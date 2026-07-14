@@ -1,0 +1,43 @@
+{
+  "task_id": "M0-T000",
+  "title": "Control-plane lifecycle verification",
+  "task_type": "research",
+  "milestone_id": "M0",
+  "objective": "Prove the task/gate/checkpoint/acceptance lifecycle works end to end",
+  "business_reason": "Bootstrap requirement",
+  "inputs": [],
+  "outputs": [],
+  "dependencies": [],
+  "allowed_paths": [],
+  "forbidden_paths": [],
+  "acceptance_scenarios": [],
+  "required_gates": [
+    "G0",
+    "G3"
+  ],
+  "producer_agent": "progress-auditor",
+  "reviewer_agents": [],
+  "status": "accepted",
+  "progress_percent": 100,
+  "risks": [],
+  "blockers": [],
+  "created_at": "2026-07-14T21:06:50.094132+00:00",
+  "updated_at": "2026-07-14T21:07:31.341348+00:00",
+  "worktree": "local",
+  "progress_log": [
+    {
+      "at": "2026-07-14T21:06:50.448068+00:00",
+      "agent": "progress-auditor",
+      "percent": 75,
+      "message": "Lifecycle steps executed"
+    },
+    {
+      "at": "2026-07-14T21:06:51.075217+00:00",
+      "agent": "progress-auditor",
+      "percent": 75,
+      "message": "Rework complete"
+    }
+  ],
+  "accepted_by": "orchestrator",
+  "accepted_at": "2026-07-14T21:07:31.341348+00:00"
+}

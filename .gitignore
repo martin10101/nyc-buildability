@@ -1,0 +1,60 @@
+# Dependencies and environments
+node_modules/
+.venv/
+venv/
+env/
+__pycache__/
+*.py[cod]
+
+# Builds and caches
+.next/
+dist/
+build/
+coverage/
+.cache/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.turbo/
+*.log
+
+# Local databases and Supabase local state
+*.db
+*.sqlite
+*.sqlite3
+.supabase/
+supabase/.temp/
+
+# Large downloaded or generated data
+data/
+datasets/
+downloads/
+tmp/
+temp/
+artifacts/
+reports/generated/
+source-snapshots/
+gis-imports/
+*.shp
+*.shx
+*.dbf
+*.gpkg
+*.geojson.tmp
+*.parquet
+*.feather
+
+# Browser and test recordings
+playwright-report/
+test-results/
+blob-report/
+*.webm
+
+# Claude-managed worktrees
+.claude/worktrees/
+
+# Secrets and local settings
+.env
+.env.*
+!.env.example
+.DS_Store
+Thumbs.db

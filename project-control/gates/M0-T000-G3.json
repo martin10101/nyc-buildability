@@ -1,0 +1,9 @@
+{
+  "task_id": "M0-T000",
+  "gate_id": "G3",
+  "reviewer": "qa-engineer",
+  "result": "PASS",
+  "report_file": "project-control\\reports\\M0-T000-G3-pass-evidence.json",
+  "reviewed_at": "2026-07-14T21:07:31.227746+00:00",
+  "updated_at": "2026-07-14T21:07:31.227746+00:00"
+}

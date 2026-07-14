@@ -1,0 +1,9 @@
+{
+  "checkpoint_id": "CP-0002",
+  "timestamp": "2026-07-14T21:07:31.438609+00:00",
+  "commit": "none-pre-git",
+  "branch": "main",
+  "active_milestone": "M0",
+  "summary": "M0-T000 accepted. Lifecycle fully verified incl. rejection paths. Defect found+fixed: BOM-intolerant JSON load in project_control.py (utf-8 -> utf-8-sig).",
+  "updated_at": "2026-07-14T21:07:31.438609+00:00"
+}

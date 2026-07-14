@@ -1,0 +1,101 @@
+{
+  "task_statuses": [
+    "backlog",
+    "ready",
+    "claimed",
+    "in_progress",
+    "self_check",
+    "awaiting_gate",
+    "rework",
+    "accepted",
+    "blocked",
+    "canceled"
+  ],
+  "gate_results": [
+    "PASS",
+    "FAIL",
+    "BLOCKED"
+  ],
+  "progress_markers": {
+    "claimed": 10,
+    "scenarios_written": 20,
+    "core_exists": 40,
+    "happy_path": 60,
+    "self_checks_complete": 75,
+    "submitted": 85,
+    "gates_passed": 95,
+    "accepted": 100
+  },
+  "required_gates_by_task_type": {
+    "research": [
+      "G0",
+      "G1",
+      "G3"
+    ],
+    "connector": [
+      "G0",
+      "G1",
+      "G2",
+      "G3",
+      "G4",
+      "G5"
+    ],
+    "database": [
+      "G0",
+      "G2",
+      "G3",
+      "G4",
+      "G5"
+    ],
+    "backend": [
+      "G0",
+      "G2",
+      "G3",
+      "G4",
+      "G5"
+    ],
+    "frontend": [
+      "G0",
+      "G2",
+      "G3",
+      "G4"
+    ],
+    "geospatial": [
+      "G0",
+      "G1",
+      "G2",
+      "G3",
+      "G4"
+    ],
+    "ai_pipeline": [
+      "G0",
+      "G2",
+      "G3",
+      "G4",
+      "G5"
+    ],
+    "legal_rule": [
+      "G0",
+      "G1",
+      "G2",
+      "G3",
+      "G4",
+      "G5",
+      "G6"
+    ],
+    "release": [
+      "G3",
+      "G4",
+      "G5",
+      "G6",
+      "G7"
+    ]
+  },
+  "local_storage_policy": {
+    "owner_free_space_gb_at_project_start": 7,
+    "minimum_free_space_to_preserve_gb": 4,
+    "maximum_additional_local_use_without_approval_gb": 2,
+    "default_execution": "cloud",
+    "policy_document": "docs/LOW_STORAGE_CLOUD_DEVELOPMENT_POLICY.md"
+  }
+}

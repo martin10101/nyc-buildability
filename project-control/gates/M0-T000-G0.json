@@ -1,0 +1,9 @@
+{
+  "task_id": "M0-T000",
+  "gate_id": "G0",
+  "reviewer": "orchestrator",
+  "result": "PASS",
+  "report_file": "project-control\\reports\\M0-T000-G0-evidence.json",
+  "reviewed_at": "2026-07-14T21:07:31.098562+00:00",
+  "updated_at": "2026-07-14T21:07:31.098562+00:00"
+}

@@ -1,0 +1,21 @@
+# Task Packet
+
+- Task ID:
+- Title:
+- Task type:
+- Milestone:
+- Objective:
+- Business reason:
+- Producer agent:
+- Independent reviewers:
+- Dependencies:
+- Inputs:
+- Expected outputs:
+- Allowed paths:
+- Forbidden paths:
+- Acceptance scenarios:
+- Required gates:
+- Source evidence required:
+- Security/provenance concerns:
+- Definition of ready:
+- Definition of submitted:
