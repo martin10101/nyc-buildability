@@ -5,24 +5,83 @@
   "milestone_id": "M0",
   "objective": "ADR-001 cloud architecture, ADR-002 environment separation dev/staging/prod, ADR-003 deployment and rollback; author render.yaml Blueprint with env-var references only",
   "business_reason": "Formalizes architecture; deployment-ready without credentials",
-  "inputs": [],
-  "outputs": [],
+  "inputs": [
+    "PRD.md 14/26/32.5",
+    "docs/PRODUCT_FLOW_AND_AI_BOUNDARIES.md",
+    "docs/LOW_STORAGE_CLOUD_DEVELOPMENT_POLICY.md",
+    "official Render Blueprint documentation"
+  ],
+  "outputs": [
+    "docs/adr/ADR-001-cloud-architecture.md",
+    "docs/adr/ADR-002-environment-separation.md",
+    "docs/adr/ADR-003-deployment-and-rollback.md",
+    "render.yaml",
+    "docs/DEPLOYMENT_AND_ROLLBACK.md"
+  ],
   "dependencies": [
     "M0-T003"
   ],
-  "allowed_paths": [],
-  "forbidden_paths": [],
-  "acceptance_scenarios": [],
+  "allowed_paths": [
+    "docs/adr/**",
+    "render.yaml",
+    "docs/DEPLOYMENT_AND_ROLLBACK.md",
+    "project-control/reports/M0-T006-*"
+  ],
+  "forbidden_paths": [
+    "apps/**",
+    "services/**",
+    "packages/**",
+    ".github/**",
+    "project-control/tasks/**",
+    "project-control/gates/**",
+    "tools/**",
+    "CLAUDE.md",
+    "PRD.md"
+  ],
+  "acceptance_scenarios": [
+    {
+      "id": "S1",
+      "case": "normal",
+      "input": "render.yaml",
+      "expected": "valid Blueprint per official Render docs: FastAPI web service + background worker + cron placeholder, env vars as references (sync:false or fromGroup), no literal secrets"
+    },
+    {
+      "id": "S2",
+      "case": "conflicting-source",
+      "input": "ADR-001 alternatives",
+      "expected": "Render vs alternatives considered; decision consistent with PRD 14.1 or documented deviation"
+    },
+    {
+      "id": "S3",
+      "case": "boundary",
+      "input": "ADR-002 environments",
+      "expected": "dev/staging/prod separation with concrete Supabase project + Render service + Vercel env mapping and promotion rules"
+    },
+    {
+      "id": "S4",
+      "case": "failure",
+      "input": "ADR-003 rollback",
+      "expected": "explicit rollback procedure per service (Render rollback, migration down policy, Vercel instant rollback) incl. failed-migration handling"
+    },
+    {
+      "id": "S5",
+      "case": "provenance",
+      "input": "every Render/Vercel/Supabase capability claim",
+      "expected": "cited to official docs URL with retrieval date; no guessed platform behavior"
+    }
+  ],
   "required_gates": [
     "G0",
     "G3"
   ],
   "producer_agent": null,
-  "reviewer_agents": [],
-  "status": "backlog",
-  "progress_percent": 0,
+  "reviewer_agents": [
+    "code-reviewer"
+  ],
+  "status": "ready",
+  "progress_percent": 5,
   "risks": [],
   "blockers": [],
   "created_at": "2026-07-14T21:38:08.617024+00:00",
-  "updated_at": "2026-07-14T21:38:08.617024+00:00"
+  "updated_at": "2026-07-14T21:48:34.875169+00:00"
 }

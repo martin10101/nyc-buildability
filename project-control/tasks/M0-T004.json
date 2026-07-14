@@ -76,15 +76,16 @@
     "G4",
     "G5"
   ],
-  "producer_agent": null,
+  "producer_agent": "backend-engineer",
   "reviewer_agents": [
     "code-reviewer",
     "qa-engineer"
   ],
-  "status": "ready",
-  "progress_percent": 5,
+  "status": "claimed",
+  "progress_percent": 10,
   "risks": [],
   "blockers": [],
   "created_at": "2026-07-14T21:38:08.377759+00:00",
-  "updated_at": "2026-07-14T21:41:17.951928+00:00"
+  "updated_at": "2026-07-14T21:47:41.504667+00:00",
+  "worktree": ".claude/worktrees/M0-T004"
 }
