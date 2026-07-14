@@ -1,0 +1,15 @@
+{
+  "task_id": "M0-T002",
+  "gate": "G3",
+  "reviewer": "orchestrator",
+  "producer": "official-source-researcher",
+  "method": "Human-style walkthrough as the downstream consumer (M1 connector implementer): read the 314-line research doc from the top; checked that each decision an implementer must make (endpoint choice, auth mechanism, params, ambiguity handling, BBL direct lookup, fixture plan, human key steps) is answered with an official source URL + retrieval date or an explicit UNKNOWN.",
+  "scenario_results": [
+    {"id": "S1", "result": "PASS", "note": "Endpoints, auth (Ocp-Apim-Subscription-Key), params incl. case-sensitivity, response semantics (null omission, return codes), cadence (quarterly PAD, 26B) all sourced and dated"},
+    {"id": "S2", "result": "PASS", "note": "Geoclient vs GeoSearch vs Geoservice vs GDE compared in an executive table with official status and recommendation (Geoclient v2 primary, GeoSearch fallback)"},
+    {"id": "S3", "result": "PASS", "note": "Rate limits, v1 deactivation date, intersection path inconsistency in the official guide itself all marked UNKNOWN - requires verification; no guessed values found"}
+  ],
+  "cross_gate_note": "G1 PASS by data-contract-verifier recorded separately; verifier independently reproduced endpoints, auth, field examples, live keyless GeoSearch response matching the producer fixture. Verifier ran in a no-shell sandbox, so the orchestrator recorded the CLI gate entry on its behalf; the verdict and report are entirely the verifier's.",
+  "verdict": "PASS",
+  "follow_ups": "Fold verifier discrepancy notes 1-4 into a doc revision during M1-T003; capture portal-displayed v2 quotas and resolve intersection path with a live keyed call once B-004 clears."
+}

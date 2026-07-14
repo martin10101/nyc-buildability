@@ -5,12 +5,18 @@
   "accepted_tasks": [
     "M0-T000",
     "M0-T001",
+    "M0-T002",
     "M0-T003"
   ],
   "active_tasks": [
-    "M0-T002"
+    "M0-T004",
+    "M0-T006"
   ],
-  "blocked_tasks": [],
+  "blocked_tasks": [
+    "M0-T007",
+    "M0-T008",
+    "M0-T010"
+  ],
   "failed_gates": [],
-  "updated_at": "2026-07-14T21:38:32.272279+00:00"
+  "updated_at": "2026-07-14T22:08:44.371534+00:00"
 }

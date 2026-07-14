@@ -1,0 +1,138 @@
+# =============================================================================
+# NYC Development Feasibility Platform - Render Blueprint (Infrastructure as Code)
+# =============================================================================
+# Governing decisions: docs/adr/ADR-001-cloud-architecture.md (topology),
+#   docs/adr/ADR-002-environment-separation.md (which branch/environment this
+#   file deploys), docs/adr/ADR-003-deployment-and-rollback.md (deploy order,
+#   rollback semantics, migration policy). Operator steps:
+#   docs/DEPLOYMENT_AND_ROLLBACK.md.
+#
+# Spec reference: https://render.com/docs/blueprint-spec (retrieved 2026-07-14).
+# Render reads this file from the repository root:
+#   https://render.com/docs/infrastructure-as-code (retrieved 2026-07-14).
+#
+# SECRETS POLICY (S1): every sensitive environment variable below is declared
+# with `sync: false`, which makes Render prompt for the value in the dashboard
+# at Blueprint creation time. NO literal secret values may EVER be added to
+# this file. See PRD section 17 and ADR-002 section 3.
+#
+# PLACEHOLDER STATUS: services/api does not exist yet (owned by task(s) under
+# apps/services/packages scope). Build/start commands below are documented
+# placeholders that MUST be reconciled with the real services/api layout
+# before the first Blueprint deploy. Marked [PLACEHOLDER] individually.
+# =============================================================================
+
+# Preview environments: create per-PR copies of these services only when a PR
+# explicitly opts in (manual generation), to avoid surprise billing. Previews
+# are billed at the base-service rate; sync:false env vars are NOT copied into
+# previews and must be provided or moved to an env group if previews need them.
+# Source: https://render.com/docs/preview-environments (retrieved 2026-07-14).
+previews:
+  generation: manual
+  expireAfterDays: 3
+
+services:
+  # ---------------------------------------------------------------------------
+  # 1) FastAPI web service - the single deployable API (ADR-001: one FastAPI
+  #    service; workers/cron are separate instances of the same codebase).
+  # ---------------------------------------------------------------------------
+  - type: web
+    name: nycdf-api
+    runtime: python
+    rootDir: services/api
+    # Plan: free web services spin down after 15 minutes of inactivity
+    # (https://render.com/docs/free, retrieved 2026-07-14); the API must stay
+    # warm for analysis runs, so `starter` is the minimum. ADR-002 section 6
+    # sequences when paid plans are actually activated.
+    plan: starter
+    # Region pinned for co-location of api/worker/cron. Confirm the valid
+    # region list against https://render.com/docs/regions at first deploy
+    # (ADR-002, "Items requiring verification at first setup").
+    region: oregon
+    autoDeploy: true
+    buildCommand: "pip install -r requirements.txt"  # [PLACEHOLDER] reconcile with services/api build (e.g., uv/poetry) before first deploy
+    startCommand: "uvicorn app.main:app --host 0.0.0.0 --port $PORT"  # [PLACEHOLDER] reconcile with real ASGI module path
+    # Render treats 2xx/3xx within 5s as healthy and gates zero-downtime
+    # deploys on this path (https://render.com/docs/health-checks, retrieved
+    # 2026-07-14). A deploy that never passes health checks does not replace
+    # the running version - first line of rollback defense (ADR-003 D2).
+    healthCheckPath: /health
+    envVars:
+      - key: ENVIRONMENT
+        value: production  # staging instances override per ADR-002 mapping
+      - key: SUPABASE_URL
+        sync: false
+      - key: SUPABASE_SERVICE_ROLE_KEY
+        sync: false  # trusted backend only - never in frontend (PRD 17)
+      - key: SUPABASE_DB_URL
+        sync: false
+      - key: GEOCLIENT_SUBSCRIPTION_KEY
+        sync: false  # NYC API Developers Portal key (docs/research/M0-T002-geoclient-address-resolution.md section 2.3)
+      - key: ANTHROPIC_API_KEY
+        sync: false
+      - key: SENTRY_DSN
+        sync: false
+
+  # ---------------------------------------------------------------------------
+  # 2) Background worker - ingestion / GIS / AI-extraction / scenario jobs.
+  #    Workers run continuously and receive no inbound traffic; they poll the
+  #    job queue (https://render.com/docs/background-workers, retrieved
+  #    2026-07-14). NOTE: no free tier exists for workers
+  #    (https://render.com/docs/free, retrieved 2026-07-14).
+  #    Rollback: supported via dashboard/API without rebuild (ADR-003 R2).
+  # ---------------------------------------------------------------------------
+  - type: worker
+    name: nycdf-worker-jobs
+    runtime: python
+    rootDir: services/api
+    plan: starter
+    region: oregon
+    autoDeploy: true
+    buildCommand: "pip install -r requirements.txt"  # [PLACEHOLDER] keep identical to nycdf-api build
+    startCommand: "python -m app.workers.job_runner"  # [PLACEHOLDER] job-queue consumer entrypoint does not exist yet; defined by the services/api producer
+    envVars:
+      - key: ENVIRONMENT
+        value: production
+      - key: SUPABASE_URL
+        sync: false
+      - key: SUPABASE_SERVICE_ROLE_KEY
+        sync: false
+      - key: SUPABASE_DB_URL
+        sync: false
+      - key: GEOCLIENT_SUBSCRIPTION_KEY
+        sync: false
+      - key: ANTHROPIC_API_KEY
+        sync: false
+      - key: SENTRY_DSN
+        sync: false
+
+  # ---------------------------------------------------------------------------
+  # 3) Cron job - scheduled official-source monitoring (PRD 14.1 "Scheduled
+  #    source monitoring"). Schedule is evaluated in UTC
+  #    (https://render.com/docs/cronjobs, retrieved 2026-07-14). Cron jobs
+  #    bill per-minute while running with a $1/month minimum per cron job and
+  #    have no free tier (https://render.com/docs/cronjobs,
+  #    https://render.com/pricing, retrieved 2026-07-14).
+  #    Rollback: cron is NOT listed as rollback-eligible - revert via
+  #    `git revert` + push (ADR-003 R2).
+  # ---------------------------------------------------------------------------
+  - type: cron
+    name: nycdf-cron-source-monitor
+    runtime: python
+    rootDir: services/api
+    plan: starter
+    region: oregon
+    schedule: "0 6 * * *"  # daily 06:00 UTC (~01:00/02:00 New York); source freshness checks per PRD source strategy
+    buildCommand: "pip install -r requirements.txt"  # [PLACEHOLDER] keep identical to nycdf-api build
+    startCommand: "python -m app.jobs.source_monitor"  # [PLACEHOLDER] source-monitor entrypoint does not exist yet; defined by the services/api producer
+    envVars:
+      - key: ENVIRONMENT
+        value: production
+      - key: SUPABASE_URL
+        sync: false
+      - key: SUPABASE_SERVICE_ROLE_KEY
+        sync: false
+      - key: SUPABASE_DB_URL
+        sync: false
+      - key: SENTRY_DSN
+        sync: false

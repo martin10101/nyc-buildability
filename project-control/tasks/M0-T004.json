@@ -5,14 +5,70 @@
   "milestone_id": "M0",
   "objective": "Create apps/web (Next.js placeholder), services/api (FastAPI placeholder), packages/contracts, supabase/migrations, .github/workflows CI running lint+tests remotely; no heavy local installs",
   "business_reason": "Foundation for all implementation work; proves remote CI",
-  "inputs": [],
-  "outputs": [],
+  "inputs": [
+    "PRD.md sections 14/21/26/32",
+    "docs/PRODUCT_FLOW_AND_AI_BOUNDARIES.md",
+    "docs/LOW_STORAGE_CLOUD_DEVELOPMENT_POLICY.md"
+  ],
+  "outputs": [
+    "monorepo skeleton",
+    ".github/workflows/ci.yml",
+    "producer report with CI run evidence"
+  ],
   "dependencies": [
     "M0-T003"
   ],
-  "allowed_paths": [],
-  "forbidden_paths": [],
-  "acceptance_scenarios": [],
+  "allowed_paths": [
+    "apps/**",
+    "services/**",
+    "packages/**",
+    "supabase/migrations/.gitkeep",
+    ".github/**",
+    "package.json",
+    "pyproject.toml",
+    "README.md",
+    "project-control/reports/M0-T004-*"
+  ],
+  "forbidden_paths": [
+    "project-control/tasks/**",
+    "project-control/gates/**",
+    "docs/** (except README updates)",
+    "CLAUDE.md",
+    "PRD.md",
+    "tools/**"
+  ],
+  "acceptance_scenarios": [
+    {
+      "id": "S1",
+      "case": "normal",
+      "input": "push task branch",
+      "expected": "GitHub Actions CI runs lint+tests for web/api/contracts remotely and passes"
+    },
+    {
+      "id": "S2",
+      "case": "boundary",
+      "input": "local working tree after task",
+      "expected": "no node_modules/venv/build artifacts locally; repo growth < 1 MB; >= 4 GB free preserved"
+    },
+    {
+      "id": "S3",
+      "case": "missing-data",
+      "input": "CI without cloud secrets",
+      "expected": "CI green without any secret; no secret referenced"
+    },
+    {
+      "id": "S4",
+      "case": "invalid-input",
+      "input": "lint/type error introduced in a scratch commit on the task branch",
+      "expected": "CI fails visibly, then passes after revert (both runs linked as evidence)"
+    },
+    {
+      "id": "S5",
+      "case": "structure",
+      "input": "repo tree",
+      "expected": "apps/web (Next.js placeholder, no install), services/api (FastAPI + pytest smoke), packages/contracts (versioned schema stubs), supabase/migrations placeholder"
+    }
+  ],
   "required_gates": [
     "G0",
     "G2",
@@ -20,12 +76,24 @@
     "G4",
     "G5"
   ],
-  "producer_agent": null,
-  "reviewer_agents": [],
-  "status": "backlog",
-  "progress_percent": 0,
+  "producer_agent": "backend-engineer",
+  "reviewer_agents": [
+    "code-reviewer",
+    "qa-engineer"
+  ],
+  "status": "in_progress",
+  "progress_percent": 60,
   "risks": [],
   "blockers": [],
   "created_at": "2026-07-14T21:38:08.377759+00:00",
-  "updated_at": "2026-07-14T21:38:08.378759+00:00"
+  "updated_at": "2026-07-14T22:08:44.307639+00:00",
+  "worktree": ".claude/worktrees/M0-T004",
+  "progress_log": [
+    {
+      "at": "2026-07-14T22:08:44.307639+00:00",
+      "agent": "backend-engineer",
+      "percent": 60,
+      "message": "Orchestrator committed producer worktree (0da9575), pushed branch; CI run 29371615952 green (all 3 jobs); remaining: remote lockfile + npm ci, S4 fail/revert, submit"
+    }
+  ]
 }

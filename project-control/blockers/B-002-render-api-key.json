@@ -1,7 +1,8 @@
 {
   "blocker_id": "B-002",
   "title": "Render not connected",
-  "status": "open",
+  "status": "resolved_temporary",
+  "resolution": "Owner provided a temporary API key via chat on 2026-07-14 (will be revoked by owner). Tested same day: GET /v1/owners and /v1/services returned 200. Workspace 'My Workspace' (team tea-d37n4vje5dus739gucd0) contains 4 pre-existing services unrelated to this project (invitebot, polymarket-paper-bot, textai-sms-bot, nyc-ami-calculator) - these will never be modified. Key value NOT stored anywhere in repo or on disk. Initial service creation planned immediately after M0-T004 monorepo merge + M0-T006 render.yaml land; if the key is revoked before then, a fresh key (or the dashboard Blueprint flow using the owner's existing Render GitHub connection) will be requested at deployment time.",
   "affects": ["FastAPI deployment", "background workers", "ingestion jobs", "report generation"],
   "detail": "No Render CLI installed (by low-storage policy this is acceptable) and no Render MCP/API access is configured. Render Blueprint (render.yaml) can still be authored and committed without credentials; deployment requires the key.",
   "exact_human_action": "Create a Render account (or use existing) at https://render.com, then create an API key at Dashboard -> Account Settings -> API Keys and provide it as RENDER_API_KEY in the harness secret store or as an environment variable for Claude Code. Do not paste it into chat or committed files.",
