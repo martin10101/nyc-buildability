@@ -1,0 +1,9 @@
+{
+  "checkpoint_id": "CP-0003",
+  "timestamp": "2026-07-14T21:38:32.267321+00:00",
+  "commit": "9aff29a",
+  "branch": "main",
+  "active_milestone": "M0",
+  "summary": "Bootstrap complete. 3 tasks accepted, M0-T002 awaiting G1, blockers B-001..B-004 open, M0-T004..T009 registered, all planning docs published, ledger pushed to private GitHub.",
+  "updated_at": "2026-07-14T21:38:32.268322+00:00"
+}
