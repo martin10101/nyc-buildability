@@ -15,3 +15,6 @@ export default function HomePage() {
     </section>
   );
 }
+
+// S4 scenario: deliberate lint failure (unused variable) - will be reverted
+const s4DeliberateLintFailure = "unused";
