@@ -75,3 +75,13 @@ jobs:
       # Uses only the runner's preinstalled Python; no extra dependencies.
       - name: Validate contract schemas
         run: python3 .github/scripts/validate_contracts.py
+
+  control-plane:
+    name: control-plane (workflow regression test, ADR-005)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      # Stdlib only; proves producer-submit / reviewer-report /
+      # orchestrator-gate authority rules and bootstrap defect regressions.
+      - name: Run project-control regression test
+        run: python3 tools/test_project_control.py

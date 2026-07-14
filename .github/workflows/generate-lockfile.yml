@@ -1,0 +1,36 @@
+name: Generate web lockfile
+
+# One-shot utility (M0-T004 follow-up): generates apps/web/package-lock.json
+# on a GitHub-hosted runner (never on the owner's PC, per
+# docs/LOW_STORAGE_CLOUD_DEVELOPMENT_POLICY.md) and commits it back to the
+# branch it was dispatched on. After the lockfile lands, ci.yml switches the
+# web job from `npm install` to `npm ci`.
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  lockfile:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Generate package-lock.json (no node_modules)
+        working-directory: apps/web
+        run: npm install --package-lock-only --no-audit --no-fund
+      - name: Commit lockfile to this branch
+        run: |
+          git add apps/web/package-lock.json
+          if git diff --cached --quiet; then
+            echo "Lockfile unchanged; nothing to commit."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -m "chore(web): generate package-lock.json on CI runner (M0-T004)"
+          git push
