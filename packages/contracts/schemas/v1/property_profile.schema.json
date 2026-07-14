@@ -1,0 +1,203 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/martin10101/nyc-buildability/packages/contracts/schemas/v1/property_profile.schema.json",
+  "title": "Canonical Property Profile",
+  "description": "v1 DRAFT of the one canonical property-profile contract (PRD section 32.3). All connectors, rules, scenarios, reports, and UI views must exchange this contract; modules may not invent competing property schemas. Field-level details are finalized in task M0-T009.",
+  "type": "object",
+  "required": [
+    "profile_version",
+    "identity",
+    "lot_facts",
+    "existing_building_facts",
+    "zoning",
+    "project_intent",
+    "provenance",
+    "missing_inputs",
+    "conflicts",
+    "user_confirmations"
+  ],
+  "properties": {
+    "profile_version": {
+      "description": "Version of this profile instance (monotonic per property) plus the contract version used.",
+      "type": "object",
+      "required": ["contract_version", "profile_revision"],
+      "properties": {
+        "contract_version": { "type": "string", "const": "1.0.0-draft" },
+        "profile_revision": { "type": "integer", "minimum": 1 },
+        "generated_at": { "type": "string", "format": "date-time" }
+      }
+    },
+    "identity": {
+      "description": "Identity, address, BBL/BIN, and geometry.",
+      "type": "object",
+      "required": ["bbl"],
+      "properties": {
+        "bbl": {
+          "type": "string",
+          "pattern": "^[1-5][0-9]{5}[0-9]{4}$",
+          "description": "10-digit NYC Borough-Block-Lot (borough 1-5, 5-digit block, 4-digit lot)."
+        },
+        "bins": {
+          "type": "array",
+          "items": { "type": "string", "pattern": "^[1-5][0-9]{6}$" },
+          "description": "Building Identification Numbers on the lot."
+        },
+        "address": {
+          "type": "object",
+          "properties": {
+            "house_number": { "type": "string" },
+            "street_name": { "type": "string" },
+            "borough": {
+              "type": "string",
+              "enum": ["MANHATTAN", "BRONX", "BROOKLYN", "QUEENS", "STATEN ISLAND"]
+            },
+            "zip_code": { "type": "string" },
+            "normalized_address": { "type": "string" }
+          }
+        },
+        "geometry": {
+          "type": "object",
+          "description": "GeoJSON geometry of the lot (WGS84). Detailed geometry contract pending M0-T009.",
+          "properties": {
+            "type": { "type": "string" },
+            "coordinates": {}
+          }
+        }
+      }
+    },
+    "lot_facts": {
+      "description": "Lot-level facts (area, frontage, depth, corner status, etc.). Every fact value must have a matching provenance record.",
+      "type": "object",
+      "additionalProperties": { "$ref": "#/$defs/fact_value" }
+    },
+    "existing_building_facts": {
+      "description": "Existing-building facts (floor area, stories, use, landmark status, etc.).",
+      "type": "object",
+      "additionalProperties": { "$ref": "#/$defs/fact_value" }
+    },
+    "zoning": {
+      "description": "Zoning districts, overlays, special districts, and mapped features.",
+      "type": "object",
+      "properties": {
+        "districts": { "type": "array", "items": { "type": "string" } },
+        "commercial_overlays": { "type": "array", "items": { "type": "string" } },
+        "special_districts": { "type": "array", "items": { "type": "string" } },
+        "mapped_features": { "type": "array", "items": { "type": "object" } }
+      }
+    },
+    "project_intent": {
+      "description": "User-selected development objectives for the analysis.",
+      "type": "object",
+      "properties": {
+        "objectives": { "type": "array", "items": { "type": "string" } },
+        "notes": { "type": "string" }
+      }
+    },
+    "provenance": {
+      "description": "Source provenance for every fact used (PRD section 9).",
+      "type": "array",
+      "items": { "$ref": "#/$defs/provenance_record" }
+    },
+    "missing_inputs": {
+      "description": "Inputs the platform could not obtain, with criticality.",
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["field", "criticality"],
+        "properties": {
+          "field": { "type": "string" },
+          "criticality": { "type": "string", "enum": ["critical", "noncritical"] },
+          "reason": { "type": "string" }
+        }
+      }
+    },
+    "conflicts": {
+      "description": "Cross-source conflicts detected for facts on this property.",
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["field", "values"],
+        "properties": {
+          "field": { "type": "string" },
+          "values": {
+            "type": "array",
+            "minItems": 2,
+            "items": {
+              "type": "object",
+              "properties": {
+                "source_id": { "type": "string" },
+                "value": {}
+              }
+            }
+          },
+          "resolution": {
+            "type": "string",
+            "enum": ["unresolved", "user_confirmed", "user_overridden", "source_priority"]
+          }
+        }
+      }
+    },
+    "user_confirmations": {
+      "description": "User confirmations and overrides of official facts.",
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["field", "action"],
+        "properties": {
+          "field": { "type": "string" },
+          "action": { "type": "string", "enum": ["confirmed", "overridden"] },
+          "override_value": {},
+          "confirmed_at": { "type": "string", "format": "date-time" },
+          "confirmed_by": { "type": "string" }
+        }
+      }
+    }
+  },
+  "$defs": {
+    "fact_value": {
+      "type": "object",
+      "required": ["value"],
+      "properties": {
+        "value": {},
+        "units": { "type": "string" },
+        "provenance_ref": {
+          "type": "string",
+          "description": "ID of the provenance record backing this fact."
+        }
+      }
+    },
+    "provenance_record": {
+      "type": "object",
+      "description": "Per-fact provenance (PRD section 9).",
+      "required": [
+        "provenance_id",
+        "source_id",
+        "original_field_name",
+        "original_value",
+        "normalized_value",
+        "retrieved_at",
+        "bbl"
+      ],
+      "properties": {
+        "provenance_id": { "type": "string" },
+        "source_id": { "type": "string" },
+        "original_field_name": { "type": "string" },
+        "original_value": {},
+        "normalized_value": {},
+        "retrieved_at": { "type": "string", "format": "date-time" },
+        "dataset_version": {
+          "type": "string",
+          "description": "Dataset version or page/document version."
+        },
+        "effective_date": { "type": "string", "format": "date" },
+        "bbl": { "type": "string", "pattern": "^[1-5][0-9]{5}[0-9]{4}$" },
+        "confidence": { "type": "number", "minimum": 0, "maximum": 1 },
+        "user_confirmed_or_overridden": { "type": "boolean" },
+        "conflict_status": {
+          "type": "string",
+          "enum": ["none", "conflicting", "resolved"]
+        }
+      }
+    }
+  }
+}
