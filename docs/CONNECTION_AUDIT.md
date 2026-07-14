@@ -8,7 +8,7 @@ Audited 2026-07-14 by the orchestrator. Statuses: Connected and tested / Connect
 | File editing | Connected and tested | Docs, ledger, and code edits in this repo |
 | Git | Connected and tested | git 2.47.1; repo initialized; commit 8ba7278 on `main` |
 | GitHub (gh CLI) | Connected and tested | gh 2.83.2 authenticated as `martin10101` (scopes: gist, read:org, repo, workflow); private repo `martin10101/nyc-buildability` created and pushed |
-| GitHub Actions / remote CI | Connected but not yet tested | Push access + `workflow` scope verified; no workflow file exists yet (first CI task will prove it) |
+| GitHub Actions / remote CI | Connected and tested | 2026-07-14: run 29371615952 on `task/M0-T004-monorepo-ci` — all 3 jobs green on first run (web lint/typecheck/build, api ruff/pytest, contracts schema validation) |
 | Web research (WebSearch/WebFetch) | Connected and tested | M0-T002 research retrieved official NYC documentation incl. a live keyless GeoSearch API call |
 | Supabase (MCP) | Authentication required | MCP server resolves project URL `https://dyiviaalkqxeyyxotvvh.supabase.co`; management calls return Unauthorized (needs `SUPABASE_ACCESS_TOKEN`, blocker B-001) |
 | Supabase CLI (local) | Not connected | Intentionally not installed (low-storage policy); remote MCP + migrations in git is the working model |

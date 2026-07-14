@@ -74,14 +74,23 @@
     "G0",
     "G3"
   ],
-  "producer_agent": null,
+  "producer_agent": "cloud-architect",
   "reviewer_agents": [
     "code-reviewer"
   ],
-  "status": "ready",
-  "progress_percent": 5,
+  "status": "awaiting_gate",
+  "progress_percent": 85,
   "risks": [],
   "blockers": [],
   "created_at": "2026-07-14T21:38:08.617024+00:00",
-  "updated_at": "2026-07-14T21:48:34.875169+00:00"
+  "updated_at": "2026-07-14T22:08:44.160645+00:00",
+  "worktree": "local",
+  "progress_log": [
+    {
+      "at": "2026-07-14T22:08:43.988714+00:00",
+      "agent": "cloud-architect",
+      "percent": 75,
+      "message": "ADR-001/002/003 + render.yaml + runbook complete with official citations; producer sandbox denied CLI so orchestrator records per ADR-005"
+    }
+  ]
 }
