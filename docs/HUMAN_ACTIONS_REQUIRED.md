@@ -38,6 +38,11 @@ Unblocks: live fixture capture and rate-limit confirmation for the address-resol
 4. Provide the key as environment variable `GEOCLIENT_SUBSCRIPTION_KEY`.
 5. How it will be tested: one documented `/v2/address` request expecting HTTP 200 JSON. Key never echoed.
 
+## 5. Complete the 3D/UI expansion pack copy (B-005)
+Unblocks: integration of the 3D massing / premium UI / financial / opportunity workstreams.
+
+Three expansion files arrived mid-bootstrap and are committed, but the continuation prompt references 4 more documents (`.claude/rules/3d-ui-expansion.md`, `docs/COMPETITIVE_FEATURE_EXPANSION.md`, `docs/3D_AND_UI_EXECUTION_PLAN.md`, `docs/3D_VISUAL_ACCEPTANCE_STANDARD.md`) and 5 new subagents (`3d-massing-engineer`, `product-design-director`, `visual-quality-reviewer`, `financial-feasibility-engineer`, `opportunity-search-engineer`) that are not present. Copy the rest of the pack into the project root, or say the pack is withdrawn. Integration (task M0-T010) proceeds automatically once the files exist. Core M0/M1 work is NOT blocked by this.
+
 ## Later (not yet blocking — will be requested when reached)
 - Production deployment approval (G7).
 - Qualified NYC zoning professional to approve the first verified rule set (G6). Rule ingestion/extraction/testing proceeds meanwhile; nothing is published as "verified" until this approval.

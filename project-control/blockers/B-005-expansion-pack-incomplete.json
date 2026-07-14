@@ -1,0 +1,10 @@
+{
+  "blocker_id": "B-005",
+  "title": "3D/UI expansion pack partially delivered",
+  "status": "open",
+  "affects": ["M0-T010 expansion integration report", "future 3D massing / premium UI / financial / opportunity workstreams"],
+  "detail": "At 2026-07-14 21:30-21:31 UTC three expansion files appeared in the working tree (CONTINUE_FROM_CURRENT_STATE_PROMPT.md, docs/3D_MASSING_ENGINE_ARCHITECTURE.md, docs/PREMIUM_PRODUCT_DESIGN_SYSTEM.md) and were committed (9aff29a) after a secrets scan. The continuation prompt references 4 more documents (.claude/rules/3d-ui-expansion.md, docs/COMPETITIVE_FEATURE_EXPANSION.md, docs/3D_AND_UI_EXECUTION_PLAN.md, docs/3D_VISUAL_ACCEPTANCE_STANDARD.md) and 5 new subagents (3d-massing-engineer, product-design-director, visual-quality-reviewer, financial-feasibility-engineer, opportunity-search-engineer) that do NOT exist in the repository.",
+  "exact_human_action": "Finish copying the complete 3D/UI expansion pack into the project root (the 4 missing docs and the 5 new .claude/agents/*.md files), or confirm the pack should be considered withdrawn.",
+  "how_it_will_be_tested": "Presence check of the 9 missing files; then M0-T010 integration report proceeds automatically.",
+  "created_at": "2026-07-14T22:05:00Z"
+}

@@ -1,0 +1,28 @@
+{
+  "task_id": "M0-T010",
+  "title": "3D/UI expansion pack integration report",
+  "task_type": "research",
+  "milestone_id": "M0",
+  "objective": "Once the full expansion pack arrives, produce docs/3D_UI_EXPANSION_INTEGRATION_REPORT.md per CONTINUE_FROM_CURRENT_STATE_PROMPT.md: validity of existing tasks, new tasks, dependencies, contracts, assignments, storage/cloud implications, risks, gates",
+  "business_reason": "Controlled integration of owner-added 3D massing, premium UI, financial, and opportunity-search workstreams",
+  "inputs": [],
+  "outputs": [],
+  "dependencies": [],
+  "allowed_paths": [],
+  "forbidden_paths": [],
+  "acceptance_scenarios": [],
+  "required_gates": [
+    "G0",
+    "G3"
+  ],
+  "producer_agent": null,
+  "reviewer_agents": [],
+  "status": "blocked",
+  "progress_percent": 0,
+  "risks": [],
+  "blockers": [
+    "B-005"
+  ],
+  "created_at": "2026-07-14T21:40:17.803410+00:00",
+  "updated_at": "2026-07-14T21:40:17.803410+00:00"
+}
