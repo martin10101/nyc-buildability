@@ -1,0 +1,72 @@
+{
+  "task_id": "M0-T003",
+  "title": "Independent review of bootstrap plan",
+  "task_type": "research",
+  "milestone_id": "M0",
+  "objective": "Review the bootstrap plan and executed actions against PRD, gates, and low-storage policy; report risks and gaps",
+  "business_reason": "Bootstrap requirement: prove cloud-architect operational",
+  "inputs": [
+    "CLAUDE.md",
+    "PRD.md",
+    "docs/**",
+    "project-control/**"
+  ],
+  "outputs": [
+    "project-control/reports/M0-T003-bootstrap-review.md"
+  ],
+  "dependencies": [],
+  "allowed_paths": [
+    "project-control/reports/M0-T003-bootstrap-review.md"
+  ],
+  "forbidden_paths": [
+    "src/**",
+    "project-control/tasks/**",
+    "project-control/gates/**"
+  ],
+  "acceptance_scenarios": [
+    {
+      "id": "S1",
+      "case": "normal",
+      "input": "bootstrap plan (git init, private GitHub, Supabase/Render/Vercel plan, low-storage policy)",
+      "expected": "each element judged sound/unsound with reasons; risks and gaps listed"
+    },
+    {
+      "id": "S2",
+      "case": "boundary",
+      "input": "7 GB disk constraint",
+      "expected": "verdict on whether planned local footprint fits the 4 GB-free floor"
+    },
+    {
+      "id": "S3",
+      "case": "invalid-input",
+      "input": "any plan step contradicting PRD/policy",
+      "expected": "flagged with document citation"
+    }
+  ],
+  "required_gates": [
+    "G0",
+    "G3"
+  ],
+  "producer_agent": "cloud-architect",
+  "reviewer_agents": [
+    "orchestrator"
+  ],
+  "status": "accepted",
+  "progress_percent": 100,
+  "risks": [],
+  "blockers": [],
+  "created_at": "2026-07-14T21:10:20.139728+00:00",
+  "updated_at": "2026-07-14T21:34:09.260277+00:00",
+  "producer_hint": "cloud-architect",
+  "worktree": "local",
+  "progress_log": [
+    {
+      "at": "2026-07-14T21:18:22.052405+00:00",
+      "agent": "cloud-architect",
+      "percent": 75,
+      "message": "Independent review complete"
+    }
+  ],
+  "accepted_by": "orchestrator",
+  "accepted_at": "2026-07-14T21:34:09.260277+00:00"
+}

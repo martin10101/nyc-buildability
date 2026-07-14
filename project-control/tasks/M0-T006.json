@@ -1,0 +1,28 @@
+{
+  "task_id": "M0-T006",
+  "title": "ADRs + Render Blueprint + deploy/rollback procedures",
+  "task_type": "research",
+  "milestone_id": "M0",
+  "objective": "ADR-001 cloud architecture, ADR-002 environment separation dev/staging/prod, ADR-003 deployment and rollback; author render.yaml Blueprint with env-var references only",
+  "business_reason": "Formalizes architecture; deployment-ready without credentials",
+  "inputs": [],
+  "outputs": [],
+  "dependencies": [
+    "M0-T003"
+  ],
+  "allowed_paths": [],
+  "forbidden_paths": [],
+  "acceptance_scenarios": [],
+  "required_gates": [
+    "G0",
+    "G3"
+  ],
+  "producer_agent": null,
+  "reviewer_agents": [],
+  "status": "backlog",
+  "progress_percent": 0,
+  "risks": [],
+  "blockers": [],
+  "created_at": "2026-07-14T21:38:08.617024+00:00",
+  "updated_at": "2026-07-14T21:38:08.617024+00:00"
+}

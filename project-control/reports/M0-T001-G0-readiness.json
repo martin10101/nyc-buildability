@@ -1,0 +1,1 @@
+{"task_id": "M0-T001", "gate": "G0", "reviewer": "orchestrator", "finding": "Objective unambiguous (reconcile ledger vs repository). No dependencies. Exclusive file scope: project-control/reports/M0-T001-audit.md. Read-only otherwise. Acceptance scenarios S1-S3 present. Execution: local, <1 MB disk, no cleanup needed. Within low-storage budget."}

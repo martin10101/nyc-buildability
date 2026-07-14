@@ -1,0 +1,31 @@
+{
+  "task_id": "M0-T009",
+  "title": "Canonical contracts v1",
+  "task_type": "backend",
+  "milestone_id": "M0",
+  "objective": "Versioned typed contracts: property profile, source fact, coverage status, analysis state machine (PRD 32.3/32.1); shared by API, workers, frontend, reports",
+  "business_reason": "One canonical property profile; prevents competing schemas",
+  "inputs": [],
+  "outputs": [],
+  "dependencies": [
+    "M0-T004"
+  ],
+  "allowed_paths": [],
+  "forbidden_paths": [],
+  "acceptance_scenarios": [],
+  "required_gates": [
+    "G0",
+    "G2",
+    "G3",
+    "G4",
+    "G5"
+  ],
+  "producer_agent": null,
+  "reviewer_agents": [],
+  "status": "backlog",
+  "progress_percent": 0,
+  "risks": [],
+  "blockers": [],
+  "created_at": "2026-07-14T21:38:08.948728+00:00",
+  "updated_at": "2026-07-14T21:38:08.948728+00:00"
+}

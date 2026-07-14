@@ -16,6 +16,22 @@ def save(path, data):
 def task_path(task_id): return PC / "tasks" / f"{task_id}.json"
 def report_path(task_id): return PC / "reports" / f"{task_id}.json"
 
+def sync_state():
+    """Recompute state.json task rosters from the tasks directory so the
+    state file never drifts from the authoritative task packets."""
+    sp = PC / "state.json"
+    if not sp.exists(): return
+    state = load(sp)
+    tasks = [load(p) for p in sorted((PC / "tasks").glob("*.json"))]
+    state["accepted_tasks"] = [t["task_id"] for t in tasks if t["status"] == "accepted"]
+    state["active_tasks"] = [t["task_id"] for t in tasks if t["status"] in
+                             ("claimed", "in_progress", "self_check", "awaiting_gate", "rework")]
+    state["blocked_tasks"] = [t["task_id"] for t in tasks if t["status"] == "blocked"]
+    state["failed_gates"] = sorted(
+        gp.stem for gp in (PC / "gates").glob("*-G*.json")
+        if load(gp).get("result") == "FAIL")
+    save(sp, state)
+
 def init(_):
     for d in ["tasks","reports","gates","checkpoints","blockers"]:
         (PC/d).mkdir(parents=True, exist_ok=True)
@@ -45,7 +61,7 @@ def claim(a):
     if t["status"] not in ["ready","backlog","rework"]:
         print(f"Cannot claim from status {t['status']}",file=sys.stderr); return 2
     t.update({"producer_agent":a.agent,"worktree":a.worktree,"status":"claimed","progress_percent":10})
-    save(p,t); print(f"Claimed {a.task_id} by {a.agent}"); return 0
+    save(p,t); sync_state(); print(f"Claimed {a.task_id} by {a.agent}"); return 0
 
 def progress(a):
     p=task_path(a.task_id); t=load(p)
@@ -53,7 +69,7 @@ def progress(a):
         print("Only orchestrator acceptance may set 100%.",file=sys.stderr); return 2
     t["progress_percent"]=a.percent; t["status"]=a.status or t["status"]
     t.setdefault("progress_log",[]).append({"at":now(),"agent":a.agent,"percent":a.percent,"message":a.message})
-    save(p,t); print(f"Updated {a.task_id} to {a.percent}%"); return 0
+    save(p,t); sync_state(); print(f"Updated {a.task_id} to {a.percent}%"); return 0
 
 def submit(a):
     p=task_path(a.task_id); t=load(p)
@@ -64,7 +80,7 @@ def submit(a):
     if a.requested_status=="awaiting_gate": t["status"]="awaiting_gate"; t["progress_percent"]=85
     elif a.requested_status=="blocked": t["status"]="blocked"
     else: t["status"]="rework"
-    save(p,t); print(f"Submitted {a.task_id}: {a.requested_status}"); return 0
+    save(p,t); sync_state(); print(f"Submitted {a.task_id}: {a.requested_status}"); return 0
 
 def gate(a):
     p=task_path(a.task_id); t=load(p)
@@ -73,7 +89,13 @@ def gate(a):
     rp=Path(a.report)
     if not rp.exists(): print("Gate report missing",file=sys.stderr); return 2
     gp=PC/"gates"/f"{a.task_id}-{a.gate_id}.json"
-    save(gp,{"task_id":a.task_id,"gate_id":a.gate_id,"reviewer":a.reviewer,"result":a.result,"report_file":str(rp),"reviewed_at":now()})
+    record={"task_id":a.task_id,"gate_id":a.gate_id,"reviewer":a.reviewer,"result":a.result,"report_file":str(rp),"reviewed_at":now()}
+    if gp.exists():
+        prev=load(gp)
+        hist=prev.pop("history",[])
+        hist.append({k:prev.get(k) for k in ("reviewer","result","report_file","reviewed_at")})
+        record["history"]=hist
+    save(gp,record)
     if a.result=="FAIL": t["status"]="rework"
     elif a.result=="BLOCKED": t["status"]="blocked"
     else:
@@ -83,7 +105,7 @@ def gate(a):
             t["status"]="ready"; t["progress_percent"]=max(t.get("progress_percent",0),5)
         else:
             t["status"]="awaiting_gate"; t["progress_percent"]=95 if required.issubset(passed) else max(t.get("progress_percent",0),85)
-    save(p,t); print(f"Recorded {a.gate_id} {a.result} for {a.task_id}"); return 0
+    save(p,t); sync_state(); print(f"Recorded {a.gate_id} {a.result} for {a.task_id}"); return 0
 
 def accept(a):
     p=task_path(a.task_id); t=load(p)
@@ -91,7 +113,7 @@ def accept(a):
     passed={load(x).get("gate_id") for x in (PC/"gates").glob(f"{a.task_id}-G*.json") if load(x).get("result")=="PASS"}
     missing=set(t.get("required_gates",[]))-passed
     if missing: print("Missing passing gates: "+", ".join(sorted(missing)),file=sys.stderr); return 2
-    t["status"]="accepted"; t["progress_percent"]=100; t["accepted_by"]=a.agent; t["accepted_at"]=now(); save(p,t)
+    t["status"]="accepted"; t["progress_percent"]=100; t["accepted_by"]=a.agent; t["accepted_at"]=now(); save(p,t); sync_state()
     print(f"Accepted {a.task_id}"); return 0
 
 def checkpoint(a):

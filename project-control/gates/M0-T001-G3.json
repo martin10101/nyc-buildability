@@ -1,0 +1,9 @@
+{
+  "task_id": "M0-T001",
+  "gate_id": "G3",
+  "reviewer": "orchestrator",
+  "result": "PASS",
+  "report_file": "project-control\\reports\\M0-T001-G3-review.json",
+  "reviewed_at": "2026-07-14T21:34:08.849733+00:00",
+  "updated_at": "2026-07-14T21:34:08.849733+00:00"
+}

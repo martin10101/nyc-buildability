@@ -1,0 +1,23 @@
+{
+  "task_id": "M0-T001",
+  "gate": "G3",
+  "reviewer": "orchestrator",
+  "producer": "progress-auditor",
+  "method": "Independent walkthrough of the audit report against evidence the orchestrator gathered separately: state.json empty rosters (read directly before the audit ran), 10 untracked files (git status), BOM fix (authored and committed in 8ba7278), remote head verified via gh repo view.",
+  "scenario_results": [
+    {"id": "S1", "result": "PASS", "note": "Every ledger claim traced to git/file evidence incl. live remote check via git ls-remote"},
+    {"id": "S2", "result": "PASS", "note": "Under-gated acceptance (D1) and dead state fields (D2) flagged as unsupported/misleading progress"},
+    {"id": "S3", "result": "PASS", "note": "Eight discrepancies listed with exact paths and code line references"}
+  ],
+  "verdict": "PASS",
+  "orchestrator_dispositions": {
+    "D1": "Decision recorded: task packets may narrow config-default gates when a gate family is not applicable (G1 covers external official sources; M0-T000/T001/T003 have none). Future packets must state the narrowing rationale in the G0 readiness record.",
+    "D2": "Fixed: sync_state() added to project_control.py and called from claim/progress/submit/gate/accept.",
+    "D3": "Fixed: full ledger committed and pushed in the bootstrap follow-up commit; checkpoint CP-0003 records it.",
+    "D4": "Acknowledged: enrich_bootstrap_tasks.py was an orchestrator action (authorized to edit task packets); script retained in tools/ and committed for the evidence trail. forbidden_paths bind producers, not the orchestrator.",
+    "D5": "Fixed: gate() now preserves prior gate results in a history array instead of overwriting.",
+    "D6": "Adopted: future producer reports must embed actual command outputs.",
+    "D7": "Accepted as code-consistent behavior (progress log records only explicit progress calls).",
+    "D8": "Accepted as minor; checkpoint commit field remains free text for pre-git edge cases."
+  }
+}

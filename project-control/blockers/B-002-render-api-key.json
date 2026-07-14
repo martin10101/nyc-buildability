@@ -1,0 +1,13 @@
+{
+  "blocker_id": "B-002",
+  "title": "Render not connected",
+  "status": "open",
+  "affects": ["FastAPI deployment", "background workers", "ingestion jobs", "report generation"],
+  "detail": "No Render CLI installed (by low-storage policy this is acceptable) and no Render MCP/API access is configured. Render Blueprint (render.yaml) can still be authored and committed without credentials; deployment requires the key.",
+  "exact_human_action": "Create a Render account (or use existing) at https://render.com, then create an API key at Dashboard -> Account Settings -> API Keys and provide it as RENDER_API_KEY in the harness secret store or as an environment variable for Claude Code. Do not paste it into chat or committed files.",
+  "secret_name": "RENDER_API_KEY",
+  "where_to_enter": "Harness/OS secret store (e.g., environment variable for the Claude Code session) - never in chat, source, or .env committed to git",
+  "minimum_permissions": "Render API keys are account-scoped; use a dedicated workspace for this project to limit blast radius",
+  "how_it_will_be_tested": "GET https://api.render.com/v1/services with the key from the environment; expected: 200 with JSON list (possibly empty). Key value never echoed.",
+  "created_at": "2026-07-14T21:45:00Z"
+}

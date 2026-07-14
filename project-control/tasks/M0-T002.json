@@ -1,0 +1,68 @@
+{
+  "task_id": "M0-T002",
+  "title": "Official-source discovery: NYC address/BBL/BIN resolution (Geoclient/Geosupport/GeoSearch)",
+  "task_type": "research",
+  "milestone_id": "M0",
+  "objective": "Document current official NYC address resolution sources with endpoints, auth, limits, fields, cadence, and limitations; no guessing",
+  "business_reason": "Bootstrap requirement: prove official-source-researcher operational; feeds M1 connector work",
+  "inputs": [
+    "https://api-portal.nyc.gov/",
+    "official NYC DCP documentation"
+  ],
+  "outputs": [
+    "docs/research/M0-T002-geoclient-address-resolution.md"
+  ],
+  "dependencies": [],
+  "allowed_paths": [
+    "docs/research/M0-T002-geoclient-address-resolution.md"
+  ],
+  "forbidden_paths": [
+    "src/**",
+    "project-control/tasks/**"
+  ],
+  "acceptance_scenarios": [
+    {
+      "id": "S1",
+      "case": "normal",
+      "input": "NYC Geoclient/Geosupport official docs",
+      "expected": "current endpoint(s), auth model, rate limits, pagination/N-A, update cadence, field definitions for BBL/BIN resolution, with source URLs and retrieval date"
+    },
+    {
+      "id": "S2",
+      "case": "conflicting-source",
+      "input": "multiple candidate address services (Geoclient vs GeoSearch)",
+      "expected": "both documented with official status, differences, and recommendation"
+    },
+    {
+      "id": "S3",
+      "case": "missing-data",
+      "input": "detail not published",
+      "expected": "explicitly marked unknown; no guessed endpoints, fields, or units"
+    }
+  ],
+  "required_gates": [
+    "G0",
+    "G1",
+    "G3"
+  ],
+  "producer_agent": "official-source-researcher",
+  "reviewer_agents": [
+    "data-contract-verifier"
+  ],
+  "status": "awaiting_gate",
+  "progress_percent": 85,
+  "risks": [],
+  "blockers": [],
+  "created_at": "2026-07-14T21:10:20.023652+00:00",
+  "updated_at": "2026-07-14T21:30:12.219043+00:00",
+  "producer_hint": "official-source-researcher",
+  "worktree": "local",
+  "progress_log": [
+    {
+      "at": "2026-07-14T21:29:50.103201+00:00",
+      "agent": "official-source-researcher",
+      "percent": 75,
+      "message": "Research complete with sources and retrieval dates"
+    }
+  ]
+}

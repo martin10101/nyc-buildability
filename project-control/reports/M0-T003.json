@@ -1,0 +1,8 @@
+{
+  "task_id": "M0-T003",
+  "producer_agent": "cloud-architect",
+  "report_file": "project-control\\reports\\M0-T003-bootstrap-review.md",
+  "submitted_at": "2026-07-14T21:18:31.895052+00:00",
+  "requested_status": "awaiting_gate",
+  "updated_at": "2026-07-14T21:18:31.895052+00:00"
+}

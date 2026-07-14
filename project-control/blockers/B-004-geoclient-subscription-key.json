@@ -1,0 +1,13 @@
+{
+  "blocker_id": "B-004",
+  "title": "NYC Geoclient v2 subscription key missing",
+  "status": "open",
+  "affects": ["M1 resolve-address connector", "contract-test fixtures F1-F14 (docs/research/M0-T002-geoclient-address-resolution.md)"],
+  "detail": "Geoclient v2 requires a free subscription key from the NYC API Developers Portal. Research (M0-T002) is complete without it; live fixture capture and official rate-limit confirmation are blocked.",
+  "exact_human_action": "Sign up at https://api-portal.nyc.gov/, subscribe to product 'Geoclient User' selecting 'Geoclient - v2', copy the key from Profile -> Subscriptions -> Show, record the rate limits displayed on the subscription page, and provide the key as GEOCLIENT_SUBSCRIPTION_KEY in the harness secret store.",
+  "secret_name": "GEOCLIENT_SUBSCRIPTION_KEY",
+  "where_to_enter": "Harness/OS secret store; later Render/GitHub Actions encrypted secrets for CI smoke tests",
+  "minimum_permissions": "Standard free Geoclient User subscription",
+  "how_it_will_be_tested": "GET https://api.nyc.gov/geoclient/v2/address with documented sample params and header Ocp-Apim-Subscription-Key from env; expected: 200 JSON with bbl/bin fields. Key never echoed.",
+  "created_at": "2026-07-14T21:45:00Z"
+}

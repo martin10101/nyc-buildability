@@ -1,0 +1,71 @@
+{
+  "task_id": "M0-T001",
+  "title": "Repository and control-system audit",
+  "task_type": "research",
+  "milestone_id": "M0",
+  "objective": "Reconcile project-control records with repository and git reality; flag unsupported claims",
+  "business_reason": "Bootstrap requirement: prove progress-auditor operational",
+  "inputs": [
+    "project-control/**",
+    "git history",
+    "repository tree"
+  ],
+  "outputs": [
+    "project-control/reports/M0-T001-audit.md"
+  ],
+  "dependencies": [],
+  "allowed_paths": [
+    "project-control/reports/M0-T001-audit.md"
+  ],
+  "forbidden_paths": [
+    "src/**",
+    "project-control/tasks/**",
+    "project-control/gates/**"
+  ],
+  "acceptance_scenarios": [
+    {
+      "id": "S1",
+      "case": "normal",
+      "input": "current ledger + git log",
+      "expected": "every ledger claim (M0-T000 accepted, CP-0001/2, gates) matched to concrete file/git evidence or flagged"
+    },
+    {
+      "id": "S2",
+      "case": "missing-data",
+      "input": "task with no gate report",
+      "expected": "flagged as unsupported progress"
+    },
+    {
+      "id": "S3",
+      "case": "conflict",
+      "input": "ledger vs repo mismatch",
+      "expected": "explicit discrepancy list with file paths"
+    }
+  ],
+  "required_gates": [
+    "G0",
+    "G3"
+  ],
+  "producer_agent": "progress-auditor",
+  "reviewer_agents": [
+    "orchestrator"
+  ],
+  "status": "accepted",
+  "progress_percent": 100,
+  "risks": [],
+  "blockers": [],
+  "created_at": "2026-07-14T21:10:19.922577+00:00",
+  "updated_at": "2026-07-14T21:34:09.132861+00:00",
+  "producer_hint": "progress-auditor",
+  "worktree": "local",
+  "progress_log": [
+    {
+      "at": "2026-07-14T21:16:45.397210+00:00",
+      "agent": "progress-auditor",
+      "percent": 75,
+      "message": "Audit complete, report written"
+    }
+  ],
+  "accepted_by": "orchestrator",
+  "accepted_at": "2026-07-14T21:34:09.132861+00:00"
+}

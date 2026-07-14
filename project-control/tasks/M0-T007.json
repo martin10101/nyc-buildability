@@ -1,0 +1,33 @@
+{
+  "task_id": "M0-T007",
+  "title": "Supabase project confirmation + migration framework",
+  "task_type": "database",
+  "milestone_id": "M0",
+  "objective": "Confirm/create dedicated dev project, migrations-in-git applied remotely, no unrelated project touched",
+  "business_reason": "Database foundation",
+  "inputs": [],
+  "outputs": [],
+  "dependencies": [
+    "M0-T004"
+  ],
+  "allowed_paths": [],
+  "forbidden_paths": [],
+  "acceptance_scenarios": [],
+  "required_gates": [
+    "G0",
+    "G2",
+    "G3",
+    "G4",
+    "G5"
+  ],
+  "producer_agent": null,
+  "reviewer_agents": [],
+  "status": "blocked",
+  "progress_percent": 0,
+  "risks": [],
+  "blockers": [
+    "B-001"
+  ],
+  "created_at": "2026-07-14T21:38:08.731079+00:00",
+  "updated_at": "2026-07-14T21:38:08.731079+00:00"
+}

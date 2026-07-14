@@ -1,0 +1,13 @@
+{
+  "blocker_id": "B-003",
+  "title": "Vercel not connected (frontend deployment)",
+  "status": "open",
+  "affects": ["Next.js frontend deployment and previews (PRD 14.1)"],
+  "detail": "No Vercel CLI/token configured. Frontend code can be built and CI-tested in GitHub Actions without it; only deployment is blocked.",
+  "exact_human_action": "Create/confirm a Vercel account at https://vercel.com, create a token at Account Settings -> Tokens, and provide it as VERCEL_TOKEN in the harness secret store. Alternatively connect the GitHub repo martin10101/nyc-buildability to Vercel via the Vercel dashboard Git integration (no token needed in that path).",
+  "secret_name": "VERCEL_TOKEN (only if CLI/API deployment path is chosen)",
+  "where_to_enter": "Harness/OS secret store or Vercel dashboard Git integration",
+  "minimum_permissions": "Token scoped to the single Vercel team/project used for this product",
+  "how_it_will_be_tested": "vercel whoami (CLI in CI) or GET https://api.vercel.com/v2/user; expected: authenticated identity JSON. Token never echoed.",
+  "created_at": "2026-07-14T21:45:00Z"
+}
