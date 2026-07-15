@@ -1,0 +1,9 @@
+{
+  "checkpoint_id": "CP-0005",
+  "timestamp": "2026-07-15T23:00:29.422171+00:00",
+  "commit": "0baf81482404fda9531760e846bcfbb59cc67f91",
+  "branch": "main",
+  "active_milestone": "M0",
+  "summary": "M0-T004 accepted (all gates G0/G2/G3/G4/G5 PASS; merge 1c1eee3; main CI 29455862963 green; worktree removed). M0-T006 G3 FAIL -> rework in progress per owner deployment directive (autoDeployTrigger off + Actions-gated deploy hooks). Evidence-capture process rule added. M0-T009 contracted, ready to launch. Blockers B-001/B-002/B-004/B-005 unchanged; B-003 superseded by pending ADR-004.",
+  "updated_at": "2026-07-15T23:00:29.422757+00:00"
+}
