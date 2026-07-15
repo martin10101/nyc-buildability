@@ -4,7 +4,7 @@ NYC Development Feasibility & Zoning Intelligence Platform — monorepo.
 
 > This platform provides preliminary development and zoning feasibility
 > information based on available public records, user-provided assumptions,
-> and the platform's current rule coverage. It is not a legal opinion,
+> and the platform’s current rule coverage. It is not a legal opinion,
 > architectural or engineering certification, DOB determination, permit
 > approval, or guarantee that a proposed development will be approved.
 > Results must be reviewed by qualified New York professionals before
@@ -34,12 +34,15 @@ The owner's PC is a thin client (`docs/LOW_STORAGE_CLOUD_DEVELOPMENT_POLICY.md`)
 
 ## CI
 
-Every push and pull request runs three jobs (no secrets required):
+Every push and pull request runs four jobs (no secrets required):
 
-1. **web** — Node 22: `npm install`, `eslint`, `tsc --noEmit`, `next build`.
+1. **web** — Node 22: `npm ci` (lockfile generated remotely by
+   `generate-lockfile.yml`), `eslint`, `tsc --noEmit`, `next build`.
 2. **api** — Python 3.12: `pip install .[dev]`, `ruff check`, `pytest`.
 3. **contracts** — validates every JSON Schema parses and declares
-   `$schema`/`$id` (standard library only).
+   `$schema`/`$id`/`title`/`description` (standard library only).
+4. **control-plane** — `tools/test_project_control.py` workflow regression
+   test (ADR-005 authority rules and control-plane defect regressions).
 
 ## Delivery control
 
