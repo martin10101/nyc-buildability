@@ -1,0 +1,9 @@
+{
+  "checkpoint_id": "CP-0006",
+  "timestamp": "2026-07-15T23:30:58.361724+00:00",
+  "commit": "9386ad34b376f61e2f88fe00b25cce4822cb0703",
+  "branch": "main",
+  "active_milestone": "M0",
+  "summary": "Session 3 close. Accepted this session: M0-T004 (all gates; merged 1c1eee3) and M0-T006 (rework to owner Actions-gated deploy model: autoDeployTrigger off + deploy hooks + needs: chain; G3 PASS with 3 LOW residuals). M0-T009 awaiting_gate on branch task/M0-T009-contracts-v1 with captured G2 evidence. M0-T005 producer in-flight in worktree agent-a885db23d6225afb2 (recovery steps in SESSION_HANDOFF). M1-T001 contracted. Evidence-capture process rule added. CI green incl. render.yaml validation step. Next: SESSION_HANDOFF immediate queue.",
+  "updated_at": "2026-07-15T23:30:58.361724+00:00"
+}
