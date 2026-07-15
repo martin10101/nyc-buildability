@@ -134,3 +134,45 @@ All retrieved 2026-07-14. Claim → official source:
 2. services/api scaffolding task: create `/health`, worker and source-monitor entrypoints; reconcile `render.yaml` placeholders (requires edit rights on both scopes or a coordinated pair of tasks).
 3. CI task (owned by .github producer): GitHub Actions migration workflow per ADR-003 D3 with `staging`/`production` GitHub environments.
 4. Owner human actions (candidate for docs/HUMAN_ACTIONS_REQUIRED.md by its owner): create Supabase projects, Render Blueprint, Vercel project; decide PITR add-on timing at launch (ADR-003 R3).
+
+---
+
+## Rework 2026-07-15 (G3 FAIL — owner rework directive; producer: cloud-architect)
+
+Scope: G3 defect 1 (HIGH, deploy-trigger contradiction) per the binding owner directive of 2026-07-15, plus defects 2-6 in the same pass. Platform facts taken exclusively from `docs/research/deploy-trigger-gating-2026-07-15.md` (orchestrator-gathered official citations, all retrieved 2026-07-15); no new platform behavior was invented. Full evidence: `project-control/reports/M0-T006-rework-summary.md`.
+
+### Defect 1 (HIGH) — auto-deploy contradiction removed; single deploy-trigger model everywhere
+
+- `render.yaml`: `autoDeploy: true` removed from web and worker; **all three production services now set `autoDeployTrigger: off`** (current field; replaces deprecated `autoDeploy`, takes precedence if both present; cron previously omitted the field, whose default is `commit` — https://render.com/docs/blueprint-spec, retrieved 2026-07-15). New file-level "DEPLOY TRIGGER POLICY" comment block documents: production deploys only via each service's secret deploy hook (`ref=<validated commit SHA>`; hook URL only in GitHub `production` environment secrets — https://render.com/docs/deploy-hooks, retrieved 2026-07-15); staging keeps `autoDeployTrigger: commit`, configured at staging instantiation [confirm at first use].
+- ADR-003: D1 rewritten (Vercel git deploys disabled for the `production` branch via `git.deploymentEnabled` in `vercel.json` — **planned config, apps/web is out of this task's scope**; production deploy via Vercel CLI `vercel pull` → `vercel build --prod` → `vercel deploy --prebuilt` from the Actions workflow; one-sentence ADR-004/M0-T011 note). D2 rewritten (`autoDeployTrigger: off` + deploy hooks + staging `commit`). New **D5** describes the production deploy workflow's `needs:` chain — (a) migration validation → (b) production migrations succeed → (c) required CI checks pass → (d) human production approval via GitHub environment required reviewers → deploy jobs — and states explicitly that **this workflow does not exist yet (future implementation task)** and that the `needs:` chain is the ONLY halt-enforcing mechanism. Failed-migration step 1 rewritten accordingly (no more "promotion halts automatically"). Cron-revert policy, decision matrix, consequences, and Sources updated to match.
+- ADR-002: promotion rule 3 rewritten (nothing deploys on the `production` push itself; the push starts the future D5 workflow with the (a)-(d) chain); rule 2 states staging keeps platform auto-deploy and why that is safe (D4). Mapping table prod row updated for both Render and Vercel. Sources extended.
+- Runbook: §0 order note, §1.2 steps 3-4, §2.5 step 1 rewritten — every "halts automatically"/"blocks everything after it" claim replaced by the explicit `needs:`-chain framing plus a manual-mode STOP instruction. §2.3/§2.4 updated for auto-deploy-off consequences.
+- ADR-001: **untouched** — verified it contains no auto-deploy-model statements (grep: no `autoDeploy`/`auto-deploy` matches).
+
+### Defect 2 (MEDIUM) — `ENVIRONMENT` literals removed
+
+All three `ENVIRONMENT: production` literals in `render.yaml` replaced with `sync: false` + comment: value (`production`/`staging`) entered per Render environment at Blueprint/service creation. ADR-002 §3 now documents this mechanism in a note under the secrets table, so file and ADR agree. Uses only the already-cited `sync: false` semantics; no new platform claim.
+
+### Defect 3 (MEDIUM) — nonexistent staging smoke-test cron removed
+
+ADR-002 watch item rewritten: normal development/CI activity is the only keep-warm mechanism; no dedicated keep-warm service is deployed (cost note: $1/month minimum per cron job, no free tier — already cited); unpause-via-dashboard runbook step remains the recovery path. Removal chosen over adding a cron, per the directive's default.
+
+### Defect 4 (LOW) — service-role key removed from CI secrets
+
+ADR-002 §3 row 1: Supabase service-role key + DB URL now live in Render env vars/env groups **only**; explicitly not duplicated to GitHub because the cited Supabase CI flow needs only `SUPABASE_ACCESS_TOKEN`/`SUPABASE_DB_PASSWORD`/project ref and no current workflow needs the service-role key. New rows added for the Render deploy hook URLs and `VERCEL_TOKEN`/`VERCEL_ORG_ID`/`VERCEL_PROJECT_ID` (GitHub `production` environment secrets; cited).
+
+### Defect 5 (LOW) — unverified staging auto-deploy flagged and made explicit
+
+Decision recorded consistently in render.yaml comments, ADR-002 rule 2, ADR-003 D2, and runbook §1.1 step 3: **staging uses `autoDeployTrigger: commit`**, configured when staging services are instantiated, marked [confirm at first use] with cross-reference to ADR-002 verification item 1 (a single `render.yaml` cannot carry per-environment trigger values).
+
+### Defect 6 follow-up — render.yaml YAML validation in CI
+
+`.github/workflows/ci.yml` contracts job: added step "Validate render.yaml (Blueprint YAML syntax)" — `python3 -m pip install --quiet pyyaml` then `python3 -c "import yaml; yaml.safe_load(open('render.yaml', encoding='utf-8'))"`. Job comment updated to disclose the PyYAML install. No restructuring.
+
+### Rework self-check results
+
+- Greps (Grep tool; Bash/python denied in this sandbox — exact denial recorded in the rework summary): `halts automatically`, `blocks the dependent`, `blocks everything`, `autoDeploy: true`, `staging smoke-test cron`, `value: production` → **zero matches** across render.yaml, the three ADRs, and the runbook. `autoDeployTrigger` present in all four deployment docs + render.yaml (consistent values: prod `off`, staging `commit`). `service-role` in ADR-002 CI-secrets context → Render-only wording confirmed.
+- Programmatic `yaml.safe_load` on render.yaml/ci.yml: **NOT RUN** — Bash denied ("Permission to use Bash has been denied.") exactly as in the original session. Manual structural review of every edited hunk performed (indentation, list markers, no tabs, comments prefixed); orchestrator is requested to capture the one-line parse per the ADR-005 evidence-capture protocol (it did so for the original G3 — Defect 6 note).
+- Known YAML nuance disclosed: unquoted `off` parses as boolean `false` under YAML 1.1 loaders (PyYAML); the official Blueprint spec documents the value as `off` and the research doc records it verbatim, so the file follows the official spelling. Parse success is unaffected.
+
+Requested status: **awaiting_gate** (G3 re-review).

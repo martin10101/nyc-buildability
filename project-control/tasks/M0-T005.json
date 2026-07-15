@@ -3,28 +3,111 @@
   "title": "Secrets policy, .env.example, secret-scanning CI check",
   "task_type": "backend",
   "milestone_id": "M0",
-  "objective": "Document secret names/locations, add .env.example (no values), add CI secret-scan step",
-  "business_reason": "Prevents credential leakage before any cloud key arrives",
-  "inputs": [],
-  "outputs": [],
+  "objective": "Document every planned secret (name, owning service, storage location, rotation, never-in-git rule) in docs/SECRETS_POLICY.md; add .env.example files (names only, no values) for services/api and apps/web; add a deterministic repo-local secret-scan (tools-free Python script + new standalone GitHub Actions workflow) that fails CI on likely credentials in the tree or new commits. No external paid actions; zero secrets required to run.",
+  "business_reason": "Prevents credential leakage before any cloud key arrives; makes the no-secrets-in-git rule mechanically enforced (PRD 17/25)",
+  "inputs": [
+    "PRD.md sections 14.3, 17, 25",
+    "docs/adr/ADR-002-environment-separation.md (secret placement table)",
+    "docs/LOW_STORAGE_CLOUD_DEVELOPMENT_POLICY.md",
+    "project-control/reports/M0-T004-G5-security-review.md (defect list: SHA-pinning required before secrets land; known secret patterns rnd_/sbp_/eyJ/service_role)"
+  ],
+  "outputs": [
+    "docs/SECRETS_POLICY.md",
+    "services/api/.env.example (names + comments only)",
+    "apps/web/.env.example (names + comments only)",
+    ".github/scripts/secret_scan.py (stdlib-only)",
+    ".github/workflows/secret-scan.yml (new standalone workflow, contents: read, actions SHA-pinned per G5 Defect 1)",
+    "project-control/reports/M0-T005-producer-report.md"
+  ],
   "dependencies": [
     "M0-T004"
   ],
-  "allowed_paths": [],
-  "forbidden_paths": [],
-  "acceptance_scenarios": [],
+  "allowed_paths": [
+    "docs/SECRETS_POLICY.md",
+    "services/api/.env.example",
+    "apps/web/.env.example",
+    ".github/scripts/secret_scan.py",
+    ".github/workflows/secret-scan.yml",
+    "project-control/reports/M0-T005-*"
+  ],
+  "forbidden_paths": [
+    ".github/workflows/ci.yml (owned by M0-T006 rework)",
+    ".github/scripts/validate_contracts.py (owned by M0-T009)",
+    "packages/contracts/**",
+    "apps/web/** (except .env.example)",
+    "services/api/** (except .env.example)",
+    "docs/adr/**",
+    "render.yaml",
+    "project-control/tasks/**",
+    "project-control/gates/**",
+    "tools/**",
+    "CLAUDE.md",
+    "PRD.md"
+  ],
+  "acceptance_scenarios": [
+    {
+      "id": "S1",
+      "case": "normal",
+      "input": "clean repository tree",
+      "expected": "secret_scan.py exits 0; secret-scan workflow green on a push with no credentials"
+    },
+    {
+      "id": "S2",
+      "case": "invalid-input",
+      "input": "scratch file containing realistic fake credentials (Render rnd_..., Supabase sbp_..., JWT eyJ..., service_role, PEM private key, AWS AKIA..., generic api_key=)",
+      "expected": "secret_scan.py exits nonzero listing file, line, and pattern class for each; no credential value echoed in full (mask middle)"
+    },
+    {
+      "id": "S3",
+      "case": "boundary",
+      "input": "legitimate lookalikes (sha512 integrity hashes in package-lock.json, .env.example placeholder names, docs mentioning pattern names)",
+      "expected": "no false positive: allowlist mechanism (path or inline pragma) documented and used; package-lock.json integrity hashes pass"
+    },
+    {
+      "id": "S4",
+      "case": "missing-data",
+      "input": ".env.example files",
+      "expected": "every secret named in docs/SECRETS_POLICY.md appears in the correct .env.example with a comment and NO value; .gitignore already blocks real .env files (verify, do not edit .gitignore)"
+    },
+    {
+      "id": "S5",
+      "case": "security",
+      "input": ".github/workflows/secret-scan.yml",
+      "expected": "permissions contents: read only; actions pinned to full commit SHAs with version comments (G5 Defect 1 standard); no secrets referenced; runs on push and pull_request"
+    },
+    {
+      "id": "S6",
+      "case": "regression",
+      "input": "existing CI",
+      "expected": "existing ci.yml untouched; existing jobs unaffected; scan runtime under 1 minute on this repo"
+    }
+  ],
   "required_gates": [
     "G0",
     "G2",
     "G3",
     "G5"
   ],
-  "producer_agent": null,
-  "reviewer_agents": [],
-  "status": "backlog",
-  "progress_percent": 0,
-  "risks": [],
+  "producer_agent": "backend-engineer",
+  "reviewer_agents": [
+    "security-reviewer",
+    "code-reviewer"
+  ],
+  "status": "awaiting_gate",
+  "progress_percent": 85,
+  "risks": [
+    "Regex-based scanning has inherent false-negative risk; policy doc must state it complements (not replaces) GitHub push protection, which the owner should enable in repo settings (human action)"
+  ],
   "blockers": [],
   "created_at": "2026-07-14T21:38:08.496213+00:00",
-  "updated_at": "2026-07-14T21:38:08.496213+00:00"
+  "updated_at": "2026-07-15T23:08:00.561244+00:00",
+  "worktree": "isolated-agent-worktree",
+  "progress_log": [
+    {
+      "at": "2026-07-15T23:30:00+00:00",
+      "agent": "orchestrator",
+      "percent": 0,
+      "message": "G0 contracting: scope set to new standalone files only (SECRETS_POLICY.md, .env.example x2, secret_scan.py, secret-scan.yml) to remain disjoint from M0-T006 rework (ci.yml) and M0-T009 (validate_contracts.py). Repo-local stdlib scanner chosen over external actions (no license/secret dependencies)."
+    }
+  ]
 }
