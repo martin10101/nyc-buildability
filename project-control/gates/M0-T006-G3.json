@@ -2,8 +2,16 @@
   "task_id": "M0-T006",
   "gate_id": "G3",
   "reviewer": "code-reviewer",
-  "result": "FAIL",
-  "report_file": "project-control\\reports\\M0-T006-G3-verification.md",
-  "reviewed_at": "2026-07-15T22:42:07.525628+00:00",
-  "updated_at": "2026-07-15T22:42:07.525628+00:00"
+  "result": "PASS",
+  "report_file": "project-control\\reports\\M0-T006-G3-rework-verification.md",
+  "reviewed_at": "2026-07-15T23:22:16.607406+00:00",
+  "history": [
+    {
+      "reviewer": "code-reviewer",
+      "result": "FAIL",
+      "report_file": "project-control\\reports\\M0-T006-G3-verification.md",
+      "reviewed_at": "2026-07-15T22:42:07.525628+00:00"
+    }
+  ],
+  "updated_at": "2026-07-15T23:22:16.607406+00:00"
 }

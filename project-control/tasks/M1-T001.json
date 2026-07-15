@@ -1,0 +1,73 @@
+{
+  "task_id": "M1-T001",
+  "title": "Official-source research: PLUTO / MapPLUTO",
+  "task_type": "research",
+  "milestone_id": "M1",
+  "objective": "Discover, document, and verify the current official PLUTO/MapPLUTO sources (DCP + NYC Open Data): dataset identifiers, endpoints, formats, update cadence, schema/fields with units, BBL semantics, versioning, rate limits, terms; save findings with URLs + retrieval dates in docs/research/; produce source-registry record draft. Pattern = M0-T002.",
+  "business_reason": "PLUTO is the backbone property-facts source for the citywide profile (PRD 8.1)",
+  "inputs": [
+    "PRD.md sections 8, 8.1, 8.2, 30, 31",
+    "docs/research/ M0-T002 Geoclient/GeoSearch report (structure pattern + BBL semantics)",
+    "official starting points: https://opendata.cityofnewyork.us/, https://www.nyc.gov/content/planning/pages/resources"
+  ],
+  "outputs": [
+    "docs/research/pluto-mappluto-2026-07-15.md (findings with URL + retrieval date per claim)",
+    "docs/research/source-registry-drafts/pluto-mappluto.json (source-registry record draft per PRD 8.2)",
+    "project-control/reports/M1-T001-producer-report.md"
+  ],
+  "allowed_paths": [
+    "docs/research/pluto-mappluto-*",
+    "docs/research/source-registry-drafts/pluto-mappluto*",
+    "project-control/reports/M1-T001-*"
+  ],
+  "forbidden_paths": [
+    "everything else; research-only task, no code, no connectors, no schema edits"
+  ],
+  "acceptance_scenarios": [
+    {
+      "id": "S1",
+      "case": "normal",
+      "input": "current official PLUTO and MapPLUTO distribution channels",
+      "expected": "each channel documented (agency page, NYC Open Data dataset ID/SODA endpoint if any, bulk file formats incl. CSV/geodatabase/shapefile, ArcGIS/API options) with working URL, retrieval date, and evidence quote; no guessed identifiers"
+    },
+    {
+      "id": "S2",
+      "case": "boundary",
+      "input": "PLUTO vs MapPLUTO distinction and version scheme",
+      "expected": "differences documented (attributes vs geometry, release cadence, version naming like 25v1), including how versions are published and archived"
+    },
+    {
+      "id": "S3",
+      "case": "missing-data",
+      "input": "fields/units/null semantics",
+      "expected": "authoritative data dictionary located and cited; key fields for the property profile listed with units and null/placeholder conventions (e.g. lot area units, condo BBL handling); anything not documented flagged as open question, not guessed"
+    },
+    {
+      "id": "S4",
+      "case": "conflict",
+      "input": "multiple distribution channels for the same data",
+      "expected": "priority order recommended per PRD 8 (API > SODA > bulk file), discrepancies between channels (update lag, field differences) explicitly noted"
+    },
+    {
+      "id": "S5",
+      "case": "provenance",
+      "input": "source-registry draft",
+      "expected": "registry record contains every PRD 8.2 field (source id, agency, name, URL, type, identifiers, auth, rate limits, update frequency, coverage, fields, terms, connector plan, limitations, fallback)"
+    }
+  ],
+  "required_gates": [
+    "G0",
+    "G1",
+    "G3"
+  ],
+  "producer_agent": "official-source-researcher",
+  "reviewer_agents": [
+    "data-contract-verifier"
+  ],
+  "status": "backlog",
+  "progress_percent": 0,
+  "risks": [],
+  "blockers": [],
+  "created_at": "2026-07-15T23:20:05.070726+00:00",
+  "updated_at": "2026-07-15T23:20:05.070726+00:00"
+}

@@ -1,38 +1,46 @@
-# Session Handoff — resume state as of 2026-07-15
+# Session Handoff — resume state as of 2026-07-15 (end of session 3)
 
-Written by the orchestrator at the end of the bootstrap/M0 session. The new session MUST be opened with this folder (`nyc-development-feasibility-claude-pack`) as the workspace root, then follow CLAUDE.md's start-of-session routine. This file is the conversation-independent resume point; the ledger (`project-control/`) remains the source of truth.
+Written by the orchestrator. Open this folder (`nyc-development-feasibility-claude-pack`) as the workspace root, then follow CLAUDE.md's start-of-session routine. This file is the conversation-independent resume point; the ledger (`project-control/`) remains the source of truth.
 
 ## Paste-ready prompt for the new session
 
-> Read CLAUDE.md and docs/SESSION_HANDOFF.md, run `python tools/project_control.py status`, reconcile with git, then resume the pending work in SESSION_HANDOFF.md section "Immediate queue" top to bottom. Follow ADR-005: producers and reviewers return evidence; only you (orchestrator, main session) run project_control.py, git integration, and gh. Continue autonomously; pause only for secrets, production approvals, or professional legal review.
+> Read CLAUDE.md and docs/SESSION_HANDOFF.md, run `python tools/project_control.py status`, reconcile with git, then resume the pending work in SESSION_HANDOFF.md section "Immediate queue" top to bottom. Follow ADR-005 and the evidence-capture rule: producers and reviewers return evidence; only you (orchestrator, main session) run project_control.py, git integration, gh, and capture executable evidence when agent sandboxes deny execution. Continue autonomously; pause only for secrets, production approvals, or professional legal review.
 
 ## Where the project stands
 
-- Accepted tasks: M0-T000, M0-T001, M0-T002, M0-T003 (see `docs/IMPLEMENTATION_STATUS.md`).
-- ~5% of the full production scope done; the control plane, CI, and architecture foundation are proven.
-- Repo: private `martin10101/nyc-buildability`, branch `main` + task branch `task/M0-T004-monorepo-ci` (head a0d8f3a, CI fully green incl. run 29382502616 after review doc-fixes).
-- CI proven end-to-end including deliberate-failure recovery (S4): fail run 29372258042, recovery 29372297441.
-- Process model: ADR-005 (orchestrator-only ledger writes; reviewers return reports; regression test `tools/test_project_control.py` runs locally and as the CI `control-plane` job).
+- Accepted: M0-T000, T001, T002, T003, **T004** (all 5 gates; merged `1c1eee3`), **T006** (rework to the owner's Actions-gated deploy model; G3 PASS on re-review). See `docs/IMPLEMENTATION_STATUS.md`.
+- Main is green: CI run 29457969862, 4 jobs incl. the new render.yaml Blueprint YAML-validation step.
+- Deployment model of record: production `autoDeployTrigger: off`; deploys only from the future GitHub Actions deploy workflow ("D5", not yet implemented) after migration validation → prod migrations → required checks → human approval, via secret deploy hooks `ref=<SHA>`; staging `autoDeployTrigger: commit` `[confirm at first use]`; expand→deploy→contract preserved.
+- Process rules active (`.claude/rules/project-control.md`): ADR-005 + evidence-capture (2026-07-15). Producer/reviewer sandboxes routinely deny Bash/python/gh — orchestrator runs the commands and commits evidence to `project-control/reports/`; reviewers verify stored evidence and must not return BLOCKED for sandbox limits.
 
 ## Immediate queue (in order)
 
-1. **M0-T004** (awaiting_gate; G0/G2/G3 PASS recorded): launch security-reviewer for **G5** on the worktree branch head (read-only, report-return). On PASS: merge `task/M0-T004-monorepo-ci` into main (--no-ff), confirm main CI green, record **G4** (reviewer: qa-engineer identity validating the main CI run + regression suite), then accept M0-T004 and remove the worktree.
-2. **M0-T006** (awaiting_gate; G0 PASS): launch code-reviewer for **G3** over docs/adr/ADR-001..003, render.yaml, DEPLOYMENT_AND_ROLLBACK.md (scenarios S1–S5 in the task packet; includes ADR-004 amendment-feasibility assessment). On PASS: accept.
-3. Checkpoint CP-0004 after both acceptances; update IMPLEMENTATION_STATUS.
-4. **M0-T011 / ADR-004**: owner decision of 2026-07-14 — DROP Vercel, serve the Next.js frontend from Render. Producer cloud-architect; amends ADR-001/002/003 + render.yaml + root README deploy-target lines; verify Render Next.js + preview-environment claims from official docs.
-5. **Render services**: owner's API key was provided via chat (TEMPORARY — never write it to disk; owner will revoke). If still valid after M0-T004 merge: create the project's web service (services/api) per render.yaml in workspace "My Workspace" (`tea-d37n4vje5dus739gucd0`) — NEVER touch the 4 pre-existing unrelated services (invitebot, polymarket-paper-bot, textai-sms-bot, nyc-ami-calculator). If revoked, request a fresh key or use the dashboard Blueprint flow (blocker B-002 has details).
-6. **M0-T005** (secrets policy + CI secret scan) and **M0-T009** (contracts v1 — MUST fix G3 defects D1/D2/D3 recorded in `project-control/reports/M0-T004-G3-review.md`).
-7. **M1 research fan-out**: one official-source-researcher task per remaining mandatory source family (PLUTO/MapPLUTO, Zoning Tax Lot DB, GIS zoning features, Zoning Resolution, DOB NOW, BIS, COs, DOB violations, ACRIS, landmarks, flood, pending land use, DOB bulletins/codes, NYS MDL), pattern = M0-T002; G1 by data-contract-verifier.
+1. **M0-T005 (secrets policy + secret-scan CI) — recover the in-flight producer.** A backend-engineer producer was running in worktree `.claude/worktrees/agent-a885db23d6225afb2` (branch `worktree-agent-a885db23d6225afb2`, locked) when the session ended. Check the worktree for the five deliverables: `docs/SECRETS_POLICY.md`, `services/api/.env.example`, `apps/web/.env.example`, `.github/scripts/secret_scan.py`, `.github/workflows/secret-scan.yml`, plus `project-control/reports/M0-T005-producer-report.md`.
+   - If complete: rename branch to `task/M0-T005-secret-scan`, commit, push; capture G2 evidence (run `python .github/scripts/secret_scan.py` from the worktree root — expect exit 0 on clean tree; also seed/delete a fake-credential scratch test per scenario S2); submit awaiting_gate; dispatch G3 (code-reviewer) + G5 (security-reviewer); on PASS merge --no-ff, confirm CI, accept.
+   - If incomplete/absent: `git worktree remove --force` it (preserve any `.claude/agent-memory/` files first) and relaunch the producer per the packet `project-control/tasks/M0-T005.json` (packet is complete: scope, S1-S6, SHA-pinning standard).
+2. **M0-T009 (contracts v1) — run the gate chain.** Producer work is complete and pushed on `task/M0-T009-contracts-v1` (head 522d3b2; worktree `.claude/worktrees/agent-ac0ceadafeac708be` still present for reviewer use). G2 evidence committed: `project-control/reports/M0-T009-G2-evidence.md` (validate_contracts.py exit 0 — 6 schemas, 5 valid + 16 invalid fixtures all correct; disclaimer byte-check PASS). Dispatch **G3** (code-reviewer; focus: source_fact required-list vs PRD s9 1:1, analysis-state enum vs PRD 32.1, enum/BBL citations vs docs/research M0-T002, adversarial fixture swap, run with/without jsonschema installed) and **G5** (security-reviewer; schemas/validator only, no secrets surface). On PASS: merge --no-ff, confirm main CI green (contracts job runs the new validator), record **G4** vs the CI evidence, accept, remove worktree + branch.
+3. **M0-T011 / ADR-004 — drop Vercel, serve Next.js from Render** (owner decision 2026-07-14; now unblocked by M0-T006 acceptance). Producer cloud-architect (main tree — task packet needs creating/filling first; it exists as a stub). Scope: new docs/adr/ADR-004 + amend ADR-001/002/003, render.yaml (additive Next.js web service), docs/DEPLOYMENT_AND_ROLLBACK.md, root README. Use the section-by-section amendment map in `project-control/reports/M0-T006-G3-verification.md` (ADR-004 feasibility section). Fold in G3-rework residuals: **R1** (ADR-001:36 still says service-role key may live in "GitHub Actions secret stores" — must say Render only, per ADR-002 §3) and the **`"off"`-quoting recommendation** (quote `autoDeployTrigger: "off"` or add accepted-value check to ADR-002 first-setup items). Render Next.js/preview-environment claims must be verified from official docs — orchestrator WebFetches and saves to docs/research/ (producer has no web tools). PRD 14.1 deviation must be documented as owner-approved. Closing ADR-004 also closes blocker B-003 and decides whether the vercel.json follow-up is moot.
+4. **Create the two follow-up task packets flagged by G3 (R3)** before M0 exit: (a) D5 production deploy workflow implementation (Actions `needs:` chain + deploy-hook calls; depends on secrets existing → after B-002 and M0-T005); (b) frontend deploy gating config (only if ADR-004 keeps any Vercel surface — else fold into the Render frontend service definition).
+5. **M0-T004 G5 follow-ups** (small, can batch into one hygiene task): SHA-pin all actions (required before ANY repo/CI secret is added — the secret-scan workflow spec in M0-T005 already mandates pinning for itself), Dependabot config (npm/pip/actions), Python dependency lockfile, delete or restrict `.github/workflows/generate-lockfile.yml`.
+6. **M1 research fan-out.** M1-T001 (PLUTO/MapPLUTO) packet is contracted in backlog — claim (official-source-researcher), record G0, launch; G1 review by data-contract-verifier; pattern = M0-T002. Then repeat one packet per remaining mandatory family: Zoning Tax Lot DB, GIS zoning features, Zoning Resolution, DOB NOW, BIS, COs, DOB violations, ACRIS, landmarks, flood, pending land use, DOB bulletins/codes, NYS MDL. Researchers have web tools; run 2-3 at a time in background.
+7. **Render services (B-002)**: no valid API key available to the session (the temporary chat key from 2026-07-14 was never persisted and is presumed revoked). Ask the owner for a fresh key (or dashboard Blueprint sync) when they're available; NEVER write the key to disk; NEVER touch the 4 pre-existing unrelated services in workspace "My Workspace" (`tea-d37n4vje5dus739gucd0`): invitebot, polymarket-paper-bot, textai-sms-bot, nyc-ami-calculator.
 
-## Blocked on the owner (details in docs/HUMAN_ACTIONS_REQUIRED.md)
+## Needs owner attention (non-blocking to the queue)
 
-- B-001 SUPABASE_ACCESS_TOKEN → unblocks M0-T007/T008 (config lives in `C:\Users\MLFLL\.mcp.json`, env key `SUPABASE_ACCESS_TOKEN`, server pinned to project-ref `dyiviaalkqxeyyxotvvh` — owner must confirm this project or supply a new ref).
-- B-004 Geoclient subscription key.
-- B-005 3D/UI expansion pack incomplete (4 docs + 5 agent files missing) → M0-T010 blocked.
+- **Untracked `.claude/` files of unknown origin**: a generic agents/skills/commands/hooks pack (auth-route-debugger, backend-dev-guidelines for Node/Express/Prisma, route-tester, skill-rules.json, settings.json, hooks/) appeared untracked in the workspace. It is NOT the B-005 3D/UI expansion pack (those 9 files are still missing). Some of it targets a different stack (Express/Prisma/MUI vs this project's FastAPI/Next.js) and active hooks/settings can alter agent behavior. Owner should confirm keep/remove; not committed.
+- Blockers B-001 (Supabase access token), B-002 (Render key), B-004 (Geoclient key), B-005 (expansion pack) — `docs/HUMAN_ACTIONS_REQUIRED.md`.
+- Recommend enabling GitHub push protection / secret scanning in repo settings (will be restated in docs/SECRETS_POLICY.md when M0-T005 lands).
 
-## Known environment facts for the new session
+## Known environment facts
 
-- Windows PowerShell 5.1 writes BOM via Set-Content — agents must use the Write tool; control plane tolerates BOM (utf-8-sig).
-- Background subagents auto-deny permission prompts — give them only pre-allowed/read-only work (ADR-005).
-- Session-level permission allowlist lives in the OLD workspace root (`Downloads/nyc zoning/.claude/settings.local.json`); when reopening at the pack root, Claude Code will use THIS folder's `.claude/` — re-approve or re-add the narrow allow rules on first use (python tools/project_control.py *, git add/commit/push origin *, gh run/workflow *; never destructive commands).
-- Owner PC disk floor: keep ≥ 4 GB free; ~5.2 GB free at handoff; no local installs ever (docs/LOW_STORAGE_CLOUD_DEVELOPMENT_POLICY.md).
+- Windows PowerShell 5.1: `>` redirection writes UTF-16 — use `cmd /c "... > file"` or the Write tool for evidence files; control plane tolerates BOM (utf-8-sig). Piping `project_control.py status` into `python -c` breaks on encoding — read files directly instead.
+- Producer/reviewer subagents launched in background get Bash denied (including plain git reads sometimes). Design their prompts to Read/Grep/Write only; orchestrator captures all executable evidence. Reviewers can verify git ancestry from `.git/logs/refs/heads/main` when git commands are denied.
+- Agent tool worktrees: producers launched with worktree isolation leave their work UNCOMMITTED in `.claude/worktrees/agent-<id>`; the orchestrator commits/renames/pushes the branch. Preserve `.claude/agent-memory/**` files before removing any worktree.
+- Two parallel Agent launches in one message can trigger a combined permission prompt the owner may reject — launch one at a time.
+- The pyyaml package is available in the local Python 3.11; `jsonschema` 4.26.0 is available locally (CI contracts job note: runner Python may lack jsonschema — the validator degrades loudly to its stdlib layer by design).
+- Owner PC disk floor: keep ≥ 4 GB free; no local installs (docs/LOW_STORAGE_CLOUD_DEVELOPMENT_POLICY.md).
+- Session permission allowlist: python tools/project_control.py *, git add/commit/push origin *, gh run/workflow view/list/watch; never destructive commands without asking.
+
+## Checkpoints
+
+Latest: CP-0006 (this session close; see `project-control/checkpoints/`). Prior: CP-0005 (M0-T004 acceptance), CP-0004 and earlier (bootstrap sessions).
