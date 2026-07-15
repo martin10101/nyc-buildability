@@ -58,3 +58,6 @@ blob-report/
 !.env.example
 .DS_Store
 Thumbs.db
+
+# Quarantined unknown packs (owner decision 2026-07-15: isolate, do not delete)
+_quarantine/

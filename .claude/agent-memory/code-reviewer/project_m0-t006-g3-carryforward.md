@@ -1,16 +1,17 @@
 ---
 name: m0-t006-g3-carryforward
-description: G3 FAIL findings on M0-T006 (ADRs + render.yaml + runbook) that must be re-checked at rework and when the deploy CI pipeline is built
+description: M0-T006 rework G3 PASS (2026-07-15); residual low items to re-check when the D5 deploy workflow, vercel.json, and first Blueprint sync are built
 metadata:
   type: project
 ---
 
-M0-T006 G3 (2026-07-15) returned FAIL with one high defect plus follow-ups:
+M0-T006 rework G3 (2026-07-15, commit efec6b8) returned **PASS**. The owner-mandated deploy model (Render `autoDeployTrigger: off` in prod, GitHub Actions deploy via secret deploy hooks with `ref=<SHA>` after migration-validation → prod migrations → required checks → human approval; Vercel git deploys disabled for `production` via planned `git.deploymentEnabled`, CLI deploy from Actions) is implemented consistently across render.yaml, ADR-002 §2-4, ADR-003 D1/D2/D5/R-sections, and the runbook. Original defects 1-6 all fixed.
 
-1. HIGH — internal contradiction: `render.yaml` sets `autoDeploy: true` (and Vercel deploys are git-push-triggered), but ADR-003 failed-migration step 1 and runbook section 2.5 claim "a failed migration job blocks the dependent deploy jobs" / "pipeline halts automatically". Platform-native auto-deploys fire on the push, not after the GitHub Actions migration job. Rework must either gate deploys on CI checks (e.g., Render `autoDeployTrigger: checksPass` — verify against the current blueprint spec), use `autoDeploy: false` + CI-triggered deploy hooks, or rewrite the halt claim as a future-pipeline requirement with D4 (expand→deploy→contract) named as the actual safety net.
-2. MEDIUM — `ENVIRONMENT: value: production` literal in all three services; the staging override mechanism referenced in the comment is not defined in ADR-002.
-3. MEDIUM — ADR-002 section 6 watch item cites a "staging smoke-test cron (see render.yaml comments)" that does not exist in render.yaml (keep-warm mechanism for free Supabase projects is undefined).
-4. LOW — service-role key duplicated to GitHub environment secrets though the cited Supabase CI flow needs only ACCESS_TOKEN/DB_PASSWORD/project ref; least-privilege nit.
+Residual LOW items to re-verify at the named follow-up tasks:
+1. ADR-001 rule 5 still says service-role key lives in "Render/GitHub Actions secret stores" — contradicts ADR-002 §3 row 1 ("Render only, not duplicated to GitHub"). One-line ADR-001 fix; check at next ADR-001 touch or defect sweep.
+2. `autoDeployTrigger: off` is unquoted; PyYAML (YAML 1.1) parses it as boolean false. Render's own spec examples write it unquoted, so current spelling follows official docs, but quoting `"off"` is unambiguous in YAML 1.1 and 1.2 and I recommended it. Verify actual accepted value at first Blueprint sync.
+3. ADR-002 rule 3 / runbook §1.2 attribute all four production gates to the `needs:` chain; ADR-003 D5 (authoritative) correctly splits mechanisms (needs: for migrations, branch protection for checks, environment required reviewers for approval). Harmonize wording when D5 workflow is implemented.
+4. Preconditions for first production deploy (tracked follow-ups, not yet tasks as of 2026-07-15): D5 GitHub Actions production deploy workflow; `vercel.json` with `git.deploymentEnabled` in apps/web.
 
-**Why:** the FAIL is confined to the failure-handling path (S4); S1/S2/S3/S5 passed. Docs were status "Proposed" and the CI deploy pipeline does not exist yet, but an incident runbook asserting a halt that the shipped config contradicts is a hidden-assumption defect.
-**How to apply:** when reviewing M0-T006 rework, the deploy CI workflow task, or ADR-004 (drop Vercel, frontend on Render — needs a documented PRD 14.1 deviation with owner approval), verify defect 1 first. Also re-check that mechanical YAML validation of render.yaml ran somewhere (this gate's sandbox denied Bash; only a manual parse was done). See [[m0-t004-g3-carryforward]] for ADR-005 process facts.
+**Why:** the first G3 FAIL was a hidden-assumption contradiction (docs claimed an automatic halt the shipped config could not produce); the rework resolved it by disabling all platform auto-deploys in production and honestly marking the enforcement chain as a future task everywhere.
+**How to apply:** when reviewing the D5 deploy-workflow task, ADR-004/M0-T011 (Vercel decision), or the first Blueprint deploy evidence, check items 1-4 above first. See [[m0-t004-g3-carryforward]] for ADR-005 process facts.
