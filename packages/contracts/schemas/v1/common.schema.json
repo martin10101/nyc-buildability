@@ -1,0 +1,50 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/martin10101/nyc-buildability/packages/contracts/schemas/v1/common.schema.json",
+  "title": "Common Contract Definitions",
+  "description": "Shared v1 definitions (BBL, BIN, borough, timestamps) referenced by the other canonical contracts. Every value-shape here is grounded in official outputs documented in docs/research/M0-T002-geoclient-address-resolution.md (retrieved 2026-07-14); nothing is invented. Where official documentation leaves a constraint open, the description says so explicitly (open-with-flag) instead of guessing.",
+  "$defs": {
+    "bbl": {
+      "type": "string",
+      "pattern": "^[1-5][0-9]{5}[0-9]{4}$",
+      "description": "10-digit NYC Borough-Block-Lot: 1 borough digit (1-5) + 5-digit zero-padded tax block + 4-digit zero-padded tax lot. Grounding: Geoclient v2 /bbl example normalizes block '67' -> bblTaxBlock '00067', lot '1' -> bblTaxLot '0001', bbl '1000670001'; /v2/search recognition rule: 'A ten-digit number where the first digit is 1-5 is recognized as a BBL request' (Geoclient User Guide v2.0.4, https://mlipper.github.io/geoclient/; docs/research/M0-T002-geoclient-address-resolution.md sections 2.6-2.7). The pattern rejects borough 0 and 6-9, wrong length, and non-numeric input. OPEN-WITH-FLAG: official documentation does not state whether all-zero block (00000) or all-zero lot (0000) can exist, so the pattern does not exclude them; lot EXISTENCE validation is delegated to the Geoclient Function BL connector, never to this pattern."
+    },
+    "bin": {
+      "type": "string",
+      "pattern": "^[1-5][0-9]{6}$",
+      "description": "7-digit NYC Building Identification Number, first digit = borough (1-5). Grounding: Geoclient /v2/search recognition rule: 'A seven-digit number where the first digit is 1-5 is recognized as a BIN request'; documented example BINs '1057127', '1079043' (Geoclient User Guide v2.0.4; docs/research/M0-T002-geoclient-address-resolution.md sections 2.6-2.7) and live GeoSearch addendum.pad.bin '1001026' (same doc, section 3)."
+    },
+    "borough_code": {
+      "type": "integer",
+      "enum": [1, 2, 3, 4, 5],
+      "description": "Official NYC borough number: Manhattan=1, Bronx=2, Brooklyn=3, Queens=4, Staten Island=5. Grounding: Geoclient User Guide v2.0.4 section 2.2.1 borough values 'Manhattan/MN/1, Bronx/BX/2, Brooklyn/BK/BKLYN/3, Queens/QN/4, Staten Island/SI/5' (docs/research/M0-T002-geoclient-address-resolution.md section 2.2). This is the canonical machine representation; it equals the first digit of the BBL and BIN."
+    },
+    "borough_name": {
+      "type": "string",
+      "enum": ["Manhattan", "Bronx", "Brooklyn", "Queens", "Staten Island"],
+      "description": "Normalized borough display name using the spellings documented in Geoclient User Guide v2.0.4 section 2.2.1 and observed in the live GeoSearch v2 response ('borough': 'Manhattan') captured in docs/research/M0-T002-geoclient-address-resolution.md section 3 (retrieved 2026-07-14). Raw connector spellings (including case variants such as uppercase Geosupport names) are preserved verbatim in the provenance record's original_value; normalization to this enum is case-insensitive, consistent with Geoclient's documented case-insensitivity of parameter values (User Guide section 2.2)."
+    },
+    "zip_code": {
+      "type": "string",
+      "pattern": "^[0-9]{5}$",
+      "description": "5-digit USPS ZIP code as observed in official outputs (Geoclient 'zipCode', GeoSearch 'postalcode' e.g. '10271'; docs/research/M0-T002-geoclient-address-resolution.md sections 2.6 and 3). OPEN-WITH-FLAG: ZIP+4 has not been observed in the documented official outputs; if a connector returns it, relax this pattern additively rather than truncating data."
+    },
+    "date_time": {
+      "type": "string",
+      "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}(\\.[0-9]+)?(Z|[+-][0-9]{2}:[0-9]{2})$",
+      "format": "date-time",
+      "description": "RFC 3339 timestamp. The pattern is enforced (not only the 'format' annotation) so validation behaves identically whether or not a format-aware validator is installed."
+    },
+    "date": {
+      "type": "string",
+      "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$",
+      "format": "date",
+      "description": "RFC 3339 full-date. Pattern enforced for validator-independent behavior."
+    },
+    "non_empty_string": {
+      "type": "string",
+      "minLength": 1,
+      "description": "String that must not be empty."
+    }
+  }
+}

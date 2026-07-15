@@ -1,0 +1,14 @@
+{
+  "_expected_failure": "S2/D1: PRD s9 mandatory field dataset_version is absent; required-list must reject this record.",
+  "provenance_id": "prov-bad-0001",
+  "source_id": "nyc-geosearch-v2",
+  "original_field_name": "properties.addendum.pad.bbl",
+  "original_value": "1000477501",
+  "normalized_value": "1000477501",
+  "retrieved_at": "2026-07-14T00:00:00Z",
+  "effective_date": null,
+  "bbl": "1000477501",
+  "confidence": 0.8,
+  "user_confirmed_or_overridden": "none",
+  "conflict_status": "none"
+}

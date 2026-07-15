@@ -1,0 +1,10 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/martin10101/nyc-buildability/packages/contracts/fixtures/invalid_schemas/bad_type_value.schema.json",
+  "title": "Deliberately Broken Schema: invalid type value",
+  "description": "S5/D3 expected-failure case: 'strng' is not a JSON Schema type. Both the jsonschema meta-schema check and the stdlib structural layer must reject it.",
+  "type": "object",
+  "properties": {
+    "field_a": { "type": "strng" }
+  }
+}

@@ -1,0 +1,43 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/martin10101/nyc-buildability/packages/contracts/schemas/v1/analysis_state_transition.schema.json",
+  "title": "Analysis State Transition",
+  "description": "v1 audit record for one analysis-run state transition (PRD section 32.1: transitions must be explicit, validated, persisted, and auditable; docs/PRODUCT_FLOW_AND_AI_BOUNDARIES.md canonical contract 'Analysis state transition'). The LEGALITY of a transition (allowed from->to pairs, preconditions) is enforced by the deterministic backend state machine, not by this schema; this schema fixes the audit-record shape. correlation_id is required for structured-log traceability (PRD section 25).",
+  "type": "object",
+  "required": [
+    "run_id",
+    "from_state",
+    "to_state",
+    "occurred_at",
+    "actor",
+    "correlation_id"
+  ],
+  "properties": {
+    "run_id": {
+      "$ref": "common.schema.json#/$defs/non_empty_string",
+      "description": "Identifier of the analysis run. Every run has exactly one current state (PRD section 32.1)."
+    },
+    "from_state": {
+      "anyOf": [
+        { "$ref": "analysis_state.schema.json" },
+        { "type": "null" }
+      ],
+      "description": "Previous state; null only for the initial transition that creates the run in its first state."
+    },
+    "to_state": { "$ref": "analysis_state.schema.json" },
+    "occurred_at": { "$ref": "common.schema.json#/$defs/date_time" },
+    "actor": {
+      "type": "string",
+      "enum": ["system", "user"],
+      "description": "PLATFORM-DEFINED enum: 'system' = the deterministic backend state machine; 'user' = an authenticated user action that the backend validated. There is deliberately no 'ai' actor: the AI may not choose or skip workflow states (PRD section 32.1)."
+    },
+    "correlation_id": {
+      "$ref": "common.schema.json#/$defs/non_empty_string",
+      "description": "Correlation id linking this transition to structured logs and jobs (PRD section 25)."
+    },
+    "reason": {
+      "type": "string",
+      "description": "Optional human-readable reason or triggering event (e.g. 'Geoclient /v2/search exact match')."
+    }
+  }
+}

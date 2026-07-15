@@ -1,0 +1,13 @@
+{
+  "_expected_failure": "S3/D2: BBL '6000477501' has borough prefix 6; official borough numbers are 1-5 only (Geoclient User Guide s2.2.1).",
+  "profile_version": { "contract_version": "1.0.0", "profile_revision": 1, "generated_at": "2026-07-14T12:00:00Z" },
+  "identity": { "bbl": "6000477501" },
+  "lot_facts": {},
+  "existing_building_facts": {},
+  "zoning": {},
+  "project_intent": {},
+  "provenance": [],
+  "missing_inputs": [],
+  "conflicts": [],
+  "user_confirmations": []
+}

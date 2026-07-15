@@ -1,0 +1,15 @@
+{
+  "_expected_failure": "S2/D1: lot_facts.lot_area_sf has no provenance_ref; material fact values REQUIRE provenance (PRD s19).",
+  "profile_version": { "contract_version": "1.0.0", "profile_revision": 1, "generated_at": "2026-07-14T12:00:00Z" },
+  "identity": { "bbl": "1000477501" },
+  "lot_facts": {
+    "lot_area_sf": { "value": 10000, "units": "sq_ft" }
+  },
+  "existing_building_facts": {},
+  "zoning": {},
+  "project_intent": {},
+  "provenance": [],
+  "missing_inputs": [],
+  "conflicts": [],
+  "user_confirmations": []
+}

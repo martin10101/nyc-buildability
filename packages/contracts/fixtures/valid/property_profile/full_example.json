@@ -1,0 +1,81 @@
+{
+  "profile_version": {
+    "contract_version": "1.0.0",
+    "profile_revision": 1,
+    "generated_at": "2026-07-14T12:00:00Z"
+  },
+  "identity": {
+    "bbl": "1000477501",
+    "bins": ["1001026"],
+    "address": {
+      "house_number": "120",
+      "street_name": "BROADWAY",
+      "borough": "Manhattan",
+      "borough_code": 1,
+      "zip_code": "10271",
+      "normalized_address": "120 BROADWAY, New York, NY, USA"
+    },
+    "geometry": {
+      "type": "Point",
+      "coordinates": [-74.010542, 40.708233]
+    }
+  },
+  "lot_facts": {
+    "lot_area_sf": {
+      "value": 10000,
+      "units": "sq_ft",
+      "provenance_ref": "prov-lot-area-0001"
+    }
+  },
+  "existing_building_facts": {},
+  "zoning": {
+    "districts": [],
+    "commercial_overlays": [],
+    "special_districts": [],
+    "mapped_features": []
+  },
+  "project_intent": {
+    "objectives": ["maximum_zoning_floor_area"],
+    "notes": "Deterministic contract fixture. Address/BBL/BIN/coordinates are the documented live GeoSearch v2 response for 120 Broadway (docs/research/M0-T002-geoclient-address-resolution.md section 3, retrieved 2026-07-14). lot_area_sf is SYNTHETIC test data with a clearly non-official source_id."
+  },
+  "provenance": [
+    {
+      "provenance_id": "prov-bbl-0001",
+      "source_id": "nyc-geosearch-v2",
+      "original_field_name": "properties.addendum.pad.bbl",
+      "original_value": "1000477501",
+      "normalized_value": "1000477501",
+      "retrieved_at": "2026-07-14T00:00:00Z",
+      "dataset_version": "PAD 26a",
+      "effective_date": null,
+      "bbl": "1000477501",
+      "confidence": 0.8,
+      "user_confirmed_or_overridden": "none",
+      "conflict_status": "none"
+    },
+    {
+      "provenance_id": "prov-lot-area-0001",
+      "source_id": "test-fixture-synthetic",
+      "original_field_name": "lot_area_sf",
+      "original_value": 10000,
+      "normalized_value": 10000,
+      "units": "sq_ft",
+      "retrieved_at": "2026-07-14T12:00:00Z",
+      "dataset_version": "synthetic-fixture-v1",
+      "effective_date": null,
+      "bbl": "1000477501",
+      "confidence": 1,
+      "user_confirmed_or_overridden": "none",
+      "conflict_status": "none"
+    }
+  ],
+  "missing_inputs": [
+    {
+      "field": "existing_building_gross_area",
+      "criticality": "noncritical",
+      "reason": "Not in fixture scope; DOB/DOF connectors land in M2."
+    }
+  ],
+  "conflicts": [],
+  "user_confirmations": []
+}

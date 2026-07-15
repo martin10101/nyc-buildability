@@ -1,0 +1,11 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/martin10101/nyc-buildability/packages/contracts/fixtures/invalid_schemas/bad_keyword.schema.json",
+  "title": "Deliberately Broken Schema: typo keyword",
+  "description": "S5/D3 expected-failure case: 'requird' is a typo of 'required'. The draft 2020-12 meta-schema silently ignores unknown keywords, so the structural allowlist layer must catch it in every mode.",
+  "type": "object",
+  "requird": ["field_a"],
+  "properties": {
+    "field_a": { "type": "string" }
+  }
+}
