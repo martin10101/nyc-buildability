@@ -22,6 +22,25 @@
 # before the first Blueprint deploy. Marked [PLACEHOLDER] individually.
 # =============================================================================
 
+# DEPLOY TRIGGER POLICY (ADR-003 D2/D5): every production service below sets
+# `autoDeployTrigger: off`. `autoDeployTrigger` is the CURRENT Blueprint field
+# and "replaces the deprecated `autoDeploy` field"; if both are present,
+# autoDeployTrigger takes precedence; `off` is equivalent to the deprecated
+# `autoDeploy: false` (https://render.com/docs/blueprint-spec, retrieved
+# 2026-07-15). Production deploys are triggered ONLY by the GitHub Actions
+# production deploy workflow (a FUTURE implementation task - it does not exist
+# yet) calling each service's secret deploy hook URL with
+# ref=<validated commit SHA>, after: migration validation -> production
+# migrations succeed -> required CI checks pass -> human production approval
+# (GitHub environment required reviewers). Deploy hook = per-service secret
+# URL; ref pins the deploy to a specific commit; regenerate if compromised
+# (https://render.com/docs/deploy-hooks, retrieved 2026-07-15). Hook URLs live
+# ONLY in GitHub `production` environment secrets - never in this file.
+# STAGING instances instead keep platform auto-deploy on push to `main`
+# (autoDeployTrigger: commit), configured when the staging services are
+# instantiated [confirm at first use - ADR-002 "Items requiring verification"
+# item 1; a single render.yaml cannot carry per-environment trigger values].
+
 # Preview environments: create per-PR copies of these services only when a PR
 # explicitly opts in (manual generation), to avoid surprise billing. Previews
 # are billed at the base-service rate; sync:false env vars are NOT copied into
@@ -49,7 +68,9 @@ services:
     # region list against https://render.com/docs/regions at first deploy
     # (ADR-002, "Items requiring verification at first setup").
     region: oregon
-    autoDeploy: true
+    # Production: no platform auto-deploy; deploys only via secret deploy hook
+    # from the Actions pipeline (see DEPLOY TRIGGER POLICY above, ADR-003 D2).
+    autoDeployTrigger: off
     buildCommand: "pip install -r requirements.txt"  # [PLACEHOLDER] reconcile with services/api build (e.g., uv/poetry) before first deploy
     startCommand: "uvicorn app.main:app --host 0.0.0.0 --port $PORT"  # [PLACEHOLDER] reconcile with real ASGI module path
     # Render treats 2xx/3xx within 5s as healthy and gates zero-downtime
@@ -58,8 +79,12 @@ services:
     # the running version - first line of rollback defense (ADR-003 D2).
     healthCheckPath: /health
     envVars:
+      # Non-secret but environment-scoped: value (`production` or `staging`)
+      # is entered per Render environment at Blueprint/service creation, so
+      # this one file serves both environments without hard-coding a name
+      # (ADR-002 section 3).
       - key: ENVIRONMENT
-        value: production  # staging instances override per ADR-002 mapping
+        sync: false
       - key: SUPABASE_URL
         sync: false
       - key: SUPABASE_SERVICE_ROLE_KEY
@@ -87,12 +112,14 @@ services:
     rootDir: services/api
     plan: starter
     region: oregon
-    autoDeploy: true
+    # Production: no platform auto-deploy (see DEPLOY TRIGGER POLICY above).
+    autoDeployTrigger: off
     buildCommand: "pip install -r requirements.txt"  # [PLACEHOLDER] keep identical to nycdf-api build
     startCommand: "python -m app.workers.job_runner"  # [PLACEHOLDER] job-queue consumer entrypoint does not exist yet; defined by the services/api producer
     envVars:
+      # Environment-scoped, set per Render environment (ADR-002 section 3).
       - key: ENVIRONMENT
-        value: production
+        sync: false
       - key: SUPABASE_URL
         sync: false
       - key: SUPABASE_SERVICE_ROLE_KEY
@@ -122,12 +149,17 @@ services:
     rootDir: services/api
     plan: starter
     region: oregon
+    # Production: no platform auto-deploy (see DEPLOY TRIGGER POLICY above).
+    # Without this, the default for new services is `commit`
+    # (https://render.com/docs/blueprint-spec, retrieved 2026-07-15).
+    autoDeployTrigger: off
     schedule: "0 6 * * *"  # daily 06:00 UTC (~01:00/02:00 New York); source freshness checks per PRD source strategy
     buildCommand: "pip install -r requirements.txt"  # [PLACEHOLDER] keep identical to nycdf-api build
     startCommand: "python -m app.jobs.source_monitor"  # [PLACEHOLDER] source-monitor entrypoint does not exist yet; defined by the services/api producer
     envVars:
+      # Environment-scoped, set per Render environment (ADR-002 section 3).
       - key: ENVIRONMENT
-        value: production
+        sync: false
       - key: SUPABASE_URL
         sync: false
       - key: SUPABASE_SERVICE_ROLE_KEY

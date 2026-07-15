@@ -70,9 +70,14 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      # Uses only the runner's preinstalled Python; no extra dependencies.
+      # Uses only the runner's preinstalled Python; PyYAML is installed solely
+      # for the render.yaml syntax check below (M0-T006 G3 defect-6 follow-up).
       - name: Validate contract schemas
         run: python3 .github/scripts/validate_contracts.py
+      - name: Validate render.yaml (Blueprint YAML syntax)
+        run: |
+          python3 -m pip install --quiet pyyaml
+          python3 -c "import yaml; yaml.safe_load(open('render.yaml', encoding='utf-8'))"
 
   control-plane:
     name: control-plane (workflow regression test, ADR-005)

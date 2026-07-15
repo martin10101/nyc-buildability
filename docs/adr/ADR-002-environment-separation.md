@@ -1,7 +1,7 @@
 # ADR-002: Environment Separation — dev / staging / prod
 
 - **Status:** Proposed (pending G3 gate review)
-- **Date:** 2026-07-14
+- **Date:** 2026-07-14 (amended 2026-07-15: deploy-trigger model reworked per owner directive; G3 defects 2-5)
 - **Producer:** cloud-architect (task M0-T006)
 - **Deciders:** Human project owner (final)
 - **Related:** ADR-001 (providers), ADR-003 (deployment and rollback), `render.yaml`
@@ -33,7 +33,7 @@ Key researched platform facts (all retrieved 2026-07-14):
 |---|---|---|---|---|
 | **dev** | Free project `nycdf-dev` (Free-org slot 1). Accepts destructive experiments and seeded/mock data. | No always-on dev services. Per-PR **preview environments** with `previews.generation: manual` (opt-in per PR) to avoid surprise billing; `previews.expireAfterDays` set. | **Preview deployments** per PR/branch (default behavior). | PRs into `main`; GitHub environment `dev` for CI-only secrets (dev Supabase URL/keys). |
 | **staging** | Free project `nycdf-staging` (Free-org slot 2) pre-launch; migrations auto-applied from `main`. Post-Pro-upgrade, MAY be replaced by a **persistent branch** of the prod project (Pro feature) — separate-project remains the default. | Staging copies of the Blueprint services, grouped in a Render **project environment** `staging` with an environment group scoped to staging only. Created from the `main` branch. | Pre-Pro: branch-tracked previews of `main` with **branch-scoped env vars** pointing at staging Supabase. Post-Pro: a **Custom Environment** `staging` tracking `main`. | GitHub environment `staging`: staging secrets; auto-deploy jobs (migrations) run here on merge to `main`. |
-| **prod** | **Pro** project `nycdf-prod` from launch (daily backups; PITR add-on decision at launch — ADR-003). | Production Blueprint services (`render.yaml` on `production` branch), grouped in Render project environment `production`, marked **protected**, with private-network isolation enabled and a prod-only environment group. | Production deployments from the `production` branch (set as the Vercel production branch). | GitHub environment `production`: prod secrets; deployment jobs gated (see promotion rules). |
+| **prod** | **Pro** project `nycdf-prod` from launch (daily backups; PITR add-on decision at launch — ADR-003). | Production Blueprint services (`render.yaml` on `production` branch), grouped in Render project environment `production`, marked **protected**, with private-network isolation enabled and a prod-only environment group. Platform auto-deploy **disabled** (`autoDeployTrigger: off`); deploys are triggered only by the Actions deploy workflow via each service's secret deploy hook (ADR-003 D2/D5). | `production` set as the Vercel production branch, but automatic git deploys for it are **disabled** via `git.deploymentEnabled` in `vercel.json` (planned config — `vercel.json` lives in `apps/web`, outside this task's scope; https://vercel.com/docs/project-configuration/git-configuration, retrieved 2026-07-15). Production deploys run from the Actions deploy workflow via the Vercel CLI (ADR-003 D1). | GitHub environment `production`: prod secrets; deployment jobs gated (see promotion rules). |
 
 Naming convention: `nycdf-<env>` for Supabase projects and Render services (e.g., `nycdf-api-staging`, `nycdf-api` for prod).
 
@@ -41,16 +41,20 @@ Naming convention: `nycdf-<env>` for Supabase projects and Render services (e.g.
 
 | Secret | Lives in |
 |---|---|
-| Supabase service-role key, DB URL (per env) | Render env vars/env groups (scoped per project environment) + GitHub environment secrets (for migration CI) |
+| Supabase service-role key, DB URL (per env) | Render env vars/env groups (scoped per project environment) **only**. Not duplicated to GitHub: the official migration CI flow needs only the CLI secrets in the row below, and no current workflow needs the service-role key. |
 | Supabase anon/publishable key + URL (per env) | Vercel env vars scoped to the matching Vercel environment/branch |
 | `SUPABASE_ACCESS_TOKEN`, `SUPABASE_DB_PASSWORD`, project ref per env (for CLI migrations in CI) | GitHub environment secrets (`staging`, `production`) — per the official Supabase CI workflow (https://supabase.com/docs/guides/deployment/managing-environments, retrieved 2026-07-14) |
+| Render deploy hook URL (one per production service) | GitHub `production` environment secrets **only**. A deploy hook is a per-service **secret URL**; provide it only to trusted systems and regenerate it if compromised (https://render.com/docs/deploy-hooks, retrieved 2026-07-15). Never in Git. |
+| `VERCEL_TOKEN`, `VERCEL_ORG_ID`, `VERCEL_PROJECT_ID` (CI-driven production deploys) | GitHub `production` environment secrets (https://vercel.com/guides/how-can-i-use-github-actions-with-vercel, retrieved 2026-07-15) |
 | Geoclient subscription key, Anthropic API key, Sentry DSN | Render env vars (`sync: false` references in `render.yaml`); duplicated to GitHub environment secrets only if CI needs them |
+
+Non-secret but environment-scoped: the `ENVIRONMENT` variable is declared `sync: false` in `render.yaml` and its value (`staging` or `production`) is entered per Render environment at Blueprint/service creation, so a single Blueprint file serves both environments without hard-coding an environment name.
 
 ### 4. Promotion rules
 
 1. **feature → dev:** open PR to `main`. CI runs lint/tests. Vercel preview auto-deploys; Render preview only when explicitly requested (manual generation). Schema changes ride as new files in `supabase/migrations/` (forward-only, ADR-003).
-2. **dev → staging:** merge PR to `main` (requires PR review + green CI). GitHub Actions then applies new migrations to `nycdf-staging` (Supabase CLI, `staging` environment secrets) and Render/Vercel staging auto-deploy from `main`. Producers verify acceptance scenarios against staging.
-3. **staging → prod:** **human-only promotion (gate G7).** The project owner (a human, not an agent) approves; the mechanical step is a fast-forward of `production` to the approved `main` commit (tagged `release-YYYYMMDD-N`). That push triggers: migrations against `nycdf-prod` (GitHub `production` environment), Render production deploy, Vercel production deploy. Order and verification steps are in ADR-003/runbook.
+2. **dev → staging:** merge PR to `main` (requires PR review + green CI). GitHub Actions then applies new migrations to `nycdf-staging` (Supabase CLI, `staging` environment secrets). **Staging keeps platform auto-deploy:** Render staging services deploy on commit to `main` (`autoDeployTrigger: commit`, configured when the staging services are instantiated — [confirm at first use], verification item 1 below) and the Vercel staging environment auto-deploys from `main` via git integration (automatic git deploys remain enabled for non-production branches). Staging deploys therefore run concurrently with staging migrations; this is acceptable because the expand→deploy→contract rule (ADR-003 D4) keeps old code compatible with new schema. Producers verify acceptance scenarios against staging.
+3. **staging → prod:** **human-only promotion (gate G7).** The project owner (a human, not an agent) approves; the mechanical step is a fast-forward of `production` to the approved `main` commit (tagged `release-YYYYMMDD-N`). **Nothing deploys on that push by itself** — platform auto-deploys are disabled in production (Render `autoDeployTrigger: off`; Vercel git deploys disabled for the `production` branch). The push starts the **production deploy workflow** (GitHub Actions — a future implementation task; it does not exist yet), whose job-dependency chain (`needs:`) enforces, in order: (a) migration validation passes; (b) migrations against `nycdf-prod` complete successfully (GitHub `production` environment); (c) required CI checks pass on the promoted commit; (d) human production approval is recorded (GitHub environment required reviewers, where the plan allows — §5). Only then do the deploy jobs trigger the Render production deploys via each service's secret deploy hook with `ref=<validated commit SHA>` (https://render.com/docs/deploy-hooks, retrieved 2026-07-15) and the frontend production deploy via the Vercel CLI (ADR-003 D1). Order and verification steps are in ADR-003/runbook.
 4. **No skipping:** nothing reaches `production` except via `main` → staging verification. Hotfixes follow the same path (fix on `main`, verify on staging, promote).
 
 ### 5. Who approves prod
@@ -69,7 +73,7 @@ The **human project owner** approves every production promotion (G7 in `docs/GAT
 | Production launch prep | Create `nycdf-prod` on Supabase **Pro** (backups); Render production services on paid plans; consider Vercel Pro (Custom Environments, broader Instant Rollback eligibility — ADR-003) |
 | Post-launch | Decide PITR add-on (ADR-003 §backups); optionally replace staging project with a persistent branch of prod (Pro branching) if migration-fidelity issues appear |
 
-Watch item: free Supabase projects pause after 1 week of inactivity (https://supabase.com/docs/guides/platform/free-project-pausing, retrieved 2026-07-14) — the staging smoke-test cron (see `render.yaml` comments) and normal development activity keep `nycdf-dev`/`nycdf-staging` warm; unpausing via dashboard is in the runbook.
+Watch item: free Supabase projects pause after 1 week of inactivity (https://supabase.com/docs/guides/platform/free-project-pausing, retrieved 2026-07-14) — normal development and CI activity is the only keep-warm mechanism for `nycdf-dev`/`nycdf-staging`; no dedicated keep-warm service is deployed (a cron would carry a $1/month-minimum cost per job with no free tier). If a project pauses, unpause it from the dashboard per the runbook before deploying.
 
 ## Consequences
 
@@ -84,7 +88,7 @@ Watch item: free Supabase projects pause after 1 week of inactivity (https://sup
 2. Render: valid `region` values for the Blueprint (`render.yaml` currently pins `oregon`; confirm against https://render.com/docs/regions).
 3. Vercel: whether Hobby-plan branch-scoped preview env vars fully cover the staging need until Pro (confirm against https://vercel.com/docs/environment-variables when wiring `apps/web`).
 
-## Sources (all retrieved 2026-07-14)
+## Sources (retrieved 2026-07-14 unless noted)
 
 - https://supabase.com/docs/guides/deployment/managing-environments — separate projects + GitHub Actions migration flow, CI secrets
 - https://supabase.com/docs/guides/deployment/branching — Pro-plan requirement; preview vs persistent branches
@@ -96,3 +100,7 @@ Watch item: free Supabase projects pause after 1 week of inactivity (https://sup
 - https://render.com/docs/free — free-tier limits (spin-down; no free workers/cron)
 - https://vercel.com/docs/deployments/environments — production/preview model; Custom Environments on Pro/Enterprise; branch tracking
 - https://docs.github.com/en/actions/reference/workflows-and-actions/deployments-and-environments and https://docs.github.com/actions/deployment/targeting-different-environments/using-environments-for-deployment — environment protection plan limits
+- https://render.com/docs/blueprint-spec (retrieved 2026-07-15) — `autoDeployTrigger` field (`commit` / `checksPass` / `off`); replaces the deprecated `autoDeploy` and takes precedence if both present; default `commit` for new services
+- https://render.com/docs/deploy-hooks (retrieved 2026-07-15) — per-service secret deploy-hook URL; `ref` query parameter deploys a specific commit SHA; regenerate on compromise
+- https://vercel.com/guides/how-can-i-use-github-actions-with-vercel (retrieved 2026-07-15) — CI-driven deploys via Vercel CLI (`vercel pull` → `vercel build --prod` → `vercel deploy --prebuilt`); requires `VERCEL_TOKEN`, `VERCEL_ORG_ID`, `VERCEL_PROJECT_ID`
+- https://vercel.com/docs/project-configuration/git-configuration (retrieved 2026-07-15) — `git.deploymentEnabled` disables automatic git deploys per branch (default `true`; `github.enabled` deprecated)

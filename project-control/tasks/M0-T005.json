@@ -93,8 +93,8 @@
     "security-reviewer",
     "code-reviewer"
   ],
-  "status": "awaiting_gate",
-  "progress_percent": 85,
+  "status": "claimed",
+  "progress_percent": 10,
   "risks": [
     "Regex-based scanning has inherent false-negative risk; policy doc must state it complements (not replaces) GitHub push protection, which the owner should enable in repo settings (human action)"
   ],

@@ -79,12 +79,12 @@
   "reviewer_agents": [
     "code-reviewer"
   ],
-  "status": "rework",
+  "status": "awaiting_gate",
   "progress_percent": 85,
   "risks": [],
   "blockers": [],
   "created_at": "2026-07-14T21:38:08.617024+00:00",
-  "updated_at": "2026-07-15T22:42:07.529381+00:00",
+  "updated_at": "2026-07-15T23:15:02.234766+00:00",
   "worktree": "local",
   "progress_log": [
     {

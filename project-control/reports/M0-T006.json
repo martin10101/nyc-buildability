@@ -1,8 +1,8 @@
 {
   "task_id": "M0-T006",
   "producer_agent": "cloud-architect",
-  "report_file": "project-control\\reports\\M0-T006-producer-report.md",
-  "submitted_at": "2026-07-14T22:08:44.160645+00:00",
+  "report_file": "project-control\\reports\\M0-T006-rework-summary.md",
+  "submitted_at": "2026-07-15T23:15:02.234766+00:00",
   "requested_status": "awaiting_gate",
-  "updated_at": "2026-07-14T22:08:44.160645+00:00"
+  "updated_at": "2026-07-15T23:15:02.234766+00:00"
 }

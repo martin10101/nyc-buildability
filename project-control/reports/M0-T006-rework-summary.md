@@ -81,3 +81,13 @@ L86-87 / L121-122 / L161-162:  - key: ENVIRONMENT
 ## Risks
 
 - No new risks introduced. Existing recorded risks unchanged (private-repo required-reviewers gap, render.yaml placeholders, free-project pausing). One new tracked dependency: the D5 deploy workflow + `vercel.json` git config are prerequisites for the first production deploy and need follow-up tasks.
+
+## Orchestrator-captured parse evidence (2026-07-15, per ADR-005 evidence-capture rule)
+
+```
+python -c "import yaml; yaml.safe_load(open('render.yaml', encoding='utf-8'))"   -> render.yaml parse OK
+python -c "... open('.github/workflows/ci.yml' ...)"                              -> ci.yml parse OK; jobs: ['web', 'api', 'contracts', 'control-plane']
+autoDeployTrigger values parsed by PyYAML (YAML 1.1): [('nycdf-api', False), ('nycdf-worker-jobs', False), ('nycdf-cron-source-monitor', False)]
+```
+
+Note for G3 reviewer: PyYAML reads unquoted `off` as boolean false (YAML 1.1). The official Render blueprint-spec examples write `autoDeployTrigger: off` unquoted; whether Render's parser expects the string "off" is flagged `[confirm at first use]` by the producer. Reviewer should assess whether quoting "off" is the safer spelling.
