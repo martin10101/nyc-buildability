@@ -1,0 +1,9 @@
+{
+  "checkpoint_id": "CP-0004",
+  "timestamp": "2026-07-15T21:50:38.091748+00:00",
+  "commit": "09914c5",
+  "branch": "main",
+  "active_milestone": "M0",
+  "summary": "End of bootstrap session. Accepted: M0-T000/T001/T002/T003. In review: M0-T004 (G0/G2/G3 PASS, needs G5+merge+G4), M0-T006 (needs G3). ADR-005 process model in force with CI-enforced regression test. Blockers: B-001 Supabase token, B-004 Geoclient key, B-005 expansion pack. Handoff doc: docs/SESSION_HANDOFF.md",
+  "updated_at": "2026-07-15T21:50:38.092749+00:00"
+}
