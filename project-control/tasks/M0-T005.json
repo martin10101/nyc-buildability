@@ -93,14 +93,14 @@
     "security-reviewer",
     "code-reviewer"
   ],
-  "status": "claimed",
-  "progress_percent": 10,
+  "status": "awaiting_gate",
+  "progress_percent": 85,
   "risks": [
     "Regex-based scanning has inherent false-negative risk; policy doc must state it complements (not replaces) GitHub push protection, which the owner should enable in repo settings (human action)"
   ],
   "blockers": [],
   "created_at": "2026-07-14T21:38:08.496213+00:00",
-  "updated_at": "2026-07-15T23:08:00.561244+00:00",
+  "updated_at": "2026-07-15T23:37:30.218854+00:00",
   "worktree": "isolated-agent-worktree",
   "progress_log": [
     {
