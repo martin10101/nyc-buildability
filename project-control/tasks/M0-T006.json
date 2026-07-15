@@ -25,13 +25,14 @@
     "docs/adr/**",
     "render.yaml",
     "docs/DEPLOYMENT_AND_ROLLBACK.md",
-    "project-control/reports/M0-T006-*"
+    "project-control/reports/M0-T006-*",
+    ".github/workflows/ci.yml"
   ],
   "forbidden_paths": [
     "apps/**",
     "services/**",
     "packages/**",
-    ".github/**",
+    ".github/** (except workflows/ci.yml render.yaml-validation step, owner-authorized 2026-07-15)",
     "project-control/tasks/**",
     "project-control/gates/**",
     "tools/**",
@@ -78,12 +79,12 @@
   "reviewer_agents": [
     "code-reviewer"
   ],
-  "status": "awaiting_gate",
+  "status": "rework",
   "progress_percent": 85,
   "risks": [],
   "blockers": [],
   "created_at": "2026-07-14T21:38:08.617024+00:00",
-  "updated_at": "2026-07-14T22:08:44.160645+00:00",
+  "updated_at": "2026-07-15T22:42:07.529381+00:00",
   "worktree": "local",
   "progress_log": [
     {
@@ -91,6 +92,12 @@
       "agent": "cloud-architect",
       "percent": 75,
       "message": "ADR-001/002/003 + render.yaml + runbook complete with official citations; producer sandbox denied CLI so orchestrator records per ADR-005"
+    },
+    {
+      "at": "2026-07-15T22:45:00+00:00",
+      "agent": "orchestrator",
+      "percent": 60,
+      "message": "G3 FAIL (report: M0-T006-G3-verification.md). Owner rework directive 2026-07-15: production autoDeploy false; GitHub Actions triggers Render deploy via deploy hook/API only after migration validation + prod migrations + required checks + human approval; frontend deploy gated the same way; remove unenforced 'halts automatically' claims; keep expand->deploy->contract; fix defects 2-5; add render.yaml YAML validation to CI (ci.yml owner-authorized). Rework producer: cloud-architect; then G3 re-review."
     }
   ]
 }

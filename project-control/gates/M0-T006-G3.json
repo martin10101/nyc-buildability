@@ -1,0 +1,9 @@
+{
+  "task_id": "M0-T006",
+  "gate_id": "G3",
+  "reviewer": "code-reviewer",
+  "result": "FAIL",
+  "report_file": "project-control\\reports\\M0-T006-G3-verification.md",
+  "reviewed_at": "2026-07-15T22:42:07.525628+00:00",
+  "updated_at": "2026-07-15T22:42:07.525628+00:00"
+}
