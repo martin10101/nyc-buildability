@@ -14,7 +14,10 @@ Authoritative detail lives in `project-control/` (run `python tools/project_cont
 ### In review
 | Task | Title | Producer | Waiting on |
 |---|---|---|---|
-| M0-T002 | Official-source discovery: NYC address/BBL/BIN resolution | official-source-researcher | G1 (data-contract-verifier, running), then G3 |
+| M0-T004 | Monorepo skeleton + GitHub Actions CI (G0/G2/G3 PASS; CI green incl. S4 fail/revert proof) | backend-engineer | G5 security review, then merge + G4 |
+| M0-T006 | ADR-001/002/003 + render.yaml + rollback runbook (committed on main) | cloud-architect | G3 review |
+
+M0-T002 was accepted 2026-07-14 after G1 (data-contract-verifier) + G3. See docs/SESSION_HANDOFF.md for the exact resume queue.
 
 ### Ready / next
 See `docs/MASTER_EXECUTION_PLAN.md` — M0-T004 (monorepo skeleton + CI) is the next unblocked implementation task.

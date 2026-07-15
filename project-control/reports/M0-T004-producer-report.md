@@ -275,3 +275,25 @@ triggered.
    lists; add contract tests binding `services/api` responses to the schemas.
 4. Clean-up: none needed locally — no temporary files, caches, or installs
    were created (only small text files inside the worktree plus this report).
+
+
+---
+
+## Orchestrator integration evidence (appended per ADR-005; producer content above unmodified)
+
+Executed by the main-session orchestrator because the producer sandbox denied git/gh/python (see ADR-005).
+
+| Step | Evidence |
+|---|---|
+| Worktree inspection | `git status --short`: only the 6 intended untracked paths; no tracked files modified |
+| Commit | `0da9575` on `task/M0-T004-monorepo-ci` (21 files, 700 insertions); pushed |
+| S1 initial CI | Run 29371615952 — SUCCESS (web, api, contracts) https://github.com/martin10101/nyc-buildability/actions/runs/29371615952 |
+| Merge main into branch | `ba05bb9` (ADR-005 correction + regression test) |
+| control-plane CI job added | `682ae43`; run 29372083661 — SUCCESS (4 jobs) |
+| Remote lockfile generation | `generate-lockfile.yml` dispatched on branch; run 29372113001 — SUCCESS; bot commit `05c19ae` added apps/web/package-lock.json (5,558 lines); zero local npm usage |
+| npm ci switch | `e4e57a0`; run 29372179826 — SUCCESS (all 4 jobs) https://github.com/martin10101/nyc-buildability/actions/runs/29372179826 |
+| S4 deliberate failure | `9aec6b4` (unused variable); run 29372258042 — FAILURE isolated to web job as expected https://github.com/martin10101/nyc-buildability/actions/runs/29372258042 |
+| S4 recovery | revert `429c575`; run 29372297441 — SUCCESS https://github.com/martin10101/nyc-buildability/actions/runs/29372297441 |
+| S2 storage | 5.19 GB free after all steps (floor 4 GB); no node_modules/venv/build dirs locally; lockfile is a ~250 KB text file |
+
+Scenario verdicts: S1 PASS, S2 PASS, S3 PASS (producer grep + `permissions: contents: read`), S4 PASS, S5 PASS (tree per producer listing, verified at commit 0da9575).
