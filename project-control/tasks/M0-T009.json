@@ -94,16 +94,16 @@
     "qa-engineer",
     "security-reviewer"
   ],
-  "status": "backlog",
-  "progress_percent": 0,
+  "status": "awaiting_gate",
+  "progress_percent": 85,
   "risks": [
     "Contract v1 shape decisions constrain all downstream modules; keep versioned and additive",
     "D2 enum grounding limited to M0-T002 research coverage; unknown values must be modeled as open-but-flagged rather than guessed"
   ],
   "blockers": [],
   "created_at": "2026-07-14T21:38:08.948728+00:00",
-  "updated_at": "2026-07-15T23:10:00+00:00",
-  "worktree": "local",
+  "updated_at": "2026-07-15T23:02:23.570464+00:00",
+  "worktree": "isolated-agent-worktree",
   "progress_log": [
     {
       "at": "2026-07-15T23:10:00+00:00",
