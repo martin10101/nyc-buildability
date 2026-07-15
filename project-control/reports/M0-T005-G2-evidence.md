@@ -43,6 +43,18 @@ Cleanup: `Remove-Item scratch_fake_creds.txt` → rerun → `secret-scan: PASS -
 2. **Checkout SHA mislabel found and corrected (orchestrator, evidence-backed):** the producer pinned `actions/checkout@08c6903c... # v4.2.2`, taking the SHA verbatim from the M0-T004 G5 report example (disclosed assumption — no network in its sandbox). Orchestrator verification: `git ls-remote https://github.com/actions/checkout refs/tags/v4.2.2` → `11bd71901bbe5b1630ceea73d27597364c9af683`; `git ls-remote --tags | grep 08c6903` → `refs/tags/v5.0.0`. So 08c6903 is the v5.0.0 commit mislabeled as v4.2.2 (the mislabel originates in the G5 report example — reviewers of future tasks should not reuse it). Corrected on the task branch to `11bd719... # v4.2.2` with an explanatory comment. Reviewers: re-verify the mapping and note the same mislabel exists in `project-control/reports/M0-T004-G5-security-review.md` Defect 1 remediation text (historical record — do not edit; just do not copy it).
 3. Everything else matched the producer's predicted outputs exactly.
 
+## Re-verification at branch head a687b21 (orchestrator, session 4, 2026-07-15)
+
+The full section-5 command sequence was re-executed from the worktree at the current branch head a687b21 (after the SHA-pin correction commit):
+
+1. S1 clean scan: `python .github/scripts/secret_scan.py` → exit 0, `scanned 176 files in 0.56s`, `PASS -- no findings`, 3 `ALLOWLISTED PATH` notices printed (both `.env.example` files + `apps/web/package-lock.json`, each with reason).
+2. S2 plant: `scratch_fake_creds.txt` created with the producer's 11-line fixture (pipes removed).
+3. S2 detect: scanner → exit 1, `FAIL -- 9 potential credential(s) found` at lines 2,3,4,5,6,9,10,11,12, every value masked to first/last 4 chars; remediation hint printed. Pragma line 13 suppressed with **no visible notice** — deviation 1 below re-confirmed at head.
+4. S2 cleanup: `Remove-Item scratch_fake_creds.txt` → rerun exit 0 PASS; `git status --short` clean.
+5. S6 timing: `Measure-Command { ... }` → **0.48 s** (budget 60 s).
+
+SHA pin re-verified at head: `secret-scan.yml:33` pins `actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2`; `git ls-remote https://github.com/actions/checkout refs/tags/v4.2.2` → `11bd71901bbe5b1630ceea73d27597364c9af683` (match); `08c6903...` confirmed = `refs/tags/v5.0.0`.
+
 ## Disposition
 
 Producer's requested `blocked` status is superseded by this capture (the producer's own stated unblock condition is met). M0-T005 moves to `awaiting_gate`. Pending gates: G3 (code-reviewer), G5 (security-reviewer) — reviewer focus list is in the producer report §"Recommended reviewer focus" plus deviation 1 above; also verify actions/checkout tag→SHA mapping via `git ls-remote https://github.com/actions/checkout v4.2.2` (orchestrator to capture if reviewer sandbox lacks network).
