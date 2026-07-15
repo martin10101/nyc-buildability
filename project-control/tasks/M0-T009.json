@@ -3,16 +3,84 @@
   "title": "Canonical contracts v1",
   "task_type": "backend",
   "milestone_id": "M0",
-  "objective": "Versioned typed contracts: property profile, source fact, coverage status, analysis state machine (PRD 32.3/32.1); shared by API, workers, frontend, reports",
-  "business_reason": "One canonical property profile; prevents competing schemas",
-  "inputs": [],
-  "outputs": [],
+  "objective": "Versioned typed contracts: property profile, source fact/provenance, coverage status, analysis state machine (PRD 32.3/32.1/9/12); shared by API, workers, frontend, reports. Must fix M0-T004 G3 defects D1 (provenance schema under-enforces PRD s9 mandatory fields: dataset_version, confidence, user_confirmed_or_overridden, conflict_status; provenance_ref must be required where material), D2 (invented enums - borough spellings, conflict resolution/status - and permissive BBL pattern; validate against real connector outputs documented in docs/research/ from M0-T002), D3 (contracts CI validation upgrades from parse+keys to JSON Schema meta-schema validation, implemented inside .github/scripts/validate_contracts.py only). Also fixes doc defects D4 (disclaimer apostrophe glyph vs PRD s29) and D5 (stale root README job list; stale contracts README key list).",
+  "business_reason": "One canonical property profile; prevents competing schemas (PRD 32.3); provenance completeness is a legal-defensibility requirement (PRD 9)",
+  "inputs": [
+    "PRD.md sections 9, 12, 32.1, 32.3",
+    "docs/PRODUCT_FLOW_AND_AI_BOUNDARIES.md (canonical contracts)",
+    "project-control/reports/M0-T004-G3-review.md (defects D1-D5)",
+    "packages/contracts/schemas/v1/*.json (existing stubs)",
+    "docs/research/ M0-T002 Geoclient/GeoSearch findings (real field shapes for D2 enum validation)"
+  ],
+  "outputs": [
+    "packages/contracts/schemas/v1/ property_profile, source_fact/provenance, coverage_status, analysis_state (+ any new: rule evaluation trace, scenario, report evidence item stubs if in scope of v1)",
+    "packages/contracts/README.md updated",
+    ".github/scripts/validate_contracts.py meta-schema validation",
+    "apps/web/src/lib/disclaimer.ts exact PRD s29 text (D4)",
+    "README.md job list corrected (D5)",
+    "project-control/reports/M0-T009-producer-report.md"
+  ],
   "dependencies": [
     "M0-T004"
   ],
-  "allowed_paths": [],
-  "forbidden_paths": [],
-  "acceptance_scenarios": [],
+  "allowed_paths": [
+    "packages/contracts/**",
+    ".github/scripts/validate_contracts.py",
+    "apps/web/src/lib/disclaimer.ts",
+    "README.md",
+    "project-control/reports/M0-T009-*"
+  ],
+  "forbidden_paths": [
+    ".github/workflows/** (ci.yml owned by M0-T006 rework; script-only changes here)",
+    "docs/adr/**",
+    "render.yaml",
+    "docs/DEPLOYMENT_AND_ROLLBACK.md",
+    "services/**",
+    "apps/web/** (except src/lib/disclaimer.ts)",
+    "project-control/tasks/**",
+    "project-control/gates/**",
+    "tools/**",
+    "CLAUDE.md",
+    "PRD.md"
+  ],
+  "acceptance_scenarios": [
+    {
+      "id": "S1",
+      "case": "normal",
+      "input": "all v1 schemas",
+      "expected": "each schema validates against its declared JSON Schema meta-schema (draft 2020-12); validate_contracts.py enforces this and CI contracts job passes unchanged"
+    },
+    {
+      "id": "S2",
+      "case": "provenance-completeness (D1)",
+      "input": "source_fact/provenance schema vs PRD s9 list",
+      "expected": "every PRD s9 mandatory provenance field is required in the schema (source id, original field name, original value, normalized value, retrieved timestamp, dataset_version, effective date where available, bbl, confidence, user_confirmed_or_overridden, conflict_status); a fixture missing any one of them fails validation"
+    },
+    {
+      "id": "S3",
+      "case": "real-data enums (D2)",
+      "input": "borough, conflict status/resolution enums and BBL pattern vs documented M0-T002 connector outputs",
+      "expected": "enums and BBL pattern match documented official API values with citation comments in the schema or README; no invented spellings remain; BBL pattern rejects malformed examples (wrong length, non-numeric, borough 0/6)"
+    },
+    {
+      "id": "S4",
+      "case": "boundary",
+      "input": "analysis_state schema vs PRD 32.1",
+      "expected": "exactly the 14 PRD states, no extras; invalid state value fails validation"
+    },
+    {
+      "id": "S5",
+      "case": "invalid-input",
+      "input": "deliberately broken fixture (bad meta-schema keyword, missing required provenance field, unknown coverage status)",
+      "expected": "validate_contracts.py exits nonzero with a clear per-file error"
+    },
+    {
+      "id": "S6",
+      "case": "regression",
+      "input": "existing CI contracts job + doc fixes",
+      "expected": "CI contracts job still green; disclaimer matches PRD s29 byte-for-byte (D4); root README describes the actual four CI jobs and npm ci (D5); contracts README key list matches shipped schemas"
+    }
+  ],
   "required_gates": [
     "G0",
     "G2",
@@ -20,12 +88,28 @@
     "G4",
     "G5"
   ],
-  "producer_agent": null,
-  "reviewer_agents": [],
+  "producer_agent": "backend-engineer",
+  "reviewer_agents": [
+    "code-reviewer",
+    "qa-engineer",
+    "security-reviewer"
+  ],
   "status": "backlog",
   "progress_percent": 0,
-  "risks": [],
+  "risks": [
+    "Contract v1 shape decisions constrain all downstream modules; keep versioned and additive",
+    "D2 enum grounding limited to M0-T002 research coverage; unknown values must be modeled as open-but-flagged rather than guessed"
+  ],
   "blockers": [],
   "created_at": "2026-07-14T21:38:08.948728+00:00",
-  "updated_at": "2026-07-14T21:38:08.948728+00:00"
+  "updated_at": "2026-07-15T23:10:00+00:00",
+  "worktree": "local",
+  "progress_log": [
+    {
+      "at": "2026-07-15T23:10:00+00:00",
+      "agent": "orchestrator",
+      "percent": 0,
+      "message": "G0 contracting: packet filled (scope, scenarios, D1-D5 remediation). ci.yml deliberately excluded from scope to avoid overlap with M0-T006 rework; D3 implemented in validate_contracts.py only. Launch gated on M0-T004 acceptance."
+    }
+  ]
 }

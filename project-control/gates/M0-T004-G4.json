@@ -1,0 +1,9 @@
+{
+  "task_id": "M0-T004",
+  "gate_id": "G4",
+  "reviewer": "qa-engineer",
+  "result": "PASS",
+  "report_file": "project-control\\reports\\M0-T004-G4-integration-review.md",
+  "reviewed_at": "2026-07-15T22:58:02.029215+00:00",
+  "updated_at": "2026-07-15T22:58:02.030440+00:00"
+}
