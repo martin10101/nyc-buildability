@@ -1,6 +1,17 @@
 # Implementation Status
 
-Authoritative detail lives in `project-control/` (run `python tools/project_control.py status`). This file is the human-readable summary. Updated: 2026-07-16 (end of session 4).
+Authoritative detail lives in `project-control/` (run `python tools/project_control.py status`). This file is the human-readable summary. Updated: 2026-07-16 (session 5, after M1-T002 acceptance).
+
+## Session 5 additions (2026-07-16)
+
+| Task | Title | Result |
+|---|---|---|
+| M0-T005-R1 | Scanner + validator hardening (11 items) | **ACCEPTED** (G0/G2/G3/G5) — merged `84b6a15`; SECRETS_POLICY §5 accuracy + ADR-004 update included; hardened scanner immediately caught fake demo values in gate reports (pragma-allowlisted, visible suppressions); Low residuals F1/F2/F3 carried to hygiene follow-up + B-006 |
+| M0-T011 | ADR-004: frontend on Render, drop Vercel | **ACCEPTED** (G0/G3) — `nycdf-web` additive service, all `autoDeployTrigger` quoted `"off"`, no previews initially (Pro-gated = owner billing decision); **B-003 CLOSED**; Vercel residuals cleaned repo-wide (CLAUDE.md principle 5, READMEs, .env.example headers, agent description, ADR-001/002/003 headers flipped to Accepted) |
+| M1-T002 | **PLUTO SODA connector** (64uk-42ks) | **ACCEPTED** (G0/G1/G2/G3/G4/G5) — merged `4a3537a` + fixup; 101 tests; live-verified fixtures; BBL decimal normalization with raw preserved; typed error taxonomy incl. schema-drift signature; stdlib-only runtime; CI + secret-scan green on `69b5509`. G5 F1–F4 (Low) hardening folded into M1-T005 |
+| M1-T003 | GIS Zoning Features + ZTLDB research | **ACCEPTED** (G0/G1/G3) — 2 products, 3 registry records; cap-exceedance paging hazard; ZTLDB `degraded_suspected` (3.4-month Socrata stall); ZD1 open enum (Queens ZR sections); 7 connector carry-forwards recorded |
+| M1-T004 | Zoning Resolution text research | Producer done, **awaiting G1** — portal is server-rendered Drupal (no API anywhere; tier-4 HTML is the ceiling); 10 dated archive snapshots; per-section Last-Amended stamps |
+| M1-T005 | Property-profile API v1 (`GET /api/v1/properties/{bbl}`) | **claimed / in progress** (owner Priority 3) — bound to contracts v1; explicit no_match/conflict/unavailable/drift states; includes M1-T002 G5 F1–F4 hardening |
 
 ## Milestone: M0 — Engineering control plane and cloud foundation (ACTIVE)
 

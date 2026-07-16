@@ -1,0 +1,9 @@
+{
+  "checkpoint_id": "CP-0008",
+  "timestamp": "2026-07-16T21:36:54.221460+00:00",
+  "commit": "69b5509",
+  "branch": "main",
+  "active_milestone": "M0",
+  "summary": "Session 5 mid-session checkpoint after M1-T002 acceptance. ACCEPTED this session: M0-T005-R1 (scanner hardening, merged 84b6a15), M0-T011/ADR-004 (Vercel dropped, B-003 closed, residual cleanup incl. CLAUDE.md principle 5), M1-T002 PLUTO SODA connector (all six gates; merged 4a3537a + fixup fe87b99; CI+scan green 69b5509), M1-T003 zoning geodata research (C1-C7 + D1 applied). M1-T004 ZR research awaiting G1 (dispatched). M1-T005 property-profile API claimed, G0 PASS, producer dispatched (includes M1-T002 G5 F1-F4 hardening). Hardened scanner caught fake demo values in gate reports twice - pragma-allowlisted with visible notices; ruff E501 on first pragma fixed. Global hook disable plan written (awaiting owner approval). B-005 still 3/12 files. Disk 2.27GB free (below floor, pre-existing).",
+  "updated_at": "2026-07-16T21:36:54.223967+00:00"
+}

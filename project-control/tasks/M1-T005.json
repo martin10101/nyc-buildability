@@ -108,8 +108,8 @@
     "code-reviewer",
     "security-reviewer"
   ],
-  "status": "backlog",
-  "progress_percent": 0,
+  "status": "claimed",
+  "progress_percent": 10,
   "risks": [
     "Profile document must be the canonical contract (PRD 32.3) - no competing schema; if property_profile.schema.json v1 lacks a needed field, STOP and report (contract changes are a separate task)",
     "Coverage labels: connector facts are unreviewed source facts - nothing may be labeled verified (PRD 12); expected statuses are conditional/unsupported/data_conflict/not_applicable classes only",
@@ -118,5 +118,6 @@
   ],
   "blockers": [],
   "created_at": "2026-07-16T21:28:13.929406+00:00",
-  "updated_at": "2026-07-16T21:28:13.929406+00:00"
+  "updated_at": "2026-07-16T21:35:11.741710+00:00",
+  "worktree": ".claude/worktrees/M1-T005"
 }
