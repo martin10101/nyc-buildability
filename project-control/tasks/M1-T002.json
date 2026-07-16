@@ -106,8 +106,8 @@
     "code-reviewer",
     "security-reviewer"
   ],
-  "status": "claimed",
-  "progress_percent": 10,
+  "status": "awaiting_gate",
+  "progress_percent": 85,
   "risks": [
     "SODA omits null fields per record: schema must come from the 108-column /api/views inventory, never from record keys (research 4.2)",
     "Condo unit-lot BBLs legitimately return no PLUTO record (billing-lot semantics); must not be treated as connector failure",
@@ -119,6 +119,14 @@
   ],
   "blockers": [],
   "created_at": "2026-07-16T20:19:09.867908+00:00",
-  "updated_at": "2026-07-16T20:20:52.158403+00:00",
-  "worktree": ".claude/worktrees/M1-T002"
+  "updated_at": "2026-07-16T20:57:17.859917+00:00",
+  "worktree": ".claude/worktrees/M1-T002",
+  "progress_log": [
+    {
+      "at": "2026-07-16T20:56:54.152129+00:00",
+      "agent": "backend-engineer",
+      "percent": 85,
+      "message": "Producer done; orchestrator re-ran evidence live: 87 passed, validate_contracts 0 failures; committed on task branch"
+    }
+  ]
 }

@@ -15,3 +15,8 @@ Verified during M1-T001 G1 (2026-07-16). Techniques that work from this sandbox 
 - **catalog.data.gov** dataset pages are fetchable and federate NYC metadata (but often just point back to nyc.gov landing pages). CKAN package_show slugs may 404; use the HTML page via WebFetch.
 - **Bash /tmp paths don't map to native Windows Python** — pipe curl to `python -c` via stdin instead of writing temp files.
 - SODA gotcha found: `$select`ed number columns (e.g. bbl) serialize as `"1000010100.00000000"` — normalization required in connectors.
+
+Added during M1-T003 G1 (2026-07-16):
+- **Socrata blobby datasets:** createdAt/rowsUpdatedAt/publicationDate are frozen at upload time, but `viewLastModified` DOES move when the blob/description changes — it is the usable change-polling signal (seen on mm69-vrje: frozen 2013 triple, viewLastModified 2026-05-26).
+- **ArcGIS hosted layers: `maxRecordCount` can be LESS than the live feature count** (DCP nysp cap 92 vs 95 features; nysp_sd 317 vs 336) — unpaged queries silently truncate; always compare `returnCountOnly=true` against the cap.
+- Socrata column descriptions can carry semantics absent from the official PDF dictionary (fdkv-4t4z zoning_district_1 may hold ZR section numbers for some Queens lots; bbl description has the corrected example the PDF typos). Always read both.
