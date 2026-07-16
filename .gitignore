@@ -61,3 +61,8 @@ Thumbs.db
 
 # Quarantined unknown packs (owner decision 2026-07-15: isolate, do not delete)
 _quarantine/
+
+# Marker kept IN PLACE deliberately: the owner's GLOBAL ~/.claude UserPromptSubmit hook
+# (auto-project-setup.sh) re-installs the generic pack whenever this marker is missing.
+# Do not quarantine or delete it. Durable fix = owner removes that hook from global settings.
+.claude/.auto-setup-complete
