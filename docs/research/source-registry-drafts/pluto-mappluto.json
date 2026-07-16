@@ -77,7 +77,7 @@
     "api_dataset_identifier": "f888-ni5f (NYC Open Data catalog entry; href/external-pointer type only — NOT a tabular SODA resource; E3)",
     "authentication": {
       "required": false,
-      "notes": "Public download per DCP release model; nyc.gov returned HTTP 403 to the non-browser evidence session (bot protection), so download mechanics need G1 re-verification (OQ-4)"
+      "notes": "Public download per DCP release model; nyc.gov returns HTTP 403 to non-browser clients (bot protection, confirmed twice incl. at G1) — exact download mechanics are OQ-4 residual, requiring a browser-capable session; must not be guessed"
     },
     "rate_limits": null,
     "update_frequency": "Quarterly (major releases; E3 portal metadata 'Quarterly' and E4 README release model). PLUTOChangeFile<ver>.csv ships as part of the MapPLUTO download (E4).",

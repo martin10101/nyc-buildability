@@ -39,7 +39,7 @@ Release model (official README 26v1, E4, verbatim basis): **major updates quarte
   - **viewType/displayType: `href`** — an attachment/external-link entry, **not** a tabular SODA resource. Update frequency metadata: "Quarterly".
   - Attachments listed on the portal: `PLUTODD22v3.pdf`, `PlutoReadme22v3.pdf` — **stale 22v3 documents** while the current release is 26v1 (channel-lag finding, see §5).
   - Raw timestamps: created/rowsUpdated/publication all 1374771826/1374771872 (2013-07-25) — href datasets do not update row timestamps; version currency must come from the DCP channel.
-  - The URL the href entry points to was not captured — **[NEEDS G1 RE-VERIFICATION]** (OQ-9).
+  - The URL the href entry points to **[RESOLVED AT G1 — OQ-9]**: `metadata.accessPoints["web site"]` = `http://www1.nyc.gov/site/planning/data-maps/open-data/dwn-pluto-mappluto.page`.
 
 ### 2.3 DCP bulk release — README and data dictionary PDFs (VERIFIED for README; dictionary URL search-verified)
 
@@ -190,7 +190,7 @@ healthcenterdistrict, bct2020, bctcb2020, transitzone
 
 **PLUTO tabular facts:**
 1. **SODA API** — `https://data.cityofnewyork.us/resource/64uk-42ks.json` (PRD tier 2; no tier-1 dedicated API exists for PLUTO). Live, version-current (26v1), filterable per-BBL, and carries the `version` field per record for provenance (E2). Use an **`X-App-Token`** header when available: without a token, requests "are throttled by IP address and share a common pool"; with a token, Socrata does "not throttle API requests... unless those requests are determined to be abusive or malicious"; throttled requests return HTTP 429; token via `X-App-Token` header (preferred) or `$$app_token` param (E7, `https://dev.socrata.com/docs/app-tokens`).
-2. **DCP bulk CSV** (PRD tier 3) — for full-city imports and for reproducible version pinning (archive of prior versions), per the README's release model (E4) and the archive statement (E6, [NEEDS G1 RE-VERIFICATION]). Bulk import must run on a Render worker per the low-storage policy; never on the owner's PC.
+2. **DCP bulk CSV** (PRD tier 3) — for full-city imports and for reproducible version pinning (archive of prior versions), per the README's release model (E4) and the archive statement (partially resolved at G1: archive page URL identified; exact zip URLs = OQ-4 residual). Bulk import must run on a Render worker per the low-storage policy; never on the owner's PC.
 
 **MapPLUTO geometry:**
 1. **DCP bulk File Geodatabase, shoreline-clipped** (PRD tier 3) — the verified full-fidelity official channel for citywide import; there is no tabular SODA resource for MapPLUTO (E3; confirmed at G1 via the Socrata catalog API). Clipped variant confirmed by the official `meta_mappluto.pdf` ("MapPLUTO 26v1 - Shoreline Clipped"); exact archive file names for clipped/unclipped/borough shapefiles remain open (OQ-10 residual). Shoreline-clipped is the appropriate default for zoning-analysis area computations, with the unclipped variant only if riparian-lot edge cases demand it.

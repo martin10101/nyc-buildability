@@ -16,10 +16,15 @@ Authoritative detail lives in `project-control/` (run `python tools/project_cont
 | M0-T005 | Secrets policy + .env templates + secret scanner + scan workflow | backend-engineer | G0, G2, G3, G5 — merged; scan workflow live and green on main; accepted 2026-07-16 |
 | M0-T009 | Canonical contracts v1 (6 schemas, validator, fixtures) | backend-engineer | G0, G2, G3, G4, G5 — merged `fe6cc21`; CI 4/4 green; accepted 2026-07-16 |
 
+### Accepted (M1)
+| Task | Title | Producer | Gates passed |
+|---|---|---|---|
+| M1-T001 | PLUTO/MapPLUTO official-source research | official-source-researcher | G0, G1 (live re-verification), G3 (live SODA spot-tests) — corrections C1-C6 + D1-D3 applied; accepted 2026-07-16. Only OQ-4/OQ-10 residuals (nyc.gov-403-bound file URLs) and OQ-6 observation window open — carried into the connector packets. |
+
 ### In progress
 | Task | State |
 |---|---|
-| M1-T001 PLUTO/MapPLUTO research | Deliverables committed; **G0 PASS, G1 PASS** (live verification: 26v1 on SODA, 108 columns, dictionary units/nulls, official ArcGIS endpoint, BBL-serialization + qt5r-nqxp findings); corrections C1-C6 applied (e178adb). G3 dispatch repeatedly hit API-529 at session end — re-dispatch G3, record, accept. |
+| (none) | Next up: M0-T005-R1, M0-T011/ADR-004, PLUTO SODA connector packet, M1 research fan-out |
 
 ### Ready / next
 - **M0-T005-R1** — scanner + validator hardening (contracted, backlog, ready to claim). 11-item burn-down of all M0-T005/M0-T009 review defects. Must land before any real credential enters the repo or M0 exit. Note: CI runner ships jsonschema 4.10.3, making the legacy RefResolver the LIVE CI path — item 10 priority raised.

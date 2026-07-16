@@ -17,9 +17,9 @@ Written by the orchestrator. Open this folder (`nyc-development-feasibility-clau
 
 **Uncommitted at handoff:** none expected; if `git status` shows `project-control/gates/M1-T001-G3.json` or checkpoint files, those are the session-close recordings — commit them.
 
-**Accepted tasks (orchestrator-recorded, all gates PASS):** M0-T000, T001, T002, T003, T004, T005, T006, T009 (+ M1-T001 if the G3 verdict landed before session close — check `project-control/tasks/M1-T001.json` status).
+**Accepted tasks (orchestrator-recorded, all gates PASS):** M0-T000, T001, T002, T003, T004, T005, T006, T009, **M1-T001** (G0/G1/G3 all PASS; G3 re-ran all four SODA spot-tests live; coherence defects D1-D3 fixed at acceptance).
 
-**Awaiting-gate / in progress:** M1-T001 (PLUTO/MapPLUTO research) — producer deliverables committed (9fec830), **G0 PASS, G1 PASS** (data-contract-verifier live-verified everything; report `project-control/reports/M1-T001-G1-verification.md`), G1 corrections C1-C6 applied by orchestrator (e178adb). G3 walkthrough was dispatched to qa-engineer near session end — if no `project-control/gates/M1-T001-G3.json` exists, re-dispatch G3 (prompt focus: C1-C6 coherence, the four SODA spot-tests from G1 report §2, OQ-4/OQ-10 residuals only open items), then accept.
+**Awaiting-gate / in progress:** none.
 
 **Backlog:** M0-T005-R1 (scanner + validator hardening — fully contracted packet, ready to claim), M0-T011 (ADR-004 drop Vercel — stub, packet needs filling).
 
@@ -39,7 +39,7 @@ Written by the orchestrator. Open this folder (`nyc-development-feasibility-clau
 
 ## Immediate queue (in order)
 
-1. **M1-T001 — close out.** G0/G1 PASS recorded; corrections applied. If `project-control/gates/M1-T001-G3.json` is missing, dispatch G3 (any independent reviewer identity; focus list in the ledger entry above), record it, then orchestrator-accept and checkpoint. Recommended immediate follow-up packets from the G1 findings: (a) PLUTO SODA connector (fixture pack F1-F14 is fully specified in the research doc §6, including the BBL string-normalization and schema-drift-400 cases); (b) MapPLUTO bulk FileGDB importer (Render worker); (c) small follow-up capture for OQ-4/OQ-10 exact file URLs once any browser-capable path to nyc.gov exists.
+1. **M1-T001 — DONE (accepted).** Contract the follow-up packets its findings specified: (a) PLUTO SODA connector (fixture pack F1-F14 fully specified in the research doc §6, incl. BBL string-normalization and schema-drift-400 cases; G3 carry-forwards in `project-control/reports/M1-T001-G3-review.md`); (b) MapPLUTO bulk FileGDB importer (Render worker; blocked on OQ-4/OQ-10 exact URLs — needs a browser-capable session against nyc.gov, or fold into the task as its first step; REJECT any packet that guesses the .gdb names); (c) Socrata app-token creation is a small human action to add to HUMAN_ACTIONS_REQUIRED.md when the connector task is contracted.
 2. **M0-T005-R1 — claim and run** (backend-engineer producer, isolated worktree, scope = secret_scan.py + validate_contracts.py + one SECRETS_POLICY.md sentence). Small, high-value, unblocks safe credential handling.
 3. **M0-T011 / ADR-004 — drop Vercel, serve Next.js from Render** (owner decision 2026-07-14). Fill the stub packet first. Scope: docs/adr/ADR-004 + amend ADR-001/002/003, render.yaml (additive Next.js web service), docs/DEPLOYMENT_AND_ROLLBACK.md, root README. Use the amendment map in `project-control/reports/M0-T006-G3-verification.md`; fold in R1 residuals (ADR-001:36 service-role wording → Render only; quote `autoDeployTrigger: "off"`). Orchestrator WebFetches official Render Next.js/preview docs into docs/research/ for the producer. Closing ADR-004 closes B-003.
 4. **Follow-up packets before M0 exit:** (a) D5 production deploy workflow (needs B-002 + M0-T005-R1); (b) frontend deploy gating (folds into ADR-004 outcome); (c) M0-T004 G5 hygiene batch: SHA-pin ALL actions in ci.yml (required before any repo/CI secret is added), Dependabot config (npm/pip/actions), Python lockfile, delete/restrict `.github/workflows/generate-lockfile.yml`.
