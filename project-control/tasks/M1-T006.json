@@ -1,0 +1,71 @@
+{
+  "task_id": "M1-T006",
+  "title": "Property-profile contract v1.1 (additive): document coverage_status/data_completeness/reproducibility + district provenance linkage",
+  "task_type": "contract",
+  "milestone_id": "M1",
+  "objective": "Additively version property_profile.schema.json to 1.1.0 so every key the accepted M1-T005 API emits is formally documented (per-fact coverage_status, profile-level data_completeness, reproducibility block) and zoning district/overlay/special-district values gain machine-resolvable provenance linkage (G3 D4), with v1.0.0 instances remaining valid, valid+invalid fixtures, and validator-enforced provenance referential integrity for every new provenance_ref site",
+  "business_reason": "M1-T005 G3 adjudication #1 made this the mandatory gate before the Priority 4 property screen may consume the additive keys; frontend consumes documented contract keys only",
+  "inputs": [
+    "packages/contracts/schemas/v1/property_profile.schema.json (v1.0.0, accepted M0-T004)",
+    "packages/contracts/schemas/v1/coverage_status.schema.json (6 PRD-12 coverage enums + $defs/data_completeness 3 enums)",
+    "packages/contracts/schemas/v1/source_fact.schema.json + common.schema.json",
+    "services/api/app/profile/builder.py lines 94-100/117-145/341-396 (READ-ONLY ground truth: exact emitted shapes of per-fact coverage_status, data_completeness, reproducibility{correlation_id,source_id,dataset_id,dataset_version,request_url,retrieved_at,record_count,drift_signals,connector_notes,coverage_policy})",
+    "project-control/reports/M1-T005-G3-review.md (adjudication #1, defects D2/D4, section 5 frontend tolerance rules)",
+    ".github/scripts/validate_contracts.py (existing fixture validator incl. provenance_ref referential-integrity enforcement)"
+  ],
+  "outputs": [
+    "property_profile.schema.json bumped additively to contract_version 1.1.0: the three M1-T005 additive keys documented as OPTIONAL properties with $ref to coverage_status enums (per-fact coverage_status on fact_value; profile-level data_completeness $ref coverage_status.schema.json#/$defs/data_completeness; reproducibility object matching the builder's emitted shape)",
+    "district-level provenance linkage (G3 D4): additive, machine-resolvable link from zoning.districts/commercial_overlays/special_districts values to provenance records; existing plain-string arrays MUST remain valid; any new provenance_ref site participates in referential-integrity validation",
+    "backward compatibility: every existing v1.0.0 fixture still validates unchanged (contract_version accepts 1.0.0 and 1.1.0); required key set unchanged; no key removed or retyped",
+    "fixtures: valid v1.1 full example (all three additive keys + district linkage), valid v1.0.0 regression fixture (no additive keys), invalid fixtures at minimum: bad coverage_status enum value, bad data_completeness enum value, reproducibility missing a required subfield, district-linkage provenance_ref dangling (does not resolve to provenance array)",
+    "validator: additive-change validation (v1.0.0 instances pass against the v1.1 schema) and complete provenance-reference testing across ALL provenance_ref sites including the new district linkage",
+    "packages/contracts/README.md updated with the v1.1 additive-versioning rule and key documentation"
+  ],
+  "dependencies": [
+    "M1-T005"
+  ],
+  "allowed_paths": [
+    "packages/contracts/**",
+    ".github/scripts/validate_contracts.py",
+    ".github/scripts/tests/**",
+    "project-control/reports/M1-T006-producer-report.md"
+  ],
+  "forbidden_paths": [
+    "services/**",
+    "project-control/** (except own producer report)",
+    ".github/workflows/**",
+    "docs/**"
+  ],
+  "acceptance_scenarios": [
+    "S1 primary: valid v1.1 fixture (three additive keys + district provenance linkage) validates against the v1.1 schema; validator exit 0",
+    "S2 backward-compat regression: EVERY pre-existing v1.0.0 fixture validates unchanged against the v1.1 schema (additive-change proof); packages/contracts/fixtures/valid/property_profile/full_example.json untouched or byte-identical semantics",
+    "S3 boundary: coverage_status accepts exactly the 6 PRD-12 enums ($ref, not duplicated inline); data_completeness exactly the 3 enums; any other string rejected (invalid fixtures prove rejection)",
+    "S4 missing/null: reproducibility object with a missing required subfield rejected; fact_value WITHOUT coverage_status still valid (key optional = v1.0 compat)",
+    "S5 referential integrity: district-linkage provenance_ref that resolves passes; dangling district-linkage provenance_ref FAILS validation via validate_contracts.py (new invalid fixture)",
+    "S6 ground-truth conformance: the exact profile shape emitted by the accepted M1-T005 builder (additive keys as built, contract_version 1.0.0) validates against the v1.1 schema without modification",
+    "S7 regression: full existing contract-validation suite passes (all schemas, all fixtures, invalid_schemas set still rejected); jsonschema 4.10.3 legacy path consideration documented (CI runner reality)",
+    "S8 negative meta: schema itself passes the validator's schema-sanity checks (no required-not-in-properties, draft 2020-12 keywords only)"
+  ],
+  "required_gates": [
+    "G0",
+    "G2",
+    "G3",
+    "G4"
+  ],
+  "producer_agent": "backend-engineer",
+  "reviewer_agents": [
+    "code-reviewer"
+  ],
+  "status": "claimed",
+  "progress_percent": 10,
+  "risks": [
+    "CI runner ships jsonschema 4.10.3 (legacy resolver path is LIVE in CI, guarded fail-closed since M0-T005-R1): any new $ref pattern must work on both 4.10.3 and 4.26 or fail closed, never silently pass",
+    "district provenance linkage design must not force a breaking change on zoning arrays (plain strings must stay valid) or on the accepted M1-T005 API output",
+    "contract_version const->enum relaxation must not accidentally admit arbitrary versions (closed enum [1.0.0, 1.1.0] only)"
+  ],
+  "blockers": [],
+  "execution_location": "owner PC (KB-scale JSON/schema edits + local pytest run) with authoritative validation in GitHub Actions CI; expected disk use <1 MB, no datasets, no installs; durable output = git commits pushed to GitHub; no temp files beyond pytest cache (already git-ignored)",
+  "created_at": "2026-07-16T22:55:07.095778+00:00",
+  "updated_at": "2026-07-16T22:56:47.954830+00:00",
+  "worktree": ".claude/worktrees/M1-T006"
+}
