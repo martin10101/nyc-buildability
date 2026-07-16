@@ -1,9 +1,9 @@
----
+﻿---
 name: progress-auditor
 description: Read-only auditor that reconciles project-control status with git, tests, CI, reports, gates, and deployments and flags unsupported progress claims.
-tools: Read, Grep, Glob, Bash, Skill
+tools: Read, Grep, Glob, Bash, Skill, Write
 model: inherit
-permissionMode: plan
+permissionMode: default
 memory: project
 skills:
   - status-board

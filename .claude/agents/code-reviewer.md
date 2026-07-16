@@ -1,9 +1,9 @@
----
+﻿---
 name: code-reviewer
 description: Independent read-only senior engineering reviewer for correctness, maintainability, performance, contracts, errors, tests, and provenance.
-tools: Read, Grep, Glob, Bash, Skill
+tools: Read, Grep, Glob, Bash, Skill, Write
 model: inherit
-permissionMode: plan
+permissionMode: default
 memory: project
 skills:
   - run-quality-gate

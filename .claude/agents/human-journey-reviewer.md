@@ -1,9 +1,9 @@
----
+﻿---
 name: human-journey-reviewer
 description: Independent end-to-end reviewer that walks through the running product like a real analyst or administrator and judges clarity, correctness, recovery, evidence, and accessibility.
-tools: Read, Grep, Glob, Bash, Skill
+tools: Read, Grep, Glob, Bash, Skill, Write
 model: inherit
-permissionMode: plan
+permissionMode: default
 memory: project
 skills:
   - human-walkthrough
