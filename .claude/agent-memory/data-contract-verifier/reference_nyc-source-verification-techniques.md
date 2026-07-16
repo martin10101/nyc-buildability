@@ -22,6 +22,13 @@ Added during M1-T002 G1 (2026-07-16):
 - source_fact v1 schema has no `additionalProperties` keyword → additive provenance keys are legal; validate emitted facts with Draft202012Validator + referencing Registry over source_fact+common.
 - ArcGIS MAPPLUTO FeatureServer `/0/query?where=BBL=...&outFields=...` is a cheap second-official-presentation cross-check for individual PLUTO records (values matched SODA exactly for 1000010100).
 
+Added during M1-T004 G1 (2026-07-16, ZR portal):
+- **ZR portal Drupal AJAX endpoints:** markup `href="/nojs/get/amendment/section/{id}"` 404s to plain GET; the working form is `/ajax/get/amendment/section/{id}?_wrapper_format=drupal_ajax` with header `X-Requested-With: XMLHttpRequest` → 200 JSON command array whose `insert` payload is a per-section amendment-history table (Effective Date | ULURP/CPC Report | Project Name | Action | Notes | Description). Section-entity IDs are a third ID namespace (≠ node IDs).
+- **council.nyc.gov and legistar.council.nyc.gov are automation-accessible** (200 to curl) — official adoption records reachable despite www.nyc.gov 403. Legistar detail pages give matter status ("Adopted") + ULURP numbers. `a030-cpc.nyc.gov/html/cpc/report.aspx?num=<ULURP>` 302s to the CPC report PDF on www1.nyc.gov → 403 (browser needed for the PDF itself, but the redirect leaks the canonical PDF URL).
+- ZR portal greps: section numbers inside cross-refs are wrapped `<a class="sec-link-inline"><span>NN-NN</span></a>` — a grep for "FROM 66-11" fails; grep the left context instead. "FROM" prefix has 5 variants (FROM / FROM SECTION / FROM Section / FROM: / double-space).
+- Drupal `/index.php/` prefix is a valid front-controller alias for HTML routes (200) but 404 for `/sites/default/files/` static assets — explains summarizer-transferred prefix errors.
+- Drupal pagers: grep for `title="Go to last page"` — producers who only read visible pager numbers understate feed depth (recently-adopted: visible 0–8, actual last page 30).
+
 Added during M1-T003 G1 (2026-07-16):
 - **Socrata blobby datasets:** createdAt/rowsUpdatedAt/publicationDate are frozen at upload time, but `viewLastModified` DOES move when the blob/description changes — it is the usable change-polling signal (seen on mm69-vrje: frozen 2013 triple, viewLastModified 2026-05-26).
 - **ArcGIS hosted layers: `maxRecordCount` can be LESS than the live feature count** (DCP nysp cap 92 vs 95 features; nysp_sd 317 vs 336) — unpaged queries silently truncate; always compare `returnCountOnly=true` against the cap.
