@@ -1,0 +1,122 @@
+{
+  "task_id": "M1-T005",
+  "title": "Property-profile API v1: GET /api/v1/properties/{bbl} via pluto-soda connector",
+  "task_type": "backend",
+  "milestone_id": "M1",
+  "objective": "Versioned FastAPI endpoint accepting a validated BBL and returning the canonical property profile built from the accepted pluto-soda connector: source facts with full provenance, coverage statuses, explicit unsupported/unknown/conflict/source-unavailable states, bound to the accepted M0-T009 JSON schemas; contract + integration tests; no credential or raw-internal-error exposure; includes the M1-T002 G5 hardening items F1-F4",
+  "business_reason": "Owner Priority 3: first user-facing property data path; prerequisite for the first browser property screen (Priority 4)",
+  "inputs": [
+    "services/api/app/connectors/pluto_soda.py + bbl.py (accepted M1-T002 connector; error taxonomy: no_match, rate_limited, schema_drift, source_unavailable, timeout, validation_error)",
+    "packages/contracts/schemas/v1/property_profile.schema.json, source_fact.schema.json, coverage_status.schema.json, common.schema.json (accepted M0-T009; binding response contracts)",
+    "project-control/reports/M1-T002-G3-review.md carry-forwards: treat no_match as a result not an error; persist conflicts/drift_signals/absent_columns/notes into the PRD section-9 model; NEVER map confidence=1.0 to a coverage label (PRD section 12); wire check_columns_for_drift into a monitor hook (stub acceptable, documented)",
+    "project-control/reports/M1-T002-G5-security-review.md findings F1-F4 (REQUIRED in this task): F1 bounded response read; F2 catch RecursionError/hostile JSON -> typed error; F3 disable redirects or pin final host in urllib transport; F4 sanitize untrusted errorCode in detail (repr-style). F5: log to_payload(), never formatted tracebacks",
+    "PRD section 21 (versioned /api/v1), section 12 (coverage statuses), section 9 (provenance), section 32.3 (canonical profile)",
+    "services/api/app/main.py (FastAPI placeholder; this task may now modify it to mount the v1 router)"
+  ],
+  "outputs": [
+    "services/api/app/api/v1/properties.py (router: GET /api/v1/properties/{bbl})",
+    "services/api/app/profile/builder.py (connector facts -> canonical property-profile document with coverage + completeness statuses)",
+    "services/api/app/connectors/pluto_soda.py (G5 F1-F4 hardening only - no redesign)",
+    "services/api/app/main.py (router mount only)",
+    "services/api/tests/api/test_properties_v1.py (contract + integration tests, fixture-driven, offline)",
+    "project-control/reports/M1-T005-producer-report.md"
+  ],
+  "dependencies": [
+    "M1-T002",
+    "M0-T009",
+    "M0-T004"
+  ],
+  "allowed_paths": [
+    "services/api/app/api/**",
+    "services/api/app/profile/**",
+    "services/api/app/main.py",
+    "services/api/app/connectors/pluto_soda.py",
+    "services/api/tests/**",
+    "services/api/pyproject.toml",
+    "project-control/reports/M1-T005-*"
+  ],
+  "forbidden_paths": [
+    ".github/**",
+    "packages/contracts/**",
+    "apps/**",
+    "tools/**",
+    "docs/**",
+    "project-control/tasks/**",
+    "project-control/gates/**",
+    "services/api/app/connectors/bbl.py",
+    "services/api/tests/fixtures/pluto/**"
+  ],
+  "acceptance_scenarios": [
+    {
+      "id": "S1",
+      "case": "normal",
+      "input": "GET /api/v1/properties/1000010100 (connector on fixture transport)",
+      "expected": "200; body validates against property_profile.schema.json v1; every fact carries provenance refs that resolve (no dangling); coverage statuses present and NEVER derived from connector confidence; profile_version and reproducibility metadata present"
+    },
+    {
+      "id": "S2",
+      "case": "boundary",
+      "input": "decimal-serialized and component-form BBLs; borough 1 and 5 bounds",
+      "expected": "canonical 10-digit path only; raw preserved in provenance; consistent 200/404/422 semantics documented in OpenAPI"
+    },
+    {
+      "id": "S3",
+      "case": "missing",
+      "input": "valid-pattern nonexistent BBL (5999999999); record with absent columns",
+      "expected": "404-or-explicit-no-match response shape (documented choice) with machine-readable state=no_match, condo billing-lot explanation included; absent columns surface as unknown facts, never fabricated"
+    },
+    {
+      "id": "S4",
+      "case": "conflict",
+      "input": "record with bbl/borocode disagreement (conflict fixture)",
+      "expected": "200 with conflict visible in the profile (data_conflict coverage on affected facts); never silently resolved"
+    },
+    {
+      "id": "S5",
+      "case": "failure",
+      "input": "connector rate_limited / timeout / source_unavailable / schema_drift (fixture-forced)",
+      "expected": "503-style source_unavailable and 502/424-style responses (documented) with typed machine-readable states; NO stack traces, internals, or token material in any response; drift signalled distinctly"
+    },
+    {
+      "id": "S6",
+      "case": "retry-idempotency",
+      "input": "same BBL twice on fixture transport",
+      "expected": "identical profile documents (stable ordering/keys) modulo retrieval timestamps"
+    },
+    {
+      "id": "S7",
+      "case": "security",
+      "input": "G5 F1-F4 verification: oversized response body, deeply nested JSON, cross-host redirect, CRLF errorCode",
+      "expected": "bounded read enforced; typed error not RecursionError; token never follows a cross-host redirect; detail fields sanitized; all with tests"
+    },
+    {
+      "id": "S8",
+      "case": "regression",
+      "input": "full services/api suite + contracts validator",
+      "expected": "all M1-T002 connector tests still pass (101+); validate_contracts 0 failures; no contract files modified"
+    }
+  ],
+  "required_gates": [
+    "G0",
+    "G2",
+    "G3",
+    "G4",
+    "G5"
+  ],
+  "producer_agent": "backend-engineer",
+  "reviewer_agents": [
+    "code-reviewer",
+    "security-reviewer"
+  ],
+  "status": "backlog",
+  "progress_percent": 0,
+  "risks": [
+    "Profile document must be the canonical contract (PRD 32.3) - no competing schema; if property_profile.schema.json v1 lacks a needed field, STOP and report (contract changes are a separate task)",
+    "Coverage labels: connector facts are unreviewed source facts - nothing may be labeled verified (PRD 12); expected statuses are conditional/unsupported/data_conflict/not_applicable classes only",
+    "This endpoint has no auth yet (M0-T007/T008 blocked on Supabase token) - must be clearly marked internal/dev, not exposed publicly, and documented as a G5 condition",
+    "Low disk: source-only edits; tests offline; CI runs the suite"
+  ],
+  "blockers": [],
+  "created_at": "2026-07-16T21:28:13.929406+00:00",
+  "updated_at": "2026-07-16T21:28:13.929406+00:00"
+}

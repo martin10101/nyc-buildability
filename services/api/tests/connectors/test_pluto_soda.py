@@ -395,7 +395,7 @@ def test_s5_no_partial_facts_on_failure() -> None:
 def test_s5_error_payloads_never_contain_token_or_stack_trace(
     monkeypatch, caplog
 ) -> None:
-    token = "secret-token-value-12345"
+    token = "secret-token-value-12345"  # secretscan:allow fake token for the leak-absence test; asserted never to appear in payloads/logs
     monkeypatch.setenv("SOCRATA_APP_TOKEN", token)
     transport = FakeTransport([TransportResponse(500, "boom")] * 3)
     with caplog.at_level(logging.DEBUG, logger="app.connectors.pluto_soda"):
