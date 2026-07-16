@@ -16,7 +16,7 @@
 
 | # | Item | Method | Result |
 |---|---|---|---|
-| 1 | Compound-prefix generic regex (D1) | Live: `MY_DB_PASSWORD = "<23-char>"` → `generic-credential-assignment`. Desk: `AUTH_TOKEN="…"` and the exact original G3 repro `allowed_token = "Zq7pL9mXv2Rt8Kn3Jd6Ws1"` both now match (probes I, J) | **FIXED** |
+| 1 | Compound-prefix generic regex (D1) | Live: `MY_DB_PASSWORD = "<23-char>"` → `generic-credential-assignment`. Desk: `AUTH_TOKEN="…"` and the exact original G3 repro `allowed_token = "Zq7pL9mXv2Rt8Kn3Jd6Ws1"` both now match (probes I, J) | **FIXED** | <!-- secretscan:allow historical G3 repro string, fake test value, gate-report evidence --> |
 | 2 | Inventory-name class (D2) | Live: `GEOCLIENT_SUBSCRIPTION_KEY=<32-hex>` and `RENDER_DEPLOY_HOOK_URL_API=<url>` → `inventory-secret-name-assignment`, exit 1. Desk: YAML `NAME: value` form also matches (probe H) | **FIXED** (residuals R1-D1/D2 below) |
 | 3 | Postgres-URI class (D2) | Live: `postgres://appuser:S3cr...zQxT@db.internal:5432/prod` (reviewer's fake demo value; defanged post-merge after the hardened scanner flagged the verbatim form on main — itself proof the class works) → `postgres-uri-with-password`, password-only masked `S3cr...zQxT` | **FIXED** (residuals R1-D1/D3) |
 | 4 | Exact-path allowlist + template content scan (D3) | Live: rogue `g3r_dir/.env.example` with `SUPABASE_DB_PASSWORD=<value>` → finding, exit 1 (no basename skip). End-to-end in temp clone: value appended to `services/api/.env.example` → BOTH `inventory-secret-name-assignment` and `env-template-nonempty-value` at line 45, exit 1. Desk: 1-char value flagged; empty value and comments pass | **FIXED** |
