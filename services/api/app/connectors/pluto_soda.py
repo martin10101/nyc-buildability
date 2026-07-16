@@ -56,6 +56,7 @@ from app.connectors.bbl import (
 __all__ = [
     "BASE_URL",
     "DATASET_ID",
+    "MAX_RESPONSE_BYTES",
     "PLUTO_COLUMN_TYPES",
     "PLUTO_COLUMNS",
     "PlutoConnectorError",
@@ -88,6 +89,17 @@ VERSION_RE = re.compile(r"^\d{2}v\d+(\.\d+)?$")
 
 # Schema-drift failure signature (M1-T001 G1 finding; fixture F13).
 SCHEMA_DRIFT_ERROR_CODE = "query.soql.no-such-column"
+
+# G5 F1: bounded response read. Expected per-BBL bodies are ~1.5 KB; anything
+# beyond this cap indicates a compromised/misbehaving endpoint and is refused
+# instead of exhausting worker memory.
+MAX_RESPONSE_BYTES = 10 * 1024 * 1024
+
+# G5 F4: Socrata errorCode values observed officially are dotted lowercase
+# tokens (e.g. query.soql.no-such-column). Anything outside this shape is
+# repr()-sanitized before being embedded in an error payload so a hostile
+# response can never inject control characters into caller logs.
+_ERROR_CODE_SAFE_RE = re.compile(r"^[A-Za-z0-9._-]{1,120}$")
 
 # Per-input vintage date columns = per-record effective-date bounds
 # (research section 4.2, G1 C5). Socrata-typed text; nullable per record (F1v).
@@ -257,18 +269,51 @@ class TransportFailure(Exception):
 Transport = Callable[[str, dict[str, str], float], TransportResponse]
 
 
+class _NoRedirectHandler(urllib.request.HTTPRedirectHandler):
+    """G5 F3: refuse ALL HTTP redirects. urllib's default redirect handler
+    re-sends request headers - including X-App-Token - to the redirect
+    target, so an open redirect on the pinned official host could exfiltrate
+    the token cross-host. Returning None makes urlopen raise HTTPError(3xx),
+    which the transport converts into a plain TransportResponse; the caller
+    then classifies the 3xx as source_unavailable. The token never follows
+    any redirect, same-host or cross-host."""
+
+    def redirect_request(self, req, fp, code, msg, headers, newurl):  # noqa: ARG002
+        return None
+
+
+# Module-level opener WITHOUT redirect following (G5 F3). build_opener
+# replaces the default HTTPRedirectHandler with our subclass.
+_OPENER = urllib.request.build_opener(_NoRedirectHandler)
+
+
+def _bounded_read(stream: object) -> str:
+    """G5 F1: read at most MAX_RESPONSE_BYTES; refuse oversize bodies with a
+    typed transport failure instead of an unbounded read + json.loads."""
+    data = stream.read(MAX_RESPONSE_BYTES + 1)  # type: ignore[attr-defined]
+    if len(data) > MAX_RESPONSE_BYTES:
+        raise TransportFailure(
+            f"response body exceeded {MAX_RESPONSE_BYTES} bytes; refusing unbounded read"
+        )
+    return data.decode("utf-8", errors="replace")
+
+
 def urllib_transport(url: str, headers: dict[str, str], timeout: float) -> TransportResponse:
     """Default stdlib transport (no third-party HTTP dependency; low-storage
-    policy). Translates urllib failures into transport-level signals."""
+    policy). Translates urllib failures into transport-level signals.
+    Hardened per M1-T002 G5: bounded body read (F1) and no redirect
+    following (F3)."""
     request = urllib.request.Request(url, headers=headers, method="GET")
     try:
-        with urllib.request.urlopen(request, timeout=timeout) as response:  # noqa: S310
+        with _OPENER.open(request, timeout=timeout) as response:  # noqa: S310
             return TransportResponse(
                 status=response.status,
-                body=response.read().decode("utf-8", errors="replace"),
+                body=_bounded_read(response),
             )
     except urllib.error.HTTPError as exc:
-        body = exc.read().decode("utf-8", errors="replace")
+        # Includes refused 3xx redirects (F3): status passes through and the
+        # caller maps it to a typed error; no request is ever re-issued.
+        body = _bounded_read(exc)
         return TransportResponse(status=exc.code, body=body)
     except TimeoutError as exc:  # socket.timeout is an alias since Python 3.10
         raise TransportTimeout(f"timeout after {timeout}s") from exc
@@ -324,16 +369,32 @@ def _build_headers(app_token: str | None) -> dict[str, str]:
 
 
 def _classify_400(body: str) -> str | None:
-    """Return the Socrata errorCode of a 400 body when parseable, else None."""
+    """Return the Socrata errorCode of a 400 body when parseable, else None.
+
+    G5 F2: hostile deeply nested JSON makes json.loads raise RecursionError;
+    that must classify as unparseable (None), never escape as a raw stack.
+    """
     try:
         parsed = json.loads(body)
-    except (json.JSONDecodeError, ValueError):
+    except (json.JSONDecodeError, ValueError, RecursionError):
         return None
     if isinstance(parsed, dict):
         code = parsed.get("errorCode")
         if isinstance(code, str):
             return code
     return None
+
+
+def _sanitize_error_code(code: str | None) -> str | None:
+    """G5 F4: errorCode is untrusted response data. Official codes match the
+    dotted-token allowlist and pass through verbatim; anything else (control
+    characters, CRLF log-injection payloads, oversized strings) is
+    repr()-sanitized, consistent with version_raw/record_bbl_raw handling."""
+    if code is None:
+        return None
+    if _ERROR_CODE_SAFE_RE.match(code):
+        return code
+    return repr(code)
 
 
 def _request_with_retry(
@@ -378,17 +439,18 @@ def _request_with_retry(
                 )
             elif response.status == 400:
                 error_code = _classify_400(response.body)
+                safe_code = _sanitize_error_code(error_code)  # G5 F4
                 if error_code == SCHEMA_DRIFT_ERROR_CODE:
                     raise SchemaDriftError(
                         "SODA rejected a column reference: schema drift signature "
                         f"({SCHEMA_DRIFT_ERROR_CODE})",
                         correlation_id=correlation_id,
-                        detail={"http_status": 400, "error_code": error_code, "url": url},
+                        detail={"http_status": 400, "error_code": safe_code, "url": url},
                     )
                 raise SourceUnavailableError(
                     "SODA rejected the request (HTTP 400, not the schema-drift signature)",
                     correlation_id=correlation_id,
-                    detail={"http_status": 400, "error_code": error_code, "url": url},
+                    detail={"http_status": 400, "error_code": safe_code, "url": url},
                 )
             elif 500 <= response.status < 600:
                 last_kind = "server_error"
@@ -553,7 +615,10 @@ def fetch_by_bbl(
 
     try:
         records = json.loads(response.body)
-    except (json.JSONDecodeError, ValueError) as exc:
+    except (json.JSONDecodeError, ValueError, RecursionError) as exc:
+        # G5 F2: RecursionError (hostile deeply nested JSON) must surface as
+        # the same typed error as any other unparseable body - never a raw
+        # stack escaping the typed-error contract.
         raise SourceUnavailableError(
             "SODA returned HTTP 200 with a body that is not valid JSON",
             correlation_id=correlation_id,
