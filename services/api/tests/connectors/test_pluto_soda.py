@@ -11,9 +11,13 @@ fixture record inside the test body. Synthetic variants exercise connector
 logic only and are never presented as official data.
 """
 
+import io
 import json
 import logging
 import re
+import socket
+import urllib.error
+import urllib.request
 from datetime import UTC, datetime
 from pathlib import Path
 
@@ -22,6 +26,7 @@ import pytest
 from app.connectors import pluto_soda
 from app.connectors.bbl import BBLValidationError
 from app.connectors.pluto_soda import (
+    BASE_URL,
     DATASET_ID,
     PLUTO_COLUMN_TYPES,
     PLUTO_COLUMNS,
@@ -39,6 +44,7 @@ from app.connectors.pluto_soda import (
     build_page_url,
     check_columns_for_drift,
     fetch_by_bbl,
+    urllib_transport,
 )
 
 REPO_ROOT = Path(__file__).resolve().parents[4]
@@ -642,6 +648,210 @@ def test_every_fixture_embeds_url_timestamp_and_capture_method() -> None:
                 r"^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z$",
                 fixture["retrieval_timestamp_utc"],
             ), path.name
+
+
+# --------------------------------------------------------------------------
+# Fixup pass 2026-07-16: G3 D1/D2/D3, G1 C1, G3 F5
+# --------------------------------------------------------------------------
+
+
+def test_d1_unparseable_record_bbl_is_schema_drift_not_validation_error() -> None:
+    # SYNTHETIC variant (G3 D1): the record's OWN bbl cannot parse. That is
+    # source-shape drift; validation_error is reserved for caller input
+    # rejected before any network call.
+    fixture = load_fixture("F01_single_lot_normal.json")
+    record = json.loads(fixture["response_body_raw"])[0]
+    record["bbl"] = "0000000000.00000000"
+    transport = FakeTransport([TransportResponse(200, json.dumps([record]))])
+    with pytest.raises(SchemaDriftError) as excinfo:
+        fetch_by_bbl(
+            "1000010100", transport=transport, sleep=SleepRecorder(), clock=FIXED_CLOCK
+        )
+    assert not isinstance(excinfo.value, BBLValidationError)
+    payload = excinfo.value.to_payload()
+    assert payload["error_type"] == "schema_drift"
+    assert payload["detail"]["validation_code"] == "invalid_borough"
+    assert payload["detail"]["record_bbl_raw"] == repr("0000000000.00000000")
+    assert len(transport.calls) == 1  # drift is never retried
+
+
+@pytest.mark.parametrize("bad_value", ["NaN", "Infinity", "-Infinity"])
+def test_d2_non_finite_number_is_drift_signal_with_raw_preserved(bad_value) -> None:
+    # SYNTHETIC variant (G3 D2): float() accepts "NaN"/"Infinity" but they are
+    # not usable numeric facts and break RFC-8259 JSON serialization.
+    fixture = load_fixture("F01_single_lot_normal.json")
+    record = json.loads(fixture["response_body_raw"])[0]
+    record["lotarea"] = bad_value
+    transport = FakeTransport([TransportResponse(200, json.dumps([record]))])
+    result = fetch_by_bbl(
+        "1000010100", transport=transport, sleep=SleepRecorder(), clock=FIXED_CLOCK
+    )
+    assert "non_finite_number_value:lotarea" in result.drift_signals
+    lotarea = next(f for f in result.facts if f["original_field_name"] == "lotarea")
+    assert lotarea["original_value"] == bad_value  # verbatim raw preserved
+    assert lotarea["normalized_value"] == bad_value  # string passthrough...
+    assert isinstance(lotarea["normalized_value"], str)  # ...never float nan/inf
+    json.dumps(result.facts, allow_nan=False)  # RFC-8259-clean serialization
+
+
+def test_d3_retrieved_at_stamped_after_successful_response() -> None:
+    # G3 D3: the provenance timestamp must reflect the actual retrieval
+    # moment, not a pre-request stamp that retries could skew by ~30s.
+    events: list[str] = []
+    tick = {"n": 0}
+
+    def stepping_clock() -> datetime:
+        tick["n"] += 1
+        events.append("clock")
+        return datetime(2026, 7, 16, 12, 0, tick["n"], tzinfo=UTC)
+
+    inner = FakeTransport(
+        [TransportResponse(503, "unavailable"),
+         fixture_response("F01_single_lot_normal.json")]
+    )
+
+    def transport(url: str, headers: dict, timeout: float) -> TransportResponse:
+        events.append("request")
+        return inner(url, headers, timeout)
+
+    result = fetch_by_bbl(
+        "1000010100", transport=transport, sleep=SleepRecorder(), clock=stepping_clock
+    )
+    # The clock fires exactly once, AFTER the last (successful) attempt.
+    assert events == ["request", "request", "clock"]
+    assert result.retrieved_at == "2026-07-16T12:00:01Z"
+    assert all(f["retrieved_at"] == result.retrieved_at for f in result.facts)
+
+
+def test_c1_yearbuilt_zero_is_unknown_not_confident_zero() -> None:
+    # The REAL F01 record carries yearbuilt "0"; dictionary p.34-35: 0/null
+    # means the year built is UNKNOWN (G1 C1).
+    result, _ = fetch_fixture("F01_single_lot_normal.json", "1000010100")
+    yearbuilt = next(f for f in result.facts if f["original_field_name"] == "yearbuilt")
+    assert yearbuilt["original_value"] == "0"  # verbatim raw preserved
+    assert yearbuilt["normalized_value"] is None  # unknown, never year 0
+    assert any(note.startswith("yearbuilt_unknown") for note in result.notes)
+
+
+def test_c1_yearbuilt_absent_is_flagged_unknown() -> None:
+    # SYNTHETIC variant: yearbuilt omitted entirely (SODA null-omission).
+    fixture = load_fixture("F01_single_lot_normal.json")
+    record = json.loads(fixture["response_body_raw"])[0]
+    del record["yearbuilt"]
+    transport = FakeTransport([TransportResponse(200, json.dumps([record]))])
+    result = fetch_by_bbl(
+        "1000010100", transport=transport, sleep=SleepRecorder(), clock=FIXED_CLOCK
+    )
+    assert any(note.startswith("yearbuilt_unknown") for note in result.notes)
+    assert "yearbuilt" in result.absent_columns
+    assert not any(f["original_field_name"] == "yearbuilt" for f in result.facts)
+
+
+def test_c1_real_construction_year_stays_a_normal_numeric_fact() -> None:
+    # SYNTHETIC variant: a genuine construction year is untouched and no
+    # unknown note fires.
+    fixture = load_fixture("F01_single_lot_normal.json")
+    record = json.loads(fixture["response_body_raw"])[0]
+    record["yearbuilt"] = "1970"
+    transport = FakeTransport([TransportResponse(200, json.dumps([record]))])
+    result = fetch_by_bbl(
+        "1000010100", transport=transport, sleep=SleepRecorder(), clock=FIXED_CLOCK
+    )
+    yearbuilt = next(f for f in result.facts if f["original_field_name"] == "yearbuilt")
+    assert yearbuilt["normalized_value"] == 1970
+    assert not any(note.startswith("yearbuilt_unknown") for note in result.notes)
+
+
+class _FakeUrlopenResponse:
+    """Minimal stand-in for the http.client.HTTPResponse context manager."""
+
+    def __init__(self, status: int, body: bytes):
+        self.status = status
+        self._body = body
+
+    def read(self) -> bytes:
+        return self._body
+
+    def __enter__(self) -> "_FakeUrlopenResponse":
+        return self
+
+    def __exit__(self, *exc_info) -> bool:
+        return False
+
+
+def test_urllib_transport_success_returns_status_and_decoded_body(monkeypatch) -> None:
+    captured: dict = {}
+
+    def fake_urlopen(request, timeout=None):
+        captured["url"] = request.full_url
+        captured["timeout"] = timeout
+        captured["accept"] = request.get_header("Accept")
+        return _FakeUrlopenResponse(200, b'[{"version": "26v1"}]')
+
+    monkeypatch.setattr(urllib.request, "urlopen", fake_urlopen)
+    response = urllib_transport(
+        f"{BASE_URL}?bbl=1000010100", {"Accept": "application/json"}, 10.0
+    )
+    assert response == TransportResponse(200, '[{"version": "26v1"}]')
+    assert captured["url"] == f"{BASE_URL}?bbl=1000010100"
+    assert captured["timeout"] == 10.0
+    assert captured["accept"] == "application/json"
+
+
+def test_urllib_transport_http_error_body_passes_through_as_response(monkeypatch) -> None:
+    # G3 F5: HTTPError must NOT propagate - its status/body become a normal
+    # TransportResponse so the caller can classify 400/429/5xx itself.
+    body = b'{"errorCode": "query.soql.no-such-column"}'
+
+    def fake_urlopen(request, timeout=None):
+        raise urllib.error.HTTPError(
+            request.full_url, 400, "Bad Request", None, io.BytesIO(body)
+        )
+
+    monkeypatch.setattr(urllib.request, "urlopen", fake_urlopen)
+    response = urllib_transport(BASE_URL, {}, 10.0)
+    assert response.status == 400
+    assert json.loads(response.body)["errorCode"] == "query.soql.no-such-column"
+
+
+def test_urllib_transport_timeout_error_maps_to_transport_timeout(monkeypatch) -> None:
+    def fake_urlopen(request, timeout=None):
+        raise TimeoutError("timed out")
+
+    monkeypatch.setattr(urllib.request, "urlopen", fake_urlopen)
+    with pytest.raises(TransportTimeout) as excinfo:
+        urllib_transport(BASE_URL, {}, 2.5)
+    assert "2.5" in str(excinfo.value)
+
+
+def test_urllib_transport_urlerror_timeout_reason_maps_to_transport_timeout(
+    monkeypatch,
+) -> None:
+    def fake_urlopen(request, timeout=None):
+        raise urllib.error.URLError(TimeoutError("timed out"))
+
+    monkeypatch.setattr(urllib.request, "urlopen", fake_urlopen)
+    with pytest.raises(TransportTimeout):
+        urllib_transport(BASE_URL, {}, 2.5)
+
+
+@pytest.mark.parametrize(
+    "reason",
+    [ConnectionRefusedError("refused"), socket.gaierror(11001, "getaddrinfo failed")],
+    ids=["connection_refused", "dns_gaierror"],
+)
+def test_urllib_transport_urlerror_network_reason_maps_to_transport_failure(
+    monkeypatch, reason
+) -> None:
+    def fake_urlopen(request, timeout=None):
+        raise urllib.error.URLError(reason)
+
+    monkeypatch.setattr(urllib.request, "urlopen", fake_urlopen)
+    with pytest.raises(TransportFailure) as excinfo:
+        urllib_transport(BASE_URL, {}, 10.0)
+    # Message carries only the failure type name - no URL, no reason detail
+    # that could embed secrets.
+    assert str(excinfo.value) == f"network failure: {type(reason).__name__}"
 
 
 def test_connector_error_hierarchy_and_taxonomy() -> None:

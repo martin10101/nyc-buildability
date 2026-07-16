@@ -36,6 +36,7 @@ from __future__ import annotations
 
 import json
 import logging
+import math
 import os
 import re
 import time
@@ -459,6 +460,13 @@ def _normalize_value(column: str, raw: object, drift_signals: list[str]) -> obje
         else:
             drift_signals.append(f"unexpected_number_value:{column}")
             return raw
+        if not math.isfinite(number):
+            # G3 D2: "NaN"/"Infinity" strings parse via float() but are not
+            # usable numeric facts (json.dumps would emit non-RFC-8259 output
+            # that strict downstream parsers reject). Surface as drift and
+            # preserve the verbatim raw value - never guessed.
+            drift_signals.append(f"non_finite_number_value:{column}")
+            return raw
         return int(number) if number.is_integer() else number
     if column_type == "calendar_date":
         if isinstance(raw, str) and re.match(r"^\d{4}-\d{2}-\d{2}", raw):
@@ -523,7 +531,6 @@ def fetch_by_bbl(
         app_token = os.environ.get(APP_TOKEN_ENV_VAR) or None
 
     url = f"{BASE_URL}?bbl={normalized.canonical}"
-    retrieved_at = _rfc3339(clock())
     logger.info(
         "pluto_soda fetch_by_bbl bbl=%s url=%s correlation_id=%s token_configured=%s",
         normalized.canonical, url, correlation_id, bool(app_token),
@@ -539,6 +546,10 @@ def fetch_by_bbl(
         sleep=sleep,
         correlation_id=correlation_id,
     )
+    # G3 D3: stamp retrieved_at AFTER the successful response so the
+    # provenance timestamp reflects the actual retrieval moment (a
+    # pre-request stamp could precede retrieval by ~30s across retries).
+    retrieved_at = _rfc3339(clock())
 
     try:
         records = json.loads(response.body)
@@ -611,7 +622,26 @@ def fetch_by_bbl(
             detail={"url": url, "version_raw": repr(version_raw)},
         )
 
-    record_bbl = normalize_bbl(record["bbl"]).canonical if "bbl" in record else None
+    record_bbl: str | None = None
+    if "bbl" in record:
+        try:
+            record_bbl = normalize_bbl(record["bbl"]).canonical
+        except BBLValidationError as exc:
+            # G3 D1: an unparseable record-level bbl is SOURCE-SHAPE drift.
+            # validation_error is reserved for caller input rejected BEFORE
+            # any network call; corrupted/drifted source data must surface on
+            # the schema-drift signal path instead.
+            raise SchemaDriftError(
+                "record-level bbl value cannot be parsed as a canonical BBL; "
+                "classifying as schema drift (source record shape), not a "
+                "caller validation error",
+                correlation_id=correlation_id,
+                detail={
+                    "url": url,
+                    "record_bbl_raw": repr(record["bbl"]),
+                    "validation_code": exc.code,
+                },
+            ) from exc
     if record_bbl != normalized.canonical:
         raise SchemaDriftError(
             "record BBL does not match the exact-match query BBL",
@@ -644,10 +674,30 @@ def fetch_by_bbl(
             "26v1 data dictionary p.28 the number of floors is NOT AVAILABLE for "
             "this tax lot (unknown, never zero, never fabricated)."
         )
+    if "yearbuilt" not in record or _parse_positive_number(record.get("yearbuilt")) == 0:
+        # G1 C1 (mirrors the numfloors pattern): dictionary p.34-35 - a
+        # YearBuilt of 0 (or null) means the year built is UNKNOWN. Never
+        # assert 0 as a confident construction year.
+        notes.append(
+            "yearbuilt_unknown: YearBuilt is 0 or absent; per the 26v1 data "
+            "dictionary p.34-35 a 0/null YearBuilt means the year built is "
+            "UNKNOWN for this tax lot (never the year 0, never fabricated)."
+        )
 
     facts: list[dict] = []
     for column in sorted(record_keys & PLUTO_COLUMNS):
         raw_value = record[column]
+        normalized_value = _normalize_value(column, raw_value, drift_signals)
+        if (
+            column == "yearbuilt"
+            and not isinstance(normalized_value, bool)
+            and normalized_value == 0
+        ):
+            # G1 C1: dictionary p.34-35 - YearBuilt 0 means UNKNOWN. The raw
+            # "0" stays verbatim in original_value; the normalized value is
+            # explicitly None (unknown), paired with the yearbuilt_unknown
+            # note above - never a confident year 0.
+            normalized_value = None
         fact = {
             # Deterministic key: same dataset version + BBL + field => same id
             # (idempotency, scenario S6).
@@ -655,7 +705,7 @@ def fetch_by_bbl(
             "source_id": SOURCE_ID,
             "original_field_name": column,
             "original_value": raw_value,
-            "normalized_value": _normalize_value(column, raw_value, drift_signals),
+            "normalized_value": normalized_value,
             "units": FIELD_UNITS.get(column),
             "retrieved_at": retrieved_at,
             "dataset_version": version_raw,

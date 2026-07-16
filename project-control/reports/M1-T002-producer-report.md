@@ -60,7 +60,7 @@ Every fixture embeds `request_url`, `retrieval_timestamp_utc`, `capture_method`,
 | F6b | `…?$order=bbl&$limit=5&$offset=5` | 20:27:48Z | 200 | 6918 |
 | F10 | `…?$where=borocode=1 and zipcode=10463&$limit=1&$order=bbl` | 20:27:59Z | 200 | 1403 |
 | F14 | `…/resource/qt5r-nqxp.json?$limit=1` | 20:28:03Z | 200 | 131 |
-| F8 | `…/api/views/64uk-42ks.json` | 20:28:07Z | 200 | 202647 |
+| F8 | `…/api/views/64uk-42ks.json` | 20:28:07Z | 200 | stored `response_body_raw` = 202598 chars = 202647 UTF-8 bytes (49 multibyte chars account for the char/byte difference; fixture file on disk 228576 bytes incl. provenance envelope — corrected per G1 C4) |
 | F3b | `…?bbl=5999999999` | 20:31:11Z | 200 | 3 |
 | F13b | `…?$where=splitzone='Y'&$limit=1` | 20:31:15Z | 400 | 5709 |
 | F1v | `…?$select=bbl,basempdate,…,zoningdate&bbl=1000010100` | 20:31:36Z | 200 | 32 |
@@ -75,7 +75,7 @@ All producer commands run from `services/api/` in the worktree; Python 3.11.9, p
 
 | Scenario | Tests | Expected | Actual |
 |---|---|---|---|
-| S1 normal | `test_s1_normal_fetch_returns_one_canonical_record`, `test_s1_every_fact_validates_against_source_fact_v1`, `test_s1_provenance_fields_on_a_concrete_fact` | one canonical record; every fact validates against source_fact v1 with full provenance | PASS — 66 facts from F1; jsonschema Draft2020-12 + referencing registry; provenance fields asserted value-by-value |
+| S1 normal | `test_s1_normal_fetch_returns_one_canonical_record`, `test_s1_every_fact_validates_against_source_fact_v1`, `test_s1_provenance_fields_on_a_concrete_fact` | one canonical record; every fact validates against source_fact v1 with full provenance | PASS — 67 facts from F1 (67 record keys; corrected per G1 C2/G3 D4, previously misstated as 66); jsonschema Draft2020-12 + referencing registry; provenance fields asserted value-by-value |
 | S2 boundary | `test_normalize_socrata_decimal_serialization_f12`, `test_bbl_from_components_bounds` (borough 1/5, block 1/99999, lot 1/9999), `test_s2a_record_bbl_decimal_serialization_normalized_with_raw_preserved`, `test_s2c_condo_billing_lot_returns_complex_record`, `test_s2c_condo_unit_lot_is_no_match_with_condo_explanation` | F12 normalization with raw preserved; padded assembly; condo billing found / unit no_match with explanation | PASS |
 | S3 missing/null | `test_s3a_valid_nonexistent_bbl_is_explicit_no_match_not_error` (F3b), `test_s3a_packet_bbl_9999999999_is_rejected_before_any_network_call` (see §3), `test_s3b_null_field_omission_yields_absent_columns_never_fabrication`, `test_s3b_f04_fixture_record_keys_are_subset_of_inventory`, `test_s3c_numfloors_absent_with_buildings_is_flagged_not_available` (real F4 record) | no_match not error; omitted keys = absent/unknown never fabricated; NumFloors "not available" per dictionary p.28 | PASS |
 | S4 ambiguous/conflicting | 18-case parametrized `test_malformed_inputs_rejected_with_typed_codes` + `test_s4a_malformed_bbl_rejected_typed_with_no_network_call` (zero transport calls) + `test_s4b_identifier_conflict_flagged_never_silently_resolved` + bbl.py consistency tests | typed errors naming the defect, no network; conflicts flagged at provenance level, both values visible | PASS |
@@ -152,3 +152,37 @@ $ git status --short   (worktree root)
 4. Human action: create a production Socrata app token (optional but recommended; record in HUMAN_ACTIONS_REQUIRED.md).
 
 **Report path:** `project-control/reports/M1-T002-producer-report.md`
+
+---
+
+## 11. Fixup pass 2026-07-16 (post-G1/G3 review fixes; producer: backend-engineer)
+
+Scope: apply the exact G3 D1–D3/F5 and G1 C1–C2/C4 corrections. No redesign; connector + tests + this report only. All edits inside `services/api/app/connectors/pluto_soda.py`, `services/api/tests/connectors/test_pluto_soda.py`, and this report.
+
+| Fix | Change | Test |
+|---|---|---|
+| G3 D1 (Medium) | `pluto_soda.py` record-BBL check (`fetch_by_bbl`): `normalize_bbl(record["bbl"])` now wrapped in `try/except BBLValidationError` → raises `SchemaDriftError` (`error_type=schema_drift`) with `detail.record_bbl_raw` + `detail.validation_code`. An unparseable record-level bbl is source-shape drift, never a caller `validation_error`. | `test_d1_unparseable_record_bbl_is_schema_drift_not_validation_error` (F01 replay, bbl mutated to `"0000000000.00000000"`; asserts schema_drift, not BBLValidationError, single call) |
+| G3 D2 (Low) | `_normalize_value` number path: added `math.isfinite` guard. Non-finite parses (`"NaN"`, `"Infinity"`, `"-Infinity"`) emit `drift_signals` entry `non_finite_number_value:<column>` and pass the verbatim raw value through (no float nan/inf normalized fact; `json.dumps(..., allow_nan=False)` verified clean). | `test_d2_non_finite_number_is_drift_signal_with_raw_preserved` (parametrized: NaN, Infinity, -Infinity) |
+| G3 D3 (Low) | `retrieved_at` is now stamped AFTER `_request_with_retry` returns the successful response (was: before the request; retry skew up to ~31.5 s). Fixed-clock pattern preserved; no existing test pinned the old ordering. | `test_d3_retrieved_at_stamped_after_successful_response` (stepping clock + event ordering: `["request", "request", "clock"]` across a 503 retry; result and all facts carry the post-response stamp) |
+| G1 C1 (minor) | `yearbuilt` semantics per dictionary p.34-35 (0/null = unknown), mirroring the `numfloors_not_available` pattern: when `yearbuilt` is 0 or absent, a `yearbuilt_unknown` note is appended and the fact (when present) keeps `original_value` verbatim (`"0"`) with `normalized_value: null` — never a confident normalized 0. Genuine years are unaffected. | `test_c1_yearbuilt_zero_is_unknown_not_confident_zero` (real F01 record), `test_c1_yearbuilt_absent_is_flagged_unknown`, `test_c1_real_construction_year_stays_a_normal_numeric_fact` |
+| G3 F5 (test gap) | Offline unit tests for `urllib_transport` error translation via monkeypatched `urllib.request.urlopen`: success status/body/timeout/header pass-through; `HTTPError` body → `TransportResponse` (never propagates); `TimeoutError` → `TransportTimeout`; `URLError(TimeoutError)` → `TransportTimeout`; `URLError(ConnectionRefusedError/gaierror)` → `TransportFailure` with type-name-only message (no URL/secret leakage). | `test_urllib_transport_success_returns_status_and_decoded_body`, `test_urllib_transport_http_error_body_passes_through_as_response`, `test_urllib_transport_timeout_error_maps_to_transport_timeout`, `test_urllib_transport_urlerror_timeout_reason_maps_to_transport_timeout`, `test_urllib_transport_urlerror_network_reason_maps_to_transport_failure[connection_refused/dns_gaierror]` |
+| G1 C2 / G3 D4 | §5 S1 row corrected: 67 facts from F1 (was misstated 66). | n/a (report text; 67 already asserted implicitly by fixture key count) |
+| G1 C4 | §4 F8 capture row corrected: stored `response_body_raw` = 202598 chars = 202647 UTF-8 bytes (multibyte accounting), fixture file 228576 bytes on disk. | n/a (report text) |
+
+### Fixup commands and exact outputs
+
+```
+$ cd services/api && python -m pytest tests -q
+........................................................................ [ 71%]
+.............................                                            [100%]
+101 passed in 1.36s      # was 87; +14 fixup tests (2 health + 38 bbl + 61 pluto)
+
+$ python -m pytest tests/connectors/test_pluto_soda.py -q
+.............................................................            [100%]
+61 passed in 0.24s       # was 47
+
+$ python -m ruff check app/connectors tests/connectors
+All checks passed!
+```
+
+No fixtures, contracts, or pyproject touched in this pass. Status requested remains `awaiting_gate` (G5/merge per orchestrator); this producer does not accept its own work.
