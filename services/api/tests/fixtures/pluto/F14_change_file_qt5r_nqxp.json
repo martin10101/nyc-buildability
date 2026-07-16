@@ -1,0 +1,11 @@
+{
+  "fixture_id": "F14",
+  "title": "F14 PLUTO Change File companion dataset qt5r-nqxp single record",
+  "dataset_id": "qt5r-nqxp",
+  "request_url": "https://data.cityofnewyork.us/resource/qt5r-nqxp.json?$limit=1",
+  "http_status": 200,
+  "retrieval_timestamp_utc": "2026-07-16T20:28:03Z",
+  "capture_method": "live curl GET by M1-T002 producer, tokenless, single KB-scale request (polite shared-pool use)",
+  "notes": "Change-file record shape: bbl, field, old_value, new_value, type, reason, version. Companion channel verified at M1-T001 G1 (C6).",
+  "response_body_raw": "[{\"bbl\":\"1000010301\",\"field\":\"lotarea\",\"old_value\":\"0\",\"new_value\":\"241719\",\"type\":\"1\",\"reason\":\"Zero lot area\",\"version\":\"26v1\"}]\n"
+}

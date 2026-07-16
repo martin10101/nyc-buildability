@@ -1,0 +1,12 @@
+{
+  "fixture_id": "F7",
+  "title": "F7 HTTP 429 throttle response (synthetic-from-official-doc)",
+  "dataset_id": "64uk-42ks",
+  "request_url": "https://data.cityofnewyork.us/resource/64uk-42ks.json?bbl=1000010100",
+  "http_status": 429,
+  "retrieval_timestamp_utc": null,
+  "capture_method": "synthetic-from-official-doc",
+  "source_doc": "https://dev.socrata.com/docs/app-tokens (retrieved 2026-07-16 at M1-T001; re-verified at G1)",
+  "notes": "NOT a live capture: deliberately constructed instead of bursting the shared tokenless IP pool (task risk register). The official Socrata app-tokens doc documents ONLY the HTTP 429 status for throttled requests; no body shape is documented, so the body here is empty and the connector MUST classify rate limiting on the status code alone, never on the body.",
+  "response_body_raw": ""
+}
