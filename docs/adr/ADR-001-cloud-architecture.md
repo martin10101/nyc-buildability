@@ -1,6 +1,6 @@
 # ADR-001: Cloud Architecture — Supabase + Render + GitHub, Modular Monorepo, One FastAPI Service
 
-- **Status:** Proposed (pending G3 gate review)
+- **Status:** Accepted (M0-T006 G3 PASS after rework, accepted 2026-07-15; status header corrected 2026-07-16 per M0-T011 G3 defect 6)
 - **Date:** 2026-07-14 (amended 2026-07-16 per ADR-004: frontend moved from Vercel to a Render web service — owner decision 2026-07-14; title updated from "Supabase + Render + Vercel + GitHub"; service-role wording tightened per M0-T006 G3 residual)
 - **Producer:** cloud-architect (task M0-T006; ADR-004 amendments by task M0-T011)
 - **Deciders:** Human project owner (final), per PRD section 14.1 which mandates the providers (frontend-host deviation owner-approved in ADR-004)

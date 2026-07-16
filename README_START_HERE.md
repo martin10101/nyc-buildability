@@ -5,7 +5,7 @@ This repository pack is an operating system for Claude Code to build the complet
 ## Included
 
 - Full citywide product PRD
-- Supabase + Render + Vercel + GitHub architecture
+- Supabase + Render + GitHub architecture (frontend on Render per ADR-004; Vercel dropped 2026-07-14)
 - Crisp four-stage analyst flow and deterministic analysis state machine
 - Project subagents with isolated responsibilities
 - Skills for task control, checkpoints, source verification, independent gates, human walkthroughs, status, and replanning
@@ -25,7 +25,7 @@ Preferred working model:
 - Builds/tests in GitHub Actions
 - Persistent data and files in Supabase
 - Processing and workers on Render
-- Frontend deployments on Vercel
+- Frontend deployments on Render (nycdf-web web service, ADR-004)
 
 Do not install Docker Desktop, local Supabase/PostgreSQL, citywide NYC datasets, or large package/build caches on the owner’s PC. Read `docs/LOW_STORAGE_CLOUD_DEVELOPMENT_POLICY.md` before bootstrapping.
 
@@ -52,8 +52,7 @@ python tools/project_control.py status
 ## Cloud services
 
 - Supabase: Postgres/PostGIS/Auth/Storage/pgvector
-- Render: FastAPI Web Service, background workers, cron jobs, one-off processing
-- Vercel: Next.js frontend
+- Render: FastAPI Web Service, background workers, cron jobs, one-off processing, Next.js frontend (ADR-004)
 - GitHub: source control and CI
 
 ## Important completion rule

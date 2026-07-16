@@ -1,6 +1,6 @@
 # ADR-002: Environment Separation — dev / staging / prod
 
-- **Status:** Proposed (pending G3 gate review)
+- **Status:** Accepted (M0-T006 G3 PASS after rework, accepted 2026-07-15; status header corrected 2026-07-16 per M0-T011 G3 defect 6)
 - **Date:** 2026-07-14 (amended 2026-07-15: deploy-trigger model reworked per owner directive; G3 defects 2-5. Amended 2026-07-16 per ADR-004: frontend moved from Vercel to a Render web service `nycdf-web` — owner decision 2026-07-14; all Vercel mappings replaced below)
 - **Producer:** cloud-architect (task M0-T006; ADR-004 amendments by task M0-T011)
 - **Deciders:** Human project owner (final)

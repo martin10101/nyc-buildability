@@ -1,6 +1,6 @@
 ---
 name: cloud-architect
-description: Designs and reviews Supabase, Render, Vercel, GitHub, service boundaries, tenancy, queues, deployment, observability, and architectural decisions.
+description: Designs and reviews Supabase, Render, GitHub, service boundaries, tenancy, queues, deployment, observability, and architectural decisions.
 tools: Read, Write, Edit, Bash, Grep, Glob, Skill
 model: inherit
 permissionMode: default

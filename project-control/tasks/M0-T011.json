@@ -81,8 +81,8 @@
   "reviewer_agents": [
     "code-reviewer"
   ],
-  "status": "awaiting_gate",
-  "progress_percent": 85,
+  "status": "accepted",
+  "progress_percent": 100,
   "risks": [
     "PRD explicitly names Vercel; ADR must record this as a deliberate owner-approved deviation, not silently diverge",
     "Preview environments are Pro-plan-gated on Render: choosing them has a real billing implication that needs owner visibility before purchase (no purchase in this task)",
@@ -90,7 +90,7 @@
   ],
   "blockers": [],
   "created_at": "2026-07-14T21:55:11.934281+00:00",
-  "updated_at": "2026-07-16T20:59:37.139626+00:00",
+  "updated_at": "2026-07-16T21:07:05.680262+00:00",
   "worktree": "main-checkout-docs-only",
   "progress_log": [
     {
@@ -99,5 +99,7 @@
       "percent": 85,
       "message": "Producer done; YAML re-validated by orchestrator (4 services, all autoDeployTrigger quoted off); committed; G3 dispatched"
     }
-  ]
+  ],
+  "accepted_by": "orchestrator",
+  "accepted_at": "2026-07-16T21:07:05.680262+00:00"
 }

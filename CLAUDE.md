@@ -20,7 +20,7 @@ Before any planning or code change, read:
 2. Every material fact, rule, formula, scenario, and report value must retain provenance.
 3. Never guess API schemas, dataset fields, units, legal rules, effective dates, or source meanings.
 4. Official sources are primary. Conflicts and stale data must be visible.
-5. Persistent production data is cloud-based: Supabase for Postgres/PostGIS/Auth/Storage/pgvector; Render for FastAPI, workers, cron jobs, and long-running processing; Vercel for the Next.js frontend; GitHub for code and CI.
+5. Persistent production data is cloud-based: Supabase for Postgres/PostGIS/Auth/Storage/pgvector; Render for FastAPI, workers, cron jobs, long-running processing, and the Next.js frontend (ADR-004, owner decision 2026-07-14 — Vercel dropped); GitHub for code and CI.
 6. The backend state machine controls workflow. AI may not skip states or declare compliance.
 7. A worker agent cannot mark its own task complete. It may only submit evidence for an independent gate.
 8. Every task must create executable acceptance examples before or alongside implementation.

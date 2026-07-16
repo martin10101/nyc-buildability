@@ -1,7 +1,9 @@
 {
   "blocker_id": "B-003",
   "title": "Vercel not connected (frontend deployment)",
-  "status": "open",
+  "status": "closed",
+  "closed_at": "2026-07-16T21:30:00Z",
+  "closure_reason": "Superseded by ADR-004 (M0-T011 accepted 2026-07-16, G3 PASS): the Next.js frontend is served from the Render web service nycdf-web; no Vercel account, token, or integration will be created. Owner decision 2026-07-14.",
   "affects": ["Next.js frontend deployment and previews (PRD 14.1)"],
   "detail": "No Vercel CLI/token configured. Frontend code can be built and CI-tested in GitHub Actions without it; only deployment is blocked.",
   "exact_human_action": "Create/confirm a Vercel account at https://vercel.com, create a token at Account Settings -> Tokens, and provide it as VERCEL_TOKEN in the harness secret store. Alternatively connect the GitHub repo martin10101/nyc-buildability to Vercel via the Vercel dashboard Git integration (no token needed in that path).",

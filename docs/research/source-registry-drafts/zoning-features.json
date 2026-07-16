@@ -74,18 +74,18 @@
       "notes": "Socrata platform throttling (X-App-Token model verified in M1-T001, E7); single ~3.15 MB zip per release",
       "throttle_signal": "HTTP 429"
     },
-    "update_frequency": "Stated Monthly (Socrata custom fields: Update Frequency Monthly, Data Change Frequency Monthly, Automation Yes; Z6). WHETHER THE BLOB ACTUALLY UPDATES MONTHLY IS UNCONFIRMED: description says 'Current version: 202604' while ArcGIS layers were edited 2026-07-01; blobby timestamps frozen at 2013-01-29 (raw 1359482950) — see OQ-4.",
+    "update_frequency": "Stated Monthly (Socrata custom fields: Update Frequency Monthly, Data Change Frequency Monthly, Automation Yes; Z6). WHETHER THE BLOB ACTUALLY UPDATES MONTHLY IS UNCONFIRMED: description says 'Current version: 202604' while ArcGIS layers were edited 2026-07-01; blobby ROW timestamps frozen at 2013-01-29 (raw 1359482950). G1 C2 (G3 D1 fixup): viewLastModified = 1779809507 = 2026-05-26T15:31:47Z is LIVE and moving — the primary blob-change polling signal; it implies the blob likely updated ~2026-05-26 while the description string lags — see OQ-4.",
     "geographic_coverage": "Citywide; six feature classes in one FileGDB (description verbatim, Z6): zoning districts, special purpose districts, special purpose district subdistricts, limited height districts, commercial overlay districts, zoning map amendments.",
     "fields_available": {
       "note": "Same six layer schemas as the ArcGIS record (nyzd/nyco/nysp/nysp_sd/nylh/nyzma); internal FileGDB schema inspection at first import. Official per-layer metadata PDFs attached on the dataset with assetIds: nyzd_metadata.pdf ee770e89-09d9-4b47-b0e1-8f543da5dbff; nyco_metadata.pdf f1459cd0-eb93-4085-9bf7-e7198765637e; nysp_metadata.pdf f11a7a91-0dbc-4e39-9c46-6366a4c216ab; nysp_sd_metadata.pdf 0ff3fd30-3fee-400f-920d-03435b7b55e0; nylh_metadata.pdf f83f6f43-7538-46d2-871e-c9b6ed82f13b; nyzma_metadata.pdf 8d4c40d4-6990-417b-8724-7925ffa9a7b1 (Z6). Same PDFs on s-media.nyc.gov (nyzd verified by direct read, Z11)."
     },
     "terms_usage_notes": "DCP informational-purposes-only disclaimer; previous versions archived on BYTES of the BIG APPLE (description verbatim links https://www.nyc.gov/content/planning/pages/resources/datasets/gis-zoning-features; 403 to non-browser clients).",
-    "connector_implementation": "PLAN ONLY: snapshot channel — on version-string change (or per monthly schedule once OQ-4 resolved), Render worker downloads the ~3.15 MB zip, stores it in Supabase Storage gis-imports keyed by YYYYMM for reproducibility; optional import fallback if ArcGIS unavailable.",
+    "connector_implementation": "PLAN ONLY: snapshot channel — poll viewLastModified (primary signal, G1 C2) plus the description version string; on change, Render worker downloads the ~3.15 MB zip, stores it in Supabase Storage gis-imports keyed by YYYYMM for reproducibility; optional import fallback if ArcGIS unavailable.",
     "last_successful_ingestion": null,
     "latest_source_version": "202604 per the description string 'Current version: 202604' (fetched live 2026-07-16, Z6); data.gov harvest still 202604 at its 2026-05-26 check (Z13). ArcGIS channel is ahead (2026-07-01 edits) — cross-channel lag recorded (S4).",
     "health_status": "unverified",
     "known_limitations": [
-      "blobby dataset: createdAt/rowsUpdatedAt/publicationDate all frozen at 2013-01-29 — Socrata timestamps unusable for freshness; only signals are the description version string and blob content hash (OQ-4)",
+      "blobby dataset: createdAt/rowsUpdatedAt/publicationDate all frozen at 2013-01-29 — row timestamps unusable for freshness; viewLastModified IS live (2026-05-26T15:31:47Z observed; G1 C2) and is the primary blob-change polling signal, alongside the description version string and blob content hash (OQ-4)",
       "Description version string may itself be stale relative to the blob content — do not trust either without the OQ-4 observation",
       "No SODA/tabular access; zip download only",
       "No shapefile variant found on Socrata (OQ-2)"
@@ -94,7 +94,7 @@
     "open_questions": [
       "OQ-1: BYTES download URLs and archive listing",
       "OQ-2: shapefile variant existence/name",
-      "OQ-4: blob monthly-update behavior and reliable version-change signal",
+      "OQ-4: blob monthly-update behavior — confirm viewLastModified (primary signal, G1 C2) moves at the next monthly boundary and whether the description version string advances past 202604",
       "OQ-5: contents of the five unread layer metadata PDFs"
     ]
   }

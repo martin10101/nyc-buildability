@@ -78,8 +78,8 @@
     "data-contract-verifier",
     "code-reviewer"
   ],
-  "status": "awaiting_gate",
-  "progress_percent": 85,
+  "status": "accepted",
+  "progress_percent": 100,
   "risks": [
     "nyc.gov bot protection (403) blocked M1-T001 bulk-download page reads; expect the same and ledger it rather than guessing",
     "Multiple similarly-named zoning datasets exist on the portal; identity must be pinned by dataset ID + attribution, not by name",
@@ -87,7 +87,7 @@
   ],
   "blockers": [],
   "created_at": "2026-07-16T20:23:51.865671+00:00",
-  "updated_at": "2026-07-16T21:03:53.908572+00:00",
+  "updated_at": "2026-07-16T21:11:02.964324+00:00",
   "worktree": "main-checkout-docs-only",
   "progress_log": [
     {
@@ -96,5 +96,7 @@
       "percent": 85,
       "message": "Producer deliverables committed d5c59ac; G1 (data-contract-verifier) dispatched for live re-verification"
     }
-  ]
+  ],
+  "accepted_by": "orchestrator",
+  "accepted_at": "2026-07-16T21:11:02.964324+00:00"
 }
