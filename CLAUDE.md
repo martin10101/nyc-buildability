@@ -6,6 +6,7 @@ You are the lead engineering agent for a legally sensitive, citywide NYC develop
 Before any planning or code change, read:
 
 - @PRD.md
+- @GENERATIVE_DEVELOPMENT_STRATEGY_REQUIREMENTS.md (approved root-level product requirement, 2026-07-16 — additive to the PRD; integration plan: docs/GENERATIVE_STRATEGY_INTEGRATION_PLAN.md)
 - @docs/AGENT_OPERATING_SYSTEM.md
 - @docs/GATES_AND_CHECKPOINTS.md
 - @docs/PROJECT_CONTROL_PROTOCOL.md

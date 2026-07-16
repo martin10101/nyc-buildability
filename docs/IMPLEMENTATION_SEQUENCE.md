@@ -2,6 +2,8 @@
 
 Each milestone is delivered through controlled tasks and gates. The project proceeds directly toward the complete citywide architecture; milestones are controlled integration boundaries for the production system.
 
+> **Generative Development Strategy (added 2026-07-16, additive):** the root-level `GENERATIVE_DEVELOPMENT_STRATEGY_REQUIREMENTS.md` extends M5 (candidate grammar, deterministic evaluators, multi-objective Pareto search, strategy intelligence) and M6/M7 (precedent learning) without changing milestone order or accepted work. Phase mapping and dependency-ordered tasks: `docs/GENERATIVE_STRATEGY_INTEGRATION_PLAN.md` (Phase A contracts after the first Property screen; Phase B after M2 geometry + first M4 published rules; Phases C–E inside M5; Phase F in M6/M7).
+
 ## M0 — Engineering control plane and cloud foundation
 
 - Initialize monorepo and CI.
