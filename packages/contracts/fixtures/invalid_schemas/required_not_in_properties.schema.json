@@ -1,0 +1,11 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/martin10101/nyc-buildability/packages/contracts/fixtures/invalid_schemas/required_not_in_properties.schema.json",
+  "title": "Deliberately Broken Schema: required name not defined",
+  "description": "S5/D3 expected-failure case: 'field_b' is required but not defined in the sibling properties. Legal per the JSON Schema spec, but our contracts house rule forbids it because it usually indicates a renamed/typo'd field.",
+  "type": "object",
+  "required": ["field_b"],
+  "properties": {
+    "field_a": { "type": "string" }
+  }
+}

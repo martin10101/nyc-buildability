@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://github.com/martin10101/nyc-buildability/packages/contracts/schemas/v1/analysis_state.schema.json",
   "title": "Analysis Run State",
-  "description": "v1 DRAFT. Every analysis run has exactly one current state (PRD section 32.1). Transitions are explicit, validated, persisted, and auditable; the AI may not choose or skip workflow states.",
+  "description": "v1. Exactly the 14 workflow states of PRD section 32.1, in PRD order, no extras. Every analysis run has exactly one current state; transitions are explicit, validated, persisted, and auditable (see analysis_state_transition.schema.json); the AI may not choose or skip workflow states.",
   "type": "string",
   "enum": [
     "address_entered",

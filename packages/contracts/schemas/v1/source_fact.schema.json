@@ -1,0 +1,78 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/martin10101/nyc-buildability/packages/contracts/schemas/v1/source_fact.schema.json",
+  "title": "Source Fact (Provenance Record)",
+  "description": "v1 canonical provenance record for a single fact used by the platform. Every PRD section 9 mandatory provenance field is REQUIRED here (fix for M0-T004 G3 defect D1): source id, original field name, original value, normalized value, retrieved timestamp, dataset version, effective date (nullable but the key must be present), BBL applicability, confidence, user confirmed/overridden, conflict status. A material calculation may never be exported without a resolvable record of this shape (PRD section 19).",
+  "type": "object",
+  "required": [
+    "provenance_id",
+    "source_id",
+    "original_field_name",
+    "original_value",
+    "normalized_value",
+    "retrieved_at",
+    "dataset_version",
+    "effective_date",
+    "bbl",
+    "confidence",
+    "user_confirmed_or_overridden",
+    "conflict_status"
+  ],
+  "properties": {
+    "provenance_id": {
+      "$ref": "common.schema.json#/$defs/non_empty_string",
+      "description": "Stable identifier of this provenance record. Referenced by property-profile fact values via provenance_ref."
+    },
+    "source_id": {
+      "$ref": "common.schema.json#/$defs/non_empty_string",
+      "description": "Source-registry identifier of the official source (PRD section 8.2). Synthetic/test sources must use a clearly non-official id (e.g. prefixed 'test-')."
+    },
+    "original_field_name": {
+      "$ref": "common.schema.json#/$defs/non_empty_string",
+      "description": "Field name exactly as exposed by the source, e.g. Geoclient 'bblTaxBlock' or GeoSearch 'properties.addendum.pad.bbl' (docs/research/M0-T002-geoclient-address-resolution.md sections 2.6 and 3)."
+    },
+    "original_value": {
+      "description": "Verbatim value as returned by the source, unconverted and untrimmed (Geosupport values may intentionally retain significant whitespace, e.g. censusTract ' 187 '; research doc section 2.5). Any JSON type."
+    },
+    "normalized_value": {
+      "description": "Platform-normalized value derived deterministically from original_value. Any JSON type. Normalization code, never AI, produces this value."
+    },
+    "units": {
+      "type": ["string", "null"],
+      "description": "Units of the normalized value where applicable (PRD section 19 evidence viewer); null when unitless. Optional key."
+    },
+    "retrieved_at": {
+      "$ref": "common.schema.json#/$defs/date_time",
+      "description": "Timestamp at which the value was retrieved from the source (PRD section 9)."
+    },
+    "dataset_version": {
+      "$ref": "common.schema.json#/$defs/non_empty_string",
+      "description": "Dataset version or page/document version (PRD section 9). Examples grounded in research: Geosupport/PAD quarterly release id such as '26B' (DCP GDE page), GeoSearch 'addendum.pad.version' such as '26a' (docs/research/M0-T002-geoclient-address-resolution.md sections 3-5)."
+    },
+    "effective_date": {
+      "type": ["string", "null"],
+      "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$",
+      "description": "Effective date where the source publishes one (PRD section 9 'where available'). The key is REQUIRED and explicitly null when the source publishes none, so absence is a visible statement rather than a silent omission."
+    },
+    "bbl": {
+      "$ref": "common.schema.json#/$defs/bbl",
+      "description": "Property/BBL to which this fact applies (PRD section 9)."
+    },
+    "confidence": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 1,
+      "description": "Confidence in the normalized fact, 0-1 (e.g. GeoSearch match 'confidence': 0.8, research doc section 3; deterministic official-record retrievals use 1). PRD section 12: confidence scores must never substitute for legal-review/coverage status."
+    },
+    "user_confirmed_or_overridden": {
+      "type": "string",
+      "enum": ["none", "confirmed", "overridden"],
+      "description": "Whether the user confirmed or overrode this fact (PRD section 9). PLATFORM-DEFINED enum (not a government-source value): grounded in PRD sections 5 (confirm/correct flow) and 9; 'none' = not yet reviewed by the user."
+    },
+    "conflict_status": {
+      "type": "string",
+      "enum": ["none", "conflicting", "resolved"],
+      "description": "Conflict status of this fact across sources (PRD section 9). PLATFORM-DEFINED enum (not a government-source value): grounded in PRD sections 2/9 (conflicts must remain visible); 'resolved' requires a matching resolution entry in the property profile's conflicts list."
+    }
+  }
+}

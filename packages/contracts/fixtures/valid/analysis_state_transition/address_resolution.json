@@ -1,0 +1,9 @@
+{
+  "run_id": "run-0001",
+  "from_state": "address_entered",
+  "to_state": "address_resolved",
+  "occurred_at": "2026-07-14T12:00:05Z",
+  "actor": "system",
+  "correlation_id": "corr-0001",
+  "reason": "Geoclient /v2/search exact match"
+}

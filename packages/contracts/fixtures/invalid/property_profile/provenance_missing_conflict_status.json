@@ -1,0 +1,27 @@
+{
+  "_expected_failure": "S2/D1: the provenance record omits conflict_status (PRD s9 mandatory).",
+  "profile_version": { "contract_version": "1.0.0", "profile_revision": 1, "generated_at": "2026-07-14T12:00:00Z" },
+  "identity": { "bbl": "1000477501" },
+  "lot_facts": {},
+  "existing_building_facts": {},
+  "zoning": { "districts": [] },
+  "project_intent": { "objectives": [] },
+  "provenance": [
+    {
+      "provenance_id": "prov-bbl-0001",
+      "source_id": "nyc-geosearch-v2",
+      "original_field_name": "properties.addendum.pad.bbl",
+      "original_value": "1000477501",
+      "normalized_value": "1000477501",
+      "retrieved_at": "2026-07-14T00:00:00Z",
+      "dataset_version": "PAD 26a",
+      "effective_date": null,
+      "bbl": "1000477501",
+      "confidence": 0.8,
+      "user_confirmed_or_overridden": "none"
+    }
+  ],
+  "missing_inputs": [],
+  "conflicts": [],
+  "user_confirmations": []
+}

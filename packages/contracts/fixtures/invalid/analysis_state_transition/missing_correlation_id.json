@@ -1,0 +1,8 @@
+{
+  "_expected_failure": "correlation_id is required for structured-log traceability (PRD s25).",
+  "run_id": "run-0002",
+  "from_state": "address_entered",
+  "to_state": "address_resolved",
+  "occurred_at": "2026-07-14T12:00:05Z",
+  "actor": "system"
+}

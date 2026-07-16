@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://github.com/martin10101/nyc-buildability/packages/contracts/schemas/v1/property_profile.schema.json",
   "title": "Canonical Property Profile",
-  "description": "v1 DRAFT of the one canonical property-profile contract (PRD section 32.3). All connectors, rules, scenarios, reports, and UI views must exchange this contract; modules may not invent competing property schemas. Field-level details are finalized in task M0-T009.",
+  "description": "v1 of the one canonical property-profile contract (PRD section 32.3). All connectors, rules, scenarios, reports, and UI views must exchange this contract; modules may not invent competing property schemas. Every fact value carries a REQUIRED provenance_ref that must resolve to a provenance record in this profile (PRD sections 9 and 19; fix for M0-T004 G3 defect D1). Referential integrity of provenance_ref is enforced by .github/scripts/validate_contracts.py for fixtures and must be enforced by the backend for live data.",
   "type": "object",
   "required": [
     "profile_version",
@@ -20,11 +20,11 @@
     "profile_version": {
       "description": "Version of this profile instance (monotonic per property) plus the contract version used.",
       "type": "object",
-      "required": ["contract_version", "profile_revision"],
+      "required": ["contract_version", "profile_revision", "generated_at"],
       "properties": {
-        "contract_version": { "type": "string", "const": "1.0.0-draft" },
+        "contract_version": { "type": "string", "const": "1.0.0" },
         "profile_revision": { "type": "integer", "minimum": 1 },
-        "generated_at": { "type": "string", "format": "date-time" }
+        "generated_at": { "$ref": "common.schema.json#/$defs/date_time" }
       }
     },
     "identity": {
@@ -32,14 +32,10 @@
       "type": "object",
       "required": ["bbl"],
       "properties": {
-        "bbl": {
-          "type": "string",
-          "pattern": "^[1-5][0-9]{5}[0-9]{4}$",
-          "description": "10-digit NYC Borough-Block-Lot (borough 1-5, 5-digit block, 4-digit lot)."
-        },
+        "bbl": { "$ref": "common.schema.json#/$defs/bbl" },
         "bins": {
           "type": "array",
-          "items": { "type": "string", "pattern": "^[1-5][0-9]{6}$" },
+          "items": { "$ref": "common.schema.json#/$defs/bin" },
           "description": "Building Identification Numbers on the lot."
         },
         "address": {
@@ -48,16 +44,17 @@
             "house_number": { "type": "string" },
             "street_name": { "type": "string" },
             "borough": {
-              "type": "string",
-              "enum": ["MANHATTAN", "BRONX", "BROOKLYN", "QUEENS", "STATEN ISLAND"]
+              "$ref": "common.schema.json#/$defs/borough_name",
+              "description": "Normalized borough display name (documented official spellings; see common.schema.json for grounding). Raw connector spellings are preserved in provenance original_value."
             },
-            "zip_code": { "type": "string" },
+            "borough_code": { "$ref": "common.schema.json#/$defs/borough_code" },
+            "zip_code": { "$ref": "common.schema.json#/$defs/zip_code" },
             "normalized_address": { "type": "string" }
           }
         },
         "geometry": {
           "type": "object",
-          "description": "GeoJSON geometry of the lot (WGS84). Detailed geometry contract pending M0-T009.",
+          "description": "GeoJSON geometry of the lot. OPEN-WITH-FLAG: the full tax-lot geometry contract (CRS handling, polygon validity, geometry versioning) is deferred to the M2 tax-lot geometry tasks. Note from research (docs/research/M0-T002-geoclient-address-resolution.md section 2.6): Geoclient x/y are NAD83 New York-Long Island state plane in feet, lat/long are derived; the EPSG mapping is UNKNOWN from official pages and must be verified before geometry import.",
           "properties": {
             "type": { "type": "string" },
             "coordinates": {}
@@ -66,17 +63,17 @@
       }
     },
     "lot_facts": {
-      "description": "Lot-level facts (area, frontage, depth, corner status, etc.). Every fact value must have a matching provenance record.",
+      "description": "Lot-level facts (area, frontage, depth, corner status, etc.). Material by definition: every fact value REQUIRES a provenance_ref (PRD sections 9/19).",
       "type": "object",
       "additionalProperties": { "$ref": "#/$defs/fact_value" }
     },
     "existing_building_facts": {
-      "description": "Existing-building facts (floor area, stories, use, landmark status, etc.).",
+      "description": "Existing-building facts (floor area, stories, use, landmark status, etc.). Every fact value REQUIRES a provenance_ref.",
       "type": "object",
       "additionalProperties": { "$ref": "#/$defs/fact_value" }
     },
     "zoning": {
-      "description": "Zoning districts, overlays, special districts, and mapped features.",
+      "description": "Zoning districts, overlays, special districts, and mapped features. OPEN-WITH-FLAG: district-code enums/patterns are NOT modeled in v1 because the official zoning source family has not yet been researched (M0-T002 covered address/BBL/BIN only; Geoclient examples expose no zoning district designation field - research doc section 2.6). Free strings here must carry provenance; enum grounding is added additively when the M2 zoning-source research lands.",
       "type": "object",
       "properties": {
         "districts": { "type": "array", "items": { "type": "string" } },
@@ -86,7 +83,7 @@
       }
     },
     "project_intent": {
-      "description": "User-selected development objectives for the analysis.",
+      "description": "User-selected development objectives for the analysis. Objective identifiers are finalized with the scenario-engine contracts (M5); PRD section 6 is the source list.",
       "type": "object",
       "properties": {
         "objectives": { "type": "array", "items": { "type": "string" } },
@@ -94,12 +91,12 @@
       }
     },
     "provenance": {
-      "description": "Source provenance for every fact used (PRD section 9).",
+      "description": "Source provenance records for every fact used (PRD section 9). Each record follows the canonical source_fact contract. Every fact_value.provenance_ref in this profile must equal some provenance_id in this array.",
       "type": "array",
-      "items": { "$ref": "#/$defs/provenance_record" }
+      "items": { "$ref": "source_fact.schema.json" }
     },
     "missing_inputs": {
-      "description": "Inputs the platform could not obtain, with criticality.",
+      "description": "Inputs the platform could not obtain, with criticality (PRD section 12 data-completeness).",
       "type": "array",
       "items": {
         "type": "object",
@@ -112,11 +109,11 @@
       }
     },
     "conflicts": {
-      "description": "Cross-source conflicts detected for facts on this property.",
+      "description": "Cross-source conflicts detected for facts on this property. Conflicts must remain visible in results and reports (PRD sections 2/9).",
       "type": "array",
       "items": {
         "type": "object",
-        "required": ["field", "values"],
+        "required": ["field", "values", "resolution"],
         "properties": {
           "field": { "type": "string" },
           "values": {
@@ -124,6 +121,7 @@
             "minItems": 2,
             "items": {
               "type": "object",
+              "required": ["source_id", "value"],
               "properties": {
                 "source_id": { "type": "string" },
                 "value": {}
@@ -132,13 +130,14 @@
           },
           "resolution": {
             "type": "string",
-            "enum": ["unresolved", "user_confirmed", "user_overridden", "source_priority"]
+            "enum": ["unresolved", "user_confirmed", "user_overridden", "source_priority"],
+            "description": "PLATFORM-DEFINED enum (not a government-source value): grounded in PRD section 5 (user confirms/corrects), section 9 (user confirmed/overrode), and section 8 (official source priority order). 'source_priority' means the platform preferred the higher-priority official source and the conflict remains visible."
           }
         }
       }
     },
     "user_confirmations": {
-      "description": "User confirmations and overrides of official facts.",
+      "description": "User confirmations and overrides of official facts (PRD sections 5/9).",
       "type": "array",
       "items": {
         "type": "object",
@@ -147,7 +146,7 @@
           "field": { "type": "string" },
           "action": { "type": "string", "enum": ["confirmed", "overridden"] },
           "override_value": {},
-          "confirmed_at": { "type": "string", "format": "date-time" },
+          "confirmed_at": { "$ref": "common.schema.json#/$defs/date_time" },
           "confirmed_by": { "type": "string" }
         }
       }
@@ -156,46 +155,13 @@
   "$defs": {
     "fact_value": {
       "type": "object",
-      "required": ["value"],
+      "required": ["value", "provenance_ref"],
       "properties": {
         "value": {},
         "units": { "type": "string" },
         "provenance_ref": {
-          "type": "string",
-          "description": "ID of the provenance record backing this fact."
-        }
-      }
-    },
-    "provenance_record": {
-      "type": "object",
-      "description": "Per-fact provenance (PRD section 9).",
-      "required": [
-        "provenance_id",
-        "source_id",
-        "original_field_name",
-        "original_value",
-        "normalized_value",
-        "retrieved_at",
-        "bbl"
-      ],
-      "properties": {
-        "provenance_id": { "type": "string" },
-        "source_id": { "type": "string" },
-        "original_field_name": { "type": "string" },
-        "original_value": {},
-        "normalized_value": {},
-        "retrieved_at": { "type": "string", "format": "date-time" },
-        "dataset_version": {
-          "type": "string",
-          "description": "Dataset version or page/document version."
-        },
-        "effective_date": { "type": "string", "format": "date" },
-        "bbl": { "type": "string", "pattern": "^[1-5][0-9]{5}[0-9]{4}$" },
-        "confidence": { "type": "number", "minimum": 0, "maximum": 1 },
-        "user_confirmed_or_overridden": { "type": "boolean" },
-        "conflict_status": {
-          "type": "string",
-          "enum": ["none", "conflicting", "resolved"]
+          "$ref": "common.schema.json#/$defs/non_empty_string",
+          "description": "REQUIRED id of the provenance record backing this fact (PRD section 19: a material calculation can never be exported without provenance). Must resolve to a provenance_id in this profile's provenance array."
         }
       }
     }

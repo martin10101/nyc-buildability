@@ -1,0 +1,13 @@
+{
+  "_expected_failure": "S3/D2: BBL '100047750' is 9 digits; a BBL is exactly 10 digits (Geoclient /v2/search recognition rule).",
+  "profile_version": { "contract_version": "1.0.0", "profile_revision": 1, "generated_at": "2026-07-14T12:00:00Z" },
+  "identity": { "bbl": "100047750" },
+  "lot_facts": {},
+  "existing_building_facts": {},
+  "zoning": {},
+  "project_intent": {},
+  "provenance": [],
+  "missing_inputs": [],
+  "conflicts": [],
+  "user_confirmations": []
+}
