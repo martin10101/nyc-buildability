@@ -86,7 +86,7 @@
   ],
   "blockers": [],
   "created_at": "2026-07-16T21:12:14.088625+00:00",
-  "updated_at": "2026-07-16T21:49:05.631069+00:00",
+  "updated_at": "2026-07-16T22:02:51.167741+00:00",
   "worktree": "main-checkout-docs-only",
   "progress_log": [
     {
@@ -94,6 +94,12 @@
       "agent": "official-source-researcher",
       "percent": 85,
       "message": "Producer deliverables committed; G1 dispatch next"
+    },
+    {
+      "at": "2026-07-16T22:02:51.167741+00:00",
+      "agent": "official-source-researcher",
+      "percent": 85,
+      "message": "AUDIT RECORD (owner directive): G1 verdict PASS is CONDITIONAL - corrections C1-C9 were BLOCKING for G3 dispatch and acceptance. C1-C9 now applied by producer rework and validated by orchestrator (JSON parses; stale-marker grep = only the line-7 discipline definition; OQ ledger consistent). Amendment-history AJAX endpoint recorded as monitored optional enrichment with graceful fallback, never sole source (owner directive line added to registry known_limitations). G3 dispatch follows this record."
     }
   ]
 }

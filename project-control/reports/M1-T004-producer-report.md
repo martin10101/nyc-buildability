@@ -82,3 +82,28 @@ None on production (docs only). Provenance model strengthened: the report establ
 ## 9. Commands run (complete list)
 
 All fetches live 2026-07-16. WebFetch: portal home ×2, `/jsonapi`, Socrata catalog, `/zr-downloads`, `/article-i`, `/article-i/chapter-1`, `/article-i/chapter-2`, `/article-i/chapter-2/12-10`, `/disclaimer`, `/recently-adopted/20-berry-st-n-240272-zrk`, `/search?fulltext=city+of+yes`, `/appendix-i`, `/article-i/chapter-2/12-01`. WebSearch: City of Yes adoption ×1. Bash/curl (all KB-scale or HEAD-only): HEADs on 6 PDFs + entityprint/print routes ×3; status probes on `/node/18523?_format=json`, `/sitemap.xml`, `/appendix-a`, `/article-i/chapter-1/11-99`, `/article-xv`, nyc.gov ×2, zr.planning.nyc.gov ×2; raw GET + grep on `/`, `/zr-downloads`, `/article-i/chapter-1/11-02`, `/article-i/chapter-2/12-01`, `/disclaimer`, `/search` (4 query variants), `/recently-adopted`, `/robots.txt`. No permission denials occurred this run. No git/gh/project_control commands run (ADR-005).
+
+## 10. G1 corrections applied (rework pass, 2026-07-16)
+
+All nine corrections from `project-control/reports/M1-T004-G1-verification.md` §5 (evidence §1.1–§1.10) were applied in place by the producer. No new network research was performed — every corrected fact cites the G1 report. Correction-marker convention follows `docs/research/zoning-features-ztldb-2026-07-16.md` (**[CORRECTED AT G1 — Cn]** / **[RESOLVED AT G1 — Cn]** / **[NARROWED AT G1 — Cn]** at exact locations).
+
+| C | Applied at |
+|---|---|
+| C1 | Research doc §2.1 Rendering bullet (over-broad "no content XHR" sentence corrected); §3.3 (full amendment-history AJAX endpoint spec: markup `/nojs/get/amendment/section/{sectionEntityId}`, working form `GET /ajax/get/amendment/section/{id}?_wrapper_format=drupal_ajax` + XHR header → 200 JSON 6-column table; §11-47 id 22740 row; also fixed the original mis-cite of OQ-10 where OQ-9 was meant); §3.2 (OQ-3 narrowing); §4.4 (section-entity IDs = third identifier namespace); §8 OQ-9 → RESOLVED, OQ-3 → NARROWED. Registry JSON: new `fields_available.structure` entry for the endpoint; `open_questions` OQ-9/OQ-3 updated |
+| C2 | Research doc §3.4 (marker removed; CoY-HO N 240290 ZRY adopted 2024-12-05, three official channels; council.nyc.gov + Legistar automation-accessible; CPC chain 403-bound); §2.6 and §5.6 item 5 (OQ-2 cross-refs updated); §8 OQ-2 → RESOLVED; §9 E18 row (marker removed); header discipline line post-G1 note. Registry JSON: `known_limitations` CoY line, `fallback_source` (council channels added), `open_questions` OQ-2 → RESOLVED |
+| C3 | Research doc §2.4 lead-in parenthetical + §5.5 rewrite (raw markup DOES contain `/index.php/` theme links; valid front-controller route, 200 for HTML aliases, 404 for static assets; summarizer transferred a real prefix). Registry JSON: `known_limitations` summarizer line re-diagnosed |
+| C4 | Research doc §2.3 Appendix I row (HEAD-verified: 200, application/pdf, 5,069,648 B, LM Tue 23 Jun 2026 00:53:12 GMT; "size unknown" removed); §9 E14 row cross-note |
+| C5 | Research doc §1 exec-summary amendment-feed row + §3.3 first bullet (depth = 31 pages, 0–30, `?page=30` "Go to last page" href); §8 OQ-10 → PARTIALLY RESOLVED (mutability open). Registry JSON: structure feed line + `open_questions` OQ-10 |
+| C6 | Research doc §6 fixture ZR-F8 (assert on results-count string/results region, not global views-row count; 25 stray views-rows on wrong-param page) |
+| C7 | Research doc §2.2 Socrata row ("12 results" → resultSetSize 25 observed at G1; absence claim stands); §9 E2 row |
+| C8 | Research doc §4.3 §12-01(c) (straight double quotes, `od -c` verified) + §4.3 §12-10 bullet (5 FROM-prefix variants with counts; `sec-link-inline` span wrap; per-definition `node--type-defined-term` nodes) + §6 fixture ZR-F3 assertions extended |
+| C9 | Research doc §1 exec-summary alias row + §8 OQ-7 → NARROWED (self-referencing `Link: …; rel="canonical"` per host; no cross-host canonical; hostname = connector config with alias recorded). Registry JSON: `known_limitations` hostname line + `open_questions` OQ-7 |
+
+**Verification (exact outputs):**
+
+- JSON parse: `python -c "import json; d=json.load(open('docs/research/source-registry-drafts/zoning-resolution.json', encoding='utf-8')); print('JSON OK;', len(d), 'record(s);', len(d[0]), 'keys;', len(d[0]['open_questions']), 'open_questions;', len(d[0]['fields_available']['structure']), 'structure entries')"` → `JSON OK; 1 record(s); 19 keys; 12 open_questions; 13 structure entries` (was 12 structure entries; +1 = the C1 endpoint entry; all 18 PRD §8.2 fields + open_questions intact).
+- Stale-marker grep: `NEEDS G1 RE-VERIFICATION` across `docs/research/zoning-resolution-2026-07-16.md` + `docs/research/source-registry-drafts/zoning-resolution.json` → **1 hit**: the doc's line-7 discipline-definition line only (now carrying a post-G1 note that zero markers remain outstanding). Zero hits in the registry JSON. Genuinely-unverified count: **ZERO**, as required.
+- OQ-ledger consistency (doc §8 = JSON `open_questions`): OQ-2 RESOLVED, OQ-9 RESOLVED, OQ-3 NARROWED, OQ-7 NARROWED, OQ-10 PARTIALLY RESOLVED (depth only), OQ-1/4/5/6/8/11/12 OPEN.
+- Note: the marker mentions earlier in this report (§2 S2, §4) are the historical production-time record and are intentionally unedited; this section supersedes them.
+
+Files changed this pass: `docs/research/zoning-resolution-2026-07-16.md`, `docs/research/source-registry-drafts/zoning-resolution.json`, this report (append only). Status requested: `awaiting_gate` (G3).

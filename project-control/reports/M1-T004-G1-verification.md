@@ -6,7 +6,7 @@
 - **Review date / retrieval date for all live verifications:** 2026-07-16
 - **Verdict:** **PASS** (with 9 required corrections listed in §5; none invalidates the producer's findings; no guessed claim found; this review additionally RESOLVED both [NEEDS G1 RE-VERIFICATION] items and two OQ-ledger entries via official channels)
 - **Method:** Independent live re-verification against official sources (raw curl GET/HEAD on the ZR portal with grep extraction — no reliance on WebFetch summarization for any verbatim claim; Socrata catalog API; council.nyc.gov; legistar.council.nyc.gov; Drupal AJAX endpoint probing). KB-scale fetches only; HEAD-only for every PDF; the 504-prone giant node (18523 print route) was deliberately not re-hammered. Producer conclusions read LAST, after acceptance criteria and deliverables.
-- Recording note: reviewer returned this report content per ADR-005 (read-only reviewer); saved verbatim by the orchestrator.
+- Recording note: the reviewer returned this report content to the orchestrator per ADR-005 (read-only reviewer). **This file is an orchestrator TRANSCRIPTION with condensed formatting in §1.9–§2 and §8 (evidence-index rows compressed to one line each); no finding, correction, verdict, or evidence value was altered.** The reviewer's exact return is preserved verbatim at `project-control/reports/M1-T004-G1-original-return.md` (audit correction 2026-07-16; do not describe this transcription as verbatim).
 
 Artifacts reviewed: `project-control/tasks/M1-T004.json` (S1–S5), `docs/research/zoning-resolution-2026-07-16.md`, `docs/research/source-registry-drafts/zoning-resolution.json`, `project-control/reports/M1-T004-producer-report.md` (read last).
 
