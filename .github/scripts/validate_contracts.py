@@ -26,9 +26,12 @@ Validation layers (never silently weakened; the run banner reports the mode):
    disagreement fails the build.
 5. Expected-failure meta cases: every schema under
    fixtures/invalid_schemas/ must fail the meta-schema layers.
-6. Property-profile invariant (PRD sections 9/19): every fact_value
-   provenance_ref in a property_profile fixture must resolve to a
-   provenance_id in that profile's provenance array.
+6. Property-profile invariant (PRD sections 9/19): every provenance_ref in a
+   property_profile fixture must resolve to a provenance_id in that profile's
+   provenance array - fact values, zoning.mapped_features entries, and the
+   contract-1.1.0 zoning provenance maps (district_provenance /
+   commercial_overlay_provenance / special_district_provenance, task
+   M1-T006); map keys must also be members of the sibling value array.
 
 Standard library is sufficient; jsonschema only strengthens the run.
 """
@@ -386,8 +389,20 @@ def validate_instance(instance, schema, base_id, registry, path="$"):
 # PRD s19 invariant for property profiles
 # --------------------------------------------------------------------------
 
+# Contract 1.1.0 zoning provenance maps (task M1-T006, G3 D4): sibling value
+# array -> optional map from value string to a list of provenance_refs.
+ZONING_PROVENANCE_MAPS = (
+    ("districts", "district_provenance"),
+    ("commercial_overlays", "commercial_overlay_provenance"),
+    ("special_districts", "special_district_provenance"),
+)
+
+
 def profile_provenance_invariant(instance):
-    """Every fact_value.provenance_ref must match a provenance_id (PRD s9/s19)."""
+    """Every provenance_ref must match a provenance_id (PRD s9/s19), at EVERY
+    site: fact values, zoning.mapped_features entries, and the contract-1.1.0
+    zoning provenance maps (M1-T006). Map keys must additionally be members of
+    the sibling value array (the map annotates it, never extends it)."""
     errors = []
     if not isinstance(instance, dict):
         return errors
@@ -405,6 +420,41 @@ def profile_provenance_invariant(instance):
                 if fact["provenance_ref"] not in ids:
                     errors.append(
                         f"$.{section}.{name}: provenance_ref '{fact['provenance_ref']}' does not resolve "
+                        "to any provenance_id in the profile's provenance array (PRD s19)"
+                    )
+    zoning = instance.get("zoning")
+    if not isinstance(zoning, dict):
+        return errors
+    features = zoning.get("mapped_features")
+    if isinstance(features, list):
+        for index, feature in enumerate(features):
+            if not (isinstance(feature, dict) and "provenance_ref" in feature):
+                continue
+            ref = feature["provenance_ref"]
+            if not isinstance(ref, str) or ref not in ids:
+                errors.append(
+                    f"$.zoning.mapped_features[{index}]: provenance_ref '{ref}' does not resolve "
+                    "to any provenance_id in the profile's provenance array (PRD s19)"
+                )
+    for array_key, map_key in ZONING_PROVENANCE_MAPS:
+        mapping = zoning.get(map_key)
+        if not isinstance(mapping, dict):
+            continue
+        values = zoning.get(array_key)
+        members = {v for v in values if isinstance(v, str)} if isinstance(values, list) else set()
+        for value, refs in mapping.items():
+            if value not in members:
+                errors.append(
+                    f"$.zoning.{map_key}: key '{value}' is not a member of the sibling "
+                    f"zoning.{array_key} array (contract 1.1.0: the map only annotates "
+                    "values that are actually listed)"
+                )
+            if not isinstance(refs, list):
+                continue  # shape errors are the schema layer's job
+            for ref in refs:
+                if not isinstance(ref, str) or ref not in ids:
+                    errors.append(
+                        f"$.zoning.{map_key}['{value}']: provenance_ref '{ref}' does not resolve "
                         "to any provenance_id in the profile's provenance array (PRD s19)"
                     )
     return errors

@@ -1,0 +1,24 @@
+{
+  "_expected_failure": "M1-T006 S4: reproducibility is present but missing the required subfield 'correlation_id' (the builder emits every reproducibility subfield unconditionally, so all 10 are required when the object is present).",
+  "profile_version": { "contract_version": "1.1.0", "profile_revision": 1, "generated_at": "2026-07-16T12:00:00Z" },
+  "identity": { "bbl": "1000477501" },
+  "lot_facts": {},
+  "existing_building_facts": {},
+  "zoning": {},
+  "project_intent": {},
+  "provenance": [],
+  "missing_inputs": [],
+  "conflicts": [],
+  "user_confirmations": [],
+  "reproducibility": {
+    "source_id": "test-fixture-synthetic",
+    "dataset_id": "test-dataset",
+    "dataset_version": null,
+    "request_url": "https://example.invalid/test-dataset.json?bbl=1000477501",
+    "retrieved_at": "2026-07-16T12:00:00Z",
+    "record_count": 1,
+    "drift_signals": [],
+    "connector_notes": [],
+    "coverage_policy": "coverage_status is derived only from review status and conflict/drift state (PRD section 12)."
+  }
+}

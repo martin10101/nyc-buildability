@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://github.com/martin10101/nyc-buildability/packages/contracts/schemas/v1/property_profile.schema.json",
   "title": "Canonical Property Profile",
-  "description": "v1 of the one canonical property-profile contract (PRD section 32.3). All connectors, rules, scenarios, reports, and UI views must exchange this contract; modules may not invent competing property schemas. Every fact value carries a REQUIRED provenance_ref that must resolve to a provenance record in this profile (PRD sections 9 and 19; fix for M0-T004 G3 defect D1). Referential integrity of provenance_ref is enforced by .github/scripts/validate_contracts.py for fixtures and must be enforced by the backend for live data.",
+  "description": "v1 of the one canonical property-profile contract (PRD section 32.3). All connectors, rules, scenarios, reports, and UI views must exchange this contract; modules may not invent competing property schemas. Every fact value carries a REQUIRED provenance_ref that must resolve to a provenance record in this profile (PRD sections 9 and 19; fix for M0-T004 G3 defect D1). Referential integrity of EVERY provenance_ref site (fact values, zoning.mapped_features, and the v1.1 district-provenance maps) is enforced by .github/scripts/validate_contracts.py for fixtures and must be enforced by the backend for live data. CONTRACT 1.1.0 (task M1-T006, additive; M1-T005 G3 adjudication #1 + defects D2/D4): documents the three keys the accepted M1-T005 API already emits (OPTIONAL per-fact coverage_status, OPTIONAL top-level data_completeness, OPTIONAL top-level reproducibility) and adds OPTIONAL machine-resolvable district-provenance maps under zoning. Every 1.0.0 instance remains valid: no required key was added, removed, or retyped.",
   "type": "object",
   "required": [
     "profile_version",
@@ -22,7 +22,11 @@
       "type": "object",
       "required": ["contract_version", "profile_revision", "generated_at"],
       "properties": {
-        "contract_version": { "type": "string", "const": "1.0.0" },
+        "contract_version": {
+          "type": "string",
+          "enum": ["1.0.0", "1.1.0"],
+          "description": "CLOSED enum of published contract versions within the v1 major line. 1.0.0 = M0-T009 shape; 1.1.0 = M1-T006 additive extension. New versions are admitted only by an accepted contract task that appends to this enum; arbitrary versions are rejected."
+        },
         "profile_revision": { "type": "integer", "minimum": 1 },
         "generated_at": { "$ref": "common.schema.json#/$defs/date_time" }
       }
@@ -79,7 +83,19 @@
         "districts": { "type": "array", "items": { "type": "string" } },
         "commercial_overlays": { "type": "array", "items": { "type": "string" } },
         "special_districts": { "type": "array", "items": { "type": "string" } },
-        "mapped_features": { "type": "array", "items": { "type": "object" } }
+        "mapped_features": { "type": "array", "items": { "type": "object" } },
+        "district_provenance": {
+          "$ref": "#/$defs/district_provenance_map",
+          "description": "CONTRACT 1.1.0, OPTIONAL (M1-T005 G3 defect D4): machine-resolvable provenance for zoning.districts values. Each key MUST be a value present in the sibling districts array; each mapped provenance_ref MUST resolve to a provenance_id in this profile's provenance array. Both rules are enforced by validate_contracts.py for fixtures and by the backend for live data. The plain-string districts array is unchanged and remains the canonical value list; this map only annotates it, so 1.0.0 instances (no map) stay valid."
+        },
+        "commercial_overlay_provenance": {
+          "$ref": "#/$defs/district_provenance_map",
+          "description": "CONTRACT 1.1.0, OPTIONAL (G3 D4): same contract as district_provenance, keyed by values of the sibling commercial_overlays array."
+        },
+        "special_district_provenance": {
+          "$ref": "#/$defs/district_provenance_map",
+          "description": "CONTRACT 1.1.0, OPTIONAL (G3 D4): same contract as district_provenance, keyed by values of the sibling special_districts array."
+        }
       }
     },
     "project_intent": {
@@ -150,6 +166,72 @@
           "confirmed_by": { "type": "string" }
         }
       }
+    },
+    "data_completeness": {
+      "$ref": "coverage_status.schema.json#/$defs/data_completeness",
+      "description": "CONTRACT 1.1.0, OPTIONAL (M1-T005 G3 defect D2): profile-level data-completeness status - exactly the 3 PRD section 12 values, referenced from coverage_status.schema.json (never duplicated inline). The accepted M1-T005 builder derives it deterministically from missing_inputs criticality (any critical missing input -> missing_critical; any missing input -> missing_noncritical; else complete)."
+    },
+    "reproducibility": {
+      "description": "CONTRACT 1.1.0, OPTIONAL (M1-T005 G3 defect D2): retrieval metadata that lets a report reader reproduce this profile build (PRD section 9: retain the exact source snapshot used; PRD section 20 item 17: reproducibility identifier). Shape matches the accepted M1-T005 builder output exactly: the builder emits every subfield unconditionally, so all subfields are REQUIRED when the object is present. Single-source (PLUTO) shape; when M2 merges multiple sources this evolves additively (e.g. a per-source array ALONGSIDE this object), never by retyping these keys.",
+      "type": "object",
+      "required": [
+        "correlation_id",
+        "source_id",
+        "dataset_id",
+        "dataset_version",
+        "request_url",
+        "retrieved_at",
+        "record_count",
+        "drift_signals",
+        "connector_notes",
+        "coverage_policy"
+      ],
+      "properties": {
+        "correlation_id": {
+          "$ref": "common.schema.json#/$defs/non_empty_string",
+          "description": "Correlation id of the request that built this profile (PRD section 25 structured logs; equals the X-Correlation-ID response header of the M1-T005 endpoint). The reproducibility identifier joining this profile to logs and job records (PRD section 20 item 17)."
+        },
+        "source_id": {
+          "$ref": "common.schema.json#/$defs/non_empty_string",
+          "description": "Source-registry id of the official source used (PRD sections 8.2/9), e.g. 'nyc-dcp-pluto-soda'."
+        },
+        "dataset_id": {
+          "$ref": "common.schema.json#/$defs/non_empty_string",
+          "description": "Official dataset identifier within the source (PRD section 9 'dataset version or page/document version' context), e.g. SODA id '64uk-42ks'."
+        },
+        "dataset_version": {
+          "type": ["string", "null"],
+          "minLength": 1,
+          "description": "Dataset version used for this build, e.g. PLUTO release '26v1' (PRD section 9). REQUIRED key, explicitly null when the source publishes/exposes none at retrieval time (same visible-absence pattern as source_fact.effective_date); never an empty string."
+        },
+        "request_url": {
+          "$ref": "common.schema.json#/$defs/non_empty_string",
+          "description": "Exact official request URL used, so the retrieval can be repeated against the same endpoint (PRD section 9 provenance; secrets/tokens are never part of this URL - they travel in headers)."
+        },
+        "retrieved_at": {
+          "$ref": "common.schema.json#/$defs/date_time",
+          "description": "Timestamp of the successful source retrieval this profile was built from (PRD section 9 retrieved timestamp)."
+        },
+        "record_count": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Number of source records the retrieval returned (PRD section 9 snapshot completeness; >1 signals an unexpected multi-record response kept visible rather than silently truncated)."
+        },
+        "drift_signals": {
+          "type": "array",
+          "items": { "$ref": "common.schema.json#/$defs/non_empty_string" },
+          "description": "Connector schema-drift signals observed during retrieval (PRD section 25 schema-drift alerts), e.g. 'non_finite_number_value:lotarea'. Facts named by drift signals carry coverage_status 'unsupported'. Empty array = no drift."
+        },
+        "connector_notes": {
+          "type": "array",
+          "items": { "$ref": "common.schema.json#/$defs/non_empty_string" },
+          "description": "Connector notes carrying official data-dictionary semantics for present-but-unknown values (e.g. 'yearbuilt_unknown: ...'); feeds missing_inputs. Conflicts and stale data stay visible (PRD principle 4)."
+        },
+        "coverage_policy": {
+          "$ref": "common.schema.json#/$defs/non_empty_string",
+          "description": "Verbatim statement of the deterministic policy that produced every coverage_status in this profile (PRD section 12: AI/connector confidence never substitutes for legal-review status). Stored per profile so a historical report explains its own labels even after the policy text evolves."
+        }
+      }
     }
   },
   "$defs": {
@@ -162,8 +244,23 @@
         "provenance_ref": {
           "$ref": "common.schema.json#/$defs/non_empty_string",
           "description": "REQUIRED id of the provenance record backing this fact (PRD section 19: a material calculation can never be exported without provenance). Must resolve to a provenance_id in this profile's provenance array."
+        },
+        "coverage_status": {
+          "$ref": "coverage_status.schema.json",
+          "description": "CONTRACT 1.1.0, OPTIONAL (M1-T005 G3 defect D2): PRD section 12 coverage status of this fact - exactly the 6 canonical values, referenced from coverage_status.schema.json (never duplicated inline). OPTIONAL so every 1.0.0 instance stays valid. Derived only from review status and conflict/drift state, never from connector confidence, and never 'verified' before a published-rule/reviewer pipeline exists (see reproducibility.coverage_policy)."
         }
       }
+    },
+    "provenance_ref_list": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "$ref": "common.schema.json#/$defs/non_empty_string" },
+      "description": "Non-empty list of provenance_ref ids; every entry must resolve to a provenance_id in this profile's provenance array (PRD sections 9/19). A list (not a single ref) so one value can be corroborated by multiple provenance records - e.g. PLUTO zonedist columns today plus the M2 DCP GIS zoning-features cross-check later - without another contract bump, and so duplicate source columns can never silently drop a record."
+    },
+    "district_provenance_map": {
+      "type": "object",
+      "additionalProperties": { "$ref": "#/$defs/provenance_ref_list" },
+      "description": "CONTRACT 1.1.0 (G3 D4): map from a zoning value string (a member of the sibling plain-string array) to the provenance records backing it. Two validator-enforced integrity rules: (1) every key is present in the sibling value array; (2) every listed provenance_ref resolves to a provenance_id in this profile's provenance array. The map may cover a subset of the array (partial linkage is legal; absent linkage means provenance is joinable only via provenance[].original_field_name, the documented 1.0.0 situation)."
     }
   }
 }
