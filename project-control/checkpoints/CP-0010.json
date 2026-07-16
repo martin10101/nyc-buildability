@@ -1,0 +1,9 @@
+{
+  "checkpoint_id": "CP-0010",
+  "timestamp": "2026-07-16T22:30:47.391704+00:00",
+  "commit": "422ab8f",
+  "branch": "main",
+  "active_milestone": "M0",
+  "summary": "Session 5 close. ACCEPTED: M0-T005-R1 (scanner hardening, 84b6a15), M0-T011/ADR-004 (Vercel dropped, B-003 CLOSED, repo-wide cleanup), M1-T002 PLUTO connector (all six gates, 4a3537a), M1-T003 zoning geodata research, M1-T004 ZR research (owner-audited: C1-C9 blocking-then-applied, verbatim return preserved, amendment endpoint = optional enrichment), M1-T005 property-profile API (142 tests, ae44554, F1-F4 closed). 16 accepted total; no branches/worktrees. Process rules codified after owner audit (agent memory/AOS s7, PASS-with-corrections blocking, verbatim report preservation, exact-path staging, ls-remote evidence). GDS requirements positioned at root design level; Section 15 integration plan DRAFTED FOR OWNER REVIEW (no tasks contracted). NEXT: contract v1.1 -> Priority 4 property screen -> M1 research fan-out (DOB NOW first) -> M2 packets on B-001 -> hygiene batch. Owner decisions pending: GDS plan approval, B-005 supply-or-supersede, hook disable, B-001/B-002/B-004/B-006. Handoff fully rewritten (docs/SESSION_HANDOFF.md).",
+  "updated_at": "2026-07-16T22:30:47.391704+00:00"
+}
