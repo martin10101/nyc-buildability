@@ -43,6 +43,13 @@ Unblocks: nothing today, but it is the stated compensating control for the regex
 3. While in settings, confirm branch protection on `main` (require PRs/checks) — this also mitigates the scanner-is-self-modifiable residual risk noted in the G5 review (finding F3).
 4. How it will be verified: a settings screenshot or your confirmation; no secrets involved.
 
+## 7. Socrata app token (optional, recommended — no blocker)
+Unblocks: nothing (the PLUTO connector M1-T002 works tokenless), but a free app token removes shared-IP throttling for production use.
+
+1. Create a free account at https://data.cityofnewyork.us/ (or evergreen.data.socrata.com profile), then Developer Settings → Create New App Token.
+2. Provide it as environment variable `SOCRATA_APP_TOKEN` (Render/CI secret later; never in the repo).
+3. How it will be tested: one documented request with the `X-App-Token` header expecting HTTP 200. Token never echoed or logged.
+
 ## Later (not yet blocking — will be requested when reached)
 - Production deployment approval (G7).
 - Qualified NYC zoning professional to approve the first verified rule set (G6). Rule ingestion/extraction/testing proceeds meanwhile; nothing is published as "verified" until this approval.

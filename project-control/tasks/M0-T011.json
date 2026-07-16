@@ -5,24 +5,91 @@
   "milestone_id": "M0",
   "objective": "Formalize owner decision to serve the Next.js frontend from Render instead of Vercel: verify Render Next.js support and PR preview environments from official docs, document trade-offs, update ADR-001/002/003 cross-references and render.yaml accordingly",
   "business_reason": "Owner prefers one deployment platform; removes B-003",
-  "inputs": [],
-  "outputs": [],
+  "inputs": [
+    "docs/research/render-nextjs-previews-2026-07-16.md (orchestrator-captured official Render docs: Next.js web service, preview environments Pro-gated, blueprint autoDeployTrigger values incl. quoted \"off\")",
+    "project-control/reports/M0-T006-G3-verification.md (amendment map for ADR-001/002/003; R1 residuals: ADR-001 line ~36 service-role wording -> Render only; quote autoDeployTrigger \"off\")",
+    "docs/adr/ADR-001-cloud-architecture.md and existing ADR-002/003 if present",
+    "render.yaml (accepted M0-T006 blueprint)",
+    "docs/DEPLOYMENT_AND_ROLLBACK.md (accepted runbook)",
+    "docs/HUMAN_ACTIONS_REQUIRED.md section 3 (B-003 Vercel on hold pending this ADR)"
+  ],
+  "outputs": [
+    "docs/adr/ADR-004-frontend-hosting-render.md (decision, trade-off table incl. preview-strategy options and costs, consequences, rollback path)",
+    "Amendments to docs/adr/ADR-001-cloud-architecture.md (+ ADR-002/003 where the amendment map requires)",
+    "render.yaml (additive Next.js web service, autoDeployTrigger \"off\" quoted, production Actions-gated per M0-T006 model)",
+    "docs/DEPLOYMENT_AND_ROLLBACK.md (frontend deploy/rollback section)",
+    "README.md (root: deployment summary line update)",
+    "project-control/reports/M0-T011-producer-report.md"
+  ],
   "dependencies": [
     "M0-T006"
   ],
-  "allowed_paths": [],
-  "forbidden_paths": [],
-  "acceptance_scenarios": [],
+  "allowed_paths": [
+    "docs/adr/**",
+    "render.yaml",
+    "docs/DEPLOYMENT_AND_ROLLBACK.md",
+    "README.md",
+    "project-control/reports/M0-T011-*"
+  ],
+  "forbidden_paths": [
+    "services/**",
+    "apps/**",
+    "packages/**",
+    ".github/**",
+    "tools/**",
+    "project-control/tasks/**",
+    "project-control/gates/**",
+    "docs/SECRETS_POLICY.md"
+  ],
+  "acceptance_scenarios": [
+    {
+      "id": "S1",
+      "case": "normal",
+      "input": "read ADR-004",
+      "expected": "decision matches the owner directive (Render hosts Next.js; Vercel dropped); every factual claim about Render cites the captured research file or an official URL; preview strategy explicitly decided with cost basis (preview environments are Pro-gated; service previews and no-previews evaluated)"
+    },
+    {
+      "id": "S2",
+      "case": "boundary",
+      "input": "render.yaml after amendment",
+      "expected": "new web service is ADDITIVE (API service untouched); autoDeployTrigger value \"off\" is YAML-quoted; blueprint parses as valid YAML; staging/production split preserved per M0-T006 model"
+    },
+    {
+      "id": "S3",
+      "case": "missing",
+      "input": "cross-references",
+      "expected": "ADR-001/002/003 amended per the M0-T006 G3 amendment map incl. R1 residual (service-role wording -> Render only); no dangling references to Vercel remain in ADRs, runbook, or root README"
+    },
+    {
+      "id": "S4",
+      "case": "conflict",
+      "input": "deployment model consistency",
+      "expected": "frontend deploys gated identically to backend (Actions-gated, no auto-deploy in production); no contradiction with docs/DEPLOYMENT_AND_ROLLBACK.md; rollback path for frontend documented"
+    },
+    {
+      "id": "S5",
+      "case": "regression",
+      "input": "B-003 closure check",
+      "expected": "ADR-004 explicitly supersedes the Vercel plan so B-003 can close; PRD deviations (PRD names Vercel) acknowledged in the ADR as an approved architectural deviation with rationale"
+    }
+  ],
   "required_gates": [
     "G0",
     "G3"
   ],
-  "producer_agent": null,
-  "reviewer_agents": [],
-  "status": "backlog",
-  "progress_percent": 0,
-  "risks": [],
+  "producer_agent": "cloud-architect",
+  "reviewer_agents": [
+    "code-reviewer"
+  ],
+  "status": "claimed",
+  "progress_percent": 10,
+  "risks": [
+    "PRD explicitly names Vercel; ADR must record this as a deliberate owner-approved deviation, not silently diverge",
+    "Preview environments are Pro-plan-gated on Render: choosing them has a real billing implication that needs owner visibility before purchase (no purchase in this task)",
+    "render.yaml edits must not break the accepted API service definition"
+  ],
   "blockers": [],
   "created_at": "2026-07-14T21:55:11.934281+00:00",
-  "updated_at": "2026-07-14T21:55:11.934281+00:00"
+  "updated_at": "2026-07-16T20:28:27.234773+00:00",
+  "worktree": "main-checkout-docs-only"
 }

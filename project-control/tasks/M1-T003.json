@@ -1,0 +1,92 @@
+{
+  "task_id": "M1-T003",
+  "title": "Official-source research: NYC GIS Zoning Features + Zoning Tax Lot Database",
+  "task_type": "research",
+  "milestone_id": "M1",
+  "objective": "Discover, document, and verify the best official sources for NYC GIS Zoning Features (zoning district/overlay/special-district geometries) and the NYC Zoning Tax Lot Database, following the M1-T001 evidence standard: verified channels and identifiers, version/release model, fields/units/null semantics, channel discrepancies, PRD 8.2 registry drafts, fixture-pack proposal, no guessed schemas",
+  "business_reason": "M2 zoning-district/overlay/split-lot intelligence cannot be contracted without verified official zoning geodata sources",
+  "inputs": [
+    "PRD.md section 8.1 (mandatory source families) and 8.2 (registry record fields)",
+    "docs/research/pluto-mappluto-2026-07-16.md (M1-T001 accepted research: evidence standard, verification discipline, OQ ledger pattern; DATES OF DATA shows NYC GIS Zoning Features vintage 2026-03-31 as a PLUTO input)",
+    "docs/research/M0-T002-geoclient-address-resolution.md (companion research pattern)",
+    "docs/research/source-registry-drafts/pluto-mappluto.json (registry draft format)",
+    "Official starting points: https://www.nyc.gov/content/planning/pages/resources ; https://opendata.cityofnewyork.us/ ; NYC Open Data catalog search for GIS Zoning Features / NYC Zoning Tax Lot Database; ArcGIS DCP_GIS org (verified M1-T001: services5.arcgis.com/GfwWNkhOj9bNBqoJ)"
+  ],
+  "outputs": [
+    "docs/research/zoning-features-ztldb-2026-07-16.md (findings with per-claim evidence citations and an open-questions ledger; unverified claims marked NEEDS G1 RE-VERIFICATION)",
+    "docs/research/source-registry-drafts/zoning-features.json and ztldb.json (all 18 PRD 8.2 fields per record; nulls where unknown)",
+    "project-control/reports/M1-T003-producer-report.md"
+  ],
+  "dependencies": [
+    "M1-T001"
+  ],
+  "allowed_paths": [
+    "docs/research/zoning-features-ztldb-*",
+    "docs/research/source-registry-drafts/zoning-features.json",
+    "docs/research/source-registry-drafts/ztldb.json",
+    "project-control/reports/M1-T003-*"
+  ],
+  "forbidden_paths": [
+    "services/**",
+    "apps/**",
+    "packages/**",
+    ".github/**",
+    "tools/**",
+    "project-control/tasks/**",
+    "project-control/gates/**",
+    "docs/research/pluto-mappluto-2026-07-16.md"
+  ],
+  "acceptance_scenarios": [
+    {
+      "id": "S1",
+      "case": "normal",
+      "input": "enumerate all official distribution channels for both products (Open Data/SODA, DCP bulk downloads, ArcGIS services)",
+      "expected": "every channel evidenced by a live fetch or directly read official document; dataset identifiers verified live where a SODA resource exists; no channel asserted from memory or search-summary alone"
+    },
+    {
+      "id": "S2",
+      "case": "boundary",
+      "input": "version/release model and update cadence for both products",
+      "expected": "verbatim official statements on release cadence and versioning; current version observed live where possible; relationship to PLUTO release cycle (zoning attributes update monthly) documented"
+    },
+    {
+      "id": "S3",
+      "case": "missing-ambiguous",
+      "input": "fields, units, CRS, null semantics; split-lot representation in ZTLDB",
+      "expected": "field inventory from official metadata/dictionary (not from sampled record keys); unknowns entered in an OQ ledger, never guessed; CRS stated with evidence"
+    },
+    {
+      "id": "S4",
+      "case": "conflict",
+      "input": "cross-channel discrepancies (stale attachments, version lag, metadata timestamps)",
+      "expected": "discrepancies surfaced with evidence and a recommended PRD section-8 priority order per product"
+    },
+    {
+      "id": "S5",
+      "case": "failure",
+      "input": "bot-protected or dead endpoints",
+      "expected": "403/timeout behavior recorded honestly as OQ items with the exact URL; nothing promoted to fact without direct verification"
+    }
+  ],
+  "required_gates": [
+    "G0",
+    "G1",
+    "G3"
+  ],
+  "producer_agent": "official-source-researcher",
+  "reviewer_agents": [
+    "data-contract-verifier",
+    "code-reviewer"
+  ],
+  "status": "claimed",
+  "progress_percent": 10,
+  "risks": [
+    "nyc.gov bot protection (403) blocked M1-T001 bulk-download page reads; expect the same and ledger it rather than guessing",
+    "Multiple similarly-named zoning datasets exist on the portal; identity must be pinned by dataset ID + attribution, not by name",
+    "Low-storage: KB-scale fetches only; no shapefile/geodatabase downloads in a research task"
+  ],
+  "blockers": [],
+  "created_at": "2026-07-16T20:23:51.865671+00:00",
+  "updated_at": "2026-07-16T20:24:35.705298+00:00",
+  "worktree": "main-checkout-docs-only"
+}

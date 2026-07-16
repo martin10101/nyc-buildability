@@ -1,0 +1,124 @@
+{
+  "task_id": "M1-T002",
+  "title": "PLUTO SODA connector (64uk-42ks) with provenance and contract tests",
+  "task_type": "backend",
+  "milestone_id": "M1",
+  "objective": "Implement the production pluto-soda connector per accepted M1-T001 research: per-BBL retrieval from official dataset 64uk-42ks, BBL normalization, provenance capture, null/missing handling, mapping to M0-T009 canonical contracts, drift/429/timeout behavior, F1-F14-derived fixture pack and contract tests",
+  "business_reason": "First production connector; unblocks the property-profile API (Priority 3) and the first browser property screen (Priority 4)",
+  "inputs": [
+    "docs/research/pluto-mappluto-2026-07-16.md (accepted M1-T001 research; esp. section 4 fields/units/nulls, section 5.2 priority order, section 6 fixture pack F1-F14, section 7 plan)",
+    "docs/research/source-registry-drafts/pluto-mappluto.json (registry record 1: PLUTO 64uk-42ks)",
+    "project-control/reports/M1-T001-G3-review.md section 4 carry-forwards: (a) BBL number-type normalization to 10-digit strings (F12), (b) HTTP 400 query.soql.no-such-column as the schema-drift signature (F13), (c) Socrata app token = human action (optional; connector must run tokenless)",
+    "packages/contracts/schemas/v1/source_fact.schema.json and property_profile.schema.json (accepted M0-T009 canonical contracts; facts emitted by this connector MUST validate against source_fact v1)",
+    "packages/contracts/fixtures/valid/source_fact/geosearch_bbl_fact.json (shape example)",
+    "Socrata app-token model: X-App-Token header optional, tokenless requests throttled by shared IP pool, HTTP 429 on throttle (research section 5.2, E7)"
+  ],
+  "outputs": [
+    "services/api/app/connectors/__init__.py",
+    "services/api/app/connectors/pluto_soda.py (connector: fetch_by_bbl + normalization + provenance + error taxonomy)",
+    "services/api/app/connectors/bbl.py (BBL validation/normalization shared helper: 10-digit canonical string, borough 1-5, decimal-serialization normalization, malformed/conflicting-identifier detection)",
+    "services/api/tests/connectors/test_pluto_soda.py and test_bbl.py (offline, fixture-driven, deterministic)",
+    "services/api/tests/fixtures/pluto/*.json (KB-scale official response fixtures, each with request URL, retrieval timestamp, and capture method recorded)",
+    "project-control/reports/M1-T002-producer-report.md (return packet with exact commands and outputs)"
+  ],
+  "dependencies": [
+    "M1-T001",
+    "M0-T009"
+  ],
+  "allowed_paths": [
+    "services/api/app/connectors/**",
+    "services/api/tests/connectors/**",
+    "services/api/tests/fixtures/pluto/**",
+    "services/api/pyproject.toml",
+    "project-control/reports/M1-T002-*"
+  ],
+  "forbidden_paths": [
+    ".github/**",
+    "packages/contracts/**",
+    "apps/**",
+    "tools/**",
+    "project-control/tasks/**",
+    "project-control/gates/**",
+    "services/api/app/main.py",
+    "docs/**"
+  ],
+  "acceptance_scenarios": [
+    {
+      "id": "S1",
+      "case": "normal",
+      "input": "fetch_by_bbl('1000010100') against the F1 fixture (live-captured single-lot record, version 26v1)",
+      "expected": "one canonical record; every emitted fact validates against source_fact.schema.json v1; provenance carries source_id, dataset_id 64uk-42ks, source URL, source field name, raw value, normalized value, PLUTO version string, retrieval timestamp"
+    },
+    {
+      "id": "S2",
+      "case": "boundary",
+      "input": "(a) $select-projected BBL value '1000010100.00000000' (F12); (b) borough/block/lot inputs at limits (borough 1 and 5, block 00001, lot 9999); (c) condo unit-lot BBL vs billing-lot BBL (F2 semantics)",
+      "expected": "(a) normalized to canonical 10-digit string '1000010100' with raw value preserved in provenance; (b) valid canonical BBLs assembled/zero-padded per dictionary p.38; (c) unit BBL returns explicit no_match (never a guessed record) with the condo billing-BBL explanation available to callers"
+    },
+    {
+      "id": "S3",
+      "case": "missing-null",
+      "input": "(a) nonexistent BBL 9999999999 -> [] (F3 fixture); (b) record with SODA null-field omission, e.g. no zonedist2/overlay/spdist keys (F4 fixture); (c) numfloors absent with numbldgs > 0",
+      "expected": "(a) explicit no_match result, not an error, not an invented record; (b) omitted keys surface as fact-absent/unknown per dictionary semantics, never fabricated, never treated as schema; (c) NumFloors marked unknown per dictionary p.28 rule"
+    },
+    {
+      "id": "S4",
+      "case": "ambiguous-conflicting",
+      "input": "(a) malformed BBLs: 9 digits, 11 digits, borough 6, non-numeric, negative, '1000010100.5'; (b) conflicting identifiers: bbl field disagreeing with borocode/block/lot fields in the response record",
+      "expected": "(a) each rejected with a typed validation error naming the defect, no network call made; (b) conflict detected and reported as a provenance-level conflict flag, never silently resolved in favor of either value"
+    },
+    {
+      "id": "S5",
+      "case": "failure",
+      "input": "(a) HTTP 429 (throttle); (b) HTTP 400 body errorCode query.soql.no-such-column (F13 fixture); (c) connect/read timeout; (d) network unavailable; (e) 5xx",
+      "expected": "(a) bounded retry with backoff then typed rate_limited error; (b) classified as schema_drift signal, distinct from other 400s, surfaced for alerting, never retried blindly; (c,d,e) typed source_unavailable/timeout errors with no partial facts emitted; no raw stack traces or token values in any error payload or log"
+    },
+    {
+      "id": "S6",
+      "case": "retry-idempotency",
+      "input": "same BBL fetched twice; a retried request after a transient failure",
+      "expected": "identical canonical output for identical raw input (stable ordering, stable fact ids or deterministic keys); retrieval timestamps differ only where they must; no duplicate facts"
+    },
+    {
+      "id": "S7",
+      "case": "provenance-completeness",
+      "input": "any successful fetch",
+      "expected": "it is impossible to obtain a normalized fact without its provenance record; version regex ^\\d{2}v\\d+(\\.\\d+)?$ enforced (F9); the 8 per-input vintage date columns (basempdate..zoningdate) captured when present as effective-date bounds"
+    },
+    {
+      "id": "S8",
+      "case": "regression",
+      "input": "existing services/api test suite plus contracts validator",
+      "expected": "test_health.py still passes; python .github/scripts/validate_contracts.py still passes; no contract schema files modified"
+    }
+  ],
+  "required_gates": [
+    "G0",
+    "G1",
+    "G2",
+    "G3",
+    "G4",
+    "G5"
+  ],
+  "producer_agent": "backend-engineer",
+  "reviewer_agents": [
+    "data-contract-verifier",
+    "code-reviewer",
+    "security-reviewer"
+  ],
+  "status": "claimed",
+  "progress_percent": 10,
+  "risks": [
+    "SODA omits null fields per record: schema must come from the 108-column /api/views inventory, never from record keys (research 4.2)",
+    "Condo unit-lot BBLs legitimately return no PLUTO record (billing-lot semantics); must not be treated as connector failure",
+    "Tokenless throttling shares an IP pool: keep test fixture capture to a handful of KB-scale requests; F7 (429) must NOT be captured via an abusive burst - construct it from the official Socrata app-tokens doc shape and label it synthetic-from-official-doc",
+    "F11 (MapPLUTO bulk manifest) is OUT of scope here - it belongs to the M2 mappluto-bulk importer task (OQ-4/OQ-10 residuals)",
+    "residfar/commfar/facilfar are informational only, exclusive of bonuses - map them as facts but NEVER as rule outputs (research 4.1)",
+    "Owner PC below 4 GB free: producer works source-only; full test runs and any heavy execution belong in CI; fixtures KB-scale only",
+    "Socrata app token is optional for correctness but recommended for production: human action to be recorded in HUMAN_ACTIONS_REQUIRED.md; connector reads it from env (never hard-coded, never logged)"
+  ],
+  "blockers": [],
+  "created_at": "2026-07-16T20:19:09.867908+00:00",
+  "updated_at": "2026-07-16T20:20:52.158403+00:00",
+  "worktree": ".claude/worktrees/M1-T002"
+}
