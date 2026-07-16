@@ -1,0 +1,9 @@
+{
+  "checkpoint_id": "CP-0009",
+  "timestamp": "2026-07-16T22:16:00.883134+00:00",
+  "commit": "8597c2e",
+  "branch": "main",
+  "active_milestone": "M0",
+  "summary": "Session 5: M1-T004 ACCEPTED (G1 conditional-PASS with C1-C9 applied per owner audit; G3 PASS zero defects; original G1 return preserved verbatim; amendment endpoint = optional enrichment per owner directive). M1-T005 property-profile API ACCEPTED (G0/G2/G3/G5/G4; D1 fixup; 142 tests; merged ae44554 CI+scan green). Owner audit items 1-7 executed: remote-state verification protocol, verbatim report preservation rule, agent-memory rule cited to AOS s7, PASS-with-corrections semantics codified, exact-path staging rule - all in .claude/rules/project-control.md. GDS requirements doc integrated at root design level (CLAUDE.md read list + IMPLEMENTATION_SEQUENCE note); Section 15 integration plan DRAFTED FOR OWNER REVIEW at docs/GENERATIVE_STRATEGY_INTEGRATION_PLAN.md - no GDS tasks contracted pending approval. Blocking follow-ups recorded: contract v1.1 before Priority 4 consumes additive keys; no-auth condition until B-001.",
+  "updated_at": "2026-07-16T22:16:00.883134+00:00"
+}
