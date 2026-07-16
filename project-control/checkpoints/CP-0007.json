@@ -1,0 +1,9 @@
+{
+  "checkpoint_id": "CP-0007",
+  "timestamp": "2026-07-16T19:55:06.193609+00:00",
+  "commit": "cde4451",
+  "branch": "main",
+  "active_milestone": "M0",
+  "summary": "Session 4 close. M0-T005 ACCEPTED (G2/G3/G5; scan workflow live+green). M0-T009 ACCEPTED (G2/G3/G4/G5; contracts v1 merged; CI runner jsonschema 4.10.3 discovery raised R1 item 10). M0-T005-R1 contracted (11-item hardening). B-006 created (push protection). B-005 re-audited: 3/12 present, no INTEGRATION_MANIFEST.json exists. Unknown .claude pack quarantined TWICE - root cause = owner global auto-project-setup.sh hook; marker kept in place to disarm. Permission root-cause fixed: reviewer plan-mode removed, bypassPermissions local settings, destructive ops ask-gated, .env reads denied. M1-T001: producer network-denied then completed from orchestrator-captured evidence; G0+G1 PASS (live-verified: 26v1, 108 cols, dictionary units, ArcGIS endpoint, BBL serialization hazard, qt5r-nqxp); corrections C1-C6 applied; G3 pending re-dispatch after persistent API 529s. Next: G3+accept M1-T001, M0-T005-R1, M0-T011/ADR-004, M1 fan-out.",
+  "updated_at": "2026-07-16T19:55:06.194603+00:00"
+}
