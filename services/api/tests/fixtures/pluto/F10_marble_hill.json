@@ -1,0 +1,11 @@
+{
+  "fixture_id": "F10",
+  "title": "F10 Marble Hill lot (borocode 1, zipcode 10463, MN block 2215)",
+  "dataset_id": "64uk-42ks",
+  "request_url": "https://data.cityofnewyork.us/resource/64uk-42ks.json?$where=borocode=1%20and%20zipcode=10463&$limit=1&$order=bbl",
+  "http_status": 200,
+  "retrieval_timestamp_utc": "2026-07-16T20:27:59Z",
+  "capture_method": "live curl GET by M1-T002 producer, tokenless, single KB-scale request (polite shared-pool use)",
+  "notes": "Marble Hill is legally Manhattan (borocode 1) but Bronx-serviced: sanitboro=2, cd=208, schooldist 10 (README 26v1). Also a split-zone record (zonedist2, zonedist3 present).",
+  "response_body_raw": "[{\"borough\":\"MN\",\"block\":\"2215\",\"lot\":\"1\",\"cd\":\"208\",\"ct2010\":\"309\",\"cb2010\":\"4002\",\"schooldist\":\"10\",\"council\":\"10\",\"zipcode\":\"10463\",\"firecomp\":\"E081\",\"policeprct\":\"50\",\"healtharea\":\"110\",\"sanitboro\":\"2\",\"sanitsub\":\"2A\",\"address\":\"BROADWAY\",\"zonedist1\":\"M1-1\",\"zonedist2\":\"R6\",\"zonedist3\":\"R7-1\",\"splitzone\":true,\"bldgclass\":\"U6\",\"landuse\":\"7\",\"easements\":\"2\",\"ownertype\":\"X\",\"ownername\":\"HP PROMENADE HOUSING DEVELOPMENT FUND CO MPANY, INC\",\"lotarea\":\"75206\",\"bldgarea\":\"0\",\"areasource\":\"7\",\"numbldgs\":\"0\",\"unitsres\":\"0\",\"unitstotal\":\"0\",\"lotfront\":\"99.8300000\",\"lotdepth\":\"685.0000000\",\"bldgfront\":\"0.0000000\",\"bldgdepth\":\"0.0000000\",\"ext\":\"N\",\"proxcode\":\"0\",\"irrlotcode\":true,\"lottype\":\"3\",\"bsmtcode\":\"0\",\"assessland\":\"0.00000\",\"assesstot\":\"0.00000\",\"exempttot\":\"0.00000\",\"yearbuilt\":\"0\",\"yearalter1\":\"0\",\"yearalter2\":\"0\",\"builtfar\":\"0.00000000000\",\"residfar\":\"0.00000000000\",\"commfar\":\"1.00000000000\",\"facilfar\":\"2.40000000000\",\"affresfar\":\"0.00000000000\",\"mnffar\":\"1.00000000000\",\"borocode\":\"1\",\"bbl\":\"1022150001.00000000\",\"tract2010\":\"309\",\"xcoord\":\"1008660\",\"ycoord\":\"257932\",\"latitude\":\"40.8746043\",\"longitude\":\"-73.9117353\",\"zonemap\":\"1d\",\"zmcode\":true,\"sanborn\":\"112 080\",\"taxmap\":\"10804\",\"plutomapid\":\"1\",\"version\":\"26v1\",\"sanitdistrict\":\"8\",\"healthcenterdistrict\":\"17\",\"firm07_flag\":\"1\",\"pfirm15_flag\":\"1\",\"bct2020\":\"1030900\",\"bctcb2020\":\"10309005000\",\"transitzone\":\"Outer Transit Zone\"}]\n"
+}

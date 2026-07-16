@@ -1,0 +1,11 @@
+{
+  "fixture_id": "F9",
+  "title": "F9 $select=version probe",
+  "dataset_id": "64uk-42ks",
+  "request_url": "https://data.cityofnewyork.us/resource/64uk-42ks.json?$select=version&$limit=1",
+  "http_status": 200,
+  "retrieval_timestamp_utc": "2026-07-16T20:26:53Z",
+  "capture_method": "live curl GET by M1-T002 producer, tokenless, single KB-scale request (polite shared-pool use)",
+  "notes": "PLUTO version string 26v1; must match ^\\d{2}v\\d+(\\.\\d+)?$. Freshness monitoring polls this, not Socrata metadata timestamps.",
+  "response_body_raw": "[{\"version\":\"26v1\"}]\n"
+}

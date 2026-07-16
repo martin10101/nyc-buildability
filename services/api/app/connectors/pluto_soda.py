@@ -1,0 +1,731 @@
+"""PLUTO SODA connector - official NYC Open Data dataset ``64uk-42ks`` (task M1-T002).
+
+Responsibilities (per accepted M1-T001 research, docs/research/pluto-mappluto-2026-07-16.md):
+
+- ``fetch_by_bbl``: per-BBL retrieval with BBL validation BEFORE any network call.
+- Canonical source-fact emission: every fact validates against
+  ``packages/contracts/schemas/v1/source_fact.schema.json`` and carries full
+  provenance (source id, dataset id, request URL, source field name, raw value,
+  normalized value, PLUTO version, retrieval timestamp, per-input vintage dates
+  when present).
+- Null-omission rule: SODA omits null fields per record. The schema comes ONLY
+  from the 108-column inventory captured from ``/api/views/64uk-42ks.json``
+  (fixture F08, retrieved 2026-07-16); absent keys mean the fact is
+  unknown/absent and are surfaced in ``absent_columns`` - NEVER fabricated.
+- Typed error taxonomy: ``validation_error`` (raised by
+  :mod:`app.connectors.bbl` before any request), ``no_match`` (a RESULT, not an
+  error - condo unit-lot BBLs legitimately return ``[]``), ``rate_limited``,
+  ``schema_drift``, ``timeout``, ``source_unavailable``.
+- HTTP 400 with errorCode ``query.soql.no-such-column`` is the schema-drift
+  signature (M1-T001 G1 finding, fixture F13) and is never blindly retried.
+  Other 400s (e.g. ``query.soql.type-mismatch``, fixture F13b) are NOT drift.
+- Bounded retry with exponential backoff on 429 / 5xx / timeout / network
+  failure only.
+- Optional ``SOCRATA_APP_TOKEN`` sent as ``X-App-Token`` header: never
+  required, never logged, never present in any error payload (tokenless
+  requests share the common IP pool - dev.socrata.com/docs/app-tokens, E7).
+- Structured errors and results carry a correlation id; no stack traces in
+  payloads.
+
+Deterministic code only: no AI, no legal interpretation, no invented values
+(PRD sections 2, 9, 23.2). FAR columns are informational facts, never rule
+outputs (research section 4.1).
+"""
+
+from __future__ import annotations
+
+import json
+import logging
+import os
+import re
+import time
+import urllib.error
+import urllib.request
+import uuid
+from collections.abc import Callable
+from dataclasses import dataclass, field
+from datetime import UTC, datetime
+
+from app.connectors.bbl import (
+    BBLValidationError,
+    check_identifier_consistency,
+    normalize_bbl,
+)
+
+__all__ = [
+    "BASE_URL",
+    "DATASET_ID",
+    "PLUTO_COLUMN_TYPES",
+    "PLUTO_COLUMNS",
+    "PlutoConnectorError",
+    "PlutoFetchResult",
+    "RateLimitedError",
+    "SchemaDriftError",
+    "SourceTimeoutError",
+    "SourceUnavailableError",
+    "TransportFailure",
+    "TransportResponse",
+    "TransportTimeout",
+    "VERSION_RE",
+    "VINTAGE_DATE_COLUMNS",
+    "build_page_url",
+    "check_columns_for_drift",
+    "fetch_by_bbl",
+    "urllib_transport",
+]
+
+logger = logging.getLogger("app.connectors.pluto_soda")
+
+SOURCE_ID = "nyc-dcp-pluto-soda"  # source registry record 1 (pluto-mappluto.json)
+DATASET_ID = "64uk-42ks"
+BASE_URL = "https://data.cityofnewyork.us/resource/64uk-42ks.json"
+API_VIEWS_URL = "https://data.cityofnewyork.us/api/views/64uk-42ks.json"
+APP_TOKEN_ENV_VAR = "SOCRATA_APP_TOKEN"
+
+# PLUTO release version format, e.g. 26v1 or 26v1.1 (README 26v1 release model).
+VERSION_RE = re.compile(r"^\d{2}v\d+(\.\d+)?$")
+
+# Schema-drift failure signature (M1-T001 G1 finding; fixture F13).
+SCHEMA_DRIFT_ERROR_CODE = "query.soql.no-such-column"
+
+# Per-input vintage date columns = per-record effective-date bounds
+# (research section 4.2, G1 C5). Socrata-typed text; nullable per record (F1v).
+VINTAGE_DATE_COLUMNS = (
+    "basempdate",
+    "dcasdate",
+    "edesigdate",
+    "landmkdate",
+    "masdate",
+    "polidate",
+    "rpaddate",
+    "zoningdate",
+)
+
+# Condo lot-number semantics (official meta_mappluto.pdf, verified at M1-T001 G1):
+# unit lots 1001-6999, billing lots 7501-7599; PLUTO carries one record per
+# condominium complex under the billing BBL (README 26v1, research section 4.4).
+CONDO_UNIT_LOT_RANGE = (1001, 6999)
+CONDO_BILLING_LOT_RANGE = (7501, 7599)
+
+# ---------------------------------------------------------------------------
+# 108-column inventory with official Socrata dataTypeName per column.
+# Source: /api/views/64uk-42ks.json columns array, retrieved 2026-07-16
+# (fixture F08_api_views_columns_snapshot.json - the test suite cross-checks
+# this constant against that fixture, so transcription drift fails the build).
+# NEVER infer schema from record keys (SODA omits null fields per record).
+# ---------------------------------------------------------------------------
+PLUTO_COLUMN_TYPES: dict[str, str] = {
+    "borough": "text", "block": "number", "lot": "number", "cd": "number",
+    "ct2010": "number", "cb2010": "number", "schooldist": "number",
+    "council": "number", "zipcode": "number", "firecomp": "text",
+    "policeprct": "number", "healtharea": "number", "sanitboro": "number",
+    "sanitsub": "text", "address": "text", "zonedist1": "text",
+    "zonedist2": "text", "zonedist3": "text", "zonedist4": "text",
+    "overlay1": "text", "overlay2": "text", "spdist1": "text",
+    "spdist2": "text", "spdist3": "text", "ltdheight": "text",
+    "splitzone": "checkbox", "bldgclass": "text", "landuse": "number",
+    "easements": "number", "ownertype": "text", "ownername": "text",
+    "lotarea": "number", "bldgarea": "number", "comarea": "number",
+    "resarea": "number", "officearea": "number", "retailarea": "number",
+    "garagearea": "number", "strgearea": "number", "factryarea": "number",
+    "otherarea": "number", "areasource": "number", "numbldgs": "number",
+    "numfloors": "number", "unitsres": "number", "unitstotal": "number",
+    "lotfront": "number", "lotdepth": "number", "bldgfront": "number",
+    "bldgdepth": "number", "ext": "text", "proxcode": "number",
+    "irrlotcode": "checkbox", "lottype": "number", "bsmtcode": "number",
+    "assessland": "number", "assesstot": "number", "exempttot": "number",
+    "yearbuilt": "number", "yearalter1": "number", "yearalter2": "number",
+    "histdist": "text", "landmark": "text", "builtfar": "number",
+    "residfar": "number", "commfar": "number", "facilfar": "number",
+    "affresfar": "number", "mnffar": "number", "borocode": "number",
+    "bbl": "number", "condono": "number", "tract2010": "number",
+    "xcoord": "number", "ycoord": "number", "latitude": "number",
+    "longitude": "number", "zonemap": "text", "zmcode": "checkbox",
+    "sanborn": "text", "taxmap": "number", "edesignum": "text",
+    "appbbl": "number", "appdate": "calendar_date", "plutomapid": "number",
+    "version": "text", "sanitdistrict": "number",
+    "healthcenterdistrict": "number", "firm07_flag": "number",
+    "pfirm15_flag": "number", "dcpedited": "text", "notes": "text",
+    "bct2020": "text", "bctcb2020": "text", "mih_opt1": "checkbox",
+    "mih_opt2": "checkbox", "mih_opt3": "checkbox", "mih_opt4": "checkbox",
+    "transitzone": "text", "geom": "text", "basempdate": "text",
+    "dcasdate": "text", "edesigdate": "text", "landmkdate": "text",
+    "masdate": "text", "polidate": "text", "rpaddate": "text",
+    "zoningdate": "text",
+}
+PLUTO_COLUMNS: frozenset[str] = frozenset(PLUTO_COLUMN_TYPES)
+
+# Units per the 26v1 data dictionary (research section 4.1; G1-verified pages
+# cited there). Columns not listed are unitless/coded and get units=None.
+_SQUARE_FEET = "square feet"
+FIELD_UNITS: dict[str, str] = {
+    # dictionary p.21/p.22: areas in square feet (BldgArea: condo values are
+    # net not gross, and NOT ZR 12-10 zoning floor area - informational fact).
+    "lotarea": _SQUARE_FEET, "bldgarea": _SQUARE_FEET, "comarea": _SQUARE_FEET,
+    "resarea": _SQUARE_FEET, "officearea": _SQUARE_FEET,
+    "retailarea": _SQUARE_FEET, "garagearea": _SQUARE_FEET,
+    "strgearea": _SQUARE_FEET, "factryarea": _SQUARE_FEET,
+    "otherarea": _SQUARE_FEET,
+    # dictionary p.29: frontage/depth measured in feet.
+    "lotfront": "feet", "lotdepth": "feet", "bldgfront": "feet",
+    "bldgdepth": "feet",
+    # dictionary p.33-34: DOF dollar values.
+    "assessland": "US dollars", "assesstot": "US dollars",
+    "exempttot": "US dollars",
+    # dictionary p.39-40: NY-Long Island State Plane (EPSG:2263, US survey feet
+    # confirmed on the official ArcGIS service side at G1).
+    "xcoord": "US survey feet (NY-Long Island State Plane, EPSG:2263)",
+    "ycoord": "US survey feet (NY-Long Island State Plane, EPSG:2263)",
+    "latitude": "decimal degrees",
+    "longitude": "decimal degrees",
+}
+
+
+# ---------------------------------------------------------------------------
+# Error taxonomy
+# ---------------------------------------------------------------------------
+
+class PlutoConnectorError(Exception):
+    """Base typed connector error. Payloads never contain stack traces,
+    headers, or the app token."""
+
+    error_type = "source_unavailable"
+
+    def __init__(self, message: str, *, correlation_id: str, detail: dict | None = None):
+        super().__init__(message)
+        self.message = message
+        self.correlation_id = correlation_id
+        self.detail = detail or {}
+
+    def to_payload(self) -> dict:
+        return {
+            "error_type": self.error_type,
+            "message": self.message,
+            "correlation_id": self.correlation_id,
+            "source_id": SOURCE_ID,
+            "dataset_id": DATASET_ID,
+            "detail": self.detail,
+        }
+
+
+class RateLimitedError(PlutoConnectorError):
+    """HTTP 429 persisted through the bounded retry budget."""
+
+    error_type = "rate_limited"
+
+
+class SchemaDriftError(PlutoConnectorError):
+    """Dataset contract changed (no-such-column 400, malformed version,
+    unexpected body shape). Surfaced for alerting; never blindly retried."""
+
+    error_type = "schema_drift"
+
+
+class SourceTimeoutError(PlutoConnectorError):
+    """Connect/read timeout persisted through the retry budget."""
+
+    error_type = "timeout"
+
+
+class SourceUnavailableError(PlutoConnectorError):
+    """Network failure, 5xx persisted through retries, or an unexpected
+    non-drift HTTP status."""
+
+    error_type = "source_unavailable"
+
+
+# ---------------------------------------------------------------------------
+# Transport abstraction (injectable so all tests run offline)
+# ---------------------------------------------------------------------------
+
+@dataclass(frozen=True)
+class TransportResponse:
+    status: int
+    body: str
+
+
+class TransportTimeout(Exception):
+    """Raised by a transport on connect/read timeout."""
+
+
+class TransportFailure(Exception):
+    """Raised by a transport when the network/DNS/TLS layer fails.
+    The message must already be free of secrets."""
+
+
+Transport = Callable[[str, dict[str, str], float], TransportResponse]
+
+
+def urllib_transport(url: str, headers: dict[str, str], timeout: float) -> TransportResponse:
+    """Default stdlib transport (no third-party HTTP dependency; low-storage
+    policy). Translates urllib failures into transport-level signals."""
+    request = urllib.request.Request(url, headers=headers, method="GET")
+    try:
+        with urllib.request.urlopen(request, timeout=timeout) as response:  # noqa: S310
+            return TransportResponse(
+                status=response.status,
+                body=response.read().decode("utf-8", errors="replace"),
+            )
+    except urllib.error.HTTPError as exc:
+        body = exc.read().decode("utf-8", errors="replace")
+        return TransportResponse(status=exc.code, body=body)
+    except TimeoutError as exc:  # socket.timeout is an alias since Python 3.10
+        raise TransportTimeout(f"timeout after {timeout}s") from exc
+    except urllib.error.URLError as exc:
+        if isinstance(exc.reason, TimeoutError):
+            raise TransportTimeout(f"timeout after {timeout}s") from exc
+        raise TransportFailure(f"network failure: {type(exc.reason).__name__}") from exc
+
+
+# ---------------------------------------------------------------------------
+# Result contract
+# ---------------------------------------------------------------------------
+
+@dataclass
+class PlutoFetchResult:
+    """Canonical fetch result. ``facts`` entries validate against
+    source_fact.schema.json v1; ``no_match`` is a legitimate result status."""
+
+    status: str  # "ok" | "no_match"
+    bbl: str
+    correlation_id: str
+    request_url: str
+    retrieved_at: str
+    dataset_version: str | None
+    record_count: int
+    facts: list[dict] = field(default_factory=list)
+    conflicts: list[dict] = field(default_factory=list)
+    drift_signals: list[str] = field(default_factory=list)
+    absent_columns: list[str] = field(default_factory=list)
+    notes: list[str] = field(default_factory=list)
+    no_match_explanation: str | None = None
+
+
+# ---------------------------------------------------------------------------
+# Internals
+# ---------------------------------------------------------------------------
+
+def _utc_now() -> datetime:
+    return datetime.now(UTC)
+
+
+def _rfc3339(moment: datetime) -> str:
+    return moment.strftime("%Y-%m-%dT%H:%M:%SZ")
+
+
+def _build_headers(app_token: str | None) -> dict[str, str]:
+    headers = {"Accept": "application/json"}
+    if app_token:
+        # Optional per the official app-token model (E7); never logged and
+        # never included in error payloads.
+        headers["X-App-Token"] = app_token
+    return headers
+
+
+def _classify_400(body: str) -> str | None:
+    """Return the Socrata errorCode of a 400 body when parseable, else None."""
+    try:
+        parsed = json.loads(body)
+    except (json.JSONDecodeError, ValueError):
+        return None
+    if isinstance(parsed, dict):
+        code = parsed.get("errorCode")
+        if isinstance(code, str):
+            return code
+    return None
+
+
+def _request_with_retry(
+    url: str,
+    *,
+    transport: Transport,
+    headers: dict[str, str],
+    timeout: float,
+    max_attempts: int,
+    backoff_base: float,
+    sleep: Callable[[float], None],
+    correlation_id: str,
+) -> TransportResponse:
+    """Bounded retry on 429/5xx/timeout/network failure only. Schema drift
+    and other 4xx are never retried."""
+    last_kind: str | None = None
+    last_detail: dict = {}
+    for attempt in range(1, max_attempts + 1):
+        try:
+            response = transport(url, headers, timeout)
+        except TransportTimeout:
+            last_kind, last_detail = "timeout", {"attempts": attempt}
+            logger.warning(
+                "pluto_soda timeout url=%s attempt=%d correlation_id=%s",
+                url, attempt, correlation_id,
+            )
+        except TransportFailure as exc:
+            last_kind = "network"
+            last_detail = {"attempts": attempt, "reason": str(exc)}
+            logger.warning(
+                "pluto_soda network failure url=%s attempt=%d correlation_id=%s",
+                url, attempt, correlation_id,
+            )
+        else:
+            if response.status == 200:
+                return response
+            if response.status == 429:
+                last_kind, last_detail = "rate_limited", {"attempts": attempt}
+                logger.warning(
+                    "pluto_soda throttled (429) url=%s attempt=%d correlation_id=%s",
+                    url, attempt, correlation_id,
+                )
+            elif response.status == 400:
+                error_code = _classify_400(response.body)
+                if error_code == SCHEMA_DRIFT_ERROR_CODE:
+                    raise SchemaDriftError(
+                        "SODA rejected a column reference: schema drift signature "
+                        f"({SCHEMA_DRIFT_ERROR_CODE})",
+                        correlation_id=correlation_id,
+                        detail={"http_status": 400, "error_code": error_code, "url": url},
+                    )
+                raise SourceUnavailableError(
+                    "SODA rejected the request (HTTP 400, not the schema-drift signature)",
+                    correlation_id=correlation_id,
+                    detail={"http_status": 400, "error_code": error_code, "url": url},
+                )
+            elif 500 <= response.status < 600:
+                last_kind = "server_error"
+                last_detail = {"attempts": attempt, "http_status": response.status}
+                logger.warning(
+                    "pluto_soda server error %d url=%s attempt=%d correlation_id=%s",
+                    response.status, url, attempt, correlation_id,
+                )
+            else:
+                raise SourceUnavailableError(
+                    f"unexpected HTTP status {response.status} from SODA endpoint",
+                    correlation_id=correlation_id,
+                    detail={"http_status": response.status, "url": url},
+                )
+        if attempt < max_attempts:
+            sleep(backoff_base * (2 ** (attempt - 1)))
+
+    detail = {**last_detail, "url": url, "max_attempts": max_attempts}
+    if last_kind == "rate_limited":
+        raise RateLimitedError(
+            "SODA throttled the request (HTTP 429) and the retry budget is exhausted; "
+            "configure SOCRATA_APP_TOKEN to leave the shared tokenless pool",
+            correlation_id=correlation_id,
+            detail=detail,
+        )
+    if last_kind == "timeout":
+        raise SourceTimeoutError(
+            "SODA request timed out and the retry budget is exhausted",
+            correlation_id=correlation_id,
+            detail=detail,
+        )
+    raise SourceUnavailableError(
+        "SODA endpoint unavailable and the retry budget is exhausted",
+        correlation_id=correlation_id,
+        detail=detail,
+    )
+
+
+def _normalize_value(column: str, raw: object, drift_signals: list[str]) -> object:
+    """Deterministic per-column normalization based on the official Socrata
+    dataTypeName (fixture F08). Unparseable values are surfaced as drift
+    signals and passed through verbatim - never guessed."""
+    column_type = PLUTO_COLUMN_TYPES[column]
+    if raw is None:
+        return None
+    if column_type == "checkbox":
+        if isinstance(raw, bool):
+            return raw
+        drift_signals.append(f"unexpected_checkbox_value:{column}")
+        return raw
+    if column in ("bbl", "appbbl"):
+        try:
+            return normalize_bbl(raw).canonical
+        except BBLValidationError:
+            drift_signals.append(f"unparseable_bbl_value:{column}")
+            return raw
+    if column_type == "number":
+        if isinstance(raw, bool):
+            drift_signals.append(f"unexpected_number_value:{column}")
+            return raw
+        if isinstance(raw, int | float):
+            number = float(raw)
+        elif isinstance(raw, str):
+            try:
+                number = float(raw)
+            except ValueError:
+                drift_signals.append(f"unparseable_number_value:{column}")
+                return raw
+        else:
+            drift_signals.append(f"unexpected_number_value:{column}")
+            return raw
+        return int(number) if number.is_integer() else number
+    if column_type == "calendar_date":
+        if isinstance(raw, str) and re.match(r"^\d{4}-\d{2}-\d{2}", raw):
+            return raw[:10]
+        drift_signals.append(f"unparseable_calendar_date:{column}")
+        return raw
+    # text: identity, verbatim.
+    return raw
+
+
+def _condo_explanation(lot: int) -> str | None:
+    low, high = CONDO_UNIT_LOT_RANGE
+    if low <= lot <= high:
+        return (
+            f"Lot {lot} is in the condominium unit-lot range {low}-{high}. PLUTO carries "
+            "one record per condominium complex under the BILLING lot "
+            f"({CONDO_BILLING_LOT_RANGE[0]}-{CONDO_BILLING_LOT_RANGE[1]}, or the lowest "
+            "lot in the block when unassigned); resolve the billing BBL (e.g. Geoclient "
+            "condominiumBillingBbl) and retry (PLUTO README 26v1; research section 4.4)."
+        )
+    return None
+
+
+def _parse_positive_number(raw: object) -> float | None:
+    try:
+        value = float(raw)  # type: ignore[arg-type]
+    except (TypeError, ValueError):
+        return None
+    return value
+
+
+# ---------------------------------------------------------------------------
+# Public API
+# ---------------------------------------------------------------------------
+
+def fetch_by_bbl(
+    bbl: object,
+    *,
+    transport: Transport = urllib_transport,
+    timeout: float = 10.0,
+    max_attempts: int = 3,
+    backoff_base: float = 0.5,
+    sleep: Callable[[float], None] = time.sleep,
+    clock: Callable[[], datetime] = _utc_now,
+    correlation_id: str | None = None,
+    app_token: str | None = None,
+) -> PlutoFetchResult:
+    """Fetch the PLUTO record for one BBL and emit canonical source facts.
+
+    Raises:
+        BBLValidationError: malformed BBL input; NO network call is made.
+        RateLimitedError / SchemaDriftError / SourceTimeoutError /
+        SourceUnavailableError: typed failures; NO partial facts are emitted.
+
+    Returns:
+        PlutoFetchResult with status "ok" (facts populated) or "no_match"
+        (empty official response - a legitimate result, e.g. condo unit lots).
+    """
+    correlation_id = correlation_id or uuid.uuid4().hex
+    normalized = normalize_bbl(bbl)  # validation_error before any network I/O
+    if app_token is None:
+        app_token = os.environ.get(APP_TOKEN_ENV_VAR) or None
+
+    url = f"{BASE_URL}?bbl={normalized.canonical}"
+    retrieved_at = _rfc3339(clock())
+    logger.info(
+        "pluto_soda fetch_by_bbl bbl=%s url=%s correlation_id=%s token_configured=%s",
+        normalized.canonical, url, correlation_id, bool(app_token),
+    )
+
+    response = _request_with_retry(
+        url,
+        transport=transport,
+        headers=_build_headers(app_token),
+        timeout=timeout,
+        max_attempts=max_attempts,
+        backoff_base=backoff_base,
+        sleep=sleep,
+        correlation_id=correlation_id,
+    )
+
+    try:
+        records = json.loads(response.body)
+    except (json.JSONDecodeError, ValueError) as exc:
+        raise SourceUnavailableError(
+            "SODA returned HTTP 200 with a body that is not valid JSON",
+            correlation_id=correlation_id,
+            detail={"url": url, "parse_error": type(exc).__name__},
+        ) from exc
+    if not isinstance(records, list):
+        raise SchemaDriftError(
+            "SODA resource endpoint no longer returns a JSON array",
+            correlation_id=correlation_id,
+            detail={"url": url, "body_type": type(records).__name__},
+        )
+
+    if len(records) == 0:
+        explanation = _condo_explanation(normalized.lot) or (
+            f"No PLUTO record exists for BBL {normalized.canonical} in dataset "
+            f"{DATASET_ID}. The BBL is syntactically valid but matches no tax lot "
+            "in the current PLUTO release (or the lot is represented under a "
+            "different BBL, e.g. after merger - see appbbl semantics)."
+        )
+        logger.info(
+            "pluto_soda no_match bbl=%s correlation_id=%s",
+            normalized.canonical, correlation_id,
+        )
+        return PlutoFetchResult(
+            status="no_match",
+            bbl=normalized.canonical,
+            correlation_id=correlation_id,
+            request_url=url,
+            retrieved_at=retrieved_at,
+            dataset_version=None,
+            record_count=0,
+            no_match_explanation=explanation,
+        )
+
+    if len(records) > 1:
+        raise SchemaDriftError(
+            f"SODA returned {len(records)} records for a single BBL; PLUTO carries "
+            "one record per tax lot / condo complex, so uniqueness is part of the "
+            "dataset contract",
+            correlation_id=correlation_id,
+            detail={"url": url, "record_count": len(records)},
+        )
+
+    record = records[0]
+    if not isinstance(record, dict):
+        raise SchemaDriftError(
+            "SODA record is not a JSON object",
+            correlation_id=correlation_id,
+            detail={"url": url, "record_type": type(record).__name__},
+        )
+
+    drift_signals: list[str] = []
+    record_keys = set(record)
+    unknown_columns = sorted(record_keys - PLUTO_COLUMNS)
+    for column in unknown_columns:
+        # Never infer schema from record keys: unknown columns yield NO facts,
+        # only an alerting signal (additive drift is visible, not fatal).
+        drift_signals.append(f"unknown_column:{column}")
+
+    version_raw = record.get("version")
+    if not isinstance(version_raw, str) or not VERSION_RE.match(version_raw):
+        raise SchemaDriftError(
+            "PLUTO version field missing or malformed on the returned record; "
+            "provenance cannot be recorded without a valid release version",
+            correlation_id=correlation_id,
+            detail={"url": url, "version_raw": repr(version_raw)},
+        )
+
+    record_bbl = normalize_bbl(record["bbl"]).canonical if "bbl" in record else None
+    if record_bbl != normalized.canonical:
+        raise SchemaDriftError(
+            "record BBL does not match the exact-match query BBL",
+            correlation_id=correlation_id,
+            detail={
+                "url": url,
+                "requested_bbl": normalized.canonical,
+                "record_bbl": record_bbl,
+            },
+        )
+
+    conflicts = check_identifier_consistency(
+        normalized.canonical,
+        borocode=record.get("borocode"),
+        block=record.get("block"),
+        lot=record.get("lot"),
+    )
+    conflict_fields = {"bbl"} | {c["field"] for c in conflicts} if conflicts else set()
+
+    vintages = {
+        column: record[column] for column in VINTAGE_DATE_COLUMNS if column in record
+    }
+
+    notes: list[str] = []
+    numbldgs = _parse_positive_number(record.get("numbldgs"))
+    if "numfloors" not in record and numbldgs is not None and numbldgs > 0:
+        # Dictionary p.28: NumFloors null with NumBldgs > 0 = "not available".
+        notes.append(
+            "numfloors_not_available: NumFloors is null while NumBldgs > 0; per the "
+            "26v1 data dictionary p.28 the number of floors is NOT AVAILABLE for "
+            "this tax lot (unknown, never zero, never fabricated)."
+        )
+
+    facts: list[dict] = []
+    for column in sorted(record_keys & PLUTO_COLUMNS):
+        raw_value = record[column]
+        fact = {
+            # Deterministic key: same dataset version + BBL + field => same id
+            # (idempotency, scenario S6).
+            "provenance_id": f"pluto-{DATASET_ID}-{version_raw}-{normalized.canonical}-{column}",
+            "source_id": SOURCE_ID,
+            "original_field_name": column,
+            "original_value": raw_value,
+            "normalized_value": _normalize_value(column, raw_value, drift_signals),
+            "units": FIELD_UNITS.get(column),
+            "retrieved_at": retrieved_at,
+            "dataset_version": version_raw,
+            # Per-fact effective dates are NOT published per column; the
+            # per-input vintage dates below are the official effective-date
+            # bounds (README 26v1 DATES OF DATA). No field->input mapping is
+            # published, so effective_date stays explicitly null (never guessed).
+            "effective_date": None,
+            "bbl": normalized.canonical,
+            "confidence": 1.0,
+            "user_confirmed_or_overridden": "none",
+            "conflict_status": "conflicting" if column in conflict_fields else "none",
+            # Additive provenance extensions (source_fact v1 permits additional
+            # keys; the required v1 field set above is complete and unchanged).
+            "dataset_id": DATASET_ID,
+            "request_url": url,
+            "input_vintages": vintages,
+        }
+        facts.append(fact)
+
+    absent_columns = sorted(PLUTO_COLUMNS - record_keys)
+    logger.info(
+        "pluto_soda ok bbl=%s version=%s facts=%d conflicts=%d drift_signals=%d "
+        "correlation_id=%s",
+        normalized.canonical, version_raw, len(facts), len(conflicts),
+        len(drift_signals), correlation_id,
+    )
+    return PlutoFetchResult(
+        status="ok",
+        bbl=normalized.canonical,
+        correlation_id=correlation_id,
+        request_url=url,
+        retrieved_at=retrieved_at,
+        dataset_version=version_raw,
+        record_count=1,
+        facts=facts,
+        conflicts=conflicts,
+        drift_signals=drift_signals,
+        absent_columns=absent_columns,
+        notes=notes,
+    )
+
+
+def build_page_url(limit: int, offset: int) -> str:
+    """Stable-ordered pagination URL ($order=bbl) for future bulk/scan use.
+
+    Fixtures F06a/F06b prove ordering stability and no dupes/gaps across the
+    page boundary. Citywide import remains the M2 bulk task (F11 out of scope).
+    """
+    if limit < 1 or offset < 0:
+        raise ValueError("limit must be >= 1 and offset >= 0")
+    return f"{BASE_URL}?$order=bbl&$limit={limit}&$offset={offset}"
+
+
+def check_columns_for_drift(api_views_metadata: dict) -> dict:
+    """Compare a live /api/views/64uk-42ks.json document against the embedded
+    108-column contract snapshot (fixture F08). Returns added/removed/type-
+    changed column names for the scheduled drift monitor."""
+    columns = api_views_metadata.get("columns")
+    if not isinstance(columns, list):
+        return {"error": "metadata document has no columns array"}
+    live = {
+        column.get("fieldName"): column.get("dataTypeName")
+        for column in columns
+        if isinstance(column, dict)
+    }
+    added = sorted(set(live) - PLUTO_COLUMNS)
+    removed = sorted(PLUTO_COLUMNS - set(live))
+    type_changed = sorted(
+        name for name in (set(live) & PLUTO_COLUMNS)
+        if live[name] != PLUTO_COLUMN_TYPES[name]
+    )
+    return {"added": added, "removed": removed, "type_changed": type_changed}

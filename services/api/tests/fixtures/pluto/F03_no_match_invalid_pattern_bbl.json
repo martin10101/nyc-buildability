@@ -1,0 +1,11 @@
+{
+  "fixture_id": "F3",
+  "title": "F3 raw API behavior for BBL 9999999999 -> []",
+  "dataset_id": "64uk-42ks",
+  "request_url": "https://data.cityofnewyork.us/resource/64uk-42ks.json?bbl=9999999999",
+  "http_status": 200,
+  "retrieval_timestamp_utc": "2026-07-16T20:26:50Z",
+  "capture_method": "live curl GET by M1-T002 producer, tokenless, single KB-scale request (polite shared-pool use)",
+  "notes": "Documents the raw endpoint behavior only. 9999999999 violates the accepted canonical BBL pattern ^[1-5][0-9]{9}$ (common.schema.json), so the connector rejects it client-side as validation_error BEFORE any network call; the [] no-match path is proven by F03b and F02b.",
+  "response_body_raw": "[]\n"
+}

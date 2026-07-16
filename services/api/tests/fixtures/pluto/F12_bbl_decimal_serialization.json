@@ -1,0 +1,11 @@
+{
+  "fixture_id": "F12",
+  "title": "F12 $select-projected BBL decimal serialization",
+  "dataset_id": "64uk-42ks",
+  "request_url": "https://data.cityofnewyork.us/resource/64uk-42ks.json?$select=bbl&$order=bbl&$limit=2",
+  "http_status": 200,
+  "retrieval_timestamp_utc": "2026-07-16T20:26:57Z",
+  "capture_method": "live curl GET by M1-T002 producer, tokenless, single KB-scale request (polite shared-pool use)",
+  "notes": "Socrata number-typed BBL serializes as e.g. \"1000010010.00000000\". Connector MUST normalize to the 10-digit canonical string while preserving the raw value in provenance (M1-T001 G1 finding C6).",
+  "response_body_raw": "[{\"bbl\":\"1000010010.00000000\"}\n,{\"bbl\":\"1000010100.00000000\"}]\n"
+}

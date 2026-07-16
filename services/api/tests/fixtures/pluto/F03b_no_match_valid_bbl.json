@@ -1,0 +1,11 @@
+{
+  "fixture_id": "F3b",
+  "title": "F3b syntactically valid, nonexistent BBL 5999999999 -> []",
+  "dataset_id": "64uk-42ks",
+  "request_url": "https://data.cityofnewyork.us/resource/64uk-42ks.json?bbl=5999999999",
+  "http_status": 200,
+  "retrieval_timestamp_utc": "2026-07-16T20:31:11Z",
+  "capture_method": "live curl GET by M1-T002 producer, tokenless, single KB-scale request (polite shared-pool use)",
+  "notes": "Valid pattern (borough 5, block 99999, lot 9999), no such lot. Connector must return an explicit no_match result: not an error, never an invented record.",
+  "response_body_raw": "[]\n"
+}

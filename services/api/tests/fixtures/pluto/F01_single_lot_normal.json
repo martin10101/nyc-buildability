@@ -1,0 +1,11 @@
+{
+  "fixture_id": "F1",
+  "title": "F1 single-lot normal record (BBL 1000010100, Governors Island area)",
+  "dataset_id": "64uk-42ks",
+  "request_url": "https://data.cityofnewyork.us/resource/64uk-42ks.json?bbl=1000010100",
+  "http_status": 200,
+  "retrieval_timestamp_utc": "2026-07-16T20:26:46Z",
+  "capture_method": "live curl GET by M1-T002 producer, tokenless, single KB-scale request (polite shared-pool use)",
+  "notes": "One record, version 26v1. Demonstrates: bbl/appbbl number-type decimal serialization even in full records; splitzone/irrlotcode as JSON booleans; numfloors omitted (numbldgs=0); SODA null-field omission (record carries a subset of the 108 columns).",
+  "response_body_raw": "[{\"borough\":\"MN\",\"block\":\"1\",\"lot\":\"100\",\"cd\":\"101\",\"ct2010\":\"5\",\"cb2010\":\"2\",\"council\":\"1\",\"address\":\"CARDER ROAD\",\"zonedist1\":\"R3-2\",\"spdist1\":\"GI\",\"splitzone\":false,\"bldgclass\":\"Y4\",\"landuse\":\"8\",\"easements\":\"0\",\"ownertype\":\"X\",\"ownername\":\"GOVERNORS ISLAND CORPORATION\",\"lotarea\":\"23121\",\"bldgarea\":\"10000\",\"comarea\":\"10000\",\"resarea\":\"0\",\"officearea\":\"0\",\"retailarea\":\"0\",\"garagearea\":\"0\",\"strgearea\":\"0\",\"factryarea\":\"0\",\"otherarea\":\"10000\",\"areasource\":\"2\",\"numbldgs\":\"0\",\"unitsres\":\"0\",\"unitstotal\":\"1\",\"lotfront\":\"297.4900000\",\"lotdepth\":\"67.0100000\",\"bldgfront\":\"60.6000000\",\"bldgdepth\":\"153.4000000\",\"proxcode\":\"0\",\"irrlotcode\":false,\"lottype\":\"0\",\"bsmtcode\":\"5\",\"assessland\":\"0.00000\",\"assesstot\":\"0.00000\",\"exempttot\":\"0.00000\",\"yearbuilt\":\"0\",\"yearalter1\":\"0\",\"yearalter2\":\"0\",\"builtfar\":\"0.43000000000\",\"residfar\":\"0.75000000000\",\"commfar\":\"0.00000000000\",\"facilfar\":\"1.00000000000\",\"affresfar\":\"1.00000000000\",\"mnffar\":\"0.00000000000\",\"borocode\":\"1\",\"bbl\":\"1000010100.00000000\",\"tract2010\":\"5\",\"xcoord\":\"980406\",\"ycoord\":\"191658\",\"latitude\":\"40.6927315\",\"longitude\":\"-74.0138601\",\"zonemap\":\"16a\",\"appbbl\":\"1000010010.00000000\",\"appdate\":\"2026-03-16T00:00:00.000\",\"plutomapid\":\"1\",\"version\":\"26v1\",\"firm07_flag\":\"1\",\"pfirm15_flag\":\"1\",\"bct2020\":\"1000500\",\"bctcb2020\":\"10005000003\",\"transitzone\":\"Beyond the Greater Transit Zone\"}]\n"
+}

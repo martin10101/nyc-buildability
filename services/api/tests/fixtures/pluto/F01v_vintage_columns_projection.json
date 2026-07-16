@@ -1,0 +1,11 @@
+{
+  "fixture_id": "F1v",
+  "title": "F1v $select projection of the eight per-input vintage date columns for BBL 1000010100",
+  "dataset_id": "64uk-42ks",
+  "request_url": "https://data.cityofnewyork.us/resource/64uk-42ks.json?$select=bbl,basempdate,dcasdate,edesigdate,landmkdate,masdate,polidate,rpaddate,zoningdate&bbl=1000010100",
+  "http_status": 200,
+  "retrieval_timestamp_utc": "2026-07-16T20:31:36Z",
+  "capture_method": "live curl GET by M1-T002 producer, tokenless, single KB-scale request (polite shared-pool use)",
+  "notes": "All eight vintage columns (basempdate..zoningdate) are NULL for this record: SODA omits null fields even under $select, so only bbl is returned. Proves vintage dates are per-record nullable; connector captures them only when present.",
+  "response_body_raw": "[{\"bbl\":\"1000010100.00000000\"}]\n"
+}
