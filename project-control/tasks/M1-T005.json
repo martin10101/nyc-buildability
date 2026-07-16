@@ -108,8 +108,8 @@
     "code-reviewer",
     "security-reviewer"
   ],
-  "status": "claimed",
-  "progress_percent": 10,
+  "status": "awaiting_gate",
+  "progress_percent": 85,
   "risks": [
     "Profile document must be the canonical contract (PRD 32.3) - no competing schema; if property_profile.schema.json v1 lacks a needed field, STOP and report (contract changes are a separate task)",
     "Coverage labels: connector facts are unreviewed source facts - nothing may be labeled verified (PRD 12); expected statuses are conditional/unsupported/data_conflict/not_applicable classes only",
@@ -118,6 +118,14 @@
   ],
   "blockers": [],
   "created_at": "2026-07-16T21:28:13.929406+00:00",
-  "updated_at": "2026-07-16T21:35:11.741710+00:00",
-  "worktree": ".claude/worktrees/M1-T005"
+  "updated_at": "2026-07-16T21:55:24.910483+00:00",
+  "worktree": ".claude/worktrees/M1-T005",
+  "progress_log": [
+    {
+      "at": "2026-07-16T21:55:24.910483+00:00",
+      "agent": "backend-engineer",
+      "percent": 85,
+      "message": "Producer done, committed 555db54; orchestrator re-ran 140 tests + ruff + scan; G3/G5 dispatching"
+    }
+  ]
 }
