@@ -19,7 +19,7 @@ Authoritative detail lives in `project-control/` (run `python tools/project_cont
 ### In progress
 | Task | State |
 |---|---|
-| M1-T001 PLUTO/MapPLUTO research | Claimed (official-source-researcher), G0 PASS; producer launched near session-4 end. Gates when delivered: G1 (data-contract-verifier) + G3. |
+| M1-T001 PLUTO/MapPLUTO research | Deliverables committed; **G0 PASS, G1 PASS** (live verification: 26v1 on SODA, 108 columns, dictionary units/nulls, official ArcGIS endpoint, BBL-serialization + qt5r-nqxp findings); corrections C1-C6 applied (e178adb). G3 dispatch repeatedly hit API-529 at session end — re-dispatch G3, record, accept. |
 
 ### Ready / next
 - **M0-T005-R1** — scanner + validator hardening (contracted, backlog, ready to claim). 11-item burn-down of all M0-T005/M0-T009 review defects. Must land before any real credential enters the repo or M0 exit. Note: CI runner ships jsonschema 4.10.3, making the legacy RefResolver the LIVE CI path — item 10 priority raised.
