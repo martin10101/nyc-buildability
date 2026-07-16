@@ -22,7 +22,7 @@
       },
       "evidence": "service roots fetched live 2026-07-16 (Z8)"
     },
-    "update_frequency": "Monthly. Official verbatim (nyzd_metadata.pdf, Z11): 'The downloadable zoning data will be updated on the last Monday of every month. Updates will include recent zoning changes adopted by City Council.' All six ArcGIS layers observed data-last-edited 2026-07-01 (~13:23-13:34 UTC) — coordinated monthly refresh (Z9; manual epoch conversion, OQ-9).",
+    "update_frequency": "Monthly. Official verbatim (nyzd_metadata.pdf, Z11): 'The downloadable zoning data will be updated on the last Monday of every month. Updates will include recent zoning changes adopted by City Council.' All six ArcGIS layers observed data-last-edited 2026-07-01 (~13:23-13:34 UTC) — coordinated monthly refresh (Z9; epoch conversions machine-verified at G1, C6).",
     "geographic_coverage": "Citywide, all five boroughs. nyzd polygons are continuous over the entire city, extending to city limits on land and to US Army Corps of Engineers pierhead lines over water (service description verbatim, Z8). OFFICIAL USE LIMITATION (Z11 verbatim): 'These features are not intended for determining zoning at the individual tax lot level' — lot-level assignment belongs to ZTLDB/PLUTO.",
     "fields_available": {
       "nyzd": ["OBJECTID (OID)", "ZONEDIST (String 15) — 'Zoning district designation' (official metadata, Z11)", "Shape__Area (Double)", "Shape__Length (Double)"],
@@ -32,8 +32,8 @@
       "nylh": ["OBJECTID", "LHNAME (String 50)", "LHLBL (String 10)", "Shape__Area", "Shape__Length"],
       "nyzma": ["OBJECTID", "EFFECTIVE (esriFieldTypeDate)", "STATUS (String 15)", "ULURPNO (String 50)", "LUCATS (String 10)", "PROJECT_NAME (String 100)", "Shape__Area", "Shape__Length"],
       "crs": "All six layers spatialReference wkid 102718 / latestWkid 2263 = EPSG:2263 NAD83 New York-Long Island (US survey feet); confirmed by official nyzd metadata ('NAD_1983_StatePlane_New_York_Long_Island_FIPS_3104_Feet', reference system identifier 2263 EPSG) and live services (Z8, Z11)",
-      "accuracy": "Estimated horizontal accuracy +/- 20 feet (official nyzd metadata Data Quality statement, Z11; glyph-exactness OQ-10). Near-boundary split determinations must be treated as uncertain.",
-      "feature_counts_2026_07_16": { "nyzd": 5416, "nyco": 9623 }
+      "accuracy": "Estimated horizontal accuracy +/- 20 feet (official nyzd metadata Data Quality statement, Z11; semantics confirmed by independent G1 direct read, C7 — OQ-10 resolved). Near-boundary split determinations must be treated as uncertain.",
+      "feature_counts_2026_07_16": { "nyzd": 5416, "nyco": 9623, "nysp": 95, "nysp_sd": 336, "nylh": 14, "nyzma": 1414, "note": "nysp/nysp_sd/nylh/nyzma counts captured at G1 review (C3)" }
     },
     "terms_usage_notes": "DCP informational-purposes-only disclaimer (nyzd metadata verbatim, Z11): DCP does not warranty completeness, accuracy, content, or fitness for any particular purpose. Data 'freely available to all New York City agencies and the public.' Not for lot-level zoning determination (see geographic_coverage).",
     "connector_implementation": "PLAN ONLY (M1-T003 is research): monthly Render worker pages all six layers via f=json (resultOffset paging; nyco 9,623 features > 2000 cap needs ~5 pages) into PostGIS zoning_district_geometries / commercial_overlay_geometries / special_district_geometries / limited-height / pending_land_use_actions (nyzma); stamps editingInfo.dataLastEditDate + retrieval timestamp per layer as provenance; raw page responses stored to Supabase Storage.",
@@ -43,6 +43,7 @@
     "known_limitations": [
       "No version field on services; provenance version must be derived from editingInfo.dataLastEditDate (OQ-6)",
       "Per-request page caps vary by layer (92/317/14 on small layers) — connector must page generically",
+      "CAP-EXCEEDANCE HAZARD (G1, C3): live counts EXCEED maxRecordCount on nysp (95>92), nysp_sd (336>317), and nyzma (1414>1292), with nylh exactly at cap (14=14) — an unpaged request silently truncates; paging is MANDATORY on every layer",
       "Official +/- 20 ft horizontal accuracy: split-lot boundary intersections near tolerance are not authoritative (Z11)",
       "nysp_sd service description references a SUBSUB attribute that does not exist in the live schema (SUBAREA_* fields instead) — map fields from the live schema only (S4 finding)",
       "Directory also contains non-canonical zoning services (v_Zoning_Districts_NYZD view, neighborhood rezoning one-offs) — pin to the six canonical service names",
