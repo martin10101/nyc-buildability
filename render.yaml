@@ -4,7 +4,9 @@
 # Governing decisions: docs/adr/ADR-001-cloud-architecture.md (topology),
 #   docs/adr/ADR-002-environment-separation.md (which branch/environment this
 #   file deploys), docs/adr/ADR-003-deployment-and-rollback.md (deploy order,
-#   rollback semantics, migration policy). Operator steps:
+#   rollback semantics, migration policy),
+#   docs/adr/ADR-004-frontend-hosting-render.md (frontend web service on
+#   Render; Vercel dropped - owner decision 2026-07-14). Operator steps:
 #   docs/DEPLOYMENT_AND_ROLLBACK.md.
 #
 # Spec reference: https://render.com/docs/blueprint-spec (retrieved 2026-07-14).
@@ -22,8 +24,14 @@
 # before the first Blueprint deploy. Marked [PLACEHOLDER] individually.
 # =============================================================================
 
-# DEPLOY TRIGGER POLICY (ADR-003 D2/D5): every production service below sets
-# `autoDeployTrigger: off`. `autoDeployTrigger` is the CURRENT Blueprint field
+# DEPLOY TRIGGER POLICY (ADR-003 D1/D2/D5): every production service below -
+# including the frontend web service (ADR-004) - sets
+# `autoDeployTrigger: "off"`. The value "off" is QUOTED because bare `off` is
+# a YAML-1.1 boolean and would not be the string Render expects
+# (docs/research/render-nextjs-previews-2026-07-16.md section 3;
+# https://render.com/docs/blueprint-spec, retrieved 2026-07-16; applied
+# 2026-07-16 per M0-T006 G3 residual). `autoDeployTrigger` is the CURRENT
+# Blueprint field
 # and "replaces the deprecated `autoDeploy` field"; if both are present,
 # autoDeployTrigger takes precedence; `off` is equivalent to the deprecated
 # `autoDeploy: false` (https://render.com/docs/blueprint-spec, retrieved
@@ -70,7 +78,7 @@ services:
     region: oregon
     # Production: no platform auto-deploy; deploys only via secret deploy hook
     # from the Actions pipeline (see DEPLOY TRIGGER POLICY above, ADR-003 D2).
-    autoDeployTrigger: off
+    autoDeployTrigger: "off"
     buildCommand: "pip install -r requirements.txt"  # [PLACEHOLDER] reconcile with services/api build (e.g., uv/poetry) before first deploy
     startCommand: "uvicorn app.main:app --host 0.0.0.0 --port $PORT"  # [PLACEHOLDER] reconcile with real ASGI module path
     # Render treats 2xx/3xx within 5s as healthy and gates zero-downtime
@@ -113,7 +121,7 @@ services:
     plan: starter
     region: oregon
     # Production: no platform auto-deploy (see DEPLOY TRIGGER POLICY above).
-    autoDeployTrigger: off
+    autoDeployTrigger: "off"
     buildCommand: "pip install -r requirements.txt"  # [PLACEHOLDER] keep identical to nycdf-api build
     startCommand: "python -m app.workers.job_runner"  # [PLACEHOLDER] job-queue consumer entrypoint does not exist yet; defined by the services/api producer
     envVars:
@@ -152,7 +160,7 @@ services:
     # Production: no platform auto-deploy (see DEPLOY TRIGGER POLICY above).
     # Without this, the default for new services is `commit`
     # (https://render.com/docs/blueprint-spec, retrieved 2026-07-15).
-    autoDeployTrigger: off
+    autoDeployTrigger: "off"
     schedule: "0 6 * * *"  # daily 06:00 UTC (~01:00/02:00 New York); source freshness checks per PRD source strategy
     buildCommand: "pip install -r requirements.txt"  # [PLACEHOLDER] keep identical to nycdf-api build
     startCommand: "python -m app.jobs.source_monitor"  # [PLACEHOLDER] source-monitor entrypoint does not exist yet; defined by the services/api producer
@@ -168,3 +176,60 @@ services:
         sync: false
       - key: SENTRY_DSN
         sync: false
+
+  # ---------------------------------------------------------------------------
+  # 4) Next.js frontend web service (ADDED 2026-07-16 per ADR-004; owner
+  #    decision 2026-07-14: frontend served from Render, Vercel dropped).
+  #    Render's official guide deploys "a full Next.js app with server-side
+  #    logic" as a WEB SERVICE - language Node, build `yarn; yarn build` (npm
+  #    equivalents fine), start `yarn start`
+  #    (docs/research/render-nextjs-previews-2026-07-16.md section 1;
+  #    https://render.com/docs/deploy-nextjs-app, retrieved 2026-07-16).
+  #    Build-cache note: Render does not persist .next/cache between builds by
+  #    default; an optional build script can save/restore it via
+  #    $XDG_CACHE_HOME (same source) - later optimization, not required.
+  #    Previews: NONE initially (ADR-004 preview strategy; multi-service
+  #    preview environments are Pro-plan-gated - research file section 2).
+  #    Rollback: web services are rollback-eligible without rebuild
+  #    (ADR-003 R1 as amended by ADR-004 / R2).
+  # ---------------------------------------------------------------------------
+  - type: web
+    name: nycdf-web
+    runtime: node
+    rootDir: apps/web
+    # Plan: free web services spin down after 15 minutes of inactivity
+    # (https://render.com/docs/free, retrieved 2026-07-14) - unacceptable for
+    # a client-facing frontend at launch, so `starter` is the declared target.
+    # ADR-002 section 6 sequences when paid plans are actually activated;
+    # nothing deploys or bills from this file alone (ADR-004 flags the new
+    # paid instance for owner visibility).
+    plan: starter
+    # Same region as the API for co-location (see nycdf-api note above).
+    region: oregon
+    # Production: no platform auto-deploy; deploys only via this service's
+    # secret deploy hook from the Actions pipeline, after migrations + human
+    # approval - identical model to nycdf-api (ADR-003 D1 as amended, D2/D5;
+    # DEPLOY TRIGGER POLICY above). "off" quoted per blueprint spec (research
+    # file section 3).
+    autoDeployTrigger: "off"
+    # npm equivalents of the official guide's yarn commands (research file
+    # section 1), matched to apps/web/package.json scripts (build=`next
+    # build`, start=`next start`; package-lock.json is committed, so `npm ci`
+    # is deterministic). Reconcile only if apps/web tooling changes.
+    buildCommand: "npm ci && npm run build"
+    startCommand: "npm run start"
+    # Zero-downtime deploy gating: Render treats 2xx/3xx within 5s as healthy
+    # (https://render.com/docs/health-checks, retrieved 2026-07-14). The root
+    # page of the Next.js app serves as the health endpoint.
+    healthCheckPath: /
+    envVars:
+      # PUBLISHABLE VALUES ONLY (apps/web/.env.example security boundary):
+      # NEXT_PUBLIC_* variables are compiled into the public browser bundle.
+      # The Supabase SERVICE-ROLE key, database URLs, deploy hooks, and every
+      # other privileged credential must NEVER appear on this service
+      # (PRD 14.3/17; ADR-002 section 3). Values are environment-scoped and
+      # entered per Render environment at Blueprint/service creation.
+      - key: NEXT_PUBLIC_SUPABASE_URL
+        sync: false
+      - key: NEXT_PUBLIC_SUPABASE_ANON_KEY
+        sync: false  # anon/publishable key only - safe because RLS enforces access

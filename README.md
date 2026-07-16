@@ -14,7 +14,7 @@ NYC Development Feasibility & Zoning Intelligence Platform — monorepo.
 
 | Path | Contents | Deploy target |
 | --- | --- | --- |
-| `apps/web` | Next.js 15 App Router frontend (placeholder) | Vercel |
+| `apps/web` | Next.js 15 App Router frontend (placeholder) | Render web service (ADR-004; Vercel dropped 2026-07-14) |
 | `services/api` | FastAPI service, `/api/v1/*` endpoints | Render |
 | `packages/contracts` | Versioned canonical JSON Schema contracts (v1) plus test fixtures | shared |
 | `supabase/migrations` | Database migrations (empty placeholder) | Supabase |
@@ -30,7 +30,7 @@ The owner's PC is a thin client (`docs/LOW_STORAGE_CLOUD_DEVELOPMENT_POLICY.md`)
   GitHub Actions (see `.github/workflows/ci.yml`) or Codespaces.
 - No `node_modules/`, virtualenvs, `.next/`, or datasets may be committed or
   kept in the local checkout (see `.gitignore`).
-- Persistent data lives in Supabase; deployments run on Vercel and Render.
+- Persistent data lives in Supabase; all application deployments (API, workers, cron, and the Next.js frontend) run on Render (`docs/adr/ADR-004-frontend-hosting-render.md`).
 
 ## CI
 

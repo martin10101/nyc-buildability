@@ -1,10 +1,10 @@
-# ADR-001: Cloud Architecture — Supabase + Render + Vercel + GitHub, Modular Monorepo, One FastAPI Service
+# ADR-001: Cloud Architecture — Supabase + Render + GitHub, Modular Monorepo, One FastAPI Service
 
 - **Status:** Proposed (pending G3 gate review)
-- **Date:** 2026-07-14
-- **Producer:** cloud-architect (task M0-T006)
-- **Deciders:** Human project owner (final), per PRD section 14.1 which mandates the providers
-- **Related:** ADR-002 (environment separation), ADR-003 (deployment and rollback), `render.yaml`, `docs/DEPLOYMENT_AND_ROLLBACK.md`
+- **Date:** 2026-07-14 (amended 2026-07-16 per ADR-004: frontend moved from Vercel to a Render web service — owner decision 2026-07-14; title updated from "Supabase + Render + Vercel + GitHub"; service-role wording tightened per M0-T006 G3 residual)
+- **Producer:** cloud-architect (task M0-T006; ADR-004 amendments by task M0-T011)
+- **Deciders:** Human project owner (final), per PRD section 14.1 which mandates the providers (frontend-host deviation owner-approved in ADR-004)
+- **Related:** ADR-002 (environment separation), ADR-003 (deployment and rollback), ADR-004 (frontend hosting on Render), `render.yaml`, `docs/DEPLOYMENT_AND_ROLLBACK.md`
 
 ## Context
 
@@ -13,7 +13,7 @@ The PRD requires a cloud-first architecture (PRD 14.1 "Required providers") and 
 - PostGIS-heavy geospatial data, pgvector embeddings, RLS multi-tenancy (PRD 15–17)
 - Long-running ingestion/GIS/AI-extraction/scenario jobs that must NOT run in serverless edge functions (PRD 14.2)
 - A deterministic backend state machine that controls workflow, not the AI (PRD 32.5)
-- A Next.js frontend with preview deployments (PRD 14.1)
+- A Next.js frontend (PRD 14.1 assigns it to Vercel with preview deployments; superseded 2026-07-16 by the owner-approved ADR-004 — the frontend is served from a Render web service)
 - A complexity-containment rule: "Use one modular monorepo and one deployable FastAPI service plus scalable worker processes. Do not create microservices without a demonstrated isolation, scale, or security need." (`docs/PRODUCT_FLOW_AND_AI_BOUNDARIES.md`, "Complexity containment")
 
 ## Decision
@@ -24,7 +24,7 @@ Adopt the provider set mandated by PRD 14.1, with the following concrete shape:
 |---|---|---|
 | Database (Postgres + PostGIS + pgvector), Auth, RLS, private Storage, migrations, audit | **Supabase** | All persistent data and documents; one project per environment (see ADR-002) |
 | Python API + all heavy compute | **Render** | One FastAPI **web service**; **background worker(s)** for ingestion/GIS/AI/scenario jobs; **cron job(s)** for scheduled source monitoring — defined as code in `render.yaml` (Blueprint) |
-| Web frontend | **Vercel** | Next.js app; preview deployments per PR; production promotion per ADR-002/003 |
+| Web frontend | **Render** (amended 2026-07-16 per ADR-004; previously Vercel) | Next.js app as a Render **web service** (`nycdf-web` in `render.yaml`); previews per the ADR-004 preview strategy (none initially); production promotion per ADR-002/003 |
 | Source control, CI, secrets for CI, approvals | **GitHub** | Repo, PRs, GitHub Actions (remote builds/tests/migrations), GitHub environments |
 
 Architecture rules:
@@ -33,7 +33,7 @@ Architecture rules:
 2. **One deployable FastAPI service.** The API is a single Render web service. Workers and cron jobs are separate Render *service instances* built from the **same codebase** (`services/api`) with different start commands — they are not separate microservices. Render defines web services, background workers ("run continuously... they don't receive any incoming network traffic"), and cron jobs as distinct service types (Render service types docs: https://render.com/docs/service-types, https://render.com/docs/background-workers, https://render.com/docs/cronjobs — retrieved 2026-07-14).
 3. **No heavy work in Supabase Edge Functions.** PRD 14.2: "Do not run large PDF parsing, GIS imports, full dataset ingestion, or lengthy AI extraction inside Edge Functions." Edge Functions remain permitted only for short authenticated endpoints/webhooks.
 4. **Infrastructure as code.** Render resources are declared in `render.yaml` at the repository root ("By default, Render creates a Blueprint using the `render.yaml` file at your repository's root" — https://render.com/docs/infrastructure-as-code, retrieved 2026-07-14). Secrets are never literal in the file: every sensitive env var is declared with `sync: false`, which tells Render to prompt for the value at deploy time so "nothing sensitive lands in Git" (https://render.com/docs/blueprint-spec, retrieved 2026-07-14).
-5. **Service-role key only in trusted backends.** Supabase service-role key exists only in Render/GitHub Actions secret stores, never in frontend code (PRD 17).
+5. **Service-role key only in trusted backends.** Supabase service-role key exists only in **Render** secret stores (env vars/env groups scoped per project environment), never in frontend code and **not duplicated to GitHub Actions secrets** — no current workflow needs it there (ADR-002 §3; PRD 17). (Amended 2026-07-16 per M0-T006 G3 residual.)
 
 ## Alternatives considered
 
@@ -55,14 +55,14 @@ Rejected by the complexity-containment rule (`docs/PRODUCT_FLOW_AND_AI_BOUNDARIE
 ## Consequences
 
 Positive:
-- Matches PRD 14.1 exactly; no deviation to document.
+- Matches PRD 14.1 for Supabase, Render, and GitHub. The frontend host **deviates from PRD 14.1 (which names Vercel) by owner decision of 2026-07-14, documented and approved in ADR-004** per PRD §34 — the same documentation standard this ADR applied to the Railway decision of record. (Amended 2026-07-16; originally "Matches PRD 14.1 exactly; no deviation to document.")
 - All heavy compute and storage stay off the owner's PC (PRD 35 satisfied).
 - `render.yaml` makes the Render topology reviewable, versioned, and reproducible.
 - One codebase for API/worker/cron means one build pipeline and shared contracts.
 
 Negative / accepted costs:
-- **Multi-vendor operations:** three dashboards (Supabase, Render, Vercel) plus GitHub; three different rollback semantics — mitigated by ADR-003 and the `docs/DEPLOYMENT_AND_ROLLBACK.md` runbook.
-- **Secrets exist in multiple secret stores** (Render env vars, Vercel env vars, GitHub Actions secrets, Supabase config). ADR-002 defines which secret lives where; `sync: false` keeps them out of Git.
+- **Multi-vendor operations:** two dashboards (Supabase, Render) plus GitHub; distinct rollback semantics per service — mitigated by ADR-003 and the `docs/DEPLOYMENT_AND_ROLLBACK.md` runbook. (Amended 2026-07-16 per ADR-004; previously three dashboards including Vercel.)
+- **Secrets exist in multiple secret stores** (Render env vars/env groups, GitHub Actions secrets, Supabase config). ADR-002 defines which secret lives where; `sync: false` keeps them out of Git. (Amended 2026-07-16 per ADR-004: Vercel env vars removed.)
 - **Cost floor:** Render background workers and cron jobs have no free tier ("there is no free tier for background workers or cron jobs"; free web services "spin down after 15 minutes of inactivity") — https://render.com/docs/free and https://render.com/pricing, retrieved 2026-07-14. Cron jobs bill per-minute with a $1/month minimum per cron job (https://render.com/docs/cronjobs, https://render.com/pricing, retrieved 2026-07-14). ADR-002 sequences paid upgrades.
 - Worker scaling is vertical/horizontal within Render service instances; if a workload later needs GPU or very large memory, that becomes a new ADR.
 
@@ -76,7 +76,8 @@ Negative / accepted costs:
 | Background workers run continuously, receive no inbound traffic | https://render.com/docs/background-workers |
 | Cron job billing ($1/mo minimum, per-minute) and UTC schedules | https://render.com/docs/cronjobs, https://render.com/pricing |
 | Free plan: web services spin down after 15 min; no free workers/cron | https://render.com/docs/free |
-| Vercel preview/production deployment model | https://vercel.com/docs/deployments/environments |
+| Vercel preview/production deployment model — **superseded 2026-07-16 per ADR-004 (Vercel no longer part of the architecture); row retained for provenance only** | https://vercel.com/docs/deployments/environments |
+| SSR Next.js as a Render web service (frontend hosting, added by ADR-004) | `docs/research/render-nextjs-previews-2026-07-16.md` §1 (https://render.com/docs/deploy-nextjs-app, retrieved 2026-07-16) |
 | Supabase multi-environment migration workflow | https://supabase.com/docs/guides/deployment/managing-environments |
 
 Verification method note: pages were retrieved on 2026-07-14 via web search against the official domains (direct page fetch was unavailable in the authoring session). Every claim above traces to the listed official page; anything not confirmable was excluded or marked for verification in ADR-002/003.
