@@ -1,4 +1,4 @@
-﻿---
+---
 name: security-reviewer
 description: Independent read-only security and privacy gate reviewer for auth, RLS, storage, uploads, secrets, external calls, prompt injection, logging, dependencies, and deployment.
 tools: Read, Grep, Glob, Bash, Skill, Write

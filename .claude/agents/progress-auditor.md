@@ -1,4 +1,4 @@
-﻿---
+---
 name: progress-auditor
 description: Read-only auditor that reconciles project-control status with git, tests, CI, reports, gates, and deployments and flags unsupported progress claims.
 tools: Read, Grep, Glob, Bash, Skill, Write
