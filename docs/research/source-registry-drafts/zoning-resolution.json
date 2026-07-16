@@ -1,0 +1,73 @@
+[
+  {
+    "source_id": "nyc-dcp-zoning-resolution-portal",
+    "agency": "NYC Department of City Planning (DCP)",
+    "name": "NYC Zoning Resolution — official text portal (zoningresolution.planning.nyc.gov)",
+    "official_url": "https://zoningresolution.planning.nyc.gov/",
+    "source_type": "official_html_portal (PRD section-8 tier 4; no API/SODA/structured-download channel exists for the ZR text — verified 2026-07-16)",
+    "api_dataset_identifier": null,
+    "authentication": {
+      "required": false,
+      "evidence": "All pages fetched anonymously live 2026-07-16 (E3, E8, E9, E13); no 403s from this host, unlike www.nyc.gov"
+    },
+    "rate_limits": {
+      "documented": null,
+      "observed": "No throttling observed at research-scale fetch rates; platform is Drupal 9 on Pantheon behind Fastly/Varnish and returned 504 Gateway Timeout for on-the-fly PDF generation of the giant 12-10 definitions node (E10) - crawlers must be low-rate and resumable",
+      "evidence": "Response headers X-Pantheon-Styx-Hostname / Via: 1.1 varnish (E4, E6)"
+    },
+    "update_frequency": "Per adopted text amendment (event-driven, not scheduled). Homepage currency banner verbatim (raw HTML, E3): \"All text changes approved by the city council as of <span class='date'>May 20, 2026</span>\". Official disclaimer verbatim (E12): \"CHANGES ARE MADE PERIODICALLY TO THE ZR AND THESE CHANGES MAY OR MAY NOT BE IMMEDIATELY REFLECTED IN THE MATERIALS LOCATED AT OR INFORMATION PRESENT ON HTTPS://ZR.PLANNING.NYC.GOV.\" Dated complete-PDF snapshots on /zr-downloads appear at an irregular 3-6 month cadence (10 snapshots 2024-03-22 through 2026-06-23, E8).",
+    "geographic_coverage": "All five boroughs (citywide law). Homepage verbatim: \"14 Articles and 11 Appendices, plus 126 Zoning Maps, that establish the zoning districts for the City and the regulations governing land use and development.\" (E3)",
+    "fields_available": {
+      "note": "Not a dataset; a structured legal-text corpus served as server-rendered Drupal 9 HTML (X-Generator header, E4). Structure verified live 2026-07-16.",
+      "structure": [
+        "Articles I-XIV at /article-{roman} (titles: I General Provisions; II Residence District Regulations; III Commercial District Regulations; IV Manufacturing District Regulations; V Non-Conforming Uses and Non-Complying Buildings; VI Special Regulations Applicable to Certain Areas; VII Administration; VIII-XIV Special Purpose Districts) (E3, E12)",
+        "Chapters at /article-{roman}/chapter-{n}; chapter pages carry full text of all sections with #CC-NN anchors; chapter gaps exist (Article I has chapters 1,2,3,5,6 - no 4; OQ-5) (E8, E9)",
+        "Sections at /article-{roman}/chapter-{n}/{CC-NN[N[N]]}; per-section Drupal nodes (11-02 = node 18416; 12-10 = node 18523) (E9)",
+        "Section numbering: 2-digit prefix = article+chapter ordinals (11-xx, 12-xx, 74-xx); special-purpose-district chapters use 3-digit prefixes from 101-00 (official basis: section 12-01(j), E13)",
+        "Per-section machine-readable amendment stamp: <time datetime=\"1961-12-15T12:00:00Z\" class=\"datetime\">12/15/1961</time> after 'Last Amended' label (E9)",
+        "Defined terms rendered as <em> elements in body text, mapping to the 12-10 alphabetical definitions (which carry per-definition Last Amended dates, applicability notes, and FROM <section> attributions) (E9, E13)",
+        "Cross-reference hyperlinks as href='/article-i/chapter-1#11-23' (chapter-anchor form) (E9)",
+        "Appendices B-K at descriptive aliases (Appendix F = parent + 5 borough pages; no Appendix A - /appendix-a 404, count reconciliation OQ-1); Preamble at /node/79; Disclaimer at /disclaimer (E12, E14)",
+        "Recently-adopted amendment feed at /recently-adopted (paginated ?page=0..8 observed): entries = project name + application number (e.g. N 240272 ZRK), date, affected-section reference; stub pages without amendment text (E11)",
+        "Archive at /zr-downloads: 10 dated complete-ZR PDF snapshots 2024-03-22 to 2026-06-23, 24.32-84.74 MB (E8)",
+        "PDF channels: complete ZR /sites/default/files/article/Zoning%20Resolution%20Complete.pdf (102,565,724 B HEAD-verified); per-article (Article I = 3,170,980 B); per-chapter (Chapter 1 = 149,858 B); per-section on-the-fly /entityprint/pdf/node/{nid} -> /print/pdf/node/{nid} (undocumented entity_print route; 200/44,977 B for 11-02, 504 for 12-10) (E6, E10)",
+        "Search at /search with parameter search_term (custom nyczr_search_global_search_form module); unknown parameters are silently ignored and yield '0 results' - connector must use search_term and a positive-control query (E13)"
+      ],
+      "api_surface_absent": "Verified absent 2026-07-16: /jsonapi 404; /node/{nid}?_format=json 406; /sitemap.xml 404; no ZR-text dataset in the NYC Open Data catalog (Socrata catalog search q='zoning resolution' returned only geodata products) (E2, E5)"
+    },
+    "terms_usage_notes": "Official disclaimer (verbatim, E12): the ZR site \"IS DISTRIBUTED AND TRANSMITTED WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED\"; \"DCP IS NOT RESPONSIBLE FOR ANY SPECIAL, INDIRECT, INCIDENTAL OR CONSEQUENTIAL DAMAGES\"; \"DCP RESERVES THE RIGHT TO REVISE THIS DISCLAIMER AT ANY TIME AND WITHOUT NOTICE.\" The disclaimer does NOT state that the online version is the official legal text (OQ-11 - authoritative-publication question needs qualified-human review before 'verified' labeling policy). Robots.txt is standard Drupal (no content-path disallows) (E5).",
+    "connector_implementation": "PLAN ONLY (M1-T004 is research): (1) zr-portal-crawler Render worker crawls article->chapter->section tree (no sitemap), stores raw HTML per section in Supabase Storage with retrieval timestamp + banner date + per-section Last Amended -> legal_sections / legal_section_versions; re-crawl triggered by banner-date change or new /recently-adopted entry. (2) zr-snapshot-archiver downloads each new dated complete-PDF snapshot (72-85 MB) on a worker into source-pdfs. (3) Per-release HTML-vs-chapter-PDF sampling cross-check. See docs/research/zoning-resolution-2026-07-16.md sections 6-7 for the 14-fixture contract-test pack.",
+    "last_successful_ingestion": null,
+    "latest_source_version": "Text current through City Council adoptions of 2026-05-20 (homepage banner, E3). Newest frozen snapshot: AllArticles_23Jun2026_compressed_0.pdf (75,589,847 B, Last-Modified 2026-06-24, E8). Current complete PDF regenerated 2026-06-23 (E6). PDF file dates are generation timestamps; the banner date is the legal-currency version label.",
+    "health_status": "healthy_observed — all channels returned expected responses on 2026-07-16 except the undocumented per-section print-PDF route (504 on the oversized 12-10 node, E10) and 403-bound www.nyc.gov companion pages (E17)",
+    "known_limitations": [
+      "No API/JSON channel and no Open Data dataset of the text - HTML crawling is the only per-section machine channel (tier 4)",
+      "No official statement that the portal text is the legally authoritative version; disclaimer warns changes 'MAY OR MAY NOT BE IMMEDIATELY REFLECTED' (E12)",
+      "'Last Amended' is not officially defined as adoption vs effective date (OQ-3)",
+      "Historical snapshots only reach back to 2024-03-22; pre-2024 text (incl. pre-City-of-Yes states) has no verified official channel (OQ-4)",
+      "No per-section version history or diff channel; /recently-adopted entries are stubs without amendment text (E11)",
+      "Amendments are integrated inline without program branding - full-text search for 'city of yes' returns 0 results; CoY identification requires external official confirmation (OQ-2, [NEEDS G1 RE-VERIFICATION])",
+      "Search silently ignores unknown parameters and reports 0 results (parameter trap, E13)",
+      "entity-print per-section PDFs are undocumented and 504 on large nodes - never a dependency (OQ-6)",
+      "Two hostnames serve the site (zoningresolution.planning.nyc.gov / zr.planning.nyc.gov); canonicality unresolved (OQ-7)",
+      "Archive PDF filename conventions drifted over time (two naming styles observed) - manifest parsing must be tolerant (E8)",
+      "WebFetch-summarizer URL hallucination observed during research (/index.php/ prefix, disproved by raw HTML + 404 probe) - all URL claims in fixtures must be raw-capture based (E7, report section 5.5)",
+      "Table markup conventions not yet inspected (OQ-8); section 12-01(b) requires text to control over tables in any extraction pipeline (E13)"
+    ],
+    "fallback_source": "Per-article and per-chapter PDFs on the same portal (/sites/default/files/article/{node}/... , HEAD-verified, E6) and dated complete-PDF snapshots (/zr-downloads, E8) - same publisher, so this is a channel fallback, not an independent-source fallback. www.nyc.gov DCP zoning pages are 403 to non-browser clients (E17). No independent official mirror of the ZR text was found; CityLaw/Council records channels for adoption documents were not researched this task (OQ-2).",
+    "open_questions": [
+      "OQ-1: '11 Appendices' count vs observed letters B-K; no Appendix A (/appendix-a 404); reconciliation not officially stated",
+      "OQ-2: official confirmation of the 2024-12-05 City of Yes for Housing Opportunity adoption (only law-firm secondary sources fetched; nyc.gov 403) [NEEDS G1 RE-VERIFICATION]",
+      "OQ-3: 'Last Amended' semantics - adoption date vs effective date",
+      "OQ-4: official channel for pre-2024-03-22 historical ZR text",
+      "OQ-5: chapter gaps (Article I lacks chapter 4) - reserved or repealed; full 14-article chapter inventory pending",
+      "OQ-6: entity-print route stability and DCP intent",
+      "OQ-7: canonical hostname (portal self-references HTTPS://ZR.PLANNING.NYC.GOV in the disclaimer)",
+      "OQ-8: table markup conventions (needed before M3 table ingestion; fixture ZR-F6)",
+      "OQ-9: nyczr_amendment_popup module - per-section amendment metadata beyond Last Amended?",
+      "OQ-10: /recently-adopted feed depth and entry mutability",
+      "OQ-11: which publication is legally authoritative (needs qualified-human/legal review)",
+      "OQ-12: content identity of the 102.6 MB complete PDF vs the 75.6 MB compressed snapshot"
+    ]
+  }
+]
