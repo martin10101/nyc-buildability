@@ -5,6 +5,7 @@
 - **Retrieval date for all sources:** 2026-07-16 (unless noted)
 - **Evidence basis:** This report is written from orchestrator-captured evidence in `project-control/reports/M1-T001-fetch-evidence.md` (sections E1–E7, all fetched/searched live on 2026-07-16), per the ADR-005 / 2026-07-15 evidence-capture directive, because the producer sandbox denied all network tools (see `project-control/reports/M1-T001-producer-report.md` §3 history). Each claim below cites the evidence section (E1–E7) plus the underlying official URL.
 - **Discipline:** Claims that come only from a search-result summary or a summarizer paraphrase — rather than a verbatim quote or a directly read document — are marked **[NEEDS G1 RE-VERIFICATION]**. Nothing unverified is presented as fact. Anything unknown is listed in §8 Open Questions.
+- **Post-G1 status (2026-07-16):** the G1 data-contract-verifier independently live-verified this document (`project-control/reports/M1-T001-G1-verification.md`, verdict PASS) and corrections C1–C6 from that report were applied in place by the orchestrator. Markers below that say **[RESOLVED AT G1 — see G1 report §…]** were re-verified directly against official sources by the reviewer; the only items still open are OQ-4 (exact bulk zip URLs/sizes) and OQ-10 residual (exact .gdb/borough-shapefile file names), both blocked by nyc.gov bot protection and deliberately not guessed.
 
 ---
 
@@ -26,7 +27,7 @@ Release model (official README 26v1, E4, verbatim basis): **major updates quarte
 - Dataset metadata fetch: `https://data.cityofnewyork.us/api/views/64uk-42ks.json` (E1, retrieved 2026-07-16).
   - Name: "Primary Land Use Tax Lot Output (PLUTO)"; ID **`64uk-42ks`**; attribution "Department of City Planning (DCP)"; category "City Government"; viewType tabular/table; provenance "Official"; created 2020-02-12.
   - Description (quoted in E1): "Extensive land use and geographic data at the tax lot level in comma-separated values (CSV) file format. The PLUTO files contain more than seventy fields derived from data maintained by city agencies."
-  - The evidence's summarizer reported "Last Updated: August 26, 2026 / Publication Date: July 30, 2026" — **future-dated relative to the retrieval date; almost certainly a misconversion of raw unix timestamps.** **[NEEDS G1 RE-VERIFICATION]** — read `createdAt` / `rowsUpdatedAt` / `publicationDate` directly from the raw JSON (Open Question OQ-1).
+  - Raw timestamps **[RESOLVED AT G1 — see G1 report §1.1]**: `createdAt` 1581533291 = 2020-02-12T18:48:11Z; `rowsUpdatedAt` 1779997848 = **2026-05-28T19:50:48Z**; `publicationDate` 1779987139 = 2026-05-28T16:52:19Z — consistent with the May 2026 (26v1) release. (The evidence summarizer's "August 26, 2026 / July 30, 2026" reading was a misconversion, exactly as suspected.) Socrata metadata timestamps ARE usable as freshness signals on this dataset; keep `version`-field polling as the primary signal.
 - **SODA resource endpoint is live**: `https://data.cityofnewyork.us/resource/64uk-42ks.json?$limit=1` returned a valid JSON record on 2026-07-16 (E2). The record's **`version` field value is `"26v1"`** — the Open Data tabular channel currently serves the same version as the DCP bulk release.
 - 73 fields were present on the sampled record (verbatim list in §4.2 below). SODA omits null fields per record, so this is a floor, not the full column set (OQ-2).
 
@@ -43,18 +44,23 @@ Release model (official README 26v1, E4, verbatim basis): **major updates quarte
 ### 2.3 DCP bulk release — README and data dictionary PDFs (VERIFIED for README; dictionary URL search-verified)
 
 - **Official PLUTO README 26v1** directly fetched and read (pages 1–8): `https://s-media.nyc.gov/agencies/dcp/assets/files/pdf/data-tools/bytes/pluto_readme.pdf` (342 KB PDF; E4, retrieved 2026-07-16). Header: "PLUTO README DOCUMENT — May 2026 (26v1)". Opening: "The Primary Land Use Tax Lot Output (PLUTO™) data file contains extensive land use and geographic data at the tax lot level in an ASCII comma-delimited file." Fields are derived from data maintained by DCP, DOF, DCAS, and LPC.
-- **Official PLUTO data dictionary 26v1**: "PLUTO DATA DICTIONARY May 2026 (26v1)" at `https://s-media.nyc.gov/agencies/dcp/assets/files/pdf/data-tools/bytes/pluto_datadictionary.pdf` (E5). The version+date come from a **search-result title string**, not a direct fetch — **[NEEDS G1 RE-VERIFICATION]** and field-level extraction still to do (OQ-5).
+- **Official PLUTO data dictionary 26v1**: "PLUTO DATA DICTIONARY May 2026 (26v1)" at `https://s-media.nyc.gov/agencies/dcp/assets/files/pdf/data-tools/bytes/pluto_datadictionary.pdf` (E5). **[RESOLVED AT G1 — see G1 report §1.3]**: the reviewer fetched and read the PDF directly (605 KB; header verbatim "PLUTO DATA DICTIONARY — May 2026 (26v1)") and verified units/null conventions for the key property-profile fields (see §4.3/§4.6 updates below).
 
 ### 2.4 DCP web page and archive (search-evidenced only — bot-protected to this session)
 
-- Current DCP page: `https://www.nyc.gov/content/planning/pages/resources/datasets/mappluto-pluto-change` (search-result title: "PLUTO, MapPLUTO and PLUTO Change File"); legacy URL `https://www.nyc.gov/site/planning/data-maps/open-data/dwn-pluto-mappluto.page` still resolves in search (E6). **nyc.gov and apps.nyc.gov content-api returned HTTP 403 to the evidence session's WebFetch** (bot protection), so all page-level claims (download links, exact file sizes, archive links) are **[NEEDS G1 RE-VERIFICATION]** (OQ-4).
-- MapPLUTO bulk formats, from search summary plus the `meta_mappluto.pdf` title (E6): ESRI shapefile and File Geodatabase; **Shoreline Clipped** (`Mappluto/Mappluto.gdb`) and **Unclipped water-included** (`Mapplutounclipped/Mapplutounclipped.gdb`); a borough shapefile distribution exists. **[NEEDS G1 RE-VERIFICATION]** (search-summary basis).
-- Archive: "All previously released versions of this data are available on the DCP Website: BYTES of the BIG APPLE" (E6, search summary). Exact archive URL not captured — **[NEEDS G1 RE-VERIFICATION]** (OQ-4).
-- Official build pipeline is open source: `https://github.com/NYCPlanning/db-pluto` with docs at `https://nycplanning.github.io/db-pluto/` (E6, search evidence). **[NEEDS G1 RE-VERIFICATION]** before citing as authoritative for field derivations.
+- Current DCP page: `https://www.nyc.gov/content/planning/pages/resources/datasets/mappluto-pluto-change` (search-result title: "PLUTO, MapPLUTO and PLUTO Change File"); legacy URL `https://www.nyc.gov/site/planning/data-maps/open-data/dwn-pluto-mappluto.page` still resolves in search (E6). **nyc.gov 403 independently confirmed at G1** (curl with browser UA and WebFetch both blocked — bot protection, not a producer error; G1 report §1.5). Exact download `.zip` URLs and file sizes remain OPEN (OQ-4 residual) — they require a browser-capable session and must not be guessed.
+- MapPLUTO bulk formats **[PARTIALLY RESOLVED AT G1 — see G1 report §1.5]**: the official `meta_mappluto.pdf` (497.7 KB) was read directly — title "MapPLUTO 26v1 - Shoreline Clipped"; confirms DTM-derived tax-lot polygon geometry, the shoreline-clipped variant ("does not contain lots completely or partially underwater"), the **PLUTO Only non-geographic table** (PLUTO records without a DTM lot), DCP Mapping Lots, and condo unit lots 1001–6999 vs **billing lots 7501–7599** with base-lot ("FKA") merge behavior. FileGDB + shapefile family confirmed via metadata + data.gov ("ESRI Shapefile"). Exact archive file names for clipped/unclipped and borough shapefiles remain OPEN (OQ-10 residual).
+- Archive **[PARTIALLY RESOLVED AT G1]**: official archive page identified at `https://www.nyc.gov/site/planning/data-maps/open-data/bytes-archive.page` ("BYTES of the BIG APPLE — Archive"); page contents unfetchable from this environment (403).
+- Build pipeline **[RESOLVED WITH CORRECTION AT G1 — C3]**: `https://github.com/NYCPlanning/db-pluto` exists but is **archived since 2023-07-13**; the active official build repository is `https://github.com/NYCPlanning/data-engineering`. Do not cite db-pluto as authoritative for current field derivations.
 
-### 2.5 ArcGIS channel (UNVERIFIED)
+### 2.5 ArcGIS channel (VERIFIED AT G1 — official endpoint identified; C4)
 
-- An ArcGIS Hub item exists (`https://hub.arcgis.com/datasets/DCP::mappluto-1/about`) but the page is JS-rendered and the underlying feature-service endpoint was **not verified** (E6). Do **not** treat an ArcGIS feature service as an available channel until G1 or a follow-up capture confirms the REST endpoint (OQ-3).
+- **[RESOLVED AT G1 — see G1 report §1.4]**: official feature service verified live via ArcGIS Online REST search/item/portal APIs (2026-07-16):
+  - **Endpoint:** `https://services5.arcgis.com/GfwWNkhOj9bNBqoJ/arcgis/rest/services/MAPPLUTO/FeatureServer` (layer 0 "MAPPLUTO", `esriGeometryPolygon`).
+  - **Owner:** `DCP_GIS`, org "NYC DCP Mapping Portal" (urlKey `DCP`); item modified 2026-05-27; matches Hub item `DCP::mappluto-1`.
+  - **Layer:** 103 fields (PascalCase: ZoneDist1–4, Overlay1–2, SPDist1–3, LtdHeight, SplitZone, …), spatialReference `wkid 102718 / latestWkid 2263` (EPSG:2263 NAD83 NY-Long Island ftUS), **`maxRecordCount 2000`**.
+  - Live query returned `{"Version": "26v1", "BBL": 1000010100}` — serves the current release.
+- Role: `maxRecordCount 2000` rules it out as the citywide-import primary (~850k+ lots ≈ 430 paged requests); use as the **verified secondary/per-lot query channel**; DCP bulk FileGDB remains the citywide-import primary.
 
 ---
 
@@ -71,7 +77,7 @@ Release model (official README 26v1, E4, verbatim basis): **major updates quarte
 
 - Fields updated in **minor (monthly) releases**: ZoneDist1–4, Overlay1–2, SPDist1–3, LtdHeight, SplitZone, ResidFAR, CommFAR, FacilFAR, ZoneMap, ZMCode, TaxMap, EDesigNum (E4).
 - **Current version: 26v1** ("May 2026 (26v1)" README header, E4; independently observed as the `version` value in the live SODA record, E2).
-- **Change tracking:** "The changes made to a tax lot record are records in PLUTOChangeFile\<ver\>.csv, which is available as part of the MapPLUTO download on BYTES of the BIG APPLE." (E4, verbatim).
+- **Change tracking:** "The changes made to a tax lot record are records in PLUTOChangeFile\<ver\>.csv, which is available as part of the MapPLUTO download on BYTES of the BIG APPLE." (E4, verbatim). **[RESOLVED AT G1 — C6]:** the PLUTO Change File is ALSO its own tabular Socrata dataset **`qt5r-nqxp`** (attribution DCP; `rowsUpdatedAt` 2026-05-28T19:39:30Z — same release day as PLUTO), a verified companion channel.
 
 ### 3.3 Underlying data vintages — DATES OF DATA table (README 26v1, E4)
 
@@ -102,7 +108,7 @@ Note: PLUTO 26v1 was built on **Geosupport 26A**, while the M0-T002 report found
 
 ### 3.5 Archiving
 
-- Prior versions are stated to be retrievable from the DCP website (BYTES of the BIG APPLE archive) (E6, search summary) — **[NEEDS G1 RE-VERIFICATION]**, exact archive URL not yet captured (OQ-4).
+- Prior versions are stated to be retrievable from the DCP website (BYTES of the BIG APPLE archive) (E6). **[PARTIALLY RESOLVED AT G1]:** archive page URL identified — `https://www.nyc.gov/site/planning/data-maps/open-data/bytes-archive.page`; page contents (per-version file links) remain unfetchable from this environment (nyc.gov 403; OQ-4 residual).
 
 ---
 
@@ -110,7 +116,17 @@ Note: PLUTO 26v1 was built on **Geosupport 26A**, while the M0-T002 report found
 
 ### 4.1 Authoritative data dictionary
 
-- `https://s-media.nyc.gov/agencies/dcp/assets/files/pdf/data-tools/bytes/pluto_datadictionary.pdf` — "PLUTO DATA DICTIONARY May 2026 (26v1)" (E5; title search-verified, **[NEEDS G1 RE-VERIFICATION]** by direct fetch). This is the authoritative reference for per-field definitions, units, and null/placeholder conventions. **Field-level extraction has not yet been performed** — see OQ-5 for the exact field list that requires it. No units are asserted in this report that the captured evidence does not state.
+- `https://s-media.nyc.gov/agencies/dcp/assets/files/pdf/data-tools/bytes/pluto_datadictionary.pdf` — "PLUTO DATA DICTIONARY May 2026 (26v1)" **[RESOLVED AT G1 — direct PDF read; G1 report §1.3]**. Key field-level verifications (dictionary pages in parentheses):
+  - **LotArea** (p.21): "Total area of the tax lot, expressed in **square feet** rounded to the nearest integer." Includes street beds for "paper streets"; zero PTS values substituted from DTM geometric area with `DCPEdited=1`.
+  - **LotFront / LotDepth** (p.29): frontage/depth "measured in **feet**", format Numeric 9999.99.
+  - **NumFloors** (p.28): full + partial floors of the tallest building (fractional values possible); "If the NUMBER OF FLOORS is null and the NUMBER OF BUILDINGS is greater than zero, then NUMBER OF FLOORS is not available for the tax lot."
+  - **BBL** (p.38): borough code + block zero-padded to 5 + lot zero-padded to 4 = 10 digits; "For condominiums, the BBL is for the billing lot."
+  - **BldgArea** (p.22): "total gross area in **square feet**, except for condominium measurements which... are **net square footage not gross**"; explicitly a rough estimate that is **NOT ZR §12-10 zoning floor area**.
+  - **YearBuilt** (p.34–35): "If Year Built is null or 0, then the value is unknown"; decade-accurate caveat; ~26k historic-district buildings LPC-corrected (`DCPEdited=1`).
+  - **AssessLand/AssessTot/ExemptTot** (p.33–34): DOF dollar values; tentative (mid-Jan) vs final (~May 25) roll selection rule.
+  - **ResidFAR/CommFAR/FacilFAR** (p.36–37): based on ZoneDist1 (fallthrough ZoneDist2–4), **exclusive of bonuses** — informational, never a substitute for the rules engine.
+  - **CondoNo** (p.39): unique within a borough. **BoroCode** (p.38): 1=MN 2=BX 3=BK 4=QN 5=SI; Marble Hill BoroCode 1, Rikers BoroCode 2 (legal borough).
+  - Code-list appendices B–D (BldgClass, LandUse, SPDist, LtdHeight meanings) remain extractable from the same verified PDF at connector-build time (OQ-5 residual).
 
 ### 4.2 Fields observed live on the SODA channel (E2, verbatim list, 2026-07-16)
 
@@ -129,12 +145,16 @@ longitude, zonemap, sanborn, taxmap, plutomapid, version, sanitdistrict,
 healthcenterdistrict, bct2020, bctcb2020, transitzone
 ```
 
-**Critical caveat (E2):** the sampled record did **not** surface `zonedist2`–`zonedist4`, `overlay1`–`overlay2`, `spdist1`–`spdist3`, `ltdheight`, `landmark`, `histdist`, `appbbl`, `condono`, etc. — **SODA omits null fields per record**. These fields are known to exist in PLUTO from the README's minor-release field list (E4) and its condo/APPBBL discussion (E4). The full column set must be taken from the `/api/views/64uk-42ks.json` `columns` array and the data dictionary, not from a single record (OQ-2). A connector must never infer schema from record keys.
+**Critical caveat (E2):** the sampled record did **not** surface `zonedist2`–`zonedist4`, `overlay1`–`overlay2`, `spdist1`–`spdist3`, `ltdheight`, `landmark`, `histdist`, `appbbl`, `condono`, etc. — **SODA omits null fields per record**. A connector must never infer schema from record keys.
+
+**[RESOLVED AT G1 — full column inventory; G1 report §1.2, C5]:** the `/api/views/64uk-42ks.json` `columns` array contains **108 columns**. All questioned fields exist as SODA columns: `zonedist2-4`, `overlay1-2`, `spdist1-3`, `ltdheight`, `landmark`, `histdist`, `appbbl`, `condono`, `bldgclass`, plus `edesignum`, `zmcode`, `appdate`, `ownertype`. The MIH columns are **`mih_opt1`–`mih_opt4`** (not "mihoption1-4"). Additional columns beyond the 73-field sample: `geom` (the tabular dataset carries a geometry column), `firm07_flag`, `pfirm15_flag`, `dcpedited`, `notes`, and eight per-input date columns — `basempdate`, `dcasdate`, `edesigdate`, `landmkdate`, `masdate`, `polidate`, `rpaddate`, `zoningdate` — which are per-record input-vintage provenance fields directly useful for the provenance contract.
 
 ### 4.3 Null/placeholder conventions (verified so far)
 
-- **NumFloors** (README 26v1, E4, verbatim): "NUMBER OF FLOORS (NumFloors) has been modified to show \<null\> for values of zero and for other values of less than one."
-- All other per-field null/placeholder conventions (e.g., YearBuilt=0 handling, LotArea zero/placeholder semantics, borough-code conventions): pending data-dictionary extraction — **not asserted** (OQ-5).
+- **NumFloors** (README 26v1, E4, verbatim): "NUMBER OF FLOORS (NumFloors) has been modified to show \<null\> for values of zero and for other values of less than one." The dictionary (p.28) adds: null with `NumBldgs > 0` means "not available".
+- **YearBuilt** (dictionary p.34–35, verified at G1): "If Year Built is null or 0, then the value is unknown."
+- **LotArea** (dictionary p.21, verified at G1): zero PTS values are substituted with the DTM geometric area and flagged `DCPEdited=1`.
+- Remaining code-list conventions (`areasource`/`lottype`/`proxcode`/`bsmtcode` meanings): in the verified dictionary appendices, extraction deferred to connector build (OQ-5 residual).
 
 ### 4.4 Condominium / billing-BBL semantics (README 26v1, E4, verbatim)
 
@@ -149,7 +169,7 @@ healthcenterdistrict, bct2020, bctcb2020, transitzone
 
 ### 4.6 Coordinates
 
-- The SODA record carries `xcoord`, `ycoord`, `latitude`, `longitude` (E2). The CRS/EPSG for `xcoord`/`ycoord` is **not stated in the captured evidence** and is pending dictionary extraction (OQ-5). (Geosupport uses NAD83 New York–Long Island state plane in feet per the M0-T002 report, and PLUTO 26v1 is built on Geosupport 26A, but the PLUTO dictionary must confirm this for PLUTO's own columns — not asserted here.)
+- The SODA record carries `xcoord`, `ycoord`, `latitude`, `longitude` (E2). **[RESOLVED AT G1 — C5]:** the dictionary (p.39–40) states verbatim "The XY coordinates are expressed in the **New York-Long Island State Plane coordinate system**" (no EPSG code given in the dictionary itself); the official ArcGIS MapPLUTO service reports `wkid 102718 / latestWkid 2263`, i.e. **EPSG:2263** (NAD83 NY-Long Island, US survey feet). If coordinates are unavailable from Geosupport they are calculated from the lot centroid constrained to lot boundaries.
 
 ### 4.7 Official disclaimer (README 26v1, E4, verbatim)
 
@@ -164,7 +184,7 @@ healthcenterdistrict, bct2020, bctcb2020, transitzone
 1. **Stale portal attachments (channel lag):** the `f888-ni5f` MapPLUTO Open Data entry still lists `PLUTODD22v3.pdf` / `PlutoReadme22v3.pdf` while the current release is 26v1 (E3 vs E4). The Open Data attachment channel for documentation is roughly 3.5 years behind DCP's own site. Current dictionaries live at `s-media.nyc.gov` (E4/E5).
 2. **href timestamps are dead:** `f888-ni5f` raw created/rowsUpdated timestamps are frozen at 2013-07-25 (E3) — version currency for MapPLUTO cannot be monitored from Socrata metadata; it must come from the DCP channel (or the per-record `version` field of the PLUTO SODA dataset as a proxy).
 3. **Tabular channel is current:** the PLUTO SODA endpoint serves `version = "26v1"` (E2), matching the DCP release (E4) — no version lag observed on the tabular channel on 2026-07-16. Whether monthly **minor** releases (26v1.1, …) propagate to `64uk-42ks`, and how fast, is unobserved (OQ-6).
-4. **Suspect Socrata metadata timestamps** on `64uk-42ks` (future-dated summarizer output, E1) — re-verify raw values before using `rowsUpdatedAt` in freshness monitoring (OQ-1).
+4. **Socrata metadata timestamps** on `64uk-42ks` **[RESOLVED AT G1 — C2]**: raw values verified (`rowsUpdatedAt` 2026-05-28T19:50:48Z, matching the 26v1 release); the earlier future-dated reading was a summarizer misconversion. Metadata timestamps are usable as a secondary freshness signal; `version`-field polling remains primary.
 
 ### 5.2 Recommended priority order (argued from evidence, per PRD §8 tiers)
 
@@ -173,9 +193,9 @@ healthcenterdistrict, bct2020, bctcb2020, transitzone
 2. **DCP bulk CSV** (PRD tier 3) — for full-city imports and for reproducible version pinning (archive of prior versions), per the README's release model (E4) and the archive statement (E6, [NEEDS G1 RE-VERIFICATION]). Bulk import must run on a Render worker per the low-storage policy; never on the owner's PC.
 
 **MapPLUTO geometry:**
-1. **DCP bulk File Geodatabase, shoreline-clipped** (PRD tier 3) — the only verified full-fidelity official channel; there is no tabular SODA resource for MapPLUTO (E3). Clipped vs unclipped variants exist (E6, [NEEDS G1 RE-VERIFICATION] for exact file names/URLs); shoreline-clipped is the appropriate default for zoning-analysis area computations, with the unclipped variant only if riparian-lot edge cases demand it.
-2. **ArcGIS feature service** — potential API-tier channel but **unverified** (E6); evaluate at G1/follow-up capture (OQ-3) before it can rank above bulk.
-3. **NYC Open Data `f888-ni5f`** — treat strictly as a catalog **pointer**, never as a data or documentation channel (stale attachments, dead timestamps; E3).
+1. **DCP bulk File Geodatabase, shoreline-clipped** (PRD tier 3) — the verified full-fidelity official channel for citywide import; there is no tabular SODA resource for MapPLUTO (E3; confirmed at G1 via the Socrata catalog API). Clipped variant confirmed by the official `meta_mappluto.pdf` ("MapPLUTO 26v1 - Shoreline Clipped"); exact archive file names for clipped/unclipped/borough shapefiles remain open (OQ-10 residual). Shoreline-clipped is the appropriate default for zoning-analysis area computations, with the unclipped variant only if riparian-lot edge cases demand it.
+2. **ArcGIS feature service — VERIFIED at G1 (C4)**: `https://services5.arcgis.com/GfwWNkhOj9bNBqoJ/arcgis/rest/services/MAPPLUTO/FeatureServer` (DCP_GIS, 26v1, EPSG:2263, `maxRecordCount 2000`). Use as the **secondary/per-lot query channel**; the 2000-record cap rules it out as the citywide-import primary.
+3. **NYC Open Data `f888-ni5f`** — treat strictly as a catalog **pointer**, never as a data or documentation channel (stale attachments, dead timestamps; E3). Its href target (verified at G1): `http://www1.nyc.gov/site/planning/data-maps/open-data/dwn-pluto-mappluto.page`.
 
 **Freshness monitoring:** poll the PLUTO SODA `version` field (cheap `$select=version&$limit=1` style query) rather than Socrata metadata timestamps, given discrepancies 2 and 4 above.
 
@@ -198,6 +218,9 @@ All fixtures are raw, unmodified responses stored with request URL, headers (min
 | F9 | version/provenance | `$select=version&$limit=1` | version string format `^\d{2}v\d+(\.\d+)?$`; recorded per ingestion |
 | F10 | Marble Hill / Rikers | the two idiosyncratic geographies (E4) | borough fields behave as documented |
 | F11 | MapPLUTO bulk manifest | HEAD/metadata of the DCP FileGDB download (Render worker) | size, version in file name, checksum recorded |
+| F12 | BBL numeric serialization (G1 finding, C6) | `$select=bbl&$order=bbl&$limit=2` | `$select`ed BBL returns `"1000010100.00000000"` (Socrata number type with trailing decimals) — connector MUST normalize number-typed BBLs to 10-digit strings |
+| F13 | schema-drift error shape (G1 finding) | `$select=nonexistent_col` | HTTP 400 with JSON body `errorCode: "query.soql.no-such-column"` — the schema-drift failure signature |
+| F14 | change-file companion (G1 finding, C6) | `/resource/qt5r-nqxp.json?$limit=1` | PLUTO Change File dataset live; column-level format inspection at connector build |
 
 ---
 
@@ -209,23 +232,23 @@ All fixtures are raw, unmodified responses stored with request URL, headers (min
 
 ---
 
-## 8. OPEN QUESTIONS (explicit — nothing below is asserted anywhere above)
+## 8. OPEN QUESTIONS — post-G1 ledger (G1 report §3; corrections C1–C6 applied 2026-07-16)
 
-| # | Question | Why open | Proposed resolution |
-|---|---|---|---|
-| OQ-1 | Raw Socrata timestamps (`createdAt`, `rowsUpdatedAt`, `publicationDate`) for `64uk-42ks` | Summarizer reported future-dated values ("Last Updated: August 26, 2026 / Publication Date: July 30, 2026") — implausible vs retrieval date 2026-07-16; likely misconverted unix values (E1) | G1 reviewer reads raw JSON values directly |
-| OQ-2 | Full SODA column list for `64uk-42ks` | Single-record sample omits null fields — `zonedist2-4`, `overlay1-2`, `spdist1-3`, `ltdheight`, `landmark`, `histdist`, `appbbl`, `condono` etc. unconfirmed as SODA columns (E2) | Fetch `/api/views/64uk-42ks.json` and enumerate the `columns` array |
-| OQ-3 | Official ArcGIS feature-service REST endpoint for MapPLUTO | Hub page is JS-rendered; endpoint never observed (E6) | Follow-up capture from a browser-capable session, or defer; do not use unverified |
-| OQ-4 | Exact bulk download URLs, file sizes, and BYTES of the BIG APPLE archive URLs | nyc.gov / apps.nyc.gov content-api returned HTTP 403 to the evidence session (E6) | G1 re-verification via browser or content-api from a permitted network |
-| OQ-5 | Field-level units and null/placeholder conventions from the data dictionary — at minimum: `lotarea`/`bldgarea`/`comarea`/`resarea`/`officearea`/`retailarea`/`garagearea`/`strgearea`/`factryarea`/`otherarea` (units), `lotfront`/`lotdepth`/`bldgfront`/`bldgdepth` (units), `assessland`/`assesstot`/`exempttot` (currency basis), `xcoord`/`ycoord` (CRS/EPSG), `yearbuilt`/`yearalter1-2` (zero/placeholder handling), `bldgclass`/`landuse` code lists, `areasource`/`lottype`/`proxcode`/`bsmtcode` code meanings, README-name→SODA-column mapping (e.g., ManuFAR ↔ `mnffar`) | Dictionary located (E5) but only title-verified; no field extraction performed | Follow-up capture task: fetch `pluto_datadictionary.pdf` and extract; or G1 |
-| OQ-6 | Do monthly minor releases (26v1.1, …) propagate to the `64uk-42ks` SODA channel, and with what lag? | Not observable from one snapshot | Observe `version` field across a minor-release boundary |
-| OQ-7 | Data dictionary direct-fetch confirmation (URL, version header) | E5 is a search-result title string only | Direct fetch at G1 |
-| OQ-8 | NYC Open Data portal terms of use for automated access | Only `dev.socrata.com` app-token docs were captured (E7); the NYC-specific terms page was not | Fetch terms page linked from `https://opendata.cityofnewyork.us/` |
-| OQ-9 | What URL the `f888-ni5f` href entry points to | Not captured in E3 | Read `metadata.accessPoints`/href from raw `api/views` JSON |
-| OQ-10 | MapPLUTO clipped/unclipped exact file names, borough-shapefile availability, `meta_mappluto.pdf` contents | Search-summary basis only (E6) | G1 re-verification with the DCP page |
-| OQ-11 | `PLUTOChangeFile<ver>.csv` exact location/format | README states it ships "as part of the MapPLUTO download" (E4); file itself unseen | Inspect at first bulk import |
+| # | Question | Post-G1 status |
+|---|---|---|
+| OQ-1 | Raw Socrata timestamps for `64uk-42ks` | **RESOLVED** — createdAt 2020-02-12; rowsUpdatedAt 2026-05-28T19:50:48Z; publicationDate 2026-05-28T16:52:19Z (§2.1) |
+| OQ-2 | Full SODA column list | **RESOLVED** — 108 columns enumerated; all questioned fields exist; MIH columns are `mih_opt1-4` (§4.2) |
+| OQ-3 | Official ArcGIS feature-service endpoint | **RESOLVED** — DCP_GIS FeatureServer verified live, 26v1, EPSG:2263, maxRecordCount 2000 (§2.5) |
+| OQ-4 | Exact bulk download `.zip` URLs and file sizes | **STILL OPEN (narrowed)** — archive page URL identified (`.../bytes-archive.page`); zip URLs/sizes need a browser-capable session vs nyc.gov 403; must not be guessed |
+| OQ-5 | Field-level units/null conventions | **SUBSTANTIALLY RESOLVED** — key property-profile fields verified from the 26v1 dictionary (§4.1); code-list appendices (BldgClass, LandUse, SPDist, LtdHeight, AreaSource/LotType/ProxCode/BsmtCode) extractable at connector build |
+| OQ-6 | Minor-release propagation lag to SODA | **STILL OPEN (baseline set)** — 26v1 unchanged on SODA as of 2026-07-16 (rows updated 2026-05-28); observe across a minor-release boundary |
+| OQ-7 | Dictionary direct-fetch confirmation | **RESOLVED** — direct PDF read; header "PLUTO DATA DICTIONARY — May 2026 (26v1)" |
+| OQ-8 | NYC Open Data terms for automated access | **RESOLVED** — terms verified at `opendata.cityofnewyork.us/overview`: no warranty; NYC.gov Terms of Use + Privacy Policy apply; no prohibition on automated API access; agency-specific terms may add constraints |
+| OQ-9 | `f888-ni5f` href target | **RESOLVED** — `metadata.accessPoints["web site"]` = `http://www1.nyc.gov/site/planning/data-maps/open-data/dwn-pluto-mappluto.page` |
+| OQ-10 | MapPLUTO variant file names / `meta_mappluto.pdf` contents | **PARTIALLY RESOLVED** — official metadata PDF read ("MapPLUTO 26v1 - Shoreline Clipped"; PLUTO-Only table; condo unit-lot 1001–6999 / billing-lot 7501–7599). Residual: exact `.gdb`/borough-shapefile archive file names (needs the nyc.gov page) |
+| OQ-11 | `PLUTOChangeFile<ver>.csv` location/format | **RESOLVED (location)** — Socrata dataset `qt5r-nqxp` + ships with MapPLUTO bulk; column-level inspection at connector build |
 
-**Open-question count: 11.**
+**Legitimately still open after G1: OQ-4 residual and OQ-10 residual (both nyc.gov-403-bound), plus the OQ-6 observation window.**
 
 ---
 
@@ -237,6 +260,8 @@ All fixtures are raw, unmodified responses stored with request URL, headers (min
 | E2 | `https://data.cityofnewyork.us/resource/64uk-42ks.json?$limit=1` | live fetch, verbatim record | SODA endpoint liveness, `version=26v1`, 73-field sample, null-omission behavior |
 | E3 | `https://data.cityofnewyork.us/api/views/f888-ni5f.json` | live fetch | MapPLUTO href-type entry, quarterly, stale 22v3 attachments, dead timestamps |
 | E4 | `https://s-media.nyc.gov/agencies/dcp/assets/files/pdf/data-tools/bytes/pluto_readme.pdf` | direct PDF read (pages 1–8) | release model, version naming, condo/billing BBL, Marble Hill/Rikers, DATES OF DATA, 26v1 new fields, NumFloors null convention, disclaimer, PLUTOChangeFile |
-| E5 | `https://s-media.nyc.gov/agencies/dcp/assets/files/pdf/data-tools/bytes/pluto_datadictionary.pdf` | search-result title only | data dictionary 26v1 location — [NEEDS G1 RE-VERIFICATION] |
-| E6 | `https://www.nyc.gov/content/planning/pages/resources/datasets/mappluto-pluto-change`; `https://github.com/NYCPlanning/db-pluto`; `https://hub.arcgis.com/datasets/DCP::mappluto-1/about` | search evidence; nyc.gov 403 to direct fetch | DCP page, formats, archive, build pipeline, ArcGIS item — all [NEEDS G1 RE-VERIFICATION] |
-| E7 | `https://dev.socrata.com/docs/app-tokens` | live fetch | app-token-optional throttling model, X-App-Token header, HTTP 429 |
+| E5 | `https://s-media.nyc.gov/agencies/dcp/assets/files/pdf/data-tools/bytes/pluto_datadictionary.pdf` | search-result title (producer); **direct PDF read at G1** | data dictionary 26v1 — RESOLVED at G1 (units/null conventions verified, §4.1) |
+| E6 | `https://www.nyc.gov/content/planning/pages/resources/datasets/mappluto-pluto-change`; `https://github.com/NYCPlanning/db-pluto` (**archived 2023-07-13**; active repo `NYCPlanning/data-engineering`); `https://hub.arcgis.com/datasets/DCP::mappluto-1/about` | search evidence; nyc.gov 403 confirmed twice; ArcGIS REST verified at G1 | DCP page (403-bound), formats (confirmed via `meta_mappluto.pdf`), archive page URL, build pipeline (corrected, C3), ArcGIS endpoint (verified, C4) |
+| E7 | `https://dev.socrata.com/docs/app-tokens` | live fetch (re-verified verbatim at G1) | app-token-optional throttling model, X-App-Token header, HTTP 429 |
+
+Post-G1 additions (verified by the G1 reviewer 2026-07-16; full URL index in `project-control/reports/M1-T001-G1-verification.md` §7): `meta_mappluto.pdf` (MapPLUTO 26v1 Shoreline Clipped metadata), MAPPLUTO FeatureServer REST endpoint, `catalog.data.gov` MapPLUTO entry, `opendata.cityofnewyork.us/overview` terms, Socrata catalog API (no tabular MapPLUTO; `qt5r-nqxp` change file), BYTES archive page URL.

@@ -20,7 +20,7 @@
     "update_frequency": "Major release quarterly (all fields); minor release monthly (zoning attributes only: ZoneDist1-4, Overlay1-2, SPDist1-3, LtdHeight, SplitZone, ResidFAR, CommFAR, FacilFAR, ZoneMap, ZMCode, TaxMap, EDesigNum) per official README 26v1 (E4). Propagation lag of minor releases to the SODA channel unobserved (OQ-6).",
     "geographic_coverage": "All five NYC boroughs, tax-lot level; one record per condominium complex (billing BBL), not per condo unit lot; Marble Hill legally Manhattan/serviced by Bronx and Rikers legally Bronx/serviced by Queens (E4)",
     "fields_available": {
-      "note": "73 fields observed verbatim on a live SODA record 2026-07-16 (E2); SODA omits null fields per record, so this is a floor. Full column set pending api/views columns-array enumeration (OQ-2). Fields below marked 'dictionary-known' are documented in the README (E4) but were absent from the sampled record.",
+      "note": "108 columns total, enumerated from the api/views columns array at G1 (2026-07-16; OQ-2 RESOLVED). 73 fields were observed on the live sample record (SODA omits null fields per record — schema must never be inferred from record keys). G1-verified additional columns beyond both lists below: geom, firm07_flag, pfirm15_flag, dcpedited, notes, ownertype, appdate, and eight per-input date columns (basempdate, dcasdate, edesigdate, landmkdate, masdate, polidate, rpaddate, zoningdate) usable as per-record input-vintage provenance.",
       "key_property_profile_fields_observed": [
         "bbl", "borough", "borocode", "block", "lot", "address", "zipcode",
         "zonedist1", "splitzone", "zonemap",
@@ -43,11 +43,11 @@
         "zonedist2", "zonedist3", "zonedist4", "overlay1", "overlay2",
         "spdist1", "spdist2", "spdist3", "ltdheight",
         "landmark", "histdist", "appbbl", "condono",
-        "edesignum", "zmcode", "mihoption1", "mihoption2", "mihoption3", "mihoption4"
+        "edesignum", "zmcode", "mih_opt1", "mih_opt2", "mih_opt3", "mih_opt4"
       ],
-      "units_and_null_conventions": "PENDING data-dictionary extraction (OQ-5). Verified so far: NumFloors shows null for zero and values below one (E4 verbatim)."
+      "units_and_null_conventions": "Verified from the 26v1 data dictionary at G1 (direct PDF read; G1 report section 1.3): LotArea = square feet (rounded to integer); LotFront/LotDepth = feet (Numeric 9999.99); BldgArea = gross square feet EXCEPT condos (net, from Condo Declaration) and is NOT ZR 12-10 zoning floor area; NumFloors null for zero/<1, and null with NumBldgs>0 means not available; YearBuilt null or 0 = unknown; AssessLand/AssessTot/ExemptTot = DOF dollar values (tentative vs final roll rule); XCoord/YCoord = New York-Long Island State Plane (dictionary verbatim; EPSG:2263 confirmed on the ArcGIS service side); BBL = 1+5+4 zero-padded digits, condo BBL = billing lot; CondoNo unique within borough. Code-list appendices (BldgClass, LandUse, AreaSource, LotType, ProxCode, BsmtCode) extractable from the same verified PDF at connector build (OQ-5 residual)."
     },
-    "terms_usage_notes": "DCP disclaimer (README 26v1, E4): provided for informational purposes only; DCP does not warranty completeness, accuracy, content, or fitness for any particular purpose or use. NYC Open Data portal terms for automated access not yet captured (OQ-8).",
+    "terms_usage_notes": "DCP disclaimer (README 26v1, E4): provided for informational purposes only; DCP does not warranty completeness, accuracy, content, or fitness for any particular purpose or use. NYC Open Data terms verified at G1 (opendata.cityofnewyork.us/overview): no warranty; NYC.gov Terms of Use + Privacy Policy apply; no prohibition on automated API access; agency-specific terms may add constraints (OQ-8 RESOLVED).",
     "connector_implementation": "PLAN ONLY (no connector built in M1-T001): per-BBL/per-block SODA queries with X-App-Token from secrets; raw record + version field + retrieval timestamp persisted to raw_source_records/property_source_facts; schema-drift check against api/views columns array each scheduled run; freshness monitor polls the version field, not Socrata metadata timestamps.",
     "last_successful_ingestion": null,
     "latest_source_version": "26v1 — observed in the version field of a live SODA record on 2026-07-16 (E2); matches DCP README header 'May 2026 (26v1)' (E4)",
@@ -57,16 +57,15 @@
       "One record per condominium complex under the billing BBL; condo-unit BBLs will not match directly (E4)",
       "Underlying input vintages lag the release date; see DATES OF DATA table in README 26v1 (E4)",
       "PLUTO 26v1 built on Geosupport 26A while Geosupport 26B is current — cross-source version skew (E4 vs M0-T002 report)",
-      "Socrata metadata timestamps for this dataset are suspect (future-dated summarizer readings, OQ-1); do not use for freshness monitoring until re-verified",
-      "Field-level units and null/placeholder conventions not yet extracted from the data dictionary (OQ-5)"
+      "Socrata metadata timestamps verified at G1 (rowsUpdatedAt 2026-05-28T19:50:48Z, consistent with 26v1) — usable as a secondary freshness signal; version-field polling remains primary (OQ-1 RESOLVED)",
+      "SODA number-typed BBL serializes with trailing decimals under $select (e.g. \"1000010100.00000000\") — connector MUST normalize to 10-digit strings (G1 finding, C6)",
+      "Schema-drift failure signature: bad column names return HTTP 400 with errorCode query.soql.no-such-column (G1 finding)"
     ],
-    "fallback_source": "DCP bulk CSV release via BYTES of the BIG APPLE (archive of prior versions; exact URLs pending G1 re-verification, OQ-4); processed on a Render worker only, per the low-storage policy",
+    "fallback_source": "DCP bulk CSV release via BYTES of the BIG APPLE (archive page https://www.nyc.gov/site/planning/data-maps/open-data/bytes-archive.page identified at G1; exact zip URLs/sizes still open, OQ-4 residual); processed on a Render worker only, per the low-storage policy. Companion channel: PLUTO Change File Socrata dataset qt5r-nqxp (verified at G1).",
     "open_questions": [
-      "OQ-1: raw Socrata createdAt/rowsUpdatedAt/publicationDate values for 64uk-42ks",
-      "OQ-2: full SODA column list from the api/views columns array",
-      "OQ-5: field-level units and null conventions from pluto_datadictionary.pdf (incl. area/frontage units, assessment currency basis, xcoord/ycoord CRS/EPSG, code lists, README-name to SODA-column mapping)",
-      "OQ-6: minor-release (26v1.1, ...) propagation and lag on the SODA channel",
-      "OQ-8: NYC Open Data portal terms of use for automated access"
+      "OQ-4 residual: exact bulk download zip URLs and file sizes (nyc.gov 403 to non-browser clients; needs a browser-capable session; must not be guessed)",
+      "OQ-5 residual: code-list appendices (BldgClass, LandUse, AreaSource, LotType, ProxCode, BsmtCode) extraction from the verified 26v1 dictionary at connector build",
+      "OQ-6: minor-release (26v1.1, ...) propagation and lag on the SODA channel (baseline set 2026-07-16: 26v1, rows updated 2026-05-28)"
     ]
   },
   {
@@ -82,11 +81,11 @@
     },
     "rate_limits": null,
     "update_frequency": "Quarterly (major releases; E3 portal metadata 'Quarterly' and E4 README release model). PLUTOChangeFile<ver>.csv ships as part of the MapPLUTO download (E4).",
-    "geographic_coverage": "All five NYC boroughs, tax-lot polygon level; shoreline-clipped primary variant, water-included unclipped variant reported (E6, NEEDS G1 RE-VERIFICATION)",
+    "geographic_coverage": "All five NYC boroughs, tax-lot polygon level; shoreline-clipped primary variant CONFIRMED at G1 via official meta_mappluto.pdf ('MapPLUTO 26v1 - Shoreline Clipped': does not contain lots completely or partially underwater; includes the PLUTO Only non-geographic table for PLUTO records without a DTM lot, and DCP Mapping Lots). Condo unit lots 1001-6999 vs billing lots 7501-7599 with base-lot (FKA) merge behavior (G1 report section 1.5).",
     "fields_available": {
-      "note": "PLUTO attribute set (see nyc-dcp-pluto-soda record) merged with tax-lot polygon features from the DCP-modified DOF Digital Tax Map, clipped to shoreline (E3/E4 verbatim descriptions). Exact geometry-side fields/CRS pending first capture of the FileGDB metadata (OQ-10)."
+      "note": "PLUTO attribute set (see nyc-dcp-pluto-soda record) merged with tax-lot polygon features from the DCP-modified DOF Digital Tax Map, clipped to shoreline (E3/E4 verbatim descriptions). ArcGIS service side verified at G1: 103 PascalCase fields, spatialReference wkid 102718 / latestWkid 2263 (EPSG:2263). Exact bulk FileGDB internal schema inspection at first import (OQ-10 residual)."
     },
-    "terms_usage_notes": "Same DCP informational-purposes-only disclaimer as PLUTO (README 26v1, E4). Formats reported: ESRI File Geodatabase and shapefile; clipped (Mappluto.gdb) and unclipped (Mapplutounclipped.gdb) variants; borough shapefile distribution — all format details from search evidence, NEEDS G1 RE-VERIFICATION (E6/OQ-10).",
+    "terms_usage_notes": "Same DCP informational-purposes-only disclaimer as PLUTO (README 26v1, E4). Formats: ESRI File Geodatabase + shapefile family confirmed at G1 (official meta_mappluto.pdf + data.gov 'ESRI Shapefile'); exact clipped/unclipped/borough archive file names still open (OQ-10 residual).",
     "connector_implementation": "PLAN ONLY: quarterly Render worker job streams the shoreline-clipped FileGDB into bounded temp space, loads PostGIS tax_lot_geometries, uploads the original archive to Supabase Storage (gis-imports), deletes temp files (low-storage policy). Version pinned from release file name + README. Never executed on the owner's PC.",
     "last_successful_ingestion": null,
     "latest_source_version": "26v1 per DCP README (E4). The f888-ni5f portal entry carries STALE 22v3 documentation attachments and frozen 2013 timestamps (E3) — version currency must be read from the DCP channel, not the portal.",
@@ -95,17 +94,15 @@
       "No tabular SODA resource exists for MapPLUTO; f888-ni5f is an href pointer only (E3)",
       "Portal attachment channel lags DCP by years (22v3 dictionaries on a 26v1 product) — cross-channel discrepancy recorded for S4 (E3 vs E4/E5)",
       "Socrata timestamps frozen at 2013-07-25 for href datasets; unusable for freshness monitoring (E3)",
-      "Exact download URLs, file sizes, archive URLs unverified (nyc.gov 403 to evidence session; OQ-4)",
-      "ArcGIS feature-service endpoint unverified (JS-rendered Hub page; OQ-3)",
+      "Exact download zip URLs and file sizes unverified (nyc.gov 403 confirmed twice; archive page URL identified: https://www.nyc.gov/site/planning/data-maps/open-data/bytes-archive.page; OQ-4 residual)",
+      "ArcGIS feature service maxRecordCount 2000 rules it out as citywide-import primary (~850k+ lots = ~430 paged requests); per-lot/per-area queries only (G1 report section 1.4)",
       "Same condo billing-BBL and borough-idiosyncrasy semantics as PLUTO (E4)"
     ],
-    "fallback_source": "Candidate: official ArcGIS feature service (hub.arcgis.com/datasets/DCP::mappluto-1/about) — UNVERIFIED, must not be used until the REST endpoint is confirmed (OQ-3). The NYC Open Data f888-ni5f entry is a catalog pointer only, not a data fallback.",
+    "fallback_source": "VERIFIED at G1 (C4): official ArcGIS feature service https://services5.arcgis.com/GfwWNkhOj9bNBqoJ/arcgis/rest/services/MAPPLUTO/FeatureServer (owner DCP_GIS = 'NYC DCP Mapping Portal'; layer 0 polygon; 103 fields; serving Version 26v1; wkid 102718/2263; maxRecordCount 2000) — use as the per-lot/per-area query fallback; bulk FileGDB remains citywide-import primary. The NYC Open Data f888-ni5f entry is a catalog pointer only (href target verified at G1: http://www1.nyc.gov/site/planning/data-maps/open-data/dwn-pluto-mappluto.page).",
     "open_questions": [
-      "OQ-3: official ArcGIS feature-service REST endpoint for MapPLUTO",
-      "OQ-4: exact bulk download URLs, file sizes, and BYTES of the BIG APPLE archive URLs",
-      "OQ-9: target URL of the f888-ni5f href entry",
-      "OQ-10: clipped/unclipped exact file names, borough-shapefile availability, geometry CRS, meta_mappluto.pdf contents",
-      "OQ-11: PLUTOChangeFile<ver>.csv exact location and format"
+      "OQ-4 residual: exact bulk download zip URLs and file sizes (browser-capable session needed vs nyc.gov 403; must not be guessed)",
+      "OQ-10 residual: exact .gdb archive file names, unclipped variant file name, borough-shapefile listing",
+      "OQ-11 residual: PLUTOChangeFile column-level format (location resolved at G1: Socrata dataset qt5r-nqxp + ships with MapPLUTO bulk)"
     ]
   }
 ]
