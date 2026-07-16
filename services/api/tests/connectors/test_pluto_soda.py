@@ -769,14 +769,30 @@ class _FakeUrlopenResponse:
         self.status = status
         self._body = body
 
-    def read(self) -> bytes:
-        return self._body
+    def read(self, amt: int | None = None) -> bytes:
+        # Mirrors http.client.HTTPResponse.read(amt): bounded reads (G5 F1)
+        # pass an explicit byte cap.
+        if amt is None:
+            return self._body
+        return self._body[:amt]
 
     def __enter__(self) -> "_FakeUrlopenResponse":
         return self
 
     def __exit__(self, *exc_info) -> bool:
         return False
+
+
+class _FakeOpener:
+    """Stand-in for pluto_soda._OPENER (the no-redirect opener, G5 F3). The
+    transport calls _OPENER.open(request, timeout=...), so transport tests
+    monkeypatch the module-level opener rather than urllib.request.urlopen."""
+
+    def __init__(self, fn):
+        self._fn = fn
+
+    def open(self, request, timeout=None):
+        return self._fn(request, timeout=timeout)
 
 
 def test_urllib_transport_success_returns_status_and_decoded_body(monkeypatch) -> None:
@@ -788,7 +804,7 @@ def test_urllib_transport_success_returns_status_and_decoded_body(monkeypatch) -
         captured["accept"] = request.get_header("Accept")
         return _FakeUrlopenResponse(200, b'[{"version": "26v1"}]')
 
-    monkeypatch.setattr(urllib.request, "urlopen", fake_urlopen)
+    monkeypatch.setattr(pluto_soda, "_OPENER", _FakeOpener(fake_urlopen))
     response = urllib_transport(
         f"{BASE_URL}?bbl=1000010100", {"Accept": "application/json"}, 10.0
     )
@@ -808,7 +824,7 @@ def test_urllib_transport_http_error_body_passes_through_as_response(monkeypatch
             request.full_url, 400, "Bad Request", None, io.BytesIO(body)
         )
 
-    monkeypatch.setattr(urllib.request, "urlopen", fake_urlopen)
+    monkeypatch.setattr(pluto_soda, "_OPENER", _FakeOpener(fake_urlopen))
     response = urllib_transport(BASE_URL, {}, 10.0)
     assert response.status == 400
     assert json.loads(response.body)["errorCode"] == "query.soql.no-such-column"
@@ -818,7 +834,7 @@ def test_urllib_transport_timeout_error_maps_to_transport_timeout(monkeypatch) -
     def fake_urlopen(request, timeout=None):
         raise TimeoutError("timed out")
 
-    monkeypatch.setattr(urllib.request, "urlopen", fake_urlopen)
+    monkeypatch.setattr(pluto_soda, "_OPENER", _FakeOpener(fake_urlopen))
     with pytest.raises(TransportTimeout) as excinfo:
         urllib_transport(BASE_URL, {}, 2.5)
     assert "2.5" in str(excinfo.value)
@@ -830,7 +846,7 @@ def test_urllib_transport_urlerror_timeout_reason_maps_to_transport_timeout(
     def fake_urlopen(request, timeout=None):
         raise urllib.error.URLError(TimeoutError("timed out"))
 
-    monkeypatch.setattr(urllib.request, "urlopen", fake_urlopen)
+    monkeypatch.setattr(pluto_soda, "_OPENER", _FakeOpener(fake_urlopen))
     with pytest.raises(TransportTimeout):
         urllib_transport(BASE_URL, {}, 2.5)
 
@@ -846,7 +862,7 @@ def test_urllib_transport_urlerror_network_reason_maps_to_transport_failure(
     def fake_urlopen(request, timeout=None):
         raise urllib.error.URLError(reason)
 
-    monkeypatch.setattr(urllib.request, "urlopen", fake_urlopen)
+    monkeypatch.setattr(pluto_soda, "_OPENER", _FakeOpener(fake_urlopen))
     with pytest.raises(TransportFailure) as excinfo:
         urllib_transport(BASE_URL, {}, 10.0)
     # Message carries only the failure type name - no URL, no reason detail
