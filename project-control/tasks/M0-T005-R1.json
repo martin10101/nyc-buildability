@@ -1,0 +1,94 @@
+{
+  "task_id": "M0-T005-R1",
+  "title": "Secret scanner hardening (G3/G5 defect burn-down)",
+  "task_type": "backend",
+  "milestone_id": "M0",
+  "objective": "Fix the 7 G3 defects and G5 findings in .github/scripts/secret_scan.py: (1) compound-prefix generic regex (AUTH_TOKEN=, DB_PASSWORD=, allowed_token); (2) inventory-name pattern class scanning for every exact secret name in docs/SECRETS_POLICY.md section 2 with a non-placeholder value; (3) postgres-URI pattern class; (4) exact-path allowlist plus content-scan of .env.example files for non-empty values; (5) pragma with empty justification exits 1; (6) UTF-16 BOM detection so PS 5.1-redirected files are scanned not skipped; (7) sanitize printed paths against workflow-command injection (newlines/control chars); (8) exit-code cleanup (git failure exits 2 not 1) and visible notices for >2MB/binary skips; (9) re-fixture S2 so the inline pragma actually triggers and the visible ALLOWLISTED LINE notice is captured, plus new fixture lines for compound names, hex key, postgres URI, deploy-hook URL, and a UTF-16 file.",
+  "business_reason": "G5 passed M0-T005 conditional on this rework landing before the first real credential enters the repo or M0 exit; policy section 1 claims mechanical enforcement that defects D1/D2 currently overstate",
+  "inputs": [
+    "project-control/reports/M0-T005-G3-review.md (defects D1-D7 with file:line and desk-test reproductions)",
+    "project-control/reports/M0-T005-G5-security-review.md (severity adjudication, findings F1, follow-up scope list)",
+    "docs/SECRETS_POLICY.md section 2 (exact inventory names for the new pattern class)",
+    ".github/scripts/secret_scan.py (current implementation)"
+  ],
+  "outputs": [
+    ".github/scripts/secret_scan.py (hardened)",
+    "docs/SECRETS_POLICY.md (one section-5 sentence: empty pragma justification fails the scan)",
+    "project-control/reports/M0-T005-R1-producer-report.md"
+  ],
+  "dependencies": [
+    "M0-T005"
+  ],
+  "allowed_paths": [
+    ".github/scripts/secret_scan.py",
+    "docs/SECRETS_POLICY.md",
+    "project-control/reports/M0-T005-R1-*"
+  ],
+  "forbidden_paths": [
+    ".github/workflows/**",
+    "services/**",
+    "apps/**",
+    "packages/**",
+    "tools/**",
+    "project-control/tasks/**",
+    "project-control/gates/**"
+  ],
+  "acceptance_scenarios": [
+    {
+      "id": "S1",
+      "case": "normal",
+      "input": "clean repository tree",
+      "expected": "scanner exits 0; existing S1 behavior unchanged (3 allowlist notices now path-exact); runtime still well under 60s"
+    },
+    {
+      "id": "S2",
+      "case": "invalid-input",
+      "input": "fixture with compound-name assignments (AUTH_TOKEN=, DB_PASSWORD=), a GEOCLIENT hex value, a postgres:// URI with password, a RENDER_DEPLOY_HOOK_URL value, and a UTF-16-encoded file containing a fake rnd_ key",
+      "expected": "every planted line detected with correct class and masked value; UTF-16 file scanned, not skipped"
+    },
+    {
+      "id": "S3",
+      "case": "boundary",
+      "input": "line matching generic class with '# secretscan:allow <justification>' pragma, and the same line with empty justification",
+      "expected": "justified pragma suppresses WITH visible 'ALLOWLISTED LINE' notice; empty justification exits 1 (finding not suppressed)"
+    },
+    {
+      "id": "S4",
+      "case": "ambiguous",
+      "input": "a file named .env.example outside the two policy-approved paths containing a real-shaped value; a policy-approved .env.example with a non-empty value",
+      "expected": "both flagged as findings (exact-path allowlist + content check), not silently skipped"
+    },
+    {
+      "id": "S5",
+      "case": "failure",
+      "input": "scanner run outside a git repository; filename containing a newline/control character (desk-test acceptable on Windows)",
+      "expected": "git failure exits 2 with a clear message (distinguishable from findings); printed paths are sanitized so no GitHub workflow command (::notice/::add-mask) can be injected"
+    },
+    {
+      "id": "S6",
+      "case": "regression",
+      "input": "the 9 original pattern classes from M0-T005 S2",
+      "expected": "all still detected and masked exactly as in project-control/reports/M0-T005-G2-evidence.md; no workflow file changes; package-lock.json still allowlisted"
+    }
+  ],
+  "required_gates": [
+    "G0",
+    "G2",
+    "G3",
+    "G5"
+  ],
+  "producer_agent": "backend-engineer",
+  "reviewer_agents": [
+    "code-reviewer",
+    "security-reviewer"
+  ],
+  "status": "backlog",
+  "progress_percent": 0,
+  "risks": [
+    "Inventory-name pattern class must not false-positive on the .env.example templates themselves (names with empty values) or on docs that mention the names without values",
+    "Must land before the first real credential enters the repository or M0 exit, per G5 condition"
+  ],
+  "blockers": [],
+  "created_at": "2026-07-16T00:30:58.924796+00:00",
+  "updated_at": "2026-07-16T00:30:58.928072+00:00"
+}

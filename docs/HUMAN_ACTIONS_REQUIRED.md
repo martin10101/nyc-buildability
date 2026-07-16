@@ -35,6 +35,14 @@ Unblocks: integration of the 3D massing / premium UI / financial / opportunity w
 
 Three expansion files arrived mid-bootstrap and are committed, but the continuation prompt references 4 more documents (`.claude/rules/3d-ui-expansion.md`, `docs/COMPETITIVE_FEATURE_EXPANSION.md`, `docs/3D_AND_UI_EXECUTION_PLAN.md`, `docs/3D_VISUAL_ACCEPTANCE_STANDARD.md`) and 5 new subagents (`3d-massing-engineer`, `product-design-director`, `visual-quality-reviewer`, `financial-feasibility-engineer`, `opportunity-search-engineer`) that are not present. Copy the rest of the pack into the project root, or say the pack is withdrawn. Integration (task M0-T010) proceeds automatically once the files exist. Core M0/M1 work is NOT blocked by this.
 
+## 6. Enable GitHub push protection and secret scanning (B-006)
+Unblocks: nothing today, but it is the stated compensating control for the regex false negatives of the repo-local secret scanner (docs/SECRETS_POLICY.md §6; M0-T005 G5 review finding F2). Strongly recommended before the first real credential is handled anywhere near this repository.
+
+1. Go to https://github.com/martin10101/nyc-buildability/settings/security_analysis
+2. Enable "Secret scanning" and "Push protection". (On private repos these may require GitHub Advanced Security depending on plan; if unavailable, say so and it will be recorded as a documented exception.)
+3. While in settings, confirm branch protection on `main` (require PRs/checks) — this also mitigates the scanner-is-self-modifiable residual risk noted in the G5 review (finding F3).
+4. How it will be verified: a settings screenshot or your confirmation; no secrets involved.
+
 ## Later (not yet blocking — will be requested when reached)
 - Production deployment approval (G7).
 - Qualified NYC zoning professional to approve the first verified rule set (G6). Rule ingestion/extraction/testing proceeds meanwhile; nothing is published as "verified" until this approval.
@@ -47,3 +55,4 @@ Three expansion files arrived mid-bootstrap and are committed, but the continuat
 | 2026-07-14 | B-002 Render API key | OPEN — requested |
 | 2026-07-14 | B-003 Vercel | OPEN — requested (low urgency) |
 | 2026-07-14 | B-004 Geoclient key | OPEN — requested |
+| 2026-07-16 | B-006 GitHub push protection + secret scanning + branch protection | OPEN — requested |

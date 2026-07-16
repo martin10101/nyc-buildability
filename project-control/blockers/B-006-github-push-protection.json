@@ -1,0 +1,13 @@
+{
+  "blocker_id": "B-006",
+  "title": "GitHub push protection, secret scanning, and main branch protection not yet enabled",
+  "status": "open",
+  "affects": ["Compensating control for secret_scan.py regex false negatives (M0-T005 G5 review F2/F3)", "M0 exit gate posture", "any task that handles a real credential"],
+  "detail": "docs/SECRETS_POLICY.md section 6 designates GitHub push protection + secret scanning as the server-side compensating control for the inherent false negatives of the repo-local regex scanner. The M0-T005 G5 security review (findings F2, F3) requires this to be tracked as a human action with a blocker record, and also asks the owner to confirm branch protection on main (mitigates the scanner-is-self-modifiable-from-a-PR residual risk). Nothing is blocked today; this becomes critical before the first real credential is handled.",
+  "exact_human_action": "In https://github.com/martin10101/nyc-buildability/settings/security_analysis enable Secret scanning and Push protection (if the private-repo plan does not include them, report that so a documented exception can be recorded). In branch settings, confirm or add protection on main requiring pull requests and passing checks.",
+  "secret_name": null,
+  "where_to_enter": "GitHub repository settings (owner authority)",
+  "minimum_permissions": "Repository admin",
+  "how_it_will_be_tested": "Owner confirmation or settings screenshot; optionally a rejected test push containing a canary GitHub-format token from a scratch branch.",
+  "created_at": "2026-07-16T00:35:00Z"
+}
