@@ -156,3 +156,40 @@ secret-scan: PASS -- no findings
 ## 12. Report path
 
 `project-control/reports/M1-T005-producer-report.md` (this file)
+
+---
+
+## 13. D1 fixup 2026-07-16 (G3 review defect D1, Medium)
+
+**Defect (from `project-control/reports/M1-T005-G3-review.md` D1):** `_drift_monitor_hook()`, the no_match mapping, `build_property_profile()`, and the 200-response construction ran OUTSIDE the route's `try/except`, so any exception there bypassed the documented 500 contract (Starlette plain-text 500, no `state=internal_error` body, no `X-Correlation-ID` header, full-traceback logging contrary to the M1-T002 G5 F5 payload-only policy).
+
+**Change — `services/api/app/api/v1/properties.py`:**
+
+- Extracted the generic-500 construction into a new helper `_internal_error_500(exc, correlation_id)` (after `_json`, ~lines 107-127): logs `type(exc).__name__` + correlation id ONLY (never `str(exc)`/traceback), returns the documented body (`state=internal_error`, message, `correlation_id`) with the `X-Correlation-ID` header.
+- The fetch block's `except Exception` now delegates to that helper (~lines 236-237).
+- Step 3 (drift hook + no_match 404 mapping + builder + 200 construction, ~lines 239-267) is now wrapped in its own `try: ... except Exception as exc: return _internal_error_500(exc, correlation_id)`. Deliberately a SEPARATE try so the `except PlutoConnectorError` mapping stays scoped to fetcher-raised errors only; any post-fetch exception maps to the generic 500, exactly per the documented semantics table.
+
+**Tests — `services/api/tests/api/test_properties_v1.py`:**
+
+- New `raw_client` fixture: `TestClient(app, raise_server_exceptions=False)` so the tests assert the wire-visible HTTP behavior instead of the harness re-raising.
+- New shared assertion helper `_assert_documented_generic_500`: 500 status, `X-Correlation-ID` header present, JSON body (`response.json()` would raise on Starlette's plain-text default), `state=internal_error`, body `correlation_id` == header value, and leak-absence (`secret-internal-path`, `hostile`, `Traceback`, `File "` all absent from body).
+- `test_s5_builder_exception_is_500_generic_no_internals` — monkeypatches `app.api.v1.properties.build_property_profile` to raise `RuntimeError("secret-internal-path C:\hostile\r\n::injected")` over the real F01 fixture fetch; asserts the documented generic 500.
+- `test_s5_drift_hook_exception_is_500_generic_no_internals` — same for `_drift_monitor_hook` raising `ValueError`.
+
+**Evidence (exact commands from the worktree):**
+
+```
+$ cd services/api && python -m pytest tests -q
+........................................................................ [ 50%]
+......................................................................   [100%]
+142 passed in 1.55s
+
+$ python -m pytest tests/api/test_properties_v1.py -q -k "builder_exception or drift_hook_exception"
+tests\api\test_properties_v1.py ..                                       [100%]
+====================== 2 passed, 39 deselected in 0.70s =======================
+
+$ python -m ruff check app tests
+All checks passed!
+```
+
+142 = the reviewer-reproduced 140 + the 2 new D1 regression tests; 0 failures, 0 skips. Files touched by this fixup: `services/api/app/api/v1/properties.py`, `services/api/tests/api/test_properties_v1.py`, this report section. No contract, builder, or connector changes. D2-D6 untouched (D2/D4 belong to the contract v1.1 follow-up task per the G3 adjudication).

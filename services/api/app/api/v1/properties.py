@@ -104,6 +104,28 @@ def _json(status_code: int, body: dict, correlation_id: str) -> JSONResponse:
     )
 
 
+def _internal_error_500(exc: Exception, correlation_id: str) -> JSONResponse:
+    """Documented generic 500 for ANY unexpected exception (G3 D1 fix).
+
+    Unexpected = internal defect. Log type + correlation id only (no
+    str(exc)/traceback: the exception chain may embed untrusted upstream
+    strings - M1-T002 G5 F5 payload-only logging policy).
+    """
+    logger.error(
+        "properties_v1 unexpected_error type=%s correlation_id=%s",
+        type(exc).__name__, correlation_id,
+    )
+    return _json(
+        500,
+        {
+            "state": "internal_error",
+            "message": "unexpected internal error; see server logs by correlation id",
+            "correlation_id": correlation_id,
+        },
+        correlation_id,
+    )
+
+
 _RESPONSES_DOC = {
     200: {
         "description": (
@@ -212,43 +234,36 @@ def get_property(
             correlation_id,
         )
     except Exception as exc:
-        # Unexpected = internal defect. Log type + correlation id only (no
-        # str(exc)/traceback: the chain may embed untrusted response data).
-        logger.error(
-            "properties_v1 unexpected_error type=%s correlation_id=%s",
-            type(exc).__name__, correlation_id,
-        )
-        return _json(
-            500,
-            {
-                "state": "internal_error",
-                "message": "unexpected internal error; see server logs by correlation id",
-                "correlation_id": correlation_id,
-            },
-            correlation_id,
-        )
+        return _internal_error_500(exc, correlation_id)
 
-    _drift_monitor_hook(result.drift_signals, correlation_id)
+    # 3. Everything after the fetch (drift hook, no_match mapping, builder,
+    #    200 construction) runs inside the same generic-500 guard so ANY
+    #    unexpected exception honors the documented contract (G3 D1 fix) -
+    #    never Starlette's plain-text 500 with full-traceback logging.
+    try:
+        _drift_monitor_hook(result.drift_signals, correlation_id)
 
-    # 3. no_match is a RESULT, not an error (M1-T002 G3 carry-forward):
-    #    documented choice = HTTP 404 with a machine-readable state, because
-    #    the resource does not exist in the official dataset. Distinguishable
-    #    from a routing 404 by the ``state`` field.
-    if result.status == "no_match":
-        return _json(
-            404,
-            {
-                "state": "no_match",
-                "bbl": result.bbl,
-                "message": result.no_match_explanation,
-                "correlation_id": result.correlation_id,
-                "source_id": SOURCE_ID,
-                "dataset_id": DATASET_ID,
-                "request_url": result.request_url,
-                "retrieved_at": result.retrieved_at,
-            },
-            correlation_id,
-        )
+        # no_match is a RESULT, not an error (M1-T002 G3 carry-forward):
+        # documented choice = HTTP 404 with a machine-readable state, because
+        # the resource does not exist in the official dataset. Distinguishable
+        # from a routing 404 by the ``state`` field.
+        if result.status == "no_match":
+            return _json(
+                404,
+                {
+                    "state": "no_match",
+                    "bbl": result.bbl,
+                    "message": result.no_match_explanation,
+                    "correlation_id": result.correlation_id,
+                    "source_id": SOURCE_ID,
+                    "dataset_id": DATASET_ID,
+                    "request_url": result.request_url,
+                    "retrieved_at": result.retrieved_at,
+                },
+                correlation_id,
+            )
 
-    profile = build_property_profile(result)
-    return _json(200, profile, correlation_id)
+        profile = build_property_profile(result)
+        return _json(200, profile, correlation_id)
+    except Exception as exc:
+        return _internal_error_500(exc, correlation_id)

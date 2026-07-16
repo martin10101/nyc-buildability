@@ -17,6 +17,7 @@ from pathlib import Path
 import pytest
 from fastapi.testclient import TestClient
 
+from app.api.v1 import properties as properties_module
 from app.api.v1.properties import get_pluto_fetcher
 from app.connectors import pluto_soda
 from app.connectors.pluto_soda import (
@@ -111,6 +112,16 @@ class FetcherHarness:
 @pytest.fixture()
 def client():
     with TestClient(app) as test_client:
+        yield test_client
+    app.dependency_overrides.clear()
+
+
+@pytest.fixture()
+def raw_client():
+    """TestClient that surfaces server exceptions as real HTTP responses
+    (raise_server_exceptions=False) - proves the wire-visible 500 contract
+    instead of letting the harness re-raise (G3 D1 regression tests)."""
+    with TestClient(app, raise_server_exceptions=False) as test_client:
         yield test_client
     app.dependency_overrides.clear()
 
@@ -498,6 +509,47 @@ def test_s5_unexpected_exception_is_500_generic_no_internals(client) -> None:
     assert body["correlation_id"]
     assert "hostile" not in response.text
     assert "Traceback" not in response.text
+
+
+def _assert_documented_generic_500(response) -> None:
+    """The G3 D1 contract: JSON 500 with state=internal_error, a correlation
+    id in body AND X-Correlation-ID header, and zero internals leakage."""
+    assert response.status_code == 500
+    assert response.headers.get("X-Correlation-ID")
+    body = response.json()  # would raise on Starlette's plain-text default 500
+    assert body["state"] == "internal_error"
+    assert body["correlation_id"] == response.headers["X-Correlation-ID"]
+    assert "secret-internal-path" not in response.text
+    assert "hostile" not in response.text
+    assert "Traceback" not in response.text
+    assert 'File "' not in response.text
+
+
+def test_s5_builder_exception_is_500_generic_no_internals(raw_client, monkeypatch) -> None:
+    """G3 D1 regression: an exception raised AFTER the fetch (in the profile
+    builder) must yield the documented generic 500, not Starlette's
+    plain-text handler (which would also log the full traceback)."""
+    fixture_fetcher("F01_single_lot_normal.json")
+
+    def exploding_builder(result):
+        raise RuntimeError("secret-internal-path C:\\hostile\r\n::injected")
+
+    monkeypatch.setattr(properties_module, "build_property_profile", exploding_builder)
+    response = raw_client.get("/api/v1/properties/1000010100")
+    _assert_documented_generic_500(response)
+
+
+def test_s5_drift_hook_exception_is_500_generic_no_internals(raw_client, monkeypatch) -> None:
+    """G3 D1 regression (hook variant): a defect in the drift-monitor hook
+    must also honor the documented generic-500 contract."""
+    fixture_fetcher("F01_single_lot_normal.json")
+
+    def exploding_hook(drift_signals, correlation_id):
+        raise ValueError("secret-internal-path hostile-hook\r\n::injected")
+
+    monkeypatch.setattr(properties_module, "_drift_monitor_hook", exploding_hook)
+    response = raw_client.get("/api/v1/properties/1000010100")
+    _assert_documented_generic_500(response)
 
 
 # --------------------------------------------------------------------------
