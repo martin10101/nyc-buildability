@@ -47,6 +47,31 @@ FIXTURE_ROOT = REPO_ROOT / "packages" / "contracts" / "fixtures"
 REQUIRED_KEYS = ("$schema", "$id", "title", "description")
 DRAFT_2020_12 = "https://json-schema.org/draft/2020-12/schema"
 
+# Marker used by the fail-closed legacy $ref guard (M0-T005-R1 item 10) so the
+# fixture loop can distinguish a blocked remote fetch from an engine hiccup.
+REMOTE_REF_BLOCK_MSG = "remote $ref fetch blocked (fail-closed): target not in the loaded contract store"
+
+
+# ---------------------------------------------------------------------------
+# Shared output-sanitization helper. Kept textually identical in
+# .github/scripts/secret_scan.py and .github/scripts/validate_contracts.py:
+# both are standalone stdlib scripts and the task scope forbids adding a
+# shared module (M0-T005 G5 finding F1 + M0-T009 G5 finding F2).
+# ---------------------------------------------------------------------------
+_CONTROL_CHARS_RE = re.compile(r"[\x00-\x1f\x7f]")
+
+
+def sanitize_for_log(text: str) -> str:
+    """Replace control characters (newline, CR, ESC, NUL, ...) with '?' so a
+    hostile filename or value can never start a new log line and forge a
+    GitHub workflow command (::notice / ::add-mask / ::error ...)."""
+    return _CONTROL_CHARS_RE.sub("?", str(text))
+
+
+def emit(message: str, *, err: bool = False) -> None:
+    """Print one sanitized line to stdout (or stderr)."""
+    print(sanitize_for_log(message), file=sys.stderr if err else sys.stdout)
+
 # Keyword allowlist for THIS repository's contracts (subset of draft 2020-12).
 # Extending the subset is an additive change: add the keyword here and to the
 # mini-validator below in the same commit.
@@ -88,17 +113,38 @@ def load_jsonschema_engine():
             registry = Registry().with_resources(resources)
             return jsonschema.Draft202012Validator(schema, registry=registry)
         except ImportError:
+            # Legacy path: jsonschema < 4.18 has no 'referencing' package.
+            # This is the LIVE path on the GitHub CI runner (jsonschema
+            # 4.10.3, M0-T009 G4 evidence). The stock RefResolver attempts a
+            # NETWORK FETCH (requests.get/urlopen) whenever a $ref misses the
+            # local store. This contract set has zero remote $refs, so any
+            # store miss is a defect in the schemas, never a reason to fetch:
+            # resolve_remote() -- the single choke point every scheme funnels
+            # through in jsonschema's RefResolver -- is overridden to raise
+            # instead (M0-T005-R1 item 10, fail closed).
+            class _LocalOnlyRefResolver(jsonschema.RefResolver):
+                def resolve_remote(self, uri):
+                    raise RuntimeError(f"{REMOTE_REF_BLOCK_MSG}: '{uri}'")
+
+            global _LEGACY_RESOLVER_NOTE_PRINTED
+            if not _LEGACY_RESOLVER_NOTE_PRINTED:
+                _LEGACY_RESOLVER_NOTE_PRINTED = True
+                emit("NOTE: legacy jsonschema RefResolver in use ('referencing' not importable); "
+                     "remote $ref fetching is blocked -- any store miss fails closed.")
             store = {
                 doc["$id"]: doc
                 for doc in all_docs
                 if isinstance(doc, dict) and "$id" in doc
             }
-            resolver = jsonschema.RefResolver(
+            resolver = _LocalOnlyRefResolver(
                 base_uri=schema.get("$id", ""), referrer=schema, store=store
             )
             return jsonschema.Draft202012Validator(schema, resolver=resolver)
 
     return jsonschema, getattr(jsonschema, "__version__", "unknown"), make_validator
+
+
+_LEGACY_RESOLVER_NOTE_PRINTED = False
 
 
 # --------------------------------------------------------------------------
@@ -417,21 +463,21 @@ def main() -> int:
     failures = 0
 
     if not SCHEMA_ROOT.is_dir():
-        print(f"ERROR: schema root not found: {SCHEMA_ROOT}", file=sys.stderr)
+        emit(f"ERROR: schema root not found: {SCHEMA_ROOT}", err=True)
         return 1
     schema_files = sorted(SCHEMA_ROOT.rglob("*.json"))
     if not schema_files:
-        print(f"ERROR: no schema files found under {SCHEMA_ROOT}", file=sys.stderr)
+        emit(f"ERROR: no schema files found under {SCHEMA_ROOT}", err=True)
         return 1
 
     jsonschema_mod, jsonschema_note, make_validator = load_jsonschema_engine()
     if jsonschema_mod is not None:
-        print(f"meta-schema engines : stdlib-structural + jsonschema {jsonschema_note}")
-        print(f"instance engines    : stdlib mini-validator + jsonschema {jsonschema_note} (cross-checked)")
+        emit(f"meta-schema engines : stdlib-structural + jsonschema {jsonschema_note}")
+        emit(f"instance engines    : stdlib mini-validator + jsonschema {jsonschema_note} (cross-checked)")
     else:
-        print(f"meta-schema engines : stdlib-structural ONLY ({jsonschema_note})")
-        print("instance engines    : stdlib mini-validator ONLY")
-        print("NOTE: degraded mode is still strict (allowlist + required/properties + $ref + pattern checks).")
+        emit(f"meta-schema engines : stdlib-structural ONLY ({jsonschema_note})")
+        emit("instance engines    : stdlib mini-validator ONLY")
+        emit("NOTE: degraded mode is still strict (allowlist + required/properties + $ref + pattern checks).")
 
     # ---- load all contract schemas and index by $id -----------------------
     docs = {}
@@ -439,14 +485,14 @@ def main() -> int:
     for schema_file in schema_files:
         try:
             doc = load_json(schema_file)
-        except (OSError, json.JSONDecodeError) as exc:
-            print(f"FAIL {schema_file.relative_to(REPO_ROOT)}: does not parse as JSON: {exc}", file=sys.stderr)
+        except (OSError, json.JSONDecodeError, UnicodeDecodeError) as exc:
+            emit(f"FAIL {schema_file.relative_to(REPO_ROOT)}: does not parse as JSON: {exc}", err=True)
             failures += 1
             continue
         docs[schema_file] = doc
         if isinstance(doc, dict) and isinstance(doc.get("$id"), str):
             if doc["$id"] in registry:
-                print(f"FAIL {schema_file.relative_to(REPO_ROOT)}: duplicate $id '{doc['$id']}'", file=sys.stderr)
+                emit(f"FAIL {schema_file.relative_to(REPO_ROOT)}: duplicate $id '{doc['$id']}'", err=True)
                 failures += 1
             registry[doc["$id"]] = doc
 
@@ -458,9 +504,9 @@ def main() -> int:
         if errors:
             failures += 1
             for err in errors:
-                print(f"FAIL {rel}: {err}", file=sys.stderr)
+                emit(f"FAIL {rel}: {err}", err=True)
         else:
-            print(f"OK   {rel} ({doc['title']})")
+            emit(f"OK   {rel} ({doc['title']})")
 
     # ---- phase 4: fixtures -------------------------------------------------
     def schema_for_stem(stem):
@@ -475,9 +521,15 @@ def main() -> int:
                 validator = make_validator(schema_doc, list(all_docs))
                 engine_errors = [e.message for e in validator.iter_errors(instance)]
             except Exception as exc:  # noqa: BLE001 - degrade loudly, never crash the gate
-                engine_errors = None
-                print(f"NOTE: jsonschema instance engine unavailable for this schema ({exc}); "
-                      "stdlib mini-validator verdict used.")
+                if REMOTE_REF_BLOCK_MSG in str(exc):
+                    # Fail-closed $ref guard tripped: this is a real error in
+                    # the contract set, not an engine hiccup -- surface it as
+                    # an engine verdict so the fixture loop records a failure.
+                    engine_errors = [f"fail-closed $ref guard: {exc}"]
+                else:
+                    engine_errors = None
+                    emit(f"NOTE: jsonschema instance engine unavailable for this schema ({exc}); "
+                         "stdlib mini-validator verdict used.")
         return mini_errors, engine_errors
 
     for expectation in ("valid", "invalid"):
@@ -489,13 +541,13 @@ def main() -> int:
             stem = fixture.parent.name
             schema_path = schema_for_stem(stem)
             if schema_path is None:
-                print(f"FAIL {rel}: no schema 'schemas/v1/{stem}.schema.json' for fixture directory", file=sys.stderr)
+                emit(f"FAIL {rel}: no schema 'schemas/v1/{stem}.schema.json' for fixture directory", err=True)
                 failures += 1
                 continue
             try:
                 instance = load_json(fixture)
-            except (OSError, json.JSONDecodeError) as exc:
-                print(f"FAIL {rel}: does not parse as JSON: {exc}", file=sys.stderr)
+            except (OSError, json.JSONDecodeError, UnicodeDecodeError) as exc:
+                emit(f"FAIL {rel}: does not parse as JSON: {exc}", err=True)
                 failures += 1
                 continue
 
@@ -504,8 +556,8 @@ def main() -> int:
 
             if engine_errors is not None and bool(engine_errors) != bool(mini_errors):
                 failures += 1
-                print(f"FAIL {rel}: validator disagreement — mini={mini_errors!r} jsonschema={engine_errors!r}",
-                      file=sys.stderr)
+                emit(f"FAIL {rel}: validator disagreement — mini={mini_errors!r} jsonschema={engine_errors!r}",
+                     err=True)
                 continue
 
             all_errors = list(mini_errors)
@@ -516,16 +568,16 @@ def main() -> int:
                 if all_errors:
                     failures += 1
                     for err in all_errors:
-                        print(f"FAIL {rel}: {err}", file=sys.stderr)
+                        emit(f"FAIL {rel}: {err}", err=True)
                 else:
-                    print(f"OK   {rel} (valid fixture passes {stem})")
+                    emit(f"OK   {rel} (valid fixture passes {stem})")
             else:
                 if all_errors:
-                    print(f"OK   {rel} (invalid fixture correctly rejected: {all_errors[0]})")
+                    emit(f"OK   {rel} (invalid fixture correctly rejected: {all_errors[0]})")
                 else:
                     failures += 1
-                    print(f"FAIL {rel}: fixture in 'invalid/' unexpectedly PASSED validation against {stem}",
-                          file=sys.stderr)
+                    emit(f"FAIL {rel}: fixture in 'invalid/' unexpectedly PASSED validation against {stem}",
+                         err=True)
 
     # ---- phase 5: expected-failure meta-schema cases -----------------------
     invalid_schemas_dir = FIXTURE_ROOT / "invalid_schemas"
@@ -534,8 +586,8 @@ def main() -> int:
             rel = schema_file.relative_to(REPO_ROOT)
             try:
                 doc = load_json(schema_file)
-            except (OSError, json.JSONDecodeError) as exc:
-                print(f"OK   {rel} (broken schema correctly rejected: does not parse: {exc})")
+            except (OSError, json.JSONDecodeError, UnicodeDecodeError) as exc:
+                emit(f"OK   {rel} (broken schema correctly rejected: does not parse: {exc})")
                 continue
             base_id = doc.get("$id", "") if isinstance(doc, dict) else ""
             local_registry = dict(registry)
@@ -543,12 +595,12 @@ def main() -> int:
                 local_registry[base_id] = doc
             errors = meta_validate_schema(doc, schema_file, base_id, local_registry, jsonschema_mod, False)
             if errors:
-                print(f"OK   {rel} (broken schema correctly rejected: {errors[0]})")
+                emit(f"OK   {rel} (broken schema correctly rejected: {errors[0]})")
             else:
                 failures += 1
-                print(f"FAIL {rel}: schema in 'invalid_schemas/' unexpectedly PASSED meta validation", file=sys.stderr)
+                emit(f"FAIL {rel}: schema in 'invalid_schemas/' unexpectedly PASSED meta validation", err=True)
 
-    print(f"Checked {len(schema_files)} schema file(s); {failures} failure(s).")
+    emit(f"Checked {len(schema_files)} schema file(s); {failures} failure(s).")
     return 1 if failures else 0
 
 
