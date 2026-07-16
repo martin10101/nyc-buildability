@@ -1,90 +1,83 @@
-# M1-T001 Producer Report — Official-source research: PLUTO / MapPLUTO
+# M1-T001 Producer Report — Official-source research: PLUTO / MapPLUTO (continuation run)
 
 - **Task ID:** M1-T001
 - **Producer agent:** official-source-researcher
 - **Date:** 2026-07-16
-- **Requested status:** `blocked`
-- **Worktree:** `.claude/worktrees/agent-ab7d30546f58c0a85`
+- **Requested status:** `awaiting_gate`
+- **Run history:** Run 1 (2026-07-16, worktree `agent-ab7d30546f58c0a85`) was network-denied and returned `blocked` with a fetch plan (§5 of the prior version of this report). The orchestrator executed that plan and committed `project-control/reports/M1-T001-fetch-evidence.md` (E1–E7). Run 2 (this run, worktree `agent-a7f911e9c1dcee512`, task worktree designation `main-tree-research-only`) produced the deliverables from that stored evidence only — no network calls were attempted in this run, per ADR-005 and the 2026-07-15 evidence-capture directive.
 
-## 1. Summary
+## 1. Files created (complete list; only allowed paths touched)
 
-The task is 100% network-dependent research (verify official PLUTO/MapPLUTO distribution channels, dataset identifiers, data dictionary, versioning, rate limits, terms — every claim requires a working official URL + retrieval date 2026-07-16 + evidence quote). **All network-capable tools were permission-denied in this producer sandbox.** Producing the research document or the source-registry draft without live verification would require guessing dataset identifiers, field semantics, units, and cadences, which is prohibited by the task rules, CLAUDE.md principle 3, and PRD §31. No research deliverables were written; only this report.
+1. `docs/research/pluto-mappluto-2026-07-16.md` — full findings for S1–S5 with per-claim evidence citations (E1–E7 + official URL + retrieval date 2026-07-16), [NEEDS G1 RE-VERIFICATION] markers on every search-summary/summarizer-paraphrase claim, 11-item OPEN QUESTIONS table, contract-test fixture pack, connector plan.
+2. `docs/research/source-registry-drafts/pluto-mappluto.json` — array of two source-registry records (`nyc-dcp-pluto-soda`, `nyc-dcp-mappluto-bulk`), each with all PRD §8.2 fields plus an `open_questions` array; JSON null for unknowns; no invented values.
+3. `project-control/reports/M1-T001-producer-report.md` — this file (overwrites the run-1 blocked report; run-1 denial content summarized above and preserved in git history at commit f11b970's successor history).
 
-## 2. Files created
+## 2. Commands run (this run)
 
-- `project-control/reports/M1-T001-producer-report.md` (this file)
+- No network commands (prohibited for this run; evidence is pre-captured).
+- JSON validation of the registry draft:
 
-Files NOT created (blocked):
+```
+python -c "import json;d=json.load(open(r'...\docs\research\source-registry-drafts\pluto-mappluto.json',encoding='utf-8'));print('valid JSON; records:',len(d));..."
+```
 
-- `docs/research/pluto-mappluto-2026-07-16.md`
-- `docs/research/source-registry-drafts/pluto-mappluto.json`
+Output (actual):
 
-## 3. Exact denials (commands attempted and results)
+```
+valid JSON; records: 2
+keys r1: ['agency', 'api_dataset_identifier', 'authentication', 'connector_implementation', 'fallback_source', 'fields_available', 'geographic_coverage', 'health_status', 'known_limitations', 'last_successful_ingestion', 'latest_source_version', 'name', 'official_url', 'open_questions', 'rate_limits', 'source_id', 'source_type', 'terms_usage_notes', 'update_frequency']
+keys r2: [same 19 keys]
+```
 
-Attempt 1 — WebFetch:
+## 3. Acceptance scenarios S1–S5 → evidence mapping
 
-- Call: `WebFetch(url="https://apps.nyc.gov/content-api/v1/content/planning/resources/datasets/pluto-mappluto", prompt="Extract PLUTO/MapPLUTO release, formats, sizes, dictionary links...")`
-- Result: `Permission to use WebFetch has been denied.`
+| Scenario | Status | Where satisfied | Evidence basis |
+|---|---|---|---|
+| S1 — distribution channels, dataset IDs, formats | DONE (with flagged gaps) | research doc §2 | E1 (`api/views/64uk-42ks.json`), E2 (live SODA `resource/64uk-42ks.json?$limit=1`), E3 (`api/views/f888-ni5f.json`), E4 (README PDF direct read), E5/E6 (search-verified — marked [NEEDS G1 RE-VERIFICATION]) |
+| S2 — PLUTO vs MapPLUTO, version scheme, archive | DONE (archive URL open) | research doc §3 | E4 verbatim release model (quarterly major / monthly minor, 24v1 / 24v1.1 naming), E3/E4 product distinction, E6 archive statement flagged for G1 (OQ-4) |
+| S3 — data dictionary, fields, units, nulls | PARTIAL-BY-DESIGN, gaps explicit | research doc §4 | Dictionary located (E5, title-verified); 73 SODA fields verbatim (E2); NumFloors null convention + condo billing-BBL semantics verbatim (E4); all per-field units/null conventions listed as OQ-5, not guessed |
+| S4 — channel discrepancies, priority order | DONE | research doc §5 | Stale 22v3 attachments and frozen 2013 timestamps on f888-ni5f (E3) vs current 26v1 README (E4); live version-current SODA (E2); priority argued per PRD §8 with Socrata token rules (E7) |
+| S5 — source-registry draft, all PRD §8.2 fields | DONE | registry JSON | Two records, 19 keys each (validated above), open_questions arrays, nulls for unknowns |
 
-Attempt 2 — WebSearch (issued in the same turn):
+## 4. Key verified facts (for the gate's convenience; full citations in the research doc)
 
-- Call: `WebSearch(query='NYC Open Data "Primary Land Use Tax Lot Output" PLUTO dataset data.cityofnewyork.us')`
-- Result: `Permission to use WebSearch has been denied.`
+- PLUTO tabular = Open Data `64uk-42ks`, live SODA endpoint, serving `version = "26v1"` on 2026-07-16 (E2).
+- MapPLUTO Open Data `f888-ni5f` is href-type (no SODA resource), quarterly, with stale 22v3 attachments and 2013-frozen timestamps (E3).
+- Official README 26v1 (direct PDF read, E4): quarterly major / monthly minor release model; minor releases touch zoning attributes only; condo one-record-per-complex billing-BBL semantics; Marble Hill/Rikers idiosyncrasies; DATES OF DATA input-vintage table; new 26v1 fields MIHOption1-4 / TrnstZone / AffResFAR / ManuFAR; NumFloors null convention; DCP disclaimer; PLUTOChangeFile ships with MapPLUTO.
+- Socrata app tokens optional; tokenless = shared IP-pool throttling; tokened = unthrottled unless abusive; 429 on throttle; `X-App-Token` header preferred (E7).
 
-Attempt 3 — Bash (natural alternative per the denial guidance):
+## 5. Recommended channel priority (per PRD §8, argued from evidence)
 
-- Command: `curl -s --max-time 30 "https://apps.nyc.gov/content-api/v1/content/planning/resources/datasets/pluto-mappluto" | head -c 3000`
-- Result: `Permission to use Bash has been denied.`
+- **PLUTO facts:** SODA `64uk-42ks` with `X-App-Token` when available (tier 2 — no tier-1 dedicated API exists), DCP bulk CSV fallback for full imports and version pinning (tier 3).
+- **MapPLUTO geometry:** DCP bulk FileGDB shoreline-clipped primary (tier 3; only verified full-fidelity channel); Open Data `f888-ni5f` treated as a catalog pointer only; ArcGIS feature service unverified pending OQ-3.
+- **Stale-attachment channel lag** on the portal is recorded as a concrete S4 discrepancy; freshness monitoring must poll the SODA `version` field, not Socrata metadata timestamps.
 
-Per task instructions ("If a command you genuinely need is permission-denied, record the exact denial in your report and return requested status blocked - do not retry endlessly"), I stopped after these three distinct tool families. No further retries or workarounds were attempted.
+## 6. What remains open for G1 (11 open questions; full table in research doc §8)
 
-## 4. Acceptance scenarios S1–S5 → evidence mapping
+OQ-1 raw Socrata timestamps for `64uk-42ks` (summarizer reported future-dated values); OQ-2 full SODA column list via the `api/views` columns array (single-record sample omits null fields: zonedist2-4, overlay1-2, spdist1-3, ltdheight, landmark, histdist, appbbl, condono...); OQ-3 ArcGIS feature-service endpoint (JS-rendered page); OQ-4 exact bulk download sizes/URLs and archive URLs (nyc.gov 403 to evidence session); OQ-5 field-level units and null conventions from the data dictionary (fields enumerated in the doc; flagged for G1 or a follow-up capture); OQ-6 minor-release propagation lag on SODA; OQ-7 data-dictionary direct-fetch confirmation; OQ-8 NYC Open Data terms of use; OQ-9 f888-ni5f href target; OQ-10 clipped/unclipped file names + geometry CRS; OQ-11 PLUTOChangeFile location/format.
 
-| Scenario | Status | Reason |
-|---|---|---|
-| S1 (distribution channels, dataset IDs, formats) | NOT EXECUTED | requires live fetch of DCP page + Open Data catalog |
-| S2 (PLUTO vs MapPLUTO, version scheme, archive) | NOT EXECUTED | requires live fetch of DCP page / BYTES of the BIG APPLE archive |
-| S3 (data dictionary fields, units, null conventions) | NOT EXECUTED | requires the authoritative data dictionary document |
-| S4 (channel discrepancies, priority order) | NOT EXECUTED | requires comparing live channel metadata (update timestamps/versions) |
-| S5 (source-registry draft, all PRD §8.2 fields) | NOT EXECUTED | draft would contain guessed identifiers without S1–S4 evidence |
+## 7. Assumptions and defaults
 
-## 5. Fetch plan for unblocking (exact requests the producer would run)
+- Assumed the orchestrator-captured evidence file faithfully records the 2026-07-16 fetches (ADR-005 division of labor). Direct quotes were treated as evidence; summarizer paraphrases and search-result summaries were treated as pointers and marked [NEEDS G1 RE-VERIFICATION] in the deliverables.
+- Assumed the task's `main-tree-research-only` worktree designation means deliverables belong at the repository-root paths named in the task contract.
+- No units, CRS, code meanings, endpoints, or URLs were assumed beyond what the evidence states; every such gap is an explicit open question.
 
-If network permission is granted (or the orchestrator captures evidence per the ADR-005 / 2026-07-15 evidence-capture directive), these are the fetches needed. All URLs below are **starting points to be verified live**, not claims; the M0-T002 report proved the `apps.nyc.gov/content-api` pattern for client-rendered nyc.gov planning pages.
+## 8. Known limitations
 
-1. **DCP PLUTO/MapPLUTO page** (S1, S2): `https://www.nyc.gov/content/planning/pages/resources/datasets/pluto-mappluto` — client-rendered; fetch content via `https://apps.nyc.gov/content-api/v1/content/planning/resources/datasets/pluto-mappluto`. Capture: latest release name (expected `YYvN` style — verify), date of data, update frequency, download formats + sizes + URLs, data dictionary/readme links, archive link, use limitations.
-2. **BYTES of the BIG APPLE archive** (S2): follow the archive link found on the DCP page (do not guess the URL) to document how prior PLUTO/MapPLUTO versions are retrievable.
-3. **NYC Open Data catalog search** (S1): `https://data.cityofnewyork.us/browse?q=PLUTO` (and `q=MapPLUTO`) to obtain the current dataset 4x4 IDs. Candidate IDs from prior model knowledge — **UNVERIFIED, must be confirmed, never used unconfirmed**: PLUTO `64uk-42ks`; MapPLUTO `f888-ni5f`.
-4. **Dataset metadata JSON** (S1, S4): for each confirmed ID, `https://data.cityofnewyork.us/api/views/<id>.json` (small KB-scale response — permitted evidence) to capture name, description, rowsUpdatedAt, attribution, columns, and whether a SODA resource endpoint (`/resource/<id>.json`) exists vs an attachment/href-only dataset (MapPLUTO geometry is often distributed as attachments/export rather than a tabular SODA resource — verify).
-5. **Authoritative data dictionary** (S3): fetch the PLUTO data dictionary PDF/page linked from the DCP page (historically hosted under DCP assets or `nycplanning` GitHub — verify live). Extract key property-profile fields (BBL/borough/block/lot, LotArea + units, LotFront/LotDepth, ZoneDist1–4, Overlay1–2, SPDist1–3, Landmark, NumBldgs/NumFloors, BldgClass, LandUse, BuiltFAR/ResidFAR/CommFAR/FacilFAR, YearBuilt, BBL vs condo billing BBL handling, Address, Latitude/Longitude/XCoord/YCoord + CRS) with units and null/placeholder conventions; flag anything undocumented.
-6. **ArcGIS REST / feature services** (S1): search DCP's official GIS distribution (e.g., links from the DCP page or `services.arcgis.com` items referenced by official NYC pages) for a MapPLUTO feature service; do not guess service URLs.
-7. **SODA auth/rate limits** (S5): `https://dev.socrata.com/docs/app-tokens` (official Socrata developer docs) — app-token-optional throttling rules; plus NYC Open Data terms of use page linked from `https://opendata.cityofnewyork.us/`.
-8. **Cross-check** (S4): compare DCP release version/date vs Open Data dataset `rowsUpdatedAt`/metadata to document update lag between channels.
+- Worked from stored evidence only (`project-control/reports/M1-T001-fetch-evidence.md`); no independent live verification in this run. G1 (data-contract-verifier) should re-verify the [NEEDS G1 RE-VERIFICATION] items, especially E5/E6-based claims.
+- S3 is deliberately partial: the authoritative data dictionary is located but not field-extracted; the registry records therefore mark units/null conventions as pending rather than asserting them.
+- nyc.gov page-level facts (download links/sizes/archive) remain unverified due to bot protection (HTTP 403) in the evidence session.
 
-Estimated total transfer: a few hundred KB of HTML/JSON/PDF-text — well within the low-storage budget. No dataset downloads at any point.
+## 9. Security / provenance impact
 
-## 6. Assumptions and defaults
+- None negative. No code, schema, or connector touched. Deliverables strengthen provenance: per-record `version` capture and input-vintage (DATES OF DATA) tracking are specified for the future connector.
 
-- None applied to deliverables (none were written).
-- Assumed the denial is sandbox-wide for network tools, based on three independent tool families being denied in sequence.
+## 10. Recommended next tasks
 
-## 7. Known limitations
-
-- No research output exists for M1-T001 yet; the task remains at claimed/scope-verified level (~10%).
-
-## 8. Security / provenance impact
-
-- None. No files fetched, no datasets downloaded, no code or schema touched, no secrets involved.
-
-## 9. New risks / dependencies
-
-- Process risk: research-type producer tasks fail in sandboxes without network permission. Recommend the orchestrator either (a) relaunch this producer with WebFetch/WebSearch allowed, or (b) capture the fetches in §5 into `project-control/reports/` per the 2026-07-15 evidence-capture directive and relaunch the producer against the stored evidence.
-
-## 10. Recommended next steps
-
-1. Orchestrator records M1-T001 as `blocked` with this report as evidence.
-2. Unblock via one of the two paths in §9; the fetch plan in §5 is complete and immediately executable.
-3. After unblocking, the same producer completes S1–S5 and submits for G1/G3 with the two research deliverables.
+1. **PLUTO SODA connector task** (M1/M2): implement `pluto-soda` per the plan in research doc §7 with the fixture pack in §6; requires a Socrata app token (human action: create at the Socrata/NYC Open Data developer settings — record exact steps at G1).
+2. **Data-dictionary field-extraction capture**: fetch `pluto_datadictionary.pdf` (E5 URL) and extract units/null conventions/code lists for the OQ-5 field list; closes most of S3's open surface. Small, orchestrator- or browser-capable session.
+3. **MapPLUTO bulk-import task** (M2): Render-worker FileGDB→PostGIS import per research doc §7, after OQ-4/OQ-10 close.
+4. **Remaining M1 source-family research packets** (PRD §8.1): Zoning Tax Lot Database, GIS Zoning Features, Zoning Resolution, DOB NOW, ACRIS, landmarks, flood — reuse the fetch-plan → orchestrator-capture → stored-evidence pattern proven here.
 
 ## 11. Report path
 
