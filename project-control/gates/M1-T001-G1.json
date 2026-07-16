@@ -1,0 +1,9 @@
+{
+  "task_id": "M1-T001",
+  "gate_id": "G1",
+  "reviewer": "data-contract-verifier",
+  "result": "PASS",
+  "report_file": "project-control\\reports\\M1-T001-G1-verification.md",
+  "reviewed_at": "2026-07-16T19:29:58.057691+00:00",
+  "updated_at": "2026-07-16T19:29:58.058690+00:00"
+}
