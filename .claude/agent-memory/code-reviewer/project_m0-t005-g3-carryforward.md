@@ -1,19 +1,18 @@
 ---
 name: m0-t005-g3-carryforward
-description: M0-T005 G3 PASS (2026-07-15) with 7 scanner-hardening defects; what to re-verify at the follow-up fix task and G5
+description: M0-T005 G3 PASS + M0-T005-R1 G3 PASS (2026-07-16); D1-D7/F1 all closed; residual R1-D1..D5 (placeholder-hint charset interaction) to recheck at G5/next hardening
 metadata:
   type: project
 ---
 
-M0-T005 G3 (2026-07-15, branch head a687b21) returned **PASS**. Full report: `project-control/reports/M0-T005-G3-review.md`.
+M0-T005 G3 (2026-07-15) PASS with defects D1-D7; **M0-T005-R1 G3 (2026-07-16, commit 1caa972) PASS — all 11 rework items verified fixed by live re-execution.** Full report: `project-control/reports/M0-T005-R1-G3-review.md`.
 
-Key facts worth carrying forward:
+Still-relevant carry-forward:
 
-1. `secret_scan.py` generic regex `\b(?:...|token)\b` cannot match after `_` → `AUTH_TOKEN=/MY_SECRET=/allowed_token=` bypass the catch-all (Defect 1, medium). This is also why the G2 "invisible pragma notice" deviation happened: the `ALLOWLISTED LINE` code path exists and works (lines 147-164) — the fixture line just never produced a hit. The pragma suppression path has never been executed against the real script; the follow-up task must fix the regex AND re-fixture with `token = "<fake>" # secretscan:allow ...` and show the visible notice.
-2. Inventory secrets that evade all classes in NAME=value form: GEOCLIENT_SUBSCRIPTION_KEY (hex), VERCEL_TOKEN, SUPABASE_DB_PASSWORD, SUPABASE_DB_URL (postgres URI — `:`/`@` outside generic value charset), RENDER_DEPLOY_HOOK_URL_* (Defect 2, medium; handed to G5).
-3. Lesser gaps: basename allowlist matches `.env.example`/`package-lock.json` anywhere (D3); pragma with no justification still exits 0 (D4); `git ls-files` failure exits 1 not 2 (D5); UTF-16 files skipped as binary — PS 5.1 `>` default (D6); >2MB/binary skips silent (D7).
-4. actions/checkout tag→SHA verified: v4.2.2 = `11bd71901bbe5b1630ceea73d27597364c9af683`; `08c6903...` = **v5.0.0** — the M0-T004 G5 report example mislabels it; never copy that pin.
-5. Full-history secret sweep (all branches) was clean at a687b21.
+1. **Closed at R1 (do not re-flag):** compound-name regex, inventory-name class, postgres-URI class, exact-path allowlist + template content scan, empty-pragma exit 1, UTF-16 BOM decode, emit()/sanitize_for_log in BOTH .github/scripts, exit-2 for git failures, SKIPPED notices, RefResolver fail-closed guard (verified under real jsonschema 4.10.3 — CI-live version).
+2. **Open residuals (recheck at G5 M0-T005-R1 and any scanner touch):** R1-D1 placeholder hints `$`/`<`/`{` suppress real secrets in inventory/postgres classes (charsets allow them, unlike generic — `SUPABASE_DB_PASSWORD=Xk9q$...` → no finding); R1-D2 `NAME = value` with spaces evades inventory (Python-config style); R1-D3 `user:pass` hint suppresses `produser:passXXX@` URIs; R1-D5 policy §5 first bullet still says "basename path allowlist" — orchestrator doc touch-up owed.
+3. **Review technique that worked:** for exact-path-keyed checks, test end-to-end in a throwaway local clone (`git clone file://<worktree>` ≈ 2.2 MB) instead of transiently editing forbidden paths (producer's S4b shortcut — adjudicated acceptable-once, not to repeat). For forcing the jsonschema legacy path, a temp venv with `jsonschema==4.10.3` (~15 MB) is the honest test; poisoning `sys.modules['referencing']` under 4.26 kills jsonschema entirely (tests degraded mode instead). Windows note: `shutil.rmtree` on a clone needs an onerror chmod for read-only .git objects.
+4. actions/checkout tag→SHA: v4.2.2 = `11bd71901bbe5b1630ceea73d27597364c9af683`; `08c6903...` = **v5.0.0** (M0-T004 G5 report example mislabels it; never copy that pin).
 
-**Why:** PASS because all six contracted scenarios pass on reproduced evidence; the defects are catch-all hardening gaps, not contract failures.
-**How to apply:** when reviewing the scanner follow-up task, the G5 M0-T005 gate, or any future task touching `.github/scripts/secret_scan.py`/`docs/SECRETS_POLICY.md`, verify items 1-3 first and reuse item 4 for any workflow pin review. See [[m0-t006-g3-carryforward]] and [[m0-t004-g3-carryforward]].
+**Why:** R1 PASS because every packet item reproduced fixed with reviewer-owned fixtures; residuals are strictly narrower than the closed defects and share the accepted compensating-control rationale (push protection, no real credentials yet).
+**How to apply:** at the M0-T005-R1 G5 gate or any future edit to `.github/scripts/secret_scan.py`/`validate_contracts.py`/`docs/SECRETS_POLICY.md`, check item 2 residuals first; reuse item 3 techniques; item 4 for workflow pins. See [[m0-t009-g3-carryforward]].

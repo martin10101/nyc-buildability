@@ -1,12 +1,12 @@
 ---
 name: vercel-dropped-frontend-on-render
-description: Owner decided 2026-07-14 to drop Vercel and serve the frontend from Render (M0-T011 / ADR-004)
+description: ADR-004 landed (M0-T011, G3 PASS 2026-07-16) - Vercel dropped, frontend is Render web service nycdf-web; known allowed Vercel residuals list
 metadata:
   type: project
 ---
 
-On 2026-07-14 the owner decided to drop Vercel and serve the Next.js frontend from Render, tracked as task M0-T011 / ADR-004. As of the M0-T006 G3 review, ADR-001/002/003 and docs/DEPLOYMENT_AND_ROLLBACK.md still assume Vercel (PRD 14.1 also still mandates Vercel), and ADR-004 did not exist yet.
+ADR-004 (docs/adr/ADR-004-frontend-hosting-render.md) landed at commit 8e6bdf4 and passed G3 on 2026-07-16: the Next.js frontend is Render web service `nycdf-web` (runtime node, rootDir apps/web, plan starter, `autoDeployTrigger: "off"` quoted, deploy-hook gated identically to the API). ADR-001/002/003, runbook, README, render.yaml were amended; both M0-T006 R1 residuals applied. See [[m0-t011-g3-carryforward]] for residuals still open.
 
-**Why:** Owner decision postdating M0-T006; consolidating on Render reduces vendor count. Note PRD 14.1 names Vercel as required provider, so ADR-004 must record an owner-approved PRD deviation/change.
+**Why:** Owner decision 2026-07-14 (single deployment platform); PRD §14.1 deviation recorded per PRD §34 inside ADR-004.
 
-**How to apply:** When reviewing anything referencing Vercel (Instant Rollback, preview deployments, Hobby/Pro gating, branch-scoped env vars), check whether ADR-004 has landed and superseded those sections. Do not treat Vercel references in pre-ADR-004 docs as defects of their producing tasks. Verify current state of docs/adr/ before relying on this memory.
+**How to apply:** Vercel references are now DEFECTS unless they are: inside ADR-004; superseded-marked rows in ADR-001/002/003/runbook; immutable source docs (PRD.md, PRODUCT_FLOW, LOW_STORAGE, IMPLEMENTATION_SEQUENCE); project-control history; or on the tracked cleanup list (SECRETS_POLICY.md, apps/web/.env.example, services/api/.env.example, README_START_HERE.md, cloud-architect agent description, CLAUDE.md principle 5). Verify the cleanup task landed before flagging those again.

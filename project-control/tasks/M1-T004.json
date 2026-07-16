@@ -1,0 +1,91 @@
+{
+  "task_id": "M1-T004",
+  "title": "Official-source research: NYC Zoning Resolution text corpus",
+  "task_type": "research",
+  "milestone_id": "M1",
+  "objective": "Discover, document, and verify the official distribution channels for the complete NYC Zoning Resolution text (zoningresolution.planning.nyc.gov, any API/JSON endpoints, PDF chapter downloads, effective-date/version model, section hierarchy and cross-reference structure), following the M1-T001/M1-T003 evidence standard: live-verified channels, verbatim version/update statements, structure inventory, discrepancies, PRD 8.2 registry draft, fixture proposal, OQ ledger, no guessing",
+  "business_reason": "M3 legal-corpus ingestion cannot be contracted without verified official ZR sources; feeds the rules platform (M4)",
+  "inputs": [
+    "PRD.md sections 8.1 (Zoning Resolution family), 8.2 (registry fields), 7.1 (rule families the corpus must support)",
+    "docs/research/pluto-mappluto-2026-07-16.md and docs/research/zoning-features-ztldb-2026-07-16.md (accepted evidence standard: live verification, verbatim quotes, OQ ledger, NEEDS G1 RE-VERIFICATION markers)",
+    "Official starting point: https://zoningresolution.planning.nyc.gov/ (PRD 30); NYC Open Data catalog search for any Zoning Resolution datasets; s-media.nyc.gov DCP PDF hosting pattern (verified in M1-T001/T003)",
+    "docs/research/source-registry-drafts/ (format examples)"
+  ],
+  "outputs": [
+    "docs/research/zoning-resolution-2026-07-16.md (channels, structure/hierarchy model, versioning/effective-date model, discrepancies, fixture proposal, OQ ledger, source register)",
+    "docs/research/source-registry-drafts/zoning-resolution.json (all 18 PRD 8.2 fields; nulls where unknown)",
+    "project-control/reports/M1-T004-producer-report.md"
+  ],
+  "dependencies": [
+    "M1-T001"
+  ],
+  "allowed_paths": [
+    "docs/research/zoning-resolution-*",
+    "docs/research/source-registry-drafts/zoning-resolution.json",
+    "project-control/reports/M1-T004-*"
+  ],
+  "forbidden_paths": [
+    "services/**",
+    "apps/**",
+    "packages/**",
+    ".github/**",
+    "tools/**",
+    "project-control/tasks/**",
+    "project-control/gates/**",
+    "docs/research/pluto-*",
+    "docs/research/zoning-features-*"
+  ],
+  "acceptance_scenarios": [
+    {
+      "id": "S1",
+      "case": "normal",
+      "input": "enumerate official ZR text channels (web portal, any JSON/API endpoints behind it, PDF chapter downloads, print edition statements)",
+      "expected": "every channel evidenced by live fetch or directly read official document; any undocumented-but-official API endpoints (e.g. portal XHR JSON) recorded with exact URLs and marked for stability caveats; nothing from memory"
+    },
+    {
+      "id": "S2",
+      "case": "boundary",
+      "input": "versioning and effective-date model",
+      "expected": "verbatim official statements on how amendments/effective dates are published; whether historical versions are retrievable; how the portal indicates currency; CityAPA/City of Yes amendment handling noted if officially stated"
+    },
+    {
+      "id": "S3",
+      "case": "missing-ambiguous",
+      "input": "structure inventory: articles/chapters/sections, definitions (12-10), tables, maps/appendices, cross-reference conventions",
+      "expected": "hierarchy model documented from the official source; anything not directly verified goes to the OQ ledger; no guessed section semantics"
+    },
+    {
+      "id": "S4",
+      "case": "conflict",
+      "input": "cross-channel discrepancies (portal vs PDF vs any Open Data mirror)",
+      "expected": "discrepancies surfaced with evidence; recommended PRD section-8 priority order for M3 ingestion"
+    },
+    {
+      "id": "S5",
+      "case": "failure",
+      "input": "bot protection, dead links, JS-only content",
+      "expected": "403/JS-rendering limits recorded honestly as OQs with exact URLs; no content promoted to fact without direct verification"
+    }
+  ],
+  "required_gates": [
+    "G0",
+    "G1",
+    "G3"
+  ],
+  "producer_agent": "official-source-researcher",
+  "reviewer_agents": [
+    "data-contract-verifier",
+    "code-reviewer"
+  ],
+  "status": "awaiting_gate",
+  "progress_percent": 85,
+  "risks": [
+    "The ZR portal is a JS application; underlying JSON endpoints may be technically accessible but undocumented - record them as unofficial-stability channels, never as guaranteed APIs",
+    "Legal text: no paraphrase may be presented as verbatim; quote exactly or mark as summary",
+    "KB-scale fetches only; no bulk PDF downloads (sizes recorded via HEAD where possible)"
+  ],
+  "blockers": [],
+  "created_at": "2026-07-16T21:12:14.088625+00:00",
+  "updated_at": "2026-07-16T21:14:29.370514+00:00",
+  "worktree": "main-checkout-docs-only"
+}

@@ -1,12 +1,15 @@
 ---
 name: env-producer-sandbox-no-exec
-description: Producer worktree sandboxes deny ALL Bash execution (even `python script.py`); plan for orchestrator-captured evidence from the start
+description: Producer sandbox permissions VARY BY SESSION - probe cheaply first; M0/M1-T001 sessions denied all exec, M1-T002 allowed python+pytest+live network but denied rm
 metadata:
   type: project
 ---
 
-In this project's producer worktree sandboxes, the Bash tool is permission-denied for every invocation tried (inline `python -c`, `python <script>` with absolute path, compound `cd; python`). Observed 2026-07-15 during M0-T009.
+Producer-session sandbox capabilities are NOT constant across sessions. Observed history:
 
-**Why:** Harness permission policy for producer agents; consistent with the 2026-07-15 owner directive in `.claude/rules/project-control.md` (orchestrator captures executable evidence when a sandbox cannot run commands).
+- 2026-07-15 (M0-T005, M0-T009) and the M1-T001 producer session: ALL Bash execution of Python denied in every invocation form -> orchestrator evidence-capture rule (ADR-005) applied; see [[sandbox-no-python-exec]].
+- 2026-07-16 (M1-T002 producer session): python 3.11.9, pytest 8.4.2, jsonschema 4.26.0, ruff 0.9.9, and curl WITH live network all worked first try; full offline test suite executed locally. Denied instead: `rm -rf` (even for an OS-temp dir) and any compound command containing it. Also: the Bash tool runs git-bash even though the env block claims PowerShell - `Get-ChildItem` etc. fail; use POSIX commands.
 
-**How to apply:** Do not budget G2 time around running self-checks locally. Instead: (1) make every self-check a committed, argument-free script the orchestrator can run verbatim; (2) design validators so expected-failure cases are exercised by the NORMAL run (e.g. `fixtures/invalid/` directories the script expects to fail), so one command captures positive and negative evidence; (3) desk-check code paths by hand and record exact expected outputs in the producer report; (4) record the verbatim denial once and stop retrying. Grep/Glob/Read still work for read-only verification (ripgrep supports `\x{2019}`-style unicode escapes for byte-level checks).
+**Why:** permission profiles are configured per launch by the orchestrator/owner. Assuming denial forfeits first-hand executable evidence; assuming permission wastes turns on denials.
+
+**How to apply:** at session start run ONE cheap probe (`python --version` plus, if the task needs network, a single tiny curl) before planning around the evidence-capture fallback. Still design all tests offline-deterministic with injectable transports so they run anywhere. If `rm` is denied, disclose pending temp cleanup in the producer report instead of retrying. Local Python is 3.11.9 while services/api pyproject targets >=3.12 - keep code 3.11-compatible so local self-checks work (`datetime.UTC` exists in 3.11).

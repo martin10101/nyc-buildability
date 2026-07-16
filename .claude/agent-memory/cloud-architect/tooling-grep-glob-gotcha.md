@@ -11,4 +11,4 @@ Grep tool brace-glob patterns that mix a root-level file with subdirectory patte
 
 **How to apply:** for self-check greps over a known small file set, run one Grep call per file/directory with `path` set directly and no `glob`. Never trust an all-files-in-one brace-glob "no matches" result as removal evidence without a positive control (grep for a string you know exists using the same parameters).
 
-Related: producer sandboxes here deny Bash entirely (including read-only python), so Grep/Read are the only self-check instruments; executable evidence (yaml.safe_load etc.) is captured by the orchestrator per ADR-005.
+Related: Bash availability varies by session, not by rule. The 2026-07-15 M0-T006 producer sandbox denied Bash entirely (orchestrator captured yaml.safe_load evidence per ADR-005), but the 2026-07-16 M0-T011 producer session ran `python -c` (pyyaml) and read-only `git diff` without any denial. So: attempt the executable self-check first; only fall back to orchestrator-captured evidence if the command is actually denied, and record the exact denial in the report.

@@ -18,8 +18,8 @@ Note: the MCP server already resolves project `dyiviaalkqxeyyxotvvh.supabase.co`
 ## 2. Render API key (B-002) — DONE 2026-07-14 (temporary key)
 Temporary key provided and verified (read-only calls only; 4 pre-existing unrelated services excluded from all operations; key never written to disk or repo). **One remaining step:** keep the key valid until the initial services are created from the monorepo (immediately after M0-T004/M0-T006 land — expected same session), then revoke it. If you revoke earlier, that's fine — I'll ask for a fresh key or use the dashboard Blueprint flow at deployment time. Future secrets: use environment variables or MCP config, not chat.
 
-## 3. Vercel (B-003) — ON HOLD, likely not needed
-Owner decision 2026-07-14: prefer serving the frontend from Render instead of Vercel. ADR-004 (task M0-T011) will formalize this with trade-offs (Render supports Next.js web services and PR preview environments; Vercel's edge network/preview UX is the main loss). No Vercel action needed unless the ADR concludes otherwise.
+## 3. Vercel (B-003) — CLOSED 2026-07-16
+ADR-004 accepted (M0-T011, G3 PASS): the Next.js frontend is served from the Render web service `nycdf-web`. No Vercel account, token, or integration will ever be needed. Note for later: enabling Render *preview environments* requires a Pro plan (billing decision — will be asked explicitly if/when previews are proposed; nothing paid was enabled).
 
 ## 4. NYC Geoclient subscription key (B-004)
 Unblocks: live fixture capture and rate-limit confirmation for the address-resolution connector (M1). Research is already complete without it.
