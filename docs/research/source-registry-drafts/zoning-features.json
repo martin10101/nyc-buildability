@@ -1,0 +1,100 @@
+[
+  {
+    "source_id": "nyc-dcp-zoning-features-arcgis",
+    "agency": "NYC Department of City Planning (DCP)",
+    "name": "NYC GIS Zoning Features — ArcGIS feature services (nyzd, nyco, nysp, nysp_sd, nylh, nyzma)",
+    "official_url": "https://services5.arcgis.com/GfwWNkhOj9bNBqoJ/arcgis/rest/services/nyzd/FeatureServer",
+    "source_type": "official_arcgis_feature_service",
+    "api_dataset_identifier": "services5.arcgis.com/GfwWNkhOj9bNBqoJ services: nyzd, nyco, nysp, nysp_sd, nylh, nyzma (layer 0 each); ArcGIS Online items verified under owner DCP_GIS: nyzd item 788dcf4c61e34757bad1e015cb5f4111, nyzma item d432de08f4f5477db101bb2f3dbe1f65",
+    "authentication": {
+      "required": false,
+      "notes": "Anonymous query verified live 2026-07-16 on all six services (Z8-Z10, docs/research/zoning-features-ztldb-2026-07-16.md)"
+    },
+    "rate_limits": {
+      "published_limit": null,
+      "per_request_page_caps_maxRecordCount": {
+        "nyzd": 2000,
+        "nyco": 2000,
+        "nysp": 92,
+        "nysp_sd": 317,
+        "nylh": 14,
+        "nyzma": 1292
+      },
+      "evidence": "service roots fetched live 2026-07-16 (Z8)"
+    },
+    "update_frequency": "Monthly. Official verbatim (nyzd_metadata.pdf, Z11): 'The downloadable zoning data will be updated on the last Monday of every month. Updates will include recent zoning changes adopted by City Council.' All six ArcGIS layers observed data-last-edited 2026-07-01 (~13:23-13:34 UTC) — coordinated monthly refresh (Z9; manual epoch conversion, OQ-9).",
+    "geographic_coverage": "Citywide, all five boroughs. nyzd polygons are continuous over the entire city, extending to city limits on land and to US Army Corps of Engineers pierhead lines over water (service description verbatim, Z8). OFFICIAL USE LIMITATION (Z11 verbatim): 'These features are not intended for determining zoning at the individual tax lot level' — lot-level assignment belongs to ZTLDB/PLUTO.",
+    "fields_available": {
+      "nyzd": ["OBJECTID (OID)", "ZONEDIST (String 15) — 'Zoning district designation' (official metadata, Z11)", "Shape__Area (Double)", "Shape__Length (Double)"],
+      "nyco": ["OBJECTID", "OVERLAY (String 15, alias 'Commercial Overlay')", "Shape__Area", "Shape__Length"],
+      "nysp": ["OBJECTID", "SDNAME (String 255)", "SDLBL (String 10)", "Shape__Area", "Shape__Length"],
+      "nysp_sd": ["OBJECTID", "SPNAME (String 255)", "SPLBL (String 10)", "SUBDIST (String 50)", "SUB_AREA_NM (String 50)", "SUBDIST_LBL (String 50)", "SUBAREA_LBL (String 50)", "SUBAREA_OTR (String 50)", "Shape__Area", "Shape__Length"],
+      "nylh": ["OBJECTID", "LHNAME (String 50)", "LHLBL (String 10)", "Shape__Area", "Shape__Length"],
+      "nyzma": ["OBJECTID", "EFFECTIVE (esriFieldTypeDate)", "STATUS (String 15)", "ULURPNO (String 50)", "LUCATS (String 10)", "PROJECT_NAME (String 100)", "Shape__Area", "Shape__Length"],
+      "crs": "All six layers spatialReference wkid 102718 / latestWkid 2263 = EPSG:2263 NAD83 New York-Long Island (US survey feet); confirmed by official nyzd metadata ('NAD_1983_StatePlane_New_York_Long_Island_FIPS_3104_Feet', reference system identifier 2263 EPSG) and live services (Z8, Z11)",
+      "accuracy": "Estimated horizontal accuracy +/- 20 feet (official nyzd metadata Data Quality statement, Z11; glyph-exactness OQ-10). Near-boundary split determinations must be treated as uncertain.",
+      "feature_counts_2026_07_16": { "nyzd": 5416, "nyco": 9623 }
+    },
+    "terms_usage_notes": "DCP informational-purposes-only disclaimer (nyzd metadata verbatim, Z11): DCP does not warranty completeness, accuracy, content, or fitness for any particular purpose. Data 'freely available to all New York City agencies and the public.' Not for lot-level zoning determination (see geographic_coverage).",
+    "connector_implementation": "PLAN ONLY (M1-T003 is research): monthly Render worker pages all six layers via f=json (resultOffset paging; nyco 9,623 features > 2000 cap needs ~5 pages) into PostGIS zoning_district_geometries / commercial_overlay_geometries / special_district_geometries / limited-height / pending_land_use_actions (nyzma); stamps editingInfo.dataLastEditDate + retrieval timestamp per layer as provenance; raw page responses stored to Supabase Storage.",
+    "last_successful_ingestion": null,
+    "latest_source_version": "No version label on the ArcGIS channel (OQ-6). Freshness observed live 2026-07-16: all six layers dataLastEditDate 2026-07-01. Corresponding BYTES release naming is YYYYMM (Socrata blob description 'Current version: 202604' — lagging channel, see known_limitations).",
+    "health_status": "unverified",
+    "known_limitations": [
+      "No version field on services; provenance version must be derived from editingInfo.dataLastEditDate (OQ-6)",
+      "Per-request page caps vary by layer (92/317/14 on small layers) — connector must page generically",
+      "Official +/- 20 ft horizontal accuracy: split-lot boundary intersections near tolerance are not authoritative (Z11)",
+      "nysp_sd service description references a SUBSUB attribute that does not exist in the live schema (SUBAREA_* fields instead) — map fields from the live schema only (S4 finding)",
+      "Directory also contains non-canonical zoning services (v_Zoning_Districts_NYZD view, neighborhood rezoning one-offs) — pin to the six canonical service names",
+      "nyzma STATUS/LUCATS value domains and EFFECTIVE null semantics unverified (OQ-7)"
+    ],
+    "fallback_source": "Socrata blob mm69-vrje (see companion record nyc-dcp-zoning-features-blob); DCP BYTES page https://www.nyc.gov/content/planning/pages/resources/datasets/gis-zoning-features (URL authentic per mm69-vrje description; HTTP 403 to non-browser clients recorded 2026-07-16, OQ-1)",
+    "open_questions": [
+      "OQ-1: exact BYTES download URLs/file names and archive listing (nyc.gov 403; browser capture needed)",
+      "OQ-2: existence/name of a shapefile variant (no Socrata shapefile dataset found)",
+      "OQ-5: contents of nyco/nysp/nysp_sd/nylh/nyzma metadata PDFs (attachments verified to exist with assetIds)",
+      "OQ-6: version-label derivation for ArcGIS ingests",
+      "OQ-7: nyzma value domains",
+      "OQ-11: f=geojson support and resultOffset paging behavior (standard AGOL, not exercised live)"
+    ]
+  },
+  {
+    "source_id": "nyc-dcp-zoning-features-blob",
+    "agency": "NYC Department of City Planning (DCP)",
+    "name": "Zoning GIS Data: Geodatabase — NYC Open Data blob (citywide FileGDB zip)",
+    "official_url": "https://data.cityofnewyork.us/api/views/mm69-vrje.json",
+    "source_type": "official_open_data_file_download",
+    "api_dataset_identifier": "mm69-vrje (viewType blobby; blob nycgiszoningfeatures_fgdb.zip, 3298048 bytes; direct download endpoint https://data.cityofnewyork.us/download/mm69-vrje/application/zip per data.gov harvest, Z13)",
+    "authentication": {
+      "required": false,
+      "notes": "Public Socrata blob; metadata fetched live 2026-07-16 (Z6)"
+    },
+    "rate_limits": {
+      "notes": "Socrata platform throttling (X-App-Token model verified in M1-T001, E7); single ~3.15 MB zip per release",
+      "throttle_signal": "HTTP 429"
+    },
+    "update_frequency": "Stated Monthly (Socrata custom fields: Update Frequency Monthly, Data Change Frequency Monthly, Automation Yes; Z6). WHETHER THE BLOB ACTUALLY UPDATES MONTHLY IS UNCONFIRMED: description says 'Current version: 202604' while ArcGIS layers were edited 2026-07-01; blobby timestamps frozen at 2013-01-29 (raw 1359482950) — see OQ-4.",
+    "geographic_coverage": "Citywide; six feature classes in one FileGDB (description verbatim, Z6): zoning districts, special purpose districts, special purpose district subdistricts, limited height districts, commercial overlay districts, zoning map amendments.",
+    "fields_available": {
+      "note": "Same six layer schemas as the ArcGIS record (nyzd/nyco/nysp/nysp_sd/nylh/nyzma); internal FileGDB schema inspection at first import. Official per-layer metadata PDFs attached on the dataset with assetIds: nyzd_metadata.pdf ee770e89-09d9-4b47-b0e1-8f543da5dbff; nyco_metadata.pdf f1459cd0-eb93-4085-9bf7-e7198765637e; nysp_metadata.pdf f11a7a91-0dbc-4e39-9c46-6366a4c216ab; nysp_sd_metadata.pdf 0ff3fd30-3fee-400f-920d-03435b7b55e0; nylh_metadata.pdf f83f6f43-7538-46d2-871e-c9b6ed82f13b; nyzma_metadata.pdf 8d4c40d4-6990-417b-8724-7925ffa9a7b1 (Z6). Same PDFs on s-media.nyc.gov (nyzd verified by direct read, Z11)."
+    },
+    "terms_usage_notes": "DCP informational-purposes-only disclaimer; previous versions archived on BYTES of the BIG APPLE (description verbatim links https://www.nyc.gov/content/planning/pages/resources/datasets/gis-zoning-features; 403 to non-browser clients).",
+    "connector_implementation": "PLAN ONLY: snapshot channel — on version-string change (or per monthly schedule once OQ-4 resolved), Render worker downloads the ~3.15 MB zip, stores it in Supabase Storage gis-imports keyed by YYYYMM for reproducibility; optional import fallback if ArcGIS unavailable.",
+    "last_successful_ingestion": null,
+    "latest_source_version": "202604 per the description string 'Current version: 202604' (fetched live 2026-07-16, Z6); data.gov harvest still 202604 at its 2026-05-26 check (Z13). ArcGIS channel is ahead (2026-07-01 edits) — cross-channel lag recorded (S4).",
+    "health_status": "unverified",
+    "known_limitations": [
+      "blobby dataset: createdAt/rowsUpdatedAt/publicationDate all frozen at 2013-01-29 — Socrata timestamps unusable for freshness; only signals are the description version string and blob content hash (OQ-4)",
+      "Description version string may itself be stale relative to the blob content — do not trust either without the OQ-4 observation",
+      "No SODA/tabular access; zip download only",
+      "No shapefile variant found on Socrata (OQ-2)"
+    ],
+    "fallback_source": "DCP BYTES of the BIG APPLE page (previous versions archive; 403-bound, OQ-1); primary channel is the ArcGIS record nyc-dcp-zoning-features-arcgis",
+    "open_questions": [
+      "OQ-1: BYTES download URLs and archive listing",
+      "OQ-2: shapefile variant existence/name",
+      "OQ-4: blob monthly-update behavior and reliable version-change signal",
+      "OQ-5: contents of the five unread layer metadata PDFs"
+    ]
+  }
+]

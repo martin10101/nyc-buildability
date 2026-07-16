@@ -1,0 +1,69 @@
+[
+  {
+    "source_id": "nyc-dcp-ztldb-soda",
+    "agency": "NYC Department of City Planning (DCP)",
+    "name": "NYC Zoning Tax Lot Database (ZTLDB) — NYC Open Data tabular (SODA)",
+    "official_url": "https://data.cityofnewyork.us/api/views/fdkv-4t4z.json",
+    "source_type": "official_open_data_soda_api",
+    "api_dataset_identifier": "fdkv-4t4z",
+    "authentication": {
+      "required": false,
+      "recommended": "Socrata application token via X-App-Token header (platform behavior verified in M1-T001, E7)",
+      "evidence": "SODA endpoint queried anonymously live 2026-07-16 (Z3, Z4)"
+    },
+    "rate_limits": {
+      "without_token": "throttled by IP in shared pool",
+      "with_token": "not throttled unless abusive/malicious",
+      "throttle_signal": "HTTP 429",
+      "evidence": "Socrata platform docs verified in M1-T001 (E7, dev.socrata.com/docs/app-tokens)"
+    },
+    "update_frequency": "Stated Monthly (dataset description verbatim, Z2: 'The Database is updated on a monthly basis to reflect rezoning and corrections to the file.'; custom fields Update Frequency Monthly, Automation Yes). OBSERVED VIOLATION on 2026-07-16: rowsUpdatedAt raw 1775414816 = 2026-04-05T18:46:56Z (~3.4 months stale); independently corroborated by data.gov (last checked 2026-07-07, still 'April 5, 2026'; Z13). The current s-media data dictionary cites source data DTM 2026-06-09 + NYC GIS Zoning Features 2026-05-20, i.e. the DCP bulk release is NEWER than the Socrata rows (Z5). See OQ-3.",
+    "geographic_coverage": "All five boroughs; all tax lots from the specified DOF Digital Tax Map version (dictionary OVERVIEW verbatim, Z5). 857,951 rows on 2026-07-16 ($select=count(bbl), Z4). One row per tax lot; condominium BBL is the billing lot (Socrata bbl column description, Z2). Marble Hill borough code 1 (legally Manhattan), Rikers borough code 2 (legally Bronx) (dictionary NOTE, Z5).",
+    "fields_available": {
+      "note": "Authoritative SODA column inventory: 16 columns from the api/views columns array (Z2), matching the official data dictionary read directly from s-media (all 11 pages, Z5). SODA omits blank fields per record (verified live: sample record lacked commercial_overlay_*, limited_height_district, zoning_district_3/4, special_district_2/3 keys; Z3). Number-typed columns (borough_code, tax_block, tax_lot, bbl) serialize as JSON strings.",
+      "columns": [
+        "borough_code (number; 1=MN 2=BX 3=BK 4=QN 5=SI)",
+        "tax_block (number; unique within borough)",
+        "tax_lot (number; unique within block)",
+        "bbl (number; borough + block zero-padded to 5 + lot zero-padded to 4 = 10 digits; condo = billing lot)",
+        "zoning_district_1 (text 9; greatest % of lot area; since 2019-12-31 assigned even if <10% for mostly-underwater lots)",
+        "zoning_district_2 (text 9; second greatest %; blank if lot not divided by a zoning boundary line)",
+        "zoning_district_3 (text 9; third greatest %; blank if not split three ways)",
+        "zoning_district_4 (text 9; fourth greatest %; blank if not split four ways)",
+        "commercial_overlay_1 (text 4; greatest %; valid values C1-1..C1-5, C2-1..C2-5 per Appendix C)",
+        "commercial_overlay_2 (text 4; second greatest %)",
+        "special_district_1 (text 6; greatest %; overlapping same-percentage districts joined with '/'; Appendix A abbreviations)",
+        "special_district_2 (text 6; second greatest %; '/' rule applies)",
+        "special_district_3 (text 6; third greatest %)",
+        "limited_height_district (text 5; Appendix D: LH-1, LH-1A; LH-2/LH-3 currently unused)",
+        "zoning_map_number (text 3; from DCP Quartersection Map Index)",
+        "zoning_map_code (text 1; 'Y' = lot may be on the border of two or more zoning maps; zoning_map_number is then one of the potential maps)"
+      ],
+      "assignment_rules_verbatim_basis": "Dictionary OVERVIEW (Z5): zoning districts / special districts / limited height districts assigned when the feature covers >= 10% of the lot; commercial overlays assigned when the overlay covers >= 10% of the lot AND/OR >= 50% of the overlay feature is within the lot. Split lots: districts ordered by descending percentage of lot area across zoning_district_1..4.",
+      "park_caveat": "Lots intersecting features designated PARK / BALL FIELD / PLAYGROUND / PUBLIC SPACES get the single value PARK; 'Lots designated as PARK should not be used to calculate the amount of open space in an area' (Z5 verbatim).",
+      "null_semantics": "Blank = not applicable / lot not split further (explicit for zoning_district_2..4); blanks appear as omitted keys on SODA records; no sentinel values documented."
+    },
+    "terms_usage_notes": "DCP disclaimer (dictionary verbatim, Z5): provided for informational purposes only; no warranty of completeness, accuracy, content, or fitness. NYC Open Data terms as verified in M1-T001 (OQ-8 there, resolved).",
+    "connector_implementation": "PLAN ONLY (M1-T003 is research): per-BBL SODA queries + monthly full paged sync on a Render worker; mandatory staleness guard on rowsUpdatedAt (alert when age > ~45 days given the observed 2026 stall); parse '/'-combined special-district values; propagate the PARK caveat as a fact flag; cross-check against PLUTO zonedist1-4/overlay1-2/spdist1-3/ltdheight and live nyzd/nyco spatial intersection in the conflict engine (three presentations, three vintages).",
+    "last_successful_ingestion": null,
+    "latest_source_version": "No version column in the data and no version string in Socrata metadata. Socrata rows last updated 2026-04-05T18:46:56Z (raw 1775414816, Z2). Current DCP bulk release pinned by the dictionary SOURCE DATASETS block: DOF Digital Tax Map June 9, 2026 + NYC GIS Zoning Features May 20, 2026 (Z5) — newer than the Socrata rows.",
+    "health_status": "degraded_suspected — monthly-cadence dataset observed ~3.4 months stale on 2026-07-16 (OQ-3); data itself served correctly",
+    "known_limitations": [
+      "No per-record version field (unlike PLUTO); freshness only via rowsUpdatedAt",
+      "Observed staleness: rows at 2026-04-05 despite Monthly/Automation=Yes; DCP bulk channel ahead (dictionary sources June 2026) — OQ-3",
+      "SODA omits blank fields per record; schema must come from the columns array/dictionary, never record keys (Z3)",
+      "Number-typed BBL/block/lot serialize as strings; normalize to 10-digit BBL strings (same class of issue as M1-T001 C6)",
+      "special_district_1/2 can contain two '/'-joined abbreviations in one 6-char value — parser required (OQ-8)",
+      "PARK value is a consolidation, not a definitive parks list; not usable for open-space calculations (Z5 verbatim)",
+      "Zoning District 1 logic changed 2019-12-31 (assigned even if <10% for underwater-dominated lots) — historical comparisons must account for it",
+      "Dictionary PDF contains a BBL example typo (5158287501 for a Brooklyn lot; Socrata column description has the corrected 3158287501) — use the algorithmic definition, not the example (S4 finding)",
+      "Underlying zoning-feature boundaries carry +/- 20 ft estimated horizontal accuracy (nyzd metadata, Z11) — split assignments near boundaries are not authoritative"
+    ],
+    "fallback_source": "DCP bulk CSV via BYTES of the BIG APPLE (currently NEWER than the SODA channel per dictionary source dates; page https://www.nyc.gov/content/planning/pages/resources/datasets/zoning-taxlot-database is search-evidenced only, nyc.gov 403 to non-browser clients — OQ-1; Render worker import only). Cross-check presentations: PLUTO SODA 64uk-42ks zoning attributes; live nyzd/nyco spatial intersection (see zoning-features registry records).",
+    "open_questions": [
+      "OQ-1: exact BYTES CSV download URL/file name for ZTLDB (nyc.gov 403; browser capture needed)",
+      "OQ-3: cause and duration of the Socrata update stall (observe next monthly boundary; escalate to DCPOpendata@planning.nyc.gov if persistent)",
+      "OQ-8: real-world serialization of '/'-combined special-district values (capture fixture at connector build)"
+    ]
+  }
+]
