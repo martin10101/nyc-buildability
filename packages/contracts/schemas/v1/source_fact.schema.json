@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://github.com/martin10101/nyc-buildability/packages/contracts/schemas/v1/source_fact.schema.json",
   "title": "Source Fact (Provenance Record)",
-  "description": "v1 canonical provenance record for a single fact used by the platform. Every PRD section 9 mandatory provenance field is REQUIRED here (fix for M0-T004 G3 defect D1): source id, original field name, original value, normalized value, retrieved timestamp, dataset version, effective date (nullable but the key must be present), BBL applicability, confidence, user confirmed/overridden, conflict status. A material calculation may never be exported without a resolvable record of this shape (PRD section 19).",
+  "description": "v1 canonical provenance record for a single fact used by the platform. Every PRD section 9 mandatory provenance field is REQUIRED here (fix for M0-T004 G3 defect D1): source id, original field name, original value, normalized value, retrieved timestamp, dataset version, effective date (nullable but the key must be present), BBL applicability, confidence, user confirmed/overridden, conflict status. A material calculation may never be exported without a resolvable record of this shape (PRD section 19). TASK M2-T004 (additive, property-profile contract 1.2.0): four OPTIONAL identity/lineage keys - stable fact_key (survives re-observation), immutable observation_id (unique per retrieval event), value_digest and response_digest (canonical-json-1 digests, see common.schema.json digest_sha256). The required v1 field set is unchanged, so every pre-M2-T004 record remains valid; the backend emits all four on every new fact so each fact traces observation -> source version (dataset_version) -> request (request_url + retrieved_at) without gaps.",
   "type": "object",
   "required": [
     "provenance_id",
@@ -73,6 +73,22 @@
       "type": "string",
       "enum": ["none", "conflicting", "resolved"],
       "description": "Conflict status of this fact across sources (PRD section 9). PLATFORM-DEFINED enum (not a government-source value): grounded in PRD sections 2/9 (conflicts must remain visible); 'resolved' requires a matching resolution entry in the property profile's conflicts list."
+    },
+    "fact_key": {
+      "$ref": "common.schema.json#/$defs/non_empty_string",
+      "description": "TASK M2-T004, OPTIONAL (additive; owner P1 bullet 2): STABLE identity of the LOGICAL fact, independent of when it was retrieved. Re-observing the same fact (same source, dataset, property, source field) at any later time - including under a new dataset version - yields the SAME fact_key, letting persistence and diffing track a fact's value across releases. Construction is connector-specific and documented per connector; the PLUTO connector uses 'fact:<source_id>:<dataset_id>:<bbl>:<original_field_name>'. Distinct from provenance_id (stable within one dataset version) and observation_id (unique per retrieval event). OPTIONAL so that pre-M2-T004 records remain valid; the backend emits it on every new fact."
+    },
+    "observation_id": {
+      "$ref": "common.schema.json#/$defs/non_empty_string",
+      "description": "TASK M2-T004, OPTIONAL (additive; owner P1 bullet 2): IMMUTABLE identity of ONE observation of the fact - unique per retrieval event, never reused, never reassigned. Two retrievals of byte-identical content still get different observation_ids (the digests, not the observation_id, express content equality). The PLUTO connector uses 'obs:<retrieval-event-id>:<bbl>:<original_field_name>' where the retrieval-event id is minted fresh for every fetch, so all facts of one fetch share the event segment. Together with fact_key this separates 'which fact' from 'which retrieval' (snapshot lineage: observation -> source version via dataset_version -> request via request_url/retrieved_at)."
+    },
+    "value_digest": {
+      "$ref": "common.schema.json#/$defs/digest_sha256",
+      "description": "TASK M2-T004, OPTIONAL (additive; owner P1 bullet 3): canonical digest of this fact's verbatim original_value (the PARSED source value, canonical-json-1 form - see common.schema.json digest_sha256). Deterministic: identical source values digest equal across retrievals; any value change flips the digest."
+    },
+    "response_digest": {
+      "$ref": "common.schema.json#/$defs/digest_sha256",
+      "description": "TASK M2-T004, OPTIONAL (additive; owner P1 bullets 3-4): canonical digest of the ENTIRE parsed source response body this observation came from (canonical-json-1 form). All facts of one retrieval event share it, tying every fact to the exact response snapshot; equals reproducibility.response_digest in the property profile built from the same retrieval."
     }
   }
 }

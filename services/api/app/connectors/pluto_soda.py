@@ -34,6 +34,7 @@ outputs (research section 4.1).
 
 from __future__ import annotations
 
+import hashlib
 import json
 import logging
 import math
@@ -55,6 +56,7 @@ from app.connectors.bbl import (
 
 __all__ = [
     "BASE_URL",
+    "CANONICALIZATION_SPEC",
     "DATASET_ID",
     "MAX_RESPONSE_BYTES",
     "PLUTO_COLUMN_TYPES",
@@ -70,7 +72,9 @@ __all__ = [
     "TransportTimeout",
     "VERSION_RE",
     "VINTAGE_DATE_COLUMNS",
+    "build_fact_key",
     "build_page_url",
+    "canonical_json_digest",
     "check_columns_for_drift",
     "fetch_by_bbl",
     "urllib_transport",
@@ -192,6 +196,61 @@ FIELD_UNITS: dict[str, str] = {
     "latitude": "decimal degrees",
     "longitude": "decimal degrees",
 }
+
+# ---------------------------------------------------------------------------
+# Canonical digests and fact identity (task M2-T004, owner P1 bullets 2-4).
+# ---------------------------------------------------------------------------
+
+# Verbatim canonicalization spec, recorded in every profile's
+# reproducibility.digest_canonicalization so a historical report can recompute
+# and verify its own digests (self-description pattern of coverage_policy).
+CANONICALIZATION_SPEC = (
+    "canonical-json-1: a digest is 'sha256:' + lowercase-hex SHA-256 of the "
+    "UTF-8 encoding of the canonical JSON serialization of the PARSED value. "
+    "Canonical serialization: object keys sorted lexicographically by Unicode "
+    "code point; separators ',' and ':' with no insignificant whitespace; "
+    "non-ASCII characters preserved as-is (not escaped); no Unicode "
+    "normalization applied; numbers serialized by Python json.dumps defaults "
+    "(integers verbatim, floats shortest-repr). response_digest covers the "
+    "entire parsed HTTP response body; value_digest covers one field's "
+    "verbatim original_value. Digesting parsed values makes semantically "
+    "identical responses digest equal regardless of source key order or "
+    "whitespace, while any value change flips the digest."
+)
+
+
+def canonical_json_digest(value: object) -> str:
+    """Deterministic digest of a PARSED JSON value per CANONICALIZATION_SPEC.
+
+    Sensitive to every value change; insensitive to source key order and
+    insignificant whitespace (the value is re-serialized canonically before
+    hashing). Raw SODA scalar values are strings/booleans, so float
+    representation never varies in practice; parsed floats use json.dumps
+    shortest-repr, which is deterministic within the platform.
+    """
+    canonical = json.dumps(
+        value, sort_keys=True, separators=(",", ":"), ensure_ascii=False
+    ).encode("utf-8")
+    return f"sha256:{hashlib.sha256(canonical).hexdigest()}"
+
+
+def build_fact_key(bbl: str, column: str) -> str:
+    """STABLE identity of the logical fact (source, dataset, property, field).
+
+    Survives re-observation and dataset-version changes by construction: it
+    deliberately excludes dataset_version, retrieval time, and any event id.
+    Distinct from provenance_id (stable only within one dataset version) and
+    observation_id (unique per retrieval event).
+    """
+    return f"fact:{SOURCE_ID}:{DATASET_ID}:{bbl}:{column}"
+
+
+def _build_observation_id(event_id: str, bbl: str, column: str) -> str:
+    """IMMUTABLE identity of one observation of one fact: unique per retrieval
+    event (event_id is minted fresh per fetch), never reused or reassigned.
+    All facts of one fetch share the event segment, so an evidence viewer can
+    group a retrieval's observations without a join table."""
+    return f"obs:{event_id}:{bbl}:{column}"
 
 
 # ---------------------------------------------------------------------------
@@ -330,7 +389,12 @@ def urllib_transport(url: str, headers: dict[str, str], timeout: float) -> Trans
 @dataclass
 class PlutoFetchResult:
     """Canonical fetch result. ``facts`` entries validate against
-    source_fact.schema.json v1; ``no_match`` is a legitimate result status."""
+    source_fact.schema.json v1; ``no_match`` is a legitimate result status.
+
+    ``response_digest`` (task M2-T004): canonical-json-1 digest of the ENTIRE
+    parsed response body (also present for ``no_match``, where it digests the
+    empty array - the snapshot that proved the absence is itself evidence).
+    """
 
     status: str  # "ok" | "no_match"
     bbl: str
@@ -345,6 +409,7 @@ class PlutoFetchResult:
     absent_columns: list[str] = field(default_factory=list)
     notes: list[str] = field(default_factory=list)
     no_match_explanation: str | None = None
+    response_digest: str | None = None
 
 
 # ---------------------------------------------------------------------------
@@ -575,8 +640,17 @@ def fetch_by_bbl(
     clock: Callable[[], datetime] = _utc_now,
     correlation_id: str | None = None,
     app_token: str | None = None,
+    observation_event_id: str | None = None,
 ) -> PlutoFetchResult:
     """Fetch the PLUTO record for one BBL and emit canonical source facts.
+
+    Args (M2-T004 addition):
+        observation_event_id: identity of THIS retrieval event, minted fresh
+            (uuid4) when not injected. Deliberately separate from
+            correlation_id: a caller-supplied correlation id may legitimately
+            span several fetches (e.g. a future batch endpoint), while the
+            event id is unique per fetch so every ``observation_id`` stays
+            immutable and never collides. Injectable for deterministic tests.
 
     Raises:
         BBLValidationError: malformed BBL input; NO network call is made.
@@ -588,6 +662,7 @@ def fetch_by_bbl(
         (empty official response - a legitimate result, e.g. condo unit lots).
     """
     correlation_id = correlation_id or uuid.uuid4().hex
+    observation_event_id = observation_event_id or uuid.uuid4().hex
     normalized = normalize_bbl(bbl)  # validation_error before any network I/O
     if app_token is None:
         app_token = os.environ.get(APP_TOKEN_ENV_VAR) or None
@@ -631,6 +706,12 @@ def fetch_by_bbl(
             detail={"url": url, "body_type": type(records).__name__},
         )
 
+    # M2-T004: canonical digest of the ENTIRE parsed response body, computed
+    # BEFORE any normalization touches derived copies (the parsed object is
+    # never mutated). Deterministic across byte-different but semantically
+    # identical responses; flipped by any value change.
+    response_digest = canonical_json_digest(records)
+
     if len(records) == 0:
         explanation = _condo_explanation(normalized.lot) or (
             f"No PLUTO record exists for BBL {normalized.canonical} in dataset "
@@ -651,6 +732,7 @@ def fetch_by_bbl(
             dataset_version=None,
             record_count=0,
             no_match_explanation=explanation,
+            response_digest=response_digest,
         )
 
     if len(records) > 1:
@@ -788,6 +870,19 @@ def fetch_by_bbl(
             "dataset_id": DATASET_ID,
             "request_url": url,
             "input_vintages": vintages,
+            # M2-T004 fact identity + snapshot lineage (source_fact contract
+            # optional keys, emitted unconditionally by this connector):
+            # fact_key is STABLE across re-observations AND dataset versions;
+            # observation_id is IMMUTABLE and unique per retrieval event; the
+            # digests pin this observation to exact content. Lineage chain:
+            # observation_id -> dataset_version (source version) ->
+            # request_url + retrieved_at (request) -> response_digest (body).
+            "fact_key": build_fact_key(normalized.canonical, column),
+            "observation_id": _build_observation_id(
+                observation_event_id, normalized.canonical, column
+            ),
+            "value_digest": canonical_json_digest(raw_value),
+            "response_digest": response_digest,
         }
         facts.append(fact)
 
@@ -811,6 +906,7 @@ def fetch_by_bbl(
         drift_signals=drift_signals,
         absent_columns=absent_columns,
         notes=notes,
+        response_digest=response_digest,
     )
 
 

@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://github.com/martin10101/nyc-buildability/packages/contracts/schemas/v1/property_profile.schema.json",
   "title": "Canonical Property Profile",
-  "description": "v1 of the one canonical property-profile contract (PRD section 32.3). All connectors, rules, scenarios, reports, and UI views must exchange this contract; modules may not invent competing property schemas. Every fact value carries a REQUIRED provenance_ref that must resolve to a provenance record in this profile (PRD sections 9 and 19; fix for M0-T004 G3 defect D1). Referential integrity of EVERY provenance_ref site (fact values, zoning.mapped_features, and the v1.1 district-provenance maps) is enforced by .github/scripts/validate_contracts.py for fixtures and must be enforced by the backend for live data. CONTRACT 1.1.0 (task M1-T006, additive; M1-T005 G3 adjudication #1 + defects D2/D4): documents the three keys the accepted M1-T005 API already emits (OPTIONAL per-fact coverage_status, OPTIONAL top-level data_completeness, OPTIONAL top-level reproducibility) and adds OPTIONAL machine-resolvable district-provenance maps under zoning. Every 1.0.0 instance remains valid: no required key was added, removed, or retyped.",
+  "description": "v1 of the one canonical property-profile contract (PRD section 32.3). All connectors, rules, scenarios, reports, and UI views must exchange this contract; modules may not invent competing property schemas. Every fact value carries a REQUIRED provenance_ref that must resolve to a provenance record in this profile (PRD sections 9 and 19; fix for M0-T004 G3 defect D1). Referential integrity of EVERY provenance_ref site (fact values, zoning.mapped_features, and the v1.1 district-provenance maps) is enforced by .github/scripts/validate_contracts.py for fixtures and must be enforced by the backend for live data. CONTRACT 1.1.0 (task M1-T006, additive; M1-T005 G3 adjudication #1 + defects D2/D4): documents the three keys the accepted M1-T005 API already emits (OPTIONAL per-fact coverage_status, OPTIONAL top-level data_completeness, OPTIONAL top-level reproducibility) and adds OPTIONAL machine-resolvable district-provenance maps under zoning. Every 1.0.0 instance remains valid: no required key was added, removed, or retyped. CONTRACT 1.2.0 (task M2-T004, additive; owner code-audit P1 2026-07-17): adds the OPTIONAL top-level status_dimensions object (five INDEPENDENT status dimensions - source_record_completeness, analysis_readiness, rule_coverage, geometry_validity, financial_readiness - never collapsed into one label, per PRD s12 and GENERATIVE_DEVELOPMENT_STRATEGY_REQUIREMENTS s3.3; dimensions the platform cannot yet compute are declared 'not_computed', never inferred), the OPTIONAL missing_inputs[].feasibility_relevant flag (membership in the documented feasibility-relevant completeness basis - data_completeness and source_record_completeness are derived from feasibility-relevant gaps ONLY, never from all 108 PLUTO columns), OPTIONAL reproducibility.response_digest + reproducibility.digest_canonicalization, and the four OPTIONAL source_fact identity/lineage keys (fact_key, observation_id, value_digest, response_digest - see source_fact.schema.json). Every 1.0.0 and 1.1.0 instance remains valid: all new keys are optional and no existing key changed.",
   "type": "object",
   "required": [
     "profile_version",
@@ -24,8 +24,8 @@
       "properties": {
         "contract_version": {
           "type": "string",
-          "enum": ["1.0.0", "1.1.0"],
-          "description": "CLOSED enum of published contract versions within the v1 major line. 1.0.0 = M0-T009 shape; 1.1.0 = M1-T006 additive extension. New versions are admitted only by an accepted contract task that appends to this enum; arbitrary versions are rejected."
+          "enum": ["1.0.0", "1.1.0", "1.2.0"],
+          "description": "CLOSED enum of published contract versions within the v1 major line. 1.0.0 = M0-T009 shape; 1.1.0 = M1-T006 additive extension; 1.2.0 = M2-T004 additive extension (status_dimensions, feasibility_relevant, digests, fact identity/lineage). New versions are admitted only by an accepted contract task that appends to this enum; arbitrary versions are rejected. DECLARATION SEMANTICS (input to M2-T003, deliberately not preempted here): as with 1.1.0, adding 1.2.0 to this enum publishes the version; WHICH version a producer declares (the accepted M1-T005 builder still declares 1.0.0 while emitting the additive keys, all legal at every version because the keys are optional) and whether declared version and emitted key set are validated against each other is the M2-T003 validation/typegen decision."
         },
         "profile_revision": { "type": "integer", "minimum": 1 },
         "generated_at": { "$ref": "common.schema.json#/$defs/date_time" }
@@ -112,7 +112,7 @@
       "items": { "$ref": "source_fact.schema.json" }
     },
     "missing_inputs": {
-      "description": "Inputs the platform could not obtain, with criticality (PRD section 12 data-completeness).",
+      "description": "Inputs the platform could not obtain, with criticality (PRD section 12 data-completeness). Every absent/unknown source column stays listed here (unknown is stated, never hidden - PRD section 9); CONTRACT 1.2.0 adds the OPTIONAL feasibility_relevant flag so consumers can tell which gaps drive the completeness statuses.",
       "type": "array",
       "items": {
         "type": "object",
@@ -120,7 +120,11 @@
         "properties": {
           "field": { "type": "string" },
           "criticality": { "type": "string", "enum": ["critical", "noncritical"] },
-          "reason": { "type": "string" }
+          "reason": { "type": "string" },
+          "feasibility_relevant": {
+            "type": "boolean",
+            "description": "CONTRACT 1.2.0, OPTIONAL (task M2-T004, owner P1 bullet 1): true when this field is a member of the documented feasibility-relevant completeness basis (the builder's FEASIBILITY_COLUMNS set, grounded in the official PLUTO 26v1 data dictionary via docs/research/pluto-mappluto-2026-07-16.md). data_completeness and status_dimensions.source_record_completeness are derived ONLY from entries with feasibility_relevant true - absence of a column outside the basis (e.g. an administrative-district column, or a conditional-presence zoning column whose SODA null-omission absence is not distinguishable from 'none') never degrades completeness. This replaces the pre-1.2.0 behavior in which all 108 possible PLUTO columns fed the derivation. Entries without this flag (pre-1.2.0 producers) are treated as feasibility-relevant by consumers that must assume the old derivation."
+          }
         }
       }
     },
@@ -169,10 +173,10 @@
     },
     "data_completeness": {
       "$ref": "coverage_status.schema.json#/$defs/data_completeness",
-      "description": "CONTRACT 1.1.0, OPTIONAL (M1-T005 G3 defect D2): profile-level data-completeness status - exactly the 3 PRD section 12 values, referenced from coverage_status.schema.json (never duplicated inline). The accepted M1-T005 builder derives it deterministically from missing_inputs criticality (any critical missing input -> missing_critical; any missing input -> missing_noncritical; else complete)."
+      "description": "CONTRACT 1.1.0, OPTIONAL (M1-T005 G3 defect D2): profile-level data-completeness status - exactly the 3 PRD section 12 values, referenced from coverage_status.schema.json (never duplicated inline). Derived deterministically from missing_inputs criticality. DERIVATION BASIS FIXED AT 1.2.0 (task M2-T004, owner P1): only FEASIBILITY-RELEVANT missing inputs count (entries with feasibility_relevant true - the documented FEASIBILITY_COLUMNS basis): any critical feasibility-relevant missing input -> missing_critical; any feasibility-relevant missing input -> missing_noncritical; else complete. Before 1.2.0 the derivation counted every absent column of the 108-column PLUTO inventory, which made 'complete' unreachable in practice (the owner-audit defect). The key, its enum, and its placement are unchanged for v1.1 consumers."
     },
     "reproducibility": {
-      "description": "CONTRACT 1.1.0, OPTIONAL (M1-T005 G3 defect D2): retrieval metadata that lets a report reader reproduce this profile build (PRD section 9: retain the exact source snapshot used; PRD section 20 item 17: reproducibility identifier). Shape matches the accepted M1-T005 builder output exactly: the builder emits every subfield unconditionally, so all subfields are REQUIRED when the object is present. Single-source (PLUTO) shape; when M2 merges multiple sources this evolves additively (e.g. a per-source array ALONGSIDE this object), never by retyping these keys.",
+      "description": "CONTRACT 1.1.0, OPTIONAL (M1-T005 G3 defect D2): retrieval metadata that lets a report reader reproduce this profile build (PRD section 9: retain the exact source snapshot used; PRD section 20 item 17: reproducibility identifier). Shape matches the accepted M1-T005 builder output exactly: the builder emits every 1.1.0 subfield unconditionally, so the 10 original subfields are REQUIRED when the object is present. CONTRACT 1.2.0 (task M2-T004) adds two OPTIONAL snapshot-lineage subfields - response_digest and digest_canonicalization - which the current builder also emits unconditionally but which stay optional in the schema so 1.1.0 instances remain valid. Single-source (PLUTO) shape; when M2 merges multiple sources this evolves additively (e.g. a per-source array ALONGSIDE this object), never by retyping these keys.",
       "type": "object",
       "required": [
         "correlation_id",
@@ -230,6 +234,57 @@
         "coverage_policy": {
           "$ref": "common.schema.json#/$defs/non_empty_string",
           "description": "Verbatim statement of the deterministic policy that produced every coverage_status in this profile (PRD section 12: AI/connector confidence never substitutes for legal-review status). Stored per profile so a historical report explains its own labels even after the policy text evolves."
+        },
+        "response_digest": {
+          "$ref": "common.schema.json#/$defs/digest_sha256",
+          "description": "CONTRACT 1.2.0, OPTIONAL (task M2-T004, owner P1 bullets 3-4): canonical digest of the ENTIRE parsed source response body this profile was built from (canonical-json-1 form; see common.schema.json digest_sha256). Deterministic across identical responses; any source value change flips it. Equals the response_digest carried on every provenance record of this build, closing the snapshot lineage: observation (observation_id, retrieved_at) -> source version (dataset_version) -> request (request_url) -> exact response content (this digest)."
+        },
+        "digest_canonicalization": {
+          "$ref": "common.schema.json#/$defs/non_empty_string",
+          "description": "CONTRACT 1.2.0, OPTIONAL (task M2-T004): verbatim statement of the canonicalization rules under which response_digest and every value_digest in this profile were computed (spec id + key order + whitespace + encoding + number handling). Stored per profile - like coverage_policy - so a historical report can recompute and verify its own digests even after the canonicalization spec evolves."
+        }
+      }
+    },
+    "status_dimensions": {
+      "description": "CONTRACT 1.2.0, OPTIONAL (task M2-T004; owner code-audit P1 bullet 1; PRD section 12; GENERATIVE_DEVELOPMENT_STRATEGY_REQUIREMENTS section 3.3): five INDEPENDENT status dimensions of this profile. They are never collapsed into one confidence label, and a dimension the platform cannot yet compute is declared 'not_computed' - never inferred, never invented, never hidden. All six subfields are REQUIRED when the object is present because the builder emits each unconditionally (same pattern as reproducibility): omitting a dimension would silently collapse the dimension set. Enum values are the CLOSED set the current deterministic backend can emit; future capabilities (M2 geometry validation, M4 rule engine, financial engine) extend these enums ADDITIVELY via an accepted contract task - values are never removed. The legacy top-level data_completeness key is unchanged and continues to serve v1.1 consumers; source_record_completeness is the successor dimension, not a replacement.",
+      "type": "object",
+      "required": [
+        "source_record_completeness",
+        "analysis_readiness",
+        "rule_coverage",
+        "geometry_validity",
+        "financial_readiness",
+        "policy"
+      ],
+      "properties": {
+        "source_record_completeness": {
+          "type": "string",
+          "enum": ["complete", "partial", "not_computed"],
+          "description": "Completeness of the official source record RELATIVE TO THE DOCUMENTED FEASIBILITY-RELEVANT COLUMN BASIS ONLY (builder FEASIBILITY_COLUMNS, grounded in the official PLUTO 26v1 data dictionary; see packages/contracts/README.md and docs/research/pluto-mappluto-2026-07-16.md). 'complete' = every basis column is present with a usable value; 'partial' = at least one basis column is absent, officially-unknown (e.g. YearBuilt 0 per dictionary p.34-35), or drift-flagged; 'not_computed' = the profile was built without a column inventory to judge against. Absence of the ~89 non-basis PLUTO columns NEVER degrades this dimension (the pre-1.2.0 108-column defect). Says nothing about geometry, rules, or finance - those are the other dimensions."
+        },
+        "analysis_readiness": {
+          "type": "string",
+          "enum": ["ready", "blocked_missing_critical", "blocked_data_conflict", "not_computed"],
+          "description": "Whether the DATA in this profile suffices to begin deterministic rules evaluation. Evaluated in documented order: (1) 'blocked_data_conflict' when an unresolved conflict touches an identity field (bbl/borocode/block/lot) or a critical feasibility column; (2) 'blocked_missing_critical' when a critical feasibility column (lotarea, zonedist1) is absent or carries an unusable drift-flagged value; (3) else 'ready'. 'ready' is a DATA statement only - it is NOT the PRD section 32.1 'ready_for_analysis' workflow state and never implies that user confirmation (PRD section 5) occurred; the backend state machine consumes this dimension and still owns the workflow."
+        },
+        "rule_coverage": {
+          "type": "string",
+          "enum": ["not_computed"],
+          "description": "Coverage of this profile by published deterministic rules. 'not_computed' is the ONLY value the platform may emit before the M4 rule engine exists: rule applicability is not yet computable, and declaring anything else would invent coverage (PRD section 12: no result is 'verified' without a published rule + reviewer pipeline). M4 extends this enum additively (an accepted contract task appends values; this single-value enum is deliberate, not a placeholder omission)."
+        },
+        "geometry_validity": {
+          "type": "string",
+          "enum": ["missing", "not_computed"],
+          "description": "Validity of the lot geometry attached to this profile. 'missing' = the official source provided no usable geometry (no finite coordinate pair), stated explicitly rather than silently omitting the geometry key; 'not_computed' = geometry is present (currently a PLUTO-derived point; dictionary p.39-40 / EPSG:2263 research note) but the geometry-validation pipeline does not exist until the M2 tax-lot geometry tasks - validity is unknown and is NOT asserted. 'valid'/'invalid'/'repaired' values land additively with that pipeline. Independent of source_record_completeness by construction: geometry columns are excluded from the completeness basis."
+        },
+        "financial_readiness": {
+          "type": "string",
+          "enum": ["not_computed"],
+          "description": "Readiness of financial-feasibility evaluation for this profile. 'not_computed' is the ONLY value before a financial-evaluation engine exists (GENERATIVE_DEVELOPMENT_STRATEGY_REQUIREMENTS section 3.3 financial status; Phase C evaluators). Future values (e.g. assumption-based estimate states) land additively with that engine via an accepted contract task."
+        },
+        "policy": {
+          "$ref": "common.schema.json#/$defs/non_empty_string",
+          "description": "Verbatim statement of the deterministic derivation policy that produced the five dimension values in this profile, including the completeness basis identification. Stored per profile - same self-description pattern as reproducibility.coverage_policy - so a historical report explains its own labels after the policy evolves."
         }
       }
     }

@@ -327,7 +327,11 @@
       "conflict_status": "none",
       "dataset_id": "64uk-42ks",
       "request_url": "https://data.cityofnewyork.us/resource/64uk-42ks.json?bbl=1000010010",
-      "input_vintages": {}
+      "input_vintages": {},
+      "fact_key": "fact:nyc-dcp-pluto-soda:64uk-42ks:1000010010:address",
+      "observation_id": "obs:m2t004-s6-ground-truth-event:1000010010:address",
+      "value_digest": "sha256:6bd55b3ac32797d68f4c38ce35c16e9fe17c45bcf25046843cee068df4a73f03",
+      "response_digest": "sha256:030f188844c2efb2217feae0594fabed7322b93135a6f33c0870704a16c259a5"
     },
     {
       "provenance_id": "pluto-64uk-42ks-26v1-1000010010-affresfar",
@@ -345,7 +349,11 @@
       "conflict_status": "none",
       "dataset_id": "64uk-42ks",
       "request_url": "https://data.cityofnewyork.us/resource/64uk-42ks.json?bbl=1000010010",
-      "input_vintages": {}
+      "input_vintages": {},
+      "fact_key": "fact:nyc-dcp-pluto-soda:64uk-42ks:1000010010:affresfar",
+      "observation_id": "obs:m2t004-s6-ground-truth-event:1000010010:affresfar",
+      "value_digest": "sha256:8733e7f60434366848060f5b96246db2505387f9d62cc3781582bd17a9cb1042",
+      "response_digest": "sha256:030f188844c2efb2217feae0594fabed7322b93135a6f33c0870704a16c259a5"
     },
     {
       "provenance_id": "pluto-64uk-42ks-26v1-1000010010-appbbl",
@@ -363,7 +371,11 @@
       "conflict_status": "none",
       "dataset_id": "64uk-42ks",
       "request_url": "https://data.cityofnewyork.us/resource/64uk-42ks.json?bbl=1000010010",
-      "input_vintages": {}
+      "input_vintages": {},
+      "fact_key": "fact:nyc-dcp-pluto-soda:64uk-42ks:1000010010:appbbl",
+      "observation_id": "obs:m2t004-s6-ground-truth-event:1000010010:appbbl",
+      "value_digest": "sha256:90ef6d9e855ae66b0e6051bb8f9f091bd74d0a68cab5a7493014149c9795a6e5",
+      "response_digest": "sha256:030f188844c2efb2217feae0594fabed7322b93135a6f33c0870704a16c259a5"
     },
     {
       "provenance_id": "pluto-64uk-42ks-26v1-1000010010-appdate",
@@ -381,7 +393,11 @@
       "conflict_status": "none",
       "dataset_id": "64uk-42ks",
       "request_url": "https://data.cityofnewyork.us/resource/64uk-42ks.json?bbl=1000010010",
-      "input_vintages": {}
+      "input_vintages": {},
+      "fact_key": "fact:nyc-dcp-pluto-soda:64uk-42ks:1000010010:appdate",
+      "observation_id": "obs:m2t004-s6-ground-truth-event:1000010010:appdate",
+      "value_digest": "sha256:c0e736aac92e516f47cecb86920689af1bf5af80eb58df6b61c7b765e635cdeb",
+      "response_digest": "sha256:030f188844c2efb2217feae0594fabed7322b93135a6f33c0870704a16c259a5"
     },
     {
       "provenance_id": "pluto-64uk-42ks-26v1-1000010010-areasource",
@@ -399,7 +415,11 @@
       "conflict_status": "none",
       "dataset_id": "64uk-42ks",
       "request_url": "https://data.cityofnewyork.us/resource/64uk-42ks.json?bbl=1000010010",
-      "input_vintages": {}
+      "input_vintages": {},
+      "fact_key": "fact:nyc-dcp-pluto-soda:64uk-42ks:1000010010:areasource",
+      "observation_id": "obs:m2t004-s6-ground-truth-event:1000010010:areasource",
+      "value_digest": "sha256:cc11310c456c3690d5a74c23aa31cc25b4e74cdae146c71e54ad9dbc1d109fde",
+      "response_digest": "sha256:030f188844c2efb2217feae0594fabed7322b93135a6f33c0870704a16c259a5"
     },
     {
       "provenance_id": "pluto-64uk-42ks-26v1-1000010010-assessland",
@@ -417,7 +437,11 @@
       "conflict_status": "none",
       "dataset_id": "64uk-42ks",
       "request_url": "https://data.cityofnewyork.us/resource/64uk-42ks.json?bbl=1000010010",
-      "input_vintages": {}
+      "input_vintages": {},
+      "fact_key": "fact:nyc-dcp-pluto-soda:64uk-42ks:1000010010:assessland",
+      "observation_id": "obs:m2t004-s6-ground-truth-event:1000010010:assessland",
+      "value_digest": "sha256:34b564b52794431d2a760abf4eca27efa8331c29de7a8a9b01bb3d233cf6b96e",
+      "response_digest": "sha256:030f188844c2efb2217feae0594fabed7322b93135a6f33c0870704a16c259a5"
     },
     {
       "provenance_id": "pluto-64uk-42ks-26v1-1000010010-assesstot",
@@ -435,7 +459,11 @@
       "conflict_status": "none",
       "dataset_id": "64uk-42ks",
       "request_url": "https://data.cityofnewyork.us/resource/64uk-42ks.json?bbl=1000010010",
-      "input_vintages": {}
+      "input_vintages": {},
+      "fact_key": "fact:nyc-dcp-pluto-soda:64uk-42ks:1000010010:assesstot",
+      "observation_id": "obs:m2t004-s6-ground-truth-event:1000010010:assesstot",
+      "value_digest": "sha256:bd2995fdd379b14db8630f98296defb567e9dfe9a17d0ca9e9b11dfdf6a851f2",
+      "response_digest": "sha256:030f188844c2efb2217feae0594fabed7322b93135a6f33c0870704a16c259a5"
     },
     {
       "provenance_id": "pluto-64uk-42ks-26v1-1000010010-bbl",
@@ -453,7 +481,11 @@
       "conflict_status": "none",
       "dataset_id": "64uk-42ks",
       "request_url": "https://data.cityofnewyork.us/resource/64uk-42ks.json?bbl=1000010010",
-      "input_vintages": {}
+      "input_vintages": {},
+      "fact_key": "fact:nyc-dcp-pluto-soda:64uk-42ks:1000010010:bbl",
+      "observation_id": "obs:m2t004-s6-ground-truth-event:1000010010:bbl",
+      "value_digest": "sha256:90ef6d9e855ae66b0e6051bb8f9f091bd74d0a68cab5a7493014149c9795a6e5",
+      "response_digest": "sha256:030f188844c2efb2217feae0594fabed7322b93135a6f33c0870704a16c259a5"
     },
     {
       "provenance_id": "pluto-64uk-42ks-26v1-1000010010-bct2020",
@@ -471,7 +503,11 @@
       "conflict_status": "none",
       "dataset_id": "64uk-42ks",
       "request_url": "https://data.cityofnewyork.us/resource/64uk-42ks.json?bbl=1000010010",
-      "input_vintages": {}
+      "input_vintages": {},
+      "fact_key": "fact:nyc-dcp-pluto-soda:64uk-42ks:1000010010:bct2020",
+      "observation_id": "obs:m2t004-s6-ground-truth-event:1000010010:bct2020",
+      "value_digest": "sha256:ad4f99daaf176c6dba4714ae93e13351eb76d954576fcf2d21e6244ddc0c87a9",
+      "response_digest": "sha256:030f188844c2efb2217feae0594fabed7322b93135a6f33c0870704a16c259a5"
     },
     {
       "provenance_id": "pluto-64uk-42ks-26v1-1000010010-bctcb2020",
@@ -489,7 +525,11 @@
       "conflict_status": "none",
       "dataset_id": "64uk-42ks",
       "request_url": "https://data.cityofnewyork.us/resource/64uk-42ks.json?bbl=1000010010",
-      "input_vintages": {}
+      "input_vintages": {},
+      "fact_key": "fact:nyc-dcp-pluto-soda:64uk-42ks:1000010010:bctcb2020",
+      "observation_id": "obs:m2t004-s6-ground-truth-event:1000010010:bctcb2020",
+      "value_digest": "sha256:6616dee441106b540639362f2e2169f956c897552e5dd29033e47cdcab07659d",
+      "response_digest": "sha256:030f188844c2efb2217feae0594fabed7322b93135a6f33c0870704a16c259a5"
     },
     {
       "provenance_id": "pluto-64uk-42ks-26v1-1000010010-bldgarea",
@@ -507,7 +547,11 @@
       "conflict_status": "none",
       "dataset_id": "64uk-42ks",
       "request_url": "https://data.cityofnewyork.us/resource/64uk-42ks.json?bbl=1000010010",
-      "input_vintages": {}
+      "input_vintages": {},
+      "fact_key": "fact:nyc-dcp-pluto-soda:64uk-42ks:1000010010:bldgarea",
+      "observation_id": "obs:m2t004-s6-ground-truth-event:1000010010:bldgarea",
+      "value_digest": "sha256:c323c25b8f91ce0df45c95a1f25e0748809a7437d50f22288055108a16d3c90b",
+      "response_digest": "sha256:030f188844c2efb2217feae0594fabed7322b93135a6f33c0870704a16c259a5"
     },
     {
       "provenance_id": "pluto-64uk-42ks-26v1-1000010010-bldgclass",
@@ -525,7 +569,11 @@
       "conflict_status": "none",
       "dataset_id": "64uk-42ks",
       "request_url": "https://data.cityofnewyork.us/resource/64uk-42ks.json?bbl=1000010010",
-      "input_vintages": {}
+      "input_vintages": {},
+      "fact_key": "fact:nyc-dcp-pluto-soda:64uk-42ks:1000010010:bldgclass",
+      "observation_id": "obs:m2t004-s6-ground-truth-event:1000010010:bldgclass",
+      "value_digest": "sha256:0bc02aeed2cff34867a8821cd3805e502066cb608f4109321f218f2846f75499",
+      "response_digest": "sha256:030f188844c2efb2217feae0594fabed7322b93135a6f33c0870704a16c259a5"
     },
     {
       "provenance_id": "pluto-64uk-42ks-26v1-1000010010-bldgdepth",
@@ -543,7 +591,11 @@
       "conflict_status": "none",
       "dataset_id": "64uk-42ks",
       "request_url": "https://data.cityofnewyork.us/resource/64uk-42ks.json?bbl=1000010010",
-      "input_vintages": {}
+      "input_vintages": {},
+      "fact_key": "fact:nyc-dcp-pluto-soda:64uk-42ks:1000010010:bldgdepth",
+      "observation_id": "obs:m2t004-s6-ground-truth-event:1000010010:bldgdepth",
+      "value_digest": "sha256:5b12a56f12c0b7cb70a325211ff4e0867c0b723f063b28bc7dfd877b117031e2",
+      "response_digest": "sha256:030f188844c2efb2217feae0594fabed7322b93135a6f33c0870704a16c259a5"
     },
     {
       "provenance_id": "pluto-64uk-42ks-26v1-1000010010-bldgfront",
@@ -561,7 +613,11 @@
       "conflict_status": "none",
       "dataset_id": "64uk-42ks",
       "request_url": "https://data.cityofnewyork.us/resource/64uk-42ks.json?bbl=1000010010",
-      "input_vintages": {}
+      "input_vintages": {},
+      "fact_key": "fact:nyc-dcp-pluto-soda:64uk-42ks:1000010010:bldgfront",
+      "observation_id": "obs:m2t004-s6-ground-truth-event:1000010010:bldgfront",
+      "value_digest": "sha256:5b12a56f12c0b7cb70a325211ff4e0867c0b723f063b28bc7dfd877b117031e2",
+      "response_digest": "sha256:030f188844c2efb2217feae0594fabed7322b93135a6f33c0870704a16c259a5"
     },
     {
       "provenance_id": "pluto-64uk-42ks-26v1-1000010010-block",
@@ -579,7 +635,11 @@
       "conflict_status": "none",
       "dataset_id": "64uk-42ks",
       "request_url": "https://data.cityofnewyork.us/resource/64uk-42ks.json?bbl=1000010010",
-      "input_vintages": {}
+      "input_vintages": {},
+      "fact_key": "fact:nyc-dcp-pluto-soda:64uk-42ks:1000010010:block",
+      "observation_id": "obs:m2t004-s6-ground-truth-event:1000010010:block",
+      "value_digest": "sha256:391552c099c101b131feaf24c5795a6a15bc8ec82015424e0d2b4274a369a0bf",
+      "response_digest": "sha256:030f188844c2efb2217feae0594fabed7322b93135a6f33c0870704a16c259a5"
     },
     {
       "provenance_id": "pluto-64uk-42ks-26v1-1000010010-borocode",
@@ -597,7 +657,11 @@
       "conflict_status": "none",
       "dataset_id": "64uk-42ks",
       "request_url": "https://data.cityofnewyork.us/resource/64uk-42ks.json?bbl=1000010010",
-      "input_vintages": {}
+      "input_vintages": {},
+      "fact_key": "fact:nyc-dcp-pluto-soda:64uk-42ks:1000010010:borocode",
+      "observation_id": "obs:m2t004-s6-ground-truth-event:1000010010:borocode",
+      "value_digest": "sha256:391552c099c101b131feaf24c5795a6a15bc8ec82015424e0d2b4274a369a0bf",
+      "response_digest": "sha256:030f188844c2efb2217feae0594fabed7322b93135a6f33c0870704a16c259a5"
     },
     {
       "provenance_id": "pluto-64uk-42ks-26v1-1000010010-borough",
@@ -615,7 +679,11 @@
       "conflict_status": "none",
       "dataset_id": "64uk-42ks",
       "request_url": "https://data.cityofnewyork.us/resource/64uk-42ks.json?bbl=1000010010",
-      "input_vintages": {}
+      "input_vintages": {},
+      "fact_key": "fact:nyc-dcp-pluto-soda:64uk-42ks:1000010010:borough",
+      "observation_id": "obs:m2t004-s6-ground-truth-event:1000010010:borough",
+      "value_digest": "sha256:443dae73186f55c206a253b2791ae031457eddb463402a443bb9e78a728fe9dc",
+      "response_digest": "sha256:030f188844c2efb2217feae0594fabed7322b93135a6f33c0870704a16c259a5"
     },
     {
       "provenance_id": "pluto-64uk-42ks-26v1-1000010010-bsmtcode",
@@ -633,7 +701,11 @@
       "conflict_status": "none",
       "dataset_id": "64uk-42ks",
       "request_url": "https://data.cityofnewyork.us/resource/64uk-42ks.json?bbl=1000010010",
-      "input_vintages": {}
+      "input_vintages": {},
+      "fact_key": "fact:nyc-dcp-pluto-soda:64uk-42ks:1000010010:bsmtcode",
+      "observation_id": "obs:m2t004-s6-ground-truth-event:1000010010:bsmtcode",
+      "value_digest": "sha256:391552c099c101b131feaf24c5795a6a15bc8ec82015424e0d2b4274a369a0bf",
+      "response_digest": "sha256:030f188844c2efb2217feae0594fabed7322b93135a6f33c0870704a16c259a5"
     },
     {
       "provenance_id": "pluto-64uk-42ks-26v1-1000010010-builtfar",
@@ -651,7 +723,11 @@
       "conflict_status": "none",
       "dataset_id": "64uk-42ks",
       "request_url": "https://data.cityofnewyork.us/resource/64uk-42ks.json?bbl=1000010010",
-      "input_vintages": {}
+      "input_vintages": {},
+      "fact_key": "fact:nyc-dcp-pluto-soda:64uk-42ks:1000010010:builtfar",
+      "observation_id": "obs:m2t004-s6-ground-truth-event:1000010010:builtfar",
+      "value_digest": "sha256:3e2e7ce542fd20147081775e5f9b958dd0816d98cd4264b4262a0b846724422b",
+      "response_digest": "sha256:030f188844c2efb2217feae0594fabed7322b93135a6f33c0870704a16c259a5"
     },
     {
       "provenance_id": "pluto-64uk-42ks-26v1-1000010010-cb2010",
@@ -669,7 +745,11 @@
       "conflict_status": "none",
       "dataset_id": "64uk-42ks",
       "request_url": "https://data.cityofnewyork.us/resource/64uk-42ks.json?bbl=1000010010",
-      "input_vintages": {}
+      "input_vintages": {},
+      "fact_key": "fact:nyc-dcp-pluto-soda:64uk-42ks:1000010010:cb2010",
+      "observation_id": "obs:m2t004-s6-ground-truth-event:1000010010:cb2010",
+      "value_digest": "sha256:ea33dc847d962e75874bfed11cf65b69acebbfa3cabec313effeb7c8b4fc90e1",
+      "response_digest": "sha256:030f188844c2efb2217feae0594fabed7322b93135a6f33c0870704a16c259a5"
     },
     {
       "provenance_id": "pluto-64uk-42ks-26v1-1000010010-cd",
@@ -687,7 +767,11 @@
       "conflict_status": "none",
       "dataset_id": "64uk-42ks",
       "request_url": "https://data.cityofnewyork.us/resource/64uk-42ks.json?bbl=1000010010",
-      "input_vintages": {}
+      "input_vintages": {},
+      "fact_key": "fact:nyc-dcp-pluto-soda:64uk-42ks:1000010010:cd",
+      "observation_id": "obs:m2t004-s6-ground-truth-event:1000010010:cd",
+      "value_digest": "sha256:4f0112476f5f4c14ff4ac13a792cb691119b4e1ebf07b2fdd4a901c0b7b56e34",
+      "response_digest": "sha256:030f188844c2efb2217feae0594fabed7322b93135a6f33c0870704a16c259a5"
     },
     {
       "provenance_id": "pluto-64uk-42ks-26v1-1000010010-comarea",
@@ -705,7 +789,11 @@
       "conflict_status": "none",
       "dataset_id": "64uk-42ks",
       "request_url": "https://data.cityofnewyork.us/resource/64uk-42ks.json?bbl=1000010010",
-      "input_vintages": {}
+      "input_vintages": {},
+      "fact_key": "fact:nyc-dcp-pluto-soda:64uk-42ks:1000010010:comarea",
+      "observation_id": "obs:m2t004-s6-ground-truth-event:1000010010:comarea",
+      "value_digest": "sha256:c323c25b8f91ce0df45c95a1f25e0748809a7437d50f22288055108a16d3c90b",
+      "response_digest": "sha256:030f188844c2efb2217feae0594fabed7322b93135a6f33c0870704a16c259a5"
     },
     {
       "provenance_id": "pluto-64uk-42ks-26v1-1000010010-commfar",
@@ -723,7 +811,11 @@
       "conflict_status": "none",
       "dataset_id": "64uk-42ks",
       "request_url": "https://data.cityofnewyork.us/resource/64uk-42ks.json?bbl=1000010010",
-      "input_vintages": {}
+      "input_vintages": {},
+      "fact_key": "fact:nyc-dcp-pluto-soda:64uk-42ks:1000010010:commfar",
+      "observation_id": "obs:m2t004-s6-ground-truth-event:1000010010:commfar",
+      "value_digest": "sha256:09726995307b1dbad1bcb9a0e7ac6b4cbe8f339997f7c8b13188755eb4fc3f1f",
+      "response_digest": "sha256:030f188844c2efb2217feae0594fabed7322b93135a6f33c0870704a16c259a5"
     },
     {
       "provenance_id": "pluto-64uk-42ks-26v1-1000010010-council",
@@ -741,7 +833,11 @@
       "conflict_status": "none",
       "dataset_id": "64uk-42ks",
       "request_url": "https://data.cityofnewyork.us/resource/64uk-42ks.json?bbl=1000010010",
-      "input_vintages": {}
+      "input_vintages": {},
+      "fact_key": "fact:nyc-dcp-pluto-soda:64uk-42ks:1000010010:council",
+      "observation_id": "obs:m2t004-s6-ground-truth-event:1000010010:council",
+      "value_digest": "sha256:391552c099c101b131feaf24c5795a6a15bc8ec82015424e0d2b4274a369a0bf",
+      "response_digest": "sha256:030f188844c2efb2217feae0594fabed7322b93135a6f33c0870704a16c259a5"
     },
     {
       "provenance_id": "pluto-64uk-42ks-26v1-1000010010-ct2010",
@@ -759,7 +855,11 @@
       "conflict_status": "none",
       "dataset_id": "64uk-42ks",
       "request_url": "https://data.cityofnewyork.us/resource/64uk-42ks.json?bbl=1000010010",
-      "input_vintages": {}
+      "input_vintages": {},
+      "fact_key": "fact:nyc-dcp-pluto-soda:64uk-42ks:1000010010:ct2010",
+      "observation_id": "obs:m2t004-s6-ground-truth-event:1000010010:ct2010",
+      "value_digest": "sha256:d10a4bc9e0c1fa4e8f3d7ce2512b8756e47ca5fa451f373c39a1431bb88db49f",
+      "response_digest": "sha256:030f188844c2efb2217feae0594fabed7322b93135a6f33c0870704a16c259a5"
     },
     {
       "provenance_id": "pluto-64uk-42ks-26v1-1000010010-easements",
@@ -777,7 +877,11 @@
       "conflict_status": "none",
       "dataset_id": "64uk-42ks",
       "request_url": "https://data.cityofnewyork.us/resource/64uk-42ks.json?bbl=1000010010",
-      "input_vintages": {}
+      "input_vintages": {},
+      "fact_key": "fact:nyc-dcp-pluto-soda:64uk-42ks:1000010010:easements",
+      "observation_id": "obs:m2t004-s6-ground-truth-event:1000010010:easements",
+      "value_digest": "sha256:98089e6d36f78e9766c9ea34d5acb3611f3a92cd81c5eb102095d924ffc7d08b",
+      "response_digest": "sha256:030f188844c2efb2217feae0594fabed7322b93135a6f33c0870704a16c259a5"
     },
     {
       "provenance_id": "pluto-64uk-42ks-26v1-1000010010-exempttot",
@@ -795,7 +899,11 @@
       "conflict_status": "none",
       "dataset_id": "64uk-42ks",
       "request_url": "https://data.cityofnewyork.us/resource/64uk-42ks.json?bbl=1000010010",
-      "input_vintages": {}
+      "input_vintages": {},
+      "fact_key": "fact:nyc-dcp-pluto-soda:64uk-42ks:1000010010:exempttot",
+      "observation_id": "obs:m2t004-s6-ground-truth-event:1000010010:exempttot",
+      "value_digest": "sha256:bd2995fdd379b14db8630f98296defb567e9dfe9a17d0ca9e9b11dfdf6a851f2",
+      "response_digest": "sha256:030f188844c2efb2217feae0594fabed7322b93135a6f33c0870704a16c259a5"
     },
     {
       "provenance_id": "pluto-64uk-42ks-26v1-1000010010-ext",
@@ -813,7 +921,11 @@
       "conflict_status": "none",
       "dataset_id": "64uk-42ks",
       "request_url": "https://data.cityofnewyork.us/resource/64uk-42ks.json?bbl=1000010010",
-      "input_vintages": {}
+      "input_vintages": {},
+      "fact_key": "fact:nyc-dcp-pluto-soda:64uk-42ks:1000010010:ext",
+      "observation_id": "obs:m2t004-s6-ground-truth-event:1000010010:ext",
+      "value_digest": "sha256:f9dfd61493ca94a454a5eed57383fda3e8c36afd6315c3aa952415d6f2637cdb",
+      "response_digest": "sha256:030f188844c2efb2217feae0594fabed7322b93135a6f33c0870704a16c259a5"
     },
     {
       "provenance_id": "pluto-64uk-42ks-26v1-1000010010-facilfar",
@@ -831,7 +943,11 @@
       "conflict_status": "none",
       "dataset_id": "64uk-42ks",
       "request_url": "https://data.cityofnewyork.us/resource/64uk-42ks.json?bbl=1000010010",
-      "input_vintages": {}
+      "input_vintages": {},
+      "fact_key": "fact:nyc-dcp-pluto-soda:64uk-42ks:1000010010:facilfar",
+      "observation_id": "obs:m2t004-s6-ground-truth-event:1000010010:facilfar",
+      "value_digest": "sha256:8733e7f60434366848060f5b96246db2505387f9d62cc3781582bd17a9cb1042",
+      "response_digest": "sha256:030f188844c2efb2217feae0594fabed7322b93135a6f33c0870704a16c259a5"
     },
     {
       "provenance_id": "pluto-64uk-42ks-26v1-1000010010-factryarea",
@@ -849,7 +965,11 @@
       "conflict_status": "none",
       "dataset_id": "64uk-42ks",
       "request_url": "https://data.cityofnewyork.us/resource/64uk-42ks.json?bbl=1000010010",
-      "input_vintages": {}
+      "input_vintages": {},
+      "fact_key": "fact:nyc-dcp-pluto-soda:64uk-42ks:1000010010:factryarea",
+      "observation_id": "obs:m2t004-s6-ground-truth-event:1000010010:factryarea",
+      "value_digest": "sha256:98089e6d36f78e9766c9ea34d5acb3611f3a92cd81c5eb102095d924ffc7d08b",
+      "response_digest": "sha256:030f188844c2efb2217feae0594fabed7322b93135a6f33c0870704a16c259a5"
     },
     {
       "provenance_id": "pluto-64uk-42ks-26v1-1000010010-firecomp",
@@ -867,7 +987,11 @@
       "conflict_status": "none",
       "dataset_id": "64uk-42ks",
       "request_url": "https://data.cityofnewyork.us/resource/64uk-42ks.json?bbl=1000010010",
-      "input_vintages": {}
+      "input_vintages": {},
+      "fact_key": "fact:nyc-dcp-pluto-soda:64uk-42ks:1000010010:firecomp",
+      "observation_id": "obs:m2t004-s6-ground-truth-event:1000010010:firecomp",
+      "value_digest": "sha256:a4d761286dff886b2398d4ea2cc616c1c8c5e3f87411ed3c076c04513a362d2d",
+      "response_digest": "sha256:030f188844c2efb2217feae0594fabed7322b93135a6f33c0870704a16c259a5"
     },
     {
       "provenance_id": "pluto-64uk-42ks-26v1-1000010010-firm07_flag",
@@ -885,7 +1009,11 @@
       "conflict_status": "none",
       "dataset_id": "64uk-42ks",
       "request_url": "https://data.cityofnewyork.us/resource/64uk-42ks.json?bbl=1000010010",
-      "input_vintages": {}
+      "input_vintages": {},
+      "fact_key": "fact:nyc-dcp-pluto-soda:64uk-42ks:1000010010:firm07_flag",
+      "observation_id": "obs:m2t004-s6-ground-truth-event:1000010010:firm07_flag",
+      "value_digest": "sha256:391552c099c101b131feaf24c5795a6a15bc8ec82015424e0d2b4274a369a0bf",
+      "response_digest": "sha256:030f188844c2efb2217feae0594fabed7322b93135a6f33c0870704a16c259a5"
     },
     {
       "provenance_id": "pluto-64uk-42ks-26v1-1000010010-garagearea",
@@ -903,7 +1031,11 @@
       "conflict_status": "none",
       "dataset_id": "64uk-42ks",
       "request_url": "https://data.cityofnewyork.us/resource/64uk-42ks.json?bbl=1000010010",
-      "input_vintages": {}
+      "input_vintages": {},
+      "fact_key": "fact:nyc-dcp-pluto-soda:64uk-42ks:1000010010:garagearea",
+      "observation_id": "obs:m2t004-s6-ground-truth-event:1000010010:garagearea",
+      "value_digest": "sha256:98089e6d36f78e9766c9ea34d5acb3611f3a92cd81c5eb102095d924ffc7d08b",
+      "response_digest": "sha256:030f188844c2efb2217feae0594fabed7322b93135a6f33c0870704a16c259a5"
     },
     {
       "provenance_id": "pluto-64uk-42ks-26v1-1000010010-healtharea",
@@ -921,7 +1053,11 @@
       "conflict_status": "none",
       "dataset_id": "64uk-42ks",
       "request_url": "https://data.cityofnewyork.us/resource/64uk-42ks.json?bbl=1000010010",
-      "input_vintages": {}
+      "input_vintages": {},
+      "fact_key": "fact:nyc-dcp-pluto-soda:64uk-42ks:1000010010:healtharea",
+      "observation_id": "obs:m2t004-s6-ground-truth-event:1000010010:healtharea",
+      "value_digest": "sha256:219d6f3788f5ebee2b8a30969d09c3c27e4eb2795bdb458be84f285c25c300b8",
+      "response_digest": "sha256:030f188844c2efb2217feae0594fabed7322b93135a6f33c0870704a16c259a5"
     },
     {
       "provenance_id": "pluto-64uk-42ks-26v1-1000010010-healthcenterdistrict",
@@ -939,7 +1075,11 @@
       "conflict_status": "none",
       "dataset_id": "64uk-42ks",
       "request_url": "https://data.cityofnewyork.us/resource/64uk-42ks.json?bbl=1000010010",
-      "input_vintages": {}
+      "input_vintages": {},
+      "fact_key": "fact:nyc-dcp-pluto-soda:64uk-42ks:1000010010:healthcenterdistrict",
+      "observation_id": "obs:m2t004-s6-ground-truth-event:1000010010:healthcenterdistrict",
+      "value_digest": "sha256:47cea6234e51694af3ba37750e249b15a6cd79dce68ac582e3075bb28393b5ea",
+      "response_digest": "sha256:030f188844c2efb2217feae0594fabed7322b93135a6f33c0870704a16c259a5"
     },
     {
       "provenance_id": "pluto-64uk-42ks-26v1-1000010010-histdist",
@@ -957,7 +1097,11 @@
       "conflict_status": "none",
       "dataset_id": "64uk-42ks",
       "request_url": "https://data.cityofnewyork.us/resource/64uk-42ks.json?bbl=1000010010",
-      "input_vintages": {}
+      "input_vintages": {},
+      "fact_key": "fact:nyc-dcp-pluto-soda:64uk-42ks:1000010010:histdist",
+      "observation_id": "obs:m2t004-s6-ground-truth-event:1000010010:histdist",
+      "value_digest": "sha256:9c91989176965f2ad0bac1780f46f51d667a7abc7f80b5440f18de6eefdb8505",
+      "response_digest": "sha256:030f188844c2efb2217feae0594fabed7322b93135a6f33c0870704a16c259a5"
     },
     {
       "provenance_id": "pluto-64uk-42ks-26v1-1000010010-irrlotcode",
@@ -975,7 +1119,11 @@
       "conflict_status": "none",
       "dataset_id": "64uk-42ks",
       "request_url": "https://data.cityofnewyork.us/resource/64uk-42ks.json?bbl=1000010010",
-      "input_vintages": {}
+      "input_vintages": {},
+      "fact_key": "fact:nyc-dcp-pluto-soda:64uk-42ks:1000010010:irrlotcode",
+      "observation_id": "obs:m2t004-s6-ground-truth-event:1000010010:irrlotcode",
+      "value_digest": "sha256:fcbcf165908dd18a9e49f7ff27810176db8e9f63b4352213741664245224f8aa",
+      "response_digest": "sha256:030f188844c2efb2217feae0594fabed7322b93135a6f33c0870704a16c259a5"
     },
     {
       "provenance_id": "pluto-64uk-42ks-26v1-1000010010-landmark",
@@ -993,7 +1141,11 @@
       "conflict_status": "none",
       "dataset_id": "64uk-42ks",
       "request_url": "https://data.cityofnewyork.us/resource/64uk-42ks.json?bbl=1000010010",
-      "input_vintages": {}
+      "input_vintages": {},
+      "fact_key": "fact:nyc-dcp-pluto-soda:64uk-42ks:1000010010:landmark",
+      "observation_id": "obs:m2t004-s6-ground-truth-event:1000010010:landmark",
+      "value_digest": "sha256:f65a64ea38b30f4f068cd946a26d9846db3fd011e12cc25be4affa540d15004e",
+      "response_digest": "sha256:030f188844c2efb2217feae0594fabed7322b93135a6f33c0870704a16c259a5"
     },
     {
       "provenance_id": "pluto-64uk-42ks-26v1-1000010010-landuse",
@@ -1011,7 +1163,11 @@
       "conflict_status": "none",
       "dataset_id": "64uk-42ks",
       "request_url": "https://data.cityofnewyork.us/resource/64uk-42ks.json?bbl=1000010010",
-      "input_vintages": {}
+      "input_vintages": {},
+      "fact_key": "fact:nyc-dcp-pluto-soda:64uk-42ks:1000010010:landuse",
+      "observation_id": "obs:m2t004-s6-ground-truth-event:1000010010:landuse",
+      "value_digest": "sha256:ade1a1c2a61af0f279a4978dfddcdb6acd33f5a8b61e62c5fd881e8a88a387bc",
+      "response_digest": "sha256:030f188844c2efb2217feae0594fabed7322b93135a6f33c0870704a16c259a5"
     },
     {
       "provenance_id": "pluto-64uk-42ks-26v1-1000010010-latitude",
@@ -1029,7 +1185,11 @@
       "conflict_status": "none",
       "dataset_id": "64uk-42ks",
       "request_url": "https://data.cityofnewyork.us/resource/64uk-42ks.json?bbl=1000010010",
-      "input_vintages": {}
+      "input_vintages": {},
+      "fact_key": "fact:nyc-dcp-pluto-soda:64uk-42ks:1000010010:latitude",
+      "observation_id": "obs:m2t004-s6-ground-truth-event:1000010010:latitude",
+      "value_digest": "sha256:6974f1181a3dcba3bf54d9042a2efb6fa049e41cbc40b963a0401d2d6d89d741",
+      "response_digest": "sha256:030f188844c2efb2217feae0594fabed7322b93135a6f33c0870704a16c259a5"
     },
     {
       "provenance_id": "pluto-64uk-42ks-26v1-1000010010-longitude",
@@ -1047,7 +1207,11 @@
       "conflict_status": "none",
       "dataset_id": "64uk-42ks",
       "request_url": "https://data.cityofnewyork.us/resource/64uk-42ks.json?bbl=1000010010",
-      "input_vintages": {}
+      "input_vintages": {},
+      "fact_key": "fact:nyc-dcp-pluto-soda:64uk-42ks:1000010010:longitude",
+      "observation_id": "obs:m2t004-s6-ground-truth-event:1000010010:longitude",
+      "value_digest": "sha256:bbe5413cb32d9f7cf64cbda3eb4d09afe1cb1913d2737ef8f0c5ba4fd3fefeff",
+      "response_digest": "sha256:030f188844c2efb2217feae0594fabed7322b93135a6f33c0870704a16c259a5"
     },
     {
       "provenance_id": "pluto-64uk-42ks-26v1-1000010010-lot",
@@ -1065,7 +1229,11 @@
       "conflict_status": "none",
       "dataset_id": "64uk-42ks",
       "request_url": "https://data.cityofnewyork.us/resource/64uk-42ks.json?bbl=1000010010",
-      "input_vintages": {}
+      "input_vintages": {},
+      "fact_key": "fact:nyc-dcp-pluto-soda:64uk-42ks:1000010010:lot",
+      "observation_id": "obs:m2t004-s6-ground-truth-event:1000010010:lot",
+      "value_digest": "sha256:536549599ec6c3b859cd3970025779a13d061783c73e663fea7f963e98379aa8",
+      "response_digest": "sha256:030f188844c2efb2217feae0594fabed7322b93135a6f33c0870704a16c259a5"
     },
     {
       "provenance_id": "pluto-64uk-42ks-26v1-1000010010-lotarea",
@@ -1083,7 +1251,11 @@
       "conflict_status": "none",
       "dataset_id": "64uk-42ks",
       "request_url": "https://data.cityofnewyork.us/resource/64uk-42ks.json?bbl=1000010010",
-      "input_vintages": {}
+      "input_vintages": {},
+      "fact_key": "fact:nyc-dcp-pluto-soda:64uk-42ks:1000010010:lotarea",
+      "observation_id": "obs:m2t004-s6-ground-truth-event:1000010010:lotarea",
+      "value_digest": "sha256:3aa36437632a14395db58941ae5327d5ea2df0dc96ef84dd693331cd3dcc69d6",
+      "response_digest": "sha256:030f188844c2efb2217feae0594fabed7322b93135a6f33c0870704a16c259a5"
     },
     {
       "provenance_id": "pluto-64uk-42ks-26v1-1000010010-lotdepth",
@@ -1101,7 +1273,11 @@
       "conflict_status": "none",
       "dataset_id": "64uk-42ks",
       "request_url": "https://data.cityofnewyork.us/resource/64uk-42ks.json?bbl=1000010010",
-      "input_vintages": {}
+      "input_vintages": {},
+      "fact_key": "fact:nyc-dcp-pluto-soda:64uk-42ks:1000010010:lotdepth",
+      "observation_id": "obs:m2t004-s6-ground-truth-event:1000010010:lotdepth",
+      "value_digest": "sha256:5b12a56f12c0b7cb70a325211ff4e0867c0b723f063b28bc7dfd877b117031e2",
+      "response_digest": "sha256:030f188844c2efb2217feae0594fabed7322b93135a6f33c0870704a16c259a5"
     },
     {
       "provenance_id": "pluto-64uk-42ks-26v1-1000010010-lotfront",
@@ -1119,7 +1295,11 @@
       "conflict_status": "none",
       "dataset_id": "64uk-42ks",
       "request_url": "https://data.cityofnewyork.us/resource/64uk-42ks.json?bbl=1000010010",
-      "input_vintages": {}
+      "input_vintages": {},
+      "fact_key": "fact:nyc-dcp-pluto-soda:64uk-42ks:1000010010:lotfront",
+      "observation_id": "obs:m2t004-s6-ground-truth-event:1000010010:lotfront",
+      "value_digest": "sha256:5b12a56f12c0b7cb70a325211ff4e0867c0b723f063b28bc7dfd877b117031e2",
+      "response_digest": "sha256:030f188844c2efb2217feae0594fabed7322b93135a6f33c0870704a16c259a5"
     },
     {
       "provenance_id": "pluto-64uk-42ks-26v1-1000010010-lottype",
@@ -1137,7 +1317,11 @@
       "conflict_status": "none",
       "dataset_id": "64uk-42ks",
       "request_url": "https://data.cityofnewyork.us/resource/64uk-42ks.json?bbl=1000010010",
-      "input_vintages": {}
+      "input_vintages": {},
+      "fact_key": "fact:nyc-dcp-pluto-soda:64uk-42ks:1000010010:lottype",
+      "observation_id": "obs:m2t004-s6-ground-truth-event:1000010010:lottype",
+      "value_digest": "sha256:d10a4bc9e0c1fa4e8f3d7ce2512b8756e47ca5fa451f373c39a1431bb88db49f",
+      "response_digest": "sha256:030f188844c2efb2217feae0594fabed7322b93135a6f33c0870704a16c259a5"
     },
     {
       "provenance_id": "pluto-64uk-42ks-26v1-1000010010-mnffar",
@@ -1155,7 +1339,11 @@
       "conflict_status": "none",
       "dataset_id": "64uk-42ks",
       "request_url": "https://data.cityofnewyork.us/resource/64uk-42ks.json?bbl=1000010010",
-      "input_vintages": {}
+      "input_vintages": {},
+      "fact_key": "fact:nyc-dcp-pluto-soda:64uk-42ks:1000010010:mnffar",
+      "observation_id": "obs:m2t004-s6-ground-truth-event:1000010010:mnffar",
+      "value_digest": "sha256:09726995307b1dbad1bcb9a0e7ac6b4cbe8f339997f7c8b13188755eb4fc3f1f",
+      "response_digest": "sha256:030f188844c2efb2217feae0594fabed7322b93135a6f33c0870704a16c259a5"
     },
     {
       "provenance_id": "pluto-64uk-42ks-26v1-1000010010-numbldgs",
@@ -1173,7 +1361,11 @@
       "conflict_status": "none",
       "dataset_id": "64uk-42ks",
       "request_url": "https://data.cityofnewyork.us/resource/64uk-42ks.json?bbl=1000010010",
-      "input_vintages": {}
+      "input_vintages": {},
+      "fact_key": "fact:nyc-dcp-pluto-soda:64uk-42ks:1000010010:numbldgs",
+      "observation_id": "obs:m2t004-s6-ground-truth-event:1000010010:numbldgs",
+      "value_digest": "sha256:e3a534c81abf0641d823da24a2ab681479dfd964d1a423be59a550ec62593fbb",
+      "response_digest": "sha256:030f188844c2efb2217feae0594fabed7322b93135a6f33c0870704a16c259a5"
     },
     {
       "provenance_id": "pluto-64uk-42ks-26v1-1000010010-numfloors",
@@ -1191,7 +1383,11 @@
       "conflict_status": "none",
       "dataset_id": "64uk-42ks",
       "request_url": "https://data.cityofnewyork.us/resource/64uk-42ks.json?bbl=1000010010",
-      "input_vintages": {}
+      "input_vintages": {},
+      "fact_key": "fact:nyc-dcp-pluto-soda:64uk-42ks:1000010010:numfloors",
+      "observation_id": "obs:m2t004-s6-ground-truth-event:1000010010:numfloors",
+      "value_digest": "sha256:435469810ca07c8134adaa29d558b557a857a52577e8f57fbd4a07f15823074c",
+      "response_digest": "sha256:030f188844c2efb2217feae0594fabed7322b93135a6f33c0870704a16c259a5"
     },
     {
       "provenance_id": "pluto-64uk-42ks-26v1-1000010010-officearea",
@@ -1209,7 +1405,11 @@
       "conflict_status": "none",
       "dataset_id": "64uk-42ks",
       "request_url": "https://data.cityofnewyork.us/resource/64uk-42ks.json?bbl=1000010010",
-      "input_vintages": {}
+      "input_vintages": {},
+      "fact_key": "fact:nyc-dcp-pluto-soda:64uk-42ks:1000010010:officearea",
+      "observation_id": "obs:m2t004-s6-ground-truth-event:1000010010:officearea",
+      "value_digest": "sha256:98089e6d36f78e9766c9ea34d5acb3611f3a92cd81c5eb102095d924ffc7d08b",
+      "response_digest": "sha256:030f188844c2efb2217feae0594fabed7322b93135a6f33c0870704a16c259a5"
     },
     {
       "provenance_id": "pluto-64uk-42ks-26v1-1000010010-otherarea",
@@ -1227,7 +1427,11 @@
       "conflict_status": "none",
       "dataset_id": "64uk-42ks",
       "request_url": "https://data.cityofnewyork.us/resource/64uk-42ks.json?bbl=1000010010",
-      "input_vintages": {}
+      "input_vintages": {},
+      "fact_key": "fact:nyc-dcp-pluto-soda:64uk-42ks:1000010010:otherarea",
+      "observation_id": "obs:m2t004-s6-ground-truth-event:1000010010:otherarea",
+      "value_digest": "sha256:c323c25b8f91ce0df45c95a1f25e0748809a7437d50f22288055108a16d3c90b",
+      "response_digest": "sha256:030f188844c2efb2217feae0594fabed7322b93135a6f33c0870704a16c259a5"
     },
     {
       "provenance_id": "pluto-64uk-42ks-26v1-1000010010-ownername",
@@ -1245,7 +1449,11 @@
       "conflict_status": "none",
       "dataset_id": "64uk-42ks",
       "request_url": "https://data.cityofnewyork.us/resource/64uk-42ks.json?bbl=1000010010",
-      "input_vintages": {}
+      "input_vintages": {},
+      "fact_key": "fact:nyc-dcp-pluto-soda:64uk-42ks:1000010010:ownername",
+      "observation_id": "obs:m2t004-s6-ground-truth-event:1000010010:ownername",
+      "value_digest": "sha256:7ff7c99155751dfd18d71a67bef66eb530d83302bd9aa4ac7179ea1e70dd42f5",
+      "response_digest": "sha256:030f188844c2efb2217feae0594fabed7322b93135a6f33c0870704a16c259a5"
     },
     {
       "provenance_id": "pluto-64uk-42ks-26v1-1000010010-ownertype",
@@ -1263,7 +1471,11 @@
       "conflict_status": "none",
       "dataset_id": "64uk-42ks",
       "request_url": "https://data.cityofnewyork.us/resource/64uk-42ks.json?bbl=1000010010",
-      "input_vintages": {}
+      "input_vintages": {},
+      "fact_key": "fact:nyc-dcp-pluto-soda:64uk-42ks:1000010010:ownertype",
+      "observation_id": "obs:m2t004-s6-ground-truth-event:1000010010:ownertype",
+      "value_digest": "sha256:de9e4020d0fe7c98642db490864cd47513a4ed41689f505166c541ec5bba3a9f",
+      "response_digest": "sha256:030f188844c2efb2217feae0594fabed7322b93135a6f33c0870704a16c259a5"
     },
     {
       "provenance_id": "pluto-64uk-42ks-26v1-1000010010-pfirm15_flag",
@@ -1281,7 +1493,11 @@
       "conflict_status": "none",
       "dataset_id": "64uk-42ks",
       "request_url": "https://data.cityofnewyork.us/resource/64uk-42ks.json?bbl=1000010010",
-      "input_vintages": {}
+      "input_vintages": {},
+      "fact_key": "fact:nyc-dcp-pluto-soda:64uk-42ks:1000010010:pfirm15_flag",
+      "observation_id": "obs:m2t004-s6-ground-truth-event:1000010010:pfirm15_flag",
+      "value_digest": "sha256:391552c099c101b131feaf24c5795a6a15bc8ec82015424e0d2b4274a369a0bf",
+      "response_digest": "sha256:030f188844c2efb2217feae0594fabed7322b93135a6f33c0870704a16c259a5"
     },
     {
       "provenance_id": "pluto-64uk-42ks-26v1-1000010010-plutomapid",
@@ -1299,7 +1515,11 @@
       "conflict_status": "none",
       "dataset_id": "64uk-42ks",
       "request_url": "https://data.cityofnewyork.us/resource/64uk-42ks.json?bbl=1000010010",
-      "input_vintages": {}
+      "input_vintages": {},
+      "fact_key": "fact:nyc-dcp-pluto-soda:64uk-42ks:1000010010:plutomapid",
+      "observation_id": "obs:m2t004-s6-ground-truth-event:1000010010:plutomapid",
+      "value_digest": "sha256:391552c099c101b131feaf24c5795a6a15bc8ec82015424e0d2b4274a369a0bf",
+      "response_digest": "sha256:030f188844c2efb2217feae0594fabed7322b93135a6f33c0870704a16c259a5"
     },
     {
       "provenance_id": "pluto-64uk-42ks-26v1-1000010010-policeprct",
@@ -1317,7 +1537,11 @@
       "conflict_status": "none",
       "dataset_id": "64uk-42ks",
       "request_url": "https://data.cityofnewyork.us/resource/64uk-42ks.json?bbl=1000010010",
-      "input_vintages": {}
+      "input_vintages": {},
+      "fact_key": "fact:nyc-dcp-pluto-soda:64uk-42ks:1000010010:policeprct",
+      "observation_id": "obs:m2t004-s6-ground-truth-event:1000010010:policeprct",
+      "value_digest": "sha256:391552c099c101b131feaf24c5795a6a15bc8ec82015424e0d2b4274a369a0bf",
+      "response_digest": "sha256:030f188844c2efb2217feae0594fabed7322b93135a6f33c0870704a16c259a5"
     },
     {
       "provenance_id": "pluto-64uk-42ks-26v1-1000010010-proxcode",
@@ -1335,7 +1559,11 @@
       "conflict_status": "none",
       "dataset_id": "64uk-42ks",
       "request_url": "https://data.cityofnewyork.us/resource/64uk-42ks.json?bbl=1000010010",
-      "input_vintages": {}
+      "input_vintages": {},
+      "fact_key": "fact:nyc-dcp-pluto-soda:64uk-42ks:1000010010:proxcode",
+      "observation_id": "obs:m2t004-s6-ground-truth-event:1000010010:proxcode",
+      "value_digest": "sha256:98089e6d36f78e9766c9ea34d5acb3611f3a92cd81c5eb102095d924ffc7d08b",
+      "response_digest": "sha256:030f188844c2efb2217feae0594fabed7322b93135a6f33c0870704a16c259a5"
     },
     {
       "provenance_id": "pluto-64uk-42ks-26v1-1000010010-resarea",
@@ -1353,7 +1581,11 @@
       "conflict_status": "none",
       "dataset_id": "64uk-42ks",
       "request_url": "https://data.cityofnewyork.us/resource/64uk-42ks.json?bbl=1000010010",
-      "input_vintages": {}
+      "input_vintages": {},
+      "fact_key": "fact:nyc-dcp-pluto-soda:64uk-42ks:1000010010:resarea",
+      "observation_id": "obs:m2t004-s6-ground-truth-event:1000010010:resarea",
+      "value_digest": "sha256:98089e6d36f78e9766c9ea34d5acb3611f3a92cd81c5eb102095d924ffc7d08b",
+      "response_digest": "sha256:030f188844c2efb2217feae0594fabed7322b93135a6f33c0870704a16c259a5"
     },
     {
       "provenance_id": "pluto-64uk-42ks-26v1-1000010010-residfar",
@@ -1371,7 +1603,11 @@
       "conflict_status": "none",
       "dataset_id": "64uk-42ks",
       "request_url": "https://data.cityofnewyork.us/resource/64uk-42ks.json?bbl=1000010010",
-      "input_vintages": {}
+      "input_vintages": {},
+      "fact_key": "fact:nyc-dcp-pluto-soda:64uk-42ks:1000010010:residfar",
+      "observation_id": "obs:m2t004-s6-ground-truth-event:1000010010:residfar",
+      "value_digest": "sha256:f8f29c89fc36e4c230daea6754228035285fe40d39fd6f59a27bb8425d2463cd",
+      "response_digest": "sha256:030f188844c2efb2217feae0594fabed7322b93135a6f33c0870704a16c259a5"
     },
     {
       "provenance_id": "pluto-64uk-42ks-26v1-1000010010-retailarea",
@@ -1389,7 +1625,11 @@
       "conflict_status": "none",
       "dataset_id": "64uk-42ks",
       "request_url": "https://data.cityofnewyork.us/resource/64uk-42ks.json?bbl=1000010010",
-      "input_vintages": {}
+      "input_vintages": {},
+      "fact_key": "fact:nyc-dcp-pluto-soda:64uk-42ks:1000010010:retailarea",
+      "observation_id": "obs:m2t004-s6-ground-truth-event:1000010010:retailarea",
+      "value_digest": "sha256:98089e6d36f78e9766c9ea34d5acb3611f3a92cd81c5eb102095d924ffc7d08b",
+      "response_digest": "sha256:030f188844c2efb2217feae0594fabed7322b93135a6f33c0870704a16c259a5"
     },
     {
       "provenance_id": "pluto-64uk-42ks-26v1-1000010010-sanborn",
@@ -1407,7 +1647,11 @@
       "conflict_status": "none",
       "dataset_id": "64uk-42ks",
       "request_url": "https://data.cityofnewyork.us/resource/64uk-42ks.json?bbl=1000010010",
-      "input_vintages": {}
+      "input_vintages": {},
+      "fact_key": "fact:nyc-dcp-pluto-soda:64uk-42ks:1000010010:sanborn",
+      "observation_id": "obs:m2t004-s6-ground-truth-event:1000010010:sanborn",
+      "value_digest": "sha256:03a0620232630a217987b8a2e91a54b88893e046e02b45b249461ff3aa3a41f7",
+      "response_digest": "sha256:030f188844c2efb2217feae0594fabed7322b93135a6f33c0870704a16c259a5"
     },
     {
       "provenance_id": "pluto-64uk-42ks-26v1-1000010010-sanitboro",
@@ -1425,7 +1669,11 @@
       "conflict_status": "none",
       "dataset_id": "64uk-42ks",
       "request_url": "https://data.cityofnewyork.us/resource/64uk-42ks.json?bbl=1000010010",
-      "input_vintages": {}
+      "input_vintages": {},
+      "fact_key": "fact:nyc-dcp-pluto-soda:64uk-42ks:1000010010:sanitboro",
+      "observation_id": "obs:m2t004-s6-ground-truth-event:1000010010:sanitboro",
+      "value_digest": "sha256:391552c099c101b131feaf24c5795a6a15bc8ec82015424e0d2b4274a369a0bf",
+      "response_digest": "sha256:030f188844c2efb2217feae0594fabed7322b93135a6f33c0870704a16c259a5"
     },
     {
       "provenance_id": "pluto-64uk-42ks-26v1-1000010010-sanitdistrict",
@@ -1443,7 +1691,11 @@
       "conflict_status": "none",
       "dataset_id": "64uk-42ks",
       "request_url": "https://data.cityofnewyork.us/resource/64uk-42ks.json?bbl=1000010010",
-      "input_vintages": {}
+      "input_vintages": {},
+      "fact_key": "fact:nyc-dcp-pluto-soda:64uk-42ks:1000010010:sanitdistrict",
+      "observation_id": "obs:m2t004-s6-ground-truth-event:1000010010:sanitdistrict",
+      "value_digest": "sha256:391552c099c101b131feaf24c5795a6a15bc8ec82015424e0d2b4274a369a0bf",
+      "response_digest": "sha256:030f188844c2efb2217feae0594fabed7322b93135a6f33c0870704a16c259a5"
     },
     {
       "provenance_id": "pluto-64uk-42ks-26v1-1000010010-sanitsub",
@@ -1461,7 +1713,11 @@
       "conflict_status": "none",
       "dataset_id": "64uk-42ks",
       "request_url": "https://data.cityofnewyork.us/resource/64uk-42ks.json?bbl=1000010010",
-      "input_vintages": {}
+      "input_vintages": {},
+      "fact_key": "fact:nyc-dcp-pluto-soda:64uk-42ks:1000010010:sanitsub",
+      "observation_id": "obs:m2t004-s6-ground-truth-event:1000010010:sanitsub",
+      "value_digest": "sha256:f8bb5f31fab0238da8b86720bbd6a9a7f0df0e3ebb673ca4d522b3e3f463dfbc",
+      "response_digest": "sha256:030f188844c2efb2217feae0594fabed7322b93135a6f33c0870704a16c259a5"
     },
     {
       "provenance_id": "pluto-64uk-42ks-26v1-1000010010-schooldist",
@@ -1479,7 +1735,11 @@
       "conflict_status": "none",
       "dataset_id": "64uk-42ks",
       "request_url": "https://data.cityofnewyork.us/resource/64uk-42ks.json?bbl=1000010010",
-      "input_vintages": {}
+      "input_vintages": {},
+      "fact_key": "fact:nyc-dcp-pluto-soda:64uk-42ks:1000010010:schooldist",
+      "observation_id": "obs:m2t004-s6-ground-truth-event:1000010010:schooldist",
+      "value_digest": "sha256:cc11310c456c3690d5a74c23aa31cc25b4e74cdae146c71e54ad9dbc1d109fde",
+      "response_digest": "sha256:030f188844c2efb2217feae0594fabed7322b93135a6f33c0870704a16c259a5"
     },
     {
       "provenance_id": "pluto-64uk-42ks-26v1-1000010010-spdist1",
@@ -1497,7 +1757,11 @@
       "conflict_status": "none",
       "dataset_id": "64uk-42ks",
       "request_url": "https://data.cityofnewyork.us/resource/64uk-42ks.json?bbl=1000010010",
-      "input_vintages": {}
+      "input_vintages": {},
+      "fact_key": "fact:nyc-dcp-pluto-soda:64uk-42ks:1000010010:spdist1",
+      "observation_id": "obs:m2t004-s6-ground-truth-event:1000010010:spdist1",
+      "value_digest": "sha256:ac6b942644c2935d11b43b60fba664fadc52536d7ee505266fd1f59e0639579c",
+      "response_digest": "sha256:030f188844c2efb2217feae0594fabed7322b93135a6f33c0870704a16c259a5"
     },
     {
       "provenance_id": "pluto-64uk-42ks-26v1-1000010010-splitzone",
@@ -1515,7 +1779,11 @@
       "conflict_status": "none",
       "dataset_id": "64uk-42ks",
       "request_url": "https://data.cityofnewyork.us/resource/64uk-42ks.json?bbl=1000010010",
-      "input_vintages": {}
+      "input_vintages": {},
+      "fact_key": "fact:nyc-dcp-pluto-soda:64uk-42ks:1000010010:splitzone",
+      "observation_id": "obs:m2t004-s6-ground-truth-event:1000010010:splitzone",
+      "value_digest": "sha256:b5bea41b6c623f7c09f1bf24dcae58ebab3c0cdd90ad966bc43a45b44867e12b",
+      "response_digest": "sha256:030f188844c2efb2217feae0594fabed7322b93135a6f33c0870704a16c259a5"
     },
     {
       "provenance_id": "pluto-64uk-42ks-26v1-1000010010-strgearea",
@@ -1533,7 +1801,11 @@
       "conflict_status": "none",
       "dataset_id": "64uk-42ks",
       "request_url": "https://data.cityofnewyork.us/resource/64uk-42ks.json?bbl=1000010010",
-      "input_vintages": {}
+      "input_vintages": {},
+      "fact_key": "fact:nyc-dcp-pluto-soda:64uk-42ks:1000010010:strgearea",
+      "observation_id": "obs:m2t004-s6-ground-truth-event:1000010010:strgearea",
+      "value_digest": "sha256:98089e6d36f78e9766c9ea34d5acb3611f3a92cd81c5eb102095d924ffc7d08b",
+      "response_digest": "sha256:030f188844c2efb2217feae0594fabed7322b93135a6f33c0870704a16c259a5"
     },
     {
       "provenance_id": "pluto-64uk-42ks-26v1-1000010010-taxmap",
@@ -1551,7 +1823,11 @@
       "conflict_status": "none",
       "dataset_id": "64uk-42ks",
       "request_url": "https://data.cityofnewyork.us/resource/64uk-42ks.json?bbl=1000010010",
-      "input_vintages": {}
+      "input_vintages": {},
+      "fact_key": "fact:nyc-dcp-pluto-soda:64uk-42ks:1000010010:taxmap",
+      "observation_id": "obs:m2t004-s6-ground-truth-event:1000010010:taxmap",
+      "value_digest": "sha256:955768c26da41c8dbd3679e249dd1c17a07d59f1543e3c5a204393b448a3142f",
+      "response_digest": "sha256:030f188844c2efb2217feae0594fabed7322b93135a6f33c0870704a16c259a5"
     },
     {
       "provenance_id": "pluto-64uk-42ks-26v1-1000010010-tract2010",
@@ -1569,7 +1845,11 @@
       "conflict_status": "none",
       "dataset_id": "64uk-42ks",
       "request_url": "https://data.cityofnewyork.us/resource/64uk-42ks.json?bbl=1000010010",
-      "input_vintages": {}
+      "input_vintages": {},
+      "fact_key": "fact:nyc-dcp-pluto-soda:64uk-42ks:1000010010:tract2010",
+      "observation_id": "obs:m2t004-s6-ground-truth-event:1000010010:tract2010",
+      "value_digest": "sha256:d10a4bc9e0c1fa4e8f3d7ce2512b8756e47ca5fa451f373c39a1431bb88db49f",
+      "response_digest": "sha256:030f188844c2efb2217feae0594fabed7322b93135a6f33c0870704a16c259a5"
     },
     {
       "provenance_id": "pluto-64uk-42ks-26v1-1000010010-transitzone",
@@ -1587,7 +1867,11 @@
       "conflict_status": "none",
       "dataset_id": "64uk-42ks",
       "request_url": "https://data.cityofnewyork.us/resource/64uk-42ks.json?bbl=1000010010",
-      "input_vintages": {}
+      "input_vintages": {},
+      "fact_key": "fact:nyc-dcp-pluto-soda:64uk-42ks:1000010010:transitzone",
+      "observation_id": "obs:m2t004-s6-ground-truth-event:1000010010:transitzone",
+      "value_digest": "sha256:ce1f4ef124ad5662f50a8e30561f696f3e1657e1af6c3b50f8c022090c96ec1f",
+      "response_digest": "sha256:030f188844c2efb2217feae0594fabed7322b93135a6f33c0870704a16c259a5"
     },
     {
       "provenance_id": "pluto-64uk-42ks-26v1-1000010010-unitsres",
@@ -1605,7 +1889,11 @@
       "conflict_status": "none",
       "dataset_id": "64uk-42ks",
       "request_url": "https://data.cityofnewyork.us/resource/64uk-42ks.json?bbl=1000010010",
-      "input_vintages": {}
+      "input_vintages": {},
+      "fact_key": "fact:nyc-dcp-pluto-soda:64uk-42ks:1000010010:unitsres",
+      "observation_id": "obs:m2t004-s6-ground-truth-event:1000010010:unitsres",
+      "value_digest": "sha256:98089e6d36f78e9766c9ea34d5acb3611f3a92cd81c5eb102095d924ffc7d08b",
+      "response_digest": "sha256:030f188844c2efb2217feae0594fabed7322b93135a6f33c0870704a16c259a5"
     },
     {
       "provenance_id": "pluto-64uk-42ks-26v1-1000010010-unitstotal",
@@ -1623,7 +1911,11 @@
       "conflict_status": "none",
       "dataset_id": "64uk-42ks",
       "request_url": "https://data.cityofnewyork.us/resource/64uk-42ks.json?bbl=1000010010",
-      "input_vintages": {}
+      "input_vintages": {},
+      "fact_key": "fact:nyc-dcp-pluto-soda:64uk-42ks:1000010010:unitstotal",
+      "observation_id": "obs:m2t004-s6-ground-truth-event:1000010010:unitstotal",
+      "value_digest": "sha256:391552c099c101b131feaf24c5795a6a15bc8ec82015424e0d2b4274a369a0bf",
+      "response_digest": "sha256:030f188844c2efb2217feae0594fabed7322b93135a6f33c0870704a16c259a5"
     },
     {
       "provenance_id": "pluto-64uk-42ks-26v1-1000010010-version",
@@ -1641,7 +1933,11 @@
       "conflict_status": "none",
       "dataset_id": "64uk-42ks",
       "request_url": "https://data.cityofnewyork.us/resource/64uk-42ks.json?bbl=1000010010",
-      "input_vintages": {}
+      "input_vintages": {},
+      "fact_key": "fact:nyc-dcp-pluto-soda:64uk-42ks:1000010010:version",
+      "observation_id": "obs:m2t004-s6-ground-truth-event:1000010010:version",
+      "value_digest": "sha256:08dbb94a7967b3f4155394ad931ae0e6a7422f43285472cfbc96be6539c5c14b",
+      "response_digest": "sha256:030f188844c2efb2217feae0594fabed7322b93135a6f33c0870704a16c259a5"
     },
     {
       "provenance_id": "pluto-64uk-42ks-26v1-1000010010-xcoord",
@@ -1659,7 +1955,11 @@
       "conflict_status": "none",
       "dataset_id": "64uk-42ks",
       "request_url": "https://data.cityofnewyork.us/resource/64uk-42ks.json?bbl=1000010010",
-      "input_vintages": {}
+      "input_vintages": {},
+      "fact_key": "fact:nyc-dcp-pluto-soda:64uk-42ks:1000010010:xcoord",
+      "observation_id": "obs:m2t004-s6-ground-truth-event:1000010010:xcoord",
+      "value_digest": "sha256:6ec0c12deeb2fbe08ddb310348842b86b534ef1709cd1d93d16df38103f68584",
+      "response_digest": "sha256:030f188844c2efb2217feae0594fabed7322b93135a6f33c0870704a16c259a5"
     },
     {
       "provenance_id": "pluto-64uk-42ks-26v1-1000010010-ycoord",
@@ -1677,7 +1977,11 @@
       "conflict_status": "none",
       "dataset_id": "64uk-42ks",
       "request_url": "https://data.cityofnewyork.us/resource/64uk-42ks.json?bbl=1000010010",
-      "input_vintages": {}
+      "input_vintages": {},
+      "fact_key": "fact:nyc-dcp-pluto-soda:64uk-42ks:1000010010:ycoord",
+      "observation_id": "obs:m2t004-s6-ground-truth-event:1000010010:ycoord",
+      "value_digest": "sha256:363aab35aa1481edbf8e9bca6fb338bf996c1517ebea0b0dd853564361a90532",
+      "response_digest": "sha256:030f188844c2efb2217feae0594fabed7322b93135a6f33c0870704a16c259a5"
     },
     {
       "provenance_id": "pluto-64uk-42ks-26v1-1000010010-yearalter1",
@@ -1695,7 +1999,11 @@
       "conflict_status": "none",
       "dataset_id": "64uk-42ks",
       "request_url": "https://data.cityofnewyork.us/resource/64uk-42ks.json?bbl=1000010010",
-      "input_vintages": {}
+      "input_vintages": {},
+      "fact_key": "fact:nyc-dcp-pluto-soda:64uk-42ks:1000010010:yearalter1",
+      "observation_id": "obs:m2t004-s6-ground-truth-event:1000010010:yearalter1",
+      "value_digest": "sha256:98089e6d36f78e9766c9ea34d5acb3611f3a92cd81c5eb102095d924ffc7d08b",
+      "response_digest": "sha256:030f188844c2efb2217feae0594fabed7322b93135a6f33c0870704a16c259a5"
     },
     {
       "provenance_id": "pluto-64uk-42ks-26v1-1000010010-yearalter2",
@@ -1713,7 +2021,11 @@
       "conflict_status": "none",
       "dataset_id": "64uk-42ks",
       "request_url": "https://data.cityofnewyork.us/resource/64uk-42ks.json?bbl=1000010010",
-      "input_vintages": {}
+      "input_vintages": {},
+      "fact_key": "fact:nyc-dcp-pluto-soda:64uk-42ks:1000010010:yearalter2",
+      "observation_id": "obs:m2t004-s6-ground-truth-event:1000010010:yearalter2",
+      "value_digest": "sha256:98089e6d36f78e9766c9ea34d5acb3611f3a92cd81c5eb102095d924ffc7d08b",
+      "response_digest": "sha256:030f188844c2efb2217feae0594fabed7322b93135a6f33c0870704a16c259a5"
     },
     {
       "provenance_id": "pluto-64uk-42ks-26v1-1000010010-yearbuilt",
@@ -1731,7 +2043,11 @@
       "conflict_status": "none",
       "dataset_id": "64uk-42ks",
       "request_url": "https://data.cityofnewyork.us/resource/64uk-42ks.json?bbl=1000010010",
-      "input_vintages": {}
+      "input_vintages": {},
+      "fact_key": "fact:nyc-dcp-pluto-soda:64uk-42ks:1000010010:yearbuilt",
+      "observation_id": "obs:m2t004-s6-ground-truth-event:1000010010:yearbuilt",
+      "value_digest": "sha256:94535723eaf85260dcc737d74ccb75295ea8868d47b3d31103745a5af1e8fbdb",
+      "response_digest": "sha256:030f188844c2efb2217feae0594fabed7322b93135a6f33c0870704a16c259a5"
     },
     {
       "provenance_id": "pluto-64uk-42ks-26v1-1000010010-zipcode",
@@ -1749,7 +2065,11 @@
       "conflict_status": "none",
       "dataset_id": "64uk-42ks",
       "request_url": "https://data.cityofnewyork.us/resource/64uk-42ks.json?bbl=1000010010",
-      "input_vintages": {}
+      "input_vintages": {},
+      "fact_key": "fact:nyc-dcp-pluto-soda:64uk-42ks:1000010010:zipcode",
+      "observation_id": "obs:m2t004-s6-ground-truth-event:1000010010:zipcode",
+      "value_digest": "sha256:21150f47e7de101262d5750d179508f2c9728589a1ff9a4d49bb99253a085333",
+      "response_digest": "sha256:030f188844c2efb2217feae0594fabed7322b93135a6f33c0870704a16c259a5"
     },
     {
       "provenance_id": "pluto-64uk-42ks-26v1-1000010010-zmcode",
@@ -1767,7 +2087,11 @@
       "conflict_status": "none",
       "dataset_id": "64uk-42ks",
       "request_url": "https://data.cityofnewyork.us/resource/64uk-42ks.json?bbl=1000010010",
-      "input_vintages": {}
+      "input_vintages": {},
+      "fact_key": "fact:nyc-dcp-pluto-soda:64uk-42ks:1000010010:zmcode",
+      "observation_id": "obs:m2t004-s6-ground-truth-event:1000010010:zmcode",
+      "value_digest": "sha256:b5bea41b6c623f7c09f1bf24dcae58ebab3c0cdd90ad966bc43a45b44867e12b",
+      "response_digest": "sha256:030f188844c2efb2217feae0594fabed7322b93135a6f33c0870704a16c259a5"
     },
     {
       "provenance_id": "pluto-64uk-42ks-26v1-1000010010-zonedist1",
@@ -1785,7 +2109,11 @@
       "conflict_status": "none",
       "dataset_id": "64uk-42ks",
       "request_url": "https://data.cityofnewyork.us/resource/64uk-42ks.json?bbl=1000010010",
-      "input_vintages": {}
+      "input_vintages": {},
+      "fact_key": "fact:nyc-dcp-pluto-soda:64uk-42ks:1000010010:zonedist1",
+      "observation_id": "obs:m2t004-s6-ground-truth-event:1000010010:zonedist1",
+      "value_digest": "sha256:c1d7e5a7a6643ece8a493c218a3a6bf1943f74d2da1f563247d274eb0573533e",
+      "response_digest": "sha256:030f188844c2efb2217feae0594fabed7322b93135a6f33c0870704a16c259a5"
     },
     {
       "provenance_id": "pluto-64uk-42ks-26v1-1000010010-zonedist2",
@@ -1803,7 +2131,11 @@
       "conflict_status": "none",
       "dataset_id": "64uk-42ks",
       "request_url": "https://data.cityofnewyork.us/resource/64uk-42ks.json?bbl=1000010010",
-      "input_vintages": {}
+      "input_vintages": {},
+      "fact_key": "fact:nyc-dcp-pluto-soda:64uk-42ks:1000010010:zonedist2",
+      "observation_id": "obs:m2t004-s6-ground-truth-event:1000010010:zonedist2",
+      "value_digest": "sha256:1edbaded8e366e28b6ccdb5b91d7f36cd448a6668ddce8df62dcdd385ed179f5",
+      "response_digest": "sha256:030f188844c2efb2217feae0594fabed7322b93135a6f33c0870704a16c259a5"
     },
     {
       "provenance_id": "pluto-64uk-42ks-26v1-1000010010-zonemap",
@@ -1821,134 +2153,162 @@
       "conflict_status": "none",
       "dataset_id": "64uk-42ks",
       "request_url": "https://data.cityofnewyork.us/resource/64uk-42ks.json?bbl=1000010010",
-      "input_vintages": {}
+      "input_vintages": {},
+      "fact_key": "fact:nyc-dcp-pluto-soda:64uk-42ks:1000010010:zonemap",
+      "observation_id": "obs:m2t004-s6-ground-truth-event:1000010010:zonemap",
+      "value_digest": "sha256:ceb7714b77af14f6841183508c1223f9ff6549b064803ebd6e5d70ed2cdb6e64",
+      "response_digest": "sha256:030f188844c2efb2217feae0594fabed7322b93135a6f33c0870704a16c259a5"
     }
   ],
   "missing_inputs": [
     {
       "field": "basempdate",
       "criticality": "noncritical",
-      "reason": "column absent from the SODA record (null-omission semantics): the value is unknown for this tax lot and is never fabricated"
+      "reason": "column absent from the SODA record (null-omission semantics): the value is unknown for this tax lot and is never fabricated",
+      "feasibility_relevant": false
     },
     {
       "field": "condono",
       "criticality": "noncritical",
-      "reason": "column absent from the SODA record (null-omission semantics): the value is unknown for this tax lot and is never fabricated"
+      "reason": "column absent from the SODA record (null-omission semantics): the value is unknown for this tax lot and is never fabricated",
+      "feasibility_relevant": false
     },
     {
       "field": "dcasdate",
       "criticality": "noncritical",
-      "reason": "column absent from the SODA record (null-omission semantics): the value is unknown for this tax lot and is never fabricated"
+      "reason": "column absent from the SODA record (null-omission semantics): the value is unknown for this tax lot and is never fabricated",
+      "feasibility_relevant": false
     },
     {
       "field": "dcpedited",
       "criticality": "noncritical",
-      "reason": "column absent from the SODA record (null-omission semantics): the value is unknown for this tax lot and is never fabricated"
+      "reason": "column absent from the SODA record (null-omission semantics): the value is unknown for this tax lot and is never fabricated",
+      "feasibility_relevant": false
     },
     {
       "field": "edesigdate",
       "criticality": "noncritical",
-      "reason": "column absent from the SODA record (null-omission semantics): the value is unknown for this tax lot and is never fabricated"
+      "reason": "column absent from the SODA record (null-omission semantics): the value is unknown for this tax lot and is never fabricated",
+      "feasibility_relevant": false
     },
     {
       "field": "edesignum",
       "criticality": "noncritical",
-      "reason": "column absent from the SODA record (null-omission semantics): the value is unknown for this tax lot and is never fabricated"
+      "reason": "column absent from the SODA record (null-omission semantics): the value is unknown for this tax lot and is never fabricated",
+      "feasibility_relevant": false
     },
     {
       "field": "geom",
       "criticality": "noncritical",
-      "reason": "column absent from the SODA record (null-omission semantics): the value is unknown for this tax lot and is never fabricated"
+      "reason": "column absent from the SODA record (null-omission semantics): the value is unknown for this tax lot and is never fabricated",
+      "feasibility_relevant": false
     },
     {
       "field": "landmkdate",
       "criticality": "noncritical",
-      "reason": "column absent from the SODA record (null-omission semantics): the value is unknown for this tax lot and is never fabricated"
+      "reason": "column absent from the SODA record (null-omission semantics): the value is unknown for this tax lot and is never fabricated",
+      "feasibility_relevant": false
     },
     {
       "field": "ltdheight",
       "criticality": "noncritical",
-      "reason": "column absent from the SODA record (null-omission semantics): the value is unknown for this tax lot and is never fabricated"
+      "reason": "column absent from the SODA record (null-omission semantics): the value is unknown for this tax lot and is never fabricated",
+      "feasibility_relevant": false
     },
     {
       "field": "masdate",
       "criticality": "noncritical",
-      "reason": "column absent from the SODA record (null-omission semantics): the value is unknown for this tax lot and is never fabricated"
+      "reason": "column absent from the SODA record (null-omission semantics): the value is unknown for this tax lot and is never fabricated",
+      "feasibility_relevant": false
     },
     {
       "field": "mih_opt1",
       "criticality": "noncritical",
-      "reason": "column absent from the SODA record (null-omission semantics): the value is unknown for this tax lot and is never fabricated"
+      "reason": "column absent from the SODA record (null-omission semantics): the value is unknown for this tax lot and is never fabricated",
+      "feasibility_relevant": false
     },
     {
       "field": "mih_opt2",
       "criticality": "noncritical",
-      "reason": "column absent from the SODA record (null-omission semantics): the value is unknown for this tax lot and is never fabricated"
+      "reason": "column absent from the SODA record (null-omission semantics): the value is unknown for this tax lot and is never fabricated",
+      "feasibility_relevant": false
     },
     {
       "field": "mih_opt3",
       "criticality": "noncritical",
-      "reason": "column absent from the SODA record (null-omission semantics): the value is unknown for this tax lot and is never fabricated"
+      "reason": "column absent from the SODA record (null-omission semantics): the value is unknown for this tax lot and is never fabricated",
+      "feasibility_relevant": false
     },
     {
       "field": "mih_opt4",
       "criticality": "noncritical",
-      "reason": "column absent from the SODA record (null-omission semantics): the value is unknown for this tax lot and is never fabricated"
+      "reason": "column absent from the SODA record (null-omission semantics): the value is unknown for this tax lot and is never fabricated",
+      "feasibility_relevant": false
     },
     {
       "field": "notes",
       "criticality": "noncritical",
-      "reason": "column absent from the SODA record (null-omission semantics): the value is unknown for this tax lot and is never fabricated"
+      "reason": "column absent from the SODA record (null-omission semantics): the value is unknown for this tax lot and is never fabricated",
+      "feasibility_relevant": false
     },
     {
       "field": "overlay1",
       "criticality": "noncritical",
-      "reason": "column absent from the SODA record (null-omission semantics): the value is unknown for this tax lot and is never fabricated"
+      "reason": "column absent from the SODA record (null-omission semantics): the value is unknown for this tax lot and is never fabricated",
+      "feasibility_relevant": false
     },
     {
       "field": "overlay2",
       "criticality": "noncritical",
-      "reason": "column absent from the SODA record (null-omission semantics): the value is unknown for this tax lot and is never fabricated"
+      "reason": "column absent from the SODA record (null-omission semantics): the value is unknown for this tax lot and is never fabricated",
+      "feasibility_relevant": false
     },
     {
       "field": "polidate",
       "criticality": "noncritical",
-      "reason": "column absent from the SODA record (null-omission semantics): the value is unknown for this tax lot and is never fabricated"
+      "reason": "column absent from the SODA record (null-omission semantics): the value is unknown for this tax lot and is never fabricated",
+      "feasibility_relevant": false
     },
     {
       "field": "rpaddate",
       "criticality": "noncritical",
-      "reason": "column absent from the SODA record (null-omission semantics): the value is unknown for this tax lot and is never fabricated"
+      "reason": "column absent from the SODA record (null-omission semantics): the value is unknown for this tax lot and is never fabricated",
+      "feasibility_relevant": false
     },
     {
       "field": "spdist2",
       "criticality": "noncritical",
-      "reason": "column absent from the SODA record (null-omission semantics): the value is unknown for this tax lot and is never fabricated"
+      "reason": "column absent from the SODA record (null-omission semantics): the value is unknown for this tax lot and is never fabricated",
+      "feasibility_relevant": false
     },
     {
       "field": "spdist3",
       "criticality": "noncritical",
-      "reason": "column absent from the SODA record (null-omission semantics): the value is unknown for this tax lot and is never fabricated"
+      "reason": "column absent from the SODA record (null-omission semantics): the value is unknown for this tax lot and is never fabricated",
+      "feasibility_relevant": false
     },
     {
       "field": "zonedist3",
       "criticality": "noncritical",
-      "reason": "column absent from the SODA record (null-omission semantics): the value is unknown for this tax lot and is never fabricated"
+      "reason": "column absent from the SODA record (null-omission semantics): the value is unknown for this tax lot and is never fabricated",
+      "feasibility_relevant": false
     },
     {
       "field": "zonedist4",
       "criticality": "noncritical",
-      "reason": "column absent from the SODA record (null-omission semantics): the value is unknown for this tax lot and is never fabricated"
+      "reason": "column absent from the SODA record (null-omission semantics): the value is unknown for this tax lot and is never fabricated",
+      "feasibility_relevant": false
     },
     {
       "field": "zoningdate",
       "criticality": "noncritical",
-      "reason": "column absent from the SODA record (null-omission semantics): the value is unknown for this tax lot and is never fabricated"
+      "reason": "column absent from the SODA record (null-omission semantics): the value is unknown for this tax lot and is never fabricated",
+      "feasibility_relevant": false
     }
   ],
   "conflicts": [],
   "user_confirmations": [],
-  "data_completeness": "missing_noncritical",
+  "data_completeness": "complete",
   "reproducibility": {
     "correlation_id": "m1t006-s6-ground-truth",
     "source_id": "nyc-dcp-pluto-soda",
@@ -1959,6 +2319,16 @@
     "record_count": 1,
     "drift_signals": [],
     "connector_notes": [],
-    "coverage_policy": "coverage_status is derived only from review status and conflict/drift state: unreviewed official source facts are 'conditional', facts with connector drift signals are 'unsupported', conflicting facts are 'data_conflict'. Connector confidence is NEVER mapped to a coverage label and no unreviewed fact is 'verified' (PRD section 12)."
+    "coverage_policy": "coverage_status is derived only from review status and conflict/drift state: unreviewed official source facts are 'conditional', facts with connector drift signals are 'unsupported', conflicting facts are 'data_conflict'. Connector confidence is NEVER mapped to a coverage label and no unreviewed fact is 'verified' (PRD section 12).",
+    "response_digest": "sha256:030f188844c2efb2217feae0594fabed7322b93135a6f33c0870704a16c259a5",
+    "digest_canonicalization": "canonical-json-1: a digest is 'sha256:' + lowercase-hex SHA-256 of the UTF-8 encoding of the canonical JSON serialization of the PARSED value. Canonical serialization: object keys sorted lexicographically by Unicode code point; separators ',' and ':' with no insignificant whitespace; non-ASCII characters preserved as-is (not escaped); no Unicode normalization applied; numbers serialized by Python json.dumps defaults (integers verbatim, floats shortest-repr). response_digest covers the entire parsed HTTP response body; value_digest covers one field's verbatim original_value. Digesting parsed values makes semantically identical responses digest equal regardless of source key order or whitespace, while any value change flips the digest."
+  },
+  "status_dimensions": {
+    "source_record_completeness": "complete",
+    "analysis_readiness": "ready",
+    "rule_coverage": "not_computed",
+    "geometry_validity": "not_computed",
+    "financial_readiness": "not_computed",
+    "policy": "status_dimensions are derived deterministically and INDEPENDENTLY (owner code-audit P1 2026-07-17; PRD s12; GDS s3.3 - never collapsed into one label; dimensions not yet computable are declared 'not_computed', never inferred). source_record_completeness: 'complete' when every column of the documented 19-column feasibility-relevant basis (builder FEASIBILITY_COLUMNS; official PLUTO 26v1 data dictionary, cited per column in the builder and docs/research/pluto-mappluto-2026-07-16.md) is present with a usable value, else 'partial'; a column is unusable when absent, officially unknown (numfloors null with buildings per dictionary p.28; yearbuilt 0/null per p.34-35), or drift-flagged; absence of any other PLUTO column NEVER degrades this dimension (the 108-column denominator is retired). analysis_readiness, in order: 'blocked_data_conflict' when an unresolved conflict touches an identity field (bbl/borocode/block/lot) or a critical column; 'blocked_missing_critical' when a critical column (lotarea, zonedist1) is absent or drift-flagged; else 'ready' - a DATA statement only, NOT the PRD s32.1 workflow state, and never an assertion that user confirmation occurred. rule_coverage: 'not_computed' until the M4 published-rule engine exists. geometry_validity: 'missing' when the source supplied no usable point geometry, else 'not_computed' until M2 tax-lot geometry validation lands. financial_readiness: 'not_computed' until a financial engine exists (GDS Phase C). data_completeness (legacy 3-value field) counts ONLY feasibility-relevant missing inputs: any critical -> missing_critical, any -> missing_noncritical, none -> complete."
   }
 }

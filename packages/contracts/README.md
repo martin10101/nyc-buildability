@@ -13,8 +13,8 @@ grounding), and D3 (meta-schema validation in CI).
 | Schema | Purpose | PRD reference |
 | --- | --- | --- |
 | `schemas/v1/common.schema.json` | Shared grounded definitions: BBL, BIN, borough code/name, ZIP, timestamp shapes | 9, 32.3 |
-| `schemas/v1/source_fact.schema.json` | Canonical provenance record; ALL PRD s9 mandatory fields are required (source id, original field name, original value, normalized value, retrieved timestamp, dataset/document version, effective date [nullable but present], BBL, confidence, user confirmed/overridden, conflict status) | 9, 19 |
-| `schemas/v1/property_profile.schema.json` | One canonical property profile: identity/address, BBL/BIN, geometry, lot facts, existing-building facts, zoning, project intent, per-fact provenance (`provenance_ref` REQUIRED on every fact value), missing inputs, conflicts, user confirmations, profile version. Contract 1.1.0 adds the optional keys documented below | 9, 12, 19, 32.3 |
+| `schemas/v1/source_fact.schema.json` | Canonical provenance record; ALL PRD s9 mandatory fields are required (source id, original field name, original value, normalized value, retrieved timestamp, dataset/document version, effective date [nullable but present], BBL, confidence, user confirmed/overridden, conflict status). Contract 1.2.0 adds four OPTIONAL identity/lineage keys (`fact_key`, `observation_id`, `value_digest`, `response_digest`) | 9, 19 |
+| `schemas/v1/property_profile.schema.json` | One canonical property profile: identity/address, BBL/BIN, geometry, lot facts, existing-building facts, zoning, project intent, per-fact provenance (`provenance_ref` REQUIRED on every fact value), missing inputs, conflicts, user confirmations, profile version. Contracts 1.1.0 and 1.2.0 add the optional keys documented below | 9, 12, 19, 32.3 |
 | `schemas/v1/coverage_status.schema.json` | Exactly the 6 PRD s12 coverage statuses; the 3 data-completeness values in `$defs/data_completeness` | 12 |
 | `schemas/v1/analysis_state.schema.json` | Exactly the 14 PRD s32.1 workflow states, no extras | 32.1 |
 | `schemas/v1/analysis_state_transition.schema.json` | Audit record for one state transition (actor, timestamps, correlation id); transition legality is enforced by the backend state machine | 25, 32.1 |
@@ -74,6 +74,103 @@ Consumers that build their own `$ref` registry for
 `property_profile`, `source_fact`, `common`, and (since 1.1.0)
 `coverage_status`. Loading every schema in `schemas/v1/` — as
 `validate_contracts.py` does — is the forward-compatible pattern.
+
+## Property profile contract 1.2.0 (task M2-T004, additive — data semantics and snapshot lineage)
+
+Publishes `contract_version` `"1.2.0"` (the CLOSED enum is now
+`["1.0.0","1.1.0","1.2.0"]`; the rejected-exemplar fixture advanced to
+`1.3.0`). **Every new key is OPTIONAL, so every valid 1.0.0/1.1.0 instance
+remains valid unchanged.** Owner code-audit P1 directive, 2026-07-17.
+
+### Independent status dimensions (`status_dimensions`, top level)
+
+Five INDEPENDENT dimensions, never collapsed into one label (PRD s12; GDS
+s3.3). All six subfields are REQUIRED when the object is present (omitting a
+dimension would silently collapse the set); a dimension the platform cannot
+yet compute is DECLARED `not_computed` — never inferred, never invented:
+
+- **`source_record_completeness`** — `complete | partial | not_computed`.
+  Judged ONLY against the documented feasibility-relevant column basis (next
+  section), never against all 108 PLUTO columns.
+- **`analysis_readiness`** — `ready | blocked_missing_critical |
+  blocked_data_conflict | not_computed`. A DATA statement (critical inputs
+  present, usable, unconflicted), explicitly NOT the PRD s32.1 workflow
+  state; it never implies user confirmation occurred.
+- **`rule_coverage`** — `not_computed` (single-value enum BY DESIGN until the
+  M4 rule engine makes applicability computable; extended additively then).
+- **`geometry_validity`** — `missing | not_computed`. `missing` = the source
+  supplied no usable geometry (a positive statement); `not_computed` =
+  geometry present but the M2 tax-lot geometry validation pipeline does not
+  exist yet. `valid`/`invalid`/`repaired` land additively with it.
+- **`financial_readiness`** — `not_computed` until a financial engine exists
+  (GDS Phase C).
+- **`policy`** — verbatim derivation policy (self-description pattern of
+  `reproducibility.coverage_policy`).
+
+The legacy top-level `data_completeness` (3 PRD s12 values) is UNCHANGED in
+key, enum, and placement for v1.1 consumers; only its derivation basis is
+fixed (below).
+
+### Feasibility-relevant completeness basis (the 108-column defect fix)
+
+`data_completeness` and `source_record_completeness` are derived ONLY from
+the 19-column basis `FEASIBILITY_COLUMNS` in
+`services/api/app/profile/builder.py` — critical: `lotarea`, `zonedist1`;
+noncritical: `lotfront`, `lotdepth`, `lottype`, `irrlotcode`, `splitzone`,
+`landuse`, `bldgclass`, `bldgarea`, `numbldgs`, `numfloors`, `unitsres`,
+`unitstotal`, `yearbuilt`, `builtfar`, `residfar`, `commfar`, `facilfar`.
+Grounding: every column exists in the official 108-column SODA inventory
+(fixture F08, `/api/views/64uk-42ks.json`, retrieved 2026-07-16) and its
+meaning/units/null semantics are cited per column against the official
+"PLUTO DATA DICTIONARY — May 2026 (26v1)" in the builder's basis comment and
+`docs/research/pluto-mappluto-2026-07-16.md` s4.1/s4.3 (e.g. LotArea p.21,
+LotFront/LotDepth p.29, NumFloors p.28, YearBuilt p.34-35, BldgArea p.22,
+ResidFAR/CommFAR/FacilFAR p.36-37). Documented exclusions: conditional-
+presence zoning/regulatory columns (SODA null-omission makes absence
+indistinguishable from "none"), geometry columns (owned by the independent
+`geometry_validity` dimension), and identity/administrative columns. Every
+`missing_inputs[]` entry now carries OPTIONAL `feasibility_relevant`
+(basis membership) — ALL absent columns stay listed (unknown is stated,
+never hidden); only flagged entries drive the labels.
+
+### Fact identity and snapshot lineage (`source_fact` additive keys)
+
+Three identities with distinct lifetimes, all coexisting on each record:
+
+| Key | Lifetime | Purpose |
+| --- | --- | --- |
+| `fact_key` | STABLE across re-observations AND dataset versions | track the logical fact (`fact:<source_id>:<dataset_id>:<bbl>:<field>`) |
+| `provenance_id` | stable within one dataset version (unchanged from M1-T002) | referential target of every `provenance_ref` |
+| `observation_id` | IMMUTABLE, unique per retrieval event, never reused | pin one observation (`obs:<event-id>:<bbl>:<field>`; event id minted fresh per fetch) |
+
+Lineage chain, gap-free on every fact: `observation_id` + `retrieved_at`
+(observation) → `dataset_version`/`dataset_id`/`source_id` (source version)
+→ `request_url` (request) → `response_digest` (exact content).
+
+### Canonical digests
+
+`value_digest` (per fact, over verbatim `original_value`) and
+`response_digest` (per retrieval, over the ENTIRE parsed response body; also
+in `reproducibility` with the verbatim spec in
+`reproducibility.digest_canonicalization`). Canonicalization
+(`canonical-json-1`, `common.schema.json#/$defs/digest_sha256`): SHA-256
+over the UTF-8 encoding of the parsed value serialized with keys sorted
+lexicographically by Unicode code point, `,`/`:` separators, no
+insignificant whitespace, non-ASCII preserved (no escaping), no Unicode
+normalization, Python `json.dumps` number defaults. Parsed-value digesting
+makes byte-different but semantically identical responses digest EQUAL while
+any value change flips the digest.
+
+### `contract_version` semantics — recorded as an INPUT to M2-T003
+
+This task publishes `1.2.0` in the schema enum (the shape). What it
+deliberately does NOT decide (owner sequencing 2026-07-17: M2-T003 builds
+validation/typegen against this settled shape): which version a producer
+DECLARES, and whether declared version and emitted key set are validated
+against each other. The accepted builder still declares `"1.0.0"` while
+emitting the additive keys — legal at every published version because all
+additive keys are optional (the same precedent as M1-T005/M1-T006). M2-T003
+owns the declaration/validation decision.
 
 Deferred contracts (added additively in later milestones, per
 `docs/PRODUCT_FLOW_AND_AI_BOUNDARIES.md` "Canonical contracts"): rule
