@@ -57,6 +57,20 @@ class TTLCache:
         Expired entries are removed on observation; the caller decides how to
         count hits/misses (the fetcher emits ``cache_hit``/``cache_miss``).
         """
+        hit = self.get_with_age(key)
+        return None if hit is None else hit[0]
+
+    def get_with_age(self, key: str) -> tuple[object, float] | None:
+        """Return ``(value, age_seconds)`` for a live entry or ``None``.
+
+        ADDITIVE accessor (task M2-T006): the contract-1.3.0 typed
+        ``reproducibility.staleness`` object must state the served snapshot's
+        age on cache-hit serves, so the cache exposes the age it already
+        computes for expiry. Same semantics as ``get`` (expired entries
+        removed on observation, LRU order refreshed); the age comes from the
+        injected monotonic ``now`` callable - deterministic in tests, never a
+        wall-clock guess.
+        """
         with self._lock:
             entry = self._entries.get(key)
             if entry is None:
@@ -68,7 +82,7 @@ class TTLCache:
                     self._metrics.emit("cache_expired", key=key, age_seconds=age)
                 return None
             self._entries.move_to_end(key)
-            return entry.value
+            return entry.value, age
 
     def put(self, key: str, value: object) -> None:
         with self._lock:

@@ -124,9 +124,9 @@ def test_generated_types_cover_100_percent_of_schema_keys() -> None:
 
 def test_generated_types_pin_the_closed_contract_version_enum() -> None:
     ts = GENERATED.read_text(encoding="utf-8")
-    assert '"1.0.0" | "1.1.0" | "1.2.0"' in ts
+    assert '"1.0.0" | "1.1.0" | "1.2.0" | "1.3.0"' in ts
     # No unpublished version leaks into the generated union.
-    assert '"1.3.0"' not in ts
+    assert '"1.4.0"' not in ts
 
 
 def test_check_mode_passes_against_committed_file() -> None:

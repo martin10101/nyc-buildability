@@ -1,0 +1,34 @@
+{
+  "_comment": "CONTRACT 1.3.0 (task M2-T006): a last-known-good serve with the typed staleness object - served_from_cache + stale true, upstream_error_type, original_retrieved_at equal to reproducibility.retrieved_at, monotonic age - alongside the RETAINED human-readable connector note. SYNTHETIC fixture (source_id says so); shape mirrors the real M1-T009 LKG serve.",
+  "profile_version": { "contract_version": "1.3.0", "profile_revision": 1, "generated_at": "2026-07-16T12:02:00Z" },
+  "identity": { "bbl": "1000477501" },
+  "lot_facts": {},
+  "existing_building_facts": {},
+  "zoning": {},
+  "project_intent": {},
+  "provenance": [],
+  "missing_inputs": [],
+  "conflicts": [],
+  "user_confirmations": [],
+  "reproducibility": {
+    "correlation_id": "corr-original-fetch",
+    "source_id": "test-fixture-synthetic",
+    "dataset_id": "test-dataset",
+    "dataset_version": null,
+    "request_url": "https://example.invalid/test-dataset.json?bbl=1000477501",
+    "retrieved_at": "2026-07-16T12:00:00Z",
+    "record_count": 1,
+    "drift_signals": [],
+    "connector_notes": [
+      "served_from_last_known_good: upstream failure (source_unavailable) at 2026-07-16T12:02:00Z; serving the last-known-good official snapshot retrieved at 2026-07-16T12:00:00Z (age 120s at serve time). This response is STALE cached data, not a fresh retrieval; retrieved_at reflects the actual original retrieval (task M1-T009)."
+    ],
+    "coverage_policy": "coverage_status is derived only from review status and conflict/drift state (PRD section 12).",
+    "staleness": {
+      "served_from_cache": true,
+      "stale": true,
+      "upstream_error_type": "source_unavailable",
+      "original_retrieved_at": "2026-07-16T12:00:00Z",
+      "age_seconds": 120.0
+    }
+  }
+}

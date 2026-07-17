@@ -77,10 +77,11 @@ Consumers that build their own `$ref` registry for
 
 ## Property profile contract 1.2.0 (task M2-T004, additive — data semantics and snapshot lineage)
 
-Publishes `contract_version` `"1.2.0"` (the CLOSED enum is now
+Publishes `contract_version` `"1.2.0"` (the CLOSED enum became
 `["1.0.0","1.1.0","1.2.0"]`; the rejected-exemplar fixture advanced to
-`1.3.0`). **Every new key is OPTIONAL, so every valid 1.0.0/1.1.0 instance
-remains valid unchanged.** Owner code-audit P1 directive, 2026-07-17.
+`1.3.0` — and advanced again to `1.4.0` when M2-T006 published 1.3.0, see the
+1.3.0 section below). **Every new key is OPTIONAL, so every valid 1.0.0/1.1.0
+instance remains valid unchanged.** Owner code-audit P1 directive, 2026-07-17.
 
 ### Independent status dimensions (`status_dimensions`, top level)
 
@@ -172,12 +173,11 @@ implemented:
 
 **Decision (task M2-T003, owner code-audit P0 2026-07-17):**
 
-1. **The builder DECLARES the canonical `1.2.0`.** It emits keys through 1.2.0
-   (`status_dimensions`, `feasibility_relevant`, `response_digest` +
-   `digest_canonicalization`, and the four `source_fact` identity/lineage
-   keys), so it declares the version whose key set it fully covers. It no
-   longer declares the stale `"1.0.0"` (`PROFILE_CONTRACT_VERSION = "1.2.0"` in
-   `services/api/app/profile/builder.py`).
+1. **The builder DECLARES the version whose key set it fully covers** —
+   `1.2.0` when this decision landed (M2-T003); advanced to `1.3.0` by M2-T006
+   when the builder began emitting `reproducibility.staleness`
+   (`PROFILE_CONTRACT_VERSION` in `services/api/app/profile/builder.py`). It
+   never again declares a stale version.
 
 2. **Declared version and emitted key set ARE validated against each other.**
    The declared version must be at least the minimum version that introduces
@@ -185,7 +185,9 @@ implemented:
    key (the exact stale-declaration bug deferred here) is rejected as a typed
    `internal_contract_error` — a built payload that misstates its own version
    never leaves the API. Introduction versions:
-   `data_completeness`/`reproducibility` = 1.1.0; `status_dimensions` = 1.2.0
+   `data_completeness`/`reproducibility` = 1.1.0; `status_dimensions` = 1.2.0;
+   `reproducibility.staleness` = 1.3.0 (a DOTTED-PATH key — M2-T006 extended
+   the check with dotted-path resolution for nested additive keys)
    (`app.profile.contract.VERSION_INTRODUCED`).
 
 3. **Every 200 payload is validated against the SELECTED canonical schema
@@ -197,10 +199,11 @@ implemented:
    `services/api/app/api/v1/properties.py`).
 
 4. **An unpublished declared version is a BOUNDED typed error.** A profile
-   declaring a version outside `["1.0.0","1.1.0","1.2.0"]` (e.g. `1.3.0`)
-   yields a typed, correlation-id'd `500 unsupported_contract_version` with the
-   declared version and the supported set — never a silent coercion and never a
-   raw 500 stack.
+   declaring a version outside the published enum (currently
+   `["1.0.0","1.1.0","1.2.0","1.3.0"]`; e.g. `1.4.0`) yields a typed,
+   correlation-id'd `500 unsupported_contract_version` with the declared
+   version and the supported set — never a silent coercion and never a raw
+   500 stack.
 
 5. **Backward compatibility preserved.** Because every added key is optional, a
    valid `1.0.0` instance (no additive keys) and a valid `1.1.0` instance
@@ -230,6 +233,80 @@ real app never emits — currently `http500_state_no_match.json` (the incoherent
 HTTP 500 + `state=no_match` pair). This directory is outside `valid/`/`invalid/`
 so `validate_contracts.py` does not treat it as a contract fixture; M2-T002
 wires it as a client regression input.
+
+## Property profile contract 1.3.0 (task M2-T006, additive — typed staleness and description refreshes)
+
+Publishes `contract_version` `"1.3.0"` (the CLOSED enum is now
+`["1.0.0","1.1.0","1.2.0","1.3.0"]`; the rejected-exemplar fixture
+`fixtures/invalid/property_profile/contract_version_unknown.json` advanced to
+`1.4.0` in the same change — an "invalid" fixture that starts validating
+fails the contracts CI job). **Every new key is OPTIONAL, so every valid
+1.0.0/1.1.0/1.2.0 instance remains valid unchanged.** Sources: M1-T009 G1
+findings D1/D2 and M2-T002 G3 finding N3 (both LOW, corrective, contracted to
+ride this revision).
+
+### Typed serve-freshness (`reproducibility.staleness`) — G1 D2
+
+The machine-readable successor to the `served_from_last_known_good:`
+connector-note convention (the human-readable note in
+`reproducibility.connector_notes` is RETAINED alongside it). Shape:
+`served_from_cache` + `stale` (REQUIRED booleans), `upstream_error_type`,
+`original_retrieved_at`, `age_seconds` (optional, conditionally required):
+
+- fresh build → `{served_from_cache: false, stale: false}` and nothing else
+  (no invented age/error values);
+- within-TTL cache hit → `served_from_cache: true, stale: false` +
+  `original_retrieved_at` + `age_seconds` (the explicit cache-serve marker D2
+  asked for);
+- last-known-good serve after an upstream failure → `served_from_cache:
+  true, stale: true` + `upstream_error_type` + `original_retrieved_at` +
+  `age_seconds`.
+
+Conditionals (`served_from_cache: true` ⇒ timestamp+age required;
+`stale: true` ⇒ error type required and `served_from_cache: true`) are
+encoded with `allOf`/`anyOf`/`const` — the keyword subset
+`validate_contracts.py` supports (`if`/`then` is NOT in its allowlist) — and
+enforced by JSON-Schema validation (backend boundary + fixture CI). The
+GENERATED TypeScript types carry the two required booleans and three optional
+fields WITHOUT the cross-field conditionals (the typegen generator does not
+emit conditional types); TS consumers rely on runtime validation for those.
+ABSENCE semantics: an absent `staleness` object means a pre-1.3.0 producer —
+consumers must not infer freshness from absence and fall back to the
+connector-note convention plus the truthful `retrieved_at`. A 1.3.0 builder
+emits the object on EVERY serve. Emission: the resilience fetcher
+(`services/api/app/resilience/fetcher.py`) stamps cache-hit and LKG serves
+from its own serve record (injected monotonic-clock ages; nothing invented);
+`reproducibility.retrieved_at` is never rewritten to serve time.
+
+### `correlation_id` description refresh — G1 D1
+
+The 1.1.0-era sentence "equals the X-Correlation-ID response header" was
+written when every 200 was a fresh stateless build and became falsifiable
+once M1-T009 cache/LKG serves existed. The refreshed description states the
+truth the G1 review adjudicated (J1): the field joins the profile to the
+retrieval that PRODUCED it — equal to the serving request's header only on
+fresh builds; on cache/LKG serves it stays the ORIGINAL fetch's id while the
+`X-Correlation-ID` header identifies the serving HTTP exchange. Description
+change only; no payload semantics changed.
+
+### Open-schema key documentation — G3 N3
+
+Description-level (annotation-only, NO structural tightening — the generated
+TS types are unchanged for these shapes and the client's runtime-narrowing
+helpers remain the accepted pattern): `zoning.mapped_features` items document
+the builder-emitted keys (`feature`, `value`, `provenance_ref`,
+`coverage_status`, optional `units`); conflict `values[]` items document the
+open `derivation` string; conflict items document the open nullable `reason`.
+
+### Version-publication coordination (systemic note)
+
+The web client pins a CLOSED runtime `SUPPORTED_CONTRACT_VERSIONS` set
+(`apps/web/src/lib/contract.ts`) and fail-closes on versions outside it, so
+**publishing a contract version is always a coordinated schema + backend +
+client-vocabulary change in ONE atomic change set** (this revision shipped
+under M2-T006 amendment A1 for exactly that reason). A future contracts-
+tooling task may generate the client's runtime version array from the schema
+enum to remove the hand-edit.
 
 Deferred contracts (added additively in later milestones, per
 `docs/PRODUCT_FLOW_AND_AI_BOUNDARIES.md` "Canonical contracts"): rule

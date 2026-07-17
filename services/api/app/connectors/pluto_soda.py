@@ -434,6 +434,15 @@ class PlutoFetchResult:
     ``response_digest`` (task M2-T004): canonical-json-1 digest of the ENTIRE
     parsed response body (also present for ``no_match``, where it digests the
     empty array - the snapshot that proved the absence is itself evidence).
+
+    ``staleness`` (task M2-T006, ADDITIVE with a default so every existing
+    construction stays unchanged): the contract-1.3.0 typed serve-freshness
+    record. ``None`` on every fresh retrieval this connector performs (the
+    builder then emits the fresh marker ``{served_from_cache: false, stale:
+    false}``); the RESILIENCE layer (app.resilience.fetcher) sets it on
+    cache-hit and last-known-good serves, copying values verbatim from its
+    own serve record - never invented here. No field mapping, normalization,
+    or provenance behavior of this connector changes.
     """
 
     status: str  # "ok" | "no_match"
@@ -450,6 +459,7 @@ class PlutoFetchResult:
     notes: list[str] = field(default_factory=list)
     no_match_explanation: str | None = None
     response_digest: str | None = None
+    staleness: dict | None = None
 
 
 # ---------------------------------------------------------------------------

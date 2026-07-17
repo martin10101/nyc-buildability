@@ -418,12 +418,16 @@ def test_s6_new_profile_validates_against_evolved_contract(profile_validator) ->
 
 
 def test_s6_pre_m2t004_shape_remains_valid(profile_validator) -> None:
-    # Strip every M2-T004 key: what remains is the accepted M1-T005/M1-T006
-    # shape, which MUST still validate (additive evolution, nothing retyped).
+    # Strip every M2-T004 key (and the M2-T006 staleness key): what remains is
+    # the accepted M1-T005/M1-T006 shape, which MUST still validate (additive
+    # evolution, nothing retyped). Schema-level check only - the declared
+    # version stays the builder's; declared-vs-emitted is validate_profile's
+    # job, proven in tests/api/test_property_contract.py.
     profile = build_profile(load_fixture_body("F01_single_lot_normal.json"))
     profile.pop("status_dimensions")
     profile["reproducibility"].pop("response_digest")
     profile["reproducibility"].pop("digest_canonicalization")
+    profile["reproducibility"].pop("staleness")
     for entry in profile["missing_inputs"]:
         entry.pop("feasibility_relevant")
     for record in profile["provenance"]:
@@ -434,11 +438,17 @@ def test_s6_pre_m2t004_shape_remains_valid(profile_validator) -> None:
 
 
 def test_s6_builder_declares_resolved_canonical_contract_version() -> None:
-    # M2-T003 RESOLVED the M2-T004 declaration deferral (README section 167):
-    # the builder emits keys through 1.2.0, so it now DECLARES 1.2.0 - the
-    # canonical version whose key set it fully covers. It no longer declares
-    # the stale "1.0.0". (Backward compatibility - 1.0.0/1.1.0 instances
-    # remain valid and served - is proven in tests/api/test_property_contract.)
-    assert PROFILE_CONTRACT_VERSION == "1.2.0"
+    # M2-T003 established declare-what-you-emit; M2-T006 advanced the
+    # declaration to 1.3.0 (the builder now emits the typed
+    # reproducibility.staleness object on every serve). (Backward
+    # compatibility - 1.0.0/1.1.0/1.2.0 instances remain valid and served -
+    # is proven in tests/api/test_property_contract.)
+    assert PROFILE_CONTRACT_VERSION == "1.3.0"
     profile = build_profile(load_fixture_body("F01_single_lot_normal.json"))
-    assert profile["profile_version"]["contract_version"] == "1.2.0"
+    assert profile["profile_version"]["contract_version"] == "1.3.0"
+    # Direct builder path = fresh retrieval: the truthful fresh marker with
+    # ONLY the two required booleans (no invented age/error values).
+    assert profile["reproducibility"]["staleness"] == {
+        "served_from_cache": False,
+        "stale": False,
+    }
