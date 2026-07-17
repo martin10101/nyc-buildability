@@ -54,7 +54,7 @@
     "security-reviewer"
   ],
   "status": "awaiting_gate",
-  "progress_percent": 85,
+  "progress_percent": 95,
   "risks": [
     "Pack agent files may conflict with existing agent roster conventions (memory frontmatter, ADR-005 rules) - report, do not silently rewrite",
     "GDS overlap refresh may change M5 task ordering - owner review required before any plan edit"
@@ -63,7 +63,7 @@
     "B-005 (clears when the manifest-completeness verification is recorded)"
   ],
   "created_at": "2026-07-14T21:40:17.803410+00:00",
-  "updated_at": "2026-07-17T08:55:44.970200+00:00",
+  "updated_at": "2026-07-17T09:06:57.272181+00:00",
   "progress_log": [
     {
       "at": "2026-07-17T08:11:55.064631+00:00",
@@ -94,6 +94,12 @@
       "agent": "orchestrator",
       "percent": 85,
       "message": "G3 PASS (verbatim report preserved at project-control/reports/M0-T010-G3-review.md): reviewer self-extracted the owner ZIP (sha256 exact match), all 14 entries blob-identical at exact paths, COMPLETE; S1-S6 all PASS; P1-P8 old-quotes verified verbatim-applyable against main; C1-C7 roster conflicts independently confirmed real; no blocking defects. Carry-forwards: O1 CI evidence at merge, O3 no dispatch of the 5 pack agents pre-conformance (owner directive already stands), O5 delete 3 temp extraction dirs at acceptance. MERGE REMAINS HELD per owner directive pending G5 agent-governance review (in flight)."
+    },
+    {
+      "at": "2026-07-17T09:06:57.272181+00:00",
+      "agent": "orchestrator",
+      "percent": 95,
+      "message": "G5 PASS recorded (verbatim security-reviewer report at project-control/reports/M0-T010-G5-agent-governance-review.md) with BLOCKING conditions: merge requires the three-part machine-visible prohibition in the SAME checkpoint (counter-notice rules file .claude/rules/expansion-agent-dispatch-hold.md with no paths frontmatter + B-007 blocker JSON + contracted conformance task with G5 re-check). Recommends disposition A. D1/D2 HIGH: agents auto-register on merge + always-loaded unqualified continuation order in rule item 13 + bypassPermissions posture = unattended escalation chain unless the prohibition lands with the merge. Owner decision pending on report set (G3 accepted as content/integrity PASS only, per owner). MERGE STILL HELD for owner review of the returned reports."
     }
   ]
 }

@@ -55,7 +55,7 @@
   "blockers": [],
   "execution_location": "research is network + text only; producer writes KB-scale markdown/fixtures in the task worktree; no installs, no datasets; disk impact negligible (7.77 GB free)",
   "created_at": "2026-07-17T07:41:24.928767+00:00",
-  "updated_at": "2026-07-17T08:57:56.356488+00:00",
+  "updated_at": "2026-07-17T09:06:57.081714+00:00",
   "worktree": ".claude/worktrees/M1-T007",
   "progress_log": [
     {
@@ -99,6 +99,12 @@
       "agent": "orchestrator",
       "percent": 85,
       "message": "C1v2 applied, committed, pushed (branch @ d2949c0): evidence-backed bf97-mjsy disposition per owner directive - full 20-column inventory (BIN + zero-padded address_bbl + boro/block/lot + address present), 1326 rows, coverage 2024-01-03..2026-07-14, no filing-graph keys, system of record DOB Incident Database; classified documented secondary/future source assigned M1-T008 -> M2 property-history/risk fact stage with stated reason (valuable and joinable, outside DOB NOW module scope, supplementary risk-signal feed). All 21 catalog results accounted for. Correction packet preserved at project-control/reports/M1-T007-C1v2-correction-packet.md. Re-dispatching G3 with C1v2-verification charge."
+    },
+    {
+      "at": "2026-07-17T09:06:57.081714+00:00",
+      "agent": "orchestrator",
+      "percent": 85,
+      "message": "Owner corrections 1-5 complete before G3 (branch @ 294dad5, pushed+ls-remote verified): (1) padding claim narrowed - block observed unpadded, shorter-lot padding explicitly not established; (2) conservative join language substituted at all three sites; (3) 4 bf97-mjsy reproducibility fixtures + README classification under already-adjudicated docs/research/fixtures/m1-t007/** (no new adjudication needed) with URLs/timestamps/HTTP statuses/SHA256s; (4) M1-T008 verified NOT yet contracted - binding DOB-wide scope requirement (incl. bf97-mjsy as DOB Incident Database source, NEVER BIS) recorded in M1-T007-owner-connector-directives.md section 6; (5) both scanners re-run in all 3 trees via cmd /c with true Python exit codes captured immediately - all exit 0, evidence at project-control/reports/scan-exitcode-evidence-2026-07-17.md. Re-dispatching newly charged G3."
     }
   ]
 }

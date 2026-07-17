@@ -69,3 +69,16 @@ Second connector priority: Façade filings, Boiler filings, Elevator safety, LAA
 BIS-family research (M1-T008) and BIS reconciliation are mandatory before any UI may claim
 complete DOB history. Until then, results must be labeled "DOB NOW channel coverage",
 never "complete DOB records".
+
+## 6. M1-T008 scope requirement (owner correction 4, recorded 2026-07-17)
+
+Verified: **M1-T008 is NOT yet contracted** (no `project-control/tasks/M1-T008.json` exists),
+so no scope conflict exists today. BINDING requirement for whoever contracts it: M1-T008's
+packet scope must be **DOB-wide legacy and non-DOB-NOW sources**, explicitly including —
+in addition to the BIS family (ipu4-2q9a, ic3t-wcy2, bs8b-p36w, e98g-f8hy, bty7-2jhb) —
+the non-BIS DOB sources flagged out of M1-T007: **bf97-mjsy (Construction-Related Incidents;
+system of record = DOB Incident Database — NEVER describe it as a BIS source)**, g76y-dcqj
+(After Hour Variance Permits), and 855j-jady (DOB Safety Violations). If the orchestrator
+later narrows M1-T008 to BIS-only, a separate DOB-wide safety/risk research task MUST be
+contracted in the same replan to carry bf97-mjsy/g76y-dcqj/855j-jady — they may not be
+silently dropped.
