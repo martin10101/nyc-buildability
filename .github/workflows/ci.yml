@@ -132,6 +132,53 @@ jobs:
           python3 -m pip install --quiet pyyaml
           python3 -c "import yaml; yaml.safe_load(open('render.yaml', encoding='utf-8'))"
 
+  # Task M2-T003 (ADDITIVE job; existing jobs untouched): deterministic
+  # TypeScript type-generation drift check for the canonical property-profile
+  # contract. Regenerates the committed types with a STDLIB-ONLY Python
+  # generator (no Node toolchain, no network - thin-client policy) and fails
+  # if packages/contracts/generated/property_profile.ts diverges byte-for-byte.
+  # Also runs the generator's own determinism + 100%-key-coverage tests.
+  contracts-typegen:
+    name: contracts-typegen (TS drift check, byte-identical)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5.6.0
+        with:
+          python-version: "3.12"
+      # Byte-identical drift check: the committed generated file must equal a
+      # fresh generation. --check exits non-zero on any divergence. The
+      # generator itself is stdlib-only, so this step needs no dependencies.
+      - name: Check generated TypeScript types are up to date
+        run: python3 packages/contracts/scripts/generate_ts_types.py --check
+      # pytest for the generator's determinism + 100%-key-coverage tests
+      # (only test-time dependency; the generator has none).
+      - name: Install pytest
+        run: python3 -m pip install --quiet "pytest>=8,<9"
+      - name: Run type-generator tests
+        run: python3 -m pytest packages/contracts/scripts/tests -q
+
+  # Task M2-T003 rework (ADDITIVE job; existing jobs untouched): prove the
+  # runtime-bundled contract schemas shipped inside the installed api package
+  # (services/api/app/_contract_schemas/v1/*.schema.json) are byte-identical to
+  # the CANONICAL source (packages/contracts/schemas/v1/*.schema.json). The
+  # canonical source stays authoritative; the bundled copies are build
+  # artifacts kept provably in sync so the non-editable install (web-e2e,
+  # production) loads the exact canonical schemas via importlib.resources.
+  # Stdlib-only; mirrors the contracts-typegen drift-check pattern.
+  contracts-schema-bundle:
+    name: contracts-schema-bundle (runtime schema drift check, byte-identical)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5.6.0
+        with:
+          python-version: "3.12"
+      # --check exits non-zero if any bundled copy is missing or diverges.
+      # The sync script is stdlib-only, so this step needs no dependencies.
+      - name: Check runtime-bundled contract schemas are byte-identical to canonical
+        run: python3 services/api/scripts/sync_contract_schemas.py --check
+
   control-plane:
     name: control-plane (workflow regression test, ADR-005)
     runs-on: ubuntu-latest

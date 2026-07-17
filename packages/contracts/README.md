@@ -164,16 +164,72 @@ normalization, Python `json.dumps` number defaults. Parsed-value digesting
 makes byte-different but semantically identical responses digest EQUAL while
 any value change flips the digest.
 
-### `contract_version` semantics — recorded as an INPUT to M2-T003
+### `contract_version` semantics — RESOLVED by M2-T003 (supersedes the deferral)
 
-This task publishes `1.2.0` in the schema enum (the shape). What it
-deliberately does NOT decide (owner sequencing 2026-07-17: M2-T003 builds
-validation/typegen against this settled shape): which version a producer
-DECLARES, and whether declared version and emitted key set are validated
-against each other. The accepted builder still declares `"1.0.0"` while
-emitting the additive keys — legal at every published version because all
-additive keys are optional (the same precedent as M1-T005/M1-T006). M2-T003
-owns the declaration/validation decision.
+M2-T004 published `1.2.0` in the schema enum (the shape) and deliberately left
+the DECLARATION/VALIDATION decision to M2-T003. That decision is now made and
+implemented:
+
+**Decision (task M2-T003, owner code-audit P0 2026-07-17):**
+
+1. **The builder DECLARES the canonical `1.2.0`.** It emits keys through 1.2.0
+   (`status_dimensions`, `feasibility_relevant`, `response_digest` +
+   `digest_canonicalization`, and the four `source_fact` identity/lineage
+   keys), so it declares the version whose key set it fully covers. It no
+   longer declares the stale `"1.0.0"` (`PROFILE_CONTRACT_VERSION = "1.2.0"` in
+   `services/api/app/profile/builder.py`).
+
+2. **Declared version and emitted key set ARE validated against each other.**
+   The declared version must be at least the minimum version that introduces
+   any emitted optional key. Declaring `1.0.0`/`1.1.0` while emitting a later
+   key (the exact stale-declaration bug deferred here) is rejected as a typed
+   `internal_contract_error` — a built payload that misstates its own version
+   never leaves the API. Introduction versions:
+   `data_completeness`/`reproducibility` = 1.1.0; `status_dimensions` = 1.2.0
+   (`app.profile.contract.VERSION_INTRODUCED`).
+
+3. **Every 200 payload is validated against the SELECTED canonical schema
+   before send.** The version is selected from the payload's declared version
+   against the CLOSED published enum, which is read LIVE from this schema (no
+   stale version is hard-coded in the backend). A schema-invalid payload
+   becomes a typed `500 internal_contract_error`; an invalid 200 is impossible
+   (`app.profile.contract.validate_profile`, wired in
+   `services/api/app/api/v1/properties.py`).
+
+4. **An unpublished declared version is a BOUNDED typed error.** A profile
+   declaring a version outside `["1.0.0","1.1.0","1.2.0"]` (e.g. `1.3.0`)
+   yields a typed, correlation-id'd `500 unsupported_contract_version` with the
+   declared version and the supported set — never a silent coercion and never a
+   raw 500 stack.
+
+5. **Backward compatibility preserved.** Because every added key is optional, a
+   valid `1.0.0` instance (no additive keys) and a valid `1.1.0` instance
+   (`data_completeness` + `reproducibility`, no `status_dimensions`) both still
+   pass backend validation and are served unchanged. Proven by
+   `services/api/tests/api/test_property_contract.py` (S7) against the committed
+   `full_example.json` (1.0.0) and `full_example_v1_1.json` (1.1.0) fixtures.
+   The historical `builder_output_m1_t005.json` fixture intentionally remains a
+   1.0.0-declaring snapshot of the M1-T005 builder — it is a SCHEMA fixture
+   (validated against the version-agnostic schema in CI), not live builder
+   output, and demonstrates that an optional-key-bearing 1.0.0 instance stays
+   schema-valid; live builder output now declares 1.2.0.
+
+**Deterministic TypeScript typegen (item E).** The canonical TS types are
+generated from `property_profile.schema.json` (+ the three referenced files) by
+a STDLIB-ONLY Python generator (`packages/contracts/scripts/generate_ts_types.py`;
+no Node toolchain, no network — thin-client policy) into
+`packages/contracts/generated/property_profile.ts` (committed). A CI job
+(`contracts-typegen`) regenerates and fails on any byte-level divergence; the
+generated types cover 100% of the schema keys and pin the closed
+`contract_version` enum. This replaces any hand-written client representation
+(removed when M2-T002 migrates the web client).
+
+**Client-regression fixtures (item F).** `fixtures/client_regression/` holds
+adversarial API-response fixtures the frontend must defend against but that the
+real app never emits — currently `http500_state_no_match.json` (the incoherent
+HTTP 500 + `state=no_match` pair). This directory is outside `valid/`/`invalid/`
+so `validate_contracts.py` does not treat it as a contract fixture; M2-T002
+wires it as a client regression input.
 
 Deferred contracts (added additively in later milestones, per
 `docs/PRODUCT_FLOW_AND_AI_BOUNDARIES.md` "Canonical contracts"): rule

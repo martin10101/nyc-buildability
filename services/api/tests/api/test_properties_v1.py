@@ -229,7 +229,10 @@ def test_s1_profile_version_and_reproducibility_metadata(client) -> None:
     fixture_fetcher("F01_single_lot_normal.json")
     profile = client.get("/api/v1/properties/1000010100").json()
     version = profile["profile_version"]
-    assert version["contract_version"] == "1.0.0"
+    # M2-T003 resolved the declaration to the canonical 1.2.0 (the builder
+    # emits keys through 1.2.0); 1.0.0/1.1.0 remain valid (see
+    # tests/api/test_property_contract.py backward-compat cases).
+    assert version["contract_version"] == "1.2.0"
     assert version["profile_revision"] == 1
     assert version["generated_at"].endswith("Z")
     repro = profile["reproducibility"]
