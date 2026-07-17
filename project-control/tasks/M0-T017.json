@@ -1,0 +1,42 @@
+{
+  "task_id": "M0-T017",
+  "title": "Defect fix: control-plane S7 test must not require a backlog task in the live ledger copy",
+  "task_type": "defect_fix",
+  "milestone_id": "M0",
+  "objective": "tools/test_project_control.py test_s7_backward_compatibility asserts the copied real ledger contains at least one backlog task (line ~808). Claiming M2-T002 and M1-T009 legitimately emptied the backlog, so the assertion now fails every CI run (control-plane job) on merge-preview builds - a live-ledger test-data coupling defect, not a product regression. Fix: make S7 independent of mutable ledger composition (synthesize the needed backlog exemplar inside the temp copy when absent, or restructure the check) so the suite passes regardless of live task statuses. No behavior change to project_control.py enforcement; test-only unless a test seam requires a comment. Scope: tools/test_project_control.py (+ tools/project_control.py ONLY if a comment/docstring touch-up is needed), own producer report.",
+  "business_reason": "Integration defect discovered 2026-07-17 during the M2-T002/M1-T009 wave: control-plane CI job fails repo-wide while the backlog is empty, blocking all PR merges",
+  "inputs": [],
+  "outputs": [],
+  "dependencies": [],
+  "allowed_paths": [],
+  "forbidden_paths": [],
+  "acceptance_scenarios": [],
+  "required_gates": [
+    "G0",
+    "G2",
+    "G3",
+    "G4"
+  ],
+  "producer_agent": "backend-engineer",
+  "reviewer_agents": [
+    "code-reviewer"
+  ],
+  "status": "accepted",
+  "progress_percent": 100,
+  "risks": [],
+  "blockers": [],
+  "created_at": "2026-07-17T20:55:37.575578+00:00",
+  "updated_at": "2026-07-17T21:16:25.891096+00:00",
+  "worktree": ".claude/worktrees/M0-T017",
+  "progress_log": [
+    {
+      "at": "2026-07-17T21:16:24.995529+00:00",
+      "agent": "orchestrator",
+      "percent": 75,
+      "status": "in_progress",
+      "message": "Test-only S7 decoupling implemented (synthetic backlog exemplar + permanent zero-backlog sub-check); 10/10 groups green locally against the zero-backlog live ledger; PR 22 merged to main at 748abb6 with control-plane CI green"
+    }
+  ],
+  "accepted_by": "orchestrator",
+  "accepted_at": "2026-07-17T21:16:25.889091+00:00"
+}

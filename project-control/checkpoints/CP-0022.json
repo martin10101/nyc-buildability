@@ -1,0 +1,9 @@
+{
+  "checkpoint_id": "CP-0022",
+  "timestamp": "2026-07-17T21:16:26.067814+00:00",
+  "commit": "748abb6",
+  "branch": "main",
+  "active_milestone": "M0",
+  "summary": "M0-T017 ACCEPTED (28th): control-plane S7 test decoupled from live ledger composition (defect found when claiming M2-T002/M1-T009 emptied the backlog and failed CI repo-wide, job 87990690868). Fix: synthetic temp-copy backlog exemplar + permanent zero-backlog regression sub-check; nothing weakened; enforcement untouched; G3+G4 PASS zero defects. Unblocked PR CI for the M2-T002/M1-T009 wave.",
+  "updated_at": "2026-07-17T21:16:26.067814+00:00"
+}
