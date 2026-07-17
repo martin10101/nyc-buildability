@@ -1,0 +1,43 @@
+{
+  "pack_name": "NYC Buildability 3D and Premium UI Expansion",
+  "version": "1.0.0",
+  "merge_mode": "additive",
+  "overwrite_existing_files": false,
+  "continuation_behavior": "preserve project-control history and add dependent tasks",
+  "new_agents": [
+    "3d-massing-engineer",
+    "product-design-director",
+    "visual-quality-reviewer",
+    "financial-feasibility-engineer",
+    "opportunity-search-engineer"
+  ],
+  "recommended_3d_stack": {
+    "parcel_viewer": [
+      "three",
+      "@react-three/fiber",
+      "@react-three/drei"
+    ],
+    "map": [
+      "maplibre-gl"
+    ],
+    "large_scale_layers": [
+      "deck.gl"
+    ],
+    "spatial_database": [
+      "PostGIS"
+    ],
+    "geometry_processing": [
+      "Shapely"
+    ],
+    "mesh_processing": [
+      "Trimesh"
+    ],
+    "runtime_format": [
+      "glTF",
+      "GLB"
+    ],
+    "optional_future_context": [
+      "CesiumJS"
+    ]
+  }
+}
