@@ -33,3 +33,11 @@ Added during M1-T003 G1 (2026-07-16):
 - **Socrata blobby datasets:** createdAt/rowsUpdatedAt/publicationDate are frozen at upload time, but `viewLastModified` DOES move when the blob/description changes — it is the usable change-polling signal (seen on mm69-vrje: frozen 2013 triple, viewLastModified 2026-05-26).
 - **ArcGIS hosted layers: `maxRecordCount` can be LESS than the live feature count** (DCP nysp cap 92 vs 95 features; nysp_sd 317 vs 336) — unpaged queries silently truncate; always compare `returnCountOnly=true` against the cap.
 - Socrata column descriptions can carry semantics absent from the official PDF dictionary (fdkv-4t4z zoning_district_1 may hold ZR section numbers for some Queens lots; bbl description has the corrected example the PDF typos). Always read both.
+
+Added during M1-T007 G1 (2026-07-17, DOB NOW family; applied by orchestrator - reviewer sandbox denied memory writes, proposals preserved verbatim in the G1 report O5):
+- urllib space-encoding gotcha: encode spaces in SoQL as %20 (or use quote()); raw spaces in $where fail through urllib while curl tolerates them.
+- rbx6-tga4 join-key pollution is a POPULATION: $where=job_filing_number='Permit is no' -> count 278 (with work_permit='Permit is not yet issued' but permit_status='Signed-off'). Key-format validation ^[A-Z]\d{8}- is mandatory, not defensive.
+- Number-typed BBL serializes CLEAN on rbx6-tga4/xxbr-ypig ("4051980021", no decimal tail) unlike PLUTO's "1000010100.00000000" - do NOT generalize decimal-tail handling across datasets; normalize defensively per dataset.
+- Default $limit=1000 verified empirically (no-$limit projection returns exactly 1000 rows); stable paging citation is dev.socrata.com/docs/queries/order.html ("results of a query are not implicitly ordered"); /docs/paging(.html) both 404.
+- Cheap OQ probes: $select=<field>,count(*)&$group=<field> exposes migration depth (xubg-57si cycles 6-10 only); single cross-dataset key probe can produce first evidence for shared namespaces (juyv-2jek device_id = e5aq-a4j2 device_number, same BIN).
+- Frozen-count corroboration: identical row counts producer-vs-reviewer are EXPECTED when rowsUpdatedAt is unchanged between fetches - zero drift corroborates rather than arouses suspicion.
