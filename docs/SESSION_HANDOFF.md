@@ -38,7 +38,7 @@ Written by the orchestrator. Open this folder (`nyc-development-feasibility-clau
 
 - `bypassPermissions` REMOVED (G5 correction 6, owner-approved). `.claude/settings.local.json` (untracked): `defaultMode: acceptEdits`; allow = read-only PS cmdlets, git inspection, specific validation scripts, gh run read; **ask = git add/commit/merge/push/tag/rebase/worktree, ALL project_control.py mutations, Remove-Item/mv/copy, installs, curl/wget/IWR, gh mutations, supabase/render, setx**; deny = credential files, disk/partition/registry destruction. User-level `~/.claude/settings.json` still has a broad `Bash:*` allow — local ask entries override it for the listed classes.
 - CONSEQUENCE: every git/ledger write now prompts the owner. Batch them. Subagent producers may be fully write/exec-locked (cloud-architect was) → they return work via the agent channel; orchestrator transplants + captures evidence (established division of labor). Reviewers: Read/Grep/Glob + git-inspection + the allowed validation scripts work without prompts; one-off python does not.
-- Owner question OPEN at session end: whether to relax git add/commit/merge + project_control new-task/claim/progress/submit/gate back to allow (keeping push/accept/checkpoint/destructive/network on ask). Do not relax without explicit approval.
+- RESOLVED (owner approved, end of session 7): git add/commit/merge + project_control new-task/claim/progress/submit/gate are now ALLOW (routine autonomous operation restored); push, accept, checkpoint, worktree add/remove, tag/rebase, deletes, installs, network commands, and gh mutations remain ASK; bypassPermissions stays removed. Applied in .claude/settings.local.json and validated (commit ran prompt-free; push still prompts).
 
 ## Immediate queue (in order)
 
