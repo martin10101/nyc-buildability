@@ -1,0 +1,67 @@
+# M2-T005 — G3 Independent Human-Journey Review
+
+> Orchestrator preservation note: reviewer return saved VERBATIM from the agent-return channel (transport entity-decoding only, per the report-preservation rule in .claude/rules/project-control.md). Reviewer: human-journey-reviewer. Received 2026-07-17, session 11.
+
+**Reviewer:** human-journey-reviewer (independent; did not produce this work; read-only per ADR-005)
+**Task packet:** `project-control/tasks/M2-T005.json` (scenarios S1–S6)
+**Target:** branch `task/M2-T005-a11y-announcements`, commit `39c39a5`, worktree `C:\Users\MLFLL\Downloads\nyc zoning\nyc-development-feasibility-claude-pack\.claude\worktrees\M2-T005`
+**Diff basis:** `git diff fb67d5a..39c39a5` (16 files, +1328/−47)
+**Date:** 2026-07-17
+
+## Method and honest limitation
+
+No browser, npm, or Playwright can run on the owner PC (low-storage policy). Per `.claude/rules/project-control.md` I did not return BLOCKED for inability to execute; instead this is a code-level walkthrough of the actual diff as a keyboard/screen-reader user would experience it, a line-by-line audit of every new test for vacuousness, and verification of the orchestrator-captured CI evidence committed at `39c39a5` (`project-control/reports/M2-T005-G2-selfcheck.md`: PR #33, runs 29620815612/29620826778, vitest `156 passed (156)`, Playwright `53 passed`, all jobs green on both push and pull_request events — job IDs and verbatim log lines recorded). I started from the packet scenarios and the M2-T002 defect tables (D1–D5 verbatim, N1), and read the producer report last.
+
+## Journey walkthrough (keyboard + assistive-technology trace)
+
+**Lookup → loading → outcome (success).** The form input keeps native focus during submit; `LoadingStages` never takes focus on a non-retry lookup (`focusOnMount` defaults false — `LoadingStages.tsx:19-33`), so nothing yanks the user out of the form while waiting. On arrival, React batches `setLoadingBbl(null)` + `setResult(...)` into one commit: the persistent `OutcomeAnnouncer` text transitions `""` → message exactly once, and the arrival effect (`PropertyLookup.tsx:177-185`, keyed on `result`, which changes only on arrival) focuses the identity `h2` (`data-outcome-heading`, `tabIndex={-1}`). Sequential Tab continues from the focused heading to the single next action — the S6 e2e journey proves the full keyboard path lookup → profile → confirm → back with zero mouse events.
+
+**Old bug (outcome swallowed).** Structurally fixed, not patched: the announcer is a visually-hidden `role="status" aria-live="polite" aria-atomic` div rendered unconditionally at the top of both screens (`OutcomeAnnouncer.tsx`), so it exists in the accessibility tree before any lookup and never unmounts. The defective mechanism (the loading card's own live region unmounting with its content) can no longer swallow anything — the loading card's `aria-live` is retained only for its own stage text.
+
+**Double announcement.** The failure cards deliberately carry no `role="alert"`/`aria-live`, and the tests assert that negatively on the cards themselves (`property-lookup.test.tsx:456-457`, `confirm-screen.test.tsx:190`). The exactly-once claim is asserted positively by counting live regions containing the announcement text (`liveRegionsContaining(...)` → length 1) at component AND e2e level. Two residual perception questions remain that no DOM assertion can settle (see defect table O1/O2): focus echo of the heading, and the pre-existing `CompletenessBanner role="status"` (`PropertyLookup.tsx:96-111`) which mounts with content at the same instant on the Property success path. Both are correctly routed to the CF-1 manual NVDA/VoiceOver carry-forward; the producer disclosed both and chose polite over assertive to minimize double-speak.
+
+**Repeat identical outcome.** Re-announcement genuinely works because loading is a mandatory intermediate state on every path (form submit sets `loadingBbl`; Confirm's fetch effect sets `setLoading(true)` at `ConfirmScreen.tsx:405`), and the announcement derivation clears to `""` during loading on both screens — so a retry that fails the same way changes the region text twice (`msg → "" → msg`). Asserted with a held-open second fetch in both component retry tests (`property-lookup.test.tsx:483-513`, `confirm-screen.test.tsx` retry test) and in both keyboard-retry e2e tests with an 800 ms delayed route.
+
+**Retry focus (old bug: drop to body).** The Retry button unmounts with its card in the same commit `LoadingStages` mounts with `focusOnMount={retryFocus}`; the mount effect focuses the loading section, so focus never rests on `body`. `retryFocus` is set only in the retry callbacks and cleared on arrival, so an initial lookup can never trigger loading-card focus steal. e2e asserts `activeElement` is the loading card mid-retry and the new outcome heading after — via real Chromium, `isBody === false` at every checkpoint, keyboard-only (`Tab`+`Enter`), on both screens.
+
+**Each failure family.** All rendered failure kinds are exercised parametrically on the Property screen (11 cases: no_match, validation_error, 4 upstream states, internal_error, server_contract_error, validation_failure, network_error, unexpected_response), each asserting announcement text, exactly-once count, no card live-region, and heading focus. Confirm covers representative states (no_match, validation_failure, source_unavailable retry, success) with identical shared wiring — an acceptable, disclosed sampling. `announce.ts` copy mirrors the visible card titles, adds no legal semantics, `aborted → ""` (superseded requests are dropped by the sequence guard before render anyway), and an honesty test forbids "best"/"verified" in any announcement.
+
+## Per-scenario findings
+
+| Scenario | Finding | Evidence |
+|---|---|---|
+| S1 exactly-once announcement | **PASS** — persistent announcer; failure cards carry no live semantics (asserted); exactly-once counted at component + e2e; clear-during-loading guarantees repeat re-announcement; loading handoff structurally cannot swallow | `OutcomeAnnouncer.tsx`; `property-lookup.test.tsx:441-513`; `confirm-screen.test.tsx:174-259`; `a11y-announcements.spec.ts:47-150`; `announce.test.ts` (15 tests, distinctness + honesty) |
+| S2 focus | **PASS** — arrival → `[data-outcome-heading]` (all 9 failure components via shared `FailureTitle`, both identity h2s); retry → loading card; never body; client-invalid submit provably moves no focus (D5 behavior preserved and now asserted) | `FailureState.tsx:23-38`; `PropertyLookup.tsx:177-185,221-228`; `ConfirmScreen.tsx:417-432`; `property-lookup.test.tsx:515-531`; e2e tests 1–7 |
+| S3 minors D2–D5 | **PASS** — D2: token-based `.secondary-button:disabled` + computed-style e2e (`not-allowed`, inset bg, tertiary fg). D3: bad-param `h2`→`h1`, tested for both variants (missing and format-invalid param, zero fetch) plus e2e `h1` count = 1. D4: flags filtered from the Confirm zoning table only, kept in the dedicated flags section with **no information loss** — `FlagRow` renders value + `CoverageBadge` + `ProvenanceDisclosure`, the same triple the table row carried, plus honest unknown states; a visible note says where they live; null-keyed features are never filtered; Property table unchanged (regression-tested both levels). D5: alpha 0.35→0.9; blended ring ≈ rgb(53,97,143), ~6.5:1 on white — plausibly clears 3:1 by wide margin; pixels stay CF-2 as contracted | `globals.css:51-55,76-84,207-214`; `confirm-entry.test.tsx`; `ConfirmScreen.tsx:69-75,120-160,268-301,484-491`; `ZoningSection.tsx:85-140`; e2e tests 8–10 |
+| S4 hygiene N1 | **PASS** — byte scan of the new blob: zero raw control bytes (verified myself: `raw control bytes: []`, size 10953); line 159 uses the six-character `\u0000` escape, which constructs the identical runtime NUL string, so the raw-comparison laundering assertion is genuinely unchanged (CI: api.test.ts 31 tests green). Note the fix commit's own diff necessarily still shows `Bin` because the OLD blob is binary; the file diffs as text from this commit forward — exactly the N1 ask | `api.test.ts:156-162`; my byte scan; diffstat |
+| S5 regression | **PASS** — regression honesty verified independently: `git diff fb67d5a..39c39a5` deletion lines on both modified test files are the import statements only (extended with `fireEvent`/`waitFor`); zero existing assertions modified, weakened, or deleted; the 11 pre-existing e2e spec files are untouched; DOM changes to accepted surfaces are attribute additions, one wrapper div, the hidden announcer, and the two contracted copy changes (D3 heading level, D4 Confirm note); CI green 156/156 + 53/53 | diff `grep '^-'` outputs; CI evidence in G2 report |
+| S6 keyboard-only | **PASS** — complete no-mouse journey: Tab→input, type BBL, Enter, arrival focus + announcement asserted, Tab→confirm link, Enter, Confirm arrival focus + announcement, Tab→back link, Enter, back at the form; the disabled confirm affordance is natively unfocusable (discoverable via the adjacent persistence note, per the accepted M2-T002 design) | `a11y-announcements.spec.ts:180-217` |
+
+## Defect table
+
+| ID | Severity | Blocking? | Description |
+|---|---|---|---|
+| O1 | Minor (observation) | No | Property success arrival: the pre-existing `CompletenessBanner` (`PropertyLookup.tsx:100-104`, `role="status"`) mounts with content in the same commit as the outcome announcement. The exactly-once test filters live regions *containing the announcement text*, so this different-text region escapes the assertion; some SR/browser pairs may voice both messages (plus heading focus echo). Not new to this task (accepted M2-T001/T002 behavior, and the two messages carry distinct information), and the producer disclosed it (report §6.5). **Required CF-1 scope addition:** the manual NVDA/VoiceOver session must explicitly include the Property success arrival with the banner present, alongside the already-scoped focus-echo question. |
+| O2 | Minor (observation) | No | Focus echo: heading focus + polite status message means an SR speaks the heading text and then the announcement. Inherent to the packet contracting BOTH behaviors (S1+S2); producer chose polite over assertive and documented a one-line fallback. Correctly deferred to CF-1. |
+| O3 | Minor | No | `client_timeout` is announcement-mapped and unit-tested but not exercised at screen level (needs fake timers vs the 12 s budget). Mechanism is outcome-kind-agnostic and the state's rendering is covered by existing M2-T001 e2e. Disclosed (limitation 2). Suggested for a future test-debt pass, not blocking. |
+| O4 | Info | No | `[data-outcome-heading]:focus` uses `:focus` (not `:focus-visible`), so mouse-clicking a BBL heading will also paint a focus ring — a justified tradeoff (script-moved focus does not reliably match `:focus-visible`) with a cosmetic side effect. Fold into CF-2/CF-5 pixel review. |
+
+No Major defects found.
+
+## Producer-limitations assessment (the 3 disclosed in G2)
+
+1. **Real-SR behavior unverified (CF-1):** honest and correctly scoped — DOM-level exactly-once is the strongest automatable claim, the carry-forward pre-existed this task, and a concrete fallback is documented. Accepted, with the O1 scope addition above.
+2. **`client_timeout` not screen-exercised:** accepted as O3 — genuinely disclosed, low residual risk.
+3. **Mid-typing focus steal:** I judge this acceptable for a real user, not a defect. The focus move is the direct completion of a user-initiated action, the window is bounded by the 12 s client budget, the client-invalid-submit path provably never moves focus (`property-lookup.test.tsx:515-531`), and packet S2 explicitly contracts deterministic arrival focus. A user mid-edit loses their caret at most once per lookup they themselves started, and the focused heading tells them exactly why. The analogous Confirm-page-load auto-focus (skipping past the "Step 2" header to the outcome heading) is likewise contracted and recoverable by normal SR navigation.
+
+## Scope, overlap, and storage check
+
+- Diff touches exactly `apps/web/**` plus `project-control/reports/M2-T005-producer-report.md` and `M2-T005-G2-selfcheck.md`. No `services/**`, `packages/contracts/**`, `docs/**`, `.github/**`, `.claude/**`.
+- M2-T006 A1 overlap rule satisfied: `apps/web/src/lib/contract.ts` and `apps/web/src/lib/__tests__/validate-profile.test.ts` are NOT in the diff.
+- No large or persistent artifacts written to the owner PC: the diff is ~1330 lines of source/test text; no binaries beyond the 10.9 KB `api.test.ts` (which shrank in badness, not grew). My own writes were confined to `.claude/agent-memory/human-journey-reviewer/` (two small files), as permitted.
+
+## Verdict
+
+The D1 fix is a structurally sound persistent-announcer + deterministic-focus design whose failure modes (swallow, double-announce, stale repeat, body-drop) are each individually traced and tested with genuine, non-vacuous assertions at component and real-browser level; D2–D5 and N1 are each fixed as contracted with no information loss and no regression to accepted behavior; CI evidence is green and internally consistent.
+
+**G3: PASS** — no blocking corrections. Non-blocking follow-ups for the orchestrator to track: add O1 (CompletenessBanner co-announcement on Property success) to the CF-1 manual screen-reader session scope; O3 (`client_timeout` screen-level test) and O4 (`:focus` ring on mouse-clicked headings) as low-priority notes for the first browser-accessible session.

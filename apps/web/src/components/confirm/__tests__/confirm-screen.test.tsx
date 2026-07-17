@@ -1,4 +1,4 @@
-import { cleanup, render, screen } from "@testing-library/react";
+import { cleanup, fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { ConfirmScreen } from "@/components/confirm/ConfirmScreen";
 import {
@@ -154,5 +154,141 @@ describe("ConfirmScreen — hardened boundary (S2/S3 apply here too)", () => {
     expect(
       screen.getAllByRole("link", { name: /Back to property lookup/ }).length,
     ).toBeGreaterThan(0);
+  });
+});
+
+/**
+ * M2-T005 D1 (scenarios S1/S2) on the Confirm screen: outcome arrivals
+ * are announced exactly once by the persistent announcer and focus lands
+ * on the outcome heading — never body. The announcement/focus mechanism is
+ * shared with the Property screen (OutcomeAnnouncer + FailureTitle +
+ * data-outcome-heading), where every failure state is exercised
+ * parametrically; here representative states prove the Confirm wiring.
+ */
+
+function liveRegionsContaining(text: string): Element[] {
+  return Array.from(
+    document.querySelectorAll('[aria-live], [role="alert"], [role="status"]'),
+  ).filter((el) => (el.textContent ?? "").includes(text));
+}
+
+describe("ConfirmScreen — a11y announcement + focus (M2-T005 S1/S2)", () => {
+  it("announces a failure arrival exactly once and focuses the failure heading", async () => {
+    vi.stubGlobal(
+      "fetch",
+      vi.fn(async () => jsonResponse({ state: "no_match", bbl: "5999999999", message: "none" }, 404)),
+    );
+    render(<ConfirmScreen bbl="5999999999" />);
+    await screen.findByTestId("state-no-match");
+
+    const announcement =
+      "Lookup complete: no property record found in the official dataset.";
+    expect(screen.getByTestId("outcome-announcer")).toHaveTextContent(announcement);
+    expect(liveRegionsContaining(announcement)).toHaveLength(1);
+    const card = screen.getByTestId("state-no-match");
+    expect(card).not.toHaveAttribute("role", "alert");
+    expect(card).not.toHaveAttribute("aria-live");
+
+    const headingEl = screen.getByRole("heading", { name: "No property record found" });
+    expect(headingEl).toHaveAttribute("data-outcome-heading");
+    await waitFor(() => expect(document.activeElement).toBe(headingEl));
+    expect(document.activeElement).not.toBe(document.body);
+  });
+
+  it("announces the validation-failure arrival exactly once (hardened boundary states announce too)", async () => {
+    const broken = baseProfile() as unknown as Record<string, unknown>;
+    delete broken.zoning;
+    vi.stubGlobal("fetch", vi.fn(async () => jsonResponse(broken, 200)));
+    render(<ConfirmScreen bbl="1000010010" />);
+    await screen.findByTestId("state-validation-failure");
+
+    const announcement =
+      "Lookup failed: the response did not match the published data contract.";
+    expect(screen.getByTestId("outcome-announcer")).toHaveTextContent(announcement);
+    expect(liveRegionsContaining(announcement)).toHaveLength(1);
+    await waitFor(() =>
+      expect(document.activeElement).toBe(
+        screen.getByRole("heading", {
+          name: "The response did not match the published data contract",
+        }),
+      ),
+    );
+  });
+
+  it("announces success arrival exactly once and focuses the identity heading", async () => {
+    vi.stubGlobal("fetch", vi.fn(async () => jsonResponse(baseProfile(), 200)));
+    render(<ConfirmScreen bbl="1000010010" />);
+    await screen.findByTestId("confirm-card");
+
+    const announcement =
+      "Lookup complete: official property profile loaded for BBL 1000010010.";
+    expect(screen.getByTestId("outcome-announcer")).toHaveTextContent(announcement);
+    expect(liveRegionsContaining("profile loaded for BBL 1000010010")).toHaveLength(1);
+
+    const headingEl = screen.getByRole("heading", { name: "BBL 1000010010" });
+    expect(headingEl).toHaveAttribute("data-outcome-heading");
+    await waitFor(() => expect(document.activeElement).toBe(headingEl));
+  });
+
+  it("retry: focuses the loading card (never body), clears the announcement, then focuses the new outcome heading", async () => {
+    let resolveSecond: ((response: Response) => void) | undefined;
+    const fetchStub = vi
+      .fn()
+      .mockResolvedValueOnce(
+        jsonResponse({ state: "source_unavailable", message: "outage" }, 503),
+      )
+      .mockImplementationOnce(
+        () => new Promise<Response>((resolve) => (resolveSecond = resolve)),
+      );
+    vi.stubGlobal("fetch", fetchStub);
+    render(<ConfirmScreen bbl="1000010010" />);
+    await screen.findByTestId("state-source_unavailable");
+
+    fireEvent.click(screen.getByRole("button", { name: "Retry lookup" }));
+    const loading = await screen.findByTestId("loading-stages");
+    await waitFor(() => expect(document.activeElement).toBe(loading));
+    expect(document.activeElement).not.toBe(document.body);
+    expect(screen.getByTestId("outcome-announcer").textContent).toBe("");
+
+    resolveSecond?.(jsonResponse(baseProfile(), 200));
+    await screen.findByTestId("confirm-card");
+    expect(screen.getByTestId("outcome-announcer")).toHaveTextContent(
+      "profile loaded for BBL 1000010010",
+    );
+    await waitFor(() =>
+      expect(document.activeElement).toBe(
+        screen.getByRole("heading", { name: "BBL 1000010010" }),
+      ),
+    );
+  });
+});
+
+describe("ConfirmScreen — D4: landmark/flood flags render exactly once (M2-T005 S3)", () => {
+  it("keeps flag values in the dedicated flags section and filters them from the zoning table", async () => {
+    vi.stubGlobal("fetch", vi.fn(async () => jsonResponse(baseProfile(), 200)));
+    render(<ConfirmScreen bbl="1000010010" />);
+    await screen.findByTestId("confirm-card");
+
+    // The flags section keeps the official values (with honest unknowns).
+    const flags = screen.getByTestId("confirm-flags");
+    expect(flags).toHaveTextContent("INDIVIDUAL LANDMARK");
+    expect(flags).toHaveTextContent("Governors Island Historic District");
+
+    // The zoning mapped-features table no longer repeats them, states
+    // where they live, and keeps its non-flag features.
+    const zoning = screen.getByTestId("zoning-section");
+    expect(zoning).not.toHaveTextContent("INDIVIDUAL LANDMARK");
+    expect(zoning).not.toHaveTextContent("2007 FIRM flood flag");
+    expect(zoning).toHaveTextContent("Mapped features");
+    expect(zoning).toHaveTextContent("each official value is shown once");
+    expect(zoning).toHaveTextContent("Zoning map");
+
+    // Each flag label appears exactly once as a row label on the screen.
+    expect(screen.getAllByText("Landmark", { exact: true })).toHaveLength(1);
+    expect(screen.getAllByText("Historic district", { exact: true })).toHaveLength(1);
+    expect(screen.getAllByText("2007 FIRM flood flag", { exact: true })).toHaveLength(1);
+    expect(
+      screen.getAllByText("2015 preliminary FIRM flood flag", { exact: true }),
+    ).toHaveLength(1);
   });
 });

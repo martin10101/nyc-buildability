@@ -1,4 +1,4 @@
-import { cleanup, fireEvent, render, screen } from "@testing-library/react";
+import { cleanup, fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { PropertyLookup } from "@/components/property/PropertyLookup";
 import {
@@ -308,5 +308,240 @@ describe("PropertyLookup — honesty affordances (S7)", () => {
     expect(screen.getByTestId("address-disabled-copy")).toHaveTextContent(
       "credentials are still pending",
     );
+  });
+});
+
+/**
+ * M2-T005 D1 (scenarios S1/S2): every failure state and the success
+ * arrival is announced EXACTLY ONCE through the persistent live region,
+ * and focus lands deterministically on the outcome heading — never body.
+ */
+
+/** All live regions currently containing `text` (exactly-once check). */
+function liveRegionsContaining(text: string): Element[] {
+  return Array.from(
+    document.querySelectorAll('[aria-live], [role="alert"], [role="status"]'),
+  ).filter((el) => (el.textContent ?? "").includes(text));
+}
+
+const FAILURE_ANNOUNCEMENT_CASES: Array<{
+  name: string;
+  bbl: string;
+  stubImpl: () => Promise<Response>;
+  testId: string;
+  announcement: string;
+  heading: string;
+}> = [
+  {
+    name: "no_match",
+    bbl: "5999999999",
+    stubImpl: async () =>
+      jsonResponse({ state: "no_match", bbl: "5999999999", message: "none" }, 404),
+    testId: "state-no-match",
+    announcement: "Lookup complete: no property record found in the official dataset.",
+    heading: "No property record found",
+  },
+  {
+    name: "validation_error",
+    bbl: "1000000000",
+    stubImpl: async () =>
+      jsonResponse(
+        {
+          state: "validation_error",
+          message: "BBL tax block must be 1-99999; got '00000'",
+          detail: { code: "invalid_block", raw_value: "'1000000000'" },
+        },
+        422,
+      ),
+    testId: "state-validation-error",
+    announcement: "Lookup rejected: the API rejected this BBL.",
+    heading: "The API rejected this BBL",
+  },
+  {
+    name: "upstream rate_limited",
+    bbl: "1000010010",
+    stubImpl: async () => jsonResponse({ state: "rate_limited", message: "m" }, 503),
+    testId: "state-rate_limited",
+    announcement: "Lookup failed: the official data source is throttling requests.",
+    heading: "The official data source is throttling requests",
+  },
+  {
+    name: "upstream source_unavailable",
+    bbl: "1000010010",
+    stubImpl: async () => jsonResponse({ state: "source_unavailable", message: "m" }, 503),
+    testId: "state-source_unavailable",
+    announcement: "Lookup failed: the official data source is unavailable.",
+    heading: "The official data source is unavailable",
+  },
+  {
+    name: "upstream timeout",
+    bbl: "1000010010",
+    stubImpl: async () => jsonResponse({ state: "timeout", message: "m" }, 504),
+    testId: "state-timeout",
+    announcement: "Lookup failed: the official data source timed out.",
+    heading: "The official data source timed out",
+  },
+  {
+    name: "upstream schema_drift",
+    bbl: "1000010010",
+    stubImpl: async () => jsonResponse({ state: "schema_drift", message: "m" }, 502),
+    testId: "state-schema_drift",
+    announcement: "Lookup failed: the official dataset changed shape.",
+    heading: "The official dataset changed shape",
+  },
+  {
+    name: "internal_error",
+    bbl: "1000010010",
+    stubImpl: async () => jsonResponse({ state: "internal_error", message: "m" }, 500),
+    testId: "state-internal-error",
+    announcement: "Lookup failed: something went wrong on our side.",
+    heading: "Something went wrong on our side",
+  },
+  {
+    name: "server_contract_error",
+    bbl: "1000010010",
+    stubImpl: async () =>
+      jsonResponse({ state: "internal_contract_error", message: "refused" }, 500),
+    testId: "state-server-contract-error",
+    announcement: "Lookup failed: the server refused to deliver an invalid profile.",
+    heading: "The server refused to deliver an invalid profile",
+  },
+  {
+    name: "validation_failure",
+    bbl: "1000010010",
+    stubImpl: async () => {
+      const broken = baseProfile() as unknown as Record<string, unknown>;
+      delete broken.provenance;
+      return jsonResponse(broken, 200);
+    },
+    testId: "state-validation-failure",
+    announcement: "Lookup failed: the response did not match the published data contract.",
+    heading: "The response did not match the published data contract",
+  },
+  {
+    name: "network_error",
+    bbl: "1000010010",
+    stubImpl: async () => {
+      throw new TypeError("fetch failed");
+    },
+    testId: "state-network-error",
+    announcement: "Lookup failed: the platform API could not be reached.",
+    heading: "Could not reach the platform API",
+  },
+  {
+    name: "unexpected_response (recorded 500+no_match)",
+    bbl: "5999999999",
+    stubImpl: async () => cr500NoMatchResponse(),
+    testId: "state-unexpected-response",
+    announcement: "Lookup failed: unexpected response from the platform API.",
+    heading: "Unexpected response from the platform API",
+  },
+];
+
+describe("PropertyLookup — a11y announcement + focus on every failure state (M2-T005 S1/S2)", () => {
+  it.each(FAILURE_ANNOUNCEMENT_CASES)(
+    "$name is announced exactly once and focuses the failure heading",
+    async ({ bbl, stubImpl, testId, announcement, heading }) => {
+      vi.stubGlobal("fetch", vi.fn(stubImpl));
+      render(<PropertyLookup />);
+      submitBbl(bbl);
+      await screen.findByTestId(testId);
+
+      // Announcement: emitted by the persistent announcer, exactly once.
+      expect(screen.getByTestId("outcome-announcer")).toHaveTextContent(announcement);
+      expect(liveRegionsContaining(announcement)).toHaveLength(1);
+
+      // The failure card itself is NOT a second live source.
+      const card = screen.getByTestId(testId);
+      expect(card).not.toHaveAttribute("role", "alert");
+      expect(card).not.toHaveAttribute("aria-live");
+
+      // Focus: lands on the outcome heading, never body.
+      const headingEl = screen.getByRole("heading", { name: heading });
+      expect(headingEl).toHaveAttribute("data-outcome-heading");
+      await waitFor(() => expect(document.activeElement).toBe(headingEl));
+      expect(document.activeElement).not.toBe(document.body);
+    },
+  );
+
+  it("success arrival is announced exactly once and focuses the profile heading", async () => {
+    vi.stubGlobal("fetch", vi.fn(async () => jsonResponse(baseProfile(), 200)));
+    render(<PropertyLookup />);
+    submitBbl("1000010010");
+    await screen.findByTestId("profile-view");
+
+    const announcement =
+      "Lookup complete: official property profile loaded for BBL 1000010010.";
+    expect(screen.getByTestId("outcome-announcer")).toHaveTextContent(announcement);
+    expect(liveRegionsContaining("profile loaded for BBL 1000010010")).toHaveLength(1);
+
+    const headingEl = screen.getByRole("heading", { name: "BBL 1000010010" });
+    expect(headingEl).toHaveAttribute("data-outcome-heading");
+    await waitFor(() => expect(document.activeElement).toBe(headingEl));
+  });
+
+  it("retry: clears the announcement, focuses the loading card (never body), then re-announces and focuses the new outcome heading", async () => {
+    let resolveSecond: ((response: Response) => void) | undefined;
+    const fetchStub = vi
+      .fn()
+      .mockResolvedValueOnce(
+        jsonResponse({ state: "source_unavailable", message: "outage" }, 503),
+      )
+      .mockImplementationOnce(
+        () => new Promise<Response>((resolve) => (resolveSecond = resolve)),
+      );
+    vi.stubGlobal("fetch", fetchStub);
+    render(<PropertyLookup />);
+    submitBbl("1000010010");
+    await screen.findByTestId("state-source_unavailable");
+
+    fireEvent.click(screen.getByRole("button", { name: "Retry lookup" }));
+    const loading = await screen.findByTestId("loading-stages");
+    // Focus moved to the loading card when the Retry button unmounted.
+    await waitFor(() => expect(document.activeElement).toBe(loading));
+    expect(document.activeElement).not.toBe(document.body);
+    // Announcement cleared during loading so the repeat outcome announces.
+    expect(screen.getByTestId("outcome-announcer").textContent).toBe("");
+
+    resolveSecond?.(jsonResponse(baseProfile(), 200));
+    await screen.findByTestId("profile-view");
+    expect(screen.getByTestId("outcome-announcer")).toHaveTextContent(
+      "profile loaded for BBL 1000010010",
+    );
+    const headingEl = screen.getByRole("heading", { name: "BBL 1000010010" });
+    await waitFor(() => expect(document.activeElement).toBe(headingEl));
+  });
+
+  it("a client-invalid submit after a result does NOT move focus (D5 preserved)", async () => {
+    vi.stubGlobal("fetch", vi.fn(async () => jsonResponse(baseProfile(), 200)));
+    render(<PropertyLookup />);
+    submitBbl("1000010010");
+    await screen.findByTestId("profile-view");
+    const headingEl = screen.getByRole("heading", { name: "BBL 1000010010" });
+    await waitFor(() => expect(document.activeElement).toBe(headingEl));
+
+    submitBbl("123"); // client-invalid: no network call, result unchanged
+    await screen.findByTestId("client-validation-error");
+    // No focus steal: the arrival effect did not re-fire.
+    expect(document.activeElement).toBe(headingEl);
+    // The announcement did not change or re-emit a different message.
+    expect(screen.getByTestId("outcome-announcer")).toHaveTextContent(
+      "profile loaded for BBL 1000010010",
+    );
+  });
+});
+
+describe("PropertyLookup — D4 regression: Property zoning table keeps flag features", () => {
+  it("still lists landmark/flood flags in the mapped-features table (filter applies to Confirm only)", async () => {
+    vi.stubGlobal("fetch", vi.fn(async () => jsonResponse(baseProfile(), 200)));
+    render(<PropertyLookup />);
+    submitBbl("1000010010");
+    await screen.findByTestId("profile-view");
+    const zoning = screen.getByTestId("zoning-section");
+    expect(zoning).toHaveTextContent("Mapped features and flags");
+    expect(zoning).toHaveTextContent("Landmark");
+    expect(zoning).toHaveTextContent("2007 FIRM flood flag");
+    expect(zoning).toHaveTextContent("2015 preliminary FIRM flood flag");
+    expect(zoning).toHaveTextContent("Historic district");
   });
 });
