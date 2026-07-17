@@ -45,8 +45,8 @@
   "reviewer_agents": [
     "data-contract-verifier"
   ],
-  "status": "awaiting_gate",
-  "progress_percent": 95,
+  "status": "accepted",
+  "progress_percent": 100,
   "risks": [
     "nyc.gov + api-portal.nyc.gov are bot-blocked (403): evidence must come from data.cityofnewyork.us / catalog endpoints / council channels; do not claim a page unreachable without recording the attempt",
     "DOB NOW vs legacy BIS datasets are easily confused - the family boundary (DOB NOW only; BIS is the NEXT research task) must stay crisp with explicit rule-outs",
@@ -55,7 +55,7 @@
   "blockers": [],
   "execution_location": "research is network + text only; producer writes KB-scale markdown/fixtures in the task worktree; no installs, no datasets; disk impact negligible (7.77 GB free)",
   "created_at": "2026-07-17T07:41:24.928767+00:00",
-  "updated_at": "2026-07-17T09:16:12.308443+00:00",
+  "updated_at": "2026-07-17T09:19:33.733215+00:00",
   "worktree": ".claude/worktrees/M1-T007",
   "progress_log": [
     {
@@ -106,5 +106,7 @@
       "percent": 85,
       "message": "Owner corrections 1-5 complete before G3 (branch @ 294dad5, pushed+ls-remote verified): (1) padding claim narrowed - block observed unpadded, shorter-lot padding explicitly not established; (2) conservative join language substituted at all three sites; (3) 4 bf97-mjsy reproducibility fixtures + README classification under already-adjudicated docs/research/fixtures/m1-t007/** (no new adjudication needed) with URLs/timestamps/HTTP statuses/SHA256s; (4) M1-T008 verified NOT yet contracted - binding DOB-wide scope requirement (incl. bf97-mjsy as DOB Incident Database source, NEVER BIS) recorded in M1-T007-owner-connector-directives.md section 6; (5) both scanners re-run in all 3 trees via cmd /c with true Python exit codes captured immediately - all exit 0, evidence at project-control/reports/scan-exitcode-evidence-2026-07-17.md. Re-dispatching newly charged G3."
     }
-  ]
+  ],
+  "accepted_by": "orchestrator",
+  "accepted_at": "2026-07-17T09:19:33.733215+00:00"
 }

@@ -1,0 +1,9 @@
+{
+  "checkpoint_id": "CP-0015",
+  "timestamp": "2026-07-17T09:19:50.688492+00:00",
+  "commit": "1584167",
+  "branch": "main",
+  "active_milestone": "M0",
+  "summary": "M1-T007 ACCEPTED (19th accepted task; M1x7). Chain: G0 -> producer (11 DOB NOW datasets live-verified, 9 registry drafts incl. 2 combined parent/child family records, 30 fixtures, 7 OQs, 5 evidenced BIS rule-outs) -> orchestrator allowed-paths adjudication (source-registry-drafts/dob-now.json, precedent M1-T003/T004) -> G1 PASS data-contract-verifier (18/18 charge items) -> owner-directed C1v2 evidence-backed bf97-mjsy disposition + corrections 1-5 (padding claim narrowed, conservative join language, 4 reproducibility fixtures with SHA256s, M1-T008 DOB-wide scope requirement recorded, true-exit-code scan evidence) -> G3 PASS code-reviewer (13/13, zero blocking) -> merge 1584167 pushed (ls-remote verified) -> CI green (run 29569364061 CI success + 29569363979 secret-scan success on 1584167). bf97-mjsy is a DOB Incident Database source, never BIS. Task worktree/branch cleanup deferred to session hygiene. Owner decisions in force: disposition A with programmatic dispatch enforcement; G5 correction 6 approved (bypassPermissions removal before next dispatch); remote main must never hold dispatchable unsafe agents.",
+  "updated_at": "2026-07-17T09:19:50.688492+00:00"
+}
