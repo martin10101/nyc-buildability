@@ -43,9 +43,11 @@ test("S1: profile shows facts with units, coverage labels, banner, split-zone di
   await expect(page.getByText("square feet").first()).toBeVisible();
   expect(await page.locator(".status-badge", { hasText: "conditional" }).count()).toBeGreaterThan(0);
 
-  // data_completeness banner with the exact enum value.
+  // data_completeness banner with the exact enum value. M2-T004 corrected the
+  // completeness basis (documented 19-column feasibility set), so the real
+  // builder over the F05 capture now reports "complete" (correction C1/D1).
   await expect(page.getByTestId("completeness-banner")).toContainText(
-    "missing_noncritical",
+    "complete",
   );
 
   // Conflicts section stays visible with an explicit empty state.

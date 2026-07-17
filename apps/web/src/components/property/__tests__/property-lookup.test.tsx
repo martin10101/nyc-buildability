@@ -61,9 +61,12 @@ describe("PropertyLookup — profile rendering (S1/S2)", () => {
     // Coverage labels use the exact PRD section 12 enum wording.
     expect(screen.getAllByText("conditional").length).toBeGreaterThan(0);
 
-    // data_completeness banner shows the exact enum value.
+    // data_completeness banner shows the exact enum value. M2-T004 corrected
+    // the completeness basis (documented 19-column feasibility set replaces the
+    // 108-column denominator), so the F05 ground-truth fixture now reads
+    // "complete" (G1/G3 correction C1/D1, orchestrator-authorized).
     expect(screen.getByTestId("completeness-banner")).toHaveTextContent(
-      "missing_noncritical",
+      "complete",
     );
 
     // Missing inputs: total count always visible (fixture has 24 entries).

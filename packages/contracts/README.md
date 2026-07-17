@@ -127,8 +127,11 @@ meaning/units/null semantics are cited per column against the official
 LotFront/LotDepth p.29, NumFloors p.28, YearBuilt p.34-35, BldgArea p.22,
 ResidFAR/CommFAR/FacilFAR p.36-37). Documented exclusions: conditional-
 presence zoning/regulatory columns (SODA null-omission makes absence
-indistinguishable from "none"), geometry columns (owned by the independent
-`geometry_validity` dimension), and identity/administrative columns. Every
+indistinguishable from "none" — this category also covers the 26v1-new
+`affresfar`/`mnffar` FAR reference columns, which are informational values
+with program-dependent conditional presence; G1 correction C2), geometry
+columns (owned by the independent `geometry_validity` dimension), and
+identity/administrative columns. Every
 `missing_inputs[]` entry now carries OPTIONAL `feasibility_relevant`
 (basis membership) — ALL absent columns stay listed (unknown is stated,
 never hidden); only flagged entries drive the labels.

@@ -141,11 +141,16 @@ MAPPED_FEATURE_COLUMNS: tuple[str, ...] = (
 #      overlay1-2, spdist1-3, ltdheight, landmark, histdist, edesignum,
 #      zonemap, zmcode, transitzone, mih_opt1-4, firm07_flag, pfirm15_flag,
 #      appbbl, appdate, condono, ext, easements, dcpedited, notes, vintage
-#      dates): under SODA null-omission (research s2.1/s4.2 critical caveat)
-#      their absence is not distinguishable from "none/not applicable", and
-#      the verified research does not define per-column null semantics for
-#      them - counting them recreates the 108-column defect. When PRESENT
-#      they surface as facts/mapped features with full provenance.
+#      dates, and the 26v1-new affordable/manufacturing FAR reference columns
+#      affresfar and mnffar): under SODA null-omission (research s2.1/s4.2
+#      critical caveat) their absence is not distinguishable from "none/not
+#      applicable", and the verified research does not define per-column null
+#      semantics for them - counting them recreates the 108-column defect.
+#      affresfar/mnffar are additionally, like residfar/commfar/facilfar,
+#      informational reference values that must never become rule outputs;
+#      unlike those three they are new in 26v1 with conditional presence
+#      (program-dependent), so they stay out of the basis (G1 correction C2).
+#      When PRESENT they surface as facts/mapped features with full provenance.
 #   2. Geometry columns (GEOMETRY_COLUMNS below): owned by the INDEPENDENT
 #      geometry_validity dimension - never mixed into record completeness.
 #   3. Identity/administrative columns (borough, block, lot, borocode, bbl,
