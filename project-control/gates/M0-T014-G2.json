@@ -1,0 +1,10 @@
+{
+  "task_id": "M0-T014",
+  "gate_id": "G2",
+  "reviewer": "orchestrator",
+  "role": "self_check",
+  "result": "PASS",
+  "report_file": "project-control/reports/M0-T014-producer-report.md",
+  "reviewed_at": "2026-07-17T16:46:10.370372+00:00",
+  "updated_at": "2026-07-17T16:46:10.370372+00:00"
+}
