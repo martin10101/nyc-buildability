@@ -19,8 +19,8 @@
 import type {
   DistrictProvenanceMap,
   PropertyProfile,
-  ProvenanceRecord,
-} from "./property-profile";
+  SourceFact,
+} from "./contract";
 
 /** PLUTO columns that carry each zoning value family (D5 fallback join). */
 const FALLBACK_COLUMNS = {
@@ -33,15 +33,15 @@ export type ZoningArrayName = keyof typeof FALLBACK_COLUMNS;
 
 export interface DistrictProvenance {
   /** Records backing this value; may be empty when nothing is joinable. */
-  records: ProvenanceRecord[];
+  records: SourceFact[];
   /** Which join produced the records. */
   joinedVia: "provenance_map" | "original_field_name_fallback" | "none";
 }
 
 export function provenanceById(
   profile: PropertyProfile,
-): Map<string, ProvenanceRecord> {
-  const byId = new Map<string, ProvenanceRecord>();
+): Map<string, SourceFact> {
+  const byId = new Map<string, SourceFact>();
   for (const record of profile.provenance) {
     byId.set(record.provenance_id, record);
   }
@@ -51,8 +51,8 @@ export function provenanceById(
 /** Resolve a fact's provenance_ref; null = dangling (rendered honestly). */
 export function resolveFactProvenance(
   provenanceRef: string,
-  byId: Map<string, ProvenanceRecord>,
-): ProvenanceRecord | null {
+  byId: Map<string, SourceFact>,
+): SourceFact | null {
   return byId.get(provenanceRef) ?? null;
 }
 
@@ -79,14 +79,14 @@ export function resolveDistrictProvenance(
   profile: PropertyProfile,
   arrayName: ZoningArrayName,
   value: string,
-  byId: Map<string, ProvenanceRecord>,
+  byId: Map<string, SourceFact>,
 ): DistrictProvenance {
   const map = mapForArray(profile, arrayName);
   const refs = map?.[value];
   if (refs && refs.length > 0) {
     const records = refs
       .map((ref) => byId.get(ref))
-      .filter((r): r is ProvenanceRecord => r !== undefined);
+      .filter((r): r is SourceFact => r !== undefined);
     if (records.length > 0) {
       return { records, joinedVia: "provenance_map" };
     }

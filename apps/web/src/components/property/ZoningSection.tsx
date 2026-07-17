@@ -1,15 +1,16 @@
 import { CoverageBadge } from "./CoverageBadge";
 import { ProvenanceDisclosure } from "./ProvenanceDisclosure";
+import {
+  mappedFeatureView,
+  type PropertyProfile,
+  type SourceFact,
+} from "@/lib/contract";
 import { fieldLabel, formatValue } from "@/lib/format";
 import {
   resolveDistrictProvenance,
   resolveFactProvenance,
   type ZoningArrayName,
 } from "@/lib/provenance";
-import type {
-  PropertyProfile,
-  ProvenanceRecord,
-} from "@/lib/property-profile";
 
 const JOIN_NOTES: Record<string, string | undefined> = {
   provenance_map: undefined,
@@ -19,7 +20,7 @@ const JOIN_NOTES: Record<string, string | undefined> = {
   none: undefined,
 };
 
-function ZoningValueList({
+export function ZoningValueList({
   profile,
   byId,
   arrayName,
@@ -27,7 +28,7 @@ function ZoningValueList({
   emptyText,
 }: {
   profile: PropertyProfile;
-  byId: Map<string, ProvenanceRecord>;
+  byId: Map<string, SourceFact>;
   arrayName: ZoningArrayName;
   heading: string;
   emptyText: string;
@@ -68,16 +69,18 @@ function ZoningValueList({
 /**
  * Zoning districts, overlays, special districts, and mapped features, each
  * with provenance (map join when present, D5 fallback join otherwise —
- * never assuming full map coverage).
+ * never assuming full map coverage). Mapped-feature entries are OPEN
+ * contract objects; every key is read through the runtime narrowing helper
+ * in src/lib/contract.ts, never asserted.
  */
 export function ZoningSection({
   profile,
   byId,
 }: {
   profile: PropertyProfile;
-  byId: Map<string, ProvenanceRecord>;
+  byId: Map<string, SourceFact>;
 }) {
-  const mappedFeatures = profile.zoning.mapped_features ?? [];
+  const mappedFeatures = (profile.zoning.mapped_features ?? []).map(mappedFeatureView);
   return (
     <section className="card" aria-labelledby="zoning-title">
       <h2 className="section-title" id="zoning-title">
@@ -116,6 +119,7 @@ export function ZoningSection({
           No mapped features are present in the official record for this lot.
         </p>
       ) : (
+        <div className="table-scroll">
         <table className="facts-table">
           <thead>
             <tr>
@@ -126,26 +130,23 @@ export function ZoningSection({
             </tr>
           </thead>
           <tbody>
-            {mappedFeatures.map((feature, index) => {
+            {mappedFeatures.map((view, index) => {
               const record =
-                typeof feature.provenance_ref === "string"
-                  ? resolveFactProvenance(feature.provenance_ref, byId)
+                view.provenanceRef !== null
+                  ? resolveFactProvenance(view.provenanceRef, byId)
                   : null;
-              const name =
-                typeof feature.feature === "string"
-                  ? feature.feature
-                  : `feature ${index + 1}`;
+              const name = view.feature ?? `feature ${index + 1}`;
               return (
                 <tr key={name}>
                   <th scope="row" style={{ textTransform: "none", fontSize: "0.92rem" }}>
                     {fieldLabel(name)}
                   </th>
                   <td>
-                    <span className="fact-value">{formatValue(feature.value)}</span>
+                    <span className="fact-value">{formatValue(view.value)}</span>
                   </td>
                   <td>
-                    {feature.coverage_status ? (
-                      <CoverageBadge status={feature.coverage_status} />
+                    {view.coverageStatus ? (
+                      <CoverageBadge status={view.coverageStatus} />
                     ) : (
                       <span className="section-note">not labeled</span>
                     )}
@@ -162,6 +163,7 @@ export function ZoningSection({
             })}
           </tbody>
         </table>
+        </div>
       )}
     </section>
   );

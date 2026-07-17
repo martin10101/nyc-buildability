@@ -2,8 +2,8 @@
 
 import { useState } from "react";
 import { fieldLabel } from "@/lib/format";
-import { groupMissingInputs } from "@/lib/missing-inputs";
-import type { MissingInput } from "@/lib/property-profile";
+import { extractSharedReason, groupMissingInputs } from "@/lib/missing-inputs";
+import type { MissingInput } from "@/lib/contract";
 
 /**
  * Missing official inputs, rendered under the DOCUMENTED filter policy in
@@ -11,10 +11,32 @@ import type { MissingInput } from "@/lib/property-profile";
  * feasibility-relevant gaps are surfaced immediately; the remaining entries
  * are grouped behind an explicit count toggle. The TOTAL count is always
  * visible and nothing is ever dropped.
+ *
+ * D4 (M2-T001 G3): the shared boilerplate reason is stated ONCE above the
+ * lists; only entries whose reason DIFFERS from it show their reason
+ * inline (per-field exceptions stay visible, nothing is altered).
+ *
+ * Entries the API marks `feasibility_relevant` (contract 1.2.0, the
+ * builder's documented completeness basis) carry an explicit tag so the
+ * user can tell which gaps drive the completeness statuses.
  */
 export function MissingInputsSection({ entries }: { entries: MissingInput[] }) {
   const [showGrouped, setShowGrouped] = useState(false);
   const { surfaced, grouped, total } = groupMissingInputs(entries);
+  const sharedReason = extractSharedReason(entries);
+
+  const renderEntry = (entry: MissingInput) => (
+    <li key={entry.field}>
+      <strong>{fieldLabel(entry.field)}</strong>{" "}
+      <span className="criticality-tag">{entry.criticality}</span>
+      {entry.feasibility_relevant ? (
+        <span className="criticality-tag"> · completeness basis</span>
+      ) : null}
+      {entry.reason && entry.reason !== sharedReason ? (
+        <span className="section-note"> — {entry.reason}</span>
+      ) : null}
+    </li>
+  );
 
   return (
     <section className="card" aria-labelledby="missing-title">
@@ -33,17 +55,15 @@ export function MissingInputsSection({ entries }: { entries: MissingInput[] }) {
             listed first; the rest are grouped below — every entry remains
             accessible.
           </p>
+          {sharedReason ? (
+            <p className="section-note" data-testid="shared-missing-reason">
+              Shared reason (stated once — applies to every field below unless
+              a different reason is shown next to it): {sharedReason}
+            </p>
+          ) : null}
           {surfaced.length > 0 ? (
             <ul className="missing-list" aria-label="Feasibility-relevant missing fields">
-              {surfaced.map((entry) => (
-                <li key={entry.field}>
-                  <strong>{fieldLabel(entry.field)}</strong>{" "}
-                  <span className="criticality-tag">{entry.criticality}</span>
-                  {entry.reason ? (
-                    <span className="section-note"> — {entry.reason}</span>
-                  ) : null}
-                </li>
-              ))}
+              {surfaced.map(renderEntry)}
             </ul>
           ) : (
             <p className="section-note">
@@ -65,15 +85,7 @@ export function MissingInputsSection({ entries }: { entries: MissingInput[] }) {
               </button>
               {showGrouped ? (
                 <ul className="missing-list" aria-label="Additional missing fields">
-                  {grouped.map((entry) => (
-                    <li key={entry.field}>
-                      <strong>{fieldLabel(entry.field)}</strong>{" "}
-                      <span className="criticality-tag">{entry.criticality}</span>
-                      {entry.reason ? (
-                        <span className="section-note"> — {entry.reason}</span>
-                      ) : null}
-                    </li>
-                  ))}
+                  {grouped.map(renderEntry)}
                 </ul>
               ) : null}
             </>

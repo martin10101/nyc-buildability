@@ -1,5 +1,5 @@
 import { formatValue, urlHost } from "@/lib/format";
-import type { ProvenanceRecord, Reproducibility } from "@/lib/property-profile";
+import type { Reproducibility, SourceFact } from "@/lib/contract";
 
 /**
  * Per-fact provenance drill-down (PRD sections 9/19; task M2-T001 output 2).
@@ -17,7 +17,7 @@ export function ProvenanceDisclosure({
   label,
   joinNote,
 }: {
-  records: ProvenanceRecord[];
+  records: SourceFact[];
   reproducibility?: Reproducibility;
   /** Accessible name for the disclosure, e.g. "Source for Lot area". */
   label: string;
