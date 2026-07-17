@@ -1,0 +1,23 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/martin10101/nyc-buildability/packages/contracts/schemas/v1/coverage_status.schema.json",
+  "title": "Coverage Status",
+  "description": "v1. Exactly the 6 coverage statuses of PRD section 12; each result carries exactly one. The companion data-completeness status (exactly the 3 PRD section 12 values) is in $defs/data_completeness. AI confidence scores must never substitute for legal-review status.",
+  "type": "string",
+  "enum": [
+    "verified",
+    "conditional",
+    "professional_review_required",
+    "data_conflict",
+    "unsupported",
+    "not_applicable"
+  ],
+  "$defs": {
+    "data_completeness": {
+      "title": "Data Completeness Status",
+      "description": "Each result must also carry exactly one data-completeness status (PRD section 12).",
+      "type": "string",
+      "enum": ["complete", "missing_noncritical", "missing_critical"]
+    }
+  }
+}

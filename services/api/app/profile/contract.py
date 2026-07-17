@@ -31,17 +31,31 @@ Design (task packet items A/B/C):
   and is rejected (this is exactly the stale-declaration bug M2-T004
   deferred here).
 
-No network, no new dependency: validation uses the ``jsonschema`` engine that
+No network, no new dependency beyond the runtime ``jsonschema`` engine that
 the connector tests and ``.github/scripts/validate_contracts.py`` already
 use, with the same $ref registry pattern (``referencing`` when importable,
 legacy ``RefResolver`` otherwise).
+
+SCHEMA SOURCING — PRODUCTION-SAFE (task M2-T003 rework):
+The canonical source of authority for these schemas is
+``packages/contracts/schemas/v1/*.schema.json``. However this module loads the
+schemas from PACKAGE DATA bundled inside the installed ``app`` package
+(``app/_contract_schemas/v1/``) via ``importlib.resources``, NOT via a
+repo-relative ``__file__`` walk. That is mandatory because a deployable
+FastAPI service is installed non-editable (``pip install ./services/api`` in
+web-e2e CI and every production image): ``app/`` then lives in site-packages
+with no sibling ``packages/`` directory, so a repo-relative walk raised
+``FileNotFoundError`` at import. The bundled copies are byte-identical build
+artifacts of the canonical files, produced and verified by
+``services/api/scripts/sync_contract_schemas.py`` and the
+``contracts-schema-bundle`` CI drift check.
 """
 
 from __future__ import annotations
 
 import json
 from functools import lru_cache
-from pathlib import Path
+from importlib import resources
 
 __all__ = [
     "ContractValidationError",
@@ -52,11 +66,8 @@ __all__ = [
     "validate_profile",
 ]
 
-# packages/contracts/schemas/v1 relative to this file:
-# services/api/app/profile/contract.py -> repo root is parents[4].
-_REPO_ROOT = Path(__file__).resolve().parents[4]
-_SCHEMA_DIR = _REPO_ROOT / "packages" / "contracts" / "schemas" / "v1"
-_PROFILE_SCHEMA = _SCHEMA_DIR / "property_profile.schema.json"
+# Runtime-bundled schema package (package DATA inside the installed app).
+_SCHEMA_PACKAGE = "app._contract_schemas.v1"
 
 # The four documents a property_profile $ref registry must load (README:
 # "Consumers that build their own $ref registry ... must load all four").
@@ -66,6 +77,16 @@ _SCHEMA_FILES = (
     "common.schema.json",
     "coverage_status.schema.json",
 )
+
+
+def _load_bundled_schema(name: str) -> dict:
+    """Load one bundled contract schema via importlib.resources.
+
+    Works identically from a source tree and from a non-editable install
+    (site-packages), because the schema files ship as package data inside the
+    ``app`` package. No ``packages/``-relative filesystem access occurs."""
+    text = resources.files(_SCHEMA_PACKAGE).joinpath(name).read_text(encoding="utf-8")
+    return json.loads(text)
 
 # Optional top-level keys introduced after 1.0.0. Sourced from the contract
 # README (1.1.0 = M1-T006; 1.2.0 = M2-T004). Used ONLY for the declared-vs-
@@ -106,7 +127,7 @@ class UnsupportedContractVersionError(Exception):
 
 @lru_cache(maxsize=1)
 def _profile_schema() -> dict:
-    return json.loads(_PROFILE_SCHEMA.read_text(encoding="utf-8"))
+    return _load_bundled_schema("property_profile.schema.json")
 
 
 @lru_cache(maxsize=1)
@@ -185,10 +206,7 @@ def _validator():
     legacy RefResolver otherwise)."""
     import jsonschema
 
-    docs = [
-        json.loads((_SCHEMA_DIR / name).read_text(encoding="utf-8"))
-        for name in _SCHEMA_FILES
-    ]
+    docs = [_load_bundled_schema(name) for name in _SCHEMA_FILES]
     schema = docs[0]
     try:
         from referencing import Registry, Resource

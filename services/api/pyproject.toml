@@ -11,6 +11,13 @@ requires-python = ">=3.12"
 dependencies = [
     "fastapi>=0.115,<1",
     "uvicorn[standard]>=0.30,<1",
+    # M2-T003 rework: the property API validates every built profile against
+    # the canonical schema at REQUEST time (app/profile/contract.py
+    # validate_profile). jsonschema is therefore a RUNTIME dependency, not a
+    # dev-only extra. The web-e2e job and every production image install
+    # without dev extras, so the first validated request would have failed on
+    # a missing import had this stayed under [dev].
+    "jsonschema>=4.21,<5",
 ]
 
 [project.optional-dependencies]
@@ -18,14 +25,21 @@ dev = [
     "pytest>=8,<9",
     "httpx>=0.27,<1",
     "ruff>=0.6,<1",
-    # M1-T002: connector tests validate emitted facts against the canonical
-    # source_fact v1 contract (same engine .github/scripts/validate_contracts.py
-    # uses when available). Test-only; the connector itself is stdlib-only.
-    "jsonschema>=4.21,<5",
+    # jsonschema is now a runtime dependency (see [project].dependencies); the
+    # connector/contract tests use the same engine at test time.
 ]
 
 [tool.setuptools.packages.find]
 include = ["app*"]
+
+# M2-T003 rework: ship the runtime-bundled contract schemas (build artifacts
+# kept byte-identical to packages/contracts/schemas/v1 by
+# services/api/scripts/sync_contract_schemas.py) as PACKAGE DATA so
+# `pip install ./services/api` includes them. Without this the installed app
+# would not carry app/_contract_schemas/v1/*.schema.json and contract.py would
+# fail to load the canonical schema at import.
+[tool.setuptools.package-data]
+"app._contract_schemas.v1" = ["*.schema.json"]
 
 [tool.ruff]
 line-length = 100

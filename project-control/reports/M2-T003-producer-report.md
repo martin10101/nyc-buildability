@@ -137,3 +137,86 @@ replacing the §167 deferral text.
 ## Exact report path
 
 `project-control/reports/M2-T003-producer-report.md` (this file, inside the worktree).
+
+---
+
+# Rework — packaging / production-safety fix (2026-07-17)
+
+**Task:** M2-T003 rework. **Status requested:** `awaiting_gate`.
+
+## Defect fixed (CI web-e2e regression + related runtime-dependency gap)
+
+The web-e2e job runs `pip install ./services/api` (NON-editable, no `[dev]` extras) then imports the INSTALLED `app` package. `app/profile/contract.py` resolved the canonical schema via `_REPO_ROOT = Path(__file__).resolve().parents[4]` → `packages/contracts/schemas/v1/…`. That relative walk exists only in the SOURCE tree; installed, `app/` is in site-packages with no sibling `packages/` → `FileNotFoundError` at import (`SUPPORTED_CONTRACT_VERSIONS` is evaluated at import). The `api` job passed only because pytest there imports `app` from the source tree (cwd on `sys.path`), masking the bug. Second defect: `jsonschema` was a `[dev]`-only extra but `validate_profile` uses it at REQUEST time, so the web-e2e / production env (no dev extras) would fail the first validated request even after the path fix. The prior report already flagged this as recommended-next-task #2; this rework resolves it.
+
+## Exactly how the schema is made available when installed
+
+- **Mechanism:** the four schema documents a property_profile `$ref` registry loads (property_profile, source_fact, common, coverage_status) are shipped as PACKAGE DATA inside the installed app at `services/api/app/_contract_schemas/v1/*.schema.json` (with `__init__.py` making `app._contract_schemas.v1` an importable package). `contract.py` now loads them via `importlib.resources` (`resources.files("app._contract_schemas.v1").joinpath(name).read_text(...)`) in a new `_load_bundled_schema(name)` helper. `_profile_schema()` and `_validator()` both call it. The old `_REPO_ROOT`/`_SCHEMA_DIR`/`_PROFILE_SCHEMA` constants and the `parents[4]` walk are removed. `importlib.resources` resolves identically from a source tree and from site-packages, so no `packages/`-relative filesystem access occurs at runtime.
+- **pyproject change (packaging):** added `[tool.setuptools.package-data]` with `"app._contract_schemas.v1" = ["*.schema.json"]` so `pip install ./services/api` ships the schema files. Verified `app._contract_schemas.v1` is discovered by `setuptools.find_packages(include=["app*"])`.
+- **Authority model preserved:** `packages/contracts/schemas/v1/*.schema.json` remains the SINGLE canonical source. The bundled copies are BUILD ARTIFACTS kept byte-identical by a new stdlib-only sync script `services/api/scripts/sync_contract_schemas.py` (`--check` diffs; no-arg writes) and by a new ADDITIVE CI job.
+
+## Drift check added
+
+New CI job `contracts-schema-bundle` (mirrors the `contracts-typegen` byte-identical drift-check pattern) runs `python3 services/api/scripts/sync_contract_schemas.py --check`, failing if any bundled copy is missing or not byte-identical to canonical. Deterministic regenerate command: `python services/api/scripts/sync_contract_schemas.py`.
+
+## jsonschema is now a RUNTIME dependency
+
+Moved `jsonschema>=4.21,<5` from `[project.optional-dependencies].dev` into `[project].dependencies`. Verified via tomllib: runtime deps = `[fastapi, uvicorn[standard], jsonschema]`; dev extras no longer list it.
+
+## contract_version logic unchanged
+
+`SUPPORTED_CONTRACT_VERSIONS` is still read LIVE from the (now bundled) schema enum — verified still `("1.0.0","1.1.0","1.2.0")`. Builder still declares `1.2.0`. No hard-coded/stale version. All S6/S7/S8 version tests unchanged and green.
+
+## Commands run + results (installed-layout proof pasted)
+
+1. Sync + byte-identical check:
+   - `python services/api/scripts/sync_contract_schemas.py` → synced 4 files.
+   - `python services/api/scripts/sync_contract_schemas.py --check` → `OK: runtime-bundled contract schemas are byte-identical to the canonical source.`
+2. **Installed-layout simulation** — copied ONLY `services/api/app` into a temp dir OUTSIDE the source tree (NO `packages/` sibling), stripped all `__pycache__`/`*.pyc`, put it on `sys.path`, imported `app.profile.contract`:
+   - `contract module file = …\Temp\m2t003_installsim2\app\profile\contract.py` (proves import from the isolated tree, not source)
+   - `SUPPORTED_CONTRACT_VERSIONS = ('1.0.0', '1.1.0', '1.2.0')` (import-time enum read succeeded with no `packages/` present)
+   - `_validator()` built a `Draft202012Validator` from the 4 bundled docs; `select_schema_version('9.9.9')` correctly raised `UnsupportedContractVersionError`.
+   - `OK: validate wiring works in isolated installed layout with jsonschema at runtime`
+3. Grep guard: no `parents[` and no `_SCHEMA_DIR/_REPO_ROOT/_PROFILE_SCHEMA` remain in `contract.py` (remaining `packages/contracts` hits in `app/` are docstrings/comments or `$id`/`$ref` URIs inside the schema JSON — opaque identifiers, not filesystem paths).
+4. `python -m pytest -q` (services/api) → **211 passed** (adds `tests/api/test_contract_schema_packaging.py`; all prior S1–S10 tests unchanged and green).
+5. `python -m ruff check .` (services/api) → `All checks passed!`
+6. Temp dirs deleted after the proof.
+
+## Regression guard added
+
+`services/api/tests/api/test_contract_schema_packaging.py`:
+- loads all four schemas via `importlib.resources` (the installed-package path);
+- asserts `SUPPORTED_CONTRACT_VERSIONS` is populated (import-time load with no `packages/`-relative access);
+- asserts the bundled `_load_bundled_schema` returns the canonical enum;
+- STATIC AST guard: `contract.py` may not contain a `Path(...).parents[...]` walk or a non-docstring string literal referencing `packages/contracts` — so this specific regression cannot recur (docstrings explaining the canonical authority are allowed).
+
+## How S1–S10 stay green
+
+No change to validation semantics, error typing, the STATUS_STATE_MATRIX, the builder, or the connector. `validate_profile` selects/validates exactly as before — the ONLY change is the schema BYTES now come from `importlib.resources` on the bundled (byte-identical) copies instead of the repo-relative path. The full 211-test suite (all S1–S10 tests) passes unchanged; the 4 new packaging tests are additive.
+
+## Files changed (this rework)
+
+- `services/api/app/profile/contract.py` — MODIFIED: removed `_REPO_ROOT/_SCHEMA_DIR/_PROFILE_SCHEMA` + `parents[4]` walk; added `_load_bundled_schema` via `importlib.resources`; `_profile_schema`/`_validator` load bundled data; docstring updated.
+- `services/api/pyproject.toml` — MODIFIED: `jsonschema` → runtime `dependencies`; removed from dev extras; added `[tool.setuptools.package-data]` for `app._contract_schemas.v1`.
+- `services/api/app/_contract_schemas/__init__.py` — NEW (package marker + rationale).
+- `services/api/app/_contract_schemas/v1/__init__.py` — NEW (package marker).
+- `services/api/app/_contract_schemas/v1/{property_profile,source_fact,common,coverage_status}.schema.json` — NEW (byte-identical bundled build artifacts).
+- `services/api/scripts/sync_contract_schemas.py` — NEW (stdlib-only sync/`--check` drift tool).
+- `services/api/tests/api/test_contract_schema_packaging.py` — NEW (regression guard).
+- `.github/workflows/ci.yml` — MODIFIED (ADDITIVE): new `contracts-schema-bundle` job.
+
+## Assumptions
+
+- The `$id`/`$ref` URIs inside the schema JSON are opaque registry keys (they contain the substring `packages/contracts` but are NOT resolved as filesystem paths); the `referencing`/`RefResolver` registry keys off `$id`, so bundling identical content preserves resolution. Verified the validator builds from the bundled docs.
+- setuptools honors `[tool.setuptools.package-data]` for the discovered `app._contract_schemas.v1` package; a full wheel build could not be produced locally (no `build`/`wheel` module; thin-client disk budget) — see limitations.
+
+## Known limitations
+
+- I could not run a real `pip install`/wheel build locally: local Python is 3.11 (the package requires `>=3.12`, so pip would refuse), and `build`/`wheel` are not installed (installing them risks the thin-client disk budget). Instead I proved the runtime behavior by copying the `app` package to an isolated tree with NO `packages/` sibling and importing from there — the exact failure condition of the original defect. The definitive end-to-end proof is the `contracts-schema-bundle` + `web-e2e` CI jobs on a 3.12 runner; recommend the G3/G4 reviewer confirm the web-e2e job now passes on CI.
+
+## Security / provenance impact
+
+- No provenance, field-mapping, digest, or validation semantics changed. Canonical authority stays `packages/contracts/schemas/v1`; bundled copies are enforced byte-identical by CI, so no schema fork/drift is possible. Promoting `jsonschema` to runtime is a hardening (request-time validation now actually runs in the deployed service). No secrets, no new network, no new heavy dependency (`jsonschema` was already installed for tests).
+
+## Report path
+
+`project-control/reports/M2-T003-producer-report.md` (this file, inside the worktree).
