@@ -33,7 +33,9 @@ test("S1: Property result leads to the Confirm screen with the full compact card
   await expect(page.getByTestId("confirm-identity")).toContainText("BBL 1000010010");
   await expect(page.getByTestId("confirm-identity")).toContainText("140 CARDER ROAD");
   await expect(page.getByTestId("confirm-bin")).toContainText("Not yet retrieved");
-  await expect(page.getByTestId("confirm-geometry")).toContainText("never drawn from assumptions");
+  await expect(page.getByTestId("confirm-geometry")).toContainText(
+    "Geometry of type Point is recorded for this lot from the official source — only recorded geometry is shown; a parcel outline is never drawn from assumptions.",
+  );
 
   // Lot summary with units and human labels.
   await expect(page.getByTestId("confirm-lot")).toContainText("Lot area");

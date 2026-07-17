@@ -24,6 +24,14 @@ test("S2 BLOCKING: recorded HTTP 500 + state=no_match renders unexpected_respons
       headers: {
         "Content-Type": "application/json",
         "X-Correlation-ID": cr500NoMatch.response_headers["X-Correlation-ID"],
+        // Faithful replay: the page (127.0.0.1:3000) calls the API
+        // (127.0.0.1:8000) cross-origin, and the real harness middleware
+        // (e2e/harness/fixture_api.py) sends these CORS response headers.
+        // Without Access-Control-Expose-Headers the browser hides
+        // X-Correlation-ID from fetch(), so the client would honestly
+        // report a null correlation id — a stub artifact, not app behavior.
+        "Access-Control-Allow-Origin": "http://127.0.0.1:3000",
+        "Access-Control-Expose-Headers": "X-Correlation-ID",
       },
       body: JSON.stringify(cr500NoMatch.response_body),
     }),

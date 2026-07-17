@@ -201,7 +201,7 @@ function ConfirmCard({ profile }: { profile: PropertyProfile }) {
             <dt>Geometry</dt>
             <dd className="section-note" data-testid="confirm-geometry">
               {profile.identity.geometry?.type
-                ? `Geometry of type ${profile.identity.geometry.type} is recorded for this lot.`
+                ? `Geometry of type ${profile.identity.geometry.type} is recorded for this lot from the official source — only recorded geometry is shown; a parcel outline is never drawn from assumptions.`
                 : "No parcel geometry is included in this profile version — tax-lot geometry arrives with the MapPLUTO geometry work. Unknown, never drawn from assumptions."}
             </dd>
           </div>

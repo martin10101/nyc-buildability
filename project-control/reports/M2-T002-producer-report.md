@@ -119,3 +119,44 @@ Static self-review (in lieu of impossible local execution) specifically verified
 - Ledger: claim → progress 75% (all producer scenarios written; local execution impossible) → submit `awaiting_gate` once the task-PR CI run is green; that CI run constitutes the G2 evidence to record.
 - No ci.yml edit was made and none is required.
 - Reviewer dispatch per packet: human-journey-reviewer + visual-quality-reviewer (G3, from the CI Playwright artifact `playwright-evidence`), security-reviewer (G5: bounded reflection, pair matrix, no-storage, no-secrets).
+
+---
+
+## 11. REWORK — CI run 87990692660 Playwright failures (2 of 43), 2026-07-17
+
+Vitest was fully green; Playwright was 41 passed / 2 failed. Both failures diagnosed statically (no local execution — disk floor); CI re-run on the task PR is the re-proof.
+
+### 11.1 Failure 1 — `e2e/client-hardening.spec.ts:18` (S2 BLOCKING, correlation id not found)
+
+- **Verdict: TEST BUG (network-stub infidelity). The component and client are correct.**
+- Evidence chain:
+  - `FailureState.tsx` `Meta` renders `<code data-testid="correlation-id">` in `UnexpectedResponseState` whenever `outcome.correlationId` is non-null — the SAME established testid the passing `e2e/failures.spec.ts` S5 test asserts against the real harness (BBL 3000010005). So the render path exists and works when the id reaches it.
+  - `src/lib/api.ts:209` reads `response.headers.get("X-Correlation-ID")` through `boundedToken`; the fixture value `cr500nomatch00000000000000000000` (32 chars, `[a-z0-9]`) passes the allowlist.
+  - Root cause: the spec's `route.fulfill` replaces the real harness response but set only `Content-Type` + `X-Correlation-ID`. The page (127.0.0.1:3000) calls the API (127.0.0.1:8000) **cross-origin**; the real harness middleware (`e2e/harness/fixture_api.py`, `expose_headers=["X-Correlation-ID"]`) is bypassed by the stub, and without `Access-Control-Expose-Headers` Chromium filters the non-safelisted header out of `fetch()` responses. The client honestly got `null` and `Meta` correctly rendered nothing. The body/status stayed readable through the interception path, which is exactly why the line-38/39 assertions passed and only line 40 failed.
+- Fix (spec only): the stub now faithfully replays what the browser receives from the real harness — fixture headers PLUS the harness CORS response headers (`Access-Control-Allow-Origin: http://127.0.0.1:3000`, `Access-Control-Expose-Headers: X-Correlation-ID`), with an in-file comment explaining why. No component/client change; no testid change (existing convention kept).
+
+### 11.2 Failure 2 — `e2e/confirm-journey.spec.ts:14` (S1, geometry copy drift)
+
+- **Verdict: BOTH sides were wrong in different ways.** The spec asserted a phrase ("never drawn from assumptions") that only existed in the geometry-ABSENT branch of `ConfirmScreen.tsx`, while the live F05 path carries a Point geometry and took the PRESENT branch — whose copy ("Geometry of type Point is recorded for this lot.") was truthful but did not state the honesty limitation (a recorded Point is not a parcel outline).
+- Fix: ONE canonical honest sentence now used in both files:
+  - Component (`ConfirmScreen.tsx`, geometry-present branch): `Geometry of type ${type} is recorded for this lot from the official source — only recorded geometry is shown; a parcel outline is never drawn from assumptions.`
+  - Spec (`confirm-journey.spec.ts` S1): asserts the full Point-instantiated sentence verbatim.
+  - The geometry-absent branch copy is unchanged (still carries its own honest "never drawn from assumptions" statement).
+
+### 11.3 Files changed in rework (minimal diff, 3 files)
+
+1. `apps/web/e2e/client-hardening.spec.ts` — added the 2 CORS replay headers + comment to the S2 BLOCKING test's `route.fulfill` only.
+2. `apps/web/src/components/confirm/ConfirmScreen.tsx` — geometry-present sentence replaced with the canonical honest sentence (one line).
+3. `apps/web/e2e/confirm-journey.spec.ts` — geometry assertion pinned to the canonical sentence.
+
+### 11.4 Whack-a-mole checks (static, exact greps)
+
+- `correlation-id` across `apps/web`: only `FailureState.tsx` (renderer), `client-hardening.spec.ts:48` (fixed test), `failures.spec.ts:57` (real-harness test, passed in CI, untouched), and vitest `property-lookup.test.tsx` (Node fetch stub — no browser CORS header filtering, passed in CI, untouched).
+- Geometry copy across `apps/web`: only `ConfirmScreen.tsx:204` (component) and `confirm-journey.spec.ts:37` (spec) — now the identical canonical sentence; the absent-branch copy at `ConfirmScreen.tsx:205` is asserted nowhere else.
+- `confirm-screen.test.tsx` (vitest) asserts identity/BIN but NOT the geometry copy — vitest remains unaffected.
+- The other stubbed tests in `client-hardening.spec.ts` (503 pair, both S3 mutations) assert no correlation id and were green; left untouched per minimal-diff discipline.
+
+### 11.5 Rework limitations
+
+- Chromium's exact interception semantics (body readable while non-exposed headers are filtered) are inferred from the CI evidence itself (lines 38–39 passed, line 40 failed) plus fetch/CORS spec behavior; the CI re-run is the executable proof.
+- No local lint/typecheck/build ran (owner-PC disk floor); the edits are copy/header-literal changes inside existing well-typed expressions.
