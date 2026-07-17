@@ -63,7 +63,7 @@
     "B-005 (clears when the manifest-completeness verification is recorded)"
   ],
   "created_at": "2026-07-14T21:40:17.803410+00:00",
-  "updated_at": "2026-07-17T09:06:57.272181+00:00",
+  "updated_at": "2026-07-17T09:09:24.927855+00:00",
   "progress_log": [
     {
       "at": "2026-07-17T08:11:55.064631+00:00",
@@ -100,6 +100,12 @@
       "agent": "orchestrator",
       "percent": 95,
       "message": "G5 PASS recorded (verbatim security-reviewer report at project-control/reports/M0-T010-G5-agent-governance-review.md) with BLOCKING conditions: merge requires the three-part machine-visible prohibition in the SAME checkpoint (counter-notice rules file .claude/rules/expansion-agent-dispatch-hold.md with no paths frontmatter + B-007 blocker JSON + contracted conformance task with G5 re-check). Recommends disposition A. D1/D2 HIGH: agents auto-register on merge + always-loaded unqualified continuation order in rule item 13 + bypassPermissions posture = unattended escalation chain unless the prohibition lands with the merge. Owner decision pending on report set (G3 accepted as content/integrity PASS only, per owner). MERGE STILL HELD for owner review of the returned reports."
+    },
+    {
+      "at": "2026-07-17T09:09:24.923775+00:00",
+      "agent": "orchestrator",
+      "percent": 95,
+      "message": "STORAGE CLEARED (owner-verified + orchestrator-measured): C: free space 16.71 GB at 2026-07-17 (was 6.14 GB; owner removed the large Downloads media outside the session). Owner policy recorded: Confirm-screen worktree may be created at its queue position since free >= 10 GB; builds/Playwright/large artifacts stay in GitHub Actions; no full NYC datasets or large local caches; WARN owner if free drops below 10 GB; STOP storage-heavy work below 7 GB. Owner-approved execution order: (1) M1-T007 corrections+G3+merge+CI+acceptance, (2) M0-T010 G5 complete + owner-review package returned (done - G5 PASS recorded), (3) machine-enforced 5-agent dispatch prohibition + conformance task per approved disposition A, (4) M0-T010 merge only after all gates/conditions, (5) contract Confirm-screen task."
     }
   ]
 }
