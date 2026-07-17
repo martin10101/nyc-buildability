@@ -41,7 +41,7 @@ Two independent catalog queries on 2026-07-17 returned **identical 21-dataset re
 - `https://api.us.socrata.com/api/catalog/v1?domains=data.cityofnewyork.us&search_context=data.cityofnewyork.us&q=DOB%20NOW&limit=30` → HTTP 200, resultSetSize 21
 - `https://data.cityofnewyork.us/api/catalog/v1?q=DOB%20NOW&limit=30` → HTTP 200, resultSetSize 21
 
-11 results carry the "DOB NOW" prefix and DOB attribution (the family); 5 are legacy/BIS-era DOB datasets (ruled out in §6); the remainder are unrelated hits (g76y-dcqj After Hour Variance Permits and 855j-jady DOB Safety Violations are DOB but not DOB NOW-module datasets — out of scope here, flagged for the BIS/legacy task; two HPD datasets are noise).
+11 results carry the "DOB NOW" prefix and DOB attribution (the family); 5 are legacy/BIS-era DOB datasets (ruled out in §6); the remaining 5 are non-family hits (g76y-dcqj After Hour Variance Permits and 855j-jady DOB Safety Violations are DOB but not DOB NOW-module datasets — out of scope here, flagged for the BIS/legacy task; bf97-mjsy Construction-Related Incidents is likewise DOB-attributed but fed by the DOB Incident Database, not a DOB NOW module — description verbatim: "This dataset includes construction-related incidents recorded in through the Department of Buildings (DOB) Incident Database." [sic], identity live-verified via https://data.cityofnewyork.us/api/views/bf97-mjsy.json HTTP 200 retrieved 2026-07-17 — out of scope here, flagged for the BIS/legacy task; two HPD datasets are noise).
 
 ### 2.2 Live identity of the 11 family datasets
 
