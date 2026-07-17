@@ -72,17 +72,34 @@ export function ZoningValueList({
  * never assuming full map coverage). Mapped-feature entries are OPEN
  * contract objects; every key is read through the runtime narrowing helper
  * in src/lib/contract.ts, never asserted.
+ *
+ * M2-T005 D4: `excludeFeatures` lets a screen that renders certain feature
+ * values elsewhere (the Confirm screen's dedicated flags section) exclude
+ * exactly those keys from this table, so each official value appears once
+ * per screen. Nothing is hidden: the caller must render the excluded
+ * values itself and should pass `featureNote` saying where they live.
+ * Default rendering (no props) is unchanged — the Property screen still
+ * shows every mapped feature here.
  */
 export function ZoningSection({
   profile,
   byId,
+  excludeFeatures,
+  featuresHeading = "Mapped features and flags",
+  featureNote,
 }: {
   profile: PropertyProfile;
   byId: Map<string, SourceFact>;
+  excludeFeatures?: readonly string[];
+  featuresHeading?: string;
+  featureNote?: string;
 }) {
-  const mappedFeatures = (profile.zoning.mapped_features ?? []).map(mappedFeatureView);
+  const allFeatureViews = (profile.zoning.mapped_features ?? []).map(mappedFeatureView);
+  const mappedFeatures = allFeatureViews.filter(
+    (view) => view.feature === null || !excludeFeatures?.includes(view.feature),
+  );
   return (
-    <section className="card" aria-labelledby="zoning-title">
+    <section className="card" aria-labelledby="zoning-title" data-testid="zoning-section">
       <h2 className="section-title" id="zoning-title">
         Zoning
       </h2>
@@ -112,11 +129,14 @@ export function ZoningSection({
         emptyText="No special district is present in the official record for this lot."
       />
       <h3 style={{ fontSize: "0.95rem", margin: "1rem 0 0.25rem" }}>
-        Mapped features and flags
+        {featuresHeading}
       </h3>
+      {featureNote ? <p className="section-note">{featureNote}</p> : null}
       {mappedFeatures.length === 0 ? (
         <p className="section-note">
-          No mapped features are present in the official record for this lot.
+          {allFeatureViews.length > 0
+            ? "Every mapped feature recorded for this lot is a flag shown in its dedicated section."
+            : "No mapped features are present in the official record for this lot."}
         </p>
       ) : (
         <div className="table-scroll">

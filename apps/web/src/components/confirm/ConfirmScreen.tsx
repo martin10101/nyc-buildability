@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { useCallback, useEffect, useRef, useState } from "react";
+import { announcementForOutcome } from "@/lib/announce";
 import { fetchPropertyProfile, type LookupOutcome } from "@/lib/api";
 import { validateBblInput } from "@/lib/bbl";
 import { completenessDisplay } from "@/lib/coverage";
@@ -21,6 +22,7 @@ import { CoverageLegend } from "@/components/property/CoverageLegend";
 import { OutcomeFailureStates } from "@/components/property/FailureState";
 import { InternalBanner } from "@/components/property/InternalBanner";
 import { LoadingStages } from "@/components/property/LoadingStages";
+import { OutcomeAnnouncer } from "@/components/property/OutcomeAnnouncer";
 import { ProvenanceDisclosure } from "@/components/property/ProvenanceDisclosure";
 import { ZoningSection } from "@/components/property/ZoningSection";
 
@@ -64,6 +66,13 @@ const FLAG_FEATURES = [
   { field: "firm07_flag", label: "2007 FIRM flood flag" },
   { field: "pfirm15_flag", label: "2015 preliminary FIRM flood flag" },
 ] as const;
+/**
+ * D4 (M2-T005): these feature keys render ONCE on this screen — in the
+ * dedicated flags section (which also states honest unknowns) — so they
+ * are excluded from the shared ZoningSection mapped-features table here.
+ * The Property screen keeps the unfiltered table.
+ */
+const FLAG_FEATURE_FIELDS = FLAG_FEATURES.map(({ field }) => field);
 
 function FactRow({
   field,
@@ -175,7 +184,10 @@ function ConfirmCard({ profile }: { profile: PropertyProfile }) {
     <div data-testid="confirm-card">
       {/* --- Compact property card ------------------------------------ */}
       <section className="card" data-testid="confirm-identity">
-        <h2 className="section-title">BBL {profile.identity.bbl}</h2>
+        {/* Success-outcome focus target (M2-T005 D1). */}
+        <h2 className="section-title" tabIndex={-1} data-outcome-heading>
+          BBL {profile.identity.bbl}
+        </h2>
         {address?.normalized_address ? (
           <p style={{ margin: 0 }}>
             {address.normalized_address}
@@ -253,7 +265,16 @@ function ConfirmCard({ profile }: { profile: PropertyProfile }) {
         </dl>
       </section>
 
-      <ZoningSection profile={profile} byId={byId} />
+      <ZoningSection
+        profile={profile}
+        byId={byId}
+        excludeFeatures={FLAG_FEATURE_FIELDS}
+        featuresHeading="Mapped features"
+        featureNote={
+          "Landmark, historic-district, and flood flags appear in their " +
+          "own section below — each official value is shown once."
+        }
+      />
 
       <section className="card" data-testid="confirm-flags">
         <h2 className="section-title">Landmark, flood, and pending flags</h2>
@@ -372,7 +393,11 @@ export function ConfirmScreen({ bbl }: { bbl: string }) {
   const [loading, setLoading] = useState(true);
   const [outcome, setOutcome] = useState<LookupOutcome | null>(null);
   const [attempt, setAttempt] = useState(0);
+  /** True only between a Retry activation and its outcome (D1 focus). */
+  const [retryFocus, setRetryFocus] = useState(false);
   const requestSeq = useRef(0);
+  /** Wraps the rendered outcome; arrival focus queries inside it (D1). */
+  const outcomeRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
     const controller = new AbortController();
@@ -383,15 +408,37 @@ export function ConfirmScreen({ bbl }: { bbl: string }) {
         return;
       }
       setLoading(false);
+      setRetryFocus(false);
       setOutcome(result);
     });
     return () => controller.abort();
   }, [bbl, attempt]);
 
-  const retry = useCallback(() => setAttempt((current) => current + 1), []);
+  // D1 (M2-T005): when an outcome arrives (success or failure), focus
+  // moves deterministically to the outcome heading.
+  useEffect(() => {
+    if (!loading && outcome) {
+      outcomeRef.current
+        ?.querySelector<HTMLElement>("[data-outcome-heading]")
+        ?.focus();
+    }
+  }, [loading, outcome]);
+
+  const retry = useCallback(() => {
+    // D1: the Retry button unmounts with the failure card; the loading
+    // card takes focus so it never drops to <body>.
+    setRetryFocus(true);
+    setAttempt((current) => current + 1);
+  }, []);
+
+  // D1: single outcome announcement; cleared while loading so a repeated
+  // identical outcome is announced again (see OutcomeAnnouncer).
+  const announcement =
+    !loading && outcome ? announcementForOutcome(outcome) : "";
 
   return (
     <div data-testid="confirm-screen">
+      <OutcomeAnnouncer message={announcement} />
       <header className="confirm-header">
         <h1 className="section-title" style={{ fontSize: "1.4rem", margin: 0 }}>
           Step 2 — Confirm the property
@@ -402,19 +449,21 @@ export function ConfirmScreen({ bbl }: { bbl: string }) {
           screen, through the same validated contract.
         </p>
       </header>
-      {loading ? <LoadingStages bbl={bbl} /> : null}
-      {!loading && outcome ? (
-        outcome.kind === "profile" ? (
-          <ConfirmCard profile={outcome.profile} />
-        ) : (
-          <>
-            <OutcomeFailureStates outcome={outcome} onRetry={retry} />
-            <p className="section-note">
-              <Link href="/property">Back to property lookup</Link>
-            </p>
-          </>
-        )
-      ) : null}
+      {loading ? <LoadingStages bbl={bbl} focusOnMount={retryFocus} /> : null}
+      <div ref={outcomeRef}>
+        {!loading && outcome ? (
+          outcome.kind === "profile" ? (
+            <ConfirmCard profile={outcome.profile} />
+          ) : (
+            <>
+              <OutcomeFailureStates outcome={outcome} onRetry={retry} />
+              <p className="section-note">
+                <Link href="/property">Back to property lookup</Link>
+              </p>
+            </>
+          )
+        ) : null}
+      </div>
     </div>
   );
 }
@@ -435,7 +484,10 @@ export function ConfirmEntry() {
         <ConfirmScreen bbl={validation.canonical} />
       ) : (
         <section className="card failure-state" data-testid="confirm-bad-param">
-          <h2 className="failure-title">No property selected</h2>
+          {/* D3 (M2-T005): this is the page's top-level content in the
+              bad-param state (the "Step 2" h1 never mounts), so the title
+              must be an h1 — heading hierarchy cannot start at level 2. */}
+          <h1 className="failure-title">No property selected</h1>
           <p>
             This confirmation screen needs a valid 10-digit BBL in its web
             address (for example <code>/property/confirm?bbl=1000010010</code>).
