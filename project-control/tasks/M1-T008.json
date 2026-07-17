@@ -1,0 +1,60 @@
+{
+  "task_id": "M1-T008",
+  "title": "BIS/DOB-wide legacy source research (scope bound by M1-T007 owner connector directives)",
+  "task_type": "research",
+  "milestone_id": "M1",
+  "objective": "Research the DOB-wide legacy source families exactly as bounded by project-control/reports/M1-T007-owner-connector-directives.md section 6 - including bf97-mjsy (DOB Incident Database source; NEVER call it BIS), g76y-dcqj, and 855j-jady - applying sections 2-5 (connector model, parsers, staged priority, channel-coverage labeling). Verify current dataset identifiers, schemas, update cadence, auth/rate limits, and limitations against official sources; produce a research document with retrieval dates and a connector recommendation. Research only - no connector implementation",
+  "business_reason": "Handoff queue item 4: next parallel research slot; feeds M2 risk-fact stage per the owner connector directives",
+  "inputs": [
+    "project-control/reports/M1-T007-owner-connector-directives.md (BINDING scope: section 6 source list incl. bf97-mjsy [DOB Incident Database source - NEVER call it BIS], g76y-dcqj, 855j-jady; sections 2-5 connector model, parsers, staged priority, channel-coverage labeling)",
+    "docs/research/ existing DOB NOW research (M1-T007) and source-research conventions from M1-T001/T003/T004 (official URL + retrieval date + fixture-grade evidence, no schema guessing)",
+    "data.cityofnewyork.us Socrata catalog (tokenless access verified as standing environment fact); nyc.gov api-portal is 403-walled - do not rely on it"
+  ],
+  "outputs": [
+    "docs/research/dob-legacy-sources.md: per-source family - official dataset identity, current schema/field inventory with observed sample evidence, update cadence, auth/rate limits, null/quirk semantics, channel-coverage labeling per directive section 5, staged connector priority recommendation per section 4, explicit limitations",
+    "Small representative response fixtures ONLY if KB-scale and needed as evidence (no bulk downloads - low-storage policy)",
+    "project-control/reports/M1-T008-producer-report.md (AOS section-6 packet)"
+  ],
+  "dependencies": [],
+  "allowed_paths": [
+    "docs/research/dob-legacy-sources.md",
+    "services/api/tests/fixtures/** (KB-scale representative fixtures only, if needed)",
+    "project-control/reports/M1-T008-producer-report.md"
+  ],
+  "forbidden_paths": [
+    "services/api/app/** (research only - no connector implementation)",
+    "packages/contracts/**",
+    "apps/web/**",
+    "render.yaml, .github/**, .claude/**",
+    "project-control/** (except own producer report)"
+  ],
+  "acceptance_scenarios": [
+    "S1 every source family in directive section 6 has: verified current dataset ID, row-count/date-range observation, field inventory from a REAL sampled response (not documentation alone), retrieval timestamps",
+    "S2 bf97-mjsy is described per the owner C1v2 disposition (documented secondary/future source feeding the M2 risk-fact stage) and never labeled BIS",
+    "S3 rate-limit/auth behavior observed or officially documented with citation; tokenless throttling noted",
+    "S4 channel-coverage labeling per directive section 5 applied to every source; gaps and overlaps with DOB NOW explicit",
+    "S5 staged priority recommendation per section 4 with rationale tied to M2 needs",
+    "S6 negative case: at least one candidate dataset examined and rejected with reason (no padding the source list)",
+    "S7 no schema guessed anywhere - every field claim traces to a sampled response or official data dictionary; fixtures KB-scale; no bulk data on owner PC"
+  ],
+  "required_gates": [
+    "G0",
+    "G1",
+    "G2",
+    "G3"
+  ],
+  "producer_agent": "official-source-researcher",
+  "reviewer_agents": [
+    "data-contract-verifier",
+    "code-reviewer"
+  ],
+  "status": "backlog",
+  "progress_percent": 0,
+  "risks": [
+    "No file/reviewer overlap with Wave 1 (docs/research + fixtures only); must not delay Wave 1 gate dispatches (owner condition on the parallel slot)",
+    "Live Socrata sampling is read-only and tokenless; if throttled, degrade to documented evidence and record the limitation"
+  ],
+  "blockers": [],
+  "created_at": "2026-07-17T10:44:58.500654+00:00",
+  "updated_at": "2026-07-17T10:44:58.500654+00:00"
+}

@@ -7,7 +7,7 @@
   "business_reason": "Owner code-audit directive 2026-07-17 P0: boundary hardening must land before the Confirm screen consumes the API",
   "inputs": [
     "Owner code-audit directive 2026-07-17 P0 Property-API items (verbatim in project-control/reports/OWNER-REVIEW-code-audit-task-consolidation.md section 2.2)",
-    "packages/contracts/schemas/v1/property_profile.schema.json v1.1 + packages/contracts/README.md (canonical contract; the open contract_version question: profiles emit v1.1 keys - must they declare contract_version 1.1.0?)",
+    "packages/contracts/schemas/v1/property_profile.schema.json AS SETTLED BY M2-T004 (dimensions, fact/observation identity, digest lineage already in place) + packages/contracts/README.md; the contract_version question is resolved once against this final shape (owner sequencing decision 2026-07-17: M2-T004 precedes this task so validation, typegen, fixtures, and the version declaration are implemented exactly once)",
     "services/api/app/api/v1/properties.py + builder.py (current status/state emission: 422 validation_error, 404 state=no_match, 200 profile, 502/503/504 typed, 500 generic, X-Correlation-ID)",
     "project-control/reports/M1-T005-G3-review.md section 5 + M1-T006-G3-review.md D5 (state as non-200 discriminator; partial district provenance)",
     "apps/web/src/lib current handwritten API types (the competing representation this task replaces - read-only input; removal happens in M2-T002 when the client migrates)"
@@ -20,7 +20,9 @@
     "Recorded transport-level fixture for HTTP 500 + state=no_match (the frontend regression input for M2-T002)",
     "project-control/reports/M2-T003-producer-report.md (AOS section-6 packet)"
   ],
-  "dependencies": [],
+  "dependencies": [
+    "M2-T004"
+  ],
   "allowed_paths": [
     "services/api/**",
     "packages/contracts/**",
@@ -61,7 +63,7 @@
   "risks": [
     "contract_version decision may ripple into stored fixtures - keep the change additive and re-record fixtures with provenance rather than hand-editing",
     "Type-generation tool choice must run in CI without adding local toolchain weight (owner PC thin-client policy)",
-    "M2-T002 and M1-T009 depend on this task - it is the first M2 wave item"
+    "M2-T002 and M1-T009 depend on this task; it follows M2-T004 (owner-approved order M2-T004 -> M2-T003 -> M2-T002/M1-T009)"
   ],
   "blockers": [],
   "created_at": "2026-07-17T10:25:10.679668+00:00",

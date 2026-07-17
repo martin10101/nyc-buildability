@@ -63,3 +63,35 @@ Caching, Retry-After, jitter, circuit breaker, last-known-good with visible stal
 
 ## 4. What happens on your approval
 Reply with approval (or edits) and I will move Wave 1 to `ready`, dispatch producers under the normal G0→G5 gate chain, and run everything through the protected-main PR workflow (task branch → PR → checks green → merge). Until then, nothing runs.
+
+---
+
+## 5. OWNER APPROVAL RECORD (2026-07-17) — sequencing and gate clarifications applied
+
+The owner approved the set with required clarifications. Dispositions:
+
+### 5.1 G2 codified structurally (M0-T014 packet updated)
+G2 is a self-check, not independent review and not a reviewer-validation exception: self-check evidence may be authored by the orchestrator with actor role recorded honestly as `orchestrator/self_check`; a self_check record can never satisfy an independent gate (G1/G3/G4/G5/G6); independent gates require a reviewer listed in `reviewer_agents` differing from `producer_agent`; no general bypass exists. M0-T014 inputs, outputs, and scenario S3 rewritten accordingly.
+
+### 5.2 M2-T003 ↔ M2-T004 dependency check — REORDERED
+Read-only inspection evidence:
+- `services/api/app/profile/builder.py:318-381` computes and emits `data_completeness` (`complete`/`missing_noncritical`/`missing_critical`) — the exact completeness model M2-T004 replaces with independent dimensions, inside the profile-construction path M2-T003 wraps with response validation.
+- `packages/contracts/schemas/v1/property_profile.schema.json` (canonical schema) carries `data_completeness` (line 170, $ref into coverage_status), `provenance_ref` fact identity (lines 70/110/240), and `contract_version` (lines 23-25). M2-T004 modifies this file (dimension enums, fact_key/observation_id, digest + snapshot lineage). This same file is the single input to M2-T003's type generation and backend response validation, and its shape determines the recorded fixtures and the contract_version declaration.
+
+Per the owner's rule — M2-T004 changes the canonical schema, status model, fact identity, observation identity, digest lineage, generated-type input, and response contract consumed by M2-T003 — the critical path is reordered:
+
+**M2-T004 → M2-T003 → M2-T002 and M1-T009**
+
+Packet edits: M2-T004 dependencies cleared (now first; schema edited directly; pipeline note updated); M2-T003 now depends on M2-T004 and consumes the settled schema (validation/typegen/fixtures/contract_version implemented exactly once); M2-T002 and M1-T009 keep their M2-T003 dependency (transitively after M2-T004). Tasks were NOT combined (owner instruction).
+
+### 5.3 Parallel exclusivity for Wave 1 (packet edits)
+M0-T015 allowed paths narrowed to exact files (`render.yaml`, `services/api/requirements.txt`, `services/api/app/main.py` middleware/health wiring, middleware tests, `apps/web/.env.example`, runbook, own report); M2-T004 explicitly forbidden from `services/api/requirements.txt` and `services/api/app/main.py`. No two Wave-1 tasks share a writable file.
+
+### 5.4 M0-T015 CORS constraints (packet updated)
+Never wildcard CORS with credentialed requests (explicit negative test in S4); allowed origins environment-configurable; no provisioning or production deployment; B-002 remains an owner-controlled blocker.
+
+### 5.5 M1-T008 contracted
+Research-only packet bound by the M1-T007 owner connector directives §6/§§2–5; paths (`docs/research/` + KB fixtures + own report) and producer (official-source-researcher) do not overlap Wave 1; runs in the parallel slot without delaying gates.
+
+### 5.6 Dispatch plan executed
+Wave 1 dispatched after these edits: **M0-T014** (backend-engineer), **M0-T015** (cloud-architect), **M2-T004** (backend-engineer) — plus **M1-T008** (official-source-researcher) in the parallel slot. All work flows task branch → PR → required checks → merge into protected main; no direct pushes; accepted work untouched.

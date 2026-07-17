@@ -17,7 +17,7 @@
     "Health-check path aligned to /api/v1/health everywhere (blueprint, runbook, monitors)",
     "Web-service API wiring: NEXT_PUBLIC_API_BASE_URL env var in the blueprint or an implemented same-origin proxy (resolves M2-T001 D8; decision documented)",
     "Worker and cron entrypoints in render.yaml either implemented as real modules or removed until their milestones deliver them (no phantom entrypoints)",
-    "API security baseline: CORS origin allowlist middleware, security headers, honest documentation that auth is NOT yet enabled (M0-T007/T008 blocked on B-001) and therefore NO public exposure until it is",
+    "API security baseline: CORS origin allowlist middleware - NEVER wildcard origins with credentialed requests, allowed origins environment-configurable (env var name documented, names-only in examples); security headers; honest documentation that auth is NOT yet enabled (M0-T007/T008 blocked on B-001) and therefore NO public exposure until it is",
     "Updated deployment runbook (exact file confirmed at G0 from M0-T006 records)",
     "NO provisioning: zero Render API calls; B-002 stays owner-gated",
     "project-control/reports/M0-T015-producer-report.md (AOS section-6 packet)"
@@ -25,12 +25,15 @@
   "dependencies": [],
   "allowed_paths": [
     "render.yaml",
-    "services/api/** (packaging, health route alias if needed, CORS/security-header middleware only)",
+    "services/api/requirements.txt",
+    "services/api/app/main.py (health/CORS/security-header middleware wiring only)",
+    "services/api/tests/** (new middleware tests only)",
     "apps/web/.env.example (names only)",
     "docs/ deployment runbook file only (exact path confirmed at G0 from M0-T006 records)",
     "project-control/reports/M0-T015-producer-report.md"
   ],
   "forbidden_paths": [
+    "services/api/app/** except main.py (builder/properties/contracts code is M2-T004/M2-T003 territory - parallel exclusivity)",
     "apps/web/** except .env.example",
     "packages/contracts/**",
     "project-control/** (except own producer report)",
@@ -40,7 +43,7 @@
     "S1 blueprint truth: every buildCommand/startCommand/entrypoint in render.yaml resolves to files/modules that exist in the repo (scripted check in the report)",
     "S2 health: the blueprint health-check path matches the live route (/api/v1/health) and the runbook says the same",
     "S3 wiring: web service reaches the API via the chosen mechanism (env var or proxy) with the decision + rationale recorded; .env.example carries names only",
-    "S4 CORS/headers: pytest proves disallowed origin rejected, configured origin allowed, security headers present on API responses",
+    "S4 CORS/headers: pytest proves disallowed origin rejected, configured origin allowed, wildcard origin combined with credentials is impossible (explicit negative test), origins read from environment configuration, security headers present on API responses",
     "S5 honesty: runbook and blueprint state auth is absent and public exposure is blocked until M0-T007/T008; no secrets anywhere; secret scan green",
     "S6 no provisioning: no Render account/API interaction occurred; B-002 unchanged",
     "S7 G5 review passes on the CORS/header/no-auth-exposure posture"
