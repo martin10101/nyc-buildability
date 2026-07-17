@@ -566,7 +566,19 @@ def test_s6_same_bbl_twice_yields_identical_profiles_modulo_volatile(client) -> 
     def strip_volatile(profile: dict) -> dict:
         profile["profile_version"].pop("generated_at")
         profile["reproducibility"].pop("correlation_id")
+        for record in profile["provenance"]:
+            # observation_id is a volatile identifier BY DESIGN (M2-T004
+            # owner P1 bullet 2: unique per retrieval event, never reused);
+            # fact_key and both digests stay in the exact comparison below,
+            # so content determinism is asserted MORE strictly than before.
+            record.pop("observation_id")
         return profile
+
+    # The two retrievals are distinct observation events of the same facts
+    # (captured before strip_volatile mutates the documents).
+    obs_first = {r["observation_id"] for r in first["provenance"]}
+    obs_second = {r["observation_id"] for r in second["provenance"]}
+    assert obs_first and obs_second and not (obs_first & obs_second)
 
     # json.dumps compares structure AND key ordering (stable output).
     assert json.dumps(strip_volatile(first)) == json.dumps(strip_volatile(second))

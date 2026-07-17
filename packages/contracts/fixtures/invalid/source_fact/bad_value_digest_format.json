@@ -1,0 +1,16 @@
+{
+  "_expected_failure": "M2-T004: value_digest 'md5:abc' violates the digest_sha256 pattern '^sha256:[0-9a-f]{64}$' - only the documented canonical-json-1 SHA-256 form is a legal digest; weaker or unlabeled hash forms must be rejected so digest verification is never ambiguous.",
+  "provenance_id": "test-fixture-synthetic-bad-digest",
+  "source_id": "test-fixture-synthetic",
+  "original_field_name": "lotarea",
+  "original_value": "23121",
+  "normalized_value": 23121,
+  "retrieved_at": "2026-07-17T12:00:00Z",
+  "dataset_version": "26v1",
+  "effective_date": null,
+  "bbl": "1000477501",
+  "confidence": 1,
+  "user_confirmed_or_overridden": "none",
+  "conflict_status": "none",
+  "value_digest": "md5:abc"
+}

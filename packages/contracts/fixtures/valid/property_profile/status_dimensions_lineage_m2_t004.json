@@ -1,0 +1,81 @@
+{
+  "_comment": "M2-T004 contract-1.2.0 exemplar (SYNTHETIC per README convention: source_id 'test-fixture-synthetic'; BBL is the research-doc official 120 Broadway BBL). Models the S2 dimension-independence story: the source record is COMPLETE for the feasibility basis while geometry is MISSING - two independent truths reported simultaneously, never collapsed. Digests are real canonical-json-1 values recomputable from the shown original_value and the synthetic response [{\"bbl\":\"1000477501.00000000\",\"lotarea\":\"23121\",\"version\":\"26v1\"}].",
+  "profile_version": {
+    "contract_version": "1.2.0",
+    "profile_revision": 1,
+    "generated_at": "2026-07-17T12:00:00Z"
+  },
+  "identity": {
+    "bbl": "1000477501"
+  },
+  "lot_facts": {
+    "lotarea": {
+      "value": 23121,
+      "units": "square feet",
+      "provenance_ref": "test-fixture-synthetic-lotarea-1",
+      "coverage_status": "conditional"
+    }
+  },
+  "existing_building_facts": {},
+  "zoning": {
+    "districts": [],
+    "commercial_overlays": [],
+    "special_districts": [],
+    "mapped_features": []
+  },
+  "project_intent": {},
+  "provenance": [
+    {
+      "provenance_id": "test-fixture-synthetic-lotarea-1",
+      "source_id": "test-fixture-synthetic",
+      "original_field_name": "lotarea",
+      "original_value": "23121",
+      "normalized_value": 23121,
+      "units": "square feet",
+      "retrieved_at": "2026-07-17T12:00:00Z",
+      "dataset_version": "26v1",
+      "effective_date": null,
+      "bbl": "1000477501",
+      "confidence": 1,
+      "user_confirmed_or_overridden": "none",
+      "conflict_status": "none",
+      "fact_key": "fact:test-fixture-synthetic:64uk-42ks:1000477501:lotarea",
+      "observation_id": "obs:fixture-event-1:1000477501:lotarea",
+      "value_digest": "sha256:27bee3cb843aba0d5885ea910fd0e85ef01884af58caca5c542f292ec95b1cfe",
+      "response_digest": "sha256:79330aef519db579c48d760f88d14211d8860225595f8231eefe32bc03c152bb"
+    }
+  ],
+  "missing_inputs": [
+    {
+      "field": "sanborn",
+      "criticality": "noncritical",
+      "reason": "column absent from the synthetic record; outside the feasibility-relevant completeness basis",
+      "feasibility_relevant": false
+    }
+  ],
+  "conflicts": [],
+  "user_confirmations": [],
+  "data_completeness": "complete",
+  "reproducibility": {
+    "correlation_id": "m2t004-fixture",
+    "source_id": "test-fixture-synthetic",
+    "dataset_id": "64uk-42ks",
+    "dataset_version": "26v1",
+    "request_url": "https://data.cityofnewyork.us/resource/64uk-42ks.json?bbl=1000477501",
+    "retrieved_at": "2026-07-17T12:00:00Z",
+    "record_count": 1,
+    "drift_signals": [],
+    "connector_notes": [],
+    "coverage_policy": "coverage_status is derived only from review status and conflict/drift state; connector confidence is never mapped to a coverage label (PRD section 12).",
+    "response_digest": "sha256:79330aef519db579c48d760f88d14211d8860225595f8231eefe32bc03c152bb",
+    "digest_canonicalization": "canonical-json-1: a digest is 'sha256:' + lowercase-hex SHA-256 of the UTF-8 encoding of the canonical JSON serialization of the PARSED value. Canonical serialization: object keys sorted lexicographically by Unicode code point; separators ',' and ':' with no insignificant whitespace; non-ASCII characters preserved as-is (not escaped); no Unicode normalization applied; numbers serialized by Python json.dumps defaults (integers verbatim, floats shortest-repr)."
+  },
+  "status_dimensions": {
+    "source_record_completeness": "complete",
+    "analysis_readiness": "ready",
+    "rule_coverage": "not_computed",
+    "geometry_validity": "missing",
+    "financial_readiness": "not_computed",
+    "policy": "status_dimensions are derived deterministically and independently; dimensions the platform cannot yet compute are declared not_computed, never inferred (M2-T004 exemplar policy text)."
+  }
+}

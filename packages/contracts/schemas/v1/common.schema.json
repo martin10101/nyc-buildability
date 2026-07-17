@@ -45,6 +45,11 @@
       "type": "string",
       "minLength": 1,
       "description": "String that must not be empty."
+    },
+    "digest_sha256": {
+      "type": "string",
+      "pattern": "^sha256:[0-9a-f]{64}$",
+      "description": "Canonical content digest (task M2-T004, additive): 'sha256:' + lowercase-hex SHA-256 of the UTF-8 encoding of the canonical JSON serialization of the PARSED value being digested. Canonical JSON form (spec id 'canonical-json-1', recorded verbatim per profile in reproducibility.digest_canonicalization): object keys sorted lexicographically by Unicode code point; separators ',' and ':' with no insignificant whitespace; non-ASCII characters preserved as-is (not escaped); no Unicode normalization applied; numbers serialized by Python json.dumps defaults (integers verbatim, floats shortest-repr). Digesting the parsed value rather than raw bytes makes the digest independent of source key order and insignificant whitespace, so byte-different but semantically identical responses digest equal, while any value change flips the digest."
     }
   }
 }

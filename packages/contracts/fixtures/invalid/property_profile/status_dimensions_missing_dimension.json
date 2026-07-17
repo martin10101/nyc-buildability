@@ -1,0 +1,19 @@
+{
+  "_expected_failure": "M2-T004: status_dimensions is present but omits financial_readiness (and policy). All six subfields are REQUIRED when the object is present - silently dropping a dimension would collapse the independent-dimension set (GDS s3.3: never collapse; a dimension that cannot be computed must be DECLARED not_computed, not omitted).",
+  "profile_version": { "contract_version": "1.2.0", "profile_revision": 1, "generated_at": "2026-07-17T12:00:00Z" },
+  "identity": { "bbl": "1000477501" },
+  "lot_facts": {},
+  "existing_building_facts": {},
+  "zoning": {},
+  "project_intent": {},
+  "provenance": [],
+  "missing_inputs": [],
+  "conflicts": [],
+  "user_confirmations": [],
+  "status_dimensions": {
+    "source_record_completeness": "complete",
+    "analysis_readiness": "ready",
+    "rule_coverage": "not_computed",
+    "geometry_validity": "not_computed"
+  }
+}

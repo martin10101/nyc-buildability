@@ -444,15 +444,34 @@ def test_s5_multiple_records_for_one_bbl_is_schema_drift() -> None:
 # --------------------------------------------------------------------------
 
 
+def _strip_observation_ids(facts: list[dict]) -> list[dict]:
+    """Facts modulo the observation_id, which is a NEW volatile identifier
+    per retrieval event BY DESIGN since M2-T004 (owner P1 bullet 2: an
+    observation_id is immutable and unique per retrieval; re-observation
+    must NOT reuse it). Everything else - including fact_key, value_digest,
+    and response_digest - is deterministic and compared exactly."""
+    return [{k: v for k, v in fact.items() if k != "observation_id"} for fact in facts]
+
+
 def test_s6_same_input_twice_yields_identical_canonical_output() -> None:
     first, _ = fetch_fixture("F01_single_lot_normal.json", "1000010100")
     second, _ = fetch_fixture("F01_single_lot_normal.json", "1000010100")
     # With a fixed clock the outputs are exactly equal apart from the
-    # correlation id (unique per request by design).
-    assert first.facts == second.facts
+    # correlation id (unique per request by design) and the observation_id
+    # (unique per retrieval EVENT by design, M2-T004).
+    assert _strip_observation_ids(first.facts) == _strip_observation_ids(second.facts)
     assert first.bbl == second.bbl
     assert first.dataset_version == second.dataset_version
     assert first.absent_columns == second.absent_columns
+    # M2-T004 identity separation: the logical fact identity is STABLE across
+    # re-observation while every observation identity is fresh; identical
+    # response content digests identically.
+    assert [f["fact_key"] for f in first.facts] == [f["fact_key"] for f in second.facts]
+    assert all(
+        a["observation_id"] != b["observation_id"]
+        for a, b in zip(first.facts, second.facts, strict=True)
+    )
+    assert first.response_digest == second.response_digest
     # Fact ordering is stable (sorted by field name).
     fields = [fact["original_field_name"] for fact in first.facts]
     assert fields == sorted(fields)
@@ -471,7 +490,11 @@ def test_s6_retry_after_transient_failure_produces_same_facts() -> None:
     retried = fetch_by_bbl(
         "1000010100", transport=transport, sleep=SleepRecorder(), clock=FIXED_CLOCK
     )
-    assert retried.facts == clean.facts  # no duplicate or divergent facts
+    # No duplicate or divergent facts; only the per-retrieval observation_id
+    # differs (M2-T004 - a retried fetch is still ONE retrieval event, so ids
+    # are internally consistent and the content digests are identical).
+    assert _strip_observation_ids(retried.facts) == _strip_observation_ids(clean.facts)
+    assert retried.response_digest == clean.response_digest
 
 
 # --------------------------------------------------------------------------
