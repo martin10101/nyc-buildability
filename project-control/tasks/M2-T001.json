@@ -1,0 +1,81 @@
+{
+  "task_id": "M2-T001",
+  "title": "Priority 4: first browser Property screen (real BBL lookup against accepted property-profile API v1.1)",
+  "task_type": "frontend",
+  "milestone_id": "M2",
+  "objective": "Deliver the first client-visible end-to-end slice: an internal/development-only Next.js Property screen in apps/web that performs real BBL lookup against GET /api/v1/properties/{bbl}, consumes ONLY contract-v1.1-documented keys, and clearly renders confirmed facts, missing data (with a documented noise-filter policy), conflicts, unsupported fields, professional-review/coverage labels, and per-fact source/provenance access, with first-class loading, no-match, malformed-BBL, API-failure, and partial-data states, styled per the premium design system, with all installs/builds/tests executed in GitHub Actions (owner PC below disk floor)",
+  "business_reason": "Owner directive 2026-07-16 item 2: after contract v1.1 acceptance proceed immediately to this slice; do not let research fan-out delay it. M1-T005 adjudication made v1.1 (now ACCEPTED as M1-T006) its gate",
+  "inputs": [
+    "packages/contracts/schemas/v1/property_profile.schema.json v1.1 + packages/contracts/README.md (the ONLY key vocabulary the screen may consume)",
+    "GET /api/v1/properties/{bbl} behavior: services/api/app/api/v1/properties.py + builder.py (422 validation_error with detail.code, 404 state=no_match with condo billing-lot explanation, 200 profile, 502/503/504 typed failures, 500 generic, X-Correlation-ID header)",
+    "project-control/reports/M1-T005-G3-review.md section 5 frontend tolerance rules: tolerate absent identity.address/geometry/mapped-features and absent borough under conflict; treat state as the non-200 discriminator (routing 404 vs no_match); render 422 from detail.code+message (raw_value is repr-quoted); D3: missing_inputs has 42-entry boilerplate noise -> this task implements and DOCUMENTS the frontend filter policy (group/collapse, never hide counts)",
+    "project-control/reports/M1-T006-G3-review.md D5: partial district provenance linkage is legal - never assume full map coverage; degrade to provenance[].original_field_name join",
+    "docs/PREMIUM_PRODUCT_DESIGN_SYSTEM.md (visual standard) + docs/PRODUCT_FLOW_AND_AI_BOUNDARIES.md UI rules (plain language, one next action, never legal-certainty by color only, conflicts/unsupported always visible)",
+    "apps/web existing scaffold (Next 15.3.4 / React 19, layout.tsx, page.tsx, disclaimer.ts, .env.example security boundary)",
+    ".github/workflows/ci.yml (existing 4-job CI; web job added additively)",
+    "docs/ACCEPTANCE_SCENARIO_STANDARD.md UI human-journey pack"
+  ],
+  "outputs": [
+    "Property screen in apps/web: BBL input (client-side format validation mirroring the API's 1-5 borough/10-digit rule before any call), real fetch to the property-profile API, staged loading UI, and clearly separated sections: confirmed facts (with units), missing data (documented filter policy: feasibility-relevant entries surfaced, remaining grouped behind an explicit count - nothing silently dropped), conflicts (all values + sources, unresolved visible), unsupported/drift fields, coverage labels per fact (PRD 12 wording, never color-only), data_completeness banner, professional-review affordance",
+    "Per-fact provenance access: source id, dataset id/version, original field name/value, retrieved_at, request_url host - via the fact's provenance_ref join with district-map fallback per M1-T006 D5",
+    "Failure states as first-class UI: malformed BBL (422 detail.code), no_match 404 (show the condo billing-lot explanation), 502/503/504 typed failures with retry affordance, 500 generic with correlation id, network failure; NO mocked successful property results anywhere (fixtures live only in tests)",
+    "Address entry visibly ABSENT/disabled with honest copy (Geoclient connector + credentials pending B-004) - no pretend address lookup",
+    "INTERNAL/DEV markers: prominent internal-use banner + required PRD 29 disclaimer; no auth claimed; no public deploy (B-001); render.yaml untouched",
+    "Tests runnable in CI: component/unit tests + Playwright browser journeys (real Next build + real FastAPI process serving committed official fixtures via the existing fixture transport; clearly labeled as recorded-official-fixture harness, NOT frontend mocks) covering primary success, malformed, no-match, API-failure, partial-data, provenance drill-down, keyboard navigation; additive 'web' CI job (npm ci, lint, typecheck, build, unit, Playwright) with trace/screenshot artifacts for the G3 reviewer",
+    "apps/web/.env.example: NEXT_PUBLIC_API_BASE_URL name added (publishable, names-only rule preserved)",
+    "Producer report with exact commands and CI run links"
+  ],
+  "dependencies": [
+    "M1-T005",
+    "M1-T006"
+  ],
+  "allowed_paths": [
+    "apps/web/**",
+    ".github/workflows/ci.yml (ADDITIVE web job only - existing jobs untouched)",
+    "project-control/reports/M2-T001-producer-report.md"
+  ],
+  "forbidden_paths": [
+    "services/** (API is a read-only dependency)",
+    "packages/contracts/** (contract is frozen at v1.1)",
+    "render.yaml (no deploy changes; B-002 open)",
+    "project-control/** (except own producer report)",
+    "docs/**",
+    "supabase/**"
+  ],
+  "acceptance_scenarios": [
+    "S1 primary: enter valid BBL 1000010010 -> loading stages -> profile renders confirmed facts with units + coverage labels, data_completeness banner, conflicts section (split-zone fixture shows zonedist values from both sources, unresolved visible), provenance drill-down on lot_area shows source/dataset/version/original value/retrieved_at",
+    "S2 boundary: BBL with borough 5, minimum/maximum lot values from fixtures; district with provenance map present AND absent (D5 fallback join) both render provenance",
+    "S3 malformed input: '1-00001-0100' and '123' -> client-side validation message BEFORE any network call; server 422 path also exercised (detail.code rendered) via a bypass test",
+    "S4 no-match: condo billing-lot BBL -> 404 state=no_match screen shows the actionable billing-lot explanation, not a generic error",
+    "S5 dependency failure: API 503/504/502 -> distinct typed failure states with retry; API down (connection refused) -> recoverable network-failure state; 500 -> generic message + correlation id displayed",
+    "S6 partial data: profile missing identity.address and geometry renders without crash; missing_inputs filter policy shows feasibility-relevant entries and an explicit grouped count for the rest (nothing silently dropped)",
+    "S7 honesty checks: no mocked success path reachable in the app; address entry visibly disabled with honest copy; internal/dev banner + PRD 29 disclaimer present; no 'best'/'verified' wording invented (coverage wording from contract enums only)",
+    "S8 regression + hygiene: existing CI jobs still green; lint/typecheck clean; keyboard-only navigation completes S1; no secrets in bundle (NEXT_PUBLIC names only); no large artifacts on owner PC (all installs/builds in CI)"
+  ],
+  "required_gates": [
+    "G0",
+    "G2",
+    "G3",
+    "G4",
+    "G5"
+  ],
+  "producer_agent": "frontend-engineer",
+  "reviewer_agents": [
+    "human-journey-reviewer",
+    "security-reviewer"
+  ],
+  "status": "claimed",
+  "progress_percent": 10,
+  "risks": [
+    "OWNER PC DISK AT ~1.67 GB FREE (below the 4 GB floor): NO local npm install, node_modules, Playwright browsers, or Next build caches - source edits only locally; every install/build/test/browser run happens in the additive GitHub Actions web job. If a step cannot run in CI, stop and report a blocker rather than installing locally",
+    "CI web job must not weaken existing jobs; actions SHA-pinning debt (hygiene batch) - new job must not add unpinned third-party actions beyond the already-used official ones",
+    "Playwright browser journeys need the FastAPI app running in CI with deterministic committed fixtures via the existing transport seam - this is a test harness of recorded OFFICIAL responses, not a frontend mock; label it as such. A separate optional live-SODA smoke may exist but must not gate CI",
+    "422-before-network rule: client-side BBL validation must mirror, never replace, server validation (server path still tested)",
+    "No public deploy, no render.yaml change, no auth claims (B-001/B-002 open); screen is INTERNAL/DEV"
+  ],
+  "blockers": [],
+  "execution_location": "source edits on owner PC (KB-scale, tracked in git); ALL dependency installs, builds, lint/typecheck, unit tests, and Playwright browser runs in GitHub Actions (web job); durable artifacts = git commits + CI artifacts (traces/screenshots, short retention); local cleanup: nothing to clean because nothing heavy is installed locally",
+  "created_at": "2026-07-17T00:07:57.199637+00:00",
+  "updated_at": "2026-07-17T00:09:48.771681+00:00",
+  "worktree": ".claude/worktrees/M2-T001"
+}
