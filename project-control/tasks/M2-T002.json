@@ -59,8 +59,8 @@
     "visual-quality-reviewer",
     "security-reviewer"
   ],
-  "status": "backlog",
-  "progress_percent": 0,
+  "status": "claimed",
+  "progress_percent": 10,
   "risks": [
     "Depends on M2-T003 (generated types + backend guarantees); do not start the client hardening against handwritten types",
     "CI-only heavy execution stands (no local npm/Playwright); PR-based protected-main workflow applies",
@@ -68,5 +68,6 @@
   ],
   "blockers": [],
   "created_at": "2026-07-17T10:25:10.809766+00:00",
-  "updated_at": "2026-07-17T10:25:10.809766+00:00"
+  "updated_at": "2026-07-17T20:08:02.335427+00:00",
+  "worktree": ".claude/worktrees/M2-T002"
 }
