@@ -55,7 +55,7 @@
   "blockers": [],
   "execution_location": "research is network + text only; producer writes KB-scale markdown/fixtures in the task worktree; no installs, no datasets; disk impact negligible (7.77 GB free)",
   "created_at": "2026-07-17T07:41:24.928767+00:00",
-  "updated_at": "2026-07-17T08:41:01.206224+00:00",
+  "updated_at": "2026-07-17T08:48:09.912385+00:00",
   "worktree": ".claude/worktrees/M1-T007",
   "progress_log": [
     {
@@ -81,6 +81,12 @@
       "agent": "orchestrator",
       "percent": 85,
       "message": "G1 PASS recorded (verbatim report preserved at project-control/reports/M1-T007-G1-data-contract-review.md). BLOCKING CORRECTION C1 per gate-verdict semantics: findings section 2.1 must disposition bf97-mjsy (Construction-Related Incidents, DOB) so all 21 catalog results are accounted for - G3 and acceptance blocked until C1 is applied, validated, committed. All 18 charge items PASS including owner items: 11 IDs/titles, column counts, row counts, cadence incl. both children, tokenless access, pagination/throttling, 5 BIS rule-outs verbatim, filing-to-permit join, boiler/BIN join, 278-row polluted-key population (O4), BBL typing, aliases/casing, non-ISO dates, 7 OQs (O1/O2 enrichment evidence), 9-record/11-ID mapping, PRD 8.2 completeness, UTF-8 parse, provenance/fixture reproducibility."
+    },
+    {
+      "at": "2026-07-17T08:48:09.912385+00:00",
+      "agent": "orchestrator",
+      "percent": 85,
+      "message": "C1 applied, validated, committed: bf97-mjsy dispositioned in findings 2.1 (producer-authored with live evidence, orchestrator-applied per worktree isolation; correction packet preserved at project-control/reports/M1-T007-C1-correction-packet.md). Branch @ 385de84 pushed (ls-remote verified). G1 blocking condition cleared; dispatching G3."
     }
   ]
 }
