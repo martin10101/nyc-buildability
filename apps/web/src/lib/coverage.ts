@@ -8,7 +8,7 @@
  * The UI never invents a status and never upgrades one.
  */
 
-import type { CoverageStatus, DataCompleteness } from "./property-profile";
+import type { CoverageStatus, DataCompleteness } from "./contract";
 
 export interface CoverageDisplay {
   /** Exact PRD section 12 enum value, displayed verbatim. */

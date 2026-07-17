@@ -1,5 +1,5 @@
+import { mappedFeatureView, type PropertyProfile } from "@/lib/contract";
 import { fieldLabel, formatValue } from "@/lib/format";
-import type { PropertyProfile } from "@/lib/property-profile";
 
 interface UnsupportedEntry {
   field: string;
@@ -16,8 +16,9 @@ function collectUnsupported(profile: PropertyProfile): UnsupportedEntry[] {
     }
   }
   for (const feature of profile.zoning.mapped_features ?? []) {
-    if (feature.coverage_status === "unsupported" && typeof feature.feature === "string") {
-      entries.push({ field: feature.feature, value: feature.value });
+    const view = mappedFeatureView(feature);
+    if (view.coverageStatus === "unsupported" && view.feature !== null) {
+      entries.push({ field: view.feature, value: view.value });
     }
   }
   return entries;

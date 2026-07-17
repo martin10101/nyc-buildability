@@ -1,4 +1,4 @@
-import type { PropertyProfile } from "@/lib/property-profile";
+import type { PropertyProfile } from "@/lib/contract";
 
 /**
  * Professional-review affordance (task M2-T001 output 1). Honest by

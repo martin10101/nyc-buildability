@@ -29,7 +29,7 @@
  * healtharea, taxmap, date-stamp columns, …) are grouped, not surfaced.
  */
 
-import type { MissingInput } from "./property-profile";
+import type { MissingInput } from "./contract";
 
 export const FEASIBILITY_RELEVANT_FIELDS: ReadonlySet<string> = new Set([
   // Lot geometry and character
@@ -121,4 +121,36 @@ export function groupMissingInputs(entries: MissingInput[]): GroupedMissingInput
     }
   }
   return { surfaced, grouped, total: entries.length };
+}
+
+/**
+ * D4 (M2-T001 G3): the builder repeats one boilerplate reason on almost
+ * every entry ("column absent from the SODA record (null-omission
+ * semantics)…" x24), which is honest but visually dense. This extracts the
+ * MAJORITY reason so the UI can state it once, while every entry whose
+ * reason DIFFERS keeps its own text inline (per-field exceptions — e.g.
+ * the numfloors/yearbuilt official-unknown notes — are never collapsed).
+ *
+ * Deterministic and presentation-only: no reason text is altered or
+ * dropped; a shared reason exists only when the same exact string appears
+ * on at least two entries (ties broken lexicographically).
+ */
+export function extractSharedReason(entries: MissingInput[]): string | null {
+  const counts = new Map<string, number>();
+  for (const entry of entries) {
+    if (typeof entry.reason === "string" && entry.reason !== "") {
+      counts.set(entry.reason, (counts.get(entry.reason) ?? 0) + 1);
+    }
+  }
+  let shared: string | null = null;
+  let best = 1; // require at least 2 occurrences
+  for (const [reason, count] of [...counts.entries()].sort(([a], [b]) =>
+    a.localeCompare(b),
+  )) {
+    if (count > best) {
+      best = count;
+      shared = reason;
+    }
+  }
+  return shared;
 }

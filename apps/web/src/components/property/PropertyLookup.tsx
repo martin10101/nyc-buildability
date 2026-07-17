@@ -1,21 +1,16 @@
 "use client";
 
-import { useCallback, useRef, useState, type FormEvent } from "react";
+import Link from "next/link";
+import { useCallback, useEffect, useRef, useState, type FormEvent } from "react";
 import { fetchPropertyProfile, type LookupOutcome } from "@/lib/api";
 import { validateBblInput } from "@/lib/bbl";
 import { completenessDisplay } from "@/lib/coverage";
 import { urlHost } from "@/lib/format";
 import { provenanceById } from "@/lib/provenance";
-import type { PropertyProfile } from "@/lib/property-profile";
+import type { PropertyProfile } from "@/lib/contract";
 import { ConflictsSection } from "./ConflictsSection";
-import {
-  InternalErrorState,
-  NetworkErrorState,
-  NoMatchState,
-  UnexpectedResponseState,
-  UpstreamFailureState,
-  ValidationErrorState,
-} from "./FailureState";
+import { CoverageLegend } from "./CoverageLegend";
+import { OutcomeFailureStates } from "./FailureState";
 import { FactsTable } from "./FactsTable";
 import { LoadingStages } from "./LoadingStages";
 import { MissingInputsSection } from "./MissingInputsSection";
@@ -24,19 +19,29 @@ import { UnsupportedSection } from "./UnsupportedSection";
 import { ZoningSection } from "./ZoningSection";
 
 /**
- * Property screen state machine (task M2-T001). Purely presentational
- * workflow: idle -> loading -> one outcome. Client-side BBL validation
- * mirrors (never replaces) the server rule and runs BEFORE any network
- * call. All legal/data semantics come from the API — the frontend never
- * calculates, resolves, or fills in anything
+ * Property screen state machine (tasks M2-T001/M2-T002). Purely
+ * presentational workflow: idle -> loading -> one outcome. Client-side BBL
+ * validation mirrors (never replaces) the server rule and runs BEFORE any
+ * network call. All legal/data semantics come from the API — the frontend
+ * never calculates, resolves, or fills in anything
  * (docs/PRODUCT_FLOW_AND_AI_BOUNDARIES.md).
+ *
+ * M2-T002 hardening:
+ * - D5: a client-invalid submit AFTER a successful lookup keeps the
+ *   previous result rendered with an inline error (the last good result is
+ *   held separately from the form-error state), and the inline error
+ *   clears as soon as the user edits the input.
+ * - Cancellation: each lookup aborts the previous in-flight request
+ *   (AbortController); a superseded request resolves to the `aborted`
+ *   outcome and never touches the screen (plus a monotonic sequence guard).
+ * - Timeout: the client request budget produces the recoverable
+ *   client_timeout state (scenario S4).
  */
 
-type ScreenState =
-  | { phase: "idle" }
-  | { phase: "client_invalid"; message: string }
-  | { phase: "loading"; bbl: string }
-  | { phase: "done"; bbl: string; outcome: LookupOutcome };
+interface LookupResult {
+  bbl: string;
+  outcome: LookupOutcome;
+}
 
 function IdentityCard({ profile }: { profile: PropertyProfile }) {
   const address = profile.identity.address;
@@ -95,6 +100,7 @@ function ProfileView({ profile }: { profile: PropertyProfile }) {
     <div data-testid="profile-view">
       <IdentityCard profile={profile} />
       <CompletenessBanner profile={profile} />
+      <CoverageLegend profile={profile} />
       <ConflictsSection conflicts={profile.conflicts} />
       <ZoningSection profile={profile} byId={byId} />
       <FactsTable
@@ -114,23 +120,54 @@ function ProfileView({ profile }: { profile: PropertyProfile }) {
       <MissingInputsSection entries={profile.missing_inputs} />
       <UnsupportedSection profile={profile} />
       <ProfessionalReviewPanel profile={profile} />
+      <section className="card next-action" data-testid="next-action">
+        <h2 className="section-title">Next step</h2>
+        <p className="section-note">
+          Step 2 reviews this property as a compact card and lists only the
+          questions the official data cannot answer.
+        </p>
+        <Link
+          className="primary-button next-action-link"
+          href={`/property/confirm?bbl=${encodeURIComponent(profile.identity.bbl)}`}
+          data-testid="confirm-link"
+        >
+          Review and confirm this property
+        </Link>
+      </section>
     </div>
   );
 }
 
 export function PropertyLookup() {
   const [bblInput, setBblInput] = useState("");
-  const [screen, setScreen] = useState<ScreenState>({ phase: "idle" });
-  // Monotonic id so a stale response can never overwrite a newer lookup.
+  const [formError, setFormError] = useState<string | null>(null);
+  /** BBL currently being fetched, or null when no request is in flight. */
+  const [loadingBbl, setLoadingBbl] = useState<string | null>(null);
+  /** Last completed lookup — SURVIVES a later client-invalid submit (D5). */
+  const [result, setResult] = useState<LookupResult | null>(null);
+  // Monotonic id + abort controller: a stale response can never overwrite
+  // a newer lookup, and superseded requests are actively cancelled.
   const requestSeq = useRef(0);
+  const abortRef = useRef<AbortController | null>(null);
+
+  // Cancel any in-flight request on unmount.
+  useEffect(() => () => abortRef.current?.abort(), []);
 
   const runLookup = useCallback(async (canonical: string) => {
+    abortRef.current?.abort();
+    const controller = new AbortController();
+    abortRef.current = controller;
     const seq = ++requestSeq.current;
-    setScreen({ phase: "loading", bbl: canonical });
-    const outcome = await fetchPropertyProfile(canonical);
-    if (requestSeq.current === seq) {
-      setScreen({ phase: "done", bbl: canonical, outcome });
+    setLoadingBbl(canonical);
+    const outcome = await fetchPropertyProfile(canonical, {
+      signal: controller.signal,
+    });
+    if (requestSeq.current !== seq || outcome.kind === "aborted") {
+      // Superseded: the newer lookup owns the screen.
+      return;
     }
+    setLoadingBbl(null);
+    setResult({ bbl: canonical, outcome });
   }, []);
 
   const onSubmit = useCallback(
@@ -138,20 +175,22 @@ export function PropertyLookup() {
       event.preventDefault();
       const validation = validateBblInput(bblInput);
       if (!validation.ok) {
-        // Client-side mirror of the server rule: no network call is made.
-        setScreen({ phase: "client_invalid", message: validation.message });
+        // Client-side mirror of the server rule: no network call is made,
+        // and the PREVIOUS result stays rendered below the inline error.
+        setFormError(validation.message);
         return;
       }
+      setFormError(null);
       void runLookup(validation.canonical);
     },
     [bblInput, runLookup],
   );
 
   const retry = useCallback(() => {
-    if (screen.phase === "done") {
-      void runLookup(screen.bbl);
+    if (result) {
+      void runLookup(result.bbl);
     }
-  }, [screen, runLookup]);
+  }, [result, runLookup]);
 
   return (
     <div>
@@ -176,7 +215,11 @@ export function PropertyLookup() {
               autoComplete="off"
               placeholder="e.g. 1000010010"
               value={bblInput}
-              onChange={(event) => setBblInput(event.target.value)}
+              onChange={(event) => {
+                setBblInput(event.target.value);
+                // D5: the inline error clears as soon as the user edits.
+                setFormError(null);
+              }}
               aria-describedby="bbl-hint bbl-error"
             />
             <span className="field-hint" id="bbl-hint">
@@ -188,9 +231,9 @@ export function PropertyLookup() {
           </button>
         </form>
         <div id="bbl-error" aria-live="polite">
-          {screen.phase === "client_invalid" ? (
+          {formError ? (
             <p className="inline-error" data-testid="client-validation-error">
-              {screen.message}
+              {formError}
             </p>
           ) : null}
         </div>
@@ -213,23 +256,13 @@ export function PropertyLookup() {
         </div>
       </section>
 
-      {screen.phase === "loading" ? <LoadingStages bbl={screen.bbl} /> : null}
+      {loadingBbl !== null ? <LoadingStages bbl={loadingBbl} /> : null}
 
-      {screen.phase === "done" ? (
-        screen.outcome.kind === "profile" ? (
-          <ProfileView profile={screen.outcome.profile} />
-        ) : screen.outcome.kind === "no_match" ? (
-          <NoMatchState outcome={screen.outcome} />
-        ) : screen.outcome.kind === "validation_error" ? (
-          <ValidationErrorState outcome={screen.outcome} />
-        ) : screen.outcome.kind === "upstream_failure" ? (
-          <UpstreamFailureState outcome={screen.outcome} onRetry={retry} />
-        ) : screen.outcome.kind === "internal_error" ? (
-          <InternalErrorState outcome={screen.outcome} onRetry={retry} />
-        ) : screen.outcome.kind === "network_error" ? (
-          <NetworkErrorState outcome={screen.outcome} onRetry={retry} />
+      {loadingBbl === null && result ? (
+        result.outcome.kind === "profile" ? (
+          <ProfileView profile={result.outcome.profile} />
         ) : (
-          <UnexpectedResponseState outcome={screen.outcome} onRetry={retry} />
+          <OutcomeFailureStates outcome={result.outcome} onRetry={retry} />
         )
       ) : null}
     </div>

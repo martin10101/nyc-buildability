@@ -4,9 +4,9 @@ import { fieldLabel, formatValue } from "@/lib/format";
 import { resolveFactProvenance } from "@/lib/provenance";
 import type {
   FactValue,
-  ProvenanceRecord,
   Reproducibility,
-} from "@/lib/property-profile";
+  SourceFact,
+} from "@/lib/contract";
 
 /**
  * Confirmed official facts: value + units + per-fact coverage status +
@@ -23,7 +23,7 @@ export function FactsTable({
   title: string;
   note?: string;
   facts: Record<string, FactValue>;
-  byId: Map<string, ProvenanceRecord>;
+  byId: Map<string, SourceFact>;
   reproducibility?: Reproducibility;
 }) {
   const entries = Object.entries(facts);
@@ -42,6 +42,7 @@ export function FactsTable({
     <section className="card">
       <h2 className="section-title">{title}</h2>
       {note ? <p className="section-note">{note}</p> : null}
+      <div className="table-scroll">
       <table className="facts-table">
         <thead>
           <tr>
@@ -84,6 +85,7 @@ export function FactsTable({
           })}
         </tbody>
       </table>
+      </div>
     </section>
   );
 }

@@ -460,6 +460,128 @@ body {
   font-size: 1rem;
 }
 
+/* ---- Coverage legend (M2-T001 G3 D3: always visible, no hover) ---- */
+
+.legend-list {
+  list-style: none;
+  margin: 0 0 var(--space-3);
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.legend-list li {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-3);
+  flex-wrap: wrap;
+}
+
+.legend-gloss {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+}
+
+/* ---- Confirm screen (PRODUCT_FLOW step 2) ---- */
+
+.confirm-header {
+  margin-bottom: var(--space-5);
+}
+
+.confirm-grid {
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.confirm-row {
+  display: grid;
+  grid-template-columns: 14rem 1fr;
+  gap: var(--space-1) var(--space-3);
+  border-bottom: 1px solid var(--border-quiet);
+  padding-bottom: var(--space-2);
+}
+
+.confirm-row dt {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+}
+
+.confirm-row dd {
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+
+.confirm-persistence {
+  margin-top: var(--space-4);
+  border-top: 1px solid var(--border-quiet);
+  padding-top: var(--space-3);
+}
+
+/* ---- Next-action affordance ---- */
+
+.next-action-link {
+  display: inline-block;
+  text-decoration: none;
+  text-align: center;
+}
+
+/* ---- Responsive layout (M2-T001 G3 D2: 360/768/1280 viewports) ----
+   Wide tables scroll inside their card instead of overflowing the page;
+   the two-column confirm rows and provenance grids stack on narrow
+   screens. No content is hidden at any width. */
+
+.table-scroll {
+  overflow-x: auto;
+  max-width: 100%;
+}
+
+.failure-meta,
+.failure-state p {
+  overflow-wrap: anywhere;
+}
+
+@media (max-width: 767px) {
+  .property-shell {
+    padding: var(--space-3) var(--space-3) var(--space-6);
+  }
+
+  .card {
+    padding: var(--space-4);
+  }
+
+  .facts-table {
+    font-size: 0.85rem;
+  }
+
+  .confirm-row {
+    grid-template-columns: 1fr;
+  }
+
+  .zoning-chip {
+    min-width: 0;
+    width: 100%;
+  }
+
+  .bbl-form {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .field-group {
+    min-width: 0;
+  }
+}
+
+@media (max-width: 480px) {
+  .provenance-body dl {
+    grid-template-columns: 1fr;
+  }
+}
+
 /* ---- Visually hidden (screen-reader) helper ---- */
 
 .visually-hidden {

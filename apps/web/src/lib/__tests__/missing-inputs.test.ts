@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
-import { groupMissingInputs } from "@/lib/missing-inputs";
+import { extractSharedReason, groupMissingInputs } from "@/lib/missing-inputs";
 import { baseProfile } from "@/test-support/fixtures";
-import type { MissingInput } from "@/lib/property-profile";
+import type { MissingInput } from "@/lib/contract";
 
 /**
  * S6 / M1-T005 G3 D3: the documented missing-inputs display policy.
@@ -48,5 +48,35 @@ describe("groupMissingInputs", () => {
 
   it("handles the empty list", () => {
     expect(groupMissingInputs([])).toEqual({ surfaced: [], grouped: [], total: 0 });
+  });
+});
+
+describe("extractSharedReason (M2-T002 D4)", () => {
+  it("finds the majority boilerplate reason in the real builder fixture", () => {
+    const shared = extractSharedReason(baseProfile().missing_inputs);
+    expect(shared).toContain("null-omission semantics");
+  });
+
+  it("returns null when no reason repeats (nothing is collapsed)", () => {
+    const entries: MissingInput[] = [
+      { field: "a", criticality: "noncritical", reason: "reason one" },
+      { field: "b", criticality: "noncritical", reason: "reason two" },
+      { field: "c", criticality: "noncritical" },
+    ];
+    expect(extractSharedReason(entries)).toBeNull();
+  });
+
+  it("is deterministic on ties (lexicographic order)", () => {
+    const entries: MissingInput[] = [
+      { field: "a", criticality: "noncritical", reason: "zzz shared" },
+      { field: "b", criticality: "noncritical", reason: "zzz shared" },
+      { field: "c", criticality: "noncritical", reason: "aaa shared" },
+      { field: "d", criticality: "noncritical", reason: "aaa shared" },
+    ];
+    expect(extractSharedReason(entries)).toBe("aaa shared");
+  });
+
+  it("handles the empty list", () => {
+    expect(extractSharedReason([])).toBeNull();
   });
 });

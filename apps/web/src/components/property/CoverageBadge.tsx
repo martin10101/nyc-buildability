@@ -1,5 +1,5 @@
 import { coverageDisplay } from "@/lib/coverage";
-import type { CoverageStatus } from "@/lib/property-profile";
+import type { CoverageStatus } from "@/lib/contract";
 
 /**
  * Coverage-status badge. Shows the EXACT PRD section 12 enum value plus a

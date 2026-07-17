@@ -1,7 +1,12 @@
 import { cleanup, fireEvent, render, screen } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { PropertyLookup } from "@/components/property/PropertyLookup";
-import { baseProfile, jsonResponse, partialProfile } from "@/test-support/fixtures";
+import {
+  baseProfile,
+  cr500NoMatchResponse,
+  jsonResponse,
+  partialProfile,
+} from "@/test-support/fixtures";
 
 afterEach(() => {
   cleanup();
@@ -166,6 +171,131 @@ describe("PropertyLookup — failure states and retry (S5)", () => {
     await screen.findByTestId("state-validation-error");
     expect(screen.getByTestId("validation-code")).toHaveTextContent("invalid_block");
     expect(screen.getByTestId("validation-message")).toHaveTextContent("tax block");
+  });
+});
+
+describe("PropertyLookup — hardened boundary (M2-T002 S2/S3)", () => {
+  it("S2 BLOCKING: the recorded 500+no_match fixture renders unexpected_response, NEVER the no-match screen", async () => {
+    vi.stubGlobal(
+      "fetch",
+      vi.fn(async () => cr500NoMatchResponse()),
+    );
+    render(<PropertyLookup />);
+    submitBbl("5999999999");
+    await screen.findByTestId("state-unexpected-response");
+    expect(screen.queryByTestId("state-no-match")).toBeNull();
+    // The mismatch is inspectable: status, state, and correlation id shown.
+    expect(screen.getByTestId("unexpected-state")).toHaveTextContent("no_match");
+    expect(screen.getByTestId("correlation-id")).toHaveTextContent(
+      "cr500nomatch00000000000000000000",
+    );
+    // Nothing from the untrusted body is rendered as a result.
+    expect(screen.queryByText(/No PLUTO record exists/)).toBeNull();
+  });
+
+  it("S3: a 200 failing runtime validation renders the validation-failure state with NOTHING partially rendered", async () => {
+    const broken = baseProfile() as unknown as Record<string, unknown>;
+    delete broken.provenance;
+    vi.stubGlobal(
+      "fetch",
+      vi.fn(async () => jsonResponse(broken, 200)),
+    );
+    render(<PropertyLookup />);
+    submitBbl("1000010010");
+    await screen.findByTestId("state-validation-failure");
+    expect(screen.queryByTestId("profile-view")).toBeNull();
+    expect(screen.queryByTestId("identity-card")).toBeNull();
+    // No value from the invalid payload appears anywhere.
+    expect(screen.queryByText("7,577,714")).toBeNull();
+    expect(screen.queryByText("R3-2")).toBeNull();
+  });
+
+  it("renders the typed server-contract-error state for 500 internal_contract_error", async () => {
+    vi.stubGlobal(
+      "fetch",
+      vi.fn(async () =>
+        jsonResponse(
+          { state: "internal_contract_error", message: "refused", detail: { reason: "schema_validation_failed" } },
+          500,
+          "corr-contract-1",
+        ),
+      ),
+    );
+    render(<PropertyLookup />);
+    submitBbl("1000010010");
+    await screen.findByTestId("state-server-contract-error");
+    expect(screen.getByTestId("correlation-id")).toHaveTextContent("corr-contract-1");
+  });
+});
+
+describe("PropertyLookup — D5: previous profile survives a later invalid submit (S4)", () => {
+  it("keeps the rendered profile with an inline error, and clears the error on retype", async () => {
+    const fetchStub = vi.fn(async () => jsonResponse(baseProfile(), 200));
+    vi.stubGlobal("fetch", fetchStub);
+    render(<PropertyLookup />);
+    submitBbl("1000010010");
+    await screen.findByTestId("profile-view");
+
+    // Follow-up CLIENT-invalid submit: profile stays, inline error shows,
+    // and no network call is made.
+    submitBbl("123");
+    expect(await screen.findByTestId("client-validation-error")).toHaveTextContent(
+      "exactly 10 digits",
+    );
+    expect(screen.getByTestId("profile-view")).toBeInTheDocument();
+    expect(screen.getByTestId("identity-card")).toHaveTextContent("BBL 1000010010");
+    expect(fetchStub).toHaveBeenCalledTimes(1);
+
+    // D5 second part: the inline error clears as soon as the user edits.
+    fireEvent.change(screen.getByLabelText("BBL"), { target: { value: "1000" } });
+    expect(screen.queryByTestId("client-validation-error")).toBeNull();
+    expect(screen.getByTestId("profile-view")).toBeInTheDocument();
+  });
+
+  it("supersession: a rapid resubmit aborts the stale request and only the newest result renders", async () => {
+    // First request hangs until aborted; second resolves with the profile.
+    let call = 0;
+    const fetchStub = vi.fn((_url: unknown, init?: RequestInit) => {
+      call += 1;
+      if (call === 1) {
+        return new Promise<Response>((resolve, reject) => {
+          init?.signal?.addEventListener("abort", () =>
+            reject(new DOMException("aborted", "AbortError")),
+          );
+        });
+      }
+      return Promise.resolve(jsonResponse(baseProfile(), 200));
+    });
+    vi.stubGlobal("fetch", fetchStub);
+    render(<PropertyLookup />);
+    submitBbl("1000010100"); // stale request (hangs)
+    submitBbl("1000010010"); // supersedes and aborts it
+    await screen.findByTestId("profile-view");
+    expect(screen.getByTestId("identity-card")).toHaveTextContent("BBL 1000010010");
+    expect(fetchStub).toHaveBeenCalledTimes(2);
+    // The first request was actively cancelled.
+    const firstInit = fetchStub.mock.calls[0][1] as RequestInit;
+    expect((firstInit.signal as AbortSignal).aborted).toBe(true);
+  });
+});
+
+describe("PropertyLookup — coverage legend (M2-T002 D3)", () => {
+  it("shows the always-visible legend with the gloss for every status present", async () => {
+    vi.stubGlobal(
+      "fetch",
+      vi.fn(async () => jsonResponse(baseProfile(), 200)),
+    );
+    render(<PropertyLookup />);
+    submitBbl("1000010010");
+    await screen.findByTestId("profile-view");
+    const legend = screen.getByTestId("coverage-legend");
+    expect(legend).toHaveTextContent("What the coverage labels mean");
+    // The F05 profile carries only `conditional` facts: its gloss is
+    // visible WITHOUT hover; no status badge exists for absent statuses.
+    expect(legend).toHaveTextContent(
+      "Official source fact, not yet professionally reviewed.",
+    );
+    expect(legend.querySelectorAll(".status-badge.status-verified").length).toBe(0);
   });
 });
 

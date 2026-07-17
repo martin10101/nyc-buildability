@@ -1,5 +1,5 @@
+import { conflictValueDerivation, type Conflict } from "@/lib/contract";
 import { fieldLabel, formatValue } from "@/lib/format";
-import type { Conflict } from "@/lib/property-profile";
 
 /**
  * Cross-source conflicts (PRD principles 2/4; task M2-T001 output 1).
@@ -32,14 +32,19 @@ export function ConflictsSection({ conflicts }: { conflicts: Conflict[] }) {
                 </span>
               </h3>
               <ul className="conflict-values">
-                {conflict.values.map((entry, index) => (
-                  <li key={`${conflict.field}-${index}`}>
-                    <strong>{formatValue(entry.value)}</strong>
-                    {" — source: "}
-                    {entry.source_id}
-                    {entry.derivation ? ` (${entry.derivation})` : null}
-                  </li>
-                ))}
+                {conflict.values.map((entry, index) => {
+                  // Open-schema key read through the documented runtime
+                  // narrowing helper (see src/lib/contract.ts).
+                  const derivation = conflictValueDerivation(entry);
+                  return (
+                    <li key={`${conflict.field}-${index}`}>
+                      <strong>{formatValue(entry.value)}</strong>
+                      {" — source: "}
+                      {entry.source_id}
+                      {derivation ? ` (${derivation})` : null}
+                    </li>
+                  );
+                })}
               </ul>
             </div>
           ))}

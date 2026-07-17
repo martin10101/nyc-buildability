@@ -25,8 +25,9 @@
  *   emitted; address/geometry may be absent). No other change.
  */
 
-import type { PropertyProfile } from "@/lib/property-profile";
+import type { PropertyProfile } from "@/lib/contract";
 import builderOutput from "../../../../packages/contracts/fixtures/valid/property_profile/builder_output_m1_t005.json";
+import cr500NoMatch from "../../../../packages/contracts/fixtures/client_regression/http500_state_no_match.json";
 
 export function baseProfile(): PropertyProfile {
   // structuredClone so a test can never mutate the shared fixture module.
@@ -67,3 +68,22 @@ export function jsonResponse(
     },
   });
 }
+
+/**
+ * RECORDED client-regression fixture CR-500-no_match (M2-T003 scenario S4;
+ * consumed here per its `_consumed_by` note): the adversarial, incoherent
+ * HTTP 500 + body state=no_match transport response. Wired at the client
+ * fetch-stub level so tests prove the pair matrix — not a handwritten
+ * approximation of the fixture.
+ */
+export function cr500NoMatchResponse(): Response {
+  return jsonResponse(
+    structuredClone(cr500NoMatch.response_body),
+    cr500NoMatch.http_status,
+    cr500NoMatch.response_headers["X-Correlation-ID"],
+  );
+}
+
+/** The recorded fixture's correlation id (for assertions). */
+export const CR500_NO_MATCH_CORRELATION_ID: string =
+  cr500NoMatch.response_headers["X-Correlation-ID"];
