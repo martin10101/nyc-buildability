@@ -12,8 +12,10 @@ snapshot lineage.
   by any value change, recorded per response and per fact.
 - S5: snapshot lineage observation -> source version -> request URL/timestamp
   with no gaps on any fact.
-- S6: additive contract evolution - pre-M2-T004 shapes remain valid and the
-  builder still declares contract_version 1.0.0 (M2-T003 owns declaration).
+- S6: additive contract evolution - pre-M2-T004 shapes remain valid. The
+  builder's declared version was resolved to the canonical 1.2.0 by task
+  M2-T003 (which owns the declaration/validation decision); this test asserts
+  the resolved declaration.
 
 Offline and deterministic: fixture transports replay the accepted M1-T002
 official captures; synthetic variants (clearly labeled) are derived in-test.
@@ -431,10 +433,12 @@ def test_s6_pre_m2t004_shape_remains_valid(profile_validator) -> None:
     assert errors == [], [error.message for error in errors]
 
 
-def test_s6_builder_still_declares_contract_version_1_0_0() -> None:
-    # Declaration semantics belong to M2-T003 (owner sequencing decision);
-    # this task publishes 1.2.0 in the schema enum WITHOUT changing what the
-    # accepted builder declares.
-    assert PROFILE_CONTRACT_VERSION == "1.0.0"
+def test_s6_builder_declares_resolved_canonical_contract_version() -> None:
+    # M2-T003 RESOLVED the M2-T004 declaration deferral (README section 167):
+    # the builder emits keys through 1.2.0, so it now DECLARES 1.2.0 - the
+    # canonical version whose key set it fully covers. It no longer declares
+    # the stale "1.0.0". (Backward compatibility - 1.0.0/1.1.0 instances
+    # remain valid and served - is proven in tests/api/test_property_contract.)
+    assert PROFILE_CONTRACT_VERSION == "1.2.0"
     profile = build_profile(load_fixture_body("F01_single_lot_normal.json"))
-    assert profile["profile_version"]["contract_version"] == "1.0.0"
+    assert profile["profile_version"]["contract_version"] == "1.2.0"

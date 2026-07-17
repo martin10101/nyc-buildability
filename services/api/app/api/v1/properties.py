@@ -22,7 +22,17 @@ schema_drift        502     ``schema_drift`` (distinct state AND status so
                             transient outage)
 unexpected error    500     ``internal_error`` (generic body; internals never
                             leave the process)
+contract invalid    500     ``internal_contract_error`` (a built payload failed
+                            canonical-schema validation before send - an
+                            invalid 200 is impossible; task M2-T003)
+version unpublished 500     ``unsupported_contract_version`` (a payload declared
+                            a contract_version not in the closed published enum;
+                            bounded, never coerced; task M2-T003)
 ==================  ======  ====================================================
+
+The exact set of emitted (HTTP status, state) pairs is the single source of
+truth ``STATUS_STATE_MATRIX`` below; a parametrized test enumerates every
+emission path and fails on any undocumented pair (task M2-T003 scenario S3).
 
 Every response carries an ``X-Correlation-ID`` header and (except 200) a
 machine-readable ``state``. Responses never contain stack traces, exception
@@ -49,8 +59,13 @@ from app.connectors.pluto_soda import (
     fetch_by_bbl,
 )
 from app.profile.builder import build_property_profile
+from app.profile.contract import (
+    ContractValidationError,
+    UnsupportedContractVersionError,
+    validate_profile,
+)
 
-__all__ = ["get_pluto_fetcher", "router"]
+__all__ = ["STATUS_STATE_MATRIX", "get_pluto_fetcher", "router"]
 
 logger = logging.getLogger("app.api.v1.properties")
 
@@ -64,6 +79,34 @@ _ERROR_STATUS: dict[str, int] = {
     "schema_drift": 502,
 }
 _DEFAULT_ERROR_STATUS = 503
+
+# ---------------------------------------------------------------------------
+# EXACT (HTTP status, state) pair matrix (task M2-T003 item D, scenario S3).
+#
+# This is the SINGLE SOURCE OF TRUTH for the status/state pairs this endpoint
+# may emit. Every emission path below is enumerated here; a parametrized test
+# (tests/api/test_property_contract.py::test_s3_*) drives each path and FAILS
+# on any (status, state) pair not present in this set, so a mismatched pair is
+# impossible to ship undocumented.
+#
+# The 200 success path carries NO ``state`` field (state is the non-200
+# discriminator - M1-T005 G3 review #5 / M1-T006 D5); it is recorded with the
+# sentinel ``None`` so the enumeration is exhaustive.
+# ---------------------------------------------------------------------------
+STATUS_STATE_MATRIX: frozenset[tuple[int, str | None]] = frozenset(
+    {
+        (200, None),  # canonical profile (validated before send)
+        (422, "validation_error"),  # malformed BBL, no connector call
+        (404, "no_match"),  # valid BBL, no PLUTO record (a result)
+        (502, "schema_drift"),  # dataset contract breakage
+        (503, "rate_limited"),  # SODA throttling after retry budget
+        (503, "source_unavailable"),  # SODA outage after retry budget
+        (504, "timeout"),  # SODA timeout after retry budget
+        (500, "internal_error"),  # unexpected internal defect (generic)
+        (500, "internal_contract_error"),  # built payload failed contract
+        (500, "unsupported_contract_version"),  # declared version unpublished
+    }
+)
 
 # Fetcher contract: (canonical_bbl, correlation_id) -> PlutoFetchResult.
 # Injected through FastAPI dependency_overrides so tests run offline on the
@@ -126,6 +169,70 @@ def _internal_error_500(exc: Exception, correlation_id: str) -> JSONResponse:
     )
 
 
+def _internal_contract_error_500(
+    exc: ContractValidationError, correlation_id: str
+) -> JSONResponse:
+    """Typed 500 for a built payload that FAILED canonical-schema validation
+    before send (task M2-T003 item A, scenario S2).
+
+    A profile that does not honor the contract is an internal defect, never a
+    valid 200. Distinct ``state`` (``internal_contract_error``) so this is not
+    conflated with a generic 500. The validation ``reason`` is a fixed,
+    non-secret classifier (schema_validation_failed / missing_profile_version
+    / malformed_contract_version / declared_version_below_emitted_keys) - safe
+    to surface; the detailed message stays in logs only."""
+    logger.error(
+        "properties_v1 internal_contract_error reason=%s correlation_id=%s",
+        exc.reason, correlation_id,
+    )
+    return _json(
+        500,
+        {
+            "state": "internal_contract_error",
+            "message": (
+                "the property profile failed canonical-contract validation and "
+                "was not sent; see server logs by correlation id"
+            ),
+            "correlation_id": correlation_id,
+            "detail": {"reason": exc.reason},
+        },
+        correlation_id,
+    )
+
+
+def _unsupported_contract_version_500(
+    exc: UnsupportedContractVersionError, correlation_id: str
+) -> JSONResponse:
+    """BOUNDED typed error for a payload declaring an UNPUBLISHED
+    ``contract_version`` (task M2-T003 item C, scenario S8).
+
+    Never coerced to a nearby version and never a raw 500 stack: the declared
+    version is echoed (it is the builder's own output, not untrusted upstream
+    content) alongside the closed set of published versions."""
+    from app.profile.contract import SUPPORTED_CONTRACT_VERSIONS
+
+    logger.error(
+        "properties_v1 unsupported_contract_version declared=%s correlation_id=%s",
+        exc.declared_version, correlation_id,
+    )
+    return _json(
+        500,
+        {
+            "state": "unsupported_contract_version",
+            "message": (
+                "the property profile declared an unpublished contract_version; "
+                "it was rejected rather than coerced or served"
+            ),
+            "correlation_id": correlation_id,
+            "detail": {
+                "declared_version": exc.declared_version,
+                "supported_versions": list(SUPPORTED_CONTRACT_VERSIONS),
+            },
+        },
+        correlation_id,
+    )
+
+
 _RESPONSES_DOC = {
     200: {
         "description": (
@@ -170,7 +277,12 @@ _RESPONSES_DOC = {
     500: {
         "description": (
             "state=internal_error: unexpected failure; generic body, internals "
-            "are never exposed."
+            "are never exposed. OR state=internal_contract_error: a built "
+            "payload failed canonical-schema validation before send (task "
+            "M2-T003; an invalid 200 is impossible). OR "
+            "state=unsupported_contract_version: the payload declared a "
+            "contract_version outside the closed published enum, rejected "
+            "rather than coerced (bounded, typed)."
         )
     },
 }
@@ -264,6 +376,18 @@ def get_property(
             )
 
         profile = build_property_profile(result)
+
+        # M2-T003 item A/B/C: validate EVERY 200 payload against the selected
+        # canonical schema before send. An invalid 200 is impossible; typed
+        # contract errors are distinguished from generic internal failures and
+        # from the bounded unsupported-version case.
+        try:
+            validate_profile(profile)
+        except UnsupportedContractVersionError as exc:
+            return _unsupported_contract_version_500(exc, correlation_id)
+        except ContractValidationError as exc:
+            return _internal_contract_error_500(exc, correlation_id)
+
         return _json(200, profile, correlation_id)
     except Exception as exc:
         return _internal_error_500(exc, correlation_id)

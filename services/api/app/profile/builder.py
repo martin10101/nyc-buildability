@@ -56,7 +56,18 @@ __all__ = [
     "build_property_profile",
 ]
 
-PROFILE_CONTRACT_VERSION = "1.0.0"
+# CONTRACT VERSION DECLARED BY THIS BUILDER (task M2-T003, resolving the
+# M2-T004 deferral recorded in packages/contracts/README.md section 167).
+#
+# The builder emits keys through 1.2.0 (status_dimensions, feasibility_relevant,
+# response_digest/digest_canonicalization, and the source_fact identity/lineage
+# keys), so it now DECLARES 1.2.0 - the canonical contract version whose key set
+# it fully covers. It no longer declares the stale "1.0.0". Because every added
+# key is optional, previously accepted 1.0.0 and 1.1.0 instances remain valid
+# and are served unchanged (backward compatibility, S7); the value is validated
+# against the closed published enum by app.profile.contract, never hard-coded
+# against a stale version.
+PROFILE_CONTRACT_VERSION = "1.2.0"
 
 # ---------------------------------------------------------------------------
 # Deterministic PLUTO column buckets (presentation grouping only). Columns not
@@ -533,9 +544,12 @@ def build_property_profile(
         schema-permitted optional properties (same additive-extension pattern
         the accepted M1-T002 connector uses on source_fact); the required v1
         field set is complete and unchanged, and the declared
-        ``contract_version`` stays "1.0.0" pending the M2-T003
-        declaration/validation decision (see the contract_version enum
-        description in the schema).
+        ``contract_version`` is ``1.2.0`` - the canonical version whose key
+        set this builder fully covers (task M2-T003 resolved the M2-T004
+        declaration deferral). The API layer validates every built profile
+        against the selected canonical schema before send
+        (``app.profile.contract.validate_profile``), so an invalid 200 is
+        impossible.
     """
     if result.status != "ok":
         raise ValueError(

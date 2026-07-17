@@ -1,0 +1,28 @@
+{
+  "_fixture_id": "CR-500-no_match",
+  "_task": "M2-T003 scenario S4",
+  "_kind": "client-regression transport fixture (API-response level)",
+  "_synthetic": true,
+  "_provenance": "SYNTHETIC / ADVERSARIAL. Not an official capture and NOT producible by the real services/api app: a transport-level upstream 5xx is retried and mapped to state=source_unavailable (503), and state=no_match is only ever emitted at HTTP 404. This file records the INCOHERENT (HTTP 500, state=no_match) status/state pair deliberately, so M2-T002's client can be regression-tested to NEVER trust a no_match body that arrives with a non-404 status. It exists because a misbehaving proxy, CDN, or future middleware could theoretically produce this pair; the client contract is that the (status, state) pair must be coherent per the documented STATUS_STATE_MATRIX (services/api/app/api/v1/properties.py) and an incoherent pair is treated as a hard error, never rendered as a legitimate no-match result.",
+  "_consumed_by": "M2-T002 (apps/web) as a client regression input; wire this fixture into the web-e2e / vitest client transport there. This task (M2-T003) is READ-ONLY on apps/web and only records the artifact.",
+  "_status_state_pair": {
+    "http_status": 500,
+    "body_state": "no_match",
+    "coherent_per_matrix": false
+  },
+  "http_status": 500,
+  "response_headers": {
+    "Content-Type": "application/json",
+    "X-Correlation-ID": "cr500nomatch00000000000000000000"
+  },
+  "response_body": {
+    "state": "no_match",
+    "bbl": "5999999999",
+    "message": "No PLUTO record exists for BBL 5999999999 in dataset 64uk-42ks. The BBL is syntactically valid but matches no tax lot in the current PLUTO release (or the lot is represented under a different BBL, e.g. after merger - see appbbl semantics).",
+    "correlation_id": "cr500nomatch00000000000000000000",
+    "source_id": "nyc-dcp-pluto-soda",
+    "dataset_id": "64uk-42ks",
+    "request_url": "https://data.cityofnewyork.us/resource/64uk-42ks.json?bbl=5999999999",
+    "retrieved_at": "2026-07-16T12:00:00Z"
+  }
+}
