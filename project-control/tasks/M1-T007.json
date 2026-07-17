@@ -22,6 +22,7 @@
   "allowed_paths": [
     "docs/research/M1-T007-dob-now-sources.md",
     "docs/research/fixtures/m1-t007/**",
+    "docs/research/source-registry-drafts/dob-now.json",
     "project-control/reports/M1-T007-producer-report.md"
   ],
   "forbidden_paths": [
@@ -54,7 +55,7 @@
   "blockers": [],
   "execution_location": "research is network + text only; producer writes KB-scale markdown/fixtures in the task worktree; no installs, no datasets; disk impact negligible (7.77 GB free)",
   "created_at": "2026-07-17T07:41:24.928767+00:00",
-  "updated_at": "2026-07-17T08:08:46.863008+00:00",
+  "updated_at": "2026-07-17T08:25:05.888857+00:00",
   "worktree": ".claude/worktrees/M1-T007",
   "progress_log": [
     {
@@ -62,6 +63,12 @@
       "agent": "official-source-researcher",
       "percent": 75,
       "message": "Producer deliverables committed+pushed on task branch (65cef7a): 11 datasets live-verified, 5 evidenced rule-outs, 9 registry drafts (location adjudicated: matches accepted source-registry-drafts precedent), 26 fixtures, 7 OQs. G1 (data-contract-verifier) + G3 deferred: parallel slot yields to B-005 critical path (ZIP just landed). Worktree base pointer fix (ff-only to 6392bc1) disclosed and verified clean."
+    },
+    {
+      "at": "2026-07-17T08:25:05.887840+00:00",
+      "agent": "orchestrator",
+      "percent": 75,
+      "message": "ORCHESTRATOR ADJUDICATION (owner directive 2026-07-17, option a): packet outputs required registry drafts at 'the same draft location the accepted M1-T003/T004 research used' (= docs/research/source-registry-drafts/<name>.json, both precedent packets list it explicitly in allowed_paths), but this packet's allowed_paths omitted it - a contracting oversight, not producer scope creep. allowed_paths enriched with the exact path docs/research/source-registry-drafts/dob-now.json (field enrichment only; status untouched). G1 must additionally verify the 6-core+5-secondary=11 dataset IDs vs 9 registry records mapping: if electrical and elevator parent/child pairs are combined family records, that must be documented explicitly with every individual dataset ID, join rule, schema, freshness result and limitation still represented."
     }
   ]
 }
