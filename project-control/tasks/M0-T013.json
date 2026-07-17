@@ -1,0 +1,57 @@
+{
+  "task_id": "M0-T013",
+  "title": "Expansion-agent ADR-005 conformance (5 agent files + rule item 13/11)",
+  "task_type": "implementation",
+  "milestone_id": "M0",
+  "objective": "Bring the five 3D/UI expansion-pack agent definitions into roster conformance (frontmatter permissionMode/memory/(isolation for producers)/Skill tool; verbatim ADR-005 ledger or gate protocol sections; allowed-paths discipline line; requested-status vocabulary) and neutralize .claude/rules/3d-ui-expansion.md defects D2/D5 (qualify item 13 continuation order with owner-review + G0 contracting condition; map item 11 gate names to the G0-G7 catalog). Domain content of the agents preserved; raw-pack commits d25d2b2/c0769ae remain untouched history (hash evidence).",
+  "business_reason": "Owner decision 2026-07-17: disposition A requires the five agents be genuinely blocked or fully conformant before remote main exposure; G5 corrections 1-5 route here; closes B-007 at acceptance",
+  "inputs": [
+    "G5 report project-control/reports/M0-T010-G5-agent-governance-review.md: required corrections 1-5 verbatim (frontmatter, protocol sections per cloud-architect.md producers / security-reviewer.md reviewer pattern, allowed-paths line, requested-status vocabulary, item 13 qualification, item 11 gate mapping, task-ID re-key rule)",
+    "Conformant roster baselines: .claude/agents/cloud-architect.md (producer pattern), .claude/agents/security-reviewer.md and code-reviewer.md (reviewer pattern), .claude/rules/project-control.md (ADR-005)",
+    "Owner decision 2026-07-17: raw-pack commits preserved as hash evidence; conformance edits are NEW commits; final remote-main HEAD must carry agents fully conformant AND hook-enforced (B-007/agent_dispatch_guard.py); B-007 closes only at this task's acceptance",
+    "Enforcement already on main @ e18cea1: B-007, counter-notice rules file, PreToolUse guard, tools/test_agent_dispatch_guard.py in CI"
+  ],
+  "outputs": [
+    "The 5 agent files edited in place: frontmatter permissionMode: default + memory: project (+ isolation: worktree for the 4 producers) + Skill in tools (+ Write and skills: run-quality-gate for visual-quality-reviewer); verbatim ADR-005 'Ledger and integration protocol' (producers) / 'Gate reporting protocol' (visual-quality-reviewer, with unconditional read-only language replacing the 'during final review' qualifier); 'Stay within allowed paths' line in producers; 3d-massing-engineer completion wording aligned to awaiting_gate|blocked|needs_split; ALL domain content preserved",
+    ".claude/rules/3d-ui-expansion.md: item 13 qualified ('...continue from the first unblocked task after the owner has reviewed the integration report and the orchestrator has contracted the work through the normal G0 process'); item 11 gate names mapped to the G0-G7 catalog (evidence requirements within G3/G4, not a parallel gate system)",
+    "project-control/reports/M0-T013-producer-report.md (AOS section-6 return packet)"
+  ],
+  "allowed_paths": [
+    ".claude/agents/3d-massing-engineer.md",
+    ".claude/agents/product-design-director.md",
+    ".claude/agents/visual-quality-reviewer.md",
+    ".claude/agents/financial-feasibility-engineer.md",
+    ".claude/agents/opportunity-search-engineer.md",
+    ".claude/rules/3d-ui-expansion.md",
+    "project-control/reports/M0-T013-producer-report.md"
+  ],
+  "forbidden_paths": [
+    ".claude/hooks/**, .claude/settings.json, .claude/rules/expansion-agent-dispatch-hold.md (enforcement layer - orchestrator only), project-control/blockers/**, tools/**, .github/**, docs/**, services/**, apps/**, packages/**, all other .claude/agents/*.md"
+  ],
+  "acceptance_scenarios": [
+    "S1: each of the 5 files parses (YAML frontmatter) and carries permissionMode: default, memory: project, Skill in tools; the 4 producers carry isolation: worktree; visual-quality-reviewer carries Write + run-quality-gate skill",
+    "S2: producers embed the verbatim roster 'Ledger and integration protocol (ADR-005)' section; visual-quality-reviewer embeds the verbatim 'Gate reporting protocol (ADR-005)' with UNCONDITIONAL read-only language (no temporal qualifier)",
+    "S3: rule item 13 no longer instructs unqualified continuation (owner-review + G0 condition present); item 11 gate names mapped to G0-G7; no other rule content changed",
+    "S4: domain content of all 5 agents preserved (diff shows additive/qualifying edits only; no capability or scope-of-expertise text removed)",
+    "S5: python tools/test_agent_dispatch_guard.py still 15/15 (enforcement layer untouched); secret scan + contracts validator exit 0 (true exit codes)",
+    "S6: raw-pack commits d25d2b2/c0769ae unchanged in history (no rebase/amend); conformance edits are new commits on the task branch"
+  ],
+  "required_gates": [
+    "G0",
+    "G2",
+    "G3",
+    "G5"
+  ],
+  "producer_agent": "cloud-architect",
+  "reviewer_agents": [
+    "code-reviewer",
+    "security-reviewer"
+  ],
+  "execution_location": "text-only edits in worktree .claude/worktrees/M0-T013 on branch task/M0-T013-agent-conformance (branched from local post-merge main so the pack files exist); KB-scale; disk 16.7 GB free",
+  "status": "ready",
+  "progress_percent": 5,
+  "risks": [],
+  "blockers": [],
+  "created_at": "2026-07-17T09:29:21.474191+00:00",
+  "updated_at": "2026-07-17T09:30:40.009545+00:00"
+}
