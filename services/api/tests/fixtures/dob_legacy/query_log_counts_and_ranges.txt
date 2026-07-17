@@ -1,0 +1,137 @@
+Fri Jul 17 11:01:25 UTC 2026
+### cnt_ipu4-2q9a
+URL: https://data.cityofnewyork.us/resource/ipu4-2q9a.json?$select=count(*)%20as%20n
+HTTP: 200
+[{"n":"3989420"}]
+
+### cnt_ic3t-wcy2
+URL: https://data.cityofnewyork.us/resource/ic3t-wcy2.json?$select=count(*)%20as%20n
+HTTP: 200
+[{"n":"2715651"}]
+
+### cnt_bs8b-p36w
+URL: https://data.cityofnewyork.us/resource/bs8b-p36w.json?$select=count(*)%20as%20n
+HTTP: 200
+[{"n":"143003"}]
+
+### cnt_e98g-f8hy
+URL: https://data.cityofnewyork.us/resource/e98g-f8hy.json?$select=count(*)%20as%20n
+HTTP: 200
+[{"n":"0"}]
+
+### cnt_bty7-2jhb
+URL: https://data.cityofnewyork.us/resource/bty7-2jhb.json?$select=count(*)%20as%20n
+HTTP: 200
+[{"n":"2428526"}]
+
+### cnt_bf97-mjsy
+URL: https://data.cityofnewyork.us/resource/bf97-mjsy.json?$select=count(*)%20as%20n
+HTTP: 200
+[{"n":"1326"}]
+
+### cnt_g76y-dcqj
+URL: https://data.cityofnewyork.us/resource/g76y-dcqj.json?$select=count(*)%20as%20n
+HTTP: 200
+[{"n":"255300"}]
+
+### cnt_855j-jady
+URL: https://data.cityofnewyork.us/resource/855j-jady.json?$select=count(*)%20as%20n
+HTTP: 200
+[{"n":"1099638"}]
+
+### cnt_3h2n-5cm9
+URL: https://data.cityofnewyork.us/resource/3h2n-5cm9.json?$select=count(*)%20as%20n
+HTTP: 200
+[{"n":"2475595"}]
+
+### cnt_6bgk-3dad
+URL: https://data.cityofnewyork.us/resource/6bgk-3dad.json?$select=count(*)%20as%20n
+HTTP: 200
+[{"n":"1823837"}]
+
+### cnt_eabe-havv
+URL: https://data.cityofnewyork.us/resource/eabe-havv.json?$select=count(*)%20as%20n
+HTTP: 200
+[{"n":"3108970"}]
+
+### cnt_i296-73x5
+URL: https://data.cityofnewyork.us/resource/i296-73x5.json?$select=count(*)%20as%20n
+HTTP: 200
+[{"n":"1443995"}]
+
+### cnt_nyis-y4yr
+URL: https://data.cityofnewyork.us/resource/nyis-y4yr.json?$select=count(*)%20as%20n
+HTTP: 200
+[{"n":"15288"}]
+
+### cnt_iz2q-9x8d
+URL: https://data.cityofnewyork.us/resource/iz2q-9x8d.json?$select=count(*)%20as%20n
+HTTP: 200
+[{"n":"6091"}]
+
+### cnt_6v9u-ndjg
+URL: https://data.cityofnewyork.us/resource/6v9u-ndjg.json?$select=count(*)%20as%20n
+HTTP: 200
+[{"n":"160"}]
+
+### cnt_ndq3-kuef
+URL: https://data.cityofnewyork.us/resource/ndq3-kuef.json?$select=count(*)%20as%20n
+HTTP: 200
+[{"n":"2794"}]
+
+### cnt_t8hj-ruu2
+URL: https://data.cityofnewyork.us/resource/t8hj-ruu2.json?$select=count(*)%20as%20n
+HTTP: 200
+[{"n":"103058"}]
+
+### rng_bs8b
+URL: https://data.cityofnewyork.us/resource/bs8b-p36w.json?$select=min(c_o_issue_date)%20as%20mn,max(c_o_issue_date)%20as%20mx
+HTTP: 200
+[{"mn":"2012-07-12T00:00:00.000","mx":"2105-11-05T00:00:00.000"}]
+
+### rng_855j
+URL: https://data.cityofnewyork.us/resource/855j-jady.json?$select=min(violation_issue_date)%20as%20mn,max(violation_issue_date)%20as%20mx
+HTTP: 200
+[{"mn":"1989-10-12T00:00:00.000","mx":"2026-07-15T00:00:00.000"}]
+
+### rng_g76y
+URL: https://data.cityofnewyork.us/resource/g76y-dcqj.json?$select=min(variance_start_date_time)%20as%20mn,max(variance_start_date_time)%20as%20mx
+HTTP: 200
+[{"mn":"2017-11-18T08:00:00.000","mx":"2024-01-12T18:00:00.000"}]
+
+### rng_i296
+URL: https://data.cityofnewyork.us/resource/i296-73x5.json?$select=min(date_complaint_received)%20as%20mn,max(date_complaint_received)%20as%20mx
+HTTP: 200
+[{"mn":"2009-03-31T00:00:00.000","mx":"2024-12-23T00:00:00.000"}]
+
+### rng_bf97
+URL: https://data.cityofnewyork.us/resource/bf97-mjsy.json?$select=min(incident_date_mm_dd_yyyy)%20as%20mn,max(incident_date_mm_dd_yyyy)%20as%20mx
+HTTP: 200
+[{"mn":"2024-01-03T00:00:00.000","mx":"2026-07-14T00:00:00.000"}]
+
+### rng_bty7
+URL: https://data.cityofnewyork.us/resource/bty7-2jhb.json?$select=min(issuance_date)%20as%20mn,max(issuance_date)%20as%20mx
+HTTP: 200
+[{"mn":"1989-05-11T00:00:00","mx":"2013-04-24T00:00:00"}]
+
+### rng_3h2n
+URL: https://data.cityofnewyork.us/resource/3h2n-5cm9.json?$select=min(issue_date)%20as%20mn,max(issue_date)%20as%20mx
+HTTP: 200
+[{"mn":"000000","mx":"Y9990120"}]
+
+### rng_6bgk
+URL: https://data.cityofnewyork.us/resource/6bgk-3dad.json?$select=min(issue_date)%20as%20mn,max(issue_date)%20as%20mx
+HTTP: 200
+[{"mn":"0","mx":"20260714"}]
+
+### rng_e98g
+URL: https://data.cityofnewyork.us/resource/e98g-f8hy.json?$select=min(permit_issuance_date)%20as%20mn,max(permit_issuance_date)%20as%20mx
+HTTP: 200
+[{}]
+
+### cast_ipu4
+URL: https://data.cityofnewyork.us/resource/ipu4-2q9a.json?$select=min(issuance_date::floating_timestamp)%20as%20mn,max(issuance_date::floating_timestamp)%20as%20mx
+HTTP: 200
+[{"mn":"1989-05-11T00:00:00.000","mx":"2026-07-15T00:00:00.000"}]
+
+Fri Jul 17 11:01:58 UTC 2026
