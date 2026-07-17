@@ -23,7 +23,8 @@
     "services/api/** (EXCEPT services/api/requirements.txt and services/api/app/main.py - reserved for M0-T015 during Wave 1)",
     "packages/contracts/**",
     ".github/workflows/ci.yml (ADDITIVE only)",
-    "project-control/reports/M2-T004-producer-report.md"
+    "project-control/reports/M2-T004-producer-report.md",
+    "ORCHESTRATOR SCOPE AMENDMENT 2026-07-17 (G1 correction C1 / G3 defect D1): apps/web/src/components/property/__tests__/property-lookup.test.tsx and apps/web/e2e/primary-journey.spec.ts ONLY - the two M2-T001 assertions that hard-coded the retired 108-column completeness value; correction applied by the orchestrator, not the producer, and re-reviewed at the gate delta"
   ],
   "forbidden_paths": [
     "services/api/requirements.txt and services/api/app/main.py (M0-T015 owns these during Wave 1 - parallel exclusivity)",
@@ -54,8 +55,8 @@
     "data-contract-verifier",
     "code-reviewer"
   ],
-  "status": "backlog",
-  "progress_percent": 0,
+  "status": "accepted",
+  "progress_percent": 100,
   "risks": [
     "Owner-directed sequencing 2026-07-17: this task is FIRST on the data/API critical path (M2-T004 -> M2-T003 -> M2-T002/M1-T009) because it changes the canonical schema, status model, fact/observation identity, and digest lineage that M2-T003 consumes (evidence: builder.py:318-381 data_completeness; property_profile.schema.json:170) - reordering prevents implementing response validation and generated types twice",
     "Schema edits must keep M2-T001 fixtures/journeys green (additive evolution; existing web-e2e job is the regression harness)",
@@ -63,5 +64,24 @@
   ],
   "blockers": [],
   "created_at": "2026-07-17T10:25:10.943997+00:00",
-  "updated_at": "2026-07-17T10:25:10.943997+00:00"
+  "updated_at": "2026-07-17T17:24:37.439111+00:00",
+  "worktree": ".claude/worktrees/M2-T004",
+  "progress_log": [
+    {
+      "at": "2026-07-17T17:10:50.300252+00:00",
+      "agent": "orchestrator",
+      "percent": 60,
+      "status": "rework",
+      "message": "G3/G4 FAIL on single defect D1 (stale M2-T001 web assertions encoding the retired 108-column value; explicitly NOT contract-breaking/architectural per both reviewers). Orchestrator-authorized scope amendment: corrections C1 (two web assertions -> complete) and C2 (affresfar/mnffar exclusion rationale) applied at 151f2e5; G1 PASS with corrections C1/C2 BLOCKING - both now applied; CI rerunning; delta re-review dispatched to the same G3 reviewer."
+    },
+    {
+      "at": "2026-07-17T17:24:36.061393+00:00",
+      "agent": "orchestrator",
+      "percent": 75,
+      "status": "in_progress",
+      "message": "Corrections C1/C2 applied and delta re-review returned G3 PASS + G4 PASS (project-control/reports/M2-T004-G3-delta-rereview.md); PR 5 merged at 857bee4 with 12/12 checks green at reviewed head 151f2e5"
+    }
+  ],
+  "accepted_by": "orchestrator",
+  "accepted_at": "2026-07-17T17:24:37.439111+00:00"
 }
