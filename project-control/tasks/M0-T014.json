@@ -1,0 +1,61 @@
+{
+  "task_id": "M0-T014",
+  "title": "Project-control CLI hardening (owner code-audit P0)",
+  "task_type": "implementation",
+  "milestone_id": "M0",
+  "objective": "Harden tools/project_control.py: explicit transition enum for progress (never sets accepted); accept requires awaiting_gate + all required gates PASS + all dependencies accepted + zero open blockers referencing the task; gate reviewer must be in reviewer_agents and differ from producer_agent (G2 evidence recorded by orchestrator documented as the sanctioned exception); task-ID and report-path validation contained under approved directories; atomic concurrency-safe writes; honest documentation that --agent is not cryptographic identity; negative tests for every prohibited transition and spoofing attempt",
+  "business_reason": "Owner code-audit directive 2026-07-17 P0: control-plane integrity before further milestone throughput",
+  "inputs": [
+    "Owner code-audit directive 2026-07-17 P0 project-control items (verbatim in project-control/reports/OWNER-REVIEW-code-audit-task-consolidation.md section 2.1)",
+    "tools/project_control.py current behavior (progress accepts free-form status; accept checks gates but not dependencies/blockers; gate rejects only reviewer == producer_agent)",
+    "tools/test_project_control.py existing regression suite (runs in the CI control-plane job)",
+    ".claude/rules/project-control.md ADR-005 + recorded precedent: G2 evidence gates are recorded with --reviewer orchestrator after evidence validation (sanctioned exception to reviewer-in-reviewer_agents; must be documented, not removed)"
+  ],
+  "outputs": [
+    "Hardened tools/project_control.py: progress restricted to an explicit transition enum and can never set accepted; accept requires status awaiting_gate AND every required gate PASS AND every dependency accepted AND zero open blocker records referencing the task; gate requires reviewer in reviewer_agents (or the documented orchestrator-G2 exception) and reviewer != producer_agent; task-ID format validation; report paths validated and contained under project-control/reports/; atomic writes (temp file + os.replace) safe under concurrent invocation",
+    "Honest documentation in the tool: --agent is caller-provided, not cryptographic identity; enforcement is procedural (ADR-005) plus these validations",
+    "Extended tools/test_project_control.py with a negative test for EVERY prohibited transition and spoofing attempt",
+    "project-control/reports/M0-T014-producer-report.md (AOS section-6 packet)"
+  ],
+  "dependencies": [],
+  "allowed_paths": [
+    "tools/project_control.py",
+    "tools/test_project_control.py",
+    "project-control/reports/M0-T014-producer-report.md"
+  ],
+  "forbidden_paths": [
+    "project-control ledger data (state.json, tasks/, gates/, checkpoints/, blockers/) - the tool is edited, never the data",
+    ".claude/**",
+    ".github/**",
+    "services/**, apps/**, packages/**, docs/**, tools/test_agent_dispatch_guard.py"
+  ],
+  "acceptance_scenarios": [
+    "S1 transition enum: every legal lifecycle transition (backlog->ready->claimed->in_progress->self_check->awaiting_gate + rework/blocked paths per docs/GATES_AND_CHECKPOINTS.md) passes; progress with status accepted or any value outside the enum is REJECTED",
+    "S2 accept preconditions: accept fails when (a) status != awaiting_gate, (b) any required gate lacks PASS, (c) any dependency is not accepted, (d) an open blocker references the task; passes only when all four hold",
+    "S3 reviewer identity: gate with reviewer not in reviewer_agents rejected; reviewer == producer_agent rejected; orchestrator-recorded G2 evidence gate passes via the documented exception with its own test",
+    "S4 containment: malformed task IDs and report paths outside project-control/reports/ (../ traversal, absolute paths, drive-letter escapes) rejected on every subcommand",
+    "S5 atomicity: concurrent progress writes to one task (threaded harness) never corrupt JSON; an interrupted write leaves the previous valid file intact",
+    "S6 spoofing negatives: producer accepting own task, producer gating own task, self-review via renamed --agent, progress jumping to 100 by a producer - all rejected, each with a test",
+    "S7 regression: all existing ledger files still parse; existing suite + CI control-plane job green (validate-on-write only; stored history is not retro-rejected)"
+  ],
+  "required_gates": [
+    "G0",
+    "G2",
+    "G3",
+    "G4"
+  ],
+  "producer_agent": "backend-engineer",
+  "reviewer_agents": [
+    "code-reviewer",
+    "security-reviewer"
+  ],
+  "status": "backlog",
+  "progress_percent": 0,
+  "risks": [
+    "Backward compatibility with the 21-accepted ledger: validation applies on write, never retroactively",
+    "This tool is the orchestrator's own control plane - merge only after gates pass to avoid breaking mid-session ledger operations"
+  ],
+  "blockers": [],
+  "created_at": "2026-07-17T10:25:10.528308+00:00",
+  "updated_at": "2026-07-17T10:25:10.528308+00:00"
+}

@@ -1,0 +1,69 @@
+{
+  "task_id": "M2-T003",
+  "title": "Property API boundary + contract-version hardening (owner code-audit P0, prerequisite for Confirm)",
+  "task_type": "implementation",
+  "milestone_id": "M2",
+  "objective": "Backend/contracts half of the API boundary hardening: enforce backend response validation of the property-profile payload against the canonical schema before send; resolve whether profiles emitting v1.1 keys must declare contract_version 1.1.0 and implement the decision; add a TypeScript type-generation pipeline from packages/contracts/schemas/v1/property_profile.schema.json replacing any handwritten competing representation; guarantee exact HTTP-status/state pairs at the API (mismatched pairs impossible to emit); provide the recorded fixtures the frontend needs for the HTTP-500-plus-state-no_match regression",
+  "business_reason": "Owner code-audit directive 2026-07-17 P0: boundary hardening must land before the Confirm screen consumes the API",
+  "inputs": [
+    "Owner code-audit directive 2026-07-17 P0 Property-API items (verbatim in project-control/reports/OWNER-REVIEW-code-audit-task-consolidation.md section 2.2)",
+    "packages/contracts/schemas/v1/property_profile.schema.json v1.1 + packages/contracts/README.md (canonical contract; the open contract_version question: profiles emit v1.1 keys - must they declare contract_version 1.1.0?)",
+    "services/api/app/api/v1/properties.py + builder.py (current status/state emission: 422 validation_error, 404 state=no_match, 200 profile, 502/503/504 typed, 500 generic, X-Correlation-ID)",
+    "project-control/reports/M1-T005-G3-review.md section 5 + M1-T006-G3-review.md D5 (state as non-200 discriminator; partial district provenance)",
+    "apps/web/src/lib current handwritten API types (the competing representation this task replaces - read-only input; removal happens in M2-T002 when the client migrates)"
+  ],
+  "outputs": [
+    "Backend response validation: every 200 property-profile payload validated against the canonical schema before send; validation failure returns a typed 500 internal_contract_error with correlation id - an invalid 200 becomes impossible",
+    "Exact HTTP-status/state pair enforcement at the API: the documented pair matrix is the single source of truth; a test enumerates all emissions and rejects undocumented pairs",
+    "contract_version resolution: decision recorded in packages/contracts/README.md and implemented consistently across schema, API, and fixtures (v1.1-key-emitting profiles declare 1.1.0 or the documented alternative)",
+    "Deterministic TypeScript type-generation pipeline from the canonical schema into packages/contracts/generated/ (committed output + CI drift check; no network, no new heavy toolchain on owner PC - generation runs in CI)",
+    "Recorded transport-level fixture for HTTP 500 + state=no_match (the frontend regression input for M2-T002)",
+    "project-control/reports/M2-T003-producer-report.md (AOS section-6 packet)"
+  ],
+  "dependencies": [],
+  "allowed_paths": [
+    "services/api/**",
+    "packages/contracts/**",
+    ".github/workflows/ci.yml (ADDITIVE type-generation drift check only)",
+    "project-control/reports/M2-T003-producer-report.md"
+  ],
+  "forbidden_paths": [
+    "apps/web/** (client migration is M2-T002)",
+    "render.yaml",
+    "docs/**",
+    "project-control/** (except own producer report)",
+    ".claude/**"
+  ],
+  "acceptance_scenarios": [
+    "S1 valid profile passes backend validation unchanged and declares the resolved contract_version; all existing recorded-official fixtures still serve",
+    "S2 fault injection: a deliberately malformed profile (wrong type / missing required key) from the builder yields typed 500 internal_contract_error with correlation id - never an invalid 200",
+    "S3 pair matrix: parametrized test enumerates every (HTTP status, state) emission path against the documented matrix; an undocumented pair fails the suite",
+    "S4 the 500+state=no_match fixture is recorded and replayable through the existing fixture transport for M2-T002's client regression",
+    "S5 typegen determinism: regenerating types from the schema is byte-identical (CI drift check fails on divergence); generated types cover 100 percent of schema keys",
+    "S6 contract_version consistency: schema, README, API response, and fixtures all agree; a mismatch test fails",
+    "S7 G1 re-verification: no official-source field mapping or semantics changed (diff of builder mapping reviewed by data-contract-verifier)",
+    "S8 regression: full API pytest suite + M2-T001 web-e2e job (recorded-official-fixture harness) stay green"
+  ],
+  "required_gates": [
+    "G0",
+    "G1",
+    "G2",
+    "G3",
+    "G4"
+  ],
+  "producer_agent": "backend-engineer",
+  "reviewer_agents": [
+    "data-contract-verifier",
+    "code-reviewer"
+  ],
+  "status": "backlog",
+  "progress_percent": 0,
+  "risks": [
+    "contract_version decision may ripple into stored fixtures - keep the change additive and re-record fixtures with provenance rather than hand-editing",
+    "Type-generation tool choice must run in CI without adding local toolchain weight (owner PC thin-client policy)",
+    "M2-T002 and M1-T009 depend on this task - it is the first M2 wave item"
+  ],
+  "blockers": [],
+  "created_at": "2026-07-17T10:25:10.679668+00:00",
+  "updated_at": "2026-07-17T10:25:10.679668+00:00"
+}
