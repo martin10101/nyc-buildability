@@ -13,8 +13,7 @@ Seam design (packet discipline "behind the existing transport seam"):
   PlutoFetchResult`` contract, so route tests and the web-e2e fixture
   harness keep overriding the seam unchanged.
 
-Last-known-good staleness (item E, scenario S5) is surfaced through the
-EXISTING provenance structures only - no contract change:
+Last-known-good staleness (item E, scenario S5) is surfaced two ways:
 
 - ``retrieved_at`` on the result and every fact remains the ORIGINAL
   retrieval moment (provenance records actual retrieval, never serve time).
@@ -25,9 +24,17 @@ EXISTING provenance structures only - no contract change:
   so staleness is visible in the served profile and in reports. The builder
   maps only its known note prefixes into ``missing_inputs``, so this note
   adds no phantom missing input.
-- A stale serve is therefore NEVER silently fresh; a first-class
-  contract-visible staleness field (e.g. ``reproducibility.staleness``)
-  is recommended as an additive contract follow-up reviewed at G1.
+- CONTRACT 1.3.0 (task M2-T006, the M1-T009 G1 D2 follow-up): this fetcher
+  additionally stamps ``result.staleness`` - the TYPED machine-readable
+  channel that becomes ``reproducibility.staleness``. A last-known-good
+  serve sets ``{served_from_cache: True, stale: True, upstream_error_type,
+  original_retrieved_at, age_seconds}``; a within-TTL cache hit sets
+  ``{served_from_cache: True, stale: False, original_retrieved_at,
+  age_seconds}`` (the explicit cache-serve marker D2 asked for); a fresh
+  fetch leaves it ``None`` and the builder emits the fresh marker. Ages come
+  from the injected monotonic clock; the human-readable note is RETAINED
+  unchanged alongside the typed object.
+- A stale serve is therefore NEVER silently fresh.
 """
 
 from __future__ import annotations
@@ -206,12 +213,24 @@ class ResilientPlutoFetcher:
         canonical = normalize_bbl(bbl).canonical  # validation before anything
         key = self._cache_key(canonical)
 
-        cached = self._cache.get(key)
-        if cached is not None:
+        hit = self._cache.get_with_age(key)
+        if hit is not None:
+            cached, age_seconds = hit
             self.metrics.emit(
                 "cache_hit", key=key, correlation_id=correlation_id
             )
-            return copy.deepcopy(cached)  # type: ignore[return-value]
+            result: PlutoFetchResult = copy.deepcopy(cached)  # type: ignore[assignment]
+            # Contract 1.3.0 typed staleness (M1-T009 G1 D2): a within-TTL
+            # cache serve carries an EXPLICIT machine-readable marker. Not
+            # stale (the upstream did not fail); age from the injected
+            # monotonic clock. retrieved_at stays the original retrieval.
+            result.staleness = {
+                "served_from_cache": True,
+                "stale": False,
+                "original_retrieved_at": result.retrieved_at,
+                "age_seconds": age_seconds,
+            }
+            return result
         self.metrics.emit("cache_miss", key=key, correlation_id=correlation_id)
 
         if not self._breaker.allow():
@@ -417,6 +436,18 @@ class ResilientPlutoFetcher:
             "actual original retrieval (task M1-T009)."
         )
         result.notes = [*result.notes, note]
+        # Contract 1.3.0 typed staleness (M1-T009 G1 D2, task M2-T006): the
+        # machine-readable channel ALONGSIDE the retained human note. Values
+        # are this serve's own record - the typed upstream failure, the
+        # original retrieval timestamp, and the monotonic-clock age already
+        # computed above. Never invented.
+        result.staleness = {
+            "served_from_cache": True,
+            "stale": True,
+            "upstream_error_type": exc.error_type,
+            "original_retrieved_at": result.retrieved_at,
+            "age_seconds": age_seconds,
+        }
         self.metrics.emit(
             "lkg_served",
             key=key,

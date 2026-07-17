@@ -229,10 +229,11 @@ def test_s1_profile_version_and_reproducibility_metadata(client) -> None:
     fixture_fetcher("F01_single_lot_normal.json")
     profile = client.get("/api/v1/properties/1000010100").json()
     version = profile["profile_version"]
-    # M2-T003 resolved the declaration to the canonical 1.2.0 (the builder
-    # emits keys through 1.2.0); 1.0.0/1.1.0 remain valid (see
-    # tests/api/test_property_contract.py backward-compat cases).
-    assert version["contract_version"] == "1.2.0"
+    # M2-T003 established declare-what-you-emit; M2-T006 advanced it to 1.3.0
+    # (typed reproducibility.staleness emitted on every serve).
+    # 1.0.0/1.1.0/1.2.0 remain valid (see tests/api/test_property_contract.py
+    # backward-compat cases).
+    assert version["contract_version"] == "1.3.0"
     assert version["profile_revision"] == 1
     assert version["generated_at"].endswith("Z")
     repro = profile["reproducibility"]
@@ -243,6 +244,11 @@ def test_s1_profile_version_and_reproducibility_metadata(client) -> None:
     assert repro["retrieved_at"] == "2026-07-16T12:00:00Z"
     assert repro["record_count"] == 1
     assert repro["correlation_id"]
+    # M2-T006 S3: this route test serves a FRESH build (the harness calls the
+    # connector directly), so the typed staleness object truthfully reports a
+    # non-cached, non-stale serve - and ONLY the two required booleans (no
+    # invented age/error values on a fresh serve).
+    assert repro["staleness"] == {"served_from_cache": False, "stale": False}
 
 
 def test_s1_fact_placement_and_values(client) -> None:

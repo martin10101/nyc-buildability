@@ -15,8 +15,10 @@
  *      or removes an enum member fails `tsc` here — the arrays cannot
  *      silently drift from the generated vocabulary. This includes the
  *      contract_version pin: the generated union is
- *      "1.0.0" | "1.1.0" | "1.2.0" (the stale handwritten "1.0.0"|"1.1.0"
- *      pin is retired with this file).
+ *      "1.0.0" | "1.1.0" | "1.2.0" | "1.3.0" (the stale handwritten
+ *      "1.0.0"|"1.1.0" pin is retired with this file; "1.3.0" added by task
+ *      M2-T006 amendment A1 - publishing a contract version is a coordinated
+ *      schema + backend + client-vocabulary change while this set is closed).
  *   3. Provides RUNTIME NARROWING helpers for the two open-object shapes
  *      the schema deliberately leaves unconstrained (zoning.mapped_features
  *      items and conflict value entries). These helpers are display-only
@@ -81,6 +83,7 @@ export const SUPPORTED_CONTRACT_VERSIONS = [
   "1.0.0",
   "1.1.0",
   "1.2.0",
+  "1.3.0",
 ] as const satisfies readonly ContractVersion[];
 
 export const COVERAGE_STATUSES = [

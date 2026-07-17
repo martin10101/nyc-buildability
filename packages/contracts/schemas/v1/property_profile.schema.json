@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://github.com/martin10101/nyc-buildability/packages/contracts/schemas/v1/property_profile.schema.json",
   "title": "Canonical Property Profile",
-  "description": "v1 of the one canonical property-profile contract (PRD section 32.3). All connectors, rules, scenarios, reports, and UI views must exchange this contract; modules may not invent competing property schemas. Every fact value carries a REQUIRED provenance_ref that must resolve to a provenance record in this profile (PRD sections 9 and 19; fix for M0-T004 G3 defect D1). Referential integrity of EVERY provenance_ref site (fact values, zoning.mapped_features, and the v1.1 district-provenance maps) is enforced by .github/scripts/validate_contracts.py for fixtures and must be enforced by the backend for live data. CONTRACT 1.1.0 (task M1-T006, additive; M1-T005 G3 adjudication #1 + defects D2/D4): documents the three keys the accepted M1-T005 API already emits (OPTIONAL per-fact coverage_status, OPTIONAL top-level data_completeness, OPTIONAL top-level reproducibility) and adds OPTIONAL machine-resolvable district-provenance maps under zoning. Every 1.0.0 instance remains valid: no required key was added, removed, or retyped. CONTRACT 1.2.0 (task M2-T004, additive; owner code-audit P1 2026-07-17): adds the OPTIONAL top-level status_dimensions object (five INDEPENDENT status dimensions - source_record_completeness, analysis_readiness, rule_coverage, geometry_validity, financial_readiness - never collapsed into one label, per PRD s12 and GENERATIVE_DEVELOPMENT_STRATEGY_REQUIREMENTS s3.3; dimensions the platform cannot yet compute are declared 'not_computed', never inferred), the OPTIONAL missing_inputs[].feasibility_relevant flag (membership in the documented feasibility-relevant completeness basis - data_completeness and source_record_completeness are derived from feasibility-relevant gaps ONLY, never from all 108 PLUTO columns), OPTIONAL reproducibility.response_digest + reproducibility.digest_canonicalization, and the four OPTIONAL source_fact identity/lineage keys (fact_key, observation_id, value_digest, response_digest - see source_fact.schema.json). Every 1.0.0 and 1.1.0 instance remains valid: all new keys are optional and no existing key changed.",
+  "description": "v1 of the one canonical property-profile contract (PRD section 32.3). All connectors, rules, scenarios, reports, and UI views must exchange this contract; modules may not invent competing property schemas. Every fact value carries a REQUIRED provenance_ref that must resolve to a provenance record in this profile (PRD sections 9 and 19; fix for M0-T004 G3 defect D1). Referential integrity of EVERY provenance_ref site (fact values, zoning.mapped_features, and the v1.1 district-provenance maps) is enforced by .github/scripts/validate_contracts.py for fixtures and must be enforced by the backend for live data. CONTRACT 1.1.0 (task M1-T006, additive; M1-T005 G3 adjudication #1 + defects D2/D4): documents the three keys the accepted M1-T005 API already emits (OPTIONAL per-fact coverage_status, OPTIONAL top-level data_completeness, OPTIONAL top-level reproducibility) and adds OPTIONAL machine-resolvable district-provenance maps under zoning. Every 1.0.0 instance remains valid: no required key was added, removed, or retyped. CONTRACT 1.2.0 (task M2-T004, additive; owner code-audit P1 2026-07-17): adds the OPTIONAL top-level status_dimensions object (five INDEPENDENT status dimensions - source_record_completeness, analysis_readiness, rule_coverage, geometry_validity, financial_readiness - never collapsed into one label, per PRD s12 and GENERATIVE_DEVELOPMENT_STRATEGY_REQUIREMENTS s3.3; dimensions the platform cannot yet compute are declared 'not_computed', never inferred), the OPTIONAL missing_inputs[].feasibility_relevant flag (membership in the documented feasibility-relevant completeness basis - data_completeness and source_record_completeness are derived from feasibility-relevant gaps ONLY, never from all 108 PLUTO columns), OPTIONAL reproducibility.response_digest + reproducibility.digest_canonicalization, and the four OPTIONAL source_fact identity/lineage keys (fact_key, observation_id, value_digest, response_digest - see source_fact.schema.json). Every 1.0.0 and 1.1.0 instance remains valid: all new keys are optional and no existing key changed. CONTRACT 1.3.0 (task M2-T006, additive; M1-T009 G1 findings D1/D2 + M2-T002 G3 finding N3): adds the OPTIONAL typed reproducibility.staleness object (machine-readable cache/last-known-good serve visibility - the successor to the served_from_last_known_good connector-note convention, which is retained for humans), refreshes the correlation_id description to match cache/LKG-era generation semantics, and documents the open-schema zoning.mapped_features and conflict keys the accepted builder emits. Every 1.0.0, 1.1.0, and 1.2.0 instance remains valid: all new keys are optional and no existing key changed.",
   "type": "object",
   "required": [
     "profile_version",
@@ -24,8 +24,8 @@
       "properties": {
         "contract_version": {
           "type": "string",
-          "enum": ["1.0.0", "1.1.0", "1.2.0"],
-          "description": "CLOSED enum of published contract versions within the v1 major line. 1.0.0 = M0-T009 shape; 1.1.0 = M1-T006 additive extension; 1.2.0 = M2-T004 additive extension (status_dimensions, feasibility_relevant, digests, fact identity/lineage). New versions are admitted only by an accepted contract task that appends to this enum; arbitrary versions are rejected. DECLARATION SEMANTICS (input to M2-T003, deliberately not preempted here): as with 1.1.0, adding 1.2.0 to this enum publishes the version; WHICH version a producer declares (the accepted M1-T005 builder still declares 1.0.0 while emitting the additive keys, all legal at every version because the keys are optional) and whether declared version and emitted key set are validated against each other is the M2-T003 validation/typegen decision."
+          "enum": ["1.0.0", "1.1.0", "1.2.0", "1.3.0"],
+          "description": "CLOSED enum of published contract versions within the v1 major line. 1.0.0 = M0-T009 shape; 1.1.0 = M1-T006 additive extension; 1.2.0 = M2-T004 additive extension (status_dimensions, feasibility_relevant, digests, fact identity/lineage); 1.3.0 = M2-T006 additive extension (typed reproducibility.staleness; correlation_id description refresh; open-schema key documentation). New versions are admitted only by an accepted contract task that appends to this enum; arbitrary versions are rejected. DECLARATION SEMANTICS (input to M2-T003, deliberately not preempted here): as with 1.1.0, adding 1.2.0 to this enum publishes the version; WHICH version a producer declares (the accepted M1-T005 builder still declares 1.0.0 while emitting the additive keys, all legal at every version because the keys are optional) and whether declared version and emitted key set are validated against each other is the M2-T003 validation/typegen decision."
         },
         "profile_revision": { "type": "integer", "minimum": 1 },
         "generated_at": { "$ref": "common.schema.json#/$defs/date_time" }
@@ -83,7 +83,13 @@
         "districts": { "type": "array", "items": { "type": "string" } },
         "commercial_overlays": { "type": "array", "items": { "type": "string" } },
         "special_districts": { "type": "array", "items": { "type": "string" } },
-        "mapped_features": { "type": "array", "items": { "type": "object" } },
+        "mapped_features": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "description": "DELIBERATELY OPEN object (no structural tightening at 1.3.0; consumers runtime-narrow - the M2-T002 client helpers are the accepted pattern). DOCUMENTED KEYS (M2-T002 G3 finding N3) that the accepted builder emits per mapped zoning/regulatory feature: 'feature' (string; the source column name from the builder's mapped-feature column set, e.g. 'splitzone', 'landmark', 'firm07_flag'), plus the fact_value keys 'value' (any JSON value, verbatim-normalized), 'provenance_ref' (string; MUST resolve to a provenance_id in this profile's provenance array - enforced by validate_contracts.py for fixtures and by the backend for live data), 'coverage_status' (coverage_status.schema.json value), and 'units' (string, present only when the value has units). The shape stays open so future mapped-feature sources (M2 GIS layers, landmark/flood connectors) can add keys without a contract bump; this description is the contract-level record of the emitted keys, not a structural constraint."
+          }
+        },
         "district_provenance": {
           "$ref": "#/$defs/district_provenance_map",
           "description": "CONTRACT 1.1.0, OPTIONAL (M1-T005 G3 defect D4): machine-resolvable provenance for zoning.districts values. Each key MUST be a value present in the sibling districts array; each mapped provenance_ref MUST resolve to a provenance_id in this profile's provenance array. Both rules are enforced by validate_contracts.py for fixtures and by the backend for live data. The plain-string districts array is unchanged and remains the canonical value list; this map only annotates it, so 1.0.0 instances (no map) stay valid."
@@ -133,6 +139,7 @@
       "type": "array",
       "items": {
         "type": "object",
+        "description": "One cross-source (or intra-source) conflict. DOCUMENTED OPEN KEY (M2-T002 G3 finding N3): the accepted builder additionally emits 'reason' (string or null; the connector's explanation of why the values disagree, e.g. an identifier-consistency check message). It stays structurally undeclared at 1.3.0 - additional properties remain permitted - and consumers read it through runtime narrowing, tolerating absence.",
         "required": ["field", "values", "resolution"],
         "properties": {
           "field": { "type": "string" },
@@ -141,6 +148,7 @@
             "minItems": 2,
             "items": {
               "type": "object",
+              "description": "One conflicting value. DOCUMENTED OPEN KEY (M2-T002 G3 finding N3): the accepted builder additionally emits 'derivation' (string; how this value was obtained, e.g. 'derived from the canonical BBL digits' vs a verbatim record field). It stays structurally undeclared at 1.3.0 and is read via runtime narrowing; absence is always tolerated.",
               "required": ["source_id", "value"],
               "properties": {
                 "source_id": { "type": "string" },
@@ -176,7 +184,7 @@
       "description": "CONTRACT 1.1.0, OPTIONAL (M1-T005 G3 defect D2): profile-level data-completeness status - exactly the 3 PRD section 12 values, referenced from coverage_status.schema.json (never duplicated inline). Derived deterministically from missing_inputs criticality. DERIVATION BASIS FIXED AT 1.2.0 (task M2-T004, owner P1): only FEASIBILITY-RELEVANT missing inputs count (entries with feasibility_relevant true - the documented FEASIBILITY_COLUMNS basis): any critical feasibility-relevant missing input -> missing_critical; any feasibility-relevant missing input -> missing_noncritical; else complete. Before 1.2.0 the derivation counted every absent column of the 108-column PLUTO inventory, which made 'complete' unreachable in practice (the owner-audit defect). The key, its enum, and its placement are unchanged for v1.1 consumers."
     },
     "reproducibility": {
-      "description": "CONTRACT 1.1.0, OPTIONAL (M1-T005 G3 defect D2): retrieval metadata that lets a report reader reproduce this profile build (PRD section 9: retain the exact source snapshot used; PRD section 20 item 17: reproducibility identifier). Shape matches the accepted M1-T005 builder output exactly: the builder emits every 1.1.0 subfield unconditionally, so the 10 original subfields are REQUIRED when the object is present. CONTRACT 1.2.0 (task M2-T004) adds two OPTIONAL snapshot-lineage subfields - response_digest and digest_canonicalization - which the current builder also emits unconditionally but which stay optional in the schema so 1.1.0 instances remain valid. Single-source (PLUTO) shape; when M2 merges multiple sources this evolves additively (e.g. a per-source array ALONGSIDE this object), never by retyping these keys.",
+      "description": "CONTRACT 1.1.0, OPTIONAL (M1-T005 G3 defect D2): retrieval metadata that lets a report reader reproduce this profile build (PRD section 9: retain the exact source snapshot used; PRD section 20 item 17: reproducibility identifier). Shape matches the accepted M1-T005 builder output exactly: the builder emits every 1.1.0 subfield unconditionally, so the 10 original subfields are REQUIRED when the object is present. CONTRACT 1.2.0 (task M2-T004) adds two OPTIONAL snapshot-lineage subfields - response_digest and digest_canonicalization - which the current builder also emits unconditionally but which stay optional in the schema so 1.1.0 instances remain valid. CONTRACT 1.3.0 (task M2-T006) adds the OPTIONAL staleness subfield - the typed machine-readable serve-freshness channel (M1-T009 G1 D2) - also emitted unconditionally by the 1.3.0 builder but optional in the schema so 1.1.0/1.2.0 instances remain valid. Single-source (PLUTO) shape; when M2 merges multiple sources this evolves additively (e.g. a per-source array ALONGSIDE this object), never by retyping these keys.",
       "type": "object",
       "required": [
         "correlation_id",
@@ -193,7 +201,7 @@
       "properties": {
         "correlation_id": {
           "$ref": "common.schema.json#/$defs/non_empty_string",
-          "description": "Correlation id of the request that built this profile (PRD section 25 structured logs; equals the X-Correlation-ID response header of the M1-T005 endpoint). The reproducibility identifier joining this profile to logs and job records (PRD section 20 item 17)."
+          "description": "Correlation id of the request whose SUCCESSFUL UPSTREAM RETRIEVAL produced this payload - the reproducibility identifier joining this profile to the retrieval logs and job records that actually built it (PRD section 25 structured logs; PRD section 20 item 17). DESCRIPTION REFRESHED AT 1.3.0 (M1-T009 G1 finding D1, adjudication J1): on a freshly built profile this equals the X-Correlation-ID response header of the serving request; on a cache or last-known-good serve (see the sibling staleness object) it deliberately remains the ORIGINAL fetch's id - the only value that truthfully joins to the retrieval that produced the payload - while the X-Correlation-ID header identifies the serving HTTP exchange. Rewriting it to the serving request's id would falsify reproducibility."
         },
         "source_id": {
           "$ref": "common.schema.json#/$defs/non_empty_string",
@@ -242,6 +250,55 @@
         "digest_canonicalization": {
           "$ref": "common.schema.json#/$defs/non_empty_string",
           "description": "CONTRACT 1.2.0, OPTIONAL (task M2-T004): verbatim statement of the canonicalization rules under which response_digest and every value_digest in this profile were computed (spec id + key order + whitespace + encoding + number handling). Stored per profile - like coverage_policy - so a historical report can recompute and verify its own digests even after the canonicalization spec evolves."
+        },
+        "staleness": {
+          "description": "CONTRACT 1.3.0, OPTIONAL (task M2-T006; M1-T009 G1 findings D1/D2): typed, machine-readable freshness of the serve that produced this payload - the first-class successor to the 'served_from_last_known_good:' connector-note convention (the human-readable note in connector_notes is RETAINED alongside this object; conflicts and stale data stay visible, PRD principle 4). ABSENCE SEMANTICS: when this object is ABSENT the payload came from a pre-1.3.0 producer - consumers MUST NOT infer freshness from absence and must fall back to the connector-note convention plus the truthful retrieved_at. A 1.3.0 builder emits this object on EVERY serve (a fresh build emits {served_from_cache: false, stale: false} with no other keys - the same optional-in-schema-but-unconditionally-emitted pattern as 1.2.0's response_digest). PRESENCE SEMANTICS: served_from_cache true means the payload was served from the TTL cache or the last-known-good store rather than a fresh upstream retrieval, and then original_retrieved_at and age_seconds are REQUIRED; stale true means the serve fell back to last-known-good data BECAUSE the upstream retrieval failed, and then upstream_error_type is REQUIRED and served_from_cache must be true (a within-TTL cache hit is served_from_cache true + stale false). Values are copied verbatim from the serving fetcher's own record of the serve - never invented, never derived from wall-clock guesses. NOTE for TS consumers: the conditional requirements are enforced at JSON-Schema validation level (allOf/anyOf/const); the generated TypeScript types carry the two required booleans and three optional fields without the cross-field conditions.",
+          "type": "object",
+          "required": ["served_from_cache", "stale"],
+          "properties": {
+            "served_from_cache": {
+              "type": "boolean",
+              "description": "True when this payload was served from the TTL cache or the last-known-good store instead of a fresh upstream retrieval (M1-T009 G1 D2: a within-TTL cache serve now carries an explicit marker). False on a freshly built profile."
+            },
+            "stale": {
+              "type": "boolean",
+              "description": "True when the serve fell back to the last-known-good snapshot because the upstream retrieval FAILED (the response is known-stale official data, loudly labeled). False on a fresh build and on a within-TTL cache hit (bounded by the cache TTL and the truthful retrieved_at)."
+            },
+            "upstream_error_type": {
+              "$ref": "common.schema.json#/$defs/non_empty_string",
+              "description": "REQUIRED when stale is true: the typed error_type of the upstream failure that forced the last-known-good serve (e.g. 'source_unavailable', 'timeout', 'rate_limited' - the connector's documented error taxonomy). Absent on fresh builds and within-TTL cache hits (no failure occurred; never invented)."
+            },
+            "original_retrieved_at": {
+              "$ref": "common.schema.json#/$defs/date_time",
+              "description": "REQUIRED when served_from_cache is true: timestamp of the ORIGINAL successful retrieval the served snapshot came from. Always equals the sibling reproducibility.retrieved_at (which is never rewritten to serve time - M1-T009 provenance rule); duplicated here so the staleness object is self-contained for consumers and logs."
+            },
+            "age_seconds": {
+              "type": "number",
+              "minimum": 0,
+              "description": "REQUIRED when served_from_cache is true: age of the served snapshot at serve time in seconds, measured by the serving process's monotonic clock (injected in tests - deterministic, never a wall-clock guess). Absent on fresh builds (age of a fresh retrieval is not a meaningful serve-staleness signal)."
+            }
+          },
+          "allOf": [
+            {
+              "$comment": "served_from_cache true => original_retrieved_at + age_seconds are required (a cached serve must state what it served and how old it was).",
+              "anyOf": [
+                { "properties": { "served_from_cache": { "const": false } } },
+                { "required": ["original_retrieved_at", "age_seconds"] }
+              ]
+            },
+            {
+              "$comment": "stale true => upstream_error_type is required AND served_from_cache is true (staleness only arises from serving stored data after an upstream failure).",
+              "anyOf": [
+                { "properties": { "stale": { "const": false } } },
+                {
+                  "allOf": [
+                    { "required": ["upstream_error_type"] },
+                    { "properties": { "served_from_cache": { "const": true } } }
+                  ]
+                }
+              ]
+            }
+          ]
         }
       }
     },

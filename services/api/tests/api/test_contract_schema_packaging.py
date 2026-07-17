@@ -43,7 +43,7 @@ def test_supported_versions_populated_without_packages_relative_access() -> None
     """``SUPPORTED_CONTRACT_VERSIONS`` is computed at import from the bundled
     schema. It must be populated, proving import succeeded without any
     ``packages/``-relative filesystem access."""
-    assert SUPPORTED_CONTRACT_VERSIONS == ("1.0.0", "1.1.0", "1.2.0")
+    assert SUPPORTED_CONTRACT_VERSIONS == ("1.0.0", "1.1.0", "1.2.0", "1.3.0")
 
 
 def test_module_helper_loads_bundled_schema() -> None:
@@ -51,7 +51,7 @@ def test_module_helper_loads_bundled_schema() -> None:
     parsed canonical schema (has the profile_version.contract_version enum)."""
     schema = contract_module._load_bundled_schema("property_profile.schema.json")
     enum = schema["properties"]["profile_version"]["properties"]["contract_version"]["enum"]
-    assert enum == ["1.0.0", "1.1.0", "1.2.0"]
+    assert enum == ["1.0.0", "1.1.0", "1.2.0", "1.3.0"]
 
 
 def test_contract_module_has_no_packages_relative_runtime_path() -> None:

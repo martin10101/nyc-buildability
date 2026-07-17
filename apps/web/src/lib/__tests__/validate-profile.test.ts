@@ -25,7 +25,7 @@ describe("validateProfileDocument — valid documents", () => {
   });
 
   it("accepts every published contract_version", () => {
-    for (const version of ["1.0.0", "1.1.0", "1.2.0"]) {
+    for (const version of ["1.0.0", "1.1.0", "1.2.0", "1.3.0"]) {
       const profile = baseProfile();
       (profile.profile_version as unknown as Record<string, unknown>).contract_version =
         version;

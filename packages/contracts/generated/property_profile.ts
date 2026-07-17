@@ -49,7 +49,7 @@ export interface DistrictProvenanceMap {
 }
 export interface PropertyProfile {
   profile_version: {
-    contract_version: "1.0.0" | "1.1.0" | "1.2.0";
+    contract_version: "1.0.0" | "1.1.0" | "1.2.0" | "1.3.0";
     profile_revision: number;
     generated_at: DateTime;
   };
@@ -125,6 +125,13 @@ export interface PropertyProfile {
     coverage_policy: NonEmptyString;
     response_digest?: DigestSha256;
     digest_canonicalization?: NonEmptyString;
+    staleness?: {
+      served_from_cache: boolean;
+      stale: boolean;
+      upstream_error_type?: NonEmptyString;
+      original_retrieved_at?: DateTime;
+      age_seconds?: number;
+    };
   };
   status_dimensions?: {
     source_record_completeness: "complete" | "partial" | "not_computed";

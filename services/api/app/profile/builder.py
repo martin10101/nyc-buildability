@@ -56,18 +56,19 @@ __all__ = [
     "build_property_profile",
 ]
 
-# CONTRACT VERSION DECLARED BY THIS BUILDER (task M2-T003, resolving the
-# M2-T004 deferral recorded in packages/contracts/README.md section 167).
+# CONTRACT VERSION DECLARED BY THIS BUILDER (task M2-T003 established the
+# declare-what-you-emit rule; task M2-T006 advances it to 1.3.0).
 #
-# The builder emits keys through 1.2.0 (status_dimensions, feasibility_relevant,
-# response_digest/digest_canonicalization, and the source_fact identity/lineage
-# keys), so it now DECLARES 1.2.0 - the canonical contract version whose key set
-# it fully covers. It no longer declares the stale "1.0.0". Because every added
-# key is optional, previously accepted 1.0.0 and 1.1.0 instances remain valid
-# and are served unchanged (backward compatibility, S7); the value is validated
-# against the closed published enum by app.profile.contract, never hard-coded
-# against a stale version.
-PROFILE_CONTRACT_VERSION = "1.2.0"
+# The builder emits keys through 1.3.0 (the M2-T004 set plus the typed
+# reproducibility.staleness object, which it emits on EVERY serve), so it
+# DECLARES 1.3.0 - the canonical contract version whose key set it fully
+# covers. Because every added key is optional, previously accepted 1.0.0,
+# 1.1.0, and 1.2.0 instances remain valid and are served unchanged (backward
+# compatibility); the value is validated against the closed published enum by
+# app.profile.contract (including the declared-vs-emitted consistency check
+# on the dotted path "reproducibility.staleness"), never hard-coded against a
+# stale version.
+PROFILE_CONTRACT_VERSION = "1.3.0"
 
 # ---------------------------------------------------------------------------
 # Deterministic PLUTO column buckets (presentation grouping only). Columns not
@@ -540,13 +541,14 @@ def build_property_profile(
     Returns:
         A dict that validates against property_profile.schema.json v1. The
         additive keys ``data_completeness``, ``reproducibility``,
-        ``status_dimensions`` (M2-T004), and per-fact ``coverage_status`` are
-        schema-permitted optional properties (same additive-extension pattern
-        the accepted M1-T002 connector uses on source_fact); the required v1
-        field set is complete and unchanged, and the declared
-        ``contract_version`` is ``1.2.0`` - the canonical version whose key
-        set this builder fully covers (task M2-T003 resolved the M2-T004
-        declaration deferral). The API layer validates every built profile
+        ``status_dimensions`` (M2-T004), ``reproducibility.staleness``
+        (M2-T006), and per-fact ``coverage_status`` are schema-permitted
+        optional properties (same additive-extension pattern the accepted
+        M1-T002 connector uses on source_fact); the required v1 field set is
+        complete and unchanged, and the declared ``contract_version`` is
+        ``1.3.0`` - the canonical version whose key set this builder fully
+        covers (task M2-T003 established the rule; M2-T006 advanced the
+        version). The API layer validates every built profile
         against the selected canonical schema before send
         (``app.profile.contract.validate_profile``), so an invalid 200 is
         impossible.
@@ -636,6 +638,15 @@ def build_property_profile(
             # verbatim canonicalization spec needed to recompute/verify it.
             "response_digest": result.response_digest,
             "digest_canonicalization": CANONICALIZATION_SPEC,
+            # M2-T006 contract 1.3.0: typed serve-freshness. The resilience
+            # fetcher stamps result.staleness on cache-hit and last-known-good
+            # serves (copied verbatim - never invented here); a fresh
+            # retrieval carries None and truthfully becomes the fresh marker.
+            # Emitted on EVERY serve (schema-documented pattern), so absence
+            # can only mean a pre-1.3.0 producer.
+            "staleness": dict(result.staleness)
+            if result.staleness is not None
+            else {"served_from_cache": False, "stale": False},
         },
     }
     profile["status_dimensions"] = _status_dimensions(

@@ -88,16 +88,21 @@ def _load_bundled_schema(name: str) -> dict:
     text = resources.files(_SCHEMA_PACKAGE).joinpath(name).read_text(encoding="utf-8")
     return json.loads(text)
 
-# Optional top-level keys introduced after 1.0.0. Sourced from the contract
-# README (1.1.0 = M1-T006; 1.2.0 = M2-T004). Used ONLY for the declared-vs-
-# emitted consistency check; the schema itself remains the authority for
-# structural validity. Per-fact coverage_status and the zoning
-# district-provenance maps are also 1.1.0 additions but live inside required
-# containers, so top-level presence is the sufficient, robust signal here.
+# Optional keys introduced after 1.0.0, keyed by DOTTED PATH from the profile
+# root (task M2-T006 extended the plain top-level keys with dotted-path
+# resolution so nested additive keys - the 1.3.0 reproducibility.staleness
+# object - participate in the declared-vs-emitted consistency check). Sourced
+# from the contract README (1.1.0 = M1-T006; 1.2.0 = M2-T004; 1.3.0 =
+# M2-T006). Used ONLY for the consistency check; the schema itself remains
+# the authority for structural validity. Per-fact coverage_status and the
+# zoning district-provenance maps are also 1.1.0 additions but live inside
+# required containers, so top-level presence is the sufficient, robust signal
+# for 1.1.0.
 VERSION_INTRODUCED: dict[str, str] = {
     "data_completeness": "1.1.0",
     "reproducibility": "1.1.0",
     "status_dimensions": "1.2.0",
+    "reproducibility.staleness": "1.3.0",
 }
 
 
@@ -179,17 +184,33 @@ def select_schema_version(declared_version: str) -> str:
     return declared_version
 
 
+def _dotted_path_present(profile: dict, dotted_key: str) -> bool:
+    """True when every segment of a dotted path exists in the payload
+    (intermediate segments must be dicts). ``"reproducibility.staleness"`` is
+    present only when ``reproducibility`` is a dict carrying ``staleness``.
+    Task M2-T006: lets nested additive keys participate in the consistency
+    check without changing the plain top-level behavior."""
+    node: object = profile
+    for segment in dotted_key.split("."):
+        if not isinstance(node, dict) or segment not in node:
+            return False
+        node = node[segment]
+    return True
+
+
 def _assert_declared_matches_emitted(profile: dict) -> None:
     """Declared-version-vs-emitted-key-set consistency (S6/B).
 
     The declared version must be >= the minimum version that introduces any
-    optional top-level key present in the payload. Declaring a stale version
-    (e.g. 1.0.0) while emitting a later-version key is the exact defect
-    M2-T004 deferred to this task, and is now rejected."""
+    optional (dotted-path) key present in the payload. Declaring a stale
+    version (e.g. 1.0.0) while emitting a later-version key is the exact
+    defect M2-T004 deferred to M2-T003, and is rejected; M2-T006 extends the
+    same rule to the nested 1.3.0 key ``reproducibility.staleness``."""
     declared = profile["profile_version"]["contract_version"]
     declared_tuple = _version_tuple(declared)
     for key, introduced in VERSION_INTRODUCED.items():
-        if key in profile and _version_tuple(introduced) > declared_tuple:
+        if _dotted_path_present(profile, key) \
+                and _version_tuple(introduced) > declared_tuple:
             raise ContractValidationError(
                 f"profile declares contract_version {declared!r} but emits "
                 f"key {key!r} introduced in {introduced!r}; the declared "
