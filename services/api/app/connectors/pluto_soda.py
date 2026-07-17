@@ -44,7 +44,7 @@ import time
 import urllib.error
 import urllib.request
 import uuid
-from collections.abc import Callable
+from collections.abc import Callable, Mapping
 from dataclasses import dataclass, field
 from datetime import UTC, datetime
 
@@ -104,6 +104,13 @@ MAX_RESPONSE_BYTES = 10 * 1024 * 1024
 # repr()-sanitized before being embedded in an error payload so a hostile
 # response can never inject control characters into caller logs.
 _ERROR_CODE_SAFE_RE = re.compile(r"^[A-Za-z0-9._-]{1,120}$")
+
+# Task M1-T009: Retry-After is untrusted response data. Both RFC 9110 forms
+# (delay-seconds and HTTP-date, e.g. "Fri, 17 Jul 2026 08:00:00 GMT") match
+# this allowlist and pass through verbatim; anything else is repr()-sanitized
+# before entering the typed-error detail (same policy as errorCode above).
+# The resilience layer parses the value; unparseable -> jittered backoff.
+_RETRY_AFTER_SAFE_RE = re.compile(r"^[A-Za-z0-9,: +\-]{1,64}$")
 
 # Per-input vintage date columns = per-record effective-date bounds
 # (research section 4.2, G1 C5). Socrata-typed text; nullable per record (F1v).
@@ -312,8 +319,19 @@ class SourceUnavailableError(PlutoConnectorError):
 
 @dataclass(frozen=True)
 class TransportResponse:
+    """Transport-level response.
+
+    ``headers`` (task M1-T009, ADDITIVE with a default so every existing
+    fixture transport keeps constructing ``TransportResponse(status, body)``
+    unchanged): response headers with LOWERCASE keys - transports normalize
+    on capture. Used only to surface the RFC 9110 ``Retry-After`` value of a
+    429 into the typed error detail for the resilience layer; header values
+    are never logged and never appear in payloads unsanitized.
+    """
+
     status: int
     body: str
+    headers: Mapping[str, str] = field(default_factory=dict)
 
 
 class TransportTimeout(Exception):
@@ -346,6 +364,20 @@ class _NoRedirectHandler(urllib.request.HTTPRedirectHandler):
 _OPENER = urllib.request.build_opener(_NoRedirectHandler)
 
 
+def _lowercase_headers(message: object) -> dict[str, str]:
+    """Task M1-T009: capture RESPONSE headers with lowercase keys for the
+    TransportResponse headers contract. Response headers are server data
+    (never the request's X-App-Token); they stay out of logs and payloads
+    except the sanitized Retry-After detail."""
+    if message is None:
+        return {}
+    try:
+        items = message.items()  # type: ignore[attr-defined]
+    except AttributeError:
+        return {}
+    return {str(name).lower(): str(value) for name, value in items}
+
+
 def _bounded_read(stream: object) -> str:
     """G5 F1: read at most MAX_RESPONSE_BYTES; refuse oversize bodies with a
     typed transport failure instead of an unbounded read + json.loads."""
@@ -368,12 +400,20 @@ def urllib_transport(url: str, headers: dict[str, str], timeout: float) -> Trans
             return TransportResponse(
                 status=response.status,
                 body=_bounded_read(response),
+                # getattr: headers stay optional so response doubles without
+                # a headers attribute (tests) keep working - headers are an
+                # additive capture, never a required transport capability.
+                headers=_lowercase_headers(getattr(response, "headers", None)),
             )
     except urllib.error.HTTPError as exc:
         # Includes refused 3xx redirects (F3): status passes through and the
         # caller maps it to a typed error; no request is ever re-issued.
         body = _bounded_read(exc)
-        return TransportResponse(status=exc.code, body=body)
+        return TransportResponse(
+            status=exc.code,
+            body=body,
+            headers=_lowercase_headers(getattr(exc, "headers", None)),
+        )
     except TimeoutError as exc:  # socket.timeout is an alias since Python 3.10
         raise TransportTimeout(f"timeout after {timeout}s") from exc
     except urllib.error.URLError as exc:
@@ -450,6 +490,23 @@ def _classify_400(body: str) -> str | None:
     return None
 
 
+def _sanitize_retry_after(raw: str) -> str:
+    """Task M1-T009: pass through RFC 9110-shaped Retry-After values
+    verbatim; repr()-sanitize anything else (untrusted header data)."""
+    if _RETRY_AFTER_SAFE_RE.match(raw):
+        return raw
+    return repr(raw)
+
+
+def _get_retry_after(headers: Mapping[str, str]) -> str | None:
+    """Case-insensitive Retry-After lookup (transports normalize to
+    lowercase keys; this stays defensive for injected test transports)."""
+    for name, value in headers.items():
+        if name.lower() == "retry-after" and isinstance(value, str):
+            return value
+    return None
+
+
 def _sanitize_error_code(code: str | None) -> str | None:
     """G5 F4: errorCode is untrusted response data. Official codes match the
     dotted-token allowlist and pass through verbatim; anything else (control
@@ -498,6 +555,14 @@ def _request_with_retry(
                 return response
             if response.status == 429:
                 last_kind, last_detail = "rate_limited", {"attempts": attempt}
+                # Task M1-T009: surface the (sanitized) Retry-After value in
+                # the typed-error detail so the resilience layer can honor it
+                # exactly (RFC 9110 section 10.2.3). The official Socrata
+                # docs specify only the 429 status (fixture F07), so the
+                # header is OPTIONAL input, never a guessed guarantee.
+                retry_after_raw = _get_retry_after(response.headers)
+                if retry_after_raw is not None:
+                    last_detail["retry_after"] = _sanitize_retry_after(retry_after_raw)
                 logger.warning(
                     "pluto_soda throttled (429) url=%s attempt=%d correlation_id=%s",
                     url, attempt, correlation_id,

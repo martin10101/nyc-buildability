@@ -46,6 +46,7 @@ import json
 import logging
 import uuid
 from collections.abc import Callable
+from functools import lru_cache
 
 from fastapi import APIRouter, Depends
 from fastapi.responses import JSONResponse
@@ -56,7 +57,6 @@ from app.connectors.pluto_soda import (
     SOURCE_ID,
     PlutoConnectorError,
     PlutoFetchResult,
-    fetch_by_bbl,
 )
 from app.profile.builder import build_property_profile
 from app.profile.contract import (
@@ -114,8 +114,23 @@ STATUS_STATE_MATRIX: frozenset[tuple[int, str | None]] = frozenset(
 PlutoFetcher = Callable[[str, str], PlutoFetchResult]
 
 
+@lru_cache(maxsize=1)
+def _default_resilient_fetcher():
+    """Process-wide resilient fetcher (task M1-T009): TTL cache, exact
+    Retry-After honoring, jittered bounded backoff, per-source circuit
+    breaker, and last-known-good serving with VISIBLE staleness wrap the
+    accepted connector. Lazily built so importing this module never reads
+    resilience env vars at import time; the same instance serves every
+    request so cache/breaker/LKG state is process-wide. Typed failures keep
+    the documented status/state matrix: circuit-open fast rejects surface as
+    (503, source_unavailable) with detail.circuit == "open"."""
+    from app.resilience.fetcher import build_default_resilient_fetcher
+
+    return build_default_resilient_fetcher()
+
+
 def _default_fetcher(canonical_bbl: str, correlation_id: str) -> PlutoFetchResult:
-    return fetch_by_bbl(canonical_bbl, correlation_id=correlation_id)
+    return _default_resilient_fetcher()(canonical_bbl, correlation_id)
 
 
 def get_pluto_fetcher() -> PlutoFetcher:
