@@ -53,8 +53,8 @@
     "code-reviewer",
     "security-reviewer"
   ],
-  "status": "awaiting_gate",
-  "progress_percent": 95,
+  "status": "accepted",
+  "progress_percent": 100,
   "risks": [
     "Pack agent files may conflict with existing agent roster conventions (memory frontmatter, ADR-005 rules) - report, do not silently rewrite",
     "GDS overlap refresh may change M5 task ordering - owner review required before any plan edit"
@@ -63,7 +63,7 @@
     "B-005 (clears when the manifest-completeness verification is recorded)"
   ],
   "created_at": "2026-07-14T21:40:17.803410+00:00",
-  "updated_at": "2026-07-17T09:27:17.688566+00:00",
+  "updated_at": "2026-07-17T10:15:58.269687+00:00",
   "progress_log": [
     {
       "at": "2026-07-17T08:11:55.064631+00:00",
@@ -113,5 +113,7 @@
       "percent": 95,
       "message": "Owner decision executed part 1 - PROGRAMMATIC dispatch enforcement built on main BEFORE any pack agent lands: B-007 blocker JSON; always-loaded counter-notice .claude/rules/expansion-agent-dispatch-hold.md (suspends 3d-ui-expansion.md item 13 + CONTINUE prompt item 10, holds P1-P8/19 tasks/9 contracts/master-plan changes for owner review, restates task-ID convention); PreToolUse hook .claude/hooks/agent_dispatch_guard.py wired in tracked .claude/settings.json (reads B-007 live per dispatch; fail-closed on corrupt blocker); tools/test_agent_dispatch_guard.py 15/15 PASS (all five rejected with B-007/conformance message while open; code-reviewer allowed; enforcement lifts on status!=open; corrupt->block; live repo blocked) wired into CI control-plane job. Correction 6 executed: settings.local.json bypassPermissions REMOVED -> acceptEdits + scoped python/git/gh allows only (untracked file; remote main never had bypass). Next: contract M0-T013, merge M0-T010 LOCALLY (no push), live dispatch-rejection test, conformance chain, single final push."
     }
-  ]
+  ],
+  "accepted_by": "orchestrator",
+  "accepted_at": "2026-07-17T10:15:58.269687+00:00"
 }

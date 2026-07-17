@@ -1,7 +1,7 @@
 {
   "blocker_id": "B-005",
   "title": "3D/UI expansion pack partially delivered",
-  "status": "open",
+  "status": "resolved",
   "affects": ["M0-T010 expansion integration report", "future 3D massing / premium UI / financial / opportunity workstreams"],
   "detail": "At 2026-07-14 21:30-21:31 UTC three expansion files appeared in the working tree (CONTINUE_FROM_CURRENT_STATE_PROMPT.md, docs/3D_MASSING_ENGINE_ARCHITECTURE.md, docs/PREMIUM_PRODUCT_DESIGN_SYSTEM.md) and were committed (9aff29a) after a secrets scan. The continuation prompt references 4 more documents (.claude/rules/3d-ui-expansion.md, docs/COMPETITIVE_FEATURE_EXPANSION.md, docs/3D_AND_UI_EXECUTION_PLAN.md, docs/3D_VISUAL_ACCEPTANCE_STANDARD.md) and 5 new subagents (3d-massing-engineer, product-design-director, visual-quality-reviewer, financial-feasibility-engineer, opportunity-search-engineer) that do NOT exist in the repository.",
   "exact_human_action": "Finish copying the complete 3D/UI expansion pack into the project root (the 4 missing docs and the 5 new .claude/agents/*.md files), or confirm the pack should be considered withdrawn.",
@@ -17,6 +17,11 @@
       "at": "2026-07-16T23:40:00Z",
       "by": "orchestrator",
       "result": "OWNER DECISION RECORDED (directive 2026-07-16): GDS does NOT supersede the pack — the original 3D/UI expansion pack remains REQUIRED (its financial-feasibility, opportunity-search, 3D, design, and visual-review materials complement GDS). Owner directed locating nyc-buildability-3d-ui-expansion-pack.zip and integrating additively per its real INTEGRATION_MANIFEST.json with per-file verification. LOCATE ATTEMPT FAILED: searched (1) Downloads/Desktop/Documents/OneDrive by patterns *expansion*pack*, *buildability*, *3d-ui*, *3d_ui*, *expansion-pack*, *expansion_pack*, plus full .zip inventory of Downloads; (2) recursive C:\\Users\\MLFLL sweep for nyc-buildability-3d-ui-expansion-pack*, *3d-ui-expansion*, INTEGRATION_MANIFEST.json (zero matches outside the repo's own blocker/handoff references); (3) C:\\ root; C: is the only filesystem drive. The zip and its manifest are NOT on this machine. B-005 remains open per owner instruction (open until the complete manifest is verified). EXACT HUMAN ACTION: owner must place nyc-buildability-3d-ui-expansion-pack.zip (containing INTEGRATION_MANIFEST.json) anywhere on this PC (Downloads suggested) or state where to obtain it; integration will then proceed additively with per-manifest-entry verification and collision diffing."
+    },
+    {
+      "at": "2026-07-17T10:20:00Z",
+      "by": "orchestrator",
+      "result": "RESOLVED at M0-T010 acceptance — final manifest-completeness audit. Owner supplied nyc-buildability-3d-ui-expansion-pack.zip (sha256 0C89C2B1...FB146A); M0-T010 integrated all pack files in commits d25d2b2/c0769ae (raw pack, blob-identical hash evidence). G3 review (project-control/reports/, M0-T010 G3) independently self-extracted the owner ZIP and verified ALL 14 archive entries blob-identical to the committed tree: manifest COMPLETE. The five agent files reached ADR-005 conformance via M0-T013 (accepted 2026-07-17, G3 + G5 re-check PASS, merge ff24147, CI green). No missing pack content remains."
     }
   ]
 }

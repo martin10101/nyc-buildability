@@ -1,23 +1,20 @@
-# EXPANSION-AGENT DISPATCH HOLD (owner directive 2026-07-17; G5 M0-T010)
+# EXPANSION-AGENT HOLD NOTICE (owner directive 2026-07-17; G5 M0-T010)
 
 This notice is deliberately unconditioned (no `paths:` frontmatter) so it attaches to
 every session — the same always-loaded plane as `.claude/rules/3d-ui-expansion.md`.
 
-## 1. DISPATCH PROHIBITED
+## 1. DISPATCH PROHIBITION — RETIRED 2026-07-17
 
-The subagents `3d-massing-engineer`, `product-design-director`, `visual-quality-reviewer`,
-`financial-feasibility-engineer`, `opportunity-search-engineer` MUST NOT be dispatched by
-any session, agent, skill, workflow, or hook until conformance task **M0-T013** is accepted
-and blocker **B-007** (`project-control/blockers/B-007-expansion-agent-conformance.json`)
-is closed. Their definitions lack the ADR-005 protocol sections; dispatching them under
-current session permissions would allow non-orchestrator ledger writes.
-
-This prohibition is machine-enforced: the PreToolUse hook
-`.claude/hooks/agent_dispatch_guard.py` (wired in the tracked `.claude/settings.json`)
-reads B-007 live and rejects Agent/Task dispatch of these five exact names while the
-blocker is open. Do not remove, bypass, or re-scope the hook or this notice; only the
-orchestrator retires them, in the same checkpoint that closes B-007 after M0-T013
-acceptance (G3 + G5 re-check).
+The former prohibition on dispatching `3d-massing-engineer`, `product-design-director`,
+`visual-quality-reviewer`, `financial-feasibility-engineer`, `opportunity-search-engineer`
+was RETIRED at M0-T013 acceptance (2026-07-17): all five agent definitions now carry the
+ADR-005 protocol sections and conformant frontmatter, verified by G3 + G5 re-check
+(project-control/reports/M0-T013-G3-code-review.md and M0-T013-G5-security-recheck.md),
+merged at ff24147 with CI green. Blocker B-007 is `resolved`; the PreToolUse hook
+`.claude/hooks/agent_dispatch_guard.py` reads that status live and now permits the five
+agents. The hook and its tests stay in place as a regression backstop — do not remove or
+re-scope them without a G5 review. NOTE: dispatchability does not authorize new expansion
+work; section 2 below still governs planning.
 
 ## 2. OWNER-REVIEW HOLD ON EXPANSION PLANNING
 
