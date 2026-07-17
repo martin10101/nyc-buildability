@@ -8,26 +8,25 @@
   "inputs": [
     "Owner code-audit directive 2026-07-17 P1 items (verbatim in project-control/reports/OWNER-REVIEW-code-audit-task-consolidation.md section 2.3)",
     "services/api builder completeness logic (current overall completeness derived from all 108 possible PLUTO columns - the defect)",
-    "packages/contracts property-profile v1.1 + the M2-T003 type-generation pipeline (contract evolution must flow through it)",
+    "packages/contracts property-profile v1.1 schema (edited DIRECTLY in this task; owner sequencing decision 2026-07-17 places this task BEFORE M2-T003 so the schema settles before validation/typegen/contract_version land once against the final shape)",
     "PRD section 12 coverage model + GENERATIVE_DEVELOPMENT_STRATEGY_REQUIREMENTS.md section 3.3 independent status dimensions (legal/geometric/planning/financial/evidence must never collapse into one label)"
   ],
   "outputs": [
     "Independent dimensions on the profile: source-record completeness, analysis readiness, rule coverage, geometry validity, financial readiness - each with its own enum; dimensions not yet computable are declared not_computed, never inferred; overall completeness no longer derived from all 108 PLUTO columns (feasibility-relevant column set documented with provenance)",
     "Fact identity separation: stable fact_key (survives re-observation) vs immutable observation_id (unique per retrieval)",
     "Canonical response digest + per-value digest and snapshot lineage (observation -> source version -> request) on property facts",
-    "Additive contract evolution through the M2-T003 pipeline (v1.1 consumers unaffected)",
+    "Additive contract evolution applied directly to the canonical schema (v1.1 consumers unaffected; the M2-T003 validation/typegen pipeline is built afterward against this settled shape)",
     "project-control/reports/M2-T004-producer-report.md (AOS section-6 packet)"
   ],
-  "dependencies": [
-    "M2-T003"
-  ],
+  "dependencies": [],
   "allowed_paths": [
-    "services/api/**",
+    "services/api/** (EXCEPT services/api/requirements.txt and services/api/app/main.py - reserved for M0-T015 during Wave 1)",
     "packages/contracts/**",
     ".github/workflows/ci.yml (ADDITIVE only)",
     "project-control/reports/M2-T004-producer-report.md"
   ],
   "forbidden_paths": [
+    "services/api/requirements.txt and services/api/app/main.py (M0-T015 owns these during Wave 1 - parallel exclusivity)",
     "apps/web/**",
     "render.yaml",
     "docs/**",
@@ -40,7 +39,7 @@
     "S3 identity: re-observing the same fact preserves fact_key and issues a new observation_id; both persist in provenance",
     "S4 digest: deterministic across identical responses; any value change flips the digest; digest recorded per response and per fact",
     "S5 lineage: every fact traces observation -> source version -> request URL/timestamp without gaps",
-    "S6 additive evolution: M2-T001/M2-T002 fixtures and journeys remain green against the evolved contract",
+    "S6 additive evolution: M2-T001 fixtures and journeys remain green against the evolved contract (M2-T002 does not exist yet - it consumes this shape via M2-T003)",
     "S7 G1 re-verification of the documented column set and semantics by data-contract-verifier"
   ],
   "required_gates": [
@@ -58,7 +57,8 @@
   "status": "backlog",
   "progress_percent": 0,
   "risks": [
-    "Owner-directed sequencing: this must land before persistence and professional reports; it does NOT block M2-T002",
+    "Owner-directed sequencing 2026-07-17: this task is FIRST on the data/API critical path (M2-T004 -> M2-T003 -> M2-T002/M1-T009) because it changes the canonical schema, status model, fact/observation identity, and digest lineage that M2-T003 consumes (evidence: builder.py:318-381 data_completeness; property_profile.schema.json:170) - reordering prevents implementing response validation and generated types twice",
+    "Schema edits must keep M2-T001 fixtures/journeys green (additive evolution; existing web-e2e job is the regression harness)",
     "Dimension enums are contract surface - wrong granularity now is expensive later; keep enums minimal and extensible"
   ],
   "blockers": [],
