@@ -1,0 +1,68 @@
+{
+  "task_id": "M2-T006",
+  "title": "Property-profile contract 1.3.0 (additive): reproducibility.staleness object, correlation_id description refresh, open-schema key documentation",
+  "task_type": "backend",
+  "milestone_id": "M2",
+  "objective": "Additive contract 1.3.0 on packages/contracts property_profile schema + services/api emission. (1) Add a typed reproducibility.staleness object (served_from_cache, stale, upstream_error_type, original_retrieved_at, age_seconds) as the machine-readable channel for the M1-T009 last-known-good staleness that is currently a connector_notes convention (M1-T009 G1 findings D1/D2, LOW); keep the human-readable note. (2) Refresh the stale correlation_id description sentence flagged by M1-T009 G1 D2. (3) Document the open-schema derivation and mapped-feature keys flagged by M2-T002 G3 N3. Regenerate TypeScript types through the typegen pipeline and keep the contracts-typegen and contracts-schema-bundle CI jobs byte-identical; move the declared-vs-emitted version check to 1.3.0 atomically with the builder. Additive-optional only: the 1.2.0-shaped client must keep validating. Intended producer: backend-engineer.",
+  "business_reason": "Session-9 handoff queue item 3: G1-reviewed follow-ups from M1-T009 (D1/D2) and M2-T002 (N3); staleness must be visible in a typed contract field, not a notes convention, before any client renders resilience output",
+  "inputs": [
+    "project-control/reports/M1-T009-G1-data-contract-review.md findings D1/D2 VERBATIM (staleness object shape + correlation_id description staleness)",
+    "project-control/reports/M2-T002-G3-human-journey-review.md N3 (open-schema derivation/mapped-feature keys undocumented; bridged today by disclosed runtime-narrowing helpers)",
+    "packages/contracts/schemas/v1/property_profile.schema.json at 1.2.0 + packages/contracts/generated/property_profile.ts + contracts-typegen and contracts-schema-bundle CI jobs (M2-T003 outputs)",
+    "services/api/app/resilience/** last-known-good staleness convention (served_from_last_known_good connector_notes, M1-T009) and the M2-T003 builder declared-version logic"
+  ],
+  "outputs": [
+    "property_profile.schema.json 1.3.0: additive optional reproducibility.staleness object (served_from_cache, stale, upstream_error_type, original_retrieved_at, age_seconds); refreshed correlation_id description; documented derivation/mapped-feature open-schema keys",
+    "services/api emission populates staleness on LKG/cache serves; connector_notes note retained for humans; declared-vs-emitted check moves to 1.3.0 atomically",
+    "Regenerated packages/contracts/generated/property_profile.ts via the typegen pipeline (byte-identical in CI)",
+    "Fixture updates + deterministic tests for stale and fresh serves passing boundary validation",
+    "project-control/reports/M2-T006-producer-report.md (AOS section-6 packet)"
+  ],
+  "dependencies": [
+    "M2-T003",
+    "M1-T009"
+  ],
+  "allowed_paths": [
+    "packages/contracts/**",
+    "services/api/**",
+    "project-control/reports/M2-T006-producer-report.md"
+  ],
+  "forbidden_paths": [
+    "apps/web/** (additive-optional change must not require client edits; if it does, stop and report for a follow-up packet)",
+    "docs/** (research citations belong in the producer report)",
+    ".github/workflows/** (existing typegen/bundle jobs must pass unchanged)",
+    "project-control/** (except own producer report)",
+    ".claude/**"
+  ],
+  "acceptance_scenarios": [
+    "S1 schema: 1.3.0 validates; contracts CI job green; typegen + schema-bundle byte-identical after regeneration",
+    "S2 stale serve: LKG path emits staleness (served_from_cache true, stale true, upstream_error_type, original_retrieved_at, age_seconds) and passes boundary validation; the human-readable STALE connector note is retained",
+    "S3 fresh serve: staleness truthfully reflects a non-stale serve per the schema definition (or is absent where the schema defines absence); no invented values",
+    "S4 version: builder declares 1.3.0; declared-vs-emitted check enforces it; bounded unsupported_contract_version behavior unchanged",
+    "S5 compatibility: 1.2.0-shaped payload fixtures still validate against 1.3.0 (additive-optional proof); generated-type client consumers compile without edits",
+    "S6 correlation_id: refreshed description matches actual generation/propagation behavior (doc text asserted against the code path in review)",
+    "S7 regression: full api pytest suite green; connector field mappings untouched (S9 mapping stays as G1-verified)"
+  ],
+  "required_gates": [
+    "G0",
+    "G1",
+    "G2",
+    "G3",
+    "G4"
+  ],
+  "producer_agent": null,
+  "reviewer_agents": [
+    "data-contract-verifier",
+    "code-reviewer"
+  ],
+  "status": "backlog",
+  "progress_percent": 0,
+  "risks": [
+    "Version bump touches M2-T003 declared-vs-emitted enforcement: schema, builder, and tests must move atomically in one PR",
+    "age_seconds needs a clock source: use the same injected-clock discipline as M1-T009 (no wall-clock in deterministic tests)",
+    "B-001 no-deploy stands; CI-only proof"
+  ],
+  "blockers": [],
+  "created_at": "2026-07-17T22:19:19.813264+00:00",
+  "updated_at": "2026-07-17T22:19:19.813264+00:00"
+}

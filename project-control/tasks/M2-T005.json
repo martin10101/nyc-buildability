@@ -1,0 +1,66 @@
+{
+  "task_id": "M2-T005",
+  "title": "Confirm/Property a11y announcement + focus management (visual Major D1) and minor visual defects D2-D5 + G3 N1 test hygiene",
+  "task_type": "frontend",
+  "milestone_id": "M2",
+  "objective": "Resolve M2-T002 visual-quality Major D1 on both Property and Confirm screens: failure/outcome state arrivals are not announced (FailureState cards have no role=\"alert\"/aria-live; the loading live-region unmounts before the outcome) and focus is not managed (keyboard retry drops focus to body). Add announcements + deterministic focus management. Fold in Minors D2 (style .secondary-button:disabled so the disabled confirm affordance is visually non-interactive), D3 (confirm-bad-param state renders without an h1), D4 (landmark/flood values duplicated on Confirm between the Zoning mapped-features table and the Flags section), D5 (focus ring at 35 percent alpha likely under the 3:1 focus-appearance guideline), and G3 N1 (replace the raw NUL byte in apps/web/src/lib/__tests__/api.test.ts with the backslash-u-0000 string escape so the file diffs as text). Intended producer: frontend-engineer. Scope: apps/web/** only.",
+  "business_reason": "M2-T002 G4 visual review found Major a11y defect D1 (recommended blocking correction, tracked as defect per orchestrator call recorded in the review header); accessibility is a PRD section 24 and ACCEPTANCE_SCENARIO_STANDARD UI-pack requirement before client-facing exposure",
+  "inputs": [
+    "project-control/reports/M2-T002-visual-quality-review.md defect table VERBATIM: Major D1 (announcement/focus management), Minors D2-D5, carry-forwards CF-1/CF-2/CF-3 for context",
+    "project-control/reports/M2-T002-G3-human-journey-review.md N1 (raw NUL byte makes api.test.ts diff as binary)",
+    "Accepted M2-T002 Confirm/Property screens and e2e suite in apps/web (43 Playwright journeys green at PR #21)",
+    "docs/ACCEPTANCE_SCENARIO_STANDARD.md UI human-journey pack (keyboard navigation and basic accessibility)",
+    "docs/PREMIUM_PRODUCT_DESIGN_SYSTEM.md tokens (focus ring, button states)"
+  ],
+  "outputs": [
+    "Announcement + focus management for every failure/outcome state on Property and Confirm (role=alert or aria-live pattern, exactly-once announcement; focus moved deterministically after outcome arrival and after keyboard retry)",
+    "D2: visible .secondary-button:disabled styling; D3: h1 present in confirm-bad-param state; D4: landmark/flood flags rendered once on Confirm; D5: focus-ring token adjusted toward 3:1 focus-appearance contrast",
+    "N1: api.test.ts raw NUL literal replaced with the backslash-u-0000 string escape; file diffs as text (git no longer marks it binary)",
+    "Extended component/e2e assertions proving announcements and focus (aria attributes + document.activeElement checks)",
+    "project-control/reports/M2-T005-producer-report.md (AOS section-6 packet)"
+  ],
+  "dependencies": [
+    "M2-T002"
+  ],
+  "allowed_paths": [
+    "apps/web/**",
+    "project-control/reports/M2-T005-producer-report.md"
+  ],
+  "forbidden_paths": [
+    "services/**",
+    "packages/contracts/**",
+    "docs/**",
+    ".github/workflows/**",
+    "project-control/** (except own producer report)",
+    ".claude/**"
+  ],
+  "acceptance_scenarios": [
+    "S1 announcement: for each failure state and for success arrival on both screens, an assistive announcement is emitted exactly once (component-level aria assertions + e2e); the loading live-region handoff does not swallow the outcome",
+    "S2 focus: after outcome arrival and after keyboard retry, focus lands on the outcome container/heading (document.activeElement asserted in e2e); no focus drop to body",
+    "S3 minors: D2 disabled styling visibly distinct (token-based); D3 bad-param state has an h1; D4 flags render exactly once on Confirm; D5 focus-ring token updated toward 3:1 (final pixel verification stays CF-2 for the first browser-accessible session)",
+    "S4 hygiene: api.test.ts contains no raw control bytes (grep-verifiable), git diff renders it as text, and the control-character laundering test still passes with the escaped literal",
+    "S5 regression: all existing M2-T001 + M2-T002 Playwright journeys and vitest suites stay green; no coverage-label or copy changes outside the defect fixes",
+    "S6 keyboard-only: complete lookup-to-confirm journey using keyboard only with announcements/focus behavior active (no mouse events)"
+  ],
+  "required_gates": [
+    "G0",
+    "G2",
+    "G3",
+    "G4"
+  ],
+  "producer_agent": null,
+  "reviewer_agents": [
+    "human-journey-reviewer",
+    "visual-quality-reviewer"
+  ],
+  "status": "backlog",
+  "progress_percent": 0,
+  "risks": [
+    "aria-live/role=alert double-announcement risk when both a live region and a focus move announce; S1 requires exactly-once",
+    "CI-only heavy execution stands (no local npm/Playwright on the owner PC)",
+    "Pixel-level D5/CF-2 verification impossible until a browser-accessible session; code-level token change only"
+  ],
+  "blockers": [],
+  "created_at": "2026-07-17T22:19:19.700132+00:00",
+  "updated_at": "2026-07-17T22:19:19.700132+00:00"
+}
