@@ -18,10 +18,16 @@
 # at Blueprint creation time. NO literal secret values may EVER be added to
 # this file. See PRD section 17 and ADR-002 section 3.
 #
-# PLACEHOLDER STATUS: services/api does not exist yet (owned by task(s) under
-# apps/services/packages scope). Build/start commands below are documented
-# placeholders that MUST be reconciled with the real services/api layout
-# before the first Blueprint deploy. Marked [PLACEHOLDER] individually.
+# RECONCILIATION STATUS (task M0-T015, 2026-07-17): the former [PLACEHOLDER]
+# build/start commands were reconciled against the real services/api layout.
+# Worker and cron services were REMOVED (their entrypoint modules do not
+# exist yet — see the tracked note above the web frontend service). Nothing
+# in this file is provisioned yet: B-002 (Render account) stays owner-gated.
+#
+# AUTH STATUS (M0-T015): the API has NO authentication — M0-T007/T008 are
+# blocked on B-001. The API service below must NOT be publicly exposed until
+# the auth/organization layer lands (M1-T005 G5 condition). Provisioning this
+# Blueprint before then is for owner-controlled staging/internal use only.
 # =============================================================================
 
 # DEPLOY TRIGGER POLICY (ADR-003 D1/D2/D5): every production service below -
@@ -79,13 +85,20 @@ services:
     # Production: no platform auto-deploy; deploys only via secret deploy hook
     # from the Actions pipeline (see DEPLOY TRIGGER POLICY above, ADR-003 D2).
     autoDeployTrigger: "off"
-    buildCommand: "pip install -r requirements.txt"  # [PLACEHOLDER] reconcile with services/api build (e.g., uv/poetry) before first deploy
-    startCommand: "uvicorn app.main:app --host 0.0.0.0 --port $PORT"  # [PLACEHOLDER] reconcile with real ASGI module path
+    # Reconciled 2026-07-17 (M0-T015): services/api/requirements.txt is the
+    # pinned DEPLOYMENT set (runtime deps only, pins constrained by the
+    # pyproject.toml ranges — decision documented in that file's header).
+    buildCommand: "pip install -r requirements.txt"
+    # Reconciled 2026-07-17 (M0-T015): real ASGI path — services/api/app/main.py
+    # exposes module-level `app` (built by create_app()).
+    startCommand: "uvicorn app.main:app --host 0.0.0.0 --port $PORT"
     # Render treats 2xx/3xx within 5s as healthy and gates zero-downtime
     # deploys on this path (https://render.com/docs/health-checks, retrieved
     # 2026-07-14). A deploy that never passes health checks does not replace
     # the running version - first line of rollback defense (ADR-003 D2).
-    healthCheckPath: /health
+    # Reconciled 2026-07-17 (M0-T015): the live route is /api/v1/health
+    # (PRD section 21 versioned prefix; /health returns 404 by test).
+    healthCheckPath: /api/v1/health
     envVars:
       # Non-secret but environment-scoped: value (`production` or `staging`)
       # is entered per Render environment at Blueprint/service creation, so
@@ -105,80 +118,36 @@ services:
         sync: false
       - key: SENTRY_DSN
         sync: false
-
-  # ---------------------------------------------------------------------------
-  # 2) Background worker - ingestion / GIS / AI-extraction / scenario jobs.
-  #    Workers run continuously and receive no inbound traffic; they poll the
-  #    job queue (https://render.com/docs/background-workers, retrieved
-  #    2026-07-14). NOTE: no free tier exists for workers
-  #    (https://render.com/docs/free, retrieved 2026-07-14).
-  #    Rollback: supported via dashboard/API without rebuild (ADR-003 R2).
-  # ---------------------------------------------------------------------------
-  - type: worker
-    name: nycdf-worker-jobs
-    runtime: python
-    rootDir: services/api
-    plan: starter
-    region: oregon
-    # Production: no platform auto-deploy (see DEPLOY TRIGGER POLICY above).
-    autoDeployTrigger: "off"
-    buildCommand: "pip install -r requirements.txt"  # [PLACEHOLDER] keep identical to nycdf-api build
-    startCommand: "python -m app.workers.job_runner"  # [PLACEHOLDER] job-queue consumer entrypoint does not exist yet; defined by the services/api producer
-    envVars:
-      # Environment-scoped, set per Render environment (ADR-002 section 3).
-      - key: ENVIRONMENT
-        sync: false
-      - key: SUPABASE_URL
-        sync: false
-      - key: SUPABASE_SERVICE_ROLE_KEY
-        sync: false
-      - key: SUPABASE_DB_URL
-        sync: false
-      - key: GEOCLIENT_SUBSCRIPTION_KEY
-        sync: false
-      - key: ANTHROPIC_API_KEY
-        sync: false
-      - key: SENTRY_DSN
+      # CORS origin allowlist (task M0-T015; resolves M2-T001 G3 defect D8).
+      # NON-SECRET but environment-scoped: comma-separated EXACT origins
+      # (scheme://host[:port]) — set per environment to that environment's
+      # nycdf-web URL. Wildcards are REJECTED at app startup because the API
+      # allows credentialed requests (app/main.py enforces this; unset/empty
+      # means no cross-origin access — safe default).
+      - key: API_CORS_ALLOWED_ORIGINS
         sync: false
 
   # ---------------------------------------------------------------------------
-  # 3) Cron job - scheduled official-source monitoring (PRD 14.1 "Scheduled
-  #    source monitoring"). Schedule is evaluated in UTC
-  #    (https://render.com/docs/cronjobs, retrieved 2026-07-14). Cron jobs
-  #    bill per-minute while running with a $1/month minimum per cron job and
-  #    have no free tier (https://render.com/docs/cronjobs,
-  #    https://render.com/pricing, retrieved 2026-07-14).
-  #    Rollback: cron is NOT listed as rollback-eligible - revert via
-  #    `git revert` + push (ADR-003 R2).
+  # 2) REMOVED SERVICES — TRACKED NOTE (task M0-T015, 2026-07-17).
+  #    The background worker `nycdf-worker-jobs` (startCommand
+  #    `python -m app.workers.job_runner`) and the cron job
+  #    `nycdf-cron-source-monitor` (startCommand
+  #    `python -m app.jobs.source_monitor`, schedule "0 6 * * *" UTC) were
+  #    REMOVED from this Blueprint because neither entrypoint module exists in
+  #    services/api yet — a Blueprint must not reference phantom entrypoints
+  #    (owner deployment-blocker directive 2026-07-17, bullet 4).
+  #    RESTORATION IS OWED, not optional:
+  #      - the job-queue worker returns when the M1 connector-framework /
+  #        job-system work delivers app/workers/job_runner.py (PRD section 22);
+  #      - the source-monitor cron returns when the scheduled source-monitoring
+  #        work delivers app/jobs/source_monitor.py (PRD 14.1).
+  #    The task that delivers each module MUST restore its service block here
+  #    in the same change (prior block content is preserved in git history at
+  #    commit d61c9b6 and in docs/DEPLOYMENT_AND_ROLLBACK.md section 0 note).
   # ---------------------------------------------------------------------------
-  - type: cron
-    name: nycdf-cron-source-monitor
-    runtime: python
-    rootDir: services/api
-    plan: starter
-    region: oregon
-    # Production: no platform auto-deploy (see DEPLOY TRIGGER POLICY above).
-    # Without this, the default for new services is `commit`
-    # (https://render.com/docs/blueprint-spec, retrieved 2026-07-15).
-    autoDeployTrigger: "off"
-    schedule: "0 6 * * *"  # daily 06:00 UTC (~01:00/02:00 New York); source freshness checks per PRD source strategy
-    buildCommand: "pip install -r requirements.txt"  # [PLACEHOLDER] keep identical to nycdf-api build
-    startCommand: "python -m app.jobs.source_monitor"  # [PLACEHOLDER] source-monitor entrypoint does not exist yet; defined by the services/api producer
-    envVars:
-      # Environment-scoped, set per Render environment (ADR-002 section 3).
-      - key: ENVIRONMENT
-        sync: false
-      - key: SUPABASE_URL
-        sync: false
-      - key: SUPABASE_SERVICE_ROLE_KEY
-        sync: false
-      - key: SUPABASE_DB_URL
-        sync: false
-      - key: SENTRY_DSN
-        sync: false
 
   # ---------------------------------------------------------------------------
-  # 4) Next.js frontend web service (ADDED 2026-07-16 per ADR-004; owner
+  # 3) Next.js frontend web service (ADDED 2026-07-16 per ADR-004; owner
   #    decision 2026-07-14: frontend served from Render, Vercel dropped).
   #    Render's official guide deploys "a full Next.js app with server-side
   #    logic" as a WEB SERVICE - language Node, build `yarn; yarn build` (npm
@@ -233,3 +202,13 @@ services:
         sync: false
       - key: NEXT_PUBLIC_SUPABASE_ANON_KEY
         sync: false  # anon/publishable key only - safe because RLS enforces access
+      # API wiring decision (task M0-T015; resolves M2-T001 G3 defect D8):
+      # the frontend calls the API CROSS-ORIGIN at this base URL, paired with
+      # the API's exact-origin CORS allowlist (API_CORS_ALLOWED_ORIGINS on
+      # nycdf-api = this service's URL). Chosen over a same-origin proxy
+      # because apps/web already consumes NEXT_PUBLIC_API_BASE_URL (M2-T001,
+      # apps/web/.env.example) and a proxy would add a second hop + moving
+      # part with no security gain (no credential is hidden by proxying — the
+      # value is a publishable URL compiled into the browser bundle).
+      - key: NEXT_PUBLIC_API_BASE_URL
+        sync: false
