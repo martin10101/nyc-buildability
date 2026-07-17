@@ -1,0 +1,9 @@
+{
+  "checkpoint_id": "CP-0020",
+  "timestamp": "2026-07-17T19:54:41.913175+00:00",
+  "commit": "66a5de5",
+  "branch": "main",
+  "active_milestone": "M0",
+  "summary": "M2-T003 ACCEPTED (26th): contract 1.2.0 canonical (builder declares 1.2.0, enum read live from schema, declared-vs-emitted check, bounded unsupported-version error, pair-matrix enforcement, stdlib TS typegen + CI drift check, 500+no_match client fixture). Mid-cycle web-e2e FAIL (schema path broke under non-editable install + jsonschema dev-only) fixed by producer rework 3a78fdd: importlib.resources bundled schemas byte-identity-guarded by contracts-schema-bundle CI job, jsonschema promoted to runtime dep. G1 PASS zero corrections (S9 mapping untouched); G3+G4 PASS zero blocking (LOW residuals R1-R4, O-1/O-2 carried forward; M2-T002 wires the 500+no_match fixture at client fetch-stub level). PR 16 merged d49c077. Unlocks M2-T002 and M1-T009.",
+  "updated_at": "2026-07-17T19:54:41.913175+00:00"
+}
