@@ -29,11 +29,14 @@
     "M2-T001",
     "M2-T004"
   ],
-  "active_tasks": [],
+  "active_tasks": [
+    "M0-T016",
+    "M2-T003"
+  ],
   "blocked_tasks": [
     "M0-T007",
     "M0-T008"
   ],
   "failed_gates": [],
-  "updated_at": "2026-07-17T18:13:32.023637+00:00"
+  "updated_at": "2026-07-17T18:48:03.296532+00:00"
 }

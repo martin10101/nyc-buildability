@@ -61,8 +61,8 @@
     "data-contract-verifier",
     "code-reviewer"
   ],
-  "status": "backlog",
-  "progress_percent": 0,
+  "status": "claimed",
+  "progress_percent": 10,
   "risks": [
     "contract_version decision may ripple into stored fixtures - keep the change additive and re-record fixtures with provenance rather than hand-editing",
     "Type-generation tool choice must run in CI without adding local toolchain weight (owner PC thin-client policy)",
@@ -70,5 +70,6 @@
   ],
   "blockers": [],
   "created_at": "2026-07-17T10:25:10.679668+00:00",
-  "updated_at": "2026-07-17T18:40:00+00:00"
+  "updated_at": "2026-07-17T18:48:03.003072+00:00",
+  "worktree": ".claude/worktrees/M2-T003"
 }
