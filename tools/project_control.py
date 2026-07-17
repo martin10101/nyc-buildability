@@ -35,6 +35,12 @@ TASK LIFECYCLE (docs/GATES_AND_CHECKPOINTS.md)
     from the forward chain (only `submit`/`gate` do; the unblock path
     blocked -> awaiting_gate is the one progress exception). `accepted` and
     `canceled` are terminal: no subcommand modifies a terminal task.
+    A task leaving `blocked` for any active status (every target except
+    `canceled`) must first carry a valid roster: a real producer_agent (not
+    the reserved "orchestrator") and at least one reviewer in reviewer_agents
+    that is neither empty, "orchestrator", nor the producer. A blocked task
+    with an empty/invalid roster (e.g. legacy M0-T007/M0-T008) cannot re-enter
+    the workflow until the orchestrator amends its packet (M0-T014 G3 OBS-3).
 
 ACCEPT PRECONDITIONS (all required)
     1. --agent orchestrator (procedural label, see above);
@@ -106,6 +112,15 @@ GATE_IDS = ("G0", "G1", "G2", "G3", "G4", "G5", "G6", "G7")
 SELF_CHECK_GATES = frozenset({"G2"})
 ADMINISTRATIVE_GATES = frozenset({"G0", "G7"})
 INDEPENDENT_GATES = frozenset({"G1", "G3", "G4", "G5", "G6"})
+
+# Reserved control-plane identity. The orchestrator may author an explicitly
+# classified G2/self_check record and run G0/G7 administrative gates (reviewer
+# == "orchestrator" is REQUIRED there), but it may NEVER appear in a task's
+# reviewer_agents roster: an independent gate (G1/G3/G4/G5/G6) recorded by the
+# orchestrator would collapse producer and independent-reviewer authority.
+# Enforced on WRITE only (M0-T014 G5 defect D1); stored history is never
+# retro-rejected.
+RESERVED_ORCHESTRATOR = "orchestrator"
 
 CLAIMABLE_STATUSES = frozenset({"ready", "rework"})
 SUBMITTABLE_STATUSES = frozenset({"claimed", "in_progress", "self_check", "rework"})
@@ -268,7 +283,24 @@ def new_task(a):
     config = load(PC / "config.json")
     gates = a.gates.split(",") if a.gates else config["required_gates_by_task_type"].get(
         a.task_type, ["G0", "G2", "G3", "G4"])
+    # --gates enum validation (M0-T014 G5 defect D2): every entry must be a
+    # canonical gate id. Reject unknown names immediately, naming the offending
+    # entry and the canonical enum, so a typo can never author a task whose
+    # required_gates can never be satisfied.
+    bad_gates = [g for g in gates if g not in GATE_IDS]
+    if bad_gates:
+        return fail(f"Invalid --gates entry(ies): {', '.join(bad_gates)}. "
+                    f"Allowed gates are {', '.join(GATE_IDS)}.")
     reviewers = [x for x in (a.reviewers or "").split(",") if x]
+    # Reserved-identity prohibition (M0-T014 G5 defect D1): the orchestrator may
+    # never be a task reviewer. If it were rostered, an independent gate could be
+    # recorded by the same identity that authors self_check/administrative
+    # records, collapsing the producer/independent-review separation.
+    if RESERVED_ORCHESTRATOR in reviewers:
+        return fail(f"Reviewer {RESERVED_ORCHESTRATOR!r} is reserved and may not appear in "
+                    f"reviewer_agents: the orchestrator records self_check (G2) and "
+                    f"administrative (G0/G7) gates but can never satisfy an independent "
+                    f"gate (G1/G3/G4/G5/G6). List an independent reviewer instead.")
     data = {
         "task_id": a.task_id, "title": a.title, "task_type": a.task_type,
         "milestone_id": a.milestone, "objective": a.objective,
@@ -300,6 +332,37 @@ def claim(a):
     return 0
 
 
+def invalid_unblock_roster(task: dict):
+    """Return an explanatory string when a task's packet does not carry a valid
+    producer + independent-reviewer roster, else None.
+
+    Blocked-task roster precondition (M0-T014 G3 OBS-3): a task in `blocked`
+    status must not be able to re-enter the active workflow until its packet is
+    amended with a real producer and at least one usable independent reviewer.
+    A valid roster requires:
+      - a non-empty producer_agent that is not the reserved orchestrator; and
+      - at least one reviewer in reviewer_agents that is neither empty, the
+        reserved orchestrator, nor equal to the producer (an independent gate
+        recorded by such a reviewer would otherwise be impossible to satisfy).
+    Enforced on WRITE only at the unblock transition; stored history untouched.
+    """
+    producer = (task.get("producer_agent") or "").strip()
+    if not producer:
+        return ("no producer_agent is set; amend the packet with a producer before "
+                "unblocking.")
+    if producer == RESERVED_ORCHESTRATOR:
+        return (f"producer_agent is the reserved {RESERVED_ORCHESTRATOR!r}; amend the "
+                f"packet with a real producer before unblocking.")
+    reviewers = task.get("reviewer_agents") or []
+    usable = [r for r in reviewers
+              if r and r != RESERVED_ORCHESTRATOR and r != producer]
+    if not usable:
+        return ("reviewer_agents has no usable independent reviewer (must be non-empty "
+                f"and contain a reviewer that is neither {RESERVED_ORCHESTRATOR!r} nor "
+                f"the producer {producer!r}); amend the packet before unblocking.")
+    return None
+
+
 def progress(a):
     t, p, err = load_task(a.task_id)
     if err:
@@ -322,6 +385,16 @@ def progress(a):
                         f"{sorted(allowed) or 'none'} (lifecycle per "
                         f"docs/GATES_AND_CHECKPOINTS.md; awaiting_gate is entered via "
                         f"submit/gate, accepted via accept).")
+        # Blocked-task roster precondition (M0-T014 G3 OBS-3): leaving `blocked`
+        # for any active status requires an amended, usable producer/reviewer
+        # roster. `canceled` is exempt (a blocked task may always be abandoned).
+        if cur == "blocked" and target != "canceled":
+            roster_err = invalid_unblock_roster(t)
+            if roster_err:
+                return fail(f"Cannot unblock {a.task_id} ({cur!r} -> {target!r}): "
+                            f"{roster_err} A blocked task cannot re-enter the workflow "
+                            f"until the orchestrator amends its packet with a valid "
+                            f"producer and independent-reviewer roster.")
         t["status"] = target
     t["progress_percent"] = a.percent
     t.setdefault("progress_log", []).append(
@@ -388,6 +461,15 @@ def gate(a):
             return fail("Producer cannot record an administrative gate on its own task.")
         role = "administrative"
     else:  # INDEPENDENT_GATES
+        # Reserved-identity prohibition (M0-T014 G5 defect D1): the orchestrator
+        # can never satisfy an independent gate, even if a legacy packet lists it
+        # in reviewer_agents. Validated on WRITE only; stored gate history is
+        # never retro-rejected (accept() tolerates legacy records).
+        if a.reviewer == RESERVED_ORCHESTRATOR:
+            return fail(f"Reviewer {RESERVED_ORCHESTRATOR!r} is reserved and cannot record an "
+                        f"independent gate ({a.gate_id}): it records self_check (G2) and "
+                        f"administrative (G0/G7) gates only. An independent reviewer "
+                        f"(!= producer, listed in reviewer_agents) must record {a.gate_id}.")
         if producer and a.reviewer == producer:
             return fail("Producer cannot independently gate own task.")
         reviewers = t.get("reviewer_agents") or []

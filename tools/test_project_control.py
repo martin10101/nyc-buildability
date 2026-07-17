@@ -31,6 +31,15 @@ the M0-T014 hardening scenarios:
       still parses and serves `status`; legacy gate records without a role
       field (G2/G0 by "orchestrator", G3 by an unrostered legacy reviewer)
       still satisfy acceptance - validation is write-time only.
+  S8  M0-T016 hardening follow-up: (1) the reserved identity "orchestrator" is
+      rejected in --reviewers at new-task and as --reviewer on an independent
+      gate (even when a legacy packet lists it), while its legitimate G2
+      self_check and G0/G7 administrative paths still work; (2) unknown --gates
+      entries are rejected immediately, valid G0-G7 combinations accepted;
+      (3) a blocked task with an empty/invalid producer/reviewer roster cannot
+      transition out of blocked until the packet is amended, after which the
+      unblock path works; canceling a blocked task is always allowed. No
+      retro-rejection of stored ledger history.
 
 Stdlib only. Run directly (`python tools/test_project_control.py`) or via
 pytest. Exit code 0 = all assertions passed.
@@ -832,6 +841,163 @@ def test_s7_backward_compatibility() -> None:
 
 
 # ---------------------------------------------------------------------------
+# S8 - M0-T016 hardening follow-up (orchestrator roster prohibition, --gates
+# enum validation, blocked-task roster precondition)
+# ---------------------------------------------------------------------------
+def test_s8_hardening_followup() -> None:
+    tmpdir = tempfile.mkdtemp(prefix="pc-s8-")
+    tmp = Path(tmpdir)
+    try:
+        make_temp_project(tmp)
+        pc = tmp / "project-control"
+
+        # --- (1) orchestrator prohibited in --reviewers at new-task authoring ---
+        for rev in ("orchestrator", "reviewer-y,orchestrator", "orchestrator,reviewer-z"):
+            r = run(tmp, "new-task", "--task-id", "M9-T801", "--title", "t",
+                    "--task-type", "research", "--milestone", "M0", "--objective", "o",
+                    "--gates", "G0,G3", "--reviewers", rev)
+            assert r.returncode != 0 and "reserved" in r.stderr, \
+                f"orchestrator in --reviewers {rev!r} must be rejected: {r.stderr}"
+            assert not (pc / "tasks" / "M9-T801.json").exists(), \
+                "rejected authoring must not create the task file"
+        # a legitimate roster still authors fine
+        r = run(tmp, "new-task", "--task-id", "M9-T801", "--title", "t",
+                "--task-type", "research", "--milestone", "M0", "--objective", "o",
+                "--gates", "G0,G3", "--reviewers", "reviewer-y,reviewer-z")
+        assert r.returncode == 0, f"legitimate roster must author: {r.stderr}"
+
+        # --- (1b) orchestrator prohibited on an independent gate, even if a
+        # legacy packet lists it in reviewer_agents (validate on write) ---
+        run(tmp, "new-task", "--task-id", "M9-T802", "--title", "t", "--task-type",
+            "research", "--milestone", "M0", "--objective", "o",
+            "--gates", "G0,G3", "--reviewers", "rev-a")
+        # simulate a legacy packet that (wrongly) rostered orchestrator
+        edit_task(tmp, "M9-T802", status="awaiting_gate", producer_agent="backend-x",
+                  reviewer_agents=["orchestrator", "rev-a"])
+        rep = write_report(tmp, "M9-T802-ev.json")
+        for gid in ("G1", "G3", "G4", "G5", "G6"):
+            r = run(tmp, "gate", "--task-id", "M9-T802", "--gate-id", gid,
+                    "--reviewer", "orchestrator", "--result", "PASS", "--report", rep)
+            assert r.returncode != 0 and "reserved" in r.stderr, \
+                f"{gid}: orchestrator as independent reviewer must be rejected: {r.stderr}"
+            assert not (pc / "gates" / f"M9-T802-{gid}.json").exists(), \
+                f"{gid}: rejected independent gate must not write a record"
+        # a real rostered reviewer still passes the independent gate
+        r = run(tmp, "gate", "--task-id", "M9-T802", "--gate-id", "G3",
+                "--reviewer", "rev-a", "--result", "PASS", "--report", rep)
+        assert r.returncode == 0, f"rostered reviewer must still pass: {r.stderr}"
+
+        # --- (1c) orchestrator's legitimate self_check + administrative paths
+        # STILL WORK (must not be broken by the prohibition) ---
+        run(tmp, "new-task", "--task-id", "M9-T803", "--title", "t", "--task-type",
+            "research", "--milestone", "M0", "--objective", "o",
+            "--gates", "G0,G2,G3", "--reviewers", "rev-a")
+        edit_task(tmp, "M9-T803", status="awaiting_gate", producer_agent="backend-x")
+        r = run(tmp, "gate", "--task-id", "M9-T803", "--gate-id", "G2",
+                "--reviewer", "orchestrator", "--result", "PASS", "--report", rep)
+        assert r.returncode == 0, f"orchestrator G2 self_check must still work: {r.stderr}"
+        assert read_json(pc / "gates" / "M9-T803-G2.json")["role"] == "self_check"
+        for gid in ("G0", "G7"):
+            r = run(tmp, "gate", "--task-id", "M9-T803", "--gate-id", gid,
+                    "--reviewer", "orchestrator", "--result", "PASS", "--report", rep)
+            assert r.returncode == 0, f"orchestrator {gid} admin must still work: {r.stderr}"
+            assert read_json(pc / "gates" / f"M9-T803-{gid}.json")["role"] == "administrative"
+
+        # --- (2) --gates enum validation ---
+        for bad_gates in ("G9", "bogus", "G0,G9", "G3,bogus,G4", "g3", "G8", "G10"):
+            r = run(tmp, "new-task", "--task-id", "M9-T810", "--title", "t",
+                    "--task-type", "research", "--milestone", "M0", "--objective", "o",
+                    "--gates", bad_gates, "--reviewers", "rev-a")
+            assert r.returncode != 0, f"--gates {bad_gates!r} must be rejected"
+            # the error names an offending entry and lists the canonical enum
+            offending = [g for g in bad_gates.split(",") if g not in
+                         ("G0", "G1", "G2", "G3", "G4", "G5", "G6", "G7")]
+            assert offending[0] in r.stderr, \
+                f"error must name the offending entry {offending[0]!r}: {r.stderr}"
+            assert "G0" in r.stderr and "G7" in r.stderr, \
+                f"error must list the canonical enum: {r.stderr}"
+            assert not (pc / "tasks" / "M9-T810.json").exists(), \
+                "rejected --gates must not create the task file"
+        # every valid single gate and a full combination are accepted unchanged
+        r = run(tmp, "new-task", "--task-id", "M9-T810", "--title", "t", "--task-type",
+                "research", "--milestone", "M0", "--objective", "o",
+                "--gates", "G0,G1,G2,G3,G4,G5,G6,G7", "--reviewers", "rev-a")
+        assert r.returncode == 0, f"valid full gate combination rejected: {r.stderr}"
+        assert read_json(pc / "tasks" / "M9-T810.json")["required_gates"] == \
+            ["G0", "G1", "G2", "G3", "G4", "G5", "G6", "G7"], \
+            "valid --gates must be stored unchanged"
+
+        # --- (3) blocked-task roster precondition ---
+        # empty reviewer_agents: cannot leave blocked for any active status
+        run(tmp, "new-task", "--task-id", "M9-T820", "--title", "t", "--task-type",
+            "research", "--milestone", "M0", "--objective", "o", "--gates", "G0,G3")
+        edit_task(tmp, "M9-T820", status="blocked", producer_agent="backend-x",
+                  reviewer_agents=[])
+        for target in ("backlog", "ready", "in_progress", "awaiting_gate"):
+            r = run(tmp, "progress", "--task-id", "M9-T820", "--agent", "orchestrator",
+                    "--percent", "10", "--status", target, "--message", "unblock")
+            assert r.returncode != 0 and "amend" in r.stderr, \
+                f"blocked -> {target} without roster must be rejected: {r.stderr}"
+            assert read_json(pc / "tasks" / "M9-T820.json")["status"] == "blocked", \
+                f"rejected unblock must leave status blocked (target {target})"
+        # producer set to the reserved orchestrator is also an invalid roster
+        edit_task(tmp, "M9-T820", producer_agent="orchestrator",
+                  reviewer_agents=["rev-a"])
+        r = run(tmp, "progress", "--task-id", "M9-T820", "--agent", "orchestrator",
+                "--percent", "10", "--status", "in_progress", "--message", "unblock")
+        assert r.returncode != 0 and "amend" in r.stderr, \
+            "producer == orchestrator is an invalid unblock roster"
+        # reviewer roster that only names the producer is not usable
+        edit_task(tmp, "M9-T820", producer_agent="backend-x",
+                  reviewer_agents=["backend-x"])
+        r = run(tmp, "progress", "--task-id", "M9-T820", "--agent", "orchestrator",
+                "--percent", "10", "--status", "in_progress", "--message", "unblock")
+        assert r.returncode != 0 and "amend" in r.stderr, \
+            "reviewer roster equal to producer is not a usable independent reviewer"
+        # a reviewer roster that only names orchestrator is not usable
+        edit_task(tmp, "M9-T820", producer_agent="backend-x",
+                  reviewer_agents=["orchestrator"])
+        r = run(tmp, "progress", "--task-id", "M9-T820", "--agent", "orchestrator",
+                "--percent", "10", "--status", "in_progress", "--message", "unblock")
+        assert r.returncode != 0 and "amend" in r.stderr, \
+            "reviewer roster of only orchestrator is not usable"
+        # canceling a blocked task is always allowed (no roster required)
+        edit_task(tmp, "M9-T820", producer_agent="backend-x", reviewer_agents=[],
+                  status="blocked")
+        r = run(tmp, "progress", "--task-id", "M9-T820", "--agent", "orchestrator",
+                "--percent", "10", "--status", "canceled", "--message", "abandon")
+        assert r.returncode == 0, f"canceling a blocked task must be allowed: {r.stderr}"
+        assert read_json(pc / "tasks" / "M9-T820.json")["status"] == "canceled"
+        # after a valid roster amendment, the unblock path works
+        run(tmp, "new-task", "--task-id", "M9-T821", "--title", "t", "--task-type",
+            "research", "--milestone", "M0", "--objective", "o", "--gates", "G0,G3")
+        edit_task(tmp, "M9-T821", status="blocked", producer_agent="backend-x",
+                  reviewer_agents=[])
+        r = run(tmp, "progress", "--task-id", "M9-T821", "--agent", "orchestrator",
+                "--percent", "10", "--status", "in_progress", "--message", "still empty")
+        assert r.returncode != 0, "unblock before amendment must fail"
+        edit_task(tmp, "M9-T821", reviewer_agents=["rev-a"])  # orchestrator amends packet
+        r = run(tmp, "progress", "--task-id", "M9-T821", "--agent", "orchestrator",
+                "--percent", "10", "--status", "in_progress", "--message", "amended")
+        assert r.returncode == 0, f"unblock after valid amendment must work: {r.stderr}"
+        assert read_json(pc / "tasks" / "M9-T821.json")["status"] == "in_progress"
+
+        # --- no retro-rejection: a message-only progress on a blocked task
+        # (status unchanged) is never blocked by the roster precondition ---
+        edit_task(tmp, "M9-T821", status="blocked", producer_agent="backend-x",
+                  reviewer_agents=[])
+        r = run(tmp, "progress", "--task-id", "M9-T821", "--agent", "orchestrator",
+                "--percent", "10", "--message", "note only, no status change")
+        assert r.returncode == 0, \
+            f"message-only progress on a blocked task must not be blocked: {r.stderr}"
+        assert read_json(pc / "tasks" / "M9-T821.json")["status"] == "blocked"
+        print("OK: S8 hardening follow-up (orchestrator roster prohibition, --gates enum, "
+              "blocked-task roster precondition)")
+    finally:
+        shutil.rmtree(tmpdir, ignore_errors=True)
+
+
+# ---------------------------------------------------------------------------
 # Honest documentation: --agent is caller-provided, not cryptographic identity
 # ---------------------------------------------------------------------------
 def test_docs_honesty() -> None:
@@ -860,6 +1026,7 @@ ALL_TESTS = [
     test_s5_atomicity,
     test_s6_spoofing,
     test_s7_backward_compatibility,
+    test_s8_hardening_followup,
     test_docs_honesty,
 ]
 
