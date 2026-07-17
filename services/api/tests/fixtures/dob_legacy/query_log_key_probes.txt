@@ -1,0 +1,68 @@
+Fri Jul 17 11:02:53 UTC 2026
+### ic3t_bbl_probe
+URL: https://data.cityofnewyork.us/resource/ic3t-wcy2.json?$select=job__,bin__,bbl&$limit=6
+HTTP: 200
+[{"job__":"440673852","bin__":"4284335","bbl":"4284335"}
+,{"job__":"421789559","bin__":"4050525","bbl":"4050525"}
+,{"job__":"240304167","bin__":"2130735","bbl":"2000759"}
+,{"job__":"440707709","bin__":"4278532","bbl":"4278532"}
+,{"job__":"340819350","bin__":"3429108","bbl":"3158356"}
+,{"job__":"421789489","bin__":"4496564","bbl":"4496564"}]
+
+### ipu4_bbl_nonnull_cnt
+URL: https://data.cityofnewyork.us/resource/ipu4-2q9a.json?$select=count(*)%20as%20n&$where=bbl%20IS%20NOT%20NULL
+HTTP: 200
+[{"n":"3869747"}]
+
+### ipu4_bbl_sample
+URL: https://data.cityofnewyork.us/resource/ipu4-2q9a.json?$select=job__,bin__,bbl&$where=bbl%20IS%20NOT%20NULL&$limit=3
+HTTP: 200
+[{"job__":"402571793","bin__":"4437881","bbl":"4037280035"}
+,{"job__":"421916537","bin__":"4437881","bbl":"4037280035"}
+,{"job__":"400629094","bin__":"4437881","bbl":"4037280035"}]
+
+### bs8b_post2021_cnt
+URL: https://data.cityofnewyork.us/resource/bs8b-p36w.json?$select=count(*)%20as%20n&$where=c_o_issue_date%3E'2021-03-31T23:59:59'
+HTTP: 200
+[{"n":"12795"}]
+
+### bs8b_future_cnt
+URL: https://data.cityofnewyork.us/resource/bs8b-p36w.json?$select=count(*)%20as%20n&$where=c_o_issue_date%3E'2026-07-17T00:00:00'
+HTTP: 200
+[{"n":"1"}]
+
+### 3h2n_range_filtered
+URL: https://data.cityofnewyork.us/resource/3h2n-5cm9.json?$select=min(issue_date)%20as%20mn,max(issue_date)%20as%20mx&$where=issue_date%20between%20'19000101'%20and%20'20261231'
+HTTP: 200
+[{"mn":"19011215","mx":"20260715"}]
+
+### 3h2n_garbage_cnt
+URL: https://data.cityofnewyork.us/resource/3h2n-5cm9.json?$select=count(*)%20as%20n&$where=issue_date%20%3C%20'19000101'%20OR%20issue_date%20%3E%20'20261231'
+HTTP: 200
+[{"n":"31"}]
+
+### 6bgk_range_filtered
+URL: https://data.cityofnewyork.us/resource/6bgk-3dad.json?$select=min(issue_date)%20as%20mn,max(issue_date)%20as%20mx&$where=issue_date%20between%20'19000101'%20and%20'20261231'
+HTTP: 200
+[{"mn":"19101004","mx":"20260714"}]
+
+### 6bgk_garbage_cnt
+URL: https://data.cityofnewyork.us/resource/6bgk-3dad.json?$select=count(*)%20as%20n&$where=issue_date%20%3C%20'19000101'%20OR%20issue_date%20%3E%20'20261231'
+HTTP: 200
+[{"n":"64"}]
+
+### eabe_cast_range
+URL: https://data.cityofnewyork.us/resource/eabe-havv.json?$select=min(date_entered::floating_timestamp)%20as%20mn,max(date_entered::floating_timestamp)%20as%20mx
+HTTP: 200
+[{"mn":"1988-12-30T00:00:00.000","mx":"2026-07-16T00:00:00.000"}]
+
+### ic3t_cast_range
+URL: https://data.cityofnewyork.us/resource/ic3t-wcy2.json?$select=min(latest_action_date::floating_timestamp)%20as%20mn,max(latest_action_date::floating_timestamp)%20as%20mx
+HTTP: 500
+{"message":"Internal error: please include code c4361147-3ff1-4403-b992-78910fb4c383 if you report the error","errorCode":"internal-error","data":{"tag":"c4361147-3ff1-4403-b992-78910fb4c383"}}
+### i296_latest_snapshot_cnt
+URL: https://data.cityofnewyork.us/resource/i296-73x5.json?$select=count(*)%20as%20n&$where=dobrundate='2026-07-16T00:00:00.000'
+HTTP: 200
+[{"n":"148"}]
+
+Fri Jul 17 11:03:03 UTC 2026

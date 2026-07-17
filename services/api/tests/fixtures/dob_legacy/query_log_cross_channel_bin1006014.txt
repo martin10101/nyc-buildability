@@ -1,0 +1,51 @@
+Fri Jul 17 11:03:54 UTC 2026
+### ic3t_pre2000_cnt
+URL: https://data.cityofnewyork.us/resource/ic3t-wcy2.json?$select=count(*)%20as%20n&$where=latest_action_date%20like%20'%25/1999%25'
+HTTP: 200
+[{"n":"0"}]
+
+### ic3t_2026_cnt
+URL: https://data.cityofnewyork.us/resource/ic3t-wcy2.json?$select=count(*)%20as%20n&$where=latest_action_date%20like%20'%25/2026%25'
+HTTP: 200
+[{"n":"8941"}]
+
+### bin1006014_ic3t
+URL: https://data.cityofnewyork.us/resource/ic3t-wcy2.json?$select=count(*)%20as%20n&$where=bin__='1006014'
+HTTP: 200
+[{"n":"2"}]
+
+### bin1006014_ipu4
+URL: https://data.cityofnewyork.us/resource/ipu4-2q9a.json?$select=count(*)%20as%20n&$where=bin__='1006014'
+HTTP: 200
+[{"n":"1"}]
+
+### bin1006014_eabe
+URL: https://data.cityofnewyork.us/resource/eabe-havv.json?$select=count(*)%20as%20n&$where=bin='1006014'
+HTTP: 200
+[{"n":"17"}]
+
+### bin1006014_3h2n
+URL: https://data.cityofnewyork.us/resource/3h2n-5cm9.json?$select=count(*)%20as%20n&$where=bin='1006014'
+HTTP: 200
+[{"n":"3"}]
+
+### bin1006014_6bgk
+URL: https://data.cityofnewyork.us/resource/6bgk-3dad.json?$select=count(*)%20as%20n&$where=bin='1006014'
+HTTP: 200
+[{"n":"6"}]
+
+### bin1006014_855j
+URL: https://data.cityofnewyork.us/resource/855j-jady.json?$select=count(*)%20as%20n&$where=bin='1006014'
+HTTP: 200
+[{"n":"1"}]
+
+### bin1006014_bs8b
+URL: https://data.cityofnewyork.us/resource/bs8b-p36w.json?$select=count(*)%20as%20n&$where=bin='1006014'
+HTTP: 200
+[{"n":"0"}]
+
+### bin1006014_g76y
+URL: https://data.cityofnewyork.us/resource/g76y-dcqj.json?$select=count(*)%20as%20n&$where=bin='1006014'
+HTTP: 200
+[{"n":"0"}]
+

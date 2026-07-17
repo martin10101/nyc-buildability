@@ -1,0 +1,479 @@
+{
+ "_retrieved_utc": "2026-07-17T10:55Z",
+ "queries": [
+  {
+   "url": "https://api.us.socrata.com/api/catalog/v1?domains=data.cityofnewyork.us&search_context=data.cityofnewyork.us&q=DOB&only=dataset&limit=150",
+   "resultSetSize": 71,
+   "dob_attributed": [
+    {
+     "id": "ipu4-2q9a",
+     "name": "DOB Permit Issuance",
+     "attribution": "Department of Buildings (DOB)",
+     "updatedAt": "2026-07-16T23:27:02.000Z"
+    },
+    {
+     "id": "3h2n-5cm9",
+     "name": "DOB Violations",
+     "attribution": "Department of Buildings (DOB)",
+     "updatedAt": "2026-07-16T17:40:22.000Z"
+    },
+    {
+     "id": "ic3t-wcy2",
+     "name": "DOB Job Application Filings",
+     "attribution": "Department of Buildings (DOB)",
+     "updatedAt": "2026-07-16T21:41:30.000Z"
+    },
+    {
+     "id": "eabe-havv",
+     "name": "DOB Complaints Received",
+     "attribution": "Department of Buildings (DOB)",
+     "updatedAt": "2026-07-16T16:49:33.000Z"
+    },
+    {
+     "id": "6bgk-3dad",
+     "name": "DOB ECB Violations",
+     "attribution": "Department of Buildings (DOB)",
+     "updatedAt": "2026-07-16T17:00:37.000Z"
+    },
+    {
+     "id": "t8hj-ruu2",
+     "name": "DOB License Info",
+     "attribution": "",
+     "updatedAt": "2026-07-16T20:13:29.000Z"
+    },
+    {
+     "id": "rbx6-tga4",
+     "name": "DOB NOW: Build – Approved Permits",
+     "attribution": "Department of Buildings (DOB)",
+     "updatedAt": "2026-07-16T18:42:18.000Z"
+    },
+    {
+     "id": "bs8b-p36w",
+     "name": "DOB Certificate Of Occupancy",
+     "attribution": "",
+     "updatedAt": "2026-07-16T20:31:30.000Z"
+    },
+    {
+     "id": "w9ak-ipjd",
+     "name": "DOB NOW: Build – Job Application Filings",
+     "attribution": "Department of Buildings (DOB)",
+     "updatedAt": "2026-07-16T20:23:19.000Z"
+    },
+    {
+     "id": "bty7-2jhb",
+     "name": "Historical DOB Permit Issuance",
+     "attribution": "",
+     "updatedAt": "2022-05-09T22:20:49.000Z"
+    },
+    {
+     "id": "52dp-yji6",
+     "name": "DOB NOW: Safety Boiler",
+     "attribution": "Department of Buildings (DOB)",
+     "updatedAt": "2026-07-16T19:59:02.000Z"
+    },
+    {
+     "id": "855j-jady",
+     "name": "DOB Safety Violations",
+     "attribution": "Department of Buildings (DOB)",
+     "updatedAt": "2026-07-16T18:07:08.000Z"
+    },
+    {
+     "id": "i296-73x5",
+     "name": "DOB Stalled Construction Sites",
+     "attribution": "Department of Buildings (DOB)",
+     "updatedAt": "2026-07-16T20:01:38.000Z"
+    },
+    {
+     "id": "pkdm-hqz6",
+     "name": "DOB NOW: Certificate of Occupancy",
+     "attribution": "Department of Buildings (DOB)",
+     "updatedAt": "2026-07-16T20:01:40.000Z"
+    },
+    {
+     "id": "dm9a-ab7w",
+     "name": "DOB NOW: Electrical Permit Applications",
+     "attribution": "Department of Buildings (DOB)",
+     "updatedAt": "2026-07-16T21:48:38.000Z"
+    },
+    {
+     "id": "ndq3-kuef",
+     "name": "DOB Disciplinary Actions",
+     "attribution": "Department of Buildings (DOB)",
+     "updatedAt": "2026-07-16T19:35:08.000Z"
+    },
+    {
+     "id": "nyis-y4yr",
+     "name": "DOB Sign Application Filings",
+     "attribution": "Department of Buildings (DOB)",
+     "updatedAt": "2024-01-03T21:09:07.000Z"
+    },
+    {
+     "id": "xubg-57si",
+     "name": "DOB NOW: Safety – Facades Compliance Filings",
+     "attribution": "Department of Buildings (DOB)",
+     "updatedAt": "2026-07-16T17:31:05.000Z"
+    },
+    {
+     "id": "iz2q-9x8d",
+     "name": "DOB Cellular Antenna Filings",
+     "attribution": "Department of Buildings (DOB)",
+     "updatedAt": "2024-01-02T21:11:43.000Z"
+    },
+    {
+     "id": "g76y-dcqj",
+     "name": "DOB After Hour Variance Permits",
+     "attribution": "Department of Buildings (DOB)",
+     "updatedAt": "2023-04-18T19:48:11.000Z"
+    },
+    {
+     "id": "kfp4-dz4h",
+     "name": "DOB NOW: Build Elevator Permit Applications",
+     "attribution": "Department of Buildings (DOB)",
+     "updatedAt": "2026-07-16T16:32:00.000Z"
+    },
+    {
+     "id": "xmmq-y7za",
+     "name": "DOB NOW: Electrical Permit Details",
+     "attribution": "Department of Buildings (DOB)",
+     "updatedAt": "2026-07-16T20:05:30.000Z"
+    },
+    {
+     "id": "juyv-2jek",
+     "name": "DOB NOW: Build Elevator Device Details",
+     "attribution": "Department of Buildings (DOB)",
+     "updatedAt": "2026-07-16T18:01:46.000Z"
+    },
+    {
+     "id": "xxbr-ypig",
+     "name": "DOB NOW: Build – Limited Alteration Applications",
+     "attribution": "Department of Buildings (DOB)",
+     "updatedAt": "2026-07-16T18:35:04.000Z"
+    },
+    {
+     "id": "e5aq-a4j2",
+     "name": "DOB NOW Elevator Safety Compliance",
+     "attribution": "Department of Buildings (DOB)",
+     "updatedAt": "2026-07-16T20:32:59.000Z"
+    },
+    {
+     "id": "355w-xvp2",
+     "name": "DOB Sustainability Compliance Map: Local Law 33",
+     "attribution": "Department of Buildings (DOB)",
+     "updatedAt": "2026-04-21T13:23:09.000Z"
+    },
+    {
+     "id": "e98g-f8hy",
+     "name": "Property Data (Buildings Information System) - Now Retired",
+     "attribution": "Department of Buildings (DOB)",
+     "updatedAt": "2026-07-15T16:24:56.000Z"
+    },
+    {
+     "id": "dvaj-b7yx",
+     "name": "Shelter Repair Scorecard",
+     "attribution": "Department of Buildings (DOB), Fire Department of New York City (FDNY), Department of Housing Preservation and Development (HPD), Department of Health and Mental Hygiene (DOHMH)",
+     "updatedAt": "2026-06-30T15:07:40.000Z"
+    },
+    {
+     "id": "6v9u-ndjg",
+     "name": "Building Complaint Disposition Codes",
+     "attribution": "Department of Buildings (DOB)",
+     "updatedAt": "2020-02-08T00:42:42.000Z"
+    },
+    {
+     "id": "bf97-mjsy",
+     "name": "Construction-Related Incidents",
+     "attribution": "Department of Buildings (DOB)",
+     "updatedAt": "2026-07-16T18:46:16.000Z"
+    },
+    {
+     "id": "fvp3-gcb2",
+     "name": "Local Law 84 Monthly Data (Calendar Year)",
+     "attribution": "Department of Buildings (DOB)",
+     "updatedAt": "2025-11-25T17:26:45.000Z"
+    },
+    {
+     "id": "kswi-37bp",
+     "name": "Energy and Water Data Disclosure for Local Law 84 2011 (Data for Calendar Year 2010)",
+     "attribution": "Department of Buildings (DOB)",
+     "updatedAt": "2024-10-01T19:31:38.000Z"
+    },
+    {
+     "id": "usc3-8zwd",
+     "name": "Energy and Water Data Disclosure for Local Law 84 2021 (Data for Calendar Year 2020)",
+     "attribution": "Department of Buildings (DOB)",
+     "updatedAt": "2024-10-01T19:34:25.000Z"
+    },
+    {
+     "id": "k7nh-aufb",
+     "name": "Energy and Water Data Disclosure for Local Law 84 2012 (Data for Calendar Year 2011)",
+     "attribution": "Department of Buildings (DOB)",
+     "updatedAt": "2024-10-01T19:32:05.000Z"
+    },
+    {
+     "id": "r6ub-zhff",
+     "name": "Energy and Water Data Disclosure for Local Law 84 2013 (Data for Calendar Year 2012)",
+     "attribution": "Department of Buildings (DOB)",
+     "updatedAt": "2024-10-01T19:32:20.000Z"
+    },
+    {
+     "id": "wcm8-aq5w",
+     "name": "Energy and Water Data Disclosure for Local Law 84 2020 (Data for Calendar Year 2019)",
+     "attribution": "Department of Buildings (DOB)",
+     "updatedAt": "2024-10-01T19:34:02.000Z"
+    },
+    {
+     "id": "yr5p-wjer",
+     "name": "Energy and Water Data Disclosure for Local Law 84 2014 (Data for Calendar Year 2013)",
+     "attribution": "Department of Buildings (DOB)",
+     "updatedAt": "2024-10-01T19:32:33.000Z"
+    },
+    {
+     "id": "nbun-wekj",
+     "name": "Energy and Water Data Disclosure for Local Law 84 2015 (Data for Calendar Year 2014)",
+     "attribution": "Department of Buildings (DOB)",
+     "updatedAt": "2024-10-01T19:32:47.000Z"
+    },
+    {
+     "id": "4tys-3tzj",
+     "name": "Energy and Water Data Disclosure for Local Law 84 2019 (Data for Calendar Year 2018)",
+     "attribution": "Department of Buildings (DOB)",
+     "updatedAt": "2024-10-01T19:33:43.000Z"
+    },
+    {
+     "id": "77q4-nkfh",
+     "name": "Energy and Water Data Disclosure for Local Law 84 2016 (Data for Calendar Year 2015)",
+     "attribution": "Department of Buildings (DOB)",
+     "updatedAt": "2024-10-01T19:33:01.000Z"
+    },
+    {
+     "id": "utpj-74fz",
+     "name": "Energy and Water Data Disclosure for Local Law 84 2017 (Data for Calendar Year 2016)",
+     "attribution": "Department of Buildings (DOB)",
+     "updatedAt": "2024-10-01T19:33:13.000Z"
+    },
+    {
+     "id": "4t62-jm4m",
+     "name": "Energy and Water Data Disclosure for Local Law 84 2018 (Data for Calendar Year 2017)",
+     "attribution": "Department of Buildings (DOB)",
+     "updatedAt": "2024-10-01T19:33:28.000Z"
+    },
+    {
+     "id": "5zyy-y8am",
+     "name": "NYC Building Energy and Water Data Disclosure for Local Law 84 2023 to Present (Data for Calendar Year 2022-Present)",
+     "attribution": "Department of Buildings (DOB)",
+     "updatedAt": "2026-04-21T13:22:12.000Z"
+    }
+   ]
+  },
+  {
+   "url": "https://api.us.socrata.com/api/catalog/v1?domains=data.cityofnewyork.us&search_context=data.cityofnewyork.us&q=%22Department%20of%20Buildings%22&only=dataset&limit=150",
+   "resultSetSize": 342,
+   "dob_attributed": [
+    {
+     "id": "eabe-havv",
+     "name": "DOB Complaints Received",
+     "attribution": "Department of Buildings (DOB)",
+     "updatedAt": "2026-07-16T16:49:33.000Z"
+    },
+    {
+     "id": "3h2n-5cm9",
+     "name": "DOB Violations",
+     "attribution": "Department of Buildings (DOB)",
+     "updatedAt": "2026-07-16T17:40:22.000Z"
+    },
+    {
+     "id": "6bgk-3dad",
+     "name": "DOB ECB Violations",
+     "attribution": "Department of Buildings (DOB)",
+     "updatedAt": "2026-07-16T17:00:37.000Z"
+    },
+    {
+     "id": "pkdm-hqz6",
+     "name": "DOB NOW: Certificate of Occupancy",
+     "attribution": "Department of Buildings (DOB)",
+     "updatedAt": "2026-07-16T20:01:40.000Z"
+    },
+    {
+     "id": "e98g-f8hy",
+     "name": "Property Data (Buildings Information System) - Now Retired",
+     "attribution": "Department of Buildings (DOB)",
+     "updatedAt": "2026-07-15T16:24:56.000Z"
+    },
+    {
+     "id": "rbx6-tga4",
+     "name": "DOB NOW: Build – Approved Permits",
+     "attribution": "Department of Buildings (DOB)",
+     "updatedAt": "2026-07-16T18:42:18.000Z"
+    },
+    {
+     "id": "xubg-57si",
+     "name": "DOB NOW: Safety – Facades Compliance Filings",
+     "attribution": "Department of Buildings (DOB)",
+     "updatedAt": "2026-07-16T17:31:05.000Z"
+    },
+    {
+     "id": "ipu4-2q9a",
+     "name": "DOB Permit Issuance",
+     "attribution": "Department of Buildings (DOB)",
+     "updatedAt": "2026-07-16T23:27:02.000Z"
+    },
+    {
+     "id": "i296-73x5",
+     "name": "DOB Stalled Construction Sites",
+     "attribution": "Department of Buildings (DOB)",
+     "updatedAt": "2026-07-16T20:01:38.000Z"
+    },
+    {
+     "id": "ic3t-wcy2",
+     "name": "DOB Job Application Filings",
+     "attribution": "Department of Buildings (DOB)",
+     "updatedAt": "2026-07-16T21:41:30.000Z"
+    },
+    {
+     "id": "bs8b-p36w",
+     "name": "DOB Certificate Of Occupancy",
+     "attribution": "",
+     "updatedAt": "2026-07-16T20:31:30.000Z"
+    },
+    {
+     "id": "ndq3-kuef",
+     "name": "DOB Disciplinary Actions",
+     "attribution": "Department of Buildings (DOB)",
+     "updatedAt": "2026-07-16T19:35:08.000Z"
+    },
+    {
+     "id": "6v9u-ndjg",
+     "name": "Building Complaint Disposition Codes",
+     "attribution": "Department of Buildings (DOB)",
+     "updatedAt": "2020-02-08T00:42:42.000Z"
+    },
+    {
+     "id": "e5aq-a4j2",
+     "name": "DOB NOW Elevator Safety Compliance",
+     "attribution": "Department of Buildings (DOB)",
+     "updatedAt": "2026-07-16T20:32:59.000Z"
+    },
+    {
+     "id": "355w-xvp2",
+     "name": "DOB Sustainability Compliance Map: Local Law 33",
+     "attribution": "Department of Buildings (DOB)",
+     "updatedAt": "2026-04-21T13:23:09.000Z"
+    },
+    {
+     "id": "52dp-yji6",
+     "name": "DOB NOW: Safety Boiler",
+     "attribution": "Department of Buildings (DOB)",
+     "updatedAt": "2026-07-16T19:59:02.000Z"
+    },
+    {
+     "id": "g76y-dcqj",
+     "name": "DOB After Hour Variance Permits",
+     "attribution": "Department of Buildings (DOB)",
+     "updatedAt": "2023-04-18T19:48:11.000Z"
+    },
+    {
+     "id": "w9ak-ipjd",
+     "name": "DOB NOW: Build – Job Application Filings",
+     "attribution": "Department of Buildings (DOB)",
+     "updatedAt": "2026-07-16T20:23:19.000Z"
+    },
+    {
+     "id": "xxbr-ypig",
+     "name": "DOB NOW: Build – Limited Alteration Applications",
+     "attribution": "Department of Buildings (DOB)",
+     "updatedAt": "2026-07-16T18:35:04.000Z"
+    },
+    {
+     "id": "t8hj-ruu2",
+     "name": "DOB License Info",
+     "attribution": "",
+     "updatedAt": "2026-07-16T20:13:29.000Z"
+    },
+    {
+     "id": "iz2q-9x8d",
+     "name": "DOB Cellular Antenna Filings",
+     "attribution": "Department of Buildings (DOB)",
+     "updatedAt": "2024-01-02T21:11:43.000Z"
+    },
+    {
+     "id": "bty7-2jhb",
+     "name": "Historical DOB Permit Issuance",
+     "attribution": "",
+     "updatedAt": "2022-05-09T22:20:49.000Z"
+    },
+    {
+     "id": "nyis-y4yr",
+     "name": "DOB Sign Application Filings",
+     "attribution": "Department of Buildings (DOB)",
+     "updatedAt": "2024-01-03T21:09:07.000Z"
+    },
+    {
+     "id": "bf97-mjsy",
+     "name": "Construction-Related Incidents",
+     "attribution": "Department of Buildings (DOB)",
+     "updatedAt": "2026-07-16T18:46:16.000Z"
+    },
+    {
+     "id": "juyv-2jek",
+     "name": "DOB NOW: Build Elevator Device Details",
+     "attribution": "Department of Buildings (DOB)",
+     "updatedAt": "2026-07-16T18:01:46.000Z"
+    },
+    {
+     "id": "dm9a-ab7w",
+     "name": "DOB NOW: Electrical Permit Applications",
+     "attribution": "Department of Buildings (DOB)",
+     "updatedAt": "2026-07-16T21:48:38.000Z"
+    },
+    {
+     "id": "fvp3-gcb2",
+     "name": "Local Law 84 Monthly Data (Calendar Year)",
+     "attribution": "Department of Buildings (DOB)",
+     "updatedAt": "2025-11-25T17:26:45.000Z"
+    },
+    {
+     "id": "855j-jady",
+     "name": "DOB Safety Violations",
+     "attribution": "Department of Buildings (DOB)",
+     "updatedAt": "2026-07-16T18:07:08.000Z"
+    },
+    {
+     "id": "kfp4-dz4h",
+     "name": "DOB NOW: Build Elevator Permit Applications",
+     "attribution": "Department of Buildings (DOB)",
+     "updatedAt": "2026-07-16T16:32:00.000Z"
+    },
+    {
+     "id": "dvaj-b7yx",
+     "name": "Shelter Repair Scorecard",
+     "attribution": "Department of Buildings (DOB), Fire Department of New York City (FDNY), Department of Housing Preservation and Development (HPD), Department of Health and Mental Hygiene (DOHMH)",
+     "updatedAt": "2026-06-30T15:07:40.000Z"
+    },
+    {
+     "id": "xmmq-y7za",
+     "name": "DOB NOW: Electrical Permit Details",
+     "attribution": "Department of Buildings (DOB)",
+     "updatedAt": "2026-07-16T20:05:30.000Z"
+    },
+    {
+     "id": "5zyy-y8am",
+     "name": "NYC Building Energy and Water Data Disclosure for Local Law 84 2023 to Present (Data for Calendar Year 2022-Present)",
+     "attribution": "Department of Buildings (DOB)",
+     "updatedAt": "2026-04-21T13:22:12.000Z"
+    },
+    {
+     "id": "usc3-8zwd",
+     "name": "Energy and Water Data Disclosure for Local Law 84 2021 (Data for Calendar Year 2020)",
+     "attribution": "Department of Buildings (DOB)",
+     "updatedAt": "2024-10-01T19:34:25.000Z"
+    },
+    {
+     "id": "kswi-37bp",
+     "name": "Energy and Water Data Disclosure for Local Law 84 2011 (Data for Calendar Year 2010)",
+     "attribution": "Department of Buildings (DOB)",
+     "updatedAt": "2024-10-01T19:31:38.000Z"
+    }
+   ]
+  }
+ ]
+}
