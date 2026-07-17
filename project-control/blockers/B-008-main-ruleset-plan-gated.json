@@ -1,0 +1,14 @@
+{
+  "blocker_id": "B-008",
+  "title": "GitHub ruleset/branch protection for main is plan-gated (private repo on Free plan)",
+  "status": "open",
+  "affects": [
+    "owner directive 2026-07-17: protect main (require PRs, required status checks, block force pushes and deletion, require conversation resolution, no bypass)",
+    "server-side enforcement of the PR-based merge workflow"
+  ],
+  "detail": "Owner directive 2026-07-17 requires a GitHub ruleset on main. Inspection (2026-07-17): repo martin10101/nyc-buildability is private on the GitHub Free plan; GET /repos/.../rulesets and GET /repos/.../branches/main/protection both return HTTP 403 'Upgrade to GitHub Pro or make this repository public to enable this feature'. Main currently has NO server-side protection and none can be created until the plan constraint clears. INTERIM ENFORCEMENT (orchestrator-side, active now): (1) .claude/settings.local.json denies direct pushes to main and force pushes; (2) all implementation and material documentation work flows task branch -> push branch -> PR -> CI green -> merge -> verify remote main -> delete branch/worktree; (3) routine merges proceed autonomously after independent gates + GitHub checks pass, per the directive.",
+  "exact_human_action": "Owner chooses one: (a) upgrade the GitHub account/repo to GitHub Pro (paid - owner-only), or (b) make the repository public (owner decision; consider that this is a legally sensitive project). After either, the orchestrator will create the ruleset: require pull requests (0 required approvals so routine tasks merge autonomously), required status checks (CI + secret-scan jobs), block force pushes, block branch deletion, require conversation resolution, no bypass actors.",
+  "how_it_will_be_tested": "gh api repos/martin10101/nyc-buildability/rulesets returns 200 and lists the active ruleset; a direct push to main is rejected by GitHub; a PR with failing checks cannot merge; a PR with passing checks merges without owner approval.",
+  "created_at": "2026-07-17T10:35:00Z",
+  "audit_log": []
+}
