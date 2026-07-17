@@ -30,7 +30,14 @@ the M0-T014 hardening scenarios:
   S7  backward compatibility: the real ledger (copied into a temp project)
       still parses and serves `status`; legacy gate records without a role
       field (G2/G0 by "orchestrator", G3 by an unrostered legacy reviewer)
-      still satisfy acceptance - validation is write-time only.
+      still satisfy acceptance - validation is write-time only. S7 asserts
+      only invariants that are stable under any live ledger composition
+      (M0-T017): counts that can only grow (files parsed, accepted tasks)
+      may be floors, but exemplar records the checks need (e.g., a backlog
+      task for the message-only progress probe) are SYNTHESIZED into the
+      temp copy when the live ledger happens not to contain one, and a
+      permanent zero-backlog sub-check simulates the composition that broke
+      CI (job 87990690868: every task claimed or terminal).
   S8  M0-T016 hardening follow-up: (1) the reserved identity "orchestrator" is
       rejected in --reviewers at new-task and as --reviewer on an independent
       gate (even when a legacy packet lists it), while its legitimate G2
@@ -771,6 +778,38 @@ def test_s6_spoofing() -> None:
 # ---------------------------------------------------------------------------
 # S7 - backward compatibility with the real ledger (validate-on-write only)
 # ---------------------------------------------------------------------------
+_SYNTHETIC_BACKLOG_ID = "M9-T700"
+
+
+def _synthesize_backlog_exemplar(pc: Path) -> str:
+    """Write a SYNTHETIC, clearly-labeled backlog task into a TEMP ledger copy
+    (never the real ledger) and return its id.
+
+    S7's message-only progress probe needs some pre-existing backlog record to
+    write against, but the live ledger legitimately contains zero backlog tasks
+    whenever every task is claimed, in flight, or terminal - exactly the
+    composition that failed CI job 87990690868 (M0-T017). Test-required
+    exemplars are therefore synthesized on demand instead of being assumed to
+    exist in mutable live data.
+    """
+    task = {
+        "task_id": _SYNTHETIC_BACKLOG_ID,
+        "title": "SYNTHETIC S7 exemplar - test-only, never a real ledger task",
+        "task_type": "research", "milestone_id": "M0",
+        "objective": "backcompat probe target (synthesized by S7)",
+        "business_reason": "", "inputs": [], "outputs": [], "dependencies": [],
+        "allowed_paths": [], "forbidden_paths": [], "acceptance_scenarios": [],
+        "required_gates": ["G0", "G3"], "producer_agent": None,
+        "reviewer_agents": ["reviewer-y"], "status": "backlog",
+        "progress_percent": 0, "risks": [], "blockers": [],
+        "created_at": "2026-07-17T00:00:00+00:00",
+        "updated_at": "2026-07-17T00:00:00+00:00",
+    }
+    (pc / "tasks" / f"{_SYNTHETIC_BACKLOG_ID}.json").write_text(
+        json.dumps(task, indent=2) + "\n", encoding="utf-8")
+    return _SYNTHETIC_BACKLOG_ID
+
+
 def test_s7_backward_compatibility() -> None:
     tmpdir = tempfile.mkdtemp(prefix="pc-s7-")
     tmp = Path(tmpdir)
@@ -794,21 +833,45 @@ def test_s7_backward_compatibility() -> None:
             parsed += 1
         assert parsed >= 60, f"expected the full ledger, parsed only {parsed} files"
 
-        # status runs over the entire real roster
+        # status runs over the entire real roster. NOTE (M0-T017): assert only
+        # composition-stable invariants here. `accepted` is a terminal status
+        # (S6: immutable), so its count can only grow; a floor is stable.
         r = run(tmp, "status")
         assert r.returncode == 0, f"status over real ledger failed: {r.stderr}"
         payload = json.loads(r.stdout)
         assert payload["task_counts"].get("accepted", 0) >= 21, \
-            "the 21 accepted tasks must remain visible"
+            "the accepted tasks (>= 21 at M0-T014) must remain visible"
 
-        # a write against a copied real task (message-only progress, which
-        # also drives sync_state across all real task files) is not
-        # retro-rejected by the new validation
+        # a write against a pre-existing backlog record (message-only
+        # progress, which also drives sync_state across all real task files)
+        # is not retro-rejected by the new validation. The live ledger may
+        # legitimately have ZERO backlog tasks (all claimed/terminal), so do
+        # not assert on live composition: use a real backlog task when one
+        # exists, otherwise synthesize the exemplar into the temp copy.
         backlog = [t["id"] for t in payload["tasks"] if t["status"] == "backlog"]
-        assert backlog, "expected at least one backlog task in the ledger copy"
-        r = run(tmp, "progress", "--task-id", backlog[0], "--agent", "orchestrator",
+        probe_id = backlog[0] if backlog else _synthesize_backlog_exemplar(pc)
+        r = run(tmp, "progress", "--task-id", probe_id, "--agent", "orchestrator",
                 "--percent", "0", "--message", "backcompat regression probe")
-        assert r.returncode == 0, f"message-only progress on real task failed: {r.stderr}"
+        assert r.returncode == 0, \
+            f"message-only progress on backlog task {probe_id} failed: {r.stderr}"
+
+        # permanent zero-backlog sub-check (regression for CI job 87990690868):
+        # strip EVERY backlog task from the copy to reproduce the exact
+        # composition that broke CI, prove `status` still serves it, then
+        # prove the synthesis path keeps the probe green.
+        for tf in (pc / "tasks").glob("*.json"):
+            if read_json(tf).get("status") == "backlog":
+                tf.unlink()
+        r = run(tmp, "status")
+        assert r.returncode == 0, f"status over zero-backlog ledger failed: {r.stderr}"
+        drained = json.loads(r.stdout)
+        assert not [t for t in drained["tasks"] if t["status"] == "backlog"], \
+            "zero-backlog simulation must leave no backlog tasks in the copy"
+        probe_id = _synthesize_backlog_exemplar(pc)
+        r = run(tmp, "progress", "--task-id", probe_id, "--agent", "orchestrator",
+                "--percent", "0", "--message", "zero-backlog backcompat probe")
+        assert r.returncode == 0, \
+            f"synthesized-exemplar progress on zero-backlog ledger failed: {r.stderr}"
 
         # legacy-shaped records (no role field; G0/G2 by orchestrator; G3 by an
         # unrostered legacy reviewer; empty reviewer_agents) still accept
@@ -835,7 +898,8 @@ def test_s7_backward_compatibility() -> None:
         assert r.returncode == 0, \
             f"legacy records (no role field) must still satisfy accept: {r.stderr}"
         print(f"OK: S7 backward compatibility ({parsed} real ledger files parse; "
-              f"legacy records accepted; validation is write-time only)")
+              f"legacy records accepted; validation is write-time only; "
+              f"zero-backlog composition survived via synthesized exemplar)")
     finally:
         shutil.rmtree(tmpdir, ignore_errors=True)
 
