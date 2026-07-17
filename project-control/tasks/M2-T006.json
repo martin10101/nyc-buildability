@@ -25,10 +25,12 @@
   "allowed_paths": [
     "packages/contracts/**",
     "services/api/**",
+    "apps/web/src/lib/contract.ts (AMENDMENT A1 2026-07-17: runtime supported-versions vocabulary addition of 1.3.0 ONLY - the client pins a closed SUPPORTED_CONTRACT_VERSIONS set that would reject 1.3.0 payloads at runtime and break the real-builder e2e harness; discovered by the producer per the original STOP condition, packet amended by the orchestrator instead of a follow-up packet because the version bump is atomic by design)",
+    "apps/web/src/lib/__tests__/validate-profile.test.ts (AMENDMENT A1: the version-pin assertion update required by the same vocabulary change ONLY)",
     "project-control/reports/M2-T006-producer-report.md"
   ],
   "forbidden_paths": [
-    "apps/web/** (additive-optional change must not require client edits; if it does, stop and report for a follow-up packet)",
+    "apps/web/** EXCEPT the two A1-named files above (any further client change required means STOP and report for a follow-up packet; components, screens, hooks, styles, e2e specs remain forbidden)",
     "docs/** (research citations belong in the producer report)",
     ".github/workflows/** (existing typegen/bundle jobs must pass unchanged)",
     "project-control/** (except own producer report)",
@@ -39,7 +41,7 @@
     "S2 stale serve: LKG path emits staleness (served_from_cache true, stale true, upstream_error_type, original_retrieved_at, age_seconds) and passes boundary validation; the human-readable STALE connector note is retained",
     "S3 fresh serve: staleness truthfully reflects a non-stale serve per the schema definition (or is absent where the schema defines absence); no invented values",
     "S4 version: builder declares 1.3.0; declared-vs-emitted check enforces it; bounded unsupported_contract_version behavior unchanged",
-    "S5 compatibility: 1.2.0-shaped payload fixtures still validate against 1.3.0 (additive-optional proof); generated-type client consumers compile without edits",
+    "S5 compatibility: 1.2.0-shaped payload fixtures still validate against 1.3.0 (additive-optional proof); generated-type client consumers compile without edits beyond the two A1 vocabulary/pin files; web-e2e journeys against the real-builder harness stay green with the builder declaring 1.3.0",
     "S6 correlation_id: refreshed description matches actual generation/propagation behavior (doc text asserted against the code path in review)",
     "S7 regression: full api pytest suite green; connector field mappings untouched (S9 mapping stays as G1-verified)"
   ],
@@ -58,13 +60,14 @@
   "status": "in_progress",
   "progress_percent": 10,
   "risks": [
+    "A1 OVERLAP DOCUMENTATION (2026-07-17): the two A1 client files sit inside M2-T005's apps/web/** scope. Overlap resolution: M2-T005 (a11y defects) has no reason to touch contract.ts or validate-profile.test.ts; the orchestrator verifies at M2-T005 review time that its diff does NOT include these two files, and applies the standard post-first-merge reconciliation (update second branch from main, rerun full CI, prove reviewed-scope diff unchanged) regardless of merge order. If M2-T005's diff DOES touch either file, sequence the merges and obtain delta re-review instead of allowing silent cross-task contamination",
     "Version bump touches M2-T003 declared-vs-emitted enforcement: schema, builder, and tests must move atomically in one PR",
     "age_seconds needs a clock source: use the same injected-clock discipline as M1-T009 (no wall-clock in deterministic tests)",
     "B-001 no-deploy stands; CI-only proof"
   ],
   "blockers": [],
   "created_at": "2026-07-17T22:19:19.813264+00:00",
-  "updated_at": "2026-07-17T22:58:33.972663+00:00",
+  "updated_at": "2026-07-17T23:13:39.484140+00:00",
   "worktree": ".claude/worktrees/M2-T006",
   "progress_log": [
     {
@@ -73,6 +76,13 @@
       "percent": 10,
       "status": "in_progress",
       "message": "Session 11 dispatch: G0 PASS (readiness report committed), claimed by backend-engineer, worktree .claude/worktrees/M2-T006 branch task/M2-T006-contract-1-3-0 from main 2a996a3. Scope packages/contracts/** + services/api/**; apps/web forbidden; atomic 1.3.0 move in one PR."
+    },
+    {
+      "at": "2026-07-17T23:13:39.484140+00:00",
+      "agent": "orchestrator",
+      "percent": 10,
+      "status": "in_progress",
+      "message": "AMENDMENT A1 (orchestrator scope decision): producer triggered the packet STOP condition before implementation - the 1.3.0 declared-version move requires two client edits because apps/web/src/lib/contract.ts pins a closed SUPPORTED_CONTRACT_VERSIONS runtime set (1.0.0/1.1.0/1.2.0) and validate-profile.ts fail-closes on it; the web-e2e harness serves REAL builder output, so a 1.3.0-declaring builder would be client-rejected and CI red with no in-scope fix. Packet amended: allowed_paths widened by EXACTLY apps/web/src/lib/contract.ts (vocabulary addition only) and apps/web/src/lib/__tests__/validate-profile.test.ts (pin update only); S5 and risks updated; overlap with M2-T005 documented with verification-at-review-time rule. Producer report (requested blocked) preserved; producer resumes under amended packet. Systemic follow-up noted: future version publications remain coordinated schema+backend+client changes while the client pins a closed set."
     }
   ]
 }
