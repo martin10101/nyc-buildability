@@ -1,0 +1,10 @@
+{
+  "task_id": "M1-T008",
+  "gate_id": "G2",
+  "reviewer": "orchestrator",
+  "role": "self_check",
+  "result": "PASS",
+  "report_file": "project-control/reports/M1-T008-G2-evidence.md",
+  "reviewed_at": "2026-07-17T18:12:28.139857+00:00",
+  "updated_at": "2026-07-17T18:12:28.139857+00:00"
+}
