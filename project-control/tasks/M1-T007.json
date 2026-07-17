@@ -45,8 +45,8 @@
   "reviewer_agents": [
     "data-contract-verifier"
   ],
-  "status": "claimed",
-  "progress_percent": 75,
+  "status": "awaiting_gate",
+  "progress_percent": 85,
   "risks": [
     "nyc.gov + api-portal.nyc.gov are bot-blocked (403): evidence must come from data.cityofnewyork.us / catalog endpoints / council channels; do not claim a page unreachable without recording the attempt",
     "DOB NOW vs legacy BIS datasets are easily confused - the family boundary (DOB NOW only; BIS is the NEXT research task) must stay crisp with explicit rule-outs",
@@ -55,7 +55,7 @@
   "blockers": [],
   "execution_location": "research is network + text only; producer writes KB-scale markdown/fixtures in the task worktree; no installs, no datasets; disk impact negligible (7.77 GB free)",
   "created_at": "2026-07-17T07:41:24.928767+00:00",
-  "updated_at": "2026-07-17T08:25:05.888857+00:00",
+  "updated_at": "2026-07-17T08:27:05.729402+00:00",
   "worktree": ".claude/worktrees/M1-T007",
   "progress_log": [
     {
@@ -69,6 +69,12 @@
       "agent": "orchestrator",
       "percent": 75,
       "message": "ORCHESTRATOR ADJUDICATION (owner directive 2026-07-17, option a): packet outputs required registry drafts at 'the same draft location the accepted M1-T003/T004 research used' (= docs/research/source-registry-drafts/<name>.json, both precedent packets list it explicitly in allowed_paths), but this packet's allowed_paths omitted it - a contracting oversight, not producer scope creep. allowed_paths enriched with the exact path docs/research/source-registry-drafts/dob-now.json (field enrichment only; status untouched). G1 must additionally verify the 6-core+5-secondary=11 dataset IDs vs 9 registry records mapping: if electrical and elevator parent/child pairs are combined family records, that must be documented explicitly with every individual dataset ID, join rule, schema, freshness result and limitation still represented."
+    },
+    {
+      "at": "2026-07-17T08:27:05.713434+00:00",
+      "agent": "orchestrator",
+      "percent": 85,
+      "message": "Dataset-count mapping verified by orchestrator (owner directive item 2): 9 registry records = 7 single-dataset + 2 intentional combined parent/child family records (electrical dm9a-ab7w+xmmq-y7za; elevator kfp4-dz4h+juyv-2jek) = 11 dataset IDs = 6 core + 5 secondary. Each child ID, join rule, column count, per-child rowsUpdatedAt and child-specific limitation individually represented. Owner connector-model/parser/staging/labeling directives preserved at project-control/reports/M1-T007-owner-connector-directives.md (binding input for M2 DOB connector packets + M1-T008). Submitting to G1 (data-contract-verifier)."
     }
   ]
 }
