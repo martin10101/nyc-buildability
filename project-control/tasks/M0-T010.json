@@ -45,14 +45,16 @@
   ],
   "required_gates": [
     "G0",
-    "G3"
+    "G3",
+    "G5"
   ],
   "producer_agent": "cloud-architect",
   "reviewer_agents": [
-    "code-reviewer"
+    "code-reviewer",
+    "security-reviewer"
   ],
-  "status": "in_progress",
-  "progress_percent": 40,
+  "status": "awaiting_gate",
+  "progress_percent": 85,
   "risks": [
     "Pack agent files may conflict with existing agent roster conventions (memory frontmatter, ADR-005 rules) - report, do not silently rewrite",
     "GDS overlap refresh may change M5 task ordering - owner review required before any plan edit"
@@ -61,7 +63,7 @@
     "B-005 (clears when the manifest-completeness verification is recorded)"
   ],
   "created_at": "2026-07-14T21:40:17.803410+00:00",
-  "updated_at": "2026-07-17T08:22:58.858952+00:00",
+  "updated_at": "2026-07-17T08:55:44.970200+00:00",
   "progress_log": [
     {
       "at": "2026-07-17T08:11:55.064631+00:00",
@@ -74,6 +76,24 @@
       "agent": "orchestrator",
       "percent": 40,
       "message": "Phase 1 complete: 11 additive manifest entries copied to exact paths in worktree (branch task/M0-T010-expansion-integration @ d25d2b2, pushed), per-file source/dest SHA256 verified, 3 byte-identical entries untouched, secret_scan.py PASS, validate_contracts.py PASS. Phase 2 (cloud-architect integration report + GDS overlap refresh for owner review) dispatching next."
+    },
+    {
+      "at": "2026-07-17T08:43:10.563322+00:00",
+      "agent": "orchestrator",
+      "percent": 85,
+      "message": "Phase 2 complete: docs/3D_UI_EXPANSION_INTEGRATION_REPORT.md + producer report committed at c0769ae on task branch (pushed). Producer found: all 18 accepted tasks valid; 19 dependency-ordered proposed tasks; 9 new contract names; roster-convention conflicts C1-C7 in the 5 pack agent files (all lack memory/permissionMode/Skill frontmatter, producers lack worktree isolation, no ADR-005 protocol sections - conformance task required BEFORE any dispatch of the 5 agents); GDS plan proposals P1-P8 RETURNED FOR OWNER REVIEW, plan file untouched. Dispatching G3 (code-reviewer)."
+    },
+    {
+      "at": "2026-07-17T08:52:59.239468+00:00",
+      "agent": "orchestrator",
+      "percent": 85,
+      "message": "OWNER DIRECTIVE 2026-07-17: DO NOT MERGE after G3. Packet enriched: G5 added to required_gates (security-reviewer added to reviewers) - independent security/agent-governance review of the pack's active execution surfaces (.claude/rules/3d-ui-expansion.md vs ADR-005/ADR-004/project-control authority/producer-reviewer separation/GDS/owner approvals; all 5 agent definitions for frontmatter, permissionMode, path+network authority, no self-approval, no reviewer ledger mutation, no credential/deploy/ADR-override authority; auto-discovery/dispatchability on merge; prompt-injection and authority-escalation risks). Original ZIP hashes and raw integration evidence preserved; NO rewriting pack files inside M0-T010. After G5: owner-preferred disposition A = merge raw pack, close B-005, create linked M0 conformance task + explicit machine-visible blocker prohibiting dispatch of all 5 agents until conformance accepted. The 19 proposed tasks, 9 contracts, P1-P8, and any MASTER_EXECUTION_PLAN changes are NOT to be applied until owner reviews the complete integration report."
+    },
+    {
+      "at": "2026-07-17T08:55:44.970200+00:00",
+      "agent": "orchestrator",
+      "percent": 85,
+      "message": "G3 PASS (verbatim report preserved at project-control/reports/M0-T010-G3-review.md): reviewer self-extracted the owner ZIP (sha256 exact match), all 14 entries blob-identical at exact paths, COMPLETE; S1-S6 all PASS; P1-P8 old-quotes verified verbatim-applyable against main; C1-C7 roster conflicts independently confirmed real; no blocking defects. Carry-forwards: O1 CI evidence at merge, O3 no dispatch of the 5 pack agents pre-conformance (owner directive already stands), O5 delete 3 temp extraction dirs at acceptance. MERGE REMAINS HELD per owner directive pending G5 agent-governance review (in flight)."
     }
   ]
 }

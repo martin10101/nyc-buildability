@@ -55,7 +55,7 @@
   "blockers": [],
   "execution_location": "research is network + text only; producer writes KB-scale markdown/fixtures in the task worktree; no installs, no datasets; disk impact negligible (7.77 GB free)",
   "created_at": "2026-07-17T07:41:24.928767+00:00",
-  "updated_at": "2026-07-17T08:48:09.912385+00:00",
+  "updated_at": "2026-07-17T08:52:59.416130+00:00",
   "worktree": ".claude/worktrees/M1-T007",
   "progress_log": [
     {
@@ -87,6 +87,12 @@
       "agent": "orchestrator",
       "percent": 85,
       "message": "C1 applied, validated, committed: bf97-mjsy dispositioned in findings 2.1 (producer-authored with live evidence, orchestrator-applied per worktree isolation; correction packet preserved at project-control/reports/M1-T007-C1-correction-packet.md). Branch @ 385de84 pushed (ls-remote verified). G1 blocking condition cleared; dispatching G3."
+    },
+    {
+      "at": "2026-07-17T08:52:59.416130+00:00",
+      "agent": "orchestrator",
+      "percent": 85,
+      "message": "OWNER DIRECTIVE 2026-07-17: C1 re-opened as C1v2 - the bf97-mjsy disposition must be evidence-backed (official description, fields, keys, coverage, relationship to the property-history product), not a mere catalog-completion exclusion; if valuable but not first-connector-stage, classify as documented secondary/future source with clear reason. In-flight G3 run stopped before verdict (its charge verified the superseded C1 text; partial live checks were passing, no gate record written). Sequence: producer authors C1v2 -> orchestrator applies+commits -> G3 re-dispatched with charge to verify the C1v2 disposition and all-21 accounting."
     }
   ]
 }
