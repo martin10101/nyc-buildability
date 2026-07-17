@@ -1,0 +1,48 @@
+import { defineConfig, devices } from "@playwright/test";
+
+/**
+ * Playwright human-journey configuration (task M2-T001, scenarios S1–S8).
+ *
+ * Two real servers are started:
+ *  1. The RECORDED-OFFICIAL-FIXTURE API harness (e2e/harness/fixture_api.py)
+ *     — the real FastAPI app over committed official PLUTO captures via the
+ *     accepted fetcher-dependency seam. NOT a frontend mock.
+ *  2. The production Next.js build (`next start`; `next build` must run
+ *     first — CI does this in the web-e2e job).
+ *
+ * Runs in CI only; the owner's PC never installs browsers or node_modules
+ * (docs/LOW_STORAGE_CLOUD_DEVELOPMENT_POLICY.md).
+ */
+export default defineConfig({
+  testDir: "./e2e",
+  fullyParallel: false,
+  forbidOnly: !!process.env.CI,
+  retries: 0,
+  workers: 1,
+  reporter: [["list"], ["html", { open: "never" }]],
+  use: {
+    baseURL: "http://127.0.0.1:3000",
+    trace: "on",
+    screenshot: "only-on-failure",
+  },
+  projects: [
+    {
+      name: "chromium",
+      use: { ...devices["Desktop Chrome"] },
+    },
+  ],
+  webServer: [
+    {
+      command: "python e2e/harness/fixture_api.py",
+      url: "http://127.0.0.1:8000/api/v1/health",
+      reuseExistingServer: !process.env.CI,
+      timeout: 60_000,
+    },
+    {
+      command: "npm run start",
+      url: "http://127.0.0.1:3000",
+      reuseExistingServer: !process.env.CI,
+      timeout: 120_000,
+    },
+  ],
+});
