@@ -1,0 +1,59 @@
+{
+  "task_id": "M0-T012",
+  "title": "CI hygiene: pin all GitHub Actions to reviewed immutable commit SHAs",
+  "task_type": "security-hygiene",
+  "milestone_id": "M0",
+  "objective": "Replace all 11 tag-pinned action references (9 in .github/workflows/ci.yml, 2 in .github/workflows/generate-lockfile.yml) with immutable commit SHAs resolved live from the GitHub API for the latest release of each major tag (actions/checkout@v4, actions/setup-node@v4, actions/setup-python@v5, actions/upload-artifact@v4), each with a trailing tag comment in the same style secret-scan.yml already uses; NOTHING else changes - no formatting, ruff, dependency, or functional edits",
+  "business_reason": "Owner directive 2026-07-17: SHA-pinning must land before any repo/CI secret (B-001/B-002 credentials pending); secret-scan.yml already demonstrates the standard; G5 M0-T005-R1 and M2-T001 F1 recorded this debt",
+  "inputs": [
+    ".github/workflows/ci.yml (9 tag-pinned refs: checkout@v4 x4, setup-node@v4 x2, setup-python@v5 x2, upload-artifact@v4 x1)",
+    ".github/workflows/generate-lockfile.yml (2 tag-pinned refs: checkout@v4, setup-node@v4)",
+    ".github/workflows/secret-scan.yml (READ-ONLY reference style: checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2)",
+    "GitHub API tag->SHA resolution via gh api (live verification mandatory; never from model memory)"
+  ],
+  "outputs": [
+    "All 11 refs pinned to the immutable commit SHA of the latest release in the SAME major version line (no major upgrades), each with a '# vX.Y.Z' trailing comment matching the secret-scan.yml style",
+    "Producer report with the exact gh api commands + outputs proving each tag->SHA mapping, and a diff summary proving ONLY 'uses:' lines changed"
+  ],
+  "dependencies": [
+    "M2-T001"
+  ],
+  "allowed_paths": [
+    ".github/workflows/ci.yml",
+    ".github/workflows/generate-lockfile.yml",
+    "project-control/reports/M0-T012-producer-report.md"
+  ],
+  "forbidden_paths": [
+    "everything else - including .github/workflows/secret-scan.yml (already pinned), .github/scripts/**, apps/**, services/**, packages/**, docs/**"
+  ],
+  "acceptance_scenarios": [
+    "S1 primary: every 'uses:' line in ci.yml and generate-lockfile.yml references a 40-hex commit SHA with a trailing '# vX.Y.Z' comment; zero '@vN' tag refs remain in those two files",
+    "S2 verification: each SHA is proven equal to the commit the official tag points to via recorded gh api output (dereferenced annotated tags handled correctly - tag object vs commit object)",
+    "S3 same-line rule: each pinned version is the latest release of the SAME major already in use (checkout v4.x, setup-node v4.x, setup-python v5.x, upload-artifact v4.x); no major bumps",
+    "S4 no-collateral: git diff shows changes ONLY on 'uses:' lines (plus the producer report file); YAML parses; job/step structure byte-identical otherwise",
+    "S5 regression: full CI green on the branch after pinning (all 6 jobs) - proves the pinned SHAs actually resolve and run",
+    "S6 consistency: identical action+version pairs use identical SHAs everywhere (no mixed pins of the same action)"
+  ],
+  "required_gates": [
+    "G0",
+    "G2",
+    "G3",
+    "G4"
+  ],
+  "producer_agent": "backend-engineer",
+  "reviewer_agents": [
+    "security-reviewer"
+  ],
+  "status": "claimed",
+  "progress_percent": 10,
+  "risks": [
+    "SHA must come from the official actions/<name> repo tag (watch for annotated-tag dereference: gh api the tag ref, then dereference object.sha to the COMMIT sha)",
+    "A wrong SHA bricks all CI - S5 branch CI run is the proof gate before merge",
+    "Scope creep is prohibited by owner directive: no formatting/ruff/dependency/functional changes may ride along"
+  ],
+  "blockers": [],
+  "execution_location": "owner PC for file edits + gh api resolution (KB-scale, disk now 7.77 GB free - above floor); CI validation in GitHub Actions on the task branch; cleanup = worktree removal after acceptance",
+  "created_at": "2026-07-17T04:20:56.864218+00:00",
+  "updated_at": "2026-07-17T04:22:18.132175+00:00",
+  "worktree": ".claude/worktrees/M0-T012"
+}
