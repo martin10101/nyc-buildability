@@ -13,3 +13,4 @@
 - [M1-T006 G3 carry-forward](project_m1-t006-g3-carryforward.md) — contract v1.1 PASS; validator tests not in CI; M2 builder must emit maps + bump to 1.1.0 + extend integrity assert
 - [M0-T010 G3 carry-forward](project_m0-t010-g3-carryforward.md) — pack integration PASS @c0769ae; byte-identity = git-blob level (autocrlf); 5 pack agents C1-C7 no-dispatch until conformance; P1-P8 applyable 2026-07-17
 - [M1-T007 G3 carry-forward](project_m1-t007-g3-carryforward.md) — DOB NOW research PASS @294dad5; bf97-mjsy→M1-T008 binding §6; no "joins cleanly/trivial" wording; Socrata $-encoding gotcha
+- [M0-T013 G3 carry-forward](project_m0-t013-g3-carryforward.md) — expansion-agent conformance PASS @61a768a; B-007 closure needs G5 re-check + same-checkpoint hold retirement; PDD no-Bash deliberate
