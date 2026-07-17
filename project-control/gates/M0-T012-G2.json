@@ -1,0 +1,9 @@
+{
+  "task_id": "M0-T012",
+  "gate_id": "G2",
+  "reviewer": "orchestrator",
+  "result": "PASS",
+  "report_file": "project-control\\reports\\M0-T012-G2-evidence.md",
+  "reviewed_at": "2026-07-17T04:31:46.228124+00:00",
+  "updated_at": "2026-07-17T04:31:46.228124+00:00"
+}

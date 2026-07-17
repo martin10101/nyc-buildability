@@ -1,0 +1,9 @@
+{
+  "task_id": "M0-T012",
+  "gate_id": "G3",
+  "reviewer": "security-reviewer",
+  "result": "PASS",
+  "report_file": "project-control\\reports\\M0-T012-G3-security-review.md",
+  "reviewed_at": "2026-07-17T07:36:19.520459+00:00",
+  "updated_at": "2026-07-17T07:36:19.520459+00:00"
+}
