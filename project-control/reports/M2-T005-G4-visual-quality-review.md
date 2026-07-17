@@ -53,7 +53,7 @@ Token changed `rgba(31,79,130,0.35)` → `rgba(31,79,130,0.9)` (globals.css:55).
 
 ### N1 — api.test.ts hygiene: RESOLVED, verified by my own execution
 
-I ran an independent byte scan on the checked-out file: **0 raw control bytes, exactly one ` ` six-character escape**. The `Bin 10948 -> 10953` line in the diffstat is the correct, expected artifact of the *old* blob containing the NUL — git flags a diff binary if either side is; from this commit forward the file diffs as text, which is precisely the N1 ask. The laundering test constructs the identical runtime string, so no assertion weakened.
+I ran an independent byte scan on the checked-out file: **0 raw control bytes, exactly one `\u0000` six-character escape**. The `Bin 10948 -> 10953` line in the diffstat is the correct, expected artifact of the *old* blob containing the NUL — git flags a diff binary if either side is; from this commit forward the file diffs as text, which is precisely the N1 ask. The laundering test constructs the identical runtime string, so no assertion weakened.
 
 ---
 

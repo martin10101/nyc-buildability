@@ -1,0 +1,10 @@
+{
+  "task_id": "M2-T005",
+  "gate_id": "G2",
+  "reviewer": "orchestrator",
+  "role": "self_check",
+  "result": "PASS",
+  "report_file": "project-control/reports/M2-T005-G2-selfcheck.md",
+  "reviewed_at": "2026-07-17T23:46:56.720249+00:00",
+  "updated_at": "2026-07-17T23:46:56.721248+00:00"
+}
