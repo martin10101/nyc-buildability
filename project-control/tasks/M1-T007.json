@@ -46,7 +46,7 @@
     "data-contract-verifier"
   ],
   "status": "awaiting_gate",
-  "progress_percent": 85,
+  "progress_percent": 95,
   "risks": [
     "nyc.gov + api-portal.nyc.gov are bot-blocked (403): evidence must come from data.cityofnewyork.us / catalog endpoints / council channels; do not claim a page unreachable without recording the attempt",
     "DOB NOW vs legacy BIS datasets are easily confused - the family boundary (DOB NOW only; BIS is the NEXT research task) must stay crisp with explicit rule-outs",
@@ -55,7 +55,7 @@
   "blockers": [],
   "execution_location": "research is network + text only; producer writes KB-scale markdown/fixtures in the task worktree; no installs, no datasets; disk impact negligible (7.77 GB free)",
   "created_at": "2026-07-17T07:41:24.928767+00:00",
-  "updated_at": "2026-07-17T09:06:57.081714+00:00",
+  "updated_at": "2026-07-17T09:16:12.308443+00:00",
   "worktree": ".claude/worktrees/M1-T007",
   "progress_log": [
     {
