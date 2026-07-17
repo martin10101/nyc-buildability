@@ -1,0 +1,25 @@
+# services/api — DEPLOYMENT pin set (task M0-T015).
+#
+# DECISION (owner deployment-blocker bullet 1): render.yaml keeps
+# `pip install -r requirements.txt` and this file provides deterministic,
+# pinned runtime dependencies. Rationale: pyproject.toml declares RANGES
+# (correct for development), but a Render rebuild months apart must not
+# silently pull a different FastAPI — pinning here keeps deploys and
+# rollback-then-rebuild behavior reproducible (ADR-003).
+#
+# RULES:
+# - pyproject.toml [project.dependencies] remains the source of truth for the
+#   allowed ranges; every pin below MUST satisfy those ranges.
+# - Runtime dependencies only — dev/test tools (pytest, ruff, httpx,
+#   jsonschema) stay in pyproject [project.optional-dependencies].dev and are
+#   NEVER installed on Render.
+# - Update pins deliberately (dedicated commit, CI green) — never as a side
+#   effect of another task.
+#
+# Pins verified against pyproject ranges on 2026-07-17 (fastapi>=0.115,<1;
+# uvicorn[standard]>=0.30,<1; starlette is FastAPI's ASGI core, pinned because
+# the CORS/security middleware behavior in app/main.py depends on it).
+
+fastapi==0.128.0
+starlette==0.46.2
+uvicorn[standard]==0.40.0

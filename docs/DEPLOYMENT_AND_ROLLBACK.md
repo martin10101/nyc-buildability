@@ -2,6 +2,13 @@
 
 Distilled from `docs/adr/ADR-003-deployment-and-rollback.md` (authoritative on conflict) and `docs/adr/ADR-002-environment-separation.md`. **Amended 2026-07-16 per ADR-004:** the frontend is a Render web service (`nycdf-web`); Vercel is dropped — all former Vercel procedures replaced below. Platform behaviors cite official docs retrieved 2026-07-14 unless otherwise dated. Dashboard click-paths not quoted by official docs are marked **[confirm at first use]** — never guess a destructive action.
 
+> **Deployment reconciliation (task M0-T015, 2026-07-17):**
+> 1. **AUTH IS NOT ENABLED.** M0-T007/T008 are blocked on B-001, so the API has no authentication. Do **NOT** publicly expose `nycdf-api` (or point real users at `nycdf-web` against it) until the auth/organization layer lands (M1-T005 G5 condition). Provisioning remains owner-gated (B-002) — nothing in this runbook authorizes it.
+> 2. **API health path is `/api/v1/health`** (PRD §21 versioned prefix; `/health` returns 404). The Blueprint `healthCheckPath` and every check below use it.
+> 3. **Worker and cron are NOT in the Blueprint yet.** `nycdf-worker-jobs` and `nycdf-cron-source-monitor` were removed from `render.yaml` because their entrypoint modules (`app/workers/job_runner`, `app/jobs/source_monitor`) do not exist; the tasks that deliver those modules must restore the service blocks (tracked note in `render.yaml`; prior blocks preserved in git history at commit `d61c9b6`). Sections 2.2/2.3 apply to them only once restored.
+> 4. **API deps are pinned in `services/api/requirements.txt`** (deployment pin set; `pyproject.toml` keeps the ranges). Build command `pip install -r requirements.txt` is now real, not a placeholder.
+> 5. **Frontend↔API wiring:** `nycdf-web` calls the API cross-origin via `NEXT_PUBLIC_API_BASE_URL` (publishable URL); the API grants CORS only to exact origins listed in `API_CORS_ALLOWED_ORIGINS` on `nycdf-api` (comma-separated; set per environment to that environment's `nycdf-web` URL; wildcards make the app refuse to start). Names only here — values are entered per environment in Render (§1.3 applies to changes).
+
 ## 0. Environment map (from ADR-002)
 
 | Env | Git | Supabase project | Render (API/worker/cron) | Frontend (Render web service `nycdf-web` — ADR-004) |
@@ -20,14 +27,14 @@ Deploy order for any release containing a migration: **1) migrations, 2) Render 
 1. Merge the approved PR into `main` (green CI required).
 2. GitHub Actions applies new files in `supabase/migrations/` to `nycdf-staging` via Supabase CLI (secrets: `SUPABASE_ACCESS_TOKEN`, `SUPABASE_DB_PASSWORD`, staging project ref — per https://supabase.com/docs/guides/deployment/managing-environments, retrieved 2026-07-14).
 3. Render staging services — **including the frontend staging copy of `nycdf-web`** (ADR-004) — auto-deploy from `main` (`autoDeployTrigger: commit`, configured at staging instantiation — [confirm at first use], ADR-002 "Items requiring verification" item 1).
-4. Verify: `/health` returns 200 on the staging API; the staging frontend loads (root page 200); run the release's acceptance scenarios against staging.
+4. Verify: `/api/v1/health` returns 200 on the staging API; the staging frontend loads (root page 200); run the release's acceptance scenarios against staging.
 
 ### 1.2 To production (human approval required — G7)
 1. Owner reviews the staging verification evidence and approves (G7). **No agent may perform this step.**
 2. Tag the approved `main` commit: `release-YYYYMMDD-N`.
 3. Fast-forward `production` to that commit and push. **Nothing deploys on this push by itself** — platform auto-deploys are disabled in production (ADR-003 D1/D2).
 4. The production deploy workflow (ADR-003 D5 — a future implementation task; until it exists, perform these steps manually in this exact order and stop at the first failure) enforces via its `needs:` job chain: migration validation passes → migrations against `nycdf-prod` complete successfully → required CI checks pass on the promoted commit → human production approval recorded (GitHub `production` environment required reviewers, where the plan allows — ADR-002 §5) → Render production deploys via each service's secret deploy hook with `ref=<release commit SHA>` — API/worker/cron first, then the frontend `nycdf-web` (same mechanism; ADR-003 D1 as amended by ADR-004) (https://render.com/docs/deploy-hooks, retrieved 2026-07-15; health-check gated: 2xx/3xx within 5 s per https://render.com/docs/health-checks, retrieved 2026-07-14).
-5. Verify: API `/health`; one smoke analysis run; frontend loads against prod API; check Sentry/logs for new errors.
+5. Verify: API `/api/v1/health`; one smoke analysis run; frontend loads against prod API; check Sentry/logs for new errors.
 6. Record the release in the ops log (tag, migration IDs, verifier).
 
 ### 1.3 Env var changes are deploys
@@ -45,12 +52,13 @@ Use when: bad frontend release in production. *(The former Vercel Instant Rollba
 4. Verify the frontend loads (root page 200) against the prod API; then fix forward on `main`.
 
 ### 2.2 API / background worker (Render rollback)
-Use when: bad code release of `nycdf-api` or `nycdf-worker-jobs`.
+Use when: bad code release of `nycdf-api` or `nycdf-worker-jobs` *(worker not in the Blueprint until its entrypoint lands — see the M0-T015 note above §0)*.
 1. Render dashboard → service → Deploys → previous successful deploy → **Rollback** [confirm at first use]; also available via API (https://api-docs.render.com/reference/rollback-deploy, retrieved 2026-07-14). No rebuild — the old artifact is reused (https://render.com/docs/rollbacks, retrieved 2026-07-14).
 2. Caveats (same source): env-group changes since that deploy are NOT reflected; a deleted env group is silently omitted; current service configuration is kept.
-3. Verify `/health` and a smoke request; then fix forward on `main`.
+3. Verify `/api/v1/health` and a smoke request; then fix forward on `main`.
 
 ### 2.3 Cron job (no rollback support — redeploy)
+*(Cron not in the Blueprint until its entrypoint lands — see the M0-T015 note above §0.)*
 Cron jobs are not listed as rollback-eligible (https://render.com/docs/rollbacks lists web, private, worker — retrieved 2026-07-14).
 1. `git revert` the offending commit on the tracked branch, push, then deploy: staging redeploys automatically on the push; in production trigger the cron service's deploy hook (or a manual dashboard deploy) — production auto-deploy is off (ADR-003 D2).
 2. If the next scheduled run must be prevented immediately: suspend the cron service in the Render dashboard [confirm at first use].
