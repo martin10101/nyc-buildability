@@ -141,3 +141,7 @@ jobs:
       # orchestrator-gate authority rules and bootstrap defect regressions.
       - name: Run project-control regression test
         run: python3 tools/test_project_control.py
+      # B-007 dispatch guard (owner directive 2026-07-17): the five expansion agents
+      # must be programmatically rejected while B-007 is open; roster agents unaffected.
+      - name: Run agent dispatch-guard rejection test
+        run: python3 tools/test_agent_dispatch_guard.py

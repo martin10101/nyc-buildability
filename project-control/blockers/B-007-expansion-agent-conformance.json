@@ -1,0 +1,19 @@
+{
+  "blocker_id": "B-007",
+  "title": "Dispatch prohibition: 5 expansion agents pending ADR-005 roster conformance",
+  "status": "open",
+  "affects": [
+    "3d-massing-engineer",
+    "product-design-director",
+    "visual-quality-reviewer",
+    "financial-feasibility-engineer",
+    "opportunity-search-engineer",
+    "M0-T013 (agent-conformance task)",
+    "any task naming these five agents as producer or reviewer"
+  ],
+  "detail": "Owner decision 2026-07-17 approving disposition A for M0-T010 requires PROGRAMMATIC dispatch blocking, not documentation alone. G5 (project-control/reports/M0-T010-G5-agent-governance-review.md) found D1/D2 HIGH: the five pack agent files auto-register as dispatchable subagent types on checkout, carry no ADR-005 protocol sections, no memory/permissionMode/isolation frontmatter (C1-C7 confirmed), and .claude/rules/3d-ui-expansion.md item 13 is an always-loaded unqualified continuation order. ENFORCEMENT: (1) PreToolUse hook .claude/hooks/agent_dispatch_guard.py wired in tracked .claude/settings.json rejects Agent/Task dispatch of these five exact names while this blocker's status is 'open' (reads this file live per dispatch); (2) always-loaded counter-notice .claude/rules/expansion-agent-dispatch-hold.md; (3) this blocker (mandatory session-start reading). Rejection tests: tools/test_agent_dispatch_guard.py (run in CI control-plane job).",
+  "exact_human_action": "None (orchestrator-resolvable): closes when conformance task M0-T013 is accepted (all five agent files carry permissionMode/memory (+isolation for the four producers)/Skill frontmatter and the verbatim ADR-005 protocol sections, and .claude/rules/3d-ui-expansion.md item 13 is qualified per G5 correction 4), verified by G3 + G5 re-check.",
+  "how_it_will_be_tested": "tools/test_agent_dispatch_guard.py proves: each of the five names is rejected with a B-007/conformance-required message while this blocker is open; an unrelated roster agent (code-reviewer) is dispatchable; rejection lifts when status != open. At M0-T013 acceptance the orchestrator sets status=resolved with an audit entry; the hook then allows the (now conformant) agents; the counter-notice rules file is updated/retired in the same checkpoint.",
+  "created_at": "2026-07-17T09:40:00Z",
+  "audit_log": []
+}
