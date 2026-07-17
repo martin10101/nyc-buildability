@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useCallback, useEffect, useRef, useState, type FormEvent } from "react";
+import { announcementForOutcome } from "@/lib/announce";
 import { fetchPropertyProfile, type LookupOutcome } from "@/lib/api";
 import { validateBblInput } from "@/lib/bbl";
 import { completenessDisplay } from "@/lib/coverage";
@@ -14,6 +15,7 @@ import { OutcomeFailureStates } from "./FailureState";
 import { FactsTable } from "./FactsTable";
 import { LoadingStages } from "./LoadingStages";
 import { MissingInputsSection } from "./MissingInputsSection";
+import { OutcomeAnnouncer } from "./OutcomeAnnouncer";
 import { ProfessionalReviewPanel } from "./ProfessionalReviewPanel";
 import { UnsupportedSection } from "./UnsupportedSection";
 import { ZoningSection } from "./ZoningSection";
@@ -36,6 +38,17 @@ import { ZoningSection } from "./ZoningSection";
  *   outcome and never touches the screen (plus a monotonic sequence guard).
  * - Timeout: the client request budget produces the recoverable
  *   client_timeout state (scenario S4).
+ *
+ * M2-T005 (visual-quality Major D1):
+ * - Announcement: outcome arrivals (success and every failure state) are
+ *   announced exactly once through the persistent OutcomeAnnouncer live
+ *   region; the message clears while a lookup is in flight so a repeated
+ *   identical outcome is re-announced.
+ * - Focus: after an outcome arrives, focus moves deterministically to the
+ *   outcome heading (`[data-outcome-heading]`); after a retry, focus moves
+ *   to the loading card instead of dropping to `body` when the Retry
+ *   button unmounts. A client-invalid submit changes no result and moves
+ *   no focus (D5 behavior preserved).
  */
 
 interface LookupResult {
@@ -47,7 +60,10 @@ function IdentityCard({ profile }: { profile: PropertyProfile }) {
   const address = profile.identity.address;
   return (
     <section className="card" data-testid="identity-card">
-      <h2 className="section-title">BBL {profile.identity.bbl}</h2>
+      {/* Success-outcome focus target (M2-T005 D1). */}
+      <h2 className="section-title" tabIndex={-1} data-outcome-heading>
+        BBL {profile.identity.bbl}
+      </h2>
       {address?.normalized_address ? (
         <p style={{ margin: 0 }}>
           {address.normalized_address}
@@ -145,13 +161,28 @@ export function PropertyLookup() {
   const [loadingBbl, setLoadingBbl] = useState<string | null>(null);
   /** Last completed lookup — SURVIVES a later client-invalid submit (D5). */
   const [result, setResult] = useState<LookupResult | null>(null);
+  /** True only between a Retry activation and its outcome (D1 focus). */
+  const [retryFocus, setRetryFocus] = useState(false);
   // Monotonic id + abort controller: a stale response can never overwrite
   // a newer lookup, and superseded requests are actively cancelled.
   const requestSeq = useRef(0);
   const abortRef = useRef<AbortController | null>(null);
+  /** Wraps the rendered outcome; arrival focus queries inside it (D1). */
+  const outcomeRef = useRef<HTMLDivElement | null>(null);
 
   // Cancel any in-flight request on unmount.
   useEffect(() => () => abortRef.current?.abort(), []);
+
+  // D1 (M2-T005): after an outcome arrives, move focus to the outcome
+  // heading. `result` changes ONLY on arrival (a client-invalid submit
+  // never calls setResult), so this can never steal focus mid-form-edit.
+  useEffect(() => {
+    if (result) {
+      outcomeRef.current
+        ?.querySelector<HTMLElement>("[data-outcome-heading]")
+        ?.focus();
+    }
+  }, [result]);
 
   const runLookup = useCallback(async (canonical: string) => {
     abortRef.current?.abort();
@@ -167,6 +198,7 @@ export function PropertyLookup() {
       return;
     }
     setLoadingBbl(null);
+    setRetryFocus(false);
     setResult({ bbl: canonical, outcome });
   }, []);
 
@@ -188,12 +220,21 @@ export function PropertyLookup() {
 
   const retry = useCallback(() => {
     if (result) {
+      // D1: the Retry button is about to unmount with the failure card;
+      // the loading card takes focus so it never drops to <body>.
+      setRetryFocus(true);
       void runLookup(result.bbl);
     }
   }, [result, runLookup]);
 
+  // D1: the single outcome announcement — cleared while loading so that a
+  // repeated identical outcome (e.g. retry fails the same way) announces.
+  const announcement =
+    loadingBbl !== null ? "" : result ? announcementForOutcome(result.outcome) : "";
+
   return (
     <div>
+      <OutcomeAnnouncer message={announcement} />
       <section className="card">
         <h1 className="section-title" style={{ fontSize: "1.4rem" }}>
           Property lookup
@@ -256,15 +297,19 @@ export function PropertyLookup() {
         </div>
       </section>
 
-      {loadingBbl !== null ? <LoadingStages bbl={loadingBbl} /> : null}
-
-      {loadingBbl === null && result ? (
-        result.outcome.kind === "profile" ? (
-          <ProfileView profile={result.outcome.profile} />
-        ) : (
-          <OutcomeFailureStates outcome={result.outcome} onRetry={retry} />
-        )
+      {loadingBbl !== null ? (
+        <LoadingStages bbl={loadingBbl} focusOnMount={retryFocus} />
       ) : null}
+
+      <div ref={outcomeRef}>
+        {loadingBbl === null && result ? (
+          result.outcome.kind === "profile" ? (
+            <ProfileView profile={result.outcome.profile} />
+          ) : (
+            <OutcomeFailureStates outcome={result.outcome} onRetry={retry} />
+          )
+        ) : null}
+      </div>
     </div>
   );
 }

@@ -48,8 +48,11 @@
   --status-verified-bg: #e7f0e7;
   --status-verified-fg: #2d5a2d;
 
-  /* Focus ring */
-  --focus-ring: 0 0 0 3px rgba(31, 79, 130, 0.35);
+  /* Focus ring (M2-T005 D5: alpha raised 0.35 -> 0.9; the ring blended on
+     a white surface is ~rgb(53, 97, 143), ~6.5:1 against white — clears
+     the 3:1 focus-appearance guideline. Rendered-pixel verification stays
+     carry-forward CF-2 for the first browser-accessible session.) */
+  --focus-ring: 0 0 0 3px rgba(31, 79, 130, 0.9);
 
   /* Warning banner */
   --banner-internal-bg: #fff4d6;
@@ -65,6 +68,17 @@ body {
 }
 
 :focus-visible {
+  outline: none;
+  box-shadow: var(--focus-ring);
+  border-radius: var(--radius-control);
+}
+
+/* M2-T005 D1: outcome headings and the loading card receive PROGRAMMATIC
+   focus on state arrival/retry. Browsers do not reliably apply
+   :focus-visible to script-moved focus, so these targets use :focus to
+   guarantee sighted keyboard users can see where focus landed. */
+[data-outcome-heading]:focus,
+[data-focus-target]:focus {
   outline: none;
   box-shadow: var(--focus-ring);
   border-radius: var(--radius-control);
@@ -188,6 +202,15 @@ body {
   background: var(--surface-card);
   color: var(--text-primary);
   cursor: pointer;
+}
+
+/* M2-T005 D2: a disabled secondary button must LOOK non-interactive, not
+   only say so in its label (token-based, mirrors .text-input:disabled). */
+.secondary-button:disabled {
+  background: var(--surface-inset);
+  color: var(--text-tertiary);
+  border-color: var(--border-quiet);
+  cursor: not-allowed;
 }
 
 .inline-error {

@@ -1,3 +1,4 @@
+import type { ReactNode } from "react";
 import type {
   ClientTimeoutOutcome,
   InternalErrorOutcome,
@@ -18,6 +19,23 @@ import type {
  * (docs/PREMIUM_PRODUCT_DESIGN_SYSTEM.md section 12). All reflected server
  * text arrives already bounded by the API client (src/lib/bounded.ts).
  */
+
+/**
+ * Shared failure heading (task M2-T005 D1). `tabIndex={-1}` +
+ * `data-outcome-heading` make every failure title the deterministic
+ * programmatic-focus target after an outcome arrives (the screens move
+ * focus here so keyboard/screen-reader users land on the result instead of
+ * `body`). The heading itself carries NO `role="alert"`/`aria-live`: the
+ * single persistent OutcomeAnnouncer emits the one assistive announcement,
+ * so mounting these cards can never double-announce (scenario S1).
+ */
+function FailureTitle({ children }: { children: ReactNode }) {
+  return (
+    <h2 className="failure-title" tabIndex={-1} data-outcome-heading>
+      {children}
+    </h2>
+  );
+}
 
 function Meta({ correlationId }: { correlationId: string | null }) {
   if (!correlationId) return null;
@@ -40,7 +58,7 @@ function RetryButton({ onRetry }: { onRetry: () => void }) {
 export function NoMatchState({ outcome }: { outcome: NoMatchOutcome }) {
   return (
     <section className="card failure-state" data-testid="state-no-match">
-      <h2 className="failure-title">No property record found</h2>
+      <FailureTitle>No property record found</FailureTitle>
       <p>
         The BBL{outcome.bbl ? ` ${outcome.bbl}` : ""} is a valid format, but
         the current official dataset has no record for it. This is a result
@@ -59,7 +77,7 @@ export function ValidationErrorState({
 }) {
   return (
     <section className="card failure-state" data-testid="state-validation-error">
-      <h2 className="failure-title">The API rejected this BBL</h2>
+      <FailureTitle>The API rejected this BBL</FailureTitle>
       <p data-testid="validation-message">{outcome.message}</p>
       <p className="failure-meta">
         Rejection code: <code data-testid="validation-code">{outcome.code}</code>
@@ -111,7 +129,7 @@ export function UpstreamFailureState({
   const copy = UPSTREAM_COPY[outcome.state];
   return (
     <section className="card failure-state" data-testid={`state-${outcome.state}`}>
-      <h2 className="failure-title">{copy.title}</h2>
+      <FailureTitle>{copy.title}</FailureTitle>
       <p>{copy.body}</p>
       <p className="failure-meta">
         Failure type: <code>{outcome.state}</code> (HTTP {outcome.httpStatus})
@@ -131,7 +149,7 @@ export function InternalErrorState({
 }) {
   return (
     <section className="card failure-state" data-testid="state-internal-error">
-      <h2 className="failure-title">Something went wrong on our side</h2>
+      <FailureTitle>Something went wrong on our side</FailureTitle>
       <p>
         The platform hit an unexpected internal error. Your input was fine.
         The reference id below identifies this exact failure in the server
@@ -161,9 +179,9 @@ export function ServerContractErrorState({
       className="card failure-state"
       data-testid="state-server-contract-error"
     >
-      <h2 className="failure-title">
+      <FailureTitle>
         The server refused to deliver an invalid profile
-      </h2>
+      </FailureTitle>
       <p>
         The platform built a property profile that failed its own contract
         checks, and refused to serve it rather than show unreliable data.
@@ -193,9 +211,9 @@ export function ValidationFailureState({
 }) {
   return (
     <section className="card failure-state" data-testid="state-validation-failure">
-      <h2 className="failure-title">
+      <FailureTitle>
         The response did not match the published data contract
-      </h2>
+      </FailureTitle>
       <p>
         The API returned a profile that failed this screen&apos;s contract
         validation. Nothing from that response is shown — displaying data
@@ -231,7 +249,7 @@ export function NetworkErrorState({
 }) {
   return (
     <section className="card failure-state" data-testid="state-network-error">
-      <h2 className="failure-title">Could not reach the platform API</h2>
+      <FailureTitle>Could not reach the platform API</FailureTitle>
       <p>{outcome.message}</p>
       <RetryButton onRetry={onRetry} />
     </section>
@@ -248,7 +266,7 @@ export function ClientTimeoutState({
 }) {
   return (
     <section className="card failure-state" data-testid="state-client-timeout">
-      <h2 className="failure-title">The lookup took too long</h2>
+      <FailureTitle>The lookup took too long</FailureTitle>
       <p>
         The platform API did not answer within{" "}
         {Math.round(outcome.timeoutMs / 1000)} seconds, so the request was
@@ -269,7 +287,7 @@ export function UnexpectedResponseState({
 }) {
   return (
     <section className="card failure-state" data-testid="state-unexpected-response">
-      <h2 className="failure-title">Unexpected response from the platform API</h2>
+      <FailureTitle>Unexpected response from the platform API</FailureTitle>
       <p>
         The API returned HTTP {outcome.httpStatus}
         {outcome.receivedState ? (
