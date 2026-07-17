@@ -101,7 +101,10 @@ export const FIELD_LABELS: Record<string, string> = {
   spdist3: "Special purpose district 3",
   ltdheight: "Limited height district",
   zonemap: "Zoning map",
-  zmcode: "Zoning map change code",
+  // G3 correction C1 (2026-07-17): pure name expansion only — the prior label
+  // "Zoning map change code" was an invented interpretation (ZMCode marks a lot
+  // on the border of two or more zoning maps, not a map change).
+  zmcode: "Zoning map code",
 
   // --- FAR reference columns (dictionary p.36-37: based on ZoneDist1,
   //     exclusive of bonuses — informational reference values, never rule
