@@ -1,0 +1,5098 @@
+{
+ "w9ak-ipjd": {
+  "id": "w9ak-ipjd",
+  "name": "DOB NOW: Build – Job Application Filings",
+  "attribution": "Department of Buildings (DOB)",
+  "assetType": "dataset",
+  "category": "Housing & Development",
+  "newBackend": true,
+  "provenance": "official",
+  "createdAt_raw": 1464269649,
+  "createdAt_utc": "2016-05-26T13:34:09Z",
+  "rowsUpdatedAt_raw": 1784233399,
+  "rowsUpdatedAt_utc": "2026-07-16T20:23:19Z",
+  "publicationDate_utc": "2026-05-27T15:35:04Z",
+  "viewLastModified_utc": "2026-07-16T20:04:34Z",
+  "custom_fields": {
+   "Update": {
+    "Automation": "Yes",
+    "Date Made Public": "6/28/2016",
+    "Update Frequency": "Daily"
+   },
+   "Dataset Information": {
+    "Agency": "Department of Buildings (DOB)"
+   }
+  },
+  "attachments": [
+   {
+    "filename": "DOB_NOW_Build_Job_Application_Filings_Data_Dictionary.xlsx",
+    "assetId": "978bdfe8-11c3-4839-9515-7f36a83e219d"
+   }
+  ],
+  "description": "List of most job filings filed in DOB NOW. This dataset does not include certain types of job.  For Electrical jobs, use https://data.cityofnewyork.us/browse?Data-Collection_Data-Collection=DOB+NOW+Electrical+Permits+Data. Elevator and LAA jobs will also be published separately.",
+  "column_count": 95,
+  "columns": [
+   {
+    "fieldName": "job_filing_number",
+    "name": "Job Filing Number",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "filing_status",
+    "name": "Filing Status",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "house_no",
+    "name": "House No",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "street_name",
+    "name": "Street Name",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "borough",
+    "name": "Borough",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "block",
+    "name": "Block",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "lot",
+    "name": "LOT",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "bin",
+    "name": "Bin",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "commmunity_board",
+    "name": "Commmunity - Board",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "work_on_floor",
+    "name": "Work on Floor",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "apt_condo_no_s",
+    "name": "Apt./Condo No(s)",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "applicant_professional_title",
+    "name": "Applicant Professional Title",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "applicant_license",
+    "name": "Applicant License #",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "applicant_first_name",
+    "name": "Applicant First Name",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "applicants_middle_initial",
+    "name": "Applicants Middle Initial",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "applicant_last_name",
+    "name": "Applicant Last Name",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "owner_s_business_name",
+    "name": "Owner's Business Name",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "applicant_street_name",
+    "name": "Applicant Street Name",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "city",
+    "name": "Applicant City",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "state",
+    "name": "Applicant State",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "zip",
+    "name": "Applicant Zip",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "filing_representative_first_name",
+    "name": "Filing Representative First Name",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "filing_representative_middle_initial",
+    "name": "Filing Representative Middle Initial",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "filing_representative_last_name",
+    "name": "Filing Representative Last Name",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "filing_representative_business_name",
+    "name": "Filing Representative Business Name",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "filing_representative_street_name",
+    "name": "Filing Representative Street Name",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "filing_representative_city",
+    "name": "Filing Representative City",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "filing_representative_state",
+    "name": "Filing Representative State",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "filing_representative_zip",
+    "name": "Filing Representative Zip",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "sprinkler_work_type",
+    "name": "Sprinkler (Work Type)",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "plumbing_work_type",
+    "name": "Plumbing (Work Type)",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "standpipe",
+    "name": "Stand Pipe (Work Type)",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "antenna",
+    "name": "Antenna (Work Type)",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "sign",
+    "name": "Sign (Work Type)",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "curb_cut",
+    "name": "Curb Cut (Work Type)",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "fence",
+    "name": "Fence (Work Type)",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "scaffold",
+    "name": "Scaffold (Work Type)",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "shed",
+    "name": "Shed (Work Type)",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "initial_cost",
+    "name": "Initial Cost",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "total_construction_floor_area",
+    "name": "Total Construction Floor Area",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "review_building_code",
+    "name": "Review Building Code",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "little_e",
+    "name": "Little E",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "unmapped_cco_street",
+    "name": "Unmapped/CCO Street",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "request_legalization",
+    "name": "Request Legalization",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "includes_permanent_removal",
+    "name": "Includes Permanent Removal",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "in_compliance_with_nycecc",
+    "name": "In Compliance with NYCECC",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "exempt_from_nycecc",
+    "name": "Exempt from NYCECC",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "building_type",
+    "name": "Building Type",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "existing_stories",
+    "name": "Existing Stories",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "existing_height",
+    "name": "Existing Height",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "existing_dwelling_units",
+    "name": "Existing Dwelling Units",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "proposed_no_of_stories",
+    "name": "Proposed No of Stories",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "proposed_height",
+    "name": "Proposed Height",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "proposed_dwelling_units",
+    "name": "Proposed Dwelling Units",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "specialinspectionrequirement",
+    "name": "SpecialInspectionRequirement",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "special_inspection_agency_number",
+    "name": "Special Inspection Agency Number",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "progressinspectionrequirement",
+    "name": "ProgressInspectionRequirement",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "built_1_information_value",
+    "name": "Built 1 information value",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "built_2_information_value",
+    "name": "Built 2 information value",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "built_2_a_information_value",
+    "name": "Built 2 A information value",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "built_2_b_information_value",
+    "name": "Built 2 B information value",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "filing_date",
+    "name": "Filing Date",
+    "dataTypeName": "calendar_date"
+   },
+   {
+    "fieldName": "current_status_date",
+    "name": "Current Status Date",
+    "dataTypeName": "calendar_date"
+   },
+   {
+    "fieldName": "first_permit_date",
+    "name": "First Permit Date",
+    "dataTypeName": "calendar_date"
+   },
+   {
+    "fieldName": "boiler_equipment_work_type_",
+    "name": "Boiler Equipment (Work Type)",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "earth_work_work_type_",
+    "name": "Earth Work (Work Type)",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "foundation_work_type_",
+    "name": "Foundation (Work Type)",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "general_construction_work_type_",
+    "name": "General Construction (Work Type)",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "mechanical_systems_work_type_",
+    "name": "Mechanical Systems (Work Type)",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "place_of_assembly_work_type_",
+    "name": "Place of Assembly (Work Type)",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "protection_mechanical_methods_work_type_",
+    "name": "Protection Mechanical Methods (Work Type)",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "sidewalk_shed_work_type_",
+    "name": "Sidewalk Shed (Work Type)",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "structural_work_type_",
+    "name": "Structural (Work Type)",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "support_of_excavation_work_type_",
+    "name": "Support of Excavation (Work Type)",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "temporary_place_of_assembly_work_type_",
+    "name": "Temporary Place of Assembly (Work Type)",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "green_roof_work_type_",
+    "name": "Green Roof (Work Type)",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "solar_work_type_",
+    "name": "Solar (Work Type)",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "full_demolition_work_type_",
+    "name": "Full Demolition (Work Type) ",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "suspended_scaffold_work_type_",
+    "name": "Suspended Scaffold (Work Type)",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "job_type",
+    "name": "Job Type",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "latitude",
+    "name": "Latitude",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "longitude",
+    "name": "Longitude",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "postcode",
+    "name": "Postcode",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "council_district",
+    "name": "Council District",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "census_tract",
+    "name": "Census Tract",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "bbl",
+    "name": "BBL",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "nta",
+    "name": "NTA",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "approved_date",
+    "name": "Approved Date",
+    "dataTypeName": "calendar_date"
+   },
+   {
+    "fieldName": "signoff_date",
+    "name": "Signoff Date",
+    "dataTypeName": "calendar_date"
+   },
+   {
+    "fieldName": "applicant_business_name",
+    "name": "Applicant Business Name",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "owner_first_name",
+    "name": "Owner First Name",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "owner_last_name",
+    "name": "Owner Last Name",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "owner_type",
+    "name": "Owner Type",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "job_description",
+    "name": "Job Description",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "filing_review_type",
+    "name": "Filing Review Type",
+    "dataTypeName": "text"
+   }
+  ]
+ },
+ "rbx6-tga4": {
+  "id": "rbx6-tga4",
+  "name": "DOB NOW: Build – Approved Permits",
+  "attribution": "Department of Buildings (DOB)",
+  "assetType": "dataset",
+  "category": "Housing & Development",
+  "newBackend": true,
+  "provenance": "official",
+  "createdAt_raw": 1464269790,
+  "createdAt_utc": "2016-05-26T13:36:30Z",
+  "rowsUpdatedAt_raw": 1784227338,
+  "rowsUpdatedAt_utc": "2026-07-16T18:42:18Z",
+  "publicationDate_utc": "2025-09-24T15:19:14Z",
+  "viewLastModified_utc": "2026-07-16T18:31:31Z",
+  "custom_fields": {
+   "Update": {
+    "Automation": "Yes",
+    "Date Made Public": "6/28/2016",
+    "Update Frequency": "Daily"
+   },
+   "Dataset Information": {
+    "Agency": "Department of Buildings (DOB)"
+   }
+  },
+  "attachments": [
+   {
+    "filename": "DOB_NOW_Build_Approved_Permits_Data_Dictionary.xlsx",
+    "assetId": "9a9d025e-5bd0-437c-92ea-41e78c9e8d4c"
+   }
+  ],
+  "description": "List of all approved construction permits in DOB NOW except for <a href=\"https://data.cityofnewyork.us/City-Government/DOB-NOW-Electrical-Permit-Applications/dm9a-ab7w\">Electrical</a>, <a href=\"https://data.cityofnewyork.us/Housing-Development/DOB-NOW-Build-Elevator-Permit-Applications/kfp4-dz4h\">Elevator</a>, and <a href=\"https://data.cityofnewyork.us/Housing-Development/DOB-NOW-Build-Limited-Alteration-Applications/xxbr-ypig\">Limited Alteration Application (LAA)</a> which have their own datasets.",
+  "column_count": 46,
+  "columns": [
+   {
+    "fieldName": "job_filing_number",
+    "name": "Job Filing Number",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "work_permit",
+    "name": "Work Permit",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "sequence_number",
+    "name": "Sequence Number",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "filing_reason",
+    "name": "Filing Reason",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "house_no",
+    "name": "House No",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "street_name",
+    "name": "Street Name",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "borough",
+    "name": "Borough",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "lot",
+    "name": "LOT",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "bin",
+    "name": "Bin",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "block",
+    "name": "Block",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "c_b_no",
+    "name": "C B NO",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "apt_condo_no_s",
+    "name": "Apt/Condo No(s)",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "work_on_floor",
+    "name": "Work on Floor",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "work_type",
+    "name": "Work Type",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "permittee_s_license_type",
+    "name": "Permittee's License Type",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "applicant_license",
+    "name": "Applicant License #",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "applicant_first_name",
+    "name": "Applicant First Name",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "applicant_middle_name",
+    "name": "Applicant Middle Name",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "applicant_last_name",
+    "name": "Applicant Last Name",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "applicant_business_name",
+    "name": "Applicant Business Name",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "applicant_business_address",
+    "name": "Applicant Business Address",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "filing_representative_first_name",
+    "name": "Filing Representative First Name",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "filing_representative_middle_initial",
+    "name": "Filing Representative Middle Initial",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "filing_representative_last_name",
+    "name": "Filing Representative Last Name",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "filing_representative_business_name",
+    "name": "Filing Representative Business Name",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "approved_date",
+    "name": "Approved Date",
+    "dataTypeName": "calendar_date"
+   },
+   {
+    "fieldName": "issued_date",
+    "name": "Issued Date",
+    "dataTypeName": "calendar_date"
+   },
+   {
+    "fieldName": "expired_date",
+    "name": "Expired Date",
+    "dataTypeName": "calendar_date"
+   },
+   {
+    "fieldName": "job_description",
+    "name": "Job Description",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "estimated_job_costs",
+    "name": "Estimated Job Costs",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "owner_business_name",
+    "name": "Owner Business Name",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "owner_name",
+    "name": "Owner Name",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "owner_street_address",
+    "name": "Owner Street Address",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "owner_city",
+    "name": "Owner City",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "owner_state",
+    "name": "Owner State",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "owner_zip_code",
+    "name": "Owner Zip Code",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "permit_status",
+    "name": "Permit Status",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "tracking_number",
+    "name": "Tracking Number",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "zip_code",
+    "name": "Zip Code",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "latitude",
+    "name": "Latitude",
+    "dataTypeName": "number"
+   },
+   {
+    "fieldName": "longitude",
+    "name": "Longitude",
+    "dataTypeName": "number"
+   },
+   {
+    "fieldName": "community_board",
+    "name": "Community Board",
+    "dataTypeName": "number"
+   },
+   {
+    "fieldName": "council_district",
+    "name": "Council District",
+    "dataTypeName": "number"
+   },
+   {
+    "fieldName": "bbl",
+    "name": "BBL",
+    "dataTypeName": "number"
+   },
+   {
+    "fieldName": "census_tract",
+    "name": "Census Tract (2020)",
+    "dataTypeName": "number"
+   },
+   {
+    "fieldName": "nta",
+    "name": "Neighborhood Tabulation Area (NTA) (2020)",
+    "dataTypeName": "text"
+   }
+  ]
+ },
+ "pkdm-hqz6": {
+  "id": "pkdm-hqz6",
+  "name": "DOB NOW: Certificate of Occupancy",
+  "attribution": "Department of Buildings (DOB)",
+  "assetType": "dataset",
+  "category": "Housing & Development",
+  "newBackend": true,
+  "provenance": "official",
+  "createdAt_raw": 1652808255,
+  "createdAt_utc": "2022-05-17T17:24:15Z",
+  "rowsUpdatedAt_raw": 1784232100,
+  "rowsUpdatedAt_utc": "2026-07-16T20:01:40Z",
+  "publicationDate_utc": "2026-01-16T15:41:50Z",
+  "viewLastModified_utc": "2026-07-16T20:01:19Z",
+  "custom_fields": {
+   "Update": {
+    "Automation": "Yes",
+    "Update Frequency": "Daily"
+   },
+   "Dataset Information": {
+    "Agency": "Department of Buildings (DOB)"
+   }
+  },
+  "attachments": [
+   {
+    "filename": "Data Dictionary - DOB NOW Certificate of Occupancy_FINAL.xlsx",
+    "assetId": "90b77d47-f8e5-49a7-b020-ea3e23624c9c"
+   }
+  ],
+  "description": "This data set includes certificates of occupancy issued through the New York City Department of Buildings' DOB NOW: Certificate of Occupancy module. This module was released in March of 2021, anbd from that point onward this data set should be utilized instead of the \"DOB Certificate of Occupancy\" data set. The data is collected because the Department of Buildings tracks Certificates of Occupancies issued. This data include items such as job filing name, job filing label, BIN, Address, and Certificate of Occupancy status, sequence, label, and issuance date.\t\t\t\n<br>\n\"A Certificate of Occupancy (CO) states a legal use and/or type of permitted occupancy of a building. New buildings must have a CO, and existing buildings must have a current or amended CO when there is a change in use, egress or type of occupancy. No one may legally occupy a building until the Department has issued a CO or Temporary Certificate of Occupancy (TCO).\n\nA CO confirms that the completed work complies with all applicable laws, all paperwork has been completed, all fees owed to the Department have been paid, all relevant violations have been resolved, and all necessary approvals have been received from other City Agencies. The Department issues a final CO when the completed work matches the submitted plans for new buildings or major alterations.\"",
+  "column_count": 24,
+  "columns": [
+   {
+    "fieldName": "job_filing_name",
+    "name": "JOB FILING NAME",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "job_type",
+    "name": "JOB TYPE",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "bin",
+    "name": "BIN",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "borough",
+    "name": "BOROUGH",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "house_no",
+    "name": "HOUSE NO",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "street_name",
+    "name": "STREET NAME",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "block",
+    "name": "BLOCK",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "lot",
+    "name": "LOT",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "zip_code",
+    "name": "ZIP CODE",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "submitted_date",
+    "name": "SUBMITTED DATE",
+    "dataTypeName": "calendar_date"
+   },
+   {
+    "fieldName": "c_of_o_status",
+    "name": "C OF O STATUS",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "c_of_o_sequence",
+    "name": "C OF O SEQUENCE #",
+    "dataTypeName": "number"
+   },
+   {
+    "fieldName": "c_of_o_filing_type",
+    "name": "C OF O FILING TYPE",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "community_board",
+    "name": "COMMUNITY BOARD",
+    "dataTypeName": "number"
+   },
+   {
+    "fieldName": "c_of_o_issuance_date",
+    "name": "C OF O ISSUANCE DATE",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "application_number",
+    "name": "APPLICATION NUMBER",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "number_of_dwelling_units",
+    "name": "NUMBER OF DWELLING UNITS",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "c_of_o_number",
+    "name": "C OF O NUMBER",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "latitude",
+    "name": "latitude",
+    "dataTypeName": "number"
+   },
+   {
+    "fieldName": "longitude",
+    "name": "longitude",
+    "dataTypeName": "number"
+   },
+   {
+    "fieldName": "citycouncildistrict",
+    "name": "Council District",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "bbl",
+    "name": "BBL",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "censustract2010",
+    "name": "Census Tract",
+    "dataTypeName": "number"
+   },
+   {
+    "fieldName": "ntaname",
+    "name": "NTA",
+    "dataTypeName": "text"
+   }
+  ]
+ },
+ "xubg-57si": {
+  "id": "xubg-57si",
+  "name": "DOB NOW: Safety – Facades Compliance Filings",
+  "attribution": "Department of Buildings (DOB)",
+  "assetType": "dataset",
+  "category": "Housing & Development",
+  "newBackend": true,
+  "provenance": "official",
+  "createdAt_raw": 1473435288,
+  "createdAt_utc": "2016-09-09T15:34:48Z",
+  "rowsUpdatedAt_raw": 1784223065,
+  "rowsUpdatedAt_utc": "2026-07-16T17:31:05Z",
+  "publicationDate_utc": "2025-12-16T18:25:24Z",
+  "viewLastModified_utc": "2026-07-16T17:30:26Z",
+  "custom_fields": {
+   "Update": {
+    "Automation": "Yes",
+    "Date Made Public": "9/15/2016",
+    "Update Frequency": "Every weekday"
+   },
+   "Dataset Information": {
+    "Agency": "Department of Buildings (DOB)"
+   }
+  },
+  "attachments": [
+   {
+    "filename": "DOB_NOW_Safety_Facades_Compliance_Filings_Data_Dictionary_2025_12_12.xlsx",
+    "assetId": "5248f214-2f4f-4352-aaa5-04623c8f38d8"
+   }
+  ],
+  "description": "List of all Facades compliance filings submitted in DOB NOW.",
+  "column_count": 40,
+  "columns": [
+   {
+    "fieldName": "tr6_no",
+    "name": "TR6_NO",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "control_no",
+    "name": "CONTROL_NO",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "filing_type",
+    "name": "FILING_TYPE",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "cycle",
+    "name": "CYCLE",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "bin",
+    "name": "BIN",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "house_no",
+    "name": "HOUSE_NO",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "street_name",
+    "name": "STREET_NAME",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "borough",
+    "name": "BOROUGH",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "block",
+    "name": "BLOCK",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "lot",
+    "name": "LOT",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "sequence_no",
+    "name": "SEQUENCE_NO",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "submitted_on",
+    "name": "SUBMITTED_ON",
+    "dataTypeName": "calendar_date"
+   },
+   {
+    "fieldName": "current_status",
+    "name": "CURRENT_STATUS",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "qewi_name",
+    "name": "QEWI_NAME",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "qewi_bus_name",
+    "name": "QEWI_BUS_NAME",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "qewi_bus_street_name",
+    "name": "QEWI_BUS_STREET_NAME",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "qewi_city",
+    "name": "QEWI_CITY",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "qewi_state",
+    "name": "QEWI_STATE",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "qewi_zip",
+    "name": "QEWI_ZIP",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "qewi_nys_lic_no",
+    "name": "QEWI_NYS_LIC_NO",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "owner_name",
+    "name": "OWNER_NAME",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "owner_bus_name",
+    "name": "OWNER_BUS_NAME",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "owner_bus_street_name",
+    "name": "OWNER_BUS_STREET_NAME",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "owner_city",
+    "name": "OWNER_CITY",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "owner_zip",
+    "name": "OWNER_ZIP",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "owner_state",
+    "name": "OWNER_STATE",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "filing_date",
+    "name": "FILING_DATE",
+    "dataTypeName": "calendar_date"
+   },
+   {
+    "fieldName": "filing_status",
+    "name": "FILING_STATUS",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "prior_cycle_filing_date",
+    "name": "PRIOR_CYCLE_FILING_DATE",
+    "dataTypeName": "calendar_date"
+   },
+   {
+    "fieldName": "prior_status",
+    "name": "PRIOR_STATUS",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "field_inspection_completed_date",
+    "name": "FIELD_INSPECTION_COMPLETED_DATE",
+    "dataTypeName": "calendar_date"
+   },
+   {
+    "fieldName": "qewi_signed_date",
+    "name": "QEWI_SIGNED_DATE",
+    "dataTypeName": "calendar_date"
+   },
+   {
+    "fieldName": "late_filing_amt",
+    "name": "LATE_FILING_AMT",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "failure_to_file_amt",
+    "name": "FAILURE_TO_FILE_AMT",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "failure_to_correct_amt",
+    "name": "FAILURE_TO_CORRECT_AMT",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "comments",
+    "name": "COMMENTS",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "exterior_wall_type_s_",
+    "name": "Exterior Wall Type(s)",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "exterior_wall_type_other_description",
+    "name": "Exterior Wall Type Other Description",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "exterior_wall_material_s_",
+    "name": "Exterior Wall Material(s)",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "exterior_wall_material_other_description",
+    "name": "Exterior Wall Material Other Description",
+    "dataTypeName": "text"
+   }
+  ]
+ },
+ "52dp-yji6": {
+  "id": "52dp-yji6",
+  "name": "DOB NOW: Safety Boiler",
+  "attribution": "Department of Buildings (DOB)",
+  "assetType": "dataset",
+  "category": "Housing & Development",
+  "newBackend": true,
+  "provenance": "official",
+  "createdAt_raw": 1505422530,
+  "createdAt_utc": "2017-09-14T20:55:30Z",
+  "rowsUpdatedAt_raw": 1784231942,
+  "rowsUpdatedAt_utc": "2026-07-16T19:59:02Z",
+  "publicationDate_utc": "2017-11-15T21:16:32Z",
+  "viewLastModified_utc": "2018-11-08T20:49:04Z",
+  "custom_fields": {
+   "Update": {
+    "Automation": "Yes",
+    "Date Made Public": "9/29/2017",
+    "Update Frequency": "Daily"
+   },
+   "Dataset Information": {
+    "Agency": "Department of Buildings (DOB)"
+   }
+  },
+  "attachments": [
+   {
+    "filename": "DD_DOB_NOW_Safety_Boiler_2017-09-08.xlsx",
+    "assetId": "f2d45892-bb2b-48fa-9e61-11c4586a4db2"
+   }
+  ],
+  "description": "Annual compliance filings for high and low pressure boilers installed in buildings.\r\n\r\nThe Department of Buildings’ Boiler Unit oversees the installation and operation of New York City’s boilers. Property owners are responsible for ensuring that their boilers operate safely and are in compliance with the Building Code and all related regulations.",
+  "column_count": 21,
+  "columns": [
+   {
+    "fieldName": "tracking_number",
+    "name": "Tracking Number",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "boiler_id",
+    "name": "Boiler ID",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "report_type",
+    "name": "Report Type",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "applicantfirst_name",
+    "name": "ApplicantFirst Name",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "applicant_last_name",
+    "name": "Applicant Last Name",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "applicant_license_type",
+    "name": "Applicant License Type",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "applicant_license_number",
+    "name": "Applicant License Number",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "owner_first_name",
+    "name": "Owner First Name",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "owner_last_name",
+    "name": "Owner Last Name",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "boiler_make",
+    "name": "Boiler Make",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "boiler_model",
+    "name": "Boiler Model",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "pressure_type",
+    "name": "Pressure Type",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "inspection_type",
+    "name": "Inspection Type",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "inspection_date",
+    "name": "Inspection Date",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "defects_exist",
+    "name": "Defects Exist",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "lff_45_days",
+    "name": "LFF (45 Days)",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "lff_180_days",
+    "name": "LFF (180 Days)",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "filing_fee",
+    "name": "Filing Fee",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "total_amount_paid",
+    "name": "Total Amount Paid",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "report_status",
+    "name": "Report Status",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "bin_number",
+    "name": "Bin Number",
+    "dataTypeName": "number"
+   }
+  ]
+ },
+ "e5aq-a4j2": {
+  "id": "e5aq-a4j2",
+  "name": "DOB NOW Elevator Safety Compliance",
+  "attribution": "Department of Buildings (DOB)",
+  "assetType": "dataset",
+  "category": "Housing & Development",
+  "newBackend": true,
+  "provenance": "official",
+  "createdAt_raw": 1674849884,
+  "createdAt_utc": "2023-01-27T20:04:44Z",
+  "rowsUpdatedAt_raw": 1784233979,
+  "rowsUpdatedAt_utc": "2026-07-16T20:32:59Z",
+  "publicationDate_utc": "2025-10-01T19:41:28Z",
+  "viewLastModified_utc": "2026-07-16T20:32:17Z",
+  "custom_fields": {
+   "Update": {
+    "Automation": "Yes",
+    "Update Frequency Details": "The underlying data changes second-to-second in the system of record.",
+    "Date Made Public": "5/19/2023",
+    "Update Frequency": "Daily",
+    "Data Change Frequency": "Daily"
+   },
+   "Dataset Information": {
+    "Agency": "Department of Buildings (DOB)"
+   }
+  },
+  "attachments": [
+   {
+    "filename": "Data_Dictionary_DOB_NOW_Elevator_Safety_Compliance_Filings.xlsx",
+    "assetId": "cd2360da-acb0-4b1d-b172-92dcee8b7d4a"
+   }
+  ],
+  "description": "This data set includes elevator inspection and report filing information through the New York City Department of Buildings' DOB NOW: Elevator Compliance Filings module. The data is collected because the Department of Buildings tracks elevator inspection information.This data include items such as device number, device status, report filing dates, inspetion dates, BIN, and other location information.",
+  "column_count": 24,
+  "columns": [
+   {
+    "fieldName": "device_number",
+    "name": "Device Number",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "device_type",
+    "name": "Device Type",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "device_status",
+    "name": "Device Status",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "status_date",
+    "name": "Status Date",
+    "dataTypeName": "calendar_date"
+   },
+   {
+    "fieldName": "equipment_type",
+    "name": "Equipment Type",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "periodic_report_year",
+    "name": "Periodic Report Year",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "cat1_report_year",
+    "name": "CAT1 Report Year",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "cat1_latest_report_filed",
+    "name": "CAT1 Latest Report Filed Date",
+    "dataTypeName": "calendar_date"
+   },
+   {
+    "fieldName": "cat5_latest_report_filed",
+    "name": "CAT5 Latest Report Filed Date",
+    "dataTypeName": "calendar_date"
+   },
+   {
+    "fieldName": "periodic_latest_inspection",
+    "name": "Periodic Latest Inspection Date",
+    "dataTypeName": "calendar_date"
+   },
+   {
+    "fieldName": "bin",
+    "name": "BIN",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "borough",
+    "name": "Borough",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "house_number",
+    "name": "House Number",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "street_name",
+    "name": "Street Name",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "block",
+    "name": "Block",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "lot",
+    "name": "Lot",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "zip_code",
+    "name": "Postcode",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "latitude",
+    "name": "Latitude",
+    "dataTypeName": "number"
+   },
+   {
+    "fieldName": "longitude",
+    "name": "Longitude",
+    "dataTypeName": "number"
+   },
+   {
+    "fieldName": "communitydistrict",
+    "name": "Community Board",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "citycouncildistrict",
+    "name": "Council District",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "bbl",
+    "name": "BBL",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "censustract",
+    "name": "Census Tract (2020)",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "ntaname",
+    "name": "Neighborhood Tabulation Area (NTA) (2020)",
+    "dataTypeName": "text"
+   }
+  ]
+ },
+ "xxbr-ypig": {
+  "id": "xxbr-ypig",
+  "name": "DOB NOW: Build – Limited Alteration Applications",
+  "attribution": "Department of Buildings (DOB)",
+  "assetType": "dataset",
+  "category": "Housing & Development",
+  "newBackend": true,
+  "provenance": "official",
+  "createdAt_raw": 1635191799,
+  "createdAt_utc": "2021-10-25T19:56:39Z",
+  "rowsUpdatedAt_raw": 1784226904,
+  "rowsUpdatedAt_utc": "2026-07-16T18:35:04Z",
+  "publicationDate_utc": "2025-01-03T20:47:13Z",
+  "viewLastModified_utc": "2026-07-16T18:31:53Z",
+  "custom_fields": {
+   "Update": {
+    "Automation": "Yes",
+    "Date Made Public": "12/31/2021",
+    "Update Frequency": "Daily"
+   },
+   "Dataset Information": {
+    "Agency": "Department of Buildings (DOB)"
+   }
+  },
+  "attachments": [
+   {
+    "filename": "Data Dictionary - DOB NOW Build - Limited Alteration Applications.xlsx",
+    "assetId": "a620703b-a0c9-4724-92b1-e93079b5a8f0"
+   }
+  ],
+  "description": "The Limited Alteration Application (LAA) is used for plumbing work, fire suppression piping replacement and repairs, and oil burner installations that do not include construction work. Generally, with the exception of some new installations, LAAs are restricted to repair and/or replacement work for existing appliances and piping systems that do not require a Professional Engineer (PE) or a Registered Architect (RA).\n</br>\n<a> https://www1.nyc.gov/site/buildings/industry/limited-alteration-application.page</a>",
+  "column_count": 26,
+  "columns": [
+   {
+    "fieldName": "job_number",
+    "name": "Job Number",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "filing_type_name",
+    "name": "Filing Type Name",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "filing_number",
+    "name": "Filing Number",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "filing_status_name",
+    "name": "Filing Status Name",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "permit_number",
+    "name": "Permit Number",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "filing_date",
+    "name": "Filing Date",
+    "dataTypeName": "calendar_date"
+   },
+   {
+    "fieldName": "permit_issued_date",
+    "name": "Permit Issued Date",
+    "dataTypeName": "calendar_date"
+   },
+   {
+    "fieldName": "permit_expiration_date",
+    "name": "Permit Expiration Date",
+    "dataTypeName": "calendar_date"
+   },
+   {
+    "fieldName": "laasign_off_date",
+    "name": "LAASign Off Date",
+    "dataTypeName": "calendar_date"
+   },
+   {
+    "fieldName": "work_type_name",
+    "name": "Work Type Name",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "location_bin",
+    "name": "Location BIN",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "location_house_no",
+    "name": "Location House No",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "location_street_name",
+    "name": "Location Street Name",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "location_borough_name",
+    "name": "Location Borough Name",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "proposed_work_summary",
+    "name": "Proposed Work Summary",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "building_type_name",
+    "name": "Building Type Name",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "inspection_type_name",
+    "name": "Inspection Type Name",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "inspection_date",
+    "name": "Inspection Date",
+    "dataTypeName": "calendar_date"
+   },
+   {
+    "fieldName": "latitude",
+    "name": "Latitude",
+    "dataTypeName": "number"
+   },
+   {
+    "fieldName": "longitude",
+    "name": "Longitude",
+    "dataTypeName": "number"
+   },
+   {
+    "fieldName": "zip_code",
+    "name": "Zip Code",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "community_board",
+    "name": "Community Board",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "council_district",
+    "name": "Council District",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "bbl",
+    "name": "BBL",
+    "dataTypeName": "number"
+   },
+   {
+    "fieldName": "census_tract",
+    "name": "Census Tract (2020)",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "nta",
+    "name": "Neighborhood Tabulation Area (NTA) (2020)",
+    "dataTypeName": "text"
+   }
+  ]
+ },
+ "dm9a-ab7w": {
+  "id": "dm9a-ab7w",
+  "name": "DOB NOW: Electrical Permit Applications",
+  "attribution": "Department of Buildings (DOB)",
+  "assetType": "dataset",
+  "category": "City Government",
+  "newBackend": true,
+  "provenance": "official",
+  "createdAt_raw": 1555517241,
+  "createdAt_utc": "2019-04-17T16:07:21Z",
+  "rowsUpdatedAt_raw": 1784238518,
+  "rowsUpdatedAt_utc": "2026-07-16T21:48:38Z",
+  "publicationDate_utc": "2026-06-02T17:02:35Z",
+  "viewLastModified_utc": "2026-07-16T21:36:36Z",
+  "custom_fields": {
+   "Data Collection": {
+    "Data Collection": "DOB NOW Electrical Permits Data"
+   },
+   "Update": {
+    "Automation": "Yes",
+    "Date Made Public": "5/13/2019",
+    "Update Frequency": "Daily"
+   },
+   "Dataset Information": {
+    "Agency": "Department of Buildings (DOB)"
+   }
+  },
+  "attachments": [
+   {
+    "filename": "DD_DOB_NOW_Build-Electrical_Filings_2019-05-14.xlsx",
+    "assetId": "fe43c604-e216-44cf-9afe-eb90660bc554"
+   }
+  ],
+  "description": "This dataset is part of the DOB NOW Electrical Permit Data Collection: https://data.cityofnewyork.us/browse?Data-Collection_Data-Collection=DOB+NOW+Electrical+Permits+Data\r\nThis dataset contains general information about the job filing, including location, applicant, type of work and fee information. Each instance of electrical work might have one row/record for the Initial application, as well as one or more Post Approval Amendment or Subsequent Filing. (See Filing_Type field.)",
+  "column_count": 83,
+  "columns": [
+   {
+    "fieldName": "job_filing_number",
+    "name": "JOB_FILING_NUMBER",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "job_number",
+    "name": "JOB_NUMBER",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "filing_number",
+    "name": "FILING_NUMBER",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "filing_date",
+    "name": "FILING_DATE",
+    "dataTypeName": "calendar_date"
+   },
+   {
+    "fieldName": "filing_type",
+    "name": "FILING_TYPE",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "filing_status",
+    "name": "FILING_STATUS",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "job_status",
+    "name": "JOB_STATUS",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "house_number",
+    "name": "HOUSE_NUMBER",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "street_name",
+    "name": "STREET_NAME",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "borough",
+    "name": "BOROUGH",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "zip_code",
+    "name": "ZIP_CODE",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "block",
+    "name": "BLOCK",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "lot",
+    "name": "LOT",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "bin",
+    "name": "BIN",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "community_board",
+    "name": "COMMUNITY_BOARD",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "joint_venture_work",
+    "name": "JOINT_VENTURE_WORK",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "building_use_type",
+    "name": "BUILDING_USE_TYPE",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "applicant_first_name",
+    "name": "APPLICANT_FIRST_NAME",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "applicant_last_name",
+    "name": "APPLICANT_LAST_NAME",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "license_type",
+    "name": "LICENSE_TYPE",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "license_number",
+    "name": "LICENSE_NUMBER",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "firm_name",
+    "name": "FIRM_NAME",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "firm_number",
+    "name": "FIRM_NUMBER",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "firm_address",
+    "name": "FIRM_ADDRESS",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "city",
+    "name": "CITY",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "state",
+    "name": "STATE",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "zip",
+    "name": "ZIP",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "general_liability_company",
+    "name": "GENERAL_LIABILITY_COMPANY",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "general_liability_policy",
+    "name": "GENERAL_LIABILITY_POLICY",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "general_liability_expiration",
+    "name": "GENERAL_LIABILITY_EXPIRATION_DATE",
+    "dataTypeName": "calendar_date"
+   },
+   {
+    "fieldName": "worker_comp_company_name",
+    "name": "WORKER_COMP_COMPANY_NAME",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "worker_comp_policy",
+    "name": "WORKER_COMP_POLICY",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "worker_comp_expiration_date",
+    "name": "WORKER_COMP_EXPIRATION_DATE",
+    "dataTypeName": "calendar_date"
+   },
+   {
+    "fieldName": "disability_company_name",
+    "name": "DISABILITY_COMPANY_NAME",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "disability_policy",
+    "name": "DISABILITY_POLICY",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "disability_expiration_date",
+    "name": "DISABILITY_EXPIRATION_DATE",
+    "dataTypeName": "calendar_date"
+   },
+   {
+    "fieldName": "owner_first_name",
+    "name": "OWNER_FIRST_NAME",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "owner_last_name",
+    "name": "OWNER_LAST_NAME",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "title",
+    "name": "TITLE",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "business_name",
+    "name": "BUSINESS_NAME",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "owner_address",
+    "name": "OWNER_ADDRESS",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "owner_city",
+    "name": "OWNER_CITY",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "owner_state",
+    "name": "OWNER_STATE",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "owner_zip",
+    "name": "OWNER_ZIP",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "owner_type",
+    "name": "OWNER_TYPE",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "auth_rep_first_name",
+    "name": "AUTH_REP_FIRST_NAME",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "auth_rep_last_name",
+    "name": "AUTH_REP_LAST_NAME",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "auth_rep_owner_relation",
+    "name": "AUTH_REP_OWNER_RELATION",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "coo_related",
+    "name": "COO_RELATED",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "const_bis_job_number",
+    "name": "CONST_BIS_JOB_NUMBER",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "removal_of_vio_or_owner",
+    "name": "REMOVAL_OF_VIO_OR_OWNER",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "svc_work_notify_utility",
+    "name": "SVC_WORK_NOTIFY_UTILITY",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "general_wiring",
+    "name": "GENERAL_WIRING",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "lighting_work",
+    "name": "LIGHTING_WORK",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "temp_construction_svc",
+    "name": "TEMP_CONSTRUCTION_SVC",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "temp_light_power",
+    "name": "TEMP_LIGHT_POWER",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "hvac_wiring",
+    "name": "HVAC_WIRING",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "boiler_burner_wiring",
+    "name": "BOILER_BURNER_WIRING",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "category_work_list",
+    "name": "CATEGORY_WORK_LIST",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "_3_wire",
+    "name": "3_WIRE",
+    "dataTypeName": "number"
+   },
+   {
+    "fieldName": "_4_wire",
+    "name": "4_WIRE",
+    "dataTypeName": "number"
+   },
+   {
+    "fieldName": "_10_points",
+    "name": "10_POINTS",
+    "dataTypeName": "number"
+   },
+   {
+    "fieldName": "existing_meters",
+    "name": "EXISTING_METERS",
+    "dataTypeName": "number"
+   },
+   {
+    "fieldName": "new_meters",
+    "name": "NEW_METERS",
+    "dataTypeName": "number"
+   },
+   {
+    "fieldName": "remove_meters",
+    "name": "REMOVE_METERS",
+    "dataTypeName": "number"
+   },
+   {
+    "fieldName": "total_meters",
+    "name": "TOTAL_METERS",
+    "dataTypeName": "number"
+   },
+   {
+    "fieldName": "job_description",
+    "name": "JOB_DESCRIPTION",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "permit_issued_date",
+    "name": "PERMIT_ISSUED_DATE",
+    "dataTypeName": "calendar_date"
+   },
+   {
+    "fieldName": "job_start_date",
+    "name": "JOB_START_DATE",
+    "dataTypeName": "calendar_date"
+   },
+   {
+    "fieldName": "completion_date",
+    "name": "COMPLETION_DATE",
+    "dataTypeName": "calendar_date"
+   },
+   {
+    "fieldName": "filing_fee",
+    "name": "FILING_FEE",
+    "dataTypeName": "number"
+   },
+   {
+    "fieldName": "legalization_fee",
+    "name": "LEGALIZATION_FEE",
+    "dataTypeName": "number"
+   },
+   {
+    "fieldName": "nogood_check_fee",
+    "name": "NOGOOD_CHECK_FEE",
+    "dataTypeName": "number"
+   },
+   {
+    "fieldName": "total_billable_work_fee",
+    "name": "TOTAL_BILLABLE_WORK_FEE",
+    "dataTypeName": "number"
+   },
+   {
+    "fieldName": "amount_paid",
+    "name": "AMOUNT_PAID",
+    "dataTypeName": "number"
+   },
+   {
+    "fieldName": "amount_due",
+    "name": "AMOUNT_DUE",
+    "dataTypeName": "number"
+   },
+   {
+    "fieldName": "payment_method",
+    "name": "PAYMENT_METHOD",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "gis_latitude",
+    "name": "LATITUDE",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "gis_longitude",
+    "name": "LONGITUDE",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "gis_council_district",
+    "name": "COUNCIL_DISTRICT",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "gis_census_tract",
+    "name": "CENSUS_TRACT",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "gis_bbl",
+    "name": "BBL",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "gis_nta_name",
+    "name": "NTA_NAME",
+    "dataTypeName": "text"
+   }
+  ]
+ },
+ "xmmq-y7za": {
+  "id": "xmmq-y7za",
+  "name": "DOB NOW: Electrical Permit Details",
+  "attribution": "Department of Buildings (DOB)",
+  "assetType": "dataset",
+  "category": "City Government",
+  "newBackend": true,
+  "provenance": "official",
+  "createdAt_raw": 1555519387,
+  "createdAt_utc": "2019-04-17T16:43:07Z",
+  "rowsUpdatedAt_raw": 1784232330,
+  "rowsUpdatedAt_utc": "2026-07-16T20:05:30Z",
+  "publicationDate_utc": "2019-04-30T21:30:03Z",
+  "viewLastModified_utc": "2019-05-14T17:22:04Z",
+  "custom_fields": {
+   "Data Collection": {
+    "Data Collection": "DOB NOW Electrical Permits Data"
+   },
+   "Update": {
+    "Automation": "Yes",
+    "Date Made Public": "5/13/2019",
+    "Update Frequency": "Daily"
+   },
+   "Dataset Information": {
+    "Agency": "Department of Buildings (DOB)"
+   }
+  },
+  "attachments": [
+   {
+    "filename": "DD_DOB_NOW_Build-Electrical_Filings_2019-05-14.xlsx",
+    "assetId": "1fbd1a5c-70b4-4001-96eb-aa204e50b024"
+   }
+  ],
+  "description": "This dataset is part of the DOB NOW Electrical Permit Data Collection: https://data.cityofnewyork.us/browse?Data-Collection_Data-Collection=DOB+NOW+Electrical+Permits+Data \r\nThis dataset contains details of the electrical scope of work. For each Job Filing Number, there can be multiple rows/records in this dataset. For example, there might be electrical work being performed in the basement as well as on the 4th floor. One row/record for Basement and one for the floor. The job might have some 101 to 200 amps Service Switches as well as some Up to 100 amps Service Switches, and there would be one row/record for each.",
+  "column_count": 40,
+  "columns": [
+   {
+    "fieldName": "unique_id",
+    "name": "Details_ID",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "work_id",
+    "name": "Work_ID",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "floor_id",
+    "name": "Floor_ID",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "sign_id",
+    "name": "Sign_ID",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "job_filing_number",
+    "name": "Job_Filing_Number",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "work_description",
+    "name": "Work_Description",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "item",
+    "name": "Item",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "item_quantity",
+    "name": "Quantity",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "item_cost",
+    "name": "Cost",
+    "dataTypeName": "number"
+   },
+   {
+    "fieldName": "fee_amount",
+    "name": "Fee_Amount",
+    "dataTypeName": "number"
+   },
+   {
+    "fieldName": "item_detail",
+    "name": "Number_Size",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "floor_name",
+    "name": "Floor_Name",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "from_floor",
+    "name": "Floor_From",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "to_floor",
+    "name": "Floor_To",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "floor_detail",
+    "name": "Floor_Description",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "floor_fixtures",
+    "name": "Fixture",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "floor_ac_receptacles",
+    "name": "Receptacles_AC",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "floor_att_receptacles",
+    "name": "Receptacles_ATT",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "floor_switches",
+    "name": "Switches",
+    "dataTypeName": "number"
+   },
+   {
+    "fieldName": "floor_outlets",
+    "name": "Outlets",
+    "dataTypeName": "number"
+   },
+   {
+    "fieldName": "floor_motors_generators",
+    "name": "Motors Generators",
+    "dataTypeName": "number"
+   },
+   {
+    "fieldName": "floor_hpkw",
+    "name": "Total HPKW",
+    "dataTypeName": "number"
+   },
+   {
+    "fieldName": "floor_heaters",
+    "name": "Heaters",
+    "dataTypeName": "number"
+   },
+   {
+    "fieldName": "floor_kw",
+    "name": "Total_KW",
+    "dataTypeName": "number"
+   },
+   {
+    "fieldName": "floor_transformers",
+    "name": "Transformer",
+    "dataTypeName": "number"
+   },
+   {
+    "fieldName": "floor_kva",
+    "name": "Total_KVA",
+    "dataTypeName": "number"
+   },
+   {
+    "fieldName": "sign_dimensions",
+    "name": "Sign_Dimensions",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "sign_sq_footage",
+    "name": "Sign_Square_Footage",
+    "dataTypeName": "number"
+   },
+   {
+    "fieldName": "sign_circuits",
+    "name": "Total_Circuits",
+    "dataTypeName": "number"
+   },
+   {
+    "fieldName": "sign_lamps",
+    "name": "Total_Lamps",
+    "dataTypeName": "number"
+   },
+   {
+    "fieldName": "sign_lamp_wattage",
+    "name": "Watts_Lamps",
+    "dataTypeName": "number"
+   },
+   {
+    "fieldName": "sign_transformers",
+    "name": "Sign_Transformers",
+    "dataTypeName": "number"
+   },
+   {
+    "fieldName": "sign_va_per_transformer",
+    "name": "VA_Transformer",
+    "dataTypeName": "number"
+   },
+   {
+    "fieldName": "sign_total_watts_va",
+    "name": "Total_Watts_VA",
+    "dataTypeName": "number"
+   },
+   {
+    "fieldName": "sign_total_aw_guage",
+    "name": "AWG",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "sign_sockets_per_circuit",
+    "name": "Sockets_Per_Circuit",
+    "dataTypeName": "number"
+   },
+   {
+    "fieldName": "sign_materials_guage",
+    "name": "Material_Gauge",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "sign_text",
+    "name": "Sign_Make",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "sign_manufacturer",
+    "name": "Sign_Manufacturer",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "sign_manufacturer_address",
+    "name": "Manufacturer_Address",
+    "dataTypeName": "text"
+   }
+  ]
+ },
+ "kfp4-dz4h": {
+  "id": "kfp4-dz4h",
+  "name": "DOB NOW: Build Elevator Permit Applications",
+  "attribution": "Department of Buildings (DOB)",
+  "assetType": "dataset",
+  "category": "Housing & Development",
+  "newBackend": true,
+  "provenance": "official",
+  "createdAt_raw": 1570128595,
+  "createdAt_utc": "2019-10-03T18:49:55Z",
+  "rowsUpdatedAt_raw": 1784219520,
+  "rowsUpdatedAt_utc": "2026-07-16T16:32:00Z",
+  "publicationDate_utc": "2025-09-24T19:53:57Z",
+  "viewLastModified_utc": "2026-07-16T16:31:05Z",
+  "custom_fields": {
+   "Data Collection": {
+    "Data Collection": "DOB NOW Elevator Permits Data"
+   },
+   "Update": {
+    "Automation": "Yes",
+    "Date Made Public": "10/31/2019",
+    "Update Frequency": "Daily"
+   },
+   "Dataset Information": {
+    "Agency": "Department of Buildings (DOB)"
+   }
+  },
+  "attachments": [
+   {
+    "filename": "DOB_NOW_Build-Elevator_Filings_Data_Dictionary.xlsx",
+    "assetId": "85dacc2d-591e-4822-afd9-d27a71115e15"
+   }
+  ],
+  "description": "This collection contains applications submitted online via \"DOB NOW: BUILD\" portal by Design Professionals to get an authorization to begin work on an elevator project.\n</p>\nData in this collection is limited to applications (job filings) related to elevator applications only (also known as ELV1)  submitted on DOB NOW, and includes Initial (New), subsequent, and Post Approval Amendment (PAA) filing types.\n</br>\nDOB NOW: BUILD is an online portal that allows users to file for permit applications, check the status of an application, make payments, schedule appointments, and print permits.\n\nThis dataset contains general information about the job filing, including location, applicant, type of work and fee information. Each instance of elevator work might have one row/record for the Initial application, as well as one or more Post Approval Amendment. (See Filing_Type field.)",
+  "column_count": 82,
+  "columns": [
+   {
+    "fieldName": "job_filing_number",
+    "name": "Job Filling Number",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "job_number",
+    "name": "Job Number",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "filing_number",
+    "name": "Filing Number",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "filing_date",
+    "name": "Filing Date",
+    "dataTypeName": "calendar_date"
+   },
+   {
+    "fieldName": "filing_type",
+    "name": "Filing Type",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "elevatordevicetype",
+    "name": "Elevator Device Type",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "filing_status",
+    "name": "Filing Status",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "filingstatus_or_filingincludes",
+    "name": "Filing Status or Filing Includes",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "building_code",
+    "name": "Building Code",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "electrical_permit_number",
+    "name": "Electrical Permit Number",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "bin",
+    "name": "BIN",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "house_number",
+    "name": "House Number",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "street_name",
+    "name": "Street Name",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "zip",
+    "name": "ZIP",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "borough",
+    "name": "Borough",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "block",
+    "name": "Block",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "lot",
+    "name": "Lot",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "building_type",
+    "name": "BuildingType",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "buildingstories",
+    "name": "Building Stories",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "is_in_conjunction",
+    "name": "Is In Conjunction",
+    "dataTypeName": "checkbox"
+   },
+   {
+    "fieldName": "associatedjobnumber",
+    "name": "Associated BIS Job Number",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "total_construction_floor",
+    "name": "Total Construction Floor Area",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "plan_examiner_assigned_date",
+    "name": "Plan Examiner Assigned Date",
+    "dataTypeName": "calendar_date"
+   },
+   {
+    "fieldName": "incomplete_date",
+    "name": "Incomplete Date",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "last_incomplete_submission",
+    "name": "Last Incomplete Submission Date",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "first_objection_date",
+    "name": "1st Objection Date",
+    "dataTypeName": "calendar_date"
+   },
+   {
+    "fieldName": "last_objection_date",
+    "name": "Last Objection Date",
+    "dataTypeName": "calendar_date"
+   },
+   {
+    "fieldName": "resubmission_date",
+    "name": "Resubmission Date",
+    "dataTypeName": "calendar_date"
+   },
+   {
+    "fieldName": "permit_entire_date",
+    "name": "Permit Entire Date",
+    "dataTypeName": "calendar_date"
+   },
+   {
+    "fieldName": "signedoff_date",
+    "name": "Signed Off Date",
+    "dataTypeName": "calendar_date"
+   },
+   {
+    "fieldName": "applicant_firstname",
+    "name": "Applicant First Name",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "applicant_lastname",
+    "name": "Applicant Last Name",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "applicant_businessname",
+    "name": "Applicant Business Name",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "applicant_address",
+    "name": "Applicant Address",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "applicant_city",
+    "name": "Applicant City",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "applicant_state",
+    "name": "Applicant State",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "applicant_zip",
+    "name": "Applicant Zip",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "applicant_license_number",
+    "name": "Applicant License Number",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "designprofessional_firstname",
+    "name": "Design Professional First Name",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "designprofessional_lastname",
+    "name": "Design Professional Last Name",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "designprofessional",
+    "name": "Design Professional Business Name",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "designprofessional_address",
+    "name": "Design Professional Address",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "designprofessional_city",
+    "name": "Design Professional City",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "designprofessional_state",
+    "name": "Design Professional State",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "designprofessional_zip",
+    "name": "Design Professional  Zip",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "designprofessional_license",
+    "name": "Design Professional License Number",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "owner_firstname",
+    "name": "Owner First Name",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "owner_lastname",
+    "name": "Owner Last Name",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "owner_title",
+    "name": "Owner Title",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "owner_businessname",
+    "name": "Owner Business Name",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "owner_address",
+    "name": "Owner Address",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "owner_city",
+    "name": "Owner City",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "owner_state",
+    "name": "Owner State",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "owner_zip",
+    "name": "Owner Zip",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "owner_type",
+    "name": "Owner Type",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "asbestosabatementcompliance",
+    "name": "Asbestos Abatement Complaince",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "depacp5controlno",
+    "name": "DEP ACP-5 Control No",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "descriptionofwork",
+    "name": "Scope of Work",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "gl_company",
+    "name": "General Liability",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "gl_policy",
+    "name": "GL Certificate Policy No",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "gl_expirationdate",
+    "name": "GL Expiration Date",
+    "dataTypeName": "calendar_date"
+   },
+   {
+    "fieldName": "worker_compensation_company",
+    "name": "Workers Compensation",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "worker_compensation_policy",
+    "name": "WC Certificate Policy No",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "worker_compensation",
+    "name": "WC Expiration Date",
+    "dataTypeName": "calendar_date"
+   },
+   {
+    "fieldName": "disability_company",
+    "name": "Disability",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "disability_policy",
+    "name": "Disability Certificate Policy No",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "disability_expirationdate",
+    "name": "Disability Expiration Date",
+    "dataTypeName": "calendar_date"
+   },
+   {
+    "fieldName": "estimated_cost",
+    "name": "Estimated Cost",
+    "dataTypeName": "number"
+   },
+   {
+    "fieldName": "filing_fee",
+    "name": "Filing Fee",
+    "dataTypeName": "number"
+   },
+   {
+    "fieldName": "no_good_check",
+    "name": "No Good Check",
+    "dataTypeName": "number"
+   },
+   {
+    "fieldName": "total_fee",
+    "name": "Total Fee",
+    "dataTypeName": "number"
+   },
+   {
+    "fieldName": "amount_paid",
+    "name": "Amount Paid",
+    "dataTypeName": "number"
+   },
+   {
+    "fieldName": "amount_due",
+    "name": "Amount Due",
+    "dataTypeName": "number"
+   },
+   {
+    "fieldName": "review_type_ppn",
+    "name": "Review Type (PPN)",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "permit_expiration_date",
+    "name": "Permit Expiration Date",
+    "dataTypeName": "calendar_date"
+   },
+   {
+    "fieldName": "latitude",
+    "name": "LATITUDE",
+    "dataTypeName": "number"
+   },
+   {
+    "fieldName": "longitude",
+    "name": "LONGITUDE",
+    "dataTypeName": "number"
+   },
+   {
+    "fieldName": "community_district_number",
+    "name": "COMMUNITY_DISTRICT_NUMBER",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "city_council_district",
+    "name": "CITY_COUNCIL_DISTRICT",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "census_tract",
+    "name": "CENSUS_TRACT",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "bbl",
+    "name": "BBL",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "nta_name",
+    "name": "NTA_NAME",
+    "dataTypeName": "text"
+   }
+  ]
+ },
+ "juyv-2jek": {
+  "id": "juyv-2jek",
+  "name": "DOB NOW: Build Elevator Device Details",
+  "attribution": "Department of Buildings (DOB)",
+  "assetType": "dataset",
+  "category": "Housing & Development",
+  "newBackend": true,
+  "provenance": "official",
+  "createdAt_raw": 1570131129,
+  "createdAt_utc": "2019-10-03T19:32:09Z",
+  "rowsUpdatedAt_raw": 1784211404,
+  "rowsUpdatedAt_utc": "2026-07-16T14:16:44Z",
+  "publicationDate_utc": "2023-02-13T19:51:26Z",
+  "viewLastModified_utc": "2026-07-16T18:01:46Z",
+  "custom_fields": {
+   "Data Collection": {
+    "Data Collection": "DOB NOW Elevator Permits Data"
+   },
+   "Update": {
+    "Automation": "Yes",
+    "Date Made Public": "10/31/2019",
+    "Update Frequency": "Daily"
+   },
+   "Dataset Information": {
+    "Agency": "Department of Buildings (DOB)"
+   }
+  },
+  "attachments": [
+   {
+    "filename": "DD_DOB_NOW_Build-Elevator_Filings_2019-10-30.xlsx",
+    "assetId": "037b7006-4238-4607-a3d0-e3b2a2727e82"
+   }
+  ],
+  "description": "This collection contains elevator applications, aka job filings, submitted online through the \"DOB NOW: BUILD\" portal. An approved application allows the applicant to pull a permit and begin work on an elevator project.\n</p>\nDOB NOW: BUILD is an online portal that allows users to file for permit applications, check the status of an application, make payments, schedule appointments, and print permits. \n\nData in this collection is limited to elevator applications (also known as ELV1) submitted through DOB NOW, and includes Initial (New), Subsequent, and Post Approval Amendment (PAA) filing types. The collection includes all electrical applications submitted to the Department of Buildings since December 11, 2017, when the applications were launched in DOB NOW and were no longer accepted through other submission processes.\n\nThis dataset contains details for each device on the application. There should be one row per device/Job Filing Number in this dataset. For example, an Initial Permit Application for Device 1234 and Device 5678 would have 2 rows (one for 1234 and one for 5678). If a Post Approval Amendment (PAA) was submitted for this application, then the Device rows would be repeated but the Job Filing Number would have a P1 suffix to indicate the PAA.",
+  "column_count": 167,
+  "columns": [
+   {
+    "fieldName": "job_filing_number",
+    "name": "JOB_FILING_NUMBER",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "device_id",
+    "name": "DEVICE_ID",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "device_type",
+    "name": "DEVICE_TYPE",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "device_status",
+    "name": "DEVICE_STATUS",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "building_elevator_numbers",
+    "name": "BUILDING_ELEVATOR_NUMBERS",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "bis_nyc_device_id",
+    "name": "BIS_NYC_DEVICE_ID",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "elevator_type",
+    "name": "ELEVATOR_TYPE",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "elevator_sub_type",
+    "name": "ELEVATOR_SUB_TYPE",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "physical_address",
+    "name": "PHYSICAL_ADDRESS",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "only_elevator_in_building",
+    "name": "ONLY_ELEVATOR_IN_BUILDING",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "occupant_evacuation_elevator",
+    "name": "OCCUPANT_EVACUATION_ELEVATOR",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "meets_the_stretcher_car",
+    "name": "MEETS_THE_STRETCHER_CAR_REQUIREMENT",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "device_confirming_with_seismic",
+    "name": "DEVICE_CONFIRMING_WITH_SEISMIC_COMPLAINCE",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "fire_emergency_phase",
+    "name": "FIRE_EMERGENCY_PHASE",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "destination_dispatch_system",
+    "name": "DESTINATION_DISPATCH_SYSTEM",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "fire_service_access_elevator",
+    "name": "FIRE_SERVICE_ACCESS_ELEVATOR",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "device_in_conjunction_with",
+    "name": "DEVICE_IN_CONJUNCTION_WITH_MTA_STATION",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "new_hoistway",
+    "name": "NEW_HOISTWAY",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "loft_law_building",
+    "name": "LOFT_LAW_BUILDING",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "device_job_description",
+    "name": "DEVICE_JOB_DESCRIPTION",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "machine_manufacturer",
+    "name": "MACHINE_MANUFACTURER",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "machine_model",
+    "name": "MACHINE_MODEL",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "machine_type",
+    "name": "MACHINE_TYPE",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "type_of_machine_break",
+    "name": "TYPE_OF_MACHINE_BREAK",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "machine_location",
+    "name": "MACHINE_LOCATION",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "controller_manufacturer",
+    "name": "CONTROLLER_MANUFACTURER",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "controller_model",
+    "name": "CONTROLLER_MODEL",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "controller_location",
+    "name": "CONTROLLER_LOCATION",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "hoist_rope_qty",
+    "name": "HOIST_ROPE_QTY",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "hoist_rope_size",
+    "name": "HOIST_ROPE_SIZE",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "hoist_rope_ultimate_strength",
+    "name": "HOIST_ROPE_ULTIMATE_STRENGTH",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "hoist_rope_material",
+    "name": "HOIST_ROPE_MATERIAL",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "car_counterweight_ropes_qty",
+    "name": "CAR_COUNTERWEIGHT_ROPES_QTY",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "car_counterweight_ropes_size",
+    "name": "CAR_COUNTERWEIGHT_ROPES_SIZE",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "car_counterweight_ropes",
+    "name": "CAR_COUNTERWEIGHT_ROPES_ULTIMATE_STRENGTH",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "car_counterweight_ropes_1",
+    "name": "CAR_COUNTERWEIGHT_ROPES_MATERIAL",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "machine_counterweight_ropes",
+    "name": "MACHINE_COUNTERWEIGHT_ROPES_QTY",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "machine_counterweight_ropes_1",
+    "name": "MACHINE_COUNTERWEIGHT_ROPES_SIZE",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "machine_counterweight_ropes_2",
+    "name": "MACHINE_COUNTERWEIGHT_ROPES_ULTIMATE_STRENGTH",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "machine_counterweight_ropes_3",
+    "name": "MACHINE_COUNTERWEIGHT_ROPES_MATERIAL",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "cargovernor_ropes_qty",
+    "name": "CARGOVERNOR_ROPES_QTY",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "cargovernor_ropes_size",
+    "name": "CARGOVERNOR_ROPES_SIZE",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "cargovernor_ropes_ultimate",
+    "name": "CARGOVERNOR_ROPES_ULTIMATE_STRENGTH",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "cargovernor_ropes_material",
+    "name": "CARGOVERNOR_ROPES_MATERIAL",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "cwtgovernor_ropes_qty",
+    "name": "CWTGOVERNOR_ROPES_QTY",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "cwtgovernor_ropes_size",
+    "name": "CWTGOVERNOR_ROPES_SIZE",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "cwtgovernor_ropes_ultimate",
+    "name": "CWTGOVERNOR_ROPES_ULTIMATE_STRENGTH",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "cwtgovernor_ropes_material",
+    "name": "CWTGOVERNOR_ROPES_MATERIAL",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "cargovernor_location",
+    "name": "CARGOVERNOR_LOCATION",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "cargovernor_tripping_speed",
+    "name": "CARGOVERNOR_TRIPPING_SPEED",
+    "dataTypeName": "number"
+   },
+   {
+    "fieldName": "cargovernor_type",
+    "name": "CARGOVERNOR_TYPE",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "cwtgovernor_location",
+    "name": "CWTGOVERNOR_LOCATION",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "cwtgovernor_tripping_speed",
+    "name": "CWTGOVERNOR_TRIPPING_SPEED",
+    "dataTypeName": "number"
+   },
+   {
+    "fieldName": "cwtgovernor_type",
+    "name": "CWTGOVERNOR_TYPE",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "powertype",
+    "name": "POWERTYPE",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "main_supply_power_type",
+    "name": "MAIN_SUPPLY_POWER_TYPE",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "travel_from_floor",
+    "name": "TRAVEL_FROM_FLOOR",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "travel_to_floor",
+    "name": "TRAVEL_TO_FLOOR",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "total_travel_feet",
+    "name": "TOTAL_TRAVEL(FEET)",
+    "dataTypeName": "number"
+   },
+   {
+    "fieldName": "number_of_stops",
+    "name": "NUMBER_OF_STOPS",
+    "dataTypeName": "number"
+   },
+   {
+    "fieldName": "elevator_capacity_lbs",
+    "name": "ELEVATOR_CAPACITY(LBS)",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "elevator_speed_fpm",
+    "name": "ELEVATOR_SPEED(FPM)",
+    "dataTypeName": "number"
+   },
+   {
+    "fieldName": "elevator_control",
+    "name": "ELEVATOR_CONTROL",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "mode_of_operation",
+    "name": "MODE_OF_OPERATION",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "load_weighing_device",
+    "name": "LOAD_WEIGHING_DEVICE",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "glass_hoistway",
+    "name": "GLASS_HOISTWAY",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "atruim_elevator",
+    "name": "ATRUIM_ELEVATOR",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "regenerative_drive",
+    "name": "REGENERATIVE_DRIVE",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "car_safety_type",
+    "name": "CAR_SAFETY_TYPE",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "car_safety_type_other",
+    "name": "CAR_SAFETY_TYPE_OTHER",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "counter_weight_safety_type",
+    "name": "COUNTER_WEIGHT_SAFETY_TYPE",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "counter_weight_safety_type_1",
+    "name": "COUNTER_WEIGHT_SAFETY_TYPE_OTHER",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "car_opening",
+    "name": "CAR_OPENING",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "car_opening_direction",
+    "name": "CAR_OPENING_DIRECTION",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "car_opening_operation",
+    "name": "CAR_OPENING_OPERATION",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "contact_type",
+    "name": "CONTACT_TYPE",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "elevator_manufacturer",
+    "name": "ELEVATOR_MANUFACTURER",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "car_to_counterweight_ratio",
+    "name": "CAR_TO_COUNTERWEIGHT_RATIO",
+    "dataTypeName": "number"
+   },
+   {
+    "fieldName": "top_emergency_exit_min_area",
+    "name": "TOP_EMERGENCY_EXIT_MIN_AREA",
+    "dataTypeName": "number"
+   },
+   {
+    "fieldName": "top_emergency_exit_min_side",
+    "name": "TOP_EMERGENCY_EXIT_MIN_SIDE",
+    "dataTypeName": "number"
+   },
+   {
+    "fieldName": "car_inside_width_feet",
+    "name": "CAR_INSIDE_WIDTH(FEET)",
+    "dataTypeName": "number"
+   },
+   {
+    "fieldName": "car_inside_width_inches",
+    "name": "CAR_INSIDE_WIDTH(INCHES)",
+    "dataTypeName": "number"
+   },
+   {
+    "fieldName": "car_inside_depth_feet",
+    "name": "CAR_INSIDE_DEPTH(FEET)",
+    "dataTypeName": "number"
+   },
+   {
+    "fieldName": "car_inside_depth_inches",
+    "name": "CAR_INSIDE_DEPTH(INCHES)",
+    "dataTypeName": "number"
+   },
+   {
+    "fieldName": "car_inside_area",
+    "name": "CAR_INSIDE_AREA",
+    "dataTypeName": "number"
+   },
+   {
+    "fieldName": "sized_for_stretcher",
+    "name": "SIZED_FOR_STRETCHER_REQUIREMENT",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "glass_car",
+    "name": "GLASS_CAR",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "multicompartment",
+    "name": "MULTICOMPARTMENT",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "hoist_opening",
+    "name": "HOIST_OPENING",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "hoist_direction",
+    "name": "HOIST_DIRECTION",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "elevator_operation",
+    "name": "ELEVATOR_OPERATION",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "elevator_doorfeatures",
+    "name": "ELEVATOR_DOORFEATURES",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "interlocks_type",
+    "name": "INTERLOCKS_TYPE",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "hoist_manufacturer",
+    "name": "HOIST_MANUFACTURER",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "elevator_landing",
+    "name": "ELEVATOR_LANDING",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "number_of_openings_front",
+    "name": "NUMBER_OF_OPENINGS_FRONT",
+    "dataTypeName": "number"
+   },
+   {
+    "fieldName": "number_of_openings_side",
+    "name": "NUMBER_OF_OPENINGS_SIDE",
+    "dataTypeName": "number"
+   },
+   {
+    "fieldName": "number_of_openings_rear",
+    "name": "NUMBER_OF_OPENINGS_REAR",
+    "dataTypeName": "number"
+   },
+   {
+    "fieldName": "total_number_of_openings",
+    "name": "TOTAL_NUMBER_OF_OPENINGS",
+    "dataTypeName": "number"
+   },
+   {
+    "fieldName": "door_monitoring_circuits",
+    "name": "DOOR_MONITORING_CIRCUITS",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "fire_rated_construction_type",
+    "name": "FIRE_RATED_CONSTRUCTION_TYPE",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "self_closing_emergency_doors",
+    "name": "SELF_CLOSING_EMERGENCY_DOORS",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "interlockin_blind_hoistway",
+    "name": "INTERLOCKIN_BLIND_HOISTWAY",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "car_buffer_type",
+    "name": "CAR_BUFFER_TYPE",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "car_buffer_manufacturer",
+    "name": "CAR_BUFFER_MANUFACTURER",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "car_buffer_engagement_speed",
+    "name": "CAR_BUFFER_ENGAGEMENT_SPEED",
+    "dataTypeName": "number"
+   },
+   {
+    "fieldName": "car_buffer_stroke_feet",
+    "name": "CAR_BUFFER_STROKE(FEET)",
+    "dataTypeName": "number"
+   },
+   {
+    "fieldName": "car_buffer_stroke_inches",
+    "name": "CAR_BUFFER_STROKE(INCHES)",
+    "dataTypeName": "number"
+   },
+   {
+    "fieldName": "car_buffer_reduced_stroke",
+    "name": "CAR_BUFFER_REDUCED_STROKE",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "counterweight_buffer",
+    "name": "COUNTERWEIGHT_BUFFER",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "counter_weight_buffer_type",
+    "name": "COUNTER_WEIGHT_BUFFER_TYPE",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "counter_weight_buffer",
+    "name": "COUNTER_WEIGHT_BUFFER_MANUFACTURER",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "counter_weight_buffer_1",
+    "name": "COUNTER_WEIGHT_BUFFER_ENGAGEMENT_SPEED",
+    "dataTypeName": "number"
+   },
+   {
+    "fieldName": "counter_weight_buffer_stroke",
+    "name": "COUNTER_WEIGHT_BUFFER_STROKE(FEET)",
+    "dataTypeName": "number"
+   },
+   {
+    "fieldName": "counter_weight_buffer_stroke_1",
+    "name": "COUNTER_WEIGHT_BUFFER_STROKE(INCHES)",
+    "dataTypeName": "number"
+   },
+   {
+    "fieldName": "compensation_means",
+    "name": "COMPENSATION_MEANS",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "elevator_length_feet",
+    "name": "ELEVATOR_LENGTH(FEET)",
+    "dataTypeName": "number"
+   },
+   {
+    "fieldName": "elevator_length_inches",
+    "name": "ELEVATOR_LENGTH(INCHES)",
+    "dataTypeName": "number"
+   },
+   {
+    "fieldName": "counter_weight_buffer_reduced",
+    "name": "COUNTER_WEIGHT_BUFFER_REDUCED_STROKE",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "occupied_space_below",
+    "name": "OCCUPIED_SPACE_BELOW",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "compensation_tie_down",
+    "name": "COMPENSATION_TIE_DOWN",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "counter_weight_guard",
+    "name": "COUNTER_WEIGHT_GUARD",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "attendant_operation",
+    "name": "ATTENDANT_OPERATION",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "glass_or_transparent",
+    "name": "GLASS_OR_TRANSPARENT",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "pit_depth",
+    "name": "PIT_DEPTH",
+    "dataTypeName": "number"
+   },
+   {
+    "fieldName": "conveyor_configuration",
+    "name": "CONVEYOR_CONFIGURATION",
+    "dataTypeName": "number"
+   },
+   {
+    "fieldName": "conveyor_safety_device_type",
+    "name": "CONVEYOR_SAFETY_DEVICE_TYPE",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "conveyor_counter_weight_safety",
+    "name": "CONVEYOR_COUNTER_WEIGHT_SAFETY_DEVICE_TYPE",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "hole_less_elevator",
+    "name": "HOLE_LESS_ELEVATOR",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "plunger_type",
+    "name": "PLUNGER_TYPE",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "car_buffer",
+    "name": "CAR_BUFFER",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "counter_weight_buffer_2",
+    "name": "COUNTER_WEIGHT_BUFFER",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "accessibility_lift",
+    "name": "ACCESSIBILITY_LIFT",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "conveyor_type",
+    "name": "CONVEYOR_TYPE",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "machine_jack_type",
+    "name": "MACHINE_JACK_TYPE",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "overload_device",
+    "name": "OVERLOAD_DEVICE",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "platform_lift_type",
+    "name": "PLATFORM_LIFT_TYPE",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "car_hoist_cwt_or_noncwt",
+    "name": "CAR_HOIST_CWT_OR_NONCWT",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "car_hoist_location",
+    "name": "CAR_HOIST_LOCATION",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "private_residence",
+    "name": "PRIVATE_RESIDENCE",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "car_hoist_opening",
+    "name": "CAR_HOIST_OPENING",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "hoist_capacity",
+    "name": "HOIST_CAPACITY",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "hoist_car_weight",
+    "name": "HOIST_CAR_WEIGHT",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "hoist_car_manufacturer",
+    "name": "HOIST_CAR_MANUFACTURER",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "hoist_counter_weighted",
+    "name": "HOIST_COUNTER_WEIGHTED",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "hoist_mast_manufacturer",
+    "name": "HOIST_MAST_MANUFACTURER",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "hoist_safety_serial_number",
+    "name": "HOIST_SAFETY_SERIAL_NUMBER",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "hoist_safety_expiration_date",
+    "name": "HOIST_SAFETY_EXPIRATION_DATE",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "hoist_model_num",
+    "name": "HOIST_MODEL_NUM",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "hoist_safety_capacity",
+    "name": "HOIST_SAFETY_CAPACITY",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "escalator_energy_saving",
+    "name": "ESCALATOR_ENERGY_SAVING_FUNCTION(SLEEP_MODE)",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "escalator_angle_of_inclination",
+    "name": "ESCALATOR_ANGLE_OF_INCLINATION",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "escalator_brake_torque",
+    "name": "ESCALATOR_BRAKE_TORQUE",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "escalator_capacity_lbs",
+    "name": "ESCALATOR_CAPACITY(LBS)",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "flame_heat_smoke_protection",
+    "name": "FLAME_HEAT_SMOKE_PROTECTION_PROVIDED",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "escalator_manufacturer",
+    "name": "ESCALATOR_MANUFACTURER",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "escalator_model",
+    "name": "ESCALATOR_MODEL",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "escalator_number_of_flat",
+    "name": "ESCALATOR_NUMBER_OF_FLAT_STEPS",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "outdoor_escalator",
+    "name": "OUTDOOR_ESCALATOR",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "escalator_rise_feet",
+    "name": "ESCALATOR_RISE(FEET)",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "escalator_rise_inches",
+    "name": "ESCALATOR_RISE(INCHES)",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "escalator_speed",
+    "name": "ESCALATOR_SPEED",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "escalator_step_width_feet",
+    "name": "ESCALATOR_STEP_WIDTH(FEET)",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "escalator_step_width_inches",
+    "name": "ESCALATOR_STEP_WIDTH(INCHES)",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "escalator_tandem_operation",
+    "name": "ESCALATOR_TANDEM_OPERATION",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "escalator_travel_from_floor",
+    "name": "ESCALATOR_TRAVEL_FROM_FLOOR",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "escalator_travel_to_floor",
+    "name": "ESCALATOR_TRAVEL_TO_FLOOR",
+    "dataTypeName": "text"
+   }
+  ]
+ },
+ "ipu4-2q9a": {
+  "id": "ipu4-2q9a",
+  "name": "DOB Permit Issuance",
+  "attribution": "Department of Buildings (DOB)",
+  "assetType": "dataset",
+  "category": "Housing & Development",
+  "newBackend": true,
+  "provenance": "official",
+  "createdAt_raw": 1366298336,
+  "createdAt_utc": "2013-04-18T15:18:56Z",
+  "rowsUpdatedAt_raw": 1784244422,
+  "rowsUpdatedAt_utc": "2026-07-16T23:27:02Z",
+  "publicationDate_utc": "2026-05-28T21:34:37Z",
+  "viewLastModified_utc": "2026-07-16T22:30:44Z",
+  "custom_fields": {
+   "Update": {
+    "Automation": "Yes",
+    "Date Made Public": "4/26/2013",
+    "Update Frequency": "Daily"
+   },
+   "Dataset Information": {
+    "Agency": "Department of Buildings (DOB)"
+   }
+  },
+  "attachments": [
+   {
+    "filename": "DD_DOB_Permit_Issuance_2019-07-29.xlsx",
+    "assetId": "12265875-36c8-4f5c-8a8c-657952bd1484"
+   }
+  ],
+  "description": "The Department of Buildings (DOB) issues permits for construction and demolition activities in the City of New York. The construction industry must submit an application to DOB with details of the construction job they would like to complete. The primary types of application, aka job type, are: New Building, Demolition, and Alterations Type 1, 2, and 3. Each job type can have multiple work types, such as general construction, boiler, elevator, and plumbing. Each work type will receive a separate permit. (See the DOB Job Application Filings dataset for information about each job application.) Each row/record in this dataset represents the life cycle of one permit for one work type. The dataset is updated daily with new records, and each existing record will be updated as the permit application moves through the approval process to reflect the latest status of the application.\n<b> Note: This dataset only includes permits issued in the Buildings Information System (BIS), most current permits are now issued in DOB NOW -- see the <a href =\"https://data.cityofnewyork.us/Housing-Development/DOB-NOW-Build-Approved-Permits/rbx6-tga4/about_data\">DOB NOW: Build – Approved Permits</a> dataset.</b>",
+  "column_count": 60,
+  "columns": [
+   {
+    "fieldName": "borough",
+    "name": "BOROUGH",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "bin__",
+    "name": "Bin #",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "house__",
+    "name": "House #",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "street_name",
+    "name": "Street Name",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "job__",
+    "name": "Job #",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "job_doc___",
+    "name": "Job doc. #",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "job_type",
+    "name": "Job Type",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "self_cert",
+    "name": "Self_Cert",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "block",
+    "name": "Block",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "lot",
+    "name": "Lot",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "community_board",
+    "name": "Community Board",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "zip_code",
+    "name": "Zip Code",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "bldg_type",
+    "name": "Bldg Type",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "residential",
+    "name": "Residential",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "special_district_1",
+    "name": "Special District 1",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "special_district_2",
+    "name": "Special District 2",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "work_type",
+    "name": "Work Type",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "permit_status",
+    "name": "Permit Status",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "filing_status",
+    "name": "Filing Status",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "permit_type",
+    "name": "Permit Type",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "permit_sequence__",
+    "name": "Permit Sequence #",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "permit_subtype",
+    "name": "Permit Subtype",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "oil_gas",
+    "name": "Oil Gas",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "site_fill",
+    "name": "Site Fill",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "filing_date",
+    "name": "Filing Date",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "issuance_date",
+    "name": "Issuance Date",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "expiration_date",
+    "name": "Expiration Date",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "job_start_date",
+    "name": "Job Start Date",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "permittee_s_first_name",
+    "name": "Permittee's First Name",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "permittee_s_last_name",
+    "name": "Permittee's Last Name",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "permittee_s_business_name",
+    "name": "Permittee's Business Name",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "permittee_s_phone__",
+    "name": "Permittee's Phone #",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "permittee_s_license_type",
+    "name": "Permittee's License Type",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "permittee_s_license__",
+    "name": "Permittee's License #",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "act_as_superintendent",
+    "name": "Act as Superintendent",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "permittee_s_other_title",
+    "name": "Permittee's Other Title",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "hic_license",
+    "name": "HIC License",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "site_safety_mgr_s_first_name",
+    "name": "Site Safety Mgr's First Name",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "site_safety_mgr_s_last_name",
+    "name": "Site Safety Mgr's Last Name",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "site_safety_mgr_business_name",
+    "name": "Site Safety Mgr Business Name",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "superintendent_first___last_name",
+    "name": "Superintendent First & Last Name",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "superintendent_business_name",
+    "name": "Superintendent Business Name",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "owner_s_business_type",
+    "name": "Owner's Business Type",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "non_profit",
+    "name": "Non-Profit",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "owner_s_business_name",
+    "name": "Owner's Business Name",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "owner_s_first_name",
+    "name": "Owner's First Name",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "owner_s_last_name",
+    "name": "Owner's Last Name",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "owner_s_house__",
+    "name": "Owner's House #",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "owner_s_house_street_name",
+    "name": "Owner's House Street Name",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "city",
+    "name": "Owner’s House City",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "state",
+    "name": "Owner’s House State",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "owner_s_zip_code",
+    "name": "Owner’s House Zip Code",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "permit_si_no",
+    "name": "PERMIT_SI_NO",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "gis_latitude",
+    "name": "LATITUDE",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "gis_longitude",
+    "name": "LONGITUDE",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "gis_council_district",
+    "name": "COUNCIL_DISTRICT",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "gis_census_tract",
+    "name": "CENSUS_TRACT",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "bbl",
+    "name": "BBL",
+    "dataTypeName": "number"
+   },
+   {
+    "fieldName": "gis_nta_name",
+    "name": "NTA_NAME",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "dobrundate",
+    "name": "DOBRunDate",
+    "dataTypeName": "calendar_date"
+   }
+  ]
+ },
+ "ic3t-wcy2": {
+  "id": "ic3t-wcy2",
+  "name": "DOB Job Application Filings",
+  "attribution": "Department of Buildings (DOB)",
+  "assetType": "dataset",
+  "category": "Housing & Development",
+  "newBackend": true,
+  "provenance": "official",
+  "createdAt_raw": 1366298336,
+  "createdAt_utc": "2013-04-18T15:18:56Z",
+  "rowsUpdatedAt_raw": 1784238090,
+  "rowsUpdatedAt_utc": "2026-07-16T21:41:30Z",
+  "publicationDate_utc": "2026-05-27T21:19:53Z",
+  "viewLastModified_utc": "2026-07-16T21:02:40Z",
+  "custom_fields": {
+   "Update": {
+    "Automation": "Yes",
+    "Date Made Public": "4/26/2013",
+    "Update Frequency": "Daily"
+   },
+   "Dataset Information": {
+    "Agency": "Department of Buildings (DOB)"
+   }
+  },
+  "attachments": [
+   {
+    "filename": "DD_DOB Job Application Filings_2019-06-19.xlsx",
+    "assetId": "9bb3688e-1bf8-4f8f-9541-ce936f1d00f4"
+   }
+  ],
+  "description": "This dataset contains all job applications submitted through the Borough Offices, through eFiling, or through the HUB, which have a \"Latest Action Date\" since January 1, 2000. This dataset does not include jobs submitted through DOB NOW. See the <a href=\"https://data.cityofnewyork.us/d/w9ak-ipjd\" target=\"_blank\" rel=\"noreferrer\"\n>DOB NOW: Build – Job Application Filings</a> dataset for DOB NOW jobs.",
+  "column_count": 95,
+  "columns": [
+   {
+    "fieldName": "job_s1_no",
+    "name": "JOB_S1_NO",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "job__",
+    "name": "Job #",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "doc__",
+    "name": "Doc #",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "borough",
+    "name": "Borough",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "house__",
+    "name": "House #",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "street_name",
+    "name": "Street Name",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "block",
+    "name": "Block",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "lot",
+    "name": "Lot",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "bin__",
+    "name": "Bin #",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "total_construction_floor_area",
+    "name": "TOTAL_CONSTRUCTION_FLOOR_AREA",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "job_type",
+    "name": "Job Type",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "job_status",
+    "name": "Job Status",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "job_status_descrp",
+    "name": "Job Status Descrp",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "latest_action_date",
+    "name": "Latest Action Date",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "building_type",
+    "name": "Building Type",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "community___board",
+    "name": "Community - Board",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "cluster",
+    "name": "Cluster",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "landmarked",
+    "name": "Landmarked",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "adult_estab",
+    "name": "Adult Estab",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "loft_board",
+    "name": "Loft Board",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "city_owned",
+    "name": "City Owned",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "little_e",
+    "name": "Little e",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "pc_filed",
+    "name": "PC Filed",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "efiling_filed",
+    "name": "eFiling Filed",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "plumbing",
+    "name": "Plumbing",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "mechanical",
+    "name": "Mechanical",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "boiler",
+    "name": "Boiler",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "fuel_burning",
+    "name": "Fuel Burning",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "fuel_storage",
+    "name": "Fuel Storage",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "standpipe",
+    "name": "Standpipe",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "sprinkler",
+    "name": "Sprinkler",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "fire_alarm",
+    "name": "Fire Alarm",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "equipment",
+    "name": "Equipment",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "fire_suppression",
+    "name": "Fire Suppression",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "curb_cut",
+    "name": "Curb Cut",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "other",
+    "name": "Other",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "other_description",
+    "name": "Other Description",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "withdrawal_flag",
+    "name": "WITHDRAWAL_FLAG",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "applicant_s_first_name",
+    "name": "Applicant's First Name",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "applicant_s_last_name",
+    "name": "Applicant's Last Name",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "applicant_professional_title",
+    "name": "Applicant Professional Title",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "applicant_license__",
+    "name": "Applicant License #",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "professional_cert",
+    "name": "Professional Cert",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "pre__filing_date",
+    "name": "Pre- Filing Date",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "paid",
+    "name": "Paid",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "fully_paid",
+    "name": "Fully Paid",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "assigned",
+    "name": "Assigned",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "approved",
+    "name": "Approved",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "fully_permitted",
+    "name": "Fully Permitted",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "signoff_date",
+    "name": "SIGNOFF_DATE",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "special_action_status",
+    "name": "SPECIAL_ACTION_STATUS",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "special_action_date",
+    "name": "SPECIAL_ACTION_DATE",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "initial_cost",
+    "name": "Initial Cost",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "total_est__fee",
+    "name": "Total Est. Fee",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "fee_status",
+    "name": "Fee Status",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "existing_zoning_sqft",
+    "name": "Existing Zoning Sqft",
+    "dataTypeName": "number"
+   },
+   {
+    "fieldName": "proposed_zoning_sqft",
+    "name": "Proposed Zoning Sqft",
+    "dataTypeName": "number"
+   },
+   {
+    "fieldName": "horizontal_enlrgmt",
+    "name": "Horizontal Enlrgmt",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "vertical_enlrgmt",
+    "name": "Vertical Enlrgmt",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "enlargement_sq_footage",
+    "name": "Enlargement SQ Footage",
+    "dataTypeName": "number"
+   },
+   {
+    "fieldName": "street_frontage",
+    "name": "Street Frontage",
+    "dataTypeName": "number"
+   },
+   {
+    "fieldName": "existingno_of_stories",
+    "name": "ExistingNo. of Stories",
+    "dataTypeName": "number"
+   },
+   {
+    "fieldName": "proposed_no_of_stories",
+    "name": "Proposed No. of Stories",
+    "dataTypeName": "number"
+   },
+   {
+    "fieldName": "existing_height",
+    "name": "Existing Height",
+    "dataTypeName": "number"
+   },
+   {
+    "fieldName": "proposed_height",
+    "name": "Proposed Height",
+    "dataTypeName": "number"
+   },
+   {
+    "fieldName": "existing_dwelling_units",
+    "name": "Existing Dwelling Units",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "proposed_dwelling_units",
+    "name": "Proposed Dwelling Units",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "existing_occupancy",
+    "name": "Existing Occupancy",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "proposed_occupancy",
+    "name": "Proposed Occupancy",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "site_fill",
+    "name": "Site Fill",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "zoning_dist1",
+    "name": "Zoning Dist1",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "zoning_dist2",
+    "name": "Zoning Dist2",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "zoning_dist3",
+    "name": "Zoning Dist3",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "special_district_1",
+    "name": "Special District 1",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "special_district_2",
+    "name": "Special District 2",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "owner_type",
+    "name": "Owner Type",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "non_profit",
+    "name": "Non-Profit",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "owner_s_first_name",
+    "name": "Owner's First Name",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "owner_s_last_name",
+    "name": "Owner's Last Name",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "owner_s_business_name",
+    "name": "Owner's Business Name",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "owner_s_house_number",
+    "name": "Owner's House Number",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "owner_shouse_street_name",
+    "name": "Owner'sHouse Street Name",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "city_",
+    "name": "City ",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "state",
+    "name": "State",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "zip",
+    "name": "Zip",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "building_class",
+    "name": "BUILDING_CLASS",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "job_description",
+    "name": "Job Description",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "job_no_good_count",
+    "name": "JOB_NO_GOOD_COUNT",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "gis_latitude",
+    "name": "LATITUDE",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "gis_longitude",
+    "name": "LONGITUDE",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "gis_council_district",
+    "name": "COUNCIL DISTRICT",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "gis_census_tract",
+    "name": "CENSUS TRACT",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "gis_nta_name",
+    "name": "NTA",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "bbl",
+    "name": "BBL",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "dobrundate",
+    "name": "DOBRunDate",
+    "dataTypeName": "calendar_date"
+   }
+  ]
+ },
+ "bs8b-p36w": {
+  "id": "bs8b-p36w",
+  "name": "DOB Certificate Of Occupancy",
+  "attribution": null,
+  "assetType": "dataset",
+  "category": "Housing & Development",
+  "newBackend": true,
+  "provenance": "official",
+  "createdAt_raw": 1498850799,
+  "createdAt_utc": "2017-06-30T19:26:39Z",
+  "rowsUpdatedAt_raw": 1784233890,
+  "rowsUpdatedAt_utc": "2026-07-16T20:31:30Z",
+  "publicationDate_utc": "2017-07-11T21:58:44Z",
+  "viewLastModified_utc": "2026-04-20T13:14:50Z",
+  "custom_fields": {
+   "Update": {
+    "Automation": "Yes",
+    "Date Made Public": "7/13/2017",
+    "Update Frequency": "Daily"
+   },
+   "Legislative Compliance": {
+    "Geo-coding Attached?": ""
+   },
+   "Dataset Information": {
+    "Agency": "Department of Buildings (DOB)"
+   }
+  },
+  "attachments": [
+   {
+    "filename": "DD_DOB_Certificate_Of_Occupancy_2017-11-22.xlsx",
+    "assetId": "c85974d4-39be-4625-b5c3-03b36afc476d"
+   }
+  ],
+  "description": "A Certificate of Occupancy (CO) states a building’s legal use and/or type of permitted occupancy. New buildings must have a CO, and existing buildings must have a current or amended CO when there is a change in use, egress or type of occupancy. No one may legally occupy a building until the Department has issued a Certificate of Occupancy or Temporary Certificate of Occupancy. The Department issues a final Certificate of Occupancy when the completed work matches the submitted plans for new buildings or major alterations. It issues a Letter of Completion for minor alterations to properties. These documents confirm the work complies with all applicable laws, all paperwork has been completed, all fees owed to the Department have been paid, all relevant violations have been resolved and all necessary approvals have been received from other City Agencies.\n\nThis dataset contains all Certificates of Occupancy issued from 7/12/2012 to March 2021. PDFs of the actual COs are viewable in www.nyc.gov/bis.\n\nFor COs issued since March 2021, see <a href=\"https://data.cityofnewyork.us/Housing-Development/DOB-NOW-Certificate-of-Occupancy/pkdm-hqz6\">DOB NOW: Certificate of Occupancy</a> dataset.",
+  "column_count": 30,
+  "columns": [
+   {
+    "fieldName": "job_number",
+    "name": "JOB_NUMBER",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "job_type",
+    "name": "JOB_TYPE",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "c_o_issue_date",
+    "name": "C_O_ISSUE_DATE",
+    "dataTypeName": "calendar_date"
+   },
+   {
+    "fieldName": "bin_number",
+    "name": "BIN_NUMBER",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "borough",
+    "name": "BOROUGH",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "house_number",
+    "name": "NUMBER",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "street_name",
+    "name": "STREET",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "block",
+    "name": "BLOCK",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "lot",
+    "name": "LOT",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "postcode",
+    "name": "POSTCODE",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "pr_dwelling_unit",
+    "name": "PR_DWELLING_UNIT",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "ex_dwelling_unit",
+    "name": "EX_DWELLING_UNIT",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "application_status_raw",
+    "name": "APPLICATION_STATUS_RAW",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "filing_status_raw",
+    "name": "FILING_STATUS_RAW",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "item_number",
+    "name": "ITEM_NUMBER",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "issue_type",
+    "name": "ISSUE_TYPE",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "latitude",
+    "name": "LATITUDE",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "longitude",
+    "name": "LONGITUDE",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "community_board",
+    "name": "COMMUNITY_BOARD",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "council_district",
+    "name": "COUNCIL_DISTRICT",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "census_tract",
+    "name": "CENSUS_TRACT",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "bin",
+    "name": "BIN",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "bbl",
+    "name": "BBL",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "nta",
+    "name": "NTA",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "location",
+    "name": "LOCATION",
+    "dataTypeName": "location"
+   },
+   {
+    "fieldName": ":@computed_region_efsh_h5xi",
+    "name": "Zip Codes",
+    "dataTypeName": "number"
+   },
+   {
+    "fieldName": ":@computed_region_f5dn_yrer",
+    "name": "Community Districts",
+    "dataTypeName": "number"
+   },
+   {
+    "fieldName": ":@computed_region_yeji_bk3q",
+    "name": "Borough Boundaries",
+    "dataTypeName": "number"
+   },
+   {
+    "fieldName": ":@computed_region_92fq_4b7q",
+    "name": "City Council Districts",
+    "dataTypeName": "number"
+   },
+   {
+    "fieldName": ":@computed_region_sbqj_enih",
+    "name": "Police Precincts",
+    "dataTypeName": "number"
+   }
+  ]
+ },
+ "e98g-f8hy": {
+  "id": "e98g-f8hy",
+  "name": "Property Data (Buildings Information System) - Now Retired",
+  "attribution": "Department of Buildings (DOB)",
+  "assetType": "dataset",
+  "category": "Housing & Development",
+  "newBackend": true,
+  "provenance": "official",
+  "createdAt_raw": 1319133802,
+  "createdAt_utc": "2011-10-20T18:03:22Z",
+  "rowsUpdatedAt_raw": 1784132539,
+  "rowsUpdatedAt_utc": "2026-07-15T16:22:19Z",
+  "publicationDate_utc": "2015-02-02T20:50:17Z",
+  "viewLastModified_utc": "2026-07-15T16:24:56Z",
+  "custom_fields": {
+   "Update": {
+    "Automation": "No",
+    "Date Made Public": "10/20/2011",
+    "Update Frequency": "As needed"
+   },
+   "Dataset Information": {
+    "Agency": "Department of Buildings (DOB)"
+   }
+  },
+  "attachments": [
+   {
+    "filename": "DD_Property_Data_2017-10-20.xlsx",
+    "assetId": "fa29e435-38c7-4056-9a30-03c2190fc524"
+   }
+  ],
+  "description": "<em>This dataset is being replaced. Please visit: <a href=\"https://data.cityofnewyork.us/d/ipu4-2q9a\">https://data.cityofnewyork.us/d/ipu4-2q9a</a> for DOB permit data</em>",
+  "column_count": 11,
+  "columns": [
+   {
+    "fieldName": "permit_bin",
+    "name": "Permit BIN",
+    "dataTypeName": "number"
+   },
+   {
+    "fieldName": "permit_application_job_number",
+    "name": "Permit Application Job Number",
+    "dataTypeName": "number"
+   },
+   {
+    "fieldName": "permit_application_document_number",
+    "name": "Permit Application Document Number",
+    "dataTypeName": "number"
+   },
+   {
+    "fieldName": "permit_application_job_type",
+    "name": "Permit Application Job Type",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "permit_type",
+    "name": "Permit Type",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "permit_subtype",
+    "name": "Permit SubType",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "permit_status_description",
+    "name": "Permit Status Description",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "permit_sequence_number",
+    "name": "Permit Sequence Number",
+    "dataTypeName": "number"
+   },
+   {
+    "fieldName": "permit_status_date",
+    "name": "Permit Status Date",
+    "dataTypeName": "calendar_date"
+   },
+   {
+    "fieldName": "permit_issuance_date",
+    "name": "Permit Issuance Date",
+    "dataTypeName": "calendar_date"
+   },
+   {
+    "fieldName": "permit_experation_date",
+    "name": "Permit Experation Date",
+    "dataTypeName": "calendar_date"
+   }
+  ]
+ },
+ "bty7-2jhb": {
+  "id": "bty7-2jhb",
+  "name": "Historical DOB Permit Issuance",
+  "attribution": null,
+  "assetType": "dataset",
+  "category": "Housing & Development",
+  "newBackend": true,
+  "provenance": "official",
+  "createdAt_raw": 1475003132,
+  "createdAt_utc": "2016-09-27T19:05:32Z",
+  "rowsUpdatedAt_raw": 1533652460,
+  "rowsUpdatedAt_utc": "2018-08-07T14:34:20Z",
+  "publicationDate_utc": "2018-08-08T17:57:44Z",
+  "viewLastModified_utc": "2022-05-09T22:20:49Z",
+  "custom_fields": {
+   "Update": {
+    "Automation": "No",
+    "Date Made Public": "10/11/2017",
+    "Update Frequency": "Historical data"
+   },
+   "Dataset Information": {
+    "Agency": "Department of Buildings (DOB)"
+   }
+  },
+  "attachments": [
+   {
+    "filename": "DOB  Work Permit.xlsx",
+    "assetId": "3a89beb8-3127-4fd4-b2e5-bb25fa4c1ab9"
+   }
+  ],
+  "description": "A list of permits issued by the Department of Buildings from 1989 to 2013. This dataset was originally released to provide data from before the DOB Permit Issuance dataset began. DOB Permit Issuance has since been updated to incorporate this date range, and this historical dataset is now redundant.",
+  "column_count": 60,
+  "columns": [
+   {
+    "fieldName": "borough",
+    "name": "BOROUGH",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "bin",
+    "name": "BIN",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "house",
+    "name": "Number",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "street_name",
+    "name": "Street",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "job",
+    "name": "Job #",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "job_doc",
+    "name": "Job doc. #",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "job_type",
+    "name": "Job Type",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "self_cert",
+    "name": "Self_Cert",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "block",
+    "name": "Block",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "lot",
+    "name": "Lot",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "community_board",
+    "name": "Community Board",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "zip_code",
+    "name": "Postcode",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "bldg_type",
+    "name": "Bldg Type",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "residential",
+    "name": "Residential",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "special_district_1",
+    "name": "Special District 1",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "special_district_2",
+    "name": "Special District 2",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "work_type",
+    "name": "Work Type",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "permit_status",
+    "name": "Permit Status",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "filing_status",
+    "name": "Filing Status",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "permit_type",
+    "name": "Permit Type",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "permit_sequence",
+    "name": "Permit Sequence #",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "permit_subtype",
+    "name": "Permit Subtype",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "oil_gas",
+    "name": "Oil Gas",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "site_fill",
+    "name": "Site Fill",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "filing_date",
+    "name": "Filing Date",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "issuance_date",
+    "name": "Issuance Date",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "expiration_date",
+    "name": "Expiration Date",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "job_start_date",
+    "name": "Job Start Date",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "permittee_s_first_name",
+    "name": "Permittee's First Name",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "permittee_s_last_name",
+    "name": "Permittee's Last Name",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "permittee_s_business_name",
+    "name": "Permittee's Business Name",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "permittee_s_phone",
+    "name": "Permittee's Phone #",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "permittee_s_license_type",
+    "name": "Permittee's License Type",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "permittee_s_license",
+    "name": "Permittee's License #",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "act_as_superintendent",
+    "name": "Act as Superintendent",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "permittee_s_other_title",
+    "name": "Permittee's Other Title",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "hic_license",
+    "name": "HIC License",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "site_safety_mgr_s_first_name",
+    "name": "Site Safety Mgr's First Name",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "site_safety_mgr_s_last_name",
+    "name": "Site Safety Mgr's Last Name",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "site_safety_mgr_business_name",
+    "name": "Site Safety Mgr Business Name",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "superintendent_first_last_name",
+    "name": "Superintendent First & Last Name",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "superintendent_business_name",
+    "name": "Superintendent Business Name",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "owner_s_business_type",
+    "name": "Owner's Business Type",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "non_profit",
+    "name": "Non-Profit",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "owner_s_business_name",
+    "name": "Owner's Business Name",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "owner_s_first_name",
+    "name": "Owner's First Name",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "owner_s_last_name",
+    "name": "Owner's Last Name",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "owner_s_house",
+    "name": "Owner's House #",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "owner_s_house_street_name",
+    "name": "Owner's House Street Name",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "owner_s_house_city",
+    "name": "Owner’s House City",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "owner_s_house_state",
+    "name": "Owner’s House State",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "owner_s_house_zip_code",
+    "name": "Owner’s House Zip Code",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "owner_s_phone",
+    "name": "Owner's Phone #",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "dobrundate",
+    "name": "DOBRunDate",
+    "dataTypeName": "text"
+   },
+   {
+    "fieldName": "latitude",
+    "name": "Latitude",
+    "dataTypeName": "number"
+   },
+   {
+    "fieldName": "longitude",
+    "name": "Longitude",
+    "dataTypeName": "number"
+   },
+   {
+    "fieldName": "council_district",
+    "name": "Council District",
+    "dataTypeName": "number"
+   },
+   {
+    "fieldName": "census_tract",
+    "name": "Census Tract",
+    "dataTypeName": "number"
+   },
+   {
+    "fieldName": "bbl",
+    "name": "BBL",
+    "dataTypeName": "number"
+   },
+   {
+    "fieldName": "nta",
+    "name": "NTA",
+    "dataTypeName": "text"
+   }
+  ]
+ }
+}

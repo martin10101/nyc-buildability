@@ -1,0 +1,306 @@
+{
+ "api.us.socrata.com": {
+  "resultSetSize": 21,
+  "results": [
+   {
+    "id": "rbx6-tga4",
+    "name": "DOB NOW: Build – Approved Permits",
+    "type": "dataset",
+    "attribution": "Department of Buildings (DOB)",
+    "provenance": "official"
+   },
+   {
+    "id": "w9ak-ipjd",
+    "name": "DOB NOW: Build – Job Application Filings",
+    "type": "dataset",
+    "attribution": "Department of Buildings (DOB)",
+    "provenance": "official"
+   },
+   {
+    "id": "52dp-yji6",
+    "name": "DOB NOW: Safety Boiler",
+    "type": "dataset",
+    "attribution": "Department of Buildings (DOB)",
+    "provenance": "official"
+   },
+   {
+    "id": "pkdm-hqz6",
+    "name": "DOB NOW: Certificate of Occupancy",
+    "type": "dataset",
+    "attribution": "Department of Buildings (DOB)",
+    "provenance": "official"
+   },
+   {
+    "id": "xubg-57si",
+    "name": "DOB NOW: Safety – Facades Compliance Filings",
+    "type": "dataset",
+    "attribution": "Department of Buildings (DOB)",
+    "provenance": "official"
+   },
+   {
+    "id": "dm9a-ab7w",
+    "name": "DOB NOW: Electrical Permit Applications",
+    "type": "dataset",
+    "attribution": "Department of Buildings (DOB)",
+    "provenance": "official"
+   },
+   {
+    "id": "xmmq-y7za",
+    "name": "DOB NOW: Electrical Permit Details",
+    "type": "dataset",
+    "attribution": "Department of Buildings (DOB)",
+    "provenance": "official"
+   },
+   {
+    "id": "kfp4-dz4h",
+    "name": "DOB NOW: Build Elevator Permit Applications",
+    "type": "dataset",
+    "attribution": "Department of Buildings (DOB)",
+    "provenance": "official"
+   },
+   {
+    "id": "juyv-2jek",
+    "name": "DOB NOW: Build Elevator Device Details",
+    "type": "dataset",
+    "attribution": "Department of Buildings (DOB)",
+    "provenance": "official"
+   },
+   {
+    "id": "e5aq-a4j2",
+    "name": "DOB NOW Elevator Safety Compliance",
+    "type": "dataset",
+    "attribution": "Department of Buildings (DOB)",
+    "provenance": "official"
+   },
+   {
+    "id": "xxbr-ypig",
+    "name": "DOB NOW: Build – Limited Alteration Applications",
+    "type": "dataset",
+    "attribution": "Department of Buildings (DOB)",
+    "provenance": "official"
+   },
+   {
+    "id": "ipu4-2q9a",
+    "name": "DOB Permit Issuance",
+    "type": "dataset",
+    "attribution": "Department of Buildings (DOB)",
+    "provenance": "official"
+   },
+   {
+    "id": "ic3t-wcy2",
+    "name": "DOB Job Application Filings",
+    "type": "dataset",
+    "attribution": "Department of Buildings (DOB)",
+    "provenance": "official"
+   },
+   {
+    "id": "bs8b-p36w",
+    "name": "DOB Certificate Of Occupancy",
+    "type": "dataset",
+    "attribution": null,
+    "provenance": "official"
+   },
+   {
+    "id": "g76y-dcqj",
+    "name": "DOB After Hour Variance Permits",
+    "type": "dataset",
+    "attribution": "Department of Buildings (DOB)",
+    "provenance": "official"
+   },
+   {
+    "id": "855j-jady",
+    "name": "DOB Safety Violations",
+    "type": "dataset",
+    "attribution": "Department of Buildings (DOB)",
+    "provenance": "official"
+   },
+   {
+    "id": "e98g-f8hy",
+    "name": "Property Data (Buildings Information System) - Now Retired",
+    "type": "dataset",
+    "attribution": "Department of Buildings (DOB)",
+    "provenance": "official"
+   },
+   {
+    "id": "bty7-2jhb",
+    "name": "Historical DOB Permit Issuance",
+    "type": "dataset",
+    "attribution": null,
+    "provenance": "official"
+   },
+   {
+    "id": "bf97-mjsy",
+    "name": "Construction-Related Incidents",
+    "type": "dataset",
+    "attribution": "Department of Buildings (DOB)",
+    "provenance": "official"
+   },
+   {
+    "id": "rrtd-iyd7",
+    "name": "485-x Affordable Neighborhoods for New Yorkers: Registrations of Prospective Applicants for Tax Benefits",
+    "type": "dataset",
+    "attribution": "Department of Housing Preservation and Development (HPD)",
+    "provenance": "official"
+   },
+   {
+    "id": "pq4c-wbq4",
+    "name": "421-a(16) Affordable New York Housing Program Completion Extension - Letters of Intent",
+    "type": "dataset",
+    "attribution": "Department of Housing Preservation and Development (HPD)",
+    "provenance": "official"
+   }
+  ]
+ },
+ "data.cityofnewyork.us": {
+  "resultSetSize": 21,
+  "results": [
+   {
+    "id": "rbx6-tga4",
+    "name": "DOB NOW: Build – Approved Permits",
+    "type": "dataset",
+    "attribution": "Department of Buildings (DOB)",
+    "provenance": "official"
+   },
+   {
+    "id": "w9ak-ipjd",
+    "name": "DOB NOW: Build – Job Application Filings",
+    "type": "dataset",
+    "attribution": "Department of Buildings (DOB)",
+    "provenance": "official"
+   },
+   {
+    "id": "52dp-yji6",
+    "name": "DOB NOW: Safety Boiler",
+    "type": "dataset",
+    "attribution": "Department of Buildings (DOB)",
+    "provenance": "official"
+   },
+   {
+    "id": "pkdm-hqz6",
+    "name": "DOB NOW: Certificate of Occupancy",
+    "type": "dataset",
+    "attribution": "Department of Buildings (DOB)",
+    "provenance": "official"
+   },
+   {
+    "id": "xubg-57si",
+    "name": "DOB NOW: Safety – Facades Compliance Filings",
+    "type": "dataset",
+    "attribution": "Department of Buildings (DOB)",
+    "provenance": "official"
+   },
+   {
+    "id": "dm9a-ab7w",
+    "name": "DOB NOW: Electrical Permit Applications",
+    "type": "dataset",
+    "attribution": "Department of Buildings (DOB)",
+    "provenance": "official"
+   },
+   {
+    "id": "xmmq-y7za",
+    "name": "DOB NOW: Electrical Permit Details",
+    "type": "dataset",
+    "attribution": "Department of Buildings (DOB)",
+    "provenance": "official"
+   },
+   {
+    "id": "kfp4-dz4h",
+    "name": "DOB NOW: Build Elevator Permit Applications",
+    "type": "dataset",
+    "attribution": "Department of Buildings (DOB)",
+    "provenance": "official"
+   },
+   {
+    "id": "juyv-2jek",
+    "name": "DOB NOW: Build Elevator Device Details",
+    "type": "dataset",
+    "attribution": "Department of Buildings (DOB)",
+    "provenance": "official"
+   },
+   {
+    "id": "e5aq-a4j2",
+    "name": "DOB NOW Elevator Safety Compliance",
+    "type": "dataset",
+    "attribution": "Department of Buildings (DOB)",
+    "provenance": "official"
+   },
+   {
+    "id": "xxbr-ypig",
+    "name": "DOB NOW: Build – Limited Alteration Applications",
+    "type": "dataset",
+    "attribution": "Department of Buildings (DOB)",
+    "provenance": "official"
+   },
+   {
+    "id": "ipu4-2q9a",
+    "name": "DOB Permit Issuance",
+    "type": "dataset",
+    "attribution": "Department of Buildings (DOB)",
+    "provenance": "official"
+   },
+   {
+    "id": "ic3t-wcy2",
+    "name": "DOB Job Application Filings",
+    "type": "dataset",
+    "attribution": "Department of Buildings (DOB)",
+    "provenance": "official"
+   },
+   {
+    "id": "bs8b-p36w",
+    "name": "DOB Certificate Of Occupancy",
+    "type": "dataset",
+    "attribution": null,
+    "provenance": "official"
+   },
+   {
+    "id": "g76y-dcqj",
+    "name": "DOB After Hour Variance Permits",
+    "type": "dataset",
+    "attribution": "Department of Buildings (DOB)",
+    "provenance": "official"
+   },
+   {
+    "id": "855j-jady",
+    "name": "DOB Safety Violations",
+    "type": "dataset",
+    "attribution": "Department of Buildings (DOB)",
+    "provenance": "official"
+   },
+   {
+    "id": "e98g-f8hy",
+    "name": "Property Data (Buildings Information System) - Now Retired",
+    "type": "dataset",
+    "attribution": "Department of Buildings (DOB)",
+    "provenance": "official"
+   },
+   {
+    "id": "bty7-2jhb",
+    "name": "Historical DOB Permit Issuance",
+    "type": "dataset",
+    "attribution": null,
+    "provenance": "official"
+   },
+   {
+    "id": "bf97-mjsy",
+    "name": "Construction-Related Incidents",
+    "type": "dataset",
+    "attribution": "Department of Buildings (DOB)",
+    "provenance": "official"
+   },
+   {
+    "id": "rrtd-iyd7",
+    "name": "485-x Affordable Neighborhoods for New Yorkers: Registrations of Prospective Applicants for Tax Benefits",
+    "type": "dataset",
+    "attribution": "Department of Housing Preservation and Development (HPD)",
+    "provenance": "official"
+   },
+   {
+    "id": "pq4c-wbq4",
+    "name": "421-a(16) Affordable New York Housing Program Completion Extension - Letters of Intent",
+    "type": "dataset",
+    "attribution": "Department of Housing Preservation and Development (HPD)",
+    "provenance": "official"
+   }
+  ]
+ }
+}
