@@ -3,8 +3,17 @@
   "gate_id": "G3",
   "reviewer": "code-reviewer",
   "role": "independent_review",
-  "result": "FAIL",
-  "report_file": "project-control/reports/M1-T008-G3-code-review.md",
-  "reviewed_at": "2026-07-17T17:27:19.821635+00:00",
-  "updated_at": "2026-07-17T17:27:19.821635+00:00"
+  "result": "PASS",
+  "report_file": "project-control/reports/M1-T008-G3-delta-review.md",
+  "reviewed_at": "2026-07-17T18:12:48.308184+00:00",
+  "history": [
+    {
+      "reviewer": "code-reviewer",
+      "role": "independent_review",
+      "result": "FAIL",
+      "report_file": "project-control/reports/M1-T008-G3-code-review.md",
+      "reviewed_at": "2026-07-17T17:27:19.821635+00:00"
+    }
+  ],
+  "updated_at": "2026-07-17T18:12:48.308184+00:00"
 }

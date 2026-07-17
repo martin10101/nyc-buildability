@@ -1,0 +1,9 @@
+{
+  "checkpoint_id": "CP-0019",
+  "timestamp": "2026-07-17T18:13:32.007096+00:00",
+  "commit": "fbb4b7d",
+  "branch": "main",
+  "active_milestone": "M0",
+  "summary": "M1-T008 ACCEPTED (25th): docs-only rework (0a45aa5) reconciled provenance narrative to committed artifacts per G3 D1-D3 and G1 blocking D1/D2; delta G3 re-review PASS (fresh code-reviewer instance, verbatim report M1-T008-G3-delta-review.md; one LOW non-blocking residual N1 noted: stale disclaimed directory-total in producer report); PR 7 merged after CI green; G0/G2 late-recorded with honest late-recording notes to satisfy hardened accept preconditions. Next: M2-T003 packet update to contract-1.2.0-canonical via control PR, then dispatch.",
+  "updated_at": "2026-07-17T18:13:32.015387+00:00"
+}
