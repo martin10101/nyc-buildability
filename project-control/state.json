@@ -1,7 +1,7 @@
 {
   "project_status": "active",
   "current_milestone": "M0",
-  "last_checkpoint": "CP-0012",
+  "last_checkpoint": "CP-0013",
   "accepted_tasks": [
     "M0-T000",
     "M0-T001",
@@ -13,6 +13,7 @@
     "M0-T006",
     "M0-T009",
     "M0-T011",
+    "M0-T012",
     "M1-T001",
     "M1-T002",
     "M1-T003",
@@ -21,14 +22,12 @@
     "M1-T006",
     "M2-T001"
   ],
-  "active_tasks": [
-    "M0-T012"
-  ],
+  "active_tasks": [],
   "blocked_tasks": [
     "M0-T007",
     "M0-T008",
     "M0-T010"
   ],
   "failed_gates": [],
-  "updated_at": "2026-07-17T07:36:19.623491+00:00"
+  "updated_at": "2026-07-17T07:40:22.503280+00:00"
 }

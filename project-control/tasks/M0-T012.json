@@ -44,8 +44,8 @@
   "reviewer_agents": [
     "security-reviewer"
   ],
-  "status": "awaiting_gate",
-  "progress_percent": 85,
+  "status": "accepted",
+  "progress_percent": 100,
   "risks": [
     "SHA must come from the official actions/<name> repo tag (watch for annotated-tag dereference: gh api the tag ref, then dereference object.sha to the COMMIT sha)",
     "A wrong SHA bricks all CI - S5 branch CI run is the proof gate before merge",
@@ -54,6 +54,8 @@
   "blockers": [],
   "execution_location": "owner PC for file edits + gh api resolution (KB-scale, disk now 7.77 GB free - above floor); CI validation in GitHub Actions on the task branch; cleanup = worktree removal after acceptance",
   "created_at": "2026-07-17T04:20:56.864218+00:00",
-  "updated_at": "2026-07-17T07:36:19.553387+00:00",
-  "worktree": ".claude/worktrees/M0-T012"
+  "updated_at": "2026-07-17T07:39:50.284349+00:00",
+  "worktree": ".claude/worktrees/M0-T012",
+  "accepted_by": "orchestrator",
+  "accepted_at": "2026-07-17T07:39:50.282695+00:00"
 }

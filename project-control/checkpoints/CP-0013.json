@@ -1,0 +1,9 @@
+{
+  "checkpoint_id": "CP-0013",
+  "timestamp": "2026-07-17T07:40:22.501219+00:00",
+  "commit": "99202ce",
+  "branch": "main",
+  "active_milestone": "M0",
+  "summary": "M0-T012 CI SHA-pinning ACCEPTED (owner-directed narrow scope): all 12 action refs across ci.yml + generate-lockfile.yml pinned to immutable SHAs (checkout v4.3.1, setup-node v4.4.0, setup-python v5.6.0, upload-artifact v4.6.2); G0/G2/G3(security, independent live re-resolution)/G4 all PASS; merge 99cca33; supply-chain debt closed BEFORE any repo/CI secret lands (B-001/B-002 pending). 18 accepted total (M0x11, M1x6, M2x1). Session also: accepted-count breakdown corrected per owner; expansion ZIP still NOT on disk (expected Downloads path empty; Chrome/Edge download history has no record ever - owner re-downloading); READ-ONLY disk audit running (drive now 7.77 GB free, up from 1.67); owner directives recorded: B-005 integration from real manifest next once ZIP lands, then GDS plan refresh (owner review), Confirm screen = client-facing critical path using expansion design guidance, DOB NOW research parallel non-blocking, M5-T001 gated on refreshed approved GDS plan, deployment blockers standing (auth, rate limiting, CORS/proxy, headers, B-001/B-002).",
+  "updated_at": "2026-07-17T07:40:22.501219+00:00"
+}
