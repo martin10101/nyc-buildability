@@ -1,0 +1,72 @@
+{
+  "task_id": "M2-T002",
+  "title": "Confirm screen (step 2) with hardened API client (M2-T001 D1-D5 carry-forwards)",
+  "task_type": "frontend",
+  "milestone_id": "M2",
+  "objective": "Deliver the Confirm screen per PRODUCT_FLOW step 2 on top of the hardened boundary: client enforces exact HTTP-status/state pairs with unexpected_response for mismatches (regression: HTTP 500 + state=no_match never renders as no_match); full runtime validation of a 200 profile against generated types before rendering; bounded input/error reflection; request cancellation and timeout; resolve M2-T001 carry-forwards D1 (FIELD_LABELS for every surfaced raw PLUTO key - reviewed mapping, no invented interpretations), D2 (responsive viewports + keyboard-operated toggle/retry journeys), D3 (visible coverage-status legend), D4 (missing-inputs shared-reason density), D5 (post-success invalid-submit must not unmount the rendered profile)",
+  "business_reason": "Client-facing critical path (handoff queue item 3); PRD section 32.2 stage 2",
+  "inputs": [
+    "M2-T003 outputs: generated TypeScript types from packages/contracts/schemas/v1/property_profile.schema.json (the ONLY type vocabulary the client may use), backend response validation, exact HTTP-status/state pair guarantees, recorded 500+state=no_match regression fixture, contract_version resolution",
+    "project-control/reports/M2-T001-G3-review.md defects table D1-D5 VERBATIM: D1 FIELD_LABELS missing ~20 surfaced keys (residfar, commfar, facilfar, affresfar, mnffar, zonedist1-4, overlay1-2, spdist1-3, ltdheight, mih_opt1-4, edesignum, appbbl, appdate, condono) - labels must be a reviewed mapping with provenance, never invented interpretations; D2 responsive viewports + keyboard-operated grouped-toggle/retry e2e journeys; D3 always-visible coverage-status legend (not hover-only); D4 missing-inputs shared boilerplate reason stated once, not repeated x24; D5 post-success invalid submit must not unmount the rendered profile",
+    "docs/PRODUCT_FLOW_AND_AI_BOUNDARIES.md Step 2 Confirm spec: compact property card (canonical address, BBL/BIN, lot area/geometry summary, existing building facts, zoning districts/overlays/special districts, landmark/flood/pending flags, data conflicts, only questions government data cannot answer) + UI rules (one next action, plain language first, never legal-certainty by color, no silent defaults)",
+    "docs/PREMIUM_PRODUCT_DESIGN_SYSTEM.md + docs/3D_VISUAL_ACCEPTANCE_STANDARD.md (pack design standards, per handoff queue item 3)",
+    "M2-T001 accepted Property screen in apps/web (extend, do not fork; M1-T005 G3 section 5 tolerance rules still apply)",
+    "docs/ACCEPTANCE_SCENARIO_STANDARD.md UI human-journey pack"
+  ],
+  "outputs": [
+    "Confirm screen implementing PRODUCT_FLOW step 2 on apps/web, reachable from the Property screen result, with the compact property card sections and confirm/override affordances honestly labeled for facts the API provides today (no pretend user-assumption persistence - flag persistence as depending on M2-T004/analysis-run work)",
+    "Hardened API client module: exact status/state pair enforcement, unexpected_response state for any mismatch, runtime validation of every 200 profile against the generated types before render, bounded input/error reflection (length-capped, escaped), AbortController cancellation + timeout",
+    "D1-D5 resolutions: complete FIELD_LABELS with review provenance note; responsive layouts + viewport/keyboard e2e; visible coverage legend; deduplicated missing-inputs reason; profile persists across a subsequent invalid submit",
+    "Extended CI web job coverage (additive only); Playwright journeys for all scenarios with traces for G3",
+    "project-control/reports/M2-T002-producer-report.md (AOS section-6 packet)"
+  ],
+  "dependencies": [
+    "M2-T003"
+  ],
+  "allowed_paths": [
+    "apps/web/**",
+    ".github/workflows/ci.yml (ADDITIVE changes to the web job only)",
+    "project-control/reports/M2-T002-producer-report.md"
+  ],
+  "forbidden_paths": [
+    "services/** (read-only dependency)",
+    "packages/contracts/** (generated types are M2-T003 output; never hand-edit)",
+    "render.yaml",
+    "docs/**",
+    "project-control/** (except own producer report)",
+    ".claude/**"
+  ],
+  "acceptance_scenarios": [
+    "S1 primary: Property lookup 1000010010 -> Confirm screen renders the full property card with units, coverage labels from contract enums, visible coverage legend, conflicts section, per-fact provenance drill-down",
+    "S2 boundary/regression (BLOCKING, owner-directed): recorded fixture HTTP 500 + state=no_match renders unexpected_response with correlation id - NEVER the no_match screen; any undocumented status/state pair -> unexpected_response",
+    "S3 malformed 200: profile failing runtime validation (wrong type, missing required key) -> validation-failure state, nothing partially rendered from an invalid payload",
+    "S4 D5 regression: successful profile then invalid BBL submit -> previous profile stays rendered with inline error; cancellation: rapid resubmit aborts the stale request (no late-arrival overwrite); timeout -> recoverable state",
+    "S5 D1: every key surfaced by the missing-inputs/facts sections has a human label from the reviewed FIELD_LABELS mapping; no raw PLUTO column name reaches the user; labels traceable to an official data-dictionary reference in the report",
+    "S6 D2/D3/D4: viewports 360px/768px/1280px render without overflow; grouped-missing toggle and retry operated by keyboard in e2e; coverage legend visible without hover; shared missing-reason stated once with per-field exceptions still shown",
+    "S7 honesty: no invented interpretations or 'best'/'verified' wording beyond contract enums; questions section only shows what official data cannot answer; internal/dev banner + PRD 29 disclaimer retained",
+    "S8 regression + hygiene: all M2-T001 journeys still green; lint/typecheck clean; no secrets in bundle; all installs/builds/tests in CI (owner PC source-edits only); task branch -> PR -> checks green -> merge per protected-main workflow"
+  ],
+  "required_gates": [
+    "G0",
+    "G2",
+    "G3",
+    "G4",
+    "G5"
+  ],
+  "producer_agent": "frontend-engineer",
+  "reviewer_agents": [
+    "human-journey-reviewer",
+    "visual-quality-reviewer",
+    "security-reviewer"
+  ],
+  "status": "backlog",
+  "progress_percent": 0,
+  "risks": [
+    "Depends on M2-T003 (generated types + backend guarantees); do not start the client hardening against handwritten types",
+    "CI-only heavy execution stands (no local npm/Playwright); PR-based protected-main workflow applies",
+    "visual-quality-reviewer first real dispatch: confirm it writes only under its own agent-memory (M0-T013 G3 carry-forward 4)"
+  ],
+  "blockers": [],
+  "created_at": "2026-07-17T10:25:10.809766+00:00",
+  "updated_at": "2026-07-17T10:25:10.809766+00:00"
+}

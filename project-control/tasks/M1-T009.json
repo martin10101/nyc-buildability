@@ -1,0 +1,67 @@
+{
+  "task_id": "M1-T009",
+  "title": "Pre-paid-traffic resilience for official-source connectors",
+  "task_type": "implementation",
+  "milestone_id": "M1",
+  "objective": "Add connector-layer resilience before paid traffic: response caching, Retry-After honoring, jittered backoff, circuit breaker, last-known-good serving with visible staleness labeling, and per-analysis request budgets",
+  "business_reason": "Owner code-audit directive 2026-07-17 pre-paid-traffic resilience",
+  "inputs": [
+    "Owner code-audit directive 2026-07-17 pre-paid-traffic resilience items (verbatim in project-control/reports/OWNER-REVIEW-code-audit-task-consolidation.md section 2.5)",
+    "services/api SODA client + fixture transport seam (M1-T002/M1-T005 connector framework)",
+    "M1-T003/M1-T004 research: documented Socrata rate limits, tokenless throttling behavior, Retry-After semantics",
+    "M2-T003 outputs (staleness labeling rides on the validated response contract; last-known-good payloads must still pass backend validation)"
+  ],
+  "outputs": [
+    "Connector-layer resilience in services/api: response caching with TTL + versioned keys; Retry-After honored exactly; jittered exponential backoff; per-source circuit breaker (open/half-open/closed); last-known-good serving with staleness surfaced in provenance and coverage (never silent); per-analysis request budget with typed budget-exceeded failure",
+    "Deterministic tests for every behavior against the fixture transport (no live calls in CI)",
+    "Metrics/log hooks for breaker state, cache hit ratio, budget consumption (observability-ready, no secrets in logs)",
+    "project-control/reports/M1-T009-producer-report.md (AOS section-6 packet)"
+  ],
+  "dependencies": [
+    "M2-T003"
+  ],
+  "allowed_paths": [
+    "services/api/**",
+    ".github/workflows/ci.yml (ADDITIVE only)",
+    "project-control/reports/M1-T009-producer-report.md"
+  ],
+  "forbidden_paths": [
+    "apps/web/**",
+    "packages/contracts/** (staleness fields, if contract-visible, go through an M2-T003-pipeline additive change reviewed at G1)",
+    "render.yaml",
+    "docs/**",
+    "project-control/** (except own producer report)",
+    ".claude/**"
+  ],
+  "acceptance_scenarios": [
+    "S1 cache: second identical request within TTL serves from cache (transport call-count proves no upstream hit); expiry refetches",
+    "S2 Retry-After: 429 with Retry-After delays exactly as instructed - no early retry (clock-controlled test)",
+    "S3 backoff: retries use bounded exponential backoff with jitter (distribution asserted over runs); max-retry cap respected",
+    "S4 breaker: opens after the configured failure threshold, rejects fast while open, half-opens after cooldown, closes on success - all state transitions tested",
+    "S5 last-known-good: upstream down -> LKG served WITH visible staleness (retrieved_at + stale flag in provenance/coverage); never silently presented as fresh; no LKG available -> typed failure",
+    "S6 budget: per-analysis request budget exceeded -> typed budget_exceeded failure, zero further upstream calls in that analysis",
+    "S7 idempotency: retried requests are idempotent; no duplicate side effects; provenance records actual retrieval, not retry count artifacts",
+    "S8 regression: full existing connector/API suite green; no live-network dependence added to CI"
+  ],
+  "required_gates": [
+    "G0",
+    "G1",
+    "G2",
+    "G3",
+    "G4"
+  ],
+  "producer_agent": "backend-engineer",
+  "reviewer_agents": [
+    "data-contract-verifier",
+    "qa-engineer"
+  ],
+  "status": "backlog",
+  "progress_percent": 0,
+  "risks": [
+    "Staleness must be visible at the contract level - coordinate any contract-visible field as an additive M2-T003-pipeline change",
+    "Clock-dependent tests must be deterministic (injected clock, no sleeps in CI)"
+  ],
+  "blockers": [],
+  "created_at": "2026-07-17T10:25:11.210201+00:00",
+  "updated_at": "2026-07-17T10:25:11.210201+00:00"
+}

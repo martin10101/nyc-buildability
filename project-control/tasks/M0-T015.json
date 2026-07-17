@@ -1,0 +1,68 @@
+{
+  "task_id": "M0-T015",
+  "title": "Deployment reconciliation preflight (Render blueprint blockers)",
+  "task_type": "infrastructure",
+  "milestone_id": "M0",
+  "objective": "Reconcile deployment configuration before any Blueprint provisioning: create services/api/requirements.txt (or align blueprint to the packaging actually used); align health-check path to /api/v1/health; add NEXT_PUBLIC_API_BASE_URL or a same-origin proxy for the Render web service; fix or remove configured worker and cron entrypoints that do not exist; complete auth/CORS/security-header baseline. Do NOT provision the Blueprint (B-002 remains owner-gated)",
+  "business_reason": "Owner code-audit directive 2026-07-17 deployment-blocker list; prevents a broken first deploy",
+  "inputs": [
+    "Owner code-audit directive 2026-07-17 deployment-blocker list (verbatim in project-control/reports/OWNER-REVIEW-code-audit-task-consolidation.md section 2.4): services/api/requirements.txt missing; health path is /api/v1/health not /health; Render web lacks NEXT_PUBLIC_API_BASE_URL or same-origin proxy; configured worker/cron entrypoints do not exist; auth/CORS/security headers incomplete",
+    "render.yaml current blueprint + services/api actual packaging (pyproject-based install)",
+    "project-control/reports/M2-T001-G3-review.md D8 (CORS/proxy decision recorded as an explicit pre-deployment blocker)",
+    "B-002 (Render account owner-gated) + docs/LOW_STORAGE_CLOUD_DEVELOPMENT_POLICY.md",
+    "M0-T006 deployment/rollback procedure records (the runbook this task corrects)"
+  ],
+  "outputs": [
+    "Blueprint/packaging reconciliation: services/api/requirements.txt created OR render.yaml build command aligned to the packaging actually used (decision documented)",
+    "Health-check path aligned to /api/v1/health everywhere (blueprint, runbook, monitors)",
+    "Web-service API wiring: NEXT_PUBLIC_API_BASE_URL env var in the blueprint or an implemented same-origin proxy (resolves M2-T001 D8; decision documented)",
+    "Worker and cron entrypoints in render.yaml either implemented as real modules or removed until their milestones deliver them (no phantom entrypoints)",
+    "API security baseline: CORS origin allowlist middleware, security headers, honest documentation that auth is NOT yet enabled (M0-T007/T008 blocked on B-001) and therefore NO public exposure until it is",
+    "Updated deployment runbook (exact file confirmed at G0 from M0-T006 records)",
+    "NO provisioning: zero Render API calls; B-002 stays owner-gated",
+    "project-control/reports/M0-T015-producer-report.md (AOS section-6 packet)"
+  ],
+  "dependencies": [],
+  "allowed_paths": [
+    "render.yaml",
+    "services/api/** (packaging, health route alias if needed, CORS/security-header middleware only)",
+    "apps/web/.env.example (names only)",
+    "docs/ deployment runbook file only (exact path confirmed at G0 from M0-T006 records)",
+    "project-control/reports/M0-T015-producer-report.md"
+  ],
+  "forbidden_paths": [
+    "apps/web/** except .env.example",
+    "packages/contracts/**",
+    "project-control/** (except own producer report)",
+    ".claude/**, .github/** (CI untouched; this is deploy config, not CI)"
+  ],
+  "acceptance_scenarios": [
+    "S1 blueprint truth: every buildCommand/startCommand/entrypoint in render.yaml resolves to files/modules that exist in the repo (scripted check in the report)",
+    "S2 health: the blueprint health-check path matches the live route (/api/v1/health) and the runbook says the same",
+    "S3 wiring: web service reaches the API via the chosen mechanism (env var or proxy) with the decision + rationale recorded; .env.example carries names only",
+    "S4 CORS/headers: pytest proves disallowed origin rejected, configured origin allowed, security headers present on API responses",
+    "S5 honesty: runbook and blueprint state auth is absent and public exposure is blocked until M0-T007/T008; no secrets anywhere; secret scan green",
+    "S6 no provisioning: no Render account/API interaction occurred; B-002 unchanged",
+    "S7 G5 review passes on the CORS/header/no-auth-exposure posture"
+  ],
+  "required_gates": [
+    "G0",
+    "G2",
+    "G3",
+    "G5"
+  ],
+  "producer_agent": "cloud-architect",
+  "reviewer_agents": [
+    "security-reviewer",
+    "code-reviewer"
+  ],
+  "status": "backlog",
+  "progress_percent": 0,
+  "risks": [
+    "Do not provision anything (B-002 owner-gated); this is configuration truth-reconciliation only",
+    "CORS/proxy decision affects M2-T002's deployed behavior later - record the decision so the frontend does not hardcode assumptions"
+  ],
+  "blockers": [],
+  "created_at": "2026-07-17T10:25:11.071657+00:00",
+  "updated_at": "2026-07-17T10:25:11.071657+00:00"
+}

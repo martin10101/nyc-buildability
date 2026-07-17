@@ -1,0 +1,67 @@
+{
+  "task_id": "M2-T004",
+  "title": "Data-semantics separation and snapshot lineage (owner code-audit P1)",
+  "task_type": "implementation",
+  "milestone_id": "M2",
+  "objective": "Separate source-record completeness, analysis readiness, rule coverage, geometry validity, and financial readiness into independent dimensions (overall completeness no longer defined from all 108 possible PLUTO columns); separate stable fact_key from immutable observation_id; add canonical response/value digest and snapshot lineage to property facts",
+  "business_reason": "Owner code-audit directive 2026-07-17 P1: required before persistence and professional reports",
+  "inputs": [
+    "Owner code-audit directive 2026-07-17 P1 items (verbatim in project-control/reports/OWNER-REVIEW-code-audit-task-consolidation.md section 2.3)",
+    "services/api builder completeness logic (current overall completeness derived from all 108 possible PLUTO columns - the defect)",
+    "packages/contracts property-profile v1.1 + the M2-T003 type-generation pipeline (contract evolution must flow through it)",
+    "PRD section 12 coverage model + GENERATIVE_DEVELOPMENT_STRATEGY_REQUIREMENTS.md section 3.3 independent status dimensions (legal/geometric/planning/financial/evidence must never collapse into one label)"
+  ],
+  "outputs": [
+    "Independent dimensions on the profile: source-record completeness, analysis readiness, rule coverage, geometry validity, financial readiness - each with its own enum; dimensions not yet computable are declared not_computed, never inferred; overall completeness no longer derived from all 108 PLUTO columns (feasibility-relevant column set documented with provenance)",
+    "Fact identity separation: stable fact_key (survives re-observation) vs immutable observation_id (unique per retrieval)",
+    "Canonical response digest + per-value digest and snapshot lineage (observation -> source version -> request) on property facts",
+    "Additive contract evolution through the M2-T003 pipeline (v1.1 consumers unaffected)",
+    "project-control/reports/M2-T004-producer-report.md (AOS section-6 packet)"
+  ],
+  "dependencies": [
+    "M2-T003"
+  ],
+  "allowed_paths": [
+    "services/api/**",
+    "packages/contracts/**",
+    ".github/workflows/ci.yml (ADDITIVE only)",
+    "project-control/reports/M2-T004-producer-report.md"
+  ],
+  "forbidden_paths": [
+    "apps/web/**",
+    "render.yaml",
+    "docs/**",
+    "project-control/** (except own producer report)",
+    ".claude/**"
+  ],
+  "acceptance_scenarios": [
+    "S1 completeness basis: the feasibility-relevant column set is explicit, documented with an official data-dictionary reference, and drives source-record completeness; the 108-column denominator is gone",
+    "S2 dimension independence: fixture with a complete source record but missing geometry yields complete source-record status AND failed/missing geometry validity simultaneously",
+    "S3 identity: re-observing the same fact preserves fact_key and issues a new observation_id; both persist in provenance",
+    "S4 digest: deterministic across identical responses; any value change flips the digest; digest recorded per response and per fact",
+    "S5 lineage: every fact traces observation -> source version -> request URL/timestamp without gaps",
+    "S6 additive evolution: M2-T001/M2-T002 fixtures and journeys remain green against the evolved contract",
+    "S7 G1 re-verification of the documented column set and semantics by data-contract-verifier"
+  ],
+  "required_gates": [
+    "G0",
+    "G1",
+    "G2",
+    "G3",
+    "G4"
+  ],
+  "producer_agent": "backend-engineer",
+  "reviewer_agents": [
+    "data-contract-verifier",
+    "code-reviewer"
+  ],
+  "status": "backlog",
+  "progress_percent": 0,
+  "risks": [
+    "Owner-directed sequencing: this must land before persistence and professional reports; it does NOT block M2-T002",
+    "Dimension enums are contract surface - wrong granularity now is expensive later; keep enums minimal and extensible"
+  ],
+  "blockers": [],
+  "created_at": "2026-07-17T10:25:10.943997+00:00",
+  "updated_at": "2026-07-17T10:25:10.943997+00:00"
+}
