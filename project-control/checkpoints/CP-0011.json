@@ -1,0 +1,9 @@
+{
+  "checkpoint_id": "CP-0011",
+  "timestamp": "2026-07-17T00:05:51.511280+00:00",
+  "commit": "883d097",
+  "branch": "main",
+  "active_milestone": "M0",
+  "summary": "M1-T006 property-profile contract v1.1 ACCEPTED (G0/G2/G3/G4 all PASS; G3 zero blocking defects, byte-exact S6 ground-truth regeneration; CI green at fb5594a on real jsonschema 4.10.3 runner). Additive 1.1.0: coverage_status/data_completeness/reproducibility documented, district provenance linkage maps with referential-integrity + anti-fabrication validation, 8 new fixtures, 24 validator tests, one-line API test-registry pairing (142 tests). Non-blocking carry-forwards D1-D5 recorded (CI wiring of validator tests -> hygiene batch; builder version bump -> M2 builder task). Session-6 also: stranded worktree agent-a09bb9729962a6f1d cleaned with agent-memory preserved (c6ad0e6); B-005 owner decision recorded (GDS does NOT supersede; pack REQUIRED) but zip NOT FOUND on this machine after exhaustive search - open pending owner supplying the file. NEXT: Priority 4 property screen (owner-directed, unblocked NOW that v1.1 is accepted); GDS overlap-inventory refresh blocked on B-005. Disk note: owner PC at ~1.67 GB free, below prior 2.27 GB reading.",
+  "updated_at": "2026-07-17T00:05:51.511280+00:00"
+}

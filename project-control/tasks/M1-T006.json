@@ -56,8 +56,8 @@
   "reviewer_agents": [
     "code-reviewer"
   ],
-  "status": "awaiting_gate",
-  "progress_percent": 85,
+  "status": "accepted",
+  "progress_percent": 100,
   "risks": [
     "CI runner ships jsonschema 4.10.3 (legacy resolver path is LIVE in CI, guarded fail-closed since M0-T005-R1): any new $ref pattern must work on both 4.10.3 and 4.26 or fail closed, never silently pass",
     "district provenance linkage design must not force a breaking change on zoning arrays (plain strings must stay valid) or on the accepted M1-T005 API output",
@@ -66,6 +66,8 @@
   "blockers": [],
   "execution_location": "owner PC (KB-scale JSON/schema edits + local pytest run) with authoritative validation in GitHub Actions CI; expected disk use <1 MB, no datasets, no installs; durable output = git commits pushed to GitHub; no temp files beyond pytest cache (already git-ignored)",
   "created_at": "2026-07-16T22:55:07.095778+00:00",
-  "updated_at": "2026-07-17T00:02:46.442487+00:00",
-  "worktree": ".claude/worktrees/M1-T006"
+  "updated_at": "2026-07-17T00:05:26.702109+00:00",
+  "worktree": ".claude/worktrees/M1-T006",
+  "accepted_by": "orchestrator",
+  "accepted_at": "2026-07-17T00:05:26.702109+00:00"
 }
