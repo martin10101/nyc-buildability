@@ -11,3 +11,5 @@
 - [M1-T002 G3 carry-forward](project_m1-t002-g3-carryforward.md) — connector PASS @9e22839; D1 record-bbl misclass + D2 NaN + confidence-1.0 guidance for property-profile API
 - [M1-T004 G3 carry-forward](project_m1-t004-g3-carryforward.md) — ZR corpus PASS zero defects; amendment-AJAX = enrichment-only owner directive; §12-01(j)/FROM-variants/3-ID-namespaces for M3
 - [M1-T006 G3 carry-forward](project_m1-t006-g3-carryforward.md) — contract v1.1 PASS; validator tests not in CI; M2 builder must emit maps + bump to 1.1.0 + extend integrity assert
+- [M0-T010 G3 carry-forward](project_m0-t010-g3-carryforward.md) — pack integration PASS @c0769ae; byte-identity = git-blob level (autocrlf); 5 pack agents C1-C7 no-dispatch until conformance; P1-P8 applyable 2026-07-17
+- [M1-T007 G3 carry-forward](project_m1-t007-g3-carryforward.md) — DOB NOW research PASS @294dad5; bf97-mjsy→M1-T008 binding §6; no "joins cleanly/trivial" wording; Socrata $-encoding gotcha
