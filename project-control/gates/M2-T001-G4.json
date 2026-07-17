@@ -1,0 +1,9 @@
+{
+  "task_id": "M2-T001",
+  "gate_id": "G4",
+  "reviewer": "orchestrator",
+  "result": "PASS",
+  "report_file": "project-control\\reports\\M2-T001-G4-integration-evidence.md",
+  "reviewed_at": "2026-07-17T03:00:11.020431+00:00",
+  "updated_at": "2026-07-17T03:00:11.020431+00:00"
+}

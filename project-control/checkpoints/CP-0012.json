@@ -1,0 +1,9 @@
+{
+  "checkpoint_id": "CP-0012",
+  "timestamp": "2026-07-17T03:00:25.746480+00:00",
+  "commit": "9353466",
+  "branch": "main",
+  "active_milestone": "M0",
+  "summary": "M2-T001 Priority 4 Property screen ACCEPTED - first client-visible end-to-end slice (browser -> real property-profile API v1.1 -> official fixtures). All gates PASS: G0, G2 (CI evidence, owner PC below disk floor so ALL execution in GitHub Actions incl. lockfile regeneration + 22 Playwright journeys), G3 human-journey (zero blocking; D1-D5 carry-forwards to Confirm screen), G5 security (zero blocking; C1 CORS/proxy + C2 auth/rate-limit + C3 security headers recorded as BLOCKING-BEFORE-ANY-DEPLOY conditions), G4 CI green on main at 9353466. Merge e074a2e. Worktree/branch removed; temp artifacts deleted. Also this session: M1-T006 contract v1.1 ACCEPTED (CP-0011); B-005 zip NOT on machine after two exhaustive searches - owner must supply. Learned: GITHUB_TOKEN bot pushes never trigger CI (empty-commit workaround recorded in ci evidence + memory). NEXT: hygiene batch (SHA-pinning, validator-test CI wiring, lockfile-workflow disposition, ci.yml comment) -> M1 research fan-out (DOB NOW first) -> Confirm-screen task (D1-D5) -> M2 connector packets on B-001; GDS refresh still gated on B-005.",
+  "updated_at": "2026-07-17T03:00:25.759115+00:00"
+}
