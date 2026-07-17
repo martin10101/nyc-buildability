@@ -1,0 +1,9 @@
+{
+  "checkpoint_id": "CP-0018",
+  "timestamp": "2026-07-17T17:31:19.561583+00:00",
+  "commit": "9de93204c4025a737a289705c9020c072dfa5860",
+  "branch": "main",
+  "active_milestone": "M0",
+  "summary": "Session 8 close. ACCEPTED +3: M0-T014 (hardened control CLI: gate classes w/ orchestrator/self_check role, accept preconditions, containment, atomic writes - governs the ledger since PR 4), M0-T015 (deployment reconciliation; CORS wildcard+credentials structurally impossible; no provisioning), M2-T004 (data semantics: 6 independent dimensions, 19-column documented completeness basis, fact_key/observation_id, canonical digests, lineage; contract 1.2.0; FAIL->rework->delta-PASS history preserved) = 24 accepted. M1-T008 in REWORK: G1 PASS w/ blocking D1/D2 + G3 FAIL (provenance-narrative reconciliation only; research data live-verified sound; PR 7 open unmerged). Process: protected-main PR workflow live (PRs 1-10; no direct main pushes, local deny; B-008 records plan-gated server ruleset - owner action GitHub Pro or public). Permission posture v3: auto mode, ask only deletes. M0-T016 follow-up packet created (backlog, uncommitted). Next: M1-T008 doc-rework redispatch; M2-T003 packet update to contract 1.2.0 per owner control 2 THEN dispatch; then M2-T002/M1-T009. Owner-approved critical path M2-T004 -> M2-T003 -> M2-T002/M1-T009 on schedule.",
+  "updated_at": "2026-07-17T17:31:19.561583+00:00"
+}

@@ -1,0 +1,53 @@
+{
+  "task_id": "M0-T016",
+  "title": "Project-control hardening follow-up (owner-scoped: orchestrator roster prohibition, gate-enum validation, M0-T007/T008 roster preconditions)",
+  "task_type": "implementation",
+  "milestone_id": "M0",
+  "objective": "Scoped follow-up to M0-T014 per owner directive 2026-07-17: (1) prohibit the reserved orchestrator identity from reviewer_agents - reject it at new-task authoring and in the independent-gate branch of gate(); the orchestrator may author an explicitly classified G2/self_check record but can never satisfy an independent-review gate (closes M0-T014 G5 defect D1); (2) validate --gates values against the canonical gate enum G0-G7 and reject unknown names immediately with a bounded explanatory error (closes D2); (3) before M0-T007 or M0-T008 can leave blocked status, their packets must be amended with valid producer and independent-reviewer rosters - this task documents and enforces that precondition; their blocked status is NOT altered and they are NOT dispatched now (closes M0-T014 G3 OBS-3). D3/D4 and remaining OBS items stay in the documented maintenance backlog (not correctness/security-affecting)",
+  "business_reason": "Owner directive 2026-07-17 post-M0-T014-acceptance: scoped hardening without delaying the active gate cycle",
+  "inputs": [
+    "M0-T014 G5 report project-control/reports/M0-T014-G5-security-review.md defects D1/D2 (verbatim remediations) and G3 report M0-T014-G3-code-review.md OBS-3",
+    "Owner directive 2026-07-17 (verbatim scope; D3/D4/OBS remain maintenance backlog)",
+    "tools/project_control.py + tools/test_project_control.py as merged at main 255ebb6"
+  ],
+  "outputs": [
+    "gate(): independent-gate branch rejects --reviewer orchestrator; new_task(): rejects orchestrator in --reviewers; bounded errors",
+    "new_task(): --gates entries validated against the canonical G0-G7 enum, unknown names rejected immediately with a bounded explanatory error",
+    "Documented + tested precondition: a blocked task with empty/invalid reviewer_agents (M0-T007/M0-T008) cannot transition out of blocked until the orchestrator amends producer/reviewer rosters; no status change to those tasks in this task",
+    "Negative tests for each new rejection; existing suite stays green",
+    "project-control/reports/M0-T016-producer-report.md"
+  ],
+  "dependencies": [],
+  "allowed_paths": [
+    "tools/project_control.py",
+    "tools/test_project_control.py",
+    "project-control/reports/M0-T016-producer-report.md"
+  ],
+  "forbidden_paths": [
+    "project-control ledger data (tasks/gates/checkpoints/blockers/state) - especially M0-T007.json/M0-T008.json status",
+    ".claude/**, .github/**, services/**, apps/**, packages/**, docs/**"
+  ],
+  "acceptance_scenarios": [
+    "S1: new-task with orchestrator in --reviewers rejected; gate G1/G3/G4/G5/G6 with --reviewer orchestrator rejected even if rostered (legacy ledger unaffected - validate on write)",
+    "S2: new-task --gates G9,bogus rejected immediately with a bounded error naming the offending entry and the canonical enum; valid G0-G7 combinations accepted",
+    "S3: blocked task with empty reviewer_agents cannot progress out of blocked (bounded error directing packet amendment); after roster amendment the unblock path works; M0-T007/T008 untouched in the live ledger",
+    "S4: full existing suite + CI control-plane job green; no retro-rejection of stored history"
+  ],
+  "required_gates": [
+    "G0",
+    "G2",
+    "G3",
+    "G4"
+  ],
+  "producer_agent": "backend-engineer",
+  "reviewer_agents": [
+    "code-reviewer",
+    "security-reviewer"
+  ],
+  "status": "backlog",
+  "progress_percent": 0,
+  "risks": [],
+  "blockers": [],
+  "created_at": "2026-07-17T16:52:50.065214+00:00",
+  "updated_at": "2026-07-17T16:52:50.065214+00:00"
+}
