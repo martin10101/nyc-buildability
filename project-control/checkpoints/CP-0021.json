@@ -1,0 +1,9 @@
+{
+  "checkpoint_id": "CP-0021",
+  "timestamp": "2026-07-17T20:02:55.104249+00:00",
+  "commit": "449a235",
+  "branch": "main",
+  "active_milestone": "M0",
+  "summary": "M0-T016 ACCEPTED (27th): control-plane hardening follow-up closes M0-T014 G5 D1/D2 + G3 OBS-3 (orchestrator rejected in reviewer rosters and at independent gates; --gates G0-G7 enum validation; blocked tasks with empty/invalid rosters cannot unblock until packet amendment). Write-time only, no retro-rejection (real 134-file ledger backward-compat proven), M0-T007/T008 untouched. G3 PASS (code-reviewer, zero blocking; OBS-A/B/C LOW) + G4 PASS (security-reviewer authority lens, zero blocking; OBS-1 LOW case-sensitivity of literal rails - pre-existing model property, optional backlog hardening). PR 15 merged 66a5de5. NOTE: M0-T007/T008 now require packet roster amendment before they can leave blocked (intended).",
+  "updated_at": "2026-07-17T20:02:55.104249+00:00"
+}
