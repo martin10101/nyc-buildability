@@ -43,6 +43,59 @@ jobs:
       - name: Build
         run: npm run build
 
+  # Task M2-T001 (ADDITIVE job; existing jobs untouched): unit tests plus
+  # Playwright human journeys for the Property screen. The browser talks to
+  # the REAL FastAPI app served by the recorded-official-fixture harness
+  # (apps/web/e2e/harness/fixture_api.py) — committed official PLUTO
+  # captures through the accepted fetcher-dependency seam, not frontend
+  # mocks. Uses only actions already used elsewhere in this file.
+  web-e2e:
+    name: web-e2e (vitest + Playwright vs recorded-official-fixture API)
+    runs-on: ubuntu-latest
+    env:
+      NEXT_TELEMETRY_DISABLED: "1"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: apps/web/package-lock.json
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: services/api/pyproject.toml
+      - name: Install API package (harness serves the real app)
+        run: |
+          python -m pip install --upgrade pip
+          pip install ./services/api
+      - name: Install web dependencies
+        working-directory: apps/web
+        run: npm ci --no-audit --no-fund
+      - name: Unit and component tests (vitest)
+        working-directory: apps/web
+        run: npm run test
+      - name: Build production bundle (served by `next start` during e2e)
+        working-directory: apps/web
+        run: npm run build
+      - name: Install Playwright chromium
+        working-directory: apps/web
+        run: npx playwright install --with-deps chromium
+      - name: Playwright human journeys (S1-S8)
+        working-directory: apps/web
+        run: npm run test:e2e
+      - name: Upload Playwright traces and report for the G3 reviewer
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-evidence
+          path: |
+            apps/web/playwright-report/
+            apps/web/test-results/
+          retention-days: 7
+          if-no-files-found: ignore
+
   api:
     name: api (ruff + pytest)
     runs-on: ubuntu-latest

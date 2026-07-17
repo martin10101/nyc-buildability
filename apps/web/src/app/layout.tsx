@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import type { ReactNode } from "react";
 import { REQUIRED_DISCLAIMER } from "@/lib/disclaimer";
+import "./globals.css";
 
 export const metadata: Metadata = {
   title: "NYC Buildability",
