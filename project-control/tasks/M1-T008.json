@@ -48,13 +48,23 @@
     "data-contract-verifier",
     "code-reviewer"
   ],
-  "status": "backlog",
-  "progress_percent": 0,
+  "status": "rework",
+  "progress_percent": 60,
   "risks": [
     "No file/reviewer overlap with Wave 1 (docs/research + fixtures only); must not delay Wave 1 gate dispatches (owner condition on the parallel slot)",
     "Live Socrata sampling is read-only and tokenless; if throttled, degrade to documented evidence and record the limitation"
   ],
   "blockers": [],
   "created_at": "2026-07-17T10:44:58.500654+00:00",
-  "updated_at": "2026-07-17T10:44:58.500654+00:00"
+  "updated_at": "2026-07-17T17:27:20.047716+00:00",
+  "worktree": ".claude/worktrees/M1-T008",
+  "progress_log": [
+    {
+      "at": "2026-07-17T17:27:20.047716+00:00",
+      "agent": "orchestrator",
+      "percent": 60,
+      "status": "rework",
+      "message": "G1 PASS with BLOCKING corrections D1 (retrieval-timestamp restatement) + D2 (fixture inventory); G3 FAIL on the same provenance-narrative defects plus D3 (unreported HTTP 500, understated committed probes). Research data itself verified sound - every live re-check reproduced exactly. Rework = documentation reconciliation only (doc header/timestamps, README 44-file inventory, HTTP-500 disclosure); fixtures retained as-is; producer redispatch pending."
+    }
+  ]
 }
