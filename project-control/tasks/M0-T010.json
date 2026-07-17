@@ -5,24 +5,61 @@
   "milestone_id": "M0",
   "objective": "Once the full expansion pack arrives, produce docs/3D_UI_EXPANSION_INTEGRATION_REPORT.md per CONTINUE_FROM_CURRENT_STATE_PROMPT.md: validity of existing tasks, new tasks, dependencies, contracts, assignments, storage/cloud implications, risks, gates",
   "business_reason": "Controlled integration of owner-added 3D massing, premium UI, financial, and opportunity-search workstreams",
-  "inputs": [],
-  "outputs": [],
+  "inputs": [
+    "Recovered pack: C:\\Users\\MLFLL\\Downloads\\nyc-buildability-3d-ui-expansion-pack.zip (sha256 0C89C2B14F3F9CC93D412FB237E80ECD51C6F8FADEB49EEEFA5A30D5E0FB146A, 22.9 KB, landed 2026-07-17); extracted read-only to temp",
+    "Its real INTEGRATION_MANIFEST.json (merge_mode additive, overwrite_existing_files false, 5 new agents, recommended 3D stack) + README_ADD_TO_EXISTING_PROJECT.md (13 listed files)",
+    "Owner directives 2026-07-17: per-entry inventory (present-identical / present-different / missing / additive-merge / guidance-only / final completeness); no nesting; no invented replacements; no blind overwrites; exact-path staging; secret scan + regression checks; merge/push/verify/clean through normal gates",
+    "GENERATIVE_DEVELOPMENT_STRATEGY_REQUIREMENTS.md + docs/GENERATIVE_STRATEGY_INTEGRATION_PLAN.md (overlap refresh happens AFTER integration, owner directive step 6)"
+  ],
+  "outputs": [
+    "Phase 1 (orchestrator integration per explicit owner instruction): the 9 repo-missing pack files + INTEGRATION_MANIFEST.json + README_ADD_TO_EXISTING_PROJECT.md copied to their manifest locations at repo root (NOT nested); 3 pre-existing files verified byte-identical and left untouched; per-manifest-entry verification table; secret-scan exit 0; contracts validator regression green",
+    "Phase 2 (producer report): docs/3D_UI_EXPANSION_INTEGRATION_REPORT.md per CONTINUE_FROM_CURRENT_STATE_PROMPT.md - validity of existing tasks, new dependent tasks in dependency order, contracts touched, agent assignments, storage/cloud implications, risks, gates; PLUS the refreshed GDS overlap inventory with exact proposed changes to docs/GENERATIVE_STRATEGY_INTEGRATION_PLAN.md returned FOR OWNER REVIEW (not applied)",
+    "B-005 audit entry with the final manifest-completeness result"
+  ],
   "dependencies": [],
-  "allowed_paths": [],
-  "forbidden_paths": [],
-  "acceptance_scenarios": [],
+  "allowed_paths": [
+    "docs/COMPETITIVE_FEATURE_EXPANSION.md",
+    "docs/3D_AND_UI_EXECUTION_PLAN.md",
+    "docs/3D_VISUAL_ACCEPTANCE_STANDARD.md",
+    ".claude/rules/3d-ui-expansion.md",
+    ".claude/agents/3d-massing-engineer.md",
+    ".claude/agents/product-design-director.md",
+    ".claude/agents/visual-quality-reviewer.md",
+    ".claude/agents/financial-feasibility-engineer.md",
+    ".claude/agents/opportunity-search-engineer.md",
+    "INTEGRATION_MANIFEST.json",
+    "README_ADD_TO_EXISTING_PROJECT.md",
+    "docs/3D_UI_EXPANSION_INTEGRATION_REPORT.md",
+    "project-control/reports/M0-T010-*"
+  ],
+  "forbidden_paths": [
+    "the 3 byte-identical pre-existing pack files (no rewrite), services/**, apps/**, packages/**, .github/**, docs/GENERATIVE_STRATEGY_INTEGRATION_PLAN.md (changes PROPOSED only, owner approves)"
+  ],
+  "acceptance_scenarios": [
+    "S1: every manifest/README-listed entry classified: present-identical / present-different / missing-now-added / guidance-only; final completeness = COMPLETE",
+    "S2: no nesting - files land at their exact manifest-relative paths under repo root",
+    "S3: the 3 pre-existing files are byte-identical post-integration (git shows no diff on them)",
+    "S4: secret scan exit 0 over the integrated tree; contracts validator green; CI green post-merge",
+    "S5: new agent files are well-formed subagent definitions (frontmatter parses; names match manifest new_agents)",
+    "S6: integration report + refreshed GDS overlap returned for owner review; no GDS plan file edits applied"
+  ],
   "required_gates": [
     "G0",
     "G3"
   ],
-  "producer_agent": null,
-  "reviewer_agents": [],
-  "status": "blocked",
-  "progress_percent": 0,
-  "risks": [],
+  "producer_agent": "cloud-architect",
+  "reviewer_agents": [
+    "code-reviewer"
+  ],
+  "status": "awaiting_gate",
+  "progress_percent": 85,
+  "risks": [
+    "Pack agent files may conflict with existing agent roster conventions (memory frontmatter, ADR-005 rules) - report, do not silently rewrite",
+    "GDS overlap refresh may change M5 task ordering - owner review required before any plan edit"
+  ],
   "blockers": [
-    "B-005"
+    "B-005 (clears when the manifest-completeness verification is recorded)"
   ],
   "created_at": "2026-07-14T21:40:17.803410+00:00",
-  "updated_at": "2026-07-14T21:40:17.803410+00:00"
+  "updated_at": "2026-07-17T08:11:30.556508+00:00"
 }
