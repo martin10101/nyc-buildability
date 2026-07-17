@@ -1,0 +1,211 @@
+{
+  "profile_version": {
+    "contract_version": "1.1.0",
+    "profile_revision": 1,
+    "generated_at": "2026-07-16T12:00:00Z"
+  },
+  "identity": {
+    "bbl": "1000477501",
+    "bins": ["1001026"],
+    "address": {
+      "house_number": "120",
+      "street_name": "BROADWAY",
+      "borough": "Manhattan",
+      "borough_code": 1,
+      "zip_code": "10271",
+      "normalized_address": "120 BROADWAY, New York, NY, USA"
+    },
+    "geometry": {
+      "type": "Point",
+      "coordinates": [-74.010542, 40.708233]
+    }
+  },
+  "lot_facts": {
+    "lot_area_sf": {
+      "value": 10000,
+      "units": "sq_ft",
+      "provenance_ref": "prov-lot-area-0001",
+      "coverage_status": "conditional"
+    }
+  },
+  "existing_building_facts": {
+    "existing_stories": {
+      "value": 6,
+      "provenance_ref": "prov-numfloors-0001",
+      "coverage_status": "data_conflict"
+    }
+  },
+  "zoning": {
+    "districts": ["R6", "C4-1"],
+    "commercial_overlays": ["C1-4"],
+    "special_districts": ["GI"],
+    "mapped_features": [
+      {
+        "feature": "splitzone",
+        "value": true,
+        "provenance_ref": "prov-splitzone-0001",
+        "coverage_status": "conditional"
+      }
+    ],
+    "district_provenance": {
+      "R6": ["prov-zonedist1-0001"],
+      "C4-1": ["prov-zonedist2-0001", "prov-zonedist2-gis-0001"]
+    },
+    "commercial_overlay_provenance": {
+      "C1-4": ["prov-overlay1-0001"]
+    },
+    "special_district_provenance": {
+      "GI": ["prov-spdist1-0001"]
+    }
+  },
+  "project_intent": {
+    "objectives": ["maximum_zoning_floor_area"],
+    "notes": "Deterministic contract-1.1.0 fixture (task M1-T006). Exercises ALL additive keys: per-fact coverage_status, top-level data_completeness, top-level reproducibility (with the nullable dataset_version branch: key present, explicitly null), and the three zoning provenance maps, including one district value ('C4-1') corroborated by TWO provenance records to exercise list semantics. Address/BBL/BIN/coordinates are the documented live GeoSearch v2 response for 120 Broadway (docs/research/M0-T002-geoclient-address-resolution.md section 3, retrieved 2026-07-14). All zoning and fact values are SYNTHETIC test data with clearly non-official source_ids."
+  },
+  "provenance": [
+    {
+      "provenance_id": "prov-lot-area-0001",
+      "source_id": "test-fixture-synthetic",
+      "original_field_name": "lot_area_sf",
+      "original_value": 10000,
+      "normalized_value": 10000,
+      "units": "sq_ft",
+      "retrieved_at": "2026-07-16T12:00:00Z",
+      "dataset_version": "synthetic-fixture-v1",
+      "effective_date": null,
+      "bbl": "1000477501",
+      "confidence": 1,
+      "user_confirmed_or_overridden": "none",
+      "conflict_status": "none"
+    },
+    {
+      "provenance_id": "prov-numfloors-0001",
+      "source_id": "test-fixture-synthetic",
+      "original_field_name": "numfloors",
+      "original_value": "6",
+      "normalized_value": 6,
+      "retrieved_at": "2026-07-16T12:00:00Z",
+      "dataset_version": "synthetic-fixture-v1",
+      "effective_date": null,
+      "bbl": "1000477501",
+      "confidence": 1,
+      "user_confirmed_or_overridden": "none",
+      "conflict_status": "conflicting"
+    },
+    {
+      "provenance_id": "prov-zonedist1-0001",
+      "source_id": "test-fixture-synthetic",
+      "original_field_name": "zonedist1",
+      "original_value": "R6",
+      "normalized_value": "R6",
+      "retrieved_at": "2026-07-16T12:00:00Z",
+      "dataset_version": "synthetic-fixture-v1",
+      "effective_date": null,
+      "bbl": "1000477501",
+      "confidence": 1,
+      "user_confirmed_or_overridden": "none",
+      "conflict_status": "none"
+    },
+    {
+      "provenance_id": "prov-zonedist2-0001",
+      "source_id": "test-fixture-synthetic",
+      "original_field_name": "zonedist2",
+      "original_value": "C4-1",
+      "normalized_value": "C4-1",
+      "retrieved_at": "2026-07-16T12:00:00Z",
+      "dataset_version": "synthetic-fixture-v1",
+      "effective_date": null,
+      "bbl": "1000477501",
+      "confidence": 1,
+      "user_confirmed_or_overridden": "none",
+      "conflict_status": "none"
+    },
+    {
+      "provenance_id": "prov-zonedist2-gis-0001",
+      "source_id": "test-fixture-gis-crosscheck",
+      "original_field_name": "zonedist",
+      "original_value": "C4-1",
+      "normalized_value": "C4-1",
+      "retrieved_at": "2026-07-16T12:00:00Z",
+      "dataset_version": "synthetic-fixture-v1",
+      "effective_date": null,
+      "bbl": "1000477501",
+      "confidence": 1,
+      "user_confirmed_or_overridden": "none",
+      "conflict_status": "none"
+    },
+    {
+      "provenance_id": "prov-overlay1-0001",
+      "source_id": "test-fixture-synthetic",
+      "original_field_name": "overlay1",
+      "original_value": "C1-4",
+      "normalized_value": "C1-4",
+      "retrieved_at": "2026-07-16T12:00:00Z",
+      "dataset_version": "synthetic-fixture-v1",
+      "effective_date": null,
+      "bbl": "1000477501",
+      "confidence": 1,
+      "user_confirmed_or_overridden": "none",
+      "conflict_status": "none"
+    },
+    {
+      "provenance_id": "prov-spdist1-0001",
+      "source_id": "test-fixture-synthetic",
+      "original_field_name": "spdist1",
+      "original_value": "GI",
+      "normalized_value": "GI",
+      "retrieved_at": "2026-07-16T12:00:00Z",
+      "dataset_version": "synthetic-fixture-v1",
+      "effective_date": null,
+      "bbl": "1000477501",
+      "confidence": 1,
+      "user_confirmed_or_overridden": "none",
+      "conflict_status": "none"
+    },
+    {
+      "provenance_id": "prov-splitzone-0001",
+      "source_id": "test-fixture-synthetic",
+      "original_field_name": "splitzone",
+      "original_value": "Y",
+      "normalized_value": true,
+      "retrieved_at": "2026-07-16T12:00:00Z",
+      "dataset_version": "synthetic-fixture-v1",
+      "effective_date": null,
+      "bbl": "1000477501",
+      "confidence": 1,
+      "user_confirmed_or_overridden": "none",
+      "conflict_status": "none"
+    }
+  ],
+  "missing_inputs": [
+    {
+      "field": "yearbuilt",
+      "criticality": "noncritical",
+      "reason": "Synthetic: present-but-unknown per official data dictionary (yearbuilt 0 = unknown)."
+    }
+  ],
+  "conflicts": [
+    {
+      "field": "existing_stories",
+      "values": [
+        { "source_id": "test-fixture-synthetic", "value": 6 },
+        { "source_id": "test-fixture-gis-crosscheck", "value": 7 }
+      ],
+      "resolution": "unresolved"
+    }
+  ],
+  "user_confirmations": [],
+  "data_completeness": "missing_noncritical",
+  "reproducibility": {
+    "correlation_id": "m1t006-v11-fixture",
+    "source_id": "test-fixture-synthetic",
+    "dataset_id": "test-dataset",
+    "dataset_version": null,
+    "request_url": "https://example.invalid/test-dataset.json?bbl=1000477501",
+    "retrieved_at": "2026-07-16T12:00:00Z",
+    "record_count": 1,
+    "drift_signals": [],
+    "connector_notes": ["yearbuilt_unknown: official data dictionary maps 0 to unknown"],
+    "coverage_policy": "coverage_status is derived only from review status and conflict/drift state; connector confidence is never mapped to a coverage label and no unreviewed fact is 'verified' (PRD section 12)."
+  }
+}

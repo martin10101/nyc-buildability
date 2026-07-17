@@ -1,0 +1,14 @@
+{
+  "_expected_failure": "M1-T006 S3: top-level data_completeness 'partial' is not one of the 3 PRD s12 data-completeness enums referenced from coverage_status.schema.json#/$defs/data_completeness; must be rejected by the enum.",
+  "profile_version": { "contract_version": "1.1.0", "profile_revision": 1, "generated_at": "2026-07-16T12:00:00Z" },
+  "identity": { "bbl": "1000477501" },
+  "lot_facts": {},
+  "existing_building_facts": {},
+  "zoning": {},
+  "project_intent": {},
+  "provenance": [],
+  "missing_inputs": [],
+  "conflicts": [],
+  "user_confirmations": [],
+  "data_completeness": "partial"
+}

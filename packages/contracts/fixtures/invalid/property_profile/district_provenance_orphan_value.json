@@ -1,0 +1,36 @@
+{
+  "_expected_failure": "M1-T006 S5 companion: zoning.district_provenance has key 'C1-9' which is NOT a member of the sibling zoning.districts array (the map may only annotate listed values). Schema-clean; must fail via the validate_contracts.py membership invariant.",
+  "profile_version": { "contract_version": "1.1.0", "profile_revision": 1, "generated_at": "2026-07-16T12:00:00Z" },
+  "identity": { "bbl": "1000477501" },
+  "lot_facts": {},
+  "existing_building_facts": {},
+  "zoning": {
+    "districts": ["R6"],
+    "commercial_overlays": [],
+    "special_districts": [],
+    "mapped_features": [],
+    "district_provenance": {
+      "C1-9": ["prov-zonedist1-0001"]
+    }
+  },
+  "project_intent": {},
+  "provenance": [
+    {
+      "provenance_id": "prov-zonedist1-0001",
+      "source_id": "test-fixture-synthetic",
+      "original_field_name": "zonedist1",
+      "original_value": "R6",
+      "normalized_value": "R6",
+      "retrieved_at": "2026-07-16T12:00:00Z",
+      "dataset_version": "synthetic-fixture-v1",
+      "effective_date": null,
+      "bbl": "1000477501",
+      "confidence": 1,
+      "user_confirmed_or_overridden": "none",
+      "conflict_status": "none"
+    }
+  ],
+  "missing_inputs": [],
+  "conflicts": [],
+  "user_confirmations": []
+}

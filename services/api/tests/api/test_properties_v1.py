@@ -158,6 +158,7 @@ def profile_validator():
             "property_profile.schema.json",
             "source_fact.schema.json",
             "common.schema.json",
+            "coverage_status.schema.json",
         )
     ]
     schema = docs[0]

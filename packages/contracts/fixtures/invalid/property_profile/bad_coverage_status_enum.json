@@ -1,0 +1,35 @@
+{
+  "_expected_failure": "M1-T006 S3: fact_value coverage_status 'approved' is not one of the 6 PRD s12 coverage enums referenced from coverage_status.schema.json; must be rejected by the enum, everything else in this fixture is valid and every provenance_ref resolves.",
+  "profile_version": { "contract_version": "1.1.0", "profile_revision": 1, "generated_at": "2026-07-16T12:00:00Z" },
+  "identity": { "bbl": "1000477501" },
+  "lot_facts": {
+    "lot_area_sf": {
+      "value": 10000,
+      "units": "sq_ft",
+      "provenance_ref": "prov-lot-area-0001",
+      "coverage_status": "approved"
+    }
+  },
+  "existing_building_facts": {},
+  "zoning": {},
+  "project_intent": {},
+  "provenance": [
+    {
+      "provenance_id": "prov-lot-area-0001",
+      "source_id": "test-fixture-synthetic",
+      "original_field_name": "lot_area_sf",
+      "original_value": 10000,
+      "normalized_value": 10000,
+      "retrieved_at": "2026-07-16T12:00:00Z",
+      "dataset_version": "synthetic-fixture-v1",
+      "effective_date": null,
+      "bbl": "1000477501",
+      "confidence": 1,
+      "user_confirmed_or_overridden": "none",
+      "conflict_status": "none"
+    }
+  ],
+  "missing_inputs": [],
+  "conflicts": [],
+  "user_confirmations": []
+}

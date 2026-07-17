@@ -1,0 +1,13 @@
+{
+  "_expected_failure": "M1-T006 risk 3: contract_version '1.2.0' has never been published; the closed enum ['1.0.0','1.1.0'] must reject it (the const->enum relaxation must not admit arbitrary versions).",
+  "profile_version": { "contract_version": "1.2.0", "profile_revision": 1, "generated_at": "2026-07-16T12:00:00Z" },
+  "identity": { "bbl": "1000477501" },
+  "lot_facts": {},
+  "existing_building_facts": {},
+  "zoning": {},
+  "project_intent": {},
+  "provenance": [],
+  "missing_inputs": [],
+  "conflicts": [],
+  "user_confirmations": []
+}
