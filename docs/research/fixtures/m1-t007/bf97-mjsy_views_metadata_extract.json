@@ -1,0 +1,135 @@
+{
+ "_extract_note": "EXTRACT of api/views/bf97-mjsy.json: fields id,name,attribution,assetType,newBackend,provenance,createdAt,rowsUpdatedAt,description,metadata.custom_fields,metadata.attachments,columns[fieldName,name,dataTypeName]. Raw response sha256/size recorded in README.",
+ "_raw_response_sha256": "e8f5e6ec08fa6d1859a70d21d935e5b45f89f915b1edf63df36f07f78085c41e",
+ "_raw_response_bytes": 36002,
+ "id": "bf97-mjsy",
+ "name": "Construction-Related Incidents",
+ "attribution": "Department of Buildings (DOB)",
+ "assetType": "dataset",
+ "newBackend": true,
+ "provenance": "official",
+ "createdAt": 1729098863,
+ "rowsUpdatedAt": 1784227576,
+ "description": "This dataset includes construction-related incidents recorded in through the Department of Buildings (DOB) Incident Database.",
+ "custom_fields": {
+  "Update": {
+   "Automation": "Yes",
+   "Update Frequency Details": "The underlying data changes second-to-second in the system of record.",
+   "Date Made Public": "11/21/2024",
+   "Update Frequency": "Daily",
+   "Data Change Frequency": "Daily"
+  },
+  "Dataset Information": {
+   "Agency": "Department of Buildings (DOB)"
+  }
+ },
+ "attachments": [
+  {
+   "filename": "Construction-Related Incidents_Data Dictionary.xlsx",
+   "assetId": "b40d4ef0-d572-4a05-9195-2c01617af0c2",
+   "name": "Construction-Related Incidents_Data Dictionary.xlsx"
+  }
+ ],
+ "columns": [
+  {
+   "fieldName": "bin",
+   "name": "BIN",
+   "dataTypeName": "text"
+  },
+  {
+   "fieldName": "accident_report_id",
+   "name": "Accident Report ID",
+   "dataTypeName": "number"
+  },
+  {
+   "fieldName": "incident_date_mm_dd_yyyy",
+   "name": "Incident Date",
+   "dataTypeName": "calendar_date"
+  },
+  {
+   "fieldName": "record_type_description",
+   "name": "Record Type Description",
+   "dataTypeName": "text"
+  },
+  {
+   "fieldName": "check2_description",
+   "name": "Check2 Description",
+   "dataTypeName": "text"
+  },
+  {
+   "fieldName": "fatality",
+   "name": "Fatality",
+   "dataTypeName": "number"
+  },
+  {
+   "fieldName": "injury",
+   "name": "Injury",
+   "dataTypeName": "number"
+  },
+  {
+   "fieldName": "addressnumber",
+   "name": "House Number",
+   "dataTypeName": "text"
+  },
+  {
+   "fieldName": "street",
+   "name": "Street Name",
+   "dataTypeName": "text"
+  },
+  {
+   "fieldName": "boro",
+   "name": "Borough",
+   "dataTypeName": "text"
+  },
+  {
+   "fieldName": "block",
+   "name": "Block",
+   "dataTypeName": "text"
+  },
+  {
+   "fieldName": "lot",
+   "name": "Lot",
+   "dataTypeName": "text"
+  },
+  {
+   "fieldName": "address_zipcode",
+   "name": "Postcode",
+   "dataTypeName": "text"
+  },
+  {
+   "fieldName": "address_latitude",
+   "name": "Latitude",
+   "dataTypeName": "text"
+  },
+  {
+   "fieldName": "address_longitude",
+   "name": "Longitude",
+   "dataTypeName": "text"
+  },
+  {
+   "fieldName": "address_communitydistrict",
+   "name": "Community Board",
+   "dataTypeName": "text"
+  },
+  {
+   "fieldName": "address_citycouncildistrict",
+   "name": "Council District",
+   "dataTypeName": "text"
+  },
+  {
+   "fieldName": "address_bbl",
+   "name": "BBL",
+   "dataTypeName": "text"
+  },
+  {
+   "fieldName": "address_censustract2020",
+   "name": "Census Tract (2020)",
+   "dataTypeName": "text"
+  },
+  {
+   "fieldName": "address_nta2020",
+   "name": "Neighborhood Tabulation Area (NTA) (2020)",
+   "dataTypeName": "text"
+  }
+ ]
+}

@@ -1,0 +1,295 @@
+[
+  {
+    "source_id": "nyc-dob-now-build-job-filings-soda",
+    "agency": "NYC Department of Buildings (DOB)",
+    "name": "DOB NOW: Build — Job Application Filings (SODA)",
+    "official_url": "https://data.cityofnewyork.us/api/views/w9ak-ipjd.json",
+    "source_type": "official_open_data_soda_api",
+    "api_dataset_identifier": "w9ak-ipjd",
+    "authentication": {
+      "required": false,
+      "recommended": "Socrata application token via X-App-Token (HUMAN_ACTIONS §7; M1-T001 E7)"
+    },
+    "rate_limits": {
+      "without_token": "IP-throttled shared pool; throttle signal HTTP 429",
+      "with_token": "not throttled unless abusive (dev.socrata.com/docs/app-tokens, M1-T001 E7)",
+      "pagination": "SODA 2.1 (newBackend:true observed): $limit defaults to 1,000; no maximum on 2.1; stable paging requires $order (use :id). Evidence: dev.socrata.com/docs/queries/limit.html retrieved 2026-07-17"
+    },
+    "update_frequency": "Daily (custom_fields Update Frequency 'Daily', Automation 'Yes'); observed rowsUpdatedAt 2026-07-16T20:23:19Z on 2026-07-17 — consistent",
+    "geographic_coverage": "Citywide, per-filing records located by BIN/BBL/borough-block-lot/address. EXCLUDES electrical, elevator, and LAA jobs (own datasets) and all BIS-channel jobs (ic3t-wcy2, out of family).",
+    "fields_available": {
+      "column_count": 95,
+      "inventory_evidence": "api/views columns array captured 2026-07-17 (fixtures/m1-t007/views_metadata_extract_16_datasets.json); official dictionary XLSX attachment identified (assetId 978bdfe8-11c3-4839-9515-7f36a83e219d, 74,405 bytes, extraction OQ-2)",
+      "key_join_fields_observed": {
+        "job_filing_number": "text, e.g. 'M00855935-I1' (borough letter + 8 digits + filing suffix)",
+        "bbl": "text, 10-digit zero-padded, e.g. '1004410016'",
+        "bin": "text, 7-digit, e.g. '1006014'",
+        "borough": "text, title case observed ('Manhattan')",
+        "block/lot": "text, NOT zero-padded ('441'/'16')"
+      },
+      "null_semantics": "SODA omits null fields per record (79 of 95 keys present on sample rec 1); schema from columns array only"
+    },
+    "terms_usage_notes": "NYC Open Data terms (no warranty; verified M1-T001 G1); dataset provenance flag 'official'; rights ['read'] public",
+    "connector_implementation": "PLAN ONLY: per-BIN primary / per-BBL corroboration SODA queries; raw record + retrieval timestamp + rowsUpdatedAt persisted; columns-array drift check per run",
+    "last_successful_ingestion": null,
+    "latest_source_version": "no per-record version field observed; version = retrieval timestamp + rowsUpdatedAt (2026-07-16T20:23:19Z at research time)",
+    "health_status": "verified_live_2026-07-17",
+    "known_limitations": [
+      "Excludes electrical/elevator/LAA jobs (official description, verbatim in findings §2.4) — union with those datasets AND the BIS family required for complete job history",
+      "Address strings display-grade (observed 'EAST   14 STREET' multi-space)",
+      "latitude/longitude typed text (not number) in this dataset"
+    ],
+    "fallback_source": "None equivalent for DOB NOW-channel jobs. Complementary (different channel, NOT fallback): BIS ic3t-wcy2. Mirror: catalog.data.gov/dataset/dob-now-build-job-application-filings (verified 2026-07-17).",
+    "open_questions": ["OQ-1 rollout dates (nyc.gov 403)", "OQ-2 dictionary XLSX extraction", "OQ-7 app token"]
+  },
+  {
+    "source_id": "nyc-dob-now-build-approved-permits-soda",
+    "agency": "NYC Department of Buildings (DOB)",
+    "name": "DOB NOW: Build — Approved Permits (SODA)",
+    "official_url": "https://data.cityofnewyork.us/api/views/rbx6-tga4.json",
+    "source_type": "official_open_data_soda_api",
+    "api_dataset_identifier": "rbx6-tga4",
+    "authentication": {"required": false, "recommended": "Socrata app token (as w9ak-ipjd)"},
+    "rate_limits": {"same_as": "nyc-dob-now-build-job-filings-soda (SODA 2.1, newBackend:true observed)"},
+    "update_frequency": "Daily (stated); observed rowsUpdatedAt 2026-07-16T18:42:18Z on 2026-07-17 — consistent",
+    "geographic_coverage": "Citywide. Official description (verbatim): all approved construction permits in DOB NOW EXCEPT Electrical (dm9a-ab7w), Elevator (kfp4-dz4h), and LAA (xxbr-ypig).",
+    "fields_available": {
+      "column_count": 46,
+      "inventory_evidence": "api/views columns array 2026-07-17; dictionary XLSX attachment assetId 9a9d025e-5bd0-437c-92ea-41e78c9e8d4c (OQ-2)",
+      "key_join_fields_observed": {
+        "job_filing_number": "text — JOIN KEY TO w9ak-ipjd (same 'M00855935-I1' observed both sides)",
+        "work_permit": "text, permit ID = job_filing_number + work-type suffix ('M00855935-I1-SG')",
+        "bbl": "NUMBER-typed; observed serialization without decimal artifact ('4051980021'); normalize defensively (OQ-3)",
+        "bin": "text ('4117367')",
+        "borough": "text, UPPER case observed ('MANHATTAN','QUEENS') — differs from w9ak-ipjd casing for the same property"
+      },
+      "null_semantics": "SODA omits nulls; 36 of 46 keys on sample rec 1"
+    },
+    "terms_usage_notes": "NYC Open Data terms; provenance 'official'",
+    "connector_implementation": "PLAN ONLY: as w9ak-ipjd, plus MANDATORY job_filing_number/work_permit format validation ^[A-Z]\\d{8}- (placeholder pollution observed) and permit_status-aware interpretation",
+    "last_successful_ingestion": null,
+    "latest_source_version": "rowsUpdatedAt 2026-07-16T18:42:18Z at research time; no per-record version field",
+    "health_status": "verified_live_2026-07-17 (with data-quality caveat)",
+    "known_limitations": [
+      "JOIN-KEY POLLUTION OBSERVED: sample record carries 'Permit is no' in job_filing_number and 'Permit is not yet issued' in work_permit while permit_status='Signed-off' (verbatim fixture sample_rbx6-tga4.json) — rows without issued permits exist in 'Approved Permits'",
+      "bbl/latitude/longitude/community_board/council_district/census_tract are number-typed (casting risk, OQ-3)",
+      "Borough casing differs from sibling datasets — normalize to borocode before matching"
+    ],
+    "fallback_source": "None for DOB NOW-channel permits. Complementary BIS channel: ipu4-2q9a ('most current permits are now issued in DOB NOW' per its own description).",
+    "open_questions": ["OQ-1", "OQ-2", "OQ-3"]
+  },
+  {
+    "source_id": "nyc-dob-now-certificate-of-occupancy-soda",
+    "agency": "NYC Department of Buildings (DOB)",
+    "name": "DOB NOW: Certificate of Occupancy (SODA)",
+    "official_url": "https://data.cityofnewyork.us/api/views/pkdm-hqz6.json",
+    "source_type": "official_open_data_soda_api",
+    "api_dataset_identifier": "pkdm-hqz6",
+    "authentication": {"required": false, "recommended": "Socrata app token"},
+    "rate_limits": {"same_as": "family standard (SODA 2.1)"},
+    "update_frequency": "Daily (stated); observed rowsUpdatedAt 2026-07-16T20:01:40Z — consistent",
+    "geographic_coverage": "Citywide, COs issued through the DOB NOW CO module 'released in March of 2021' (official description); 79,236 rows on 2026-07-17",
+    "fields_available": {
+      "column_count": 24,
+      "inventory_evidence": "api/views columns array 2026-07-17; dictionary XLSX assetId 90b77d47-f8e5-49a7-b020-ea3e23624c9c (OQ-2)",
+      "key_join_fields_observed": {
+        "bin": "text ('1001905')", "bbl": "text ('1001747505', condo billing lot 7505 observed)",
+        "job_filing_name": "text — observed 9-digit BIS-style value '120954770': DOB NOW CO module issues COs for BIS-originated jobs",
+        "c_of_o_number": "text ('1001905-0000002' = BIN-prefixed)",
+        "c_of_o_issuance_date": "TEXT, non-ISO format observed '02/15/22 11:08:46 AM' (2-digit year, AM/PM) — dedicated parser required"
+      },
+      "null_semantics": "SODA omits nulls; 24 of 24 keys on sample rec 1 (small schema)"
+    },
+    "terms_usage_notes": "NYC Open Data terms; provenance 'official'; description instructs this dataset 'should be utilized instead of' bs8b-p36w from March 2021 onward",
+    "connector_implementation": "PLAN ONLY: per-BIN/BBL queries; CO status/sequence/filing-type mapping; non-ISO issuance-date parser; dwelling-unit counts as property facts with provenance",
+    "last_successful_ingestion": null,
+    "latest_source_version": "rowsUpdatedAt 2026-07-16T20:01:40Z at research time",
+    "health_status": "verified_live_2026-07-17",
+    "known_limitations": [
+      "Covers only COs issued since ~March 2021 — historical COs are in bs8b-p36w (legacy family, next task)",
+      "A CO record does not imply a DOB NOW job filing exists (BIS-style job_filing_name observed)",
+      "Description typo 'anbd' recorded (documentation quality)"
+    ],
+    "fallback_source": "Historical complement (not fallback): bs8b-p36w (COs 2012-07-12 to March 2021). PDF CO images referenced via BIS (www.nyc.gov/bis, 403-walled, OQ-1).",
+    "open_questions": ["OQ-1", "OQ-2"]
+  },
+  {
+    "source_id": "nyc-dob-now-safety-facades-soda",
+    "agency": "NYC Department of Buildings (DOB)",
+    "name": "DOB NOW: Safety — Facades Compliance Filings (SODA)",
+    "official_url": "https://data.cityofnewyork.us/api/views/xubg-57si.json",
+    "source_type": "official_open_data_soda_api",
+    "api_dataset_identifier": "xubg-57si",
+    "authentication": {"required": false, "recommended": "Socrata app token"},
+    "rate_limits": {"same_as": "family standard (SODA 2.1)"},
+    "update_frequency": "Every weekday (stated — only family member not 'Daily'); observed rowsUpdatedAt 2026-07-16T17:31:05Z (a Thursday) — consistent",
+    "geographic_coverage": "Citywide FISP/facade compliance filings submitted in DOB NOW; includes migrated pre-DOB NOW cycles (observed cycle-7 filing dated 2011-05-13; depth OQ-4); 86,683 rows",
+    "fields_available": {
+      "column_count": 40,
+      "inventory_evidence": "api/views columns array 2026-07-17; dictionary XLSX (2025-12-12 revision) assetId 5248f214-2f4f-4352-aaa5-04623c8f38d8 (OQ-2)",
+      "key_join_fields_observed": {
+        "bin": "text ('1014176') — NO BBL FIELD EXISTS in this dataset",
+        "borough/block/lot": "text ('Manhattan','774','7501')",
+        "cycle": "text ('7')",
+        "current_status/filing_status": "text ('SAFE')"
+      },
+      "null_semantics": "SODA omits nulls; 34 of 40 keys on sample rec 1"
+    },
+    "terms_usage_notes": "NYC Open Data terms; provenance 'official'",
+    "connector_implementation": "PLAN ONLY: per-BIN queries ONLY (no BBL); derive BBL via canonical BIN→BBL resolution with provenance note; facade status (SAFE/SWARMP/UNSAFE vocabulary — full domain from dictionary, OQ-2) as property flags",
+    "last_successful_ingestion": null,
+    "latest_source_version": "rowsUpdatedAt 2026-07-16T17:31:05Z at research time",
+    "health_status": "verified_live_2026-07-17",
+    "known_limitations": [
+      "No BBL column — BIN-only property join",
+      "Pre-DOB NOW cycle coverage unquantified (OQ-4)",
+      "No latitude/longitude/geo columns"
+    ],
+    "fallback_source": "None identified on Open Data for facade compliance; DOB facades program pages are nyc.gov 403-walled (OQ-1)",
+    "open_questions": ["OQ-1", "OQ-2", "OQ-4"]
+  },
+  {
+    "source_id": "nyc-dob-now-safety-boiler-soda",
+    "agency": "NYC Department of Buildings (DOB)",
+    "name": "DOB NOW: Safety Boiler (SODA)",
+    "official_url": "https://data.cityofnewyork.us/api/views/52dp-yji6.json",
+    "source_type": "official_open_data_soda_api",
+    "api_dataset_identifier": "52dp-yji6",
+    "authentication": {"required": false, "recommended": "Socrata app token"},
+    "rate_limits": {"same_as": "family standard (SODA 2.1)"},
+    "update_frequency": "Daily (stated); observed rowsUpdatedAt 2026-07-16T19:59:02Z — consistent",
+    "geographic_coverage": "Citywide annual boiler compliance filings; 871,266 rows on 2026-07-17",
+    "fields_available": {
+      "column_count": 21,
+      "inventory_evidence": "api/views columns array 2026-07-17; dictionary XLSX (2017-09-08) assetId f2d45892-bb2b-48fa-9e61-11c4586a4db2 (OQ-2)",
+      "key_join_fields_observed": {
+        "bin_number": "NUMBER-typed, the ONLY location field ('1043866','1006014' observed; no BBL, no address, no borough)",
+        "tracking_number": "text ('2018-10000021095Y0001-56770' = year + boiler_id + sequence, composition inferred from observation — verify via dictionary OQ-2)",
+        "boiler_id": "text ('10000021095Y0001')",
+        "inspection_date": "TEXT, non-ISO 'MM/DD/YYYY 00:00:00' observed ('02/22/2018 00:00:00') — dedicated parser required"
+      },
+      "null_semantics": "SODA omits nulls; 14 of 21 keys on sample rec 1"
+    },
+    "terms_usage_notes": "NYC Open Data terms; provenance 'official'",
+    "connector_implementation": "PLAN ONLY: per-BIN numeric queries ($where=bin_number=...); derive BBL via BIN resolution; boiler presence/compliance as property facts",
+    "last_successful_ingestion": null,
+    "latest_source_version": "rowsUpdatedAt 2026-07-16T19:59:02Z at research time",
+    "health_status": "verified_live_2026-07-17",
+    "known_limitations": [
+      "BIN-only, number-typed; no BBL/address/borough columns at all",
+      "inspection_date non-ISO text format",
+      "Applicant/owner personal names present — provenance storage fine, but log redaction rules apply"
+    ],
+    "fallback_source": "None identified on Open Data for DOB NOW-era boiler compliance; legacy boiler data belongs to the BIS/legacy research task",
+    "open_questions": ["OQ-2"]
+  },
+  {
+    "source_id": "nyc-dob-now-elevator-safety-compliance-soda",
+    "agency": "NYC Department of Buildings (DOB)",
+    "name": "DOB NOW Elevator Safety Compliance (SODA)",
+    "official_url": "https://data.cityofnewyork.us/api/views/e5aq-a4j2.json",
+    "source_type": "official_open_data_soda_api",
+    "api_dataset_identifier": "e5aq-a4j2",
+    "authentication": {"required": false, "recommended": "Socrata app token"},
+    "rate_limits": {"same_as": "family standard (SODA 2.1)"},
+    "update_frequency": "Daily (stated; custom field adds 'The underlying data changes second-to-second in the system of record'); observed rowsUpdatedAt 2026-07-16T20:32:59Z — consistent",
+    "geographic_coverage": "Citywide elevator device inspection/compliance filings via the DOB NOW: Elevator Compliance Filings module; 120,137 rows on 2026-07-17",
+    "fields_available": {
+      "column_count": 24,
+      "inventory_evidence": "api/views columns array 2026-07-17 (also enumerated verbatim inside the HTTP 400 fixture); dictionary XLSX assetId cd2360da-acb0-4b1d-b172-92dcee8b7d4a (OQ-2)",
+      "key_join_fields_observed": {
+        "bin": "text ('1001627')", "bbl": "text ('1001490006')",
+        "device_number": "text ('1P14518'); namespace vs juyv-2jek device_id unverified (OQ-5)",
+        "device_status": "text ('Active')",
+        "report/inspection dates": "ISO floating_timestamps observed ('2025-09-25T00:00:00.000')"
+      },
+      "null_semantics": "SODA omits nulls; 23 of 24 keys on sample rec 1"
+    },
+    "terms_usage_notes": "NYC Open Data terms; provenance 'official'; description typo 'inspetion' recorded",
+    "connector_implementation": "PLAN ONLY: per-BIN queries; device count/status as property facts (elevator presence materially affects feasibility core assumptions)",
+    "last_successful_ingestion": null,
+    "latest_source_version": "rowsUpdatedAt 2026-07-16T20:32:59Z at research time",
+    "health_status": "verified_live_2026-07-17",
+    "known_limitations": [
+      "Compliance-side only; build-side elevator jobs are kfp4-dz4h/juyv-2jek",
+      "Device universe overlap with legacy BIS elevator data unresearched (next task)"
+    ],
+    "fallback_source": "None identified on Open Data for DOB NOW elevator compliance",
+    "open_questions": ["OQ-2", "OQ-5"]
+  },
+  {
+    "source_id": "nyc-dob-now-build-laa-soda",
+    "agency": "NYC Department of Buildings (DOB)",
+    "name": "DOB NOW: Build — Limited Alteration Applications (SODA) [SECONDARY]",
+    "official_url": "https://data.cityofnewyork.us/api/views/xxbr-ypig.json",
+    "source_type": "official_open_data_soda_api",
+    "api_dataset_identifier": "xxbr-ypig",
+    "authentication": {"required": false, "recommended": "Socrata app token"},
+    "rate_limits": {"same_as": "family standard (SODA 2.1)"},
+    "update_frequency": "Daily (stated); observed rowsUpdatedAt 2026-07-16T18:35:04Z — consistent",
+    "geographic_coverage": "Citywide LAA (plumbing/fire-suppression/oil-burner work without construction)",
+    "fields_available": {
+      "column_count": 26,
+      "inventory_evidence": "api/views columns array 2026-07-17; dictionary XLSX assetId a620703b-a0c9-4724-92b1-e93079b5a8f0 (OQ-2)",
+      "key_join_fields_observed": {"bbl": "NUMBER-typed ('5031737504')", "location_bin": "text ('5122289')", "location_borough_name": "text title case ('Staten Island'); NO block/lot columns"}
+    },
+    "terms_usage_notes": "NYC Open Data terms; provenance 'official'; description links a www1.nyc.gov page (403-walled family, OQ-1)",
+    "connector_implementation": "PLAN ONLY (M2 priority low: repair-scope work, weak feasibility signal)",
+    "last_successful_ingestion": null,
+    "latest_source_version": "rowsUpdatedAt 2026-07-16T18:35:04Z at research time",
+    "health_status": "verified_live_2026-07-17",
+    "known_limitations": ["'location_' field-name prefix unique in family", "number-typed bbl (OQ-3)", "no block/lot columns"],
+    "fallback_source": "None identified",
+    "open_questions": ["OQ-1", "OQ-2", "OQ-3"]
+  },
+  {
+    "source_id": "nyc-dob-now-electrical-permits-soda",
+    "agency": "NYC Department of Buildings (DOB)",
+    "name": "DOB NOW: Electrical Permit Applications (SODA) [SECONDARY] + Electrical Permit Details child dataset",
+    "official_url": "https://data.cityofnewyork.us/api/views/dm9a-ab7w.json",
+    "source_type": "official_open_data_soda_api",
+    "api_dataset_identifier": "dm9a-ab7w (parent); xmmq-y7za (details child, 40 cols, joined ONLY via job_filing_number, no location fields — observed 'B00334201-I1-EL' / 'Q00136970-I1-EL' key format)",
+    "authentication": {"required": false, "recommended": "Socrata app token"},
+    "rate_limits": {"same_as": "family standard (SODA 2.1)"},
+    "update_frequency": "Daily (stated, both); observed rowsUpdatedAt 2026-07-16T21:48:38Z (parent) / 2026-07-16T20:05:30Z (child) — consistent",
+    "geographic_coverage": "Citywide electrical permit filings (part of the official 'DOB NOW Electrical Permits Data Collection' per description)",
+    "fields_available": {
+      "column_count": 83,
+      "inventory_evidence": "api/views columns arrays 2026-07-17; shared dictionary XLSX DD_DOB_NOW_Build-Electrical_Filings_2019-05-14.xlsx on both datasets (OQ-2)",
+      "key_join_fields_observed": {"gis_bbl": "text ('3031310023') — note gis_ prefix", "bin": "text ('3425456')", "borough": "text UPPER ('BROOKLYN')", "job_filing_number": "'-EL'-suffixed"}
+    },
+    "terms_usage_notes": "NYC Open Data terms; provenance 'official'",
+    "connector_implementation": "PLAN ONLY (M2 priority low)",
+    "last_successful_ingestion": null,
+    "latest_source_version": "rowsUpdatedAt 2026-07-16T21:48:38Z at research time",
+    "health_status": "verified_live_2026-07-17",
+    "known_limitations": ["location fields carry gis_ prefix (derived by portal, per naming — meaning verification OQ-2)", "child dataset has NO location fields"],
+    "fallback_source": "None identified",
+    "open_questions": ["OQ-2"]
+  },
+  {
+    "source_id": "nyc-dob-now-build-elevator-permits-soda",
+    "agency": "NYC Department of Buildings (DOB)",
+    "name": "DOB NOW: Build Elevator Permit Applications (SODA) [SECONDARY] + Elevator Device Details child dataset",
+    "official_url": "https://data.cityofnewyork.us/api/views/kfp4-dz4h.json",
+    "source_type": "official_open_data_soda_api",
+    "api_dataset_identifier": "kfp4-dz4h (parent, 82 cols); juyv-2jek (device details child, 167 cols, one row per device per filing, joined via job_filing_number + device_id; bis_nyc_device_id legacy cross-ref observed)",
+    "authentication": {"required": false, "recommended": "Socrata app token"},
+    "rate_limits": {"same_as": "family standard (SODA 2.1)"},
+    "update_frequency": "Daily (stated, both); observed rowsUpdatedAt 2026-07-16T16:32:00Z (parent) / 2026-07-16T14:16:44Z (child) — consistent",
+    "geographic_coverage": "Citywide ELV1 elevator job filings via DOB NOW: Build (Initial/Subsequent/PAA; PAA rows repeat devices with P1-suffixed job filing number per official description)",
+    "fields_available": {
+      "column_count": 82,
+      "inventory_evidence": "api/views columns arrays 2026-07-17; dictionary XLSX attachments on both (OQ-2)",
+      "key_join_fields_observed": {"bbl": "text ('1007987501')", "bin": "text ('1014813')", "borough": "text title case ('Manhattan')", "job_filing_number": "'M00058658-I1'"}
+    },
+    "terms_usage_notes": "NYC Open Data terms; provenance 'official'. DOCUMENTATION DEFECT recorded: juyv-2jek description says 'includes all electrical applications ... since December 11, 2017' inside the elevator dataset (copy/paste error; launch-date claim unverified for elevators, OQ-1).",
+    "connector_implementation": "PLAN ONLY (M2 priority low; e5aq-a4j2 covers compliance-side elevator facts first)",
+    "last_successful_ingestion": null,
+    "latest_source_version": "rowsUpdatedAt 2026-07-16T16:32:00Z at research time",
+    "health_status": "verified_live_2026-07-17",
+    "known_limitations": ["child dataset has no BIN/BBL — parent fan-out only", "device namespace vs e5aq-a4j2 unverified (OQ-5)"],
+    "fallback_source": "None identified",
+    "open_questions": ["OQ-1", "OQ-2", "OQ-5"]
+  }
+]
