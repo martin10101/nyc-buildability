@@ -45,7 +45,7 @@
     "data-contract-verifier"
   ],
   "status": "claimed",
-  "progress_percent": 10,
+  "progress_percent": 75,
   "risks": [
     "nyc.gov + api-portal.nyc.gov are bot-blocked (403): evidence must come from data.cityofnewyork.us / catalog endpoints / council channels; do not claim a page unreachable without recording the attempt",
     "DOB NOW vs legacy BIS datasets are easily confused - the family boundary (DOB NOW only; BIS is the NEXT research task) must stay crisp with explicit rule-outs",
@@ -54,6 +54,14 @@
   "blockers": [],
   "execution_location": "research is network + text only; producer writes KB-scale markdown/fixtures in the task worktree; no installs, no datasets; disk impact negligible (7.77 GB free)",
   "created_at": "2026-07-17T07:41:24.928767+00:00",
-  "updated_at": "2026-07-17T07:42:56.548135+00:00",
-  "worktree": ".claude/worktrees/M1-T007"
+  "updated_at": "2026-07-17T08:08:46.863008+00:00",
+  "worktree": ".claude/worktrees/M1-T007",
+  "progress_log": [
+    {
+      "at": "2026-07-17T08:08:46.863008+00:00",
+      "agent": "official-source-researcher",
+      "percent": 75,
+      "message": "Producer deliverables committed+pushed on task branch (65cef7a): 11 datasets live-verified, 5 evidenced rule-outs, 9 registry drafts (location adjudicated: matches accepted source-registry-drafts precedent), 26 fixtures, 7 OQs. G1 (data-contract-verifier) + G3 deferred: parallel slot yields to B-005 critical path (ZIP just landed). Worktree base pointer fix (ff-only to 6392bc1) disclosed and verified clean."
+    }
+  ]
 }
