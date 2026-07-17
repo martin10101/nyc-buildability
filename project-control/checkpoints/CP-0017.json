@@ -1,0 +1,9 @@
+{
+  "checkpoint_id": "CP-0017",
+  "timestamp": "2026-07-17T10:19:01.229201+00:00",
+  "commit": "472d77f8239e2074402fd4671969573d92bbfec2",
+  "branch": "main",
+  "active_milestone": "M0",
+  "summary": "M0-T010 + M0-T013 double acceptance (21 accepted). M0-T013 gates: G3 PASS (code-reviewer, all S1-S6 independently re-executed) + G5 re-check PASS (security-reviewer, corrections 1-5 verified applied; correction 6 resolved by owner decision) + G2 recorded from producer-report evidence. Merged ff24147, single push executed, remote HEAD verified, CI green (runs 29572754202 + 29572754203). B-005 resolved (manifest COMPLETE per G3 14/14 blob-identical) and B-007 resolved (conformance verified) with audit entries; counter-notice section 1 retired (section 2 owner-review hold on expansion planning REMAINS); guard regression 15/15 against live resolved blocker. Worktrees/branches M0-T010, M1-T007, M0-T013 removed; temp extraction dirs deleted. Owner directives this session: full-permission-except-delete posture applied (defaultMode auto user+local, ask list reduced to destructive/delete ops, deny list unchanged, bypassPermissions NOT used, dispatch-guard hook untouched); new directive received: PR-based protected-main workflow + GitHub ruleset (handled after this checkpoint).",
+  "updated_at": "2026-07-17T10:19:01.229201+00:00"
+}
