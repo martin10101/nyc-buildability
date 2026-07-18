@@ -1,0 +1,73 @@
+{
+  "task_id": "M2-T010",
+  "title": "Contract-publication tooling: derive client supported-versions from the canonical schema, drift regression, contract.py docstring fix",
+  "task_type": "backend",
+  "milestone_id": "M2",
+  "objective": "Consolidated contract-tooling and documentation-hygiene task (owner carry-forward 2026-07-17): (1) generate or derive the web client's supported-contract-version runtime list (apps/web/src/lib/contract.ts SUPPORTED_CONTRACT_VERSIONS) from the canonical schema enum or the canonical generated contract artifact, eliminating the possibility that the schema publishes a new contract version while the client's manually maintained runtime list silently omits it; (2) add a negative regression test proving that publication drift or omission IS detected (a version present in the schema but absent from the client list must turn CI red); (3) correct the stale module-level description in services/api/app/profile/contract.py (lines ~16-20) which still describes 1.2.0 as the current builder version even though the builder now emits 1.3.0 (M2-T006 G3 LOW D1). CONSTRAINTS: do NOT publish contract 1.4.0 as part of this task; do NOT change existing contract semantics merely for cleanup; preserve compatibility with 1.0.0, 1.1.0, 1.2.0, and 1.3.0. OWNER PRECONDITION: this task must be accepted before ANY contract version after 1.3.0 is published. It does not block M2-T007/T008/T009 while those fit truthfully within contract 1.3.0.",
+  "business_reason": "M2-T006 G3 R-NEW-1 + owner directive 2026-07-17: every version publication is currently a coordinated atomic schema+backend+client change because the client pins a closed manual list; this task removes the silent-omission failure mode before any 1.4.0",
+  "inputs": [
+    "packages/contracts/schemas/v1/property_profile.schema.json (canonical version enum) + packages/contracts/generated/property_profile.ts (generated artifact) + the contracts-typegen and contracts-schema-bundle CI jobs",
+    "apps/web/src/lib/contract.ts (closed SUPPORTED_CONTRACT_VERSIONS set) + apps/web/src/lib/validate-profile.ts (fail-closed consumer) + apps/web/src/lib/__tests__/validate-profile.test.ts (pin test)",
+    "project-control/reports/M2-T006-G3-code-review.md OBS-2 / R-NEW-1 (recommendation rationale)",
+    "services/api/app/profile/contract.py module docstring (stale 1.2.0 description)",
+    "Owner directive 2026-07-17: consolidation instruction - keep the TypedDict suggestion and stronger staleness conditional as documented maintenance considerations only; do not fragment into microtasks"
+  ],
+  "outputs": [
+    "Generation/derivation mechanism (build-time codegen into the existing typegen pipeline, or an equivalent single-source derivation) making the client runtime version list follow the canonical schema/artifact automatically, with byte-identity CI discipline preserved",
+    "Negative regression test proving version-publication drift/omission detection (schema-ahead-of-client fixture turns CI red)",
+    "Corrected services/api/app/profile/contract.py module description (doc-only change)",
+    "project-control/reports/M2-T010-producer-report.md (AOS section-6 packet)"
+  ],
+  "dependencies": [
+    "M2-T006"
+  ],
+  "allowed_paths": [
+    "packages/contracts/** (generation tooling only; NO version additions, NO semantic schema changes)",
+    "apps/web/src/lib/contract.ts and apps/web/src/lib/validate-profile.ts (derivation consumption only)",
+    "apps/web/src/lib/__tests__/** (regression tests)",
+    "services/api/app/profile/contract.py (module docstring correction ONLY)",
+    "services/api/tests/** (docstring-related test touch only if genuinely required, disclosed)",
+    ".github/workflows/** ONLY if the derivation requires a pipeline step change - disclose in report; existing jobs must stay green",
+    "project-control/reports/M2-T010-producer-report.md"
+  ],
+  "forbidden_paths": [
+    "Publishing any contract version after 1.3.0 (schema version enum must end at 1.3.0 when this task merges)",
+    "Any semantic change to existing contract fields or validation behavior (tooling and docs only)",
+    "apps/web/src/components/**, screens, hooks, styles (no UI changes)",
+    "services/api/** except the one docstring named in allowed_paths",
+    "project-control/** (except own producer report)",
+    ".claude/**"
+  ],
+  "acceptance_scenarios": [
+    "CT-S1 derivation: client SUPPORTED_CONTRACT_VERSIONS provably derives from the canonical schema enum/artifact (single source of truth); current output equals exactly 1.0.0/1.1.0/1.2.0/1.3.0; typegen and schema-bundle CI jobs remain byte-identical",
+    "CT-S2 drift regression (negative): a test fixture simulating a schema-published version missing from the client list fails loudly (CI red path proven)",
+    "CT-S3 compatibility: 1.0.0-1.3.0 payload fixtures still validate; web unit + e2e suites green; no behavior change for any existing payload",
+    "CT-S4 docstring: services/api/app/profile/contract.py module description matches actual builder behavior (1.3.0); api pytest suite green",
+    "CT-S5 no-publication proof: schema version enum unchanged (ends at 1.3.0); no new contract artifacts beyond regenerated-identical outputs",
+    "CT-S6 regression: full repository CI green on both events"
+  ],
+  "required_gates": [
+    "G0",
+    "G1",
+    "G2",
+    "G3",
+    "G4"
+  ],
+  "producer_agent": null,
+  "reviewer_agents": [
+    "data-contract-verifier",
+    "code-reviewer"
+  ],
+  "status": "backlog",
+  "progress_percent": 0,
+  "risks": [
+    "OWNER PRECONDITION: must be accepted before any contract version after 1.3.0 is published; if any in-flight connector task genuinely requires 1.4.0, that task STOPS and this task completes first",
+    "Does not block M2-T007/T008/T009 (they fit within contract 1.3.0); scheduling is at orchestrator discretion after the connector wave or opportunistically between waves",
+    "Derivation mechanism choice (codegen vs import-time derivation) is producer design freedom within the byte-identity CI discipline; deviation from the typegen pipeline conventions must be disclosed",
+    "Documented maintenance considerations carried WITHOUT new microtasks (owner instruction): M2-T006 TypedDict suggestion; stronger staleness conditional encoding (if/then remains outside validate_contracts.py allowlist)",
+    "STOP CONDITIONS: any change that would alter contract semantics; any need to publish a version; credentials; production deployment"
+  ],
+  "blockers": [],
+  "created_at": "2026-07-18T00:18:56.741200+00:00",
+  "updated_at": "2026-07-18T00:18:56.741200+00:00"
+}
