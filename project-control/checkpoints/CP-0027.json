@@ -1,0 +1,9 @@
+{
+  "checkpoint_id": "CP-0027",
+  "timestamp": "2026-07-17T23:57:19.817791+00:00",
+  "commit": "4ce2aea",
+  "branch": "main",
+  "active_milestone": "M0",
+  "summary": "M2-T006 ACCEPTED (32nd): property-profile contract 1.3.0 with typed reproducibility.staleness. Task PR #34 merged at 4ce2aea (main). Lifecycle: G0 PASS (dispatch wave PR #31) - claim backend-engineer - producer STOP on packet condition (client edits required) - AMENDMENT A1 (control PR #32, scope widened by exactly contract.ts vocabulary + validate-profile.test.ts pin) - producer resumed and completed - G2 self-check (api 276 passed; PR #34 all 8 jobs green both events) - submit - G1 PASS data-contract-verifier (D1/D2/N3 resolved exactly; 8-case conditional truth-table verified on both engines; O1 journey-count typo adjudicated 53 per CI log) - G3 PASS + G4 PASS code-reviewer (single report, gates recorded separately; LOW D1 stale contract.py module docstring carried forward; OBS-2 R-NEW-1 recommends generating the client version array from the schema enum before any 1.4.0) - accept. Reconciliation after M2-T005 merge: merge tree byte-identical to merge-tree dry-run (604184c), reviewed-scope diff cd0b385..eebdcba EMPTY, full CI green on combined tree - no delta re-review required. Session-11 dispatch wave complete: 32 accepted / 2 blocked / 0 backlog / 0 claimed. Next: contract the zoning-features + tax-lot-geometry connector packets (owner review before dispatch).",
+  "updated_at": "2026-07-17T23:57:19.817791+00:00"
+}

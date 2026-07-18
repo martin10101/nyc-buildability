@@ -1,0 +1,10 @@
+{
+  "task_id": "M2-T006",
+  "gate_id": "G1",
+  "reviewer": "data-contract-verifier",
+  "role": "independent_review",
+  "result": "PASS",
+  "report_file": "project-control/reports/M2-T006-G1-data-contract-review.md",
+  "reviewed_at": "2026-07-17T23:57:19.282746+00:00",
+  "updated_at": "2026-07-17T23:57:19.282746+00:00"
+}
