@@ -1,0 +1,90 @@
+{
+  "task_id": "M2-T009",
+  "title": "Tax-lot geometry connector (MapPLUTO ArcGIS, per-BBL)",
+  "task_type": "backend",
+  "milestone_id": "M2",
+  "objective": "Fixture-driven per-BBL MapPLUTO ArcGIS geometry connector suitable for future zoning intersections, with: (1) IDENTIFIER AND RESULT VALIDATION - strict borough/block/lot and canonical-BBL validation before any query; returned features validated as corresponding to the requested lot; zero, one, or multiple returned features handled explicitly (never silently take the first); condo billing-lot semantics preserved per docs/research/pluto-mappluto-2026-07-16.md section 2.5 (never claim every condo unit has an independent tax-lot polygon). (2) CRS - authoritative source CRS (EPSG 2263 / wkid 102718) preserved and validated from metadata BEFORE interpreting coordinates; any distance/area computation uses an appropriate projected CRS for NYC; legal area is NEVER computed from longitude/latitude degrees; every transformation documented with deterministic transformation tests. (3) GEOMETRY VALIDITY taxonomy covering polygon, multipolygon, holes, empty geometry, null geometry, self-intersection, ring closure, invalid orientation, duplicate vertices, degenerate rings, geometry-collection surprises, and multiple features for one BBL - each mapped to an explicit typed state. (4) NO SILENT REPAIR - original geometry (or its exact digest) always preserved; whether repair occurred, the repair method, and the relevant library version recorded; original AND repaired/canonical digests kept separately; if repair changes topology in a way that cannot be safely characterized, return an explicit invalid or review-required state; repaired geometry never presented as the untouched official source. (5) DETERMINISTIC GEOMETRY DIGESTS - canonical ordering defined for rings, holes, multipolygon members, coordinate precision, and serialization; Shapely/GEOS behavior needed by CI pinned and verified; digest stability proven in supported environments; raw-source digest separate from normalized-geometry digest; default WKB/WKT output NOT assumed cross-platform canonical. (6) SPATIAL TEST SCENARIOS against M2-T007 district fixtures: fully inside, fully outside, boundary touch, split intersection, hole interaction, invalid geometry, repaired geometry, repeated-run reproducibility - with boundary-touch and tolerance behavior explicitly named (the source's stated +/- 20 ft horizontal accuracy means near-boundary results are uncertain; ambiguous boundary cases are never silently classified as fully inside or outside). These spatial scenarios are TEST-level checks proving the geometry is intersection-ready; a production spatial-intersection engine is out of scope.",
+  "business_reason": "Owner approval 2026-07-17: per-BBL lot geometry is the prerequisite for deterministic zoning intersections; citywide FileGDB import stays deferred behind B-001/B-002",
+  "inputs": [
+    "docs/research/pluto-mappluto-2026-07-16.md (MapPLUTO ArcGIS channel, condo billing-lot semantics section 2.5, CRS)",
+    "docs/research/zoning-features-ztldb-2026-07-16.md section 4.3 (+/- 20 ft positional accuracy - boundary tolerance rationale)",
+    "docs/research/source-registry-drafts/pluto-mappluto.json (registry draft - geometry-channel fields to be completed/confirmed)",
+    "M2-T007 accepted zoning-features connector + district fixtures (spatial scenario inputs; allowlist/paging/metadata-validation patterns to reuse)",
+    "M2-T008 accepted ZTLDB connector (BBL validation conventions; error-taxonomy alignment)",
+    "services/api/app/resilience/** (M1-T009 framework)",
+    "ACCEPTANCE_SCENARIO_STANDARD geospatial scenario pack (docs/ACCEPTANCE_SCENARIO_STANDARD.md)",
+    "Owner directive 2026-07-17: all M2-T009 safeguards 1-7"
+  ],
+  "outputs": [
+    "services/api/app/connectors/ (new MapPLUTO-geometry module(s)) implementing the allowlisted per-BBL geometry connector with identifier validation, CRS validation, validity taxonomy, no-silent-repair policy, and separate raw/normalized geometry digests",
+    "services/api/tests/fixtures/mappluto_geometry/** fixture pack with manifest per M2-T007 conventions (raw ArcGIS responses; synthetic invalid-geometry fixtures clearly labeled synthetic)",
+    "services/api/tests/connectors/ geometry test module(s) + spatial scenario tests against M2-T007 district fixtures; deterministic, offline; Shapely/GEOS version pin recorded and asserted",
+    "Updated docs/research/source-registry-drafts/pluto-mappluto.json geometry-channel record",
+    "project-control/reports/M2-T009-producer-report.md (AOS section-6 packet, full design preserved before stopping)"
+  ],
+  "dependencies": [
+    "M2-T008",
+    "M2-T007",
+    "M1-T009"
+  ],
+  "allowed_paths": [
+    "services/api/app/connectors/** (new geometry module(s) only; existing connector files may not be modified)",
+    "services/api/tests/connectors/** (new geometry test module(s) only)",
+    "services/api/tests/fixtures/mappluto_geometry/**",
+    "services/api/requirements*.txt / pyproject dependency pin for Shapely ONLY if not already present (disclosed in report; version pinned exactly; CI green required)",
+    "docs/research/source-registry-drafts/pluto-mappluto.json",
+    "project-control/reports/M2-T009-producer-report.md"
+  ],
+  "forbidden_paths": [
+    "services/api/app/profile/** (no profile-builder wiring; geometry facts enter the profile under a later authorized task; STOP if integration seems required)",
+    "packages/contracts/** and services/api/app/_contract_schemas/** (contract 1.3.0 stands; STOP if a contract change seems required)",
+    "services/api/app/resilience/** (reuse only; STOP if a framework change is required)",
+    "services/api/app/connectors/pluto_soda.py, bbl.py, and the M2-T007/M2-T008 connector modules (read-only inputs)",
+    "apps/web/**",
+    ".github/workflows/** (EXCEPTION: if the Shapely dependency requires a CI install step change, STOP and report - do not edit workflows unilaterally)",
+    "project-control/** (except own producer report)",
+    "docs/** (except the one registry draft named in allowed_paths)",
+    ".claude/**"
+  ],
+  "acceptance_scenarios": [
+    "GEO-S1 single-lot polygon: known BBL returns one polygon feature validated against the request, CRS validated from metadata (2263/102718), provenance stamped (endpoint, layer, retrieval timestamp, source edit timestamp where available)",
+    "GEO-S2 multipolygon + holes: multipolygon lot and holed polygon fixtures normalize with canonical ring/member ordering; digests stable",
+    "GEO-S3 zero/one/multiple: no-feature, one-feature, and multiple-feature responses each produce an explicit typed outcome; multiple features for one BBL is a typed review-required state, never a silent first-pick",
+    "GEO-S4 condo semantics: billing-lot BBL fixture resolves per section 2.5 semantics; unit-lot query behavior documented; no claim of per-unit polygons",
+    "GEO-S5 invalid geometry taxonomy: self-intersection, unclosed ring, invalid orientation, duplicate vertices, degenerate ring, empty geometry, null geometry, geometry-collection fixtures each map to their explicit typed state (synthetic fixtures labeled)",
+    "GEO-S6 repair policy: a repairable invalid fixture records repair occurred + method + library version, preserves original digest AND repaired digest; an uncharacterizable repair returns invalid/review-required; no repaired geometry presented as untouched source",
+    "GEO-S7 digest determinism: canonical serialization (defined ordering + fixed coordinate precision) reproduces byte-identical digests across two runs and across CI platform(s); Shapely/GEOS versions asserted in-test; raw digest separate from normalized digest",
+    "GEO-S8 CRS safety: wrong-CRS metadata fixture is a typed failure before coordinate interpretation; area/distance computed only in projected feet with a documented transformation test; a degrees-based area path does not exist (negative test proves rejection)",
+    "GEO-S9 spatial scenarios vs M2-T007 fixtures: fully inside, fully outside, boundary touch, split intersection, hole interaction - each with named tolerance behavior; boundary-touch within tolerance reported as uncertain/boundary, never silently inside or outside; repeated-run reproducibility proven",
+    "GEO-S10 allowlist + resilience: only the packet-approved official MapPLUTO ArcGIS endpoint reachable; bounded query parameters; paging per M2-T007 pattern where applicable; timeout/429/circuit/budget behaviors typed via M1-T009 framework; malformed response never becomes an empty valid result",
+    "GEO-S11 freshness separation: source edit timestamp reported as provenance; fresh retrieval of an old source never sets transport staleness (owner two-staleness rule)",
+    "GEO-S12 regression: full api pytest suite green; M2-T007/M2-T008/PLUTO behavior unchanged"
+  ],
+  "required_gates": [
+    "G0",
+    "G1",
+    "G2",
+    "G3",
+    "G4"
+  ],
+  "producer_agent": null,
+  "reviewer_agents": [
+    "data-contract-verifier",
+    "code-reviewer",
+    "geospatial-engineer"
+  ],
+  "status": "backlog",
+  "progress_percent": 0,
+  "risks": [
+    "SCOPE EXCLUSIONS (owner, hard): no citywide FileGDB import (deferred until B-001/B-002 resolved + deployment/security prerequisites), no persistent database storage, no Render worker provisioning, no production deployment, no full zoning-rule calculations, no buildable envelope, no 3D massing, no financial analysis, no legal boundary certification",
+    "STOP CONDITIONS: contract change; profile integration; resilience framework change; CI workflow change needed for Shapely; credentials; legal-interpretation question; any Shapely/GEOS cross-platform digest instability that cannot be pinned (report evidence instead of shipping unstable digests)",
+    "PRE-DISPATCH REVALIDATION (owner): this packet must be re-read and revalidated against current main AFTER M2-T008 acceptance and BEFORE dispatch",
+    "Dependency risk: Shapely wheel availability/pinning in CI; disk footprint of Shapely wheels is small (low-storage compliant) but must be stated in the G0 record",
+    "Geometry review competence: geospatial-engineer is rostered as the G4 integration/geospatial reviewer; G1 (data-contract-verifier) covers the official-source mapping; G3 (code-reviewer) covers the human-level walkthrough of connector behavior",
+    "Error taxonomy aligned with M2-T007/M2-T008 naming plus geometry states (invalid_geometry, repaired_geometry, review_required, wrong_crs, multiple_features, no_feature)",
+    "Credential/persistence boundary: ArcGIS keyless; no database or storage writes; KB-scale fixtures only"
+  ],
+  "blockers": [],
+  "created_at": "2026-07-18T00:18:56.632757+00:00",
+  "updated_at": "2026-07-18T00:18:56.632757+00:00"
+}

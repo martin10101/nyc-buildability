@@ -1,0 +1,95 @@
+{
+  "task_id": "M2-T008",
+  "title": "ZTLDB lot-level zoning connector (SODA fdkv-4t4z)",
+  "task_type": "backend",
+  "milestone_id": "M2",
+  "objective": "Fixture-driven connector for the official NYC Zoning Tax Lot Database SODA dataset fdkv-4t4z with: (1) SCHEMA AUTHORITY - the api/views columns array is the authoritative 16-column inventory (borough_code, tax_block, tax_lot, bbl, zoning_district_1..4, commercial_overlay_1..2, special_district_1..3, limited_height_district, zoning_map_number, zoning_map_code); NEVER infer schema from whichever keys appear in one record (SODA omits blank keys per record); an omitted key follows documented source semantics (blank = not applicable / not split further) and is never silently converted into a confirmed null, zero, false, or empty value; preserve unknown / absent / not-applicable / observed-null distinctions where the source supports them. (2) QUERY SAFETY - validate BBL and all identifiers before query construction; bounded deterministic SODA queries only; no SoQL injection path (no raw caller strings into $where); dataset identifier and origin allowlisted (data.cityofnewyork.us + fdkv-4t4z only); Socrata application token optional and secret-safe (header only, never logged, never in fixtures). (3) PAGINATION AND ORDERING - explicit $limit/$offset with deterministic $order, bounded pagination even though per-BBL results are small; duplicate/repeated-page and no-progress detection; request and result-size budgets. (4) DOMAIN SEMANTICS - preserve split-lot ordering (ZD1 = greatest lot-area percentage since 2019-12-31 even if under 10 percent; ZD2/3/4 descending); preserve the slash-tie representation for special districts (SD1 may contain two Appendix-A abbreviations joined by a slash); preserve and document the PARK caveat (PARK lots must not be used to compute open space; consolidation of PARK/BALL FIELD/PLAYGROUND/PUBLIC SPACES since 2018-09-07); keep ZD1 values OPEN - research C4 proves Appendix B is not closed (ZR section numbers appear for selected Queens properties); never invent a zoning value from nearby lots; never silently choose one conflicting value as correct. (5) SOURCE FRESHNESS GUARD - report the dataset publication/update age (rowsUpdatedAt; observed 2026-04-05 vs monthly cadence = ~3.4 months stale at research time) SEPARATELY from cache/LKG transport staleness; a freshly downloaded old dataset remains an old source dataset; never set served_from_cache or stale because the city dataset is old; never hide an old source-publication date behind a fresh HTTP retrieval time; preserve both timestamps (source last-modified and connector retrieval); regression test proving the two dimensions cannot be confused (owner two-staleness rule 2026-07-17). (6) CROSS-CHECK - compare ZTLDB lot-level zoning values against accepted PLUTO connector facts and M2-T007 zoning-features fixture information; any disagreement becomes a typed conflict, uncertainty, or analysis-readiness issue with BOTH observations and their provenance preserved; no source overwrites another; the cross-check is data reconciliation, NOT legal zoning adjudication.",
+  "business_reason": "Owner approval 2026-07-17: ZTLDB is the primary tabular lot-to-zoning assignment source (split-lot ordering semantics are official here); observed ~3.4-month Socrata staleness makes the freshness guard and cross-checks mandatory (research section 5.1)",
+  "inputs": [
+    "docs/research/zoning-features-ztldb-2026-07-16.md (sections 2.1, 3, 4.1, 5.1, 5.4, 6 ZT-F1..F12 fixture pack, Appendix semantics)",
+    "docs/research/source-registry-drafts/ztldb.json (registry draft to be completed/confirmed by this task)",
+    "services/api/app/connectors/pluto_soda.py + fixtures (M2-T004 SODA conventions: X-App-Token discipline, columns-snapshot drift test, no-such-column 400 signature)",
+    "services/api/app/resilience/** (M1-T009 framework)",
+    "services/api/app/profile/** conflict/data-semantics machinery (M2-T004) and contract 1.3.0 staleness object semantics (M2-T006)",
+    "M2-T007 accepted zoning-features fixtures (cross-check inputs)",
+    "Owner directive 2026-07-17: all M2-T008 safeguards 1-7 and the two-staleness distinction"
+  ],
+  "outputs": [
+    "services/api/app/connectors/ztldb_soda.py (or equivalently named module under services/api/app/connectors/) implementing the per-BBL ZTLDB connector with schema authority, query safety, pagination, domain semantics, freshness guard, and typed error taxonomy",
+    "Profile-builder integration: ZTLDB lot-level zoning facts join the canonical profile as source facts with provenance; PLUTO/ZTLDB/zoning-features disagreements emitted through the EXISTING typed conflict / analysis-readiness machinery WITHIN contract 1.3.0 (STOP if a contract version bump is needed)",
+    "services/api/tests/fixtures/ztldb/** fixture pack (ZT scenarios) with manifest per M2-T007 conventions",
+    "services/api/tests/connectors/test_ztldb_soda.py (or equivalent) + profile cross-check tests; deterministic, offline",
+    "Completed/confirmed docs/research/source-registry-drafts/ztldb.json registry record",
+    "project-control/reports/M2-T008-producer-report.md (AOS section-6 packet, full design preserved before stopping)"
+  ],
+  "dependencies": [
+    "M2-T007",
+    "M2-T004",
+    "M1-T003",
+    "M1-T009"
+  ],
+  "allowed_paths": [
+    "services/api/app/connectors/** (new ZTLDB module(s) only; existing connector files may not be modified)",
+    "services/api/app/profile/** (cross-check/conflict integration ONLY, within contract 1.3.0; no contract-shape changes)",
+    "services/api/tests/connectors/** (new ZTLDB test module(s); existing test files only where the cross-check integration genuinely requires an additive assertion, disclosed in the report)",
+    "services/api/tests/profile/** (cross-check integration tests)",
+    "services/api/tests/fixtures/ztldb/**",
+    "docs/research/source-registry-drafts/ztldb.json",
+    "project-control/reports/M2-T008-producer-report.md"
+  ],
+  "forbidden_paths": [
+    "packages/contracts/** and services/api/app/_contract_schemas/** (contract 1.3.0 stands; if the connector genuinely requires a new public contract version or response shape, STOP - owner precondition: the M2-T010 contract-tooling task must be accepted before any version after 1.3.0)",
+    "services/api/app/resilience/** (reuse only; STOP if a framework change is required)",
+    "services/api/app/connectors/pluto_soda.py and services/api/app/connectors/bbl.py (read-only inputs)",
+    "apps/web/**",
+    ".github/workflows/**",
+    "project-control/** (except own producer report)",
+    "docs/** (except the one registry draft named in allowed_paths)",
+    ".claude/**"
+  ],
+  "acceptance_scenarios": [
+    "ZT-S1 single-lot normal (ZT-F1): known BBL returns one record mapped against the authoritative 16-column contract; number-typed columns arrive as JSON strings and are normalized with provenance",
+    "ZT-S2 split lot (ZT-F2): BBL 1000010010-style record preserves ZD1/ZD2 ordering semantics; ordering documented, never resorted",
+    "ZT-S3 no-match (ZT-F3): syntactically valid nonexistent BBL yields empty result typed as no-record (well-formed [] only); malformed record/response is a typed upstream error (ZT negative)",
+    "ZT-S4 blank omission (ZT-F4): omitted keys map to not-applicable-per-source-semantics, NOT to confirmed null/zero/false/empty; explicit-null fixture (synthetic, labeled) exercises the distinct observed-null path",
+    "ZT-S5 overlay + limited-height (ZT-F5/F8): commercial_overlay_1 within Appendix C set; limited_height_district within Appendix D; validation is advisory (typed observation), never value invention",
+    "ZT-S6 slash tie (ZT-F6): slash-joined SD1 parses to two Appendix-A codes with the tie semantics preserved in the normalized output",
+    "ZT-S7 PARK (ZT-F7): ZD1=PARK carries the do-not-use-for-open-space caveat flag in normalized output",
+    "ZT-S8 open ZD1 value (research C4): previously unseen ZD1 value (e.g. a ZR section number) is accepted as an open-set value with a typed unknown-vocabulary observation, never rejected or coerced",
+    "ZT-S9 pagination (ZT-F9): deterministic $order paging with no dupes/gaps; duplicate-page and no-progress fixtures produce typed failures; request/result budgets enforced with tests",
+    "ZT-S10 freshness guard (ZT-F10): rowsUpdatedAt age computed against injected clock; stale-source fixture (fresh retrieval of old dataset) sets source-freshness reporting WITHOUT touching served_from_cache/stale; cache/LKG serve fixture sets transport staleness WITHOUT altering source timestamps; a combined test proves the two dimensions vary independently (owner-required regression)",
+    "ZT-S11 schema drift (ZT-F11): columns-array snapshot diff detects added/renamed/removed columns as typed drift; $select nonexistent column HTTP 400 no-such-column signature handled as drift evidence, not data",
+    "ZT-S12 resilience (ZT-F12): 429 rate limit, timeout, circuit-open, budget exhaustion via M1-T009 framework, distinguishable in the taxonomy",
+    "ZT-S13 PLUTO disagreement: fixture pair (ZTLDB vs PLUTO zonedist) produces a typed conflict with both observations + provenance retained; neither value wins; no legal adjudication",
+    "ZT-S14 M2-T007 disagreement: ZTLDB value vs zoning-features fixture information produces the same typed conflict/uncertainty path",
+    "ZT-S15 determinism: raw and normalized digests reproduce across runs/platforms; ordering canonicalized before digesting",
+    "ZT-S16 query safety: injection-shaped BBL/identifier inputs are rejected before any query construction; only allowlisted origin+dataset reachable; token never logged or fixtured (negative tests)",
+    "ZT-S17 regression: full api pytest suite green; PLUTO and zoning-features behavior unchanged; contract 1.3.0 boundary validation still passes"
+  ],
+  "required_gates": [
+    "G0",
+    "G1",
+    "G2",
+    "G3",
+    "G4"
+  ],
+  "producer_agent": null,
+  "reviewer_agents": [
+    "data-contract-verifier",
+    "code-reviewer"
+  ],
+  "status": "backlog",
+  "progress_percent": 0,
+  "risks": [
+    "SCOPE EXCLUSIONS (owner, hard): no full-dataset sync (857k rows), no persistence (B-001), no production deployment, no legal zoning conclusions, no spatial intersection (cross-check uses fixture values, not computed geometry)",
+    "STOP CONDITIONS: contract version bump required (owner precondition - M2-T010 must be accepted before any post-1.3.0 publication); resilience framework change; credentials required beyond optional secret-safe app token; legal-interpretation question; any need to modify PLUTO connector behavior",
+    "PRE-DISPATCH REVALIDATION (owner): this packet must be re-read and revalidated against the new main AFTER M2-T007 acceptance and BEFORE dispatch",
+    "Cross-check design risk: profile conflict machinery shape (M2-T004) may need additive extension for three-way source comparison - additive-internal changes are in scope, contract-shape changes are STOP",
+    "Fixture capture: producer captures live SODA responses at build time with retrieval timestamps; CI offline; the observed staleness (rowsUpdatedAt 2026-04-05) may have changed by capture time - record actual values, do not copy research values into fixtures",
+    "Error taxonomy: upstream_error, malformed_response, schema_drift, budget_exhausted, circuit_open, timeout, rate_limited, disallowed_request, no_record - aligned with M2-T007 naming",
+    "Credential/persistence boundary: optional X-App-Token only, sourced from environment, never committed; no database or storage writes; low-storage KB-scale fixtures only"
+  ],
+  "blockers": [],
+  "created_at": "2026-07-18T00:18:56.519262+00:00",
+  "updated_at": "2026-07-18T00:18:56.519262+00:00"
+}

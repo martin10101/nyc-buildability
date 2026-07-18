@@ -1,0 +1,97 @@
+{
+  "task_id": "M2-T007",
+  "title": "GIS Zoning Features connector (ArcGIS, six canonical DCP layers)",
+  "task_type": "backend",
+  "milestone_id": "M2",
+  "objective": "Fixture-driven connector for the six canonical DCP_GIS ArcGIS zoning-feature services (nyzd, nyco, nysp, nysp_sd, nylh, nyzma) at services5.arcgis.com/GfwWNkhOj9bNBqoJ with: (1) ENDPOINT ALLOWLISTING - requests may target ONLY the six packet-approved official service roots; no caller-provided URLs; bounded query parameters and requested fields; the connector must not be usable as an SSRF or arbitrary-network-request mechanism. (2) METADATA VALIDATION - capture and validate official layer metadata (field inventory, objectIdField, spatial reference wkid 102718 / latestWkid 2263, maxRecordCount transfer limit, editingInfo.dataLastEditDate); detect unexpected field or CRS changes; fail loudly or emit an explicit typed degradation state on metadata change; never silently guess a renamed or missing field. (3) MANDATORY EXPLICIT PAGING on every layer even when a fixture fits one page (live counts EXCEED maxRecordCount on nysp 95>92, nysp_sd 336>317, nyzma 1414>1292; nylh sits at its cap 14=14 - research C3): respect exceededTransferLimit, deterministic ordering (order by objectIdField), detect repeated pages / repeated object IDs / zero-progress loops / unreasonable page counts, bounded maximum-page and request budgets, tests proving no infinite loop and no silent skip or duplication across page boundaries. (4) RESILIENCE - reuse the established services/api/app/resilience framework (cache, retry, Retry-After, jitter, circuit breaker, last-known-good, timeout, request budget); do NOT build a second resilience system; keep upstream failure, schema drift, budget exhaustion, and stale fallback distinguishable; never convert a malformed upstream response into a valid empty result; an ArcGIS error object returned with HTTP 200 is an upstream error, not data. (5) FIXTURE PROVENANCE - every fixture has a manifest entry recording official endpoint, layer/service identifier, safe query parameters, retrieval timestamp, source edit timestamp where available, CRS, expected record count, cryptographic digest, raw/normalized/synthetic classification, why the fixture exists, and which acceptance scenario it supports; no secrets or tokens in manifests. (6) DETERMINISM - preserve raw-response digests and canonical-normalized digests SEPARATELY; establish deterministic record ordering before canonical digesting; digests cross-platform reproducible; never rely on incidental API response order. EPSG 2263 is preserved as the authoritative source CRS (no reprojection in this task). Freshness signal: editingInfo.dataLastEditDate per layer plus mm69-vrje viewLastModified as the blob-channel polling signal (research C2); source-dataset age is provenance/freshness data and must NEVER set served_from_cache or stale (those describe transport/cache fallback only - owner staleness distinction 2026-07-17).",
+  "business_reason": "Owner approval 2026-07-17: next connector wave, strict order M2-T007 then M2-T008 then M2-T009; zoning-feature geometries are the primary citywide zoning geometry source (research zoning-features-ztldb-2026-07-16.md section 5.5)",
+  "inputs": [
+    "docs/research/zoning-features-ztldb-2026-07-16.md (G1-corrected; sections 2.3, 4.2, 4.3, 5.2, 5.3, 6 ZF fixture pack, 8 OQ ledger)",
+    "docs/research/source-registry-drafts/zoning-features.json (registry draft to be completed/confirmed by this task)",
+    "services/api/app/resilience/** (M1-T009 framework: breaker, budget, cache, config, fetcher, metrics, retry)",
+    "services/api/app/connectors/pluto_soda.py + services/api/tests/connectors/test_pluto_soda.py + services/api/tests/fixtures/pluto/** (M2-T004 conventions: fixture naming, provenance stamps, drift tests)",
+    "Owner directive 2026-07-17: two-staleness semantic distinction (serve/cache staleness vs source-dataset freshness) and all M2-T007 safeguards 1-8"
+  ],
+  "outputs": [
+    "services/api/app/connectors/zoning_features_arcgis.py (or an equivalently named module set under services/api/app/connectors/) implementing the allowlisted six-layer connector with metadata validation, paging, resilience integration, typed error taxonomy, provenance stamps, and separate raw/normalized digests",
+    "services/api/tests/fixtures/zoning_features/** fixture pack (ZF scenarios) with a committed manifest file satisfying packet safeguard 5",
+    "services/api/tests/connectors/test_zoning_features_arcgis.py (or equivalent) covering all acceptance scenarios below; deterministic, offline, no live network in CI",
+    "Completed/confirmed docs/research/source-registry-drafts/zoning-features.json registry record for the six services (connector implementation field, endpoints, limits, freshness signals)",
+    "project-control/reports/M2-T007-producer-report.md (AOS section-6 packet, full design preserved before stopping)"
+  ],
+  "dependencies": [
+    "M1-T003",
+    "M1-T005",
+    "M1-T009"
+  ],
+  "allowed_paths": [
+    "services/api/app/connectors/** (new zoning-features module(s) only; pluto_soda.py and bbl.py may not be modified)",
+    "services/api/tests/connectors/** (new zoning-features test module(s) only; existing test files may not be modified)",
+    "services/api/tests/fixtures/zoning_features/**",
+    "docs/research/source-registry-drafts/zoning-features.json",
+    "project-control/reports/M2-T007-producer-report.md"
+  ],
+  "forbidden_paths": [
+    "services/api/app/profile/** (no profile-builder wiring in this task; lot-level zoning is ZTLDB/PLUTO territory and spatial intersection is excluded - if profile integration seems required, STOP and report)",
+    "services/api/app/resilience/** (reuse only; if a framework change is genuinely required, STOP and report for a follow-up packet)",
+    "packages/contracts/** and services/api/app/_contract_schemas/** (no contract change; contract 1.3.0 stands; if any contract change seems required, STOP - owner precondition)",
+    "apps/web/**",
+    ".github/workflows/** (existing CI jobs must pass unchanged; if a workflow change is genuinely required, STOP and report)",
+    "project-control/** (except own producer report)",
+    "docs/** (except the one registry draft named in allowed_paths)",
+    ".claude/**"
+  ],
+  "acceptance_scenarios": [
+    "ZF-S1 schema snapshot x6: layer metadata fixture for each of the six layers validates field inventory, objectIdField, SR 102718/2263, maxRecordCount; connector rejects/degrades typed on missing objectIdField, missing required metadata, or wrong CRS (three negative fixtures)",
+    "ZF-S2 count baseline x6: returnCountOnly fixtures (nyzd 5416, nyco 9623, nysp 95, nysp_sd 336, nylh 14, nyzma 1414 at 2026-07-16) recorded with provenance; count-vs-page-total consistency check",
+    "ZF-S3 single-feature query: bounded attribute query (e.g. ZONEDIST='R3-2') returns typed record with attributes + polygon rings + CRS + provenance stamps (source endpoint, layer, retrieval timestamp, dataLastEditDate)",
+    "ZF-S4 paging complete extraction: multi-page fixture set (page cap < total) proves complete extraction with no skips and no duplicates across page boundaries; deterministic ordering by object ID; exceededTransferLimit respected",
+    "ZF-S5 paging pathologies: duplicate page fixture, repeated-object-ID fixture, zero-progress loop, and page-budget exhaustion each produce a typed failure (never an infinite loop, never silent truncation) - test-enforced upper bound on requests",
+    "ZF-S6 empty layer / no-match: empty features array is a valid empty result ONLY when the response is well-formed; malformed response (truncated JSON, missing features key) is a typed upstream error, never an empty result",
+    "ZF-S7 ArcGIS error-with-HTTP-200: error object payload produces a typed upstream error distinguishable from transport failure",
+    "ZF-S8 resilience: timeout, HTTP 429 rate limit with Retry-After, circuit-open, and request-budget exhaustion behaviors via the M1-T009 framework, each distinguishable in the error taxonomy; last-known-good serve (if enabled for this connector) stamps cache/staleness truthfully and NEVER because the source dataset is old",
+    "ZF-S9 schema drift: renamed field and added field fixtures produce typed drift detection (fail loud or typed degradation), never a silent guess",
+    "ZF-S10 determinism: raw digest and canonical-normalized digest reproduce byte-identically across two runs and across platforms (CI proof); normalized ordering independent of response order (shuffled-fixture proof)",
+    "ZF-S11 allowlist security: connector refuses any non-allowlisted host/service/layer (including crafted layer names and absolute URLs in parameters); query parameters and outFields are bounded; negative tests prove refusal; no token/secret appears in fixtures, manifests, or logs",
+    "ZF-S12 freshness separation: dataLastEditDate/source-age is reported as source-version provenance; a fixture-driven test proves an OLD dataLastEditDate with a FRESH retrieval does NOT set served_from_cache/stale, and a cache/LKG serve does not alter source timestamps (owner two-staleness rule)",
+    "ZF-S13 regression: full existing api pytest suite remains green; no changes to pluto/bbl/profile behavior"
+  ],
+  "required_gates": [
+    "G0",
+    "G1",
+    "G2",
+    "G3",
+    "G4",
+    "G5"
+  ],
+  "producer_agent": "backend-engineer",
+  "reviewer_agents": [
+    "data-contract-verifier",
+    "code-reviewer",
+    "security-reviewer"
+  ],
+  "status": "in_progress",
+  "progress_percent": 10,
+  "risks": [
+    "SCOPE EXCLUSIONS (owner, hard): no spatial intersection, no buildable-envelope calculation, no zoning-rule interpretation, no legal conclusions, no citywide blob/FileGDB download, no persistence (B-001 stands), no production deployment, no 3D visualization",
+    "STOP CONDITIONS: any need to change contracts/profile/resilience/workflows; any need for credentials or paid services; any need for live network access in CI beyond committed fixtures; any legal-interpretation question. Producer must preserve full design in the report before stopping (session-11 lesson: agents cannot be resumed, only relaunched from the report)",
+    "Fixture capture happens at build time by the producer via live reads of the official services (fixture-capture network use is producer-local and disclosed with retrieval timestamps; CI remains offline-deterministic)",
+    "OQ-11 (research): f=geojson support and resultOffset paging behavior on these specific services not yet exercised live - producer must verify actual paging behavior during fixture capture and record evidence; if ArcGIS paging semantics differ from assumption, record in report and adapt fixtures accordingly",
+    "Error-taxonomy requirement: upstream_error, malformed_response, schema_drift, budget_exhausted, circuit_open, timeout, rate_limited, disallowed_request must be distinguishable states (names may follow the existing resilience taxonomy)",
+    "Credential/persistence boundary: ArcGIS services are keyless; no token handling in this task; no database or storage writes",
+    "Low-storage: fixtures are KB-scale JSON only; no dataset downloads; cleanup not applicable beyond normal test tempdirs"
+  ],
+  "blockers": [],
+  "created_at": "2026-07-18T00:18:37.658636+00:00",
+  "updated_at": "2026-07-18T00:23:43.573554+00:00",
+  "worktree": ".claude/worktrees/M2-T007",
+  "progress_log": [
+    {
+      "at": "2026-07-18T00:23:43.573554+00:00",
+      "agent": "backend-engineer",
+      "percent": 10,
+      "status": "in_progress",
+      "message": "Session 12 dispatch: G0 PASS (readiness report committed), claimed by backend-engineer, worktree .claude/worktrees/M2-T007 branch task/M2-T007-zoning-features-connector to be created from main after this control PR merges. Scope: new connector + tests + fixtures + registry draft only; contracts/profile/resilience/workflows forbidden with STOP conditions."
+    }
+  ]
+}
