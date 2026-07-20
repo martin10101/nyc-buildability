@@ -1,5 +1,5 @@
 import { readFileSync } from "node:fs";
-import { fileURLToPath } from "node:url";
+import path from "node:path";
 import { describe, expect, it } from "vitest";
 import { SUPPORTED_CONTRACT_VERSIONS } from "@/lib/contract";
 
@@ -20,15 +20,21 @@ import { SUPPORTED_CONTRACT_VERSIONS } from "@/lib/contract";
  *
  * The schema is read via node:fs at TEST time only — nothing outside
  * apps/web enters the Next.js bundle (type-only import discipline intact).
+ *
+ * Resolution note: the vitest environment is jsdom, where `import.meta.url`
+ * is NOT a `file:` URL, so `fileURLToPath()` throws ERR_INVALID_URL_SCHEME.
+ * CI runs vitest with working-directory `apps/web` (.github/workflows/ci.yml),
+ * so the canonical schema is resolved from `process.cwd()` (= apps/web)
+ * two levels up into the monorepo `packages/` tree.
  */
 
-const SCHEMA_URL = new URL(
-  "../../../../../packages/contracts/schemas/v1/property_profile.schema.json",
-  import.meta.url,
+const SCHEMA_PATH = path.resolve(
+  process.cwd(),
+  "../../packages/contracts/schemas/v1/property_profile.schema.json",
 );
 
 function canonicalSchemaEnum(): string[] {
-  const schema = JSON.parse(readFileSync(fileURLToPath(SCHEMA_URL), "utf-8")) as {
+  const schema = JSON.parse(readFileSync(SCHEMA_PATH, "utf-8")) as {
     properties: {
       profile_version: {
         properties: { contract_version: { enum: string[] } };
