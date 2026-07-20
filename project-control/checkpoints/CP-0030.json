@@ -1,0 +1,9 @@
+{
+  "checkpoint_id": "CP-0030",
+  "timestamp": "2026-07-20T06:08:32.311651+00:00",
+  "commit": "c57c1a5",
+  "branch": "main",
+  "active_milestone": "M0",
+  "summary": "M2-T009 ACCEPTED (35th): per-BBL MapPLUTO ArcGIS tax-lot geometry connector, intersection-ready. Task PR 45 merged at c57c1a5. Lifecycle: dispatch control PR 44 (packet revalidated vs fec997e, G0 PASS + claim) - producer complete 6f0992f (80 new tests, api suite 522; 30 manifested fixtures: 7 live 2026-07-20 incl. a REAL two-ring multipolygon lot 4142600001 and the live condo billing/unit pair; shapely==2.0.7 exact pin, GEOS 3.11.4, the one disclosed shared-file touch) - CI green both events first try - G2 - submit - G1 PASS zero defects (live byte-identical re-fetches; from-prose digest reproduction) - G3 PASS zero defects (two-platform digest evidence) - G4 PASS geospatial-engineer (independent from-spec reimplementation; spatial claims recomputed; D1/D2 LOW carried forward) - accept. OWNER CONNECTOR WAVE COMPLETE: M2-T007 + M2-T008 + M2-T009 all accepted in the mandated strict order. Ledger: 35 accepted / 2 blocked (M0-T007/T008, B-001 + roster amendment) / 1 backlog (M2-T010 contract tooling) / 0 claimed. Session also: repo made PUBLIC (owner), B-006/B-008/B-009 resolved, ruleset protect-main active, secret scanning + push protection enabled. Next: post-wave owner report (capabilities, proposed zoning-interpretation wave - NO dispatch without owner approval).",
+  "updated_at": "2026-07-20T06:08:32.311651+00:00"
+}
