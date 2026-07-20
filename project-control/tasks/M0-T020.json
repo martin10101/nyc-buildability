@@ -95,20 +95,20 @@
     "G4",
     "G5"
   ],
-  "producer_agent": null,
+  "producer_agent": "cloud-architect",
   "reviewer_agents": [
     "code-reviewer",
     "security-reviewer"
   ],
-  "status": "backlog",
-  "progress_percent": 0,
+  "status": "accepted",
+  "progress_percent": 100,
   "planning_only": false,
   "authorizing_directive": "Owner resolution 2026-07-20 (post-M0-T018 acceptance) + PR #58 planning-review amendments + pytest 9.0.3 bounded amendment authorization (owner 2026-07-20, Phase C): M0-T020 is AUTHORIZED for implementation after this control amendment merges (Phase C3, producer cloud-architect). The ONLY new forbidden-path exception is the single services/api/pyproject.toml [dev] pytest specifier change ('pytest>=8,<9' -> 'pytest>=9.0.3,<10') plus an optional adjacent comment. No advisory waiver, no policy exception, no audit split, no pytest 8.x retention, no third-party pytest fork. Do NOT merge the M0-T020 task PR, accept M0-T020, advance CP-0031, dispatch M0-T019, or release any hold. Post-acceptance follow-up, NOT a reopening/amendment of accepted M0-T018.",
   "risks": [
     "IMPLEMENTATION AUTHORIZED (owner 2026-07-20, Phase C): after this bounded pytest amendment control PR merges, M0-T020 is dispatched to cloud-architect (Phase C3). Still NOT authorized: merging the M0-T020 task PR, accepting M0-T020, advancing CP-0031, dispatching M0-T019, or releasing any feature hold. Post-acceptance follow-up, NOT a reopening or amendment of accepted M0-T018.",
     "SEQUENCING + CHECKPOINT: M0-T020 runs BEFORE M0-T019 (M0-T019 depends on M0-T020). After BOTH are accepted -> Phase 2c reconcile + RE-RUN both complete audits (Python + npm) on reconciled main -> only THEN M2-T013 and M2-T014. All existing feature-work holds remain (M2-T012, M2-T015, M2-T016, M4-T001, M6-T001; survey Packets B/C; OQ-3 owner-deferred). NO checkpoint is recorded from the planning PR or from M0-T020 alone; the next checkpoint follows ONLY after M0-T020 AND M0-T019 acceptance + Phase 2c reconciliation + both audits green on reconciled main.",
     "PRODUCTION-LOCK IMMUTABILITY: regenerate services/api/requirements.txt with verified uv==0.11.28 and compare to the accepted lock; byte-identical -> proceed with no runtime-lock change; ANY difference -> STOP, return the exact diff + resolver explanation, and do NOT commit a changed production runtime lock without a separate owner instruction. M0-T018 historical task/gate/acceptance reports are immutable in every case.",
-    "SCOPE - PYTHON ONLY: npm/Playwright package resolution (including .github/workflows/generate-lockfile.yml and the web/web-e2e npm/Playwright steps) is M0-T019. pyproject.toml is NOT modified. Any Python CI job that must still download a package outside the production and tooling locks is a STOP condition unless the packet is amended.",
+    "SCOPE - PYTHON ONLY: npm/Playwright package resolution (including .github/workflows/generate-lockfile.yml and the web/web-e2e npm/Playwright steps) is M0-T019. pyproject.toml modification is strictly limited to the owner-authorized pytest dev-specifier change from pytest>=8,<9 to pytest>=9.0.3,<10 plus its adjacent explanatory comment; no other pyproject change is permitted. Any Python CI job that must still download a package outside the production and tooling locks is a STOP condition unless the packet is amended.",
     "STOP CONDITIONS: uv==0.11.28 not verifiable (age, advisory, provenance, or universal-lock compatibility) -> report; the production runtime lock is non-byte-identical on regeneration -> STOP + exact diff; no advisory-free tooling tree exists; any required tool younger than seven days needing an owner age-exception; any age or audit check would be skipped, downgraded, warning-only, or allowlisted; a forbidden path (pyproject.toml BEYOND the authorized [dev] pytest specifier, services/api/app/**, npm workflows) is needed; a Python download outside the two locks is required; deployment or credentials required.",
     "PYTEST 9 COMPATIBILITY STOP: run the COMPLETE existing suite under exactly pytest 9.0.3. If pytest 9.0.3 causes test failures requiring application-code changes, test weakening/deletion/skips/xfails/bypasses, or changes outside the amended packet's allowed paths, STOP and return evidence. The full suite (>= 538) must pass with the SAME test files/assertions; if the collected test COUNT changes, return the before/after collection comparison and STOP unless it is conclusively a collection-format difference with identical coverage. Re-verify every final package version (audit + age) at implementation time; earlier producer results are strong evidence but do not replace final lock-based audit and age-gate output.",
     "INTENDED PRODUCER at dispatch: cloud-architect (continuity with M0-T018's Python supply-chain work). Independent gates: G3/G4 code-reviewer, G5 security-reviewer, all != producer; G0/G2 recorded by the orchestrator.",
@@ -116,5 +116,31 @@
   ],
   "blockers": [],
   "created_at": "2026-07-20T16:24:45.968370+00:00",
-  "updated_at": "2026-07-20T18:04:49.197133+00:00"
+  "updated_at": "2026-07-20T19:55:47.900976+00:00",
+  "worktree": ".claude/worktrees/agent-ab14f31e8c53fac99",
+  "progress_log": [
+    {
+      "at": "2026-07-20T19:55:36.928765+00:00",
+      "agent": "cloud-architect",
+      "percent": 20,
+      "status": "in_progress",
+      "message": "Acceptance scenarios authored (tooling-lock byte-identity, age-gate 17-test suite, pytest 9.0.3 collection byte-identical, dual pip-audit zero, production-lock byte-identity, regression); target set reconfirmed live."
+    },
+    {
+      "at": "2026-07-20T19:55:37.149843+00:00",
+      "agent": "cloud-architect",
+      "percent": 60,
+      "status": "in_progress",
+      "message": "Hash-pinned tooling lock (11 direct -> 42 pkgs / 389 sha256) via lock_tools.sh; every Python CI job installs --require-hashes tools + --no-deps app; dual pip-audit + machine release-age gate wired; production lock byte-identical under uv 0.11.28."
+    },
+    {
+      "at": "2026-07-20T19:55:37.363615+00:00",
+      "agent": "cloud-architect",
+      "percent": 75,
+      "status": "self_check",
+      "message": "CI green incl new api-tooling-lock-verify + dual pip-audit + api on Python 3.12 (20 checks); pytest 9.0.3 suite 538 passed no weakening; production lock unchanged."
+    }
+  ],
+  "accepted_by": "orchestrator",
+  "accepted_at": "2026-07-20T19:55:47.900976+00:00"
 }
