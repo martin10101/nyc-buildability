@@ -18,11 +18,24 @@ web client). String enums, unions, nullable keys, required-vs-optional, and
 additionalProperties maps are all honored so the emitted types match the
 schema's structural contract.
 
+SECOND MANAGED ARTIFACT (task M2-T010): the web client's runtime
+SUPPORTED_CONTRACT_VERSIONS array in apps/web/src/lib/contract.ts is a
+GENERATED marker-delimited block derived from the canonical schema's
+profile_version.contract_version enum. This makes the schema enum the SINGLE
+source of truth for the published-version list on the client: publishing a
+contract version is a schema change plus regeneration, and a version present
+in the schema but absent from the client list is impossible to merge (the
+--check mode, run by the contracts-typegen CI job, byte-compares the block
+and fails loudly on any divergence). The block lives INSIDE contract.ts (not
+a separate generated module) so the Next.js bundle keeps compiling only files
+within apps/web - the M2-T002 type-only-import discipline is preserved.
+
 USAGE (also the exact CI command):
     python packages/contracts/scripts/generate_ts_types.py --check   # diff only
     python packages/contracts/scripts/generate_ts_types.py           # write
 
-The output path is packages/contracts/generated/property_profile.ts.
+The output paths are packages/contracts/generated/property_profile.ts and the
+managed block within apps/web/src/lib/contract.ts.
 """
 
 from __future__ import annotations
@@ -34,6 +47,19 @@ from pathlib import Path
 
 SCHEMA_DIR = Path(__file__).resolve().parents[1] / "schemas" / "v1"
 OUTPUT_PATH = Path(__file__).resolve().parents[1] / "generated" / "property_profile.ts"
+
+# The web client file carrying the generated SUPPORTED_CONTRACT_VERSIONS
+# block (task M2-T010). parents[3] is the repository root.
+WEB_CONTRACT_PATH = (
+    Path(__file__).resolve().parents[3] / "apps" / "web" / "src" / "lib" / "contract.ts"
+)
+
+# Marker lines delimiting the managed block inside contract.ts. Each must
+# appear EXACTLY once; everything between them (inclusive) is generated.
+CLIENT_BLOCK_BEGIN = (
+    "// BEGIN GENERATED: SUPPORTED_CONTRACT_VERSIONS (generate_ts_types.py)"
+)
+CLIENT_BLOCK_END = "// END GENERATED: SUPPORTED_CONTRACT_VERSIONS"
 
 # The four contract documents a property_profile $ref registry must load.
 SCHEMA_FILES = (
@@ -236,6 +262,130 @@ def generate() -> str:
     return "\n".join(block.rstrip("\n") for block in body) + "\n"
 
 
+# ---------------------------------------------------------------------------
+# Client SUPPORTED_CONTRACT_VERSIONS block (task M2-T010)
+# ---------------------------------------------------------------------------
+
+
+def contract_version_enum(schemas: dict[str, dict]) -> list[str]:
+    """The CLOSED published contract-version enum, read from the canonical
+    schema. Fails loudly if the schema shape ever stops exposing it - the
+    generator must never silently guess a version set."""
+    try:
+        enum = schemas["property_profile.schema.json"]["properties"][
+            "profile_version"
+        ]["properties"]["contract_version"]["enum"]
+    except (KeyError, TypeError) as exc:
+        raise ValueError(
+            "property_profile.schema.json no longer exposes the "
+            "profile_version.contract_version enum; cannot derive "
+            "SUPPORTED_CONTRACT_VERSIONS"
+        ) from exc
+    if not enum or not all(isinstance(v, str) for v in enum):
+        raise ValueError(
+            "profile_version.contract_version enum must be a non-empty list "
+            f"of strings; got {enum!r}"
+        )
+    return list(enum)
+
+
+def client_versions_block(schemas: dict[str, dict]) -> str:
+    """The full generated block (markers included, LF-joined, no trailing
+    newline) for apps/web/src/lib/contract.ts. Byte-deterministic: derived
+    only from the schema enum, in schema order."""
+    versions = contract_version_enum(schemas)
+    lines = [
+        CLIENT_BLOCK_BEGIN,
+        "// Derived from packages/contracts/schemas/v1/property_profile.schema.json",
+        "// (profile_version.contract_version enum) - the SINGLE canonical source",
+        "// of published contract versions. DO NOT EDIT BY HAND. Regenerate with:",
+        "//   python packages/contracts/scripts/generate_ts_types.py",
+        "// The contracts-typegen CI job runs --check and fails loudly if this",
+        "// block diverges from the schema enum (task M2-T010 drift protection).",
+        "export const SUPPORTED_CONTRACT_VERSIONS = [",
+        *[f"  {json.dumps(version)}," for version in versions],
+        "] as const satisfies readonly ContractVersion[];",
+        CLIENT_BLOCK_END,
+    ]
+    return "\n".join(lines)
+
+
+def extract_client_block(contract_text: str) -> str:
+    """Return the committed block (markers included) from contract.ts text.
+
+    Raises ValueError when the markers are missing, duplicated, or out of
+    order - a mangled block must fail the check, never pass silently."""
+    begin_count = contract_text.count(CLIENT_BLOCK_BEGIN)
+    end_count = contract_text.count(CLIENT_BLOCK_END)
+    if begin_count != 1 or end_count != 1:
+        raise ValueError(
+            "apps/web/src/lib/contract.ts must contain exactly one generated "
+            "SUPPORTED_CONTRACT_VERSIONS block "
+            f"(found {begin_count} BEGIN / {end_count} END markers)"
+        )
+    start = contract_text.index(CLIENT_BLOCK_BEGIN)
+    end = contract_text.index(CLIENT_BLOCK_END)
+    if end < start:
+        raise ValueError(
+            "SUPPORTED_CONTRACT_VERSIONS block markers are out of order in "
+            "apps/web/src/lib/contract.ts"
+        )
+    return contract_text[start : end + len(CLIENT_BLOCK_END)]
+
+
+def check_client_block(schemas: dict[str, dict]) -> int:
+    """--check half for the client block: exit non-zero unless the committed
+    block is byte-identical to a fresh derivation from the schema enum. This
+    is the CI-red path when the schema publishes a version the client list
+    omits (or the block is hand-edited)."""
+    if not WEB_CONTRACT_PATH.exists():
+        sys.stderr.write(f"ERROR: {WEB_CONTRACT_PATH} is missing.\n")
+        return 1
+    current = WEB_CONTRACT_PATH.read_text(encoding="utf-8")
+    try:
+        committed = extract_client_block(current)
+    except ValueError as exc:
+        sys.stderr.write(f"ERROR: {exc}\n")
+        return 1
+    expected = client_versions_block(schemas)
+    if committed != expected:
+        sys.stderr.write(
+            "ERROR: the client SUPPORTED_CONTRACT_VERSIONS block in "
+            "apps/web/src/lib/contract.ts is out of date with the canonical "
+            "schema's profile_version.contract_version enum.\n"
+            "A published contract version MUST NOT be missing from the client "
+            "runtime list (task M2-T010 drift protection).\n"
+            "Run: python packages/contracts/scripts/generate_ts_types.py\n"
+            "and commit apps/web/src/lib/contract.ts.\n"
+        )
+        return 1
+    sys.stdout.write(
+        "OK: client SUPPORTED_CONTRACT_VERSIONS block matches the schema enum.\n"
+    )
+    return 0
+
+
+def write_client_block(schemas: dict[str, dict]) -> int:
+    """Write mode: splice a fresh block between the markers in contract.ts."""
+    if not WEB_CONTRACT_PATH.exists():
+        sys.stderr.write(f"ERROR: {WEB_CONTRACT_PATH} is missing.\n")
+        return 1
+    current = WEB_CONTRACT_PATH.read_text(encoding="utf-8")
+    try:
+        committed = extract_client_block(current)
+    except ValueError as exc:
+        sys.stderr.write(f"ERROR: {exc}\n")
+        return 1
+    expected = client_versions_block(schemas)
+    if committed == expected:
+        sys.stdout.write(f"unchanged {WEB_CONTRACT_PATH}\n")
+        return 0
+    updated = current.replace(committed, expected, 1)
+    WEB_CONTRACT_PATH.write_text(updated, encoding="utf-8", newline="\n")
+    sys.stdout.write(f"wrote {WEB_CONTRACT_PATH}\n")
+    return 0
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument(
@@ -245,6 +395,7 @@ def main() -> int:
     )
     args = parser.parse_args()
 
+    schemas = load_schemas()
     generated = generate()
 
     if args.check:
@@ -262,12 +413,12 @@ def main() -> int:
             )
             return 1
         sys.stdout.write("OK: generated TypeScript types are up to date.\n")
-        return 0
+        return check_client_block(schemas)
 
     OUTPUT_PATH.parent.mkdir(parents=True, exist_ok=True)
     OUTPUT_PATH.write_text(generated, encoding="utf-8", newline="\n")
     sys.stdout.write(f"wrote {OUTPUT_PATH}\n")
-    return 0
+    return write_client_block(schemas)
 
 
 if __name__ == "__main__":

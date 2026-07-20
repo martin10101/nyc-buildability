@@ -14,10 +14,13 @@ This module is the SINGLE backend source of truth for:
 Design (task packet items A/B/C):
 
 - ``PROFILE_CONTRACT_VERSION`` (in builder.py) is the version the builder
-  DECLARES. M2-T003 resolves the M2-T004 deferral (README section 167): the
-  builder declares ``1.2.0`` because it emits keys through 1.2.0. Every added
-  key is optional, so 1.0.0 and 1.1.0 instances remain valid and are served
-  unchanged (backward compatibility, S7).
+  DECLARES under the declare-what-you-emit rule M2-T003 established (resolving
+  the M2-T004 deferral, README section 167). Task M2-T006 advanced it to
+  ``1.3.0`` because the builder now emits keys through 1.3.0 (the typed
+  ``reproducibility.staleness`` object). Every added key is optional, so
+  1.0.0, 1.1.0, and 1.2.0 instances remain valid and are served unchanged
+  (backward compatibility, S7). Docstring corrected by task M2-T010 (M2-T006
+  G3 LOW D1: this text previously still described 1.2.0 as current).
 - The validator SELECTS the schema by the payload's DECLARED version against
   the closed published enum; an unpublished version yields a bounded
   ``unsupported_contract_version`` error rather than a silent coercion or a

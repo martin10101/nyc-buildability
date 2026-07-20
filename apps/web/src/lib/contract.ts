@@ -13,12 +13,16 @@
  *      Each array is LOCKED to the generated union with `satisfies` plus a
  *      two-way exhaustiveness assertion, so any contract change that adds
  *      or removes an enum member fails `tsc` here — the arrays cannot
- *      silently drift from the generated vocabulary. This includes the
- *      contract_version pin: the generated union is
- *      "1.0.0" | "1.1.0" | "1.2.0" | "1.3.0" (the stale handwritten
- *      "1.0.0"|"1.1.0" pin is retired with this file; "1.3.0" added by task
- *      M2-T006 amendment A1 - publishing a contract version is a coordinated
- *      schema + backend + client-vocabulary change while this set is closed).
+ *      silently drift from the generated vocabulary. The runtime
+ *      SUPPORTED_CONTRACT_VERSIONS array itself is a GENERATED marker block
+ *      (task M2-T010): packages/contracts/scripts/generate_ts_types.py
+ *      derives it from the canonical schema's
+ *      profile_version.contract_version enum, and the contracts-typegen CI
+ *      job byte-checks the block, so the schema enum is the single source
+ *      of truth for the published-version list and a schema-published
+ *      version can never be silently omitted here. Publishing a contract
+ *      version is now a schema change plus regeneration (the M2-T006-era
+ *      hand-maintained pin is retired).
  *   3. Provides RUNTIME NARROWING helpers for the two open-object shapes
  *      the schema deliberately leaves unconstrained (zoning.mapped_features
  *      items and conflict value entries). These helpers are display-only
@@ -79,12 +83,20 @@ export type StatusDimensions = NonNullable<PropertyProfile["status_dimensions"]>
 // the array (two-way equality — tsc fails on either direction of drift).
 // ---------------------------------------------------------------------------
 
+// BEGIN GENERATED: SUPPORTED_CONTRACT_VERSIONS (generate_ts_types.py)
+// Derived from packages/contracts/schemas/v1/property_profile.schema.json
+// (profile_version.contract_version enum) - the SINGLE canonical source
+// of published contract versions. DO NOT EDIT BY HAND. Regenerate with:
+//   python packages/contracts/scripts/generate_ts_types.py
+// The contracts-typegen CI job runs --check and fails loudly if this
+// block diverges from the schema enum (task M2-T010 drift protection).
 export const SUPPORTED_CONTRACT_VERSIONS = [
   "1.0.0",
   "1.1.0",
   "1.2.0",
   "1.3.0",
 ] as const satisfies readonly ContractVersion[];
+// END GENERATED: SUPPORTED_CONTRACT_VERSIONS
 
 export const COVERAGE_STATUSES = [
   "verified",
