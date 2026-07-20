@@ -1,0 +1,116 @@
+{
+  "task_id": "M0-T020",
+  "title": "Python dependency-policy enforcement follow-up",
+  "task_type": "infrastructure",
+  "milestone_id": "M0",
+  "objective": "Make the Python implementation fully comply with the owner's permanent dependency-admission rule across ALL dependency classes: production runtime, transitive runtime, development/test tooling, build tooling, lock-generation tooling, package-manager tooling downloaded by CI, and audit tooling with its transitive dependencies. This is a POST-ACCEPTANCE FOLLOW-UP to the accepted, immutable M0-T018 (owner resolution 2026-07-20): M0-T018 stays accepted and is NOT reopened, rewritten, or amended, and its historical gate/acceptance reports are left untouched. Recorded post-acceptance discoveries motivating this task (genuinely NOT satisfied by M0-T018): (1) DP-S7 produced point-in-time publication-age EVIDENCE, not a machine-enforced CI age gate; the api-lock-verify job only checks regenerated-lock byte-identity and never queries official publication timestamps nor enforces 604800 elapsed seconds. (2) uv==0.11.29 was introduced as build tooling at .github/workflows/ci.yml:140, excluded from the 27-package age table, and was younger than seven days at M0-T018 acceptance. (3) 'python -m pip install --upgrade pip' is unpinned (.github/workflows/ci.yml:71, 114, 165). (4) pytest>=8,<9 and httpx>=0.27,<1 (and ruff) dynamically resolve test tooling (services/api/pyproject.toml [project.optional-dependencies].dev, installed via 'pip install .[dev]' at ci.yml:115). (5) 'pipx run --spec pip-audit==2.10.1' (ci.yml:187) pins the top-level audit tool but dynamically resolves its transitive dependencies; scheduled-audit.yml:54 pins pip-audit but its transitives are pip-resolved too. (6) the audit-tool, lock-generation, build (dynamically resolved setuptools>=69), and test dependency trees are not fully hash-locked, age-checked, and audited. (7) services/api/requirements.in's regeneration header (line 9) names the wrong tool ('pip-compile') rather than the actual supported lock script and pinned uv command. GENUINELY SATISFIED by M0-T018 and NOT re-litigated here: Render runtime dependency parity; production runtime pip-audit zero; positive and negative jsonschema validate_profile smoke; hash-pinned production runtime lock; lock byte-identity verification.",
+  "business_reason": "The owner's permanent dependency rule (advisory-free tree, at least seven days publication age, exact hash-pinned locks, continuous machine-enforced audit, no agent waiver) is only partially enforced for Python: it covers the production runtime tree but not the tooling, build, lock-generation, and audit trees, and the age requirement is recorded evidence rather than a gate that fails closed. Until enforcement is machine-verified across every Python dependency class, a future lockfile or CI change could silently reintroduce a too-new or vulnerable package through the tooling path. This follow-up closes the gap before M0-T019 and before any feature work resumes (owner directive 2026-07-20; amended per the PR #58 planning review 2026-07-20). Scope is Python only; npm/Playwright resolution is M0-T019.",
+  "inputs": [
+    "services/api/requirements.in - production dependency SOURCE; header at line 9 names 'pip-compile' and MUST be corrected to name the actual supported lock script (services/api/scripts/lock_requirements.sh) and the exact pinned uv command.",
+    "services/api/requirements.txt - the accepted, hash-pinned production runtime lock from M0-T018; regenerate with verified uv==0.11.28 for COMPARISON only (see the production-lock immutability rule); any non-byte-identical difference is a STOP condition.",
+    "services/api/scripts/lock_requirements.sh - the real Python lock-generation script referenced by requirements.in (records the pinned uv command).",
+    ".github/workflows/ci.yml - Python download paths to inspect and reconcile (Python steps ONLY; the web/web-e2e npm and Playwright resolution is M0-T019 scope): web-e2e (unpinned 'python -m pip install --upgrade pip' + 'pip install ./services/api'); api (unpinned pip upgrade + 'pip install .[dev]' -> pytest/httpx/ruff dev extras); api-lock-verify (direct 'pip install uv==0.11.29'); exact-production-install (pip upgrade + audit tool + pytest + HTTPX); contracts (unpinned PyYAML); contracts-typegen (ranged pytest); package build isolation (dynamically resolved setuptools>=69).",
+    ".github/workflows/scheduled-audit.yml - scheduled pip-audit installation (line 54) with pip-resolved transitives.",
+    "services/api/pyproject.toml - [project.optional-dependencies].dev holds pytest>=8,<9, httpx>=0.27,<1, and ruff (allowed RANGES; source of truth for bounds). REFERENCE/CONTEXT ONLY: pyproject.toml is NOT modified by this task (owner directive); affected CI jobs install exact tooling from the tooling lock instead. If editing pyproject proves strictly necessary, STOP and report for an owner path amendment.",
+    "The owner's permanent dependency-admission rule as specified verbatim in the M0-T018 and M0-T019 contracts. NOTE: the canonical docs/DEPENDENCY_SECURITY_POLICY.md is authored later in M0-T019; M0-T020 enforces the same rule for Python first (M0-T019 depends on M0-T020) and M0-T019 must remain consistent with this enforcement.",
+    "project-control/tasks/M0-T018.json - accepted; REFERENCE ONLY; MUST NOT be modified.",
+    "Owner resolution 2026-07-20 + PR #58 planning-review amendments (2026-07-20) - the authorizing directives for this packet (planning only)."
+  ],
+  "outputs": [
+    "Corrected services/api/requirements.in header naming the actual supported lock script (services/api/scripts/lock_requirements.sh) and the exact pinned uv command that generates the lock; the 'pip-compile' reference removed.",
+    "uv re-verification and downgrade: re-verify uv==0.11.28 (official live PyPI UTC release timestamp, registry origin, maintainer/provenance, advisories, universal-lock compatibility); if verified, replace uv==0.11.29 with uv==0.11.28 at its Python install sites (ci.yml api-lock-verify; lock_requirements.sh) and admit uv into the tooling lock; regenerate the production lock with uv==0.11.28 and COMPARE to the accepted M0-T018 lock -> if byte-identical, proceed with no runtime-lock change; if ANY difference, STOP and return the exact diff + resolver explanation and do NOT commit a changed production runtime lock without a separate owner instruction. (generate-lockfile.yml is the frontend npm workflow and is OUT OF SCOPE - M0-T019.)",
+    "A source manifest plus a fully exact, hash-pinned Python TOOLING lock: services/api/requirements-tools.in holds the exact reviewed DIRECT tooling pins; services/api/requirements-tools.lock holds exact DIRECT and TRANSITIVE pins plus SHA-256 hashes; generated by ONE documented script; regeneration is byte-identical; no authoritative pin list is duplicated across unrelated scripts. Coverage (every applicable Python tool): uv, pip-audit, pytest, httpx, ruff, PyYAML, and required package-build tooling (setuptools and any other actual build dependency). The lock may include uv itself; CI bootstraps it using the runner's existing pip via 'pip install --require-hashes -r requirements-tools.lock' and must NOT first download an unlocked uv to generate or verify the tool lock.",
+    "Removal of the unpinned 'python -m pip install --upgrade pip' from affected Python jobs, or pip managed through an exact, reviewed mechanism (e.g. a pinned pip in the tooling lock).",
+    "Affected Python CI jobs install ONLY from the two locks: the hash-pinned PRODUCTION lock where application runtime dependencies are required; the hash-pinned TOOLING lock where test/build/audit tools are required; and the local application via 'pip install --no-deps' (and '--no-build-isolation' where needed, after the locked build tooling is installed). Version ranges and '.[dev]' resolution are removed from the audited Python paths. Existing jobs stay green. npm/Playwright resolution in web/web-e2e is untouched (M0-T019).",
+    "Dynamically-resolved 'pipx run --spec' auditing (ci.yml) and pip-resolved 'pip install pip-audit==2.10.1' transitives (scheduled-audit.yml) replaced with an isolated environment installed from the hash-pinned tooling lock, so pip-audit's own transitive dependencies are exact and audited.",
+    "pip-audit run against BOTH the production runtime lock AND the Python tooling lock; ZERO findings required at every severity; audit failure BLOCKING; no --ignore-vuln, no allowlist, no agent waiver.",
+    "A machine-enforced release-age checker meeting the age_gate_contract below, wired into CI on relevant dependency/tooling changes, with deterministic boundary regressions.",
+    "A producer-report enumeration of EVERY Python package download path in CI reconciled to the two locks; any Python job that must still download a package outside the production and tooling locks is individually identified and treated as a STOP condition unless the packet is amended.",
+    "A .gitignore rule ignoring services/api/**/*.egg-info/ (bounded hygiene).",
+    "project-control/reports/M0-T020-producer-report.md - AOS section-6 packet with per-package official-PyPI publication-timestamp evidence for every newly admitted or changed direct AND transitive package across runtime and tooling; the production-lock byte-identity comparison result (and exact diff if any); both audit results (runtime and tooling, zero); the age-gate positive and negative proofs; and the full Python-CI-download-path reconciliation."
+  ],
+  "age_gate_contract": [
+    "Live gate uses the CURRENT UTC time in CI and official LIVE PyPI metadata (not the local clock, not a cached table).",
+    "Unit tests inject a fixed UTC 'now' for deterministic boundary testing.",
+    "For a version with multiple PyPI artifacts, use the NEWEST upload timestamp among the artifacts whose SHA-256 hashes are admitted by the applicable lock (prevents an old version number with a newly uploaded artifact from bypassing the wait).",
+    "Every admitted artifact must have aged at least 604800 seconds; the check compares full UTC instants in seconds (no date-only or truncated-day arithmetic).",
+    "Covers direct AND transitive packages across BOTH the runtime lock and the tooling lock.",
+    "Exactly 604800 seconds PASSES; 604799 seconds FAILS (deterministic boundary tests both).",
+    "Fails closed on: registry outage, missing metadata, malformed timestamp, a lock hash that cannot be matched to official PyPI metadata, or any ambiguous result.",
+    "Prints, per package/version: name, version, admitted-artifact upload timestamp, elapsed age, and PASS/FAIL result.",
+    "Runs in CI on relevant dependency/tooling changes.",
+    "Permits NO agent-created exception. Any emergency age-ONLY exception requires separate explicit owner authorization, auto-expires, and may NEVER waive an advisory affecting the installed version."
+  ],
+  "dependencies": [
+    "M0-T018"
+  ],
+  "allowed_paths": [
+    "services/api/requirements.in",
+    "services/api/requirements.txt - regenerate with verified uv==0.11.28 and COMPARE to the accepted lock; commit ONLY if byte-identical (i.e. no change). ANY non-byte-identical difference is a STOP condition: return the exact diff + resolver explanation and do NOT commit a changed production runtime lock without a separate owner instruction.",
+    "services/api/requirements-tools.in (exact reviewed DIRECT tooling pins - the source manifest)",
+    "services/api/requirements-tools.lock (exact DIRECT + TRANSITIVE tooling pins + SHA-256 hashes; generated from requirements-tools.in by one documented script; byte-identical regeneration)",
+    "services/api/scripts/** (lock_requirements.sh update; the ONE documented tooling-lock generation script; the dependency-policy release-age checker and its deterministic tests)",
+    ".github/workflows/ci.yml and .github/workflows/scheduled-audit.yml ONLY - the Python tooling/build/audit install steps (including the pip installs inside web-e2e); touch ONLY Python package resolution; existing jobs stay green",
+    ".gitignore (the repository ignore rule covering services/api/**/*.egg-info/)",
+    "project-control/reports/M0-T020-producer-report.md (own producer report only)"
+  ],
+  "forbidden_paths": [
+    "services/api/app/** - NO application or behavior change of any kind (this task locks/audits/age-gates dependencies and tooling; it does not modify application code).",
+    "services/api/pyproject.toml - NOT modified by this task (owner directive); if strictly required, STOP and report for an owner path amendment.",
+    ".github/workflows/generate-lockfile.yml - frontend npm lockfile workflow (M0-T019 npm scope); M0-T020 must NOT modify it.",
+    "Any npm or Playwright package-resolution step in .github/workflows/** (web/web-e2e) - M0-T019 owns all npm/Playwright resolution.",
+    ".github/workflows/secret-scan.yml - not in scope.",
+    "apps/web/** and all frontend work.",
+    "No feature development (no connector, spatial, profile-contract, scenario, or UI behavior change).",
+    "Committing a CHANGED production runtime lock (non-byte-identical services/api/requirements.txt) without a separate owner instruction.",
+    "project-control/tasks/M0-T018.json and project-control/reports/M0-T018-* - immutable accepted work; MUST NOT be reopened, rewritten, or amended.",
+    "project-control/** except this task's own producer report.",
+    ".claude/** (CLAUDE.md is a repo-root file and is NOT in scope for this task; the permanent CLAUDE.md dependency rule is authored by M0-T019).",
+    "No advisory suppression, pip-audit allowlist, --ignore-vuln, or agent waiver to make CI green.",
+    "No broad dependency upgrades beyond what the policy enforcement requires; do NOT bump shapely (GEOS-digest exact pin) or any unrelated runtime pin.",
+    "No production provisioning, deployment, or credential use."
+  ],
+  "acceptance_scenarios": [
+    "TP-S1 header fix: services/api/requirements.in names the actual lock script (services/api/scripts/lock_requirements.sh) and the exact pinned uv command; grep-provable that 'pip-compile' no longer appears as the regeneration instruction.",
+    "TP-S2 uv downgrade + production-lock immutability: the producer report records uv==0.11.28 official live-PyPI publication timestamp (at least seven days old), registry origin, provenance, advisory status, and universal-lock compatibility; uv==0.11.28 replaces 0.11.29 at its Python install sites; the production lock is REGENERATED with uv==0.11.28 and COMPARED to the accepted M0-T018 lock; if byte-identical, no runtime-lock change is committed; if different, the task STOPPED and returned the exact diff + resolver explanation and did NOT commit the changed lock (absent a separate owner instruction).",
+    "TP-S3 tooling lock + source manifest: services/api/requirements-tools.in holds exact reviewed DIRECT pins; services/api/requirements-tools.lock holds exact DIRECT + TRANSITIVE pins with SHA-256 hashes; ONE documented generation script produces it; regeneration is byte-identical; no authoritative pin list is duplicated across unrelated scripts; CI bootstraps via 'pip install --require-hashes -r requirements-tools.lock' using the runner's existing pip and NEVER downloads an unlocked uv first.",
+    "TP-S4 pip pinned or removed: no unpinned 'pip install --upgrade pip' remains in any affected Python job (grep-provable); pip is either removed from the critical path or managed via an exact reviewed mechanism.",
+    "TP-S5 CI installs from the locks only: every affected Python job installs application runtime deps from the production lock, tools from the tooling lock, and the local app via 'pip install --no-deps' (with '--no-build-isolation' where needed, after locked build tooling); grep-provable that '.[dev]', 'pytest>=', 'httpx>=', ranged/unpinned tool installs, and dynamically-resolved setuptools are gone from the audited Python paths.",
+    "TP-S6 pipx + scheduled-audit replaced: auditing runs from an isolated environment installed from the hash-pinned tooling lock; grep-provable that 'pipx run --spec' dynamic transitive resolution (ci.yml) and pip-resolved pip-audit transitives (scheduled-audit.yml) are gone.",
+    "TP-S7 dual audit zero: pip-audit against BOTH the production runtime lock AND the tooling lock reports zero findings at every severity; the CI step fails the build on any finding; no suppression, allowlist, or waiver.",
+    "TP-S8 machine age-gate (positive + artifact semantics): the age checker runs in CI over direct and transitive runtime and tooling packages using current UTC + live PyPI metadata; for multi-artifact versions it uses the newest upload timestamp among the lock-admitted SHA-256 artifacts; every admitted artifact is at least 604800 elapsed seconds old; exactly 604800 seconds PASSES; per-package output (name, version, admitted-artifact timestamp, elapsed age, PASS/FAIL) is recorded.",
+    "TP-S9 machine age-gate (negative + fail-closed): deterministic tests (fixed injected UTC now) prove 604799 seconds FAILS and 604800 seconds PASSES; and that registry outage, missing metadata, malformed timestamp, an unmatched lock hash, or ambiguous result each FAIL closed (not skipped or passed).",
+    "TP-S10 no agent waiver: there is no code path by which an agent can create an age or advisory exception; any emergency age-only exception path requires explicit owner authorization, auto-expires, and can never waive an advisory affecting the installed version.",
+    "TP-S11 egg-info hygiene: services/api/**/*.egg-info/ is gitignored (a stray egg-info directory is not tracked).",
+    "TP-S12 regression + immutability: M0-T018's accepted runtime lock is UNCHANGED (byte-identical after uv==0.11.28 regeneration; any difference was STOPPED and reported, not committed) and its historical task/gate/acceptance reports are untouched; ruff (installed from the tooling lock) passes; the full API test suite still passes (at least 538); exact-production-install and api-lock-verify remain green; no services/api/app/** behavior change.",
+    "TP-S13 full Python-CI-download reconciliation: the producer report enumerates EVERY Python package download path in CI (at least web-e2e, api, api-lock-verify, exact-production-install, contracts, contracts-typegen, package build isolation, ruff, scheduled pip-audit) and maps each to the production lock, the tooling lock, or an individually identified STOP-condition exception; no unlisted Python download remains."
+  ],
+  "required_gates": [
+    "G0",
+    "G2",
+    "G3",
+    "G4",
+    "G5"
+  ],
+  "producer_agent": null,
+  "reviewer_agents": [
+    "code-reviewer",
+    "security-reviewer"
+  ],
+  "status": "backlog",
+  "progress_percent": 0,
+  "planning_only": true,
+  "authorizing_directive": "Owner resolution 2026-07-20 (post-M0-T018 acceptance) + PR #58 planning-review amendments (2026-07-20): planning PR only; create/amend this packet, keep M0-T019's dependency on M0-T020, update the handoff sequencing, amend the same planning PR. Do NOT implement, claim, or dispatch M0-T020 until a separate owner instruction. This is a post-acceptance follow-up, NOT a reopening or amendment of accepted M0-T018.",
+  "risks": [
+    "PLANNING ONLY (owner authorization boundary 2026-07-20, reaffirmed at the PR #58 planning review): this packet is CREATED/AMENDED, not dispatched. Do NOT implement, claim, or dispatch M0-T020 until a separate owner instruction. Post-acceptance follow-up, NOT a reopening or amendment of accepted M0-T018.",
+    "SEQUENCING + CHECKPOINT: M0-T020 runs BEFORE M0-T019 (M0-T019 depends on M0-T020). After BOTH are accepted -> Phase 2c reconcile + RE-RUN both complete audits (Python + npm) on reconciled main -> only THEN M2-T013 and M2-T014. All existing feature-work holds remain (M2-T012, M2-T015, M2-T016, M4-T001, M6-T001; survey Packets B/C; OQ-3 owner-deferred). NO checkpoint is recorded from the planning PR or from M0-T020 alone; the next checkpoint follows ONLY after M0-T020 AND M0-T019 acceptance + Phase 2c reconciliation + both audits green on reconciled main.",
+    "PRODUCTION-LOCK IMMUTABILITY: regenerate services/api/requirements.txt with verified uv==0.11.28 and compare to the accepted lock; byte-identical -> proceed with no runtime-lock change; ANY difference -> STOP, return the exact diff + resolver explanation, and do NOT commit a changed production runtime lock without a separate owner instruction. M0-T018 historical task/gate/acceptance reports are immutable in every case.",
+    "SCOPE - PYTHON ONLY: npm/Playwright package resolution (including .github/workflows/generate-lockfile.yml and the web/web-e2e npm/Playwright steps) is M0-T019. pyproject.toml is NOT modified. Any Python CI job that must still download a package outside the production and tooling locks is a STOP condition unless the packet is amended.",
+    "STOP CONDITIONS: uv==0.11.28 not verifiable (age, advisory, provenance, or universal-lock compatibility) -> report; the production runtime lock is non-byte-identical on regeneration -> STOP + exact diff; no advisory-free tooling tree exists; any required tool younger than seven days needing an owner age-exception; any age or audit check would be skipped, downgraded, warning-only, or allowlisted; a forbidden path (pyproject.toml, services/api/app/**, npm workflows) is needed; a Python download outside the two locks is required; deployment or credentials required.",
+    "INTENDED PRODUCER at dispatch: cloud-architect (continuity with M0-T018's Python supply-chain work). Independent gates: G3/G4 code-reviewer, G5 security-reviewer, all != producer; G0/G2 recorded by the orchestrator.",
+    "EXECUTION: GitHub Actions CI (clean Python 3.12) is the authoritative environment; local runs bounded and disk-safe under the thin-client low-storage policy; no heavy caches retained."
+  ],
+  "blockers": [],
+  "created_at": "2026-07-20T16:24:45.968370+00:00",
+  "updated_at": "2026-07-20T16:55:58.327464+00:00"
+}
