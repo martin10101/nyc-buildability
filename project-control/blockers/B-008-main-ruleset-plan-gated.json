@@ -1,7 +1,7 @@
 {
   "blocker_id": "B-008",
   "title": "GitHub ruleset/branch protection for main is plan-gated (private repo on Free plan)",
-  "status": "open",
+  "status": "resolved",
   "affects": [
     "owner directive 2026-07-17: protect main (require PRs, required status checks, block force pushes and deletion, require conversation resolution, no bypass)",
     "server-side enforcement of the PR-based merge workflow"
@@ -10,5 +10,11 @@
   "exact_human_action": "Owner chooses one: (a) upgrade the GitHub account/repo to GitHub Pro (paid - owner-only), or (b) make the repository public (owner decision; consider that this is a legally sensitive project). After either, the orchestrator will create the ruleset: require pull requests (0 required approvals so routine tasks merge autonomously), required status checks (CI + secret-scan jobs), block force pushes, block branch deletion, require conversation resolution, no bypass actors.",
   "how_it_will_be_tested": "gh api repos/martin10101/nyc-buildability/rulesets returns 200 and lists the active ruleset; a direct push to main is rejected by GitHub; a PR with failing checks cannot merge; a PR with passing checks merges without owner approval.",
   "created_at": "2026-07-17T10:35:00Z",
-  "audit_log": []
+  "audit_log": [
+    {
+      "at": "2026-07-20T06:05:00Z",
+      "by": "orchestrator",
+      "note": "RESOLVED: owner chose option (b) - repository made public 2026-07-20. Orchestrator created ruleset protect-main (id 19191154, enforcement active) per the recorded spec: branch target ~DEFAULT_BRANCH; rules deletion-block, non_fast_forward (force-push block), pull_request (0 required approvals, required_review_thread_resolution true, merge method merge), required_status_checks with the 8 CI job contexts (credential scan, api, contracts, contracts-schema-bundle, contracts-typegen, control-plane, web, web-e2e); bypass_actors empty. Verified: POST returned 200 with active enforcement. Orchestrator-side interim enforcement rules in settings.local.json stay in place as defense in depth."
+    }
+  ]
 }

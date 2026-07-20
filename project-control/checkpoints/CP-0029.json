@@ -1,0 +1,9 @@
+{
+  "checkpoint_id": "CP-0029",
+  "timestamp": "2026-07-20T05:13:07.512214+00:00",
+  "commit": "4877264",
+  "branch": "main",
+  "active_milestone": "M0",
+  "summary": "M2-T008 ACCEPTED (34th): ZTLDB lot-level zoning connector (SODA fdkv-4t4z) + three-way PLUTO/ZTLDB/zoning-features cross-check into the profile within contract 1.3.0. Task PR 42 merged at 4877264. Lifecycle: dispatch control PR 41 (packet revalidated vs 81da9c3, G0 PASS + claim) - producer complete 7e40e81 (86 new tests, 24 manifested fixtures: 11 live 2026-07-20 + 13 synthetic; live findings: rowsUpdatedAt STILL 2026-04-05 = second missed monthly cycle, live no-ZD1-key rows, real 16A/16a case divergence) - CI real finding (secret-scan pragmas) fixed by disclosed orchestrator comment-only commit afacff2 - BLOCKER B-009 (GitHub Actions billing: jobs refused to start account-wide) - owner decision: REPO MADE PUBLIC - B-009 resolved, B-008 resolved (ruleset protect-main id 19191154 active: PR-required, 8 required status checks, force-push and deletion blocked, no bypass), B-006 resolved (secret scanning + push protection enabled) - G2 - submit - G1 PASS data-contract-verifier (byte-identical live re-fetches) - G3 PASS + G4 PASS code-reviewer - accept. Ledger: 34 accepted / 2 blocked (M0-T007/T008) / 2 backlog (M2-T009, M2-T010) / 0 claimed. Next: revalidate M2-T009 packet against main 4877264 then dispatch (owner-ordered serialization).",
+  "updated_at": "2026-07-20T05:13:07.512214+00:00"
+}
