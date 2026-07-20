@@ -1,0 +1,16 @@
+{
+  "fixture_id": "ZT06",
+  "title": "Limited-height lot: limited_height_district LH-1A within the official Appendix D value set",
+  "source_id": "nyc-dcp-ztldb-soda",
+  "dataset_id": "fdkv-4t4z",
+  "request_url": "https://data.cityofnewyork.us/resource/fdkv-4t4z.json?bbl=1013760011&%24order=bbl&%24limit=10",
+  "http_status": 200,
+  "retrieval_timestamp_utc": "2026-07-20T04:28:49Z",
+  "capture_method": "live urllib GET by M2-T008 producer, anonymous request to the official NYC Open Data SODA endpoint, single KB-scale bounded request",
+  "classification": "raw",
+  "supports_scenarios": [
+    "ZT-S5"
+  ],
+  "notes": "Limited-height lot: limited_height_district LH-1A within the official Appendix D value set",
+  "response_body_raw": "[{\"borough_code\":\"1\",\"tax_block\":\"1376\",\"tax_lot\":\"11\",\"bbl\":\"1013760011\",\"zoning_district_1\":\"R8B\",\"limited_height_district\":\"LH-1A\",\"zoning_map_number\":\"8C\"}]\n"
+}

@@ -1,0 +1,16 @@
+{
+  "fixture_id": "ZT10",
+  "title": "Deliberate HTTP 400 with errorCode query.soql.no-such-column: the schema-drift signature (drift evidence, not data; never retried)",
+  "source_id": "nyc-dcp-ztldb-soda",
+  "dataset_id": "fdkv-4t4z",
+  "request_url": "https://data.cityofnewyork.us/resource/fdkv-4t4z.json?%24select=nonexistent_column&%24limit=1",
+  "http_status": 400,
+  "retrieval_timestamp_utc": "2026-07-20T04:28:51Z",
+  "capture_method": "live urllib GET by M2-T008 producer, anonymous request to the official NYC Open Data SODA endpoint, single KB-scale bounded request",
+  "classification": "raw",
+  "supports_scenarios": [
+    "ZT-S11"
+  ],
+  "notes": "Deliberate HTTP 400 with errorCode query.soql.no-such-column: the schema-drift signature (drift evidence, not data; never retried)",
+  "response_body_raw": "{\"message\":\"Query coordinator error: query.soql.no-such-column; No such column: nonexistent_column; position: Map(row -> 1, column -> 8, line -> \\\"SELECT `nonexistent_column` LIMIT 1\\\\n       ^\\\")\",\"errorCode\":\"query.soql.no-such-column\",\"data\":{\"column\":\"nonexistent_column\",\"dataset\":\"foxtrot.15698\",\"position\":{\"row\":1,\"column\":8,\"line\":\"SELECT `nonexistent_column` LIMIT 1\\n       ^\"}}}"
+}

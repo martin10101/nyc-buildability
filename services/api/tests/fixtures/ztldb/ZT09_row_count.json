@@ -1,0 +1,16 @@
+{
+  "fixture_id": "ZT09",
+  "title": "Row-count baseline at capture time (dataset-scale evidence; the connector never syncs the full dataset)",
+  "source_id": "nyc-dcp-ztldb-soda",
+  "dataset_id": "fdkv-4t4z",
+  "request_url": "https://data.cityofnewyork.us/resource/fdkv-4t4z.json?%24select=count%28bbl%29",
+  "http_status": 200,
+  "retrieval_timestamp_utc": "2026-07-20T04:28:51Z",
+  "capture_method": "live urllib GET by M2-T008 producer, anonymous request to the official NYC Open Data SODA endpoint, single KB-scale bounded request",
+  "classification": "raw",
+  "supports_scenarios": [
+    "ZT-S10"
+  ],
+  "notes": "Row-count baseline at capture time (dataset-scale evidence; the connector never syncs the full dataset)",
+  "response_body_raw": "[{\"count_bbl\":\"857951\"}]\n"
+}

@@ -1,0 +1,454 @@
+{
+  "manifest_version": 1,
+  "task": "M2-T008",
+  "source_id": "nyc-dcp-ztldb-soda",
+  "dataset_id": "fdkv-4t4z",
+  "resource_endpoint": "https://data.cityofnewyork.us/resource/fdkv-4t4z.json",
+  "api_views_endpoint": "https://data.cityofnewyork.us/api/views/fdkv-4t4z.json",
+  "authentication": "none used for any capture (anonymous official SODA reads); the optional runtime app credential is environment-sourced only and never appears anywhere in this pack",
+  "generated_by": "build_fixture_pack.py",
+  "generated_at_utc": "2026-07-20T04:28:52Z",
+  "digest_algorithm": "sha256:<hex> over the exact UTF-8 bytes of response_body_raw",
+  "fixtures": [
+    {
+      "file": "ZT01_record_single_lot.json",
+      "fixture_id": "ZT01",
+      "classification": "raw",
+      "official_endpoint": "https://data.cityofnewyork.us/resource/fdkv-4t4z.json?bbl=1000010100&%24order=bbl&%24limit=10",
+      "dataset_id": "fdkv-4t4z",
+      "query_parameters": "bbl=1000010100&%24order=bbl&%24limit=10",
+      "http_status": 200,
+      "retrieval_timestamp_utc": "2026-07-20T04:28:48Z",
+      "rows_updated_at_raw": null,
+      "expected_record_count": 1,
+      "response_body_sha256": "sha256:37d1e4a4f4df9368f413dcb9175b9c8553830ba571cffccc65ca5304c3e7deac",
+      "derived_from": null,
+      "purpose": "Single-lot record for the PLUTO F01 golden lot: 16-column contract mapping, number-typed columns serialized as JSON strings, blank columns omitted per record (SODA null-omission)",
+      "supports_scenarios": [
+        "ZT-S1",
+        "ZT-S4",
+        "ZT-S13",
+        "ZT-S15"
+      ]
+    },
+    {
+      "file": "ZT02_record_split_lot.json",
+      "fixture_id": "ZT02",
+      "classification": "raw",
+      "official_endpoint": "https://data.cityofnewyork.us/resource/fdkv-4t4z.json?bbl=1000010010&%24order=bbl&%24limit=10",
+      "dataset_id": "fdkv-4t4z",
+      "query_parameters": "bbl=1000010010&%24order=bbl&%24limit=10",
+      "http_status": 200,
+      "retrieval_timestamp_utc": "2026-07-20T04:28:48Z",
+      "rows_updated_at_raw": null,
+      "expected_record_count": 1,
+      "response_body_sha256": "sha256:46ee03e1460f90cd2dedd813de3e341e47731c7e6229d4f439323e76df0b137c",
+      "derived_from": null,
+      "purpose": "Split-lot record (PLUTO F05 golden lot): zoning_district_1 R3-2 + zoning_district_2 C4-1 ordering preserved; special district GI; zoning_map_code Y border flag",
+      "supports_scenarios": [
+        "ZT-S2",
+        "ZT-S13",
+        "ZT-S14"
+      ]
+    },
+    {
+      "file": "ZT03_no_record_valid_bbl.json",
+      "fixture_id": "ZT03",
+      "classification": "raw",
+      "official_endpoint": "https://data.cityofnewyork.us/resource/fdkv-4t4z.json?bbl=5999999999&%24order=bbl&%24limit=10",
+      "dataset_id": "fdkv-4t4z",
+      "query_parameters": "bbl=5999999999&%24order=bbl&%24limit=10",
+      "http_status": 200,
+      "retrieval_timestamp_utc": "2026-07-20T04:28:48Z",
+      "rows_updated_at_raw": null,
+      "expected_record_count": 0,
+      "response_body_sha256": "sha256:37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+      "derived_from": null,
+      "purpose": "Well-formed empty array for a syntactically valid BBL with no ZTLDB row: typed no-record RESULT, never an error",
+      "supports_scenarios": [
+        "ZT-S3"
+      ]
+    },
+    {
+      "file": "ZT04_record_overlay_lot.json",
+      "fixture_id": "ZT04",
+      "classification": "raw",
+      "official_endpoint": "https://data.cityofnewyork.us/resource/fdkv-4t4z.json?bbl=1001110100&%24order=bbl&%24limit=10",
+      "dataset_id": "fdkv-4t4z",
+      "query_parameters": "bbl=1001110100&%24order=bbl&%24limit=10",
+      "http_status": 200,
+      "retrieval_timestamp_utc": "2026-07-20T04:28:49Z",
+      "rows_updated_at_raw": null,
+      "expected_record_count": 1,
+      "response_body_sha256": "sha256:b76f44a15c7842417de9f097d4f9aed49c48eba993eb642db7110706657505ec",
+      "derived_from": null,
+      "purpose": "Commercial-overlay lot: commercial_overlay_1 C1-5 within the official Appendix C value set",
+      "supports_scenarios": [
+        "ZT-S5"
+      ]
+    },
+    {
+      "file": "ZT05_record_park_lot.json",
+      "fixture_id": "ZT05",
+      "classification": "raw",
+      "official_endpoint": "https://data.cityofnewyork.us/resource/fdkv-4t4z.json?bbl=1000030001&%24order=bbl&%24limit=10",
+      "dataset_id": "fdkv-4t4z",
+      "query_parameters": "bbl=1000030001&%24order=bbl&%24limit=10",
+      "http_status": 200,
+      "retrieval_timestamp_utc": "2026-07-20T04:28:49Z",
+      "rows_updated_at_raw": null,
+      "expected_record_count": 1,
+      "response_body_sha256": "sha256:8e12fff2de21844ec547226dc16aa368a6539762f6fd3eeaa429b860059c1cda",
+      "derived_from": null,
+      "purpose": "PARK lot: zoning_district_1 PARK must carry the official do-not-use-for-open-space caveat; minimal key set demonstrates blank-omission semantics on a real record",
+      "supports_scenarios": [
+        "ZT-S4",
+        "ZT-S7"
+      ]
+    },
+    {
+      "file": "ZT06_record_limited_height_lot.json",
+      "fixture_id": "ZT06",
+      "classification": "raw",
+      "official_endpoint": "https://data.cityofnewyork.us/resource/fdkv-4t4z.json?bbl=1013760011&%24order=bbl&%24limit=10",
+      "dataset_id": "fdkv-4t4z",
+      "query_parameters": "bbl=1013760011&%24order=bbl&%24limit=10",
+      "http_status": 200,
+      "retrieval_timestamp_utc": "2026-07-20T04:28:49Z",
+      "rows_updated_at_raw": null,
+      "expected_record_count": 1,
+      "response_body_sha256": "sha256:faa8443bf62ad903800943b5f8d897d5279e1894a11dfa133c2a000178f55f75",
+      "derived_from": null,
+      "purpose": "Limited-height lot: limited_height_district LH-1A within the official Appendix D value set",
+      "supports_scenarios": [
+        "ZT-S5"
+      ]
+    },
+    {
+      "file": "ZT07a_page_offset0.json",
+      "fixture_id": "ZT07a",
+      "classification": "raw",
+      "official_endpoint": "https://data.cityofnewyork.us/resource/fdkv-4t4z.json?%24order=bbl&%24limit=5&%24offset=0",
+      "dataset_id": "fdkv-4t4z",
+      "query_parameters": "%24order=bbl&%24limit=5&%24offset=0",
+      "http_status": 200,
+      "retrieval_timestamp_utc": "2026-07-20T04:28:50Z",
+      "rows_updated_at_raw": null,
+      "expected_record_count": 5,
+      "response_body_sha256": "sha256:b4b8771accd00dcc98f68e390c9e729202d6f6216b8089e26d51c25e7cc03c42",
+      "derived_from": null,
+      "purpose": "Deterministic ordered page 1 (bbl ascending, limit 5, offset 0); includes real records with absent zoning_district_1 (blank ZD1 rows exist live despite the 2019-12-31 assignment change)",
+      "supports_scenarios": [
+        "ZT-S9",
+        "ZT-S15"
+      ]
+    },
+    {
+      "file": "ZT07b_page_offset5.json",
+      "fixture_id": "ZT07b",
+      "classification": "raw",
+      "official_endpoint": "https://data.cityofnewyork.us/resource/fdkv-4t4z.json?%24order=bbl&%24limit=5&%24offset=5",
+      "dataset_id": "fdkv-4t4z",
+      "query_parameters": "%24order=bbl&%24limit=5&%24offset=5",
+      "http_status": 200,
+      "retrieval_timestamp_utc": "2026-07-20T04:28:50Z",
+      "rows_updated_at_raw": null,
+      "expected_record_count": 5,
+      "response_body_sha256": "sha256:2ac4f3cd5f1bebfd42d0e0de94bf0b986dae7ba43d945515d9ff8c42a37299fd",
+      "derived_from": null,
+      "purpose": "Deterministic ordered page 2 (bbl ascending, limit 5, offset 5): no duplicates or gaps across the page boundary",
+      "supports_scenarios": [
+        "ZT-S9"
+      ]
+    },
+    {
+      "file": "ZT08_api_views_metadata.json",
+      "fixture_id": "ZT08",
+      "classification": "raw",
+      "official_endpoint": "https://data.cityofnewyork.us/api/views/fdkv-4t4z.json",
+      "dataset_id": "fdkv-4t4z",
+      "query_parameters": null,
+      "http_status": 200,
+      "retrieval_timestamp_utc": "2026-07-20T04:28:50Z",
+      "rows_updated_at_raw": 1775414816,
+      "expected_record_count": null,
+      "response_body_sha256": "sha256:f6dc2bbe1cdb6c190e1def54fda610b443db3e257df3ff5ff8865900ec8ce03a",
+      "derived_from": null,
+      "purpose": "Authoritative dataset metadata: the 16-column columns array (schema authority - never inferred from record keys) and rowsUpdatedAt (the ONLY official freshness signal; no per-record version column exists)",
+      "supports_scenarios": [
+        "ZT-S10",
+        "ZT-S11"
+      ]
+    },
+    {
+      "file": "ZT09_row_count.json",
+      "fixture_id": "ZT09",
+      "classification": "raw",
+      "official_endpoint": "https://data.cityofnewyork.us/resource/fdkv-4t4z.json?%24select=count%28bbl%29",
+      "dataset_id": "fdkv-4t4z",
+      "query_parameters": "%24select=count%28bbl%29",
+      "http_status": 200,
+      "retrieval_timestamp_utc": "2026-07-20T04:28:51Z",
+      "rows_updated_at_raw": null,
+      "expected_record_count": 1,
+      "response_body_sha256": "sha256:c13bebb794ab8527572a2d4d5b8de1b14ab89e1dbe0fb8e60accedb03d6f86a5",
+      "derived_from": null,
+      "purpose": "Row-count baseline at capture time (dataset-scale evidence; the connector never syncs the full dataset)",
+      "supports_scenarios": [
+        "ZT-S10"
+      ]
+    },
+    {
+      "file": "ZT100_type_mismatch_400_synthetic.json",
+      "fixture_id": "ZT100",
+      "classification": "synthetic",
+      "official_endpoint": "https://data.cityofnewyork.us/resource/fdkv-4t4z.json?%24select=nonexistent_column&%24limit=1",
+      "dataset_id": "fdkv-4t4z",
+      "query_parameters": "%24select=nonexistent_column&%24limit=1",
+      "http_status": 400,
+      "retrieval_timestamp_utc": "2026-07-20T04:28:51Z",
+      "rows_updated_at_raw": null,
+      "expected_record_count": null,
+      "response_body_sha256": "sha256:74b9048760b55ba2e01420fa2d1c1c90f4bb3e1f7cb7d5820e3583038acdb3e2",
+      "derived_from": "ZT10_no_such_column_400.json",
+      "purpose": "Non-drift HTTP 400: errorCode query.soql.type-mismatch is NOT the schema-drift signature and maps to a typed upstream error",
+      "supports_scenarios": [
+        "ZT-S11"
+      ]
+    },
+    {
+      "file": "ZT101_record_unknown_column_synthetic.json",
+      "fixture_id": "ZT101",
+      "classification": "synthetic",
+      "official_endpoint": "https://data.cityofnewyork.us/resource/fdkv-4t4z.json?bbl=1000010100&%24order=bbl&%24limit=10",
+      "dataset_id": "fdkv-4t4z",
+      "query_parameters": "bbl=1000010100&%24order=bbl&%24limit=10",
+      "http_status": 200,
+      "retrieval_timestamp_utc": "2026-07-20T04:28:48Z",
+      "rows_updated_at_raw": null,
+      "expected_record_count": 1,
+      "response_body_sha256": "sha256:6931c483a40a987dc31cfc91c57eef7f35622ababe222c7debd9cbfdc239c2fb",
+      "derived_from": "ZT01_record_single_lot.json",
+      "purpose": "Unknown record key: a column outside the authoritative 16-column inventory yields a visible drift signal and NO fact (schema is never inferred from record keys)",
+      "supports_scenarios": [
+        "ZT-S11"
+      ]
+    },
+    {
+      "file": "ZT102_meta_renamed_column_synthetic.json",
+      "fixture_id": "ZT102",
+      "classification": "synthetic",
+      "official_endpoint": "https://data.cityofnewyork.us/api/views/fdkv-4t4z.json",
+      "dataset_id": "fdkv-4t4z",
+      "query_parameters": null,
+      "http_status": 200,
+      "retrieval_timestamp_utc": "2026-07-20T04:28:50Z",
+      "rows_updated_at_raw": 1775414816,
+      "expected_record_count": null,
+      "response_body_sha256": "sha256:39f7db670c6c17bb346f15e640eb191f5bff84eb50160bf31b2ece8ccf6609b7",
+      "derived_from": "ZT08_api_views_metadata.json",
+      "purpose": "Columns-array drift: zoning_district_1 renamed in the metadata columns snapshot - detected as removed+added by the columns diff",
+      "supports_scenarios": [
+        "ZT-S11"
+      ]
+    },
+    {
+      "file": "ZT10_no_such_column_400.json",
+      "fixture_id": "ZT10",
+      "classification": "raw",
+      "official_endpoint": "https://data.cityofnewyork.us/resource/fdkv-4t4z.json?%24select=nonexistent_column&%24limit=1",
+      "dataset_id": "fdkv-4t4z",
+      "query_parameters": "%24select=nonexistent_column&%24limit=1",
+      "http_status": 400,
+      "retrieval_timestamp_utc": "2026-07-20T04:28:51Z",
+      "rows_updated_at_raw": null,
+      "expected_record_count": null,
+      "response_body_sha256": "sha256:c8b1d50832d3937eff18814280983a7f93ccd3bb46becfcb6aa1f45c7bbc8cac",
+      "derived_from": null,
+      "purpose": "Deliberate HTTP 400 with errorCode query.soql.no-such-column: the schema-drift signature (drift evidence, not data; never retried)",
+      "supports_scenarios": [
+        "ZT-S11"
+      ]
+    },
+    {
+      "file": "ZT90_record_slash_tie_synthetic.json",
+      "fixture_id": "ZT90",
+      "classification": "synthetic",
+      "official_endpoint": "https://data.cityofnewyork.us/resource/fdkv-4t4z.json?bbl=1000010100&%24order=bbl&%24limit=10",
+      "dataset_id": "fdkv-4t4z",
+      "query_parameters": "bbl=1000010100&%24order=bbl&%24limit=10",
+      "http_status": 200,
+      "retrieval_timestamp_utc": "2026-07-20T04:28:48Z",
+      "rows_updated_at_raw": null,
+      "expected_record_count": 1,
+      "response_body_sha256": "sha256:5e1bf476beae94aeb57d85dbcebcdf3e57e1313bf46e5c9183bfabe7796c00ca",
+      "derived_from": "ZT01_record_single_lot.json",
+      "purpose": "Slash-tie special district: special_district_1 'GI/WP' must parse to two Appendix A abbreviations with the official tie semantics preserved",
+      "supports_scenarios": [
+        "ZT-S6"
+      ]
+    },
+    {
+      "file": "ZT91_record_open_zd1_synthetic.json",
+      "fixture_id": "ZT91",
+      "classification": "synthetic",
+      "official_endpoint": "https://data.cityofnewyork.us/resource/fdkv-4t4z.json?bbl=1000010100&%24order=bbl&%24limit=10",
+      "dataset_id": "fdkv-4t4z",
+      "query_parameters": "bbl=1000010100&%24order=bbl&%24limit=10",
+      "http_status": 200,
+      "retrieval_timestamp_utc": "2026-07-20T04:28:48Z",
+      "rows_updated_at_raw": null,
+      "expected_record_count": 1,
+      "response_body_sha256": "sha256:4042841d782fc314d969dc08df84e7f52cc738c518e3ac12667b4cbf33f64d9b",
+      "derived_from": "ZT01_record_single_lot.json",
+      "purpose": "Open zoning_district_1 vocabulary: a ZR-section-number-shaped value must be accepted as a typed open-set observation, never rejected or coerced",
+      "supports_scenarios": [
+        "ZT-S8"
+      ]
+    },
+    {
+      "file": "ZT92_record_observed_null_synthetic.json",
+      "fixture_id": "ZT92",
+      "classification": "synthetic",
+      "official_endpoint": "https://data.cityofnewyork.us/resource/fdkv-4t4z.json?bbl=1000010100&%24order=bbl&%24limit=10",
+      "dataset_id": "fdkv-4t4z",
+      "query_parameters": "bbl=1000010100&%24order=bbl&%24limit=10",
+      "http_status": 200,
+      "retrieval_timestamp_utc": "2026-07-20T04:28:48Z",
+      "rows_updated_at_raw": null,
+      "expected_record_count": 1,
+      "response_body_sha256": "sha256:c3c6e417c2da0c56776c7b4e0c0d3b1ce16aa6c7a959dc960496878f11d648c5",
+      "derived_from": "ZT01_record_single_lot.json",
+      "purpose": "Explicit JSON null on a normally-omitted column: the distinct observed-null path (never conflated with not-applicable omission)",
+      "supports_scenarios": [
+        "ZT-S4"
+      ]
+    },
+    {
+      "file": "ZT93_record_duplicate_bbl_synthetic.json",
+      "fixture_id": "ZT93",
+      "classification": "synthetic",
+      "official_endpoint": "https://data.cityofnewyork.us/resource/fdkv-4t4z.json?bbl=1000010100&%24order=bbl&%24limit=10",
+      "dataset_id": "fdkv-4t4z",
+      "query_parameters": "bbl=1000010100&%24order=bbl&%24limit=10",
+      "http_status": 200,
+      "retrieval_timestamp_utc": "2026-07-20T04:28:48Z",
+      "rows_updated_at_raw": null,
+      "expected_record_count": 2,
+      "response_body_sha256": "sha256:d477aff417c3933fe4b20584301b540b1b872f972f45b2def75a0cae0bb7f745",
+      "derived_from": "ZT01_record_single_lot.json",
+      "purpose": "Two records for one BBL: violates the one-row-per-tax-lot dataset contract - typed schema_drift, never a silent pick",
+      "supports_scenarios": [
+        "ZT-S1"
+      ]
+    },
+    {
+      "file": "ZT94_malformed_not_array_synthetic.json",
+      "fixture_id": "ZT94",
+      "classification": "synthetic",
+      "official_endpoint": "https://data.cityofnewyork.us/resource/fdkv-4t4z.json?bbl=1000010100&%24order=bbl&%24limit=10",
+      "dataset_id": "fdkv-4t4z",
+      "query_parameters": "bbl=1000010100&%24order=bbl&%24limit=10",
+      "http_status": 200,
+      "retrieval_timestamp_utc": "2026-07-20T04:28:48Z",
+      "rows_updated_at_raw": null,
+      "expected_record_count": null,
+      "response_body_sha256": "sha256:14dead39e5d2e6c5d8c0b5e62d1eb0a3b1bbc80a387282426451b5925eeb81e2",
+      "derived_from": "ZT01_record_single_lot.json",
+      "purpose": "Malformed response: JSON object instead of the documented array - typed malformed_response, NEVER a valid empty result",
+      "supports_scenarios": [
+        "ZT-S3"
+      ]
+    },
+    {
+      "file": "ZT95_malformed_truncated_synthetic.json",
+      "fixture_id": "ZT95",
+      "classification": "synthetic",
+      "official_endpoint": "https://data.cityofnewyork.us/resource/fdkv-4t4z.json?bbl=1000010100&%24order=bbl&%24limit=10",
+      "dataset_id": "fdkv-4t4z",
+      "query_parameters": "bbl=1000010100&%24order=bbl&%24limit=10",
+      "http_status": 200,
+      "retrieval_timestamp_utc": "2026-07-20T04:28:48Z",
+      "rows_updated_at_raw": null,
+      "expected_record_count": null,
+      "response_body_sha256": "sha256:5c6e2bde413dd0400158577d3c8ff24b8df88663e90bf383869d590dc513430d",
+      "derived_from": "ZT01_record_single_lot.json",
+      "purpose": "Malformed response: JSON truncated mid-body - typed malformed_response, NEVER a valid empty result",
+      "supports_scenarios": [
+        "ZT-S3"
+      ]
+    },
+    {
+      "file": "ZT96_page_duplicate_synthetic.json",
+      "fixture_id": "ZT96",
+      "classification": "synthetic",
+      "official_endpoint": "https://data.cityofnewyork.us/resource/fdkv-4t4z.json?%24order=bbl&%24limit=5&%24offset=5",
+      "dataset_id": "fdkv-4t4z",
+      "query_parameters": "%24order=bbl&%24limit=5&%24offset=5",
+      "http_status": 200,
+      "retrieval_timestamp_utc": "2026-07-20T04:28:50Z",
+      "rows_updated_at_raw": null,
+      "expected_record_count": 5,
+      "response_body_sha256": "sha256:b4b8771accd00dcc98f68e390c9e729202d6f6216b8089e26d51c25e7cc03c42",
+      "derived_from": "ZT07b_page_offset5.json",
+      "purpose": "Paging pathology: page 2 body is byte-identical to page 1 (upstream returned the same page twice) - typed paging failure, no silent duplication",
+      "supports_scenarios": [
+        "ZT-S9"
+      ]
+    },
+    {
+      "file": "ZT97_page_no_progress_synthetic.json",
+      "fixture_id": "ZT97",
+      "classification": "synthetic",
+      "official_endpoint": "https://data.cityofnewyork.us/resource/fdkv-4t4z.json?%24order=bbl&%24limit=5&%24offset=0",
+      "dataset_id": "fdkv-4t4z",
+      "query_parameters": "%24order=bbl&%24limit=5&%24offset=0",
+      "http_status": 200,
+      "retrieval_timestamp_utc": "2026-07-20T04:28:50Z",
+      "rows_updated_at_raw": null,
+      "expected_record_count": 3,
+      "response_body_sha256": "sha256:bdbe60a5f10dfd2c64ef4f06d527b6350930daadca6ff7c269035da89a080511",
+      "derived_from": "ZT07a_page_offset0.json",
+      "purpose": "Paging pathology: page whose rows were all already extracted (zero new records) - typed no-progress failure, never a loop",
+      "supports_scenarios": [
+        "ZT-S9"
+      ]
+    },
+    {
+      "file": "ZT98_rate_limited_429_synthetic.json",
+      "fixture_id": "ZT98",
+      "classification": "synthetic",
+      "official_endpoint": "https://data.cityofnewyork.us/resource/fdkv-4t4z.json?bbl=1000010100&%24order=bbl&%24limit=10",
+      "dataset_id": "fdkv-4t4z",
+      "query_parameters": "bbl=1000010100&%24order=bbl&%24limit=10",
+      "http_status": 429,
+      "retrieval_timestamp_utc": "2026-07-20T04:28:48Z",
+      "rows_updated_at_raw": null,
+      "expected_record_count": null,
+      "response_body_sha256": "sha256:46d41af57dabe6c6153b4e14331086ef54a30b009e948c5d5b8a66c385a3a89d",
+      "derived_from": "ZT01_record_single_lot.json",
+      "purpose": "HTTP 429 throttle body (synthetic; not triggered against the official service on purpose) - typed rate_limited via the bounded retry path",
+      "supports_scenarios": [
+        "ZT-S12"
+      ]
+    },
+    {
+      "file": "ZT99_meta_missing_rows_updated_synthetic.json",
+      "fixture_id": "ZT99",
+      "classification": "synthetic",
+      "official_endpoint": "https://data.cityofnewyork.us/api/views/fdkv-4t4z.json",
+      "dataset_id": "fdkv-4t4z",
+      "query_parameters": null,
+      "http_status": 200,
+      "retrieval_timestamp_utc": "2026-07-20T04:28:50Z",
+      "rows_updated_at_raw": null,
+      "expected_record_count": null,
+      "response_body_sha256": "sha256:208e06fa1b41fb3d48a7d536ada2edc627aff30536c592502738dd93773fd4d7",
+      "derived_from": "ZT08_api_views_metadata.json",
+      "purpose": "Freshness-guard negative: rowsUpdatedAt removed from the dataset metadata - the ONLY official freshness signal is missing; typed schema_drift, never a silent default",
+      "supports_scenarios": [
+        "ZT-S10"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,17 @@
+{
+  "fixture_id": "ZT07a",
+  "title": "Deterministic ordered page 1 (bbl ascending, limit 5, offset 0); includes real records with absent zoning_district_1 (blank ZD1 rows exist live despite the 2019-12-31 assignment change)",
+  "source_id": "nyc-dcp-ztldb-soda",
+  "dataset_id": "fdkv-4t4z",
+  "request_url": "https://data.cityofnewyork.us/resource/fdkv-4t4z.json?%24order=bbl&%24limit=5&%24offset=0",
+  "http_status": 200,
+  "retrieval_timestamp_utc": "2026-07-20T04:28:50Z",
+  "capture_method": "live urllib GET by M2-T008 producer, anonymous request to the official NYC Open Data SODA endpoint, single KB-scale bounded request",
+  "classification": "raw",
+  "supports_scenarios": [
+    "ZT-S9",
+    "ZT-S15"
+  ],
+  "notes": "Deterministic ordered page 1 (bbl ascending, limit 5, offset 0); includes real records with absent zoning_district_1 (blank ZD1 rows exist live despite the 2019-12-31 assignment change)",
+  "response_body_raw": "[{\"borough_code\":\"1\",\"tax_block\":\"1\",\"tax_lot\":\"10\",\"bbl\":\"1000010010\",\"zoning_district_1\":\"R3-2\",\"zoning_district_2\":\"C4-1\",\"special_district_1\":\"GI\",\"zoning_map_number\":\"16A\",\"zoning_map_code\":\"Y\"}\n,{\"borough_code\":\"1\",\"tax_block\":\"1\",\"tax_lot\":\"100\",\"bbl\":\"1000010100\",\"zoning_district_1\":\"R3-2\",\"special_district_1\":\"GI\",\"zoning_map_number\":\"16A\"}\n,{\"borough_code\":\"1\",\"tax_block\":\"1\",\"tax_lot\":\"101\",\"bbl\":\"1000010101\",\"zoning_district_1\":\"R3-2\",\"zoning_map_number\":\"16A\"}\n,{\"borough_code\":\"1\",\"tax_block\":\"1\",\"tax_lot\":\"111\",\"bbl\":\"1000010111\",\"zoning_district_1\":\"R3-2\",\"special_district_1\":\"GI\",\"zoning_map_number\":\"16A\"}\n,{\"borough_code\":\"1\",\"tax_block\":\"1\",\"tax_lot\":\"112\",\"bbl\":\"1000010112\",\"zoning_district_1\":\"R3-2\",\"special_district_1\":\"GI\",\"zoning_map_number\":\"16A\"}]\n"
+}

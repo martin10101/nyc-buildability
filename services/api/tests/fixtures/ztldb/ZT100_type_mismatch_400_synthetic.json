@@ -1,0 +1,17 @@
+{
+  "fixture_id": "ZT100",
+  "title": "Non-drift HTTP 400: errorCode query.soql.type-mismatch is NOT the schema-drift signature and maps to a typed upstream error",
+  "source_id": "nyc-dcp-ztldb-soda",
+  "dataset_id": "fdkv-4t4z",
+  "request_url": "https://data.cityofnewyork.us/resource/fdkv-4t4z.json?%24select=nonexistent_column&%24limit=1",
+  "http_status": 400,
+  "retrieval_timestamp_utc": "2026-07-20T04:28:51Z",
+  "capture_method": "SYNTHETIC: derived offline from ZT10_no_such_column_400.json by build_fixture_pack.py derive; NOT official data; exercises connector logic only",
+  "classification": "synthetic",
+  "derived_from": "ZT10_no_such_column_400.json",
+  "supports_scenarios": [
+    "ZT-S11"
+  ],
+  "notes": "Non-drift HTTP 400: errorCode query.soql.type-mismatch is NOT the schema-drift signature and maps to a typed upstream error",
+  "response_body_raw": "{\"message\": \"Invalid SoQL: type mismatch\", \"errorCode\": \"query.soql.type-mismatch\", \"data\": {}}"
+}
