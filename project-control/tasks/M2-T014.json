@@ -17,7 +17,10 @@
     "Registry rows (or drafts) for each discovered source",
     "project-control/reports/M2-T014-producer-report.md (AOS section-6 packet)"
   ],
-  "dependencies": [],
+  "dependencies": [
+    "M0-T018",
+    "M0-T019"
+  ],
   "allowed_paths": [
     "docs/research/survey-document-sources-2026-07.md",
     "docs/SURVEY_DOCUMENT_FORMAT_POLICY.md",

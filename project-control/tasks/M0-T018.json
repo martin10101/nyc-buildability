@@ -1,0 +1,77 @@
+{
+  "task_id": "M0-T018",
+  "title": "Backend production dependency parity and Python supply-chain enforcement",
+  "task_type": "infrastructure",
+  "milestone_id": "M0",
+  "objective": "Make the EXACT Render production installation complete, reproducible, advisory-clean, release-age-controlled, and tested through the same command path used in deployment (owner directive 2026-07-20, P0). CONFIRMED CURRENT DEFECTS (verified on main f11abbe): (a) services/api/requirements.txt OMITS jsonschema even though app/profile/contract.py:231 imports it at runtime inside validate_profile; (b) requirements.txt comment incorrectly lists jsonschema among 'dev/test tools ... NEVER installed on Render' while pyproject.toml [project.dependencies] ALREADY declares 'jsonschema>=4.21,<5' as runtime (lines 16-20) - the two artifacts DISAGREE; (c) Render installs requirements.txt while existing CI primarily installs the project / dev extras (pyproject, which HAS jsonschema), so CI is green while the Render path would fail validate_profile; (d) starlette==0.46.2 currently produces seven known pip-audit findings; (e) a passing health endpoint does NOT prove validate_profile works because the jsonschema import is lazy (function-local at contract.py:231). VERIFIED SAFE TARGET SET as of 2026-07-20 (a tested target, NOT permission to skip verification - the producer MUST recheck publication timestamps and advisories before committing; if registry/advisory state has changed, STOP and report, do not substitute versions silently): fastapi==0.139.0, starlette==1.3.1, uvicorn[standard]==0.51.0, shapely==2.0.7, jsonschema==4.26.0. NOTE: shapely stays 2.0.7 (M2-T009 exact-pin: deterministic geometry digests depend on the bundled GEOS 3.11.4 build; re-pinning would require re-anchoring digests - out of scope here).",
+  "business_reason": "The production Render install is silently broken (missing runtime jsonschema) and carries seven known starlette advisories; CI does not exercise the exact Render install path so the defect is invisible. This P0 makes the deployed dependency tree correct, deterministic, advisory-clean, and continuously audited before any further feature work builds on it (owner directive 2026-07-20).",
+  "inputs": [
+    "services/api/requirements.txt (current pins: fastapi==0.128.0, starlette==0.46.2, uvicorn[standard]==0.40.0, shapely==2.0.7; jsonschema OMITTED and mislabeled dev-only)",
+    "services/api/pyproject.toml ([project.dependencies] already lists jsonschema>=4.21,<5 as runtime; ranges are the source of truth for allowed bounds)",
+    "services/api/app/profile/contract.py:231 (lazy `import jsonschema` inside validate_profile - the runtime dependency proof)",
+    "render.yaml / the Render build command (installs requirements.txt) + .github/workflows/ci.yml (current api install path)",
+    "A committed valid property-profile fixture (packages/contracts/fixtures/valid/property_profile/** or services/api tests fixtures) for the validate_profile smoke",
+    "Owner directive 2026-07-20 M0-T018 contract (verbatim requirements below) + the DEPENDENCY_SECURITY_POLICY produced by M0-T019 once available (age/audit rules are shared)"
+  ],
+  "outputs": [
+    "Corrected production dependency parity: jsonschema installed by the exact Render build path; requirements comments and pyproject metadata agree; no runtime dependency mislabeled test/dev-only",
+    "A deterministic Render dependency artifact: direct AND transitive production dependencies locked to exact versions; prefer a generated, hash-verified requirements lock sourced from pyproject runtime dependencies; Render installs the locked artifact with hash verification if the lock format supports it",
+    "New CI job 'exact-production-install': clean Python 3.12 env; runs the SAME install command Render runs; pip check; imports and creates the real app; loads a committed valid profile fixture; calls validate_profile; DEMONSTRATES that deleting/omitting jsonschema makes the gate FAIL; runs the API full test suite against the production-installed dependency set where technically feasible",
+    "Python dependency security checks: pip-audit against the exact resolved production tree, zero known vulnerabilities REQUIRED, audit failure BLOCKING at every severity (not print-only); publication-age validation for every newly admitted direct and transitive package (>= 7 complete days old for ordinary versions)",
+    "Scheduled re-audit workflow: production Python tree audited on dependency PRs AND on a schedule; scheduled audit failure visible/actionable",
+    "project-control/reports/M0-T018-producer-report.md (AOS section-6 packet with the exact Render-install smoke output proving validate_profile works, and the pip-audit zero-findings evidence)"
+  ],
+  "dependencies": [],
+  "allowed_paths": [
+    "services/api/requirements.txt (and any generated services/api/requirements*.lock / requirements-prod.txt the chosen lock format needs)",
+    "services/api/pyproject.toml (metadata alignment only; ranges stay source of truth)",
+    "render.yaml (install command / lock artifact reference only)",
+    ".github/workflows/** (new exact-production-install job + scheduled audit workflow; existing jobs stay green)",
+    "services/api/scripts/** (lock-generation / audit helper scripts if needed)",
+    "project-control/reports/M0-T018-producer-report.md"
+  ],
+  "forbidden_paths": [
+    "services/api/app/** except NO behavior change at all (this task installs/locks/audits dependencies; it does not modify application code) - the only permissible app touch is NONE; if a dependency bump forces an app change, STOP and report",
+    "No feature development; no connector, spatial, profile-contract, or UI behavior change",
+    "No suppressing/ignoring advisories; no pip-audit allowlist merely to make CI green",
+    "No broad dependency upgrade beyond what is required for a clean compatible tree",
+    "No production provisioning; no deployment",
+    "project-control/** except own producer report",
+    ".claude/**"
+  ],
+  "acceptance_scenarios": [
+    "DP-S1 parity: the exact Render install command installs jsonschema; requirements + pyproject agree; no runtime dep labeled dev/test-only (grep-provable)",
+    "DP-S2 determinism: production direct + transitive deps locked to exact versions; if the lock format supports hashes, Render install is hash-verified; re-running the lock generator is idempotent (byte-identical)",
+    "DP-S3 exact-production-install CI (positive): clean Python 3.12 env + Render's exact install command + pip check + app creation + load valid profile fixture + validate_profile succeeds",
+    "DP-S4 exact-production-install CI (negative, the key proof): with jsonschema omitted/deleted, the SAME gate FAILS loudly (proves the smoke actually exercises validate_profile, not just health)",
+    "DP-S5 API suite on production tree: the API full test suite runs against the production-installed dependency set where technically feasible; report the count (>= 538 expected) and any tests that require dev-only deps (disclosed)",
+    "DP-S6 pip-audit zero: pip-audit against the exact resolved production tree reports ZERO known vulnerabilities; the CI step FAILS the build on any finding at any severity (not print-only); starlette advisories resolved by the target bump",
+    "DP-S7 release-age: every newly admitted direct AND transitive package version is >= 7 complete days old; evidence (publication timestamps) recorded in the report",
+    "DP-S8 scheduled audit: a scheduled workflow re-audits the production tree; a simulated/failing-advisory path proves the scheduled failure is visible/actionable (not silent)",
+    "DP-S9 regression: ruff passes; all current API tests pass (>= 538); contract drift checks pass; exact Render production-install smoke passes; pip-audit zero"
+  ],
+  "required_gates": [
+    "G0",
+    "G2",
+    "G3",
+    "G4",
+    "G5"
+  ],
+  "producer_agent": null,
+  "reviewer_agents": [
+    "code-reviewer",
+    "security-reviewer"
+  ],
+  "status": "backlog",
+  "progress_percent": 0,
+  "risks": [
+    "P0 SEQUENCING (owner 2026-07-20): must be accepted BEFORE M0-T019, M2-T013, or M2-T014 dispatch. The producer cannot perform its own independent code/security approval (G3 code-reviewer, G5 security-reviewer, both != producer).",
+    "TARGET VERSIONS ARE PROVISIONAL: producer MUST recheck publication timestamps + advisories for fastapi==0.139.0/starlette==1.3.1/uvicorn[standard]==0.51.0/jsonschema==4.26.0 before committing; if advisory/registry state changed, STOP and report - no silent substitution.",
+    "shapely stays 2.0.7 (GEOS-digest pin); do not bump it here.",
+    "STOP CONDITIONS: no advisory-free compatible tree exists; a required fix is <7 days old and needs an owner age-exception; any age/audit check would be skipped/downgraded/warning-only/allowlisted; the exact Render install cannot execute validate_profile; tests require weakening to pass; a forbidden path is needed; production credentials/deployment approval required.",
+    "Execution: GitHub Actions CI (clean Python 3.12) is the authoritative environment; local runs bounded and disk-safe (no heavy caches retained); low-storage policy honored."
+  ],
+  "blockers": [],
+  "created_at": "2026-07-20T08:21:46.345246+00:00",
+  "updated_at": "2026-07-20T08:21:46.345246+00:00"
+}
