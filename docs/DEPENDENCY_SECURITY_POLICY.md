@@ -44,19 +44,41 @@ is admitted. This blunts the window in which a freshly published (possibly
 compromised or hijacked) version can enter the tree before the community and
 scanners have had time to react.
 
-The age requirement is enforced **fail-closed** in CI in both ecosystems:
+The age requirement is enforced **fail-closed** in CI in both ecosystems. In npm
+there are two distinct age layers, and it is important not to conflate them (see
+also Section 8, "The four npm enforcement layers"):
 
-- **npm:** `apps/web/.npmrc` sets `min-release-age=7`. `min-release-age` was
-  introduced in **npm 11.10.0**, so CI pins **npm 11.18.0** everywhere a lock is
-  generated or installed (see Section 6). When npm resolves or regenerates the
-  lock it refuses to select any version younger than 7 days. No
+- **npm — resolver-time filter (defense-in-depth):** `apps/web/.npmrc` sets
+  `min-release-age=7`. `min-release-age` was introduced in **npm 11.10.0**, so CI
+  pins **npm 11.18.0** everywhere a lock is generated or installed (see Section 6).
+  This only takes effect when npm **resolves / regenerates** the lock; it refuses
+  to *select* a version younger than 7 days at that moment. It does **not** gate
+  the committed lock that `npm ci` installs (`npm ci` does not resolve). No
   `min-release-age-exclude` entry exists, and none may be added — an exclusion
   would carve a hole in this rule.
+- **npm — committed-lockfile age gate (authoritative):**
+  `apps/web/scripts/dependency_age_gate.mjs` parses the **committed**
+  `apps/web/package-lock.json`, enumerates every unique registry package (direct,
+  transitive, dev, test, build, optional, scoped, platform-specific), reads the
+  live registry publication timestamp and the registry's own UTC clock (the HTTP
+  `Date` header), and fails the build **fail-closed** if any package is younger
+  than 604800 seconds — regardless of how the lock was produced. It also verifies
+  that each package's committed integrity **matches** the registry's own
+  `dist.integrity` for that version (anti-forgery: a hand-edited lock cannot claim
+  an old version while shipping a different artifact). This is the **authoritative**
+  age enforcement for npm and closes the gap that a hand-edited or bot-edited lock
+  could otherwise smuggle a too-new package past `npm ci` + `npm audit`. It is the
+  npm parallel of the Python age gate below. It has **no allowlist, no suppression,
+  no `--ignore`, and no exception path**.
 - **Python:** `services/api/scripts/dependency_age_gate.py` reads live PyPI
   metadata and PyPI's own UTC clock and fails the build if any admitted artifact
   in `services/api/requirements.txt` or `services/api/requirements-tools.lock`
   (direct **or** transitive) is younger than 604800 seconds or cannot be
-  verified.
+  verified. The committed-lockfile npm gate is the direct counterpart of this
+  Python gate.
+
+Both age gates use full-instant integer-second arithmetic: exactly 604800 seconds
+**passes**, 604799 seconds **fails**. There is no date-only or truncated-day math.
 
 The producer of any dependency change must record, in the task report, the exact
 publication date/time (UTC) and the official registry/advisory source URL for
@@ -99,16 +121,22 @@ Audits run in two places in both ecosystems and are **blocking** in all of them:
     (`npm audit --json`) that fails the job unless
     `metadata.vulnerabilities.total == 0`. Dev dependencies are included. `npm
     ci` itself stays `--no-audit` (so the install is deterministic) and this
-    explicit blocking audit is the gate immediately after it.
+    explicit blocking audit is the gate immediately after it. Separately, the
+    `web-lockfile-age-gate` job runs the committed-lockfile age gate
+    (`apps/web/scripts/dependency_age_gate.mjs`) over the committed lock and the
+    npm CLI tooling advisory + age check — both blocking, fail-closed — and runs
+    the gate's deterministic unit tests (`node --test apps/web/scripts/tests/`).
   - **Python:** the `exact-production-install` job in
     `.github/workflows/ci.yml` runs `pip-audit -r requirements.txt --no-deps
     --strict` and `pip-audit -r requirements-tools.lock --no-deps --strict`, both
     blocking at every severity, plus the release-age gate over both locks.
-- **On a schedule (so a newly disclosed advisory against an already-merged lock
-  turns a run red even when nothing changed):**
+- **On a schedule (so a newly disclosed advisory against an already-merged lock,
+  or a package that was too new when merged, turns a run red even when nothing
+  changed):**
   - **npm:** `.github/workflows/scheduled-npm-audit.yml` (daily cron +
     `pull_request` on the web dependency artifacts + `workflow_dispatch`) reruns
-    the identical blocking audit.
+    the identical blocking `npm audit` **and** the committed-lockfile age gate
+    (including the npm CLI tooling advisory + age check) plus its unit tests.
   - **Python:** `.github/workflows/scheduled-audit.yml` (daily cron + PR on the
     Python dependency artifacts + `workflow_dispatch`) reruns the dual blocking
     pip-audit and the release-age gate.
@@ -134,10 +162,18 @@ No agent may mark the tree clean, waive the finding, or deploy over it.
 Because the enforcement depends on tool behavior, the tools are pinned:
 
 - **npm 11.18.0** is installed and version-checked (the step fails if the pin did
-  not take effect) in the `web` and `web-e2e` jobs of
+  not take effect) in the `web`, `web-e2e`, and `web-lockfile-age-gate` jobs of
   `.github/workflows/ci.yml`, in `.github/workflows/generate-lockfile.yml`
   (before lock regeneration), and in `.github/workflows/scheduled-npm-audit.yml`.
   npm 11.18.0 is required because `min-release-age` only exists from npm 11.10.0.
+  The pinned npm CLI is itself **continuously advisory-checked and age-checked**:
+  `apps/web/scripts/dependency_age_gate.mjs` queries the official advisory source
+  (OSV) for advisories affecting `npm@11.18.0` and verifies it is at least 7 days
+  old on every relevant CI run and in the scheduled npm-audit workflow. **Any**
+  advisory affecting `npm@11.18.0` fails the run (no suppression, no allowlist).
+  This gives the npm dependency-management/audit tooling the same continuous
+  machine advisory coverage the application tree has — the direct parallel of the
+  Python tooling lock's pip-audit coverage below.
 - **Python audit/lock tooling** (uv, pip-audit, pytest, …) is itself
   hash-pinned in `services/api/requirements-tools.lock` and installed with
   `--require-hashes`, and the tooling lock is audited and age-gated exactly like
@@ -169,6 +205,27 @@ package.** A new dependency is admitted only when no already-present dependency
 or standard-library capability reasonably covers the need. Every new-package
 admission is recorded with its provenance findings in the task report and passes
 the normal independent security gate.
+
+## 8. The four npm enforcement layers
+
+npm enforcement is deliberately layered. These four layers are **distinct** and
+must not be conflated (a common mistake is to treat `.npmrc min-release-age` as
+"the age enforcement" — it is not, because it does not gate the committed lock
+that `npm ci` installs):
+
+| # | Layer | File / job | What it does | When it runs | What it does NOT do |
+| --- | --- | --- | --- | --- | --- |
+| **(a)** | Resolver-time age filter (defense-in-depth) | `apps/web/.npmrc` (`min-release-age=7`) under pinned npm 11.18.0 | Refuses to *select* a <7-day version while npm **resolves / regenerates** the lock | Only at lock regeneration (`generate-lockfile.yml`) or any resolving install | Does **not** gate the committed lock; `npm ci` does not resolve, so a hand-edited lock is not checked by this layer |
+| **(b)** | Committed-lockfile age verification (authoritative) | `apps/web/scripts/dependency_age_gate.mjs` (`web-lockfile-age-gate` job + scheduled workflow) | Validates **every** committed registry package is ≥ 604800 s old **and** its committed integrity matches the registry's `dist.integrity`; fail-closed | Every push/PR and on the daily schedule | Does not audit for advisories — that is layer (c) |
+| **(c)** | Application-lock advisory audit | `npm audit` (`web` job + scheduled workflow) | Fails on **any** advisory (all severities; dev deps included) affecting an installed version in the committed tree | Every push/PR and on the daily schedule | Does not check age or integrity — those are (a)/(b) |
+| **(d)** | npm CLI tooling advisory + age verification | `apps/web/scripts/dependency_age_gate.mjs` npm-tooling check (same jobs as (b)) | Fails on **any** advisory affecting the pinned `npm@11.18.0` CLI, and if that CLI is < 7 days old; fail-closed | Every push/PR and on the daily schedule | Does not audit the application tree — that is (c) |
+
+Layer (b) is the direct npm counterpart of the Python
+`services/api/scripts/dependency_age_gate.py`; layer (d) is the npm counterpart of
+auditing the Python tooling lock with pip-audit. **None of the four layers has an
+allowlist, ignore list, suppression, `--ignore`, warning-only downgrade, or any
+exception path.** The single narrow age-only owner exception below is applied
+*outside* these tools and can never waive an advisory.
 
 ---
 
@@ -205,12 +262,14 @@ audits still run and still fail on any advisory.
 
 | Concern | npm | Python |
 | --- | --- | --- |
-| Exact pins / save-exact | `apps/web/package.json`, `apps/web/.npmrc` (`save-exact=true`) | `services/api/requirements.txt`, `services/api/requirements-tools.lock` (hash-pinned) |
-| Release-age (>= 7 days) | `apps/web/.npmrc` (`min-release-age=7`, npm >= 11.10.0) | `services/api/scripts/dependency_age_gate.py` |
-| Lockfile integrity on install | `apps/web/package-lock.json` via `npm ci` | `--require-hashes` installs |
-| Blocking audit on every change | `web` job in `.github/workflows/ci.yml` | `exact-production-install` job in `.github/workflows/ci.yml` |
-| Blocking audit on a schedule | `.github/workflows/scheduled-npm-audit.yml` | `.github/workflows/scheduled-audit.yml` |
-| Pinned tooling | npm 11.18.0 (ci.yml, generate-lockfile.yml, scheduled-npm-audit.yml) | uv / pip-audit / pytest in `services/api/requirements-tools.lock` |
+| Exact pins / save-exact | `apps/web/package.json` (exact direct + dev pins, no `^`/`~`), `apps/web/.npmrc` (`save-exact=true`) | `services/api/requirements.txt`, `services/api/requirements-tools.lock` (hash-pinned) |
+| Release-age — resolver-time filter (defense-in-depth) | `apps/web/.npmrc` (`min-release-age=7`, npm >= 11.10.0) | (n/a — hash-pinned locks do not resolve at install) |
+| Release-age — committed-lock verification (authoritative, ≥ 7 days) | `apps/web/scripts/dependency_age_gate.mjs` (`web-lockfile-age-gate` + scheduled) | `services/api/scripts/dependency_age_gate.py` |
+| Committed-lock integrity vs. registry | `apps/web/scripts/dependency_age_gate.mjs` (dist.integrity match) + `npm ci` hash verify | `--require-hashes` installs |
+| Blocking advisory audit on every change | `web` job in `.github/workflows/ci.yml` (`npm audit`) | `exact-production-install` job in `.github/workflows/ci.yml` (pip-audit) |
+| Blocking advisory audit on a schedule | `.github/workflows/scheduled-npm-audit.yml` | `.github/workflows/scheduled-audit.yml` |
+| Audit/lock tooling advisory verification | `apps/web/scripts/dependency_age_gate.mjs` npm-tooling check (OSV, `npm@11.18.0`) | pip-audit over `requirements-tools.lock` |
+| Pinned tooling | npm 11.18.0 (ci.yml `web`/`web-e2e`/`web-lockfile-age-gate`, generate-lockfile.yml, scheduled-npm-audit.yml) | uv / pip-audit / pytest in `services/api/requirements-tools.lock` |
 | Lock regeneration (CI-only) | `.github/workflows/generate-lockfile.yml` | `services/api/scripts/lock_requirements.sh`, `lock_tools.sh` |
 
 This policy must stay consistent with those files. A change to enforcement must

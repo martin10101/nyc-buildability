@@ -241,3 +241,94 @@ The transitive lockfile delta, `npm ci` reproducibility proof, and the audit-zer
 4. **Workflow npm-download paths:** confirm the npm pin runs only on GitHub-hosted runners, references no secrets, and does not touch the owner PC; `scheduled-npm-audit.yml` least-privilege `contents: read`.
 5. **Policy doc:** confirm `docs/DEPENDENCY_SECURITY_POLICY.md` is internally consistent with the implemented enforcement and covers the full FE-S8 rule set + the narrow owner-only auto-expiring exception; `CLAUDE.md` principle 15 is an accurate pointer.
 6. **Forbidden-path compliance:** confirm no change to `apps/web/src/**`, `services/api/**`, tests, or TS settings, and that `package-lock.json` was NOT hand-edited by the producer.
+
+---
+
+# Policy-enforcement correction (rev 2) — committed-lockfile age gate + exact pins + npm tooling advisory verification
+
+**Date:** 2026-07-20 (second producer increment on the OPEN task PR #64)
+**Adds:** FE-S9, FE-S10, FE-S11. New allowed path `apps/web/scripts/**`. Nothing under `apps/web/src/**`, `services/api/**`, tests unrelated to the new script, TypeScript settings, or the Python jobs was changed. `apps/web/package-lock.json` is still regenerated remotely by the orchestrator — the producer did not hand-edit it.
+
+## R2.1 The gap this closes
+
+`apps/web/.npmrc min-release-age=7` only filters versions during npm **resolution** (lock regeneration). CI installs the **committed** `apps/web/package-lock.json` with `npm ci`, which does **not** resolve — so a hand-edited (or bot-edited) lock could contain a <7-day package and still pass `npm ci` + `npm audit`. The rev-1 implementation therefore left the committed lock **ungated for age**. This correction adds an independent, deterministic, fail-closed gate that validates the committed lock — the npm parallel of the accepted Python `services/api/scripts/dependency_age_gate.py`.
+
+## R2.2 Files created / modified (one-line purpose each)
+
+| File | Change | Purpose |
+| --- | --- | --- |
+| `apps/web/scripts/dependency_age_gate.mjs` | created | Node-ESM, built-ins-only, fail-closed committed-lockfile release-age gate + npm CLI tooling advisory/age check. Pure `parseLock`/`decide`/`evaluateLock`/`checkNpmTooling` (injectable `now` + providers) + a single networked `RegistryClient`. No allowlist / suppression / exception path. |
+| `apps/web/scripts/tests/dependency_age_gate.test.mjs` | created | Built-in `node --test` suite (no npm deps): 604800 PASS / 604799 FAIL boundary, integer-second floor, positive + full-lock, every fail-closed branch (missing/malformed time, missing/mismatched integrity, missing lock integrity, bad host, provider outage, too-new-in-old-lock), enumeration/dedupe of `packages`, FE-S11 tooling advisory/age. |
+| `apps/web/package.json` | modified | FE-S10: every direct dependency AND devDependency is now an EXACT version (no `^`/`~`). |
+| `.github/workflows/ci.yml` | modified | New REQUIRED, BLOCKING `web-lockfile-age-gate` job (checkout + setup-node 22 + npm 11.18.0 pin + `node --test apps/web/scripts/tests/` + live gate). Existing jobs untouched; Python jobs untouched. |
+| `.github/workflows/scheduled-npm-audit.yml` | modified | Added the SAME `node --test` + live gate after the existing blocking audit (`working-directory: apps/web`). `contents: read` kept. |
+| `docs/DEPENDENCY_SECURITY_POLICY.md` | modified | Section 2 rewritten to distinguish resolver-time `.npmrc` (defense-in-depth) from the authoritative committed-lockfile gate; Section 4 adds the gate on-change + on-schedule; Section 6 adds npm CLI tooling advisory/age verification; new Section 8 "The four npm enforcement layers" (a–d); enforcing-files index updated. |
+| `project-control/reports/M0-T019-producer-report.md` | modified | This rev-2 section (original rev-1 content above is unchanged). |
+
+## R2.3 Age-gate design (fail-closed, boundary, injectability, enumeration scope, tooling)
+
+- **Boundary / arithmetic:** `MIN_AGE_SECONDS = 604800`. `ageSeconds = Math.floor((nowMs - publishedMs)/1000)`; `passed = ageSeconds >= MIN_AGE_SECONDS`. Exactly 604800 PASSES, 604799 FAILS. Full-second integer math — no day rounding (a fractional-second test proves the floor).
+- **`now` source:** `RegistryClient.utcNow()` issues a HEAD to `https://registry.npmjs.org/` and reads the HTTP `Date` header as authoritative UTC ms (fail-closed if missing/unparseable). This mirrors the Python `utc_now` (PyPI `Date` header). Verified live: the registry root serves `Date: … GMT`.
+- **Publication timestamp:** read from the packument `time[version]` (ISO-8601). Verified live against `registry.npmjs.org/react`: `time["19.1.2"] = "2025-12-03T15:32:12.347Z"` (matches the rev-1 verified-facts table). Fail-closed if `time` or `time[version]` is missing/malformed.
+- **Anti-forgery integrity match:** `decide` requires the registry `versions[version].dist.integrity` to EQUAL the lock's committed `integrity`; fail-closed on missing or mismatch. Verified live: `versions["19.1.2"].dist.integrity` is present as an SRI string. A hand-edited lock cannot claim an old version number while shipping a different artifact hash.
+- **Enumeration scope (`parseLock`):** enumerates EVERY `packages` entry whose key starts with `node_modules/` and has a `resolved` URL — direct, transitive, dev, test, build, optional, scoped (`@scope/name`), and platform-specific (`@next/swc-*`). Name is the segment after the LAST `node_modules/` (preserving a leading `@scope/`), so nested transitives resolve to the bare package name. Dedupes by `name@version` (and fails closed if two positions of the same `name@version` carry different committed integrity). Skips the root entry `""` and any link/workspace entry with no `resolved`. Fail-closed if a registry entry (has `resolved`) is missing `integrity` or `version`, or its `resolved` host is not exactly `registry.npmjs.org`. Verified against the current committed lock: every `resolved` is `registry.npmjs.org` (no non-registry hosts, no link/file entries), and the `@next/swc-*` platform entries are present.
+- **`evaluateLock`:** fetches each packument once per name (cached), decides per package, captures a per-package fail-closed error as a FAIL result (so the report lists every problem) while the overall run still fails; bounded concurrency (10) for the live client over ~500 packages.
+- **FE-S11 `checkNpmTooling`:** verifies the pinned npm CLI version has ZERO OSV advisories (`{package:{ecosystem:"npm",name:"npm"},version}`) AND is >= 604800 s old (npm packument `time`). Fail-closed on any error. Verified live: OSV `/v1/query` returns `{}` (no `vulns` key) when clean, so the client treats an absent `vulns` as "no advisories" and only a non-empty `vulns` array as a finding; every network/parse/non-OK path throws → FAIL. No suppression / allowlist.
+- **CLI:** `node dependency_age_gate.mjs <lock> --npm-tooling-version <ver>`; prints a header (now, min_age), a per-package `PASS/FAIL name@version uploaded=… age=…s (…d)`, and the npm tooling line; exit 0 IFF every lock package passes AND the tooling passes, else 1. No allowlist/suppression/exception path anywhere. The pure functions are exported and free of network / `process.exit` so tests inject `now` + fake providers; the CLI self-invokes only when run directly (the import-guard checks `process.argv[1]` ends with `dependency_age_gate.mjs`, so `node --test` importing the module never triggers it).
+
+## R2.4 Exact-pin map (FE-S10): declared → exact, zero resolution change
+
+Every `^`/`~` range in `apps/web/package.json` was replaced with the version **already resolved at the current committed lock's `node_modules/<name>`**, so the regenerated lock's resolved versions + integrity are the SAME set (byte-for-byte). The producer confirmed each `target == lock-resolved` against the committed lock; the orchestrator's remote regeneration is the authoritative proof and MUST STOP if any resolved version changes.
+
+| package | declared (rev 1) | exact (rev 2) | lock-resolved (proof) |
+| --- | --- | --- | --- |
+| next (dep) | 15.5.20 | 15.5.20 | 15.5.20 (unchanged) |
+| react (dep) | 19.1.2 | 19.1.2 | 19.1.2 (unchanged) |
+| react-dom (dep) | 19.1.2 | 19.1.2 | 19.1.2 (unchanged) |
+| @eslint/eslintrc | ^3.3.1 | 3.3.6 | 3.3.6 |
+| @playwright/test | ^1.53.0 | 1.61.1 | 1.61.1 |
+| @testing-library/dom | ^10.4.0 | 10.4.1 | 10.4.1 |
+| @testing-library/jest-dom | ^6.6.3 | 6.9.1 | 6.9.1 |
+| @testing-library/react | ^16.3.0 | 16.3.2 | 16.3.2 |
+| @types/node | ^22.15.0 | 22.20.1 | 22.20.1 |
+| @types/react | ^19.1.0 | 19.2.17 | 19.2.17 |
+| @types/react-dom | ^19.1.0 | 19.2.3 | 19.2.3 |
+| @vitejs/plugin-react | ^4.5.0 | 4.7.0 | 4.7.0 |
+| eslint | ^9.28.0 | 9.39.5 | 9.39.5 |
+| eslint-config-next | 15.5.20 | 15.5.20 | 15.5.20 (unchanged) |
+| jsdom | ^26.1.0 | 26.1.0 | 26.1.0 |
+| typescript | ^5.8.3 | 5.9.3 | 5.9.3 |
+| vitest | ^3.2.0 | 3.2.7 | 3.2.7 |
+
+`overrides.postcss` 8.5.10 is unchanged. `save-exact=true` remains in `.npmrc` for future adds.
+
+## R2.5 CI wiring
+
+- **`ci.yml`** — new job `web-lockfile-age-gate` (REQUIRED, BLOCKING): checkout + setup-node 22 + the version-checked `Pin npm 11.18.0` step + `node --test apps/web/scripts/tests/` + `node apps/web/scripts/dependency_age_gate.mjs apps/web/package-lock.json --npm-tooling-version "$(npm -v)"`. No existing job weakened; no Python job touched. The gate needs network (registry + OSV) — available on GitHub runners; it installs nothing (Node built-ins).
+- **`scheduled-npm-audit.yml`** — after the existing blocking `npm audit`, added `node --test scripts/tests/` and `node scripts/dependency_age_gate.mjs package-lock.json --npm-tooling-version "$(npm -v)"` (job default `working-directory: apps/web`). `permissions: contents: read` unchanged.
+- **`scheduled-audit.yml` (Python)** and all Python CI jobs are untouched.
+
+## R2.6 Policy-doc clarification
+
+`docs/DEPENDENCY_SECURITY_POLICY.md` now accurately distinguishes the four npm layers so `.npmrc` is not overstated: (a) `.npmrc min-release-age` = resolver-time filtering (defense-in-depth; applies only when npm resolves/regenerates, NOT to `npm ci` of a committed lock); (b) the independent committed-lockfile age gate (`apps/web/scripts/dependency_age_gate.mjs`, fail-closed, every committed package ≥ 604800 s + registry integrity match, regardless of how the lock was produced) — the authoritative age enforcement; (c) application-lock advisory auditing (`npm audit`, blocking); (d) npm CLI tooling advisory verification (the gate's tooling check). The Python mappings and the emergency-exception section are unchanged and remain self-consistent with the implementation.
+
+## R2.7 Acceptance scenarios FE-S9 / FE-S10 / FE-S11
+
+| Scenario | How it is satisfied |
+| --- | --- |
+| **FE-S9** committed-lockfile age gate | `apps/web/scripts/dependency_age_gate.mjs` parses the entire committed lock, enumerates every unique registry package (direct/transitive/dev/test/build/optional/scoped/platform), requires each `resolved` host == `registry.npmjs.org` and committed integrity == registry `dist.integrity`, reads the registry publication timestamp + the registry `Date` UTC clock, requires age >= 604800 s (604800 PASS / 604799 FAIL, integer seconds), and FAILS CLOSED (non-zero exit, package marked FAIL, never skipped) on outage/missing-or-malformed timestamp/malformed entry/missing integrity/mismatch/unexpected host. No allowlist / suppression / `--ignore`. Runs in the required PR+push `web-lockfile-age-gate` job and the scheduled npm-audit workflow. `.npmrc min-release-age=7` retained as defense-in-depth. Proven offline by the boundary + fail-closed + enumeration unit tests; the live half runs on the CI runner. |
+| **FE-S10** exact direct/dev pins | Every direct dependency AND devDependency in `apps/web/package.json` is an EXACT version equal to the lock-resolved version (R2.4 table); converting the ranges introduces ZERO resolution change (each `target == node_modules/<name>.version` in the committed lock; the orchestrator's regeneration is the authoritative byte-for-byte diff and STOPS if any resolved version changes). `save-exact=true` retained. |
+| **FE-S11** npm CLI tooling advisory verification | `checkNpmTooling` fails the run on ANY OSV advisory affecting `npm@<pinned>` and if that CLI is < 7 days old; fail-closed on any error; no suppression/allowlist. Wired into `web-lockfile-age-gate` and the scheduled workflow via `--npm-tooling-version "$(npm -v)"` (which is `11.18.0` after the pin). The policy doc distinguishes the four layers (a–d). |
+
+## R2.8 What the orchestrator must do remotely (rev 2)
+
+1. Regenerate `apps/web/package-lock.json` on the CI runner (npm 11.18.0). Confirm the exact-pin conversion changed **zero** resolved versions/integrity vs. the prior lock (FE-S10 authoritative proof). **STOP and report** if any resolved version changes.
+2. On the CI runner, confirm `node --test apps/web/scripts/tests/` passes and the live `web-lockfile-age-gate` prints PASS for every committed package and the npm tooling (FE-S9/FE-S11). These are the CI-verified halves the thin-client PC cannot run.
+3. Record ledger transitions and integrate git per ADR-005; keep task PR #64 OPEN for the fresh G3/G4 + G5 review bound to the new head.
+
+## R2.9 Confirmations
+
+- **No `apps/web/src/**` change; no test change (other than the new gate's own tests); no TypeScript-setting change; no Python change; no `services/api/**` change.** Only `apps/web/scripts/**` (new), `apps/web/package.json` (exact pins), the two npm workflows, the policy doc, and this report were touched.
+- **No allowlist / suppression / `--ignore` / exception path** anywhere in the gate, its tests, or the workflows. The only exception mechanism remains the owner-only, age-only, auto-expiring emergency exception applied outside the tool (documented, unchanged).
+- **STOP conditions hit:** none. Every exact pin equals the already-resolved lock version (no `src`/test/TS change needed); no ambiguity forced a wrong security outcome; no forbidden path was needed.
+- **Producer executed nothing** (thin-client + ADR-005): no npm/npx/node/git/gh/project_control was run to produce build/lock/CI evidence. The two live API-shape confirmations (npm packument `time`/`dist.integrity`; OSV empty-vulns; registry `Date` header) and the exact-pin-vs-lock comparison were read-only reasoning inputs; all install/lock/CI verification is the orchestrator's on the runner.

@@ -70,3 +70,13 @@ jobs:
           npm audit --audit-level=low
           npm audit --json > "$RUNNER_TEMP/npm-audit.json"
           node -e "const t=require(process.env.RUNNER_TEMP+'/npm-audit.json').metadata.vulnerabilities.total; if(t!==0){console.error('npm audit total vulnerabilities='+t+' (must be 0)');process.exit(1)} console.log('npm audit total vulnerabilities=0')"
+      # M0-T019 policy-enforcement correction: re-run the committed-lockfile
+      # release-age gate on the SAME schedule (so a package that was <7 days old
+      # when merged, or a newly disclosed npm-tooling advisory, turns the run red
+      # even when nothing changed). Deterministic unit tests first, then the live
+      # gate over the committed lock (fail-closed, registry + OSV). Node-builtins
+      # only; the job default working-directory is apps/web.
+      - name: Age-gate deterministic unit tests
+        run: node --test scripts/tests/
+      - name: Committed-lockfile release-age gate — >= 7 days, fail-closed (blocking)
+        run: node scripts/dependency_age_gate.mjs package-lock.json --npm-tooling-version "$(npm -v)"

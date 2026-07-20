@@ -64,6 +64,47 @@ jobs:
       - name: Build
         run: npm run build
 
+  # Task M0-T019 policy-enforcement correction (ADDITIVE job; existing jobs
+  # untouched): the machine-enforced committed-lockfile release-age gate.
+  #
+  # WHY A SEPARATE, BLOCKING JOB
+  # ---------------------------
+  # apps/web/.npmrc `min-release-age=7` only filters versions while npm RESOLVES
+  # (regenerates) the lock. CI installs the COMMITTED lock with `npm ci`, which
+  # does NOT resolve — so a hand-edited lock could smuggle a <7-day (or
+  # forged-integrity) package past `npm ci` + `npm audit`. This job independently
+  # validates the committed apps/web/package-lock.json, fail-closed, against live
+  # registry metadata + the registry's own UTC clock, and is the AUTHORITATIVE age
+  # enforcement (the npm parallel of the Python age gate in exact-production-install).
+  # It also re-checks the pinned npm 11.18.0 CLI tooling for advisories + age
+  # (FE-S11). REQUIRED + BLOCKING: any failure fails CI. The gate is Node-builtins
+  # only (no npm deps), so it needs no install; it needs network (registry + OSV),
+  # which is available on GitHub runners.
+  web-lockfile-age-gate:
+    name: web-lockfile-age-gate (committed lock >= 7 days, fail-closed, incl. npm tooling)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: 22
+      # Same reviewed npm 11.18.0 pin as the other jobs (version-checked); the gate
+      # reports on exactly this tooling version via `npm -v`.
+      - name: Pin npm 11.18.0
+        run: |
+          npm install -g npm@11.18.0
+          test "$(npm --version)" = "11.18.0" || { echo "npm pin failed: $(npm --version) != 11.18.0"; exit 1; }
+      # Age-gate LOGIC regressions: the 604800 PASS / 604799 FAIL boundary, the
+      # integrity-match anti-forgery check, enumeration/dedupe, and every
+      # fail-closed branch (deterministic, offline, injected UTC now). No npm deps.
+      - name: Age-gate deterministic unit tests
+        run: node --test apps/web/scripts/tests/
+      # LIVE gate over the committed lock: every registry package must be
+      # >= 604800 s old with registry-matching integrity, and npm@$(npm -v) must be
+      # advisory-free and >= 7 days old. Fail-closed on any outage/mismatch.
+      - name: Committed-lockfile release-age gate — >= 7 days, fail-closed (blocking)
+        run: node apps/web/scripts/dependency_age_gate.mjs apps/web/package-lock.json --npm-tooling-version "$(npm -v)"
+
   # Task M2-T001 (ADDITIVE job; existing jobs untouched): unit tests plus
   # Playwright human journeys for the Property screen. The browser talks to
   # the REAL FastAPI app served by the recorded-official-fixture harness
