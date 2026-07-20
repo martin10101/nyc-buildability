@@ -85,9 +85,16 @@ services:
     # Production: no platform auto-deploy; deploys only via secret deploy hook
     # from the Actions pipeline (see DEPLOY TRIGGER POLICY above, ADR-003 D2).
     autoDeployTrigger: "off"
-    # Reconciled 2026-07-17 (M0-T015): services/api/requirements.txt is the
-    # pinned DEPLOYMENT set (runtime deps only, pins constrained by the
-    # pyproject.toml ranges — decision documented in that file's header).
+    # Reconciled 2026-07-17 (M0-T015); relocked 2026-07-20 (M0-T018):
+    # services/api/requirements.txt is now a GENERATED, fully hash-pinned lock
+    # (direct AND transitive production deps) produced from requirements.in by
+    # `uv pip compile --universal --python-version 3.12 --generate-hashes`
+    # (services/api/scripts/lock_requirements.sh; the api-lock-verify CI job
+    # enforces byte-identity). Because every line carries a --hash, pip runs in
+    # hash-checking mode and this install is HASH-VERIFIED automatically — no
+    # extra flag needed. requirements.in pins the exact runtime versions
+    # (jsonschema INCLUDED — it is a runtime dep of app/profile/contract.py);
+    # pyproject.toml ranges remain the source of truth for allowed bounds.
     buildCommand: "pip install -r requirements.txt"
     # Reconciled 2026-07-17 (M0-T015): real ASGI path — services/api/app/main.py
     # exposes module-level `app` (built by create_app()).

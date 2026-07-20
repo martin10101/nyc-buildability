@@ -118,6 +118,93 @@ jobs:
       - name: Pytest
         run: pytest -q
 
+  # Task M0-T018 (ADDITIVE job; existing jobs untouched): prove the committed
+  # production lock services/api/requirements.txt is a byte-identical, up-to-date
+  # regeneration from requirements.in. Uses a PINNED uv (resolver output can
+  # change across uv releases) and the same --universal / --python-version 3.12
+  # / --generate-hashes flags Render's build reproducibility depends on. Fails
+  # loudly if requirements.txt drifts from requirements.in (someone edited the
+  # lock by hand or forgot to regenerate). No app install needed.
+  api-lock-verify:
+    name: api-lock-verify (requirements.txt is a fresh hash-pinned uv lock)
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: services/api
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5.6.0
+        with:
+          python-version: "3.12"
+      - name: Install pinned uv
+        run: python -m pip install "uv==0.11.29"
+      - name: Verify requirements.txt is byte-identical to a fresh lock
+        run: bash scripts/lock_requirements.sh --check
+
+  # Task M0-T018 (ADDITIVE job; existing jobs untouched): the EXACT Render
+  # production install path, exercised end to end. This is the authoritative
+  # proof that the deployed dependency tree is complete (jsonschema present),
+  # advisory-clean, and actually runs validate_profile — the health endpoint
+  # cannot prove this because contract.py imports jsonschema lazily.
+  exact-production-install:
+    name: exact-production-install (Render pip install path + validate_profile + pip-audit)
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: services/api
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5.6.0
+        with:
+          python-version: "3.12"
+      # Clean env, EXACTLY Render's build command (render.yaml buildCommand:
+      # `pip install -r requirements.txt`). --require-hashes is implied because
+      # the lock is fully hashed; make it explicit so an unhashed line fails.
+      - name: Install production tree via Render's exact command (hash-verified)
+        run: |
+          python -m pip install --upgrade pip
+          pip install --require-hashes -r requirements.txt
+      # Make the real app importable without dev extras (mirrors the production
+      # image / web-e2e non-editable install): install the package itself with
+      # NO dependencies so ONLY the locked production tree above provides them.
+      - name: Install app package only (no deps — production tree already pinned)
+        run: pip install --no-deps .
+      - name: pip check (no broken/conflicting requirements)
+        run: pip check
+      # pip-audit against the EXACT resolved production tree. The lock is the
+      # full transitive closure, so `-r requirements.txt --no-deps` audits
+      # exactly the pinned versions Render installs (auditing the active env
+      # instead would trip --strict on the local, non-PyPI app package).
+      # Run via `pipx run` so pip-audit's OWN dependencies install into an
+      # isolated environment and never perturb the pinned production tree that
+      # the later pytest step runs against.
+      # BLOCKING at every severity: pip-audit exits non-zero on ANY finding and
+      # --strict fails if any pinned package cannot be audited — there is no
+      # --ignore-vuln / allowlist / print-only downgrade anywhere. The starlette
+      # bump to 1.3.1 clears the prior nine advisories
+      # (PYSEC-2026-161/248/249/1941/1942/2280/2281).
+      - name: pip-audit — production tree must have ZERO advisories (blocking)
+        run: pipx run --spec "pip-audit==2.10.1" pip-audit -r requirements.txt --no-deps --strict
+      - name: POSITIVE smoke — create_app + validate_profile on a valid fixture
+        run: python scripts/exact_install_smoke.py
+      # NEGATIVE smoke (the key proof): remove jsonschema, the SAME gate must
+      # FAIL loudly inside validate_profile. Proves the smoke exercises the
+      # runtime import, not a health endpoint.
+      - name: NEGATIVE smoke — jsonschema removed makes validate_profile FAIL
+        run: |
+          pip uninstall -y jsonschema
+          python scripts/exact_install_smoke.py --expect-missing-jsonschema
+      - name: Restore jsonschema from the locked tree (hash-verified)
+        run: pip install --require-hashes -r requirements.txt
+      # DP-S5: run the FULL API suite against the production-installed tree.
+      # Only the test RUNNER deps (pytest, httpx for TestClient) are added on
+      # top — the production runtime deps still come from the locked tree, not
+      # from dev extras. This proves the production tree runs the whole suite.
+      - name: Install test-runner deps only (pytest + httpx TestClient)
+        run: pip install "pytest>=8,<9" "httpx>=0.27,<1"
+      - name: Pytest against the production-installed tree
+        run: pytest -q
+
   contracts:
     name: contracts (JSON Schema validation)
     runs-on: ubuntu-latest
