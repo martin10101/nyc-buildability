@@ -23,12 +23,6 @@ from app.resilience.breaker import CircuitBreaker
 from app.resilience.budget import AnalysisBudget
 from app.resilience.cache import TTLCache
 from app.resilience.config import ResilienceConfig
-from app.resilience.fetcher import (
-    BudgetExceededError,
-    CircuitOpenError,
-    ResilientPlutoFetcher,
-    build_default_resilient_fetcher,
-)
 from app.resilience.metrics import ResilienceMetrics, logging_metrics_hook
 from app.resilience.retry import backoff_delay, parse_retry_after
 
@@ -46,3 +40,26 @@ __all__ = [
     "logging_metrics_hook",
     "parse_retry_after",
 ]
+
+# Task M2-T011: the fetcher-composition names are exported LAZILY (PEP 562).
+# app.resilience.fetcher imports the pluto_soda connector, and pluto_soda now
+# imports app.resilience.transport (the shared transport/retry engine); an
+# eager fetcher import here would close that loop into a circular import.
+# ``from app.resilience import ResilientPlutoFetcher`` (and the other three
+# names) keeps working unchanged through module __getattr__.
+_FETCHER_EXPORTS = frozenset(
+    {
+        "BudgetExceededError",
+        "CircuitOpenError",
+        "ResilientPlutoFetcher",
+        "build_default_resilient_fetcher",
+    }
+)
+
+
+def __getattr__(name: str):
+    if name in _FETCHER_EXPORTS:
+        from app.resilience import fetcher
+
+        return getattr(fetcher, name)
+    raise AttributeError(f"module {__name__!r} has no attribute {name!r}")

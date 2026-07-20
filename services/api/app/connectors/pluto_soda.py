@@ -41,10 +41,8 @@ import math
 import os
 import re
 import time
-import urllib.error
-import urllib.request
 import uuid
-from collections.abc import Callable, Mapping
+from collections.abc import Callable
 from dataclasses import dataclass, field
 from datetime import UTC, datetime
 
@@ -52,6 +50,28 @@ from app.connectors.bbl import (
     BBLValidationError,
     check_identifier_consistency,
     normalize_bbl,
+)
+
+# Task M2-T011: transport primitives and the bounded retry engine moved
+# VERBATIM to the shared app.resilience.transport module (consolidating the
+# four duplicated per-connector loops). This module re-exports the accepted
+# public names (__all__ unchanged) so every existing import site keeps
+# working; connector semantics (error taxonomy, 400 classification,
+# messages) stay HERE and reach the shared engine through RetryHooks.
+from app.resilience.transport import (
+    DEFAULT_OPENER,
+    MAX_RESPONSE_BYTES,
+    NoRedirectHandler,
+    Transport,
+    TransportFailure,
+    TransportResponse,
+    TransportTimeout,
+    fixed_exponential_delay,
+    request_with_retry,
+    standard_retry_hooks,
+)
+from app.resilience.transport import (
+    urllib_transport as _shared_urllib_transport,
 )
 
 __all__ = [
@@ -94,10 +114,8 @@ VERSION_RE = re.compile(r"^\d{2}v\d+(\.\d+)?$")
 # Schema-drift failure signature (M1-T001 G1 finding; fixture F13).
 SCHEMA_DRIFT_ERROR_CODE = "query.soql.no-such-column"
 
-# G5 F1: bounded response read. Expected per-BBL bodies are ~1.5 KB; anything
-# beyond this cap indicates a compromised/misbehaving endpoint and is refused
-# instead of exhausting worker memory.
-MAX_RESPONSE_BYTES = 10 * 1024 * 1024
+# G5 F1 bounded response read (M2-T011: MAX_RESPONSE_BYTES now lives in
+# app.resilience.transport and is re-exported above, value unchanged).
 
 # G5 F4: Socrata errorCode values observed officially are dotted lowercase
 # tokens (e.g. query.soql.no-such-column). Anything outside this shape is
@@ -105,12 +123,9 @@ MAX_RESPONSE_BYTES = 10 * 1024 * 1024
 # response can never inject control characters into caller logs.
 _ERROR_CODE_SAFE_RE = re.compile(r"^[A-Za-z0-9._-]{1,120}$")
 
-# Task M1-T009: Retry-After is untrusted response data. Both RFC 9110 forms
-# (delay-seconds and HTTP-date, e.g. "Fri, 17 Jul 2026 08:00:00 GMT") match
-# this allowlist and pass through verbatim; anything else is repr()-sanitized
-# before entering the typed-error detail (same policy as errorCode above).
-# The resilience layer parses the value; unparseable -> jittered backoff.
-_RETRY_AFTER_SAFE_RE = re.compile(r"^[A-Za-z0-9,: +\-]{1,64}$")
+# Task M1-T009 Retry-After sanitization (M2-T011: allowlist and sanitizer
+# now live in app.resilience.transport, policy unchanged - RFC 9110 shapes
+# pass verbatim, everything else is repr()-sanitized).
 
 # Per-input vintage date columns = per-record effective-date bounds
 # (research section 4.2, G1 C5). Socrata-typed text; nullable per record (F1v).
@@ -314,112 +329,30 @@ class SourceUnavailableError(PlutoConnectorError):
 
 
 # ---------------------------------------------------------------------------
-# Transport abstraction (injectable so all tests run offline)
+# Transport abstraction (injectable so all tests run offline). Task M2-T011:
+# TransportResponse / TransportTimeout / TransportFailure / the no-redirect
+# opener / the hardened urllib transport moved VERBATIM to
+# app.resilience.transport; the names imported at the top of this module
+# keep every accepted import path (``from app.connectors.pluto_soda import
+# TransportResponse, ...``) working unchanged.
 # ---------------------------------------------------------------------------
 
-@dataclass(frozen=True)
-class TransportResponse:
-    """Transport-level response.
-
-    ``headers`` (task M1-T009, ADDITIVE with a default so every existing
-    fixture transport keeps constructing ``TransportResponse(status, body)``
-    unchanged): response headers with LOWERCASE keys - transports normalize
-    on capture. Used only to surface the RFC 9110 ``Retry-After`` value of a
-    429 into the typed error detail for the resilience layer; header values
-    are never logged and never appear in payloads unsanitized.
-    """
-
-    status: int
-    body: str
-    headers: Mapping[str, str] = field(default_factory=dict)
-
-
-class TransportTimeout(Exception):
-    """Raised by a transport on connect/read timeout."""
-
-
-class TransportFailure(Exception):
-    """Raised by a transport when the network/DNS/TLS layer fails.
-    The message must already be free of secrets."""
-
-
-Transport = Callable[[str, dict[str, str], float], TransportResponse]
-
-
-class _NoRedirectHandler(urllib.request.HTTPRedirectHandler):
-    """G5 F3: refuse ALL HTTP redirects. urllib's default redirect handler
-    re-sends request headers - including X-App-Token - to the redirect
-    target, so an open redirect on the pinned official host could exfiltrate
-    the token cross-host. Returning None makes urlopen raise HTTPError(3xx),
-    which the transport converts into a plain TransportResponse; the caller
-    then classifies the 3xx as source_unavailable. The token never follows
-    any redirect, same-host or cross-host."""
-
-    def redirect_request(self, req, fp, code, msg, headers, newurl):  # noqa: ARG002
-        return None
-
-
-# Module-level opener WITHOUT redirect following (G5 F3). build_opener
-# replaces the default HTTPRedirectHandler with our subclass.
-_OPENER = urllib.request.build_opener(_NoRedirectHandler)
-
-
-def _lowercase_headers(message: object) -> dict[str, str]:
-    """Task M1-T009: capture RESPONSE headers with lowercase keys for the
-    TransportResponse headers contract. Response headers are server data
-    (never the request's X-App-Token); they stay out of logs and payloads
-    except the sanitized Retry-After detail."""
-    if message is None:
-        return {}
-    try:
-        items = message.items()  # type: ignore[attr-defined]
-    except AttributeError:
-        return {}
-    return {str(name).lower(): str(value) for name, value in items}
-
-
-def _bounded_read(stream: object) -> str:
-    """G5 F1: read at most MAX_RESPONSE_BYTES; refuse oversize bodies with a
-    typed transport failure instead of an unbounded read + json.loads."""
-    data = stream.read(MAX_RESPONSE_BYTES + 1)  # type: ignore[attr-defined]
-    if len(data) > MAX_RESPONSE_BYTES:
-        raise TransportFailure(
-            f"response body exceeded {MAX_RESPONSE_BYTES} bytes; refusing unbounded read"
-        )
-    return data.decode("utf-8", errors="replace")
+# Accepted monkeypatch seam (G5 F3 tests patch ``pluto_soda._OPENER`` and
+# assert ``pluto_soda._NoRedirectHandler`` is installed): the class alias
+# and the module-level opener binding are preserved; the wrapper below reads
+# ``_OPENER`` at call time so the seam behaves exactly as before.
+_NoRedirectHandler = NoRedirectHandler
+_OPENER = DEFAULT_OPENER
 
 
 def urllib_transport(url: str, headers: dict[str, str], timeout: float) -> TransportResponse:
     """Default stdlib transport (no third-party HTTP dependency; low-storage
     policy). Translates urllib failures into transport-level signals.
     Hardened per M1-T002 G5: bounded body read (F1) and no redirect
-    following (F3)."""
-    request = urllib.request.Request(url, headers=headers, method="GET")
-    try:
-        with _OPENER.open(request, timeout=timeout) as response:  # noqa: S310
-            return TransportResponse(
-                status=response.status,
-                body=_bounded_read(response),
-                # getattr: headers stay optional so response doubles without
-                # a headers attribute (tests) keep working - headers are an
-                # additive capture, never a required transport capability.
-                headers=_lowercase_headers(getattr(response, "headers", None)),
-            )
-    except urllib.error.HTTPError as exc:
-        # Includes refused 3xx redirects (F3): status passes through and the
-        # caller maps it to a typed error; no request is ever re-issued.
-        body = _bounded_read(exc)
-        return TransportResponse(
-            status=exc.code,
-            body=body,
-            headers=_lowercase_headers(getattr(exc, "headers", None)),
-        )
-    except TimeoutError as exc:  # socket.timeout is an alias since Python 3.10
-        raise TransportTimeout(f"timeout after {timeout}s") from exc
-    except urllib.error.URLError as exc:
-        if isinstance(exc.reason, TimeoutError):
-            raise TransportTimeout(f"timeout after {timeout}s") from exc
-        raise TransportFailure(f"network failure: {type(exc.reason).__name__}") from exc
+    following (F3). Task M2-T011: delegates to the shared implementation in
+    :mod:`app.resilience.transport`, passing this module's ``_OPENER`` so
+    the accepted monkeypatch seam keeps working unchanged."""
+    return _shared_urllib_transport(url, headers, timeout, opener=_OPENER)
 
 
 # ---------------------------------------------------------------------------
@@ -500,23 +433,6 @@ def _classify_400(body: str) -> str | None:
     return None
 
 
-def _sanitize_retry_after(raw: str) -> str:
-    """Task M1-T009: pass through RFC 9110-shaped Retry-After values
-    verbatim; repr()-sanitize anything else (untrusted header data)."""
-    if _RETRY_AFTER_SAFE_RE.match(raw):
-        return raw
-    return repr(raw)
-
-
-def _get_retry_after(headers: Mapping[str, str]) -> str | None:
-    """Case-insensitive Retry-After lookup (transports normalize to
-    lowercase keys; this stays defensive for injected test transports)."""
-    for name, value in headers.items():
-        if name.lower() == "retry-after" and isinstance(value, str):
-            return value
-    return None
-
-
 def _sanitize_error_code(code: str | None) -> str | None:
     """G5 F4: errorCode is untrusted response data. Official codes match the
     dotted-token allowlist and pass through verbatim; anything else (control
@@ -541,91 +457,68 @@ def _request_with_retry(
     correlation_id: str,
 ) -> TransportResponse:
     """Bounded retry on 429/5xx/timeout/network failure only. Schema drift
-    and other 4xx are never retried."""
-    last_kind: str | None = None
-    last_detail: dict = {}
-    for attempt in range(1, max_attempts + 1):
-        try:
-            response = transport(url, headers, timeout)
-        except TransportTimeout:
-            last_kind, last_detail = "timeout", {"attempts": attempt}
-            logger.warning(
-                "pluto_soda timeout url=%s attempt=%d correlation_id=%s",
-                url, attempt, correlation_id,
-            )
-        except TransportFailure as exc:
-            last_kind = "network"
-            last_detail = {"attempts": attempt, "reason": str(exc)}
-            logger.warning(
-                "pluto_soda network failure url=%s attempt=%d correlation_id=%s",
-                url, attempt, correlation_id,
-            )
-        else:
-            if response.status == 200:
-                return response
-            if response.status == 429:
-                last_kind, last_detail = "rate_limited", {"attempts": attempt}
-                # Task M1-T009: surface the (sanitized) Retry-After value in
-                # the typed-error detail so the resilience layer can honor it
-                # exactly (RFC 9110 section 10.2.3). The official Socrata
-                # docs specify only the 429 status (fixture F07), so the
-                # header is OPTIONAL input, never a guessed guarantee.
-                retry_after_raw = _get_retry_after(response.headers)
-                if retry_after_raw is not None:
-                    last_detail["retry_after"] = _sanitize_retry_after(retry_after_raw)
-                logger.warning(
-                    "pluto_soda throttled (429) url=%s attempt=%d correlation_id=%s",
-                    url, attempt, correlation_id,
-                )
-            elif response.status == 400:
-                error_code = _classify_400(response.body)
-                safe_code = _sanitize_error_code(error_code)  # G5 F4
-                if error_code == SCHEMA_DRIFT_ERROR_CODE:
-                    raise SchemaDriftError(
-                        "SODA rejected a column reference: schema drift signature "
-                        f"({SCHEMA_DRIFT_ERROR_CODE})",
-                        correlation_id=correlation_id,
-                        detail={"http_status": 400, "error_code": safe_code, "url": url},
-                    )
-                raise SourceUnavailableError(
-                    "SODA rejected the request (HTTP 400, not the schema-drift signature)",
+    and other 4xx are never retried.
+
+    Task M2-T011: delegates the accepted control flow to the shared engine
+    (:func:`app.resilience.transport.request_with_retry`) with the legacy
+    M1-T002 delay policy (plain exponential, no jitter, no Retry-After
+    wait). The PLUTO-specific classification (SODA 400 schema-drift
+    signature, G5 F4 errorCode sanitization) and every accepted message
+    stay here."""
+
+    def _raise_for_unexpected_status(response: TransportResponse) -> None:
+        if response.status == 400:
+            error_code = _classify_400(response.body)
+            safe_code = _sanitize_error_code(error_code)  # G5 F4
+            if error_code == SCHEMA_DRIFT_ERROR_CODE:
+                raise SchemaDriftError(
+                    "SODA rejected a column reference: schema drift signature "
+                    f"({SCHEMA_DRIFT_ERROR_CODE})",
                     correlation_id=correlation_id,
                     detail={"http_status": 400, "error_code": safe_code, "url": url},
                 )
-            elif 500 <= response.status < 600:
-                last_kind = "server_error"
-                last_detail = {"attempts": attempt, "http_status": response.status}
-                logger.warning(
-                    "pluto_soda server error %d url=%s attempt=%d correlation_id=%s",
-                    response.status, url, attempt, correlation_id,
-                )
-            else:
-                raise SourceUnavailableError(
-                    f"unexpected HTTP status {response.status} from SODA endpoint",
-                    correlation_id=correlation_id,
-                    detail={"http_status": response.status, "url": url},
-                )
-        if attempt < max_attempts:
-            sleep(backoff_base * (2 ** (attempt - 1)))
+            raise SourceUnavailableError(
+                "SODA rejected the request (HTTP 400, not the schema-drift signature)",
+                correlation_id=correlation_id,
+                detail={"http_status": 400, "error_code": safe_code, "url": url},
+            )
+        raise SourceUnavailableError(
+            f"unexpected HTTP status {response.status} from SODA endpoint",
+            correlation_id=correlation_id,
+            detail={"http_status": response.status, "url": url},
+        )
 
-    detail = {**last_detail, "url": url, "max_attempts": max_attempts}
-    if last_kind == "rate_limited":
-        raise RateLimitedError(
-            "SODA throttled the request (HTTP 429) and the retry budget is exhausted; "
-            "configure SOCRATA_APP_TOKEN to leave the shared tokenless pool",
+    return request_with_retry(
+        url,
+        transport=transport,
+        headers=headers,
+        timeout=timeout,
+        max_attempts=max_attempts,
+        hooks=standard_retry_hooks(
+            logger=logger,
+            log_label="pluto_soda",
             correlation_id=correlation_id,
-            detail=detail,
-        )
-    if last_kind == "timeout":
-        raise SourceTimeoutError(
-            "SODA request timed out and the retry budget is exhausted",
-            correlation_id=correlation_id,
-            detail=detail,
-        )
-    raise SourceUnavailableError(
-        "SODA endpoint unavailable and the retry budget is exhausted",
-        correlation_id=correlation_id,
-        detail=detail,
+            url=url,
+            # Accepted M1-T002 behavior: the TransportFailure message enters
+            # the retry detail verbatim (the transport already emits only
+            # secret-free failure-type names).
+            sanitize_network_reason=lambda reason: reason,
+            rate_limited_error=RateLimitedError,
+            rate_limited_message=(
+                "SODA throttled the request (HTTP 429) and the retry budget is exhausted; "
+                "configure SOCRATA_APP_TOKEN to leave the shared tokenless pool"
+            ),
+            timeout_error=SourceTimeoutError,
+            timeout_message="SODA request timed out and the retry budget is exhausted",
+            unavailable_error=SourceUnavailableError,
+            unavailable_message="SODA endpoint unavailable and the retry budget is exhausted",
+            # Accepted M1-T002 detail shape: no reason_kind key (unlike the
+            # M2-wave connectors) - preserved exactly.
+            include_reason_kind=False,
+            raise_for_unexpected_status=_raise_for_unexpected_status,
+        ),
+        compute_delay=fixed_exponential_delay(backoff_base),
+        sleep=sleep,
     )
 
 

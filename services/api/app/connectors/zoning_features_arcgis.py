@@ -76,22 +76,28 @@ from datetime import UTC, datetime
 from random import Random
 from urllib.parse import quote
 
-# Reused hardened transport + canonical JSON digest from the accepted M1-T002
-# connector (bounded body read, refused redirects, typed transport signals).
-# Read-only reuse: pluto_soda.py itself is NOT modified by this task.
-from app.connectors.pluto_soda import (
-    TransportFailure,
-    TransportResponse,
-    TransportTimeout,
-    canonical_json_digest,
-    urllib_transport,
-)
+# Canonical JSON digest reused from the accepted M1-T002 connector.
+from app.connectors.pluto_soda import canonical_json_digest
 from app.resilience.breaker import CircuitBreaker
 from app.resilience.budget import AnalysisBudget
 from app.resilience.cache import TTLCache
 from app.resilience.config import ResilienceConfig
 from app.resilience.metrics import ResilienceMetrics
-from app.resilience.retry import backoff_delay, parse_retry_after
+
+# Task M2-T011: hardened transport (bounded body read, refused redirects,
+# typed transport signals) and the bounded retry engine now come from the
+# shared app.resilience.transport module (moved verbatim from the accepted
+# M1-T002 implementation this connector previously reused via pluto_soda).
+# Connector semantics - error taxonomy, messages, layer tagging - stay HERE
+# and reach the shared engine through standard_retry_hooks.
+from app.resilience.transport import (
+    Transport,
+    TransportResponse,
+    jittered_retry_after_delay,
+    request_with_retry,
+    standard_retry_hooks,
+    urllib_transport,
+)
 
 __all__ = [
     "EXPECTED_LATEST_WKID",
@@ -258,7 +264,8 @@ HARD_MAX_PAGES = 200  # absolute ceiling regardless of caller input
 _FIELD_NAME_SAFE_RE = re.compile(r"^[A-Za-z0-9_]{1,64}$")
 _WHERE_VALUE_SAFE_RE = re.compile(r"^[A-Za-z0-9 .,'()/&+-]{1,120}$")
 _SAFE_TEXT_RE = re.compile(r"^[A-Za-z0-9 .,:;'\"()\[\]/_%=-]{1,300}$")
-_RETRY_AFTER_SAFE_RE = re.compile(r"^[A-Za-z0-9,: +\-]{1,64}$")
+# Retry-After sanitization moved to app.resilience.transport (M2-T011),
+# allowlist and repr()-sanitize policy unchanged.
 
 
 # ---------------------------------------------------------------------------
@@ -574,27 +581,11 @@ def build_query_url(
 
 # ---------------------------------------------------------------------------
 # Transport request with bounded retry (single retry authority for the plain
-# functions; reuses M1-T009 retry primitives)
+# functions). Task M2-T011: the accepted control flow now runs in the shared
+# engine (app.resilience.transport.request_with_retry) with the M1-T009
+# jitter/Retry-After delay policy; the connector-specific error taxonomy,
+# messages, and layer tagging stay here through the RetryHooks seam.
 # ---------------------------------------------------------------------------
-
-Transport = Callable[[str, dict[str, str], float], TransportResponse]
-
-
-def _get_retry_after(headers: object) -> str | None:
-    try:
-        items = headers.items()  # type: ignore[attr-defined]
-    except AttributeError:
-        return None
-    for name, value in items:
-        if str(name).lower() == "retry-after" and isinstance(value, str):
-            return value
-    return None
-
-
-def _sanitize_retry_after(raw: str) -> str:
-    if _RETRY_AFTER_SAFE_RE.match(raw):
-        return raw
-    return repr(raw)
 
 
 def _request_with_retry(
@@ -617,105 +608,47 @@ def _request_with_retry(
     unexpected statuses (including refused 3xx redirects) and every parse or
     drift condition are never retried. One budget unit per upstream ATTEMPT
     (every network call costs quota), consumed BEFORE the I/O."""
-    last_kind: str | None = None
-    last_detail: dict = {}
-    for attempt in range(1, max_attempts + 1):
-        if budget is not None and not budget.try_consume():
-            raise RequestBudgetExceededError(
-                "per-analysis upstream request budget is exhausted; no "
-                "further upstream calls are made for this analysis",
-                correlation_id=correlation_id,
-                layer=layer,
-                detail={
-                    "max_upstream_requests": budget.max_upstream_requests,
-                    "consumed": budget.consumed,
-                    "analysis_id": budget.analysis_id,
-                },
-            )
-        try:
-            response = transport(url, {"Accept": "application/json"}, timeout)
-        except TransportTimeout:
-            last_kind, last_detail = "timeout", {"attempts": attempt}
-            logger.warning(
-                "zoning_features timeout url=%s attempt=%d correlation_id=%s",
-                url, attempt, correlation_id,
-            )
-        except TransportFailure as exc:
-            last_kind = "network"
-            last_detail = {"attempts": attempt, "reason": _safe_text(str(exc))}
-            logger.warning(
-                "zoning_features network failure url=%s attempt=%d correlation_id=%s",
-                url, attempt, correlation_id,
-            )
-        else:
-            if response.status == 200:
-                return response
-            if response.status == 429:
-                last_kind, last_detail = "rate_limited", {"attempts": attempt}
-                retry_after_raw = _get_retry_after(response.headers)
-                if retry_after_raw is not None:
-                    last_detail["retry_after"] = _sanitize_retry_after(retry_after_raw)
-                logger.warning(
-                    "zoning_features throttled (429) url=%s attempt=%d correlation_id=%s",
-                    url, attempt, correlation_id,
-                )
-            elif 500 <= response.status < 600:
-                last_kind = "server_error"
-                last_detail = {"attempts": attempt, "http_status": response.status}
-                logger.warning(
-                    "zoning_features server error %d url=%s attempt=%d correlation_id=%s",
-                    response.status, url, attempt, correlation_id,
-                )
-            else:
-                raise UpstreamError(
-                    f"unexpected HTTP status {response.status} from the "
-                    "official ArcGIS service",
-                    correlation_id=correlation_id,
-                    layer=layer,
-                    detail={"http_status": response.status, "url": url},
-                )
-        if attempt < max_attempts:
-            delay: float | None = None
-            if last_kind == "rate_limited" and "retry_after" in last_detail:
-                parsed = parse_retry_after(
-                    last_detail["retry_after"], wall_now=wall_clock
-                )
-                if parsed is not None:
-                    if parsed > retry_after_cap:
-                        # Honored by NOT retrying: typed failure now rather
-                        # than a blocked worker thread (M1-T009 policy).
-                        break
-                    delay = parsed
-            if delay is None:
-                delay = backoff_delay(
-                    attempt,
-                    base_seconds=backoff_base,
-                    cap_seconds=backoff_cap,
-                    rng=rng,
-                )
-            sleep(delay)
 
-    detail = {**last_detail, "url": url, "max_attempts": max_attempts}
-    if last_kind == "rate_limited":
-        raise RateLimitedError(
-            "official ArcGIS service throttled the request (HTTP 429) and "
-            "the retry budget is exhausted",
+    return request_with_retry(
+        url,
+        transport=transport,
+        headers={"Accept": "application/json"},
+        timeout=timeout,
+        max_attempts=max_attempts,
+        hooks=standard_retry_hooks(
+            logger=logger,
+            log_label="zoning_features",
             correlation_id=correlation_id,
-            layer=layer,
-            detail=detail,
-        )
-    if last_kind == "timeout":
-        raise SourceTimeoutError(
-            "ArcGIS request timed out and the retry budget is exhausted",
-            correlation_id=correlation_id,
-            layer=layer,
-            detail=detail,
-        )
-    raise UpstreamError(
-        "official ArcGIS service unavailable and the retry budget is exhausted",
-        correlation_id=correlation_id,
-        layer=layer,
-        detail={**detail, "reason_kind": last_kind},
+            url=url,
+            sanitize_network_reason=_safe_text,
+            rate_limited_error=RateLimitedError,
+            rate_limited_message=(
+                "official ArcGIS service throttled the request (HTTP 429) and "
+                "the retry budget is exhausted"
+            ),
+            timeout_error=SourceTimeoutError,
+            timeout_message="ArcGIS request timed out and the retry budget is exhausted",
+            unavailable_error=UpstreamError,
+            unavailable_message=(
+                "official ArcGIS service unavailable and the retry budget is exhausted"
+            ),
+            include_reason_kind=True,
+            unexpected_status_message=(
+                "unexpected HTTP status {status} from the official ArcGIS service"
+            ),
+            budget_error=RequestBudgetExceededError,
+            # Every typed error of this connector carries the layer tag.
+            error_kwargs={"layer": layer},
+        ),
+        compute_delay=jittered_retry_after_delay(
+            backoff_base=backoff_base,
+            backoff_cap=backoff_cap,
+            retry_after_cap=retry_after_cap,
+            rng=rng,
+            wall_clock=wall_clock,
+        ),
+        sleep=sleep,
+        budget=budget,
     )
 
 
