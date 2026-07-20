@@ -18,6 +18,16 @@ dependencies = [
     # without dev extras, so the first validated request would have failed on
     # a missing import had this stayed under [dev].
     "jsonschema>=4.21,<5",
+    # M2-T009: runtime geometry library for the MapPLUTO per-BBL geometry
+    # connector (app/connectors/mappluto_geometry_arcgis.py). Pinned EXACT
+    # (owner packet directive) rather than as a range because the
+    # connector's deterministic geometry digests and make_valid repair
+    # behavior are GEOS-build-dependent (the 2.0.7 wheels bundle GEOS
+    # 3.11.4 on every platform); a range here could silently change digest
+    # output between installs. The test suite asserts shapely.__version__
+    # and shapely.geos_version_string. Re-pin only deliberately (dedicated
+    # commit, re-anchored digests, CI green).
+    "shapely==2.0.7",
 ]
 
 [project.optional-dependencies]
