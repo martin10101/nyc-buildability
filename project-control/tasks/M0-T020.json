@@ -95,13 +95,13 @@
     "G4",
     "G5"
   ],
-  "producer_agent": null,
+  "producer_agent": "cloud-architect",
   "reviewer_agents": [
     "code-reviewer",
     "security-reviewer"
   ],
-  "status": "backlog",
-  "progress_percent": 0,
+  "status": "accepted",
+  "progress_percent": 100,
   "planning_only": false,
   "authorizing_directive": "Owner resolution 2026-07-20 (post-M0-T018 acceptance) + PR #58 planning-review amendments + pytest 9.0.3 bounded amendment authorization (owner 2026-07-20, Phase C): M0-T020 is AUTHORIZED for implementation after this control amendment merges (Phase C3, producer cloud-architect). The ONLY new forbidden-path exception is the single services/api/pyproject.toml [dev] pytest specifier change ('pytest>=8,<9' -> 'pytest>=9.0.3,<10') plus an optional adjacent comment. No advisory waiver, no policy exception, no audit split, no pytest 8.x retention, no third-party pytest fork. Do NOT merge the M0-T020 task PR, accept M0-T020, advance CP-0031, dispatch M0-T019, or release any hold. Post-acceptance follow-up, NOT a reopening/amendment of accepted M0-T018.",
   "risks": [
@@ -116,5 +116,31 @@
   ],
   "blockers": [],
   "created_at": "2026-07-20T16:24:45.968370+00:00",
-  "updated_at": "2026-07-20T18:04:49.197133+00:00"
+  "updated_at": "2026-07-20T19:55:47.900976+00:00",
+  "worktree": ".claude/worktrees/agent-ab14f31e8c53fac99",
+  "progress_log": [
+    {
+      "at": "2026-07-20T19:55:36.928765+00:00",
+      "agent": "cloud-architect",
+      "percent": 20,
+      "status": "in_progress",
+      "message": "Acceptance scenarios authored (tooling-lock byte-identity, age-gate 17-test suite, pytest 9.0.3 collection byte-identical, dual pip-audit zero, production-lock byte-identity, regression); target set reconfirmed live."
+    },
+    {
+      "at": "2026-07-20T19:55:37.149843+00:00",
+      "agent": "cloud-architect",
+      "percent": 60,
+      "status": "in_progress",
+      "message": "Hash-pinned tooling lock (11 direct -> 42 pkgs / 389 sha256) via lock_tools.sh; every Python CI job installs --require-hashes tools + --no-deps app; dual pip-audit + machine release-age gate wired; production lock byte-identical under uv 0.11.28."
+    },
+    {
+      "at": "2026-07-20T19:55:37.363615+00:00",
+      "agent": "cloud-architect",
+      "percent": 75,
+      "status": "self_check",
+      "message": "CI green incl new api-tooling-lock-verify + dual pip-audit + api on Python 3.12 (20 checks); pytest 9.0.3 suite 538 passed no weakening; production lock unchanged."
+    }
+  ],
+  "accepted_by": "orchestrator",
+  "accepted_at": "2026-07-20T19:55:47.900976+00:00"
 }
