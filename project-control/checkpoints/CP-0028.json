@@ -1,0 +1,9 @@
+{
+  "checkpoint_id": "CP-0028",
+  "timestamp": "2026-07-20T04:08:49.987714+00:00",
+  "commit": "ef395f5",
+  "branch": "main",
+  "active_milestone": "M0",
+  "summary": "M2-T007 ACCEPTED (33rd): GIS Zoning Features connector for the six canonical DCP_GIS ArcGIS layers (nyzd/nyco/nysp/nysp_sd/nylh/nyzma), EPSG 2263 preserved. Task PR 39 merged at ef395f5. Lifecycle: packets control PR 38 (G0 PASS + claim backend-engineer) - producer complete (80 new tests, 32 manifested fixtures: 19 live-captured 2026-07-20 UTC + 13 labeled synthetic; OQ-11 resultOffset paging RESOLVED live, f=geojson still open; error-object-with-HTTP-200 captured live) - G2 self-check (api 356 passed, ruff clean, orchestrator re-ran independently; CI green both events, one disclosed unrelated web-e2e flake rerun green) - submit - G1 PASS data-contract-verifier (live byte-identical nyzd metadata re-fetch; all 32 digests recomputed; two-staleness proven both directions; D1 LOW) - G3 PASS + G4 PASS code-reviewer (suite re-run 356; scope exact; single retry loop confirmed; D1-D3 LOW) - G5 PASS security-reviewer (adversarial allowlist/injection probes; zero defects) - accept. Carry-forwards: 4 LOW defects + shared-transport refactor recommendation before M2-T008 repeats the pattern (G4 O1), wider secret-scan needles, correlation_id shape-bounding at future HTTP boundary. Ledger: 33 accepted / 2 blocked / 3 backlog (M2-T008, M2-T009, M2-T010) / 0 claimed. Next: revalidate M2-T008 packet against main ef395f5 then dispatch (owner-ordered serialization).",
+  "updated_at": "2026-07-20T04:08:49.987714+00:00"
+}
