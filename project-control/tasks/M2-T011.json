@@ -3,7 +3,7 @@
   "title": "Shared connector transport/retry consolidation + canonical source access registry",
   "task_type": "backend",
   "milestone_id": "M2",
-  "objective": "Two coupled deliverables (owner directive 2026-07-20). (1) CONSOLIDATION: extract the transport + retry loop now duplicated across services/api/app/connectors/pluto_soda.py, zoning_features_arcgis.py, ztldb_soda.py, and mappluto_geometry_arcgis.py into one shared module under services/api/app/resilience/ or services/api/app/connectors/, consolidating the ALREADY ACCEPTED connector resilience behavior WITHOUT weakening or independently redesigning it. The following accepted behaviors must be preserved exactly: response caching, request budgets, Retry-After handling, backoff jitter, circuit-breaker behavior, last-known-good serve behavior, typed staleness (contract-1.3.0 two-staleness rule), provenance capture (raw and normalized digests, retrieval timestamps, capture URLs byte-reproducible by each connector's URL builder), endpoint allowlisting, metadata validation, mandatory deterministic paging with typed pathologies, and every connector-specific semantic (SODA omitted-key vs observed-null, split-lot ordering, slash-tie, PARK caveat, condo billing-lot semantics, CRS gate before coordinate math, geometry-validity taxonomy, no-silent-repair). This is a refactor whose null hypothesis is 'behavior unchanged'; any observable behavior difference is a defect unless disclosed and owner-approved. (2) CANONICAL SOURCE ACCESS REGISTRY: create docs/SOURCE_ACCESS_REGISTRY.md as the canonical per-source access-governance record (building on docs/research/source-registry-drafts/*.json, which remain the raw research artifacts). For EVERY external source currently used or researched (PLUTO SODA, DCP zoning-features ArcGIS, ZTLDB SODA, MapPLUTO ArcGIS, Geoclient, DOB NOW/legacy datasets, zoning resolution), record: official source and endpoint URLs; API/bulk-file/authorized-document-download access mode; authentication requirements; published quota or rate-limit information (cite the official statement or record 'none published'); retrieval and refresh cadence; source freshness signal; schema/file version; terms, attribution, and usage-policy links; last policy-verification date; outage and last-known-good behavior; and whether the source is suitable for live requests, scheduled ingestion, or reference-only use. The registry must state explicitly that the ZoLa browser interface is NOT a production API (the underlying official datasets/services are the production sources) and must not assume any free government service is permanently free, unlimited, stable, or covered by an SLA — record the actual documented commitments only.",
+  "objective": "Two coupled deliverables (owner directive 2026-07-20). (1) CONSOLIDATION: extract the transport + retry loop now duplicated across services/api/app/connectors/pluto_soda.py, zoning_features_arcgis.py, ztldb_soda.py, and mappluto_geometry_arcgis.py into one shared module under services/api/app/resilience/ or services/api/app/connectors/, consolidating the ALREADY ACCEPTED connector resilience behavior WITHOUT weakening or independently redesigning it. The following accepted behaviors must be preserved exactly: response caching, request budgets, Retry-After handling, backoff jitter, circuit-breaker behavior, last-known-good serve behavior, typed staleness (contract-1.3.0 two-staleness rule), provenance capture (raw and normalized digests, retrieval timestamps, capture URLs byte-reproducible by each connector's URL builder), endpoint allowlisting, metadata validation, mandatory deterministic paging with typed pathologies, and every connector-specific semantic (SODA omitted-key vs observed-null, split-lot ordering, slash-tie, PARK caveat, condo billing-lot semantics, CRS gate before coordinate math, geometry-validity taxonomy, no-silent-repair). This is a refactor whose null hypothesis is 'behavior unchanged'; any observable behavior difference is a defect unless disclosed and owner-approved. (2) CANONICAL SOURCE ACCESS REGISTRY: create docs/SOURCE_ACCESS_REGISTRY.md as the canonical per-source access-governance record (building on docs/research/source-registry-drafts/*.json, which remain the raw research artifacts). For EVERY external source currently used or researched (PLUTO SODA, DCP zoning-features ArcGIS, ZTLDB SODA, MapPLUTO ArcGIS, Geoclient, DOB NOW/legacy datasets, zoning resolution), record: official source and endpoint URLs; API/bulk-file/authorized-document-download access mode; authentication requirements; published quota or rate-limit information (cite the official statement or record 'none published'); retrieval and refresh cadence; source freshness signal; schema/file version; terms, attribution, and usage-policy links; last policy-verification date; outage and last-known-good behavior; and whether the source is suitable for live requests, scheduled ingestion, or reference-only use. The registry must state explicitly that the ZoLa browser interface is NOT a production API (the underlying official datasets/services are the production sources) and must not assume any free government service is permanently free, unlimited, stable, or covered by an SLA \u2014 record the actual documented commitments only.",
   "business_reason": "Reviewers across M2-T007/T008/T009 recommended consolidating the four duplicated transport/retry implementations BEFORE a fifth connector lands; the owner approved with the explicit constraint that consolidation must not weaken accepted resilience behavior. The source access registry is an owner-mandated governance artifact ensuring no connector is built on undocumented access assumptions (owner directive 2026-07-20).",
   "inputs": [
     "services/api/app/connectors/pluto_soda.py, zoning_features_arcgis.py, ztldb_soda.py, mappluto_geometry_arcgis.py (the four accepted connectors and their duplicated transport/retry loops)",
@@ -57,14 +57,14 @@
     "G4",
     "G5"
   ],
-  "producer_agent": null,
+  "producer_agent": "backend-engineer",
   "reviewer_agents": [
     "data-contract-verifier",
     "code-reviewer",
     "security-reviewer"
   ],
-  "status": "backlog",
-  "progress_percent": 0,
+  "status": "accepted",
+  "progress_percent": 100,
   "risks": [
     "Touches all four connector files - MUST NOT run in parallel with any other task editing services/api/app/connectors/** or services/api/tests/{connectors,resilience}/**; it IS approved to run in parallel with M2-T010 because their file scopes are disjoint (proof recorded in the 2026-07-20 planning report)",
     "Behavior drift is the primary risk: G3/G4 must re-verify accepted behavior, not just code cleanliness; G1 re-verifies live-source behavior through the shared path (byte-identical re-fetch proof pattern)",
@@ -74,5 +74,31 @@
   ],
   "blockers": [],
   "created_at": "2026-07-20T06:34:13.860920+00:00",
-  "updated_at": "2026-07-20T06:34:13.862647+00:00"
+  "updated_at": "2026-07-20T07:51:05.975024+00:00",
+  "worktree": ".claude/worktrees/agent-acf9b40e50546a750",
+  "progress_log": [
+    {
+      "at": "2026-07-20T07:51:01.500351+00:00",
+      "agent": "backend-engineer",
+      "percent": 20,
+      "status": "in_progress",
+      "message": "Acceptance scenarios TC-S1..TC-S8 authored"
+    },
+    {
+      "at": "2026-07-20T07:51:01.936486+00:00",
+      "agent": "backend-engineer",
+      "percent": 60,
+      "status": "in_progress",
+      "message": "Shared transport.py + four connector wrappers + registry implemented"
+    },
+    {
+      "at": "2026-07-20T07:51:02.391120+00:00",
+      "agent": "backend-engineer",
+      "percent": 75,
+      "status": "self_check",
+      "message": "538 tests green (522 unmodified + 16 new); ruff clean; TC-S2 grep-proven"
+    }
+  ],
+  "accepted_by": "orchestrator",
+  "accepted_at": "2026-07-20T07:51:05.975024+00:00"
 }
