@@ -1,0 +1,17 @@
+{
+  "fixture_id": "ZF100",
+  "title": "Malformed response: well-formed JSON object WITHOUT a features key - typed malformed_response, never an empty result",
+  "source_id": "nyc-dcp-zoning-features-arcgis",
+  "layer": "nylh",
+  "request_url": "https://services5.arcgis.com/GfwWNkhOj9bNBqoJ/arcgis/rest/services/nylh/FeatureServer/0/query?where=1%3D1&outFields=*&orderByFields=OBJECTID%20ASC&resultRecordCount=6&resultOffset=0&f=json",
+  "http_status": 200,
+  "retrieval_timestamp_utc": "2026-07-20T03:07:59Z",
+  "capture_method": "SYNTHETIC: derived offline from ZF04a_page_nylh_offset0.json by build_fixture_pack.py derive; NOT official data; exercises connector failure logic only",
+  "classification": "synthetic",
+  "derived_from": "ZF04a_page_nylh_offset0.json",
+  "supports_scenarios": [
+    "ZF-S6"
+  ],
+  "notes": "Malformed response: well-formed JSON object WITHOUT a features key - typed malformed_response, never an empty result",
+  "response_body_raw": "{\"objectIdFieldName\": \"OBJECTID\", \"uniqueIdField\": {\"name\": \"OBJECTID\", \"isSystemMaintained\": true}, \"globalIdFieldName\": \"\", \"geometryProperties\": {\"shapeAreaFieldName\": \"Shape__Area\", \"shapeLengthFieldName\": \"Shape__Length\", \"units\": \"esriFeet\"}, \"geometryType\": \"esriGeometryPolygon\", \"spatialReference\": {\"wkid\": 102718, \"latestWkid\": 2263}, \"fields\": [{\"name\": \"OBJECTID\", \"type\": \"esriFieldTypeOID\", \"alias\": \"OBJECTID\", \"sqlType\": \"sqlTypeOther\", \"domain\": null, \"defaultValue\": null}, {\"name\": \"LHNAME\", \"type\": \"esriFieldTypeString\", \"alias\": \"LHNAME\", \"sqlType\": \"sqlTypeOther\", \"length\": 50, \"domain\": null, \"defaultValue\": null}, {\"name\": \"LHLBL\", \"type\": \"esriFieldTypeString\", \"alias\": \"LHLBL\", \"sqlType\": \"sqlTypeOther\", \"length\": 10, \"domain\": null, \"defaultValue\": null}, {\"name\": \"Shape__Area\", \"type\": \"esriFieldTypeDouble\", \"alias\": \"Shape__Area\", \"sqlType\": \"sqlTypeDouble\", \"domain\": null, \"defaultValue\": null}, {\"name\": \"Shape__Length\", \"type\": \"esriFieldTypeDouble\", \"alias\": \"Shape__Length\", \"sqlType\": \"sqlTypeDouble\", \"domain\": null, \"defaultValue\": null}], \"exceededTransferLimit\": true}"
+}

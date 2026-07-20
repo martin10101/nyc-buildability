@@ -1,0 +1,16 @@
+{
+  "fixture_id": "ZF02c",
+  "title": "returnCountOnly baseline for nysp at capture time (count-vs-page-total consistency input)",
+  "source_id": "nyc-dcp-zoning-features-arcgis",
+  "layer": "nysp",
+  "request_url": "https://services5.arcgis.com/GfwWNkhOj9bNBqoJ/arcgis/rest/services/nysp/FeatureServer/0/query?where=1%3D1&returnCountOnly=true&f=json",
+  "http_status": 200,
+  "retrieval_timestamp_utc": "2026-07-20T03:07:57Z",
+  "capture_method": "live urllib GET by M2-T007 producer, keyless official ArcGIS service, single KB-scale bounded request",
+  "classification": "raw",
+  "supports_scenarios": [
+    "ZF-S2"
+  ],
+  "notes": "returnCountOnly baseline for nysp at capture time (count-vs-page-total consistency input)",
+  "response_body_raw": "{\"count\":95}"
+}

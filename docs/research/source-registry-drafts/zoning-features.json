@@ -36,10 +36,10 @@
       "feature_counts_2026_07_16": { "nyzd": 5416, "nyco": 9623, "nysp": 95, "nysp_sd": 336, "nylh": 14, "nyzma": 1414, "note": "nysp/nysp_sd/nylh/nyzma counts captured at G1 review (C3)" }
     },
     "terms_usage_notes": "DCP informational-purposes-only disclaimer (nyzd metadata verbatim, Z11): DCP does not warranty completeness, accuracy, content, or fitness for any particular purpose. Data 'freely available to all New York City agencies and the public.' Not for lot-level zoning determination (see geographic_coverage).",
-    "connector_implementation": "PLAN ONLY (M1-T003 is research): monthly Render worker pages all six layers via f=json (resultOffset paging; nyco 9,623 features > 2000 cap needs ~5 pages) into PostGIS zoning_district_geometries / commercial_overlay_geometries / special_district_geometries / limited-height / pending_land_use_actions (nyzma); stamps editingInfo.dataLastEditDate + retrieval timestamp per layer as provenance; raw page responses stored to Supabase Storage.",
+    "connector_implementation": "IMPLEMENTED (M2-T007): services/api/app/connectors/zoning_features_arcgis.py — allowlisted six-layer connector (exact-match layer allowlist, bounded where/outFields/paging parameters, no caller-provided URLs), validated layer metadata (field inventory, objectIdField, SR 102718/2263, maxRecordCount, pagination capabilities, editingInfo.dataLastEditDate), mandatory deterministic paging on every layer (orderByFields=<objectIdField> ASC + resultOffset, exceededTransferLimit respected, repeated-id/duplicate-page/zero-progress/page-budget/count-mismatch guards), typed error taxonomy (upstream_error incl. ArcGIS error-object-with-HTTP-200, malformed_response, schema_drift, timeout, rate_limited, disallowed_request, paging_pathology, budget_exhausted, circuit_open), M1-T009 resilience primitives composed in ResilientZoningFeaturesClient (TTL cache, circuit breaker, last-known-good with truthful transport staleness, per-analysis request budget, Retry-After honoring), separate raw/canonical-normalized digests. Fixture pack + provenance manifest: services/api/tests/fixtures/zoning_features/ (live capture 2026-07-20 UTC). Two-staleness rule enforced: dataLastEditDate is provenance only, never sets served_from_cache/stale. REMAINING PLAN (follow-up tasks): monthly Render worker persisting paged extractions into PostGIS geometry tables; raw page responses to Supabase Storage (no persistence in M2-T007 — B-001 stands).",
     "last_successful_ingestion": null,
-    "latest_source_version": "No version label on the ArcGIS channel (OQ-6). Freshness observed live 2026-07-16: all six layers dataLastEditDate 2026-07-01. Corresponding BYTES release naming is YYYYMM (Socrata blob description 'Current version: 202604' — lagging channel, see known_limitations).",
-    "health_status": "unverified",
+    "latest_source_version": "No version label on the ArcGIS channel (OQ-6). Freshness re-observed live 2026-07-20 UTC (M2-T007 fixture capture): all six layers dataLastEditDate still 2026-07-01 (raw ms values identical to the 2026-07-16 observation) and all six feature counts identical (5416/9623/95/336/14/1414). Corresponding BYTES release naming is YYYYMM (Socrata blob description 'Current version: 202604' — lagging channel, see known_limitations).",
+    "health_status": "connector implemented and fixture-verified offline (M2-T007, live capture 2026-07-20 UTC); no production ingestion yet",
     "known_limitations": [
       "No version field on services; provenance version must be derived from editingInfo.dataLastEditDate (OQ-6)",
       "Per-request page caps vary by layer (92/317/14 on small layers) — connector must page generically",
@@ -47,7 +47,8 @@
       "Official +/- 20 ft horizontal accuracy: split-lot boundary intersections near tolerance are not authoritative (Z11)",
       "nysp_sd service description references a SUBSUB attribute that does not exist in the live schema (SUBAREA_* fields instead) — map fields from the live schema only (S4 finding)",
       "Directory also contains non-canonical zoning services (v_Zoning_Districts_NYZD view, neighborhood rezoning one-offs) — pin to the six canonical service names",
-      "nyzma STATUS/LUCATS value domains and EFFECTIVE null semantics unverified (OQ-7)"
+      "nyzma STATUS/LUCATS value domains and EFFECTIVE null semantics unverified (OQ-7). Partial live evidence 2026-07-20 UTC (fixture ZF07): STATUS 'Adopted' observed with EFFECTIVE null on nyzma OBJECTID 1 — EFFECTIVE can be null even on an Adopted record; full domains still unverified",
+      "ArcGIS error behavior verified live 2026-07-20 UTC (fixture ZF06): an invalid query returns HTTP 200 with an error OBJECT (error.code 400) — connectors must treat error-with-200 as an upstream error, never as data"
     ],
     "fallback_source": "Socrata blob mm69-vrje (see companion record nyc-dcp-zoning-features-blob); DCP BYTES page https://www.nyc.gov/content/planning/pages/resources/datasets/gis-zoning-features (URL authentic per mm69-vrje description; HTTP 403 to non-browser clients recorded 2026-07-16, OQ-1)",
     "open_questions": [
@@ -55,8 +56,8 @@
       "OQ-2: existence/name of a shapefile variant (no Socrata shapefile dataset found)",
       "OQ-5: contents of nyco/nysp/nysp_sd/nylh/nyzma metadata PDFs (attachments verified to exist with assetIds)",
       "OQ-6: version-label derivation for ArcGIS ingests",
-      "OQ-7: nyzma value domains",
-      "OQ-11: f=geojson support and resultOffset paging behavior (standard AGOL, not exercised live)"
+      "OQ-7: nyzma value domains (partial evidence 2026-07-20 UTC: STATUS 'Adopted' with EFFECTIVE null observed live — see known_limitations)",
+      "OQ-11: RESOLVED for resultOffset paging (M2-T007, live 2026-07-20 UTC): all six layers advertise advancedQueryCapabilities.supportsPagination=true and supportsOrderBy=true; resultOffset+resultRecordCount+orderByFields verified live on nylh (3 pages, 6/6/2 records, exceededTransferLimit=true on partial pages and absent on the final page — fixtures ZF04a-c). STILL OPEN for f=geojson: the connector uses f=json only; geojson support was deliberately not exercised"
     ]
   },
   {

@@ -1,0 +1,16 @@
+{
+  "fixture_id": "ZF05",
+  "title": "Well-formed empty result (no zoning district named XX): empty features array is a VALID empty result",
+  "source_id": "nyc-dcp-zoning-features-arcgis",
+  "layer": "nyzd",
+  "request_url": "https://services5.arcgis.com/GfwWNkhOj9bNBqoJ/arcgis/rest/services/nyzd/FeatureServer/0/query?where=ZONEDIST%3D%27XX%27&outFields=*&orderByFields=OBJECTID%20ASC&f=json",
+  "http_status": 200,
+  "retrieval_timestamp_utc": "2026-07-20T03:08:00Z",
+  "capture_method": "live urllib GET by M2-T007 producer, keyless official ArcGIS service, single KB-scale bounded request",
+  "classification": "raw",
+  "supports_scenarios": [
+    "ZF-S6"
+  ],
+  "notes": "Well-formed empty result (no zoning district named XX): empty features array is a VALID empty result",
+  "response_body_raw": "{\"objectIdFieldName\":\"OBJECTID\",\"uniqueIdField\":{\"name\":\"OBJECTID\",\"isSystemMaintained\":true},\"globalIdFieldName\":\"\",\"geometryProperties\":{\"shapeAreaFieldName\":\"Shape__Area\",\"shapeLengthFieldName\":\"Shape__Length\",\"units\":\"esriFeet\"},\"features\":[]}"
+}
