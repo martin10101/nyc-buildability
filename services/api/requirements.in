@@ -1,0 +1,64 @@
+# services/api — production dependency SOURCE for the deterministic lock (task M0-T018).
+#
+# WHY THIS FILE EXISTS
+# -------------------
+# render.yaml builds the API with `pip install -r requirements.txt`. That
+# requirements.txt is now a GENERATED, fully hash-pinned lock (direct AND
+# transitive) produced from THIS file by:
+#
+#   pip-compile --generate-hashes --output-file=requirements.txt requirements.in
+#
+# (exact command + pinned pip-tools version: services/api/scripts/lock_requirements.sh
+#  and the `api-lock-verify` CI job). Regenerating is idempotent (byte-identical).
+#
+# SOURCE-OF-TRUTH RELATIONSHIP
+# ----------------------------
+# pyproject.toml [project.dependencies] remains the source of truth for the
+# ALLOWED RANGES. Every EXACT pin below MUST satisfy those ranges. This file
+# adds the deliberate exact-version selection that a reproducible Render build
+# and the release-age gate require — pip-compile alone would pick the newest
+# in-range release, which can be < 7 days old and fail the M0-T018 age gate
+# (e.g. fastapi 0.139.1/0.139.2 were published 2026-07-16, only 4 days before
+# the 2026-07-20 verification; fastapi 0.139.0 (2026-07-01) is the age-clean,
+# advisory-free, starlette-1.3.1-compatible target).
+#
+# RUNTIME DEPENDENCIES ONLY. dev/test tools (pytest, httpx, ruff) stay in
+# pyproject [project.optional-dependencies].dev and are NOT installed on Render.
+# jsonschema is a RUNTIME dependency: app/profile/contract.py validate_profile
+# imports it at request time (function-local import at contract.py). It is NOT
+# a dev-only tool — it must be installed by the Render build path.
+#
+# VERIFIED TARGET SET (M0-T018, verification date 2026-07-20; see
+# project-control/reports/M0-T018-producer-report.md for per-package
+# publication-timestamp evidence and advisory checks):
+#   fastapi 0.139.0, starlette 1.3.1, uvicorn[standard] 0.51.0,
+#   shapely 2.0.7 (GEOS-digest pin — do NOT bump), jsonschema 4.26.0.
+# fastapi 0.139.0 requires `starlette>=0.46.0` (open upper bound) so 1.3.1 is
+# permitted; the resolved tree is advisory-clean under pip-audit.
+#
+# Update pins deliberately (dedicated commit, CI green, re-verified age +
+# advisories) — never as a side effect of another task.
+
+fastapi==0.139.0
+starlette==1.3.1
+uvicorn[standard]==0.51.0
+jsonschema==4.26.0
+shapely==2.0.7
+
+# --- transitive-dependency age control (M0-T018) ---
+# uvicorn[standard] pulls `websockets` (constraint websockets>=10.4). The
+# newest release websockets==16.1.1 was published 2026-07-17 — only 2 days
+# before the 2026-07-20 verification, so it FAILS the >=7-day release-age gate
+# (DP-S7). Pin the immediate age-clean predecessor 16.1 (2026-07-10, 9 days),
+# which is advisory-free and satisfies uvicorn's >=10.4 constraint. Revisit
+# when 16.1.1 (or a successor) clears the age window.
+websockets==16.1
+
+# `shapely` (pinned 2.0.7) requires `numpy>=1.14` — an OPEN upper bound — so the
+# resolver is otherwise free to choose any numpy, and uv's universal resolution
+# was observed selecting different numpy versions across runs (a reproducibility
+# hazard for the byte-identical lock). Pin numpy explicitly to remove that
+# ambiguity. 2.4.6 (2026-05-18, 62 days) is age-clean, advisory-free, and
+# provides cp312 manylinux wheels for the Render/CI target. Revisit deliberately
+# with a re-verified age + advisory check.
+numpy==2.4.6
