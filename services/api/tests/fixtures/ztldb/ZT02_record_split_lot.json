@@ -1,0 +1,18 @@
+{
+  "fixture_id": "ZT02",
+  "title": "Split-lot record (PLUTO F05 golden lot): zoning_district_1 R3-2 + zoning_district_2 C4-1 ordering preserved; special district GI; zoning_map_code Y border flag",
+  "source_id": "nyc-dcp-ztldb-soda",
+  "dataset_id": "fdkv-4t4z",
+  "request_url": "https://data.cityofnewyork.us/resource/fdkv-4t4z.json?bbl=1000010010&%24order=bbl&%24limit=10",
+  "http_status": 200,
+  "retrieval_timestamp_utc": "2026-07-20T04:28:48Z",
+  "capture_method": "live urllib GET by M2-T008 producer, anonymous request to the official NYC Open Data SODA endpoint, single KB-scale bounded request",
+  "classification": "raw",
+  "supports_scenarios": [
+    "ZT-S2",
+    "ZT-S13",
+    "ZT-S14"
+  ],
+  "notes": "Split-lot record (PLUTO F05 golden lot): zoning_district_1 R3-2 + zoning_district_2 C4-1 ordering preserved; special district GI; zoning_map_code Y border flag",
+  "response_body_raw": "[{\"borough_code\":\"1\",\"tax_block\":\"1\",\"tax_lot\":\"10\",\"bbl\":\"1000010010\",\"zoning_district_1\":\"R3-2\",\"zoning_district_2\":\"C4-1\",\"special_district_1\":\"GI\",\"zoning_map_number\":\"16A\",\"zoning_map_code\":\"Y\"}]\n"
+}

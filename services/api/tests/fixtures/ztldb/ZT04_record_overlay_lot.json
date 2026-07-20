@@ -1,0 +1,16 @@
+{
+  "fixture_id": "ZT04",
+  "title": "Commercial-overlay lot: commercial_overlay_1 C1-5 within the official Appendix C value set",
+  "source_id": "nyc-dcp-ztldb-soda",
+  "dataset_id": "fdkv-4t4z",
+  "request_url": "https://data.cityofnewyork.us/resource/fdkv-4t4z.json?bbl=1001110100&%24order=bbl&%24limit=10",
+  "http_status": 200,
+  "retrieval_timestamp_utc": "2026-07-20T04:28:49Z",
+  "capture_method": "live urllib GET by M2-T008 producer, anonymous request to the official NYC Open Data SODA endpoint, single KB-scale bounded request",
+  "classification": "raw",
+  "supports_scenarios": [
+    "ZT-S5"
+  ],
+  "notes": "Commercial-overlay lot: commercial_overlay_1 C1-5 within the official Appendix C value set",
+  "response_body_raw": "[{\"borough_code\":\"1\",\"tax_block\":\"111\",\"tax_lot\":\"100\",\"bbl\":\"1001110100\",\"zoning_district_1\":\"R7-2\",\"commercial_overlay_1\":\"C1-5\",\"zoning_map_number\":\"12D\"}]\n"
+}

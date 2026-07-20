@@ -530,6 +530,9 @@ def build_property_profile(
     result: PlutoFetchResult,
     *,
     clock: Callable[[], datetime] = _utc_now,
+    additional_provenance: list[dict] | None = None,
+    additional_conflicts: list[dict] | None = None,
+    additional_notes: list[str] | None = None,
 ) -> dict:
     """Build the canonical property-profile document for a successful fetch.
 
@@ -537,6 +540,24 @@ def build_property_profile(
         result: connector result with ``status == "ok"``. ``no_match`` and
             typed failures are HTTP-layer states, not profiles.
         clock: injectable UTC clock for deterministic tests.
+        additional_provenance: (task M2-T008, additive, default None -
+            every existing call is unchanged) extra canonical source_fact
+            records from OTHER accepted connectors for the SAME property
+            (e.g. ZTLDB lot-level zoning facts), appended verbatim to the
+            profile ``provenance`` array. Same contract shape as the PLUTO
+            facts; nothing here re-labels or adjudicates them.
+        additional_conflicts: (task M2-T008, additive) contract-shape
+            cross-source conflict entries (``field``/``values``/
+            ``resolution``/``reason``, e.g. from
+            ``app.profile.zoning_crosscheck``), appended to ``conflicts``
+            BEFORE status dimensions are computed - so an unresolved
+            cross-source conflict on an identity or critical field gates
+            ``analysis_readiness`` through the EXISTING M2-T004 machinery,
+            with no new mechanism and no contract-shape change.
+        additional_notes: (task M2-T008, additive) extra non-empty note
+            strings appended to ``reproducibility.connector_notes``
+            (schema: array of strings) - e.g. cross-check uncertainty
+            notes that are visible but are not conflicts.
 
     Returns:
         A dict that validates against property_profile.schema.json v1. The
@@ -614,10 +635,12 @@ def build_property_profile(
         },
         # Every connector fact goes into provenance verbatim (source_fact v1
         # records), including identity/zoning source fields that also feed
-        # derived sections above.
-        "provenance": list(result.facts),
+        # derived sections above. M2-T008: additional accepted-connector
+        # facts (e.g. ZTLDB) are appended verbatim - never merged, never
+        # adjudicated against the PLUTO facts.
+        "provenance": [*result.facts, *(additional_provenance or [])],
         "missing_inputs": missing_inputs,
-        "conflicts": _conflicts(result),
+        "conflicts": [*_conflicts(result), *(additional_conflicts or [])],
         "user_confirmations": [],
         # ------------------------------------------------------------------
         # Additive (schema-permitted) extensions:
@@ -632,7 +655,9 @@ def build_property_profile(
             "retrieved_at": result.retrieved_at,
             "record_count": result.record_count,
             "drift_signals": list(result.drift_signals),
-            "connector_notes": list(result.notes),
+            # M2-T008: cross-check notes (visible uncertainty that is not a
+            # conflict) travel through the EXISTING notes channel.
+            "connector_notes": [*result.notes, *(additional_notes or [])],
             "coverage_policy": _COVERAGE_POLICY,
             # M2-T004 snapshot lineage: the exact-response digest plus the
             # verbatim canonicalization spec needed to recompute/verify it.

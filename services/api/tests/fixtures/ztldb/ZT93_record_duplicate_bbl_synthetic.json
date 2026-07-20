@@ -1,0 +1,17 @@
+{
+  "fixture_id": "ZT93",
+  "title": "Two records for one BBL: violates the one-row-per-tax-lot dataset contract - typed schema_drift, never a silent pick",
+  "source_id": "nyc-dcp-ztldb-soda",
+  "dataset_id": "fdkv-4t4z",
+  "request_url": "https://data.cityofnewyork.us/resource/fdkv-4t4z.json?bbl=1000010100&%24order=bbl&%24limit=10",
+  "http_status": 200,
+  "retrieval_timestamp_utc": "2026-07-20T04:28:48Z",
+  "capture_method": "SYNTHETIC: derived offline from ZT01_record_single_lot.json by build_fixture_pack.py derive; NOT official data; exercises connector logic only",
+  "classification": "synthetic",
+  "derived_from": "ZT01_record_single_lot.json",
+  "supports_scenarios": [
+    "ZT-S1"
+  ],
+  "notes": "Two records for one BBL: violates the one-row-per-tax-lot dataset contract - typed schema_drift, never a silent pick",
+  "response_body_raw": "[{\"borough_code\": \"1\", \"tax_block\": \"1\", \"tax_lot\": \"100\", \"bbl\": \"1000010100\", \"zoning_district_1\": \"R3-2\", \"special_district_1\": \"GI\", \"zoning_map_number\": \"16A\"}, {\"borough_code\": \"1\", \"tax_block\": \"1\", \"tax_lot\": \"100\", \"bbl\": \"1000010100\", \"zoning_district_1\": \"R3-2\", \"special_district_1\": \"GI\", \"zoning_map_number\": \"16A\"}]"
+}

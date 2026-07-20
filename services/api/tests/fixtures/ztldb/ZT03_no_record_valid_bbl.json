@@ -1,0 +1,16 @@
+{
+  "fixture_id": "ZT03",
+  "title": "Well-formed empty array for a syntactically valid BBL with no ZTLDB row: typed no-record RESULT, never an error",
+  "source_id": "nyc-dcp-ztldb-soda",
+  "dataset_id": "fdkv-4t4z",
+  "request_url": "https://data.cityofnewyork.us/resource/fdkv-4t4z.json?bbl=5999999999&%24order=bbl&%24limit=10",
+  "http_status": 200,
+  "retrieval_timestamp_utc": "2026-07-20T04:28:48Z",
+  "capture_method": "live urllib GET by M2-T008 producer, anonymous request to the official NYC Open Data SODA endpoint, single KB-scale bounded request",
+  "classification": "raw",
+  "supports_scenarios": [
+    "ZT-S3"
+  ],
+  "notes": "Well-formed empty array for a syntactically valid BBL with no ZTLDB row: typed no-record RESULT, never an error",
+  "response_body_raw": "[]\n"
+}
