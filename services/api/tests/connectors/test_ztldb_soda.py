@@ -1091,7 +1091,7 @@ def test_s16_every_built_url_targets_the_pinned_official_dataset() -> None:
 
 
 def test_s16_app_token_is_header_only_and_never_logged_or_leaked(caplog) -> None:
-    token = "in-test-credential-value"  # test-local string, never committed data
+    token = "in-test-credential-value"  # secretscan:allow fake token for leak-absence test
     transport = FakeTransport(fresh_fetch_script())
     with caplog.at_level(logging.DEBUG, logger="app.connectors.ztldb_soda"):
         result = fetch_by_bbl(
@@ -1116,7 +1116,7 @@ def test_s16_app_token_is_header_only_and_never_logged_or_leaked(caplog) -> None
 
 
 def test_s16_app_token_absent_from_typed_error_payloads() -> None:
-    token = "in-test-credential-value"
+    token = "in-test-credential-value"  # secretscan:allow fake token for leak-absence test
     transport = FakeTransport(
         [fixture_response("ZT98_rate_limited_429_synthetic.json")] * 2
     )
