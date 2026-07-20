@@ -1,0 +1,72 @@
+name: scheduled-npm-audit
+
+# Task M0-T019: continuous supply-chain audit of the committed web dependency
+# tree (apps/web/package.json + apps/web/package-lock.json).
+#
+# WHY A SEPARATE WORKFLOW
+# -----------------------
+# The `web` job in ci.yml audits the tree on every push/PR, but new advisories
+# are published against ALREADY-PINNED versions AFTER a lock lands. This
+# workflow re-audits the same committed lock on a schedule so a freshly
+# disclosed advisory turns the run red and is visible/actionable even when no
+# code changed. It also runs on PRs that touch the web dependency artifacts so a
+# dependency change is audited before merge. This is the npm counterpart of the
+# Python scheduled-audit.yml.
+#
+# BLOCKING: `npm audit --audit-level=low` fails on any advisory at/above low, and
+# the JSON parse fails the run unless metadata.vulnerabilities.total == 0. Dev
+# deps are included. No --ignore, no allowlist, no warning-only downgrade
+# (docs/DEPENDENCY_SECURITY_POLICY.md). A red scheduled run is the actionable
+# signal; wire notifications at the repo level if desired (as with
+# scheduled-audit.yml).
+
+on:
+  schedule:
+    # 06:41 UTC daily (offset minute, distinct from scheduled-audit.yml's 06:17,
+    # to avoid the top-of-hour scheduler surge; GitHub does not guarantee exact
+    # cron times).
+    - cron: "41 6 * * *"
+  pull_request:
+    paths:
+      - "apps/web/package.json"
+      - "apps/web/package-lock.json"
+      - "apps/web/.npmrc"
+      - ".github/workflows/scheduled-npm-audit.yml"
+  # Manual trigger so the owner/orchestrator can re-audit on demand.
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: scheduled-npm-audit-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  audit:
+    name: npm audit (web tree, blocking on any finding)
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: apps/web
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: apps/web/package-lock.json
+      # M0-T019: pin npm to the reviewed 11.18.0 (same as ci.yml) so the audit
+      # runs against a deterministic tree installed under apps/web/.npmrc.
+      - name: Pin npm 11.18.0
+        run: |
+          npm install -g npm@11.18.0
+          test "$(npm --version)" = "11.18.0" || { echo "npm pin failed: $(npm --version) != 11.18.0"; exit 1; }
+      - name: Install dependencies (deterministic; audit is the separate gate)
+        run: npm ci --no-audit --no-fund
+      # SAME blocking audit as ci.yml's web job: level gate + JSON total==0.
+      - name: Dependency audit — zero advisories incl. dev deps (blocking)
+        run: |
+          npm audit --audit-level=low
+          npm audit --json > "$RUNNER_TEMP/npm-audit.json"
+          node -e "const t=require(process.env.RUNNER_TEMP+'/npm-audit.json').metadata.vulnerabilities.total; if(t!==0){console.error('npm audit total vulnerabilities='+t+' (must be 0)');process.exit(1)} console.log('npm audit total vulnerabilities=0')"
