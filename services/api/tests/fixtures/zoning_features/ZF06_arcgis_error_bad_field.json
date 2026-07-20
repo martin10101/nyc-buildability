@@ -1,0 +1,16 @@
+{
+  "fixture_id": "ZF06",
+  "title": "Live ArcGIS error-object behavior for an invalid field reference (records the ACTUAL http status + error envelope of these services)",
+  "source_id": "nyc-dcp-zoning-features-arcgis",
+  "layer": "nyzd",
+  "request_url": "https://services5.arcgis.com/GfwWNkhOj9bNBqoJ/arcgis/rest/services/nyzd/FeatureServer/0/query?where=NOSUCHFIELD%3D1&outFields=*&f=json",
+  "http_status": 200,
+  "retrieval_timestamp_utc": "2026-07-20T03:08:01Z",
+  "capture_method": "live urllib GET by M2-T007 producer, keyless official ArcGIS service, single KB-scale bounded request",
+  "classification": "raw",
+  "supports_scenarios": [
+    "ZF-S7"
+  ],
+  "notes": "Live ArcGIS error-object behavior for an invalid field reference (records the ACTUAL http status + error envelope of these services)",
+  "response_body_raw": "{\"error\":{\"code\":400,\"message\":\"Cannot perform query. Invalid query parameters.\",\"details\":[\"'Invalid field: NOSUCHFIELD' parameter is invalid\"]}}"
+}

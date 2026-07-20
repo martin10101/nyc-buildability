@@ -1,0 +1,714 @@
+{
+  "manifest_version": 1,
+  "task": "M2-T007",
+  "source_id": "nyc-dcp-zoning-features-arcgis",
+  "service_root": "https://services5.arcgis.com/GfwWNkhOj9bNBqoJ/arcgis/rest/services",
+  "authentication": "none (keyless official services; no tokens exist in this pack)",
+  "generated_by": "build_fixture_pack.py",
+  "generated_at_utc": "2026-07-20T03:08:47Z",
+  "digest_algorithm": "sha256:<hex> over the exact UTF-8 bytes of response_body_raw",
+  "fixtures": [
+    {
+      "file": "ZF01a_meta_nyzd.json",
+      "fixture_id": "ZF01a",
+      "classification": "raw",
+      "official_endpoint": "https://services5.arcgis.com/GfwWNkhOj9bNBqoJ/arcgis/rest/services/nyzd/FeatureServer/0?f=json",
+      "layer": "nyzd",
+      "query_parameters": "f=json",
+      "http_status": 200,
+      "retrieval_timestamp_utc": "2026-07-20T03:07:55Z",
+      "source_data_last_edit_ms": 1782912288115,
+      "crs": {
+        "wkid": 102718,
+        "latestWkid": 2263,
+        "authority": "EPSG:2263 (NAD83 / New York Long Island, US survey feet)"
+      },
+      "expected_record_count": null,
+      "response_body_sha256": "sha256:7b126c00046a0eee5a17bd20743d32732ec790376b42390861dd9d43275995ed",
+      "derived_from": null,
+      "purpose": "Layer 0 metadata for nyzd: field inventory, objectIdField, spatial reference, maxRecordCount, editingInfo freshness signals",
+      "supports_scenarios": [
+        "ZF-S1",
+        "ZF-S12"
+      ]
+    },
+    {
+      "file": "ZF01b_meta_nyco.json",
+      "fixture_id": "ZF01b",
+      "classification": "raw",
+      "official_endpoint": "https://services5.arcgis.com/GfwWNkhOj9bNBqoJ/arcgis/rest/services/nyco/FeatureServer/0?f=json",
+      "layer": "nyco",
+      "query_parameters": "f=json",
+      "http_status": 200,
+      "retrieval_timestamp_utc": "2026-07-20T03:07:56Z",
+      "source_data_last_edit_ms": 1782912829636,
+      "crs": {
+        "wkid": 102718,
+        "latestWkid": 2263,
+        "authority": "EPSG:2263 (NAD83 / New York Long Island, US survey feet)"
+      },
+      "expected_record_count": null,
+      "response_body_sha256": "sha256:f2223216b7765341ab585471e3fa404eb814e4a1e8caf928f4f5e84f7cfdd84f",
+      "derived_from": null,
+      "purpose": "Layer 0 metadata for nyco: field inventory, objectIdField, spatial reference, maxRecordCount, editingInfo freshness signals",
+      "supports_scenarios": [
+        "ZF-S1",
+        "ZF-S12"
+      ]
+    },
+    {
+      "file": "ZF01c_meta_nysp.json",
+      "fixture_id": "ZF01c",
+      "classification": "raw",
+      "official_endpoint": "https://services5.arcgis.com/GfwWNkhOj9bNBqoJ/arcgis/rest/services/nysp/FeatureServer/0?f=json",
+      "layer": "nysp",
+      "query_parameters": "f=json",
+      "http_status": 200,
+      "retrieval_timestamp_utc": "2026-07-20T03:07:56Z",
+      "source_data_last_edit_ms": 1782912605345,
+      "crs": {
+        "wkid": 102718,
+        "latestWkid": 2263,
+        "authority": "EPSG:2263 (NAD83 / New York Long Island, US survey feet)"
+      },
+      "expected_record_count": null,
+      "response_body_sha256": "sha256:594897e7d4199626b19455cdcec45b93951a10a8a0a03362556deefe972d889d",
+      "derived_from": null,
+      "purpose": "Layer 0 metadata for nysp: field inventory, objectIdField, spatial reference, maxRecordCount, editingInfo freshness signals",
+      "supports_scenarios": [
+        "ZF-S1",
+        "ZF-S12"
+      ]
+    },
+    {
+      "file": "ZF01d_meta_nysp_sd.json",
+      "fixture_id": "ZF01d",
+      "classification": "raw",
+      "official_endpoint": "https://services5.arcgis.com/GfwWNkhOj9bNBqoJ/arcgis/rest/services/nysp_sd/FeatureServer/0?f=json",
+      "layer": "nysp_sd",
+      "query_parameters": "f=json",
+      "http_status": 200,
+      "retrieval_timestamp_utc": "2026-07-20T03:07:57Z",
+      "source_data_last_edit_ms": 1782912514806,
+      "crs": {
+        "wkid": 102718,
+        "latestWkid": 2263,
+        "authority": "EPSG:2263 (NAD83 / New York Long Island, US survey feet)"
+      },
+      "expected_record_count": null,
+      "response_body_sha256": "sha256:bb26678adf8b9306fd07e9647704a6c0beaab49c9af518ebf76d2f4bb99322c4",
+      "derived_from": null,
+      "purpose": "Layer 0 metadata for nysp_sd: field inventory, objectIdField, spatial reference, maxRecordCount, editingInfo freshness signals",
+      "supports_scenarios": [
+        "ZF-S1",
+        "ZF-S12"
+      ]
+    },
+    {
+      "file": "ZF01e_meta_nylh.json",
+      "fixture_id": "ZF01e",
+      "classification": "raw",
+      "official_endpoint": "https://services5.arcgis.com/GfwWNkhOj9bNBqoJ/arcgis/rest/services/nylh/FeatureServer/0?f=json",
+      "layer": "nylh",
+      "query_parameters": "f=json",
+      "http_status": 200,
+      "retrieval_timestamp_utc": "2026-07-20T03:07:57Z",
+      "source_data_last_edit_ms": 1782912700015,
+      "crs": {
+        "wkid": 102718,
+        "latestWkid": 2263,
+        "authority": "EPSG:2263 (NAD83 / New York Long Island, US survey feet)"
+      },
+      "expected_record_count": null,
+      "response_body_sha256": "sha256:6172069c8ebb6253c2bed434e3fd22b74f7eda36ffa10a94f10914c9075edfc9",
+      "derived_from": null,
+      "purpose": "Layer 0 metadata for nylh: field inventory, objectIdField, spatial reference, maxRecordCount, editingInfo freshness signals",
+      "supports_scenarios": [
+        "ZF-S1",
+        "ZF-S12"
+      ]
+    },
+    {
+      "file": "ZF01f_meta_nyzma.json",
+      "fixture_id": "ZF01f",
+      "classification": "raw",
+      "official_endpoint": "https://services5.arcgis.com/GfwWNkhOj9bNBqoJ/arcgis/rest/services/nyzma/FeatureServer/0?f=json",
+      "layer": "nyzma",
+      "query_parameters": "f=json",
+      "http_status": 200,
+      "retrieval_timestamp_utc": "2026-07-20T03:07:58Z",
+      "source_data_last_edit_ms": 1782912214592,
+      "crs": {
+        "wkid": 102718,
+        "latestWkid": 2263,
+        "authority": "EPSG:2263 (NAD83 / New York Long Island, US survey feet)"
+      },
+      "expected_record_count": null,
+      "response_body_sha256": "sha256:aa61e70af8ba65532879423b24b65b29ea85943719a3f24dd070370bdfc643b8",
+      "derived_from": null,
+      "purpose": "Layer 0 metadata for nyzma: field inventory, objectIdField, spatial reference, maxRecordCount, editingInfo freshness signals",
+      "supports_scenarios": [
+        "ZF-S1",
+        "ZF-S12"
+      ]
+    },
+    {
+      "file": "ZF02a_count_nyzd.json",
+      "fixture_id": "ZF02a",
+      "classification": "raw",
+      "official_endpoint": "https://services5.arcgis.com/GfwWNkhOj9bNBqoJ/arcgis/rest/services/nyzd/FeatureServer/0/query?where=1%3D1&returnCountOnly=true&f=json",
+      "layer": "nyzd",
+      "query_parameters": "where=1%3D1&returnCountOnly=true&f=json",
+      "http_status": 200,
+      "retrieval_timestamp_utc": "2026-07-20T03:07:55Z",
+      "source_data_last_edit_ms": null,
+      "crs": null,
+      "expected_record_count": 5416,
+      "response_body_sha256": "sha256:c7e3f02e5932b3273f8fa5ed029085179c83767daf97ec485e029cb491024feb",
+      "derived_from": null,
+      "purpose": "returnCountOnly baseline for nyzd at capture time (count-vs-page-total consistency input)",
+      "supports_scenarios": [
+        "ZF-S2"
+      ]
+    },
+    {
+      "file": "ZF02b_count_nyco.json",
+      "fixture_id": "ZF02b",
+      "classification": "raw",
+      "official_endpoint": "https://services5.arcgis.com/GfwWNkhOj9bNBqoJ/arcgis/rest/services/nyco/FeatureServer/0/query?where=1%3D1&returnCountOnly=true&f=json",
+      "layer": "nyco",
+      "query_parameters": "where=1%3D1&returnCountOnly=true&f=json",
+      "http_status": 200,
+      "retrieval_timestamp_utc": "2026-07-20T03:07:56Z",
+      "source_data_last_edit_ms": null,
+      "crs": null,
+      "expected_record_count": 9623,
+      "response_body_sha256": "sha256:24d66015192014c12690111cc74cc82e8459739ceeeb4c6cd306ad6085383c74",
+      "derived_from": null,
+      "purpose": "returnCountOnly baseline for nyco at capture time (count-vs-page-total consistency input)",
+      "supports_scenarios": [
+        "ZF-S2"
+      ]
+    },
+    {
+      "file": "ZF02c_count_nysp.json",
+      "fixture_id": "ZF02c",
+      "classification": "raw",
+      "official_endpoint": "https://services5.arcgis.com/GfwWNkhOj9bNBqoJ/arcgis/rest/services/nysp/FeatureServer/0/query?where=1%3D1&returnCountOnly=true&f=json",
+      "layer": "nysp",
+      "query_parameters": "where=1%3D1&returnCountOnly=true&f=json",
+      "http_status": 200,
+      "retrieval_timestamp_utc": "2026-07-20T03:07:57Z",
+      "source_data_last_edit_ms": null,
+      "crs": null,
+      "expected_record_count": 95,
+      "response_body_sha256": "sha256:19659dee1004cf067426cf61c7d47e65a1c6a0ed6775c0afabff7647e5534c1a",
+      "derived_from": null,
+      "purpose": "returnCountOnly baseline for nysp at capture time (count-vs-page-total consistency input)",
+      "supports_scenarios": [
+        "ZF-S2"
+      ]
+    },
+    {
+      "file": "ZF02d_count_nysp_sd.json",
+      "fixture_id": "ZF02d",
+      "classification": "raw",
+      "official_endpoint": "https://services5.arcgis.com/GfwWNkhOj9bNBqoJ/arcgis/rest/services/nysp_sd/FeatureServer/0/query?where=1%3D1&returnCountOnly=true&f=json",
+      "layer": "nysp_sd",
+      "query_parameters": "where=1%3D1&returnCountOnly=true&f=json",
+      "http_status": 200,
+      "retrieval_timestamp_utc": "2026-07-20T03:07:57Z",
+      "source_data_last_edit_ms": null,
+      "crs": null,
+      "expected_record_count": 336,
+      "response_body_sha256": "sha256:f64f449f422f4f27910cbb826f21d4567d5b3f4264d3dca5c1a91900ec7473e3",
+      "derived_from": null,
+      "purpose": "returnCountOnly baseline for nysp_sd at capture time (count-vs-page-total consistency input)",
+      "supports_scenarios": [
+        "ZF-S2"
+      ]
+    },
+    {
+      "file": "ZF02e_count_nylh.json",
+      "fixture_id": "ZF02e",
+      "classification": "raw",
+      "official_endpoint": "https://services5.arcgis.com/GfwWNkhOj9bNBqoJ/arcgis/rest/services/nylh/FeatureServer/0/query?where=1%3D1&returnCountOnly=true&f=json",
+      "layer": "nylh",
+      "query_parameters": "where=1%3D1&returnCountOnly=true&f=json",
+      "http_status": 200,
+      "retrieval_timestamp_utc": "2026-07-20T03:07:58Z",
+      "source_data_last_edit_ms": null,
+      "crs": null,
+      "expected_record_count": 14,
+      "response_body_sha256": "sha256:d086d346fbb21cce7fd033131dbc339e86fd2416ddc29c726c6708825c13f382",
+      "derived_from": null,
+      "purpose": "returnCountOnly baseline for nylh at capture time (count-vs-page-total consistency input)",
+      "supports_scenarios": [
+        "ZF-S2"
+      ]
+    },
+    {
+      "file": "ZF02f_count_nyzma.json",
+      "fixture_id": "ZF02f",
+      "classification": "raw",
+      "official_endpoint": "https://services5.arcgis.com/GfwWNkhOj9bNBqoJ/arcgis/rest/services/nyzma/FeatureServer/0/query?where=1%3D1&returnCountOnly=true&f=json",
+      "layer": "nyzma",
+      "query_parameters": "where=1%3D1&returnCountOnly=true&f=json",
+      "http_status": 200,
+      "retrieval_timestamp_utc": "2026-07-20T03:07:58Z",
+      "source_data_last_edit_ms": null,
+      "crs": null,
+      "expected_record_count": 1414,
+      "response_body_sha256": "sha256:9175d53271f72ffe50f43a1b606db1415c16e088af6ae3dfcf72be8869d87233",
+      "derived_from": null,
+      "purpose": "returnCountOnly baseline for nyzma at capture time (count-vs-page-total consistency input)",
+      "supports_scenarios": [
+        "ZF-S2"
+      ]
+    },
+    {
+      "file": "ZF03_query_nyzd_single_R3-2.json",
+      "fixture_id": "ZF03",
+      "classification": "raw",
+      "official_endpoint": "https://services5.arcgis.com/GfwWNkhOj9bNBqoJ/arcgis/rest/services/nyzd/FeatureServer/0/query?where=ZONEDIST%3D%27R3-2%27&outFields=*&orderByFields=OBJECTID%20ASC&resultRecordCount=1&resultOffset=0&f=json",
+      "layer": "nyzd",
+      "query_parameters": "where=ZONEDIST%3D%27R3-2%27&outFields=*&orderByFields=OBJECTID%20ASC&resultRecordCount=1&resultOffset=0&f=json",
+      "http_status": 200,
+      "retrieval_timestamp_utc": "2026-07-20T03:07:59Z",
+      "source_data_last_edit_ms": null,
+      "crs": {
+        "wkid": 102718,
+        "latestWkid": 2263,
+        "authority": "EPSG:2263 (NAD83 / New York Long Island, US survey feet)"
+      },
+      "expected_record_count": 1,
+      "response_body_sha256": "sha256:0971e3d825d962ba1ec957e9dec882b2a1b988a4bf96e2472633d1fc883644a3",
+      "derived_from": null,
+      "purpose": "Bounded single-feature attribute query: typed record with attributes, polygon rings, CRS, provenance stamps",
+      "supports_scenarios": [
+        "ZF-S3",
+        "ZF-S10"
+      ]
+    },
+    {
+      "file": "ZF04a_page_nylh_offset0.json",
+      "fixture_id": "ZF04a",
+      "classification": "raw",
+      "official_endpoint": "https://services5.arcgis.com/GfwWNkhOj9bNBqoJ/arcgis/rest/services/nylh/FeatureServer/0/query?where=1%3D1&outFields=*&orderByFields=OBJECTID%20ASC&resultRecordCount=6&resultOffset=0&f=json",
+      "layer": "nylh",
+      "query_parameters": "where=1%3D1&outFields=*&orderByFields=OBJECTID%20ASC&resultRecordCount=6&resultOffset=0&f=json",
+      "http_status": 200,
+      "retrieval_timestamp_utc": "2026-07-20T03:07:59Z",
+      "source_data_last_edit_ms": null,
+      "crs": {
+        "wkid": 102718,
+        "latestWkid": 2263,
+        "authority": "EPSG:2263 (NAD83 / New York Long Island, US survey feet)"
+      },
+      "expected_record_count": 6,
+      "response_body_sha256": "sha256:4cac70ec7a2cc4adb9e8e3d2208cc0d333e6db2bbbffe5873af4b94507870c50",
+      "derived_from": null,
+      "purpose": "Real multi-page extraction page 1 of 3 (page size 6 < total 14): exceededTransferLimit=true observed live (OQ-11 resolution evidence)",
+      "supports_scenarios": [
+        "ZF-S4",
+        "ZF-S10"
+      ]
+    },
+    {
+      "file": "ZF04b_page_nylh_offset6.json",
+      "fixture_id": "ZF04b",
+      "classification": "raw",
+      "official_endpoint": "https://services5.arcgis.com/GfwWNkhOj9bNBqoJ/arcgis/rest/services/nylh/FeatureServer/0/query?where=1%3D1&outFields=*&orderByFields=OBJECTID%20ASC&resultRecordCount=6&resultOffset=6&f=json",
+      "layer": "nylh",
+      "query_parameters": "where=1%3D1&outFields=*&orderByFields=OBJECTID%20ASC&resultRecordCount=6&resultOffset=6&f=json",
+      "http_status": 200,
+      "retrieval_timestamp_utc": "2026-07-20T03:08:00Z",
+      "source_data_last_edit_ms": null,
+      "crs": {
+        "wkid": 102718,
+        "latestWkid": 2263,
+        "authority": "EPSG:2263 (NAD83 / New York Long Island, US survey feet)"
+      },
+      "expected_record_count": 6,
+      "response_body_sha256": "sha256:60587eaa68775e78667fd4791c633a5834d90a504710a8a547d4af7b76c11f52",
+      "derived_from": null,
+      "purpose": "Real multi-page extraction page 2 of 3",
+      "supports_scenarios": [
+        "ZF-S4",
+        "ZF-S10"
+      ]
+    },
+    {
+      "file": "ZF04c_page_nylh_offset12.json",
+      "fixture_id": "ZF04c",
+      "classification": "raw",
+      "official_endpoint": "https://services5.arcgis.com/GfwWNkhOj9bNBqoJ/arcgis/rest/services/nylh/FeatureServer/0/query?where=1%3D1&outFields=*&orderByFields=OBJECTID%20ASC&resultRecordCount=6&resultOffset=12&f=json",
+      "layer": "nylh",
+      "query_parameters": "where=1%3D1&outFields=*&orderByFields=OBJECTID%20ASC&resultRecordCount=6&resultOffset=12&f=json",
+      "http_status": 200,
+      "retrieval_timestamp_utc": "2026-07-20T03:08:00Z",
+      "source_data_last_edit_ms": null,
+      "crs": {
+        "wkid": 102718,
+        "latestWkid": 2263,
+        "authority": "EPSG:2263 (NAD83 / New York Long Island, US survey feet)"
+      },
+      "expected_record_count": 2,
+      "response_body_sha256": "sha256:30d8f8ee3eaa589dd1b57e81e3a5e122bcf43076178a3cf76ce364dfd253243b",
+      "derived_from": null,
+      "purpose": "Real multi-page extraction final page 3 of 3 (2 records, no exceededTransferLimit)",
+      "supports_scenarios": [
+        "ZF-S4",
+        "ZF-S10"
+      ]
+    },
+    {
+      "file": "ZF05_query_nyzd_nomatch_XX.json",
+      "fixture_id": "ZF05",
+      "classification": "raw",
+      "official_endpoint": "https://services5.arcgis.com/GfwWNkhOj9bNBqoJ/arcgis/rest/services/nyzd/FeatureServer/0/query?where=ZONEDIST%3D%27XX%27&outFields=*&orderByFields=OBJECTID%20ASC&f=json",
+      "layer": "nyzd",
+      "query_parameters": "where=ZONEDIST%3D%27XX%27&outFields=*&orderByFields=OBJECTID%20ASC&f=json",
+      "http_status": 200,
+      "retrieval_timestamp_utc": "2026-07-20T03:08:00Z",
+      "source_data_last_edit_ms": null,
+      "crs": null,
+      "expected_record_count": 0,
+      "response_body_sha256": "sha256:437b1d00810278f617f39f5d45ffaf96d9cd705330987c255c3d9cb934e4a5ce",
+      "derived_from": null,
+      "purpose": "Well-formed empty result (no zoning district named XX): empty features array is a VALID empty result",
+      "supports_scenarios": [
+        "ZF-S6"
+      ]
+    },
+    {
+      "file": "ZF06_arcgis_error_bad_field.json",
+      "fixture_id": "ZF06",
+      "classification": "raw",
+      "official_endpoint": "https://services5.arcgis.com/GfwWNkhOj9bNBqoJ/arcgis/rest/services/nyzd/FeatureServer/0/query?where=NOSUCHFIELD%3D1&outFields=*&f=json",
+      "layer": "nyzd",
+      "query_parameters": "where=NOSUCHFIELD%3D1&outFields=*&f=json",
+      "http_status": 200,
+      "retrieval_timestamp_utc": "2026-07-20T03:08:01Z",
+      "source_data_last_edit_ms": null,
+      "crs": null,
+      "expected_record_count": null,
+      "response_body_sha256": "sha256:082b5a4372eb60c1c231c05b94078c27e38eaf2e0032b86c688e800dadca5648",
+      "derived_from": null,
+      "purpose": "Live ArcGIS error-object behavior for an invalid field reference (records the ACTUAL http status + error envelope of these services)",
+      "supports_scenarios": [
+        "ZF-S7"
+      ]
+    },
+    {
+      "file": "ZF07_query_nyzma_single.json",
+      "fixture_id": "ZF07",
+      "classification": "raw",
+      "official_endpoint": "https://services5.arcgis.com/GfwWNkhOj9bNBqoJ/arcgis/rest/services/nyzma/FeatureServer/0/query?where=1%3D1&outFields=*&orderByFields=OBJECTID%20ASC&resultRecordCount=1&resultOffset=0&f=json",
+      "layer": "nyzma",
+      "query_parameters": "where=1%3D1&outFields=*&orderByFields=OBJECTID%20ASC&resultRecordCount=1&resultOffset=0&f=json",
+      "http_status": 200,
+      "retrieval_timestamp_utc": "2026-07-20T03:08:01Z",
+      "source_data_last_edit_ms": null,
+      "crs": {
+        "wkid": 102718,
+        "latestWkid": 2263,
+        "authority": "EPSG:2263 (NAD83 / New York Long Island, US survey feet)"
+      },
+      "expected_record_count": 1,
+      "response_body_sha256": "sha256:53ed84d831069e95cd868e6d143f4c46667b980a7a4d82fb24f473b445ae80b2",
+      "derived_from": null,
+      "purpose": "Single nyzma record: esriFieldTypeDate EFFECTIVE attribute shape (epoch ms) preserved verbatim in normalized records",
+      "supports_scenarios": [
+        "ZF-S3"
+      ]
+    },
+    {
+      "file": "ZF100_malformed_missing_features_key_synthetic.json",
+      "fixture_id": "ZF100",
+      "classification": "synthetic",
+      "official_endpoint": "https://services5.arcgis.com/GfwWNkhOj9bNBqoJ/arcgis/rest/services/nylh/FeatureServer/0/query?where=1%3D1&outFields=*&orderByFields=OBJECTID%20ASC&resultRecordCount=6&resultOffset=0&f=json",
+      "layer": "nylh",
+      "query_parameters": "where=1%3D1&outFields=*&orderByFields=OBJECTID%20ASC&resultRecordCount=6&resultOffset=0&f=json",
+      "http_status": 200,
+      "retrieval_timestamp_utc": "2026-07-20T03:07:59Z",
+      "source_data_last_edit_ms": null,
+      "crs": {
+        "wkid": 102718,
+        "latestWkid": 2263,
+        "authority": "EPSG:2263 (NAD83 / New York Long Island, US survey feet)"
+      },
+      "expected_record_count": null,
+      "response_body_sha256": "sha256:a8a2e08e1d4500b242a7017b19841f3e96a4701b5790aa443f8f9fe890b35233",
+      "derived_from": "ZF04a_page_nylh_offset0.json",
+      "purpose": "Malformed response: well-formed JSON object WITHOUT a features key - typed malformed_response, never an empty result",
+      "supports_scenarios": [
+        "ZF-S6"
+      ]
+    },
+    {
+      "file": "ZF101_rate_limited_429_synthetic.json",
+      "fixture_id": "ZF101",
+      "classification": "synthetic",
+      "official_endpoint": "https://services5.arcgis.com/GfwWNkhOj9bNBqoJ/arcgis/rest/services/nylh/FeatureServer/0/query?where=1%3D1&outFields=*&orderByFields=OBJECTID%20ASC&resultRecordCount=6&resultOffset=0&f=json",
+      "layer": "nylh",
+      "query_parameters": "where=1%3D1&outFields=*&orderByFields=OBJECTID%20ASC&resultRecordCount=6&resultOffset=0&f=json",
+      "http_status": 429,
+      "retrieval_timestamp_utc": "2026-07-20T03:07:59Z",
+      "source_data_last_edit_ms": null,
+      "crs": null,
+      "expected_record_count": null,
+      "response_body_sha256": "sha256:988cb8e1f58d3dd527898485981f7abbdd9b575f340558a6d88463cbdb936efa",
+      "derived_from": "ZF04a_page_nylh_offset0.json",
+      "purpose": "HTTP 429 throttle body (synthetic; cannot be triggered politely against the official service) - typed rate_limited via the resilience retry path",
+      "supports_scenarios": [
+        "ZF-S8"
+      ]
+    },
+    {
+      "file": "ZF102_arcgis_error_http200_synthetic.json",
+      "fixture_id": "ZF102",
+      "classification": "synthetic",
+      "official_endpoint": "https://services5.arcgis.com/GfwWNkhOj9bNBqoJ/arcgis/rest/services/nylh/FeatureServer/0/query?where=1%3D1&outFields=*&orderByFields=OBJECTID%20ASC&resultRecordCount=6&resultOffset=0&f=json",
+      "layer": "nylh",
+      "query_parameters": "where=1%3D1&outFields=*&orderByFields=OBJECTID%20ASC&resultRecordCount=6&resultOffset=0&f=json",
+      "http_status": 200,
+      "retrieval_timestamp_utc": "2026-07-20T03:07:59Z",
+      "source_data_last_edit_ms": null,
+      "crs": null,
+      "expected_record_count": null,
+      "response_body_sha256": "sha256:b6d0819923f24325b2dbe4bf74521a2591fab7dd7a6c84c7188b5349163cfe7b",
+      "derived_from": "ZF04a_page_nylh_offset0.json",
+      "purpose": "ArcGIS error object delivered with HTTP 200: SECOND envelope variant (generic 'Unable to complete operation.' shape) alongside the LIVE-captured ZF06 (which proved HTTP 200 + error.code 400 live) - typed upstream error, never data",
+      "supports_scenarios": [
+        "ZF-S7"
+      ]
+    },
+    {
+      "file": "ZF90_meta_nyzd_missing_objectid_synthetic.json",
+      "fixture_id": "ZF90",
+      "classification": "synthetic",
+      "official_endpoint": "https://services5.arcgis.com/GfwWNkhOj9bNBqoJ/arcgis/rest/services/nyzd/FeatureServer/0?f=json",
+      "layer": "nyzd",
+      "query_parameters": "f=json",
+      "http_status": 200,
+      "retrieval_timestamp_utc": "2026-07-20T03:07:55Z",
+      "source_data_last_edit_ms": 1782912288115,
+      "crs": {
+        "wkid": 102718,
+        "latestWkid": 2263,
+        "authority": "EPSG:2263 (NAD83 / New York Long Island, US survey feet)"
+      },
+      "expected_record_count": null,
+      "response_body_sha256": "sha256:9f7094bda700ff130ced402f10941e2c67d9a40135ffdd0b4ef1bcabc7b52ddb",
+      "derived_from": "ZF01a_meta_nyzd.json",
+      "purpose": "Metadata negative: objectIdField removed - connector must fail typed (schema_drift), never guess an ordering field",
+      "supports_scenarios": [
+        "ZF-S1"
+      ]
+    },
+    {
+      "file": "ZF91_meta_nyzd_wrong_crs_synthetic.json",
+      "fixture_id": "ZF91",
+      "classification": "synthetic",
+      "official_endpoint": "https://services5.arcgis.com/GfwWNkhOj9bNBqoJ/arcgis/rest/services/nyzd/FeatureServer/0?f=json",
+      "layer": "nyzd",
+      "query_parameters": "f=json",
+      "http_status": 200,
+      "retrieval_timestamp_utc": "2026-07-20T03:07:55Z",
+      "source_data_last_edit_ms": 1782912288115,
+      "crs": {
+        "wkid": 102718,
+        "latestWkid": 2263,
+        "authority": "EPSG:2263 (NAD83 / New York Long Island, US survey feet)"
+      },
+      "expected_record_count": null,
+      "response_body_sha256": "sha256:b73583576b390e769e947467a1007ec37803aa63d668f6644cd7f6736f8b1532",
+      "derived_from": "ZF01a_meta_nyzd.json",
+      "purpose": "Metadata negative: spatial reference replaced with WGS84 (4326) - connector must fail typed on wrong CRS (authoritative CRS is EPSG:2263 / wkid 102718)",
+      "supports_scenarios": [
+        "ZF-S1"
+      ]
+    },
+    {
+      "file": "ZF92_meta_nyzd_missing_maxrecordcount_synthetic.json",
+      "fixture_id": "ZF92",
+      "classification": "synthetic",
+      "official_endpoint": "https://services5.arcgis.com/GfwWNkhOj9bNBqoJ/arcgis/rest/services/nyzd/FeatureServer/0?f=json",
+      "layer": "nyzd",
+      "query_parameters": "f=json",
+      "http_status": 200,
+      "retrieval_timestamp_utc": "2026-07-20T03:07:55Z",
+      "source_data_last_edit_ms": 1782912288115,
+      "crs": {
+        "wkid": 102718,
+        "latestWkid": 2263,
+        "authority": "EPSG:2263 (NAD83 / New York Long Island, US survey feet)"
+      },
+      "expected_record_count": null,
+      "response_body_sha256": "sha256:c68225bcf4803413c87626afe8c1fa794444f0c8f1b9366abeeb68c7418676db",
+      "derived_from": "ZF01a_meta_nyzd.json",
+      "purpose": "Metadata negative: maxRecordCount removed - paging cannot be planned safely; connector must fail typed",
+      "supports_scenarios": [
+        "ZF-S1"
+      ]
+    },
+    {
+      "file": "ZF93_meta_nyzd_renamed_field_synthetic.json",
+      "fixture_id": "ZF93",
+      "classification": "synthetic",
+      "official_endpoint": "https://services5.arcgis.com/GfwWNkhOj9bNBqoJ/arcgis/rest/services/nyzd/FeatureServer/0?f=json",
+      "layer": "nyzd",
+      "query_parameters": "f=json",
+      "http_status": 200,
+      "retrieval_timestamp_utc": "2026-07-20T03:07:55Z",
+      "source_data_last_edit_ms": 1782912288115,
+      "crs": {
+        "wkid": 102718,
+        "latestWkid": 2263,
+        "authority": "EPSG:2263 (NAD83 / New York Long Island, US survey feet)"
+      },
+      "expected_record_count": null,
+      "response_body_sha256": "sha256:420ac53a4409ef24420fa433863293d99ac2beaa9bbe4f41c2ea2346dabfbaa3",
+      "derived_from": "ZF01a_meta_nyzd.json",
+      "purpose": "Schema drift: ZONEDIST renamed to ZONE_DIST - typed drift failure, never a silent field guess",
+      "supports_scenarios": [
+        "ZF-S9"
+      ]
+    },
+    {
+      "file": "ZF94_meta_nyzd_added_field_synthetic.json",
+      "fixture_id": "ZF94",
+      "classification": "synthetic",
+      "official_endpoint": "https://services5.arcgis.com/GfwWNkhOj9bNBqoJ/arcgis/rest/services/nyzd/FeatureServer/0?f=json",
+      "layer": "nyzd",
+      "query_parameters": "f=json",
+      "http_status": 200,
+      "retrieval_timestamp_utc": "2026-07-20T03:07:55Z",
+      "source_data_last_edit_ms": 1782912288115,
+      "crs": {
+        "wkid": 102718,
+        "latestWkid": 2263,
+        "authority": "EPSG:2263 (NAD83 / New York Long Island, US survey feet)"
+      },
+      "expected_record_count": null,
+      "response_body_sha256": "sha256:c5530906de327bfa4c3ca85d7bed10f9aecd6d0d0c4305fcf7de4ba3ca4439e2",
+      "derived_from": "ZF01a_meta_nyzd.json",
+      "purpose": "Schema drift: unexpected added field NEW_UNEXPECTED - typed degradation signal (visible, non-fatal)",
+      "supports_scenarios": [
+        "ZF-S9"
+      ]
+    },
+    {
+      "file": "ZF95_meta_nylh_old_edit_date_synthetic.json",
+      "fixture_id": "ZF95",
+      "classification": "synthetic",
+      "official_endpoint": "https://services5.arcgis.com/GfwWNkhOj9bNBqoJ/arcgis/rest/services/nylh/FeatureServer/0?f=json",
+      "layer": "nylh",
+      "query_parameters": "f=json",
+      "http_status": 200,
+      "retrieval_timestamp_utc": "2026-07-20T03:07:57Z",
+      "source_data_last_edit_ms": 1577836800000,
+      "crs": {
+        "wkid": 102718,
+        "latestWkid": 2263,
+        "authority": "EPSG:2263 (NAD83 / New York Long Island, US survey feet)"
+      },
+      "expected_record_count": null,
+      "response_body_sha256": "sha256:ba3292773f6f7ac2c0b217cf7aeda3010b41e1fb57d6c7746ad39284d93c11be",
+      "derived_from": "ZF01e_meta_nylh.json",
+      "purpose": "Two-staleness rule: dataLastEditDate forced to 2020-01-01 - an old SOURCE dataset with a FRESH retrieval must NOT set served_from_cache/stale",
+      "supports_scenarios": [
+        "ZF-S12"
+      ]
+    },
+    {
+      "file": "ZF96_page_nylh_duplicate_page_synthetic.json",
+      "fixture_id": "ZF96",
+      "classification": "synthetic",
+      "official_endpoint": "https://services5.arcgis.com/GfwWNkhOj9bNBqoJ/arcgis/rest/services/nylh/FeatureServer/0/query?where=1%3D1&outFields=*&orderByFields=OBJECTID%20ASC&resultRecordCount=6&resultOffset=6&f=json",
+      "layer": "nylh",
+      "query_parameters": "where=1%3D1&outFields=*&orderByFields=OBJECTID%20ASC&resultRecordCount=6&resultOffset=6&f=json",
+      "http_status": 200,
+      "retrieval_timestamp_utc": "2026-07-20T03:08:00Z",
+      "source_data_last_edit_ms": null,
+      "crs": {
+        "wkid": 102718,
+        "latestWkid": 2263,
+        "authority": "EPSG:2263 (NAD83 / New York Long Island, US survey feet)"
+      },
+      "expected_record_count": 6,
+      "response_body_sha256": "sha256:4cac70ec7a2cc4adb9e8e3d2208cc0d333e6db2bbbffe5873af4b94507870c50",
+      "derived_from": "ZF04b_page_nylh_offset6.json",
+      "purpose": "Paging pathology: page 2 body is byte-identical to page 1 (upstream returned the same page twice) - typed paging failure, no silent duplication",
+      "supports_scenarios": [
+        "ZF-S5"
+      ]
+    },
+    {
+      "file": "ZF97_page_nylh_repeated_oid_synthetic.json",
+      "fixture_id": "ZF97",
+      "classification": "synthetic",
+      "official_endpoint": "https://services5.arcgis.com/GfwWNkhOj9bNBqoJ/arcgis/rest/services/nylh/FeatureServer/0/query?where=1%3D1&outFields=*&orderByFields=OBJECTID%20ASC&resultRecordCount=6&resultOffset=6&f=json",
+      "layer": "nylh",
+      "query_parameters": "where=1%3D1&outFields=*&orderByFields=OBJECTID%20ASC&resultRecordCount=6&resultOffset=6&f=json",
+      "http_status": 200,
+      "retrieval_timestamp_utc": "2026-07-20T03:08:00Z",
+      "source_data_last_edit_ms": null,
+      "crs": {
+        "wkid": 102718,
+        "latestWkid": 2263,
+        "authority": "EPSG:2263 (NAD83 / New York Long Island, US survey feet)"
+      },
+      "expected_record_count": 6,
+      "response_body_sha256": "sha256:6572008acf52d0cfa31ce302f1ea108a71bd2de364c2367ab2debba8c74e709f",
+      "derived_from": "ZF04b_page_nylh_offset6.json",
+      "purpose": "Paging pathology: page 2 repeats OBJECTID 6 from page 1 - typed paging failure (repeated object id)",
+      "supports_scenarios": [
+        "ZF-S5"
+      ]
+    },
+    {
+      "file": "ZF98_page_nylh_zero_progress_synthetic.json",
+      "fixture_id": "ZF98",
+      "classification": "synthetic",
+      "official_endpoint": "https://services5.arcgis.com/GfwWNkhOj9bNBqoJ/arcgis/rest/services/nylh/FeatureServer/0/query?where=1%3D1&outFields=*&orderByFields=OBJECTID%20ASC&resultRecordCount=6&resultOffset=6&f=json",
+      "layer": "nylh",
+      "query_parameters": "where=1%3D1&outFields=*&orderByFields=OBJECTID%20ASC&resultRecordCount=6&resultOffset=6&f=json",
+      "http_status": 200,
+      "retrieval_timestamp_utc": "2026-07-20T03:08:00Z",
+      "source_data_last_edit_ms": null,
+      "crs": {
+        "wkid": 102718,
+        "latestWkid": 2263,
+        "authority": "EPSG:2263 (NAD83 / New York Long Island, US survey feet)"
+      },
+      "expected_record_count": 0,
+      "response_body_sha256": "sha256:6db975f722eb32ca22f5be348973af550528d403142922f4ecb2c63c459ad43d",
+      "derived_from": "ZF04b_page_nylh_offset6.json",
+      "purpose": "Paging pathology: empty features with exceededTransferLimit=true - zero-progress loop guard must fail typed, never spin",
+      "supports_scenarios": [
+        "ZF-S5"
+      ]
+    },
+    {
+      "file": "ZF99_malformed_truncated_synthetic.json",
+      "fixture_id": "ZF99",
+      "classification": "synthetic",
+      "official_endpoint": "https://services5.arcgis.com/GfwWNkhOj9bNBqoJ/arcgis/rest/services/nylh/FeatureServer/0/query?where=1%3D1&outFields=*&orderByFields=OBJECTID%20ASC&resultRecordCount=6&resultOffset=0&f=json",
+      "layer": "nylh",
+      "query_parameters": "where=1%3D1&outFields=*&orderByFields=OBJECTID%20ASC&resultRecordCount=6&resultOffset=0&f=json",
+      "http_status": 200,
+      "retrieval_timestamp_utc": "2026-07-20T03:07:59Z",
+      "source_data_last_edit_ms": null,
+      "crs": null,
+      "expected_record_count": null,
+      "response_body_sha256": "sha256:e25a1ca3065aa0fb9f9f48af165bc464df5c107721b1516f517179eb4152af2b",
+      "derived_from": "ZF04a_page_nylh_offset0.json",
+      "purpose": "Malformed response: JSON truncated mid-body - typed malformed_response, NEVER a valid empty result",
+      "supports_scenarios": [
+        "ZF-S6"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,17 @@
+{
+  "fixture_id": "ZF03",
+  "title": "Bounded single-feature attribute query: typed record with attributes, polygon rings, CRS, provenance stamps",
+  "source_id": "nyc-dcp-zoning-features-arcgis",
+  "layer": "nyzd",
+  "request_url": "https://services5.arcgis.com/GfwWNkhOj9bNBqoJ/arcgis/rest/services/nyzd/FeatureServer/0/query?where=ZONEDIST%3D%27R3-2%27&outFields=*&orderByFields=OBJECTID%20ASC&resultRecordCount=1&resultOffset=0&f=json",
+  "http_status": 200,
+  "retrieval_timestamp_utc": "2026-07-20T03:07:59Z",
+  "capture_method": "live urllib GET by M2-T007 producer, keyless official ArcGIS service, single KB-scale bounded request",
+  "classification": "raw",
+  "supports_scenarios": [
+    "ZF-S3",
+    "ZF-S10"
+  ],
+  "notes": "Bounded single-feature attribute query: typed record with attributes, polygon rings, CRS, provenance stamps",
+  "response_body_raw": "{\"objectIdFieldName\":\"OBJECTID\",\"uniqueIdField\":{\"name\":\"OBJECTID\",\"isSystemMaintained\":true},\"globalIdFieldName\":\"\",\"geometryProperties\":{\"shapeAreaFieldName\":\"Shape__Area\",\"shapeLengthFieldName\":\"Shape__Length\",\"units\":\"esriFeet\"},\"geometryType\":\"esriGeometryPolygon\",\"spatialReference\":{\"wkid\":102718,\"latestWkid\":2263},\"fields\":[{\"name\":\"OBJECTID\",\"type\":\"esriFieldTypeOID\",\"alias\":\"OBJECTID\",\"sqlType\":\"sqlTypeOther\",\"domain\":null,\"defaultValue\":null},{\"name\":\"ZONEDIST\",\"type\":\"esriFieldTypeString\",\"alias\":\"ZONEDIST\",\"sqlType\":\"sqlTypeOther\",\"length\":15,\"domain\":null,\"defaultValue\":null},{\"name\":\"Shape__Area\",\"type\":\"esriFieldTypeDouble\",\"alias\":\"Shape__Area\",\"sqlType\":\"sqlTypeDouble\",\"domain\":null,\"defaultValue\":null},{\"name\":\"Shape__Length\",\"type\":\"esriFieldTypeDouble\",\"alias\":\"Shape__Length\",\"sqlType\":\"sqlTypeDouble\",\"domain\":null,\"defaultValue\":null}],\"exceededTransferLimit\":true,\"features\":[{\"attributes\":{\"OBJECTID\":86,\"ZONEDIST\":\"R3-2\",\"Shape__Area\":837150.6837310791,\"Shape__Length\":4012.0487646558959},\"geometry\":{\"rings\":[[[997144.772754893,163807.577290401],[997162.708742633,163671.475856557],[997810.02798605,163765.712544724],[997933.571046054,162931.687309891],[997800.138570145,162912.387479722],[997834.148344636,162677.264262304],[997186.477067798,162583.652900979],[997012.987257302,163788.826343641],[997015.721503809,163789.220043644],[997144.772754893,163807.577290401]]]}}]}"
+}

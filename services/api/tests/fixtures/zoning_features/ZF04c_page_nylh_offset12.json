@@ -1,0 +1,17 @@
+{
+  "fixture_id": "ZF04c",
+  "title": "Real multi-page extraction final page 3 of 3 (2 records, no exceededTransferLimit)",
+  "source_id": "nyc-dcp-zoning-features-arcgis",
+  "layer": "nylh",
+  "request_url": "https://services5.arcgis.com/GfwWNkhOj9bNBqoJ/arcgis/rest/services/nylh/FeatureServer/0/query?where=1%3D1&outFields=*&orderByFields=OBJECTID%20ASC&resultRecordCount=6&resultOffset=12&f=json",
+  "http_status": 200,
+  "retrieval_timestamp_utc": "2026-07-20T03:08:00Z",
+  "capture_method": "live urllib GET by M2-T007 producer, keyless official ArcGIS service, single KB-scale bounded request",
+  "classification": "raw",
+  "supports_scenarios": [
+    "ZF-S4",
+    "ZF-S10"
+  ],
+  "notes": "Real multi-page extraction final page 3 of 3 (2 records, no exceededTransferLimit)",
+  "response_body_raw": "{\"objectIdFieldName\":\"OBJECTID\",\"uniqueIdField\":{\"name\":\"OBJECTID\",\"isSystemMaintained\":true},\"globalIdFieldName\":\"\",\"geometryProperties\":{\"shapeAreaFieldName\":\"Shape__Area\",\"shapeLengthFieldName\":\"Shape__Length\",\"units\":\"esriFeet\"},\"geometryType\":\"esriGeometryPolygon\",\"spatialReference\":{\"wkid\":102718,\"latestWkid\":2263},\"fields\":[{\"name\":\"OBJECTID\",\"type\":\"esriFieldTypeOID\",\"alias\":\"OBJECTID\",\"sqlType\":\"sqlTypeOther\",\"domain\":null,\"defaultValue\":null},{\"name\":\"LHNAME\",\"type\":\"esriFieldTypeString\",\"alias\":\"LHNAME\",\"sqlType\":\"sqlTypeOther\",\"length\":50,\"domain\":null,\"defaultValue\":null},{\"name\":\"LHLBL\",\"type\":\"esriFieldTypeString\",\"alias\":\"LHLBL\",\"sqlType\":\"sqlTypeOther\",\"length\":10,\"domain\":null,\"defaultValue\":null},{\"name\":\"Shape__Area\",\"type\":\"esriFieldTypeDouble\",\"alias\":\"Shape__Area\",\"sqlType\":\"sqlTypeDouble\",\"domain\":null,\"defaultValue\":null},{\"name\":\"Shape__Length\",\"type\":\"esriFieldTypeDouble\",\"alias\":\"Shape__Length\",\"sqlType\":\"sqlTypeDouble\",\"domain\":null,\"defaultValue\":null}],\"features\":[{\"attributes\":{\"OBJECTID\":13,\"LHNAME\":\"Limited Height District\",\"LHLBL\":\"LH-1A\",\"Shape__Area\":96864.292282104492,\"Shape__Length\":1738.5958386113741},\"geometry\":{\"rings\":[[[996610.664899215,225202.831140056],[996745.570469305,225128.133782893],[996682.548941806,225014.50933823],[996652.737321645,225030.858386889],[996588.874588475,224915.716556817],[996644.830841392,224884.653626814],[996517.86554414,224655.741026893],[996499.513218641,224665.948355556],[996437.018921047,224553.274040222],[996348.414767548,224603.268690899],[996410.352963895,224715.537823305],[996357.917373225,224744.701806977],[996610.664899215,225202.831140056]]]}},{\"attributes\":{\"OBJECTID\":14,\"LHNAME\":\"Limited Height District\",\"LHLBL\":\"LH-1A\",\"Shape__Area\":126951.50852966309,\"Shape__Length\":1758.8518364299682},\"geometry\":{\"rings\":[[[996623.362052307,225792.987111971],[996306.779680222,225222.405247897],[996131.647812635,225319.337468728],[996194.661138058,225432.741441399],[996218.700131968,225419.445536226],[996281.971658975,225536.015841141],[996259.092767715,225548.697902396],[996448.712139145,225889.953453481],[996623.362052307,225792.987111971]]]}}]}"
+}

@@ -1,0 +1,17 @@
+{
+  "fixture_id": "ZF102",
+  "title": "ArcGIS error object delivered with HTTP 200: SECOND envelope variant (generic 'Unable to complete operation.' shape) alongside the LIVE-captured ZF06 (which proved HTTP 200 + error.code 400 live) - typed upstream error, never data",
+  "source_id": "nyc-dcp-zoning-features-arcgis",
+  "layer": "nylh",
+  "request_url": "https://services5.arcgis.com/GfwWNkhOj9bNBqoJ/arcgis/rest/services/nylh/FeatureServer/0/query?where=1%3D1&outFields=*&orderByFields=OBJECTID%20ASC&resultRecordCount=6&resultOffset=0&f=json",
+  "http_status": 200,
+  "retrieval_timestamp_utc": "2026-07-20T03:07:59Z",
+  "capture_method": "SYNTHETIC: derived offline from ZF04a_page_nylh_offset0.json by build_fixture_pack.py derive; NOT official data; exercises connector failure logic only",
+  "classification": "synthetic",
+  "derived_from": "ZF04a_page_nylh_offset0.json",
+  "supports_scenarios": [
+    "ZF-S7"
+  ],
+  "notes": "ArcGIS error object delivered with HTTP 200: SECOND envelope variant (generic 'Unable to complete operation.' shape) alongside the LIVE-captured ZF06 (which proved HTTP 200 + error.code 400 live) - typed upstream error, never data",
+  "response_body_raw": "{\"error\":{\"code\":400,\"message\":\"Unable to complete operation.\",\"details\":[\"Unable to perform query operation.\"]}}"
+}
