@@ -22,7 +22,8 @@
     "project-control/reports/M0-T019-producer-report.md (AOS section-6 packet with per-package publication-date evidence and npm audit zero-findings JSON evidence)"
   ],
   "dependencies": [
-    "M0-T018"
+    "M0-T018",
+    "M0-T020"
   ],
   "allowed_paths": [
     "apps/web/package.json, apps/web/package-lock.json",
@@ -73,5 +74,5 @@
   ],
   "blockers": [],
   "created_at": "2026-07-20T08:21:46.465870+00:00",
-  "updated_at": "2026-07-20T08:21:46.465870+00:00"
+  "updated_at": "2026-07-20T16:27:53.780467+00:00"
 }
