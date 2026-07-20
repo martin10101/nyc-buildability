@@ -1,0 +1,21 @@
+{
+  "blocker_id": "B-009",
+  "title": "GitHub Actions jobs refuse to start: account payment failed or spending limit reached (private-repo Actions minutes)",
+  "status": "resolved",
+  "affects": [
+    "M2-T008 (task PR #42 cannot get green checks; merge is check-gated by owner hard rule 1)",
+    "M2-T009 (same, when dispatched)",
+    "every future PR merge until resolved"
+  ],
+  "detail": "Discovered 2026-07-20 during M2-T008 CI on task PR #42: after commit afacff2, ALL jobs on all runs fail in 1-4 seconds with zero steps executed. Job annotation (check-run 88274589386, verbatim): 'The job was not started because recent account payments have failed or your spending limit needs to be increased. Please check the Billing and plans section in your settings'. Earlier the same day runs executed normally (PR #38/#39/#40/#41 all green), so the private-repo Actions minutes quota or spending limit was exhausted mid-session. Local evidence remains green: full api suite 442 passed + ruff clean (orchestrator re-ran), secret scan PASS locally after the pragma fix afacff2. NOTE: the first PR #42 failure (credential scan on 7e40e81) was a REAL finding, fixed by afacff2 with the repo pragma convention; only the subsequent all-jobs-instant failures are billing-caused.",
+  "exact_human_action": "Owner action in GitHub Settings -> Billing and plans (account martin10101): fix the failed payment method and/or raise the Actions spending limit above zero, OR make the repository public (public repos get free Actions minutes - this overlaps with the pending B-008 decision, which the owner was already weighing: Pro upgrade vs public repo would resolve BOTH blockers via the public path, or payment fix resolves B-009 alone).",
+  "how_it_will_be_tested": "Re-run the failed workflow runs on task PR #42 (gh run rerun); jobs start executing steps and complete; gh pr checks 42 shows all green; merge proceeds under the standard workflow.",
+  "created_at": "2026-07-20T05:20:00Z",
+  "audit_log": [
+    {
+      "at": "2026-07-20T06:05:00Z",
+      "by": "orchestrator",
+      "note": "RESOLVED: owner decision 2026-07-20 (this session): repository made PUBLIC (gh repo edit --visibility public, verified isPrivate=false). Actions jobs execute again: reruns of the four outage-failed runs on task PR #42 head dab19b9 all completed success; PR #42 merged at main 4877264. Public repos have free Actions minutes - the billing constraint no longer applies."
+    }
+  ]
+}
