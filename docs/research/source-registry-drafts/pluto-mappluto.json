@@ -104,5 +104,43 @@
       "OQ-10 residual: exact .gdb archive file names, unclipped variant file name, borough-shapefile listing",
       "OQ-11 residual: PLUTOChangeFile column-level format (location resolved at G1: Socrata dataset qt5r-nqxp + ships with MapPLUTO bulk)"
     ]
+  },
+  {
+    "source_id": "nyc-dcp-mappluto-arcgis",
+    "agency": "NYC Department of City Planning (DCP)",
+    "name": "MapPLUTO — per-lot tax-lot geometry (official DCP_GIS ArcGIS feature service)",
+    "official_url": "https://services5.arcgis.com/GfwWNkhOj9bNBqoJ/arcgis/rest/services/MAPPLUTO/FeatureServer",
+    "source_type": "official_arcgis_feature_service",
+    "api_dataset_identifier": "MAPPLUTO/FeatureServer layer 0 (owner DCP_GIS, org 'NYC DCP Mapping Portal'; matches Hub item DCP::mappluto-1; verified at M1-T001 G1, correction C4)",
+    "authentication": {
+      "required": false,
+      "notes": "Keyless public feature service; no credential material of any kind is sent or stored (verified at connector build 2026-07-20: plain GET with Accept: application/json)"
+    },
+    "rate_limits": {
+      "notes": "No published numeric limit; HTTP 429 observed contractually possible on ArcGIS Online and handled via bounded retry with Retry-After honoring (connector M2-T009); maxRecordCount 2000 bounds every response",
+      "throttle_signal": "HTTP 429"
+    },
+    "update_frequency": "Follows the PLUTO/MapPLUTO release model (major quarterly, minor monthly zoning attributes). Live editingInfo.dataLastEditDate 2026-05-27T14:36:18Z observed at connector build (2026-07-20), consistent with the 26v1 release (2026-05-28); dataLastEditDate is the per-ingest source-freshness provenance stamp (never a transport-staleness signal - owner two-staleness rule).",
+    "geographic_coverage": "All five NYC boroughs, tax-lot polygon level, shoreline-clipped (parts of lots crossing water are clipped: live multipolygon example BBL 4142600001 with two exterior rings). Condo semantics per research section 2.5: one record per condominium complex under the billing lot (7501-7599); unit lots (1001-6999) carry no polygon (live-verified 2026-07-20: billing lot 1000157501 returns the complex polygon with CondoNo 1025; unit lot 1000151001 on the same block returns zero features).",
+    "fields_available": {
+      "note": "103 PascalCase fields on layer 0 (full inventory in fixture MPG01_meta.json, captured live 2026-07-20). The M2-T009 connector contracts a bounded subset: OBJECTID (esriFieldTypeOID), BBL (Double), BoroCode (Integer), Borough (String), Block (Integer), Lot (SmallInteger), CondoNo (Integer), Version (String), Shape__Area (Double), Shape__Length (Double), plus polygon geometry (esriGeometryPolygon, rings). Spatial reference wkid 102718 / latestWkid 2263 = EPSG:2263 (NAD83 New York Long Island, US survey feet) - validated from metadata before any coordinate interpretation; Shape__Area/Shape__Length are in square feet / feet (locally recomputed planar area matched Shape__Area within float tolerance on the live Empire State Building lot fixture)."
+    },
+    "terms_usage_notes": "Same DCP informational-purposes-only disclaimer as PLUTO (README 26v1). Geometry accuracy: the official DCP zoning-features metadata states plus-or-minus 20 ft horizontal accuracy for the same production chain (zoning-features research section 4.3) - near-boundary spatial conclusions are uncertain by the source's own statement and are typed boundary_uncertain by the connector's spatial classifier.",
+    "connector_implementation": "services/api/app/connectors/mappluto_geometry_arcgis.py (task M2-T009): allowlisted per-BBL geometry queries (pinned service root; canonical-BBL-validated where clause; bounded outFields subset; resultRecordCount 10) with identifier/result validation (zero/one/multiple features each an explicit typed outcome; multiple = review-required), CRS validation before coordinate interpretation (typed wrong_crs), the full geometry-validity taxonomy, a no-silent-repair policy (original + normalized digests kept separately; repair method + shapely/GEOS versions recorded), deterministic canonical geometry digests (spec MPG_CANONICALIZATION_SPEC; shapely==2.0.7 / GEOS 3.11.4 pinned exactly), and M1-T009 resilience (retry/429/circuit/budget/LKG). Fixture pack: services/api/tests/fixtures/mappluto_geometry/ (MANIFEST.json).",
+    "last_successful_ingestion": "2026-07-20 (fixture capture, live: metadata + 6 bounded per-BBL queries)",
+    "latest_source_version": "26v1 (Version attribute observed on every live-captured feature 2026-07-20; dataLastEditDate 2026-05-27T14:36:18Z)",
+    "health_status": "verified_live_2026-07-20",
+    "known_limitations": [
+      "maxRecordCount 2000 rules this channel out as the citywide-import primary (~850k+ lots); per-lot/per-area queries only - the DCP bulk FileGDB remains the citywide-import primary (deferred behind B-001/B-002)",
+      "Shoreline-clipped geometry only on this service; lots partially underwater are clipped (unclipped variant exists only in the bulk release)",
+      "One record per condominium complex under the billing lot; a condo-unit BBL query returns zero features by design (resolve the billing BBL first, e.g. Geoclient condominiumBillingBbl)",
+      "No YYYYMM-style version label on the service; provenance pinning uses the per-feature Version attribute + editingInfo.dataLastEditDate + retrieval timestamp",
+      "Horizontal accuracy plus-or-minus 20 ft (official statement for the DCP production chain): lot-vs-district conclusions within 20 ft of a boundary are typed uncertain, never silently inside/outside",
+      "Not a legal boundary survey; DCP informational-purposes-only disclaimer applies"
+    ],
+    "fallback_source": "DCP bulk MapPLUTO FileGDB release (see nyc-dcp-mappluto-bulk record) for citywide import; the NYC Open Data f888-ni5f entry is a catalog pointer only.",
+    "open_questions": [
+      "Whether editingInfo.dataLastEditDate moves in lockstep with every minor (monthly) PLUTO release on this service (baseline 2026-05-27 set at connector build; observe across the next minor-release boundary)"
+    ]
   }
 ]

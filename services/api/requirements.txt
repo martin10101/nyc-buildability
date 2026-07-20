@@ -23,3 +23,10 @@
 fastapi==0.128.0
 starlette==0.46.2
 uvicorn[standard]==0.40.0
+# M2-T009: runtime geometry library for the MapPLUTO per-BBL geometry
+# connector. Exact pin matches pyproject (also exact there, by owner packet
+# directive): deterministic geometry digests and repair behavior depend on
+# the bundled GEOS build (2.0.7 wheels bundle GEOS 3.11.4), and the test
+# suite asserts both versions. Re-pin only deliberately with re-anchored
+# digests.
+shapely==2.0.7

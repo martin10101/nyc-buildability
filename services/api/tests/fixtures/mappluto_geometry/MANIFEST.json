@@ -1,0 +1,694 @@
+{
+  "manifest_version": 1,
+  "task": "M2-T009",
+  "source_id": "nyc-dcp-mappluto-arcgis",
+  "service_root": "https://services5.arcgis.com/GfwWNkhOj9bNBqoJ/arcgis/rest/services",
+  "layer": "MAPPLUTO",
+  "authentication": "none (keyless official service; no credential material exists in this pack)",
+  "generated_by": "build_fixture_pack.py",
+  "generated_at_utc": "2026-07-20T05:44:17Z",
+  "digest_algorithm": "sha256:<hex> over the exact UTF-8 bytes of response_body_raw",
+  "fixtures": [
+    {
+      "file": "MPG01_meta.json",
+      "fixture_id": "MPG01",
+      "classification": "raw",
+      "official_endpoint": "https://services5.arcgis.com/GfwWNkhOj9bNBqoJ/arcgis/rest/services/MAPPLUTO/FeatureServer/0?f=json",
+      "layer": "MAPPLUTO",
+      "query_parameters": "f=json",
+      "http_status": 200,
+      "retrieval_timestamp_utc": "2026-07-20T05:30:57Z",
+      "source_data_last_edit_ms": 1779892578102,
+      "crs": {
+        "wkid": 102718,
+        "latestWkid": 2263,
+        "authority": "EPSG:2263 (NAD83 / New York Long Island, US survey feet)"
+      },
+      "expected_record_count": null,
+      "response_body_sha256": "sha256:819a17b2e6146f6e3792f437b20afbb168b78af9080a9f1dba859248cafa9a9b",
+      "derived_from": null,
+      "purpose": "Layer 0 metadata for MAPPLUTO: 103-field inventory, objectIdField, spatial reference (wkid 102718 / latestWkid 2263), maxRecordCount 2000, editingInfo freshness signals",
+      "supports_scenarios": [
+        "GEO-S1",
+        "GEO-S8",
+        "GEO-S11"
+      ]
+    },
+    {
+      "file": "MPG02_lot_single_1008350041.json",
+      "fixture_id": "MPG02",
+      "classification": "raw",
+      "official_endpoint": "https://services5.arcgis.com/GfwWNkhOj9bNBqoJ/arcgis/rest/services/MAPPLUTO/FeatureServer/0/query?where=BBL%3D1008350041&outFields=OBJECTID%2CBBL%2CBoroCode%2CBorough%2CBlock%2CLot%2CCondoNo%2CVersion%2CShape__Area%2CShape__Length&orderByFields=OBJECTID%20ASC&resultRecordCount=10&resultOffset=0&f=json",
+      "layer": "MAPPLUTO",
+      "query_parameters": "where=BBL%3D1008350041&outFields=OBJECTID%2CBBL%2CBoroCode%2CBorough%2CBlock%2CLot%2CCondoNo%2CVersion%2CShape__Area%2CShape__Length&orderByFields=OBJECTID%20ASC&resultRecordCount=10&resultOffset=0&f=json",
+      "http_status": 200,
+      "retrieval_timestamp_utc": "2026-07-20T05:30:57Z",
+      "source_data_last_edit_ms": null,
+      "crs": {
+        "wkid": 102718,
+        "latestWkid": 2263,
+        "authority": "EPSG:2263 (NAD83 / New York Long Island, US survey feet)"
+      },
+      "expected_record_count": 1,
+      "response_body_sha256": "sha256:0d12247fe0d12d972800419880ae1b4f6cc09adef999f4e1718f25b8a67289b4",
+      "derived_from": null,
+      "purpose": "Normal single-lot polygon by BBL (1008350041, Empire State Building): one feature, one clockwise exterior ring, attributes + Shape__Area for area cross-check",
+      "supports_scenarios": [
+        "GEO-S1",
+        "GEO-S3",
+        "GEO-S7",
+        "GEO-S9"
+      ]
+    },
+    {
+      "file": "MPG03_lot_nofeature_5999999999.json",
+      "fixture_id": "MPG03",
+      "classification": "raw",
+      "official_endpoint": "https://services5.arcgis.com/GfwWNkhOj9bNBqoJ/arcgis/rest/services/MAPPLUTO/FeatureServer/0/query?where=BBL%3D5999999999&outFields=OBJECTID%2CBBL%2CBoroCode%2CBorough%2CBlock%2CLot%2CCondoNo%2CVersion%2CShape__Area%2CShape__Length&orderByFields=OBJECTID%20ASC&resultRecordCount=10&resultOffset=0&f=json",
+      "layer": "MAPPLUTO",
+      "query_parameters": "where=BBL%3D5999999999&outFields=OBJECTID%2CBBL%2CBoroCode%2CBorough%2CBlock%2CLot%2CCondoNo%2CVersion%2CShape__Area%2CShape__Length&orderByFields=OBJECTID%20ASC&resultRecordCount=10&resultOffset=0&f=json",
+      "http_status": 200,
+      "retrieval_timestamp_utc": "2026-07-20T05:30:57Z",
+      "source_data_last_edit_ms": null,
+      "crs": null,
+      "expected_record_count": 0,
+      "response_body_sha256": "sha256:437b1d00810278f617f39f5d45ffaf96d9cd705330987c255c3d9cb934e4a5ce",
+      "derived_from": null,
+      "purpose": "Syntactically valid nonexistent BBL: well-formed EMPTY features array - explicit typed no_feature outcome, never an error and never a guessed geometry",
+      "supports_scenarios": [
+        "GEO-S3"
+      ]
+    },
+    {
+      "file": "MPG04_lot_condo_billing_1000157501.json",
+      "fixture_id": "MPG04",
+      "classification": "raw",
+      "official_endpoint": "https://services5.arcgis.com/GfwWNkhOj9bNBqoJ/arcgis/rest/services/MAPPLUTO/FeatureServer/0/query?where=BBL%3D1000157501&outFields=OBJECTID%2CBBL%2CBoroCode%2CBorough%2CBlock%2CLot%2CCondoNo%2CVersion%2CShape__Area%2CShape__Length&orderByFields=OBJECTID%20ASC&resultRecordCount=10&resultOffset=0&f=json",
+      "layer": "MAPPLUTO",
+      "query_parameters": "where=BBL%3D1000157501&outFields=OBJECTID%2CBBL%2CBoroCode%2CBorough%2CBlock%2CLot%2CCondoNo%2CVersion%2CShape__Area%2CShape__Length&orderByFields=OBJECTID%20ASC&resultRecordCount=10&resultOffset=0&f=json",
+      "http_status": 200,
+      "retrieval_timestamp_utc": "2026-07-20T05:30:58Z",
+      "source_data_last_edit_ms": null,
+      "crs": {
+        "wkid": 102718,
+        "latestWkid": 2263,
+        "authority": "EPSG:2263 (NAD83 / New York Long Island, US survey feet)"
+      },
+      "expected_record_count": 1,
+      "response_body_sha256": "sha256:2a25d5f8bc9067fb9aadb75ebb32b1d3aae0825e6637c7621b67a6fcb0f9011a",
+      "derived_from": null,
+      "purpose": "Condo BILLING lot 1000157501 (lot 7501 in billing range 7501-7599, CondoNo 1025; research section 2.5): polygon represents the merged condominium complex, never a single unit",
+      "supports_scenarios": [
+        "GEO-S4"
+      ]
+    },
+    {
+      "file": "MPG05_lot_condo_unit_1000151001.json",
+      "fixture_id": "MPG05",
+      "classification": "raw",
+      "official_endpoint": "https://services5.arcgis.com/GfwWNkhOj9bNBqoJ/arcgis/rest/services/MAPPLUTO/FeatureServer/0/query?where=BBL%3D1000151001&outFields=OBJECTID%2CBBL%2CBoroCode%2CBorough%2CBlock%2CLot%2CCondoNo%2CVersion%2CShape__Area%2CShape__Length&orderByFields=OBJECTID%20ASC&resultRecordCount=10&resultOffset=0&f=json",
+      "layer": "MAPPLUTO",
+      "query_parameters": "where=BBL%3D1000151001&outFields=OBJECTID%2CBBL%2CBoroCode%2CBorough%2CBlock%2CLot%2CCondoNo%2CVersion%2CShape__Area%2CShape__Length&orderByFields=OBJECTID%20ASC&resultRecordCount=10&resultOffset=0&f=json",
+      "http_status": 200,
+      "retrieval_timestamp_utc": "2026-07-20T05:30:58Z",
+      "source_data_last_edit_ms": null,
+      "crs": null,
+      "expected_record_count": 0,
+      "response_body_sha256": "sha256:437b1d00810278f617f39f5d45ffaf96d9cd705330987c255c3d9cb934e4a5ce",
+      "derived_from": null,
+      "purpose": "Condo UNIT lot 1000151001 (lot 1001 in unit range 1001-6999) on the same block as billing lot 7501: EMPTY result captured live - MapPLUTO has one record per condo complex, unit lots carry no polygon (research section 2.5)",
+      "supports_scenarios": [
+        "GEO-S4"
+      ]
+    },
+    {
+      "file": "MPG06_lot_holes_1000010010.json",
+      "fixture_id": "MPG06",
+      "classification": "raw",
+      "official_endpoint": "https://services5.arcgis.com/GfwWNkhOj9bNBqoJ/arcgis/rest/services/MAPPLUTO/FeatureServer/0/query?where=BBL%3D1000010010&outFields=OBJECTID%2CBBL%2CBoroCode%2CBorough%2CBlock%2CLot%2CCondoNo%2CVersion%2CShape__Area%2CShape__Length&orderByFields=OBJECTID%20ASC&resultRecordCount=10&resultOffset=0&f=json",
+      "layer": "MAPPLUTO",
+      "query_parameters": "where=BBL%3D1000010010&outFields=OBJECTID%2CBBL%2CBoroCode%2CBorough%2CBlock%2CLot%2CCondoNo%2CVersion%2CShape__Area%2CShape__Length&orderByFields=OBJECTID%20ASC&resultRecordCount=10&resultOffset=0&f=json",
+      "http_status": 200,
+      "retrieval_timestamp_utc": "2026-07-20T05:30:58Z",
+      "source_data_last_edit_ms": null,
+      "crs": {
+        "wkid": 102718,
+        "latestWkid": 2263,
+        "authority": "EPSG:2263 (NAD83 / New York Long Island, US survey feet)"
+      },
+      "expected_record_count": 1,
+      "response_body_sha256": "sha256:90a7f6dd364a64c9c114c4676a6d0b381acc7ba684afba082c6f32ddd5b2e095",
+      "derived_from": null,
+      "purpose": "Holed polygon lot 1000010010 (Governors Island): one CW exterior ring + two CCW hole rings observed live - hole normalization and canonical ring ordering input",
+      "supports_scenarios": [
+        "GEO-S2",
+        "GEO-S7",
+        "GEO-S9"
+      ]
+    },
+    {
+      "file": "MPG07_lot_multipolygon_4142600001.json",
+      "fixture_id": "MPG07",
+      "classification": "raw",
+      "official_endpoint": "https://services5.arcgis.com/GfwWNkhOj9bNBqoJ/arcgis/rest/services/MAPPLUTO/FeatureServer/0/query?where=BBL%3D4142600001&outFields=OBJECTID%2CBBL%2CBoroCode%2CBorough%2CBlock%2CLot%2CCondoNo%2CVersion%2CShape__Area%2CShape__Length&orderByFields=OBJECTID%20ASC&resultRecordCount=10&resultOffset=0&f=json",
+      "layer": "MAPPLUTO",
+      "query_parameters": "where=BBL%3D4142600001&outFields=OBJECTID%2CBBL%2CBoroCode%2CBorough%2CBlock%2CLot%2CCondoNo%2CVersion%2CShape__Area%2CShape__Length&orderByFields=OBJECTID%20ASC&resultRecordCount=10&resultOffset=0&f=json",
+      "http_status": 200,
+      "retrieval_timestamp_utc": "2026-07-20T05:30:59Z",
+      "source_data_last_edit_ms": null,
+      "crs": {
+        "wkid": 102718,
+        "latestWkid": 2263,
+        "authority": "EPSG:2263 (NAD83 / New York Long Island, US survey feet)"
+      },
+      "expected_record_count": 1,
+      "response_body_sha256": "sha256:77055f215f8f9fe42e058c44feed16d36b0e7194fceeb73b0606799a5b159f3a",
+      "derived_from": null,
+      "purpose": "TRUE MULTIPOLYGON lot 4142600001 (Queens; two CW exterior rings observed live, shoreline-clipped parts) - multipolygon member ordering and digest stability input",
+      "supports_scenarios": [
+        "GEO-S2",
+        "GEO-S7"
+      ]
+    },
+    {
+      "file": "MPG100_malformed_missing_features_synthetic.json",
+      "fixture_id": "MPG100",
+      "classification": "synthetic",
+      "official_endpoint": "https://services5.arcgis.com/GfwWNkhOj9bNBqoJ/arcgis/rest/services/MAPPLUTO/FeatureServer/0/query?where=BBL%3D1008350041&outFields=OBJECTID%2CBBL%2CBoroCode%2CBorough%2CBlock%2CLot%2CCondoNo%2CVersion%2CShape__Area%2CShape__Length&orderByFields=OBJECTID%20ASC&resultRecordCount=10&resultOffset=0&f=json",
+      "layer": "MAPPLUTO",
+      "query_parameters": "where=BBL%3D1008350041&outFields=OBJECTID%2CBBL%2CBoroCode%2CBorough%2CBlock%2CLot%2CCondoNo%2CVersion%2CShape__Area%2CShape__Length&orderByFields=OBJECTID%20ASC&resultRecordCount=10&resultOffset=0&f=json",
+      "http_status": 200,
+      "retrieval_timestamp_utc": "2026-07-20T05:30:57Z",
+      "source_data_last_edit_ms": null,
+      "crs": {
+        "wkid": 102718,
+        "latestWkid": 2263,
+        "authority": "EPSG:2263 (NAD83 / New York Long Island, US survey feet)"
+      },
+      "expected_record_count": null,
+      "response_body_sha256": "sha256:12190a0202d94277f1ea920045a76dc16d039a2056bd842d0d843b8fe0ab7714",
+      "derived_from": "MPG02_lot_single_1008350041.json",
+      "purpose": "Well-formed JSON object WITHOUT a features key - typed malformed_response, never a valid empty result",
+      "supports_scenarios": [
+        "GEO-S10"
+      ]
+    },
+    {
+      "file": "MPG101_malformed_truncated_synthetic.json",
+      "fixture_id": "MPG101",
+      "classification": "synthetic",
+      "official_endpoint": "https://services5.arcgis.com/GfwWNkhOj9bNBqoJ/arcgis/rest/services/MAPPLUTO/FeatureServer/0/query?where=BBL%3D1008350041&outFields=OBJECTID%2CBBL%2CBoroCode%2CBorough%2CBlock%2CLot%2CCondoNo%2CVersion%2CShape__Area%2CShape__Length&orderByFields=OBJECTID%20ASC&resultRecordCount=10&resultOffset=0&f=json",
+      "layer": "MAPPLUTO",
+      "query_parameters": "where=BBL%3D1008350041&outFields=OBJECTID%2CBBL%2CBoroCode%2CBorough%2CBlock%2CLot%2CCondoNo%2CVersion%2CShape__Area%2CShape__Length&orderByFields=OBJECTID%20ASC&resultRecordCount=10&resultOffset=0&f=json",
+      "http_status": 200,
+      "retrieval_timestamp_utc": "2026-07-20T05:30:57Z",
+      "source_data_last_edit_ms": null,
+      "crs": null,
+      "expected_record_count": null,
+      "response_body_sha256": "sha256:df60f34f28152e9cd550fc216c02910c1e5c34272d920bf28e515aa54bca1501",
+      "derived_from": "MPG02_lot_single_1008350041.json",
+      "purpose": "JSON truncated mid-body - typed malformed_response, NEVER a valid empty result",
+      "supports_scenarios": [
+        "GEO-S10"
+      ]
+    },
+    {
+      "file": "MPG102_arcgis_error_http200_synthetic.json",
+      "fixture_id": "MPG102",
+      "classification": "synthetic",
+      "official_endpoint": "https://services5.arcgis.com/GfwWNkhOj9bNBqoJ/arcgis/rest/services/MAPPLUTO/FeatureServer/0/query?where=BBL%3D1008350041&outFields=OBJECTID%2CBBL%2CBoroCode%2CBorough%2CBlock%2CLot%2CCondoNo%2CVersion%2CShape__Area%2CShape__Length&orderByFields=OBJECTID%20ASC&resultRecordCount=10&resultOffset=0&f=json",
+      "layer": "MAPPLUTO",
+      "query_parameters": "where=BBL%3D1008350041&outFields=OBJECTID%2CBBL%2CBoroCode%2CBorough%2CBlock%2CLot%2CCondoNo%2CVersion%2CShape__Area%2CShape__Length&orderByFields=OBJECTID%20ASC&resultRecordCount=10&resultOffset=0&f=json",
+      "http_status": 200,
+      "retrieval_timestamp_utc": "2026-07-20T05:30:57Z",
+      "source_data_last_edit_ms": null,
+      "crs": null,
+      "expected_record_count": null,
+      "response_body_sha256": "sha256:23f064e9d102bb054350d13336cf1733e64b3d33859bf2c803b2f68434d552e2",
+      "derived_from": "MPG02_lot_single_1008350041.json",
+      "purpose": "ArcGIS error object delivered with HTTP 200 (envelope shape live-verified on the sibling DCP_GIS services, M2-T007 fixture ZF06) - typed upstream error, never data",
+      "supports_scenarios": [
+        "GEO-S10"
+      ]
+    },
+    {
+      "file": "MPG103_rate_limited_429_synthetic.json",
+      "fixture_id": "MPG103",
+      "classification": "synthetic",
+      "official_endpoint": "https://services5.arcgis.com/GfwWNkhOj9bNBqoJ/arcgis/rest/services/MAPPLUTO/FeatureServer/0/query?where=BBL%3D1008350041&outFields=OBJECTID%2CBBL%2CBoroCode%2CBorough%2CBlock%2CLot%2CCondoNo%2CVersion%2CShape__Area%2CShape__Length&orderByFields=OBJECTID%20ASC&resultRecordCount=10&resultOffset=0&f=json",
+      "layer": "MAPPLUTO",
+      "query_parameters": "where=BBL%3D1008350041&outFields=OBJECTID%2CBBL%2CBoroCode%2CBorough%2CBlock%2CLot%2CCondoNo%2CVersion%2CShape__Area%2CShape__Length&orderByFields=OBJECTID%20ASC&resultRecordCount=10&resultOffset=0&f=json",
+      "http_status": 429,
+      "retrieval_timestamp_utc": "2026-07-20T05:30:57Z",
+      "source_data_last_edit_ms": null,
+      "crs": null,
+      "expected_record_count": null,
+      "response_body_sha256": "sha256:46d41af57dabe6c6153b4e14331086ef54a30b009e948c5d5b8a66c385a3a89d",
+      "derived_from": "MPG02_lot_single_1008350041.json",
+      "purpose": "HTTP 429 throttle body (synthetic; cannot be triggered politely against the official service) - typed rate_limited via the bounded retry path",
+      "supports_scenarios": [
+        "GEO-S10"
+      ]
+    },
+    {
+      "file": "MPG80_geom_self_intersection_synthetic.json",
+      "fixture_id": "MPG80",
+      "classification": "synthetic",
+      "official_endpoint": "https://services5.arcgis.com/GfwWNkhOj9bNBqoJ/arcgis/rest/services/MAPPLUTO/FeatureServer/0/query?where=BBL%3D1008350041&outFields=OBJECTID%2CBBL%2CBoroCode%2CBorough%2CBlock%2CLot%2CCondoNo%2CVersion%2CShape__Area%2CShape__Length&orderByFields=OBJECTID%20ASC&resultRecordCount=10&resultOffset=0&f=json",
+      "layer": "MAPPLUTO",
+      "query_parameters": "where=BBL%3D1008350041&outFields=OBJECTID%2CBBL%2CBoroCode%2CBorough%2CBlock%2CLot%2CCondoNo%2CVersion%2CShape__Area%2CShape__Length&orderByFields=OBJECTID%20ASC&resultRecordCount=10&resultOffset=0&f=json",
+      "http_status": 200,
+      "retrieval_timestamp_utc": "2026-07-20T05:30:57Z",
+      "source_data_last_edit_ms": null,
+      "crs": {
+        "wkid": 102718,
+        "latestWkid": 2263,
+        "authority": "EPSG:2263 (NAD83 / New York Long Island, US survey feet)"
+      },
+      "expected_record_count": 1,
+      "response_body_sha256": "sha256:ea1deeba61c1f8ff9113f5ff082e940a2e2bae1ce6cf423342de2cabc0595122",
+      "derived_from": "MPG02_lot_single_1008350041.json",
+      "purpose": "Self-intersecting (bowtie) ring - typed invalid finding self_intersection; characterizable repair via pinned shapely.make_valid with original digest preserved",
+      "supports_scenarios": [
+        "GEO-S5",
+        "GEO-S6"
+      ]
+    },
+    {
+      "file": "MPG81_geom_unclosed_ring_synthetic.json",
+      "fixture_id": "MPG81",
+      "classification": "synthetic",
+      "official_endpoint": "https://services5.arcgis.com/GfwWNkhOj9bNBqoJ/arcgis/rest/services/MAPPLUTO/FeatureServer/0/query?where=BBL%3D1008350041&outFields=OBJECTID%2CBBL%2CBoroCode%2CBorough%2CBlock%2CLot%2CCondoNo%2CVersion%2CShape__Area%2CShape__Length&orderByFields=OBJECTID%20ASC&resultRecordCount=10&resultOffset=0&f=json",
+      "layer": "MAPPLUTO",
+      "query_parameters": "where=BBL%3D1008350041&outFields=OBJECTID%2CBBL%2CBoroCode%2CBorough%2CBlock%2CLot%2CCondoNo%2CVersion%2CShape__Area%2CShape__Length&orderByFields=OBJECTID%20ASC&resultRecordCount=10&resultOffset=0&f=json",
+      "http_status": 200,
+      "retrieval_timestamp_utc": "2026-07-20T05:30:57Z",
+      "source_data_last_edit_ms": null,
+      "crs": {
+        "wkid": 102718,
+        "latestWkid": 2263,
+        "authority": "EPSG:2263 (NAD83 / New York Long Island, US survey feet)"
+      },
+      "expected_record_count": 1,
+      "response_body_sha256": "sha256:1fd0f2c84d2114d677bc691d5737c7e59a6d7ac7ad4f34835c405f75b809f5ab",
+      "derived_from": "MPG02_lot_single_1008350041.json",
+      "purpose": "Unclosed ring (first vertex not repeated at the end) - typed finding unclosed_ring; deterministic ring_closure repair recorded",
+      "supports_scenarios": [
+        "GEO-S5",
+        "GEO-S6"
+      ]
+    },
+    {
+      "file": "MPG82_geom_duplicate_vertices_synthetic.json",
+      "fixture_id": "MPG82",
+      "classification": "synthetic",
+      "official_endpoint": "https://services5.arcgis.com/GfwWNkhOj9bNBqoJ/arcgis/rest/services/MAPPLUTO/FeatureServer/0/query?where=BBL%3D1008350041&outFields=OBJECTID%2CBBL%2CBoroCode%2CBorough%2CBlock%2CLot%2CCondoNo%2CVersion%2CShape__Area%2CShape__Length&orderByFields=OBJECTID%20ASC&resultRecordCount=10&resultOffset=0&f=json",
+      "layer": "MAPPLUTO",
+      "query_parameters": "where=BBL%3D1008350041&outFields=OBJECTID%2CBBL%2CBoroCode%2CBorough%2CBlock%2CLot%2CCondoNo%2CVersion%2CShape__Area%2CShape__Length&orderByFields=OBJECTID%20ASC&resultRecordCount=10&resultOffset=0&f=json",
+      "http_status": 200,
+      "retrieval_timestamp_utc": "2026-07-20T05:30:57Z",
+      "source_data_last_edit_ms": null,
+      "crs": {
+        "wkid": 102718,
+        "latestWkid": 2263,
+        "authority": "EPSG:2263 (NAD83 / New York Long Island, US survey feet)"
+      },
+      "expected_record_count": 1,
+      "response_body_sha256": "sha256:8398a08f77b1ef7537dd6c5501eccb8523cc9f9f753d9be132e78a94f74849b3",
+      "derived_from": "MPG02_lot_single_1008350041.json",
+      "purpose": "Consecutive duplicate vertex in a ring - typed finding duplicate_vertices; deterministic dedup repair recorded",
+      "supports_scenarios": [
+        "GEO-S5",
+        "GEO-S6"
+      ]
+    },
+    {
+      "file": "MPG83_geom_degenerate_ring_synthetic.json",
+      "fixture_id": "MPG83",
+      "classification": "synthetic",
+      "official_endpoint": "https://services5.arcgis.com/GfwWNkhOj9bNBqoJ/arcgis/rest/services/MAPPLUTO/FeatureServer/0/query?where=BBL%3D1008350041&outFields=OBJECTID%2CBBL%2CBoroCode%2CBorough%2CBlock%2CLot%2CCondoNo%2CVersion%2CShape__Area%2CShape__Length&orderByFields=OBJECTID%20ASC&resultRecordCount=10&resultOffset=0&f=json",
+      "layer": "MAPPLUTO",
+      "query_parameters": "where=BBL%3D1008350041&outFields=OBJECTID%2CBBL%2CBoroCode%2CBorough%2CBlock%2CLot%2CCondoNo%2CVersion%2CShape__Area%2CShape__Length&orderByFields=OBJECTID%20ASC&resultRecordCount=10&resultOffset=0&f=json",
+      "http_status": 200,
+      "retrieval_timestamp_utc": "2026-07-20T05:30:57Z",
+      "source_data_last_edit_ms": null,
+      "crs": {
+        "wkid": 102718,
+        "latestWkid": 2263,
+        "authority": "EPSG:2263 (NAD83 / New York Long Island, US survey feet)"
+      },
+      "expected_record_count": 1,
+      "response_body_sha256": "sha256:5c863825712fcac08310dc66f7bd46f9660a1842e91a9d01b778b86ff93d26b7",
+      "derived_from": "MPG02_lot_single_1008350041.json",
+      "purpose": "Zero-area collinear ring alongside a valid exterior - typed finding degenerate_ring; characterized drop_degenerate_ring repair (polygonal area unchanged)",
+      "supports_scenarios": [
+        "GEO-S5",
+        "GEO-S6"
+      ]
+    },
+    {
+      "file": "MPG84_geom_empty_rings_synthetic.json",
+      "fixture_id": "MPG84",
+      "classification": "synthetic",
+      "official_endpoint": "https://services5.arcgis.com/GfwWNkhOj9bNBqoJ/arcgis/rest/services/MAPPLUTO/FeatureServer/0/query?where=BBL%3D1008350041&outFields=OBJECTID%2CBBL%2CBoroCode%2CBorough%2CBlock%2CLot%2CCondoNo%2CVersion%2CShape__Area%2CShape__Length&orderByFields=OBJECTID%20ASC&resultRecordCount=10&resultOffset=0&f=json",
+      "layer": "MAPPLUTO",
+      "query_parameters": "where=BBL%3D1008350041&outFields=OBJECTID%2CBBL%2CBoroCode%2CBorough%2CBlock%2CLot%2CCondoNo%2CVersion%2CShape__Area%2CShape__Length&orderByFields=OBJECTID%20ASC&resultRecordCount=10&resultOffset=0&f=json",
+      "http_status": 200,
+      "retrieval_timestamp_utc": "2026-07-20T05:30:57Z",
+      "source_data_last_edit_ms": null,
+      "crs": {
+        "wkid": 102718,
+        "latestWkid": 2263,
+        "authority": "EPSG:2263 (NAD83 / New York Long Island, US survey feet)"
+      },
+      "expected_record_count": 1,
+      "response_body_sha256": "sha256:c6c360088b7aea54221549569ff43d1e3f1eaa4d6a9d9b8df5bbc78015419c77",
+      "derived_from": "MPG02_lot_single_1008350041.json",
+      "purpose": "Empty rings array - explicit typed empty_geometry invalid state",
+      "supports_scenarios": [
+        "GEO-S5"
+      ]
+    },
+    {
+      "file": "MPG85_geom_null_synthetic.json",
+      "fixture_id": "MPG85",
+      "classification": "synthetic",
+      "official_endpoint": "https://services5.arcgis.com/GfwWNkhOj9bNBqoJ/arcgis/rest/services/MAPPLUTO/FeatureServer/0/query?where=BBL%3D1008350041&outFields=OBJECTID%2CBBL%2CBoroCode%2CBorough%2CBlock%2CLot%2CCondoNo%2CVersion%2CShape__Area%2CShape__Length&orderByFields=OBJECTID%20ASC&resultRecordCount=10&resultOffset=0&f=json",
+      "layer": "MAPPLUTO",
+      "query_parameters": "where=BBL%3D1008350041&outFields=OBJECTID%2CBBL%2CBoroCode%2CBorough%2CBlock%2CLot%2CCondoNo%2CVersion%2CShape__Area%2CShape__Length&orderByFields=OBJECTID%20ASC&resultRecordCount=10&resultOffset=0&f=json",
+      "http_status": 200,
+      "retrieval_timestamp_utc": "2026-07-20T05:30:57Z",
+      "source_data_last_edit_ms": null,
+      "crs": {
+        "wkid": 102718,
+        "latestWkid": 2263,
+        "authority": "EPSG:2263 (NAD83 / New York Long Island, US survey feet)"
+      },
+      "expected_record_count": 1,
+      "response_body_sha256": "sha256:fad4a5662db0ef1c1de6ab7cd30c8bd154a886ac18e0fddb2037cafbd86cf1ac",
+      "derived_from": "MPG02_lot_single_1008350041.json",
+      "purpose": "Geometry JSON null - explicit typed null_geometry invalid state",
+      "supports_scenarios": [
+        "GEO-S5"
+      ]
+    },
+    {
+      "file": "MPG86_geom_orientation_all_ccw_synthetic.json",
+      "fixture_id": "MPG86",
+      "classification": "synthetic",
+      "official_endpoint": "https://services5.arcgis.com/GfwWNkhOj9bNBqoJ/arcgis/rest/services/MAPPLUTO/FeatureServer/0/query?where=BBL%3D1008350041&outFields=OBJECTID%2CBBL%2CBoroCode%2CBorough%2CBlock%2CLot%2CCondoNo%2CVersion%2CShape__Area%2CShape__Length&orderByFields=OBJECTID%20ASC&resultRecordCount=10&resultOffset=0&f=json",
+      "layer": "MAPPLUTO",
+      "query_parameters": "where=BBL%3D1008350041&outFields=OBJECTID%2CBBL%2CBoroCode%2CBorough%2CBlock%2CLot%2CCondoNo%2CVersion%2CShape__Area%2CShape__Length&orderByFields=OBJECTID%20ASC&resultRecordCount=10&resultOffset=0&f=json",
+      "http_status": 200,
+      "retrieval_timestamp_utc": "2026-07-20T05:30:57Z",
+      "source_data_last_edit_ms": null,
+      "crs": {
+        "wkid": 102718,
+        "latestWkid": 2263,
+        "authority": "EPSG:2263 (NAD83 / New York Long Island, US survey feet)"
+      },
+      "expected_record_count": 1,
+      "response_body_sha256": "sha256:ff9fa2c8597c554c420fbb936b3f1e9fa1773650005c77b19ff36586fd5f29b5",
+      "derived_from": "MPG02_lot_single_1008350041.json",
+      "purpose": "Only counterclockwise ring(s): esri orientation convention (CW exterior) inverted - typed finding invalid_orientation, review_required (intent cannot be safely characterized)",
+      "supports_scenarios": [
+        "GEO-S5"
+      ]
+    },
+    {
+      "file": "MPG87_geom_collection_paths_synthetic.json",
+      "fixture_id": "MPG87",
+      "classification": "synthetic",
+      "official_endpoint": "https://services5.arcgis.com/GfwWNkhOj9bNBqoJ/arcgis/rest/services/MAPPLUTO/FeatureServer/0/query?where=BBL%3D1008350041&outFields=OBJECTID%2CBBL%2CBoroCode%2CBorough%2CBlock%2CLot%2CCondoNo%2CVersion%2CShape__Area%2CShape__Length&orderByFields=OBJECTID%20ASC&resultRecordCount=10&resultOffset=0&f=json",
+      "layer": "MAPPLUTO",
+      "query_parameters": "where=BBL%3D1008350041&outFields=OBJECTID%2CBBL%2CBoroCode%2CBorough%2CBlock%2CLot%2CCondoNo%2CVersion%2CShape__Area%2CShape__Length&orderByFields=OBJECTID%20ASC&resultRecordCount=10&resultOffset=0&f=json",
+      "http_status": 200,
+      "retrieval_timestamp_utc": "2026-07-20T05:30:57Z",
+      "source_data_last_edit_ms": null,
+      "crs": {
+        "wkid": 102718,
+        "latestWkid": 2263,
+        "authority": "EPSG:2263 (NAD83 / New York Long Island, US survey feet)"
+      },
+      "expected_record_count": 1,
+      "response_body_sha256": "sha256:62336db867f4a3153eb40cb67f333594995d650cbe325622fb5eec25d82a04c1",
+      "derived_from": "MPG02_lot_single_1008350041.json",
+      "purpose": "Polyline 'paths' payload where polygon 'rings' are contracted - typed finding geometry_collection (non-polygon surprise), invalid_geometry",
+      "supports_scenarios": [
+        "GEO-S5"
+      ]
+    },
+    {
+      "file": "MPG88_geom_hole_outside_shell_synthetic.json",
+      "fixture_id": "MPG88",
+      "classification": "synthetic",
+      "official_endpoint": "https://services5.arcgis.com/GfwWNkhOj9bNBqoJ/arcgis/rest/services/MAPPLUTO/FeatureServer/0/query?where=BBL%3D1008350041&outFields=OBJECTID%2CBBL%2CBoroCode%2CBorough%2CBlock%2CLot%2CCondoNo%2CVersion%2CShape__Area%2CShape__Length&orderByFields=OBJECTID%20ASC&resultRecordCount=10&resultOffset=0&f=json",
+      "layer": "MAPPLUTO",
+      "query_parameters": "where=BBL%3D1008350041&outFields=OBJECTID%2CBBL%2CBoroCode%2CBorough%2CBlock%2CLot%2CCondoNo%2CVersion%2CShape__Area%2CShape__Length&orderByFields=OBJECTID%20ASC&resultRecordCount=10&resultOffset=0&f=json",
+      "http_status": 200,
+      "retrieval_timestamp_utc": "2026-07-20T05:30:57Z",
+      "source_data_last_edit_ms": null,
+      "crs": {
+        "wkid": 102718,
+        "latestWkid": 2263,
+        "authority": "EPSG:2263 (NAD83 / New York Long Island, US survey feet)"
+      },
+      "expected_record_count": 1,
+      "response_body_sha256": "sha256:e8822be6c8a8edd064868cecdb5e3433a896d8a17dc11e51545c0adbcd380177",
+      "derived_from": "MPG02_lot_single_1008350041.json",
+      "purpose": "CCW hole ring located entirely outside every exterior ring - typed finding invalid_orientation, review_required (uncharacterizable topology; never silently repaired)",
+      "supports_scenarios": [
+        "GEO-S5"
+      ]
+    },
+    {
+      "file": "MPG90_meta_wrong_crs_synthetic.json",
+      "fixture_id": "MPG90",
+      "classification": "synthetic",
+      "official_endpoint": "https://services5.arcgis.com/GfwWNkhOj9bNBqoJ/arcgis/rest/services/MAPPLUTO/FeatureServer/0?f=json",
+      "layer": "MAPPLUTO",
+      "query_parameters": "f=json",
+      "http_status": 200,
+      "retrieval_timestamp_utc": "2026-07-20T05:30:57Z",
+      "source_data_last_edit_ms": 1779892578102,
+      "crs": {
+        "wkid": 102718,
+        "latestWkid": 2263,
+        "authority": "EPSG:2263 (NAD83 / New York Long Island, US survey feet)"
+      },
+      "expected_record_count": null,
+      "response_body_sha256": "sha256:16355533ed3ac83ad817fef9219b2b88ce563f83ce98f14db45f1f0d4a25ee46",
+      "derived_from": "MPG01_meta.json",
+      "purpose": "Metadata negative: spatial reference replaced with WGS84 (4326) - typed wrong_crs failure BEFORE any coordinate interpretation (authoritative CRS is EPSG:2263 / wkid 102718)",
+      "supports_scenarios": [
+        "GEO-S8"
+      ]
+    },
+    {
+      "file": "MPG91_meta_missing_bbl_field_synthetic.json",
+      "fixture_id": "MPG91",
+      "classification": "synthetic",
+      "official_endpoint": "https://services5.arcgis.com/GfwWNkhOj9bNBqoJ/arcgis/rest/services/MAPPLUTO/FeatureServer/0?f=json",
+      "layer": "MAPPLUTO",
+      "query_parameters": "f=json",
+      "http_status": 200,
+      "retrieval_timestamp_utc": "2026-07-20T05:30:57Z",
+      "source_data_last_edit_ms": 1779892578102,
+      "crs": {
+        "wkid": 102718,
+        "latestWkid": 2263,
+        "authority": "EPSG:2263 (NAD83 / New York Long Island, US survey feet)"
+      },
+      "expected_record_count": null,
+      "response_body_sha256": "sha256:4e7f29000e4d7d557b085f5f0273e780faf5c4dc35ed2f2845f2f8790e94e34c",
+      "derived_from": "MPG01_meta.json",
+      "purpose": "Metadata negative: BBL field removed from the live schema - typed schema_drift, never a silent field guess",
+      "supports_scenarios": [
+        "GEO-S1"
+      ]
+    },
+    {
+      "file": "MPG92_meta_retyped_block_synthetic.json",
+      "fixture_id": "MPG92",
+      "classification": "synthetic",
+      "official_endpoint": "https://services5.arcgis.com/GfwWNkhOj9bNBqoJ/arcgis/rest/services/MAPPLUTO/FeatureServer/0?f=json",
+      "layer": "MAPPLUTO",
+      "query_parameters": "f=json",
+      "http_status": 200,
+      "retrieval_timestamp_utc": "2026-07-20T05:30:57Z",
+      "source_data_last_edit_ms": 1779892578102,
+      "crs": {
+        "wkid": 102718,
+        "latestWkid": 2263,
+        "authority": "EPSG:2263 (NAD83 / New York Long Island, US survey feet)"
+      },
+      "expected_record_count": null,
+      "response_body_sha256": "sha256:1d944903e6a2a13cdca108da54658e53adcc98ee7c604611e08af048063122a1",
+      "derived_from": "MPG01_meta.json",
+      "purpose": "Metadata negative: Block field re-typed to string - typed schema_drift",
+      "supports_scenarios": [
+        "GEO-S1"
+      ]
+    },
+    {
+      "file": "MPG93_meta_missing_objectid_synthetic.json",
+      "fixture_id": "MPG93",
+      "classification": "synthetic",
+      "official_endpoint": "https://services5.arcgis.com/GfwWNkhOj9bNBqoJ/arcgis/rest/services/MAPPLUTO/FeatureServer/0?f=json",
+      "layer": "MAPPLUTO",
+      "query_parameters": "f=json",
+      "http_status": 200,
+      "retrieval_timestamp_utc": "2026-07-20T05:30:57Z",
+      "source_data_last_edit_ms": 1779892578102,
+      "crs": {
+        "wkid": 102718,
+        "latestWkid": 2263,
+        "authority": "EPSG:2263 (NAD83 / New York Long Island, US survey feet)"
+      },
+      "expected_record_count": null,
+      "response_body_sha256": "sha256:46336b0e717a5a0ec331a83e27d1363015d2eedb8b6028b1af5600b50d507327",
+      "derived_from": "MPG01_meta.json",
+      "purpose": "Metadata negative: objectIdField removed - typed schema_drift (deterministic ordering cannot be established)",
+      "supports_scenarios": [
+        "GEO-S1"
+      ]
+    },
+    {
+      "file": "MPG94_meta_missing_maxrecordcount_synthetic.json",
+      "fixture_id": "MPG94",
+      "classification": "synthetic",
+      "official_endpoint": "https://services5.arcgis.com/GfwWNkhOj9bNBqoJ/arcgis/rest/services/MAPPLUTO/FeatureServer/0?f=json",
+      "layer": "MAPPLUTO",
+      "query_parameters": "f=json",
+      "http_status": 200,
+      "retrieval_timestamp_utc": "2026-07-20T05:30:57Z",
+      "source_data_last_edit_ms": 1779892578102,
+      "crs": {
+        "wkid": 102718,
+        "latestWkid": 2263,
+        "authority": "EPSG:2263 (NAD83 / New York Long Island, US survey feet)"
+      },
+      "expected_record_count": null,
+      "response_body_sha256": "sha256:84b3140e17f72f4556a426736372e8e7b05e0f7fe6797cf59b0bc556bf05b41e",
+      "derived_from": "MPG01_meta.json",
+      "purpose": "Metadata negative: maxRecordCount removed - typed schema_drift",
+      "supports_scenarios": [
+        "GEO-S1"
+      ]
+    },
+    {
+      "file": "MPG95_meta_old_edit_date_synthetic.json",
+      "fixture_id": "MPG95",
+      "classification": "synthetic",
+      "official_endpoint": "https://services5.arcgis.com/GfwWNkhOj9bNBqoJ/arcgis/rest/services/MAPPLUTO/FeatureServer/0?f=json",
+      "layer": "MAPPLUTO",
+      "query_parameters": "f=json",
+      "http_status": 200,
+      "retrieval_timestamp_utc": "2026-07-20T05:30:57Z",
+      "source_data_last_edit_ms": 1577836800000,
+      "crs": {
+        "wkid": 102718,
+        "latestWkid": 2263,
+        "authority": "EPSG:2263 (NAD83 / New York Long Island, US survey feet)"
+      },
+      "expected_record_count": null,
+      "response_body_sha256": "sha256:e8f650c5ca9406cb42a7fec5e56e0a6959903af56d5c6a792c0ec30f931a6ceb",
+      "derived_from": "MPG01_meta.json",
+      "purpose": "Two-staleness rule: dataLastEditDate forced to 2020-01-01 - an old SOURCE dataset retrieved FRESH must never set transport staleness",
+      "supports_scenarios": [
+        "GEO-S11"
+      ]
+    },
+    {
+      "file": "MPG96_multiple_features_synthetic.json",
+      "fixture_id": "MPG96",
+      "classification": "synthetic",
+      "official_endpoint": "https://services5.arcgis.com/GfwWNkhOj9bNBqoJ/arcgis/rest/services/MAPPLUTO/FeatureServer/0/query?where=BBL%3D1008350041&outFields=OBJECTID%2CBBL%2CBoroCode%2CBorough%2CBlock%2CLot%2CCondoNo%2CVersion%2CShape__Area%2CShape__Length&orderByFields=OBJECTID%20ASC&resultRecordCount=10&resultOffset=0&f=json",
+      "layer": "MAPPLUTO",
+      "query_parameters": "where=BBL%3D1008350041&outFields=OBJECTID%2CBBL%2CBoroCode%2CBorough%2CBlock%2CLot%2CCondoNo%2CVersion%2CShape__Area%2CShape__Length&orderByFields=OBJECTID%20ASC&resultRecordCount=10&resultOffset=0&f=json",
+      "http_status": 200,
+      "retrieval_timestamp_utc": "2026-07-20T05:30:57Z",
+      "source_data_last_edit_ms": null,
+      "crs": {
+        "wkid": 102718,
+        "latestWkid": 2263,
+        "authority": "EPSG:2263 (NAD83 / New York Long Island, US survey feet)"
+      },
+      "expected_record_count": 2,
+      "response_body_sha256": "sha256:d47dd7029abdc274ce7702c7e9ee19768c505c8aedb81cf9d6645bf5a1104789",
+      "derived_from": "MPG02_lot_single_1008350041.json",
+      "purpose": "MULTIPLE features returned for one BBL (duplicated feature, distinct OBJECTID) - explicit typed multiple_features review-required outcome; never a silent first-pick",
+      "supports_scenarios": [
+        "GEO-S3"
+      ]
+    },
+    {
+      "file": "MPG97_wrong_lot_returned_synthetic.json",
+      "fixture_id": "MPG97",
+      "classification": "synthetic",
+      "official_endpoint": "https://services5.arcgis.com/GfwWNkhOj9bNBqoJ/arcgis/rest/services/MAPPLUTO/FeatureServer/0/query?where=BBL%3D1008350041&outFields=OBJECTID%2CBBL%2CBoroCode%2CBorough%2CBlock%2CLot%2CCondoNo%2CVersion%2CShape__Area%2CShape__Length&orderByFields=OBJECTID%20ASC&resultRecordCount=10&resultOffset=0&f=json",
+      "layer": "MAPPLUTO",
+      "query_parameters": "where=BBL%3D1008350041&outFields=OBJECTID%2CBBL%2CBoroCode%2CBorough%2CBlock%2CLot%2CCondoNo%2CVersion%2CShape__Area%2CShape__Length&orderByFields=OBJECTID%20ASC&resultRecordCount=10&resultOffset=0&f=json",
+      "http_status": 200,
+      "retrieval_timestamp_utc": "2026-07-20T05:30:57Z",
+      "source_data_last_edit_ms": null,
+      "crs": {
+        "wkid": 102718,
+        "latestWkid": 2263,
+        "authority": "EPSG:2263 (NAD83 / New York Long Island, US survey feet)"
+      },
+      "expected_record_count": 1,
+      "response_body_sha256": "sha256:dbeca574723953bcb83ee751e4d0f195f63e5eda53358464099251a0f3de75ec",
+      "derived_from": "MPG02_lot_single_1008350041.json",
+      "purpose": "Feature BBL/Lot disagree with the requested lot - typed result_mismatch failure (returned data is never silently trusted)",
+      "supports_scenarios": [
+        "GEO-S1"
+      ]
+    },
+    {
+      "file": "MPG98_component_conflict_synthetic.json",
+      "fixture_id": "MPG98",
+      "classification": "synthetic",
+      "official_endpoint": "https://services5.arcgis.com/GfwWNkhOj9bNBqoJ/arcgis/rest/services/MAPPLUTO/FeatureServer/0/query?where=BBL%3D1008350041&outFields=OBJECTID%2CBBL%2CBoroCode%2CBorough%2CBlock%2CLot%2CCondoNo%2CVersion%2CShape__Area%2CShape__Length&orderByFields=OBJECTID%20ASC&resultRecordCount=10&resultOffset=0&f=json",
+      "layer": "MAPPLUTO",
+      "query_parameters": "where=BBL%3D1008350041&outFields=OBJECTID%2CBBL%2CBoroCode%2CBorough%2CBlock%2CLot%2CCondoNo%2CVersion%2CShape__Area%2CShape__Length&orderByFields=OBJECTID%20ASC&resultRecordCount=10&resultOffset=0&f=json",
+      "http_status": 200,
+      "retrieval_timestamp_utc": "2026-07-20T05:30:57Z",
+      "source_data_last_edit_ms": null,
+      "crs": {
+        "wkid": 102718,
+        "latestWkid": 2263,
+        "authority": "EPSG:2263 (NAD83 / New York Long Island, US survey feet)"
+      },
+      "expected_record_count": 1,
+      "response_body_sha256": "sha256:16a63e141da92e56e0b3b5bde1ad8e87439022377d7ec458384d6db31ed5aae8",
+      "derived_from": "MPG02_lot_single_1008350041.json",
+      "purpose": "BBL matches the request but the Block component attribute disagrees with the BBL-derived block - visible identifier conflict surfaced on the result (never silently resolved)",
+      "supports_scenarios": [
+        "GEO-S1"
+      ]
+    },
+    {
+      "file": "MPG99_query_wrong_crs_synthetic.json",
+      "fixture_id": "MPG99",
+      "classification": "synthetic",
+      "official_endpoint": "https://services5.arcgis.com/GfwWNkhOj9bNBqoJ/arcgis/rest/services/MAPPLUTO/FeatureServer/0/query?where=BBL%3D1008350041&outFields=OBJECTID%2CBBL%2CBoroCode%2CBorough%2CBlock%2CLot%2CCondoNo%2CVersion%2CShape__Area%2CShape__Length&orderByFields=OBJECTID%20ASC&resultRecordCount=10&resultOffset=0&f=json",
+      "layer": "MAPPLUTO",
+      "query_parameters": "where=BBL%3D1008350041&outFields=OBJECTID%2CBBL%2CBoroCode%2CBorough%2CBlock%2CLot%2CCondoNo%2CVersion%2CShape__Area%2CShape__Length&orderByFields=OBJECTID%20ASC&resultRecordCount=10&resultOffset=0&f=json",
+      "http_status": 200,
+      "retrieval_timestamp_utc": "2026-07-20T05:30:57Z",
+      "source_data_last_edit_ms": null,
+      "crs": {
+        "wkid": 4326,
+        "latestWkid": 4326
+      },
+      "expected_record_count": 1,
+      "response_body_sha256": "sha256:74d762991f23e48fa3faa85e84d2cb3ca8c68a079952086d1d152060b3aa3481",
+      "derived_from": "MPG02_lot_single_1008350041.json",
+      "purpose": "Query response spatial reference replaced with WGS84 (4326) - typed wrong_crs BEFORE geometry interpretation; proves no degrees-based area path exists",
+      "supports_scenarios": [
+        "GEO-S8"
+      ]
+    }
+  ]
+}

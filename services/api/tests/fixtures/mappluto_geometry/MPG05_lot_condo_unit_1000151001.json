@@ -1,0 +1,16 @@
+{
+  "fixture_id": "MPG05",
+  "title": "Condo UNIT lot 1000151001 (lot 1001 in unit range 1001-6999) on the same block as billing lot 7501: EMPTY result captured live - MapPLUTO has one record per condo complex, unit lots carry no polygon (research section 2.5)",
+  "source_id": "nyc-dcp-mappluto-arcgis",
+  "layer": "MAPPLUTO",
+  "request_url": "https://services5.arcgis.com/GfwWNkhOj9bNBqoJ/arcgis/rest/services/MAPPLUTO/FeatureServer/0/query?where=BBL%3D1000151001&outFields=OBJECTID%2CBBL%2CBoroCode%2CBorough%2CBlock%2CLot%2CCondoNo%2CVersion%2CShape__Area%2CShape__Length&orderByFields=OBJECTID%20ASC&resultRecordCount=10&resultOffset=0&f=json",
+  "http_status": 200,
+  "retrieval_timestamp_utc": "2026-07-20T05:30:58Z",
+  "capture_method": "live urllib GET by M2-T009 producer, keyless official ArcGIS service, single KB-scale bounded request",
+  "classification": "raw",
+  "supports_scenarios": [
+    "GEO-S4"
+  ],
+  "notes": "Condo UNIT lot 1000151001 (lot 1001 in unit range 1001-6999) on the same block as billing lot 7501: EMPTY result captured live - MapPLUTO has one record per condo complex, unit lots carry no polygon (research section 2.5)",
+  "response_body_raw": "{\"objectIdFieldName\":\"OBJECTID\",\"uniqueIdField\":{\"name\":\"OBJECTID\",\"isSystemMaintained\":true},\"globalIdFieldName\":\"\",\"geometryProperties\":{\"shapeAreaFieldName\":\"Shape__Area\",\"shapeLengthFieldName\":\"Shape__Length\",\"units\":\"esriFeet\"},\"features\":[]}"
+}
