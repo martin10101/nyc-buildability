@@ -1,0 +1,79 @@
+{
+  "task_id": "M2-T012",
+  "title": "Profile integration of wave connectors + spatial results (single contract 1.4.0 update)",
+  "task_type": "backend",
+  "milestone_id": "M2",
+  "objective": "Integrate the accepted connector wave AND the M2-T013 spatial-intersection results into the canonical property profile in ONE coordinated contract update (owner directive 2026-07-20: avoid successive contract versions; no temporary contract fields). Scope: (1) zoning-features citywide facts (M2-T007 six layers) and per-BBL MapPLUTO geometry facts (M2-T009) enter the canonical profile with full provenance; (2) M2-T013 intersection records (exact geometry results, boundary distances, uncertainty classifications, split-lot percentages, professional-review flags) enter the profile WITHOUT collapsing uncertainty; (3) the three-way PLUTO/ZTLDB/zoning-features cross-check (M2-T008) extends to include the geometric assignment as a fourth evidence stream, with disagreements surfacing through the existing conflict shape; (4) publish contract 1.4.0 through the M2-T010 tooling (client + backend version declarations derive automatically; drift tests prove detection); (5) fold in the carried LOW-defect fixes and options assigned to this task: M2-T009 metadata-TTL-cache option for the resilient client, M2-T007 G3/G4 LOW defects (untested drift signals, test-name mismatch, count==cap default-page test), M2-T008 G3/G4 D1 (check_columns_for_drift TypeError on doubly-malformed metadata) and O2 (SOCRATA_APP_TOKEN test hermeticity), M2-T007 G1 D1 (out_fields footgun typing), M2-T009 G4 D1 (top-level metadata spatialReference assertion). CONSTRAINT: additive-only contract evolution (builder.py additive pattern); 1.0.0-1.3.0 payloads must continue to validate; fail-closed behavior for unsupported versions preserved.",
+  "business_reason": "The wave connectors and spatial engine are accepted but their facts do not yet reach the canonical profile that the UI, rules engine, and reports consume; one coordinated 1.4.0 update avoids the churn of successive versions and is gated on the M2-T010 anti-drift tooling (owner precondition).",
+  "inputs": [
+    "Accepted domain models: M2-T007 zoning-features, M2-T008 ZTLDB + zoning_crosscheck.py, M2-T009 MapPLUTO geometry, M2-T013 spatial-intersection records",
+    "M2-T010 accepted contract-publication tooling (derivation + drift tests) - HARD precondition for publishing 1.4.0",
+    "services/api/app/profile/builder.py (additive declare-what-you-emit pattern), contract.py (schema-derived SUPPORTED_CONTRACT_VERSIONS), packages/contracts/schemas/v1/property_profile.schema.json",
+    "Carried defect list (M2-T007/T008/T009 carry-forwards enumerated in the objective, from docs/SESSION_HANDOFF.md and the G-gate reports)"
+  ],
+  "outputs": [
+    "Contract 1.4.0: schema + generated artifacts + backend/client declarations all derived through the M2-T010 pipeline; additive keys for zoning-features facts, lot-geometry facts, and spatial-intersection results with uncertainty preserved",
+    "Profile builder emitting the new facts with full provenance (source, retrieval timestamp, digests, version)",
+    "Extended conflict engine coverage: geometric-vs-ZTLDB assignment disagreement as a typed conflict",
+    "Carried LOW-defect fixes with per-defect evidence in the producer report",
+    "project-control/reports/M2-T012-producer-report.md (AOS section-6 packet)"
+  ],
+  "dependencies": [
+    "M2-T010",
+    "M2-T011",
+    "M2-T013"
+  ],
+  "allowed_paths": [
+    "services/api/app/profile/**",
+    "services/api/app/_contract_schemas/** (via the sync tooling only)",
+    "packages/contracts/** (1.4.0 publication through M2-T010 tooling)",
+    "apps/web/src/lib/** (derived declarations + validation consumption)",
+    "services/api/app/connectors/** and services/api/app/resilience/** ONLY for the enumerated carried defects (each touch disclosed per-defect)",
+    "services/api/tests/**, apps/web/src/lib/__tests__/**",
+    "services/api/app/api/v1/** (typed error surface only if the new keys require it, disclosed)",
+    "project-control/reports/M2-T012-producer-report.md"
+  ],
+  "forbidden_paths": [
+    "Any contract version beyond 1.4.0; any non-additive change to existing keys",
+    "Collapsing M2-T013 uncertainty classifications into definitive assignments anywhere in the profile or UI-facing payload",
+    "apps/web/src/components/** (UI rendering of the new facts is a separate frontend task)",
+    "project-control/** (except own producer report)",
+    ".claude/**"
+  ],
+  "acceptance_scenarios": [
+    "PI-S1 primary: a BBL with complete wave data yields a 1.4.0 profile carrying zoning-features facts, lot geometry facts, and intersection records with provenance; validates against the canonical schema",
+    "PI-S2 uncertainty preservation: a near-boundary lot's profile shows the uncertainty classification AND the exact geometric result; no definitive single assignment appears anywhere in the payload",
+    "PI-S3 conflict: geometric assignment disagreeing with ZTLDB produces the typed conflict entry; resolution field honest (unresolved)",
+    "PI-S4 compatibility: 1.0.0-1.3.0 fixture payloads still validate; a 1.3.0-declaring producer path still works; unsupported-version fail-closed behavior unchanged",
+    "PI-S5 drift tooling: 1.4.0 publication goes through the M2-T010 derivation; schema-ahead-of-client drift test proves red-path; backend declaration follows automatically (bundled-schema sync check green)",
+    "PI-S6 carried defects: each enumerated carry-forward fixed with its own test evidence (per-defect list in report)",
+    "PI-S7 missing data: absent spatial results or absent connector facts degrade to typed missing/conditional statuses, never invented values",
+    "PI-S8 regression: full repository CI green on both events; web unit + e2e suites green"
+  ],
+  "required_gates": [
+    "G0",
+    "G1",
+    "G2",
+    "G3",
+    "G4",
+    "G5"
+  ],
+  "producer_agent": null,
+  "reviewer_agents": [
+    "data-contract-verifier",
+    "code-reviewer",
+    "security-reviewer"
+  ],
+  "status": "backlog",
+  "progress_percent": 0,
+  "risks": [
+    "HARD sequencing: cannot start before M2-T010 (tooling), M2-T011 (connector files stable), and M2-T013 (intersection records) are ALL accepted; owner-ratified order 2026-07-20",
+    "Largest-surface task of the wave (profile + contracts + web lib + carried defects); consider split if the carried-defect fold-in bloats the diff - orchestrator may split defects into a companion task at G0",
+    "1.4.0 is the FIRST post-tooling contract publication - G1 must verify the derivation chain end-to-end, not assume it",
+    "STOP CONDITIONS: any non-additive schema need; any uncertainty-collapsing simplification request; any 1.5.0 temptation (stop and replan); credentials; production deployment",
+    "Execution: local checkout + CI; negligible disk footprint"
+  ],
+  "blockers": [],
+  "created_at": "2026-07-20T06:34:25.260094+00:00",
+  "updated_at": "2026-07-20T06:34:25.260094+00:00"
+}

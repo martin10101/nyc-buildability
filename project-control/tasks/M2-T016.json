@@ -1,0 +1,77 @@
+{
+  "task_id": "M2-T016",
+  "title": "Survey review UI, correction workflow, and profile integration (Packet C)",
+  "task_type": "frontend",
+  "milestone_id": "M2",
+  "objective": "Design and build the survey review experience (owner directive 2026-07-20, survey workstream Packet C). (1) REVIEW SCREEN: clean, progressively disclosed; shows the original survey document with extracted lines, boundaries, labels, and measurements overlaid; highlights uncertain or conflicting values; lets an AUTHORIZED user accept, correct, or reject each material item. (2) CORRECTIONS: every correction is auditable (who/when/what/why), causes dependent calculations to rerun, and NEVER overwrites the immutable source file or erases the original extraction (correction history per the survey-evidence contract). (3) STATES: use the explicit states uploaded / processing / auto_extracted / needs_review / rejected / professionally_confirmed. 'Verified' is NOT automatically the final status - the task must define exactly which licensed or designated professional role may provide professional confirmation (professional-confirmation state is granted only through that role; this is a G6-adjacent boundary and the role definition requires owner/qualified-human sign-off). (4) DOWNSTREAM HONESTY: show which buildability conclusions are blocked or provisional because survey evidence is unresolved (unresolved survey items propagate visibly; no silent defaults).",
+  "business_reason": "Extraction without human-controlled correction and explicit professional confirmation would let machine output masquerade as boundary truth; the review workflow is what turns ingested documents into auditable evidence (owner directive 2026-07-20).",
+  "inputs": [
+    "M2-T015 outputs: survey-evidence contract, ingestion states, deterministic-check results, fixture pack",
+    "M2-T012 canonical profile contract (1.4.0) - the integration surface for survey-derived facts and unresolved-condition propagation",
+    "docs/PRODUCT_FLOW_AND_AI_BOUNDARIES.md (progressive disclosure, one clear next action, no legal certainty by color alone), docs/PREMIUM_PRODUCT_DESIGN_SYSTEM.md",
+    "Owner directive 2026-07-20 section 3 Packet C (verbatim requirements above)"
+  ],
+  "outputs": [
+    "docs/SURVEY_REVIEW_WORKFLOW.md (canonical workflow: states, transitions, role authorization, professional-confirmation definition, audit model, rerun semantics)",
+    "Survey review screens (apps/web) with overlay rendering, uncertain/conflict highlighting, accept/correct/reject flows, state visibility, and blocked/provisional buildability indicators",
+    "API endpoints for review actions with audit events and dependent-recalculation triggers (backend slice disclosed if it exceeds the frontend scope - orchestrator may split at G0)",
+    "UI human-journey acceptance pack (ACCEPTANCE_SCENARIO_STANDARD): browser automation + independent manual-style walkthrough",
+    "project-control/reports/M2-T016-producer-report.md (AOS section-6 packet)"
+  ],
+  "dependencies": [
+    "M2-T015",
+    "M2-T012"
+  ],
+  "allowed_paths": [
+    "apps/web/src/** (survey review feature areas)",
+    "services/api/app/documents/** (review-action endpoints + audit events only, disclosed)",
+    "services/api/tests/documents/**, apps/web tests/e2e for the new screens",
+    "docs/SURVEY_REVIEW_WORKFLOW.md",
+    "project-control/reports/M2-T016-producer-report.md"
+  ],
+  "forbidden_paths": [
+    "Automatic 'verified' labeling of any survey fact (professional confirmation only through the defined role; no agent may grant it)",
+    "Mutation or deletion of original documents or original extraction records (immutability is contract-level)",
+    "services/api/app/profile/** beyond consuming the 1.4.0 contract surface (no contract changes; if a survey-facts contract version is needed, STOP - that is a new contracted decision)",
+    "Production storage/auth provisioning (B-001 hold)",
+    "project-control/** (except own producer report)",
+    ".claude/**"
+  ],
+  "acceptance_scenarios": [
+    "SC-S1 primary journey: reviewer opens a needs_review survey, sees overlay + highlighted uncertain values, accepts some, corrects one (with reason), rejects one; audit trail complete; dependent calculations rerun; states transition correctly",
+    "SC-S2 immutability: after corrections, the original file digest and original extraction records remain intact and viewable side-by-side with the corrections",
+    "SC-S3 authorization: an unauthorized role cannot accept/correct/reject or grant professional confirmation; the professional-confirmation action is available only to the defined role",
+    "SC-S4 no-auto-verified: nothing reaches professionally_confirmed without the explicit role action; auto_extracted facts display as unconfirmed evidence everywhere they appear",
+    "SC-S5 downstream honesty: a property with unresolved survey items shows exactly which buildability conclusions are blocked/provisional; resolving the item clears the flag through rerun",
+    "SC-S6 conflict display: a deterministic-check failure (e.g. area-vs-stated mismatch) is visible, plain-language explained, and unresolvable-by-click (requires correction or rejection, never dismissal)",
+    "SC-S7 recovery + a11y: recoverable API failure mid-review; keyboard navigation and accessibility pack on the new screens; responsive at supported viewports",
+    "SC-S8 regression: full repository CI green on both events; existing web e2e suites green"
+  ],
+  "required_gates": [
+    "G0",
+    "G2",
+    "G3",
+    "G4",
+    "G5"
+  ],
+  "producer_agent": null,
+  "reviewer_agents": [
+    "code-reviewer",
+    "human-journey-reviewer",
+    "visual-quality-reviewer",
+    "security-reviewer"
+  ],
+  "status": "backlog",
+  "progress_percent": 0,
+  "risks": [
+    "DISPATCH HOLD: awaits owner review of the 2026-07-20 planning report AND acceptance of M2-T015 + M2-T012",
+    "The professional-confirmation role definition is a human-authority decision: the packet defines the mechanism; WHO qualifies is recorded as an owner/qualified-human decision before the state can be granted in production",
+    "Frontend + backend-slice scope: orchestrator may split the API slice to backend-engineer at G0 to preserve exclusive file scopes",
+    "Tenant isolation and production auth remain under B-001; review flows are proven against local/CI auth fixtures and the design must not assume public buckets",
+    "STOP CONDITIONS: any path granting confirmation without the defined role; any contract change need; any production credential need",
+    "Execution: local/CI; Playwright browser evidence; low-storage compliant"
+  ],
+  "blockers": [],
+  "created_at": "2026-07-20T06:34:25.583607+00:00",
+  "updated_at": "2026-07-20T06:34:25.583607+00:00"
+}

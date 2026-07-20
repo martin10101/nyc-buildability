@@ -1,0 +1,67 @@
+{
+  "task_id": "M2-T014",
+  "title": "Survey and official-document source/format research (Packet A)",
+  "task_type": "research",
+  "milestone_id": "M2",
+  "objective": "Research-only task (owner directive 2026-07-20, survey workstream Packet A). (1) INVENTORY the official systems that may provide surveys, site plans, tax maps, architectural filings, or related documents (DOB NOW / BIS filings and attachments, DOF Digital Tax Map, DCP datasets, ACRIS document images, and any other official system discovered). For each: authorized access method, API/download availability, authentication, format, address/BBL/job-number linkage, freshness, access restrictions, and known limitations. (2) DISTINGUISH EXPLICITLY (owner requirement - these are related evidence sources but NOT interchangeable): licensed boundary/topographic survey; tax-lot polygon; tax map; DOB site plan; architectural drawing; proposed plan; historical filing attachment. The deliverable must define each class, its evidentiary weight, and what it can and cannot establish. (3) DEFINE the initial supported UPLOAD formats, evaluating separately: born-digital PDF, vector PDF, scanned PDF, TIFF, PNG/JPEG, DXF, and native DWG. Do NOT promise native DWG support unless the parser/conversion approach, licensing, sandboxing, and testability are proven - otherwise define safe deferral or conversion requirements for unsupported formats. (4) ACCESS RULES: where an official website exposes an authorized stable download URL or documented API, document how the system may retrieve the document preserving URL, timestamp, headers, MIME type, and digest. Never document or design any path that bypasses logins, CAPTCHA, viewer controls, or access restrictions - where no authorized stable method exists, the finding is 'manual upload required'. (5) Add one registry row per discovered source to docs/SOURCE_ACCESS_REGISTRY.md (created by M2-T011) or, if M2-T011 has not merged yet, as source-registry drafts in docs/research/source-registry-drafts/.",
+  "business_reason": "Survey and official-document evidence is the substrate for the M2-T015 secure ingestion pipeline and eventually for buildability conclusions; building the pipeline before knowing the real access modes, formats, and legal distinctions would violate the never-guess principle (owner directive 2026-07-20).",
+  "inputs": [
+    "PRD section 8 source strategy + official starting references (api-portal.nyc.gov, opendata.cityofnewyork.us, DOB, DOF)",
+    "docs/research/M1-T007-dob-now-sources.md, docs/research/dob-legacy-sources.md (accepted DOB source research)",
+    "docs/SOURCE_ACCESS_REGISTRY.md (if merged) / docs/research/source-registry-drafts/",
+    "Owner directive 2026-07-20 section 3 Packet A (verbatim requirements above)"
+  ],
+  "outputs": [
+    "docs/research/survey-document-sources-2026-07.md: source inventory with per-source access findings, retrieval-date-stamped citations, and the seven-way document-class distinction",
+    "docs/SURVEY_DOCUMENT_FORMAT_POLICY.md: canonical initial supported-format decision matrix (per-format verdict: supported / convert / defer, with the proof or deferral reason for each; DWG position explicit)",
+    "Registry rows (or drafts) for each discovered source",
+    "project-control/reports/M2-T014-producer-report.md (AOS section-6 packet)"
+  ],
+  "dependencies": [],
+  "allowed_paths": [
+    "docs/research/survey-document-sources-2026-07.md",
+    "docs/SURVEY_DOCUMENT_FORMAT_POLICY.md",
+    "docs/research/source-registry-drafts/** (additive rows)",
+    "docs/SOURCE_ACCESS_REGISTRY.md (additive rows only, if it exists at execution time)",
+    "docs/research/fixtures/m2-t014/** (small representative response/metadata extracts only, low-storage policy)",
+    "project-control/reports/M2-T014-producer-report.md"
+  ],
+  "forbidden_paths": [
+    "services/**, apps/**, packages/** (research only - no implementation)",
+    "Any code or documentation of login/CAPTCHA/viewer-control bypasses (hard prohibition)",
+    "Bulk document downloads (small representative extracts only; owner PC disk budget)",
+    "project-control/** (except own producer report)",
+    ".claude/**"
+  ],
+  "acceptance_scenarios": [
+    "SR-S1 inventory completeness: every official system family named in the objective investigated with an explicit finding (available / unavailable / restricted), retrieval dates on every citation",
+    "SR-S2 document-class matrix: the seven document classes each defined with evidentiary weight and non-interchangeability stated; reviewer confirms no conflation",
+    "SR-S3 format policy: all seven formats have explicit verdicts; DWG verdict includes the licensing/sandboxing/testability analysis or a deferral; no format promised without a proven path",
+    "SR-S4 authorized-access proof: for each source claimed retrievable, the documented stable URL/API is cited from official documentation (no guessed endpoints); for each source without one, 'manual upload required' recorded",
+    "SR-S5 negative case: at least one system investigated and honestly recorded as having NO authorized programmatic access",
+    "SR-S6 registry rows: each discovered source has a registry row/draft with the owner-mandated fields",
+    "SR-S7 G3 walkthrough: reviewer independently spot-verifies claims against the live official pages (data-contract-verifier pattern) and checks no access-restriction violations are proposed"
+  ],
+  "required_gates": [
+    "G0",
+    "G2",
+    "G3"
+  ],
+  "producer_agent": null,
+  "reviewer_agents": [
+    "data-contract-verifier",
+    "security-reviewer"
+  ],
+  "status": "backlog",
+  "progress_percent": 0,
+  "risks": [
+    "DISPATCH HOLD: contracted 2026-07-20 but dispatch awaits owner review of the returned planning report (owner directive: return dependency graph + packet summaries before dispatching survey work)",
+    "ACRIS/BIS document images may be viewer-gated; the honest finding may be 'manual upload required' for the most valuable class (licensed surveys are typically NOT in any public system - private documents held by owners/surveyors); the research must say so plainly",
+    "No private client documents may be referenced or fetched; official public systems only",
+    "STOP CONDITIONS: any access requiring credentials or payment (record as blocker/finding, do not create accounts); any terms-of-use ambiguity (record, do not proceed); external emails prohibited",
+    "Execution: web research + local docs writes; negligible disk footprint (extracts only)"
+  ],
+  "blockers": [],
+  "created_at": "2026-07-20T06:34:25.367762+00:00",
+  "updated_at": "2026-07-20T06:34:25.367762+00:00"
+}

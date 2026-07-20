@@ -1,0 +1,79 @@
+{
+  "task_id": "M2-T015",
+  "title": "Secure survey ingestion, extraction, and deterministic verification (Packet B)",
+  "task_type": "backend",
+  "milestone_id": "M2",
+  "objective": "Build the secure survey/official-document ingestion, extraction, and deterministic-verification pipeline (owner directive 2026-07-20, survey workstream Packet B). EXTRACTION DOCTRINE: the pipeline must NOT be described or implemented as 'OCR reads the survey'. Use the best available extraction path by format (per the M2-T014 format policy): vector/CAD object extraction when available; embedded PDF text extraction; OCR only for scanned text; line/symbol detection for scanned geometry; AI-assisted classification only where bounded and schema-constrained; deterministic geometry reconstruction and validation always. SECURITY (G5-mandatory): MIME/content validation, extension-mismatch rejection, size/page/pixel limits, decompression-bomb protection, malware/dangerous-content screening, sandboxed parsing, private storage design, immutable originals, file digests, safe failure behavior. SURVEY-EVIDENCE CONTRACT: define a structured contract preserving, for every extracted fact: original document digest; page number; bounding box or object reference; original detected text/value; normalized value and units; extraction method; confidence; validation results; correction history; professional-confirmation state. DETERMINISTIC CHECKS (required): address/BBL matching, units, scale, north/orientation, boundary closure, calculated area versus stated area, segment sums, contradictory dimensions, geometry validity, elevations where present, and comparison against accepted tax-lot geometry - with MapPLUTO/tax-lot geometry serving ONLY as a cross-check that must never silently override a licensed survey. FAIL-CLOSED PRINCIPLE: no language-model output may become canonical geometry or a material buildability input merely because the model expressed high confidence; if material values cannot be independently validated, fail closed and produce a visible unresolved condition. FIXTURES: build a representative fixture matrix covering digital PDFs, vector PDFs, clean scans, poor scans, rotated pages, mixed units, decimal ambiguities, conflicting dimensions, incomplete boundaries, multi-page surveys, wrong-address files, and malicious/oversized inputs - synthetic or properly redacted only; no private client documents as public repository fixtures without explicit authorization and redaction.",
+  "business_reason": "Licensed surveys are the highest-quality boundary evidence available and typically exist only as documents; a deterministic, secure, provenance-preserving ingestion path is required before survey facts can influence any buildability conclusion (owner directive 2026-07-20). B-001 blocks production private-object storage, tenant isolation, and retention enforcement - but contracts, parsing, validation, fixtures, and CI-reviewable flows proceed without production credentials.",
+  "inputs": [
+    "M2-T014 outputs: docs/research/survey-document-sources-2026-07.md + docs/SURVEY_DOCUMENT_FORMAT_POLICY.md (supported-format decisions - HARD input; formats not approved there are rejected or deferred, not improvised)",
+    "packages/contracts/schemas/v1/** (contract conventions; survey-evidence contract follows the same canonical-schema + generated-artifact discipline)",
+    "services/api/app/connectors/mappluto_geometry_arcgis.py domain models (tax-lot geometry cross-check input)",
+    "docs/SECRETS_POLICY.md, docs/LOW_STORAGE_CLOUD_DEVELOPMENT_POLICY.md (storage/processing constraints; Render worker execution model)",
+    "Owner directive 2026-07-20 section 3 Packet B (verbatim requirements above)"
+  ],
+  "outputs": [
+    "docs/SURVEY_DOCUMENT_INGESTION_ARCHITECTURE.md (canonical architecture: per-format extraction paths, sandboxing model, storage design honest about the B-001 hold, state machine uploaded/processing/auto_extracted/needs_review/rejected/professionally_confirmed)",
+    "docs/UPLOAD_THREAT_MODEL.md (canonical threat model + control matrix for the G5 reviewer)",
+    "Survey-evidence contract: packages/contracts/schemas/v1/survey_evidence.schema.json + docs/SURVEY_EVIDENCE_CONTRACT.md (field-by-field per-fact provenance record per the objective)",
+    "Ingestion/extraction/validation implementation with deterministic checks and fail-closed behavior (suggested home services/api/app/documents/**)",
+    "docs/SURVEY_FIXTURE_MATRIX.md + committed synthetic fixture pack with MANIFEST digests (build_fixture_pack.py pattern)",
+    "project-control/reports/M2-T015-producer-report.md (AOS section-6 packet)"
+  ],
+  "dependencies": [
+    "M2-T014"
+  ],
+  "allowed_paths": [
+    "services/api/app/documents/** (new module)",
+    "services/api/tests/documents/** (tests + synthetic fixture pack)",
+    "packages/contracts/schemas/v1/survey_evidence.schema.json + its generated artifacts via the M2-T010 tooling",
+    "docs/SURVEY_DOCUMENT_INGESTION_ARCHITECTURE.md, docs/UPLOAD_THREAT_MODEL.md, docs/SURVEY_EVIDENCE_CONTRACT.md, docs/SURVEY_FIXTURE_MATRIX.md",
+    "project-control/reports/M2-T015-producer-report.md"
+  ],
+  "forbidden_paths": [
+    "Production storage provisioning of any kind (B-001 hold: no Supabase buckets, no credentials, no deployment)",
+    "services/api/app/profile/**, services/api/app/connectors/** (cross-check consumes domain models read-only)",
+    "apps/web/** (UI is Packet C / M2-T016)",
+    "Any fixture derived from a private client document without recorded owner authorization + redaction evidence",
+    "project-control/** (except own producer report)",
+    ".claude/**"
+  ],
+  "acceptance_scenarios": [
+    "SB-S1 primary: a clean synthetic vector PDF survey is ingested, extracted via the vector path (not OCR), every extracted fact carries the full evidence record, deterministic checks pass, state reaches auto_extracted/needs_review correctly",
+    "SB-S2 extraction-path routing: each supported format routes to its designated extraction path; an unapproved format is rejected or deferred exactly per the M2-T014 policy (never improvised parsing)",
+    "SB-S3 deterministic verification: boundary-closure, area-vs-stated, segment-sum, and contradictory-dimension checks each proven with a passing and a failing fixture; failures produce visible unresolved conditions, never silent acceptance",
+    "SB-S4 tax-lot cross-check: divergence between survey geometry and MapPLUTO lot geometry is recorded as a typed comparison result; the survey is never silently overridden",
+    "SB-S5 fail-closed AI boundary: a bounded AI-classification output that cannot be independently validated does NOT become canonical geometry; the item lands in needs_review with the unresolved condition visible",
+    "SB-S6 security pack: extension mismatch, oversized file, page/pixel bomb, decompression bomb, and malformed-content fixtures each rejected safely with typed errors; originals immutable; digests recorded; no unsafe temp-file residue (cleanup tested)",
+    "SB-S7 wrong-address file: a survey whose address/BBL does not match the target property is flagged, not ingested into that property's evidence",
+    "SB-S8 contract validation: survey-evidence payload fixtures validate against the canonical schema; drift discipline follows the M2-T010 pipeline",
+    "SB-S9 regression: full repository CI green on both events"
+  ],
+  "required_gates": [
+    "G0",
+    "G1",
+    "G2",
+    "G3",
+    "G4",
+    "G5"
+  ],
+  "producer_agent": null,
+  "reviewer_agents": [
+    "data-contract-verifier",
+    "code-reviewer",
+    "security-reviewer"
+  ],
+  "status": "backlog",
+  "progress_percent": 0,
+  "risks": [
+    "DISPATCH HOLD: awaits owner review of the 2026-07-20 planning report AND M2-T014 acceptance (format policy is a hard input)",
+    "B-001: production storage/tenant-isolation/retention remain blocked; the architecture doc must design for them and mark them deferred - G3 verifies the honesty of that split",
+    "Parser dependencies (PDF/CAD/OCR/image libraries) must be pinned, sandbox-tested, and disk-budgeted at G0; heavy native dependencies may force Render/CI-only execution (low-storage policy)",
+    "Likely SPLIT candidate: if contract + threat model + implementation exceed a reviewable diff, the orchestrator splits at G0 (contract-first, then pipeline)",
+    "STOP CONDITIONS: any need for production credentials; any real client document; any AI output being promoted to canonical geometry; any parser that cannot be sandboxed or disk-budgeted",
+    "Execution: local/CI for logic + synthetic fixtures; bounded fixture sizes (low-storage); no bulk documents"
+  ],
+  "blockers": [],
+  "created_at": "2026-07-20T06:34:25.468863+00:00",
+  "updated_at": "2026-07-20T06:34:25.468863+00:00"
+}

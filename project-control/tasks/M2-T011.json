@@ -1,0 +1,78 @@
+{
+  "task_id": "M2-T011",
+  "title": "Shared connector transport/retry consolidation + canonical source access registry",
+  "task_type": "backend",
+  "milestone_id": "M2",
+  "objective": "Two coupled deliverables (owner directive 2026-07-20). (1) CONSOLIDATION: extract the transport + retry loop now duplicated across services/api/app/connectors/pluto_soda.py, zoning_features_arcgis.py, ztldb_soda.py, and mappluto_geometry_arcgis.py into one shared module under services/api/app/resilience/ or services/api/app/connectors/, consolidating the ALREADY ACCEPTED connector resilience behavior WITHOUT weakening or independently redesigning it. The following accepted behaviors must be preserved exactly: response caching, request budgets, Retry-After handling, backoff jitter, circuit-breaker behavior, last-known-good serve behavior, typed staleness (contract-1.3.0 two-staleness rule), provenance capture (raw and normalized digests, retrieval timestamps, capture URLs byte-reproducible by each connector's URL builder), endpoint allowlisting, metadata validation, mandatory deterministic paging with typed pathologies, and every connector-specific semantic (SODA omitted-key vs observed-null, split-lot ordering, slash-tie, PARK caveat, condo billing-lot semantics, CRS gate before coordinate math, geometry-validity taxonomy, no-silent-repair). This is a refactor whose null hypothesis is 'behavior unchanged'; any observable behavior difference is a defect unless disclosed and owner-approved. (2) CANONICAL SOURCE ACCESS REGISTRY: create docs/SOURCE_ACCESS_REGISTRY.md as the canonical per-source access-governance record (building on docs/research/source-registry-drafts/*.json, which remain the raw research artifacts). For EVERY external source currently used or researched (PLUTO SODA, DCP zoning-features ArcGIS, ZTLDB SODA, MapPLUTO ArcGIS, Geoclient, DOB NOW/legacy datasets, zoning resolution), record: official source and endpoint URLs; API/bulk-file/authorized-document-download access mode; authentication requirements; published quota or rate-limit information (cite the official statement or record 'none published'); retrieval and refresh cadence; source freshness signal; schema/file version; terms, attribution, and usage-policy links; last policy-verification date; outage and last-known-good behavior; and whether the source is suitable for live requests, scheduled ingestion, or reference-only use. The registry must state explicitly that the ZoLa browser interface is NOT a production API (the underlying official datasets/services are the production sources) and must not assume any free government service is permanently free, unlimited, stable, or covered by an SLA — record the actual documented commitments only.",
+  "business_reason": "Reviewers across M2-T007/T008/T009 recommended consolidating the four duplicated transport/retry implementations BEFORE a fifth connector lands; the owner approved with the explicit constraint that consolidation must not weaken accepted resilience behavior. The source access registry is an owner-mandated governance artifact ensuring no connector is built on undocumented access assumptions (owner directive 2026-07-20).",
+  "inputs": [
+    "services/api/app/connectors/pluto_soda.py, zoning_features_arcgis.py, ztldb_soda.py, mappluto_geometry_arcgis.py (the four accepted connectors and their duplicated transport/retry loops)",
+    "services/api/app/resilience/** (breaker, budget, cache, config, fetcher, metrics, retry - the accepted resilience primitives)",
+    "services/api/tests/connectors/** and services/api/tests/resilience/** (522-test suite state; committed build_fixture_pack.py + MANIFEST.json fixture packs per connector)",
+    "docs/research/source-registry-drafts/*.json (raw registry research: dob-now, pluto-mappluto, zoning-features, zoning-resolution, ztldb)",
+    "docs/research/M0-T002-geoclient-address-resolution.md, docs/research/dob-legacy-sources.md, docs/research/M1-T007-dob-now-sources.md (source research for registry rows)",
+    "project-control/reports/M2-T007*, M2-T008*, M2-T009* (accepted-behavior definitions the consolidation must preserve)"
+  ],
+  "outputs": [
+    "One shared transport/retry module consumed by all four connectors (net deletion of duplicated loops; connector-specific semantics stay in the connectors)",
+    "docs/SOURCE_ACCESS_REGISTRY.md (canonical source access registry, all current sources, all owner-mandated fields, last-policy-verification dates)",
+    "Updated tests proving behavior-unchanged consolidation (existing suites green unmodified except where imports move; any test change disclosed line-by-line in the producer report)",
+    "project-control/reports/M2-T011-producer-report.md (AOS section-6 packet)"
+  ],
+  "dependencies": [
+    "M2-T009"
+  ],
+  "allowed_paths": [
+    "services/api/app/connectors/** (transport-loop extraction only; connector semantics preserved)",
+    "services/api/app/resilience/** (shared module home if placed here)",
+    "services/api/tests/connectors/**, services/api/tests/resilience/** (import updates and new consolidation tests)",
+    "docs/SOURCE_ACCESS_REGISTRY.md (new canonical registry)",
+    "docs/research/source-registry-drafts/** (additive corrections only, disclosed)",
+    "project-control/reports/M2-T011-producer-report.md"
+  ],
+  "forbidden_paths": [
+    "services/api/app/profile/** (M2-T010/M2-T012 territory - HARD disjointness boundary with the parallel M2-T010 task)",
+    "services/api/app/_contract_schemas/**, packages/contracts/**, apps/web/** (M2-T010 territory)",
+    "services/api/tests/api/** (M2-T010's contract-packaging test home)",
+    "Any weakening, re-tuning, or redesign of accepted resilience semantics (retry counts, budgets, breaker thresholds, cache TTLs, staleness typing) without disclosed owner approval",
+    "New external sources or new connector functionality (consolidation + registry only)",
+    "project-control/** (except own producer report)",
+    ".claude/**"
+  ],
+  "acceptance_scenarios": [
+    "TC-S1 behavior-unchanged (primary): full existing connector + resilience test suites pass with the shared transport module in place; every URL builder still reproduces its MANIFEST capture URLs byte-identically; raw/normalized digest computation unchanged (fixture digests re-verified in-test as before)",
+    "TC-S2 consolidation proof: the duplicated transport/retry loop no longer exists in any of the four connectors (grep-provable); exactly one shared implementation; net LOC reduction reported",
+    "TC-S3 resilience-semantics regression: caching, request budgets, Retry-After, jitter bounds, breaker open/half-open/close transitions, LKG serve, and typed staleness each exercised through the SHARED path by at least one existing or new test per behavior",
+    "TC-S4 connector-specific semantics: SODA omitted-key vs observed-null, split-lot ordering, condo billing-lot, CRS gate, geometry-validity taxonomy tests all green and untouched (or import-only diffs, disclosed)",
+    "TC-S5 registry completeness: docs/SOURCE_ACCESS_REGISTRY.md has one record per current source with ALL owner-mandated fields populated or explicitly marked 'none published' with the official page cited; ZoLa non-API statement present; no permanence/SLA assumptions asserted without citation",
+    "TC-S6 registry verification: G1 reviewer (data-contract-verifier) independently spot-verifies quota/terms/attribution links and the last-policy-verification dates against the live official pages",
+    "TC-S7 failure case: a simulated transport fault (timeout, 429 with Retry-After, 5xx burst) through the shared module produces the same typed outcomes the per-connector loops produced (fixture-driven comparison)",
+    "TC-S8 regression: full repository CI green on both events"
+  ],
+  "required_gates": [
+    "G0",
+    "G1",
+    "G2",
+    "G3",
+    "G4",
+    "G5"
+  ],
+  "producer_agent": null,
+  "reviewer_agents": [
+    "data-contract-verifier",
+    "code-reviewer",
+    "security-reviewer"
+  ],
+  "status": "backlog",
+  "progress_percent": 0,
+  "risks": [
+    "Touches all four connector files - MUST NOT run in parallel with any other task editing services/api/app/connectors/** or services/api/tests/{connectors,resilience}/**; it IS approved to run in parallel with M2-T010 because their file scopes are disjoint (proof recorded in the 2026-07-20 planning report)",
+    "Behavior drift is the primary risk: G3/G4 must re-verify accepted behavior, not just code cleanliness; G1 re-verifies live-source behavior through the shared path (byte-identical re-fetch proof pattern)",
+    "Registry rows must not be invented: every quota/terms claim needs an official citation or an explicit 'none published' marker (never guess API schemas or terms - CLAUDE.md principle 3)",
+    "STOP CONDITIONS: any consolidation that cannot preserve an accepted behavior exactly (report as blocker with the specific conflict); any registry field that requires contacting an agency (record as open question, do not email anyone); credentials; production deployment",
+    "Execution: local repo checkout + CI; no citywide datasets; fixture packs already committed; expected disk footprint negligible (source-only edits)"
+  ],
+  "blockers": [],
+  "created_at": "2026-07-20T06:34:13.860920+00:00",
+  "updated_at": "2026-07-20T06:34:13.862647+00:00"
+}
