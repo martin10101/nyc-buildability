@@ -1,0 +1,83 @@
+{
+  "task_id": "M2-T013",
+  "title": "Production spatial-intersection engine with explicit uncertainty model",
+  "task_type": "backend",
+  "milestone_id": "M2",
+  "objective": "Build the production spatial-intersection engine that determines which zoning districts (and overlays/special districts) cover which portions of a tax lot: lot polygon (M2-T009 MapPLUTO geometry domain model) intersected with district polygons (M2-T007 zoning-features domain models), with split-lot shares, cross-checked against ZTLDB (M2-T008) - where ZTLDB is treated as the PRIMARY OFFICIAL LOT-LEVEL ASSIGNMENT SOURCE, not as a legally authoritative determination (owner directive 2026-07-20 item 2) - feeding the existing conflict engine. DEPENDENCY DECISION (owner-ratified 2026-07-20): operates DIRECTLY on accepted connector domain models (evidence: M2-T009's TEST-level spatial scenarios consumed the MapPLUTO lot polygon and real M2-T007 fixtures with no profile dependency); runs BEFORE M2-T012; must NOT touch the canonical profile contract (no temporary contract fields; M2-T012 integrates in one 1.4.0 update). UNCERTAINTY MODEL (owner directive, verbatim requirements): never hide source accuracy behind one arbitrary tolerance; preserve the exact computed geometry result separately from the uncertainty classification; model separately (1) exact geometric intersection result, (2) distance to the relevant boundary, (3) per-input source accuracy with documented-vs-assumed basis and citation, (4) near-boundary/uncertain condition, (5) ambiguous-sliver / compound-tolerance condition, (6) professional-review-required flag; an uncertain boundary case must NEVER collapse into one definitive legal zoning assignment. APPROVED POLICY (owner decisions 2026-07-20 accepting project-control/reports/M2-T013-geospatial-policy-advisory.md): C1 = linear-sum tolerance combination (provisionally 40 ft when both inputs carry 20 ft documented/assumed accuracy); C2 = ZTLDB agreement may upgrade a geometrically uncertain displayed result to CONDITIONAL only, never confident/verified; C3 = no sliver suppression - band-derived firm-area test only, with firm portions below 2 percent flagged minor_portion; C4 = display the mapped point value plus the uncertainty range. COVERAGE HONESTY (owner directive item 3): do NOT require mapped district shares to total 100 percent unless a topology/coverage audit proves the relevant district set is complete and non-overlapping for that lot; preserve explicit unassigned_area and overlap_area quantities where applicable; never renormalize gaps or overlaps away. BLOCKING SOURCE VERIFICATION (owner directive item 4 - advisory V1/V2 elevated to in-task blocking requirements): the task MUST obtain and record official MapPLUTO/DTM positional-accuracy evidence (V1) and per-layer accuracy evidence for nyco, nysp, nysp_sd, nylh, nyzma (V2) from the official metadata documents; until each is verified, the corresponding accuracy record stays basis=assumed, visibly propagated, with the advisory's fail-safe 2x-band sensitivity trigger active. VERIFIED-LABEL BOUNDARY (owner directive item 5): no result may be labeled Verified merely because it is stable under an assumed tolerance; Verified rule outputs remain subject to M4 rule implementation and qualified G6 professional approval - this engine emits facts-with-uncertainty only.",
+  "business_reason": "Production feasibility analysis requires deterministic lot-by-district geometry with honest uncertainty so that split-lot rules (M4+) have a trustworthy geometric substrate; the approved conservative policy (advisory 2026-07-20 + owner decisions C1-C4) prevents false geometric confidence from propagating into legal conclusions.",
+  "inputs": [
+    "services/api/app/connectors/mappluto_geometry_arcgis.py domain models (lot polygon, geometry-validity taxonomy, geometry digests)",
+    "services/api/app/connectors/zoning_features_arcgis.py domain models (six-layer district/overlay/special-district polygons, EPSG 2263)",
+    "services/api/app/connectors/ztldb_soda.py domain models (primary official lot-level assignments, split-lot ordering; vintage-skew recording continues per owner OQ-3 deferral - ZTLDB source age and possible_vintage_skew are recorded, never blocking)",
+    "services/api/tests/connectors/test_mappluto_geometry_arcgis.py TEST-level spatial scenarios (classify_spatial_relation semantics to extend, boundary_uncertain typing to preserve)",
+    "project-control/reports/M2-T009-G4-geospatial-review.md (compound-tolerance observation O4)",
+    "project-control/reports/M2-T013-geospatial-policy-advisory.md (approved policy: accuracy-as-provenance model 2.1, linear-sum 2.2, five-class taxonomy 2.3, range shares 2.4, ZTLDB cross-check semantics 2.5, professional-review trigger set 2.6, verification items V1-V5) + owner decisions C1-C4 recorded in this packet",
+    "Official MapPLUTO/DTM metadata and per-layer zoning-features metadata PDFs (to be fetched and cited in-task for V1/V2)",
+    "shapely==2.0.7 / GEOS 3.11.4 exact pin (M2-T009 precedent - repaired-geometry digests are GEOS-build-dependent)"
+  ],
+  "outputs": [
+    "New spatial-intersection module (suggested home services/api/app/spatial/**) consuming connector domain models read-only, emitting per-(lot,district) intersection records: exact intersection geometry/areas (raw, eroded-firm, dilated), boundary distance, per-input source_accuracy records (value, basis documented|assumed, citation, verified_at), five-class pair classification + lot-overall classification per the approved taxonomy, share_min/share_point/share_max ranges, unassigned_area and overlap_area where applicable, minor_portion flags, ZTLDB cross-check outcome (agreement/ordering-disagreement/set-conflict with possible_vintage_skew tagging), band_exceeds_feature_width guard, professional_review_required per the advisory 2.6 trigger set",
+    "V1/V2 source-verification evidence: official accuracy statements located, cited, and recorded (or the honest finding that officials publish none - in which case basis=assumed is permanent and visible)",
+    "Deterministic, reproducible results: same inputs + same pins produce identical outputs and digests; policy constants (band, combination rule) versioned in the record",
+    "Full geospatial acceptance-scenario pack plus uncertainty/coverage-honesty scenarios (below)",
+    "project-control/reports/M2-T013-producer-report.md (AOS section-6 packet)"
+  ],
+  "dependencies": [
+    "M2-T011"
+  ],
+  "allowed_paths": [
+    "services/api/app/spatial/** (new module)",
+    "services/api/tests/spatial/** (new tests + fixtures reusing committed connector fixture packs by reference)",
+    "docs/research/** (V1/V2 accuracy-evidence extracts, small, retrieval-dated)",
+    "project-control/reports/M2-T013-producer-report.md"
+  ],
+  "forbidden_paths": [
+    "services/api/app/profile/**, services/api/app/_contract_schemas/**, packages/contracts/** (NO contract changes - no temporary contract fields; M2-T012 integrates)",
+    "services/api/app/connectors/** (read-only consumption; no connector edits)",
+    "apps/web/**",
+    "Labeling anything Verified: this engine's outputs are facts-with-uncertainty; Verified is exclusively an M4-rule + G6-human outcome (owner directive item 5)",
+    "Renormalizing shares to 100 percent, suppressing slivers, or collapsing uncertain classes into definitive assignments (owner directives items 3 and C3)",
+    "project-control/** (except own producer report)",
+    ".claude/**"
+  ],
+  "acceptance_scenarios": [
+    "SI-S1 interior lot (primary): lot wholly inside one district beyond the band yields interior-confident pair class, exact areas + boundary distance preserved, no review flag",
+    "SI-S2 split lot: lot crossing two districts yields per-district records with share_min/share_point/share_max; point shares NOT forced to total 100 percent absent a coverage audit; ordering compared against ZTLDB split-lot ordering",
+    "SI-S3 near-boundary: lot edge within the compound band yields near_boundary_uncertain with the exact geometric result preserved separately; with ZTLDB agreement the displayed result upgrades to conditional AT MOST (C2); never a definitive single assignment",
+    "SI-S4 sliver: sub-band sliver classified sliver_ambiguous with exact sliver geometry preserved; firm portions under 2 percent flagged minor_portion, never suppressed (C3)",
+    "SI-S5 ZTLDB cross-check: agreement, ordering-disagreement, and set-conflict cases each produce the advisory-2.5 typed outcome; set-conflict feeds the conflict engine unresolved with possible_vintage_skew tagged when vintages differ",
+    "SI-S6 coverage honesty (negative): a lot area not covered by any district polygon yields explicit unassigned_area; overlapping district polygons yield explicit overlap_area; neither is renormalized away (owner item 3)",
+    "SI-S7 invalid/repaired geometry: uncharacterizable or repaired inputs propagate the M2-T009 taxonomy (no silent repair; original digest preserved; review-required per accepted behavior); degenerate-district erode-empty case sets band_exceeds_feature_width",
+    "SI-S8 V1/V2 verification: official accuracy evidence recorded per source with citations, or basis=assumed persists visibly AND the 2x-band sensitivity trigger (advisory 2.6.7) demonstrably flips flip-sensitive classifications to review-required",
+    "SI-S9 no-Verified invariant (negative): grep/test-provable absence of any code path emitting a Verified label or coverage status from this module (owner item 5)",
+    "SI-S10 reproducibility: identical inputs reproduce identical outputs and digests across two runs; pins + policy version asserted",
+    "SI-S11 missing input: absent lot geometry or absent district layer fails typed and visible (no fabricated assignment)",
+    "SI-S12 regression: full repository CI green on both events; no connector or profile test touched"
+  ],
+  "required_gates": [
+    "G0",
+    "G1",
+    "G2",
+    "G3",
+    "G4"
+  ],
+  "reviewer_agents": [
+    "data-contract-verifier",
+    "code-reviewer",
+    "geospatial-engineer"
+  ],
+  "producer_agent": null,
+  "status": "backlog",
+  "progress_percent": 0,
+  "risks": [
+    "POLICY RECORDED (2026-07-20): owner accepted advisory defaults C1 (linear sum, provisional 40 ft), C2 (conditional-only upgrade), C3 (no suppression + minor_portion under 2 percent), C4 (point + range display) - the pre-implementation policy condition is SATISFIED; dispatch still awaits owner review of the returned bounded packet (owner directive item 7) and M2-T011 acceptance",
+    "G1 added for the V1/V2 official-metadata verification (data-contract-verifier); G4 domain reviewer is geospatial-engineer, so the producer must be a DIFFERENT agent (backend-engineer per M2-T009 precedent)",
+    "V1/V2 are BLOCKING in-task requirements: if officials publish no accuracy figure, the honest permanent finding is basis=assumed with fail-safe behavior - that outcome is acceptable; guessing a documented figure is not",
+    "The linear-sum band is PROVISIONAL on 20 ft inputs: if V1/V2 verification finds different documented values, the band recomputes from the verified values (policy formula is fixed; constants are evidence-driven)",
+    "STOP CONDITIONS: any pressure to collapse uncertain cases into definitive assignments; any need for a contract field (that is M2-T012); any legal-interpretation question (blocker for professional review); any Verified-labeling request; credentials",
+    "Execution: local checkout + CI; committed fixture reuse + small metadata extracts; negligible disk footprint"
+  ],
+  "blockers": [],
+  "created_at": "2026-07-20T06:34:25.149757+00:00",
+  "updated_at": "2026-07-20T06:34:25.149757+00:00"
+}

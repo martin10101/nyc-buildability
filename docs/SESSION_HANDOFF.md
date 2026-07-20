@@ -1,4 +1,6 @@
-# Session Handoff — resume state as of 2026-07-20 (end of session 12)
+# Session Handoff — resume state as of 2026-07-20 (session 13, post next-wave approval)
+
+> **2026-07-20 owner approval + revisions (session 13):** the next wave is APPROVED with revised order and additions. Canonical details live in the task packets (`project-control/tasks/`) and the documents linked below — this file records only state, decisions, dependency order, blockers, and links (owner directive 2026-07-20 section 6).
 
 Written by the orchestrator. Open this folder (`nyc-development-feasibility-claude-pack`) as the workspace root, then follow CLAUDE.md's start-of-session routine. This file is the conversation-independent resume point; the ledger (`project-control/`) remains the source of truth.
 
@@ -8,8 +10,8 @@ Written by the orchestrator. Open this folder (`nyc-development-feasibility-clau
 
 ## Exact repository state
 
-- **main = remote main** (at handoff: `b222dec` + this handoff-refresh PR). All PRs merged through #46; no open PRs at handoff.
-- **Ledger: 35 accepted / 2 blocked / 1 backlog / 0 claimed.** Session 12 accepted **M2-T007 (33rd, CP-0028)**, **M2-T008 (34th, CP-0029)**, **M2-T009 (35th, CP-0030)** — the owner's connector wave, in the mandated strict order. Backlog: **M2-T010** (contract-publication tooling; owner precondition before ANY contract version after 1.3.0). Blocked: M0-T007/T008 (B-001 + packet roster amendment).
+- **main = remote main** (session-13 planning: `949f071` + this control PR). No open PRs besides in-flight work.
+- **Ledger: 35 accepted / 2 blocked / 9 backlog / 0 claimed** (session 13 contracted M2-T011/T012/T013/T014/T015/T016, M4-T001, M6-T001 and amended M2-T010). Blocked: M0-T007/T008 (B-001 + packet roster amendment). Session 12 had accepted M2-T007 (CP-0028), M2-T008 (CP-0029), M2-T009 (CP-0030).
 - **Checkpoints:** CP-0028/0029/0030; state.json `last_checkpoint` = CP-0030.
 - **Repo visibility: PUBLIC (owner decision 2026-07-20).** Ruleset `protect-main` (id 19191154) active; secret scanning + push protection enabled. Blockers B-006, B-008, B-009 RESOLVED (audit logs in the blocker files).
 - **Worktrees:** task worktrees M2-T007/008/009 removed; only harness-managed stale `agent-*` worktrees remain (two locked — leave them).
@@ -23,15 +25,17 @@ Written by the orchestrator. Open this folder (`nyc-development-feasibility-clau
 3. **M2-T008 ACCEPTED (34th).** Task PR #42 (merge `4877264`): ZTLDB SODA connector (fdkv-4t4z) — 16-column schema authority, omitted-key/observed-null distinctions, split-lot ordering, slash-tie, PARK caveat, open ZD1, source-freshness guard (rowsUpdatedAt STILL 2026-04-05 = second missed monthly cycle → OQ-3 escalation warranted), three-way PLUTO/ZTLDB/zoning-features cross-check emitting contract-1.3.0 conflicts (builder.py additive-only). 86 new tests; suite 442. Mid-task: CI credential-scan REAL finding (missing secretscan:allow pragmas) fixed by disclosed orchestrator comment-only commit; then **B-009** (GitHub Actions billing: jobs refused to start account-wide) → owner decision: **repo made PUBLIC** → B-009 resolved; orchestrator then created ruleset (B-008 resolved) and enabled secret scanning + push protection (B-006 resolved). Gates: G1 PASS (five live byte-identical re-fetches), G3+G4 PASS. Control PR #43 (merge `fec997e`) + CP-0029 + blocker resolutions.
 4. **M2-T009 ACCEPTED (35th).** Task PR #45 (merge `c57c1a5`): per-BBL MapPLUTO ArcGIS geometry connector — strict BBL/result validation, zero/one/multiple explicit (multiple = review-required), condo billing-lot semantics LIVE-proven (unit 1000151001 empty vs billing 1000157501 CondoNo 1025), CRS gate before coordinate math (degrees-area path proven absent), full geometry-validity taxonomy incl. a REAL live two-ring multipolygon (4142600001), no-silent-repair (make_valid, original digest always preserved, uncharacterizable = review-required), deterministic geometry digests (from-prose reproducible; shapely==2.0.7/GEOS 3.11.4 exact pin — the one disclosed shared-file touch), TEST-level spatial scenarios vs the real M2-T007 fixtures with named 20 ft tolerance (ambiguous = boundary_uncertain). 80 new tests; suite 522. Gates: G1 PASS zero defects, G3 PASS zero defects, G4 PASS geospatial-engineer (from-spec digest reimplementation on a third environment; D1/D2 LOW). Control PR #46 (merge `b222dec`) + CP-0030.
 
-## Immediate queue (in order)
+## Immediate queue (in order) — APPROVED WAVE (owner 2026-07-20)
 
-1. **OWNER APPROVAL GATE: the post-wave report was delivered at end of session 12** (chat) — the proposed next wave (deterministic zoning interpretation + spatial intersection) must NOT be dispatched until the owner approves its packets. Proposed dependency-ordered set (exact IDs from the final report; ONLY M2-T010 is contracted so far — the others need `new-task` packets after owner approval):
-   - **M2-T011 — shared connector transport/retry consolidation** (small additive refactor extracting the transport + retry loop now duplicated across pluto_soda/zoning_features/ztldb/mappluto_geometry into one module; reviewers recommended before a FIFTH connector; touches all four connector files → sequence alone, full G1/G3/G4 re-verification that behavior is unchanged).
-   - **M2-T010 — contract-publication tooling** (contracted, backlog; owner precondition before ANY contract version after 1.3.0).
-   - **M2-T012 — profile integration of the wave connectors** (zoning-features citywide facts + per-BBL geometry facts into the canonical profile; likely requires contract 1.4.0 → M2-T010 must be ACCEPTED first; folds in the M2-T009 metadata-TTL-cache option and the LOW-defect fixes from the carry-forward list).
-   - **M2-T013 — production spatial-intersection engine** (lot polygon x district polygons: which districts cover which lot, split-lot percentages; MUST explicitly decide the compound-tolerance question — each source is plus-or-minus 20 ft, worst case ~40 ft combined (M2-T009 G4 O4); boundary-uncertain results surface as typed uncertainty; cross-check against ZTLDB's official assignments feeds the conflict engine).
-   - **First M4 slice — rules DSL + one deterministic rule family** (e.g. R3-2 FAR) — crosses the professional-review boundary: G6 requires a qualified human zoning reviewer before anything is labeled verified.
-   OQ-3 human escalation (DCP Open Data email re the ZTLDB Socrata stall) awaits owner send-off.
+1. **DISPATCH NOW (approved, parallel — file scopes proven disjoint):**
+   - **M2-T011** — shared transport/retry consolidation + canonical source access registry (`project-control/tasks/M2-T011.json`; produces `docs/SOURCE_ACCESS_REGISTRY.md`). Preserve ALL accepted resilience behavior; ZoLa is not a production API; no free-service permanence assumptions.
+   - **M2-T010** — contract-publication tooling (amended 2026-07-20: backend + client declarations both provably derive from the canonical schema; test scope narrowed to `services/api/tests/api/**` for disjointness). Precondition for any contract after 1.3.0.
+2. **THEN M2-T013** — production spatial-intersection engine (`project-control/tasks/M2-T013.json`). Owner accepted the geospatial advisory defaults (C1 linear-sum provisional 40 ft; C2 ZTLDB upgrades to conditional only; C3 no suppression + minor_portion under 2%; C4 point + range display — advisory: `project-control/reports/M2-T013-geospatial-policy-advisory.md`). ZTLDB = primary official lot-level assignment source, NOT a legally authoritative determination. No forced 100% share totals without a coverage audit; explicit unassigned_area/overlap_area. V1/V2 accuracy verification is BLOCKING in-task. Nothing from this engine is ever labeled Verified. Dispatch after M2-T011 acceptance AND owner review of the returned bounded packet.
+3. **THEN M2-T012** — profile integration of wave connectors + spatial results in ONE contract-1.4.0 update (`project-control/tasks/M2-T012.json`; requires M2-T010 + M2-T011 + M2-T013 accepted; folds in the enumerated carry-forward LOW defects + metadata-TTL-cache option).
+4. **Survey workstream (contracted, DISPATCH HELD pending owner review of the session-13 planning report):** M2-T014 research (Packet A) → M2-T015 secure ingestion + evidence contract (Packet B) → M2-T016 review UI/workflow (Packet C). Canonical doc homes are named in each packet (SURVEY_DOCUMENT_FORMAT_POLICY, SURVEY_DOCUMENT_INGESTION_ARCHITECTURE, UPLOAD_THREAT_MODEL, SURVEY_EVIDENCE_CONTRACT, SURVEY_FIXTURE_MATRIX, SURVEY_REVIEW_WORKFLOW). B-001 still blocks production storage; research/contracts/fixtures/CI flows proceed without it.
+5. **First M4 slice (contracted, DISPATCH HELD as above + sequenced after M2-T013):** M4-T001 rules-engine foundation (`project-control/tasks/M4-T001.json`) — reusable versioned rule system; FIRST family = **R5 residential FAR** (owner decision 2026-07-20: the client benchmark sheet is R5; R3-2 had no precedence claim and remains a fixture candidate). G6 = qualified human, always.
+6. **M6-T001** — pre-public-launch inbound-traffic/upload protection: contracted BACKLOG consolidation only; NOT in this wave; distinct from upstream connector resilience.
+   **OQ-3 is OWNER-DEFERRED and non-blocking** (owner directive 2026-07-20): no external inquiry is drafted or sent; connectors continue recording ZTLDB source age and possible_vintage_skew; do not resurface OQ-3 as an owner action unless it materially blocks production or remains unresolved near launch.
 2. **Non-blocking carry-forwards:** M2-T007: G1 D1 (out_fields footgun typing), G3/G4 D1-D3 LOW (untested drift signals, test-name mismatch, count==cap default-page test), G5 O1 (correlation_id shape-bounding at future HTTP boundary). M2-T008: G1 D1 (ZT07a/b manifest purpose mixup), G3/G4 D1 (check_columns_for_drift TypeError on doubly-malformed metadata), O2 (test hermeticity re SOCRATA_APP_TOKEN env). M2-T009: G4 D1 (top-level metadata spatialReference not asserted), D2 (report byte-column label), condo citation section mispointer (2.5 → 2.4/4.4), compound-tolerance decision for the production intersection task, resilient-client metadata TTL cache option. Plus the standing M2-T005 accessibility release carry-forwards (NVDA/VoiceOver session, rendered focus-ring pixels — must not disappear before release) and the M2-T005-era web-e2e a11y focus-race flake (one more data point recorded this session).
 3. **Standing hygiene (unchanged):** 8 older remote task branches; validator-tests CI wiring (M1-T006 D1); .gitattributes CRLF determinism; Dependabot; Python lockfile; project_control.py docstring staleness.
 
@@ -45,11 +49,13 @@ B-001 (HIGHEST, Supabase token — blocks M0-T007/T008 AND persistence/citywide-
 
 ## Owner decisions pending
 
-1. **Approve/adjust the proposed post-wave task set** (Immediate queue item 1) — blocks the next implementation wave.
+1. Review the session-13 planning report (dependency graph + packet summaries) to release the DISPATCH HOLDS on the survey workstream (M2-T014/T015/T016), M2-T013, and M4-T001.
 2. Credentials when ready: B-001 (highest), B-002, B-004.
 3. GDS/expansion planning review (counter-notice section 2 hold) — unchanged.
 4. CORS/proxy decision (M2-T001 D8) — deploy-blocking; no urgency while B-001 no-deploy stands.
-5. OQ-3: authorize the DCP Open Data escalation email re the stalled ZTLDB Socrata rows.
+5. M2-T016 professional-confirmation role definition (WHO may professionally confirm survey evidence) — needed before that state can be granted in production.
+
+Decisions RESOLVED 2026-07-20: next-wave approval (revised order ratified); M2-T013 policy knobs C1–C4 (advisory defaults accepted); first M4 rule family = R5 (client benchmark); OQ-3 owner-deferred/non-blocking (no external inquiry; keep recording source age + possible_vintage_skew; do not resurface unless production-blocking or unresolved near launch).
 
 ## Environment/process lessons (session 12 additions; prior lists still apply)
 

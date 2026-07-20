@@ -1,0 +1,81 @@
+{
+  "task_id": "M4-T001",
+  "title": "Rules-engine foundation: versioned rule system + first rule family (R5 residential FAR)",
+  "task_type": "backend",
+  "milestone_id": "M4",
+  "objective": "Establish the REUSABLE rule system - not a one-off R3-2 calculator (owner revision 2026-07-20). The first slice must define, as engine/DSL capabilities with contracts and tests: versioned official Zoning Resolution source material (section-level snapshots with retrieval dates and document versions); section-level citations; effective dates and amendment/version history; deterministic rule identifiers; applicability predicates; required inputs; outputs; exceptions and overrides; special-district interaction points; the three-way distinction between source-record completeness, analysis readiness, and rule coverage; unresolved/conflict behavior (a rule must record when it is not implemented or when required evidence is absent rather than guessing); rule-level and scenario-level test requirements; and the G6 professional-approval requirements per the PRD rule lifecycle (discovered through published). FIRST IMPLEMENTED RULE FAMILY (owner decision 2026-07-20): R5 residential FAR - chosen because the client's real benchmark sheet is R5, and PRD section 27 defines first-release success as client validation against the client's known properties; R3-2 (the earlier 'e.g.' candidate) appears in the repo only as an incidental live fixture (BBL 1000010010, R3-2/C4-1 split) and has no concrete precedence claim - it remains available as an additional FAR-family test fixture, including its real split-lot case. The engine and DSL must not be hardcoded around R5 (or any family's) terminology or assumptions - a second, STRUCTURALLY DIFFERENT rule family (e.g. a height or yard rule, not another FAR family) must be representable without engine changes (prove by representing one as a draft fixture). AI BOUNDARIES: AI may assist in retrieving, classifying, and drafting candidate rule representations; AI may NOT independently publish legal rules or calculate canonical compliance conclusions. A rule becomes eligible for 'verified' labeling only when deterministically represented, tested against normal and edge-case fixtures, traceable to the governing text, and approved by the required zoning professional (G6 - qualified human; agent consensus cannot substitute). This slice does NOT require full M3 corpus ingestion: it requires versioned section-level source snapshots for the specific sections implemented, captured with the same provenance discipline the full M3 corpus will use.",
+  "business_reason": "This structure is how the program will eventually handle thousands of rules and exceptions (owner directive 2026-07-20 section 4); building R3-2 as a bespoke calculator would create a second architecture to unwind. The PRD rule lifecycle, DSL requirements (PRD section 11), and G6 gate are the governing contracts.",
+  "inputs": [
+    "PRD sections 10 (rule lifecycle), 11 (rules DSL), 12 (coverage model), 24 (rule tests); docs/GATES_AND_CHECKPOINTS.md G6",
+    "docs/research/zoning-resolution-2026-07-16.md (accepted ZR source research: official source, versioning, access)",
+    "Official NYC Zoning Resolution sections governing R5 residential FAR and its general/special interactions (exact sections captured as versioned snapshots during the task)",
+    "The client's R5 benchmark sheet (owner-provided; the first-release validation target per PRD section 27 - request via blocker if not yet in the repo when the task starts)",
+    "M2-T013 uncertainty taxonomy (split-lot/boundary-uncertain inputs arrive as facts-with-uncertainty; rules must propagate, never collapse - advisory V5)",
+    "packages/contracts conventions + M2-T010 tooling (rule contracts follow the same canonical-schema discipline)",
+    "Owner directive 2026-07-20 section 4 (verbatim requirements above)"
+  ],
+  "outputs": [
+    "docs/RULES_ENGINE_ARCHITECTURE.md (canonical rules-source + rules-engine architecture: DSL, lifecycle, versioning, citation model, coverage semantics, G6 workflow)",
+    "Versioned rules DSL (JSON-based per PRD 11) + deterministic evaluator with evaluation traces (suggested home services/api/app/rules/**)",
+    "Section-level ZR source snapshots for the implemented sections with provenance (suggested home consistent with future M3 corpus layout, e.g. legal-corpus storage conventions documented in the architecture doc)",
+    "R5 residential FAR rule family represented in the DSL as extracted_draft/needs_review artifacts (NOT published; G6 human approval is a separate recorded event)",
+    "Second-family representability proof (draft fixture of a structurally different rule family, e.g. a height or yard rule, without engine changes)",
+    "Full legal-rule scenario pack (ACCEPTANCE_SCENARIO_STANDARD): applies+passes, applies+fails, not-applicable, threshold boundary, missing input, general-modified-by-special, exception applies/does-not, effective-date transition, citation + rule-version assertions",
+    "project-control/reports/M4-T001-producer-report.md (AOS section-6 packet)"
+  ],
+  "dependencies": [
+    "M2-T013"
+  ],
+  "allowed_paths": [
+    "services/api/app/rules/** (new module)",
+    "services/api/tests/rules/**",
+    "docs/RULES_ENGINE_ARCHITECTURE.md",
+    "docs/research/zoning-resolution snapshots location as defined in the architecture doc (small section-level extracts only, low-storage)",
+    "packages/contracts/schemas/v1/** rule-definition/evaluation-trace schemas via M2-T010 tooling (additive only, disclosed)",
+    "project-control/reports/M4-T001-producer-report.md"
+  ],
+  "forbidden_paths": [
+    "Publishing any rule (status published/verified) - G6 qualified-human approval is outside agent authority; the ledger records it as a separate human event",
+    "Hardcoding R5 (or any family's) terminology into the engine/DSL core",
+    "services/api/app/profile/**, connectors, spatial engine (consume contracts read-only)",
+    "apps/web/** (reviewer UI is a later M4 task)",
+    "Bulk ZR ingestion (section-level snapshots only; full corpus is M3)",
+    "project-control/** (except own producer report)",
+    ".claude/**"
+  ],
+  "acceptance_scenarios": [
+    "RE-S1 DSL round-trip: an R5 FAR rule expressed in the DSL parses, validates against the rule-definition schema, evaluates deterministically with a full trace (inputs, formula, citation, versions) on golden inputs",
+    "RE-S2 lifecycle: rule status transitions follow the PRD lifecycle; nothing labeled verified without a recorded G6 approval event; draft results carry non-verified coverage labels",
+    "RE-S3 applicability: positive, negative, and boundary applicability tests pass; special-district interaction point demonstrated (general rule modified by a special-rule stub)",
+    "RE-S4 missing evidence: absent required input yields the typed missing-data behavior (never a guessed value); uncertain split-lot geometric input propagates as conditional/professional-review per the M2-T013 taxonomy",
+    "RE-S5 second-family proof: a structurally different rule family represented as a draft fixture with ZERO engine changes (diff-provable)",
+    "RE-S6 provenance: every evaluated result traces to exact section snapshot, document version, effective date, rule version, and test status; export without provenance impossible",
+    "RE-S7 coverage honesty: an unimplemented rule family queried against a property returns unsupported (visible), not silence",
+    "RE-S8 regression: full repository CI green on both events"
+  ],
+  "required_gates": [
+    "G0",
+    "G2",
+    "G3",
+    "G4",
+    "G6"
+  ],
+  "producer_agent": null,
+  "reviewer_agents": [
+    "code-reviewer",
+    "qa-engineer"
+  ],
+  "status": "backlog",
+  "progress_percent": 0,
+  "risks": [
+    "DISPATCH HOLD: awaits owner review of the 2026-07-20 planning report; sequenced after M2-T013 acceptance (uncertainty taxonomy is an input contract)",
+    "G6 is a HUMAN gate: the task can reach needs_review status for its rules but acceptance of 'published/verified' labeling requires the qualified zoning professional - expect a standing blocker until that human is available; the engine itself (G3/G4) is acceptable independently",
+    "Producer is rules-engineer; legal-corpus snapshot conventions must be coordinated with future M3 (architecture doc defines the layout so M3 can adopt it, not fight it)",
+    "Milestone note: master plan shows M4 depends on M3; this bounded slice is the owner-approved exception (section-level snapshots with M3-grade provenance instead of full corpus) - recorded here to keep the plan honest",
+    "STOP CONDITIONS: any legal-interpretation ambiguity in the governing text (blocker for professional review, never a guess); any pressure to label draft rules verified; any need for full corpus ingestion",
+    "Execution: local/CI; section-level text extracts only (low-storage)"
+  ],
+  "blockers": [],
+  "created_at": "2026-07-20T06:34:25.711538+00:00",
+  "updated_at": "2026-07-20T06:34:25.711538+00:00"
+}

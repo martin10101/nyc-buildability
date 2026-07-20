@@ -1,0 +1,64 @@
+{
+  "task_id": "M6-T001",
+  "title": "Pre-public-launch inbound-traffic and upload protection (consolidated backlog)",
+  "task_type": "infrastructure",
+  "milestone_id": "M6",
+  "objective": "Consolidated pre-public-launch protection of OUR OWN application from concurrent customers and abusive callers (owner directive 2026-07-20 section 5). Explicitly distinct from upstream connector resilience: M1-T009 and M2-T011 protect us from SOURCE-service behavior; this packet protects our services from CUSTOMER traffic. Scope when dispatched: per-user and per-tenant quotas; IP-level abuse controls; authenticated authorization on every endpoint; endpoint-specific request budgets; concurrency and cost ceilings; asynchronous processing for expensive documents; upload and storage quotas; signed upload/download URLs; cancellation and bounded timeouts; standards-compliant 429 responses (Retry-After, no information leakage); audit logs, monitoring, and alerts; emergency suspension controls (per-user, per-tenant, global); tenant data isolation verification under load; and denial-of-wallet protections (cost-bounded AI/geometry/report operations, budget alarms, automatic throttling before spend runs away). This is a BACKLOG CONSOLIDATION packet: it does NOT block the current single-client build and is not dispatched in the current wave; it exists so the requirements are contracted once, in one place, and are refined into concrete subtasks at M6 planning (or earlier if the owner schedules public exposure sooner).",
+  "business_reason": "The current build serves a single known client; public launch changes the threat and cost model completely. Contracting the protection surface now prevents it from being discovered as scope at launch time (owner directive 2026-07-20 section 5).",
+  "inputs": [
+    "docs/SECRETS_POLICY.md, PRD section 17 (security), docs/GATES_AND_CHECKPOINTS.md G5",
+    "M1-T009 resilient-client + M2-T011 shared transport (the upstream-facing counterparts whose patterns - budgets, breakers, typed 429 handling - inform but do not substitute for inbound controls)",
+    "M2-T015 upload pipeline + docs/UPLOAD_THREAT_MODEL.md (upload-specific controls land there first; this packet extends them to quota/abuse/cost dimensions)",
+    "B-001/B-002 credential blockers (Supabase/Render provisioning is prerequisite for the production enforcement layer)"
+  ],
+  "outputs": [
+    "docs/INBOUND_TRAFFIC_PROTECTION_PLAN.md (canonical plan: control matrix per endpoint class, quota/budget model, abuse-response runbook, denial-of-wallet analysis, emergency suspension design)",
+    "Dependency-ordered subtask proposals for implementation (returned to the orchestrator at dispatch time; likely split across backend, supabase RLS/storage, and observability tasks)",
+    "project-control/reports/M6-T001-producer-report.md (AOS section-6 packet)"
+  ],
+  "dependencies": [
+    "M2-T015"
+  ],
+  "allowed_paths": [
+    "docs/INBOUND_TRAFFIC_PROTECTION_PLAN.md",
+    "project-control/reports/M6-T001-producer-report.md",
+    "(implementation paths contracted per-subtask when dispatched - this packet plans; subtasks implement)"
+  ],
+  "forbidden_paths": [
+    "Any production provisioning before B-001/B-002 resolve and the owner approves deployment",
+    "Weakening or duplicating upstream connector resilience (that is M1-T009/M2-T011 territory)",
+    "project-control/** (except own producer report)",
+    ".claude/**"
+  ],
+  "acceptance_scenarios": [
+    "IT-S1 coverage: the plan addresses every item in the owner's 2026-07-20 section 5 list with a concrete control, an enforcement point, and a test strategy",
+    "IT-S2 distinctness: the plan explicitly maps which concerns are inbound-only vs shared with upstream resilience, with no silent reuse of upstream code paths as inbound controls",
+    "IT-S3 denial-of-wallet: cost ceilings and automatic throttling defined for every expensive operation class (AI extraction, geometry, report generation, document processing) with alert thresholds",
+    "IT-S4 emergency controls: suspension controls specified at user/tenant/global levels with audit requirements and recovery procedure",
+    "IT-S5 429 compliance: standards-compliant rate-limit responses specified (status, Retry-After, bounded error body, no enumeration leakage)",
+    "IT-S6 subtask decomposition: dependency-ordered, exclusively-scoped subtask proposals ready for G0 contracting"
+  ],
+  "required_gates": [
+    "G0",
+    "G2",
+    "G3",
+    "G4",
+    "G5"
+  ],
+  "producer_agent": null,
+  "reviewer_agents": [
+    "security-reviewer",
+    "cloud-architect"
+  ],
+  "status": "backlog",
+  "progress_percent": 0,
+  "risks": [
+    "NOT part of the current wave: dispatch at M6 planning or on explicit owner scheduling of public exposure; contracted now so requirements are not lost",
+    "Production enforcement depends on B-001 (Supabase) and B-002 (Render) credentials; the plan must be provider-concrete but provisioning-deferred",
+    "STOP CONDITIONS: any production provisioning; any billing commitment; any change to the current single-client build's behavior",
+    "Execution: documentation/planning only at this packet's own scope; negligible disk footprint"
+  ],
+  "blockers": [],
+  "created_at": "2026-07-20T06:34:25.835580+00:00",
+  "updated_at": "2026-07-20T06:34:25.835580+00:00"
+}
