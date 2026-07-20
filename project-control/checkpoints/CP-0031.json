@@ -1,0 +1,9 @@
+{
+  "checkpoint_id": "CP-0031",
+  "timestamp": "2026-07-20T07:51:47.227459+00:00",
+  "commit": "555d68a",
+  "branch": "main",
+  "active_milestone": "M0",
+  "summary": "M2-T011 (36th) + M2-T010 (37th) accepted. M2-T011: shared connector transport/retry consolidation (four connectors -> app/resilience/transport.py via RetryHooks; 522 unmodified + 16 new = 538 green; behavior-unchanged null hypothesis held) + docs/SOURCE_ACCESS_REGISTRY.md. Gates G0/G2 orchestrator, G1 data-contract-verifier PASS (registry claims live-verified), G3/G4 code-reviewer PASS, G5 security-reviewer PASS (hardening moved verbatim). M2-T010: client+backend SUPPORTED_CONTRACT_VERSIONS derive from canonical schema enum with negative drift regression; no contract >1.3.0 published; contract.py docstring fixed. Gates G0/G2 orchestrator, G1 data-contract-verifier PASS, G3/G4 code-reviewer PASS. One orchestrator integration fix (jsdom vitest test-harness path) independently scrutinized by both DCV and code-reviewer and judged correct/not-weakened. Task PRs #50 (6dfac68) and #51 (555d68a) merged CI-green; branches deleted; producer worktrees removed. Ledger records ride acceptance control PR.",
+  "updated_at": "2026-07-20T07:51:47.227459+00:00"
+}
