@@ -58,13 +58,13 @@
     "G4",
     "G5"
   ],
-  "producer_agent": null,
+  "producer_agent": "frontend-engineer",
   "reviewer_agents": [
     "code-reviewer",
     "security-reviewer"
   ],
-  "status": "backlog",
-  "progress_percent": 0,
+  "status": "claimed",
+  "progress_percent": 10,
   "risks": [
     "P0 SEQUENCING (owner 2026-07-20): dispatched only AFTER M0-T018 is accepted; accepted BEFORE M2-T013/M2-T014 dispatch. Producer (frontend-engineer) cannot self-approve; G3 code-reviewer + G5 security-reviewer, both != producer.",
     "TARGET VERSIONS PROVISIONAL on re-verification of publication timestamps + advisories at implementation; STOP and report if changed.",
@@ -74,5 +74,6 @@
   ],
   "blockers": [],
   "created_at": "2026-07-20T08:21:46.465870+00:00",
-  "updated_at": "2026-07-20T16:27:53.780467+00:00"
+  "updated_at": "2026-07-20T20:50:02.661267+00:00",
+  "worktree": ".claude/worktrees/M0-T019-frontend"
 }
