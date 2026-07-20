@@ -67,14 +67,14 @@
     "G3",
     "G4"
   ],
-  "producer_agent": null,
+  "producer_agent": "backend-engineer",
   "reviewer_agents": [
     "data-contract-verifier",
     "code-reviewer",
     "geospatial-engineer"
   ],
-  "status": "backlog",
-  "progress_percent": 0,
+  "status": "in_progress",
+  "progress_percent": 10,
   "risks": [
     "SCOPE EXCLUSIONS (owner, hard): no citywide FileGDB import (deferred until B-001/B-002 resolved + deployment/security prerequisites), no persistent database storage, no Render worker provisioning, no production deployment, no full zoning-rule calculations, no buildable envelope, no 3D massing, no financial analysis, no legal boundary certification",
     "STOP CONDITIONS: contract change; profile integration; resilience framework change; CI workflow change needed for Shapely; credentials; legal-interpretation question; any Shapely/GEOS cross-platform digest instability that cannot be pinned (report evidence instead of shipping unstable digests)",
@@ -86,5 +86,15 @@
   ],
   "blockers": [],
   "created_at": "2026-07-18T00:18:56.632757+00:00",
-  "updated_at": "2026-07-18T00:18:56.632757+00:00"
+  "updated_at": "2026-07-20T05:17:36.161765+00:00",
+  "worktree": ".claude/worktrees/M2-T009",
+  "progress_log": [
+    {
+      "at": "2026-07-20T05:17:36.161765+00:00",
+      "agent": "backend-engineer",
+      "percent": 10,
+      "status": "in_progress",
+      "message": "Session 12 dispatch after M2-T008 acceptance (owner serialization honored): packet revalidated against main fec997e (both predecessor connectors accepted, spatial fixtures on main, contract 1.3.0 stands, public-repo/ruleset change has no packet impact), G0 PASS, claimed backend-engineer, worktree .claude/worktrees/M2-T009 branch task/M2-T009-mappluto-geometry after this control PR merges. Carry-forwards in brief: read-only transport reuse (no fourth transport copy; refactor stays owner-sequenced post-wave), wider secret needles + pragma convention, two-staleness quartet, taxonomy alignment, Shapely pin disclosed as the one dependency addition."
+    }
+  ]
 }
