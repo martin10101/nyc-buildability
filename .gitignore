@@ -10,6 +10,10 @@ __pycache__/
 .next/
 dist/
 build/
+# M0-T020: setuptools writes app.egg-info/ when `pip install ./services/api`
+# builds the package in-tree (api / web-e2e / exact-production-install jobs);
+# keep that stray build artifact out of git.
+services/api/**/*.egg-info/
 coverage/
 .cache/
 .pytest_cache/

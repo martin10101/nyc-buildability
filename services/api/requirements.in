@@ -4,19 +4,24 @@
 # -------------------
 # render.yaml builds the API with `pip install -r requirements.txt`. That
 # requirements.txt is now a GENERATED, fully hash-pinned lock (direct AND
-# transitive) produced from THIS file by:
+# transitive) produced from THIS file by the supported lock script
+# services/api/scripts/lock_requirements.sh, which runs (with PINNED uv==0.11.28):
 #
-#   pip-compile --generate-hashes --output-file=requirements.txt requirements.in
+#   uv pip compile --universal --python-version 3.12 --generate-hashes \
+#       --no-header requirements.in --output-file requirements.txt
 #
-# (exact command + pinned pip-tools version: services/api/scripts/lock_requirements.sh
-#  and the `api-lock-verify` CI job). Regenerating is idempotent (byte-identical).
+# Regenerate:  services/api/scripts/lock_requirements.sh
+# Verify (CI): services/api/scripts/lock_requirements.sh --check  (the
+# `api-lock-verify` job installs the pinned uv from requirements-tools.lock and
+# fails if a fresh regeneration is not byte-identical). Regenerating is
+# idempotent (byte-identical).
 #
 # SOURCE-OF-TRUTH RELATIONSHIP
 # ----------------------------
 # pyproject.toml [project.dependencies] remains the source of truth for the
 # ALLOWED RANGES. Every EXACT pin below MUST satisfy those ranges. This file
 # adds the deliberate exact-version selection that a reproducible Render build
-# and the release-age gate require — pip-compile alone would pick the newest
+# and the release-age gate require — the resolver alone would pick the newest
 # in-range release, which can be < 7 days old and fail the M0-T018 age gate
 # (e.g. fastapi 0.139.1/0.139.2 were published 2026-07-16, only 4 days before
 # the 2026-07-20 verification; fastapi 0.139.0 (2026-07-01) is the age-clean,

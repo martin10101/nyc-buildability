@@ -1,0 +1,87 @@
+# services/api — Python TOOLING dependency SOURCE for the deterministic tool lock
+# (task M0-T020). Direct pins for every test / build / lock-generation / audit
+# tool that any Python CI job needs. Runtime application dependencies live in
+# requirements.in (the production lock); NOTHING here is installed on Render.
+#
+# WHY THIS FILE EXISTS
+# --------------------
+# Before M0-T020 the tooling, build, lock-generation, and audit trees were
+# resolved dynamically in CI (`pip install .[dev]`, `pip install uv==...`,
+# `pipx run --spec pip-audit==...`, unpinned `pip install --upgrade pip`). That
+# left those trees un-hash-locked, un-age-gated, and only partially audited, so
+# a future change could silently pull a too-new or vulnerable tool. This file is
+# the single reviewed set of DIRECT tooling pins; requirements-tools.lock is the
+# full DIRECT+TRANSITIVE hash-pinned closure generated from it.
+#
+# GENERATION (byte-identical; the ONE documented tool-lock script)
+# ----------------------------------------------------------------
+#   services/api/scripts/lock_tools.sh            # regenerate requirements-tools.lock
+#   services/api/scripts/lock_tools.sh --check    # verify byte-identical (CI)
+# It runs, with PINNED uv==0.11.28 (resolver output can change across uv
+# releases) and the same --universal / --python-version 3.12 / --generate-hashes
+# / --no-header flags the production lock uses:
+#   uv pip compile --universal --python-version 3.12 --generate-hashes \
+#       --no-header requirements-tools.in -o requirements-tools.lock
+#
+# CI installs tools ONLY from the lock:
+#   pip install --require-hashes -r requirements-tools.lock
+# using the runner's EXISTING pip; it must never download an unlocked uv first
+# (the lock hash-pins uv itself, so uv is bootstrapped from the lock).
+#
+# ADMISSION RULE (owner permanent dependency policy; enforced by the CI age gate
+# services/api/scripts/dependency_age_gate.py and dual pip-audit)
+# ------------------------------------------------------------------------------
+# Every pin (direct AND transitive) must be advisory-free (pip-audit ZERO at
+# every severity) and its newest lock-admitted PyPI artifact must have been
+# published at least 604800 seconds (7 days) ago. Bump pins deliberately
+# (dedicated commit, re-verified age + advisories, CI green) — never as a side
+# effect of another task. Per-version publication-timestamp evidence and advisory
+# checks: project-control/reports/M0-T020-producer-report.md.
+#
+# VERIFIED DIRECT TOOLING SET (M0-T020, verification date 2026-07-20 against live
+# PyPI + OSV; see the producer report for the full per-package table):
+#   uv 0.11.28          lock generator / resolver (12.79d, advisory-free).
+#                       0.11.29 (wired before this task) was only 4.98d old ->
+#                       failed the 7-day gate, so it is downgraded to 0.11.28.
+#   pip 26.1.2          package installer, pinned so no unpinned
+#                       `pip install --upgrade pip` remains (50.03d, clean).
+#                       Fixes the un-pinned-pip CI gap; supersedes 25.x.
+#   setuptools 83.0.0   build backend (pyproject build-system requires
+#                       setuptools>=69); replaces the dynamically resolved
+#                       build tooling (16.11d, clean).
+#   wheel 0.46.2        build/bdist tool (179.76d, clean). 0.46.0 and 0.46.1 are
+#                       BOTH yanked (PYSEC-2026-2047) — do NOT use them.
+#   pytest 9.0.3        test runner. pyproject [dev] now requires
+#                       `pytest>=9.0.3,<10` (bounded owner amendment 2026-07-20)
+#                       to admit the advisory-free CVE-2025-71176 fix; 8.x is
+#                       retired (104.04d, advisory-free).
+#   httpx 0.28.1        Starlette TestClient transport for the suite (591.11d,
+#                       clean).
+#   ruff 0.13.0         linter (313.08d, clean).
+#   pyyaml 6.0.3        render.yaml Blueprint syntax check in the contracts job
+#                       (293.91d, clean). Replaces the unpinned `pip install
+#                       pyyaml` there.
+#   pip-audit 2.10.1    supply-chain auditor. Its OWN transitive tree is now
+#                       hash-locked here instead of pip/pipx-resolved (39.83d,
+#                       clean).
+uv==0.11.28
+pip==26.1.2
+setuptools==83.0.0
+wheel==0.46.2
+pytest==9.0.3
+httpx==0.28.1
+ruff==0.13.0
+pyyaml==6.0.3
+pip-audit==2.10.1
+
+# --- transitive-dependency age control (M0-T020) ---
+# The unconstrained universal resolution of the tools above pulls two transitives
+# whose newest artifact is younger than the 7-day gate at the 2026-07-20
+# verification, so they are down-pinned to the nearest age-clean, advisory-free
+# predecessor. Revisit deliberately when the newer release clears the age window.
+#   filelock     3.31.1 -> 2026-07-20 (0.63d, FAILS the gate); pin 3.29.7
+#                (2026-07-08, 12.52d, advisory-free). Via cachecontrol.
+#   platformdirs 4.10.1 -> 2026-07-18 (2.60d, FAILS the gate); pin 4.10.0
+#                (2026-05-28, 53.61d, advisory-free). Via pip-audit.
+filelock==3.29.7
+platformdirs==4.10.0

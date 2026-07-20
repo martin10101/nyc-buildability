@@ -36,7 +36,11 @@
 # =============================================================================
 set -euo pipefail
 
-UV_VERSION="0.11.29"
+# M0-T020: downgraded 0.11.29 -> 0.11.28. uv 0.11.29 was only ~5 days old at the
+# 2026-07-20 verification and failed the 7-day publication-age gate; 0.11.28
+# (2026-07-07, advisory-free) is age-clean and produces a byte-identical
+# production lock. Kept in lockstep with services/api/scripts/lock_tools.sh.
+UV_VERSION="0.11.28"
 PYTHON_TARGET="3.12"
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
