@@ -1,0 +1,77 @@
+{
+  "task_id": "M0-T019",
+  "title": "Frontend framework security upgrade and permanent dependency-admission policy",
+  "task_type": "frontend",
+  "milestone_id": "M0",
+  "objective": "Patch the vulnerable Next/React tree and make the owner's dependency-admission rule permanent, documented, and programmatically enforced (owner directive 2026-07-20, P0). REQUIRED EXACT TARGET: next==15.5.20, react==19.1.2, react-dom==19.1.2, eslint-config-next==15.5.20, package override postcss==8.5.10. HARD PROHIBITIONS: do NOT upgrade to Next 16; do NOT use a canary; do NOT run `npm audit fix --force`; do NOT accept an automated major downgrade or unrelated dependency rewrite. The producer MUST record exact publication dates + official registry/advisory evidence for every directly changed or overridden package and verify each ordinary changed package is >= 7 complete days old before committing; if registry/advisory state has changed, STOP and report - no silent substitution. The named targets already exceed seven days as of this directive (no emergency exception needed).",
+  "business_reason": "The current Next/React tree carries known advisories; this P0 patches them to the exact reviewed target AND makes the owner's dependency-admission policy (advisory-free tree, 7-day release-age, exact pins, continuous audit) permanent and machine-enforced so future lockfile changes cannot silently reintroduce vulnerable or too-new packages (owner directive 2026-07-20).",
+  "inputs": [
+    "apps/web/package.json + apps/web/package-lock.json (current Next/React tree)",
+    ".github/workflows/ci.yml (web + web-e2e jobs; npm tooling version)",
+    "Owner directive 2026-07-20 M0-T019 contract (verbatim requirements below)",
+    "The shared dependency-security policy concepts co-defined with M0-T018 (age/audit rules apply to both ecosystems)"
+  ],
+  "outputs": [
+    "apps/web/package.json + intentionally regenerated apps/web/package-lock.json at the exact target (next/react/react-dom/eslint-config-next) with \"overrides\": { \"postcss\": \"8.5.10\" }",
+    "CI npm tooling pinned to a reviewed npm 11 release supporting min-release-age (npm 11.18.0 is an eligible >7-day target as of this directive)",
+    "Project npm configuration: min-release-age=7, save-exact=true, normal integrity/lockfile verification retained",
+    "A BLOCKING full dependency audit (incl. dev deps): `npm audit --audit-level=low` AND JSON-output inspection requiring total vulnerabilities == 0; a warning-only audit step is NOT acceptable; npm ci stays deterministic (npm ci --no-audit permitted ONLY if followed by an explicit blocking audit)",
+    "A scheduled audit workflow (future advisories may affect an already-merged lockfile)",
+    "docs/DEPENDENCY_SECURITY_POLICY.md (permanent policy, full content per the owner contract)",
+    "A concise permanent dependency-security rule added to CLAUDE.md so future orchestrators must read it",
+    "project-control/reports/M0-T019-producer-report.md (AOS section-6 packet with per-package publication-date evidence and npm audit zero-findings JSON evidence)"
+  ],
+  "dependencies": [
+    "M0-T018"
+  ],
+  "allowed_paths": [
+    "apps/web/package.json, apps/web/package-lock.json",
+    "apps/web/.npmrc (or the repo npm config location) for min-release-age/save-exact",
+    ".github/workflows/** (npm tooling pin, blocking audit step, scheduled audit; existing jobs stay green)",
+    "docs/DEPENDENCY_SECURITY_POLICY.md",
+    "CLAUDE.md (append the concise permanent dependency-security rule ONLY)",
+    "project-control/reports/M0-T019-producer-report.md"
+  ],
+  "forbidden_paths": [
+    "Next 16, canaries, `npm audit fix --force`, automated major downgrades, unrelated dependency rewrites",
+    "apps/web/src/** application/component/behavior changes (this is a dependency + policy task; a build/type fix strictly required by the framework bump must be minimal and disclosed, and must not change UI behavior or weaken tests/TS settings)",
+    "No weakening of tests or TypeScript settings; no warning-only audit; no advisory waiver by an agent",
+    "No production provisioning; no deployment",
+    "project-control/** except own producer report",
+    ".claude/** (CLAUDE.md is a repo-root file, allowed; .claude/ tooling is not)"
+  ],
+  "acceptance_scenarios": [
+    "FE-S1 exact target: package.json + regenerated lockfile carry next==15.5.20, react==19.1.2, react-dom==19.1.2, eslint-config-next==15.5.20, and postcss override ==8.5.10; save-exact respected; no Next 16 / canary anywhere",
+    "FE-S2 audit zero (BLOCKING): `npm audit --audit-level=low` AND JSON total == 0; the audit step fails the build on any finding; dev deps included",
+    "FE-S3 deterministic install: npm ci reproduces the committed lockfile; integrity/lockfile verification intact; any --no-audit is followed by an explicit blocking audit",
+    "FE-S4 npm tooling + config: CI uses the pinned npm 11.18.0 (>7 days); min-release-age=7 and save-exact=true configured and effective",
+    "FE-S5 release-age: every ordinary changed/overridden package is >= 7 complete days old; per-package publication dates + official source URLs recorded in the report",
+    "FE-S6 full regression: npm ci; npm audit zero; lint pass; typecheck pass; complete Vitest suite pass; production Next build pass; existing Playwright journeys pass; secret scan pass",
+    "FE-S7 scheduled audit: a scheduled workflow re-audits the tree; failure path proven visible/actionable",
+    "FE-S8 permanent policy: docs/DEPENDENCY_SECURITY_POLICY.md contains the full owner-specified rule set (advisory-free tree across runtime/dev/build/audit-tooling; 7-day age; exact pins + lockfile integrity; audits on every change + schedule; no agent waiver; post-merge advisory reopens security work + blocks deploy; new-package provenance review of names/maintainers/lifecycle-scripts/registry-origin/publication-date/ownership-changes; prefer existing deps/stdlib over new packages) AND the emergency exception (age-requirement ONLY, never an advisory affecting the installed version, owner-authorized only, full record fields, auto-expiry at 7 days, no wildcard/org-wide/permanent/undocumented exceptions); CLAUDE.md carries the concise permanent rule pointer"
+  ],
+  "required_gates": [
+    "G0",
+    "G2",
+    "G3",
+    "G4",
+    "G5"
+  ],
+  "producer_agent": null,
+  "reviewer_agents": [
+    "code-reviewer",
+    "security-reviewer"
+  ],
+  "status": "backlog",
+  "progress_percent": 0,
+  "risks": [
+    "P0 SEQUENCING (owner 2026-07-20): dispatched only AFTER M0-T018 is accepted; accepted BEFORE M2-T013/M2-T014 dispatch. Producer (frontend-engineer) cannot self-approve; G3 code-reviewer + G5 security-reviewer, both != producer.",
+    "TARGET VERSIONS PROVISIONAL on re-verification of publication timestamps + advisories at implementation; STOP and report if changed.",
+    "The framework bump may surface a minimal required build/type fix; it must not change UI behavior or weaken tests/TS - disclose any such touch line-by-line.",
+    "STOP CONDITIONS: no advisory-free compatible tree exists; a required fix is <7 days old needing an owner exception; any age/audit check skipped/downgraded/warning-only/allowlisted; tests require weakening; a forbidden path is needed; production credentials/deployment approval required.",
+    "Execution: GitHub Actions CI is authoritative for the web suites (thin-client policy: no local node_modules on the owner PC); local npm prohibited; disk-safe."
+  ],
+  "blockers": [],
+  "created_at": "2026-07-20T08:21:46.465870+00:00",
+  "updated_at": "2026-07-20T08:21:46.465870+00:00"
+}
