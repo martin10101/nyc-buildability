@@ -1,9 +1,0 @@
-{
-  "checkpoint_id": "CP-0032",
-  "timestamp": "2026-07-20T19:56:22.585722+00:00",
-  "commit": "4693ca4",
-  "branch": "main",
-  "active_milestone": "M0",
-  "summary": "M0-T020 (39th) accepted: Python dependency-policy enforcement (hash-pinned tooling lock + machine release-age gate + CI hardening). Reviewed task PR #60 head 9da5449 merged to main at 4693ca4 (all 23 checks green; CI+secret-scan green on reconciled main). Gates G0/G2 orchestrator, G3/G4 code-reviewer PASS, G5 security-reviewer PASS (reports verbatim on main via PR #61). Content: bounded pyproject pytest>=8,<9 -> pytest>=9.0.3,<10 (CVE-2025-71176 / PYSEC-2026-1845 fix, owner amendment PR #59 - packet-scope, NOT a policy waiver); hash-pinned tooling lock (11 direct -> 42 pkgs / 389 sha256) via one lock_tools.sh (byte-identical --check); every Python CI job installs tools --require-hashes + app --no-deps; dual pip-audit (runtime+tooling) blocking zero; machine release-age gate (>=604800s, fail-closed) + 17 tests (re-verified locally 17 passed); new api-tooling-lock-verify CI job. Production runtime lock requirements.txt BYTE-IDENTICAL (verified blob 7da554c pre==post). Invariants held: no services/api/app/** change, no M0-T018 artifact change, no npm/Playwright change. 3 non-blocking review observations dispositioned (no change required): full tooling-lock install (intentional; --require-hashes rejects single-pkg form), api pip-cache key (neutral; installs hash-verified), age-gate urllib.parse.quote (defense-in-depth; fixed-host lock-bound accepted). Ledger 39 accepted / 2 blocked / 8 backlog / 0 claimed. Ledger records + this checkpoint ride the M0-T020 acceptance control PR (owner-authorized; acceptance PR not yet merged). M0-T019 is next eligible but UNDISPATCHED (owner hold); all feature/credential/GDS/3D holds preserved.",
-  "updated_at": "2026-07-20T19:56:22.585722+00:00"
-}
