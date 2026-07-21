@@ -58,14 +58,14 @@
     "G4",
     "G5"
   ],
-  "producer_agent": null,
+  "producer_agent": "orchestrator",
   "reviewer_agents": [
     "data-contract-verifier",
     "code-reviewer",
     "security-reviewer"
   ],
-  "status": "backlog",
-  "progress_percent": 0,
+  "status": "in_progress",
+  "progress_percent": 10,
   "risks": [
     "HARD sequencing: cannot start before M2-T010 (tooling), M2-T011 (connector files stable), and M2-T013 (intersection records) are ALL accepted; owner-ratified order 2026-07-20",
     "Largest-surface task of the wave (profile + contracts + web lib + carried defects); consider split if the carried-defect fold-in bloats the diff - orchestrator may split defects into a companion task at G0",
@@ -75,5 +75,15 @@
   ],
   "blockers": [],
   "created_at": "2026-07-20T06:34:25.260094+00:00",
-  "updated_at": "2026-07-20T06:34:25.260094+00:00"
+  "updated_at": "2026-07-21T06:22:54.956698+00:00",
+  "worktree": ".claude/worktrees/M2-T012-profile",
+  "progress_log": [
+    {
+      "at": "2026-07-21T06:22:54.955606+00:00",
+      "agent": "orchestrator",
+      "percent": 10,
+      "status": "in_progress",
+      "message": "Lead-only start from merged main 6f9d603 (M2-T013 accepted). Scope: contract 1.4.0 integration of zoning-features + MapPLUTO geometry + M2-T013 spatial records, additive-only, uncertainty preserved."
+    }
+  ]
 }
