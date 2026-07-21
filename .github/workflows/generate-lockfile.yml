@@ -20,6 +20,15 @@ jobs:
       - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
         with:
           node-version: 22
+      # M0-T019: pin npm to the reviewed 11.18.0 BEFORE generating the lock so
+      # the regenerated apps/web/package-lock.json honors apps/web/.npmrc
+      # (min-release-age=7 -> no package younger than 7 days is admitted) and
+      # the "overrides": { "postcss": "8.5.10" } pin. min-release-age needs
+      # npm >= 11.10.0 (docs/DEPENDENCY_SECURITY_POLICY.md).
+      - name: Pin npm 11.18.0
+        run: |
+          npm install -g npm@11.18.0
+          test "$(npm --version)" = "11.18.0" || { echo "npm pin failed: $(npm --version) != 11.18.0"; exit 1; }
       - name: Generate package-lock.json (no node_modules)
         working-directory: apps/web
         run: npm install --package-lock-only --no-audit --no-fund

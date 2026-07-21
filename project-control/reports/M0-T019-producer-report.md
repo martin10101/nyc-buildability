@@ -1,0 +1,334 @@
+# M0-T019 producer report — Frontend framework security upgrade and permanent npm dependency-admission policy
+
+**Task ID:** M0-T019
+**Producer agent:** frontend-engineer
+**Status requested:** `awaiting_gate`
+**Worktree / branch:** `.claude/worktrees/M0-T019-frontend` / `task/M0-T019-frontend-security`
+**Date:** 2026-07-20
+
+This is an AOS section-6 producer packet. No git/npm/gh/project_control commands
+were run by the producer (thin-client + ADR-005): the orchestrator regenerates
+the lockfile on a CI runner and records all ledger transitions. Nothing under
+`apps/web/src/**`, `services/api/**`, tests, or TypeScript settings was changed,
+and no `min-release-age-exclude` (or any other exclusion) was added.
+
+---
+
+## 1. Files changed (one-line purpose each)
+
+| File | Change | Purpose |
+| --- | --- | --- |
+| `apps/web/package.json` | modified | Exact pins `next` 15.5.20, `react` 19.1.2, `react-dom` 19.1.2 (deps), `eslint-config-next` 15.5.20 (dev); new `"overrides": { "postcss": "8.5.10" }`. Other devDeps unchanged. |
+| `apps/web/.npmrc` | created | `save-exact=true`, `min-release-age=7` (+ comment: needs npm >= 11.10.0, CI pins 11.18.0). No exclusions. |
+| `.github/workflows/ci.yml` | modified | `web` + `web-e2e`: pin npm 11.18.0 after setup-node (version-checked). `web`: BLOCKING audit after `npm ci` (`--audit-level=low` + JSON total==0). Python jobs untouched. |
+| `.github/workflows/generate-lockfile.yml` | modified | Pin npm 11.18.0 before lock regeneration so the lock honors `.npmrc` + the postcss override. Stays workflow_dispatch, `--package-lock-only --no-audit --no-fund`, commit-back. |
+| `.github/workflows/scheduled-npm-audit.yml` | created | Daily cron (06:41) + PR on web dep artifacts + workflow_dispatch; checkout + setup-node 22 + npm pin + `npm ci --no-audit --no-fund` + the SAME blocking audit. `permissions: contents: read`. |
+| `docs/DEPENDENCY_SECURITY_POLICY.md` | created | Permanent cross-ecosystem (npm + Python) policy + owner-only auto-expiring emergency exception. |
+| `CLAUDE.md` | appended | New permanent principle 15 pointing at the policy (append-only; existing content unchanged). |
+| `project-control/reports/M0-T019-producer-report.md` | created | This report. |
+
+`apps/web/package-lock.json` is intentionally **NOT** edited here — it is
+regenerated remotely by the orchestrator (see Section 8).
+
+---
+
+## 2. Verified-facts table (orchestrator-captured 2026-07-20 21:59:44 UTC; used verbatim, not re-verified by producer)
+
+Source: registry.npmjs.org + api.osv.dev + official npm v11 docs.
+
+| package | exact target | published (UTC) | age at verification | advisory (OSV, installed version) | registry |
+| --- | --- | --- | --- | --- | --- |
+| next | 15.5.20 | 2026-07-01T21:07 | 19.04 days (1,645,000+ s) | NONE | registry.npmjs.org |
+| react | 19.1.2 | 2025-12-03T15:32 | 229.27 days | NONE | registry.npmjs.org |
+| react-dom | 19.1.2 | 2025-12-03T15:32 | 229.27 days | NONE | registry.npmjs.org |
+| eslint-config-next | 15.5.20 | 2026-07-01T21:06 | 19.04 days | NONE | registry.npmjs.org |
+| postcss (override) | 8.5.10 | 2026-04-15T14:42 | 96.30 days | NONE | registry.npmjs.org |
+| npm (CI tooling) | 11.18.0 | 2026-06-29T16:42 | 21.22 days | NONE | registry.npmjs.org |
+
+All six targets exceed 7 complete days (604800 s); **no emergency age exception
+is needed.** `next` latest is 16.2.10 — we intentionally stay on 15.x (Next 16 is
+FORBIDDEN). react/react-dom latest is 19.2.7 — we use the reviewed 19.1.2 patch.
+npm `min-release-age` was introduced in npm 11.10.0, which is why npm 11.18.0 is
+the pinned CI tooling version.
+
+---
+
+## 3. Final `apps/web/package.json`
+
+```json
+{
+  "name": "@nyc-buildability/web",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Next.js 15 App Router placeholder for the NYC Development Feasibility & Zoning Intelligence Platform",
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "eslint .",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "test:e2e": "playwright test"
+  },
+  "dependencies": {
+    "next": "15.5.20",
+    "react": "19.1.2",
+    "react-dom": "19.1.2"
+  },
+  "devDependencies": {
+    "@eslint/eslintrc": "^3.3.1",
+    "@playwright/test": "^1.53.0",
+    "@testing-library/dom": "^10.4.0",
+    "@testing-library/jest-dom": "^6.6.3",
+    "@testing-library/react": "^16.3.0",
+    "@types/node": "^22.15.0",
+    "@types/react": "^19.1.0",
+    "@types/react-dom": "^19.1.0",
+    "@vitejs/plugin-react": "^4.5.0",
+    "eslint": "^9.28.0",
+    "eslint-config-next": "15.5.20",
+    "jsdom": "^26.1.0",
+    "typescript": "^5.8.3",
+    "vitest": "^3.2.0"
+  },
+  "overrides": {
+    "postcss": "8.5.10"
+  }
+}
+```
+
+## 4. Final `apps/web/.npmrc`
+
+```
+# Dependency-admission enforcement (docs/DEPENDENCY_SECURITY_POLICY.md). min-release-age requires npm >= 11.10.0; CI pins npm 11.18.0 so the lockfile is regenerated honoring these keys.
+save-exact=true
+min-release-age=7
+```
+
+`.npmrc` keys used: `save-exact=true` (Boolean), `min-release-age=7` (Number,
+days). No `min-release-age-exclude` entry — no exclusion of any kind was added.
+
+---
+
+## 5. Workflow change diff summary (verbatim key lines)
+
+### `.github/workflows/ci.yml`
+
+**`web` job** — after `setup-node`, added the npm pin; after `npm ci`, added the blocking audit:
+
+```yaml
+      - name: Pin npm 11.18.0
+        run: |
+          npm install -g npm@11.18.0
+          test "$(npm --version)" = "11.18.0" || { echo "npm pin failed: $(npm --version) != 11.18.0"; exit 1; }
+```
+```yaml
+      - name: Install dependencies
+        run: npm ci --no-audit --no-fund
+      - name: Dependency audit — zero advisories incl. dev deps (blocking)
+        run: |
+          npm audit --audit-level=low
+          npm audit --json > "$RUNNER_TEMP/npm-audit.json"
+          node -e "const t=require(process.env.RUNNER_TEMP+'/npm-audit.json').metadata.vulnerabilities.total; if(t!==0){console.error('npm audit total vulnerabilities='+t+' (must be 0)');process.exit(1)} console.log('npm audit total vulnerabilities=0')"
+```
+
+**`web-e2e` job** — after `setup-node` (before `setup-python`), added the SAME npm pin step. No audit added here (the audit lives in the `web` job and the scheduled workflow); `web-e2e` continues to run vitest + Playwright unchanged. `npm ci --no-audit --no-fund` is unchanged in this job.
+
+`cache-dependency-path: apps/web/package-lock.json` is unchanged in both jobs. **All Python jobs (`api`, `api-lock-verify`, `api-tooling-lock-verify`, `exact-production-install`, `contracts`, `contracts-typegen`, `contracts-schema-bundle`, `control-plane`) are untouched.**
+
+### `.github/workflows/generate-lockfile.yml`
+
+Added the npm pin between `setup-node` and the lock-generation step:
+
+```yaml
+      - name: Pin npm 11.18.0
+        run: |
+          npm install -g npm@11.18.0
+          test "$(npm --version)" = "11.18.0" || { echo "npm pin failed: $(npm --version) != 11.18.0"; exit 1; }
+      - name: Generate package-lock.json (no node_modules)
+        working-directory: apps/web
+        run: npm install --package-lock-only --no-audit --no-fund
+```
+
+`workflow_dispatch` trigger, `permissions: contents: write`, and the commit-back step are unchanged.
+
+### `.github/workflows/scheduled-npm-audit.yml` (new)
+
+Triggers, permissions, and the audit body:
+
+```yaml
+on:
+  schedule:
+    - cron: "41 6 * * *"
+  pull_request:
+    paths:
+      - "apps/web/package.json"
+      - "apps/web/package-lock.json"
+      - "apps/web/.npmrc"
+      - ".github/workflows/scheduled-npm-audit.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+```
+```yaml
+      - name: Pin npm 11.18.0
+        run: |
+          npm install -g npm@11.18.0
+          test "$(npm --version)" = "11.18.0" || { echo "npm pin failed: $(npm --version) != 11.18.0"; exit 1; }
+      - name: Install dependencies (deterministic; audit is the separate gate)
+        run: npm ci --no-audit --no-fund
+      - name: Dependency audit — zero advisories incl. dev deps (blocking)
+        run: |
+          npm audit --audit-level=low
+          npm audit --json > "$RUNNER_TEMP/npm-audit.json"
+          node -e "const t=require(process.env.RUNNER_TEMP+'/npm-audit.json').metadata.vulnerabilities.total; if(t!==0){console.error('npm audit total vulnerabilities='+t+' (must be 0)');process.exit(1)} console.log('npm audit total vulnerabilities=0')"
+```
+
+The daily cron is offset to 06:41 UTC, distinct from the Python `scheduled-audit.yml` cron (06:17 UTC), so the two do not collide at the top of the hour. `working-directory: apps/web` is the job default; the npm pin step runs a global install so it is directory-independent.
+
+---
+
+## 6. Acceptance scenarios FE-S1..FE-S8
+
+| Scenario | How it is satisfied |
+| --- | --- |
+| **FE-S1** exact target | `package.json` carries `next` 15.5.20, `react`/`react-dom` 19.1.2, `eslint-config-next` 15.5.20 as exact strings, plus `overrides.postcss` 8.5.10; `.npmrc save-exact=true`. No Next 16 / canary anywhere. The regenerated lockfile (CI runner) will carry these exact versions and the postcss override; the orchestrator confirms them in the lock delta. |
+| **FE-S2** audit zero (BLOCKING) | `web` job runs `npm audit --audit-level=low` **and** the JSON `metadata.vulnerabilities.total == 0` check; the step exits non-zero on any finding. `npm ci` is `--no-audit` (deterministic) and the explicit blocking audit follows it. Dev deps are in scope (default npm audit behavior). CI-verified on the runner after the lock is regenerated. |
+| **FE-S3** deterministic install | Every web install is `npm ci` (fails on package.json/lock mismatch; verifies integrity hashes). The only `--no-audit` usages are immediately followed by the explicit blocking audit (`web` job and scheduled workflow). CI-verified. |
+| **FE-S4** npm tooling + config | npm 11.18.0 is installed and version-checked in `web`, `web-e2e`, `generate-lockfile`, and `scheduled-npm-audit` (the step fails if `npm --version` != 11.18.0). `.npmrc` sets `min-release-age=7` + `save-exact=true`; effective because the lock is regenerated under npm 11.18.0. |
+| **FE-S5** release-age | All six changed/overridden/tooling targets are >= 7 days old (Section 2 table: 19.04–229.27 days; npm 21.22 days). `min-release-age=7` enforces this fail-closed for the whole transitive tree at lock-regeneration time. Per-package publication dates + registry source recorded above. |
+| **FE-S6** full regression | Runs on the CI runner after lock regeneration: `web` (npm ci → blocking audit → lint → typecheck → build) and `web-e2e` (npm ci → vitest → build → Playwright journeys). No test or TS setting was weakened; no `apps/web/src/**` change. Secret scan / existing jobs remain. CI-verified by the orchestrator/reviewers. |
+| **FE-S7** scheduled audit | `scheduled-npm-audit.yml` re-audits the committed tree daily + on PRs touching the web dep artifacts + on demand; a finding turns the run red (JSON total==0 gate), matching the Python `scheduled-audit.yml` visibility pattern. |
+| **FE-S8** permanent policy | `docs/DEPENDENCY_SECURITY_POLICY.md` states the full rule set (advisory-free across runtime/dev/build/lock/audit tooling + transitives; 7-day age; exact pins + lockfile integrity; blocking audits on every change + schedule; no agent waiver/allowlist/ignore/warning-only; post-merge advisory reopens security work + blocks deploy; new-package provenance review of name/typo-squat, maintainers/ownership changes, install/lifecycle scripts, registry origin, publication age; prefer existing deps/stdlib) AND the emergency exception (age-only, never an advisory, owner-authorized, records package+version+reason+approver+timestamp+expiry, auto-expires at 7 days, no wildcard/org-wide/permanent/undocumented). `CLAUDE.md` principle 15 is the concise pointer. |
+
+---
+
+## 7. Assumptions / defaults
+
+- **Blocking-audit placement:** put the blocking audit in the existing `web` job (right after `npm ci`) rather than a new dedicated job — the contract explicitly allows either; the `web` job already installs the web tree, so this avoids a redundant install. The scheduled workflow provides the independent, schedule-driven copy.
+- **`web-e2e` gets the npm pin but not a second audit:** the audit is intentionally single-sourced (the `web` job + the scheduled workflow) to avoid a redundant ~identical audit; `web-e2e` still needs the pin so its `npm ci` resolves under `.npmrc`.
+- **Cron offset 06:41 UTC** chosen to avoid colliding with the Python audit's 06:17 UTC and the top-of-hour scheduler surge; any non-colliding offset minute is acceptable.
+- **JSON total check uses `metadata.vulnerabilities.total`** — the documented aggregate across all severities in `npm audit --json` (npm v11), so it catches `info`-level findings that `--audit-level=low` alone would let pass. Written to `$RUNNER_TEMP` (not the workspace) to avoid polluting the tree the lint/build steps see.
+- The other `apps/web` devDependencies were left exactly as-is (ranged), per the contract; `save-exact` only affects future `npm install <pkg>` additions, and the committed lockfile already freezes the full transitive tree.
+
+## 8. What the orchestrator must do remotely
+
+1. **Regenerate `apps/web/package-lock.json`** on a CI runner (dispatch `generate-lockfile.yml`, now pinned to npm 11.18.0) so the lock reflects `next` 15.5.20 / `react` 19.1.2 / `react-dom` 19.1.2 / `eslint-config-next` 15.5.20 and the `postcss` 8.5.10 override, with `min-release-age=7` honored across the transitive tree.
+2. **After the lock lands, complete the transitive lockfile-delta inventory** (which transitive versions changed vs. the prior lock) and confirm on the CI runner: `npm ci` reproduces the committed lock; the blocking audit prints `npm audit total vulnerabilities=0`; lint/typecheck/build and the vitest + Playwright journeys pass. These are the CI-verified halves of FE-S2/FE-S3/FE-S6 that cannot run on the thin-client PC.
+3. Record all ledger transitions (progress/submit) and integrate git per ADR-005.
+
+The transitive lockfile delta, `npm ci` reproducibility proof, and the audit-zero JSON are produced by the CI runner after step 1 — they are not available to the producer, who cannot run npm locally.
+
+## 9. Known limitations
+
+- The producer could not execute `npm ci`, `npm audit`, `npm run build`, or the Playwright suite locally (thin-client + ADR-005); FE-S2/FE-S3/FE-S6/FE-S7 correctness is asserted by construction and must be confirmed by the CI runner. This is expected and by design.
+- `min-release-age` enforcement is effective only when the lock is regenerated (or install resolves) under npm >= 11.10.0; the pinned npm 11.18.0 in `generate-lockfile.yml` guarantees this for regeneration. If a lock were ever regenerated with an older npm (not possible through the committed workflows), the age gate would silently not apply — the pin + version-check step is the guard.
+- npm's audit database and OSV can disclose a new advisory against an already-pinned version at any time; the scheduled workflow (FE-S7) is exactly the mechanism that surfaces that, per policy Section 5.
+
+## 10. Security / provenance notes
+
+- All six targets are advisory-free against the installed version and >= 7 days old (Section 2, orchestrator-captured from registry.npmjs.org + api.osv.dev). No emergency exception invoked.
+- The audit is genuinely blocking: two independent failure paths (`--audit-level=low` non-zero exit; JSON `total != 0` process.exit(1)). No `--ignore`, no allowlist, no warning-only step, no `npm audit fix --force`, anywhere.
+- The npm pin steps download `npm@11.18.0` from the npm registry on GitHub-hosted runners only (never the owner PC). No secrets are referenced by any changed workflow; `scheduled-npm-audit.yml` runs with `permissions: contents: read` (least privilege). `generate-lockfile.yml` keeps `contents: write` solely for its existing commit-back, unchanged.
+- No `apps/web/src/**`, `services/api/**`, test, or TypeScript-setting change; no `min-release-age-exclude` or any exclusion added; Next 16 and canaries excluded.
+
+## 11. Recommended reviewer focus (G3 code-reviewer + G5 security-reviewer)
+
+1. **Lockfile delta (post-regeneration):** confirm the regenerated `package-lock.json` carries exactly the five target versions + postcss 8.5.10 override and no Next 16 / canary; review the transitive delta the orchestrator inventories.
+2. **Audit enforcement is truly blocking:** verify both the `--audit-level=low` and the JSON `total==0` paths fail the job, in both the `web` job and `scheduled-npm-audit.yml`; confirm no allowlist/ignore/warning-only crept in.
+3. **Age policy:** confirm `.npmrc min-release-age=7` with no exclusion, and that npm 11.18.0 is pinned + version-checked everywhere a lock is generated or installed.
+4. **Workflow npm-download paths:** confirm the npm pin runs only on GitHub-hosted runners, references no secrets, and does not touch the owner PC; `scheduled-npm-audit.yml` least-privilege `contents: read`.
+5. **Policy doc:** confirm `docs/DEPENDENCY_SECURITY_POLICY.md` is internally consistent with the implemented enforcement and covers the full FE-S8 rule set + the narrow owner-only auto-expiring exception; `CLAUDE.md` principle 15 is an accurate pointer.
+6. **Forbidden-path compliance:** confirm no change to `apps/web/src/**`, `services/api/**`, tests, or TS settings, and that `package-lock.json` was NOT hand-edited by the producer.
+
+---
+
+# Policy-enforcement correction (rev 2) — committed-lockfile age gate + exact pins + npm tooling advisory verification
+
+**Date:** 2026-07-20 (second producer increment on the OPEN task PR #64)
+**Adds:** FE-S9, FE-S10, FE-S11. New allowed path `apps/web/scripts/**`. Nothing under `apps/web/src/**`, `services/api/**`, tests unrelated to the new script, TypeScript settings, or the Python jobs was changed. `apps/web/package-lock.json` is still regenerated remotely by the orchestrator — the producer did not hand-edit it.
+
+## R2.1 The gap this closes
+
+`apps/web/.npmrc min-release-age=7` only filters versions during npm **resolution** (lock regeneration). CI installs the **committed** `apps/web/package-lock.json` with `npm ci`, which does **not** resolve — so a hand-edited (or bot-edited) lock could contain a <7-day package and still pass `npm ci` + `npm audit`. The rev-1 implementation therefore left the committed lock **ungated for age**. This correction adds an independent, deterministic, fail-closed gate that validates the committed lock — the npm parallel of the accepted Python `services/api/scripts/dependency_age_gate.py`.
+
+## R2.2 Files created / modified (one-line purpose each)
+
+| File | Change | Purpose |
+| --- | --- | --- |
+| `apps/web/scripts/dependency_age_gate.mjs` | created | Node-ESM, built-ins-only, fail-closed committed-lockfile release-age gate + npm CLI tooling advisory/age check. Pure `parseLock`/`decide`/`evaluateLock`/`checkNpmTooling` (injectable `now` + providers) + a single networked `RegistryClient`. No allowlist / suppression / exception path. |
+| `apps/web/scripts/tests/dependency_age_gate.test.mjs` | created | Built-in `node --test` suite (no npm deps): 604800 PASS / 604799 FAIL boundary, integer-second floor, positive + full-lock, every fail-closed branch (missing/malformed time, missing/mismatched integrity, missing lock integrity, bad host, provider outage, too-new-in-old-lock), enumeration/dedupe of `packages`, FE-S11 tooling advisory/age. |
+| `apps/web/package.json` | modified | FE-S10: every direct dependency AND devDependency is now an EXACT version (no `^`/`~`). |
+| `.github/workflows/ci.yml` | modified | New REQUIRED, BLOCKING `web-lockfile-age-gate` job (checkout + setup-node 22 + npm 11.18.0 pin + `node --test apps/web/scripts/tests/` + live gate). Existing jobs untouched; Python jobs untouched. |
+| `.github/workflows/scheduled-npm-audit.yml` | modified | Added the SAME `node --test` + live gate after the existing blocking audit (`working-directory: apps/web`). `contents: read` kept. |
+| `docs/DEPENDENCY_SECURITY_POLICY.md` | modified | Section 2 rewritten to distinguish resolver-time `.npmrc` (defense-in-depth) from the authoritative committed-lockfile gate; Section 4 adds the gate on-change + on-schedule; Section 6 adds npm CLI tooling advisory/age verification; new Section 8 "The four npm enforcement layers" (a–d); enforcing-files index updated. |
+| `project-control/reports/M0-T019-producer-report.md` | modified | This rev-2 section (original rev-1 content above is unchanged). |
+
+## R2.3 Age-gate design (fail-closed, boundary, injectability, enumeration scope, tooling)
+
+- **Boundary / arithmetic:** `MIN_AGE_SECONDS = 604800`. `ageSeconds = Math.floor((nowMs - publishedMs)/1000)`; `passed = ageSeconds >= MIN_AGE_SECONDS`. Exactly 604800 PASSES, 604799 FAILS. Full-second integer math — no day rounding (a fractional-second test proves the floor).
+- **`now` source:** `RegistryClient.utcNow()` issues a HEAD to `https://registry.npmjs.org/` and reads the HTTP `Date` header as authoritative UTC ms (fail-closed if missing/unparseable). This mirrors the Python `utc_now` (PyPI `Date` header). Verified live: the registry root serves `Date: … GMT`.
+- **Publication timestamp:** read from the packument `time[version]` (ISO-8601). Verified live against `registry.npmjs.org/react`: `time["19.1.2"] = "2025-12-03T15:32:12.347Z"` (matches the rev-1 verified-facts table). Fail-closed if `time` or `time[version]` is missing/malformed.
+- **Anti-forgery integrity match:** `decide` requires the registry `versions[version].dist.integrity` to EQUAL the lock's committed `integrity`; fail-closed on missing or mismatch. Verified live: `versions["19.1.2"].dist.integrity` is present as an SRI string. A hand-edited lock cannot claim an old version number while shipping a different artifact hash.
+- **Enumeration scope (`parseLock`):** enumerates EVERY `packages` entry whose key starts with `node_modules/` and has a `resolved` URL — direct, transitive, dev, test, build, optional, scoped (`@scope/name`), and platform-specific (`@next/swc-*`). Name is the segment after the LAST `node_modules/` (preserving a leading `@scope/`), so nested transitives resolve to the bare package name. Dedupes by `name@version` (and fails closed if two positions of the same `name@version` carry different committed integrity). Skips the root entry `""` and any link/workspace entry with no `resolved`. Fail-closed if a registry entry (has `resolved`) is missing `integrity` or `version`, or its `resolved` host is not exactly `registry.npmjs.org`. Verified against the current committed lock: every `resolved` is `registry.npmjs.org` (no non-registry hosts, no link/file entries), and the `@next/swc-*` platform entries are present.
+- **`evaluateLock`:** fetches each packument once per name (cached), decides per package, captures a per-package fail-closed error as a FAIL result (so the report lists every problem) while the overall run still fails; bounded concurrency (10) for the live client over ~500 packages.
+- **FE-S11 `checkNpmTooling`:** verifies the pinned npm CLI version has ZERO OSV advisories (`{package:{ecosystem:"npm",name:"npm"},version}`) AND is >= 604800 s old (npm packument `time`). Fail-closed on any error. Verified live: OSV `/v1/query` returns `{}` (no `vulns` key) when clean, so the client treats an absent `vulns` as "no advisories" and only a non-empty `vulns` array as a finding; every network/parse/non-OK path throws → FAIL. No suppression / allowlist.
+- **CLI:** `node dependency_age_gate.mjs <lock> --npm-tooling-version <ver>`; prints a header (now, min_age), a per-package `PASS/FAIL name@version uploaded=… age=…s (…d)`, and the npm tooling line; exit 0 IFF every lock package passes AND the tooling passes, else 1. No allowlist/suppression/exception path anywhere. The pure functions are exported and free of network / `process.exit` so tests inject `now` + fake providers; the CLI self-invokes only when run directly (the import-guard checks `process.argv[1]` ends with `dependency_age_gate.mjs`, so `node --test` importing the module never triggers it).
+
+## R2.4 Exact-pin map (FE-S10): declared → exact, zero resolution change
+
+Every `^`/`~` range in `apps/web/package.json` was replaced with the version **already resolved at the current committed lock's `node_modules/<name>`**, so the regenerated lock's resolved versions + integrity are the SAME set (byte-for-byte). The producer confirmed each `target == lock-resolved` against the committed lock; the orchestrator's remote regeneration is the authoritative proof and MUST STOP if any resolved version changes.
+
+| package | declared (rev 1) | exact (rev 2) | lock-resolved (proof) |
+| --- | --- | --- | --- |
+| next (dep) | 15.5.20 | 15.5.20 | 15.5.20 (unchanged) |
+| react (dep) | 19.1.2 | 19.1.2 | 19.1.2 (unchanged) |
+| react-dom (dep) | 19.1.2 | 19.1.2 | 19.1.2 (unchanged) |
+| @eslint/eslintrc | ^3.3.1 | 3.3.6 | 3.3.6 |
+| @playwright/test | ^1.53.0 | 1.61.1 | 1.61.1 |
+| @testing-library/dom | ^10.4.0 | 10.4.1 | 10.4.1 |
+| @testing-library/jest-dom | ^6.6.3 | 6.9.1 | 6.9.1 |
+| @testing-library/react | ^16.3.0 | 16.3.2 | 16.3.2 |
+| @types/node | ^22.15.0 | 22.20.1 | 22.20.1 |
+| @types/react | ^19.1.0 | 19.2.17 | 19.2.17 |
+| @types/react-dom | ^19.1.0 | 19.2.3 | 19.2.3 |
+| @vitejs/plugin-react | ^4.5.0 | 4.7.0 | 4.7.0 |
+| eslint | ^9.28.0 | 9.39.5 | 9.39.5 |
+| eslint-config-next | 15.5.20 | 15.5.20 | 15.5.20 (unchanged) |
+| jsdom | ^26.1.0 | 26.1.0 | 26.1.0 |
+| typescript | ^5.8.3 | 5.9.3 | 5.9.3 |
+| vitest | ^3.2.0 | 3.2.7 | 3.2.7 |
+
+`overrides.postcss` 8.5.10 is unchanged. `save-exact=true` remains in `.npmrc` for future adds.
+
+## R2.5 CI wiring
+
+- **`ci.yml`** — new job `web-lockfile-age-gate` (REQUIRED, BLOCKING): checkout + setup-node 22 + the version-checked `Pin npm 11.18.0` step + `node --test apps/web/scripts/tests/` + `node apps/web/scripts/dependency_age_gate.mjs apps/web/package-lock.json --npm-tooling-version "$(npm -v)"`. No existing job weakened; no Python job touched. The gate needs network (registry + OSV) — available on GitHub runners; it installs nothing (Node built-ins).
+- **`scheduled-npm-audit.yml`** — after the existing blocking `npm audit`, added `node --test scripts/tests/` and `node scripts/dependency_age_gate.mjs package-lock.json --npm-tooling-version "$(npm -v)"` (job default `working-directory: apps/web`). `permissions: contents: read` unchanged.
+- **`scheduled-audit.yml` (Python)** and all Python CI jobs are untouched.
+
+## R2.6 Policy-doc clarification
+
+`docs/DEPENDENCY_SECURITY_POLICY.md` now accurately distinguishes the four npm layers so `.npmrc` is not overstated: (a) `.npmrc min-release-age` = resolver-time filtering (defense-in-depth; applies only when npm resolves/regenerates, NOT to `npm ci` of a committed lock); (b) the independent committed-lockfile age gate (`apps/web/scripts/dependency_age_gate.mjs`, fail-closed, every committed package ≥ 604800 s + registry integrity match, regardless of how the lock was produced) — the authoritative age enforcement; (c) application-lock advisory auditing (`npm audit`, blocking); (d) npm CLI tooling advisory verification (the gate's tooling check). The Python mappings and the emergency-exception section are unchanged and remain self-consistent with the implementation.
+
+## R2.7 Acceptance scenarios FE-S9 / FE-S10 / FE-S11
+
+| Scenario | How it is satisfied |
+| --- | --- |
+| **FE-S9** committed-lockfile age gate | `apps/web/scripts/dependency_age_gate.mjs` parses the entire committed lock, enumerates every unique registry package (direct/transitive/dev/test/build/optional/scoped/platform), requires each `resolved` host == `registry.npmjs.org` and committed integrity == registry `dist.integrity`, reads the registry publication timestamp + the registry `Date` UTC clock, requires age >= 604800 s (604800 PASS / 604799 FAIL, integer seconds), and FAILS CLOSED (non-zero exit, package marked FAIL, never skipped) on outage/missing-or-malformed timestamp/malformed entry/missing integrity/mismatch/unexpected host. No allowlist / suppression / `--ignore`. Runs in the required PR+push `web-lockfile-age-gate` job and the scheduled npm-audit workflow. `.npmrc min-release-age=7` retained as defense-in-depth. Proven offline by the boundary + fail-closed + enumeration unit tests; the live half runs on the CI runner. |
+| **FE-S10** exact direct/dev pins | Every direct dependency AND devDependency in `apps/web/package.json` is an EXACT version equal to the lock-resolved version (R2.4 table); converting the ranges introduces ZERO resolution change (each `target == node_modules/<name>.version` in the committed lock; the orchestrator's regeneration is the authoritative byte-for-byte diff and STOPS if any resolved version changes). `save-exact=true` retained. |
+| **FE-S11** npm CLI tooling advisory verification | `checkNpmTooling` fails the run on ANY OSV advisory affecting `npm@<pinned>` and if that CLI is < 7 days old; fail-closed on any error; no suppression/allowlist. Wired into `web-lockfile-age-gate` and the scheduled workflow via `--npm-tooling-version "$(npm -v)"` (which is `11.18.0` after the pin). The policy doc distinguishes the four layers (a–d). |
+
+## R2.8 What the orchestrator must do remotely (rev 2)
+
+1. Regenerate `apps/web/package-lock.json` on the CI runner (npm 11.18.0). Confirm the exact-pin conversion changed **zero** resolved versions/integrity vs. the prior lock (FE-S10 authoritative proof). **STOP and report** if any resolved version changes.
+2. On the CI runner, confirm `node --test apps/web/scripts/tests/` passes and the live `web-lockfile-age-gate` prints PASS for every committed package and the npm tooling (FE-S9/FE-S11). These are the CI-verified halves the thin-client PC cannot run.
+3. Record ledger transitions and integrate git per ADR-005; keep task PR #64 OPEN for the fresh G3/G4 + G5 review bound to the new head.
+
+## R2.9 Confirmations
+
+- **No `apps/web/src/**` change; no test change (other than the new gate's own tests); no TypeScript-setting change; no Python change; no `services/api/**` change.** Only `apps/web/scripts/**` (new), `apps/web/package.json` (exact pins), the two npm workflows, the policy doc, and this report were touched.
+- **No allowlist / suppression / `--ignore` / exception path** anywhere in the gate, its tests, or the workflows. The only exception mechanism remains the owner-only, age-only, auto-expiring emergency exception applied outside the tool (documented, unchanged).
+- **STOP conditions hit:** none. Every exact pin equals the already-resolved lock version (no `src`/test/TS change needed); no ambiguity forced a wrong security outcome; no forbidden path was needed.
+- **Producer executed nothing** (thin-client + ADR-005): no npm/npx/node/git/gh/project_control was run to produce build/lock/CI evidence. The two live API-shape confirmations (npm packument `time`/`dist.integrity`; OSV empty-vulns; registry `Date` header) and the exact-pin-vs-lock comparison were read-only reasoning inputs; all install/lock/CI verification is the orchestrator's on the runner.

@@ -33,6 +33,7 @@ When running parallel or multi-agent execution, also follow `.claude/ORCHESTRATI
 12. No rule becomes `published` without source linkage, deterministic tests, independent review, and qualified reviewer approval.
 13. Stop and create a blocker when a legal interpretation, secret, payment, production approval, or unavailable credential requires a human.
 14. The owner’s PC has approximately 7 GB free. Treat it as a thin client: no local databases, Docker stack, citywide datasets, bulk documents, or large dependency/build caches. Follow `docs/LOW_STORAGE_CLOUD_DEVELOPMENT_POLICY.md`.
+15. Every dependency change, in every ecosystem (npm and Python today), must obey `docs/DEPENDENCY_SECURITY_POLICY.md`: advisory-free tree across runtime/dev/build/lock/audit tooling and all transitives; minimum 7-day publication age; exact version pins plus committed lockfile integrity; blocking audits on every change and on a schedule; new-package provenance review (name/typo-squat, maintainers/ownership changes, install scripts, registry origin, publication age), preferring existing deps or the standard library over a new package. No agent may waive, allowlist, or downgrade any check. The only exception relaxes the release-age requirement (never an advisory), is owner-authorized, fully recorded, and auto-expires at 7 days.
 
 ## Mandatory start-of-session routine
 
