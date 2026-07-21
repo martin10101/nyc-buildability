@@ -10,7 +10,9 @@ subagent tool calls (Claude Code 2.1.x).
 Enforcement (2.1.x PreToolUse blocking contract):
 - Any file-mutation tool (Write/Edit/MultiEdit/NotebookEdit) -> DENY.
 - Bash commands that mutate the repo/GitHub/control-plane/lockfiles or write files
-  -> DENY.
+  -> DENY. Git mutations are matched both by the regex AND by a quoting-aware
+  shlex/argv pass (`_git_argv_mutates`), so a quoted or backslash-escaped
+  `-C <path>` containing spaces cannot hide the sub-command from the guard.
 - Read-only git inspection, gh reads, and test execution -> ALLOW (silent).
 Deny is emitted as exit 0 with hookSpecificOutput.permissionDecision == "deny".
 An unparseable / non-object payload fails CLOSED (deny) — real harness payloads are
@@ -26,6 +28,7 @@ scratch never reaches a branch, a PR, or the ledger. See
 """
 import json
 import re
+import shlex
 import sys
 
 READ_ONLY_AGENTS = frozenset(
@@ -86,6 +89,110 @@ _MUTATING = re.compile(
 # while `2>/dev/null` and `2>&1` are allowed.
 _REDIRECT = re.compile(r">>?\s*(?!\s*(?:/dev/(?:null|stderr|stdout)\b|&))")
 
+# --- Quoting-aware git-mutation detection (additive backstop) --------------
+# The _MUTATING regex consumes a `-C <path>` / `-c <cfg>` argument with `\S+`,
+# which cannot span a space. Because this repo's path contains a space and
+# absolute `-C` paths are the encouraged idiom here, `git -C "<spaced path>"
+# <verb>` slipped past the regex (the mutating verb never realigned). Rather
+# than swap in another whitespace-fragile regex, we ALSO tokenize the command
+# with shlex — which resolves single quotes, double quotes, and backslash-escaped
+# spaces into real argv — and inspect the git sub-command directly. This pass is
+# ADDITIVE: it only ever ADDS a denial (OR-ed with the regexes below), so every
+# existing regex/redirect denial and every existing allow is preserved. A parse
+# failure returns False, leaving the regex as the primary matcher (no regression).
+_GIT_MUTATING_SUBCMDS = frozenset(
+    {
+        "add", "commit", "push", "pull", "fetch", "merge", "rebase", "reset",
+        "revert", "restore", "checkout", "switch", "rm", "mv", "clean", "stash",
+        "tag", "apply", "am", "cherry-pick", "update-ref", "update-index",
+        "write-tree", "commit-tree", "gc", "prune", "notes", "replace",
+        "filter-branch", "submodule", "fast-import",
+    }
+)
+# git global options that consume the FOLLOWING token as their value.
+_GIT_VALUE_OPTS = frozenset(
+    {
+        "-C", "-c", "--git-dir", "--work-tree", "--namespace", "--super-prefix",
+        "--exec-path", "--config-env",
+    }
+)
+_SHELL_OPS = frozenset({"&&", "||", "|", "&", ";", "(", ")", "{", "}", "\n"})
+
+
+def _is_git(token):
+    base = token.rsplit("/", 1)[-1].rsplit("\\", 1)[-1]
+    return base in ("git", "git.exe")
+
+
+def _git_sub_mutates(sub, rest):
+    """Classify a git sub-command (with its trailing tokens) as mutating. Mirrors
+    the regex nuances for config/remote/worktree/branch so read-only forms
+    (config --get, remote -v, worktree list, branch --list) stay allowed."""
+    if sub in _GIT_MUTATING_SUBCMDS:
+        return True
+    if sub == "config":
+        return not any(
+            r in ("--get", "--get-all", "--get-regexp", "--get-urlmatch", "--list", "-l")
+            for r in rest
+        )
+    if sub == "remote":
+        return any(
+            r in ("add", "remove", "rm", "rename", "set-url", "set-head",
+                  "set-branches", "prune", "update")
+            for r in rest
+        )
+    if sub == "worktree":
+        return any(
+            r in ("add", "remove", "move", "prune", "lock", "unlock", "repair")
+            for r in rest
+        )
+    if sub == "branch":
+        return any(
+            r in ("-d", "-D", "--delete", "-m", "-M", "--move", "-c", "-C", "--copy",
+                  "-f", "--force")
+            for r in rest
+        )
+    return False
+
+
+def _git_argv_mutates(cmd):
+    """True if any simple command in `cmd` is a repo-mutating git invocation,
+    with quotes/escapes resolved so a spaced `-C`/`-c` value cannot hide the
+    verb. Returns False on shlex parse failure (regex stays the primary matcher)."""
+    try:
+        tokens = shlex.split(cmd, posix=True)
+    except ValueError:
+        return False
+    simple, cur = [], []
+    for tok in tokens:
+        if tok in _SHELL_OPS:
+            if cur:
+                simple.append(cur)
+                cur = []
+        else:
+            cur.append(tok)
+    if cur:
+        simple.append(cur)
+    for words in simple:
+        if not words or not _is_git(words[0]):
+            continue
+        j = 1
+        while j < len(words):
+            t = words[j]
+            if t.startswith("-"):
+                if "=" in t:
+                    j += 1
+                    continue
+                if t in _GIT_VALUE_OPTS:
+                    j += 2
+                    continue
+                j += 1
+                continue
+            if _git_sub_mutates(t, words[j + 1:]):
+                return True
+            break
+    return False
+
 
 def _deny(reason):
     sys.stdout.write(
@@ -121,7 +228,7 @@ def main():
         return 0
     if tool == "Bash":
         cmd = (payload.get("tool_input") or {}).get("command") or ""
-        if _MUTATING.search(cmd) or _REDIRECT.search(cmd):
+        if _MUTATING.search(cmd) or _REDIRECT.search(cmd) or _git_argv_mutates(cmd):
             _deny(
                 f"'{agent}' is operationally read-only: repository/GitHub/control-plane "
                 "mutation and shell file-writes are blocked. Read-only git inspection, "
