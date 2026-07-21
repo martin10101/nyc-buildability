@@ -15,6 +15,8 @@ Before any planning or code change, read:
 - @docs/IMPLEMENTATION_SEQUENCE.md
 - @docs/LOW_STORAGE_CLOUD_DEVELOPMENT_POLICY.md
 
+When running parallel or multi-agent execution, also follow `.claude/ORCHESTRATION_POLICY.md` (reusable agent roster, concurrency limits, review independence, sequential integration, dependency-security rule, and the owner-authority boundary). It is operational guidance only and never overrides these rules, the gates, or an active owner hold.
+
 ## Permanent principles
 
 1. AI retrieves, classifies, drafts, and explains. Deterministic code calculates. Qualified humans approve legal interpretations.
