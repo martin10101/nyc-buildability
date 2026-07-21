@@ -109,6 +109,37 @@ def main() -> int:
     check("deny chained: status && -C <spaced> push", "DENY",
           bash_payload(R, f"git status && git -C {DQ} push"))
 
+    # 1c. Operator-adjacency — a mutating git hidden after ANY shell separator
+    #     (glued or spaced, incl. newline / subst / backtick / brace / redirect)
+    #     must still be DENIED. These 8 vectors bypassed the first shlex-only
+    #     implementation (found by the config-security-review wave, session 18).
+    check("deny glued ; status;git -C push", "DENY",
+          bash_payload(R, f"git status;git -C {DQ} push"))
+    check("deny newline echo<LF>git -C push", "DENY",
+          bash_payload(R, f"echo hi\ngit -C {DQ} push"))
+    check("deny newline status<LF>git -C push", "DENY",
+          bash_payload(R, f"git -C {DQ} status\ngit -C {DQ} push"))
+    check("deny glued subshell (git -C push)", "DENY",
+          bash_payload(R, f"(git -C {DQ} push)"))
+    check("deny cmd-subst x=$(git -C push)", "DENY",
+          bash_payload(R, f"x=$(git -C {DQ} push)"))
+    check("deny backtick x=`git -C push`", "DENY",
+          bash_payload(R, f"x=`git -C {DQ} push`"))
+    check("deny glued pipe true|git -C push", "DENY",
+          bash_payload(R, f"true|git -C {DQ} push"))
+    check("deny brace group { git -C push; }", "DENY",
+          bash_payload(R, f"{{ git -C {DQ} push; }}"))
+    check("deny glued redirect push>log", "DENY",
+          bash_payload(R, f"git -C {DQ} push>log"))
+
+    # 1d. Quoted separators must NOT over-deny read-only git (regression guard).
+    check("allow -C log --grep with ;| in quotes", "ALLOW",
+          bash_payload(R, f'git -C {DQ} log --grep "fix;feat|bug"'))
+    check("allow -C log --pretty parens in quotes", "ALLOW",
+          bash_payload(R, f'git -C {DQ} log --pretty=format:"%h (%an)"'))
+    check("allow subshell of read-only (git -C status)", "ALLOW",
+          bash_payload(R, f"(git -C {DQ} status)"))
+
     # 2. NO OVER-DENIAL — read-only git through the same spaced -C stays ALLOWED.
     for verb in ["status", "diff", "log --oneline -5", "show HEAD",
                  "config --get user.email", "branch --list", "remote -v",

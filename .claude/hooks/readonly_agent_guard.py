@@ -89,17 +89,19 @@ _MUTATING = re.compile(
 # while `2>/dev/null` and `2>&1` are allowed.
 _REDIRECT = re.compile(r">>?\s*(?!\s*(?:/dev/(?:null|stderr|stdout)\b|&))")
 
-# --- Quoting-aware git-mutation detection (additive backstop) --------------
+# --- Quoting- and separator-aware git-mutation detection (additive) --------
 # The _MUTATING regex consumes a `-C <path>` / `-c <cfg>` argument with `\S+`,
-# which cannot span a space. Because this repo's path contains a space and
-# absolute `-C` paths are the encouraged idiom here, `git -C "<spaced path>"
-# <verb>` slipped past the regex (the mutating verb never realigned). Rather
-# than swap in another whitespace-fragile regex, we ALSO tokenize the command
-# with shlex — which resolves single quotes, double quotes, and backslash-escaped
-# spaces into real argv — and inspect the git sub-command directly. This pass is
-# ADDITIVE: it only ever ADDS a denial (OR-ed with the regexes below), so every
-# existing regex/redirect denial and every existing allow is preserved. A parse
-# failure returns False, leaving the regex as the primary matcher (no regression).
+# which cannot span a space; because this repo's path contains a space and
+# absolute `-C` is the encouraged idiom, `git -C "<spaced path>" <verb>` slipped
+# past it. Rather than another whitespace-fragile regex, we split the command
+# into segments on UNQUOTED shell separators (`; | & ( ) { } < > newline`,
+# backtick, and `$(`) — so a git call hidden after ANY operator, glued or
+# spaced, is isolated into its own segment — then shlex-tokenize each segment
+# (resolving single/double quotes and backslash-escaped spaces to real argv) and
+# inspect the git sub-command. Quoted separators are preserved, so a read-only
+# `git log --grep "a;b|c"` is never mis-split. This pass is ADDITIVE (OR-ed with
+# the regexes) and mirrors the regex's config/remote/worktree/branch nuances
+# exactly, so no existing denial is removed and no read-only form is newly denied.
 _GIT_MUTATING_SUBCMDS = frozenset(
     {
         "add", "commit", "push", "pull", "fetch", "merge", "rebase", "reset",
@@ -116,7 +118,9 @@ _GIT_VALUE_OPTS = frozenset(
         "--exec-path", "--config-env",
     }
 )
-_SHELL_OPS = frozenset({"&&", "||", "|", "&", ";", "(", ")", "{", "}", "\n"})
+# Unquoted single-char shell separators that begin a new command (`$(` handled
+# separately). Each isolates whatever follows into its own segment.
+_SEGMENT_CHARS = ";\n|&(){}<>`"
 
 
 def _is_git(token):
@@ -125,55 +129,89 @@ def _is_git(token):
 
 
 def _git_sub_mutates(sub, rest):
-    """Classify a git sub-command (with its trailing tokens) as mutating. Mirrors
-    the regex nuances for config/remote/worktree/branch so read-only forms
-    (config --get, remote -v, worktree list, branch --list) stay allowed."""
+    """Classify a git sub-command as mutating, mirroring the _MUTATING regex's
+    nuances for config/remote/worktree/branch so their read-only forms
+    (config --get*/--list/-l, remote -v/show, worktree list, branch --list) stay
+    allowed and nothing beyond the regex baseline is newly denied."""
     if sub in _GIT_MUTATING_SUBCMDS:
         return True
     if sub == "config":
-        return not any(
-            r in ("--get", "--get-all", "--get-regexp", "--get-urlmatch", "--list", "-l")
-            for r in rest
-        )
+        first = rest[0] if rest else None
+        return not (first is not None
+                    and (first.startswith("--get") or first in ("--list", "-l")))
     if sub == "remote":
-        return any(
-            r in ("add", "remove", "rm", "rename", "set-url", "set-head",
-                  "set-branches", "prune", "update")
-            for r in rest
-        )
+        return any(r in ("add", "remove", "rename", "set-url", "prune") for r in rest)
     if sub == "worktree":
-        return any(
-            r in ("add", "remove", "move", "prune", "lock", "unlock", "repair")
-            for r in rest
-        )
+        return any(r in ("add", "remove", "move", "prune", "lock", "unlock") for r in rest)
     if sub == "branch":
-        return any(
-            r in ("-d", "-D", "--delete", "-m", "-M", "--move", "-c", "-C", "--copy",
-                  "-f", "--force")
-            for r in rest
-        )
+        return any(r in ("-d", "-D", "-m", "-M", "--delete", "--move", "--force")
+                   for r in rest)
     return False
 
 
+def _split_command_segments(cmd):
+    """Split a command line into candidate command segments on UNQUOTED shell
+    separators (_SEGMENT_CHARS plus `$(`), preserving quoted separators and
+    backslash escapes so a read-only command's quoted metacharacters are never
+    mis-split. A git call hidden after any operator lands in its own segment."""
+    segments, buf = [], []
+    quote = None
+    i, n = 0, len(cmd)
+    while i < n:
+        c = cmd[i]
+        if quote is not None:
+            buf.append(c)
+            if c == "\\" and quote == '"' and i + 1 < n:
+                buf.append(cmd[i + 1])
+                i += 2
+                continue
+            if c == quote:
+                quote = None
+            i += 1
+            continue
+        if c in ("'", '"'):
+            quote = c
+            buf.append(c)
+            i += 1
+            continue
+        if c == "\\" and i + 1 < n:
+            buf.append(c)
+            buf.append(cmd[i + 1])
+            i += 2
+            continue
+        if c == "$" and i + 1 < n and cmd[i + 1] == "(":
+            segments.append("".join(buf))
+            buf = []
+            i += 2
+            continue
+        if c in _SEGMENT_CHARS:
+            segments.append("".join(buf))
+            buf = []
+            i += 1
+            continue
+        buf.append(c)
+        i += 1
+    segments.append("".join(buf))
+    return segments
+
+
 def _git_argv_mutates(cmd):
-    """True if any simple command in `cmd` is a repo-mutating git invocation,
-    with quotes/escapes resolved so a spaced `-C`/`-c` value cannot hide the
-    verb. Returns False on shlex parse failure (regex stays the primary matcher)."""
-    try:
-        tokens = shlex.split(cmd, posix=True)
-    except ValueError:
-        return False
-    simple, cur = [], []
-    for tok in tokens:
-        if tok in _SHELL_OPS:
-            if cur:
-                simple.append(cur)
-                cur = []
-        else:
-            cur.append(tok)
-    if cur:
-        simple.append(cur)
-    for words in simple:
+    """True if any command segment is a repo-mutating git invocation, with quotes
+    and separators resolved so neither a spaced/quoted `-C` value nor any shell
+    separator (glued or spaced) can hide the git verb. A segment whose quoting
+    will not tokenize fails closed ONLY when it invokes git."""
+    for seg in _split_command_segments(cmd):
+        seg = seg.strip()
+        if not seg:
+            continue
+        try:
+            words = shlex.split(seg, posix=True)
+        except ValueError:
+            # Malformed quoting (only if the original command is itself
+            # unbalanced): fail closed when the segment invokes git.
+            if re.search(r"(?:^|\s)git(?:\.exe)?(?:\s|$)", seg):
+                return True
+            continue
         if not words or not _is_git(words[0]):
             continue
         j = 1
