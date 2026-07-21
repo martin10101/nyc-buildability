@@ -72,6 +72,14 @@ class UnitHelpers(unittest.TestCase):
             self.assertFalse(m.is_unconditional_rule(scoped))
             self.assertTrue(m.is_unconditional_rule(uncond))
 
+    def test_stray_paths_substring_not_misclassified(self):
+        # A `paths:` inside another field's VALUE must not mark the rule as path-scoped (OBS-3).
+        with tempfile.TemporaryDirectory() as d:
+            p = pathlib.Path(d)
+            f = p / "c.md"
+            f.write_text("---\ndescription: mind the paths: they matter\n---\nbody\n", encoding="utf-8")
+            self.assertTrue(m.is_unconditional_rule(f))
+
     def test_split_sections(self):
         secs = m.split_sections("intro\n# A\na1\n## B\nb1\n")
         self.assertEqual(len(secs), 3)
@@ -104,6 +112,14 @@ class Checks(unittest.TestCase):
             (root / "BIG.md").parent.mkdir(parents=True, exist_ok=True)
             _mktree(root, claude="# CLAUDE\n\n- @BIG.md\n")
             (root / "BIG.md").write_text("padding " * 5000, encoding="utf-8")  # huge import
+            self.assertEqual(_run_main(root, dict(BASE_CFG)), 1)
+
+    def test_at_import_inside_unconditional_rule_counted(self):
+        # A big @-import hidden inside an unconditional rule must still count toward the budget (OBS-1).
+        with tempfile.TemporaryDirectory() as d:
+            root = pathlib.Path(d)
+            _mktree(root, rules={"hold.md": "# hold\n\n- @BIG.md\n"})
+            (root / "BIG.md").write_text("padding " * 5000, encoding="utf-8")
             self.assertEqual(_run_main(root, dict(BASE_CFG)), 1)
 
     def test_retired_section_flagged_without_archive_link(self):

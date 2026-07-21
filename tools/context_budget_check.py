@@ -40,12 +40,16 @@ def read(path: pathlib.Path) -> str:
 
 
 def is_unconditional_rule(path: pathlib.Path) -> bool:
-    """A rule is eager (unconditional) unless it has a `paths:` key in front-matter."""
+    """A rule is eager (unconditional) unless it has a `paths:` KEY in front-matter.
+
+    Matches a real front-matter key (`^paths:` on its own line), not the substring `paths:`
+    appearing inside some other field's value.
+    """
     text = read(path)
     m = re.match(r"^---\n(.*?)\n---\n", text, re.S)
     if not m:
         return True
-    return "paths:" not in m.group(1)
+    return re.search(r"(?m)^\s*paths\s*:", m.group(1)) is None
 
 
 def resolve_imports(path: pathlib.Path, visited: set[pathlib.Path]) -> list[pathlib.Path]:
@@ -77,6 +81,9 @@ def eager_files() -> list[pathlib.Path]:
     for rule in sorted((ROOT / ".claude" / "rules").glob("*.md")):
         if is_unconditional_rule(rule):
             files.append(rule)
+            # An unconditional rule can itself @-import — those imports also load eagerly, so count
+            # them too (otherwise a big @-import hidden in a rule would evade the budget).
+            files.extend(resolve_imports(rule, set()))
     # de-dupe preserving order
     seen: set[pathlib.Path] = set()
     uniq = []
