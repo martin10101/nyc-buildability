@@ -27,6 +27,7 @@ GUARD = REPO / ".claude" / "hooks" / "readonly_agent_guard.py"
 DQ = '"/srv/nyc zoning/repo"'          # double-quoted
 SQ = "'/srv/nyc zoning/repo'"          # single-quoted
 BS = "/srv/nyc\\ zoning/repo"          # backslash-escaped space (unquoted)
+NL = chr(10)                            # explicit newline (avoid \\n f-string ambiguity)
 
 SIX_ROLES = [
     "progress-auditor",
@@ -139,6 +140,50 @@ def main() -> int:
           bash_payload(R, f'git -C {DQ} log --pretty=format:"%h (%an)"'))
     check("allow subshell of read-only (git -C status)", "ALLOW",
           bash_payload(R, f"(git -C {DQ} status)"))
+
+    # 1e. Prefix / wrapper / case / dynamic vectors — a spaced-`-C` mutation must
+    #     DENY regardless of a leading assignment, command wrapper, binary case,
+    #     backslash line-continuation, or a verb hidden in a variable/substitution
+    #     (found by the wave-2 code + security reviewers, session 18).
+    check("deny env-prefix VAR=v git -C push", "DENY",
+          bash_payload(R, f"VAR=v git -C {DQ} push"))
+    check("deny multi-assign A=1 B=2 git -C commit", "DENY",
+          bash_payload(R, f"A=1 B=2 git -C {DQ} commit -m x"))
+    check("deny wrapper env git -C push", "DENY",
+          bash_payload(R, f"env git -C {DQ} push"))
+    check("deny wrapper sudo git -C push", "DENY",
+          bash_payload(R, f"sudo git -C {DQ} push"))
+    check("deny wrapper command git -C push", "DENY",
+          bash_payload(R, f"command git -C {DQ} push"))
+    check("deny wrapper exec git -C reset", "DENY",
+          bash_payload(R, f"exec git -C {DQ} reset --hard"))
+    check("deny case-variant GIT -C push", "DENY",
+          bash_payload(R, f"GIT -C {DQ} push"))
+    check("deny case-variant Git.exe -C push", "DENY",
+          bash_payload(R, f"Git.exe -C {DQ} push"))
+    check("deny line-continuation (space) push", "DENY",
+          bash_payload(R, f"git -C {DQ} \\{NL} push"))
+    check("deny line-continuation (no-space) push", "DENY",
+          bash_payload(R, f"git -C {DQ} \\{NL}push"))
+    check("deny CRLF line-continuation push", "DENY",
+          bash_payload(R, f"git -C {DQ} \\{chr(13)}{NL}push"))
+    check("deny verb-in-variable git -C \"$c\"", "DENY",
+          bash_payload(R, f'git -C {DQ} "$c"'))
+    check("deny verb-in-subst git -C $(printf push)", "DENY",
+          bash_payload(R, f"git -C {DQ} $(printf push)"))
+    check("deny bare git -C <tree> (no verb)", "DENY",
+          bash_payload(R, f"git -C {DQ}"))
+
+    # 1f. The prefix / case forms must still ALLOW read-only sub-commands, and a
+    #     dynamic -C VALUE with an explicit read-only verb must ALLOW.
+    check("allow VAR=v git -C status", "ALLOW",
+          bash_payload(R, f"VAR=v git -C {DQ} status"))
+    check("allow env git -C log", "ALLOW",
+          bash_payload(R, f"env git -C {DQ} log --oneline"))
+    check("allow GIT -C diff (case, read-only)", "ALLOW",
+          bash_payload(R, f"GIT -C {DQ} diff"))
+    check("allow git -C \"$REPO\" status (dynamic tree, explicit read verb)", "ALLOW",
+          bash_payload(R, 'git -C "$REPO" status'))
 
     # 2. NO OVER-DENIAL — read-only git through the same spaced -C stays ALLOWED.
     for verb in ["status", "diff", "log --oneline -5", "show HEAD",

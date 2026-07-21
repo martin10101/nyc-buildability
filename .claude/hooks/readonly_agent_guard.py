@@ -118,13 +118,19 @@ _GIT_VALUE_OPTS = frozenset(
         "--exec-path", "--config-env",
     }
 )
+# The subset of value-options that point git at a DIFFERENT working tree/repo.
+# A cross-tree git call whose sub-command cannot be positively classified as
+# read-only (a dynamic `$…`/backtick verb, a verb produced by a split-off `$(…)`,
+# or an absent verb) is failed closed — that is exactly the spaced-`-C` mutation
+# pattern this guard exists to stop.
+_GIT_TARGET_OPTS = frozenset({"-C", "--git-dir", "--work-tree"})
 # Unquoted single-char shell separators that begin a new command (`$(` handled
 # separately). Each isolates whatever follows into its own segment.
 _SEGMENT_CHARS = ";\n|&(){}<>`"
 
 
 def _is_git(token):
-    base = token.rsplit("/", 1)[-1].rsplit("\\", 1)[-1]
+    base = token.rsplit("/", 1)[-1].rsplit("\\", 1)[-1].lower()
     return base in ("git", "git.exe")
 
 
@@ -175,6 +181,14 @@ def _split_command_segments(cmd):
             i += 1
             continue
         if c == "\\" and i + 1 < n:
+            if cmd[i + 1] in "\r\n":
+                # backslash-newline = shell line continuation: join (drop both,
+                # plus any run of CR/LF) so `git -C "x y" \<nl>push` cannot hide
+                # the verb by gluing the newline onto it.
+                i += 1
+                while i < n and cmd[i] in "\r\n":
+                    i += 1
+                continue
             buf.append(c)
             buf.append(cmd[i + 1])
             i += 2
@@ -196,10 +210,21 @@ def _split_command_segments(cmd):
 
 
 def _git_argv_mutates(cmd):
-    """True if any command segment is a repo-mutating git invocation, with quotes
-    and separators resolved so neither a spaced/quoted `-C` value nor any shell
-    separator (glued or spaced) can hide the git verb. A segment whose quoting
-    will not tokenize fails closed ONLY when it invokes git."""
+    """True if any command segment invokes a repo-mutating git, with quotes and
+    separators resolved so nothing static can hide the git verb. Each segment is
+    shlex-tokenized (blank/newline tokens dropped, closing backslash line
+    continuations) and EVERY `git` token is inspected wherever it sits — so a
+    leading assignment (`VAR=v git …`), a command wrapper (`env`/`sudo`/`nice`/
+    `command`/`exec`/…), or a case-variant binary (`GIT`) cannot make the guard
+    miss it. For each git token we skip global options, tracking whether it
+    targets another tree (`-C`/`--git-dir`/`--work-tree`), then classify the
+    sub-command: a known mutating verb -> deny; a cross-tree git whose verb is
+    dynamic (`$…`/backtick), split off (`$(…)`), or absent -> deny (fail closed);
+    otherwise allow. NOTE (documented residual, unchanged from the base regex):
+    a verb hidden in a shell variable WITHOUT a tree target (`c=push; git "$c"`)
+    still runs against the current dir and is not statically resolvable here — the
+    same limitation the `_MUTATING` regex has for `git "$c"`; it is covered by the
+    read-only role + orchestrator-only integration, not by this static pass."""
     for seg in _split_command_segments(cmd):
         seg = seg.strip()
         if not seg:
@@ -209,26 +234,43 @@ def _git_argv_mutates(cmd):
         except ValueError:
             # Malformed quoting (only if the original command is itself
             # unbalanced): fail closed when the segment invokes git.
-            if re.search(r"(?:^|\s)git(?:\.exe)?(?:\s|$)", seg):
+            if re.search(r"(?i)(?:^|\s)git(?:\.exe)?(?:\s|$)", seg):
                 return True
             continue
-        if not words or not _is_git(words[0]):
-            continue
-        j = 1
-        while j < len(words):
-            t = words[j]
-            if t.startswith("-"):
-                if "=" in t:
+        words = [w for w in words if w.strip()]  # drop stray blank/newline tokens
+        for gi, w in enumerate(words):
+            if not _is_git(w):
+                continue
+            has_target = False
+            sub = None
+            j = gi + 1
+            while j < len(words):
+                t = words[j]
+                if t.startswith("-"):
+                    base = t.split("=", 1)[0]
+                    if base in _GIT_TARGET_OPTS:
+                        has_target = True
+                    if "=" in t:
+                        j += 1
+                        continue
+                    if t in _GIT_VALUE_OPTS:
+                        j += 2
+                        continue
                     j += 1
                     continue
-                if t in _GIT_VALUE_OPTS:
-                    j += 2
-                    continue
-                j += 1
+                sub = t
+                break
+            if sub is None:
+                if has_target:  # `git -C <tree>` with no resolvable verb
+                    return True
                 continue
-            if _git_sub_mutates(t, words[j + 1:]):
+            if "$" in sub or "`" in sub:  # verb hidden in a variable/substitution
+                if has_target:
+                    return True
+                continue
+            if _git_sub_mutates(sub, words[j + 1:]):
                 return True
-            break
+            # known read-only sub-command for this git token; keep scanning
     return False
 
 
