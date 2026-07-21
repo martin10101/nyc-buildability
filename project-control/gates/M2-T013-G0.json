@@ -1,0 +1,10 @@
+{
+  "task_id": "M2-T013",
+  "gate_id": "G0",
+  "reviewer": "orchestrator",
+  "role": "administrative",
+  "result": "PASS",
+  "report_file": "project-control/reports/M2-T013-G0-readiness-and-dispatch-exception.md",
+  "reviewed_at": "2026-07-21T05:09:46.731653+00:00",
+  "updated_at": "2026-07-21T05:09:46.731653+00:00"
+}
