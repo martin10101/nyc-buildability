@@ -1,10 +1,17 @@
+---
+paths:
+  - "apps/web/**"
+---
 # 3D and Premium UI Expansion Rule
 
-This repository contains a separately added 3D/UI expansion.
+Path-scoped (2026-07-21): loads only when touching `apps/web/**`, not on every session. The
+still-active owner planning hold and dispatch history live in the unconditional
+`.claude/rules/expansion-agent-dispatch-hold.md`; this file holds the technical/quality rules for
+3D and premium-UI work.
 
-When this file is present:
+This repository contains a separately added 3D/UI expansion. When doing 3D/premium-UI work:
 
-1. Read all new expansion documents before planning related work.
+1. Read the relevant expansion documents before planning related work (`docs/3D_MASSING_ENGINE_ARCHITECTURE.md`, `docs/PREMIUM_PRODUCT_DESIGN_SYSTEM.md`, `docs/3D_VISUAL_ACCEPTANCE_STANDARD.md`, `docs/3D_AND_UI_EXECUTION_PLAN.md`, `docs/COMPETITIVE_FEATURE_EXPANSION.md`).
 2. Do not reset existing project-control state.
 3. Preserve accepted tasks, evidence, and gates.
 4. Add new work as dependent tasks with new IDs.
@@ -22,4 +29,4 @@ When this file is present:
 10. Apply producer/reviewer separation to all visual work.
 11. Require visual, mathematical, performance, accessibility, and human-journey acceptance evidence. These are evidence requirements within the existing G3 (independent human-style walkthrough) and G4 (integration and regression) gates of the `docs/GATES_AND_CHECKPOINTS.md` G0–G7 catalog, not a parallel gate system.
 12. Follow the premium product design rules; do not ship a default dashboard template.
-13. The main orchestrator must update the existing master plan and continue from the first unblocked task after the owner has reviewed the integration report and the orchestrator has contracted the work through the normal G0 process.
+13. Continuation onto the expansion workstream (updating the master plan and starting the first unblocked task after owner review of the integration report) is **SUSPENDED pending owner review** — see `.claude/rules/expansion-agent-dispatch-hold.md §2`. Do not start expansion tasks or change the plan on this item until the owner releases that hold.

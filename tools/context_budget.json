@@ -1,0 +1,24 @@
+{
+  "_comment": "Config for tools/context_budget_check.py. Guards the automatic project-instruction context budget so it cannot silently regrow to the pre-2026-07-21 ~23k-token bloat. Tokens are estimated as ceil(chars/4).",
+  "eager_token_budget": 6000,
+  "handoff_token_budget": 4000,
+  "handoff_file": "docs/SESSION_HANDOFF.md",
+  "retired_markers": ["retired", "superseded", "deprecated", "obsolete"],
+  "retired_section_min_chars": 400,
+  "archive_exempt_substring": "docs/archive/",
+  "historical_required": [
+    "docs/IMPLEMENTATION_STATUS.md",
+    "docs/MASTER_EXECUTION_PLAN.md",
+    "CONTINUE_FROM_CURRENT_STATE_PROMPT.md"
+  ],
+  "historical_marker_regex": "HISTORICAL|ARCHIVED|DO NOT USE FOR CURRENT",
+  "historical_marker_scan_lines": 15,
+  "board_status_header_regex": "\\|\\s*status\\s*\\|",
+  "board_task_id_regex": "\\bM\\d+-T\\d+\\b",
+  "board_min_task_rows": 8,
+  "board_scan_globs": ["docs/*.md", "*.md"],
+  "board_allowlist": [
+    "docs/MASTER_EXECUTION_PLAN.md",
+    "docs/GENERATIVE_STRATEGY_INTEGRATION_PLAN.md"
+  ]
+}

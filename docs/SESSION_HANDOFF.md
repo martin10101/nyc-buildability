@@ -2,7 +2,8 @@
 
 Open `nyc-development-feasibility-claude-pack` as the workspace root, then run the CLAUDE.md
 start-of-session routine (`python tools/project_control.py status`). The `project-control/`
-ledger + git + CI are the source of truth; this file is orientation only.
+ledger + git + CI are the source of truth; this file is orientation only. Keep it current-only and
+short; superseded multi-session handoffs live in `docs/archive/session-handoffs/` (history, not instruction).
 
 ## Current state (read first)
 - **main = origin/main = `6f9d603`.** Ledger: **40 accepted / 2 blocked / 1 claimed / 1 in_progress / 5 backlog.** Checkpoint **CP-0031** (CP-0032 is RESERVED for M0-T019 — do not create a checkpoint).
