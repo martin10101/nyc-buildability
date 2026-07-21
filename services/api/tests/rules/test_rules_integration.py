@@ -509,3 +509,101 @@ def test_ri_s8_target_family_matches_r5_rule_family(registry):
     # the family this slice targets is exactly the R5 rule's declared family
     rule = registry.rule("r5-residential-far")
     assert rule.family == ri.TARGET_FAMILY
+
+
+# --------------------------------------------------------------------------
+# Gate corrections — G4 blocking TEST-ONLY additions C1-C3 (production code is
+# unchanged and already correct; these pin reachable/defensive paths the
+# RI-S1..S8 pack omitted) plus G3-F1 and two invariant-pinning cases.
+# --------------------------------------------------------------------------
+
+def test_c1_confident_base_with_commercial_overlay_pair(registry):
+    # G4 C1: a confident R5 base pair ALONGSIDE a non-base (commercial-overlay)
+    # pair. The overlay must not change the base-district derivation and must be
+    # excluded from the base-zoning candidate list (the _base_pairs family filter
+    # — the only test that exercises it with a real non-base pair).
+    record = _record(
+        LOT_SINGLE_DISTRICT_CONFIDENT,
+        [
+            _pair("R5", PAIR_INTERIOR_CONFIDENT),
+            _pair("C1-4", PAIR_INTERIOR_CONFIDENT, layer="nyco"),  # family=commercial_overlay
+        ],
+        professional_review_required=False,
+    )
+    result = ri.evaluate_property(_profile(_spatial_section(record)), registry=registry)
+    assert result.zoning_district == "R5"
+    assert result.coverage_status == cov.COVERAGE_CONDITIONAL
+    assert result.evaluations[0]["outputs"]["max_residential_far"] == 1.5
+    candidates = result.spatial_uncertainty["base_district_candidates"]
+    assert [c["district_label"] for c in candidates] == ["R5"]  # overlay excluded
+    assert all("pair_class" in c for c in candidates)  # consumer can filter neighbours
+
+
+def test_c2_confident_district_but_missing_lot_area_no_value(registry):
+    # G4 C2: district is confidently R5 but no positive lot area is available
+    # (geometry absent + non-positive pair area). The evaluator's typed
+    # missing-critical path is reached THROUGH the confident branch: the district
+    # is known, but NO value is computed.
+    record = _record(
+        LOT_SINGLE_DISTRICT_CONFIDENT,
+        [_pair("R5", PAIR_INTERIOR_CONFIDENT, lot_area=0.0)],  # non-positive -> unusable
+        professional_review_required=False,
+    )
+    profile = _profile(_spatial_section(record), with_geometry=False)
+    result = ri.evaluate_property(profile, registry=registry)
+    assert result.zoning_district == "R5"          # confidently known
+    assert result.lot_area_sq_ft is None
+    assert result.fail_safe is False               # went through the confident path
+    assert result.coverage_status == cov.COVERAGE_PROFESSIONAL_REVIEW_REQUIRED
+    assert result.evaluations[0]["outputs"] == {}  # no computed value
+    assert result.evaluations[0]["data_completeness"] == cov.COMPLETENESS_MISSING_CRITICAL
+
+
+@pytest.mark.parametrize("district", ["R5A", "R5B"])
+def test_c3_r5a_r5b_variants_far_1_5(registry, district):
+    # G4 C3: the packet-named R5A / R5B districts compute the standard FAR 1.5.
+    result = ri.evaluate_property(_confident_profile(district), registry=registry)
+    assert result.zoning_district == district
+    assert result.coverage_status == cov.COVERAGE_CONDITIONAL
+    assert result.evaluations[0]["outputs"]["max_residential_far"] == 1.5
+
+
+def test_f1_confident_class_but_professional_review_required_fails_safe(registry):
+    # G3 F1: pin the `or professional_review_required` fail-safe clause in
+    # isolation — lot_overall_class is single_district_confident with exactly one
+    # interior_confident pair, but the review flag is set. Must still fail safe.
+    record = _record(
+        LOT_SINGLE_DISTRICT_CONFIDENT,
+        [_pair("R5", PAIR_INTERIOR_CONFIDENT)],
+        professional_review_required=True,
+    )
+    result = ri.evaluate_property(_profile(_spatial_section(record)), registry=registry)
+    assert result.fail_safe is True
+    assert result.fail_safe_reason == ri.FAILSAFE_GEOMETRY_UNCERTAIN
+    assert result.zoning_district is None
+    assert result.evaluations == []
+
+
+def test_confident_class_two_interior_pairs_fails_safe(registry):
+    # Defensive (G4 gap1): single_district_confident but TWO interior_confident
+    # base pairs -> not exactly one -> never guess a district, fail safe.
+    record = _record(
+        LOT_SINGLE_DISTRICT_CONFIDENT,
+        [_pair("R5", PAIR_INTERIOR_CONFIDENT), _pair("R6", PAIR_INTERIOR_CONFIDENT)],
+        professional_review_required=False,
+    )
+    result = ri.evaluate_property(_profile(_spatial_section(record)), registry=registry)
+    assert result.fail_safe is True
+    assert result.fail_safe_reason == ri.FAILSAFE_INCONSISTENT_CONFIDENT
+    assert result.zoning_district is None
+    assert result.evaluations == []
+
+
+def test_confident_class_empty_pairs_fails_safe(registry):
+    # Defensive (G4 gap6): single_district_confident but NO base pairs -> fail safe.
+    record = _record(LOT_SINGLE_DISTRICT_CONFIDENT, [], professional_review_required=False)
+    result = ri.evaluate_property(_profile(_spatial_section(record)), registry=registry)
+    assert result.fail_safe is True
+    assert result.fail_safe_reason == ri.FAILSAFE_INCONSISTENT_CONFIDENT
+    assert result.zoning_district is None
+    assert result.evaluations == []
