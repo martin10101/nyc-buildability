@@ -7,7 +7,10 @@
         "hooks": [
           {
             "type": "command",
-            "command": "python .claude/hooks/agent_dispatch_guard.py"
+            "command": "python",
+            "args": [
+              "${CLAUDE_PROJECT_DIR}/.claude/hooks/agent_dispatch_guard.py"
+            ]
           }
         ]
       },
@@ -16,7 +19,10 @@
         "hooks": [
           {
             "type": "command",
-            "command": "python .claude/hooks/readonly_agent_guard.py"
+            "command": "python",
+            "args": [
+              "${CLAUDE_PROJECT_DIR}/.claude/hooks/readonly_agent_guard.py"
+            ]
           }
         ]
       }
