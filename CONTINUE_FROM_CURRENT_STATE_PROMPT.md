@@ -1,3 +1,10 @@
+> **HISTORICAL — the one-time 3D/UI expansion bootstrap prompt.** It was already executed
+> (integration report `docs/3D_UI_EXPANSION_INTEGRATION_REPORT.md` exists) and its **item 10
+> (auto-continue onto expansion tasks) is SUSPENDED** by the active owner hold in
+> `.claude/rules/expansion-agent-dispatch-hold.md §2`. Do NOT follow this prompt as current
+> instruction. For current state use `python tools/current_state.py`,
+> `python tools/project_control.py status`, and `docs/SESSION_HANDOFF.md`.
+
 You are continuing the existing NYC Buildability production project.
 
 A separate 3D, competitive-feature, and premium-UI expansion pack has just been added to the repository.

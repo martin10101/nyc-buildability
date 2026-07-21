@@ -1,5 +1,11 @@
 # Implementation Status
 
+> **HISTORICAL — DO NOT USE FOR CURRENT STATUS.** The task tables below are stale (last updated
+> 2026-07-16, session 5) and are kept only for history. They predate almost all accepted work.
+> For current, authoritative state run `python tools/current_state.py` (compact) or
+> `python tools/project_control.py status`, and read `docs/SESSION_HANDOFF.md`. Do not plan work
+> from this file and do not maintain it as a live task board — the ledger is the single source of truth.
+
 Authoritative detail lives in `project-control/` (run `python tools/project_control.py status`). This file is the human-readable summary. Updated: 2026-07-16 (session 5, after M1-T002 acceptance).
 
 ## Session 5 additions (2026-07-16)

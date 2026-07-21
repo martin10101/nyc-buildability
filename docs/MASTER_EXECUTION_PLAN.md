@@ -1,5 +1,12 @@
 # Master Execution Plan — NYC Buildability (Full Production)
 
+> **HISTORICAL — the task board below is stale (last updated 2026-07-14) and is NOT current status.**
+> Kept for history: it records the original workstream/task design. The per-task status column no
+> longer matches reality. Do not maintain a duplicate manual task board here. For current state run
+> `python tools/current_state.py` or `python tools/project_control.py status`, and read
+> `docs/SESSION_HANDOFF.md`. Milestone *definitions* remain in `docs/IMPLEMENTATION_SEQUENCE.md`;
+> live per-task status is the `project-control/` ledger, which is the single source of truth.
+
 Owner of this plan: orchestrator (only the orchestrator edits it). Ledger source of truth: `project-control/`. Milestone definitions: `docs/IMPLEMENTATION_SEQUENCE.md`. Updated: 2026-07-14.
 
 Scope: the complete citywide product in PRD.md — every NYC property accepted, all mandatory official-source families ingested, complete Zoning Resolution corpus, published machine rules with professional approval, scenario engine, evidence viewer, reproducible reports. Coverage activates progressively; the architecture is citywide from the start. No prototype shortcuts become production behavior.
