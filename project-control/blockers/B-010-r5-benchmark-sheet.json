@@ -1,0 +1,14 @@
+{
+  "blocker_id": "B-010",
+  "title": "Client R5 residential FAR benchmark sheet not yet in the repo",
+  "status": "open",
+  "affects": [
+    "M4-T001 client-validation item ONLY (RE first-release success per PRD section 27: R5 rule outputs validated against the client's known R5 properties)"
+  ],
+  "detail": "M4-T001 implements the reusable rules engine + the first R5 residential FAR rule family. Per PRD section 27 and the task packet inputs, the client's real R5 benchmark sheet is the first-release validation target. G0 reconciliation (2026-07-21) found no benchmark sheet in the repo. This blocker is DELIBERATELY BOUNDED: it blocks ONLY the client-benchmark validation acceptance item. All engine/DSL architecture, deterministic evaluator, versioned section-level ZR source snapshots, R5 rule representation as extracted_draft/needs_review artifacts, the second-family representability proof, and the synthetic/golden-fixture scenario pack proceed WITHOUT it (owner directive 2026-07-21). It is distinct from the G6 qualified-human legal-approval gate, which is a separate standing human dependency for any 'verified'/'published' rule labeling.",
+  "exact_human_action": "Owner provides the client's R5 residential FAR benchmark sheet (the known-property expected-FAR reference used for first-release validation). Place it in the repo under a path the M4-T001 architecture doc designates for validation fixtures (small, low-storage extract only; no bulk data), or hand it to the orchestrator to commit. Confirm which properties/BBLs and expected FAR figures are authoritative.",
+  "where_to_enter": "Repository validation-fixture location defined in docs/RULES_ENGINE_ARCHITECTURE.md (M4-T001 output); orchestrator commits it on a task/control branch.",
+  "minimum_permissions": "None (owner-provided document).",
+  "how_it_will_be_tested": "A golden validation test evaluates the R5 FAR rule against each benchmark property and asserts the engine's deterministic FAR/trace matches the client sheet's expected figures within the sheet's stated precision; provenance (section snapshot, document version, effective date, rule version) attached to each result.",
+  "created_at": "2026-07-21T00:00:00Z"
+}

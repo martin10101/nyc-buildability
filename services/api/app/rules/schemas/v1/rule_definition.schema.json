@@ -1,0 +1,204 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/martin10101/nyc-buildability/services/api/app/rules/schemas/v1/rule_definition.schema.json",
+  "title": "Zoning Rule Definition (DSL v1)",
+  "description": "v1 versioned JSON DSL for a single deterministic zoning rule (M4-T001, PRD section 11). Engine-owned contract; the architecture doc (docs/RULES_ENGINE_ARCHITECTURE.md) documents its promotion path into packages/contracts when a cross-tier consumer (UI/report) first needs it. Family-agnostic: a FAR rule, a yard rule, and a height rule are all expressed with the same shape and the same closed op set, so a structurally different family is representable with zero engine changes. 'status' may never be 'published' in an authored file - publication requires a recorded G6 qualified-human approval, never an agent.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "rule_id",
+    "rule_version",
+    "family",
+    "title",
+    "jurisdiction",
+    "status",
+    "description",
+    "citations",
+    "inputs",
+    "outputs",
+    "parameters",
+    "applicability",
+    "computation"
+  ],
+  "properties": {
+    "rule_id": {"type": "string", "pattern": "^[a-z0-9][a-z0-9-]*$"},
+    "rule_version": {"type": "string", "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+(-draft)?$"},
+    "family": {"type": "string", "pattern": "^[a-z0-9][a-z0-9_]*$"},
+    "title": {"type": "string", "minLength": 1},
+    "jurisdiction": {"type": "string", "minLength": 1},
+    "status": {"type": "string", "enum": ["discovered", "extracted_draft", "needs_review"]},
+    "description": {"type": "string", "minLength": 1},
+    "citations": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["snapshot_id", "section", "quote"],
+        "properties": {
+          "snapshot_id": {"type": "string", "minLength": 1},
+          "section": {"type": "string", "minLength": 1},
+          "quote": {"type": "string", "minLength": 1},
+          "last_amended": {"type": ["string", "null"]}
+        }
+      }
+    },
+    "inputs": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["name", "type", "required"],
+        "properties": {
+          "name": {"type": "string", "pattern": "^[a-z0-9][a-z0-9_]*$"},
+          "type": {"type": "string", "enum": ["string", "number", "integer", "boolean"]},
+          "required": {"type": "boolean"},
+          "unit": {"type": ["string", "null"]},
+          "enum": {"type": "array", "items": {"type": "string"}},
+          "description": {"type": "string"}
+        }
+      }
+    },
+    "outputs": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["name", "type"],
+        "properties": {
+          "name": {"type": "string", "pattern": "^[a-z0-9][a-z0-9_]*$"},
+          "type": {"type": "string", "enum": ["number", "integer"]},
+          "unit": {"type": ["string", "null"]},
+          "description": {"type": "string"}
+        }
+      }
+    },
+    "parameters": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["name", "value", "citation_ref"],
+        "properties": {
+          "name": {"type": "string", "pattern": "^[a-z0-9][a-z0-9_]*$"},
+          "value": {
+            "description": "A scalar number, or a map (object) of key->number for district-keyed lookups via the param_select ref.",
+            "type": ["number", "object"],
+            "additionalProperties": {"type": "number"}
+          },
+          "citation_ref": {"type": "string", "minLength": 1},
+          "note": {"type": "string"}
+        }
+      }
+    },
+    "applicability": {"$ref": "#/$defs/predicate"},
+    "computation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["steps", "outputs"],
+      "properties": {
+        "steps": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["id", "op", "args"],
+            "properties": {
+              "id": {"type": "string", "pattern": "^[a-z0-9][a-z0-9_]*$"},
+              "op": {"type": "string", "enum": ["identity", "add", "subtract", "multiply", "divide", "min", "max", "round", "clamp"]},
+              "args": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/ref"}},
+              "note": {"type": "string"}
+            }
+          }
+        },
+        "outputs": {
+          "type": "object",
+          "minProperties": 1,
+          "additionalProperties": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["step"],
+            "properties": {"step": {"type": "string"}}
+          }
+        }
+      }
+    },
+    "exceptions": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "description", "effect"],
+        "properties": {
+          "id": {"type": "string", "minLength": 1},
+          "description": {"type": "string", "minLength": 1},
+          "condition": {"anyOf": [{"$ref": "#/$defs/predicate"}, {"type": "null"}]},
+          "effect": {"type": "string", "enum": ["conditional_alternative", "professional_review_required", "documented_limitation"]},
+          "citation_ref": {"type": ["string", "null"]},
+          "note": {"type": "string"}
+        }
+      }
+    },
+    "special_district_interactions": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "description"],
+        "properties": {
+          "id": {"type": "string", "minLength": 1},
+          "description": {"type": "string", "minLength": 1},
+          "interaction_point": {"type": "string"},
+          "special_rule_stub": {"type": ["string", "null"]},
+          "citation_ref": {"type": ["string", "null"]}
+        }
+      }
+    },
+    "uncertainty_policy": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "geometry_uncertain_coverage": {"type": "string", "enum": ["professional_review_required", "conditional"]},
+        "data_conflict_coverage": {"type": "string", "enum": ["data_conflict"]},
+        "note": {"type": "string"}
+      }
+    },
+    "limitations": {"type": "array", "items": {"type": "string"}}
+  },
+  "$defs": {
+    "ref": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "const": {"type": "number"},
+        "input": {"type": "string"},
+        "param": {"type": "string"},
+        "param_select": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["map", "key_input"],
+          "properties": {
+            "map": {"type": "string"},
+            "key_input": {"type": "string"}
+          }
+        },
+        "step": {"type": "string"}
+      }
+    },
+    "predicate": {
+      "type": "object",
+      "properties": {
+        "op": {"type": "string", "enum": ["equals", "in_set", "exists", "compare"]},
+        "input": {"type": "string"},
+        "value": {},
+        "values": {"type": "array"},
+        "compare": {"type": "string", "enum": ["lt", "le", "gt", "ge", "eq", "ne"]},
+        "all": {"type": "array", "items": {"$ref": "#/$defs/predicate"}, "minItems": 1},
+        "any": {"type": "array", "items": {"$ref": "#/$defs/predicate"}, "minItems": 1},
+        "not": {"$ref": "#/$defs/predicate"}
+      }
+    }
+  }
+}

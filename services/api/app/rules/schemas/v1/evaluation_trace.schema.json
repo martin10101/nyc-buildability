@@ -1,0 +1,76 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/martin10101/nyc-buildability/services/api/app/rules/schemas/v1/evaluation_trace.schema.json",
+  "title": "Rule Evaluation Trace (v1)",
+  "description": "v1 full, exportable trace of one deterministic rule evaluation (M4-T001, PRD sections 11/12/19). Records the resolved inputs, the applicability decision with per-predicate reasoning, every computation step with resolved arguments and result, the citations WITH their source-snapshot provenance (a material value may never be exported without it), the coverage + data-completeness labels, and any propagated M2-T013 geometric uncertainty. coverage_status uses the canonical PRD-section-12 vocabulary; 'verified' appears only for a published rule evaluated with its G6 approval attached.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "rule_id",
+    "rule_version",
+    "rule_status",
+    "family",
+    "evaluated_inputs",
+    "applicability_outcome",
+    "applicability_trace",
+    "computation_steps",
+    "outputs",
+    "coverage_status",
+    "data_completeness",
+    "citations",
+    "uncertainty",
+    "exceptions_applied",
+    "notes"
+  ],
+  "properties": {
+    "rule_id": {"type": "string"},
+    "rule_version": {"type": "string"},
+    "rule_status": {"type": "string", "enum": ["discovered", "extracted_draft", "needs_review", "published"]},
+    "family": {"type": "string"},
+    "evaluated_inputs": {"type": "object"},
+    "applicability_outcome": {"type": "boolean"},
+    "applicability_trace": {"type": "array", "items": {"type": "object"}},
+    "computation_steps": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["step_id", "op", "resolved_args", "result", "note"],
+        "properties": {
+          "step_id": {"type": "string"},
+          "op": {"type": "string"},
+          "resolved_args": {"type": "array"},
+          "result": {"type": "number"},
+          "note": {"type": "string"}
+        }
+      }
+    },
+    "outputs": {"type": "object"},
+    "coverage_status": {
+      "type": "string",
+      "enum": ["verified", "conditional", "professional_review_required", "data_conflict", "unsupported", "not_applicable"]
+    },
+    "data_completeness": {
+      "type": "string",
+      "enum": ["complete", "missing_noncritical", "missing_critical"]
+    },
+    "citations": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["snapshot_id", "section", "quote", "provenance"],
+        "properties": {
+          "snapshot_id": {"type": "string"},
+          "section": {"type": "string"},
+          "quote": {"type": "string"},
+          "last_amended": {"type": ["string", "null"]},
+          "provenance": {"type": "object"}
+        }
+      }
+    },
+    "uncertainty": {"type": "object"},
+    "exceptions_applied": {"type": "array"},
+    "notes": {"type": "array", "items": {"type": "string"}}
+  }
+}

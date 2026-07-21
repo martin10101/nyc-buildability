@@ -60,13 +60,13 @@
     "G4",
     "G6"
   ],
-  "producer_agent": null,
+  "producer_agent": "rules-engineer",
   "reviewer_agents": [
     "code-reviewer",
     "qa-engineer"
   ],
-  "status": "backlog",
-  "progress_percent": 0,
+  "status": "claimed",
+  "progress_percent": 10,
   "risks": [
     "DISPATCH HOLD: awaits owner review of the 2026-07-20 planning report; sequenced after M2-T013 acceptance (uncertainty taxonomy is an input contract)",
     "G6 is a HUMAN gate: the task can reach needs_review status for its rules but acceptance of 'published/verified' labeling requires the qualified zoning professional - expect a standing blocker until that human is available; the engine itself (G3/G4) is acceptable independently",
@@ -77,5 +77,6 @@
   ],
   "blockers": [],
   "created_at": "2026-07-20T06:34:25.711538+00:00",
-  "updated_at": "2026-07-20T06:34:25.711538+00:00"
+  "updated_at": "2026-07-21T20:07:38.285921+00:00",
+  "worktree": ".claude/worktrees/M4-T001-rules"
 }
