@@ -16,17 +16,17 @@ Three distinct mechanisms exist. Name the one you are using; never blur them.
 2. **Background / parallel subagents (report to the lead).** The `Agent` tool spawns focused subagents in separate contexts that return a structured report to the lead. This works on the current runtime **now**. It is the default when agent teams are unavailable.
 3. **Isolated worktree sessions.** A writing producer runs in its own git worktree/branch (`isolation: worktree`) so parallel writers never touch each other's files. Composes with either mechanism above.
 
-**Current runtime status (recorded 2026-07-20):** the PATH CLI reports `2.0.11` (below the 2.1.178 team minimum), so **true agent teams require the owner to update Claude Code to ≥ 2.1.178 and restart the extension**. Until then, use mechanisms 2 + 3 (subagents + worktree isolation). The settings are already in place, so teams activate on the next update + restart with no further configuration.
+**Current runtime status (updated 2026-07-21):** the active Claude Code IDE-extension runtime is **2.1.215** (env `AI_AGENT=claude-code_2-1-215_agent`; the separate global npm CLI on PATH is `2.0.11` and is not what the extension session runs). **2.1.215 is the supported baseline; older versions are not sufficient.** Agent teams are functional: teammates spawn in-process via the Agent tool (`name` + `team_name`), communicate via `SendMessage`, and are torn down with `TaskStop` (this runtime has no separate `TeamCreate`/`TeamDelete` tool). Subagents + worktree isolation (mechanisms 2 + 3) remain the safe default for parallel writing work.
 
 ### 1a. Sessions are not durable — teams are per-conversation
 
-In-process agent-team runtime state (the team file, task list, and teammate sessions under `~/.claude/teams/` and `~/.claude/tasks/`) **does not survive a conversation resume, restart, or context compaction.** What *is* durable: the persistent agent **definitions** in `.claude/agents/`, this policy, and the project-control ledger. Therefore **every new Claude Code conversation must create a fresh runtime team** (via `TeamCreate`) when parallel execution is appropriate — never assume a prior team still exists. Let Claude Code own the runtime files under `~/.claude/teams/` and `~/.claude/tasks/`; never hand-author or pre-create them.
+In-process agent-team runtime state (the team file, task list, and teammate sessions under `~/.claude/teams/` and `~/.claude/tasks/`) **does not survive a conversation resume, restart, or context compaction.** What *is* durable: the persistent agent **definitions** in `.claude/agents/`, this policy, and the project-control ledger. Therefore **every new Claude Code conversation must spin up a fresh runtime team** (spawn teammates via the Agent tool with `team_name`; tear each down with `TaskStop`) when parallel execution is appropriate — never assume a prior team still exists. Let Claude Code own the runtime files under `~/.claude/teams/`; never hand-author or pre-create them, and remove only a confirmed dead-session leftover.
 
 ---
 
 ## 2. Reusable agent roster
 
-Nine reusable roles. Seven reuse existing, owner-accepted definitions unchanged; two (`ci-evidence-verifier`, `control-plane-verifier`) were added 2026-07-20 with conformant ADR-005 frontmatter. All producers declare `isolation: worktree`; all reviewers/verifiers/auditors are read-only (no `Edit` tool) and follow the ADR-005 return-to-orchestrator protocol.
+Nine reusable roles. Seven reuse existing, owner-accepted definitions; two (`ci-evidence-verifier`, `control-plane-verifier`) were added 2026-07-20. All producers declare `isolation: worktree`; all six reviewers/verifiers/auditors are **operationally** read-only (enforced, not merely instructed — see below) and follow the ADR-005 return-to-orchestrator protocol.
 
 | # | Role | Agent (`.claude/agents/…`) | Kind | Isolation | Read-only |
 |---|------|----------------------------|------|-----------|-----------|
@@ -42,7 +42,14 @@ Nine reusable roles. Seven reuse existing, owner-accepted definitions unchanged;
 
 **Model policy.** Every definition uses `model: inherit`, i.e. the resolved lead/session model (currently Opus 4.8), for implementation and all critical review (security, data-contract, geospatial, CI/evidence, control-plane, code). A faster model may be selected **at dispatch** only for bounded, read-only inventory sweeps by the repository auditor. Never downgrade security, contract, geospatial, or acceptance-grade review to save tokens.
 
-**Read-only enforcement (reviewers/verifiers/auditors).** Enforced exactly as the repository's five pre-existing accepted reviewers: no `Edit` tool; the ADR-005 "Gate reporting protocol" section requires them to *return* report content with a PASS / FAIL / BLOCKED verdict rather than write ledger/git; the orchestrator is the sole ledger/git/gh writer; any file write is confined to the agent's own `.claude/agent-memory/<name>/`. A reviewer never repairs the producer branch and then approves its own repair.
+**Read-only enforcement (reviewers/verifiers/auditors) — operationally enforced (2026-07-21).** The six read-only roles (`progress-auditor`, `code-reviewer`, `security-reviewer`, `data-contract-verifier`, `ci-evidence-verifier`, `control-plane-verifier`) are made read-only by four layers, not by instruction alone:
+
+1. **`tools:` omits every writer** — no Write/Edit/MultiEdit/NotebookEdit/Agent (they keep Read, Grep, Glob, Bash, Skill; the data-contract verifier also keeps WebSearch/WebFetch).
+2. **`disallowedTools: Write, Edit, MultiEdit, NotebookEdit, Agent`** — applied before tool resolution and **not overridable** by any parent/session permission mode.
+3. **`permissionMode: plan`** — defence in depth (a parent mode can override this, which is why it is not relied on alone).
+4. **A tracked PreToolUse guard** — `.claude/hooks/readonly_agent_guard.py`, wired in `.claude/settings.json` on `Bash|Write|Edit|MultiEdit|NotebookEdit` and **gated by `agent_type` to exactly these six roles**. It denies the write tools and any repository / GitHub / control-plane-mutating or file-writing Bash command, while allowing read-only git inspection, `gh` reads, and test execution. It never affects the main orchestrator or the isolated-worktree producers (verified: main/producer `agent_type`s pass through).
+
+Reviewers **return** their report content to the lead via SendMessage; the orchestrator is the sole ledger/git/gh writer and preserves the verbatim report. **Residual (documented):** a scripting-language file write through an allowed test runner (e.g. `python -c`) is not sandboxed — inseparable from allowing test execution — but is contained because only the orchestrator commits/pushes/merges, so a reviewer's local scratch never reaches a branch, a PR, or the ledger. A reviewer never repairs a producer branch and then approves its own repair.
 
 **Producer confinement.** Producers work only inside their task packet's allowed paths in their own worktree. They do not run `tools/project_control.py`, `git push`, `gh`, or accept/checkpoint anything (ADR-005). They return files-changed + real command output + requested status (`awaiting_gate` | `blocked` | `needs_split`).
 
