@@ -94,6 +94,14 @@ def eager_files() -> list[pathlib.Path]:
     return uniq
 
 
+def strip_code(text: str) -> str:
+    """Remove fenced and inline code spans so a path/filename in backticks (e.g. a short archive
+    pointer whose name contains 'retired') is not counted as a retired/superseded marker."""
+    text = re.sub(r"```.*?```", " ", text, flags=re.S)
+    text = re.sub(r"`[^`]*`", " ", text)
+    return text
+
+
 def split_sections(text: str) -> list[str]:
     sections: list[str] = []
     cur: list[str] = []
@@ -121,17 +129,20 @@ def main(argv: list[str]) -> int:
     files = eager_files()
     total_tok = 0
     total_bytes = 0
+    total_lines = 0
     print("## Eager (auto-loaded) project instructions")
     for f in files:
         text = read(f)
         b = len(f.read_bytes())
+        ln = text.count("\n") + (1 if text and not text.endswith("\n") else 0)
         t = tokens(text)
         total_tok += t
         total_bytes += b
+        total_lines += ln
         rel = f.relative_to(ROOT).as_posix()
-        print(f"  {b:>7}B  ~{t:>5} tok  {rel}")
+        print(f"  {b:>7}B  {ln:>4}L  ~{t:>5} tok  {rel}")
     budget = cfg["eager_token_budget"]
-    print(f"  ---- eager total: {total_bytes}B  ~{total_tok} tok  (budget {budget} tok)")
+    print(f"  ---- eager total: {total_bytes}B  {total_lines}L  ~{total_tok} tok  (budget {budget} tok)")
     if total_tok > budget:
         failures.append(
             f"eager project-instruction budget exceeded: ~{total_tok} tok > {budget} tok "
@@ -171,22 +182,30 @@ def main(argv: list[str]) -> int:
     print("\n## Retired/superseded sections in unconditional rules")
     retired = re.compile(r"(?i)\b(" + "|".join(map(re.escape, cfg["retired_markers"])) + r")\b")
     min_chars = cfg["retired_section_min_chars"]
-    exempt = cfg["archive_exempt_substring"]
     flagged = False
     for rule in sorted((ROOT / ".claude" / "rules").glob("*.md")):
         if not is_unconditional_rule(rule):
             continue
         for sec in split_sections(read(rule)):
-            if retired.search(sec) and len(sec) > min_chars and exempt not in sec:
+            lines = sec.splitlines()
+            heading = lines[0] if lines else ""
+            # A section TITLED retired/superseded is never allowed. A retired/superseded historical
+            # BODY over the size threshold is never allowed either. An archive link does NOT exempt
+            # either case (owner directive 2026-07-21). Code spans are stripped first so a short
+            # archive pointer whose path contains "retired" is not itself flagged.
+            titled = heading.lstrip().startswith("#") and retired.search(strip_code(heading))
+            historical = retired.search(strip_code(sec)) and len(sec) > min_chars
+            if titled or historical:
                 flagged = True
                 rel = rule.relative_to(ROOT).as_posix()
-                head = sec.splitlines()[0][:70]
+                why = "a RETIRED/SUPERSEDED-titled section" if titled else \
+                    f"a retired/superseded historical section (> {min_chars} chars)"
                 failures.append(
-                    f"unconditional rule {rel} holds a retired/superseded section "
-                    f'("{head}") > {min_chars} chars with no {exempt} link — move it to docs/archive/'
+                    f'unconditional rule {rel} holds {why} ("{heading[:70]}") — move the history '
+                    f"to docs/archive/ and leave only a short pointer; an archive link does NOT exempt it"
                 )
     if not flagged:
-        print("  OK - none (retired history is archived or absent)")
+        print("  OK - none (no retired/superseded section in an unconditional rule)")
 
     # 5) No new duplicate current-status task board ---------------------------
     print("\n## Duplicate current-status task boards")

@@ -57,9 +57,16 @@ not imports, precisely so they stay out of every session's base context.
 | Parallel / multi-agent execution | `.claude/ORCHESTRATION_POLICY.md` |
 
 Path-scoped rules in `.claude/rules/` auto-load when you touch their paths (project-control, apps/web,
-services/api, geospatial data, legal/rules, deployment). Standard workflows are skills:
-`/start-controlled-task`, `/submit-checkpoint`, `/run-quality-gate`, `/human-walkthrough`,
-`/replan-project`, `/status-board`.
+services/api, geospatial data, legal/rules, deployment). The five standard workflows are on-demand
+skills — invoke the one that matches the work:
+
+| Workflow | Skill(s) |
+|---|---|
+| Session reconciliation (reconcile ledger ↔ repo/CI on resume) | `/replan-project`, `/status-board` (+ `python tools/current_state.py`) |
+| Controlled-task workflow (create/claim → checkpoint) | `/start-controlled-task`, `/submit-checkpoint` |
+| Independent review (evidence gate; UI walkthrough) | `/run-quality-gate`, `/human-walkthrough` |
+| Dependency security (package admission / age gate) | `/dependency-security` |
+| Orchestration (parallel / multi-agent execution) | `/orchestration` |
 
 ## Task routine
 

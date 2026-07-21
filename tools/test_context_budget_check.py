@@ -36,7 +36,6 @@ BASE_CFG = {
     "handoff_file": "docs/SESSION_HANDOFF.md",
     "retired_markers": ["retired", "superseded"],
     "retired_section_min_chars": 400,
-    "archive_exempt_substring": "docs/archive/",
     "historical_required": [],
     "historical_marker_regex": "HISTORICAL|ARCHIVED",
     "historical_marker_scan_lines": 15,
@@ -129,14 +128,37 @@ class Checks(unittest.TestCase):
             _mktree(root, rules={"hold.md": retired})
             self.assertEqual(_run_main(root, dict(BASE_CFG)), 1)
 
-    def test_retired_section_ok_with_archive_link(self):
+    def test_retired_titled_section_with_archive_link_still_fails(self):
+        # Owner directive 2026-07-21: an archive link does NOT exempt a retired/superseded section.
         with tempfile.TemporaryDirectory() as d:
             root = pathlib.Path(d)
             retired = (
-                "# Rule\n\n## Old thing retired\nSee docs/archive/old.md for the full retired text. "
-                + ("short. " * 40)
+                "# Rule\n\n## Old thing RETIRED\nFull text: `docs/archive/old.md`. "
+                + ("this is retired narrative. " * 40)
             )
             _mktree(root, rules={"hold.md": retired})
+            self.assertEqual(_run_main(root, dict(BASE_CFG)), 1)
+
+    def test_retired_historical_body_with_archive_link_still_fails(self):
+        # No retired-titled heading, but a long retired body + an archive link must still fail.
+        with tempfile.TemporaryDirectory() as d:
+            root = pathlib.Path(d)
+            body = (
+                "# Rule\n\n## Backstop\nSee `docs/archive/old.md`. "
+                + ("this was retired at M0-T013 and superseded later. " * 20)
+            )
+            _mktree(root, rules={"hold.md": body})
+            self.assertEqual(_run_main(root, dict(BASE_CFG)), 1)
+
+    def test_short_archive_pointer_passes(self):
+        # A short pointer whose only marker ("retired") is inside a backticked path is allowed.
+        with tempfile.TemporaryDirectory() as d:
+            root = pathlib.Path(d)
+            pointer = (
+                "# Rule\n\n## Guard invariant (active)\nKeep the guard in place. "
+                "Former history: `docs/archive/thing-retired-2026.md`.\n"
+            )
+            _mktree(root, rules={"hold.md": pointer})
             self.assertEqual(_run_main(root, dict(BASE_CFG)), 0)
 
     def test_missing_historical_marker_flagged(self):

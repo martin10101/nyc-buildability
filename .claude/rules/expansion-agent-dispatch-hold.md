@@ -4,14 +4,13 @@ This notice is deliberately unconditioned (no `paths:` frontmatter) so it attach
 it carries the still-active owner hold on expansion planning. (The 3D/UI *technical* rules are now
 path-scoped in `.claude/rules/3d-ui-expansion.md`, loading only under `apps/web/**`.)
 
-## 1. Dispatch-guard backstop (former prohibition RETIRED 2026-07-17)
+## 1. Dispatch-guard invariant (active)
 
-The former prohibition on dispatching the five expansion agents (`3d-massing-engineer`,
+Keep `.claude/hooks/agent_dispatch_guard.py` and its tests in place as a regression backstop; do not
+remove or re-scope them without a G5 review. The five expansion agents (`3d-massing-engineer`,
 `product-design-director`, `visual-quality-reviewer`, `financial-feasibility-engineer`,
-`opportunity-search-engineer`) was **retired 2026-07-17** at M0-T013 acceptance (blocker B-007
-resolved); the `.claude/hooks/agent_dispatch_guard.py` guard now permits them. **Keep the guard and
-its tests in place as a regression backstop — do not remove or re-scope them without a G5 review.**
-Dispatchability does not authorize expansion work; §2 governs planning. Full retired text:
+`opportunity-search-engineer`) are dispatchable; dispatchability does not authorize expansion work —
+§2 governs planning. Former dispatch-prohibition history:
 `docs/archive/expansion-agent-dispatch-prohibition-retired-2026-07-17.md`.
 
 ## 2. OWNER-REVIEW HOLD ON EXPANSION PLANNING

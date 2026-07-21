@@ -12,7 +12,7 @@ This policy governs *how work is parallelized and integrated*. It confers **no**
 
 Three distinct mechanisms exist. Name the one you are using; never blur them.
 
-1. **Agent teams (named teammates + messaging).** A lead spawns named teammate agents (the `Agent` tool) that message each other with `SendMessage` and are torn down with `TaskStop`. Use whatever coordination/teardown tools your active runtime exposes — do not assume a specific version or a specific create/delete tool name (that surface drifts between releases). If agent teams are unavailable, use mechanism 2.
+1. **Agent teams (named teammates + messaging).** A lead spawns teammate agents using the active runtime's agent-spawning capability; teammates coordinate through its messaging capability and are torn down through its teardown capability. Do not hard-code a spawn/message/coordinate/teardown tool name or version — that surface drifts between releases; use whatever the active runtime exposes. If agent teams are unavailable, use mechanism 2.
 2. **Background / parallel subagents (report to the lead).** The `Agent` tool spawns focused subagents in separate contexts that return a structured report to the lead. This is always available and is the default when agent teams are unavailable.
 3. **Isolated worktree sessions.** A writing producer runs in its own git worktree/branch (`isolation: worktree`) so parallel writers never touch each other's files. Composes with either mechanism above.
 
@@ -20,7 +20,7 @@ Three distinct mechanisms exist. Name the one you are using; never blur them.
 
 ### 1a. Sessions are not durable — teams are per-conversation
 
-In-process agent-team runtime state (team/task files and teammate sessions under `~/.claude/teams/` and `~/.claude/tasks/`) **does not survive a conversation resume, restart, or context compaction.** What *is* durable: the persistent agent **definitions** in `.claude/agents/`, this policy, and the project-control ledger. Therefore **every new Claude Code conversation must spin up a fresh runtime team** (spawn named teammates via the `Agent` tool; tear each down with `TaskStop`) when parallel execution is appropriate — never assume a prior team still exists. Let Claude Code own the runtime files under `~/.claude/teams/`; never hand-author or pre-create them, and remove only a confirmed dead-session leftover.
+In-process agent-team runtime state (team/task files and teammate sessions under `~/.claude/teams/` and `~/.claude/tasks/`) **does not survive a conversation resume, restart, or context compaction.** What *is* durable: the persistent agent **definitions** in `.claude/agents/`, this policy, and the project-control ledger. Therefore **every new Claude Code conversation must spin up a fresh runtime team** (spawn teammates, then tear them down, using the runtime's current capabilities) when parallel execution is appropriate — never assume a prior team still exists. Let Claude Code own the runtime files under `~/.claude/teams/`; never hand-author or pre-create them, and remove only a confirmed dead-session leftover.
 
 ---
 
@@ -40,7 +40,7 @@ Nine reusable roles. Seven reuse existing, owner-accepted definitions; two (`ci-
 | 8 | CI / evidence verifier | `ci-evidence-verifier` | review | — | yes |
 | 9 | Control-plane verifier | `control-plane-verifier` | review | — | yes |
 
-**Model policy.** Every definition uses `model: inherit`, i.e. the resolved lead/session model (currently Opus 4.8), for implementation and all critical review (security, data-contract, geospatial, CI/evidence, control-plane, code). A faster model may be selected **at dispatch** only for bounded, read-only inventory sweeps by the repository auditor. Never downgrade security, contract, geospatial, or acceptance-grade review to save tokens.
+**Model policy.** Every definition uses `model: inherit`, i.e. the resolved lead/session model, for implementation and all critical review (security, data-contract, geospatial, CI/evidence, control-plane, code). A faster model may be selected **at dispatch** only for bounded, read-only inventory sweeps by the repository auditor. Never downgrade security, contract, geospatial, or acceptance-grade review to save tokens.
 
 **Read-only enforcement (reviewers/verifiers/auditors) — operationally enforced (2026-07-21).** The six read-only roles (`progress-auditor`, `code-reviewer`, `security-reviewer`, `data-contract-verifier`, `ci-evidence-verifier`, `control-plane-verifier`) are made read-only by four layers, not by instruction alone:
 
@@ -49,7 +49,7 @@ Nine reusable roles. Seven reuse existing, owner-accepted definitions; two (`ci-
 3. **`permissionMode: plan`** — defence in depth (a parent mode can override this, which is why it is not relied on alone).
 4. **A tracked PreToolUse guard** — `.claude/hooks/readonly_agent_guard.py`, wired in `.claude/settings.json` on `Bash|Write|Edit|MultiEdit|NotebookEdit` and **gated by `agent_type` to exactly these six roles**. It denies the write tools and any repository / GitHub / control-plane-mutating or file-writing Bash command, while allowing read-only git inspection, `gh` reads, and test execution. It never affects the main orchestrator or the isolated-worktree producers (verified: main/producer `agent_type`s pass through).
 
-Reviewers **return** their report content to the lead via SendMessage; the orchestrator is the sole ledger/git/gh writer and preserves the verbatim report. **Residual (documented):** a scripting-language file write through an allowed test runner (e.g. `python -c`) is not sandboxed — inseparable from allowing test execution — but is contained because only the orchestrator commits/pushes/merges, so a reviewer's local scratch never reaches a branch, a PR, or the ledger. A reviewer never repairs a producer branch and then approves its own repair.
+Reviewers **return** their report content to the lead through the runtime's messaging capability; the orchestrator is the sole ledger/git/gh writer and preserves the verbatim report. **Residual (documented):** a scripting-language file write through an allowed test runner (e.g. `python -c`) is not sandboxed — inseparable from allowing test execution — but is contained because only the orchestrator commits/pushes/merges, so a reviewer's local scratch never reaches a branch, a PR, or the ledger. A reviewer never repairs a producer branch and then approves its own repair.
 
 **Producer confinement.** Producers work only inside their task packet's allowed paths in their own worktree. They do not run `tools/project_control.py`, `git push`, `gh`, or accept/checkpoint anything (ADR-005). They return files-changed + real command output + requested status (`awaiting_gate` | `blocked` | `needs_split`).
 

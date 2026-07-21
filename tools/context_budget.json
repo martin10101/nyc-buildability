@@ -5,7 +5,6 @@
   "handoff_file": "docs/SESSION_HANDOFF.md",
   "retired_markers": ["retired", "superseded", "deprecated", "obsolete"],
   "retired_section_min_chars": 400,
-  "archive_exempt_substring": "docs/archive/",
   "historical_required": [
     "docs/IMPLEMENTATION_STATUS.md",
     "docs/MASTER_EXECUTION_PLAN.md",
