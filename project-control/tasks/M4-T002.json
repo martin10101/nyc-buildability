@@ -1,0 +1,77 @@
+{
+  "task_id": "M4-T002",
+  "title": "Rules-engine integration with property-profile / spatial-analysis results",
+  "task_type": "backend",
+  "milestone_id": "M4",
+  "objective": "Wire the accepted-on-main M4-T001 rules engine into the property-analysis flow at the SERVICE layer (no new public endpoint or UI in this slice). Consume the canonical property profile (M2-T012 contract 1.4.0: zoning_features, lot_geometry, spatial_intersection) and the M2-T013 spatial-intersection facts READ-ONLY, derive the evaluator inputs (zoning_district candidate + a spatial_context shaped from the M2-T013 record), and evaluate the applicable draft rule family (R5 residential FAR) producing a rules-evaluation result section. HARD REQUIREMENTS: (1) preserve M2-T013 uncertainty end-to-end - split-lot share ranges, typed conflicts, and professional_review_required flags flow into the evaluation and are never collapsed into a definitive district; (2) FAIL SAFE - when spatial uncertainty exists (lot_overall_class not single_district_confident, or professional_review_required) OR the required spatial_context is missing/absent, the result is professional_review_required (or data_conflict) with no definitive value, never a guessed assignment; (3) return the deterministic calculation + citation traces from the evaluator verbatim (provenance fail-closed); (4) expose draft/review status honestly - every result carries its coverage_status and the rule's needs_review lifecycle state; (5) PREVENT downstream callers (scenario generator, UI, reports) from interpreting draft results as Verified - the integration must never emit or up-label a result to verified, and must surface the not-Verified disclaimer. No rule is published or Verified; nothing consumes credentials. Additive-only; consume profile/spatial contracts read-only (do not modify the profile builder or the spatial engine).",
+  "business_reason": "The engine and the property/spatial facts exist but are not yet connected; the scenario generator and UI need explainable, uncertainty-preserving, honestly-draft rule results. Owner directive 2026-07-21: advance product engineering now with needs_review rules; G6/B-010 block only publication/verification and final acceptance, not this integration.",
+  "inputs": [
+    "M4-T001 rules engine on main (services/api/app/rules/**): RuleRegistry, evaluator.evaluate(rule, inputs, snapshots, spatial_context=...), RuleResult.export(), coverage vocabulary",
+    "M2-T012 canonical property profile contract 1.4.0 (packages/contracts/schemas/v1/property_profile.schema.json): zoning_features, lot_geometry, spatial_intersection keys",
+    "M2-T013 spatial-intersection record shape (services/api/app/spatial/models.py LotIntersectionRecord.as_dict): lot_overall_class, pairs[].pair_class + share ranges, professional_review_required, coverage_note, crosscheck",
+    "docs/PRODUCT_FLOW_AND_AI_BOUNDARIES.md (deterministic backend controls coverage; AI never up-labels), PRD sections 12 (coverage) and 19 (provenance)"
+  ],
+  "outputs": [
+    "New service-layer integration module under services/api/app/rules/** mapping a property profile + spatial facts to evaluator inputs + spatial_context and returning rules-evaluation results (coverage_status, deterministic trace, citations, draft/needs_review status, not-Verified disclaimer)",
+    "Integration test pack under services/api/tests/rules/** covering RI-S1..RI-S8",
+    "project-control/reports/M4-T002-producer-report.md (AOS section-6 packet)"
+  ],
+  "dependencies": [
+    "M4-T001",
+    "M2-T012",
+    "M2-T013"
+  ],
+  "allowed_paths": [
+    "services/api/app/rules/** (new integration module; consume profile/spatial via read-only imports only)",
+    "services/api/tests/rules/**",
+    "project-control/reports/M4-T002-producer-report.md"
+  ],
+  "forbidden_paths": [
+    "services/api/app/profile/** (consume its OUTPUT read-only; do not modify the profile builder or contract)",
+    "services/api/app/spatial/** (consume read-only; do not modify the spatial engine)",
+    "services/api/app/connectors/**, services/api/app/resilience/**",
+    "packages/contracts/** (no contract change in this slice; a published rules-evaluation contract is a separate additive task)",
+    "services/api/app/api/v1/** and any new public endpoint (service-layer only this slice)",
+    "apps/web/** (UI is a later task)",
+    "Publishing or Verifying any rule; up-labeling any result to verified; collapsing M2-T013 uncertainty into a definitive district",
+    "project-control/** (except own producer report)",
+    ".claude/**"
+  ],
+  "acceptance_scenarios": [
+    "RI-S1 confident path: a profile whose spatial_intersection is single_district_confident for an R5 district yields a rules-evaluation carrying the R5 FAR result, coverage conditional (never verified), a full deterministic trace with resolvable citations",
+    "RI-S2 uncertainty preserved: a boundary_uncertain / split_lot / sliver_ambiguous / invalid_geometry spatial_intersection yields professional_review_required (data_conflict for a conflict) with NO definitive district or value; share ranges, conflicts and review flags are surfaced, never collapsed",
+    "RI-S3 fail-safe on missing evidence: absent spatial_intersection or missing/None spatial_context yields the typed professional_review_required outcome with no guessed assignment and no computed value",
+    "RI-S4 honest draft status: every result carries its coverage_status AND the rule's needs_review lifecycle status plus an explicit not-Verified disclaimer; no field equals verified",
+    "RI-S5 determinism: the same profile input yields byte-identical evaluation output (traces included)",
+    "RI-S6 coverage honesty: a non-R5 or unimplemented-family district yields a visible not_applicable / unsupported result, not silence",
+    "RI-S7 downstream safety: an explicit test proves the integration output cannot be read as verified (no verified coverage anywhere; disclaimer present) so scenario/UI callers cannot misinterpret a draft as final",
+    "RI-S8 regression: full repository CI green; no modification to profile/spatial/contract code"
+  ],
+  "required_gates": [
+    "G0",
+    "G2",
+    "G3",
+    "G4",
+    "G5"
+  ],
+  "producer_agent": "rules-engineer",
+  "reviewer_agents": [
+    "code-reviewer",
+    "qa-engineer",
+    "security-reviewer"
+  ],
+  "status": "claimed",
+  "progress_percent": 10,
+  "risks": [
+    "HARD: consume the M2-T012 profile and M2-T013 spatial contracts READ-ONLY; do not modify the profile builder, the spatial engine, or any canonical contract in this slice.",
+    "Uncertainty must never collapse into a definitive district; the integration must fail safe (professional_review_required) when spatial_context is missing or uncertain.",
+    "No rule may be published or Verified; the integration must never up-label a draft result to verified. G6 (qualified-human) and B-010 (client benchmark) remain outstanding and block final acceptance + publication, NOT this engineering slice (owner directive 2026-07-21).",
+    "Risk-required independent reviews: G3 (code), G4 (integration/regression), G5 (security/privacy - draft-not-Verified integrity, no injection/leak of official-derived values, least privilege).",
+    "STOP CONDITIONS: any need to modify a canonical contract (spin a separate additive task); any need for a new public endpoint or UI (later task); any temptation to collapse uncertainty or emit verified; credentials; production deployment.",
+    "Execution: local checkout + CI; negligible disk footprint (no bulk data)."
+  ],
+  "blockers": [],
+  "created_at": "2026-07-21T21:11:19.932368+00:00",
+  "updated_at": "2026-07-21T21:13:09.080200+00:00",
+  "worktree": ".claude/worktrees/M4-T002-integration"
+}
