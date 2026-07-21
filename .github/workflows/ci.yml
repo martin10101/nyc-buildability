@@ -98,7 +98,7 @@ jobs:
       # integrity-match anti-forgery check, enumeration/dedupe, and every
       # fail-closed branch (deterministic, offline, injected UTC now). No npm deps.
       - name: Age-gate deterministic unit tests
-        run: node --test apps/web/scripts/tests/
+        run: node --test apps/web/scripts/tests/*.test.mjs
       # LIVE gate over the committed lock: every registry package must be
       # >= 604800 s old with registry-matching integrity, and npm@$(npm -v) must be
       # advisory-free and >= 7 days old. Fail-closed on any outage/mismatch.

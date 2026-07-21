@@ -77,6 +77,6 @@ jobs:
       # gate over the committed lock (fail-closed, registry + OSV). Node-builtins
       # only; the job default working-directory is apps/web.
       - name: Age-gate deterministic unit tests
-        run: node --test scripts/tests/
+        run: node --test scripts/tests/*.test.mjs
       - name: Committed-lockfile release-age gate — >= 7 days, fail-closed (blocking)
         run: node scripts/dependency_age_gate.mjs package-lock.json --npm-tooling-version "$(npm -v)"
