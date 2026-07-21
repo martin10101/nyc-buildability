@@ -18,6 +18,8 @@ from .coverage import audit_family
 from .crosscheck import crosscheck_ztldb
 from .geometry import PAIR_SLIVER_LIKE, assert_geometry_pins, classify_pair
 from .models import (
+    AUDIT_GAPS_DETECTED,
+    AUDIT_OVERLAPS_DETECTED,
     LOT_BOUNDARY_UNCERTAIN,
     LOT_DATA_CONFLICT,
     LOT_INVALID_GEOMETRY_REVIEW,
@@ -215,6 +217,31 @@ def compose_lot_intersection(
             review_reasons.append(
                 f"band_exceeds_feature_width on {pair.layer}:{pair.district_label} "
                 "(narrow feature; confidence impossible - advisory 2.6.6)"
+            )
+        # Fail-safe (G4 F1): the lot-overall class is computed over base zoning
+        # only, so a real positional uncertainty on a NON-base family (overlay /
+        # special district) would otherwise never reach the review rollup. Any
+        # such uncertain pair over material lot area must route to review -
+        # advisory 2.6.1 ("if rule sensitivity is unknown at this milestone:
+        # always"). Strictly additive; never collapses the pair.
+        if (
+            pair.family != _BASE_FAMILY
+            and pair.pair_class in (PAIR_NEAR_BOUNDARY_UNCERTAIN, PAIR_SLIVER_AMBIGUOUS)
+            and pair.raw_intersection_sq_ft > AREA_EPSILON_SQ_FT
+        ):
+            review_reasons.append(
+                f"non-base positional uncertainty on {pair.layer}:{pair.district_label} "
+                f"({pair.pair_class}); overlay/special-district applicability requires "
+                "professional review (advisory 2.6.1)"
+            )
+    # Fail-safe (G3 obs 2): an explicit same-family coverage gap or overlap means
+    # the assignment is incomplete/inconsistent for that family; route to review
+    # rather than leaving it visible-but-unflagged (owner coverage-honesty).
+    for ca in coverage_audits:
+        if ca.status in (AUDIT_GAPS_DETECTED, AUDIT_OVERLAPS_DETECTED):
+            review_reasons.append(
+                f"coverage anomaly in {ca.family}: {ca.status}; explicit "
+                "unassigned/overlap area requires professional review"
             )
     if (
         crosscheck.outcome == XCHK_ZTLDB_ABSENT

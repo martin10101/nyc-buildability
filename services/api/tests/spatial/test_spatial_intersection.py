@@ -336,6 +336,60 @@ def test_si_cf4_same_family_overlap_emits_overlap_area() -> None:
 
 
 # ---------------------------------------------------------------------------
+# Fail-safe hardening from independent review (G4 F1 + G3 obs 1/2)
+# ---------------------------------------------------------------------------
+def test_f1_non_base_overlay_uncertainty_triggers_review() -> None:
+    """G4 F1: a real positional uncertainty on a NON-base family (here a
+    commercial overlay grazing the lot within the band) must route to review
+    even when the base assignment is confident - without collapsing the pair."""
+    base = district(box(0, 0, 400, 400), label="R5", layer="nyzd")
+    overlay = district(box(190, 0, 590, 400), label="C1-4", layer="nyco")  # grazes lot in-band
+    rec = compose_lot_intersection(
+        lot(box(100, 100, 200, 200)),
+        [base, overlay],
+        ztldb_assignment=ztldb("R5"),
+        ztldb_status="ok",
+    )
+    overlay_pair = next(p for p in rec.pairs if p.district_label == "C1-4")
+    assert overlay_pair.pair_class == PAIR_NEAR_BOUNDARY_UNCERTAIN
+    assert overlay_pair.raw_intersection_sq_ft > 0.0  # preserved, not collapsed
+    assert rec.lot_overall_class == LOT_SINGLE_DISTRICT_CONFIDENT  # base still confident
+    assert rec.professional_review_required is True  # but the overlay uncertainty is flagged
+    assert any("non-base positional uncertainty" in r for r in rec.review_reasons)
+    assert_vocab(rec)
+
+
+def test_coverage_anomaly_triggers_review_in_isolation() -> None:
+    """G3 obs 2: a same-family coverage anomaly must force review even when the
+    lot class is otherwise confident and ZTLDB agrees (no other trigger)."""
+    a = district(box(0, 0, 300, 400), label="R5", layer="nyzd")
+    b = district(box(200, 0, 400, 400), label="R6", layer="nyzd")  # overlaps A on x[200,300]
+    rec = compose_lot_intersection(
+        lot(box(0, 0, 400, 400)), [a, b], ztldb_assignment=ztldb("R5", "R6"), ztldb_status="ok"
+    )
+    assert rec.lot_overall_class == LOT_SPLIT_LOT_CONFIDENT  # not uncertain
+    assert rec.crosscheck.outcome != XCHK_ZTLDB_ABSENT  # ZTLDB agrees; not the trigger
+    assert rec.professional_review_required is True
+    assert any("coverage anomaly" in r for r in rec.review_reasons)
+
+
+def test_g3_obs1_simultaneous_overlap_and_gap_both_explicit() -> None:
+    """G3 obs 1: when a base family has BOTH a same-family overlap AND a coverage
+    gap, both quantities stay explicit; neither suppresses the other."""
+    a = district(box(0, 0, 300, 400), label="R5", layer="nyzd")
+    b = district(box(200, 0, 400, 400), label="R6", layer="nyzd")  # overlap x[200,300]
+    rec = compose_lot_intersection(  # lot extends to x=600 -> x[400,600] uncovered gap
+        lot(box(0, 0, 600, 400)), [a, b], ztldb_assignment=ztldb("R5", "R6"), ztldb_status="ok"
+    )
+    base_unassigned = [u for u in rec.unassigned_area if u["family"] == "base_zoning"]
+    base_overlap = [o for o in rec.overlap_area if o["family"] == "base_zoning"]
+    assert base_unassigned, "coverage gap must remain explicit"
+    assert base_overlap, "same-family overlap must remain explicit"
+    assert base_unassigned[0]["unassigned_area_sq_ft"] == pytest.approx(80000.0, rel=1e-6)
+    assert base_overlap[0]["overlap_area_sq_ft"] == pytest.approx(40000.0, rel=1e-6)
+
+
+# ---------------------------------------------------------------------------
 # SI-CF5 / SI-S9 no Verified label anywhere (grep/test-provable)
 # ---------------------------------------------------------------------------
 def test_si_cf5_no_verified_label_in_any_field() -> None:

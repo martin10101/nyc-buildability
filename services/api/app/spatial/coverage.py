@@ -87,16 +87,26 @@ def audit_family(
     unassigned: float | None = None
     overlap: float | None = None
 
-    if overlap_area > AREA_EPSILON_SQ_FT:
-        # Unexpected same-family overlap is a real topology signal for every
-        # family (two base zones, or two overlays, should not overlap).
-        status = AUDIT_OVERLAPS_DETECTED
+    # Compute the two quantities INDEPENDENTLY so a simultaneous same-family
+    # overlap AND coverage gap both stay explicit - one never suppresses the
+    # other (G3 obs 1). ``unassigned`` is emitted only for a family expected to
+    # fully cover the lot (invariant 4); ``overlap`` for any same-family overlap.
+    has_overlap = overlap_area > AREA_EPSILON_SQ_FT
+    has_gap = expects_full and gap_area > AREA_EPSILON_SQ_FT
+    if has_overlap:
         overlap = round(overlap_area, _AREA_DECIMALS)
         notes.append("same-family polygon overlap on the lot (not cross-family stacking)")
-    elif expects_full and gap_area > AREA_EPSILON_SQ_FT:
-        status = AUDIT_GAPS_DETECTED
+    if has_gap:
         unassigned = round(gap_area, _AREA_DECIMALS)
         notes.append("base-zoning coverage gap on the lot; area left explicit, never renormalized")
+
+    # Single status field: overlap is the stronger topology signal, so it wins
+    # the status label when both are present, but the gap quantity above is still
+    # emitted alongside it.
+    if has_overlap:
+        status = AUDIT_OVERLAPS_DETECTED
+    elif has_gap:
+        status = AUDIT_GAPS_DETECTED
     elif expects_full:
         status = AUDIT_COMPLETE_NONOVERLAPPING
         notes.append("base-zoning covers the lot with no same-family overlap or gap")
