@@ -48,7 +48,8 @@
   "active_tasks": [
     "M0-T019",
     "M4-T001",
-    "M4-T003"
+    "M4-T003",
+    "M4-T002"
   ],
   "blocked_tasks": [
     "M0-T007",
