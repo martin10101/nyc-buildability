@@ -1,0 +1,36 @@
+{
+  "task_id": "M4-T003",
+  "title": "Rules-engine correctness hardening: fail-closed input & predicate validation, temporal versioning, compliance determinations",
+  "task_type": "backend",
+  "milestone_id": "M4",
+  "objective": "Correctness hardening of the M4-T001 rules engine per owner launch-readiness review 2026-07-21, before any G6. (1) FAIL-CLOSED input validation: the evaluator validates every supplied input against its declared spec (type; declared enum membership; numeric finiteness; optional declared numeric domain min/max) BEFORE computation; a required-or-supplied invalid value yields a typed professional_review_required outcome with NO computed value and NO crash (never a negative/NaN/inf result). (2) PREDICATE reference validation at DSL load: every applicability/exception-condition predicate input name must be a declared input or the rule fails to load (a misspelled predicate input can never silently become not_applicable). (3) Rule test/lifecycle RELEASE status carried in the evaluation trace (deterministic-tests + independent-review + G6 state; verified-eligibility false for a draft). (4) EFFECTIVE-DATE temporal rule-versioning: rules carry effective_from/effective_to; evaluation accepts an as_of date and selects the version in effect, or a visible not-effective outcome, proven by a synthetic before/after amendment-transition fixture. (5) COMPLIANCE determination capability: a rule may test a proposal input against computed outputs and emit a genuine applies+passes / applies+fails determination, proven by a synthetic compliance fixture. Additive + fail-closed only; engine-owned schemas extended additively; canonical packages/contracts untouched; no rule published/Verified.",
+  "business_reason": "Owner launch-readiness review 2026-07-21 confirmed real M4-T001 engine defects (negative/non-finite inputs -> bad values; predicate refs not fail-closed; enum/type not validated; trace lacks test status) and directed correction + independent re-review before any G6 and before M4-T002 integration.",
+  "inputs": [],
+  "outputs": [],
+  "dependencies": [
+    "M4-T001"
+  ],
+  "allowed_paths": [],
+  "forbidden_paths": [],
+  "acceptance_scenarios": [],
+  "required_gates": [
+    "G0",
+    "G2",
+    "G3",
+    "G4",
+    "G5"
+  ],
+  "producer_agent": "rules-engineer",
+  "reviewer_agents": [
+    "code-reviewer",
+    "qa-engineer",
+    "security-reviewer"
+  ],
+  "status": "claimed",
+  "progress_percent": 10,
+  "risks": [],
+  "blockers": [],
+  "created_at": "2026-07-21T22:43:17.373329+00:00",
+  "updated_at": "2026-07-21T22:44:22.052863+00:00",
+  "worktree": ".claude/worktrees/M4-T003-hardening"
+}
