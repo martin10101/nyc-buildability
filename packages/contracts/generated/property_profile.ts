@@ -49,7 +49,7 @@ export interface DistrictProvenanceMap {
 }
 export interface PropertyProfile {
   profile_version: {
-    contract_version: "1.0.0" | "1.1.0" | "1.2.0" | "1.3.0";
+    contract_version: "1.0.0" | "1.1.0" | "1.2.0" | "1.3.0" | "1.4.0";
     profile_revision: number;
     generated_at: DateTime;
   };
@@ -140,5 +140,42 @@ export interface PropertyProfile {
     geometry_validity: "missing" | "not_computed";
     financial_readiness: "not_computed";
     policy: NonEmptyString;
+  };
+  zoning_features?: {
+    layers?: {
+      layer: NonEmptyString;
+      provenance_ref: NonEmptyString;
+      coverage_status?: CoverageStatus;
+    }[];
+  };
+  lot_geometry?: {
+    outcome: NonEmptyString;
+    review_required?: boolean;
+    geometry_status?: string | null;
+    area_sq_ft?: number | null;
+    provenance_ref: NonEmptyString;
+    coverage_status?: CoverageStatus;
+    crs?: {
+    };
+  };
+  spatial_intersection?: {
+    bbl: Bbl;
+    lot_overall_class: NonEmptyString;
+    professional_review_required: boolean;
+    coverage_note: NonEmptyString;
+    provenance_refs: ProvenanceRefList;
+    pairs?: {
+    }[];
+    crosscheck?: unknown | null;
+    review_reasons?: string[];
+    unassigned_area?: {
+    }[];
+    overlap_area?: {
+    }[];
+    accuracy_records?: {
+    }[];
+    policy?: {
+    };
+    notes?: string[];
   };
 }

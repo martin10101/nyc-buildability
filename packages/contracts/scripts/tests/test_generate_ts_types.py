@@ -124,9 +124,10 @@ def test_generated_types_cover_100_percent_of_schema_keys() -> None:
 
 def test_generated_types_pin_the_closed_contract_version_enum() -> None:
     ts = GENERATED.read_text(encoding="utf-8")
-    assert '"1.0.0" | "1.1.0" | "1.2.0" | "1.3.0"' in ts
-    # No unpublished version leaks into the generated union.
-    assert '"1.4.0"' not in ts
+    assert '"1.0.0" | "1.1.0" | "1.2.0" | "1.3.0" | "1.4.0"' in ts
+    # No unpublished version leaks into the generated union (1.5.0 is the
+    # current rejected exemplar; 1.4.0 was published by task M2-T012).
+    assert '"1.5.0"' not in ts
 
 
 def test_check_mode_passes_against_committed_file() -> None:
@@ -162,11 +163,11 @@ def _run_check_main() -> int:
         sys.argv = argv
 
 
-def test_schema_enum_is_closed_at_1_3_0() -> None:
-    """CT-S5 guard: the canonical enum ends at 1.3.0 - this task publishes
-    NOTHING after it."""
+def test_schema_enum_is_closed_at_1_4_0() -> None:
+    """Guard: the canonical enum ends at 1.4.0 - task M2-T012 published the
+    three wave/spatial-integration keys and NOTHING after 1.4.0."""
     enum = GEN.contract_version_enum(GEN.load_schemas())
-    assert enum == ["1.0.0", "1.1.0", "1.2.0", "1.3.0"]
+    assert enum == ["1.0.0", "1.1.0", "1.2.0", "1.3.0", "1.4.0"]
 
 
 def test_committed_client_block_is_byte_identical_to_fresh_derivation() -> None:
@@ -217,14 +218,14 @@ def test_drift_schema_published_version_missing_from_client_turns_check_red(
     tmp_path, monkeypatch, capsys
 ) -> None:
     """CT-S2 (negative drift regression, THE CI-red path): simulate the schema
-    publishing 1.4.0 while the committed client block still ends at 1.3.0.
+    publishing 1.5.0 while the committed client block still ends at 1.4.0.
 
     The generated-artifact half of --check is satisfied against a fresh
     generation from the mutated schema (tmp OUTPUT_PATH), isolating the CLIENT
     block check: it must fail loudly (rc 1 + explicit message), proving a
     schema-published version can never be silently omitted from the client
     runtime list."""
-    schema_dir = _publish_simulated_version(tmp_path, "1.4.0")
+    schema_dir = _publish_simulated_version(tmp_path, "1.5.0")
     monkeypatch.setattr(GEN, "SCHEMA_DIR", schema_dir)
 
     # Satisfy the property_profile.ts byte-identity half against the mutated
@@ -244,10 +245,10 @@ def test_drift_end_to_end_check_fails_when_schema_moves_ahead(
     tmp_path, monkeypatch,
 ) -> None:
     """CT-S2 companion: with NO tmp substitution of the generated artifact,
-    the very same simulated 1.4.0 publication also turns the committed
+    the very same simulated 1.5.0 publication also turns the committed
     property_profile.ts check red (rc 1) - drift cannot pass EITHER half of
     the contracts-typegen CI job."""
-    schema_dir = _publish_simulated_version(tmp_path, "1.4.0")
+    schema_dir = _publish_simulated_version(tmp_path, "1.5.0")
     monkeypatch.setattr(GEN, "SCHEMA_DIR", schema_dir)
     assert _run_check_main() == 1
 
@@ -259,7 +260,7 @@ def test_client_block_check_red_when_client_ahead_of_schema(
     the schema enum (hand-edited block) must also fail."""
     contract_text = WEB_CONTRACT.read_text(encoding="utf-8")
     committed = GEN.extract_client_block(contract_text)
-    mutated_block = committed.replace('  "1.3.0",', '  "1.3.0",\n  "9.9.9",')
+    mutated_block = committed.replace('  "1.4.0",', '  "1.4.0",\n  "9.9.9",')
     assert mutated_block != committed
     fake_contract = tmp_path / "contract.ts"
     fake_contract.write_text(
@@ -295,10 +296,10 @@ def test_client_block_check_red_when_markers_are_mangled(
 def test_write_mode_updates_stale_client_block_from_schema(
     tmp_path, monkeypatch,
 ) -> None:
-    """Publication flow (on tmp copies): after the schema publishes 1.4.0,
+    """Publication flow (on tmp copies): after the schema publishes 1.5.0,
     write mode regenerates the client block automatically - no manual client
     edit - and the refreshed tree passes --check. Idempotent second run."""
-    schema_dir = _publish_simulated_version(tmp_path, "1.4.0")
+    schema_dir = _publish_simulated_version(tmp_path, "1.5.0")
     monkeypatch.setattr(GEN, "SCHEMA_DIR", schema_dir)
 
     fake_output = tmp_path / "property_profile.ts"
@@ -316,7 +317,7 @@ def test_write_mode_updates_stale_client_block_from_schema(
         sys.argv = ["generate_ts_types.py"]
         assert GEN.main() == 0  # write
         first = fake_contract.read_text(encoding="utf-8")
-        assert '"1.4.0",' in GEN.extract_client_block(first)
+        assert '"1.5.0",' in GEN.extract_client_block(first)
         sys.argv = ["generate_ts_types.py", "--check"]
         assert GEN.main() == 0  # regenerated tree is clean
         sys.argv = ["generate_ts_types.py"]

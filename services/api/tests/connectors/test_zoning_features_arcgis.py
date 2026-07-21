@@ -703,23 +703,19 @@ def test_s9_added_field_is_visible_typed_degradation() -> None:
     assert "added_field:NEW_UNEXPECTED" in meta.drift_signals
 
 
-def test_s9_added_field_signal_propagates_into_extraction_result() -> None:
-    page = json.loads(load_fixture(NYLH_PAGES[0])["response_body_raw"])
+def test_s9_added_field_signal_propagates_into_query_result() -> None:
+    # M2-T007 G3/G4 D2 cleanup: named for the path it actually exercises
+    # (query_features, which re-validates the metadata it fetches), not
+    # extraction; the prior name implied extract_layer and the test carried a
+    # dead unused page load. The added_field drift signal from the ZF94
+    # synthetic metadata propagates into the query result's drift_signals.
     transport = FakeTransport(
-        [
-            fixture_response("ZF94_meta_nyzd_added_field_synthetic.json"),
-        ]
-    )
-    meta = fetch_layer_metadata("nyzd", **run_kwargs(transport))
-    assert meta.drift_signals == ["added_field:NEW_UNEXPECTED"]
-    del page  # (page unused; drift propagation asserted via query below)
-    transport2 = FakeTransport(
         [
             fixture_response("ZF94_meta_nyzd_added_field_synthetic.json"),
             fixture_response("ZF03_query_nyzd_single_R3-2.json"),
         ]
     )
-    result = query_features("nyzd", "ZONEDIST", "R3-2", **run_kwargs(transport2))
+    result = query_features("nyzd", "ZONEDIST", "R3-2", **run_kwargs(transport))
     assert "added_field:NEW_UNEXPECTED" in result.drift_signals
 
 

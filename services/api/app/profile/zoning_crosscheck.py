@@ -61,11 +61,19 @@ from app.connectors.ztldb_soda import (
 )
 
 __all__ = [
+    "GEOMETRIC_SOURCE_ID",
     "ZONING_CROSSCHECK_FIELD_MAP",
     "CrosscheckReport",
     "crosscheck_lot_zoning",
     "external_observation",
+    "geometric_zoning_observations",
 ]
+
+# Presentation label for the FOURTH (geometric) evidence stream in a conflict
+# value entry (task M2-T012). It is the spatial-intersection engine's geometric
+# base-zoning assignment, distinct from the PLUTO and ZTLDB presentations; it is
+# never a Verified determination and never an official government field value.
+GEOMETRIC_SOURCE_ID = "nyc-geometric-intersection"
 
 # Profile-canonical field (PLUTO column) -> ZTLDB column. The PLUTO column
 # name is the conflict entry's ``field`` because the profile's fact values
@@ -142,6 +150,60 @@ def external_observation(
         "value": value,
         "derivation": derivation,
     }
+
+
+def geometric_zoning_observations(intersection_record: object) -> list[dict]:
+    """Build the FOURTH (geometric) evidence-stream observation(s) for the
+    lot-level zoning cross-check from an accepted M2-T013 spatial-intersection
+    record (task M2-T012, safeguard: the M2-T008 three-way PLUTO/ZTLDB/
+    zoning-features cross-check extends to include the geometric assignment).
+
+    A geometric ``zonedist1`` observation is emitted ONLY when the lot is
+    ``single_district_confident`` - the geometry firmly places the WHOLE lot in
+    one base zoning district beyond the positional-tolerance band, so a single
+    base-district value is a defensible cross-check input. Its value is that
+    district's label and its derivation records the exact class, so the
+    observation is never presented as a Verified determination. For every other
+    ``lot_overall_class`` (split, boundary-uncertain, sliver, data-conflict,
+    invalid-geometry) the geometry is inherently non-definitive for a single
+    ``zonedist1`` and NO collapsing value is emitted - uncertainty is preserved
+    (the full uncertainty stays in the profile's ``spatial_intersection`` section
+    and its own ZTLDB crosscheck). Feed the returned list to
+    :func:`crosscheck_lot_zoning` via ``external_observations``; a geometric value
+    that disagrees with the ZTLDB/PLUTO ``zonedist1`` becomes a typed conflict
+    (``resolution='unresolved'``) through the EXISTING conflict shape, and - being
+    on the critical column - gates ``analysis_readiness`` exactly like any other
+    conflict. Accepts the ``LotIntersectionRecord`` dataclass or its ``as_dict()``
+    form (read-only; no geometry is computed here)."""
+    record = (
+        intersection_record.as_dict()
+        if hasattr(intersection_record, "as_dict")
+        else dict(intersection_record)
+    )
+    if record.get("lot_overall_class") != "single_district_confident":
+        return []
+    crosscheck = record.get("crosscheck") or {}
+    ordered = crosscheck.get("geometric_ordered_districts") or []
+    if not ordered:
+        return []
+    top = ordered[0]
+    label = top.get("label") if isinstance(top, dict) else None
+    if not isinstance(label, str) or not label:
+        return []
+    share_point = top.get("share_point") if isinstance(top, dict) else None
+    return [
+        external_observation(
+            source_id=GEOMETRIC_SOURCE_ID,
+            profile_field="zonedist1",
+            value=label,
+            derivation=(
+                "geometric base-zoning assignment from the M2-T013 spatial "
+                "intersection (lot_overall_class=single_district_confident, "
+                f"share_point={share_point}, BBL {record.get('bbl')}); "
+                "facts-with-uncertainty, NEVER a Verified zoning determination"
+            ),
+        )
+    ]
 
 
 def _pluto_observation(

@@ -63,14 +63,15 @@ describe("SUPPORTED_CONTRACT_VERSIONS derivation (single canonical source)", () 
     );
   });
 
-  it("currently derives exactly 1.0.0 / 1.1.0 / 1.2.0 / 1.3.0 — nothing after 1.3.0 is published", () => {
+  it("currently derives exactly 1.0.0 / 1.1.0 / 1.2.0 / 1.3.0 / 1.4.0 — nothing after 1.4.0 is published", () => {
     expect([...SUPPORTED_CONTRACT_VERSIONS]).toEqual([
       "1.0.0",
       "1.1.0",
       "1.2.0",
       "1.3.0",
+      "1.4.0",
     ]);
-    expect(SUPPORTED_CONTRACT_VERSIONS).not.toContain("1.4.0");
+    expect(SUPPORTED_CONTRACT_VERSIONS).not.toContain("1.5.0");
   });
 });
 

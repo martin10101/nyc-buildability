@@ -106,6 +106,13 @@ VERSION_INTRODUCED: dict[str, str] = {
     "reproducibility": "1.1.0",
     "status_dimensions": "1.2.0",
     "reproducibility.staleness": "1.3.0",
+    # Task M2-T012 (contract 1.4.0): the three additive top-level wave/spatial
+    # integration keys. A profile emitting any of them must declare >= 1.4.0,
+    # so a stale-declared payload carrying wave facts is rejected exactly like
+    # the earlier additive keys (the declared-vs-emitted consistency check).
+    "zoning_features": "1.4.0",
+    "lot_geometry": "1.4.0",
+    "spatial_intersection": "1.4.0",
 }
 
 

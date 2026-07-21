@@ -1,0 +1,10 @@
+{
+  "task_id": "M2-T012",
+  "gate_id": "G0",
+  "reviewer": "orchestrator",
+  "role": "administrative",
+  "result": "PASS",
+  "report_file": "project-control/reports/M2-T012-G0-readiness.md",
+  "reviewed_at": "2026-07-21T06:22:51.755318+00:00",
+  "updated_at": "2026-07-21T06:22:51.755318+00:00"
+}
