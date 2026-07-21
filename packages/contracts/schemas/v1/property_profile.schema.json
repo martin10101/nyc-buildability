@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://github.com/martin10101/nyc-buildability/packages/contracts/schemas/v1/property_profile.schema.json",
   "title": "Canonical Property Profile",
-  "description": "v1 of the one canonical property-profile contract (PRD section 32.3). All connectors, rules, scenarios, reports, and UI views must exchange this contract; modules may not invent competing property schemas. Every fact value carries a REQUIRED provenance_ref that must resolve to a provenance record in this profile (PRD sections 9 and 19; fix for M0-T004 G3 defect D1). Referential integrity of EVERY provenance_ref site (fact values, zoning.mapped_features, and the v1.1 district-provenance maps) is enforced by .github/scripts/validate_contracts.py for fixtures and must be enforced by the backend for live data. CONTRACT 1.1.0 (task M1-T006, additive; M1-T005 G3 adjudication #1 + defects D2/D4): documents the three keys the accepted M1-T005 API already emits (OPTIONAL per-fact coverage_status, OPTIONAL top-level data_completeness, OPTIONAL top-level reproducibility) and adds OPTIONAL machine-resolvable district-provenance maps under zoning. Every 1.0.0 instance remains valid: no required key was added, removed, or retyped. CONTRACT 1.2.0 (task M2-T004, additive; owner code-audit P1 2026-07-17): adds the OPTIONAL top-level status_dimensions object (five INDEPENDENT status dimensions - source_record_completeness, analysis_readiness, rule_coverage, geometry_validity, financial_readiness - never collapsed into one label, per PRD s12 and GENERATIVE_DEVELOPMENT_STRATEGY_REQUIREMENTS s3.3; dimensions the platform cannot yet compute are declared 'not_computed', never inferred), the OPTIONAL missing_inputs[].feasibility_relevant flag (membership in the documented feasibility-relevant completeness basis - data_completeness and source_record_completeness are derived from feasibility-relevant gaps ONLY, never from all 108 PLUTO columns), OPTIONAL reproducibility.response_digest + reproducibility.digest_canonicalization, and the four OPTIONAL source_fact identity/lineage keys (fact_key, observation_id, value_digest, response_digest - see source_fact.schema.json). Every 1.0.0 and 1.1.0 instance remains valid: all new keys are optional and no existing key changed. CONTRACT 1.3.0 (task M2-T006, additive; M1-T009 G1 findings D1/D2 + M2-T002 G3 finding N3): adds the OPTIONAL typed reproducibility.staleness object (machine-readable cache/last-known-good serve visibility - the successor to the served_from_last_known_good connector-note convention, which is retained for humans), refreshes the correlation_id description to match cache/LKG-era generation semantics, and documents the open-schema zoning.mapped_features and conflict keys the accepted builder emits. Every 1.0.0, 1.1.0, and 1.2.0 instance remains valid: all new keys are optional and no existing key changed.",
+  "description": "v1 of the one canonical property-profile contract (PRD section 32.3). All connectors, rules, scenarios, reports, and UI views must exchange this contract; modules may not invent competing property schemas. Every fact value carries a REQUIRED provenance_ref that must resolve to a provenance record in this profile (PRD sections 9 and 19; fix for M0-T004 G3 defect D1). Referential integrity of EVERY provenance_ref site (fact values, zoning.mapped_features, and the v1.1 district-provenance maps) is enforced by .github/scripts/validate_contracts.py for fixtures and must be enforced by the backend for live data. CONTRACT 1.1.0 (task M1-T006, additive; M1-T005 G3 adjudication #1 + defects D2/D4): documents the three keys the accepted M1-T005 API already emits (OPTIONAL per-fact coverage_status, OPTIONAL top-level data_completeness, OPTIONAL top-level reproducibility) and adds OPTIONAL machine-resolvable district-provenance maps under zoning. Every 1.0.0 instance remains valid: no required key was added, removed, or retyped. CONTRACT 1.2.0 (task M2-T004, additive; owner code-audit P1 2026-07-17): adds the OPTIONAL top-level status_dimensions object (five INDEPENDENT status dimensions - source_record_completeness, analysis_readiness, rule_coverage, geometry_validity, financial_readiness - never collapsed into one label, per PRD s12 and GENERATIVE_DEVELOPMENT_STRATEGY_REQUIREMENTS s3.3; dimensions the platform cannot yet compute are declared 'not_computed', never inferred), the OPTIONAL missing_inputs[].feasibility_relevant flag (membership in the documented feasibility-relevant completeness basis - data_completeness and source_record_completeness are derived from feasibility-relevant gaps ONLY, never from all 108 PLUTO columns), OPTIONAL reproducibility.response_digest + reproducibility.digest_canonicalization, and the four OPTIONAL source_fact identity/lineage keys (fact_key, observation_id, value_digest, response_digest - see source_fact.schema.json). Every 1.0.0 and 1.1.0 instance remains valid: all new keys are optional and no existing key changed. CONTRACT 1.3.0 (task M2-T006, additive; M1-T009 G1 findings D1/D2 + M2-T002 G3 finding N3): adds the OPTIONAL typed reproducibility.staleness object (machine-readable cache/last-known-good serve visibility - the successor to the served_from_last_known_good connector-note convention, which is retained for humans), refreshes the correlation_id description to match cache/LKG-era generation semantics, and documents the open-schema zoning.mapped_features and conflict keys the accepted builder emits. Every 1.0.0, 1.1.0, and 1.2.0 instance remains valid: all new keys are optional and no existing key changed. CONTRACT 1.4.0 (task M2-T012, additive; owner directive 2026-07-20 - ONE coordinated wave-connector + spatial-intersection integration, no successive contract versions): adds three OPTIONAL top-level keys that carry the accepted connector-wave and spatial-intersection facts into the canonical profile with full provenance - zoning_features (per-layer retrieval facts for the six official DCP GIS zoning-features layers, task M2-T007; CITYWIDE reference data, explicitly NOT lot-level determinations), lot_geometry (per-BBL MapPLUTO tax-lot geometry facts, task M2-T009; the geometry-validity taxonomy is preserved and it is never a legal boundary certification), and spatial_intersection (the task M2-T013 lot/zoning facts-with-uncertainty substrate - exact geometric results, boundary distances, split-share RANGES, positional-uncertainty classes, and professional-review flags - with uncertainty NEVER collapsed into a definitive single-district assignment and no Verified label, deliberately EXCLUDING the engine-internal coverage_audits diagnostic). Every provenance_ref / provenance_refs in the three new keys resolves to a provenance record in this profile's provenance array (the backend enforces this for live data via app.profile.builder._assert_provenance_integrity; extending .github/scripts/validate_contracts.py to the three new fixture sites is a recommended follow-up, out of this task's file scope). The fourth (geometric) evidence stream of the task M2-T008 cross-check surfaces geometric-vs-ZTLDB disagreement through the EXISTING conflicts array - no new conflict shape. Every 1.0.0, 1.1.0, 1.2.0, and 1.3.0 instance remains valid: all three new keys are optional and no existing key changed.",
   "type": "object",
   "required": [
     "profile_version",
@@ -24,8 +24,8 @@
       "properties": {
         "contract_version": {
           "type": "string",
-          "enum": ["1.0.0", "1.1.0", "1.2.0", "1.3.0"],
-          "description": "CLOSED enum of published contract versions within the v1 major line. 1.0.0 = M0-T009 shape; 1.1.0 = M1-T006 additive extension; 1.2.0 = M2-T004 additive extension (status_dimensions, feasibility_relevant, digests, fact identity/lineage); 1.3.0 = M2-T006 additive extension (typed reproducibility.staleness; correlation_id description refresh; open-schema key documentation). New versions are admitted only by an accepted contract task that appends to this enum; arbitrary versions are rejected. DECLARATION SEMANTICS (input to M2-T003, deliberately not preempted here): as with 1.1.0, adding 1.2.0 to this enum publishes the version; WHICH version a producer declares (the accepted M1-T005 builder still declares 1.0.0 while emitting the additive keys, all legal at every version because the keys are optional) and whether declared version and emitted key set are validated against each other is the M2-T003 validation/typegen decision."
+          "enum": ["1.0.0", "1.1.0", "1.2.0", "1.3.0", "1.4.0"],
+          "description": "CLOSED enum of published contract versions within the v1 major line. 1.0.0 = M0-T009 shape; 1.1.0 = M1-T006 additive extension; 1.2.0 = M2-T004 additive extension (status_dimensions, feasibility_relevant, digests, fact identity/lineage); 1.3.0 = M2-T006 additive extension (typed reproducibility.staleness; correlation_id description refresh; open-schema key documentation); 1.4.0 = M2-T012 additive extension (the three OPTIONAL top-level wave/spatial-integration keys zoning_features, lot_geometry, and spatial_intersection). New versions are admitted only by an accepted contract task that appends to this enum; arbitrary versions are rejected. DECLARATION SEMANTICS (input to M2-T003, deliberately not preempted here): as with 1.1.0, adding 1.2.0 to this enum publishes the version; WHICH version a producer declares (the accepted M1-T005 builder still declares 1.0.0 while emitting the additive keys, all legal at every version because the keys are optional) and whether declared version and emitted key set are validated against each other is the M2-T003 validation/typegen decision."
         },
         "profile_revision": { "type": "integer", "minimum": 1 },
         "generated_at": { "$ref": "common.schema.json#/$defs/date_time" }
@@ -342,6 +342,138 @@
         "policy": {
           "$ref": "common.schema.json#/$defs/non_empty_string",
           "description": "Verbatim statement of the deterministic derivation policy that produced the five dimension values in this profile, including the completeness basis identification. Stored per profile - same self-description pattern as reproducibility.coverage_policy - so a historical report explains its own labels after the policy evolves."
+        }
+      }
+    },
+    "zoning_features": {
+      "description": "CONTRACT 1.4.0, OPTIONAL (task M2-T012): per-layer RETRIEVAL facts for the six official DCP GIS zoning-features layers (nyzd districts, nyco commercial overlays, nysp special-purpose districts, nysp_sd special-purpose subdistricts, nylh limited-height districts, nyzma zoning-map amendments; task M2-T007). These are CITYWIDE reference-data provenance facts - which layers were consulted, at what content digest, when, and in which CRS - NOT lot-level zoning determinations (the official use limitation is explicit: 'these features are not intended for determining zoning at the individual tax lot level'; lot-level assignment with uncertainty lives in spatial_intersection). DELIBERATELY OPEN: the per-layer entry carries at least layer + provenance_ref and the accepted connector also passes through record_count, normalized_digest, source_data_last_edited, crs, and drift_signals; the shape stays open so future layer facts can be added without a contract bump. OPTIONAL so every 1.0.0-1.3.0 instance stays valid.",
+      "type": "object",
+      "properties": {
+        "layers": {
+          "type": "array",
+          "description": "One entry per zoning-features layer consulted for this profile's analysis.",
+          "items": {
+            "type": "object",
+            "description": "DELIBERATELY OPEN per-layer retrieval record. DOCUMENTED KEYS the accepted builder emits: 'layer' (one of nyzd|nyco|nysp|nysp_sd|nylh|nyzma), 'provenance_ref' (string; MUST resolve to a provenance_id in this profile's provenance array - enforced by the backend for live data), 'coverage_status' (coverage_status.schema.json value; 'conditional' for an unreviewed official retrieval, 'unsupported' when the retrieval carried a schema-drift signal), plus open pass-through keys 'record_count', 'normalized_digest', 'source_data_last_edited', 'crs', and 'drift_signals'. The shape stays open (no structural tightening) so additional zoning-features facts can be added without a contract bump.",
+            "required": ["layer", "provenance_ref"],
+            "properties": {
+              "layer": {
+                "$ref": "common.schema.json#/$defs/non_empty_string",
+                "description": "Canonical zoning-features layer key: nyzd | nyco | nysp | nysp_sd | nylh | nyzma."
+              },
+              "provenance_ref": {
+                "$ref": "common.schema.json#/$defs/non_empty_string",
+                "description": "REQUIRED provenance record backing this layer retrieval. Must resolve to a provenance_id in this profile's provenance array (PRD sections 9/19)."
+              },
+              "coverage_status": {
+                "$ref": "coverage_status.schema.json",
+                "description": "PRD section 12 coverage status of this layer retrieval - never derived from connector confidence; never 'verified' before a published-rule/reviewer pipeline exists."
+              }
+            }
+          }
+        }
+      }
+    },
+    "lot_geometry": {
+      "description": "CONTRACT 1.4.0, OPTIONAL (task M2-T012): per-BBL MapPLUTO tax-lot geometry facts (task M2-T009) with full provenance. The connector's geometry-validity taxonomy is preserved verbatim (outcome + geometry_status + review flags + separate original/normalized digests); this is deterministic geometry provenance, NEVER a legal boundary certification and never a zoning determination. DELIBERATELY OPEN: carries at least outcome + provenance_ref and the accepted builder also passes through review_required, geometry_status, area_sq_ft, shape_area_attribute_sq_ft, normalized_digest, original_geometry_digest, crs, source_data_last_edited, shapely_version/geos_version, and drift_signals. OPTIONAL so every 1.0.0-1.3.0 instance stays valid.",
+      "type": "object",
+      "required": ["outcome", "provenance_ref"],
+      "properties": {
+        "outcome": {
+          "$ref": "common.schema.json#/$defs/non_empty_string",
+          "description": "Explicit per-lot outcome: 'single_feature' | 'no_feature' | 'multiple_features' (multiple features for one BBL is review-required, never a silent first-pick - task M2-T009 safeguard 1)."
+        },
+        "review_required": {
+          "type": "boolean",
+          "description": "True when the lot geometry cannot be safely used without professional review (multiple features, invalid/uncharacterizable geometry, or identifier conflict)."
+        },
+        "geometry_status": {
+          "type": ["string", "null"],
+          "description": "Geometry-validity state of the single feature: 'valid' | 'repaired' | 'invalid_geometry' | 'review_required'; null when there is no single feature (no_feature/multiple_features)."
+        },
+        "area_sq_ft": {
+          "type": ["number", "null"],
+          "description": "Planar lot area in square feet computed ONLY in the validated EPSG:2263 projected CRS; null when no usable geometry exists. Never computed from degrees."
+        },
+        "provenance_ref": {
+          "$ref": "common.schema.json#/$defs/non_empty_string",
+          "description": "REQUIRED provenance record backing this lot-geometry fact. Must resolve to a provenance_id in this profile's provenance array (PRD sections 9/19)."
+        },
+        "coverage_status": {
+          "$ref": "coverage_status.schema.json",
+          "description": "PRD section 12 coverage status of the lot-geometry fact - never derived from connector confidence; never 'verified' before a published-rule/reviewer pipeline exists."
+        },
+        "crs": {
+          "type": "object",
+          "description": "Authoritative source CRS stamp (EPSG:2263 / wkid 102718). Open object; coordinates are never interpreted outside this validated CRS."
+        }
+      }
+    },
+    "spatial_intersection": {
+      "description": "CONTRACT 1.4.0, OPTIONAL (task M2-T012): the task M2-T013 lot/zoning spatial-intersection substrate - deterministic FACTS-WITH-UNCERTAINTY only. It carries the exact geometric results (raw/firm/dilated intersection areas, boundary distances), the split-share RANGES (share_min/share_point/share_max, never renormalized), the positional-uncertainty classes (pair_class and lot_overall_class), and the professional-review flags - and it NEVER collapses an uncertain boundary into a definitive single-district assignment, NEVER carries a Verified label (Verified is exclusively an M4 published-rule + G6 professional outcome), and DELIBERATELY EXCLUDES the engine-internal coverage_audits diagnostic (owner amendment invariant 6). The permanent coverage_note states this substrate is not a Verified zoning determination. DELIBERATELY OPEN so the full engine record passes through without a contract bump. OPTIONAL so every 1.0.0-1.3.0 instance stays valid.",
+      "type": "object",
+      "required": ["bbl", "lot_overall_class", "professional_review_required", "coverage_note", "provenance_refs"],
+      "properties": {
+        "bbl": {
+          "$ref": "common.schema.json#/$defs/bbl",
+          "description": "BBL this intersection substrate describes; equals the profile identity.bbl."
+        },
+        "lot_overall_class": {
+          "$ref": "common.schema.json#/$defs/non_empty_string",
+          "description": "Lot-overall positional-uncertainty class: 'single_district_confident' | 'split_lot_confident' | 'boundary_uncertain' | 'sliver_ambiguous' | 'data_conflict' | 'invalid_geometry_review'. An uncertainty CLASSIFICATION over base zoning, NEVER a definitive single-district assignment and never a Verified determination."
+        },
+        "professional_review_required": {
+          "type": "boolean",
+          "description": "True when any positional uncertainty, coverage anomaly, ZTLDB set-conflict, or non-intersectable geometry routes this lot to professional review (task M2-T013 fail-safe rollup)."
+        },
+        "coverage_note": {
+          "$ref": "common.schema.json#/$defs/non_empty_string",
+          "description": "The permanent honest coverage note stamped on every intersection record: facts-with-uncertainty, NOT a Verified zoning determination (Verified requires an M4 published rule and G6 professional approval)."
+        },
+        "provenance_refs": {
+          "$ref": "#/$defs/provenance_ref_list",
+          "description": "REQUIRED non-empty list of provenance records this intersection was computed from (the derived-result record and its lot-geometry / zoning-features inputs). Every entry MUST resolve to a provenance_id in this profile's provenance array (PRD sections 9/19)."
+        },
+        "pairs": {
+          "type": "array",
+          "description": "Per (lot, district) intersection records. DELIBERATELY OPEN items: each carries the exact geometric facts (raw_intersection_sq_ft, firm_intersection_sq_ft, dilated_intersection_sq_ft, distance_ft, lot_area_sq_ft), the share RANGE (share_min/share_point/share_max, minor_portion), and the pair_class uncertainty label - the class is the interpretation, the numbers are the facts, and the range is never collapsed to a point.",
+          "items": {
+            "type": "object",
+            "description": "Open (lot, district) intersection record; consumers runtime-narrow. Never a Verified assignment."
+          }
+        },
+        "crosscheck": {
+          "type": ["object", "null"],
+          "description": "Open ZTLDB cross-check outcome (agreement/ordering/set-conflict/absent) with the geometric-vs-ZTLDB ordered district sets; a ZTLDB agreement upgrades a geometrically uncertain DISPLAYED result to 'conditional' at most - never confident/Verified. null when no cross-check was computed."
+        },
+        "review_reasons": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Explicit reasons this lot routes to professional review; empty when none."
+        },
+        "unassigned_area": {
+          "type": "array",
+          "description": "Per-family explicit unassigned (coverage-gap) area records; never renormalized away.",
+          "items": { "type": "object" }
+        },
+        "overlap_area": {
+          "type": "array",
+          "description": "Per-family, same-family-only overlap area records; never computed across families.",
+          "items": { "type": "object" }
+        },
+        "accuracy_records": {
+          "type": "array",
+          "description": "Every input positional-accuracy stamp (documented vs assumed tolerances) used in the intersection.",
+          "items": { "type": "object" }
+        },
+        "policy": {
+          "type": "object",
+          "description": "Open snapshot of the deterministic intersection policy (version + the owner-approved advisory parameters) under which this record was computed, so a historical report explains its own uncertainty rules."
+        },
+        "notes": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Visible uncertainty notes (e.g. split-share ranges must feed M4 rules as ranges); never conflicts, never adjudications."
         }
       }
     }

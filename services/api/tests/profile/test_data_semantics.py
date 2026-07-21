@@ -438,14 +438,14 @@ def test_s6_pre_m2t004_shape_remains_valid(profile_validator) -> None:
 
 
 def test_s6_builder_declares_resolved_canonical_contract_version() -> None:
-    # M2-T003 established declare-what-you-emit; M2-T006 advanced the
-    # declaration to 1.3.0 (the builder now emits the typed
-    # reproducibility.staleness object on every serve). (Backward
-    # compatibility - 1.0.0/1.1.0/1.2.0 instances remain valid and served -
-    # is proven in tests/api/test_property_contract.)
-    assert PROFILE_CONTRACT_VERSION == "1.3.0"
+    # M2-T003 established declare-what-you-emit; M2-T006 advanced it to 1.3.0;
+    # M2-T012 advanced the declaration to 1.4.0 (the builder can now emit the
+    # optional wave/spatial-integration keys). (Backward compatibility -
+    # 1.0.0/1.1.0/1.2.0/1.3.0 instances remain valid and served - is proven in
+    # tests/api/test_property_contract.)
+    assert PROFILE_CONTRACT_VERSION == "1.4.0"
     profile = build_profile(load_fixture_body("F01_single_lot_normal.json"))
-    assert profile["profile_version"]["contract_version"] == "1.3.0"
+    assert profile["profile_version"]["contract_version"] == "1.4.0"
     # Direct builder path = fresh retrieval: the truthful fresh marker with
     # ONLY the two required booleans (no invented age/error values).
     assert profile["reproducibility"]["staleness"] == {

@@ -697,10 +697,17 @@ def check_columns_for_drift(api_views_metadata: dict) -> dict:
     columns = api_views_metadata.get("columns")
     if not isinstance(columns, list):
         return {"error": "metadata document has no columns array"}
+    # Only NAMED columns participate in the by-name comparison. A column dict
+    # without a string ``fieldName`` cannot be identified and must not become a
+    # ``None`` key: M2-T008 G3/G4 D1 - a None key mixed with real column names
+    # made the sorted() differences below raise TypeError on doubly-malformed
+    # metadata (a column that is a dict but lacks fieldName, alongside a real
+    # added/removed column). Such a column is ignored here (it is not a valid,
+    # comparable column definition); the by-name drift result is unaffected.
     live = {
-        column.get("fieldName"): column.get("dataTypeName")
+        column["fieldName"]: column.get("dataTypeName")
         for column in columns
-        if isinstance(column, dict)
+        if isinstance(column, dict) and isinstance(column.get("fieldName"), str)
     }
     added = sorted(set(live) - ZTLDB_COLUMNS)
     removed = sorted(ZTLDB_COLUMNS - set(live))

@@ -200,7 +200,7 @@ implemented:
 
 4. **An unpublished declared version is a BOUNDED typed error.** A profile
    declaring a version outside the published enum (currently
-   `["1.0.0","1.1.0","1.2.0","1.3.0"]`; e.g. `1.4.0`) yields a typed,
+   `["1.0.0","1.1.0","1.2.0","1.3.0","1.4.0"]`; e.g. `1.5.0`) yields a typed,
    correlation-id'd `500 unsupported_contract_version` with the declared
    version and the supported set — never a silent coercion and never a raw
    500 stack.
@@ -313,6 +313,65 @@ Deferred contracts (added additively in later milestones, per
 definition and rule evaluation trace (M4), scenario (M5), report evidence
 item (M6). They are deliberately not stubbed here to avoid shipping
 unreviewed shapes that downstream code might bind to.
+
+## Property profile contract 1.4.0 (task M2-T012, additive — wave-connector + spatial-intersection integration)
+
+Publishes `contract_version` `"1.4.0"` (the CLOSED enum is now
+`["1.0.0","1.1.0","1.2.0","1.3.0","1.4.0"]`; the rejected-exemplar fixture
+`fixtures/invalid/property_profile/contract_version_unknown.json` advanced to
+`1.5.0` in the same change — that string is a NEVER-PUBLISHED rejection
+exemplar, unrelated to the owner STOP condition on real 1.5.0 publication).
+One coordinated update (owner directive 2026-07-20: no successive contract
+versions) carries the accepted connector-wave and spatial-intersection facts
+into the canonical profile. **Every new key is OPTIONAL, so every valid
+1.0.0/1.1.0/1.2.0/1.3.0 instance remains valid unchanged**; the builder now
+declares `1.4.0` and a PLUTO-only build (no wave data) emits no 1.4.0 key and
+stays declared-vs-emitted consistent.
+
+### Three additive top-level keys (each with full provenance)
+
+- **`zoning_features`** — per-layer RETRIEVAL facts for the six DCP GIS
+  zoning-features layers (M2-T007): `layers[]` each carrying `layer`,
+  `provenance_ref` (resolves to a provenance record), `coverage_status`
+  (`conditional`, or `unsupported` on a drift signal), and open pass-through
+  keys (`record_count`, `normalized_digest`, `source_data_last_edited`, `crs`,
+  `drift_signals`). CITYWIDE reference data, **not** lot-level determinations
+  (the official use limitation is explicit).
+- **`lot_geometry`** — per-BBL MapPLUTO tax-lot geometry facts (M2-T009):
+  `outcome`, `provenance_ref`, plus open `review_required`, `geometry_status`,
+  `area_sq_ft`, digests, `crs`, library versions. The validity taxonomy is
+  preserved; never a legal boundary certification.
+- **`spatial_intersection`** — the M2-T013 lot/zoning facts-with-uncertainty
+  substrate: exact geometric results, boundary distances, split-share **ranges**
+  (`share_min/point/max`), positional-uncertainty classes (`pair_class`,
+  `lot_overall_class`), professional-review flags, `coverage_note`, and
+  `provenance_refs`. **Uncertainty is NEVER collapsed** into a definitive
+  single-district assignment, nothing is `Verified`, and the engine-internal
+  `coverage_audits` diagnostic is deliberately EXCLUDED (owner amendment
+  invariant 6).
+
+### Fourth (geometric) evidence stream — through the EXISTING conflict shape
+
+The M2-T008 lot-level zoning cross-check (`app.profile.zoning_crosscheck`)
+gains a fourth evidence stream: `geometric_zoning_observations()` emits a
+geometric `zonedist1` observation ONLY when the lot is
+`single_district_confident` (the geometry firmly places the whole lot in one
+base district); fed to `crosscheck_lot_zoning` via `external_observations`, a
+geometric value disagreeing with the ZTLDB/PLUTO `zonedist1` becomes a typed
+`conflict` (`resolution='unresolved'`) in the existing `conflicts` array and —
+being on the critical column — gates `analysis_readiness`. No new conflict
+shape; uncertain lots emit no collapsing value (uncertainty preserved).
+
+### Referential integrity
+
+Every `provenance_ref` / `provenance_refs` in the three new keys resolves to a
+provenance record in the profile's `provenance` array. The backend is the
+integrity authority for live data
+(`app.profile.builder._assert_provenance_integrity`, extended to the three new
+sites). **Follow-up (out of this task's file scope):**
+`.github/scripts/validate_contracts.py`'s `profile_provenance_invariant` still
+checks only the pre-1.4.0 fixture sites; extending it to the three new sites is
+a recommended companion change in a `.github/`-scoped task.
 
 ## Data grounding (defect D2)
 

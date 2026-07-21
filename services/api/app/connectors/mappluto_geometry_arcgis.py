@@ -1377,6 +1377,25 @@ def fetch_layer_metadata(
             detail={"url": url, "spatial_reference": repr(sr)},
         )
 
+    # M2-T009 G4 D1: the layer metadata also carries a TOP-LEVEL
+    # ``spatialReference`` (alongside ``extent.spatialReference``). Assert it
+    # too when present, so a drifted top-level CRS cannot pass validation while
+    # the extent CRS stays correct - mirroring the per-page envelope CRS check.
+    top_sr = doc.get("spatialReference")
+    if top_sr is not None and (
+        not isinstance(top_sr, dict)
+        or top_sr.get("wkid") != EXPECTED_WKID
+        or top_sr.get("latestWkid") != EXPECTED_LATEST_WKID
+    ):
+        raise WrongCRSError(
+            "top-level layer spatialReference is not the authoritative "
+            f"EPSG:2263 (wkid {EXPECTED_WKID} / latestWkid "
+            f"{EXPECTED_LATEST_WKID}); geometry in an unexpected CRS must not "
+            "be consumed",
+            correlation_id=correlation_id,
+            detail={"url": url, "spatial_reference": repr(top_sr)},
+        )
+
     geometry_type = doc.get("geometryType")
     if geometry_type != EXPECTED_GEOMETRY_TYPE:
         raise SchemaDriftError(
@@ -1939,6 +1958,7 @@ class ResilientMapPlutoGeometryClient:
         sleep: Callable[[float], None] = time.sleep,
         rng: Random | None = None,
         metrics: ResilienceMetrics | None = None,
+        metadata_cache_ttl_seconds: float | None = None,
     ) -> None:
         self._config = config or ResilienceConfig()
         self._transport = transport
@@ -1948,6 +1968,14 @@ class ResilientMapPlutoGeometryClient:
         self._sleep = sleep
         self._rng = rng or Random()
         self.metrics = metrics or ResilienceMetrics()
+        # M2-T009 carried option (opt-in, default OFF): when set to a positive
+        # TTL, the validated layer metadata is fetched ONCE and reused across
+        # lot fetches until it expires, instead of refetching+revalidating it on
+        # every result-cache miss. None/<=0 preserves the original behavior
+        # exactly (the plain fetch fetches its own metadata each call).
+        self._metadata_cache_ttl_seconds = metadata_cache_ttl_seconds
+        self._metadata_lock = threading.Lock()
+        self._metadata_entry: tuple[float, MapPlutoLayerMetadata] | None = None
         self._cache = TTLCache(
             ttl_seconds=self._config.cache_ttl_seconds,
             max_entries=self._config.cache_max_entries,
@@ -1966,6 +1994,52 @@ class ResilientMapPlutoGeometryClient:
 
     def _cache_key(self, canonical_bbl: str) -> str:
         return f"{self._config.cache_key_version}:{SOURCE_ID}:lot:{canonical_bbl}"
+
+    def _acquire_metadata(
+        self, correlation_id: str, budget: AnalysisBudget | None
+    ) -> MapPlutoLayerMetadata | None:
+        """Opt-in metadata reuse (M2-T009 carried option). When
+        ``metadata_cache_ttl_seconds`` is set, validated layer metadata is
+        fetched ONCE and reused across lot fetches until the TTL expires,
+        avoiding a metadata refetch+revalidation on every result-cache miss.
+        Returns None when the option is disabled (the plain fetch then fetches
+        its own metadata - unchanged behavior). Fetched inside the caller's
+        try/except, so a transient metadata failure routes to the SAME breaker /
+        last-known-good handling as a lot fetch (never silently ignored)."""
+        ttl = self._metadata_cache_ttl_seconds
+        if ttl is None or ttl <= 0:
+            return None
+        with self._metadata_lock:
+            entry = self._metadata_entry
+            if entry is not None and (self._now() - entry[0]) <= ttl:
+                self.metrics.emit(
+                    "metadata_cache_hit",
+                    source_id=SOURCE_ID,
+                    correlation_id=correlation_id,
+                )
+                return entry[1]
+        self.metrics.emit(
+            "metadata_cache_miss", source_id=SOURCE_ID, correlation_id=correlation_id
+        )
+        metadata = fetch_layer_metadata(
+            transport=self._transport,
+            timeout=self._timeout,
+            max_attempts=self._config.retry_max_attempts,
+            backoff_base=self._config.backoff_base_seconds,
+            backoff_cap=self._config.backoff_cap_seconds,
+            retry_after_cap=self._config.retry_after_max_wait_seconds,
+            rng=self._rng,
+            sleep=self._sleep,
+            clock=self._wall_clock,
+            correlation_id=correlation_id,
+            budget=budget,
+        )
+        with self._metadata_lock:
+            self._metadata_entry = (self._now(), metadata)
+        self.metrics.emit(
+            "metadata_cache_store", source_id=SOURCE_ID, correlation_id=correlation_id
+        )
+        return metadata
 
     def fetch_lot_geometry(
         self,
@@ -2011,8 +2085,12 @@ class ResilientMapPlutoGeometryClient:
             return self._serve_lkg_or_raise(key, correlation_id, rejection)
 
         try:
+            # Opt-in reuse of validated metadata across lot fetches (default
+            # off -> None -> the plain fetch fetches its own, unchanged).
+            metadata = self._acquire_metadata(correlation_id, budget)
             result = fetch_lot_geometry(
                 normalized.canonical,
+                metadata=metadata,
                 transport=self._transport,
                 timeout=self._timeout,
                 max_attempts=self._config.retry_max_attempts,

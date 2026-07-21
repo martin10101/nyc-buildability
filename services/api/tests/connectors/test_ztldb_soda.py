@@ -27,6 +27,7 @@ from app.connectors.pluto_soda import (
 )
 from app.connectors.ztldb_soda import (
     API_VIEWS_URL,
+    APP_TOKEN_ENV_VAR,
     APPENDIX_C_OVERLAYS,
     APPENDIX_D_LIMITED_HEIGHT,
     BASE_URL,
@@ -75,6 +76,17 @@ APRIL_CLOCK = lambda: datetime(2026, 4, 10, 12, 0, 0, tzinfo=UTC)  # noqa: E731
 ZT01_NORMALIZED_DIGEST = (
     "sha256:5ac370992b87ff2da5eeaf883d264b9b30658da0c5bdec555fe4a6482cfc2564"
 )
+
+
+@pytest.fixture(autouse=True)
+def _hermetic_app_token(monkeypatch):
+    """M2-T008 G3/G4 O2 (test hermeticity): clear any ambient SOCRATA_APP_TOKEN
+    so token behavior is determined ONLY by each test's explicit ``app_token``
+    argument, never by the developer's or CI runner's environment. Without this,
+    a machine that exports the token would make the ``app_token=None`` /
+    no-token assertions (e.g. test_s16_requests_without_token_carry_only_the_
+    accept_header) silently exercise a different path than intended."""
+    monkeypatch.delenv(APP_TOKEN_ENV_VAR, raising=False)
 
 
 def load_fixture(name: str) -> dict:

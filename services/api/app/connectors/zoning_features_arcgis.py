@@ -527,6 +527,26 @@ def build_query_url(
                 layer=layer,
                 detail={"unknown": [_safe_field_name(f) for f in unknown]},
             )
+        # M2-T007 G1 D1: an explicit out_fields list that omits the object-id
+        # (order-by) field makes the service return features WITHOUT an object
+        # id, which _validate_page_envelope would then classify as
+        # malformed_response - blaming upstream for a client-side parameter
+        # mistake. Refuse it up front as a typed disallowed_request instead
+        # (the object id is required for deterministic ordering + envelope
+        # validation). The default '*' path is unaffected.
+        if order_by_field not in out_fields:
+            raise DisallowedRequestError(
+                "an explicit outFields list must include the order-by "
+                "object-id field; omitting it would make the service return "
+                "features without an object id (a client-side parameter "
+                "mistake, not an upstream malformed response)",
+                correlation_id=correlation_id,
+                layer=layer,
+                detail={
+                    "order_by_field": _safe_field_name(order_by_field),
+                    "out_fields": [_safe_field_name(f) for f in out_fields],
+                },
+            )
         out_fields_param = ",".join(out_fields)
     else:
         raise DisallowedRequestError(

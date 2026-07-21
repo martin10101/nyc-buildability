@@ -3,15 +3,16 @@
 Acceptance scenarios (packet S1-S8, S10):
 
 - S1  valid profile passes backend validation unchanged and declares the
-      resolved canonical contract_version (1.3.0 since task M2-T006).
+      resolved canonical contract_version (1.4.0 since task M2-T012).
 - S2  fault injection: a malformed profile from the builder yields a typed
       500 internal_contract_error with correlation id, never an invalid 200.
 - S3  pair matrix: every (HTTP status, state) emission path is enumerated
       against the documented STATUS_STATE_MATRIX; an undocumented pair fails.
 - S5  typegen determinism + 100% key coverage (test_property_typegen.py).
 - S6  contract_version consistency: schema, README, API, builder agree on
-      1.3.0; declared-vs-emitted-key-set consistency (including the M2-T006
-      dotted-path key reproducibility.staleness); no stale hard-coded ver.
+      1.4.0; declared-vs-emitted-key-set consistency (including the M2-T006
+      dotted-path key reproducibility.staleness and the M2-T012 wave keys); no
+      stale hard-coded ver.
 - S7  backward compatibility: valid 1.2.0, 1.1.0 AND 1.0.0 instances still
       pass backend validation (every added key is optional).
 - S8  unsupported version: a profile declaring an unpublished contract_version
@@ -147,9 +148,9 @@ def test_s1_valid_profile_declares_resolved_version_and_validates(client) -> Non
     assert response.status_code == 200
     assert response.headers["x-correlation-id"]
     profile = response.json()
-    # The resolved canonical declaration (declare-what-you-emit; 1.3.0 since
-    # M2-T006 added the typed reproducibility.staleness emission).
-    assert profile["profile_version"]["contract_version"] == "1.3.0"
+    # The resolved canonical declaration (declare-what-you-emit; 1.4.0 since
+    # M2-T012 added the optional wave/spatial-integration keys).
+    assert profile["profile_version"]["contract_version"] == "1.4.0"
     # And it passes the same validator the route ran before send.
     validate_profile(profile)  # must not raise
 
@@ -336,7 +337,7 @@ def test_s3_500_unsupported_version_pair_is_documented(raw_client, monkeypatch) 
 
     def bad_version_builder(result):
         profile = build_property_profile(result)
-        profile["profile_version"]["contract_version"] = "1.4.0"  # unpublished
+        profile["profile_version"]["contract_version"] = "1.5.0"  # unpublished
         return profile
 
     monkeypatch.setattr(properties_module, "build_property_profile", bad_version_builder)
@@ -374,10 +375,10 @@ def test_s3_matrix_has_no_untested_pairs() -> None:
 
 
 def test_s6_builder_and_schema_agree_on_canonical_version() -> None:
-    assert PROFILE_CONTRACT_VERSION == "1.3.0"
+    assert PROFILE_CONTRACT_VERSION == "1.4.0"
     assert PROFILE_CONTRACT_VERSION in SUPPORTED_CONTRACT_VERSIONS
     # The supported set is sourced LIVE from the schema enum, not hard-coded.
-    assert SUPPORTED_CONTRACT_VERSIONS == ("1.0.0", "1.1.0", "1.2.0", "1.3.0")
+    assert SUPPORTED_CONTRACT_VERSIONS == ("1.0.0", "1.1.0", "1.2.0", "1.3.0", "1.4.0")
 
 
 def test_s6_declared_below_emitted_keys_is_rejected() -> None:
@@ -428,9 +429,10 @@ def test_s6_no_stale_version_hard_coded_in_builder_source() -> None:
     builder_src = (REPO_ROOT / "services" / "api" / "app" / "profile" / "builder.py").read_text(
         encoding="utf-8"
     )
-    assert 'PROFILE_CONTRACT_VERSION = "1.3.0"' in builder_src
+    assert 'PROFILE_CONTRACT_VERSION = "1.4.0"' in builder_src
     assert 'PROFILE_CONTRACT_VERSION = "1.0.0"' not in builder_src
     assert 'PROFILE_CONTRACT_VERSION = "1.2.0"' not in builder_src
+    assert 'PROFILE_CONTRACT_VERSION = "1.3.0"' not in builder_src
 
 
 # --------------------------------------------------------------------------
@@ -497,14 +499,16 @@ def test_s7_valid_1_3_0_lkg_fixture_validates() -> None:
 
 
 def test_s8_select_schema_version_rejects_unpublished() -> None:
+    # 1.5.0 is the current rejected exemplar (one beyond the published 1.4.0);
+    # 1.4.0 became published by task M2-T012.
     with pytest.raises(UnsupportedContractVersionError) as excinfo:
-        select_schema_version("1.4.0")
-    assert excinfo.value.declared_version == "1.4.0"
+        select_schema_version("1.5.0")
+    assert excinfo.value.declared_version == "1.5.0"
 
 
 def test_s8_validate_profile_bounded_error_for_unpublished_version() -> None:
     profile = build_f01_profile()
-    profile["profile_version"]["contract_version"] = "1.4.0"
+    profile["profile_version"]["contract_version"] = "1.5.0"
     with pytest.raises(UnsupportedContractVersionError):
         validate_profile(profile)
 
@@ -530,13 +534,13 @@ def test_s8_route_returns_bounded_500_for_unpublished_version(raw_client, monkey
 
 
 def test_s8_unsupported_version_is_never_coerced_to_a_neighbor() -> None:
-    """The declared version is rejected, not silently rewritten to 1.3.0."""
+    """The declared version is rejected, not silently rewritten to 1.4.0."""
     profile = build_f01_profile()
-    profile["profile_version"]["contract_version"] = "1.4.0"
+    profile["profile_version"]["contract_version"] = "1.5.0"
     with pytest.raises(UnsupportedContractVersionError):
         validate_profile(profile)
     # The profile object was not mutated to a supported version.
-    assert profile["profile_version"]["contract_version"] == "1.4.0"
+    assert profile["profile_version"]["contract_version"] == "1.5.0"
 
 
 def test_s8_malformed_contract_version_type_is_typed_contract_error() -> None:

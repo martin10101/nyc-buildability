@@ -47,6 +47,7 @@ from app.connectors.pluto_soda import (
     SOURCE_ID,
     PlutoFetchResult,
 )
+from app.profile.wave_integration import build_wave_sections
 
 __all__ = [
     "CRITICAL_COLUMNS",
@@ -57,18 +58,22 @@ __all__ = [
 ]
 
 # CONTRACT VERSION DECLARED BY THIS BUILDER (task M2-T003 established the
-# declare-what-you-emit rule; task M2-T006 advances it to 1.3.0).
+# declare-what-you-emit rule; M2-T006 advanced it to 1.3.0; task M2-T012
+# advances it to 1.4.0).
 #
-# The builder emits keys through 1.3.0 (the M2-T004 set plus the typed
-# reproducibility.staleness object, which it emits on EVERY serve), so it
-# DECLARES 1.3.0 - the canonical contract version whose key set it fully
-# covers. Because every added key is optional, previously accepted 1.0.0,
-# 1.1.0, and 1.2.0 instances remain valid and are served unchanged (backward
-# compatibility); the value is validated against the closed published enum by
-# app.profile.contract (including the declared-vs-emitted consistency check
-# on the dotted path "reproducibility.staleness"), never hard-coded against a
-# stale version.
-PROFILE_CONTRACT_VERSION = "1.3.0"
+# The builder can now emit keys through 1.4.0 (the M2-T004/M2-T006 set plus the
+# three OPTIONAL wave/spatial-integration keys zoning_features, lot_geometry,
+# and spatial_intersection - emitted ONLY when the caller supplies that data),
+# so it DECLARES 1.4.0 - the canonical contract version whose key set it fully
+# covers. Because every added key is optional, a PLUTO-only build (no wave data)
+# declares 1.4.0 while emitting no 1.4.0 keys and stays consistent (declared >=
+# every emitted key's introducing version), and previously accepted 1.0.0-1.3.0
+# instances remain valid and are served unchanged (backward compatibility). The
+# value is validated against the closed published enum by app.profile.contract
+# (including the declared-vs-emitted consistency check on the wave keys and the
+# dotted path "reproducibility.staleness"), never hard-coded against a stale
+# version.
+PROFILE_CONTRACT_VERSION = "1.4.0"
 
 # ---------------------------------------------------------------------------
 # Deterministic PLUTO column buckets (presentation grouping only). Columns not
@@ -507,8 +512,12 @@ def _conflicts(result: PlutoFetchResult) -> list[dict]:
 def _assert_provenance_integrity(profile: dict) -> None:
     """Backend-side enforcement of the schema's referential-integrity rule:
     every provenance_ref must resolve to a provenance_id (PRD sections 9/19).
-    By construction this cannot fail; if it ever does, failing loudly beats
-    exporting a fact without provenance."""
+    Covers the pre-1.4.0 fact sites (lot_facts, existing_building_facts,
+    zoning.mapped_features) AND the contract-1.4.0 wave/spatial sites
+    (zoning_features.layers[].provenance_ref, lot_geometry.provenance_ref,
+    spatial_intersection.provenance_refs[] - task M2-T012). The backend is the
+    integrity authority for live data; by construction this cannot fail, but if
+    it ever does, failing loudly beats exporting a fact without provenance."""
     provenance_ids = {record["provenance_id"] for record in profile["provenance"]}
     refs = [
         fact["provenance_ref"]
@@ -518,6 +527,25 @@ def _assert_provenance_integrity(profile: dict) -> None:
     refs.extend(
         feature["provenance_ref"] for feature in profile["zoning"]["mapped_features"]
     )
+    # Contract 1.4.0 additive sites (present only when the caller supplied the
+    # corresponding wave/spatial facts).
+    zoning_features = profile.get("zoning_features")
+    if isinstance(zoning_features, dict):
+        refs.extend(
+            layer["provenance_ref"]
+            for layer in zoning_features.get("layers", [])
+            if isinstance(layer, dict) and "provenance_ref" in layer
+        )
+    lot_geometry = profile.get("lot_geometry")
+    if isinstance(lot_geometry, dict) and "provenance_ref" in lot_geometry:
+        refs.append(lot_geometry["provenance_ref"])
+    spatial_intersection = profile.get("spatial_intersection")
+    if isinstance(spatial_intersection, dict):
+        refs.extend(
+            ref
+            for ref in spatial_intersection.get("provenance_refs", [])
+            if isinstance(ref, str)
+        )
     dangling = sorted(set(refs) - provenance_ids)
     if dangling:
         raise RuntimeError(
@@ -533,6 +561,9 @@ def build_property_profile(
     additional_provenance: list[dict] | None = None,
     additional_conflicts: list[dict] | None = None,
     additional_notes: list[str] | None = None,
+    lot_geometry: object | None = None,
+    zoning_features: object | None = None,
+    spatial_intersection: object | None = None,
 ) -> dict:
     """Build the canonical property-profile document for a successful fetch.
 
@@ -558,6 +589,23 @@ def build_property_profile(
             strings appended to ``reproducibility.connector_notes``
             (schema: array of strings) - e.g. cross-check uncertainty
             notes that are visible but are not conflicts.
+        lot_geometry: (task M2-T012, additive contract 1.4.0, default None -
+            every existing call is unchanged) the accepted MapPLUTO
+            ``LotGeometryResult`` (or its dict form) for THIS BBL; emitted as
+            the additive ``lot_geometry`` section with its own provenance
+            record. The geometry-validity taxonomy is preserved; never a legal
+            boundary certification.
+        zoning_features: (task M2-T012, additive) an iterable of accepted
+            zoning-features layer results (or dicts) consulted for this
+            analysis; emitted as the additive ``zoning_features`` section (one
+            provenance record per layer). CITYWIDE reference facts, NOT
+            lot-level determinations.
+        spatial_intersection: (task M2-T012, additive) the accepted M2-T013
+            ``LotIntersectionRecord`` (or its ``as_dict()``); emitted as the
+            additive ``spatial_intersection`` section with the engine-internal
+            ``coverage_audits`` EXCLUDED and the uncertainty NEVER collapsed.
+            Its ``provenance_refs`` point at the derived-result record and its
+            lot-geometry / zoning-features inputs.
 
     Returns:
         A dict that validates against property_profile.schema.json v1. The
@@ -681,5 +729,25 @@ def build_property_profile(
         profile["conflicts"],
         drift_columns,
     )
+
+    # Task M2-T012 (contract 1.4.0, additive): fold in the accepted
+    # wave-connector and spatial-intersection facts as OPTIONAL sections, each
+    # with full provenance, when supplied. A PLUTO-only build passes all three
+    # as None and is byte-for-byte unchanged (build_wave_sections returns empty
+    # collections). The wave provenance records are appended to the provenance
+    # array BEFORE integrity is asserted so every new provenance_ref resolves;
+    # wave_integration only RESHAPES accepted facts into the contract - it never
+    # adjudicates, renormalizes a share range, or collapses the M2-T013
+    # uncertainty.
+    wave_sections, wave_provenance = build_wave_sections(
+        result.bbl,
+        lot_geometry=lot_geometry,
+        zoning_features=zoning_features,
+        spatial_intersection=spatial_intersection,
+        fallback_retrieved_at=profile["profile_version"]["generated_at"],
+    )
+    profile["provenance"].extend(wave_provenance)
+    profile.update(wave_sections)
+
     _assert_provenance_integrity(profile)
     return profile
