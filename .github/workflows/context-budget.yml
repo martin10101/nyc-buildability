@@ -1,0 +1,29 @@
+name: context-budget
+
+# Guards the automatic project-instruction context load (root CLAUDE.md + its @-imports +
+# unconditional .claude/rules) so it cannot silently regrow to the pre-2026-07-21 ~23k-token
+# bloat, and so retired history / stale status boards stay archived and labelled.
+# Deliberately a standalone workflow — it does not touch ci.yml's security/control-plane jobs.
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: context-budget-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  context-budget:
+    name: context-budget (automatic project-instruction load guard)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+      # Stdlib only; no dependencies, no network. ubuntu-latest ships python3.
+      - name: Context-budget guard self-tests
+        run: python3 tools/test_context_budget_check.py
+      - name: Enforce context budget (eager load, handoff cap, retired/stale/duplicate boards)
+        run: python3 tools/context_budget_check.py

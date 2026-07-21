@@ -1,20 +1,17 @@
 # EXPANSION-AGENT HOLD NOTICE (owner directive 2026-07-17; G5 M0-T010)
 
-This notice is deliberately unconditioned (no `paths:` frontmatter) so it attaches to
-every session — the same always-loaded plane as `.claude/rules/3d-ui-expansion.md`.
+This notice is deliberately unconditioned (no `paths:` frontmatter) so it attaches to every session:
+it carries the still-active owner hold on expansion planning. (The 3D/UI *technical* rules are now
+path-scoped in `.claude/rules/3d-ui-expansion.md`, loading only under `apps/web/**`.)
 
-## 1. DISPATCH PROHIBITION — RETIRED 2026-07-17
+## 1. Dispatch-guard invariant (active)
 
-The former prohibition on dispatching `3d-massing-engineer`, `product-design-director`,
-`visual-quality-reviewer`, `financial-feasibility-engineer`, `opportunity-search-engineer`
-was RETIRED at M0-T013 acceptance (2026-07-17): all five agent definitions now carry the
-ADR-005 protocol sections and conformant frontmatter, verified by G3 + G5 re-check
-(project-control/reports/M0-T013-G3-code-review.md and M0-T013-G5-security-recheck.md),
-merged at ff24147 with CI green. Blocker B-007 is `resolved`; the PreToolUse hook
-`.claude/hooks/agent_dispatch_guard.py` reads that status live and now permits the five
-agents. The hook and its tests stay in place as a regression backstop — do not remove or
-re-scope them without a G5 review. NOTE: dispatchability does not authorize new expansion
-work; section 2 below still governs planning.
+Keep `.claude/hooks/agent_dispatch_guard.py` and its tests in place as a regression backstop; do not
+remove or re-scope them without a G5 review. The five expansion agents (`3d-massing-engineer`,
+`product-design-director`, `visual-quality-reviewer`, `financial-feasibility-engineer`,
+`opportunity-search-engineer`) are dispatchable; dispatchability does not authorize expansion work —
+§2 governs planning. Former dispatch-prohibition history:
+`docs/archive/expansion-agent-dispatch-prohibition-retired-2026-07-17.md`.
 
 ## 2. OWNER-REVIEW HOLD ON EXPANSION PLANNING
 
