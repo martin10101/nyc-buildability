@@ -24,8 +24,7 @@
   ],
   "dependencies": [
     "M2-T011",
-    "M0-T018",
-    "M0-T019"
+    "M0-T018"
   ],
   "allowed_paths": [
     "services/api/app/spatial/** (new module)",
@@ -76,19 +75,20 @@
     "geospatial-engineer"
   ],
   "producer_agent": "orchestrator",
-  "status": "awaiting_gate",
-  "progress_percent": 95,
+  "status": "accepted",
+  "progress_percent": 100,
   "risks": [
     "POLICY RECORDED (2026-07-20): owner accepted advisory defaults C1 (linear sum, provisional 40 ft), C2 (conditional-only upgrade), C3 (no suppression + minor_portion under 2 percent), C4 (point + range display); coverage-family invariants amendment added 2026-07-20. Pre-implementation policy condition SATISFIED. DISPATCH GATED: owner directive 2026-07-20 requires BOTH P0 tasks (M0-T018, M0-T019) accepted AND all exact-main checks green BEFORE M2-T013 dispatch (Phase 3); M2-T011 already accepted.",
     "G1 added for the V1/V2 official-metadata verification (data-contract-verifier); G4 domain reviewer is geospatial-engineer, so the producer must be a DIFFERENT agent (backend-engineer per M2-T009 precedent)",
     "V1/V2 are BLOCKING in-task requirements: if officials publish no accuracy figure, the honest permanent finding is basis=assumed with fail-safe behavior - that outcome is acceptable; guessing a documented figure is not",
     "The linear-sum band is PROVISIONAL on 20 ft inputs: if V1/V2 verification finds different documented values, the band recomputes from the verified values (policy formula is fixed; constants are evidence-driven)",
     "STOP CONDITIONS: any pressure to collapse uncertain cases into definitive assignments; any need for a contract field (that is M2-T012); any legal-interpretation question (blocker for professional review); any Verified-labeling request; credentials",
-    "Execution: local checkout + CI; committed fixture reuse + small metadata extracts; negligible disk footprint"
+    "Execution: local checkout + CI; committed fixture reuse + small metadata extracts; negligible disk footprint",
+    "OWNER-AUTHORIZED ACCEPTANCE EXCEPTION 2026-07-21: the M0-T019 dependency was a 2026-07-20 SEQUENCING gate only (M2-T013 is backend-only, zero file/import overlap with the frozen frontend M0-T019). The owner lifted it for M2-T013 acceptance at the reviewed head 788f1f7 (G1/G3/G4 PASS + bounded final-head delta review PASS). M0-T019/PR #64 remains frozen and untouched; CP-0032 reserved; M0-T020 unchanged. Exception applies to M2-T013 only."
   ],
   "blockers": [],
   "created_at": "2026-07-20T06:34:25.149757+00:00",
-  "updated_at": "2026-07-21T05:57:42.155174+00:00",
+  "updated_at": "2026-07-21T06:16:41.815219+00:00",
   "worktree": ".claude/worktrees/M2-T013-spatial",
   "progress_log": [
     {
@@ -112,5 +112,7 @@
       "status": "awaiting_gate",
       "message": "All required independent gates PASS (G1 data-contract, G3 code, G4 geospatial) at 59dbe65. Reviewer-recommended fail-safe hardening applied additively; full suite 567 passed, ruff clean. Acceptance BLOCKED pending M0-T019 sequencing exception + separate owner authorization."
     }
-  ]
+  ],
+  "accepted_by": "orchestrator",
+  "accepted_at": "2026-07-21T06:16:41.814135+00:00"
 }
