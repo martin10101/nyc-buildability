@@ -76,8 +76,8 @@
     "geospatial-engineer"
   ],
   "producer_agent": "orchestrator",
-  "status": "self_check",
-  "progress_percent": 75,
+  "status": "awaiting_gate",
+  "progress_percent": 85,
   "risks": [
     "POLICY RECORDED (2026-07-20): owner accepted advisory defaults C1 (linear sum, provisional 40 ft), C2 (conditional-only upgrade), C3 (no suppression + minor_portion under 2 percent), C4 (point + range display); coverage-family invariants amendment added 2026-07-20. Pre-implementation policy condition SATISFIED. DISPATCH GATED: owner directive 2026-07-20 requires BOTH P0 tasks (M0-T018, M0-T019) accepted AND all exact-main checks green BEFORE M2-T013 dispatch (Phase 3); M2-T011 already accepted.",
     "G1 added for the V1/V2 official-metadata verification (data-contract-verifier); G4 domain reviewer is geospatial-engineer, so the producer must be a DIFFERENT agent (backend-engineer per M2-T009 precedent)",
@@ -88,7 +88,7 @@
   ],
   "blockers": [],
   "created_at": "2026-07-20T06:34:25.149757+00:00",
-  "updated_at": "2026-07-21T05:38:08.579607+00:00",
+  "updated_at": "2026-07-21T05:40:18.622321+00:00",
   "worktree": ".claude/worktrees/M2-T013-spatial",
   "progress_log": [
     {
