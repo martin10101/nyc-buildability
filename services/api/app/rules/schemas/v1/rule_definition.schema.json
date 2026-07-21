@@ -55,7 +55,11 @@
           "required": {"type": "boolean"},
           "unit": {"type": ["string", "null"]},
           "enum": {"type": "array", "items": {"type": "string"}},
-          "description": {"type": "string"}
+          "description": {"type": "string"},
+          "minimum": {"type": "number", "description": "M4-T003: optional inclusive lower bound for a numeric input; a supplied value below it is rejected fail-closed at evaluation (no computed value)."},
+          "maximum": {"type": "number", "description": "M4-T003: optional inclusive upper bound for a numeric input."},
+          "exclusive_minimum": {"type": "number", "description": "M4-T003: optional exclusive lower bound (value must be strictly greater); e.g. a zoning-lot area must be > 0."},
+          "exclusive_maximum": {"type": "number", "description": "M4-T003: optional exclusive upper bound (value must be strictly less)."}
         }
       }
     },
@@ -165,9 +169,59 @@
         "note": {"type": "string"}
       }
     },
-    "limitations": {"type": "array", "items": {"type": "string"}}
+    "limitations": {"type": "array", "items": {"type": "string"}},
+    "effective_from": {
+      "type": ["string", "null"],
+      "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$",
+      "description": "M4-T003: ISO date (YYYY-MM-DD) this rule version first takes effect, or null for open-ended-in-the-past. Used with an as_of evaluation date to select the version in effect. Half-open with effective_to: [effective_from, effective_to)."
+    },
+    "effective_to": {
+      "type": ["string", "null"],
+      "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$",
+      "description": "M4-T003: ISO date this rule version stops being effective (exclusive), or null for open-ended-in-the-future."
+    },
+    "release": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "M4-T003: self-described test/lifecycle release evidence carried into the trace so a consumer sees, per evaluation, that a draft rule is not release-verified. Never a substitute for the independent gate or G6.",
+      "properties": {
+        "deterministic_tests": {"type": "string", "enum": ["declared", "none"], "description": "Whether the rule author declares a deterministic test suite exercises this rule."},
+        "test_suite_ref": {"type": ["string", "null"], "description": "Pointer to the deterministic test evidence (e.g. a test module path)."},
+        "independent_review": {"type": "string", "enum": ["pending", "passed"], "description": "Independent engineering review (G3/G4) state as declared by the rule author; the authoritative record is the project-control ledger."},
+        "qualified_human_approval": {"type": "string", "enum": ["pending", "approved"], "description": "G6 qualified-human legal approval state. 'approved' is meaningful only alongside a recorded G6Approval at evaluation time; a draft rule declares 'pending'."}
+      }
+    },
+    "determination": {
+      "$ref": "#/$defs/determination",
+      "description": "M4-T003: optional compliance determination. When present, after the computation the engine compares a proposal input against a computed output (or constant) and records a genuine pass/fail determination in the trace WITHOUT changing coverage (a draft rule stays conditional)."
+    }
   },
   "$defs": {
+    "determination": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "left", "compare", "right", "pass_label", "fail_label"],
+      "properties": {
+        "id": {"type": "string", "pattern": "^[a-z0-9][a-z0-9_]*$"},
+        "description": {"type": "string"},
+        "left": {"$ref": "#/$defs/determination_ref"},
+        "compare": {"type": "string", "enum": ["lt", "le", "gt", "ge", "eq", "ne"]},
+        "right": {"$ref": "#/$defs/determination_ref"},
+        "pass_label": {"type": "string", "minLength": 1},
+        "fail_label": {"type": "string", "minLength": 1},
+        "citation_ref": {"type": ["string", "null"]}
+      }
+    },
+    "determination_ref": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "Exactly one of const / input / output. 'output' references a declared computation output by name (available after computation).",
+      "properties": {
+        "const": {"type": "number"},
+        "input": {"type": "string"},
+        "output": {"type": "string"}
+      }
+    },
     "ref": {
       "type": "object",
       "additionalProperties": false,

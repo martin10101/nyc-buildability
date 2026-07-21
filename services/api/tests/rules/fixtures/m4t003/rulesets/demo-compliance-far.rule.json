@@ -1,0 +1,42 @@
+{
+  "rule_id": "demo-compliance-far",
+  "rule_version": "0.0.1-draft",
+  "family": "demo_compliance",
+  "title": "SYNTHETIC FAR compliance determination (applies+passes / applies+fails)",
+  "jurisdiction": "nyc",
+  "status": "extracted_draft",
+  "description": "SYNTHETIC fixture (M4-T003 RH-S7): computes a maximum floor area from the lot area and a FAR, then TESTS a proposed floor area against that computed limit, emitting a genuine compliance pass/fail determination. Proves the engine can express applies+passes AND applies+fails (a real constraint check, not just a limit computation) WITHOUT changing coverage. Illustrative value; not a Verified determination.",
+  "citations": [
+    {"snapshot_id": "zr-demo-m4t003", "section": "00-00-DEMO", "quote": "SYNTHETIC (not verbatim from any source): for M4-T003 engine-hardening demonstrations only - effective-date temporal selection and a compliance pass/fail determination. Illustrative values; never a legal statement.", "last_amended": null}
+  ],
+  "inputs": [
+    {"name": "zoning_district", "type": "string", "required": true, "description": "District governing the lot (scope via applicability)."},
+    {"name": "lot_area_sq_ft", "type": "number", "required": true, "unit": "square_feet", "exclusive_minimum": 0, "description": "Zoning-lot area (must be > 0)."},
+    {"name": "proposed_floor_area_sq_ft", "type": "number", "required": true, "unit": "square_feet", "exclusive_minimum": 0, "description": "Proposed residential floor area to test against the computed maximum (must be > 0)."}
+  ],
+  "outputs": [
+    {"name": "max_floor_area_sq_ft", "type": "number", "unit": "square_feet", "description": "Maximum floor area = lot area x FAR."}
+  ],
+  "parameters": [
+    {"name": "far_value", "value": 1.5, "citation_ref": "zr-demo-m4t003", "note": "SYNTHETIC FAR."}
+  ],
+  "applicability": {"op": "in_set", "input": "zoning_district", "values": ["DEMO"]},
+  "computation": {
+    "steps": [
+      {"id": "far", "op": "identity", "args": [{"param": "far_value"}], "note": "FAR."},
+      {"id": "max_fa", "op": "multiply", "args": [{"input": "lot_area_sq_ft"}, {"step": "far"}], "note": "Maximum floor area = lot area x FAR."}
+    ],
+    "outputs": {"max_floor_area_sq_ft": {"step": "max_fa"}}
+  },
+  "determination": {
+    "id": "far_compliance",
+    "description": "Proposed floor area must not exceed the computed maximum.",
+    "left": {"input": "proposed_floor_area_sq_ft"},
+    "compare": "le",
+    "right": {"output": "max_floor_area_sq_ft"},
+    "pass_label": "within_far_limit",
+    "fail_label": "exceeds_far_limit",
+    "citation_ref": "zr-demo-m4t003"
+  },
+  "limitations": ["SYNTHETIC compliance-determination demonstration; illustrative value; requires official capture + G6 before any use."]
+}

@@ -5,7 +5,15 @@
   "title": "R5 residence districts - maximum residential floor area ratio (standard zoning lots)",
   "jurisdiction": "nyc",
   "status": "needs_review",
-  "description": "DRAFT extraction (needs_review) of the maximum residential floor area ratio for standard zoning lots in R5, R5A, R5B and R5D districts, per NYC Zoning Resolution section 23-21. NOT a Verified determination: it is a candidate representation awaiting raw-HTML source verification and G6 qualified-human legal approval. The engine computes the standard-zoning-lot FAR and the resulting maximum residential floor area from the lot area; the higher 'qualifying residential sites' FAR and the single-dwelling-unit equivalent-FAR cap are surfaced as a conditional alternative and a documented limitation rather than silently applied or ignored.",
+  "effective_from": "2024-12-05",
+  "effective_to": null,
+  "release": {
+    "deterministic_tests": "declared",
+    "test_suite_ref": "services/api/tests/rules/test_rules_engine.py",
+    "independent_review": "pending",
+    "qualified_human_approval": "pending"
+  },
+  "description": "DRAFT extraction (needs_review) of the maximum residential floor area ratio for standard zoning lots in R5, R5A, R5B and R5D districts, per NYC Zoning Resolution section 23-21. NOT a Verified determination: it is a candidate representation awaiting raw-HTML source verification and G6 qualified-human legal approval. The engine computes the standard-zoning-lot FAR and the resulting maximum residential floor area from the lot area; the higher 'qualifying residential sites' FAR and the single-dwelling-unit equivalent-FAR cap are surfaced as a conditional alternative and a documented limitation rather than silently applied or ignored. effective_from is the section's Last Amended date (2024-12-05): evaluating as_of a date before it yields a visible not-effective outcome rather than applying today's values to a period this draft does not represent.",
   "citations": [
     {
       "snapshot_id": "zr-23-21",
@@ -15,8 +23,8 @@
     }
   ],
   "inputs": [
-    {"name": "zoning_district", "type": "string", "required": true, "enum": ["R5", "R5A", "R5B", "R5D"], "description": "The residence district governing the lot (or the portion under evaluation). Must be a confident, non-collapsed assignment; an uncertain M2-T013 geometric assignment is passed via spatial_context and downgrades coverage."},
-    {"name": "lot_area_sq_ft", "type": "number", "required": true, "unit": "square_feet", "description": "Zoning-lot area in square feet."},
+    {"name": "zoning_district", "type": "string", "required": true, "description": "The residence district governing the lot (or the portion under evaluation). District SCOPE is enforced by applicability (in_set R5/R5A/R5B/R5D), NOT by an input domain enum: a non-R5 district is a visible not_applicable, never an invalid input. Must be a confident, non-collapsed assignment; an uncertain M2-T013 geometric assignment is passed via spatial_context and downgrades coverage."},
+    {"name": "lot_area_sq_ft", "type": "number", "required": true, "unit": "square_feet", "exclusive_minimum": 0, "description": "Zoning-lot area in square feet; must be strictly positive. A zero/negative/non-finite value is rejected fail-closed (professional_review_required, no computed value) so the engine never produces a bogus (negative/NaN/inf) floor area."},
     {"name": "site_class", "type": "string", "required": false, "enum": ["standard_zoning_lot", "qualifying_residential_site"], "description": "Whether the lot is a standard zoning lot or a 'qualifying residential site'. When absent, the qualifying-site alternative is surfaced as conditional (not decided)."}
   ],
   "outputs": [

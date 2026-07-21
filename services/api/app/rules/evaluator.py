@@ -21,6 +21,7 @@ Load-bearing guarantees:
 
 from __future__ import annotations
 
+import math
 from typing import Any
 
 from . import coverage as cov
@@ -214,6 +215,149 @@ def _citations_with_provenance(rule: RuleDefinition, snapshots: SnapshotStore) -
 
 
 # --------------------------------------------------------------------------
+# M4-T003: fail-closed input validation (fix 1)
+# --------------------------------------------------------------------------
+
+def _is_finite_number(value: Any) -> bool:
+    return isinstance(value, int | float) and not isinstance(value, bool) and math.isfinite(value)
+
+
+def _json_safe(value: Any) -> Any:
+    """Non-finite floats are not valid strict JSON; represent them as strings so
+    a fail-closed trace (which records the offending input) stays serializable."""
+    if isinstance(value, float) and not math.isfinite(value):
+        return repr(value)
+    return value
+
+
+def _json_safe_inputs(inputs: dict) -> dict:
+    return {name: _json_safe(value) for name, value in inputs.items()}
+
+
+def _invalid_reason(spec, value: Any) -> str | None:
+    """Return why a SUPPLIED (non-None) input value is invalid, or None if valid.
+    Fail-closed: a value that is the wrong type, non-finite, out of the declared
+    numeric domain, or not in the declared enum is rejected before computation so
+    the engine never turns a bad input into a fabricated (e.g. negative) result."""
+    kind = spec.type
+    if kind in ("number", "integer"):
+        if isinstance(value, bool) or not isinstance(value, int | float):
+            return f"expected numeric {kind}, got {type(value).__name__}"
+        number = float(value)
+        if not math.isfinite(number):
+            return "non-finite number (NaN or infinity) is not a usable value"
+        if kind == "integer" and not number.is_integer():
+            return "expected an integer value"
+        if spec.minimum is not None and number < spec.minimum:
+            return f"below inclusive minimum {spec.minimum}"
+        if spec.maximum is not None and number > spec.maximum:
+            return f"above inclusive maximum {spec.maximum}"
+        if spec.exclusive_minimum is not None and number <= spec.exclusive_minimum:
+            return f"not greater than exclusive_minimum {spec.exclusive_minimum}"
+        if spec.exclusive_maximum is not None and number >= spec.exclusive_maximum:
+            return f"not less than exclusive_maximum {spec.exclusive_maximum}"
+    elif kind == "boolean":
+        if not isinstance(value, bool):
+            return f"expected boolean, got {type(value).__name__}"
+    elif kind == "string":
+        if not isinstance(value, str):
+            return f"expected string, got {type(value).__name__}"
+    if spec.enum is not None and value not in spec.enum:
+        return f"value {value!r} is not in the declared enum {list(spec.enum)}"
+    return None
+
+
+def _validate_inputs(rule: RuleDefinition, inputs: dict) -> tuple[list[str], list[dict]]:
+    """Return (missing_required, invalid_inputs). A required input that is None is
+    missing; any supplied input that fails :func:`_invalid_reason` is invalid."""
+    missing_required: list[str] = []
+    invalid_inputs: list[dict] = []
+    for spec in rule.inputs:
+        value = inputs.get(spec.name)
+        if value is None:
+            if spec.required:
+                missing_required.append(spec.name)
+            continue
+        reason = _invalid_reason(spec, value)
+        if reason is not None:
+            invalid_inputs.append(
+                {"name": spec.name, "reason": reason, "value_seen": _json_safe(value)}
+            )
+    return missing_required, invalid_inputs
+
+
+# --------------------------------------------------------------------------
+# M4-T003: release status (fix 3) + temporal effectiveness (fix 4)
+# --------------------------------------------------------------------------
+
+def _rule_release(rule: RuleDefinition, *, verified_eligible: bool) -> dict:
+    release = rule.release or {}
+    return {
+        "lifecycle_status": rule.status,
+        "deterministic_tests": release.get("deterministic_tests", "none"),
+        "independent_review": release.get("independent_review", "pending"),
+        "qualified_human_approval": release.get("qualified_human_approval", "pending"),
+        "verified_eligible": bool(verified_eligible),
+    }
+
+
+def _effective_window(rule: RuleDefinition, as_of_date: str | None) -> dict:
+    return {
+        "effective_from": rule.effective_from,
+        "effective_to": rule.effective_to,
+        "evaluated_as_of": as_of_date,
+        "in_effect": rule.is_in_effect(as_of_date),
+    }
+
+
+# --------------------------------------------------------------------------
+# M4-T003: compliance determination (fix 5)
+# --------------------------------------------------------------------------
+
+_COMPARATORS = {
+    "lt": lambda a, b: a < b,
+    "le": lambda a, b: a <= b,
+    "gt": lambda a, b: a > b,
+    "ge": lambda a, b: a >= b,
+    "eq": lambda a, b: a == b,
+    "ne": lambda a, b: a != b,
+}
+
+
+def _resolve_determination_ref(ref: dict, inputs: dict, outputs: dict) -> Any:
+    if "const" in ref:
+        return ref["const"]
+    if "input" in ref:
+        return inputs.get(ref["input"])
+    if "output" in ref:
+        return outputs.get(ref["output"])
+    return None
+
+
+def _evaluate_determination(rule: RuleDefinition, inputs: dict, outputs: dict) -> dict | None:
+    """Evaluate a compliance determination (proposal vs computed limit) into a
+    genuine pass/fail, WITHOUT changing coverage. Returns None when the rule has
+    no determination or an operand is not a finite number (indeterminate)."""
+    spec = rule.determination
+    if not spec:
+        return None
+    left = _resolve_determination_ref(spec["left"], inputs, outputs)
+    right = _resolve_determination_ref(spec["right"], inputs, outputs)
+    if not _is_finite_number(left) or not _is_finite_number(right):
+        return None
+    passed = _COMPARATORS[spec["compare"]](float(left), float(right))
+    return {
+        "id": spec["id"],
+        "description": spec.get("description", ""),
+        "compare": spec["compare"],
+        "left_value": float(left),
+        "right_value": float(right),
+        "outcome": "pass" if passed else "fail",
+        "label": spec["pass_label"] if passed else spec["fail_label"],
+    }
+
+
+# --------------------------------------------------------------------------
 # Top-level evaluate
 # --------------------------------------------------------------------------
 
@@ -224,47 +368,102 @@ def evaluate(
     *,
     spatial_context: dict | None = None,
     g6_approval: lifecycle.G6Approval | None = None,
+    as_of_date: str | None = None,
 ) -> RuleResult:
     citations = _citations_with_provenance(rule, snapshots)
+    verified_eligible = rule.status == lifecycle.STATUS_PUBLISHED and _approval_matches(
+        rule, g6_approval
+    )
+    rule_release = _rule_release(rule, verified_eligible=verified_eligible)
+    effective_window = _effective_window(rule, as_of_date)
+    evaluated_inputs = _json_safe_inputs(inputs)
     base_notes: list = []
 
-    # 1. Missing required inputs -> typed missing-data behaviour, no computation.
-    missing_required = [name for name in rule.required_inputs() if inputs.get(name) is None]
+    def _make_trace(**overrides) -> EvaluationTrace:
+        fields = {
+            "rule_id": rule.rule_id,
+            "rule_version": rule.rule_version,
+            "rule_status": rule.status,
+            "family": rule.family,
+            "evaluated_inputs": evaluated_inputs,
+            "citations": citations,
+            "uncertainty": {"propagated": False},
+            "exceptions_applied": [],
+            "computation_steps": [],
+            "outputs": {},
+            "applicability_trace": [],
+            "input_validation": {"valid": True, "invalid_inputs": []},
+            "rule_release": rule_release,
+            "effective_window": effective_window,
+            "determination": None,
+        }
+        fields.update(overrides)
+        return EvaluationTrace(**fields)
+
+    # 0. Temporal gating (fix 4): a rule not in effect as of the supplied date does
+    #    not apply - no computation, no value, a visible reason (never silent).
+    if not effective_window["in_effect"]:
+        return RuleResult(
+            _make_trace(
+                applicability_outcome=False,
+                applicability_trace=[
+                    {"not_effective": True, "evaluated_as_of": as_of_date}
+                ],
+                coverage_status=cov.COVERAGE_NOT_APPLICABLE,
+                data_completeness=cov.COMPLETENESS_COMPLETE,
+                notes=base_notes
+                + [
+                    f"rule {rule.rule_id} is not effective as of {as_of_date} "
+                    f"(effective {rule.effective_from}..{rule.effective_to})"
+                ],
+            )
+        )
+
+    # 1. Fail-closed input validation (fix 1): a missing required input, or ANY
+    #    supplied input that is the wrong type / non-finite / out of declared
+    #    domain / not in the declared enum, stops the evaluation before any
+    #    computation. No fabricated value (never a negative/NaN/inf result).
+    missing_required, invalid_inputs = _validate_inputs(rule, inputs)
     optional_missing = [
-        spec.name
-        for spec in rule.inputs
-        if not spec.required and inputs.get(spec.name) is None
+        spec.name for spec in rule.inputs if not spec.required and inputs.get(spec.name) is None
     ]
 
-    if missing_required:
-        # Applicability is only shown if all of ITS inputs are present; otherwise
-        # it is indeterminate (never silently 'not applicable').
+    if missing_required or invalid_inputs:
+        blocking = set(missing_required) | {iv["name"] for iv in invalid_inputs}
         appl_inputs = _predicate_input_names(rule.applicability)
-        if appl_inputs & set(missing_required):
+        if appl_inputs & blocking:
             appl_outcome = False
-            appl_trace = {"indeterminate": True, "reason": "required applicability input missing"}
-            base_notes.append("applicability indeterminate: required input(s) missing")
+            appl_trace = {
+                "indeterminate": True,
+                "reason": "applicability input missing or invalid",
+            }
+            base_notes.append("applicability indeterminate: applicability input(s) missing/invalid")
         else:
             appl_outcome, appl_trace = _eval_predicate(rule.applicability, inputs)
-        trace = EvaluationTrace(
-            rule_id=rule.rule_id,
-            rule_version=rule.rule_version,
-            rule_status=rule.status,
-            family=rule.family,
-            evaluated_inputs=dict(inputs),
-            applicability_outcome=appl_outcome,
-            applicability_trace=[appl_trace],
-            computation_steps=[],
-            outputs={},
-            coverage_status=cov.COVERAGE_PROFESSIONAL_REVIEW_REQUIRED,
-            data_completeness=cov.COMPLETENESS_MISSING_CRITICAL,
-            citations=citations,
-            uncertainty={"propagated": False},
-            exceptions_applied=[],
-            notes=base_notes
-            + [f"missing required input(s): {sorted(missing_required)}; no value computed"],
+        required_broken = blocking & set(rule.required_inputs())
+        completeness = (
+            cov.COMPLETENESS_MISSING_CRITICAL
+            if required_broken
+            else cov.COMPLETENESS_MISSING_NONCRITICAL
         )
-        return RuleResult(trace)
+        note_bits = []
+        if missing_required:
+            note_bits.append(f"missing required input(s): {sorted(missing_required)}")
+        if invalid_inputs:
+            note_bits.append(
+                "invalid input(s): "
+                + ", ".join(f"{iv['name']} ({iv['reason']})" for iv in invalid_inputs)
+            )
+        return RuleResult(
+            _make_trace(
+                applicability_outcome=appl_outcome,
+                applicability_trace=[appl_trace],
+                coverage_status=cov.COVERAGE_PROFESSIONAL_REVIEW_REQUIRED,
+                data_completeness=completeness,
+                input_validation={"valid": not invalid_inputs, "invalid_inputs": invalid_inputs},
+                notes=base_notes + [f"{'; '.join(note_bits)}; no value computed (fail-closed)"],
+            )
+        )
 
     # 2. Applicability.
     appl_outcome, appl_trace = _eval_predicate(rule.applicability, inputs)
@@ -272,33 +471,22 @@ def evaluate(
         completeness = (
             cov.COMPLETENESS_MISSING_NONCRITICAL if optional_missing else cov.COMPLETENESS_COMPLETE
         )
-        trace = EvaluationTrace(
-            rule_id=rule.rule_id,
-            rule_version=rule.rule_version,
-            rule_status=rule.status,
-            family=rule.family,
-            evaluated_inputs=dict(inputs),
-            applicability_outcome=False,
-            applicability_trace=[appl_trace],
-            computation_steps=[],
-            outputs={},
-            coverage_status=cov.COVERAGE_NOT_APPLICABLE,
-            data_completeness=completeness,
-            citations=citations,
-            uncertainty={"propagated": False},
-            exceptions_applied=[],
-            notes=base_notes + ["rule not applicable to the supplied inputs"],
+        return RuleResult(
+            _make_trace(
+                applicability_outcome=False,
+                applicability_trace=[appl_trace],
+                coverage_status=cov.COVERAGE_NOT_APPLICABLE,
+                data_completeness=completeness,
+                notes=base_notes + ["rule not applicable to the supplied inputs"],
+            )
         )
-        return RuleResult(trace)
 
     # 3. Deterministic computation.
     step_traces, outputs = _run_computation(rule, inputs)
 
     # 4. Base coverage for a draft rule is conditional; verified is only for a
     #    published rule with a matching G6 approval attached.
-    base_coverage = cov.COVERAGE_CONDITIONAL
-    if rule.status == lifecycle.STATUS_PUBLISHED and _approval_matches(rule, g6_approval):
-        base_coverage = cov.COVERAGE_VERIFIED
+    base_coverage = cov.COVERAGE_VERIFIED if verified_eligible else cov.COVERAGE_CONDITIONAL
 
     # 5. Exceptions + geometric uncertainty downgrade coverage (never upgrade).
     exc_downgrade, exceptions_applied, exc_notes = _apply_exceptions(rule, inputs)
@@ -314,24 +502,24 @@ def evaluate(
     for limitation in rule.limitations:
         notes.append(f"limitation: {limitation}")
 
-    trace = EvaluationTrace(
-        rule_id=rule.rule_id,
-        rule_version=rule.rule_version,
-        rule_status=rule.status,
-        family=rule.family,
-        evaluated_inputs=dict(inputs),
-        applicability_outcome=True,
-        applicability_trace=[appl_trace],
-        computation_steps=step_traces,
-        outputs=outputs,
-        coverage_status=coverage_status,
-        data_completeness=completeness,
-        citations=citations,
-        uncertainty=uncertainty_trace,
-        exceptions_applied=exceptions_applied,
-        notes=notes,
+    # 6. Compliance determination (fix 5): a genuine pass/fail against a computed
+    #    limit, recorded in the trace WITHOUT changing coverage.
+    determination = _evaluate_determination(rule, inputs, outputs)
+
+    return RuleResult(
+        _make_trace(
+            applicability_outcome=True,
+            applicability_trace=[appl_trace],
+            computation_steps=step_traces,
+            outputs=outputs,
+            coverage_status=coverage_status,
+            data_completeness=completeness,
+            uncertainty=uncertainty_trace,
+            exceptions_applied=exceptions_applied,
+            notes=notes,
+            determination=determination,
+        )
     )
-    return RuleResult(trace)
 
 
 def _approval_matches(rule: RuleDefinition, approval: lifecycle.G6Approval | None) -> bool:

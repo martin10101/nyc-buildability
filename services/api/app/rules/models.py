@@ -25,6 +25,11 @@ class InputSpec:
     unit: str | None = None
     enum: tuple[str, ...] | None = None
     description: str = ""
+    # M4-T003 fail-closed domain constraints (all optional; numeric inputs only).
+    minimum: float | None = None
+    maximum: float | None = None
+    exclusive_minimum: float | None = None
+    exclusive_maximum: float | None = None
 
 
 @dataclass(frozen=True)
@@ -67,12 +72,31 @@ class RuleDefinition:
     uncertainty_policy: dict
     limitations: tuple[str, ...]
     raw: dict
+    # M4-T003 additive fields (temporal versioning, release status, compliance).
+    effective_from: str | None = None
+    effective_to: str | None = None
+    release: dict = field(default_factory=dict)
+    determination: dict | None = None
 
     def input_map(self) -> dict[str, InputSpec]:
         return {spec.name: spec for spec in self.inputs}
 
     def required_inputs(self) -> tuple[str, ...]:
         return tuple(spec.name for spec in self.inputs if spec.required)
+
+    def output_names(self) -> tuple[str, ...]:
+        return tuple(self.computation.get("outputs", {}).keys())
+
+    def is_in_effect(self, as_of_date: str | None) -> bool:
+        """True when no ``as_of_date`` is supplied (no temporal gating) or the ISO
+        date falls in the half-open window ``[effective_from, effective_to)``."""
+        if as_of_date is None:
+            return True
+        if self.effective_from is not None and as_of_date < self.effective_from:
+            return False
+        if self.effective_to is not None and as_of_date >= self.effective_to:
+            return False
+        return True
 
 
 @dataclass
@@ -126,6 +150,11 @@ class EvaluationTrace:
     uncertainty: dict
     exceptions_applied: list
     notes: list = field(default_factory=list)
+    # M4-T003 additive trace sections (always emitted).
+    input_validation: dict = field(default_factory=lambda: {"valid": True, "invalid_inputs": []})
+    rule_release: dict = field(default_factory=dict)
+    effective_window: dict = field(default_factory=dict)
+    determination: dict | None = None
 
     def as_dict(self) -> dict:
         return {
@@ -144,6 +173,10 @@ class EvaluationTrace:
             "uncertainty": dict(self.uncertainty),
             "exceptions_applied": list(self.exceptions_applied),
             "notes": list(self.notes),
+            "input_validation": dict(self.input_validation),
+            "rule_release": dict(self.rule_release),
+            "effective_window": dict(self.effective_window),
+            "determination": dict(self.determination) if self.determination is not None else None,
         }
 
 

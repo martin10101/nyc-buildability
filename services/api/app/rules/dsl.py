@@ -97,6 +97,76 @@ def _check_refs(document: dict, snapshots: SnapshotStore) -> None:
         if ref:
             snapshots.get(ref)
 
+    # M4-T003 fix 2: predicate input references are validated fail-closed at LOAD.
+    # Every applicability / exception-condition predicate input must be a declared
+    # input, so a misspelled predicate input can never silently make a rule
+    # evaluate to False (not_applicable) at runtime.
+    _check_predicate_refs(rule_id, document["applicability"], inputs, where="applicability")
+    for exc in document.get("exceptions", []):
+        condition = exc.get("condition")
+        if condition is not None:
+            _check_predicate_refs(
+                rule_id, condition, inputs, where=f"exception {exc.get('id')!r} condition"
+            )
+
+    # M4-T003 fix 5: determination refs point at declared inputs / outputs / const.
+    determination = document.get("determination")
+    if determination is not None:
+        output_names = set(document["computation"]["outputs"])
+        for side in ("left", "right"):
+            _check_determination_ref(rule_id, determination[side], inputs, output_names, side)
+
+    # M4-T003 fix 4: effective window must be ordered when both bounds are present.
+    eff_from = document.get("effective_from")
+    eff_to = document.get("effective_to")
+    if eff_from and eff_to and eff_from >= eff_to:
+        raise DSLError(
+            f"rule {rule_id}: effective_from {eff_from!r} must be strictly before "
+            f"effective_to {eff_to!r}"
+        )
+
+
+def _check_predicate_refs(rule_id: str, node: dict, inputs: set[str], *, where: str) -> None:
+    """Fail-closed walk of a predicate tree: every leaf ``input`` must be declared."""
+    for combinator in ("all", "any"):
+        for child in node.get(combinator, []):
+            _check_predicate_refs(rule_id, child, inputs, where=where)
+    if "not" in node:
+        _check_predicate_refs(rule_id, node["not"], inputs, where=where)
+    input_name = node.get("input")
+    if input_name is not None and input_name not in inputs:
+        raise DSLError(
+            f"rule {rule_id}: {where} references input {input_name!r} which is not a "
+            "declared input (a misspelled predicate input must never silently evaluate "
+            "to not_applicable)"
+        )
+
+
+def _check_determination_ref(
+    rule_id: str, ref: dict, inputs: set[str], output_names: set[str], side: str
+) -> None:
+    keys = set(ref)
+    if keys == {"const"}:
+        return
+    if keys == {"input"}:
+        if ref["input"] not in inputs:
+            raise DSLError(
+                f"rule {rule_id}: determination {side} input {ref['input']!r} is not a "
+                "declared input"
+            )
+        return
+    if keys == {"output"}:
+        if ref["output"] not in output_names:
+            raise DSLError(
+                f"rule {rule_id}: determination {side} output {ref['output']!r} is not a "
+                "declared computation output"
+            )
+        return
+    raise DSLError(
+        f"rule {rule_id}: determination {side} ref {ref!r} must have exactly one of "
+        "const/input/output"
+    )
+
 
 def _check_ref(rule_id, arg, inputs, params, seen_steps) -> None:
     keys = set(arg)
@@ -166,6 +236,10 @@ def build_rule_definition(document: dict, snapshots: SnapshotStore) -> RuleDefin
             unit=i.get("unit"),
             enum=tuple(i["enum"]) if i.get("enum") else None,
             description=i.get("description", ""),
+            minimum=i.get("minimum"),
+            maximum=i.get("maximum"),
+            exclusive_minimum=i.get("exclusive_minimum"),
+            exclusive_maximum=i.get("exclusive_maximum"),
         )
         for i in document["inputs"]
     )
@@ -199,6 +273,10 @@ def build_rule_definition(document: dict, snapshots: SnapshotStore) -> RuleDefin
         uncertainty_policy=document.get("uncertainty_policy", {}),
         limitations=tuple(document.get("limitations", [])),
         raw=document,
+        effective_from=document.get("effective_from"),
+        effective_to=document.get("effective_to"),
+        release=document.get("release", {}),
+        determination=document.get("determination"),
     )
 
 
