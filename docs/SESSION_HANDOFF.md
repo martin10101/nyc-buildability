@@ -1,148 +1,86 @@
-# Session Handoff — resume state as of 2026-07-21 (session 18: Phase A hook-config + read-only-guard security fix IN PROGRESS; then finish M0-T019 through fresh review)
+# Session Handoff — NYC Buildability (updated 2026-07-21)
 
-> ## >>> SESSION 18 (read first; supersedes session 17 only on the Phase A hook-config work and next-step ordering)
->
-> **Owner authorization (session 18):** (1) fix the live cwd-drift hook bug and (2) finish M0-T019 through fresh review, with token/wall-clock-efficient parallelism (dispatch reviewers only at a frozen SHA, concise PASS/FAIL verdicts, no agent churn). Boundaries unchanged: do NOT merge PR #64, accept M0-T019, advance the checkpoint, modify M0-T020, or release any hold.
->
-> ### Phase A — config + read-only-guard security fix (this PR, branch `control/hook-path-fix` off `f6da943`)
-> Authorized files ONLY: `.claude/settings.json`, `.claude/hooks/readonly_agent_guard.py`, `tools/test_readonly_agent_guard.py` (new), `docs/SESSION_HANDOFF.md`.
-> - **Hook-path fix:** both PreToolUse hooks moved from cwd-relative `python .claude/hooks/<x>.py` to the cwd-independent args exec form `{command:"python", args:["${CLAUDE_PROJECT_DIR}/.claude/hooks/<x>.py"]}`. Fixes the brick where a cwd drift into `apps/web` made the relative script path unresolvable → tool BLOCKED. Proven LIVE from all 4 dirs (repo root, apps/web, M0-T019 worktree root, worktree apps/web); settings reload live (no restart); `${CLAUDE_PROJECT_DIR}` resolves the space-containing path.
-> - **HIGH read-only-guard bypass fix (owner-approved scope expansion):** the `_MUTATING` regex consumed `-C <path>` with `\S+`, so `git -C "<path with a space>" <verb>` bypassed the guard (this repo's path has a space). Fixed ROBUSTLY (not a fragile regex swap) with an ADDITIVE, quoting- AND separator-aware pass (`_split_command_segments` + `_git_argv_mutates`): the command is split on UNQUOTED shell separators (`; | & ( ) { } < > newline`, backtick, `$(`) so a git call hidden after ANY operator — glued or spaced — is isolated, then each segment is shlex-tokenized and its git sub-command classified (config/remote/worktree/branch nuances aligned to the regex). OR-ed with the existing regexes → only ADDS denials; preserves every existing denial/allow; fail-closed. Two independent review waves hardened it: wave 1 caught 8 operator-adjacency variants (glued `;`/`|`/`(`, newline, `$(...)`, backtick, brace, glued redirect); wave 2 caught prefix/wrapper/case/dynamic variants. The final pass scans EVERY `git` token in each segment (so a leading assignment `VAR=v git …`, a wrapper `env`/`sudo`/`command`/`exec`/`nice` …, or a case-variant `GIT` cannot hide it), is case-insensitive, treats backslash-newline as a line continuation, and fail-closes a cross-tree `git -C/--git-dir/--work-tree` whose verb is dynamic (`$…`/backtick), substitution-produced (`$(…)`), or absent. Documented residual (unchanged from the base regex, covered by read-only role + orchestrator-only integration): a verb hidden in a shell variable with NO tree target (`c=push; git "$c"`) is not statically resolvable. `tools/test_readonly_agent_guard.py` full suite PASS (spaced-`-C` mutations across all quoting; 8 operator-adjacency vectors; env/wrapper/case/line-continuation/verb-in-variable/verb-in-substitution/bare-`git -C`; read-only over-deny guards; all six roles; fail-closed). `test_agent_dispatch_guard.py` still 15/15 PASS.
-> - Note: wiring `tools/test_readonly_agent_guard.py` into `ci.yml`'s control-plane job is a 1-line follow-up intentionally deferred (ci.yml is outside the authorized Phase A path set); the two independent reviewers verify the suite at the frozen SHA.
-> - Next: freeze the config-PR head SHA → CI + `code-reviewer` + `security-reviewer` concurrently (security-reviewer also live-attempts the spaced-`-C` mutation to confirm the wired hook denies it) → merge only when CI green + both PASS at the same SHA + no later commit → reconcile main.
->
-> ### Then M0-T019 (unchanged plan): workflow node --test glob fix in the worktree → reconcile merged config-main into the task branch → freeze final PR #64 head → CI + 4 reviewers (code/security/ci-evidence/control) concurrently at that SHA → preserve rev-2 reports via a control PR. STOP at open/green/reviewed PR #64 (not merged/accepted).
+Open `nyc-development-feasibility-claude-pack` as the workspace root, then run the CLAUDE.md
+start-of-session routine (`python tools/project_control.py status`). The `project-control/`
+ledger + git + CI are the source of truth; this file is orientation only.
 
+## Current state (read first)
+- **main = origin/main = `6f9d603`.** Ledger: **40 accepted / 2 blocked / 1 claimed / 1 in_progress / 5 backlog.** Checkpoint **CP-0031** (CP-0032 is RESERVED for M0-T019 — do not create a checkpoint).
+- **Milestone M0** active. M1 (source registry + connectors) accepted. M2 (property intelligence) mostly accepted; profile integration in progress.
+- Repo PUBLIC; `protect-main` ruleset active; secret-scan + push-protection ON.
 
-> ## >>> SESSION 17 LATEST STATE (read this first; it supersedes the session-16 banner below on the M0-T019 head SHA and next steps)
->
-> **Owner authorization (session 17):** FINAL CONFIG AUDIT (Phase 0) + RESUME M0-T019 THROUGH FRESH REVIEW ONLY (Phases 1–5). Do NOT merge PR #64, do NOT accept M0-T019, no checkpoint, no other task dispatch, no M0-T020 change, no hold release, no acceptance prep. Active Claude Code IDE runtime = **2.1.215**; global npm CLI on PATH = 2.0.11 (unused by the extension session; do not modify either).
->
-> ### Verified state right now
-> - **main = origin/main = `f6da943`** (config work merged: PR #68 orchestration setup, PR #69 read-only agent hardening). Ledger **39 accepted / 2 blocked / 7 backlog / 1 claimed** (M0-T019 `claimed`). Checkpoint **CP-0031**. 17 worktrees preserved.
-> - **PR #64 (M0-T019) OPEN.** Remote task branch `task/M0-T019-frontend-security` head = **`bfea462`** (verify: `gh pr view 64 --json headRefOid`). The corrected rev-2 producer commit **`9961d39`** is PRESERVED as an ancestor of `bfea462` (chain: `9961d39` → `a4b5de3` merge-main → `bfea462` lock-regen). Producer worktree `.claude/worktrees/M0-T019-frontend` is on the branch and clean.
-> - The **net PR diff** (`git diff f6da943..bfea462 --name-only`) is exactly the 11 M0-T019 product files (workflows, apps/web/*, DEPENDENCY_SECURITY_POLICY.md, CLAUDE.md principle 15, producer report) — **no `.claude/` config** (config is on the base too, so it cancels).
->
-> ### DONE this session (Phases 0–2)
-> - **Phase 0 config audit** (code-reviewer, read-only) bound to `f6da943`: **PASS, zero blocking defects** (6 hardened read-only agents; `readonly_agent_guard.py` 38/38 cases incl. the 3 fixes; producers unchanged; config-only scope).
-> - **Phase 1** merge of `f6da943` into the task branch → `a4b5de3` (clean, only CLAUDE.md auto-merged; `9961d39` preserved; config-free net PR diff).
-> - **Phase 2 lockfile regeneration** via `generate-lockfile.yml` on the task branch (pinned npm 11.18.0) → bot commit **`bfea462`**. **FE-S10 PROVEN — ZERO resolved-version change:** all **550 resolved entries byte-identical** (version+integrity+host) before vs after; the ONLY lock change is the 13 root `devDependencies` declared strings flipping range→exact (`@eslint/eslintrc` 3.3.6 … `vitest` 3.2.7). Proof artifacts in scratchpad: `lock_before.txt` / `lock_after.txt`.
-> - Ran FE-S9 tests locally (Node-builtins only, disk-safe): **20/20 PASS** (boundary 604800 PASS / 604799 FAIL, fail-closed branches, tooling checks).
->
-> ### >>> NEXT STEPS (Phases 3–5) — EXACT
-> 1. **⚠️ FIRST: the `node --test` directory form FAILS.** Confirmed empirically on Node 22.18.0: `node --test scripts/tests/` → 1 FAIL (MODULE_NOT_FOUND); `node --test scripts/tests/*.test.mjs` → 20/20 PASS. The owner (Phase 3.3) authorized correcting it to the explicit `*.test.mjs` glob **within authorized paths**. Apply in BOTH `apps/web`-relative workflow files (task worktree): `.github/workflows/ci.yml` job `web-lockfile-age-gate` (`node --test apps/web/scripts/tests/` → `node --test apps/web/scripts/tests/*.test.mjs`) and `.github/workflows/scheduled-npm-audit.yml` (`node --test scripts/tests/` → `node --test scripts/tests/*.test.mjs`). This is a lead CI-orchestration fix (do NOT dispatch an isolated producer — it would create a forbidden competing worktree; edit directly in the existing `.claude/worktrees/M0-T019-frontend`).
-> 2. **Trigger CI on the head.** The lock-regen bot pushed `bfea462` via GITHUB_TOKEN, which does NOT trigger CI. Commit the glob fix (step 1) in the worktree and **push (user auth)** — that commit becomes the new PR #64 head AND triggers CI. (The earlier `a4b5de3` push triggered a CI run that FAILS on `npm ci` because that was the pre-regen lock mismatch — ignore it; only the post-glob-fix head matters.)
-> 3. **All CI green** on the final head: web, web-e2e, blocking `npm audit` (web), `web-lockfile-age-gate`, scheduled-audit validation, all Python/M0-T020 jobs, contracts, control-plane, secret scan.
-> 4. **Phase 4 — freeze the final PR #64 head SHA; run 4 read-only reviewers concurrently** bound to that exact SHA: `code-reviewer` (G3/G4), `security-reviewer` (G5), `ci-evidence-verifier`, `control-plane-verifier`. They must verify: committed lock cannot bypass the 7-day rule; 604800 pass / 604799 fail; registry outage/malformed fail closed; every governed direct dep exact-pinned; exact-pinning changed ZERO resolved versions (550 identical — see artifacts); npm@11.18.0 tooling recurring advisory check; audit totals zero; no M0-T020 control weakened; no forbidden path/unrelated task changed. Any post-review commit invalidates all verdicts → re-run.
-> 5. **Phase 5 — preserve the verbatim rev-2 reports** under distinct rev-2 filenames via ONE control-only reviewer-report-preservation PR (rev-2 reports + a minimal SESSION_HANDOFF refresh ONLY; NO acceptance gates / ledger / checkpoint / code / hold change). Owner authorized MERGING that control PR after checks pass; then reconcile main.
-> 6. **STOP** after delivering the open, corrected, green, freshly-reviewed PR #64 + the 16-item return packet. Do NOT merge/accept/checkpoint/dispatch/release-hold.
->
-> ### 🛑 CRITICAL LIVE BUG — the read-only guard hook bricks Bash/Edit on cwd drift (fix EARLY)
-> PR #69 wired `.claude/settings.json` PreToolUse hook (matcher `Bash|Write|Edit|MultiEdit|NotebookEdit`) with the **relative** command `python .claude/hooks/readonly_agent_guard.py`. Claude Code 2.1.215 runs that Bash-tool PreToolUse hook from the **shared (Bash+PowerShell) persisted cwd**. Any `cd` into a subdir (e.g. `apps/web` to run tests) drifts the cwd; the next Bash/Edit/Write then runs the hook from that subdir, the relative script path is not found, python exits 2, and the tool call is **BLOCKED** — this hits the MAIN session and any read-only subagent, not just the intended targets. `$CLAUDE_PROJECT_DIR` is **EMPTY** in this runtime, so it is NOT a usable anchor.
-> - **RECOVERY if bricked:** run **PowerShell** `Set-Location "<repo-root>"` — the PowerShell tool is not matched by the `Bash|…` hook and shares the cwd, so it resets it; Bash/Edit then work again from repo root.
-> - **PROPER FIX (do as a SEPARATE small config-only PR, NOT inside PR #64):** make both hook commands cwd-independent, e.g. `python "$(git rev-parse --show-toplevel)/.claude/hooks/readonly_agent_guard.py"` (and same for `agent_dispatch_guard.py`), or resolve why `$CLAUDE_PROJECT_DIR` is empty and use it. Until fixed, KEEP the shared cwd at repo root (append `; cd "$(git rev-parse --show-toplevel)"` is NOT enough because the hook runs BEFORE the command — instead avoid leaving cwd drifted at the END of any Bash call).
->
-> ### Do-not / preserve
-> Do NOT resume beyond the above. Preserve `9961d39` and the producer worktree. Do not recreate/discard/clean that worktree. Keep PR #64 OPEN + unmerged. M0-T019 stays `claimed`, not accepted. No checkpoint, no held-task dispatch, no M0-T020 change, no hold release.
+## Active work — M2-T012 (in_progress, lead-only)
+- **M2-T012 Profile integration (single contract 1.4.0 update).** Claimed by orchestrator (lead session); branch `task/M2-T012-profile`; worktree `.claude/worktrees/M2-T012-profile` (based on `6f9d603`); 10% (G0 PASS + claimed).
+- **Scope (additive-only):** one coordinated **contract 1.4.0** update via the accepted M2-T010 tooling — integrate zoning-features (M2-T007) + MapPLUTO geometry (M2-T009) + the accepted **M2-T013** spatial-intersection records into the canonical profile with full provenance and **uncertainty preserved (never collapsed)**; add the geometric assignment as the 4th cross-check evidence stream; fold in the enumerated carried LOW-defect fixes. 1.0.0–1.3.0 payloads must still validate. **STOP** on any non-additive schema need, any uncertainty-collapse, any 1.5.0 temptation, or credentials.
+- **File scope:** `services/api/app/profile/**`, `packages/contracts/**` (1.4.0 via M2-T010 tooling), `_contract_schemas/**` (sync tooling only), `apps/web/src/lib/**` (derived declarations), tests; connector/resilience touches ONLY for the enumerated carried defects (each disclosed). Reviewers G0–G5: data-contract-verifier, code-reviewer, security-reviewer.
+- **Read only:** the M2-T012 packet, the M2-T013 output (`services/api/app/spatial/`), the profile modules (`builder.py`/`contract.py`/`property_profile.schema.json`), the M2-T010 tooling, and the enumerated carried-defect sources. Do NOT broadly reread the repo or historical reports.
 
-## (Session-16 banner — historical; superseded on head SHA + next steps by the SESSION 17 block above)
+## Just delivered — M2-T013 (accepted, merged PR #71)
+Production **spatial-intersection engine** (`services/api/app/spatial/`): determines which zoning
+districts/overlays/special districts cover which parts of a tax lot, with an explicit
+positional-uncertainty model (documented vs assumed ±20 ft; 40 ft linear-sum compound band),
+a 5-class taxonomy, split-share ranges, per-family coverage audit, ZTLDB cross-check, and
+professional-review triggers. Emits facts-with-uncertainty only — never labels "Verified", never
+collapses uncertainty. Consumes MapPLUTO/zoning-features/ZTLDB domain models read-only. Gates
+G1/G3/G4 + a bounded final-head delta review all PASS; full API suite 567 passed. It is the
+geometric substrate M2-T012 (profile) and M4-T001 (rules) consume.
 
-> **P0 DEPENDENCY-SECURITY WAVE — M0-T020 ACCEPTED (39th, live on main); M0-T019 UNDER OWNER-DIRECTED POLICY-ENFORCEMENT CORRECTION, mid-implementation.** M0-T020 accepted via PR #62 (`9391bb0`). M0-T019 (frontend Next/React security upgrade + permanent npm dependency-admission policy) was implemented + reviewed once (G3/G4 + G5 PASS at task head `3bbb594`), but an owner review found a **BLOCKING gap: `.npmrc min-release-age` is resolver-time only; CI's `npm ci` installs the committed `package-lock.json` WITHOUT resolving, so a hand-edited lock could smuggle a <7-day package past `npm ci` + `npm audit`.** The owner authorized a 3-part correction (packet amendment → implement a committed-lockfile age gate → fresh G3/G4/G5). **>>> RESUME POINT: the correction is MID-IMPLEMENTATION. Phase A + producer implementation are DONE and committed to the task worktree branch (LOCAL head `9961d39`, NOT pushed); the remaining work is: regenerate the lock (verify zero resolution change) → push task PR #64 → CI green → FRESH G3/G4/G5 → preserve new reports → return. The task PR stays OPEN + unmerged.** Checkpoint remains `CP-0031`. Do NOT merge task PR #64, accept M0-T019, record its acceptance gates, create a checkpoint, run Phase 2c, dispatch M2-T013/M2-T014 or any held task, modify M0-T020, or release any hold. The ledger (`project-control/`) is the source of truth.
+## FROZEN — M0-T019 / PR #64 (do NOT touch without separate owner authorization)
+- **PR #64 (M0-T019 frontend dependency-security upgrade + permanent npm dependency-admission policy) is OPEN and FROZEN at SHA `39080822a361b6204813d2dcbd1f849b196100ea`.** Status `claimed`; worktree `.claude/worktrees/M0-T019-frontend`. It is blocked only by its own dependency-age gate (a lockfile package must reach 7 complete days old).
+- **Scheduled action:** at or after **2026-07-22T06:10:00Z**, rerun ONLY the required *failed* CI jobs at that same SHA. Do NOT commit, regenerate the lockfile, weaken the age policy, or rerun the 3 already-passing reviewers. If CI goes green, run ONLY `ci-evidence-verifier` with a small evidence packet. PR #64 stays open/unmerged/unaccepted until the owner separately authorizes the merge.
+- Do NOT merge/accept M0-T019, change its frozen SHA, advance CP-0032, or modify M0-T020.
 
-Written by the orchestrator. Open this folder (`nyc-development-feasibility-claude-pack`) as the workspace root, then follow CLAUDE.md's start-of-session routine.
+## Next eligible product work (after M2-T012)
+- **M4-T001** (rules-engine foundation + first R5 FAR family) — its M2-T013 dependency is now
+  satisfied, BUT M4-T001 and the survey workstream (**M2-T014/T015/T016**) remain under the owner
+  **"2026-07-20 planning-report review" dispatch hold**. Do NOT dispatch them without the owner
+  releasing that hold. **M6-T001** is explicitly not-this-wave.
+- If, after M2-T012, no product task is unambiguously eligible, report the exact blocking hold
+  concisely — do NOT release a hold to find work.
 
-## >>> EXACT RESUME STEPS for the next chat (M0-T019 correction — finish it)
-
-**Verified starting state:** main = remote main = `4c649601f902eeb0ffdfac48748df07ee3f886df` (after amendment PR #66). Ledger 39 accepted / 2 blocked / 7 backlog / 1 claimed (M0-T019 `claimed`). Checkpoint CP-0031. 1 open PR: **#64** (M0-T019 task PR, remote head still `3bbb594` = the rev-1 reviewed head). The corrected work is committed LOCALLY on the task worktree branch but NOT pushed.
-
-- **Worktree:** `.claude/worktrees/M0-T019-frontend` on branch `task/M0-T019-frontend-security`, LOCAL head **`9961d39`** (= merge of amended main `af26db6` + the rev-2 producer commit). This is AHEAD of the remote task branch (`3bbb594`) and contains all the correction work. `git -C .claude/worktrees/M0-T019-frontend log --oneline -3` to confirm.
-
-**Owner correction = 3 parts (A done, B mostly done, C + finish remain):**
-
-**A. Packet amendment — DONE.** PR #66 merged → main `4c64960`. `project-control/tasks/M0-T019.json` now has: allowed_paths += `apps/web/scripts/dependency_age_gate.mjs` + `apps/web/scripts/tests/**`; acceptance += **FE-S9** (deterministic fail-closed committed-lockfile release-age gate; validates EVERY registry pkg/version — direct/transitive/dev/build/optional/scoped/platform — ≥ exactly 604800 s vs the registry Date-header UTC clock; boundary 604800 pass / 604799 fail; fail-closed on outage/missing/malformed/integrity-mismatch/unexpected-host; runs in PR+push CI + scheduled npm-audit), **FE-S10** (exact direct+dev pins, ZERO resolution change), **FE-S11** (continuous npm@11.18.0 CLI tooling advisory verification; policy doc distinguishes 4 enforcement layers).
-
-**B. Implement + amend task PR #64 — producer edits DONE + committed to the worktree branch (`9961d39`); LOCK REGEN + PUSH + CI remain.** The task branch was merged up to amended main (`af26db6`), then the frontend-engineer implemented (committed at `9961d39`):
-  - `apps/web/scripts/dependency_age_gate.mjs` (NEW, Node ESM, node-builtins-only, no npm deps): mirrors the accepted Python `services/api/scripts/dependency_age_gate.py`. Pure `parseLock`/`decide`/`evaluateLock`/`checkNpmTooling` (injectable `now` + providers) + a single networked `RegistryClient`. Enumerates every `packages` entry with a `resolved` (dedup name@version); requires `resolved` host == registry.npmjs.org + committed `integrity` == registry `dist.integrity` (anti-forgery); publish time from packument `time[version]`; `ageSeconds = Math.floor((nowMs-publishedMs)/1000)`; PASS iff `>= 604800`; fail-closed (throw→FAIL) on every missing/malformed/outage/mismatch. `checkNpmTooling` = OSV advisory + age for npm@11.18.0. No allowlist/suppression.
-  - `apps/web/scripts/tests/dependency_age_gate.test.mjs` (NEW, `node --test`, node-builtins-only): boundary 604800 PASS / 604799 FAIL, integer-second floor, positive, full-lock, every fail-closed branch, enumeration/dedupe, FE-S11 tooling. **Local run PASSING** (the explicit-file invocation `node --test apps/web/scripts/tests/dependency_age_gate.test.mjs` passed tests 1-5 boundary/positive before the session was paused).
-  - `apps/web/package.json` (FE-S10): every direct dep + devDep EXACT-pinned to its already-resolved version (^/~ removed). Map (all verified ≥7 days, so no <7-day version smuggled): `@eslint/eslintrc` 3.3.6, `@playwright/test` 1.61.1, `@testing-library/dom` 10.4.1, `@testing-library/jest-dom` 6.9.1, `@testing-library/react` 16.3.2, `@types/node` 22.20.1, `@types/react` 19.2.17, `@types/react-dom` 19.2.3, `@vitejs/plugin-react` 4.7.0, `eslint` 9.39.5, `jsdom` 26.1.0, `typescript` 5.9.3, `vitest` 3.2.7 (next 15.5.20 / react 19.1.2 / react-dom 19.1.2 / eslint-config-next 15.5.20 already exact; `overrides.postcss` 8.5.10 kept).
-  - `.github/workflows/ci.yml`: NEW BLOCKING job `web-lockfile-age-gate` = checkout + setup-node 22 + pin npm 11.18.0 + `node --test apps/web/scripts/tests/` + `node apps/web/scripts/dependency_age_gate.mjs apps/web/package-lock.json --npm-tooling-version "$(npm -v)"`.
-  - `.github/workflows/scheduled-npm-audit.yml`: appended the `node --test` + live gate after the blocking audit.
-  - `docs/DEPENDENCY_SECURITY_POLICY.md`: distinguishes the 4 npm layers (a .npmrc resolver-time filtering; b committed-lockfile age gate = authoritative; c npm audit; d npm CLI tooling advisory).
-  - `project-control/reports/M0-T019-producer-report.md`: rev-2 section appended (rev-1 preserved).
-  - (The producer also wrote `.claude/agent-memory/frontend-engineer/**` — NOT part of the task; do NOT commit it to the PR.)
-
-  **⚠️ WATCH ITEM:** locally, `node --test apps/web/scripts/tests/` (directory arg with trailing slash) errored `MODULE_NOT_FOUND` on Node 22.18.0, but the EXPLICIT file `node --test apps/web/scripts/tests/dependency_age_gate.test.mjs` PASSES. The CI job uses the directory form — **if the CI `web-lockfile-age-gate` job fails on test discovery, switch the CI step (ci.yml + scheduled-npm-audit.yml) to `node --test apps/web/scripts/tests/*.test.mjs` or the explicit file path.** (Verify in CI.)
-
-  **B — REMAINING (do these next):**
-  1. **Regenerate the lock:** package.json was exact-pinned, so the committed lock's root `packages[""].devDependencies` declared ranges must be regenerated. Push package.json+scripts+workflows to the task branch, then dispatch `generate-lockfile.yml` on `task/M0-T019-frontend-security` (npm 11.18.0). Pull the bot's lock commit. **VERIFY ZERO RESOLVED-VERSION CHANGE** (diff resolved `node_modules/*` versions + integrity old-vs-new; the producer pre-verified all 17 exact targets == current resolved, so expect only the root declared-range strings to change). **If ANY resolved version or integrity changes, STOP and report (FE-S10 STOP condition).**
-  2. **Push + CI:** push the task branch (fast-forward from `3bbb594` via the `af26db6` merge → PR #64 head advances). Run ALL CI to completion (foreground polls): the new `web-lockfile-age-gate` (node --test + live gate over ~530 pkgs hitting registry+OSV — may be slow but should pass), web / web-e2e / `npm audit (web tree)`, and every Python job green.
-
-**C. Fresh independent review — NOT STARTED.** Because PR #64 gets new commits, the rev-1 G3/G4/G5 verdicts (at `3bbb594`) do NOT authorize the corrected head. Re-dispatch **code-reviewer (G3/G4)** + **security-reviewer (G5)** against the NEW exact task-PR head. Require them to specifically test: a manually injected too-new lock entry fails CI; 604800 passes / 604799 fails; registry/error conditions fail closed; all direct package.json declarations are exact; npm@11.18.0 tooling is in the recurring advisory enforcement; no M0-T020 control weakened. Preserve the NEW verbatim reports under DISTINCT filenames (e.g. `project-control/reports/M0-T019-G3-G4-code-review-rev2.md`, `M0-T019-G5-security-review-rev2.md`) via a control PR; retain the rev-1 reports (`M0-T019-G3-G4-code-review.md`, `M0-T019-G5-security-review.md`, already on main) as historical.
-
-**Then:** update this handoff; deliver the owner's return packet (packet-amendment PR + merge SHA `4c64960`; new PR #64 head SHA; changed files + diffstat; exact-pin inventory; proof resolved versions did not change; age-gate test results incl. the two boundary cases + fail-closed cases; npm tooling advisory result; complete CI; fresh G3/G4/G5 reports bound to the new head; current ledger/checkpoint; confirmation PR #64 open/unmerged; confirmation no held task dispatched/released). **STOP** — do not merge PR #64, do not accept, no checkpoint, no held-task dispatch, no M0-T020 change, no hold release.
-
-## Owner correction directive (verbatim intent)
-
-Root finding: `.npmrc min-release-age=7` applies at RESOLUTION; `npm ci` installs the committed lock without resolving, so a manually altered lock could contain a <7-day package and pass `npm ci` + `npm audit` (if no advisory yet). The "release age enforced only at regeneration" reviewer note is therefore BLOCKING. Also correct two related inconsistencies: (1) direct devDeps still had `^` ranges (save-exact governs only future saves) → exact-pin all; (2) npm@11.18.0 tooling had only point-in-time evidence → add recurring machine advisory check. New allowed paths: `apps/web/scripts/**`. PR #64 stays open; new commits + fresh review; NOT accepted; no checkpoint; no hold released; M0-T020 unchanged.
-
-## Exact repository state
-
-- **main = remote main = `4c649601f902eeb0ffdfac48748df07ee3f886df`** (chain this session: `9391bb0` PR #62 M0-T020 acceptance → `301f5a2` PR #63 M0-T019 dispatch → `97d3c79` PR #65 rev-1 reviewer-report preservation → `4c64960` PR #66 policy-enforcement packet amendment). **1 open PR: #64** (M0-T019 task, remote head `3bbb594`).
-- **Ledger: 39 accepted / 2 blocked / 7 backlog / 1 claimed (M0-T019).** **Checkpoint CP-0031** (next checkpoint deferred per the M0-T020 packet rule: only after M0-T020 + M0-T019 accepted + Phase 2c + both Python & npm audits green on reconciled main).
-- **M0-T020 — ACCEPTED (39th), live on main, IMMUTABLE.** Python dependency-policy enforcement (hash-pinned tooling lock + `dependency_age_gate.py` + CI hardening). Do not reopen.
-- **M0-T019 — CLAIMED (frontend-engineer); rev-1 implemented + reviewed PASS/PASS at `3bbb594` (on the remote PR #64), NOW under policy-enforcement correction (rev-2 committed locally at `9961d39`, not pushed).** See resume steps above. rev-1 verbatim reviewer reports on main: `project-control/reports/M0-T019-G3-G4-code-review.md` + `M0-T019-G5-security-review.md` (SUPERSEDED by the correction — do NOT use them to authorize the corrected head).
-- **M0-T018 (38th, ACCEPTED, IMMUTABLE).**
-- **Repo PUBLIC**; ruleset `protect-main` active; secret scanning + push protection ON. B-005..B-009 resolved.
-- **Worktrees:** `.claude/worktrees/M0-T019-frontend` (M0-T019 producer, branch `task/M0-T019-frontend-security` @ local `9961d39` — HOLDS THE UNPUSHED CORRECTION WORK; do not delete). `agent-a501f3e0a11bdd091` (stopped rev-0 research; superseded) preserved. Older harness-managed stale `agent-*` worktrees (two locked — leave).
-- **Working tree (main checkout):** clean except `.claude/agent-memory/**` (permitted) + this handoff branch.
+## Operating rules (owner directives — persist)
+- **Lead implements a single eligible task directly** (no producer subagent when there is no
+  concurrent second task — a lone producer only duplicates context/tokens).
+- **Reviewers:** only those the task's actual risk requires; dispatch **once, at a frozen SHA**;
+  give each a **small exact packet** (task criteria + frozen SHA/diff + relevant modules + exact
+  tests/reports); target **≤50k tokens per reviewer**; never ask a reviewer to read the whole repo
+  or all reports; never repeat a review when the SHA is unchanged. Four-role review only when
+  genuinely required by the task's control rules or risk.
+- **Do NOT create broad agent-config / orchestration / process PRs during product work.** Any
+  control-system codification is a separate bounded PR that must not interrupt active product work.
+- **CI does not need continuous watching** — start it, do other independent work, inspect the
+  result afterward (background `gh pr checks <n> --watch`, then merge on green).
+- **Acceptance-with-sequencing-exception pattern** (used for M2-T013): when the owner authorizes
+  accepting a task whose only unmet dependency is a superseded *sequencing* gate, remove that
+  dependency from the task's `dependencies` (documented in the task record), then `accept`. The
+  `accept` CLI does NOT create a checkpoint, so CP-0032 stays reserved.
 
 ## HARD RULES (unchanged)
+- **Protected-main, PR-only.** Never push to main. Task/control branch → push → `gh pr create` →
+  required checks green → `gh pr merge --merge` → `git fetch` + reconcile. `--match-head-commit`
+  needs the FULL 40-char SHA (a short SHA errors "Could not coerce value to GitObjectID").
+- **ADR-005:** only the orchestrator runs `tools/project_control.py` / git / gh. Producers edit
+  files + return a report (thin client; no git/npm). Reviewers are read-only, return report content
+  the orchestrator saves VERBATIM + records the gate. `project_control` lifecycle: G0 backlog→ready;
+  claim needs `ready`; submit→awaiting_gate; G2 `--reviewer orchestrator`; independent gates
+  (G1/G3/G4/G5/G6) need a rostered reviewer ≠ producer; accepted tasks immutable; gate `--report`
+  path must exist when the CLI runs.
+- **Thin client / low storage:** keep ≥4 GB free; no local node_modules/DB/citywide datasets; the
+  web lockfile regenerates on a runner via `generate-lockfile.yml`. The Python API test env
+  (shapely 2.0.7 / GEOS 3.11.4 / pytest) IS available locally for backend self-checks; CI (pytest
+  9.0.3 from the hash-pinned tooling lock) is authoritative.
+- **Shell/runtime:** Bash + PowerShell share a persisted cwd — prefer absolute paths and don't leave
+  cwd drifted. On Windows git warns LF→CRLF on commit (harmless). Background tasks (subagents, CI
+  watch) notify and re-invoke this session on completion — you may dispatch one and continue.
 
-(1) **Protected-main PR workflow** — NEVER push to main; task/control branch → push → `gh pr create` → wait checks green (FOREGROUND polls) → `gh pr merge --merge --delete-branch --match-head-commit <FULL-40-char-SHA>` (a SHORT sha errors "Could not coerce value to GitObjectID") → `git fetch` + `git merge --ff-only origin/main` → verify. (2) **HARDENED project_control.py** — G0 backlog→ready; claim needs `ready`; submit→awaiting_gate; G2 `--reviewer orchestrator`; independent gates (G3/G4/G5) need a rostered reviewer ≠ producer; accepted tasks IMMUTABLE; report paths must EXIST when the CLI runs (record acceptance gates AFTER the task PR merges, in a later acceptance control PR). (3) **ADR-005** — only the orchestrator runs project_control.py/git/gh; producers edit files + return a report (no git/npm — thin client); reviewer returns preserved VERBATIM (byte-scan python bytes <9 or 14–31). (4) **THIN-CLIENT** — no local node_modules/npm; the web lockfile regenerates on a GitHub runner via `generate-lockfile.yml` (workflow_dispatch). SHELL: Bash + PowerShell SHARE a persisted cwd — after any `cd` run `cd "$(git rev-parse --show-toplevel)"` before relative CLI reads; `node --test <dir>/` may need the explicit-file/glob form. IDE: background-task completion does NOT re-invoke the session — run CI waits in the FOREGROUND (bounded polls; `gh pr checks <n> --watch` may background — poll `gh pr checks <n>` directly). Permission posture: auto mode, ask only for deletions.
-
-## Blockers
-
-**B-001** (HIGHEST — Supabase token; blocks M0-T007/T008 + persistence/citywide-import), **B-002** (Render), **B-004** (Geoclient). B-003 closed; B-005..B-009 resolved.
+## Blockers (owner action required)
+- **B-001** (Supabase access token — HIGHEST; blocks M0-T007/T008 + persistence + citywide imports),
+  **B-002** (Render API key), **B-004** (Geoclient subscription key). B-003, B-005..B-009 resolved.
 
 ## Owner decisions pending
+1. M0-T019 / PR #64 merge authorization (after the 2026-07-22T06:10Z CI + dependency-age gate resolves).
+2. Release the "2026-07-20 planning-report review" dispatch hold on M4-T001 + the survey workstream (M2-T014/T015/T016).
+3. Credentials: B-001 (highest), B-002, B-004.
+4. GDS/expansion planning review (counter-notice §2 hold) and 3D holds — preserved.
 
-1. **Finish the M0-T019 correction** (regen lock + push + CI + fresh G3/G4/G5), then owner reviews + authorizes acceptance — the immediate resume gate.
-2. Release the DISPATCH HOLDS on the survey workstream (M2-T014/T015/T016), M2-T013, M4-T001.
-3. Credentials when ready: B-001 (highest), B-002, B-004.
-4. GDS/expansion planning review (counter-notice §2 hold).
-5. CORS/proxy decision (M2-T001 D8). 6. M2-T016 professional-confirmation role definition.
-
-## Holds this run (do NOT dispatch / do NOT release)
-
-M2-T012, M2-T013, M2-T014, M2-T015, M2-T016, M4-T001, M6-T001; survey Packets B/C. All GDS/expansion (counter-notice §2) + 3D holds preserved. M0-T019 task PR #64: open + under correction, NOT merged.
-
-## Session 16 log (condensed)
-
-M0-T020 accepted (PR #62 → `9391bb0`). M0-T019 dispatched (PR #63 → `301f5a2`) → implemented + reviewed rev-1 (task PR #64 head `3bbb594`, G3/G4 + G5 PASS) → rev-1 reports preserved (PR #65 → `97d3c79`). Owner found the `npm ci` age-enforcement gap → packet amended (PR #66 → `4c64960`, FE-S9/S10/S11) → frontend-engineer implemented the fail-closed committed-lockfile age gate + tests + exact pins + CI wiring + policy/report updates → committed to the task worktree branch (`9961d39`, unpushed). Local age-gate tests passing. Session paused before lock-regen/push/CI/fresh-review.
-
-## Prior sessions (condensed)
-
-- **S15:** M0-T020 implemented + reviewed; bounded pytest 9.0.3 amendment (PR #59).
-- **S14:** accepted M0-T018 (38th). **S13:** M2-T011 (36th) + M2-T010 (37th) at CP-0031. **S12:** M2-T007/T008/T009 (33rd–35th; repo made PUBLIC).
-
-## Environment/process lessons (this session)
-
-- **`.npmrc min-release-age` does NOT gate `npm ci` of a committed lock** — it is resolver-time only. A committed-lockfile age gate (the npm parallel of M0-T020's `dependency_age_gate.py`) is required to make the policy machine-enforced against every future lockfile change. (This is the M0-T019 correction.)
-- **`gh pr merge --match-head-commit` requires the FULL 40-char SHA** — a short SHA errors "Could not coerce value ... to GitObjectID". Use `gh pr view <n> --json headRefOid --jq .headRefOid`.
-- **A fresh owner instruction does not override an already-approved packet rule** (the interim CP-0032 conflicted with the M0-T020 checkpoint rule; owner corrected to keep CP-0031). Surface conflicts.
-- **Node `node --test <dir>/`** (trailing-slash directory) can throw MODULE_NOT_FOUND on Node 22.18.0 while the explicit-file form works — use `*.test.mjs`/explicit path in CI if the directory form fails.
-- **Deferred-ledger + review-only boundary:** keep the task-PR head == the reviewed SHA; preserve reviewer reports on main via a separate control PR (rev-1 → PR #65); record acceptance gates + accept together only in a later owner-authorized acceptance control PR. Producer works in an isolated worktree; the orchestrator commits/pushes/regenerates-lock/opens-PR; reviewers dispatched WITHOUT isolation, pointed at the task-branch worktree + `gh pr diff`.
-
-## Configuration note — parallel agent orchestration setup (2026-07-20; config-only; does NOT change M0-T019)
-
-Owner-authorized agent-orchestration setup was completed as a **separate configuration-only change** on branch `control/agent-orchestration-setup`. It touched only: user-level Claude settings (agent-teams keys, out of repo), two new **read-only** verifier agent definitions (`.claude/agents/ci-evidence-verifier.md`, `control-plane-verifier.md`), `.claude/ORCHESTRATION_POLICY.md`, a one-line `CLAUDE.md` pointer, and this note. **No product code, dependency/lock, workflow, contract, ledger, gate, checkpoint, accepted-task, or existing task PR was changed.**
-
-- **Reconciled main at setup start:** `61a1d6f` (= origin/main, verified against the live remote). This config-only PR, when merged, advances main by exactly its own commit; the merge SHA is recorded in the owner return packet.
-- **Agent teams:** require Claude Code ≥ 2.1.178 (installed CLI is 2.0.11). Settings are pre-staged, so **activation requires the owner to update the extension to ≥ 2.1.178 and restart.** Until then the active mechanism is background subagents + `isolation: worktree`. In-process team runtime does not survive resume/restart — each new conversation must create a fresh team (`.claude/ORCHESTRATION_POLICY.md` §1a).
-- **M0-T019 resume pointer PRESERVED, untouched:** still `claimed`; task PR #64 OPEN at remote head `3bbb594`; the corrected rev-2 work remains committed locally at `9961d39` in worktree `.claude/worktrees/M0-T019-frontend` (unpushed). This setup did **not** resume, push, review, merge, or accept M0-T019. Follow the resume steps above to finish that correction.
-
-## Configuration note — 2.1.215 verification + read-only agent hardening (2026-07-21; config-only; does NOT change M0-T019)
-
-Owner-authorized configuration correction (second config-only PR). The Claude Code **IDE-extension runtime is 2.1.215** (the global npm CLI on PATH remains 2.0.11, not used by the extension session); agent teams are functional in-process (spawn via the Agent tool + `SendMessage`; teardown via `TaskStop`; this runtime has no `TeamCreate`/`TeamDelete`).
-
-The six read-only roles (`progress-auditor`, `code-reviewer`, `security-reviewer`, `data-contract-verifier`, `ci-evidence-verifier`, `control-plane-verifier`) are now **operationally** read-only: writer tools removed from `tools`, `disallowedTools: Write, Edit, MultiEdit, NotebookEdit, Agent`, `permissionMode: plan`, `memory` dropped, plus a tracked PreToolUse guard `.claude/hooks/readonly_agent_guard.py` (`agent_type`-gated to the six roles, wired in `.claude/settings.json`) that denies write tools and repo/GitHub/control-plane-mutating or file-writing Bash while allowing read-only git, `gh` reads, and test execution. Producers are **unchanged** (isolated-worktree writers). Live adversarial probe: a read-only role could Read + run read-only git, but Write / `echo > file` / `git tag` / `git config` were each **BLOCKED** (nothing created). Changed paths: `.claude/agents/**` (6), `.claude/hooks/readonly_agent_guard.py`, `.claude/settings.json`, `.claude/ORCHESTRATION_POLICY.md`, this note. **No product code, dependency/lock, workflow, contract, ledger, gate, checkpoint, accepted-task, or PR #64 change.** M0-T019 remains `claimed`, PR #64 OPEN @ `3bbb594`, local `9961d39` preserved. Do NOT resume M0-T019.
+Written by the orchestrator.
