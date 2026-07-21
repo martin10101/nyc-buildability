@@ -6,22 +6,27 @@ the remote: **origin/main may have advanced, so do not trust any SHA written her
 This file is orientation only. Operating rules, gates, hard rules, and workflow routes live in
 `CLAUDE.md` and the specialist docs it routes to — not here.
 
-**Verified base at `46f8745cf38930f4e18ba4c858424b4c0e909153`** (origin/main when this was written;
-`git fetch` and reconcile). Milestone **M0** active; M1 accepted; M2 profile integration **M2-T012
-accepted** (contract 1.4.0 wave+spatial integration, merged PR #74 at frozen `82b92e1`; G0/G1/G2/G3/G4/G5
-all PASS). Checkpoint **CP-0031** (CP-0032 is reserved for M0-T019 — do not create one).
+**Verified base at `dcb905d62b47919a3d2d78c7620d7bd07662ccf5`** (origin/main when this was written;
+`git fetch` and reconcile). Milestone **M0** active; M1 accepted; M2-T012 accepted; **M4-T001
+rules-engine foundation merged** (PR #76 at frozen `de88ba2`; G0/G2/G3/G4 all PASS, **awaiting G6**,
+NOT accepted — every R5 rule stays `needs_review`, nothing Published/Verified). Checkpoint **CP-0031**
+(CP-0032 is reserved for M0-T019 — do not create one).
 
-## Next task — M4-T001 (zoning-rules-engine foundation + first R5 residential FAR rule family)
-M2-T012 is accepted and merged; the 2026-07-20 planning-report dispatch hold on **M4-T001 only** is
-released (survey holds M2-T014/T015/T016 remain held). M4-T001 is lead-only in a new isolated task
-branch/worktree. Read the packet for scope, file scope, and STOP conditions:
-`project-control/tasks/M4-T001.json` — not a summary here.
-**Next action:** G0 reconciliation, then implement M4-T001 lead-only (versioned deterministic rules DSL;
-exact ZR citations + effective dates; evaluation traces; uncertainty/missing-data propagation; no
-AI-published/auto-`Verified` legal rule; R5 residential FAR as first family; structurally-different
-second-family representability proof; G6 qualified-human boundary preserved). If the client R5 benchmark
-sheet is unavailable, raise a bounded human-input blocker for that validation item only and continue all
-architecture/engine/official-source/synthetic-fixture work that does not need it.
+## M4-T001 status — foundation merged, awaiting G6 (do not accept, do not publish)
+The tested rules-engine + first R5 residential-FAR draft family are on main (PR #76 @ `de88ba2`).
+Recorded G0/G2/G3/G4 PASS; task stays `awaiting_gate`. Acceptance is blocked on **G6** (qualified-human
+legal approval — mandatory before any R5 rule is Published/Verified) and, for the client-validation item
+only, **B-010** (client R5 benchmark sheet). These block ONLY publication/verification + final
+acceptance — not continued engineering with `needs_review` rules (owner directive 2026-07-21).
+
+## Next task — rules-engine ↔ property-analysis integration
+Wire the M4-T001 engine into the property-profile / M2-T013 spatial-analysis API: feed property +
+spatial facts into the evaluator; preserve split-lot ranges, conflicts, professional-review flags; fail
+safely when spatial uncertainty exists or `spatial_context` is missing; return deterministic
+calculation + citation traces; expose draft/review status honestly; prevent downstream callers from
+treating draft results as Verified. Confirm the exact task ID from the ledger; if none exists, create
+the smallest controlled task (never CP-0032). Implement to a frozen SHA + CI + risk-required reviews,
+then return the evidence packet before merge.
 
 ## Current blocker
 None blocking M2-T012. Credentials pending (do not block this task): B-001 Supabase (highest),

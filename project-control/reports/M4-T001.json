@@ -1,0 +1,8 @@
+{
+  "task_id": "M4-T001",
+  "producer_agent": "rules-engineer",
+  "report_file": "project-control/reports/M4-T001-producer-report.md",
+  "submitted_at": "2026-07-21T21:03:47.319273+00:00",
+  "requested_status": "awaiting_gate",
+  "updated_at": "2026-07-21T21:03:47.319273+00:00"
+}

@@ -65,8 +65,8 @@
     "code-reviewer",
     "qa-engineer"
   ],
-  "status": "claimed",
-  "progress_percent": 10,
+  "status": "awaiting_gate",
+  "progress_percent": 85,
   "risks": [
     "DISPATCH HOLD: awaits owner review of the 2026-07-20 planning report; sequenced after M2-T013 acceptance (uncertainty taxonomy is an input contract)",
     "G6 is a HUMAN gate: the task can reach needs_review status for its rules but acceptance of 'published/verified' labeling requires the qualified zoning professional - expect a standing blocker until that human is available; the engine itself (G3/G4) is acceptable independently",
@@ -77,6 +77,15 @@
   ],
   "blockers": [],
   "created_at": "2026-07-20T06:34:25.711538+00:00",
-  "updated_at": "2026-07-21T20:07:38.285921+00:00",
-  "worktree": ".claude/worktrees/M4-T001-rules"
+  "updated_at": "2026-07-21T21:04:05.966978+00:00",
+  "worktree": ".claude/worktrees/M4-T001-rules",
+  "progress_log": [
+    {
+      "at": "2026-07-21T21:04:05.966978+00:00",
+      "agent": "orchestrator",
+      "percent": 85,
+      "status": "awaiting_gate",
+      "message": "Foundation merged to main at reviewed SHA de88ba2 (PR #76). G0/G2/G3/G4 all PASS (G3 code-review + G4 integration, independent, at frozen SHA). NOT accepted: acceptance blocked on G6 qualified-human legal approval (required_gate) and, for the client-validation item only, blocker B-010. Every R5 rule remains needs_review; nothing is Published/Verified. Engine foundation is integrated and available for downstream product tasks per owner directive 2026-07-21."
+    }
+  ]
 }
