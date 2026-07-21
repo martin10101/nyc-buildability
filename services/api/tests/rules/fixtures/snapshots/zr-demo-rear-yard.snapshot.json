@@ -1,0 +1,31 @@
+{
+  "snapshot_id": "zr-demo-rear-yard",
+  "snapshot_schema": "zr_section_snapshot/v1",
+  "jurisdiction": "nyc",
+  "corpus": "zoning_resolution",
+  "section_number": "23-47-DEMO",
+  "section_title": "SYNTHETIC rear-yard demonstration (NOT an official capture)",
+  "article": "II",
+  "chapter": "3",
+  "source": {
+    "source_id": "synthetic-test-fixture",
+    "official_channel": "none",
+    "request_url": "urn:synthetic:m4-t001:rear-yard-representability-demo",
+    "retrieved_at": "2026-07-21T00:00:00Z",
+    "document_currency_banner": null,
+    "document_currency_banner_note": "SYNTHETIC fixture; no official document.",
+    "section_last_amended": null,
+    "section_last_amended_source_text": null,
+    "capture_method": "synthetic_test_fixture",
+    "raw_html_verified": false,
+    "verification_required": "SYNTHETIC - this snapshot was NOT captured from any official source. It exists only to prove that a structurally different rule family (a minimum rear-yard depth in linear feet) is representable in the DSL with ZERO engine changes. Its values are illustrative and must never be used as a legal statement; a real rear-yard rule requires official capture + G6 approval."
+  },
+  "verbatim_excerpt": "SYNTHETIC (not verbatim from any source): For the purposes of this representability demonstration, a minimum rear yard depth of 30 feet applies in the indicated district.",
+  "extraction_status": "synthetic_test_fixture",
+  "content_digest_sha256": "d361bf54a8fe82db384bacb21844e15e2a8e914b8df7760d7c60b20ab7472c6a",
+  "notes": [
+    "Second-family representability proof for M4-T001 RE-S5.",
+    "Structurally different from FAR: the output is a minimum linear dimension (feet), not a ratio times area.",
+    "SYNTHETIC illustrative value; not a Verified determination and not an official-source capture."
+  ]
+}

@@ -1,0 +1,30 @@
+{
+  "rule_id": "r5-rear-yard-demo",
+  "rule_version": "0.0.1-draft",
+  "family": "rear_yard",
+  "title": "SYNTHETIC rear-yard minimum (representability demonstration)",
+  "jurisdiction": "nyc",
+  "status": "extracted_draft",
+  "description": "SYNTHETIC second-family fixture proving a structurally different rule family (a minimum rear-yard depth in linear feet - a floor, not a ratio times area) is representable with ZERO engine changes (M4-T001 RE-S5). Illustrative values only; not a Verified determination and not an official capture.",
+  "citations": [
+    {"snapshot_id": "zr-demo-rear-yard", "section": "23-47-DEMO", "quote": "SYNTHETIC (not verbatim from any source): For the purposes of this representability demonstration, a minimum rear yard depth of 30 feet applies in the indicated district.", "last_amended": null}
+  ],
+  "inputs": [
+    {"name": "zoning_district", "type": "string", "required": true, "enum": ["R5"], "description": "District governing the lot."},
+    {"name": "lot_depth_ft", "type": "number", "required": false, "unit": "feet", "description": "Optional lot depth (unused by this minimal demo; present to show optional-input handling)."}
+  ],
+  "outputs": [
+    {"name": "min_rear_yard_depth_ft", "type": "number", "unit": "feet", "description": "Minimum required rear-yard depth in feet."}
+  ],
+  "parameters": [
+    {"name": "base_rear_yard_ft", "value": 30.0, "citation_ref": "zr-demo-rear-yard", "note": "SYNTHETIC illustrative minimum rear-yard depth."}
+  ],
+  "applicability": {"op": "in_set", "input": "zoning_district", "values": ["R5"]},
+  "computation": {
+    "steps": [
+      {"id": "rear_yard", "op": "identity", "args": [{"param": "base_rear_yard_ft"}], "note": "Minimum rear-yard depth (feet)."}
+    ],
+    "outputs": {"min_rear_yard_depth_ft": {"step": "rear_yard"}}
+  },
+  "limitations": ["SYNTHETIC representability demonstration; illustrative value; requires official capture + G6 before any use."]
+}
