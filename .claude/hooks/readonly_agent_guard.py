@@ -13,8 +13,9 @@ Enforcement (2.1.x PreToolUse blocking contract):
   -> DENY.
 - Read-only git inspection, gh reads, and test execution -> ALLOW (silent).
 Deny is emitted as exit 0 with hookSpecificOutput.permissionDecision == "deny".
-An unparseable payload from a read-only role fails CLOSED (deny); a payload with no
-read-only agent_type is allowed (it is the main session or a producer).
+An unparseable / non-object payload fails CLOSED (deny) — real harness payloads are
+always valid JSON objects, so this never affects the main session in practice while
+guaranteeing a malformed event can never slip a mutation through.
 
 This does NOT sandbox a scripting-language file write (e.g. `python -c` opening a
 file for writing) — that is inseparable from allowing test execution. The residual
@@ -42,7 +43,9 @@ WRITE_TOOLS = frozenset({"Write", "Edit", "MultiEdit", "NotebookEdit"})
 
 # Repository / GitHub / control-plane / filesystem mutation. Read-only git
 # (status/log/show/diff/rev-parse/ls-*/cat-file/blame/branch --list/worktree list/
-# config --get) and test runners (pytest/node --test/npm test) are NOT matched.
+# config --get/merge-base/show-branch) and test runners (pytest/node --test/npm
+# test) are NOT matched. `(?![\w-])` after the git verb group prevents a mutating
+# verb from matching a hyphenated read-only cousin (e.g. `merge` vs `merge-base`).
 _MUTATING = re.compile(
     r"""(?ix)
     (?:^|[\s;&|(`{])
@@ -55,7 +58,7 @@ _MUTATING = re.compile(
                remote\s+(?:add|remove|rename|set-url|prune)|
                worktree\s+(?:add|remove|move|prune|lock|unlock)|
                branch\s+(?:-[dDmM]|--delete|--move|--force)|
-               notes|replace|filter-branch|submodule|fast-import)
+               notes|replace|filter-branch|submodule|fast-import)(?![\w-])
       | gh\s+(?:pr|issue|release|repo|run|api|workflow|label|gist|secret|
                variable|ruleset|cache|project|codespace)\b
             [^;&|]*?\b(?:create|edit|close|reopen|merge|comment|review|delete|
@@ -77,9 +80,11 @@ _MUTATING = re.compile(
     """
 )
 
-# A redirection writing to a real path (not /dev/null|/dev/stderr|/dev/stdout or an
-# fd duplication like >&2 / 2>&1). `2>/dev/null` is fine (digit before '>' excluded).
-_REDIRECT = re.compile(r"(?<![0-9&>])>>?\s*(?!\s*(?:/dev/null|/dev/stderr|/dev/stdout|&))")
+# A redirection writing to a real path. Allows only /dev/null|/dev/stderr|/dev/stdout
+# and fd duplications (`>&2`, `2>&1`). A leading fd digit (1>, 2>, 9>, or none) still
+# counts as a file write unless the target is one of those — so `1>out.txt` is DENIED
+# while `2>/dev/null` and `2>&1` are allowed.
+_REDIRECT = re.compile(r">>?\s*(?!\s*(?:/dev/(?:null|stderr|stdout)\b|&))")
 
 
 def _deny(reason):
@@ -102,14 +107,13 @@ def main():
         payload = json.loads(raw)
     except (ValueError, TypeError):
         payload = None
-    agent = ""
-    if isinstance(payload, dict):
-        agent = (payload.get("agent_type") or payload.get("agentType") or "").strip()
+    if not isinstance(payload, dict):
+        # Malformed / non-object event on a guarded tool: fail CLOSED.
+        _deny("read-only guard: unparseable PreToolUse payload (fail-closed)")
+        return 0
+    agent = (payload.get("agent_type") or payload.get("agentType") or "").strip()
     # Only govern the six read-only roles. Main session / producers pass through.
     if agent not in READ_ONLY_AGENTS:
-        return 0
-    if payload is None:
-        _deny(f"read-only guard for '{agent}': unparseable PreToolUse payload (fail-closed)")
         return 0
     tool = payload.get("tool_name") or ""
     if tool in WRITE_TOOLS:
