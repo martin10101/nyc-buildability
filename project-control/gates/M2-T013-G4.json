@@ -1,0 +1,10 @@
+{
+  "task_id": "M2-T013",
+  "gate_id": "G4",
+  "reviewer": "geospatial-engineer",
+  "role": "independent_review",
+  "result": "PASS",
+  "report_file": "project-control/reports/M2-T013-G4-geospatial-review.md",
+  "reviewed_at": "2026-07-21T05:53:23.375775+00:00",
+  "updated_at": "2026-07-21T05:53:23.375775+00:00"
+}
