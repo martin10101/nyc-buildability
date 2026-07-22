@@ -47,3 +47,16 @@ results to untrusted callers.**
 Neither item blocks the current service-layer slice (no endpoint/UI; results are draft
 `needs_review`, never Published/Verified). All three are prerequisites for the future
 property-analysis endpoint + UI task.
+
+## FH-4 — `detect_rule_conflicts` gates temporal effectiveness lexically (consistency)
+- **Where:** `services/api/app/rules/registry.py` → `detect_rule_conflicts` uses `rule.is_in_effect`
+  (lexical string comparison) directly rather than routing `as_of_date` through FH-1's
+  `_valid_iso_date` calendar validation.
+- **Why safe now:** independently confirmed by G5/G3/G4 (M4-T004): every reachable path with an invalid
+  `as_of_date` resolves fail-closed — a conflict at most surfaces `professional_review_required` with no
+  value, and the `evaluate_property` eval loop separately routes an invalid `as_of_date` through the
+  evaluator's `as_of_invalid` guard (PRR, no computation) before any value is emitted. The real corpus is
+  single-rule so FH-2 never triggers. Raised as a non-blocking INFO by all three M4-T004 gates.
+- **Future fix (before public endpoint):** validate `as_of_date` via `_valid_iso_date` at the
+  `evaluate_property`/`detect_conflicts` boundary so an impossible date fails closed identically on both
+  the conflict-detection and single-rule paths (belt-and-suspenders; today they already both fail closed).

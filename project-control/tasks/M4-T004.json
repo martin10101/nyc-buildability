@@ -63,12 +63,12 @@
     "qa-engineer",
     "security-reviewer"
   ],
-  "status": "claimed",
-  "progress_percent": 10,
+  "status": "in_progress",
+  "progress_percent": 95,
   "risks": [],
   "blockers": [],
   "created_at": "2026-07-22T05:08:12.759723+00:00",
-  "updated_at": "2026-07-22T05:11:52.395247+00:00",
+  "updated_at": "2026-07-22T17:07:07.381166+00:00",
   "worktree": ".claude/worktrees/M4-T004-safeguards",
   "progress_log": [
     {
@@ -77,6 +77,20 @@
       "percent": 10,
       "status": "claimed",
       "message": "G0 PASS; claimed; scope FH-1/FH-2/FH-3 fail-closed safeguards; awaiting owner confirm on FH-2 conservative-guard scope before implementation"
+    },
+    {
+      "at": "2026-07-22T05:15:09.328266+00:00",
+      "agent": "rules-engineer",
+      "percent": 20,
+      "status": "in_progress",
+      "message": "FH-2 authoritative spec recorded; producer implementing FH-1/FH-2/FH-3 + adversarial tests"
+    },
+    {
+      "at": "2026-07-22T17:07:07.381166+00:00",
+      "agent": "rules-engineer",
+      "percent": 95,
+      "status": "in_progress",
+      "message": "Frozen 3e45524; CI 12/12 green; independent G3/G4/G5 PASS; FH-4 recorded"
     }
   ]
 }
