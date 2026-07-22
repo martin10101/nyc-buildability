@@ -161,8 +161,8 @@
   "execution_location": "Cloud/worktree isolation on branch task/M4-T005-rule-eval; CI (GitHub Actions) is the authority for web build/lint/typecheck/e2e. Owner PC stays thin-client: text-only edits, python stdlib typegen + pytest locally; NO local npm, DB, Docker, or bulk data. Temporary files under the session scratchpad only; no large/persistent artifacts on the owner PC.",
   "disk_budget": "Negligible (source + JSON fixtures). No datasets, no caches, no node_modules added locally.",
   "holds_honored": "Nothing Published/Verified; no rule accepted; no G6 manufactured; M4-T001 stays unaccepted; endpoint disabled by default in production (not exposed anonymously); PR #64, CP-0032, expansion/GDS holds untouched; property_profile 1.4.0 and existing /properties/{bbl} contract unchanged.",
-  "status": "in_progress",
-  "progress_percent": 90,
+  "status": "awaiting_gate",
+  "progress_percent": 85,
   "risks": [
     "Contract $ref resolution across files must stay byte-identical through typegen + bundle (three CI drift checks) - highest-friction area.",
     "Feature-flag gating must fail SAFE (absent/unknown flag => disabled) and be provable by security review, not merely documented.",
@@ -171,7 +171,7 @@
   "blockers": [],
   "worktree": ".claude/worktrees/M4-T005-rule-eval",
   "branch": "task/M4-T005-rule-eval",
-  "updated_at": "2026-07-22T21:36:48.624838+00:00",
+  "updated_at": "2026-07-22T22:03:48.036988+00:00",
   "progress_log": [
     {
       "at": "2026-07-22T17:37:44.389605+00:00",
