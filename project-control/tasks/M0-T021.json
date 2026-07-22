@@ -65,12 +65,12 @@
     "code-reviewer",
     "qa-engineer"
   ],
-  "status": "claimed",
-  "progress_percent": 10,
+  "status": "awaiting_gate",
+  "progress_percent": 85,
   "risks": [],
   "blockers": [],
   "created_at": "2026-07-22T04:10:23.342273+00:00",
-  "updated_at": "2026-07-22T04:14:33.653794+00:00",
+  "updated_at": "2026-07-22T04:29:37.743463+00:00",
   "worktree": ".claude/worktrees/M0-T021-lock-verifier",
   "progress_log": [
     {
@@ -79,6 +79,13 @@
       "percent": 10,
       "status": "claimed",
       "message": "G0 PASS; claimed; root cause captured in M0-T021-diagnosis.md"
+    },
+    {
+      "at": "2026-07-22T04:29:02.286819+00:00",
+      "agent": "cloud-architect",
+      "percent": 40,
+      "status": "in_progress",
+      "message": "Verifier fix implemented in both mirror scripts + AS-1..AS-6 regression tests"
     }
   ]
 }
