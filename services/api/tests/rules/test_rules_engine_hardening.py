@@ -263,3 +263,133 @@ def test_rh_s8_nothing_verified(registry, hardening_registry):
 def test_rh_s8_finite_helpers_are_strict():
     # guardrail on the finiteness check the fail-closed path depends on
     assert math.isfinite(0.0) and not math.isfinite(float("inf"))
+
+
+# --------------------------------------------------------------------------
+# RH-S9 (rework, G5 D1/D2) - numeric OVERFLOW never fabricates an output.
+# A huge-but-finite input whose computation overflows to inf, and an
+# arbitrary-precision int too big for float(), both fail closed WITHOUT a
+# value and WITHOUT an uncaught exception.
+# --------------------------------------------------------------------------
+
+def test_rh_s9_overflow_output_fails_closed_no_value(registry):
+    # 1.2e308 is a finite, in-domain input; 1.2e308 * FAR(1.5) OVERFLOWS to inf.
+    # The output-finiteness guard must fail closed rather than emit inf (D1).
+    result = registry.evaluate(_R5, _std("R5", 1.2e308))
+    assert result.coverage_status == _PRR
+    assert result.outputs == {}  # never a fabricated inf floor area
+    assert "max_residential_floor_area_sq_ft" not in result.outputs
+    # the fail-closed trace is strict JSON (allow_nan=False) - no inf leaks out
+    json.dumps(result.export(), allow_nan=False)
+    assert any("non-finite result" in note for note in result.trace.notes)
+
+
+def test_rh_s9_huge_int_does_not_crash_validation(registry):
+    # 10**309 is an arbitrary-precision int that raises OverflowError in float().
+    # Must fail closed as an invalid input, NOT raise (D2).
+    result = registry.evaluate(
+        _R5, {"zoning_district": "R5", "lot_area_sq_ft": 10**309}
+    )
+    assert result.coverage_status == _PRR
+    assert result.outputs == {}
+    assert result.trace.input_validation["valid"] is False
+    assert any(
+        iv["name"] == "lot_area_sq_ft" for iv in result.trace.input_validation["invalid_inputs"]
+    )
+    json.dumps(result.export(), allow_nan=False)
+
+
+# --------------------------------------------------------------------------
+# RH-S10 (rework, G5 D3) - a non-finite value NESTED in a container keeps the
+# trace strict-JSON (_json_safe recurses into lists/dicts).
+# --------------------------------------------------------------------------
+
+def test_rh_s10_container_nested_nonfinite_stays_strict_json(registry):
+    result = registry.evaluate(
+        _R5, {"zoning_district": "R5", "lot_area_sq_ft": [float("inf")]}
+    )
+    assert result.coverage_status == _PRR  # a list is not a numeric input
+    assert result.outputs == {}
+    # export must be strict JSON even though the offending input nests an inf
+    json.dumps(result.export(), allow_nan=False)
+
+
+def test_rh_s10_successful_trace_is_strict_json(registry):
+    # the strict-JSON invariant must ALSO hold for a normal successful trace
+    ok = registry.evaluate(_R5, _std("R5", 10000)).export()
+    json.dumps(ok, allow_nan=False)
+
+
+# --------------------------------------------------------------------------
+# RH-S11 (rework, G5 I1/R2/L2) - malformed / non-string as_of_date FAILS CLOSED
+# (no misleading lexical compare, no TypeError crash).
+# --------------------------------------------------------------------------
+
+@pytest.mark.parametrize("bad_as_of", ["garbage", "2024/12/05", "2024-13-05", "2024-12-32"])
+def test_rh_s11_malformed_as_of_date_fails_closed(registry, bad_as_of):
+    result = registry.evaluate(_R5, _std("R5", 10000), as_of_date=bad_as_of)
+    assert result.coverage_status == _PRR
+    assert result.outputs == {}
+    assert result.trace.effective_window["in_effect"] is False
+    json.dumps(result.export(), allow_nan=False)
+
+
+def test_rh_s11_non_string_as_of_date_does_not_crash(registry):
+    # a non-string previously raised TypeError in the lexical comparison; now PRR.
+    result = registry.evaluate(_R5, _std("R5", 10000), as_of_date=20240101)
+    assert result.coverage_status == _PRR
+    assert result.outputs == {}
+    assert result.trace.effective_window["in_effect"] is False
+    json.dumps(result.export(), allow_nan=False)
+
+
+# --------------------------------------------------------------------------
+# RH-S12 (rework, G4 cheap gaps) - boundary / bool / negative-proposal
+# fail-closed cases the round-1 pack did not cover.
+# --------------------------------------------------------------------------
+
+def test_rh_s12_zero_lot_area_exclusive_minimum_boundary_fails_closed(registry):
+    # exclusive_minimum 0 -> exactly 0 is NOT greater-than and must be rejected.
+    result = registry.evaluate(_R5, _std("R5", 0))
+    assert result.coverage_status == _PRR
+    assert result.outputs == {}
+    assert result.trace.input_validation["valid"] is False
+
+
+def test_rh_s12_bool_as_number_fails_closed(registry):
+    # True is an int subclass in Python; it must NOT be accepted as a lot area.
+    result = registry.evaluate(_R5, _std("R5", True))
+    assert result.coverage_status == _PRR
+    assert result.outputs == {}
+    assert any(
+        iv["name"] == "lot_area_sq_ft" for iv in result.trace.input_validation["invalid_inputs"]
+    )
+
+
+def test_rh_s12_negative_proposal_fails_closed_no_determination(hardening_registry):
+    result = hardening_registry.evaluate(
+        "demo-compliance-far",
+        {"zoning_district": "DEMO", "lot_area_sq_ft": 10000, "proposed_floor_area_sq_ft": -5000},
+    )
+    assert result.coverage_status == _PRR
+    assert result.outputs == {}
+    assert result.trace.determination is None  # no genuine pass/fail from a bad input
+
+
+# --------------------------------------------------------------------------
+# RH-S13 (rework, G-1) - an OPTIONAL, omitted determination operand yields an
+# INDETERMINATE (null) determination: the rule still computes the limit but does
+# not fabricate a pass/fail.
+# --------------------------------------------------------------------------
+
+def test_rh_s13_indeterminate_determination_when_proposal_omitted(hardening_registry):
+    result = hardening_registry.evaluate(
+        "demo-compliance-optional",
+        {"zoning_district": "DEMO", "lot_area_sq_ft": 10000},  # proposal omitted
+    )
+    # the limit is still computed (a value the caller can see)...
+    assert result.outputs["max_floor_area_sq_ft"] == 15000.0
+    # ...but the compliance determination is honestly indeterminate.
+    assert result.trace.determination is None
+    assert result.coverage_status == cov.COVERAGE_CONDITIONAL
+    json.dumps(result.export(), allow_nan=False)

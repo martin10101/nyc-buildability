@@ -22,6 +22,7 @@ Load-bearing guarantees:
 from __future__ import annotations
 
 import math
+import re
 from typing import Any
 
 from . import coverage as cov
@@ -219,14 +220,26 @@ def _citations_with_provenance(rule: RuleDefinition, snapshots: SnapshotStore) -
 # --------------------------------------------------------------------------
 
 def _is_finite_number(value: Any) -> bool:
-    return isinstance(value, int | float) and not isinstance(value, bool) and math.isfinite(value)
+    if isinstance(value, bool) or not isinstance(value, int | float):
+        return False
+    try:
+        return math.isfinite(value)
+    except OverflowError:  # int too big to convert to float (e.g. 10**400)
+        return False
 
 
 def _json_safe(value: Any) -> Any:
     """Non-finite floats are not valid strict JSON; represent them as strings so
-    a fail-closed trace (which records the offending input) stays serializable."""
+    a fail-closed trace (which records the offending input) stays serializable.
+    Recurse into lists/tuples/dicts so a non-finite value nested in a container
+    (e.g. ``[float('inf')]``) is stringified too, keeping the whole trace
+    ``json.dumps(..., allow_nan=False)``-safe."""
     if isinstance(value, float) and not math.isfinite(value):
         return repr(value)
+    if isinstance(value, list | tuple):
+        return [_json_safe(item) for item in value]
+    if isinstance(value, dict):
+        return {key: _json_safe(item) for key, item in value.items()}
     return value
 
 
@@ -243,7 +256,10 @@ def _invalid_reason(spec, value: Any) -> str | None:
     if kind in ("number", "integer"):
         if isinstance(value, bool) or not isinstance(value, int | float):
             return f"expected numeric {kind}, got {type(value).__name__}"
-        number = float(value)
+        try:
+            number = float(value)
+        except OverflowError:
+            return "numeric value is out of representable range (too large to use)"
         if not math.isfinite(number):
             return "non-finite number (NaN or infinity) is not a usable value"
         if kind == "integer" and not number.is_integer():
@@ -299,6 +315,22 @@ def _rule_release(rule: RuleDefinition, *, verified_eligible: bool) -> dict:
         "qualified_human_approval": release.get("qualified_human_approval", "pending"),
         "verified_eligible": bool(verified_eligible),
     }
+
+
+_ISO_DATE_RE = re.compile(r"^(\d{4})-(\d{2})-(\d{2})$")
+
+
+def _valid_iso_date(value: Any) -> bool:
+    """True only for a syntactically valid ISO ``YYYY-MM-DD`` calendar date. A
+    non-string or a malformed/out-of-range value is rejected so temporal gating
+    fails closed instead of doing a misleading lexical string comparison."""
+    if not isinstance(value, str):
+        return False
+    match = _ISO_DATE_RE.match(value)
+    if not match:
+        return False
+    _, month, day = (int(part) for part in match.groups())
+    return 1 <= month <= 12 and 1 <= day <= 31
 
 
 def _effective_window(rule: RuleDefinition, as_of_date: str | None) -> dict:
@@ -375,7 +407,16 @@ def evaluate(
         rule, g6_approval
     )
     rule_release = _rule_release(rule, verified_eligible=verified_eligible)
-    effective_window = _effective_window(rule, as_of_date)
+    as_of_invalid = as_of_date is not None and not _valid_iso_date(as_of_date)
+    if as_of_invalid:
+        effective_window = {
+            "effective_from": rule.effective_from,
+            "effective_to": rule.effective_to,
+            "evaluated_as_of": _json_safe(as_of_date),
+            "in_effect": False,
+        }
+    else:
+        effective_window = _effective_window(rule, as_of_date)
     evaluated_inputs = _json_safe_inputs(inputs)
     base_notes: list = []
 
@@ -399,6 +440,20 @@ def evaluate(
         }
         fields.update(overrides)
         return EvaluationTrace(**fields)
+
+    # 0a. Invalid as_of_date fails closed (M4-T003 rework): a non-string or a
+    #     non-ISO/out-of-range date cannot be temporally reasoned about; do NOT
+    #     do a misleading lexical compare (fail OPEN). No computation, no value.
+    if as_of_invalid:
+        appl_trace = {"invalid_as_of_date": True, "value_seen": _json_safe(as_of_date)}
+        return RuleResult(_make_trace(
+            applicability_outcome=False,
+            applicability_trace=[appl_trace],
+            coverage_status=cov.COVERAGE_PROFESSIONAL_REVIEW_REQUIRED,
+            data_completeness=cov.COMPLETENESS_COMPLETE,
+            notes=base_notes + ["as_of_date is not a valid ISO (YYYY-MM-DD) calendar date; "
+                                "temporal effectiveness cannot be determined (fail-closed)"],
+        ))
 
     # 0. Temporal gating (fix 4): a rule not in effect as of the supplied date does
     #    not apply - no computation, no value, a visible reason (never silent).
@@ -483,6 +538,23 @@ def evaluate(
 
     # 3. Deterministic computation.
     step_traces, outputs = _run_computation(rule, inputs)
+
+    # 3a. Output finiteness guard (M4-T003 rework, D1): even with in-domain inputs
+    #     a computation can overflow to a non-finite result (e.g. a huge finite
+    #     lot_area multiplied by a FAR). Never emit a fabricated inf/NaN output;
+    #     fail closed to professional review with a visible reason.
+    nonfinite_steps = [s["step_id"] for s in step_traces if not _is_finite_number(s["result"])]
+    if nonfinite_steps:
+        return RuleResult(_make_trace(
+            applicability_outcome=True,
+            applicability_trace=[appl_trace],
+            coverage_status=cov.COVERAGE_PROFESSIONAL_REVIEW_REQUIRED,
+            data_completeness=cov.COMPLETENESS_COMPLETE,
+            notes=base_notes + [
+                f"computation produced a non-finite result in step(s) {nonfinite_steps} "
+                "(numeric overflow); no value emitted (fail-closed)"
+            ],
+        ))
 
     # 4. Base coverage for a draft rule is conditional; verified is only for a
     #    published rule with a matching G6 approval attached.
