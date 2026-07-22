@@ -1,0 +1,30 @@
+{
+  "snapshot_id": "zr-demo-m4t003",
+  "snapshot_schema": "zr_section_snapshot/v1",
+  "jurisdiction": "nyc",
+  "corpus": "zoning_resolution",
+  "section_number": "00-00-DEMO",
+  "section_title": "SYNTHETIC M4-T003 engine-hardening demonstration (NOT an official capture)",
+  "article": "0",
+  "chapter": "0",
+  "source": {
+    "source_id": "synthetic-test-fixture",
+    "official_channel": "none",
+    "request_url": "urn:synthetic:m4-t003:engine-hardening-demo",
+    "retrieved_at": "2026-07-21T00:00:00Z",
+    "document_currency_banner": null,
+    "document_currency_banner_note": "SYNTHETIC fixture; no official document.",
+    "section_last_amended": null,
+    "section_last_amended_source_text": null,
+    "capture_method": "synthetic_test_fixture",
+    "raw_html_verified": false,
+    "verification_required": "SYNTHETIC - NOT captured from any official source. Exists only to exercise M4-T003 engine capabilities (effective-date temporal version selection and a compliance pass/fail determination). Values are illustrative and must never be used as a legal statement; a real rule requires official capture + G6 approval."
+  },
+  "verbatim_excerpt": "SYNTHETIC (not verbatim from any source): for M4-T003 engine-hardening demonstrations only - effective-date temporal selection and a compliance pass/fail determination. Illustrative values; never a legal statement.",
+  "extraction_status": "synthetic_test_fixture",
+  "content_digest_sha256": "09e77a47c0e000bcf5f11ce84997564a12708c1442b4b45d1f1b226b1796d711",
+  "notes": [
+    "M4-T003 fixture for temporal-versioning (RH-S6) and compliance-determination (RH-S7).",
+    "SYNTHETIC illustrative values; not a Verified determination and not an official-source capture."
+  ]
+}

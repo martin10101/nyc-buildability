@@ -20,7 +20,11 @@
     "citations",
     "uncertainty",
     "exceptions_applied",
-    "notes"
+    "notes",
+    "input_validation",
+    "rule_release",
+    "effective_window",
+    "determination"
   ],
   "properties": {
     "rule_id": {"type": "string"},
@@ -71,6 +75,68 @@
     },
     "uncertainty": {"type": "object"},
     "exceptions_applied": {"type": "array"},
-    "notes": {"type": "array", "items": {"type": "string"}}
+    "notes": {"type": "array", "items": {"type": "string"}},
+    "input_validation": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "M4-T003: fail-closed input validation result. When valid is false the evaluation stops before computation and coverage is professional_review_required (no computed value).",
+      "required": ["valid", "invalid_inputs"],
+      "properties": {
+        "valid": {"type": "boolean"},
+        "invalid_inputs": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["name", "reason"],
+            "properties": {
+              "name": {"type": "string"},
+              "reason": {"type": "string"},
+              "value_seen": {}
+            }
+          }
+        }
+      }
+    },
+    "rule_release": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "M4-T003: the rule's test/lifecycle release status carried per evaluation. verified_eligible is true only for a published rule evaluated with a matching G6 approval attached.",
+      "required": ["lifecycle_status", "deterministic_tests", "independent_review", "qualified_human_approval", "verified_eligible"],
+      "properties": {
+        "lifecycle_status": {"type": "string", "enum": ["discovered", "extracted_draft", "needs_review", "published"]},
+        "deterministic_tests": {"type": "string", "enum": ["declared", "none"]},
+        "independent_review": {"type": "string", "enum": ["pending", "passed"]},
+        "qualified_human_approval": {"type": "string", "enum": ["pending", "approved"]},
+        "verified_eligible": {"type": "boolean"}
+      }
+    },
+    "effective_window": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "M4-T003: temporal effectiveness of this rule version relative to the evaluation as_of date. evaluated_as_of is null when the caller did not pass one (no temporal gating applied).",
+      "required": ["effective_from", "effective_to", "evaluated_as_of", "in_effect"],
+      "properties": {
+        "effective_from": {"type": ["string", "null"]},
+        "effective_to": {"type": ["string", "null"]},
+        "evaluated_as_of": {"type": ["string", "null"]},
+        "in_effect": {"type": "boolean"}
+      }
+    },
+    "determination": {
+      "description": "M4-T003: compliance pass/fail determination when the rule declares one and was applicable+computed; null otherwise. Never changes coverage.",
+      "type": ["object", "null"],
+      "additionalProperties": false,
+      "required": ["id", "compare", "left_value", "right_value", "outcome", "label"],
+      "properties": {
+        "id": {"type": "string"},
+        "description": {"type": "string"},
+        "compare": {"type": "string"},
+        "left_value": {"type": ["number", "null"]},
+        "right_value": {"type": ["number", "null"]},
+        "outcome": {"type": "string", "enum": ["pass", "fail"]},
+        "label": {"type": "string"}
+      }
+    }
   }
 }

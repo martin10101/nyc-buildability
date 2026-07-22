@@ -1,0 +1,34 @@
+{
+  "rule_id": "demo-temporal-far-v1",
+  "rule_version": "0.0.1-draft",
+  "family": "demo_temporal_far",
+  "title": "SYNTHETIC temporal FAR - version 1 (before the demo amendment)",
+  "jurisdiction": "nyc",
+  "status": "extracted_draft",
+  "effective_from": null,
+  "effective_to": "2024-01-01",
+  "description": "SYNTHETIC fixture (M4-T003 RH-S6): version 1 of a demo FAR rule governing dates BEFORE 2024-01-01. Proves effective-date temporal selection: evaluating as_of a pre-2024-01-01 date selects this version. Illustrative value; not a Verified determination.",
+  "citations": [
+    {"snapshot_id": "zr-demo-m4t003", "section": "00-00-DEMO", "quote": "SYNTHETIC (not verbatim from any source): for M4-T003 engine-hardening demonstrations only - effective-date temporal selection and a compliance pass/fail determination. Illustrative values; never a legal statement.", "last_amended": null}
+  ],
+  "inputs": [
+    {"name": "zoning_district", "type": "string", "required": true, "description": "District governing the lot (scope via applicability)."},
+    {"name": "lot_area_sq_ft", "type": "number", "required": true, "unit": "square_feet", "exclusive_minimum": 0, "description": "Zoning-lot area (must be > 0)."}
+  ],
+  "outputs": [
+    {"name": "max_far", "type": "number", "unit": "far", "description": "Maximum FAR (version 1)."},
+    {"name": "max_floor_area_sq_ft", "type": "number", "unit": "square_feet", "description": "Maximum floor area = lot area x FAR."}
+  ],
+  "parameters": [
+    {"name": "far_value", "value": 1.0, "citation_ref": "zr-demo-m4t003", "note": "SYNTHETIC version-1 FAR (pre-amendment)."}
+  ],
+  "applicability": {"op": "in_set", "input": "zoning_district", "values": ["DEMO"]},
+  "computation": {
+    "steps": [
+      {"id": "far", "op": "identity", "args": [{"param": "far_value"}], "note": "Version-1 FAR."},
+      {"id": "floor_area", "op": "multiply", "args": [{"input": "lot_area_sq_ft"}, {"step": "far"}], "note": "lot area x FAR."}
+    ],
+    "outputs": {"max_far": {"step": "far"}, "max_floor_area_sq_ft": {"step": "floor_area"}}
+  },
+  "limitations": ["SYNTHETIC temporal-versioning demonstration; illustrative value; requires official capture + G6 before any use."]
+}

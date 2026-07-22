@@ -71,11 +71,30 @@ class RuleRegistry:
         *,
         spatial_context: dict | None = None,
         g6_approval: lifecycle.G6Approval | None = None,
+        as_of_date: str | None = None,
     ) -> RuleResult:
         rule = self.rule(rule_id)
         return evaluator.evaluate(
-            rule, inputs, self.snapshots, spatial_context=spatial_context, g6_approval=g6_approval
+            rule,
+            inputs,
+            self.snapshots,
+            spatial_context=spatial_context,
+            g6_approval=g6_approval,
+            as_of_date=as_of_date,
         )
+
+    def effective_rules(self, family: str, as_of_date: str | None) -> list[RuleDefinition]:
+        """Temporal selection (M4-T003): rules in ``family`` whose effective window
+        contains ``as_of_date``. A well-formed temporal series yields exactly one;
+        zero means no version governs that date (a visible not-effective gap) and
+        more than one is an overlapping-window authoring error the caller must
+        surface, never silently pick from."""
+        self._ensure()
+        return [
+            rule
+            for rule in self._by_family.get(family, [])
+            if rule.is_in_effect(as_of_date)
+        ]
 
     def family_coverage(self, family: str) -> dict:
         """Coverage honesty (RE-S7): a family with no implemented rule is a
