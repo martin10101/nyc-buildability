@@ -55,6 +55,15 @@ include = ["app*"]
 [tool.setuptools.package-data]
 "app._contract_schemas.v1" = ["*.schema.json"]
 
+# M4-T005 phase 2b: ship the runtime-bundled ZR section snapshots (build
+# artifacts kept byte-identical to docs/research/zr-snapshots/v1 by
+# services/api/scripts/sync_zr_snapshots.py) as PACKAGE DATA so
+# `pip install ./services/api` includes them. Without this the installed app
+# would not carry app/_zr_snapshots/v1/*.snapshot.json and snapshots.py would
+# fail to load the ZR snapshots at first rule evaluation (docs/ is not part of
+# the wheel), 500-ing the rule-evaluation endpoint in web-e2e and production.
+"app._zr_snapshots.v1" = ["*.snapshot.json"]
+
 [tool.ruff]
 line-length = 100
 target-version = "py312"
