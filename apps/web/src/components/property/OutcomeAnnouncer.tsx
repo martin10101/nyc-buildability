@@ -20,15 +20,26 @@
  * announcement of the same event. Focus management (moving focus to the
  * outcome heading) is handled by the screens, not by this component.
  * `aria-atomic` makes each update read as one whole message.
+ *
+ * M4-T005: an optional `testId` (default "outcome-announcer") lets a SECOND,
+ * independent live region coexist on the same screen (the additive
+ * rule-evaluation surface mounts its own announcer) without colliding on the
+ * default test id — the property/confirm announcers are unchanged.
  */
-export function OutcomeAnnouncer({ message }: { message: string }) {
+export function OutcomeAnnouncer({
+  message,
+  testId = "outcome-announcer",
+}: {
+  message: string;
+  testId?: string;
+}) {
   return (
     <div
       className="visually-hidden"
       role="status"
       aria-live="polite"
       aria-atomic="true"
-      data-testid="outcome-announcer"
+      data-testid={testId}
     >
       {message}
     </div>

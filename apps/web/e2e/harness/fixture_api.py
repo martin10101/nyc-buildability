@@ -54,6 +54,8 @@ import uvicorn
 from fastapi.middleware.cors import CORSMiddleware
 
 from app.api.v1.properties import get_pluto_fetcher
+from app.api.v1.rule_evaluation import get_spatial_substrate_provider
+from app.config import INTERNAL_RULE_EVAL_ENABLED_ENV_VAR
 from app.connectors.pluto_soda import (
     TransportFailure,
     TransportResponse,
@@ -152,8 +154,104 @@ def harness_fetcher(bbl: str, correlation_id: str):
     )
 
 
+# ---------------------------------------------------------------------------
+# M4-T005 phase 3: server-side spatial substrate for the internal draft
+# rule-evaluation endpoint. The endpoint rebuilds the profile SERVER-SIDE and
+# runs the real deterministic evaluator; the ONLY seam is the substrate
+# provider (never browser-supplied), overridden here with the SAME faithful
+# M2-T013 substrate dicts the accepted phase-2 API acceptance pack uses
+# (services/api/tests/api/test_rule_evaluation_api.py: _pair / _substrate). No
+# rule-evaluation body is hand-written; route, builder, evaluator, serializer,
+# and strict validation are the production code paths.
+#
+# Substrate routing (drives the six UI states through the REAL endpoint):
+#   1000010100 (F01) -> confident single R5 district      -> applicable draft
+#   1000010010 (F05) -> split lot R5/R6 with share RANGES  -> spatial uncertainty
+#   any other BBL    -> None (no substrate wired)          -> professional-review
+#                                                             fail-safe (missing
+#                                                             evidence)
+# ---------------------------------------------------------------------------
+
+RULE_EVAL_CONFIDENT_BBL = "1000010100"
+RULE_EVAL_SPLIT_LOT_BBL = "1000010010"
+
+
+def _pair(label: str, pair_class: str, *, lot_area=10000.0, share=(1.0, 1.0, 1.0), minor=False):
+    smin, spoint, smax = share
+    return {
+        "layer": "nyzd",
+        "family": "base_zoning",
+        "district_label": label,
+        "pair_class": pair_class,
+        "raw_intersection_sq_ft": lot_area * spoint,
+        "firm_intersection_sq_ft": lot_area * spoint,
+        "dilated_intersection_sq_ft": lot_area * smax,
+        "distance_ft": 0.0,
+        "lot_area_sq_ft": lot_area,
+        "share_min": smin,
+        "share_point": spoint,
+        "share_max": smax,
+        "minor_portion": minor,
+    }
+
+
+def _substrate(bbl: str, lot_overall_class: str, pairs: list, *, review: bool, review_reasons=None):
+    return {
+        "bbl": bbl,
+        "lot_overall_class": lot_overall_class,
+        "pairs": pairs,
+        "coverage_audits": [{"family": "base_zoning", "status": "unknown"}],
+        "crosscheck": None,
+        "professional_review_required": review,
+        "review_reasons": review_reasons or [],
+        "unassigned_area": [],
+        "overlap_area": [],
+        "accuracy_records": [{"applies_to": "lot", "value_ft": 20.0, "basis": "documented"}],
+        "policy": {"version": "policy-1"},
+        "provenance": {
+            "source_id": "nyc-dcp-mappluto-arcgis",
+            "requested_bbl": bbl,
+            "retrieved_at": "2026-07-16T12:00:00Z",
+            "normalized_digest": "sha256:" + "e" * 64,
+            "source_data_last_edited": "2026-07-15T00:00:00Z",
+        },
+        "coverage_note": "facts_with_uncertainty; not a Verified zoning determination",
+        "notes": [],
+    }
+
+
+def harness_substrate_provider(canonical_bbl: str, correlation_id: str):
+    if canonical_bbl == RULE_EVAL_CONFIDENT_BBL:
+        return _substrate(
+            canonical_bbl,
+            "single_district_confident",
+            [_pair("R5", "interior_confident")],
+            review=False,
+        )
+    if canonical_bbl == RULE_EVAL_SPLIT_LOT_BBL:
+        return _substrate(
+            canonical_bbl,
+            "split_lot_confident",
+            [
+                _pair("R5", "split_confident", share=(0.55, 0.60, 0.65)),
+                _pair("R6", "split_confident", share=(0.35, 0.40, 0.45), minor=True),
+            ],
+            review=True,
+            review_reasons=["lot_overall_class=split_lot_confident"],
+        )
+    return None
+
+
 def build_app():
+    # M4-T005: enable the internal rule-evaluation endpoint's SERVER flag for
+    # this test process only (independent of the frontend flag). The no-call
+    # frontend spec still proves the browser issues no request when the surface
+    # is not opted in, regardless of this server-side flag.
+    os.environ[INTERNAL_RULE_EVAL_ENABLED_ENV_VAR] = "1"
     app.dependency_overrides[get_pluto_fetcher] = lambda: harness_fetcher
+    app.dependency_overrides[get_spatial_substrate_provider] = (
+        lambda: harness_substrate_provider
+    )
     # Test-origin CORS only (see module docstring CORS NOTE).
     app.add_middleware(
         CORSMiddleware,
