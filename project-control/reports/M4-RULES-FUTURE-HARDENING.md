@@ -31,6 +31,19 @@ results to untrusted callers.**
   both apply to the same inputs over an overlapping effective window — while still permitting
   distinct-applicability rules to share a window.
 
+## FH-3 — `assert_not_verified` iterates `evaluations` without a list-guard
+- **Where:** `services/api/app/rules/integration.py` → `assert_not_verified`
+  (`for trace in data.get("evaluations") or []`).
+- **Current behavior:** if a caller passes a *foreign* payload whose `evaluations` is a truthy
+  non-iterable (e.g. a scalar), the guard raises `TypeError` there rather than iterating.
+- **Why safe now:** the internal producer always emits `evaluations` as a list; the guard is only
+  ever called on payloads this module built (at construction and in `export()`). Flagged as a
+  non-blocking carry-forward INFO by G3 and G5 round-2 — the same robustness class as FH/LOW-1 but
+  in the downstream-safety guard rather than the spatial-container helpers.
+- **Future fix:** apply the same `_as_list`-style coercion (or an `isinstance` list-guard) inside
+  `assert_not_verified` so a hostile foreign payload fails safe instead of raising, once the guard is
+  exposed to untrusted callers at the public endpoint.
+
 Neither item blocks the current service-layer slice (no endpoint/UI; results are draft
-`needs_review`, never Published/Verified). Both are prerequisites for the future
+`needs_review`, never Published/Verified). All three are prerequisites for the future
 property-analysis endpoint + UI task.
