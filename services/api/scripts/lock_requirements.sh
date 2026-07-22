@@ -67,6 +67,17 @@ MODE="${1:-generate}"
 if [ "${MODE}" = "--check" ]; then
   TMP="$(mktemp)"
   trap 'rm -f "${TMP}"' EXIT
+  # M0-T021: SEED the temp output with the COMMITTED lock before the (identical,
+  # non-upgrade) compile so uv uses the committed pins as existing-output
+  # PREFERENCES and keeps them whenever they still satisfy requirements.in.
+  # Compiling into a BLANK temp file gave uv no preferences, so it resolved every
+  # package to its LATEST upstream release; the check then asked "is anything
+  # newer upstream?" (red on every unrelated PR the moment any dep published a
+  # new version) instead of "does the committed lock reproduce from its inputs?".
+  # No --upgrade is added anywhere: genuine drift (inputs changed) and tamper
+  # (a hash edited by hand) still fail because uv rewrites the resolved version's
+  # hashes and re-resolves any pin the inputs no longer permit.
+  cp "${OUT_FILE}" "${TMP}"
   "${COMPILE[@]}" --output-file "${TMP}" >/dev/null
   if ! diff -u "${OUT_FILE}" "${TMP}"; then
     echo "ERROR: requirements.txt is NOT byte-identical to a fresh lock." >&2
