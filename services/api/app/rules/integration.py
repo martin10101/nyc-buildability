@@ -83,6 +83,10 @@ FAILSAFE_SPATIAL_INCOMPLETE = "spatial_context_incomplete"
 FAILSAFE_DATA_CONFLICT = "data_conflict"
 FAILSAFE_GEOMETRY_UNCERTAIN = "geometry_uncertain"
 FAILSAFE_INCONSISTENT_CONFIDENT = "inconsistent_confident_geometry"
+# FH-2: >=2 same-family rules simultaneously in effect and independently
+# applicable to the same inputs for overlapping outputs (a legal ambiguity the
+# engine surfaces for professional review; it never picks a governing rule).
+FAILSAFE_RULE_CONFLICT = "rule_conflict"
 
 _COVERAGE_SOURCE_EVALUATOR = "rule_evaluator"
 _COVERAGE_SOURCE_FAIL_SAFE = "integration_fail_safe"
@@ -124,6 +128,10 @@ class PropertyRuleEvaluation:
     family_coverage: dict
     reasons: list
     coverage_source: str = _COVERAGE_SOURCE_EVALUATOR
+    # FH-2: the typed, deterministic rule-conflict object (competing rule IDs +
+    # each rule's effective window) when a same-family conflict is detected;
+    # ``None`` otherwise. Never carries a computed output/determination value.
+    rule_conflict: dict | None = None
 
     def as_dict(self) -> dict:
         return {
@@ -148,6 +156,7 @@ class PropertyRuleEvaluation:
             "family_coverage": dict(self.family_coverage),
             "reasons": list(self.reasons),
             "coverage_source": self.coverage_source,
+            "rule_conflict": (dict(self.rule_conflict) if self.rule_conflict is not None else None),
         }
 
     def export(self) -> dict:
@@ -175,13 +184,21 @@ def assert_not_verified(payload: PropertyRuleEvaluation | dict) -> None:
             "integration coverage_status is 'verified'; a draft-rule result may "
             "never be Verified (G6 qualified-human approval is required first)."
         )
-    for trace in data.get("evaluations") or []:
+    # FH-3: a FOREIGN/hostile payload may carry ``evaluations`` as a non-list
+    # (int, dict, str). Coerce with the same ``_as_list`` list-guard used for the
+    # spatial containers so a malformed container is treated as empty and the
+    # guard still fails CLOSED on any real verified status, never raising
+    # TypeError deep in the loop. The never-Verified guarantee is not weakened.
+    for trace in _as_list(data.get("evaluations")):
         if isinstance(trace, dict) and trace.get("coverage_status") == verified:
             raise DraftVerifiedError(
                 f"evaluator trace for rule {trace.get('rule_id')!r} carries "
                 "'verified'; a draft rule may never be Verified."
             )
-    family_coverage = data.get("family_coverage") or {}
+    # FH-3: ``family_coverage`` may likewise be a non-dict in a foreign payload;
+    # the isinstance guard treats a non-dict as absent (fail-safe) instead of
+    # raising, while still catching a genuine verified family status.
+    family_coverage = data.get("family_coverage")
     if isinstance(family_coverage, dict) and family_coverage.get("coverage_status") == verified:
         raise DraftVerifiedError("family_coverage is 'verified'; unreachable for a draft family.")
 
@@ -371,6 +388,57 @@ def _fail_safe(
     )
 
 
+def _conflict_result(
+    *,
+    bbl: str | None,
+    conflict: dict,
+    district: str,
+    lot_area_sq_ft: float | None,
+    lot_area_source: str | None,
+    spatial_context: dict | None,
+    spatial_uncertainty: dict,
+    input_provenance: dict,
+    family_coverage: dict,
+) -> PropertyRuleEvaluation:
+    """FH-2 fail-closed result for a detected same-family rule conflict.
+
+    Coverage is ``professional_review_required`` and NO value is produced from the
+    competing rules (``evaluations`` is empty, no determination). The typed
+    ``rule_conflict`` object carries the competing rule IDs and effective windows.
+    The known district and its input provenance are PRESERVED (the conflict is
+    about which RULE governs, not about which district the lot is in); a reviewer
+    still sees the full provenance trail. Never selects, ranks, or merges rules."""
+    competing = ", ".join(entry["rule_id"] for entry in conflict.get("competing_rules", []))
+    return PropertyRuleEvaluation(
+        bbl=bbl,
+        coverage_status=cov.COVERAGE_PROFESSIONAL_REVIEW_REQUIRED,
+        data_completeness=None,
+        needs_review=True,
+        professional_review_required=True,
+        fail_safe=True,
+        fail_safe_reason=FAILSAFE_RULE_CONFLICT,
+        rule_lifecycle_statuses=[],
+        not_verified_disclaimer=NOT_VERIFIED_DISCLAIMER,
+        zoning_district=district,
+        lot_area_sq_ft=lot_area_sq_ft,
+        lot_area_source=lot_area_source,
+        spatial_context=spatial_context,
+        spatial_uncertainty=spatial_uncertainty,
+        input_provenance=input_provenance,
+        evaluations=[],
+        family_coverage=family_coverage,
+        reasons=[
+            f"same-family rule conflict for district {district!r}: rules "
+            f"[{competing}] are simultaneously in effect and independently "
+            "applicable for overlapping output(s) "
+            f"{conflict.get('competing_output_names')}; the governing rule is a "
+            "legal determination - professional review required, no value produced"
+        ],
+        coverage_source=_COVERAGE_SOURCE_FAIL_SAFE,
+        rule_conflict=conflict,
+    )
+
+
 # ---------------------------------------------------------------------------
 # Public entry point.
 # ---------------------------------------------------------------------------
@@ -379,6 +447,7 @@ def evaluate_property(
     profile: dict,
     *,
     registry: RuleRegistry | None = None,
+    as_of_date: str | None = None,
 ) -> PropertyRuleEvaluation:
     """Map a canonical property profile into the rules evaluator and evaluate the
     draft R5 residential-FAR family. Pure and deterministic: the same profile
@@ -387,6 +456,11 @@ def evaluate_property(
     The profile is the contract-1.4.0 dict the accepted M2-T012 builder emits; the
     keys read are ``identity.bbl``, ``spatial_intersection`` (the M2-T013
     substrate), and ``lot_geometry.area_sq_ft``. Nothing is written back.
+
+    ``as_of_date`` (optional ISO ``YYYY-MM-DD``) threads temporal effectiveness
+    through to the evaluator and to FH-2 conflict detection. When omitted (the
+    default and the only existing behaviour) no temporal gating is applied, so the
+    single-rule R5 family behaves exactly as before.
     """
     registry = registry or _default_registry()
     family_coverage = registry.family_coverage(TARGET_FAMILY)
@@ -497,13 +571,36 @@ def evaluate_property(
     # residential site" is a separate legal determination the rule defers. Leaving
     # it absent makes the rule surface the higher-FAR alternative as conditional.
     inputs = {"zoning_district": district, "lot_area_sq_ft": lot_area_sq_ft}
+    input_provenance = _input_provenance(profile, spatial, lot_area_source)
+
+    # FH-2 (strictly fail-closed): if >=2 same-family rules are simultaneously in
+    # effect and independently applicable to these inputs for overlapping outputs,
+    # which one governs is a legal determination. Surface the typed conflict and
+    # produce NO value; never pick a winner. Detection depends on the concrete
+    # inputs (applicability) + as_of_date (temporal simultaneity); the real
+    # single-rule R5 family never triggers this.
+    conflict = registry.detect_conflicts(TARGET_FAMILY, inputs, as_of_date=as_of_date)
+    if conflict is not None:
+        return _conflict_result(
+            bbl=bbl,
+            conflict=conflict,
+            district=district,
+            lot_area_sq_ft=lot_area_sq_ft,
+            lot_area_source=lot_area_source,
+            spatial_context=spatial_context,
+            spatial_uncertainty=spatial_uncertainty,
+            input_provenance=input_provenance,
+            family_coverage=family_coverage,
+        )
 
     evaluations: list = []
     applicable_coverages: list = []
     statuses: set = set()
     reasons: list = []
     for rule_id in family_coverage.get("rule_ids", []):
-        result = registry.evaluate(rule_id, inputs, spatial_context=spatial_context)
+        result = registry.evaluate(
+            rule_id, inputs, spatial_context=spatial_context, as_of_date=as_of_date
+        )
         trace = result.export()  # provenance fail-closed (PRD section 19)
         evaluations.append(trace)
         statuses.add(trace["rule_status"])
@@ -545,7 +642,7 @@ def evaluate_property(
         lot_area_source=lot_area_source,
         spatial_context=spatial_context,
         spatial_uncertainty=spatial_uncertainty,
-        input_provenance=_input_provenance(profile, spatial, lot_area_source),
+        input_provenance=input_provenance,
         evaluations=evaluations,
         family_coverage=family_coverage,
         reasons=reasons,
@@ -568,4 +665,5 @@ __all__ = [
     "FAILSAFE_DATA_CONFLICT",
     "FAILSAFE_GEOMETRY_UNCERTAIN",
     "FAILSAFE_INCONSISTENT_CONFIDENT",
+    "FAILSAFE_RULE_CONFLICT",
 ]

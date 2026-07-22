@@ -1,0 +1,32 @@
+{
+  "rule_id": "syn-win-a",
+  "rule_version": "0.0.1-draft",
+  "family": "syn_window_overlap_far",
+  "title": "SYNTHETIC overlapping-window FAR - A (effective up to 2024-06-01)",
+  "jurisdiction": "nyc",
+  "status": "extracted_draft",
+  "effective_from": null,
+  "effective_to": "2024-06-01",
+  "description": "SYNTHETIC fixture (M4-T004 FH-2): window (-inf, 2024-06-01). Overlaps syn-win-b on [2024-01-01, 2024-06-01), so an as_of_date inside that overlap has BOTH in effect and applicable to SYNTH for the same output -> a genuine conflict. Outside the overlap only one is in effect -> no conflict. Illustrative value; not a Verified determination.",
+  "citations": [
+    {"snapshot_id": "zr-demo-m4t004", "section": "00-00-DEMO-FH2", "quote": "SYNTHETIC (not verbatim from any source): FH-2 window A.", "last_amended": null}
+  ],
+  "inputs": [
+    {"name": "zoning_district", "type": "string", "required": true, "description": "District governing the lot (scope via applicability)."},
+    {"name": "lot_area_sq_ft", "type": "number", "required": true, "unit": "square_feet", "exclusive_minimum": 0, "description": "Zoning-lot area (must be > 0)."}
+  ],
+  "outputs": [
+    {"name": "max_syn_window_far", "type": "number", "unit": "far", "description": "SYNTHETIC max FAR (window A)."}
+  ],
+  "parameters": [
+    {"name": "far_value", "value": 1.0, "citation_ref": "zr-demo-m4t004", "note": "SYNTHETIC window-A FAR."}
+  ],
+  "applicability": {"op": "in_set", "input": "zoning_district", "values": ["SYNTH"]},
+  "computation": {
+    "steps": [
+      {"id": "far", "op": "identity", "args": [{"param": "far_value"}], "note": "Window-A FAR."}
+    ],
+    "outputs": {"max_syn_window_far": {"step": "far"}}
+  },
+  "limitations": ["SYNTHETIC FH-2 demonstration; illustrative value; requires official capture + G6 before any use."]
+}

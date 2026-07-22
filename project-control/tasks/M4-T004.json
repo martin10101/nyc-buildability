@@ -1,0 +1,96 @@
+{
+  "task_id": "M4-T004",
+  "title": "Pre-endpoint fail-closed safeguards FH-1/FH-2/FH-3 (impossible-date, same-applicability overlap, guard container)",
+  "task_type": "backend",
+  "milestone_id": "M4",
+  "objective": "Smallest fail-closed safeguard task; additive; no lock/manifest/contract change; nothing Published/Verified. FH-1: services/api/app/rules/evaluator.py _valid_iso_date must reject IMPOSSIBLE calendar dates (e.g. 2024-02-30, 2024-04-31) via true datetime.date(y,m,d) validation in try/except ValueError, so a malformed as_of_date fails closed to professional_review_required (not lexically sorted as if valid). FH-3: services/api/app/rules/integration.py assert_not_verified must not raise TypeError on a foreign payload whose 'evaluations' (or family_coverage) is a non-list; coerce via an isinstance/list guard so a hostile/foreign payload fails safe. FH-2 (CONSERVATIVE, fail-closed ONLY; NOT a rule_series redesign): guard the same-applicability overlapping-effective-window case so that if more than one in-effect rule in a family would BOTH apply to the same inputs over overlapping windows, the result surfaces professional_review_required / a typed conflict rather than silently picking or combining \u2014 the full rule_series grouping remains explicit future work. This must NOT wrongly reject legitimate DIFFERENT-applicability multi-district families (the G4-L1 constraint). Add deterministic tests for each: impossible-date fail-closed; non-list evaluations fails safe; same-applicability overlap surfaces review while different-applicability family still evaluates. Scope: evaluator.py, registry.py, integration.py, and their tests under services/api/tests/rules/**. Does NOT modify lock files, dependency tooling, contracts, M4-T001/002/003 accepted behavior beyond these additive guards, or any legal RULE CONTENT.",
+  "business_reason": "Recorded future-hardening items FH-1/FH-2/FH-3 (project-control/reports/M4-RULES-FUTURE-HARDENING.md) are prerequisites the owner requires BEFORE the rules-evaluation result is exposed through any public property-analysis endpoint/UI. Each is a fail-closed safeguard against an untrusted or ambiguous input reaching the evaluator; today they are safe only because callers are trusted in-process. Owner directive 2026-07-22: address FH-1/FH-2/FH-3 in the smallest properly controlled task before endpoint exposure.",
+  "inputs": [
+    "project-control/reports/M4-RULES-FUTURE-HARDENING.md (FH-1/FH-2/FH-3 definitions)",
+    "services/api/app/rules/evaluator.py (_valid_iso_date ~L323-333) \u2014 FH-1 site",
+    "services/api/app/rules/registry.py (effective_rules ~L86-96) \u2014 FH-2 site",
+    "services/api/app/rules/integration.py (assert_not_verified ~L165-187) \u2014 FH-3 site",
+    "services/api/tests/rules/** (existing test conventions incl. test_rules_engine_hardening.py, test_rules_integration.py)"
+  ],
+  "outputs": [
+    "Additive fail-closed guards for FH-1/FH-2/FH-3 in evaluator.py/registry.py/integration.py",
+    "Deterministic tests for each safeguard",
+    "project-control/reports/M4-T004-producer-report.md"
+  ],
+  "requirement_refs": [
+    "project-control/reports/M4-RULES-FUTURE-HARDENING.md",
+    "PRD.md \u00a710-\u00a712 (rule lifecycle, coverage statuses)",
+    "CLAUDE.md permanent principle #1 (qualified humans approve legal interpretations \u2014 FH-2 must fail closed, never make a legal pick)"
+  ],
+  "dependencies": [
+    "M4-T002"
+  ],
+  "allowed_paths": [
+    "services/api/app/rules/evaluator.py",
+    "services/api/app/rules/registry.py",
+    "services/api/app/rules/integration.py",
+    "services/api/tests/rules/**"
+  ],
+  "forbidden_paths": [
+    "services/api/app/rules/coverage.py",
+    "services/api/app/rules/models.py",
+    "services/api/app/rules/lifecycle.py",
+    "packages/**",
+    "services/api/scripts/**",
+    "services/api/requirements*.txt",
+    "services/api/requirements*.in",
+    "services/api/requirements*.lock",
+    "any rule JSON / legal rule content",
+    ".github/**"
+  ],
+  "acceptance_scenarios": [
+    "AS-1 (FH-1 primary): as_of_date='2024-02-30' (well-formed but impossible) -> professional_review_required fail-closed (in_effect False); a real date '2024-02-29' (leap) still valid.",
+    "AS-2 (FH-1 boundary): '2024-04-31','2025-02-29' (non-leap) -> fail-closed; '2024-12-31','2024-01-01' -> valid.",
+    "AS-3 (FH-3): assert_not_verified given a payload whose 'evaluations' is a non-list (e.g. an int) does NOT raise TypeError and still fails closed on any verified status; a non-list family_coverage likewise guarded.",
+    "AS-4 (FH-2 fail-closed): a synthetic family with TWO in-effect rules whose applicability BOTH match the same inputs over overlapping windows -> surfaces professional_review_required / typed conflict (no silent pick or combine).",
+    "AS-5 (FH-2 no false-positive / G4-L1): a family with two in-effect rules of DIFFERENT applicability (e.g. distinct districts) still evaluates normally for inputs matching exactly one -> unchanged behavior, NOT rejected.",
+    "AS-6 (regression): full services/api suite green; strict-JSON / provenance / uncertainty / never-Verified invariants preserved; no rule Published/Verified."
+  ],
+  "required_gates": [
+    "G0",
+    "G3",
+    "G4",
+    "G5"
+  ],
+  "producer_agent": "rules-engineer",
+  "reviewer_agents": [
+    "code-reviewer",
+    "qa-engineer",
+    "security-reviewer"
+  ],
+  "status": "in_progress",
+  "progress_percent": 95,
+  "risks": [],
+  "blockers": [],
+  "created_at": "2026-07-22T05:08:12.759723+00:00",
+  "updated_at": "2026-07-22T17:07:07.381166+00:00",
+  "worktree": ".claude/worktrees/M4-T004-safeguards",
+  "progress_log": [
+    {
+      "at": "2026-07-22T05:11:52.395247+00:00",
+      "agent": "rules-engineer",
+      "percent": 10,
+      "status": "claimed",
+      "message": "G0 PASS; claimed; scope FH-1/FH-2/FH-3 fail-closed safeguards; awaiting owner confirm on FH-2 conservative-guard scope before implementation"
+    },
+    {
+      "at": "2026-07-22T05:15:09.328266+00:00",
+      "agent": "rules-engineer",
+      "percent": 20,
+      "status": "in_progress",
+      "message": "FH-2 authoritative spec recorded; producer implementing FH-1/FH-2/FH-3 + adversarial tests"
+    },
+    {
+      "at": "2026-07-22T17:07:07.381166+00:00",
+      "agent": "rules-engineer",
+      "percent": 95,
+      "status": "in_progress",
+      "message": "Frozen 3e45524; CI 12/12 green; independent G3/G4/G5 PASS; FH-4 recorded"
+    }
+  ]
+}
