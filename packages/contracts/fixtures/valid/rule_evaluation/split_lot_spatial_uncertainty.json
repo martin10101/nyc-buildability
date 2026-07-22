@@ -1,0 +1,70 @@
+{
+  "contract_version": "1.0.0",
+  "evaluated_input": {
+    "bbl": "1000477501",
+    "profile_contract_version": "1.4.0",
+    "input_fingerprint": "sha256:a0b248aafa43cd3784f29a226099db9c4aaa0f784af8b9c8a86db5582a43be27",
+    "input_provenance": {
+      "zoning_district": [],
+      "lot_area_sq_ft": []
+    }
+  },
+  "coverage_status": "professional_review_required",
+  "data_completeness": null,
+  "needs_review": true,
+  "professional_review_required": true,
+  "fail_safe": true,
+  "fail_safe_reason": "geometry_uncertain",
+  "rule_lifecycle_statuses": [],
+  "not_verified_disclaimer": "DRAFT - not a Verified determination. This result is produced by a needs_review draft rule pending raw-HTML source verification and G6 qualified-human legal approval (PRD sections 10-12). It must never be presented, stored, or consumed as Verified; coverage tops out at conditional.",
+  "zoning_district": null,
+  "lot_area_sq_ft": null,
+  "lot_area_source": null,
+  "spatial_context": {
+    "lot_overall_class": "split_lot_confident",
+    "professional_review_required": true,
+    "coverage_note": "split across R5/R6; no single confident district"
+  },
+  "spatial_uncertainty": {
+    "lot_overall_class": "split_lot_confident",
+    "professional_review_required": true,
+    "coverage_note": "split across R5/R6; no single confident district",
+    "review_reasons": [
+      "lot spans two base-zoning districts"
+    ],
+    "notes": [],
+    "base_district_candidates": [
+      {
+        "district_label": "R5",
+        "pair_class": "split_confident",
+        "share_min": 0.55,
+        "share_point": 0.6,
+        "share_max": 0.65,
+        "minor_portion": false
+      },
+      {
+        "district_label": "R6",
+        "pair_class": "split_confident",
+        "share_min": 0.35,
+        "share_point": 0.4,
+        "share_max": 0.45,
+        "minor_portion": true
+      }
+    ],
+    "crosscheck": null
+  },
+  "evaluations": [],
+  "family_coverage": {
+    "family": "residential_far",
+    "coverage_status": "conditional",
+    "note": "one or more draft rules implemented; results are conditional pending G6",
+    "rule_ids": [
+      "r5-residential-far"
+    ]
+  },
+  "reasons": [
+    "spatial_intersection lot_overall_class='split_lot_confident', professional_review_required=True; the lot-level district is not confidently assignable - uncertainty preserved, never collapsed; professional review required"
+  ],
+  "coverage_source": "integration_fail_safe",
+  "rule_conflict": null
+}

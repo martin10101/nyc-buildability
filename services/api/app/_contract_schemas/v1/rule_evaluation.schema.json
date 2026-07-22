@@ -1,0 +1,450 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/martin10101/nyc-buildability/packages/contracts/schemas/v1/rule_evaluation.schema.json",
+  "title": "Rule Evaluation Result",
+  "description": "v1 canonical contract for one deterministic rule-evaluation result over a single property (the exported shape of app.rules.integration.PropertyRuleEvaluation; the fulfilment of the README-deferred 'rule evaluation trace (M4)' contract). Draft-rule output is a candidate representation, NEVER a Verified legal determination: coverage_status is drawn from the canonical PRD-section-12 vocabulary MINUS 'verified' (a draft result may never be Verified before published-rule + G6 qualified-human approval, PRD sections 10-12), and every result carries not_verified_disclaimer and professional_review_required. The evaluated INPUT is identified by reference - bbl, the evaluated property_profile contract_version, the input provenance_refs (which resolve into that profile's provenance array), and a deterministic input_fingerprint - so this document NEVER embeds a full copy of the property profile (owner directive, M4-T005). Spatial uncertainty (M2-T013 share ranges, positional classes, review flags) is preserved as structured data, never collapsed into a definitive single-district assignment. The canonical coverage vocabulary is REFERENCED from coverage_status.schema.json and NEVER redefined inline; shared value shapes (bbl, non_empty_string, digest_sha256, data_completeness) are $ref'd from common.schema.json / coverage_status.schema.json. A later aggregate-analysis contract can embed or reference this self-contained, versioned document without breaking it.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "contract_version",
+    "evaluated_input",
+    "coverage_status",
+    "coverage_source",
+    "data_completeness",
+    "needs_review",
+    "professional_review_required",
+    "fail_safe",
+    "fail_safe_reason",
+    "rule_lifecycle_statuses",
+    "not_verified_disclaimer",
+    "zoning_district",
+    "lot_area_sq_ft",
+    "lot_area_source",
+    "spatial_context",
+    "spatial_uncertainty",
+    "evaluations",
+    "family_coverage",
+    "reasons",
+    "rule_conflict"
+  ],
+  "properties": {
+    "contract_version": {
+      "type": "string",
+      "enum": ["1.0.0"],
+      "description": "CLOSED enum of published rule_evaluation contract versions. 1.0.0 = M4-T005 initial shape. New versions are admitted only by an accepted contract task that appends to this enum; arbitrary versions are rejected. This is the version of THIS contract, distinct from evaluated_input.profile_contract_version (the version of the property_profile that was evaluated)."
+    },
+    "evaluated_input": {
+      "$ref": "#/$defs/evaluated_input"
+    },
+    "coverage_status": {
+      "$ref": "#/$defs/coverage_status_draft"
+    },
+    "coverage_source": {
+      "type": "string",
+      "enum": ["rule_evaluator", "integration_fail_safe"],
+      "description": "PLATFORM-DEFINED: whether this coverage label came from a deterministic evaluator trace (rule_evaluator) or an integration fail-safe short-circuit (integration_fail_safe). Grounded in app.rules.integration._COVERAGE_SOURCE_EVALUATOR / _COVERAGE_SOURCE_FAIL_SAFE."
+    },
+    "data_completeness": {
+      "description": "Most-severe data-completeness across the evaluated traces (exactly the 3 PRD s12 values, referenced from coverage_status.schema.json, never redefined), or null on a fail-safe short-circuit that produced no trace.",
+      "anyOf": [
+        { "$ref": "coverage_status.schema.json#/$defs/data_completeness" },
+        { "type": "null" }
+      ]
+    },
+    "needs_review": {
+      "type": "boolean",
+      "description": "True when the result requires human review: a draft (non-published) rule, professional-review coverage, a data conflict, or a professional-review spatial rollup. A draft result is never auto-final."
+    },
+    "professional_review_required": {
+      "type": "boolean",
+      "description": "True when coverage_status is professional_review_required (or a fail-safe forced it). Deterministic escalation to a qualified human, never an AI decision."
+    },
+    "fail_safe": {
+      "type": "boolean",
+      "description": "True when the result is a fail-safe short-circuit (no computed value, no guessed district) rather than a completed evaluator run."
+    },
+    "fail_safe_reason": {
+      "description": "Machine-readable fail-safe discriminator (finer than coverage_status) when fail_safe is true; null otherwise. Grounded in the app.rules.integration.FAILSAFE_* constants.",
+      "anyOf": [
+        {
+          "type": "string",
+          "enum": [
+            "spatial_intersection_absent",
+            "spatial_context_incomplete",
+            "data_conflict",
+            "geometry_uncertain",
+            "inconsistent_confident_geometry",
+            "rule_conflict"
+          ]
+        },
+        { "type": "null" }
+      ]
+    },
+    "rule_lifecycle_statuses": {
+      "type": "array",
+      "description": "Sorted, de-duplicated lifecycle statuses of the rules that were evaluated (PRD sections 10-11). Empty on a fail-safe short-circuit. 'published' may appear, but coverage_status can still never be 'verified' in this contract (a Verified determination requires the separate G6 approval attached, which this draft-integration document never carries).",
+      "items": {
+        "type": "string",
+        "enum": ["discovered", "extracted_draft", "needs_review", "published"]
+      }
+    },
+    "not_verified_disclaimer": {
+      "$ref": "common.schema.json#/$defs/non_empty_string",
+      "description": "The permanent honest disclaimer stamped on every result (app.rules.integration.NOT_VERIFIED_DISCLAIMER). Its human-readable text contains the word 'Verified'; that text is NEVER a coverage_status and never up-labels the result."
+    },
+    "zoning_district": {
+      "description": "The single confidently-assigned base-zoning district the evaluation used, or null on any fail-safe (an uncertain lot is never collapsed into a definitive district).",
+      "anyOf": [
+        { "$ref": "common.schema.json#/$defs/non_empty_string" },
+        { "type": "null" }
+      ]
+    },
+    "lot_area_sq_ft": {
+      "description": "The zoning-lot area input used, strictly positive, or null when no positive area was available (the evaluator then yields a missing-critical result and no computed value).",
+      "anyOf": [
+        { "type": "number", "exclusiveMinimum": 0 },
+        { "type": "null" }
+      ]
+    },
+    "lot_area_source": {
+      "description": "Which profile field supplied lot_area_sq_ft (e.g. 'lot_geometry.area_sq_ft' or 'spatial_intersection.pairs[].lot_area_sq_ft'), or null when no area was used. Open string (not a closed enum) so a future area source lands without a contract bump.",
+      "anyOf": [
+        { "$ref": "common.schema.json#/$defs/non_empty_string" },
+        { "type": "null" }
+      ]
+    },
+    "spatial_context": {
+      "description": "The compact spatial summary the evaluator saw, or null when no spatial substrate was present.",
+      "anyOf": [
+        { "$ref": "#/$defs/spatial_context" },
+        { "type": "null" }
+      ]
+    },
+    "spatial_uncertainty": {
+      "$ref": "#/$defs/spatial_uncertainty"
+    },
+    "evaluations": {
+      "type": "array",
+      "description": "Deterministic evaluator traces (already provenance-resolved by RuleResult.export()); empty on a fail-safe short-circuit. Each trace carries citations, computation steps, outputs, determination, and propagated uncertainty.",
+      "items": { "$ref": "#/$defs/evaluation_trace" }
+    },
+    "family_coverage": {
+      "$ref": "#/$defs/family_coverage"
+    },
+    "reasons": {
+      "type": "array",
+      "description": "Human-readable reasons for the outcome (fail-safe cause, not_applicable explanation, etc.). Never a substitute for the machine-readable fields above.",
+      "items": { "type": "string" }
+    },
+    "rule_conflict": {
+      "description": "Typed same-family rule-conflict object (competing rule IDs + each rule's effective window) when >=2 same-family rules are simultaneously in effect and independently applicable for overlapping outputs (a legal ambiguity surfaced for professional review); null otherwise. Never selects, ranks, or merges rules, and never carries a computed value.",
+      "anyOf": [
+        { "$ref": "#/$defs/rule_conflict" },
+        { "type": "null" }
+      ]
+    },
+    "_expected_failure": {
+      "type": "string",
+      "description": "FIXTURE-ONLY annotation stating the intended defect of an invalid/ fixture (packages/contracts README convention). The evaluator NEVER emits this key; it is allowed here (optional) so an invalid fixture fails only for its stated defect under the additionalProperties:false guard, and so valid fixtures - which omit it - stay clean."
+    }
+  },
+  "$defs": {
+    "coverage_status_draft": {
+      "description": "The canonical PRD-section-12 coverage vocabulary (REFERENCED from coverage_status.schema.json, never redefined) NARROWED to exclude 'verified'. A draft-rule result may never be Verified (owner directive, M4-T005; PRD sections 10-12). The allOf keeps coverage_status.schema.json the single source of the vocabulary while the subset enum removes exactly 'verified'.",
+      "allOf": [
+        { "$ref": "coverage_status.schema.json" },
+        {
+          "enum": [
+            "conditional",
+            "professional_review_required",
+            "data_conflict",
+            "unsupported",
+            "not_applicable"
+          ]
+        }
+      ]
+    },
+    "evaluated_input": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "Identity of the evaluated property input BY REFERENCE - never an embedded copy of the property profile (owner directive, M4-T005). bbl + the evaluated profile contract_version + the input provenance_refs (resolving into that profile's provenance array) + a deterministic input_fingerprint pin exactly which input produced this result.",
+      "required": ["bbl", "profile_contract_version", "input_fingerprint", "input_provenance"],
+      "properties": {
+        "bbl": {
+          "description": "BBL of the evaluated property, or null when the profile carried no identity.bbl.",
+          "anyOf": [
+            { "$ref": "common.schema.json#/$defs/bbl" },
+            { "type": "null" }
+          ]
+        },
+        "profile_contract_version": {
+          "$ref": "common.schema.json#/$defs/non_empty_string",
+          "description": "The contract_version of the property_profile instance that was evaluated (e.g. '1.4.0'). Intentionally an open non-empty string rather than a closed enum, so it is not coupled to the property_profile contract's own evolving published-version list; the authoritative closed enum lives in property_profile.schema.json."
+        },
+        "input_fingerprint": {
+          "$ref": "common.schema.json#/$defs/digest_sha256",
+          "description": "Deterministic fingerprint (canonical sha256 digest, common.schema.json digest_sha256 shape) of the canonical evaluator inputs (zoning_district, lot_area_sq_ft, as_of_date, and the identifying spatial facts). Lets a consumer confirm a result was produced from a specific input snapshot WITHOUT storing the profile. The exact canonicalization/computation is implemented in a later phase (M4-T005 phase 2); this contract defines the field and its hex-digest shape now."
+        },
+        "input_provenance": {
+          "$ref": "#/$defs/input_provenance"
+        }
+      }
+    },
+    "input_provenance": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "Which property_profile provenance records back each derived evaluator input. Each entry is a list of provenance_ref ids that MUST resolve to a provenance_id in the evaluated profile's provenance array (PRD sections 9/19) - the same provenance-ref-by-string pattern property_profile uses (a source_fact record per id). Empty lists are legal on a fail-safe with no derived input.",
+      "required": ["zoning_district", "lot_area_sq_ft"],
+      "properties": {
+        "zoning_district": {
+          "type": "array",
+          "items": { "$ref": "common.schema.json#/$defs/non_empty_string" }
+        },
+        "lot_area_sq_ft": {
+          "type": "array",
+          "items": { "$ref": "common.schema.json#/$defs/non_empty_string" }
+        }
+      }
+    },
+    "spatial_context": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "The compact spatial summary passed to the evaluator (a subset of spatial_uncertainty).",
+      "required": ["lot_overall_class", "professional_review_required", "coverage_note"],
+      "properties": {
+        "lot_overall_class": { "type": ["string", "null"] },
+        "professional_review_required": { "type": "boolean" },
+        "coverage_note": { "type": ["string", "null"] }
+      }
+    },
+    "spatial_uncertainty": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "The M2-T013 facts-with-uncertainty preserved verbatim - share RANGES, positional classes, and review flags - NEVER collapsed into a single definitive district. Present (with empty/null members) even on a fail-safe.",
+      "required": [
+        "lot_overall_class",
+        "professional_review_required",
+        "coverage_note",
+        "review_reasons",
+        "notes",
+        "base_district_candidates",
+        "crosscheck"
+      ],
+      "properties": {
+        "lot_overall_class": { "type": ["string", "null"] },
+        "professional_review_required": { "type": "boolean" },
+        "coverage_note": { "type": ["string", "null"] },
+        "review_reasons": { "type": "array", "items": { "type": "string" } },
+        "notes": { "type": "array", "items": { "type": "string" } },
+        "base_district_candidates": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/base_district_candidate" }
+        },
+        "crosscheck": {
+          "description": "The M2-T008 lot-level zoning cross-check outcome carried verbatim, or null. Open shape (the cross-check contract is owned by the spatial substrate); consumers narrow at the use site."
+        }
+      }
+    },
+    "base_district_candidate": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "One base-zoning candidate pair with its split-share RANGE preserved. minor_portion flags a minor share of a split lot. Fields are nullable because a malformed foreign spatial record must be surfaced, never dropped.",
+      "required": ["district_label", "pair_class", "share_min", "share_point", "share_max", "minor_portion"],
+      "properties": {
+        "district_label": { "type": ["string", "null"] },
+        "pair_class": { "type": ["string", "null"] },
+        "share_min": { "type": ["number", "null"] },
+        "share_point": { "type": ["number", "null"] },
+        "share_max": { "type": ["number", "null"] },
+        "minor_portion": { "type": ["boolean", "null"] }
+      }
+    },
+    "family_coverage": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "Coverage honesty for the evaluated rule family (app.rules.registry.family_coverage): a family with no implemented rule is a VISIBLE 'unsupported'; a family with draft rules is 'conditional' pending G6. coverage_status is drawn from the same never-Verified vocabulary.",
+      "required": ["family", "coverage_status", "note"],
+      "properties": {
+        "family": { "type": "string" },
+        "coverage_status": { "$ref": "#/$defs/coverage_status_draft" },
+        "note": { "type": "string" },
+        "rule_ids": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Present only for a supported family; the rule IDs that back the coverage."
+        }
+      }
+    },
+    "rule_conflict": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "Typed same-family rule conflict (app.rules.registry.detect_conflicts). Surfaces the competing rules and their effective windows; NEVER picks a governing rule (that is a legal determination) and never produces a value from the competing rules.",
+      "required": ["conflict", "family", "as_of_date", "competing_output_names", "competing_rules", "note"],
+      "properties": {
+        "conflict": { "type": "boolean" },
+        "family": { "type": "string" },
+        "as_of_date": { "type": ["string", "null"] },
+        "competing_output_names": { "type": "array", "items": { "type": "string" } },
+        "competing_rules": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/competing_rule" }
+        },
+        "note": { "type": "string" }
+      }
+    },
+    "competing_rule": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["rule_id", "rule_version", "effective_from", "effective_to", "output_names"],
+      "properties": {
+        "rule_id": { "type": "string" },
+        "rule_version": { "type": "string" },
+        "effective_from": { "type": ["string", "null"] },
+        "effective_to": { "type": ["string", "null"] },
+        "output_names": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+    "evaluation_trace": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "One exported deterministic rule-evaluation trace (mirrors the rule-engine-internal services/api/app/rules/schemas/v1/evaluation_trace.schema.json, the authoritative export shape), with coverage_status narrowed to the never-Verified vocabulary for this draft-integration contract. Records resolved inputs, the applicability decision, every computation step with resolved args and result, the citations WITH their source-snapshot provenance (a material value is never exported without it, PRD section 19), the coverage + data-completeness labels, and any propagated M2-T013 geometric uncertainty.",
+      "required": [
+        "rule_id",
+        "rule_version",
+        "rule_status",
+        "family",
+        "evaluated_inputs",
+        "applicability_outcome",
+        "applicability_trace",
+        "computation_steps",
+        "outputs",
+        "coverage_status",
+        "data_completeness",
+        "citations",
+        "uncertainty",
+        "exceptions_applied",
+        "notes",
+        "input_validation",
+        "rule_release",
+        "effective_window",
+        "determination"
+      ],
+      "properties": {
+        "rule_id": { "type": "string" },
+        "rule_version": { "type": "string" },
+        "rule_status": {
+          "type": "string",
+          "enum": ["discovered", "extracted_draft", "needs_review", "published"]
+        },
+        "family": { "type": "string" },
+        "evaluated_inputs": { "type": "object" },
+        "applicability_outcome": { "type": "boolean" },
+        "applicability_trace": { "type": "array", "items": { "type": "object" } },
+        "computation_steps": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/computation_step" }
+        },
+        "outputs": { "type": "object" },
+        "coverage_status": { "$ref": "#/$defs/coverage_status_draft" },
+        "data_completeness": { "$ref": "coverage_status.schema.json#/$defs/data_completeness" },
+        "citations": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/citation" }
+        },
+        "uncertainty": { "type": "object" },
+        "exceptions_applied": { "type": "array" },
+        "notes": { "type": "array", "items": { "type": "string" } },
+        "input_validation": {
+          "type": "object",
+          "additionalProperties": false,
+          "description": "Fail-closed input validation result. When valid is false the evaluation stops before computation and coverage is professional_review_required (no computed value).",
+          "required": ["valid", "invalid_inputs"],
+          "properties": {
+            "valid": { "type": "boolean" },
+            "invalid_inputs": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": ["name", "reason"],
+                "properties": {
+                  "name": { "type": "string" },
+                  "reason": { "type": "string" },
+                  "value_seen": { "description": "The rejected value as seen (any JSON type)." }
+                }
+              }
+            }
+          }
+        },
+        "rule_release": {
+          "type": "object",
+          "additionalProperties": false,
+          "description": "The rule's test/lifecycle release status carried per evaluation. verified_eligible is true only for a published rule evaluated with a matching G6 approval attached - which this draft-integration contract never carries, so coverage never reaches 'verified'.",
+          "required": ["lifecycle_status", "deterministic_tests", "independent_review", "qualified_human_approval", "verified_eligible"],
+          "properties": {
+            "lifecycle_status": {
+              "type": "string",
+              "enum": ["discovered", "extracted_draft", "needs_review", "published"]
+            },
+            "deterministic_tests": { "type": "string", "enum": ["declared", "none"] },
+            "independent_review": { "type": "string", "enum": ["pending", "passed"] },
+            "qualified_human_approval": { "type": "string", "enum": ["pending", "approved"] },
+            "verified_eligible": { "type": "boolean" }
+          }
+        },
+        "effective_window": {
+          "type": "object",
+          "additionalProperties": false,
+          "description": "Temporal effectiveness of this rule version relative to the evaluation as_of date. evaluated_as_of is null when the caller passed none (no temporal gating).",
+          "required": ["effective_from", "effective_to", "evaluated_as_of", "in_effect"],
+          "properties": {
+            "effective_from": { "type": ["string", "null"] },
+            "effective_to": { "type": ["string", "null"] },
+            "evaluated_as_of": { "type": ["string", "null"] },
+            "in_effect": { "type": "boolean" }
+          }
+        },
+        "determination": {
+          "description": "Compliance pass/fail determination when the rule declares one and was applicable+computed; null otherwise. Never changes coverage.",
+          "type": ["object", "null"],
+          "additionalProperties": false,
+          "required": ["id", "compare", "left_value", "right_value", "outcome", "label"],
+          "properties": {
+            "id": { "type": "string" },
+            "description": { "type": "string" },
+            "compare": { "type": "string" },
+            "left_value": { "type": ["number", "null"] },
+            "right_value": { "type": ["number", "null"] },
+            "outcome": { "type": "string", "enum": ["pass", "fail"] },
+            "label": { "type": "string" }
+          }
+        }
+      }
+    },
+    "computation_step": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["step_id", "op", "resolved_args", "result", "note"],
+      "properties": {
+        "step_id": { "type": "string" },
+        "op": { "type": "string" },
+        "resolved_args": { "type": "array" },
+        "result": { "type": "number" },
+        "note": { "type": "string" }
+      }
+    },
+    "citation": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "One source citation WITH its resolved source-snapshot provenance (a material value may never be exported without it, PRD section 19).",
+      "required": ["snapshot_id", "section", "quote", "provenance"],
+      "properties": {
+        "snapshot_id": { "type": "string" },
+        "section": { "type": "string" },
+        "quote": { "type": "string" },
+        "last_amended": { "type": ["string", "null"] },
+        "provenance": { "type": "object" }
+      }
+    }
+  }
+}

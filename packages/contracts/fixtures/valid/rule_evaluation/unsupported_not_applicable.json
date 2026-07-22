@@ -1,0 +1,145 @@
+{
+  "contract_version": "1.0.0",
+  "evaluated_input": {
+    "bbl": "1000477501",
+    "profile_contract_version": "1.4.0",
+    "input_fingerprint": "sha256:68061abd0fe9f1eeacc8f83c42853849f6828e1239a6814d4a542c22757b87b5",
+    "input_provenance": {
+      "zoning_district": [
+        "prov-spatial-nyzd"
+      ],
+      "lot_area_sq_ft": [
+        "prov-lotgeom"
+      ]
+    }
+  },
+  "coverage_status": "not_applicable",
+  "data_completeness": "missing_noncritical",
+  "needs_review": true,
+  "professional_review_required": false,
+  "fail_safe": false,
+  "fail_safe_reason": null,
+  "rule_lifecycle_statuses": [
+    "needs_review"
+  ],
+  "not_verified_disclaimer": "DRAFT - not a Verified determination. This result is produced by a needs_review draft rule pending raw-HTML source verification and G6 qualified-human legal approval (PRD sections 10-12). It must never be presented, stored, or consumed as Verified; coverage tops out at conditional.",
+  "zoning_district": "R7",
+  "lot_area_sq_ft": 8000.0,
+  "lot_area_source": "lot_geometry.area_sq_ft",
+  "spatial_context": {
+    "lot_overall_class": "single_district_confident",
+    "professional_review_required": false,
+    "coverage_note": null
+  },
+  "spatial_uncertainty": {
+    "lot_overall_class": "single_district_confident",
+    "professional_review_required": false,
+    "coverage_note": null,
+    "review_reasons": [],
+    "notes": [],
+    "base_district_candidates": [
+      {
+        "district_label": "R7",
+        "pair_class": "interior_confident",
+        "share_min": 1.0,
+        "share_point": 1.0,
+        "share_max": 1.0,
+        "minor_portion": false
+      }
+    ],
+    "crosscheck": null
+  },
+  "evaluations": [
+    {
+      "rule_id": "r5-residential-far",
+      "rule_version": "0.1.0-draft",
+      "rule_status": "needs_review",
+      "family": "residential_far",
+      "evaluated_inputs": {
+        "zoning_district": "R7",
+        "lot_area_sq_ft": 8000.0
+      },
+      "applicability_outcome": false,
+      "applicability_trace": [
+        {
+          "op": "in_set",
+          "input_name": "zoning_district",
+          "detail": {
+            "values": [
+              "R5",
+              "R5A",
+              "R5B",
+              "R5D"
+            ],
+            "value_seen": "R7"
+          },
+          "outcome": false
+        }
+      ],
+      "computation_steps": [],
+      "outputs": {},
+      "coverage_status": "not_applicable",
+      "data_completeness": "missing_noncritical",
+      "citations": [
+        {
+          "snapshot_id": "zr-23-21",
+          "section": "23-21",
+          "quote": "In the districts indicated, the maximum residential floor area ratio shall be as set forth in the following table. Separate maximum residential floor area ratios are set forth for standard zoning lots and zoning lots that are qualifying residential sites.",
+          "last_amended": "2024-12-05",
+          "provenance": {
+            "snapshot_id": "zr-23-21",
+            "source_id": "nyc-dcp-zoning-resolution-portal",
+            "official_channel": "html",
+            "request_url": "https://zoningresolution.planning.nyc.gov/article-ii/chapter-3/23-21",
+            "retrieved_at": "2026-07-21T00:00:00Z",
+            "section_number": "23-21",
+            "section_title": "Floor Area Regulations for R1 Through R5 Districts",
+            "section_last_amended": "2024-12-05",
+            "document_currency_banner": null,
+            "content_digest_sha256": "4b6dd1f5e966b1e533f56f01e77a7d0e1db7b0fe1e4ae7927a12b9bc83e868d7",
+            "raw_html_verified": false,
+            "extraction_status": "extracted_draft"
+          }
+        }
+      ],
+      "uncertainty": {
+        "propagated": false
+      },
+      "exceptions_applied": [],
+      "notes": [
+        "rule not applicable to the supplied inputs"
+      ],
+      "input_validation": {
+        "valid": true,
+        "invalid_inputs": []
+      },
+      "rule_release": {
+        "lifecycle_status": "needs_review",
+        "deterministic_tests": "declared",
+        "independent_review": "pending",
+        "qualified_human_approval": "pending",
+        "verified_eligible": false
+      },
+      "effective_window": {
+        "effective_from": "2024-12-05",
+        "effective_to": null,
+        "evaluated_as_of": null,
+        "in_effect": true
+      },
+      "determination": null
+    }
+  ],
+  "family_coverage": {
+    "family": "residential_far",
+    "coverage_status": "conditional",
+    "note": "one or more draft rules implemented; results are conditional pending G6",
+    "rule_ids": [
+      "r5-residential-far"
+    ]
+  },
+  "reasons": [
+    "no implemented residential_far rule applies to district 'R7'; result is not_applicable (visible, not silent)"
+  ],
+  "coverage_source": "rule_evaluator",
+  "rule_conflict": null
+}
