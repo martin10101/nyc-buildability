@@ -41,6 +41,7 @@ Load-bearing guarantees (owner directive 2026-07-20/21; task M4-T002 hard rules)
 
 from __future__ import annotations
 
+import math
 from dataclasses import dataclass
 from typing import Any
 
@@ -123,7 +124,6 @@ class PropertyRuleEvaluation:
     family_coverage: dict
     reasons: list
     coverage_source: str = _COVERAGE_SOURCE_EVALUATOR
-    verified_status_present: bool = False
 
     def as_dict(self) -> dict:
         return {
@@ -148,7 +148,6 @@ class PropertyRuleEvaluation:
             "family_coverage": dict(self.family_coverage),
             "reasons": list(self.reasons),
             "coverage_source": self.coverage_source,
-            "verified_status_present": self.verified_status_present,
         }
 
     def export(self) -> dict:
@@ -192,13 +191,30 @@ def assert_not_verified(payload: PropertyRuleEvaluation | dict) -> None:
 # ---------------------------------------------------------------------------
 
 def _positive_number(value: Any) -> bool:
-    return isinstance(value, int | float) and not isinstance(value, bool) and value > 0
+    """A strictly-positive, FINITE real number. Rejects bool, non-numerics, NaN,
+    +/-inf, and an int too large to convert to float (G5 LOW-2): a non-finite lot
+    area must never become an evaluator input that fabricates an ``inf`` output."""
+    if isinstance(value, bool) or not isinstance(value, int | float):
+        return False
+    try:
+        return math.isfinite(value) and value > 0
+    except OverflowError:  # int too large to represent as a float (e.g. 10**309)
+        return False
+
+
+def _as_list(value: Any) -> list:
+    """Coerce a spatial container sub-field to a list, fail-safe (G5 LOW-1): a
+    malformed non-list (a truthy scalar, dict, etc.) becomes an empty list instead
+    of raising ``TypeError`` deep inside a comprehension. The trusted in-process
+    producer always emits lists; this guards a malformed foreign payload so the
+    module still fails safe (no value, no crash) rather than propagating."""
+    return list(value) if isinstance(value, list | tuple) else []
 
 
 def _base_pairs(spatial: dict) -> list:
     return [
         pair
-        for pair in (spatial.get("pairs") or [])
+        for pair in _as_list(spatial.get("pairs"))
         if isinstance(pair, dict) and pair.get("family") == _BASE_ZONING_FAMILY
     ]
 
@@ -221,8 +237,8 @@ def _preserve_uncertainty(spatial: dict) -> dict:
         "lot_overall_class": spatial.get("lot_overall_class"),
         "professional_review_required": bool(spatial.get("professional_review_required", False)),
         "coverage_note": spatial.get("coverage_note"),
-        "review_reasons": list(spatial.get("review_reasons") or []),
-        "notes": list(spatial.get("notes") or []),
+        "review_reasons": _as_list(spatial.get("review_reasons")),
+        "notes": _as_list(spatial.get("notes")),
         "base_district_candidates": candidates,
         "crosscheck": spatial.get("crosscheck"),
     }
@@ -278,7 +294,7 @@ def _input_provenance(profile: dict, spatial: dict, area_source: str | None) -> 
     """Which profile provenance records back each derived evaluator input, so a
     downstream reader can trace inputs (the OUTPUT provenance is the rule's own
     citations, enforced fail-closed by RuleResult.export())."""
-    spatial_refs = [ref for ref in (spatial.get("provenance_refs") or []) if isinstance(ref, str)]
+    spatial_refs = [ref for ref in _as_list(spatial.get("provenance_refs")) if isinstance(ref, str)]
     provenance = {"zoning_district": list(spatial_refs), "lot_area_sq_ft": []}
     geometry = profile.get("lot_geometry")
     if area_source == "lot_geometry.area_sq_ft" and isinstance(geometry, dict):
