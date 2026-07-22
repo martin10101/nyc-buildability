@@ -1,0 +1,32 @@
+{
+  "rule_id": "syn-disjoint-aaa",
+  "rule_version": "0.0.1-draft",
+  "family": "syn_disjoint_far",
+  "title": "SYNTHETIC disjoint-applicability FAR - district AAA",
+  "jurisdiction": "nyc",
+  "status": "extracted_draft",
+  "effective_from": null,
+  "effective_to": null,
+  "description": "SYNTHETIC fixture (M4-T004 FH-2 negative control): same family + same output + same (null) window as syn-disjoint-bbb, but MUTUALLY EXCLUSIVE applicability (district AAA only). For any single set of inputs at most one of the pair is applicable, so they never compete -> NO conflict. This is the case a naive family-wide overlap guard would WRONGLY reject. Illustrative value; not a Verified determination.",
+  "citations": [
+    {"snapshot_id": "zr-demo-m4t004", "section": "00-00-DEMO-FH2", "quote": "SYNTHETIC (not verbatim from any source): FH-2 disjoint AAA.", "last_amended": null}
+  ],
+  "inputs": [
+    {"name": "zoning_district", "type": "string", "required": true, "description": "District governing the lot (scope via applicability)."},
+    {"name": "lot_area_sq_ft", "type": "number", "required": true, "unit": "square_feet", "exclusive_minimum": 0, "description": "Zoning-lot area (must be > 0)."}
+  ],
+  "outputs": [
+    {"name": "max_syn_disjoint_far", "type": "number", "unit": "far", "description": "SYNTHETIC max FAR (AAA)."}
+  ],
+  "parameters": [
+    {"name": "far_value", "value": 1.0, "citation_ref": "zr-demo-m4t004", "note": "SYNTHETIC AAA FAR."}
+  ],
+  "applicability": {"op": "in_set", "input": "zoning_district", "values": ["AAA"]},
+  "computation": {
+    "steps": [
+      {"id": "far", "op": "identity", "args": [{"param": "far_value"}], "note": "AAA FAR."}
+    ],
+    "outputs": {"max_syn_disjoint_far": {"step": "far"}}
+  },
+  "limitations": ["SYNTHETIC FH-2 negative-control demonstration; illustrative value; requires official capture + G6 before any use."]
+}

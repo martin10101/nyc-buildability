@@ -1,0 +1,30 @@
+{
+  "snapshot_id": "zr-demo-m4t004",
+  "snapshot_schema": "zr_section_snapshot/v1",
+  "jurisdiction": "nyc",
+  "corpus": "zoning_resolution",
+  "section_number": "00-00-DEMO-FH2",
+  "section_title": "SYNTHETIC M4-T004 FH-2 conflict-detection demonstration (NOT an official capture)",
+  "article": "0",
+  "chapter": "0",
+  "source": {
+    "source_id": "synthetic-test-fixture",
+    "official_channel": "none",
+    "request_url": "urn:synthetic:m4-t004:fh2-conflict-detection-demo",
+    "retrieved_at": "2026-07-22T00:00:00Z",
+    "document_currency_banner": null,
+    "document_currency_banner_note": "SYNTHETIC fixture; no official document.",
+    "section_last_amended": null,
+    "section_last_amended_source_text": null,
+    "capture_method": "synthetic_test_fixture",
+    "raw_html_verified": false,
+    "verification_required": "SYNTHETIC - NOT captured from any official source. Exists only to exercise the M4-T004 FH-2 fail-closed same-family rule-conflict detector. Values are illustrative and must never be used as a legal statement; a real rule requires official capture + G6 approval."
+  },
+  "verbatim_excerpt": "SYNTHETIC (not verbatim from any source): for M4-T004 FH-2 conflict-detection demonstrations only - same-family, same-applicability rules with overlapping effective windows and overlapping outputs. Illustrative values; never a legal statement.",
+  "extraction_status": "synthetic_test_fixture",
+  "content_digest_sha256": "3f8edc8407fa692445a146436306125a266972f69a54ac2451266908f59dfa7d",
+  "notes": [
+    "M4-T004 fixture for FH-2 same-family rule-conflict detection (positive + negative controls).",
+    "SYNTHETIC illustrative values; not a Verified determination and not an official-source capture."
+  ]
+}

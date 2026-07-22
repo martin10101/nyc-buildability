@@ -1,0 +1,32 @@
+{
+  "rule_id": "syn-comp-yard",
+  "rule_version": "0.0.1-draft",
+  "family": "syn_complementary_far",
+  "title": "SYNTHETIC complementary rule - rear-yard output",
+  "jurisdiction": "nyc",
+  "status": "extracted_draft",
+  "effective_from": null,
+  "effective_to": null,
+  "description": "SYNTHETIC fixture (M4-T004 FH-2 negative control): coexists with syn-comp-far but emits min_syn_comp_rear_yard (a DIFFERENT output domain). The two rules do not compete for the same decision -> NO conflict. Illustrative value; not a Verified determination.",
+  "citations": [
+    {"snapshot_id": "zr-demo-m4t004", "section": "00-00-DEMO-FH2", "quote": "SYNTHETIC (not verbatim from any source): FH-2 complementary yard.", "last_amended": null}
+  ],
+  "inputs": [
+    {"name": "zoning_district", "type": "string", "required": true, "description": "District governing the lot (scope via applicability)."},
+    {"name": "lot_area_sq_ft", "type": "number", "required": true, "unit": "square_feet", "exclusive_minimum": 0, "description": "Zoning-lot area (must be > 0)."}
+  ],
+  "outputs": [
+    {"name": "min_syn_comp_rear_yard", "type": "number", "unit": "feet", "description": "SYNTHETIC minimum rear yard (complementary)."}
+  ],
+  "parameters": [
+    {"name": "yard_value", "value": 30.0, "citation_ref": "zr-demo-m4t004", "note": "SYNTHETIC complementary rear-yard depth."}
+  ],
+  "applicability": {"op": "in_set", "input": "zoning_district", "values": ["SYNTH"]},
+  "computation": {
+    "steps": [
+      {"id": "yard", "op": "identity", "args": [{"param": "yard_value"}], "note": "Complementary rear yard."}
+    ],
+    "outputs": {"min_syn_comp_rear_yard": {"step": "yard"}}
+  },
+  "limitations": ["SYNTHETIC FH-2 negative-control demonstration; illustrative value; requires official capture + G6 before any use."]
+}
