@@ -159,7 +159,7 @@
   "disk_budget": "Negligible (source + JSON fixtures). No datasets, no caches, no node_modules added locally.",
   "holds_honored": "Nothing Published/Verified; no rule accepted; no G6 manufactured; M4-T001 stays unaccepted; endpoint disabled by default in production (not exposed anonymously); PR #64, CP-0032, expansion/GDS holds untouched; property_profile 1.4.0 and existing /properties/{bbl} contract unchanged.",
   "status": "claimed",
-  "progress_percent": 20,
+  "progress_percent": 70,
   "risks": [
     "Contract $ref resolution across files must stay byte-identical through typegen + bundle (three CI drift checks) - highest-friction area.",
     "Feature-flag gating must fail SAFE (absent/unknown flag => disabled) and be provable by security review, not merely documented.",
@@ -168,7 +168,7 @@
   "blockers": [],
   "worktree": ".claude/worktrees/M4-T005-rule-eval",
   "branch": "task/M4-T005-rule-eval",
-  "updated_at": "2026-07-22T17:37:44.389605+00:00",
+  "updated_at": "2026-07-22T19:57:23.424495+00:00",
   "progress_log": [
     {
       "at": "2026-07-22T17:37:44.389605+00:00",
@@ -176,6 +176,20 @@
       "percent": 20,
       "status": "claimed",
       "message": "Packet authored (18 inputs, 11 outputs, 29/29 allowed/forbidden paths, 14 acceptance scenarios, gate->reviewer map G0/G1/G3/G4/G5). G0 PASS. Acceptance scenarios recorded. Ready for Phase 1 (contract producer)."
+    },
+    {
+      "at": "2026-07-22T19:15:34.525049+00:00",
+      "agent": "orchestrator",
+      "percent": 45,
+      "status": "claimed",
+      "message": "Phase 1 (contract) built by backend-engineer, independently orchestrator-validated (typegen/bundle/validate_contracts green; 199 tests; property_profile 1.4.0 + forbidden paths byte-identical), committed 43b7ac5. Dispatching Phase 2 (API endpoint)."
+    },
+    {
+      "at": "2026-07-22T19:57:23.424495+00:00",
+      "agent": "orchestrator",
+      "percent": 70,
+      "status": "claimed",
+      "message": "Phase 2 (API endpoint + FH-4 + serializer) built by backend-engineer, independently orchestrator-validated (847 pytest pass, ruff clean, contract drift green, config/endpoint/response security audit clean; properties.py/integration.py/evaluator.py byte-identical), committed 86f4b9f. Dispatching Phase 3 (frontend); web suites validate in CI."
     }
   ]
 }
