@@ -72,7 +72,7 @@ include = ["app*"]
 # FileNotFoundError at first rule evaluation (same installed-wheel gap that hit
 # the ZR snapshots). Declared against the app.rules package with a subdirectory
 # glob so the rulesets/ directory needs no __init__.py and stays unmodified.
-"app.rules" = ["rulesets/*.rule.json"]
+"app.rules" = ["rulesets/*.rule.json", "schemas/v1/*.schema.json"]
 
 [tool.ruff]
 line-length = 100

@@ -27,6 +27,7 @@ _REQUIRED_PACKAGE_DATA = [
     ("app._contract_schemas.v1", "*.schema.json", _APP / "_contract_schemas" / "v1"),
     ("app._zr_snapshots.v1", "*.snapshot.json", _APP / "_zr_snapshots" / "v1"),
     ("app.rules", "rulesets/*.rule.json", _APP / "rules"),
+    ("app.rules", "schemas/v1/*.schema.json", _APP / "rules"),
 ]
 
 
