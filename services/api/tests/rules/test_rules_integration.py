@@ -607,3 +607,89 @@ def test_confident_class_empty_pairs_fails_safe(registry):
     assert result.fail_safe_reason == ri.FAILSAFE_INCONSISTENT_CONFIDENT
     assert result.zoning_district is None
     assert result.evaluations == []
+
+
+# --------------------------------------------------------------------------
+# M4-T002 post-rebase hardening follow-ups (G5 LOW-1 / LOW-2 / INFO-4).
+# Applied after rebasing onto the M4-T003-corrected evaluator; these pin the
+# integration-layer defenses that are now belt-and-suspenders with the engine.
+# --------------------------------------------------------------------------
+
+def test_hard1_malformed_spatial_containers_fail_safe_no_crash(registry):
+    # G5 LOW-1: malformed (truthy non-iterable) spatial container sub-fields must
+    # NOT raise TypeError deep in a comprehension; the module fails safe instead.
+    section = {
+        "lot_overall_class": ri._LOT_SINGLE_DISTRICT_CONFIDENT,
+        "professional_review_required": False,
+        "coverage_note": None,
+        "pairs": 999,            # truthy non-iterable scalar
+        "review_reasons": 5,     # truthy non-iterable scalar
+        "notes": 7,              # truthy non-iterable scalar
+        "provenance_refs": 3,    # truthy non-iterable scalar
+        "crosscheck": None,
+    }
+    result = ri.evaluate_property(_profile(section), registry=registry)  # must not raise
+    assert result.fail_safe is True
+    # pairs coerced to [] -> no interior_confident district -> inconsistent-confident.
+    assert result.fail_safe_reason == ri.FAILSAFE_INCONSISTENT_CONFIDENT
+    assert result.zoning_district is None
+    assert result.evaluations == []
+    # The malformed list fields are coerced to empty lists, never propagated.
+    assert result.spatial_uncertainty["review_reasons"] == []
+    assert result.spatial_uncertainty["notes"] == []
+    assert result.input_provenance["zoning_district"] == []
+    # Strict-JSON serializable fail-safe payload.
+    json.dumps(result.export(), allow_nan=False)
+
+
+def test_hard2_non_finite_lot_area_rejected_at_derivation(registry):
+    # G5 LOW-2: a +inf lot area must never become an evaluator input. Both the
+    # geometry area and the confident base pair carry inf -> derivation yields no
+    # area -> the evaluator takes its typed missing-critical path (no value, no
+    # fabricated inf output), and nothing crashes.
+    record = _record(
+        LOT_SINGLE_DISTRICT_CONFIDENT,
+        [_pair("R5", PAIR_INTERIOR_CONFIDENT, lot_area=float("inf"))],
+        professional_review_required=False,
+    )
+    profile = _profile(_spatial_section(record), area=float("inf"))
+    result = ri.evaluate_property(profile, registry=registry)  # must not raise
+    assert result.zoning_district == "R5"          # district still confidently derived
+    assert result.lot_area_sq_ft is None           # inf REJECTED at derivation (LOW-2)
+    assert result.lot_area_source is None
+    assert result.coverage_status == cov.COVERAGE_PROFESSIONAL_REVIEW_REQUIRED
+    # No fabricated inf anywhere; strict-JSON safe.
+    export = result.export()
+    assert "inf" not in json.dumps(export)
+    json.dumps(export, allow_nan=False)
+
+
+def test_hard2_nan_and_negative_lot_area_also_rejected(registry):
+    # Companion to LOW-2: NaN and negative areas were already rejected; keep it pinned.
+    for bad in (float("nan"), -1.0, 0.0):
+        record = _record(
+            LOT_SINGLE_DISTRICT_CONFIDENT,
+            [_pair("R5", PAIR_INTERIOR_CONFIDENT, lot_area=bad)],
+            professional_review_required=False,
+        )
+        profile = _profile(_spatial_section(record), area=bad)
+        result = ri.evaluate_property(profile, registry=registry)
+        assert result.lot_area_sq_ft is None
+        assert result.coverage_status == cov.COVERAGE_PROFESSIONAL_REVIEW_REQUIRED
+        json.dumps(result.export(), allow_nan=False)
+
+
+def test_hard3_vestigial_verified_status_present_field_removed(registry):
+    # G5 INFO-4 / G3 F2: the never-set/never-read verified_status_present field is
+    # removed (not wired). It must not appear in the dataclass or the serialized form.
+    result = ri.evaluate_property(_confident_profile("R5"), registry=registry)
+    assert not hasattr(result, "verified_status_present")
+    assert "verified_status_present" not in result.as_dict()
+    assert "verified_status_present" not in result.export()
+
+
+def test_hard4_successful_result_is_strict_json(registry):
+    # Reinforces the strict-JSON invariant on a normal confident result.
+    result = ri.evaluate_property(_confident_profile("R5", area=10000.0), registry=registry)
+    assert result.coverage_status == cov.COVERAGE_CONDITIONAL
+    json.dumps(result.export(), allow_nan=False)
