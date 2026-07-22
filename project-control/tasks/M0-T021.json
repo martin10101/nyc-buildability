@@ -1,0 +1,84 @@
+{
+  "task_id": "M0-T021",
+  "title": "Repair lock-verifier reproducibility check (blank-temp -> seeded committed lock)",
+  "task_type": "devops",
+  "milestone_id": "M0",
+  "objective": "Correct the byte-identical lock verifiers so --check tests REPRODUCIBILITY of the COMMITTED lock (its exact pins preserved) instead of performing a fresh latest-version resolution. Fix: in lock_tools.sh and lock_requirements.sh --check mode, SEED the temp output file with the committed lock (cp OUT_FILE TMP) BEFORE running the identical NON-upgrade uv pip compile, so uv uses the committed pins as existing-output preferences; then diff. No --upgrade, no re-lock of any dependency, no certifi upgrade. MUST NOT modify dependency_age_gate.py or weaken the 7-day (604800s) age gate. Preserve every security property: exact pins+hashes retained; separate production (requirements.txt) and tooling (requirements-tools.lock) locks; --check still FAILS on genuine manifest<->lock drift (a new/removed/changed .in requirement the committed lock does not satisfy); still FAILS on tampered or missing hashes; no silent dependency updates. Add regression tests under services/api/scripts/tests/: (1) a newer upstream transitive release does NOT break a PR whose committed lock still satisfies its .in inputs; (2) real manifest/lock drift still fails; (3) tampered/missing hashes still fail; (4) an intentional dependency addition/upgrade still invokes the age gate. Optionally the upstream-newer-version DISCOVERY may remain as a SEPARATE scheduled/reporting check but must not masquerade as committed-lock reproducibility nor block unrelated PRs. Freeze SHA; full CI; G5 dependency-security + G3 + G4 review of the changed workflow; return evidence before merge. Does NOT touch M4-T002 or any lock file's contents.",
+  "business_reason": "Upstream certifi 2026.7.22 (released 2026-07-22) makes api-tooling-lock-verify fail on every unrelated PR (repo-wide deadlock; observed on PR #79) even though the committed tooling lock still satisfies requirements-tools.in. Root cause: lock_tools.sh --check (and its mirror lock_requirements.sh --check) compile into a BLANK mktemp file, so uv resolves to LATEST instead of using the committed lock as existing-output version preferences. This is a design defect in the verifier, not a real lock/manifest drift. The same latent bug in lock_requirements.sh will break production-lock CI the moment any runtime transitive dep releases. Owner directive 2026-07-22: repair the verifier, do NOT re-lock or upgrade certifi, do NOT weaken the 7-day age gate.",
+  "inputs": [
+    "services/api/scripts/lock_tools.sh (verifier under repair)",
+    "services/api/scripts/lock_requirements.sh (mirror verifier, same defect)",
+    "services/api/scripts/dependency_age_gate.py (age gate \u2014 READ-ONLY, must not change behavior)",
+    "services/api/scripts/tests/test_dependency_age_gate.py (existing test conventions)",
+    "services/api/requirements-tools.in / requirements-tools.lock (tooling manifest+lock \u2014 READ-ONLY)",
+    "services/api/requirements.in / requirements.txt (production manifest+lock \u2014 READ-ONLY)",
+    ".github/workflows/ci.yml (api-tooling-lock-verify + api-lock-verify jobs)",
+    "project-control/reports/M0-T021-diagnosis.md (orchestrator-captured failure repro + root cause)"
+  ],
+  "outputs": [
+    "Repaired lock_tools.sh / lock_requirements.sh --check (seeded reproducibility verification)",
+    "services/api/scripts/tests/test_lock_verify_reproducibility.py (4 regression scenarios)",
+    "project-control/reports/M0-T021-producer-report.md"
+  ],
+  "requirement_refs": [
+    ".claude/ORCHESTRATION_POLICY.md \u00a7G (dependency-security policy, permanent, no waiver)",
+    ".claude/rules/deployment.md (CI/lock specifics)",
+    "docs/LOW_STORAGE_CLOUD_DEVELOPMENT_POLICY.md (heavy tests run on CI, not locally)"
+  ],
+  "dependencies": [
+    "M0-T020"
+  ],
+  "allowed_paths": [
+    "services/api/scripts/lock_tools.sh",
+    "services/api/scripts/lock_requirements.sh",
+    "services/api/scripts/tests/**",
+    ".github/workflows/ci.yml"
+  ],
+  "forbidden_paths": [
+    "services/api/scripts/dependency_age_gate.py",
+    "services/api/requirements.txt",
+    "services/api/requirements-tools.lock",
+    "services/api/requirements.in",
+    "services/api/requirements-tools.in",
+    "services/api/app/**",
+    "packages/**",
+    "project-control/** (except own reports)",
+    "any M4-T002 / M4-T003 path or worktree"
+  ],
+  "acceptance_scenarios": [
+    "AS-1 (primary): committed tooling lock unchanged + no upstream release relevant -> lock_tools.sh --check PASSES (byte-identical after seeding).",
+    "AS-2 (repo-wide-deadlock regression): a newer upstream transitive version exists upstream (simulated) but the committed lock still satisfies requirements-tools.in -> --check PASSES (does NOT pull the newer version; unrelated PRs are not blocked).",
+    "AS-3 (genuine drift, failure): a requirement in the .in manifest is added/removed/changed so the committed lock no longer satisfies it -> --check FAILS with a clear diff.",
+    "AS-4 (tamper, failure): a hash in the committed lock is altered or removed -> --check FAILS.",
+    "AS-5 (age-gate preserved): an intentional dependency addition/upgrade still routes through dependency_age_gate.py and a <7-day (604799s) package still FAILS the age gate; the gate's behavior is unchanged (byte-identical dependency_age_gate.py).",
+    "AS-6 (boundary): both lock_tools.sh AND lock_requirements.sh receive the identical fix; production-lock verifier no longer performs latest-version resolution."
+  ],
+  "required_gates": [
+    "G0",
+    "G3",
+    "G4",
+    "G5"
+  ],
+  "producer_agent": "cloud-architect",
+  "reviewer_agents": [
+    "security-reviewer",
+    "code-reviewer",
+    "qa-engineer"
+  ],
+  "status": "claimed",
+  "progress_percent": 10,
+  "risks": [],
+  "blockers": [],
+  "created_at": "2026-07-22T04:10:23.342273+00:00",
+  "updated_at": "2026-07-22T04:14:33.653794+00:00",
+  "worktree": ".claude/worktrees/M0-T021-lock-verifier",
+  "progress_log": [
+    {
+      "at": "2026-07-22T04:14:33.653794+00:00",
+      "agent": "cloud-architect",
+      "percent": 10,
+      "status": "claimed",
+      "message": "G0 PASS; claimed; root cause captured in M0-T021-diagnosis.md"
+    }
+  ]
+}
