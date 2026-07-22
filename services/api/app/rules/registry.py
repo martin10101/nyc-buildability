@@ -54,6 +54,19 @@ def detect_rule_conflicts(
     ``rules`` must all belong to one family (the registry passes one family's
     list). The outcome does not depend on the order of ``rules``.
     """
+    # FH-4: an impossible/malformed calendar ``as_of_date`` must fail closed
+    # IDENTICALLY to the single-rule evaluate path. evaluator.evaluate already
+    # routes as_of_date through ``_valid_iso_date`` and marks such a date
+    # ``in_effect=False`` (FH-1); the raw ``RuleDefinition.is_in_effect`` used
+    # below does a LEXICAL string comparison and would treat e.g. "2024-02-30"
+    # as a real date - a temporal asymmetry that could spuriously report a
+    # conflict on a date that does not exist. A date no rule can be in effect on
+    # can carry no simultaneous-in-effect conflict, so we short-circuit to None
+    # here using the SAME validator the evaluate path uses. ``None`` (no
+    # temporal gating) and every real date - including a genuine leap day
+    # "2024-02-29" - are unaffected; this is additive and strictly fail-closed.
+    if as_of_date is not None and not evaluator._valid_iso_date(as_of_date):
+        return None
     candidates = [
         rule
         for rule in rules

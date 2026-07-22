@@ -54,7 +54,9 @@ def _registry() -> Registry:
     resources = []
     for schema_file in sorted(SCHEMA_DIR.glob("*.schema.json")):
         doc = _load(schema_file)
-        resources.append((doc["$id"], Resource.from_contents(doc, default_specification=DRAFT202012)))
+        resources.append(
+            (doc["$id"], Resource.from_contents(doc, default_specification=DRAFT202012))
+        )
     return Registry().with_resources(resources)
 
 
@@ -80,8 +82,12 @@ INVALID_FIXTURES = sorted((FIXTURE_ROOT / "invalid" / "rule_evaluation").glob("*
 
 
 def test_there_are_the_required_fixtures() -> None:
-    assert len(VALID_FIXTURES) >= 4, "need >=4 valid fixtures (draft, not_applicable, fail-safe, split-lot)"
-    assert len(INVALID_FIXTURES) >= 3, "need >=3 invalid fixtures (verified, missing field, embedded profile)"
+    assert len(VALID_FIXTURES) >= 4, (
+        "need >=4 valid fixtures (draft, not_applicable, fail-safe, split-lot)"
+    )
+    assert len(INVALID_FIXTURES) >= 3, (
+        "need >=3 invalid fixtures (verified, missing field, embedded profile)"
+    )
 
 
 @pytest.mark.parametrize("fixture", VALID_FIXTURES, ids=lambda p: p.name)
@@ -109,7 +115,9 @@ def test_valid_fixture_identifies_input_by_reference(fixture: Path) -> None:
     assert set(ev) == {"bbl", "profile_contract_version", "input_fingerprint", "input_provenance"}
     assert ev["input_fingerprint"].startswith("sha256:")
     # No embedded property-profile structure anywhere at the top level.
-    for profile_key in ("property_profile", "lot_facts", "profile_version", "provenance", "identity"):
+    for profile_key in (
+        "property_profile", "lot_facts", "profile_version", "provenance", "identity",
+    ):
         assert profile_key not in instance, f"unexpected embedded profile key {profile_key!r}"
 
 
@@ -136,7 +144,9 @@ def test_invalid_missing_field_fixture_fails_on_required() -> None:
 
 
 def test_invalid_embedded_profile_fixture_fails_on_additional_property() -> None:
-    instance = _load(FIXTURE_ROOT / "invalid" / "rule_evaluation" / "embedded_property_profile.json")
+    instance = _load(
+        FIXTURE_ROOT / "invalid" / "rule_evaluation" / "embedded_property_profile.json"
+    )
     messages = " ".join(e.message for e in _validator().iter_errors(instance))
     assert "property_profile" in messages and "dditional" in messages
 
@@ -152,7 +162,9 @@ def test_schema_refs_canonical_coverage_status_never_redefines_it() -> None:
     schema = _load(RULE_EVAL_SCHEMA)
     draft = schema["$defs"]["coverage_status_draft"]
     refs = [branch.get("$ref") for branch in draft["allOf"] if "$ref" in branch]
-    assert "coverage_status.schema.json" in refs, "coverage_status_draft must $ref the canonical schema"
+    assert "coverage_status.schema.json" in refs, (
+        "coverage_status_draft must $ref the canonical schema"
+    )
     # Every coverage_status property points at the shared draft def, not an
     # inline enum.
     assert schema["properties"]["coverage_status"] == {"$ref": "#/$defs/coverage_status_draft"}
@@ -170,14 +182,18 @@ def test_verified_is_not_an_allowed_coverage_status() -> None:
     """'verified' is excluded from the draft coverage vocabulary and rejected by
     validation at the coverage_status site."""
     schema = _load(RULE_EVAL_SCHEMA)
-    subset = next(b["enum"] for b in schema["$defs"]["coverage_status_draft"]["allOf"] if "enum" in b)
+    subset = next(
+        b["enum"] for b in schema["$defs"]["coverage_status_draft"]["allOf"] if "enum" in b
+    )
     assert "verified" not in subset
     assert set(subset) == set(CANONICAL_COVERAGE) - {"verified"}
 
     valid = _load(FIXTURE_ROOT / "valid" / "rule_evaluation" / "supported_family_draft.json")
     tampered = dict(valid)
     tampered["coverage_status"] = "verified"
-    assert list(_validator().iter_errors(tampered)), "'verified' must be rejected at coverage_status"
+    assert list(_validator().iter_errors(tampered)), (
+        "'verified' must be rejected at coverage_status"
+    )
 
 
 def _all_enums(node) -> list:

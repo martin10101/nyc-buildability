@@ -29,6 +29,7 @@ from fastapi import FastAPI, Request, Response
 from fastapi.middleware.cors import CORSMiddleware
 
 from app.api.v1.properties import router as properties_v1_router
+from app.api.v1.rule_evaluation import router as rule_evaluation_v1_router
 
 API_VERSION = "0.1.0"
 
@@ -113,6 +114,11 @@ def create_app() -> FastAPI:
         return response
 
     application.include_router(properties_v1_router)
+    # Internal, feature-flag-gated rule-evaluation endpoint (task M4-T005). The
+    # route is ALWAYS registered but is unreachable (generic 404, no OpenAPI
+    # entry) unless INTERNAL_RULE_EVAL_ENABLED is explicitly true; absent/unknown
+    # -> disabled (fail safe). See app.api.v1.rule_evaluation.
+    application.include_router(rule_evaluation_v1_router)
 
     @application.get("/api/v1/health")
     def health() -> dict[str, str]:
