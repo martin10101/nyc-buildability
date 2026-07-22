@@ -283,8 +283,8 @@ def get_rule_evaluation(
 
         return _json(200, document, correlation_id)
     except Exception:
-        logger.error(
-            "rule_evaluation_v1 unexpected_error stage=evaluate correlation_id=%s",
+        logger.exception(
+            "rule_evaluation_v1 unexpected_error stage=evaluate correlation_id=%s [TEMP-DEBUG M4-T005; revert before freeze]",
             correlation_id,
         )
         return _internal_error_500(correlation_id)
