@@ -64,6 +64,16 @@ include = ["app*"]
 # the wheel), 500-ing the rule-evaluation endpoint in web-e2e and production.
 "app._zr_snapshots.v1" = ["*.snapshot.json"]
 
+# M4-T005 phase 2b: ship the rule DSL rulesets as PACKAGE DATA. They live under
+# app/rules/rulesets/*.rule.json (source of authority, not a synced copy), but
+# are DATA files: setuptools packages Python modules, not arbitrary data, so
+# without this entry `pip install ./services/api` omits them and the installed
+# app has no app/rules/rulesets directory -> RuleRegistry.load() raises
+# FileNotFoundError at first rule evaluation (same installed-wheel gap that hit
+# the ZR snapshots). Declared against the app.rules package with a subdirectory
+# glob so the rulesets/ directory needs no __init__.py and stays unmodified.
+"app.rules" = ["rulesets/*.rule.json"]
+
 [tool.ruff]
 line-length = 100
 target-version = "py312"
