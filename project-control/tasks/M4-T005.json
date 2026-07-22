@@ -69,6 +69,10 @@
     "services/api/app/rules/integration.py",
     "services/api/app/rules/registry.py",
     "services/api/app/rules/response.py",
+    "services/api/app/rules/snapshots.py",
+    "services/api/app/_zr_snapshots/**",
+    "services/api/scripts/sync_zr_snapshots.py",
+    "services/api/pyproject.toml",
     "services/api/tests/api/**",
     "services/api/tests/rules/**",
     "services/api/tests/contracts/**",
@@ -99,7 +103,6 @@
     "services/api/app/rules/lifecycle.py",
     "services/api/app/rules/dsl.py",
     "services/api/app/rules/operations.py",
-    "services/api/app/rules/snapshots.py",
     "services/api/app/rules/rulesets/**",
     "docs/research/zr-snapshots/**",
     "any rule JSON / legal rule content",
@@ -158,7 +161,7 @@
   "execution_location": "Cloud/worktree isolation on branch task/M4-T005-rule-eval; CI (GitHub Actions) is the authority for web build/lint/typecheck/e2e. Owner PC stays thin-client: text-only edits, python stdlib typegen + pytest locally; NO local npm, DB, Docker, or bulk data. Temporary files under the session scratchpad only; no large/persistent artifacts on the owner PC.",
   "disk_budget": "Negligible (source + JSON fixtures). No datasets, no caches, no node_modules added locally.",
   "holds_honored": "Nothing Published/Verified; no rule accepted; no G6 manufactured; M4-T001 stays unaccepted; endpoint disabled by default in production (not exposed anonymously); PR #64, CP-0032, expansion/GDS holds untouched; property_profile 1.4.0 and existing /properties/{bbl} contract unchanged.",
-  "status": "blocked",
+  "status": "in_progress",
   "progress_percent": 85,
   "risks": [
     "Contract $ref resolution across files must stay byte-identical through typegen + bundle (three CI drift checks) - highest-friction area.",
@@ -168,7 +171,7 @@
   "blockers": [],
   "worktree": ".claude/worktrees/M4-T005-rule-eval",
   "branch": "task/M4-T005-rule-eval",
-  "updated_at": "2026-07-22T21:24:39.783974+00:00",
+  "updated_at": "2026-07-22T21:27:26.118006+00:00",
   "progress_log": [
     {
       "at": "2026-07-22T17:37:44.389605+00:00",
@@ -204,6 +207,13 @@
       "percent": 85,
       "status": "blocked",
       "message": "BLOCKED (scope decision): web-e2e rule-eval specs fail in installed-wheel context \u2014 RuleRegistry ZR-snapshot dir resolves to docs/ which is unpackaged (snapshots.py:26 parents[4]). Latent M4-T001 deployability gap; endpoint is first registry consumer in installed context; would also break Render deploy. Fix touches forbidden paths (snapshots.py, pyproject.toml). See project-control/reports/M4-T005-blocker-snapshot-deployability.md. Contract+frontend fine; all non-endpoint CI green. Awaiting owner scope decision (A: fix in-task / B: split to M4-T006)."
+    },
+    {
+      "at": "2026-07-22T21:27:26.118006+00:00",
+      "agent": "orchestrator",
+      "percent": 85,
+      "status": "in_progress",
+      "message": "UNBLOCKED by owner scope decision 2026-07-22 (Option A: fix in-task). Authorized scope expansion: add services/api/app/rules/snapshots.py, services/api/pyproject.toml, services/api/app/_zr_snapshots/**, services/api/scripts/sync_zr_snapshots.py to allowed_paths (removed snapshots.py from forbidden). Fix: bundle ZR snapshots into the installed package (byte-identical, mirror _contract_schemas pattern) so the rule registry resolves them from an installed wheel. Nothing Published/Verified; no rule content changed. docs/research/zr-snapshots/** stays forbidden (read-only source)."
     }
   ]
 }
