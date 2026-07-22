@@ -162,7 +162,7 @@
   "disk_budget": "Negligible (source + JSON fixtures). No datasets, no caches, no node_modules added locally.",
   "holds_honored": "Nothing Published/Verified; no rule accepted; no G6 manufactured; M4-T001 stays unaccepted; endpoint disabled by default in production (not exposed anonymously); PR #64, CP-0032, expansion/GDS holds untouched; property_profile 1.4.0 and existing /properties/{bbl} contract unchanged.",
   "status": "awaiting_gate",
-  "progress_percent": 85,
+  "progress_percent": 98,
   "risks": [
     "Contract $ref resolution across files must stay byte-identical through typegen + bundle (three CI drift checks) - highest-friction area.",
     "Feature-flag gating must fail SAFE (absent/unknown flag => disabled) and be provable by security review, not merely documented.",
@@ -171,7 +171,7 @@
   "blockers": [],
   "worktree": ".claude/worktrees/M4-T005-rule-eval",
   "branch": "task/M4-T005-rule-eval",
-  "updated_at": "2026-07-22T22:03:48.036988+00:00",
+  "updated_at": "2026-07-22T22:20:54.305151+00:00",
   "progress_log": [
     {
       "at": "2026-07-22T17:37:44.389605+00:00",
@@ -221,6 +221,13 @@
       "percent": 90,
       "status": "in_progress",
       "message": "Phase 2b snapshot-bundling fix built + orchestrator-validated (853 pytest, ruff clean, sync --check byte-identical, DEFAULT_SNAPSHOT_DIR->packaged, registry loads). Pushing to re-run CI; web-e2e (installed wheel) is the deployability validator."
+    },
+    {
+      "at": "2026-07-22T22:20:54.305151+00:00",
+      "agent": "orchestrator",
+      "percent": 98,
+      "status": "awaiting_gate",
+      "message": "ALL required gates PASS at frozen impl SHA 84b50a7: G0 readiness, G1 data-contract, G3 code, G4 integration(qa)+UI/a11y(human-journey), G5 security. PR #84 25/25 CI green incl installed-wheel web-e2e (deployability proven). Two LOW non-blocking future-hardening notes recorded (FH-M4T005-1/2). NOT accepted: awaiting owner merge decision; acceptance also gated on dependency M4-T004 (G6-held). Nothing Published/Verified; endpoint disabled-by-default in production."
     }
   ]
 }
