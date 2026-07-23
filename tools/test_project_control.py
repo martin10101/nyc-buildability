@@ -55,6 +55,7 @@ from __future__ import annotations
 
 import importlib.util
 import json
+import re
 import shutil
 import subprocess
 import sys
@@ -1083,10 +1084,13 @@ def test_docs_honesty() -> None:
 
 # ---------------------------------------------------------------------------
 # S9 - B-001 blocks acceptance of the M3 durable-storage corpus tasks
-# (M3-T002 / M3-T004). Proves the fixture-vs-production invariant is REALLY
-# enforced by the CLI via the blocker record, not merely asserted in packet
-# prose. Uses the SAME affects wording committed to the real B-001 file, in an
-# isolated temporary ledger that never touches real task state.
+# (M3-T002 immutable capture, M3-T003 evidence engine, M3-T005 construction
+# code). Proves the fixture-vs-production invariant is REALLY enforced by the
+# CLI via the blocker record, not merely asserted in packet prose. Anti-drift:
+# reads the ACTUAL committed B-001 JSON, asserts it identifies exactly the
+# intended M3 storage tasks, then copies that real record into an isolated
+# temporary ledger; only the temp copy is ever set to resolved. The real
+# blocker and real task state are never mutated.
 # ---------------------------------------------------------------------------
 def test_s9_b001_m3_corpus_storage_enforcement() -> None:
     tmpdir = tempfile.mkdtemp(prefix="pc-s9-")
@@ -1095,20 +1099,31 @@ def test_s9_b001_m3_corpus_storage_enforcement() -> None:
         make_temp_project(tmp)
         pc = tmp / "project-control"
 
-        # The three durable-storage corpus tasks (five-packet split): immutable
-        # capture (T002), evidence engine (T003), construction-code (T005).
+        # The three durable-storage corpus tasks (five-packet split).
         STORAGE_TASKS = ["M3-T002", "M3-T003", "M3-T005"]
 
-        # Mirror of the real B-001 affects wording (word-bounded task ids present).
-        b001_affects = [
-            "M0 cloud foundation",
-            "M3-T002 (durable content-addressed immutable HTML/PDF/rendered-page "
-            "object storage - required before acceptance)",
-            "M3-T003 (durable content-addressed extraction/OCR/evidence/human-review "
-            "bundle object storage - required before acceptance)",
-            "M3-T005 (durable content-addressed Construction-Code + amendment-overlay "
-            "object storage - required before acceptance)",
-        ]
+        # Read the ACTUAL committed B-001 record (never mutate it).
+        real_b001_path = REAL_PC / "blockers" / "B-001-supabase-access-token.json"
+        real_b001 = json.loads(real_b001_path.read_text(encoding="utf-8"))
+
+        # Drift guard: the real blocker's affects+detail must identify EXACTLY the
+        # intended M3 storage tasks - no more, no fewer. Any M3-T0xx id that drifts
+        # in or out fails here before the acceptance tests run.
+        haystack = "\n".join(str(x) for x in (real_b001.get("affects") or [])) \
+            + "\n" + str(real_b001.get("detail") or "")
+        referenced = set(re.findall(r"M3-T0\d\d", haystack))
+        assert referenced == set(STORAGE_TASKS), (
+            f"real B-001 must reference exactly {sorted(STORAGE_TASKS)} M3 storage "
+            f"tasks, found {sorted(referenced)} - test and blocker have drifted")
+        assert str(real_b001.get("status", "open")).lower() == "open", \
+            "real B-001 is expected to be open for this enforcement test"
+
+        def write_b001_copy(status):
+            # Copy the REAL record into the temp ledger; only override status.
+            rec = dict(real_b001)
+            rec["status"] = status
+            (pc / "blockers" / "B-001-supabase-access-token.json").write_text(
+                json.dumps(rec), encoding="utf-8")
 
         def ready_for_accept(task_id):
             new_ready_task(tmp, task_id)
@@ -1119,19 +1134,12 @@ def test_s9_b001_m3_corpus_storage_enforcement() -> None:
                     "--reviewer", "reviewer-y", "--result", "PASS", "--report", rev)
             assert r.returncode == 0, r.stderr
 
-        def write_b001(status="open"):
-            (pc / "blockers" / "B-001-supabase-access-token.json").write_text(
-                json.dumps({"blocker_id": "B-001", "title": "Supabase token missing",
-                            "status": status, "affects": b001_affects,
-                            "detail": "durable legal-corpus storage unavailable"}),
-                encoding="utf-8")
-
         # Each storage task is otherwise fully acceptable (gates PASS, no deps).
         for tid in STORAGE_TASKS:
             ready_for_accept(tid)
 
-        # (a) open B-001 blocks acceptance of every durable-storage task
-        write_b001("open")
+        # (a) open B-001 (the real record, copied) blocks acceptance of each task
+        write_b001_copy("open")
         for tid in STORAGE_TASKS:
             r = run(tmp, "accept", "--task-id", tid, "--agent", "orchestrator")
             assert r.returncode != 0 and "B-001" in r.stderr, \
@@ -1144,16 +1152,17 @@ def test_s9_b001_m3_corpus_storage_enforcement() -> None:
         assert r.returncode != 0 and "B-001" in r.stderr, \
             f"a fixtures-only marker must not bypass B-001: {r.stderr}"
 
-        # (c) resolving B-001 (durable storage available) lets acceptance proceed for
-        # every storage task, proving B-001 was the sole remaining blocker.
-        write_b001("resolved")
+        # (c) resolving ONLY the temp copy lets acceptance proceed for every storage
+        # task, proving B-001 was the sole remaining blocker.
+        write_b001_copy("resolved")
         for tid in STORAGE_TASKS:
             r = run(tmp, "accept", "--task-id", tid, "--agent", "orchestrator")
             assert r.returncode == 0, \
                 f"resolved B-001 must allow {tid} acceptance: {r.stderr}"
 
-        print("OK: S9 B-001 blocks M3-T002/M3-T003/M3-T005 acceptance (fixture-only "
-              "cannot bypass; resolving B-001 unblocks all three)")
+        print("OK: S9 B-001 (read from the real committed record) blocks "
+              "M3-T002/M3-T003/M3-T005 acceptance (fixture-only cannot bypass; "
+              "resolving B-001 unblocks all three)")
     finally:
         shutil.rmtree(tmpdir, ignore_errors=True)
 

@@ -2,7 +2,7 @@
 
 **Author:** orchestrator (main session) · **Date:** 2026-07-23 · **Branch:** `control/M3-corpus-replan-2026-07-23`
 **Directive:** owner directive 2026-07-23 (repair the missing M3 legal-corpus dependency before any M4-T007+ yard/coverage work; §11-25 correction; architect benchmark; construction-code scope; deterministic completeness harnesses).
-**Status of this package:** PROPOSAL, **revision 4** (owner directive 2026-07-23 — Document/PDF Evidence Verification Engine; **M3 is now a FIVE-packet sequence**). See §15 (rev-2), §16 (rev-3), and **§17 (rev-4, the five-packet restructure — authoritative for the packet map)** + §18 (rev-4 log). No producer is dispatched. M4-T007/T008/T009 are NOT contracted, claimed, or started. The 3-way vs 4-way split is preserved as a downstream candidate and NOT decided here. Nothing merges to `main` until you approve.
+**Status of this package:** PROPOSAL, **revision 5** (owner decision: **all PDF parsing/rendering moves into M3-T003**; §17.16 resolved). See §15 (rev-2), §16 (rev-3), **§17 (five-packet restructure — authoritative for the packet map; §17.16 records the rev-5 decision)** + §18 (rev-4 log) + §19 (rev-5 log). No producer is dispatched. M4-T007/T008/T009 are NOT contracted, claimed, or started. The 3-way vs 4-way split is preserved as a downstream candidate and NOT decided here. Nothing merges to `main` until you approve.
 
 > **Reading order note:** §17 supersedes the four-packet structure described in §5B/§7/§8/§9/§10 below wherever they differ. Those earlier sections are retained for the corrections history; **§17 is the current packet map, dependency graph, ownership, evidence model, and harness matrix.** Renumbering: closure moved T003→**T004**; construction-code moved T004→**T005**; the new **T003** is the Document Evidence Verification Engine.
 
@@ -24,7 +24,7 @@ This document is the single return package the directive's section 9 asks for. I
 **Control-metadata reconciliation (directive §1 asked to check these explicitly):**
 
 - **M3 had no tasks** (status `planned`) — the missing legal-corpus dependency. This PR adds the four proposed packets.
-- **M4 summary said "0/5"** but the ledger holds **M4-T001…T006** (six tasks). **Fixed in this PR** to "0/6" with the M4-T006 R5 height/setback family noted, and M4-T007's new dependency on accepted M3-T003 recorded.
+- **M4 summary said "0/5"** but the ledger holds **M4-T001…T006** (six tasks). **Fixed in this PR** to "0/6" with the M4-T006 R5 height/setback family noted, and M4-T007's new dependency on accepted M3-T004 recorded (closure renumbered T003->T004 in rev-4).
 - **All M4-T001…T006 + M5-T001 are `awaiting_gate`** — merged DRAFT (`needs_review`), **none accepted, Published, or Verified**. G6 gates the chain.
 - Checkpoint is **CP-0031**; **CP-0032 remains reserved** for M0-T019 (not created here).
 - Open blockers: **B-001** (Supabase management token → durable object storage; **amended to affect M3-T002, M3-T003 & M3-T005** — the durable-storage tasks; see §17.15), **B-004** (Geoclient key), **B-010** (client R5 benchmark sheet absent from repo), and **B-011** (new — owner-approved construction-code release scope; gates **M3-T005** readiness, see §17.2). (Rev-2/rev-3 text in §10A/§15/§16 references the pre-restructure numbering; **§17 is authoritative** — closure is now T004, construction-code T005.)
@@ -35,7 +35,7 @@ This document is the single return package the directive's section 9 asks for. I
 
 ## 2. Immediate decision (directive §2)
 
-The current 3-way footprint proposal (PR #91) is **not approved for implementation**. The downstream slices (coverage; rear/rear-equivalent; front/side) remain **candidates**; their exact boundaries must be **regenerated after the cross-reference closure graph (M3-T003) identifies the complete reachable section set.** A section list assembled by hand from one chapter is not sufficient evidence of completeness.
+The current 3-way footprint proposal (PR #91) is **not approved for implementation**. The downstream slices (coverage; rear/rear-equivalent; front/side) remain **candidates**; their exact boundaries must be **regenerated after the cross-reference closure graph (M3-T004) identifies the complete reachable section set.** A section list assembled by hand from one chapter is not sufficient evidence of completeness.
 
 `/replan-project` was invoked because the owner supplied new authoritative source requirements, a client architect benchmark, a newly identified legal dependency (§11-25), a construction-code coverage requirement, and a requirement for deterministic completeness/self-check harnesses. This package is the replan output.
 
@@ -51,9 +51,9 @@ ZR §11-25: regulations applicable to a district designation apply to that desig
 - If a section lists R5 and does **not** list separate suffix provisions → **model §11-25 inheritance** (R5A/R5B/R5D inherit).
 - If the same section **expressly** lists different R5A/R5B/R5D provisions → those **express provisions control**.
 - Preserve explicit exclusions such as §23-422's "except R5 Districts with a letter suffix."
-- **§11-25 is added to every relevant rule's closure manifest and tests** (M3-T003 harness AS-1/AS-2/NC-3).
+- **§11-25 is added to every relevant rule's closure manifest and tests** (M3-T004 harness AS-1/AS-2/NC-3).
 
-This corrects the earlier tendency to treat bare-R5 as ambiguous by default. It is the canonical test pair for M3-T003: §23-361/R5B **inherits** via §11-25; §23-422 **excludes** suffixed R5.
+This corrects the earlier tendency to treat bare-R5 as ambiguous by default. It is the canonical test pair for M3-T004: §23-361/R5B **inherits** via §11-25; §23-422 **excludes** suffixed R5.
 
 ### 3B. Lot taxonomy — §12-10 (CORRECTION)
 
@@ -89,7 +89,7 @@ The client PDF **must not be committed** without explicit owner authorization. A
 
 ### 3D. "Confirmed absence" (CORRECTION)
 
-Do not call a modifier "confirmed absent" merely because it was not found in Article II Chapter 3. Absence may be asserted **only** if the declared search universe and cross-reference closure are complete (M3-T003). Otherwise use **`unsupported`**, **`not_evaluated`**, or **`professional_review_required`.**
+Do not call a modifier "confirmed absent" merely because it was not found in Article II Chapter 3. Absence may be asserted **only** if the declared search universe and cross-reference closure are complete (M3-T004). Otherwise use **`unsupported`**, **`not_evaluated`**, or **`professional_review_required`.**
 
 ---
 
@@ -147,7 +147,7 @@ Every domain row records **six columns**: status; controlling official source ch
 | Zoning maps / district facts | partial | DCP GIS zoning-features + ZTLDB (accepted) | 2026-07-20 | M2 (accepted) | lot-level legal determination | note ±20ft limitation (data-contract-verifier) |
 | Zoning Resolution text | missing | ZR portal (registry §8) | — | M3-T002 | every rule value / Verified | ingest + fidelity (data-contract-verifier) |
 | Amendments / effective dates | missing | ZR /recently-adopted + PDF snapshots | — | M3-T002 | effective-date correctness | multi-signal version detect (data-contract-verifier) |
-| Definitions & interpretation (§12-10, §11-25) | missing | ZR text (closure) | — | M3-T003 | applicability / suffix scope | closure graph (qa-engineer) |
+| Definitions & interpretation (§12-10, §11-25) | missing | ZR text (closure) | — | M3-T004 | applicability / suffix scope | closure graph (qa-engineer) |
 | Special districts / overlays | partial | DCP GIS (facts) + ZR (text) | 2026-07-20 | M2 accepted / ZR text M3-T002 | override resolution | ingest override text (data-contract-verifier) |
 | Environmental & restrictive declarations | missing | ACRIS / recorded instruments | — | future task (unassigned) | project-specific control | scope a task (orchestrator) |
 | Zoning-lot identity & recorded agreements | missing | ZTLDB + recorded ZLDA | — | future task (unassigned) | zoning-lot ≠ tax-lot claims | scope a task (orchestrator) |
@@ -261,20 +261,20 @@ Explicit invariant, carried into M3-T002 and M3-T004 as an `acceptance_precondit
 
 ## 11. §11-25 correction — recorded
 
-See §3A. §11-25 suffix inheritance is (a) a required correction to the current analysis, (b) an M3-T003 graph edge type, (c) a closure-manifest entry for every relevant rule, and (d) harness cases AS-1/AS-2/NC-3. The §23-422 express exclusion is preserved as the counter-case.
+See §3A. §11-25 suffix inheritance is (a) a required correction to the current analysis, (b) an M3-T004 graph edge type, (c) a closure-manifest entry for every relevant rule, and (d) harness cases AS-1/AS-2/NC-3. The §23-422 express exclusion is preserved as the counter-case.
 
 ---
 
 ## 12. Revised recommendation — 3-way vs 4-way (directive §9)
 
-**Recommendation: do not fix the number now; regenerate the slice boundaries from the M3-T003 closure set, and expect 4-way (or more) to be the floor, not 3-way.**
+**Recommendation: do not fix the number now; regenerate the slice boundaries from the M3-T004 closure set, and expect 4-way (or more) to be the floor, not 3-way.**
 
 Rationale:
 - The current 3-way grouping (coverage / rear+rear-equivalent / front+side) was assembled from a manual chapter reading. The owner's §11-25 correction and the §12-10 lot-taxonomy correction both change which sections are reachable and how R5A/R5B/R5D scope, so the *inputs* to the split decision are not yet stable.
 - Front and side yards have **different** applicability drivers (side-yard count depends on building type — detached/semi-detached/zero-lot-line/attached — and may require two yards; front-yard depth interacts with the §23-423 setback offset with its 7-ft floor). Bundling front+side risks hiding a building-type branch, which is exactly the failure the benchmark (§3C item 5) exposes.
 - Therefore the **4-way split** (T007 lot coverage → T008 rear + rear-equivalent → T009 front → T010 side) is the more honest **lower bound**; the closure graph may reveal a further split (e.g. open-space/FAR-interaction, or building-type-specific side-yard sub-rules).
 
-**Concrete proposal:** keep the 4-way split as the working candidate, but **contract its exact boundaries only after M3-T003 is accepted**, when the reachable controlling-section set and the §11-25/§12-10 predicates are known. Until then M4-T007+ stays uncontracted, dependent on accepted M3-T003.
+**Concrete proposal:** keep the 4-way split as the working candidate, but **contract its exact boundaries only after M3-T004 is accepted**, when the reachable controlling-section set and the §11-25/§12-10 predicates are known. Until then M4-T007+ stays uncontracted, dependent on accepted M3-T004.
 
 ---
 
@@ -421,19 +421,24 @@ official source to immutable capture (T002) to evidence verification (T003) to s
 
 ### 17.13 Security + resource controls (all capture/extraction tasks; G5)
 
-Every PDF (including government-hosted) is untrusted: MIME + file-signature validation; max file size / page count / decompressed-stream size / image dimensions / processing time; memory/CPU budgets; sandboxed worker with no unnecessary network; **no execution of PDF JavaScript, attachments, actions, macros, or external references**; reject encrypted/unsupported unless an approved workflow exists; parser crash isolation; no path traversal; no bulk temp files on the owner PC; private object storage; sensitive-log redaction; prompt-injection isolation if extracted text is ever shown to an AI (embedded document instructions are data, never control). **G5 must include malicious and malformed PDF fixtures.**
+Every PDF (including government-hosted) is untrusted. The controls split by ownership (§17.16): **capture-time controls belong to M3-T002** — approved hosts + redirect policy, MIME + file-signature validation, byte/time limits, safe filenames/paths, no execution, private/quarantined storage; **parser-level controls belong to M3-T003** (where the parser/renderer runs) — max page count / decompressed-stream size / image dimensions / processing time, memory/CPU budgets, sandboxed worker with no unnecessary network, **no execution of PDF JavaScript/attachments/actions/macros/external references**, reject encrypted/unsupported unless an approved workflow exists, parser crash isolation, prompt-injection isolation if extracted text is ever shown to an AI (embedded document instructions are data, never control). No bulk temp files on the owner PC; sensitive-log redaction throughout. **G5 must include malicious and malformed PDF fixtures (in M3-T003).**
 
 ### 17.14 Storage + reproducibility (M3-T003)
 
-Content-addressable in approved cloud object storage: original PDF, original HTML, rendered page images, extraction result, OCR result, evidence manifest, page crops/review bundles, cross-source diff, human decision record. **Deduplicate by hash; never overwrite an old version.** Reproducible by: raw document hash + engine version + config hash + language pack/version + render DPI + normalization version + evidence-schema version. **An engine upgrade creates a NEW extraction run; it does not erase previous evidence.** B-001 references and blocks acceptance of every durable-storage task (T002/T003/T005) — proven by regression S9.
+Content-addressable in approved cloud object storage, split by ownership (§17.16): **M3-T002 stores the immutable ORIGINALS** (original PDF, original HTML) via its **generic append-only interface**; **M3-T003 appends** rendered page images, extraction result, OCR result, evidence manifest, page crops/review bundles, cross-source diff, and human decision record via that same interface (never editing T002 code or overwriting); **M3-T005 appends** the construction-code corpus + overlay. **Deduplicate by hash; never overwrite an old version.** Reproducible by: raw document hash + engine version + config hash + language pack/version + render DPI + normalization version + evidence-schema version. **An engine upgrade creates a NEW extraction run; it does not erase previous evidence.** B-001 references and blocks acceptance of every durable-storage task (T002/T003/T005) — proven by regression S9.
 
 ### 17.15 B-001 enforcement proof (rev-3 mechanism, extended)
 
 `B-001.affects` now names **M3-T002, M3-T003, M3-T005**; the CLI blocks acceptance when a blocker's affects/detail names the task (`_blocker_references`). Control-plane regression **S9** (`tools/test_project_control.py`) proves, in an isolated temp ledger, that open B-001 blocks acceptance of all three, a `fixtures_only` marker cannot bypass, and resolving B-001 unblocks all three. Evidence: `project-control/reports/M3-CORPUS-B001-enforcement-evidence.md`.
 
-### 17.16 One open sequencing point for owner confirmation
+### 17.16 Decision recorded (owner, rev-5): ALL PDF parsing/rendering lives in M3-T003
 
-M3-T002 lists "rendered-page derivatives" (page rasterization) in its scope, but the PDF renderer/parser library is selected in **M3-T003**'s `/dependency-security` pass. So M3-T002's PDF-derivative sub-capability is **sequenced after** that selection; HTML capture + byte preservation + hashing + versioning need no new dependency and proceed first. **Confirm:** keep rendered-page derivatives in T002 (sequenced behind the T003 library decision), or move rendering into T003 and have T002 store the derivatives T003 produces. Either preserves the trust boundary; I recommend the latter (rendering in T003 with the same approved library) for a single PDF-handling surface — but left it in T002 per your directive text pending your call.
+The earlier open question is **resolved**: **all PDF parsing and rendering move into M3-T003**, removing the dependency inversion (T002 could not be accepted until rendered pages existed; the renderer is selected in T003; T003 depends on accepted T002).
+
+- **M3-T002** is a TRUE immutable-capture packet: exact bytes; raw SHA-256; content-addressable, deduplicated, never-overwrite storage exposed as a **generic append-only interface**; canonical URL / publisher / tier / retrieval timestamp / HTTP status+metadata; transport-level MIME/file-signature checks; and **byte-level** multi-signal version detection (raw HTML hash, raw PDF hash, Last-Amended, amendment feed, adopted instruments). **No** page count, rotation/crop/media box/DPI, parser/normalized-layout hashes, rendering, or page-image derivatives. T002 security is **capture-time only** (hosts/redirects, byte/time limits, MIME/signature, safe paths, no execution, private/quarantined storage). T002 is **independently acceptable** on durable original captures + hashes + version-detection evidence — **no forward dependency on T003**.
+- **M3-T003** owns the **entire PDF-handling surface**: parser/renderer selection via `/dependency-security`; PDF classification + parser-derived metadata (page count, rotation, crop/media boxes, DPI); deterministic page rendering; rendered-page images + hashes; native text/layout extraction; OCR. Every rendered/parsed derivative records: original raw-document hash, page number, renderer/library name + exact version, config hash, render DPI + page geometry, rendered-page hash, creation timestamp, schema version. T003 **consumes accepted T002 originals + hashes** (not T002-rendered pages — T002 renders nothing) and **appends** its derivatives + manifests via T002's append-only interface **without editing T002 code or overwriting** existing objects.
+
+This is the recorded decision; §17.2/§17.3/§17.5/§17.13/§17.14 are read consistently with it.
 
 ---
 
@@ -453,5 +458,24 @@ Applied in-branch (control-only). No task moved, claimed, dispatched, implemente
 | B-011 | Retargeted from M3-T004 to **M3-T005**; scope-approval is not legal-approval wording preserved (G6 independent). |
 | master_plan | M3 summary to five packets + dependency order; M4-T007+ now depends on accepted **M3-T004**. |
 | Dependencies | Not chosen or installed in this control-only PR; PDF/OCR selection deferred to M3-T003 `/dependency-security` (17.11). |
+
+Ledger totals: **42 accepted / 9 backlog** (5 M3 proposals + 4 pre-existing) — nothing accepted, moved, claimed, or dispatched.
+
+---
+
+## 19. Amendment log — PR #93 revision 5 (final §17.16 decision: all PDF parsing/rendering in M3-T003)
+
+Applied in-branch (control-only). No task moved, claimed, dispatched, implemented, accepted, merged, or dependency-installed.
+
+| Area | Change |
+|---|---|
+| §17.16 decision | Recorded owner decision: **all PDF parsing/rendering lives in M3-T003**; dependency inversion removed (T002 no longer needs a T003-selected library to be accepted). |
+| M3-T002 | Stripped every parser/render/page-derivative element (page count, rotation/crop/media box/DPI, normalized-layout hashes, rendering, page-image derivatives/hashes, parser-dependent inspection) from objective/inputs/outputs/acceptance-preconditions/acceptance-scenarios/harnesses/risks. Now: exact bytes + raw SHA-256 + content-addressable never-overwrite storage as a **generic append-only interface** + capture metadata + transport MIME/signature + **byte-level** multi-signal version detection. Security = capture-time only. **No forward dependency on T003**; independently acceptable on durable original captures. |
+| M3-T003 | Now owns the **entire PDF-handling surface**: parser/renderer selection, classification + parser-derived metadata, deterministic rendering, rendered-page images+hashes, native extraction, OCR. Added rendered-derivative provenance (raw-doc hash, page, renderer name+exact version, config hash, DPI+geometry, rendered-page hash, timestamp, schema version) + AS-1b. Input corrected to consume T002 **originals + hashes** (not rendered pages); appends derivatives via T002's append-only interface without editing T002 or overwriting. |
+| B-001 | Wording reconciled to the new ownership (T002 = original captures; T003 = rendered pages + extraction/OCR evidence + review bundles; T005 = code corpus). **Removed the literal `M3-T004` token from `detail`** — it would have made the CLI also block closure acceptance (caught by the hardened S9 drift guard). Acceptance blocking for T002/T003/T005 unchanged. |
+| Enforcement report | `M3-CORPUS-B001-enforcement-evidence.md` rewritten to consistently identify **M3-T002/M3-T003/M3-T005** (title, purpose, mechanism, sub-check table, run-output, isolation confirmation). |
+| S9 test | Fixed the stale header comment; **hardened** to READ the real committed `B-001` JSON, assert its affects/detail reference **exactly** `{M3-T002, M3-T003, M3-T005}` (drift guard), copy that real record into the isolated temp ledger, and set only the temp copy to `resolved`. The real blocker and real task state are never mutated. |
+| Security/storage (report §17.13/§17.14) | Split by ownership: capture-time controls (T002) vs parser-level controls (T003); T002 stores originals, T003/T005 append derivatives via the append-only interface. |
+| PR | Title updated to "5 proposed packets"; body updated to the final ownership. |
 
 Ledger totals: **42 accepted / 9 backlog** (5 M3 proposals + 4 pre-existing) — nothing accepted, moved, claimed, or dispatched.
