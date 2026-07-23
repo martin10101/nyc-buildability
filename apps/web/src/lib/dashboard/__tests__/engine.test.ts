@@ -72,6 +72,28 @@ describe('owner status + acceptance eligibility', () => {
     expect(t.passedGates).not.toContain('G3');
     expect(t.unmetGates).toContain('G3');
   });
+
+  it('an accepted task never shows pending gates, even with legacy records (owner directive #8)', () => {
+    // Mirrors accept()'s tolerance of legacy pre-hardening gate records: an
+    // ACCEPTED task with a G3 recorded by the orchestrator and no G4 record must
+    // still read as fully gated — never "pending" — so its canonical ACCEPTED
+    // status is not contradicted in any drill-down.
+    const raw: RawControlPlane = synthRaw({
+      tasks: [{
+        task_id: 'M0-T050', milestone_id: 'M0', title: 'legacy accepted', status: 'accepted',
+        progress_percent: 100, required_gates: ['G3', 'G4'], dependencies: [],
+        producer_agent: 'backend-engineer', accepted_at: '2026-07-01T00:00:00+00:00',
+      }],
+      gates: [{ task_id: 'M0-T050', gate_id: 'G3', reviewer: 'orchestrator', result: 'PASS', reviewed_at: '2026-07-01T00:00:00+00:00' }],
+      state: { project_status: 'active', current_milestone: 'M0', accepted_tasks: ['M0-T050'] },
+    });
+    const m = assembleDashboard(raw, GH_OK, NOW_ISO);
+    const t = m.tasks.find((x) => x.id === 'M0-T050')!;
+    expect(t.accepted).toBe(true);
+    expect(t.unmetGates).toEqual([]);
+    expect(t.passedGates).toEqual(['G3', 'G4']);
+    expect(m.issues.some((i) => i.code === 'roster.contradiction')).toBe(false);
+  });
 });
 
 describe('health is independent of completion (owner directive #3)', () => {

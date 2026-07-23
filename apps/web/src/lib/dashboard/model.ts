@@ -117,24 +117,33 @@ export function buildProjectModel(
     const requiredGates = asStringArray(raw.required_gates);
     const producer = asString(raw.producer_agent) ?? undefined;
     const gates = gatesByTask.get(id) ?? [];
+    const accepted = status === 'accepted';
 
     // per-task gate state: a required gate counts as PASS only if a record exists
     // with result PASS AND (for independent gates) an independent role + reviewer!=producer.
+    //
+    // Historical-honesty exception (owner directive #8; G1 advisory 1): a task the
+    // control plane has ALREADY ACCEPTED has — by accept()'s own rule — satisfied all
+    // its required gates, including legacy pre-hardening records (role null / reviewer
+    // orchestrator) that accept() tolerates. Never show an accepted task's gates as
+    // "pending"; that would contradict its canonical ACCEPTED status.
     const passedGates: string[] = [];
-    for (const gid of requiredGates) {
-      const rec = gates.find((g) => g.gateId === gid && g.result === 'PASS');
-      if (!rec) continue;
-      if (INDEPENDENT_GATES.has(gid)) {
-        const independent = rec.role !== 'self_check' && rec.reviewer !== 'orchestrator'
-          && (!producer || rec.reviewer !== producer);
-        if (independent) passedGates.push(gid);
-      } else {
-        passedGates.push(gid);
+    if (accepted) {
+      passedGates.push(...requiredGates);
+    } else {
+      for (const gid of requiredGates) {
+        const rec = gates.find((g) => g.gateId === gid && g.result === 'PASS');
+        if (!rec) continue;
+        if (INDEPENDENT_GATES.has(gid)) {
+          const independent = rec.role !== 'self_check' && rec.reviewer !== 'orchestrator'
+            && (!producer || rec.reviewer !== producer);
+          if (independent) passedGates.push(gid);
+        } else {
+          passedGates.push(gid);
+        }
       }
     }
     const unmetGates = requiredGates.filter((g) => !passedGates.includes(g));
-
-    const accepted = status === 'accepted';
 
     // acceptance-eligibility (reproduces accept(); does NOT itself accept).
     const acceptanceBlockers: string[] = [];
