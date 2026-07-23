@@ -6,16 +6,20 @@ the remote: **origin/main may have advanced, so do not trust any SHA written her
 This file is orientation only. Operating rules, gates, hard rules, and workflow routes live in
 `CLAUDE.md` and the specialist docs it routes to — not here.
 
-**Current main at `c5e8cd0`** (origin/main when written; `git fetch` and reconcile — it likely
-advanced if PR #88 merged). This session advanced main: `2d31ff7` (PR #86, M5-T001 scenario
-foundation) → `c5e8cd0` (PR #87, M4-T006 proposal). **PR #88 (M4-T006 implementation, frozen
-`6509db3`) is OPEN awaiting owner merge authorization** — merging it advances main again.
+**Current main at `a3784af`** (origin/main when written; `git fetch` and reconcile — it likely
+advanced if PR #88 merged). Main progression this window: `2d31ff7` (PR #86, M5-T001 scenario
+foundation) → `c5e8cd0` (PR #87, M4-T006 proposal) → `a3784af` (**PR #89, M0-T022 owner-dashboard —
+merged AND accepted independently**). **PR #88 (M4-T006 implementation, frozen `6509db3`) is OPEN,
+reconciled onto `a3784af` (state.json merge; reviewed rules code byte-identical to `6509db3`), awaiting
+owner merge authorization** — merging it advances main again.
 
-**Nothing is Published, Verified, or accepted this session.** Accepted-task count stands at **41**
-(through M2-T013). All M4/M5 work below is merged/awaiting as **draft `needs_review`**, gated on G6.
+**Accepted-task count = 42** (through M2-T013 **+ M0-T022**, accepted independently via PR #89).
+Nothing in the M4/M5 chains is Published, Verified, or accepted — all merged/awaiting as **draft
+`needs_review`**, gated on G6.
 
 ## Milestone reality (reconciled 2026-07-23; corrected in PR #85)
-- **M0** active (19/23 accepted; M0-T007/T008 blocked; M0-T019/T021 active).
+- **M0** active (20/24 accepted incl. **M0-T022 owner-dashboard**, PR #89; M0-T007/T008 blocked;
+  M0-T019/T021 active).
 - **M1** complete (9/9 accepted).
 - **M2** active (13/16 accepted; **M2-T014/T015/T016 survey-planning tasks HELD** — owner survey hold).
 - **M3** planned (no tasks; M4 proceeded on `needs_review` rules per owner directive 2026-07-21).
