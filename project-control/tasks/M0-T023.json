@@ -94,20 +94,37 @@
     "G5": "independent security/privacy review (security-reviewer)"
   },
   "gate_notes": "G1 (data-contract) is NOT_APPLICABLE: this governance task adds no official-source connector or external data mapping. This is recorded as an explicit, justified N/A, not an omission.",
-  "producer_agent": null,
+  "producer_agent": "orchestrator",
   "reviewer_agents": [
     "directive-compliance-verifier",
     "control-plane-verifier",
     "code-reviewer",
     "security-reviewer"
   ],
-  "status": "backlog",
-  "progress_percent": 0,
+  "status": "awaiting_gate",
+  "progress_percent": 85,
   "risks": [
     "Enforcement mis-scope could deadlock in-flight work; mitigated by the effective-date + regime-entry migration rule and the no-deadlock migration table (D-001-R108/R109).",
     "Content-manifest identity must survive merge/rebase/squash yet invalidate on relevant edits; covered by adversarial tests (D-001-R110/R111)."
   ],
   "blockers": [],
   "created_at": "2026-07-23T18:51:06.647661+00:00",
-  "updated_at": "2026-07-23T18:51:06.647661+00:00"
+  "updated_at": "2026-07-23T21:42:32.107788+00:00",
+  "worktree": "lead-main-checkout:task/M0-T023-directive-compliance",
+  "progress_log": [
+    {
+      "at": "2026-07-23T21:42:31.487700+00:00",
+      "agent": "orchestrator",
+      "percent": 40,
+      "status": "in_progress",
+      "message": "implementation complete; local battery green"
+    },
+    {
+      "at": "2026-07-23T21:42:31.656459+00:00",
+      "agent": "orchestrator",
+      "percent": 75,
+      "status": "self_check",
+      "message": "producer self-check complete"
+    }
+  ]
 }
