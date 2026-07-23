@@ -83,6 +83,169 @@ def _ledger_task_status(tasks_dir: Path, task_id: str) -> str | None:
         return None
 
 
+def _validate_v1_verification(w, m, v, req_ids, req_producer, completion_claimed):
+    """v1 single-task verification cross-checks (c7/c8/c10/c11/c12/c13/c14)."""
+    errors = []
+    ver_rows = {vr.get("id"): vr for vr in v.get("requirements", [])}
+    rset, vset = req_ids, set(ver_rows)
+    if rset - vset:
+        errors.append(f"c14 {w} verification.json missing rows for {', '.join(sorted(rset - vset))}")
+    if vset - rset:
+        errors.append(f"c14 {w} verification.json has rows with no requirement: {', '.join(sorted(vset - rset))}")
+    producer = (v.get("producer") or req_producer or "").strip()
+    verifier = (v.get("verifier") or "").strip()
+    if verifier and producer and verifier == producer:
+        errors.append(f"c7 {w} verifier {verifier!r} equals producer {producer!r}")
+    for vid, vr in ver_rows.items():
+        if vr.get("state") not in VERIFICATION_STATES:
+            errors.append(f"c1 {w} verification row {vid} state {vr.get('state')!r} invalid")
+        if vr.get("state") == "NOT_APPLICABLE":
+            if not vr.get("not_applicable_justification") or not vr.get("not_applicable_approved_by"):
+                errors.append(f"c11 {w} {vid} NOT_APPLICABLE without justification + independent approver")
+        if vr.get("state") == "PASS" and not (vr.get("evidence") or []):
+            errors.append(f"c8 {w} {vid} verification PASS without evidence")
+    vsha = v.get("reviewed_manifest_sha256")
+    msha = m.get("final_reviewed_manifest_sha256")
+    if vsha is not None and msha is not None and vsha != msha:
+        errors.append(f"c10 {w} verification content-identity {vsha} != manifest final identity {msha} (stale)")
+    unresolved_rows = [vid for vid, vr in ver_rows.items() if vr.get("state") in UNRESOLVED_VERIFICATION]
+    if completion_claimed and unresolved_rows:
+        errors.append(f"c12/c13 {w} completion claimed while {len(unresolved_rows)} verification row(s) unresolved")
+    return errors
+
+
+def _validate_v2_verification(w, did, m, v, req_ids, req_producer, completion_claimed, tasks_dir):
+    """v2 multi-task verification cross-checks (D-001 amendment 3, Section 2). Each
+    task_verifications[] entry is checked in isolation: cross-directive contamination,
+    duplicate task rows, per-task producer/verifier separation, applicable-id validity and
+    subset-ness, no extra/cross-task requirement rows, PASS-needs-evidence, justified
+    NOT_APPLICABLE, and content-identity format. Missing/duplicate/extra/cross-task rows
+    are integrity errors here and fail closed at accept()."""
+    errors = []
+    tvs = v.get("task_verifications")
+    if not isinstance(tvs, list):
+        return [f"c1 {w} v2 verification missing task_verifications[] array"]
+    seen_tasks = set()
+    total_unresolved = 0
+    covered = set()
+    for tv in tvs:
+        tid = tv.get("task_id")
+        tw = f"{w} {tid}"
+        if tv.get("directive_id") != did:
+            errors.append(f"c16 {tw} task_verification directive_id {tv.get('directive_id')!r} != {did} (cross-directive contamination)")
+        if not dr.re.match(r"^M\d+-T\d{3}(-R\d+)?$", str(tid or "")):
+            errors.append(f"c5 {tw} task_verification has malformed task_id")
+            continue
+        if tid in seen_tasks:
+            errors.append(f"c16 {tw} duplicate task_verification for the same task (fail closed)")
+        seen_tasks.add(tid)
+        covered.add(tid)
+        producer = (tv.get("producer") or v.get("producer") or req_producer or "").strip()
+        verifier = (tv.get("verifier") or "").strip()
+        if verifier and producer and verifier == producer:
+            errors.append(f"c7 {tw} verifier {verifier!r} equals producer {producer!r} (per-task separation)")
+        applic = tv.get("applicable_requirement_ids") or []
+        for rid in applic:
+            if not dr.REQUIREMENT_ID_RE.match(str(rid)):
+                errors.append(f"c1 {tw} malformed applicable requirement id {rid!r}")
+            elif rid not in req_ids:
+                errors.append(f"c6 {tw} applicable id {rid} is not a requirement of {did}")
+        applic_set = set(applic)
+        rows = {}
+        for r in tv.get("requirements", []):
+            rid = r.get("id")
+            if rid in rows:
+                errors.append(f"c16 {tw} duplicate verification row {rid}")
+            rows[rid] = r
+        extra = sorted(set(rows) - applic_set)
+        if extra:
+            errors.append(f"c16 {tw} verification rows outside this task's applicable set (extra/cross-task): {', '.join(extra)}")
+        missing = sorted(applic_set - set(rows))
+        if missing:
+            errors.append(f"c14 {tw} verification missing rows for applicable requirement(s): {', '.join(missing)}")
+        for rid, r in rows.items():
+            st = r.get("state")
+            if st not in VERIFICATION_STATES:
+                errors.append(f"c1 {tw} verification row {rid} state {st!r} invalid")
+            if st == "NOT_APPLICABLE" and (not r.get("not_applicable_justification") or not r.get("not_applicable_approved_by")):
+                errors.append(f"c11 {tw} {rid} NOT_APPLICABLE without justification + independent approver")
+            if st == "PASS" and not (r.get("evidence") or []):
+                errors.append(f"c8 {tw} {rid} verification PASS without evidence")
+            if st in UNRESOLVED_VERIFICATION:
+                total_unresolved += 1
+        vsha = tv.get("reviewed_manifest_sha256")
+        if vsha is not None and not SHA64.match(str(vsha)):
+            errors.append(f"c10 {tw} reviewed_manifest_sha256 present but not a 64-hex sha")
+        rsha = tv.get("reviewed_sha")
+        if rsha is not None and not SHA40.match(str(rsha)):
+            errors.append(f"c9 {tw} reviewed_sha present but not a 40-hex sha")
+    for t in m.get("affected_tasks", []):
+        tp = tasks_dir / f"{t}.json"
+        if not tp.exists():
+            continue
+        try:
+            task = _load_json(tp)
+        except (ValueError, OSError):
+            continue
+        if task.get("directive_regime_version") and t not in covered:
+            errors.append(f"c14 {w} in-regime affected task {t} has no task_verification row")
+    msha = m.get("final_reviewed_manifest_sha256")
+    primary = (m.get("affected_tasks") or [None])[0]
+    if msha is not None and primary is not None:
+        ptv = next((x for x in tvs if x.get("task_id") == primary), None)
+        if ptv is not None and ptv.get("reviewed_manifest_sha256") not in (None, msha):
+            errors.append(f"c10 {w} manifest final identity {msha} != primary task {primary} verification identity {ptv.get('reviewed_manifest_sha256')} (stale)")
+    if completion_claimed and total_unresolved:
+        errors.append(f"c12/c13 {w} completion claimed while {total_unresolved} verification row(s) unresolved")
+    return errors
+
+
+def _validate_migration_manifest(registry_root: Path, active_directives) -> list:
+    """Integrity of the immutable migration manifest (D-001 amendment 3, Section 1):
+    schema, 40-hex baseline sha, well-formed unique task entries with 64-hex material
+    digests, and the append-only content lock -- the manifest's content hash MUST equal
+    the migration_manifest_sha256 recorded in a governing active directive's manifest, so
+    the legacy list cannot silently grow without an owner amendment."""
+    errors = []
+    mm_path = registry_root / "migration_manifest.json"
+    if not mm_path.exists():
+        return ["mig migration_manifest.json missing (regime enforcement needs the frozen baseline list)"]
+    try:
+        mm = _load_json(mm_path)
+    except (ValueError, OSError) as e:
+        return [f"mig migration_manifest.json unreadable/invalid JSON: {e}"]
+    if mm.get("schema") != "directive_migration/v1":
+        errors.append(f"mig schema {mm.get('schema')!r} != 'directive_migration/v1'")
+    if not SHA40.match(str(mm.get("frozen_baseline_sha", ""))):
+        errors.append("mig frozen_baseline_sha missing or not a 40-hex sha")
+    seen = set()
+    for t in mm.get("tasks", []):
+        tid = t.get("task_id")
+        dig = t.get("material_digest")
+        if not dr.re.match(r"^M\d+-T\d{3}(-R\d+)?$", str(tid or "")):
+            errors.append(f"mig task_id {tid!r} malformed")
+            continue
+        if not SHA64.match(str(dig or "")):
+            errors.append(f"mig {tid} material_digest missing or not a 64-hex sha")
+        if tid in seen:
+            errors.append(f"mig {tid} listed more than once")
+        seen.add(tid)
+    recorded = None
+    for d in active_directives:
+        rec = d.manifest.get("migration_manifest_sha256")
+        if rec:
+            recorded = rec
+            actual = hashlib.sha256(mm_path.read_bytes()).hexdigest()
+            if actual != recorded:
+                errors.append(f"mig content hash {actual[:12]}.. != {d.directive_id} "
+                              f"manifest.migration_manifest_sha256 {str(recorded)[:12]}.. "
+                              f"(the frozen legacy list changed without an owner amendment)")
+    if recorded is None:
+        errors.append("mig no active directive records migration_manifest_sha256 "
+                      "(the frozen legacy list would be unprotected)")
+    return errors
+
+
 def validate(registry_root: Path = DIRECTIVES_DIR, tasks_dir: Path = TASKS_DIR) -> list:
     """Return a list of human-readable error strings ([] == valid)."""
     errors: list = []
@@ -103,6 +266,11 @@ def validate(registry_root: Path = DIRECTIVES_DIR, tasks_dir: Path = TASKS_DIR) 
                  "directive_verification"):
         if not (schema_dir / f"{name}.schema.json").exists():
             errors.append(f"c1 versioned schema missing: schema/v1/{name}.schema.json")
+    # v2 multi-task verification schema (D-001 amendment 3, Section 2).
+    if not (registry_root / "schema" / "v2" / "directive_verification.schema.json").exists():
+        errors.append("c1 versioned schema missing: schema/v2/directive_verification.schema.json")
+    # Immutable migration manifest integrity + append-only content lock (Section 1).
+    errors.extend(_validate_migration_manifest(registry_root, reg.active_directives()))
 
     # c16: multiple directives are handled independently; iterate each.
     active_ids = [d.directive_id for d in reg.active_directives()]
@@ -236,44 +404,19 @@ def validate(registry_root: Path = DIRECTIVES_DIR, tasks_dir: Path = TASKS_DIR) 
                               f"(manifest {declared_body[:12]}.. actual {actual_body[:12]}..): "
                               f"a requirement body was edited without a recorded amendment")
 
-        # ---- c7/c10/c11/c12/c13 verification cross-checks ----
+        # ---- c7/c10/c11/c12/c13 verification cross-checks (schema-aware) ----
         v = d.verification
-        ver_rows = {vr.get("id"): vr for vr in v.get("requirements", [])}
-        # requirements <-> verification id-set equality (no missing/extra rows)
-        rset, vset = set(req_ids), set(ver_rows)
-        if rset - vset:
-            errors.append(f"c14 {w} verification.json missing rows for {', '.join(sorted(rset - vset))}")
-        if vset - rset:
-            errors.append(f"c14 {w} verification.json has rows with no requirement: {', '.join(sorted(vset - rset))}")
-        # c7 producer/verifier separation
-        producer = (v.get("producer") or d.requirements.get("producer") or "").strip()
-        verifier = (v.get("verifier") or "").strip()
-        if verifier and producer and verifier == producer:
-            errors.append(f"c7 {w} verifier {verifier!r} equals producer {producer!r}")
-        # c11 verification NOT_APPLICABLE needs justification + approver
-        for vid, vr in ver_rows.items():
-            if vr.get("state") not in VERIFICATION_STATES:
-                errors.append(f"c1 {w} verification row {vid} state {vr.get('state')!r} invalid")
-            if vr.get("state") == "NOT_APPLICABLE":
-                if not vr.get("not_applicable_justification") or not vr.get("not_applicable_approved_by"):
-                    errors.append(f"c11 {w} {vid} NOT_APPLICABLE without justification + independent approver")
-            # c8 verification PASS needs evidence
-            if vr.get("state") == "PASS" and not (vr.get("evidence") or []):
-                errors.append(f"c8 {w} {vid} verification PASS without evidence")
-        # c10 stale verification: recorded content-identity must match the manifest's
-        vsha = v.get("reviewed_manifest_sha256")
-        msha = m.get("final_reviewed_manifest_sha256")
-        if vsha is not None and msha is not None and vsha != msha:
-            errors.append(f"c10 {w} verification content-identity {vsha} != manifest final identity {msha} (stale)")
-        # c12/c13 no 'complete' claim while items unresolved
         completion_claimed = bool(m.get("complete") or m.get("all_addressed")
                                   or str(m.get("owner_approval", {}).get("state", "")).lower() in ("complete", "accepted"))
-        unresolved_rows = [vid for vid, vr in ver_rows.items()
-                           if vr.get("state") in UNRESOLVED_VERIFICATION]
-        if completion_claimed and unresolved_rows:
-            errors.append(f"c12/c13 {w} completion claimed while {len(unresolved_rows)} verification row(s) unresolved")
         if m.get("complete") is not None or m.get("all_addressed") is not None:
             errors.append(f"c13 {w} manifest carries a narrative completion flag; per-requirement atomic states are the only completion signal")
+        req_producer = (d.requirements.get("producer") or "").strip()
+        if v.get("schema") == "directive_verification/v2":
+            errors.extend(_validate_v2_verification(
+                w, did, m, v, set(req_ids), req_producer, completion_claimed, tasks_dir))
+        else:
+            errors.extend(_validate_v1_verification(
+                w, m, v, set(req_ids), req_producer, completion_claimed))
 
         # ---- c5 affected task/PR references ----
         for t in m.get("affected_tasks", []):

@@ -1,0 +1,54 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://nyc-buildability/project-control/directives/schema/v2/directive_verification.schema.json",
+  "title": "Directive independent verification (v2, multi-task)",
+  "description": "Per-TASK independent verification records for the Owner Directive Compliance System (D-001 amendment 3, Section 2). One directive may govern several tasks, each with its own allowed paths, content-manifest identity, evidence, and independent verifier. Each task_verifications[] entry is a self-contained clean-context review of exactly the requirements APPLICABLE TO THAT TASK. accept() reads the entry matching (directive_id, task_id) as BLOCKING EVIDENCE: an in-regime task is refused unless every requirement applicable to IT is PASS at the reviewed content identity, by an independent verifier (verifier != producer, per task). Acceptance AUTHORITY and all state transitions remain in tools/project_control.py -- this is evidence the CLI consumes, not a second gate. Missing, duplicate, extra, stale, or cross-task rows FAIL CLOSED. 'ALL' means all requirements applicable to the current task, not every requirement belonging to the directive.",
+  "type": "object",
+  "required": ["schema", "directive_id", "task_verifications", "updated_at"],
+  "additionalProperties": true,
+  "properties": {
+    "schema": {"const": "directive_verification/v2"},
+    "directive_id": {"type": "string", "pattern": "^D-\\d{3}$"},
+    "authority_note": {"type": "string"},
+    "producer": {"type": ["string", "null"]},
+    "migrated_from": {"type": ["string", "null"], "description": "prior schema id this record was migrated from, e.g. 'directive_verification/v1' (evidence history preserved)"},
+    "task_verifications": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["directive_id", "task_id", "applicable_requirement_ids", "producer", "verifier", "reviewed_manifest_sha256", "requirements"],
+        "additionalProperties": true,
+        "properties": {
+          "directive_id": {"type": "string", "pattern": "^D-\\d{3}$"},
+          "task_id": {"type": "string", "pattern": "^M\\d+-T\\d{3}(-R\\d+)?$"},
+          "applicable_requirement_ids": {"type": "array", "items": {"type": "string", "pattern": "^D-\\d{3}-R\\d{3}$"}},
+          "reviewed_sha": {"type": ["string", "null"]},
+          "reviewed_manifest_sha256": {"type": ["string", "null"]},
+          "producer": {"type": "string"},
+          "verifier": {"type": ["string", "null"]},
+          "schema_version": {"type": ["string", "null"]},
+          "verified_at": {"type": ["string", "null"]},
+          "requirements": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": ["id", "state"],
+              "additionalProperties": true,
+              "properties": {
+                "id": {"type": "string", "pattern": "^D-\\d{3}-R\\d{3}$"},
+                "state": {"enum": ["pending", "PASS", "FAIL", "BLOCKED", "UNVERIFIABLE", "NOT_APPLICABLE"]},
+                "evidence": {"type": "array", "items": {"type": "string"}},
+                "verified_at": {"type": ["string", "null"]},
+                "verified_by": {"type": ["string", "null"]},
+                "reviewed_sha": {"type": ["string", "null"]},
+                "not_applicable_justification": {"type": ["string", "null"]},
+                "not_applicable_approved_by": {"type": ["string", "null"]}
+              }
+            }
+          }
+        }
+      }
+    },
+    "updated_at": {"type": "string"}
+  }
+}

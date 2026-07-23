@@ -1,0 +1,307 @@
+{
+  "schema": "directive_migration/v1",
+  "version": 1,
+  "governing_directive": "D-001",
+  "frozen_baseline_sha": "1acb9b510541cfa87afff6b2dc197880e01a389b",
+  "note": "Immutable migration manifest (D-001 amendment 3, Section 1). The EXACT set of pre-regime task IDs present at baseline 1acb9b5, each with a deterministic digest of its MATERIAL packet fields (objective, inputs, outputs, dependencies, allowed/forbidden paths, acceptance_scenarios, required_gates, risks, blockers) at that baseline. A task ID absent here can NEVER become grandfathered by omitting the regime stamp. A material amendment/replan (digest change) invalidates grandfathering. This list MUST NOT silently grow: its content hash is recorded in D-001 manifest.json (migration_manifest_sha256) and enforced by tools/validate_directive_compliance.py, so adding an ID requires an owner-issued directive amendment. status_at_baseline is informational provenance only; enforcement never uses created_at or status alone.",
+  "material_fields": [
+    "objective",
+    "inputs",
+    "outputs",
+    "dependencies",
+    "allowed_paths",
+    "forbidden_paths",
+    "acceptance_scenarios",
+    "required_gates",
+    "risks",
+    "blockers"
+  ],
+  "tasks": [
+    {
+      "task_id": "M0-T000",
+      "material_digest": "ba162eacf998a908e9324562544be0767f8a8ff11de70322dc1bb3d9f67370cd",
+      "status_at_baseline": "accepted"
+    },
+    {
+      "task_id": "M0-T001",
+      "material_digest": "88da733ba421999f0e9827e84f535d6f5db515e73cde6b2796153d67e2805f01",
+      "status_at_baseline": "accepted"
+    },
+    {
+      "task_id": "M0-T002",
+      "material_digest": "90eb4fca83149cc1634ed21e0d876654a3193a65e107ea6cfc0a86c576df2436",
+      "status_at_baseline": "accepted"
+    },
+    {
+      "task_id": "M0-T003",
+      "material_digest": "596930b997735154272b80282b501e1d1aea544e81ab537aedd0c3cd0cff356c",
+      "status_at_baseline": "accepted"
+    },
+    {
+      "task_id": "M0-T004",
+      "material_digest": "1f9eb756a24ad3021b68146c1dc37c0c39c1f53d09070c1d68ae65647c83f669",
+      "status_at_baseline": "accepted"
+    },
+    {
+      "task_id": "M0-T005",
+      "material_digest": "c8a3da7635f00a652ec2e59197d5bb983f3f43f34e2c3e92ab1f88e8f7094347",
+      "status_at_baseline": "accepted"
+    },
+    {
+      "task_id": "M0-T005-R1",
+      "material_digest": "2e486818ac7ed0c3fac25fdb35a8bac59d1add58173928764acaf9374fd94ea4",
+      "status_at_baseline": "accepted"
+    },
+    {
+      "task_id": "M0-T006",
+      "material_digest": "76493d50f98020ea60484365f2c2fd01de210ff230a4864ceeccdceb7cfacdf5",
+      "status_at_baseline": "accepted"
+    },
+    {
+      "task_id": "M0-T007",
+      "material_digest": "65ff155f0de807180c25d09f5560d43a9f16d2d24ce8986387dff090a6354a55",
+      "status_at_baseline": "blocked"
+    },
+    {
+      "task_id": "M0-T008",
+      "material_digest": "327fd540b5266802bbfe97445a89cd37215478aa919f6d766637c79dd2555c5c",
+      "status_at_baseline": "blocked"
+    },
+    {
+      "task_id": "M0-T009",
+      "material_digest": "a7ac039909ffc5d1c9bd6b95c70d53f3295028ed36d00b01754e61f63dad1b32",
+      "status_at_baseline": "accepted"
+    },
+    {
+      "task_id": "M0-T010",
+      "material_digest": "ffd9474e4b9ae6747a9aeaafd7b7204cfce92c1c90d5bb6f8f5a3420ff14a89b",
+      "status_at_baseline": "accepted"
+    },
+    {
+      "task_id": "M0-T011",
+      "material_digest": "04cfc09e1b85cad4e8a45b761154bed9d0f72c101231b5b05c90efca78fc2d46",
+      "status_at_baseline": "accepted"
+    },
+    {
+      "task_id": "M0-T012",
+      "material_digest": "43cbb15fea8fbc7922177ac7b91462c96514c1c8aa24cac11c76462a99ab7b89",
+      "status_at_baseline": "accepted"
+    },
+    {
+      "task_id": "M0-T013",
+      "material_digest": "d5822fd3d085fc1d076852f050e6fda82d53c1921b4c5c739bc0d7b957cdd1ec",
+      "status_at_baseline": "accepted"
+    },
+    {
+      "task_id": "M0-T014",
+      "material_digest": "1f8b559c03d3b08d67940eb9ec8ac9f5e64a6ffc12009f44ebef9c57a3b89e2c",
+      "status_at_baseline": "accepted"
+    },
+    {
+      "task_id": "M0-T015",
+      "material_digest": "3352e0893a1a8be536aa5e036bef2e5325f5dfe5c70c56d89c93835e4b12d2ee",
+      "status_at_baseline": "accepted"
+    },
+    {
+      "task_id": "M0-T016",
+      "material_digest": "9b21dac02017dd9787d1538680cf477ea372fd22f008307a8b9917817e1a8a55",
+      "status_at_baseline": "accepted"
+    },
+    {
+      "task_id": "M0-T017",
+      "material_digest": "8157f2c88fec33fbea3a6b0bfca876da5650d62cc51b94c68ec21fa9252d805c",
+      "status_at_baseline": "accepted"
+    },
+    {
+      "task_id": "M0-T018",
+      "material_digest": "2736533640ef446129fcc07d394ffa014ed7580536f133f296c13b563de36564",
+      "status_at_baseline": "accepted"
+    },
+    {
+      "task_id": "M0-T019",
+      "material_digest": "934402859efddc55fe1c64ba13e4ec33cfd7db5a72f23ccf20d333a120c55a97",
+      "status_at_baseline": "claimed"
+    },
+    {
+      "task_id": "M0-T020",
+      "material_digest": "2f31dc2ab7c53e7cb1f0bd0d5116645385ba1f93bc44f6518362b4b69f96c4c5",
+      "status_at_baseline": "accepted"
+    },
+    {
+      "task_id": "M0-T021",
+      "material_digest": "e5385464d821e12e5612c04a01849490186933be0f06999997778ce9a3570cbe",
+      "status_at_baseline": "awaiting_gate"
+    },
+    {
+      "task_id": "M0-T022",
+      "material_digest": "b7803b8cdacc7e2a1421d7b98c8a3e9c1bfc8225b2afdda62c59817a0622ab83",
+      "status_at_baseline": "accepted"
+    },
+    {
+      "task_id": "M1-T001",
+      "material_digest": "0ccefb16811fa6c61acf3f574e342bbdf9bd0cbcf4ca967f879b03358fc4c5df",
+      "status_at_baseline": "accepted"
+    },
+    {
+      "task_id": "M1-T002",
+      "material_digest": "a717d6ec104354d9e655d542c194f2d1c4d1bfe04e250db4a49c2409823c6e86",
+      "status_at_baseline": "accepted"
+    },
+    {
+      "task_id": "M1-T003",
+      "material_digest": "b92e9a936f0dcd8cb57795d57bae07dd64de944c45e285f40768166a87789ddc",
+      "status_at_baseline": "accepted"
+    },
+    {
+      "task_id": "M1-T004",
+      "material_digest": "aa8eba7a62f068ac17864b52d1f0168c347c54841e6f3aa998f09faea11c46c8",
+      "status_at_baseline": "accepted"
+    },
+    {
+      "task_id": "M1-T005",
+      "material_digest": "9453feea018120449370a8ac96a0209300905d2eddd345f15019c52a78f1bb6f",
+      "status_at_baseline": "accepted"
+    },
+    {
+      "task_id": "M1-T006",
+      "material_digest": "b3c716f3613bda83d38445406c4a0817f165a5ae961f3505e180b85ae1c5e7c1",
+      "status_at_baseline": "accepted"
+    },
+    {
+      "task_id": "M1-T007",
+      "material_digest": "990c1cbef5e11ea49c399d3233efe1c24577de8d74f8b98f8b44a1e643e497ce",
+      "status_at_baseline": "accepted"
+    },
+    {
+      "task_id": "M1-T008",
+      "material_digest": "95a1c4a079db33a865ad6dc05ca5d9b3155d556d657dfdcb3662f6858073790d",
+      "status_at_baseline": "accepted"
+    },
+    {
+      "task_id": "M1-T009",
+      "material_digest": "4e45862550f367ab0b473055153229893577c4463fc295a09d6aab0d1fc2e252",
+      "status_at_baseline": "accepted"
+    },
+    {
+      "task_id": "M2-T001",
+      "material_digest": "c54ecdda9cf2e0151a8ee4995898faa18e79c44bc21d6b394e4a713c6e044ab0",
+      "status_at_baseline": "accepted"
+    },
+    {
+      "task_id": "M2-T002",
+      "material_digest": "3f48bb32dd6e5d774c97f1a8519524814ee760e9ff2eb58981db93366c50aa37",
+      "status_at_baseline": "accepted"
+    },
+    {
+      "task_id": "M2-T003",
+      "material_digest": "9cd27e9683a7c088d0b73b151606084c0978041dbe6d00f6a01e2a515d721601",
+      "status_at_baseline": "accepted"
+    },
+    {
+      "task_id": "M2-T004",
+      "material_digest": "7e50f1043c07cd8ceab86f80b8d91c44756219b323f23d41bceaa55c8c4748d1",
+      "status_at_baseline": "accepted"
+    },
+    {
+      "task_id": "M2-T005",
+      "material_digest": "aa237eda8259a0c794bcf990c70be7550a04a429dc9c7f1b6fbe864bb11e71e3",
+      "status_at_baseline": "accepted"
+    },
+    {
+      "task_id": "M2-T006",
+      "material_digest": "e366da5b5a2d9cd0380d14a01525d396ac43a46c6dd6db64cfd767e02f09c0bb",
+      "status_at_baseline": "accepted"
+    },
+    {
+      "task_id": "M2-T007",
+      "material_digest": "aee07685186f6bd640808c5e7cbb730a6d73e85d8501f7eb0478e68c8c66e783",
+      "status_at_baseline": "accepted"
+    },
+    {
+      "task_id": "M2-T008",
+      "material_digest": "4cbfce8ae66c0d3524e0f069173a757932de57d21924b1126561d0ff724dfd20",
+      "status_at_baseline": "accepted"
+    },
+    {
+      "task_id": "M2-T009",
+      "material_digest": "e6eda9770e3c43bd811e2523b13ab7a4cc3c75159fec5de51747b480662764db",
+      "status_at_baseline": "accepted"
+    },
+    {
+      "task_id": "M2-T010",
+      "material_digest": "d931c8dfdfe227fcdaa7537c8a907477359b83fb28e1c4d710af0bbfe14b309b",
+      "status_at_baseline": "accepted"
+    },
+    {
+      "task_id": "M2-T011",
+      "material_digest": "5aad9e350d3b710cbccb5b3b8be506811e0200f41d6b6e9278cf4697cc5057dc",
+      "status_at_baseline": "accepted"
+    },
+    {
+      "task_id": "M2-T012",
+      "material_digest": "e9ec86d0cc0d52a67fb59a80eb55ad1f9a949bb9ec35961c91238b25120ad3c5",
+      "status_at_baseline": "accepted"
+    },
+    {
+      "task_id": "M2-T013",
+      "material_digest": "5641bdf95e2c854f508759c59b031819441e42cd5db2508820400d327cd323fe",
+      "status_at_baseline": "accepted"
+    },
+    {
+      "task_id": "M2-T014",
+      "material_digest": "06c84bc3ff4375f652344811b252bac42339191aa391df296a7e6ed971a45956",
+      "status_at_baseline": "backlog"
+    },
+    {
+      "task_id": "M2-T015",
+      "material_digest": "d886a201eecbcdc9bf4cdebb813e20572863af694efaf0e723ab2faf8e7f8d3b",
+      "status_at_baseline": "backlog"
+    },
+    {
+      "task_id": "M2-T016",
+      "material_digest": "6c6899f4390120b3de83636665b4755bd044a86df39923358d56a95b4eb24257",
+      "status_at_baseline": "backlog"
+    },
+    {
+      "task_id": "M4-T001",
+      "material_digest": "ffb49e8533b4d0a0386afc938d8e54bbcd64f0ab11d878d28e4a4e7462d1d0fd",
+      "status_at_baseline": "awaiting_gate"
+    },
+    {
+      "task_id": "M4-T002",
+      "material_digest": "fa2af36a8da109ec92d5abf174704e2bd1a55e2184f69af67b0a08a840d73efe",
+      "status_at_baseline": "awaiting_gate"
+    },
+    {
+      "task_id": "M4-T003",
+      "material_digest": "588a9e8dd4d37e0c38c8937348206e2d660b40f48cfd92cbf979cbf9c6c21e7a",
+      "status_at_baseline": "awaiting_gate"
+    },
+    {
+      "task_id": "M4-T004",
+      "material_digest": "29343a513490da8a90a13aa7ba1b5b9e631dc4d48e313514e06813544493babe",
+      "status_at_baseline": "awaiting_gate"
+    },
+    {
+      "task_id": "M4-T005",
+      "material_digest": "6f8fc326c49cc724e0af3f26f936b6eb876aa500aa707af9fd2fdfdc3c7fcc73",
+      "status_at_baseline": "awaiting_gate"
+    },
+    {
+      "task_id": "M4-T006",
+      "material_digest": "e7575c1cad57bb3d3c576e1d73f44ebee45fe36ba51a8e81a82332381e028f22",
+      "status_at_baseline": "awaiting_gate"
+    },
+    {
+      "task_id": "M5-T001",
+      "material_digest": "49d1643767059cbc882bf7339890ec239db2aa444ce18f04fc97495df9a1db89",
+      "status_at_baseline": "awaiting_gate"
+    },
+    {
+      "task_id": "M6-T001",
+      "material_digest": "0cdaf1f67bf56de32244010bab7ce440c3111cb36da104fc4d4da64f812aae77",
+      "status_at_baseline": "backlog"
+    }
+  ],
+  "task_count": 57
+}

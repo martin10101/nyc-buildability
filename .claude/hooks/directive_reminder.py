@@ -17,10 +17,14 @@ Design guarantees (D-001-R050/R051/R112..R115, correction 6):
 - NEVER raw source: only validated directive IDs, sanitized short titles, and fixed
   pointer/imperative text are emitted — registry text is treated as inert DATA, so it
   cannot become a prompt-injection or command-execution surface. Nothing is executed.
-- FAIL-CLOSED & VISIBLE: a corrupt/invalid registry yields a visible warning, never
-  silence. Zero active directives yields no injection (clean). Any internal error is
-  caught and downgraded to a short warning with exit 0 (a hook failure never breaks a
-  session).
+- FAIL-VISIBLE (advisory, NOT fail-closed): a corrupt/invalid registry yields a visible
+  warning, never silence — but the hook is advisory and always exits 0, so it never blocks
+  a prompt. It surfaces a problem; it does not enforce. Mechanical fail-closed enforcement
+  of the directive regime lives in the CLI (tools/project_control.py), the validator
+  (tools/validate_directive_compliance.py), blockers, and gates — never in this hook
+  (D-001-R134, amendment 3). Zero active directives yields no injection (clean). Any
+  internal error is caught and downgraded to a short warning with exit 0 (a hook failure
+  never breaks a session).
 """
 import json
 import os
@@ -60,8 +64,9 @@ def _cap(text: str, limit: int) -> str:
 
 def _load_active():
     """Return (active_list, warning). active_list = [(id, title)]. warning is a string
-    when the registry is present-but-corrupt (fail-closed, visible), else None. A
-    missing registry is not a warning (zero active directives)."""
+    when the registry is present-but-corrupt (fail-visible: surfaced as an advisory
+    warning, exit 0 — never blocking), else None. A missing registry is not a warning
+    (zero active directives)."""
     reg = _registry_dir()
     idx = reg / "index.json"
     if not idx.exists():

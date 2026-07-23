@@ -1,9 +1,9 @@
 {
   "schema": "directive_requirements/v1",
   "directive_id": "D-001",
-  "version": 2,
+  "version": 3,
   "producer": "orchestrator",
-  "requirement_count": 89,
+  "requirement_count": 136,
   "requirements": [
     {
       "id": "D-001-R001",
@@ -4542,6 +4542,2255 @@
         "tests": [
           "test_project_control.py"
         ],
+        "tasks": [
+          "M0-T023"
+        ]
+      },
+      "supersedes": null,
+      "not_applicable_justification": null,
+      "checklist": []
+    },
+    {
+      "id": "D-001-R119",
+      "text": "At the start of this amendment, independently reconcile and report current origin/main, current PR #97 head, the reviewed-content SHA and manifest identity, the commits and files added after the reviewed-content SHA, and the current remote CI state.",
+      "source_ref": "source-003-amendment.md#reconcile",
+      "classification": "return",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T023"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [],
+        "lifecycle_events": [
+          "submit",
+          "accept"
+        ],
+        "effective_date": "2026-07-23"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [
+          "docs/SESSION_HANDOFF.md"
+        ],
+        "tests": [],
+        "tasks": [
+          "M0-T023"
+        ]
+      },
+      "supersedes": null,
+      "not_applicable_justification": null,
+      "checklist": []
+    },
+    {
+      "id": "D-001-R120",
+      "text": "Do not trust the existing PR description as current state; reconcile the head discrepancy (GitHub head 33fbb44 vs the PR description's stated final head 6e41fd8).",
+      "source_ref": "source-003-amendment.md#reconcile",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T023"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [],
+        "lifecycle_events": [
+          "claim",
+          "submit",
+          "accept"
+        ],
+        "effective_date": "2026-07-23"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "Implemented and independently verified at the frozen review identity.",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [
+          ".github/workflows/ci.yml"
+        ],
+        "tests": [],
+        "tasks": [
+          "M0-T023"
+        ]
+      },
+      "supersedes": null,
+      "not_applicable_justification": null,
+      "checklist": []
+    },
+    {
+      "id": "D-001-R121",
+      "text": "Create an immutable migration manifest bound to baseline 1acb9b5 containing the exact pre-regime task IDs and a deterministic digest of each packet's material fields.",
+      "source_ref": "source-003-amendment.md#section-1",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T023"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [],
+        "lifecycle_events": [
+          "claim",
+          "submit",
+          "accept"
+        ],
+        "effective_date": "2026-07-23"
+      },
+      "dependencies": [],
+      "required_harness": "tools/test_directive_compliance.py",
+      "required_evidence": "Implemented and independently verified at the frozen review identity.",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [
+          "project-control/directives/migration_manifest.json",
+          "tools/directive_registry.py"
+        ],
+        "tests": [
+          "test_directive_compliance.py",
+          "test_project_control.py"
+        ],
+        "tasks": [
+          "M0-T023"
+        ]
+      },
+      "supersedes": null,
+      "not_applicable_justification": null,
+      "checklist": []
+    },
+    {
+      "id": "D-001-R122",
+      "text": "The legacy migration list must not silently grow; adding an ID requires an owner-issued directive amendment, enforced by an append-only content lock (migration_manifest_sha256 recorded in the directive manifest and checked by the validator).",
+      "source_ref": "source-003-amendment.md#section-1",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T023"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [],
+        "lifecycle_events": [
+          "claim",
+          "submit",
+          "accept"
+        ],
+        "effective_date": "2026-07-23"
+      },
+      "dependencies": [],
+      "required_harness": "tools/test_directive_compliance.py",
+      "required_evidence": "Implemented and independently verified at the frozen review identity.",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [
+          "tools/validate_directive_compliance.py",
+          "project-control/directives/D-001-owner-directive-compliance-system/manifest.json"
+        ],
+        "tests": [
+          "test_directive_compliance.py"
+        ],
+        "tasks": [
+          "M0-T023"
+        ]
+      },
+      "supersedes": null,
+      "not_applicable_justification": null,
+      "checklist": []
+    },
+    {
+      "id": "D-001-R123",
+      "text": "When the directive regime is enabled, every newly created task must carry valid active directive_refs; new-task without them fails closed.",
+      "source_ref": "source-003-amendment.md#section-1",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T023"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [],
+        "lifecycle_events": [
+          "claim",
+          "submit",
+          "accept"
+        ],
+        "effective_date": "2026-07-23"
+      },
+      "dependencies": [],
+      "required_harness": "tools/test_project_control.py",
+      "required_evidence": "Implemented and independently verified at the frozen review identity.",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [
+          "tools/project_control.py"
+        ],
+        "tests": [
+          "test_project_control.py"
+        ],
+        "tasks": [
+          "M0-T023"
+        ]
+      },
+      "supersedes": null,
+      "not_applicable_justification": null,
+      "checklist": []
+    },
+    {
+      "id": "D-001-R124",
+      "text": "A task ID not present in the frozen migration manifest must never become grandfathered merely because its packet omitted the regime stamp.",
+      "source_ref": "source-003-amendment.md#section-1",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T023"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [],
+        "lifecycle_events": [
+          "claim",
+          "submit",
+          "accept"
+        ],
+        "effective_date": "2026-07-23"
+      },
+      "dependencies": [],
+      "required_harness": "tools/test_project_control.py",
+      "required_evidence": "Implemented and independently verified at the frozen review identity.",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [
+          "tools/project_control.py",
+          "tools/directive_registry.py"
+        ],
+        "tests": [
+          "test_project_control.py"
+        ],
+        "tasks": [
+          "M0-T023"
+        ]
+      },
+      "supersedes": null,
+      "not_applicable_justification": null,
+      "checklist": []
+    },
+    {
+      "id": "D-001-R125",
+      "text": "A previously unstarted legacy task must enter the regime when it is claimed or reclaimed.",
+      "source_ref": "source-003-amendment.md#section-1",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T023"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [],
+        "lifecycle_events": [
+          "claim",
+          "submit",
+          "accept"
+        ],
+        "effective_date": "2026-07-23"
+      },
+      "dependencies": [],
+      "required_harness": "tools/test_project_control.py",
+      "required_evidence": "Implemented and independently verified at the frozen review identity.",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [
+          "tools/project_control.py"
+        ],
+        "tests": [
+          "test_project_control.py"
+        ],
+        "tasks": [
+          "M0-T023"
+        ]
+      },
+      "supersedes": null,
+      "not_applicable_justification": null,
+      "checklist": []
+    },
+    {
+      "id": "D-001-R126",
+      "text": "An already-active legacy task (claimed, in_progress, self_check, or awaiting_gate) may finish its existing lifecycle without deadlock.",
+      "source_ref": "source-003-amendment.md#section-1",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T023"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [],
+        "lifecycle_events": [
+          "claim",
+          "submit",
+          "accept"
+        ],
+        "effective_date": "2026-07-23"
+      },
+      "dependencies": [],
+      "required_harness": "tools/test_project_control.py",
+      "required_evidence": "Implemented and independently verified at the frozen review identity.",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [
+          "tools/project_control.py"
+        ],
+        "tests": [
+          "test_project_control.py"
+        ],
+        "tasks": [
+          "M0-T023"
+        ]
+      },
+      "supersedes": null,
+      "not_applicable_justification": null,
+      "checklist": []
+    },
+    {
+      "id": "D-001-R127",
+      "text": "Accepted and canceled tasks remain immutable under the regime.",
+      "source_ref": "source-003-amendment.md#section-1",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T023"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [],
+        "lifecycle_events": [
+          "claim",
+          "submit",
+          "accept"
+        ],
+        "effective_date": "2026-07-23"
+      },
+      "dependencies": [],
+      "required_harness": "tools/test_project_control.py",
+      "required_evidence": "Implemented and independently verified at the frozen review identity.",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [
+          "tools/project_control.py"
+        ],
+        "tests": [
+          "test_project_control.py"
+        ],
+        "tasks": [
+          "M0-T023"
+        ]
+      },
+      "supersedes": null,
+      "not_applicable_justification": null,
+      "checklist": []
+    },
+    {
+      "id": "D-001-R128",
+      "text": "A material amendment or replan of a legacy task invalidates grandfathering, decided by a deterministic digest of material packet fields (objective, inputs, outputs, dependencies, allowed/forbidden paths, acceptance_scenarios, required_gates, risks, blockers) that excludes lifecycle bookkeeping (status, progress, timestamps, reports, gate records).",
+      "source_ref": "source-003-amendment.md#section-1",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T023"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [],
+        "lifecycle_events": [
+          "claim",
+          "submit",
+          "accept"
+        ],
+        "effective_date": "2026-07-23"
+      },
+      "dependencies": [],
+      "required_harness": "tools/test_project_control.py",
+      "required_evidence": "Implemented and independently verified at the frozen review identity.",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [
+          "tools/directive_registry.py",
+          "tools/project_control.py"
+        ],
+        "tests": [
+          "test_project_control.py"
+        ],
+        "tasks": [
+          "M0-T023"
+        ]
+      },
+      "supersedes": null,
+      "not_applicable_justification": null,
+      "checklist": []
+    },
+    {
+      "id": "D-001-R129",
+      "text": "A blocked, rework, backlog, or ready legacy task must provide valid directive references at its next claim.",
+      "source_ref": "source-003-amendment.md#section-1",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T023"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [],
+        "lifecycle_events": [
+          "claim",
+          "submit",
+          "accept"
+        ],
+        "effective_date": "2026-07-23"
+      },
+      "dependencies": [],
+      "required_harness": "tools/test_project_control.py",
+      "required_evidence": "Implemented and independently verified at the frozen review identity.",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [
+          "tools/project_control.py"
+        ],
+        "tests": [
+          "test_project_control.py"
+        ],
+        "tasks": [
+          "M0-T023"
+        ]
+      },
+      "supersedes": null,
+      "not_applicable_justification": null,
+      "checklist": []
+    },
+    {
+      "id": "D-001-R130",
+      "text": "Do not use created_at alone to decide migration status.",
+      "source_ref": "source-003-amendment.md#section-1",
+      "classification": "prohibition",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T023"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [],
+        "lifecycle_events": [
+          "claim",
+          "submit",
+          "accept"
+        ],
+        "effective_date": "2026-07-23"
+      },
+      "dependencies": [],
+      "required_harness": "tools/test_project_control.py",
+      "required_evidence": "Implemented and independently verified at the frozen review identity.",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [
+          "tools/project_control.py",
+          "tools/directive_registry.py",
+          "project-control/config.json"
+        ],
+        "tests": [
+          "test_project_control.py"
+        ],
+        "tasks": [
+          "M0-T023"
+        ]
+      },
+      "supersedes": null,
+      "not_applicable_justification": null,
+      "checklist": []
+    },
+    {
+      "id": "D-001-R131",
+      "text": "If the registry or migration manifest is missing, corrupt, inactive, or unresolved, new-task and required regime entry must fail closed.",
+      "source_ref": "source-003-amendment.md#section-1",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T023"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [],
+        "lifecycle_events": [
+          "claim",
+          "submit",
+          "accept"
+        ],
+        "effective_date": "2026-07-23"
+      },
+      "dependencies": [],
+      "required_harness": "tools/test_project_control.py",
+      "required_evidence": "Implemented and independently verified at the frozen review identity.",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [
+          "tools/project_control.py"
+        ],
+        "tests": [
+          "test_project_control.py"
+        ],
+        "tasks": [
+          "M0-T023"
+        ]
+      },
+      "supersedes": null,
+      "not_applicable_justification": null,
+      "checklist": []
+    },
+    {
+      "id": "D-001-R132",
+      "text": "Do not add a general bypass, suppression flag, or agent-selected exemption to the regime enforcement.",
+      "source_ref": "source-003-amendment.md#section-1",
+      "classification": "prohibition",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T023"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [],
+        "lifecycle_events": [
+          "claim",
+          "submit",
+          "accept"
+        ],
+        "effective_date": "2026-07-23"
+      },
+      "dependencies": [],
+      "required_harness": "tools/test_project_control.py",
+      "required_evidence": "Implemented and independently verified at the frozen review identity.",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [
+          "tools/project_control.py"
+        ],
+        "tests": [
+          "test_project_control.py",
+          "test_directive_compliance.py"
+        ],
+        "tasks": [
+          "M0-T023"
+        ]
+      },
+      "supersedes": null,
+      "not_applicable_justification": null,
+      "checklist": []
+    },
+    {
+      "id": "D-001-R133",
+      "text": "Add adversarial tests proving: a new product task without directive references is rejected; omitting the regime stamp cannot manufacture grandfathered status; a new task with valid references succeeds; already-active legacy tasks can finish; a legacy task's material amendment requires regime entry; lifecycle-only changes do not falsely count as material amendments; a backlog/blocked/rework task must enter the regime when claimed again; accepted tasks remain immutable; malformed or unavailable registry state fails closed.",
+      "source_ref": "source-003-amendment.md#section-1",
+      "classification": "harness",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T023"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [],
+        "lifecycle_events": [
+          "claim",
+          "submit",
+          "accept"
+        ],
+        "effective_date": "2026-07-23"
+      },
+      "dependencies": [],
+      "required_harness": "tools/test_project_control.py",
+      "required_evidence": "Implemented and independently verified at the frozen review identity.",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [
+          "tools/test_project_control.py"
+        ],
+        "tests": [
+          "test_project_control.py"
+        ],
+        "tasks": [
+          "M0-T023"
+        ]
+      },
+      "supersedes": null,
+      "not_applicable_justification": null,
+      "checklist": []
+    },
+    {
+      "id": "D-001-R134",
+      "text": "The reminder hook remains advisory and exit-0 and is described accurately as 'fail-visible', not 'fail-closed'; mechanical fail-closed enforcement belongs to the CLI, validator, blockers, and gates.",
+      "source_ref": "source-003-amendment.md#section-1",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T023"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [],
+        "lifecycle_events": [
+          "claim",
+          "submit",
+          "accept"
+        ],
+        "effective_date": "2026-07-23"
+      },
+      "dependencies": [],
+      "required_harness": "tools/test_directive_reminder.py",
+      "required_evidence": "Implemented and independently verified at the frozen review identity.",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [
+          ".claude/hooks/directive_reminder.py",
+          ".claude/rules/project-control.md"
+        ],
+        "tests": [
+          "test_directive_reminder.py"
+        ],
+        "tasks": [
+          "M0-T023"
+        ]
+      },
+      "supersedes": null,
+      "not_applicable_justification": null,
+      "checklist": []
+    },
+    {
+      "id": "D-001-R135",
+      "text": "Implement a versioned verification schema directive_verification/v2 with task_verifications[], where each entry contains at least the directive ID, task ID, exact applicable requirement IDs for that task, reviewed SHA, task-specific content-manifest identity, producer, independent verifier, per-requirement states and evidence, and a verification timestamp/schema version.",
+      "source_ref": "source-003-amendment.md#section-2",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T023"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [],
+        "lifecycle_events": [
+          "claim",
+          "submit",
+          "accept"
+        ],
+        "effective_date": "2026-07-23"
+      },
+      "dependencies": [],
+      "required_harness": "tools/test_directive_compliance.py",
+      "required_evidence": "Implemented and independently verified at the frozen review identity.",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [
+          "project-control/directives/schema/v2/directive_verification.schema.json",
+          "project-control/directives/D-001-owner-directive-compliance-system/verification.json",
+          "tools/directive_registry.py"
+        ],
+        "tests": [
+          "test_directive_compliance.py"
+        ],
+        "tasks": [
+          "M0-T023"
+        ]
+      },
+      "supersedes": null,
+      "not_applicable_justification": null,
+      "checklist": []
+    },
+    {
+      "id": "D-001-R136",
+      "text": "Acceptance must call verification with the directive_id, task_id, the task's derived applicable requirement IDs, and its current content identity; only requirements applicable to that task are evaluated for that task's acceptance.",
+      "source_ref": "source-003-amendment.md#section-2",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T023"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [],
+        "lifecycle_events": [
+          "claim",
+          "submit",
+          "accept"
+        ],
+        "effective_date": "2026-07-23"
+      },
+      "dependencies": [],
+      "required_harness": "tools/test_project_control.py",
+      "required_evidence": "Implemented and independently verified at the frozen review identity.",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [
+          "tools/project_control.py",
+          "tools/directive_registry.py"
+        ],
+        "tests": [
+          "test_project_control.py"
+        ],
+        "tasks": [
+          "M0-T023"
+        ]
+      },
+      "supersedes": null,
+      "not_applicable_justification": null,
+      "checklist": []
+    },
+    {
+      "id": "D-001-R137",
+      "text": "'ALL' means all requirements applicable to the current task, not every requirement belonging to the directive.",
+      "source_ref": "source-003-amendment.md#section-2",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T023"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [],
+        "lifecycle_events": [
+          "claim",
+          "submit",
+          "accept"
+        ],
+        "effective_date": "2026-07-23"
+      },
+      "dependencies": [],
+      "required_harness": "tools/test_directive_compliance.py",
+      "required_evidence": "Implemented and independently verified at the frozen review identity.",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [
+          "tools/directive_registry.py"
+        ],
+        "tests": [
+          "test_directive_compliance.py",
+          "test_project_control.py"
+        ],
+        "tasks": [
+          "M0-T023"
+        ]
+      },
+      "supersedes": null,
+      "not_applicable_justification": null,
+      "checklist": []
+    },
+    {
+      "id": "D-001-R138",
+      "text": "Two tasks governed by the same directive may have different allowed paths, content identities, evidence, and reviewers.",
+      "source_ref": "source-003-amendment.md#section-2",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T023"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [],
+        "lifecycle_events": [
+          "claim",
+          "submit",
+          "accept"
+        ],
+        "effective_date": "2026-07-23"
+      },
+      "dependencies": [],
+      "required_harness": "tools/test_directive_compliance.py",
+      "required_evidence": "Implemented and independently verified at the frozen review identity.",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [
+          "tools/directive_registry.py"
+        ],
+        "tests": [
+          "test_directive_compliance.py"
+        ],
+        "tasks": [
+          "M0-T023"
+        ]
+      },
+      "supersedes": null,
+      "not_applicable_justification": null,
+      "checklist": []
+    },
+    {
+      "id": "D-001-R139",
+      "text": "Stale verification for task A must block task A without incorrectly invalidating task B.",
+      "source_ref": "source-003-amendment.md#section-2",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T023"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [],
+        "lifecycle_events": [
+          "claim",
+          "submit",
+          "accept"
+        ],
+        "effective_date": "2026-07-23"
+      },
+      "dependencies": [],
+      "required_harness": "tools/test_directive_compliance.py",
+      "required_evidence": "Implemented and independently verified at the frozen review identity.",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [
+          "tools/directive_registry.py"
+        ],
+        "tests": [
+          "test_directive_compliance.py"
+        ],
+        "tasks": [
+          "M0-T023"
+        ]
+      },
+      "supersedes": null,
+      "not_applicable_justification": null,
+      "checklist": []
+    },
+    {
+      "id": "D-001-R140",
+      "text": "A shared requirement applicable to both tasks must be independently represented for both task verifications.",
+      "source_ref": "source-003-amendment.md#section-2",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T023"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [],
+        "lifecycle_events": [
+          "claim",
+          "submit",
+          "accept"
+        ],
+        "effective_date": "2026-07-23"
+      },
+      "dependencies": [],
+      "required_harness": "tools/test_directive_compliance.py",
+      "required_evidence": "Implemented and independently verified at the frozen review identity.",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [
+          "tools/directive_registry.py",
+          "project-control/directives/D-001-owner-directive-compliance-system/verification.json"
+        ],
+        "tests": [
+          "test_directive_compliance.py"
+        ],
+        "tasks": [
+          "M0-T023"
+        ]
+      },
+      "supersedes": null,
+      "not_applicable_justification": null,
+      "checklist": []
+    },
+    {
+      "id": "D-001-R141",
+      "text": "Producer/verifier separation must be checked per task.",
+      "source_ref": "source-003-amendment.md#section-2",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T023"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [],
+        "lifecycle_events": [
+          "claim",
+          "submit",
+          "accept"
+        ],
+        "effective_date": "2026-07-23"
+      },
+      "dependencies": [],
+      "required_harness": "tools/test_directive_compliance.py",
+      "required_evidence": "Implemented and independently verified at the frozen review identity.",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [
+          "tools/directive_registry.py",
+          "tools/validate_directive_compliance.py"
+        ],
+        "tests": [
+          "test_directive_compliance.py"
+        ],
+        "tasks": [
+          "M0-T023"
+        ]
+      },
+      "supersedes": null,
+      "not_applicable_justification": null,
+      "checklist": []
+    },
+    {
+      "id": "D-001-R142",
+      "text": "Missing, duplicate, extra, stale, or cross-task verification rows must fail closed.",
+      "source_ref": "source-003-amendment.md#section-2",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T023"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [],
+        "lifecycle_events": [
+          "claim",
+          "submit",
+          "accept"
+        ],
+        "effective_date": "2026-07-23"
+      },
+      "dependencies": [],
+      "required_harness": "tools/test_directive_compliance.py",
+      "required_evidence": "Implemented and independently verified at the frozen review identity.",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [
+          "tools/directive_registry.py",
+          "tools/validate_directive_compliance.py"
+        ],
+        "tests": [
+          "test_directive_compliance.py",
+          "test_project_control.py"
+        ],
+        "tasks": [
+          "M0-T023"
+        ]
+      },
+      "supersedes": null,
+      "not_applicable_justification": null,
+      "checklist": []
+    },
+    {
+      "id": "D-001-R143",
+      "text": "Migrate D-001's existing single-task verification into the v2 representation without losing its evidence history.",
+      "source_ref": "source-003-amendment.md#section-2",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T023"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [],
+        "lifecycle_events": [
+          "claim",
+          "submit",
+          "accept"
+        ],
+        "effective_date": "2026-07-23"
+      },
+      "dependencies": [],
+      "required_harness": "tools/test_directive_compliance.py",
+      "required_evidence": "Implemented and independently verified at the frozen review identity.",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [
+          "project-control/directives/D-001-owner-directive-compliance-system/verification.json"
+        ],
+        "tests": [
+          "test_directive_compliance.py"
+        ],
+        "tasks": [
+          "M0-T023"
+        ]
+      },
+      "supersedes": null,
+      "not_applicable_justification": null,
+      "checklist": []
+    },
+    {
+      "id": "D-001-R144",
+      "text": "Add positive and adversarial fixtures with at least two tasks, different allowed paths, different applicable requirement sets, and different content identities.",
+      "source_ref": "source-003-amendment.md#section-2",
+      "classification": "harness",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T023"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [],
+        "lifecycle_events": [
+          "claim",
+          "submit",
+          "accept"
+        ],
+        "effective_date": "2026-07-23"
+      },
+      "dependencies": [],
+      "required_harness": "tools/test_directive_compliance.py",
+      "required_evidence": "Implemented and independently verified at the frozen review identity.",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [
+          "tools/test_directive_compliance.py"
+        ],
+        "tests": [
+          "test_directive_compliance.py"
+        ],
+        "tasks": [
+          "M0-T023"
+        ]
+      },
+      "supersedes": null,
+      "not_applicable_justification": null,
+      "checklist": []
+    },
+    {
+      "id": "D-001-R145",
+      "text": "Do not hash raw working-tree bytes as the authoritative reviewed identity.",
+      "source_ref": "source-003-amendment.md#section-3",
+      "classification": "prohibition",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T023"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [],
+        "lifecycle_events": [
+          "claim",
+          "submit",
+          "accept"
+        ],
+        "effective_date": "2026-07-23"
+      },
+      "dependencies": [],
+      "required_harness": "tools/test_directive_compliance.py",
+      "required_evidence": "Implemented and independently verified at the frozen review identity.",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [
+          "tools/directive_registry.py",
+          "tools/project_control.py"
+        ],
+        "tests": [
+          "test_directive_compliance.py",
+          "test_project_control.py"
+        ],
+        "tasks": [
+          "M0-T023"
+        ]
+      },
+      "supersedes": null,
+      "not_applicable_justification": null,
+      "checklist": []
+    },
+    {
+      "id": "D-001-R146",
+      "text": "Derive the manifest from canonical tracked Git content at the frozen/reviewed commit: sorted repository-relative path, Git blob/object identity, file mode (including executable/symlink/submodule distinctions), and deterministic directory expansion.",
+      "source_ref": "source-003-amendment.md#section-3",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T023"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [],
+        "lifecycle_events": [
+          "claim",
+          "submit",
+          "accept"
+        ],
+        "effective_date": "2026-07-23"
+      },
+      "dependencies": [],
+      "required_harness": "tools/test_directive_compliance.py",
+      "required_evidence": "Implemented and independently verified at the frozen review identity.",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [
+          "tools/directive_registry.py"
+        ],
+        "tests": [
+          "test_directive_compliance.py"
+        ],
+        "tasks": [
+          "M0-T023"
+        ]
+      },
+      "supersedes": null,
+      "not_applicable_justification": null,
+      "checklist": []
+    },
+    {
+      "id": "D-001-R147",
+      "text": "LF versus CRLF checkout differences cannot change the identity when canonical Git content is identical.",
+      "source_ref": "source-003-amendment.md#section-3",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T023"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [],
+        "lifecycle_events": [
+          "claim",
+          "submit",
+          "accept"
+        ],
+        "effective_date": "2026-07-23"
+      },
+      "dependencies": [],
+      "required_harness": "tools/test_directive_compliance.py",
+      "required_evidence": "Implemented and independently verified at the frozen review identity.",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [
+          "tools/directive_registry.py"
+        ],
+        "tests": [
+          "test_directive_compliance.py"
+        ],
+        "tasks": [
+          "M0-T023"
+        ]
+      },
+      "supersedes": null,
+      "not_applicable_justification": null,
+      "checklist": []
+    },
+    {
+      "id": "D-001-R148",
+      "text": "Binary content remains byte-exact in the identity.",
+      "source_ref": "source-003-amendment.md#section-3",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T023"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [],
+        "lifecycle_events": [
+          "claim",
+          "submit",
+          "accept"
+        ],
+        "effective_date": "2026-07-23"
+      },
+      "dependencies": [],
+      "required_harness": "tools/test_directive_compliance.py",
+      "required_evidence": "Implemented and independently verified at the frozen review identity.",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [
+          "tools/directive_registry.py"
+        ],
+        "tests": [
+          "test_directive_compliance.py"
+        ],
+        "tasks": [
+          "M0-T023"
+        ]
+      },
+      "supersedes": null,
+      "not_applicable_justification": null,
+      "checklist": []
+    },
+    {
+      "id": "D-001-R149",
+      "text": "Relevant untracked or dirty files fail closed rather than being silently omitted.",
+      "source_ref": "source-003-amendment.md#section-3",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T023"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [],
+        "lifecycle_events": [
+          "claim",
+          "submit",
+          "accept"
+        ],
+        "effective_date": "2026-07-23"
+      },
+      "dependencies": [],
+      "required_harness": "tools/test_directive_compliance.py",
+      "required_evidence": "Implemented and independently verified at the frozen review identity.",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [
+          "tools/directive_registry.py",
+          "tools/project_control.py"
+        ],
+        "tests": [
+          "test_directive_compliance.py",
+          "test_project_control.py"
+        ],
+        "tasks": [
+          "M0-T023"
+        ]
+      },
+      "supersedes": null,
+      "not_applicable_justification": null,
+      "checklist": []
+    },
+    {
+      "id": "D-001-R150",
+      "text": "Identical relevant blobs remain stable across merge, rebase, and squash.",
+      "source_ref": "source-003-amendment.md#section-3",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T023"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [],
+        "lifecycle_events": [
+          "claim",
+          "submit",
+          "accept"
+        ],
+        "effective_date": "2026-07-23"
+      },
+      "dependencies": [],
+      "required_harness": "tools/test_directive_compliance.py",
+      "required_evidence": "Implemented and independently verified at the frozen review identity.",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [
+          "tools/directive_registry.py"
+        ],
+        "tests": [
+          "test_directive_compliance.py"
+        ],
+        "tasks": [
+          "M0-T023"
+        ]
+      },
+      "supersedes": null,
+      "not_applicable_justification": null,
+      "checklist": []
+    },
+    {
+      "id": "D-001-R151",
+      "text": "A relevant content or file-mode change invalidates verification.",
+      "source_ref": "source-003-amendment.md#section-3",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T023"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [],
+        "lifecycle_events": [
+          "claim",
+          "submit",
+          "accept"
+        ],
+        "effective_date": "2026-07-23"
+      },
+      "dependencies": [],
+      "required_harness": "tools/test_directive_compliance.py",
+      "required_evidence": "Implemented and independently verified at the frozen review identity.",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [
+          "tools/directive_registry.py"
+        ],
+        "tests": [
+          "test_directive_compliance.py"
+        ],
+        "tasks": [
+          "M0-T023"
+        ]
+      },
+      "supersedes": null,
+      "not_applicable_justification": null,
+      "checklist": []
+    },
+    {
+      "id": "D-001-R152",
+      "text": "Submission, independent gates, and acceptance must use the same shared content-identity implementation.",
+      "source_ref": "source-003-amendment.md#section-3",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T023"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [],
+        "lifecycle_events": [
+          "claim",
+          "submit",
+          "accept"
+        ],
+        "effective_date": "2026-07-23"
+      },
+      "dependencies": [],
+      "required_harness": "tools/test_project_control.py",
+      "required_evidence": "Implemented and independently verified at the frozen review identity.",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [
+          "tools/project_control.py",
+          "tools/directive_registry.py"
+        ],
+        "tests": [
+          "test_project_control.py"
+        ],
+        "tasks": [
+          "M0-T023"
+        ]
+      },
+      "supersedes": null,
+      "not_applicable_justification": null,
+      "checklist": []
+    },
+    {
+      "id": "D-001-R153",
+      "text": "Require and validate the reviewed commit SHA where needed.",
+      "source_ref": "source-003-amendment.md#section-3",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T023"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [],
+        "lifecycle_events": [
+          "claim",
+          "submit",
+          "accept"
+        ],
+        "effective_date": "2026-07-23"
+      },
+      "dependencies": [],
+      "required_harness": "tools/test_directive_compliance.py",
+      "required_evidence": "Implemented and independently verified at the frozen review identity.",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [
+          "tools/directive_registry.py",
+          "tools/project_control.py"
+        ],
+        "tests": [
+          "test_directive_compliance.py",
+          "test_project_control.py"
+        ],
+        "tasks": [
+          "M0-T023"
+        ]
+      },
+      "supersedes": null,
+      "not_applicable_justification": null,
+      "checklist": []
+    },
+    {
+      "id": "D-001-R154",
+      "text": "Add tests for LF/CRLF equivalence, binary changes, mode changes, dirty/untracked relevant files, unrelated-file changes, merge/rebase-equivalent blobs, and an actual relevant-content mutation.",
+      "source_ref": "source-003-amendment.md#section-3",
+      "classification": "harness",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T023"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [],
+        "lifecycle_events": [
+          "claim",
+          "submit",
+          "accept"
+        ],
+        "effective_date": "2026-07-23"
+      },
+      "dependencies": [],
+      "required_harness": "tools/test_directive_compliance.py",
+      "required_evidence": "Implemented and independently verified at the frozen review identity.",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [
+          "tools/test_directive_compliance.py"
+        ],
+        "tests": [
+          "test_directive_compliance.py"
+        ],
+        "tasks": [
+          "M0-T023"
+        ]
+      },
+      "supersedes": null,
+      "not_applicable_justification": null,
+      "checklist": []
+    },
+    {
+      "id": "D-001-R155",
+      "text": "Freeze a new review identity after implementing Sections 1-3.",
+      "source_ref": "source-003-amendment.md#section-4",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T023"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [],
+        "lifecycle_events": [
+          "claim",
+          "submit",
+          "accept"
+        ],
+        "effective_date": "2026-07-23"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "Implemented and independently verified at the frozen review identity.",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [
+          "project-control/directives/D-001-owner-directive-compliance-system/manifest.json",
+          "project-control/directives/D-001-owner-directive-compliance-system/verification.json"
+        ],
+        "tests": [],
+        "tasks": [
+          "M0-T023"
+        ]
+      },
+      "supersedes": null,
+      "not_applicable_justification": null,
+      "checklist": []
+    },
+    {
+      "id": "D-001-R156",
+      "text": "Rerun independent G3, directive-compliance G4, control-plane G4, and G5 at the frozen review identity.",
+      "source_ref": "source-003-amendment.md#section-4",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T023"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [],
+        "lifecycle_events": [
+          "claim",
+          "submit",
+          "accept"
+        ],
+        "effective_date": "2026-07-23"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "Implemented and independently verified at the frozen review identity.",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [
+          "project-control/tasks/M0-T023.json"
+        ],
+        "tests": [],
+        "tasks": [
+          "M0-T023"
+        ]
+      },
+      "supersedes": null,
+      "not_applicable_justification": null,
+      "checklist": []
+    },
+    {
+      "id": "D-001-R157",
+      "text": "Regenerate the complete per-requirement verification matrix.",
+      "source_ref": "source-003-amendment.md#section-4",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T023"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [],
+        "lifecycle_events": [
+          "claim",
+          "submit",
+          "accept"
+        ],
+        "effective_date": "2026-07-23"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "Implemented and independently verified at the frozen review identity.",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [
+          "project-control/directives/D-001-owner-directive-compliance-system/verification.json"
+        ],
+        "tests": [],
+        "tasks": [
+          "M0-T023"
+        ]
+      },
+      "supersedes": null,
+      "not_applicable_justification": null,
+      "checklist": []
+    },
+    {
+      "id": "D-001-R158",
+      "text": "Run the full local and remote CI suite, including web-e2e, API, contracts, locks, control-plane, context-budget, and secret-scan.",
+      "source_ref": "source-003-amendment.md#section-4",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T023"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [],
+        "lifecycle_events": [
+          "claim",
+          "submit",
+          "accept"
+        ],
+        "effective_date": "2026-07-23"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "Implemented and independently verified at the frozen review identity.",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [
+          ".github/workflows/ci.yml"
+        ],
+        "tests": [],
+        "tasks": [
+          "M0-T023"
+        ]
+      },
+      "supersedes": null,
+      "not_applicable_justification": null,
+      "checklist": []
+    },
+    {
+      "id": "D-001-R159",
+      "text": "Update the PR description to distinguish clearly among frozen base, reviewed code SHA, reviewed content-manifest identity, evidence-only commits, and current PR head.",
+      "source_ref": "source-003-amendment.md#section-4",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T023"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [],
+        "lifecycle_events": [
+          "claim",
+          "submit",
+          "accept"
+        ],
+        "effective_date": "2026-07-23"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "Implemented and independently verified at the frozen review identity.",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": [
+          "M0-T023"
+        ]
+      },
+      "supersedes": null,
+      "not_applicable_justification": null,
+      "checklist": []
+    },
+    {
+      "id": "D-001-R160",
+      "text": "Do not call an older commit the 'final head'.",
+      "source_ref": "source-003-amendment.md#section-4",
+      "classification": "prohibition",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T023"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [],
+        "lifecycle_events": [
+          "claim",
+          "submit",
+          "accept"
+        ],
+        "effective_date": "2026-07-23"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "Implemented and independently verified at the frozen review identity.",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": [
+          "M0-T023"
+        ]
+      },
+      "supersedes": null,
+      "not_applicable_justification": null,
+      "checklist": []
+    },
+    {
+      "id": "D-001-R161",
+      "text": "Any later change to code, schemas, tests, requirements, or content-manifest paths invalidates the review and requires re-review.",
+      "source_ref": "source-003-amendment.md#section-4",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T023"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [],
+        "lifecycle_events": [
+          "claim",
+          "submit",
+          "accept"
+        ],
+        "effective_date": "2026-07-23"
+      },
+      "dependencies": [],
+      "required_harness": "tools/test_directive_compliance.py",
+      "required_evidence": "Implemented and independently verified at the frozen review identity.",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [
+          "tools/directive_registry.py",
+          "tools/validate_directive_compliance.py",
+          "tools/project_control.py"
+        ],
+        "tests": [
+          "test_directive_compliance.py",
+          "test_project_control.py"
+        ],
+        "tasks": [
+          "M0-T023"
+        ]
+      },
+      "supersedes": null,
+      "not_applicable_justification": null,
+      "checklist": []
+    },
+    {
+      "id": "D-001-R162",
+      "text": "Evidence-only/ledger-only commits must be explicitly enumerated and independently checked as such.",
+      "source_ref": "source-003-amendment.md#section-4",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T023"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [],
+        "lifecycle_events": [
+          "claim",
+          "submit",
+          "accept"
+        ],
+        "effective_date": "2026-07-23"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "Implemented and independently verified at the frozen review identity.",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": [
+          "M0-T023"
+        ]
+      },
+      "supersedes": null,
+      "not_applicable_justification": null,
+      "checklist": []
+    },
+    {
+      "id": "D-001-R163",
+      "text": "Keep this amendment tightly bounded to these defects: do not conduct another whole-system replan, change product code, select dependencies, deploy, purchase anything, close another PR, lift a hold, merge, or accept M0-T023.",
+      "source_ref": "source-003-amendment.md#bounded",
+      "classification": "prohibition",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T023"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [],
+        "lifecycle_events": [
+          "claim",
+          "submit",
+          "accept"
+        ],
+        "effective_date": "2026-07-23"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "Implemented and independently verified at the frozen review identity.",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [
+          "project-control/directives/D-001-owner-directive-compliance-system/manifest.json"
+        ],
+        "tests": [],
+        "tasks": [
+          "M0-T023"
+        ]
+      },
+      "supersedes": null,
+      "not_applicable_justification": null,
+      "checklist": []
+    },
+    {
+      "id": "D-001-R164",
+      "text": "Return the eleven enumerated items: old and new heads; exact changed files; D-001 amendment and new requirement IDs; regime-entry behavior table for every lifecycle state; multi-task verification schema and two-task test evidence; cross-platform manifest algorithm and adversarial results; local versus remote checks; independent review results and identity; corrected PR-description identity fields; unresolved limitations; and explicit confirmation that nothing was merged, accepted, deployed, purchased, product-dispatched, or closed.",
+      "source_ref": "source-003-amendment.md#return",
+      "classification": "return",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T023"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [],
+        "lifecycle_events": [
+          "submit",
+          "accept"
+        ],
+        "effective_date": "2026-07-23"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": [
+          "M0-T023"
+        ]
+      },
+      "supersedes": null,
+      "not_applicable_justification": null,
+      "checklist": []
+    },
+    {
+      "id": "D-001-R165",
+      "text": "Stop at the updated PR for owner review.",
+      "source_ref": "source-003-amendment.md#return",
+      "classification": "sequencing",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T023"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [],
+        "lifecycle_events": [
+          "submit",
+          "accept"
+        ],
+        "effective_date": "2026-07-23"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [
+          "project-control/tasks/M0-T023.json"
+        ],
+        "tests": [],
         "tasks": [
           "M0-T023"
         ]

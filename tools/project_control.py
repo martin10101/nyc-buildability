@@ -301,10 +301,49 @@ def _task_in_regime(t: dict) -> bool:
 # lifecycle bookkeeping. Registry integrity is enforced separately by the validator.
 _MANIFEST_EXCLUDE_PREFIXES = ("project-control/",)
 
+# Statuses at which a not-in-regime legacy task counts as "already active" and may finish
+# its existing lifecycle without deadlock (D-001 amendment 3, Section 1). ready/backlog/
+# rework/blocked are NOT here: they must enter the regime at their next claim.
+_CONTINUATION_STATUSES = frozenset({"claimed", "in_progress", "self_check", "awaiting_gate"})
 
-def _task_content_manifest(reg_mod, t: dict) -> str:
-    return reg_mod.content_manifest(list(t.get("allowed_paths") or []),
-                                    exclude_prefixes=_MANIFEST_EXCLUDE_PREFIXES)
+
+def _task_git_identity(reg_mod, t: dict, reviewed_sha=None):
+    """Authoritative git-canonical reviewed content identity for a task's allowed_paths,
+    excluding the volatile control-plane tree. Returns (identity, resolved_sha, error);
+    fails closed (error != None) when `.` is not a git work tree, the reviewed SHA is
+    unresolvable, or a relevant tracked file is dirty / a relevant file is untracked
+    (D-001 amendment 3, Section 3). Submit, gate, and accept all call THIS one function."""
+    return reg_mod.frozen_git_identity(
+        list(t.get("allowed_paths") or []), reviewed_sha=reviewed_sha, root=ROOT,
+        exclude_prefixes=_MANIFEST_EXCLUDE_PREFIXES, require_clean=True)
+
+
+def _legacy_grandfather_check(t: dict, task_id: str):
+    """For a NOT-in-regime task under an ENABLED regime at a continuation event
+    (submit/accept): return an error string if it may NOT proceed as grandfathered, else
+    None. Grandfathering requires (a) membership in the frozen migration manifest, (b) an
+    unchanged material packet digest since baseline, and (c) an already-active continuation
+    status. A missing/corrupt manifest or unavailable resolver fails closed. There is no
+    bypass flag, suppression flag, or agent-selected exemption (D-001 amendment 3)."""
+    reg_mod = _resolver()
+    if reg_mod is None:
+        return "directive resolver unavailable; legacy task cannot be validated (fail closed)."
+    mm = reg_mod.load_migration_manifest()
+    if mm.errors:
+        return f"migration manifest unavailable/corrupt (fail closed): {mm.errors[0]}"
+    if not mm.contains(task_id):
+        return (f"task {task_id} is not in the frozen migration manifest (baseline "
+                f"{(mm.baseline_sha or '?')[:12]}); it cannot be grandfathered by omitting the "
+                f"regime stamp. Enter the regime with valid --directive-refs (fail closed).")
+    if reg_mod.material_digest(t) != mm.digest_for(task_id):
+        return (f"task {task_id} has a material amendment/replan since baseline (material "
+                f"packet digest changed); grandfathering is invalidated. Enter the regime with "
+                f"valid --directive-refs (fail closed).")
+    if t.get("status") not in _CONTINUATION_STATUSES:
+        return (f"task {task_id} in status {t.get('status')!r} is not an already-active legacy "
+                f"task; it must enter the regime at its next claim with valid --directive-refs "
+                f"(fail closed).")
+    return None
 
 
 def _path_touches(path: str, allowed: list) -> bool:
@@ -402,18 +441,21 @@ def _directive_submit_check(t: dict, evidence_map_arg, sha_arg):
     missing = sorted(applicable - covered)
     if missing:
         return (f"evidence map does not cover applicable requirement(s): {', '.join(missing)}", {})
-    cm = _task_content_manifest(reg_mod, t)
-    extra = {"evidence_map": rel, "content_manifest_sha256": cm,
+    identity, resolved_sha, ierr = _task_git_identity(reg_mod, t, reviewed_sha=sha_arg)
+    if ierr:
+        return (f"in-regime submit content identity (fail closed): {ierr}", {})
+    extra = {"evidence_map": rel, "content_manifest_sha256": identity,
+             "reviewed_sha": resolved_sha,
              "applicable_requirements": sorted(applicable)}
-    if sha_arg:
-        extra["reviewed_sha"] = sha_arg
     return (None, extra)
 
 
 def _directive_accept_reasons(t: dict, task_id: str) -> list:
     """Reasons an in-regime task must NOT be accepted (appended to accept()'s list).
-    Never a bypass: only adds reasons. Verifies references, content-manifest freshness,
-    and full independent verification at the current content identity."""
+    Never a bypass: only adds reasons. Verifies references, git-canonical content-identity
+    freshness, and full independent PER-TASK verification (directive_verification/v2)
+    covering exactly the requirements APPLICABLE TO THIS TASK at the current identity
+    (D-001 amendment 3, Sections 2+3)."""
     reasons = []
     reg_mod = _resolver()
     if reg_mod is None:
@@ -422,7 +464,10 @@ def _directive_accept_reasons(t: dict, task_id: str) -> list:
     ev = reg.evaluate_task_refs(t)
     if not ev["ok"]:
         reasons.extend(f"directive refs: {r}" for r in ev["reasons"])
-    current_cm = _task_content_manifest(reg_mod, t)
+    identity, _resolved_sha, ierr = _task_git_identity(reg_mod, t)
+    if ierr:
+        return reasons + [f"content identity (fail closed): {ierr}"]
+    applicable = ev["applicable_ids"]
     rep = None
     rp = report_path(task_id)
     if rp.exists():
@@ -430,14 +475,16 @@ def _directive_accept_reasons(t: dict, task_id: str) -> list:
             rep = load(rp)
         except (ValueError, OSError):
             rep = None
-    if not rep or rep.get("content_manifest_sha256") != current_cm:
+    if not rep or rep.get("content_manifest_sha256") != identity:
         reasons.append("frozen-evidence identity mismatch: the task's relevant contents "
                        "changed since submission (stale); re-submit and re-verify at the "
                        "new content identity before acceptance.")
+    # Per-task verification: only requirements applicable to THIS task are evaluated for
+    # THIS task's acceptance (one directive may govern several tasks independently).
     for ref in (t.get("directive_refs") or []):
         did = ref.get("directive_id") if isinstance(ref, dict) else None
         if did:
-            reasons.extend(reg.unresolved_requirements(did, current_cm))
+            reasons.extend(reg.task_unresolved_requirements(did, task_id, applicable, identity))
     return reasons
 
 
@@ -486,6 +533,29 @@ def new_task(a):
                     f"reviewer_agents: the orchestrator records self_check (G2) and "
                     f"administrative (G0/G7) gates but can never satisfy an independent "
                     f"gate (G1/G3/G4/G5/G6). List an independent reviewer instead.")
+    # Directive-compliance regime (D-001 amendment 3, Section 1): when the regime is
+    # enabled every NEW task must carry valid --directive-refs. A brand-new task id can
+    # never be in the frozen migration manifest (which is bound to the baseline commit),
+    # so new-task WITHOUT refs fails closed; a missing/corrupt/inactive registry or a
+    # missing/corrupt migration manifest also fails closed. There is no bypass flag.
+    enabled, _rv, _re, _rg = _regime()
+    if enabled:
+        reg_mod = _resolver()
+        if reg_mod is None:
+            return fail("directive regime is enabled but the shared resolver is unavailable; "
+                        "new-task fails closed.")
+        reg = reg_mod.load_registry()
+        if reg.errors or not reg.active_directives():
+            return fail("directive regime is enabled but the registry is missing/corrupt/"
+                        "inactive; new-task fails closed until it is healthy.")
+        mm = reg_mod.load_migration_manifest()
+        if mm.errors:
+            return fail(f"directive regime is enabled but the migration manifest is unavailable/"
+                        f"corrupt; new-task fails closed: {mm.errors[0]}")
+        if not getattr(a, "directive_refs", None):
+            return fail("directive regime is enabled: every new task must carry valid "
+                        "--directive-refs (e.g. 'D-001:ALL'). new-task without them fails "
+                        "closed (D-001 amendment 3, Section 1).")
     data = {
         "task_id": a.task_id, "title": a.title, "task_type": a.task_type,
         "milestone_id": a.milestone, "objective": a.objective,
@@ -537,6 +607,17 @@ def claim(a):
         if enabled:
             t["directive_regime_version"] = version
             t.setdefault("directive_regime_entered_at", now())
+    # Regime entry is MANDATORY at claim/reclaim (D-001 amendment 3, Section 1): under an
+    # enabled regime a task that is still not in-regime after any --directive-refs stamp
+    # cannot be claimed as grandfathered. A previously-unstarted legacy task, and any
+    # backlog/ready/rework/blocked legacy task at its next claim, must enter the regime
+    # here (fail closed). The migration manifest never exempts claim.
+    enabled, _rv, _re, _rg = _regime()
+    if enabled and not _task_in_regime(t):
+        return fail(f"Cannot claim {a.task_id}: the directive regime is enabled and this task is "
+                    f"not in-regime. Claiming or reclaiming is a regime-entry event: pass valid "
+                    f"--directive-refs (e.g. 'D-001:ALL') so the task enters the regime. A legacy "
+                    f"task cannot be claimed as grandfathered (fail closed; D-001 amendment 3).")
     dcerr = _directive_claim_check(t, a.agent)
     if dcerr:
         return fail(f"Cannot claim {a.task_id}: {dcerr}")
@@ -640,13 +721,22 @@ def submit(a):
     report = {"task_id": a.task_id, "producer_agent": a.agent, "report_file": rel,
               "submitted_at": now(), "requested_status": a.requested_status}
     # In-regime submit (D-001): require an evidence map covering every applicable
-    # requirement and stamp the frozen content-manifest identity (correction 5).
+    # requirement and stamp the git-canonical frozen content identity (Section 3). A
+    # not-in-regime task under an enabled regime may only submit if it is grandfather-
+    # eligible (in the frozen migration manifest, material-unchanged, already-active);
+    # otherwise it must enter the regime (fail closed, D-001 amendment 3, Section 1).
     if _task_in_regime(t):
         serr, extra = _directive_submit_check(
             t, getattr(a, "evidence_map", None), getattr(a, "sha", None))
         if serr:
             return fail(serr)
         report.update(extra)
+    else:
+        enabled, _rv, _re, _rg = _regime()
+        if enabled:
+            gferr = _legacy_grandfather_check(t, a.task_id)
+            if gferr:
+                return fail(f"Cannot submit {a.task_id}: {gferr}")
     save(report_path(a.task_id), report)
     if a.requested_status == "awaiting_gate":
         t["status"] = "awaiting_gate"
@@ -712,14 +802,21 @@ def gate(a):
     gp = PC / "gates" / f"{a.task_id}-{a.gate_id}.json"
     record = {"task_id": a.task_id, "gate_id": a.gate_id, "reviewer": a.reviewer,
               "role": role, "result": a.result, "report_file": rel, "reviewed_at": now()}
-    # In-regime gate (D-001): stamp the content-manifest identity and reviewed SHA so
-    # acceptance can detect stale post-review edits (correction 5).
+    # In-regime gate (D-001): stamp the git-canonical content identity and reviewed SHA so
+    # acceptance can detect stale post-review edits. Same shared identity implementation as
+    # submit and accept (D-001 amendment 3, Sections 2+3); fail closed on identity error.
     if _task_in_regime(t):
         reg_mod = _resolver()
-        if reg_mod is not None:
-            record["content_manifest_sha256"] = _task_content_manifest(reg_mod, t)
-        if getattr(a, "sha", None):
-            record["reviewed_sha"] = a.sha
+        if reg_mod is None:
+            return fail(f"directive resolver unavailable; in-regime gate on {a.task_id} "
+                        f"cannot be recorded (fail closed).")
+        identity, resolved_sha, ierr = _task_git_identity(
+            reg_mod, t, reviewed_sha=getattr(a, "sha", None))
+        if ierr:
+            return fail(f"Cannot record gate for in-regime {a.task_id}: content identity "
+                        f"(fail closed): {ierr}")
+        record["content_manifest_sha256"] = identity
+        record["reviewed_sha"] = resolved_sha
     if gp.exists():
         prev = load(gp)
         hist = prev.pop("history", [])
@@ -826,10 +923,18 @@ def accept(a):
                 reasons.append(f"open blocker {b.get('blocker_id', bp.name)} "
                                f"references this task")
     # Directive-compliance acceptance gate (D-001): for in-regime tasks, require valid
-    # references, a matching frozen content-manifest identity, and full independent
-    # verification at that identity. Only ADDS reasons; never bypasses accept().
+    # references, a matching git-canonical content identity, and full independent PER-TASK
+    # verification at that identity. A not-in-regime task under an enabled regime is
+    # accepted only if grandfather-eligible (in the frozen migration manifest, material-
+    # unchanged, already-active); otherwise it must enter the regime. Only ADDS reasons.
     if _task_in_regime(t):
         reasons.extend(_directive_accept_reasons(t, a.task_id))
+    else:
+        enabled, _rv, _re, _rg = _regime()
+        if enabled:
+            gferr = _legacy_grandfather_check(t, a.task_id)
+            if gferr:
+                reasons.append(gferr)
     if reasons:
         return fail(f"Cannot accept {a.task_id}:\n" + "\n".join(f"- {r}" for r in reasons))
     t["status"] = "accepted"
