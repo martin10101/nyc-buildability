@@ -17,7 +17,8 @@
 | PR #91 | OPEN, superseded (not closed) |
 | PR #94 | OPEN (Part 1 frontend-security reconciliation) |
 | PR #64 (M0-T019) | OPEN, 115 behind / 8 ahead of main (stale; superseded) |
-| Ledger | 42 accepted / 8 awaiting_gate / 9 backlog / 2 blocked / 1 claimed |
+| Ledger (authoritative main **and** this #95 branch) | **42 accepted / 8 awaiting_gate / 4 backlog / 2 blocked / 1 claimed** |
+| Note on "9 backlog" | The five M3 backlog proposals exist **only on unmerged PR #93**. "9 backlog" is the **hypothetical combined state after #93 merges**, not #95's current ledger. This #95 branch adds only a report doc — its backlog count is **4**. |
 | M4-T007+ | uncontracted |
 
 ---
@@ -90,7 +91,7 @@ Every item maps to: an **existing task**, a **proposed packet area** (§5 letter
 | ID | Sev | Defect + evidence | Mechanical consequence | Current safeguard | Missing control | Proposed disposition |
 |---|---|---|---|---|---|---|
 | DF-1 | **P0** | **No auth/RLS/tenancy** anywhere; `supabase/migrations/.gitkeep` only; `main.py:6-11` "auth NOT enabled" | any deploy exposes all data cross-tenant | service documented INTERNAL/DEV-only; not deployed | JWT issuer/aud validation, org membership, RLS on every row/object/job/report, positive+negative cross-tenant tests | proposed **I**; blockers B-001/B-002; **B-012 deploy hold** (no public exposure) |
-| DF-2 | **P0** | **Legal math on binary float**; `rules/operations.py:41/46/77` (`float(a)`, `round(v,10)`, `a/b`); no `Decimal` in `services/` | FAR/coverage/yard boundary at exact threshold subject to representation error (e.g. exact FAR equality) | 10-dp determinism rounding; fail-closed non-finite guards; geometry floats **isolated** (`evaluator.py:157` reads typed classes only) | Decimal/rational from canonical strings; per-rule rounding mode/scale/order; unit enforcement; adversarial threshold tests | proposed **D**; amend M4 evaluator (blocks M4 publication) |
+| DF-2 | **P0** | **Legal math on binary float**; `rules/operations.py:41/46/77` (`float(a)`, `round(v,10)`, `a/b`); no `Decimal` in `services/` | FAR/coverage/yard boundary at exact threshold subject to representation error (e.g. exact FAR equality) | 10-dp determinism rounding; fail-closed non-finite guards; geometry floats **isolated** (`evaluator.py:157` reads typed classes only) | Decimal/rational from canonical strings; per-rule rounding mode/scale/order; unit enforcement; adversarial threshold tests | proposed **D**; **owner made this a mandatory blocker for M4 rule publication → B-014** (references M4-T001..T006) |
 | DF-3 | **P0** | **No run orchestrator / snapshot set / persistence**; synchronous per-request; `profile_revision` frozen `1` (`builder.py:669`); no DB | a partial multi-source analysis could be presented as complete; no reproducible run; no as_of coherence | single-source PLUTO path only; wave/spatial not wired (can't silently combine) | immutable run id + as_of_date + source_snapshot_set + typed stage states; coherent cache/LKG/breaker across restarts | proposed **A/B**; blocker B-001 (storage) |
 | DF-4 | High | **`source_fact` contract OPEN** (`source_fact.schema.json`, no additionalProperties) — mandatory provenance record | undocumented/typo fields silently accepted into provenance | producer uses allowlist dict assembly (`profile/builder.py:297`) | `additionalProperties:false` (or single versioned `extensions`); negative typo/leak tests | proposed **G** |
 | DF-5 | High | **`analysis_state_transition` contract OPEN** | audit records accept unknown keys | schema exists but no runtime writes it | close contract; allowlist serializer | proposed **G** (+ **B** when the state machine is built) |
@@ -109,7 +110,7 @@ Every item maps to: an **existing task**, a **proposed packet area** (§5 letter
 
 | Area | Scope (owner directive) | Maps to / proposed | Key deps |
 |---|---|---|---|
-| **A** Machine source registry + immutable capture + snapshot sets | machine-readable registry row per `SOURCE_ID`; CI rejects unregistered connector/endpoint; exact raw-byte capture, content-addressed/immutable/dedup/replayable; `source_snapshot_set` per analysis with skew rules; coherent-snapshot pagination | extend M1 registry (accepted) → machine-readable + CI gate (**proposed**); reuse M3-T002 immutable-capture primitives for connector data (**proposed**, cross-lane reuse) | B-001 storage; M1 (accepted) |
+| **A** Machine source registry + immutable capture + snapshot sets | machine-readable registry row per `SOURCE_ID` (full field list in §5B); CI rejects unregistered connector/endpoint; exact raw-byte capture, content-addressed/immutable/dedup/replayable; `source_snapshot_set` per analysis with skew rules; coherent-snapshot pagination | extend M1 registry (accepted) → machine-readable + CI gate (**proposed**); **depends on accepted M3-T002** for the generic append-only content-addressed storage primitive, imported **read-only** (ownership resolved in §5C) | **accepted M3-T002** (storage primitive); B-001 storage; M1 (accepted) |
 | **B** Analysis-run / job orchestrator | immutable run id, tenant, as_of_date, snapshot set, rule release, engine/config hashes; async/persistent/idempotent/resumable/cancellable; per-source budgets + whole-run deadline; typed stage states; partial-never-complete; coherent cache/LKG/breaker across restarts; restore worker + source-monitor entrypoints | **proposed** (new); `analysis_state*` contracts exist; restore `render.yaml:137-154` worker/cron under real entrypoints | A; B-001/B-002; DF-3 |
 | **C** Canonical zoning-lot + physical-context model | distinct address/BBL/tax-lot/condo/building/zoning-lot entities; zoning lot may span tax lots (dated evidence); no MapPLUTO-area-as-zoning-area; frontage/lot-lines/street-lines/street-width class/block-face/legal portions; corner/interior/through/irregular/multi-frontage/remaining-portion; **no `semi_corner`** unless enacted source; missing topology blocks dependent rules | extend M2 geometry (M2-T009 accepted; M2-T014/15/16 survey **HELD**); **proposed** canonical zoning-lot entity; ties to M3-T004 closure (PR #93) | M2 geometry; M3-T004; DF-9 |
 | **D** Exact legal math + units | Decimal/rational from canonical strings; per-rule rounding mode/scale/order; unit enforcement; canonical decimal serialization + formula/unit traces; geometry-float isolation with explicit conversions; adversarial threshold/rounding tests | **amend M4** `rules/operations.py`+`evaluator.py` (**proposed** rework); blocks M4 publication | M4 engine; DF-2 |
@@ -117,12 +118,42 @@ Every item maps to: an **existing task**, a **proposed packet area** (§5 letter
 | **F** Provenance, human review, publication | deprecate generic confidence as legal signal (keep separated); track retrieval-fidelity/normalization/authority/freshness/conflict/review/coverage separately; full derivation graph; immutable user decisions; G6 verifies reviewer authorization+eligible evidence+closure+tests+rule-release hash; approved/suspended/superseded/rejected/revoked; upstream change invalidates downstream without deleting history | **proposed** review workflow + publication state machine (`analysis_state*` runtime); G6 (existing hold) | B (runtime); E; DF-11 |
 | **G** Strict versioned contracts | close production objects `additionalProperties:false` or single versioned `extensions`; allowlist serializers; negative typo/undocumented-field/diagnostic-leak tests; schema migration + compat rules | **proposed** contract-hardening (close `source_fact`, `analysis_state_transition`; audit all) | DF-4/DF-5 |
 | **H** Scenario, optimizer, 3D, reports | hard/soft constraints + objectives; infeasible/timeout/unsupported/approximate/optimal outcomes; pin solver/version/config/seed/discretization/tolerance/gap; no AI numbers into solver; 3D visualization-only; reports pin manifest + draft/partial/review state; supersede/invalidate; injection-safe tenant-scoped signed export | **M5** (foundation exists) → **proposed** optimizer + reports/export; 3D under **expansion hold** | E; **/dependency-security** for any solver; DF-7 |
-| **I** Auth, tenancy, storage, ops | JWT iss/aud, org membership, tenant scope on every row/object/job/report; RLS pos+neg tests; backend-only service creds + CSRF policy; rate/quota/upload/decompression budgets; durable queue + DLQ + recovery; readiness≠liveness≠source-health; telemetry/alerting/migration/rollback/backup/PITR/retention/drills; **no public exposure before auth + P0 gates accepted** | **M0-T007/T008** (blocked B-001) + **proposed** RLS/tenancy/ops; **B-012 deploy hold** | B-001/B-002; DF-1 |
+| **I-foundation** Auth, tenant identity, RLS, base security contracts | JWT iss/aud, organization membership, tenant identity, RLS, tenant-scoped object ownership, base migration + security contracts; RLS pos+neg tests. **Precedes any persistent B analysis-run records** | **M0-T007/T008** (blocked B-001) + **proposed** RLS/tenancy | B-001; DF-1 |
+| **I-operations** Production workers, deploy, observability, ops | production workers, deployment, readiness (≠liveness≠source-health), observability/telemetry/alerting, rate/quota/upload/decompression budgets, durable queue + DLQ + recovery, backup/restore/PITR, retention, incident procedures. **Follows or integrates with the accepted B orchestrator** | **proposed** ops; restore `render.yaml:137-154` worker/cron; **B-012 deploy hold** | **accepted B**; B-001/B-002; DF-1/DF-3 |
 | **J** End-to-end expert golden corpus + launch gate | expert-reviewed cases across every borough/lot-type/condo/split-district/overlay/landmark/flood/street-width/vesting/source-mismatch/conflict/outage/stale-cache/restart/schema-drift/pagination/changed-during-read/rounding/unknown-applicability/override/supersession/tenant-isolation; replay/property-based/mutation/metamorphic/differential/failure-injection harnesses; CI deterministic+offline; live smoke separate, never silently updates goldens | **M6** golden-property library → **proposed** expert corpus + launch gate (G7) | all above; §6 |
 
----
+### 5A. Approval scope — architecture only (NOT contracting)
 
-## 6. Harness + expert-golden-corpus matrix
+**Approving or merging #95 approves the ARCHITECTURE only.** It does **not** contract or authorize any A–J implementation. Before any A–J work begins, a **separate control PR** must create exact task IDs with: outputs, allowed/forbidden paths, dependencies, **explicit blocker references**, acceptance preconditions, G0–G5 acceptance scenarios, harness owner, producer-report path, and any control-plane regressions. Until then the A–J holds in §7C are **not** machine-enforced.
+
+### 5B. Machine source-registry — required fields (Area A)
+
+Every registry row (one per connector `SOURCE_ID` and legal/document channel) must carry **at least**: stable **source ID**; official **authority/publisher**; approved **endpoint/domain + dataset identity**; **authentication/credential class**; **rate + pagination limits**; **access/usage terms**; **version/change signals**; **freshness + staleness rules**; **coherent-snapshot method**; **fallback/LKG policy**; **source-health monitoring**; **responsible owner**; and **known limitations + downstream claims blocked**. **CI must reject an unregistered connector or endpoint** (a build-time gate over the registry vs the connector allowlist).
+
+### 5C. Revised dependency graph + M3-T002/A ownership resolution
+
+**Proposed order (owner sequencing decision):** `A + I-foundation → B → I-operations`. C/D/E proceed per their exact dependencies but may **not** be production-wired around A / B / I-foundation.
+
+```
+accepted M3-T002 (storage primitive)
+        │ (read-only import)
+        ▼
+   A (registry + capture + snapshot sets) ── + ── I-foundation (auth/tenant/RLS)
+        │                                          │
+        └──────────────┬───────────────────────────┘
+                       ▼
+                  B (run orchestrator, persistent runs)
+                       │
+                       ▼
+                 I-operations (workers/deploy/observability/backup)
+   C / D / E: per their own deps; NOT production-wired around A/B/I-foundation.
+```
+
+**M3-T002 ↔ A ownership (explicit disposition):**
+- **A depends on accepted M3-T002** for the generic append-only, content-addressed storage primitive, and **imports that interface read-only**.
+- **A separately owns** its own trees: **API-response capture manifests, connector observations, and the `source_snapshot_set` contracts** — all **outside** the M3 legal-corpus-owned trees (`services/api/app/corpus/**`).
+- **A may not modify or duplicate `app/corpus/storage`.**
+- **If this cross-lane dependency is rejected** (e.g. the owner prefers the legal-corpus and connector-data storage stay fully separate), the fallback is a **neutral shared-storage packet** owned by neither lane, and M3-T002 is updated to consume it. Either way, "reuse" is not left ambiguous.
 
 | Harness | Target area | Deterministic/offline? |
 |---|---|---|
@@ -138,17 +169,33 @@ Every item maps to: an **existing task**, a **proposed packet area** (§5 letter
 
 ---
 
-## 7. Cross-milestone holds + enforcement proof
+## 7. Holds — classified by how they are actually enforced
 
-| Hold | Enforcement (machine or record) |
+**Honesty correction (owner directive):** a hold is only "enforced" if a machine gate, an existing structural fact, or an existing blocker record actually prevents the outcome. A hold named in §5 is **not** machine-enforced merely because §5 says so, and a **proposed** A/B task does **not** inherit B-001 until that task has a real ID and B-001's blocker record explicitly references it. The table below splits holds into three classes.
+
+### 7A. Currently machine-enforced (a gate/precondition actually blocks today)
+| Hold | Enforcement |
 |---|---|
-| M4-T007+ uncontracted until accepted M3-T004 closure **+** compatible-snapshot / canonical-zoning-lot / exact-legal-math / three-valued applicability+coverage prerequisites | no M4-T007 task file exists; master_plan records the M3-T004 dependency; §5 adds the further prerequisites (A/C/D/E) as gating |
-| Existing M4 rules remain draft/awaiting G6 | ledger: M4-T001..T006 all `awaiting_gate`; G6 gate not recorded |
-| M5-T001 remains scenario foundation only | ledger: M5-T001 `awaiting_gate`; `scenario/__init__.py` "service-layer only, no endpoint" |
-| Construction-Code claims blocked until accepted M3-T005 | PR #93 M3-T005 `backlog` + B-011 (scope) + B-001 (storage) |
-| Fixture-only evidence cannot make a production ingestion/document task accepted | S9 regression (control-plane CI) — B-001 blocks acceptance of M3-T002/T003/T005; proposed A/B ingestion tasks inherit the same B-001 gate |
-| No "Verified/complete/buildable" unless every required domain evaluated from compatible snapshots under an approved rule release | `assert_not_verified` (`rules/integration.py:38`); coverage caps at `conditional`; profile `rule_coverage="not_computed"`; G6 human gate |
-| Public deployment blocked | **B-012** (new, Part 1); `render.yaml` autoDeploy off; DF-1 |
+| Existing M4 rules cannot be accepted (draft/awaiting G6) | ledger: M4-T001..T006 all `awaiting_gate`; the `accept` precondition requires all required gates PASS incl. G6 (not recorded) |
+| Fixture-only cannot make **M3-T002 / M3-T003 / M3-T005** accepted (PR #93 lane) | **S9 control-plane regression** proves the CLI blocks their acceptance while **B-001** (which names exactly those three) is open — but only on the **unmerged PR #93 branch**; not in force on main until #93 merges |
+| Construction-Code corpus (M3-T005) blocked | on the #93 branch: **B-011** (scope) + **B-001** (storage) reference M3-T005; not in force on main until #93 merges |
+| No `verified` label from the rules engine | `assert_not_verified` (`rules/integration.py:38`); coverage caps at `conditional`; profile `rule_coverage="not_computed"` (code on main) |
+| Decimal/rational legal math required before M4 rule **publication** (owner decision) | **B-014** (new, this PR) references M4-T001..T006 → blocks their acceptance until exact-decimal math + typed units land; enforced on the #95 branch (in force on main only when this PR merges) |
+| Public deployment blocked | **B-012** (Part 1 / PR #94 branch); `render.yaml` autoDeploy off |
+
+### 7B. Structurally prevented only because no downstream task/code exists yet (not a machine gate)
+| Hold | Why it holds today |
+|---|---|
+| M4-T007+ not started | **no M4-T007 task file exists**; nothing to run. This is absence, not enforcement. The further prerequisites (accepted M3-T004 closure + A/C/D/E) become real gates only when M4-T007 is contracted with explicit dependency + blocker references. |
+| M5-T001 is foundation only | `scenario/__init__.py` "service-layer only, no endpoint" — **no scenario endpoint exists**; nothing wires it. Absence, not a gate. |
+| Built-but-unwired connectors can't mislead | the production route simply never calls them (§2). Absence, not enforcement. |
+
+### 7C. Proposed — NOT yet enforced (require contracting before they bind)
+| Intended hold | Not yet enforced because |
+|---|---|
+| Compatible-snapshot / canonical-zoning-lot / exact-legal-math / three-valued prerequisites gate M4-T007 | these are **§5 proposals**; no task IDs, no blocker records reference M4-T007 yet |
+| Proposed A/B ingestion tasks gated by B-001 (durable storage) | **A/B do not inherit B-001** — B-001 references only M3-T002/T003/T005. A/B inherit it only after they receive real IDs and B-001 (or a new blocker) is amended to name them |
+| Any "no Verified/complete/buildable unless every required domain evaluated from compatible snapshots under an approved rule release" system-wide guarantee | depends on the run orchestrator (B), coverage certificate (E), and snapshot set (A) that **do not exist yet** |
 
 ---
 
@@ -162,26 +209,35 @@ Every item maps to: an **existing task**, a **proposed packet area** (§5 letter
 
 ---
 
-## 9. Unresolved owner decisions · paid-service questions · continuing limitations
+## 9. Owner decisions (RECORDED) · paid-service questions · continuing limitations
 
-**Owner decisions needed:**
-1. Approve this replan's area breakdown (A–J) and the sequence, so IDs can be assigned (nothing contracted yet).
-2. **B-013** — AGE-ONLY exception for `next@15.5.21` (Part 1, PR #94).
-3. Sequencing: A/B (capture+orchestrator) and I (auth/RLS) are the P0 substrate; confirm they precede wiring the built-but-unwired connectors (DF-8) into production.
-4. Whether DF-2 (Decimal legal math) is a blocking prerequisite to M4 rule *publication* (recommended: yes).
+**Owner decisions RECORDED (owner directive 2026-07-23):**
+1. **A–J architecture: approved in principle**, subject to the corrections in this revision — **not yet contracted**. IDs/outputs/paths/deps/blockers/preconditions/scenarios/regressions are created in a separate control PR before any A–J implementation (§5A).
+2. **Decimal/rational legal math + typed units: a MANDATORY BLOCKER for M4 rule publication** → recorded as **B-014** (references M4-T001..T006; blocks their acceptance until exact-decimal math + typed units land). This resolves DF-2's disposition.
+3. **B-013: age exception DECLINED — WAIT** until `2026-07-28T15:59:32.231Z` (Part 1, PR #94).
+4. **Sequencing: `A + I-foundation → B → I-operations`** (§5C); C/D/E per their deps but not production-wired around A/B/I-foundation.
+5. **Public deployment holds remain** (B-012).
+6. **No implementation follows merely from merging #95** (§5A).
 
-**Paid-service / credential questions (stop-and-report, none purchased):**
-- B-001 Supabase (storage/RLS), B-002 Render (workers/deploy), B-004 Geoclient (address→BBL). All free-tier/official; no purchase proposed.
-- Any future solver/queue/cloud-OCR → `/dependency-security` + owner decision first.
+**Paid-service / credential questions (stop-and-report; NOTHING purchased or authorized here):**
+- **No purchase is authorized in this proposal.** Exact current pricing must be **re-verified immediately before any owner purchase approval.**
+- **Geoclient** access is official and **expected to be free** (B-004, free subscription key).
+- **B-002 (Render) is currently `resolved_temporary`** and must be **revalidated before deployment**.
+- **The declared production Render architecture includes PAID Starter web services and PAID worker/cron capacity** (not free-tier). **Production Supabase is expected to require Pro/paid** reliability + backup (PITR) features.
+- Any future solver / queue / cloud-OCR / paid API / new parsing library → **`/dependency-security` + stop-and-report owner decision** before selection or install.
+
+**Final reports vs bounded diagnostic lists (owner directive item 8):**
+- **Bounded API/client error lists are acceptable** (e.g. `missing-inputs.ts`, `validate-profile.ts` "further problems omitted (bounded report)").
+- **A final evidence or professional-review report may NEVER silently truncate** material missing inputs, conflicts, citations, or limitations. It **must include the complete machine-readable artifact** or a **visible continuation/pagination** control. This distinction is a requirement on Areas F (review) and H (reports); J1 below is re-scoped to "bounded *diagnostic* lists only".
 
 **Continuing (disclosed) non-launch limitations:**
 - PLUTO-only production analysis; ZTLDB/geometry/spatial/rules/scenario not production-invoked (§2).
 - No persistence, run orchestrator, report/export, or auth today.
-- Bounded/truncated diagnostic reports (J1).
+- Bounded/truncated **diagnostic** lists are acceptable; **final reports must not silently truncate** (above).
 - 3D massing / premium UI / financial / opportunity-search under expansion hold.
 
 ---
 
 ## 10. Confirmation
 
-Nothing was merged, moved, claimed, dispatched, implemented, accepted, deployed, purchased, installed, or closed. Ledger totals unchanged (42 accepted / 8 awaiting_gate / 9 backlog / 2 blocked / 1 claimed). This document is a proposal; contracting happens only after owner approval and ID reconciliation.
+Nothing was merged, moved, claimed, dispatched, implemented, accepted, deployed, purchased, installed, or closed. **Authoritative main ledger unchanged: 42 accepted / 8 awaiting_gate / 4 backlog / 2 blocked / 1 claimed** (this #95 branch adds a report doc + the B-014 blocker record; the five M3 backlog proposals live only on unmerged PR #93; "9 backlog" is the hypothetical post-#93 combined state). This document is a proposal; contracting happens only after owner approval and ID reconciliation. **Merging #95 approves the architecture only — it does not contract or authorize any A–J implementation** (§5A).
