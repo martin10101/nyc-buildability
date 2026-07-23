@@ -113,6 +113,27 @@ open blockers, ranked by missing launch weight. It is not an AI-generated opinio
   it is never presented as live, and it never changes the file-derived numbers.
 - Every live panel shows a "last synced" timestamp.
 
+## Isolation from the architect product (owner requirement)
+
+The dashboard is internal, read-only owner tooling and is kept cleanly separated from the
+architect-facing product so its failure can never impair property analysis:
+
+- **One-directional dependency:** the product (`app/property`, `app/confirm`, root layout/home,
+  `components/property`, `lib/api`) imports **nothing** from the dashboard. The dashboard imports
+  nothing from the product either — it has its own `InternalBanner` — so it is a self-contained
+  unit under `app/dashboard`, `components/dashboard`, `lib/dashboard`.
+- **Failure containment:** `app/dashboard/error.tsx` is a route-level error boundary. Next.js
+  renders route segments independently, so any unexpected dashboard error is contained to
+  `/dashboard` (showing a safe fallback that surfaces only an opaque `error.digest`) and never
+  reaches the property routes. The file loader is fail-safe (returns UNKNOWN, never throws).
+- **Off by default:** the route 404s unless `INTERNAL_OWNER_DASHBOARD_ENABLED` is set, so in a
+  normal production deploy it is not even reachable.
+- **Build:** it currently rides the same `nycdf-web` build; a dashboard build error is caught by
+  required CI before any deploy. Because the engine (`lib/dashboard`) is pure and framework-
+  independent and the route imports nothing from the product, the dashboard can later be extracted
+  into its **own Render web service / subdomain from the same repo** with minimal effort (point a
+  second service at `app/dashboard` + `lib/dashboard`, or a thin app that imports `lib/dashboard`).
+
 ## Deploying on Render (later, owner-authorized)
 
 The dashboard rides the existing `nycdf-web` service — **no new Render service**. To deploy:

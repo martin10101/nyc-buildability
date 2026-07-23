@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
-import { InternalBanner } from '@/components/property/InternalBanner';
+import { InternalBanner } from '@/components/dashboard/InternalBanner';
 import { DashboardApp } from '@/components/dashboard/DashboardApp';
 import { dashboardEnabled } from '@/lib/dashboard/config';
 import { getDashboardModel } from '@/lib/dashboard/server';
