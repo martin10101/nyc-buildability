@@ -1,0 +1,32 @@
+{
+  "rule_id": "syn-temporal-late",
+  "rule_version": "0.0.1-draft",
+  "family": "syn_temporal_far",
+  "title": "SYNTHETIC temporal FAR - late version (effective on/after 2024-01-01)",
+  "jurisdiction": "nyc",
+  "status": "extracted_draft",
+  "effective_from": "2024-01-01",
+  "effective_to": null,
+  "description": "SYNTHETIC fixture (M4-T004 FH-2 negative control + boundary): governs dates ON/AFTER 2024-01-01 (half-open [from, to): effective_from is INCLUSIVE). At the seam date 2024-01-01 ONLY this rule is in effect (early's effective_to is exclusive), so the boundary resolves deterministically and there is NO conflict. Illustrative value; not a Verified determination.",
+  "citations": [
+    {"snapshot_id": "zr-demo-m4t004", "section": "00-00-DEMO-FH2", "quote": "SYNTHETIC (not verbatim from any source): FH-2 temporal late.", "last_amended": null}
+  ],
+  "inputs": [
+    {"name": "zoning_district", "type": "string", "required": true, "description": "District governing the lot (scope via applicability)."},
+    {"name": "lot_area_sq_ft", "type": "number", "required": true, "unit": "square_feet", "exclusive_minimum": 0, "description": "Zoning-lot area (must be > 0)."}
+  ],
+  "outputs": [
+    {"name": "max_syn_temporal_far", "type": "number", "unit": "far", "description": "SYNTHETIC max FAR (late)."}
+  ],
+  "parameters": [
+    {"name": "far_value", "value": 2.0, "citation_ref": "zr-demo-m4t004", "note": "SYNTHETIC late FAR."}
+  ],
+  "applicability": {"op": "in_set", "input": "zoning_district", "values": ["SYNTH"]},
+  "computation": {
+    "steps": [
+      {"id": "far", "op": "identity", "args": [{"param": "far_value"}], "note": "Late FAR."}
+    ],
+    "outputs": {"max_syn_temporal_far": {"step": "far"}}
+  },
+  "limitations": ["SYNTHETIC FH-2 negative-control demonstration; illustrative value; requires official capture + G6 before any use."]
+}

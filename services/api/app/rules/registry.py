@@ -23,6 +23,83 @@ from .snapshots import SnapshotStore
 _RULESET_DIR = Path(__file__).resolve().parent / "rulesets"
 
 
+# --------------------------------------------------------------------------
+# FH-2: strictly fail-closed same-family rule-conflict DETECTION.
+#
+# This DETECTS an ambiguity and surfaces it for professional review; it NEVER
+# selects, ranks, merges, supersedes, or reinterprets a competing legal rule.
+# A genuine conflict requires ALL of (M4-T004-FH2-SPEC.md):
+#   1. same rule family / output domain (the caller passes one family's rules);
+#   2. simultaneously in effect for the same valid as_of_date
+#      (``is_in_effect`` uses the half-open window ``[effective_from,
+#      effective_to)`` - effective_from INCLUSIVE, effective_to EXCLUSIVE);
+#   3. each independently matches the same normalized inputs (applicability
+#      independently satisfied);
+#   4. they compete for the same evaluation decision (overlapping OUTPUT names) -
+#      complementary rules producing DIFFERENT outputs are not competitors.
+# The typed result carries the competing rule IDs and each rule's effective
+# window; it produces NO output/determination value. It is deterministic and
+# INDEPENDENT of rule load order (competing rules + output names are sorted).
+# --------------------------------------------------------------------------
+
+def detect_rule_conflicts(
+    rules: list[RuleDefinition],
+    inputs: dict,
+    as_of_date: str | None = None,
+) -> dict | None:
+    """Return a typed, deterministic conflict object when >=2 rules from a single
+    family are simultaneously in effect, independently applicable to ``inputs``,
+    and compete for at least one shared output name; otherwise ``None``.
+
+    ``rules`` must all belong to one family (the registry passes one family's
+    list). The outcome does not depend on the order of ``rules``.
+    """
+    candidates = [
+        rule
+        for rule in rules
+        if rule.is_in_effect(as_of_date) and evaluator.applicability_satisfied(rule, inputs)
+    ]
+    if len(candidates) < 2:
+        return None
+    # Group applicable+in-effect rules by each output name they would emit.
+    output_to_rules: dict[str, list[RuleDefinition]] = {}
+    for rule in candidates:
+        for name in rule.output_names():
+            output_to_rules.setdefault(name, []).append(rule)
+    contested = sorted(name for name, rs in output_to_rules.items() if len(rs) >= 2)
+    if not contested:
+        # Only complementary rules (each emitting distinct outputs) coexist -> the
+        # rules do not compete for the same decision; NOT a conflict.
+        return None
+    competing: dict[str, RuleDefinition] = {}
+    for name in contested:
+        for rule in output_to_rules[name]:
+            competing[rule.rule_id] = rule
+    competing_rules = [competing[rule_id] for rule_id in sorted(competing)]
+    return {
+        "conflict": True,
+        "family": competing_rules[0].family,
+        "as_of_date": as_of_date,
+        "competing_output_names": contested,
+        "competing_rules": [
+            {
+                "rule_id": rule.rule_id,
+                "rule_version": rule.rule_version,
+                "effective_from": rule.effective_from,
+                "effective_to": rule.effective_to,
+                "output_names": sorted(rule.output_names()),
+            }
+            for rule in competing_rules
+        ],
+        "note": (
+            "multiple same-family rules are simultaneously in effect and "
+            "independently applicable to the same inputs for overlapping "
+            "output(s); which rule governs is a legal determination requiring "
+            "professional review - no value is produced from the competing rules"
+        ),
+    }
+
+
 class RuleRegistry:
     def __init__(self, ruleset_dir: Path | None = None, snapshots: SnapshotStore | None = None):
         self.ruleset_dir = Path(ruleset_dir) if ruleset_dir else _RULESET_DIR
@@ -95,6 +172,16 @@ class RuleRegistry:
             for rule in self._by_family.get(family, [])
             if rule.is_in_effect(as_of_date)
         ]
+
+    def detect_conflicts(
+        self, family: str, inputs: dict, as_of_date: str | None = None
+    ) -> dict | None:
+        """FH-2: detect a strictly fail-closed same-family rule conflict for
+        ``inputs`` as of ``as_of_date`` (see :func:`detect_rule_conflicts`).
+        Returns a typed conflict object or ``None``. Deterministic and
+        independent of rule load order; never picks a winner."""
+        self._ensure()
+        return detect_rule_conflicts(self._by_family.get(family, []), inputs, as_of_date)
 
     def family_coverage(self, family: str) -> dict:
         """Coverage honesty (RE-S7): a family with no implemented rule is a

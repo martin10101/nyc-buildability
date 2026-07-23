@@ -21,6 +21,7 @@ Load-bearing guarantees:
 
 from __future__ import annotations
 
+import datetime
 import math
 import re
 from typing import Any
@@ -84,6 +85,19 @@ def _predicate_input_names(node: dict) -> set[str]:
     if node.get("input") is not None:
         names.add(node["input"])
     return names
+
+
+def applicability_satisfied(rule: RuleDefinition, inputs: dict) -> bool:
+    """True iff ``rule``'s applicability predicate is independently satisfied by
+    ``inputs``. Used by FH-2 conflict detection to judge whether two same-family
+    rules would both apply to the same normalized inputs. Fail-closed: a malformed
+    predicate/input that raises is treated as NOT satisfied (never a false
+    positive, never an escaping exception). This does no computation and produces
+    no value; it only reads applicability."""
+    try:
+        return bool(_eval_predicate(rule.applicability, inputs)[0])
+    except (KeyError, TypeError, ValueError, IndexError):
+        return False
 
 
 # --------------------------------------------------------------------------
@@ -321,16 +335,25 @@ _ISO_DATE_RE = re.compile(r"^(\d{4})-(\d{2})-(\d{2})$")
 
 
 def _valid_iso_date(value: Any) -> bool:
-    """True only for a syntactically valid ISO ``YYYY-MM-DD`` calendar date. A
-    non-string or a malformed/out-of-range value is rejected so temporal gating
-    fails closed instead of doing a misleading lexical string comparison."""
+    """True only for a REAL ISO ``YYYY-MM-DD`` calendar date. A non-string, a
+    shape-malformed value, or a calendar-impossible day (``2024-02-30``,
+    ``2024-04-31``, ``2025-02-29`` in a non-leap year) is rejected so temporal
+    gating fails closed instead of doing a misleading lexical string comparison
+    (FH-1). ``datetime.date`` supplies true calendar validation - including leap
+    years, so a genuine ``2024-02-29`` stays valid."""
     if not isinstance(value, str):
         return False
     match = _ISO_DATE_RE.match(value)
     if not match:
         return False
-    _, month, day = (int(part) for part in match.groups())
-    return 1 <= month <= 12 and 1 <= day <= 31
+    year, month, day = (int(part) for part in match.groups())
+    try:
+        datetime.date(year, month, day)
+    except ValueError:
+        # Impossible calendar date (e.g. Feb 30, Apr 31, Feb 29 in a non-leap
+        # year, month/day out of range): fail closed like any malformed input.
+        return False
+    return True
 
 
 def _effective_window(rule: RuleDefinition, as_of_date: str | None) -> dict:
