@@ -4,7 +4,16 @@
   "reviewer": "qa-engineer",
   "role": "independent_review",
   "result": "PASS",
-  "report_file": "project-control/reports/M4-T006-G4-qa-review.md",
-  "reviewed_at": "2026-07-23T04:14:07.528315+00:00",
-  "updated_at": "2026-07-23T04:14:07.528315+00:00"
+  "report_file": "project-control/reports/M4-T006-G4b-qa-review.md",
+  "reviewed_at": "2026-07-23T04:51:15.924736+00:00",
+  "history": [
+    {
+      "reviewer": "qa-engineer",
+      "role": "independent_review",
+      "result": "PASS",
+      "report_file": "project-control/reports/M4-T006-G4-qa-review.md",
+      "reviewed_at": "2026-07-23T04:14:07.528315+00:00"
+    }
+  ],
+  "updated_at": "2026-07-23T04:51:15.929020+00:00"
 }

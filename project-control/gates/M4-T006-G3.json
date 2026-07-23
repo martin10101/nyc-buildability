@@ -4,7 +4,16 @@
   "reviewer": "code-reviewer",
   "role": "independent_review",
   "result": "PASS",
-  "report_file": "project-control/reports/M4-T006-G3-code-review.md",
-  "reviewed_at": "2026-07-23T04:14:07.195952+00:00",
-  "updated_at": "2026-07-23T04:14:07.195952+00:00"
+  "report_file": "project-control/reports/M4-T006-G3b-code-review.md",
+  "reviewed_at": "2026-07-23T04:51:15.573386+00:00",
+  "history": [
+    {
+      "reviewer": "code-reviewer",
+      "role": "independent_review",
+      "result": "PASS",
+      "report_file": "project-control/reports/M4-T006-G3-code-review.md",
+      "reviewed_at": "2026-07-23T04:14:07.195952+00:00"
+    }
+  ],
+  "updated_at": "2026-07-23T04:51:15.576856+00:00"
 }
