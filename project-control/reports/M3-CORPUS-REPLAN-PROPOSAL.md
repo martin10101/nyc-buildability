@@ -2,7 +2,7 @@
 
 **Author:** orchestrator (main session) · **Date:** 2026-07-23 · **Branch:** `control/M3-corpus-replan-2026-07-23`
 **Directive:** owner directive 2026-07-23 (repair the missing M3 legal-corpus dependency before any M4-T007+ yard/coverage work; §11-25 correction; architect benchmark; construction-code scope; deterministic completeness harnesses).
-**Status of this package:** PROPOSAL. No producer is dispatched. M4-T007/T008/T009 are NOT contracted, claimed, or started. The 3-way vs 4-way split is preserved as a downstream candidate and NOT decided here. Nothing merges to `main` until you approve.
+**Status of this package:** PROPOSAL, **revision 2** (owner corrections applied in-branch to PR #93 — see §15 amendment log). No producer is dispatched. M4-T007/T008/T009 are NOT contracted, claimed, or started. The 3-way vs 4-way split is preserved as a downstream candidate and NOT decided here. Nothing merges to `main` until you approve.
 
 This document is the single return package the directive's section 9 asks for. It is control-only (task packets + docs); it changes no product code.
 
@@ -105,29 +105,60 @@ Do not call a modifier "confirmed absent" merely because it was not found in Art
 
 **Rule:** never generalize a project-specific agency determination to a different property without an approved legal interpretation.
 
+### 4A. Provenance is NOT automatic precedence (amendment item 4)
+
+The seven tiers **classify source provenance; they are not a conflict-resolution ranking.** `SOURCE_AUTHORITY_POLICY.md` (M3-T001) must state:
+
+- An **adopted amendment becomes part of current law**; an older consolidated portal page does **not** defeat a later effective amendment merely because of a tier number.
+- A **legally effective project-specific instrument** (variance, special permit, restrictive declaration, zoning-lot agreement) **may control the affected property** even though it is narrower than citywide law.
+- **Deterministic resolution must consider** jurisdiction, legal status, effective/as-of date, explicit amendment/supersession/rescission, and scope specificity.
+- If precedence or applicability remains unresolved → return **`data_conflict`** or **`professional_review_required`**; **never silently select a source.**
+- **AI may propose relationships but has no authority to approve a legal interpretation.**
+
+M3-T001 AS-1/AS-8 prove these points.
+
 ---
 
 ## 5. Legal-corpus coverage matrix (directive §4/§5) — becomes `docs/LEGAL_CORPUS_COVERAGE_MATRIX.md` (M3-T001)
 
-Per-domain status vocabulary: **`implemented` | `partial` | `missing` | `conflicting` | `unsupported` | `professional_review_required` | `not_applicable`.** **No single "complete/compliant/buildable" label while any material domain is unresolved.** Initial orchestrator assessment (M3-T001 producer verifies + finalizes):
+### 5A. Authoritative status vocabulary (amendment item 5 — reconciled)
 
-| Domain | Initial status | Basis |
+**One** authoritative vocabulary, mapped to runtime rule-evaluation outcomes. Domain roll-up may also use `implemented`/`partial`; the per-evaluation outcomes are:
+
+| Status | Meaning | Runtime mapping |
 |---|---|---|
-| Zoning maps / district facts | partial | M2 GIS zoning-features + ZTLDB connectors accepted; lot-level determination limitation noted |
-| Zoning Resolution text | missing | no versioned corpus yet (M3-T002); M4 rules ride hand-captured snapshots (`raw_html_verified:false`) |
-| Amendments / effective dates | missing | ingestion + overlay owed (M3-T002) |
-| Definitions & interpretation (§12-10, §11-25) | missing | closure graph owed (M3-T003) |
-| Special districts / overlays | partial | M2 overlay/special-district facts; ZR text + overrides missing |
-| Environmental & restrictive declarations | missing | not ingested |
-| Zoning-lot identity & recorded agreements | missing | not ingested; tax-lot ≠ zoning-lot flagged |
-| CPC / BSA / DOB project-specific approvals | missing | not ingested |
-| Construction Code | missing | M3-T004 (scope-bounded) |
-| DOB Rules / Bulletins / Local Laws | missing | M3-T004 overlay |
-| Landmarks / historic | partial | M2 LPC flag; requirements text missing |
-| Waterfront / flood / environmental | partial | flood flag researched; requirements missing |
-| Occupancy / use / building type | missing | code + rule work owed |
-| Parking / loading | missing | rule slice not started |
-| Accessibility / fire-egress / structural | missing | M3-T004 scope |
+| `missing` | required source/domain not yet present | no value; blocks dependent claim |
+| `not_evaluated` | in scope but not yet assessed this run | no value; not a negative finding |
+| `unsupported` | cannot be resolved with current corpus/closure | typed unsupported result |
+| `conflicting` | ≥2 sources disagree, precedence unresolved | `data_conflict` |
+| `professional_review_required` | needs qualified-human legal/design judgment | PRR result, never `verified` |
+| `not_applicable` | affirmatively resolved as not applying | only after applicability resolved |
+
+**`not_applicable` may be returned only after applicability is affirmatively resolved. Unknown or missing information must NEVER become `not_applicable` or `false`.** (This adds `not_evaluated`, which the earlier draft used in prose but omitted from the vocabulary.)
+
+### 5B. Actionable coverage matrix (amendment item 7)
+
+Every domain row records **six columns**: status; controlling official source channel **or** unavailable-document class; evidence/as-of date; implementing task ID **or** human-action blocker; downstream claims blocked; next action + responsible reviewer. **No `missing`/`partial`/`conflicting`/`unsupported`/`professional_review_required` row may be left without a task, blocker, or explicit continuing limitation. Completing M3-T003 must not imply that unrelated missing domains were covered.** Initial orchestrator assessment (M3-T001 producer verifies + finalizes):
+
+| Domain | Status | Controlling channel / unavailable-class | Evidence as-of | Implementing task / blocker | Downstream claims blocked | Next action (reviewer) |
+|---|---|---|---|---|---|---|
+| Zoning maps / district facts | partial | DCP GIS zoning-features + ZTLDB (accepted) | 2026-07-20 | M2 (accepted) | lot-level legal determination | note ±20ft limitation (data-contract-verifier) |
+| Zoning Resolution text | missing | ZR portal (registry §8) | — | M3-T002 | every rule value / Verified | ingest + fidelity (data-contract-verifier) |
+| Amendments / effective dates | missing | ZR /recently-adopted + PDF snapshots | — | M3-T002 | effective-date correctness | multi-signal version detect (data-contract-verifier) |
+| Definitions & interpretation (§12-10, §11-25) | missing | ZR text (closure) | — | M3-T003 | applicability / suffix scope | closure graph (qa-engineer) |
+| Special districts / overlays | partial | DCP GIS (facts) + ZR (text) | 2026-07-20 | M2 accepted / ZR text M3-T002 | override resolution | ingest override text (data-contract-verifier) |
+| Environmental & restrictive declarations | missing | ACRIS / recorded instruments | — | future task (unassigned) | project-specific control | scope a task (orchestrator) |
+| Zoning-lot identity & recorded agreements | missing | ZTLDB + recorded ZLDA | — | future task (unassigned) | zoning-lot ≠ tax-lot claims | scope a task (orchestrator) |
+| CPC / BSA / DOB project-specific approvals | missing | BSA / CPC / DOB NOW | — | future task (unassigned) | property-specific precedence | scope a task (orchestrator) |
+| Construction Code | missing | DOB code PDFs (scope-bounded) | — | M3-T004 + B-011 | construction-feasibility | approve scope (owner, B-011) |
+| DOB Rules / Bulletins / Local Laws | missing | DOB Rules/Bulletins/LL overlay | — | M3-T004 | code effective-text | overlay build (data-contract-verifier) |
+| Landmarks / historic | partial | LPC (flag) + requirements text | 2026-07-20 | M2 flag / requirements future | landmark requirement claims | scope requirements task (orchestrator) |
+| Waterfront / flood / environmental | partial | FEMA/official flood (flag) + reqs | research | M2 flag / requirements future | waterfront/flood requirements | scope requirements task (orchestrator) |
+| Occupancy / use / building type | missing | ZR + Construction Code | — | M3-T004 + rule slice | use/occupancy claims | after M3-T003/T004 (orchestrator) |
+| Parking / loading | missing | ZR parking regs | — | future rule slice | parking claims | scope after closure (orchestrator) |
+| Accessibility / fire-egress / structural | missing | Construction Code (scope-bounded) | — | M3-T004 + B-011 | accessibility/egress/structural | approve scope (owner, B-011) |
+
+Rows marked "future task (unassigned)" carry an **explicit continuing limitation** and an orchestrator next-action; they are not silently covered by M3-T001..T004.
 
 ---
 
@@ -145,20 +176,29 @@ IDs confirmed unused before authoring. All four are created **`backlog` / PROPOS
 |---|---|---|---|---|
 | **M3-T001** | Authority hierarchy + coverage matrix + registry channels (Construction Code / Local Law / DOB Rule / Buildings Bulletin) + derived benchmark analysis + versioned legal-source manifest schema | official-source-researcher | G0,G1,G2,G3,G4,G5 | M1-T001 (accepted) |
 | **M3-T002** | Versioned ZR ingestion (official HTML + PDF), content-addressable raw capture, full provenance fields, `raw_html_verified` discipline, **source-fidelity harness** | legal-corpus-engineer | G0,G1,G2,G3,G4,G5 | M3-T001 |
-| **M3-T003** | Cross-reference **closure graph** + §11-25 suffix inheritance + per-rule **closure manifests** + **cross-reference-closure harness** | legal-corpus-engineer | G0,G1,G2,G3,G4,G5 | M3-T002 (accepted) |
-| **M3-T004** | DOB **Construction-Code** corpus (scope-bounded PDFs) + Local Law/DOB Rule/Bulletin/Code Note **effective-date overlay** | legal-corpus-engineer | G0,G1,G2,G3,G4,G5 | M3-T001 + approved storage/ingestion infra (B-001) |
+| **M3-T003** | Cross-reference **closure graph** + §11-25 suffix inheritance + per-rule **closure manifests** + **cross-reference-closure harness** (linked + unlinked + table/footnote citations) | legal-corpus-engineer | G0,G1,G2,G3,G4,G5 | M3-T002 (accepted as production corpus) |
+| **M3-T004** | DOB **Construction-Code** corpus (scope-bounded PDFs) + Local Law/DOB Rule/Bulletin/Code Note **effective-date overlay** | legal-corpus-engineer | G0,G1,G2,G3,G4,G5 | M3-T001 + M3-T002 (accepted) + storage (B-001) + **approved release scope (B-011)** |
 
-**Dependency rules (directive §5), including the cross-milestone ones:**
+**Dependency rules (directive §5, amended per items 2 & 3), including the cross-milestone ones:**
 
 - M3-T001 ← accepted **M1-T001** source-registry research.
 - M3-T002 ← M3-T001; **reuses `app.resilience.transport`**.
-- M3-T003 ← accepted **M3-T002**.
-- M3-T004 ← M3-T001 + approved storage/ingestion (B-001).
+- M3-T003 ← **M3-T002 accepted as the production corpus** (durable captures + fidelity evidence — a fixture-only increment does not satisfy it, item 3).
+- M3-T004 ← accepted **M3-T001** + accepted **M3-T002** (imports its ingest/parser/fidelity core) + approved storage/ingestion (**B-001**) + **owner-approved construction-code release scope (B-011)**.
 - **M4-T007 and every later yard/coverage/rear/front/side rule ← accepted M3-T003.**
-- **Any construction-feasibility claim ← the relevant accepted M3-T004 scope.**
+- **Any construction-feasibility claim ← the relevant accepted M3-T004 scope (with durable captures).**
 - **G6 remains mandatory** before any rule is Published or Verified.
 
-Exclusive file scopes are declared per packet (`allowed_paths` / `forbidden_paths`); the four packets touch disjoint trees (`docs/` + contracts for T001; `services/api/app/corpus/**` sub-packages for T002/T003/T004) so they do not overlap.
+**File-ownership correction (amendment item 2).** The earlier draft claimed disjoint trees but M3-T002 owned `services/api/app/corpus/**`, which overlaps M3-T003 and M3-T004. Corrected ownership — each tree has exactly one owning task; downstream tasks **import the shared core read-only and never mutate it** (strictly-sequential-modification rule):
+
+| Tree | Owner | Others |
+|---|---|---|
+| `services/api/app/corpus/ingest/**`, `parsers/**`, `fidelity/**`, `versioning/**` | **M3-T002** (shared core) | T003/T004 import read-only |
+| `services/api/app/corpus/closure/**` | **M3-T003** | excluded from T002/T004 |
+| `services/api/app/corpus/construction_code/**`, `overlay/**` | **M3-T004** | excluded from T002/T003 |
+| `docs/*` + `packages/contracts/schemas/**` (per-file) | **M3-T001** (policy/matrix/registry/scope/manifest); **M3-T003** (closure_manifest schema) | non-overlapping files |
+
+M3-T002's `forbidden_paths` now explicitly exclude `closure/**`, `construction_code/**`, and `overlay/**`.
 
 ---
 
@@ -166,8 +206,9 @@ Exclusive file scopes are declared per packet (`allowed_paths` / `forbidden_path
 
 | Harness | Assigned to | Key cases |
 |---|---|---|
-| **Source-fidelity** | M3-T002 (extended to PDF in M3-T004) | exact-bytes hash reproduces / changed bytes fail; replay to source offsets/DOM/PDF page; HTML-vs-PDF → `data_conflict`; changed currency banner → new version; missing version evidence blocks publication; redirects/host-change/malformed/drift fail closed |
-| **Cross-reference-closure** | M3-T003 | §23-361/R5B imports §11-25 unless expressly overridden; §23-422 express exclusion blocks R5→R5A/R5B/R5D leakage; unresolved definition/exception → no final value; cycles terminate; renumber/delete detected; single-chapter cannot satisfy absence |
+| **Source-fidelity** | M3-T002 (extended to PDF in M3-T004) | exact-bytes hash reproduces / changed bytes fail; replay to source offsets/DOM/PDF page; HTML-vs-PDF → `data_conflict`; missing version evidence blocks publication; redirects/host-change/malformed/drift fail closed |
+| **Version-change-detection** (item 8) | M3-T002 | banner is one signal; changed section hash / Last-Amended / amendment feed / adopted instrument / official PDF each raise a candidate corpus version even with an unchanged banner; unchanged banner never suppresses a detected change |
+| **Cross-reference-closure** | M3-T003 | §23-361/R5B imports §11-25 unless expressly overridden; §23-422 express exclusion blocks R5→R5A/R5B/R5D leakage; unresolved definition/exception/citation-candidate → no final value; cycles terminate; renumber/delete detected; single-chapter cannot satisfy absence; **linked + unlinked + table/footnote + unparseable citations cannot be silently missed; AI-extracted edges proposed until validated** (item 8) |
 | **Lot/applicability** | downstream M4 slice (consumes M3-T003) | interior/corner/through/mixed portions; 135° boundary; curved-street tangent; 100-ft corner + remainder; zoning-lot ≠ tax-lot; missing zoning-lot docs; split district; wide/narrow street; detached/semi-detached/zero-lot-line/attached/multiple-dwelling; special/overlay/landmark/waterfront unknowns. `Unknown` never `false`; PLUTO code never sets legal lot type |
 | **Rule-behavior** | downstream M4 slice | positive/negative/boundary/not-applicable/missing-input/conflict/exception-applies/-not/effective-date-before-after/source-tamper/competing-rule; byte-identical determinism; every value carries section+URL+raw hash+corpus version+effective date+rule version+closure-manifest ID; `Verified` structurally unreachable without G6 |
 | **Architect-benchmark** | M3-T001 seed → downstream M4 slice | sample yields discrepancy/missing-input findings not a pass; 7,602 vs 7,500 surfaced; no invented exclusion; lot coverage not selected without residence+lot-type branches; no inferred address/BBL; no final buildable-envelope claim |
@@ -193,6 +234,20 @@ Exclusive file scopes are declared per packet (`allowed_paths` / `forbidden_path
 - Bulk raw HTML/PDF artifacts are stored **content-addressably in approved cloud object storage** (Supabase Storage / Render worker). **Never** commit a citywide corpus; **never** leave bulk temp data on the owner's ~7 GB PC (thin-client policy).
 - **B-001 (Supabase management token) gates durable object storage.** If it remains open, M3-T002/T004 degrade to **bounded frozen fixtures + parser + harness only**, and each report **states the limitation explicitly** (no faked durability). Recorded as a `blockers` entry on M3-T002 and M3-T004.
 - **B-004** (Geoclient key) is not on the M3 path. **B-010** (client benchmark sheet) blocks committing the PDF, not the derived analysis.
+
+### 10A. Fixture-only work must not unlock production (amendment item 3)
+
+Explicit invariant, carried into M3-T002 and M3-T004 as an `acceptance_preconditions` block and enforced by the control CLI (accept requires **zero open blockers referencing the task**; B-001 is such a blocker):
+
+- Fixture/parser/harness work **may be developed and gate-reviewed** while storage is blocked.
+- It **must not** mark the ZR or Construction-Code corpus domain `implemented`.
+- **M3-T002 does not reach `accepted`** as the production ZR corpus — and **does not satisfy M3-T003's dependency** — until durable, content-addressed official captures + required source-fidelity evidence exist.
+- **M3-T004 does not reach `accepted`** for any construction-code scope, and **does not unblock any feasibility claim**, until durable official captures + overlay evidence exist.
+- The distinction is expressible in the lifecycle (gate PASS on the engineering increment ≠ acceptance; B-001 blocks acceptance while open), so **no task split is required**; if evidence later shows the lifecycle cannot hold the distinction, the fallback is to split engineering/harness from production-corpus acceptance into separate tasks.
+
+### 10B. Construction-code release scope is frozen before readiness (amendment item 6)
+
+`"declared release scope from PRD / owner"` is not a sufficient input. **M3-T001 drafts `docs/CONSTRUCTION_CODE_RELEASE_SCOPE.md`** (code edition + as-of date; product claims supported; exact in-scope titles/chapters/domains; required LL/DOB-Rule/Bulletin/Code-Note/rescission/supersession channels; excluded domains; consumer claim each exclusion blocks). Owner approval of that document clears **B-011**. **M3-T004 stays `backlog`/blocked until B-011 clears.** AI has no authority to set release scope.
 
 **Stop-rather-than-guess conditions (directive §8)** are carried into each packet's risks: unverified endpoint/source identity; unclear licensing/terms; bot-blocked source; raw-HTML-vs-PDF disagreement; unresolvable amendment/effective date; unresolved cross-reference; unavailable legal zoning-lot geometry; tax-lot-may-not-equal-zoning-lot; a controlling project-specific approval/restrictive declaration; a conclusion needing professional legal/design judgment; unavailable durable-storage credentials.
 
@@ -238,3 +293,22 @@ Please approve (or amend) this control-only package. On approval I will:
 3. Keep M4-T007+ uncontracted until M3-T003 is accepted.
 
 No producer work starts until you approve.
+
+---
+
+## 15. Amendment log — PR #93 revision 2 (owner corrections 1–8)
+
+Applied in-branch (control-only) on `control/M3-corpus-replan-2026-07-23`. No task moved, claimed, dispatched, implemented, or accepted.
+
+| # | Correction | How implemented |
+|---|---|---|
+| 1 | Complete every task contract (no empty `outputs`) | All four packets now carry exact `outputs[]` artifact paths that agree with `allowed_paths`, acceptance scenarios, harness assignments, and producer-report paths (G0 inputs+outputs satisfied). |
+| 2 | Correct dependencies + file ownership | M3-T004 `dependencies` = M3-T001 **+ M3-T002**; blockers add **B-011**. M3-T002 ownership narrowed to `ingest/parsers/fidelity/versioning`; `closure/**`, `construction_code/**`, `overlay/**` explicitly excluded via `forbidden_paths`. Ownership table + strictly-sequential-modification rule documented (§7). |
+| 3 | Fixture-only must not unlock production | New `acceptance_preconditions` on M3-T002 & M3-T004: fixture/harness work is gate-reviewable but the task is not accepted, does not mark the domain `implemented`, and does not satisfy downstream deps until durable content-addressed captures + fidelity/overlay evidence exist. Enforced by B-001 in `blockers[]` (accept requires zero open referencing blockers). §10A. No task split needed; fallback split documented. |
+| 4 | Separate source authority from legal precedence | `SOURCE_AUTHORITY_POLICY.md` requirements + M3-T001 AS-1/AS-8: tiers are provenance, not auto-precedence; amendments become current law; project-specific instruments may control; resolution by jurisdiction/legal-status/effective-date/amendment-supersession/scope; unresolved → `data_conflict`/`professional_review_required`; AI proposes only. §4A. |
+| 5 | Reconcile status vocabulary | Authoritative vocabulary now includes **`not_evaluated`** and maps to runtime outcomes; `not_applicable` only after affirmative resolution; unknown/missing never → `not_applicable`/false. M3-T001 AS-9. §5A. |
+| 6 | Freeze M3-T004 release scope before ready | New `docs/CONSTRUCTION_CODE_RELEASE_SCOPE.md` drafted by M3-T001 (M3-T001 AS-10); owner approval = **B-011** (new blocker); M3-T004 stays backlog/blocked until B-011 clears (M3-T004 AS-8). §10B. |
+| 7 | Every coverage gap actionable | Coverage matrix expanded to six columns (status, controlling channel/unavailable-class, evidence/as-of, task/blocker, downstream claims blocked, next action + reviewer); no unresolved row without a task/blocker/explicit continuing limitation; closure ≠ covering unrelated domains. M3-T001 AS-3. §5B. |
+| 8 | Strengthen source verification + version detection | **M3-T001:** registry rows for every M3-T004 channel incl. Code Notes/directives + formal DOB interpretations; ZoLa presentation-only; UpCodes reference-only with dated API-availability/subscription/pricing + 'not required'; unresolved source identity/endpoint/access/terms/URL BLOCKED at G1 (AS-5/AS-6). **M3-T002:** multi-signal version detection — banner is one signal; hash/Last-Amended/feed/instrument/PDF changes each raise a candidate version; unchanged banner never suppresses a change (AS-5). **M3-T003:** closure covers linked+unlinked+table/footnote+unparseable citation candidates; unresolved candidates block a final value; adversarial 'cannot be silently missed' tests; AI-extracted edges proposed until validated (AS-8/AS-9). |
+
+Also created blocker **B-011** and left B-010/B-001 semantics unchanged. Ledger totals unchanged: 42 accepted / 8 backlog (4 M3 proposals) — nothing accepted.

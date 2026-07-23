@@ -3,43 +3,51 @@
   "title": "Cross-reference closure graph, per-rule closure manifests, and completeness/self-check harness (incl. ZR 11-25 suffix inheritance)",
   "task_type": "backend",
   "milestone_id": "M3",
-  "objective": "PROPOSED — NOT CONTRACTED (owner approval required to move backlog -> ready). Build a deterministic directed graph over the ingested corpus covering: section-to-section references; definitions imported from §12-10 and other scoped definition sections; §11-25 suffix inheritance; 'except as otherwise provided' relationships; general-to-special regulation priority; exceptions/modifications; special-purpose district overrides; appendices/mapped areas; amendment/supersession relationships. Every releasable rule family gets a closure manifest: entry sections; all reachable controlling sections; imported definitions; applicability predicates; exceptions; overrides; unresolved references; required property facts; source version/hash for every node. A rule may proceed ONLY if all reachable references in its declared scope are resolved; otherwise it returns a typed unsupported/professional_review_required result. An unresolved reference is NEVER treated as non-applicable; searching one chapter cannot satisfy an absence assertion. Cycles terminate deterministically; renumbered/deleted sections are detected. Full spec: project-control/reports/M3-CORPUS-REPLAN-PROPOSAL.md.",
-  "business_reason": "Completeness must be proven by reachable-reference closure, not assembled manually from one chapter; §11-25 suffix inheritance and §23-422's express suffix exclusion must be modeled before any bare-R5 applicability or absence claim, and before the downstream M4 yard/coverage slices are re-scoped. This is the structural precondition the owner set for regenerating the coverage/rear/front/side slice boundaries.",
+  "objective": "PROPOSED — NOT CONTRACTED (owner approval required to move backlog -> ready). Build a deterministic directed graph over the ingested corpus covering: linked AND unlinked textual section citations; definitions imported from §12-10 and other scoped definition sections; §11-25 suffix inheritance; 'except as otherwise provided' relationships; general-to-special priority; exceptions/modifications; special-purpose district overrides; appendices/mapped areas; tables and footnotes; exception language; amendment/supersession links; and citation-like text that could not be parsed (amendment item 8). Every releasable rule family gets a closure manifest: entry sections; all reachable controlling sections; imported definitions; applicability predicates; exceptions; overrides; UNRESOLVED reference/citation candidates; required property facts; source version/hash per node. A rule may proceed ONLY if all reachable references in its declared scope are resolved; otherwise a typed unsupported/professional_review_required result. Unresolved citation candidates MUST appear in the closure manifest and BLOCK a final rule value. An unresolved reference is NEVER treated as non-applicable; searching one chapter cannot satisfy an absence assertion. AI-extracted edges remain PROPOSED until deterministic evidence or required human review validates them. Cycles terminate deterministically; renumbered/deleted sections are detected. Full spec: project-control/reports/M3-CORPUS-REPLAN-PROPOSAL.md.",
+  "business_reason": "Completeness must be proven by reachable-reference closure over linked AND unlinked/table/footnote citations, not assembled manually from one chapter; §11-25 suffix inheritance and §23-422's express suffix exclusion must be modeled before any bare-R5 applicability or absence claim, and before the downstream M4 yard/coverage slices are re-scoped. This is the structural precondition the owner set for regenerating the coverage/rear/front/side slice boundaries.",
   "inputs": [
-    "M3-T002 accepted: versioned corpus with per-section raw+normalized hashes, cross-reference hrefs, definitions, last-amended/effective dates, amendment/supersession records — the graph's node/edge source",
-    "M3-T001 accepted: LEGAL_CORPUS_COVERAGE_MATRIX.md (domains a manifest maps to) + legal_source_manifest schema (per-node version/hash record)",
+    "M3-T002 accepted AS PRODUCTION CORPUS (durable content-addressed captures + fidelity evidence; NOT a fixture-only engineering increment): per-section raw+normalized hashes, cross-reference hrefs, definitions, last-amended/effective dates, amendment/supersession records, tables/footnotes — the graph's node/edge source",
+    "M3-T002 exported ingest/parser/fidelity core (services/api/app/corpus/ingest|parsers|fidelity) — IMPORT read-only; do not mutate",
+    "M3-T001 accepted: LEGAL_CORPUS_COVERAGE_MATRIX.md (domains a manifest maps to) + legal_source_manifest schema (per-node version/hash record) + authoritative status vocabulary",
     "ZR §11-25 (a district designation's regulations apply to a suffixed designation unless the Resolution expressly provides separate provisions); §23-422 express exclusion 'except R5 Districts with a letter suffix'; §12-10 definitions",
-    "services/api/app/rules/** (M4-T001 engine): RuleResult coverage vocabulary, rule_conflict/competing-rules trace shape, unsupported/professional_review_required outcomes the closure result must produce — consume unchanged",
-    "M4-T006 closure-manifest concept (per-rule reachable set) — the interim informal version this task formalizes"
+    "services/api/app/rules/** (M4-T001 engine): RuleResult coverage vocabulary, rule_conflict/competing-rules trace shape, unsupported/professional_review_required outcomes the closure result must produce — consume unchanged"
   ],
-  "outputs": [],
+  "outputs": [
+    "services/api/app/corpus/closure/** — graph builder, linked+unlinked+table/footnote citation extractor, §11-25 suffix-inheritance resolver, closure-manifest generator, reachability + deterministic cycle termination, renumber/delete detector, proposed-vs-validated edge state",
+    "packages/contracts/schemas/v1/closure_manifest.schema.json — NEW versioned internal manifest schema (additive; entry sections, reachable sections, imported definitions, applicability predicates, exceptions, overrides, unresolved candidates, required facts, per-node version/hash)",
+    "services/api/tests/corpus/closure/** — deterministic cross-reference-closure harness incl. adversarial unlinked-reference + table-footnote 'cannot be silently missed' tests",
+    "services/api/tests/fixtures/corpus/closure/** — bounded frozen fixtures: §23-361/R5B inheritance, §23-422 suffix exclusion, cyclic ref, renumbered/deleted section, unresolved definition, unlinked textual citation, table footnote citation",
+    "project-control/reports/M3-T003-producer-report.md"
+  ],
   "dependencies": [
     "M3-T002"
   ],
   "allowed_paths": [
-    "services/api/app/corpus/closure/** (NEW: graph builder, suffix-inheritance resolver, closure-manifest generator, reachability/cycle-termination)",
-    "packages/contracts/schemas/**/closure_manifest*.schema.json (NEW versioned internal manifest schema; additive)",
-    "services/api/tests/corpus/closure/** (deterministic cross-reference-closure harness)",
-    "services/api/tests/fixtures/corpus/closure/** (bounded frozen fixtures: §23-361/R5B, §23-422 suffix exclusion, cyclic ref, renumbered/deleted section, unresolved definition)",
+    "services/api/app/corpus/closure/** (OWNED by M3-T003; exclusive)",
+    "packages/contracts/schemas/v1/closure_manifest.schema.json (NEW additive)",
+    "services/api/tests/corpus/closure/**",
+    "services/api/tests/fixtures/corpus/closure/**",
     "project-control/reports/M3-T003-producer-report.md"
   ],
   "forbidden_paths": [
+    "services/api/app/corpus/ingest/**, parsers/**, fidelity/**, versioning/** (owned by M3-T002 — import read-only, never mutate), services/api/app/corpus/construction_code/** and overlay/** (owned by M3-T004)",
     "Editing the rules evaluator core or any ruleset (consume the engine unchanged; this task produces closure inputs, not rules)",
-    "Publishing/Verifying any rule; emitting a final value when any reachable reference is unresolved; treating an unresolved reference as non-applicable",
+    "Publishing/Verifying any rule; emitting a final value when any reachable reference/citation candidate is unresolved; treating an unresolved reference as non-applicable; treating an AI-extracted edge as validated without deterministic evidence or human review",
     "Asserting 'confirmed absent' for any modifier; asserting completeness from a single-chapter scan",
-    "Editing canonical contracts (property_profile/rule_evaluation/coverage_status/scenario); apps/web/**; project-control/** except own reports; .claude/** except own agent-memory",
-    "Adding any new runtime dependency (stdlib graph over the ingested corpus; no graph framework)"
+    "Editing canonical contracts (property_profile/rule_evaluation/coverage_status/scenario); apps/web/**; project-control/** except own reports; .claude/** except own agent-memory; adding any new runtime dependency (stdlib graph)"
   ],
   "acceptance_scenarios": [
     "AS-1 suffix inheritance: §23-361 applied to R5B imports §11-25 inheritance unless the section expressly provides a different suffix rule -> R5B inherits R5 provisions where no separate R5B provision exists.",
-    "AS-2 express exclusion wins: §23-422's express 'except R5 Districts with a letter suffix' prevents R5 values from leaking to R5A/R5B/R5D; the closure records the express exclusion, not inheritance.",
-    "AS-3 unresolved blocks value: an unresolved definition or exception in a rule's reachable set produces NO final value — a typed unsupported/professional_review_required result instead.",
+    "AS-2 express exclusion wins: §23-422's express 'except R5 Districts with a letter suffix' prevents R5 values leaking to R5A/R5B/R5D; the closure records the express exclusion, not inheritance.",
+    "AS-3 unresolved blocks value: an unresolved definition/exception/citation candidate in a rule's reachable set produces NO final value — a typed unsupported/professional_review_required result instead.",
     "AS-4 cycle termination: a reference cycle terminates deterministically (no infinite loop, no arbitrary cutoff that hides a node).",
     "AS-5 renumber/delete detection: a renumbered or deleted section referenced by the graph is detected and flagged unresolved, not silently followed to a stale node.",
-    "AS-6 manifest completeness: each releasable rule family's closure manifest lists entry sections, all reachable controlling sections, imported definitions, applicability predicates, exceptions, overrides, unresolved references, required property facts, and source version/hash per node.",
+    "AS-6 manifest completeness: each releasable rule family's closure manifest lists entry sections, all reachable controlling sections, imported definitions, applicability predicates, exceptions, overrides, unresolved candidates, required property facts, and source version/hash per node.",
     "AS-7 determinism: identical corpus version -> byte-identical closure manifest + graph.",
-    "NC-1 single-chapter absence: a search restricted to one chapter cannot satisfy an absence assertion; the harness asserts that such an assertion is rejected as unsupported.",
-    "NC-2 unresolved != non-applicable: a reference the graph cannot resolve is never coerced to 'not applicable' or a default value.",
+    "AS-8 unlinked + table/footnote citations (item 8): closure processes linked AND unlinked textual citations, definition imports, tables/footnotes, exception language, amendment links, and citation-like text that could not be parsed; adversarial tests prove an unlinked reference or a table footnote citation CANNOT be silently missed.",
+    "AS-9 proposed-edge discipline (item 8): an AI-extracted edge is recorded as PROPOSED and cannot contribute to a resolved closure (or a final rule value) until deterministic evidence or required human review validates it.",
+    "NC-1 single-chapter absence: a search restricted to one chapter cannot satisfy an absence assertion; the harness asserts such an assertion is rejected as unsupported.",
+    "NC-2 unresolved != non-applicable: a reference/citation the graph cannot resolve is never coerced to 'not applicable' or a default value.",
     "NC-3 bare-R5 not auto-ambiguous: bare R5 in a section with no separate suffix provisions is modeled via §11-25 inheritance (not flagged inherently ambiguous), while a section that expressly lists distinct R5A/R5B/R5D provisions lets those express provisions control."
   ],
   "required_gates": [
@@ -60,21 +68,23 @@
   "progress_percent": 0,
   "risks": [
     "PROPOSAL ONLY: no dispatch until owner approves the packet + dependency order.",
+    "DEPENDS ON PRODUCTION M3-T002: this task requires M3-T002 accepted as the durable production corpus (not a fixture-only increment); a fixture-only M3-T002 does NOT satisfy this dependency (amendment item 3).",
     "GATES M4: M4-T007 and every later yard/coverage/rear/front/side rule DEPENDS ON accepted M3-T003; the slice boundaries are regenerated from this closure set, not from a hand-assembled chapter list.",
-    "LEGAL BOUNDARY: closure resolves references structurally; where resolution requires legal interpretation, the result is professional_review_required, never a guessed edge.",
-    "SUFFIX-INHERITANCE CORRECTNESS: §11-25 inheritance vs §23-422 express exclusion is the canonical test pair; getting it wrong silently mis-scopes R5A/R5B/R5D — G3/QA must exercise both."
+    "SILENT-MISS HAZARD: unlinked textual citations, table footnotes, and unparseable citation-like text are the highest-risk silent gaps — they must surface as unresolved candidates that block a final value, never be dropped.",
+    "PROPOSED-EDGE DISCIPLINE: AI-extracted edges are proposed until validated; a proposed edge must not silently complete a closure.",
+    "LEGAL BOUNDARY: closure resolves references structurally; where resolution requires legal interpretation, the result is professional_review_required, never a guessed edge."
   ],
   "blockers": [],
   "requirement_refs": [
-    "project-control/reports/M3-CORPUS-REPLAN-PROPOSAL.md — full spec (owner directive 2026-07-23, sections 3A §11-25 correction, 5 M3-T003, 6 cross-reference-closure harness)",
+    "project-control/reports/M3-CORPUS-REPLAN-PROPOSAL.md — full spec (owner directive 2026-07-23 + amendment items 1,8; §11-25 correction)",
     "ZR §11-25, §12-10, §23-361, §23-422 (official portal)",
     "docs/GATES_AND_CHECKPOINTS.md G3/G4/G5",
     "docs/ACCEPTANCE_SCENARIO_STANDARD.md (AS/NC format)"
   ],
   "harness_assignments": [
-    "CROSS-REFERENCE-CLOSURE HARNESS (owner directive section 6): §23-361/R5B imports §11-25 unless expressly overridden; §23-422 express suffix exclusion prevents R5->R5A/R5B/R5D leakage; unresolved definition/exception produces no final value; cycles terminate deterministically; renumbered/deleted sections detected; single-chapter search cannot satisfy an absence assertion.",
-    "LOT/APPLICABILITY + RULE-BEHAVIOR + ARCHITECT-BENCHMARK + CONSUMER-BOUNDARY harnesses (owner directive section 6) are ASSIGNED DOWNSTREAM to the M4 yard/coverage slices that consume this closure — M3-T003 provides the applicability-predicate + suffix-inheritance foundation they assert against; it does not itself classify lots or evaluate rules."
+    "CROSS-REFERENCE-CLOSURE HARNESS (owner directive section 6 + amendment item 8): §23-361/R5B imports §11-25 unless expressly overridden; §23-422 express suffix exclusion prevents R5->R5A/R5B/R5D leakage; unresolved definition/exception/citation-candidate produces no final value; cycles terminate deterministically; renumbered/deleted sections detected; single-chapter search cannot satisfy an absence assertion; unlinked references + table footnotes cannot be silently missed; AI-extracted edges are proposed until validated.",
+    "LOT/APPLICABILITY + RULE-BEHAVIOR + ARCHITECT-BENCHMARK harnesses (owner directive section 6) are ASSIGNED DOWNSTREAM to the M4 yard/coverage slices that consume this closure — M3-T003 provides the applicability-predicate + suffix-inheritance foundation they assert against; it does not itself classify lots or evaluate rules."
   ],
   "created_at": "2026-07-23T12:09:22.069056+00:00",
-  "updated_at": "2026-07-23T12:09:22.069056+00:00"
+  "updated_at": "2026-07-23T12:35:00.000000+00:00"
 }
