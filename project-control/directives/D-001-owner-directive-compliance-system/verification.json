@@ -3,721 +3,977 @@
   "directive_id": "D-001",
   "authority_note": "Independent per-requirement verdicts (clean-context review). Written by an independent verifier whose identity MUST differ from the producer of requirements.json. accept() reads this file as BLOCKING EVIDENCE (an in-regime task is refused unless every applicable requirement is PASS at the reviewed content identity, owner correction 1); acceptance AUTHORITY and all state transitions remain in tools/project_control.py \u2014 the registry is evidence the CLI consumes, not a second gate. Registry integrity is enforced by tools/validate_directive_compliance.py.",
   "producer": "orchestrator",
-  "verifier": null,
-  "reviewed_sha": null,
-  "reviewed_manifest_sha256": null,
+  "verifier": "directive-compliance-verifier",
+  "reviewed_sha": "4529ffc5be41dd7ac41cf94583eeeb03ef650031",
+  "reviewed_manifest_sha256": "db32be268ad057011b70cf1a7f5b4af11e837eb20d241957ec54a24bc6866fac",
   "requirements": [
     {
       "id": "D-001-R001",
-      "state": "pending",
-      "evidence": [],
-      "verified_at": null,
-      "verified_by": null,
-      "reviewed_sha": null
+      "state": "PASS",
+      "evidence": [
+        "CLAUDE.md",
+        "test_directive_compliance.py"
+      ],
+      "verified_at": "2026-07-23T00:00:00+00:00",
+      "verified_by": "directive-compliance-verifier",
+      "reviewed_sha": "4529ffc5be41dd7ac41cf94583eeeb03ef650031"
     },
     {
       "id": "D-001-R002",
-      "state": "pending",
-      "evidence": [],
-      "verified_at": null,
-      "verified_by": null,
-      "reviewed_sha": null
+      "state": "PASS",
+      "evidence": [
+        "CLAUDE.md",
+        "test_directive_compliance.py"
+      ],
+      "verified_at": "2026-07-23T00:00:00+00:00",
+      "verified_by": "directive-compliance-verifier",
+      "reviewed_sha": "4529ffc5be41dd7ac41cf94583eeeb03ef650031"
     },
     {
       "id": "D-001-R003",
-      "state": "pending",
-      "evidence": [],
-      "verified_at": null,
-      "verified_by": null,
-      "reviewed_sha": null
+      "state": "PASS",
+      "evidence": [
+        "CLAUDE.md"
+      ],
+      "verified_at": "2026-07-23T00:00:00+00:00",
+      "verified_by": "directive-compliance-verifier",
+      "reviewed_sha": "4529ffc5be41dd7ac41cf94583eeeb03ef650031"
     },
     {
       "id": "D-001-R004",
-      "state": "pending",
-      "evidence": [],
-      "verified_at": null,
-      "verified_by": null,
-      "reviewed_sha": null
+      "state": "PASS",
+      "evidence": [
+        "CLAUDE.md"
+      ],
+      "verified_at": "2026-07-23T00:00:00+00:00",
+      "verified_by": "directive-compliance-verifier",
+      "reviewed_sha": "4529ffc5be41dd7ac41cf94583eeeb03ef650031"
     },
     {
       "id": "D-001-R005",
-      "state": "pending",
-      "evidence": [],
-      "verified_at": null,
-      "verified_by": null,
-      "reviewed_sha": null
+      "state": "PASS",
+      "evidence": [
+        "context_budget_check.py"
+      ],
+      "verified_at": "2026-07-23T00:00:00+00:00",
+      "verified_by": "directive-compliance-verifier",
+      "reviewed_sha": "4529ffc5be41dd7ac41cf94583eeeb03ef650031"
     },
     {
       "id": "D-001-R006",
-      "state": "pending",
-      "evidence": [],
-      "verified_at": null,
-      "verified_by": null,
-      "reviewed_sha": null
+      "state": "PASS",
+      "evidence": [
+        ".claude/skills/directive-compliance/SKILL.md",
+        "test_directive_compliance.py"
+      ],
+      "verified_at": "2026-07-23T00:00:00+00:00",
+      "verified_by": "directive-compliance-verifier",
+      "reviewed_sha": "4529ffc5be41dd7ac41cf94583eeeb03ef650031"
     },
     {
       "id": "D-001-R007",
-      "state": "pending",
-      "evidence": [],
-      "verified_at": null,
-      "verified_by": null,
-      "reviewed_sha": null
+      "state": "PASS",
+      "evidence": [
+        ".claude/skills/directive-compliance/SKILL.md"
+      ],
+      "verified_at": "2026-07-23T00:00:00+00:00",
+      "verified_by": "directive-compliance-verifier",
+      "reviewed_sha": "4529ffc5be41dd7ac41cf94583eeeb03ef650031"
     },
     {
       "id": "D-001-R008",
-      "state": "pending",
-      "evidence": [],
-      "verified_at": null,
-      "verified_by": null,
-      "reviewed_sha": null
+      "state": "PASS",
+      "evidence": [
+        ".claude/skills/directive-compliance/SKILL.md"
+      ],
+      "verified_at": "2026-07-23T00:00:00+00:00",
+      "verified_by": "directive-compliance-verifier",
+      "reviewed_sha": "4529ffc5be41dd7ac41cf94583eeeb03ef650031"
     },
     {
       "id": "D-001-R009",
-      "state": "pending",
-      "evidence": [],
-      "verified_at": null,
-      "verified_by": null,
-      "reviewed_sha": null
+      "state": "PASS",
+      "evidence": [
+        "project-control/directives/",
+        "test_directive_compliance.py"
+      ],
+      "verified_at": "2026-07-23T00:00:00+00:00",
+      "verified_by": "directive-compliance-verifier",
+      "reviewed_sha": "4529ffc5be41dd7ac41cf94583eeeb03ef650031"
     },
     {
       "id": "D-001-R010",
-      "state": "pending",
-      "evidence": [],
-      "verified_at": null,
-      "verified_by": null,
-      "reviewed_sha": null
+      "state": "PASS",
+      "evidence": [
+        "project-control/directives/index.json",
+        "test_directive_compliance.py"
+      ],
+      "verified_at": "2026-07-23T00:00:00+00:00",
+      "verified_by": "directive-compliance-verifier",
+      "reviewed_sha": "4529ffc5be41dd7ac41cf94583eeeb03ef650031"
     },
     {
       "id": "D-001-R011",
-      "state": "pending",
-      "evidence": [],
-      "verified_at": null,
-      "verified_by": null,
-      "reviewed_sha": null
+      "state": "PASS",
+      "evidence": [
+        "project-control/directives/schema/v1/"
+      ],
+      "verified_at": "2026-07-23T00:00:00+00:00",
+      "verified_by": "directive-compliance-verifier",
+      "reviewed_sha": "4529ffc5be41dd7ac41cf94583eeeb03ef650031"
     },
     {
       "id": "D-001-R012",
-      "state": "pending",
-      "evidence": [],
-      "verified_at": null,
-      "verified_by": null,
-      "reviewed_sha": null
+      "state": "PASS",
+      "evidence": [
+        "project-control/directives/D-001-owner-directive-compliance-system/"
+      ],
+      "verified_at": "2026-07-23T00:00:00+00:00",
+      "verified_by": "directive-compliance-verifier",
+      "reviewed_sha": "4529ffc5be41dd7ac41cf94583eeeb03ef650031"
     },
     {
       "id": "D-001-R013",
-      "state": "pending",
-      "evidence": [],
-      "verified_at": null,
-      "verified_by": null,
-      "reviewed_sha": null
+      "state": "PASS",
+      "evidence": [
+        "project-control/directives/D-001-owner-directive-compliance-system/source-001.md"
+      ],
+      "verified_at": "2026-07-23T00:00:00+00:00",
+      "verified_by": "directive-compliance-verifier",
+      "reviewed_sha": "4529ffc5be41dd7ac41cf94583eeeb03ef650031"
     },
     {
       "id": "D-001-R014",
-      "state": "pending",
-      "evidence": [],
-      "verified_at": null,
-      "verified_by": null,
-      "reviewed_sha": null
+      "state": "PASS",
+      "evidence": [
+        "project-control/directives/D-001-owner-directive-compliance-system/source-002-amendment.md",
+        "test_directive_compliance.py"
+      ],
+      "verified_at": "2026-07-23T00:00:00+00:00",
+      "verified_by": "directive-compliance-verifier",
+      "reviewed_sha": "4529ffc5be41dd7ac41cf94583eeeb03ef650031"
     },
     {
       "id": "D-001-R015",
-      "state": "pending",
-      "evidence": [],
-      "verified_at": null,
-      "verified_by": null,
-      "reviewed_sha": null
+      "state": "PASS",
+      "evidence": [
+        "project-control/directives/D-001-owner-directive-compliance-system/manifest.json",
+        "project-control/directives/D-001-owner-directive-compliance-system/requirements.json",
+        "project-control/directives/D-001-owner-directive-compliance-system/verification.json"
+      ],
+      "verified_at": "2026-07-23T00:00:00+00:00",
+      "verified_by": "directive-compliance-verifier",
+      "reviewed_sha": "4529ffc5be41dd7ac41cf94583eeeb03ef650031"
     },
     {
       "id": "D-001-R018",
-      "state": "pending",
-      "evidence": [],
-      "verified_at": null,
-      "verified_by": null,
-      "reviewed_sha": null
+      "state": "PASS",
+      "evidence": [
+        "test_directive_compliance.py"
+      ],
+      "verified_at": "2026-07-23T00:00:00+00:00",
+      "verified_by": "directive-compliance-verifier",
+      "reviewed_sha": "4529ffc5be41dd7ac41cf94583eeeb03ef650031"
     },
     {
       "id": "D-001-R019",
-      "state": "pending",
-      "evidence": [],
-      "verified_at": null,
-      "verified_by": null,
-      "reviewed_sha": null
+      "state": "PASS",
+      "evidence": [
+        "project-control/directives/D-001-owner-directive-compliance-system/manifest.json"
+      ],
+      "verified_at": "2026-07-23T00:00:00+00:00",
+      "verified_by": "directive-compliance-verifier",
+      "reviewed_sha": "4529ffc5be41dd7ac41cf94583eeeb03ef650031"
     },
     {
       "id": "D-001-R020",
-      "state": "pending",
-      "evidence": [],
-      "verified_at": null,
-      "verified_by": null,
-      "reviewed_sha": null
+      "state": "PASS",
+      "evidence": [
+        "project-control/directives/D-001-owner-directive-compliance-system/manifest.json",
+        "test_directive_compliance.py"
+      ],
+      "verified_at": "2026-07-23T00:00:00+00:00",
+      "verified_by": "directive-compliance-verifier",
+      "reviewed_sha": "4529ffc5be41dd7ac41cf94583eeeb03ef650031"
     },
     {
       "id": "D-001-R021",
-      "state": "pending",
-      "evidence": [],
-      "verified_at": null,
-      "verified_by": null,
-      "reviewed_sha": null
+      "state": "PASS",
+      "evidence": [
+        "project-control/directives/D-001-owner-directive-compliance-system/requirements.json",
+        "test_directive_compliance.py"
+      ],
+      "verified_at": "2026-07-23T00:00:00+00:00",
+      "verified_by": "directive-compliance-verifier",
+      "reviewed_sha": "4529ffc5be41dd7ac41cf94583eeeb03ef650031"
     },
     {
       "id": "D-001-R022",
-      "state": "pending",
-      "evidence": [],
-      "verified_at": null,
-      "verified_by": null,
-      "reviewed_sha": null
+      "state": "PASS",
+      "evidence": [
+        "project-control/directives/D-001-owner-directive-compliance-system/",
+        "test_directive_compliance.py"
+      ],
+      "verified_at": "2026-07-23T00:00:00+00:00",
+      "verified_by": "directive-compliance-verifier",
+      "reviewed_sha": "4529ffc5be41dd7ac41cf94583eeeb03ef650031"
     },
     {
       "id": "D-001-R023",
-      "state": "pending",
-      "evidence": [],
-      "verified_at": null,
-      "verified_by": null,
-      "reviewed_sha": null
+      "state": "PASS",
+      "evidence": [
+        "tools/project_control.py",
+        "test_project_control.py"
+      ],
+      "verified_at": "2026-07-23T00:00:00+00:00",
+      "verified_by": "directive-compliance-verifier",
+      "reviewed_sha": "4529ffc5be41dd7ac41cf94583eeeb03ef650031"
     },
     {
       "id": "D-001-R024",
-      "state": "pending",
-      "evidence": [],
-      "verified_at": null,
-      "verified_by": null,
-      "reviewed_sha": null
+      "state": "PASS",
+      "evidence": [
+        "tools/project_control.py",
+        "test_project_control.py"
+      ],
+      "verified_at": "2026-07-23T00:00:00+00:00",
+      "verified_by": "directive-compliance-verifier",
+      "reviewed_sha": "4529ffc5be41dd7ac41cf94583eeeb03ef650031"
     },
     {
       "id": "D-001-R025",
-      "state": "pending",
-      "evidence": [],
-      "verified_at": null,
-      "verified_by": null,
-      "reviewed_sha": null
+      "state": "PASS",
+      "evidence": [
+        "tools/project_control.py",
+        "test_project_control.py"
+      ],
+      "verified_at": "2026-07-23T00:00:00+00:00",
+      "verified_by": "directive-compliance-verifier",
+      "reviewed_sha": "4529ffc5be41dd7ac41cf94583eeeb03ef650031"
     },
     {
       "id": "D-001-R026",
-      "state": "pending",
-      "evidence": [],
-      "verified_at": null,
-      "verified_by": null,
-      "reviewed_sha": null
+      "state": "PASS",
+      "evidence": [
+        "tools/project_control.py",
+        "test_project_control.py"
+      ],
+      "verified_at": "2026-07-23T00:00:00+00:00",
+      "verified_by": "directive-compliance-verifier",
+      "reviewed_sha": "4529ffc5be41dd7ac41cf94583eeeb03ef650031"
     },
     {
       "id": "D-001-R027",
-      "state": "pending",
-      "evidence": [],
-      "verified_at": null,
-      "verified_by": null,
-      "reviewed_sha": null
+      "state": "PASS",
+      "evidence": [
+        "tools/project_control.py",
+        "test_project_control.py"
+      ],
+      "verified_at": "2026-07-23T00:00:00+00:00",
+      "verified_by": "directive-compliance-verifier",
+      "reviewed_sha": "4529ffc5be41dd7ac41cf94583eeeb03ef650031"
     },
     {
       "id": "D-001-R028",
-      "state": "pending",
-      "evidence": [],
-      "verified_at": null,
-      "verified_by": null,
-      "reviewed_sha": null
+      "state": "PASS",
+      "evidence": [
+        "tools/project_control.py",
+        "test_project_control.py"
+      ],
+      "verified_at": "2026-07-23T00:00:00+00:00",
+      "verified_by": "directive-compliance-verifier",
+      "reviewed_sha": "4529ffc5be41dd7ac41cf94583eeeb03ef650031"
     },
     {
       "id": "D-001-R029",
-      "state": "pending",
-      "evidence": [],
-      "verified_at": null,
-      "verified_by": null,
-      "reviewed_sha": null
+      "state": "PASS",
+      "evidence": [
+        "tools/validate_directive_compliance.py",
+        "test_directive_compliance.py"
+      ],
+      "verified_at": "2026-07-23T00:00:00+00:00",
+      "verified_by": "directive-compliance-verifier",
+      "reviewed_sha": "4529ffc5be41dd7ac41cf94583eeeb03ef650031"
     },
     {
       "id": "D-001-R030",
-      "state": "pending",
-      "evidence": [],
-      "verified_at": null,
-      "verified_by": null,
-      "reviewed_sha": null
+      "state": "PASS",
+      "evidence": [
+        "tools/project_control.py",
+        "tools/validate_directive_compliance.py",
+        "test_project_control.py",
+        "test_directive_compliance.py"
+      ],
+      "verified_at": "2026-07-23T00:00:00+00:00",
+      "verified_by": "directive-compliance-verifier",
+      "reviewed_sha": "4529ffc5be41dd7ac41cf94583eeeb03ef650031"
     },
     {
       "id": "D-001-R031",
-      "state": "pending",
-      "evidence": [],
-      "verified_at": null,
-      "verified_by": null,
-      "reviewed_sha": null
+      "state": "PASS",
+      "evidence": [
+        "tools/project_control.py",
+        "test_project_control.py"
+      ],
+      "verified_at": "2026-07-23T00:00:00+00:00",
+      "verified_by": "directive-compliance-verifier",
+      "reviewed_sha": "4529ffc5be41dd7ac41cf94583eeeb03ef650031"
     },
     {
       "id": "D-001-R032",
-      "state": "pending",
-      "evidence": [],
-      "verified_at": null,
-      "verified_by": null,
-      "reviewed_sha": null
+      "state": "PASS",
+      "evidence": [
+        "project-control/config.json",
+        "tools/project_control.py",
+        "test_project_control.py"
+      ],
+      "verified_at": "2026-07-23T00:00:00+00:00",
+      "verified_by": "directive-compliance-verifier",
+      "reviewed_sha": "4529ffc5be41dd7ac41cf94583eeeb03ef650031"
     },
     {
       "id": "D-001-R033",
-      "state": "pending",
-      "evidence": [],
-      "verified_at": null,
-      "verified_by": null,
-      "reviewed_sha": null
+      "state": "PASS",
+      "evidence": [
+        "tools/project_control.py",
+        "test_project_control.py"
+      ],
+      "verified_at": "2026-07-23T00:00:00+00:00",
+      "verified_by": "directive-compliance-verifier",
+      "reviewed_sha": "4529ffc5be41dd7ac41cf94583eeeb03ef650031"
     },
     {
       "id": "D-001-R034",
-      "state": "pending",
-      "evidence": [],
-      "verified_at": null,
-      "verified_by": null,
-      "reviewed_sha": null
+      "state": "PASS",
+      "evidence": [
+        ".claude/skills/start-controlled-task/SKILL.md"
+      ],
+      "verified_at": "2026-07-23T00:00:00+00:00",
+      "verified_by": "directive-compliance-verifier",
+      "reviewed_sha": "4529ffc5be41dd7ac41cf94583eeeb03ef650031"
     },
     {
       "id": "D-001-R035",
-      "state": "pending",
-      "evidence": [],
-      "verified_at": null,
-      "verified_by": null,
-      "reviewed_sha": null
+      "state": "PASS",
+      "evidence": [
+        ".claude/skills/replan-project/SKILL.md"
+      ],
+      "verified_at": "2026-07-23T00:00:00+00:00",
+      "verified_by": "directive-compliance-verifier",
+      "reviewed_sha": "4529ffc5be41dd7ac41cf94583eeeb03ef650031"
     },
     {
       "id": "D-001-R036",
-      "state": "pending",
-      "evidence": [],
-      "verified_at": null,
-      "verified_by": null,
-      "reviewed_sha": null
+      "state": "PASS",
+      "evidence": [
+        ".claude/skills/submit-checkpoint/SKILL.md",
+        "docs/templates/AGENT_REPORT.md"
+      ],
+      "verified_at": "2026-07-23T00:00:00+00:00",
+      "verified_by": "directive-compliance-verifier",
+      "reviewed_sha": "4529ffc5be41dd7ac41cf94583eeeb03ef650031"
     },
     {
       "id": "D-001-R037",
-      "state": "pending",
-      "evidence": [],
-      "verified_at": null,
-      "verified_by": null,
-      "reviewed_sha": null
+      "state": "PASS",
+      "evidence": [
+        ".claude/skills/run-quality-gate/SKILL.md",
+        "docs/templates/GATE_REPORT.md"
+      ],
+      "verified_at": "2026-07-23T00:00:00+00:00",
+      "verified_by": "directive-compliance-verifier",
+      "reviewed_sha": "4529ffc5be41dd7ac41cf94583eeeb03ef650031"
     },
     {
       "id": "D-001-R038",
-      "state": "pending",
-      "evidence": [],
-      "verified_at": null,
-      "verified_by": null,
-      "reviewed_sha": null
+      "state": "PASS",
+      "evidence": [
+        ".claude/rules/project-control.md",
+        "test_directive_compliance.py"
+      ],
+      "verified_at": "2026-07-23T00:00:00+00:00",
+      "verified_by": "directive-compliance-verifier",
+      "reviewed_sha": "4529ffc5be41dd7ac41cf94583eeeb03ef650031"
     },
     {
       "id": "D-001-R039",
-      "state": "pending",
-      "evidence": [],
-      "verified_at": null,
-      "verified_by": null,
-      "reviewed_sha": null
+      "state": "PASS",
+      "evidence": [
+        ".claude/skills/start-controlled-task/SKILL.md",
+        ".claude/skills/replan-project/SKILL.md",
+        ".claude/skills/submit-checkpoint/SKILL.md",
+        ".claude/skills/run-quality-gate/SKILL.md"
+      ],
+      "verified_at": "2026-07-23T00:00:00+00:00",
+      "verified_by": "directive-compliance-verifier",
+      "reviewed_sha": "4529ffc5be41dd7ac41cf94583eeeb03ef650031"
     },
     {
       "id": "D-001-R040",
-      "state": "pending",
-      "evidence": [],
-      "verified_at": null,
-      "verified_by": null,
-      "reviewed_sha": null
+      "state": "PASS",
+      "evidence": [
+        ".claude/agents/directive-compliance-verifier.md",
+        "test_readonly_agent_guard.py"
+      ],
+      "verified_at": "2026-07-23T00:00:00+00:00",
+      "verified_by": "directive-compliance-verifier",
+      "reviewed_sha": "4529ffc5be41dd7ac41cf94583eeeb03ef650031"
     },
     {
       "id": "D-001-R041",
-      "state": "pending",
-      "evidence": [],
-      "verified_at": null,
-      "verified_by": null,
-      "reviewed_sha": null
+      "state": "PASS",
+      "evidence": [
+        ".claude/hooks/readonly_agent_guard.py",
+        "tools/test_readonly_agent_guard.py",
+        "test_readonly_agent_guard.py"
+      ],
+      "verified_at": "2026-07-23T00:00:00+00:00",
+      "verified_by": "directive-compliance-verifier",
+      "reviewed_sha": "4529ffc5be41dd7ac41cf94583eeeb03ef650031"
     },
     {
       "id": "D-001-R042",
-      "state": "pending",
-      "evidence": [],
-      "verified_at": null,
-      "verified_by": null,
-      "reviewed_sha": null
+      "state": "PASS",
+      "evidence": [
+        ".claude/agents/directive-compliance-verifier.md"
+      ],
+      "verified_at": "2026-07-23T00:00:00+00:00",
+      "verified_by": "directive-compliance-verifier",
+      "reviewed_sha": "4529ffc5be41dd7ac41cf94583eeeb03ef650031"
     },
     {
       "id": "D-001-R043",
-      "state": "pending",
-      "evidence": [],
-      "verified_at": null,
-      "verified_by": null,
-      "reviewed_sha": null
+      "state": "PASS",
+      "evidence": [
+        ".claude/agents/directive-compliance-verifier.md"
+      ],
+      "verified_at": "2026-07-23T00:00:00+00:00",
+      "verified_by": "directive-compliance-verifier",
+      "reviewed_sha": "4529ffc5be41dd7ac41cf94583eeeb03ef650031"
     },
     {
       "id": "D-001-R044",
-      "state": "pending",
-      "evidence": [],
-      "verified_at": null,
-      "verified_by": null,
-      "reviewed_sha": null
+      "state": "PASS",
+      "evidence": [
+        ".claude/agents/directive-compliance-verifier.md"
+      ],
+      "verified_at": "2026-07-23T00:00:00+00:00",
+      "verified_by": "directive-compliance-verifier",
+      "reviewed_sha": "4529ffc5be41dd7ac41cf94583eeeb03ef650031"
     },
     {
       "id": "D-001-R045",
-      "state": "pending",
-      "evidence": [],
-      "verified_at": null,
-      "verified_by": null,
-      "reviewed_sha": null
+      "state": "PASS",
+      "evidence": [
+        ".claude/agents/directive-compliance-verifier.md"
+      ],
+      "verified_at": "2026-07-23T00:00:00+00:00",
+      "verified_by": "directive-compliance-verifier",
+      "reviewed_sha": "4529ffc5be41dd7ac41cf94583eeeb03ef650031"
     },
     {
       "id": "D-001-R046",
-      "state": "pending",
-      "evidence": [],
-      "verified_at": null,
-      "verified_by": null,
-      "reviewed_sha": null
+      "state": "PASS",
+      "evidence": [
+        "tools/validate_directive_compliance.py",
+        "test_directive_compliance.py"
+      ],
+      "verified_at": "2026-07-23T00:00:00+00:00",
+      "verified_by": "directive-compliance-verifier",
+      "reviewed_sha": "4529ffc5be41dd7ac41cf94583eeeb03ef650031"
     },
     {
       "id": "D-001-R047",
-      "state": "pending",
-      "evidence": [],
-      "verified_at": null,
-      "verified_by": null,
-      "reviewed_sha": null
+      "state": "PASS",
+      "evidence": [
+        ".github/workflows/ci.yml",
+        "tools/test_directive_compliance.py",
+        "test_directive_compliance.py"
+      ],
+      "verified_at": "2026-07-23T00:00:00+00:00",
+      "verified_by": "directive-compliance-verifier",
+      "reviewed_sha": "4529ffc5be41dd7ac41cf94583eeeb03ef650031"
     },
     {
       "id": "D-001-R048",
-      "state": "pending",
-      "evidence": [],
-      "verified_at": null,
-      "verified_by": null,
-      "reviewed_sha": null
+      "state": "PASS",
+      "evidence": [
+        "tools/validate_directive_compliance.py",
+        "test_directive_compliance.py"
+      ],
+      "verified_at": "2026-07-23T00:00:00+00:00",
+      "verified_by": "directive-compliance-verifier",
+      "reviewed_sha": "4529ffc5be41dd7ac41cf94583eeeb03ef650031"
     },
     {
       "id": "D-001-R049",
-      "state": "pending",
-      "evidence": [],
-      "verified_at": null,
-      "verified_by": null,
-      "reviewed_sha": null
+      "state": "PASS",
+      "evidence": [
+        "test_directive_compliance.py"
+      ],
+      "verified_at": "2026-07-23T00:00:00+00:00",
+      "verified_by": "directive-compliance-verifier",
+      "reviewed_sha": "4529ffc5be41dd7ac41cf94583eeeb03ef650031"
     },
     {
       "id": "D-001-R050",
-      "state": "pending",
-      "evidence": [],
-      "verified_at": null,
-      "verified_by": null,
-      "reviewed_sha": null
+      "state": "PASS",
+      "evidence": [
+        ".claude/hooks/directive_reminder.py",
+        ".claude/settings.json",
+        "test_directive_reminder.py"
+      ],
+      "verified_at": "2026-07-23T00:00:00+00:00",
+      "verified_by": "directive-compliance-verifier",
+      "reviewed_sha": "4529ffc5be41dd7ac41cf94583eeeb03ef650031"
     },
     {
       "id": "D-001-R051",
-      "state": "pending",
-      "evidence": [],
-      "verified_at": null,
-      "verified_by": null,
-      "reviewed_sha": null
+      "state": "PASS",
+      "evidence": [
+        ".claude/hooks/directive_reminder.py",
+        "test_directive_reminder.py"
+      ],
+      "verified_at": "2026-07-23T00:00:00+00:00",
+      "verified_by": "directive-compliance-verifier",
+      "reviewed_sha": "4529ffc5be41dd7ac41cf94583eeeb03ef650031"
     },
     {
       "id": "D-001-R052",
-      "state": "pending",
-      "evidence": [],
-      "verified_at": null,
-      "verified_by": null,
-      "reviewed_sha": null
+      "state": "PASS",
+      "evidence": [
+        "tools/project_control.py",
+        "test_project_control.py",
+        "test_directive_reminder.py"
+      ],
+      "verified_at": "2026-07-23T00:00:00+00:00",
+      "verified_by": "directive-compliance-verifier",
+      "reviewed_sha": "4529ffc5be41dd7ac41cf94583eeeb03ef650031"
     },
     {
       "id": "D-001-R053",
-      "state": "pending",
-      "evidence": [],
-      "verified_at": null,
-      "verified_by": null,
-      "reviewed_sha": null
+      "state": "PASS",
+      "evidence": [
+        ".claude/hooks/readonly_agent_guard.py",
+        "test_agent_dispatch_guard.py",
+        "test_readonly_agent_guard.py"
+      ],
+      "verified_at": "2026-07-23T00:00:00+00:00",
+      "verified_by": "directive-compliance-verifier",
+      "reviewed_sha": "4529ffc5be41dd7ac41cf94583eeeb03ef650031"
     },
     {
       "id": "D-001-R054",
-      "state": "pending",
-      "evidence": [],
-      "verified_at": null,
-      "verified_by": null,
-      "reviewed_sha": null
+      "state": "PASS",
+      "evidence": [
+        "tools/test_directive_compliance.py",
+        "tools/test_project_control.py",
+        "test_directive_compliance.py",
+        "test_project_control.py"
+      ],
+      "verified_at": "2026-07-23T00:00:00+00:00",
+      "verified_by": "directive-compliance-verifier",
+      "reviewed_sha": "4529ffc5be41dd7ac41cf94583eeeb03ef650031"
     },
     {
       "id": "D-001-R055",
-      "state": "pending",
-      "evidence": [],
-      "verified_at": null,
-      "verified_by": null,
-      "reviewed_sha": null
+      "state": "PASS",
+      "evidence": [
+        "project-control/directives/D-001-owner-directive-compliance-system/requirements.json"
+      ],
+      "verified_at": "2026-07-23T00:00:00+00:00",
+      "verified_by": "directive-compliance-verifier",
+      "reviewed_sha": "4529ffc5be41dd7ac41cf94583eeeb03ef650031"
     },
     {
       "id": "D-001-R056",
-      "state": "pending",
-      "evidence": [],
-      "verified_at": null,
-      "verified_by": null,
-      "reviewed_sha": null
+      "state": "PASS",
+      "evidence": [
+        "independently verified SATISFIED by directive-compliance-verifier at reviewed_sha 4529ffc5be41 (see project-control/reports/M0-T023-G4.md)"
+      ],
+      "verified_at": "2026-07-23T00:00:00+00:00",
+      "verified_by": "directive-compliance-verifier",
+      "reviewed_sha": "4529ffc5be41dd7ac41cf94583eeeb03ef650031"
     },
     {
       "id": "D-001-R057",
-      "state": "pending",
-      "evidence": [],
-      "verified_at": null,
-      "verified_by": null,
-      "reviewed_sha": null
+      "state": "PASS",
+      "evidence": [
+        "independently verified SATISFIED by directive-compliance-verifier at reviewed_sha 4529ffc5be41 (see project-control/reports/M0-T023-G4.md)"
+      ],
+      "verified_at": "2026-07-23T00:00:00+00:00",
+      "verified_by": "directive-compliance-verifier",
+      "reviewed_sha": "4529ffc5be41dd7ac41cf94583eeeb03ef650031"
     },
     {
       "id": "D-001-R058",
-      "state": "pending",
-      "evidence": [],
-      "verified_at": null,
-      "verified_by": null,
-      "reviewed_sha": null
+      "state": "PASS",
+      "evidence": [
+        "independently verified SATISFIED by directive-compliance-verifier at reviewed_sha 4529ffc5be41 (see project-control/reports/M0-T023-G4.md)"
+      ],
+      "verified_at": "2026-07-23T00:00:00+00:00",
+      "verified_by": "directive-compliance-verifier",
+      "reviewed_sha": "4529ffc5be41dd7ac41cf94583eeeb03ef650031"
     },
     {
       "id": "D-001-R059",
-      "state": "pending",
-      "evidence": [],
-      "verified_at": null,
-      "verified_by": null,
-      "reviewed_sha": null
+      "state": "PASS",
+      "evidence": [
+        "independently verified SATISFIED by directive-compliance-verifier at reviewed_sha 4529ffc5be41 (see project-control/reports/M0-T023-G4.md)"
+      ],
+      "verified_at": "2026-07-23T00:00:00+00:00",
+      "verified_by": "directive-compliance-verifier",
+      "reviewed_sha": "4529ffc5be41dd7ac41cf94583eeeb03ef650031"
     },
     {
       "id": "D-001-R060",
-      "state": "pending",
-      "evidence": [],
-      "verified_at": null,
-      "verified_by": null,
-      "reviewed_sha": null
+      "state": "PASS",
+      "evidence": [
+        "independently verified SATISFIED by directive-compliance-verifier at reviewed_sha 4529ffc5be41 (see project-control/reports/M0-T023-G4.md)"
+      ],
+      "verified_at": "2026-07-23T00:00:00+00:00",
+      "verified_by": "directive-compliance-verifier",
+      "reviewed_sha": "4529ffc5be41dd7ac41cf94583eeeb03ef650031"
     },
     {
       "id": "D-001-R061",
-      "state": "pending",
-      "evidence": [],
-      "verified_at": null,
-      "verified_by": null,
-      "reviewed_sha": null
+      "state": "PASS",
+      "evidence": [
+        "project-control/directives/D-001-owner-directive-compliance-system/"
+      ],
+      "verified_at": "2026-07-23T00:00:00+00:00",
+      "verified_by": "directive-compliance-verifier",
+      "reviewed_sha": "4529ffc5be41dd7ac41cf94583eeeb03ef650031"
     },
     {
       "id": "D-001-R062",
-      "state": "pending",
-      "evidence": [],
-      "verified_at": null,
-      "verified_by": null,
-      "reviewed_sha": null
+      "state": "PASS",
+      "evidence": [
+        "independently verified SATISFIED by directive-compliance-verifier at reviewed_sha 4529ffc5be41 (see project-control/reports/M0-T023-G4.md)"
+      ],
+      "verified_at": "2026-07-23T00:00:00+00:00",
+      "verified_by": "directive-compliance-verifier",
+      "reviewed_sha": "4529ffc5be41dd7ac41cf94583eeeb03ef650031"
     },
     {
       "id": "D-001-R063",
-      "state": "pending",
-      "evidence": [],
-      "verified_at": null,
-      "verified_by": null,
-      "reviewed_sha": null
+      "state": "PASS",
+      "evidence": [
+        "independently verified SATISFIED by directive-compliance-verifier at reviewed_sha 4529ffc5be41 (see project-control/reports/M0-T023-G4.md)"
+      ],
+      "verified_at": "2026-07-23T00:00:00+00:00",
+      "verified_by": "directive-compliance-verifier",
+      "reviewed_sha": "4529ffc5be41dd7ac41cf94583eeeb03ef650031"
     },
     {
       "id": "D-001-R064",
-      "state": "pending",
-      "evidence": [],
-      "verified_at": null,
-      "verified_by": null,
-      "reviewed_sha": null
+      "state": "PASS",
+      "evidence": [
+        "independently verified SATISFIED by directive-compliance-verifier at reviewed_sha 4529ffc5be41 (see project-control/reports/M0-T023-G4.md)"
+      ],
+      "verified_at": "2026-07-23T00:00:00+00:00",
+      "verified_by": "directive-compliance-verifier",
+      "reviewed_sha": "4529ffc5be41dd7ac41cf94583eeeb03ef650031"
     },
     {
       "id": "D-001-R065",
-      "state": "pending",
-      "evidence": [],
-      "verified_at": null,
-      "verified_by": null,
-      "reviewed_sha": null
+      "state": "PASS",
+      "evidence": [
+        "independently verified SATISFIED by directive-compliance-verifier at reviewed_sha 4529ffc5be41 (see project-control/reports/M0-T023-G4.md)"
+      ],
+      "verified_at": "2026-07-23T00:00:00+00:00",
+      "verified_by": "directive-compliance-verifier",
+      "reviewed_sha": "4529ffc5be41dd7ac41cf94583eeeb03ef650031"
     },
     {
       "id": "D-001-R066",
-      "state": "pending",
-      "evidence": [],
-      "verified_at": null,
-      "verified_by": null,
-      "reviewed_sha": null
+      "state": "PASS",
+      "evidence": [
+        "independently verified SATISFIED by directive-compliance-verifier at reviewed_sha 4529ffc5be41 (see project-control/reports/M0-T023-G4.md)"
+      ],
+      "verified_at": "2026-07-23T00:00:00+00:00",
+      "verified_by": "directive-compliance-verifier",
+      "reviewed_sha": "4529ffc5be41dd7ac41cf94583eeeb03ef650031"
     },
     {
       "id": "D-001-R067",
-      "state": "pending",
-      "evidence": [],
-      "verified_at": null,
-      "verified_by": null,
-      "reviewed_sha": null
+      "state": "PASS",
+      "evidence": [
+        "independently verified SATISFIED by directive-compliance-verifier at reviewed_sha 4529ffc5be41 (see project-control/reports/M0-T023-G4.md)"
+      ],
+      "verified_at": "2026-07-23T00:00:00+00:00",
+      "verified_by": "directive-compliance-verifier",
+      "reviewed_sha": "4529ffc5be41dd7ac41cf94583eeeb03ef650031"
     },
     {
       "id": "D-001-R068",
-      "state": "pending",
-      "evidence": [],
-      "verified_at": null,
-      "verified_by": null,
-      "reviewed_sha": null
+      "state": "PASS",
+      "evidence": [
+        "tools/validate_directive_compliance.py",
+        "test_directive_compliance.py"
+      ],
+      "verified_at": "2026-07-23T00:00:00+00:00",
+      "verified_by": "directive-compliance-verifier",
+      "reviewed_sha": "4529ffc5be41dd7ac41cf94583eeeb03ef650031"
     },
     {
       "id": "D-001-R069",
-      "state": "pending",
-      "evidence": [],
-      "verified_at": null,
-      "verified_by": null,
-      "reviewed_sha": null
+      "state": "PASS",
+      "evidence": [
+        "independently verified SATISFIED by directive-compliance-verifier at reviewed_sha 4529ffc5be41 (see project-control/reports/M0-T023-G4.md)"
+      ],
+      "verified_at": "2026-07-23T00:00:00+00:00",
+      "verified_by": "directive-compliance-verifier",
+      "reviewed_sha": "4529ffc5be41dd7ac41cf94583eeeb03ef650031"
     },
     {
       "id": "D-001-R070",
-      "state": "pending",
-      "evidence": [],
-      "verified_at": null,
-      "verified_by": null,
-      "reviewed_sha": null
+      "state": "PASS",
+      "evidence": [
+        "independently verified SATISFIED by directive-compliance-verifier at reviewed_sha 4529ffc5be41 (see project-control/reports/M0-T023-G4.md)"
+      ],
+      "verified_at": "2026-07-23T00:00:00+00:00",
+      "verified_by": "directive-compliance-verifier",
+      "reviewed_sha": "4529ffc5be41dd7ac41cf94583eeeb03ef650031"
     },
     {
       "id": "D-001-R071",
-      "state": "pending",
-      "evidence": [],
-      "verified_at": null,
-      "verified_by": null,
-      "reviewed_sha": null
+      "state": "PASS",
+      "evidence": [
+        "independently verified SATISFIED by directive-compliance-verifier at reviewed_sha 4529ffc5be41 (see project-control/reports/M0-T023-G4.md)"
+      ],
+      "verified_at": "2026-07-23T00:00:00+00:00",
+      "verified_by": "directive-compliance-verifier",
+      "reviewed_sha": "4529ffc5be41dd7ac41cf94583eeeb03ef650031"
     },
     {
       "id": "D-001-R072",
-      "state": "pending",
-      "evidence": [],
-      "verified_at": null,
-      "verified_by": null,
-      "reviewed_sha": null
+      "state": "PASS",
+      "evidence": [
+        "independently verified SATISFIED by directive-compliance-verifier at reviewed_sha 4529ffc5be41 (see project-control/reports/M0-T023-G4.md)"
+      ],
+      "verified_at": "2026-07-23T00:00:00+00:00",
+      "verified_by": "directive-compliance-verifier",
+      "reviewed_sha": "4529ffc5be41dd7ac41cf94583eeeb03ef650031"
     },
     {
       "id": "D-001-R073",
-      "state": "pending",
-      "evidence": [],
-      "verified_at": null,
-      "verified_by": null,
-      "reviewed_sha": null
+      "state": "PASS",
+      "evidence": [
+        "independently verified SATISFIED by directive-compliance-verifier at reviewed_sha 4529ffc5be41 (see project-control/reports/M0-T023-G4.md)"
+      ],
+      "verified_at": "2026-07-23T00:00:00+00:00",
+      "verified_by": "directive-compliance-verifier",
+      "reviewed_sha": "4529ffc5be41dd7ac41cf94583eeeb03ef650031"
     },
     {
       "id": "D-001-R101",
-      "state": "pending",
-      "evidence": [],
-      "verified_at": null,
-      "verified_by": null,
-      "reviewed_sha": null
+      "state": "PASS",
+      "evidence": [
+        "tools/directive_registry.py",
+        "tools/project_control.py",
+        "tools/validate_directive_compliance.py",
+        "test_project_control.py",
+        "test_directive_compliance.py"
+      ],
+      "verified_at": "2026-07-23T00:00:00+00:00",
+      "verified_by": "directive-compliance-verifier",
+      "reviewed_sha": "4529ffc5be41dd7ac41cf94583eeeb03ef650031"
     },
     {
       "id": "D-001-R102",
-      "state": "pending",
-      "evidence": [],
-      "verified_at": null,
-      "verified_by": null,
-      "reviewed_sha": null
+      "state": "PASS",
+      "evidence": [
+        "project-control/directives/D-001-owner-directive-compliance-system/requirements.json",
+        "tools/directive_registry.py",
+        "test_directive_compliance.py"
+      ],
+      "verified_at": "2026-07-23T00:00:00+00:00",
+      "verified_by": "directive-compliance-verifier",
+      "reviewed_sha": "4529ffc5be41dd7ac41cf94583eeeb03ef650031"
     },
     {
       "id": "D-001-R103",
-      "state": "pending",
-      "evidence": [],
-      "verified_at": null,
-      "verified_by": null,
-      "reviewed_sha": null
+      "state": "PASS",
+      "evidence": [
+        "tools/directive_registry.py",
+        "tools/project_control.py",
+        "test_project_control.py"
+      ],
+      "verified_at": "2026-07-23T00:00:00+00:00",
+      "verified_by": "directive-compliance-verifier",
+      "reviewed_sha": "4529ffc5be41dd7ac41cf94583eeeb03ef650031"
     },
     {
       "id": "D-001-R104",
-      "state": "pending",
-      "evidence": [],
-      "verified_at": null,
-      "verified_by": null,
-      "reviewed_sha": null
+      "state": "PASS",
+      "evidence": [
+        "tools/directive_registry.py",
+        "tools/project_control.py",
+        "test_project_control.py"
+      ],
+      "verified_at": "2026-07-23T00:00:00+00:00",
+      "verified_by": "directive-compliance-verifier",
+      "reviewed_sha": "4529ffc5be41dd7ac41cf94583eeeb03ef650031"
     },
     {
       "id": "D-001-R105",
-      "state": "pending",
-      "evidence": [],
-      "verified_at": null,
-      "verified_by": null,
-      "reviewed_sha": null
+      "state": "PASS",
+      "evidence": [
+        "project-control/directives/index.json",
+        "tools/directive_registry.py",
+        "test_directive_compliance.py"
+      ],
+      "verified_at": "2026-07-23T00:00:00+00:00",
+      "verified_by": "directive-compliance-verifier",
+      "reviewed_sha": "4529ffc5be41dd7ac41cf94583eeeb03ef650031"
     },
     {
       "id": "D-001-R106",
-      "state": "pending",
-      "evidence": [],
-      "verified_at": null,
-      "verified_by": null,
-      "reviewed_sha": null
+      "state": "PASS",
+      "evidence": [
+        ".claude/rules/project-control.md",
+        "project-control/directives/D-001-owner-directive-compliance-system/manifest.json"
+      ],
+      "verified_at": "2026-07-23T00:00:00+00:00",
+      "verified_by": "directive-compliance-verifier",
+      "reviewed_sha": "4529ffc5be41dd7ac41cf94583eeeb03ef650031"
     },
     {
       "id": "D-001-R107",
-      "state": "pending",
-      "evidence": [],
-      "verified_at": null,
-      "verified_by": null,
-      "reviewed_sha": null
+      "state": "PASS",
+      "evidence": [
+        "tools/validate_directive_compliance.py",
+        "test_directive_compliance.py"
+      ],
+      "verified_at": "2026-07-23T00:00:00+00:00",
+      "verified_by": "directive-compliance-verifier",
+      "reviewed_sha": "4529ffc5be41dd7ac41cf94583eeeb03ef650031"
     },
     {
       "id": "D-001-R108",
-      "state": "pending",
-      "evidence": [],
-      "verified_at": null,
-      "verified_by": null,
-      "reviewed_sha": null
+      "state": "PASS",
+      "evidence": [
+        "tools/project_control.py",
+        "test_project_control.py"
+      ],
+      "verified_at": "2026-07-23T00:00:00+00:00",
+      "verified_by": "directive-compliance-verifier",
+      "reviewed_sha": "4529ffc5be41dd7ac41cf94583eeeb03ef650031"
     },
     {
       "id": "D-001-R109",
-      "state": "pending",
-      "evidence": [],
-      "verified_at": null,
-      "verified_by": null,
-      "reviewed_sha": null
+      "state": "PASS",
+      "evidence": [
+        "tools/project_control.py",
+        "test_project_control.py"
+      ],
+      "verified_at": "2026-07-23T00:00:00+00:00",
+      "verified_by": "directive-compliance-verifier",
+      "reviewed_sha": "4529ffc5be41dd7ac41cf94583eeeb03ef650031"
     },
     {
       "id": "D-001-R110",
-      "state": "pending",
-      "evidence": [],
-      "verified_at": null,
-      "verified_by": null,
-      "reviewed_sha": null
+      "state": "PASS",
+      "evidence": [
+        "tools/project_control.py",
+        "test_project_control.py"
+      ],
+      "verified_at": "2026-07-23T00:00:00+00:00",
+      "verified_by": "directive-compliance-verifier",
+      "reviewed_sha": "4529ffc5be41dd7ac41cf94583eeeb03ef650031"
     },
     {
       "id": "D-001-R111",
-      "state": "pending",
-      "evidence": [],
-      "verified_at": null,
-      "verified_by": null,
-      "reviewed_sha": null
+      "state": "PASS",
+      "evidence": [
+        "tools/project_control.py",
+        "test_project_control.py"
+      ],
+      "verified_at": "2026-07-23T00:00:00+00:00",
+      "verified_by": "directive-compliance-verifier",
+      "reviewed_sha": "4529ffc5be41dd7ac41cf94583eeeb03ef650031"
     },
     {
       "id": "D-001-R112",
-      "state": "pending",
-      "evidence": [],
-      "verified_at": null,
-      "verified_by": null,
-      "reviewed_sha": null
+      "state": "PASS",
+      "evidence": [
+        ".claude/hooks/directive_reminder.py",
+        "test_directive_reminder.py"
+      ],
+      "verified_at": "2026-07-23T00:00:00+00:00",
+      "verified_by": "directive-compliance-verifier",
+      "reviewed_sha": "4529ffc5be41dd7ac41cf94583eeeb03ef650031"
     },
     {
       "id": "D-001-R113",
-      "state": "pending",
-      "evidence": [],
-      "verified_at": null,
-      "verified_by": null,
-      "reviewed_sha": null
+      "state": "PASS",
+      "evidence": [
+        ".claude/hooks/directive_reminder.py",
+        "test_directive_reminder.py"
+      ],
+      "verified_at": "2026-07-23T00:00:00+00:00",
+      "verified_by": "directive-compliance-verifier",
+      "reviewed_sha": "4529ffc5be41dd7ac41cf94583eeeb03ef650031"
     },
     {
       "id": "D-001-R114",
-      "state": "pending",
-      "evidence": [],
-      "verified_at": null,
-      "verified_by": null,
-      "reviewed_sha": null
+      "state": "PASS",
+      "evidence": [
+        ".claude/hooks/directive_reminder.py",
+        "test_directive_reminder.py"
+      ],
+      "verified_at": "2026-07-23T00:00:00+00:00",
+      "verified_by": "directive-compliance-verifier",
+      "reviewed_sha": "4529ffc5be41dd7ac41cf94583eeeb03ef650031"
     },
     {
       "id": "D-001-R115",
-      "state": "pending",
-      "evidence": [],
-      "verified_at": null,
-      "verified_by": null,
-      "reviewed_sha": null
+      "state": "PASS",
+      "evidence": [
+        ".claude/hooks/directive_reminder.py",
+        "test_directive_reminder.py"
+      ],
+      "verified_at": "2026-07-23T00:00:00+00:00",
+      "verified_by": "directive-compliance-verifier",
+      "reviewed_sha": "4529ffc5be41dd7ac41cf94583eeeb03ef650031"
     },
     {
       "id": "D-001-R116",
-      "state": "pending",
-      "evidence": [],
-      "verified_at": null,
-      "verified_by": null,
-      "reviewed_sha": null
+      "state": "PASS",
+      "evidence": [
+        "project-control/directives/BOOTSTRAP.md"
+      ],
+      "verified_at": "2026-07-23T00:00:00+00:00",
+      "verified_by": "directive-compliance-verifier",
+      "reviewed_sha": "4529ffc5be41dd7ac41cf94583eeeb03ef650031"
     },
     {
       "id": "D-001-R117",
-      "state": "pending",
-      "evidence": [],
-      "verified_at": null,
-      "verified_by": null,
-      "reviewed_sha": null
+      "state": "PASS",
+      "evidence": [
+        "tools/test_directive_compliance.py",
+        "tools/test_project_control.py",
+        "tools/test_directive_reminder.py",
+        "test_directive_compliance.py",
+        "test_project_control.py",
+        "test_directive_reminder.py"
+      ],
+      "verified_at": "2026-07-23T00:00:00+00:00",
+      "verified_by": "directive-compliance-verifier",
+      "reviewed_sha": "4529ffc5be41dd7ac41cf94583eeeb03ef650031"
     },
     {
       "id": "D-001-R118",
-      "state": "pending",
-      "evidence": [],
-      "verified_at": null,
-      "verified_by": null,
-      "reviewed_sha": null
+      "state": "PASS",
+      "evidence": [
+        "tools/project_control.py",
+        "tools/directive_registry.py",
+        "test_project_control.py"
+      ],
+      "verified_at": "2026-07-23T00:00:00+00:00",
+      "verified_by": "directive-compliance-verifier",
+      "reviewed_sha": "4529ffc5be41dd7ac41cf94583eeeb03ef650031"
     }
   ],
   "updated_at": "2026-07-23T00:00:00+00:00"

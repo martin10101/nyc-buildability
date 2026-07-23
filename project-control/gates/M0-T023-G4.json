@@ -1,0 +1,12 @@
+{
+  "task_id": "M0-T023",
+  "gate_id": "G4",
+  "reviewer": "directive-compliance-verifier",
+  "role": "independent_review",
+  "result": "PASS",
+  "report_file": "project-control/reports/M0-T023-G4.md",
+  "reviewed_at": "2026-07-23T22:40:36.391352+00:00",
+  "content_manifest_sha256": "db32be268ad057011b70cf1a7f5b4af11e837eb20d241957ec54a24bc6866fac",
+  "reviewed_sha": "4529ffc5be41dd7ac41cf94583eeeb03ef650031",
+  "updated_at": "2026-07-23T22:40:36.412467+00:00"
+}

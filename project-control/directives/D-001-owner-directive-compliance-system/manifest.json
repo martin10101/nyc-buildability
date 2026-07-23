@@ -100,8 +100,8 @@
   "lifecycle_state": "active",
   "requirements_file": "requirements.json",
   "verification_file": "verification.json",
-  "final_reviewed_sha": null,
-  "final_reviewed_manifest_sha256": null,
+  "final_reviewed_sha": "4529ffc5be41dd7ac41cf94583eeeb03ef650031",
+  "final_reviewed_manifest_sha256": "db32be268ad057011b70cf1a7f5b4af11e837eb20d241957ec54a24bc6866fac",
   "enforcement_pointers": {
     "tasks": [
       "M0-T023"
@@ -130,6 +130,11 @@
       "at": "2026-07-23T00:00:00+00:00",
       "by": "orchestrator",
       "note": "Recorded owner amendment (source-002-amendment.md): Option-1 approval + 8 mandatory corrections; folded into requirements D-001-R101..R118."
+    },
+    {
+      "at": "2026-07-23T00:00:00+00:00",
+      "by": "orchestrator",
+      "note": "Independent review complete at 4529ffc5be41: G3 code PASS, G4 directive-compliance PASS (89/89 SATISFIED) + control-plane PASS, G5 security PASS. verification.json recorded."
     }
   ],
   "locked_requirement_ids": [
