@@ -49,7 +49,11 @@ export default defineConfig({
       // here without needing a rebuild. The surface still renders ONLY on
       // requests that also opt in with `?ruleeval=on`, so unrelated journeys are
       // unaffected and the no-call spec (no opt-in) proves the browser is silent.
-      env: { INTERNAL_RULE_EVAL_UI: "1" },
+      // M0-T022: also enable the internal owner dashboard for this test server so
+      // the human-journey walkthrough (G4) can exercise /dashboard in a real
+      // browser. Non-public runtime flag, read server-side, never inlined into the
+      // client bundle; unset in production so the route 404s by default.
+      env: { INTERNAL_RULE_EVAL_UI: "1", INTERNAL_OWNER_DASHBOARD_ENABLED: "1" },
     },
   ],
 });

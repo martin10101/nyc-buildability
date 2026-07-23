@@ -352,3 +352,19 @@ jobs:
       # must be programmatically rejected while B-007 is open; roster agents unaffected.
       - name: Run agent dispatch-guard rejection test
         run: python3 tools/test_agent_dispatch_guard.py
+
+  # Task M0-T022 (ADDITIVE job; existing jobs untouched): integrity gate for the
+  # owner dashboard's one new metadata file, project-control/product-map.json.
+  # Stdlib only. Proves every ledger task maps to exactly one product system,
+  # eng_weight and launch_weight each sum to 100, and every referenced id
+  # resolves - so the read-only dashboard's two progress numbers can never be
+  # computed from a product map that has silently drifted from the ledger.
+  product-map:
+    name: product-map (owner-dashboard metadata integrity)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+      - name: Validate product-map.json against the ledger
+        run: python3 tools/validate_product_map.py --check
+      - name: Run product-map validator unit tests
+        run: python3 tools/test_product_map.py

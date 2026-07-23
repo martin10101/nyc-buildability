@@ -1,0 +1,104 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://nyc-buildability/project-control/product-map.schema.json",
+  "title": "Product Map",
+  "description": "Schema for project-control/product-map.json - the canonical metadata mapping engineering tasks/milestones to owner-facing product systems, with explicit weights, for the read-only owner dashboard. Structural rules are checked here; cross-reference integrity (every ledger task maps to exactly one system, weights sum to 100, all references resolve) is enforced by tools/validate_product_map.py.",
+  "type": "object",
+  "required": ["version", "systems", "architect_journey", "owner_status_vocabulary", "progress_model"],
+  "additionalProperties": true,
+  "properties": {
+    "$schema": { "type": "string" },
+    "version": { "type": "integer", "minimum": 1 },
+    "updated_at": { "type": "string" },
+    "purpose": { "type": "string" },
+    "progress_model": {
+      "type": "object",
+      "required": ["engineering_completion", "launch_readiness"],
+      "properties": {
+        "engineering_completion": { "type": "string" },
+        "launch_readiness": { "type": "string" },
+        "notes": { "type": "string" }
+      },
+      "additionalProperties": true
+    },
+    "repo": {
+      "type": "object",
+      "properties": {
+        "github": { "type": "string" },
+        "default_branch": { "type": "string" },
+        "public": { "type": "boolean" }
+      },
+      "additionalProperties": true
+    },
+    "owner_status_vocabulary": {
+      "type": "object",
+      "description": "Maps each control-plane task status to an owner-facing label.",
+      "additionalProperties": { "type": "string" }
+    },
+    "systems": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["id", "name", "owner_purpose", "owner_why", "eng_weight", "launch_weight", "planned_count"],
+        "additionalProperties": false,
+        "properties": {
+          "id": { "type": "string", "pattern": "^[a-z][a-z0-9_]*$" },
+          "name": { "type": "string", "minLength": 1 },
+          "owner_purpose": { "type": "string", "minLength": 1 },
+          "owner_why": { "type": "string", "minLength": 1 },
+          "eng_weight": { "type": "number", "minimum": 0, "maximum": 100 },
+          "launch_weight": { "type": "number", "minimum": 0, "maximum": 100 },
+          "planned_count": { "type": "integer", "minimum": 0 },
+          "milestones": { "type": "array", "items": { "type": "string", "pattern": "^M\\d+$" } },
+          "tasks_include": { "type": "array", "items": { "type": "string", "pattern": "^M\\d+-T\\d{3}(-R\\d+)?$" } },
+          "tasks_exclude": { "type": "array", "items": { "type": "string", "pattern": "^M\\d+-T\\d{3}(-R\\d+)?$" } },
+          "depends_on": { "type": "array", "items": { "type": "string" } },
+          "critical_for_beta": { "type": "boolean" },
+          "journey_steps": { "type": "array", "items": { "type": "integer", "minimum": 0 } },
+          "readiness_cap": {
+            "type": "object",
+            "required": ["until_gate_passes", "max_readiness_fraction"],
+            "properties": {
+              "until_gate_passes": { "type": "string", "pattern": "^G[0-7]$" },
+              "on_task": { "type": "string", "pattern": "^M\\d+-T\\d{3}(-R\\d+)?$" },
+              "max_readiness_fraction": { "type": "number", "minimum": 0, "maximum": 1 },
+              "reason": { "type": "string" }
+            },
+            "additionalProperties": false
+          }
+        }
+      }
+    },
+    "architect_journey": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["step", "label", "systems"],
+        "additionalProperties": false,
+        "properties": {
+          "step": { "type": "integer", "minimum": 0 },
+          "label": { "type": "string", "minLength": 1 },
+          "systems": { "type": "array", "items": { "type": "string" } }
+        }
+      }
+    },
+    "task_overrides": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "object",
+        "required": ["owner_title", "owner_description"],
+        "additionalProperties": false,
+        "properties": {
+          "owner_title": { "type": "string", "minLength": 1 },
+          "owner_description": { "type": "string", "minLength": 1 }
+        }
+      }
+    },
+    "blocker_labels": {
+      "type": "object",
+      "additionalProperties": { "type": "string" }
+    }
+  }
+}
