@@ -88,6 +88,32 @@ def test_as1_r5_setback_confident_min_depth_by_street(registry, street_class, ex
     assert res.outputs == {"required_setback_depth": expected_depth}
 
 
+@pytest.mark.parametrize("street_class", ["wide", "narrow"])
+def test_as1_r5_setback_10_15_are_standard_unmodified_not_final(registry, street_class):
+    """The 10/15 ft depths are the STANDARD UNMODIFIED starting setbacks under
+    section 23-423; the section's reductions/modifications (front-yard offset with a
+    7 ft floor, recesses/outer courts, >50 ft or qualifying-orientation optionality,
+    dormers) depend on inputs absent from the canonical property_profile and are NOT
+    evaluated. The result MUST mark that the modified/final applicable setback is
+    unresolved (professional review) so 10/15 is never presented as the final setback."""
+    res = registry.evaluate(
+        "r5-setback", {"zoning_district": "R5", "street_width_class": street_class}
+    )
+    marker = next(
+        (e for e in res.trace.exceptions_applied
+         if e["id"] == "section_23_423_modifications_unresolved"),
+        None,
+    )
+    assert marker is not None, "setback must mark section 23-423 modifications unresolved"
+    # an always-on documented limitation (not a coverage downgrade): the standard
+    # starting value is still surfaced, but the modified/final setback is flagged unresolved.
+    assert marker["effect"] == "documented_limitation"
+    # the marker text makes clear 10/15 is standard/unmodified and never the final setback.
+    text = (marker.get("description") or "").lower()
+    assert "standard unmodified" in text
+    assert "never be presented as the final" in text
+
+
 def test_as1_r5a_pitched_confident_wall_and_ridge_separate(registry):
     res = registry.evaluate(
         "r5a-height", {"zoning_district": "R5A", "building_type": "detached"}
