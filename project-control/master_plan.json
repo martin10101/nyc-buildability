@@ -8,8 +8,7 @@
       "id": "M0",
       "name": "Engineering control plane and cloud foundation",
       "status": "active",
-      "depends_on": [],
-      "summary": "19/23 tasks accepted. Open: M0-T019, M0-T021 (active); blocked: M0-T007, M0-T008. Foundation substantially complete."
+      "depends_on": []
     },
     {
       "id": "M1",
@@ -73,6 +72,6 @@
       ]
     }
   ],
-  "updated_at": "2026-07-23T01:34:12.454678+00:00",
+  "updated_at": "2026-07-23T01:50:47.314307+00:00",
   "current_milestone_note": "Reconciled from 'M0'. M4 is the active engineering frontier (M4-T001..T005 merged draft, none accepted, held at G6). M0/M2 retain open/held tasks; M1 complete. This pointer marks active work, not acceptance of M3."
 }
