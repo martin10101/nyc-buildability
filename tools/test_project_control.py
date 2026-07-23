@@ -1081,6 +1081,80 @@ def test_docs_honesty() -> None:
         shutil.rmtree(tmpdir, ignore_errors=True)
 
 
+# ---------------------------------------------------------------------------
+# S9 - B-001 blocks acceptance of the M3 durable-storage corpus tasks
+# (M3-T002 / M3-T004). Proves the fixture-vs-production invariant is REALLY
+# enforced by the CLI via the blocker record, not merely asserted in packet
+# prose. Uses the SAME affects wording committed to the real B-001 file, in an
+# isolated temporary ledger that never touches real task state.
+# ---------------------------------------------------------------------------
+def test_s9_b001_m3_corpus_storage_enforcement() -> None:
+    tmpdir = tempfile.mkdtemp(prefix="pc-s9-")
+    tmp = Path(tmpdir)
+    try:
+        make_temp_project(tmp)
+        pc = tmp / "project-control"
+
+        # Mirror of the real B-001 affects wording (word-bounded task ids present).
+        b001_affects = [
+            "M0 cloud foundation",
+            "M3-T002 (durable content-addressed ZR legal-corpus object storage "
+            "- required before acceptance)",
+            "M3-T004 (durable content-addressed Construction-Code + amendment-overlay "
+            "object storage - required before acceptance)",
+        ]
+
+        def ready_for_accept(task_id):
+            new_ready_task(tmp, task_id)
+            rev = write_report(tmp, f"{task_id}-g3.json", '{"verdict": "PASS"}')
+            edit_task(tmp, task_id, status="awaiting_gate", producer_agent="producer-x",
+                      dependencies=[])
+            r = run(tmp, "gate", "--task-id", task_id, "--gate-id", "G3",
+                    "--reviewer", "reviewer-y", "--result", "PASS", "--report", rev)
+            assert r.returncode == 0, r.stderr
+
+        def write_b001(status="open"):
+            (pc / "blockers" / "B-001-supabase-access-token.json").write_text(
+                json.dumps({"blocker_id": "B-001", "title": "Supabase token missing",
+                            "status": status, "affects": b001_affects,
+                            "detail": "durable legal-corpus storage unavailable"}),
+                encoding="utf-8")
+
+        # Both corpus tasks are otherwise fully acceptable (gates PASS, no deps).
+        ready_for_accept("M3-T002")
+        ready_for_accept("M3-T004")
+
+        # (a) open B-001 blocks acceptance of M3-T002
+        write_b001("open")
+        r = run(tmp, "accept", "--task-id", "M3-T002", "--agent", "orchestrator")
+        assert r.returncode != 0 and "B-001" in r.stderr, \
+            f"open B-001 must block M3-T002 acceptance: {r.stderr}"
+
+        # (b) open B-001 blocks acceptance of M3-T004
+        r = run(tmp, "accept", "--task-id", "M3-T004", "--agent", "orchestrator")
+        assert r.returncode != 0 and "B-001" in r.stderr, \
+            f"open B-001 must block M3-T004 acceptance: {r.stderr}"
+
+        # (c) fixture-only work cannot bypass: adding a 'fixtures_only' marker or
+        # any other task field does NOT flip acceptance; only resolving B-001 can.
+        edit_task(tmp, "M3-T002", fixtures_only=True, progress_percent=100)
+        r = run(tmp, "accept", "--task-id", "M3-T002", "--agent", "orchestrator")
+        assert r.returncode != 0 and "B-001" in r.stderr, \
+            f"a fixtures-only marker must not bypass B-001: {r.stderr}"
+
+        # (d) resolving B-001 (durable storage available) lets acceptance proceed,
+        # proving B-001 was the sole remaining blocker.
+        write_b001("resolved")
+        r = run(tmp, "accept", "--task-id", "M3-T002", "--agent", "orchestrator")
+        assert r.returncode == 0, \
+            f"resolved B-001 must allow M3-T002 acceptance: {r.stderr}"
+
+        print("OK: S9 B-001 blocks M3-T002/M3-T004 acceptance (fixture-only cannot "
+              "bypass; resolving B-001 unblocks)")
+    finally:
+        shutil.rmtree(tmpdir, ignore_errors=True)
+
+
 ALL_TESTS = [
     test_original_workflow,
     test_s1_transitions,
@@ -1092,6 +1166,7 @@ ALL_TESTS = [
     test_s7_backward_compatibility,
     test_s8_hardening_followup,
     test_docs_honesty,
+    test_s9_b001_m3_corpus_storage_enforcement,
 ]
 
 

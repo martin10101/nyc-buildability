@@ -14,7 +14,8 @@
   ],
   "outputs": [
     "services/api/app/corpus/closure/** — graph builder, linked+unlinked+table/footnote citation extractor, §11-25 suffix-inheritance resolver, closure-manifest generator, reachability + deterministic cycle termination, renumber/delete detector, proposed-vs-validated edge state",
-    "packages/contracts/schemas/v1/closure_manifest.schema.json — NEW versioned internal manifest schema (additive; entry sections, reachable sections, imported definitions, applicability predicates, exceptions, overrides, unresolved candidates, required facts, per-node version/hash)",
+    "packages/contracts/schemas/v1/closure_manifest.schema.json — NEW versioned internal manifest schema (additive; deterministic version + $id; entry sections, reachable sections, imported definitions, applicability predicates, exceptions, overrides, unresolved candidates, required facts, per-node version/hash)",
+    "packages/contracts/schemas/v1/fixtures/closure_manifest/{positive,negative}/*.json — executable schema-validation fixtures (positive validates; negatives missing unresolved-reference field or per-node source-version/hash fail)",
     "services/api/tests/corpus/closure/** — deterministic cross-reference-closure harness incl. adversarial unlinked-reference + table-footnote 'cannot be silently missed' tests",
     "services/api/tests/fixtures/corpus/closure/** — bounded frozen fixtures: §23-361/R5B inheritance, §23-422 suffix exclusion, cyclic ref, renumbered/deleted section, unresolved definition, unlinked textual citation, table footnote citation",
     "project-control/reports/M3-T003-producer-report.md"
@@ -25,6 +26,7 @@
   "allowed_paths": [
     "services/api/app/corpus/closure/** (OWNED by M3-T003; exclusive)",
     "packages/contracts/schemas/v1/closure_manifest.schema.json (NEW additive)",
+    "packages/contracts/schemas/v1/fixtures/closure_manifest/** (positive + negative closure-manifest fixtures for AS-10 executable validation)",
     "services/api/tests/corpus/closure/**",
     "services/api/tests/fixtures/corpus/closure/**",
     "project-control/reports/M3-T003-producer-report.md"
@@ -46,6 +48,7 @@
     "AS-7 determinism: identical corpus version -> byte-identical closure manifest + graph.",
     "AS-8 unlinked + table/footnote citations (item 8): closure processes linked AND unlinked textual citations, definition imports, tables/footnotes, exception language, amendment links, and citation-like text that could not be parsed; adversarial tests prove an unlinked reference or a table footnote citation CANNOT be silently missed.",
     "AS-9 proposed-edge discipline (item 8): an AI-extracted edge is recorded as PROPOSED and cannot contribute to a resolved closure (or a final rule value) until deterministic evidence or required human review validates it.",
+    "AS-10 closure_manifest schema validation (executable): (a) closure_manifest.schema.json itself passes JSON Schema meta-validation; (b) a complete positive closure-manifest fixture validates; (c) negative fixtures FAIL — including one missing the unresolved-reference/citation-candidate field and one missing per-node source-version/hash; (d) the schema's version and $id are deterministic (byte-identical across regeneration); (e) it stays an internal additive schema, not promoted to a canonical cross-tier contract without a justified consumer.",
     "NC-1 single-chapter absence: a search restricted to one chapter cannot satisfy an absence assertion; the harness asserts such an assertion is rejected as unsupported.",
     "NC-2 unresolved != non-applicable: a reference/citation the graph cannot resolve is never coerced to 'not applicable' or a default value.",
     "NC-3 bare-R5 not auto-ambiguous: bare R5 in a section with no separate suffix provisions is modeled via §11-25 inheritance (not flagged inherently ambiguous), while a section that expressly lists distinct R5A/R5B/R5D provisions lets those express provisions control."

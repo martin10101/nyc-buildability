@@ -2,7 +2,7 @@
 
 **Author:** orchestrator (main session) · **Date:** 2026-07-23 · **Branch:** `control/M3-corpus-replan-2026-07-23`
 **Directive:** owner directive 2026-07-23 (repair the missing M3 legal-corpus dependency before any M4-T007+ yard/coverage work; §11-25 correction; architect benchmark; construction-code scope; deterministic completeness harnesses).
-**Status of this package:** PROPOSAL, **revision 2** (owner corrections applied in-branch to PR #93 — see §15 amendment log). No producer is dispatched. M4-T007/T008/T009 are NOT contracted, claimed, or started. The 3-way vs 4-way split is preserved as a downstream candidate and NOT decided here. Nothing merges to `main` until you approve.
+**Status of this package:** PROPOSAL, **revision 3** (owner corrections applied in-branch to PR #93 — see §15 rev-2 and §16 rev-3 amendment logs). No producer is dispatched. M4-T007/T008/T009 are NOT contracted, claimed, or started. The 3-way vs 4-way split is preserved as a downstream candidate and NOT decided here. Nothing merges to `main` until you approve.
 
 This document is the single return package the directive's section 9 asks for. It is control-only (task packets + docs); it changes no product code.
 
@@ -25,7 +25,7 @@ This document is the single return package the directive's section 9 asks for. I
 - **M4 summary said "0/5"** but the ledger holds **M4-T001…T006** (six tasks). **Fixed in this PR** to "0/6" with the M4-T006 R5 height/setback family noted, and M4-T007's new dependency on accepted M3-T003 recorded.
 - **All M4-T001…T006 + M5-T001 are `awaiting_gate`** — merged DRAFT (`needs_review`), **none accepted, Published, or Verified**. G6 gates the chain.
 - Checkpoint is **CP-0031**; **CP-0032 remains reserved** for M0-T019 (not created here).
-- Open blockers: **B-001** (Supabase management token → durable object storage), **B-004** (Geoclient key), **B-010** (client R5 benchmark sheet absent from repo).
+- Open blockers: **B-001** (Supabase management token → durable object storage; **now amended to affect M3-T002 & M3-T004** — see §15/§10A), **B-004** (Geoclient key), **B-010** (client R5 benchmark sheet absent from repo), and **B-011** (new — owner-approved construction-code release scope; gates M3-T004 readiness, see §10B).
 
 **After this PR (control-only):** 42 accepted (unchanged) / 8 awaiting_gate / **8 backlog** (4 new M3 proposals) / 2 blocked / 1 claimed.
 
@@ -223,8 +223,8 @@ M3-T002's `forbidden_paths` now explicitly exclude `closure/**`, `construction_c
 - **Reuse first:** `app.resilience.transport` (bounded HTTP); existing JSON/hash/path libs; existing `jsonschema`; existing `shapely==2.0.7` only for already-justified geometry.
 - **Do NOT add:** `requests`, browser automation, an UpCodes SDK, scraping frameworks, or an AI framework.
 - **`httpx` is dev/test-only** — not an approved runtime crawler dependency; do not import it in production merely because tests install it.
-- The first authority/manifest + raw-HTML capture work should require **no new runtime dependency**. If the stdlib parser cannot safely preserve required HTML/table structure, invoke **`/dependency-security`** and select **exactly one** parser — justified vs alternatives, exact-pinned via the manifest/lock process, **≥7 days old**, vulnerability-audited, installed-wheel tested, in reproducibility + deployment checks.
-- **PDF extraction is a separate bounded dependency decision** (M3-T004): prefer text-bearing official PDFs; OCR is draft-only with page/image provenance; no silent PDF/OCR package.
+- The first authority/manifest + raw-**HTML** capture work should require **no new runtime dependency** — HTML uses the Python stdlib (`html.parser`). If the stdlib parser cannot safely preserve required HTML/table structure, invoke **`/dependency-security`** and select **exactly one** HTML parser — justified vs alternatives, exact-pinned, **≥7 days old**, vulnerability-audited, installed-wheel tested, in reproducibility + deployment checks.
+- **PDF extraction correction (amendment item 2):** the Python **standard library does not parse PDFs**. Official **ZR PDF text extraction, page replay, and HTML-vs-PDF comparison are required by M3-T002 itself**, so **M3-T002 owns the approved PDF text-extraction adapter** (`services/api/app/corpus/parsers/pdf/**`). The underlying library is **NOT chosen in this control-only PR** — the decision is recorded as a requirement: `/dependency-security` selection, exact pinning, vulnerability review, installed-wheel verification, and **G5 evidence** before any PDF library is added. **M3-T004 imports the approved M3-T002 adapter read-only** and does not choose its own PDF library. **OCR** remains a separate conditional decision; OCR output stays **draft-only** with page/image provenance. No wording anywhere implies a stdlib PDF parser exists.
 - **No paid service required** for these official sources (ZoLa/ZR/Open Data/DCP ArcGIS/DOB docs are public; Geoclient needs only a free key). If any source later requires payment, authentication, licensing, or redistribution rights → **stop and record a human-action blocker**; do not purchase, accept terms, or scrape around restrictions.
 
 ---
@@ -248,6 +248,8 @@ Explicit invariant, carried into M3-T002 and M3-T004 as an `acceptance_precondit
 ### 10B. Construction-code release scope is frozen before readiness (amendment item 6)
 
 `"declared release scope from PRD / owner"` is not a sufficient input. **M3-T001 drafts `docs/CONSTRUCTION_CODE_RELEASE_SCOPE.md`** (code edition + as-of date; product claims supported; exact in-scope titles/chapters/domains; required LL/DOB-Rule/Bulletin/Code-Note/rescission/supersession channels; excluded domains; consumer claim each exclusion blocks). Owner approval of that document clears **B-011**. **M3-T004 stays `backlog`/blocked until B-011 clears.** AI has no authority to set release scope.
+
+**Scope of what B-011 approval means (clarification).** Owner approval of the release-scope artifact is a **product/release-scope decision** — it fixes *which* code domains are in scope. It is **NOT** a legal approval and does not certify legal adequacy or completeness. **Qualified professionals still approve legal interpretations and release adequacy through G6**, which remains mandatory before any rule sourced from this corpus is Published/Verified. B-011 and G6 are independent gates.
 
 **Stop-rather-than-guess conditions (directive §8)** are carried into each packet's risks: unverified endpoint/source identity; unclear licensing/terms; bot-blocked source; raw-HTML-vs-PDF disagreement; unresolvable amendment/effective date; unresolved cross-reference; unavailable legal zoning-lot geometry; tax-lot-may-not-equal-zoning-lot; a controlling project-specific approval/restrictive declaration; a conclusion needing professional legal/design judgment; unavailable durable-storage credentials.
 
@@ -289,7 +291,7 @@ Rationale:
 
 Please approve (or amend) this control-only package. On approval I will:
 1. Merge the control-only PR (packets + docs reconciliation) to `main`.
-2. Move **M3-T001 only** `backlog → ready → claimed`, dispatch the producer at one frozen SHA, and return full G0–G5 evidence before starting M3-T002.
+2. Move **M3-T001 ONLY** `backlog → ready → claimed`, dispatch the producer at one frozen SHA, and return full G0–G5 evidence before starting M3-T002. **M3-T002, M3-T003, and M3-T004 stay `backlog`** — approval of this package does not move them; each is contracted only when its dependencies (and, for T002/T004, its blockers) clear.
 3. Keep M4-T007+ uncontracted until M3-T003 is accepted.
 
 No producer work starts until you approve.
@@ -312,3 +314,16 @@ Applied in-branch (control-only) on `control/M3-corpus-replan-2026-07-23`. No ta
 | 8 | Strengthen source verification + version detection | **M3-T001:** registry rows for every M3-T004 channel incl. Code Notes/directives + formal DOB interpretations; ZoLa presentation-only; UpCodes reference-only with dated API-availability/subscription/pricing + 'not required'; unresolved source identity/endpoint/access/terms/URL BLOCKED at G1 (AS-5/AS-6). **M3-T002:** multi-signal version detection — banner is one signal; hash/Last-Amended/feed/instrument/PDF changes each raise a candidate version; unchanged banner never suppresses a change (AS-5). **M3-T003:** closure covers linked+unlinked+table/footnote+unparseable citation candidates; unresolved candidates block a final value; adversarial 'cannot be silently missed' tests; AI-extracted edges proposed until validated (AS-8/AS-9). |
 
 Also created blocker **B-011** and left B-010/B-001 semantics unchanged. Ledger totals unchanged: 42 accepted / 8 backlog (4 M3 proposals) — nothing accepted.
+
+---
+
+## 16. Amendment log — PR #93 revision 3 (owner corrections, four final issues)
+
+Applied in-branch (control-only). No task moved, claimed, dispatched, implemented, or accepted.
+
+| # | Correction | How implemented |
+|---|---|---|
+| 1 | Make B-001 enforcement real | Amended `B-001-supabase-access-token.json` so `affects` names **M3-T002** and **M3-T004** (durable legal-corpus storage required before acceptance). The CLI blocks acceptance when a blocker's affects/detail names the task (`_blocker_references`, project_control.py:525); packet `blockers[]`/prose alone are not enforced. Added permanent control-plane regression **S9** in `tools/test_project_control.py` (the file CI's `control-plane` job runs) proving open B-001 blocks accept of both tasks, a fixtures-only marker cannot bypass, and resolving B-001 unblocks — in an isolated temp ledger that leaves real state untouched. Evidence: `project-control/reports/M3-CORPUS-B001-enforcement-evidence.md`. |
+| 2 | Correct PDF-extraction plan | Removed all wording implying a stdlib PDF parser exists. HTML parsing = stdlib (`parsers/html/**`). **M3-T002 owns the approved PDF text-extraction adapter** (`parsers/pdf/**`) required for ZR PDF text + page replay + HTML-vs-PDF compare; the library is **not chosen in this control-only PR** — recorded requirement: `/dependency-security` + exact pin + vuln review + installed-wheel + **G5** evidence. **M3-T004 imports the approved adapter read-only.** OCR separate, draft-only. Report §9 corrected. |
+| 3 | Restore executable schema acceptance | M3-T001 **AS-11** (legal_source_manifest): schema meta-validates; positive fixture validates; negatives missing provenance/version/hash fail; version + `$id` deterministic; not promoted to canonical cross-tier without a justified consumer. M3-T003 **AS-10** (closure_manifest): equivalent, incl. negative fixtures missing the unresolved-reference field and missing per-node source-version/hash. Positive+negative fixture paths added to both packets. |
+| 4 | Synchronize review surfaces | PR #93 description updated (M3-T004 deps = M3-T001 + accepted M3-T002 + B-001 + B-011). Report: B-011 added to §1 open-blocker reconciliation; §14 clarified that approval moves **only M3-T001** toward ready/claim (T002/T003/T004 stay backlog); §10B + B-011 record that owner scope approval is a product/release-scope decision, **not** legal approval — **G6** still governs legal interpretation + release adequacy. Remote GitHub CI vs local checks are reported with separate exact counts (see return message). |
