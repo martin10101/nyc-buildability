@@ -59,8 +59,8 @@
     "qa-engineer",
     "security-reviewer"
   ],
-  "status": "in_progress",
-  "progress_percent": 10,
+  "status": "awaiting_gate",
+  "progress_percent": 85,
   "risks": [
     "LEGAL BOUNDARY: AI extracts + encodes candidate rules with provenance; the regime choice and every value are needs_review and require G6 qualified-human legal approval before publication/verification/acceptance. G6 NOT weakened; independent of B-010.",
     "GENUINE-AMBIGUITY STOP: if the official source is genuinely ambiguous on the regime or a value in a way needing human legal interpretation (not mere effort), STOP and report a blocker; do NOT guess and do NOT weaken G6.",
@@ -73,7 +73,7 @@
   ],
   "blockers": [],
   "created_at": "2026-07-23T03:15:27.979150+00:00",
-  "updated_at": "2026-07-23T03:17:57.812539+00:00",
+  "updated_at": "2026-07-23T04:07:15.622574+00:00",
   "requirement_refs": [
     "project-control/reports/M4-T006-DRAFT-PROPOSAL.md - authoritative full spec incl. owner amendments sections 3-7, 11",
     "PRD.md 7.2 (basic code-feasibility), 9 (provenance), 12 (coverage + data-completeness), 13.3 (scenario fields: height/base height/setbacks - downstream consumers)",
