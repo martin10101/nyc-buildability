@@ -6,12 +6,12 @@ the remote: **origin/main may have advanced, so do not trust any SHA written her
 This file is orientation only. Operating rules, gates, hard rules, and workflow routes live in
 `CLAUDE.md` and the specialist docs it routes to — not here.
 
-**Current main at `a3784af`** (origin/main when written; `git fetch` and reconcile — it likely
-advanced if PR #88 merged). Main progression this window: `2d31ff7` (PR #86, M5-T001 scenario
-foundation) → `c5e8cd0` (PR #87, M4-T006 proposal) → `a3784af` (**PR #89, M0-T022 owner-dashboard —
-merged AND accepted independently**). **PR #88 (M4-T006 implementation, frozen `6509db3`) is OPEN,
-reconciled onto `a3784af` (state.json merge; reviewed rules code byte-identical to `6509db3`), awaiting
-owner merge authorization** — merging it advances main again.
+**Current main at `5635c13`** (origin/main when written; `git fetch` and reconcile). Main progression
+this window: `2d31ff7` (PR #86, M5-T001) → `c5e8cd0` (PR #87, M4-T006 proposal) → `a3784af` (PR #89,
+M0-T022 owner-dashboard, merged AND accepted independently) → `5635c13` (**PR #88, M4-T006
+implementation — MERGED**). PR #88's frozen code SHA is `5d605d4` (after a targeted owner
+legal-semantics correction to the R5 setback; see M4 section). **M4-T006 is merged DRAFT and remains
+`awaiting_gate`, NOT accepted** (G6).
 
 **Accepted-task count = 42** (through M2-T013 **+ M0-T022**, accepted independently via PR #89).
 Nothing in the M4/M5 chains is Published, Verified, or accepted — all merged/awaiting as **draft
@@ -31,15 +31,23 @@ Nothing in the M4/M5 chains is Published, Verified, or accepted — all merged/a
   merged, all `awaiting_gate`, gate JSONs recorded (reconciled in PR #85). None accepted.
 - **M4-T005** = first internal rule-evaluation endpoint (disabled-by-default; `rule_evaluation` 1.0.0
   contract). Merged PR #84 @ `84b50a7`; G1/G3/G4/G5 PASS.
-- **M4-T006** = R5-series **height & setback draft rule family** (this session). Frozen `6509db3`,
-  **PR #88 OPEN awaiting owner merge**; **G0/G2/G3/G4/G5 all PASS** (independent), CI 24/24 green incl.
-  literal `exact-production-install`. 6 per-district rules (R5 base35/bldg45 + §23-423 setback; R5A
-  pitched 25/35; R5B 35; R5D 45; §23-424 QRS 45/55), 5 provenance-stamped ZR snapshots (effective
+- **M4-T006** = R5-series **height & setback draft rule family** (this session). **MERGED** PR #88 @
+  `5635c13`; frozen code `5d605d4`; **G0/G2/G3/G4/G5 all PASS** (independent; re-gated after the
+  correction), CI 26/26 green incl. literal `exact-production-install`. `awaiting_gate`, **NOT
+  accepted**. 6 per-district rules (R5 base35/bldg45 + §23-423 setback; R5A pitched perimeter-wall 25 /
+  ridge 35; R5B 35; R5D 45; §23-424 QRS 45/55), 5 provenance-stamped ZR snapshots (effective
   2024-12-05, City-of-Yes §23-42 series), per-district (no defaults), separate typed constraints,
   fail-closed on unavailable inputs (street width / building type / QRS geography / overlay →
   `professional_review_required`), §23-424-vs-base → `rule_conflict`, **never `verified`**. FAR rule,
   evaluator core, integration, canonical contracts byte-unchanged. Values are `extracted_draft`
   (`raw_html_verified:false`) — **G6 must byte-verify against live ZR before any Verified surface.**
+  - **Owner legal-semantics correction (this session):** the §23-423 setback now labels 10/15 ft as the
+    **STANDARD UNMODIFIED minimum starting** depth and carries an always-on `documented_limitation`
+    (`section_23_423_modifications_unresolved`) marking the section's reductions/modifications (front-yard
+    offset with a **7-ft floor**, recesses/outer courts, >50-ft/orientation optionality, dormers) as
+    unevaluated → modified/final setback **unresolved** (professional review); 10/15 is never the final
+    setback. R5A already emits separate perimeter-wall/ridge constraints + flags the sloping-plane setback
+    for professional review (verified correct, unchanged).
 - **Acceptance boundary for the whole M4 chain:** blocked on **G6** qualified-human legal approval of
   M4-T001; and for the client-validation item only, **B-010**. These block ONLY publication/
   verification + final acceptance — not continued `needs_review` engineering (owner directive
@@ -65,11 +73,12 @@ Draw from the M5-T001 rule-coverage dependency matrix + `M4-T006-future-hardenin
    `citation_ref:null`); extend snapshot digest to cover structured `table`/`notes` (G5 LOW).
 
 ## Open PRs
-- **#88** M4-T006 implementation (frozen `6509db3`) — OPEN, all gates PASS, CI green, **awaiting owner
-  merge**. Merge integrates draft rules to main; M4-T006 stays unaccepted (G6).
-- **#83** stale handoff (M4-T001 era) — **superseded by this refresh; do not merge #83 unchanged**.
+- **#88** M4-T006 implementation — **MERGED** this session (`5635c13`, frozen code `5d605d4`). Draft
+  rules on main; M4-T006 stays `awaiting_gate`/unaccepted (G6).
+- **#90** this handoff refresh — docs-only (supersedes closed #83).
 - **#64** M0-T019 frontend security + npm dependency-admission policy — FROZEN, owner-authorized merge
   only.
+- (#83 stale handoff — CLOSED as superseded.)
 
 ## Preserved holds / conventions (unchanged)
 - **G6** qualified-human legal approval mandatory before any rule is Published/Verified/accepted.
@@ -81,8 +90,10 @@ Draw from the M5-T001 rule-coverage dependency matrix + `M4-T006-future-hardenin
   control-only PRs; producer code + gate records travel on the task branch to a single product PR.
 
 ## Unresolved owner decisions
-1. **PR #88** (M4-T006) merge authorization.
+1. Next task from the frontier above (yards/lot-coverage rule slice → M5 envelope-scenario → G6-prep).
 2. PR #64 (M0-T019) merge — frozen, owner-authorized only.
 3. M2-T014/T015/T016 survey planning-report dispatch (still held).
 4. GDS / expansion-planning review (counter-notice §2 hold) and 3D holds — preserved.
 5. Credentials B-001 (highest) / B-002 / B-004.
+6. G6 qualified-human legal approval of the M4 chain (M4-T001..T006) — the gate to any Verified/Published
+   result and final acceptance (incl. byte-level verification of the M4-T006 ZR snapshots).
