@@ -1,0 +1,74 @@
+{
+  "rule_id": "r5a-height",
+  "rule_version": "0.1.0-draft",
+  "family": "residential_height_setback",
+  "title": "R5A district (pitched-roof envelope) - maximum perimeter-wall height and maximum ridge/building height",
+  "jurisdiction": "nyc",
+  "status": "needs_review",
+  "effective_from": "2024-12-05",
+  "effective_to": null,
+  "release": {
+    "deterministic_tests": "declared",
+    "test_suite_ref": "services/api/tests/rules/test_r5_height_setback.py",
+    "independent_review": "pending",
+    "qualified_human_approval": "pending"
+  },
+  "description": "DRAFT extraction (needs_review) of the pitched-roof envelope HEIGHT constraints for the exact R5A district per NYC Zoning Resolution section 23-421 (City of Yes, Last Amended 2024-12-05). Two SEPARATE typed constraints are emitted, both measured ABOVE THE BASE PLANE: maximum perimeter-wall height (25 ft) and maximum ridge/building height (35 ft). R5A is a distinct pitched-roof envelope, encoded SEPARATELY from R5/R5B/R5D - no dimension is inherited. FAIL-CLOSED INPUT: applicability is conditional on BUILDING TYPE (detached / semi-detached / zero-lot-line per section 23-421); the canonical property_profile exposes NO building-type field, so building_type is a REQUIRED input with no canonical source - when it is missing/unavailable the evaluation returns professional_review_required with NO value (this is also the flat-vs-pitched envelope selection failing closed). The R5A setback is governed by pitched-plane (sky-exposure) geometry, NOT the flat section 23-423 10/15-ft rule, and is a documented limitation (professional review), not a numeric constraint. NOT a Verified determination.",
+  "citations": [
+    {
+      "snapshot_id": "zr-23-421",
+      "section": "23-421",
+      "quote": "Perimeter walls are subject to setback regulations at a maximum height above the base plane of 25 feet. These planes start at the maximum permitted height of the perimeter walls and meet at a ridge line of 35 feet above the base plane.",
+      "last_amended": "2024-12-05"
+    }
+  ],
+  "inputs": [
+    {"name": "zoning_district", "type": "string", "required": true, "description": "Residence district governing the lot. Applicability equals R5A (via in_set); R5/R5B/R5D are NOT matched."},
+    {"name": "building_type", "type": "string", "required": true, "enum": ["detached", "semi_detached", "zero_lot_line"], "description": "Building type the section 23-421 pitched-roof envelope applies to. REQUIRED and FAIL-CLOSED: no canonical property_profile field exposes building type, so in practice this is unavailable and the evaluation returns professional_review_required with no value - the pitched envelope is never assumed."},
+    {"name": "overlay_present", "type": "boolean", "required": false, "description": "True iff zoning.commercial_overlays[] is non-empty; when true -> professional_review_required (section 23-44)."},
+    {"name": "special_district_present", "type": "boolean", "required": false, "description": "True iff zoning.special_districts[] is non-empty; when true -> professional_review_required (section 23-44)."},
+    {"name": "historic_district", "type": "boolean", "required": false, "description": "True iff the lot is in a designated Historic District (section 23-426); when a caller supplies true -> professional_review_required."}
+  ],
+  "outputs": [
+    {"name": "max_perimeter_wall_height", "type": "number", "unit": "feet", "description": "Maximum perimeter-wall height (ft) ABOVE THE BASE PLANE. Separate typed constraint; not a buildable-envelope result."},
+    {"name": "max_building_height", "type": "number", "unit": "feet", "description": "Maximum ridge/building height (ft) ABOVE THE BASE PLANE. Separate typed constraint; not a buildable-envelope result."}
+  ],
+  "parameters": [
+    {"name": "perimeter_wall_height_ft", "value": 25, "citation_ref": "zr-23-421", "note": "R5A maximum perimeter-wall height 25 ft above the base plane (section 23-421). Candidate value pending raw-HTML verification and G6 approval."},
+    {"name": "ridge_height_ft", "value": 35, "citation_ref": "zr-23-421", "note": "R5A maximum ridge/building height 35 ft above the base plane (section 23-421). Candidate value pending raw-HTML verification and G6 approval."}
+  ],
+  "applicability": {
+    "all": [
+      {"op": "in_set", "input": "zoning_district", "values": ["R5A"]},
+      {"op": "in_set", "input": "building_type", "values": ["detached", "semi_detached", "zero_lot_line"]}
+    ]
+  },
+  "computation": {
+    "steps": [
+      {"id": "wall_h", "op": "identity", "args": [{"param": "perimeter_wall_height_ft"}], "note": "Maximum perimeter-wall height above the base plane for R5A (section 23-421)."},
+      {"id": "ridge_h", "op": "identity", "args": [{"param": "ridge_height_ft"}], "note": "Maximum ridge/building height above the base plane for R5A (section 23-421)."}
+    ],
+    "outputs": {
+      "max_perimeter_wall_height": {"step": "wall_h"},
+      "max_building_height": {"step": "ridge_h"}
+    }
+  },
+  "exceptions": [
+    {"id": "pitched_plane_setback_professional_review", "description": "The R5A setback is governed by pitched-plane (sky-exposure) geometry rising from the perimeter-wall height to the 35 ft ridge, NOT the flat section 23-423 10/15-ft rule. It is not reduced to a single numeric depth here and requires professional review.", "condition": null, "effect": "documented_limitation", "citation_ref": "zr-23-421"},
+    {"id": "commercial_overlay_modification", "description": "A commercial overlay may modify residence-district height (section 23-44); the citywide value is not emitted as final. Professional review required.", "condition": {"op": "equals", "input": "overlay_present", "value": true}, "effect": "professional_review_required", "citation_ref": null},
+    {"id": "special_district_modification", "description": "A mapped special district may modify height (section 23-44); the citywide value is not emitted as final. Professional review required.", "condition": {"op": "equals", "input": "special_district_present", "value": true}, "effect": "professional_review_required", "citation_ref": null},
+    {"id": "historic_district_base_height_match", "description": "In a designated Historic District the perimeter-wall height may be required to match adjacent buildings (section 23-426); the citywide value is not emitted as final. Professional review required.", "condition": {"op": "equals", "input": "historic_district", "value": true}, "effect": "professional_review_required", "citation_ref": null}
+  ],
+  "uncertainty_policy": {
+    "geometry_uncertain_coverage": "professional_review_required",
+    "data_conflict_coverage": "data_conflict",
+    "note": "An uncertain, split, sliver, or invalid M2-T013 geometric district assignment is never collapsed into a single definitive district: coverage downgrades to professional_review_required (or data_conflict)."
+  },
+  "limitations": [
+    "Draft extraction pending raw-HTML source verification and G6 qualified-human legal approval; not a Verified determination.",
+    "Heights are measured ABOVE THE BASE PLANE (section 23-421), not above curb; the base-plane determination is a separate professional input.",
+    "Applicability requires a building type (detached / semi-detached / zero-lot-line) that has no canonical property_profile field; without it the rule fails closed to professional_review_required.",
+    "The R5A setback is pitched-plane geometry, not a flat depth; it is surfaced as a documented limitation / professional review, not a numeric setback constraint.",
+    "The section 23-424 qualifying-residential-site alternative (base 45 / building 55) is a SEPARATE rule (r5-qrs-height) and applies only where the section 12-10 test is met."
+  ]
+}

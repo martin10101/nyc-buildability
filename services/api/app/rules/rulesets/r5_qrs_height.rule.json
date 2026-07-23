@@ -1,0 +1,77 @@
+{
+  "rule_id": "r5-qrs-height",
+  "rule_version": "0.1.0-draft",
+  "family": "residential_height_setback",
+  "title": "R5-series qualifying residential site - alternative maximum base height and building height (section 23-424)",
+  "jurisdiction": "nyc",
+  "status": "needs_review",
+  "effective_from": "2024-12-05",
+  "effective_to": null,
+  "release": {
+    "deterministic_tests": "declared",
+    "test_suite_ref": "services/api/tests/rules/test_r5_height_setback.py",
+    "independent_review": "pending",
+    "qualified_human_approval": "pending"
+  },
+  "description": "DRAFT extraction (needs_review) of the ALTERNATIVE (taller) height envelope available to all four R5 variants (R5, R5A, R5B, R5D) on a QUALIFYING RESIDENTIAL SITE per NYC Zoning Resolution section 23-424 (City of Yes, Last Amended 2024-12-05): maximum base height 45 ft, maximum building height 55 ft, with a setback per section 23-423. FAIL-CLOSED INPUT: applicability is conditional on the section 12-10 qualifying-residential-site test (>= 5,000 sf lot within the Greater Transit Zone with wide-street/short-block frontage and no excluding district) - geography the platform CANNOT evaluate from the canonical property_profile. qualifying_residential_site is therefore a REQUIRED input with no canonical source; when missing/unavailable the evaluation returns professional_review_required with NO value. This alternative COMPETES with the base-district height rules (r5-height / r5b-height / r5d-height, and the r5a pitched envelope) for the same max_base_height / max_building_height decision; when both are simultaneously applicable the same-family conflict detector surfaces a rule_conflict and NO value is selected. NOT a Verified determination.",
+  "citations": [
+    {
+      "snapshot_id": "zr-23-424",
+      "section": "23-424",
+      "quote": "R5 R5A R5B R5D | Maximum Base Height 45 | Maximum Height of Buildings or other Structures 55",
+      "last_amended": "2024-12-05"
+    },
+    {
+      "snapshot_id": "zr-23-423",
+      "section": "23-423",
+      "quote": "A setback shall be provided in accordance with this Section. The depth of the setback shall be at least 10 feet from a street wall fronting on a wide street, and at least 15 feet from a street wall fronting on a narrow street.",
+      "last_amended": "2024-12-05"
+    }
+  ],
+  "inputs": [
+    {"name": "zoning_district", "type": "string", "required": true, "description": "Residence district governing the lot. Applicability is in_set R5/R5A/R5B/R5D; a non-R5 district is a visible not_applicable."},
+    {"name": "qualifying_residential_site", "type": "boolean", "required": true, "description": "True iff the lot meets the section 12-10 'qualifying residential site' test. REQUIRED and FAIL-CLOSED: the test turns on lot area + Greater-Transit-Zone geography + frontage/short-block conditions + district exclusions that the canonical property_profile CANNOT establish, so in practice this is unavailable and the evaluation returns professional_review_required with no value. The alternative envelope is never assumed to apply."},
+    {"name": "overlay_present", "type": "boolean", "required": false, "description": "True iff zoning.commercial_overlays[] is non-empty; when true -> professional_review_required (section 23-44)."},
+    {"name": "special_district_present", "type": "boolean", "required": false, "description": "True iff zoning.special_districts[] is non-empty; when true -> professional_review_required (section 23-44)."}
+  ],
+  "outputs": [
+    {"name": "max_base_height", "type": "number", "unit": "feet", "description": "Alternative maximum base height (ft) on a qualifying residential site. Separate typed constraint; not a buildable-envelope result. Competes with the base-district max_base_height."},
+    {"name": "max_building_height", "type": "number", "unit": "feet", "description": "Alternative maximum building height (ft) on a qualifying residential site. Separate typed constraint; not a buildable-envelope result. Competes with the base-district max_building_height."}
+  ],
+  "parameters": [
+    {"name": "qrs_base_height_ft", "value": 45, "citation_ref": "zr-23-424", "note": "Section 23-424 qualifying-residential-site maximum base height 45 ft (R5/R5A/R5B/R5D). Candidate value pending raw-HTML verification and G6 approval."},
+    {"name": "qrs_building_height_ft", "value": 55, "citation_ref": "zr-23-424", "note": "Section 23-424 qualifying-residential-site maximum building height 55 ft (R5/R5A/R5B/R5D). Candidate value pending raw-HTML verification and G6 approval."}
+  ],
+  "applicability": {
+    "all": [
+      {"op": "in_set", "input": "zoning_district", "values": ["R5", "R5A", "R5B", "R5D"]},
+      {"op": "equals", "input": "qualifying_residential_site", "value": true}
+    ]
+  },
+  "computation": {
+    "steps": [
+      {"id": "base_h", "op": "identity", "args": [{"param": "qrs_base_height_ft"}], "note": "Alternative maximum base height on a qualifying residential site (section 23-424)."},
+      {"id": "bldg_h", "op": "identity", "args": [{"param": "qrs_building_height_ft"}], "note": "Alternative maximum building height on a qualifying residential site (section 23-424)."}
+    ],
+    "outputs": {
+      "max_base_height": {"step": "base_h"},
+      "max_building_height": {"step": "bldg_h"}
+    }
+  },
+  "exceptions": [
+    {"id": "setback_per_23_423", "description": "The section 23-424 alternative envelope requires a setback per section 23-423, whose depth is street-width conditional (10 wide / 15 narrow, section 12-10). That depth is a separate street-width-gated constraint (rule r5-setback) and is not restated here.", "condition": null, "effect": "documented_limitation", "citation_ref": "zr-23-423"},
+    {"id": "commercial_overlay_modification", "description": "A commercial overlay may modify residence-district height (section 23-44); the value is not emitted as final. Professional review required.", "condition": {"op": "equals", "input": "overlay_present", "value": true}, "effect": "professional_review_required", "citation_ref": null},
+    {"id": "special_district_modification", "description": "A mapped special district may modify height (section 23-44); the value is not emitted as final. Professional review required.", "condition": {"op": "equals", "input": "special_district_present", "value": true}, "effect": "professional_review_required", "citation_ref": null}
+  ],
+  "uncertainty_policy": {
+    "geometry_uncertain_coverage": "professional_review_required",
+    "data_conflict_coverage": "data_conflict",
+    "note": "An uncertain, split, sliver, or invalid M2-T013 geometric district assignment is never collapsed into a single definitive district: coverage downgrades to professional_review_required (or data_conflict)."
+  },
+  "limitations": [
+    "Draft extraction pending raw-HTML source verification and G6 qualified-human legal approval; not a Verified determination.",
+    "Whether a lot is a 'qualifying residential site' (section 12-10) is a separate legal determination the platform cannot make from the canonical profile; without qualifying_residential_site the rule fails closed to professional_review_required.",
+    "This alternative competes with the base-district height rules for max_base_height / max_building_height; a same-family rule_conflict is surfaced rather than a silent precedence pick when both are applicable.",
+    "The section 23-423 setback for this envelope is a separate street-width-gated constraint (rule r5-setback)."
+  ]
+}

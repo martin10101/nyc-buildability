@@ -1,0 +1,75 @@
+{
+  "rule_id": "r5-setback",
+  "rule_version": "0.1.0-draft",
+  "family": "residential_height_setback",
+  "title": "R5 district (flat-roof envelope) - required setback depth above the base height",
+  "jurisdiction": "nyc",
+  "status": "needs_review",
+  "effective_from": "2024-12-05",
+  "effective_to": null,
+  "release": {
+    "deterministic_tests": "declared",
+    "test_suite_ref": "services/api/tests/rules/test_r5_height_setback.py",
+    "independent_review": "pending",
+    "qualified_human_approval": "pending"
+  },
+  "description": "DRAFT extraction (needs_review) of the required SETBACK DEPTH above the R5 base height for the flat-roof envelope per NYC Zoning Resolution section 23-423 (with the wide/narrow street definition in section 12-10; City of Yes, Last Amended 2024-12-05). The setback depth is CONDITIONAL on street-width class: at least 10 ft from a street wall on a WIDE street (>= 75 ft, section 12-10), at least 15 ft on a NARROW street (< 75 ft). This is a SEPARATE typed constraint from the base/building heights (rule r5-height). FAIL-CLOSED INPUT: the canonical property_profile exposes NO street-width / frontage field, so street_width_class is a REQUIRED input with no canonical source; when it is missing/unavailable the evaluation returns professional_review_required with NO computed setback depth - a value predicated on street width is never emitted from a guessed class. NOT a Verified determination.",
+  "citations": [
+    {
+      "snapshot_id": "zr-23-423",
+      "section": "23-423",
+      "quote": "A setback shall be provided in accordance with this Section. The depth of the setback shall be at least 10 feet from a street wall fronting on a wide street, and at least 15 feet from a street wall fronting on a narrow street.",
+      "last_amended": "2024-12-05"
+    },
+    {
+      "snapshot_id": "zr-12-10",
+      "section": "12-10",
+      "quote": "A wide street is a street that is 75 feet or more in width. A narrow street is a street that is less than 75 feet in width.",
+      "last_amended": "2024-12-05"
+    },
+    {
+      "snapshot_id": "zr-23-422",
+      "section": "23-422",
+      "quote": "At a height not higher than the maximum base height, a setback shall be provided in accordance with Section 23-423.",
+      "last_amended": "2024-12-05"
+    }
+  ],
+  "inputs": [
+    {"name": "zoning_district", "type": "string", "required": true, "description": "Residence district governing the lot. Applicability equals R5 (via in_set); R5A/R5B/R5D are NOT matched (R5A uses pitched-plane geometry, R5B/R5D have no 23-423 setback in the source)."},
+    {"name": "street_width_class", "type": "string", "required": true, "enum": ["wide", "narrow"], "description": "Wide (>= 75 ft) or narrow (< 75 ft) street per section 12-10. REQUIRED and FAIL-CLOSED: no canonical property_profile field exposes street width, so in practice this is unavailable and the evaluation returns professional_review_required with no value. The setback depth is never computed from a guessed street class."},
+    {"name": "overlay_present", "type": "boolean", "required": false, "description": "True iff zoning.commercial_overlays[] is non-empty; when true -> professional_review_required (section 23-44)."},
+    {"name": "special_district_present", "type": "boolean", "required": false, "description": "True iff zoning.special_districts[] is non-empty; when true -> professional_review_required (section 23-44)."}
+  ],
+  "outputs": [
+    {"name": "required_setback_depth", "type": "number", "unit": "feet", "description": "STANDARD UNMODIFIED minimum starting setback depth (ft) above the base height, selected by street-width class (10 wide / 15 narrow) per section 23-423. This is the base starting depth ONLY: section 23-423 permits reductions/modifications (street-wall location beyond the minimum required front yard, reducing the setback with a 7 ft floor; recesses and outer courts; optional treatment for street walls more than 50 ft from a street line or with a qualifying orientation; dormer penetrations) that depend on inputs NOT present in the canonical property_profile and are NOT evaluated here - the modified/final applicable setback is UNRESOLVED and requires professional review. Never the final legally applicable setback. Separate typed constraint; not a buildable-envelope result."}
+  ],
+  "parameters": [
+    {"name": "setback_depth_by_street_class", "value": {"wide": 10, "narrow": 15}, "citation_ref": "zr-23-423", "note": "STANDARD UNMODIFIED minimum starting setback depth in feet by street-width class per section 23-423 (wide 10 ft, narrow 15 ft) - the base starting depth before the section's unevaluated reductions/modifications (7 ft floor, recesses/outer courts, >50 ft or qualifying-orientation optionality, dormers). Candidate values pending raw-HTML verbatim verification and G6 approval."}
+  ],
+  "applicability": {"op": "in_set", "input": "zoning_district", "values": ["R5"]},
+  "computation": {
+    "steps": [
+      {"id": "depth", "op": "identity", "args": [{"param_select": {"map": "setback_depth_by_street_class", "key_input": "street_width_class"}}], "note": "Select the minimum setback depth for the street-width class (section 23-423)."}
+    ],
+    "outputs": {
+      "required_setback_depth": {"step": "depth"}
+    }
+  },
+  "exceptions": [
+    {"id": "section_23_423_modifications_unresolved", "description": "The 10/15 ft depths are the STANDARD UNMODIFIED minimum starting setbacks under section 23-423. The section permits reductions/modifications - street-wall location beyond the minimum required front yard (reducing the required setback, with a floor of 7 ft); recesses and outer courts; optional treatment for street walls more than 50 feet from a street line or with a qualifying orientation; and dormer penetrations - that depend on street-wall / front-yard / wall-geometry / dormer inputs NOT present in the canonical property_profile and NOT evaluated here. The modified/final applicable setback is UNRESOLVED and requires professional review; 10/15 must never be presented as the final legally applicable setback.", "condition": null, "effect": "documented_limitation", "citation_ref": "zr-23-423"},
+    {"id": "commercial_overlay_modification", "description": "A commercial overlay may modify the setback (section 23-44); the citywide value is not emitted as final. Professional review required.", "condition": {"op": "equals", "input": "overlay_present", "value": true}, "effect": "professional_review_required", "citation_ref": null},
+    {"id": "special_district_modification", "description": "A mapped special district may modify the setback (section 23-44); the citywide value is not emitted as final. Professional review required.", "condition": {"op": "equals", "input": "special_district_present", "value": true}, "effect": "professional_review_required", "citation_ref": null}
+  ],
+  "uncertainty_policy": {
+    "geometry_uncertain_coverage": "professional_review_required",
+    "data_conflict_coverage": "data_conflict",
+    "note": "An uncertain, split, sliver, or invalid M2-T013 geometric district assignment is never collapsed into a single definitive district: coverage downgrades to professional_review_required (or data_conflict)."
+  },
+  "limitations": [
+    "Draft extraction pending raw-HTML source verification and G6 qualified-human legal approval; not a Verified determination.",
+    "The setback depth is street-width conditional and the canonical property_profile has no street-width field; without street_width_class the constraint fails closed to professional_review_required.",
+    "This setback applies ABOVE the 35 ft base height (rule r5-height); it does not restate the heights.",
+    "The 10/15 ft depths are STANDARD UNMODIFIED starting setbacks; section 23-423 reductions/modifications (front-yard offset with a 7 ft floor, recesses/outer courts, >50 ft or qualifying-orientation optionality, dormer penetrations) depend on inputs absent from the canonical property_profile and are NOT evaluated - the modified/final applicable setback is UNRESOLVED (professional review). 10/15 is never the final legally applicable setback for every property.",
+    "The section 23-423 depth values (10/15 ft) are the official-source-researcher reading pending byte-level raw-HTML verbatim confirmation."
+  ]
+}
