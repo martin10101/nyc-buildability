@@ -1,0 +1,85 @@
+{
+  "task_id": "M3-T002",
+  "title": "Versioned Zoning Resolution ingestion (official HTML + PDF channels; content-addressable raw capture; source-fidelity harness)",
+  "task_type": "backend",
+  "milestone_id": "M3",
+  "objective": "PROPOSED — NOT CONTRACTED (owner approval required to move backlog -> ready). Scheduled/event-driven ingestion from official ZR HTML and official PDF channels (NEVER fetched live during a property analysis). Capture per section/document: publisher + authority tier, canonical URL, retrieval timestamp, HTTP status + relevant response metadata, exact raw-content SHA-256, normalized-content SHA-256, homepage currency banner, document/section identifier + hierarchy, section title, last-amended + effective dates, tables + table structure, definitions, explicit hyperlinks/cross-references, amendment/supersession records, parser/extractor version, extraction status, raw_html_verified, human-review/G6 status. raw_html_verified may become true ONLY when stored raw response bytes + deterministic extraction/replay evidence exist (an AI statement that text is verbatim is not verification). Store bulk raw HTML/PDF content-addressably in approved cloud object storage; NEVER commit a citywide corpus or leave bulk temporary data on the owner PC. If B-001 prevents durable storage, record the blocker and implement only bounded fixtures/parser/harness that stay honest about the limitation. Live-source smoke tests are SEPARATE from deterministic CI (CI uses frozen official fixtures). Full spec: project-control/reports/M3-CORPUS-REPLAN-PROPOSAL.md.",
+  "business_reason": "Every rule value must trace to a versioned, hash-verified official ZR snapshot; the current M4 draft rules ride hand-captured snapshots (raw_html_verified:false) and cannot reach Verified without this ingestion + fidelity harness. Reuses the accepted resilience/transport framework rather than adding a crawler dependency.",
+  "inputs": [
+    "M3-T001 accepted: SOURCE_AUTHORITY_POLICY.md (tier assignment), LEGAL_CORPUS_COVERAGE_MATRIX.md (domain a rule value maps to), legal_source_manifest schema (the record shape ingestion writes)",
+    "docs/SOURCE_ACCESS_REGISTRY.md section 8 — ZR portal facts: HTML tree /article-{roman}/chapter-{n}/{section}, /recently-adopted amendment feed (31 pages), /zr-downloads dated PDF snapshots, per-article/chapter PDFs; API surface verified ABSENT (jsonapi 404); homepage currency banner; per-section Last Amended; 504 on the oversized 12-10 node (low-rate, resumable)",
+    "services/api/app/resilience/transport.py (M2-T011) — bounded HTTP, Retry-After, breaker, budget: REUSE, do not fork",
+    "services/api/app/_zr_snapshots/v1/*.snapshot.json + sync_zr_snapshots (M4-T005/T006 hand-captured snapshot+hash pattern) — the interim format this ingestion supersedes/backfills",
+    "B-001 (Supabase management token) — gates durable cloud object storage; if unavailable, bounded-fixtures-only path applies"
+  ],
+  "outputs": [],
+  "dependencies": [
+    "M3-T001"
+  ],
+  "allowed_paths": [
+    "services/api/app/corpus/** (NEW ingestion package: fetcher over app.resilience.transport, normalizer, hasher, manifest writer)",
+    "services/api/app/corpus/parsers/** (stdlib HTML/PDF parsing; a non-stdlib parser requires /dependency-security FIRST and exactly one parser)",
+    "services/api/tests/corpus/** (deterministic fixtures + source-fidelity harness; frozen official fixtures only in CI)",
+    "services/api/tests/fixtures/corpus/** (bounded frozen official HTML/PDF fixtures — NOT a citywide corpus)",
+    "infra/ or ops/ ingestion schedule definition (Render worker/cron descriptor) if storage is available",
+    "project-control/reports/M3-T002-producer-report.md, project-control/reports/M3-T002-source-capture.md"
+  ],
+  "forbidden_paths": [
+    "Committing bulk/citywide raw HTML or PDF corpus into git; leaving bulk temp data on the owner PC (thin-client policy)",
+    "Fetching the ZR live inside any per-property analysis path; wiring ingestion into the request path",
+    "Adding requests / browser automation / scraping framework / AI framework; importing httpx in production (dev/test-only today) — new runtime deps require /dependency-security + age-gate + lock",
+    "Setting raw_html_verified true without stored raw bytes + deterministic replay evidence",
+    "Any rule publication/Verified labeling; editing canonical contracts; apps/web/**; project-control/** except own reports; .claude/** except own agent-memory"
+  ],
+  "acceptance_scenarios": [
+    "AS-1 capture fidelity: ingesting a frozen fixture section records every required field (publisher/tier, URL, timestamp, HTTP status, raw+normalized SHA-256, banner, hierarchy/title, last-amended/effective, tables, definitions, cross-refs, amendment records, parser version, extraction status, raw_html_verified, G6 status).",
+    "AS-2 exact-bytes hash: stored raw bytes reproduce their recorded SHA-256; a single changed byte fails the check.",
+    "AS-3 replay to source: extracted text replays to exact source offsets/DOM nodes (HTML) or PDF page (PDF); replay mismatch fails.",
+    "AS-4 HTML-vs-PDF cross-check: official HTML and official PDF for the same section are compared; a mismatch creates a typed data_conflict (never a silent pick).",
+    "AS-5 currency-banner versioning: a changed homepage currency banner creates a NEW corpus version; unchanged banner does not.",
+    "AS-6 fail-closed transport: redirect / unexpected host change / malformed document / schema drift fails closed via app.resilience.transport (no partial silent ingest).",
+    "AS-7 raw_html_verified discipline: raw_html_verified is false until stored raw bytes + deterministic replay exist; an AI 'looks verbatim' assertion never flips it.",
+    "AS-8 CI isolation: deterministic CI runs entirely on frozen fixtures; live-source smoke tests are a separate suite and do not gate normal builds.",
+    "NC-1 no live-in-request: a test asserts no per-property code path triggers a live ZR fetch.",
+    "NC-2 storage honesty: with B-001 open, the task ingests only bounded fixtures and the report states the durable-storage limitation explicitly; no bulk corpus is committed or left on the PC.",
+    "NC-3 missing version evidence blocks: a section lacking version/amendment evidence is marked extraction-incomplete and is publication-ineligible (cannot feed a Verified rule)."
+  ],
+  "required_gates": [
+    "G0",
+    "G1",
+    "G2",
+    "G3",
+    "G4",
+    "G5"
+  ],
+  "producer_agent": "legal-corpus-engineer",
+  "reviewer_agents": [
+    "data-contract-verifier",
+    "code-reviewer",
+    "security-reviewer"
+  ],
+  "status": "backlog",
+  "progress_percent": 0,
+  "risks": [
+    "PROPOSAL ONLY: no dispatch until owner approves the packet + dependency order.",
+    "STORAGE BLOCKER B-001: durable content-addressable object storage may be unavailable; the task must degrade to bounded-fixtures-only and say so, never fake durability.",
+    "THIN CLIENT: no bulk corpus in git or on the owner PC; ingestion + bulk storage belong on a Render worker + cloud object storage.",
+    "DEPENDENCY DISCIPLINE: reuse app.resilience.transport; stdlib parsing first; a non-stdlib HTML/PDF parser is exactly one, chosen via /dependency-security, age-gated, pinned, wheel-tested.",
+    "VERIFICATION HONESTY: raw_html_verified is an evidence state, not an assertion; G6 still required before any Verified surface."
+  ],
+  "blockers": [
+    "B-001"
+  ],
+  "requirement_refs": [
+    "project-control/reports/M3-CORPUS-REPLAN-PROPOSAL.md — full spec (owner directive 2026-07-23, sections 5 M3-T002 + 6 source-fidelity harness + 7 dependency rules)",
+    "docs/SOURCE_ACCESS_REGISTRY.md section 8 (ZR portal)",
+    "docs/LOW_STORAGE_CLOUD_DEVELOPMENT_POLICY.md (thin-client / durable cloud routing)",
+    "docs/GATES_AND_CHECKPOINTS.md G1 (source/data-contract), G4 (integration), G5 (security)"
+  ],
+  "harness_assignments": [
+    "SOURCE-FIDELITY HARNESS (owner directive section 6): exact raw bytes reproduce hash; changed bytes fail; extracted text replays to exact source offsets/DOM nodes or PDF pages; official HTML vs official PDF compared; mismatches -> data_conflict; changed currency banner -> new corpus version; missing version/amendment evidence blocks publication; redirects/host changes/malformed docs/schema drift fail closed.",
+    "LIVE-SOURCE SMOKE TESTS: separate from deterministic CI; detect upstream change without making normal builds depend on live government sites."
+  ],
+  "created_at": "2026-07-23T12:09:21.718197+00:00",
+  "updated_at": "2026-07-23T12:09:21.718197+00:00"
+}

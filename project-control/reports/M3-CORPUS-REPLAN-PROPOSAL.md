@@ -1,0 +1,240 @@
+# M3 Legal-Corpus Replan — Control-Only Package (for owner approval)
+
+**Author:** orchestrator (main session) · **Date:** 2026-07-23 · **Branch:** `control/M3-corpus-replan-2026-07-23`
+**Directive:** owner directive 2026-07-23 (repair the missing M3 legal-corpus dependency before any M4-T007+ yard/coverage work; §11-25 correction; architect benchmark; construction-code scope; deterministic completeness harnesses).
+**Status of this package:** PROPOSAL. No producer is dispatched. M4-T007/T008/T009 are NOT contracted, claimed, or started. The 3-way vs 4-way split is preserved as a downstream candidate and NOT decided here. Nothing merges to `main` until you approve.
+
+This document is the single return package the directive's section 9 asks for. It is control-only (task packets + docs); it changes no product code.
+
+---
+
+## 1. Live repository reconciliation (directive §1)
+
+| Check | Result |
+|---|---|
+| `git fetch origin main` | fetched `origin/main` |
+| Local tree | on `main` (session-start snapshot showed `control/handoff-2026-07-23-footprint`; live tree was `main`), clean except `.claude/agent-memory/**` |
+| `git rev-parse HEAD` | `1acb9b510541cfa87afff6b2dc197880e01a389b` |
+| `git rev-parse origin/main` | `1acb9b510541cfa87afff6b2dc197880e01a389b` — **main did NOT advance; the reviewed baseline holds** |
+| `python tools/project_control.py status` | 42 accepted / 8 awaiting_gate / 4 backlog / 2 blocked / 1 claimed (before this PR) |
+| `python tools/current_state.py` | checkpoint CP-0031; ledger updated 2026-07-23T04:51Z |
+
+**Control-metadata reconciliation (directive §1 asked to check these explicitly):**
+
+- **M3 had no tasks** (status `planned`) — the missing legal-corpus dependency. This PR adds the four proposed packets.
+- **M4 summary said "0/5"** but the ledger holds **M4-T001…T006** (six tasks). **Fixed in this PR** to "0/6" with the M4-T006 R5 height/setback family noted, and M4-T007's new dependency on accepted M3-T003 recorded.
+- **All M4-T001…T006 + M5-T001 are `awaiting_gate`** — merged DRAFT (`needs_review`), **none accepted, Published, or Verified**. G6 gates the chain.
+- Checkpoint is **CP-0031**; **CP-0032 remains reserved** for M0-T019 (not created here).
+- Open blockers: **B-001** (Supabase management token → durable object storage), **B-004** (Geoclient key), **B-010** (client R5 benchmark sheet absent from repo).
+
+**After this PR (control-only):** 42 accepted (unchanged) / 8 awaiting_gate / **8 backlog** (4 new M3 proposals) / 2 blocked / 1 claimed.
+
+---
+
+## 2. Immediate decision (directive §2)
+
+The current 3-way footprint proposal (PR #91) is **not approved for implementation**. The downstream slices (coverage; rear/rear-equivalent; front/side) remain **candidates**; their exact boundaries must be **regenerated after the cross-reference closure graph (M3-T003) identifies the complete reachable section set.** A section list assembled by hand from one chapter is not sufficient evidence of completeness.
+
+`/replan-project` was invoked because the owner supplied new authoritative source requirements, a client architect benchmark, a newly identified legal dependency (§11-25), a construction-code coverage requirement, and a requirement for deterministic completeness/self-check harnesses. This package is the replan output.
+
+---
+
+## 3. Corrections to the current legal analysis (directive §3)
+
+### 3A. District suffix inheritance — ZR §11-25 (CORRECTION)
+
+ZR §11-25: regulations applicable to a district designation apply to that designation **with a suffix** unless the Resolution provides separate express provisions. Therefore:
+
+- **Do not** classify bare "R5" applicability as inherently ambiguous.
+- If a section lists R5 and does **not** list separate suffix provisions → **model §11-25 inheritance** (R5A/R5B/R5D inherit).
+- If the same section **expressly** lists different R5A/R5B/R5D provisions → those **express provisions control**.
+- Preserve explicit exclusions such as §23-422's "except R5 Districts with a letter suffix."
+- **§11-25 is added to every relevant rule's closure manifest and tests** (M3-T003 harness AS-1/AS-2/NC-3).
+
+This corrects the earlier tendency to treat bare-R5 as ambiguous by default. It is the canonical test pair for M3-T003: §23-361/R5B **inherits** via §11-25; §23-422 **excludes** suffixed R5.
+
+### 3B. Lot taxonomy — §12-10 (CORRECTION)
+
+**Do not create a general `semi_corner` lot type.** Under §12-10 model: **corner lot; interior lot; through lot; and portions of a zoning lot subject to different classifications.** For a corner lot, preserve the **100-foot corner portion** and separately classify any remaining portion as interior or through when applicable. The classifier must use the **legal zoning-lot boundary and street lines — not merely a PLUTO tax-lot code.** (Harness: lot/applicability, assigned to the downstream M4 slice consuming M3-T003; `Unknown` must never equal `false`; a PLUTO tax-lot code never establishes legal ZR lot type by itself.)
+
+### 3C. Architect benchmark (adversarial; NOT an answer key)
+
+Supplied PDF SHA-256: `9442b5002e10b8ac0d9f78500db7cd4e8b34240e9155d0c61bbb51e00407ea85`. One page labeled "2 OF 2." Project/address/BBL/job/checked-by fields **blank** — **do not infer identity from PDF metadata or filename.**
+
+Observed sheet statements (recorded, not endorsed):
+
+| Item | Sheet statement |
+|---|---|
+| District | R5 |
+| Lot | 40 × 125 ft = 5,000 sq ft |
+| §23-361 | 60% / 3,000 sq ft allowed; 2,850 proposed |
+| §23-21 | 1.50 / 7,500 sq ft allowed; **7,602 proposed** |
+| §23-422 | "35ft, 45ft – with a setback of 15ft"; 35 ft proposed |
+| Front yard | 10 ft |
+| Rear yard | 20 ft |
+| Side yards | 5 ft |
+
+**Required system response (discrepancy/missing-input findings, NOT a forced pass):**
+
+1. Proposed floor area **exceeds the sheet's own stated cap by 102 sq ft** (7,602 vs 7,500).
+2. **No floor-area-exclusion schedule** is supplied.
+3. **60% lot coverage is not selectable** until legal lot type and proposed residence type are known.
+4. The **15-ft setback branch depends** on narrow-street and vertical-envelope conditions.
+5. **Side-yard requirements depend** on proposed building type and may require **two** yards.
+6. **Project identity and zoning-lot documentation are missing.**
+
+The client PDF **must not be committed** without explicit owner authorization. A derived benchmark report (M3-T001 output) records the hash + observations without claiming the sheet is correct. Tracked by **B-010**.
+
+### 3D. "Confirmed absence" (CORRECTION)
+
+Do not call a modifier "confirmed absent" merely because it was not found in Article II Chapter 3. Absence may be asserted **only** if the declared search universe and cross-reference closure are complete (M3-T003). Otherwise use **`unsupported`**, **`not_evaluated`**, or **`professional_review_required`.**
+
+---
+
+## 4. Source-authority hierarchy (directive §4) — becomes `docs/SOURCE_AUTHORITY_POLICY.md` (M3-T001)
+
+| Tier | Authority | Examples |
+|---|---|---|
+| 1 | Current enacted/adopted official law | Zoning Resolution; zoning maps; NYC Administrative/Construction Codes; Local Laws; applicable state law |
+| 2 | Official amendments + project-specific legal instruments | CPC/City Council actions; BSA variances; special permits; authorizations; certifications; recorded restrictive declarations; zoning-lot development agreements; easements; applicable DOB-approved documents |
+| 3 | Official agency interpretations | DOB Rules; Buildings Bulletins; Code Notes; directives; formal interpretations (record issuing body, number, date, cited provisions, status, rescission/supersession) |
+| 4 | Official factual datasets | PLUTO/MapPLUTO; ZTLDB; DCP GIS; DOB NOW/BIS; LPC; FEMA/official flood — establish facts with limitations; do not replace legal text |
+| 5 | Third-party references | UpCodes and similar — **cross-check only; never controlling provenance** |
+| 6 | Architect/client documents | benchmark/project evidence — **never general legal authority** |
+| 7 | AI output | **no authority** — retrieves, classifies, proposes extraction, drafts tests, explains deterministic results only |
+
+**Rule:** never generalize a project-specific agency determination to a different property without an approved legal interpretation.
+
+---
+
+## 5. Legal-corpus coverage matrix (directive §4/§5) — becomes `docs/LEGAL_CORPUS_COVERAGE_MATRIX.md` (M3-T001)
+
+Per-domain status vocabulary: **`implemented` | `partial` | `missing` | `conflicting` | `unsupported` | `professional_review_required` | `not_applicable`.** **No single "complete/compliant/buildable" label while any material domain is unresolved.** Initial orchestrator assessment (M3-T001 producer verifies + finalizes):
+
+| Domain | Initial status | Basis |
+|---|---|---|
+| Zoning maps / district facts | partial | M2 GIS zoning-features + ZTLDB connectors accepted; lot-level determination limitation noted |
+| Zoning Resolution text | missing | no versioned corpus yet (M3-T002); M4 rules ride hand-captured snapshots (`raw_html_verified:false`) |
+| Amendments / effective dates | missing | ingestion + overlay owed (M3-T002) |
+| Definitions & interpretation (§12-10, §11-25) | missing | closure graph owed (M3-T003) |
+| Special districts / overlays | partial | M2 overlay/special-district facts; ZR text + overrides missing |
+| Environmental & restrictive declarations | missing | not ingested |
+| Zoning-lot identity & recorded agreements | missing | not ingested; tax-lot ≠ zoning-lot flagged |
+| CPC / BSA / DOB project-specific approvals | missing | not ingested |
+| Construction Code | missing | M3-T004 (scope-bounded) |
+| DOB Rules / Bulletins / Local Laws | missing | M3-T004 overlay |
+| Landmarks / historic | partial | M2 LPC flag; requirements text missing |
+| Waterfront / flood / environmental | partial | flood flag researched; requirements missing |
+| Occupancy / use / building type | missing | code + rule work owed |
+| Parking / loading | missing | rule slice not started |
+| Accessibility / fire-egress / structural | missing | M3-T004 scope |
+
+---
+
+## 6. Architect-benchmark discrepancy report (directive §9)
+
+Captured in §3C above and delivered as the M3-T001 output `project-control/reports/M3-T001-architect-benchmark-analysis.md` (hash + observations + the six required discrepancy findings; no PDF, no inferred identity). This is the seed for the **architect-benchmark harness** (§8 below): the sample must produce discrepancy/missing-input findings, never a forced pass.
+
+---
+
+## 7. Proposed M3 task packets + dependency order (directive §5)
+
+IDs confirmed unused before authoring. All four are created **`backlog` / PROPOSED / not contracted** on the control branch. Full packets: `project-control/tasks/M3-T00{1..4}.json`.
+
+| Task | Scope (one line) | Producer | Gates | Depends on |
+|---|---|---|---|---|
+| **M3-T001** | Authority hierarchy + coverage matrix + registry channels (Construction Code / Local Law / DOB Rule / Buildings Bulletin) + derived benchmark analysis + versioned legal-source manifest schema | official-source-researcher | G0,G1,G2,G3,G4,G5 | M1-T001 (accepted) |
+| **M3-T002** | Versioned ZR ingestion (official HTML + PDF), content-addressable raw capture, full provenance fields, `raw_html_verified` discipline, **source-fidelity harness** | legal-corpus-engineer | G0,G1,G2,G3,G4,G5 | M3-T001 |
+| **M3-T003** | Cross-reference **closure graph** + §11-25 suffix inheritance + per-rule **closure manifests** + **cross-reference-closure harness** | legal-corpus-engineer | G0,G1,G2,G3,G4,G5 | M3-T002 (accepted) |
+| **M3-T004** | DOB **Construction-Code** corpus (scope-bounded PDFs) + Local Law/DOB Rule/Bulletin/Code Note **effective-date overlay** | legal-corpus-engineer | G0,G1,G2,G3,G4,G5 | M3-T001 + approved storage/ingestion infra (B-001) |
+
+**Dependency rules (directive §5), including the cross-milestone ones:**
+
+- M3-T001 ← accepted **M1-T001** source-registry research.
+- M3-T002 ← M3-T001; **reuses `app.resilience.transport`**.
+- M3-T003 ← accepted **M3-T002**.
+- M3-T004 ← M3-T001 + approved storage/ingestion (B-001).
+- **M4-T007 and every later yard/coverage/rear/front/side rule ← accepted M3-T003.**
+- **Any construction-feasibility claim ← the relevant accepted M3-T004 scope.**
+- **G6 remains mandatory** before any rule is Published or Verified.
+
+Exclusive file scopes are declared per packet (`allowed_paths` / `forbidden_paths`); the four packets touch disjoint trees (`docs/` + contracts for T001; `services/api/app/corpus/**` sub-packages for T002/T003/T004) so they do not overlap.
+
+---
+
+## 8. Harness assignments (directive §6)
+
+| Harness | Assigned to | Key cases |
+|---|---|---|
+| **Source-fidelity** | M3-T002 (extended to PDF in M3-T004) | exact-bytes hash reproduces / changed bytes fail; replay to source offsets/DOM/PDF page; HTML-vs-PDF → `data_conflict`; changed currency banner → new version; missing version evidence blocks publication; redirects/host-change/malformed/drift fail closed |
+| **Cross-reference-closure** | M3-T003 | §23-361/R5B imports §11-25 unless expressly overridden; §23-422 express exclusion blocks R5→R5A/R5B/R5D leakage; unresolved definition/exception → no final value; cycles terminate; renumber/delete detected; single-chapter cannot satisfy absence |
+| **Lot/applicability** | downstream M4 slice (consumes M3-T003) | interior/corner/through/mixed portions; 135° boundary; curved-street tangent; 100-ft corner + remainder; zoning-lot ≠ tax-lot; missing zoning-lot docs; split district; wide/narrow street; detached/semi-detached/zero-lot-line/attached/multiple-dwelling; special/overlay/landmark/waterfront unknowns. `Unknown` never `false`; PLUTO code never sets legal lot type |
+| **Rule-behavior** | downstream M4 slice | positive/negative/boundary/not-applicable/missing-input/conflict/exception-applies/-not/effective-date-before-after/source-tamper/competing-rule; byte-identical determinism; every value carries section+URL+raw hash+corpus version+effective date+rule version+closure-manifest ID; `Verified` structurally unreachable without G6 |
+| **Architect-benchmark** | M3-T001 seed → downstream M4 slice | sample yields discrepancy/missing-input findings not a pass; 7,602 vs 7,500 surfaced; no invented exclusion; lot coverage not selected without residence+lot-type branches; no inferred address/BBL; no final buildable-envelope claim |
+| **Consumer-boundary** | M3-T004 (construction-code) + existing M5 boundary | M5 rejects yards/coverage/height/setback as a complete envelope until all blocking coverage-matrix domains present; unknown rule outputs not silently consumed; no output relabeled gross/net/sellable/feasible/compliant/buildable |
+
+**Live-source smoke tests are separate from deterministic CI.** CI runs on frozen official fixtures; scheduled smoke tests detect upstream change without making normal builds depend on live government sites.
+
+---
+
+## 9. Dependency plan (directive §7)
+
+- **Reuse first:** `app.resilience.transport` (bounded HTTP); existing JSON/hash/path libs; existing `jsonschema`; existing `shapely==2.0.7` only for already-justified geometry.
+- **Do NOT add:** `requests`, browser automation, an UpCodes SDK, scraping frameworks, or an AI framework.
+- **`httpx` is dev/test-only** — not an approved runtime crawler dependency; do not import it in production merely because tests install it.
+- The first authority/manifest + raw-HTML capture work should require **no new runtime dependency**. If the stdlib parser cannot safely preserve required HTML/table structure, invoke **`/dependency-security`** and select **exactly one** parser — justified vs alternatives, exact-pinned via the manifest/lock process, **≥7 days old**, vulnerability-audited, installed-wheel tested, in reproducibility + deployment checks.
+- **PDF extraction is a separate bounded dependency decision** (M3-T004): prefer text-bearing official PDFs; OCR is draft-only with page/image provenance; no silent PDF/OCR package.
+- **No paid service required** for these official sources (ZoLa/ZR/Open Data/DCP ArcGIS/DOB docs are public; Geoclient needs only a free key). If any source later requires payment, authentication, licensing, or redistribution rights → **stop and record a human-action blocker**; do not purchase, accept terms, or scrape around restrictions.
+
+---
+
+## 10. Storage plan + blockers (directive §7/§8)
+
+- Bulk raw HTML/PDF artifacts are stored **content-addressably in approved cloud object storage** (Supabase Storage / Render worker). **Never** commit a citywide corpus; **never** leave bulk temp data on the owner's ~7 GB PC (thin-client policy).
+- **B-001 (Supabase management token) gates durable object storage.** If it remains open, M3-T002/T004 degrade to **bounded frozen fixtures + parser + harness only**, and each report **states the limitation explicitly** (no faked durability). Recorded as a `blockers` entry on M3-T002 and M3-T004.
+- **B-004** (Geoclient key) is not on the M3 path. **B-010** (client benchmark sheet) blocks committing the PDF, not the derived analysis.
+
+**Stop-rather-than-guess conditions (directive §8)** are carried into each packet's risks: unverified endpoint/source identity; unclear licensing/terms; bot-blocked source; raw-HTML-vs-PDF disagreement; unresolvable amendment/effective date; unresolved cross-reference; unavailable legal zoning-lot geometry; tax-lot-may-not-equal-zoning-lot; a controlling project-specific approval/restrictive declaration; a conclusion needing professional legal/design judgment; unavailable durable-storage credentials.
+
+**Gates:** M3 source/corpus work runs **G0–G5 at one frozen implementation SHA**. Rule releases additionally require genuine **G6** qualified-human review. G6 is not weakened anywhere in this plan.
+
+---
+
+## 11. §11-25 correction — recorded
+
+See §3A. §11-25 suffix inheritance is (a) a required correction to the current analysis, (b) an M3-T003 graph edge type, (c) a closure-manifest entry for every relevant rule, and (d) harness cases AS-1/AS-2/NC-3. The §23-422 express exclusion is preserved as the counter-case.
+
+---
+
+## 12. Revised recommendation — 3-way vs 4-way (directive §9)
+
+**Recommendation: do not fix the number now; regenerate the slice boundaries from the M3-T003 closure set, and expect 4-way (or more) to be the floor, not 3-way.**
+
+Rationale:
+- The current 3-way grouping (coverage / rear+rear-equivalent / front+side) was assembled from a manual chapter reading. The owner's §11-25 correction and the §12-10 lot-taxonomy correction both change which sections are reachable and how R5A/R5B/R5D scope, so the *inputs* to the split decision are not yet stable.
+- Front and side yards have **different** applicability drivers (side-yard count depends on building type — detached/semi-detached/zero-lot-line/attached — and may require two yards; front-yard depth interacts with the §23-423 setback offset with its 7-ft floor). Bundling front+side risks hiding a building-type branch, which is exactly the failure the benchmark (§3C item 5) exposes.
+- Therefore the **4-way split** (T007 lot coverage → T008 rear + rear-equivalent → T009 front → T010 side) is the more honest **lower bound**; the closure graph may reveal a further split (e.g. open-space/FAR-interaction, or building-type-specific side-yard sub-rules).
+
+**Concrete proposal:** keep the 4-way split as the working candidate, but **contract its exact boundaries only after M3-T003 is accepted**, when the reachable controlling-section set and the §11-25/§12-10 predicates are known. Until then M4-T007+ stays uncontracted, dependent on accepted M3-T003.
+
+---
+
+## 13. What I did NOT do (holds preserved)
+
+- Did **not** contract, claim, dispatch, or implement M4-T007/T008/T009.
+- Did **not** ask you to choose 3-way vs 4-way (deferred to post-closure per directive).
+- Did **not** commit the client PDF or infer its identity.
+- Did **not** change M3 to `active` or move any M3 packet past `backlog` — approval flips them to `ready`.
+- Did **not** create CP-0032 (reserved for M0-T019). No new checkpoint created; this replan is recorded in this report + the packets.
+- Preserved all standing holds: G6, survey (M2-T014/T015/T016), expansion/3D-UI, credentials (B-001/B-002/B-004), thin-client, PR #64 frozen.
+
+---
+
+## 14. Requested approval
+
+Please approve (or amend) this control-only package. On approval I will:
+1. Merge the control-only PR (packets + docs reconciliation) to `main`.
+2. Move **M3-T001 only** `backlog → ready → claimed`, dispatch the producer at one frozen SHA, and return full G0–G5 evidence before starting M3-T002.
+3. Keep M4-T007+ uncontracted until M3-T003 is accepted.
+
+No producer work starts until you approve.

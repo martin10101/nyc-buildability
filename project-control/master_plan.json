@@ -35,7 +35,7 @@
       "depends_on": [
         "M1"
       ],
-      "summary": "Versioned legal corpus. No tasks contracted or accepted yet. M4 rule work proceeded on needs_review rules per owner directive 2026-07-21; full M3 corpus still owed before publication/G6."
+      "summary": "Versioned legal corpus. 0/4 accepted. M3-T001..T004 authored as PROPOSED backlog packets (owner directive 2026-07-23, control-only PR control/M3-corpus-replan-2026-07-23): T001 authority-hierarchy+coverage-matrix+registry-channels+benchmark-analysis+manifest-schema; T002 versioned ZR ingestion + source-fidelity harness; T003 cross-reference-closure graph + §11-25 suffix inheritance + closure manifests; T004 DOB Construction-Code + amendment overlay. NOT contracted/claimed/dispatched pending owner approval. M4 rule work proceeded on needs_review rules per owner directive 2026-07-21; full M3 corpus still owed before publication/G6. M4-T007+ yard/coverage slices now depend on accepted M3-T003."
     },
     {
       "id": "M4",
@@ -44,7 +44,7 @@
       "depends_on": [
         "M3"
       ],
-      "summary": "0/5 tasks accepted. M4-T001..T005 all MERGED to main as DRAFT engineering (needs_review rules); gates PASS recorded/on-file. NONE accepted, Published, or Verified. Whole chain blocked from acceptance by G6 qualified-human legal approval on M4-T001 (+ B-010 client benchmark)."
+      "summary": "0/6 tasks accepted. M4-T001..T006 all MERGED to main as DRAFT engineering (needs_review rules; T006 = R5 height/setback family, PR #88); gates PASS recorded/on-file. NONE accepted, Published, or Verified. Whole chain blocked from acceptance by G6 qualified-human legal approval on M4-T001 (+ B-010 client benchmark). M4-T007 (yard/coverage; 3-way vs 4-way split TBD) is NOT contracted and now depends on accepted M3-T003 cross-reference closure (owner directive 2026-07-23)."
     },
     {
       "id": "M5",

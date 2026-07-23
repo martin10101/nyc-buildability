@@ -1,0 +1,80 @@
+{
+  "task_id": "M3-T001",
+  "title": "Legal-source authority hierarchy, corpus scope, coverage matrix, and internal legal-source manifest contract",
+  "task_type": "research",
+  "milestone_id": "M3",
+  "objective": "PROPOSED — NOT CONTRACTED (owner approval required to move backlog -> ready). Establish the legal-source authority hierarchy (7 tiers: tier 1 current enacted/adopted law; tier 2 official amendments + project-specific legal instruments; tier 3 official agency interpretations; tier 4 official factual datasets; tier 5 third-party references cross-check only; tier 6 architect/client documents; tier 7 AI output = no authority), the legal-corpus coverage matrix with a per-domain status vocabulary (implemented | partial | missing | conflicting | unsupported | professional_review_required | not_applicable), official-source-registry channel additions for the DOB Construction Code, Local Law, DOB Rule, and Buildings Bulletin channels, a derived architect-benchmark discrepancy analysis (records ONLY the SHA-256 9442b5002e10b8ac0d9f78500db7cd4e8b34240e9155d0c61bbb51e00407ea85 + the observed sheet statements + the required-system-response discrepancies; does NOT commit the client PDF and does NOT infer project address/BBL/job number), and a versioned internal legal-source manifest schema (not promoted to a canonical cross-tier contract unless a cross-tier consumer justifies it). There must be NO single complete/compliant/buildable label while any material domain is unresolved. AI retrieves/classifies/drafts/explains only; humans approve legal interpretation. Full spec: project-control/reports/M3-CORPUS-REPLAN-PROPOSAL.md.",
+  "business_reason": "M3 legal corpus is an undelivered dependency for M4 rule publication and every yard/coverage slice; the coverage matrix + authority hierarchy make completeness auditable and provenance-tiered instead of asserted from one manually-read chapter. This is also the corrective for the 'confirmed absence' overreach: a modifier is not 'confirmed absent' unless the declared search universe and cross-reference closure are complete.",
+  "inputs": [
+    "M1-T001 accepted official-source registry research (docs/research/source-registry-drafts/*.json, docs/research/*.md) — provenance and access-governance baseline",
+    "docs/SOURCE_ACCESS_REGISTRY.md section 8 (Zoning Resolution portal, researched M1-T004; ingestion planned M3) — READ; extend with the four new legal channels",
+    "Architect benchmark: one-page sheet labeled '2 OF 2', SHA-256 9442b5002e10b8ac0d9f78500db7cd4e8b34240e9155d0c61bbb51e00407ea85; project/address/BBL/job/checked-by BLANK; observed statements R5 / 40x125=5,000 sf / §23-361 60% 3,000 allowed 2,850 proposed / §23-21 1.50 7,500 allowed 7,602 proposed / §23-422 35ft,45ft with 15ft setback 35 proposed / front 10 / rear 20 / side 5 — treat as ADVERSARIAL, not an answer key (B-010)",
+    "ZR §11-25 (district suffix inheritance), §12-10 (definitions incl. lot taxonomy), §23-361 / §23-21 / §23-422 (benchmark sections) — official ZR portal text",
+    "docs/PRODUCT_FLOW_AND_AI_BOUNDARIES.md (AI boundaries) and PRD source-tiering sections"
+  ],
+  "outputs": [],
+  "dependencies": [
+    "M1-T001"
+  ],
+  "allowed_paths": [
+    "docs/SOURCE_AUTHORITY_POLICY.md (NEW — 7-tier hierarchy + never-generalize-a-project-specific-determination rule)",
+    "docs/LEGAL_CORPUS_COVERAGE_MATRIX.md (NEW — every declared domain with a status from the vocabulary; no aggregate compliant/buildable label)",
+    "docs/SOURCE_ACCESS_REGISTRY.md (ADDITIVE new sections only: DOB Construction Code, Local Law, DOB Rule, Buildings Bulletin channels; do not rewrite existing accepted rows)",
+    "packages/contracts/schemas/**/legal_source_manifest*.schema.json (NEW versioned internal manifest schema; additive; NOT promoted to canonical cross-tier contract without justification)",
+    "project-control/reports/M3-T001-architect-benchmark-analysis.md (hash + observations + required-response discrepancies ONLY; no PDF, no inferred identity)",
+    "project-control/reports/M3-T001-producer-report.md"
+  ],
+  "forbidden_paths": [
+    "Committing the client architect PDF anywhere in the repo (explicit owner authorization required)",
+    "Inferring or recording the benchmark project address, BBL, job number, or checked-by from metadata/filename",
+    "Any services/api/app runtime code, any connector implementation (this is authority/scope/contract only)",
+    "Any canonical contract redefinition (property_profile/rule_evaluation/coverage_status/scenario)",
+    "apps/web/** and any 3D/UI; any rule publication or Verified labeling; project-control/** except own reports; .claude/** except own agent-memory"
+  ],
+  "acceptance_scenarios": [
+    "AS-1 authority hierarchy: SOURCE_AUTHORITY_POLICY.md defines all 7 tiers with examples and the explicit rule that a project-specific agency determination is never generalized to another property without an approved legal interpretation; AI is tier 7 (no authority).",
+    "AS-2 coverage-matrix domain completeness: every domain in the replan proposal (zoning maps/district facts; ZR text; amendments/effective dates; definitions/interpretation; special districts/overlays; environmental & restrictive declarations; zoning-lot identity & recorded agreements; CPC/BSA/DOB approvals; Construction Code; DOB Rules/Bulletins/Local Laws; landmarks/historic; waterfront/flood/environmental; occupancy/use/building type; parking/loading; accessibility/fire-egress/structural) appears with exactly one status from the vocabulary.",
+    "AS-3 no false aggregate: the matrix emits NO single complete/compliant/buildable label; a machine check asserts the absence of such an aggregate field while any domain is missing/partial/unsupported/professional_review_required/conflicting.",
+    "AS-4 registry additions: SOURCE_ACCESS_REGISTRY.md gains four additive channel rows (Construction Code, Local Law, DOB Rule, Buildings Bulletin) each with official source identity, access mode, auth, published limits (or 'none published'), and a 'to verify at G1' marker; existing accepted rows are byte-unchanged.",
+    "AS-5 benchmark analysis honesty: the benchmark report records the SHA-256 and observed statements, surfaces 7,602 vs the sheet's stated 7,500 cap (102 sf over), records that no floor-area-exclusion schedule is supplied, that 60% lot coverage is not selectable until legal lot type + residence type are known, that the 15-ft setback branch depends on narrow-street/vertical-envelope conditions, that side-yard requirements depend on building type and may require two yards, and that project identity + zoning-lot documentation are missing — emitting NO buildable/compliant conclusion and NO inferred address/BBL.",
+    "AS-6 manifest schema versioned + validated: the legal_source_manifest schema is versioned, jsonschema-valid, and a sample manifest validates; it is not silently promoted to a canonical cross-tier contract.",
+    "NC-1 absence discipline: the deliverables never state a modifier is 'confirmed absent'; absence is expressed only as unsupported/not_evaluated/professional_review_required until closure (M3-T003) is complete.",
+    "NC-2 no PDF / no identity leak: a grep confirms the client PDF bytes are not committed and no project address/BBL/job number string appears in any output.",
+    "NC-3 tier discipline: no third-party reference (UpCodes etc.) is recorded as controlling provenance; it is tier 5 cross-check only."
+  ],
+  "required_gates": [
+    "G0",
+    "G1",
+    "G2",
+    "G3",
+    "G4",
+    "G5"
+  ],
+  "producer_agent": "official-source-researcher",
+  "reviewer_agents": [
+    "data-contract-verifier",
+    "code-reviewer",
+    "security-reviewer"
+  ],
+  "status": "backlog",
+  "progress_percent": 0,
+  "risks": [
+    "PROPOSAL ONLY: nothing here authorizes producer dispatch. Owner must approve the packet + dependency order (control-only PR) before backlog -> ready -> claim.",
+    "LEGAL BOUNDARY: authority-tier and matrix status assignments are classifications, not legal conclusions; any domain needing legal interpretation is professional_review_required, never resolved by the agent.",
+    "IDENTITY/PRIVACY: the client benchmark PDF must not be committed and its blank identity fields must not be inferred; B-010 tracks the sheet's absence from the repo.",
+    "NO NEW RUNTIME DEPENDENCY: authority/matrix/registry/manifest work is stdlib + existing jsonschema; no requests/httpx/scraping/AI framework."
+  ],
+  "blockers": [],
+  "requirement_refs": [
+    "project-control/reports/M3-CORPUS-REPLAN-PROPOSAL.md — authoritative full spec (owner directive 2026-07-23, sections 3-8)",
+    "docs/GATES_AND_CHECKPOINTS.md (G0-G5 gate definitions; G6 reserved for rule publication)",
+    "docs/ACCEPTANCE_SCENARIO_STANDARD.md (AS/NC pack format)",
+    "docs/PRODUCT_FLOW_AND_AI_BOUNDARIES.md (AI retrieves/classifies/drafts/explains; humans approve legal interpretation)",
+    "ZR §11-25, §12-10, §23-361, §23-21, §23-422 (official portal)"
+  ],
+  "harness_assignments": [
+    "(defines, does not execute) — this task establishes the coverage vocabulary + authority tiers that the downstream source-fidelity, cross-reference-closure, lot/applicability, rule-behavior, architect-benchmark, and consumer-boundary harnesses assert against."
+  ],
+  "created_at": "2026-07-23T12:09:21.318415+00:00",
+  "updated_at": "2026-07-23T12:09:21.318415+00:00"
+}
