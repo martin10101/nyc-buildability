@@ -1,0 +1,6 @@
+# Directive-compliance registry (D-001, task M0-T023): these files are integrity-checked
+# — source-*.md bytes are SHA-256 hashed into manifest.json (content_digest_sha256) and
+# verified by tools/validate_directive_compliance.py and tools/directive_registry.py.
+# Pin to LF so the checked-out bytes match the recorded digests on EVERY platform; a
+# Windows CRLF checkout would otherwise change the bytes and fail the integrity check.
+project-control/directives/** text eol=lf

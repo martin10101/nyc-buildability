@@ -256,6 +256,189 @@ def sync_state():
     save(sp, state)
 
 
+# --------------------------------------------------------------------------
+# Owner Directive Compliance System (directive D-001).
+#
+# These checks are ADDITIVE and gated on a per-packet regime stamp so no legacy
+# or in-flight task is affected (correction 4: machine-enforceable migration, not
+# created_at). project_control.py remains the SOLE task/gate/acceptance authority
+# (D-001-R023/R118): the checks only ADD reasons to accept()'s existing list and add
+# fail-closed guards to claim/submit; there is no bypass/override flag. All directive
+# resolution is delegated to the shared, read-only tools/directive_registry.py so the
+# CLI and tools/validate_directive_compliance.py can never diverge (correction 1).
+# --------------------------------------------------------------------------
+
+def _resolver():
+    """Lazily import the shared directive resolver. Returns the module, or None if it
+    is unavailable (older checkout). Callers fail closed for in-regime/governance work."""
+    try:
+        sys.path.insert(0, str(Path(__file__).resolve().parent))
+        import directive_registry
+        return directive_registry
+    except Exception:
+        return None
+
+
+def _regime():
+    """(enabled, version, effective_date, governance_paths) from config.json."""
+    try:
+        cfg = load(PC / "config.json")
+    except (ValueError, OSError):
+        return False, "", "", []
+    r = cfg.get("directive_compliance_regime") or {}
+    return (bool(r.get("enabled")), r.get("version", ""), r.get("effective_date", ""),
+            list(r.get("governance_paths") or []))
+
+
+def _task_in_regime(t: dict) -> bool:
+    """A task is IN-REGIME when it carries an explicit regime stamp or directive_refs.
+    Legacy/pre-regime tasks (neither) are grandfathered."""
+    return bool(t.get("directive_regime_version")) or bool(t.get("directive_refs"))
+
+
+# Volatile control-plane records excluded from the content-manifest so the frozen
+# evidence identity guards the reviewable code/doc work product and does not churn on
+# lifecycle bookkeeping. Registry integrity is enforced separately by the validator.
+_MANIFEST_EXCLUDE_PREFIXES = ("project-control/",)
+
+
+def _task_content_manifest(reg_mod, t: dict) -> str:
+    return reg_mod.content_manifest(list(t.get("allowed_paths") or []),
+                                    exclude_prefixes=_MANIFEST_EXCLUDE_PREFIXES)
+
+
+def _path_touches(path: str, allowed: list) -> bool:
+    p = str(path).rstrip("/")
+    for a in allowed:
+        ap = str(a).rstrip("/")
+        if ap == p or ap.startswith(p + "/") or p.startswith(ap + "/"):
+            return True
+    return False
+
+
+def _touches_governance(allowed_paths: list, governance_paths: list) -> bool:
+    return any(_path_touches(g, allowed_paths) for g in governance_paths)
+
+
+def _parse_directive_refs(raw: str):
+    """Parse "D-001:ALL;D-002:D-002-R001,D-002-R002" into the directive_refs list.
+    Returns (refs, error)."""
+    refs = []
+    for chunk in (raw or "").split(";"):
+        chunk = chunk.strip()
+        if not chunk:
+            continue
+        if ":" not in chunk:
+            return None, f"malformed --directive-refs entry {chunk!r} (expected DID:ALL or DID:RID,RID)"
+        did, rest = chunk.split(":", 1)
+        did = did.strip()
+        rest = rest.strip()
+        if rest.upper() == "ALL":
+            refs.append({"directive_id": did, "requirement_ids": "ALL"})
+        else:
+            rids = [x.strip() for x in rest.split(",") if x.strip()]
+            refs.append({"directive_id": did, "requirement_ids": rids})
+    return refs, None
+
+
+def _directive_claim_check(t: dict, agent: str):
+    """Fail-closed guard run at claim. Returns an error string or None.
+    Enforces (for in-regime tasks) valid directive references and (for any task whose
+    allowed_paths touch governance/control-plane files) that a governance directive
+    covers it (s19 / D-001-R024/R118)."""
+    enabled, _version, _eff, gov_paths = _regime()
+    if not enabled:
+        return None
+    touches_gov = _touches_governance(t.get("allowed_paths") or [], gov_paths)
+    in_regime = _task_in_regime(t)
+    if not in_regime and not touches_gov:
+        return None  # grandfathered legacy/pre-regime task, non-governance scope
+    reg_mod = _resolver()
+    if reg_mod is None:
+        return ("directive resolver/registry unavailable; an in-regime or "
+                "governance-scoped task cannot be claimed without reference "
+                "verification (fail closed).")
+    reg = reg_mod.load_registry()
+    if touches_gov and not reg.covers_governance(t):
+        return ("this task's allowed_paths touch governance/control-plane files but it "
+                "cites no applicable active governance directive. Create/cite a governance "
+                "directive scoped to this task before claiming (fail closed; s19 / D-001-R118).")
+    if in_regime:
+        ev = reg.evaluate_task_refs(t)
+        if not ev["ok"]:
+            return ("directive-compliance references invalid at claim:\n"
+                    + "\n".join(f"  - {r}" for r in ev["reasons"]))
+    return None
+
+
+def _directive_submit_check(t: dict, evidence_map_arg, sha_arg):
+    """For in-regime tasks: require an evidence map covering every applicable
+    requirement, and stamp the frozen content-manifest identity. Returns (error, extra)
+    where extra is merged into the report record."""
+    reg_mod = _resolver()
+    if reg_mod is None:
+        return ("directive resolver unavailable; in-regime submit blocked (fail closed).", {})
+    reg = reg_mod.load_registry()
+    ev = reg.evaluate_task_refs(t)
+    if not ev["ok"]:
+        return ("directive-compliance references invalid at submit:\n"
+                + "\n".join(f"  - {r}" for r in ev["reasons"]), {})
+    applicable = set(ev["applicable_ids"])
+    if not evidence_map_arg:
+        return ("in-regime submit requires --evidence-map (JSON in project-control/reports/ "
+                "mapping each applicable requirement id to evidence).", {})
+    rel, ep, eerr = validate_report_arg(evidence_map_arg)
+    if eerr:
+        return (eerr, {})
+    if not ep.exists():
+        return (f"evidence map file missing: {rel}", {})
+    try:
+        emap = load(ep)
+    except (ValueError, OSError) as e:
+        return (f"evidence map is not valid JSON: {e}", {})
+    covered = {k for k, v in (emap.get("requirements") or {}).items() if v}
+    missing = sorted(applicable - covered)
+    if missing:
+        return (f"evidence map does not cover applicable requirement(s): {', '.join(missing)}", {})
+    cm = _task_content_manifest(reg_mod, t)
+    extra = {"evidence_map": rel, "content_manifest_sha256": cm,
+             "applicable_requirements": sorted(applicable)}
+    if sha_arg:
+        extra["reviewed_sha"] = sha_arg
+    return (None, extra)
+
+
+def _directive_accept_reasons(t: dict, task_id: str) -> list:
+    """Reasons an in-regime task must NOT be accepted (appended to accept()'s list).
+    Never a bypass: only adds reasons. Verifies references, content-manifest freshness,
+    and full independent verification at the current content identity."""
+    reasons = []
+    reg_mod = _resolver()
+    if reg_mod is None:
+        return ["directive resolver unavailable; in-regime task cannot be accepted (fail closed)."]
+    reg = reg_mod.load_registry()
+    ev = reg.evaluate_task_refs(t)
+    if not ev["ok"]:
+        reasons.extend(f"directive refs: {r}" for r in ev["reasons"])
+    current_cm = _task_content_manifest(reg_mod, t)
+    rep = None
+    rp = report_path(task_id)
+    if rp.exists():
+        try:
+            rep = load(rp)
+        except (ValueError, OSError):
+            rep = None
+    if not rep or rep.get("content_manifest_sha256") != current_cm:
+        reasons.append("frozen-evidence identity mismatch: the task's relevant contents "
+                       "changed since submission (stale); re-submit and re-verify at the "
+                       "new content identity before acceptance.")
+    for ref in (t.get("directive_refs") or []):
+        did = ref.get("directive_id") if isinstance(ref, dict) else None
+        if did:
+            reasons.extend(reg.unresolved_requirements(did, current_cm))
+    return reasons
+
+
 def init(_):
     for d in ["tasks", "reports", "gates", "checkpoints", "blockers"]:
         (PC / d).mkdir(parents=True, exist_ok=True)
@@ -310,6 +493,23 @@ def new_task(a):
         "reviewer_agents": reviewers, "status": "backlog", "progress_percent": 0,
         "risks": [], "blockers": [], "created_at": now(), "updated_at": now(),
     }
+    # Directive-compliance regime (D-001): a new task created WITH --directive-refs is
+    # born in-regime; without it the task is pre-regime/grandfathered (existing flow).
+    if getattr(a, "directive_refs", None):
+        refs, rerr = _parse_directive_refs(a.directive_refs)
+        if rerr:
+            return fail(rerr)
+        data["directive_refs"] = refs
+        enabled, version, _e, _g = _regime()
+        if enabled:
+            data["directive_regime_version"] = version
+            data["directive_regime_entered_at"] = now()
+        reg_mod = _resolver()
+        if reg_mod is not None:
+            ev = reg_mod.load_registry().evaluate_task_refs(data)
+            if not ev["ok"]:
+                return fail("directive references invalid for new task:\n"
+                            + "\n".join(f"  - {r}" for r in ev["reasons"]))
     save(p, data)
     print(p.relative_to(ROOT))
     return 0
@@ -324,6 +524,20 @@ def claim(a):
     if t.get("status") not in CLAIMABLE_STATUSES:
         return fail(f"Cannot claim from status {t.get('status')!r}: claim requires "
                     f"{sorted(CLAIMABLE_STATUSES)} (G0 readiness moves backlog to ready).")
+    # Directive-compliance regime entry on (re)claim (D-001, correction 4): --directive-refs
+    # stamps the task in-regime; then references are enforced fail-closed.
+    if getattr(a, "directive_refs", None):
+        refs, rerr = _parse_directive_refs(a.directive_refs)
+        if rerr:
+            return fail(rerr)
+        t["directive_refs"] = refs
+        enabled, version, _e, _g = _regime()
+        if enabled:
+            t["directive_regime_version"] = version
+            t.setdefault("directive_regime_entered_at", now())
+    dcerr = _directive_claim_check(t, a.agent)
+    if dcerr:
+        return fail(f"Cannot claim {a.task_id}: {dcerr}")
     t.update({"producer_agent": a.agent, "worktree": a.worktree,
               "status": "claimed", "progress_percent": 10})
     save(p, t)
@@ -423,6 +637,14 @@ def submit(a):
         return fail(f"Report file missing: {rel}")
     report = {"task_id": a.task_id, "producer_agent": a.agent, "report_file": rel,
               "submitted_at": now(), "requested_status": a.requested_status}
+    # In-regime submit (D-001): require an evidence map covering every applicable
+    # requirement and stamp the frozen content-manifest identity (correction 5).
+    if _task_in_regime(t):
+        serr, extra = _directive_submit_check(
+            t, getattr(a, "evidence_map", None), getattr(a, "sha", None))
+        if serr:
+            return fail(serr)
+        report.update(extra)
     save(report_path(a.task_id), report)
     if a.requested_status == "awaiting_gate":
         t["status"] = "awaiting_gate"
@@ -488,6 +710,14 @@ def gate(a):
     gp = PC / "gates" / f"{a.task_id}-{a.gate_id}.json"
     record = {"task_id": a.task_id, "gate_id": a.gate_id, "reviewer": a.reviewer,
               "role": role, "result": a.result, "report_file": rel, "reviewed_at": now()}
+    # In-regime gate (D-001): stamp the content-manifest identity and reviewed SHA so
+    # acceptance can detect stale post-review edits (correction 5).
+    if _task_in_regime(t):
+        reg_mod = _resolver()
+        if reg_mod is not None:
+            record["content_manifest_sha256"] = _task_content_manifest(reg_mod, t)
+        if getattr(a, "sha", None):
+            record["reviewed_sha"] = a.sha
     if gp.exists():
         prev = load(gp)
         hist = prev.pop("history", [])
@@ -593,6 +823,11 @@ def accept(a):
             if blocking and _blocker_references(a.task_id, b):
                 reasons.append(f"open blocker {b.get('blocker_id', bp.name)} "
                                f"references this task")
+    # Directive-compliance acceptance gate (D-001): for in-regime tasks, require valid
+    # references, a matching frozen content-manifest identity, and full independent
+    # verification at that identity. Only ADDS reasons; never bypasses accept().
+    if _task_in_regime(t):
+        reasons.extend(_directive_accept_reasons(t, a.task_id))
     if reasons:
         return fail(f"Cannot accept {a.task_id}:\n" + "\n".join(f"- {r}" for r in reasons))
     t["status"] = "accepted"
@@ -664,7 +899,10 @@ def main():
                   ("--task-type", {"required": True}), ("--milestone", {"required": True}),
                   ("--objective", {"required": True}), ("--business-reason", {}),
                   ("--depends", {}), ("--gates", {}),
-                  ("--reviewers", {"help": "comma-separated reviewer_agents roster"})]:
+                  ("--reviewers", {"help": "comma-separated reviewer_agents roster"}),
+                  ("--directive-refs", {"help": "directive-compliance refs, e.g. "
+                                        "'D-001:ALL' or 'D-001:D-001-R001,D-001-R002' "
+                                        "(stamps the task in-regime; D-001)"})]:
         x.add_argument(n, **kw)
     x.set_defaults(fn=new_task)
     x = sp.add_parser("claim")
@@ -672,6 +910,9 @@ def main():
     x.add_argument("--agent", required=True,
                    help="caller-provided producer label (not authenticated identity)")
     x.add_argument("--worktree", required=True)
+    x.add_argument("--directive-refs",
+                   help="directive-compliance refs to stamp on (re)claim (D-001); "
+                        "e.g. 'D-001:ALL'")
     x.set_defaults(fn=claim)
     x = sp.add_parser("progress")
     x.add_argument("--task-id", required=True)
@@ -692,6 +933,11 @@ def main():
                    help="relative path inside project-control/reports/")
     x.add_argument("--requested-status",
                    choices=["awaiting_gate", "blocked", "needs_split"], required=True)
+    x.add_argument("--evidence-map",
+                   help="relative path in project-control/reports/ to a JSON evidence "
+                        "map {\"requirements\": {\"D-001-R001\": [evidence...]}} "
+                        "(required for in-regime tasks; D-001)")
+    x.add_argument("--sha", help="reviewed head SHA (provenance) for in-regime tasks")
     x.set_defaults(fn=submit)
     x = sp.add_parser("gate")
     x.add_argument("--task-id", required=True)
@@ -702,6 +948,7 @@ def main():
     x.add_argument("--result", choices=["PASS", "FAIL", "BLOCKED"], required=True)
     x.add_argument("--report", required=True,
                    help="relative path inside project-control/reports/")
+    x.add_argument("--sha", help="reviewed head SHA (provenance) stamped on in-regime gate records")
     x.set_defaults(fn=gate)
     x = sp.add_parser("accept")
     x.add_argument("--task-id", required=True)

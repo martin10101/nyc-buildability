@@ -31,6 +31,19 @@ document only when the task at hand needs it (routing table below).
 `python tools/project_control.py status`. Current orientation: `docs/SESSION_HANDOFF.md`
 (orientation only; the ledger wins on any conflict).
 
+## Owner-directive compliance
+
+A **substantive owner directive** is any request that changes, corrects, restricts, authorizes,
+replans, implements, dispatches, claims, accepts, merges, or amends repository work; pure
+explanations and read-only status questions do not create one unless they add a new requirement.
+Before planning, writing, claiming, dispatching, submitting, accepting, merging, or declaring
+completion for a directive, invoke `/directive-compliance`: capture it verbatim under
+`project-control/directives/`, decompose it into atomic requirement IDs, bind the affected task/PR,
+preserve every prohibition/hold/sequencing/dependency/harness/evidence/owner-decision/return item,
+require independent completeness and final verification (producer ≠ verifier), and refuse
+"all addressed"/"complete" narratives as evidence. Mechanically enforced by `tools/project_control.py`
++ `tools/validate_directive_compliance.py`; gates, authority, holds unchanged (ADR-005; `.claude/rules/project-control.md`).
+
 ## Start-of-session routine
 
 1. Run `python tools/project_control.py status` and read `docs/SESSION_HANDOFF.md`.

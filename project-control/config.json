@@ -97,5 +97,25 @@
     "maximum_additional_local_use_without_approval_gb": 2,
     "default_execution": "cloud",
     "policy_document": "docs/LOW_STORAGE_CLOUD_DEVELOPMENT_POLICY.md"
+  },
+  "directive_compliance_regime": {
+    "enabled": true,
+    "version": "1.0",
+    "effective_date": "2026-07-23",
+    "governing_directive": "D-001",
+    "note": "Owner Directive Compliance System (D-001). Enforcement is keyed on an explicit per-packet 'directive_regime_version' stamp (or presence of directive_refs), NOT on created_at alone (correction 4). A task is IN-REGIME when it carries that stamp; pre-regime/legacy tasks are grandfathered so no in-flight work deadlocks. Regime entry is a machine transition: new-task/claim with --directive-refs stamps the version. See project-control/directives/BOOTSTRAP.md.",
+    "governance_paths": [
+      "CLAUDE.md",
+      ".claude/hooks/",
+      ".claude/rules/",
+      ".claude/agents/",
+      ".claude/skills/",
+      ".claude/settings.json",
+      "tools/project_control.py",
+      "tools/directive_registry.py",
+      "tools/validate_directive_compliance.py",
+      "project-control/directives/",
+      ".github/workflows/"
+    ]
   }
 }

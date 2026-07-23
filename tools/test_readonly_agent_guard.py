@@ -29,13 +29,14 @@ SQ = "'/srv/nyc zoning/repo'"          # single-quoted
 BS = "/srv/nyc\\ zoning/repo"          # backslash-escaped space (unquoted)
 NL = chr(10)                            # explicit newline (avoid \\n f-string ambiguity)
 
-SIX_ROLES = [
+GOVERNED_ROLES = [
     "progress-auditor",
     "code-reviewer",
     "security-reviewer",
     "data-contract-verifier",
     "ci-evidence-verifier",
     "control-plane-verifier",
+    "directive-compliance-verifier",
 ]
 
 FAILURES = []
@@ -221,9 +222,9 @@ def main() -> int:
     check("allow gh pr view (read)", "ALLOW",
           bash_payload(R, "gh pr view 64 --json headRefOid"))
 
-    # 5. ALL SIX governed roles are enforced (spaced -C push denied for each);
+    # 5. ALL governed roles are enforced (spaced -C push denied for each);
     #    a non-governed role passes through.
-    for role in SIX_ROLES:
+    for role in GOVERNED_ROLES:
         check(f"role governed: {role} deny spaced push", "DENY",
               bash_payload(role, f"git -C {DQ} push"))
     check("non-governed lead (no agent_type) push allowed", "ALLOW",

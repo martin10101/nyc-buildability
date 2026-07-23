@@ -1,0 +1,78 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://nyc-buildability/project-control/directives/schema/v1/directive_requirements.schema.json",
+  "title": "Directive atomic requirements (v1)",
+  "description": "Atomic, individually-testable requirements decomposed from a directive's verbatim source. Authored by the PRODUCER. Requirement IDs are append-only once the directive is active (no deletion/renumber/rewrite). Structural intent only; tools/validate_directive_compliance.py enforces coverage, applicability and separation.",
+  "type": "object",
+  "required": ["schema", "directive_id", "requirements", "updated_at"],
+  "additionalProperties": true,
+  "properties": {
+    "schema": {"const": "directive_requirements/v1"},
+    "directive_id": {"type": "string", "pattern": "^D-\\d{3}$"},
+    "version": {"type": "integer", "minimum": 1},
+    "requirement_count": {"type": "integer", "minimum": 0},
+    "requirements": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "id", "text", "source_ref", "classification", "applicability",
+          "producer", "independent_verifier", "status", "maps_to"
+        ],
+        "additionalProperties": true,
+        "properties": {
+          "id": {"type": "string", "pattern": "^D-\\d{3}-R\\d{3}$"},
+          "text": {"type": "string"},
+          "source_ref": {"type": "string"},
+          "classification": {
+            "enum": ["obligation", "prohibition", "hold", "sequencing", "dependency",
+                     "decision", "harness", "evidence", "external_fact", "return", "authorization"]
+          },
+          "binding": {"type": "boolean"},
+          "applicability": {
+            "type": "object",
+            "required": ["task_ids", "task_types", "milestones", "paths", "lifecycle_events", "effective_date"],
+            "additionalProperties": true,
+            "properties": {
+              "task_ids": {"type": "array", "items": {"type": "string"}},
+              "task_types": {"type": "array", "items": {"type": "string"}},
+              "milestones": {"type": "array", "items": {"type": "string"}},
+              "paths": {"type": "array", "items": {"type": "string"}},
+              "lifecycle_events": {"type": "array", "items": {"type": "string"}},
+              "effective_date": {"type": "string"}
+            }
+          },
+          "dependencies": {"type": "array", "items": {"type": "string"}},
+          "required_harness": {"type": "string"},
+          "required_evidence": {"type": "string"},
+          "producer": {"type": "string"},
+          "independent_verifier": {"type": "string"},
+          "status": {"enum": ["pending", "implemented", "PASS", "FAIL", "BLOCKED", "UNVERIFIABLE", "NOT_APPLICABLE"]},
+          "status_reason": {"type": "string"},
+          "evidence_paths": {"type": "array", "items": {"type": "string"}},
+          "reviewed_sha": {"type": ["string", "null"]},
+          "maps_to": {
+            "type": "object",
+            "additionalProperties": true,
+            "properties": {
+              "files": {"type": "array", "items": {"type": "string"}},
+              "tests": {"type": "array", "items": {"type": "string"}},
+              "tasks": {"type": "array", "items": {"type": "string"}}
+            }
+          },
+          "supersedes": {"type": ["string", "null"]},
+          "not_applicable_justification": {"type": ["string", "null"]},
+          "checklist": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": ["sub_id", "text"],
+              "properties": {"sub_id": {"type": "string"}, "text": {"type": "string"}}
+            }
+          }
+        }
+      }
+    },
+    "updated_at": {"type": "string"}
+  }
+}

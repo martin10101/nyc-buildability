@@ -1081,6 +1081,334 @@ def test_docs_honesty() -> None:
         shutil.rmtree(tmpdir, ignore_errors=True)
 
 
+# ---------------------------------------------------------------------------
+# S9  Owner Directive Compliance System (directive D-001): the CLI enforcement
+#     lane. All checks are IN-REGIME-gated so legacy/pre-regime tasks are
+#     grandfathered (no deadlock). Proves: claim requires valid refs; selective
+#     citation refused; governance-path guard (s19); submit requires an evidence
+#     map; content-manifest identity goes stale on relevant edits (s7/merge-
+#     rebase-squash property); accept blocks until independent verification at the
+#     matching content identity; and the migration table over every current status.
+# ---------------------------------------------------------------------------
+import hashlib as _hashlib
+
+
+def _sha256_text(s: str) -> str:
+    return _hashlib.sha256(s.encode("utf-8")).hexdigest()
+
+
+def make_directive(pc: Path, did: str, slug: str, task_ids, task_types, milestones,
+                   req_specs, paths=None, status="active") -> None:
+    """Write a valid directive into a temp registry (correct source hash, locked ids)."""
+    ddir = pc / "directives" / f"{did}-{slug}"
+    ddir.mkdir(parents=True, exist_ok=True)
+    src_text = f"Verbatim source for {did}.\n"
+    (ddir / "source-001.md").write_text(src_text, encoding="utf-8", newline="\n")
+    digest = _hashlib.sha256(src_text.encode("utf-8")).hexdigest()
+    reqs, vers, ids = [], [], []
+    for rid, applic_task_ids in req_specs:
+        ids.append(rid)
+        reqs.append({
+            "id": rid, "text": "req", "source_ref": "source-001.md#x",
+            "classification": "obligation", "binding": True,
+            "applicability": {"task_ids": applic_task_ids, "task_types": [],
+                              "milestones": [], "paths": [], "lifecycle_events": ["claim"],
+                              "effective_date": "2026-07-23"},
+            "dependencies": [], "required_harness": "", "required_evidence": "",
+            "producer": "orchestrator", "independent_verifier": "reviewer-v",
+            "status": "pending", "status_reason": "", "evidence_paths": [],
+            "reviewed_sha": None, "maps_to": {"files": [], "tests": [], "tasks": []},
+            "supersedes": None, "not_applicable_justification": None, "checklist": []})
+        vers.append({"id": rid, "state": "pending", "evidence": [], "verified_at": None,
+                     "verified_by": None, "reviewed_sha": None})
+    manifest = {
+        "schema": "directive_manifest/v1", "directive_id": did, "version": 1, "slug": slug,
+        "title": did, "status": status, "issued_by": "owner", "issued_at": "2026-07-23",
+        "captured_at": "2026-07-23T00:00:00+00:00", "channel": "owner_message",
+        "frozen_baseline_sha": "1acb9b510541cfa87afff6b2dc197880e01a389b",
+        "sources": [{"file": "source-001.md", "kind": "original", "sequence": 1,
+                     "content_digest_sha256": digest}],
+        "amendments": [], "supersedes": [], "superseded_by": None,
+        "affected_tasks": task_ids, "affected_prs": [],
+        "scope": {"task_ids": task_ids, "task_types": task_types,
+                  "milestones": milestones, "paths": paths or []},
+        "owner_approval": {"state": "approved_for_implementation"},
+        "lifecycle_state": status, "requirements_file": "requirements.json",
+        "verification_file": "verification.json", "final_reviewed_sha": None,
+        "final_reviewed_manifest_sha256": None,
+        "locked_requirement_ids": ids,
+        "requirements_id_digest_sha256": _hashlib.sha256("\n".join(sorted(ids)).encode()).hexdigest(),
+        "created_at": "2026-07-23T00:00:00+00:00", "updated_at": "2026-07-23T00:00:00+00:00",
+        "audit_log": [{"at": "2026-07-23T00:00:00+00:00", "by": "orchestrator", "note": "x"}]}
+    (ddir / "manifest.json").write_text(json.dumps(manifest, indent=2), encoding="utf-8")
+    (ddir / "requirements.json").write_text(json.dumps(
+        {"schema": "directive_requirements/v1", "directive_id": did, "version": 1,
+         "producer": "orchestrator", "requirement_count": len(reqs),
+         "requirements": reqs, "updated_at": "2026-07-23T00:00:00+00:00"}, indent=2),
+        encoding="utf-8")
+    (ddir / "verification.json").write_text(json.dumps(
+        {"schema": "directive_verification/v1", "directive_id": did, "producer": "orchestrator",
+         "verifier": None, "reviewed_sha": None, "reviewed_manifest_sha256": None,
+         "requirements": vers, "updated_at": "2026-07-23T00:00:00+00:00"}, indent=2),
+        encoding="utf-8")
+    idx_path = pc / "directives" / "index.json"
+    idx = read_json(idx_path) if idx_path.exists() else {
+        "schema": "directive_index/v1", "version": 1, "directives": [],
+        "updated_at": "2026-07-23T00:00:00+00:00"}
+    idx["directives"].append({
+        "directive_id": did, "slug": slug, "title": did, "status": status,
+        "issued_at": "2026-07-23", "issued_by": "owner", "supersedes": [],
+        "superseded_by": None, "affected_tasks": task_ids,
+        "manifest": f"{did}-{slug}/manifest.json"})
+    idx_path.write_text(json.dumps(idx, indent=2), encoding="utf-8")
+
+
+def setup_regime(tmp: Path, governance_paths=None) -> None:
+    """Enable the directive regime in a temp project: copy the resolver, set config,
+    and create the schema dir so the validator convention holds."""
+    shutil.copy2(HERE / "directive_registry.py", tmp / "tools" / "directive_registry.py")
+    pc = tmp / "project-control"
+    cfg = read_json(pc / "config.json")
+    cfg["directive_compliance_regime"] = {
+        "enabled": True, "version": "1.0", "effective_date": "2026-07-23",
+        "governance_paths": governance_paths or ["tools/project_control.py",
+                                                 "project-control/directives/"]}
+    (pc / "config.json").write_text(json.dumps(cfg, indent=2), encoding="utf-8")
+    (pc / "directives" / "schema" / "v1").mkdir(parents=True, exist_ok=True)
+
+
+def _content_manifest(tmp: Path, paths):
+    sys.path.insert(0, str(HERE))
+    import directive_registry as dr
+    return dr.content_manifest(list(paths), root=tmp, exclude_prefixes=("project-control/",))
+
+
+def test_s9_directive_claim_and_governance() -> None:
+    tmpdir = tempfile.mkdtemp(prefix="pc-dc-claim-")
+    tmp = Path(tmpdir)
+    try:
+        make_temp_project(tmp)
+        setup_regime(tmp)
+        pc = tmp / "project-control"
+        make_directive(pc, "D-900", "example", task_ids=["M9-T900", "M9-T902"],
+                       task_types=["governance"], milestones=["M0"],
+                       req_specs=[("D-900-R001", ["M9-T900"]), ("D-900-R002", ["M9-T900"])])
+
+        # (a) in-regime task claimed WITH full refs succeeds.
+        r = run(tmp, "new-task", "--task-id", "M9-T900", "--title", "t", "--task-type",
+                "research", "--milestone", "M0", "--objective", "o", "--gates", "G0,G3",
+                "--reviewers", "reviewer-v,reviewer-z", "--directive-refs", "D-900:ALL")
+        assert r.returncode == 0, f"new-task in-regime failed: {r.stderr}"
+        t = read_json(pc / "tasks" / "M9-T900.json")
+        assert t.get("directive_regime_version") == "1.0", "new-task should stamp regime version"
+        write_report(tmp, "m9t900-g0.json", '{"g":0}')
+        run(tmp, "gate", "--task-id", "M9-T900", "--gate-id", "G0", "--reviewer",
+            "orchestrator", "--result", "PASS", "--report", "project-control/reports/m9t900-g0.json")
+        r = run(tmp, "claim", "--task-id", "M9-T900", "--agent", "orchestrator",
+                "--worktree", "wt")
+        assert r.returncode == 0, f"claim with full refs must succeed: {r.stderr}"
+
+        # (b) selective citation is refused.
+        r = run(tmp, "new-task", "--task-id", "M9-T901", "--title", "t", "--task-type",
+                "research", "--milestone", "M0", "--objective", "o", "--gates", "G0,G3",
+                "--reviewers", "reviewer-v,reviewer-z", "--directive-refs", "D-900:ALL")
+        assert r.returncode == 0
+        # M9-T901 is not in D-900's requirement applicability, so ALL -> no applicable; to
+        # test selective citation we point requirements at M9-T901 via a second directive.
+        make_directive(pc, "D-901", "sel", task_ids=["M9-T901"], task_types=[],
+                       milestones=[], req_specs=[("D-901-R001", ["M9-T901"]),
+                                                 ("D-901-R002", ["M9-T901"])])
+        edit_task(tmp, "M9-T901", directive_refs=[{"directive_id": "D-901",
+                  "requirement_ids": ["D-901-R001"]}], directive_regime_version="1.0")
+        write_report(tmp, "m9t901-g0.json", '{"g":0}')
+        run(tmp, "gate", "--task-id", "M9-T901", "--gate-id", "G0", "--reviewer",
+            "orchestrator", "--result", "PASS", "--report", "project-control/reports/m9t901-g0.json")
+        r = run(tmp, "claim", "--task-id", "M9-T901", "--agent", "orchestrator", "--worktree", "wt")
+        assert r.returncode != 0 and "selective citation" in (r.stderr + r.stdout).lower(), \
+            f"selective citation must be refused: {r.stdout} {r.stderr}"
+
+        # (c) governance-path guard (s19): a product task touching a governance path with
+        # NO governance directive ref is refused; adding a covering governance ref allows it.
+        r = run(tmp, "new-task", "--task-id", "M9-T902", "--title", "t", "--task-type",
+                "backend", "--milestone", "M0", "--objective", "o", "--gates", "G0,G3",
+                "--reviewers", "reviewer-v,reviewer-z")
+        assert r.returncode == 0
+        edit_task(tmp, "M9-T902", allowed_paths=["tools/project_control.py"])  # governance path
+        write_report(tmp, "m9t902-g0.json", '{"g":0}')
+        run(tmp, "gate", "--task-id", "M9-T902", "--gate-id", "G0", "--reviewer",
+            "orchestrator", "--result", "PASS", "--report", "project-control/reports/m9t902-g0.json")
+        r = run(tmp, "claim", "--task-id", "M9-T902", "--agent", "orchestrator", "--worktree", "wt")
+        assert r.returncode != 0 and "governance" in (r.stderr + r.stdout).lower(), \
+            f"governance-path task without governance ref must be refused: {r.stdout} {r.stderr}"
+        # D-900 scopes governance task_type and lists M9-T902 -> citing it covers the guard.
+        edit_task(tmp, "M9-T902", directive_refs=[{"directive_id": "D-900", "requirement_ids": "ALL"}],
+                  directive_regime_version="1.0")
+        r = run(tmp, "claim", "--task-id", "M9-T902", "--agent", "orchestrator", "--worktree", "wt")
+        assert r.returncode == 0, f"governance-path task WITH covering governance ref must claim: {r.stderr}"
+        print("OK: S9 directive claim enforcement (refs required, selective citation refused, "
+              "governance-path guard)")
+    finally:
+        shutil.rmtree(tmpdir, ignore_errors=True)
+
+
+def test_s9_submit_evidence_and_identity() -> None:
+    tmpdir = tempfile.mkdtemp(prefix="pc-dc-submit-")
+    tmp = Path(tmpdir)
+    try:
+        make_temp_project(tmp)
+        setup_regime(tmp)
+        pc = tmp / "project-control"
+        (tmp / "probe.txt").write_text("original\n", encoding="utf-8")
+        make_directive(pc, "D-900", "example", task_ids=["M9-T900"], task_types=[],
+                       milestones=[], req_specs=[("D-900-R001", ["M9-T900"])])
+        run(tmp, "new-task", "--task-id", "M9-T900", "--title", "t", "--task-type", "research",
+            "--milestone", "M0", "--objective", "o", "--gates", "G0,G3",
+            "--reviewers", "reviewer-v,reviewer-z", "--directive-refs", "D-900:ALL")
+        edit_task(tmp, "M9-T900", allowed_paths=["probe.txt"])
+        write_report(tmp, "g0.json", '{"g":0}')
+        run(tmp, "gate", "--task-id", "M9-T900", "--gate-id", "G0", "--reviewer", "orchestrator",
+            "--result", "PASS", "--report", "project-control/reports/g0.json")
+        run(tmp, "claim", "--task-id", "M9-T900", "--agent", "orchestrator", "--worktree", "wt")
+        run(tmp, "progress", "--task-id", "M9-T900", "--agent", "orchestrator", "--percent",
+            "40", "--status", "in_progress", "--message", "x")
+        write_report(tmp, "final.json", '{"report": "x"}')
+
+        # (a) in-regime submit WITHOUT an evidence map is refused.
+        r = run(tmp, "submit", "--task-id", "M9-T900", "--agent", "orchestrator",
+                "--report", "project-control/reports/final.json", "--requested-status", "awaiting_gate")
+        assert r.returncode != 0 and "evidence-map" in (r.stderr + r.stdout), \
+            f"in-regime submit without evidence map must fail: {r.stdout} {r.stderr}"
+
+        # (b) evidence map covering the applicable requirement lets submit through and
+        #     stamps the content-manifest identity.
+        write_report(tmp, "emap.json", json.dumps({"requirements": {"D-900-R001": ["final.json"]}}))
+        r = run(tmp, "submit", "--task-id", "M9-T900", "--agent", "orchestrator",
+                "--report", "project-control/reports/final.json", "--requested-status",
+                "awaiting_gate", "--evidence-map", "project-control/reports/emap.json",
+                "--sha", "abc123")
+        assert r.returncode == 0, f"submit with evidence map must succeed: {r.stderr}"
+        rep = read_json(pc / "reports" / "M9-T900.json")
+        expected_cm = _content_manifest(tmp, ["probe.txt"])
+        assert rep.get("content_manifest_sha256") == expected_cm, "submit must stamp content manifest"
+
+        # (c) editing a relevant file changes the content identity (stale-evidence property
+        #     that survives merge/rebase/squash but invalidates on real edits).
+        (tmp / "probe.txt").write_text("edited after review\n", encoding="utf-8")
+        new_cm = _content_manifest(tmp, ["probe.txt"])
+        assert new_cm != expected_cm, "a relevant-file edit must change the content identity"
+        print("OK: S9 submit evidence map + content-manifest identity (stale on relevant edit)")
+    finally:
+        shutil.rmtree(tmpdir, ignore_errors=True)
+
+
+def test_s9_accept_requires_verification() -> None:
+    tmpdir = tempfile.mkdtemp(prefix="pc-dc-accept-")
+    tmp = Path(tmpdir)
+    try:
+        make_temp_project(tmp)
+        setup_regime(tmp)
+        pc = tmp / "project-control"
+        (tmp / "probe.txt").write_text("content\n", encoding="utf-8")
+        make_directive(pc, "D-900", "example", task_ids=["M9-T900"], task_types=[],
+                       milestones=[], req_specs=[("D-900-R001", ["M9-T900"])])
+        run(tmp, "new-task", "--task-id", "M9-T900", "--title", "t", "--task-type", "research",
+            "--milestone", "M0", "--objective", "o", "--gates", "G0,G3",
+            "--reviewers", "reviewer-v,reviewer-z", "--directive-refs", "D-900:ALL")
+        edit_task(tmp, "M9-T900", allowed_paths=["probe.txt"])
+        write_report(tmp, "g0.json", '{"g":0}')
+        run(tmp, "gate", "--task-id", "M9-T900", "--gate-id", "G0", "--reviewer", "orchestrator",
+            "--result", "PASS", "--report", "project-control/reports/g0.json")
+        run(tmp, "claim", "--task-id", "M9-T900", "--agent", "producer-p", "--worktree", "wt")
+        run(tmp, "progress", "--task-id", "M9-T900", "--agent", "producer-p", "--percent", "40",
+            "--status", "in_progress", "--message", "x")
+        write_report(tmp, "final.json", '{"r": "x"}')
+        write_report(tmp, "emap.json", json.dumps({"requirements": {"D-900-R001": ["final.json"]}}))
+        run(tmp, "submit", "--task-id", "M9-T900", "--agent", "producer-p", "--report",
+            "project-control/reports/final.json", "--requested-status", "awaiting_gate",
+            "--evidence-map", "project-control/reports/emap.json")
+        write_report(tmp, "g3.json", '{"g":3}')
+        run(tmp, "gate", "--task-id", "M9-T900", "--gate-id", "G3", "--reviewer", "reviewer-v",
+            "--result", "PASS", "--report", "project-control/reports/g3.json")
+
+        # (a) accept is BLOCKED while D-900 verification is unsatisfied (pending).
+        r = run(tmp, "accept", "--task-id", "M9-T900", "--agent", "orchestrator")
+        assert r.returncode != 0 and "verification" in (r.stderr + r.stdout).lower(), \
+            f"accept must block until independent verification: {r.stdout} {r.stderr}"
+
+        # (b) satisfy verification at the matching content identity -> accept succeeds
+        #     (proves the gate is not a permanent deadlock).
+        cm = _content_manifest(tmp, ["probe.txt"])
+        vpath = pc / "directives" / "D-900-example" / "verification.json"
+        v = read_json(vpath)
+        v["verifier"] = "reviewer-v"  # != producer 'orchestrator'
+        v["reviewed_manifest_sha256"] = cm
+        for row in v["requirements"]:
+            row["state"] = "PASS"
+            row["evidence"] = ["project-control/reports/g3.json"]
+            row["verified_by"] = "reviewer-v"
+        vpath.write_text(json.dumps(v, indent=2), encoding="utf-8")
+        r = run(tmp, "accept", "--task-id", "M9-T900", "--agent", "orchestrator")
+        assert r.returncode == 0, f"accept must succeed once verification is satisfied: {r.stderr}"
+
+        # (c) producer == verifier is refused (self-verification).
+        v["verifier"] = "orchestrator"
+        vpath.write_text(json.dumps(v, indent=2), encoding="utf-8")
+        edit_task(tmp, "M9-T900", status="awaiting_gate")  # reopen for the negative probe
+        r = run(tmp, "accept", "--task-id", "M9-T900", "--agent", "orchestrator")
+        assert r.returncode != 0, "producer self-verification must be refused"
+        print("OK: S9 accept requires independent verification at the frozen content identity")
+    finally:
+        shutil.rmtree(tmpdir, ignore_errors=True)
+
+
+def test_s9_migration_no_deadlock() -> None:
+    """Correction 4 / D-001-R033/R109: legacy/pre-regime tasks are grandfathered so no
+    in-flight status deadlocks; regime entry is an explicit stamp, not created_at."""
+    tmpdir = tempfile.mkdtemp(prefix="pc-dc-migrate-")
+    tmp = Path(tmpdir)
+    try:
+        make_temp_project(tmp)
+        setup_regime(tmp)  # regime ENABLED
+        # A pre-regime task (no directive_regime_version, no refs) claims/submits freely.
+        new_ready_task(tmp, "M9-T700", reviewers="rev-a,rev-b", gates="G0,G3")
+        r = run(tmp, "claim", "--task-id", "M9-T700", "--agent", "producer-p", "--worktree", "wt")
+        assert r.returncode == 0, f"legacy pre-regime task must claim with regime ON (grandfathered): {r.stderr}"
+        for status, pct in [("in_progress", 40), ("self_check", 75)]:
+            r = run(tmp, "progress", "--task-id", "M9-T700", "--agent", "producer-p",
+                    "--percent", str(pct), "--status", status, "--message", "x")
+            assert r.returncode == 0, f"legacy transition {status} must not be blocked: {r.stderr}"
+        rep = write_report(tmp, "m9t700.json", '{"r":"x"}')
+        r = run(tmp, "submit", "--task-id", "M9-T700", "--agent", "producer-p", "--report",
+                rep, "--requested-status", "awaiting_gate")
+        assert r.returncode == 0, f"legacy submit must not require an evidence map: {r.stderr}"
+        pc = tmp / "project-control"
+        assert read_json(pc / "tasks" / "M9-T700.json")["status"] == "awaiting_gate"
+
+        # Accepted tasks remain immutable even with the regime on (s14).
+        make_directive(pc, "D-900", "ex", task_ids=["M9-T701"], task_types=[], milestones=[],
+                       req_specs=[("D-900-R001", ["M9-T701"])])
+        new_ready_task(tmp, "M9-T701", reviewers="rev-a,rev-b", gates="G0")
+        run(tmp, "claim", "--task-id", "M9-T701", "--agent", "producer-p", "--worktree", "wt")
+        run(tmp, "progress", "--task-id", "M9-T701", "--agent", "producer-p", "--percent", "40",
+            "--status", "in_progress", "--message", "x")
+        rep = write_report(tmp, "m9t701.json", '{"r":"x"}')
+        run(tmp, "submit", "--task-id", "M9-T701", "--agent", "producer-p", "--report", rep,
+            "--requested-status", "awaiting_gate")
+        r = run(tmp, "accept", "--task-id", "M9-T701", "--agent", "orchestrator")
+        assert r.returncode == 0, f"pre-regime accept must work: {r.stderr}"
+        for sub in ("claim", "submit"):
+            args = ["--task-id", "M9-T701", "--agent", "producer-p"]
+            if sub == "claim":
+                args += ["--worktree", "wt"]
+            else:
+                args += ["--report", rep, "--requested-status", "awaiting_gate"]
+            r = run(tmp, sub, *args)
+            assert r.returncode != 0, f"accepted task must be immutable to {sub}"
+        print("OK: S9 migration table (legacy grandfathered, no deadlock; accepted immutable)")
+    finally:
+        shutil.rmtree(tmpdir, ignore_errors=True)
+
+
 ALL_TESTS = [
     test_original_workflow,
     test_s1_transitions,
@@ -1092,6 +1420,10 @@ ALL_TESTS = [
     test_s7_backward_compatibility,
     test_s8_hardening_followup,
     test_docs_honesty,
+    test_s9_directive_claim_and_governance,
+    test_s9_submit_evidence_and_identity,
+    test_s9_accept_requires_verification,
+    test_s9_migration_no_deadlock,
 ]
 
 

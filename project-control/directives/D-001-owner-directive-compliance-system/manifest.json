@@ -1,0 +1,227 @@
+{
+  "schema": "directive_manifest/v1",
+  "directive_id": "D-001",
+  "version": 2,
+  "slug": "owner-directive-compliance-system",
+  "title": "Durable Owner Directive Compliance System",
+  "status": "active",
+  "issued_by": "owner",
+  "issued_at": "2026-07-23",
+  "captured_at": "2026-07-23T00:00:00+00:00",
+  "channel": "owner_message",
+  "frozen_baseline_sha": "1acb9b510541cfa87afff6b2dc197880e01a389b",
+  "sources": [
+    {
+      "file": "source-001.md",
+      "kind": "original",
+      "sequence": 1,
+      "recorded_at": "2026-07-23T00:00:00+00:00",
+      "content_digest_sha256": "f3aa16d9bfa3b8c356565ec28bba34e519cbe25b0001729dc49595c6fa9307c9"
+    },
+    {
+      "file": "source-002-amendment.md",
+      "kind": "amendment",
+      "sequence": 2,
+      "amends": "source-001.md",
+      "recorded_at": "2026-07-23T00:00:00+00:00",
+      "content_digest_sha256": "888b3443ad62c898f0fd2fa1333d3ed4858fc59f12ad1e16b725305148d0fab9"
+    }
+  ],
+  "amendments": [
+    "source-002-amendment.md"
+  ],
+  "supersedes": [],
+  "superseded_by": null,
+  "affected_tasks": [
+    "M0-T023"
+  ],
+  "affected_prs": [],
+  "affected_branches": [
+    "task/M0-T023-directive-compliance"
+  ],
+  "scope": {
+    "task_ids": [
+      "M0-T023"
+    ],
+    "task_types": [
+      "governance"
+    ],
+    "milestones": [
+      "M0"
+    ],
+    "paths": [
+      "CLAUDE.md",
+      ".claude/skills/directive-compliance/",
+      ".claude/skills/start-controlled-task/",
+      ".claude/skills/replan-project/",
+      ".claude/skills/submit-checkpoint/",
+      ".claude/skills/run-quality-gate/",
+      ".claude/agents/directive-compliance-verifier.md",
+      ".claude/hooks/directive_reminder.py",
+      ".claude/hooks/readonly_agent_guard.py",
+      ".claude/rules/project-control.md",
+      ".claude/settings.json",
+      "tools/directive_registry.py",
+      "tools/validate_directive_compliance.py",
+      "tools/test_directive_compliance.py",
+      "tools/project_control.py",
+      "tools/test_project_control.py",
+      "tools/test_directive_reminder.py",
+      "tools/test_readonly_agent_guard.py",
+      "project-control/directives/",
+      "project-control/config.json",
+      "docs/templates/AGENT_REPORT.md",
+      "docs/templates/GATE_REPORT.md",
+      ".github/workflows/ci.yml"
+    ]
+  },
+  "applicability_note": "All D-001 requirements are scoped to the single governance task M0-T023 that implements this directive; the resolver derives the full applicable set from applicability.task_ids and requires M0-T023 to cover all of it (no selective citation).",
+  "owner_approval": {
+    "state": "approved_for_implementation",
+    "decision": "Option 1 - build the full M0-T023 PR and stop before merge",
+    "decided_at": "2026-07-23",
+    "merge_authorized": false,
+    "accept_authorized": false,
+    "authorizes": [
+      "create the M0-T023 task and dedicated branch from frozen base 1acb9b5",
+      "implement the complete closed loop (all 10 architecture components + 8 corrections)",
+      "run harnesses and independent G0-G5 reviews",
+      "open exactly one PR for owner review"
+    ],
+    "prohibits": [
+      "merging or accepting M0-T023",
+      "creating a checkpoint",
+      "deploying, purchasing, installing dependencies",
+      "closing or superseding PRs #64/#91/#93/#94/#95",
+      "dispatching product work or changing product code",
+      "releasing any hold"
+    ]
+  },
+  "lifecycle_state": "active",
+  "requirements_file": "requirements.json",
+  "verification_file": "verification.json",
+  "final_reviewed_sha": null,
+  "final_reviewed_manifest_sha256": null,
+  "enforcement_pointers": {
+    "tasks": [
+      "M0-T023"
+    ],
+    "gates": [],
+    "blockers": [],
+    "rules": [
+      ".claude/rules/project-control.md"
+    ],
+    "hold": false
+  },
+  "notes": [
+    "D-001 is owner-issued (channel owner_message); its 'active' status reflects owner issuance, not AI self-activation (D-001-R106).",
+    "Directive status 'active' makes the requirements binding on M0-T023; it does NOT authorize accepting or merging M0-T023, which remain owner-gated.",
+    "affected_prs is populated after the PR is opened; final_reviewed_sha and final_reviewed_manifest_sha256 are populated at independent final review."
+  ],
+  "created_at": "2026-07-23T00:00:00+00:00",
+  "updated_at": "2026-07-23T00:00:00+00:00",
+  "audit_log": [
+    {
+      "at": "2026-07-23T00:00:00+00:00",
+      "by": "orchestrator",
+      "note": "Captured D-001 verbatim (source-001.md) at frozen base 1acb9b5; requirements decomposed."
+    },
+    {
+      "at": "2026-07-23T00:00:00+00:00",
+      "by": "orchestrator",
+      "note": "Recorded owner amendment (source-002-amendment.md): Option-1 approval + 8 mandatory corrections; folded into requirements D-001-R101..R118."
+    }
+  ],
+  "locked_requirement_ids": [
+    "D-001-R001",
+    "D-001-R002",
+    "D-001-R003",
+    "D-001-R004",
+    "D-001-R005",
+    "D-001-R006",
+    "D-001-R007",
+    "D-001-R008",
+    "D-001-R009",
+    "D-001-R010",
+    "D-001-R011",
+    "D-001-R012",
+    "D-001-R013",
+    "D-001-R014",
+    "D-001-R015",
+    "D-001-R018",
+    "D-001-R019",
+    "D-001-R020",
+    "D-001-R021",
+    "D-001-R022",
+    "D-001-R023",
+    "D-001-R024",
+    "D-001-R025",
+    "D-001-R026",
+    "D-001-R027",
+    "D-001-R028",
+    "D-001-R029",
+    "D-001-R030",
+    "D-001-R031",
+    "D-001-R032",
+    "D-001-R033",
+    "D-001-R034",
+    "D-001-R035",
+    "D-001-R036",
+    "D-001-R037",
+    "D-001-R038",
+    "D-001-R039",
+    "D-001-R040",
+    "D-001-R041",
+    "D-001-R042",
+    "D-001-R043",
+    "D-001-R044",
+    "D-001-R045",
+    "D-001-R046",
+    "D-001-R047",
+    "D-001-R048",
+    "D-001-R049",
+    "D-001-R050",
+    "D-001-R051",
+    "D-001-R052",
+    "D-001-R053",
+    "D-001-R054",
+    "D-001-R055",
+    "D-001-R056",
+    "D-001-R057",
+    "D-001-R058",
+    "D-001-R059",
+    "D-001-R060",
+    "D-001-R061",
+    "D-001-R062",
+    "D-001-R063",
+    "D-001-R064",
+    "D-001-R065",
+    "D-001-R066",
+    "D-001-R067",
+    "D-001-R068",
+    "D-001-R069",
+    "D-001-R070",
+    "D-001-R071",
+    "D-001-R072",
+    "D-001-R073",
+    "D-001-R101",
+    "D-001-R102",
+    "D-001-R103",
+    "D-001-R104",
+    "D-001-R105",
+    "D-001-R106",
+    "D-001-R107",
+    "D-001-R108",
+    "D-001-R109",
+    "D-001-R110",
+    "D-001-R111",
+    "D-001-R112",
+    "D-001-R113",
+    "D-001-R114",
+    "D-001-R115",
+    "D-001-R116",
+    "D-001-R117",
+    "D-001-R118"
+  ],
+  "requirements_id_digest_sha256": "0644d03da718d88beabbe4ddddca33e44fea66755ef804791a22f7f37c002ccd"
+}

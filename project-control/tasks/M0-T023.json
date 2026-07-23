@@ -1,0 +1,113 @@
+{
+  "task_id": "M0-T023",
+  "title": "Owner Directive Compliance System (governance/control)",
+  "task_type": "governance",
+  "milestone_id": "M0",
+  "objective": "Implement a durable Owner Directive Compliance System (directive D-001): registry, shared resolver, project_control.py enforcement, skill + skill edits, verifier agent, validator + CI, reminder hook, adversarial harnesses. Lead-only; open one PR; do not merge/accept.",
+  "business_reason": "Eliminate reliance on chat memory: every substantive owner directive becomes durable, atomic, traceable, independently verified repository state before completion can be declared (D-001).",
+  "directive_refs": [
+    {
+      "directive_id": "D-001",
+      "requirement_ids": "ALL"
+    }
+  ],
+  "directive_regime_version": "1.0",
+  "directive_regime_entered_at": "2026-07-23",
+  "directive_regime_note": "M0-T023 was created under the pre-enforcement (old) CLI as the bootstrap task and hand-stamped in-regime (directive_regime_version 1.0) with directive_refs to D-001. From this point the hardened CLI enforces refs/evidence/verification on its transitions. See project-control/directives/BOOTSTRAP.md.",
+  "inputs": [
+    "project-control/directives/D-001-owner-directive-compliance-system/source-001.md",
+    "project-control/directives/D-001-owner-directive-compliance-system/source-002-amendment.md",
+    "project-control/directives/D-001-owner-directive-compliance-system/requirements.json"
+  ],
+  "outputs": [
+    "CLAUDE.md (Owner-directive compliance section)",
+    ".claude/skills/directive-compliance/SKILL.md",
+    "project-control/directives/ registry + schema/v1 + D-001 records",
+    "tools/directive_registry.py",
+    "tools/validate_directive_compliance.py",
+    "tools/project_control.py (additive directive-compliance checks)",
+    ".claude/agents/directive-compliance-verifier.md",
+    ".claude/hooks/directive_reminder.py",
+    "tools/test_directive_compliance.py",
+    "tools/test_directive_reminder.py"
+  ],
+  "dependencies": [],
+  "allowed_paths": [
+    "CLAUDE.md",
+    ".claude/skills/directive-compliance/",
+    ".claude/skills/start-controlled-task/SKILL.md",
+    ".claude/skills/replan-project/SKILL.md",
+    ".claude/skills/submit-checkpoint/SKILL.md",
+    ".claude/skills/run-quality-gate/SKILL.md",
+    ".claude/agents/directive-compliance-verifier.md",
+    ".claude/hooks/directive_reminder.py",
+    ".claude/hooks/readonly_agent_guard.py",
+    ".claude/rules/project-control.md",
+    ".claude/settings.json",
+    "tools/directive_registry.py",
+    "tools/validate_directive_compliance.py",
+    "tools/test_directive_compliance.py",
+    "tools/project_control.py",
+    "tools/test_project_control.py",
+    "tools/test_directive_reminder.py",
+    "tools/test_readonly_agent_guard.py",
+    "project-control/directives/",
+    "project-control/config.json",
+    "project-control/tasks/M0-T023.json",
+    "docs/templates/AGENT_REPORT.md",
+    "docs/templates/GATE_REPORT.md",
+    ".github/workflows/ci.yml"
+  ],
+  "forbidden_paths": [
+    "apps/**",
+    "services/**",
+    "packages/**",
+    ".claude/hooks/agent_dispatch_guard.py",
+    "tools/test_agent_dispatch_guard.py",
+    "project-control/tasks/ (any task file other than M0-T023.json)",
+    "project-control/master_plan.json",
+    "project-control/state.json (except sync_state side-effects)"
+  ],
+  "acceptance_scenarios": [
+    "AS-1: python tools/validate_directive_compliance.py --check exits 0 over the D-001 registry (schemas, unique IDs, source hashes, append-only IDs, producer/verifier separation).",
+    "AS-2: claiming an in-regime task (directive_regime_version set) with no valid directive_refs is refused; with D-001 ALL refs it succeeds.",
+    "AS-3: a task citing only a strict subset of D-001's applicable requirements is refused for selective citation.",
+    "AS-4: every currently accepted task remains byte-immutable; each in-flight task status (claimed/awaiting_gate/blocked/backlog) has a proven legal path forward (migration table) with no deadlock.",
+    "AS-5: the reminder hook emits a bounded advisory (IDs + summaries + pointers, under the size cap) on SessionStart/UserPromptSubmit, never the full protocol; a corrupt registry yields a visible fail-closed warning, not silence.",
+    "AS-6: readonly_agent_guard denies mutating Bash/write tools for directive-compliance-verifier (added to the roster) and its regression test asserts it.",
+    "AS-7: frozen-evidence identity uses a path-scoped content manifest: it stays stable across merge/rebase/squash of identical content and goes stale on any relevant-file content change.",
+    "AS-8: no new dependency; all new tools import only the Python standard library; agent_dispatch_guard.py/readonly_agent_guard.py existing tests still pass.",
+    "AS-9: the independent directive-compliance-verifier reports every D-001 requirement ID individually (SATISFIED/VIOLATED/INDETERMINATE) at the frozen head; producer != verifier."
+  ],
+  "required_gates": [
+    "G0",
+    "G2",
+    "G3",
+    "G4",
+    "G5"
+  ],
+  "gate_role_map": {
+    "G0": "administrative readiness (orchestrator)",
+    "G2": "producer self-check (orchestrator, honest self_check record)",
+    "G3": "independent code review (code-reviewer)",
+    "G4": "independent directive-compliance final verification (directive-compliance-verifier) + control-plane integrity (control-plane-verifier)",
+    "G5": "independent security/privacy review (security-reviewer)"
+  },
+  "gate_notes": "G1 (data-contract) is NOT_APPLICABLE: this governance task adds no official-source connector or external data mapping. This is recorded as an explicit, justified N/A, not an omission.",
+  "producer_agent": null,
+  "reviewer_agents": [
+    "directive-compliance-verifier",
+    "control-plane-verifier",
+    "code-reviewer",
+    "security-reviewer"
+  ],
+  "status": "backlog",
+  "progress_percent": 0,
+  "risks": [
+    "Enforcement mis-scope could deadlock in-flight work; mitigated by the effective-date + regime-entry migration rule and the no-deadlock migration table (D-001-R108/R109).",
+    "Content-manifest identity must survive merge/rebase/squash yet invalidate on relevant edits; covered by adversarial tests (D-001-R110/R111)."
+  ],
+  "blockers": [],
+  "created_at": "2026-07-23T18:51:06.647661+00:00",
+  "updated_at": "2026-07-23T18:51:06.647661+00:00"
+}

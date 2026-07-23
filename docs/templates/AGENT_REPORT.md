@@ -14,6 +14,16 @@
 
 ## Acceptance scenarios created
 
+## Requirement-to-evidence map
+
+<!-- One row per packet requirement AND per governing directive requirement ID (D-<nnn>-R<nnn>),
+mapping each to the specific test/output/file that satisfies it. Flag any unmet item. For an
+in-regime task this must match the JSON evidence map passed to `submit --evidence-map`. -->
+
+| Requirement ID | Obligation | Evidence (test / output / path) | Status |
+|---|---|---|---|
+|  |  |  |  |
+
 ## Commands and tests run
 
 ## Expected versus actual results

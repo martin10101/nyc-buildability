@@ -1,0 +1,37 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://nyc-buildability/project-control/directives/schema/v1/directive_verification.schema.json",
+  "title": "Directive independent verification (v1)",
+  "description": "Independent per-requirement verdicts. Authored by an INDEPENDENT verifier whose identity MUST differ from the producer of requirements.json (D-001-R028/R107). NON-AUTHORITATIVE: tools/project_control.py never reads this file to gate acceptance; it is the durable record of the clean-context review. The requirement id set here must equal the id set in requirements.json (no missing/extra rows).",
+  "type": "object",
+  "required": ["schema", "directive_id", "producer", "requirements", "updated_at"],
+  "additionalProperties": true,
+  "properties": {
+    "schema": {"const": "directive_verification/v1"},
+    "directive_id": {"type": "string", "pattern": "^D-\\d{3}$"},
+    "authority_note": {"type": "string"},
+    "producer": {"type": "string"},
+    "verifier": {"type": ["string", "null"]},
+    "reviewed_sha": {"type": ["string", "null"]},
+    "reviewed_manifest_sha256": {"type": ["string", "null"]},
+    "requirements": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "state"],
+        "additionalProperties": true,
+        "properties": {
+          "id": {"type": "string", "pattern": "^D-\\d{3}-R\\d{3}$"},
+          "state": {"enum": ["pending", "PASS", "FAIL", "BLOCKED", "UNVERIFIABLE", "NOT_APPLICABLE"]},
+          "evidence": {"type": "array", "items": {"type": "string"}},
+          "verified_at": {"type": ["string", "null"]},
+          "verified_by": {"type": ["string", "null"]},
+          "reviewed_sha": {"type": ["string", "null"]},
+          "not_applicable_justification": {"type": ["string", "null"]},
+          "not_applicable_approved_by": {"type": ["string", "null"]}
+        }
+      }
+    },
+    "updated_at": {"type": "string"}
+  }
+}
