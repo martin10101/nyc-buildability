@@ -138,8 +138,8 @@
   "execution_location": "Cloud/worktree isolation on branch task/M0-T022-owner-dashboard; CI (GitHub Actions) is the authority for web build/lint/typecheck/vitest/e2e and the product-map validation job. Owner PC stays thin-client: text-only edits, python stdlib validation + tests locally; NO local npm, DB, Docker, or bulk data. Temporary files under the session scratchpad only.",
   "disk_budget": "Negligible (source + small JSON metadata/fixtures). No datasets, caches, or node_modules added locally; zero new npm dependencies.",
   "holds_honored": "Read-only observer: no control-plane mutation, no task/gate/acceptance change, no master_plan change, no merge to protected main outside the PR+CI+gate flow. Expansion/GDS holds untouched (this is owner-directed M0 tooling, not expansion-pack work; no 3D/UI expansion tasks contracted). Nothing Published/Verified; the dashboard reports M4 rules as draft/needs-review honestly. Existing product screens and contracts unchanged.",
-  "status": "awaiting_gate",
-  "progress_percent": 95,
+  "status": "accepted",
+  "progress_percent": 100,
   "risks": [
     "Two progress numbers must be deterministic and auditable; any AI-guessed value or hidden heuristic fails the owner's core requirement. Mitigation: explicit weights in product-map.json + pure calculators + unit tests with hand-computed expected values.",
     "Product-map.json is the only NEW source of truth; if it drifts from the ledger (orphan tasks, stale references) the dashboard misleads. Mitigation: validator enforces every task maps to exactly one system + all references resolve, run in CI.",
@@ -150,7 +150,7 @@
   "blockers": [],
   "worktree": ".claude/worktrees/M0-T022-dashboard",
   "branch": "task/M0-T022-owner-dashboard",
-  "updated_at": "2026-07-23T04:06:32.965067+00:00",
+  "updated_at": "2026-07-23T04:13:48.490913+00:00",
   "progress_log": [
     {
       "at": "2026-07-23T02:09:50.655791+00:00",
@@ -173,5 +173,7 @@
       "status": "awaiting_gate",
       "message": "Reconciled branch with origin/main c5e8cd0 (brings M4-T006/M5-T001 etc.); state.json re-synced from merged task files. All 6 gates PASS at pre-reconcile b2de479; re-verifying required CI + gates at reconciled SHA per owner directive."
     }
-  ]
+  ],
+  "accepted_by": "orchestrator",
+  "accepted_at": "2026-07-23T04:13:48.490913+00:00"
 }
