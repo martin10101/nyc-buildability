@@ -29,7 +29,7 @@ This document is the single return package the directive's section 9 asks for. I
 - Checkpoint is **CP-0031**; **CP-0032 remains reserved** for M0-T019 (not created here).
 - Open blockers: **B-001** (Supabase management token → durable object storage; **amended to affect M3-T002, M3-T003 & M3-T005** — the durable-storage tasks; see §17.15), **B-004** (Geoclient key), **B-010** (client R5 benchmark sheet absent from repo), and **B-011** (new — owner-approved construction-code release scope; gates **M3-T005** readiness, see §17.2). (Rev-2/rev-3 text in §10A/§15/§16 references the pre-restructure numbering; **§17 is authoritative** — closure is now T004, construction-code T005.)
 
-**After this PR (control-only):** 42 accepted (unchanged) / 8 awaiting_gate / **8 backlog** (4 new M3 proposals) / 2 blocked / 1 claimed.
+**After this PR (control-only):** 42 accepted (unchanged) / 8 awaiting_gate / **9 backlog** (5 new M3 proposals + 4 pre-existing) / 2 blocked / 1 claimed.
 
 ---
 
@@ -214,7 +214,7 @@ M3-T002's `forbidden_paths` now explicitly exclude `closure/**`, `construction_c
 | **Lot/applicability** | downstream M4 slice (consumes M3-T003) | interior/corner/through/mixed portions; 135° boundary; curved-street tangent; 100-ft corner + remainder; zoning-lot ≠ tax-lot; missing zoning-lot docs; split district; wide/narrow street; detached/semi-detached/zero-lot-line/attached/multiple-dwelling; special/overlay/landmark/waterfront unknowns. `Unknown` never `false`; PLUTO code never sets legal lot type |
 | **Rule-behavior** | downstream M4 slice | positive/negative/boundary/not-applicable/missing-input/conflict/exception-applies/-not/effective-date-before-after/source-tamper/competing-rule; byte-identical determinism; every value carries section+URL+raw hash+corpus version+effective date+rule version+closure-manifest ID; `Verified` structurally unreachable without G6 |
 | **Architect-benchmark** | M3-T001 seed → downstream M4 slice | sample yields discrepancy/missing-input findings not a pass; 7,602 vs 7,500 surfaced; no invented exclusion; lot coverage not selected without residence+lot-type branches; no inferred address/BBL; no final buildable-envelope claim |
-| **Consumer-boundary** | M3-T004 (construction-code) + existing M5 boundary | M5 rejects yards/coverage/height/setback as a complete envelope until all blocking coverage-matrix domains present; unknown rule outputs not silently consumed; no output relabeled gross/net/sellable/feasible/compliant/buildable |
+| **Consumer-boundary** | M3-T005 (construction-code) + existing M5 boundary | M5 rejects yards/coverage/height/setback as a complete envelope until all blocking coverage-matrix domains present; unknown rule outputs not silently consumed; no output relabeled gross/net/sellable/feasible/compliant/buildable |
 
 **Live-source smoke tests are separate from deterministic CI.** CI runs on frozen official fixtures; scheduled smoke tests detect upstream change without making normal builds depend on live government sites.
 
@@ -306,7 +306,7 @@ Applied in-branch (control-only) on `control/M3-corpus-replan-2026-07-23`. No ta
 
 | # | Correction | How implemented |
 |---|---|---|
-| 1 | Complete every task contract (no empty `outputs`) | All four packets now carry exact `outputs[]` artifact paths that agree with `allowed_paths`, acceptance scenarios, harness assignments, and producer-report paths (G0 inputs+outputs satisfied). |
+| 1 | Complete every task contract (no empty `outputs`) | All five packets carry exact `outputs[]` artifact paths that agree with `allowed_paths`, acceptance scenarios, harness assignments, and producer-report paths (G0 inputs+outputs satisfied). (Rev-2 applied this to the then-four packets; the fifth, M3-T003, was added at rev-4 with outputs.) |
 | 2 | Correct dependencies + file ownership | M3-T004 `dependencies` = M3-T001 **+ M3-T002**; blockers add **B-011**. M3-T002 ownership narrowed to `ingest/parsers/fidelity/versioning`; `closure/**`, `construction_code/**`, `overlay/**` explicitly excluded via `forbidden_paths`. Ownership table + strictly-sequential-modification rule documented (§7). |
 | 3 | Fixture-only must not unlock production | New `acceptance_preconditions` on M3-T002 & M3-T004: fixture/harness work is gate-reviewable but the task is not accepted, does not mark the domain `implemented`, and does not satisfy downstream deps until durable content-addressed captures + fidelity/overlay evidence exist. Enforced by B-001 in `blockers[]` (accept requires zero open referencing blockers). §10A. No task split needed; fallback split documented. |
 | 4 | Separate source authority from legal precedence | `SOURCE_AUTHORITY_POLICY.md` requirements + M3-T001 AS-1/AS-8: tiers are provenance, not auto-precedence; amendments become current law; project-specific instruments may control; resolution by jurisdiction/legal-status/effective-date/amendment-supersession/scope; unresolved → `data_conflict`/`professional_review_required`; AI proposes only. §4A. |
@@ -315,7 +315,7 @@ Applied in-branch (control-only) on `control/M3-corpus-replan-2026-07-23`. No ta
 | 7 | Every coverage gap actionable | Coverage matrix expanded to six columns (status, controlling channel/unavailable-class, evidence/as-of, task/blocker, downstream claims blocked, next action + reviewer); no unresolved row without a task/blocker/explicit continuing limitation; closure ≠ covering unrelated domains. M3-T001 AS-3. §5B. |
 | 8 | Strengthen source verification + version detection | **M3-T001:** registry rows for every M3-T004 channel incl. Code Notes/directives + formal DOB interpretations; ZoLa presentation-only; UpCodes reference-only with dated API-availability/subscription/pricing + 'not required'; unresolved source identity/endpoint/access/terms/URL BLOCKED at G1 (AS-5/AS-6). **M3-T002:** multi-signal version detection — banner is one signal; hash/Last-Amended/feed/instrument/PDF changes each raise a candidate version; unchanged banner never suppresses a change (AS-5). **M3-T003:** closure covers linked+unlinked+table/footnote+unparseable citation candidates; unresolved candidates block a final value; adversarial 'cannot be silently missed' tests; AI-extracted edges proposed until validated (AS-8/AS-9). |
 
-Also created blocker **B-011** and left B-010/B-001 semantics unchanged. Ledger totals unchanged: 42 accepted / 8 backlog (4 M3 proposals) — nothing accepted.
+Also created blocker **B-011** and left B-010/B-001 semantics unchanged. Ledger totals (current on this branch): 42 accepted / **9 backlog** (5 M3 proposals + 4 pre-existing) — nothing accepted.
 
 ---
 
