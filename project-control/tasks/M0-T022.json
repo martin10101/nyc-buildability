@@ -53,7 +53,11 @@
     "apps/web/src/test-support/dashboard/**",
     "apps/web/e2e/dashboard.spec.ts",
     "apps/web/e2e/fixtures/control-plane/**",
+    "apps/web/playwright.config.ts",
     "docs/DASHBOARD.md"
+  ],
+  "scope_amendments": [
+    "2026-07-23: added apps/web/playwright.config.ts to allowed_paths (additive only) to set the non-public INTERNAL_OWNER_DASHBOARD_ENABLED flag on the e2e web server so the G4 human-journey reviewer can walk the running /dashboard. No production behavior changed; the flag remains unset in production (route 404s by default)."
   ],
   "forbidden_paths": [
     "apps/web/src/app/property/**",

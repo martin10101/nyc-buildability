@@ -7,7 +7,9 @@ const TRUE_TOKENS = new Set(['1', 'true', 'yes', 'on']);
 
 export const DASHBOARD_FLAG = 'INTERNAL_OWNER_DASHBOARD_ENABLED';
 
-export function dashboardEnabled(env: NodeJS.ProcessEnv = process.env): boolean {
+export function dashboardEnabled(
+  env: Record<string, string | undefined> = process.env,
+): boolean {
   const raw = env[DASHBOARD_FLAG];
   if (typeof raw !== 'string') return false;
   return TRUE_TOKENS.has(raw.trim().toLowerCase());
