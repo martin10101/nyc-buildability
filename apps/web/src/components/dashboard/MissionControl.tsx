@@ -1,7 +1,7 @@
 'use client';
 
 import type { DashboardModel } from '@/lib/dashboard/types';
-import { HealthDot, PercentStat, StatusBadge, Freshness, UnavailableNote } from './ui';
+import { HealthDot, PercentStat, Freshness, UnavailableNote } from './ui';
 
 const CI_META: Record<string, { sym: string; label: string; cls: string }> = {
   success: { sym: '✓', label: 'Passing', cls: 'dash-ci-ok' },

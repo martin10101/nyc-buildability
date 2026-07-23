@@ -63,7 +63,7 @@ export function CurrentWork({
   return (
     <div>
       <section className="dash-card" aria-labelledby="dash-cw-primary">
-        <h2 id="dash-cw-primary" className="dash-card-title">What's being worked on now</h2>
+        <h2 id="dash-cw-primary" className="dash-card-title">{"What's being worked on now"}</h2>
         {primary ? (
           <TaskCard task={primary} viewMode={viewMode} onSelectSystem={onSelectSystem} primary />
         ) : (
