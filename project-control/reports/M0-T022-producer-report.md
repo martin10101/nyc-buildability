@@ -2,9 +2,11 @@
 
 **Task:** Read-only owner observability dashboard over project-control.
 **Branch:** `task/M0-T022-owner-dashboard` (worktree `.claude/worktrees/M0-T022-dashboard`).
-**Frozen impl SHA:** `6c501aaf1b898a11ebf1843090c6b04dca54ebb7`
-**CI:** run 29976490909 — **all 11 jobs success** (https://github.com/martin10101/nyc-buildability/actions/runs/29976490909)
-**Status:** producer self-check complete; submitting to independent gates. **Not accepted.**
+**Frozen impl SHA:** `b2de4794e85344574f0641b49b68a3585ec532ff`
+**CI:** run 29977738748 — **all 11 jobs success** (https://github.com/martin10101/nyc-buildability/actions/runs/29977738748)
+**Status:** producer self-check complete; independent gates passed (see below). **Not accepted** — awaiting owner merge + acceptance decision.
+
+**Post-first-gate correction (G1 advisory 1, owner directive #8, honesty):** first gate wave reviewed `7ea8b0d` (code == `6c501aa`, CI run 29976490909 green) and all passed; G1 flagged that 9 already-accepted tasks would render "(pending G3/G4)" because the engine applied the strict gate-independence rule even to accepted tasks. Fixed in `model.ts` (an accepted task's required gates are, by accept()'s own rule, satisfied — never shown pending) + a vitest test + a test-fixture cap-target correction. Re-validated green at `a9d7903` → `b2de479`; the affected dimensions (G1 data-contract, G3 code, G4 qa + human-journey) were re-reviewed at `b2de479` and confirmed PASS; G5 security carried forward (the delta is pure display logic — no IO, secret, render sink, or network changed). The real rules_engine cap (M4-T001, awaiting_gate) is unaffected — Launch Readiness stays correctly capped.
 
 ## What was built
 

@@ -139,7 +139,7 @@
   "disk_budget": "Negligible (source + small JSON metadata/fixtures). No datasets, caches, or node_modules added locally; zero new npm dependencies.",
   "holds_honored": "Read-only observer: no control-plane mutation, no task/gate/acceptance change, no master_plan change, no merge to protected main outside the PR+CI+gate flow. Expansion/GDS holds untouched (this is owner-directed M0 tooling, not expansion-pack work; no 3D/UI expansion tasks contracted). Nothing Published/Verified; the dashboard reports M4 rules as draft/needs-review honestly. Existing product screens and contracts unchanged.",
   "status": "awaiting_gate",
-  "progress_percent": 85,
+  "progress_percent": 95,
   "risks": [
     "Two progress numbers must be deterministic and auditable; any AI-guessed value or hidden heuristic fails the owner's core requirement. Mitigation: explicit weights in product-map.json + pure calculators + unit tests with hand-computed expected values.",
     "Product-map.json is the only NEW source of truth; if it drifts from the ledger (orphan tasks, stale references) the dashboard misleads. Mitigation: validator enforces every task maps to exactly one system + all references resolve, run in CI.",
@@ -150,7 +150,7 @@
   "blockers": [],
   "worktree": ".claude/worktrees/M0-T022-dashboard",
   "branch": "task/M0-T022-owner-dashboard",
-  "updated_at": "2026-07-23T03:20:05.317390+00:00",
+  "updated_at": "2026-07-23T03:54:14.715918+00:00",
   "progress_log": [
     {
       "at": "2026-07-23T02:09:50.655791+00:00",
