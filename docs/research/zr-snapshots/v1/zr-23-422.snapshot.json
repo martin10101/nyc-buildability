@@ -1,0 +1,60 @@
+{
+  "snapshot_id": "zr-23-422",
+  "snapshot_schema": "zr_section_snapshot/v1",
+  "jurisdiction": "nyc",
+  "corpus": "zoning_resolution",
+  "section_number": "23-422",
+  "section_title": "Height and setback - flat-roof building envelope (R1 through R5)",
+  "article": "II",
+  "chapter": "3",
+  "source": {
+    "source_id": "nyc-dcp-zoning-resolution-portal",
+    "official_channel": "html",
+    "request_url": "https://zr.planning.nyc.gov/article-ii/chapter-3/23-422",
+    "retrieved_at": "2026-07-22T00:00:00Z",
+    "document_currency_banner": null,
+    "document_currency_banner_note": "City of Yes for Housing Opportunity moved the R1-R5 residential bulk (height and setback) regulations into the ZR 23-42 series with a Last Amended date of 12/5/2024. The site-wide currency banner was not captured for this retrieval and is a needs_review item.",
+    "section_last_amended": "2024-12-05",
+    "section_last_amended_source_text": "Last Amended 12/5/2024",
+    "capture_method": "official_source_researcher_capture_2026-07-22",
+    "raw_html_verified": false,
+    "verification_required": "Draft capture of ZR 23-422 supplied by official-source-researcher (access 2026-07-22, zr.planning.nyc.gov). It has NOT been re-verified byte-for-byte against raw HTML by the rules-engineer, so raw_html_verified is false and extraction_status is extracted_draft. The governing section, the exact heights/depths, the district-to-statement association, and every applicability condition (building type, street width, qualifying-residential-site geography, special-district/overlay/historic-district context) MUST be confirmed by a qualified zoning professional (G6) before any rule citing this snapshot is published or Verified."
+  },
+  "verbatim_excerpt": "In the district indicated, except R5 Districts with a letter suffix, the maximum base height shall be 35 feet, and the maximum building height shall be 45 feet. At a height not higher than the maximum base height, a setback shall be provided in accordance with Section 23-423.\n\nIn the district indicated, the maximum building height shall be 35 feet.\n\nIn the district indicated, the maximum building height shall be 45 feet.",
+  "table": {
+    "columns": [
+      "District",
+      "Maximum base height (ft)",
+      "Maximum building height (ft)",
+      "Setback"
+    ],
+    "rows": [
+      {
+        "district": "R5",
+        "max_base_height_ft": "35",
+        "max_building_height_ft": "45",
+        "setback": "required above the 35 ft base per Section 23-423"
+      },
+      {
+        "district": "R5B",
+        "max_base_height_ft": null,
+        "max_building_height_ft": "35",
+        "setback": "none stated (no base/setback split)"
+      },
+      {
+        "district": "R5D",
+        "max_base_height_ft": null,
+        "max_building_height_ft": "45",
+        "setback": "none stated"
+      }
+    ],
+    "table_note": "The three 'In the district indicated ...' statements in this section are associated by the researcher with R5 (35/45 + setback), R5B (building 35), and R5D (building 45) respectively. R5A is NOT here - it is a pitched-roof envelope under §23-421. The exact district-to-statement association is a needs_review item pending raw-HTML row confirmation."
+  },
+  "content_digest_sha256": "7e910c245bfc4c8f1a65ffdbdaf9b4985b71477338d3173c13f2a77395f0148a",
+  "extraction_status": "extracted_draft",
+  "notes": [
+    "Governs the R5, R5B and R5D flat-roof envelopes. R5: base height max 35 ft (NO minimum stated), building height max 45 ft, setback above the base per §23-423. R5B: building height max 35 ft (no base/setback split). R5D: building height max 45 ft, NO setback - encoded SEPARATELY from R5 even though both cap building height at 45 ft.",
+    "Captured for M4-T006 as a governing-source candidate for the R5-series height & setback DRAFT rule family (needs_review).",
+    "Nothing in this record is a Verified zoning determination. Verified requires an M4 published rule plus G6 qualified-human approval (owner directive item 5)."
+  ]
+}

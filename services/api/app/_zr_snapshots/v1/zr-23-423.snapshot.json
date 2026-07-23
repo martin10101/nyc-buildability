@@ -1,0 +1,32 @@
+{
+  "snapshot_id": "zr-23-423",
+  "snapshot_schema": "zr_section_snapshot/v1",
+  "jurisdiction": "nyc",
+  "corpus": "zoning_resolution",
+  "section_number": "23-423",
+  "section_title": "Required setback distance - flat-roof building envelope (R1 through R5)",
+  "article": "II",
+  "chapter": "3",
+  "source": {
+    "source_id": "nyc-dcp-zoning-resolution-portal",
+    "official_channel": "html",
+    "request_url": "https://zr.planning.nyc.gov/article-ii/chapter-3/23-423",
+    "retrieved_at": "2026-07-22T00:00:00Z",
+    "document_currency_banner": null,
+    "document_currency_banner_note": "City of Yes for Housing Opportunity moved the R1-R5 residential bulk (height and setback) regulations into the ZR 23-42 series with a Last Amended date of 12/5/2024. The site-wide currency banner was not captured for this retrieval and is a needs_review item.",
+    "section_last_amended": "2024-12-05",
+    "section_last_amended_source_text": "Last Amended 12/5/2024",
+    "capture_method": "official_source_researcher_capture_2026-07-22",
+    "raw_html_verified": false,
+    "verification_required": "Draft capture of ZR 23-423 supplied by official-source-researcher (access 2026-07-22, zr.planning.nyc.gov). It has NOT been re-verified byte-for-byte against raw HTML by the rules-engineer, so raw_html_verified is false and extraction_status is extracted_draft. The governing section, the exact heights/depths, the district-to-statement association, and every applicability condition (building type, street width, qualifying-residential-site geography, special-district/overlay/historic-district context) MUST be confirmed by a qualified zoning professional (G6) before any rule citing this snapshot is published or Verified."
+  },
+  "verbatim_excerpt": "A setback shall be provided in accordance with this Section. The depth of the setback shall be at least 10 feet from a street wall fronting on a wide street, and at least 15 feet from a street wall fronting on a narrow street.",
+  "content_digest_sha256": "b0b062fbb570ea5bc437572a144eb63f207aa73bdfe8cc612e938f0f3cb72903",
+  "extraction_status": "extracted_draft",
+  "notes": [
+    "Supplies the setback DEPTH above the base height for the flat-roof envelope: at least 10 ft on a wide street, at least 15 ft on a narrow street (wide/narrow per §12-10). The depth is CONDITIONAL on street width; the canonical property_profile exposes NO street-width field, so the setback-depth constraint fails closed to professional_review_required.",
+    "This excerpt is the official-source-researcher reading of §23-423 pending byte-level raw-HTML verbatim confirmation (a needs_review item).",
+    "Captured for M4-T006 as a governing-source candidate for the R5-series height & setback DRAFT rule family (needs_review).",
+    "Nothing in this record is a Verified zoning determination. Verified requires an M4 published rule plus G6 qualified-human approval (owner directive item 5)."
+  ]
+}
