@@ -1,0 +1,284 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/martin10101/nyc-buildability/packages/contracts/schemas/v1/scenario.schema.json",
+  "title": "Scenario Foundation",
+  "description": "v1 ADDITIVE draft output contract for the deterministic, coverage-aware scenario FOUNDATION (task M5-T001). A scenario is assembled by deterministic code from a property_profile (1.4.0) and a rule_evaluation (1.0.0) result consumed READ-ONLY; it performs NO independent legal calculation. When (and only when) the R5 residential-FAR family is applicable and conditional with no conflict/uncertainty, the scenario SURFACES the canonical rule_evaluation trace output max_residential_floor_area_sq_ft VERBATIM as draft_zoning_floor_area_cap_sq_ft - a DRAFT maximum residential ZONING-FLOOR-AREA CAP under ZR 23-21, NEVER recomputed here and NEVER relabeled as gross/net/sellable/feasible area or a buildable envelope. Every candidate constraint carries exactly one ConstraintCompleteness state (known/draft/missing/conflicting/unsupported/professional_review_required) plus a PRD-section-12 data-completeness status and its provenance; envelope constraints (height, stories, setbacks, yards, lot coverage, open space, parking, street wall, use group, overlays, density bonuses) are MISSING and MUST NOT be inferred. A scenario_kind of no_scenario is produced (fail-closed) on any conflict, professional-review/spatial uncertainty, malformed/non-finite input, or absent controlling input; unsupported districts yield a visible unsupported stub. coverage_status is the canonical PRD-section-12 vocabulary REFERENCED from coverage_status.schema.json and NARROWED to exclude 'verified' (allOf + subset enum) - a scenario is NEVER Verified; every scenario carries not_verified_disclaimer and needs_review. Any far*lot_area recompute is VERIFICATION-ONLY (integrity_check), never the surfaced value, and fails closed (data_conflict, no cap) on disagreement. Preliminary scenarios vary ONLY via explicit typed assumptions (no hidden utilization/optimization defaults). The evaluated input is identified BY REFERENCE (bbl + profile/rule_evaluation contract versions + input_fingerprint); this document NEVER embeds a full property profile.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "contract_version",
+    "scenario_kind",
+    "coverage_status",
+    "data_completeness",
+    "needs_review",
+    "professional_review_required",
+    "not_verified_disclaimer",
+    "evaluated_input",
+    "constraints",
+    "draft_zoning_floor_area_cap_sq_ft",
+    "cap_label",
+    "cap_provenance",
+    "assumptions",
+    "reasons",
+    "coverage_matrix",
+    "integrity_check"
+  ],
+  "properties": {
+    "contract_version": {
+      "type": "string",
+      "enum": ["1.0.0"],
+      "description": "CLOSED enum of published scenario contract versions. 1.0.0 = M5-T001 initial foundation shape. New versions are admitted only by an accepted contract task that appends to this enum."
+    },
+    "scenario_kind": {
+      "type": "string",
+      "enum": ["preliminary", "no_scenario", "unsupported"],
+      "description": "The typed outcome. 'preliminary' = a draft zoning-floor-area cap was surfaced from the canonical R5 trace (never a buildable envelope). 'no_scenario' = fail-closed (conflict, professional review, spatial uncertainty, malformed/non-finite input, or an absent controlling input); no cap is surfaced. 'unsupported' = the district/rule family is not implemented; a visible stub with reasons and no cap."
+    },
+    "coverage_status": {
+      "$ref": "#/$defs/coverage_status_draft"
+    },
+    "data_completeness": {
+      "description": "The most-severe PRD-section-12 data-completeness across the scenario's constraints (referenced from coverage_status.schema.json, never redefined). A preliminary scenario is honestly missing_critical: the envelope-governing families (height, setbacks/yards, lot coverage/open space) have no rule and are MISSING, so even with the draft cap present the data is critically incomplete for a buildable envelope.",
+      "$ref": "coverage_status.schema.json#/$defs/data_completeness"
+    },
+    "needs_review": {
+      "type": "boolean",
+      "description": "Always true: every scenario inherits the draft (needs_review) M4 lineage and is never auto-final. A scenario is never Verified."
+    },
+    "professional_review_required": {
+      "type": "boolean",
+      "description": "True when the outcome escalates to a qualified human (professional-review coverage, spatial uncertainty, or a fail-closed malformed-input stop). Deterministic escalation, never an AI decision."
+    },
+    "not_verified_disclaimer": {
+      "$ref": "common.schema.json#/$defs/non_empty_string",
+      "description": "The permanent honest disclaimer stamped on every scenario. Its human-readable text may contain the word 'Verified'; that text is NEVER a coverage_status and never up-labels the scenario."
+    },
+    "evaluated_input": {
+      "$ref": "#/$defs/evaluated_input"
+    },
+    "constraints": {
+      "type": "array",
+      "description": "Every candidate constraint the scenario could use, each with exactly one ConstraintCompleteness state - nothing silently absent. Emitted in a fixed deterministic order.",
+      "items": { "$ref": "#/$defs/constraint" }
+    },
+    "draft_zoning_floor_area_cap_sq_ft": {
+      "description": "The canonical rule_evaluation trace output max_residential_floor_area_sq_ft surfaced VERBATIM (never recomputed here) on a preliminary scenario; null on every no_scenario/unsupported outcome and whenever the integrity check fails closed. Strictly positive when present.",
+      "anyOf": [
+        { "type": "number", "exclusiveMinimum": 0 },
+        { "type": "null" }
+      ]
+    },
+    "cap_label": {
+      "description": "The mandatory label attached to a surfaced cap (present only on a preliminary scenario, null otherwise): it states the value is a DRAFT residential zoning-floor-area cap under ZR 23-21 and explicitly NOT gross/net/sellable/feasible area or a buildable envelope.",
+      "anyOf": [
+        { "$ref": "common.schema.json#/$defs/non_empty_string" },
+        { "type": "null" }
+      ]
+    },
+    "cap_provenance": {
+      "description": "Provenance of the surfaced cap propagated verbatim from the consumed rule_evaluation trace (rule_id/version/status + the rule citation(s) with their source-snapshot provenance); null when no cap is surfaced.",
+      "anyOf": [
+        { "$ref": "#/$defs/cap_provenance" },
+        { "type": "null" }
+      ]
+    },
+    "assumptions": {
+      "type": "array",
+      "description": "Explicitly declared typed assumptions applied to this scenario. DEFAULTS TO EMPTY. A preliminary scenario with no assumptions equals the raw draft cap; there are NO implicit utilization, efficiency, yield, or optimization factors anywhere in the path. Any variation exists ONLY as an explicit entry here and NEVER changes draft_zoning_floor_area_cap_sq_ft (the surfaced cap is always the raw canonical value).",
+      "items": { "$ref": "#/$defs/assumption" }
+    },
+    "reasons": {
+      "type": "array",
+      "description": "Human-readable reasons for the outcome (fail-safe cause, unsupported explanation, named missing constraint, integrity-disagreement, etc.). Never a substitute for the machine-readable fields above.",
+      "items": { "type": "string" }
+    },
+    "coverage_matrix": {
+      "type": "array",
+      "description": "The rule-coverage dependency matrix (proposal section 7): what must exist before a scenario may be presented as a real buildable envelope. Emitted on every scenario in a fixed order; everything but the R5 residential-FAR row is MISSING and must not be inferred.",
+      "items": { "$ref": "#/$defs/coverage_matrix_row" }
+    },
+    "integrity_check": {
+      "$ref": "#/$defs/integrity_check"
+    },
+    "_expected_failure": {
+      "type": "string",
+      "description": "FIXTURE-ONLY annotation stating the intended defect of an invalid fixture (packages/contracts README convention). The builder NEVER emits this key; it is allowed here (optional) so an invalid fixture fails only for its stated defect under additionalProperties:false, and valid fixtures - which omit it - stay clean."
+    }
+  },
+  "$defs": {
+    "coverage_status_draft": {
+      "description": "The canonical PRD-section-12 coverage vocabulary (REFERENCED from coverage_status.schema.json, never redefined) NARROWED to exclude 'verified'. A scenario may never be Verified (PRD sections 10-12). The allOf keeps coverage_status.schema.json the single source of the vocabulary while the subset enum removes exactly 'verified'.",
+      "allOf": [
+        { "$ref": "coverage_status.schema.json" },
+        {
+          "enum": [
+            "conditional",
+            "professional_review_required",
+            "data_conflict",
+            "unsupported",
+            "not_applicable"
+          ]
+        }
+      ]
+    },
+    "evaluated_input": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "Identity of the evaluated input BY REFERENCE - never an embedded copy of the property profile. bbl + the evaluated profile contract_version + the consumed rule_evaluation contract_version + the deterministic input_fingerprint (carried verbatim from the rule_evaluation) pin exactly which inputs produced this scenario without storing the profile.",
+      "required": ["bbl", "profile_contract_version", "rule_evaluation_contract_version", "input_fingerprint"],
+      "properties": {
+        "bbl": {
+          "description": "BBL of the evaluated property, or null when the inputs carried no identity.bbl.",
+          "anyOf": [
+            { "$ref": "common.schema.json#/$defs/bbl" },
+            { "type": "null" }
+          ]
+        },
+        "profile_contract_version": {
+          "$ref": "common.schema.json#/$defs/non_empty_string",
+          "description": "contract_version of the property_profile instance that was consumed (e.g. '1.4.0'). Open non-empty string, not coupled to the profile contract's evolving enum."
+        },
+        "rule_evaluation_contract_version": {
+          "$ref": "common.schema.json#/$defs/non_empty_string",
+          "description": "contract_version of the rule_evaluation document that was consumed (e.g. '1.0.0')."
+        },
+        "input_fingerprint": {
+          "description": "The rule_evaluation.evaluated_input.input_fingerprint carried verbatim (a sha256: hex digest), or null when the consumed document carried none. Lets a consumer confirm the scenario came from a specific input snapshot WITHOUT storing the profile.",
+          "anyOf": [
+            { "$ref": "common.schema.json#/$defs/digest_sha256" },
+            { "type": "null" }
+          ]
+        }
+      }
+    },
+    "constraint": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "One candidate constraint with exactly one ConstraintCompleteness state, its provenance, and its PRD-section-12 data-completeness. A 'missing' constraint records a gap and may NEVER be inferred or defaulted.",
+      "required": ["key", "state", "value", "unit", "data_completeness", "provenance", "note"],
+      "properties": {
+        "key": {
+          "$ref": "common.schema.json#/$defs/non_empty_string",
+          "description": "Stable machine key for the constraint family (e.g. residential_far_cap, lot_area, height_limit)."
+        },
+        "state": {
+          "type": "string",
+          "enum": ["known", "draft", "missing", "conflicting", "unsupported", "professional_review_required"],
+          "description": "ConstraintCompleteness (proposal section 4). 'known' = present from an authoritative source; 'draft' = from a needs_review rule (never Verified); 'missing' = no rule/datum provides it (may not be inferred); 'conflicting' = sources/rules disagree; 'unsupported' = family not implemented; 'professional_review_required' = spatial uncertainty / fail-safe."
+        },
+        "value": {
+          "description": "The constraint value when present, else null. Never NaN/Infinity (strict JSON).",
+          "type": ["number", "string", "boolean", "null"]
+        },
+        "unit": {
+          "description": "Unit of value when numeric (e.g. square_feet), else null.",
+          "type": ["string", "null"]
+        },
+        "data_completeness": {
+          "$ref": "coverage_status.schema.json#/$defs/data_completeness"
+        },
+        "provenance": {
+          "description": "Provenance propagated verbatim from the source contract (rule citations + rule_id/version/status for the cap; profile field + dataset for lot area), or null when the constraint is a recorded gap with no source.",
+          "type": ["object", "null"]
+        },
+        "note": {
+          "type": "string",
+          "description": "Human-readable note (e.g. why the constraint is missing and that it must not be inferred)."
+        }
+      }
+    },
+    "cap_provenance": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "Provenance of the surfaced draft cap, propagated verbatim from the consumed rule_evaluation trace. Never invented here.",
+      "required": ["rule_id", "rule_version", "rule_status", "output_name", "citations", "note"],
+      "properties": {
+        "rule_id": { "type": "string" },
+        "rule_version": { "type": "string" },
+        "rule_status": {
+          "type": "string",
+          "enum": ["discovered", "extracted_draft", "needs_review", "published"]
+        },
+        "output_name": {
+          "type": "string",
+          "description": "The canonical trace output key the cap was taken from (max_residential_floor_area_sq_ft)."
+        },
+        "citations": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/citation" }
+        },
+        "note": { "type": "string" }
+      }
+    },
+    "citation": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "One source citation WITH its resolved source-snapshot provenance, carried verbatim from the rule_evaluation trace (a material value may never be surfaced without it, PRD section 19).",
+      "required": ["snapshot_id", "section", "quote", "provenance"],
+      "properties": {
+        "snapshot_id": { "type": "string" },
+        "section": { "type": "string" },
+        "quote": { "type": "string" },
+        "last_amended": { "type": ["string", "null"] },
+        "provenance": { "type": "object" }
+      }
+    },
+    "assumption": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "One explicitly declared typed assumption. It is recorded verbatim and NEVER silently applied to the surfaced cap; a variant scenario differs from the raw draft-cap scenario only by the presence of entries here.",
+      "required": ["key", "assumption_type", "value", "unit", "rationale"],
+      "properties": {
+        "key": { "$ref": "common.schema.json#/$defs/non_empty_string" },
+        "assumption_type": {
+          "type": "string",
+          "description": "Open label for the kind of assumption (e.g. utilization_factor, efficiency_ratio). Recorded, never defaulted."
+        },
+        "value": { "type": ["number", "string", "boolean", "null"] },
+        "unit": { "type": ["string", "null"] },
+        "rationale": { "type": "string" }
+      }
+    },
+    "coverage_matrix_row": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "One row of the rule-coverage dependency matrix (proposal section 7).",
+      "required": ["constraint_family", "governs", "rule_status_today", "blocks_buildable_envelope"],
+      "properties": {
+        "constraint_family": { "type": "string" },
+        "governs": { "type": "string" },
+        "rule_status_today": {
+          "type": "string",
+          "enum": ["draft", "missing", "out_of_scope"],
+          "description": "draft = a needs_review rule exists (only the R5 residential-FAR cap today); missing = no rule exists and the family MUST NOT be inferred; out_of_scope = not a zoning rule / outside R5 scope."
+        },
+        "blocks_buildable_envelope": { "type": "boolean" }
+      }
+    },
+    "integrity_check": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "The VERIFICATION-ONLY integrity check (proposal section 5 step 5). When a preliminary cap is a candidate, the engine MAY recompute far*lot_area purely to COMPARE against the canonical trace value. It NEVER replaces the surfaced value and MUST FAIL CLOSED (data_conflict no_scenario, no cap) on disagreement beyond the documented tolerance. Raw numbers are NOT surfaced here on disagreement.",
+      "required": ["performed", "agreed", "tolerance", "method", "note"],
+      "properties": {
+        "performed": {
+          "type": "boolean",
+          "description": "True when the recompute-and-compare ran (i.e. both far and a positive lot area were available)."
+        },
+        "agreed": {
+          "description": "True when the verification recompute matched the canonical trace value within tolerance; false when it disagreed (fail-closed to no_scenario); null when the check was not performed.",
+          "type": ["boolean", "null"]
+        },
+        "tolerance": {
+          "type": "number",
+          "description": "The documented absolute-or-relative tolerance used for the comparison."
+        },
+        "method": {
+          "type": "string",
+          "description": "Fixed description of the comparison method (e.g. 'abs(recomputed - canonical) <= tolerance * max(1, abs(canonical))')."
+        },
+        "note": { "type": "string" }
+      }
+    }
+  }
+}

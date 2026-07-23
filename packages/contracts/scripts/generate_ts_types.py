@@ -83,6 +83,20 @@ RULE_EVAL_SCHEMA_FILES = (
     "common.schema.json",
 )
 
+# THIRD GENERATED TS ARTIFACT (task M5-T001): the scenario contract. Generated
+# INDEPENDENTLY of property_profile.ts and rule_evaluation.ts so both stay
+# byte-identical (mirrors the M4-T005 pattern). scenario only $refs
+# coverage_status and common (never property_profile - the input is identified
+# by reference, never embedded).
+SCENARIO_OUTPUT_PATH = (
+    Path(__file__).resolve().parents[1] / "generated" / "scenario.ts"
+)
+SCENARIO_SCHEMA_FILES = (
+    "scenario.schema.json",
+    "coverage_status.schema.json",
+    "common.schema.json",
+)
+
 # ---------------------------------------------------------------------------
 # Schema loading + $ref resolution across the four files
 # ---------------------------------------------------------------------------
@@ -174,6 +188,26 @@ RULE_EVAL_NAMED_DEFS: dict[tuple[str, str], str] = {
     ("rule_evaluation.schema.json", "/$defs/computation_step"): "ComputationStep",
     ("rule_evaluation.schema.json", "/$defs/citation"): "Citation",
     ("rule_evaluation.schema.json", "/$defs/evaluation_trace"): "EvaluationTrace",
+}
+
+# Named aliases for the scenario artifact (task M5-T001). A SEPARATE map so the
+# property_profile and rule_evaluation emissions are untouched and their .ts
+# files stay byte-identical. Shared scalars are re-declared in scenario.ts so
+# the generated file is standalone.
+SCENARIO_NAMED_DEFS: dict[tuple[str, str], str] = {
+    ("common.schema.json", "/$defs/bbl"): "Bbl",
+    ("common.schema.json", "/$defs/non_empty_string"): "NonEmptyString",
+    ("common.schema.json", "/$defs/digest_sha256"): "DigestSha256",
+    ("coverage_status.schema.json", ""): "CoverageStatus",
+    ("coverage_status.schema.json", "/$defs/data_completeness"): "DataCompleteness",
+    ("scenario.schema.json", "/$defs/coverage_status_draft"): "DraftCoverageStatus",
+    ("scenario.schema.json", "/$defs/evaluated_input"): "ScenarioEvaluatedInput",
+    ("scenario.schema.json", "/$defs/citation"): "ScenarioCitation",
+    ("scenario.schema.json", "/$defs/cap_provenance"): "CapProvenance",
+    ("scenario.schema.json", "/$defs/constraint"): "ScenarioConstraint",
+    ("scenario.schema.json", "/$defs/assumption"): "ScenarioAssumption",
+    ("scenario.schema.json", "/$defs/coverage_matrix_row"): "CoverageMatrixRow",
+    ("scenario.schema.json", "/$defs/integrity_check"): "IntegrityCheck",
 }
 
 
@@ -418,6 +452,89 @@ def write_rule_evaluation() -> int:
 
 
 # ---------------------------------------------------------------------------
+# scenario artifact (task M5-T001)
+# ---------------------------------------------------------------------------
+
+
+def load_scenario_schemas() -> dict[str, dict]:
+    """Return {filename: parsed schema} for the scenario $ref set (scenario +
+    coverage_status + common). Uses SCHEMA_DIR so a monkeypatched schema dir is
+    honored; callers guard the missing-file case (the property_profile drift-test
+    harness copies only the four profile schemas)."""
+    return {
+        name: json.loads((SCHEMA_DIR / name).read_text(encoding="utf-8"))
+        for name in SCENARIO_SCHEMA_FILES
+    }
+
+
+def generate_scenario() -> str:
+    """Generate the scenario.ts source. Independent of generate() and
+    generate_rule_evaluation() so both other .ts files stay byte-identical."""
+    schemas = load_scenario_schemas()
+    root = schemas["scenario.schema.json"]
+    resolver = Resolver(schemas, "scenario.schema.json")
+
+    header = (
+        "// GENERATED FILE - DO NOT EDIT BY HAND.\n"
+        "// Source of truth: packages/contracts/schemas/v1/scenario.schema.json\n"
+        "// (+ common, coverage_status). Regenerate with:\n"
+        "//   python packages/contracts/scripts/generate_ts_types.py\n"
+        "// CI fails if this file diverges from a fresh generation (task M5-T001).\n"
+        "//\n"
+        "// One canonical scenario contract shared by API, workers, and reports\n"
+        "// (PRD section 32.3). coverage_status is the canonical vocabulary\n"
+        "// narrowed to exclude 'verified' - a scenario is never Verified. The\n"
+        "// draft zoning-floor-area cap is surfaced VERBATIM from a rule_evaluation\n"
+        "// trace, never recomputed; envelope constraints are MISSING, never\n"
+        "// inferred. The evaluated input is identified by reference, never by an\n"
+        "// embedded profile copy.\n"
+    )
+
+    body: list[str] = [header]
+    body.extend(emit_named_defs(schemas, SCENARIO_NAMED_DEFS))
+
+    root_expr = object_expr(root, resolver, 0, SCENARIO_NAMED_DEFS)
+    body.append(f"export interface Scenario {root_expr}\n")
+
+    return "\n".join(block.rstrip("\n") for block in body) + "\n"
+
+
+def check_scenario() -> int:
+    """--check half for scenario.ts: exit non-zero unless the committed file is
+    byte-identical to a fresh generation. Skips (rc 0) when the active schema dir
+    has no scenario.schema.json (the property_profile drift-test harness copies
+    only the four profile schemas; real CI always has the file)."""
+    if not (SCHEMA_DIR / "scenario.schema.json").exists():
+        return 0
+    generated = generate_scenario()
+    if not SCENARIO_OUTPUT_PATH.exists():
+        sys.stderr.write(
+            f"ERROR: {SCENARIO_OUTPUT_PATH} is missing; run the generator and commit it.\n"
+        )
+        return 1
+    if SCENARIO_OUTPUT_PATH.read_text(encoding="utf-8") != generated:
+        sys.stderr.write(
+            "ERROR: generated scenario TypeScript types are out of date.\n"
+            "Run: python packages/contracts/scripts/generate_ts_types.py\n"
+            "and commit packages/contracts/generated/scenario.ts.\n"
+        )
+        return 1
+    sys.stdout.write("OK: generated scenario TypeScript types are up to date.\n")
+    return 0
+
+
+def write_scenario() -> int:
+    """Write mode for scenario.ts. Skips when the active schema dir has no
+    scenario.schema.json (see check_scenario)."""
+    if not (SCHEMA_DIR / "scenario.schema.json").exists():
+        return 0
+    SCENARIO_OUTPUT_PATH.parent.mkdir(parents=True, exist_ok=True)
+    SCENARIO_OUTPUT_PATH.write_text(generate_scenario(), encoding="utf-8", newline="\n")
+    sys.stdout.write(f"wrote {SCENARIO_OUTPUT_PATH}\n")
+    return 0
+
+
+# ---------------------------------------------------------------------------
 # Client SUPPORTED_CONTRACT_VERSIONS block (task M2-T010)
 # ---------------------------------------------------------------------------
 
@@ -570,14 +687,16 @@ def main() -> int:
         sys.stdout.write("OK: generated TypeScript types are up to date.\n")
         rc_client = check_client_block(schemas)
         rc_rule = check_rule_evaluation()
-        return rc_client or rc_rule
+        rc_scenario = check_scenario()
+        return rc_client or rc_rule or rc_scenario
 
     OUTPUT_PATH.parent.mkdir(parents=True, exist_ok=True)
     OUTPUT_PATH.write_text(generated, encoding="utf-8", newline="\n")
     sys.stdout.write(f"wrote {OUTPUT_PATH}\n")
     rc_client = write_client_block(schemas)
     rc_rule = write_rule_evaluation()
-    return rc_client or rc_rule
+    rc_scenario = write_scenario()
+    return rc_client or rc_rule or rc_scenario
 
 
 if __name__ == "__main__":
