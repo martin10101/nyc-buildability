@@ -1,67 +1,62 @@
 {
   "task_id": "M3-T002",
-  "title": "Versioned Zoning Resolution ingestion (official HTML + PDF channels; content-addressable raw capture; source-fidelity harness)",
+  "title": "Immutable official-source capture and versioning (exact HTML/PDF bytes, content-addressable storage, change detection; NO semantic OCR/extraction)",
   "task_type": "backend",
   "milestone_id": "M3",
-  "objective": "PROPOSED — NOT CONTRACTED (owner approval required to move backlog -> ready). Scheduled/event-driven ingestion from official ZR HTML and official PDF channels (NEVER fetched live during a property analysis). Capture per section/document: publisher + authority tier, canonical URL, retrieval timestamp, HTTP status + relevant response metadata, exact raw-content SHA-256, normalized-content SHA-256, homepage currency banner, document/section identifier + hierarchy, section title, last-amended + effective dates, tables + table structure, definitions, explicit hyperlinks/cross-references, amendment/supersession records, parser/extractor version, extraction status, raw_html_verified, human-review/G6 status. raw_html_verified true ONLY when stored raw response bytes + deterministic extraction/replay evidence exist. VERSION-CHANGE DETECTION (amendment item 8): the homepage currency banner is ONE change signal, not the sole legal-version trigger — a changed section hash, changed Last-Amended value, a new /recently-adopted amendment-feed entry, a newly adopted instrument, or a changed official PDF MUST trigger a candidate corpus version / reconciliation even when the banner is unchanged; an unchanged banner NEVER suppresses a detected content or amendment change. Store bulk raw HTML/PDF content-addressably in approved cloud object storage; NEVER commit a citywide corpus or leave bulk temp data on the owner PC. FIXTURE-vs-PRODUCTION invariant (amendment item 3): fixture/parser/harness work may be developed and reviewed while B-001 blocks durable storage, but this task does NOT reach 'accepted' — and does NOT mark the ZR corpus domain 'implemented' nor satisfy M3-T003's dependency — until durable content-addressed official captures + the required source-fidelity evidence exist (enforced by B-001 in blockers[]: acceptance is impossible while it references this task). HTML parsing uses the Python stdlib (html.parser); official ZR PDF text extraction (page text + replay + HTML-vs-PDF comparison) uses an APPROVED adapter — the stdlib does NOT parse PDFs, so the library is selected later via /dependency-security (exact pin, vulnerability review, installed-wheel, G5), NOT in this control-only PR; M3-T004 imports that approved adapter read-only; OCR is a separate conditional decision, draft-only. Live-source smoke tests are SEPARATE from deterministic CI (CI uses frozen official fixtures). Full spec: project-control/reports/M3-CORPUS-REPLAN-PROPOSAL.md.",
-  "business_reason": "Every rule value must trace to a versioned, hash-verified official ZR snapshot; the current M4 draft rules ride hand-captured snapshots (raw_html_verified:false) and cannot reach Verified without this ingestion + fidelity harness. Reuses the accepted resilience/transport framework rather than adding a crawler dependency.",
+  "objective": "PROPOSED — NOT CONTRACTED (owner approval required to move backlog -> ready). NARROWED (owner directive 2026-07-23 five-packet split): capture and preserve official sources IMMUTABLY — this task performs NO semantic OCR decision and NO final legal extraction (that is M3-T003). Scope: download and preserve EXACT official HTML/PDF bytes; content-addressable storage; SHA-256 (raw + normalized-layout-only); retrieval metadata (publisher, authority tier, canonical URL, timestamp, HTTP status + response metadata); source/version/change detection; HTML page capture; PDF page count, PDF document metadata (rotation/crop box/media box/DPI where present), and rendered-page derivatives (page images + their hashes). MULTI-SIGNAL version detection: a changed section hash, changed Last-Amended, a new /recently-adopted amendment-feed entry, a newly adopted instrument, or a changed official PDF MUST raise a candidate corpus version even when the homepage currency banner is UNCHANGED; an unchanged banner NEVER suppresses a detected change. Store bulk raw HTML/PDF + rendered pages content-addressably in approved cloud object storage; deduplicate by hash; never overwrite an old version; NEVER commit a citywide corpus or leave bulk temp data on the owner PC. Every PDF is treated as UNTRUSTED (§ security controls). FIXTURE-vs-PRODUCTION: fixture/harness increments may be gate-reviewed while B-001 blocks durable storage, but this task does NOT reach 'accepted', does NOT mark the ZR corpus domain 'implemented', and does NOT satisfy downstream (M3-T003/M3-T004) dependencies until durable content-addressed official captures exist (enforced by B-001). NOTE: any PDF library needed for page-count/metadata/render is SELECTED in M3-T003's /dependency-security pass, NOT chosen here; HTML capture + byte preservation + hashing + versioning need no new dependency and proceed first (see report §2/§10 sequencing note). Live-source smoke tests are SEPARATE from deterministic CI. Full spec: project-control/reports/M3-CORPUS-REPLAN-PROPOSAL.md.",
+  "business_reason": "An immutable, hash-addressed, versioned capture of the exact official bytes is the provenance floor every downstream stage (evidence verification, closure, rules) inherits from. Splitting capture from extraction keeps the trust boundary clean: nothing here interprets a document, so no OCR/parse choice can silently taint provenance.",
   "inputs": [
-    "M3-T001 accepted: SOURCE_AUTHORITY_POLICY.md (tier assignment + provenance-vs-precedence rules), LEGAL_CORPUS_COVERAGE_MATRIX.md (domain + actionable columns), legal_source_manifest schema (the record shape ingestion writes), authoritative status vocabulary",
-    "docs/SOURCE_ACCESS_REGISTRY.md section 8 — ZR portal facts: HTML tree /article-{roman}/chapter-{n}/{section}, /recently-adopted amendment feed (31 pages), /zr-downloads dated PDF snapshots, per-article/chapter PDFs; API surface verified ABSENT; homepage currency banner; per-section Last Amended; 504 on the oversized 12-10 node (low-rate, resumable)",
+    "M3-T001 accepted: SOURCE_AUTHORITY_POLICY.md (tier assignment + provenance-vs-precedence), LEGAL_CORPUS_COVERAGE_MATRIX.md (domain mapping), legal_source_manifest schema (record shape), DOCUMENT_EVIDENCE_POLICY.md (capture is 'raw_captured', not extraction), authoritative status vocabulary",
+    "docs/SOURCE_ACCESS_REGISTRY.md section 8 — ZR portal: HTML tree, /recently-adopted feed, /zr-downloads dated PDFs, per-article/chapter PDFs; API surface ABSENT; homepage banner; per-section Last Amended; 504 on the oversized 12-10 node (low-rate, resumable)",
     "services/api/app/resilience/transport.py (M2-T011) — bounded HTTP, Retry-After, breaker, budget: REUSE, do not fork",
-    "services/api/app/_zr_snapshots/v1/*.snapshot.json + sync_zr_snapshots (M4-T005/T006 hand-captured snapshot+hash pattern) — the interim format this ingestion supersedes/backfills",
+    "services/api/app/_zr_snapshots/v1/*.snapshot.json + sync_zr_snapshots (M4-T005/T006 hand-captured pattern) — interim format this ingestion supersedes/backfills",
     "B-001 (Supabase management token) — gates durable cloud object storage AND this task's acceptance; if unavailable, bounded-fixtures-only engineering path applies"
   ],
   "outputs": [
-    "services/api/app/corpus/ingest/** — fetcher (over app.resilience.transport), normalizer, content-address hasher, manifest writer producing legal_source_manifest records (SHARED INGESTION CORE owned by this task)",
-    "services/api/app/corpus/parsers/html/** — HTML section+table+definition+cross-reference extraction using the Python STANDARD LIBRARY (html.parser); a non-stdlib HTML parser would require /dependency-security first (exactly one)",
-    "services/api/app/corpus/parsers/pdf/** — the APPROVED PDF text-extraction ADAPTER required for official ZR PDFs (page-level text + replay + HTML-vs-PDF comparison). NOTE: the Python standard library does NOT parse PDFs; this adapter needs a non-stdlib library. The library is NOT chosen in this control-only PR — the decision is recorded as a REQUIREMENT: /dependency-security selection, exact pinning, vulnerability review, installed-wheel verification, and G5 evidence before any PDF library is added. M3-T004 imports this approved adapter read-only. OCR is a SEPARATE conditional decision and OCR output stays draft-only with page/image provenance",
-    "services/api/app/corpus/versioning/** — multi-signal version-change detector (banner + section hash + Last-Amended + amendment feed + adopted instrument + PDF), candidate-version/reconciliation emitter",
-    "services/api/app/corpus/fidelity/** — source-fidelity checks (exact-bytes hash, replay-to-source, HTML-vs-PDF compare -> data_conflict, fail-closed transport)",
-    "services/api/tests/corpus/ingest/**, services/api/tests/corpus/fidelity/**, services/api/tests/corpus/versioning/** — deterministic source-fidelity + version-detection harness on frozen fixtures",
-    "services/api/tests/fixtures/corpus/zr/** — bounded frozen official ZR HTML/PDF fixtures (NOT a citywide corpus)",
-    "infra/ingestion/zr-corpus-worker.* — Render worker/cron descriptor (only exercised when durable storage is available)",
+    "services/api/app/corpus/ingest/** — fetcher over app.resilience.transport, retrieval-metadata recorder, HTML page capture (OWNED)",
+    "services/api/app/corpus/storage/** — content-addressable object-storage adapter (SHA-256 keys, dedupe-by-hash, never-overwrite, private buckets), original HTML/PDF + rendered-page persistence, legal_source_manifest writer (OWNED)",
+    "services/api/app/corpus/versioning/** — multi-signal change detector (banner + section hash + Last-Amended + amendment feed + adopted instrument + PDF), candidate-version/reconciliation emitter (OWNED)",
+    "services/api/tests/corpus/ingest/**, services/api/tests/corpus/storage/**, services/api/tests/corpus/versioning/** — deterministic capture + versioning tests on frozen fixtures",
+    "services/api/tests/fixtures/corpus/capture/** — bounded frozen official HTML/PDF fixtures (NOT a citywide corpus)",
+    "infra/ingestion/** — Render worker/cron descriptor (only exercised when durable storage is available)",
     "project-control/reports/M3-T002-producer-report.md, project-control/reports/M3-T002-source-capture.md"
   ],
   "dependencies": [
     "M3-T001"
   ],
   "allowed_paths": [
-    "services/api/app/corpus/ingest/** (SHARED ingestion core — owned by M3-T002)",
-    "services/api/app/corpus/parsers/html/** (stdlib HTML parser — owned by M3-T002)",
-    "services/api/app/corpus/parsers/pdf/** (approved PDF text-extraction adapter for ZR PDFs — owned by M3-T002; the underlying library is chosen later via /dependency-security, not in this control-only PR)",
-    "services/api/app/corpus/versioning/** (version-change detection — owned by M3-T002)",
-    "services/api/app/corpus/fidelity/** (source-fidelity harness support — owned by M3-T002)",
-    "services/api/tests/corpus/ingest/**, services/api/tests/corpus/fidelity/**, services/api/tests/corpus/versioning/**",
-    "services/api/tests/fixtures/corpus/zr/**",
-    "infra/ingestion/** (schedule/worker descriptor)",
+    "services/api/app/corpus/ingest/** (OWNED by M3-T002)",
+    "services/api/app/corpus/storage/** (OWNED by M3-T002)",
+    "services/api/app/corpus/versioning/** (OWNED by M3-T002)",
+    "services/api/tests/corpus/ingest/**, services/api/tests/corpus/storage/**, services/api/tests/corpus/versioning/**",
+    "services/api/tests/fixtures/corpus/capture/**",
+    "infra/ingestion/**",
     "project-control/reports/M3-T002-producer-report.md, project-control/reports/M3-T002-source-capture.md"
   ],
   "forbidden_paths": [
-    "services/api/app/corpus/closure/** (owned by M3-T003), services/api/app/corpus/construction_code/** and services/api/app/corpus/overlay/** (owned by M3-T004) — M3-T002 may EXPORT its ingest/parser/fidelity core for those tasks to import read-only, but must not create or modify those trees (strictly-sequential-modification rule: only the owning task edits its tree; downstream tasks import, never mutate, the shared core)",
-    "Committing bulk/citywide raw HTML or PDF corpus into git; leaving bulk temp data on the owner PC (thin-client)",
-    "Fetching the ZR live inside any per-property analysis path; wiring ingestion into the request path",
-    "Adding requests / browser automation / scraping framework / AI framework; importing httpx in production (dev/test-only today) — new runtime deps require /dependency-security + age-gate + lock",
-    "Setting raw_html_verified true without stored raw bytes + deterministic replay evidence; marking the ZR domain 'implemented' on fixtures alone",
+    "services/api/app/corpus/extractors/**, evidence/**, document_validation/** (owned by M3-T003), closure/** (owned by M3-T004), construction_code/** and overlay/** (owned by M3-T005) — M3-T002 must not create or modify those trees",
+    "ANY semantic OCR decision, native text/layout extraction, critical-token detection, or final legal extraction (that is M3-T003) — capture only",
+    "Choosing/installing a PDF or OCR library (deferred to M3-T003 /dependency-security); adding requests / browser automation / scraping framework / AI framework; importing httpx in production (dev/test-only)",
+    "Committing bulk/citywide raw HTML/PDF/rendered-page corpus into git; leaving bulk temp data on the owner PC; fetching live inside a per-property analysis path; overwriting a prior version; marking the ZR domain 'implemented' on fixtures alone",
     "Any rule publication/Verified labeling; editing canonical contracts; apps/web/**; project-control/** except own reports; .claude/** except own agent-memory"
   ],
   "acceptance_preconditions": [
-    "ACCEPTANCE (not gate-PASS) additionally requires: B-001 resolved; durable content-addressed official ZR captures exist in approved object storage; source-fidelity evidence (exact-bytes hash + replay-to-source + HTML-vs-PDF compare) recorded against those durable captures.",
-    "Until then, fixture/parser/harness/version-detection increments may PASS G0-G5 as an engineering increment but the task remains awaiting_gate/blocked (B-001), is NOT accepted, does NOT mark the ZR corpus domain 'implemented', and does NOT satisfy M3-T003's dependency."
+    "ACCEPTANCE (not gate-PASS) additionally requires: B-001 resolved; durable content-addressed official captures (HTML + PDF + rendered pages) exist in approved object storage; multi-signal version detection demonstrated against durable captures.",
+    "Until then, fixture/harness increments may PASS G0-G5 as an engineering increment but the task stays awaiting_gate/blocked (B-001), is NOT accepted, does NOT mark the ZR domain 'implemented', and does NOT satisfy M3-T003/M3-T004 dependencies."
   ],
   "acceptance_scenarios": [
-    "AS-1 capture fidelity: ingesting a frozen fixture section records every required field (publisher/tier, URL, timestamp, HTTP status, raw+normalized SHA-256, banner, hierarchy/title, last-amended/effective, tables, definitions, cross-refs, amendment records, parser version, extraction status, raw_html_verified, G6 status).",
+    "AS-1 immutable capture: a frozen fixture source is captured with publisher/tier, canonical URL, retrieval timestamp, HTTP status, raw SHA-256, normalized-layout SHA-256, and (PDF) page count + document metadata (rotation/crop/media box/DPI where present).",
     "AS-2 exact-bytes hash: stored raw bytes reproduce their recorded SHA-256; a single changed byte fails.",
-    "AS-3 replay to source: extracted text replays to exact source offsets/DOM nodes (HTML) or PDF page (PDF); replay mismatch fails.",
-    "AS-4 HTML-vs-PDF cross-check: official HTML and official PDF for the same section are compared; a mismatch creates a typed data_conflict (never a silent pick).",
-    "AS-5 multi-signal versioning (item 8): a changed section hash OR changed Last-Amended OR new amendment-feed entry OR newly adopted instrument OR changed official PDF triggers a candidate corpus version even when the homepage banner is UNCHANGED; and an unchanged banner never suppresses a detected content/amendment change.",
-    "AS-6 fail-closed transport: redirect / unexpected host change / malformed document / schema drift fails closed via app.resilience.transport (no partial silent ingest).",
-    "AS-7 raw_html_verified discipline: raw_html_verified is false until stored raw bytes + deterministic replay exist; an AI 'looks verbatim' assertion never flips it.",
-    "AS-8 CI isolation: deterministic CI runs entirely on frozen fixtures; live-source smoke tests are a separate suite and do not gate normal builds.",
-    "AS-9 fixture-not-production (item 3): with B-001 open, a machine/report check confirms the ZR corpus domain is NOT marked 'implemented', the task is NOT accepted, and M3-T003's dependency is NOT satisfied — only the engineering increment is reviewed.",
-    "NC-1 no live-in-request: a test asserts no per-property code path triggers a live ZR fetch.",
-    "NC-2 storage honesty: with B-001 open, the task ingests only bounded fixtures and the report states the durable-storage limitation explicitly; no bulk corpus committed or left on the PC.",
-    "NC-3 missing version evidence blocks: a section lacking version/amendment evidence is marked extraction-incomplete and is publication-ineligible."
+    "AS-3 content-addressable + never-overwrite: identical bytes deduplicate to one object; a changed capture creates a NEW version keyed by its hash; a prior version is never overwritten or deleted.",
+    "AS-4 rendered-page derivative provenance: each rendered page image records its page number + image hash + source-document raw hash (rendering uses the M3-T003-selected library; see sequencing note).",
+    "AS-5 multi-signal versioning: a changed section hash OR Last-Amended OR amendment-feed entry OR adopted instrument OR official PDF raises a candidate corpus version even with an UNCHANGED homepage banner; and an unchanged banner never suppresses a detected change.",
+    "AS-6 fail-closed transport: redirect / unexpected host change / malformed document / schema drift fails closed via app.resilience.transport (no partial silent capture).",
+    "AS-7 no extraction here: a test asserts M3-T002 emits NO extracted legal values / no OCR text / no critical-token decisions — only bytes, hashes, metadata, rendered derivatives, and version signals.",
+    "AS-8 CI isolation: deterministic CI runs on frozen fixtures; live-source smoke tests are a separate suite and do not gate normal builds.",
+    "AS-9 fixture-not-production: with B-001 open, a machine/report check confirms the ZR domain is NOT 'implemented', the task is NOT accepted, and downstream deps are NOT satisfied.",
+    "NC-1 no live-in-request: no per-property code path triggers a live fetch.",
+    "NC-2 storage honesty: with B-001 open, only bounded fixtures are captured and the report states the durable-storage limitation; no bulk corpus committed or left on the PC.",
+    "NC-3 untrusted PDF: a malformed/oversized/encrypted fixture PDF is rejected/limited by the security controls (size/page/stream/time budgets; no JS/attachment/action execution) and never crashes the worker or writes bulk temp files."
   ],
   "required_gates": [
     "G0",
@@ -81,26 +76,26 @@
   "progress_percent": 0,
   "risks": [
     "PROPOSAL ONLY: no dispatch until owner approves the packet + dependency order.",
-    "FIXTURE != PRODUCTION: gate PASS on fixtures is an engineering increment; acceptance (and satisfying M3-T003's dependency, and 'implemented' status) requires durable captures + fidelity evidence — enforced by B-001 in blockers[].",
-    "STORAGE BLOCKER B-001: durable content-addressable object storage may be unavailable; degrade to bounded-fixtures-only and say so, never fake durability.",
-    "OWNERSHIP: M3-T002 owns the shared ingest/parser/fidelity/versioning core; M3-T003 (closure/) and M3-T004 (construction_code/, overlay/) import it read-only and never mutate it (strictly-sequential-modification rule).",
-    "DEPENDENCY DISCIPLINE: reuse app.resilience.transport; HTML via the stdlib (html.parser). PDF has NO stdlib parser — ZR PDF extraction requires an approved non-stdlib text-extraction adapter (owned by M3-T002) selected via /dependency-security with exact pin + vulnerability review + installed-wheel verification + G5 evidence; the library is NOT chosen in this control-only PR. OCR is a separate conditional decision, draft-only.",
-    "VERSION-SIGNAL COMPLETENESS: the banner is not the sole trigger; hash/Last-Amended/feed/instrument/PDF changes must all raise a candidate version."
+    "FIXTURE != PRODUCTION: gate PASS on fixtures is an engineering increment; acceptance (and satisfying downstream deps, and 'implemented') requires durable captures — enforced by B-001 in blockers[].",
+    "TRUST BOUNDARY: this task captures, it does not interpret; NO OCR/extraction here so no parse choice taints provenance. Extraction + its dependencies belong to M3-T003.",
+    "SEQUENCING NOTE: PDF page-count/metadata/render need the library selected in M3-T003 /dependency-security; that PDF-derivative sub-capability is sequenced after that selection. HTML capture + hashing + versioning need no new dependency and proceed first. (Flagged for owner confirmation in the return.)",
+    "SECURITY: every PDF (incl. government-hosted) is untrusted — MIME/signature validation, size/page/stream/image/time budgets, sandboxed worker, no PDF JS/attachment/action execution, crash isolation, no path traversal, private storage, log redaction (G5).",
+    "THIN CLIENT: no bulk corpus in git or on the owner PC; bulk storage on cloud object storage via a Render worker."
   ],
   "blockers": [
     "B-001"
   ],
   "requirement_refs": [
-    "project-control/reports/M3-CORPUS-REPLAN-PROPOSAL.md — full spec (owner directive 2026-07-23 + amendment items 1,2,3,8)",
+    "project-control/reports/M3-CORPUS-REPLAN-PROPOSAL.md — full spec (owner directive 2026-07-23 five-packet split, sections 2 M3-T002, 7 cross-source, 12 security, 13 storage)",
     "docs/SOURCE_ACCESS_REGISTRY.md section 8 (ZR portal)",
     "docs/LOW_STORAGE_CLOUD_DEVELOPMENT_POLICY.md (thin-client / durable cloud routing)",
     "docs/GATES_AND_CHECKPOINTS.md G1/G4/G5"
   ],
   "harness_assignments": [
-    "SOURCE-FIDELITY HARNESS (owner directive section 6): exact raw bytes reproduce hash; changed bytes fail; extracted text replays to exact source offsets/DOM nodes or PDF pages; official HTML vs official PDF compared; mismatches -> data_conflict; missing version/amendment evidence blocks publication; redirects/host changes/malformed docs/schema drift fail closed.",
-    "VERSION-CHANGE-DETECTION HARNESS (amendment item 8): banner is one signal; section-hash/Last-Amended/amendment-feed/adopted-instrument/PDF changes each raise a candidate version even with an unchanged banner; unchanged banner never suppresses a detected change.",
-    "LIVE-SOURCE SMOKE TESTS: separate from deterministic CI; detect upstream change without making normal builds depend on live government sites."
+    "IMMUTABLE-CAPTURE + VERSION-CHANGE-DETECTION HARNESS: exact-bytes hash reproduces / changed bytes fail; content-addressable dedupe + never-overwrite; multi-signal version detection (banner is one signal; hash/Last-Amended/feed/instrument/PDF each raise a candidate version; unchanged banner never suppresses); fail-closed transport; untrusted-PDF security limits.",
+    "The SOURCE-FIDELITY replay + HTML-vs-PDF-critical-conflict + extraction harnesses move to M3-T003 (they require extraction, which lives there).",
+    "LIVE-SOURCE SMOKE TESTS: separate from deterministic CI."
   ],
   "created_at": "2026-07-23T12:09:21.718197+00:00",
-  "updated_at": "2026-07-23T12:35:00.000000+00:00"
+  "updated_at": "2026-07-23T13:10:00.000000+00:00"
 }

@@ -1095,12 +1095,18 @@ def test_s9_b001_m3_corpus_storage_enforcement() -> None:
         make_temp_project(tmp)
         pc = tmp / "project-control"
 
+        # The three durable-storage corpus tasks (five-packet split): immutable
+        # capture (T002), evidence engine (T003), construction-code (T005).
+        STORAGE_TASKS = ["M3-T002", "M3-T003", "M3-T005"]
+
         # Mirror of the real B-001 affects wording (word-bounded task ids present).
         b001_affects = [
             "M0 cloud foundation",
-            "M3-T002 (durable content-addressed ZR legal-corpus object storage "
-            "- required before acceptance)",
-            "M3-T004 (durable content-addressed Construction-Code + amendment-overlay "
+            "M3-T002 (durable content-addressed immutable HTML/PDF/rendered-page "
+            "object storage - required before acceptance)",
+            "M3-T003 (durable content-addressed extraction/OCR/evidence/human-review "
+            "bundle object storage - required before acceptance)",
+            "M3-T005 (durable content-addressed Construction-Code + amendment-overlay "
             "object storage - required before acceptance)",
         ]
 
@@ -1120,37 +1126,34 @@ def test_s9_b001_m3_corpus_storage_enforcement() -> None:
                             "detail": "durable legal-corpus storage unavailable"}),
                 encoding="utf-8")
 
-        # Both corpus tasks are otherwise fully acceptable (gates PASS, no deps).
-        ready_for_accept("M3-T002")
-        ready_for_accept("M3-T004")
+        # Each storage task is otherwise fully acceptable (gates PASS, no deps).
+        for tid in STORAGE_TASKS:
+            ready_for_accept(tid)
 
-        # (a) open B-001 blocks acceptance of M3-T002
+        # (a) open B-001 blocks acceptance of every durable-storage task
         write_b001("open")
-        r = run(tmp, "accept", "--task-id", "M3-T002", "--agent", "orchestrator")
-        assert r.returncode != 0 and "B-001" in r.stderr, \
-            f"open B-001 must block M3-T002 acceptance: {r.stderr}"
+        for tid in STORAGE_TASKS:
+            r = run(tmp, "accept", "--task-id", tid, "--agent", "orchestrator")
+            assert r.returncode != 0 and "B-001" in r.stderr, \
+                f"open B-001 must block {tid} acceptance: {r.stderr}"
 
-        # (b) open B-001 blocks acceptance of M3-T004
-        r = run(tmp, "accept", "--task-id", "M3-T004", "--agent", "orchestrator")
-        assert r.returncode != 0 and "B-001" in r.stderr, \
-            f"open B-001 must block M3-T004 acceptance: {r.stderr}"
-
-        # (c) fixture-only work cannot bypass: adding a 'fixtures_only' marker or
+        # (b) fixture-only work cannot bypass: adding a 'fixtures_only' marker or
         # any other task field does NOT flip acceptance; only resolving B-001 can.
-        edit_task(tmp, "M3-T002", fixtures_only=True, progress_percent=100)
-        r = run(tmp, "accept", "--task-id", "M3-T002", "--agent", "orchestrator")
+        edit_task(tmp, "M3-T003", fixtures_only=True, progress_percent=100)
+        r = run(tmp, "accept", "--task-id", "M3-T003", "--agent", "orchestrator")
         assert r.returncode != 0 and "B-001" in r.stderr, \
             f"a fixtures-only marker must not bypass B-001: {r.stderr}"
 
-        # (d) resolving B-001 (durable storage available) lets acceptance proceed,
-        # proving B-001 was the sole remaining blocker.
+        # (c) resolving B-001 (durable storage available) lets acceptance proceed for
+        # every storage task, proving B-001 was the sole remaining blocker.
         write_b001("resolved")
-        r = run(tmp, "accept", "--task-id", "M3-T002", "--agent", "orchestrator")
-        assert r.returncode == 0, \
-            f"resolved B-001 must allow M3-T002 acceptance: {r.stderr}"
+        for tid in STORAGE_TASKS:
+            r = run(tmp, "accept", "--task-id", tid, "--agent", "orchestrator")
+            assert r.returncode == 0, \
+                f"resolved B-001 must allow {tid} acceptance: {r.stderr}"
 
-        print("OK: S9 B-001 blocks M3-T002/M3-T004 acceptance (fixture-only cannot "
-              "bypass; resolving B-001 unblocks)")
+        print("OK: S9 B-001 blocks M3-T002/M3-T003/M3-T005 acceptance (fixture-only "
+              "cannot bypass; resolving B-001 unblocks all three)")
     finally:
         shutil.rmtree(tmpdir, ignore_errors=True)
 

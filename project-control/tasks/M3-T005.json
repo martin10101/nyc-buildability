@@ -1,0 +1,100 @@
+{
+  "task_id": "M3-T005",
+  "title": "DOB Construction-Code + amendment-overlay corpus (scope-bounded; reuses the accepted evidence engine; no second PDF/OCR impl)",
+  "task_type": "backend",
+  "milestone_id": "M3",
+  "objective": "PROPOSED — NOT CONTRACTED, and BLOCKED until B-011 (owner-approved release scope) clears. RENUMBERED from the former construction-code packet (owner directive 2026-07-23 five-packet split). Ingest official DOB chapter PDFs ONLY within the owner-approved release scope (docs/CONSTRUCTION_CODE_RELEASE_SCOPE.md); build an effective-date overlay for subsequent Local Laws, DOB Rules, Buildings Bulletins, relevant Code Notes/directives, and rescissions/supersessions (record issuing body, number, date, cited provisions, status, rescission/supersession for each). It MUST REUSE the accepted M3-T003 Document Evidence Verification Engine (classification, native/OCR extraction, critical-token, cross-source, evidence-state machine, human-review bundles) rather than create a SECOND PDF/OCR implementation. UpCodes is NEVER the source corpus (manual discrepancy-spotting only, resolved against official sources; never controlling provenance; no runtime dependency). The official DOB page warns not all applicable laws are on its website: this corpus NEVER claims universal legal completeness; it reports its declared scope and routes unresolved/out-of-scope applicability to a licensed professional. Construction-feasibility claims depend on the relevant accepted M3-T005 scope. Full spec: project-control/reports/M3-CORPUS-REPLAN-PROPOSAL.md.",
+  "business_reason": "Any construction-feasibility claim (egress, occupancy, structural, accessibility, fire/life-safety) depends on an official construction-code corpus with amendment overlays, verified through the same evidence engine as the ZR. Building it as a fifth packet that REUSES M3-T003 prevents a divergent second PDF/OCR path and keeps one trust boundary.",
+  "inputs": [
+    "docs/CONSTRUCTION_CODE_RELEASE_SCOPE.md APPROVED by owner (B-011 cleared) — code edition + as-of date; product claims supported; exact in-scope titles/chapters/domains; required LL/DOB-Rule/Bulletin/Code-Note/rescission/supersession channels; excluded domains; consumer claim each exclusion blocks",
+    "M3-T001 accepted: SOURCE_AUTHORITY_POLICY.md, LEGAL_CORPUS_COVERAGE_MATRIX.md, the new SOURCE_ACCESS_REGISTRY channels, DOCUMENT_EVIDENCE_POLICY.md, legal_source_manifest schema",
+    "M3-T002 accepted AS PRODUCTION CORPUS + storage/ingest/versioning core (import read-only) — durable capture + versioning for code PDFs",
+    "M3-T003 accepted: the Document Evidence Verification Engine (extractors/evidence/document_validation + the approved PDF/OCR adapter) — IMPORT read-only; REUSE for all code-PDF extraction/verification; do NOT choose a new PDF/OCR library",
+    "Official DOB Construction-Code chapter PDFs + LL/DOB-Rule/Buildings-Bulletin/Code-Note channels (identities in the M3-T001 registry additions; download URLs 'to verify at G1' — nyc.gov 403 bot-wall; unresolved identity BLOCKED at G1)",
+    "B-001 (durable storage) + B-011 (approved release scope)"
+  ],
+  "outputs": [
+    "services/api/app/corpus/construction_code/** — scope-bounded chapter ingestion driving the M3-T003 evidence engine + a scope-boundary guard routing out-of-scope domains to professional_review_required (OWNED)",
+    "services/api/app/corpus/overlay/** — Local Law / DOB Rule / Buildings Bulletin / Code Note effective-date + rescission/supersession overlay resolver (OWNED)",
+    "services/api/tests/corpus/construction_code/**, services/api/tests/corpus/overlay/** — deterministic scope-boundary + overlay + evidence-reuse tests on frozen fixtures",
+    "services/api/tests/fixtures/corpus/construction_code/** — bounded frozen official PDF fixtures (NOT the full code)",
+    "docs/SOURCE_ACCESS_REGISTRY.md — ONLY if G1 verification adds evidence to the M3-T001 channels (additive)",
+    "project-control/reports/M3-T005-producer-report.md, project-control/reports/M3-T005-source-capture.md"
+  ],
+  "dependencies": [
+    "M3-T001",
+    "M3-T002",
+    "M3-T003"
+  ],
+  "allowed_paths": [
+    "services/api/app/corpus/construction_code/** (OWNED by M3-T005; exclusive)",
+    "services/api/app/corpus/overlay/** (OWNED by M3-T005; exclusive)",
+    "services/api/tests/corpus/construction_code/**, services/api/tests/corpus/overlay/**",
+    "services/api/tests/fixtures/corpus/construction_code/**",
+    "docs/SOURCE_ACCESS_REGISTRY.md (additive G1 evidence only)",
+    "project-control/reports/M3-T005-producer-report.md, project-control/reports/M3-T005-source-capture.md"
+  ],
+  "forbidden_paths": [
+    "services/api/app/corpus/ingest/**, storage/**, versioning/** (M3-T002), extractors/**, evidence/**, document_validation/** (M3-T003), closure/** (M3-T004) — import read-only, never mutate",
+    "Creating a SECOND PDF/OCR implementation or choosing a new PDF/OCR library (reuse the accepted M3-T003 engine); using UpCodes as source corpus/controlling provenance or a runtime dependency",
+    "Ingesting beyond the owner-approved release scope; claiming universal legal completeness; emitting a construction-feasibility conclusion without routing unresolved/out-of-scope applicability to professional review",
+    "Committing bulk/citywide code corpus into git or leaving bulk temp data on the owner PC; fetching live inside a per-property analysis; marking the construction-code domain 'implemented' on fixtures alone",
+    "Rule publication/Verified labeling; editing canonical contracts; apps/web/**; project-control/** except own reports; .claude/** except own agent-memory"
+  ],
+  "acceptance_preconditions": [
+    "READINESS (backlog -> ready) requires B-011 cleared (owner-approved release scope) and M3-T001 + M3-T002 + M3-T003 accepted.",
+    "ACCEPTANCE additionally requires B-001 resolved; durable content-addressed official Construction-Code + amendment-overlay captures + verified evidence spans (via the M3-T003 engine) + overlay evidence exist.",
+    "Fixture/harness increments may PASS G0-G5 while B-001/B-011 are open but the task is NOT accepted for any scope, does NOT mark the construction-code domain 'implemented', and does NOT unblock any feasibility claim."
+  ],
+  "acceptance_scenarios": [
+    "AS-1 evidence-engine reuse: an in-scope Construction-Code chapter PDF is ingested and verified THROUGH the M3-T003 engine (classification -> native/OCR extraction -> critical-token -> cross-source -> evidence span), producing eligible spans only; a machine check confirms NO second PDF/OCR implementation was added.",
+    "AS-2 amendment overlay: a subsequent Local Law / DOB Rule / Buildings Bulletin / Code Note is recorded with issuing body, number, date, cited provisions, status, and rescission/supersession, and correctly overlays the base chapter's effective text as-of a date.",
+    "AS-3 declared-scope honesty: an out-of-scope domain query returns not_evaluated/professional_review_required (routing the exact consumer claim the scope artifact says that exclusion blocks), never a completeness claim.",
+    "AS-4 no universal-completeness claim: a machine check asserts no output labels the corpus universally complete; the DOB 'not all applicable laws are on this website' caveat is recorded verbatim.",
+    "AS-5 UpCodes discipline: a discrepancy spotted via UpCodes is recorded as a lead resolved against an official source; UpCodes never appears as provenance and adds no runtime dependency.",
+    "AS-6 fixture-not-production: with B-001 open, a check confirms the construction-code domain is NOT 'implemented', the task is NOT accepted, and no feasibility claim is unblocked.",
+    "AS-7 scope artifact gates readiness: a G0 check confirms docs/CONSTRUCTION_CODE_RELEASE_SCOPE.md is owner-approved (B-011 cleared) before the task can move to ready.",
+    "NC-1 rescission respected: a rescinded/superseded provision is not served as current; the overlay marks it and points to the superseding instrument.",
+    "NC-2 feasibility gate: no envelope/scenario output is relabeled feasible/buildable/compliant on construction-code grounds while the relevant M3-T005 scope is unaccepted.",
+    "NC-3 bot-wall honesty: an unverifiable download URL behind the nyc.gov 403 wall is marked 'to verify at G1 via human browser session' and BLOCKED, never guessed or scraped around."
+  ],
+  "required_gates": [
+    "G0",
+    "G1",
+    "G2",
+    "G3",
+    "G4",
+    "G5"
+  ],
+  "producer_agent": "legal-corpus-engineer",
+  "reviewer_agents": [
+    "data-contract-verifier",
+    "code-reviewer",
+    "security-reviewer"
+  ],
+  "status": "backlog",
+  "progress_percent": 0,
+  "risks": [
+    "PROPOSAL ONLY + BLOCKED: no dispatch until owner approves the packet; readiness additionally requires B-011 (owner-approved release scope).",
+    "REUSE THE ENGINE: must not build a second PDF/OCR path; imports the accepted M3-T003 engine + its approved adapter read-only.",
+    "FIXTURE != PRODUCTION: acceptance for any construction-code scope (and 'implemented', and unblocking feasibility) requires durable captures + verified evidence + overlay evidence — enforced by B-001 in blockers[].",
+    "SCOPE CREEP: ingest ONLY the owner-approved release-scope domains; the full construction code is out of scope and must not be implied complete.",
+    "BOT WALL: nyc.gov 403 to non-browser clients; download-URL enumeration may need a human browser session; unresolved identity BLOCKED at G1; never scrape around restrictions."
+  ],
+  "blockers": [
+    "B-001",
+    "B-011"
+  ],
+  "requirement_refs": [
+    "project-control/reports/M3-CORPUS-REPLAN-PROPOSAL.md — full spec (owner directive 2026-07-23 five-packet split; sections 2 M3-T005, 10 dependency, 12 security, 13 storage, 15 integration boundary)",
+    "docs/CONSTRUCTION_CODE_RELEASE_SCOPE.md (owner-approved; drafted by M3-T001; gated by B-011)",
+    "docs/SOURCE_ACCESS_REGISTRY.md (new legal channels; bot-wall note)",
+    "docs/LOW_STORAGE_CLOUD_DEVELOPMENT_POLICY.md; docs/GATES_AND_CHECKPOINTS.md G1/G4/G5"
+  ],
+  "harness_assignments": [
+    "REUSES the M3-T003 adversarial document-verification + source-fidelity harnesses (extended to code PDFs + amendment-overlay as-of resolution + rescission/supersession).",
+    "CONSUMER-BOUNDARY HARNESS (construction-code slice): M5/report consumers must not relabel any output feasible/buildable/compliant on construction-code grounds while the relevant scope is unaccepted; out-of-scope domains return professional_review_required routing the exact consumer claim named in the scope artifact."
+  ],
+  "created_at": "2026-07-23T13:21:10.137249+00:00",
+  "updated_at": "2026-07-23T13:21:10.137249+00:00"
+}

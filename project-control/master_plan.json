@@ -35,7 +35,7 @@
       "depends_on": [
         "M1"
       ],
-      "summary": "Versioned legal corpus. 0/4 accepted. M3-T001..T004 authored as PROPOSED backlog packets (owner directive 2026-07-23, control-only PR control/M3-corpus-replan-2026-07-23): T001 authority-hierarchy+coverage-matrix+registry-channels+benchmark-analysis+manifest-schema; T002 versioned ZR ingestion + source-fidelity harness; T003 cross-reference-closure graph + §11-25 suffix inheritance + closure manifests; T004 DOB Construction-Code + amendment overlay. NOT contracted/claimed/dispatched pending owner approval. M4 rule work proceeded on needs_review rules per owner directive 2026-07-21; full M3 corpus still owed before publication/G6. M4-T007+ yard/coverage slices now depend on accepted M3-T003."
+      "summary": "Versioned legal corpus. 0/5 accepted. M3-T001..T005 authored as PROPOSED backlog packets (owner directive 2026-07-23 FIVE-PACKET split adding a Document Evidence Verification Engine; control-only PR control/M3-corpus-replan-2026-07-23): T001 authority-hierarchy+coverage-matrix+registry-channels+benchmark-analysis+legal-source-manifest+DOCUMENT_EVIDENCE_POLICY+construction-code-release-scope-draft; T002 immutable source capture + versioning (no OCR/extraction); T003 Document Evidence Verification Engine (classify/native-extract/OCR/critical-token/cross-source/evidence-state-machine/human-review-bundles/adversarial-harness; PDF+OCR dependency chosen here via /dependency-security); T004 cross-reference-closure graph + §11-25 suffix inheritance + closure manifests (consumes ONLY eligible verified evidence); T005 DOB Construction-Code + amendment overlay (reuses the evidence engine). NOT contracted/claimed/dispatched pending owner approval. Dependency order: T001 -> T002 -> T003 -> T004; T005 needs T001+T002+T003+B-001+B-011. M4 rule work proceeded on needs_review rules per owner directive 2026-07-21; full M3 corpus still owed before publication/G6. M4-T007+ yard/coverage slices now depend on accepted M3-T004."
     },
     {
       "id": "M4",
@@ -44,7 +44,7 @@
       "depends_on": [
         "M3"
       ],
-      "summary": "0/6 tasks accepted. M4-T001..T006 all MERGED to main as DRAFT engineering (needs_review rules; T006 = R5 height/setback family, PR #88); gates PASS recorded/on-file. NONE accepted, Published, or Verified. Whole chain blocked from acceptance by G6 qualified-human legal approval on M4-T001 (+ B-010 client benchmark). M4-T007 (yard/coverage; 3-way vs 4-way split TBD) is NOT contracted and now depends on accepted M3-T003 cross-reference closure (owner directive 2026-07-23)."
+      "summary": "0/6 tasks accepted. M4-T001..T006 all MERGED to main as DRAFT engineering (needs_review rules; T006 = R5 height/setback family, PR #88); gates PASS recorded/on-file. NONE accepted, Published, or Verified. Whole chain blocked from acceptance by G6 qualified-human legal approval on M4-T001 (+ B-010 client benchmark). M4-T007 (yard/coverage; 3-way vs 4-way split TBD) is NOT contracted and now depends on accepted M3-T004 cross-reference closure (owner directive 2026-07-23 five-packet split; closure renumbered T003->T004)."
     },
     {
       "id": "M5",

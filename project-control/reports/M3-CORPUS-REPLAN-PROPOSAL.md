@@ -2,7 +2,9 @@
 
 **Author:** orchestrator (main session) · **Date:** 2026-07-23 · **Branch:** `control/M3-corpus-replan-2026-07-23`
 **Directive:** owner directive 2026-07-23 (repair the missing M3 legal-corpus dependency before any M4-T007+ yard/coverage work; §11-25 correction; architect benchmark; construction-code scope; deterministic completeness harnesses).
-**Status of this package:** PROPOSAL, **revision 3** (owner corrections applied in-branch to PR #93 — see §15 rev-2 and §16 rev-3 amendment logs). No producer is dispatched. M4-T007/T008/T009 are NOT contracted, claimed, or started. The 3-way vs 4-way split is preserved as a downstream candidate and NOT decided here. Nothing merges to `main` until you approve.
+**Status of this package:** PROPOSAL, **revision 4** (owner directive 2026-07-23 — Document/PDF Evidence Verification Engine; **M3 is now a FIVE-packet sequence**). See §15 (rev-2), §16 (rev-3), and **§17 (rev-4, the five-packet restructure — authoritative for the packet map)** + §18 (rev-4 log). No producer is dispatched. M4-T007/T008/T009 are NOT contracted, claimed, or started. The 3-way vs 4-way split is preserved as a downstream candidate and NOT decided here. Nothing merges to `main` until you approve.
+
+> **Reading order note:** §17 supersedes the four-packet structure described in §5B/§7/§8/§9/§10 below wherever they differ. Those earlier sections are retained for the corrections history; **§17 is the current packet map, dependency graph, ownership, evidence model, and harness matrix.** Renumbering: closure moved T003→**T004**; construction-code moved T004→**T005**; the new **T003** is the Document Evidence Verification Engine.
 
 This document is the single return package the directive's section 9 asks for. It is control-only (task packets + docs); it changes no product code.
 
@@ -25,7 +27,7 @@ This document is the single return package the directive's section 9 asks for. I
 - **M4 summary said "0/5"** but the ledger holds **M4-T001…T006** (six tasks). **Fixed in this PR** to "0/6" with the M4-T006 R5 height/setback family noted, and M4-T007's new dependency on accepted M3-T003 recorded.
 - **All M4-T001…T006 + M5-T001 are `awaiting_gate`** — merged DRAFT (`needs_review`), **none accepted, Published, or Verified**. G6 gates the chain.
 - Checkpoint is **CP-0031**; **CP-0032 remains reserved** for M0-T019 (not created here).
-- Open blockers: **B-001** (Supabase management token → durable object storage; **now amended to affect M3-T002 & M3-T004** — see §15/§10A), **B-004** (Geoclient key), **B-010** (client R5 benchmark sheet absent from repo), and **B-011** (new — owner-approved construction-code release scope; gates M3-T004 readiness, see §10B).
+- Open blockers: **B-001** (Supabase management token → durable object storage; **amended to affect M3-T002, M3-T003 & M3-T005** — the durable-storage tasks; see §17.15), **B-004** (Geoclient key), **B-010** (client R5 benchmark sheet absent from repo), and **B-011** (new — owner-approved construction-code release scope; gates **M3-T005** readiness, see §17.2). (Rev-2/rev-3 text in §10A/§15/§16 references the pre-restructure numbering; **§17 is authoritative** — closure is now T004, construction-code T005.)
 
 **After this PR (control-only):** 42 accepted (unchanged) / 8 awaiting_gate / **8 backlog** (4 new M3 proposals) / 2 blocked / 1 claimed.
 
@@ -327,3 +329,129 @@ Applied in-branch (control-only). No task moved, claimed, dispatched, implemente
 | 2 | Correct PDF-extraction plan | Removed all wording implying a stdlib PDF parser exists. HTML parsing = stdlib (`parsers/html/**`). **M3-T002 owns the approved PDF text-extraction adapter** (`parsers/pdf/**`) required for ZR PDF text + page replay + HTML-vs-PDF compare; the library is **not chosen in this control-only PR** — recorded requirement: `/dependency-security` + exact pin + vuln review + installed-wheel + **G5** evidence. **M3-T004 imports the approved adapter read-only.** OCR separate, draft-only. Report §9 corrected. |
 | 3 | Restore executable schema acceptance | M3-T001 **AS-11** (legal_source_manifest): schema meta-validates; positive fixture validates; negatives missing provenance/version/hash fail; version + `$id` deterministic; not promoted to canonical cross-tier without a justified consumer. M3-T003 **AS-10** (closure_manifest): equivalent, incl. negative fixtures missing the unresolved-reference field and missing per-node source-version/hash. Positive+negative fixture paths added to both packets. |
 | 4 | Synchronize review surfaces | PR #93 description updated (M3-T004 deps = M3-T001 + accepted M3-T002 + B-001 + B-011). Report: B-011 added to §1 open-blocker reconciliation; §14 clarified that approval moves **only M3-T001** toward ready/claim (T002/T003/T004 stay backlog); §10B + B-011 record that owner scope approval is a product/release-scope decision, **not** legal approval — **G6** still governs legal interpretation + release adequacy. Remote GitHub CI vs local checks are reported with separate exact counts (see return message). |
+
+---
+
+## 17. Five-packet restructure — Document Evidence Verification Engine (rev-4; AUTHORITATIVE packet map)
+
+Owner directive 2026-07-23 adds a required document-evidence-verification layer and splits the over-broad former M3-T002 (storage + version + PDF + OCR + verification) into dedicated packets. This section is authoritative wherever it differs from §5B/§7–§10.
+
+### 17.1 Fundamental accuracy boundary (three truths)
+
+Three separate questions, none resolved by any single OCR/parser/AI/calculator:
+1. **Extraction truth** — what the official document visibly states.
+2. **Legal truth** — does that provision apply to this property and as-of date.
+3. **Mathematical truth** — was the calculation performed correctly on approved inputs.
+
+**Prohibited claims** (grep-enforced absent from M3 deliverables): "100% accurate OCR", "100% legally accurate", "OCR confidence proves correctness", "two OCR engines agreed therefore verified", "arithmetic consistency proves the extracted rule is correct".
+
+**System guarantee:** no unverified or conflicting OCR-derived critical value may enter a Published/Verified rule, final constraint, compliance conclusion, or buildability calculation. The calculator is only "mathematically deterministic for its declared inputs"; legal correctness still needs source evidence + applicability closure + G6.
+
+### 17.2 Packet map + dependency graph
+
+| Task | Scope (one line) | Producer | Gates | Depends on | Blockers |
+|---|---|---|---|---|---|
+| **M3-T001** | authority hierarchy + coverage matrix + registry channels + benchmark analysis + legal_source_manifest + **DOCUMENT_EVIDENCE_POLICY** + construction-code release-scope DRAFT | official-source-researcher | G0–G5 | M1-T001 | — |
+| **M3-T002** | **immutable source capture + versioning** (exact bytes, content-addressable storage, SHA-256, rendered-page derivatives, multi-signal change detection); **NO OCR/extraction** | legal-corpus-engineer | G0–G5 | M3-T001 | B-001 (accept) |
+| **M3-T003** | **Document Evidence Verification Engine** (classify to native/OCR extract to critical-token to cross-source to evidence-state machine to human-review bundles; adversarial harness; PDF+OCR dependency chosen here) | legal-corpus-engineer | G0–G5 | M3-T001 + **accepted M3-T002** | B-001 (accept) |
+| **M3-T004** | **cross-reference closure + applicability graph** (§11-25; closure manifests; consumes ONLY eligible verified evidence) | legal-corpus-engineer | G0–G5 | **accepted M3-T002 + accepted M3-T003** | — |
+| **M3-T005** | **DOB Construction-Code + amendment overlay** (scope-bounded; **reuses** the M3-T003 engine) | legal-corpus-engineer | G0–G5 | M3-T001 + accepted M3-T002 + accepted M3-T003 + **B-001** + **B-011** | B-001, B-011 |
+
+Dependency order: M1-T001 (accepted) then M3-T001 then M3-T002 then M3-T003 then M3-T004 then M4-T007+ (yard/coverage). M3-T005 branches off after M3-T003 and additionally needs B-001 + B-011. B-001 gates acceptance of T002, T003, T005. Any construction-feasibility claim depends on accepted **M3-T005** scope. **G6** mandatory before any rule Published/Verified.
+
+### 17.3 Exact ownership boundaries (one owner per tree; downstream imports read-only)
+
+| Tree | Owner |
+|---|---|
+| `services/api/app/corpus/ingest/**`, `storage/**`, `versioning/**` | **M3-T002** |
+| `services/api/app/corpus/extractors/**`, `document_validation/**`, `evidence/**` | **M3-T003** |
+| `services/api/app/corpus/closure/**` | **M3-T004** |
+| `services/api/app/corpus/construction_code/**`, `overlay/**` | **M3-T005** |
+| `docs/*` policy/matrix/registry/scope + `legal_source_manifest.schema.json` | **M3-T001** |
+| `document_classification`/`extraction_run`/`evidence_span`/`cross_source_comparison`/`human_review_decision` schemas | **M3-T003** |
+| `closure_manifest.schema.json` | **M3-T004** |
+
+Strictly-sequential-modification rule: only the owning task edits its tree; downstream tasks import, never mutate.
+
+### 17.4 Document classification (M3-T003)
+
+Classes: `digitally_born` · `scanned_image` · `existing_ocr_layer` · `hybrid_text_and_image` · `classification_uncertain` · `malformed_or_unsupported`. The last two **fail closed**. Classification evidence: native-text presence, per-page text/image coverage, font/encoding anomalies, selectable-vs-visible alignment, hidden-OCR-layer presence, rotation/crop/media box/DPI, parser + classifier versions.
+
+### 17.5 Extraction strategy (M3-T003)
+
+- **Digitally born:** native extraction primary; preserve chars/words, page, bbox/polygon, reading order, font/encoding, table cells + row/col headings, links/citations/footnotes/superscripts/annotations, exact-raw + normalized. Do **not** OCR by default; OCR only as selective diagnostic when the text layer is corrupt/hidden/incomplete/misaligned.
+- **Scanned:** OCR is always initially `ocr_draft`; per span preserve page, bbox, page-image hash, exact OCR text, engine+version, config+language, **raw confidence labeled a model score (not a probability of correctness)**, preprocessing, DPI, review status. A high score **never** auto-promotes a critical legal field.
+- **Existing-OCR-layer / hybrid:** compare hidden layer vs visible render vs fresh OCR vs native, then a mismatch becomes `extraction_conflict`; never silently trust the hidden layer.
+
+### 17.6 Critical-token specification (M3-T003)
+
+Detected tokens: section/chapter citations; FAR values; percentages; dimensions/areas; dates + effective dates; amendment numbers; decimal points; negative signs; fractions; units; district names + suffixes; table row/col headings; footnote markers; and the words **not, except, unless, provided that, more than, less than, at least, no more than, before, after, and vs or**. Any disagreement involving a critical token **blocks automatic eligibility**. Required test mutations: `1.50` to `150`/`1.80`/`1.5O`; `15 ft` to `75 ft`; `35` to `85`; `%` omitted; minus omitted; "shall not" to "shall"; "except R5 Districts with a letter suffix" partially omitted; table value under the wrong heading; footnote modifier omitted; two-column text combined in the wrong order.
+
+### 17.7 Evidence-state model + schema proposal (M3-T003)
+
+**Extraction states:** `raw_captured` · `document_classified` · `native_extracted` · `ocr_draft` · `evidence_checked` · `cross_source_matched` · `extraction_conflict` · `human_confirmed` · `rejected` · `unsupported`. **No single vague `verified` flag.** Legal-review state is tracked separately.
+
+Every **evidence span** records: source-document ID; raw SHA-256; rendered-page hash; source URL + publisher; retrieval timestamp; corpus version; page number; bbox/polygon; visible context snippet; raw text; normalized text; extraction method; engine name/version/config; criticality classification; cross-extractor results; cross-source comparison result; arithmetic/unit checks; human reviewer + date + decision (where applicable); rule-draft eligibility; legal-review status (separate).
+
+**Rule-draft eligibility** requires either (native-extracted with deterministic replay + required official cross-source reconciliation) **or** (OCR-derived AND a human explicitly confirmed the highlighted source evidence). Eligibility is not Published/Verified/compliant/legally approved.
+
+**New versioned internal schemas** (each: positive fixture + multiple negative fixtures; stable `$id` + version; required provenance/hashes/engine-config/page-coords; explicit unknown/conflict states; rejects missing critical evidence): `document_classification`, `extraction_run`, `evidence_span`, `cross_source_comparison`, `human_review_decision` (M3-T003); plus `legal_source_manifest` (M3-T001) and `closure_manifest` (M3-T004). Internal contracts until a justified cross-tier consumer is approved.
+
+### 17.8 Cross-source verification (M3-T003)
+
+HTML is the primary structured channel; official PDF is an independent presentation/archive channel. Align by article/chapter/section + effective version; preserve both raw forms; normalize **only** layout artifacts (approved whitespace/hyphenation) — never words/numbers/punctuation/negation/comparisons/units/citations in a meaning-changing way. Critical-token disagreement becomes `data_conflict` (identify both sources+versions, list affected rules, prevent publication, require official reconciliation or human review). An unchanged homepage banner never suppresses a detected PDF/HTML/section-hash/Last-Amended/amendment-feed change.
+
+### 17.9 Mathematical validation engine (M3-T003)
+
+Deterministic, separate from extraction and applicability: parse numbers from original strings; preserve decimal precision; **exact decimal/integer/rational arithmetic, never binary float for legal thresholds**; explicit unit normalization; reject unknown/incompatible units; formula traces; exact boundary values. Verified samples: 40x125=5,000; 5,000x1.50=7,500; 7,602-7,500=102; 60%x5,000=3,000. **Arithmetic consistency is supporting evidence only — it never proves the selected FAR/coverage/yard/branch applies. No AI-generated numeric value enters this calculator.**
+
+### 17.10 Verification-harness matrix (M3-T003)
+
+Bounded frozen fixtures: digitally-born PDF · scanned page · existing incorrect OCR layer · hybrid text/image · multi-column legal text · rotated page · merged-cell table · table footnote changing a value · decimal/percentage values · negation/exception language · superscript/fraction · malformed PDF · password-protected/unsupported PDF · HTML-vs-PDF agreement · HTML-vs-PDF critical conflict · OCR-engine disagreement · arithmetic inconsistency · correct arithmetic with the wrong legal branch. Public official fixtures where licensing permits + synthetic adversarial mutations; the client architect PDF is **not** committed (authorized hash + derived expectations only).
+
+**Acceptance standard:** 100% exact critical-token match on the bounded approved golden set; zero OCR-derived critical fields auto-promoted without human confirmation; zero silent HTML/PDF critical conflicts; every extracted field replays to page coordinates; every mathematical result has an exact formula/unit trace; every malformed/uncertain/conflicting/unsupported case fails closed; **no claim that bounded-fixture performance proves universal 100% accuracy.**
+
+### 17.11 Dependency-security decision plan (M3-T003)
+
+**No dependency chosen or installed in this control-only PR.** During M3-T003 G0/G5: use `/dependency-security`; benchmark the native PDF parser/renderer against frozen fixtures; benchmark an OCR option only for scanned content; select the smallest justified set; exact-pin every runtime dependency; verify release age (>= 7 days), vulnerabilities, licenses, wheels, Render compatibility, deterministic output, and memory; record engine version + config in every extraction run. A second OCR engine is **disagreement detection only**, never proof of correctness. **No paid/cloud OCR by default** — if proposed, STOP and report pricing/auth/data-retention/terms/rate-limits/why-local-inadequate/owner-approval. **No AI or RAG framework** for OCR verification.
+
+### 17.12 Integration boundary (M3-T001 policy)
+
+official source to immutable capture (T002) to evidence verification (T003) to structured eligible evidence to closure/applicability (T004) to draft rule to G6 human legal approval to deterministic calculator. **The rule engine never reads raw OCR strings.** If any preceding stage is missing/unresolved/conflicting/stale/out-of-scope, the consumer receives `missing` / `not_evaluated` / `unsupported` / `data_conflict` / `professional_review_required` — never a default/nearest value, `not_applicable`, compliant, feasible, or buildable result.
+
+### 17.13 Security + resource controls (all capture/extraction tasks; G5)
+
+Every PDF (including government-hosted) is untrusted: MIME + file-signature validation; max file size / page count / decompressed-stream size / image dimensions / processing time; memory/CPU budgets; sandboxed worker with no unnecessary network; **no execution of PDF JavaScript, attachments, actions, macros, or external references**; reject encrypted/unsupported unless an approved workflow exists; parser crash isolation; no path traversal; no bulk temp files on the owner PC; private object storage; sensitive-log redaction; prompt-injection isolation if extracted text is ever shown to an AI (embedded document instructions are data, never control). **G5 must include malicious and malformed PDF fixtures.**
+
+### 17.14 Storage + reproducibility (M3-T003)
+
+Content-addressable in approved cloud object storage: original PDF, original HTML, rendered page images, extraction result, OCR result, evidence manifest, page crops/review bundles, cross-source diff, human decision record. **Deduplicate by hash; never overwrite an old version.** Reproducible by: raw document hash + engine version + config hash + language pack/version + render DPI + normalization version + evidence-schema version. **An engine upgrade creates a NEW extraction run; it does not erase previous evidence.** B-001 references and blocks acceptance of every durable-storage task (T002/T003/T005) — proven by regression S9.
+
+### 17.15 B-001 enforcement proof (rev-3 mechanism, extended)
+
+`B-001.affects` now names **M3-T002, M3-T003, M3-T005**; the CLI blocks acceptance when a blocker's affects/detail names the task (`_blocker_references`). Control-plane regression **S9** (`tools/test_project_control.py`) proves, in an isolated temp ledger, that open B-001 blocks acceptance of all three, a `fixtures_only` marker cannot bypass, and resolving B-001 unblocks all three. Evidence: `project-control/reports/M3-CORPUS-B001-enforcement-evidence.md`.
+
+### 17.16 One open sequencing point for owner confirmation
+
+M3-T002 lists "rendered-page derivatives" (page rasterization) in its scope, but the PDF renderer/parser library is selected in **M3-T003**'s `/dependency-security` pass. So M3-T002's PDF-derivative sub-capability is **sequenced after** that selection; HTML capture + byte preservation + hashing + versioning need no new dependency and proceed first. **Confirm:** keep rendered-page derivatives in T002 (sequenced behind the T003 library decision), or move rendering into T003 and have T002 store the derivatives T003 produces. Either preserves the trust boundary; I recommend the latter (rendering in T003 with the same approved library) for a single PDF-handling surface — but left it in T002 per your directive text pending your call.
+
+---
+
+## 18. Amendment log — PR #93 revision 4 (five-packet Document Evidence Verification Engine)
+
+Applied in-branch (control-only). No task moved, claimed, dispatched, implemented, or accepted.
+
+| Area | Change |
+|---|---|
+| Packet split | M3 is now **five** packets (17.2). Former M3-T002 (storage+version+PDF+OCR+verify) split; closure T003 to **T004**; construction-code T004 to **T005**; new **T003** = Document Evidence Verification Engine. |
+| M3-T001 | Added `docs/DOCUMENT_EVIDENCE_POLICY.md` output (three-truths boundary, distinct evidence states, OCR-has-no-authority, extraction-is-not-G6, prohibited-claims, integration boundary) + AS-12; renumbered refs (closure to T004, construction-code to T005). |
+| M3-T002 | Narrowed to immutable capture + versioning only (no OCR/extraction); owns `ingest/storage/versioning`; multi-signal versioning; untrusted-PDF security; fixture-not-production via B-001. |
+| M3-T003 | New evidence engine: classification, native/OCR extraction, critical-token, table/footnote, cross-extractor, HTML-vs-PDF, arithmetic validator, evidence-state machine, human-review bundles, adversarial harness, five new schemas, PDF/OCR dependency chosen here via /dependency-security. |
+| M3-T004 | Closure now depends on accepted M3-T002 + M3-T003 and consumes ONLY eligible evidence (rejects ocr_draft/conflict/unresolved/unconfirmed/AI-unvalidated) — AS-9; closure_manifest gains a per-node evidence-eligibility reference. |
+| M3-T005 | Construction-code reuses the accepted M3-T003 engine (no second PDF/OCR impl); deps M3-T001+T002+T003; blockers B-001+B-011. |
+| B-001 | `affects` now names **M3-T002, M3-T003, M3-T005**; S9 regression extended to all three (fixtures cannot bypass; resolving unblocks all three). |
+| B-011 | Retargeted from M3-T004 to **M3-T005**; scope-approval is not legal-approval wording preserved (G6 independent). |
+| master_plan | M3 summary to five packets + dependency order; M4-T007+ now depends on accepted **M3-T004**. |
+| Dependencies | Not chosen or installed in this control-only PR; PDF/OCR selection deferred to M3-T003 `/dependency-security` (17.11). |
+
+Ledger totals: **42 accepted / 9 backlog** (5 M3 proposals + 4 pre-existing) — nothing accepted, moved, claimed, or dispatched.
