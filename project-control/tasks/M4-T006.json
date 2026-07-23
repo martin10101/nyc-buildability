@@ -1,0 +1,94 @@
+{
+  "task_id": "M4-T006",
+  "title": "R5 residential height & setback vertical-envelope draft rule family (per-district; base/building height, street wall, setback as separate typed min/max constraints; fail-closed)",
+  "task_type": "backend",
+  "milestone_id": "M4",
+  "objective": "Extract, as a draft (needs_review) rule family in the existing rules engine/DSL, the CURRENT effective R5-series height & setback regulations, per R5 district variant scoped SEPARATELY (R5/R5A/R5B/R5D; no R5* defaults, no shared-dimension assumption). Model base height, building height, street wall, and setback as SEPARATE typed constraints, preserving min AND max where the source distinguishes them; never label any output a buildable envelope/feasible building/massing. Every constraint records exact ZR section/clause + amendment/effective dates + source snapshot id+hash + precise applicability conditions (district, street-width, building, lot, frontage, ground-floor, special-district/overlay). Produce a mandatory input-readiness matrix mapping every condition to an exact canonical property_profile field path; missing/uncertain/contradictory/unavailable inputs -> typed missing/unsupported/professional_review_required, NEVER a guessed value (note: street-width/frontage/ground-floor have no canonical field today -> fail closed). Competing independently-applicable rules for the same constraint -> rule_conflict with no selected value. Effective-date discipline (as_of before controlling amendment -> not-effective). No rule published or Verified; regime + values are candidates awaiting G6 legal approval. Additive/fail-closed only; FAR rule, evaluator core, and all canonical contracts untouched. Full spec + amendments: project-control/reports/M4-T006-DRAFT-PROPOSAL.md.",
+  "business_reason": "FAR alone cannot describe a building; the vertical envelope (height + setback/street wall) is the highest-impact missing constraint set from the M5-T001 coverage matrix and the prerequisite for any honest narrow R5 massing. Owner directive 2026-07-21 authorizes advancing rule engineering with needs_review rules; G6 (and, only for the client-validation item, B-010) gate publication/verification and final acceptance, not this build.",
+  "inputs": [
+    "M4-T001 rules engine + DSL on main (services/api/app/rules/**): RuleRegistry, evaluator, RuleResult.export(), coverage vocabulary, rule_conflict/competing-rules trace shape, effective-date/as_of handling",
+    "services/api/app/rules/rulesets/r5_residential_far.rule.json - DSL PATTERN to mirror (rule_id/family/status/effective_from/citations{snapshot_id,section,quote,last_amended}/inputs/outputs/applicability/computation); DO NOT EDIT",
+    "services/api/app/_zr_snapshots/v1/*.snapshot.json + sync_zr_snapshots mechanism (zr-23-21) - snapshot+hash pattern for new official ZR sections",
+    "packages/contracts/schemas/v1/property_profile.schema.json (1.4.0) - canonical field paths for the input-readiness matrix (READ-ONLY): zoning.districts[], zoning.commercial_overlays[], zoning.special_districts[], lot_geometry.area_sq_ft, spatial_intersection.lot_overall_class (note: NO street-width/frontage/ground-floor field today)",
+    "packages/contracts/schemas/v1/rule_evaluation.schema.json (1.0.0) - open evaluation_trace.outputs object the new rule outputs ride (READ-ONLY; no contract change expected)"
+  ],
+  "outputs": [],
+  "dependencies": [
+    "M4-T001"
+  ],
+  "allowed_paths": [
+    "services/api/app/rules/rulesets/*.rule.json (NEW R5 height/setback ruleset file(s); do NOT edit r5_residential_far.rule.json)",
+    "services/api/app/rules/schemas/v1/*.schema.json (ONLY if an additive min/max height-setback DSL field is required; extend additively, never redefine)",
+    "services/api/app/_zr_snapshots/v1/*.snapshot.json + the sync_zr_snapshots source dir (NEW official ZR snapshots, byte-identical + hash-guarded, package-data per M4-T005)",
+    "services/api/tests/rules/** (deterministic, fail-closed, effective-date, provenance, rule-conflict, negative-control NC-1..NC-7, installed-wheel deployability tests)",
+    "project-control/reports/M4-T006-producer-report.md, project-control/reports/M4-T006-input-readiness-matrix.md, project-control/reports/M4-T006-source-capture.md"
+  ],
+  "forbidden_paths": [
+    "services/api/app/rules/evaluator.py and engine core (consume unchanged), services/api/app/rules/rulesets/r5_residential_far.rule.json (no edit)",
+    "services/api/app/profile/**, services/api/app/spatial/**, services/api/app/scenario/**, services/api/app/api/v1/** and any endpoint",
+    "Any canonical contract (property_profile/rule_evaluation/coverage_status/scenario) - no edits",
+    "apps/web/** and any 3D/UI; yards, lot coverage, parking (explicitly OUT - later slices)",
+    "Publishing/Verifying any rule; emitting verified; inventing any dimension/condition; applying a remembered pre-amendment value; silent precedence between competing rules; wiring rules into the scenario builder",
+    "project-control/** except own reports; .claude/** except own agent-memory"
+  ],
+  "acceptance_scenarios": [
+    "AS-1 per-district confident: for EACH encoded variant (R5/R5A/R5B/R5D) a supported case -> deterministic base-height/building-height/street-wall/setback constraints (min & max preserved), coverage conditional (never verified), full trace with resolvable ZR citations + applicability conditions, needs_review + not-Verified disclaimer.",
+    "AS-2 provenance fidelity: every emitted dimension traces to a captured ZR snapshot (exact section + verbatim quote + last_amended + hash) and carries its precise applicability conditions; a tampered/absent snapshot fails closed.",
+    "AS-3 effective-date boundary: as_of immediately before vs on/after the controlling amendment -> not-effective vs captured values (before/after fixture per affected variant).",
+    "AS-4 determinism: identical input -> byte-identical output (trace included).",
+    "AS-5 never-Verified & draft lifecycle: every result needs_review, coverage != verified, rule_release verified-ineligible.",
+    "AS-6 installed-wheel deployability: new ruleset(s) + ZR snapshots load from the installed wheel (pip install --no-deps .), guarded like M4-T005; full API suite green; FAR rule/engine core/canonical contracts byte-unchanged.",
+    "NC-1 district variant: a value defined for one R5 variant is NOT silently applied to another; silent variant -> unsupported/professional_review_required.",
+    "NC-2 street-width class: wide/narrow/UNKNOWN street; unknown/unavailable class (no canonical field) -> professional_review_required, no computed value; a street-width-predicated value is never emitted from a guessed class.",
+    "NC-3 special-district/overlay: a special-district or commercial-overlay condition that modifies or competes -> rule_conflict or unsupported, never a silent base-district value.",
+    "NC-4 building/ground-floor condition: a source-predicated building-type/ground-floor condition unavailable in the profile -> professional_review_required.",
+    "NC-5 missing input: a required canonical field absent/null -> typed missing outcome, no value.",
+    "NC-6 contradictory input: contradictory canonical inputs (e.g. conflicting district signals) -> data_conflict/professional_review_required, no value.",
+    "NC-7 mutually exclusive rules: two independently applicable rules for the same constraint -> rule_conflict, no selected value."
+  ],
+  "required_gates": [
+    "G0",
+    "G2",
+    "G3",
+    "G4",
+    "G5"
+  ],
+  "producer_agent": "rules-engineer",
+  "reviewer_agents": [
+    "code-reviewer",
+    "qa-engineer",
+    "security-reviewer"
+  ],
+  "status": "in_progress",
+  "progress_percent": 10,
+  "risks": [
+    "LEGAL BOUNDARY: AI extracts + encodes candidate rules with provenance; the regime choice and every value are needs_review and require G6 qualified-human legal approval before publication/verification/acceptance. G6 NOT weakened; independent of B-010.",
+    "GENUINE-AMBIGUITY STOP: if the official source is genuinely ambiguous on the regime or a value in a way needing human legal interpretation (not mere effort), STOP and report a blocker; do NOT guess and do NOT weaken G6.",
+    "CURRENT effective regime only: identify exact controlling sections/values in the current ZR (post City-of-Yes 2024-12-05) from official sources; never carry forward a remembered pre-amendment value.",
+    "Per-district: R5/R5A/R5B/R5D scoped separately; no family-wide default; no shared-dimension assumption.",
+    "Fail-closed inputs: every condition mapped to an exact canonical property_profile path; missing/uncertain/contradictory/unavailable -> typed missing/unsupported/professional_review_required, never a guessed value (street-width/frontage/ground-floor unavailable today).",
+    "Separate typed constraints (base height/building height/street wall/setback), min & max preserved; never labeled envelope/feasible/massing. Competing rules -> rule_conflict, no selected value.",
+    "Additive + fail-closed: do NOT modify the FAR rule, evaluator core, or any canonical contract; installed-wheel deployability guarded (package-data per M4-T005).",
+    "Risk-required independent gates at ONE frozen SHA: G0/G2(self-check)/G3(code)/G4(integration+deployability)/G5(security). Thin client: local checkout + CI; negligible disk."
+  ],
+  "blockers": [],
+  "created_at": "2026-07-23T03:15:27.979150+00:00",
+  "updated_at": "2026-07-23T03:17:57.812539+00:00",
+  "requirement_refs": [
+    "project-control/reports/M4-T006-DRAFT-PROPOSAL.md - authoritative full spec incl. owner amendments sections 3-7, 11",
+    "PRD.md 7.2 (basic code-feasibility), 9 (provenance), 12 (coverage + data-completeness), 13.3 (scenario fields: height/base height/setbacks - downstream consumers)",
+    "docs/PRODUCT_FLOW_AND_AI_BOUNDARIES.md (AI extracts/classifies; deterministic code calculates; humans approve legal interpretation)",
+    "docs/ACCEPTANCE_SCENARIO_STANDARD.md (AS/NC pack format)",
+    "Official NYC Zoning Resolution - CURRENT effective R5-series height & setback sections (producer identifies+verifies exact sections via official-source-researcher + legal-corpus-engineer; post City-of-Yes 2024-12-05)"
+  ],
+  "worktree": ".claude/worktrees/M4-T006-r5-height-setback",
+  "progress_log": [
+    {
+      "at": "2026-07-23T03:17:57.812539+00:00",
+      "agent": "rules-engineer",
+      "percent": 10,
+      "status": "in_progress",
+      "message": "Contracted + claimed; scope frozen; source-capture + rule extraction starting"
+    }
+  ]
+}
