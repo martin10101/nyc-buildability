@@ -4,7 +4,7 @@
 // semantics read-only; it never mutates anything.
 
 import type {
-  Task, Blocker, MilestoneModel, Issue, GateStateEntry, TaskStatus,
+  Task, Blocker, MilestoneModel, Issue, GateStateEntry,
 } from './types';
 import {
   isRecord, asString, asFiniteNumber, asStringArray,
@@ -39,7 +39,7 @@ function parseBlocker(raw: unknown): Blocker | null {
   if (!id) return null;
   const status = (asString(raw.status) ?? '').toLowerCase();
   const affects = asStringArray(raw.affects);
-  let sinceIso = asString(raw.created_at);
+  const sinceIso = asString(raw.created_at);
   return {
     id,
     title: asString(raw.title) ?? id,
