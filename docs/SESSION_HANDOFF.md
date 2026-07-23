@@ -6,25 +6,27 @@ the remote: **origin/main may have advanced, so do not trust any SHA written her
 This file is orientation only. Operating rules, gates, hard rules, and workflow routes live in
 `CLAUDE.md` and the specialist docs it routes to — not here.
 
-**Current main at `5635c13`** (origin/main when written; `git fetch` and reconcile). Main progression
-this window: `2d31ff7` (PR #86, M5-T001) → `c5e8cd0` (PR #87, M4-T006 proposal) → `a3784af` (PR #89,
-M0-T022 owner-dashboard, merged AND accepted independently) → `5635c13` (**PR #88, M4-T006
-implementation — MERGED**). PR #88's frozen code SHA is `5d605d4` (after a targeted owner
-legal-semantics correction to the R5 setback; see M4 section). **M4-T006 is merged DRAFT and remains
-`awaiting_gate`, NOT accepted** (G6).
+**Current main at `1acb9b5`** (origin/main when written; `git fetch` and reconcile). Main progression
+since the last handoff: `5635c13` (**PR #88, M4-T006 implementation — MERGED**; frozen code `5d605d4`
+after the owner R5-setback legal-semantics correction) → `1acb9b5` (**PR #90, prior handoff refresh —
+MERGED**). This session opened **PR #91** (control-only, **OPEN**) — the M4 footprint 4-way split
+proposals + metadata reconciliation (see "Next task"). **M4-T006 stays merged DRAFT / `awaiting_gate`,
+NOT accepted** (G6).
 
-**Accepted-task count = 42** (through M2-T013 **+ M0-T022**, accepted independently via PR #89).
-Nothing in the M4/M5 chains is Published, Verified, or accepted — all merged/awaiting as **draft
-`needs_review`**, gated on G6.
+**Accepted-task count = 42** (UNCHANGED this session — all footprint work is proposal-stage; nothing
+contracted or accepted). Nothing in the M4/M5 chains is Published, Verified, or accepted — all
+merged/awaiting as **draft `needs_review`**, gated on G6.
 
-## Milestone reality (reconciled 2026-07-23; corrected in PR #85)
+## Milestone reality (reconciled 2026-07-23)
 - **M0** active (20/24 accepted incl. **M0-T022 owner-dashboard**, PR #89; M0-T007/T008 blocked;
   M0-T019/T021 active).
 - **M1** complete (9/9 accepted).
 - **M2** active (13/16 accepted; **M2-T014/T015/T016 survey-planning tasks HELD** — owner survey hold).
 - **M3** planned (no tasks; M4 proceeded on `needs_review` rules per owner directive 2026-07-21).
-- **M4** active — **0/5 accepted**. M4-T001..T005 merged draft; M4-T006 merged/awaiting (see below).
-- **M5** active — M5-T001 merged draft (0 accepted).
+- **M4** active — **0/6 accepted** (6 contracted: M4-T001..T006, all merged draft `awaiting_gate`).
+  *(main's `master_plan.json` still reads "0/5 … T001..T005"; **PR #91** corrects it to 0/6.)*
+- **M5** active — M5-T001 merged draft (0 accepted). *(main's `master_plan.json` still says M5
+  "planned"; **PR #91** sets it "active" with an honest summary.)*
 
 ## M4 rules chain — merged DRAFT, awaiting G6 (do NOT accept/publish)
 - **M4-T001** foundation (engine + first R5 FAR draft) merged (PR #76). **M4-T002/T003/T004/T005**
@@ -61,24 +63,45 @@ Nothing in the M4/M5 chains is Published, Verified, or accepted — all merged/a
   lot-coverage/parking) shown **`missing`**; top-level `missing_critical`; fail-closed; never
   `verified`. New additive `scenario` 0.x contract. Final acceptance gated on the M4 chain clearing G6.
 
-## Next task — the active frontier
-Draw from the M5-T001 rule-coverage dependency matrix + `M4-T006-future-hardening.md`:
-1. **Follow-up rule slice:** R5 **yards / lot coverage / open space** (footprint constraints) — the
-   remaining `blocks_envelope` families after height/setback; same M4 rule-engineering pattern, draft.
-2. **M5 envelope-scenario task:** wire FAR cap + M4-T006 height/setback (later + yards) into a narrow
-   bounded R5 massing scenario (still draft, never a buildable-envelope claim until the matrix is
-   covered). Consumers MUST gate on `coverage_status`, not `outputs` emptiness (M4-T006 modifier note).
-3. **Verification/G6-prep:** byte-level raw-HTML verbatim confirmation of the M4-T006 snapshots +
-   capture verbatim for the §23-42/426/44/425 override contexts (currently PRR exceptions,
-   `citation_ref:null`); extend snapshot digest to cover structured `table`/`notes` (G5 LOW).
+## Next task — the active frontier (M4 footprint follow-up; owner-approved 4-way split)
+Frontier item 1 (R5 footprint constraints) is scoped and PROPOSED in **PR #91** (control-only, OPEN).
+Owner chose a **4-way split**, contracted **one frozen-SHA task at a time, NO auto-dispatch**:
+1. **M4-T007** lot coverage (§23-361/363) — leads; establishes the M5 consumer-boundary regression.
+2. **M4-T008** rear yards + rear-yard equivalents (§23-342/343/344).
+3. **M4-T009** front yards (§23-321).
+4. **M4-T010** side yards (§23-332/333/334) — most entangled; last.
+
+All `legal_rule`, `required_gates = G0,G1,G2,G3,G4,G5,G6` (G6 gates publication/verification/
+acceptance, NOT the draft build). Per-variant via **§11-25** (base ⇒ suffix unless the section lists
+separate suffix provisions; explicit per variant, NO family default; cite §11-25 + the substantive
+section for suffix-derived values). **Fail-closed-HEAVY:** ZR **lot type is unusable from PLUTO**
+(false-friend — PLUTO `LotType` 6 "Interior" = no frontage ≠ ZR interior = code 5 "Inside"), **building
+type is unavailable**, and **zoning-lot area/width are only conditionally proxied by tax-lot facts**
+(documented tolerance/comparison policy, not blanket `data_conflict`). CURRENT-effective **§23-3xx**
+numbering (legacy §23-14/45/46/47 is STALE). PR #91 also carries the corrected input-readiness matrix,
+the §11-25 applicability decision, a CLOSED source inventory (every cross-ref classified), and a bounded
+metadata reconciliation. The M5 consumer-boundary regression is **test-only** (a negative guard; no M5
+consumption).
+
+**IMMEDIATE NEXT ACTION:** owner reviews/approves **PR #91**, then the orchestrator contracts + claims
+**ONLY M4-T007** and returns its exact frozen SHA + full G0-G6 evidence + CI + product PR **before**
+T008. Do NOT auto-dispatch T008/T009/T010.
+
+Still open (frontier items 2-3, unchanged): the **M5 envelope-scenario** task (consumers MUST gate on
+`coverage_status`, never `outputs` emptiness — M4-T006 modifier note) and **M4-T006 verification/G6-prep**
+(byte-level raw-HTML confirmation of the snapshots; capture the §23-42/426/44/425 override contexts,
+currently PRR exceptions with `citation_ref:null`; extend the snapshot digest to structured
+`table`/`notes`, G5 LOW).
 
 ## Open PRs
-- **#88** M4-T006 implementation — **MERGED** this session (`5635c13`, frozen code `5d605d4`). Draft
-  rules on main; M4-T006 stays `awaiting_gate`/unaccepted (G6).
-- **#90** this handoff refresh — docs-only (supersedes closed #83).
+- **#91** M4 footprint proposal (control-only, **OPEN**, this session) — 4-way split T007-T010 packets
+  + corrected readiness matrix + §11-25 decision + closed source inventory + bounded metadata
+  reconciliation. **No task JSON, no code.** Owner review/approval gates contracting M4-T007.
 - **#64** M0-T019 frontend security + npm dependency-admission policy — FROZEN, owner-authorized merge
   only.
-- (#83 stale handoff — CLOSED as superseded.)
+- **#88** M4-T006 implementation — MERGED (`5635c13`, code `5d605d4`). **#90** prior handoff refresh —
+  MERGED (`1acb9b5`). (#83 stale handoff — CLOSED.) This handoff refresh travels on its own
+  control-only branch/PR (`control/handoff-2026-07-23-footprint`).
 
 ## Preserved holds / conventions (unchanged)
 - **G6** qualified-human legal approval mandatory before any rule is Published/Verified/accepted.
@@ -90,7 +113,9 @@ Draw from the M5-T001 rule-coverage dependency matrix + `M4-T006-future-hardenin
   control-only PRs; producer code + gate records travel on the task branch to a single product PR.
 
 ## Unresolved owner decisions
-1. Next task from the frontier above (yards/lot-coverage rule slice → M5 envelope-scenario → G6-prep).
+1. **PR #91 review/approval** (M4 footprint 4-way split) — gates contracting **M4-T007** first (then
+   T008-T010, one frozen-SHA task at a time). Merging #91 also lands the metadata reconciliation
+   (M4 0/6, M5 active). Frontier items 2-3 (M5 envelope-scenario, M4-T006 G6-prep) follow.
 2. PR #64 (M0-T019) merge — frozen, owner-authorized only.
 3. M2-T014/T015/T016 survey planning-report dispatch (still held).
 4. GDS / expansion-planning review (counter-notice §2 hold) and 3D holds — preserved.
