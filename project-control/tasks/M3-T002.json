@@ -80,7 +80,7 @@
     "NO FORWARD DEPENDENCY ON T003: T002 is independently acceptable on durable original captures + hashes + version-detection evidence; it uses no parser/renderer and no T003-selected library. The former dependency inversion is removed.",
     "FIXTURE != PRODUCTION: gate PASS on fixtures is an engineering increment; acceptance (and satisfying downstream deps, and 'implemented') requires durable original captures — enforced by B-001 in blockers[].",
     "TRUST BOUNDARY: T002 captures bytes, it does not interpret them; ALL parsing/rendering/OCR/extraction and their dependencies belong to M3-T003.",
-    "CAPTURE-TIME SECURITY ONLY: approved hosts/redirects, byte/time limits, MIME/file-signature, safe filenames/paths, no execution, private/quarantined storage; parser-level malicious-PDF defenses are M3-T003 G5.",
+    "CAPTURE-TIME SECURITY ONLY: approved hosts/redirects, byte/time limits, MIME/file-signature, safe filenames/paths, no execution, private/quarantined storage; parser-level malicious-PDF defenses are M3-T003 G5. Build these as part of ONE shared, domain-agnostic untrusted-document security surface reusable by the future survey-document domain (report §17.13); domain eligibility policies stay separate.",
     "THIN CLIENT: no bulk corpus in git or on the owner PC; bulk storage on cloud object storage via a Render worker."
   ],
   "blockers": [

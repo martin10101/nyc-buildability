@@ -1152,17 +1152,34 @@ def test_s9_b001_m3_corpus_storage_enforcement() -> None:
         assert r.returncode != 0 and "B-001" in r.stderr, \
             f"a fixtures-only marker must not bypass B-001: {r.stderr}"
 
-        # (c) resolving ONLY the temp copy lets acceptance proceed for every storage
-        # task, proving B-001 was the sole remaining blocker.
+        # (c) resolving B-001 removes ONLY that blocker - it does NOT by itself make a
+        # task acceptable while another blocker still references it. Resolve the temp
+        # B-001 copy but add a second independent open blocker on M3-T003: M3-T003 is
+        # STILL blocked (now by the second blocker), proving B-001 removal alone is not
+        # sufficient for acceptance.
         write_b001_copy("resolved")
+        second = pc / "blockers" / "B-999-second.json"
+        second.write_text(json.dumps({
+            "blocker_id": "B-999", "title": "independent second blocker", "status": "open",
+            "affects": ["M3-T003 (independent second precondition)"],
+            "detail": "another acceptance precondition remains"}), encoding="utf-8")
+        r = run(tmp, "accept", "--task-id", "M3-T003", "--agent", "orchestrator")
+        assert r.returncode != 0 and "B-999" in r.stderr, \
+            f"resolving B-001 must not make M3-T003 acceptable while B-999 remains: {r.stderr}"
+
+        # (d) only once B-001 is resolved AND no other blocker/precondition remains does
+        # acceptance proceed for every storage task. B-001 removal is NECESSARY but not
+        # by itself SUFFICIENT.
+        second.unlink()
         for tid in STORAGE_TASKS:
             r = run(tmp, "accept", "--task-id", tid, "--agent", "orchestrator")
             assert r.returncode == 0, \
-                f"resolved B-001 must allow {tid} acceptance: {r.stderr}"
+                f"with B-001 resolved and no other blocker, {tid} must accept: {r.stderr}"
 
         print("OK: S9 B-001 (read from the real committed record) blocks "
-              "M3-T002/M3-T003/M3-T005 acceptance (fixture-only cannot bypass; "
-              "resolving B-001 unblocks all three)")
+              "M3-T002/M3-T003/M3-T005 acceptance; fixture-only cannot bypass; resolving "
+              "B-001 removes ONLY that blocker (a second blocker still blocks); acceptance "
+              "needs B-001 resolved AND no other blocker/precondition")
     finally:
         shutil.rmtree(tmpdir, ignore_errors=True)
 

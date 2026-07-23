@@ -4,7 +4,7 @@
 **Directive:** owner directive 2026-07-23 (repair the missing M3 legal-corpus dependency before any M4-T007+ yard/coverage work; §11-25 correction; architect benchmark; construction-code scope; deterministic completeness harnesses).
 **Status of this package:** PROPOSAL, **revision 5** (owner decision: **all PDF parsing/rendering moves into M3-T003**; §17.16 resolved). See §15 (rev-2), §16 (rev-3), **§17 (five-packet restructure — authoritative for the packet map; §17.16 records the rev-5 decision)** + §18 (rev-4 log) + §19 (rev-5 log). No producer is dispatched. M4-T007/T008/T009 are NOT contracted, claimed, or started. The 3-way vs 4-way split is preserved as a downstream candidate and NOT decided here. Nothing merges to `main` until you approve.
 
-> **Reading order note:** §17 supersedes the four-packet structure described in §5B/§7/§8/§9/§10 below wherever they differ. Those earlier sections are retained for the corrections history; **§17 is the current packet map, dependency graph, ownership, evidence model, and harness matrix.** Renumbering: closure moved T003→**T004**; construction-code moved T004→**T005**; the new **T003** is the Document Evidence Verification Engine.
+> **Reading order note:** §17 supersedes the earlier four-packet structure (now **five packets**, M3-T001…T005) described in §5B/§7/§8/§9/§10 below wherever they differ. Those earlier sections are retained for the corrections history; **§17 is the current packet map, dependency graph, ownership, evidence model, and harness matrix.** Renumbering: closure moved T003→**T004**; construction-code moved T004→**T005**; the new **T003** is the Document Evidence Verification Engine.
 
 This document is the single return package the directive's section 9 asks for. It is control-only (task packets + docs); it changes no product code.
 
@@ -23,7 +23,7 @@ This document is the single return package the directive's section 9 asks for. I
 
 **Control-metadata reconciliation (directive §1 asked to check these explicitly):**
 
-- **M3 had no tasks** (status `planned`) — the missing legal-corpus dependency. This PR adds the four proposed packets.
+- **M3 had no tasks** (status `planned`) — the missing legal-corpus dependency. This PR adds **five** proposed packets (M3-T001…T005; the sequence grew from four to five when the Document Evidence Verification Engine was split out — §17).
 - **M4 summary said "0/5"** but the ledger holds **M4-T001…T006** (six tasks). **Fixed in this PR** to "0/6" with the M4-T006 R5 height/setback family noted, and M4-T007's new dependency on accepted M3-T004 recorded (closure renumbered T003->T004 in rev-4).
 - **All M4-T001…T006 + M5-T001 are `awaiting_gate`** — merged DRAFT (`needs_review`), **none accepted, Published, or Verified**. G6 gates the chain.
 - Checkpoint is **CP-0031**; **CP-0032 remains reserved** for M0-T019 (not created here).
@@ -422,6 +422,8 @@ official source to immutable capture (T002) to evidence verification (T003) to s
 ### 17.13 Security + resource controls (all capture/extraction tasks; G5)
 
 Every PDF (including government-hosted) is untrusted. The controls split by ownership (§17.16): **capture-time controls belong to M3-T002** — approved hosts + redirect policy, MIME + file-signature validation, byte/time limits, safe filenames/paths, no execution, private/quarantined storage; **parser-level controls belong to M3-T003** (where the parser/renderer runs) — max page count / decompressed-stream size / image dimensions / processing time, memory/CPU budgets, sandboxed worker with no unnecessary network, **no execution of PDF JavaScript/attachments/actions/macros/external references**, reject encrypted/unsupported unless an approved workflow exists, parser crash isolation, prompt-injection isolation if extracted text is ever shown to an AI (embedded document instructions are data, never control). No bulk temp files on the owner PC; sensitive-log redaction throughout. **G5 must include malicious and malformed PDF fixtures (in M3-T003).**
+
+**Shared untrusted-document security surface (owner directive, Part 2).** The low-level untrusted-document security primitives — capture-time (T002: hosts/redirects, byte/time limits, MIME/file-signature, safe paths, no execution, private/quarantined storage) and parser-level (T003: page/stream/image/time budgets, sandboxed worker, no JS/attachment/action execution, crash isolation) — are designed as **one shared, domain-agnostic surface suitable for reuse by the later survey-document domain**, so a second document domain does not reimplement PDF safety. **Eligibility policy stays separate per domain:** the *legal-document* eligibility policy (native-replay + cross-source, or human-confirmed OCR) and the future *survey-document* eligibility policy are distinct and are NOT shared — only the low-level safety surface is. This is recorded now so the T002/T003 primitives are factored for reuse from the start; the survey-document domain remains a separate future packet (survey hold preserved).
 
 ### 17.14 Storage + reproducibility (M3-T003)
 

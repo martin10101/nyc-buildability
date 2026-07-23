@@ -92,7 +92,7 @@
     "DEPENDENCY DECISION LIVES HERE: PDF parser/renderer + OCR selected via /dependency-security at G0/G5 (exact pin, age gate, vuln audit, wheel test, Render compat, determinism, memory); NOT chosen in the control-only PR. Paid/cloud OCR or AI/RAG framework -> STOP and report.",
     "OCR CONFIDENCE IS NOT CORRECTNESS: a model score never auto-promotes a critical field; two agreeing engines are disagreement-detection, not verification; only native-replay+cross-source or explicit human confirmation makes a critical span eligible.",
     "ARITHMETIC != LEGAL: the calculator is mathematically deterministic for declared inputs only; consistency never proves the selected FAR/coverage/yard/branch applies. No AI-generated number enters it.",
-    "SECURITY: every PDF (incl. government) is untrusted; sandboxed worker, no JS/attachment/action, size/page/stream/image/time budgets, crash isolation, private storage, redaction; G5 includes malicious+malformed fixtures.",
+    "SECURITY: every PDF (incl. government) is untrusted; sandboxed worker, no JS/attachment/action, size/page/stream/image/time budgets, crash isolation, private storage, redaction; G5 includes malicious+malformed fixtures. Parser-level defenses are part of ONE shared, domain-agnostic untrusted-document security surface reusable by the future survey-document domain (report §17.13); the legal-document eligibility policy stays separate from the future survey-document eligibility policy.",
     "BENCHMARK PDF: not committed; only its authorized hash + derived adversarial expectations are used."
   ],
   "blockers": [

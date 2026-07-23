@@ -17,9 +17,12 @@ Test group **S9** — `test_s9_b001_m3_corpus_storage_enforcement` in `tools/tes
 | (b) | open B-001 → `accept M3-T003` fails, stderr names `B-001` |
 | (c) | open B-001 → `accept M3-T005` fails, stderr names `B-001` |
 | (d) | adding a `fixtures_only=true` marker (or any task field) does NOT bypass — accept still fails on B-001 |
-| (e) | setting the TEMP copy of B-001 to `resolved` → accept succeeds for all three, proving B-001 was the sole remaining blocker |
+| (e) | resolving B-001 while a SECOND independent blocker still references M3-T003 → accept **still fails** (on the second blocker), proving **resolving B-001 removes only that one blocker** |
+| (f) | only once B-001 is resolved AND no other blocker/precondition remains → accept succeeds for all three |
 
-Each temp task is driven to `awaiting_gate` with all required gates PASS and no dependencies, so B-001 is the only variable under test.
+Each temp task is driven to `awaiting_gate` with all required gates PASS and no dependencies, so B-001 is the only variable isolated in (a)–(d).
+
+**Accuracy note (owner directive, Part 2):** resolving B-001 removes **that blocker only**. It does **not** independently make a task acceptable when other blockers or acceptance preconditions remain. In production this matters concretely: **M3-T005** additionally carries **B-011** (approved release scope) and depends on accepted M3-T001/T002/T003; **M3-T003** depends on accepted M3-T002; and every acceptance still requires all required gates PASS and all dependencies accepted (enforced by the same `accept` preconditions). The S9 isolation (no other blockers/deps) exists only to prove the B-001 mechanism itself; sub-checks (e)/(f) prove B-001 removal is **necessary but not sufficient**.
 
 ## Run output
 
