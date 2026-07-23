@@ -6,39 +6,79 @@ the remote: **origin/main may have advanced, so do not trust any SHA written her
 This file is orientation only. Operating rules, gates, hard rules, and workflow routes live in
 `CLAUDE.md` and the specialist docs it routes to — not here.
 
-**Verified base at `dcb905d62b47919a3d2d78c7620d7bd07662ccf5`** (origin/main when this was written;
-`git fetch` and reconcile). Milestone **M0** active; M1 accepted; M2-T012 accepted; **M4-T001
-rules-engine foundation merged** (PR #76 at frozen `de88ba2`; G0/G2/G3/G4 all PASS, **awaiting G6**,
-NOT accepted — every R5 rule stays `needs_review`, nothing Published/Verified). Checkpoint **CP-0031**
-(CP-0032 is reserved for M0-T019 — do not create one).
+**Current main at `c5e8cd0`** (origin/main when written; `git fetch` and reconcile — it likely
+advanced if PR #88 merged). This session advanced main: `2d31ff7` (PR #86, M5-T001 scenario
+foundation) → `c5e8cd0` (PR #87, M4-T006 proposal). **PR #88 (M4-T006 implementation, frozen
+`6509db3`) is OPEN awaiting owner merge authorization** — merging it advances main again.
 
-## M4-T001 status — foundation merged, awaiting G6 (do not accept, do not publish)
-The tested rules-engine + first R5 residential-FAR draft family are on main (PR #76 @ `de88ba2`).
-Recorded G0/G2/G3/G4 PASS; task stays `awaiting_gate`. Acceptance is blocked on **G6** (qualified-human
-legal approval — mandatory before any R5 rule is Published/Verified) and, for the client-validation item
-only, **B-010** (client R5 benchmark sheet). These block ONLY publication/verification + final
-acceptance — not continued engineering with `needs_review` rules (owner directive 2026-07-21).
+**Nothing is Published, Verified, or accepted this session.** Accepted-task count stands at **41**
+(through M2-T013). All M4/M5 work below is merged/awaiting as **draft `needs_review`**, gated on G6.
 
-## Next task — rules-engine ↔ property-analysis integration
-Wire the M4-T001 engine into the property-profile / M2-T013 spatial-analysis API: feed property +
-spatial facts into the evaluator; preserve split-lot ranges, conflicts, professional-review flags; fail
-safely when spatial uncertainty exists or `spatial_context` is missing; return deterministic
-calculation + citation traces; expose draft/review status honestly; prevent downstream callers from
-treating draft results as Verified. Confirm the exact task ID from the ledger; if none exists, create
-the smallest controlled task (never CP-0032). Implement to a frozen SHA + CI + risk-required reviews,
-then return the evidence packet before merge.
+## Milestone reality (reconciled 2026-07-23; corrected in PR #85)
+- **M0** active (19/23 accepted; M0-T007/T008 blocked; M0-T019/T021 active).
+- **M1** complete (9/9 accepted).
+- **M2** active (13/16 accepted; **M2-T014/T015/T016 survey-planning tasks HELD** — owner survey hold).
+- **M3** planned (no tasks; M4 proceeded on `needs_review` rules per owner directive 2026-07-21).
+- **M4** active — **0/5 accepted**. M4-T001..T005 merged draft; M4-T006 merged/awaiting (see below).
+- **M5** active — M5-T001 merged draft (0 accepted).
 
-## Current blocker
-None blocking M2-T012. Credentials pending (do not block this task): B-001 Supabase (highest),
-B-002 Render, B-004 Geoclient.
+## M4 rules chain — merged DRAFT, awaiting G6 (do NOT accept/publish)
+- **M4-T001** foundation (engine + first R5 FAR draft) merged (PR #76). **M4-T002/T003/T004/T005**
+  merged, all `awaiting_gate`, gate JSONs recorded (reconciled in PR #85). None accepted.
+- **M4-T005** = first internal rule-evaluation endpoint (disabled-by-default; `rule_evaluation` 1.0.0
+  contract). Merged PR #84 @ `84b50a7`; G1/G3/G4/G5 PASS.
+- **M4-T006** = R5-series **height & setback draft rule family** (this session). Frozen `6509db3`,
+  **PR #88 OPEN awaiting owner merge**; **G0/G2/G3/G4/G5 all PASS** (independent), CI 24/24 green incl.
+  literal `exact-production-install`. 6 per-district rules (R5 base35/bldg45 + §23-423 setback; R5A
+  pitched 25/35; R5B 35; R5D 45; §23-424 QRS 45/55), 5 provenance-stamped ZR snapshots (effective
+  2024-12-05, City-of-Yes §23-42 series), per-district (no defaults), separate typed constraints,
+  fail-closed on unavailable inputs (street width / building type / QRS geography / overlay →
+  `professional_review_required`), §23-424-vs-base → `rule_conflict`, **never `verified`**. FAR rule,
+  evaluator core, integration, canonical contracts byte-unchanged. Values are `extracted_draft`
+  (`raw_html_verified:false`) — **G6 must byte-verify against live ZR before any Verified surface.**
+- **Acceptance boundary for the whole M4 chain:** blocked on **G6** qualified-human legal approval of
+  M4-T001; and for the client-validation item only, **B-010**. These block ONLY publication/
+  verification + final acceptance — not continued `needs_review` engineering (owner directive
+  2026-07-21). B-010 is NOT a blocker for M4-T002..T006 or M5 engineering.
 
-## Frozen concurrent items — scheduled action required
-- **M0-T019 / PR #64** OPEN, FROZEN at `39080822a361b6204813d2dcbd1f849b196100ea`; blocked only by its
-  own dependency-age gate. At/after **2026-07-22T06:10:00Z** rerun ONLY the failed CI jobs at that SHA;
-  if green, run ONLY `ci-evidence-verifier`. Do not merge/accept/regenerate-lock/weaken-policy/advance CP-0032.
+## M5 scenario engine — merged DRAFT, awaiting G6-dependent acceptance
+- **M5-T001** deterministic coverage-aware **scenario foundation**. Merged PR #86 @ `e994147`;
+  **G0/G1/G3/G4/G5 all PASS**; `awaiting_gate`, **NOT accepted**. Consumes the canonical
+  `max_residential_floor_area_sq_ft` as a **draft zoning-floor-area cap** (never recomputed; never
+  labeled gross/net/feasible/envelope/building); every envelope constraint (height/setback/yard/
+  lot-coverage/parking) shown **`missing`**; top-level `missing_critical`; fail-closed; never
+  `verified`. New additive `scenario` 0.x contract. Final acceptance gated on the M4 chain clearing G6.
+
+## Next task — the active frontier
+Draw from the M5-T001 rule-coverage dependency matrix + `M4-T006-future-hardening.md`:
+1. **Follow-up rule slice:** R5 **yards / lot coverage / open space** (footprint constraints) — the
+   remaining `blocks_envelope` families after height/setback; same M4 rule-engineering pattern, draft.
+2. **M5 envelope-scenario task:** wire FAR cap + M4-T006 height/setback (later + yards) into a narrow
+   bounded R5 massing scenario (still draft, never a buildable-envelope claim until the matrix is
+   covered). Consumers MUST gate on `coverage_status`, not `outputs` emptiness (M4-T006 modifier note).
+3. **Verification/G6-prep:** byte-level raw-HTML verbatim confirmation of the M4-T006 snapshots +
+   capture verbatim for the §23-42/426/44/425 override contexts (currently PRR exceptions,
+   `citation_ref:null`); extend snapshot digest to cover structured `table`/`notes` (G5 LOW).
+
+## Open PRs
+- **#88** M4-T006 implementation (frozen `6509db3`) — OPEN, all gates PASS, CI green, **awaiting owner
+  merge**. Merge integrates draft rules to main; M4-T006 stays unaccepted (G6).
+- **#83** stale handoff (M4-T001 era) — **superseded by this refresh; do not merge #83 unchanged**.
+- **#64** M0-T019 frontend security + npm dependency-admission policy — FROZEN, owner-authorized merge
+  only.
+
+## Preserved holds / conventions (unchanged)
+- **G6** qualified-human legal approval mandatory before any rule is Published/Verified/accepted.
+- **CP-0032** reserved for M0-T019 — **do not create one.** No new checkpoint created this session.
+- **Survey hold**: M2-T014/T015/T016 planning-report dispatch held.
+- **Expansion / 3D-UI holds** active (owner review of the expansion pack pending); no 3D/UI work.
+- **Credentials pending** (do not block): B-001 Supabase (highest), B-002 Render, B-004 Geoclient.
+- Thin-client (~7 GB free): no local DB / Docker / bulk data / local npm. Control-plane changes go via
+  control-only PRs; producer code + gate records travel on the task branch to a single product PR.
 
 ## Unresolved owner decisions
-1. M0-T019 / PR #64 merge (after the 2026-07-22T06:10Z gate resolves).
-2. Survey M2-T014/T015/T016 planning-report dispatch hold — still held (M4-T001 hold released 2026-07-21).
-3. Credentials B-001 (highest) / B-002 / B-004.
-4. GDS/expansion planning review (counter-notice §2 hold) and 3D holds — preserved.
+1. **PR #88** (M4-T006) merge authorization.
+2. PR #64 (M0-T019) merge — frozen, owner-authorized only.
+3. M2-T014/T015/T016 survey planning-report dispatch (still held).
+4. GDS / expansion-planning review (counter-notice §2 hold) and 3D holds — preserved.
+5. Credentials B-001 (highest) / B-002 / B-004.
