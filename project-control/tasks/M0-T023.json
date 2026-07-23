@@ -109,7 +109,7 @@
   ],
   "blockers": [],
   "created_at": "2026-07-23T18:51:06.647661+00:00",
-  "updated_at": "2026-07-23T21:42:32.107788+00:00",
+  "updated_at": "2026-07-23T22:21:43.039917+00:00",
   "worktree": "lead-main-checkout:task/M0-T023-directive-compliance",
   "progress_log": [
     {
@@ -125,6 +125,27 @@
       "percent": 75,
       "status": "self_check",
       "message": "producer self-check complete"
+    },
+    {
+      "at": "2026-07-23T22:21:42.483122+00:00",
+      "agent": "orchestrator",
+      "percent": 60,
+      "status": "rework",
+      "message": "G3 code review FAIL at 041ca285 (c15 CI-break, doc contradiction, requirements-body integrity); corrections applied per D-001 protocol"
+    },
+    {
+      "at": "2026-07-23T22:21:42.655228+00:00",
+      "agent": "orchestrator",
+      "percent": 65,
+      "status": "in_progress",
+      "message": "F1/F2/F3 + L1/L2/F5/F6 fixes; LF byte-identity"
+    },
+    {
+      "at": "2026-07-23T22:21:42.832980+00:00",
+      "agent": "orchestrator",
+      "percent": 75,
+      "status": "self_check",
+      "message": "producer self-check re-run: 35 directive tests, 14 pc groups, all green"
     }
   ]
 }
