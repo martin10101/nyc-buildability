@@ -1,0 +1,32 @@
+{
+  "snapshot_id": "zr-23-421",
+  "snapshot_schema": "zr_section_snapshot/v1",
+  "jurisdiction": "nyc",
+  "corpus": "zoning_resolution",
+  "section_number": "23-421",
+  "section_title": "Height and setback - pitched-roof building envelope (R1 through R5)",
+  "article": "II",
+  "chapter": "3",
+  "source": {
+    "source_id": "nyc-dcp-zoning-resolution-portal",
+    "official_channel": "html",
+    "request_url": "https://zr.planning.nyc.gov/article-ii/chapter-3/23-421",
+    "retrieved_at": "2026-07-22T00:00:00Z",
+    "document_currency_banner": null,
+    "document_currency_banner_note": "City of Yes for Housing Opportunity moved the R1-R5 residential bulk (height and setback) regulations into the ZR 23-42 series with a Last Amended date of 12/5/2024. The site-wide currency banner was not captured for this retrieval and is a needs_review item.",
+    "section_last_amended": "2024-12-05",
+    "section_last_amended_source_text": "Last Amended 12/5/2024",
+    "capture_method": "official_source_researcher_capture_2026-07-22",
+    "raw_html_verified": false,
+    "verification_required": "Draft capture of ZR 23-421 supplied by official-source-researcher (access 2026-07-22, zr.planning.nyc.gov). It has NOT been re-verified byte-for-byte against raw HTML by the rules-engineer, so raw_html_verified is false and extraction_status is extracted_draft. The governing section, the exact heights/depths, the district-to-statement association, and every applicability condition (building type, street width, qualifying-residential-site geography, special-district/overlay/historic-district context) MUST be confirmed by a qualified zoning professional (G6) before any rule citing this snapshot is published or Verified."
+  },
+  "verbatim_excerpt": "Perimeter walls are subject to setback regulations at a maximum height above the base plane of 25 feet. These planes start at the maximum permitted height of the perimeter walls and meet at a ridge line of 35 feet above the base plane.",
+  "content_digest_sha256": "d561048b812284eb8849d2bd7aec3deee9af4285075dd972f8cb2b1719999287",
+  "extraction_status": "extracted_draft",
+  "notes": [
+    "Governs the R5A pitched-roof envelope: perimeter-wall height max 25 ft above the base plane; ridge/building height max 35 ft above the base plane. Applicability is conditional on building type (detached / semi-detached / zero-lot-line per §23-421); the setback is governed by pitched-plane (sky-exposure) geometry, NOT the flat §23-423 10/15-ft rule.",
+    "section_title is a descriptive label; the official heading is pending raw-HTML verification.",
+    "Captured for M4-T006 as a governing-source candidate for the R5-series height & setback DRAFT rule family (needs_review).",
+    "Nothing in this record is a Verified zoning determination. Verified requires an M4 published rule plus G6 qualified-human approval (owner directive item 5)."
+  ]
+}

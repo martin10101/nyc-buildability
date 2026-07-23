@@ -1,0 +1,31 @@
+{
+  "snapshot_id": "zr-12-10",
+  "snapshot_schema": "zr_section_snapshot/v1",
+  "jurisdiction": "nyc",
+  "corpus": "zoning_resolution",
+  "section_number": "12-10",
+  "section_title": "Definitions - wide street and narrow street",
+  "article": "I",
+  "chapter": "2",
+  "source": {
+    "source_id": "nyc-dcp-zoning-resolution-portal",
+    "official_channel": "html",
+    "request_url": "https://zr.planning.nyc.gov/article-i/chapter-2/12-10",
+    "retrieved_at": "2026-07-22T00:00:00Z",
+    "document_currency_banner": null,
+    "document_currency_banner_note": "City of Yes for Housing Opportunity moved the R1-R5 residential bulk (height and setback) regulations into the ZR 23-42 series with a Last Amended date of 12/5/2024. The site-wide currency banner was not captured for this retrieval and is a needs_review item.",
+    "section_last_amended": "2024-12-05",
+    "section_last_amended_source_text": "Last Amended 12/5/2024",
+    "capture_method": "official_source_researcher_capture_2026-07-22",
+    "raw_html_verified": false,
+    "verification_required": "Draft capture of ZR 12-10 supplied by official-source-researcher (access 2026-07-22, zr.planning.nyc.gov). It has NOT been re-verified byte-for-byte against raw HTML by the rules-engineer, so raw_html_verified is false and extraction_status is extracted_draft. The governing section, the exact heights/depths, the district-to-statement association, and every applicability condition (building type, street width, qualifying-residential-site geography, special-district/overlay/historic-district context) MUST be confirmed by a qualified zoning professional (G6) before any rule citing this snapshot is published or Verified."
+  },
+  "verbatim_excerpt": "A wide street is a street that is 75 feet or more in width. A narrow street is a street that is less than 75 feet in width.",
+  "content_digest_sha256": "4810adcb1beab01cd4d71176495c79183fb9867f4463ff05a8f111598030243a",
+  "extraction_status": "extracted_draft",
+  "notes": [
+    "Supplies the §12-10 wide/narrow street threshold (75 feet) the §23-423 setback depth turns on. The canonical property_profile exposes NO street-width field, so any constraint predicated on wide/narrow street fails closed to professional_review_required.",
+    "Captured for M4-T006 as a governing-source candidate for the R5-series height & setback DRAFT rule family (needs_review).",
+    "Nothing in this record is a Verified zoning determination. Verified requires an M4 published rule plus G6 qualified-human approval (owner directive item 5)."
+  ]
+}

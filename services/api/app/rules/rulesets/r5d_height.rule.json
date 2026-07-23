@@ -1,0 +1,62 @@
+{
+  "rule_id": "r5d-height",
+  "rule_version": "0.1.0-draft",
+  "family": "residential_height_setback",
+  "title": "R5D district (flat-roof envelope) - maximum building height (no setback)",
+  "jurisdiction": "nyc",
+  "status": "needs_review",
+  "effective_from": "2024-12-05",
+  "effective_to": null,
+  "release": {
+    "deterministic_tests": "declared",
+    "test_suite_ref": "services/api/tests/rules/test_r5_height_setback.py",
+    "independent_review": "pending",
+    "qualified_human_approval": "pending"
+  },
+  "description": "DRAFT extraction (needs_review) of the flat-roof envelope HEIGHT constraint for the exact R5D district per NYC Zoning Resolution section 23-422 (City of Yes, Last Amended 2024-12-05). The source gives R5D a single maximum building height (45 ft) with NO setback. R5D is encoded SEPARATELY from R5 even though both cap building height at 45 ft: R5 mandates a base height (35 ft) + setback (section 23-423), whereas R5D has NO base-height split and NO setback. Only max_building_height is emitted; a base height and a setback are NOT invented for R5D. NOT a Verified determination.",
+  "citations": [
+    {
+      "snapshot_id": "zr-23-422",
+      "section": "23-422",
+      "quote": "In the district indicated, the maximum building height shall be 45 feet.",
+      "last_amended": "2024-12-05"
+    }
+  ],
+  "inputs": [
+    {"name": "zoning_district", "type": "string", "required": true, "description": "Residence district governing the lot. Applicability equals R5D (via in_set); R5/R5A/R5B are NOT matched."},
+    {"name": "overlay_present", "type": "boolean", "required": false, "description": "True iff zoning.commercial_overlays[] is non-empty; when true -> professional_review_required (section 23-44)."},
+    {"name": "special_district_present", "type": "boolean", "required": false, "description": "True iff zoning.special_districts[] is non-empty; when true -> professional_review_required (section 23-44)."},
+    {"name": "historic_district", "type": "boolean", "required": false, "description": "True iff the lot is in a designated Historic District (section 23-426); when a caller supplies true -> professional_review_required."}
+  ],
+  "outputs": [
+    {"name": "max_building_height", "type": "number", "unit": "feet", "description": "Maximum building height (ft) for R5D. Separate typed constraint; not a buildable-envelope result. R5D has no setback in the source."}
+  ],
+  "parameters": [
+    {"name": "building_height_ft", "value": 45, "citation_ref": "zr-23-422", "note": "R5D maximum building height 45 ft (section 23-422), with no setback. Candidate value pending raw-HTML verification and G6 approval."}
+  ],
+  "applicability": {"op": "in_set", "input": "zoning_district", "values": ["R5D"]},
+  "computation": {
+    "steps": [
+      {"id": "bldg_h", "op": "identity", "args": [{"param": "building_height_ft"}], "note": "Maximum building height for R5D (section 23-422)."}
+    ],
+    "outputs": {
+      "max_building_height": {"step": "bldg_h"}
+    }
+  },
+  "exceptions": [
+    {"id": "commercial_overlay_modification", "description": "A commercial overlay may modify residence-district height (section 23-44); the citywide value is not emitted as final. Professional review required.", "condition": {"op": "equals", "input": "overlay_present", "value": true}, "effect": "professional_review_required", "citation_ref": null},
+    {"id": "special_district_modification", "description": "A mapped special district may modify height (section 23-44); the citywide value is not emitted as final. Professional review required.", "condition": {"op": "equals", "input": "special_district_present", "value": true}, "effect": "professional_review_required", "citation_ref": null},
+    {"id": "historic_district_base_height_match", "description": "In a designated Historic District the height may be constrained (section 23-426); the citywide value is not emitted as final. Professional review required.", "condition": {"op": "equals", "input": "historic_district", "value": true}, "effect": "professional_review_required", "citation_ref": null}
+  ],
+  "uncertainty_policy": {
+    "geometry_uncertain_coverage": "professional_review_required",
+    "data_conflict_coverage": "data_conflict",
+    "note": "An uncertain, split, sliver, or invalid M2-T013 geometric district assignment is never collapsed into a single definitive district: coverage downgrades to professional_review_required (or data_conflict)."
+  },
+  "limitations": [
+    "Draft extraction pending raw-HTML source verification and G6 qualified-human legal approval; not a Verified determination.",
+    "The source gives R5D only a maximum building height (45 ft) with no base height and no setback; neither is invented for R5D.",
+    "R5D shares the 45 ft building cap with R5 but is a DISTINCT envelope (R5 mandates a base height + setback; R5D does not); they are encoded as separate rules.",
+    "The section 23-424 qualifying-residential-site alternative (base 45 / building 55) is a SEPARATE rule (r5-qrs-height) and applies only where the section 12-10 test is met."
+  ]
+}

@@ -1,0 +1,46 @@
+{
+  "snapshot_id": "zr-23-424",
+  "snapshot_schema": "zr_section_snapshot/v1",
+  "jurisdiction": "nyc",
+  "corpus": "zoning_resolution",
+  "section_number": "23-424",
+  "section_title": "Alternative height and setback - qualifying residential sites (R1 through R5)",
+  "article": "II",
+  "chapter": "3",
+  "source": {
+    "source_id": "nyc-dcp-zoning-resolution-portal",
+    "official_channel": "html",
+    "request_url": "https://zr.planning.nyc.gov/article-ii/chapter-3/23-424",
+    "retrieved_at": "2026-07-22T00:00:00Z",
+    "document_currency_banner": null,
+    "document_currency_banner_note": "City of Yes for Housing Opportunity moved the R1-R5 residential bulk (height and setback) regulations into the ZR 23-42 series with a Last Amended date of 12/5/2024. The site-wide currency banner was not captured for this retrieval and is a needs_review item.",
+    "section_last_amended": "2024-12-05",
+    "section_last_amended_source_text": "Last Amended 12/5/2024",
+    "capture_method": "official_source_researcher_capture_2026-07-22",
+    "raw_html_verified": false,
+    "verification_required": "Draft capture of ZR 23-424 supplied by official-source-researcher (access 2026-07-22, zr.planning.nyc.gov). It has NOT been re-verified byte-for-byte against raw HTML by the rules-engineer, so raw_html_verified is false and extraction_status is extracted_draft. The governing section, the exact heights/depths, the district-to-statement association, and every applicability condition (building type, street width, qualifying-residential-site geography, special-district/overlay/historic-district context) MUST be confirmed by a qualified zoning professional (G6) before any rule citing this snapshot is published or Verified."
+  },
+  "verbatim_excerpt": "R5 R5A R5B R5D | Maximum Base Height 45 | Maximum Height of Buildings or other Structures 55",
+  "table": {
+    "columns": [
+      "Districts",
+      "Maximum Base Height",
+      "Maximum Height of Buildings or other Structures"
+    ],
+    "rows": [
+      {
+        "districts": "R5 R5A R5B R5D",
+        "maximum_base_height": "45",
+        "maximum_height_of_buildings_or_other_structures": "55"
+      }
+    ],
+    "table_note": "The §23-424 alternative (taller) envelope - base height 45 ft, building height 55 ft, with a setback per §23-423 - applies ONLY on a 'qualifying residential site' (§12-10): broadly a lot of 5,000 sf or more within the Greater Transit Zone with wide-street/short-block frontage and no excluding district. That geography cannot be evaluated from the canonical property_profile, so the alternative fails closed to professional_review_required."
+  },
+  "content_digest_sha256": "1ad17144b64593652e67e49edf7c1006e9c476074ce62d076e9804da844ce506",
+  "extraction_status": "extracted_draft",
+  "notes": [
+    "Alternative envelope for all four R5 variants on a qualifying residential site. Whether a lot qualifies is a separate legal determination (§12-10) NOT decided by this snapshot or any agent.",
+    "Captured for M4-T006 as a governing-source candidate for the R5-series height & setback DRAFT rule family (needs_review).",
+    "Nothing in this record is a Verified zoning determination. Verified requires an M4 published rule plus G6 qualified-human approval (owner directive item 5)."
+  ]
+}
