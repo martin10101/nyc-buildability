@@ -171,7 +171,7 @@
   "blockers": [],
   "worktree": ".claude/worktrees/M4-T005-rule-eval",
   "branch": "task/M4-T005-rule-eval",
-  "updated_at": "2026-07-22T22:20:54.305151+00:00",
+  "updated_at": "2026-07-23T01:50:47.314307+00:00",
   "progress_log": [
     {
       "at": "2026-07-22T17:37:44.389605+00:00",
@@ -229,5 +229,25 @@
       "status": "awaiting_gate",
       "message": "ALL required gates PASS at frozen impl SHA 84b50a7: G0 readiness, G1 data-contract, G3 code, G4 integration(qa)+UI/a11y(human-journey), G5 security. PR #84 25/25 CI green incl installed-wheel web-e2e (deployability proven). Two LOW non-blocking future-hardening notes recorded (FH-M4T005-1/2). NOT accepted: awaiting owner merge decision; acceptance also gated on dependency M4-T004 (G6-held). Nothing Published/Verified; endpoint disabled-by-default in production."
     }
-  ]
+  ],
+  "reconciliation": {
+    "reconciled_at": "2026-07-23T01:50:47.314307+00:00",
+    "reconciled_by": "orchestrator \u2014 control-only replan (no product-code change)",
+    "prior_ledger_status": "awaiting_gate",
+    "git_reality": "MERGED to main",
+    "merged_pr": 84,
+    "merge_commit": "1f6e3ae",
+    "reviewed_sha": "84b50a722d518d0ae6c233ee38affedbdaaebea3",
+    "gate_evidence": [
+      "G1 PASS data-contract-verifier (project-control/reports/M4-T005-G1-datacontract-review.md @ 84b50a7)",
+      "G3 PASS code-reviewer (project-control/reports/M4-T005-G3-code-review.md @ 84b50a7)",
+      "G4 PASS qa-engineer + human-journey-reviewer (project-control/reports/M4-T005-G4-qa-review.md + M4-T005-G4-human-journey-review.md @ 84b50a7)",
+      "G5 PASS security-reviewer (project-control/reports/M4-T005-G5-security-review.md @ 84b50a7)"
+    ],
+    "gate_json_recorded": "G0/G1/G3/G4/G5 recorded (G1/G3/G4/G5 recorded during this reconciliation; G4 JSON references qa half per M4-T004 precedent, human-journey PASS in report)",
+    "acceptance_status": "NOT accepted \u2014 draft only. Nothing Published, Verified, or legally final. All R5 rules remain needs_review.",
+    "acceptance_blocked_by": "G6 qualified-human legal approval on M4-T001 (transitive dependency M4-T005->M4-T004->M4-T002->M4-T001). This is the genuine legal-publication dependency; it blocks final acceptance + any publication/verification only. It is NOT weakened by this reconciliation.",
+    "note": "Merged as engineering (needs_review rules) under owner directive 2026-07-21. Status set to awaiting_gate to reflect merged+reviewed-but-unaccepted reality. No acceptance record created.",
+    "b010_scope": "B-010 (client R5 benchmark validation) blocks ONLY the client R5 benchmark-validation item. It is NOT a blocker for M4-T005 acceptance, nor for M4-T002/T003/T004/T005 or M5 engineering (owner directive 2026-07-22)."
+  }
 }
