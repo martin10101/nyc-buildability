@@ -1,0 +1,268 @@
+{
+  "contract_version": "1.0.0",
+  "coverage_status": "conditional",
+  "data_completeness": "missing_critical",
+  "needs_review": true,
+  "professional_review_required": false,
+  "not_verified_disclaimer": "DRAFT scenario - not a Verified determination. Assembled by deterministic code from a needs_review draft rule evaluation (pending raw-HTML source verification and G6 qualified-human legal approval, PRD sections 10-12). It must never be presented, stored, or consumed as Verified; coverage tops out at conditional.",
+  "evaluated_input": {
+    "bbl": "1000477501",
+    "profile_contract_version": "1.4.0",
+    "rule_evaluation_contract_version": "1.0.0",
+    "input_fingerprint": "sha256:c499fc3cc97d60d873917e24a6b4640374d5d0758a9faf8a804ab02b19d9562e"
+  },
+  "constraints": [
+    {
+      "key": "residential_far_cap",
+      "state": "draft",
+      "value": 15000.0,
+      "unit": "square_feet",
+      "data_completeness": "missing_noncritical",
+      "provenance": {
+        "rule_id": "r5-residential-far",
+        "rule_version": "0.1.0-draft",
+        "rule_status": "needs_review",
+        "output_name": "max_residential_floor_area_sq_ft",
+        "citations": [
+          {
+            "snapshot_id": "zr-23-21",
+            "section": "23-21",
+            "quote": "In the districts indicated, the maximum residential floor area ratio shall be as set forth in the following table. Separate maximum residential floor area ratios are set forth for standard zoning lots and zoning lots that are qualifying residential sites.",
+            "provenance": {
+              "snapshot_id": "zr-23-21",
+              "source_id": "nyc-dcp-zoning-resolution-portal",
+              "official_channel": "html",
+              "request_url": "https://zoningresolution.planning.nyc.gov/article-ii/chapter-3/23-21",
+              "retrieved_at": "2026-07-21T00:00:00Z",
+              "section_number": "23-21",
+              "section_title": "Floor Area Regulations for R1 Through R5 Districts",
+              "section_last_amended": "2024-12-05",
+              "document_currency_banner": null,
+              "content_digest_sha256": "4b6dd1f5e966b1e533f56f01e77a7d0e1db7b0fe1e4ae7927a12b9bc83e868d7",
+              "raw_html_verified": false,
+              "extraction_status": "extracted_draft"
+            },
+            "last_amended": "2024-12-05"
+          }
+        ],
+        "note": "Draft residential zoning-floor-area cap consumed verbatim from the canonical rule_evaluation trace output; not recomputed by the scenario engine."
+      },
+      "note": "DRAFT maximum residential ZONING-FLOOR-AREA CAP under ZR 23-21. NOT gross, net, sellable, or feasible floor area; NOT a buildable envelope. Height, stories, setbacks, yards, lot coverage, open space, parking, and street-wall constraints are UNKNOWN (see coverage matrix). Draft rule (needs_review); requires professional review; NOT Verified."
+    },
+    {
+      "key": "lot_area",
+      "state": "known",
+      "value": 10000.0,
+      "unit": "square_feet",
+      "data_completeness": "complete",
+      "provenance": {
+        "profile_field": "lot_geometry.area_sq_ft",
+        "provenance_refs": [
+          "prov-lotgeom"
+        ],
+        "resolved": [
+          {
+            "provenance_id": "prov-lotgeom",
+            "source_id": "nyc-dcp-lot-geometry",
+            "dataset_version": "26v1",
+            "original_field_name": "area_sq_ft",
+            "effective_date": null
+          }
+        ]
+      },
+      "note": "Zoning-lot area consumed from the rule_evaluation input (profile-sourced)."
+    },
+    {
+      "key": "zoning_district",
+      "state": "known",
+      "value": "R5",
+      "unit": null,
+      "data_completeness": "complete",
+      "provenance": null,
+      "note": "Confidently-assigned base zoning district used by the evaluation."
+    },
+    {
+      "key": "height_limit",
+      "state": "missing",
+      "value": null,
+      "unit": null,
+      "data_completeness": "missing_critical",
+      "provenance": null,
+      "note": "No rule family provides max height / story count; recorded as a gap. MUST NOT be inferred, defaulted, or estimated."
+    },
+    {
+      "key": "setbacks_yards",
+      "state": "missing",
+      "value": null,
+      "unit": null,
+      "data_completeness": "missing_critical",
+      "provenance": null,
+      "note": "No rule family provides front / side / rear yard buildable footprint; recorded as a gap. MUST NOT be inferred, defaulted, or estimated."
+    },
+    {
+      "key": "lot_coverage_open_space",
+      "state": "missing",
+      "value": null,
+      "unit": null,
+      "data_completeness": "missing_critical",
+      "provenance": null,
+      "note": "No rule family provides footprint <-> FAR interaction; recorded as a gap. MUST NOT be inferred, defaulted, or estimated."
+    },
+    {
+      "key": "street_wall_base_height",
+      "state": "missing",
+      "value": null,
+      "unit": null,
+      "data_completeness": "missing_critical",
+      "provenance": null,
+      "note": "No rule family provides lower-massing form; recorded as a gap. MUST NOT be inferred, defaulted, or estimated."
+    },
+    {
+      "key": "parking_loading",
+      "state": "missing",
+      "value": null,
+      "unit": null,
+      "data_completeness": "missing_noncritical",
+      "provenance": null,
+      "note": "No rule family provides ground/cellar program; recorded as a gap. MUST NOT be inferred, defaulted, or estimated."
+    },
+    {
+      "key": "use_group_overlay",
+      "state": "missing",
+      "value": null,
+      "unit": null,
+      "data_completeness": "missing_noncritical",
+      "provenance": null,
+      "note": "No rule family provides permitted use mix; recorded as a gap. MUST NOT be inferred, defaulted, or estimated."
+    },
+    {
+      "key": "special_districts_overlays",
+      "state": "missing",
+      "value": null,
+      "unit": null,
+      "data_completeness": "missing_critical",
+      "provenance": null,
+      "note": "No rule family provides modifications to base rules; recorded as a gap. MUST NOT be inferred, defaulted, or estimated."
+    },
+    {
+      "key": "density_bonuses",
+      "state": "missing",
+      "value": null,
+      "unit": null,
+      "data_completeness": "missing_noncritical",
+      "provenance": null,
+      "note": "No rule family provides FAR bonus (e.g. inclusionary housing); recorded as a gap. MUST NOT be inferred, defaulted, or estimated."
+    }
+  ],
+  "draft_zoning_floor_area_cap_sq_ft": 15000.0,
+  "cap_label": "DRAFT maximum residential ZONING-FLOOR-AREA CAP under ZR 23-21. NOT gross, net, sellable, or feasible floor area; NOT a buildable envelope. Height, stories, setbacks, yards, lot coverage, open space, parking, and street-wall constraints are UNKNOWN (see coverage matrix). Draft rule (needs_review); requires professional review; NOT Verified.",
+  "cap_provenance": {
+    "rule_id": "r5-residential-far",
+    "rule_version": "0.1.0-draft",
+    "rule_status": "needs_review",
+    "output_name": "max_residential_floor_area_sq_ft",
+    "citations": [
+      {
+        "snapshot_id": "zr-23-21",
+        "section": "23-21",
+        "quote": "In the districts indicated, the maximum residential floor area ratio shall be as set forth in the following table. Separate maximum residential floor area ratios are set forth for standard zoning lots and zoning lots that are qualifying residential sites.",
+        "provenance": {
+          "snapshot_id": "zr-23-21",
+          "source_id": "nyc-dcp-zoning-resolution-portal",
+          "official_channel": "html",
+          "request_url": "https://zoningresolution.planning.nyc.gov/article-ii/chapter-3/23-21",
+          "retrieved_at": "2026-07-21T00:00:00Z",
+          "section_number": "23-21",
+          "section_title": "Floor Area Regulations for R1 Through R5 Districts",
+          "section_last_amended": "2024-12-05",
+          "document_currency_banner": null,
+          "content_digest_sha256": "4b6dd1f5e966b1e533f56f01e77a7d0e1db7b0fe1e4ae7927a12b9bc83e868d7",
+          "raw_html_verified": false,
+          "extraction_status": "extracted_draft"
+        },
+        "last_amended": "2024-12-05"
+      }
+    ],
+    "note": "Draft residential zoning-floor-area cap consumed verbatim from the canonical rule_evaluation trace output; not recomputed by the scenario engine."
+  },
+  "assumptions": [],
+  "reasons": [
+    "Preliminary scenario: surfaced the canonical draft residential zoning-floor-area cap (ZR 23-21) from the rule_evaluation trace, verbatim. NOT a buildable envelope - see the coverage matrix for the rule families still MISSING."
+  ],
+  "coverage_matrix": [
+    {
+      "constraint_family": "residential_far_cap",
+      "governs": "draft max residential zoning floor area (R5)",
+      "rule_status_today": "draft",
+      "blocks_buildable_envelope": false
+    },
+    {
+      "constraint_family": "height_limit",
+      "governs": "max height / sky-exposure plane",
+      "rule_status_today": "missing",
+      "blocks_buildable_envelope": true
+    },
+    {
+      "constraint_family": "setbacks_yards",
+      "governs": "front / side / rear yard setbacks",
+      "rule_status_today": "missing",
+      "blocks_buildable_envelope": true
+    },
+    {
+      "constraint_family": "lot_coverage_open_space",
+      "governs": "lot coverage / open-space ratio",
+      "rule_status_today": "missing",
+      "blocks_buildable_envelope": true
+    },
+    {
+      "constraint_family": "street_wall_base_height",
+      "governs": "street wall / base height",
+      "rule_status_today": "missing",
+      "blocks_buildable_envelope": true
+    },
+    {
+      "constraint_family": "parking_loading",
+      "governs": "parking / loading",
+      "rule_status_today": "missing",
+      "blocks_buildable_envelope": false
+    },
+    {
+      "constraint_family": "use_group_overlay",
+      "governs": "use group / commercial overlay",
+      "rule_status_today": "missing",
+      "blocks_buildable_envelope": false
+    },
+    {
+      "constraint_family": "special_districts_overlays",
+      "governs": "special districts / mapped overlays",
+      "rule_status_today": "missing",
+      "blocks_buildable_envelope": true
+    },
+    {
+      "constraint_family": "density_bonuses",
+      "governs": "density bonuses (e.g. inclusionary housing)",
+      "rule_status_today": "missing",
+      "blocks_buildable_envelope": false
+    },
+    {
+      "constraint_family": "higher_density_bulk_tower",
+      "governs": "higher-density bulk / tower massing (non-R5)",
+      "rule_status_today": "out_of_scope",
+      "blocks_buildable_envelope": false
+    },
+    {
+      "constraint_family": "gross_to_net_efficiency_yield",
+      "governs": "gross-to-net / efficiency, unit count, constructability",
+      "rule_status_today": "out_of_scope",
+      "blocks_buildable_envelope": false
+    }
+  ],
+  "integrity_check": {
+    "performed": true,
+    "agreed": true,
+    "tolerance": 1e-06,
+    "method": "abs(recomputed - canonical) <= tolerance * max(1, abs(canonical))",
+    "note": "Verification-only recompute (far * lot_area) agreed with the canonical trace value within tolerance; the surfaced value remains the canonical trace output, not the recompute."
+  },
+  "_expected_failure": "required field scenario_kind is missing"
+}

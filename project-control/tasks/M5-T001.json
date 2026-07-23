@@ -1,0 +1,97 @@
+{
+  "task_id": "M5-T001",
+  "title": "Deterministic coverage-aware scenario foundation (consume canonical draft zoning-floor-area cap; no independent legal calc; no envelope inference)",
+  "task_type": "backend",
+  "milestone_id": "M5",
+  "objective": "Build a deterministic, strict-JSON, coverage-aware scenario FOUNDATION at the service layer that consumes property_profile 1.4.0 and rule_evaluation 1.0.0 READ-ONLY and produces a typed scenario object with an explicit constraint/completeness model. Consume the canonical rule_evaluation trace output max_residential_floor_area_sq_ft (+ its citations/lifecycle) as a DRAFT zoning-floor-area cap under ZR 23-21 - never recompute FAR*lot_area as a second legal path, never relabel it as gross/net/sellable/feasible area or a buildable envelope, and never infer height/stories/setbacks/yards/parking/lot-coverage/efficiency/unit-count/gross-to-net/constructability (all MISSING per the coverage matrix). Produce NO scenario on spatial conflict, rule conflict, professional_review_required, or malformed/non-finite input. Any integrity recompute is verification-only, never replaces the canonical value, and fails closed on disagreement. Preliminary scenarios vary only via explicit typed assumptions (no hidden utilization/optimization defaults). Preserve provenance + completeness status on every constraint and output. Carry needs_review + not_verified_disclaimer end-to-end; never emit verified. Additive/fail-closed only; profile/spatial/rule engines and canonical contracts unchanged. Full spec: project-control/reports/M5-T001-DRAFT-PROPOSAL.md.",
+  "business_reason": "M5 turns draft rule evaluation into honest feasibility framing. Foundation-first (completeness model + coverage matrix) prevents a floor-area cap being presented as a building. M5 engineering authorized against merged draft/needs_review M4 artifacts without treating M4 accepted (owner directives 2026-07-21/07-22); final acceptance still gated on genuine G6 legal approval of M4-T001 (not weakened; B-010 is not a blocker here).",
+  "inputs": [
+    "packages/contracts/schemas/v1/property_profile.schema.json (1.4.0) \u2014 zoning_features, lot_geometry, spatial_intersection (READ-ONLY)",
+    "packages/contracts/schemas/v1/rule_evaluation.schema.json (1.0.0) \u2014 evaluation_trace.outputs.max_residential_floor_area_sq_ft (canonical draft cap), coverage_status_draft, spatial_uncertainty, rule_conflict, family_coverage (READ-ONLY)",
+    "packages/contracts/schemas/v1/coverage_status.schema.json \u2014 canonical vocabulary (reference only; never redefine; narrow to exclude 'verified')",
+    "services/api/app/rules/rulesets/r5_residential_far.rule.json \u2014 confirms max_residential_floor_area_sq_ft is the canonical trace output (READ-ONLY)",
+    "packages/contracts/fixtures/valid/rule_evaluation/supported_family_draft.json \u2014 canonical example payload for AS fixtures",
+    "project-control/reports/M5-T001-DRAFT-PROPOSAL.md \u2014 authoritative full spec for this task"
+  ],
+  "outputs": [],
+  "dependencies": [
+    "M4-T005",
+    "M4-T002",
+    "M2-T012",
+    "M2-T013"
+  ],
+  "allowed_paths": [
+    "services/api/app/scenario/** (new deterministic foundation module + typed constraint/completeness model; consume profile/rule-evaluation via read-only imports only)",
+    "services/api/tests/scenario/** (acceptance pack AS-1..AS-12)",
+    "packages/contracts/schemas/v1/scenario.schema.json (new ADDITIVE draft output contract; reference coverage_status narrowed to exclude 'verified', never redefined) + its generated typegen/runtime-bundle/fixtures under the existing generated/fixture dirs",
+    "project-control/reports/M5-T001-producer-report.md"
+  ],
+  "forbidden_paths": [
+    "services/api/app/profile/**, services/api/app/spatial/**, services/api/app/rules/** (consume READ-ONLY; no modification)",
+    "packages/contracts/schemas/v1/property_profile.schema.json, rule_evaluation.schema.json, coverage_status.schema.json (no edits to existing canonical contracts)",
+    "services/api/app/api/v1/** and any new public endpoint (service-layer only this slice)",
+    "apps/web/**, any 3D rendering, any polished UI (expansion/3D holds active)",
+    "Independent legal recomputation as the surfaced value; inferring height/stories/setbacks/yards/parking/lot-coverage/efficiency/unit-count/gross-to-net/constructability; relabeling the cap; hidden utilization or optimization defaults; emitting 'verified'; publishing/Verifying any rule; collapsing spatial uncertainty",
+    "project-control/** except own producer report; .claude/** except own agent-memory"
+  ],
+  "acceptance_scenarios": [
+    "AS-1 confident R5 cap: single-district-confident R5 profile + conditional rule_evaluation whose trace carries a finite max_residential_floor_area_sq_ft -> one PRELIMINARY scenario surfacing that CANONICAL value verbatim with the draft-zoning-floor-area-cap label, full provenance, coverage conditional (never verified), needs_review + disclaimer. Test asserts surfaced value == trace value (not locally recomputed).",
+    "AS-2 unsupported district: non-R5/unimplemented family -> typed unsupported stub, no cap, visible reason (not silence).",
+    "AS-3 missing constraint: required datum absent -> NO scenario; typed outcome naming the missing constraint; nothing inferred.",
+    "AS-4 spatial uncertainty: boundary/split-lot/sliver/invalid-geometry or professional_review_required -> NO scenario; share ranges/review flags surfaced, never collapsed.",
+    "AS-5 legal-rule conflict: data_conflict/rule_conflict -> NO scenario; conflict surfaced with competing-rule provenance.",
+    "AS-6 malformed/non-finite inputs: NaN/\u00b1inf/huge-int/wrong-type cap or area -> fail-closed typed outcome, no crash, no negative/NaN/inf value, strict-JSON preserved.",
+    "AS-7 integrity disagreement fails closed: verification recompute disagrees with canonical trace value -> engine emits data_conflict no-scenario, never surfaces either number; canonical value never replaced.",
+    "AS-8 deterministic ordering: identical input -> byte-identical output (constraints, reasons, scenarios, traces).",
+    "AS-9 never-Verified: exhaustive check no field == verified; disclaimer + needs_review lineage on every produced scenario and on the cap value.",
+    "AS-10 provenance & completeness preserved: every constraint and every output carries its completeness state (PRD \u00a712) and provenance to source (rule citations+rule_id/version/status for the cap; profile field+dataset for lot area).",
+    "AS-11 explicit-assumption-only variation: a preliminary scenario with no assumptions == raw draft cap; a variant differs ONLY by an explicitly declared typed assumption; test proves no hidden utilization/efficiency/optimization factor is ever applied.",
+    "AS-12 regression: full repository CI green; zero modification to profile/spatial/rule-engine/canonical-contract code."
+  ],
+  "required_gates": [
+    "G0",
+    "G1",
+    "G3",
+    "G4",
+    "G5"
+  ],
+  "producer_agent": "scenario-optimization-engineer",
+  "reviewer_agents": [
+    "data-contract-verifier",
+    "code-reviewer",
+    "qa-engineer",
+    "security-reviewer"
+  ],
+  "status": "awaiting_gate",
+  "progress_percent": 95,
+  "risks": [
+    "HARD: consume property_profile 1.4.0 and rule_evaluation 1.0.0 READ-ONLY; surface the canonical max_residential_floor_area_sq_ft from the trace \u2014 never recompute it as the result value.",
+    "Never infer any envelope constraint (height/stories/setbacks/yards/parking/lot-coverage/efficiency/unit-count/gross-to-net/constructability); all MISSING per the coverage matrix. Never relabel the cap as gross/net/sellable/feasible area or a buildable envelope.",
+    "Fail closed: NO scenario on conflict/uncertainty/professional-review/malformed input; integrity recompute is verification-only and never replaces the canonical value.",
+    "No hidden utilization/optimization defaults; variation only via explicit typed assumptions. Never emit verified; carry needs_review + not_verified_disclaimer end-to-end.",
+    "M5 engineering authorized vs merged draft/needs_review M4 (owner 2026-07-21/07-22); FINAL ACCEPTANCE gated on genuine G6 legal approval of M4-T001 (dependency-accepted precondition) \u2014 NOT weakened. B-010 is not a blocker here.",
+    "Risk-required independent gates at ONE frozen SHA: G1 (new scenario contract), G3 (code), G4 (integration/regression), G5 (security). UI/3D excluded. CP-0032 not used.",
+    "Thin-client: local checkout + CI; negligible disk (no bulk data / no local db)."
+  ],
+  "blockers": [],
+  "created_at": "2026-07-23T01:59:03.137171+00:00",
+  "updated_at": "2026-07-23T02:44:06.905998+00:00",
+  "requirement_refs": [
+    "PRD.md \u00a77.2 (basic code-feasibility layer \u2014 deferred inferential fields are later, explicit-assumption/rule-backed work, never silently inferred here)",
+    "PRD.md \u00a79 (data provenance)",
+    "PRD.md \u00a712 (coverage status vocabulary + data-completeness status complete/missing_noncritical/missing_critical)",
+    "PRD.md \u00a713, \u00a713.1\u2013\u00a713.4 (scenario engine inputs/outputs/fields/validation; \u00a713.3 field structure with completeness states; \u00a713.4 reject-or-Conditional rule)",
+    "docs/PRODUCT_FLOW_AND_AI_BOUNDARIES.md (deterministic backend controls coverage; AI never up-labels or invents constraints)",
+    "docs/ACCEPTANCE_SCENARIO_STANDARD.md (AS pack format)"
+  ],
+  "worktree": ".claude/worktrees/M5-T001-scenario-foundation",
+  "progress_log": [
+    {
+      "at": "2026-07-23T02:02:23.301031+00:00",
+      "agent": "scenario-optimization-engineer",
+      "percent": 10,
+      "status": "in_progress",
+      "message": "Contracted + claimed; scope frozen; implementation starting"
+    }
+  ]
+}
