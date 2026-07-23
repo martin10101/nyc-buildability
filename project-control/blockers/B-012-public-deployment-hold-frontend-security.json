@@ -1,0 +1,16 @@
+{
+  "blocker_id": "B-012",
+  "title": "Public frontend deployment blocked until the reconciled frontend framework-security P0 upgrade is accepted",
+  "status": "open",
+  "affects": [
+    "public frontend deployment / production exposure of apps/web",
+    "any production deploy or G7 release of the web app"
+  ],
+  "detail": "The current main frontend tree carries next==15.3.4 / react==19.1.0 / react-dom==19.1.0 / eslint-config-next==15.3.4, which are affected by React CVE-2025-55182 (CVSS 10.0 RSC RCE; 19.1.x fix = 19.1.2) and by the Next.js July-20-2026 security release (4 HIGH + 5 MEDIUM; Maintenance-LTS target 15.5.21). Until the reconciled frontend framework-security P0 upgrade task is ACCEPTED and its P0 security gates (advisory-free full lock, committed-lockfile age gate, blocking audit, npm-tooling advisory check) pass, the web frontend MUST NOT be publicly deployed or exposed. This is a deployment hold; it deliberately does NOT reference the upgrade task's own id in affects/detail so it cannot block that task's acceptance (accepting the task is what clears this hold). Note the API separately has no auth/RLS and is INTERNAL/DEV-only (B-001 chain).",
+  "exact_human_action": "None to clear directly: this hold is cleared automatically when the orchestrator records acceptance of the reconciled frontend framework-security P0 upgrade (see gated_by_task) and confirms its security gates passed. Owner action is only to authorize that upgrade's dispatch and the age exception (B-013).",
+  "where_to_enter": "Cleared by the orchestrator upon accepting the gating task; no owner data entry.",
+  "minimum_permissions": "None.",
+  "how_it_will_be_tested": "A deploy/G7 checklist item asserts this blocker is resolved (gating task accepted + security gates green) before any public frontend deployment; CI/deploy definitions keep autoDeploy off until then.",
+  "gated_by_task": "M0-T019 (reconciled frontend framework-security P0 upgrade)",
+  "created_at": "2026-07-23T13:55:00Z"
+}

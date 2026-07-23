@@ -1,0 +1,16 @@
+{
+  "blocker_id": "B-013",
+  "title": "Owner decision needed: AGE-ONLY emergency exception for next@15.5.21 (< 7 days old)",
+  "status": "open",
+  "affects": [
+    "M0-T019 (frontend framework-security P0 upgrade) — blocked from acceptance until the owner grants or declines this AGE-ONLY exception",
+    "public frontend deployment (depends on the accepted M0-T019 security upgrade)"
+  ],
+  "detail": "The reconciled M0-T019 target is next==15.5.21 and eslint-config-next==15.5.21 (Next.js July-20-2026 Maintenance-LTS security release fixing 4 HIGH + 5 MEDIUM CVEs). Published 2026-07-20, it is ~3 days old as of 2026-07-23 — under the project's 7-complete-day release-age gate. Applying the security patch therefore requires an AGE-ONLY emergency exception. The agent may NOT self-authorize it. Per docs/DEPENDENCY_SECURITY_POLICY.md the exception may waive ONLY the release-age requirement; it may NEVER waive an advisory affecting the installed version, an integrity/hash failure, an unverified package, an unexpected registry host, or a failed test. It auto-expires at 7 days (2026-07-27, when 15.5.21 reaches 7 complete days) and is not a wildcard/org-wide/permanent/undocumented exception.",
+  "exact_human_action": "Owner reviews the security tradeoff (a HIGH/MEDIUM-fixing security release that is < 7 days old vs the 7-day age gate) and either (a) GRANTS an AGE-ONLY exception for next@15.5.21 + eslint-config-next@15.5.21 — recorded with the DEPENDENCY_SECURITY_POLICY exception fields (package+version, reason=security-patch-under-age-gate, authorizer, timestamp, auto-expiry 2026-07-27, scope = these two packages only) — or (b) DECLINES and the upgrade waits until 2026-07-27 when 15.5.21 clears the age gate, or (c) directs a different official patched 15.x target. No advisory, integrity, unverified-package, unexpected-host, or failed-test condition may be waived under any option.",
+  "where_to_enter": "Owner reply to the orchestrator; the exception record is committed into project-control/reports/M0-T019-frontend-security-reconciliation-2026-07-23.md and docs/DEPENDENCY_SECURITY_POLICY.md exception log at dispatch.",
+  "minimum_permissions": "None (owner security decision).",
+  "how_it_will_be_tested": "M0-T019 G0 verifies an owner-authorized AGE-ONLY exception record exists (or that the age gate is met without exception); the committed-lockfile age gate (FE-S9) otherwise fails closed on next@15.5.21 until 2026-07-27.",
+  "auto_expires": "2026-07-27T00:00:00Z (when next@15.5.21 reaches 7 complete days)",
+  "created_at": "2026-07-23T13:55:00Z"
+}
