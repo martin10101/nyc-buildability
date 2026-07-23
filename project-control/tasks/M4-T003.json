@@ -26,11 +26,29 @@
     "qa-engineer",
     "security-reviewer"
   ],
-  "status": "claimed",
-  "progress_percent": 10,
+  "status": "awaiting_gate",
+  "progress_percent": 98,
   "risks": [],
   "blockers": [],
   "created_at": "2026-07-21T22:43:17.373329+00:00",
-  "updated_at": "2026-07-21T22:44:22.052863+00:00",
-  "worktree": ".claude/worktrees/M4-T003-hardening"
+  "updated_at": "2026-07-23T01:33:09.926272+00:00",
+  "worktree": ".claude/worktrees/M4-T003-hardening",
+  "reconciliation": {
+    "reconciled_at": "2026-07-23T01:33:09.926272+00:00",
+    "reconciled_by": "orchestrator \u2014 control-only replan (no product-code change)",
+    "prior_ledger_status": "claimed",
+    "git_reality": "MERGED to main",
+    "merged_pr": 78,
+    "merge_commit": "f5ab631",
+    "reviewed_sha": "7051a7bd631d8bdef62807c106267e72f2e73edd",
+    "gate_evidence": [
+      "G3 PASS code-reviewer (project-control/reports/M4-T003-G3-code-review-round2.md @ 7051a7b)",
+      "G4 PASS qa-engineer (project-control/reports/M4-T003-G4-qa-review-round2.md @ 7051a7b)",
+      "G5 PASS security-reviewer round2 (project-control/reports/M4-T003-G5-security-review-round2.md @ 7051a7b; round1 FAIL reworked to PASS)"
+    ],
+    "gate_json_recorded": "G0 only; G3/G4/G5 verbatim PASS reports on file, gate-JSON backfill pending owner authorization",
+    "acceptance_status": "NOT accepted \u2014 draft only. Nothing Published, Verified, or legally final. All R5 rules remain needs_review.",
+    "acceptance_blocked_by": "G6 qualified-human legal approval on M4-T001 (transitive dependency M4-T005->M4-T004->M4-T002->M4-T001); B-010 client R5 benchmark for the client-validation item. These block ONLY publication/verification + final acceptance, per owner directive 2026-07-21.",
+    "note": "Merged as engineering (needs_review rules) under owner directive 2026-07-21. Status set to awaiting_gate to reflect merged+reviewed-but-unaccepted reality. No acceptance record created."
+  }
 }
