@@ -1,0 +1,240 @@
+{
+  "contract_version": "1.0.0",
+  "scenario_kind": "no_scenario",
+  "coverage_status": "data_conflict",
+  "data_completeness": "missing_critical",
+  "needs_review": true,
+  "professional_review_required": false,
+  "not_verified_disclaimer": "DRAFT scenario - not a Verified determination. Assembled by deterministic code from a needs_review draft rule evaluation (pending raw-HTML source verification and G6 qualified-human legal approval, PRD sections 10-12). It must never be presented, stored, or consumed as Verified; coverage tops out at conditional.",
+  "evaluated_input": {
+    "bbl": "1000477501",
+    "profile_contract_version": "1.4.0",
+    "rule_evaluation_contract_version": "1.0.0",
+    "input_fingerprint": "sha256:c499fc3cc97d60d873917e24a6b4640374d5d0758a9faf8a804ab02b19d9562e"
+  },
+  "constraints": [
+    {
+      "key": "residential_far_cap",
+      "state": "conflicting",
+      "value": null,
+      "unit": "square_feet",
+      "data_completeness": "missing_critical",
+      "provenance": {
+        "family": "residential_far",
+        "as_of_date": null,
+        "competing_output_names": [
+          "max_residential_floor_area_sq_ft"
+        ],
+        "competing_rules": [
+          {
+            "rule_id": "r5-residential-far",
+            "rule_version": "0.1.0-draft",
+            "effective_from": "2024-12-05",
+            "effective_to": null,
+            "output_names": [
+              "max_residential_floor_area_sq_ft"
+            ]
+          },
+          {
+            "rule_id": "r5-residential-far-alt",
+            "rule_version": "0.2.0-draft",
+            "effective_from": "2024-12-05",
+            "effective_to": null,
+            "output_names": [
+              "max_residential_floor_area_sq_ft"
+            ]
+          }
+        ],
+        "note": "two same-family rules simultaneously in effect for the same output"
+      },
+      "note": "Competing rules / conflicting data present; no cap surfaced. Conflict provenance retained in reasons/provenance."
+    },
+    {
+      "key": "lot_area",
+      "state": "known",
+      "value": 10000.0,
+      "unit": "square_feet",
+      "data_completeness": "complete",
+      "provenance": {
+        "profile_field": "lot_geometry.area_sq_ft",
+        "provenance_refs": [
+          "prov-lotgeom"
+        ],
+        "resolved": [
+          {
+            "provenance_id": "prov-lotgeom",
+            "source_id": "nyc-dcp-lot-geometry",
+            "dataset_version": "26v1",
+            "original_field_name": "area_sq_ft",
+            "effective_date": null
+          }
+        ]
+      },
+      "note": "Zoning-lot area consumed from the rule_evaluation input (profile-sourced)."
+    },
+    {
+      "key": "zoning_district",
+      "state": "conflicting",
+      "value": "R5",
+      "unit": null,
+      "data_completeness": "missing_critical",
+      "provenance": null,
+      "note": "Base zoning district as seen by the evaluation (never collapsed when uncertain)."
+    },
+    {
+      "key": "height_limit",
+      "state": "missing",
+      "value": null,
+      "unit": null,
+      "data_completeness": "missing_critical",
+      "provenance": null,
+      "note": "No rule family provides max height / story count; recorded as a gap. MUST NOT be inferred, defaulted, or estimated."
+    },
+    {
+      "key": "setbacks_yards",
+      "state": "missing",
+      "value": null,
+      "unit": null,
+      "data_completeness": "missing_critical",
+      "provenance": null,
+      "note": "No rule family provides front / side / rear yard buildable footprint; recorded as a gap. MUST NOT be inferred, defaulted, or estimated."
+    },
+    {
+      "key": "lot_coverage_open_space",
+      "state": "missing",
+      "value": null,
+      "unit": null,
+      "data_completeness": "missing_critical",
+      "provenance": null,
+      "note": "No rule family provides footprint <-> FAR interaction; recorded as a gap. MUST NOT be inferred, defaulted, or estimated."
+    },
+    {
+      "key": "street_wall_base_height",
+      "state": "missing",
+      "value": null,
+      "unit": null,
+      "data_completeness": "missing_critical",
+      "provenance": null,
+      "note": "No rule family provides lower-massing form; recorded as a gap. MUST NOT be inferred, defaulted, or estimated."
+    },
+    {
+      "key": "parking_loading",
+      "state": "missing",
+      "value": null,
+      "unit": null,
+      "data_completeness": "missing_noncritical",
+      "provenance": null,
+      "note": "No rule family provides ground/cellar program; recorded as a gap. MUST NOT be inferred, defaulted, or estimated."
+    },
+    {
+      "key": "use_group_overlay",
+      "state": "missing",
+      "value": null,
+      "unit": null,
+      "data_completeness": "missing_noncritical",
+      "provenance": null,
+      "note": "No rule family provides permitted use mix; recorded as a gap. MUST NOT be inferred, defaulted, or estimated."
+    },
+    {
+      "key": "special_districts_overlays",
+      "state": "missing",
+      "value": null,
+      "unit": null,
+      "data_completeness": "missing_critical",
+      "provenance": null,
+      "note": "No rule family provides modifications to base rules; recorded as a gap. MUST NOT be inferred, defaulted, or estimated."
+    },
+    {
+      "key": "density_bonuses",
+      "state": "missing",
+      "value": null,
+      "unit": null,
+      "data_completeness": "missing_noncritical",
+      "provenance": null,
+      "note": "No rule family provides FAR bonus (e.g. inclusionary housing); recorded as a gap. MUST NOT be inferred, defaulted, or estimated."
+    }
+  ],
+  "draft_zoning_floor_area_cap_sq_ft": null,
+  "cap_label": null,
+  "cap_provenance": null,
+  "assumptions": [],
+  "reasons": [
+    "NO SCENARIO (fail-closed): a legal-rule or data conflict is present; the scenario engine never selects, ranks, or merges competing rules.",
+    "rule_evaluation fail_safe_reason: rule_conflict."
+  ],
+  "coverage_matrix": [
+    {
+      "constraint_family": "residential_far_cap",
+      "governs": "draft max residential zoning floor area (R5)",
+      "rule_status_today": "draft",
+      "blocks_buildable_envelope": false
+    },
+    {
+      "constraint_family": "height_limit",
+      "governs": "max height / sky-exposure plane",
+      "rule_status_today": "missing",
+      "blocks_buildable_envelope": true
+    },
+    {
+      "constraint_family": "setbacks_yards",
+      "governs": "front / side / rear yard setbacks",
+      "rule_status_today": "missing",
+      "blocks_buildable_envelope": true
+    },
+    {
+      "constraint_family": "lot_coverage_open_space",
+      "governs": "lot coverage / open-space ratio",
+      "rule_status_today": "missing",
+      "blocks_buildable_envelope": true
+    },
+    {
+      "constraint_family": "street_wall_base_height",
+      "governs": "street wall / base height",
+      "rule_status_today": "missing",
+      "blocks_buildable_envelope": true
+    },
+    {
+      "constraint_family": "parking_loading",
+      "governs": "parking / loading",
+      "rule_status_today": "missing",
+      "blocks_buildable_envelope": false
+    },
+    {
+      "constraint_family": "use_group_overlay",
+      "governs": "use group / commercial overlay",
+      "rule_status_today": "missing",
+      "blocks_buildable_envelope": false
+    },
+    {
+      "constraint_family": "special_districts_overlays",
+      "governs": "special districts / mapped overlays",
+      "rule_status_today": "missing",
+      "blocks_buildable_envelope": true
+    },
+    {
+      "constraint_family": "density_bonuses",
+      "governs": "density bonuses (e.g. inclusionary housing)",
+      "rule_status_today": "missing",
+      "blocks_buildable_envelope": false
+    },
+    {
+      "constraint_family": "higher_density_bulk_tower",
+      "governs": "higher-density bulk / tower massing (non-R5)",
+      "rule_status_today": "out_of_scope",
+      "blocks_buildable_envelope": false
+    },
+    {
+      "constraint_family": "gross_to_net_efficiency_yield",
+      "governs": "gross-to-net / efficiency, unit count, constructability",
+      "rule_status_today": "out_of_scope",
+      "blocks_buildable_envelope": false
+    }
+  ],
+  "integrity_check": {
+    "performed": false,
+    "agreed": null,
+    "tolerance": 1e-06,
+    "method": "abs(recomputed - canonical) <= tolerance * max(1, abs(canonical))",
+    "note": "Not performed: a conflict stopped the build before any cap candidate."
+  }
+}
