@@ -1,7 +1,7 @@
 {
   "schema": "directive_verification/v1",
   "directive_id": "D-001",
-  "authority_note": "NON-AUTHORITATIVE mirror. Compliance is proven by the referenced tasks/gates and by tools/validate_directive_compliance.py; tools/project_control.py never reads this file to gate acceptance. Producer writes requirements.json; an independent verifier (!= producer) writes this file.",
+  "authority_note": "Independent per-requirement verdicts (clean-context review). Written by an independent verifier whose identity MUST differ from the producer of requirements.json. accept() reads this file as BLOCKING EVIDENCE (an in-regime task is refused unless every applicable requirement is PASS at the reviewed content identity, owner correction 1); acceptance AUTHORITY and all state transitions remain in tools/project_control.py \u2014 the registry is evidence the CLI consumes, not a second gate. Registry integrity is enforced by tools/validate_directive_compliance.py.",
   "producer": "orchestrator",
   "verifier": null,
   "reviewed_sha": null,

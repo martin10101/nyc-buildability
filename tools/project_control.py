@@ -347,10 +347,12 @@ def _directive_claim_check(t: dict, agent: str):
     allowed_paths touch governance/control-plane files) that a governance directive
     covers it (s19 / D-001-R024/R118)."""
     enabled, _version, _eff, gov_paths = _regime()
-    if not enabled:
-        return None
-    touches_gov = _touches_governance(t.get("allowed_paths") or [], gov_paths)
     in_regime = _task_in_regime(t)
+    # The per-task in-regime enforcement stands even if the regime is globally toggled
+    # off after a task was stamped (F5: uniform per-task gating, matching submit/gate/
+    # accept — no fail-open re-claim). The governance-path guard is a regime feature
+    # (it needs the configured governance_paths), so it is gated on `enabled`.
+    touches_gov = enabled and _touches_governance(t.get("allowed_paths") or [], gov_paths)
     if not in_regime and not touches_gov:
         return None  # grandfathered legacy/pre-regime task, non-governance scope
     reg_mod = _resolver()

@@ -53,6 +53,17 @@ def sha256_file(path: Path) -> str:
     return hashlib.sha256(path.read_bytes()).hexdigest()
 
 
+def _within(child: Path, parent: Path) -> bool:
+    """True iff `child` resolves to a path inside `parent` (path-containment guard,
+    defense-in-depth). A '../' or absolute registry-internal path value therefore
+    cannot point outside the directives tree; callers fail closed on False."""
+    try:
+        child.resolve().relative_to(parent.resolve())
+        return True
+    except (ValueError, OSError):
+        return False
+
+
 class Directive:
     """One directive's loaded records plus any integrity errors found on load."""
 
@@ -131,6 +142,9 @@ class DirectiveRegistry:
             seen.add(did)
             manifest_rel = entry.get("manifest") or ""
             dpath = self.dir / manifest_rel
+            if not _within(dpath, self.dir):
+                self.errors.append(f"index entry {did} manifest path escapes the registry: {manifest_rel!r}")
+                continue
             d = Directive(did, dpath.parent)
             d.index_entry = entry
             self._load_directive(d, dpath)
@@ -151,6 +165,9 @@ class DirectiveRegistry:
         for src in d.manifest.get("sources", []):
             fpath = d.dir_path / src.get("file", "")
             declared = src.get("content_digest_sha256")
+            if not _within(fpath, d.dir_path):
+                d.errors.append(f"{d.directive_id}: source path {src.get('file')!r} escapes the directive dir")
+                continue
             if not fpath.exists():
                 d.errors.append(f"{d.directive_id}: source file {src.get('file')!r} missing")
                 continue
@@ -196,7 +213,6 @@ class DirectiveRegistry:
         match/non-match."""
         if not isinstance(applic, dict):
             return False, "applicability is missing or not an object"
-        dims = ("task_ids", "task_types", "milestones", "paths", "lifecycle_events")
         for k in ("task_ids", "task_types", "milestones", "paths"):
             v = applic.get(k, [])
             if not isinstance(v, list):
@@ -435,6 +451,8 @@ def content_manifest(paths: list, root: Path = ROOT, exclude_prefixes: tuple = (
     seen: set[str] = set()
     for p in sorted(str(x) for x in paths):
         base = (root / p)
+        if not _within(base, root):
+            continue  # a '../'/absolute allowed_path can never pull in files outside root
         if base.is_file():
             files = [base]
         elif base.is_dir():

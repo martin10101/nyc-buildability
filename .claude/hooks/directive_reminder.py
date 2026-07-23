@@ -36,6 +36,7 @@ _TITLE_OK = re.compile(r"[^A-Za-z0-9 ,.\-()/:+]")
 
 PER_PROMPT_CAP = 400
 SESSION_CAP = 1400
+MAX_INDEX_BYTES = 262144  # 256 KiB; a directive index is tiny — larger is anomalous
 
 SUBSTANCE = ("If this prompt changes repository work, invoke /directive-compliance and "
              "capture/bind it before acting.")
@@ -66,8 +67,15 @@ def _load_active():
     if not idx.exists():
         return [], None
     try:
-        data = json.loads(idx.read_text(encoding="utf-8-sig"))
-    except (ValueError, OSError) as e:
+        raw = idx.read_bytes()
+    except OSError as e:
+        return [], f"directive registry index.json is unreadable ({e})"
+    if len(raw) > MAX_INDEX_BYTES:
+        return [], (f"directive registry index.json is unexpectedly large "
+                    f"({len(raw)} bytes > {MAX_INDEX_BYTES}); refusing to parse")
+    try:
+        data = json.loads(raw.decode("utf-8-sig"))
+    except (ValueError, UnicodeError) as e:
         return [], f"directive registry index.json is unreadable/corrupt ({e})"
     if not isinstance(data, dict) or not isinstance(data.get("directives"), list):
         return [], "directive registry index.json has an unexpected shape"

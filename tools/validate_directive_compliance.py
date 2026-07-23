@@ -220,6 +220,21 @@ def validate(registry_root: Path = DIRECTIVES_DIR, tasks_dir: Path = TASKS_DIR) 
             actual = hashlib.sha256("\n".join(sorted(req_ids)).encode()).hexdigest()
             if declared and declared != actual:
                 errors.append(f"c14 {w} requirements_id_digest mismatch: manifest {declared[:12]}.. actual {actual[:12]}.. (added/removed/renumbered id without amendment)")
+        # c14 requirements BODY integrity: the frozen content-manifest excludes the
+        # control-plane tree, so the reviewed matrix body (each row's text/evidence/
+        # classification) is protected here instead. Any edit to requirements.json after
+        # activation changes this digest -> a visible, CI-caught failure.
+        rfile_path = d.dir_path / (m.get("requirements_file") or "requirements.json")
+        declared_body = m.get("requirements_content_digest_sha256")
+        if not declared_body:
+            errors.append(f"c14 {w} manifest missing requirements_content_digest_sha256 "
+                          f"(the reviewed requirement bodies would be unprotected)")
+        elif rfile_path.exists():
+            actual_body = hashlib.sha256(rfile_path.read_bytes()).hexdigest()
+            if actual_body != declared_body:
+                errors.append(f"c14 {w} requirements.json content digest mismatch "
+                              f"(manifest {declared_body[:12]}.. actual {actual_body[:12]}..): "
+                              f"a requirement body was edited without a recorded amendment")
 
         # ---- c7/c10/c11/c12/c13 verification cross-checks ----
         v = d.verification
@@ -271,10 +286,28 @@ def validate(registry_root: Path = DIRECTIVES_DIR, tasks_dir: Path = TASKS_DIR) 
                 errors.append(f"c5 {w} affected_pr {pr!r} not an int/str")
 
         # ---- c15 no retroactive mutation of accepted packets ----
+        # A directive may legitimately scope a task that later reaches its own terminal
+        # `accepted` state (the bootstrap case: D-001 scopes M0-T023, which is accepted
+        # only at its own completion). That is NOT a retroactive mutation. What c15
+        # guards is a directive RETROACTIVELY binding an already-accepted task that never
+        # consented — an accepted task in scope whose packet does not cite this directive.
+        # (Mere presence is fine; the CLI's terminal-state guards enforce immutability.)
         for t in (m.get("scope", {}).get("task_ids") or []):
-            st = _ledger_task_status(tasks_dir, t)
-            if st == "accepted":
-                errors.append(f"c15 {w} scope includes accepted task {t}; accepted packets are immutable")
+            if _ledger_task_status(tasks_dir, t) != "accepted":
+                continue
+            tp = tasks_dir / f"{t}.json"
+            cites = False
+            if tp.exists():
+                try:
+                    trefs = _load_json(tp).get("directive_refs") or []
+                    cites = any(isinstance(r, dict) and r.get("directive_id") == did
+                                for r in trefs)
+                except (ValueError, OSError):
+                    cites = False
+            if not cites:
+                errors.append(f"c15 {w} scope includes accepted task {t} that does not cite "
+                              f"{did}; a directive may not retroactively bind an "
+                              f"already-accepted task")
 
         # ---- c6 applicable-task requirement references ----
         # For each in-regime affected task that exists, the task must cite the directive

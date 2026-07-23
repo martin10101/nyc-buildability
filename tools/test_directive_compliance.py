@@ -271,8 +271,7 @@ class MultipleDirectivesTest(unittest.TestCase):
             "created_at": "2026-07-23T00:00:00+00:00", "updated_at": "2026-07-23T00:00:00+00:00",
             "audit_log": [{"at": "2026-07-23T00:00:00+00:00", "by": "orchestrator", "note": "x"}],
         }
-        _write(d2dir / "manifest.json", manifest)
-        _write(d2dir / "requirements.json", {
+        d2_reqs = {
             "schema": "directive_requirements/v1", "directive_id": "D-002", "version": 1,
             "requirement_count": 1, "producer": "orchestrator",
             "requirements": [{
@@ -285,7 +284,11 @@ class MultipleDirectivesTest(unittest.TestCase):
                 "status": "pending", "status_reason": "", "evidence_paths": [], "reviewed_sha": None,
                 "maps_to": {"files": [], "tests": [], "tasks": []},
                 "supersedes": None, "not_applicable_justification": None, "checklist": []}],
-            "updated_at": "2026-07-23T00:00:00+00:00"})
+            "updated_at": "2026-07-23T00:00:00+00:00"}
+        _write(d2dir / "requirements.json", d2_reqs)
+        manifest["requirements_content_digest_sha256"] = hashlib.sha256(
+            (d2dir / "requirements.json").read_bytes()).hexdigest()
+        _write(d2dir / "manifest.json", manifest)
         _write(d2dir / "verification.json", {
             "schema": "directive_verification/v1", "directive_id": "D-002",
             "producer": "orchestrator", "verifier": None, "reviewed_sha": None,
@@ -374,6 +377,93 @@ class StdlibOnlyTests(unittest.TestCase):
 
     def test_validator_stdlib_only(self):
         self.assertTrue(self._imports(HERE / "validate_directive_compliance.py") <= self.STDLIB)
+
+
+class ClaudeMdSectionTests(unittest.TestCase):
+    """Real regressions for D-001-R001 (section <=12 lines) and R002 (no competing
+    .claude/CLAUDE.md) — the two requirements a review found had only inspection coverage."""
+
+    def _section_lines(self):
+        text = (ROOT / "CLAUDE.md").read_text(encoding="utf-8").splitlines()
+        start = next((i for i, l in enumerate(text)
+                      if l.strip() == "## Owner-directive compliance"), None)
+        self.assertIsNotNone(start, "CLAUDE.md must contain the 'Owner-directive compliance' section")
+        body = []
+        for l in text[start + 1:]:
+            if l.startswith("## "):
+                break
+            body.append(l)
+        # drop trailing blank lines
+        while body and not body[-1].strip():
+            body.pop()
+        return [text[start]] + body
+
+    def test_claude_md_section_bounds(self):
+        lines = self._section_lines()
+        self.assertLessEqual(len(lines), 12,
+                             f"section must be <=12 lines, got {len(lines)}")
+        self.assertIn("/directive-compliance", "\n".join(lines))
+
+    def test_no_competing_claude_md(self):
+        self.assertFalse((ROOT / ".claude" / "CLAUDE.md").exists(),
+                         "a competing .claude/CLAUDE.md must not exist")
+
+
+class C15AcceptedTaskTests(unittest.TestCase):
+    """F1: c15 must NOT flag a directive scoping its own task that reaches `accepted`
+    (the bootstrap case); it flags only an accepted task in scope that does not cite
+    the directive (retroactive/non-consensual binding)."""
+
+    def _validate_with_task(self, task):
+        tmp = Path(tempfile.mkdtemp(prefix="c15-"))
+        try:
+            (tmp / "M0-T023.json").write_text(json.dumps(task), encoding="utf-8")
+            errs = vdc.validate(REAL_REGISTRY, tmp)
+            return [e for e in errs if "c15" in e]
+        finally:
+            shutil.rmtree(tmp, ignore_errors=True)
+
+    def test_accepted_task_that_cites_directive_is_ok(self):
+        task = {"task_id": "M0-T023", "milestone_id": "M0", "task_type": "governance",
+                "status": "accepted", "allowed_paths": [], "directive_regime_version": "1.0",
+                "directive_refs": [{"directive_id": "D-001", "requirement_ids": "ALL"}]}
+        self.assertEqual(self._validate_with_task(task), [],
+                         "an accepted task that cites the directive must not trip c15")
+
+    def test_accepted_task_not_citing_is_flagged(self):
+        task = {"task_id": "M0-T023", "milestone_id": "M0", "task_type": "governance",
+                "status": "accepted", "allowed_paths": [], "directive_refs": []}
+        c15 = self._validate_with_task(task)
+        self.assertTrue(c15 and "retroactively bind" in c15[0],
+                        "an accepted task in scope that does not cite the directive must trip c15")
+
+
+class RequirementsBodyDigestTest(unittest.TestCase):
+    """F3: editing a requirement's body text (same IDs, same source hashes) must be
+    caught by the requirements_content_digest_sha256 check."""
+
+    def test_body_edit_detected(self):
+        fx = Fixture()
+        try:
+            r = fx.requirements()
+            r["requirements"][0]["text"] = r["requirements"][0]["text"] + " (silently weakened)"
+            fx.set_requirements(r)
+            errs = fx.validate()
+            self.assertTrue(any("content digest mismatch" in e for e in errs),
+                            "a requirements.json body edit must be caught")
+        finally:
+            fx.close()
+
+    def test_missing_content_digest_flagged(self):
+        fx = Fixture()
+        try:
+            m = fx.manifest()
+            m.pop("requirements_content_digest_sha256", None)
+            fx.set_manifest(m)
+            errs = fx.validate()
+            self.assertTrue(any("requirements_content_digest" in e for e in errs))
+        finally:
+            fx.close()
 
 
 if __name__ == "__main__":

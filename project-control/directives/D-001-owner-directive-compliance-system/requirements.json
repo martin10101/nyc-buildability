@@ -30,7 +30,7 @@
         "effective_date": "2026-07-23"
       },
       "dependencies": [],
-      "required_harness": "test_directive_compliance.py::test_claude_md_section_bounds",
+      "required_harness": "tools/test_directive_compliance.py",
       "required_evidence": "CLAUDE.md contains the titled section and its body is <=12 lines.",
       "producer": "orchestrator",
       "independent_verifier": "directive-compliance-verifier",
@@ -78,7 +78,7 @@
         "effective_date": "2026-07-23"
       },
       "dependencies": [],
-      "required_harness": "test_directive_compliance.py::test_no_competing_claude_md",
+      "required_harness": "tools/test_directive_compliance.py",
       "required_evidence": "No .claude/CLAUDE.md exists; section is a pointer, not the protocol.",
       "producer": "orchestrator",
       "independent_verifier": "directive-compliance-verifier",
@@ -264,7 +264,7 @@
         "effective_date": "2026-07-23"
       },
       "dependencies": [],
-      "required_harness": "test_directive_compliance.py::test_skill_present",
+      "required_harness": "tools/test_directive_compliance.py",
       "required_evidence": "File exists with description-only frontmatter (pack convention).",
       "producer": "orchestrator",
       "independent_verifier": "directive-compliance-verifier",
@@ -461,7 +461,7 @@
         "effective_date": "2026-07-23"
       },
       "dependencies": [],
-      "required_harness": "test_directive_compliance.py::test_registry_shape",
+      "required_harness": "tools/test_directive_compliance.py",
       "required_evidence": "Directory tree exists with schema/v1 and one dir per directive.",
       "producer": "orchestrator",
       "independent_verifier": "directive-compliance-verifier",
@@ -509,7 +509,7 @@
         "effective_date": "2026-07-23"
       },
       "dependencies": [],
-      "required_harness": "test_directive_compliance.py::test_multiple_active_directives",
+      "required_harness": "tools/test_directive_compliance.py",
       "required_evidence": "Two active directives coexist without eviction.",
       "producer": "orchestrator",
       "independent_verifier": "directive-compliance-verifier",
@@ -695,7 +695,7 @@
         "effective_date": "2026-07-23"
       },
       "dependencies": [],
-      "required_harness": "test_directive_compliance.py::test_append_only_history",
+      "required_harness": "tools/test_directive_compliance.py",
       "required_evidence": "Amendment is a new file; rewriting source-001 without a new amendment fails the validator.",
       "producer": "orchestrator",
       "independent_verifier": "directive-compliance-verifier",
@@ -791,7 +791,7 @@
         "effective_date": "2026-07-23"
       },
       "dependencies": [],
-      "required_harness": "test_directive_compliance.py::test_multiple_active_directives",
+      "required_harness": "tools/test_directive_compliance.py",
       "required_evidence": "index.json is a keyed list; adding a 2nd active directive does not evict the 1st.",
       "producer": "orchestrator",
       "independent_verifier": "directive-compliance-verifier",
@@ -883,7 +883,7 @@
         "effective_date": "2026-07-23"
       },
       "dependencies": [],
-      "required_harness": "test_directive_compliance.py::test_manifest_required_keys",
+      "required_harness": "tools/test_directive_compliance.py",
       "required_evidence": "Validator asserts each key present.",
       "producer": "orchestrator",
       "independent_verifier": "directive-compliance-verifier",
@@ -972,7 +972,7 @@
         "effective_date": "2026-07-23"
       },
       "dependencies": [],
-      "required_harness": "test_directive_compliance.py::test_requirement_required_keys",
+      "required_harness": "tools/test_directive_compliance.py",
       "required_evidence": "Validator asserts each key present per requirement row.",
       "producer": "orchestrator",
       "independent_verifier": "directive-compliance-verifier",
@@ -1020,7 +1020,7 @@
         "effective_date": "2026-07-23"
       },
       "dependencies": [],
-      "required_harness": "test_directive_compliance.py::test_bootstrap_self_proof",
+      "required_harness": "tools/test_directive_compliance.py",
       "required_evidence": "validate_directive_compliance.py --check passes over D-001; M0-T023 cites D-001.",
       "producer": "orchestrator",
       "independent_verifier": "directive-compliance-verifier",
@@ -1068,7 +1068,7 @@
         "effective_date": "2026-07-23"
       },
       "dependencies": [],
-      "required_harness": "test_project_control.py::test_directive_single_authority",
+      "required_harness": "tools/test_project_control.py",
       "required_evidence": "New checks add reasons to accept()'s existing list; no override/skip flag; no parallel state machine.",
       "producer": "orchestrator",
       "independent_verifier": "directive-compliance-verifier",
@@ -1116,7 +1116,7 @@
         "effective_date": "2026-07-23"
       },
       "dependencies": [],
-      "required_harness": "test_project_control.py::test_claim_requires_directive_refs",
+      "required_harness": "tools/test_project_control.py",
       "required_evidence": "claim of an in-regime task without directive_refs is refused.",
       "producer": "orchestrator",
       "independent_verifier": "directive-compliance-verifier",
@@ -1164,7 +1164,7 @@
         "effective_date": "2026-07-23"
       },
       "dependencies": [],
-      "required_harness": "test_project_control.py::test_submit_requires_evidence_map",
+      "required_harness": "tools/test_project_control.py",
       "required_evidence": "submit without an evidence map covering applicable requirements is refused.",
       "producer": "orchestrator",
       "independent_verifier": "directive-compliance-verifier",
@@ -1212,7 +1212,7 @@
         "effective_date": "2026-07-23"
       },
       "dependencies": [],
-      "required_harness": "test_project_control.py::test_accept_requires_final_verification",
+      "required_harness": "tools/test_project_control.py",
       "required_evidence": "accept of an in-regime task without a matching-identity final verification gate is refused.",
       "producer": "orchestrator",
       "independent_verifier": "directive-compliance-verifier",
@@ -1260,7 +1260,7 @@
         "effective_date": "2026-07-23"
       },
       "dependencies": [],
-      "required_harness": "test_project_control.py::test_stale_verification_after_change",
+      "required_harness": "tools/test_project_control.py",
       "required_evidence": "verify at identity A then change to B -> prior PASS is stale and does not satisfy accept.",
       "producer": "orchestrator",
       "independent_verifier": "directive-compliance-verifier",
@@ -1308,7 +1308,7 @@
         "effective_date": "2026-07-23"
       },
       "dependencies": [],
-      "required_harness": "test_project_control.py::test_producer_ne_verifier",
+      "required_harness": "tools/test_project_control.py",
       "required_evidence": "Reuses existing gate/accept producer!=reviewer enforcement; a same-identity final verification is refused.",
       "producer": "orchestrator",
       "independent_verifier": "directive-compliance-verifier",
@@ -1356,7 +1356,7 @@
         "effective_date": "2026-07-23"
       },
       "dependencies": [],
-      "required_harness": "test_directive_compliance.py::test_not_applicable_requires_justification",
+      "required_harness": "tools/test_directive_compliance.py",
       "required_evidence": "A NOT_APPLICABLE state without justification+independent approver fails the validator.",
       "producer": "orchestrator",
       "independent_verifier": "directive-compliance-verifier",
@@ -1404,7 +1404,7 @@
         "effective_date": "2026-07-23"
       },
       "dependencies": [],
-      "required_harness": "test_project_control.py::test_unresolved_blocks_accept",
+      "required_harness": "tools/test_project_control.py, tools/test_directive_compliance.py",
       "required_evidence": "Any such verification state blocks accept.",
       "producer": "orchestrator",
       "independent_verifier": "directive-compliance-verifier",
@@ -1454,7 +1454,7 @@
         "effective_date": "2026-07-23"
       },
       "dependencies": [],
-      "required_harness": "test_project_control.py::test_accepted_tasks_immutable",
+      "required_harness": "tools/test_project_control.py",
       "required_evidence": "All 42 accepted packets remain byte-stable; terminal-state guards untouched.",
       "producer": "orchestrator",
       "independent_verifier": "directive-compliance-verifier",
@@ -1502,7 +1502,7 @@
         "effective_date": "2026-07-23"
       },
       "dependencies": [],
-      "required_harness": "test_project_control.py::test_regime_migration",
+      "required_harness": "tools/test_project_control.py",
       "required_evidence": "DIRECTIVE_REGIME_EFFECTIVE recorded; regime-entry transitions coded.",
       "producer": "orchestrator",
       "independent_verifier": "directive-compliance-verifier",
@@ -1551,7 +1551,7 @@
         "effective_date": "2026-07-23"
       },
       "dependencies": [],
-      "required_harness": "test_project_control.py::test_no_deadlock_inflight",
+      "required_harness": "tools/test_project_control.py",
       "required_evidence": "Every current in-flight task transitions without directive_refs under the grandfather rule (migration table).",
       "producer": "orchestrator",
       "independent_verifier": "directive-compliance-verifier",
@@ -1785,7 +1785,7 @@
         "effective_date": "2026-07-23"
       },
       "dependencies": [],
-      "required_harness": "test_directive_compliance.py::test_rule_present",
+      "required_harness": "tools/test_directive_compliance.py",
       "required_evidence": "Directives-registry rules section added.",
       "producer": "orchestrator",
       "independent_verifier": "directive-compliance-verifier",
@@ -1882,7 +1882,7 @@
         "effective_date": "2026-07-23"
       },
       "dependencies": [],
-      "required_harness": "test_readonly_agent_guard.py",
+      "required_harness": "tools/test_readonly_agent_guard.py",
       "required_evidence": "File exists with reviewer frontmatter.",
       "producer": "orchestrator",
       "independent_verifier": "directive-compliance-verifier",
@@ -1930,7 +1930,7 @@
         "effective_date": "2026-07-23"
       },
       "dependencies": [],
-      "required_harness": "test_readonly_agent_guard.py::directive-compliance-verifier",
+      "required_harness": "tools/test_readonly_agent_guard.py",
       "required_evidence": "Name added to READ_ONLY_AGENTS frozenset AND to the guard test roster; denied mutating Bash.",
       "producer": "orchestrator",
       "independent_verifier": "directive-compliance-verifier",
@@ -2196,7 +2196,7 @@
         "effective_date": "2026-07-23"
       },
       "dependencies": [],
-      "required_harness": "test_directive_compliance.py::test_validator_stdlib_only",
+      "required_harness": "tools/test_directive_compliance.py",
       "required_evidence": "Validator imports only stdlib; runs read-only with --check.",
       "producer": "orchestrator",
       "independent_verifier": "directive-compliance-verifier",
@@ -2244,7 +2244,7 @@
         "effective_date": "2026-07-23"
       },
       "dependencies": [],
-      "required_harness": "",
+      "required_harness": "tools/test_directive_compliance.py",
       "required_evidence": "New steps added to ci.yml control-plane job.",
       "producer": "orchestrator",
       "independent_verifier": "directive-compliance-verifier",
@@ -2293,7 +2293,7 @@
         "effective_date": "2026-07-23"
       },
       "dependencies": [],
-      "required_harness": "test_directive_compliance.py",
+      "required_harness": "tools/test_directive_compliance.py",
       "required_evidence": "Each check has a positive and negative test.",
       "producer": "orchestrator",
       "independent_verifier": "directive-compliance-verifier",
@@ -2406,7 +2406,7 @@
         "effective_date": "2026-07-23"
       },
       "dependencies": [],
-      "required_harness": "test_directive_compliance.py::test_validator_stdlib_only",
+      "required_harness": "tools/test_directive_compliance.py",
       "required_evidence": "No lockfile change; all new tools stdlib-only.",
       "producer": "orchestrator",
       "independent_verifier": "directive-compliance-verifier",
@@ -2452,7 +2452,7 @@
         "effective_date": "2026-07-23"
       },
       "dependencies": [],
-      "required_harness": "test_directive_reminder.py::test_events_and_channel",
+      "required_harness": "tools/test_directive_reminder.py",
       "required_evidence": "Hook registered on SessionStart+UserPromptSubmit; reads registry only; additionalContext + exit 0.",
       "producer": "orchestrator",
       "independent_verifier": "directive-compliance-verifier",
@@ -2501,7 +2501,7 @@
         "effective_date": "2026-07-23"
       },
       "dependencies": [],
-      "required_harness": "test_directive_reminder.py::test_size_cap",
+      "required_harness": "tools/test_directive_reminder.py",
       "required_evidence": "Injected text under a fixed byte cap and contains the substance line.",
       "producer": "orchestrator",
       "independent_verifier": "directive-compliance-verifier",
@@ -2549,7 +2549,7 @@
         "effective_date": "2026-07-23"
       },
       "dependencies": [],
-      "required_harness": "test_project_control.py::test_claim_requires_directive_refs",
+      "required_harness": "tools/test_project_control.py, tools/test_directive_reminder.py",
       "required_evidence": "CLI lifecycle enforcement blocks in-regime transitions lacking refs; read/status/test commands pass through.",
       "producer": "orchestrator",
       "independent_verifier": "directive-compliance-verifier",
@@ -2598,7 +2598,7 @@
         "effective_date": "2026-07-23"
       },
       "dependencies": [],
-      "required_harness": "test_agent_dispatch_guard.py",
+      "required_harness": "tools/test_agent_dispatch_guard.py, tools/test_readonly_agent_guard.py",
       "required_evidence": "Existing guard files change only additively (roster append); their existing tests still pass.",
       "producer": "orchestrator",
       "independent_verifier": "directive-compliance-verifier",
@@ -2647,7 +2647,7 @@
         "effective_date": "2026-07-23"
       },
       "dependencies": [],
-      "required_harness": "test_directive_compliance.py + test_project_control.py",
+      "required_harness": "tools/test_directive_compliance.py, tools/test_project_control.py",
       "required_evidence": "Each scenario has a named test.",
       "producer": "orchestrator",
       "independent_verifier": "directive-compliance-verifier",
@@ -3383,7 +3383,7 @@
         "effective_date": "2026-07-23"
       },
       "dependencies": [],
-      "required_harness": "test_directive_compliance.py",
+      "required_harness": "tools/test_directive_compliance.py",
       "required_evidence": "Validator + tests cover the listed families where applicable to this task.",
       "producer": "orchestrator",
       "independent_verifier": "directive-compliance-verifier",
@@ -3649,7 +3649,7 @@
         "effective_date": "2026-07-23"
       },
       "dependencies": [],
-      "required_harness": "test_project_control.py::test_resolver_fail_closed",
+      "required_harness": "tools/test_project_control.py, tools/test_directive_compliance.py",
       "required_evidence": "tools/directive_registry.py imported by both CLI and validator; bad refs fail closed.",
       "producer": "orchestrator",
       "independent_verifier": "directive-compliance-verifier",
@@ -3700,7 +3700,7 @@
         "effective_date": "2026-07-23"
       },
       "dependencies": [],
-      "required_harness": "test_directive_compliance.py::test_applicability_present",
+      "required_harness": "tools/test_directive_compliance.py",
       "required_evidence": "Every requirement carries an applicability object.",
       "producer": "orchestrator",
       "independent_verifier": "directive-compliance-verifier",
@@ -3749,7 +3749,7 @@
         "effective_date": "2026-07-23"
       },
       "dependencies": [],
-      "required_harness": "test_project_control.py::test_no_selective_citation",
+      "required_harness": "tools/test_project_control.py",
       "required_evidence": "A task citing a strict subset of applicable requirements is refused.",
       "producer": "orchestrator",
       "independent_verifier": "directive-compliance-verifier",
@@ -3798,7 +3798,7 @@
         "effective_date": "2026-07-23"
       },
       "dependencies": [],
-      "required_harness": "test_project_control.py::test_unresolved_scope_blocks",
+      "required_harness": "tools/test_project_control.py",
       "required_evidence": "Resolver returns unresolved -> CLI blocks the transition and points to blocker/owner decision.",
       "producer": "orchestrator",
       "independent_verifier": "directive-compliance-verifier",
@@ -3847,7 +3847,7 @@
         "effective_date": "2026-07-23"
       },
       "dependencies": [],
-      "required_harness": "test_directive_compliance.py::test_directive_states",
+      "required_harness": "tools/test_directive_compliance.py",
       "required_evidence": "index/manifest status uses the state vocabulary; resolver honors it.",
       "producer": "orchestrator",
       "independent_verifier": "directive-compliance-verifier",
@@ -3943,7 +3943,7 @@
         "effective_date": "2026-07-23"
       },
       "dependencies": [],
-      "required_harness": "test_directive_compliance.py::test_no_silent_rewrite_or_renumber",
+      "required_harness": "tools/test_directive_compliance.py",
       "required_evidence": "Rewriting a source without a new amendment, or dropping/renumbering an active requirement id, fails the validator.",
       "producer": "orchestrator",
       "independent_verifier": "directive-compliance-verifier",
@@ -3991,7 +3991,7 @@
         "effective_date": "2026-07-23"
       },
       "dependencies": [],
-      "required_harness": "test_project_control.py::test_regime_entry_transitions",
+      "required_harness": "tools/test_project_control.py",
       "required_evidence": "A legacy nonterminal task entering rework/reclaim is stamped in-regime and then requires refs; created_at alone does not keep it grandfathered after rework.",
       "producer": "orchestrator",
       "independent_verifier": "directive-compliance-verifier",
@@ -4039,7 +4039,7 @@
         "effective_date": "2026-07-23"
       },
       "dependencies": [],
-      "required_harness": "test_project_control.py::test_migration_table_all_states",
+      "required_harness": "tools/test_project_control.py",
       "required_evidence": "A test enumerates each current status and shows a legal path forward.",
       "producer": "orchestrator",
       "independent_verifier": "directive-compliance-verifier",
@@ -4087,7 +4087,7 @@
         "effective_date": "2026-07-23"
       },
       "dependencies": [],
-      "required_harness": "test_project_control.py::test_content_manifest_identity",
+      "required_harness": "tools/test_project_control.py",
       "required_evidence": "Content-manifest match, not raw SHA equality, gates final verification.",
       "producer": "orchestrator",
       "independent_verifier": "directive-compliance-verifier",
@@ -4135,7 +4135,7 @@
         "effective_date": "2026-07-23"
       },
       "dependencies": [],
-      "required_harness": "test_project_control.py::test_evidence_identity_merge_rebase_squash",
+      "required_harness": "tools/test_project_control.py",
       "required_evidence": "Each scenario asserts correct stale/fresh behavior.",
       "producer": "orchestrator",
       "independent_verifier": "directive-compliance-verifier",
@@ -4183,7 +4183,7 @@
         "effective_date": "2026-07-23"
       },
       "dependencies": [],
-      "required_harness": "test_directive_reminder.py::test_no_raw_source",
+      "required_harness": "tools/test_directive_reminder.py",
       "required_evidence": "Injected text contains IDs/summaries/pointers only; no verbatim source.",
       "producer": "orchestrator",
       "independent_verifier": "directive-compliance-verifier",
@@ -4231,7 +4231,7 @@
         "effective_date": "2026-07-23"
       },
       "dependencies": [],
-      "required_harness": "test_directive_reminder.py::test_size_cap_and_dedup",
+      "required_harness": "tools/test_directive_reminder.py",
       "required_evidence": "Output <= cap; repeated identical prompt yields a shortened/deduped reminder.",
       "producer": "orchestrator",
       "independent_verifier": "directive-compliance-verifier",
@@ -4279,7 +4279,7 @@
         "effective_date": "2026-07-23"
       },
       "dependencies": [],
-      "required_harness": "test_directive_reminder.py::test_corrupt_registry_warns",
+      "required_harness": "tools/test_directive_reminder.py",
       "required_evidence": "A corrupt registry yields a visible warning (not empty output).",
       "producer": "orchestrator",
       "independent_verifier": "directive-compliance-verifier",
@@ -4327,7 +4327,7 @@
         "effective_date": "2026-07-23"
       },
       "dependencies": [],
-      "required_harness": "test_directive_reminder.py::test_injection_safe",
+      "required_harness": "tools/test_directive_reminder.py",
       "required_evidence": "Registry content is never executed; only IDs/pointers/whitelisted summary chars emitted.",
       "producer": "orchestrator",
       "independent_verifier": "directive-compliance-verifier",
@@ -4421,7 +4421,7 @@
         "effective_date": "2026-07-23"
       },
       "dependencies": [],
-      "required_harness": "test_directive_compliance.py + test_project_control.py + test_directive_reminder.py",
+      "required_harness": "tools/test_directive_compliance.py, tools/test_project_control.py, tools/test_directive_reminder.py",
       "required_evidence": "Each listed scenario has a named test.",
       "producer": "orchestrator",
       "independent_verifier": "directive-compliance-verifier",
@@ -4526,8 +4526,8 @@
         "effective_date": "2026-07-23"
       },
       "dependencies": [],
-      "required_harness": "test_project_control.py::test_directive_single_authority",
-      "required_evidence": "Acceptance authority stays in accept(); resolver only validates references; blocking flows through blockers/holds.",
+      "required_harness": "tools/test_project_control.py",
+      "required_evidence": "Acceptance authority stays in accept(); the resolver validates references AND surfaces unresolved verification.json as blocking EVIDENCE for accept() (owner correction 1); the registry is not a second gate/competing authority.",
       "producer": "orchestrator",
       "independent_verifier": "directive-compliance-verifier",
       "status": "pending",

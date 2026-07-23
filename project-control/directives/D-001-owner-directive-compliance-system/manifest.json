@@ -223,5 +223,6 @@
     "D-001-R117",
     "D-001-R118"
   ],
-  "requirements_id_digest_sha256": "0644d03da718d88beabbe4ddddca33e44fea66755ef804791a22f7f37c002ccd"
+  "requirements_id_digest_sha256": "0644d03da718d88beabbe4ddddca33e44fea66755ef804791a22f7f37c002ccd",
+  "requirements_content_digest_sha256": "b6c033619b9585d4c9ee109d207aaab370ea2a947f723ae1f6bce1c2cfd828a9"
 }

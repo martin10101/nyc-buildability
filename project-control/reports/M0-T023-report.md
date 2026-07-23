@@ -76,9 +76,30 @@ enforced separately by the validator). Regime effective date = capture date 2026
 ## Known limitations
 
 Cross-commit append-only of source/requirement IDs is enforced structurally (source digests +
-`locked_requirement_ids` + id digest) and by independent review + git history, not by a stateless
-single-commit validator. Semantic completeness of directive decomposition is independently reviewed,
-not machine-proven. See the enforcement-tier statement in the PR return.
+`locked_requirement_ids` + id digest + `requirements_content_digest_sha256`) and by independent
+review + git history, not by a stateless single-commit validator. Semantic completeness of directive
+decomposition is independently reviewed, not machine-proven. Additional documented limitations:
+- **F4 (multi-task-per-directive):** `verification.json` carries a single `reviewed_manifest_sha256`;
+  a directive cited by two tasks with different `allowed_paths` would hit a content-identity mismatch
+  at accept. Not reachable for D-001 (one task, M0-T023); a limitation for future multi-task directives.
+- **F7 (`.gitattributes` scope):** the registry is LF-pinned; the broader content-manifest'd work
+  product (`CLAUDE.md`, `tools/`, `.claude/`, `.github/`) is not eol-normalized. Acceptance runs on the
+  single orchestrator machine, so submit/accept content-manifests are self-consistent; cross-platform
+  re-derivation is the documented residual.
+- **D2 (GitHub CI):** local suites are reproduced green; the GitHub Actions conclusion for the frozen
+  head is captured separately via `gh` (local vs remote CI stated separately in the return).
+
+## Independent review and corrections
+
+The frozen-head review found: G4-control PASS, G5-security PASS (2 Low: L1 resolver path-containment,
+L2 reminder read-cap), G4-directive PASS ×2 (all 89 requirements SATISFIED), **G3-code FAIL** (F1 a c15
+check that would break CI on M0-T023 acceptance; F2 a rule-doc sentence contradicting `accept()`; F3
+the requirements.json body outside the frozen identity). All were corrected before re-review: c15 now
+flags only retroactive/non-consensual binding (+test); the two-lane wording now accurately states
+`accept()` reads `verification.json` as blocking evidence; a `requirements_content_digest_sha256`
+locks the matrix body (+test); L1/L2/F5/F6 applied; real R001/R002 regressions added; `required_harness`
+relabeled to real runnable files. This is the directive-compliance protocol operating on its own
+implementation (FAIL → correct → re-verify).
 
 ## Security and provenance impact
 

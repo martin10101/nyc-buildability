@@ -1140,12 +1140,13 @@ def make_directive(pc: Path, did: str, slug: str, task_ids, task_types, mileston
         "requirements_id_digest_sha256": _hashlib.sha256("\n".join(sorted(ids)).encode()).hexdigest(),
         "created_at": "2026-07-23T00:00:00+00:00", "updated_at": "2026-07-23T00:00:00+00:00",
         "audit_log": [{"at": "2026-07-23T00:00:00+00:00", "by": "orchestrator", "note": "x"}]}
+    reqs_obj = {"schema": "directive_requirements/v1", "directive_id": did, "version": 1,
+                "producer": "orchestrator", "requirement_count": len(reqs),
+                "requirements": reqs, "updated_at": "2026-07-23T00:00:00+00:00"}
+    (ddir / "requirements.json").write_text(json.dumps(reqs_obj, indent=2), encoding="utf-8")
+    manifest["requirements_content_digest_sha256"] = _hashlib.sha256(
+        (ddir / "requirements.json").read_bytes()).hexdigest()
     (ddir / "manifest.json").write_text(json.dumps(manifest, indent=2), encoding="utf-8")
-    (ddir / "requirements.json").write_text(json.dumps(
-        {"schema": "directive_requirements/v1", "directive_id": did, "version": 1,
-         "producer": "orchestrator", "requirement_count": len(reqs),
-         "requirements": reqs, "updated_at": "2026-07-23T00:00:00+00:00"}, indent=2),
-        encoding="utf-8")
     (ddir / "verification.json").write_text(json.dumps(
         {"schema": "directive_verification/v1", "directive_id": did, "producer": "orchestrator",
          "verifier": None, "reviewed_sha": None, "reviewed_manifest_sha256": None,
