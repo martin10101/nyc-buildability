@@ -63,7 +63,7 @@
     "security-reviewer"
   ],
   "status": "awaiting_gate",
-  "progress_percent": 85,
+  "progress_percent": 95,
   "risks": [
     "HARD: consume property_profile 1.4.0 and rule_evaluation 1.0.0 READ-ONLY; surface the canonical max_residential_floor_area_sq_ft from the trace \u2014 never recompute it as the result value.",
     "Never infer any envelope constraint (height/stories/setbacks/yards/parking/lot-coverage/efficiency/unit-count/gross-to-net/constructability); all MISSING per the coverage matrix. Never relabel the cap as gross/net/sellable/feasible area or a buildable envelope.",
@@ -75,7 +75,7 @@
   ],
   "blockers": [],
   "created_at": "2026-07-23T01:59:03.137171+00:00",
-  "updated_at": "2026-07-23T02:35:52.804060+00:00",
+  "updated_at": "2026-07-23T02:44:06.905998+00:00",
   "requirement_refs": [
     "PRD.md \u00a77.2 (basic code-feasibility layer \u2014 deferred inferential fields are later, explicit-assumption/rule-backed work, never silently inferred here)",
     "PRD.md \u00a79 (data provenance)",
