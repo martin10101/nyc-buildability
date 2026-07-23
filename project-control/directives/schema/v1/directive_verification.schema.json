@@ -2,7 +2,7 @@
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "https://nyc-buildability/project-control/directives/schema/v1/directive_verification.schema.json",
   "title": "Directive independent verification (v1)",
-  "description": "Independent per-requirement verdicts. Authored by an INDEPENDENT verifier whose identity MUST differ from the producer of requirements.json (D-001-R028/R107). NON-AUTHORITATIVE: tools/project_control.py never reads this file to gate acceptance; it is the durable record of the clean-context review. The requirement id set here must equal the id set in requirements.json (no missing/extra rows).",
+  "description": "Independent per-requirement verdicts (clean-context review). Authored by an INDEPENDENT verifier whose identity MUST differ from the producer of requirements.json (D-001-R028/R107). accept() reads this file as BLOCKING EVIDENCE (an in-regime task is refused unless every applicable requirement is PASS at the reviewed content identity, owner correction 1); acceptance AUTHORITY and all state transitions remain in tools/project_control.py -- this is evidence the CLI consumes, not a second gate/competing authority. The requirement id set here must equal the id set in requirements.json (no missing/extra rows).",
   "type": "object",
   "required": ["schema", "directive_id", "producer", "requirements", "updated_at"],
   "additionalProperties": true,
