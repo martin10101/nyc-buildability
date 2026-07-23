@@ -26,7 +26,10 @@ export const synthProductMapRaw = {
       id: 'sys_b', name: 'System B', owner_purpose: 'p', owner_why: 'w',
       eng_weight: 50, launch_weight: 50, planned_count: 2, milestones: ['M1'],
       critical_for_beta: true, journey_steps: [2],
-      readiness_cap: { until_gate_passes: 'G6', on_task: 'M1-T001', max_readiness_fraction: 0.15, reason: 'legal sign-off' },
+      // Cap target is the NON-accepted task (mirrors real rules_engine: capped until
+      // G6 passes on the foundational task, which is not yet accepted). An accepted
+      // cap target would, by accept()'s own rule, have passed G6 and lift the cap.
+      readiness_cap: { until_gate_passes: 'G6', on_task: 'M1-T002', max_readiness_fraction: 0.15, reason: 'legal sign-off' },
     },
   ],
   architect_journey: [
