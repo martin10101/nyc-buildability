@@ -44,16 +44,17 @@
       "depends_on": [
         "M3"
       ],
-      "summary": "0/5 tasks accepted. M4-T001..T005 all MERGED to main as DRAFT engineering (needs_review rules); gates PASS recorded/on-file. NONE accepted, Published, or Verified. Whole chain blocked from acceptance by G6 qualified-human legal approval on M4-T001 (+ B-010 client benchmark)."
+      "summary": "0/6 tasks accepted. M4-T001..T006 all MERGED to main as DRAFT engineering (needs_review rules); gates PASS recorded/on-file. NONE accepted, Published, or Verified. Whole chain blocked from acceptance by G6 qualified-human legal approval on M4-T001 (+ B-010 client benchmark). PLANNED (proposed in the M4-footprint control-only PR, NOT yet contracted): four legal_rule footprint tasks M4-T007 (lot coverage), M4-T008 (rear yards + rear-yard equivalents), M4-T009 (front yards), M4-T010 (side yards), gates G0-G6, sequenced one frozen-SHA task at a time. On approval + contracting they raise M4 contracted scope from 6 to 10 tasks (still 0 accepted; no acceptance without G6). See project-control/reports/M4-footprint-control-metadata-reconciliation.md for the planned-count/dashboard impact."
     },
     {
       "id": "M5",
       "name": "Scenario and optimization engine",
-      "status": "planned",
+      "status": "active",
       "depends_on": [
         "M2",
         "M4"
-      ]
+      ],
+      "summary": "1 task contracted, 0 accepted (no longer 'not started'). M5-T001 (deterministic coverage-aware scenario foundation) MERGED to main as DRAFT (needs_review); G0/G1/G3/G4/G5 PASS on file; awaiting_gate, NOT accepted. Surfaces the canonical FAR cap only; every envelope constraint (height/setback/yard/lot-coverage/parking) is emitted 'missing' and top-level data_completeness is deterministically missing_critical (a floor-area cap is never a buildable envelope). Final acceptance gated on the M4 chain clearing G6."
     },
     {
       "id": "M6",
@@ -72,6 +73,6 @@
       ]
     }
   ],
-  "updated_at": "2026-07-23T01:50:47.314307+00:00",
-  "current_milestone_note": "Reconciled from 'M0'. M4 is the active engineering frontier (M4-T001..T005 merged draft, none accepted, held at G6). M0/M2 retain open/held tasks; M1 complete. This pointer marks active work, not acceptance of M3."
+  "updated_at": "2026-07-23T11:23:29.391855+00:00",
+  "current_milestone_note": "Reconciled from 'M0'. M4 is the active engineering frontier (M4-T001..T006 merged draft, none accepted, held at G6). M0/M2 retain open/held tasks; M1 complete. This pointer marks active work, not acceptance of M3. 2026-07-23 metadata reconciliation (M4-footprint control-only PR): M4 count corrected 0/5->0/6 (T006 was omitted); M5 planned->active (M5-T001 merged draft); four M4 footprint tasks proposed (T007-T010), not yet contracted."
 }
