@@ -18,13 +18,63 @@ from __future__ import annotations
 
 import hashlib
 import json
+import os
 from dataclasses import dataclass
+from importlib import resources
 from pathlib import Path
 
-# docs/research/zr-snapshots/v1 resolved relative to the repo root (this file is
-# services/api/app/rules/snapshots.py -> parents[4] is the repo root).
+# PRODUCTION-SAFE default snapshot resolution (M4-T005 phase 2b).
+#
+# The canonical source of authority for the ZR section snapshots is
+# ``docs/research/zr-snapshots/v1/*.snapshot.json`` (declared in
+# docs/RULES_ENGINE_ARCHITECTURE.md). But the API is deployed/tested as an
+# INSTALLED wheel (``pip install ./services/api`` in web-e2e CI and every
+# production image), where ``app/`` lives in site-packages with NO sibling
+# ``docs/`` directory. The former repo-relative
+# ``Path(__file__).parents[4] / "docs/..."`` walk therefore resolved to a
+# non-existent path and ``SnapshotStore.load`` raised ``SnapshotError`` on first
+# use, 500-ing the rule-evaluation endpoint.
+#
+# So the snapshots are shipped as PACKAGE DATA under ``app/_zr_snapshots/v1/``
+# (byte-identical build artifacts kept in sync by
+# services/api/scripts/sync_zr_snapshots.py) and resolved via
+# ``importlib.resources`` — which works identically from a source tree and from
+# a non-editable install. We PREFER the packaged copy so source and installed
+# behave identically, and fall back to the repo ``docs`` path for source-only
+# runs where the bundle is somehow unavailable. An explicit
+# ``SnapshotStore(directory=...)`` override (used throughout the test suite)
+# bypasses this default entirely and is unaffected.
+_PACKAGED_SNAPSHOT_PACKAGE = "app._zr_snapshots.v1"
+
+# Repo docs source, relative to the repo root (this file is
+# services/api/app/rules/snapshots.py -> parents[4] is the repo root). Kept as a
+# fallback for source-only runs; NOT the primary resolution in an install.
 _REPO_ROOT = Path(__file__).resolve().parents[4]
-DEFAULT_SNAPSHOT_DIR = _REPO_ROOT / "docs" / "research" / "zr-snapshots" / "v1"
+_DOCS_SNAPSHOT_DIR = _REPO_ROOT / "docs" / "research" / "zr-snapshots" / "v1"
+
+
+def _resolve_default_snapshot_dir() -> Path:
+    """Return the default snapshot directory, preferring the PACKAGED location
+    (works in a non-editable install) and falling back to the repo docs source.
+
+    ``importlib.resources.files`` on a normally-installed (unzipped) package —
+    which is how the API wheel is installed (``pip install --no-deps .``) —
+    yields a concrete filesystem path, so ``SnapshotStore``'s Path-based
+    ``glob``/``is_dir`` continue to work unchanged. If the package is not
+    importable, is not a real filesystem directory (e.g. a zipimport
+    traversable), or carries no snapshot files, we fall back to the docs source.
+    """
+    try:
+        packaged = resources.files(_PACKAGED_SNAPSHOT_PACKAGE)
+        packaged_path = Path(os.fspath(packaged))
+    except (ModuleNotFoundError, TypeError, ValueError, OSError):
+        return _DOCS_SNAPSHOT_DIR
+    if packaged_path.is_dir() and any(packaged_path.glob("*.snapshot.json")):
+        return packaged_path
+    return _DOCS_SNAPSHOT_DIR
+
+
+DEFAULT_SNAPSHOT_DIR = _resolve_default_snapshot_dir()
 
 
 class SnapshotError(RuntimeError):

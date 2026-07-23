@@ -1,0 +1,187 @@
+{
+  "contract_version": "1.0.0",
+  "evaluated_input": {
+    "bbl": "1000477501",
+    "profile_contract_version": "1.4.0",
+    "input_fingerprint": "sha256:c499fc3cc97d60d873917e24a6b4640374d5d0758a9faf8a804ab02b19d9562e",
+    "input_provenance": {
+      "zoning_district": [
+        "prov-spatial-nyzd"
+      ],
+      "lot_area_sq_ft": [
+        "prov-lotgeom"
+      ]
+    }
+  },
+  "data_completeness": "missing_noncritical",
+  "needs_review": true,
+  "professional_review_required": false,
+  "fail_safe": false,
+  "fail_safe_reason": null,
+  "rule_lifecycle_statuses": [
+    "needs_review"
+  ],
+  "not_verified_disclaimer": "DRAFT - not a Verified determination. This result is produced by a needs_review draft rule pending raw-HTML source verification and G6 qualified-human legal approval (PRD sections 10-12). It must never be presented, stored, or consumed as Verified; coverage tops out at conditional.",
+  "zoning_district": "R5",
+  "lot_area_sq_ft": 10000.0,
+  "lot_area_source": "lot_geometry.area_sq_ft",
+  "spatial_context": {
+    "lot_overall_class": "single_district_confident",
+    "professional_review_required": false,
+    "coverage_note": null
+  },
+  "spatial_uncertainty": {
+    "lot_overall_class": "single_district_confident",
+    "professional_review_required": false,
+    "coverage_note": null,
+    "review_reasons": [],
+    "notes": [],
+    "base_district_candidates": [
+      {
+        "district_label": "R5",
+        "pair_class": "interior_confident",
+        "share_min": 1.0,
+        "share_point": 1.0,
+        "share_max": 1.0,
+        "minor_portion": false
+      }
+    ],
+    "crosscheck": null
+  },
+  "evaluations": [
+    {
+      "rule_id": "r5-residential-far",
+      "rule_version": "0.1.0-draft",
+      "rule_status": "needs_review",
+      "family": "residential_far",
+      "evaluated_inputs": {
+        "zoning_district": "R5",
+        "lot_area_sq_ft": 10000.0
+      },
+      "applicability_outcome": true,
+      "applicability_trace": [
+        {
+          "op": "in_set",
+          "input_name": "zoning_district",
+          "detail": {
+            "values": [
+              "R5",
+              "R5A",
+              "R5B",
+              "R5D"
+            ],
+            "value_seen": "R5"
+          },
+          "outcome": true
+        }
+      ],
+      "computation_steps": [
+        {
+          "step_id": "far",
+          "op": "identity",
+          "resolved_args": [
+            1.5
+          ],
+          "result": 1.5,
+          "note": "Select the standard-zoning-lot maximum residential FAR for the district (ZR 23-21 table)."
+        },
+        {
+          "step_id": "floor_area",
+          "op": "multiply",
+          "resolved_args": [
+            10000.0,
+            1.5
+          ],
+          "result": 15000.0,
+          "note": "Maximum residential floor area = lot area (sq ft) x FAR."
+        }
+      ],
+      "outputs": {
+        "max_residential_far": 1.5,
+        "max_residential_floor_area_sq_ft": 15000.0
+      },
+      "coverage_status": "conditional",
+      "data_completeness": "missing_noncritical",
+      "citations": [
+        {
+          "snapshot_id": "zr-23-21",
+          "section": "23-21",
+          "quote": "In the districts indicated, the maximum residential floor area ratio shall be as set forth in the following table. Separate maximum residential floor area ratios are set forth for standard zoning lots and zoning lots that are qualifying residential sites.",
+          "last_amended": "2024-12-05",
+          "provenance": {
+            "snapshot_id": "zr-23-21",
+            "source_id": "nyc-dcp-zoning-resolution-portal",
+            "official_channel": "html",
+            "request_url": "https://zoningresolution.planning.nyc.gov/article-ii/chapter-3/23-21",
+            "retrieved_at": "2026-07-21T00:00:00Z",
+            "section_number": "23-21",
+            "section_title": "Floor Area Regulations for R1 Through R5 Districts",
+            "section_last_amended": "2024-12-05",
+            "document_currency_banner": null,
+            "content_digest_sha256": "4b6dd1f5e966b1e533f56f01e77a7d0e1db7b0fe1e4ae7927a12b9bc83e868d7",
+            "raw_html_verified": false,
+            "extraction_status": "extracted_draft"
+          }
+        }
+      ],
+      "uncertainty": {
+        "propagated": true,
+        "lot_overall_class": "single_district_confident",
+        "professional_review_required": false,
+        "coverage_note": null,
+        "collapsed_into_definitive_district": false,
+        "effect": null
+      },
+      "exceptions_applied": [
+        {
+          "id": "qualifying_residential_site",
+          "effect": "conditional_alternative",
+          "description": "A higher maximum residential FAR (up to 2.00 for R5/R5A/R5B per ZR 23-21) applies to zoning lots that are 'qualifying residential sites'. Whether a specific lot qualifies is a separate legal determination and is not decided by this rule; when the site class is unknown or qualifying, the result is conditional and the higher FAR may apply."
+        },
+        {
+          "id": "single_dwelling_unit_equivalent_far_cap",
+          "effect": "documented_limitation",
+          "description": "For standard zoning lots with a lot area of 4,000 square feet or more, the residential floor area associated with any single dwelling unit may not exceed an equivalent FAR of 0.60 (ZR 23-21). Applying this cap requires per-dwelling-unit inputs this rule does not model."
+        }
+      ],
+      "notes": [
+        "exception qualifying_residential_site: A higher maximum residential FAR (up to 2.00 for R5/R5A/R5B per ZR 23-21) applies to zoning lots that are 'qualifying residential sites'. Whether a specific lot qualifies is a separate legal determination and is not decided by this rule; when the site class is unknown or qualifying, the result is conditional and the higher FAR may apply.",
+        "exception single_dwelling_unit_equivalent_far_cap: For standard zoning lots with a lot area of 4,000 square feet or more, the residential floor area associated with any single dwelling unit may not exceed an equivalent FAR of 0.60 (ZR 23-21). Applying this cap requires per-dwelling-unit inputs this rule does not model.",
+        "optional input(s) not supplied: ['site_class']",
+        "limitation: Draft extraction pending raw-HTML source verification and G6 qualified-human legal approval; not a Verified determination.",
+        "limitation: Only the standard-zoning-lot residential FAR is computed; the qualifying-residential-site FAR and the per-single-dwelling-unit 0.60 equivalent-FAR cap are surfaced (conditional / documented limitation), not computed.",
+        "limitation: Special Purpose District and other overlay modifications are not applied."
+      ],
+      "input_validation": {
+        "valid": true,
+        "invalid_inputs": []
+      },
+      "rule_release": {
+        "lifecycle_status": "needs_review",
+        "deterministic_tests": "declared",
+        "independent_review": "pending",
+        "qualified_human_approval": "pending",
+        "verified_eligible": false
+      },
+      "effective_window": {
+        "effective_from": "2024-12-05",
+        "effective_to": null,
+        "evaluated_as_of": null,
+        "in_effect": true
+      },
+      "determination": null
+    }
+  ],
+  "family_coverage": {
+    "family": "residential_far",
+    "coverage_status": "conditional",
+    "note": "one or more draft rules implemented; results are conditional pending G6",
+    "rule_ids": [
+      "r5-residential-far"
+    ]
+  },
+  "reasons": [],
+  "coverage_source": "rule_evaluator",
+  "rule_conflict": null,
+  "_expected_failure": "M4-T005: required top-level field 'coverage_status' is missing; the contract requires exactly one coverage status per result (PRD s12)."
+}

@@ -19,6 +19,7 @@ import { OutcomeAnnouncer } from "./OutcomeAnnouncer";
 import { ProfessionalReviewPanel } from "./ProfessionalReviewPanel";
 import { UnsupportedSection } from "./UnsupportedSection";
 import { ZoningSection } from "./ZoningSection";
+import { RuleEvaluationPanel } from "@/components/rule-evaluation/RuleEvaluationPanel";
 
 /**
  * Property screen state machine (tasks M2-T001/M2-T002). Purely
@@ -110,7 +111,13 @@ function CompletenessBanner({ profile }: { profile: PropertyProfile }) {
   );
 }
 
-function ProfileView({ profile }: { profile: PropertyProfile }) {
+function ProfileView({
+  profile,
+  ruleEvalEnabled,
+}: {
+  profile: PropertyProfile;
+  ruleEvalEnabled: boolean;
+}) {
   const byId = provenanceById(profile);
   return (
     <div data-testid="profile-view">
@@ -150,11 +157,23 @@ function ProfileView({ profile }: { profile: PropertyProfile }) {
           Review and confirm this property
         </Link>
       </section>
+      {/* Additive, optional draft rule-evaluation enrichment (M4-T005). Rendered
+          only when the frontend flag is on for this request; placed LAST so it
+          never alters the existing profile layout or the Property -> Confirm
+          focus/tab flow, and it loads independently of the profile above. */}
+      {ruleEvalEnabled ? <RuleEvaluationPanel bbl={profile.identity.bbl} /> : null}
     </div>
   );
 }
 
-export function PropertyLookup() {
+export function PropertyLookup({
+  ruleEvalEnabled = false,
+}: {
+  /** Additive (M4-T005): render the draft rule-evaluation surface after a
+   * successful profile. Defaults to false so existing behavior is unchanged and
+   * the surface (and its fetch) stay off unless the Server Component enabled it. */
+  ruleEvalEnabled?: boolean;
+} = {}) {
   const [bblInput, setBblInput] = useState("");
   const [formError, setFormError] = useState<string | null>(null);
   /** BBL currently being fetched, or null when no request is in flight. */
@@ -304,7 +323,10 @@ export function PropertyLookup() {
       <div ref={outcomeRef}>
         {loadingBbl === null && result ? (
           result.outcome.kind === "profile" ? (
-            <ProfileView profile={result.outcome.profile} />
+            <ProfileView
+              profile={result.outcome.profile}
+              ruleEvalEnabled={ruleEvalEnabled}
+            />
           ) : (
             <OutcomeFailureStates outcome={result.outcome} onRetry={retry} />
           )

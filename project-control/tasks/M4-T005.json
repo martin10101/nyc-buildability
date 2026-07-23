@@ -1,0 +1,233 @@
+{
+  "task_id": "M4-T005",
+  "title": "Rules-evaluation to property-analysis endpoint + property-screen draft-result surface (new v1 rule_evaluation contract; FH-4)",
+  "task_type": "fullstack",
+  "milestone_id": "M4",
+  "objective": "Wire integration.evaluate_property into (a) a NEW versioned contract packages/contracts/schemas/v1/rule_evaluation.schema.json @1.0.0 that $refs canonical coverage_status/common/source_fact provenance schemas (NO competing definitions; property_profile stays 1.4.0 unchanged), (b) a NEW internal/dev-only sibling endpoint GET /api/v1/properties/{bbl}/rule-evaluation that server-side rebuilds the canonical profile via build_property_profile (never accepts a browser-supplied profile), calls evaluate_property, asserts_not_verified at the boundary, and returns the rule_evaluation document; endpoint is feature-flag gated and returns 404 by default in production (registered/enabled only via an explicit internal flag), existing GET /properties/{bbl} contract and all consumers unchanged, and (c) the existing internal property screen surfacing the draft result with six UI states. Preserve end-to-end: draft/needs_review status, typed conflict, spatial uncertainty ranges, provenance, citations, deterministic calculation trace, professional_review_required. FH-4: validate as_of_date via _valid_iso_date at the conflict-detection/evaluate_property boundary so impossible dates fail closed identically on both paths. Rule evaluation is OPTIONAL enrichment - if it fails/needs review the property profile remains usable. Do not embed a full duplicate profile in the rule response; identify evaluated input by bbl + profile contract_version + provenance references + deterministic input fingerprint. Preserve a clean future path for a versioned aggregate analysis endpoint. Strict request/response validation, strict JSON, safe API errors with no internal-trace/sensitive leakage. Accessible keyboard interaction, live-region announcements, focus management, provenance drill-down. No output/UI wording presenting an R5 result as Published, Verified, legally final, or guaranteed buildable. Tests at every layer (contract, API, frontend, a11y, e2e) on real canonical fixtures.",
+  "business_reason": "First exposure of rules-evaluation results through an API/UI surface. FH-1/FH-3 landed (M4-T004); FH-4 (as_of_date must route through _valid_iso_date at the detect_rule_conflicts/evaluate_property boundary) is the remaining pre-exposure safeguard and is folded in. Owner directive 2026-07-22: build the smallest properly controlled vertical slice that wires integration.evaluate_property into a new internal/dev-only endpoint and the existing property screen, honoring all holds - nothing Published/Verified, results always draft/needs_review, endpoint disabled by default in production.",
+  "inputs": [
+    "services/api/app/rules/integration.py (evaluate_property ~L446-653; PropertyRuleEvaluation dataclass L101-167; assert_not_verified; NOT_VERIFIED_DISCLAIMER; failsafe discriminators) - service entrypoint to wire",
+    "services/api/app/rules/registry.py (detect_rule_conflicts ~L45; RuleRegistry.effective_rules/detect_conflicts) - FH-4 site",
+    "services/api/app/rules/evaluator.py (_valid_iso_date ~L337-356) - imported for FH-4 date validation, NOT edited",
+    "services/api/app/api/v1/properties.py (get_property route, STATUS_STATE_MATRIX L96-109, normalize_bbl, get_pluto_fetcher) - pattern to mirror; MUST remain unchanged",
+    "services/api/app/profile/builder.py (build_property_profile, PROFILE_CONTRACT_VERSION) + profile/contract.py (validate_profile, SUPPORTED_CONTRACT_VERSIONS) - trusted server-side profile builder to reuse",
+    "services/api/app/main.py (router mounting, ~L115) - mount new router behind flag",
+    "packages/contracts/schemas/v1/{coverage_status,common,source_fact,property_profile}.schema.json + README.md - canonical schemas to $ref and the additive-only v1 versioning convention",
+    "packages/contracts/scripts/generate_ts_types.py + scripts/tests/ - typegen (byte-identical, contracts-typegen CI)",
+    "services/api/scripts/sync_contract_schemas.py + services/api/app/_contract_schemas/v1/ - runtime schema bundle (contracts-schema-bundle CI, byte-identical)",
+    ".github/scripts/validate_contracts.py - contract validation (contracts CI); extend ONLY if new schema is not auto-discovered",
+    "apps/web/src/app/property/page.tsx + components/property/PropertyLookup.tsx + lib/api.ts (LookupOutcome union) + lib/contract-matrix.ts + lib/validate-profile.ts - existing property screen to extend additively (existing states unchanged)",
+    "apps/web/src/components/property/{ProfessionalReviewPanel,UnsupportedSection,ProvenanceDisclosure,OutcomeAnnouncer,CoverageBadge}.tsx - existing draft/review UI hooks to reuse",
+    "services/api/tests/fixtures/pluto/F*.json (recorded-official PLUTO fixtures, incl. F05 split-zone), zoning_features/ZF*, ztldb/ZT* - real canonical fixtures for API/e2e",
+    "packages/contracts/fixtures/valid/property_profile/*.json - canonical profile fixtures feeding the evaluator",
+    "apps/web/e2e/*.spec.ts + helpers.ts + src/test-support/fixtures.ts - web e2e harness (real API on recorded-official-fixture transport)",
+    "project-control/reports/M4-RULES-FUTURE-HARDENING.md (FH-4 definition L51-62; FH-1/FH-2/FH-3 status)",
+    "docs/PRODUCT_FLOW_AND_AI_BOUNDARIES.md (Evidence view fields, UI rules, AI-boundary: AI output never an unverified legal result)",
+    "docs/ACCEPTANCE_SCENARIO_STANDARD.md (universal set + legal-rule pack + UI human-journey pack)"
+  ],
+  "outputs": [
+    "packages/contracts/schemas/v1/rule_evaluation.schema.json (NEW @1.0.0, $ref canonical schemas)",
+    "packages/contracts/generated/rule_evaluation.ts (NEW, byte-identical typegen)",
+    "packages/contracts/fixtures/valid/rule_evaluation/** + fixtures/invalid/rule_evaluation/** (NEW canonical fixtures)",
+    "packages/contracts/README.md (document rule_evaluation 1.0.0)",
+    "services/api/app/_contract_schemas/v1/rule_evaluation.schema.json (bundle copy, byte-identical via sync script)",
+    "services/api/app/api/v1/rule_evaluation.py (NEW router, feature-flag gated) + main.py mount",
+    "services/api/app/rules/integration.py + registry.py (FH-4 additive fail-closed date guard; response serializer/fingerprint helper)",
+    "services/api/app/config feature flag for internal endpoint (default disabled in production)",
+    "apps/web property screen rule-evaluation surface: fetch client, six UI states, a11y, provenance drill-down (additive; existing states unchanged)",
+    "Layered tests: contract (schema+typegen), API (endpoint+flag+FH-4+errors), frontend (component+client), a11y, e2e (real-fixture transport)",
+    "project-control/reports/M4-T005-producer-report.md + acceptance-scenario evidence"
+  ],
+  "requirement_refs": [
+    "docs/PRODUCT_FLOW_AND_AI_BOUNDARIES.md (Step 4 Evidence fields; UI rules; canonical contracts list incl. 'Rule evaluation trace'; AI never emits an unverified legal result)",
+    "PRD.md sections 10-12 (rule lifecycle, coverage statuses, never-published-without-G6)",
+    "docs/ACCEPTANCE_SCENARIO_STANDARD.md (universal minimum set; legal-rule scenario pack; UI human-journey pack)",
+    "project-control/reports/M4-RULES-FUTURE-HARDENING.md (FH-4, and pre-exposure gating of FH-1/2/3/4)",
+    "CLAUDE.md permanent principles #1 (humans approve legal interpretations), #2 (provenance), #6 (state machine controls workflow), #12 (no published rule without G6)",
+    "docs/GATES_AND_CHECKPOINTS.md (G0/G1/G3/G4/G5)",
+    "Owner directives 2026-07-22: server-side prod-disable enforcement; no browser-supplied profile; no duplicate profile embed (identify by bbl+contract_version+provenance+fingerprint); optional-enrichment; $ref reuse; clean aggregate-endpoint future path; security must prove anonymous-unreachable-in-prod and frontend-cannot-call-when-disabled"
+  ],
+  "dependencies": [
+    "M4-T004",
+    "M2-T013"
+  ],
+  "allowed_paths": [
+    "packages/contracts/schemas/v1/rule_evaluation.schema.json",
+    "packages/contracts/generated/rule_evaluation.ts",
+    "packages/contracts/scripts/generate_ts_types.py",
+    "packages/contracts/scripts/tests/**",
+    "packages/contracts/fixtures/valid/rule_evaluation/**",
+    "packages/contracts/fixtures/invalid/rule_evaluation/**",
+    "packages/contracts/README.md",
+    ".github/scripts/validate_contracts.py",
+    "services/api/app/_contract_schemas/v1/rule_evaluation.schema.json",
+    "services/api/app/api/v1/rule_evaluation.py",
+    "services/api/app/api/v1/__init__.py",
+    "services/api/app/main.py",
+    "services/api/app/config.py",
+    "services/api/app/settings.py",
+    "services/api/app/rules/integration.py",
+    "services/api/app/rules/registry.py",
+    "services/api/app/rules/response.py",
+    "services/api/app/rules/snapshots.py",
+    "services/api/app/_zr_snapshots/**",
+    "services/api/scripts/sync_zr_snapshots.py",
+    "services/api/pyproject.toml",
+    "services/api/tests/api/**",
+    "services/api/tests/rules/**",
+    "services/api/tests/contracts/**",
+    "apps/web/src/app/property/**",
+    "apps/web/src/components/property/**",
+    "apps/web/src/components/rule-evaluation/**",
+    "apps/web/src/lib/rule-evaluation.ts",
+    "apps/web/src/lib/rule-evaluation-contract.ts",
+    "apps/web/src/lib/api.ts",
+    "apps/web/src/lib/contract-matrix.ts",
+    "apps/web/src/test-support/**",
+    "apps/web/e2e/**"
+  ],
+  "forbidden_paths": [
+    "packages/contracts/schemas/v1/property_profile.schema.json",
+    "packages/contracts/schemas/v1/coverage_status.schema.json",
+    "packages/contracts/schemas/v1/common.schema.json",
+    "packages/contracts/schemas/v1/source_fact.schema.json",
+    "packages/contracts/schemas/v1/analysis_state*.schema.json",
+    "packages/contracts/generated/property_profile.ts",
+    "packages/contracts/schemas/v2/**",
+    "services/api/app/api/v1/properties.py",
+    "services/api/app/profile/**",
+    "services/api/app/spatial/**",
+    "services/api/app/rules/evaluator.py",
+    "services/api/app/rules/coverage.py",
+    "services/api/app/rules/models.py",
+    "services/api/app/rules/lifecycle.py",
+    "services/api/app/rules/dsl.py",
+    "services/api/app/rules/operations.py",
+    "services/api/app/rules/rulesets/**",
+    "docs/research/zr-snapshots/**",
+    "any rule JSON / legal rule content",
+    "services/api/scripts/sync_contract_schemas.py",
+    "services/api/requirements*.txt",
+    "services/api/requirements*.in",
+    "services/api/requirements*.lock",
+    "packages/**/package-lock.json",
+    "apps/web/package.json",
+    "apps/web/package-lock.json",
+    ".github/workflows/**",
+    "project-control/** (except the producer's own project-control/reports/M4-T005-*.md)"
+  ],
+  "acceptance_scenarios": [
+    "AS-1 (contract primary): rule_evaluation.schema.json validates a real evaluate_property(F05 split-zone profile).export() payload; coverage_status/provenance fields resolve via $ref to canonical coverage_status/common/source_fact schemas; NO field redefines a canonical enum. Generated rule_evaluation.ts is byte-identical under generate_ts_types.py --check; bundle copy byte-identical under sync --check.",
+    "AS-2 (contract backward-compat / no fork): property_profile.schema.json and generated property_profile.ts remain byte-identical to main (1.4.0); existing property_profile fixtures still validate; validate_contracts + contracts-typegen + contracts-schema-bundle all green.",
+    "AS-3 (API primary, flag ON): with the internal flag enabled, GET /api/v1/properties/1000010010/rule-evaluation returns 200 with a schema-valid rule_evaluation doc for a supported family; body carries draft coverage_status (never 'verified'), professional_review_required, not_verified_disclaimer, citations, computation_steps, spatial_uncertainty; response identifies input by bbl + profile contract_version + provenance refs + deterministic input fingerprint and does NOT embed a full duplicate property_profile.",
+    "AS-4 (security prod-disable, flag OFF/default): with production/default config (flag unset), the route is unregistered/returns 404 and leaks no hint of the feature; assert_not_verified guards the boundary so no 'verified' payload can ever be returned; enabling requires the explicit internal flag only.",
+    "AS-5 (does-not-apply / unsupported): a BBL whose family is unsupported returns a well-formed rule_evaluation with coverage_status=unsupported (not an error), UI shows the 'not applicable' state, and the property profile remains fully usable.",
+    "AS-6 (missing evidence / spatial substrate absent): a profile lacking spatial_intersection or lot area fails closed to professional_review_required with a typed failsafe reason (no fabricated value); UI shows 'missing evidence' state; profile still usable.",
+    "AS-7 (conflicting rules): a family whose in-effect rules conflict for the inputs surfaces the typed rule_conflict / professional_review_required (no silent pick); UI shows 'conflicting rules' state with the conflict made visible.",
+    "AS-8 (spatial uncertainty): a split-lot / data_conflict spatial result preserves the M2-T013 share ranges/review flags verbatim through the contract and into the UI 'spatial uncertainty' state (never collapsed to a single value).",
+    "AS-9 (FH-4 impossible date): as_of_date='2024-02-30' fails closed identically on BOTH the detect_rule_conflicts path and the evaluate_property single-rule path via _valid_iso_date; a real leap date '2024-02-29' still evaluates; deterministic test proves parity.",
+    "AS-10 (API failure handling): upstream/profile-build failure and an internal error return safe typed API errors with NO internal traceback, file path, secret, or sensitive value in the body/headers; strict JSON only; unknown/oversized request rejected by strict validation.",
+    "AS-11 (UI network/server failure + recovery): the property screen handles network error and 5xx from the rule endpoint as a recoverable state without breaking the already-rendered property profile; retry available.",
+    "AS-12 (accessibility): rule-evaluation surface is keyboard-operable end to end; status/needs-review changes are announced via a live region; focus is managed on state change; provenance drill-down is reachable and labeled; no reliance on color alone for legal certainty.",
+    "AS-13 (honesty invariant): no API field or UI string presents the result as Published, Verified, legally final, or guaranteed buildable; the not_verified disclaimer is present end to end; existing 'honesty' e2e assertions still pass.",
+    "AS-14 (regression): full services/api pytest + ruff green; apps/web lint+typecheck+build + vitest + Playwright e2e green in CI; existing /properties/{bbl} (status,state) matrix test unchanged and passing; no duplicate calculation path introduced."
+  ],
+  "required_gates": [
+    "G0",
+    "G1",
+    "G3",
+    "G4",
+    "G5"
+  ],
+  "gate_reviewer_map": {
+    "G0": "orchestrator (definition-of-ready)",
+    "G1": "data-contract-verifier (new rule_evaluation contract; $ref reuse; no competing definitions; typegen/bundle byte-identity; field/unit/provenance fidelity vs evaluator output)",
+    "G3": "code-reviewer (endpoint wiring, feature-flag gating, FH-4, error handling, strict validation, no duplicate calc path, contract conformance)",
+    "G4": "qa-engineer (integration + regression: full API + web suites, contract-compat, existing-consumer non-regression) AND human-journey-reviewer (real-browser UI walkthrough of the six states + accessibility) - BOTH must PASS",
+    "G5": "security-reviewer (proves endpoint unreachable anonymously in production/default config; frontend cannot call when disabled; no browser-supplied profile trusted; no internal-trace/secret leakage; injection/SSRF; strict JSON)"
+  },
+  "producer_agent": "backend-engineer",
+  "additional_producers": [
+    "frontend-engineer"
+  ],
+  "producer_plan": "Sequential in ONE worktree (.claude/worktrees/M4-T005-rule-eval) to respect the tight contract->types->API->frontend->e2e coupling; no parallel writers over overlapping files. Phase 1 contract (backend-engineer): rule_evaluation.schema.json + typegen + bundle + fixtures + validate_contracts. Phase 2 API (backend-engineer): new flag-gated router + FH-4 + response fingerprint + strict validation + safe errors + API/contract tests. Phase 3 frontend (frontend-engineer): property-screen surface + six states + a11y + provenance drill-down + component/e2e tests. Frontend build/tests run in CI only (no local npm per thin-client policy); API/contract tests run locally with python. Orchestrator commits each phase and freezes one SHA before gates.",
+  "reviewer_agents": [
+    "data-contract-verifier",
+    "code-reviewer",
+    "qa-engineer",
+    "human-journey-reviewer",
+    "security-reviewer"
+  ],
+  "execution_location": "Cloud/worktree isolation on branch task/M4-T005-rule-eval; CI (GitHub Actions) is the authority for web build/lint/typecheck/e2e. Owner PC stays thin-client: text-only edits, python stdlib typegen + pytest locally; NO local npm, DB, Docker, or bulk data. Temporary files under the session scratchpad only; no large/persistent artifacts on the owner PC.",
+  "disk_budget": "Negligible (source + JSON fixtures). No datasets, no caches, no node_modules added locally.",
+  "holds_honored": "Nothing Published/Verified; no rule accepted; no G6 manufactured; M4-T001 stays unaccepted; endpoint disabled by default in production (not exposed anonymously); PR #64, CP-0032, expansion/GDS holds untouched; property_profile 1.4.0 and existing /properties/{bbl} contract unchanged.",
+  "status": "awaiting_gate",
+  "progress_percent": 98,
+  "risks": [
+    "Contract $ref resolution across files must stay byte-identical through typegen + bundle (three CI drift checks) - highest-friction area.",
+    "Feature-flag gating must fail SAFE (absent/unknown flag => disabled) and be provable by security review, not merely documented.",
+    "Must not perturb the accepted property_profile 1.4.0 contract or the existing /properties/{bbl} endpoint/consumers."
+  ],
+  "blockers": [],
+  "worktree": ".claude/worktrees/M4-T005-rule-eval",
+  "branch": "task/M4-T005-rule-eval",
+  "updated_at": "2026-07-22T22:20:54.305151+00:00",
+  "progress_log": [
+    {
+      "at": "2026-07-22T17:37:44.389605+00:00",
+      "agent": "orchestrator",
+      "percent": 20,
+      "status": "claimed",
+      "message": "Packet authored (18 inputs, 11 outputs, 29/29 allowed/forbidden paths, 14 acceptance scenarios, gate->reviewer map G0/G1/G3/G4/G5). G0 PASS. Acceptance scenarios recorded. Ready for Phase 1 (contract producer)."
+    },
+    {
+      "at": "2026-07-22T19:15:34.525049+00:00",
+      "agent": "orchestrator",
+      "percent": 45,
+      "status": "claimed",
+      "message": "Phase 1 (contract) built by backend-engineer, independently orchestrator-validated (typegen/bundle/validate_contracts green; 199 tests; property_profile 1.4.0 + forbidden paths byte-identical), committed 43b7ac5. Dispatching Phase 2 (API endpoint)."
+    },
+    {
+      "at": "2026-07-22T19:57:23.424495+00:00",
+      "agent": "orchestrator",
+      "percent": 70,
+      "status": "claimed",
+      "message": "Phase 2 (API endpoint + FH-4 + serializer) built by backend-engineer, independently orchestrator-validated (847 pytest pass, ruff clean, contract drift green, config/endpoint/response security audit clean; properties.py/integration.py/evaluator.py byte-identical), committed 86f4b9f. Dispatching Phase 3 (frontend); web suites validate in CI."
+    },
+    {
+      "at": "2026-07-22T20:42:35.995019+00:00",
+      "agent": "orchestrator",
+      "percent": 85,
+      "status": "claimed",
+      "message": "All 3 phases built + committed (Phase 3 frontend 4209cf6). Contract+API independently orchestrator-validated locally; frontend static-reviewed (flag fail-safe, 6 states, never-Verified wording, no-fetch-when-off) \u2014 web/web-e2e validate in CI. Pushing branch + opening PR to run CI before freezing SHA."
+    },
+    {
+      "at": "2026-07-22T21:24:39.783974+00:00",
+      "agent": "orchestrator",
+      "percent": 85,
+      "status": "blocked",
+      "message": "BLOCKED (scope decision): web-e2e rule-eval specs fail in installed-wheel context \u2014 RuleRegistry ZR-snapshot dir resolves to docs/ which is unpackaged (snapshots.py:26 parents[4]). Latent M4-T001 deployability gap; endpoint is first registry consumer in installed context; would also break Render deploy. Fix touches forbidden paths (snapshots.py, pyproject.toml). See project-control/reports/M4-T005-blocker-snapshot-deployability.md. Contract+frontend fine; all non-endpoint CI green. Awaiting owner scope decision (A: fix in-task / B: split to M4-T006)."
+    },
+    {
+      "at": "2026-07-22T21:27:26.118006+00:00",
+      "agent": "orchestrator",
+      "percent": 85,
+      "status": "in_progress",
+      "message": "UNBLOCKED by owner scope decision 2026-07-22 (Option A: fix in-task). Authorized scope expansion: add services/api/app/rules/snapshots.py, services/api/pyproject.toml, services/api/app/_zr_snapshots/**, services/api/scripts/sync_zr_snapshots.py to allowed_paths (removed snapshots.py from forbidden). Fix: bundle ZR snapshots into the installed package (byte-identical, mirror _contract_schemas pattern) so the rule registry resolves them from an installed wheel. Nothing Published/Verified; no rule content changed. docs/research/zr-snapshots/** stays forbidden (read-only source)."
+    },
+    {
+      "at": "2026-07-22T21:36:48.624838+00:00",
+      "agent": "orchestrator",
+      "percent": 90,
+      "status": "in_progress",
+      "message": "Phase 2b snapshot-bundling fix built + orchestrator-validated (853 pytest, ruff clean, sync --check byte-identical, DEFAULT_SNAPSHOT_DIR->packaged, registry loads). Pushing to re-run CI; web-e2e (installed wheel) is the deployability validator."
+    },
+    {
+      "at": "2026-07-22T22:20:54.305151+00:00",
+      "agent": "orchestrator",
+      "percent": 98,
+      "status": "awaiting_gate",
+      "message": "ALL required gates PASS at frozen impl SHA 84b50a7: G0 readiness, G1 data-contract, G3 code, G4 integration(qa)+UI/a11y(human-journey), G5 security. PR #84 25/25 CI green incl installed-wheel web-e2e (deployability proven). Two LOW non-blocking future-hardening notes recorded (FH-M4T005-1/2). NOT accepted: awaiting owner merge decision; acceptance also gated on dependency M4-T004 (G6-held). Nothing Published/Verified; endpoint disabled-by-default in production."
+    }
+  ]
+}

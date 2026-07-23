@@ -43,6 +43,13 @@ export default defineConfig({
       url: "http://127.0.0.1:3000",
       reuseExistingServer: !process.env.CI,
       timeout: 120_000,
+      // M4-T005: enable the FRONTEND rule-evaluation flag for this test server.
+      // The variable is non-public (never inlined into the client bundle) and
+      // is read at RUNTIME by the Server Component, so `next start` picks it up
+      // here without needing a rebuild. The surface still renders ONLY on
+      // requests that also opt in with `?ruleeval=on`, so unrelated journeys are
+      // unaffected and the no-call spec (no opt-in) proves the browser is silent.
+      env: { INTERNAL_RULE_EVAL_UI: "1" },
     },
   ],
 });
