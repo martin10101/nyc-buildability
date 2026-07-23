@@ -35,7 +35,9 @@
   "affected_tasks": [
     "M0-T023"
   ],
-  "affected_prs": [],
+  "affected_prs": [
+    97
+  ],
   "affected_branches": [
     "task/M0-T023-directive-compliance"
   ],
@@ -135,6 +137,11 @@
       "at": "2026-07-23T00:00:00+00:00",
       "by": "orchestrator",
       "note": "Independent review complete at 4529ffc5be41: G3 code PASS, G4 directive-compliance PASS (89/89 SATISFIED) + control-plane PASS, G5 security PASS. verification.json recorded."
+    },
+    {
+      "at": "2026-07-23T00:00:00+00:00",
+      "by": "orchestrator",
+      "note": "Opened PR #97 for owner review (DO NOT MERGE). All gates PASS; M0-T023 awaiting_gate 95%, not accepted."
     }
   ],
   "locked_requirement_ids": [
