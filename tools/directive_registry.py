@@ -21,6 +21,7 @@ from __future__ import annotations
 
 import hashlib
 import json
+import os
 import re
 import subprocess
 from pathlib import Path
@@ -639,11 +640,18 @@ SHA40_RE = re.compile(r"^[0-9a-f]{40}$")
 
 def _run_git(root: Path, args: list) -> tuple:
     """Run `git -C root <args>` capturing bytes. Returns (stdout_bytes, error_or_None).
-    A non-zero exit or an unavailable git binary is a fail-closed error, never a
-    silent empty result."""
+    A non-zero exit, a timeout, or an unavailable git binary is a fail-closed error, never
+    a silent empty result. GIT_LITERAL_PATHSPECS=1 forces every pathspec to be matched
+    literally so pathspec magic (e.g. ':(exclude)') in task allowed_paths cannot alter the
+    file set (defense-in-depth; G5 hardening). A bounded timeout prevents a wedged git from
+    hanging the CLI."""
     try:
-        proc = subprocess.run(["git", "-C", str(root), *args],
-                              stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        proc = subprocess.run(
+            ["git", "-C", str(root), *args],
+            stdout=subprocess.PIPE, stderr=subprocess.PIPE,
+            env={**os.environ, "GIT_LITERAL_PATHSPECS": "1"}, timeout=60)
+    except subprocess.TimeoutExpired:
+        return None, "git command timed out (fail closed)"
     except (OSError, ValueError) as e:
         return None, f"git unavailable: {e}"
     if proc.returncode != 0:
@@ -665,7 +673,9 @@ def resolve_commit(root: Path, sha: str | None) -> tuple:
     """Validate that `sha` (or HEAD when falsy) resolves to a commit object. Returns
     (full_40hex_sha, error). Peels tags to commits."""
     rev = f"{sha}^{{commit}}" if sha else "HEAD^{commit}"
-    out, err = _run_git(root, ["rev-parse", "--verify", "--quiet", rev])
+    # --end-of-options guarantees `rev` is parsed as a revision, never as a git option,
+    # even if an operator passes a value beginning with '-' (G5 hardening).
+    out, err = _run_git(root, ["rev-parse", "--verify", "--quiet", "--end-of-options", rev])
     if err is not None or not out.strip():
         return None, (f"cannot resolve reviewed commit {sha or 'HEAD'!r} to a commit object "
                       f"(fail closed)")
@@ -736,8 +746,9 @@ def relevant_working_tree_dirty(root: Path, paths: list,
             continue
         xy = tok[:2].decode("utf-8", "replace")
         path = tok[3:].decode("utf-8", "replace")
-        # rename/copy records carry the origin path in the following NUL field.
-        if xy[:1] in ("R", "C"):
+        # rename/copy records carry the origin path in the following NUL field. Porcelain
+        # v1 reports the R/C in the index (X) column; check both columns defensively.
+        if xy[:1] in ("R", "C") or xy[1:2] in ("R", "C"):
             i += 1
         if not any(path.startswith(pre) for pre in exclude_prefixes):
             dirty.append((xy, path))
@@ -764,6 +775,18 @@ def frozen_git_identity(paths: list, reviewed_sha: str | None = None,
     if err is not None:
         return None, None, err
     if require_clean:
+        # The cleanliness check compares the working tree to HEAD, so a clean LIVE stamp is
+        # only meaningful when the reviewed commit IS HEAD. If an explicit reviewed_sha
+        # resolves to a non-HEAD commit, the "clean" guard would validate the wrong tree, so
+        # fail closed (N2). reviewed_sha=None (-> HEAD) and submit/gate passing the current
+        # HEAD both satisfy this.
+        head, herr = resolve_commit(root, None)
+        if herr is not None:
+            return None, None, herr
+        if commit != head:
+            return None, None, (
+                f"reviewed sha {commit[:12]} is not HEAD {head[:12]}; a clean live content-"
+                f"identity stamp must be taken at HEAD (fail closed)")
         dirty, derr = relevant_working_tree_dirty(root, paths, exclude_prefixes)
         if derr is not None:
             return None, None, derr

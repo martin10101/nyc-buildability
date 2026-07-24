@@ -480,11 +480,18 @@ def _directive_accept_reasons(t: dict, task_id: str) -> list:
                        "changed since submission (stale); re-submit and re-verify at the "
                        "new content identity before acceptance.")
     # Per-task verification: only requirements applicable to THIS task are evaluated for
-    # THIS task's acceptance (one directive may govern several tasks independently).
+    # THIS task's acceptance (one directive may govern several tasks independently). When a
+    # task cites several directives, restrict the applicable set to EACH directive's own
+    # requirement ids per iteration so one directive's rows are never treated as missing/
+    # cross-task for another (G3 N1; a task may be governed by multiple directives).
+    applicable_set = set(applicable)
     for ref in (t.get("directive_refs") or []):
         did = ref.get("directive_id") if isinstance(ref, dict) else None
-        if did:
-            reasons.extend(reg.task_unresolved_requirements(did, task_id, applicable, identity))
+        if not did:
+            continue
+        d = reg.get(did)
+        did_applicable = applicable_set & (d.requirement_ids() if d else set())
+        reasons.extend(reg.task_unresolved_requirements(did, task_id, did_applicable, identity))
     return reasons
 
 
@@ -692,6 +699,21 @@ def progress(a):
                             f"{roster_err} A blocked task cannot re-enter the workflow "
                             f"until the orchestrator amends its packet with a valid "
                             f"producer and independent-reviewer roster.")
+        # Regime-entry guard (D-001 amendment 3, Section 1; G3 F1): a not-in-regime legacy
+        # task under an ENABLED regime may not be laundered from a non-continuation status
+        # (blocked/rework/backlog/ready) INTO a continuation status (in_progress/self_check/
+        # awaiting_gate) via `progress`, which would slip it past the claim-time regime-entry
+        # requirement and grandfather it at accept. Regime entry happens ONLY at claim
+        # (with valid --directive-refs); this transition fails closed. `canceled` is exempt.
+        enabled, _rv, _re, _rg = _regime()
+        if (enabled and not _task_in_regime(t) and target != "canceled"
+                and cur not in _CONTINUATION_STATUSES
+                and target in _CONTINUATION_STATUSES):
+            return fail(f"Cannot move {a.task_id} {cur!r} -> {target!r}: the directive regime "
+                        f"is enabled and this legacy task is not in-regime. A blocked/rework/"
+                        f"backlog/ready legacy task enters the regime at its next CLAIM (with "
+                        f"valid --directive-refs), not via progress (fail closed; D-001 "
+                        f"amendment 3, Section 1).")
         t["status"] = target
     t["progress_percent"] = a.percent
     t.setdefault("progress_log", []).append(

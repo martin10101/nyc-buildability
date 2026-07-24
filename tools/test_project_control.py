@@ -1236,9 +1236,11 @@ def setup_regime(tmp: Path, governance_paths=None, enabled: bool = True) -> None
     git_init(tmp)
 
 
-def _git_identity(tmp: Path, paths, sha=None):
-    ident, rsha, err = _dr.frozen_git_identity(list(paths), reviewed_sha=sha, root=tmp,
-                                               exclude_prefixes=("project-control/",))
+def _git_identity(tmp: Path, paths, sha):
+    # Pure content identity at a specific commit (no clean-stamp semantics), mirroring the
+    # manifest portion of frozen_git_identity so tests can compare identities across commits.
+    ident, _entries, err = _dr.git_tree_manifest(tmp, sha, list(paths),
+                                                 exclude_prefixes=("project-control/",))
     assert err is None, f"git identity error: {err}"
     return ident
 
@@ -1520,6 +1522,44 @@ def test_s9_regime_bypass_closed_and_migration() -> None:
         r = run(tmp, "claim", "--task-id", "M9-T750", "--agent", "producer-p", "--worktree", "wt",
                 "--directive-refs", "D-905:ALL")
         assert r.returncode == 0, f"PROOF7 claiming WITH refs must enter the regime: {r.stderr}"
+
+        # PROOF 7b (G3 F1 regression) — a BLOCKED legacy task cannot be laundered into a
+        # continuation status (awaiting_gate/in_progress) via `progress` to slip past the
+        # claim-time regime-entry requirement; regime entry happens ONLY at claim.
+        set_regime_enabled(tmp, False)
+        new_ready_task(tmp, "M9-T760", reviewers="rev-a,rev-b", gates="G0,G3")
+        run(tmp, "claim", "--task-id", "M9-T760", "--agent", "producer-p", "--worktree", "wt")
+        run(tmp, "progress", "--task-id", "M9-T760", "--agent", "producer-p", "--percent", "40",
+            "--status", "in_progress", "--message", "x")
+        run(tmp, "progress", "--task-id", "M9-T760", "--agent", "producer-p", "--percent", "40",
+            "--status", "blocked", "--message", "blocked pre-regime")
+        set_regime_enabled(tmp, True)
+        write_migration_manifest(tmp, [("M9-T760", material_digest_of(tmp, "M9-T760"))])
+        r = run(tmp, "progress", "--task-id", "M9-T760", "--agent", "producer-p", "--percent", "50",
+                "--status", "awaiting_gate", "--message", "launder attempt")
+        assert r.returncode != 0 and "regime" in (r.stderr + r.stdout).lower(), \
+            f"PROOF7b blocked legacy task must not be laundered to awaiting_gate via progress: {r.stdout} {r.stderr}"
+        r = run(tmp, "accept", "--task-id", "M9-T760", "--agent", "orchestrator")
+        assert r.returncode != 0, "PROOF7b a blocked legacy task must not be acceptable as grandfathered"
+
+        # PROOF 7c (G3 F1 regression) — a REWORK legacy task likewise cannot be laundered
+        # into in_progress via `progress`; it must re-enter the regime at its next claim.
+        set_regime_enabled(tmp, False)
+        new_ready_task(tmp, "M9-T761", reviewers="rev-a,rev-b", gates="G0,G3")
+        run(tmp, "claim", "--task-id", "M9-T761", "--agent", "producer-p", "--worktree", "wt")
+        run(tmp, "progress", "--task-id", "M9-T761", "--agent", "producer-p", "--percent", "40",
+            "--status", "in_progress", "--message", "x")
+        _rep = write_report(tmp, "m9t761.json", '{"r":"x"}')
+        run(tmp, "submit", "--task-id", "M9-T761", "--agent", "producer-p", "--report", _rep,
+            "--requested-status", "awaiting_gate")
+        run(tmp, "progress", "--task-id", "M9-T761", "--agent", "producer-p", "--percent", "60",
+            "--status", "rework", "--message", "sent to rework pre-regime")
+        set_regime_enabled(tmp, True)
+        write_migration_manifest(tmp, [("M9-T761", material_digest_of(tmp, "M9-T761"))])
+        r = run(tmp, "progress", "--task-id", "M9-T761", "--agent", "producer-p", "--percent", "65",
+                "--status", "in_progress", "--message", "launder attempt")
+        assert r.returncode != 0 and "regime" in (r.stderr + r.stdout).lower(), \
+            f"PROOF7c rework legacy task must not be laundered to in_progress via progress: {r.stdout} {r.stderr}"
 
         # PROOF 8 — accepted tasks remain immutable.
         for sub, extra in (("claim", ["--worktree", "wt"]),
