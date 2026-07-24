@@ -1,7 +1,7 @@
 {
   "schema": "directive_manifest/v1",
   "directive_id": "D-004",
-  "version": 4,
+  "version": 5,
   "slug": "agent-teams-runtime-adoption",
   "title": "Agent-teams runtime adoption, staged with pilots",
   "status": "active",
@@ -41,12 +41,21 @@
       "amends": "source-001.md",
       "recorded_at": "2026-07-24T00:00:00+00:00",
       "content_digest_sha256": "d15911caa921bcf88c660d8f3ad9824a8af8df0855b825f4ff0621a4662ff75c"
+    },
+    {
+      "file": "source-005-amendment.md",
+      "kind": "amendment",
+      "sequence": 5,
+      "amends": "source-001.md",
+      "recorded_at": "2026-07-24T00:00:00+00:00",
+      "content_digest_sha256": "518348c3a878803a4bcbf1148bed421e22fa50e4d09bee831c01547fd777611f"
     }
   ],
   "amendments": [
     "source-002-amendment.md",
     "source-003-amendment.md",
-    "source-004-amendment.md"
+    "source-004-amendment.md",
+    "source-005-amendment.md"
   ],
   "supersedes": [],
   "superseded_by": null,
@@ -76,8 +85,8 @@
   },
   "applicability_note": "PHASE0 requirements (task_ids=[D-004-PHASE0], a non-ledger sentinel) are the orient/verify/persist actions performed at capture time in this session. PROCESS requirements (task_ids=[D-004-PROCESS], a non-ledger sentinel) are the standing constraints and stop discipline that bind every phase and are checked against primary repository evidence at the final independent directive verification. The three ledger IDs in scope are RESERVED, not yet contracted: M0-T027 = pilot-governance control task (Steps 1, 2, 4 evidence), M0-T028 = producer-confinement control task (Step 3), M0-T029 = adoption task (Step 5). Each is contracted only on the owner's explicit GO for its step; if a reserved ID cannot be used, an append-only source-00N-amendment.md records the reassignment. M0-T025 is out of scope and must not be touched (D-004-R022/R053).",
   "owner_approval": {
-    "state": "step_1_authorized",
-    "decision": "Adopt the agent-teams runtime in staged pilots, each step gated on an explicit owner GO. Phase 0 is complete. Amendment 3 (source-004) is the owner's explicit CONDITIONAL GO for STEP 1 with flag-3 option (a), conditioned on the machine-verification and re-orientation items being fully green. Steps 2, 3, 4, and 5 remain un-authorized.",
+    "state": "step_1_accepted_step_2_authorized",
+    "decision": "Staged pilots, each gated on an explicit owner GO. Step 1 is COMPLETE and its evidence is ACCEPTED AS-IS (FAIL/FAIL/PASS verdicts, off-policy Sonnet spawns, and the sentinel escape all stand as recorded; the UNVERIFIABLE byte-identity finding is accepted with no remediation). Step 2 is AUTHORIZED NOW, deliberately before the B-015 fix, under explicit safeguards. B-015's diagnosis and fix are assigned to M0-T028, whose packet must be presented for owner review before it starts. The effort hold is CLOSED (xhigh, session-global, unchanged; the agent never writes an effort key). Steps 3, 4, and 5 remain un-authorized.",
     "decided_at": "2026-07-24",
     "merge_authorized": false,
     "accept_authorized": false,
@@ -86,7 +95,10 @@
       "verbatim capture of this directive and its requirement decomposition",
       "record source-002 amendment 1: teammateDefaultModel value-clause supersession (null -> Opus 4.8) plus the lead/reviewer Fable 5 and producer Opus 4.8 spawn rule",
       "record source-003 amendment 2: effort hold, flag-3 option (a), the two M0-T028 ride-along scope items, and the no-Step-1-this-session instruction",
-      "record source-004 amendment 3: the conditional Step-1 GO - contract M0-T027, commit the D-004 capture + M0-T027 packet together via the protected-main workflow, run the read-only reviewer pilot with the independently verified sentinel negative test, then present evidence and STOP"
+      "record source-004 amendment 3: the conditional Step-1 GO - contract M0-T027, commit the D-004 capture + M0-T027 packet together via the protected-main workflow, run the read-only reviewer pilot with the independently verified sentinel negative test, then present evidence and STOP",
+      "record source-005 amendment 4: Step-1 acceptance, the R095 confirmation, the B-015 ratification with expanded M0-T028 scope, the Step-2 GO with safeguards, the effort decision, the spawn-model mechanism, and the R112 closure",
+      "execute D-004 Step 2 (no-write worktree capability probe) under the item-4 safeguards, with the probe report written under M0-T027 while it remains blocked",
+      "author and PRESENT the M0-T028 packet for owner review (presentation only, not a start)"
     ],
     "prohibits": [
       "starting Step 1, 2, 3, 4, or 5 without the owner's explicit GO for that step",
@@ -101,7 +113,14 @@
       "starting Step 1 in the capture session",
       "referencing the prior session's team or task list (every conversation spawns a fresh team)",
       "proceeding past any ambiguous or non-green verification item instead of stopping and reporting",
-      "starting Step 2, 3, 4, or 5 on the strength of the Step-1 GO"
+      "starting Step 2, 3, 4, or 5 on the strength of the Step-1 GO",
+      "re-running the Step-1 reviewer wave before the B-015 fix merges",
+      "rewriting, softening, or removing the recorded Step-1 FAIL/FAIL/PASS verdicts, the off-policy Sonnet spawns, or the sentinel escape",
+      "manufacturing after-the-fact corroboration for the R001-R104 pre-image",
+      "starting, claiming, or dispatching M0-T028 before the owner reviews its packet",
+      "advancing M0-T027 past blocked, or accepting it, before the on-policy re-run passes",
+      "writing an effort key anywhere, ever",
+      "spawning any teammate without an explicit model value"
     ]
   },
   "lifecycle_state": "active",
@@ -129,7 +148,8 @@
     "final_reviewed_* are populated at the independent directive re-gate.",
     "Amendment 1 (source-002, rows R087-R095) supersedes the VALUE clause of D-004-R081 only (teammateDefaultModel: null -> Opus 4.8 as the global teammate fallback) and re-affirms R081's prohibition clause unchanged. The owner's text cites R083; R083 has no value or prohibition clause and the quoted clauses are verbatim R081, so the supersession is recorded against R081 with the discrepancy raised as the OPEN row D-004-R095. No pre-existing row was edited.",
     "Amendment 2 (source-003, rows R096-R104): effort application is on a standing hold; the item-3 findings are held OUTSIDE the repository (scratchpad + orchestrator memory, no new tracked files); M0-T027 is contracted and committed with the capture on the Step-1 GO next session; two ride-along items are reserved for M0-T028's future scope (space-safe hook commands; .gitignore entry for .claude/settings.local.json); Step 1 is not started in the capture session.",
-    "Amendment 3 (source-004, rows R105-R128): new-session bootstrap plus the CONDITIONAL Step-1 GO. Machine verification recorded: agent-teams env flag active, CLI 2.1.219 >= 2.1.178, project path renamed space-free, machine-global hooks block removed owner-side. OPEN NOTE carried on D-004-R112: UserPromptSubmit (and SessionStart) run clean, but PostToolUse and Stop are not registered in ANY settings file after that removal, so they cannot be shown running and cannot error; zero hooks errored, so the R113 STOP condition did not trigger. Flag-3 option (a) executed: M0-T027 contracted and committed together with this capture. Effort remains on the absolute R096/R124 hold - no effort setting applied anywhere."
+    "Amendment 3 (source-004, rows R105-R128): new-session bootstrap plus the CONDITIONAL Step-1 GO. Machine verification recorded: agent-teams env flag active, CLI 2.1.219 >= 2.1.178, project path renamed space-free, machine-global hooks block removed owner-side. OPEN NOTE carried on D-004-R112: UserPromptSubmit (and SessionStart) run clean, but PostToolUse and Stop are not registered in ANY settings file after that removal, so they cannot be shown running and cannot error; zero hooks errored, so the R113 STOP condition did not trigger. Flag-3 option (a) executed: M0-T027 contracted and committed together with this capture. Effort remains on the absolute R096/R124 hold - no effort setting applied anywhere.",
+    "Amendment 4 (source-005, rows R129-R167): owner decisions on the Step-1 STOP. Step-1 evidence ACCEPTED AS-IS with no re-run now; the on-policy re-run is deferred until after the B-015 fix merges and then doubles as that fix's end-to-end acceptance test (same three roles, then-current head, explicit Fable 5 per spawn, sentinel repeated, denial independently verified). D-004-R095 is CLOSED by owner confirmation that R081 was the intended row (recorded at R138; R095's own row is not edited). B-015 RATIFIED; its diagnosis/fix plus the R100 and R101 ride-alongs and the index.json affected_tasks correction are assigned to M0-T028, which must NOT start before the owner reviews its packet. STEP 2 AUTHORIZED under safeguards (pre-created worktrees, no Write/Edit tools, Bash limited to pwd/git inspection, post-attestation dirt sweep recorded before teardown, stop on any unexpected file). EFFORT HOLD CLOSED: xhigh stays, session-global, unchanged; MAX rejected; the agent never writes an effort key (R159, permanent). SPAWN MODEL RULE: every teammate spawn passes an explicit model value - Fable 5 for gate-class reviewers, Opus 4.8 for producers; teammateDefaultModel is set only at Step 5 via /config. D-004-R112 CLOSED: PostToolUse/Stop are intentionally unregistered machine-side."
   ],
   "created_at": "2026-07-24T00:00:00+00:00",
   "updated_at": "2026-07-24T00:00:00+00:00",
@@ -153,6 +173,11 @@
       "at": "2026-07-24T00:00:00+00:00",
       "by": "orchestrator",
       "note": "Amendment 3 recorded append-only: source-004-amendment.md registered (kind=amendment, amends source-001.md, sequence 4); rows D-004-R105..R128 appended; rows R001-R104 asserted byte-identical by sorted-key comparison before/after the append; manifest.amendments[] and locked_requirement_ids extended; id + content digests recomputed. M0-T027 contracted in-regime (directive_refs D-004:ALL) and recorded in affected_tasks/enforcement_pointers. Machine re-verification green except the R112 open note (PostToolUse/Stop hooks are no longer registered anywhere after the owner-side global-hooks removal). No effort setting applied anywhere; M0-T025 untouched; no product code or ledger product state changed."
+    },
+    {
+      "at": "2026-07-24T00:00:00+00:00",
+      "by": "orchestrator",
+      "note": "Amendment 4 recorded append-only: source-005-amendment.md registered (sequence 5); rows D-004-R129..R167 appended; rows R001-R128 asserted byte-identical by sorted-key comparison before/after the append; manifest.amendments[] and locked_requirement_ids extended to 167; id + content digests recomputed. Owner decisions captured: Step-1 evidence accepted as-is (no re-run now), R095 closed in favour of R081, B-015 ratified and assigned to M0-T028 (packet presented before start), Step 2 authorized under safeguards, effort hold closed at xhigh with a permanent no-write prohibition, spawn model rule recorded, R112 closed. No effort setting applied anywhere. M0-T025 untouched. No existing requirement row edited."
     }
   ],
   "locked_requirement_ids": [
@@ -283,8 +308,47 @@
     "D-004-R125",
     "D-004-R126",
     "D-004-R127",
-    "D-004-R128"
+    "D-004-R128",
+    "D-004-R129",
+    "D-004-R130",
+    "D-004-R131",
+    "D-004-R132",
+    "D-004-R133",
+    "D-004-R134",
+    "D-004-R135",
+    "D-004-R136",
+    "D-004-R137",
+    "D-004-R138",
+    "D-004-R139",
+    "D-004-R140",
+    "D-004-R141",
+    "D-004-R142",
+    "D-004-R143",
+    "D-004-R144",
+    "D-004-R145",
+    "D-004-R146",
+    "D-004-R147",
+    "D-004-R148",
+    "D-004-R149",
+    "D-004-R150",
+    "D-004-R151",
+    "D-004-R152",
+    "D-004-R153",
+    "D-004-R154",
+    "D-004-R155",
+    "D-004-R156",
+    "D-004-R157",
+    "D-004-R158",
+    "D-004-R159",
+    "D-004-R160",
+    "D-004-R161",
+    "D-004-R162",
+    "D-004-R163",
+    "D-004-R164",
+    "D-004-R165",
+    "D-004-R166",
+    "D-004-R167"
   ],
-  "requirements_id_digest_sha256": "a33ce8b2bf735be8efa4fee560e0c21e2fb0e60dd86b2e488f7dba5513ed159d",
-  "requirements_content_digest_sha256": "8f77dbecd48d7f4920e8967de49abce50295eab0fab34a712ce66be857b2e9ef"
+  "requirements_id_digest_sha256": "3afbac91e6ee7c1f46be8c1f0025e3f721a34d3d6a1f13c2c0de25713199ddde",
+  "requirements_content_digest_sha256": "68645c810ebb804a1856e9df36578dc6db452ebcbbd32eeb1c6abddc208dfbb9"
 }
