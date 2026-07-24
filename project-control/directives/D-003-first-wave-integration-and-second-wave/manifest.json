@@ -105,6 +105,11 @@
       "at": "2026-07-24T00:00:00+00:00",
       "by": "orchestrator",
       "note": "Captured D-003 verbatim (source-001.md sha256 d9b01931) at frozen post-D-002 baseline cc14208; decomposed 28 requirements (10 CTRL / 18 POST). Remote facts independently reverified: main cc14208; #99 green, #100 red (context-budget + contracts), #101 red (web-e2e a11y)."
+    },
+    {
+      "at": "2026-07-24T00:00:00+00:00",
+      "by": "orchestrator",
+      "note": "First-wave sequential integration COMPLETE (D-003): M2-T017 accepted+merged (PR #99); M4-T007 accepted+merged (PR #103, superseded #101), B-014 RESOLVED; M3-T001 accepted+merged (PR #104, superseded #100). Both #100/#101 force-push blocks resolved via the fresh non-force branch method (controller pushed each verified rebased head to a new branch; #100/#101 closed pointing to #104/#103). Each accepted only after independent exact-head gates + directive-compliance-verifier PASS (verifier != producer) + green final-head CI, one PR merged at a time with ff main. accepted count 44 -> 47. main -> reconcile PR head. SECOND WAVE intentionally NOT contracted (owner directed reconcile-and-stop). Owner prohibition honored: no Agent Teams adoption directive captured/planned/implemented this session."
     }
   ],
   "locked_requirement_ids": [
