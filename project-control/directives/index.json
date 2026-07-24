@@ -54,6 +54,18 @@
         "M0-T026"
       ],
       "manifest": "D-003-first-wave-integration-and-second-wave/manifest.json"
+    },
+    {
+      "directive_id": "D-004",
+      "slug": "agent-teams-runtime-adoption",
+      "title": "Agent-teams runtime adoption, staged with pilots",
+      "status": "active",
+      "issued_at": "2026-07-24",
+      "issued_by": "owner",
+      "supersedes": [],
+      "superseded_by": null,
+      "affected_tasks": [],
+      "manifest": "D-004-agent-teams-runtime-adoption/manifest.json"
     }
   ],
   "updated_at": "2026-07-24T00:00:00+00:00"
