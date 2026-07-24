@@ -1,0 +1,21 @@
+{
+  "task_id": "M3-T001",
+  "gate_id": "G2",
+  "reviewer": "orchestrator",
+  "role": "self_check",
+  "result": "PASS",
+  "report_file": "project-control/reports/M3-T001-producer-report.md",
+  "reviewed_at": "2026-07-24T17:03:16.921656+00:00",
+  "content_manifest_sha256": "c1fea6139dd1c7d4ea3308d38ccb702eeb16cd81aa77fb1e2f35e4a1ee04e0b3",
+  "reviewed_sha": "705f16ecd4bf174cba2ba81272714e7808437007",
+  "history": [
+    {
+      "reviewer": "orchestrator",
+      "role": "self_check",
+      "result": "PASS",
+      "report_file": "project-control/reports/M3-T001-producer-report.md",
+      "reviewed_at": "2026-07-24T17:01:17.674358+00:00"
+    }
+  ],
+  "updated_at": "2026-07-24T17:03:17.689750+00:00"
+}

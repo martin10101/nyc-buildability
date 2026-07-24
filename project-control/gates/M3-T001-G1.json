@@ -1,0 +1,12 @@
+{
+  "task_id": "M3-T001",
+  "gate_id": "G1",
+  "reviewer": "data-contract-verifier",
+  "role": "independent_review",
+  "result": "PASS",
+  "report_file": "project-control/reports/M3-T001-G1.md",
+  "reviewed_at": "2026-07-24T17:03:49.769485+00:00",
+  "content_manifest_sha256": "c1fea6139dd1c7d4ea3308d38ccb702eeb16cd81aa77fb1e2f35e4a1ee04e0b3",
+  "reviewed_sha": "705f16ecd4bf174cba2ba81272714e7808437007",
+  "updated_at": "2026-07-24T17:03:50.502718+00:00"
+}

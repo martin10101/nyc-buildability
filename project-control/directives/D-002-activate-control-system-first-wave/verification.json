@@ -604,97 +604,156 @@
         "D-002-R059",
         "D-002-R060"
       ],
-      "producer": "orchestrator",
-      "verifier": "",
+      "producer": "official-source-researcher",
+      "verifier": "directive-compliance-verifier",
       "schema_version": "directive_verification/v2",
-      "reviewed_sha": null,
-      "reviewed_manifest_sha256": null,
+      "reviewed_sha": "705f16ecd4bf174cba2ba81272714e7808437007",
+      "reviewed_manifest_sha256": "c1fea6139dd1c7d4ea3308d38ccb702eeb16cd81aa77fb1e2f35e4a1ee04e0b3",
       "requirements": [
         {
           "id": "D-002-R036",
-          "state": "pending",
-          "evidence": [],
-          "reviewed_sha": null
+          "state": "PASS",
+          "evidence": [
+            "changed-file audit: 19 files, all within the AMENDED allowed_paths (docs/* + legal_source_manifest.schema.json + fixtures/{valid,invalid,}/legal_source_manifest/ + 2 reports); no forbidden hotspot; the producer did NOT edit .github/** or tools/** (the CI-fix control amendment was a separate controller PR #102)",
+            "project-control/reports/M3-T001-producer-report.md"
+          ],
+          "reviewed_sha": "705f16ecd4bf174cba2ba81272714e7808437007",
+          "verified_by": "directive-compliance-verifier",
+          "verified_at": "2026-07-24T00:00:00+00:00"
         },
         {
           "id": "D-002-R037",
-          "state": "pending",
-          "evidence": [],
-          "reviewed_sha": null
+          "state": "PASS",
+          "evidence": [
+            "only project-control writes are the two M3-T001 report paths"
+          ],
+          "reviewed_sha": "705f16ecd4bf174cba2ba81272714e7808437007",
+          "verified_by": "directive-compliance-verifier",
+          "verified_at": "2026-07-24T00:00:00+00:00"
         },
         {
           "id": "D-002-R038",
-          "state": "pending",
-          "evidence": [],
-          "reviewed_sha": null
+          "state": "PASS",
+          "evidence": [
+            "legal_source_manifest.schema.json is an additive internal manifest behind a frozen interface; not wired into a shared production entrypoint"
+          ],
+          "reviewed_sha": "705f16ecd4bf174cba2ba81272714e7808437007",
+          "verified_by": "directive-compliance-verifier",
+          "verified_at": "2026-07-24T00:00:00+00:00"
         },
         {
           "id": "D-002-R039",
-          "state": "pending",
-          "evidence": [],
-          "reviewed_sha": null
+          "state": "PASS",
+          "evidence": [
+            "no shared/canonical contract edited; the fixture relocation stayed within the producer's amended allowed_paths; on discovering the CI control-file need, the producer respected its ownership boundary (controller made the amendment) - no boundary crossing"
+          ],
+          "reviewed_sha": "705f16ecd4bf174cba2ba81272714e7808437007",
+          "verified_by": "directive-compliance-verifier",
+          "verified_at": "2026-07-24T00:00:00+00:00"
         },
         {
           "id": "D-002-R051",
-          "state": "pending",
-          "evidence": [],
-          "reviewed_sha": null
+          "state": "PASS",
+          "evidence": [
+            "producer report cites required session-start reads incl. the correction capsule; corrected fixtures + rebased onto current main"
+          ],
+          "reviewed_sha": "705f16ecd4bf174cba2ba81272714e7808437007",
+          "verified_by": "directive-compliance-verifier",
+          "verified_at": "2026-07-24T00:00:00+00:00"
         },
         {
           "id": "D-002-R052",
-          "state": "pending",
-          "evidence": [],
-          "reviewed_sha": null
+          "state": "PASS",
+          "evidence": [
+            "full deliverable set (5 docs + schema + fixtures + harness; AS-1..AS-12) in one finished PR; corrected + rebased; no premature stop"
+          ],
+          "reviewed_sha": "705f16ecd4bf174cba2ba81272714e7808437007",
+          "verified_by": "directive-compliance-verifier",
+          "verified_at": "2026-07-24T00:00:00+00:00"
         },
         {
           "id": "D-002-R053",
-          "state": "pending",
-          "evidence": [],
-          "reviewed_sha": null
+          "state": "PASS",
+          "evidence": [
+            "diff changes no ledger/other-task-packet/other-worktree"
+          ],
+          "reviewed_sha": "705f16ecd4bf174cba2ba81272714e7808437007",
+          "verified_by": "directive-compliance-verifier",
+          "verified_at": "2026-07-24T00:00:00+00:00"
         },
         {
           "id": "D-002-R054",
-          "state": "pending",
-          "evidence": [],
-          "reviewed_sha": null
+          "state": "PASS",
+          "evidence": [
+            "harness stdlib-only; no import from a sibling branch; only own docs/schema/fixtures modified"
+          ],
+          "reviewed_sha": "705f16ecd4bf174cba2ba81272714e7808437007",
+          "verified_by": "directive-compliance-verifier",
+          "verified_at": "2026-07-24T00:00:00+00:00"
         },
         {
           "id": "D-002-R055",
-          "state": "pending",
-          "evidence": [],
-          "reviewed_sha": null
+          "state": "PASS",
+          "evidence": [
+            "one assigned lane; corrected+rebased head pushed to a fresh branch (r2) superseding #100 after a force-push block (controller-owned resolution)"
+          ],
+          "reviewed_sha": "705f16ecd4bf174cba2ba81272714e7808437007",
+          "verified_by": "directive-compliance-verifier",
+          "verified_at": "2026-07-24T00:00:00+00:00"
         },
         {
           "id": "D-002-R056",
-          "state": "pending",
-          "evidence": [],
-          "reviewed_sha": null
+          "state": "PASS",
+          "evidence": [
+            "committed producer report carries exact commands (validate_contracts.py, context_budget_check.py, check_m3_t001.py), fixture matrices, and gate evidence - not chat",
+            "project-control/reports/M3-T001-producer-report.md"
+          ],
+          "reviewed_sha": "705f16ecd4bf174cba2ba81272714e7808437007",
+          "verified_by": "directive-compliance-verifier",
+          "verified_at": "2026-07-24T00:00:00+00:00"
         },
         {
           "id": "D-002-R057",
-          "state": "pending",
-          "evidence": [],
-          "reviewed_sha": null
+          "state": "PASS",
+          "evidence": [
+            "no improper stop; the force-push limitation was surfaced as a real environment stop condition and resolved by the controller via a fresh non-force branch"
+          ],
+          "reviewed_sha": "705f16ecd4bf174cba2ba81272714e7808437007",
+          "verified_by": "directive-compliance-verifier",
+          "verified_at": "2026-07-24T00:00:00+00:00"
         },
         {
           "id": "D-002-R058",
-          "state": "pending",
-          "evidence": [],
-          "reviewed_sha": null
+          "state": "PASS",
+          "evidence": [
+            "no blocker return content beyond the concise force-push stop-condition surfaced to the owner (<=200 words)"
+          ],
+          "reviewed_sha": "705f16ecd4bf174cba2ba81272714e7808437007",
+          "verified_by": "directive-compliance-verifier",
+          "verified_at": "2026-07-24T00:00:00+00:00"
         },
         {
           "id": "D-002-R059",
-          "state": "pending",
-          "evidence": [],
-          "reviewed_sha": null
+          "state": "PASS",
+          "evidence": [
+            "report supplies all enumerated completion items"
+          ],
+          "reviewed_sha": "705f16ecd4bf174cba2ba81272714e7808437007",
+          "verified_by": "directive-compliance-verifier",
+          "verified_at": "2026-07-24T00:00:00+00:00"
         },
         {
           "id": "D-002-R060",
-          "state": "pending",
-          "evidence": [],
-          "reviewed_sha": null
+          "state": "PASS",
+          "evidence": [
+            "detailed evidence in the committed report; compact status carries no transcript dump"
+          ],
+          "reviewed_sha": "705f16ecd4bf174cba2ba81272714e7808437007",
+          "verified_by": "directive-compliance-verifier",
+          "verified_at": "2026-07-24T00:00:00+00:00"
         }
-      ]
+      ],
+      "verified_at": "2026-07-24T00:00:00+00:00"
     },
     {
       "directive_id": "D-002",

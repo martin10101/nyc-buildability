@@ -201,3 +201,124 @@ signature). Socrata platform baseline applies. Policy re-verification due at eac
 - **Registry maintenance:** rows change only with cited evidence (a dated official page read, a captured
   fixture, or an accepted research doc). The G1 reviewer for M2-T011 (TC-S6) independently spot-verifies
   quota/terms/attribution links and the last-policy-verification dates against the live official pages.
+
+---
+
+## 9. DOB legal-source channels (M3-T005 construction-code corpus) — ADDITIVE (task M3-T001, 2026-07-23)
+
+**Additive note (M3-T001, D-002 first-wave lane 1).** The six channels below are registered so that
+`docs/CONSTRUCTION_CODE_RELEASE_SCOPE.md` and M3-T005 have a governance record for every source the
+construction-code corpus needs. **None of these channels has been verified yet.** The publisher-level
+identity is known (NYC DOB / NYC Administrative Code, official City sources), but exact machine endpoints,
+download URLs, access modes, and terms are **to verify at G1** of M3-T005. Per the G1-honesty rule
+(directive amendment item 8): **a channel whose official source identity, endpoint, access mode, terms, or
+required download URL is unresolved is recorded as BLOCKED at G1, never accepted as verified** — "to verify
+at G1" is a proposal marker only, not a pass. The `www.nyc.gov` / `www1.nyc.gov` bot wall (HTTP 403 to
+non-browser clients; see Cross-source access notes) applies to DOB-hosted PDFs, so every DOB download URL
+is enumerated **via a human browser session at G1**, never guessed or scraped through evasion. These
+channels do **not** add any runtime dependency in M3-T001; they describe sources M3-T005 will capture
+(M3-T002 immutable-capture interface) and verify (M3-T003 evidence engine).
+
+Provenance tiers per `docs/SOURCE_AUTHORITY_POLICY.md` §2: the **Construction Code** and **Local Law** are
+tier 1 (enacted/adopted law); **DOB Rules, Buildings Bulletins, Code Notes/directives, and formal DOB
+interpretations** are tier 3 (official agency interpretations — persuasive/operative, not the statute).
+
+### 9.1 NYC Construction Code (DOB) — tier 1
+
+| Field | Record |
+|---|---|
+| Official source identity | NYC Department of Buildings — NYC Construction Codes (Title 28 NYC Administrative Code + referenced Building/Plumbing/Mechanical/Fuel Gas/Energy Codes). Publisher: City of New York / DOB |
+| Access mode | Official PDF/document ingestion + HTML corpus ingestion (exact edition, chapter PDF URLs, and any structured channel **to verify at G1**; nyc.gov 403 bot wall applies — enumerate via human browser session) |
+| Authentication | None expected for public code text (**to verify at G1**) |
+| Published quota / rate limits | none published (**to verify at G1**) |
+| Edition / effective date | **to verify at G1** — exact adopted edition + effective date read from the official source; NOT guessed here (see CONSTRUCTION_CODE_RELEASE_SCOPE.md §1) |
+| Last policy verification | **NONE** — channel registered 2026-07-23 by M3-T001; not yet read from the official source. First verification at M3-T005 G1 |
+| G1 disposition | Endpoint/download URLs unresolved → **BLOCKED at G1 until identity+endpoint+access+terms+URL are verified**; not accepted as verified on faith |
+
+### 9.2 Local Law (Construction Code amendments) — tier 1
+
+| Field | Record |
+|---|---|
+| Official source identity | NYC Local Laws amending Title 28 / the Construction Codes. Publishers: NYC Council / Legistar (adoption records) + official codified Administrative Code |
+| Access mode | HTML/PDF ingestion of enacted Local Laws + adoption records (council.nyc.gov / Legistar, noted automation-accessible in ZR research; exact endpoints **to verify at G1**) |
+| Authentication | None expected (**to verify at G1**) |
+| Published quota / rate limits | none published (**to verify at G1**) |
+| Effective-date signal | Local Law number + enactment/effective date (drives the M3-T005 amendment/effective-date overlay) |
+| Last policy verification | **NONE** — registered 2026-07-23 by M3-T001. First verification at M3-T005 G1 |
+| G1 disposition | Unresolved identity/endpoint/terms → **BLOCKED at G1**, not verified |
+
+### 9.3 DOB Rule (RCNY) — tier 3
+
+| Field | Record |
+|---|---|
+| Official source identity | NYC DOB Rules — Rules of the City of New York (RCNY), Title 1 (Department of Buildings). Publisher: DOB / NYC Rules |
+| Access mode | HTML/PDF ingestion (official rules portal + DOB; exact endpoints **to verify at G1**) |
+| Authentication | None expected (**to verify at G1**) |
+| Published quota / rate limits | none published (**to verify at G1**) |
+| Interpretation metadata | record issuing body, rule number, adoption/effective date, cited provisions, status, rescission/supersession |
+| Last policy verification | **NONE** — registered 2026-07-23 by M3-T001. First verification at M3-T005 G1 |
+| G1 disposition | Unresolved identity/endpoint/terms → **BLOCKED at G1**, not verified |
+
+### 9.4 Buildings Bulletin (DOB) — tier 3
+
+| Field | Record |
+|---|---|
+| Official source identity | NYC DOB Buildings Bulletins. Publisher: DOB |
+| Access mode | Official PDF/HTML ingestion (DOB Buildings Bulletins index; exact URLs **to verify at G1**; nyc.gov bot wall applies) |
+| Authentication | None expected (**to verify at G1**) |
+| Published quota / rate limits | none published (**to verify at G1**) |
+| Interpretation metadata | bulletin number, issue date, subject, cited code provisions, status, rescission/supersession |
+| Last policy verification | **NONE** — registered 2026-07-23 by M3-T001. First verification at M3-T005 G1 |
+| G1 disposition | Unresolved identity/endpoint/terms → **BLOCKED at G1**, not verified |
+
+### 9.5 DOB Code Note / directive — tier 3
+
+| Field | Record |
+|---|---|
+| Official source identity | NYC DOB Code Notes and directives (operational guidance interpreting the code). Publisher: DOB |
+| Access mode | Official PDF/HTML ingestion (DOB; exact URLs **to verify at G1**; nyc.gov bot wall applies) |
+| Authentication | None expected (**to verify at G1**) |
+| Published quota / rate limits | none published (**to verify at G1**) |
+| Interpretation metadata | code-note/directive identifier, date, subject, cited provisions, status, rescission/supersession |
+| Last policy verification | **NONE** — registered 2026-07-23 by M3-T001. First verification at M3-T005 G1 |
+| G1 disposition | Unresolved identity/endpoint/terms → **BLOCKED at G1**, not verified |
+
+### 9.6 Formal DOB interpretation — tier 3
+
+| Field | Record |
+|---|---|
+| Official source identity | NYC DOB formal interpretations / determinations (project-scoped or general, as published). Publisher: DOB |
+| Access mode | Official document ingestion (**to verify at G1**). **Project-specific determinations are never generalized to another property** without an approved legal interpretation (SOURCE_AUTHORITY_POLICY.md §2 rule 4) |
+| Authentication | None expected for published interpretations (**to verify at G1**) |
+| Published quota / rate limits | none published (**to verify at G1**) |
+| Interpretation metadata | interpretation number, date, issuing office, cited provisions, scope (general vs project-specific), status, rescission/supersession |
+| Last policy verification | **NONE** — registered 2026-07-23 by M3-T001. First verification at M3-T005 G1 |
+| G1 disposition | Unresolved identity/endpoint/terms → **BLOCKED at G1**, not verified |
+
+---
+
+## 10. Third-party references (reference-only; never controlling provenance) — ADDITIVE (task M3-T001, 2026-07-23)
+
+Per `docs/SOURCE_AUTHORITY_POLICY.md` §2, tier-5 third-party references and tier-6/presentation layers are
+**cross-check only** and are **never** recorded as controlling provenance; the platform adds **no runtime
+dependency** on either (Acceptance NC-3).
+
+### 10.1 UpCodes — tier 5 reference-only
+
+| Field | Record |
+|---|---|
+| Official source identity | UpCodes, Inc. — a **third-party** consolidation of building/zoning code text. NOT an official City/State publisher |
+| Provenance tier | **Tier 5 (third-party reference).** Cross-check only; **never controlling provenance**; the machine provenance of any fact is always the underlying official source, never UpCodes |
+| API availability | UpCodes publishes a commercial API/product offering (noted 2026-07-23; **exact endpoints/terms to verify at G1 only if ever used for a manual cross-check**) |
+| Subscription / pricing | Paid subscription tiers exist; **pricing is published on the vendor site and is NOT recorded here as a fact** (would require verification) and is **NOT procured**. If any paid tier were ever proposed, that is a human-action blocker (stop-and-record), not a platform decision |
+| Program requirement | **The program does not require UpCodes.** No runtime dependency; no ingestion; used, if at all, only by a human for a manual cross-check that is recorded as a secondary presentation, never as machine provenance |
+| Last policy verification | **NONE** — recorded reference-only 2026-07-23 by M3-T001 |
+
+### 10.2 ZoLa — reaffirmed presentation-only (cross-reference governance rule 1)
+
+| Field | Record |
+|---|---|
+| Official source identity | ZoLa (zola.planning.nyc.gov) — DCP's **web mapping presentation layer** for human users |
+| Provenance / use | **Presentation-only (reaffirmed).** This platform must never scrape or depend on the ZoLa interface. Production provenance comes from the underlying official datasets/services (GIS Zoning Features, ZTLDB, PLUTO/MapPLUTO — sections 1–4). ZoLa may be used by a human for a manual cross-check only, recorded as a secondary presentation, never as machine provenance. See Governance rule 1 |
+| Program requirement | **The program does not require the ZoLa interface.** No runtime dependency (unchanged from Governance rule 1) |
+| Last policy verification | governed by Governance rule 1 (unchanged); reaffirmed 2026-07-23 by M3-T001 |
