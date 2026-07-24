@@ -9,7 +9,7 @@ scenarios owned by M3-T001:
   AS-11b  every positive fixture validates against the schema.
   AS-11c  every negative fixture FAILS validation (each isolates one missing/invalid
           required provenance / corpus-version / raw-hash field or constraint).
-  AS-11d  the schema's $id and x-contract-version are the expected deterministic constants;
+  AS-11d  the schema's $id and manifest_version const are the expected deterministic constants;
           the schema file's SHA-256 is printed so reruns are visibly byte-identical.
   AS-4    no forbidden aggregate "complete/compliant/buildable/feasible" system guarantee
           appears in the prose deliverables while any coverage-matrix domain is unresolved.
@@ -32,10 +32,13 @@ from pathlib import Path
 
 from jsonschema import Draft202012Validator
 
-HERE = Path(__file__).resolve()
-FIXROOT = HERE.parent                       # .../fixtures/legal_source_manifest
-REPO = HERE.parents[6]                       # repo root
+HERE = Path(__file__).resolve()             # .../packages/contracts/fixtures/legal_source_manifest/check_m3_t001.py
+REPO = HERE.parents[4]                       # repo root (fixtures/legal_source_manifest -> fixtures -> contracts -> packages -> root)
 SCHEMA_PATH = REPO / "packages/contracts/schemas/v1/legal_source_manifest.schema.json"
+# Fixtures live under the repo convention the CI validator instance-checks:
+# valid/ must validate against the schema; invalid/ must FAIL.
+VALID_DIR = REPO / "packages/contracts/fixtures/valid/legal_source_manifest"
+INVALID_DIR = REPO / "packages/contracts/fixtures/invalid/legal_source_manifest"
 
 EXPECTED_ID = ("https://github.com/martin10101/nyc-buildability/"
                "packages/contracts/schemas/v1/legal_source_manifest.schema.json")
@@ -117,17 +120,19 @@ def main() -> int:
     except Exception as exc:  # noqa: BLE001
         record("AS-11a schema meta-validates (Draft 2020-12)", False, str(exc))
 
-    # AS-11d
+    # AS-11d — deterministic version carried by the $id (/v1/) + the manifest_version const
+    # (house convention; the CI contract validator's keyword allowlist forbids a custom
+    # top-level version keyword, so version lives in $id + the const, not an x- keyword).
     ok_id = schema.get("$id") == EXPECTED_ID
-    ok_ver = schema.get("x-contract-version") == EXPECTED_VERSION
-    record("AS-11d deterministic $id + x-contract-version constants",
+    ok_ver = schema.get("properties", {}).get("manifest_version", {}).get("const") == EXPECTED_VERSION
+    record("AS-11d deterministic $id + manifest_version const",
            ok_id and ok_ver,
-           f"$id_ok={ok_id} version_ok={ok_ver} sha256={schema_sha}")
+           f"$id_ok={ok_id} version_const_ok={ok_ver} sha256={schema_sha}")
 
     validator = Draft202012Validator(schema)
 
-    # AS-11b positives
-    pos = sorted((FIXROOT / "positive").glob("*.json"))
+    # AS-11b positives (repo convention: fixtures/valid/<schema>/)
+    pos = sorted(VALID_DIR.glob("*.json"))
     all_pos_ok = bool(pos)
     for f in pos:
         errs = sorted(validator.iter_errors(json.loads(f.read_text(encoding="utf-8"))),
@@ -137,8 +142,8 @@ def main() -> int:
         record(f"AS-11b positive validates: {f.name}", ok,
                "" if ok else f"unexpected errors: {[e.message for e in errs]}")
 
-    # AS-11c negatives
-    neg = sorted((FIXROOT / "negative").glob("*.json"))
+    # AS-11c negatives (repo convention: fixtures/invalid/<schema>/ — must FAIL)
+    neg = sorted(INVALID_DIR.glob("*.json"))
     all_neg_ok = bool(neg)
     for f in neg:
         errs = list(validator.iter_errors(json.loads(f.read_text(encoding="utf-8"))))

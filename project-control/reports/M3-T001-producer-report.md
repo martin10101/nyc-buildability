@@ -11,6 +11,20 @@ report is evidence for an **independent** gate; the producer does not self-accep
 > files, no control CLI. The new `legal_source_manifest.schema.json` is an interface *addition*, not a
 > change to a frozen shared contract; no interface-change request was required.
 
+> **Correction applied (D-003 correction capsule; rebased onto `origin/main` = `e9ae2d8`).** Three producer-side
+> changes, all within the task's amended allowed paths and touching **no** control file (`.github/**`, `tools/**`
+> unchanged): (1) fixtures relocated from `schemas/v1/fixtures/legal_source_manifest/{positive,negative}/` to the
+> repo convention `packages/contracts/fixtures/{valid,invalid}/legal_source_manifest/` so the CI validator
+> **instance-validates** them (valid pass, invalid fail) instead of misreading them as schema documents — the
+> validator was **not** weakened and invalid fixtures were **not** disguised; (2) the `check_m3_t001.py` harness
+> moved to `packages/contracts/fixtures/legal_source_manifest/` with corrected internal paths; (3) the schema's
+> non-standard top-level `x-contract-version` keyword (rejected by the CI keyword allowlist) was replaced with an
+> allowlisted `$comment` — the deterministic version is now carried by the `$id` `/v1/` directory + the required
+> `manifest_version` `const` (the house convention), preserving AS-11d. The context-budget guard passes because
+> the controller registered `docs/LEGAL_CORPUS_COVERAGE_MATRIX.md` in `tools/context_budget.json` (honest: it is a
+> current coverage board, not historical). `docs/CONSTRUCTION_CODE_RELEASE_SCOPE.md` remains a DRAFT — acceptance
+> does not approve B-011.
+
 ---
 
 ## 1. Deliverables produced (G0 inputs/outputs satisfied)
@@ -23,8 +37,8 @@ report is evidence for an **independent** gate; the producer does not self-accep
 | Construction-code release scope (DRAFT) | `docs/CONSTRUCTION_CODE_RELEASE_SCOPE.md` | AS-10 (B-011) |
 | Source access registry (additive) | `docs/SOURCE_ACCESS_REGISTRY.md` §9–§10 | AS-5, AS-6, NC-3 |
 | Legal-source manifest schema | `packages/contracts/schemas/v1/legal_source_manifest.schema.json` | AS-11 |
-| Manifest fixtures (2 positive, 8 negative) | `packages/contracts/schemas/v1/fixtures/legal_source_manifest/{positive,negative}/` | AS-11 |
-| Self-check harness | `packages/contracts/schemas/v1/fixtures/legal_source_manifest/check_m3_t001.py` | AS-4, AS-11, AS-12, NC-2 |
+| Manifest fixtures (2 valid, 8 invalid) | `packages/contracts/fixtures/{valid,invalid}/legal_source_manifest/` | AS-11 |
+| Self-check harness | `packages/contracts/fixtures/legal_source_manifest/check_m3_t001.py` | AS-4, AS-11, AS-12, NC-2 |
 | Architect benchmark analysis | `project-control/reports/M3-T001-architect-benchmark-analysis.md` | AS-7, NC-1, NC-2 |
 | This producer report | `project-control/reports/M3-T001-producer-report.md` | G0–G5 evidence |
 
@@ -39,16 +53,16 @@ report is evidence for an **independent** gate; the producer does not self-accep
 Command (repo root = worktree root):
 
 ```
-python packages/contracts/schemas/v1/fixtures/legal_source_manifest/check_m3_t001.py
+python packages/contracts/fixtures/legal_source_manifest/check_m3_t001.py
 ```
 
 Output (authoritative final run):
 
 ```
-schema sha256: 9b153e907999e2938fe4ad77e2b4e0daaac7541a20bcd9278064748e89f44210
+schema sha256: 1aa51eaffefe4b71eb815a1a260818fc0f120f50a9b20938a6a3f129342adb09
 
 [PASS] AS-11a schema meta-validates (Draft 2020-12)
-[PASS] AS-11d deterministic $id + x-contract-version constants - $id_ok=True version_ok=True sha256=9b153e90...f44210
+[PASS] AS-11d deterministic $id + manifest_version const - $id_ok=True version_const_ok=True sha256=1aa51eaf...adb09
 [PASS] AS-11b positive validates: upcodes_reference_only.json
 [PASS] AS-11b positive validates: zr_portal_html.json
 [PASS] AS-11c negative rejected: bad_raw_hash_format.json - rejected on: ... does not match '^sha256:...'
@@ -74,7 +88,7 @@ TOTAL: 17 checks, 0 failed
 byte-identity across reruns is visible — AS-11d.)
 
 This one harness proves AS-11a (schema meta-validates), AS-11b (positives validate), AS-11c (negatives
-each rejected on the isolated missing/invalid field), AS-11d (deterministic `$id` + `x-contract-version`;
+each rejected on the isolated missing/invalid field), AS-11d (deterministic `$id` + `manifest_version` const;
 schema SHA-256 printed for byte-identity across reruns), AS-4 (no aggregate complete/compliant/buildable
 guarantee), AS-12 (prohibited claims only appear as prohibitions), and NC-2 (no PDF committed; no inferred
 BBL/address in the benchmark analysis).

@@ -108,7 +108,7 @@ next action and responsible reviewer. No `missing` / `partial` / `conflicting` /
 "buildable" label** for the corpus or for a property.
 
 **How it is checked (executable, reproducible).** The self-check harness
-[`packages/contracts/schemas/v1/fixtures/legal_source_manifest/check_m3_t001.py`](../packages/contracts/schemas/v1/fixtures/legal_source_manifest/check_m3_t001.py)
+[`packages/contracts/fixtures/legal_source_manifest/check_m3_t001.py`](../packages/contracts/fixtures/legal_source_manifest/check_m3_t001.py)
 scans every M3-T001 deliverable for a system-guarantee assertion of an aggregate label (e.g. "the property
 is buildable", "corpus is complete", "the result is compliant") and fails if any is present as a
 guarantee. The current matrix has multiple `missing`/`partial` domains, so the invariant requires — and
