@@ -60,14 +60,14 @@
     "G3",
     "G5"
   ],
-  "producer_agent": null,
+  "producer_agent": "orchestrator",
   "reviewer_agents": [
     "control-plane-verifier",
     "directive-compliance-verifier",
     "code-reviewer"
   ],
-  "status": "backlog",
-  "progress_percent": 0,
+  "status": "blocked",
+  "progress_percent": 45,
   "risks": [
     "Teammates may not inherit skills frontmatter; each spawn prompt must state the frozen SHA and explicitly instruct /run-quality-gate, or Step-1 item 4 fails.",
     "A reviewer sandbox that cannot execute commands cannot return its own rev-parse; per .claude/rules/project-control.md the orchestrator then captures the executable evidence and the reviewer verifies it, and this substitution is recorded explicitly rather than silently.",
@@ -76,7 +76,7 @@
   ],
   "blockers": [],
   "created_at": "2026-07-24T18:23:08.048623+00:00",
-  "updated_at": "2026-07-24T18:23:08.083632+00:00",
+  "updated_at": "2026-07-24T18:53:28.384750+00:00",
   "directive_refs": [
     {
       "directive_id": "D-004",
@@ -85,5 +85,15 @@
   ],
   "directive_regime_version": "1.0",
   "directive_regime_entered_at": "2026-07-24T18:23:08.051652+00:00",
-  "allowed_paths_note": "D-004 Step 1 (D-004-R028) fixes this task's scope to exactly the named pilot report files plus its own producer report; those are entries 1-4. Entry 5, the packet file itself, is an ORCHESTRATOR LIFECYCLE path written only by tools/project_control.py (claim/progress/submit/gate/accept) and is never a producer or teammate write target - it is listed so a containment diff has no unexplained escape. The D-004 directive-registry files co-committed with this packet under flag-3 option (a) are the orchestrator's D-001 capture authority, NOT M0-T027 producer output, and are deliberately excluded from allowed_paths (see forbidden_paths)."
+  "allowed_paths_note": "D-004 Step 1 (D-004-R028) fixes this task's scope to exactly the named pilot report files plus its own producer report; those are entries 1-4. Entry 5, the packet file itself, is an ORCHESTRATOR LIFECYCLE path written only by tools/project_control.py (claim/progress/submit/gate/accept) and is never a producer or teammate write target - it is listed so a containment diff has no unexplained escape. The D-004 directive-registry files co-committed with this packet under flag-3 option (a) are the orchestrator's D-001 capture authority, NOT M0-T027 producer output, and are deliberately excluded from allowed_paths (see forbidden_paths).",
+  "worktree": "main",
+  "progress_log": [
+    {
+      "at": "2026-07-24T18:53:28.384750+00:00",
+      "agent": "orchestrator",
+      "percent": 45,
+      "status": "blocked",
+      "message": "D-004 Step 1 executed at frozen SHA da0d42b6e9334e823a95aa5cd120f480dbc501c8. Three reviewer teammates spawned from named .claude/agents/ definitions (control-plane-verifier, directive-compliance-verifier, code-reviewer); all three pinned to the frozen SHA by their own git rev-parse and all three explicitly invoked /run-quality-gate. Four of the five Step-1 items satisfied. Item 3 FAILED: the sentinel negative test was NOT blocked - a code-reviewer-role teammate's 'echo x > ./PILOT_SENTINEL.tmp' created the file; orchestrator independently verified with its own test -e (exit 0, EXISTS, 2 bytes, untracked) and only then disposed of the sentinel (post-deletion test -e exit 1). Read-only guard is ineffective for agent-teams teammates: blocker B-015 OPEN. Verdicts: code-reviewer FAIL, control-plane-verifier FAIL, directive-compliance-verifier PASS; both FAILs trace to the single sentinel defect, no reviewer found a content defect. BLOCKING CONDITIONS for this task: (1) B-015 must be resolved under M0-T028 (D-004 Step 3) - the guard was deliberately NOT modified here, .claude/hooks/** being in this task's forbidden_paths; (2) Steps 2/4 evidence outputs remain unproduced pending their own explicit owner GOs. Evidence: project-control/reports/AGENT-TEAMS-PILOT-1.md (all three reviewer reports preserved verbatim, one machine username redacted and annotated). No effort setting applied anywhere (D-004-R096/R124). M0-T025 untouched."
+    }
+  ]
 }
