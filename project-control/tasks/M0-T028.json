@@ -1,0 +1,104 @@
+{
+  "task_id": "M0-T028",
+  "title": "B-015: teammate read-only confinement - diagnose, fix, and regression-test the PreToolUse guard",
+  "task_type": "governance",
+  "milestone_id": "M0",
+  "objective": "Close blocker B-015. (a) Determine WITH PRIMARY EVIDENCE why the PreToolUse read-only guard did not deny an agent-teams teammate's repo-mutating Bash redirection - hook not firing for teammates (H1) versus firing without a recognisable agent_type (H2) - explicitly weighing the positive Step-1 finding that per-spawn TOOL-UNAVAILABILITY was enforced by the harness while instruction-only confinement was not. (b) Fix so reviewer-class teammates are denied writes, preserving the existing fail-closed behaviour on unparseable payloads and not weakening any current denial. (c) Regression tests: the sentinel negative test itself, plus the D-004-R100 hook-command path-quoting ride-along (quote all project-path references so the repo is space-safe on any machine) and the D-004-R101 .claude/settings.local.json entry in the repo .gitignore. (d) Correct project-control/directives/index.json's D-004 affected_tasks, or state explicitly where that correction belongs. Design input from D-004 Step 2 (AGENT-TEAMS-PILOT-2-PROBE.md): teammate cwd RESETS to the primary checkout before every Bash call, so confinement can never be anchored to working directory and an uncompensated teammate write lands in the MAIN checkout - detection (containment diff) must carry the load, not positional assumptions.",
+  "business_reason": "D-004 amendment 4 item 3 ratifies B-015 and assigns its diagnosis and fix here. Until this closes, the PreToolUse layer that stops shell redirections, rm, git add/commit/push, gh mutations, and control-CLI calls is ineffective for teammates, and D-004 Steps 3-5 grant teammates progressively more write authority. The on-policy Step-1 re-run (D-004-R134/R135) is gated on this fix merging and doubles as its end-to-end acceptance test.",
+  "inputs": [
+    "project-control/blockers/B-015-teammate-readonly-guard-bypass.json (the blocker this task closes)",
+    "project-control/reports/AGENT-TEAMS-PILOT-1.md (Step-1 evidence: the sentinel escape, verbatim guard/tool denials, the isolated-hook diagnostic proving the hook's own logic is correct)",
+    "project-control/reports/AGENT-TEAMS-PILOT-2-PROBE.md (Step-2 evidence: teammate cwd resets before every Bash call; uncompensated writes land in the MAIN checkout)",
+    ".claude/hooks/readonly_agent_guard.py (the guard under repair)",
+    ".claude/settings.json (hook wiring; matcher Bash|Write|Edit|MultiEdit|NotebookEdit)",
+    "tools/test_readonly_agent_guard.py (existing regression suite to extend)",
+    "project-control/directives/D-004-agent-teams-runtime-adoption/ (source-001 Step 3 layers; source-005 item 3 scope; rows R139-R144, R100, R101)",
+    ".claude/rules/project-control.md, .claude/ORCHESTRATION_POLICY.md"
+  ],
+  "outputs": [
+    ".claude/hooks/readonly_agent_guard.py (fixed agent-identity resolution and/or documented detection fallback)",
+    ".claude/settings.json (hook wiring changes only if the diagnosis requires them, incl. R100 path quoting)",
+    ".gitignore (R101: .claude/settings.local.json entry)",
+    "tools/test_readonly_agent_guard.py (regression cases incl. the teammate payload shape)",
+    "project-control/directives/index.json (R144 affected_tasks correction, if permitted here)",
+    "project-control/reports/M0-T028-producer-report.md",
+    "project-control/reports/M0-T028-TEAMMATE-PAYLOAD-EVIDENCE.md (the primary H1/H2 evidence)"
+  ],
+  "dependencies": [
+    "M0-T027"
+  ],
+  "allowed_paths": [
+    ".claude/hooks/readonly_agent_guard.py",
+    ".claude/settings.json",
+    ".gitignore",
+    "tools/test_readonly_agent_guard.py",
+    "project-control/directives/index.json",
+    "project-control/reports/M0-T028-producer-report.md",
+    "project-control/reports/M0-T028-TEAMMATE-PAYLOAD-EVIDENCE.md",
+    "project-control/tasks/M0-T028.json",
+    "project-control/blockers/B-015-teammate-readonly-guard-bypass.json"
+  ],
+  "forbidden_paths": [
+    "project-control/tasks/M0-T025.json and M0-T025 in any form (D-004-R022/R053)",
+    "project-control/directives/D-004-agent-teams-runtime-adoption/** (append-only owner-directive provenance, not this task's output)",
+    "project-control/reports/AGENT-TEAMS-PILOT-1.md and AGENT-TEAMS-PILOT-2-PROBE.md (D-004-R132: Step-1/2 findings stay recorded exactly as captured)",
+    "project-control/master_plan.json, state.json, gates/, checkpoints/ (lifecycle is the orchestrator's, via the CLI)",
+    ".claude/settings.local.json (untracked; and no effort key anywhere - D-004-R159)",
+    ".claude/agents/**, .claude/rules/**, CLAUDE.md",
+    "tools/project_control.py, tools/directive_registry.py, tools/validate_directive_compliance.py (control CLI and validators stay frozen)",
+    "services/**, apps/**, packages/**, render.yaml and any deployment definition",
+    "any product/runtime code"
+  ],
+  "acceptance_scenarios": [
+    "AS-1 (evidence, H1-vs-H2): M0-T028-TEAMMATE-PAYLOAD-EVIDENCE.md records the ACTUAL PreToolUse payload observed for a live agent-teams teammate Bash call, or an equally primary artifact, and states which hypothesis it supports - hook never fires (H1) or fires without a recognisable agent_type (H2). A reasoned argument without a captured payload does NOT satisfy this scenario.",
+    "AS-2 (evidence): the same document explicitly weighs the Step-1 positive finding that per-spawn tool-unavailability WAS enforced (the Write tool was absent from the teammate's toolset) while the PreToolUse Bash layer was not, and states what that implies about where enforcement actually lives.",
+    "AS-3 (executable, the core fix): a reviewer-class teammate's sentinel Bash redirection is DENIED, the denial text comes from readonly_agent_guard.py itself rather than from tool-unavailability, and the orchestrator's own independent test -e returns non-zero. If H1 holds and PreToolUse cannot be made to fire for teammates, this scenario is instead satisfied by a guaranteed-DETECTION mechanism that refuses completion on any escape, and the packet is amended to say so explicitly rather than silently reinterpreted.",
+    "AS-4 (executable, no regression): tools/test_readonly_agent_guard.py passes in full, including a NEW case for the teammate payload shape and the existing fail-closed-on-unparseable-payload case. No previously-denied command becomes allowed, and no read-only command (read-only git, gh reads, test runners) becomes newly denied.",
+    "AS-5 (executable, R100 ride-along): every project-path reference in every hook command in .claude/settings.json is quoted, and a test proves the hook commands resolve correctly when the repository path contains a space.",
+    "AS-6 (executable, R101 ride-along): .claude/settings.local.json is matched by the REPO .gitignore, verified with git check-ignore -v resolving against the repo file rather than only the machine-global ignore file.",
+    "AS-7 (R144): project-control/directives/index.json's D-004 affected_tasks is corrected, OR the producer report states explicitly and with reasoning which task the correction belongs to and why it cannot be done here.",
+    "AS-8 (executable, control plane): python tools/validate_directive_compliance.py exits 0; python tools/test_project_control.py and python tools/test_directive_compliance.py pass; secret scan PASS.",
+    "AS-9 (containment): the task's diff touches only allowed_paths; M0-T025 is unmodified; the D-004 capture and the two pilot reports are byte-identical to their committed state; no effortLevel/effort key is added or changed anywhere.",
+    "AS-10 (blocker closure): B-015 moves to resolved ONLY with an audit-log entry citing the merged fix and the passing sentinel evidence - and only by the orchestrator, never by the producer."
+  ],
+  "required_gates": [
+    "G0",
+    "G2",
+    "G3",
+    "G5"
+  ],
+  "producer_agent": null,
+  "reviewer_agents": [
+    "security-reviewer",
+    "code-reviewer",
+    "control-plane-verifier",
+    "directive-compliance-verifier"
+  ],
+  "status": "backlog",
+  "progress_percent": 0,
+  "risks": [
+    "H1 (hook never fires for teammates) may be UNFIXABLE from inside the repository, since hook dispatch is harness behaviour. If so, this task must pivot to guaranteed detection (D-004 Step 3 layer 4: containment diff on completion AND idle) and say so plainly rather than claim a prevention fix it did not achieve.",
+    "Testing a merged hook/settings change inside the session that merged it is explicitly forbidden by D-004's standing constraint - the sentinel re-verification must happen in a COMPLETELY FRESH session.",
+    "The guard's regexes are load-bearing security logic with documented residuals (scripting-language writes; a verb hidden in a shell variable without a tree target). Widening agent-identity resolution must not accidentally narrow command matching.",
+    "Step-2 proved teammate cwd resets before every Bash call, so any fix reasoning from 'the producer is in its worktree' is invalid; an uncompensated teammate write lands in the MAIN checkout.",
+    "This task edits .claude/settings.json, a governance path - it is in-regime under D-004 and needs the full G3+G5 reviewer set."
+  ],
+  "blockers": [],
+  "created_at": "2026-07-24T19:36:53.815540+00:00",
+  "updated_at": "2026-07-24T19:36:53.831536+00:00",
+  "directive_refs": [
+    {
+      "directive_id": "D-004",
+      "requirement_ids": "ALL"
+    }
+  ],
+  "directive_regime_version": "1.0",
+  "directive_regime_entered_at": "2026-07-24T19:36:53.815540+00:00",
+  "stop_conditions": [
+    "If closing B-015 requires changing anything outside allowed_paths (for example the Agent/Task dispatch layer, an agent definition, or the control CLI), STOP and report - do not widen scope unilaterally.",
+    "If the diagnosis shows prevention is impossible for teammates, STOP before implementing a detection-only design and report, so the owner can decide whether detection-only satisfies B-015.",
+    "Never modify AGENT-TEAMS-PILOT-1.md or AGENT-TEAMS-PILOT-2-PROBE.md (D-004-R132).",
+    "Never write an effort key anywhere (D-004-R159, permanent)."
+  ],
+  "owner_review_state": "PROPOSED - presented for owner review per D-004-R145; NOT started, NOT claimed, NOT dispatched."
+}

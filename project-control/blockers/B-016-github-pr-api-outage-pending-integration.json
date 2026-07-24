@@ -1,0 +1,21 @@
+{
+  "blocker_id": "B-016",
+  "title": "GitHub PR-creation API returning 500: two reviewed-ready branches pending integration",
+  "status": "open",
+  "affects": [
+    "M0-T027 (D-004 pilot-governance: Step-2 probe evidence + M0-T028 packet)",
+    "D-004 amendment 4 capture (source-005-amendment.md and its requirement rows R129-R167)",
+    "any protected-main integration while the outage persists"
+  ],
+  "detail": "From approximately 19:20 to 19:42 UTC on 2026-07-24, GitHub's pull-request CREATION API failed continuously for this repository. `gh pr create` returned 'GraphQL: Something went wrong while executing your query' on every attempt (~15 attempts, request ids incl. D332:140276:14699D9:482CF88, F1D6:E9446:12A46BA:41B9B03), and a direct REST POST to /repos/{owner}/{repo}/pulls returned HTTP 500. This is NOT a repository, permission, or branch problem: `git push` succeeded for both branches, REST reads succeeded (`gh api repos/{owner}/{repo}` returned the repo), and https://www.githubstatus.com reported 'All Systems Operational' throughout - so the incident was not reflected on the public status page. Because ADR-005 and the owner's protected-main directive forbid pushing directly to main, the completed work cannot be integrated until PR creation recovers. TWO BRANCHES ARE PUSHED, COMPLETE, AND AWAITING PRs, in this dependency-free order (they touch disjoint files and may be merged in either order): (1) `control/D-004-amendment-4-owner-decisions` at 8dd5bcaa473b8b2ddbd742f55e0955967506b8fe - the append-only D-004 amendment-4 capture (source-005-amendment.md, requirements.json rows R129-R167, manifest.json v5, verification.json M0-T027 applicable set 71->97); (2) `task/M0-T027-step2-probe-and-M0-T028-packet` at cc3fcb83340e04a88c7378ffb7301a675f0299de - the Step-2 probe report, the proposed M0-T028 packet, and the M0-T027 progress/lifecycle update. Both were validated locally before push: validate_directive_compliance.py exit 0, secret_scan PASS. Neither branch has run CI yet, because CI on this repository is triggered by the pull request.",
+  "exact_human_action": "None required from the owner unless the outage persists. Orchestrator-resolvable: retry `gh pr create` for both branches once GitHub's PR API recovers, let CI run, and merge sequentially per the protected-main workflow (one PR at a time, reconcile main between merges). If GitHub reports a confirmed incident affecting pull requests, simply wait it out - no repository change is warranted, and no direct push to main is permitted as a workaround.",
+  "how_it_will_be_tested": "Retry `gh pr create --base main --head <branch>` for each branch. Success = a PR number is returned, CI runs green on it, and `gh pr merge --merge --delete-branch` completes; then `git pull --ff-only origin main` and confirm both head SHAs are ancestors of the new main, `python tools/validate_directive_compliance.py` exits 0 on the merged state, and `git ls-remote --heads origin` shows both branches deleted. This blocker closes with an audit entry naming the two merge commits.",
+  "created_at": "2026-07-24T19:42:00Z",
+  "audit_log": [
+    {
+      "at": "2026-07-24T19:42:00Z",
+      "by": "orchestrator",
+      "result": "OPENED. All D-004 work authorized for this turn is COMPLETE and committed locally: amendment 4 captured append-only (validator exit 0), Step 2 executed under the owner's item-4 safeguards with its probe report written and the worktrees torn down cleanly, and the M0-T028 packet authored as a backlog proposal (NOT started, per D-004-R145). Only INTEGRATION is blocked, and only by the external outage. No work was lost: both branches are pushed to origin. No direct push to main was attempted at any point."
+    }
+  ]
+}
