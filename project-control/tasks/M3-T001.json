@@ -33,7 +33,9 @@
     "docs/DOCUMENT_EVIDENCE_POLICY.md (NEW  -  document-evidence-state policy foundation for M3-T003)",
     "docs/SOURCE_ACCESS_REGISTRY.md (ADDITIVE new channel sections only; existing accepted rows byte-unchanged)",
     "packages/contracts/schemas/v1/legal_source_manifest.schema.json (NEW additive)",
-    "packages/contracts/schemas/v1/fixtures/legal_source_manifest/** (positive + negative manifest fixtures for AS-11 executable validation)",
+    "packages/contracts/fixtures/valid/legal_source_manifest/ (D-003 amendment: relocated from schemas/v1/fixtures to the conventional fixtures tree the CI validator instance-checks; positive manifest fixtures for AS-11)",
+    "packages/contracts/fixtures/invalid/legal_source_manifest/ (D-003 amendment: negative manifest fixtures that MUST fail schema validation)",
+    "packages/contracts/fixtures/legal_source_manifest/ (D-003 amendment: the check_m3_t001.py self-check harness, relocated with the fixtures)",
     "project-control/reports/M3-T001-architect-benchmark-analysis.md, project-control/reports/M3-T001-producer-report.md"
   ],
   "forbidden_paths": [

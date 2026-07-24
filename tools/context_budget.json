@@ -18,6 +18,7 @@
   "board_scan_globs": ["docs/*.md", "*.md"],
   "board_allowlist": [
     "docs/MASTER_EXECUTION_PLAN.md",
-    "docs/GENERATIVE_STRATEGY_INTEGRATION_PLAN.md"
+    "docs/GENERATIVE_STRATEGY_INTEGRATION_PLAN.md",
+    "docs/LEGAL_CORPUS_COVERAGE_MATRIX.md"
   ]
 }
