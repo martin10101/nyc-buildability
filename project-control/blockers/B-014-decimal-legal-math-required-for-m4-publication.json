@@ -1,7 +1,7 @@
 {
   "blocker_id": "B-014",
   "title": "Exact Decimal/rational legal math + typed units required before M4 rule publication (owner directive 2026-07-23)",
-  "status": "open",
+  "status": "resolved",
   "owner_decision": "MANDATORY blocker for M4 rule publication (owner directive 2026-07-23, Part 3 owner decisions).",
   "affects": [
     "M4-T001 (rules engine + first R5 FAR draft)  -  blocked from acceptance/publication until exact-decimal legal math + typed units land",
@@ -16,5 +16,7 @@
   "where_to_enter": "Resolved by the orchestrator upon accepting the Area-D exact-legal-math task; evidence committed to the whole-system-trust-replan lane.",
   "minimum_permissions": "None.",
   "how_it_will_be_tested": "M4 rule acceptance is blocked by this open blocker (the accept precondition requires zero open blockers referencing the task). Resolution requires: rules/operations.py + evaluator.py use Decimal/rational from canonical strings; per-rule rounding mode/scale/order encoded; units enforced (unknown/incompatible units rejected); adversarial threshold + rounding tests pass; geometry-float isolation preserved with explicit conversions.",
-  "created_at": "2026-07-23T14:40:00Z"
+  "created_at": "2026-07-23T14:40:00Z",
+  "resolved_at": "2026-07-24T00:00:00+00:00",
+  "resolution": "Resolved by acceptance of M4-T007 (exact rational/Decimal legal math): rules/operations.py + evaluator.py compute and compare via exact Fraction built from canonical decimal strings; per-rule rounding mode/scale/order encoded; unit enforcement fail-closed; adversarial threshold + rounding tests pass (differential proven independent - fails under old float); geometry-float isolation preserved. Independently verified G3/G4/G5 + D-002 at head 0817ba1. NOTE: this clears ONLY the exact-math prerequisite; M4 rule publication remains blocked by G6 qualified-human legal approval + B-010."
 }

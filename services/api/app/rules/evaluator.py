@@ -24,10 +24,11 @@ from __future__ import annotations
 import datetime
 import math
 import re
+from fractions import Fraction
 from typing import Any
 
 from . import coverage as cov
-from . import lifecycle
+from . import lifecycle, units
 from .models import (
     ComputationStep,
     EvaluationTrace,
@@ -126,9 +127,28 @@ def _resolve_ref(ref: dict, inputs: dict, params: dict, step_values: dict) -> An
     raise EvaluationError(f"malformed ref {ref!r}")
 
 
-def _run_computation(rule: RuleDefinition, inputs: dict) -> tuple[list, dict]:
-    step_values: dict[str, float] = {}
-    step_traces: list = []
+def _run_computation(
+    rule: RuleDefinition, inputs: dict
+) -> tuple[list, dict, dict, list[str]]:
+    """Run the ordered computation on EXACT rationals.
+
+    Returns ``(step_traces, outputs_json, outputs_exact, nonrepresentable_steps)``:
+
+    * ``step_traces`` - JSON-safe per-step trace (resolved args + result rendered
+      to finite JSON numbers).
+    * ``outputs_json`` - the declared outputs rendered to JSON numbers (the trace's
+      ``outputs`` field).
+    * ``outputs_exact`` - the same outputs as EXACT rationals, for an exact
+      compliance determination.
+    * ``nonrepresentable_steps`` - ids of steps whose exact result overflows the
+      finite JSON-number range; when non-empty the caller fails closed and NONE of
+      the trace/outputs is emitted.
+
+    Step values stay EXACT for step-to-step chaining; nothing is rounded unless a
+    ``round`` step asks for it (per-rule rounding order is the explicit step order).
+    """
+    step_values: dict[str, Fraction] = {}
+    computed: list[tuple[dict, list, Fraction]] = []
     for step in rule.computation["steps"]:
         resolved = [
             _resolve_ref(arg, inputs, rule.parameters, step_values) for arg in step["args"]
@@ -138,16 +158,34 @@ def _run_computation(rule: RuleDefinition, inputs: dict) -> tuple[list, dict]:
         except OperationError as exc:
             raise EvaluationError(f"step {step['id']!r}: {exc}") from exc
         step_values[step["id"]] = result
-        step_traces.append(
-            ComputationStep(
-                step["id"], step["op"], resolved, result, step.get("note", "")
-            ).as_dict()
-        )
-    outputs = {
+        computed.append((step, resolved, result))
+
+    # Overflow guard (decided on the EXACT value, before any float render): an
+    # exact result can be mathematically finite yet too large to emit as a finite
+    # JSON number (e.g. 1.2e308 * 1.5 = 1.8e308). Fail closed rather than render inf.
+    nonrepresentable = [
+        step["id"] for step, _resolved, result in computed
+        if not units.is_representable_float(result)
+    ]
+    if nonrepresentable:
+        return [], {}, {}, nonrepresentable
+
+    step_traces = [
+        ComputationStep(
+            step["id"],
+            step["op"],
+            [units.to_json_number(arg) for arg in resolved],
+            units.to_json_number(result),
+            step.get("note", ""),
+        ).as_dict()
+        for step, resolved, result in computed
+    ]
+    outputs_exact = {
         name: step_values[target["step"]]
         for name, target in rule.computation["outputs"].items()
     }
-    return step_traces, outputs
+    outputs_json = {name: units.to_json_number(value) for name, value in outputs_exact.items()}
+    return step_traces, outputs_json, outputs_exact, nonrepresentable
 
 
 # --------------------------------------------------------------------------
@@ -232,15 +270,6 @@ def _citations_with_provenance(rule: RuleDefinition, snapshots: SnapshotStore) -
 # --------------------------------------------------------------------------
 # M4-T003: fail-closed input validation (fix 1)
 # --------------------------------------------------------------------------
-
-def _is_finite_number(value: Any) -> bool:
-    if isinstance(value, bool) or not isinstance(value, int | float):
-        return False
-    try:
-        return math.isfinite(value)
-    except OverflowError:  # int too big to convert to float (e.g. 10**400)
-        return False
-
 
 def _json_safe(value: Any) -> Any:
     """Non-finite floats are not valid strict JSON; represent them as strings so
@@ -389,27 +418,56 @@ def _resolve_determination_ref(ref: dict, inputs: dict, outputs: dict) -> Any:
     return None
 
 
-def _evaluate_determination(rule: RuleDefinition, inputs: dict, outputs: dict) -> dict | None:
+def _evaluate_determination(rule: RuleDefinition, inputs: dict, outputs_exact: dict) -> dict | None:
     """Evaluate a compliance determination (proposal vs computed limit) into a
-    genuine pass/fail, WITHOUT changing coverage. Returns None when the rule has
-    no determination or an operand is not a finite number (indeterminate)."""
+    genuine pass/fail, WITHOUT changing coverage. The comparison is performed on
+    EXACT rationals so a proposal that exactly meets a computed legal cap resolves
+    deterministically (no float boundary error). Returns None when the rule has no
+    determination or an operand is not a usable number (indeterminate); the
+    trace's ``left_value``/``right_value`` are the exact operands rendered to JSON
+    numbers."""
     spec = rule.determination
     if not spec:
         return None
-    left = _resolve_determination_ref(spec["left"], inputs, outputs)
-    right = _resolve_determination_ref(spec["right"], inputs, outputs)
-    if not _is_finite_number(left) or not _is_finite_number(right):
+    left = _resolve_determination_ref(spec["left"], inputs, outputs_exact)
+    right = _resolve_determination_ref(spec["right"], inputs, outputs_exact)
+    try:
+        left_exact = units.to_exact(left)
+        right_exact = units.to_exact(right)
+    except units.LegalNumberError:
         return None
-    passed = _COMPARATORS[spec["compare"]](float(left), float(right))
+    passed = _COMPARATORS[spec["compare"]](left_exact, right_exact)
     return {
         "id": spec["id"],
         "description": spec.get("description", ""),
         "compare": spec["compare"],
-        "left_value": float(left),
-        "right_value": float(right),
+        "left_value": units.to_json_number(left_exact),
+        "right_value": units.to_json_number(right_exact),
         "outcome": "pass" if passed else "fail",
         "label": spec["pass_label"] if passed else spec["fail_label"],
     }
+
+
+# --------------------------------------------------------------------------
+# M4-T007: unit enforcement
+# --------------------------------------------------------------------------
+
+def _unknown_declared_units(rule: RuleDefinition) -> list[str]:
+    """Return human-readable descriptions of any declared input/output whose unit
+    is not a recognized legal unit (``units.require_known_unit`` rejects it). Empty
+    when every declared unit is known or null (dimensionless)."""
+    bad: list[str] = []
+    for spec in rule.inputs:
+        try:
+            units.require_known_unit(spec.unit)
+        except units.UnitError:
+            bad.append(f"input {spec.name!r}={spec.unit!r}")
+    for spec in rule.outputs:
+        try:
+            units.require_known_unit(spec.unit)
+        except units.UnitError:
+            bad.append(f"output {spec.name!r}={spec.unit!r}")
+    return bad
 
 
 # --------------------------------------------------------------------------
@@ -463,6 +521,24 @@ def evaluate(
         }
         fields.update(overrides)
         return EvaluationTrace(**fields)
+
+    # 0-units. Unit enforcement (M4-T007 / B-014): every declared input/output unit
+    #     must be a recognized legal unit (or null = dimensionless). An unknown
+    #     unit is a rule-authoring defect the engine cannot reason about
+    #     dimensionally; fail closed (no computation, no value) rather than silently
+    #     treat it as dimensionless.
+    unknown_units = _unknown_declared_units(rule)
+    if unknown_units:
+        return RuleResult(_make_trace(
+            applicability_outcome=False,
+            applicability_trace=[{"unknown_unit": True, "detail": unknown_units}],
+            coverage_status=cov.COVERAGE_PROFESSIONAL_REVIEW_REQUIRED,
+            data_completeness=cov.COMPLETENESS_COMPLETE,
+            notes=base_notes + [
+                f"rule declares unknown/unenforceable unit(s): {unknown_units}; "
+                "no value computed (fail-closed)"
+            ],
+        ))
 
     # 0a. Invalid as_of_date fails closed (M4-T003 rework): a non-string or a
     #     non-ISO/out-of-range date cannot be temporally reasoned about; do NOT
@@ -559,14 +635,16 @@ def evaluate(
             )
         )
 
-    # 3. Deterministic computation.
-    step_traces, outputs = _run_computation(rule, inputs)
+    # 3. Deterministic computation on EXACT rationals (M4-T007). Step values stay
+    #    exact for chaining and for the compliance determination; the trace renders
+    #    them to finite JSON numbers only at its edge.
+    step_traces, outputs, outputs_exact, nonfinite_steps = _run_computation(rule, inputs)
 
-    # 3a. Output finiteness guard (M4-T003 rework, D1): even with in-domain inputs
-    #     a computation can overflow to a non-finite result (e.g. a huge finite
-    #     lot_area multiplied by a FAR). Never emit a fabricated inf/NaN output;
-    #     fail closed to professional review with a visible reason.
-    nonfinite_steps = [s["step_id"] for s in step_traces if not _is_finite_number(s["result"])]
+    # 3a. Output representability guard (M4-T003 D1, kept exact in M4-T007): with
+    #     exact rationals a computation cannot overflow to inf, but an exact result
+    #     can still be too large to emit as a finite JSON number (e.g. a huge finite
+    #     lot_area * FAR). Never emit a fabricated inf/NaN output; fail closed to
+    #     professional review with a visible reason.
     if nonfinite_steps:
         return RuleResult(_make_trace(
             applicability_outcome=True,
@@ -598,8 +676,10 @@ def evaluate(
         notes.append(f"limitation: {limitation}")
 
     # 6. Compliance determination (fix 5): a genuine pass/fail against a computed
-    #    limit, recorded in the trace WITHOUT changing coverage.
-    determination = _evaluate_determination(rule, inputs, outputs)
+    #    limit, recorded in the trace WITHOUT changing coverage. Compared on EXACT
+    #    rationals (M4-T007): a proposal exactly at the computed cap resolves
+    #    deterministically.
+    determination = _evaluate_determination(rule, inputs, outputs_exact)
 
     return RuleResult(
         _make_trace(

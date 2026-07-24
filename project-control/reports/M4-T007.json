@@ -1,0 +1,27 @@
+{
+  "task_id": "M4-T007",
+  "producer_agent": "rules-engineer",
+  "report_file": "project-control/reports/M4-T007-producer-report.md",
+  "submitted_at": "2026-07-24T16:43:00.963424+00:00",
+  "requested_status": "awaiting_gate",
+  "evidence_map": "project-control/reports/M4-T007-evidence-map.json",
+  "content_manifest_sha256": "a10522d990b1226539085d2128cad9cc394b0e969c24b0a8130222c3dcc60810",
+  "reviewed_sha": "0817ba114f76c6279933bb3bbca4779ec5d85590",
+  "applicable_requirements": [
+    "D-002-R036",
+    "D-002-R037",
+    "D-002-R038",
+    "D-002-R039",
+    "D-002-R051",
+    "D-002-R052",
+    "D-002-R053",
+    "D-002-R054",
+    "D-002-R055",
+    "D-002-R056",
+    "D-002-R057",
+    "D-002-R058",
+    "D-002-R059",
+    "D-002-R060"
+  ],
+  "updated_at": "2026-07-24T16:43:01.375484+00:00"
+}
