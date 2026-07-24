@@ -1,0 +1,21 @@
+{
+  "manifest_version": "1.0.0",
+  "manifest_id": "lsm:bad:missing-corpus-version",
+  "provenance": {
+    "source_id": "nyc-zr-portal",
+    "publisher": "NYC DCP",
+    "provenance_tier": 1,
+    "legal_status": "effective",
+    "canonical_url": "https://zoningresolution.planning.nyc.gov/",
+    "access_mode": "html_corpus_ingestion",
+    "retrieved_at": "2026-07-23T12:00:00Z",
+    "effective_date": null,
+    "as_of_date": "2026-05-20"
+  },
+  "raw_capture": {
+    "raw_sha256": "sha256:3fb51a9ec788cd567abf2e4aec1e72566f963a1ce059b733fdcf5d7c2f0eefe5",
+    "media_type": "text/html",
+    "byte_size": 482913
+  },
+  "status": "to_verify_at_g1"
+}
