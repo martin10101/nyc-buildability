@@ -1,0 +1,89 @@
+{
+  "task_id": "M0-T027",
+  "title": "D-004 pilot-governance: agent-teams runtime pilots (Steps 1, 2, 4 evidence)",
+  "task_type": "governance",
+  "milestone_id": "M0",
+  "objective": "Hold all D-004 agent-teams pilot evidence under a contracted task. Step 1 (on owner GO, now): read-only reviewer pilot against a frozen accepted SHA - per-teammate rev-parse of the reviewed SHA, teammate names + agent types from team configuration only, the sentinel negative test (Write-tool attempt AND Bash redirection) with verbatim guard denials plus the orchestrator's own independent test -e verification, confirmation each reviewer invoked /run-quality-gate, and verdicts + verbatim report content. Steps 2 and 4 evidence land here later, each only on its own explicit owner GO. Mechanism proof only: the ledger's product state is untouched, no product code changes, M0-T025 is not touched, and no effort setting is applied anywhere.",
+  "business_reason": "Owner directive D-004 Step 1 requires that every tracked file the directive produces (including pilot reports) belongs to a contracted task whose allowed_paths cover it; nothing floats outside a task. Owner amendment 3 (source-004) is the explicit Step-1 GO with flag-3 option (a): contract M0-T027 and commit it together with the D-004 capture.",
+  "inputs": [
+    "project-control/directives/D-004-agent-teams-runtime-adoption/source-001.md (verbatim owner directive; STEP 1 spec)",
+    "project-control/directives/D-004-agent-teams-runtime-adoption/source-002-amendment.md (amendment 1: teammateDefaultModel value-clause supersession; spawn-model rule)",
+    "project-control/directives/D-004-agent-teams-runtime-adoption/source-003-amendment.md (amendment 2: effort hold; flag-3 option (a); M0-T028 ride-alongs)",
+    "project-control/directives/D-004-agent-teams-runtime-adoption/source-004-amendment.md (amendment 3: the explicit conditional Step-1 GO executed by this task)",
+    "project-control/directives/D-004-agent-teams-runtime-adoption/requirements.json (D-004-R001..R128)",
+    "origin/main @ 421265709f81a40e20f3d890609907ed932967dd (frozen, already-accepted baseline; the SHA the reviewer pilot targets)",
+    ".claude/agents/ (named reviewer definitions; teammates are spawned only from these)",
+    ".claude/hooks/readonly_agent_guard.py (the guard whose denials the sentinel negative test exercises)",
+    "docs/GATES_AND_CHECKPOINTS.md, docs/PROJECT_CONTROL_PROTOCOL.md, .claude/ORCHESTRATION_POLICY.md"
+  ],
+  "outputs": [
+    "project-control/reports/AGENT-TEAMS-PILOT-1.md (Step 1 read-only reviewer pilot evidence, redacted)",
+    "project-control/reports/AGENT-TEAMS-PILOT-2-PROBE.md (Step 2 worktree capability probe - ONLY on a separate explicit owner GO)",
+    "project-control/reports/AGENT-TEAMS-PILOT-3.md (Step 4 two-producer pilot - ONLY on a separate explicit owner GO)",
+    "project-control/reports/M0-T027-producer-report.md (this task's own producer report)"
+  ],
+  "dependencies": [
+    "M0-T024"
+  ],
+  "allowed_paths": [
+    "project-control/reports/AGENT-TEAMS-PILOT-1.md",
+    "project-control/reports/AGENT-TEAMS-PILOT-2-PROBE.md",
+    "project-control/reports/AGENT-TEAMS-PILOT-3.md",
+    "project-control/reports/M0-T027-producer-report.md",
+    "project-control/tasks/M0-T027.json"
+  ],
+  "forbidden_paths": [
+    "project-control/tasks/M0-T025.json and M0-T025 in any form (D-004-R022/R053: do NOT touch M0-T025 in any way)",
+    "project-control/master_plan.json, state.json, gates/, checkpoints/, blockers/ (no plan or lifecycle change from this pilot)",
+    "project-control/directives/** (directive-registry writes are the orchestrator's D-001 capture authority, not M0-T027 producer output; the D-004 amendment-3 capture is co-committed under flag-3 option (a) and is NOT a pilot artifact)",
+    ".claude/settings.json and .claude/settings.local.json (D-004-R096/R124: NO effort setting is applied anywhere; the env flag stays untracked until Step 5)",
+    ".claude/ORCHESTRATION_POLICY.md (amended only by the Step-5 adoption task M0-T029)",
+    ".claude/hooks/**, .claude/agents/**, .claude/rules/**, CLAUDE.md, tools/**, .github/**",
+    "services/**, apps/**, packages/**, render.yaml and any deployment definition",
+    "any product/runtime code; any other task's allowed paths or outputs"
+  ],
+  "acceptance_scenarios": [
+    "AS-1 (executable): python tools/validate_directive_compliance.py exits 0 with D-004 active, 128 locked requirement ids, and matching requirements_id_digest_sha256 / requirements_content_digest_sha256.",
+    "AS-2 (executable): python tools/project_control.py status shows M0-T027 present, in-regime (directive_regime_version 1.0), citing D-004; reference coverage OK.",
+    "AS-3 (executable): the D-004 capture and the M0-T027 packet land in ONE pull request on a non-main branch and reach main through the protected-main merge workflow; git log shows no direct push to main (D-004-R120, flag-3 option (a)).",
+    "AS-4: project-control/reports/AGENT-TEAMS-PILOT-1.md records, for EACH reviewer teammate, that teammate's OWN `git rev-parse HEAD` output equal to the frozen reviewed 40-char SHA (D-004 Step 1 item 1).",
+    "AS-5: the same report records teammate names and agent types taken ONLY from team configuration, with session ids, pane ids, absolute user paths, and machine-specific data redacted (D-004 Step 1 item 2 + evidence-hygiene constraint).",
+    "AS-6 (executable, negative): one reviewer attempts BOTH a Write-tool creation of ./PILOT_SENTINEL.tmp AND a Bash redirection (`echo x > ./PILOT_SENTINEL.tmp`); both guard denials are captured verbatim; THEN the orchestrator independently runs `test -e ./PILOT_SENTINEL.tmp` and records that it does not exist. Reviewer assertion alone does not satisfy this scenario (D-004 Step 1 item 3, D-004-R122).",
+    "AS-7: the report confirms each reviewer teammate actually invoked /run-quality-gate, with the spawn prompt having stated the frozen 40-char SHA and explicitly instructed the skill (skills frontmatter does not auto-apply to teammates).",
+    "AS-8: each reviewer's verdict and FULL report content are preserved verbatim in the report (report-preservation rule, .claude/rules/project-control.md).",
+    "AS-9 (executable, containment): `git diff --name-only` for this task's contribution touches only paths in allowed_paths; project-control/tasks/M0-T025.json is unmodified; no effortLevel/effort key is added or changed in any settings file.",
+    "AS-10: the ledger's product state is untouched - no task status, gate record, master-plan entry, or milestone changes as a result of the pilot itself (mechanism proof only)."
+  ],
+  "required_gates": [
+    "G0",
+    "G2",
+    "G3",
+    "G5"
+  ],
+  "producer_agent": null,
+  "reviewer_agents": [
+    "control-plane-verifier",
+    "directive-compliance-verifier",
+    "code-reviewer"
+  ],
+  "status": "backlog",
+  "progress_percent": 0,
+  "risks": [
+    "Teammates may not inherit skills frontmatter; each spawn prompt must state the frozen SHA and explicitly instruct /run-quality-gate, or Step-1 item 4 fails.",
+    "A reviewer sandbox that cannot execute commands cannot return its own rev-parse; per .claude/rules/project-control.md the orchestrator then captures the executable evidence and the reviewer verifies it, and this substitution is recorded explicitly rather than silently.",
+    "Evidence hygiene: teammate transcripts can contain absolute user paths and session ids; everything written to the repository must be redacted (public repository).",
+    "/resume does not restore teammates; any later session re-running this task spawns a fresh team and must never message a prior team (D-004-R107/R108)."
+  ],
+  "blockers": [],
+  "created_at": "2026-07-24T18:23:08.048623+00:00",
+  "updated_at": "2026-07-24T18:23:08.083632+00:00",
+  "directive_refs": [
+    {
+      "directive_id": "D-004",
+      "requirement_ids": "ALL"
+    }
+  ],
+  "directive_regime_version": "1.0",
+  "directive_regime_entered_at": "2026-07-24T18:23:08.051652+00:00",
+  "allowed_paths_note": "D-004 Step 1 (D-004-R028) fixes this task's scope to exactly the named pilot report files plus its own producer report; those are entries 1-4. Entry 5, the packet file itself, is an ORCHESTRATOR LIFECYCLE path written only by tools/project_control.py (claim/progress/submit/gate/accept) and is never a producer or teammate write target - it is listed so a containment diff has no unexplained escape. The D-004 directive-registry files co-committed with this packet under flag-3 option (a) are the orchestrator's D-001 capture authority, NOT M0-T027 producer output, and are deliberately excluded from allowed_paths (see forbidden_paths)."
+}
