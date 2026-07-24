@@ -89,8 +89,8 @@
   "lifecycle_state": "active",
   "requirements_file": "requirements.json",
   "verification_file": "verification.json",
-  "final_reviewed_sha": null,
-  "final_reviewed_manifest_sha256": null,
+  "final_reviewed_sha": "d93748311a23c76444fbf300430d02ab7c5e36a2",
+  "final_reviewed_manifest_sha256": "f237e673ab1b74dbc42a54cd71e0a22270ddd009d346418ad3fb2d136354aa0f",
   "enforcement_pointers": {
     "tasks": [
       "M0-T024",
@@ -131,6 +131,11 @@
       "at": "2026-07-24T00:00:00+00:00",
       "by": "orchestrator",
       "note": "PR #97 accepted + merged under Section 1 (identities verified: head 9bc1f13, reviewed ed8a6776, manifest 9ab6c960, evidence/control-only, CI+directive-verification green). merge commit 2d44b47."
+    },
+    {
+      "at": "2026-07-24T00:00:00+00:00",
+      "by": "orchestrator",
+      "note": "M0-T024 independent re-gate at reviewed_sha d937483 / identity f237e673: G3 code PASS, G4 control-plane PASS (round-1 FAIL on B-011 _blocker_references remediated), G5 security PASS, and directive-compliance-verifier PASS on all 40 CTRL requirements. verification.json M0-T024 row recorded PASS (verifier=directive-compliance-verifier != producer orchestrator). Producer (PROD) and post-merge (POST) requirements remain pending until their own gates."
     }
   ],
   "locked_requirement_ids": [

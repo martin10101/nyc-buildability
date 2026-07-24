@@ -67,15 +67,15 @@
     "security-reviewer",
     "directive-compliance-verifier"
   ],
-  "status": "awaiting_gate",
-  "progress_percent": 85,
+  "status": "accepted",
+  "progress_percent": 100,
   "risks": [
     "Porting stale-PR content could reintroduce superseded claims - mitigated by per-PR disposition ledger + independent control-plane review.",
     "Over-binding via directive applicability - mitigated by scoped CTRL/PROD/POST groups (no wildcard requirements)."
   ],
   "blockers": [],
   "created_at": "2026-07-24T02:37:17.967965+00:00",
-  "updated_at": "2026-07-24T03:17:51.062180+00:00",
+  "updated_at": "2026-07-24T03:25:21.689972+00:00",
   "directive_refs": [
     {
       "directive_id": "D-002",
@@ -93,5 +93,7 @@
       "status": "rework",
       "message": "G4 control-plane FAIL (independent): B-011 detail contained bare tokens M3-T001 + M3-T004, so open B-011 spuriously blocked accept() of first-wave M3-T001 and coupled M3-T004 via _blocker_references. Rework: reword B-011 to keep only M3-T005 matchable; fix test_directive_compliance.py D-002-squat (CI control-plane FAIL); add superseding banner to ported M3-CORPUS proposal (G3 advisory)."
     }
-  ]
+  ],
+  "accepted_by": "orchestrator",
+  "accepted_at": "2026-07-24T03:25:21.689972+00:00"
 }
