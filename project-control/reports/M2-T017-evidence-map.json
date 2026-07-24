@@ -1,0 +1,22 @@
+{
+  "task_id": "M2-T017",
+  "directive_id": "D-002",
+  "produced_by": "backend-engineer",
+  "note": "Evidence for the 14 D-002 PROD requirements applicable to M2-T017, independently confirmed SATISFIED by the directive-compliance-verifier at reviewed head fead3f38. Transcribed by the orchestrator for the in-regime submit.",
+  "requirements": {
+    "D-002-R036": ["changed-file audit: all 18 files within allowed_paths; no forbidden hotspot touched (registry byte-identical at head)", "project-control/reports/M2-T017-producer-report.md"],
+    "D-002-R037": ["only project-control write is project-control/reports/M2-T017-producer-report.md (the one report path)"],
+    "D-002-R038": ["git grep app.contracts.serializers finds no import in app/main.py, app/api/**, app/profile/builder.py; regression test test_serializer_not_imported_by_any_production_module", "services/api/app/contracts/serializers.py"],
+    "D-002-R039": ["only M2-T017-owned contracts (source_fact, analysis_state_transition) edited; no shared/non-owned contract touched; no ICR owed", "packages/contracts/schemas/v1/source_fact.schema.json"],
+    "D-002-R051": ["producer report cites required session-start reads: CLAUDE.md, packet, FIRST-WAVE-INTEGRATION-CONTRACT.md, D-002 requirements, frozen schema files", "project-control/reports/M2-T017-producer-report.md"],
+    "D-002-R052": ["full deliverable set (18 files; AS-1..AS-6) in one finished PR; no premature stop"],
+    "D-002-R053": ["diff changes no ledger/other-task-packet/other-worktree; PR #99 OPEN, mergedAt null (not merged/accepted/replanned)"],
+    "D-002-R054": ["serializer stdlib-only self-contained; no import from sibling branch; only owned contracts modified"],
+    "D-002-R055": ["exactly one PR (#99) against main from the single assigned branch task/M2-T017-contract-hardening"],
+    "D-002-R056": ["committed producer report carries exact CI commands, matrices, file lists, gate evidence - not chat", "project-control/reports/M2-T017-producer-report.md"],
+    "D-002-R057": ["no improper stop; report reasons the stop condition (forced shared-entrypoint change) did not apply"],
+    "D-002-R058": ["no blocker return issued (task completed to PR); <=200-word limit vacuously met"],
+    "D-002-R059": ["report section 8 supplies all enumerated completion items (task+outcome, PR+head, what works, contract/interface impact, tests+review, blockers, next dependency, idle)"],
+    "D-002-R060": ["detailed SHAs/commands/test-names live in the committed report; compact status carries no transcript dump"]
+  }
+}

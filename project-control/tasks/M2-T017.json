@@ -60,7 +60,7 @@
     "G4",
     "G5"
   ],
-  "producer_agent": null,
+  "producer_agent": "backend-engineer",
   "reviewer_agents": [
     "code-reviewer",
     "control-plane-verifier",
@@ -68,15 +68,15 @@
     "data-contract-verifier",
     "directive-compliance-verifier"
   ],
-  "status": "backlog",
-  "progress_percent": 0,
+  "status": "accepted",
+  "progress_percent": 100,
   "risks": [
     "Closing source_fact could break an existing valid fixture that carried an extra key - mitigated: producer audits + updates fixtures within allowed_paths; builder.py assembly is already allowlist-based (DF-4 evidence).",
     "property_profile.ts drift - mitigated: source_fact is the only $ref touched; producer regenerates and owns it solely this wave."
   ],
   "blockers": [],
   "created_at": "2026-07-24T02:37:18.397554+00:00",
-  "updated_at": "2026-07-24T02:37:18.397554+00:00",
+  "updated_at": "2026-07-24T04:50:43.204743+00:00",
   "directive_refs": [
     {
       "directive_id": "D-002",
@@ -84,5 +84,8 @@
     }
   ],
   "directive_regime_version": "1.0",
-  "directive_regime_entered_at": "2026-07-24T02:37:18.397554+00:00"
+  "directive_regime_entered_at": "2026-07-24T02:37:18.397554+00:00",
+  "worktree": "C:/Users/MLFLL/Downloads/nyc zoning/ctl-int-M2-T017",
+  "accepted_by": "orchestrator",
+  "accepted_at": "2026-07-24T04:50:43.204743+00:00"
 }
