@@ -109,7 +109,7 @@
   ],
   "blockers": [],
   "created_at": "2026-07-23T18:51:06.647661+00:00",
-  "updated_at": "2026-07-23T22:40:36.645731+00:00",
+  "updated_at": "2026-07-24T00:32:50.318172+00:00",
   "worktree": "lead-main-checkout:task/M0-T023-directive-compliance",
   "progress_log": [
     {
@@ -146,6 +146,21 @@
       "percent": 75,
       "status": "self_check",
       "message": "producer self-check re-run: 35 directive tests, 14 pc groups, all green"
+    },
+    {
+      "at": "2026-07-24T00:28:16.093350+00:00",
+      "agent": "orchestrator",
+      "percent": 60,
+      "status": "rework",
+      "message": "amendment-3 re-gate: re-open to re-stamp reviewed identity at ed8a6776"
+    },
+    {
+      "at": "2026-07-24T00:28:16.269268+00:00",
+      "agent": "orchestrator",
+      "percent": 65,
+      "status": "in_progress",
+      "message": "amendment-3 rework applied (F1/F2/N1/N2/N4 + G5 hardening)"
     }
-  ]
+  ],
+  "scope_notes": "`.gitattributes` (repo-root, pins project-control/directives/** to eol=lf so the recorded digests are byte-stable on every platform) is a D-001 registry-integrity artifact functionally in-scope for this governance task but intentionally NOT added to allowed_paths: adding it would pull it into the git-canonical content identity and churn the frozen reviewed identity. It is not in forbidden_paths. (G4 control-plane hygiene note, amendment 3.)"
 }

@@ -111,8 +111,8 @@
   "lifecycle_state": "active",
   "requirements_file": "requirements.json",
   "verification_file": "verification.json",
-  "final_reviewed_sha": null,
-  "final_reviewed_manifest_sha256": null,
+  "final_reviewed_sha": "ed8a6776f89c9f2b17ecad35e528a0180fe6bfd1",
+  "final_reviewed_manifest_sha256": "9ab6c9601b1a60f903d1a399d57192f662d96e912fdc50304ba931894b3004be",
   "enforcement_pointers": {
     "tasks": [
       "M0-T023"
@@ -156,6 +156,11 @@
       "at": "2026-07-23T00:00:00+00:00",
       "by": "orchestrator",
       "note": "Recorded owner amendment 003 (source-003-amendment.md): final bounded hardening of PR #97 -- close the regime bypass (immutable migration manifest + fail-closed regime entry + material-digest grandfather invalidation), directive_verification/v2 multi-task schema, git-canonical cross-platform content identity. Decomposed into D-001-R119..R165 (47 new requirements). verification.json migrated v1->v2 preserving evidence history; rows pending until the independent re-gate at the frozen identity."
+    },
+    {
+      "at": "2026-07-23T00:00:00+00:00",
+      "by": "orchestrator",
+      "note": "Amendment-3 independent re-gate complete at reviewed_sha ed8a6776 / git-canonical content identity 9ab6c960 (bd8e1011 was the round-1 intermediate; a G3 FAIL on the F1 progress-launder bypass sent it to rework; ed8a6776 is the corrected reviewed head). Round-2 G3 code PASS, G4 directive-compliance PASS (41 SATISFIED + 6 Section-4 downstream), G4 control-plane PASS, G5 security PASS. verification.json 136/136 rows PASS at 9ab6c960 by directive-compliance-verifier (!= producer orchestrator). The six Section-4 rows (R156/R158/R159/R160/R162/R164) are orchestrator-completed steps evidenced by the recorded gates, remote CI, and the corrected PR description + owner return, per the verifier's PASS-pending-artifact mapping. M0-T023 remains awaiting_gate; NOT accepted (owner hold)."
     }
   ],
   "locked_requirement_ids": [
