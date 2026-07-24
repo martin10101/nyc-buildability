@@ -1,0 +1,12 @@
+{
+  "task_id": "M0-T027",
+  "gate_id": "G0",
+  "reviewer": "orchestrator",
+  "role": "administrative",
+  "result": "PASS",
+  "report_file": "project-control/reports/M0-T027-producer-report.md",
+  "reviewed_at": "2026-07-24T18:35:04.645350+00:00",
+  "content_manifest_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "reviewed_sha": "da0d42b6e9334e823a95aa5cd120f480dbc501c8",
+  "updated_at": "2026-07-24T18:35:04.975765+00:00"
+}
