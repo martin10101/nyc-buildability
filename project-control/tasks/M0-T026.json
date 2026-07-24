@@ -1,0 +1,42 @@
+{
+  "task_id": "M0-T026",
+  "title": "D-003: first-wave integration + second-wave preparation",
+  "task_type": "governance",
+  "milestone_id": "M0",
+  "objective": "Govern the D-002 sequential integration of first-wave PRs #99/#100/#101 (correction capsules, tiny controller control-amendment if needed, one-at-a-time accept/merge), then contract a second blind-isolated wave from a new frozen main SHA. Control-plane only; producer-task acceptances flow through their own D-002 lifecycles.",
+  "business_reason": "Owner directive D-003.",
+  "inputs": [],
+  "outputs": [],
+  "dependencies": [],
+  "allowed_paths": [],
+  "forbidden_paths": [],
+  "acceptance_scenarios": [],
+  "required_gates": [
+    "G0",
+    "G2",
+    "G3",
+    "G4",
+    "G5"
+  ],
+  "producer_agent": null,
+  "reviewer_agents": [
+    "code-reviewer",
+    "control-plane-verifier",
+    "security-reviewer",
+    "directive-compliance-verifier"
+  ],
+  "status": "backlog",
+  "progress_percent": 0,
+  "risks": [],
+  "blockers": [],
+  "created_at": "2026-07-24T04:32:29.499186+00:00",
+  "updated_at": "2026-07-24T04:32:29.505784+00:00",
+  "directive_refs": [
+    {
+      "directive_id": "D-003",
+      "requirement_ids": "ALL"
+    }
+  ],
+  "directive_regime_version": "1.0",
+  "directive_regime_entered_at": "2026-07-24T04:32:29.499186+00:00"
+}

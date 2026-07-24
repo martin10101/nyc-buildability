@@ -40,6 +40,20 @@
         "M2-T017"
       ],
       "manifest": "D-002-activate-control-system-first-wave/manifest.json"
+    },
+    {
+      "directive_id": "D-003",
+      "slug": "first-wave-integration-and-second-wave",
+      "title": "Integrate first wave (D-002 sequential integration) and prepare second wave",
+      "status": "active",
+      "issued_at": "2026-07-24",
+      "issued_by": "owner",
+      "supersedes": [],
+      "superseded_by": null,
+      "affected_tasks": [
+        "M0-T026"
+      ],
+      "manifest": "D-003-first-wave-integration-and-second-wave/manifest.json"
     }
   ],
   "updated_at": "2026-07-24T00:00:00+00:00"

@@ -1,0 +1,92 @@
+{
+  "schema": "directive_verification/v2",
+  "directive_id": "D-003",
+  "producer": "orchestrator",
+  "authority_note": "Per-task independent verification (v2). Rows pending until an independent verifier (verifier != producer) records PASS at the frozen reviewed identity.",
+  "task_verifications": [
+    {
+      "directive_id": "D-003",
+      "task_id": "M0-T026",
+      "applicable_requirement_ids": [
+        "D-003-R002",
+        "D-003-R006",
+        "D-003-R009",
+        "D-003-R010",
+        "D-003-R011",
+        "D-003-R022",
+        "D-003-R023",
+        "D-003-R024",
+        "D-003-R025",
+        "D-003-R026"
+      ],
+      "producer": "orchestrator",
+      "verifier": "",
+      "schema_version": "directive_verification/v2",
+      "reviewed_sha": null,
+      "reviewed_manifest_sha256": null,
+      "requirements": [
+        {
+          "id": "D-003-R002",
+          "state": "pending",
+          "evidence": [],
+          "reviewed_sha": null
+        },
+        {
+          "id": "D-003-R006",
+          "state": "pending",
+          "evidence": [],
+          "reviewed_sha": null
+        },
+        {
+          "id": "D-003-R009",
+          "state": "pending",
+          "evidence": [],
+          "reviewed_sha": null
+        },
+        {
+          "id": "D-003-R010",
+          "state": "pending",
+          "evidence": [],
+          "reviewed_sha": null
+        },
+        {
+          "id": "D-003-R011",
+          "state": "pending",
+          "evidence": [],
+          "reviewed_sha": null
+        },
+        {
+          "id": "D-003-R022",
+          "state": "pending",
+          "evidence": [],
+          "reviewed_sha": null
+        },
+        {
+          "id": "D-003-R023",
+          "state": "pending",
+          "evidence": [],
+          "reviewed_sha": null
+        },
+        {
+          "id": "D-003-R024",
+          "state": "pending",
+          "evidence": [],
+          "reviewed_sha": null
+        },
+        {
+          "id": "D-003-R025",
+          "state": "pending",
+          "evidence": [],
+          "reviewed_sha": null
+        },
+        {
+          "id": "D-003-R026",
+          "state": "pending",
+          "evidence": [],
+          "reviewed_sha": null
+        }
+      ]
+    }
+  ],
+  "updated_at": "2026-07-24T00:00:00+00:00"
+}
