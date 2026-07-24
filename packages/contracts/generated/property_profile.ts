@@ -36,6 +36,12 @@ export interface SourceFact {
   observation_id?: NonEmptyString;
   value_digest?: DigestSha256;
   response_digest?: DigestSha256;
+  dataset_id?: NonEmptyString;
+  request_url?: NonEmptyString;
+  input_vintages?: {
+    [key: string]: unknown;
+  };
+  source_rows_updated_at?: DateTime;
 }
 export interface FactValue {
   value: unknown;

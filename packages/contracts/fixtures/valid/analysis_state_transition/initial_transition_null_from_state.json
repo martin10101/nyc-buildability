@@ -1,0 +1,8 @@
+{
+  "run_id": "run-1000010010-0001",
+  "from_state": null,
+  "to_state": "address_entered",
+  "occurred_at": "2026-07-17T12:00:00Z",
+  "actor": "user",
+  "correlation_id": "corr-init-0001"
+}

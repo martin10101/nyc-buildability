@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://github.com/martin10101/nyc-buildability/packages/contracts/schemas/v1/analysis_state_transition.schema.json",
   "title": "Analysis State Transition",
-  "description": "v1 audit record for one analysis-run state transition (PRD section 32.1: transitions must be explicit, validated, persisted, and auditable; docs/PRODUCT_FLOW_AND_AI_BOUNDARIES.md canonical contract 'Analysis state transition'). The LEGALITY of a transition (allowed from->to pairs, preconditions) is enforced by the deterministic backend state machine, not by this schema; this schema fixes the audit-record shape. correlation_id is required for structured-log traceability (PRD section 25).",
+  "description": "v1 audit record for one analysis-run state transition (PRD section 32.1: transitions must be explicit, validated, persisted, and auditable; docs/PRODUCT_FLOW_AND_AI_BOUNDARIES.md canonical contract 'Analysis state transition'). The LEGALITY of a transition (allowed from->to pairs, preconditions) is enforced by the deterministic backend state machine, not by this schema; this schema fixes the audit-record shape. correlation_id is required for structured-log traceability (PRD section 25). TASK M2-T017 (DF-5, whole-system trust replan Area G): this audit record is now CLOSED with additionalProperties:false so it can no longer silently accept an undocumented or mistyped key - an unknown field (typo of the optional 'reason', or a leaked diagnostic/internal field) is rejected instead of persisted into an audit trail. No runtime writes this record yet (the deterministic state machine is a later task), so no conformant producer output is affected; the allowlist serializer in services/api/app/contracts/serializers.py is the frozen (un-wired) writer interface a future state machine will use.",
   "type": "object",
   "required": [
     "run_id",
@@ -39,5 +39,6 @@
       "type": "string",
       "description": "Optional human-readable reason or triggering event (e.g. 'Geoclient /v2/search exact match')."
     }
-  }
+  },
+  "additionalProperties": false
 }

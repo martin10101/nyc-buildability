@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://github.com/martin10101/nyc-buildability/packages/contracts/schemas/v1/source_fact.schema.json",
   "title": "Source Fact (Provenance Record)",
-  "description": "v1 canonical provenance record for a single fact used by the platform. Every PRD section 9 mandatory provenance field is REQUIRED here (fix for M0-T004 G3 defect D1): source id, original field name, original value, normalized value, retrieved timestamp, dataset version, effective date (nullable but the key must be present), BBL applicability, confidence, user confirmed/overridden, conflict status. A material calculation may never be exported without a resolvable record of this shape (PRD section 19). TASK M2-T004 (additive, property-profile contract 1.2.0): four OPTIONAL identity/lineage keys - stable fact_key (survives re-observation), immutable observation_id (unique per retrieval event), value_digest and response_digest (canonical-json-1 digests, see common.schema.json digest_sha256). The required v1 field set is unchanged, so every pre-M2-T004 record remains valid; the backend emits all four on every new fact so each fact traces observation -> source version (dataset_version) -> request (request_url + retrieved_at) without gaps.",
+  "description": "v1 canonical provenance record for a single fact used by the platform. Every PRD section 9 mandatory provenance field is REQUIRED here (fix for M0-T004 G3 defect D1): source id, original field name, original value, normalized value, retrieved timestamp, dataset version, effective date (nullable but the key must be present), BBL applicability, confidence, user confirmed/overridden, conflict status. A material calculation may never be exported without a resolvable record of this shape (PRD section 19). TASK M2-T004 (additive, property-profile contract 1.2.0): four OPTIONAL identity/lineage keys - stable fact_key (survives re-observation), immutable observation_id (unique per retrieval event), value_digest and response_digest (canonical-json-1 digests, see common.schema.json digest_sha256). The required v1 field set is unchanged, so every pre-M2-T004 record remains valid; the backend emits all four on every new fact so each fact traces observation -> source version (dataset_version) -> request (request_url + retrieved_at) without gaps. TASK M2-T017 (DF-4, whole-system trust replan Area G): this record is now CLOSED with additionalProperties:false so a mandatory provenance record can no longer SILENTLY accept an undocumented or mistyped key (a typo of an OPTIONAL field, or a leaked diagnostic/internal field, is rejected instead of passing through). No conformant record is rejected: the four connector-emitted lineage keys that accepted connectors already produce (dataset_id, request_url, input_vintages [PLUTO], source_rows_updated_at [ZTLDB]) are now DOCUMENTED optional properties rather than open-schema extras, so the closed contract exactly matches real producer output. The $id/path stay v1 (the property_profile contract $refs this file by name and is out of this task's scope); this is an in-place hardening of the v1 contract, additive in documented keys and restrictive only against genuinely-undocumented keys.",
   "type": "object",
   "required": [
     "provenance_id",
@@ -89,6 +89,24 @@
     "response_digest": {
       "$ref": "common.schema.json#/$defs/digest_sha256",
       "description": "TASK M2-T004, OPTIONAL (additive; owner P1 bullets 3-4): canonical digest of the ENTIRE parsed source response body this observation came from (canonical-json-1 form). All facts of one retrieval event share it, tying every fact to the exact response snapshot; equals reproducibility.response_digest in the property profile built from the same retrieval."
+    },
+    "dataset_id": {
+      "$ref": "common.schema.json#/$defs/non_empty_string",
+      "description": "TASK M2-T017, OPTIONAL (additive; DOCUMENTING an existing connector-emitted lineage key so the record can be CLOSED rather than left open): the source's dataset identifier. The Socrata connectors emit their dataset's 4x4 resource token here (PLUTO 'DATASET_ID=64uk-42ks', ZTLDB 'DATASET_ID=fdkv-4t4z'; services/api/app/connectors/pluto_soda.py, ztldb_soda.py). It is the machine identity of the dataset behind dataset_version and appears verbatim in the deterministic provenance_id. OPTIONAL so pre-M2-T017 records and connectors that do not carry a stable dataset token (e.g. the wave/ArcGIS provenance records) stay valid."
+    },
+    "request_url": {
+      "$ref": "common.schema.json#/$defs/non_empty_string",
+      "description": "TASK M2-T017, OPTIONAL (additive; DOCUMENTING an existing connector-emitted lineage key): the exact official request URL this observation was retrieved from, so the retrieval can be repeated against the same endpoint (PRD section 9 provenance; the Socrata connectors set it - pluto_soda.py, ztldb_soda.py). Secrets/tokens are NEVER part of this URL - they travel in request headers (mirrors property_profile.reproducibility.request_url). Equals reproducibility.request_url in the profile built from the same retrieval. OPTIONAL so pre-M2-T017 records stay valid."
+    },
+    "input_vintages": {
+      "type": "object",
+      "additionalProperties": {},
+      "description": "TASK M2-T017, OPTIONAL (additive; DOCUMENTING an existing PLUTO-connector-emitted lineage key): a map of the source's input-vintage date columns actually present in the retrieved record (services/api/app/connectors/pluto_soda.py VINTAGE_DATE_COLUMNS - basempdate, dcasdate, edesigdate, landmkdate, masdate, polidate, rpaddate, zoningdate, ...) to their VERBATIM source values (any JSON type). These are the official per-input 'DATES OF DATA' effective-date bounds the source publishes at the dataset level, distinct from the per-fact effective_date (which stays null when the source publishes no per-column effective date). Empty {} when the record exposes none. The inner map is intentionally open (source-driven column names are never guessed into a closed set); the TOP-LEVEL record is closed. OPTIONAL and PLUTO-specific, so records from other connectors stay valid."
+    },
+    "source_rows_updated_at": {
+      "$ref": "common.schema.json#/$defs/date_time",
+      "description": "TASK M2-T017, OPTIONAL (additive; DOCUMENTING an existing ZTLDB-connector-emitted lineage key): the official dataset 'rows last updated' timestamp (RFC 3339) the ZTLDB SODA connector uses as its dataset-version freshness signal (services/api/app/connectors/ztldb_soda.py; ZTLDB publishes no per-record release token, so rowsUpdatedAt is the version signal that becomes dataset_version). This exposes source-publication freshness WITHOUT ever marking a fresh transport as cached/stale (the two-staleness rule). OPTIONAL and ZTLDB-specific, so records from other connectors stay valid."
     }
-  }
+  },
+  "additionalProperties": false
 }

@@ -1,0 +1,25 @@
+{
+  "provenance_id": "pluto-64uk-42ks-26v1-1000010010-lotarea",
+  "source_id": "nyc-dcp-pluto-soda",
+  "original_field_name": "lotarea",
+  "original_value": "23121",
+  "normalized_value": 23121,
+  "units": "square_feet",
+  "retrieved_at": "2026-07-17T12:00:00Z",
+  "dataset_version": "26v1",
+  "effective_date": null,
+  "bbl": "1000010010",
+  "confidence": 1.0,
+  "user_confirmed_or_overridden": "none",
+  "conflict_status": "none",
+  "fact_key": "fact:nyc-dcp-pluto-soda:64uk-42ks:1000010010:lotarea",
+  "observation_id": "obs:evt-2026-07-17T12:00:00Z-abc123:1000010010:lotarea",
+  "value_digest": "sha256:27bee3cb843aba0d5885ea910fd0e85ef01884af58caca5c542f292ec95b1cfe",
+  "response_digest": "sha256:42587214506f9ce614dfb4bbbe98e92aaa446f4c4083d6abae09e22c62811b8f",
+  "dataset_id": "64uk-42ks",
+  "request_url": "https://data.cityofnewyork.us/resource/64uk-42ks.json?bbl=1000010010",
+  "input_vintages": {
+    "rpaddate": "2025-12-31T00:00:00.000",
+    "zoningdate": "2025-11-15T00:00:00.000"
+  }
+}
