@@ -1,0 +1,635 @@
+{
+  "schema": "directive_verification/v2",
+  "directive_id": "D-002",
+  "producer": "orchestrator",
+  "authority_note": "Per-task independent verification (directive_verification/v2). Rows are 'pending' until an independent verifier (verifier != producer) records PASS at the frozen reviewed content identity for that task. accept() reads the (directive_id, task_id) entry as BLOCKING EVIDENCE.",
+  "task_verifications": [
+    {
+      "directive_id": "D-002",
+      "task_id": "M0-T024",
+      "applicable_requirement_ids": [
+        "D-002-R001",
+        "D-002-R002",
+        "D-002-R003",
+        "D-002-R004",
+        "D-002-R005",
+        "D-002-R006",
+        "D-002-R007",
+        "D-002-R008",
+        "D-002-R009",
+        "D-002-R010",
+        "D-002-R011",
+        "D-002-R012",
+        "D-002-R013",
+        "D-002-R014",
+        "D-002-R015",
+        "D-002-R016",
+        "D-002-R017",
+        "D-002-R018",
+        "D-002-R019",
+        "D-002-R020",
+        "D-002-R021",
+        "D-002-R022",
+        "D-002-R023",
+        "D-002-R024",
+        "D-002-R025",
+        "D-002-R026",
+        "D-002-R027",
+        "D-002-R028",
+        "D-002-R029",
+        "D-002-R031",
+        "D-002-R032",
+        "D-002-R033",
+        "D-002-R034",
+        "D-002-R035",
+        "D-002-R040",
+        "D-002-R041",
+        "D-002-R042",
+        "D-002-R043",
+        "D-002-R044",
+        "D-002-R065"
+      ],
+      "producer": "orchestrator",
+      "verifier": "",
+      "schema_version": "directive_verification/v2",
+      "reviewed_sha": null,
+      "reviewed_manifest_sha256": null,
+      "requirements": [
+        {
+          "id": "D-002-R001",
+          "state": "pending",
+          "evidence": [],
+          "reviewed_sha": null
+        },
+        {
+          "id": "D-002-R002",
+          "state": "pending",
+          "evidence": [],
+          "reviewed_sha": null
+        },
+        {
+          "id": "D-002-R003",
+          "state": "pending",
+          "evidence": [],
+          "reviewed_sha": null
+        },
+        {
+          "id": "D-002-R004",
+          "state": "pending",
+          "evidence": [],
+          "reviewed_sha": null
+        },
+        {
+          "id": "D-002-R005",
+          "state": "pending",
+          "evidence": [],
+          "reviewed_sha": null
+        },
+        {
+          "id": "D-002-R006",
+          "state": "pending",
+          "evidence": [],
+          "reviewed_sha": null
+        },
+        {
+          "id": "D-002-R007",
+          "state": "pending",
+          "evidence": [],
+          "reviewed_sha": null
+        },
+        {
+          "id": "D-002-R008",
+          "state": "pending",
+          "evidence": [],
+          "reviewed_sha": null
+        },
+        {
+          "id": "D-002-R009",
+          "state": "pending",
+          "evidence": [],
+          "reviewed_sha": null
+        },
+        {
+          "id": "D-002-R010",
+          "state": "pending",
+          "evidence": [],
+          "reviewed_sha": null
+        },
+        {
+          "id": "D-002-R011",
+          "state": "pending",
+          "evidence": [],
+          "reviewed_sha": null
+        },
+        {
+          "id": "D-002-R012",
+          "state": "pending",
+          "evidence": [],
+          "reviewed_sha": null
+        },
+        {
+          "id": "D-002-R013",
+          "state": "pending",
+          "evidence": [],
+          "reviewed_sha": null
+        },
+        {
+          "id": "D-002-R014",
+          "state": "pending",
+          "evidence": [],
+          "reviewed_sha": null
+        },
+        {
+          "id": "D-002-R015",
+          "state": "pending",
+          "evidence": [],
+          "reviewed_sha": null
+        },
+        {
+          "id": "D-002-R016",
+          "state": "pending",
+          "evidence": [],
+          "reviewed_sha": null
+        },
+        {
+          "id": "D-002-R017",
+          "state": "pending",
+          "evidence": [],
+          "reviewed_sha": null
+        },
+        {
+          "id": "D-002-R018",
+          "state": "pending",
+          "evidence": [],
+          "reviewed_sha": null
+        },
+        {
+          "id": "D-002-R019",
+          "state": "pending",
+          "evidence": [],
+          "reviewed_sha": null
+        },
+        {
+          "id": "D-002-R020",
+          "state": "pending",
+          "evidence": [],
+          "reviewed_sha": null
+        },
+        {
+          "id": "D-002-R021",
+          "state": "pending",
+          "evidence": [],
+          "reviewed_sha": null
+        },
+        {
+          "id": "D-002-R022",
+          "state": "pending",
+          "evidence": [],
+          "reviewed_sha": null
+        },
+        {
+          "id": "D-002-R023",
+          "state": "pending",
+          "evidence": [],
+          "reviewed_sha": null
+        },
+        {
+          "id": "D-002-R024",
+          "state": "pending",
+          "evidence": [],
+          "reviewed_sha": null
+        },
+        {
+          "id": "D-002-R025",
+          "state": "pending",
+          "evidence": [],
+          "reviewed_sha": null
+        },
+        {
+          "id": "D-002-R026",
+          "state": "pending",
+          "evidence": [],
+          "reviewed_sha": null
+        },
+        {
+          "id": "D-002-R027",
+          "state": "pending",
+          "evidence": [],
+          "reviewed_sha": null
+        },
+        {
+          "id": "D-002-R028",
+          "state": "pending",
+          "evidence": [],
+          "reviewed_sha": null
+        },
+        {
+          "id": "D-002-R029",
+          "state": "pending",
+          "evidence": [],
+          "reviewed_sha": null
+        },
+        {
+          "id": "D-002-R031",
+          "state": "pending",
+          "evidence": [],
+          "reviewed_sha": null
+        },
+        {
+          "id": "D-002-R032",
+          "state": "pending",
+          "evidence": [],
+          "reviewed_sha": null
+        },
+        {
+          "id": "D-002-R033",
+          "state": "pending",
+          "evidence": [],
+          "reviewed_sha": null
+        },
+        {
+          "id": "D-002-R034",
+          "state": "pending",
+          "evidence": [],
+          "reviewed_sha": null
+        },
+        {
+          "id": "D-002-R035",
+          "state": "pending",
+          "evidence": [],
+          "reviewed_sha": null
+        },
+        {
+          "id": "D-002-R040",
+          "state": "pending",
+          "evidence": [],
+          "reviewed_sha": null
+        },
+        {
+          "id": "D-002-R041",
+          "state": "pending",
+          "evidence": [],
+          "reviewed_sha": null
+        },
+        {
+          "id": "D-002-R042",
+          "state": "pending",
+          "evidence": [],
+          "reviewed_sha": null
+        },
+        {
+          "id": "D-002-R043",
+          "state": "pending",
+          "evidence": [],
+          "reviewed_sha": null
+        },
+        {
+          "id": "D-002-R044",
+          "state": "pending",
+          "evidence": [],
+          "reviewed_sha": null
+        },
+        {
+          "id": "D-002-R065",
+          "state": "pending",
+          "evidence": [],
+          "reviewed_sha": null
+        }
+      ]
+    },
+    {
+      "directive_id": "D-002",
+      "task_id": "M3-T001",
+      "applicable_requirement_ids": [
+        "D-002-R036",
+        "D-002-R037",
+        "D-002-R038",
+        "D-002-R039",
+        "D-002-R051",
+        "D-002-R052",
+        "D-002-R053",
+        "D-002-R054",
+        "D-002-R055",
+        "D-002-R056",
+        "D-002-R057",
+        "D-002-R058",
+        "D-002-R059",
+        "D-002-R060"
+      ],
+      "producer": "orchestrator",
+      "verifier": "",
+      "schema_version": "directive_verification/v2",
+      "reviewed_sha": null,
+      "reviewed_manifest_sha256": null,
+      "requirements": [
+        {
+          "id": "D-002-R036",
+          "state": "pending",
+          "evidence": [],
+          "reviewed_sha": null
+        },
+        {
+          "id": "D-002-R037",
+          "state": "pending",
+          "evidence": [],
+          "reviewed_sha": null
+        },
+        {
+          "id": "D-002-R038",
+          "state": "pending",
+          "evidence": [],
+          "reviewed_sha": null
+        },
+        {
+          "id": "D-002-R039",
+          "state": "pending",
+          "evidence": [],
+          "reviewed_sha": null
+        },
+        {
+          "id": "D-002-R051",
+          "state": "pending",
+          "evidence": [],
+          "reviewed_sha": null
+        },
+        {
+          "id": "D-002-R052",
+          "state": "pending",
+          "evidence": [],
+          "reviewed_sha": null
+        },
+        {
+          "id": "D-002-R053",
+          "state": "pending",
+          "evidence": [],
+          "reviewed_sha": null
+        },
+        {
+          "id": "D-002-R054",
+          "state": "pending",
+          "evidence": [],
+          "reviewed_sha": null
+        },
+        {
+          "id": "D-002-R055",
+          "state": "pending",
+          "evidence": [],
+          "reviewed_sha": null
+        },
+        {
+          "id": "D-002-R056",
+          "state": "pending",
+          "evidence": [],
+          "reviewed_sha": null
+        },
+        {
+          "id": "D-002-R057",
+          "state": "pending",
+          "evidence": [],
+          "reviewed_sha": null
+        },
+        {
+          "id": "D-002-R058",
+          "state": "pending",
+          "evidence": [],
+          "reviewed_sha": null
+        },
+        {
+          "id": "D-002-R059",
+          "state": "pending",
+          "evidence": [],
+          "reviewed_sha": null
+        },
+        {
+          "id": "D-002-R060",
+          "state": "pending",
+          "evidence": [],
+          "reviewed_sha": null
+        }
+      ]
+    },
+    {
+      "directive_id": "D-002",
+      "task_id": "M4-T007",
+      "applicable_requirement_ids": [
+        "D-002-R036",
+        "D-002-R037",
+        "D-002-R038",
+        "D-002-R039",
+        "D-002-R051",
+        "D-002-R052",
+        "D-002-R053",
+        "D-002-R054",
+        "D-002-R055",
+        "D-002-R056",
+        "D-002-R057",
+        "D-002-R058",
+        "D-002-R059",
+        "D-002-R060"
+      ],
+      "producer": "orchestrator",
+      "verifier": "",
+      "schema_version": "directive_verification/v2",
+      "reviewed_sha": null,
+      "reviewed_manifest_sha256": null,
+      "requirements": [
+        {
+          "id": "D-002-R036",
+          "state": "pending",
+          "evidence": [],
+          "reviewed_sha": null
+        },
+        {
+          "id": "D-002-R037",
+          "state": "pending",
+          "evidence": [],
+          "reviewed_sha": null
+        },
+        {
+          "id": "D-002-R038",
+          "state": "pending",
+          "evidence": [],
+          "reviewed_sha": null
+        },
+        {
+          "id": "D-002-R039",
+          "state": "pending",
+          "evidence": [],
+          "reviewed_sha": null
+        },
+        {
+          "id": "D-002-R051",
+          "state": "pending",
+          "evidence": [],
+          "reviewed_sha": null
+        },
+        {
+          "id": "D-002-R052",
+          "state": "pending",
+          "evidence": [],
+          "reviewed_sha": null
+        },
+        {
+          "id": "D-002-R053",
+          "state": "pending",
+          "evidence": [],
+          "reviewed_sha": null
+        },
+        {
+          "id": "D-002-R054",
+          "state": "pending",
+          "evidence": [],
+          "reviewed_sha": null
+        },
+        {
+          "id": "D-002-R055",
+          "state": "pending",
+          "evidence": [],
+          "reviewed_sha": null
+        },
+        {
+          "id": "D-002-R056",
+          "state": "pending",
+          "evidence": [],
+          "reviewed_sha": null
+        },
+        {
+          "id": "D-002-R057",
+          "state": "pending",
+          "evidence": [],
+          "reviewed_sha": null
+        },
+        {
+          "id": "D-002-R058",
+          "state": "pending",
+          "evidence": [],
+          "reviewed_sha": null
+        },
+        {
+          "id": "D-002-R059",
+          "state": "pending",
+          "evidence": [],
+          "reviewed_sha": null
+        },
+        {
+          "id": "D-002-R060",
+          "state": "pending",
+          "evidence": [],
+          "reviewed_sha": null
+        }
+      ]
+    },
+    {
+      "directive_id": "D-002",
+      "task_id": "M2-T017",
+      "applicable_requirement_ids": [
+        "D-002-R036",
+        "D-002-R037",
+        "D-002-R038",
+        "D-002-R039",
+        "D-002-R051",
+        "D-002-R052",
+        "D-002-R053",
+        "D-002-R054",
+        "D-002-R055",
+        "D-002-R056",
+        "D-002-R057",
+        "D-002-R058",
+        "D-002-R059",
+        "D-002-R060"
+      ],
+      "producer": "orchestrator",
+      "verifier": "",
+      "schema_version": "directive_verification/v2",
+      "reviewed_sha": null,
+      "reviewed_manifest_sha256": null,
+      "requirements": [
+        {
+          "id": "D-002-R036",
+          "state": "pending",
+          "evidence": [],
+          "reviewed_sha": null
+        },
+        {
+          "id": "D-002-R037",
+          "state": "pending",
+          "evidence": [],
+          "reviewed_sha": null
+        },
+        {
+          "id": "D-002-R038",
+          "state": "pending",
+          "evidence": [],
+          "reviewed_sha": null
+        },
+        {
+          "id": "D-002-R039",
+          "state": "pending",
+          "evidence": [],
+          "reviewed_sha": null
+        },
+        {
+          "id": "D-002-R051",
+          "state": "pending",
+          "evidence": [],
+          "reviewed_sha": null
+        },
+        {
+          "id": "D-002-R052",
+          "state": "pending",
+          "evidence": [],
+          "reviewed_sha": null
+        },
+        {
+          "id": "D-002-R053",
+          "state": "pending",
+          "evidence": [],
+          "reviewed_sha": null
+        },
+        {
+          "id": "D-002-R054",
+          "state": "pending",
+          "evidence": [],
+          "reviewed_sha": null
+        },
+        {
+          "id": "D-002-R055",
+          "state": "pending",
+          "evidence": [],
+          "reviewed_sha": null
+        },
+        {
+          "id": "D-002-R056",
+          "state": "pending",
+          "evidence": [],
+          "reviewed_sha": null
+        },
+        {
+          "id": "D-002-R057",
+          "state": "pending",
+          "evidence": [],
+          "reviewed_sha": null
+        },
+        {
+          "id": "D-002-R058",
+          "state": "pending",
+          "evidence": [],
+          "reviewed_sha": null
+        },
+        {
+          "id": "D-002-R059",
+          "state": "pending",
+          "evidence": [],
+          "reviewed_sha": null
+        },
+        {
+          "id": "D-002-R060",
+          "state": "pending",
+          "evidence": [],
+          "reviewed_sha": null
+        }
+      ]
+    }
+  ],
+  "updated_at": "2026-07-24T00:00:00+00:00"
+}

@@ -1,0 +1,88 @@
+{
+  "task_id": "M2-T017",
+  "title": "Canonical source_fact and analysis_state_transition contract hardening (DF-4/DF-5)",
+  "task_type": "engineering",
+  "milestone_id": "M2",
+  "objective": "Close the source_fact and analysis_state_transition canonical contracts (additionalProperties:false, or a single versioned extensions object) so mandatory provenance/audit records can no longer silently accept undocumented keys; provide an allowlist serializer module as a FROZEN interface (not wired into the production entrypoint here); add negative typo/undocumented-field/diagnostic-leak fixtures + contract tests; keep the runtime-bundled copy and generated types byte-identical for the owned schemas only. Deterministic offline; DF-4/DF-5 (Area G).",
+  "business_reason": "D-002 first-wave lane 3 (Section 7.3); whole-system trust replan Area G / defects DF-4 (source_fact OPEN) + DF-5 (analysis_state_transition OPEN).",
+  "inputs": [
+    "project-control/reports/WHOLE-SYSTEM-TRUST-REPLAN-2026-07-23.md (Area G, DF-4/DF-5)",
+    "packages/contracts/schemas/v1/source_fact.schema.json, analysis_state_transition.schema.json (current OPEN contracts @ frozen base)",
+    "packages/contracts/scripts/generate_ts_types.py, services/api/scripts/sync_contract_schemas.py (drift checks)",
+    "services/api/app/profile/builder.py (READ-ONLY: current source_fact allowlist assembly - reference only; do NOT edit)"
+  ],
+  "outputs": [
+    "packages/contracts/schemas/v1/source_fact.schema.json (closed contract; version/$id bumped per rules)",
+    "packages/contracts/schemas/v1/analysis_state_transition.schema.json (closed contract)",
+    "packages/contracts/generated/property_profile.ts (regenerated ONLY if the source_fact change alters it; sole owner in this wave)",
+    "services/api/app/_contract_schemas/v1/source_fact.schema.json (byte-identical runtime-bundled copy)",
+    "packages/contracts/fixtures/invalid/source_fact/**, packages/contracts/fixtures/invalid/analysis_state_transition/** (negative fixtures)",
+    "services/api/app/contracts/serializers.py (NEW allowlist serializer module; frozen interface, NOT wired into production route)",
+    "services/api/tests/contracts/** (negative + serializer tests)",
+    "project-control/reports/M2-T017-producer-report.md"
+  ],
+  "dependencies": [
+    "M2-T003"
+  ],
+  "allowed_paths": [
+    "packages/contracts/schemas/v1/source_fact.schema.json",
+    "packages/contracts/schemas/v1/analysis_state_transition.schema.json",
+    "packages/contracts/generated/property_profile.ts",
+    "packages/contracts/fixtures/invalid/source_fact/",
+    "packages/contracts/fixtures/invalid/analysis_state_transition/",
+    "packages/contracts/fixtures/valid/source_fact/",
+    "packages/contracts/fixtures/valid/analysis_state_transition/",
+    "services/api/app/_contract_schemas/v1/source_fact.schema.json",
+    "services/api/app/contracts/",
+    "services/api/tests/contracts/",
+    "project-control/reports/M2-T017-producer-report.md"
+  ],
+  "forbidden_paths": [
+    "packages/contracts/schemas/v1/property_profile.schema.json, rule_evaluation.schema.json, scenario.schema.json, coverage_status.schema.json, common.schema.json (other canonical contracts)",
+    "packages/contracts/schemas/v1/legal_source_manifest.schema.json (lane 1 M3-T001 owns)",
+    "packages/contracts/generated/rule_evaluation.ts, scenario.ts",
+    "services/api/app/profile/builder.py and services/api/app/api/** (production serializer wiring deferred to a later integration task)",
+    "services/api/app/rules/** (lane 2 M4-T007 owns)",
+    "CLAUDE.md, .claude/**, .github/**, tools/**, render.yaml, packages/contracts/scripts/** (shared generators are frozen), any other task's paths or report"
+  ],
+  "acceptance_scenarios": [
+    "AS-1 (executable): source_fact and analysis_state_transition reject an undocumented/typo key - negative fixtures FAIL validation; positive fixtures still PASS (python contract-validation suite).",
+    "AS-2 (executable): python services/api/scripts/sync_contract_schemas.py --check passes (bundled source_fact byte-identical to canonical); python packages/contracts/scripts/generate_ts_types.py --check passes (property_profile.ts regenerated iff changed, byte-identical).",
+    "AS-3 (executable): the new allowlist serializer rejects unknown keys and round-trips only documented fields; serializer unit tests + diagnostic-leak negative tests pass.",
+    "AS-4: the serializer is a frozen interface only (not imported by the production route/builder in this task); wiring is explicitly deferred to a controller-contracted integration task.",
+    "AS-5: no other canonical contract, generated artifact, or schema is modified (changed-file audit within allowed_paths).",
+    "AS-6: full G0/G2/G3/G4/G5 evidence in project-control/reports/M2-T017-producer-report.md."
+  ],
+  "required_gates": [
+    "G0",
+    "G2",
+    "G3",
+    "G4",
+    "G5"
+  ],
+  "producer_agent": null,
+  "reviewer_agents": [
+    "code-reviewer",
+    "control-plane-verifier",
+    "security-reviewer",
+    "data-contract-verifier",
+    "directive-compliance-verifier"
+  ],
+  "status": "backlog",
+  "progress_percent": 0,
+  "risks": [
+    "Closing source_fact could break an existing valid fixture that carried an extra key - mitigated: producer audits + updates fixtures within allowed_paths; builder.py assembly is already allowlist-based (DF-4 evidence).",
+    "property_profile.ts drift - mitigated: source_fact is the only $ref touched; producer regenerates and owns it solely this wave."
+  ],
+  "blockers": [],
+  "created_at": "2026-07-24T02:37:18.397554+00:00",
+  "updated_at": "2026-07-24T02:37:18.397554+00:00",
+  "directive_refs": [
+    {
+      "directive_id": "D-002",
+      "requirement_ids": "ALL"
+    }
+  ],
+  "directive_regime_version": "1.0",
+  "directive_regime_entered_at": "2026-07-24T02:37:18.397554+00:00"
+}
