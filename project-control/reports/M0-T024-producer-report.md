@@ -42,6 +42,21 @@ shared-hotspot edits, no producer dispatch in this tab.
 - `git status` — only intended project-control/ + docs/SESSION_HANDOFF.md paths staged; agent-memory
   noise never staged.
 
+## Rework (after independent gate round 1)
+Round-1 independent review found real defects; reworked at the corrected identity:
+- **G4 control-plane FAIL (fixed):** `B-011` `detail` carried bare tokens `M3-T001` and `M3-T004`, so
+  `_blocker_references` made open B-011 spuriously block acceptance of first-wave lane 1 (M3-T001) and
+  couple M3-T004. Reworded B-011 so only `M3-T005` is matchable; re-verified: no open blocker blocks any
+  first-wave task; M3-T002/T003 blocked by B-001, M3-T005 by B-001+B-011. Gate reports saved under
+  `project-control/reports/M0-T024-G3.md`, `-G4.md`, `-G5.md`.
+- **CI control-plane FAIL (fixed):** `tools/test_directive_compliance.py::MultipleDirectivesTest` squatted
+  on the id `D-002` as a synthetic fixture and asserted the real registry was exactly `{D-001}` — a latent
+  bug that any real second directive triggers. D-002 was genuinely free in the registry (only D-001
+  present) and is the owner's expected id, so D-002 is kept; the fixture is moved to a reserved synthetic
+  id `D-900` with a robust (subset) coexistence assertion. Controller-only test-maintenance (D-002 §6);
+  M0-T024 allowed_paths extended to that single test file. `test_directive_compliance.py` 55/55 PASS.
+- **G3 advisory (applied):** superseding banner added atop the ported `M3-CORPUS-REPLAN-PROPOSAL.md`.
+
 ## Not done here (by design)
 - Worktrees + capsules (D-002 §8/§9) happen only AFTER this consolidation PR is accepted+merged.
 - Product implementation of M3-T001/M4-T007/M2-T017 is for the blind producer tabs, not this tab.

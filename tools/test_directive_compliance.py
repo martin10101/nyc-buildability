@@ -247,13 +247,13 @@ class MultipleDirectivesTest(unittest.TestCase):
         self.fx.close()
 
     def _add_second_directive(self):
-        d2dir = self.fx.root / "D-002-example-second"
+        d2dir = self.fx.root / "D-900-example-second"
         d2dir.mkdir()
         src = d2dir / "source-001.md"
         src.write_text("Second directive verbatim text.\n", encoding="utf-8")
         digest = hashlib.sha256(src.read_bytes()).hexdigest()
         manifest = {
-            "schema": "directive_manifest/v1", "directive_id": "D-002", "version": 1,
+            "schema": "directive_manifest/v1", "directive_id": "D-900", "version": 1,
             "slug": "example-second", "title": "Second", "status": "active",
             "issued_by": "owner", "issued_at": "2026-07-23",
             "captured_at": "2026-07-23T00:00:00+00:00", "channel": "owner_message",
@@ -267,16 +267,16 @@ class MultipleDirectivesTest(unittest.TestCase):
             "lifecycle_state": "active", "requirements_file": "requirements.json",
             "verification_file": "verification.json", "final_reviewed_sha": None,
             "final_reviewed_manifest_sha256": None,
-            "locked_requirement_ids": ["D-002-R001"],
-            "requirements_id_digest_sha256": hashlib.sha256(b"D-002-R001").hexdigest(),
+            "locked_requirement_ids": ["D-900-R001"],
+            "requirements_id_digest_sha256": hashlib.sha256(b"D-900-R001").hexdigest(),
             "created_at": "2026-07-23T00:00:00+00:00", "updated_at": "2026-07-23T00:00:00+00:00",
             "audit_log": [{"at": "2026-07-23T00:00:00+00:00", "by": "orchestrator", "note": "x"}],
         }
         d2_reqs = {
-            "schema": "directive_requirements/v1", "directive_id": "D-002", "version": 1,
+            "schema": "directive_requirements/v1", "directive_id": "D-900", "version": 1,
             "requirement_count": 1, "producer": "orchestrator",
             "requirements": [{
-                "id": "D-002-R001", "text": "example", "source_ref": "source-001.md#x",
+                "id": "D-900-R001", "text": "example", "source_ref": "source-001.md#x",
                 "classification": "obligation", "binding": True,
                 "applicability": {"task_ids": [], "task_types": ["backend"], "milestones": ["M9"],
                                   "paths": [], "lifecycle_events": ["accept"], "effective_date": "2026-07-23"},
@@ -291,33 +291,36 @@ class MultipleDirectivesTest(unittest.TestCase):
             (d2dir / "requirements.json").read_bytes()).hexdigest()
         _write(d2dir / "manifest.json", manifest)
         _write(d2dir / "verification.json", {
-            "schema": "directive_verification/v1", "directive_id": "D-002",
+            "schema": "directive_verification/v1", "directive_id": "D-900",
             "producer": "orchestrator", "verifier": None, "reviewed_sha": None,
             "reviewed_manifest_sha256": None,
-            "requirements": [{"id": "D-002-R001", "state": "pending", "evidence": [],
+            "requirements": [{"id": "D-900-R001", "state": "pending", "evidence": [],
                               "verified_at": None, "verified_by": None, "reviewed_sha": None}],
             "updated_at": "2026-07-23T00:00:00+00:00"})
         idx = _read(self.fx.root / "index.json")
         idx["directives"].append({
-            "directive_id": "D-002", "slug": "example-second", "title": "Second",
+            "directive_id": "D-900", "slug": "example-second", "title": "Second",
             "status": "active", "issued_at": "2026-07-23", "issued_by": "owner",
             "supersedes": [], "superseded_by": None, "affected_tasks": [],
-            "manifest": "D-002-example-second/manifest.json"})
+            "manifest": "D-900-example-second/manifest.json"})
         _write(self.fx.root / "index.json", idx)
 
     def test_two_active_directives_validate_and_coexist(self):
         errs = self.fx.validate()
         self.assertEqual(errs, [], "\n".join(errs))
         reg = dr.load_registry(self.fx.root)
-        self.assertEqual({d.directive_id for d in reg.active_directives()}, {"D-001", "D-002"})
+        active = {d.directive_id for d in reg.active_directives()}
+        # Robust to additional REAL directives in the committed registry (e.g. D-002):
+        # the synthetic second directive must coexist with D-001 and the registry must validate.
+        self.assertTrue({"D-001", "D-900"}.issubset(active), active)
 
     def test_second_directive_scopes_independently(self):
         reg = dr.load_registry(self.fx.root)
-        # A backend/M9 task matches D-002 but NOT D-001 (different scope).
+        # A backend/M9 task matches the synthetic D-900 but NOT D-001/D-002 (different scope).
         t = {"task_id": "M9-T001", "task_type": "backend", "milestone_id": "M9",
              "allowed_paths": [], "directive_refs": []}
         applicable, _ = reg.derive_applicable(t)
-        self.assertEqual(applicable, {"D-002-R001"})
+        self.assertEqual(applicable, {"D-900-R001"})
 
 
 class ContentManifestTests(unittest.TestCase):

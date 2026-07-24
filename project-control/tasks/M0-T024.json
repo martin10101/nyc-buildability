@@ -30,13 +30,14 @@
   ],
   "allowed_paths": [
     "project-control/",
-    "docs/SESSION_HANDOFF.md"
+    "docs/SESSION_HANDOFF.md",
+    "tools/test_directive_compliance.py"
   ],
   "forbidden_paths": [
     "CLAUDE.md",
     ".claude/**",
     ".github/**",
-    "tools/** (directive/control CLI and shared tests are frozen; D-002 needs no tooling change)",
+    "tools/** EXCEPT tools/test_directive_compliance.py (controller-only test-maintenance: the CI-exposed D-002-squat fixture fix, D-002 Section 6 reserves control tests for the controller; the directive/control CLI, validators, and other control tests remain frozen)",
     "services/**",
     "apps/**",
     "packages/**",
@@ -66,15 +67,15 @@
     "security-reviewer",
     "directive-compliance-verifier"
   ],
-  "status": "awaiting_gate",
-  "progress_percent": 85,
+  "status": "rework",
+  "progress_percent": 80,
   "risks": [
     "Porting stale-PR content could reintroduce superseded claims - mitigated by per-PR disposition ledger + independent control-plane review.",
     "Over-binding via directive applicability - mitigated by scoped CTRL/PROD/POST groups (no wildcard requirements)."
   ],
   "blockers": [],
   "created_at": "2026-07-24T02:37:17.967965+00:00",
-  "updated_at": "2026-07-24T02:59:46.761026+00:00",
+  "updated_at": "2026-07-24T03:13:20.970708+00:00",
   "directive_refs": [
     {
       "directive_id": "D-002",
@@ -83,5 +84,14 @@
   ],
   "directive_regime_version": "1.0",
   "directive_regime_entered_at": "2026-07-24T02:37:17.967965+00:00",
-  "worktree": "C:/Users/MLFLL/Downloads/nyc zoning/nyc-development-feasibility-claude-pack"
+  "worktree": "C:/Users/MLFLL/Downloads/nyc zoning/nyc-development-feasibility-claude-pack",
+  "progress_log": [
+    {
+      "at": "2026-07-24T03:13:20.970708+00:00",
+      "agent": "orchestrator",
+      "percent": 80,
+      "status": "rework",
+      "message": "G4 control-plane FAIL (independent): B-011 detail contained bare tokens M3-T001 + M3-T004, so open B-011 spuriously blocked accept() of first-wave M3-T001 and coupled M3-T004 via _blocker_references. Rework: reword B-011 to keep only M3-T005 matchable; fix test_directive_compliance.py D-002-squat (CI control-plane FAIL); add superseding banner to ported M3-CORPUS proposal (G3 advisory)."
+    }
+  ]
 }

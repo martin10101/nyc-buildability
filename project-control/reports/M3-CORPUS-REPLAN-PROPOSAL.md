@@ -1,5 +1,8 @@
 # M3 Legal-Corpus Replan — Control-Only Package (for owner approval)
 
+> **SUPERSEDED / HISTORICAL PROVENANCE (D-002 consolidation, 2026-07-24).** This report is the PR #93 five-packet proposal, ported verbatim as provenance. Its "PROPOSED / not contracted" framing is superseded: M3-T001 is now CONTRACTED as D-002 first-wave lane 1, and M3-T002..T005 are contracted backlog packets. The authoritative source of truth is the task packets + master_plan + FIRST-WAVE-INTEGRATION-CONTRACT.md; see M0-T024-PR-DISPOSITIONS.md.
+
+
 **Author:** orchestrator (main session) · **Date:** 2026-07-23 · **Branch:** `control/M3-corpus-replan-2026-07-23`
 **Directive:** owner directive 2026-07-23 (repair the missing M3 legal-corpus dependency before any M4-T007+ yard/coverage work; §11-25 correction; architect benchmark; construction-code scope; deterministic completeness harnesses).
 **Status of this package:** PROPOSAL, **revision 5** (owner decision: **all PDF parsing/rendering moves into M3-T003**; §17.16 resolved). See §15 (rev-2), §16 (rev-3), **§17 (five-packet restructure — authoritative for the packet map; §17.16 records the rev-5 decision)** + §18 (rev-4 log) + §19 (rev-5 log). No producer is dispatched. M4-T007/T008/T009 are NOT contracted, claimed, or started. The 3-way vs 4-way split is preserved as a downstream candidate and NOT decided here. Nothing merges to `main` until you approve.
