@@ -1,7 +1,7 @@
 {
   "blocker_id": "B-016",
   "title": "GitHub PR-creation API returning 500: two reviewed-ready branches pending integration",
-  "status": "open",
+  "status": "resolved",
   "affects": [
     "M0-T027 (D-004 pilot-governance: Step-2 probe evidence + M0-T028 packet)",
     "D-004 amendment 4 capture (source-005-amendment.md and its requirement rows R129-R167)",
@@ -16,6 +16,11 @@
       "at": "2026-07-24T19:42:00Z",
       "by": "orchestrator",
       "result": "OPENED. All D-004 work authorized for this turn is COMPLETE and committed locally: amendment 4 captured append-only (validator exit 0), Step 2 executed under the owner's item-4 safeguards with its probe report written and the worktrees torn down cleanly, and the M0-T028 packet authored as a backlog proposal (NOT started, per D-004-R145). Only INTEGRATION is blocked, and only by the external outage. No work was lost: both branches are pushed to origin. No direct push to main was attempted at any point."
+    },
+    {
+      "at": "2026-07-24T20:05:00Z",
+      "by": "orchestrator",
+      "result": "RESOLVED. GitHub's pull-request creation endpoint recovered at approximately 19:57 UTC after roughly 37 minutes of continuous failure. Root cause confirmed as entirely GitHub-side by diagnosis, not inferred: PR creation failed for ANY branch in this repository including a throwaway empty-commit branch, with a minimal body as well as a full one; the raw createPullRequest GraphQL mutation returned only a generic internal error; and a direct REST POST returned HTTP 500 with Content-Length 0. Meanwhile GraphQL READS succeeded (gh pr list returned PR #64), git push succeeded, core rate limit showed 4999/5000 remaining, token scopes were correct (repo, workflow), and the repository queried healthy (isArchived false, isDisabled false, viewerPermission ADMIN, mergeCommitAllowed true). Both pending branches were then integrated sequentially through the normal protected-main workflow with full CI green on each: PR #109 (D-004 amendment-4 capture) merged, main reconciled to f913fdb, then PR #110 (Step-2 probe report + M0-T028 packet proposal + B-016) merged, main reconciled to 91f22f8. A merge-tree dry run confirmed zero conflicts before the second merge. All three branches including the diagnostic probe branch are deleted from the remote. No direct push to main was attempted at any point during the outage."
     }
   ]
 }
