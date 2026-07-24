@@ -1,0 +1,142 @@
+{
+  "schema": "directive_manifest/v1",
+  "directive_id": "D-003",
+  "version": 1,
+  "slug": "first-wave-integration-and-second-wave",
+  "title": "Integrate first wave (D-002 sequential integration) and prepare second wave",
+  "status": "active",
+  "issued_by": "owner",
+  "issued_at": "2026-07-24",
+  "captured_at": "2026-07-24T00:00:00+00:00",
+  "channel": "owner_message",
+  "frozen_baseline_sha": "cc142081336f2dac0854a947694fec33559dcc8a",
+  "sources": [
+    {
+      "file": "source-001.md",
+      "kind": "original",
+      "sequence": 1,
+      "recorded_at": "2026-07-24T00:00:00+00:00",
+      "content_digest_sha256": "d9b019313dca6b9924c0bfbe874949717dd248b4a34e97bf1c655a4ff3e34d29"
+    }
+  ],
+  "amendments": [],
+  "supersedes": [],
+  "superseded_by": null,
+  "affected_tasks": [
+    "M0-T026"
+  ],
+  "affected_prs": [
+    99,
+    100,
+    101
+  ],
+  "affected_branches": [
+    "control/D-003-integration-2026-07-24"
+  ],
+  "scope": {
+    "task_ids": [
+      "M0-T026"
+    ],
+    "task_types": [
+      "governance"
+    ],
+    "milestones": [
+      "M0",
+      "M2",
+      "M3",
+      "M4"
+    ],
+    "paths": [
+      "project-control/",
+      "docs/SESSION_HANDOFF.md"
+    ]
+  },
+  "applicability_note": "CTRL requirements (task_ids=[M0-T026]) are the controller deliverables of the D-003 integration+second-wave control task, verified at its gate. POST requirements (task_ids=[M0-T026-POSTMERGE], a non-ledger sentinel) are the sequenced integration actions (per-PR exact-head review, gates, one-at-a-time accept/merge/ff, CI reruns, rebases, wave-2 worktrees) discharged over the run; they never block acceptance and are checked against primary repo evidence at the final independent directive verification (two-lane principle). The first-wave producer tasks M2-T017/M3-T001/M4-T007 are accepted through their own D-002 lifecycles.",
+  "owner_approval": {
+    "state": "active_execution_authorized",
+    "decision": "Integrate the three first-wave PRs one-at-a-time under the protected lifecycle; prepare a second blind-isolated wave.",
+    "decided_at": "2026-07-24",
+    "merge_authorized": true,
+    "accept_authorized": true,
+    "authorizes": [
+      "accept+merge #99 (M2-T017) if exact-head gates green",
+      "correction/rebase capsules to idle producers; a tiny controller-owned control amendment if needed",
+      "accept+merge #100/#101 only after rebase + green final-head CI + independent gates",
+      "contract a second wave from a new frozen main SHA + create fresh worktrees"
+    ],
+    "prohibits": [
+      "accepting/merging a red PR",
+      "wiring the M2-T017 serializer into the builder outside a new integration task",
+      "modifying active producer worktrees from the controller",
+      "silently approving the B-011 construction-code draft",
+      "starting M3-T003 before accepted M3-T002",
+      "reusing old task branches/worktrees for new tasks"
+    ]
+  },
+  "lifecycle_state": "active",
+  "requirements_file": "requirements.json",
+  "verification_file": "verification.json",
+  "final_reviewed_sha": null,
+  "final_reviewed_manifest_sha256": null,
+  "enforcement_pointers": {
+    "tasks": [
+      "M0-T026"
+    ],
+    "gates": [],
+    "blockers": [
+      "B-001",
+      "B-011",
+      "B-014"
+    ],
+    "rules": [
+      ".claude/rules/project-control.md"
+    ],
+    "hold": false
+  },
+  "notes": [
+    "D-003 is owner-issued (channel owner_message); 'active' reflects owner issuance.",
+    "First-wave producer-task acceptances flow through their D-002 lifecycles; D-003 governs the controller integration process + second-wave prep.",
+    "final_reviewed_* are populated at M0-T026's independent directive re-gate."
+  ],
+  "created_at": "2026-07-24T00:00:00+00:00",
+  "updated_at": "2026-07-24T00:00:00+00:00",
+  "audit_log": [
+    {
+      "at": "2026-07-24T00:00:00+00:00",
+      "by": "orchestrator",
+      "note": "Captured D-003 verbatim (source-001.md sha256 d9b01931) at frozen post-D-002 baseline cc14208; decomposed 28 requirements (10 CTRL / 18 POST). Remote facts independently reverified: main cc14208; #99 green, #100 red (context-budget + contracts), #101 red (web-e2e a11y)."
+    }
+  ],
+  "locked_requirement_ids": [
+    "D-003-R001",
+    "D-003-R002",
+    "D-003-R003",
+    "D-003-R004",
+    "D-003-R005",
+    "D-003-R006",
+    "D-003-R007",
+    "D-003-R008",
+    "D-003-R009",
+    "D-003-R010",
+    "D-003-R011",
+    "D-003-R012",
+    "D-003-R013",
+    "D-003-R014",
+    "D-003-R015",
+    "D-003-R016",
+    "D-003-R017",
+    "D-003-R018",
+    "D-003-R019",
+    "D-003-R020",
+    "D-003-R021",
+    "D-003-R022",
+    "D-003-R023",
+    "D-003-R024",
+    "D-003-R025",
+    "D-003-R026",
+    "D-003-R027",
+    "D-003-R028"
+  ],
+  "requirements_id_digest_sha256": "b598a89b3cf660ee60366e341adac6a16c9f13baba2e5753adec0cc93a41aaa2",
+  "requirements_content_digest_sha256": "9830be95dd393786183a71448d40e6409c61246a6b7747230f1819c913af2b79"
+}
