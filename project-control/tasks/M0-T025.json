@@ -1,0 +1,62 @@
+{
+  "task_id": "M0-T025",
+  "title": "Control-plane hardening: path containment for trusted checked-in requirements_file/verification_file references (LOW-1)",
+  "task_type": "governance",
+  "milestone_id": "M0",
+  "objective": "Add explicit path-containment validation for the directive manifest's requirements_file and verification_file references so they cannot resolve outside the directive's own directory, while preserving the current fail-closed behavior. Narrowly scoped control-plane hardening; NOT a blocker for the first wave; not implemented under D-002.",
+  "business_reason": "D-002 Section 2: preserve the LOW-1 review finding durably in project control; do not amend PR #97 again for it.",
+  "inputs": [
+    "project-control/reports/M0-T024-LOW-1.md (the recorded LOW-1 finding)",
+    "tools/directive_registry.py, tools/validate_directive_compliance.py (where requirements_file/verification_file are resolved)"
+  ],
+  "outputs": [
+    "tools/directive_registry.py and/or tools/validate_directive_compliance.py (explicit path-containment check on manifest.requirements_file / verification_file, resolving within the directive's own directory)",
+    "tools/test_directive_compliance.py (positive + negative containment tests)",
+    "project-control/reports/M0-T025-producer-report.md"
+  ],
+  "dependencies": [],
+  "allowed_paths": [
+    "tools/directive_registry.py",
+    "tools/validate_directive_compliance.py",
+    "tools/test_directive_compliance.py",
+    "project-control/reports/M0-T025-producer-report.md"
+  ],
+  "forbidden_paths": [
+    "any product/runtime code (services/**, apps/**, packages/**)",
+    "CLAUDE.md, .claude/**, .github/**, any other task's paths or report",
+    "the D-002 registry source files (append-only) and any other directive's records"
+  ],
+  "acceptance_scenarios": [
+    "AS-1 (executable): a manifest whose requirements_file or verification_file resolves outside its directive directory (e.g. '../other/x.json' or an absolute path) is REJECTED by the validator with a clear containment error.",
+    "AS-2 (executable): the current, well-formed in-directory references continue to PASS unchanged (no regression); fail-closed behavior preserved.",
+    "AS-3: full G0/G2/G3/G4/G5 evidence in project-control/reports/M0-T025-producer-report.md."
+  ],
+  "required_gates": [
+    "G0",
+    "G2",
+    "G3",
+    "G4",
+    "G5"
+  ],
+  "producer_agent": null,
+  "reviewer_agents": [
+    "code-reviewer",
+    "control-plane-verifier",
+    "security-reviewer",
+    "directive-compliance-verifier"
+  ],
+  "status": "backlog",
+  "progress_percent": 0,
+  "risks": [],
+  "blockers": [],
+  "created_at": "2026-07-24T02:50:32.021489+00:00",
+  "updated_at": "2026-07-24T02:50:32.021489+00:00",
+  "directive_refs": [
+    {
+      "directive_id": "D-002",
+      "requirement_ids": "ALL"
+    }
+  ],
+  "directive_regime_version": "1.0",
+  "directive_regime_entered_at": "2026-07-24T02:50:32.021489+00:00"
+}
