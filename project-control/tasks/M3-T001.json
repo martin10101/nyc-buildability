@@ -27,16 +27,17 @@
     "M1-T001"
   ],
   "allowed_paths": [
-    "docs/SOURCE_AUTHORITY_POLICY.md (NEW)",
-    "docs/LEGAL_CORPUS_COVERAGE_MATRIX.md (NEW)",
-    "docs/CONSTRUCTION_CODE_RELEASE_SCOPE.md (NEW draft for owner approval)",
-    "docs/DOCUMENT_EVIDENCE_POLICY.md (NEW  -  document-evidence-state policy foundation for M3-T003)",
-    "docs/SOURCE_ACCESS_REGISTRY.md (ADDITIVE new channel sections only; existing accepted rows byte-unchanged)",
-    "packages/contracts/schemas/v1/legal_source_manifest.schema.json (NEW additive)",
-    "packages/contracts/fixtures/valid/legal_source_manifest/ (D-003 amendment: relocated from schemas/v1/fixtures to the conventional fixtures tree the CI validator instance-checks; positive manifest fixtures for AS-11)",
-    "packages/contracts/fixtures/invalid/legal_source_manifest/ (D-003 amendment: negative manifest fixtures that MUST fail schema validation)",
-    "packages/contracts/fixtures/legal_source_manifest/ (D-003 amendment: the check_m3_t001.py self-check harness, relocated with the fixtures)",
-    "project-control/reports/M3-T001-architect-benchmark-analysis.md, project-control/reports/M3-T001-producer-report.md"
+    "docs/SOURCE_AUTHORITY_POLICY.md",
+    "docs/LEGAL_CORPUS_COVERAGE_MATRIX.md",
+    "docs/CONSTRUCTION_CODE_RELEASE_SCOPE.md",
+    "docs/DOCUMENT_EVIDENCE_POLICY.md",
+    "docs/SOURCE_ACCESS_REGISTRY.md",
+    "packages/contracts/schemas/v1/legal_source_manifest.schema.json",
+    "packages/contracts/fixtures/valid/legal_source_manifest/",
+    "packages/contracts/fixtures/invalid/legal_source_manifest/",
+    "packages/contracts/fixtures/legal_source_manifest/",
+    "project-control/reports/M3-T001-architect-benchmark-analysis.md",
+    "project-control/reports/M3-T001-producer-report.md"
   ],
   "forbidden_paths": [
     "Committing the client architect PDF anywhere; inferring benchmark project address/BBL/job/checked-by from metadata/filename",
@@ -78,8 +79,8 @@
     "data-contract-verifier",
     "directive-compliance-verifier"
   ],
-  "status": "backlog",
-  "progress_percent": 0,
+  "status": "accepted",
+  "progress_percent": 100,
   "risks": [
     "Contracted as first-wave lane 1 (D-002); a producer implements it in an isolated worktree; M3-T002..T005 remain backlog and sequential (M3-T002 needs accepted M3-T001).",
     "PROVENANCE != PRECEDENCE: the 7 tiers classify source provenance; conflict resolution is by jurisdiction/legal-status/effective-date/amendment-supersession/scope, with data_conflict/professional_review_required on any unresolved precedence  -  never a silent tier-number pick.",
@@ -101,7 +102,7 @@
     "(defines, does not execute)  -  establishes the authoritative status vocabulary, the provenance-vs-precedence rules, and the coverage-matrix schema that the downstream source-fidelity, cross-reference-closure, lot/applicability, rule-behavior, architect-benchmark, and consumer-boundary harnesses assert against."
   ],
   "created_at": "2026-07-23T12:09:21.318415+00:00",
-  "updated_at": "2026-07-23T12:35:00.000000+00:00",
+  "updated_at": "2026-07-24T17:04:10.655443+00:00",
   "directive_refs": [
     {
       "directive_id": "D-002",
@@ -109,5 +110,17 @@
     }
   ],
   "directive_regime_version": "1.0",
-  "directive_regime_entered_at": "2026-07-24T02:37:18.113430+00:00"
+  "directive_regime_entered_at": "2026-07-24T02:37:18.113430+00:00",
+  "worktree": "C:/Users/MLFLL/Downloads/nyc zoning/ctl-int-M3-T001",
+  "progress_log": [
+    {
+      "at": "2026-07-24T17:03:16.587566+00:00",
+      "agent": "official-source-researcher",
+      "percent": 80,
+      "status": "rework",
+      "message": "controller cleanup: M3-T001 allowed_paths carried #93 descriptive suffixes ((NEW)/(ADDITIVE)/(D-003 amendment)) + a comma-joined entry, so frozen_git_identity resolved to the empty-set hash. Stripped to literal paths so the frozen identity covers the real reviewed files. Re-submit at the same reviewed head 705f16e."
+    }
+  ],
+  "accepted_by": "orchestrator",
+  "accepted_at": "2026-07-24T17:04:10.654438+00:00"
 }
