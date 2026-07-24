@@ -715,97 +715,158 @@
         "D-002-R059",
         "D-002-R060"
       ],
-      "producer": "orchestrator",
-      "verifier": "",
+      "producer": "rules-engineer",
+      "verifier": "directive-compliance-verifier",
       "schema_version": "directive_verification/v2",
-      "reviewed_sha": null,
-      "reviewed_manifest_sha256": null,
+      "reviewed_sha": "0817ba114f76c6279933bb3bbca4779ec5d85590",
+      "reviewed_manifest_sha256": "a10522d990b1226539085d2128cad9cc394b0e969c24b0a8130222c3dcc60810",
       "requirements": [
         {
           "id": "D-002-R036",
-          "state": "pending",
-          "evidence": [],
-          "reviewed_sha": null
+          "state": "PASS",
+          "evidence": [
+            "changed-file audit: exactly 6 files (rules/{operations,evaluator,units}.py + tests/rules/ + report), all within allowed_paths; no apps/web, no rulesets/**, no canonical contracts, no shared hotspot",
+            "project-control/reports/M4-T007-producer-report.md"
+          ],
+          "reviewed_sha": "0817ba114f76c6279933bb3bbca4779ec5d85590",
+          "verified_by": "directive-compliance-verifier",
+          "verified_at": "2026-07-24T00:00:00+00:00"
         },
         {
           "id": "D-002-R037",
-          "state": "pending",
-          "evidence": [],
-          "reviewed_sha": null
+          "state": "PASS",
+          "evidence": [
+            "only project-control write is project-control/reports/M4-T007-producer-report.md (the one report path)"
+          ],
+          "reviewed_sha": "0817ba114f76c6279933bb3bbca4779ec5d85590",
+          "verified_by": "directive-compliance-verifier",
+          "verified_at": "2026-07-24T00:00:00+00:00"
         },
         {
           "id": "D-002-R038",
-          "state": "pending",
-          "evidence": [],
-          "reviewed_sha": null
+          "state": "PASS",
+          "evidence": [
+            "exact-math helpers live behind units.py; not wired into a shared production entrypoint beyond the rules module",
+            "services/api/app/rules/units.py"
+          ],
+          "reviewed_sha": "0817ba114f76c6279933bb3bbca4779ec5d85590",
+          "verified_by": "directive-compliance-verifier",
+          "verified_at": "2026-07-24T00:00:00+00:00"
         },
         {
           "id": "D-002-R039",
-          "state": "pending",
-          "evidence": [],
-          "reviewed_sha": null
+          "state": "PASS",
+          "evidence": [
+            "only M4-T007-owned rule-engine math files edited; no shared contract or frozen interface changed; no ICR owed"
+          ],
+          "reviewed_sha": "0817ba114f76c6279933bb3bbca4779ec5d85590",
+          "verified_by": "directive-compliance-verifier",
+          "verified_at": "2026-07-24T00:00:00+00:00"
         },
         {
           "id": "D-002-R051",
-          "state": "pending",
-          "evidence": [],
-          "reviewed_sha": null
+          "state": "PASS",
+          "evidence": [
+            "producer report cites required session-start reads: CLAUDE.md, packet, FIRST-WAVE-INTEGRATION-CONTRACT.md, D-002 requirements, WHOLE-SYSTEM-TRUST-REPLAN Area D / B-014, current operations.py/evaluator.py",
+            "project-control/reports/M4-T007-producer-report.md"
+          ],
+          "reviewed_sha": "0817ba114f76c6279933bb3bbca4779ec5d85590",
+          "verified_by": "directive-compliance-verifier",
+          "verified_at": "2026-07-24T00:00:00+00:00"
         },
         {
           "id": "D-002-R052",
-          "state": "pending",
-          "evidence": [],
-          "reviewed_sha": null
+          "state": "PASS",
+          "evidence": [
+            "full deliverable set (Decimal/rational math + units + tests; AS-1..AS-6) in one finished PR; rebased onto current main; no premature stop"
+          ],
+          "reviewed_sha": "0817ba114f76c6279933bb3bbca4779ec5d85590",
+          "verified_by": "directive-compliance-verifier",
+          "verified_at": "2026-07-24T00:00:00+00:00"
         },
         {
           "id": "D-002-R053",
-          "state": "pending",
-          "evidence": [],
-          "reviewed_sha": null
+          "state": "PASS",
+          "evidence": [
+            "diff changes no ledger/other-task-packet/other-worktree"
+          ],
+          "reviewed_sha": "0817ba114f76c6279933bb3bbca4779ec5d85590",
+          "verified_by": "directive-compliance-verifier",
+          "verified_at": "2026-07-24T00:00:00+00:00"
         },
         {
           "id": "D-002-R054",
-          "state": "pending",
-          "evidence": [],
-          "reviewed_sha": null
+          "state": "PASS",
+          "evidence": [
+            "units.py stdlib-only (fractions/decimal); no import from a sibling branch; only owned rule-engine files modified"
+          ],
+          "reviewed_sha": "0817ba114f76c6279933bb3bbca4779ec5d85590",
+          "verified_by": "directive-compliance-verifier",
+          "verified_at": "2026-07-24T00:00:00+00:00"
         },
         {
           "id": "D-002-R055",
-          "state": "pending",
-          "evidence": [],
-          "reviewed_sha": null
+          "state": "PASS",
+          "evidence": [
+            "exactly one PR against main (rebased head on task/M4-T007-decimal-legal-arithmetic-r2, superseding #101 after a force-push block); one assigned lane"
+          ],
+          "reviewed_sha": "0817ba114f76c6279933bb3bbca4779ec5d85590",
+          "verified_by": "directive-compliance-verifier",
+          "verified_at": "2026-07-24T00:00:00+00:00"
         },
         {
           "id": "D-002-R056",
-          "state": "pending",
-          "evidence": [],
-          "reviewed_sha": null
+          "state": "PASS",
+          "evidence": [
+            "committed producer report carries exact test commands/counts (64 + 291 + full-suite), matrices, and gate evidence - not chat",
+            "project-control/reports/M4-T007-producer-report.md"
+          ],
+          "reviewed_sha": "0817ba114f76c6279933bb3bbca4779ec5d85590",
+          "verified_by": "directive-compliance-verifier",
+          "verified_at": "2026-07-24T00:00:00+00:00"
         },
         {
           "id": "D-002-R057",
-          "state": "pending",
-          "evidence": [],
-          "reviewed_sha": null
+          "state": "PASS",
+          "evidence": [
+            "no improper stop; the force-push limitation was surfaced as a real environment stop condition and resolved by the controller via a fresh non-force branch"
+          ],
+          "reviewed_sha": "0817ba114f76c6279933bb3bbca4779ec5d85590",
+          "verified_by": "directive-compliance-verifier",
+          "verified_at": "2026-07-24T00:00:00+00:00"
         },
         {
           "id": "D-002-R058",
-          "state": "pending",
-          "evidence": [],
-          "reviewed_sha": null
+          "state": "PASS",
+          "evidence": [
+            "no blocker return content beyond the concise force-push stop-condition surfaced to the owner (<=200 words)"
+          ],
+          "reviewed_sha": "0817ba114f76c6279933bb3bbca4779ec5d85590",
+          "verified_by": "directive-compliance-verifier",
+          "verified_at": "2026-07-24T00:00:00+00:00"
         },
         {
           "id": "D-002-R059",
-          "state": "pending",
-          "evidence": [],
-          "reviewed_sha": null
+          "state": "PASS",
+          "evidence": [
+            "report supplies all enumerated completion items (task+outcome, PR+head, what works, contract/interface impact, tests+review, blockers, next dependency, idle)"
+          ],
+          "reviewed_sha": "0817ba114f76c6279933bb3bbca4779ec5d85590",
+          "verified_by": "directive-compliance-verifier",
+          "verified_at": "2026-07-24T00:00:00+00:00"
         },
         {
           "id": "D-002-R060",
-          "state": "pending",
-          "evidence": [],
-          "reviewed_sha": null
+          "state": "PASS",
+          "evidence": [
+            "detailed SHAs/commands/test-names live in the committed report; compact status carries no transcript dump"
+          ],
+          "reviewed_sha": "0817ba114f76c6279933bb3bbca4779ec5d85590",
+          "verified_by": "directive-compliance-verifier",
+          "verified_at": "2026-07-24T00:00:00+00:00"
         }
-      ]
+      ],
+      "verified_at": "2026-07-24T00:00:00+00:00"
     },
     {
       "directive_id": "D-002",

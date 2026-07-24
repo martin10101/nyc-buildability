@@ -1,0 +1,22 @@
+{
+  "task_id": "M4-T007",
+  "directive_id": "D-002",
+  "produced_by": "rules-engineer",
+  "note": "Evidence for the 14 D-002 PROD requirements applicable to M4-T007, independently confirmed by the directive-compliance-verifier at reviewed head 0817ba1 (rebased onto current main e9ae2d8). Transcribed by the orchestrator for the in-regime submit.",
+  "requirements": {
+    "D-002-R036": ["changed-file audit: exactly 6 files (rules/{operations,evaluator,units}.py + tests/rules/ + report), all within allowed_paths; no apps/web, no rulesets/**, no canonical contracts, no shared hotspot", "project-control/reports/M4-T007-producer-report.md"],
+    "D-002-R037": ["only project-control write is project-control/reports/M4-T007-producer-report.md (the one report path)"],
+    "D-002-R038": ["exact-math helpers live behind units.py; not wired into a shared production entrypoint beyond the rules module", "services/api/app/rules/units.py"],
+    "D-002-R039": ["only M4-T007-owned rule-engine math files edited; no shared contract or frozen interface changed; no ICR owed"],
+    "D-002-R051": ["producer report cites required session-start reads: CLAUDE.md, packet, FIRST-WAVE-INTEGRATION-CONTRACT.md, D-002 requirements, WHOLE-SYSTEM-TRUST-REPLAN Area D / B-014, current operations.py/evaluator.py", "project-control/reports/M4-T007-producer-report.md"],
+    "D-002-R052": ["full deliverable set (Decimal/rational math + units + tests; AS-1..AS-6) in one finished PR; rebased onto current main; no premature stop"],
+    "D-002-R053": ["diff changes no ledger/other-task-packet/other-worktree"],
+    "D-002-R054": ["units.py stdlib-only (fractions/decimal); no import from a sibling branch; only owned rule-engine files modified"],
+    "D-002-R055": ["exactly one PR against main (rebased head on task/M4-T007-decimal-legal-arithmetic-r2, superseding #101 after a force-push block); one assigned lane"],
+    "D-002-R056": ["committed producer report carries exact test commands/counts (64 + 291 + full-suite), matrices, and gate evidence - not chat", "project-control/reports/M4-T007-producer-report.md"],
+    "D-002-R057": ["no improper stop; the force-push limitation was surfaced as a real environment stop condition and resolved by the controller via a fresh non-force branch"],
+    "D-002-R058": ["no blocker return content beyond the concise force-push stop-condition surfaced to the owner (<=200 words)"],
+    "D-002-R059": ["report supplies all enumerated completion items (task+outcome, PR+head, what works, contract/interface impact, tests+review, blockers, next dependency, idle)"],
+    "D-002-R060": ["detailed SHAs/commands/test-names live in the committed report; compact status carries no transcript dump"]
+  }
+}

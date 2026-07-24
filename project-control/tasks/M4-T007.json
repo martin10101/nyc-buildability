@@ -48,7 +48,7 @@
     "G4",
     "G5"
   ],
-  "producer_agent": null,
+  "producer_agent": "rules-engineer",
   "reviewer_agents": [
     "code-reviewer",
     "control-plane-verifier",
@@ -56,15 +56,15 @@
     "qa-engineer",
     "directive-compliance-verifier"
   ],
-  "status": "backlog",
-  "progress_percent": 0,
+  "status": "accepted",
+  "progress_percent": 100,
   "risks": [
     "Changing rounding could shift a draft rule's numeric output - mitigated: rules are draft/awaiting-G6 (not published), and legal SEMANTICS/rule content are out of scope (rulesets/** forbidden).",
     "Geometry floats must stay isolated - mitigated by explicit typed-conversion boundary + tests."
   ],
   "blockers": [],
   "created_at": "2026-07-24T02:37:18.247305+00:00",
-  "updated_at": "2026-07-24T02:37:18.247305+00:00",
+  "updated_at": "2026-07-24T16:43:29.547768+00:00",
   "directive_refs": [
     {
       "directive_id": "D-002",
@@ -72,5 +72,8 @@
     }
   ],
   "directive_regime_version": "1.0",
-  "directive_regime_entered_at": "2026-07-24T02:37:18.247305+00:00"
+  "directive_regime_entered_at": "2026-07-24T02:37:18.247305+00:00",
+  "worktree": "C:/Users/MLFLL/Downloads/nyc zoning/ctl-int-M4-T007",
+  "accepted_by": "orchestrator",
+  "accepted_at": "2026-07-24T16:43:29.547768+00:00"
 }
