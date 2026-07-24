@@ -1,0 +1,104 @@
+{
+  "task_id": "M3-T004",
+  "title": "Cross-reference closure and legal applicability graph (ZR 11-25 suffix inheritance; per-rule closure manifests; consumes ONLY eligible verified evidence)",
+  "task_type": "backend",
+  "milestone_id": "M3",
+  "objective": "M3 chain (D-002 consolidation; carried from PR #93; backlog, sequential). RENUMBERED from the former closure packet (owner directive 2026-07-23 five-packet split) because closure must now also depend on the accepted Document Evidence Verification Engine. Build a deterministic directed graph over the VERIFIED corpus covering: linked AND unlinked textual section citations; definitions imported from sec.12-10 and other scoped definition sections; sec.11-25 suffix inheritance; 'except as otherwise provided'; general-to-special priority; exceptions/modifications; special-purpose district overrides; appendices/mapped areas; tables and footnotes; exception language; amendment/supersession links; and citation-like text that could not be parsed. Every releasable rule family gets a closure manifest (entry sections; reachable controlling sections; imported definitions; applicability predicates; exceptions; overrides; UNRESOLVED reference/citation candidates; required property facts; source version/hash per node). A rule may proceed ONLY if all reachable references in its declared scope are resolved; otherwise a typed unsupported/professional_review_required result. It may CONSUME ONLY evidence spans eligible for rule drafting (M3-T003) and MUST REJECT: ocr_draft, extraction conflicts, unresolved table structures, unresolved citations, unconfirmed critical OCR values, and AI-proposed-but-unvalidated relationships. Unresolved citation candidates appear in the closure manifest and BLOCK a final rule value; unresolved reference is NEVER non-applicable; single-chapter search cannot satisfy an absence assertion; AI-extracted edges are PROPOSED until deterministic evidence or required human review validates them; cycles terminate deterministically; renumbered/deleted sections detected. M4-T007+ depends on accepted M3-T004. Full spec: project-control/reports/M3-CORPUS-REPLAN-PROPOSAL.md.",
+  "business_reason": "Completeness must be proven by reachable-reference closure over VERIFIED evidence, not assembled from one chapter and not from unverified OCR. sec.11-25 suffix inheritance and sec.23-422's express exclusion must be modeled before any bare-R5 applicability or absence claim, and before the downstream M4 yard/coverage slices are re-scoped. Gating closure on eligible-evidence-only is what keeps an unverified critical value out of every rule. | D-002 M3 chain; carried from PR #93 (superseded).",
+  "inputs": [
+    "M3-T002 accepted AS PRODUCTION CORPUS: per-section raw+normalized hashes, cross-reference hrefs, definitions, last-amended/effective dates, amendment/supersession, tables/footnotes",
+    "M3-T003 accepted: the evidence-state machine + eligible evidence spans (native-extracted+replayed+cross-source-reconciled OR human-confirmed OCR); the closure graph consumes ONLY eligible spans and reads the evidence contracts (evidence_span, cross_source_comparison) read-only",
+    "M3-T001 accepted: LEGAL_CORPUS_COVERAGE_MATRIX.md, legal_source_manifest schema, DOCUMENT_EVIDENCE_POLICY.md (integration boundary: closure never reads raw OCR strings), authoritative status vocabulary",
+    "ZR sec.11-25 (suffix inheritance unless expressly separate), sec.23-422 express exclusion 'except R5 Districts with a letter suffix', sec.12-10 definitions",
+    "services/api/app/rules/** (M4-T001 engine): coverage vocabulary, rule_conflict/competing-rules trace, unsupported/professional_review_required outcomes  -  consume unchanged"
+  ],
+  "outputs": [
+    "services/api/app/corpus/closure/**  -  graph builder, linked+unlinked+table/footnote citation extractor, sec.11-25 suffix-inheritance resolver, closure-manifest generator, reachability + deterministic cycle termination, renumber/delete detector, proposed-vs-validated edge state, eligible-evidence gate (rejects ocr_draft/conflict/unresolved/unconfirmed/AI-unvalidated) (OWNED)",
+    "packages/contracts/schemas/v1/closure_manifest.schema.json  -  NEW versioned internal schema (deterministic $id+version; entry sections, reachable sections, imported definitions, applicability predicates, exceptions, overrides, unresolved candidates, required facts, per-node version/hash, per-node evidence-eligibility reference)",
+    "packages/contracts/schemas/v1/fixtures/closure_manifest/{positive,negative}/*.json  -  positive validates; negatives missing the unresolved-reference field or per-node source-version/hash or evidence-eligibility reference fail",
+    "services/api/tests/corpus/closure/**  -  deterministic cross-reference-closure harness incl. adversarial unlinked-reference/table-footnote 'cannot be silently missed' + ineligible-evidence-rejection tests",
+    "services/api/tests/fixtures/corpus/closure/**  -  bounded frozen fixtures (sec.23-361/R5B inheritance, sec.23-422 suffix exclusion, cyclic ref, renumbered/deleted section, unresolved definition, unlinked textual citation, table footnote citation, ocr_draft span, extraction_conflict span)",
+    "project-control/reports/M3-T004-producer-report.md"
+  ],
+  "dependencies": [
+    "M3-T002",
+    "M3-T003"
+  ],
+  "allowed_paths": [
+    "services/api/app/corpus/closure/** (OWNED by M3-T004; exclusive)",
+    "packages/contracts/schemas/v1/closure_manifest.schema.json (NEW additive)",
+    "packages/contracts/schemas/v1/fixtures/closure_manifest/**",
+    "services/api/tests/corpus/closure/**",
+    "services/api/tests/fixtures/corpus/closure/**",
+    "project-control/reports/M3-T004-producer-report.md"
+  ],
+  "forbidden_paths": [
+    "services/api/app/corpus/ingest/**, storage/**, versioning/** (M3-T002), extractors/**, evidence/**, document_validation/** (M3-T003), construction_code/** and overlay/** (M3-T005)  -  import read-only, never mutate",
+    "Reading raw OCR strings or ingesting ocr_draft/conflicted/unconfirmed/AI-unvalidated evidence into a closure (integration boundary); editing the rules evaluator core or any ruleset",
+    "Publishing/Verifying any rule; emitting a final value when any reachable reference/citation candidate is unresolved; treating an unresolved reference as non-applicable; treating an AI-extracted edge as validated without deterministic evidence or human review",
+    "Asserting 'confirmed absent' from a single-chapter scan; editing canonical contracts; apps/web/**; project-control/** except own reports; .claude/** except own agent-memory; adding any new runtime dependency (stdlib graph)"
+  ],
+  "acceptance_scenarios": [
+    "AS-1 suffix inheritance: sec.23-361 applied to R5B imports sec.11-25 inheritance unless the section expressly provides a different suffix rule -> R5B inherits R5 provisions where no separate R5B provision exists.",
+    "AS-2 express exclusion wins: sec.23-422's express 'except R5 Districts with a letter suffix' prevents R5 values leaking to R5A/R5B/R5D; the closure records the express exclusion, not inheritance.",
+    "AS-3 unresolved blocks value: an unresolved definition/exception/citation candidate in a rule's reachable set -> NO final value (typed unsupported/professional_review_required).",
+    "AS-4 cycle termination: a reference cycle terminates deterministically (no infinite loop, no hidden cutoff).",
+    "AS-5 renumber/delete detection: a renumbered/deleted referenced section is detected and flagged unresolved, not silently followed to a stale node.",
+    "AS-6 manifest completeness: each releasable rule family's closure manifest lists entry sections, reachable controlling sections, imported definitions, applicability predicates, exceptions, overrides, unresolved candidates, required property facts, per-node version/hash, and the per-node evidence-eligibility reference.",
+    "AS-7 determinism: identical corpus version + evidence set -> byte-identical closure manifest + graph.",
+    "AS-8 unlinked + table/footnote citations: closure processes linked AND unlinked textual citations, definition imports, tables/footnotes, exception language, amendment links, and unparseable citation-like text; adversarial tests prove an unlinked reference or table-footnote citation CANNOT be silently missed.",
+    "AS-9 eligible-evidence gate (NEW): closure REJECTS ocr_draft, extraction_conflict, unresolved table structures, unresolved citations, unconfirmed critical OCR values, and AI-proposed-but-unvalidated relationships; a fixture carrying any of these produces no final value and is surfaced, not consumed.",
+    "AS-10 proposed-edge discipline: an AI-extracted edge is PROPOSED and cannot contribute to a resolved closure (or a final rule value) until deterministic evidence or required human review validates it.",
+    "AS-11 closure_manifest schema validation (executable): schema meta-validates; positive fixture validates; negatives FAIL including one missing the unresolved-reference/citation-candidate field, one missing per-node source-version/hash, and one missing the evidence-eligibility reference; deterministic $id + version.",
+    "NC-1 single-chapter absence: a search restricted to one chapter cannot satisfy an absence assertion (rejected as unsupported).",
+    "NC-2 unresolved != non-applicable: a reference/citation the graph cannot resolve is never coerced to not_applicable or a default value.",
+    "NC-3 bare-R5 not auto-ambiguous: bare R5 in a section with no separate suffix provisions is modeled via sec.11-25 inheritance; a section expressly listing distinct R5A/R5B/R5D provisions lets those express provisions control."
+  ],
+  "required_gates": [
+    "G0",
+    "G1",
+    "G2",
+    "G3",
+    "G4",
+    "G5"
+  ],
+  "producer_agent": "legal-corpus-engineer",
+  "reviewer_agents": [
+    "code-reviewer",
+    "control-plane-verifier",
+    "security-reviewer",
+    "data-contract-verifier",
+    "directive-compliance-verifier"
+  ],
+  "status": "backlog",
+  "progress_percent": 0,
+  "risks": [
+    "Backlog, sequential (D-002 consolidation); not first-wave. Producer dispatched only after its accepted dependencies.",
+    "DEPENDS ON PRODUCTION M3-T002 + accepted M3-T003 evidence engine: closure consumes ONLY eligible verified evidence; a fixture-only M3-T002 or an un-accepted M3-T003 does not satisfy this dependency.",
+    "GATES M4: M4-T007 and every later yard/coverage/rear/front/side rule DEPENDS ON accepted M3-T004; the slice boundaries are regenerated from this closure set.",
+    "SILENT-MISS + INELIGIBLE-EVIDENCE HAZARD: unlinked citations, table footnotes, unparseable citation-like text, and any ocr_draft/conflicted/unconfirmed span are the highest-risk gaps  -  they must surface and block a final value, never be dropped or consumed.",
+    "LEGAL BOUNDARY: closure resolves references structurally; where resolution needs legal interpretation, the result is professional_review_required, never a guessed edge."
+  ],
+  "blockers": [],
+  "requirement_refs": [
+    "project-control/reports/M3-CORPUS-REPLAN-PROPOSAL.md  -  full spec (owner directive 2026-07-23 five-packet split; sec.11-25 correction; sec.15 integration boundary)",
+    "ZR sec.11-25, sec.12-10, sec.23-361, sec.23-422 (official portal)",
+    "docs/DOCUMENT_EVIDENCE_POLICY.md (integration boundary  -  closure never reads raw OCR)",
+    "docs/GATES_AND_CHECKPOINTS.md G3/G4/G5; docs/ACCEPTANCE_SCENARIO_STANDARD.md"
+  ],
+  "harness_assignments": [
+    "CROSS-REFERENCE-CLOSURE HARNESS: sec.23-361/R5B imports sec.11-25 unless expressly overridden; sec.23-422 express exclusion; unresolved definition/exception/citation-candidate -> no final value; cycles terminate; renumber/delete detected; single-chapter cannot satisfy absence; linked+unlinked+table/footnote+unparseable citations cannot be silently missed; AI edges proposed until validated.",
+    "ELIGIBLE-EVIDENCE-GATE HARNESS (NEW): ocr_draft / extraction_conflict / unresolved-table / unresolved-citation / unconfirmed-critical-OCR / AI-unvalidated spans are rejected, never consumed.",
+    "LOT/APPLICABILITY + RULE-BEHAVIOR + ARCHITECT-BENCHMARK harnesses remain DOWNSTREAM (M4 yard/coverage slices consuming this closure)."
+  ],
+  "created_at": "2026-07-23T12:09:22.069056+00:00",
+  "updated_at": "2026-07-23T13:10:00.000000+00:00",
+  "directive_refs": [
+    {
+      "directive_id": "D-002",
+      "requirement_ids": "ALL"
+    }
+  ],
+  "directive_regime_version": "1.0",
+  "directive_regime_entered_at": "2026-07-24T02:46:05.169565+00:00"
+}

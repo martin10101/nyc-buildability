@@ -1,0 +1,17 @@
+{
+  "blocker_id": "B-013",
+  "title": "Temporary age blocker: next@15.5.21 + eslint-config-next@15.5.21 under the 7-day gate (owner DECLINED an exception; wait until 2026-07-28T15:59:32.231Z)",
+  "status": "open",
+  "owner_decision": "DECLINED age exception; wait for the full 7-complete-day threshold (owner directive 2026-07-23).",
+  "affects": [
+    "M0-T019 (frontend framework-security P0 upgrade)  -  blocked from implementation/acceptance until the age threshold is met",
+    "public frontend deployment (depends on the accepted M0-T019 security upgrade)"
+  ],
+  "detail": "The reconciled M0-T019 target is next==15.5.21 and eslint-config-next==15.5.21 (Next.js July-2026 Maintenance-LTS security release fixing 4 HIGH + 5 MEDIUM CVEs; blog announced 2026-07-20). Official npm registry publish timestamps: eslint-config-next@15.5.21 = 2026-07-21T15:59:04.475Z; next@15.5.21 = 2026-07-21T15:59:32.231Z. Both reach 7 complete days at the LATER timestamp 2026-07-28T15:59:32.231Z (~2026-07-28 11:59:32 America/New_York). The owner DECLINED an age exception and selected WAIT: implementation does not begin before the threshold. Per FE-S9 there is NO allowlist/suppression/exception path in the machine age gate; a paper exception could not make it pass anyway. This blocker therefore stands as a TEMPORARY AGE blocker until registry time proves the full 7-day requirement; it is then resolved with registry-time evidence (not by an exception). NO advisory affecting the installed version, integrity/hash failure, unverified package, unexpected registry host, or failed test is waived  -  those always fail closed regardless of age.",
+  "exact_human_action": "None required now  -  this is an owner-recorded WAIT decision, not a pending exception. At/after 2026-07-28T15:59:32.231Z the orchestrator (not the owner) resolves B-013 by attaching registry-time evidence that both packages are >= 7 complete days old; only then may the reconciled M0-T019 implementation proceed (still subject to fresh advisory + integrity + full-lock re-verification and all gates).",
+  "where_to_enter": "No owner data entry. Resolution evidence is committed into project-control/reports/M0-T019-frontend-security-reconciliation-2026-07-23.md at/after the threshold.",
+  "minimum_permissions": "None.",
+  "how_it_will_be_tested": "FE-S9 (committed-lockfile age gate) fails closed on next@15.5.21 / eslint-config-next@15.5.21 until 2026-07-28T15:59:32.231Z; M0-T019 G0 verifies the age threshold is met (with registry-time evidence) before implementation  -  there is no exception record and no exception path.",
+  "resolves_at": "2026-07-28T15:59:32.231Z (both packages reach 7 complete days; resolve with registry-time evidence)",
+  "created_at": "2026-07-23T13:55:00Z"
+}

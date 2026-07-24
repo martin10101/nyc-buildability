@@ -1,0 +1,123 @@
+{
+  "task_id": "M3-T003",
+  "title": "Document Evidence Verification Engine (classify -> native extract / OCR -> critical-token -> cross-source -> evidence-state machine -> human-review bundles; adversarial harness)",
+  "task_type": "backend",
+  "milestone_id": "M3",
+  "objective": "M3 chain (D-002 consolidation; carried from PR #93; backlog, sequential). NEW dedicated packet (owner directive 2026-07-23). Turn immutable captures (M3-T002) into VERIFIED, page-anchored evidence spans without ever letting an unverified/conflicting OCR-derived critical value reach a rule. Scope: (1) classify every PDF as digitally_born / scanned_image / existing_ocr_layer / hybrid_text_and_image / classification_uncertain / malformed_or_unsupported (last two FAIL CLOSED) with classification evidence (native-text presence, per-page text/image coverage, font/encoding anomalies, selectable-vs-visible alignment, hidden-OCR-layer presence, rotation/crop/media box/DPI, parser+classifier versions); (2) native PDF text+layout extraction for digitally_born (chars/words, page, bbox/polygon, reading order, font/encoding, table cells + row/col headings, links/citations/footnotes/superscripts/annotations, exact-raw + separately-normalized); do NOT OCR digitally_born by default (OCR only as selective diagnostic when the text layer is corrupt/hidden/incomplete/misaligned); (3) OCR fallback for scanned (always initially ocr_draft; per span: page, bbox, page-image hash, exact OCR text, engine+version, config+language, raw confidence LABELED a model score not a probability of correctness, preprocessing, DPI, review status; a high score NEVER auto-promotes a critical legal field); (4) existing-OCR-layer/hybrid: compare hidden layer vs visible render vs fresh OCR vs native -> mismatch = extraction_conflict (never silently trust the hidden layer); (5) deterministic CRITICAL-TOKEN detector (report sec.5 list)  -  any disagreement on a critical token blocks automatic eligibility; (6) table/footnote structure preservation; (7) cross-extractor comparison; (8) official HTML-vs-PDF comparison aligned by article/chapter/section + effective version -> critical disagreement = data_conflict (list affected rules; prevent publication; require reconciliation/human review); (9) arithmetic/unit consistency validation (exact decimal/integer/rational, never binary float for legal thresholds; supporting evidence only, never proves a legal branch; no AI-generated number enters it); (10) an EVIDENCE-STATE MACHINE (report sec.6 states; NO single vague 'verified'); (11) private structured HUMAN-REVIEW EVIDENCE BUNDLES (report sec.9; page image + zoom crop + bbox + value + alternatives + token class + context + related HTML + arithmetic + affected rules + confirm/reject/conflict + reviewer/timestamp)  -  NOT a browser workbench, NOT apps/web; (12) an ADVERSARIAL document-verification harness (report sec.11). Dependency selection (native PDF parser/renderer; OCR for scanned only) happens HERE via /dependency-security at G0/G5  -  NOT chosen in the control-only PR. OWNERSHIP (owner directive 2026-07-23 sec.17.16 decision): M3-T003 owns the ENTIRE PDF-handling surface  -  PDF classification + parser-derived metadata (page count, rotation, crop/media boxes, DPI where available), deterministic page RENDERING, rendered-page images + hashes, native text/layout extraction, and OCR. Every rendered/parsed derivative records at least: original raw-document hash; page number; renderer/library name + exact version; configuration hash; render DPI + relevant page geometry; rendered-page hash; creation timestamp; schema version. M3-T003 CONSUMES accepted M3-T002 ORIGINALS + raw hashes (NOT T002-rendered pages  -  T002 renders nothing) and APPENDS its rendered/extraction/evidence derivatives + manifests via M3-T002's generic append-only storage interface WITHOUT editing T002-owned code or overwriting existing objects. Full spec: project-control/reports/M3-CORPUS-REPLAN-PROPOSAL.md sections 1,3,4,5,6,7,8,9,10,11,12,13,14 + sec.17.",
+  "business_reason": "The three-truths boundary (extraction / legal / mathematical) means no OCR, parser, AI, or calculator resolves correctness alone. A dedicated evidence engine is the only place that can guarantee: no unverified or conflicting OCR-derived critical value enters a Published/Verified rule, final constraint, compliance conclusion, or buildability calculation. Burying this inside raw ingestion (former M3-T002) hid the trust boundary; this packet makes it explicit and testable. | D-002 M3 chain; carried from PR #93 (superseded).",
+  "inputs": [
+    "M3-T001 accepted: DOCUMENT_EVIDENCE_POLICY.md (three-truths boundary, evidence states, prohibited claims, integration boundary), legal_source_manifest schema, LEGAL_CORPUS_COVERAGE_MATRIX.md, authoritative status vocabulary",
+    "M3-T002 accepted AS PRODUCTION CORPUS: durable content-addressed ORIGINAL HTML/PDF bytes + raw hashes + retrieval metadata + byte-level version signals + the generic append-only storage interface  -  the immutable ORIGINALS this engine renders/parses/verifies (T002 renders nothing; T003 appends its own rendered/extraction/evidence derivatives via that interface, never editing T002 code or overwriting)",
+    "services/api/app/resilience/transport.py  -  reuse for any bounded fetch of a diagnostic re-OCR source (no live per-analysis fetch)",
+    "Architect benchmark observations (M3-T001 analysis)  -  adversarial critical-token targets (1.50 vs 150; 15ft vs 75ft; 35 vs 85; % / minus omission; 'except R5 Districts with a letter suffix'; table-value-wrong-heading; footnote modifier)  -  hash-only, no client PDF committed",
+    "/dependency-security policy (age gate, exact pin, wheel test, vuln audit)  -  the gate for selecting the native PDF parser/renderer and the OCR engine at G0/G5"
+  ],
+  "outputs": [
+    "services/api/app/corpus/extractors/**  -  native PDF text+layout extractor + PDF page RENDERER (deterministic page images + hashes) + parser-derived metadata (page count, rotation, crop/media boxes, DPI) + OCR adapter (parser/renderer/OCR chosen via /dependency-security) + cross-extractor comparison; rendered/parsed derivatives appended to storage via M3-T002's append-only interface with full provenance (original raw-doc hash, page number, renderer/library name+exact version, config hash, render DPI+geometry, rendered-page hash, creation timestamp, schema version) (OWNED)",
+    "services/api/app/corpus/document_validation/**  -  PDF classifier (six classes; fail-closed on uncertain/malformed) + critical-token detector + arithmetic/unit validator (exact decimal/rational) (OWNED)",
+    "services/api/app/corpus/evidence/**  -  evidence-state machine, cross-source (HTML-vs-PDF) comparator, evidence-span assembler, human-review-bundle generator (private structured bundle; page images/crops/bboxes/comparisons/decisions) (OWNED)",
+    "packages/contracts/schemas/v1/document_classification.schema.json, extraction_run.schema.json, evidence_span.schema.json, cross_source_comparison.schema.json, human_review_decision.schema.json  -  NEW versioned internal schemas (deterministic $id+version) (OWNED)",
+    "packages/contracts/schemas/v1/fixtures/{document_classification,extraction_run,evidence_span,cross_source_comparison,human_review_decision}/{positive,negative}/*.json  -  positive + multiple negative fixtures per schema",
+    "services/api/tests/corpus/evidence/**  -  adversarial document-verification harness (report sec.11 matrix)",
+    "services/api/tests/fixtures/corpus/evidence/**  -  bounded frozen fixtures (digitally-born, scanned, bad-OCR-layer, hybrid, multi-column, rotated, merged-cell table, footnote-changes-value, decimal/percent, negation/exception, superscript/fraction, malformed, encrypted/unsupported, HTML-vs-PDF agree, HTML-vs-PDF critical conflict, OCR-engine disagreement, arithmetic inconsistency, correct-arithmetic-wrong-branch)",
+    "project-control/reports/M3-T003-producer-report.md, project-control/reports/M3-T003-dependency-security.md (the PDF/OCR selection evidence)"
+  ],
+  "dependencies": [
+    "M3-T001",
+    "M3-T002"
+  ],
+  "allowed_paths": [
+    "services/api/app/corpus/extractors/** (OWNED)",
+    "services/api/app/corpus/document_validation/** (OWNED)",
+    "services/api/app/corpus/evidence/** (OWNED)",
+    "packages/contracts/schemas/v1/{document_classification,extraction_run,evidence_span,cross_source_comparison,human_review_decision}.schema.json (NEW additive)",
+    "packages/contracts/schemas/v1/fixtures/{document_classification,extraction_run,evidence_span,cross_source_comparison,human_review_decision}/**",
+    "services/api/tests/corpus/evidence/**",
+    "services/api/tests/fixtures/corpus/evidence/**",
+    "requirements/lock updates ONLY via the approved /dependency-security process for the selected PDF/OCR library (exact-pinned; recorded in M3-T003-dependency-security.md)",
+    "project-control/reports/M3-T003-producer-report.md, project-control/reports/M3-T003-dependency-security.md"
+  ],
+  "forbidden_paths": [
+    "services/api/app/corpus/ingest/**, storage/**, versioning/** (owned by M3-T002  -  import read-only), closure/** (owned by M3-T004), construction_code/** and overlay/** (owned by M3-T005)",
+    "apps/web/** and any browser reviewer workbench (a workbench is a SEPARATE task after the evidence contracts are accepted); any user-facing UI",
+    "Auto-promoting any OCR-derived critical field on confidence score; silently trusting a hidden OCR layer; letting arithmetic consistency prove a legal branch; letting any AI-generated number enter the calculator; emitting a single vague 'verified' flag",
+    "Any prohibited claim (100% accurate OCR / 100% legally accurate / confidence-proves-correctness / two-engines-agree-therefore-verified / arithmetic-proves-rule-correct); claiming bounded-fixture performance proves universal accuracy",
+    "Adding a paid OCR/cloud service without stopping and reporting (pricing/auth/retention/terms/limits/why-local-inadequate/owner-approval); adding an AI or RAG framework; installing ANY dependency outside the /dependency-security process",
+    "Rule publication/Verified labeling; editing canonical contracts; project-control/** except own reports; .claude/** except own agent-memory"
+  ],
+  "acceptance_preconditions": [
+    "ACCEPTANCE additionally requires B-001 resolved and durable content-addressed storage of extraction/OCR/evidence/bundle artifacts (evidence provenance must be durable, not fixture-only).",
+    "Fixture/harness increments may PASS G0-G5 while B-001 is open but the task is NOT accepted and does NOT satisfy M3-T004's dependency until durable evidence storage exists.",
+    "The PDF/OCR dependency decision must be recorded (M3-T003-dependency-security.md) with G5 evidence before any such library is pinned."
+  ],
+  "acceptance_scenarios": [
+    "AS-1 classification fail-closed: digitally_born / scanned_image / existing_ocr_layer / hybrid are classified with evidence; classification_uncertain and malformed_or_unsupported FAIL CLOSED (no extraction proceeds).",
+    "AS-1b rendering + derivative provenance (owns the whole PDF surface): T003 renders pages deterministically and records parser-derived metadata (page count, rotation, crop/media boxes, DPI); every rendered/parsed derivative carries original raw-document hash, page number, renderer/library name + EXACT version, config hash, render DPI + page geometry, rendered-page hash, creation timestamp, and schema version; derivatives are appended via M3-T002's append-only interface without editing T002 code or overwriting; identical inputs + same library version + config -> identical rendered-page hash (deterministic).",
+    "AS-2 native extraction fidelity: a digitally_born fixture yields chars/words with page + bbox + reading order + font/encoding + table cells with row/col headings + links/citations/footnotes/superscripts + exact-raw and normalized forms; every field replays to page coordinates.",
+    "AS-3 OCR is ocr_draft: a scanned fixture's OCR output is ocr_draft with page/bbox/page-image hash/text/engine+version/config/lang/confidence(model-score)/preprocessing/DPI/review-status; a high confidence score does NOT auto-promote a critical field.",
+    "AS-4 bad hidden OCR layer: an existing-OCR-layer fixture whose hidden text disagrees with the visible render -> extraction_conflict; the hidden layer is never silently trusted.",
+    "AS-5 critical-token blocking: each mutation (1.50->150/1.80/1.5O; 15ft->75ft; 35->85; % omitted; minus omitted; 'shall not'->'shall'; 'except R5 Districts with a letter suffix' partially omitted; table value under wrong heading; footnote modifier omitted; two-column wrong reading order) is detected and blocks automatic eligibility.",
+    "AS-6 cross-source conflict: an HTML-vs-PDF critical-token disagreement emits data_conflict identifying both sources+versions, listing affected rules, preventing publication, requiring reconciliation/human review; an unchanged homepage banner never suppresses a detected PDF/HTML/section-hash/Last-Amended/amendment-feed change.",
+    "AS-7 arithmetic validator: 40x125=5,000; 5,000x1.50=7,500; 7,602-7,500=102; 60%x5,000=3,000 computed with exact decimal/integer/rational arithmetic + formula/unit trace; unknown/incompatible units rejected; arithmetic consistency is recorded as SUPPORTING evidence only and never selects a legal branch; no AI-generated number enters the calculator.",
+    "AS-8 evidence-state machine: spans move through raw_captured/document_classified/native_extracted|ocr_draft/evidence_checked/cross_source_matched/extraction_conflict/human_confirmed/rejected/unsupported; there is NO single vague 'verified' flag; each span records the full field set (report sec.6).",
+    "AS-9 eligibility rule: a span is rule-draft-eligible ONLY if (native-extracted with deterministic replay + required official cross-source reconciliation) OR (OCR-derived AND a human explicitly confirmed the highlighted source evidence); rule-draft eligibility is labeled NOT Published/Verified/compliant/legally-approved.",
+    "AS-10 human-review bundle: for every OCR-derived critical value or extraction_conflict a private structured bundle is generated (doc identity+hash, full page, zoom crop, bbox, value, alternatives, token class, surrounding context, related HTML, arithmetic, affected rules/outputs, confirm/reject/conflict field, reviewer+timestamp); a text-only report is rejected as insufficient for OCR confirmation; the bundle does NOT claim the reviewer's confirmation is G6.",
+    "AS-11 schema validation (executable, all five schemas): each of document_classification/extraction_run/evidence_span/cross_source_comparison/human_review_decision meta-validates; a positive fixture validates; multiple negative fixtures fail (missing provenance / raw or page hash / engine+config / page coordinates / explicit unknown-or-conflict state / a required critical-evidence field); each schema has a stable $id + deterministic version.",
+    "AS-12 golden-set acceptance standard (report sec.11): 100% exact critical-token match on the bounded approved golden fixture set; ZERO OCR-derived critical fields auto-promoted without human confirmation; ZERO silent HTML/PDF critical conflicts; every extracted field replays to page coordinates; every math result carries an exact formula/unit trace; every malformed/uncertain/conflicting/unsupported case fails closed; the report makes NO claim that bounded-fixture performance proves universal 100% accuracy.",
+    "AS-13 dependency-security: the native PDF parser/renderer and (scanned-only) OCR engine are selected via /dependency-security  -  smallest justified set, exact-pinned, age/vuln/license/wheel/Render/determinism/memory verified, engine version+config recorded per extraction run; a second OCR engine is used ONLY as disagreement detection (never as proof of correctness); no paid/cloud OCR and no AI/RAG framework are added.",
+    "NC-1 no auto-promote: no code path promotes an OCR critical field to eligible on confidence alone.",
+    "NC-2 no meaning-changing normalization: normalization touches only layout artifacts (approved whitespace/hyphenation); words/numbers/punctuation/negation/comparisons/units/citations are never normalized in a way that changes meaning (adversarial test).",
+    "NC-3 untrusted PDF security: malicious/malformed fixtures (oversized, decompression bomb, embedded JS/actions/attachments, encrypted, path-traversal filename) are contained by G5 controls; no code execution, no bulk temp files on the owner PC, worker crash-isolated."
+  ],
+  "required_gates": [
+    "G0",
+    "G1",
+    "G2",
+    "G3",
+    "G4",
+    "G5"
+  ],
+  "producer_agent": "legal-corpus-engineer",
+  "reviewer_agents": [
+    "code-reviewer",
+    "control-plane-verifier",
+    "security-reviewer",
+    "data-contract-verifier",
+    "directive-compliance-verifier"
+  ],
+  "status": "backlog",
+  "progress_percent": 0,
+  "risks": [
+    "Backlog, sequential (D-002 consolidation); not first-wave. Producer dispatched only after its accepted dependencies.",
+    "SYSTEM GUARANTEE: no unverified/conflicting OCR-derived critical value may enter a Published/Verified rule, final constraint, compliance conclusion, or buildability calculation. This is the load-bearing invariant of the whole M3 corpus.",
+    "DEPENDENCY DECISION LIVES HERE: PDF parser/renderer + OCR selected via /dependency-security at G0/G5 (exact pin, age gate, vuln audit, wheel test, Render compat, determinism, memory); NOT chosen in the control-only PR. Paid/cloud OCR or AI/RAG framework -> STOP and report.",
+    "OCR CONFIDENCE IS NOT CORRECTNESS: a model score never auto-promotes a critical field; two agreeing engines are disagreement-detection, not verification; only native-replay+cross-source or explicit human confirmation makes a critical span eligible.",
+    "ARITHMETIC != LEGAL: the calculator is mathematically deterministic for declared inputs only; consistency never proves the selected FAR/coverage/yard/branch applies. No AI-generated number enters it.",
+    "SECURITY: every PDF (incl. government) is untrusted; sandboxed worker, no JS/attachment/action, size/page/stream/image/time budgets, crash isolation, private storage, redaction; G5 includes malicious+malformed fixtures. Parser-level defenses are part of ONE shared, domain-agnostic untrusted-document security surface reusable by the future survey-document domain (report sec.17.13); the legal-document eligibility policy stays separate from the future survey-document eligibility policy.",
+    "BENCHMARK PDF: not committed; only its authorized hash + derived adversarial expectations are used."
+  ],
+  "blockers": [
+    "B-001"
+  ],
+  "requirement_refs": [
+    "project-control/reports/M3-CORPUS-REPLAN-PROPOSAL.md  -  full spec (owner directive 2026-07-23 five-packet split; sections 1,3,4,5,6,7,8,9,10,11,12,13,14)",
+    "docs/DOCUMENT_EVIDENCE_POLICY.md (M3-T001 output  -  evidence states, three-truths, prohibited claims, integration boundary)",
+    "docs/GATES_AND_CHECKPOINTS.md G1/G4/G5 (G5 security incl. malicious PDFs)",
+    "docs/ACCEPTANCE_SCENARIO_STANDARD.md (AS/NC format)"
+  ],
+  "harness_assignments": [
+    "ADVERSARIAL DOCUMENT-VERIFICATION HARNESS (report sec.11): the fixture matrix (digitally-born/scanned/bad-OCR-layer/hybrid/multi-column/rotated/merged-cell/footnote-changes-value/decimal/percent/negation/exception/superscript/fraction/malformed/encrypted/HTML-vs-PDF-agree/HTML-vs-PDF-critical-conflict/OCR-disagreement/arithmetic-inconsistency/correct-arithmetic-wrong-branch) + the golden-set acceptance standard (AS-12).",
+    "SOURCE-FIDELITY replay + HTML-vs-PDF critical-conflict harness (moved here from the former M3-T002 because they require extraction).",
+    "CRITICAL-TOKEN + ARITHMETIC harnesses (AS-5/AS-7)."
+  ],
+  "created_at": "2026-07-23T13:10:00.000000+00:00",
+  "updated_at": "2026-07-23T13:10:00.000000+00:00",
+  "directive_refs": [
+    {
+      "directive_id": "D-002",
+      "requirement_ids": "ALL"
+    }
+  ],
+  "directive_regime_version": "1.0",
+  "directive_regime_entered_at": "2026-07-24T02:46:05.031509+00:00"
+}

@@ -1,0 +1,15 @@
+{
+  "blocker_id": "B-011",
+  "title": "Owner-approved construction-code release-scope artifact not yet defined",
+  "status": "open",
+  "affects": [
+    "M3-T005 (DOB Construction-Code + amendment-overlay corpus)  -  remains backlog/blocked until this artifact is approved",
+    "Any construction-feasibility product claim (egress, occupancy, structural, accessibility, fire/life-safety) that depends on accepted M3-T005 scope"
+  ],
+  "detail": "M3-T005 must ingest ONLY the code domains actually required by the product's declared release scope, never the whole construction code, and must never imply universal completeness. 'Declared release scope from PRD / owner' is not a sufficiently defined input to let M3-T005 pass G0 (definition-of-ready) or move to ready. An exact, owner-approved scope artifact is required first. The M3 source-authority research packet (first-wave lane 1) drafts this artifact as docs/CONSTRUCTION_CODE_RELEASE_SCOPE.md (proposal, no authority); owner approval of that document clears this blocker. Until approved, M3-T005 stays backlog/blocked. This blocker intentionally names only the construction-code corpus task M3-T005 in its matchable fields; the cross-reference closure task is a separate packet and is NOT blocked by this record (owner directive 2026-07-23 five-packet split).",
+  "exact_human_action": "Owner reviews and approves docs/CONSTRUCTION_CODE_RELEASE_SCOPE.md (drafted by M3-T001). The approved artifact MUST identify: (1) code edition + as-of date; (2) the exact product claims being supported; (3) exact in-scope code titles, chapters, and subject domains; (4) required Local Law, DOB Rule, Buildings Bulletin, Code Note/directive, rescission, and supersession channels; (5) explicitly excluded domains; (6) which consumer claim each exclusion blocks. This is a PRODUCT/RELEASE-SCOPE decision (which domains are in scope) and AI has no authority to set it. It is NOT a legal approval and does not certify legal adequacy or completeness: qualified professionals still approve legal interpretations and release adequacy through G6, which remains mandatory and independent of this blocker.",
+  "where_to_enter": "docs/CONSTRUCTION_CODE_RELEASE_SCOPE.md (M3-T001 draft output); owner marks it approved (or hands edits to the orchestrator to commit on a control branch).",
+  "minimum_permissions": "None (owner scope/legal decision).",
+  "how_it_will_be_tested": "M3-T005 G0 verifies the approved scope artifact exists and is referenced as an input; M3-T005 acceptance verifies ingestion stayed within the approved in-scope titles/chapters/domains and that every excluded domain routes its named consumer claim to professional_review_required. A machine check asserts no output labels the corpus universally complete.",
+  "created_at": "2026-07-23T12:30:00Z"
+}

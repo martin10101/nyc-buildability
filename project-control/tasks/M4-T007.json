@@ -1,0 +1,76 @@
+{
+  "task_id": "M4-T007",
+  "title": "Exact Decimal/legal-units arithmetic and rounding foundation (DF-2)",
+  "task_type": "engineering",
+  "milestone_id": "M4",
+  "objective": "Replace binary-float legal math in the rule-evaluation core with Decimal/rational computed from canonical decimal strings; enforce per-rule rounding mode/scale/order and unit consistency; keep geometry floats isolated behind explicit typed conversions; add property-based, differential, and adversarial exact-threshold/rounding tests. Deterministic offline foundation that unblocks exact FAR/coverage/yard-boundary comparisons; publication-blocker foundation per DF-2 / B-014.",
+  "business_reason": "D-002 first-wave lane 2 (Section 7.2); whole-system trust replan Area D / defect DF-2 / blocker B-014 (owner made exact legal arithmetic a mandatory M4 rule-publication blocker).",
+  "inputs": [
+    "project-control/reports/WHOLE-SYSTEM-TRUST-REPLAN-2026-07-23.md (Area D, DF-2)",
+    "project-control/blockers/B-014-decimal-legal-math-required-for-m4-publication.json",
+    "services/api/app/rules/operations.py, evaluator.py (current float math @ frozen base)",
+    "docs/ACCEPTANCE_SCENARIO_STANDARD.md"
+  ],
+  "outputs": [
+    "services/api/app/rules/operations.py (Decimal/rational math; documented rounding mode/scale/order)",
+    "services/api/app/rules/evaluator.py (exact comparisons at thresholds; geometry-float isolation preserved)",
+    "services/api/app/rules/units.py (NEW: canonical decimal + unit-enforcement helpers; frozen interface)",
+    "services/api/tests/rules/** (property-based, differential native-vs-recompute, adversarial exact-threshold and rounding tests)",
+    "project-control/reports/M4-T007-producer-report.md"
+  ],
+  "dependencies": [],
+  "allowed_paths": [
+    "services/api/app/rules/operations.py",
+    "services/api/app/rules/evaluator.py",
+    "services/api/app/rules/units.py",
+    "services/api/tests/rules/",
+    "project-control/reports/M4-T007-producer-report.md"
+  ],
+  "forbidden_paths": [
+    "packages/contracts/** (canonical contracts; lane 3 owns source_fact/analysis_state_transition)",
+    "services/api/app/rules/rulesets/** (published rule CONTENT; no legal-semantics change without G6)",
+    "services/api/app/rules/dsl.py, lifecycle.py, registry.py, integration.py (rule-definition/lifecycle surface)",
+    "services/api/app/profile/** and services/api/app/api/** (production entrypoints / serializers)",
+    "CLAUDE.md, .claude/**, .github/**, tools/**, render.yaml, any other task's paths or report"
+  ],
+  "acceptance_scenarios": [
+    "AS-1 (executable): no binary-float arithmetic remains on the legal-value path in operations.py/evaluator.py (grep/AST check: legal numeric ops go through Decimal/rational; geometry floats remain isolated behind typed conversions).",
+    "AS-2 (executable): adversarial exact-threshold suite passes - FAR/coverage/yard equalities at representable-vs-non-representable decimals resolve deterministically (e.g. exact FAR == cap boundary) with no float representation error.",
+    "AS-3 (executable): differential test - native evaluator output equals an independent Decimal recompute across generated inputs; property-based invariants (scaling lot area scales FAR cap) hold.",
+    "AS-4 (executable): per-rule rounding mode/scale/order and unit enforcement are explicit and covered; non-finite/malformed decimals fail closed (never silently coerced).",
+    "AS-5: existing rules-engine tests still pass (no published legal-semantics change; only arithmetic exactness improved).",
+    "AS-6: full G0/G2/G3/G4/G5 evidence in project-control/reports/M4-T007-producer-report.md."
+  ],
+  "required_gates": [
+    "G0",
+    "G2",
+    "G3",
+    "G4",
+    "G5"
+  ],
+  "producer_agent": null,
+  "reviewer_agents": [
+    "code-reviewer",
+    "control-plane-verifier",
+    "security-reviewer",
+    "qa-engineer",
+    "directive-compliance-verifier"
+  ],
+  "status": "backlog",
+  "progress_percent": 0,
+  "risks": [
+    "Changing rounding could shift a draft rule's numeric output - mitigated: rules are draft/awaiting-G6 (not published), and legal SEMANTICS/rule content are out of scope (rulesets/** forbidden).",
+    "Geometry floats must stay isolated - mitigated by explicit typed-conversion boundary + tests."
+  ],
+  "blockers": [],
+  "created_at": "2026-07-24T02:37:18.247305+00:00",
+  "updated_at": "2026-07-24T02:37:18.247305+00:00",
+  "directive_refs": [
+    {
+      "directive_id": "D-002",
+      "requirement_ids": "ALL"
+    }
+  ],
+  "directive_regime_version": "1.0",
+  "directive_regime_entered_at": "2026-07-24T02:37:18.247305+00:00"
+}

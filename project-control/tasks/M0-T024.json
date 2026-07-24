@@ -1,0 +1,99 @@
+{
+  "task_id": "M0-T024",
+  "title": "Control consolidation: activate D-002, reconcile stale PRs, first-wave contract + packets",
+  "task_type": "governance",
+  "milestone_id": "M0",
+  "objective": "Capture D-002; reconcile PRs #93/#94/#95/#96/#91/#92/#64; port only currently-valid, independently-supported control changes; record LOW-1; build the first-wave integration contract and contract the first-wave producer packets (M3-T001, M4-T007, M2-T017); refresh exactly one handoff. Control-plane only: no product code, no shared-hotspot edits, no producer dispatch.",
+  "business_reason": "Owner directive D-002 sections 2-7: one fresh control-consolidation from post-#97 main before the first blind-isolated parallel build wave.",
+  "inputs": [
+    "project-control/directives/D-002-activate-control-system-first-wave/source-001.md (verbatim owner directive)",
+    "origin/main @ 2d44b47 (post-#97 merge)",
+    "PRs #93/#94/#95/#96/#91/#92/#64 (read-only reconciliation inputs)",
+    "docs/GATES_AND_CHECKPOINTS.md, docs/PROJECT_CONTROL_PROTOCOL.md, .claude/rules/project-control.md"
+  ],
+  "outputs": [
+    "project-control/directives/D-002-activate-control-system-first-wave/** (D-002 registry: source-001.md, manifest.json, requirements.json (69), verification.json (v2))",
+    "project-control/directives/index.json (D-002 registered active)",
+    "project-control/tasks/M3-T001.json, M4-T007.json, M2-T017.json (first-wave producer packets, in-regime, citing D-002)",
+    "project-control/tasks/M3-T002.json, M3-T003.json, M3-T004.json, M3-T005.json (ported M3 chain, backlog, sequential)",
+    "project-control/tasks/M0-T019.json (frontend-security target + eligibility reconciliation ported from #94)",
+    "project-control/blockers/B-011..B-014 + LOW-1 (ported/created control blockers)",
+    "project-control/reports/M0-T024-PR-DISPOSITIONS.md (per-PR carried/superseded/unresolved ledger)",
+    "project-control/reports/FIRST-WAVE-INTEGRATION-CONTRACT.md (frozen fields + collision matrix + hotspot reservations)",
+    "project-control/reports/WHOLE-SYSTEM-TRUST-REPLAN-2026-07-23.md + M3-CORPUS-REPLAN-PROPOSAL.md (ported analyses)",
+    "project-control/reports/M0-T024-LOW-1.md, M0-T024-producer-report.md",
+    "project-control/master_plan.json (M3 chain reflected; no scope change without owner)",
+    "docs/SESSION_HANDOFF.md (single refreshed handoff on consolidated main)"
+  ],
+  "dependencies": [
+    "M0-T023"
+  ],
+  "allowed_paths": [
+    "project-control/",
+    "docs/SESSION_HANDOFF.md",
+    "tools/test_directive_compliance.py"
+  ],
+  "forbidden_paths": [
+    "CLAUDE.md",
+    ".claude/**",
+    ".github/**",
+    "tools/** EXCEPT tools/test_directive_compliance.py (controller-only test-maintenance: the CI-exposed D-002-squat fixture fix, D-002 Section 6 reserves control tests for the controller; the directive/control CLI, validators, and other control tests remain frozen)",
+    "services/**",
+    "apps/**",
+    "packages/**",
+    "render.yaml and any deployment definition",
+    "any product/runtime code; any first-wave producer's allowed paths or outputs"
+  ],
+  "acceptance_scenarios": [
+    "AS-1 (executable): python tools/validate_directive_compliance.py --check exits 0; D-002 is active with 69 locked requirements and matching id/content digests.",
+    "AS-2 (executable): python tools/project_control.py status shows M0-T024, M3-T001, M4-T007, M2-T017 present, in-regime, citing D-002; ref coverage OK for each (evaluate_task_refs ok).",
+    "AS-3: project-control/reports/FIRST-WAVE-INTEGRATION-CONTRACT.md freezes every D-002 Section-5 field (task id, base SHA, deps, outputs, allowed/forbidden paths, owned+consumed interfaces + schema versions, generated-artifact sole owner, DB/migration/env/port ownership, harness responsibilities, report path, acceptance evidence, stop conditions, downstream integration task) for each first-wave producer, and includes a semantic-collision matrix proving disjoint ownership + no unmerged-sibling dependency.",
+    "AS-4: LOW-1 recorded durably as a narrowly scoped control-plane backlog item (path containment for trusted checked-in requirements_file/verification_file references), stating fail-closed behavior is preserved and it is NOT implemented in this directive.",
+    "AS-5: project-control/reports/M0-T024-PR-DISPOSITIONS.md records, for each of #93/#94/#95/#96/#91/#92/#64, whether each unique material change was carried forward / superseded (with reason) / still unresolved.",
+    "AS-6: exactly one docs/SESSION_HANDOFF.md reflects consolidated main; no contradictory handoffs introduced.",
+    "AS-7: The preserved items of D-002 Section 4 are all present (M3 5-task chain + Document Evidence Verification Engine; whole-system A-J analysis; decimal-arithmetic publication blocker B-014; frontend security target + age rule + age-exception-declined decision; M0-T019 eligibility 2026-07-28T15:59:32.231Z; all holds G6/legal/credentials/deployment/survey/paid)."
+  ],
+  "required_gates": [
+    "G0",
+    "G2",
+    "G3",
+    "G4",
+    "G5"
+  ],
+  "producer_agent": "orchestrator",
+  "reviewer_agents": [
+    "code-reviewer",
+    "control-plane-verifier",
+    "security-reviewer",
+    "directive-compliance-verifier"
+  ],
+  "status": "accepted",
+  "progress_percent": 100,
+  "risks": [
+    "Porting stale-PR content could reintroduce superseded claims - mitigated by per-PR disposition ledger + independent control-plane review.",
+    "Over-binding via directive applicability - mitigated by scoped CTRL/PROD/POST groups (no wildcard requirements)."
+  ],
+  "blockers": [],
+  "created_at": "2026-07-24T02:37:17.967965+00:00",
+  "updated_at": "2026-07-24T03:25:21.689972+00:00",
+  "directive_refs": [
+    {
+      "directive_id": "D-002",
+      "requirement_ids": "ALL"
+    }
+  ],
+  "directive_regime_version": "1.0",
+  "directive_regime_entered_at": "2026-07-24T02:37:17.967965+00:00",
+  "worktree": "C:/Users/MLFLL/Downloads/nyc zoning/nyc-development-feasibility-claude-pack",
+  "progress_log": [
+    {
+      "at": "2026-07-24T03:13:20.970708+00:00",
+      "agent": "orchestrator",
+      "percent": 80,
+      "status": "rework",
+      "message": "G4 control-plane FAIL (independent): B-011 detail contained bare tokens M3-T001 + M3-T004, so open B-011 spuriously blocked accept() of first-wave M3-T001 and coupled M3-T004 via _blocker_references. Rework: reword B-011 to keep only M3-T005 matchable; fix test_directive_compliance.py D-002-squat (CI control-plane FAIL); add superseding banner to ported M3-CORPUS proposal (G3 advisory)."
+    }
+  ],
+  "accepted_by": "orchestrator",
+  "accepted_at": "2026-07-24T03:25:21.689972+00:00"
+}

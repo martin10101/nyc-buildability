@@ -1,0 +1,2719 @@
+{
+  "schema": "directive_requirements/v1",
+  "directive_id": "D-002",
+  "version": 1,
+  "requirement_count": 69,
+  "producer": "orchestrator",
+  "requirements": [
+    {
+      "id": "D-002-R001",
+      "text": "Complete this directive as one continuous control-plane run; do not stop after routine substeps, commits, reviews, CI reruns, or corrections.",
+      "source_ref": "source-001.md#preamble",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T024"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [],
+        "lifecycle_events": [
+          "claim",
+          "submit",
+          "accept"
+        ],
+        "effective_date": "2026-07-24"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured; awaiting per-task independent verification at the reviewed identity",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": [
+          "M0-T024"
+        ]
+      }
+    },
+    {
+      "id": "D-002-R002",
+      "text": "Design the first-wave work so the four blind-island producer tabs (separate windows/worktrees that cannot see one another's conversations, unmerged branches, discoveries, or work) do not need cross-visibility.",
+      "source_ref": "source-001.md#preamble",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T024"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [],
+        "lifecycle_events": [
+          "claim",
+          "submit",
+          "accept"
+        ],
+        "effective_date": "2026-07-24"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured; awaiting per-task independent verification at the reviewed identity",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": [
+          "M0-T024"
+        ]
+      }
+    },
+    {
+      "id": "D-002-R003",
+      "text": "Do not use internal Agent/teammate/subagent dispatch as a substitute for the separate producer tabs and do not launch product producers in this controller tab; read-only reviewers are permitted only where the existing control system allows them.",
+      "source_ref": "source-001.md#preamble",
+      "classification": "prohibition",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T024"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [],
+        "lifecycle_events": [
+          "claim",
+          "submit",
+          "accept"
+        ],
+        "effective_date": "2026-07-24"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured; awaiting per-task independent verification at the reviewed identity",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": [
+          "M0-T024"
+        ]
+      }
+    },
+    {
+      "id": "D-002-R004",
+      "text": "Owner authorizes completing the acceptance+merge lifecycle for PR #97 only if all identities match: final head 9bc1f13, reviewed code identity ed8a6776, content-manifest identity 9ab6c960, evidence/control-only post-review changes, required final-head checks + directive verification green, and no unreviewed product code.",
+      "source_ref": "source-001.md#1",
+      "classification": "authorization",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T024"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [],
+        "lifecycle_events": [
+          "claim",
+          "submit",
+          "accept"
+        ],
+        "effective_date": "2026-07-24"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured; awaiting per-task independent verification at the reviewed identity",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": [
+          "M0-T024"
+        ]
+      }
+    },
+    {
+      "id": "D-002-R005",
+      "text": "Use the existing project-control lifecycle for #97; do not bypass acceptance, producer/verifier separation, frozen-identity checking, branch protection, or any owner/legal gate.",
+      "source_ref": "source-001.md#1",
+      "classification": "prohibition",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T024"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [],
+        "lifecycle_events": [
+          "claim",
+          "submit",
+          "accept"
+        ],
+        "effective_date": "2026-07-24"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured; awaiting per-task independent verification at the reviewed identity",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": [
+          "M0-T024"
+        ]
+      }
+    },
+    {
+      "id": "D-002-R006",
+      "text": "If an identity differs or new substantive code appeared, stop and return only a concise mismatch report; otherwise accept+merge #97, update local main with --ff-only, and read the merged directive/control-system changes before continuing.",
+      "source_ref": "source-001.md#1",
+      "classification": "decision",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T024"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [],
+        "lifecycle_events": [
+          "claim",
+          "submit",
+          "accept"
+        ],
+        "effective_date": "2026-07-24"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured; awaiting per-task independent verification at the reviewed identity",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": [
+          "M0-T024"
+        ]
+      }
+    },
+    {
+      "id": "D-002-R007",
+      "text": "Do not amend PR #97 again for the LOW-1 issue (containment validation of requirements_file and verification_file).",
+      "source_ref": "source-001.md#2",
+      "classification": "prohibition",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T024"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [],
+        "lifecycle_events": [
+          "claim",
+          "submit",
+          "accept"
+        ],
+        "effective_date": "2026-07-24"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured; awaiting per-task independent verification at the reviewed identity",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": [
+          "M0-T024"
+        ]
+      }
+    },
+    {
+      "id": "D-002-R008",
+      "text": "After #97 is merged, record LOW-1 as a narrowly scoped control-plane backlog item using the next valid reconciled task/blocker mechanism.",
+      "source_ref": "source-001.md#2",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T024"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [],
+        "lifecycle_events": [
+          "claim",
+          "submit",
+          "accept"
+        ],
+        "effective_date": "2026-07-24"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured; awaiting per-task independent verification at the reviewed identity",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": [
+          "M0-T024"
+        ]
+      }
+    },
+    {
+      "id": "D-002-R009",
+      "text": "State that LOW-1 concerns path containment for trusted checked-in registry references and preserve the current fail-closed behavior.",
+      "source_ref": "source-001.md#2",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T024"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [],
+        "lifecycle_events": [
+          "claim",
+          "submit",
+          "accept"
+        ],
+        "effective_date": "2026-07-24"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured; awaiting per-task independent verification at the reviewed identity",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": [
+          "M0-T024"
+        ]
+      }
+    },
+    {
+      "id": "D-002-R010",
+      "text": "Do not claim, dispatch, or implement LOW-1 during this directive; it is not a blocker for preparing the first wave unless reconciliation discovers a materially greater risk.",
+      "source_ref": "source-001.md#2",
+      "classification": "prohibition",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T024"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [],
+        "lifecycle_events": [
+          "claim",
+          "submit",
+          "accept"
+        ],
+        "effective_date": "2026-07-24"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured; awaiting per-task independent verification at the reviewed identity",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": [
+          "M0-T024"
+        ]
+      }
+    },
+    {
+      "id": "D-002-R011",
+      "text": "The LOW-1 recommendation must live durably in project control (not only in chat) so it is not forgotten in later conversations.",
+      "source_ref": "source-001.md#2",
+      "classification": "evidence",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T024"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [],
+        "lifecycle_events": [
+          "claim",
+          "submit",
+          "accept"
+        ],
+        "effective_date": "2026-07-24"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured; awaiting per-task independent verification at the reviewed identity",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": [
+          "M0-T024"
+        ]
+      }
+    },
+    {
+      "id": "D-002-R012",
+      "text": "Invoke and follow /directive-compliance and capture this entire owner message verbatim as the next directive.",
+      "source_ref": "source-001.md#3",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T024"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [],
+        "lifecycle_events": [
+          "claim",
+          "submit",
+          "accept"
+        ],
+        "effective_date": "2026-07-24"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured; awaiting per-task independent verification at the reviewed identity",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": [
+          "M0-T024"
+        ]
+      }
+    },
+    {
+      "id": "D-002-R013",
+      "text": "Use directive id D-002 only after reconciliation confirms it is available; do not silently choose D-002 if it is occupied.",
+      "source_ref": "source-001.md#3",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T024"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [],
+        "lifecycle_events": [
+          "claim",
+          "submit",
+          "accept"
+        ],
+        "effective_date": "2026-07-24"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured; awaiting per-task independent verification at the reviewed identity",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": [
+          "M0-T024"
+        ]
+      }
+    },
+    {
+      "id": "D-002-R014",
+      "text": "Decompose all requirements including the blind-tab rules and the compact-reporting rules, and use the multi-task verification format where applicable.",
+      "source_ref": "source-001.md#3",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T024"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [],
+        "lifecycle_events": [
+          "claim",
+          "submit",
+          "accept"
+        ],
+        "effective_date": "2026-07-24"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured; awaiting per-task independent verification at the reviewed identity",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": [
+          "M0-T024"
+        ]
+      }
+    },
+    {
+      "id": "D-002-R015",
+      "text": "Every new or materially replanned task packet created by this directive must cite this directive and carry the required directive-regime stamp.",
+      "source_ref": "source-001.md#3",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T024"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [],
+        "lifecycle_events": [
+          "claim",
+          "submit",
+          "accept"
+        ],
+        "effective_date": "2026-07-24"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured; awaiting per-task independent verification at the reviewed identity",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": [
+          "M0-T024"
+        ]
+      }
+    },
+    {
+      "id": "D-002-R016",
+      "text": "Do not create a second ledger, a second gate system, or a competing coordination framework.",
+      "source_ref": "source-001.md#3",
+      "classification": "prohibition",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T024"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [],
+        "lifecycle_events": [
+          "claim",
+          "submit",
+          "accept"
+        ],
+        "effective_date": "2026-07-24"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured; awaiting per-task independent verification at the reviewed identity",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": [
+          "M0-T024"
+        ]
+      }
+    },
+    {
+      "id": "D-002-R017",
+      "text": "After #97 is merged, fetch the latest remote state and inspect the full diffs, reports, task packets, checks, and present status of PRs #93, #94, #95, #96, #91, #92, and #64.",
+      "source_ref": "source-001.md#4",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T024"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [],
+        "lifecycle_events": [
+          "claim",
+          "submit",
+          "accept"
+        ],
+        "effective_date": "2026-07-24"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured; awaiting per-task independent verification at the reviewed identity",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": [
+          "M0-T024"
+        ]
+      }
+    },
+    {
+      "id": "D-002-R018",
+      "text": "Do not merge the stale branches blindly and do not assume their chat summaries are authoritative.",
+      "source_ref": "source-001.md#4",
+      "classification": "prohibition",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T024"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [],
+        "lifecycle_events": [
+          "claim",
+          "submit",
+          "accept"
+        ],
+        "effective_date": "2026-07-24"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured; awaiting per-task independent verification at the reviewed identity",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": [
+          "M0-T024"
+        ]
+      }
+    },
+    {
+      "id": "D-002-R019",
+      "text": "Create one fresh control-consolidation task and branch from the new post-#97 origin/main, porting or restating only the currently valid, independently supported control changes from the open PRs.",
+      "source_ref": "source-001.md#4",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T024"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [],
+        "lifecycle_events": [
+          "claim",
+          "submit",
+          "accept"
+        ],
+        "effective_date": "2026-07-24"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured; awaiting per-task independent verification at the reviewed identity",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": [
+          "M0-T024"
+        ]
+      }
+    },
+    {
+      "id": "D-002-R020",
+      "text": "The consolidation must preserve the corrected five-task M3 chain and the Document Evidence Verification Engine.",
+      "source_ref": "source-001.md#4",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T024"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [],
+        "lifecycle_events": [
+          "claim",
+          "submit",
+          "accept"
+        ],
+        "effective_date": "2026-07-24"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured; awaiting per-task independent verification at the reviewed identity",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": [
+          "M0-T024"
+        ]
+      }
+    },
+    {
+      "id": "D-002-R021",
+      "text": "The consolidation must preserve source authority, closure, capture, versioning, construction-code, and professional-review controls.",
+      "source_ref": "source-001.md#4",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T024"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [],
+        "lifecycle_events": [
+          "claim",
+          "submit",
+          "accept"
+        ],
+        "effective_date": "2026-07-24"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured; awaiting per-task independent verification at the reviewed identity",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": [
+          "M0-T024"
+        ]
+      }
+    },
+    {
+      "id": "D-002-R022",
+      "text": "The consolidation must preserve the whole-system A-J defect and architecture analysis.",
+      "source_ref": "source-001.md#4",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T024"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [],
+        "lifecycle_events": [
+          "claim",
+          "submit",
+          "accept"
+        ],
+        "effective_date": "2026-07-24"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured; awaiting per-task independent verification at the reviewed identity",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": [
+          "M0-T024"
+        ]
+      }
+    },
+    {
+      "id": "D-002-R023",
+      "text": "The consolidation must preserve decimal/exact legal arithmetic as a publication blocker.",
+      "source_ref": "source-001.md#4",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T024"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [],
+        "lifecycle_events": [
+          "claim",
+          "submit",
+          "accept"
+        ],
+        "effective_date": "2026-07-24"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured; awaiting per-task independent verification at the reviewed identity",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": [
+          "M0-T024"
+        ]
+      }
+    },
+    {
+      "id": "D-002-R024",
+      "text": "The consolidation must preserve the auth/RLS/tenancy, orchestration, persistence, compatible snapshot sets, reporting, invalidation, and canonical-contract deficiencies.",
+      "source_ref": "source-001.md#4",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T024"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [],
+        "lifecycle_events": [
+          "claim",
+          "submit",
+          "accept"
+        ],
+        "effective_date": "2026-07-24"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured; awaiting per-task independent verification at the reviewed identity",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": [
+          "M0-T024"
+        ]
+      }
+    },
+    {
+      "id": "D-002-R025",
+      "text": "The consolidation must preserve the current frontend security target and its age rule.",
+      "source_ref": "source-001.md#4",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T024"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [],
+        "lifecycle_events": [
+          "claim",
+          "submit",
+          "accept"
+        ],
+        "effective_date": "2026-07-24"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured; awaiting per-task independent verification at the reviewed identity",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": [
+          "M0-T024"
+        ]
+      }
+    },
+    {
+      "id": "D-002-R026",
+      "text": "The consolidation must preserve the owner's previous decision not to use an age-only exception.",
+      "source_ref": "source-001.md#4",
+      "classification": "decision",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T024"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [],
+        "lifecycle_events": [
+          "claim",
+          "submit",
+          "accept"
+        ],
+        "effective_date": "2026-07-24"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured; awaiting per-task independent verification at the reviewed identity",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": [
+          "M0-T024"
+        ]
+      }
+    },
+    {
+      "id": "D-002-R027",
+      "text": "Preserve that M0-T019 must not begin before the recorded exact eligibility time 2026-07-28T15:59:32.231Z, unless a later owner directive changes that decision.",
+      "source_ref": "source-001.md#4",
+      "classification": "hold",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T024"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [],
+        "lifecycle_events": [
+          "claim",
+          "submit",
+          "accept"
+        ],
+        "effective_date": "2026-07-24"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured; awaiting per-task independent verification at the reviewed identity",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": [
+          "M0-T024"
+        ]
+      }
+    },
+    {
+      "id": "D-002-R028",
+      "text": "The consolidation must preserve all existing holds concerning G6, legal approval, credentials, deployment, survey expansion, and paid services.",
+      "source_ref": "source-001.md#4",
+      "classification": "hold",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T024"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [],
+        "lifecycle_events": [
+          "claim",
+          "submit",
+          "accept"
+        ],
+        "effective_date": "2026-07-24"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured; awaiting per-task independent verification at the reviewed identity",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": [
+          "M0-T024"
+        ]
+      }
+    },
+    {
+      "id": "D-002-R029",
+      "text": "For every old PR, record whether each unique material change was (1) carried forward, (2) superseded with a reason, or (3) still unresolved.",
+      "source_ref": "source-001.md#4",
+      "classification": "evidence",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T024"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [],
+        "lifecycle_events": [
+          "claim",
+          "submit",
+          "accept"
+        ],
+        "effective_date": "2026-07-24"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured; awaiting per-task independent verification at the reviewed identity",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": [
+          "M0-T024"
+        ]
+      }
+    },
+    {
+      "id": "D-002-R030",
+      "text": "Only after the fresh consolidation PR is accepted and merged may stale/superseded PRs be closed, and only when all unique material changes are accounted for; each closure comment links to its replacement; do not close any PR whose unique changes remain unresolved.",
+      "source_ref": "source-001.md#4",
+      "classification": "authorization",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T024-POSTMERGE"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [
+          "post_merge"
+        ],
+        "effective_date": "2026-07-24"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured; awaiting per-task independent verification at the reviewed identity",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      }
+    },
+    {
+      "id": "D-002-R031",
+      "text": "Create or refresh exactly one accurate handoff based on the consolidated main state; do not preserve multiple contradictory handoffs.",
+      "source_ref": "source-001.md#4",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T024"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [],
+        "lifecycle_events": [
+          "claim",
+          "submit",
+          "accept"
+        ],
+        "effective_date": "2026-07-24"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured; awaiting per-task independent verification at the reviewed identity",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": [
+          "M0-T024"
+        ]
+      }
+    },
+    {
+      "id": "D-002-R032",
+      "text": "Create a durable first-wave integration contract using the existing task packets, directive references, allowed paths, reports, and project-control system; it may include a collision matrix and interface map but must not become a new task ledger.",
+      "source_ref": "source-001.md#5",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T024"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [],
+        "lifecycle_events": [
+          "claim",
+          "submit",
+          "accept"
+        ],
+        "effective_date": "2026-07-24"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured; awaiting per-task independent verification at the reviewed identity",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": [
+          "M0-T024"
+        ]
+      }
+    },
+    {
+      "id": "D-002-R033",
+      "text": "The contract must freeze, per task: exact task ID; exact base SHA; task dependencies; complete outputs; precise allowed paths; precise forbidden paths; owned interfaces and schema versions; read-only interfaces consumed from main; generated artifacts and their sole owner; database/migration ownership; environment-variable ownership; service/port ownership if applicable; test and harness responsibilities; exact producer-report path; acceptance evidence; explicit stop conditions; and the planned downstream integration task.",
+      "source_ref": "source-001.md#5",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T024"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [],
+        "lifecycle_events": [
+          "claim",
+          "submit",
+          "accept"
+        ],
+        "effective_date": "2026-07-24"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured; awaiting per-task independent verification at the reviewed identity",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": [
+          "M0-T024"
+        ]
+      }
+    },
+    {
+      "id": "D-002-R034",
+      "text": "No first-wave producer may depend on an unmerged output from another first-wave producer; if producer B needs producer A's work they are sequential tasks and may not run simultaneously.",
+      "source_ref": "source-001.md#5",
+      "classification": "dependency",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T024"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [],
+        "lifecycle_events": [
+          "claim",
+          "submit",
+          "accept"
+        ],
+        "effective_date": "2026-07-24"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured; awaiting per-task independent verification at the reviewed identity",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": [
+          "M0-T024"
+        ]
+      }
+    },
+    {
+      "id": "D-002-R035",
+      "text": "Beyond path separation, check semantic collisions: same API contract or schema ID; same DB table or migration sequence; same configuration variable; same generated output; same source-of-truth document; same package or lockfile; same deployment definition; same production entrypoint; provider/consumer version incompatibility; and treat different source paths that write the same generated file as an overlap.",
+      "source_ref": "source-001.md#5",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T024"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [],
+        "lifecycle_events": [
+          "claim",
+          "submit",
+          "accept"
+        ],
+        "effective_date": "2026-07-24"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured; awaiting per-task independent verification at the reviewed identity",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": [
+          "M0-T024"
+        ]
+      }
+    },
+    {
+      "id": "D-002-R036",
+      "text": "A first-wave producer must not modify (unless explicitly assigned sole ownership): CLAUDE.md; .claude/**; .github/**; the directive registry or directive tooling; the project-control CLI, master ledger, shared gate code, or control tests; root dependency and lock files; shared deployment definitions such as root render.yaml; common production entrypoints; shared application startup/configuration files; shared generated artifacts; another task's report; another producer's migrations; another producer's schema or interface.",
+      "source_ref": "source-001.md#6",
+      "classification": "prohibition",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M3-T001",
+          "M4-T007",
+          "M2-T017"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [
+          "claim",
+          "submit",
+          "accept"
+        ],
+        "effective_date": "2026-07-24"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured; awaiting per-task independent verification at the reviewed identity",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": [
+          "M3-T001",
+          "M4-T007",
+          "M2-T017"
+        ]
+      }
+    },
+    {
+      "id": "D-002-R037",
+      "text": "A producer may modify only its exact task packet's allowed paths and its one exact producer-report path.",
+      "source_ref": "source-001.md#6",
+      "classification": "prohibition",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M3-T001",
+          "M4-T007",
+          "M2-T017"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [
+          "claim",
+          "submit",
+          "accept"
+        ],
+        "effective_date": "2026-07-24"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured; awaiting per-task independent verification at the reviewed identity",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": [
+          "M3-T001",
+          "M4-T007",
+          "M2-T017"
+        ]
+      }
+    },
+    {
+      "id": "D-002-R038",
+      "text": "Producer modules are implemented behind frozen interfaces; wiring multiple modules into shared production entrypoints belongs to a later, controller-contracted integration task after the providers have been merged.",
+      "source_ref": "source-001.md#6",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M3-T001",
+          "M4-T007",
+          "M2-T017"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [
+          "claim",
+          "submit",
+          "accept"
+        ],
+        "effective_date": "2026-07-24"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured; awaiting per-task independent verification at the reviewed identity",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": [
+          "M3-T001",
+          "M4-T007",
+          "M2-T017"
+        ]
+      }
+    },
+    {
+      "id": "D-002-R039",
+      "text": "If a producer discovers that a frozen interface must change, it must stop and submit a short interface-change request; it must not edit the shared contract.",
+      "source_ref": "source-001.md#6",
+      "classification": "sequencing",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M3-T001",
+          "M4-T007",
+          "M2-T017"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [
+          "claim",
+          "submit",
+          "accept"
+        ],
+        "effective_date": "2026-07-24"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured; awaiting per-task independent verification at the reviewed identity",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": [
+          "M3-T001",
+          "M4-T007",
+          "M2-T017"
+        ]
+      }
+    },
+    {
+      "id": "D-002-R040",
+      "text": "Prepare a maximum of four producer worktrees plus this controller tab; four producers are a ceiling, not a quota.",
+      "source_ref": "source-001.md#7",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T024"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [],
+        "lifecycle_events": [
+          "claim",
+          "submit",
+          "accept"
+        ],
+        "effective_date": "2026-07-24"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured; awaiting per-task independent verification at the reviewed identity",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": [
+          "M0-T024"
+        ]
+      }
+    },
+    {
+      "id": "D-002-R041",
+      "text": "Evaluate the four candidate independent lanes (M3-T001 legal-source authority; exact Decimal/legal-units arithmetic addressing DF-2; canonical source_fact and analysis_state_transition contract hardening; Auth/RLS/tenant-isolation only if its real acceptance path is not prevented by B-001 or another credential/deployment blocker).",
+      "source_ref": "source-001.md#7",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T024"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [],
+        "lifecycle_events": [
+          "claim",
+          "submit",
+          "accept"
+        ],
+        "effective_date": "2026-07-24"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured; awaiting per-task independent verification at the reviewed identity",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": [
+          "M0-T024"
+        ]
+      }
+    },
+    {
+      "id": "D-002-R042",
+      "text": "Assign exact task IDs only after reconciling the authoritative ledger; do not invent task IDs from this message.",
+      "source_ref": "source-001.md#7",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T024"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [],
+        "lifecycle_events": [
+          "claim",
+          "submit",
+          "accept"
+        ],
+        "effective_date": "2026-07-24"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured; awaiting per-task independent verification at the reviewed identity",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": [
+          "M0-T024"
+        ]
+      }
+    },
+    {
+      "id": "D-002-R043",
+      "text": "Respect sequencing: M3-T002 depends on accepted M3-T001 (not simultaneous); M3-T003 depends on M3-T002; closure and downstream legal-rule work follow their accepted dependencies; consumers of newly hardened canonical contracts do not run in parallel with the changing task unless they consume an already frozen compatible version; do not start M0-T019 before its eligibility timestamp; do not start a run orchestrator requiring unmerged auth/persistence/contract outputs; do not fill an unsafe fourth slot merely to use all five windows.",
+      "source_ref": "source-001.md#7",
+      "classification": "sequencing",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T024"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [],
+        "lifecycle_events": [
+          "claim",
+          "submit",
+          "accept"
+        ],
+        "effective_date": "2026-07-24"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured; awaiting per-task independent verification at the reviewed identity",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": [
+          "M0-T024"
+        ]
+      }
+    },
+    {
+      "id": "D-002-R044",
+      "text": "If only three producers are genuinely independent and ready, prepare three and state plainly why the fourth remains idle.",
+      "source_ref": "source-001.md#7",
+      "classification": "decision",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T024"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [],
+        "lifecycle_events": [
+          "claim",
+          "submit",
+          "accept"
+        ],
+        "effective_date": "2026-07-24"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured; awaiting per-task independent verification at the reviewed identity",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": [
+          "M0-T024"
+        ]
+      }
+    },
+    {
+      "id": "D-002-R045",
+      "text": "Only after the control-consolidation PR and first-wave task contracts are accepted and merged: fetch and fast-forward local main; confirm the controller worktree is clean; record one frozen first-wave base SHA; inspect existing worktrees and branches; and create one separate sibling Git worktree and unique task branch per approved producer.",
+      "source_ref": "source-001.md#8",
+      "classification": "sequencing",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T024-POSTMERGE"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [
+          "post_merge"
+        ],
+        "effective_date": "2026-07-24"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured; awaiting per-task independent verification at the reviewed identity",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      }
+    },
+    {
+      "id": "D-002-R046",
+      "text": "Do not duplicate the repository; do not install duplicate dependency trees, local databases, Docker data, or citywide datasets merely to prepare the worktrees; and do not launch Claude, Cursor, or producer agents inside them.",
+      "source_ref": "source-001.md#8",
+      "classification": "prohibition",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T024-POSTMERGE"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [
+          "post_merge"
+        ],
+        "effective_date": "2026-07-24"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured; awaiting per-task independent verification at the reviewed identity",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      }
+    },
+    {
+      "id": "D-002-R047",
+      "text": "Return the exact absolute path of every worktree so the owner can manually open each folder in a separate Cursor window.",
+      "source_ref": "source-001.md#8",
+      "classification": "return",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T024-POSTMERGE"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [
+          "post_merge"
+        ],
+        "effective_date": "2026-07-24"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured; awaiting per-task independent verification at the reviewed identity",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      }
+    },
+    {
+      "id": "D-002-R048",
+      "text": "Each producer starts from the same frozen main SHA unless its accepted dependency requires a later wave.",
+      "source_ref": "source-001.md#8",
+      "classification": "sequencing",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T024-POSTMERGE"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [
+          "post_merge"
+        ],
+        "effective_date": "2026-07-24"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured; awaiting per-task independent verification at the reviewed identity",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      }
+    },
+    {
+      "id": "D-002-R049",
+      "text": "Create one startup capsule for each producer, saved durably in its task/report area, with the task packet remaining the source of truth.",
+      "source_ref": "source-001.md#9",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T024-POSTMERGE"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [
+          "post_merge"
+        ],
+        "effective_date": "2026-07-24"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured; awaiting per-task independent verification at the reviewed identity",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      }
+    },
+    {
+      "id": "D-002-R050",
+      "text": "Each capsule is concise and contains: 'You are a producer, not the controller.'; task ID and title; branch and expected worktree; frozen base SHA; exact files to read before starting; directive references; owned and consumed interfaces; allowed paths; forbidden paths; dependencies already proven accepted; required tests and harnesses; permitted report path; exact completion condition; stop conditions; and the compact final-return format.",
+      "source_ref": "source-001.md#9",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T024-POSTMERGE"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [
+          "post_merge"
+        ],
+        "effective_date": "2026-07-24"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured; awaiting per-task independent verification at the reviewed identity",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      }
+    },
+    {
+      "id": "D-002-R051",
+      "text": "At the beginning of a new producer session, and after chat compaction, rebase, or a new task, the producer must read: root CLAUDE.md; its authoritative task packet; the first-wave integration contract; its applicable directive requirements; its frozen interface/schema files; and its most recent task-specific resume report if any.",
+      "source_ref": "source-001.md#9",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M3-T001",
+          "M4-T007",
+          "M2-T017"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [
+          "claim",
+          "submit",
+          "accept"
+        ],
+        "effective_date": "2026-07-24"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured; awaiting per-task independent verification at the reviewed identity",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": [
+          "M3-T001",
+          "M4-T007",
+          "M2-T017"
+        ]
+      }
+    },
+    {
+      "id": "D-002-R052",
+      "text": "Work through the entire authorized task without stopping after routine substeps.",
+      "source_ref": "source-001.md#10",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M3-T001",
+          "M4-T007",
+          "M2-T017"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [
+          "claim",
+          "submit",
+          "accept"
+        ],
+        "effective_date": "2026-07-24"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured; awaiting per-task independent verification at the reviewed identity",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": [
+          "M3-T001",
+          "M4-T007",
+          "M2-T017"
+        ]
+      }
+    },
+    {
+      "id": "D-002-R053",
+      "text": "Do not merge, accept, replan the ledger, change another task, or operate another worktree.",
+      "source_ref": "source-001.md#10",
+      "classification": "prohibition",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M3-T001",
+          "M4-T007",
+          "M2-T017"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [
+          "claim",
+          "submit",
+          "accept"
+        ],
+        "effective_date": "2026-07-24"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured; awaiting per-task independent verification at the reviewed identity",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": [
+          "M3-T001",
+          "M4-T007",
+          "M2-T017"
+        ]
+      }
+    },
+    {
+      "id": "D-002-R054",
+      "text": "Do not read from or import an unmerged sibling branch; do not assume another tab completed anything; and do not modify a shared contract.",
+      "source_ref": "source-001.md#10",
+      "classification": "prohibition",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M3-T001",
+          "M4-T007",
+          "M2-T017"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [
+          "claim",
+          "submit",
+          "accept"
+        ],
+        "effective_date": "2026-07-24"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured; awaiting per-task independent verification at the reviewed identity",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": [
+          "M3-T001",
+          "M4-T007",
+          "M2-T017"
+        ]
+      }
+    },
+    {
+      "id": "D-002-R055",
+      "text": "Commit and push only the assigned branch, and open one PR against main when the complete packet is ready.",
+      "source_ref": "source-001.md#10",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M3-T001",
+          "M4-T007",
+          "M2-T017"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [
+          "claim",
+          "submit",
+          "accept"
+        ],
+        "effective_date": "2026-07-24"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured; awaiting per-task independent verification at the reviewed identity",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": [
+          "M3-T001",
+          "M4-T007",
+          "M2-T017"
+        ]
+      }
+    },
+    {
+      "id": "D-002-R056",
+      "text": "Keep detailed evidence, commands, matrices, and file lists in committed reports and CI, not in the owner chat.",
+      "source_ref": "source-001.md#10",
+      "classification": "evidence",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M3-T001",
+          "M4-T007",
+          "M2-T017"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [
+          "claim",
+          "submit",
+          "accept"
+        ],
+        "effective_date": "2026-07-24"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured; awaiting per-task independent verification at the reviewed identity",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": [
+          "M3-T001",
+          "M4-T007",
+          "M2-T017"
+        ]
+      }
+    },
+    {
+      "id": "D-002-R057",
+      "text": "Stop only for a real owner decision, credential/payment requirement, legal ambiguity, security exception, destructive operation, contract collision, or impossible acceptance condition.",
+      "source_ref": "source-001.md#10",
+      "classification": "sequencing",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M3-T001",
+          "M4-T007",
+          "M2-T017"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [
+          "claim",
+          "submit",
+          "accept"
+        ],
+        "effective_date": "2026-07-24"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured; awaiting per-task independent verification at the reviewed identity",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": [
+          "M3-T001",
+          "M4-T007",
+          "M2-T017"
+        ]
+      }
+    },
+    {
+      "id": "D-002-R058",
+      "text": "A blocker return must be no more than 200 words.",
+      "source_ref": "source-001.md#10",
+      "classification": "return",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M3-T001",
+          "M4-T007",
+          "M2-T017"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [
+          "claim",
+          "submit",
+          "accept"
+        ],
+        "effective_date": "2026-07-24"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured; awaiting per-task independent verification at the reviewed identity",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": [
+          "M3-T001",
+          "M4-T007",
+          "M2-T017"
+        ]
+      }
+    },
+    {
+      "id": "D-002-R059",
+      "text": "A completed producer return must be no more than 500 words and use at most eight bullets: task+outcome; PR link+head; what now works; contract/interface impact; tests+review result; blockers/limitations; exact next dependency unlocked; whether the producer is now idle.",
+      "source_ref": "source-001.md#10",
+      "classification": "return",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M3-T001",
+          "M4-T007",
+          "M2-T017"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [
+          "claim",
+          "submit",
+          "accept"
+        ],
+        "effective_date": "2026-07-24"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured; awaiting per-task independent verification at the reviewed identity",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": [
+          "M3-T001",
+          "M4-T007",
+          "M2-T017"
+        ]
+      }
+    },
+    {
+      "id": "D-002-R060",
+      "text": "Do not return every intermediate SHA, command, file, test name, requirement row, or review transcript.",
+      "source_ref": "source-001.md#10",
+      "classification": "prohibition",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M3-T001",
+          "M4-T007",
+          "M2-T017"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [
+          "claim",
+          "submit",
+          "accept"
+        ],
+        "effective_date": "2026-07-24"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured; awaiting per-task independent verification at the reviewed identity",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": [
+          "M3-T001",
+          "M4-T007",
+          "M2-T017"
+        ]
+      }
+    },
+    {
+      "id": "D-002-R061",
+      "text": "On each pasted producer completion, the controller must explicitly: fetch remote state; inspect PR metadata and full diff; read the authoritative task packet and producer report; confirm every changed file is within allowed paths; check frozen interface/schema versions; inspect required CI and independent-review evidence; detect collisions against changes already merged during the wave; determine whether the branch must be rebased; merge only one producer PR at a time; and fast-forward main and read the merged result before considering the next PR.",
+      "source_ref": "source-001.md#11",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T024-POSTMERGE"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [
+          "post_merge"
+        ],
+        "effective_date": "2026-07-24"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured; awaiting per-task independent verification at the reviewed identity",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      }
+    },
+    {
+      "id": "D-002-R062",
+      "text": "If a completed producer branch is behind main, do not modify its active worktree silently; return a short rebase/revalidation capsule and merge only after its final rebased head is green.",
+      "source_ref": "source-001.md#11",
+      "classification": "sequencing",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T024-POSTMERGE"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [
+          "post_merge"
+        ],
+        "effective_date": "2026-07-24"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured; awaiting per-task independent verification at the reviewed identity",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      }
+    },
+    {
+      "id": "D-002-R063",
+      "text": "If a merge changes an interface, schema, migration, generator, or configuration a producer consumes, freeze the affected producer and require explicit rebase and revalidation; other independent tabs do not need live updates.",
+      "source_ref": "source-001.md#11",
+      "classification": "sequencing",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T024-POSTMERGE"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [
+          "post_merge"
+        ],
+        "effective_date": "2026-07-24"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured; awaiting per-task independent verification at the reviewed identity",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      }
+    },
+    {
+      "id": "D-002-R064",
+      "text": "Parallel production never means parallel merging; use provider-before-consumer and schema-before-integration order; shared entrypoint wiring occurs only in a later integration task after all required providers are accepted.",
+      "source_ref": "source-001.md#11",
+      "classification": "sequencing",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T024-POSTMERGE"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [
+          "post_merge"
+        ],
+        "effective_date": "2026-07-24"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured; awaiting per-task independent verification at the reviewed identity",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      }
+    },
+    {
+      "id": "D-002-R065",
+      "text": "Do not return to the owner after each file edit, commit, gate, reviewer round, CI retry, stale PR inspected, or routine fix; continue automatically unless an explicit stop condition requires an owner decision.",
+      "source_ref": "source-001.md#12",
+      "classification": "prohibition",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T024"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [],
+        "lifecycle_events": [
+          "claim",
+          "submit",
+          "accept"
+        ],
+        "effective_date": "2026-07-24"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured; awaiting per-task independent verification at the reviewed identity",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": [
+          "M0-T024"
+        ]
+      }
+    },
+    {
+      "id": "D-002-R066",
+      "text": "At the end, return one owner-facing summary of no more than 900 words (excluding the startup capsules), in plain English, including only the enumerated items.",
+      "source_ref": "source-001.md#12",
+      "classification": "return",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T024-POSTMERGE"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [
+          "post_merge"
+        ],
+        "effective_date": "2026-07-24"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured; awaiting per-task independent verification at the reviewed identity",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      }
+    },
+    {
+      "id": "D-002-R067",
+      "text": "Do not include full changed-file lists, complete SHA histories, complete requirement matrices, raw command output, duplicated test lists, or lengthy reviewer narratives in the summary.",
+      "source_ref": "source-001.md#12",
+      "classification": "prohibition",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T024-POSTMERGE"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [
+          "post_merge"
+        ],
+        "effective_date": "2026-07-24"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured; awaiting per-task independent verification at the reviewed identity",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      }
+    },
+    {
+      "id": "D-002-R068",
+      "text": "Always distinguish proposed / implemented-on-a-branch / CI-verified / accepted / merged-into-main / production-invoked / deployed.",
+      "source_ref": "source-001.md#12",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T024-POSTMERGE"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [
+          "post_merge"
+        ],
+        "effective_date": "2026-07-24"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured; awaiting per-task independent verification at the reviewed identity",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      }
+    },
+    {
+      "id": "D-002-R069",
+      "text": "Stop after the worktrees and capsules are prepared; the owner will manually open each producer worktree and paste its capsule; do not begin product implementation in the controller tab.",
+      "source_ref": "source-001.md#12",
+      "classification": "sequencing",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T024-POSTMERGE"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [
+          "post_merge"
+        ],
+        "effective_date": "2026-07-24"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured; awaiting per-task independent verification at the reviewed identity",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      }
+    }
+  ],
+  "updated_at": "2026-07-24T00:00:00+00:00"
+}

@@ -1,0 +1,255 @@
+{
+  "task_id": "M0-T024",
+  "directive_id": "D-002",
+  "produced_by": "orchestrator",
+  "note": "Evidence for D-002 requirements APPLICABLE TO M0-T024 (CTRL). Independent verification by directive-compliance-verifier writes verification.json.",
+  "requirements": {
+    "D-002-R001": [
+      "project-control/reports/M0-T024-producer-report.md",
+      "git log (controller-only commits 385f119/0fcdc68; no product producers dispatched in this tab)"
+    ],
+    "D-002-R002": [
+      "project-control/reports/M0-T024-producer-report.md",
+      "git log (controller-only commits 385f119/0fcdc68; no product producers dispatched in this tab)"
+    ],
+    "D-002-R003": [
+      "project-control/reports/M0-T024-producer-report.md",
+      "git log (controller-only commits 385f119/0fcdc68; no product producers dispatched in this tab)"
+    ],
+    "D-002-R004": [
+      "merge commit 2d44b47 (PR #97 merged)",
+      "project-control/directives/D-001-owner-directive-compliance-system/verification.json (identity ed8a6776/9ab6c960)",
+      "project-control/reports/M0-T024-PR-DISPOSITIONS.md (#97 accepted+merged)"
+    ],
+    "D-002-R005": [
+      "merge commit 2d44b47 (PR #97 merged)",
+      "project-control/directives/D-001-owner-directive-compliance-system/verification.json (identity ed8a6776/9ab6c960)",
+      "project-control/reports/M0-T024-PR-DISPOSITIONS.md (#97 accepted+merged)"
+    ],
+    "D-002-R006": [
+      "merge commit 2d44b47 (PR #97 merged)",
+      "project-control/directives/D-001-owner-directive-compliance-system/verification.json (identity ed8a6776/9ab6c960)",
+      "project-control/reports/M0-T024-PR-DISPOSITIONS.md (#97 accepted+merged)"
+    ],
+    "D-002-R007": [
+      "project-control/reports/M0-T024-LOW-1.md",
+      "project-control/tasks/M0-T025.json"
+    ],
+    "D-002-R008": [
+      "project-control/reports/M0-T024-LOW-1.md",
+      "project-control/tasks/M0-T025.json"
+    ],
+    "D-002-R009": [
+      "project-control/reports/M0-T024-LOW-1.md",
+      "project-control/tasks/M0-T025.json"
+    ],
+    "D-002-R010": [
+      "project-control/reports/M0-T024-LOW-1.md",
+      "project-control/tasks/M0-T025.json"
+    ],
+    "D-002-R011": [
+      "project-control/reports/M0-T024-LOW-1.md",
+      "project-control/tasks/M0-T025.json"
+    ],
+    "D-002-R012": [
+      "project-control/directives/D-002-activate-control-system-first-wave/ (source-001.md, manifest.json, requirements.json, verification.json)",
+      "project-control/directives/index.json (D-002 active)",
+      "tools/validate_directive_compliance.py --check PASS"
+    ],
+    "D-002-R013": [
+      "project-control/directives/D-002-activate-control-system-first-wave/ (source-001.md, manifest.json, requirements.json, verification.json)",
+      "project-control/directives/index.json (D-002 active)",
+      "tools/validate_directive_compliance.py --check PASS"
+    ],
+    "D-002-R014": [
+      "project-control/directives/D-002-activate-control-system-first-wave/ (source-001.md, manifest.json, requirements.json, verification.json)",
+      "project-control/directives/index.json (D-002 active)",
+      "tools/validate_directive_compliance.py --check PASS"
+    ],
+    "D-002-R015": [
+      "project-control/directives/D-002-activate-control-system-first-wave/ (source-001.md, manifest.json, requirements.json, verification.json)",
+      "project-control/directives/index.json (D-002 active)",
+      "tools/validate_directive_compliance.py --check PASS"
+    ],
+    "D-002-R016": [
+      "project-control/directives/D-002-activate-control-system-first-wave/ (source-001.md, manifest.json, requirements.json, verification.json)",
+      "project-control/directives/index.json (D-002 active)",
+      "tools/validate_directive_compliance.py --check PASS"
+    ],
+    "D-002-R017": [
+      "project-control/reports/M0-T024-PR-DISPOSITIONS.md",
+      "project-control/reports/WHOLE-SYSTEM-TRUST-REPLAN-2026-07-23.md",
+      "project-control/reports/M3-CORPUS-REPLAN-PROPOSAL.md",
+      "project-control/tasks/M3-T001.json..M3-T005.json",
+      "project-control/blockers/B-001,B-011,B-012,B-013,B-014",
+      "project-control/tasks/M0-T019.json (eligibility 2026-07-28T15:59:32.231Z)",
+      "project-control/master_plan.json",
+      "docs/SESSION_HANDOFF.md (single handoff)"
+    ],
+    "D-002-R018": [
+      "project-control/reports/M0-T024-PR-DISPOSITIONS.md",
+      "project-control/reports/WHOLE-SYSTEM-TRUST-REPLAN-2026-07-23.md",
+      "project-control/reports/M3-CORPUS-REPLAN-PROPOSAL.md",
+      "project-control/tasks/M3-T001.json..M3-T005.json",
+      "project-control/blockers/B-001,B-011,B-012,B-013,B-014",
+      "project-control/tasks/M0-T019.json (eligibility 2026-07-28T15:59:32.231Z)",
+      "project-control/master_plan.json",
+      "docs/SESSION_HANDOFF.md (single handoff)"
+    ],
+    "D-002-R019": [
+      "project-control/reports/M0-T024-PR-DISPOSITIONS.md",
+      "project-control/reports/WHOLE-SYSTEM-TRUST-REPLAN-2026-07-23.md",
+      "project-control/reports/M3-CORPUS-REPLAN-PROPOSAL.md",
+      "project-control/tasks/M3-T001.json..M3-T005.json",
+      "project-control/blockers/B-001,B-011,B-012,B-013,B-014",
+      "project-control/tasks/M0-T019.json (eligibility 2026-07-28T15:59:32.231Z)",
+      "project-control/master_plan.json",
+      "docs/SESSION_HANDOFF.md (single handoff)"
+    ],
+    "D-002-R020": [
+      "project-control/reports/M0-T024-PR-DISPOSITIONS.md",
+      "project-control/reports/WHOLE-SYSTEM-TRUST-REPLAN-2026-07-23.md",
+      "project-control/reports/M3-CORPUS-REPLAN-PROPOSAL.md",
+      "project-control/tasks/M3-T001.json..M3-T005.json",
+      "project-control/blockers/B-001,B-011,B-012,B-013,B-014",
+      "project-control/tasks/M0-T019.json (eligibility 2026-07-28T15:59:32.231Z)",
+      "project-control/master_plan.json",
+      "docs/SESSION_HANDOFF.md (single handoff)"
+    ],
+    "D-002-R021": [
+      "project-control/reports/M0-T024-PR-DISPOSITIONS.md",
+      "project-control/reports/WHOLE-SYSTEM-TRUST-REPLAN-2026-07-23.md",
+      "project-control/reports/M3-CORPUS-REPLAN-PROPOSAL.md",
+      "project-control/tasks/M3-T001.json..M3-T005.json",
+      "project-control/blockers/B-001,B-011,B-012,B-013,B-014",
+      "project-control/tasks/M0-T019.json (eligibility 2026-07-28T15:59:32.231Z)",
+      "project-control/master_plan.json",
+      "docs/SESSION_HANDOFF.md (single handoff)"
+    ],
+    "D-002-R022": [
+      "project-control/reports/M0-T024-PR-DISPOSITIONS.md",
+      "project-control/reports/WHOLE-SYSTEM-TRUST-REPLAN-2026-07-23.md",
+      "project-control/reports/M3-CORPUS-REPLAN-PROPOSAL.md",
+      "project-control/tasks/M3-T001.json..M3-T005.json",
+      "project-control/blockers/B-001,B-011,B-012,B-013,B-014",
+      "project-control/tasks/M0-T019.json (eligibility 2026-07-28T15:59:32.231Z)",
+      "project-control/master_plan.json",
+      "docs/SESSION_HANDOFF.md (single handoff)"
+    ],
+    "D-002-R023": [
+      "project-control/reports/M0-T024-PR-DISPOSITIONS.md",
+      "project-control/reports/WHOLE-SYSTEM-TRUST-REPLAN-2026-07-23.md",
+      "project-control/reports/M3-CORPUS-REPLAN-PROPOSAL.md",
+      "project-control/tasks/M3-T001.json..M3-T005.json",
+      "project-control/blockers/B-001,B-011,B-012,B-013,B-014",
+      "project-control/tasks/M0-T019.json (eligibility 2026-07-28T15:59:32.231Z)",
+      "project-control/master_plan.json",
+      "docs/SESSION_HANDOFF.md (single handoff)"
+    ],
+    "D-002-R024": [
+      "project-control/reports/M0-T024-PR-DISPOSITIONS.md",
+      "project-control/reports/WHOLE-SYSTEM-TRUST-REPLAN-2026-07-23.md",
+      "project-control/reports/M3-CORPUS-REPLAN-PROPOSAL.md",
+      "project-control/tasks/M3-T001.json..M3-T005.json",
+      "project-control/blockers/B-001,B-011,B-012,B-013,B-014",
+      "project-control/tasks/M0-T019.json (eligibility 2026-07-28T15:59:32.231Z)",
+      "project-control/master_plan.json",
+      "docs/SESSION_HANDOFF.md (single handoff)"
+    ],
+    "D-002-R025": [
+      "project-control/reports/M0-T024-PR-DISPOSITIONS.md",
+      "project-control/reports/WHOLE-SYSTEM-TRUST-REPLAN-2026-07-23.md",
+      "project-control/reports/M3-CORPUS-REPLAN-PROPOSAL.md",
+      "project-control/tasks/M3-T001.json..M3-T005.json",
+      "project-control/blockers/B-001,B-011,B-012,B-013,B-014",
+      "project-control/tasks/M0-T019.json (eligibility 2026-07-28T15:59:32.231Z)",
+      "project-control/master_plan.json",
+      "docs/SESSION_HANDOFF.md (single handoff)"
+    ],
+    "D-002-R026": [
+      "project-control/reports/M0-T024-PR-DISPOSITIONS.md",
+      "project-control/reports/WHOLE-SYSTEM-TRUST-REPLAN-2026-07-23.md",
+      "project-control/reports/M3-CORPUS-REPLAN-PROPOSAL.md",
+      "project-control/tasks/M3-T001.json..M3-T005.json",
+      "project-control/blockers/B-001,B-011,B-012,B-013,B-014",
+      "project-control/tasks/M0-T019.json (eligibility 2026-07-28T15:59:32.231Z)",
+      "project-control/master_plan.json",
+      "docs/SESSION_HANDOFF.md (single handoff)"
+    ],
+    "D-002-R027": [
+      "project-control/reports/M0-T024-PR-DISPOSITIONS.md",
+      "project-control/reports/WHOLE-SYSTEM-TRUST-REPLAN-2026-07-23.md",
+      "project-control/reports/M3-CORPUS-REPLAN-PROPOSAL.md",
+      "project-control/tasks/M3-T001.json..M3-T005.json",
+      "project-control/blockers/B-001,B-011,B-012,B-013,B-014",
+      "project-control/tasks/M0-T019.json (eligibility 2026-07-28T15:59:32.231Z)",
+      "project-control/master_plan.json",
+      "docs/SESSION_HANDOFF.md (single handoff)"
+    ],
+    "D-002-R028": [
+      "project-control/reports/M0-T024-PR-DISPOSITIONS.md",
+      "project-control/reports/WHOLE-SYSTEM-TRUST-REPLAN-2026-07-23.md",
+      "project-control/reports/M3-CORPUS-REPLAN-PROPOSAL.md",
+      "project-control/tasks/M3-T001.json..M3-T005.json",
+      "project-control/blockers/B-001,B-011,B-012,B-013,B-014",
+      "project-control/tasks/M0-T019.json (eligibility 2026-07-28T15:59:32.231Z)",
+      "project-control/master_plan.json",
+      "docs/SESSION_HANDOFF.md (single handoff)"
+    ],
+    "D-002-R029": [
+      "project-control/reports/M0-T024-PR-DISPOSITIONS.md",
+      "project-control/reports/WHOLE-SYSTEM-TRUST-REPLAN-2026-07-23.md",
+      "project-control/reports/M3-CORPUS-REPLAN-PROPOSAL.md",
+      "project-control/tasks/M3-T001.json..M3-T005.json",
+      "project-control/blockers/B-001,B-011,B-012,B-013,B-014",
+      "project-control/tasks/M0-T019.json (eligibility 2026-07-28T15:59:32.231Z)",
+      "project-control/master_plan.json",
+      "docs/SESSION_HANDOFF.md (single handoff)"
+    ],
+    "D-002-R031": [
+      "project-control/reports/M0-T024-PR-DISPOSITIONS.md",
+      "project-control/reports/WHOLE-SYSTEM-TRUST-REPLAN-2026-07-23.md",
+      "project-control/reports/M3-CORPUS-REPLAN-PROPOSAL.md",
+      "project-control/tasks/M3-T001.json..M3-T005.json",
+      "project-control/blockers/B-001,B-011,B-012,B-013,B-014",
+      "project-control/tasks/M0-T019.json (eligibility 2026-07-28T15:59:32.231Z)",
+      "project-control/master_plan.json",
+      "docs/SESSION_HANDOFF.md (single handoff)"
+    ],
+    "D-002-R032": [
+      "project-control/reports/FIRST-WAVE-INTEGRATION-CONTRACT.md (frozen fields + semantic-collision matrix)"
+    ],
+    "D-002-R033": [
+      "project-control/reports/FIRST-WAVE-INTEGRATION-CONTRACT.md (frozen fields + semantic-collision matrix)"
+    ],
+    "D-002-R034": [
+      "project-control/reports/FIRST-WAVE-INTEGRATION-CONTRACT.md (frozen fields + semantic-collision matrix)"
+    ],
+    "D-002-R035": [
+      "project-control/reports/FIRST-WAVE-INTEGRATION-CONTRACT.md (frozen fields + semantic-collision matrix)"
+    ],
+    "D-002-R040": [
+      "project-control/reports/FIRST-WAVE-INTEGRATION-CONTRACT.md (3 lanes selected; lane 4 idle w/ reason)",
+      "project-control/tasks/M3-T001.json, M4-T007.json, M2-T017.json"
+    ],
+    "D-002-R041": [
+      "project-control/reports/FIRST-WAVE-INTEGRATION-CONTRACT.md (3 lanes selected; lane 4 idle w/ reason)",
+      "project-control/tasks/M3-T001.json, M4-T007.json, M2-T017.json"
+    ],
+    "D-002-R042": [
+      "project-control/reports/FIRST-WAVE-INTEGRATION-CONTRACT.md (3 lanes selected; lane 4 idle w/ reason)",
+      "project-control/tasks/M3-T001.json, M4-T007.json, M2-T017.json"
+    ],
+    "D-002-R043": [
+      "project-control/reports/FIRST-WAVE-INTEGRATION-CONTRACT.md (3 lanes selected; lane 4 idle w/ reason)",
+      "project-control/tasks/M3-T001.json, M4-T007.json, M2-T017.json"
+    ],
+    "D-002-R044": [
+      "project-control/reports/FIRST-WAVE-INTEGRATION-CONTRACT.md (3 lanes selected; lane 4 idle w/ reason)",
+      "project-control/tasks/M3-T001.json, M4-T007.json, M2-T017.json"
+    ],
+    "D-002-R065": [
+      "project-control/reports/M0-T024-producer-report.md (controller did not return per-substep; one final summary)"
+    ]
+  }
+}

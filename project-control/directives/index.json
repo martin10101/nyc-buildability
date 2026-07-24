@@ -23,7 +23,24 @@
         "M0-T023"
       ],
       "manifest": "D-001-owner-directive-compliance-system/manifest.json"
+    },
+    {
+      "directive_id": "D-002",
+      "slug": "activate-control-system-first-wave",
+      "title": "Activate the control system, consolidate the plan, and prepare the first blind-isolated parallel build wave",
+      "status": "active",
+      "issued_at": "2026-07-24",
+      "issued_by": "owner",
+      "supersedes": [],
+      "superseded_by": null,
+      "affected_tasks": [
+        "M0-T024",
+        "M3-T001",
+        "M4-T007",
+        "M2-T017"
+      ],
+      "manifest": "D-002-activate-control-system-first-wave/manifest.json"
     }
   ],
-  "updated_at": "2026-07-23T00:00:00+00:00"
+  "updated_at": "2026-07-24T00:00:00+00:00"
 }

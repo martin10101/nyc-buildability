@@ -1,0 +1,214 @@
+{
+  "schema": "directive_manifest/v1",
+  "directive_id": "D-002",
+  "version": 1,
+  "slug": "activate-control-system-first-wave",
+  "title": "Activate the control system, consolidate the plan, and prepare the first blind-isolated parallel build wave",
+  "status": "active",
+  "issued_by": "owner",
+  "issued_at": "2026-07-24",
+  "captured_at": "2026-07-24T00:00:00+00:00",
+  "channel": "owner_message",
+  "frozen_baseline_sha": "2d44b47a6dcd0a53d04c60753482dc5f53776c8d",
+  "sources": [
+    {
+      "file": "source-001.md",
+      "kind": "original",
+      "sequence": 1,
+      "recorded_at": "2026-07-24T00:00:00+00:00",
+      "content_digest_sha256": "aead44b81c6c5d45a762065b134ce8ca1ef0c5a6b43ba6012473b4f4b8a1e910"
+    }
+  ],
+  "amendments": [],
+  "supersedes": [],
+  "superseded_by": null,
+  "affected_tasks": [
+    "M0-T024",
+    "M3-T001",
+    "M4-T007",
+    "M2-T017"
+  ],
+  "affected_prs": [
+    97,
+    93,
+    94,
+    95,
+    96,
+    91,
+    92,
+    64
+  ],
+  "affected_branches": [
+    "control/D-002-consolidation-2026-07-24"
+  ],
+  "scope": {
+    "task_ids": [
+      "M0-T024",
+      "M3-T001",
+      "M4-T007",
+      "M2-T017"
+    ],
+    "task_types": [
+      "governance"
+    ],
+    "milestones": [
+      "M0",
+      "M2",
+      "M3",
+      "M4"
+    ],
+    "paths": [
+      "project-control/",
+      "docs/SESSION_HANDOFF.md",
+      "packages/contracts/",
+      "services/api/app/rules/",
+      "docs/"
+    ]
+  },
+  "applicability_note": "CTRL requirements (applicability.task_ids=[M0-T024]) are covered and independently verified at the M0-T024 consolidation gate. PROD requirements (applicability.task_ids=[M3-T001,M4-T007,M2-T017]) are covered by each first-wave producer packet and verified at that packet's own gate. POST requirements (applicability.task_ids=[M0-T024-POSTMERGE], a non-ledger sentinel) match no ledger task, so they never block acceptance; they are post-merge controller obligations discharged after the consolidation merges and evidenced in the final owner summary + repository state (two-lane principle, D-001-R118).",
+  "owner_approval": {
+    "state": "active_execution_authorized",
+    "decision": "Complete this directive as one continuous controller run; #97 merge authorized under Section 1 identity match.",
+    "decided_at": "2026-07-24",
+    "merge_authorized": true,
+    "accept_authorized": true,
+    "authorizes": [
+      "accept + merge PR #97 (Section 1 identities verified to match)",
+      "capture D-002; create the M0-T024 control-consolidation task + branch from post-#97 main",
+      "contract the first-wave producer packets (M3-T001, M4-T007, M2-T017) and build the first-wave integration contract",
+      "create one sibling worktree + branch per approved producer AFTER the consolidation PR is accepted+merged"
+    ],
+    "prohibits": [
+      "launching product producers / dispatching build agents in the controller tab",
+      "starting M0-T019 before 2026-07-28T15:59:32.231Z",
+      "opening a fourth (auth/RLS) producer whose acceptance is blocked by B-001",
+      "closing any stale PR whose unique material changes remain unresolved",
+      "deploying, purchasing, installing dependencies, or releasing any hold"
+    ]
+  },
+  "lifecycle_state": "active",
+  "requirements_file": "requirements.json",
+  "verification_file": "verification.json",
+  "final_reviewed_sha": "d93748311a23c76444fbf300430d02ab7c5e36a2",
+  "final_reviewed_manifest_sha256": "f237e673ab1b74dbc42a54cd71e0a22270ddd009d346418ad3fb2d136354aa0f",
+  "enforcement_pointers": {
+    "tasks": [
+      "M0-T024",
+      "M3-T001",
+      "M4-T007",
+      "M2-T017"
+    ],
+    "gates": [],
+    "blockers": [
+      "B-001",
+      "B-002",
+      "B-011",
+      "B-012",
+      "B-013",
+      "B-014",
+      "LOW-1"
+    ],
+    "rules": [
+      ".claude/rules/project-control.md",
+      ".claude/rules/expansion-agent-dispatch-hold.md"
+    ],
+    "hold": false
+  },
+  "notes": [
+    "D-002 is owner-issued (channel owner_message); 'active' reflects owner issuance, not AI self-activation.",
+    "CTRL/PROD requirements block their task's acceptance via per-task verification; POST requirements are recorded provenance discharged by the controller after merge (two-lane principle).",
+    "final_reviewed_sha / final_reviewed_manifest_sha256 are populated when M0-T024's independent directive re-gate records PASS at the frozen consolidation identity."
+  ],
+  "created_at": "2026-07-24T00:00:00+00:00",
+  "updated_at": "2026-07-24T00:00:00+00:00",
+  "audit_log": [
+    {
+      "at": "2026-07-24T00:00:00+00:00",
+      "by": "orchestrator",
+      "note": "Captured D-002 verbatim (source-001.md, sha256 aead44b8) at frozen post-#97 baseline 2d44b47; decomposed 69 atomic requirements (40 CTRL / 14 PROD / 15 POST)."
+    },
+    {
+      "at": "2026-07-24T00:00:00+00:00",
+      "by": "orchestrator",
+      "note": "PR #97 accepted + merged under Section 1 (identities verified: head 9bc1f13, reviewed ed8a6776, manifest 9ab6c960, evidence/control-only, CI+directive-verification green). merge commit 2d44b47."
+    },
+    {
+      "at": "2026-07-24T00:00:00+00:00",
+      "by": "orchestrator",
+      "note": "M0-T024 independent re-gate at reviewed_sha d937483 / identity f237e673: G3 code PASS, G4 control-plane PASS (round-1 FAIL on B-011 _blocker_references remediated), G5 security PASS, and directive-compliance-verifier PASS on all 40 CTRL requirements. verification.json M0-T024 row recorded PASS (verifier=directive-compliance-verifier != producer orchestrator). Producer (PROD) and post-merge (POST) requirements remain pending until their own gates."
+    }
+  ],
+  "locked_requirement_ids": [
+    "D-002-R001",
+    "D-002-R002",
+    "D-002-R003",
+    "D-002-R004",
+    "D-002-R005",
+    "D-002-R006",
+    "D-002-R007",
+    "D-002-R008",
+    "D-002-R009",
+    "D-002-R010",
+    "D-002-R011",
+    "D-002-R012",
+    "D-002-R013",
+    "D-002-R014",
+    "D-002-R015",
+    "D-002-R016",
+    "D-002-R017",
+    "D-002-R018",
+    "D-002-R019",
+    "D-002-R020",
+    "D-002-R021",
+    "D-002-R022",
+    "D-002-R023",
+    "D-002-R024",
+    "D-002-R025",
+    "D-002-R026",
+    "D-002-R027",
+    "D-002-R028",
+    "D-002-R029",
+    "D-002-R030",
+    "D-002-R031",
+    "D-002-R032",
+    "D-002-R033",
+    "D-002-R034",
+    "D-002-R035",
+    "D-002-R036",
+    "D-002-R037",
+    "D-002-R038",
+    "D-002-R039",
+    "D-002-R040",
+    "D-002-R041",
+    "D-002-R042",
+    "D-002-R043",
+    "D-002-R044",
+    "D-002-R045",
+    "D-002-R046",
+    "D-002-R047",
+    "D-002-R048",
+    "D-002-R049",
+    "D-002-R050",
+    "D-002-R051",
+    "D-002-R052",
+    "D-002-R053",
+    "D-002-R054",
+    "D-002-R055",
+    "D-002-R056",
+    "D-002-R057",
+    "D-002-R058",
+    "D-002-R059",
+    "D-002-R060",
+    "D-002-R061",
+    "D-002-R062",
+    "D-002-R063",
+    "D-002-R064",
+    "D-002-R065",
+    "D-002-R066",
+    "D-002-R067",
+    "D-002-R068",
+    "D-002-R069"
+  ],
+  "requirements_id_digest_sha256": "c226300dc4e9e9fc8c2cda807f5db96b8cace3fe802350bed3f8e62570a6f653",
+  "requirements_content_digest_sha256": "94822c701c5c81e03ad2e7fd5280864442c923fd9f5877eeb8eb0e337389f896"
+}

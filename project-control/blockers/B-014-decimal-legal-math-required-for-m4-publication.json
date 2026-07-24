@@ -1,0 +1,20 @@
+{
+  "blocker_id": "B-014",
+  "title": "Exact Decimal/rational legal math + typed units required before M4 rule publication (owner directive 2026-07-23)",
+  "status": "open",
+  "owner_decision": "MANDATORY blocker for M4 rule publication (owner directive 2026-07-23, Part 3 owner decisions).",
+  "affects": [
+    "M4-T001 (rules engine + first R5 FAR draft)  -  blocked from acceptance/publication until exact-decimal legal math + typed units land",
+    "M4-T002  -  blocked from acceptance until exact-decimal legal math + typed units land",
+    "M4-T003  -  blocked from acceptance until exact-decimal legal math + typed units land",
+    "M4-T004  -  blocked from acceptance until exact-decimal legal math + typed units land",
+    "M4-T005  -  blocked from acceptance until exact-decimal legal math + typed units land",
+    "M4-T006  -  blocked from acceptance until exact-decimal legal math + typed units land"
+  ],
+  "detail": "The runtime legal/zoning arithmetic in services/api/app/rules/operations.py computes and COMPARES legal thresholds (FAR, floor area, lot coverage %, yard depths, height, setback) in binary IEEE-754 float (float(a) at :41, round(v,10) at :46, a/b at :77, _pred_compare on raw floats); no Decimal/rational is used anywhere in services/ (defect DF-2 in project-control/reports/WHOLE-SYSTEM-TRUST-REPLAN-2026-07-23.md). Binary-float equality/threshold comparison at an exact legal boundary is subject to representation error. The owner has made exact Decimal/rational legal math (constructed from canonical strings) with per-rule rounding mode/scale/order + enforced dimensional units a MANDATORY prerequisite to M4 rule PUBLICATION. Geometry (shapely) may keep floats in an isolated spatial boundary; conversions from geometry into legal thresholds must be explicit. Until an accepted task delivers this (proposed Area D), no M4 rule may be accepted/Published/Verified. This blocker is independent of and additional to the G6 qualified-human legal-approval gate.",
+  "exact_human_action": "None  -  this is an owner-recorded engineering prerequisite, not a data-entry action. It is resolved by the orchestrator when an accepted task (proposed Area D: replace binary-float legal arithmetic with Decimal/rational + typed units in rules/operations.py + evaluator.py, with adversarial threshold/rounding tests) is accepted; the resolution evidence references that task's acceptance.",
+  "where_to_enter": "Resolved by the orchestrator upon accepting the Area-D exact-legal-math task; evidence committed to the whole-system-trust-replan lane.",
+  "minimum_permissions": "None.",
+  "how_it_will_be_tested": "M4 rule acceptance is blocked by this open blocker (the accept precondition requires zero open blockers referencing the task). Resolution requires: rules/operations.py + evaluator.py use Decimal/rational from canonical strings; per-rule rounding mode/scale/order encoded; units enforced (unknown/incompatible units rejected); adversarial threshold + rounding tests pass; geometry-float isolation preserved with explicit conversions.",
+  "created_at": "2026-07-23T14:40:00Z"
+}
