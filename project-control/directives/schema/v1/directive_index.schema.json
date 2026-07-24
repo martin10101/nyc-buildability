@@ -1,0 +1,36 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://nyc-buildability/project-control/directives/schema/v1/directive_index.schema.json",
+  "title": "Directive registry index (v1)",
+  "description": "Keyed list of all owner directives. Multiple 'active' entries are allowed; never a single global current-directive pointer. Structural intent only; tools/validate_directive_compliance.py enforces cross-reference integrity.",
+  "type": "object",
+  "required": ["schema", "version", "directives", "updated_at"],
+  "additionalProperties": true,
+  "properties": {
+    "schema": {"const": "directive_index/v1"},
+    "version": {"type": "integer", "minimum": 1},
+    "note": {"type": "string"},
+    "directive_states": {"type": "array", "items": {"type": "string"}},
+    "directives": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["directive_id", "slug", "title", "status", "issued_at", "manifest"],
+        "additionalProperties": true,
+        "properties": {
+          "directive_id": {"type": "string", "pattern": "^D-\\d{3}$"},
+          "slug": {"type": "string", "pattern": "^[a-z0-9][a-z0-9-]*$"},
+          "title": {"type": "string"},
+          "status": {"enum": ["proposed", "active", "superseded", "withdrawn", "retired"]},
+          "issued_at": {"type": "string"},
+          "issued_by": {"type": "string"},
+          "supersedes": {"type": "array", "items": {"type": "string", "pattern": "^D-\\d{3}$"}},
+          "superseded_by": {"type": ["string", "null"], "pattern": "^D-\\d{3}$"},
+          "affected_tasks": {"type": "array", "items": {"type": "string"}},
+          "manifest": {"type": "string"}
+        }
+      }
+    },
+    "updated_at": {"type": "string"}
+  }
+}

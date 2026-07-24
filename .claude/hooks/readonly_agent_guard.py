@@ -39,6 +39,7 @@ READ_ONLY_AGENTS = frozenset(
         "data-contract-verifier",
         "ci-evidence-verifier",
         "control-plane-verifier",
+        "directive-compliance-verifier",
     }
 )
 

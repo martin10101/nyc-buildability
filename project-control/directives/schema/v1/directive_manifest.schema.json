@@ -1,0 +1,90 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://nyc-buildability/project-control/directives/schema/v1/directive_manifest.schema.json",
+  "title": "Directive manifest (v1)",
+  "description": "Identity, provenance, scope, supersession, owner-approval and lifecycle for one directive. Structural intent only; tools/validate_directive_compliance.py enforces integrity (source digests, ID coverage, reference validity).",
+  "type": "object",
+  "required": [
+    "schema", "directive_id", "version", "status", "issued_by", "captured_at",
+    "frozen_baseline_sha", "sources", "affected_tasks", "scope", "owner_approval",
+    "lifecycle_state", "requirements_file", "verification_file", "created_at", "updated_at", "audit_log"
+  ],
+  "additionalProperties": true,
+  "properties": {
+    "schema": {"const": "directive_manifest/v1"},
+    "directive_id": {"type": "string", "pattern": "^D-\\d{3}$"},
+    "version": {"type": "integer", "minimum": 1},
+    "slug": {"type": "string"},
+    "title": {"type": "string"},
+    "status": {"enum": ["proposed", "active", "superseded", "withdrawn", "retired"]},
+    "issued_by": {"type": "string"},
+    "issued_at": {"type": "string"},
+    "captured_at": {"type": "string"},
+    "channel": {"type": "string"},
+    "frozen_baseline_sha": {"type": "string", "pattern": "^[0-9a-f]{40}$"},
+    "sources": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["file", "kind", "sequence", "content_digest_sha256"],
+        "additionalProperties": true,
+        "properties": {
+          "file": {"type": "string"},
+          "kind": {"enum": ["original", "amendment"]},
+          "sequence": {"type": "integer", "minimum": 1},
+          "amends": {"type": "string"},
+          "recorded_at": {"type": "string"},
+          "content_digest_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+        }
+      }
+    },
+    "amendments": {"type": "array", "items": {"type": "string"}},
+    "supersedes": {"type": "array", "items": {"type": "string", "pattern": "^D-\\d{3}$"}},
+    "superseded_by": {"type": ["string", "null"]},
+    "affected_tasks": {"type": "array", "items": {"type": "string"}},
+    "affected_prs": {"type": "array", "items": {"type": ["integer", "string"]}},
+    "affected_branches": {"type": "array", "items": {"type": "string"}},
+    "scope": {
+      "type": "object",
+      "additionalProperties": true,
+      "properties": {
+        "task_ids": {"type": "array", "items": {"type": "string"}},
+        "task_types": {"type": "array", "items": {"type": "string"}},
+        "milestones": {"type": "array", "items": {"type": "string"}},
+        "paths": {"type": "array", "items": {"type": "string"}}
+      }
+    },
+    "applicability_note": {"type": "string"},
+    "owner_approval": {
+      "type": "object",
+      "required": ["state"],
+      "additionalProperties": true,
+      "properties": {
+        "state": {"type": "string"},
+        "merge_authorized": {"type": "boolean"},
+        "accept_authorized": {"type": "boolean"}
+      }
+    },
+    "lifecycle_state": {"enum": ["proposed", "active", "superseded", "withdrawn", "retired"]},
+    "requirements_file": {"type": "string"},
+    "verification_file": {"type": "string"},
+    "final_reviewed_sha": {"type": ["string", "null"]},
+    "final_reviewed_manifest_sha256": {"type": ["string", "null"]},
+    "enforcement_pointers": {"type": "object"},
+    "created_at": {"type": "string"},
+    "updated_at": {"type": "string"},
+    "audit_log": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["at", "by", "note"],
+        "properties": {
+          "at": {"type": "string"},
+          "by": {"type": "string"},
+          "note": {"type": "string"}
+        }
+      }
+    }
+  }
+}

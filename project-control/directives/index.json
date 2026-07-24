@@ -1,0 +1,29 @@
+{
+  "schema": "directive_index/v1",
+  "version": 1,
+  "note": "Registry of owner directives. MULTIPLE directives may be status 'active' at once; this is a keyed list, never a single global current-directive pointer (D-001-R010/R018). Records are provenance only: all work-blocking decisions flow through tools/project_control.py, blockers, holds, and gates (two-lane principle, D-001-R118).",
+  "directive_states": [
+    "proposed",
+    "active",
+    "superseded",
+    "withdrawn",
+    "retired"
+  ],
+  "directives": [
+    {
+      "directive_id": "D-001",
+      "slug": "owner-directive-compliance-system",
+      "title": "Durable Owner Directive Compliance System",
+      "status": "active",
+      "issued_at": "2026-07-23",
+      "issued_by": "owner",
+      "supersedes": [],
+      "superseded_by": null,
+      "affected_tasks": [
+        "M0-T023"
+      ],
+      "manifest": "D-001-owner-directive-compliance-system/manifest.json"
+    }
+  ],
+  "updated_at": "2026-07-23T00:00:00+00:00"
+}

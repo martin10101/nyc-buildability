@@ -1,0 +1,553 @@
+{
+  "requirements": {
+    "D-001-R001": [
+      "CLAUDE.md",
+      "tools/test_directive_compliance.py"
+    ],
+    "D-001-R002": [
+      "CLAUDE.md",
+      "tools/test_directive_compliance.py"
+    ],
+    "D-001-R003": [
+      "CLAUDE.md"
+    ],
+    "D-001-R004": [
+      "CLAUDE.md"
+    ],
+    "D-001-R005": [
+      "tools/context_budget_check.py"
+    ],
+    "D-001-R006": [
+      ".claude/skills/directive-compliance/SKILL.md",
+      "tools/test_directive_compliance.py"
+    ],
+    "D-001-R007": [
+      ".claude/skills/directive-compliance/SKILL.md"
+    ],
+    "D-001-R008": [
+      ".claude/skills/directive-compliance/SKILL.md"
+    ],
+    "D-001-R009": [
+      "project-control/directives/",
+      "tools/test_directive_compliance.py"
+    ],
+    "D-001-R010": [
+      "project-control/directives/index.json",
+      "tools/test_directive_compliance.py"
+    ],
+    "D-001-R011": [
+      "project-control/directives/schema/v1/"
+    ],
+    "D-001-R012": [
+      "project-control/directives/D-001-owner-directive-compliance-system/"
+    ],
+    "D-001-R013": [
+      "project-control/directives/D-001-owner-directive-compliance-system/source-001.md"
+    ],
+    "D-001-R014": [
+      "project-control/directives/D-001-owner-directive-compliance-system/source-002-amendment.md",
+      "tools/test_directive_compliance.py"
+    ],
+    "D-001-R015": [
+      "project-control/directives/D-001-owner-directive-compliance-system/manifest.json",
+      "project-control/directives/D-001-owner-directive-compliance-system/requirements.json",
+      "project-control/directives/D-001-owner-directive-compliance-system/verification.json"
+    ],
+    "D-001-R018": [
+      "tools/test_directive_compliance.py"
+    ],
+    "D-001-R019": [
+      "project-control/directives/D-001-owner-directive-compliance-system/manifest.json"
+    ],
+    "D-001-R020": [
+      "project-control/directives/D-001-owner-directive-compliance-system/manifest.json",
+      "tools/test_directive_compliance.py"
+    ],
+    "D-001-R021": [
+      "project-control/directives/D-001-owner-directive-compliance-system/requirements.json",
+      "tools/test_directive_compliance.py"
+    ],
+    "D-001-R022": [
+      "project-control/directives/D-001-owner-directive-compliance-system/",
+      "tools/test_directive_compliance.py"
+    ],
+    "D-001-R023": [
+      "tools/project_control.py",
+      "tools/test_project_control.py"
+    ],
+    "D-001-R024": [
+      "tools/project_control.py",
+      "tools/test_project_control.py"
+    ],
+    "D-001-R025": [
+      "tools/project_control.py",
+      "tools/test_project_control.py"
+    ],
+    "D-001-R026": [
+      "tools/project_control.py",
+      "tools/test_project_control.py"
+    ],
+    "D-001-R027": [
+      "tools/project_control.py",
+      "tools/test_project_control.py"
+    ],
+    "D-001-R028": [
+      "tools/project_control.py",
+      "tools/test_project_control.py"
+    ],
+    "D-001-R029": [
+      "tools/validate_directive_compliance.py",
+      "tools/test_directive_compliance.py"
+    ],
+    "D-001-R030": [
+      "tools/project_control.py",
+      "tools/validate_directive_compliance.py",
+      "tools/test_project_control.py",
+      "tools/test_directive_compliance.py"
+    ],
+    "D-001-R031": [
+      "tools/project_control.py",
+      "tools/test_project_control.py"
+    ],
+    "D-001-R032": [
+      "project-control/config.json",
+      "tools/project_control.py",
+      "tools/test_project_control.py"
+    ],
+    "D-001-R033": [
+      "tools/project_control.py",
+      "tools/test_project_control.py"
+    ],
+    "D-001-R034": [
+      ".claude/skills/start-controlled-task/SKILL.md"
+    ],
+    "D-001-R035": [
+      ".claude/skills/replan-project/SKILL.md"
+    ],
+    "D-001-R036": [
+      ".claude/skills/submit-checkpoint/SKILL.md",
+      "docs/templates/AGENT_REPORT.md"
+    ],
+    "D-001-R037": [
+      ".claude/skills/run-quality-gate/SKILL.md",
+      "docs/templates/GATE_REPORT.md"
+    ],
+    "D-001-R038": [
+      ".claude/rules/project-control.md",
+      "tools/test_directive_compliance.py"
+    ],
+    "D-001-R039": [
+      ".claude/skills/start-controlled-task/SKILL.md",
+      ".claude/skills/replan-project/SKILL.md",
+      ".claude/skills/submit-checkpoint/SKILL.md",
+      ".claude/skills/run-quality-gate/SKILL.md"
+    ],
+    "D-001-R040": [
+      ".claude/agents/directive-compliance-verifier.md",
+      "tools/test_readonly_agent_guard.py"
+    ],
+    "D-001-R041": [
+      ".claude/hooks/readonly_agent_guard.py",
+      "tools/test_readonly_agent_guard.py",
+      "tools/test_readonly_agent_guard.py"
+    ],
+    "D-001-R042": [
+      ".claude/agents/directive-compliance-verifier.md"
+    ],
+    "D-001-R043": [
+      ".claude/agents/directive-compliance-verifier.md"
+    ],
+    "D-001-R044": [
+      ".claude/agents/directive-compliance-verifier.md"
+    ],
+    "D-001-R045": [
+      ".claude/agents/directive-compliance-verifier.md"
+    ],
+    "D-001-R046": [
+      "tools/validate_directive_compliance.py",
+      "tools/test_directive_compliance.py"
+    ],
+    "D-001-R047": [
+      ".github/workflows/ci.yml",
+      "tools/test_directive_compliance.py",
+      "tools/test_directive_compliance.py"
+    ],
+    "D-001-R048": [
+      "tools/validate_directive_compliance.py",
+      "tools/test_directive_compliance.py"
+    ],
+    "D-001-R049": [
+      "tools/test_directive_compliance.py"
+    ],
+    "D-001-R050": [
+      ".claude/hooks/directive_reminder.py",
+      ".claude/settings.json",
+      "tools/test_directive_reminder.py"
+    ],
+    "D-001-R051": [
+      ".claude/hooks/directive_reminder.py",
+      "tools/test_directive_reminder.py"
+    ],
+    "D-001-R052": [
+      "tools/project_control.py",
+      "tools/test_project_control.py",
+      "tools/test_directive_reminder.py"
+    ],
+    "D-001-R053": [
+      ".claude/hooks/readonly_agent_guard.py",
+      "tools/test_agent_dispatch_guard.py",
+      "tools/test_readonly_agent_guard.py"
+    ],
+    "D-001-R054": [
+      "tools/test_directive_compliance.py",
+      "tools/test_project_control.py",
+      "tools/test_directive_compliance.py",
+      "tools/test_project_control.py"
+    ],
+    "D-001-R055": [
+      "project-control/directives/D-001-owner-directive-compliance-system/requirements.json"
+    ],
+    "D-001-R056": [
+      "source-001.md#component-10"
+    ],
+    "D-001-R057": [
+      "source-001.md#component-10"
+    ],
+    "D-001-R058": [
+      "source-001.md#component-10"
+    ],
+    "D-001-R059": [
+      "source-001.md#component-10"
+    ],
+    "D-001-R060": [
+      "source-001.md#component-10"
+    ],
+    "D-001-R061": [
+      "project-control/directives/D-001-owner-directive-compliance-system/"
+    ],
+    "D-001-R062": [
+      "source-001.md#protocol-2"
+    ],
+    "D-001-R063": [
+      "source-001.md#protocol-3"
+    ],
+    "D-001-R064": [
+      "source-001.md#protocol-4"
+    ],
+    "D-001-R065": [
+      "source-001.md#protocol-5"
+    ],
+    "D-001-R066": [
+      "source-001.md#protocol-6"
+    ],
+    "D-001-R067": [
+      "source-001.md#protocol-7"
+    ],
+    "D-001-R068": [
+      "tools/validate_directive_compliance.py",
+      "tools/test_directive_compliance.py"
+    ],
+    "D-001-R069": [
+      "source-001.md#protocol-9"
+    ],
+    "D-001-R070": [
+      "source-001.md#protocol-10"
+    ],
+    "D-001-R071": [
+      "source-001.md#authorization"
+    ],
+    "D-001-R072": [
+      "source-001.md#authorization"
+    ],
+    "D-001-R073": [
+      "source-001.md#authorization"
+    ],
+    "D-001-R101": [
+      "tools/directive_registry.py",
+      "tools/project_control.py",
+      "tools/validate_directive_compliance.py",
+      "tools/test_project_control.py",
+      "tools/test_directive_compliance.py"
+    ],
+    "D-001-R102": [
+      "project-control/directives/D-001-owner-directive-compliance-system/requirements.json",
+      "tools/directive_registry.py",
+      "tools/test_directive_compliance.py"
+    ],
+    "D-001-R103": [
+      "tools/directive_registry.py",
+      "tools/project_control.py",
+      "tools/test_project_control.py"
+    ],
+    "D-001-R104": [
+      "tools/directive_registry.py",
+      "tools/project_control.py",
+      "tools/test_project_control.py"
+    ],
+    "D-001-R105": [
+      "project-control/directives/index.json",
+      "tools/directive_registry.py",
+      "tools/test_directive_compliance.py"
+    ],
+    "D-001-R106": [
+      ".claude/rules/project-control.md",
+      "project-control/directives/D-001-owner-directive-compliance-system/manifest.json"
+    ],
+    "D-001-R107": [
+      "tools/validate_directive_compliance.py",
+      "tools/test_directive_compliance.py"
+    ],
+    "D-001-R108": [
+      "tools/project_control.py",
+      "tools/test_project_control.py"
+    ],
+    "D-001-R109": [
+      "tools/project_control.py",
+      "tools/test_project_control.py"
+    ],
+    "D-001-R110": [
+      "tools/project_control.py",
+      "tools/test_project_control.py"
+    ],
+    "D-001-R111": [
+      "tools/project_control.py",
+      "tools/test_project_control.py"
+    ],
+    "D-001-R112": [
+      ".claude/hooks/directive_reminder.py",
+      "tools/test_directive_reminder.py"
+    ],
+    "D-001-R113": [
+      ".claude/hooks/directive_reminder.py",
+      "tools/test_directive_reminder.py"
+    ],
+    "D-001-R114": [
+      ".claude/hooks/directive_reminder.py",
+      "tools/test_directive_reminder.py"
+    ],
+    "D-001-R115": [
+      ".claude/hooks/directive_reminder.py",
+      "tools/test_directive_reminder.py"
+    ],
+    "D-001-R116": [
+      "project-control/directives/BOOTSTRAP.md"
+    ],
+    "D-001-R117": [
+      "tools/test_directive_compliance.py",
+      "tools/test_project_control.py",
+      "tools/test_directive_reminder.py",
+      "tools/test_directive_compliance.py",
+      "tools/test_project_control.py",
+      "tools/test_directive_reminder.py"
+    ],
+    "D-001-R118": [
+      "tools/project_control.py",
+      "tools/directive_registry.py",
+      "tools/test_project_control.py"
+    ],
+    "D-001-R119": [
+      "docs/SESSION_HANDOFF.md"
+    ],
+    "D-001-R120": [
+      ".github/workflows/ci.yml"
+    ],
+    "D-001-R121": [
+      "project-control/directives/migration_manifest.json",
+      "tools/directive_registry.py",
+      "tools/test_directive_compliance.py",
+      "tools/test_project_control.py"
+    ],
+    "D-001-R122": [
+      "tools/validate_directive_compliance.py",
+      "project-control/directives/D-001-owner-directive-compliance-system/manifest.json",
+      "tools/test_directive_compliance.py"
+    ],
+    "D-001-R123": [
+      "tools/project_control.py",
+      "tools/test_project_control.py"
+    ],
+    "D-001-R124": [
+      "tools/project_control.py",
+      "tools/directive_registry.py",
+      "tools/test_project_control.py"
+    ],
+    "D-001-R125": [
+      "tools/project_control.py",
+      "tools/test_project_control.py"
+    ],
+    "D-001-R126": [
+      "tools/project_control.py",
+      "tools/test_project_control.py"
+    ],
+    "D-001-R127": [
+      "tools/project_control.py",
+      "tools/test_project_control.py"
+    ],
+    "D-001-R128": [
+      "tools/directive_registry.py",
+      "tools/project_control.py",
+      "tools/test_project_control.py"
+    ],
+    "D-001-R129": [
+      "tools/project_control.py",
+      "tools/test_project_control.py"
+    ],
+    "D-001-R130": [
+      "tools/project_control.py",
+      "tools/directive_registry.py",
+      "project-control/config.json",
+      "tools/test_project_control.py"
+    ],
+    "D-001-R131": [
+      "tools/project_control.py",
+      "tools/test_project_control.py"
+    ],
+    "D-001-R132": [
+      "tools/project_control.py",
+      "tools/test_project_control.py",
+      "tools/test_directive_compliance.py"
+    ],
+    "D-001-R133": [
+      "tools/test_project_control.py",
+      "tools/test_project_control.py"
+    ],
+    "D-001-R134": [
+      ".claude/hooks/directive_reminder.py",
+      ".claude/rules/project-control.md",
+      "tools/test_directive_reminder.py"
+    ],
+    "D-001-R135": [
+      "project-control/directives/schema/v2/directive_verification.schema.json",
+      "project-control/directives/D-001-owner-directive-compliance-system/verification.json",
+      "tools/directive_registry.py",
+      "tools/test_directive_compliance.py"
+    ],
+    "D-001-R136": [
+      "tools/project_control.py",
+      "tools/directive_registry.py",
+      "tools/test_project_control.py"
+    ],
+    "D-001-R137": [
+      "tools/directive_registry.py",
+      "tools/test_directive_compliance.py",
+      "tools/test_project_control.py"
+    ],
+    "D-001-R138": [
+      "tools/directive_registry.py",
+      "tools/test_directive_compliance.py"
+    ],
+    "D-001-R139": [
+      "tools/directive_registry.py",
+      "tools/test_directive_compliance.py"
+    ],
+    "D-001-R140": [
+      "tools/directive_registry.py",
+      "project-control/directives/D-001-owner-directive-compliance-system/verification.json",
+      "tools/test_directive_compliance.py"
+    ],
+    "D-001-R141": [
+      "tools/directive_registry.py",
+      "tools/validate_directive_compliance.py",
+      "tools/test_directive_compliance.py"
+    ],
+    "D-001-R142": [
+      "tools/directive_registry.py",
+      "tools/validate_directive_compliance.py",
+      "tools/test_directive_compliance.py",
+      "tools/test_project_control.py"
+    ],
+    "D-001-R143": [
+      "project-control/directives/D-001-owner-directive-compliance-system/verification.json",
+      "tools/test_directive_compliance.py"
+    ],
+    "D-001-R144": [
+      "tools/test_directive_compliance.py",
+      "tools/test_directive_compliance.py"
+    ],
+    "D-001-R145": [
+      "tools/directive_registry.py",
+      "tools/project_control.py",
+      "tools/test_directive_compliance.py",
+      "tools/test_project_control.py"
+    ],
+    "D-001-R146": [
+      "tools/directive_registry.py",
+      "tools/test_directive_compliance.py"
+    ],
+    "D-001-R147": [
+      "tools/directive_registry.py",
+      "tools/test_directive_compliance.py"
+    ],
+    "D-001-R148": [
+      "tools/directive_registry.py",
+      "tools/test_directive_compliance.py"
+    ],
+    "D-001-R149": [
+      "tools/directive_registry.py",
+      "tools/project_control.py",
+      "tools/test_directive_compliance.py",
+      "tools/test_project_control.py"
+    ],
+    "D-001-R150": [
+      "tools/directive_registry.py",
+      "tools/test_directive_compliance.py"
+    ],
+    "D-001-R151": [
+      "tools/directive_registry.py",
+      "tools/test_directive_compliance.py"
+    ],
+    "D-001-R152": [
+      "tools/project_control.py",
+      "tools/directive_registry.py",
+      "tools/test_project_control.py"
+    ],
+    "D-001-R153": [
+      "tools/directive_registry.py",
+      "tools/project_control.py",
+      "tools/test_directive_compliance.py",
+      "tools/test_project_control.py"
+    ],
+    "D-001-R154": [
+      "tools/test_directive_compliance.py",
+      "tools/test_directive_compliance.py"
+    ],
+    "D-001-R155": [
+      "project-control/directives/D-001-owner-directive-compliance-system/manifest.json",
+      "project-control/directives/D-001-owner-directive-compliance-system/verification.json"
+    ],
+    "D-001-R156": [
+      "project-control/tasks/M0-T023.json"
+    ],
+    "D-001-R157": [
+      "project-control/directives/D-001-owner-directive-compliance-system/verification.json"
+    ],
+    "D-001-R158": [
+      ".github/workflows/ci.yml"
+    ],
+    "D-001-R159": [
+      "source-003-amendment.md#section-4"
+    ],
+    "D-001-R160": [
+      "source-003-amendment.md#section-4"
+    ],
+    "D-001-R161": [
+      "tools/directive_registry.py",
+      "tools/validate_directive_compliance.py",
+      "tools/project_control.py",
+      "tools/test_directive_compliance.py",
+      "tools/test_project_control.py"
+    ],
+    "D-001-R162": [
+      "source-003-amendment.md#section-4"
+    ],
+    "D-001-R163": [
+      "project-control/directives/D-001-owner-directive-compliance-system/manifest.json"
+    ],
+    "D-001-R164": [
+      "source-003-amendment.md#return"
+    ],
+    "D-001-R165": [
+      "project-control/tasks/M0-T023.json"
+    ]
+  }
+}

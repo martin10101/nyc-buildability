@@ -352,6 +352,18 @@ jobs:
       # must be programmatically rejected while B-007 is open; roster agents unaffected.
       - name: Run agent dispatch-guard rejection test
         run: python3 tools/test_agent_dispatch_guard.py
+      # Owner Directive Compliance System (D-001, task M0-T023): stdlib-only registry
+      # integrity + CLI enforcement + reminder-hook + read-only-guard-roster regressions.
+      # Added to the already-required control-plane job so a failure blocks merge
+      # (connected check; no branch-protection change needed).
+      - name: Validate directive-compliance registry (real project-control/directives)
+        run: python3 tools/validate_directive_compliance.py --check
+      - name: Run directive-compliance validator + adversarial tests
+        run: python3 tools/test_directive_compliance.py
+      - name: Run directive-compliance reminder-hook tests
+        run: python3 tools/test_directive_reminder.py
+      - name: Run read-only reviewer guard test (governed roster incl. directive-compliance-verifier)
+        run: python3 tools/test_readonly_agent_guard.py
 
   # Task M0-T022 (ADDITIVE job; existing jobs untouched): integrity gate for the
   # owner dashboard's one new metadata file, project-control/product-map.json.
