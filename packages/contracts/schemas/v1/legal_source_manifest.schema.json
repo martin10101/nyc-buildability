@@ -1,0 +1,190 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/martin10101/nyc-buildability/packages/contracts/schemas/v1/legal_source_manifest.schema.json",
+  "title": "Legal Source Manifest (internal, v1)",
+  "description": "INTERNAL, NON-CANONICAL manifest for one captured legal/official source in the M3 legal corpus (task M3-T001, D-002 first-wave lane 1). It records the provenance, corpus version, and raw-capture hash that make a source traceable and precedence-resolvable per docs/SOURCE_AUTHORITY_POLICY.md. SCOPE DISCIPLINE: this is an internal manifest, deliberately NOT one of the canonical cross-tier contracts (property_profile / rule_evaluation / coverage_status / scenario / source_fact / analysis_state_transition). It is NOT in packages/contracts/scripts SCHEMA_FILES and is NOT a TypeScript typegen target, so adding it changes no generated artifact. It must NOT be promoted into a canonical cross-tier contract without a justified cross-tier consumer and a controlled contract change (AS-11e). DETERMINISM: this schema is hand-authored and static (no generator); its $id and x-contract-version are fixed constants, so it is byte-identical across regeneration (AS-11d). CHANGE DISCIPLINE: changes are additive with an x-contract-version bump; older manifests remain valid. This manifest describes a SOURCE's capture/verification disposition; it is distinct from the per-evaluation runtime status vocabulary in docs/LEGAL_CORPUS_COVERAGE_MATRIX.md and from the document evidence-state machine in M3-T003.",
+  "x-contract-version": "1.0.0",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "manifest_version",
+    "manifest_id",
+    "provenance",
+    "corpus_version",
+    "raw_capture",
+    "status"
+  ],
+  "properties": {
+    "manifest_version": {
+      "type": "string",
+      "const": "1.0.0",
+      "description": "Manifest schema version this record conforms to. Fixed constant for v1; a schema change bumps this additively."
+    },
+    "manifest_id": {
+      "$ref": "#/$defs/non_empty_string",
+      "description": "Stable identifier of this manifest record (e.g. 'lsm:zr:2026-05-20:<short-hash>'). Construction is documented per corpus task; must be unique within the corpus."
+    },
+    "provenance": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "Source-intrinsic provenance. REQUIRED as a whole; a manifest with no provenance block is invalid (AS-11c). Feeds precedence resolution (SOURCE_AUTHORITY_POLICY.md §3).",
+      "required": [
+        "source_id",
+        "publisher",
+        "provenance_tier",
+        "legal_status",
+        "canonical_url",
+        "access_mode",
+        "retrieved_at"
+      ],
+      "properties": {
+        "source_id": {
+          "$ref": "#/$defs/non_empty_string",
+          "description": "Source-registry identifier of the official source (docs/SOURCE_ACCESS_REGISTRY.md). Third-party/reference sources (tier 5/6) use a clearly non-official id and are NEVER controlling provenance."
+        },
+        "publisher": {
+          "$ref": "#/$defs/non_empty_string",
+          "description": "Publishing body, e.g. 'NYC DCP', 'NYC DOB', 'NYC Council'. For a third-party reference this is the vendor (e.g. 'UpCodes, Inc.') and the tier must be 5."
+        },
+        "provenance_tier": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 7,
+          "description": "Provenance CLASSIFICATION 1-7 per SOURCE_AUTHORITY_POLICY.md §2. This is a provenance class, NOT a conflict-resolution rank: a tier number never decides a precedence conflict (that is §3). Tier 5 (third-party) / tier 6 (client) are never controlling provenance; tier 7 (AI) has no authority."
+        },
+        "legal_status": {
+          "type": "string",
+          "enum": [
+            "effective",
+            "adopted_not_yet_effective",
+            "superseded",
+            "rescinded",
+            "proposed",
+            "factual",
+            "reference_only",
+            "ai_proposed"
+          ],
+          "description": "Legal/operative status used by precedence resolution (SOURCE_AUTHORITY_POLICY.md §3.1 factors 2-4). 'reference_only' MUST be used for tier-5 third-party references; 'ai_proposed' for tier-7 AI proposals (no authority); 'factual' for tier-4 datasets."
+        },
+        "jurisdiction": {
+          "type": ["string", "null"],
+          "description": "Optional. Governing jurisdiction/scope of the source (e.g. 'NYC', 'NYS'); used by precedence factor 1 (jurisdiction). Null when not applicable/known."
+        },
+        "scope": {
+          "type": "string",
+          "enum": ["citywide", "project_specific", "not_applicable"],
+          "default": "citywide",
+          "description": "Precedence factor 5 (scope specificity). 'project_specific' instruments (variance/special permit/restrictive declaration/ZLDA) may control the affected property within their granted scope, and are NEVER generalized to another property."
+        },
+        "canonical_url": {
+          "type": "string",
+          "format": "uri",
+          "pattern": "^https?://",
+          "description": "Canonical official URL the source was retrieved from. For sources behind the nyc.gov bot wall or otherwise unresolved, the manifest status is 'blocked_at_g1' until the URL is verified (AS-6)."
+        },
+        "access_mode": {
+          "type": "string",
+          "enum": [
+            "api_live_request",
+            "bulk_file_download",
+            "authorized_document_download",
+            "html_corpus_ingestion",
+            "reference_only"
+          ],
+          "description": "Machine token for the registry access-mode taxonomy (docs/SOURCE_ACCESS_REGISTRY.md governance rule 4). 'reference_only' is used for tier-5/6 cross-check sources that add no runtime dependency."
+        },
+        "retrieved_at": {
+          "$ref": "#/$defs/date_time",
+          "description": "Timestamp at which the raw source was retrieved (RFC 3339)."
+        },
+        "effective_date": {
+          "type": ["string", "null"],
+          "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$",
+          "description": "Effective date where the source publishes one (precedence factor 3). Key present and explicitly null when none is published, so absence is a visible statement, never a silent omission or a guess."
+        },
+        "as_of_date": {
+          "type": ["string", "null"],
+          "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$",
+          "description": "Currency/'as-of' date carried by the source (e.g. the ZR homepage banner date). Null when none is published."
+        },
+        "supersedes": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/non_empty_string" },
+          "description": "Optional manifest_ids this source supersedes (precedence factor 4). AI may PROPOSE supersession edges; they are validated downstream and never approved by AI."
+        },
+        "superseded_by": {
+          "type": ["string", "null"],
+          "description": "Optional manifest_id that supersedes this source, or null."
+        }
+      }
+    },
+    "corpus_version": {
+      "$ref": "#/$defs/non_empty_string",
+      "description": "REQUIRED corpus version label for this capture (AS-11c). Deterministic label grounded in an official signal, e.g. 'zr-banner-2026-05-20' or a snapshot/edition id. A manifest with no corpus_version is invalid."
+    },
+    "raw_capture": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "Immutable raw-capture facts. REQUIRED (AS-11c). The raw hash is content-addressable; the manifest never carries the raw bytes (bulk bytes live in approved object storage per M3-T002).",
+      "required": ["raw_sha256", "media_type", "byte_size"],
+      "properties": {
+        "raw_sha256": {
+          "$ref": "#/$defs/digest_sha256",
+          "description": "REQUIRED content hash of the exact raw captured bytes, 'sha256:' + 64 lowercase hex (AS-11c). A manifest with no raw hash, or a malformed hash, is invalid."
+        },
+        "media_type": {
+          "$ref": "#/$defs/non_empty_string",
+          "description": "IANA media type of the raw capture, e.g. 'text/html', 'application/pdf'."
+        },
+        "byte_size": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Exact byte length of the raw capture."
+        },
+        "storage_ref": {
+          "type": ["string", "null"],
+          "description": "Optional content-addressable reference into approved object storage (M3-T002 append-only interface); null while durable storage is blocked (B-001)."
+        }
+      }
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "registered",
+        "to_verify_at_g1",
+        "blocked_at_g1",
+        "verified_available",
+        "superseded",
+        "rescinded"
+      ],
+      "description": "SOURCE capture/verification disposition (NOT a rule-evaluation outcome). 'to_verify_at_g1' is a proposal marker; 'blocked_at_g1' is used when identity/endpoint/access/terms/URL is unresolved (AS-6) — never 'verified_available' on faith. Distinct from the per-evaluation vocabulary in LEGAL_CORPUS_COVERAGE_MATRIX.md §2."
+    },
+    "cross_check_only": {
+      "type": "boolean",
+      "default": false,
+      "description": "True for tier-5/6 sources recorded for human cross-check only (UpCodes/ZoLa). When true, this source is NEVER controlling provenance and adds no runtime dependency (NC-3)."
+    },
+    "notes": {
+      "type": ["string", "null"],
+      "description": "Optional free-text provenance note; never a substitute for a required field."
+    }
+  },
+  "$defs": {
+    "non_empty_string": {
+      "type": "string",
+      "minLength": 1,
+      "description": "String that must not be empty."
+    },
+    "date_time": {
+      "type": "string",
+      "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}(\\.[0-9]+)?(Z|[+-][0-9]{2}:[0-9]{2})$",
+      "format": "date-time",
+      "description": "RFC 3339 timestamp. Pattern enforced so validation behaves identically with or without a format-aware validator (mirrors common.schema.json)."
+    },
+    "digest_sha256": {
+      "type": "string",
+      "pattern": "^sha256:[0-9a-f]{64}$",
+      "description": "'sha256:' + lowercase-hex SHA-256, mirroring common.schema.json digest_sha256. For raw_capture this digests the exact raw bytes (content-addressable), not a canonical JSON form."
+    }
+  }
+}

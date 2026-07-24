@@ -1,0 +1,27 @@
+{
+  "manifest_version": "1.0.0",
+  "manifest_id": "lsm:upcodes-ref:2026-07-23:53dbe208",
+  "provenance": {
+    "source_id": "third-party-upcodes",
+    "publisher": "UpCodes, Inc.",
+    "provenance_tier": 5,
+    "legal_status": "reference_only",
+    "jurisdiction": "NYC",
+    "scope": "not_applicable",
+    "canonical_url": "https://up.codes/",
+    "access_mode": "reference_only",
+    "retrieved_at": "2026-07-23T12:00:00Z",
+    "effective_date": null,
+    "as_of_date": null
+  },
+  "corpus_version": "upcodes-ref-2026-07-23",
+  "raw_capture": {
+    "raw_sha256": "sha256:53dbe208c8609c33e3dcf74848e5c2a886802da7a9d03ef2cab358025e778ef0",
+    "media_type": "text/html",
+    "byte_size": 12345,
+    "storage_ref": null
+  },
+  "status": "registered",
+  "cross_check_only": true,
+  "notes": "Tier-5 third-party reference recorded for human cross-check ONLY; never controlling provenance; no runtime dependency (NC-3)."
+}
