@@ -826,97 +826,159 @@
         "D-002-R059",
         "D-002-R060"
       ],
-      "producer": "orchestrator",
-      "verifier": "",
+      "producer": "backend-engineer",
+      "verifier": "directive-compliance-verifier",
       "schema_version": "directive_verification/v2",
-      "reviewed_sha": null,
-      "reviewed_manifest_sha256": null,
+      "reviewed_sha": "fead3f386281ecef5210d6aee1ba6f568264711d",
+      "reviewed_manifest_sha256": "411290671e55d280700fd2a942bad292607f08dae430a0beea1e35f6941d9b92",
       "requirements": [
         {
           "id": "D-002-R036",
-          "state": "pending",
-          "evidence": [],
-          "reviewed_sha": null
+          "state": "PASS",
+          "evidence": [
+            "changed-file audit: all 18 files within allowed_paths; no forbidden hotspot touched (registry byte-identical at head)",
+            "project-control/reports/M2-T017-producer-report.md"
+          ],
+          "reviewed_sha": "fead3f386281ecef5210d6aee1ba6f568264711d",
+          "verified_by": "directive-compliance-verifier",
+          "verified_at": "2026-07-24T00:00:00+00:00"
         },
         {
           "id": "D-002-R037",
-          "state": "pending",
-          "evidence": [],
-          "reviewed_sha": null
+          "state": "PASS",
+          "evidence": [
+            "only project-control write is project-control/reports/M2-T017-producer-report.md (the one report path)"
+          ],
+          "reviewed_sha": "fead3f386281ecef5210d6aee1ba6f568264711d",
+          "verified_by": "directive-compliance-verifier",
+          "verified_at": "2026-07-24T00:00:00+00:00"
         },
         {
           "id": "D-002-R038",
-          "state": "pending",
-          "evidence": [],
-          "reviewed_sha": null
+          "state": "PASS",
+          "evidence": [
+            "git grep app.contracts.serializers finds no import in app/main.py, app/api/**, app/profile/builder.py; regression test test_serializer_not_imported_by_any_production_module",
+            "services/api/app/contracts/serializers.py"
+          ],
+          "reviewed_sha": "fead3f386281ecef5210d6aee1ba6f568264711d",
+          "verified_by": "directive-compliance-verifier",
+          "verified_at": "2026-07-24T00:00:00+00:00"
         },
         {
           "id": "D-002-R039",
-          "state": "pending",
-          "evidence": [],
-          "reviewed_sha": null
+          "state": "PASS",
+          "evidence": [
+            "only M2-T017-owned contracts (source_fact, analysis_state_transition) edited; no shared/non-owned contract touched; no ICR owed",
+            "packages/contracts/schemas/v1/source_fact.schema.json"
+          ],
+          "reviewed_sha": "fead3f386281ecef5210d6aee1ba6f568264711d",
+          "verified_by": "directive-compliance-verifier",
+          "verified_at": "2026-07-24T00:00:00+00:00"
         },
         {
           "id": "D-002-R051",
-          "state": "pending",
-          "evidence": [],
-          "reviewed_sha": null
+          "state": "PASS",
+          "evidence": [
+            "producer report cites required session-start reads: CLAUDE.md, packet, FIRST-WAVE-INTEGRATION-CONTRACT.md, D-002 requirements, frozen schema files",
+            "project-control/reports/M2-T017-producer-report.md"
+          ],
+          "reviewed_sha": "fead3f386281ecef5210d6aee1ba6f568264711d",
+          "verified_by": "directive-compliance-verifier",
+          "verified_at": "2026-07-24T00:00:00+00:00"
         },
         {
           "id": "D-002-R052",
-          "state": "pending",
-          "evidence": [],
-          "reviewed_sha": null
+          "state": "PASS",
+          "evidence": [
+            "full deliverable set (18 files; AS-1..AS-6) in one finished PR; no premature stop"
+          ],
+          "reviewed_sha": "fead3f386281ecef5210d6aee1ba6f568264711d",
+          "verified_by": "directive-compliance-verifier",
+          "verified_at": "2026-07-24T00:00:00+00:00"
         },
         {
           "id": "D-002-R053",
-          "state": "pending",
-          "evidence": [],
-          "reviewed_sha": null
+          "state": "PASS",
+          "evidence": [
+            "diff changes no ledger/other-task-packet/other-worktree; PR #99 OPEN, mergedAt null (not merged/accepted/replanned)"
+          ],
+          "reviewed_sha": "fead3f386281ecef5210d6aee1ba6f568264711d",
+          "verified_by": "directive-compliance-verifier",
+          "verified_at": "2026-07-24T00:00:00+00:00"
         },
         {
           "id": "D-002-R054",
-          "state": "pending",
-          "evidence": [],
-          "reviewed_sha": null
+          "state": "PASS",
+          "evidence": [
+            "serializer stdlib-only self-contained; no import from sibling branch; only owned contracts modified"
+          ],
+          "reviewed_sha": "fead3f386281ecef5210d6aee1ba6f568264711d",
+          "verified_by": "directive-compliance-verifier",
+          "verified_at": "2026-07-24T00:00:00+00:00"
         },
         {
           "id": "D-002-R055",
-          "state": "pending",
-          "evidence": [],
-          "reviewed_sha": null
+          "state": "PASS",
+          "evidence": [
+            "exactly one PR (#99) against main from the single assigned branch task/M2-T017-contract-hardening"
+          ],
+          "reviewed_sha": "fead3f386281ecef5210d6aee1ba6f568264711d",
+          "verified_by": "directive-compliance-verifier",
+          "verified_at": "2026-07-24T00:00:00+00:00"
         },
         {
           "id": "D-002-R056",
-          "state": "pending",
-          "evidence": [],
-          "reviewed_sha": null
+          "state": "PASS",
+          "evidence": [
+            "committed producer report carries exact CI commands, matrices, file lists, gate evidence - not chat",
+            "project-control/reports/M2-T017-producer-report.md"
+          ],
+          "reviewed_sha": "fead3f386281ecef5210d6aee1ba6f568264711d",
+          "verified_by": "directive-compliance-verifier",
+          "verified_at": "2026-07-24T00:00:00+00:00"
         },
         {
           "id": "D-002-R057",
-          "state": "pending",
-          "evidence": [],
-          "reviewed_sha": null
+          "state": "PASS",
+          "evidence": [
+            "no improper stop; report reasons the stop condition (forced shared-entrypoint change) did not apply"
+          ],
+          "reviewed_sha": "fead3f386281ecef5210d6aee1ba6f568264711d",
+          "verified_by": "directive-compliance-verifier",
+          "verified_at": "2026-07-24T00:00:00+00:00"
         },
         {
           "id": "D-002-R058",
-          "state": "pending",
-          "evidence": [],
-          "reviewed_sha": null
+          "state": "PASS",
+          "evidence": [
+            "no blocker return issued (task completed to PR); <=200-word limit vacuously met"
+          ],
+          "reviewed_sha": "fead3f386281ecef5210d6aee1ba6f568264711d",
+          "verified_by": "directive-compliance-verifier",
+          "verified_at": "2026-07-24T00:00:00+00:00"
         },
         {
           "id": "D-002-R059",
-          "state": "pending",
-          "evidence": [],
-          "reviewed_sha": null
+          "state": "PASS",
+          "evidence": [
+            "report section 8 supplies all enumerated completion items (task+outcome, PR+head, what works, contract/interface impact, tests+review, blockers, next dependency, idle)"
+          ],
+          "reviewed_sha": "fead3f386281ecef5210d6aee1ba6f568264711d",
+          "verified_by": "directive-compliance-verifier",
+          "verified_at": "2026-07-24T00:00:00+00:00"
         },
         {
           "id": "D-002-R060",
-          "state": "pending",
-          "evidence": [],
-          "reviewed_sha": null
+          "state": "PASS",
+          "evidence": [
+            "detailed SHAs/commands/test-names live in the committed report; compact status carries no transcript dump"
+          ],
+          "reviewed_sha": "fead3f386281ecef5210d6aee1ba6f568264711d",
+          "verified_by": "directive-compliance-verifier",
+          "verified_at": "2026-07-24T00:00:00+00:00"
         }
-      ]
+      ],
+      "verified_at": "2026-07-24T00:00:00+00:00"
     }
   ],
   "updated_at": "2026-07-24T00:00:00+00:00"

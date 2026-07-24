@@ -1,0 +1,17 @@
+{
+  "_expected_failure": "M2-T017/DF-4: an internal DIAGNOSTIC/error field ('_debug_source_error') must never leak into a persisted provenance record; the closed contract rejects it instead of carrying a stack trace / internal detail into the audit trail.",
+  "provenance_id": "test-fixture-synthetic-close",
+  "source_id": "test-fixture-synthetic",
+  "original_field_name": "lotarea",
+  "original_value": "23121",
+  "normalized_value": 23121,
+  "units": "square_feet",
+  "retrieved_at": "2026-07-17T12:00:00Z",
+  "dataset_version": "26v1",
+  "effective_date": null,
+  "bbl": "1000010010",
+  "confidence": 1.0,
+  "user_confirmed_or_overridden": "none",
+  "conflict_status": "none",
+  "_debug_source_error": "Traceback (most recent call last): connector timeout at pluto_soda.py:640 token=REDACTED"
+}

@@ -1,0 +1,10 @@
+{
+  "_expected_failure": "M2-T017/DF-5: a TYPO of the OPTIONAL 'reason' field ('resason') is silently accepted while OPEN and the real 'reason' is quietly lost; the closed contract rejects it.",
+  "run_id": "run-1000010010-0002",
+  "from_state": "address_entered",
+  "to_state": "address_resolved",
+  "occurred_at": "2026-07-17T12:00:05Z",
+  "actor": "system",
+  "correlation_id": "corr-0002",
+  "resason": "Geoclient /v2/search exact match"
+}

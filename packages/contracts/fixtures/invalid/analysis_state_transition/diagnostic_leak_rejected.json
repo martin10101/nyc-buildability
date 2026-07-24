@@ -1,0 +1,10 @@
+{
+  "_expected_failure": "M2-T017/DF-5: an internal DIAGNOSTIC field ('_internal_stack') must never leak into a persisted audit record; the closed contract rejects it.",
+  "run_id": "run-1000010010-0002",
+  "from_state": "address_entered",
+  "to_state": "address_resolved",
+  "occurred_at": "2026-07-17T12:00:05Z",
+  "actor": "system",
+  "correlation_id": "corr-0002",
+  "_internal_stack": "Traceback (most recent call last): state_machine.py:__ transition guard failed"
+}

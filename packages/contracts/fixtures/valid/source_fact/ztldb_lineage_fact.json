@@ -1,0 +1,22 @@
+{
+  "provenance_id": "ztldb-fdkv-4t4z-2026-06-30T04:15:00Z-1000010010-zonedist1",
+  "source_id": "nyc-dcp-ztldb-soda",
+  "original_field_name": "zonedist1",
+  "original_value": "R6",
+  "normalized_value": "R6",
+  "units": null,
+  "retrieved_at": "2026-07-17T12:05:00Z",
+  "dataset_version": "2026-06-30T04:15:00Z",
+  "effective_date": null,
+  "bbl": "1000010010",
+  "confidence": 1.0,
+  "user_confirmed_or_overridden": "none",
+  "conflict_status": "none",
+  "fact_key": "fact:nyc-dcp-ztldb-soda:fdkv-4t4z:1000010010:zonedist1",
+  "observation_id": "obs:evt-2026-07-17T12:05:00Z-def456:1000010010:zonedist1",
+  "value_digest": "sha256:694bce7f76b6b129cca994443db0b029197479dcc8ee1eb5a864088cc01ffccc",
+  "response_digest": "sha256:22d5321d4fa3af8d8c0b77ea217927abb497d34744a5bed5d83c40b5dc3d120d",
+  "dataset_id": "fdkv-4t4z",
+  "request_url": "https://data.cityofnewyork.us/api/views/fdkv-4t4z.json",
+  "source_rows_updated_at": "2026-06-30T04:15:00Z"
+}
