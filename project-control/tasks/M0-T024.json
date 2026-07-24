@@ -67,15 +67,15 @@
     "security-reviewer",
     "directive-compliance-verifier"
   ],
-  "status": "rework",
-  "progress_percent": 80,
+  "status": "awaiting_gate",
+  "progress_percent": 85,
   "risks": [
     "Porting stale-PR content could reintroduce superseded claims - mitigated by per-PR disposition ledger + independent control-plane review.",
     "Over-binding via directive applicability - mitigated by scoped CTRL/PROD/POST groups (no wildcard requirements)."
   ],
   "blockers": [],
   "created_at": "2026-07-24T02:37:17.967965+00:00",
-  "updated_at": "2026-07-24T03:13:20.970708+00:00",
+  "updated_at": "2026-07-24T03:17:51.062180+00:00",
   "directive_refs": [
     {
       "directive_id": "D-002",
