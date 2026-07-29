@@ -1,0 +1,3029 @@
+{
+  "schema": "directive_requirements/v1",
+  "directive_id": "D-005",
+  "version": 1,
+  "requirement_count": 65,
+  "producer": "orchestrator",
+  "requirements": [
+    {
+      "id": "D-005-R001",
+      "text": "Review the forwarded GPT code-graph pilot proposal and determine whether it is a good fit for the NYC Buildability program.",
+      "source_ref": "source-001.md#owner-preamble",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "D-005-REVIEW"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [],
+        "effective_date": "2026-07-29"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured; awaiting independent verification",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      }
+    },
+    {
+      "id": "D-005-R002",
+      "text": "Identify potential issues/conflicts between the proposal and work already completed (control plane, directives, hooks, worktrees, policies, accepted tasks, active lanes).",
+      "source_ref": "source-001.md#owner-preamble",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "D-005-REVIEW"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [],
+        "effective_date": "2026-07-29"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured; awaiting independent verification",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      }
+    },
+    {
+      "id": "D-005-R003",
+      "text": "Determine how the proposal would be implemented and run within the current execution environment (Windows 11 thin client, PowerShell 5.1 primary plus Git Bash, protected-main workflow, CI-heavy execution).",
+      "source_ref": "source-001.md#owner-preamble",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "D-005-REVIEW"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [],
+        "effective_date": "2026-07-29"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured; awaiting independent verification",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      }
+    },
+    {
+      "id": "D-005-R004",
+      "text": "Check the proposal against the recently implemented security controls (dependency-security/age-gate policy, hook guards, permission posture, secret scanning) and identify any security issues or required adjustments.",
+      "source_ref": "source-001.md#owner-preamble",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "D-005-REVIEW"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [],
+        "effective_date": "2026-07-29"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured; awaiting independent verification",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      }
+    },
+    {
+      "id": "D-005-R005",
+      "text": "Assess whether a better/easier approach achieves the same navigation goal; compare alternatives before recommending.",
+      "source_ref": "source-001.md#owner-preamble",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "D-005-REVIEW"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [],
+        "effective_date": "2026-07-29"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured; awaiting independent verification",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      }
+    },
+    {
+      "id": "D-005-R006",
+      "text": "Decide and state the recommended next step; implementation proceeds on the basis of that recommendation.",
+      "source_ref": "source-001.md#owner-preamble",
+      "classification": "return",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "D-005-REVIEW"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [],
+        "effective_date": "2026-07-29"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured; awaiting independent verification",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      }
+    },
+    {
+      "id": "D-005-R007",
+      "text": "Interpretation recorded for owner confirmation: the owner's 'doesn't mean that you have to bring me back' authorizes autonomous review and a policy-compliant isolated evaluation, while Part 17/19/20 and the post-block 'send me the resulting owner-decision packet first' reserve ADOPTION/integration/merge for an owner decision on the decision packet. This reading treats review+isolated-pilot as authorized and adoption as owner-gated.",
+      "source_ref": "source-001.md#owner-preamble",
+      "classification": "decision",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "D-005-REVIEW"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [],
+        "effective_date": "2026-07-29"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured; awaiting independent verification",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      }
+    },
+    {
+      "id": "D-005-R008",
+      "text": "This is a controlled evaluation first: no broad adoption of a code graph into engineering infrastructure until the evaluation completes and adoption is separately authorized.",
+      "source_ref": "source-001.md#header",
+      "classification": "hold",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "D-005-REVIEW",
+          "D-005-PILOT"
+        ],
+        "task_types": [
+          "governance",
+          "evaluation"
+        ],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [
+          "always"
+        ],
+        "effective_date": "2026-07-29"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured; awaiting independent verification",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      }
+    },
+    {
+      "id": "D-005-R009",
+      "text": "Standing header prohibitions for the entire evaluation.",
+      "source_ref": "source-001.md#header",
+      "classification": "prohibition",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "D-005-REVIEW",
+          "D-005-PILOT"
+        ],
+        "task_types": [
+          "governance",
+          "evaluation"
+        ],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [
+          "always"
+        ],
+        "effective_date": "2026-07-29"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured; awaiting independent verification",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      },
+      "checklist": [
+        {
+          "sub_id": "D-005-R009-c1",
+          "text": "do NOT broadly install Graphify into the active Claude environment"
+        },
+        {
+          "sub_id": "D-005-R009-c2",
+          "text": "do NOT change the product"
+        },
+        {
+          "sub_id": "D-005-R009-c3",
+          "text": "do NOT change the six future design-platform PRDs"
+        },
+        {
+          "sub_id": "D-005-R009-c4",
+          "text": "do NOT interrupt the current NYC Buildability development lane"
+        },
+        {
+          "sub_id": "D-005-R009-c5",
+          "text": "do NOT weaken or bypass any existing control-plane, directive, worktree, gate, or protected-main requirement"
+        }
+      ]
+    },
+    {
+      "id": "D-005-R010",
+      "text": "Purpose: determine whether a code graph should become part of engineering infrastructure and, if yes, how to integrate it safely.",
+      "source_ref": "source-001.md#header",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "D-005-REVIEW"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [],
+        "effective_date": "2026-07-29"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured; awaiting independent verification",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      }
+    },
+    {
+      "id": "D-005-R011",
+      "text": "Capture this owner directive through the existing directive-compliance process (the current regime requires capture).",
+      "source_ref": "source-001.md#part-0",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "D-005-REVIEW"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [],
+        "effective_date": "2026-07-29"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "implemented",
+      "status_reason": "capture performed this session at frozen baseline 58309bc; independent verification pending",
+      "evidence_paths": [
+        "project-control/directives/D-005-codebase-knowledge-graph-pilot/source-001.md",
+        "project-control/directives/D-005-codebase-knowledge-graph-pilot/manifest.json",
+        "project-control/directives/D-005-codebase-knowledge-graph-pilot/requirements.json"
+      ],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      }
+    },
+    {
+      "id": "D-005-R012",
+      "text": "Reconcile against CURRENT repository truth before evaluating.",
+      "source_ref": "source-001.md#part-0",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "D-005-REVIEW"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [],
+        "effective_date": "2026-07-29"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured; awaiting independent verification",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      },
+      "checklist": [
+        {
+          "sub_id": "D-005-R012-c1",
+          "text": "origin/main"
+        },
+        {
+          "sub_id": "D-005-R012-c2",
+          "text": "project-control ledger"
+        },
+        {
+          "sub_id": "D-005-R012-c3",
+          "text": "active directives"
+        },
+        {
+          "sub_id": "D-005-R012-c4",
+          "text": "active blockers"
+        },
+        {
+          "sub_id": "D-005-R012-c5",
+          "text": "current tasks"
+        },
+        {
+          "sub_id": "D-005-R012-c6",
+          "text": "CI"
+        },
+        {
+          "sub_id": "D-005-R012-c7",
+          "text": "current Agent Teams / worktree / hook state"
+        }
+      ]
+    },
+    {
+      "id": "D-005-R013",
+      "text": "Pay special attention to currently known teammate/worktree/hook confinement issues; do NOT assume they are resolved merely because the prompt references them; determine current truth from the repository.",
+      "source_ref": "source-001.md#part-0",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "D-005-REVIEW"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [],
+        "effective_date": "2026-07-29"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured; awaiting independent verification",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      }
+    },
+    {
+      "id": "D-005-R014",
+      "text": "Do not disturb existing work during this evaluation.",
+      "source_ref": "source-001.md#part-0",
+      "classification": "prohibition",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "D-005-REVIEW",
+          "D-005-PILOT"
+        ],
+        "task_types": [
+          "governance",
+          "evaluation"
+        ],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [
+          "always"
+        ],
+        "effective_date": "2026-07-29"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured; awaiting independent verification",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      },
+      "checklist": [
+        {
+          "sub_id": "D-005-R014-c1",
+          "text": "any dirty checkout"
+        },
+        {
+          "sub_id": "D-005-R014-c2",
+          "text": "any active producer worktree"
+        },
+        {
+          "sub_id": "D-005-R014-c3",
+          "text": "any uncommitted files"
+        },
+        {
+          "sub_id": "D-005-R014-c4",
+          "text": "any active task branch"
+        },
+        {
+          "sub_id": "D-005-R014-c5",
+          "text": "current development work"
+        }
+      ]
+    },
+    {
+      "id": "D-005-R015",
+      "text": "Use a new isolated worktree/branch if this evaluation requires files or experimentation.",
+      "source_ref": "source-001.md#part-0",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "D-005-PILOT"
+        ],
+        "task_types": [
+          "evaluation"
+        ],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [
+          "claim",
+          "submit",
+          "accept"
+        ],
+        "effective_date": "2026-07-29"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured; awaiting independent verification",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      }
+    },
+    {
+      "id": "D-005-R016",
+      "text": "Target the defined problem: a machine-readable CODEBASE NAVIGATION GRAPH that reduces repeated broad Glob/Grep/Read exploration, dependency chasing, and duplicate architectural analysis, able to answer implementation/call/dependency/upstream-downstream/impact/code-path questions of the kinds listed in Part 1.",
+      "source_ref": "source-001.md#part-1",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "D-005-REVIEW"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [],
+        "effective_date": "2026-07-29"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured; awaiting independent verification",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      }
+    },
+    {
+      "id": "D-005-R017",
+      "text": "Keep the codebase navigation graph strictly separate from the future NYC legal/evidence/benchmark knowledge graph.",
+      "source_ref": "source-001.md#part-1",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "D-005-REVIEW",
+          "D-005-PILOT"
+        ],
+        "task_types": [
+          "governance",
+          "evaluation"
+        ],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [
+          "always"
+        ],
+        "effective_date": "2026-07-29"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured; awaiting independent verification",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      }
+    },
+    {
+      "id": "D-005-R018",
+      "text": "Scope: layer A (codebase graph) only initially, with recommendations for later connection to layer B (project/control graph).",
+      "source_ref": "source-001.md#part-1",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "D-005-REVIEW",
+          "D-005-PILOT"
+        ],
+        "task_types": [
+          "governance",
+          "evaluation"
+        ],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [],
+        "effective_date": "2026-07-29"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured; awaiting independent verification",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      }
+    },
+    {
+      "id": "D-005-R019",
+      "text": "Do not implement layer C (NYC evidence knowledge graph).",
+      "source_ref": "source-001.md#part-1",
+      "classification": "prohibition",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "D-005-REVIEW",
+          "D-005-PILOT"
+        ],
+        "task_types": [
+          "governance",
+          "evaluation"
+        ],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [
+          "always"
+        ],
+        "effective_date": "2026-07-29"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured; awaiting independent verification",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      }
+    },
+    {
+      "id": "D-005-R020",
+      "text": "Perform due diligence on the current official Graphify project from official/current sources (never social-media instructions), covering every listed dimension.",
+      "source_ref": "source-001.md#part-2",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "D-005-REVIEW"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [],
+        "effective_date": "2026-07-29"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured; awaiting independent verification",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      },
+      "checklist": [
+        {
+          "sub_id": "D-005-R020-c1",
+          "text": "official repository"
+        },
+        {
+          "sub_id": "D-005-R020-c2",
+          "text": "official PyPI package"
+        },
+        {
+          "sub_id": "D-005-R020-c3",
+          "text": "current package name"
+        },
+        {
+          "sub_id": "D-005-R020-c4",
+          "text": "current CLI command"
+        },
+        {
+          "sub_id": "D-005-R020-c5",
+          "text": "current release/version"
+        },
+        {
+          "sub_id": "D-005-R020-c6",
+          "text": "release date"
+        },
+        {
+          "sub_id": "D-005-R020-c7",
+          "text": "license"
+        },
+        {
+          "sub_id": "D-005-R020-c8",
+          "text": "Python requirement"
+        },
+        {
+          "sub_id": "D-005-R020-c9",
+          "text": "dependencies"
+        },
+        {
+          "sub_id": "D-005-R020-c10",
+          "text": "optional dependencies"
+        },
+        {
+          "sub_id": "D-005-R020-c11",
+          "text": "what is local"
+        },
+        {
+          "sub_id": "D-005-R020-c12",
+          "text": "what can make network/model calls"
+        },
+        {
+          "sub_id": "D-005-R020-c13",
+          "text": "files it writes"
+        },
+        {
+          "sub_id": "D-005-R020-c14",
+          "text": "Claude/Cursor configuration it modifies"
+        },
+        {
+          "sub_id": "D-005-R020-c15",
+          "text": "hooks it can install"
+        },
+        {
+          "sub_id": "D-005-R020-c16",
+          "text": "incremental-update behavior"
+        },
+        {
+          "sub_id": "D-005-R020-c17",
+          "text": "output files"
+        },
+        {
+          "sub_id": "D-005-R020-c18",
+          "text": "whether it executes arbitrary repository code"
+        },
+        {
+          "sub_id": "D-005-R020-c19",
+          "text": "security-relevant behavior"
+        },
+        {
+          "sub_id": "D-005-R020-c20",
+          "text": "telemetry/network behavior if any"
+        },
+        {
+          "sub_id": "D-005-R020-c21",
+          "text": "known recent fixes relevant to data loss/settings/hooks"
+        }
+      ]
+    },
+    {
+      "id": "D-005-R021",
+      "text": "Independently verify the current package name (reportedly 'graphifyy') and CLI command (reportedly 'graphify') rather than trusting the prompt.",
+      "source_ref": "source-001.md#part-2",
+      "classification": "external_fact",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "D-005-REVIEW"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [],
+        "effective_date": "2026-07-29"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured; awaiting independent verification",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      }
+    },
+    {
+      "id": "D-005-R022",
+      "text": "The existing dependency-age/security policy remains binding. If the latest Graphify release is younger than the permitted package-age window, do NOT silently waive that rule; report the conflict.",
+      "source_ref": "source-001.md#part-2",
+      "classification": "hold",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "D-005-REVIEW",
+          "D-005-PILOT"
+        ],
+        "task_types": [
+          "governance",
+          "evaluation"
+        ],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [
+          "always"
+        ],
+        "effective_date": "2026-07-29"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured; awaiting independent verification",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      }
+    },
+    {
+      "id": "D-005-R023",
+      "text": "An isolated, non-production evaluation may be proposed if allowed by existing policy; adoption into canonical engineering infrastructure requires explicit policy compliance or an owner-approved exception.",
+      "source_ref": "source-001.md#part-2",
+      "classification": "authorization",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "D-005-REVIEW",
+          "D-005-PILOT"
+        ],
+        "task_types": [
+          "governance",
+          "evaluation"
+        ],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [],
+        "effective_date": "2026-07-29"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured; awaiting independent verification",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      }
+    },
+    {
+      "id": "D-005-R024",
+      "text": "No install into the active environment.",
+      "source_ref": "source-001.md#part-3",
+      "classification": "prohibition",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "D-005-REVIEW",
+          "D-005-PILOT"
+        ],
+        "task_types": [
+          "governance",
+          "evaluation"
+        ],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [
+          "always"
+        ],
+        "effective_date": "2026-07-29"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured; awaiting independent verification",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      },
+      "checklist": [
+        {
+          "sub_id": "D-005-R024-c1",
+          "text": "do NOT initially run 'graphify install' against the active development checkout or user/global Claude configuration"
+        },
+        {
+          "sub_id": "D-005-R024-c2",
+          "text": "do NOT initially install Graphify hooks"
+        },
+        {
+          "sub_id": "D-005-R024-c3",
+          "text": "do NOT alter global Claude Code configuration"
+        },
+        {
+          "sub_id": "D-005-R024-c4",
+          "text": "do NOT alter Cursor configuration"
+        },
+        {
+          "sub_id": "D-005-R024-c5",
+          "text": "do NOT add it to production requirements"
+        },
+        {
+          "sub_id": "D-005-R024-c6",
+          "text": "do NOT modify active .claude hook/configuration surfaces"
+        }
+      ]
+    },
+    {
+      "id": "D-005-R025",
+      "text": "If due diligence finds no blocking reason to stop, create a completely isolated CODE-GRAPH PILOT environment meeting every Part-4 isolation requirement.",
+      "source_ref": "source-001.md#part-4",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "D-005-PILOT"
+        ],
+        "task_types": [
+          "evaluation"
+        ],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [
+          "claim",
+          "submit",
+          "accept"
+        ],
+        "effective_date": "2026-07-29"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured; awaiting independent verification",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      },
+      "checklist": [
+        {
+          "sub_id": "D-005-R025-c1",
+          "text": "separate clean worktree or disposable clone"
+        },
+        {
+          "sub_id": "D-005-R025-c2",
+          "text": "based on a known frozen origin/main SHA"
+        },
+        {
+          "sub_id": "D-005-R025-c3",
+          "text": "no active development branch"
+        },
+        {
+          "sub_id": "D-005-R025-c4",
+          "text": "no product commits"
+        },
+        {
+          "sub_id": "D-005-R025-c5",
+          "text": "no persistent user/global configuration mutation"
+        },
+        {
+          "sub_id": "D-005-R025-c6",
+          "text": "no existing Claude hooks modified"
+        },
+        {
+          "sub_id": "D-005-R025-c7",
+          "text": "no source-of-truth project-control data modified"
+        },
+        {
+          "sub_id": "D-005-R025-c8",
+          "text": "no push to main"
+        },
+        {
+          "sub_id": "D-005-R025-c9",
+          "text": "no merge"
+        },
+        {
+          "sub_id": "D-005-R025-c10",
+          "text": "no acceptance without the normal workflow"
+        }
+      ]
+    },
+    {
+      "id": "D-005-R026",
+      "text": "Prefer an isolated tool environment such as uv tool/pipx rather than contaminating the repository Python environment.",
+      "source_ref": "source-001.md#part-4",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "D-005-PILOT"
+        ],
+        "task_types": [
+          "evaluation"
+        ],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [
+          "claim",
+          "submit",
+          "accept"
+        ],
+        "effective_date": "2026-07-29"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured; awaiting independent verification",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      }
+    },
+    {
+      "id": "D-005-R027",
+      "text": "Record the pilot provenance facts.",
+      "source_ref": "source-001.md#part-4",
+      "classification": "evidence",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "D-005-PILOT"
+        ],
+        "task_types": [
+          "evaluation"
+        ],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [
+          "claim",
+          "submit",
+          "accept"
+        ],
+        "effective_date": "2026-07-29"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured; awaiting independent verification",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      },
+      "checklist": [
+        {
+          "sub_id": "D-005-R027-c1",
+          "text": "exact Graphify version"
+        },
+        {
+          "sub_id": "D-005-R027-c2",
+          "text": "package digest if practical"
+        },
+        {
+          "sub_id": "D-005-R027-c3",
+          "text": "exact Python version"
+        },
+        {
+          "sub_id": "D-005-R027-c4",
+          "text": "frozen repository SHA"
+        },
+        {
+          "sub_id": "D-005-R027-c5",
+          "text": "exact commands used"
+        },
+        {
+          "sub_id": "D-005-R027-c6",
+          "text": "files created outside graph output"
+        },
+        {
+          "sub_id": "D-005-R027-c7",
+          "text": "network connections if observable"
+        },
+        {
+          "sub_id": "D-005-R027-c8",
+          "text": "configuration modifications"
+        }
+      ]
+    },
+    {
+      "id": "D-005-R028",
+      "text": "First extraction is CODE ONLY where practical; the first question is whether deterministic/local AST-based code graphing materially improves navigation of this repository.",
+      "source_ref": "source-001.md#part-5",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "D-005-PILOT"
+        ],
+        "task_types": [
+          "evaluation"
+        ],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [
+          "claim",
+          "submit",
+          "accept"
+        ],
+        "effective_date": "2026-07-29"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured; awaiting independent verification",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      }
+    },
+    {
+      "id": "D-005-R029",
+      "text": "Do not feed sensitive content into an external model.",
+      "source_ref": "source-001.md#part-5",
+      "classification": "prohibition",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "D-005-REVIEW",
+          "D-005-PILOT"
+        ],
+        "task_types": [
+          "governance",
+          "evaluation"
+        ],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [
+          "always"
+        ],
+        "effective_date": "2026-07-29"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured; awaiting independent verification",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      },
+      "checklist": [
+        {
+          "sub_id": "D-005-R029-c1",
+          "text": "legal PDFs"
+        },
+        {
+          "sub_id": "D-005-R029-c2",
+          "text": "client documents"
+        },
+        {
+          "sub_id": "D-005-R029-c3",
+          "text": "plan sets"
+        },
+        {
+          "sub_id": "D-005-R029-c4",
+          "text": "proprietary uploads"
+        },
+        {
+          "sub_id": "D-005-R029-c5",
+          "text": "benchmark documents"
+        },
+        {
+          "sub_id": "D-005-R029-c6",
+          "text": "sensitive content"
+        }
+      ]
+    },
+    {
+      "id": "D-005-R030",
+      "text": "Where Graphify allows local tree-sitter extraction, prefer that mode; do not enable optional model/API processing merely because it exists.",
+      "source_ref": "source-001.md#part-5",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "D-005-PILOT"
+        ],
+        "task_types": [
+          "evaluation"
+        ],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [
+          "claim",
+          "submit",
+          "accept"
+        ],
+        "effective_date": "2026-07-29"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured; awaiting independent verification",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      }
+    },
+    {
+      "id": "D-005-R031",
+      "text": "Generate the normal graph artifacts in the isolated pilot (e.g. graph.json / graph.html / human-readable report), inspecting current Graphify behavior rather than assuming exact filenames.",
+      "source_ref": "source-001.md#part-5",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "D-005-PILOT"
+        ],
+        "task_types": [
+          "evaluation"
+        ],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [
+          "claim",
+          "submit",
+          "accept"
+        ],
+        "effective_date": "2026-07-29"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured; awaiting independent verification",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      }
+    },
+    {
+      "id": "D-005-R032",
+      "text": "Before benchmarking, inspect whether the graph actually understands this repository across all 16 Part-6 dimensions.",
+      "source_ref": "source-001.md#part-6",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "D-005-PILOT"
+        ],
+        "task_types": [
+          "evaluation"
+        ],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [
+          "claim",
+          "submit",
+          "accept"
+        ],
+        "effective_date": "2026-07-29"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured; awaiting independent verification",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      },
+      "checklist": [
+        {
+          "sub_id": "D-005-R032-c1",
+          "text": "languages parsed"
+        },
+        {
+          "sub_id": "D-005-R032-c2",
+          "text": "packages detected"
+        },
+        {
+          "sub_id": "D-005-R032-c3",
+          "text": "modules"
+        },
+        {
+          "sub_id": "D-005-R032-c4",
+          "text": "functions/classes"
+        },
+        {
+          "sub_id": "D-005-R032-c5",
+          "text": "imports"
+        },
+        {
+          "sub_id": "D-005-R032-c6",
+          "text": "call relationships"
+        },
+        {
+          "sub_id": "D-005-R032-c7",
+          "text": "cross-language boundaries"
+        },
+        {
+          "sub_id": "D-005-R032-c8",
+          "text": "Next.js/TypeScript coverage"
+        },
+        {
+          "sub_id": "D-005-R032-c9",
+          "text": "FastAPI/Python coverage"
+        },
+        {
+          "sub_id": "D-005-R032-c10",
+          "text": "generated-contract handling"
+        },
+        {
+          "sub_id": "D-005-R032-c11",
+          "text": "tests"
+        },
+        {
+          "sub_id": "D-005-R032-c12",
+          "text": "project-control scripts"
+        },
+        {
+          "sub_id": "D-005-R032-c13",
+          "text": "false-positive edges"
+        },
+        {
+          "sub_id": "D-005-R032-c14",
+          "text": "missing edges"
+        },
+        {
+          "sub_id": "D-005-R032-c15",
+          "text": "inferred vs explicit relationships"
+        },
+        {
+          "sub_id": "D-005-R032-c16",
+          "text": "whether dynamic Python/TypeScript behavior creates blind spots"
+        }
+      ]
+    },
+    {
+      "id": "D-005-R033",
+      "text": "Produce concrete examples of GOOD graph relationships and of WRONG or MISSING graph relationships; do not claim accuracy because graph.html looks impressive.",
+      "source_ref": "source-001.md#part-6",
+      "classification": "evidence",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "D-005-PILOT"
+        ],
+        "task_types": [
+          "evaluation"
+        ],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [
+          "claim",
+          "submit",
+          "accept"
+        ],
+        "effective_date": "2026-07-29"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured; awaiting independent verification",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      }
+    },
+    {
+      "id": "D-005-R034",
+      "text": "Create a small reproducible navigation benchmark of approximately 15-25 questions representative of real NYC Buildability work, adapted to current repository architecture rather than blindly reusing the example names.",
+      "source_ref": "source-001.md#part-7",
+      "classification": "harness",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "D-005-PILOT"
+        ],
+        "task_types": [
+          "evaluation"
+        ],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [
+          "claim",
+          "submit",
+          "accept"
+        ],
+        "effective_date": "2026-07-29"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured; awaiting independent verification",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      }
+    },
+    {
+      "id": "D-005-R035",
+      "text": "For each benchmark question run APPROACH A (baseline: normal Claude repository navigation via the existing approved workflow) measuring where practical: elapsed time, searches, grep/glob calls, source files opened, approximate retrieved/context volume, correctness, completeness, mistaken detours.",
+      "source_ref": "source-001.md#part-7",
+      "classification": "harness",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "D-005-PILOT"
+        ],
+        "task_types": [
+          "evaluation"
+        ],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [
+          "claim",
+          "submit",
+          "accept"
+        ],
+        "effective_date": "2026-07-29"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured; awaiting independent verification",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      }
+    },
+    {
+      "id": "D-005-R036",
+      "text": "For each benchmark question run APPROACH B (graph first: use graph output/query mechanisms to identify relevant nodes/paths/files, then verify important conclusions against actual source code) measuring: elapsed time, graph queries, source files opened, approximate retrieved/context volume, correctness, completeness, mistaken graph paths.",
+      "source_ref": "source-001.md#part-7",
+      "classification": "harness",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "D-005-PILOT"
+        ],
+        "task_types": [
+          "evaluation"
+        ],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [
+          "claim",
+          "submit",
+          "accept"
+        ],
+        "effective_date": "2026-07-29"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured; awaiting independent verification",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      }
+    },
+    {
+      "id": "D-005-R037",
+      "text": "Produce the per-question comparison table with the Part-8 columns (question; baseline result; graph-first result; correct?; complete?; files opened; navigation steps/tool calls; graph missed anything?; graph invented anything?; source verification required?; winner).",
+      "source_ref": "source-001.md#part-8",
+      "classification": "return",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "D-005-PILOT"
+        ],
+        "task_types": [
+          "evaluation"
+        ],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [
+          "claim",
+          "submit",
+          "accept"
+        ],
+        "effective_date": "2026-07-29"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured; awaiting independent verification",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      }
+    },
+    {
+      "id": "D-005-R038",
+      "text": "Produce the overall scoring.",
+      "source_ref": "source-001.md#part-8",
+      "classification": "return",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "D-005-PILOT"
+        ],
+        "task_types": [
+          "evaluation"
+        ],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [
+          "claim",
+          "submit",
+          "accept"
+        ],
+        "effective_date": "2026-07-29"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured; awaiting independent verification",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      },
+      "checklist": [
+        {
+          "sub_id": "D-005-R038-c1",
+          "text": "navigation speed improvement"
+        },
+        {
+          "sub_id": "D-005-R038-c2",
+          "text": "reduction in unnecessary reads"
+        },
+        {
+          "sub_id": "D-005-R038-c3",
+          "text": "reduction in repeated discovery"
+        },
+        {
+          "sub_id": "D-005-R038-c4",
+          "text": "accuracy"
+        },
+        {
+          "sub_id": "D-005-R038-c5",
+          "text": "false-positive rate"
+        },
+        {
+          "sub_id": "D-005-R038-c6",
+          "text": "material false-negative cases"
+        },
+        {
+          "sub_id": "D-005-R038-c7",
+          "text": "usefulness for large-task context routing"
+        },
+        {
+          "sub_id": "D-005-R038-c8",
+          "text": "usefulness for independent reviewers"
+        },
+        {
+          "sub_id": "D-005-R038-c9",
+          "text": "usefulness for producers"
+        },
+        {
+          "sub_id": "D-005-R038-c10",
+          "text": "usefulness for orchestrator"
+        },
+        {
+          "sub_id": "D-005-R038-c11",
+          "text": "usefulness for a non-engineer owner"
+        }
+      ]
+    },
+    {
+      "id": "D-005-R039",
+      "text": "Do NOT invent precise token savings if tokens cannot actually be measured; use observable measures instead.",
+      "source_ref": "source-001.md#part-8",
+      "classification": "prohibition",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "D-005-REVIEW",
+          "D-005-PILOT"
+        ],
+        "task_types": [
+          "governance",
+          "evaluation"
+        ],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [
+          "always"
+        ],
+        "effective_date": "2026-07-29"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured; awaiting independent verification",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      }
+    },
+    {
+      "id": "D-005-R040",
+      "text": "Trust model: the code graph must NEVER become authoritative truth. Canonical truth remains Git content, actual source files, project-control, schemas/contracts, CI, and accepted gate evidence. The graph is an INDEX / NAVIGATION PROJECTION.",
+      "source_ref": "source-001.md#part-9",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "D-005-REVIEW",
+          "D-005-PILOT"
+        ],
+        "task_types": [
+          "governance",
+          "evaluation"
+        ],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [
+          "always"
+        ],
+        "effective_date": "2026-07-29"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured; awaiting independent verification",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      }
+    },
+    {
+      "id": "D-005-R041",
+      "text": "Enforce the required pattern (TASK -> GRAPH QUERY -> LIKELY FILES/CALL PATH -> READ AUTHORITATIVE SOURCE -> IMPLEMENT/REVIEW) and forbid the pattern (TASK -> GRAPH -> TRUST WITHOUT SOURCE VERIFICATION).",
+      "source_ref": "source-001.md#part-9",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "D-005-REVIEW",
+          "D-005-PILOT"
+        ],
+        "task_types": [
+          "governance",
+          "evaluation"
+        ],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [
+          "always"
+        ],
+        "effective_date": "2026-07-29"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured; awaiting independent verification",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      }
+    },
+    {
+      "id": "D-005-R042",
+      "text": "Define which kinds of graph results require source verification; at minimum anything involving the listed categories must still be confirmed from authoritative source.",
+      "source_ref": "source-001.md#part-9",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "D-005-REVIEW",
+          "D-005-PILOT"
+        ],
+        "task_types": [
+          "governance",
+          "evaluation"
+        ],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [],
+        "effective_date": "2026-07-29"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured; awaiting independent verification",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      },
+      "checklist": [
+        {
+          "sub_id": "D-005-R042-c1",
+          "text": "security"
+        },
+        {
+          "sub_id": "D-005-R042-c2",
+          "text": "legal semantics"
+        },
+        {
+          "sub_id": "D-005-R042-c3",
+          "text": "control plane"
+        },
+        {
+          "sub_id": "D-005-R042-c4",
+          "text": "data contracts"
+        },
+        {
+          "sub_id": "D-005-R042-c5",
+          "text": "public interfaces"
+        },
+        {
+          "sub_id": "D-005-R042-c6",
+          "text": "dependency impact"
+        },
+        {
+          "sub_id": "D-005-R042-c7",
+          "text": "acceptance decisions"
+        }
+      ]
+    },
+    {
+      "id": "D-005-R043",
+      "text": "Design (not necessarily implement yet) a deterministic graph-freshness model whose metadata records the listed facts.",
+      "source_ref": "source-001.md#part-10",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "D-005-REVIEW",
+          "D-005-PILOT"
+        ],
+        "task_types": [
+          "governance",
+          "evaluation"
+        ],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [],
+        "effective_date": "2026-07-29"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured; awaiting independent verification",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      },
+      "checklist": [
+        {
+          "sub_id": "D-005-R043-c1",
+          "text": "source repository SHA it represents"
+        },
+        {
+          "sub_id": "D-005-R043-c2",
+          "text": "graph generation time"
+        },
+        {
+          "sub_id": "D-005-R043-c3",
+          "text": "tool/version"
+        },
+        {
+          "sub_id": "D-005-R043-c4",
+          "text": "extraction mode"
+        },
+        {
+          "sub_id": "D-005-R043-c5",
+          "text": "configuration"
+        },
+        {
+          "sub_id": "D-005-R043-c6",
+          "text": "whether the checkout was dirty"
+        },
+        {
+          "sub_id": "D-005-R043-c7",
+          "text": "whether uncommitted files were included"
+        }
+      ]
+    },
+    {
+      "id": "D-005-R044",
+      "text": "Freshness rule: before an agent uses the graph, compare graph_source_sha vs the current working/frozen task SHA; if they differ, STATE = STALE, and stale graph information must not be presented as current.",
+      "source_ref": "source-001.md#part-10",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "D-005-REVIEW",
+          "D-005-PILOT"
+        ],
+        "task_types": [
+          "governance",
+          "evaluation"
+        ],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [
+          "always"
+        ],
+        "effective_date": "2026-07-29"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured; awaiting independent verification",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      }
+    },
+    {
+      "id": "D-005-R045",
+      "text": "For active task worktrees, think carefully about whether graphing origin/main, the frozen task base, or the task HEAD is appropriate; do not assume one answer fits every lifecycle stage.",
+      "source_ref": "source-001.md#part-10",
+      "classification": "decision",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "D-005-REVIEW",
+          "D-005-PILOT"
+        ],
+        "task_types": [
+          "governance",
+          "evaluation"
+        ],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [],
+        "effective_date": "2026-07-29"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured; awaiting independent verification",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      }
+    },
+    {
+      "id": "D-005-R046",
+      "text": "Evaluate Graphify's incremental-update capability and design the safest initial refresh pattern (session/task start -> check graph metadata -> query if current, controlled update if not -> continue).",
+      "source_ref": "source-001.md#part-11",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "D-005-PILOT"
+        ],
+        "task_types": [
+          "evaluation"
+        ],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [
+          "claim",
+          "submit",
+          "accept"
+        ],
+        "effective_date": "2026-07-29"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured; awaiting independent verification",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      }
+    },
+    {
+      "id": "D-005-R047",
+      "text": "Do NOT automatically install Git hooks yet; especially do not add commit/push hooks while the existing hook/confinement work is still sensitive, unless separately reviewed and owner-authorized.",
+      "source_ref": "source-001.md#part-11",
+      "classification": "prohibition",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "D-005-REVIEW",
+          "D-005-PILOT"
+        ],
+        "task_types": [
+          "governance",
+          "evaluation"
+        ],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [
+          "always"
+        ],
+        "effective_date": "2026-07-29"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured; awaiting independent verification",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      }
+    },
+    {
+      "id": "D-005-R048",
+      "text": "Later update automation may only be PROPOSED in this evaluation, not enacted.",
+      "source_ref": "source-001.md#part-11",
+      "classification": "return",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "D-005-REVIEW",
+          "D-005-PILOT"
+        ],
+        "task_types": [
+          "governance",
+          "evaluation"
+        ],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [],
+        "effective_date": "2026-07-29"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured; awaiting independent verification",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      }
+    },
+    {
+      "id": "D-005-R049",
+      "text": "If the pilot succeeds, propose how graph-first navigation should integrate with the existing context-routing approach (controlled task -> minimal task/control capsule -> relevant graph neighborhood -> subsystem/files/dependencies -> read authoritative source files only -> implement).",
+      "source_ref": "source-001.md#part-12",
+      "classification": "return",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "D-005-PILOT"
+        ],
+        "task_types": [
+          "evaluation"
+        ],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [
+          "claim",
+          "submit",
+          "accept"
+        ],
+        "effective_date": "2026-07-29"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured; awaiting independent verification",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      }
+    },
+    {
+      "id": "D-005-R050",
+      "text": "Do NOT force the full graph.json into Claude's context; graph retrieval must be targeted.",
+      "source_ref": "source-001.md#part-12",
+      "classification": "prohibition",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "D-005-REVIEW",
+          "D-005-PILOT"
+        ],
+        "task_types": [
+          "governance",
+          "evaluation"
+        ],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [
+          "always"
+        ],
+        "effective_date": "2026-07-29"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured; awaiting independent verification",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      }
+    },
+    {
+      "id": "D-005-R051",
+      "text": "Design targeted graph query patterns.",
+      "source_ref": "source-001.md#part-12",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "D-005-REVIEW",
+          "D-005-PILOT"
+        ],
+        "task_types": [
+          "governance",
+          "evaluation"
+        ],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [],
+        "effective_date": "2026-07-29"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured; awaiting independent verification",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      },
+      "checklist": [
+        {
+          "sub_id": "D-005-R051-c1",
+          "text": "explain node"
+        },
+        {
+          "sub_id": "D-005-R051-c2",
+          "text": "neighbors"
+        },
+        {
+          "sub_id": "D-005-R051-c3",
+          "text": "upstream dependencies"
+        },
+        {
+          "sub_id": "D-005-R051-c4",
+          "text": "downstream dependents"
+        },
+        {
+          "sub_id": "D-005-R051-c5",
+          "text": "shortest path between concepts"
+        },
+        {
+          "sub_id": "D-005-R051-c6",
+          "text": "files implementing a concept"
+        },
+        {
+          "sub_id": "D-005-R051-c7",
+          "text": "callers/callees"
+        },
+        {
+          "sub_id": "D-005-R051-c8",
+          "text": "impact neighborhood"
+        }
+      ]
+    },
+    {
+      "id": "D-005-R052",
+      "text": "Evaluate how a graph could help Agent Teams (orchestrator scopes the task; each teammate receives only its relevant graph neighborhood).",
+      "source_ref": "source-001.md#part-13",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "D-005-REVIEW",
+          "D-005-PILOT"
+        ],
+        "task_types": [
+          "governance",
+          "evaluation"
+        ],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [],
+        "effective_date": "2026-07-29"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured; awaiting independent verification",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      }
+    },
+    {
+      "id": "D-005-R053",
+      "text": "Do NOT change the current agent confinement model during this pilot; the graph must not be used as justification to loosen safety controls.",
+      "source_ref": "source-001.md#part-13",
+      "classification": "prohibition",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "D-005-REVIEW",
+          "D-005-PILOT"
+        ],
+        "task_types": [
+          "governance",
+          "evaluation"
+        ],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [
+          "always"
+        ],
+        "effective_date": "2026-07-29"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured; awaiting independent verification",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      }
+    },
+    {
+      "id": "D-005-R054",
+      "text": "Evaluate whether parallel agents could safely share one graph artifact read-only.",
+      "source_ref": "source-001.md#part-13",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "D-005-REVIEW",
+          "D-005-PILOT"
+        ],
+        "task_types": [
+          "governance",
+          "evaluation"
+        ],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [],
+        "effective_date": "2026-07-29"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured; awaiting independent verification",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      }
+    },
+    {
+      "id": "D-005-R055",
+      "text": "Produce a design note (do NOT implement now) for eventually adding project-control relationships to a graph projection using the Part-14 node types (task, directive, requirement, blocker, milestone, gate, PR, product system, file, module, contract) and edge types (IMPLEMENTS, PART_OF, DEPENDS_ON, BLOCKED_BY, MODIFIES, DELIVERS, REVIEWS, CONSUMED_BY). That projection must be GENERATED FROM canonical project-control/Git sources and must not become a competing manually edited source of truth.",
+      "source_ref": "source-001.md#part-14",
+      "classification": "return",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "D-005-REVIEW",
+          "D-005-PILOT"
+        ],
+        "task_types": [
+          "governance",
+          "evaluation"
+        ],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [],
+        "effective_date": "2026-07-29"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured; awaiting independent verification",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      }
+    },
+    {
+      "id": "D-005-R056",
+      "text": "Evaluate (recommendation only; do not build unless separately authorized) whether the owner Mission-Control dashboard could later add an ENGINEERING MAP / CODE MAP view (owner view: purpose, engineering %, launch readiness, blockers; technical view: modules, key files, key contracts, upstream dependencies, downstream consumers) reusing graph output rather than duplicating architecture metadata.",
+      "source_ref": "source-001.md#part-15",
+      "classification": "return",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "D-005-REVIEW",
+          "D-005-PILOT"
+        ],
+        "task_types": [
+          "governance",
+          "evaluation"
+        ],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [],
+        "effective_date": "2026-07-29"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured; awaiting independent verification",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      }
+    },
+    {
+      "id": "D-005-R057",
+      "text": "Record explicitly that Graphify/code graphing is NOT the future NYC evidence graph; that future system (properties, BBL/BIN, districts, rules, sources, filings, plans, benchmark cases, solver runs, discrepancies, etc.) needs its own data model/provenance/temporal semantics, and Graphify must not become the canonical data store for those.",
+      "source_ref": "source-001.md#part-16",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "D-005-REVIEW",
+          "D-005-PILOT"
+        ],
+        "task_types": [
+          "governance",
+          "evaluation"
+        ],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [],
+        "effective_date": "2026-07-29"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured; awaiting independent verification",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      }
+    },
+    {
+      "id": "D-005-R058",
+      "text": "STOP and return to the owner before adoption if any Part-17 stop condition occurs; never work around a STOP condition silently.",
+      "source_ref": "source-001.md#part-17",
+      "classification": "hold",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "D-005-REVIEW",
+          "D-005-PILOT"
+        ],
+        "task_types": [
+          "governance",
+          "evaluation"
+        ],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [
+          "always"
+        ],
+        "effective_date": "2026-07-29"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured; awaiting independent verification",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      },
+      "checklist": [
+        {
+          "sub_id": "D-005-R058-c1",
+          "text": "Graphify modifies active/global Claude settings unexpectedly"
+        },
+        {
+          "sub_id": "D-005-R058-c2",
+          "text": "it installs hooks without explicit authorization"
+        },
+        {
+          "sub_id": "D-005-R058-c3",
+          "text": "it touches an active development checkout"
+        },
+        {
+          "sub_id": "D-005-R058-c4",
+          "text": "it modifies project source/control data unexpectedly"
+        },
+        {
+          "sub_id": "D-005-R058-c5",
+          "text": "code is transmitted externally during the code-only local pilot"
+        },
+        {
+          "sub_id": "D-005-R058-c6",
+          "text": "package/dependency policy blocks installation"
+        },
+        {
+          "sub_id": "D-005-R058-c7",
+          "text": "security review finds a material unresolved risk"
+        },
+        {
+          "sub_id": "D-005-R058-c8",
+          "text": "it requires weakening existing Claude/worktree safety"
+        },
+        {
+          "sub_id": "D-005-R058-c9",
+          "text": "graph results have material false-negative dependency paths"
+        },
+        {
+          "sub_id": "D-005-R058-c10",
+          "text": "graph output cannot be deterministically tied to a source SHA"
+        },
+        {
+          "sub_id": "D-005-R058-c11",
+          "text": "it creates more context overhead than it removes"
+        },
+        {
+          "sub_id": "D-005-R058-c12",
+          "text": "its installation conflicts with existing Claude skills/hooks"
+        },
+        {
+          "sub_id": "D-005-R058-c13",
+          "text": "the pilot would require bypassing the existing control plane"
+        }
+      ]
+    },
+    {
+      "id": "D-005-R059",
+      "text": "The pilot succeeds ONLY if all 12 Part-18 success criteria are demonstrated.",
+      "source_ref": "source-001.md#part-18",
+      "classification": "harness",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "D-005-PILOT"
+        ],
+        "task_types": [
+          "evaluation"
+        ],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [
+          "claim",
+          "submit",
+          "accept"
+        ],
+        "effective_date": "2026-07-29"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured; awaiting independent verification",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      },
+      "checklist": [
+        {
+          "sub_id": "D-005-R059-c1",
+          "text": "graph generation is reproducible enough for our use"
+        },
+        {
+          "sub_id": "D-005-R059-c2",
+          "text": "code can remain local during the code-only path"
+        },
+        {
+          "sub_id": "D-005-R059-c3",
+          "text": "generated graph is clearly non-authoritative"
+        },
+        {
+          "sub_id": "D-005-R059-c4",
+          "text": "graph freshness can be tied to repository identity"
+        },
+        {
+          "sub_id": "D-005-R059-c5",
+          "text": "important results can be verified against source"
+        },
+        {
+          "sub_id": "D-005-R059-c6",
+          "text": "it materially reduces unnecessary repository exploration"
+        },
+        {
+          "sub_id": "D-005-R059-c7",
+          "text": "it maintains or improves correctness"
+        },
+        {
+          "sub_id": "D-005-R059-c8",
+          "text": "it integrates without weakening project controls"
+        },
+        {
+          "sub_id": "D-005-R059-c9",
+          "text": "it can be updated safely as main changes"
+        },
+        {
+          "sub_id": "D-005-R059-c10",
+          "text": "it provides targeted context instead of dumping the whole graph"
+        },
+        {
+          "sub_id": "D-005-R059-c11",
+          "text": "there is a safe path for multi-agent read-only consumption"
+        },
+        {
+          "sub_id": "D-005-R059-c12",
+          "text": "no active product work was disturbed"
+        }
+      ]
+    },
+    {
+      "id": "D-005-R060",
+      "text": "Deliver a structured CODE GRAPH PILOT - OWNER DECISION PACKET (not a stream-of-consciousness report) with sections A-M and exactly one recommendation.",
+      "source_ref": "source-001.md#part-19",
+      "classification": "return",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "D-005-REVIEW",
+          "D-005-PILOT"
+        ],
+        "task_types": [
+          "governance",
+          "evaluation"
+        ],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [],
+        "effective_date": "2026-07-29"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured; awaiting independent verification",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      },
+      "checklist": [
+        {
+          "sub_id": "D-005-R060-c1",
+          "text": "A. current repo/control state (main SHA, active work, confinement/hook considerations)"
+        },
+        {
+          "sub_id": "D-005-R060-c2",
+          "text": "B. tool due diligence (package, version, age, license, install mechanism, local/network behavior, config/hook effects, risks)"
+        },
+        {
+          "sub_id": "D-005-R060-c3",
+          "text": "C. pilot setup (isolated location, frozen SHA, commands, files created)"
+        },
+        {
+          "sub_id": "D-005-R060-c4",
+          "text": "D. graph quality (maps well, misses, false/inferred relationships)"
+        },
+        {
+          "sub_id": "D-005-R060-c5",
+          "text": "E. benchmark results (baseline vs graph-first)"
+        },
+        {
+          "sub_id": "D-005-R060-c6",
+          "text": "F. security/control findings"
+        },
+        {
+          "sub_id": "D-005-R060-c7",
+          "text": "G. staleness/update strategy"
+        },
+        {
+          "sub_id": "D-005-R060-c8",
+          "text": "H. proposed Claude context-routing integration"
+        },
+        {
+          "sub_id": "D-005-R060-c9",
+          "text": "I. proposed multi-agent use"
+        },
+        {
+          "sub_id": "D-005-R060-c10",
+          "text": "J. Mission-Control integration recommendation"
+        },
+        {
+          "sub_id": "D-005-R060-c11",
+          "text": "K. relationship to future project/evidence graphs"
+        },
+        {
+          "sub_id": "D-005-R060-c12",
+          "text": "L. exactly one of: GO - adopt now / GO WITH CONDITIONS / WAIT / REJECT"
+        },
+        {
+          "sub_id": "D-005-R060-c13",
+          "text": "M. exact next controlled task(s), if GO"
+        }
+      ]
+    },
+    {
+      "id": "D-005-R061",
+      "text": "This evaluation is NOT authorization for any of the listed items; those will be separate owner decisions.",
+      "source_ref": "source-001.md#part-20",
+      "classification": "prohibition",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "D-005-REVIEW",
+          "D-005-PILOT"
+        ],
+        "task_types": [
+          "governance",
+          "evaluation"
+        ],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [
+          "always"
+        ],
+        "effective_date": "2026-07-29"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured; awaiting independent verification",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      },
+      "checklist": [
+        {
+          "sub_id": "D-005-R061-c1",
+          "text": "implement the six new design-platform PRDs"
+        },
+        {
+          "sub_id": "D-005-R061-c2",
+          "text": "build the generative solver"
+        },
+        {
+          "sub_id": "D-005-R061-c3",
+          "text": "build the historical benchmark laboratory"
+        },
+        {
+          "sub_id": "D-005-R061-c4",
+          "text": "build the NYC Evidence Knowledge Graph"
+        },
+        {
+          "sub_id": "D-005-R061-c5",
+          "text": "install Neo4j"
+        },
+        {
+          "sub_id": "D-005-R061-c6",
+          "text": "install a vector database"
+        },
+        {
+          "sub_id": "D-005-R061-c7",
+          "text": "modify Mission Control"
+        },
+        {
+          "sub_id": "D-005-R061-c8",
+          "text": "restructure the repo"
+        },
+        {
+          "sub_id": "D-005-R061-c9",
+          "text": "rewrite Claude configuration"
+        },
+        {
+          "sub_id": "D-005-R061-c10",
+          "text": "change global hooks"
+        },
+        {
+          "sub_id": "D-005-R061-c11",
+          "text": "merge Graphify integration"
+        }
+      ]
+    },
+    {
+      "id": "D-005-R062",
+      "text": "Immediate goal: PROVE WHETHER A CODEBASE GRAPH CAN SAFELY MAKE CLAUDE/AGENTS NAVIGATE NYC BUILDABILITY FASTER AND MORE ACCURATELY; proceed with audit and isolated evaluation under the existing control plane.",
+      "source_ref": "source-001.md#part-20",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "D-005-REVIEW",
+          "D-005-PILOT"
+        ],
+        "task_types": [
+          "governance",
+          "evaluation"
+        ],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [],
+        "effective_date": "2026-07-29"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured; awaiting independent verification",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      }
+    },
+    {
+      "id": "D-005-R063",
+      "text": "Verify (rather than trust) the post-block claim that current Graphify docs support project-scoped installation and incremental --update operation (claimed source: PyPI graphifyy page).",
+      "source_ref": "source-001.md#post-block",
+      "classification": "external_fact",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "D-005-REVIEW"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [],
+        "effective_date": "2026-07-29"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured; awaiting independent verification",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      }
+    },
+    {
+      "id": "D-005-R064",
+      "text": "Do not select or approve a merge merely because Claude reports Graphify works; the owner inspects the resulting decision packet (benchmark results; interaction with existing Claude hooks and worktree confinement) before it becomes part of the pipeline.",
+      "source_ref": "source-001.md#post-block",
+      "classification": "sequencing",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "D-005-REVIEW",
+          "D-005-PILOT"
+        ],
+        "task_types": [
+          "governance",
+          "evaluation"
+        ],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [
+          "always"
+        ],
+        "effective_date": "2026-07-29"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured; awaiting independent verification",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      }
+    },
+    {
+      "id": "D-005-R065",
+      "text": "Sequence: the current build continues normally in parallel; code graph pilot -> prove usefulness -> safe integration -> graph-first Claude -> MASTER EXPANSION ARCHITECTURE -> 6 PRDs -> graph-assisted gap audit -> controlled implementation. Claude should NOT start the giant expansion now.",
+      "source_ref": "source-001.md#post-block",
+      "classification": "sequencing",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "D-005-REVIEW",
+          "D-005-PILOT"
+        ],
+        "task_types": [
+          "governance",
+          "evaluation"
+        ],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [
+          "always"
+        ],
+        "effective_date": "2026-07-29"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured; awaiting independent verification",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      }
+    }
+  ],
+  "updated_at": "2026-07-29T20:42:00+00:00"
+}

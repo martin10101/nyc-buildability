@@ -1,0 +1,170 @@
+{
+  "schema": "directive_manifest/v1",
+  "directive_id": "D-005",
+  "version": 1,
+  "slug": "codebase-knowledge-graph-pilot",
+  "title": "Codebase knowledge graph pilot (Graphify) - controlled evaluation before any adoption",
+  "status": "active",
+  "issued_by": "owner",
+  "issued_at": "2026-07-29",
+  "captured_at": "2026-07-29T20:42:00+00:00",
+  "channel": "owner_message",
+  "frozen_baseline_sha": "58309bc984eadde10034f5c60a920de72f30ffc1",
+  "sources": [
+    {
+      "file": "source-001.md",
+      "kind": "original",
+      "sequence": 1,
+      "recorded_at": "2026-07-29T20:42:00+00:00",
+      "content_digest_sha256": "5e2bd348f45f59ebf2a6e8b255e346b8e6510477a1c51d7ad82ad86d012e956b"
+    }
+  ],
+  "amendments": [],
+  "supersedes": [],
+  "superseded_by": null,
+  "affected_tasks": [],
+  "affected_prs": [],
+  "affected_branches": [],
+  "scope": {
+    "task_ids": [
+      "D-005-REVIEW",
+      "D-005-PILOT"
+    ],
+    "task_types": [
+      "governance",
+      "evaluation"
+    ],
+    "milestones": [],
+    "paths": [
+      "project-control/directives/D-005-codebase-knowledge-graph-pilot/"
+    ]
+  },
+  "applicability_note": "D-005-REVIEW and D-005-PILOT are NON-LEDGER applicability sentinels (D-004-PHASE0 precedent). D-005-REVIEW = the capture-session review work: verbatim capture, repository-truth reconciliation, Graphify due diligence from official sources, fit/security/implementation review, alternatives assessment, recommendation. D-005-PILOT = the reserved, not-yet-contracted isolated code-graph pilot (Parts 4-8, 11-13, 18): it is contracted as a ledger task ONLY if the recommendation supports it AND the dependency-security policy permits (or the owner grants an exception per D-005-R022/R023). STANDING rows (lifecycle_events=['always']) bind both phases and any future D-005 work. affected_tasks stays empty until a ledger task is contracted (c5 requires ledger-existing IDs).",
+  "owner_approval": {
+    "state": "evaluation_authorized_adoption_reserved",
+    "decision": "Owner forwarded the GPT-drafted pilot directive with instructions to review fit, conflicts with completed work, execution in the current PowerShell/terminal environment, and compatibility with the recently implemented security controls; to consider simpler alternatives; to decide the next step; and to proceed on the resulting recommendation without returning for the review itself. Adoption of a code graph into canonical engineering infrastructure, any Graphify integration merge, and everything listed in Part 20 remain owner decisions on the owner-decision packet (Parts 17/19/20 and the post-block instruction).",
+    "decided_at": "2026-07-29",
+    "merge_authorized": false,
+    "accept_authorized": false,
+    "authorizes": [
+      "verbatim capture of this directive and its requirement decomposition",
+      "reconciliation against current repository truth (origin/main, ledger, directives, blockers, tasks, CI, worktree/hook state)",
+      "read-only due diligence on the Graphify project from official/current sources, including verifying the actual package name, age, license, install behavior, and network/model behavior",
+      "fit / conflict / implementation / security review of the proposal against existing program controls, plus an alternatives assessment",
+      "deciding and reporting the recommended next step; implementation proceeds on that recommendation subject to the standing prohibitions and the dependency-security policy",
+      "proposing (and, only if existing policy permits or the owner grants an exception, executing) an isolated non-production pilot in a separate worktree/disposable clone with an isolated tool environment under the Part-3/Part-4 constraints"
+    ],
+    "prohibits": [
+      "broadly installing Graphify into the active Claude environment (checkout, user/global Claude configuration, Cursor configuration)",
+      "running 'graphify install' against the active development checkout or user/global Claude configuration",
+      "installing Graphify hooks or any new Git hooks without separate review and owner authorization",
+      "modifying active .claude hook/configuration surfaces or the current agent confinement model",
+      "adding Graphify to production requirements",
+      "changing the product, the six future design-platform PRDs, or interrupting the current development lane",
+      "weakening or bypassing any control-plane, directive, worktree, gate, or protected-main requirement",
+      "implementing layer C (NYC evidence knowledge graph) or any Part-20 item (solver, benchmark laboratory, Neo4j, vector database, Mission-Control changes, repo restructure, Claude-config rewrite, global-hook changes)",
+      "silently waiving the dependency-age/security policy for a too-young package",
+      "merging any Graphify integration without the owner's decision on the owner-decision packet",
+      "feeding legal PDFs, client documents, plan sets, proprietary uploads, benchmark documents, or other sensitive content into an external model"
+    ]
+  },
+  "lifecycle_state": "active",
+  "requirements_file": "requirements.json",
+  "verification_file": "verification.json",
+  "final_reviewed_sha": null,
+  "final_reviewed_manifest_sha256": null,
+  "enforcement_pointers": {
+    "tasks": [],
+    "gates": [],
+    "blockers": [],
+    "rules": [
+      ".claude/rules/project-control.md"
+    ],
+    "hold": false
+  },
+  "notes": [
+    "D-005 is owner-issued (channel owner_message): the owner forwarded a GPT-drafted directive wrapped in their own review instruction; the verbatim source captures BOTH the owner preamble and the GPT text plus the post-block instructions.",
+    "OPEN interpretation row D-005-R007: the owner preamble delegates the next-step decision ('doesn't mean that you have to bring me back') while the pack reserves adoption for owner review of the decision packet; recorded reading = review + policy-compliant isolated evaluation autonomous, adoption/integration/merge owner-gated. The owner may correct this via an append-only amendment.",
+    "D-005-R022 is expected to bite: the graphifyy package is new; if its latest release is younger than the permitted package-age window, the pilot cannot install it under current policy without an owner-approved exception - the conflict must be reported in the decision packet, never waived silently.",
+    "Pack task IDs and graph workstreams never create ledger tasks outside the M<x>-T<n> convention (.claude/rules/expansion-agent-dispatch-hold.md section 3 applies unchanged).",
+    "final_reviewed_* are populated at the independent directive re-gate."
+  ],
+  "created_at": "2026-07-29T20:42:00+00:00",
+  "updated_at": "2026-07-29T20:42:00+00:00",
+  "audit_log": [
+    {
+      "at": "2026-07-29T20:42:00+00:00",
+      "by": "orchestrator",
+      "note": "Captured D-005 verbatim at frozen baseline 58309bc (origin/main == local main, post-B-016 resolve PR #111). Decomposed 65 atomic requirements across the owner preamble, header prohibitions, Parts 0-20, and the post-block instructions, with checklists preserving every enumerated sub-item. No pilot started; nothing installed; no hook/config surface touched; active worktrees and dirty files undisturbed. Due-diligence research (official-source verification of graphifyy, dependency-policy check, hook-surface inventory, existing-navigation inventory) initiated read-only in the same session."
+    }
+  ],
+  "locked_requirement_ids": [
+    "D-005-R001",
+    "D-005-R002",
+    "D-005-R003",
+    "D-005-R004",
+    "D-005-R005",
+    "D-005-R006",
+    "D-005-R007",
+    "D-005-R008",
+    "D-005-R009",
+    "D-005-R010",
+    "D-005-R011",
+    "D-005-R012",
+    "D-005-R013",
+    "D-005-R014",
+    "D-005-R015",
+    "D-005-R016",
+    "D-005-R017",
+    "D-005-R018",
+    "D-005-R019",
+    "D-005-R020",
+    "D-005-R021",
+    "D-005-R022",
+    "D-005-R023",
+    "D-005-R024",
+    "D-005-R025",
+    "D-005-R026",
+    "D-005-R027",
+    "D-005-R028",
+    "D-005-R029",
+    "D-005-R030",
+    "D-005-R031",
+    "D-005-R032",
+    "D-005-R033",
+    "D-005-R034",
+    "D-005-R035",
+    "D-005-R036",
+    "D-005-R037",
+    "D-005-R038",
+    "D-005-R039",
+    "D-005-R040",
+    "D-005-R041",
+    "D-005-R042",
+    "D-005-R043",
+    "D-005-R044",
+    "D-005-R045",
+    "D-005-R046",
+    "D-005-R047",
+    "D-005-R048",
+    "D-005-R049",
+    "D-005-R050",
+    "D-005-R051",
+    "D-005-R052",
+    "D-005-R053",
+    "D-005-R054",
+    "D-005-R055",
+    "D-005-R056",
+    "D-005-R057",
+    "D-005-R058",
+    "D-005-R059",
+    "D-005-R060",
+    "D-005-R061",
+    "D-005-R062",
+    "D-005-R063",
+    "D-005-R064",
+    "D-005-R065"
+  ],
+  "requirements_id_digest_sha256": "5f774b28933d5a98078c50751617400d7ff6b6ba978e72f32c47f03a09c3b6c0",
+  "requirements_content_digest_sha256": "01e20c7cc646ac284fddfd31e4c565e4bc425f9681e89db3e3812a7f3af3ab66"
+}
