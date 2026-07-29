@@ -1,7 +1,7 @@
 {
   "schema": "directive_manifest/v1",
   "directive_id": "D-005",
-  "version": 1,
+  "version": 2,
   "slug": "codebase-knowledge-graph-pilot",
   "title": "Codebase knowledge graph pilot (Graphify) - controlled evaluation before any adoption",
   "status": "active",
@@ -17,12 +17,24 @@
       "sequence": 1,
       "recorded_at": "2026-07-29T20:42:00+00:00",
       "content_digest_sha256": "5e2bd348f45f59ebf2a6e8b255e346b8e6510477a1c51d7ad82ad86d012e956b"
+    },
+    {
+      "file": "source-002-amendment.md",
+      "kind": "amendment",
+      "sequence": 2,
+      "amends": "source-001.md",
+      "recorded_at": "2026-07-29T21:03:55+00:00",
+      "content_digest_sha256": "84874d430349897724aa543925ce88f187f5f109e6a3112cd14737f70a61d72c"
     }
   ],
-  "amendments": [],
+  "amendments": [
+    "source-002-amendment.md"
+  ],
   "supersedes": [],
   "superseded_by": null,
-  "affected_tasks": [],
+  "affected_tasks": [
+    "M0-T030"
+  ],
   "affected_prs": [],
   "affected_branches": [],
   "scope": {
@@ -41,8 +53,8 @@
   },
   "applicability_note": "D-005-REVIEW and D-005-PILOT are NON-LEDGER applicability sentinels (D-004-PHASE0 precedent). D-005-REVIEW = the capture-session review work: verbatim capture, repository-truth reconciliation, Graphify due diligence from official sources, fit/security/implementation review, alternatives assessment, recommendation. D-005-PILOT = the reserved, not-yet-contracted isolated code-graph pilot (Parts 4-8, 11-13, 18): it is contracted as a ledger task ONLY if the recommendation supports it AND the dependency-security policy permits (or the owner grants an exception per D-005-R022/R023). STANDING rows (lifecycle_events=['always']) bind both phases and any future D-005 work. affected_tasks stays empty until a ledger task is contracted (c5 requires ledger-existing IDs).",
   "owner_approval": {
-    "state": "evaluation_authorized_adoption_reserved",
-    "decision": "Owner forwarded the GPT-drafted pilot directive with instructions to review fit, conflicts with completed work, execution in the current PowerShell/terminal environment, and compatibility with the recently implemented security controls; to consider simpler alternatives; to decide the next step; and to proceed on the resulting recommendation without returning for the review itself. Adoption of a code graph into canonical engineering infrastructure, any Graphify integration merge, and everything listed in Part 20 remain owner decisions on the owner-decision packet (Parts 17/19/20 and the post-block instruction).",
+    "state": "task_go_graphify_wait_ratified",
+    "decision": "Amendment 1 (source-002): owner GO to author and execute one controlled task (M0-T030) for the in-house code-navigation index generator + CI drift/freshness validation + 15-20-question navigation benchmark, with ten binding clarifications (graph honesty labels; non-self-referential fingerprint; pollution exclusions with no husk deletion; small V1 scope; targeted querying; mandatory source verification; load-bearing benchmark; no-hook/no-config CI pattern; isolation from active lanes; post-task decision packet). Owner ratifies WAIT/REJECT for Graphify: do not install it and do not reopen that decision during this task. Downstream integrations (session orientation, context routing, Agent Teams navigation, Mission Control map, six-PRD audit) remain owner decisions on the post-task packet; STOP before any broader pipeline integration.",
     "decided_at": "2026-07-29",
     "merge_authorized": false,
     "accept_authorized": false,
@@ -52,7 +64,9 @@
       "read-only due diligence on the Graphify project from official/current sources, including verifying the actual package name, age, license, install behavior, and network/model behavior",
       "fit / conflict / implementation / security review of the proposal against existing program controls, plus an alternatives assessment",
       "deciding and reporting the recommended next step; implementation proceeds on that recommendation subject to the standing prohibitions and the dependency-security policy",
-      "proposing (and, only if existing policy permits or the owner grants an exception, executing) an isolated non-production pilot in a separate worktree/disposable clone with an isolated tool environment under the Part-3/Part-4 constraints"
+      "proposing (and, only if existing policy permits or the owner grants an exception, executing) an isolated non-production pilot in a separate worktree/disposable clone with an isolated tool environment under the Part-3/Part-4 constraints",
+      "amendment 1: contracting and executing ledger task M0-T030 through the normal controlled-task workflow, gates, PR and CI",
+      "amendment 1: the A/B navigation benchmark (15-20 questions) with observable-evidence scoring"
     ],
     "prohibits": [
       "broadly installing Graphify into the active Claude environment (checkout, user/global Claude configuration, Cursor configuration)",
@@ -65,7 +79,13 @@
       "implementing layer C (NYC evidence knowledge graph) or any Part-20 item (solver, benchmark laboratory, Neo4j, vector database, Mission-Control changes, repo restructure, Claude-config rewrite, global-hook changes)",
       "silently waiving the dependency-age/security policy for a too-young package",
       "merging any Graphify integration without the owner's decision on the owner-decision packet",
-      "feeding legal PDFs, client documents, plan sets, proprietary uploads, benchmark documents, or other sensitive content into an external model"
+      "feeding legal PDFs, client documents, plan sets, proprietary uploads, benchmark documents, or other sensitive content into an external model",
+      "installing Graphify or reopening the Graphify decision during M0-T030 (amendment 1)",
+      "emitting caller/callee or any relationship as certain when the implementation cannot establish it (amendment 1, clarification 1)",
+      "a self-referential graph-freshness model (final commit SHA embedded in a committed graph.json) (amendment 1, clarification 2)",
+      "deleting/moving/repairing the 33 orphaned .claude/worktrees husks under this task (amendment 1, clarification 3)",
+      "declaring success from node/edge counts, graph appearance, or generator completion (amendment 1, clarification 7)",
+      "implementing downstream integrations (orientation, context routing, Agent Teams navigation, Mission Control map, six-PRD audit) without the owner's decision on the post-task packet (amendment 1, clarification 10)"
     ]
   },
   "lifecycle_state": "active",
@@ -74,7 +94,9 @@
   "final_reviewed_sha": null,
   "final_reviewed_manifest_sha256": null,
   "enforcement_pointers": {
-    "tasks": [],
+    "tasks": [
+      "M0-T030"
+    ],
     "gates": [],
     "blockers": [],
     "rules": [
@@ -87,15 +109,21 @@
     "OPEN interpretation row D-005-R007: the owner preamble delegates the next-step decision ('doesn't mean that you have to bring me back') while the pack reserves adoption for owner review of the decision packet; recorded reading = review + policy-compliant isolated evaluation autonomous, adoption/integration/merge owner-gated. The owner may correct this via an append-only amendment.",
     "D-005-R022 is expected to bite: the graphifyy package is new; if its latest release is younger than the permitted package-age window, the pilot cannot install it under current policy without an owner-approved exception - the conflict must be reported in the decision packet, never waived silently.",
     "Pack task IDs and graph workstreams never create ledger tasks outside the M<x>-T<n> convention (.claude/rules/expansion-agent-dispatch-hold.md section 3 applies unchanged).",
-    "final_reviewed_* are populated at the independent directive re-gate."
+    "final_reviewed_* are populated at the independent directive re-gate.",
+    "Amendment 1 (source-002, rows R066-R089): owner GO after the WAIT recommendation. D-005-PILOT sentinel is realized as ledger task M0-T030 (in-house index, NOT Graphify). Graphify-specific pilot rows from source-001 (R025-R033, R046, R059, R063) remain recorded but their Graphify-execution reading is inapplicable while the owner-ratified WAIT stands; their generic principles (isolation, honesty, provenance recording, benchmark, success criteria) bind M0-T030 as restated and tightened by R066-R089. No pre-existing row was edited."
   ],
   "created_at": "2026-07-29T20:42:00+00:00",
-  "updated_at": "2026-07-29T20:42:00+00:00",
+  "updated_at": "2026-07-29T21:03:55+00:00",
   "audit_log": [
     {
       "at": "2026-07-29T20:42:00+00:00",
       "by": "orchestrator",
       "note": "Captured D-005 verbatim at frozen baseline 58309bc (origin/main == local main, post-B-016 resolve PR #111). Decomposed 65 atomic requirements across the owner preamble, header prohibitions, Parts 0-20, and the post-block instructions, with checklists preserving every enumerated sub-item. No pilot started; nothing installed; no hook/config surface touched; active worktrees and dirty files undisturbed. Due-diligence research (official-source verification of graphifyy, dependency-policy check, hook-surface inventory, existing-navigation inventory) initiated read-only in the same session."
+    },
+    {
+      "at": "2026-07-29T21:03:55+00:00",
+      "by": "orchestrator",
+      "note": "Amendment 1 recorded append-only: source-002-amendment.md registered (kind=amendment, amends source-001.md, sequence 2); rows D-005-R066..R089 appended; rows R001-R065 asserted byte-identical by sorted-key comparison before/after the append; manifest.amendments[] set; locked_requirement_ids extended to 89; id + content digests recomputed. M0-T030 contracted in-regime (directive_refs D-005:ALL) and recorded in affected_tasks/enforcement_pointers. Graphify NOT installed; no hook/config surface touched."
     }
   ],
   "locked_requirement_ids": [
@@ -163,8 +191,32 @@
     "D-005-R062",
     "D-005-R063",
     "D-005-R064",
-    "D-005-R065"
+    "D-005-R065",
+    "D-005-R066",
+    "D-005-R067",
+    "D-005-R068",
+    "D-005-R069",
+    "D-005-R070",
+    "D-005-R071",
+    "D-005-R072",
+    "D-005-R073",
+    "D-005-R074",
+    "D-005-R075",
+    "D-005-R076",
+    "D-005-R077",
+    "D-005-R078",
+    "D-005-R079",
+    "D-005-R080",
+    "D-005-R081",
+    "D-005-R082",
+    "D-005-R083",
+    "D-005-R084",
+    "D-005-R085",
+    "D-005-R086",
+    "D-005-R087",
+    "D-005-R088",
+    "D-005-R089"
   ],
-  "requirements_id_digest_sha256": "5f774b28933d5a98078c50751617400d7ff6b6ba978e72f32c47f03a09c3b6c0",
-  "requirements_content_digest_sha256": "01e20c7cc646ac284fddfd31e4c565e4bc425f9681e89db3e3812a7f3af3ab66"
+  "requirements_id_digest_sha256": "684868f73d68df24dabfbb067492f6d8e30b9d969bf01d78127d97d8b634efd7",
+  "requirements_content_digest_sha256": "aaa9eae32c50ad0b161d1ad3047916e2728dc0abac41cd0b07f9cca49b989659"
 }
