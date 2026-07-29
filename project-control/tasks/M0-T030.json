@@ -1,0 +1,92 @@
+{
+  "task_id": "M0-T030",
+  "title": "In-house code-navigation index: deterministic generator, targeted query CLI, CI determinism check, A/B navigation benchmark",
+  "task_type": "infrastructure",
+  "milestone_id": "M0",
+  "objective": "Build the D-005 V1 code-navigation index entirely in-house (stdlib only): a deterministic generator over services/api, apps/web, packages/contracts and tools that emits an honesty-labeled graph (exact/derived/partial/unresolved edges), a non-self-referential source fingerprint for freshness, a bounded query CLI that never dumps the whole graph, an additive CI job proving determinism and correctness, and a load-bearing 15-20 question A/B navigation benchmark. No Graphify, no hooks, no config changes, no product changes, no new dependencies.",
+  "business_reason": "Owner GO on D-005 amendment 1: reduce repeated repository rediscovery by Claude/agents with advisory navigation infrastructure that cannot go stale silently, without weakening any control-plane, confinement, or supply-chain protection.",
+  "inputs": [
+    "project-control/directives/D-005-codebase-knowledge-graph-pilot/source-001.md (Parts 1, 5-13, 17-19: problem, quality/benchmark/trust/staleness/query requirements)",
+    "project-control/directives/D-005-codebase-knowledge-graph-pilot/source-002-amendment.md (owner GO + ten binding clarifications; requirement rows D-005-R066..R089)",
+    "Read-only source trees to index: services/api/**/*.py, tools/*.py, apps/web/src/**/*.ts|tsx, packages/contracts/** (schemas + generated + scripts)",
+    "House pattern precedents: packages/contracts/scripts/generate_ts_types.py, services/api/scripts/sync_contract_schemas.py, tools/validate_product_map.py, .github/scripts/validate_contracts.py",
+    "docs/LOW_STORAGE_CLOUD_DEVELOPMENT_POLICY.md (thin client), .claude/rules/deployment.md (CI job rules)"
+  ],
+  "outputs": [
+    "tools/code_graph/generate.py - stdlib-only deterministic extractor (python ast for *.py; syntactic import/export extraction for *.ts/*.tsx) emitting graph.json + graph.meta.json into a per-checkout cache directory OUTSIDE the repository (no committed artifact, no .gitignore change)",
+    "tools/code_graph/query.py - bounded deterministic query CLI (find-symbol, file/module summary, upstream imports, downstream importers, neighbors, contract-refs, path-between, impact neighborhood) with source-locatable, size-capped output; recomputes the source fingerprint on every invocation and auto-regenerates (or reports STALE) on mismatch - stale data can never be presented as current",
+    "tools/code_graph/README.md - trust model (advisory index, never authoritative; mandatory source verification for legal/security/control-plane/contracts/dependency-impact/public-interface/acceptance questions), design rationale for the no-committed-artifact freshness model, usage examples",
+    "tools/test_code_graph.py - stdlib test suite on temp fixtures (never live-ledger-composition dependent)",
+    ".github/workflows/ci.yml - one ADDITIVE job 'code-graph': regenerate twice on the runner, assert byte-identical artifacts (determinism), assert fingerprint invariants, run tools/test_code_graph.py; no other job modified",
+    "project-control/reports/M0-T030-producer-report.md - design decisions, honesty-label semantics, exclusion list evidence, self-check results",
+    "project-control/reports/M0-T030-benchmark.md - 15-20 question A/B benchmark: per-question comparison table + overall scoring, observable evidence only (tool operations, relevant/irrelevant files opened, correctness, completeness, missed/false relationships, elapsed time where reproducible); NO token claims"
+  ],
+  "dependencies": [],
+  "allowed_paths": [
+    "tools/code_graph/generate.py",
+    "tools/code_graph/query.py",
+    "tools/code_graph/README.md",
+    "tools/test_code_graph.py",
+    ".github/workflows/ci.yml (ADDITIVE 'code-graph' job only; existing jobs byte-untouched)",
+    "project-control/reports/M0-T030-producer-report.md",
+    "project-control/reports/M0-T030-benchmark.md",
+    "project-control/tasks/M0-T030.json (via control CLI only)"
+  ],
+  "allowed_paths_note": "Generated artifacts (graph.json, graph.meta.json) are written ONLY to a cache directory outside the repository working tree (keyed by repo root + source fingerprint) and to CI temp dirs; nothing generated is committed, so no product PR can ever fail CI because the graph went stale (owner clarification 9) and the self-referential-SHA problem is structurally avoided (owner clarification 2).",
+  "forbidden_paths": [
+    ".claude/** in any form (settings, hooks, skills, agents, rules, worktrees; the 33 orphaned .claude/worktrees husks are NOT to be deleted, moved, or repaired by this task - only excluded from traversal; owner clarification 3)",
+    ".git/hooks/** and any Git hook installation (owner clarification 8)",
+    "Any global/user configuration outside the repository (Claude, Cursor, shell profiles; owner clarification 8)",
+    "services/**, apps/**, packages/**, supabase/** - read-only inputs; zero product changes (D-005-R009)",
+    "project-control/master_plan.json, state.json, gates/, checkpoints/, blockers/, directives/**, product-map.json (orchestrator authority only)",
+    "requirements*.in, requirements*.txt, requirements-tools.lock, package.json, package-lock.json, pyproject.toml - NO new or changed dependencies of any kind (stdlib only; owner clarification 8)",
+    "Graphify/graphifyy in any form: no install, no pipx/uv tool env, no download, no re-evaluation (owner ratified WAIT; D-005-R068)",
+    "Existing CI jobs in .github/workflows/*.yml other than the one additive job; no third-party action may be added (reuse the SHA-pinned checkout/setup steps already in ci.yml)",
+    "docs/** and README.md (any doc integration beyond tools/code_graph/README.md is post-decision-packet work)"
+  ],
+  "acceptance_scenarios": [
+    "AS-1 (executable): fresh generation - `python tools/code_graph/generate.py --repo . --out <tmp>` exits 0 in under 120s on a CI runner, emitting graph.json + graph.meta.json; meta records source fingerprint, generator version, mode, included path roots, exclusion list, node/edge counts, and per-language edge-confidence tallies.",
+    "AS-2 (executable, determinism): two consecutive generations into two temp dirs produce byte-identical graph.json and graph.meta.json (no wall-clock timestamps or nondeterministic ordering inside artifacts; all collections canonically sorted; LF-only output).",
+    "AS-3 (executable, non-self-referential fingerprint): unit tests prove the source fingerprint is computed ONLY over canonical input file paths+bytes (sorted), that editing any indexed source file changes it, and that creating/edit­ing graph artifacts, files under excluded trees, or project-control/reports does NOT change it.",
+    "AS-4 (executable, pollution exclusion): fixture test plants sentinel .py/.ts files under .claude/worktrees/, node_modules/, .next/, __pycache__/, .pytest_cache/, .venv/, dist/, build/, coverage/, .git/ inside a temp repo - none appear as nodes and the exclusion list is recorded in graph.meta.json.",
+    "AS-5 (executable, honesty labels): every edge carries confidence in {exact, derived, partial, unresolved}; Python import edges resolved to indexed modules are 'exact'; TypeScript import edges are 'exact' as SYNTACTIC import facts with resolution status; imports that cannot be resolved inside the indexed tree are emitted as 'unresolved' with the raw specifier, never guessed; V1 emits NO caller/callee edge type at all (deferred; owner clarification 1); a test asserts no unlabeled edge exists.",
+    "AS-6 (executable, bounded query): `python tools/code_graph/query.py` supports find-symbol, file, module, upstream, downstream, neighbors, contract-refs, path, impact; every response includes repo-relative source path (and line where known), is size-capped (documented cap, test-enforced), and the CLI never prints the full graph; querying with a stale cache (fingerprint mismatch) auto-regenerates or exits with an explicit STALE error - a test proves stale results cannot be returned silently.",
+    "AS-7 (executable): `python tools/test_code_graph.py` exits 0; suite uses temp fixtures only and never depends on live ledger/repo composition; generator+query+tests import Python stdlib only (test enumerates imports).",
+    "AS-8 (executable, CI): additive 'code-graph' job in .github/workflows/ci.yml runs AS-2 determinism + the test suite and is green on the task PR; `git diff` of ci.yml shows only the added job block; no new third-party actions.",
+    "AS-9 (evidence, benchmark): project-control/reports/M0-T030-benchmark.md contains 15-20 representative questions each answered under Approach A (existing navigation workflow) and Approach B (graph-first, then source verification), with per-question observable evidence (tool operations, relevant files opened, irrelevant files opened, correct?, complete?, missed relationships, false relationships, elapsed time where reproducible) and an overall scoring; correctness of BOTH approaches verified against actual source by someone other than the answer producer; zero fabricated token counts; explicit statement of any material correctness regression (which fails the benchmark even if B is faster).",
+    "AS-10 (evidence, isolation): task-branch diff touches only allowed paths; git status shows no mutation of .claude/**, .git/hooks/**, product trees, or dependency manifests; no active worktree, dirty file, or unrelated lane was disturbed."
+  ],
+  "required_gates": [
+    "G0",
+    "G3",
+    "G4",
+    "G5"
+  ],
+  "producer_agent": null,
+  "reviewer_agents": [
+    "code-reviewer",
+    "qa-engineer",
+    "security-reviewer",
+    "directive-compliance-verifier"
+  ],
+  "status": "backlog",
+  "progress_percent": 0,
+  "risks": [
+    "CRLF byte-identity on Windows vs LF on CI runners - generator must write LF explicitly and tests must compare bytes it wrote, not checkout-normalized files (precedent: tooling-lock CRLF gotcha, M0-T020).",
+    "Benchmark objectivity - producer must not judge its own answers; correctness verification is performed independently against source (producer != verifier).",
+    "Elapsed-time measurements are environment-sensitive; primary metrics are tool-operation and file-open counts (owner clarification 7).",
+    "TypeScript extraction is syntactic (regex/state-machine, no compiler): dynamic imports, computed re-exports and type-only nuances are PARTIAL/UNRESOLVED by design and must be labeled as such, never inferred (owner clarification 1).",
+    "Scope creep toward project-control/evidence graphs is prohibited in V1 (owner clarifications 4; D-005-R080/R081)."
+  ],
+  "blockers": [],
+  "created_at": "2026-07-29T21:01:11.506335+00:00",
+  "updated_at": "2026-07-29T21:05:00.000000+00:00",
+  "directive_refs": [
+    {
+      "directive_id": "D-005",
+      "requirement_ids": "ALL"
+    }
+  ],
+  "directive_regime_version": "1.0",
+  "directive_regime_entered_at": "2026-07-29T21:01:11.506335+00:00"
+}
