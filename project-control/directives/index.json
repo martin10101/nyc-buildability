@@ -66,7 +66,19 @@
       "superseded_by": null,
       "affected_tasks": [],
       "manifest": "D-004-agent-teams-runtime-adoption/manifest.json"
+    },
+    {
+      "directive_id": "D-005",
+      "slug": "codebase-knowledge-graph-pilot",
+      "title": "Codebase knowledge graph pilot (Graphify) - controlled evaluation before any adoption",
+      "status": "active",
+      "issued_at": "2026-07-29",
+      "issued_by": "owner",
+      "supersedes": [],
+      "superseded_by": null,
+      "affected_tasks": [],
+      "manifest": "D-005-codebase-knowledge-graph-pilot/manifest.json"
     }
   ],
-  "updated_at": "2026-07-24T00:00:00+00:00"
+  "updated_at": "2026-07-29T20:42:00+00:00"
 }

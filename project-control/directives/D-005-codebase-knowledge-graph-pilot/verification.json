@@ -1,0 +1,8 @@
+{
+  "schema": "directive_verification/v2",
+  "directive_id": "D-005",
+  "producer": "orchestrator",
+  "authority_note": "Per-task independent verification (v2). No ledger task is contracted for D-005 yet: D-005-REVIEW (in-session review/due-diligence work) and D-005-PILOT (reserved isolated code-graph pilot) are non-ledger applicability sentinels. Task rows are created when a ledger task is contracted for this directive, and stay pending until an independent verifier (verifier != producer) records PASS at the frozen reviewed identity. The orchestrator (producer of requirements.json) must never record a PASS here.",
+  "task_verifications": [],
+  "updated_at": "2026-07-29T20:42:00+00:00"
+}
