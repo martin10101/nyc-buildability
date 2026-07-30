@@ -68,7 +68,7 @@
     "security-reviewer"
   ],
   "status": "in_progress",
-  "progress_percent": 80,
+  "progress_percent": 90,
   "risks": [
     "Teammates may not inherit skills frontmatter; each spawn prompt must state the frozen SHA and explicitly instruct /run-quality-gate, or Step-1 item 4 fails.",
     "A reviewer sandbox that cannot execute commands cannot return its own rev-parse; per .claude/rules/project-control.md the orchestrator then captures the executable evidence and the reviewer verifies it, and this substitution is recorded explicitly rather than silently.",
@@ -77,7 +77,7 @@
   ],
   "blockers": [],
   "created_at": "2026-07-24T18:23:08.048623+00:00",
-  "updated_at": "2026-07-30T19:23:23.381489+00:00",
+  "updated_at": "2026-07-30T20:24:27.966508+00:00",
   "directive_refs": [
     {
       "directive_id": "D-004",
@@ -130,6 +130,13 @@
       "percent": 80,
       "status": "in_progress",
       "message": "PHASE 4 step 1 (D-004-R453): unblocked through the NORMAL CLI - no direct status edit. The blocked->in_progress transition was accepted by the corrected invalid_unblock_roster guard delivered by M0-T033 (accepted 2026-07-30, PR #132/#133), on the packet's own shape: task_type=governance, producer_agent=orchestrator, required_gates include the independent gates G3 and G5, and reviewer_agents carries four usable independent reviewers distinct from the producer. Confirmed mechanically before attempting the transition (invalid_unblock_roster() -> None), not assumed. The prior blocking condition recorded at 75% is therefore resolved by the owner-authorized OPTION B control-plane fix, not by relabeling the producer: producer_agent remains the truthful orchestrator, which authored all three pilot reports."
+    },
+    {
+      "at": "2026-07-30T20:24:27.966508+00:00",
+      "agent": "orchestrator",
+      "percent": 90,
+      "status": "in_progress",
+      "message": "PHASE 4 steps 5-7 COMPLETE; STOPPED at step 8 on a BLOCKED independent verification. Four independent reviewers dispatched read-only at ONE frozen identity 3ed05fda6d434670e5b610e6dad7a8b224a9aa94, all at EXPLICIT OPUS 5 under D-004-R307; every return preserved VERBATIM (D-004-R385/R468) and nothing edited, softened, or summarized. VERDICTS: code-reviewer G3 = PASS with four required corrections; security-reviewer G5 = PASS, no rework; control-plane-verifier = PASS with five observations; directive-compliance-verifier = BLOCKED. Gates recorded: G0 PASS (historical, byte-verified unaltered), G2 PASS self_check, G3 PASS, G5 PASS - all four required gates now carry a lawful record, no reviewer equals the producer. G3 REWORK APPLIED (all append-only, no historical record touched): D-1 the three evidence-map pointers that named a section and a file not existing at the frozen head are repointed to the artifacts that now exist; D-2 the inherited D-004-R122 pointer that cited sections 2-3 is repointed to section 4 and the carry-forward disclosed rather than silently fixed; D-3 reviewed_sha and content_manifest_sha256 restored to the evidence map; D-4 the AS-9 wording gap disclosed in new section 13.11. Evidence-map id set unchanged at exactly the 233 resolver-derived ids; only pointer text and the two identity fields changed. STOP RECORDED HONESTLY (D-004-R479/R387/R480): the directive-compliance-verifier returned BLOCKED and this closeout did NOT submit, merge, or accept. No reviewer was re-run for a better answer and no red result was called green. What it actually found: ZERO requirements violated - 0 FAIL, 0 BLOCKED-by-defect, 204/233 PASS on primary evidence it reproduced itself, and all of Phase 3 plus Phase-4 steps 1-4 fully verified and clean. Its 29 UNVERIFIABLE rows are evidence that CANNOT exist at a pre-gate frozen head (G3/G5 records, preserved returns, model disclosures, and the whole submit-PR-CI-merge-reverify-accept sequence), which the owner's own Phase-4 ordering places after this wave. STRUCTURAL FINDING FOR THE OWNER: a single directive verification at the pre-gate identity can never reach PASS, because about 12 percent of the applicable set describes acts that follow it; the registry precedent is a second pass at the last pre-accept identity (verification.json records M0-T028 at 177/177 PASS and M0-T033 at 52/52 PASS, both at a pre-accept SHA), which the verifier itself prescribes. Two of its four stated conditions are now satisfied (returns verbatim, models honest) and the G3/G5 records close a third; the remaining one needs the second pass. verification.json still holds the stale 97-row M0-T027 block against 233 derived, so accept() would refuse regardless - fail-closed, verified in code by two reviewers. Owner decision required before merge/accept."
     }
   ]
 }

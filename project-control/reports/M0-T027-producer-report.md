@@ -435,3 +435,88 @@ everything above. By construction that SHA cannot appear inside the tree it name
 the **G2 gate record** (`project-control/gates/M0-T027-G2.json` → `reviewed_sha`), in the submit
 record, and verbatim in **every** reviewer dispatch, so all four independent reviewers rule on one
 identical identity. Section 14 records each reviewer's own `git rev-parse HEAD` against it.
+
+### 13.11 Reviewer dispatch ledger, and the AS-9 wording gap (G3 rework D-1/D-4)
+
+**Dispatch ledger (closes D-004-R384; G3 defect D-1).** All four dispatched read-only against the
+one frozen identity `3ed05fda6d434670e5b610e6dad7a8b224a9aa94`; each confirmed that SHA with its own
+`git rev-parse HEAD` before reviewing.
+
+| agent type | spawn name | model value passed at spawn | model the reviewer itself disclosed | gate/role | verdict |
+|---|---|---|---|---|---|
+| `code-reviewer` | `m0t027-g3` | explicit **Opus 5** | Opus 5, read-only | G3 | **PASS with required corrections** |
+| `security-reviewer` | `m0t027-g5` | explicit **Opus 5** | `claude-opus-5[1m]` | G5 | **PASS** |
+| `control-plane-verifier` | `m0t027-cpv` | explicit **Opus 5** | `claude-opus-5[1m]` | lifecycle + containment | **PASS** (5 observations) |
+| `directive-compliance-verifier` | `m0t027-dcv` | explicit **Opus 5** | `claude-opus-5[1m]` | directive verification | **BLOCKED** |
+
+Recorded honestly per D-004-R465/R466: the actual model was **Opus 5** for every reviewer and for the
+lead, under the still-active temporary availability exception (D-004-R307). **No Fable 5 is claimed
+for any part of this wave.** Three of the four independently disclosed their exact model id and all
+three matched the value passed at spawn.
+
+**AS-9 vs R477 — the wording gap, stated plainly instead of glossed (closes G3 defect D-4;
+independently raised as control-plane O-1 and directive-verifier OBS-2).** Two changed paths —
+`project-control/state.json` and `project-control/gates/M0-T027-G2.json` — appear **verbatim** in
+this packet's own `forbidden_paths` entry 2, and a third, `project-control/reports/M0-T027-evidence-map.json`,
+is **not enumerated in `allowed_paths`**. AS-9's contract-time wording requires the contribution to
+touch "only paths in `allowed_paths`", so **AS-9 cannot be claimed clean on its literal wording**,
+and this report does not claim it is.
+
+What resolves it is that all three are **CLI-written lifecycle artifacts**, not producer edits, and
+each was compelled by the owner's own Phase-4 instructions: step 1 orders the unblock "through the
+normal CLI", which necessarily writes `state.json` and the packet; step 4 orders the G2 self-check,
+which writes the gate record; step 3 orders the evidence-map regeneration, which `_directive_submit_check`
+additionally *requires* for any in-regime submit. D-004-R477 — the later and more specific owner
+instruction — sets the controlling standard as "M0-T027's authorized paths **and lifecycle
+artifacts**", which covers all three. AS-9 itself was deliberately **not** edited: R448/R380 forbid
+any material packet change beyond the two authorized clarifications, and `acceptance_scenarios` is a
+MATERIAL field. The gap is therefore disclosed here and left for a truth-preserving clarification in
+a follow-up task, exactly as all three reviewers recommended, rather than resolved by an unauthorized
+edit.
+
+**Numeric reconciliation the owner is owed (G3 observation O-1).** The owner's stated "97 ids recorded
+vs 150 derived" reconciles exactly against live state, and both independent checks agree: **97** is the
+row count of the stale `verification.json` M0-T027 block; **150** is the applicable set at the
+pre-amendment-11 head `11f3540c` — the directive-compliance-verifier re-derived it by extracting that
+tree and re-running the resolver there. **150 + 83 newly applicable amendment-11 rows = 233**, with
+**zero** previously-applicable id dropped. The owner's number was right for the state the owner saw;
+233 is right for this head.
+
+### 13.12 Independent review outcome, and why this closeout STOPPED short of acceptance
+
+Four returns, all preserved verbatim (D-004-R385/R468) at
+`project-control/reports/M0-T027-{G3-report,G5-report,control-plane-verification,dcv-verification}.md`.
+Nothing was edited, softened, or summarized away — including the findings against the orchestrator's
+own work.
+
+| reviewer | verdict | outstanding |
+|---|---|---|
+| `code-reviewer` (G3) | PASS with required corrections | D-1/D-2/D-3 applied above; D-4 disclosed in section 13.11 |
+| `security-reviewer` (G5) | PASS | no rework; 2 LOW + 3 INFO recorded, all out of scope by R489 or unrelated |
+| `control-plane-verifier` | PASS | O-1 (this section) and O-4 (below) were forward-looking prerequisites |
+| `directive-compliance-verifier` | **BLOCKED** | 29 UNVERIFIABLE rows + the stale 97-row `verification.json` block |
+
+**The BLOCKED verdict is recorded as BLOCKED and was not treated as a pass.** Per D-004-R479/R387 —
+"STOP on any FAIL, BLOCKED, unresolved requirement... do not force, bypass, substitute reviewers, or
+call a red result green" — **M0-T027 was NOT submitted, merged, or accepted in this session.** No
+reviewer was re-run to obtain a better answer, and no verdict was re-characterized.
+
+What the verifier actually found: **0 FAIL, 0 BLOCKED-by-defect, 0 requirements violated**, and 204 of
+233 PASS on primary evidence it reproduced itself. It states its own verdict means "not yet
+certifiable", not "defective", and that all of Phase 3 and Phase-4 steps 1-4 are fully verified and
+clean. The 29 UNVERIFIABLE rows are evidence that **cannot exist at a pre-gate frozen head** — G3/G5
+gate records, the preserved returns, the model disclosures, and the whole
+submit → PR → CI → merge → merged-identity re-verification → accept sequence, which the owner's own
+Phase-4 ordering places *after* this review wave.
+
+This exposes a **structural finding worth the owner's attention**: a single directive verification run
+at the pre-gate frozen identity can never reach PASS, because ~12% of the applicable set describes acts
+that follow it. The precedent in this registry is a second verification pass at the last pre-accept
+identity — `verification.json` records M0-T028 at 177/177 PASS and M0-T033 at 52/52 PASS, both stamped
+at a pre-accept SHA. The verifier itself prescribes exactly that: re-running "should convert all 29 to
+PASS" once its four conditions hold. Two of those four are now satisfied by this commit (returns
+preserved verbatim, models recorded honestly); G3/G5 gate records are recorded alongside it; the
+remaining condition needs the second pass at the post-gate identity.
+
+The orchestrator did **not** decide unilaterally to push through the BLOCKED result to a protected-main
+merge. That decision is the owner's, and the stop is recorded here rather than resolved by assumption.
