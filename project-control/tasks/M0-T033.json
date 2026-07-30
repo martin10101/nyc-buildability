@@ -1,94 +1,126 @@
 {
- "task_id": "M0-T033",
- "title": "Governance-orchestrator unblock-roster semantics",
- "task_type": "governance",
- "milestone_id": "M0",
- "objective": "Correct invalid_unblock_roster GENERALLY so it stops over-triggering on orchestrator-produced governance tasks, without hard-coding any task id and without a bypass flag. Every existing default is preserved (missing producer invalid; non-governance orchestrator producer invalid; empty roster invalid; orchestrator-only roster invalid; producer-only roster invalid; malformed data fails closed; blocked->canceled permitted; independent-gate enforcement unchanged). Exactly ONE narrow valid case is added: a blocked task may leave blocked with producer_agent=orchestrator only when ALL of (1) task_type is exactly 'governance', (2) at least one required gate is drawn from G1/G3/G4/G5/G6, (3) reviewer_agents holds at least one usable independent reviewer (non-empty, not orchestrator, not the producer), and (4) the task stays subject to every existing directive-regime, evidence, gate, submit, verification and acceptance control. gate(), submit(), accept(), directive verification, evidence identity, and producer-versus-reviewer separation must not weaken.",
- "business_reason": "Owner directive D-004 amendment 9 (source-010, rows D-004-R332/R344-R361): the owner REJECTED naming a false producer for M0-T027 (option a) and REJECTED abandoning it (option c), and AUTHORIZED a narrow independently-reviewed control-plane correction (option b). M0-T027's honest producer IS the main-session orchestrator (ADR-005 reserves teammate dispatch, pilot execution and integration to the main session), its evidence is complete and merged, and it already carries three usable independent reviewers - so the guard's stated rationale (an independent gate would otherwise be unsatisfiable) does not hold for it. The purpose is to recognize the orchestrator as the truthful producer of orchestrator-produced governance evidence when independent review remains structurally possible.",
- "inputs": [
-  "project-control/directives/D-004-agent-teams-runtime-adoption/source-010-amendment.md (owner amendment 9, verbatim: OPTION B authorization and the required guard semantics)",
-  "project-control/directives/D-004-agent-teams-runtime-adoption/requirements.json rows D-004-R332, R337-R343 (contracting), R344-R361 (required semantics), R362-R373 (mandatory tests + lifecycle)",
-  "tools/project_control.py invalid_unblock_roster() and its single call site in progress() (the blocked->active transition)",
-  "tools/test_project_control.py (existing unblock-roster regression coverage that must stay green)",
-  "docs/GATES_AND_CHECKPOINTS.md (lifecycle + gate-class invariants; edit ONLY if an invariant statement is actually contradicted by the corrected semantics)",
-  "project-control/tasks/M0-T027.json (the motivating packet: task_type=governance, producer_agent=orchestrator, gates G0/G2/G3/G5, three usable independent reviewers) - READ ONLY, must not be modified by this task"
- ],
- "outputs": [
-  "tools/project_control.py with invalid_unblock_roster corrected generally (no task-id hard-coding, no bypass flag)",
-  "tools/test_project_control.py with the 10 mandatory regression tests of D-004-R362..R371",
-  "docs/GATES_AND_CHECKPOINTS.md updated ONLY if its stated invariant must be corrected (otherwise unchanged, and the report must say so explicitly)",
-  "project-control/reports/M0-T033-producer-report.md (producer evidence: exact diff of semantics, full test output, per-requirement mapping)"
- ],
- "dependencies": [],
- "allowed_paths": [
-  "tools/project_control.py",
-  "tools/test_project_control.py",
-  "docs/GATES_AND_CHECKPOINTS.md",
-  "project-control/reports/M0-T033-producer-report.md",
-  "project-control/tasks/M0-T033.json"
- ],
- "forbidden_paths": [
-  "project-control/tasks/M0-T027.json and M0-T027 in any form (D-004-R374: do NOT touch M0-T027 during this implementation)",
-  "project-control/directives/** (directive-registry writes are the orchestrator's D-001 capture authority, not M0-T033 producer output)",
-  "project-control/master_plan.json, state.json, gates/, checkpoints/, blockers/ (orchestrator lifecycle only)",
-  ".claude/hooks/**, .claude/agents/**, .claude/rules/**, .claude/settings.json, .claude/settings.local.json, .claude/ORCHESTRATION_POLICY.md, CLAUDE.md (D-004-R343)",
-  "tools/** other than project_control.py and test_project_control.py (D-004-R343)",
-  "docs/** other than the conditional GATES_AND_CHECKPOINTS.md correction",
-  ".github/**, render.yaml and any deployment definition",
-  "services/**, apps/**, packages/** and any product/runtime code",
-  "any unrelated control-plane behavior: gate(), submit(), accept(), directive verification, evidence identity, and producer-versus-reviewer separation must not weaken (D-004-R361)"
- ],
- "acceptance_scenarios": [
-  "AS-1 (executable, D-004-R362): an ordinary NON-governance task (e.g. task_type='engineering') with producer_agent='orchestrator' is still REFUSED at the blocked->in_progress transition; the pre-existing regression test for this remains green and unmodified in substance.",
-  "AS-2 (executable, D-004-R363): a task with task_type='governance', producer_agent='orchestrator', at least one required gate from G1/G3/G4/G5/G6, and at least one usable independent reviewer CAN leave blocked; invalid_unblock_roster returns None and progress() performs the transition.",
-  "AS-3 (executable, D-004-R364): task_type='governance' + producer_agent='orchestrator' + EMPTY reviewer_agents is REFUSED.",
-  "AS-4 (executable, D-004-R365): task_type='governance' + producer_agent='orchestrator' + reviewer_agents==['orchestrator'] is REFUSED.",
-  "AS-5 (executable, D-004-R366): task_type='governance' + producer_agent='orchestrator' + required_gates containing NO gate from G1/G3/G4/G5/G6 (e.g. only G0/G2/G7) is REFUSED.",
-  "AS-6 (executable, D-004-R367): malformed roster/gate data (reviewer_agents or required_gates not a list; non-string members; None; nested objects) FAILS CLOSED - invalid_unblock_roster returns an explanatory string and no exception or traceback escapes.",
-  "AS-7 (executable, D-004-R368): a normal non-orchestrator producer with a usable independent reviewer is unaffected - it still unblocks exactly as before, and a non-orchestrator producer whose only reviewer equals the producer is still REFUSED.",
-  "AS-8 (executable, D-004-R369): the blocked->canceled transition remains permitted for every roster shape, including one that the guard would otherwise refuse.",
-  "AS-9 (executable, D-004-R370): an independent reviewer can never equal the producer - the 'usable reviewer' computation still excludes the producer, and gate() still refuses an independent G1/G3/G4/G5/G6 record whose reviewer equals producer_agent (regression proof that gate() did not weaken).",
-  "AS-10 (executable, D-004-R371): the FULL suites are green - python tools/test_project_control.py exits 0 with its total count reported, and python tools/validate_directive_compliance.py --check reports the registry VALID (exit 0).",
-  "AS-11 (executable, D-004-R345/R346): the diff contains NO task-id literal (grep for 'M0-T027' and any 'M0-T0' task-id pattern in the changed region of tools/project_control.py returns nothing) and NO new bypass/override flag, environment variable, or CLI argument.",
-  "AS-12 (executable, D-004-R343/R361): the changed-file set is exactly within allowed_paths; git diff --name-only against the frozen base shows no file outside them, and gate()/submit()/accept()/directive-verification code paths are byte-unchanged except where the corrected roster helper is called."
- ],
- "required_gates": [
-  "G0",
-  "G2",
-  "G3",
-  "G5"
- ],
- "producer_agent": null,
- "reviewer_agents": [
-  "code-reviewer",
-  "security-reviewer",
-  "control-plane-verifier",
-  "directive-compliance-verifier"
- ],
- "status": "backlog",
- "progress_percent": 0,
- "risks": [
-  "Over-broad fix: a helper rewritten to key on 'producer is orchestrator' alone would silently permit non-governance orchestrator producers. AS-1 and AS-5 are the guards; the four conditions must be conjunctive.",
-  "Fail-open on malformed data: treating a non-list reviewer_agents or required_gates as 'empty' could flip a refusal into a pass. AS-6 requires an explanatory refusal, not a traceback and not a silent allow.",
-  "Scope escape: docs/GATES_AND_CHECKPOINTS.md is conditional. Touching it without a real contradicted invariant is an unauthorized change under D-004-R342/R343.",
-  "Producer independence: backend-engineer must not review its own change; all four reviewers (code-reviewer, security-reviewer, control-plane-verifier, directive-compliance-verifier) are distinct from the producer and from each other.",
-  "Collateral weakening: the required independent-gate check (condition 2) reads required_gates, which gate() also consumes. Any refactor there risks changing gate enforcement - AS-9/AS-12 exist to catch it."
- ],
- "blockers": [],
- "created_at": "2026-07-30T15:25:04.982247+00:00",
- "updated_at": "2026-07-30T15:25:05.096328+00:00",
- "directive_refs": [
-  {
-   "directive_id": "D-001",
-   "requirement_ids": "ALL"
-  },
-  {
-   "directive_id": "D-004",
-   "requirement_ids": "ALL"
-  }
- ],
- "directive_regime_version": "1.0",
- "directive_regime_entered_at": "2026-07-30T15:25:04.982247+00:00",
- "allowed_paths_note": "D-004-R342 fixes this task's scope to exactly these paths. docs/GATES_AND_CHECKPOINTS.md is CONDITIONAL: it may be touched ONLY if the corrected semantics actually contradict a stated invariant there; if it does not, the file must remain byte-identical and the producer report must state that explicitly. project-control/tasks/M0-T033.json is an ORCHESTRATOR LIFECYCLE path written only by tools/project_control.py (claim/progress/submit/gate/accept); it is never a producer write target and is listed so a containment diff has no unexplained escape.",
- "worktree": "task/M0-T033-unblock-roster-semantics"
+  "task_id": "M0-T033",
+  "title": "Governance-orchestrator unblock-roster semantics",
+  "task_type": "governance",
+  "milestone_id": "M0",
+  "objective": "Correct invalid_unblock_roster GENERALLY so it stops over-triggering on orchestrator-produced governance tasks, without hard-coding any task id and without a bypass flag. Every existing default is preserved (missing producer invalid; non-governance orchestrator producer invalid; empty roster invalid; orchestrator-only roster invalid; producer-only roster invalid; malformed data fails closed; blocked->canceled permitted; independent-gate enforcement unchanged). Exactly ONE narrow valid case is added: a blocked task may leave blocked with producer_agent=orchestrator only when ALL of (1) task_type is exactly 'governance', (2) at least one required gate is drawn from G1/G3/G4/G5/G6, (3) reviewer_agents holds at least one usable independent reviewer (non-empty, not orchestrator, not the producer), and (4) the task stays subject to every existing directive-regime, evidence, gate, submit, verification and acceptance control. gate(), submit(), accept(), directive verification, evidence identity, and producer-versus-reviewer separation must not weaken.",
+  "business_reason": "Owner directive D-004 amendment 9 (source-010, rows D-004-R332/R344-R361): the owner REJECTED naming a false producer for M0-T027 (option a) and REJECTED abandoning it (option c), and AUTHORIZED a narrow independently-reviewed control-plane correction (option b). M0-T027's honest producer IS the main-session orchestrator (ADR-005 reserves teammate dispatch, pilot execution and integration to the main session), its evidence is complete and merged, and it already carries three usable independent reviewers - so the guard's stated rationale (an independent gate would otherwise be unsatisfiable) does not hold for it. The purpose is to recognize the orchestrator as the truthful producer of orchestrator-produced governance evidence when independent review remains structurally possible.",
+  "inputs": [
+    "project-control/directives/D-004-agent-teams-runtime-adoption/source-010-amendment.md (owner amendment 9, verbatim: OPTION B authorization and the required guard semantics)",
+    "project-control/directives/D-004-agent-teams-runtime-adoption/requirements.json rows D-004-R332, R337-R343 (contracting), R344-R361 (required semantics), R362-R373 (mandatory tests + lifecycle)",
+    "tools/project_control.py invalid_unblock_roster() and its single call site in progress() (the blocked->active transition)",
+    "tools/test_project_control.py (existing unblock-roster regression coverage that must stay green)",
+    "docs/GATES_AND_CHECKPOINTS.md (lifecycle + gate-class invariants; edit ONLY if an invariant statement is actually contradicted by the corrected semantics)",
+    "project-control/tasks/M0-T027.json (the motivating packet: task_type=governance, producer_agent=orchestrator, gates G0/G2/G3/G5, three usable independent reviewers) - READ ONLY, must not be modified by this task"
+  ],
+  "outputs": [
+    "tools/project_control.py with invalid_unblock_roster corrected generally (no task-id hard-coding, no bypass flag)",
+    "tools/test_project_control.py with the 10 mandatory regression tests of D-004-R362..R371",
+    "docs/GATES_AND_CHECKPOINTS.md updated ONLY if its stated invariant must be corrected (otherwise unchanged, and the report must say so explicitly)",
+    "project-control/reports/M0-T033-producer-report.md (producer evidence: exact diff of semantics, full test output, per-requirement mapping)"
+  ],
+  "dependencies": [],
+  "allowed_paths": [
+    "tools/project_control.py",
+    "tools/test_project_control.py",
+    "docs/GATES_AND_CHECKPOINTS.md",
+    "project-control/reports/M0-T033-producer-report.md",
+    "project-control/reports/M0-T033-evidence-map.json",
+    "project-control/reports/M0-T033.json",
+    "project-control/tasks/M0-T033.json"
+  ],
+  "forbidden_paths": [
+    "project-control/tasks/M0-T027.json and M0-T027 in any form (D-004-R374: do NOT touch M0-T027 during this implementation)",
+    "project-control/directives/** (directive-registry writes are the orchestrator's D-001 capture authority, not M0-T033 producer output)",
+    "project-control/master_plan.json, state.json, gates/, checkpoints/, blockers/ (orchestrator lifecycle only) [C1 QUALIFICATION: binds the PRODUCER only; sync_state() writes state.json automatically during the orchestrator lifecycle mandated by D-004-R372]",
+    ".claude/hooks/**, .claude/agents/**, .claude/rules/**, .claude/settings.json, .claude/settings.local.json, .claude/ORCHESTRATION_POLICY.md, CLAUDE.md (D-004-R343)",
+    "tools/** other than project_control.py and test_project_control.py (D-004-R343)",
+    "docs/** other than the conditional GATES_AND_CHECKPOINTS.md correction",
+    ".github/**, render.yaml and any deployment definition",
+    "services/**, apps/**, packages/** and any product/runtime code",
+    "any unrelated control-plane behavior: gate(), submit(), accept(), directive verification, evidence identity, and producer-versus-reviewer separation must not weaken (D-004-R361)"
+  ],
+  "acceptance_scenarios": [
+    "AS-1 (executable, D-004-R362): an ordinary NON-governance task (e.g. task_type='engineering') with producer_agent='orchestrator' is still REFUSED at the blocked->in_progress transition; the pre-existing regression test for this remains green and unmodified in substance.",
+    "AS-2 (executable, D-004-R363): a task with task_type='governance', producer_agent='orchestrator', at least one required gate from G1/G3/G4/G5/G6, and at least one usable independent reviewer CAN leave blocked; invalid_unblock_roster returns None and progress() performs the transition.",
+    "AS-3 (executable, D-004-R364): task_type='governance' + producer_agent='orchestrator' + EMPTY reviewer_agents is REFUSED.",
+    "AS-4 (executable, D-004-R365): task_type='governance' + producer_agent='orchestrator' + reviewer_agents==['orchestrator'] is REFUSED.",
+    "AS-5 (executable, D-004-R366): task_type='governance' + producer_agent='orchestrator' + required_gates containing NO gate from G1/G3/G4/G5/G6 (e.g. only G0/G2/G7) is REFUSED.",
+    "AS-6 (executable, D-004-R367): malformed roster/gate data (reviewer_agents or required_gates not a list; non-string members; None; nested objects) FAILS CLOSED - invalid_unblock_roster returns an explanatory string and no exception or traceback escapes.",
+    "AS-7 (executable, D-004-R368): a normal non-orchestrator producer with a usable independent reviewer is unaffected - it still unblocks exactly as before, and a non-orchestrator producer whose only reviewer equals the producer is still REFUSED.",
+    "AS-8 (executable, D-004-R369): the blocked->canceled transition remains permitted for every roster shape, including one that the guard would otherwise refuse.",
+    "AS-9 (executable, D-004-R370): an independent reviewer can never equal the producer - the 'usable reviewer' computation still excludes the producer, and gate() still refuses an independent G1/G3/G4/G5/G6 record whose reviewer equals producer_agent (regression proof that gate() did not weaken).",
+    "AS-10 (executable, D-004-R371): the FULL suites are green - python tools/test_project_control.py exits 0 with its total count reported, and python tools/validate_directive_compliance.py --check reports the registry VALID (exit 0).",
+    "AS-11 (executable, D-004-R345/R346): the diff contains NO task-id literal (grep for 'M0-T027' and any 'M0-T0' task-id pattern in the changed region of tools/project_control.py returns nothing) and NO new bypass/override flag, environment variable, or CLI argument.",
+    "AS-12 (executable, D-004-R343/R361): the changed-file set is exactly within allowed_paths; git diff --name-only against the frozen base shows no file outside them, and gate()/submit()/accept()/directive-verification code paths are byte-unchanged except where the corrected roster helper is called."
+  ],
+  "required_gates": [
+    "G0",
+    "G2",
+    "G3",
+    "G5"
+  ],
+  "producer_agent": "backend-engineer",
+  "reviewer_agents": [
+    "code-reviewer",
+    "security-reviewer",
+    "control-plane-verifier",
+    "directive-compliance-verifier"
+  ],
+  "status": "awaiting_gate",
+  "progress_percent": 97,
+  "risks": [
+    "Over-broad fix: a helper rewritten to key on 'producer is orchestrator' alone would silently permit non-governance orchestrator producers. AS-1 and AS-5 are the guards; the four conditions must be conjunctive.",
+    "Fail-open on malformed data: treating a non-list reviewer_agents or required_gates as 'empty' could flip a refusal into a pass. AS-6 requires an explanatory refusal, not a traceback and not a silent allow.",
+    "Scope escape: docs/GATES_AND_CHECKPOINTS.md is conditional. Touching it without a real contradicted invariant is an unauthorized change under D-004-R342/R343.",
+    "Producer independence: backend-engineer must not review its own change; all four reviewers (code-reviewer, security-reviewer, control-plane-verifier, directive-compliance-verifier) are distinct from the producer and from each other.",
+    "Collateral weakening: the required independent-gate check (condition 2) reads required_gates, which gate() also consumes. Any refactor there risks changing gate enforcement - AS-9/AS-12 exist to catch it."
+  ],
+  "blockers": [],
+  "created_at": "2026-07-30T15:25:04.982247+00:00",
+  "updated_at": "2026-07-30T18:18:20.191785+00:00",
+  "directive_refs": [
+    {
+      "directive_id": "D-001",
+      "requirement_ids": "ALL"
+    },
+    {
+      "directive_id": "D-004",
+      "requirement_ids": "ALL"
+    }
+  ],
+  "directive_regime_version": "1.0",
+  "directive_regime_entered_at": "2026-07-30T15:25:04.982247+00:00",
+  "allowed_paths_note": "D-004-R342 fixes this task's scope to exactly these paths. docs/GATES_AND_CHECKPOINTS.md is CONDITIONAL: it may be touched ONLY if the corrected semantics actually contradict a stated invariant there; if it does not, the file must remain byte-identical and the producer report must state that explicitly. project-control/tasks/M0-T033.json is an ORCHESTRATOR LIFECYCLE path written only by tools/project_control.py (claim/progress/submit/gate/accept); it is never a producer write target and is listed so a containment diff has no unexplained escape. ORCHESTRATOR CORRECTION C1 (raised by control-plane-verifier, code-reviewer G3 and security-reviewer G5; see project-control/reports/M0-T033-orchestrator-corrections.md): project-control/reports/M0-T033-evidence-map.json was OMITTED from this array at contracting time even though _directive_submit_check STRUCTURALLY REFUSES an in-regime submit without --evidence-map. It is authorized by D-004-R342 (\"M0-T033 own packet AND REPORTS\") and is an ORCHESTRATOR LIFECYCLE artifact, never a producer write target; it is added here so a containment diff has no unexplained escape. project-control/state.json is likewise written automatically by sync_state() during the orchestrator lifecycle - its forbidden_paths entry is retained and qualified below, binding the PRODUCER only. This was an orchestrator packet-drafting defect, NOT a producer escape: the producer commit 6592b89 touched exactly three files, all inside allowed_paths, verified by three independent reviewers. V1 COMPLETION (directive-compliance-verifier): project-control/reports/M0-T033.json - the CLI submit record written by submit() and READ FROM DISK by _directive_accept_reasons - is likewise added as an orchestrator-lifecycle path. It was untracked entirely until the control-plane verifier caught it (finding D-1, fixed at 6dec7a5); had it shipped untracked, accept would have failed on any fresh checkout and permanently blocked M0-T027 through D-004-R419.",
+  "worktree": "task/M0-T033-unblock-roster-semantics",
+  "progress_log": [
+    {
+      "at": "2026-07-30T16:42:24.939627+00:00",
+      "agent": "orchestrator",
+      "percent": 55,
+      "status": "claimed",
+      "message": "PRODUCER REWORK CYCLE 1 (in-scope; no new directive amendment per explicit owner ruling that this is execution guidance within already-captured scope, NOT a new directive - recorded here rather than as an amendment so the instruction stays traceable without amending the registry).\n\nORCHESTRATOR EXACT-DIFF CONTAINMENT REVIEW of the first producer return, at frozen base 170478efc34e52f3479d9bb0ac914ad0c364b245 in isolated worktree .claude/worktrees/agent-af94933c3b313bae5.\n\nVERIFIED CLEAN (orchestrator re-ran everything independently, did not accept producer claims): containment exact - git status -uall shows only tools/project_control.py, tools/test_project_control.py, project-control/reports/M0-T033-producer-report.md plus 2 own-agent-memory files; docs/GATES_AND_CHECKPOINTS.md byte-identical (git diff --exit-code exit 0); zero M0-T027 occurrences in project_control.py; full suite re-run by the orchestrator = 15/15 groups, S10 executing, exit 0; S10 registered in ALL_TESTS with the summary count computed from len(ALL_TESTS), not hardcoded; guard diff matches the required semantics with the four conditions structurally conjunctive (the orchestrator-producer branch is reachable only AFTER the general usable-reviewer check).\n\nPRODUCER FINDING PRESERVED: the producer identified a genuine PRE-EXISTING FAIL-OPEN defect in the original guard - task.get('reviewer_agents') or [] iterated a bare string 'rev-a' into ['r','e','v','-','a'], every element truthy and unequal to orchestrator/producer, so a malformed packet PASSED the roster check. The fix closes it. Disclosed as a finding, not folded in silently.\n\nDEFECT FOUND, REWORK REQUIRED (D-004-R412 forbids waiving; D-004-R414 makes it in-scope correctable): the R413/R414 execution-proof mechanism is incomplete and its own comment overstates it. tools/test_project_control.py:1644-1650 claims each numbered block records on reaching its end, that the exact expected label sequence is asserted at function end, and that per-block counts print with the OK line. In fact _rec() is called for blocks 1-5 ONLY (lines 1673, 1697, 1710, 1723, 1740); blocks 6-9 and the source-level generality proofs never record; the 'executed' list is appended to but NEVER READ, so no label-sequence assertion exists; and the OK line prints no counts. The uncovered blocks are exactly those proving R352/R367, R368, R369, R370. The tests do genuinely run - the orchestrator confirmed that independently - but the mechanism offered as PROOF of execution does not cover more than half the blocks while asserting that it does. That is presence-of-code standing in for proof-of-execution, the precise failure mode D-004-R413/R414 exist to prevent. Additionally the report's per-requirement mapping stops at R373 and never mentions R413/R414.\n\nREWORK DISPATCHED to the same producer (backend-engineer, explicit Opus 5 under D-004-R307), 8 binding items: every block records; assert the COMPLETE expected label sequence; OK line reports executed AND expected block counts plus per-block case counts; regenerate the evidence mapping from the CANONICAL resolver-derived applicable set (52 ids at this head: R332, R335-R373, R387, R389, R410-R419) rather than a hand-picked range, with orchestrator-scope rows marked not-claimed; negative control in the isolated worktree only (inject one controlled guard defect, prove S10 fails FOR THE EXPECTED REASON, restore, prove S10 and full suite pass, prove the defect is absent from the final diff); re-run containment; preserve the fail-open finding as an explicit disclosure; and leave the R368-vs-R352 asymmetry, the whitespace-stripping tightening, and the AS-11 interpretation OPEN for independent reviewers with no self-certification.\n\nThe orchestrator did NOT fix the defect itself: authoring producer evidence would collapse the producer-versus-orchestrator separation this very task is about. NOTHING IS PORTED until the corrected return is complete (D-004-R417). No gate has been recorded beyond the administrative G0. M0-T027 untouched (D-004-R419); Step 5/M0-T029, M0-T032, M0-T025 not begun (D-004-R420)."
+    },
+    {
+      "at": "2026-07-30T17:39:42.860284+00:00",
+      "agent": "orchestrator",
+      "percent": 85,
+      "status": "awaiting_gate",
+      "message": "TWO OF FOUR INDEPENDENT REVIEWS RETURNED - both PASS with binding corrections. Reviewed identity 1e86cd74cc0f80bd1c2bd238e088b11640b1f2a0 (content identity cd8f93b7...; unchanged by the later project-control-only commits, which the manifest excludes).\n\ncontrol-plane-verifier: PASS with C1-C4. Verified the orchestrator's own claims rather than accepting them - re-hashed the LIVE producer worktree to confirm the tree-identical port, proved by byte-level re-serialization that no lifecycle field was ever hand-edited after contracting, and showed tools/test_project_control.py has ZERO deleted lines base->HEAD (pre-existing S8 unmodified in bytes, not merely in substance). Scanned all 52 accepted tasks: no missing required-gate PASS, no self-approved independent gate.\n\ncode-reviewer (G3): PASS with C1-C3. Went well beyond the producer: exhausted 143,640 input shapes against the base implementation and found exactly 756 newly-passing shapes, ALL of them the single intended case (producer=orchestrator AND task_type=governance AND >=1 independent gate AND a usable reviewer), with ZERO raises. Ran SIX independent mutants at HEAD - each broke S10 in the block covering the disabled condition, and the unmutated control passed, proving S10 genuinely binds rather than passing vacuously. Real-ledger scan: the verdict flips for exactly three packets (M0-T023, M0-T024 both accepted/terminal/inert, and M0-T027), purely by shape; M0-T007/M0-T008 remain blocked, so the original M0-T014 G3 OBS-3 protection is intact.\n\nCONVERGENT RULINGS (reached independently, not by deference): OQ-1 -> D-004-R368 DOMINATES, leave the validation asymmetry as built (both reasoned that malformed required_gates makes accept() fail LOUD, never open, and that R352's subject is roster data which now fails closed on EVERY path). OQ-2 -> ACCEPT the whitespace tightening (proved monotonically tightening; it is what makes R350 actually hold). OQ-3 -> ACCEPT the producer's AS-11 reading; R345's binding text is satisfied absolutely (0 occurrences of M0-T027 in the module) and the literal packet clause would require deleting pre-existing provenance, violating CLAUDE.md principle 2. NEGATIVE-CONTROL RE-RUN: NOT REQUIRED (premise verified by blob hash across the base advance; superseded by the G3 reviewer's own six mutants at HEAD).\n\nFINDING F-1 IS MORE SEVERE THAN THE PRODUCER REPORTED, independently reproduced by the orchestrator on the reachable NON-orchestrator path: at base, reviewer_agents='orchestrator' (a bare string naming ONLY the reserved identity) PASSED the roster check, as did 'rev-a', 'x' and a dict; reviewer_agents=7 raised TypeError. The base guard could be defeated by the very identity R350 exists to exclude. HEAD refuses all five.\n\nORCHESTRATOR DEFECT ACKNOWLEDGED (C1, authored by me, not the producer): the packet's allowed_paths omit project-control/reports/M0-T033-evidence-map.json - which _directive_submit_check MANDATES for an in-regime submit - and forbidden_paths lists state.json while R372 mandates the lifecycle that sync_state() writes to it. Internally inconsistent packet drafting. The producer's own commit 6592b89 touched exactly three files, all inside allowed_paths; producer containment is clean.\n\nD-1 ALREADY FIXED at 6dec7a5 (CLI submit record project-control/reports/M0-T033.json was untracked; 47 peers tracked; would have failed accept on any fresh checkout and permanently blocked M0-T027 via R419 - exact recurrence of the M0-T028 defect fixed in 14ed27f). Identity-neutral, proven empirically before and after.\n\nSTILL OPEN: security-reviewer G5 (first spawn died mid-run on an API connection error just as it began a mutation test; orchestrator verified NO tree contamination - both tools/ blobs byte-identical to HEAD - and re-dispatched with instructions to mutate only a copy outside the repo) and directive-compliance-verifier. Remaining corrections C1/C2/C3 all land in project-control/, which the content manifest excludes, so applying them does not disturb the reviewed content identity. No gate beyond administrative G0 recorded yet. M0-T027 untouched (R419); Step 5/M0-T029, M0-T032, M0-T025 not begun (R420)."
+    },
+    {
+      "at": "2026-07-30T18:01:23.508761+00:00",
+      "agent": "orchestrator",
+      "percent": 95,
+      "status": "awaiting_gate",
+      "message": "STOPPED BEFORE MERGE ON A RED CI CHECK (D-004-R321/R387: stop on any blocking or ambiguous result; do not improvise).\n\nALL FOUR INDEPENDENT REVIEWS PASSED and all four gates are recorded: G0 administrative, G2 self_check, G3 code-reviewer, G5 security-reviewer - G2/G3/G5 all at ONE frozen identity fda2dc3a7bd07e60ceeab6b467d7ecf7a67ace2c, content manifest cd8f93b76116c1e43b84bb0aa54f5ad621ddc16ae5e0a932cdfe86f65a8e1665 (D-004-R373). Independent directive verification recorded PASS at 52/52 applicable ids, 0 violated, 0 blocked, 0 unverifiable. PR #132 opened.\n\nBLOCKING FINDING: CI check 'web-e2e (vitest + Playwright vs recorded-official-fixture API)' FAILED on PR #132; mergeStateStatus BLOCKED. The failure is apps/web/e2e/a11y-announcements.spec.ts:169 - 'S2: KEYBOARD retry on Confirm - focus moves to the loading card, then the outcome heading, never body' - assertion expect(during.isBody).toBe(false) got true. 65 passed, 1 failed. This is a focus-timing assertion in the web frontend.\n\nEVIDENCE THAT IT IS UNRELATED TO M0-T033, gathered rather than assumed: (1) this branch changes ZERO files under apps/, packages/, services/ or .github/ - the diff vs origin/main is confined to tools/project_control.py, tools/test_project_control.py and project-control/**; (2) the SAME web-e2e job PASSED in the sibling workflow run on the SAME commit (run 30568247444 pass, run 30568243759 fail) - a pass and a fail on identical content is direct flake evidence; (3) main is green on its latest runs; (4) 65 of 66 Playwright tests passed and the single failure is a focus-race assertion, a classic timing flake.\n\nNOT MERGED. The orchestrator did NOT force-merge, did NOT disable or bypass the check, did NOT re-run in a loop, and did NOT rationalize a red check as green. A GitHub API rate limit (5,000/hr) was also hit while gathering this evidence, so no further gh calls were made.\n\nOWNER DECISION REQUIRED before merge, because D-004-R321 makes a blocking or ambiguous CI result a stop condition and D-004-R322 conditions merge on 'only if everything passes': either (a) authorize a re-run of the flaky web-e2e job once the rate limit resets and, if green, proceed to merge and accept; or (b) direct that the flake be investigated as its own tracked task before M0-T033 merges. The orchestrator recommends (a) on the evidence above, but will not decide it unilaterally.\n\nM0-T027 remains untouched (D-004-R419) and is NOT unblocked - Phase 3/4 have not begun. Step 5/M0-T029, M0-T032 and M0-T025 remain not begun (D-004-R420). Accepted-task count remains 52; no checkpoint created."
+    },
+    {
+      "at": "2026-07-30T18:18:20.191785+00:00",
+      "agent": "orchestrator",
+      "percent": 97,
+      "status": "awaiting_gate",
+      "message": "EVIDENCE-HYGIENE RECONCILIATION (owner pre-merge check). DETERMINATION: no reviewer evidence is altered; a forward-looking convention is recorded instead.\n\nFINDINGS. (1) Machine-specific paths present as bare file citations in three M0-T033 reports: directive-verification 12, control-plane-verification 11, G3 6; G5 has ZERO. (2) NOT a new exposure: branch-wide 59 tracked files carry the pattern and 56 are ALREADY on public main, going back to M0-T002 across roughly 30 merged reviewer reports; commit author metadata additionally publishes the owner name and email by construction. (3) NOTHING more sensitive than a Windows username plus a local directory path: zero credentials, tokens, secrets, private sources or keys. Every hit on password/secret/token/api_key/service_role/supabase/ghp_/sk-/xox is benign PROSE - the words occur inside the G5 reviewer's own security-sweep grep pattern and in assertion text. All 12 commits on this branch passed the gitleaks pre-commit hook (no leaks found).\n\nREMEDIATION CHOSEN (smallest compliant). Reviewer evidence is NOT altered. Redacting only these three files would be security theater: it cannot un-publish the same username already in 56 files on public main, in existing clones and in the public event log, so it would reduce exposure by zero. Altering the bodies would either break the binding verbatim report-preservation rule or force relabelling evidence that four recorded gates depend on. The compliant minimum is this record plus the convention that NEW reports cite repository-relative paths.\n\nVERIFIER REISSUE: NOT REQUIRED. Nothing sensitive is present, and a sanitized reissue of 3 of 59 files would destroy verbatim provenance for no security gain.\n\nHISTORY REWRITE: NOT REQUIRED AND NOT PERFORMED. No force-push, no history rewrite, no rebase - none was authorized, and rewriting could not recall an already-public username. A normal follow-up commit carries this record.\n\nINVARIANTS RE-VERIFIED AT THIS HEAD: content manifest cd8f93b76116c1e43b84bb0aa54f5ad621ddc16ae5e0a932cdfe86f65a8e1665 UNCHANGED; M0-T027 blob 1d226e997866faca7a2912250984254f7251ddc8 IDENTICAL to origin/main (untouched, D-004-R419).\n\nFORWARD CONVENTION (non-blocking, for future dispatches): reviewer dispatch prompts should ask for repository-relative paths in evidence citations. Retrofitting the 56 already-public files is a separate owner decision and is NOT undertaken here."
+    }
+  ]
 }
