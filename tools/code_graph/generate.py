@@ -11,8 +11,10 @@ Hard properties (acceptance scenarios AS-1..AS-5):
     wall-clock timestamp, username, or absolute path appears in artifacts.
   * Non-self-referential fingerprint: the source fingerprint is computed
     ONLY over the canonical input source files (sorted relpath + sha256 of
-    CRLF-normalized bytes). Generated artifacts, excluded trees, and report
-    files are never inputs, so the graph can never invalidate itself.
+    CRLF-normalized bytes) plus the listed config inputs (CONFIG_INPUTS,
+    e.g. apps/web/tsconfig.json, which steers '@/' alias resolution).
+    Generated artifacts, excluded trees, and report files are never inputs,
+    so the graph can never invalidate itself.
   * Honesty labels: every edge carries confidence in
     {exact, derived, partial, unresolved}. Nothing is guessed: an import
     that cannot be resolved inside the indexed tree is emitted as
@@ -36,7 +38,7 @@ import shutil
 import sys
 import tempfile
 
-GENERATOR_VERSION = "1.0.0"
+GENERATOR_VERSION = "1.0.1"
 SCHEMA_VERSION = "1.0.0"
 MODE = "code-only"
 
@@ -139,11 +141,27 @@ def scan_input_files(repo_root: str) -> list[str]:
 # fingerprint (non-self-referential; AS-3)
 # --------------------------------------------------------------------------
 
+# Config files that steer generation without being indexed source files
+# (G3 Finding 1): editing one changes graph output, so each existing entry
+# is hashed into the source fingerprint exactly like a source file. Absent
+# entries contribute nothing, so a repo without them still fingerprints
+# deterministically. Repo-relative posix paths.
+CONFIG_INPUTS = ("apps/web/tsconfig.json",)
+
 FINGERPRINT_ALGORITHM = (
     "sha256 over the relpath-sorted sequence of 'relpath\\0sha256(bytes with "
-    "b\"\\r\\n\" replaced by b\"\\n\")\\n' for every included input source file; "
-    "generated artifacts, excluded directories, and report files are never inputs."
+    "b\"\\r\\n\" replaced by b\"\\n\")\\n' for every included input source file, "
+    "followed by the same entry for each config input that exists (currently "
+    "apps/web/tsconfig.json, which steers '@/' alias resolution); generated "
+    "artifacts, excluded directories, and report files are never inputs."
 )
+
+
+def _fingerprint_entry(repo_root: str, rel: str) -> bytes:
+    with open(os.path.join(repo_root, *rel.split("/")), "rb") as fh:
+        data = fh.read().replace(b"\r\n", b"\n")
+    inner = hashlib.sha256(data).hexdigest()
+    return rel.encode("utf-8") + b"\0" + inner.encode("ascii") + b"\n"
 
 
 def compute_source_fingerprint(repo_root: str, files: list[str] | None = None) -> str:
@@ -151,10 +169,10 @@ def compute_source_fingerprint(repo_root: str, files: list[str] | None = None) -
         files = scan_input_files(repo_root)
     outer = hashlib.sha256()
     for rel in files:
-        with open(os.path.join(repo_root, *rel.split("/")), "rb") as fh:
-            data = fh.read().replace(b"\r\n", b"\n")
-        inner = hashlib.sha256(data).hexdigest()
-        outer.update(rel.encode("utf-8") + b"\0" + inner.encode("ascii") + b"\n")
+        outer.update(_fingerprint_entry(repo_root, rel))
+    for rel in CONFIG_INPUTS:
+        if os.path.isfile(os.path.join(repo_root, *rel.split("/"))):
+            outer.update(_fingerprint_entry(repo_root, rel))
     return outer.hexdigest()
 
 
@@ -679,7 +697,9 @@ class _EdgeSet:
 
 
 def build_graph(repo_root: str) -> tuple[dict, dict, list[str]]:
-    """(graph, meta, input_files). Pure function of the input file bytes."""
+    """(graph, meta, input_files). Pure function of the input file bytes
+    plus the CONFIG_INPUTS config files (currently apps/web/tsconfig.json,
+    read by _load_ts_aliases); all of these are fingerprint inputs."""
     input_files = scan_input_files(repo_root)
     files_text: dict[str, str] = {}
     for rel in input_files:

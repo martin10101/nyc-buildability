@@ -81,9 +81,11 @@ because of a stale graph, and staleness is *detected* instead of trusted:
 the **source fingerprint** is `sha256` over the relpath-sorted sequence of
 `relpath\0sha256(normalized_bytes)\n` for every **input** source file
 (`normalized_bytes` = raw bytes with `\r\n` replaced by `\n`, so checkouts
-with different line endings fingerprint identically). Generated artifacts,
-excluded trees, and report files are **never** fingerprint inputs, so the
-graph cannot invalidate itself (no self-referential SHA).
+with different line endings fingerprint identically), followed by the same
+entry for each existing config input (`CONFIG_INPUTS`, currently
+`apps/web/tsconfig.json`, which steers `@/` alias resolution). Generated
+artifacts, excluded trees, and report files are **never** fingerprint
+inputs, so the graph cannot invalidate itself (no self-referential SHA).
 
 `query.py` recomputes the fingerprint **first on every invocation**. On
 mismatch it regenerates in-process and prints `regenerated (stale

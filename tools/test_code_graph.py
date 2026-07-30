@@ -208,6 +208,48 @@ class CodeGraphTests(unittest.TestCase):
             fh.write(data.replace(b"\n", b"\r\n"))
         self.assertEqual(fp1, generate.compute_source_fingerprint(self.repo))
 
+    # ---- G3 C1: config inputs (apps/web/tsconfig.json) -----------------------
+
+    def test_fingerprint_changes_when_tsconfig_changes(self):
+        fp1 = generate.compute_source_fingerprint(self.repo)
+        _write(self.repo, "apps/web/tsconfig.json",
+               json.dumps({"compilerOptions":
+                           {"paths": {"@/*": ["./src/*"],
+                                      "~lib/*": ["./src/lib/*"]}}}))
+        fp2 = generate.compute_source_fingerprint(self.repo)
+        self.assertNotEqual(
+            fp1, fp2,
+            "editing apps/web/tsconfig.json changes alias resolution and "
+            "therefore graph output; it must invalidate the fingerprint")
+
+    def test_repo_without_tsconfig_deterministic_and_invariants_hold(self):
+        os.remove(os.path.join(self.repo, "apps", "web", "tsconfig.json"))
+        # two generations are still byte-identical
+        out_a = os.path.join(self.base, "out-notc-a")
+        out_b = os.path.join(self.base, "out-notc-b")
+        generate.generate_into(self.repo, out_a)
+        generate.generate_into(self.repo, out_b)
+        for name in ("graph.json", "graph.meta.json"):
+            self.assertEqual(read_bytes(os.path.join(out_a, name)),
+                             read_bytes(os.path.join(out_b, name)),
+                             "artifact %s not byte-identical without tsconfig"
+                             % name)
+        # fingerprint still ignores excluded trees, artifacts, and reports
+        fp1 = generate.compute_source_fingerprint(self.repo)
+        plant_sentinels(self.repo)
+        _write(self.repo, "graph.json", '{"junk": true}')
+        _write(self.repo, "graph.meta.json", '{"junk": true}')
+        _write(self.repo, "project-control/reports/some-report.md", "# r\n")
+        self.assertEqual(fp1, generate.compute_source_fingerprint(self.repo))
+
+    def test_unparseable_tsconfig_falls_back_to_default_no_crash(self):
+        _write(self.repo, "apps/web/tsconfig.json", "{not valid json !!!")
+        out = os.path.join(self.base, "out-badtc")
+        gen(self.repo, out)  # must not raise
+        with open(os.path.join(out, "graph.meta.json"), "rb") as fh:
+            meta = json.loads(fh.read().decode("utf-8"))
+        self.assertEqual(meta["ts_aliases"], [["@/", "apps/web/src/"]])
+
     # ---- AS-4: pollution exclusion -----------------------------------------
 
     def test_sentinel_files_never_indexed_and_exclusions_recorded(self):
