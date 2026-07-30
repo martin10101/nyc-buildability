@@ -224,19 +224,97 @@ def _uncertainty_effect(
     return None, trace
 
 
+def _unsupplied_predicate_inputs(condition: dict, inputs: dict) -> list[str]:
+    """The input names ``condition`` READS that were not supplied - detected BY NAME
+    from the predicate tree (:func:`_predicate_input_names`), never inferred from an
+    evaluation outcome.
+
+    "Not supplied" is the same test the rest of the engine already uses (absent key
+    OR a present ``None``): :func:`_validate_inputs` treats ``value is None`` as
+    missing, and so does the ``optional_missing`` computation in :func:`evaluate`.
+    Both spellings reach ``inputs.get(name) -> None`` inside :func:`_eval_predicate`,
+    so both produce the identical unsupported answer and both must be caught here.
+
+    By-name detection is required because the predicate outcome cannot be trusted to
+    reveal the gap: :mod:`.operations` predicates are deliberately TOTAL - ``equals``
+    / ``in_set`` / ``compare`` return ``False`` for a value they never saw rather
+    than raising - so a ``False`` carries no information about whether the input was
+    read at all. The sorted list makes the resulting note deterministic."""
+    return sorted(
+        name for name in _predicate_input_names(condition) if inputs.get(name) is None
+    )
+
+
 def _apply_exceptions(rule: RuleDefinition, inputs: dict) -> tuple[str | None, list, list]:
-    """Return (coverage_downgrade_or_None, exceptions_applied, notes)."""
+    """Return (coverage_downgrade_or_None, exceptions_applied, notes).
+
+    THREE-VALUED over exception conditions (M4-T008, defect DF-6). Exceptions are the
+    mechanism by which a rule DOWNGRADES its own coverage (commercial overlay,
+    special district, historic district, large site, qualifying-site alternative), so
+    an exception condition evaluated two-valued turned "an optional legal input was
+    never supplied" into "the exception does not apply" - a SILENT SKIP of an
+    escalation the engine had no evidence to skip (fail-OPEN). Deterministic code
+    must never read a missing legal input as ``False``.
+
+    The rule implemented here, per exception:
+
+    * ``condition: null`` (unconditional documented limitation) - always applies,
+      unchanged.
+    * condition reads only SUPPLIED inputs - evaluated exactly as before (both
+      outcomes), so all-inputs-present behaviour is bit-for-bit preserved.
+    * condition would SKIP the exception (``holds`` is false) while reading one or
+      more UNSUPPLIED inputs - INDETERMINATE. The engine cannot support "does not
+      apply", so it routes to the existing indeterminate escalation,
+      ``professional_review_required``, and records a note naming the exception id
+      and every unsupplied input the condition reads. Never a silent skip.
+    * condition APPLIES the exception while reading unsupplied inputs - the
+      exception is applied (an applied exception can only move coverage AWAY from
+      ``verified`` via :func:`coverage.most_severe`, so applying is the conservative
+      direction and is never a fail-open miss), and an extra note makes the
+      unsupported basis explicit rather than silent.
+
+    An indeterminate exception is NOT added to ``exceptions_applied``: asserting it
+    applied would be exactly as unfounded as asserting it did not. The coverage
+    downgrade plus the named note carry the fact, using only existing contract
+    fields - no key is added to any trace object and no schema changes.
+
+    Unsupplied optional inputs that NO exception condition reads are untouched: they
+    remain an ``optional_missing`` note with ``missing_noncritical`` completeness."""
     downgrade: str | None = None
     applied: list = []
     notes: list = []
     for exc in rule.exceptions:
         condition = exc.get("condition")
-        holds = True if condition is None else _eval_predicate(condition, inputs)[0]
+        if condition is None:
+            holds, unsupplied = True, []
+        else:
+            unsupplied = _unsupplied_predicate_inputs(condition, inputs)
+            holds = _eval_predicate(condition, inputs)[0]
+            if not holds and unsupplied:
+                # DF-6: the two-valued engine would silently SKIP a
+                # coverage-downgrading exception on evidence it never had.
+                # Escalate to professional review instead of guessing "no".
+                downgrade = cov.most_severe(downgrade or cov.COVERAGE_VERIFIED, _PRR)
+                notes.append(
+                    f"exception {exc['id']} indeterminate: its condition reads "
+                    f"input(s) not supplied: {unsupplied}; whether this exception "
+                    "applies cannot be determined from the supplied inputs, so the "
+                    "result is escalated to professional review instead of being "
+                    "treated as not applying (fail-closed)"
+                )
+                continue
         if not holds:
             continue
         effect = exc["effect"]
         applied.append({"id": exc["id"], "effect": effect, "description": exc["description"]})
         notes.append(f"exception {exc['id']}: {exc['description']}")
+        if unsupplied:
+            notes.append(
+                f"exception {exc['id']} was applied although its condition reads "
+                f"input(s) not supplied: {unsupplied}; the exception is applied "
+                "(the conservative direction - an applied exception can only "
+                "downgrade coverage) but it is NOT an evidence-based determination"
+            )
         if effect == "professional_review_required":
             downgrade = cov.most_severe(downgrade or cov.COVERAGE_VERIFIED, _PRR)
         elif effect == "conditional_alternative":
