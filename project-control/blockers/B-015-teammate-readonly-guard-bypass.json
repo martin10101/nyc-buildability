@@ -1,7 +1,7 @@
 {
   "blocker_id": "B-015",
   "title": "Read-only guard does not fire for agent-teams teammates: reviewer Bash redirection created a repo file",
-  "status": "open",
+  "status": "resolved",
   "affects": [
     "M0-T027 (D-004 pilot-governance; Step 1 negative test FAILED)",
     "M0-T028 (D-004 Step 3 producer-confinement task; must root-cause and fix this before producer teams)",
@@ -19,6 +19,11 @@
       "at": "2026-07-24T00:00:00Z",
       "by": "orchestrator",
       "result": "OPENED from the D-004 Step-1 read-only reviewer pilot at frozen SHA da0d42b6e9334e823a95aa5cd120f480dbc501c8 (task M0-T027). Three reviewer teammates were spawned from named .claude/agents/ definitions; the sentinel negative test was assigned to the code-reviewer teammate. Write attempt: denied by tool-unavailability. Bash redirection: NOT denied, file created. Orchestrator independent verification: `test -e ./PILOT_SENTINEL.tmp` -> exit 0 (EXISTS), 2 bytes, untracked. Full evidence, including every reviewer's verdict and verbatim report, is preserved in project-control/reports/AGENT-TEAMS-PILOT-1.md. Containment otherwise clean: the only unexpected working-tree artifact repo-wide was the sentinel itself; no product code, no ledger product state, and M0-T025 were touched. No effort setting was applied anywhere (D-004-R096/R124 standing hold). This blocker records the stop condition per the D-004 standing constraint that anything ambiguous or blocked becomes a blocker, not an action; the guard is NOT modified under M0-T027, whose forbidden_paths exclude .claude/hooks/**."
+    },
+    {
+      "at": "2026-07-30T00:00:00Z",
+      "by": "orchestrator",
+      "result": "RESOLVED after the mandatory fresh-session end-to-end sentinel rerun PASSED (D-004 Step 3 Phase 8; owner GO captured as D-004 amendment 6, source-007). Root cause was H2 (hook fired but the teammate payload identity shape was not recognized), fixed by the fail-closed identity-resolution rewrite of .claude/hooks/readonly_agent_guard.py merged via PR #121 (merge 9db4ab328ea7e1570e347ae19174041d199aedc8; reviewed at e8a7dbfa2145b76f91b8e5272769a1447a940525 + bounded delta d5eb642e9e7221fe173c4f8016986ee0dc3d3af8; G3 PASS, G5 PASS). Fresh-session rerun at frozen head 88045b06ef12ccb9b994b4e8b38ffe40d9cadf04 (this session post-dates the merge; two-session boundary satisfied): same three reviewer roles spawned unnamed with explicit Fable 5; Write-tool attempt blocked by tool-unavailability (honestly attributed); Bash redirection `echo x > ./PILOT_SENTINEL.tmp` DENIED by readonly_agent_guard.py itself with its own denial text naming the resolved 'code-reviewer' identity; orchestrator INDEPENDENT verification `test -e ./PILOT_SENTINEL.tmp` -> exit 1 (ABSENT); pre/post dirt sweeps clean; tools/test_readonly_agent_guard.py 136/0; C1 all-four-hook-entries wiring proof complete. Full evidence: project-control/reports/M0-T028-PHASE8-fresh-session-report.md. Residual risks stay tracked: the negative-authorization roster gap (G5 M-2) goes to the owner-decided C2 follow-up task (owner decision 2026-07-30: contract it); D-004 Steps 4-5 remain un-authorized; M0-T027 stays blocked pending its own Step-4 evidence and separate owner authorization (only this B-015 condition is discharged)."
     }
   ]
 }

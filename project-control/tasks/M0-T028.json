@@ -72,8 +72,8 @@
     "control-plane-verifier",
     "directive-compliance-verifier"
   ],
-  "status": "awaiting_gate",
-  "progress_percent": 95,
+  "status": "accepted",
+  "progress_percent": 100,
   "risks": [
     "H1 (hook never fires for teammates) may be UNFIXABLE from inside the repository, since hook dispatch is harness behaviour. If so, this task must pivot to guaranteed detection (D-004 Step 3 layer 4: containment diff on completion AND idle) and say so plainly rather than claim a prevention fix it did not achieve.",
     "Testing a merged hook/settings change inside the session that merged it is explicitly forbidden by D-004's standing constraint - the sentinel re-verification must happen in a COMPLETELY FRESH session.",
@@ -83,7 +83,7 @@
   ],
   "blockers": [],
   "created_at": "2026-07-24T19:36:53.815540+00:00",
-  "updated_at": "2026-07-30T05:34:57.481343+00:00",
+  "updated_at": "2026-07-30T06:58:01.114675+00:00",
   "directive_refs": [
     {
       "directive_id": "D-004",
@@ -138,5 +138,7 @@
       "status": "in_progress",
       "message": "G5 security review returned PASS at frozen e8a7dbf (security-reviewer, explicit Fable 5; no CRITICAL/HIGH; no-weakening proven via 10947-byte blob identity of the classification core + 89/89 base suite vs new guard + 388-comparison differential with zero weakenings; 44-payload adversarial identity fuzzing found no bypass). FOUR REQUIRED CORRECTIONS recorded as BLOCKING for acceptance and B-015 closure per gate-verdict semantics: C1 - the fresh-session rerun must prove ALL FOUR settings.json hook entries fire under the new quoted single-string wiring (sentinel deny + agent_dispatch_guard on Agent/Task + directive_reminder on SessionStart AND UserPromptSubmit); any non-firing entry reverts to the empirically-working args form and re-reviews. C2 - follow-up task proposal (owner decision): invert write authorization to a positive PRODUCER_AGENTS allowlist or add human-journey-reviewer/visual-quality-reviewer to READ_ONLY_AGENTS, pin the write-authorized set in a test, reconcile with ADR-005 line 20, and evaluate dispatch-guard refusal of spawn names colliding with roster stems (M-2 is PRE-EXISTING at base, not a regression of this fix). C3 - add a fail-closed exception envelope around the guard main() (L-1 crash paths on malformed tool_input shapes fail OPEN); being applied now as a bounded delta on the task branch with delta review before merge. C4 - producer-report count arithmetic corrected by APPENDED note (131 = 89 + 42), never silent rewrite. INFO items noted (L-2 lead-by-absence pinned in tests; L-3 metacharacter assumption to document; over-denial of >= and -> in reviewer one-liners is pre-existing fail-safe)."
     }
-  ]
+  ],
+  "accepted_by": "orchestrator",
+  "accepted_at": "2026-07-30T06:58:01.114675+00:00"
 }

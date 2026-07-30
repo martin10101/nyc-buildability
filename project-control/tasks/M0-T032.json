@@ -1,0 +1,38 @@
+{
+  "task_id": "M0-T032",
+  "title": "Positive write-authorization allowlist for readonly_agent_guard (G5 M-2 / C2 follow-up)",
+  "task_type": "governance",
+  "milestone_id": "M0",
+  "objective": "Invert readonly_agent_guard.py negative authorization to an explicit positive PRODUCER_AGENTS allowlist (or add human-journey-reviewer and visual-quality-reviewer to READ_ONLY_AGENTS), pin the write-authorized agent set in a test so any roster addition fails CI until classified, reconcile the guard read-only set with ADR-005 reviewer classification, and evaluate extending agent_dispatch_guard.py to refuse spawn names colliding with roster stems.",
+  "business_reason": "Owner decision 2026-07-30 (recorded at D-004-R296 and M0-T028-PHASE8-fresh-session-report.md section 8): contract the C2 proposal from G5 finding M-2 - the merged guard authorizes writes negatively, so 18 roster identities pass through today including two reviewers ADR-005 classifies as read-only. Claiming/starting this task requires its own owner GO and directive citation at claim time.",
+  "inputs": [],
+  "outputs": [],
+  "dependencies": [],
+  "allowed_paths": [],
+  "forbidden_paths": [],
+  "acceptance_scenarios": [],
+  "required_gates": [
+    "G0",
+    "G2",
+    "G3",
+    "G5"
+  ],
+  "producer_agent": null,
+  "reviewer_agents": [],
+  "status": "backlog",
+  "progress_percent": 0,
+  "risks": [],
+  "blockers": [],
+  "created_at": "2026-07-30T06:58:41.013604+00:00",
+  "updated_at": "2026-07-30T06:58:41.039559+00:00",
+  "directive_refs": [
+    {
+      "directive_id": "D-004",
+      "requirement_ids": [
+        "D-004-R296"
+      ]
+    }
+  ],
+  "directive_regime_version": "1.0",
+  "directive_regime_entered_at": "2026-07-30T06:58:41.013604+00:00"
+}
