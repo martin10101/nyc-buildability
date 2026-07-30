@@ -1084,7 +1084,7 @@
           "id": "D-004-R010",
           "state": "PASS",
           "evidence": [
-            "Ledger is sole truth: CLI-written progress_log/gates/state.json + PRs #120\u2013#123 + gh checks 28/28; no extra-ledger status claimed anywhere"
+            "Ledger is sole truth: CLI-written progress_log/gates/state.json + PRs #120–#123 + gh checks 28/28; no extra-ledger status claimed anywhere"
           ],
           "verified_at": "2026-07-30T00:00:00+00:00",
           "verified_by": "directive-compliance-verifier",
@@ -1104,7 +1104,7 @@
           "id": "D-004-R012",
           "state": "PASS",
           "evidence": [
-            "git log: e8a7dbf/d5eb642/all merges authored by orchestrator identity martin10101; producer report \u00a76 contains no CLI/git-write/gh command"
+            "git log: e8a7dbf/d5eb642/all merges authored by orchestrator identity martin10101; producer report §6 contains no CLI/git-write/gh command"
           ],
           "verified_at": "2026-07-30T00:00:00+00:00",
           "verified_by": "directive-compliance-verifier",
@@ -1114,7 +1114,7 @@
           "id": "D-004-R013",
           "state": "PASS",
           "evidence": [
-            "Merges #120\u2013#123 are all orchestrator first-parent merge commits (git log --first-parent)"
+            "Merges #120–#123 are all orchestrator first-parent merge commits (git log --first-parent)"
           ],
           "verified_at": "2026-07-30T00:00:00+00:00",
           "verified_by": "directive-compliance-verifier",
@@ -1124,7 +1124,7 @@
           "id": "D-004-R014",
           "state": "PASS",
           "evidence": [
-            "Producer report \u00a71/\u00a76: no push/gh/rebase; branch commits authored/committed by orchestrator only"
+            "Producer report §1/§6: no push/gh/rebase; branch commits authored/committed by orchestrator only"
           ],
           "verified_at": "2026-07-30T00:00:00+00:00",
           "verified_by": "directive-compliance-verifier",
@@ -1134,7 +1134,7 @@
           "id": "D-004-R015",
           "state": "PASS",
           "evidence": [
-            "Not triggered \u2014 no rebase occurred (task branch is base 4a4bf2d + 2 commits, merge-base = base)"
+            "Not triggered — no rebase occurred (task branch is base 4a4bf2d + 2 commits, merge-base = base)"
           ],
           "verified_at": "2026-07-30T00:00:00+00:00",
           "verified_by": "directive-compliance-verifier",
@@ -1144,7 +1144,7 @@
           "id": "D-004-R016",
           "state": "PASS",
           "evidence": [
-            "Sequential PRs #120\u2192#121\u2192#122\u2192#123; G2/G3/G5 recorded at merged content identity 126d2d53"
+            "Sequential PRs #120→#121→#122→#123; G2/G3/G5 recorded at merged content identity 126d2d53"
           ],
           "verified_at": "2026-07-30T00:00:00+00:00",
           "verified_by": "directive-compliance-verifier",
@@ -1154,7 +1154,7 @@
           "id": "D-004-R017",
           "state": "PASS",
           "evidence": [
-            "All 4 reviewer roles exist as .claude/agents/*.md (ls verified); guard denials named the roster roles live (G3 \u00a712, G5 line 46, dcv \u00a77, plus 4 denials of this verifier at HEAD)"
+            "All 4 reviewer roles exist as .claude/agents/*.md (ls verified); guard denials named the roster roles live (G3 §12, G5 line 46, dcv §7, plus 4 denials of this verifier at HEAD)"
           ],
           "verified_at": "2026-07-30T00:00:00+00:00",
           "verified_by": "directive-compliance-verifier",
@@ -1174,7 +1174,7 @@
           "id": "D-004-R019",
           "state": "PASS",
           "evidence": [
-            "Every reviewer report header pins the frozen 40-char SHA (e8a7dbfa\u2026/d5eb642e\u2026); this dispatch pinned 88045b06\u2026"
+            "Every reviewer report header pins the frozen 40-char SHA (e8a7dbfa…/d5eb642e…); this dispatch pinned 88045b06…"
           ],
           "verified_at": "2026-07-30T00:00:00+00:00",
           "verified_by": "directive-compliance-verifier",
@@ -1194,7 +1194,7 @@
           "id": "D-004-R021",
           "state": "PASS",
           "evidence": [
-            "PR #121 diff = 6 files all \u2286 allowed_paths; #122/#123 = orchestrator control-plane lifecycle records bound to M0-T028 (each gate record names its report_file)"
+            "PR #121 diff = 6 files all ⊆ allowed_paths; #122/#123 = orchestrator control-plane lifecycle records bound to M0-T028 (each gate record names its report_file)"
           ],
           "verified_at": "2026-07-30T00:00:00+00:00",
           "verified_by": "directive-compliance-verifier",
@@ -1214,7 +1214,7 @@
           "id": "D-004-R023",
           "state": "PASS",
           "evidence": [
-            "Evidence file \u00a72 records only spawn name m0t028-diag-probe + roles from configuration"
+            "Evidence file §2 records only spawn name m0t028-diag-probe + roles from configuration"
           ],
           "verified_at": "2026-07-30T00:00:00+00:00",
           "verified_by": "directive-compliance-verifier",
@@ -1224,7 +1224,7 @@
           "id": "D-004-R024",
           "state": "PASS",
           "evidence": [
-            "Task-lane artifacts sanitized \u2014 my grep over both frozen reports finds only payload key names + the hygiene disclaimer; reviewer returns follow the 2026-07-16 owner verbatim-preservation rule (see summary note 2)"
+            "Task-lane artifacts sanitized — my grep over both frozen reports finds only payload key names + the hygiene disclaimer; reviewer returns follow the 2026-07-16 owner verbatim-preservation rule (see summary note 2)"
           ],
           "verified_at": "2026-07-30T00:00:00+00:00",
           "verified_by": "directive-compliance-verifier",
@@ -1234,7 +1234,7 @@
           "id": "D-004-R025",
           "state": "PASS",
           "evidence": [
-            "Fresh session spawns fresh agents (this session); capsule \u00a73 mandates fresh spawns; no prior-team messaging artifact"
+            "Fresh session spawns fresh agents (this session); capsule §3 mandates fresh spawns; no prior-team messaging artifact"
           ],
           "verified_at": "2026-07-30T00:00:00+00:00",
           "verified_by": "directive-compliance-verifier",
@@ -1254,7 +1254,7 @@
           "id": "D-004-R050",
           "state": "PASS",
           "evidence": [
-            "Not triggered \u2014 Step-2 probe passed (AGENT-TEAMS-PILOT-2-PROBE.md at main); Step 3 began only on owner GO (source-006)"
+            "Not triggered — Step-2 probe passed (AGENT-TEAMS-PILOT-2-PROBE.md at main); Step 3 began only on owner GO (source-006)"
           ],
           "verified_at": "2026-07-30T00:00:00+00:00",
           "verified_by": "directive-compliance-verifier",
@@ -1294,7 +1294,7 @@
           "id": "D-004-R054",
           "state": "PASS",
           "evidence": [
-            "Guard docstring residuals (lines 39\u201344) + producer \u00a73/\u00a77 + evidence \u00a74.5 name detection as backstop; no \"impossible\" claim anywhere"
+            "Guard docstring residuals (lines 39–44) + producer §3/§7 + evidence §4.5 name detection as backstop; no \"impossible\" claim anywhere"
           ],
           "verified_at": "2026-07-30T00:00:00+00:00",
           "verified_by": "directive-compliance-verifier",
@@ -1304,7 +1304,7 @@
           "id": "D-004-R055",
           "state": "PASS",
           "evidence": [
-            "Binding task\u2194worktree\u2194branch task/M0-T028-readonly-guard\u2194frozen base 4a4bf2d (single-chain); harness refused unbound work (producer \u00a71 verbatim denials)"
+            "Binding task↔worktree↔branch task/M0-T028-readonly-guard↔frozen base 4a4bf2d (single-chain); harness refused unbound work (producer §1 verbatim denials)"
           ],
           "verified_at": "2026-07-30T00:00:00+00:00",
           "verified_by": "directive-compliance-verifier",
@@ -1314,7 +1314,7 @@
           "id": "D-004-R056",
           "state": "PASS",
           "evidence": [
-            "Execution-level: producer Write/Edit outside its worktree denied (producer \u00a71 quoted harness denial); governed identities denied all Write/Edit by guard; teams-runtime layer-2 infra not triggerable (no producer teammates, R233; Step 4 unauthorized, R178) \u2014 see summary note 3"
+            "Execution-level: producer Write/Edit outside its worktree denied (producer §1 quoted harness denial); governed identities denied all Write/Edit by guard; teams-runtime layer-2 infra not triggerable (no producer teammates, R233; Step 4 unauthorized, R178) — see summary note 3"
           ],
           "verified_at": "2026-07-30T00:00:00+00:00",
           "verified_by": "directive-compliance-verifier",
@@ -1324,7 +1324,7 @@
           "id": "D-004-R057",
           "state": "PASS",
           "evidence": [
-            "Harness refused producer cross-tree git -C (producer \u00a71); guard denies mutating Bash for governed/unknown identities (suite 136/0; 4 live denials of this verifier at HEAD)"
+            "Harness refused producer cross-tree git -C (producer §1); guard denies mutating Bash for governed/unknown identities (suite 136/0; 4 live denials of this verifier at HEAD)"
           ],
           "verified_at": "2026-07-30T00:00:00+00:00",
           "verified_by": "directive-compliance-verifier",
@@ -1334,7 +1334,7 @@
           "id": "D-004-R058",
           "state": "PASS",
           "evidence": [
-            "Not triggered \u2014 no TaskCompleted/TeammateIdle events existed (Agent Teams producers prohibited while B-015 open); containment enforced by orchestrator port-diff + 3 reviewer containment checks + recorded dirt sweeps"
+            "Not triggered — no TaskCompleted/TeammateIdle events existed (Agent Teams producers prohibited while B-015 open); containment enforced by orchestrator port-diff + 3 reviewer containment checks + recorded dirt sweeps"
           ],
           "verified_at": "2026-07-30T00:00:00+00:00",
           "verified_by": "directive-compliance-verifier",
@@ -1354,7 +1354,7 @@
           "id": "D-004-R060",
           "state": "PASS",
           "evidence": [
-            "Zero escapes (sweeps clean; sentinel absent \u2014 my test -e exit 1); the one Step-1 escape (B-015) blocked completion until fixed \u2014 refusal semantics upheld"
+            "Zero escapes (sweeps clean; sentinel absent — my test -e exit 1); the one Step-1 escape (B-015) blocked completion until fixed — refusal semantics upheld"
           ],
           "verified_at": "2026-07-30T00:00:00+00:00",
           "verified_by": "directive-compliance-verifier",
@@ -1394,7 +1394,7 @@
           "id": "D-004-R085",
           "state": "PASS",
           "evidence": [
-            "Each STOP presented evidence/diffs then waited: packet proposal\u2192owner GO (source-006); capsule\u2192owner GO (source-007, 2026-07-30)"
+            "Each STOP presented evidence/diffs then waited: packet proposal→owner GO (source-006); capsule→owner GO (source-007, 2026-07-30)"
           ],
           "verified_at": "2026-07-30T00:00:00+00:00",
           "verified_by": "directive-compliance-verifier",
@@ -1404,7 +1404,7 @@
           "id": "D-004-R086",
           "state": "PASS",
           "evidence": [
-            "Ambiguity\u2192blocker practice upheld (B-015; MODEL-MISMATCH honest stop at 40% entry; no improvised action)"
+            "Ambiguity→blocker practice upheld (B-015; MODEL-MISMATCH honest stop at 40% entry; no improvised action)"
           ],
           "verified_at": "2026-07-30T00:00:00+00:00",
           "verified_by": "directive-compliance-verifier",
@@ -1434,7 +1434,7 @@
           "id": "D-004-R091",
           "state": "PASS",
           "evidence": [
-            "Not triggered \u2014 no producer teammate used (forbidden while B-015 open); background-subagent inherit=Fable 5 non-downgrade honestly recorded (40% entry)"
+            "Not triggered — no producer teammate used (forbidden while B-015 open); background-subagent inherit=Fable 5 non-downgrade honestly recorded (40% entry)"
           ],
           "verified_at": "2026-07-30T00:00:00+00:00",
           "verified_by": "directive-compliance-verifier",
@@ -1464,7 +1464,7 @@
           "id": "D-004-R100",
           "state": "PASS",
           "evidence": [
-            "settings.json:10,19,29,39 all quoted \"${CLAUDE_PROJECT_DIR}/\u2026\"; suite section 12 space-safety passes (my 136/0 run); the quoted wiring demonstrably fires live in this fresh session (guard denied 4 of my commands)"
+            "settings.json:10,19,29,39 all quoted \"${CLAUDE_PROJECT_DIR}/…\"; suite section 12 space-safety passes (my 136/0 run); the quoted wiring demonstrably fires live in this fresh session (guard denied 4 of my commands)"
           ],
           "verified_at": "2026-07-30T00:00:00+00:00",
           "verified_by": "directive-compliance-verifier",
@@ -1504,7 +1504,7 @@
           "id": "D-004-R134",
           "state": "PASS",
           "evidence": [
-            "Sequencing honored \u2014 fix merged (9db4ab3) with no rerun attempted before merge (zero premature claims, dcv grep)"
+            "Sequencing honored — fix merged (9db4ab3) with no rerun attempted before merge (zero premature claims, dcv grep)"
           ],
           "verified_at": "2026-07-30T00:00:00+00:00",
           "verified_by": "directive-compliance-verifier",
@@ -1514,7 +1514,7 @@
           "id": "D-004-R135",
           "state": "PASS",
           "evidence": [
-            "Phase-8 report \u00a74: on-policy rerun performed post-merge and PASSED (verbatim tool-unavailability + verbatim guard denial + independent absence); doubles as the B-015 fix's end-to-end acceptance test, cited in the B-015 resolution entry"
+            "Phase-8 report §4: on-policy rerun performed post-merge and PASSED (verbatim tool-unavailability + verbatim guard denial + independent absence); doubles as the B-015 fix's end-to-end acceptance test, cited in the B-015 resolution entry"
           ],
           "verified_at": "2026-07-30T00:00:00+00:00",
           "verified_by": "directive-compliance-verifier",
@@ -1524,7 +1524,7 @@
           "id": "D-004-R136",
           "state": "PASS",
           "evidence": [
-            "\u00a74: same three Step-1 reviewer roles (code-reviewer, control-plane-verifier, directive-compliance-verifier), frozen then-current main head 88045b0, explicit Fable 5 on every spawn (I am the third; self-confirmed claude-fable-5), sentinel repeated exactly once"
+            "§4: same three Step-1 reviewer roles (code-reviewer, control-plane-verifier, directive-compliance-verifier), frozen then-current main head 88045b0, explicit Fable 5 on every spawn (I am the third; self-confirmed claude-fable-5), sentinel repeated exactly once"
           ],
           "verified_at": "2026-07-30T00:00:00+00:00",
           "verified_by": "directive-compliance-verifier",
@@ -1534,7 +1534,7 @@
           "id": "D-004-R137",
           "state": "PASS",
           "evidence": [
-            "Guard denial OBSERVED (verbatim `_deny` text naming 'code-reviewer', \u00a74/Appendix A(b), byte-matching the guard at HEAD) and INDEPENDENTLY verified (orchestrator test -e \u2192 exit 1 + ls + git-status grep; my own test -e \u2192 exit 1) \u2014 not reviewer assertion alone"
+            "Guard denial OBSERVED (verbatim `_deny` text naming 'code-reviewer', §4/Appendix A(b), byte-matching the guard at HEAD) and INDEPENDENTLY verified (orchestrator test -e → exit 1 + ls + git-status grep; my own test -e → exit 1) — not reviewer assertion alone"
           ],
           "verified_at": "2026-07-30T00:00:00+00:00",
           "verified_by": "directive-compliance-verifier",
@@ -1564,7 +1564,7 @@
           "id": "D-004-R141",
           "state": "PASS",
           "evidence": [
-            "TEAMMATE-PAYLOAD-EVIDENCE.md \u00a7\u00a71\u20134: live payloads, H1 REFUTED/H2 CONFIRMED, tool-unavailability positive explicitly weighed"
+            "TEAMMATE-PAYLOAD-EVIDENCE.md §§1–4: live payloads, H1 REFUTED/H2 CONFIRMED, tool-unavailability positive explicitly weighed"
           ],
           "verified_at": "2026-07-30T00:00:00+00:00",
           "verified_by": "directive-compliance-verifier",
@@ -1574,7 +1574,7 @@
           "id": "D-004-R142",
           "state": "PASS",
           "evidence": [
-            "Fail-closed identity resolution at HEAD (readonly_agent_guard.py:347\u2013363); named/unknown spawns 63/63 mutations denied (G5 differential); suite 136/0 (my run); pre-existing unnamed-reviewer-class residual = C2 owner decision, flagged not hidden"
+            "Fail-closed identity resolution at HEAD (readonly_agent_guard.py:347–363); named/unknown spawns 63/63 mutations denied (G5 differential); suite 136/0 (my run); pre-existing unnamed-reviewer-class residual = C2 owner decision, flagged not hidden"
           ],
           "verified_at": "2026-07-30T00:00:00+00:00",
           "verified_by": "directive-compliance-verifier",
@@ -1594,7 +1594,7 @@
           "id": "D-004-R144",
           "state": "PASS",
           "evidence": [
-            "index.json D-004 affected_tasks = [\"M0-T027\",\"M0-T028\"] (my JSON read); corrected at capture (PR #120); task diff on index = 0 with explicit statement (producer \u00a74)"
+            "index.json D-004 affected_tasks = [\"M0-T027\",\"M0-T028\"] (my JSON read); corrected at capture (PR #120); task diff on index = 0 with explicit statement (producer §4)"
           ],
           "verified_at": "2026-07-30T00:00:00+00:00",
           "verified_by": "directive-compliance-verifier",
@@ -1614,7 +1614,7 @@
           "id": "D-004-R156",
           "state": "PASS",
           "evidence": [
-            "effortLevel xhigh session-global observed unchanged (payload \u00a72.2); no change made"
+            "effortLevel xhigh session-global observed unchanged (payload §2.2); no change made"
           ],
           "verified_at": "2026-07-30T00:00:00+00:00",
           "verified_by": "directive-compliance-verifier",
@@ -1644,7 +1644,7 @@
           "id": "D-004-R160",
           "state": "PASS",
           "evidence": [
-            "Probes A/B explicit Fable 5 (evidence \u00a72.2/2.3; probe self-reported claude-fable-5); reviewer spawns explicit Fable 5"
+            "Probes A/B explicit Fable 5 (evidence §2.2/2.3; probe self-reported claude-fable-5); reviewer spawns explicit Fable 5"
           ],
           "verified_at": "2026-07-30T00:00:00+00:00",
           "verified_by": "directive-compliance-verifier",
@@ -1664,7 +1664,7 @@
           "id": "D-004-R162",
           "state": "PASS",
           "evidence": [
-            "Not triggered \u2014 no producer teammate; enum limitation (opus\u2192claude-opus-5) honestly measured and recorded (40% entry; capsule \u00a74)"
+            "Not triggered — no producer teammate; enum limitation (opus→claude-opus-5) honestly measured and recorded (40% entry; capsule §4)"
           ],
           "verified_at": "2026-07-30T00:00:00+00:00",
           "verified_by": "directive-compliance-verifier",
@@ -1674,7 +1674,7 @@
           "id": "D-004-R166",
           "state": "PASS",
           "evidence": [
-            "Historical sequence on record: source-005 captured \u2192 Step 2 run (PILOT-2-PROBE.md at main) \u2192 STOP with M0-T028 packet proposal"
+            "Historical sequence on record: source-005 captured → Step 2 run (PILOT-2-PROBE.md at main) → STOP with M0-T028 packet proposal"
           ],
           "verified_at": "2026-07-30T00:00:00+00:00",
           "verified_by": "directive-compliance-verifier",
@@ -1744,7 +1744,7 @@
           "id": "D-004-R173",
           "state": "PASS",
           "evidence": [
-            "Diagnosis rests on the primary payload artifact (evidence \u00a7\u00a71\u20132)"
+            "Diagnosis rests on the primary payload artifact (evidence §§1–2)"
           ],
           "verified_at": "2026-07-30T00:00:00+00:00",
           "verified_by": "directive-compliance-verifier",
@@ -1774,7 +1774,7 @@
           "id": "D-004-R176",
           "state": "PASS",
           "evidence": [
-            "All three mandated components now complete: independent review (G3/G5 + delta at e8a7dbf/d5eb642), protected-main merge (PR #121, 28/28), fresh-session end-to-end rerun (\u00a74 PASS)"
+            "All three mandated components now complete: independent review (G3/G5 + delta at e8a7dbf/d5eb642), protected-main merge (PR #121, 28/28), fresh-session end-to-end rerun (§4 PASS)"
           ],
           "verified_at": "2026-07-30T00:00:00+00:00",
           "verified_by": "directive-compliance-verifier",
@@ -1794,7 +1794,7 @@
           "id": "D-004-R178",
           "state": "PASS",
           "evidence": [
-            "No Step-4/5 artifact in any diff; capsule \u00a76 forbids; none begun"
+            "No Step-4/5 artifact in any diff; capsule §6 forbids; none begun"
           ],
           "verified_at": "2026-07-30T00:00:00+00:00",
           "verified_by": "directive-compliance-verifier",
@@ -1924,7 +1924,7 @@
           "id": "D-004-R191",
           "state": "PASS",
           "evidence": [
-            "No M2\u2013M7 product code (diff surface = hooks/settings/gitignore/tools-test/reports/control-plane only)"
+            "No M2–M7 product code (diff surface = hooks/settings/gitignore/tools-test/reports/control-plane only)"
           ],
           "verified_at": "2026-07-30T00:00:00+00:00",
           "verified_by": "directive-compliance-verifier",
@@ -2024,7 +2024,7 @@
           "id": "D-004-R202",
           "state": "PASS",
           "evidence": [
-            "Advancement e5d95b6\u21924a4bf2d is PR #120 itself (the authorized capture); later advancement = this task's own PRs #121\u2013#123"
+            "Advancement e5d95b6→4a4bf2d is PR #120 itself (the authorized capture); later advancement = this task's own PRs #121–#123"
           ],
           "verified_at": "2026-07-30T00:00:00+00:00",
           "verified_by": "directive-compliance-verifier",
@@ -2034,7 +2034,7 @@
           "id": "D-004-R203",
           "state": "PASS",
           "evidence": [
-            "Deadlock ratified and corrected pre-G0; accept() dependency refusal confirmed at tools/project_control.py:923\u2013933 (control-plane item 1)"
+            "Deadlock ratified and corrected pre-G0; accept() dependency refusal confirmed at tools/project_control.py:923–933 (control-plane item 1)"
           ],
           "verified_at": "2026-07-30T00:00:00+00:00",
           "verified_by": "directive-compliance-verifier",
@@ -2054,7 +2054,7 @@
           "id": "D-004-R205",
           "state": "PASS",
           "evidence": [
-            "Inputs 2\u20133 = both pilot reports; dependency_note preserves M0-T027 as causal predecessor, not acceptance prerequisite"
+            "Inputs 2–3 = both pilot reports; dependency_note preserves M0-T027 as causal predecessor, not acceptance prerequisite"
           ],
           "verified_at": "2026-07-30T00:00:00+00:00",
           "verified_by": "directive-compliance-verifier",
@@ -2084,7 +2084,7 @@
           "id": "D-004-R208",
           "state": "PASS",
           "evidence": [
-            "owner_review_state = \"APPROVED \u2014 explicit owner GO \u2026 source-006 \u2026\" citing its conditions"
+            "owner_review_state = \"APPROVED — explicit owner GO … source-006 …\" citing its conditions"
           ],
           "verified_at": "2026-07-30T00:00:00+00:00",
           "verified_by": "directive-compliance-verifier",
@@ -2114,7 +2114,7 @@
           "id": "D-004-R211",
           "state": "PASS",
           "evidence": [
-            "Clarification recorded: Write/Edit may remain blocked by tool unavailability (packet AS-2; evidence \u00a74.1)"
+            "Clarification recorded: Write/Edit may remain blocked by tool unavailability (packet AS-2; evidence §4.1)"
           ],
           "verified_at": "2026-07-30T00:00:00+00:00",
           "verified_by": "directive-compliance-verifier",
@@ -2124,7 +2124,7 @@
           "id": "D-004-R212",
           "state": "PASS",
           "evidence": [
-            "No artifact claims the guard denied an uninvokable tool; Step-1 Write denial attributed to \"No such tool available: Write\" (evidence \u00a74.1; dcv grep zero false claims)"
+            "No artifact claims the guard denied an uninvokable tool; Step-1 Write denial attributed to \"No such tool available: Write\" (evidence §4.1; dcv grep zero false claims)"
           ],
           "verified_at": "2026-07-30T00:00:00+00:00",
           "verified_by": "directive-compliance-verifier",
@@ -2134,7 +2134,7 @@
           "id": "D-004-R213",
           "state": "PASS",
           "evidence": [
-            "Bash redirection is the load-bearing test in suite + capsule \u00a73.4 procedure"
+            "Bash redirection is the load-bearing test in suite + capsule §3.4 procedure"
           ],
           "verified_at": "2026-07-30T00:00:00+00:00",
           "verified_by": "directive-compliance-verifier",
@@ -2144,7 +2144,7 @@
           "id": "D-004-R214",
           "state": "PASS",
           "evidence": [
-            "Live fresh-session Bash sentinel denied by readonly_agent_guard.py itself; denial evidence captured verbatim (\u00a74, Appendix A(b)); corroborated by 6 live denials of this verifier at the same head"
+            "Live fresh-session Bash sentinel denied by readonly_agent_guard.py itself; denial evidence captured verbatim (§4, Appendix A(b)); corroborated by 6 live denials of this verifier at the same head"
           ],
           "verified_at": "2026-07-30T00:00:00+00:00",
           "verified_by": "directive-compliance-verifier",
@@ -2154,7 +2154,7 @@
           "id": "D-004-R215",
           "state": "PASS",
           "evidence": [
-            "Orchestrator independently ran `test -e ./PILOT_SENTINEL.tmp` \u2192 exit 1 ABSENT, recorded in \u00a74; reproduced by me (exit 1)"
+            "Orchestrator independently ran `test -e ./PILOT_SENTINEL.tmp` → exit 1 ABSENT, recorded in §4; reproduced by me (exit 1)"
           ],
           "verified_at": "2026-07-30T00:00:00+00:00",
           "verified_by": "directive-compliance-verifier",
@@ -2164,7 +2164,7 @@
           "id": "D-004-R216",
           "state": "PASS",
           "evidence": [
-            "The required honest trio recorded exactly: tool-unavailability for direct Write (labeled as such, never credited to the guard) + guard's own denial for Bash + independent absence verification (\u00a74)"
+            "The required honest trio recorded exactly: tool-unavailability for direct Write (labeled as such, never credited to the guard) + guard's own denial for Bash + independent absence verification (§4)"
           ],
           "verified_at": "2026-07-30T00:00:00+00:00",
           "verified_by": "directive-compliance-verifier",
@@ -2184,7 +2184,7 @@
           "id": "D-004-R219",
           "state": "PASS",
           "evidence": [
-            "Rows appended from next free ID R168; prior rows unedited (control-plane row-by-row proof; my amendment-6 comparison: R001\u2013R286 unchanged)"
+            "Rows appended from next free ID R168; prior rows unedited (control-plane row-by-row proof; my amendment-6 comparison: R001–R286 unchanged)"
           ],
           "verified_at": "2026-07-30T00:00:00+00:00",
           "verified_by": "directive-compliance-verifier",
@@ -2334,7 +2334,7 @@
           "id": "D-004-R234",
           "state": "PASS",
           "evidence": [
-            "Probes bounded, no-Write/Edit, explicit model (evidence \u00a7\u00a72.2\u20132.3)"
+            "Probes bounded, no-Write/Edit, explicit model (evidence §§2.2–2.3)"
           ],
           "verified_at": "2026-07-30T00:00:00+00:00",
           "verified_by": "directive-compliance-verifier",
@@ -2344,7 +2344,7 @@
           "id": "D-004-R235",
           "state": "PASS",
           "evidence": [
-            "Dirt sweeps before/after every probe recorded clean (35% entry; evidence \u00a71)"
+            "Dirt sweeps before/after every probe recorded clean (35% entry; evidence §1)"
           ],
           "verified_at": "2026-07-30T00:00:00+00:00",
           "verified_by": "directive-compliance-verifier",
@@ -2364,7 +2364,7 @@
           "id": "D-004-R237",
           "state": "PASS",
           "evidence": [
-            "Diagnosis (35% entry, 03:57Z) precedes implementation commit; fix contract derived from evidence \u00a75, not guessed"
+            "Diagnosis (35% entry, 03:57Z) precedes implementation commit; fix contract derived from evidence §5, not guessed"
           ],
           "verified_at": "2026-07-30T00:00:00+00:00",
           "verified_by": "directive-compliance-verifier",
@@ -2374,7 +2374,7 @@
           "id": "D-004-R238",
           "state": "PASS",
           "evidence": [
-            "H1 vs H2 distinguished with live payload captures (evidence \u00a7\u00a72\u20133)"
+            "H1 vs H2 distinguished with live payload captures (evidence §§2–3)"
           ],
           "verified_at": "2026-07-30T00:00:00+00:00",
           "verified_by": "directive-compliance-verifier",
@@ -2384,7 +2384,7 @@
           "id": "D-004-R239",
           "state": "PASS",
           "evidence": [
-            "Live instrumentation of the real hook stdin \u2014 primary runtime artifact, not synthetic (evidence \u00a71)"
+            "Live instrumentation of the real hook stdin — primary runtime artifact, not synthetic (evidence §1)"
           ],
           "verified_at": "2026-07-30T00:00:00+00:00",
           "verified_by": "directive-compliance-verifier",
@@ -2404,7 +2404,7 @@
           "id": "D-004-R241",
           "state": "PASS",
           "evidence": [
-            "Evidence \u00a74 reconciles all five required facts explicitly"
+            "Evidence §4 reconciles all five required facts explicitly"
           ],
           "verified_at": "2026-07-30T00:00:00+00:00",
           "verified_by": "directive-compliance-verifier",
@@ -2424,7 +2424,7 @@
           "id": "D-004-R243",
           "state": "PASS",
           "evidence": [
-            "Unparseable-payload deny unchanged + roster-failure\u2192empty-roster fail-closed + C3 envelope (guard code; fail-closed cases in my 136/0 run)"
+            "Unparseable-payload deny unchanged + roster-failure→empty-roster fail-closed + C3 envelope (guard code; fail-closed cases in my 136/0 run)"
           ],
           "verified_at": "2026-07-30T00:00:00+00:00",
           "verified_by": "directive-compliance-verifier",
@@ -2444,7 +2444,7 @@
           "id": "D-004-R245",
           "state": "PASS",
           "evidence": [
-            "Read-only git/gh/test commands unchanged across all identity classes (34\u00d74 identical; allow checks in my run; my own read-only git/gh executed)"
+            "Read-only git/gh/test commands unchanged across all identity classes (34×4 identical; allow checks in my run; my own read-only git/gh executed)"
           ],
           "verified_at": "2026-07-30T00:00:00+00:00",
           "verified_by": "directive-compliance-verifier",
@@ -2454,7 +2454,7 @@
           "id": "D-004-R246",
           "state": "PASS",
           "evidence": [
-            "Not triggered \u2014 H2 proven; no detection-only implemented, no packet reinterpretation"
+            "Not triggered — H2 proven; no detection-only implemented, no packet reinterpretation"
           ],
           "verified_at": "2026-07-30T00:00:00+00:00",
           "verified_by": "directive-compliance-verifier",
@@ -2464,7 +2464,7 @@
           "id": "D-004-R247",
           "state": "PASS",
           "evidence": [
-            "Not triggered \u2014 no H1 STOP packet needed"
+            "Not triggered — no H1 STOP packet needed"
           ],
           "verified_at": "2026-07-30T00:00:00+00:00",
           "verified_by": "directive-compliance-verifier",
@@ -2474,7 +2474,7 @@
           "id": "D-004-R248",
           "state": "PASS",
           "evidence": [
-            "Not triggered \u2014 no detection-only work"
+            "Not triggered — no detection-only work"
           ],
           "verified_at": "2026-07-30T00:00:00+00:00",
           "verified_by": "directive-compliance-verifier",
@@ -2564,7 +2564,7 @@
           "id": "D-004-R257",
           "state": "PASS",
           "evidence": [
-            "My `git check-ignore -v` output: `.gitignore:64:.claude/settings.local.json` \u2014 repo file supplies the match"
+            "My `git check-ignore -v` output: `.gitignore:64:.claude/settings.local.json` — repo file supplies the match"
           ],
           "verified_at": "2026-07-30T00:00:00+00:00",
           "verified_by": "directive-compliance-verifier",
@@ -2594,7 +2594,7 @@
           "id": "D-004-R260",
           "state": "PASS",
           "evidence": [
-            "Untouched: M0-T025, product code, pilot reports, prior D-004 sources (R001\u2013R286 unchanged), unrelated settings, CLAUDE.md, agents, rules, deployment, effort"
+            "Untouched: M0-T025, product code, pilot reports, prior D-004 sources (R001–R286 unchanged), unrelated settings, CLAUDE.md, agents, rules, deployment, effort"
           ],
           "verified_at": "2026-07-30T00:00:00+00:00",
           "verified_by": "directive-compliance-verifier",
@@ -2614,7 +2614,7 @@
           "id": "D-004-R262",
           "state": "PASS",
           "evidence": [
-            "backend-engineer \u2260 any of the four reviewers; I am not the producer of any reviewed change"
+            "backend-engineer ≠ any of the four reviewers; I am not the producer of any reviewed change"
           ],
           "verified_at": "2026-07-30T00:00:00+00:00",
           "verified_by": "directive-compliance-verifier",
@@ -2674,7 +2674,7 @@
           "id": "D-004-R268",
           "state": "PASS",
           "evidence": [
-            "Merged hook/settings tested only in this genuinely fresh session; C1 proof covers all four entries (\u00a72: SessionStart + UserPromptSubmit reminder contexts captured verbatim, dispatch guard fired on the three spawns + script-level proof, readonly guard proven by the live sentinel denial); no entry needed reversion"
+            "Merged hook/settings tested only in this genuinely fresh session; C1 proof covers all four entries (§2: SessionStart + UserPromptSubmit reminder contexts captured verbatim, dispatch guard fired on the three spawns + script-level proof, readonly guard proven by the live sentinel denial); no entry needed reversion"
           ],
           "verified_at": "2026-07-30T00:00:00+00:00",
           "verified_by": "directive-compliance-verifier",
@@ -2684,7 +2684,7 @@
           "id": "D-004-R269",
           "state": "PASS",
           "evidence": [
-            "main==origin/main at 88045b0; merge SHA recorded (capsule \u00a71; submit record); trees clean except the authorized amendment-6 capture"
+            "main==origin/main at 88045b0; merge SHA recorded (capsule §1; submit record); trees clean except the authorized amendment-6 capture"
           ],
           "verified_at": "2026-07-30T00:00:00+00:00",
           "verified_by": "directive-compliance-verifier",
@@ -2714,7 +2714,7 @@
           "id": "D-004-R272",
           "state": "PASS",
           "evidence": [
-            "No freshness simulation \u2014 genuinely new session; prior records refuse simulation"
+            "No freshness simulation — genuinely new session; prior records refuse simulation"
           ],
           "verified_at": "2026-07-30T00:00:00+00:00",
           "verified_by": "directive-compliance-verifier",
@@ -2724,7 +2724,7 @@
           "id": "D-004-R273",
           "state": "PASS",
           "evidence": [
-            "Phase 8 authorized by owner GO captured as amendment 6 (source-007, rows R287\u2013R296 scoped to D-004-PHASE8, 2026-07-30)"
+            "Phase 8 authorized by owner GO captured as amendment 6 (source-007, rows R287–R296 scoped to D-004-PHASE8, 2026-07-30)"
           ],
           "verified_at": "2026-07-30T00:00:00+00:00",
           "verified_by": "directive-compliance-verifier",
@@ -2734,7 +2734,7 @@
           "id": "D-004-R274",
           "state": "PASS",
           "evidence": [
-            "\u00a71: fetch/prune, main==origin/main==88045b0, ancestor check for 9db4ab3, status reconciled; head frozen; on-policy rerun with the same three roles executed (\u00a74)"
+            "§1: fetch/prune, main==origin/main==88045b0, ancestor check for 9db4ab3, status reconciled; head frozen; on-policy rerun with the same three roles executed (§4)"
           ],
           "verified_at": "2026-07-30T00:00:00+00:00",
           "verified_by": "directive-compliance-verifier",
@@ -2744,7 +2744,7 @@
           "id": "D-004-R275",
           "state": "PASS",
           "evidence": [
-            "Explicit Fable 5 passed on every gate-class reviewer spawn (\u00a74 records the mechanism `fable`\u2192claude-fable-5; my own spawn carried it and I run on claude-fable-5)"
+            "Explicit Fable 5 passed on every gate-class reviewer spawn (§4 records the mechanism `fable`→claude-fable-5; my own spawn carried it and I run on claude-fable-5)"
           ],
           "verified_at": "2026-07-30T00:00:00+00:00",
           "verified_by": "directive-compliance-verifier",
@@ -2764,7 +2764,7 @@
           "id": "D-004-R277",
           "state": "PASS",
           "evidence": [
-            "Bash redirection denied by readonly_agent_guard.py itself with the guard's captured verbatim denial text naming the resolved 'code-reviewer' identity (\u00a74, Appendix A(b))"
+            "Bash redirection denied by readonly_agent_guard.py itself with the guard's captured verbatim denial text naming the resolved 'code-reviewer' identity (§4, Appendix A(b))"
           ],
           "verified_at": "2026-07-30T00:00:00+00:00",
           "verified_by": "directive-compliance-verifier",
@@ -2774,7 +2774,7 @@
           "id": "D-004-R278",
           "state": "PASS",
           "evidence": [
-            "Orchestrator's independent `test -e` against the exact sentinel path recorded as exit 1 / ABSENT (\u00a74), plus ls and git-status corroboration; reproduced by me at this head"
+            "Orchestrator's independent `test -e` against the exact sentinel path recorded as exit 1 / ABSENT (§4), plus ls and git-status corroboration; reproduced by me at this head"
           ],
           "verified_at": "2026-07-30T00:00:00+00:00",
           "verified_by": "directive-compliance-verifier",
@@ -2784,7 +2784,7 @@
           "id": "D-004-R279",
           "state": "PASS",
           "evidence": [
-            "Post-test dirt sweeps identical to baseline (\u00a75: 39 entries, no sentinel, no unexpected artifact); regression/directive checks re-run green (\u00a76) and independently reproduced by me (136/0, 14/14, 55 OK, validator exit 0); my current sweep shows only the declared control-plane artifacts"
+            "Post-test dirt sweeps identical to baseline (§5: 39 entries, no sentinel, no unexpected artifact); regression/directive checks re-run green (§6) and independently reproduced by me (136/0, 14/14, 55 OK, validator exit 0); my current sweep shows only the declared control-plane artifacts"
           ],
           "verified_at": "2026-07-30T00:00:00+00:00",
           "verified_by": "directive-compliance-verifier",
@@ -2794,7 +2794,7 @@
           "id": "D-004-R280",
           "state": "PASS",
           "evidence": [
-            "All four components in place in the required order: audit evidence appended on the permitted report surface (new M0-T028-PHASE8 report under reports/, per capsule \u00a73.7); B-015 resolved by the orchestrator with the append-only audit entry citing merged fix + passing sentinel (verified against HEAD: OPENED entry byte-preserved); final independent verification completed by my two passes; CLI acceptance queued immediately after verbatim transcription, mechanically unable to precede these verdicts and auto-refused if any precondition fails"
+            "All four components in place in the required order: audit evidence appended on the permitted report surface (new M0-T028-PHASE8 report under reports/, per capsule §3.7); B-015 resolved by the orchestrator with the append-only audit entry citing merged fix + passing sentinel (verified against HEAD: OPENED entry byte-preserved); final independent verification completed by my two passes; CLI acceptance queued immediately after verbatim transcription, mechanically unable to precede these verdicts and auto-refused if any precondition fails"
           ],
           "verified_at": "2026-07-30T00:00:00+00:00",
           "verified_by": "directive-compliance-verifier",
@@ -2804,7 +2804,7 @@
           "id": "D-004-R281",
           "state": "PASS",
           "evidence": [
-            "Checkpoint decision policy-derived, not assumed (\u00a711: GATES_AND_CHECKPOINTS requires one after integrating a task; CP-0034 only after acceptance; checkpoints dir verified still ending at CP-0033 \u2014 nothing pre-reserved); cleanup queued for ONLY task/M0-T028-readonly-guard branch + its worktree, husks explicitly excluded"
+            "Checkpoint decision policy-derived, not assumed (§11: GATES_AND_CHECKPOINTS requires one after integrating a task; CP-0034 only after acceptance; checkpoints dir verified still ending at CP-0033 — nothing pre-reserved); cleanup queued for ONLY task/M0-T028-readonly-guard branch + its worktree, husks explicitly excluded"
           ],
           "verified_at": "2026-07-30T00:00:00+00:00",
           "verified_by": "directive-compliance-verifier",
@@ -2814,7 +2814,7 @@
           "id": "D-004-R283",
           "state": "PASS",
           "evidence": [
-            "All 17 packet items verified bound and determined in recorded artifacts (\u00a7\u00a71\u20139, \u00a711 + lifecycle records: final SHA, PRs/merges, dependency state, amendment rows R168\u2013R286/R287\u2013R296, frozen SHAs, H2 + evidence location, fix, file inventory, test/CI, reviewer verdicts, sentinel result, B-015 entry, task/M0-T027 states, count/checkpoint, holds, prohibited-action confirmations); delivery is the orchestrator's mechanically-following final message \u2014 judged on bound content per the two-pass design, so recorded here explicitly rather than strained silent"
+            "All 17 packet items verified bound and determined in recorded artifacts (§§1–9, §11 + lifecycle records: final SHA, PRs/merges, dependency state, amendment rows R168–R286/R287–R296, frozen SHAs, H2 + evidence location, fix, file inventory, test/CI, reviewer verdicts, sentinel result, B-015 entry, task/M0-T027 states, count/checkpoint, holds, prohibited-action confirmations); delivery is the orchestrator's mechanically-following final message — judged on bound content per the two-pass design, so recorded here explicitly rather than strained silent"
           ],
           "verified_at": "2026-07-30T00:00:00+00:00",
           "verified_by": "directive-compliance-verifier",
@@ -2834,7 +2834,7 @@
           "id": "D-004-R285",
           "state": "PASS",
           "evidence": [
-            "Conduct-to-date clean (this session contains only Phase-8/M0-T028 acts; e5d95b6..HEAD and the working tree contain no unrelated work); remaining session plan is enumerated and terminates at the packet (\u00a711) \u2014 any post-packet unrelated work would be a new violation outside this verification's reach, stated plainly"
+            "Conduct-to-date clean (this session contains only Phase-8/M0-T028 acts; e5d95b6..HEAD and the working tree contain no unrelated work); remaining session plan is enumerated and terminates at the packet (§11) — any post-packet unrelated work would be a new violation outside this verification's reach, stated plainly"
           ],
           "verified_at": "2026-07-30T00:00:00+00:00",
           "verified_by": "directive-compliance-verifier",
@@ -2844,7 +2844,7 @@
           "id": "D-004-R286",
           "state": "PASS",
           "evidence": [
-            "The owner's trailing question is answered honestly and the answer content is bound into the packet (\u00a711 + the 40% progress entry restated: producer-class workers are NOT on Opus 4.8 \u2014 no producer teammate is permitted while B-015 was open, the coarse enum resolves opus\u2192claude-opus-5 so Opus 4.8 is not per-spawn selectable and that is a recorded STOP condition if ever required, the sole producer ran inherit=Fable 5 non-downgrade; effort is session-global xhigh, unchanged, with no per-spawn control and no effort key ever written)"
+            "The owner's trailing question is answered honestly and the answer content is bound into the packet (§11 + the 40% progress entry restated: producer-class workers are NOT on Opus 4.8 — no producer teammate is permitted while B-015 was open, the coarse enum resolves opus→claude-opus-5 so Opus 4.8 is not per-spawn selectable and that is a recorded STOP condition if ever required, the sole producer ran inherit=Fable 5 non-downgrade; effort is session-global xhigh, unchanged, with no per-spawn control and no effort key ever written)"
           ],
           "verified_at": "2026-07-30T00:00:00+00:00",
           "verified_by": "directive-compliance-verifier",
@@ -2883,7 +2883,7 @@
           "id": "D-004-R301",
           "state": "PASS",
           "evidence": [
-            "Unnamed roster spawn (backend-engineer) with explicit model; work commit 756f601's sole parent is the ONE frozen base `84c1bf2` (git-verified); isolation via harness `agent-*` worktree with guard refusals quoted verbatim in producer report \u00a70.1; section-C matrix recorded in AGENT-TEAMS-PILOT-3.md with orchestrator ratification + task branch as integration target (attestation event 1); disjointness independently verified \u2014 the 7-file and 4-file merged diffs share zero paths and `git diff 84c1bf2..HEAD` contains exactly the union (11 files). [PASS (substance met under the recorded adaptation)]"
+            "Unnamed roster spawn (backend-engineer) with explicit model; work commit 756f601's sole parent is the ONE frozen base `84c1bf2` (git-verified); isolation via harness `agent-*` worktree with guard refusals quoted verbatim in producer report §0.1; section-C matrix recorded in AGENT-TEAMS-PILOT-3.md with orchestrator ratification + task branch as integration target (attestation event 1); disjointness independently verified — the 7-file and 4-file merged diffs share zero paths and `git diff 84c1bf2..HEAD` contains exactly the union (11 files). [PASS (substance met under the recorded adaptation)]"
           ],
           "verified_at": "2026-07-30T00:00:00+00:00",
           "verified_by": "directive-compliance-verifier",
@@ -2893,7 +2893,7 @@
           "id": "D-004-R302",
           "state": "PASS",
           "evidence": [
-            "Producer report \u00a70 is the FIRST report content and records all four values: assigned-worktree HEAD = `84c1bf2` = EXPECTED_BASE_SHA, actual harness-worktree HEAD = `84c1bf2`, plus SHA-256 byte-identity of all ten in-scope files across both trees before any write; the worktree-location mismatch (harness `agent-*` vs pre-created worktree) was reported with \"orchestrator action required\" rather than hidden, satisfies the adapted single-pass invariants (HEAD==base exactly, own fresh agent worktree, clean tree), and the exact-diff port to 756f601 was tree-identical (0-line diff per progress_log). [PASS (deviation disclosed and adjudicated, not concealed)]"
+            "Producer report §0 is the FIRST report content and records all four values: assigned-worktree HEAD = `84c1bf2` = EXPECTED_BASE_SHA, actual harness-worktree HEAD = `84c1bf2`, plus SHA-256 byte-identity of all ten in-scope files across both trees before any write; the worktree-location mismatch (harness `agent-*` vs pre-created worktree) was reported with \"orchestrator action required\" rather than hidden, satisfies the adapted single-pass invariants (HEAD==base exactly, own fresh agent worktree, clean tree), and the exact-diff port to 756f601 was tree-identical (0-line diff per progress_log). [PASS (deviation disclosed and adjudicated, not concealed)]"
           ],
           "verified_at": "2026-07-30T00:00:00+00:00",
           "verified_by": "directive-compliance-verifier",
@@ -2903,7 +2903,7 @@
           "id": "D-004-R303",
           "state": "PASS",
           "evidence": [
-            "`git diff --name-only 84c1bf2..756f601` = 7 files, every one inside packet `allowed_paths`, zero forbidden paths (reproduced myself); commit 756f601 author+committer = orchestrator identity `martin10101 <myhappybook212@gmail.com>` (no producer git); producer report states no git/gh/project_control invocations and requests `awaiting_gate` (\u00a70, \u00a7AS-6, final line); G3 Item 6 and G5 dimension 6 independently confirm containment."
+            "`git diff --name-only 84c1bf2..756f601` = 7 files, every one inside packet `allowed_paths`, zero forbidden paths (reproduced myself); commit 756f601 author+committer = orchestrator identity `martin10101 <myhappybook212@gmail.com>` (no producer git); producer report states no git/gh/project_control invocations and requests `awaiting_gate` (§0, §AS-6, final line); G3 Item 6 and G5 dimension 6 independently confirm containment."
           ],
           "verified_at": "2026-07-30T00:00:00+00:00",
           "verified_by": "directive-compliance-verifier",
@@ -2913,7 +2913,7 @@
           "id": "D-004-R306",
           "state": "PASS",
           "evidence": [
-            "Reproduced scans on the full merged range `84c1bf2..HEAD`: grep for `effort`/`teammateDefaultModel` in the diff \u2192 NO MATCHES; `git diff -- project-control/tasks/M0-T025.json` \u2192 empty; changed-file list contains no expansion/Graphify/survey/deployment/settings surface; `git grep teammateDefaultModel` over tracked `.claude/` at HEAD \u2192 no matches; all four reviewer capture headers record explicit Fable 5."
+            "Reproduced scans on the full merged range `84c1bf2..HEAD`: grep for `effort`/`teammateDefaultModel` in the diff → NO MATCHES; `git diff -- project-control/tasks/M0-T025.json` → empty; changed-file list contains no expansion/Graphify/survey/deployment/settings surface; `git grep teammateDefaultModel` over tracked `.claude/` at HEAD → no matches; all four reviewer capture headers record explicit Fable 5."
           ],
           "verified_at": "2026-07-30T00:00:00+00:00",
           "verified_by": "directive-compliance-verifier",
@@ -2962,7 +2962,7 @@
           "id": "D-004-R302",
           "state": "PASS",
           "evidence": [
-            "First spawn STOPPED on 3/4 mismatch with ZERO writes and returned `blocked` (progress_log 07:44 \u2014 the stop-on-mismatch path demonstrably fired; the merged range contains no first-spawn artifact); re-dispatch recorded the four verified values (HEAD `84c1bf2`, pwd==toplevel==own agent worktree, matching branch, clean tree) as \u00a71 \u2014 the FIRST content of the producer report, with \"This file was the first write\"."
+            "First spawn STOPPED on 3/4 mismatch with ZERO writes and returned `blocked` (progress_log 07:44 — the stop-on-mismatch path demonstrably fired; the merged range contains no first-spawn artifact); re-dispatch recorded the four verified values (HEAD `84c1bf2`, pwd==toplevel==own agent worktree, matching branch, clean tree) as §1 — the FIRST content of the producer report, with \"This file was the first write\"."
           ],
           "verified_at": "2026-07-30T00:00:00+00:00",
           "verified_by": "directive-compliance-verifier",
@@ -2972,7 +2972,7 @@
           "id": "D-004-R303",
           "state": "PASS",
           "evidence": [
-            "`git diff --name-only 2122cd2^..2122cd2` = 4 files (evaluator.py, two tests/rules files, own producer report), all inside `allowed_paths`, zero forbidden paths (reproduced myself); commit 2122cd2 author+committer = orchestrator identity; producer report \u00a71 states no git/gh/project_control and \u00a711 requests `awaiting_gate` (with needs_split explicitly offered rather than self-resolved); G3/G5 containment findings concur."
+            "`git diff --name-only 2122cd2^..2122cd2` = 4 files (evaluator.py, two tests/rules files, own producer report), all inside `allowed_paths`, zero forbidden paths (reproduced myself); commit 2122cd2 author+committer = orchestrator identity; producer report §1 states no git/gh/project_control and §11 requests `awaiting_gate` (with needs_split explicitly offered rather than self-resolved); G3/G5 containment findings concur."
           ],
           "verified_at": "2026-07-30T00:00:00+00:00",
           "verified_by": "directive-compliance-verifier",
@@ -2987,6 +2987,398 @@
           "verified_at": "2026-07-30T00:00:00+00:00",
           "verified_by": "directive-compliance-verifier",
           "reviewed_sha": "31226481a62170477c0d6973a3d51bd215751505"
+        }
+      ]
+    },
+    {
+      "task_id": "M0-T033",
+      "directive_id": "D-004",
+      "producer": "backend-engineer",
+      "verifier": "directive-compliance-verifier",
+      "reviewed_sha": null,
+      "reviewed_manifest_sha256": null,
+      "state": "pending",
+      "note": "Row created at contracting time per authority_note. Applicable requirement ids were DERIVED through the canonical resolver (directive_registry.derive_applicable) against the M0-T033 packet, not hand-selected (D-004-R341). The producer is backend-engineer; the verdict is written ONLY by the independent directive-compliance-verifier at the G5 gate, at one frozen identity. Producer self-verification is prohibited.",
+      "applicable_requirement_ids": [
+        "D-004-R332",
+        "D-004-R335",
+        "D-004-R336",
+        "D-004-R337",
+        "D-004-R338",
+        "D-004-R339",
+        "D-004-R340",
+        "D-004-R341",
+        "D-004-R342",
+        "D-004-R343",
+        "D-004-R344",
+        "D-004-R345",
+        "D-004-R346",
+        "D-004-R347",
+        "D-004-R348",
+        "D-004-R349",
+        "D-004-R350",
+        "D-004-R351",
+        "D-004-R352",
+        "D-004-R353",
+        "D-004-R354",
+        "D-004-R355",
+        "D-004-R356",
+        "D-004-R357",
+        "D-004-R358",
+        "D-004-R359",
+        "D-004-R360",
+        "D-004-R361",
+        "D-004-R362",
+        "D-004-R363",
+        "D-004-R364",
+        "D-004-R365",
+        "D-004-R366",
+        "D-004-R367",
+        "D-004-R368",
+        "D-004-R369",
+        "D-004-R370",
+        "D-004-R371",
+        "D-004-R372",
+        "D-004-R373",
+        "D-004-R387",
+        "D-004-R389"
+      ],
+      "requirements": [
+        {
+          "id": "D-004-R332",
+          "state": "pending",
+          "evidence": [],
+          "verified_at": null,
+          "verified_by": null,
+          "reviewed_sha": null
+        },
+        {
+          "id": "D-004-R335",
+          "state": "pending",
+          "evidence": [],
+          "verified_at": null,
+          "verified_by": null,
+          "reviewed_sha": null
+        },
+        {
+          "id": "D-004-R336",
+          "state": "pending",
+          "evidence": [],
+          "verified_at": null,
+          "verified_by": null,
+          "reviewed_sha": null
+        },
+        {
+          "id": "D-004-R337",
+          "state": "pending",
+          "evidence": [],
+          "verified_at": null,
+          "verified_by": null,
+          "reviewed_sha": null
+        },
+        {
+          "id": "D-004-R338",
+          "state": "pending",
+          "evidence": [],
+          "verified_at": null,
+          "verified_by": null,
+          "reviewed_sha": null
+        },
+        {
+          "id": "D-004-R339",
+          "state": "pending",
+          "evidence": [],
+          "verified_at": null,
+          "verified_by": null,
+          "reviewed_sha": null
+        },
+        {
+          "id": "D-004-R340",
+          "state": "pending",
+          "evidence": [],
+          "verified_at": null,
+          "verified_by": null,
+          "reviewed_sha": null
+        },
+        {
+          "id": "D-004-R341",
+          "state": "pending",
+          "evidence": [],
+          "verified_at": null,
+          "verified_by": null,
+          "reviewed_sha": null
+        },
+        {
+          "id": "D-004-R342",
+          "state": "pending",
+          "evidence": [],
+          "verified_at": null,
+          "verified_by": null,
+          "reviewed_sha": null
+        },
+        {
+          "id": "D-004-R343",
+          "state": "pending",
+          "evidence": [],
+          "verified_at": null,
+          "verified_by": null,
+          "reviewed_sha": null
+        },
+        {
+          "id": "D-004-R344",
+          "state": "pending",
+          "evidence": [],
+          "verified_at": null,
+          "verified_by": null,
+          "reviewed_sha": null
+        },
+        {
+          "id": "D-004-R345",
+          "state": "pending",
+          "evidence": [],
+          "verified_at": null,
+          "verified_by": null,
+          "reviewed_sha": null
+        },
+        {
+          "id": "D-004-R346",
+          "state": "pending",
+          "evidence": [],
+          "verified_at": null,
+          "verified_by": null,
+          "reviewed_sha": null
+        },
+        {
+          "id": "D-004-R347",
+          "state": "pending",
+          "evidence": [],
+          "verified_at": null,
+          "verified_by": null,
+          "reviewed_sha": null
+        },
+        {
+          "id": "D-004-R348",
+          "state": "pending",
+          "evidence": [],
+          "verified_at": null,
+          "verified_by": null,
+          "reviewed_sha": null
+        },
+        {
+          "id": "D-004-R349",
+          "state": "pending",
+          "evidence": [],
+          "verified_at": null,
+          "verified_by": null,
+          "reviewed_sha": null
+        },
+        {
+          "id": "D-004-R350",
+          "state": "pending",
+          "evidence": [],
+          "verified_at": null,
+          "verified_by": null,
+          "reviewed_sha": null
+        },
+        {
+          "id": "D-004-R351",
+          "state": "pending",
+          "evidence": [],
+          "verified_at": null,
+          "verified_by": null,
+          "reviewed_sha": null
+        },
+        {
+          "id": "D-004-R352",
+          "state": "pending",
+          "evidence": [],
+          "verified_at": null,
+          "verified_by": null,
+          "reviewed_sha": null
+        },
+        {
+          "id": "D-004-R353",
+          "state": "pending",
+          "evidence": [],
+          "verified_at": null,
+          "verified_by": null,
+          "reviewed_sha": null
+        },
+        {
+          "id": "D-004-R354",
+          "state": "pending",
+          "evidence": [],
+          "verified_at": null,
+          "verified_by": null,
+          "reviewed_sha": null
+        },
+        {
+          "id": "D-004-R355",
+          "state": "pending",
+          "evidence": [],
+          "verified_at": null,
+          "verified_by": null,
+          "reviewed_sha": null
+        },
+        {
+          "id": "D-004-R356",
+          "state": "pending",
+          "evidence": [],
+          "verified_at": null,
+          "verified_by": null,
+          "reviewed_sha": null
+        },
+        {
+          "id": "D-004-R357",
+          "state": "pending",
+          "evidence": [],
+          "verified_at": null,
+          "verified_by": null,
+          "reviewed_sha": null
+        },
+        {
+          "id": "D-004-R358",
+          "state": "pending",
+          "evidence": [],
+          "verified_at": null,
+          "verified_by": null,
+          "reviewed_sha": null
+        },
+        {
+          "id": "D-004-R359",
+          "state": "pending",
+          "evidence": [],
+          "verified_at": null,
+          "verified_by": null,
+          "reviewed_sha": null
+        },
+        {
+          "id": "D-004-R360",
+          "state": "pending",
+          "evidence": [],
+          "verified_at": null,
+          "verified_by": null,
+          "reviewed_sha": null
+        },
+        {
+          "id": "D-004-R361",
+          "state": "pending",
+          "evidence": [],
+          "verified_at": null,
+          "verified_by": null,
+          "reviewed_sha": null
+        },
+        {
+          "id": "D-004-R362",
+          "state": "pending",
+          "evidence": [],
+          "verified_at": null,
+          "verified_by": null,
+          "reviewed_sha": null
+        },
+        {
+          "id": "D-004-R363",
+          "state": "pending",
+          "evidence": [],
+          "verified_at": null,
+          "verified_by": null,
+          "reviewed_sha": null
+        },
+        {
+          "id": "D-004-R364",
+          "state": "pending",
+          "evidence": [],
+          "verified_at": null,
+          "verified_by": null,
+          "reviewed_sha": null
+        },
+        {
+          "id": "D-004-R365",
+          "state": "pending",
+          "evidence": [],
+          "verified_at": null,
+          "verified_by": null,
+          "reviewed_sha": null
+        },
+        {
+          "id": "D-004-R366",
+          "state": "pending",
+          "evidence": [],
+          "verified_at": null,
+          "verified_by": null,
+          "reviewed_sha": null
+        },
+        {
+          "id": "D-004-R367",
+          "state": "pending",
+          "evidence": [],
+          "verified_at": null,
+          "verified_by": null,
+          "reviewed_sha": null
+        },
+        {
+          "id": "D-004-R368",
+          "state": "pending",
+          "evidence": [],
+          "verified_at": null,
+          "verified_by": null,
+          "reviewed_sha": null
+        },
+        {
+          "id": "D-004-R369",
+          "state": "pending",
+          "evidence": [],
+          "verified_at": null,
+          "verified_by": null,
+          "reviewed_sha": null
+        },
+        {
+          "id": "D-004-R370",
+          "state": "pending",
+          "evidence": [],
+          "verified_at": null,
+          "verified_by": null,
+          "reviewed_sha": null
+        },
+        {
+          "id": "D-004-R371",
+          "state": "pending",
+          "evidence": [],
+          "verified_at": null,
+          "verified_by": null,
+          "reviewed_sha": null
+        },
+        {
+          "id": "D-004-R372",
+          "state": "pending",
+          "evidence": [],
+          "verified_at": null,
+          "verified_by": null,
+          "reviewed_sha": null
+        },
+        {
+          "id": "D-004-R373",
+          "state": "pending",
+          "evidence": [],
+          "verified_at": null,
+          "verified_by": null,
+          "reviewed_sha": null
+        },
+        {
+          "id": "D-004-R387",
+          "state": "pending",
+          "evidence": [],
+          "verified_at": null,
+          "verified_by": null,
+          "reviewed_sha": null
+        },
+        {
+          "id": "D-004-R389",
+          "state": "pending",
+          "evidence": [],
+          "verified_at": null,
+          "verified_by": null,
+          "reviewed_sha": null
         }
       ]
     }
