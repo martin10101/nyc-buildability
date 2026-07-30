@@ -409,6 +409,29 @@ def main() -> int:
     # 12. D-004-R100 ride-along: settings.json hook commands are space-safe.
     check_settings_commands()
 
+    # 13. G5 C3 - fail-closed exception envelope. Malformed tool_input shapes
+    #     that survive identity resolution used to CRASH the hook (exit 1, no
+    #     decision emitted = the harness proceeds = fail OPEN). With the
+    #     envelope they must DENY. The lead (no identity keys) returns before
+    #     tool handling, so it stays unaffected regardless of shape.
+    p = bash_payload(R, "irrelevant")
+    p["tool_input"] = "not-a-dict"
+    check("C3: governed + tool_input as string -> deny", "DENY", p)
+    p = bash_payload(R, "irrelevant")
+    p["tool_input"] = ["not", "a", "dict"]
+    check("C3: governed + tool_input as list -> deny", "DENY", p)
+    p = bash_payload(R, "x")
+    p["tool_input"] = {"command": 42}
+    check("C3: governed + command as int -> deny", "DENY", p)
+    p = bash_payload("m0t028-diag-probe", "irrelevant")
+    p["agent_id"] = "am0t028-diag-probe-0f3a"
+    p["tool_input"] = "not-a-dict"
+    check("C3: named spawn + tool_input as string -> deny", "DENY", p)
+    p = bash_payload(None, "irrelevant")
+    p["tool_input"] = "not-a-dict"
+    check("C3: lead (no identity) + odd tool_input -> allow (returns first)",
+          "ALLOW", p)
+
     if FAILURES:
         print(f"\n{len(FAILURES)} FAILURE(S): " + ", ".join(FAILURES))
         return 1

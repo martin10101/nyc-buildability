@@ -383,3 +383,23 @@ tools/test_readonly_agent_guard.py False
    contains no failures.
 6. This report contains no usernames, no absolute machine paths, and no session/prompt/pane IDs;
    quoted denials are redacted as stated in the header.
+
+## 9. Post-review corrections (appended after the frozen-SHA reviews; original text above is preserved exactly as reviewed)
+
+1. **C4 (G3 defect F-1 / G5 defect L-4) — check-count arithmetic.** The summary claims of
+   "132 checks (90 pre-existing + 42 new)" in this report (and "All 90 pre-existing checks
+   preserved verbatim") are each off by one. The correct figures, independently established by both
+   the G3 code reviewer (boundary analysis: the pre-existing suite ends at check 89,
+   `fail-closed: JSON non-object (array)`) and the G5 security reviewer (execution of the pre-fix
+   suite: 89/89), are: **131 total checks = 89 pre-existing (preserved verbatim) + 42 new**, 0
+   failures, exit 0. The verbatim suite output in section 6.1 (131 PASS lines) was and remains
+   correct; only the summary arithmetic was wrong.
+2. **C3 (G5 finding L-1) — fail-closed exception envelope.** After the frozen-SHA reviews, a
+   bounded delta was applied per the G5 required correction: `main()` in
+   `.claude/hooks/readonly_agent_guard.py` is now a try/except envelope around the decision path
+   (`_main()`), denying with "read-only guard: internal error (fail-closed)" on any unexpected
+   exception, because a crashed hook is a non-blocking error and would fail OPEN. Five new suite
+   checks (section 13) cover the crash shapes G5 reproduced (tool_input as string/list, command as
+   int, for governed and named-spawn identities) plus the lead's unaffected pass-through. Suite
+   total after the delta: **136 checks = 89 pre-existing + 47 new**. The delta received its own
+   bounded independent review before merge (see the gate records).

@@ -334,7 +334,7 @@ def _deny(reason):
     )
 
 
-def main():
+def _main():
     raw = sys.stdin.read()
     try:
         payload = json.loads(raw)
@@ -375,6 +375,19 @@ def main():
             )
             return 0
     return 0
+
+
+def main():
+    """Fail-closed envelope (G5 required correction C3): a crashed hook is a
+    NON-BLOCKING error to the harness, i.e. it fails OPEN. Any unexpected
+    exception in the decision path (e.g. a malformed tool_input shape that
+    survives identity resolution) must therefore emit a deny instead of
+    propagating."""
+    try:
+        return _main()
+    except Exception:
+        _deny("read-only guard: internal error (fail-closed)")
+        return 0
 
 
 if __name__ == "__main__":
