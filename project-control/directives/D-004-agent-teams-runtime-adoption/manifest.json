@@ -1,7 +1,7 @@
 {
   "schema": "directive_manifest/v1",
   "directive_id": "D-004",
-  "version": 12,
+  "version": 13,
   "slug": "agent-teams-runtime-adoption",
   "title": "Agent-teams runtime adoption, staged with pilots",
   "status": "active",
@@ -105,6 +105,14 @@
       "amends": "source-001.md",
       "recorded_at": "2026-07-30T00:00:00+00:00",
       "content_digest_sha256": "9dcdcba7dc4186d3f4257071d3f710998983fcc7d55809a2daa6a274e0e7cabf"
+    },
+    {
+      "file": "source-013-amendment.md",
+      "kind": "amendment",
+      "sequence": 13,
+      "amends": "source-001.md",
+      "recorded_at": "2026-07-30T00:00:00+00:00",
+      "content_digest_sha256": "69b6bbdeded7b1162a119fc0e013e02bbaa645cacecf8bcbb9ee7ca0e251e216"
     }
   ],
   "amendments": [
@@ -118,7 +126,8 @@
     "source-009-amendment.md",
     "source-010-amendment.md",
     "source-011-amendment.md",
-    "source-012-amendment.md"
+    "source-012-amendment.md",
+    "source-013-amendment.md"
   ],
   "supersedes": [],
   "superseded_by": null,
@@ -307,6 +316,11 @@
       "at": "2026-07-30T00:00:00+00:00",
       "by": "orchestrator",
       "note": "Amendment 11 captured verbatim as source-012-amendment.md (sha256 9dcdcba7dc4186d3f4257071d3f710998983fcc7d55809a2daa6a274e0e7cabf) at frozen head 11f3540c602849f4100517f35b7b93eca6742a8d. The owner's GO 'EXECUTE M0-T027 PHASES 3 AND 4 ONLY' is EXECUTION CONFIRMATION for the already-authorized OPTION B sequence (amendment 9, source-010) and adds ONE new authorization: a pre-flight, non-material reviewer-roster correction adding exactly 'security-reviewer' to M0-T027 reviewer_agents so the already-required G5 is satisfiable by the proper specialist (reviewer_agents is excluded from MATERIAL_FIELDS, so the packet digest is unaffected). 96 append-only rows D-004-R421..R516 (total 420 -> 516) across the live baseline, the pre-flight roster correction and G0-preservation constraints, the two truth-preserving AS-1/AS-6 clarifications, the nine Phase-4 closeout steps, the ten step-7 confirmations, the twelve not-authorized prohibitions, and the thirteen required return items. LIVE RECONCILIATION DISCLOSURE: the owner's stated head 208c939dcb9c0afe9f0bb72cc53bc784f2cc2514 is one commit behind live 11f3540c602849f4100517f35b7b93eca6742a8d (PR #134, a docs-only refresh of docs/SESSION_HANDOFF.md, +92/-49, no control-plane/directive/product file); recorded as NON-MATERIAL and disclosed rather than silently absorbed. Every other stated value matched live state exactly. TRANSMISSION DISCLOSURE: the message's leading 'Starting message for the next session' block arrived truncated mid-word in six places; the operative 'GO' block arrived complete, and no requirement is derived from a truncated fragment. No existing source file or requirement row was edited. Independent verification is written by directive-compliance-verifier at the M0-T027 closeout gates, never by the producer."
+    },
+    {
+      "at": "2026-07-30T00:00:00+00:00",
+      "by": "orchestrator",
+      "note": "Amendment 12 captured verbatim as source-013-amendment.md (sha256 69b6bbdeded7b1162a119fc0e013e02bbaa645cacecf8bcbb9ee7ca0e251e216) at origin/main 11f3540c602849f4100517f35b7b93eca6742a8d (confirmed UNCHANGED before any write per the owner's precondition) with the frozen closeout identity resolved in full to f3014213742a074841ed52cab3e59ea83ccd69c7. The owner authorizes OPTION A first and OPTION B ONLY as the exact conditional fallback for a four-row circularity (R486/R487/R488/R501). 36 append-only rows D-004-R517..R552 (total 516 -> 552). BINDING SCOPE DECISION, owner-mandated: EVERY row carries task_ids ['D-004-OPTIONB'], the session sentinel - the owner states this is execution authority, NOT a new M0-T027 task-content or acceptance requirement, and expressly forbids scoping any newly derived requirement to M0-T027. Mechanical consequence recorded so it is not mistaken for an oversight: none of R517-R552 enters M0-T027's applicable set and accept() will never gate on them; they bind session conduct and are enforced at D-004 final verification, the same structural position as the return items R502-R514. That scoping is exactly what prevents this authorization from re-creating the circularity it exists to resolve. Nothing is waived, weakened, or pre-marked PASS. No existing source file or requirement row was edited."
     }
   ],
   "locked_requirement_ids": [
@@ -825,8 +839,44 @@
     "D-004-R513",
     "D-004-R514",
     "D-004-R515",
-    "D-004-R516"
+    "D-004-R516",
+    "D-004-R517",
+    "D-004-R518",
+    "D-004-R519",
+    "D-004-R520",
+    "D-004-R521",
+    "D-004-R522",
+    "D-004-R523",
+    "D-004-R524",
+    "D-004-R525",
+    "D-004-R526",
+    "D-004-R527",
+    "D-004-R528",
+    "D-004-R529",
+    "D-004-R530",
+    "D-004-R531",
+    "D-004-R532",
+    "D-004-R533",
+    "D-004-R534",
+    "D-004-R535",
+    "D-004-R536",
+    "D-004-R537",
+    "D-004-R538",
+    "D-004-R539",
+    "D-004-R540",
+    "D-004-R541",
+    "D-004-R542",
+    "D-004-R543",
+    "D-004-R544",
+    "D-004-R545",
+    "D-004-R546",
+    "D-004-R547",
+    "D-004-R548",
+    "D-004-R549",
+    "D-004-R550",
+    "D-004-R551",
+    "D-004-R552"
   ],
-  "requirements_id_digest_sha256": "70758c6723abc3f60c103f71a2da9e67b3ae946ce67c244f81f9a1a9ae3c9871",
-  "requirements_content_digest_sha256": "f8e09facc764fb1233c3a517f5ac39ac7ab841619912db7cd0c9b2607ff3fec0"
+  "requirements_id_digest_sha256": "df2b18369d4517f579d345ae591d11457d62097908b174c4958eee695b456ce9",
+  "requirements_content_digest_sha256": "a5132a39c73e8d0ed9705c215e35f96b6511e84e66fc5ec604e905d2d5a5a135"
 }

@@ -2,7 +2,7 @@
   "schema": "directive_requirements/v1",
   "directive_id": "D-004",
   "version": 1,
-  "requirement_count": 516,
+  "requirement_count": 552,
   "producer": "orchestrator",
   "updated_at": "2026-07-30T00:00:00+00:00",
   "requirements": [
@@ -20493,6 +20493,1380 @@
         "tasks": []
       },
       "amendment_sequence": 12
+    },
+    {
+      "id": "D-004-R517",
+      "text": "This message is EXECUTION AUTHORITY under the D-004-OPTIONB session sentinel; it is NOT a new M0-T027 task-content or acceptance requirement.",
+      "source_ref": "source-013-amendment.md#scope",
+      "classification": "authorization",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "D-004-OPTIONB"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [],
+        "lifecycle_events": [
+          "capture"
+        ],
+        "effective_date": "2026-07-30"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured by amendment 12 (source-013); session-sentinel scope, deliberately NOT applicable to M0-T027 per owner instruction; verified at D-004 final verification",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      },
+      "amendment_sequence": 13
+    },
+    {
+      "id": "D-004-R518",
+      "text": "Capture this authorization under the D-004-OPTIONB session sentinel.",
+      "source_ref": "source-013-amendment.md#scope",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "D-004-OPTIONB"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [],
+        "lifecycle_events": [
+          "capture"
+        ],
+        "effective_date": "2026-07-30"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured by amendment 12 (source-013); session-sentinel scope, deliberately NOT applicable to M0-T027 per owner instruction; verified at D-004 final verification",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      },
+      "amendment_sequence": 13
+    },
+    {
+      "id": "D-004-R519",
+      "text": "Do NOT scope any newly derived requirement from this message to M0-T027.",
+      "source_ref": "source-013-amendment.md#scope",
+      "classification": "prohibition",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "D-004-OPTIONB"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [],
+        "lifecycle_events": [
+          "capture"
+        ],
+        "effective_date": "2026-07-30"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured by amendment 12 (source-013); session-sentinel scope, deliberately NOT applicable to M0-T027 per owner instruction; verified at D-004 final verification",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      },
+      "amendment_sequence": 13
+    },
+    {
+      "id": "D-004-R520",
+      "text": "Proceed from frozen closeout identity f301421 ONLY after confirming origin/main is still 11f3540c602849f4100517f35b7b93eca6742a8d and resolving the full commit identity.",
+      "source_ref": "source-013-amendment.md#scope",
+      "classification": "sequencing",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "D-004-OPTIONB"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [],
+        "lifecycle_events": [
+          "capture",
+          "gate"
+        ],
+        "effective_date": "2026-07-30"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured by amendment 12 (source-013); session-sentinel scope, deliberately NOT applicable to M0-T027 per owner instruction; verified at D-004 final verification",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      },
+      "amendment_sequence": 13
+    },
+    {
+      "id": "D-004-R521",
+      "text": "ITEM 1: run the SECOND verification pass now.",
+      "source_ref": "source-013-amendment.md#item-1",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "D-004-OPTIONB"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [],
+        "lifecycle_events": [
+          "gate"
+        ],
+        "effective_date": "2026-07-30"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured by amendment 12 (source-013); session-sentinel scope, deliberately NOT applicable to M0-T027 per owner instruction; verified at D-004 final verification",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      },
+      "amendment_sequence": 13
+    },
+    {
+      "id": "D-004-R522",
+      "text": "ITEM 1: convert ONLY rows supported by evidence that already exists.",
+      "source_ref": "source-013-amendment.md#item-1",
+      "classification": "harness",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "D-004-OPTIONB"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [],
+        "lifecycle_events": [
+          "gate"
+        ],
+        "effective_date": "2026-07-30"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured by amendment 12 (source-013); session-sentinel scope, deliberately NOT applicable to M0-T027 per owner instruction; verified at D-004 final verification",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      },
+      "amendment_sequence": 13
+    },
+    {
+      "id": "D-004-R523",
+      "text": "ITEM 1: do NOT prospectively PASS any unperformed act.",
+      "source_ref": "source-013-amendment.md#item-1",
+      "classification": "prohibition",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "D-004-OPTIONB"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [],
+        "lifecycle_events": [
+          "gate"
+        ],
+        "effective_date": "2026-07-30"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured by amendment 12 (source-013); session-sentinel scope, deliberately NOT applicable to M0-T027 per owner instruction; verified at D-004 final verification",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      },
+      "amendment_sequence": 13
+    },
+    {
+      "id": "D-004-R524",
+      "text": "ITEM 2: submit M0-T027 through the CLI.",
+      "source_ref": "source-013-amendment.md#item-2",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "D-004-OPTIONB"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [],
+        "lifecycle_events": [
+          "submit"
+        ],
+        "effective_date": "2026-07-30"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured by amendment 12 (source-013); session-sentinel scope, deliberately NOT applicable to M0-T027 per owner instruction; verified at D-004 final verification",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      },
+      "amendment_sequence": 13
+    },
+    {
+      "id": "D-004-R525",
+      "text": "ITEM 2: push and open the protected-main PR.",
+      "source_ref": "source-013-amendment.md#item-2",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "D-004-OPTIONB"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [],
+        "lifecycle_events": [
+          "submit"
+        ],
+        "effective_date": "2026-07-30"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured by amendment 12 (source-013); session-sentinel scope, deliberately NOT applicable to M0-T027 per owner instruction; verified at D-004 final verification",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      },
+      "amendment_sequence": 13
+    },
+    {
+      "id": "D-004-R526",
+      "text": "ITEM 2: require ALL contracted CI at the EXACT PR head.",
+      "source_ref": "source-013-amendment.md#item-2",
+      "classification": "evidence",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "D-004-OPTIONB"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [],
+        "lifecycle_events": [
+          "accept"
+        ],
+        "effective_date": "2026-07-30"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured by amendment 12 (source-013); session-sentinel scope, deliberately NOT applicable to M0-T027 per owner instruction; verified at D-004 final verification",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      },
+      "amendment_sequence": 13
+    },
+    {
+      "id": "D-004-R527",
+      "text": "ITEM 2: merge ONLY when green and otherwise authorized.",
+      "source_ref": "source-013-amendment.md#item-2",
+      "classification": "sequencing",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "D-004-OPTIONB"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [],
+        "lifecycle_events": [
+          "accept"
+        ],
+        "effective_date": "2026-07-30"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured by amendment 12 (source-013); session-sentinel scope, deliberately NOT applicable to M0-T027 per owner instruction; verified at D-004 final verification",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      },
+      "amendment_sequence": 13
+    },
+    {
+      "id": "D-004-R528",
+      "text": "ITEM 2: reconcile the EXACT merged-main identity.",
+      "source_ref": "source-013-amendment.md#item-2",
+      "classification": "evidence",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "D-004-OPTIONB"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [],
+        "lifecycle_events": [
+          "accept"
+        ],
+        "effective_date": "2026-07-30"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured by amendment 12 (source-013); session-sentinel scope, deliberately NOT applicable to M0-T027 per owner instruction; verified at D-004 final verification",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      },
+      "amendment_sequence": 13
+    },
+    {
+      "id": "D-004-R529",
+      "text": "ITEM 2: regenerate the evidence map with the canonical resolver.",
+      "source_ref": "source-013-amendment.md#item-2",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "D-004-OPTIONB"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [],
+        "lifecycle_events": [
+          "accept"
+        ],
+        "effective_date": "2026-07-30"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured by amendment 12 (source-013); session-sentinel scope, deliberately NOT applicable to M0-T027 per owner instruction; verified at D-004 final verification",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      },
+      "amendment_sequence": 13
+    },
+    {
+      "id": "D-004-R530",
+      "text": "ITEM 2: run the independent THIRD verification pass at that merged identity.",
+      "source_ref": "source-013-amendment.md#item-2",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "D-004-OPTIONB"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [],
+        "lifecycle_events": [
+          "accept"
+        ],
+        "effective_date": "2026-07-30"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured by amendment 12 (source-013); session-sentinel scope, deliberately NOT applicable to M0-T027 per owner instruction; verified at D-004 final verification",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      },
+      "amendment_sequence": 13
+    },
+    {
+      "id": "D-004-R531",
+      "text": "ITEM 3: if EVERY applicable M0-T027 requirement passes, accept through the CLI.",
+      "source_ref": "source-013-amendment.md#item-3",
+      "classification": "sequencing",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "D-004-OPTIONB"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [],
+        "lifecycle_events": [
+          "accept"
+        ],
+        "effective_date": "2026-07-30"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured by amendment 12 (source-013); session-sentinel scope, deliberately NOT applicable to M0-T027 per owner instruction; verified at D-004 final verification",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      },
+      "amendment_sequence": 13
+    },
+    {
+      "id": "D-004-R532",
+      "text": "ITEM 3: record the checkpoint.",
+      "source_ref": "source-013-amendment.md#item-3",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "D-004-OPTIONB"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [],
+        "lifecycle_events": [
+          "accept"
+        ],
+        "effective_date": "2026-07-30"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured by amendment 12 (source-013); session-sentinel scope, deliberately NOT applicable to M0-T027 per owner instruction; verified at D-004 final verification",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      },
+      "amendment_sequence": 13
+    },
+    {
+      "id": "D-004-R533",
+      "text": "ITEM 3: clean ONLY M0-T027 closeout-owned branches/worktrees.",
+      "source_ref": "source-013-amendment.md#item-3",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "D-004-OPTIONB"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [],
+        "lifecycle_events": [
+          "accept"
+        ],
+        "effective_date": "2026-07-30"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured by amendment 12 (source-013); session-sentinel scope, deliberately NOT applicable to M0-T027 per owner instruction; verified at D-004 final verification",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      },
+      "amendment_sequence": 13
+    },
+    {
+      "id": "D-004-R534",
+      "text": "ITEM 3: STOP after that; do NOT execute Step 5 / M0-T029.",
+      "source_ref": "source-013-amendment.md#item-3",
+      "classification": "prohibition",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "D-004-OPTIONB"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [],
+        "lifecycle_events": [
+          "accept"
+        ],
+        "effective_date": "2026-07-30"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured by amendment 12 (source-013); session-sentinel scope, deliberately NOT applicable to M0-T027 per owner instruction; verified at D-004 final verification",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      },
+      "amendment_sequence": 13
+    },
+    {
+      "id": "D-004-R535",
+      "text": "ITEM 4 TRIGGER: Option B may be invoked IF AND ONLY IF the exact remaining blockers are D-004-R486, R487, R488 and R501.",
+      "source_ref": "source-013-amendment.md#item-4",
+      "classification": "decision",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "D-004-OPTIONB"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [],
+        "lifecycle_events": [
+          "accept"
+        ],
+        "effective_date": "2026-07-30"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured by amendment 12 (source-013); session-sentinel scope, deliberately NOT applicable to M0-T027 per owner instruction; verified at D-004 final verification",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      },
+      "amendment_sequence": 13
+    },
+    {
+      "id": "D-004-R536",
+      "text": "ITEM 4 TRIGGER: and each of those four remains UNVERIFIABLE SOLELY because it describes acceptance or an act occurring after acceptance.",
+      "source_ref": "source-013-amendment.md#item-4",
+      "classification": "decision",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "D-004-OPTIONB"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [],
+        "lifecycle_events": [
+          "accept"
+        ],
+        "effective_date": "2026-07-30"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured by amendment 12 (source-013); session-sentinel scope, deliberately NOT applicable to M0-T027 per owner instruction; verified at D-004 final verification",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      },
+      "amendment_sequence": 13
+    },
+    {
+      "id": "D-004-R537",
+      "text": "OPTION B: append an owner amendment re-scoping EXACTLY R486, R487, R488 and R501 from M0-T027 to the D-004-OPTIONB session sentinel.",
+      "source_ref": "source-013-amendment.md#item-4",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "D-004-OPTIONB"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [],
+        "lifecycle_events": [
+          "accept"
+        ],
+        "effective_date": "2026-07-30"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured by amendment 12 (source-013); session-sentinel scope, deliberately NOT applicable to M0-T027 per owner instruction; verified at D-004 final verification",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      },
+      "amendment_sequence": 13
+    },
+    {
+      "id": "D-004-R538",
+      "text": "OPTION B: preserve those four rows' locked wording and order.",
+      "source_ref": "source-013-amendment.md#item-4",
+      "classification": "prohibition",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "D-004-OPTIONB"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [],
+        "lifecycle_events": [
+          "accept"
+        ],
+        "effective_date": "2026-07-30"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured by amendment 12 (source-013); session-sentinel scope, deliberately NOT applicable to M0-T027 per owner instruction; verified at D-004 final verification",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      },
+      "amendment_sequence": 13
+    },
+    {
+      "id": "D-004-R539",
+      "text": "OPTION B: do NOT delete, waive, weaken, rewrite, or pre-mark any of them PASS.",
+      "source_ref": "source-013-amendment.md#item-4",
+      "classification": "prohibition",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "D-004-OPTIONB"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [],
+        "lifecycle_events": [
+          "accept"
+        ],
+        "effective_date": "2026-07-30"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured by amendment 12 (source-013); session-sentinel scope, deliberately NOT applicable to M0-T027 per owner instruction; verified at D-004 final verification",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      },
+      "amendment_sequence": 13
+    },
+    {
+      "id": "D-004-R540",
+      "text": "OPTION B: keep all four binding as session-level lifecycle obligations.",
+      "source_ref": "source-013-amendment.md#item-4",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "D-004-OPTIONB"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [],
+        "lifecycle_events": [
+          "accept"
+        ],
+        "effective_date": "2026-07-30"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured by amendment 12 (source-013); session-sentinel scope, deliberately NOT applicable to M0-T027 per owner instruction; verified at D-004 final verification",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      },
+      "amendment_sequence": 13
+    },
+    {
+      "id": "D-004-R541",
+      "text": "OPTION B: validate the append-only directive manifest, IDs, content digests, and validator exit.",
+      "source_ref": "source-013-amendment.md#item-4",
+      "classification": "harness",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "D-004-OPTIONB"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [],
+        "lifecycle_events": [
+          "accept"
+        ],
+        "effective_date": "2026-07-30"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured by amendment 12 (source-013); session-sentinel scope, deliberately NOT applicable to M0-T027 per owner instruction; verified at D-004 final verification",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      },
+      "amendment_sequence": 13
+    },
+    {
+      "id": "D-004-R542",
+      "text": "OPTION B: merge the amendment through the normal protected-main workflow.",
+      "source_ref": "source-013-amendment.md#item-4",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "D-004-OPTIONB"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [],
+        "lifecycle_events": [
+          "accept"
+        ],
+        "effective_date": "2026-07-30"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured by amendment 12 (source-013); session-sentinel scope, deliberately NOT applicable to M0-T027 per owner instruction; verified at D-004 final verification",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      },
+      "amendment_sequence": 13
+    },
+    {
+      "id": "D-004-R543",
+      "text": "OPTION B: regenerate the canonical applicable set and evidence map.",
+      "source_ref": "source-013-amendment.md#item-4",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "D-004-OPTIONB"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [],
+        "lifecycle_events": [
+          "accept"
+        ],
+        "effective_date": "2026-07-30"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured by amendment 12 (source-013); session-sentinel scope, deliberately NOT applicable to M0-T027 per owner instruction; verified at D-004 final verification",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      },
+      "amendment_sequence": 13
+    },
+    {
+      "id": "D-004-R544",
+      "text": "OPTION B: rerun independent verification at the EXACT resulting identity.",
+      "source_ref": "source-013-amendment.md#item-4",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "D-004-OPTIONB"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [],
+        "lifecycle_events": [
+          "accept"
+        ],
+        "effective_date": "2026-07-30"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured by amendment 12 (source-013); session-sentinel scope, deliberately NOT applicable to M0-T027 per owner instruction; verified at D-004 final verification",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      },
+      "amendment_sequence": 13
+    },
+    {
+      "id": "D-004-R545",
+      "text": "OPTION B: accept M0-T027 through the CLI, then complete checkpoint, cleanup, and stop IN THEIR REQUIRED ORDER, preserving truthful sentinel evidence.",
+      "source_ref": "source-013-amendment.md#item-4",
+      "classification": "sequencing",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "D-004-OPTIONB"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [],
+        "lifecycle_events": [
+          "accept"
+        ],
+        "effective_date": "2026-07-30"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured by amendment 12 (source-013); session-sentinel scope, deliberately NOT applicable to M0-T027 per owner instruction; verified at D-004 final verification",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      },
+      "amendment_sequence": 13
+    },
+    {
+      "id": "D-004-R546",
+      "text": "Continue the existing explicit-Opus-5 and model-disclosure policy UNCHANGED.",
+      "source_ref": "source-013-amendment.md#policy",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "D-004-OPTIONB"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [],
+        "lifecycle_events": [
+          "gate",
+          "accept"
+        ],
+        "effective_date": "2026-07-30"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured by amendment 12 (source-013); session-sentinel scope, deliberately NOT applicable to M0-T027 per owner instruction; verified at D-004 final verification",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      },
+      "amendment_sequence": 13
+    },
+    {
+      "id": "D-004-R547",
+      "text": "STOP and report if ANY OTHER row remains blocked.",
+      "source_ref": "source-013-amendment.md#stop",
+      "classification": "sequencing",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "D-004-OPTIONB"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [],
+        "lifecycle_events": [
+          "gate",
+          "accept"
+        ],
+        "effective_date": "2026-07-30"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured by amendment 12 (source-013); session-sentinel scope, deliberately NOT applicable to M0-T027 per owner instruction; verified at D-004 final verification",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      },
+      "amendment_sequence": 13
+    },
+    {
+      "id": "D-004-R548",
+      "text": "STOP and report if the remaining set CHANGES.",
+      "source_ref": "source-013-amendment.md#stop",
+      "classification": "sequencing",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "D-004-OPTIONB"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [],
+        "lifecycle_events": [
+          "gate",
+          "accept"
+        ],
+        "effective_date": "2026-07-30"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured by amendment 12 (source-013); session-sentinel scope, deliberately NOT applicable to M0-T027 per owner instruction; verified at D-004 final verification",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      },
+      "amendment_sequence": 13
+    },
+    {
+      "id": "D-004-R549",
+      "text": "STOP and report if CI FAILS.",
+      "source_ref": "source-013-amendment.md#stop",
+      "classification": "sequencing",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "D-004-OPTIONB"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [],
+        "lifecycle_events": [
+          "accept"
+        ],
+        "effective_date": "2026-07-30"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured by amendment 12 (source-013); session-sentinel scope, deliberately NOT applicable to M0-T027 per owner instruction; verified at D-004 final verification",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      },
+      "amendment_sequence": 13
+    },
+    {
+      "id": "D-004-R550",
+      "text": "STOP and report if IDENTITY DRIFTS.",
+      "source_ref": "source-013-amendment.md#stop",
+      "classification": "sequencing",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "D-004-OPTIONB"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [],
+        "lifecycle_events": [
+          "gate",
+          "accept"
+        ],
+        "effective_date": "2026-07-30"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured by amendment 12 (source-013); session-sentinel scope, deliberately NOT applicable to M0-T027 per owner instruction; verified at D-004 final verification",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      },
+      "amendment_sequence": 13
+    },
+    {
+      "id": "D-004-R551",
+      "text": "STOP and report if ANY SUBSTANTIVE FINDING appears.",
+      "source_ref": "source-013-amendment.md#stop",
+      "classification": "sequencing",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "D-004-OPTIONB"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [],
+        "lifecycle_events": [
+          "gate",
+          "accept"
+        ],
+        "effective_date": "2026-07-30"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured by amendment 12 (source-013); session-sentinel scope, deliberately NOT applicable to M0-T027 per owner instruction; verified at D-004 final verification",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      },
+      "amendment_sequence": 13
+    },
+    {
+      "id": "D-004-R552",
+      "text": "Do NOT amend around any blocker other than the exact four-row circularity authorized above.",
+      "source_ref": "source-013-amendment.md#stop",
+      "classification": "prohibition",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "D-004-OPTIONB"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [],
+        "lifecycle_events": [
+          "accept"
+        ],
+        "effective_date": "2026-07-30"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured by amendment 12 (source-013); session-sentinel scope, deliberately NOT applicable to M0-T027 per owner instruction; verified at D-004 final verification",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      },
+      "amendment_sequence": 13
     }
   ],
   "amendments_applied": [
@@ -20506,6 +21880,7 @@
     "source-009-amendment.md",
     "source-010-amendment.md",
     "source-011-amendment.md",
-    "source-012-amendment.md"
+    "source-012-amendment.md",
+    "source-013-amendment.md"
   ]
 }
