@@ -72,8 +72,8 @@
     "control-plane-verifier",
     "directive-compliance-verifier"
   ],
-  "status": "backlog",
-  "progress_percent": 0,
+  "status": "awaiting_gate",
+  "progress_percent": 95,
   "risks": [
     "H1 (hook never fires for teammates) may be UNFIXABLE from inside the repository, since hook dispatch is harness behaviour. If so, this task must pivot to guaranteed detection (D-004 Step 3 layer 4: containment diff on completion AND idle) and say so plainly rather than claim a prevention fix it did not achieve.",
     "Testing a merged hook/settings change inside the session that merged it is explicitly forbidden by D-004's standing constraint - the sentinel re-verification must happen in a COMPLETELY FRESH session.",
@@ -83,7 +83,7 @@
   ],
   "blockers": [],
   "created_at": "2026-07-24T19:36:53.815540+00:00",
-  "updated_at": "2026-07-29T00:00:00+00:00",
+  "updated_at": "2026-07-30T05:34:57.481343+00:00",
   "directive_refs": [
     {
       "directive_id": "D-004",
@@ -100,5 +100,43 @@
   ],
   "owner_review_state": "APPROVED - explicit owner GO for D-004 Step 3 recorded 2026-07-29 in source-006-amendment.md (D-004 amendment 5, rows D-004-R168+). Approval is conditional on the staged execution and stop conditions captured there: corrected packet through a control-plane PR before G0/claim; single-writer implementation; primary-evidence H1/H2 diagnosis; H1 or detection-only = STOP for a new owner decision; independent review at a frozen SHA; protected-main merge; mandatory fresh-session sentinel rerun before B-015 closure or acceptance.",
   "dependency_note": "Owner directive 2026-07-29 (D-004 source-006, Phase 1): M0-T027 was removed from the formal dependencies array to break a lifecycle deadlock - M0-T027 is blocked until M0-T028 fixes B-015, and the CLI's accept() requires every listed dependency to be accepted, so M0-T028 could never have been accepted as written. M0-T027 remains the causal predecessor: it is the source of the pilot evidence (inputs 2-3), the task affected by B-015, and is referenced throughout the requirement rows - but it is NOT an acceptance prerequisite. No replacement dependency was added: the authoritative project-control model does not require a non-empty dependencies array, and no accepted predecessor is genuinely required by primary evidence (the packet's inputs are all merged main-state artifacts).",
-  "producer_note": "Assigned per source-006 Phase 1 items 6-7 after inspecting .claude/agents/: backend-engineer is an existing producer role (worktree isolation, ADR-005 return protocol) qualified for deterministic Python tooling (produced the accepted M0-T030/M0-T031 tools/ lane) and is distinct from all four independent reviewers (security-reviewer, code-reviewer, control-plane-verifier, directive-compliance-verifier). Dispatched as a background subagent, NOT an Agent Teams teammate (source-006 Phase 3 item 6: no Agent Teams writing producer while B-015 is open); on any producer-class teammate spawn the explicit model is Opus 4.8 (D-004-R091/R162)."
+  "producer_note": "Assigned per source-006 Phase 1 items 6-7 after inspecting .claude/agents/: backend-engineer is an existing producer role (worktree isolation, ADR-005 return protocol) qualified for deterministic Python tooling (produced the accepted M0-T030/M0-T031 tools/ lane) and is distinct from all four independent reviewers (security-reviewer, code-reviewer, control-plane-verifier, directive-compliance-verifier). Dispatched as a background subagent, NOT an Agent Teams teammate (source-006 Phase 3 item 6: no Agent Teams writing producer while B-015 is open); on any producer-class teammate spawn the explicit model is Opus 4.8 (D-004-R091/R162).",
+  "worktree": ".claude/worktrees/M0-T028-readonly-guard",
+  "progress_log": [
+    {
+      "at": "2026-07-30T03:57:58.566582+00:00",
+      "agent": "orchestrator",
+      "percent": 35,
+      "status": "in_progress",
+      "message": "D-004 Step 3 Phase 4 complete: H1 REFUTED / H2 CONFIRMED with primary evidence. Method: temporary task-scoped capture instrumentation inside readonly_agent_guard.py (reverted byte-exact; capture file outside the repo); dirt sweeps recorded before/after probes (clean; probes read-only). Findings: main-session PreToolUse payload has NO agent identity keys; a NAMED spawn of ci-evidence-verifier carries agent_type=<spawn name> with the role in NO payload field; an UNNAMED spawn carries agent_type=<role>. Step-1 pilot teammates were named, so the guard's roster check fell through and allowed the redirection - identity substitution, not hook non-firing. cwd=primary checkout re-confirmed live (Step-2 consistent). Sanitized evidence: project-control/reports/M0-T028-TEAMMAT"
+    },
+    {
+      "at": "2026-07-30T03:58:17.121507+00:00",
+      "agent": "orchestrator",
+      "percent": 40,
+      "status": "in_progress",
+      "message": "Continuation of the 35% entry (its final path reference was clipped): sanitized primary evidence lives at project-control/reports/M0-T028-TEAMMATE-PAYLOAD-EVIDENCE.md on branch task/M0-T028-readonly-guard (worktree .claude/worktrees/M0-T028-readonly-guard, frozen base 4a4bf2d). MODEL DISCLOSURE (recorded, not silently corrected): the first producer dispatch passed an explicit Opus model per the D-004 teammate spawn rule as a conservative reading; the harness resolved it to claude-opus-5, not Opus 4.8, and the producer stopped honestly with MODEL-MISMATCH and zero tool uses. Opus 4.8 is not selectable through the per-spawn model mechanism (coarse family enum). Because the D-004 Opus-4.8 rule (R091/R162) binds Agent Teams producer TEAMMATES - forbidden anyway while B-015 is open - and ORCHESTRATION_POLICY section 2 sets model:inherit for background-subagent producers, the producer was re-dispatched on inherit (session model Fable 5, a non-downgrade). Gate-class reviewer spawns remain explicit Fable 5 (verified live: probe self-reported claude-fable-5). No effort key written anywhere; session effort stays xhigh global (payload evidence shows effort level xhigh per call)."
+    },
+    {
+      "at": "2026-07-30T04:34:30.113618+00:00",
+      "agent": "orchestrator",
+      "percent": 60,
+      "status": "in_progress",
+      "message": "G3 code review returned PASS at frozen e8a7dbfa2145b76f91b8e5272769a1447a940525 (reviewer: code-reviewer, explicit Fable 5, read-only; full report preserved verbatim for the gate record). REQUIRED CORRECTION F-1 recorded per gate-verdict semantics (reviewed report at the frozen SHA is not rewritten): the producer report's summary counts are off by one - the correct figures are 131 total guard checks = 89 pre-existing (preserved verbatim, byte-identity proven by the reviewer) + 42 new; the report's own attached verbatim suite output (131 PASS lines) was already correct, as is the suite itself (0 FAIL, exit 0). The same 90/132 figures in the commit message parenthetical and dispatch brief are corrected by this entry; all future citations use 89/42/131. G3 also independently verified: classification region byte-identical to base, containment exact, R100/R101/R144/R159/R132 in scope PASS, report hygiene clean, AS-3 correctly deferred to the fresh session. Incidental live corroboration: the reviewer's own redirection attempts were denied by the primary checkout's guard naming code-reviewer (unnamed role spawns governed correctly)."
+    },
+    {
+      "at": "2026-07-30T04:39:54.220209+00:00",
+      "agent": "orchestrator",
+      "percent": 65,
+      "status": "in_progress",
+      "message": "DEVIATION DISCLOSURE (requested by control-plane + directive-compliance verifiers; previously recorded only in the frozen producer report section 1): the harness's per-agent isolation refused the producer subagent all writes and git against the dispatch-named worktree .claude/worktrees/M0-T028-readonly-guard and confined it to a harness-assigned clean worktree at the identical frozen base 4a4bf2d. The producer implemented there; the orchestrator verified that worktree was clean at the base, ported the exact 4-file diff plus the producer report onto task/M0-T028-readonly-guard, re-ran the full battery independently (guard suite 131 PASS / 0 FAIL, project-control 14/14, directive-compliance 55, validator OK), and committed/pushed as the single integration writer (ADR-005). Also recorded: the reviewers' consensus count correction stands at 131 total = 89 pre-existing (G3 boundary analysis) + 42 new. Review status at frozen e8a7dbf: G3 PASS, control-plane verification PASS, directive-compliance pre-merge pass PASS (all execution-to-date rows green; fresh-session rows PENDING-BY-DESIGN); PR #121 checks 28/28 green; G5 security review in flight."
+    },
+    {
+      "at": "2026-07-30T05:02:04.181946+00:00",
+      "agent": "orchestrator",
+      "percent": 70,
+      "status": "in_progress",
+      "message": "G5 security review returned PASS at frozen e8a7dbf (security-reviewer, explicit Fable 5; no CRITICAL/HIGH; no-weakening proven via 10947-byte blob identity of the classification core + 89/89 base suite vs new guard + 388-comparison differential with zero weakenings; 44-payload adversarial identity fuzzing found no bypass). FOUR REQUIRED CORRECTIONS recorded as BLOCKING for acceptance and B-015 closure per gate-verdict semantics: C1 - the fresh-session rerun must prove ALL FOUR settings.json hook entries fire under the new quoted single-string wiring (sentinel deny + agent_dispatch_guard on Agent/Task + directive_reminder on SessionStart AND UserPromptSubmit); any non-firing entry reverts to the empirically-working args form and re-reviews. C2 - follow-up task proposal (owner decision): invert write authorization to a positive PRODUCER_AGENTS allowlist or add human-journey-reviewer/visual-quality-reviewer to READ_ONLY_AGENTS, pin the write-authorized set in a test, reconcile with ADR-005 line 20, and evaluate dispatch-guard refusal of spawn names colliding with roster stems (M-2 is PRE-EXISTING at base, not a regression of this fix). C3 - add a fail-closed exception envelope around the guard main() (L-1 crash paths on malformed tool_input shapes fail OPEN); being applied now as a bounded delta on the task branch with delta review before merge. C4 - producer-report count arithmetic corrected by APPENDED note (131 = 89 + 42), never silent rewrite. INFO items noted (L-2 lead-by-absence pinned in tests; L-3 metacharacter assumption to document; over-denial of >= and -> in reviewer one-liners is pre-existing fail-safe)."
+    }
+  ]
 }
