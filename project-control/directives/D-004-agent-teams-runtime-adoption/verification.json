@@ -890,7 +890,1614 @@
           "reviewed_sha": null
         }
       ]
+    },
+    {
+      "task_id": "M0-T028",
+      "directive_id": "D-004",
+      "producer": "orchestrator",
+      "verifier": "directive-compliance-verifier",
+      "reviewed_sha": null,
+      "reviewed_manifest_sha256": null,
+      "state": "pending",
+      "note": "Row created at the owner GO for D-004 Step 3 (amendment 5, source-006) per authority_note. Every applicable requirement stays 'pending' until the INDEPENDENT directive-compliance-verifier records a verdict at the frozen reviewed identity. The orchestrator (producer of requirements.json) must never record a PASS here.",
+      "applicable_requirement_ids": [
+        "D-004-R010",
+        "D-004-R011",
+        "D-004-R012",
+        "D-004-R013",
+        "D-004-R014",
+        "D-004-R015",
+        "D-004-R016",
+        "D-004-R017",
+        "D-004-R018",
+        "D-004-R019",
+        "D-004-R020",
+        "D-004-R021",
+        "D-004-R022",
+        "D-004-R023",
+        "D-004-R024",
+        "D-004-R025",
+        "D-004-R026",
+        "D-004-R050",
+        "D-004-R051",
+        "D-004-R052",
+        "D-004-R053",
+        "D-004-R054",
+        "D-004-R055",
+        "D-004-R056",
+        "D-004-R057",
+        "D-004-R058",
+        "D-004-R059",
+        "D-004-R060",
+        "D-004-R061",
+        "D-004-R062",
+        "D-004-R063",
+        "D-004-R085",
+        "D-004-R086",
+        "D-004-R089",
+        "D-004-R090",
+        "D-004-R091",
+        "D-004-R094",
+        "D-004-R096",
+        "D-004-R100",
+        "D-004-R101",
+        "D-004-R124",
+        "D-004-R127",
+        "D-004-R134",
+        "D-004-R135",
+        "D-004-R136",
+        "D-004-R137",
+        "D-004-R139",
+        "D-004-R140",
+        "D-004-R141",
+        "D-004-R142",
+        "D-004-R143",
+        "D-004-R144",
+        "D-004-R145",
+        "D-004-R156",
+        "D-004-R157",
+        "D-004-R159",
+        "D-004-R160",
+        "D-004-R161",
+        "D-004-R162",
+        "D-004-R166",
+        "D-004-R167",
+        "D-004-R168",
+        "D-004-R169",
+        "D-004-R170",
+        "D-004-R171",
+        "D-004-R172",
+        "D-004-R173",
+        "D-004-R174",
+        "D-004-R175",
+        "D-004-R176",
+        "D-004-R177",
+        "D-004-R178",
+        "D-004-R179",
+        "D-004-R180",
+        "D-004-R181",
+        "D-004-R182",
+        "D-004-R183",
+        "D-004-R184",
+        "D-004-R185",
+        "D-004-R186",
+        "D-004-R187",
+        "D-004-R188",
+        "D-004-R189",
+        "D-004-R190",
+        "D-004-R191",
+        "D-004-R192",
+        "D-004-R193",
+        "D-004-R194",
+        "D-004-R195",
+        "D-004-R196",
+        "D-004-R197",
+        "D-004-R199",
+        "D-004-R200",
+        "D-004-R201",
+        "D-004-R202",
+        "D-004-R203",
+        "D-004-R204",
+        "D-004-R205",
+        "D-004-R206",
+        "D-004-R207",
+        "D-004-R208",
+        "D-004-R209",
+        "D-004-R210",
+        "D-004-R211",
+        "D-004-R212",
+        "D-004-R213",
+        "D-004-R214",
+        "D-004-R215",
+        "D-004-R216",
+        "D-004-R218",
+        "D-004-R219",
+        "D-004-R220",
+        "D-004-R221",
+        "D-004-R222",
+        "D-004-R223",
+        "D-004-R224",
+        "D-004-R225",
+        "D-004-R226",
+        "D-004-R227",
+        "D-004-R228",
+        "D-004-R229",
+        "D-004-R230",
+        "D-004-R231",
+        "D-004-R232",
+        "D-004-R233",
+        "D-004-R234",
+        "D-004-R235",
+        "D-004-R236",
+        "D-004-R237",
+        "D-004-R238",
+        "D-004-R239",
+        "D-004-R240",
+        "D-004-R241",
+        "D-004-R242",
+        "D-004-R243",
+        "D-004-R244",
+        "D-004-R245",
+        "D-004-R246",
+        "D-004-R247",
+        "D-004-R248",
+        "D-004-R249",
+        "D-004-R250",
+        "D-004-R251",
+        "D-004-R252",
+        "D-004-R253",
+        "D-004-R254",
+        "D-004-R255",
+        "D-004-R256",
+        "D-004-R257",
+        "D-004-R258",
+        "D-004-R259",
+        "D-004-R260",
+        "D-004-R261",
+        "D-004-R262",
+        "D-004-R263",
+        "D-004-R264",
+        "D-004-R265",
+        "D-004-R266",
+        "D-004-R267",
+        "D-004-R268",
+        "D-004-R269",
+        "D-004-R270",
+        "D-004-R271",
+        "D-004-R272",
+        "D-004-R273",
+        "D-004-R274",
+        "D-004-R275",
+        "D-004-R276",
+        "D-004-R277",
+        "D-004-R278",
+        "D-004-R279",
+        "D-004-R280",
+        "D-004-R281",
+        "D-004-R283",
+        "D-004-R284",
+        "D-004-R285",
+        "D-004-R286"
+      ],
+      "requirements": [
+        {
+          "id": "D-004-R010",
+          "state": "pending",
+          "evidence": [],
+          "verified_at": null,
+          "verified_by": null,
+          "reviewed_sha": null
+        },
+        {
+          "id": "D-004-R011",
+          "state": "pending",
+          "evidence": [],
+          "verified_at": null,
+          "verified_by": null,
+          "reviewed_sha": null
+        },
+        {
+          "id": "D-004-R012",
+          "state": "pending",
+          "evidence": [],
+          "verified_at": null,
+          "verified_by": null,
+          "reviewed_sha": null
+        },
+        {
+          "id": "D-004-R013",
+          "state": "pending",
+          "evidence": [],
+          "verified_at": null,
+          "verified_by": null,
+          "reviewed_sha": null
+        },
+        {
+          "id": "D-004-R014",
+          "state": "pending",
+          "evidence": [],
+          "verified_at": null,
+          "verified_by": null,
+          "reviewed_sha": null
+        },
+        {
+          "id": "D-004-R015",
+          "state": "pending",
+          "evidence": [],
+          "verified_at": null,
+          "verified_by": null,
+          "reviewed_sha": null
+        },
+        {
+          "id": "D-004-R016",
+          "state": "pending",
+          "evidence": [],
+          "verified_at": null,
+          "verified_by": null,
+          "reviewed_sha": null
+        },
+        {
+          "id": "D-004-R017",
+          "state": "pending",
+          "evidence": [],
+          "verified_at": null,
+          "verified_by": null,
+          "reviewed_sha": null
+        },
+        {
+          "id": "D-004-R018",
+          "state": "pending",
+          "evidence": [],
+          "verified_at": null,
+          "verified_by": null,
+          "reviewed_sha": null
+        },
+        {
+          "id": "D-004-R019",
+          "state": "pending",
+          "evidence": [],
+          "verified_at": null,
+          "verified_by": null,
+          "reviewed_sha": null
+        },
+        {
+          "id": "D-004-R020",
+          "state": "pending",
+          "evidence": [],
+          "verified_at": null,
+          "verified_by": null,
+          "reviewed_sha": null
+        },
+        {
+          "id": "D-004-R021",
+          "state": "pending",
+          "evidence": [],
+          "verified_at": null,
+          "verified_by": null,
+          "reviewed_sha": null
+        },
+        {
+          "id": "D-004-R022",
+          "state": "pending",
+          "evidence": [],
+          "verified_at": null,
+          "verified_by": null,
+          "reviewed_sha": null
+        },
+        {
+          "id": "D-004-R023",
+          "state": "pending",
+          "evidence": [],
+          "verified_at": null,
+          "verified_by": null,
+          "reviewed_sha": null
+        },
+        {
+          "id": "D-004-R024",
+          "state": "pending",
+          "evidence": [],
+          "verified_at": null,
+          "verified_by": null,
+          "reviewed_sha": null
+        },
+        {
+          "id": "D-004-R025",
+          "state": "pending",
+          "evidence": [],
+          "verified_at": null,
+          "verified_by": null,
+          "reviewed_sha": null
+        },
+        {
+          "id": "D-004-R026",
+          "state": "pending",
+          "evidence": [],
+          "verified_at": null,
+          "verified_by": null,
+          "reviewed_sha": null
+        },
+        {
+          "id": "D-004-R050",
+          "state": "pending",
+          "evidence": [],
+          "verified_at": null,
+          "verified_by": null,
+          "reviewed_sha": null
+        },
+        {
+          "id": "D-004-R051",
+          "state": "pending",
+          "evidence": [],
+          "verified_at": null,
+          "verified_by": null,
+          "reviewed_sha": null
+        },
+        {
+          "id": "D-004-R052",
+          "state": "pending",
+          "evidence": [],
+          "verified_at": null,
+          "verified_by": null,
+          "reviewed_sha": null
+        },
+        {
+          "id": "D-004-R053",
+          "state": "pending",
+          "evidence": [],
+          "verified_at": null,
+          "verified_by": null,
+          "reviewed_sha": null
+        },
+        {
+          "id": "D-004-R054",
+          "state": "pending",
+          "evidence": [],
+          "verified_at": null,
+          "verified_by": null,
+          "reviewed_sha": null
+        },
+        {
+          "id": "D-004-R055",
+          "state": "pending",
+          "evidence": [],
+          "verified_at": null,
+          "verified_by": null,
+          "reviewed_sha": null
+        },
+        {
+          "id": "D-004-R056",
+          "state": "pending",
+          "evidence": [],
+          "verified_at": null,
+          "verified_by": null,
+          "reviewed_sha": null
+        },
+        {
+          "id": "D-004-R057",
+          "state": "pending",
+          "evidence": [],
+          "verified_at": null,
+          "verified_by": null,
+          "reviewed_sha": null
+        },
+        {
+          "id": "D-004-R058",
+          "state": "pending",
+          "evidence": [],
+          "verified_at": null,
+          "verified_by": null,
+          "reviewed_sha": null
+        },
+        {
+          "id": "D-004-R059",
+          "state": "pending",
+          "evidence": [],
+          "verified_at": null,
+          "verified_by": null,
+          "reviewed_sha": null
+        },
+        {
+          "id": "D-004-R060",
+          "state": "pending",
+          "evidence": [],
+          "verified_at": null,
+          "verified_by": null,
+          "reviewed_sha": null
+        },
+        {
+          "id": "D-004-R061",
+          "state": "pending",
+          "evidence": [],
+          "verified_at": null,
+          "verified_by": null,
+          "reviewed_sha": null
+        },
+        {
+          "id": "D-004-R062",
+          "state": "pending",
+          "evidence": [],
+          "verified_at": null,
+          "verified_by": null,
+          "reviewed_sha": null
+        },
+        {
+          "id": "D-004-R063",
+          "state": "pending",
+          "evidence": [],
+          "verified_at": null,
+          "verified_by": null,
+          "reviewed_sha": null
+        },
+        {
+          "id": "D-004-R085",
+          "state": "pending",
+          "evidence": [],
+          "verified_at": null,
+          "verified_by": null,
+          "reviewed_sha": null
+        },
+        {
+          "id": "D-004-R086",
+          "state": "pending",
+          "evidence": [],
+          "verified_at": null,
+          "verified_by": null,
+          "reviewed_sha": null
+        },
+        {
+          "id": "D-004-R089",
+          "state": "pending",
+          "evidence": [],
+          "verified_at": null,
+          "verified_by": null,
+          "reviewed_sha": null
+        },
+        {
+          "id": "D-004-R090",
+          "state": "pending",
+          "evidence": [],
+          "verified_at": null,
+          "verified_by": null,
+          "reviewed_sha": null
+        },
+        {
+          "id": "D-004-R091",
+          "state": "pending",
+          "evidence": [],
+          "verified_at": null,
+          "verified_by": null,
+          "reviewed_sha": null
+        },
+        {
+          "id": "D-004-R094",
+          "state": "pending",
+          "evidence": [],
+          "verified_at": null,
+          "verified_by": null,
+          "reviewed_sha": null
+        },
+        {
+          "id": "D-004-R096",
+          "state": "pending",
+          "evidence": [],
+          "verified_at": null,
+          "verified_by": null,
+          "reviewed_sha": null
+        },
+        {
+          "id": "D-004-R100",
+          "state": "pending",
+          "evidence": [],
+          "verified_at": null,
+          "verified_by": null,
+          "reviewed_sha": null
+        },
+        {
+          "id": "D-004-R101",
+          "state": "pending",
+          "evidence": [],
+          "verified_at": null,
+          "verified_by": null,
+          "reviewed_sha": null
+        },
+        {
+          "id": "D-004-R124",
+          "state": "pending",
+          "evidence": [],
+          "verified_at": null,
+          "verified_by": null,
+          "reviewed_sha": null
+        },
+        {
+          "id": "D-004-R127",
+          "state": "pending",
+          "evidence": [],
+          "verified_at": null,
+          "verified_by": null,
+          "reviewed_sha": null
+        },
+        {
+          "id": "D-004-R134",
+          "state": "pending",
+          "evidence": [],
+          "verified_at": null,
+          "verified_by": null,
+          "reviewed_sha": null
+        },
+        {
+          "id": "D-004-R135",
+          "state": "pending",
+          "evidence": [],
+          "verified_at": null,
+          "verified_by": null,
+          "reviewed_sha": null
+        },
+        {
+          "id": "D-004-R136",
+          "state": "pending",
+          "evidence": [],
+          "verified_at": null,
+          "verified_by": null,
+          "reviewed_sha": null
+        },
+        {
+          "id": "D-004-R137",
+          "state": "pending",
+          "evidence": [],
+          "verified_at": null,
+          "verified_by": null,
+          "reviewed_sha": null
+        },
+        {
+          "id": "D-004-R139",
+          "state": "pending",
+          "evidence": [],
+          "verified_at": null,
+          "verified_by": null,
+          "reviewed_sha": null
+        },
+        {
+          "id": "D-004-R140",
+          "state": "pending",
+          "evidence": [],
+          "verified_at": null,
+          "verified_by": null,
+          "reviewed_sha": null
+        },
+        {
+          "id": "D-004-R141",
+          "state": "pending",
+          "evidence": [],
+          "verified_at": null,
+          "verified_by": null,
+          "reviewed_sha": null
+        },
+        {
+          "id": "D-004-R142",
+          "state": "pending",
+          "evidence": [],
+          "verified_at": null,
+          "verified_by": null,
+          "reviewed_sha": null
+        },
+        {
+          "id": "D-004-R143",
+          "state": "pending",
+          "evidence": [],
+          "verified_at": null,
+          "verified_by": null,
+          "reviewed_sha": null
+        },
+        {
+          "id": "D-004-R144",
+          "state": "pending",
+          "evidence": [],
+          "verified_at": null,
+          "verified_by": null,
+          "reviewed_sha": null
+        },
+        {
+          "id": "D-004-R145",
+          "state": "pending",
+          "evidence": [],
+          "verified_at": null,
+          "verified_by": null,
+          "reviewed_sha": null
+        },
+        {
+          "id": "D-004-R156",
+          "state": "pending",
+          "evidence": [],
+          "verified_at": null,
+          "verified_by": null,
+          "reviewed_sha": null
+        },
+        {
+          "id": "D-004-R157",
+          "state": "pending",
+          "evidence": [],
+          "verified_at": null,
+          "verified_by": null,
+          "reviewed_sha": null
+        },
+        {
+          "id": "D-004-R159",
+          "state": "pending",
+          "evidence": [],
+          "verified_at": null,
+          "verified_by": null,
+          "reviewed_sha": null
+        },
+        {
+          "id": "D-004-R160",
+          "state": "pending",
+          "evidence": [],
+          "verified_at": null,
+          "verified_by": null,
+          "reviewed_sha": null
+        },
+        {
+          "id": "D-004-R161",
+          "state": "pending",
+          "evidence": [],
+          "verified_at": null,
+          "verified_by": null,
+          "reviewed_sha": null
+        },
+        {
+          "id": "D-004-R162",
+          "state": "pending",
+          "evidence": [],
+          "verified_at": null,
+          "verified_by": null,
+          "reviewed_sha": null
+        },
+        {
+          "id": "D-004-R166",
+          "state": "pending",
+          "evidence": [],
+          "verified_at": null,
+          "verified_by": null,
+          "reviewed_sha": null
+        },
+        {
+          "id": "D-004-R167",
+          "state": "pending",
+          "evidence": [],
+          "verified_at": null,
+          "verified_by": null,
+          "reviewed_sha": null
+        },
+        {
+          "id": "D-004-R168",
+          "state": "pending",
+          "evidence": [],
+          "verified_at": null,
+          "verified_by": null,
+          "reviewed_sha": null
+        },
+        {
+          "id": "D-004-R169",
+          "state": "pending",
+          "evidence": [],
+          "verified_at": null,
+          "verified_by": null,
+          "reviewed_sha": null
+        },
+        {
+          "id": "D-004-R170",
+          "state": "pending",
+          "evidence": [],
+          "verified_at": null,
+          "verified_by": null,
+          "reviewed_sha": null
+        },
+        {
+          "id": "D-004-R171",
+          "state": "pending",
+          "evidence": [],
+          "verified_at": null,
+          "verified_by": null,
+          "reviewed_sha": null
+        },
+        {
+          "id": "D-004-R172",
+          "state": "pending",
+          "evidence": [],
+          "verified_at": null,
+          "verified_by": null,
+          "reviewed_sha": null
+        },
+        {
+          "id": "D-004-R173",
+          "state": "pending",
+          "evidence": [],
+          "verified_at": null,
+          "verified_by": null,
+          "reviewed_sha": null
+        },
+        {
+          "id": "D-004-R174",
+          "state": "pending",
+          "evidence": [],
+          "verified_at": null,
+          "verified_by": null,
+          "reviewed_sha": null
+        },
+        {
+          "id": "D-004-R175",
+          "state": "pending",
+          "evidence": [],
+          "verified_at": null,
+          "verified_by": null,
+          "reviewed_sha": null
+        },
+        {
+          "id": "D-004-R176",
+          "state": "pending",
+          "evidence": [],
+          "verified_at": null,
+          "verified_by": null,
+          "reviewed_sha": null
+        },
+        {
+          "id": "D-004-R177",
+          "state": "pending",
+          "evidence": [],
+          "verified_at": null,
+          "verified_by": null,
+          "reviewed_sha": null
+        },
+        {
+          "id": "D-004-R178",
+          "state": "pending",
+          "evidence": [],
+          "verified_at": null,
+          "verified_by": null,
+          "reviewed_sha": null
+        },
+        {
+          "id": "D-004-R179",
+          "state": "pending",
+          "evidence": [],
+          "verified_at": null,
+          "verified_by": null,
+          "reviewed_sha": null
+        },
+        {
+          "id": "D-004-R180",
+          "state": "pending",
+          "evidence": [],
+          "verified_at": null,
+          "verified_by": null,
+          "reviewed_sha": null
+        },
+        {
+          "id": "D-004-R181",
+          "state": "pending",
+          "evidence": [],
+          "verified_at": null,
+          "verified_by": null,
+          "reviewed_sha": null
+        },
+        {
+          "id": "D-004-R182",
+          "state": "pending",
+          "evidence": [],
+          "verified_at": null,
+          "verified_by": null,
+          "reviewed_sha": null
+        },
+        {
+          "id": "D-004-R183",
+          "state": "pending",
+          "evidence": [],
+          "verified_at": null,
+          "verified_by": null,
+          "reviewed_sha": null
+        },
+        {
+          "id": "D-004-R184",
+          "state": "pending",
+          "evidence": [],
+          "verified_at": null,
+          "verified_by": null,
+          "reviewed_sha": null
+        },
+        {
+          "id": "D-004-R185",
+          "state": "pending",
+          "evidence": [],
+          "verified_at": null,
+          "verified_by": null,
+          "reviewed_sha": null
+        },
+        {
+          "id": "D-004-R186",
+          "state": "pending",
+          "evidence": [],
+          "verified_at": null,
+          "verified_by": null,
+          "reviewed_sha": null
+        },
+        {
+          "id": "D-004-R187",
+          "state": "pending",
+          "evidence": [],
+          "verified_at": null,
+          "verified_by": null,
+          "reviewed_sha": null
+        },
+        {
+          "id": "D-004-R188",
+          "state": "pending",
+          "evidence": [],
+          "verified_at": null,
+          "verified_by": null,
+          "reviewed_sha": null
+        },
+        {
+          "id": "D-004-R189",
+          "state": "pending",
+          "evidence": [],
+          "verified_at": null,
+          "verified_by": null,
+          "reviewed_sha": null
+        },
+        {
+          "id": "D-004-R190",
+          "state": "pending",
+          "evidence": [],
+          "verified_at": null,
+          "verified_by": null,
+          "reviewed_sha": null
+        },
+        {
+          "id": "D-004-R191",
+          "state": "pending",
+          "evidence": [],
+          "verified_at": null,
+          "verified_by": null,
+          "reviewed_sha": null
+        },
+        {
+          "id": "D-004-R192",
+          "state": "pending",
+          "evidence": [],
+          "verified_at": null,
+          "verified_by": null,
+          "reviewed_sha": null
+        },
+        {
+          "id": "D-004-R193",
+          "state": "pending",
+          "evidence": [],
+          "verified_at": null,
+          "verified_by": null,
+          "reviewed_sha": null
+        },
+        {
+          "id": "D-004-R194",
+          "state": "pending",
+          "evidence": [],
+          "verified_at": null,
+          "verified_by": null,
+          "reviewed_sha": null
+        },
+        {
+          "id": "D-004-R195",
+          "state": "pending",
+          "evidence": [],
+          "verified_at": null,
+          "verified_by": null,
+          "reviewed_sha": null
+        },
+        {
+          "id": "D-004-R196",
+          "state": "pending",
+          "evidence": [],
+          "verified_at": null,
+          "verified_by": null,
+          "reviewed_sha": null
+        },
+        {
+          "id": "D-004-R197",
+          "state": "pending",
+          "evidence": [],
+          "verified_at": null,
+          "verified_by": null,
+          "reviewed_sha": null
+        },
+        {
+          "id": "D-004-R199",
+          "state": "pending",
+          "evidence": [],
+          "verified_at": null,
+          "verified_by": null,
+          "reviewed_sha": null
+        },
+        {
+          "id": "D-004-R200",
+          "state": "pending",
+          "evidence": [],
+          "verified_at": null,
+          "verified_by": null,
+          "reviewed_sha": null
+        },
+        {
+          "id": "D-004-R201",
+          "state": "pending",
+          "evidence": [],
+          "verified_at": null,
+          "verified_by": null,
+          "reviewed_sha": null
+        },
+        {
+          "id": "D-004-R202",
+          "state": "pending",
+          "evidence": [],
+          "verified_at": null,
+          "verified_by": null,
+          "reviewed_sha": null
+        },
+        {
+          "id": "D-004-R203",
+          "state": "pending",
+          "evidence": [],
+          "verified_at": null,
+          "verified_by": null,
+          "reviewed_sha": null
+        },
+        {
+          "id": "D-004-R204",
+          "state": "pending",
+          "evidence": [],
+          "verified_at": null,
+          "verified_by": null,
+          "reviewed_sha": null
+        },
+        {
+          "id": "D-004-R205",
+          "state": "pending",
+          "evidence": [],
+          "verified_at": null,
+          "verified_by": null,
+          "reviewed_sha": null
+        },
+        {
+          "id": "D-004-R206",
+          "state": "pending",
+          "evidence": [],
+          "verified_at": null,
+          "verified_by": null,
+          "reviewed_sha": null
+        },
+        {
+          "id": "D-004-R207",
+          "state": "pending",
+          "evidence": [],
+          "verified_at": null,
+          "verified_by": null,
+          "reviewed_sha": null
+        },
+        {
+          "id": "D-004-R208",
+          "state": "pending",
+          "evidence": [],
+          "verified_at": null,
+          "verified_by": null,
+          "reviewed_sha": null
+        },
+        {
+          "id": "D-004-R209",
+          "state": "pending",
+          "evidence": [],
+          "verified_at": null,
+          "verified_by": null,
+          "reviewed_sha": null
+        },
+        {
+          "id": "D-004-R210",
+          "state": "pending",
+          "evidence": [],
+          "verified_at": null,
+          "verified_by": null,
+          "reviewed_sha": null
+        },
+        {
+          "id": "D-004-R211",
+          "state": "pending",
+          "evidence": [],
+          "verified_at": null,
+          "verified_by": null,
+          "reviewed_sha": null
+        },
+        {
+          "id": "D-004-R212",
+          "state": "pending",
+          "evidence": [],
+          "verified_at": null,
+          "verified_by": null,
+          "reviewed_sha": null
+        },
+        {
+          "id": "D-004-R213",
+          "state": "pending",
+          "evidence": [],
+          "verified_at": null,
+          "verified_by": null,
+          "reviewed_sha": null
+        },
+        {
+          "id": "D-004-R214",
+          "state": "pending",
+          "evidence": [],
+          "verified_at": null,
+          "verified_by": null,
+          "reviewed_sha": null
+        },
+        {
+          "id": "D-004-R215",
+          "state": "pending",
+          "evidence": [],
+          "verified_at": null,
+          "verified_by": null,
+          "reviewed_sha": null
+        },
+        {
+          "id": "D-004-R216",
+          "state": "pending",
+          "evidence": [],
+          "verified_at": null,
+          "verified_by": null,
+          "reviewed_sha": null
+        },
+        {
+          "id": "D-004-R218",
+          "state": "pending",
+          "evidence": [],
+          "verified_at": null,
+          "verified_by": null,
+          "reviewed_sha": null
+        },
+        {
+          "id": "D-004-R219",
+          "state": "pending",
+          "evidence": [],
+          "verified_at": null,
+          "verified_by": null,
+          "reviewed_sha": null
+        },
+        {
+          "id": "D-004-R220",
+          "state": "pending",
+          "evidence": [],
+          "verified_at": null,
+          "verified_by": null,
+          "reviewed_sha": null
+        },
+        {
+          "id": "D-004-R221",
+          "state": "pending",
+          "evidence": [],
+          "verified_at": null,
+          "verified_by": null,
+          "reviewed_sha": null
+        },
+        {
+          "id": "D-004-R222",
+          "state": "pending",
+          "evidence": [],
+          "verified_at": null,
+          "verified_by": null,
+          "reviewed_sha": null
+        },
+        {
+          "id": "D-004-R223",
+          "state": "pending",
+          "evidence": [],
+          "verified_at": null,
+          "verified_by": null,
+          "reviewed_sha": null
+        },
+        {
+          "id": "D-004-R224",
+          "state": "pending",
+          "evidence": [],
+          "verified_at": null,
+          "verified_by": null,
+          "reviewed_sha": null
+        },
+        {
+          "id": "D-004-R225",
+          "state": "pending",
+          "evidence": [],
+          "verified_at": null,
+          "verified_by": null,
+          "reviewed_sha": null
+        },
+        {
+          "id": "D-004-R226",
+          "state": "pending",
+          "evidence": [],
+          "verified_at": null,
+          "verified_by": null,
+          "reviewed_sha": null
+        },
+        {
+          "id": "D-004-R227",
+          "state": "pending",
+          "evidence": [],
+          "verified_at": null,
+          "verified_by": null,
+          "reviewed_sha": null
+        },
+        {
+          "id": "D-004-R228",
+          "state": "pending",
+          "evidence": [],
+          "verified_at": null,
+          "verified_by": null,
+          "reviewed_sha": null
+        },
+        {
+          "id": "D-004-R229",
+          "state": "pending",
+          "evidence": [],
+          "verified_at": null,
+          "verified_by": null,
+          "reviewed_sha": null
+        },
+        {
+          "id": "D-004-R230",
+          "state": "pending",
+          "evidence": [],
+          "verified_at": null,
+          "verified_by": null,
+          "reviewed_sha": null
+        },
+        {
+          "id": "D-004-R231",
+          "state": "pending",
+          "evidence": [],
+          "verified_at": null,
+          "verified_by": null,
+          "reviewed_sha": null
+        },
+        {
+          "id": "D-004-R232",
+          "state": "pending",
+          "evidence": [],
+          "verified_at": null,
+          "verified_by": null,
+          "reviewed_sha": null
+        },
+        {
+          "id": "D-004-R233",
+          "state": "pending",
+          "evidence": [],
+          "verified_at": null,
+          "verified_by": null,
+          "reviewed_sha": null
+        },
+        {
+          "id": "D-004-R234",
+          "state": "pending",
+          "evidence": [],
+          "verified_at": null,
+          "verified_by": null,
+          "reviewed_sha": null
+        },
+        {
+          "id": "D-004-R235",
+          "state": "pending",
+          "evidence": [],
+          "verified_at": null,
+          "verified_by": null,
+          "reviewed_sha": null
+        },
+        {
+          "id": "D-004-R236",
+          "state": "pending",
+          "evidence": [],
+          "verified_at": null,
+          "verified_by": null,
+          "reviewed_sha": null
+        },
+        {
+          "id": "D-004-R237",
+          "state": "pending",
+          "evidence": [],
+          "verified_at": null,
+          "verified_by": null,
+          "reviewed_sha": null
+        },
+        {
+          "id": "D-004-R238",
+          "state": "pending",
+          "evidence": [],
+          "verified_at": null,
+          "verified_by": null,
+          "reviewed_sha": null
+        },
+        {
+          "id": "D-004-R239",
+          "state": "pending",
+          "evidence": [],
+          "verified_at": null,
+          "verified_by": null,
+          "reviewed_sha": null
+        },
+        {
+          "id": "D-004-R240",
+          "state": "pending",
+          "evidence": [],
+          "verified_at": null,
+          "verified_by": null,
+          "reviewed_sha": null
+        },
+        {
+          "id": "D-004-R241",
+          "state": "pending",
+          "evidence": [],
+          "verified_at": null,
+          "verified_by": null,
+          "reviewed_sha": null
+        },
+        {
+          "id": "D-004-R242",
+          "state": "pending",
+          "evidence": [],
+          "verified_at": null,
+          "verified_by": null,
+          "reviewed_sha": null
+        },
+        {
+          "id": "D-004-R243",
+          "state": "pending",
+          "evidence": [],
+          "verified_at": null,
+          "verified_by": null,
+          "reviewed_sha": null
+        },
+        {
+          "id": "D-004-R244",
+          "state": "pending",
+          "evidence": [],
+          "verified_at": null,
+          "verified_by": null,
+          "reviewed_sha": null
+        },
+        {
+          "id": "D-004-R245",
+          "state": "pending",
+          "evidence": [],
+          "verified_at": null,
+          "verified_by": null,
+          "reviewed_sha": null
+        },
+        {
+          "id": "D-004-R246",
+          "state": "pending",
+          "evidence": [],
+          "verified_at": null,
+          "verified_by": null,
+          "reviewed_sha": null
+        },
+        {
+          "id": "D-004-R247",
+          "state": "pending",
+          "evidence": [],
+          "verified_at": null,
+          "verified_by": null,
+          "reviewed_sha": null
+        },
+        {
+          "id": "D-004-R248",
+          "state": "pending",
+          "evidence": [],
+          "verified_at": null,
+          "verified_by": null,
+          "reviewed_sha": null
+        },
+        {
+          "id": "D-004-R249",
+          "state": "pending",
+          "evidence": [],
+          "verified_at": null,
+          "verified_by": null,
+          "reviewed_sha": null
+        },
+        {
+          "id": "D-004-R250",
+          "state": "pending",
+          "evidence": [],
+          "verified_at": null,
+          "verified_by": null,
+          "reviewed_sha": null
+        },
+        {
+          "id": "D-004-R251",
+          "state": "pending",
+          "evidence": [],
+          "verified_at": null,
+          "verified_by": null,
+          "reviewed_sha": null
+        },
+        {
+          "id": "D-004-R252",
+          "state": "pending",
+          "evidence": [],
+          "verified_at": null,
+          "verified_by": null,
+          "reviewed_sha": null
+        },
+        {
+          "id": "D-004-R253",
+          "state": "pending",
+          "evidence": [],
+          "verified_at": null,
+          "verified_by": null,
+          "reviewed_sha": null
+        },
+        {
+          "id": "D-004-R254",
+          "state": "pending",
+          "evidence": [],
+          "verified_at": null,
+          "verified_by": null,
+          "reviewed_sha": null
+        },
+        {
+          "id": "D-004-R255",
+          "state": "pending",
+          "evidence": [],
+          "verified_at": null,
+          "verified_by": null,
+          "reviewed_sha": null
+        },
+        {
+          "id": "D-004-R256",
+          "state": "pending",
+          "evidence": [],
+          "verified_at": null,
+          "verified_by": null,
+          "reviewed_sha": null
+        },
+        {
+          "id": "D-004-R257",
+          "state": "pending",
+          "evidence": [],
+          "verified_at": null,
+          "verified_by": null,
+          "reviewed_sha": null
+        },
+        {
+          "id": "D-004-R258",
+          "state": "pending",
+          "evidence": [],
+          "verified_at": null,
+          "verified_by": null,
+          "reviewed_sha": null
+        },
+        {
+          "id": "D-004-R259",
+          "state": "pending",
+          "evidence": [],
+          "verified_at": null,
+          "verified_by": null,
+          "reviewed_sha": null
+        },
+        {
+          "id": "D-004-R260",
+          "state": "pending",
+          "evidence": [],
+          "verified_at": null,
+          "verified_by": null,
+          "reviewed_sha": null
+        },
+        {
+          "id": "D-004-R261",
+          "state": "pending",
+          "evidence": [],
+          "verified_at": null,
+          "verified_by": null,
+          "reviewed_sha": null
+        },
+        {
+          "id": "D-004-R262",
+          "state": "pending",
+          "evidence": [],
+          "verified_at": null,
+          "verified_by": null,
+          "reviewed_sha": null
+        },
+        {
+          "id": "D-004-R263",
+          "state": "pending",
+          "evidence": [],
+          "verified_at": null,
+          "verified_by": null,
+          "reviewed_sha": null
+        },
+        {
+          "id": "D-004-R264",
+          "state": "pending",
+          "evidence": [],
+          "verified_at": null,
+          "verified_by": null,
+          "reviewed_sha": null
+        },
+        {
+          "id": "D-004-R265",
+          "state": "pending",
+          "evidence": [],
+          "verified_at": null,
+          "verified_by": null,
+          "reviewed_sha": null
+        },
+        {
+          "id": "D-004-R266",
+          "state": "pending",
+          "evidence": [],
+          "verified_at": null,
+          "verified_by": null,
+          "reviewed_sha": null
+        },
+        {
+          "id": "D-004-R267",
+          "state": "pending",
+          "evidence": [],
+          "verified_at": null,
+          "verified_by": null,
+          "reviewed_sha": null
+        },
+        {
+          "id": "D-004-R268",
+          "state": "pending",
+          "evidence": [],
+          "verified_at": null,
+          "verified_by": null,
+          "reviewed_sha": null
+        },
+        {
+          "id": "D-004-R269",
+          "state": "pending",
+          "evidence": [],
+          "verified_at": null,
+          "verified_by": null,
+          "reviewed_sha": null
+        },
+        {
+          "id": "D-004-R270",
+          "state": "pending",
+          "evidence": [],
+          "verified_at": null,
+          "verified_by": null,
+          "reviewed_sha": null
+        },
+        {
+          "id": "D-004-R271",
+          "state": "pending",
+          "evidence": [],
+          "verified_at": null,
+          "verified_by": null,
+          "reviewed_sha": null
+        },
+        {
+          "id": "D-004-R272",
+          "state": "pending",
+          "evidence": [],
+          "verified_at": null,
+          "verified_by": null,
+          "reviewed_sha": null
+        },
+        {
+          "id": "D-004-R273",
+          "state": "pending",
+          "evidence": [],
+          "verified_at": null,
+          "verified_by": null,
+          "reviewed_sha": null
+        },
+        {
+          "id": "D-004-R274",
+          "state": "pending",
+          "evidence": [],
+          "verified_at": null,
+          "verified_by": null,
+          "reviewed_sha": null
+        },
+        {
+          "id": "D-004-R275",
+          "state": "pending",
+          "evidence": [],
+          "verified_at": null,
+          "verified_by": null,
+          "reviewed_sha": null
+        },
+        {
+          "id": "D-004-R276",
+          "state": "pending",
+          "evidence": [],
+          "verified_at": null,
+          "verified_by": null,
+          "reviewed_sha": null
+        },
+        {
+          "id": "D-004-R277",
+          "state": "pending",
+          "evidence": [],
+          "verified_at": null,
+          "verified_by": null,
+          "reviewed_sha": null
+        },
+        {
+          "id": "D-004-R278",
+          "state": "pending",
+          "evidence": [],
+          "verified_at": null,
+          "verified_by": null,
+          "reviewed_sha": null
+        },
+        {
+          "id": "D-004-R279",
+          "state": "pending",
+          "evidence": [],
+          "verified_at": null,
+          "verified_by": null,
+          "reviewed_sha": null
+        },
+        {
+          "id": "D-004-R280",
+          "state": "pending",
+          "evidence": [],
+          "verified_at": null,
+          "verified_by": null,
+          "reviewed_sha": null
+        },
+        {
+          "id": "D-004-R281",
+          "state": "pending",
+          "evidence": [],
+          "verified_at": null,
+          "verified_by": null,
+          "reviewed_sha": null
+        },
+        {
+          "id": "D-004-R283",
+          "state": "pending",
+          "evidence": [],
+          "verified_at": null,
+          "verified_by": null,
+          "reviewed_sha": null
+        },
+        {
+          "id": "D-004-R284",
+          "state": "pending",
+          "evidence": [],
+          "verified_at": null,
+          "verified_by": null,
+          "reviewed_sha": null
+        },
+        {
+          "id": "D-004-R285",
+          "state": "pending",
+          "evidence": [],
+          "verified_at": null,
+          "verified_by": null,
+          "reviewed_sha": null
+        },
+        {
+          "id": "D-004-R286",
+          "state": "pending",
+          "evidence": [],
+          "verified_at": null,
+          "verified_by": null,
+          "reviewed_sha": null
+        }
+      ]
     }
   ],
-  "updated_at": "2026-07-24T00:00:00+00:00"
+  "updated_at": "2026-07-29T00:00:00+00:00"
 }

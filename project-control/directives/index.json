@@ -64,7 +64,10 @@
       "issued_by": "owner",
       "supersedes": [],
       "superseded_by": null,
-      "affected_tasks": [],
+      "affected_tasks": [
+        "M0-T027",
+        "M0-T028"
+      ],
       "manifest": "D-004-agent-teams-runtime-adoption/manifest.json"
     },
     {
