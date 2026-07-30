@@ -34,12 +34,26 @@ Task M2-T004 (owner code-audit P1, 2026-07-17) additions:
 - ``reproducibility`` gains ``response_digest`` + ``digest_canonicalization``
   (canonical snapshot digest of the exact response the profile was built
   from, plus the verbatim canonicalization spec used to compute it).
+
+Task M2-T018 (D-003 second-wave lane 2) addition:
+
+- :func:`_closed_provenance` is THE fail-closed provenance WRITE BOUNDARY.
+  Every ``source_fact`` record that enters the profile ``provenance`` array -
+  PLUTO connector facts, ``additional_provenance`` from other accepted
+  connectors, and the wave/spatial records built by
+  ``app.profile.wave_integration`` - passes through the frozen M2-T017
+  ``SOURCE_FACT_SERIALIZER`` there, so an undocumented key fails the build
+  CLOSED instead of being silently accepted. It is the runtime twin of the
+  contract's ``additionalProperties:false``. This module is the ONLY place
+  under ``app/**`` outside ``app/contracts/`` that imports the serializer;
+  ``tests/contracts/test_contract_serializers.py`` pins that exact boundary.
 """
 
 from __future__ import annotations
 
-from collections.abc import Callable
+from collections.abc import Callable, Iterable, Mapping
 from datetime import UTC, datetime
+from typing import Any
 
 from app.connectors.pluto_soda import (
     CANONICALIZATION_SPEC,
@@ -47,6 +61,7 @@ from app.connectors.pluto_soda import (
     SOURCE_ID,
     PlutoFetchResult,
 )
+from app.contracts.serializers import SOURCE_FACT_SERIALIZER
 from app.profile.wave_integration import build_wave_sections
 
 __all__ = [
@@ -509,6 +524,47 @@ def _conflicts(result: PlutoFetchResult) -> list[dict]:
     return conflicts
 
 
+def _closed_provenance(records: Iterable[Mapping[str, Any]]) -> list[dict]:
+    """THE fail-closed provenance WRITE BOUNDARY (task M2-T018).
+
+    Every canonical ``source_fact`` record that enters the profile
+    ``provenance`` array passes through the frozen M2-T017
+    ``SOURCE_FACT_SERIALIZER`` here - the PLUTO connector facts, the
+    ``additional_provenance`` facts other accepted connectors contribute (e.g.
+    ZTLDB), and the wave/spatial records from ``app.profile.wave_integration``.
+    There is no other entry point, and this is the ONLY import of the
+    serializer under ``app/**`` outside ``app/contracts/``.
+
+    Behavior, all deliberate:
+
+    - An UNDOCUMENTED key (a typo of an optional field, or a leaked internal /
+      diagnostic field such as a stack trace or a token) raises
+      ``UnknownFieldError`` and the whole build FAILS CLOSED. The offending
+      record is NEVER silently dropped and a partial profile is NEVER
+      returned: dropping a fact would produce a profile whose provenance is
+      quietly incomplete, which PRD sections 9/19 forbid just as firmly as an
+      undocumented key.
+    - A MISSING required provenance field raises ``MissingFieldError`` for the
+      same reason - every PRD section 9 field is mandatory.
+    - Both are ``ContractSerializationError`` (a ``ValueError``) and propagate
+      out of ``build_property_profile`` to the existing API error contract:
+      ``app/api/v1/properties.py`` and ``app/api/v1/rule_evaluation.py`` map an
+      exception raised while BUILDING to a typed 500 carrying only the
+      correlation id and the exception TYPE name - never ``str(exc)``, never a
+      traceback (M1-T002 G5 F5 payload-only logging policy). So an invalid 200
+      is impossible and the rejected record's VALUES cannot travel out (the
+      serializer's own messages name offending KEYS only - M2-T017
+      diagnostic-leak safety).
+    - Each emitted record is a NEW dict holding exactly the documented fields
+      in canonical schema order; the connector inputs are never mutated. No
+      documented value is lost: the four connector-emitted lineage keys
+      (``dataset_id``, ``request_url``, ``input_vintages``,
+      ``source_rows_updated_at``) are DOCUMENTED optional properties of the
+      closed v1 contract (M2-T017), so they pass through unchanged.
+    """
+    return [SOURCE_FACT_SERIALIZER.serialize(record) for record in records]
+
+
 def _assert_provenance_integrity(profile: dict) -> None:
     """Backend-side enforcement of the schema's referential-integrity rule:
     every provenance_ref must resolve to a provenance_id (PRD sections 9/19).
@@ -621,6 +677,20 @@ def build_property_profile(
         against the selected canonical schema before send
         (``app.profile.contract.validate_profile``), so an invalid 200 is
         impossible.
+
+    Raises:
+        ValueError: ``result.status != "ok"``, or the result carries no
+            ``response_digest`` (the profile would lose its snapshot lineage).
+        app.contracts.serializers.ContractSerializationError: a record entering
+            the ``provenance`` array carries an UNDOCUMENTED key
+            (``UnknownFieldError``) or is missing a REQUIRED provenance field
+            (``MissingFieldError``) - task M2-T018's fail-closed write boundary
+            (:func:`_closed_provenance`). The build fails; no record is ever
+            silently dropped and no partial profile is returned. Both API
+            routes map this to a typed 500 with the correlation id and no
+            internals, so an invalid 200 remains impossible.
+        RuntimeError: a ``provenance_ref`` does not resolve to a
+            ``provenance_id`` (:func:`_assert_provenance_integrity`).
     """
     if result.status != "ok":
         raise ValueError(
@@ -686,7 +756,13 @@ def build_property_profile(
         # derived sections above. M2-T008: additional accepted-connector
         # facts (e.g. ZTLDB) are appended verbatim - never merged, never
         # adjudicated against the PLUTO facts.
-        "provenance": [*result.facts, *(additional_provenance or [])],
+        # M2-T018: "verbatim" now means "verbatim within the CLOSED contract" -
+        # every record crosses the _closed_provenance write boundary, so an
+        # undocumented key fails the build instead of passing silently. All
+        # documented keys (including the connector lineage keys) survive.
+        "provenance": _closed_provenance(
+            [*result.facts, *(additional_provenance or [])]
+        ),
         "missing_inputs": missing_inputs,
         "conflicts": [*_conflicts(result), *(additional_conflicts or [])],
         "user_confirmations": [],
@@ -746,7 +822,10 @@ def build_property_profile(
         spatial_intersection=spatial_intersection,
         fallback_retrieved_at=profile["profile_version"]["generated_at"],
     )
-    profile["provenance"].extend(wave_provenance)
+    # M2-T018: the wave/spatial feed crosses the SAME fail-closed write
+    # boundary as the connector facts - there is no second, laxer path into
+    # the provenance array.
+    profile["provenance"].extend(_closed_provenance(wave_provenance))
     profile.update(wave_sections)
 
     _assert_provenance_integrity(profile)

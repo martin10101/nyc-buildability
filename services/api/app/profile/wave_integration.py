@@ -27,6 +27,15 @@ Hard rules (mirroring the rest of app.profile):
 - Inputs are consumed READ-ONLY and duck-typed: each result may be the connector
   dataclass OR a plain dict (the fixture/unit-test shape), so the builder is not
   coupled to the connector/spatial import graph.
+- Task M2-T018: the provenance records returned by ``build_wave_sections`` are
+  NOT spliced into the profile directly. The builder routes them through its
+  fail-closed write boundary (``app.profile.builder._closed_provenance``, the
+  frozen M2-T017 ``SOURCE_FACT_SERIALIZER``) exactly like the connector facts,
+  so this feed has no laxer path into the ``provenance`` array. Concretely:
+  ``_source_fact`` below may only emit keys DOCUMENTED in
+  ``packages/contracts/schemas/v1/source_fact.schema.json``; adding an
+  undocumented one here fails every wave profile build closed rather than
+  silently widening the closed contract.
 """
 
 from __future__ import annotations
