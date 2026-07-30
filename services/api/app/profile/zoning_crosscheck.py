@@ -35,6 +35,18 @@ The conflict entries feed the EXISTING analysis-readiness machinery
 unchanged: an unresolved conflict on a critical column (``zonedist1``)
 gates ``analysis_readiness`` exactly like any other conflict (M2-T004
 policy). No contract-shape change is made anywhere in this module.
+
+PROVENANCE WRITE BOUNDARY (task M2-T018) - why this module is unchanged:
+this module emits ONLY conflict entries and note strings. It reads
+``result.facts`` to quote a value and its ``provenance_id`` inside a
+conflict ``derivation`` string, and it NEVER produces a ``source_fact``
+record. The canonical ZTLDB facts that accompany a cross-check reach the
+profile through the connector's own ``result.facts`` passed to
+``build_property_profile(additional_provenance=...)``, where they cross the
+fail-closed boundary (``app.profile.builder._closed_provenance``). So there
+is nothing to route here; should this module ever start emitting
+``source_fact`` records, they must go through that same builder boundary and
+never into ``provenance`` directly.
 """
 
 from __future__ import annotations

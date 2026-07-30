@@ -1,12 +1,22 @@
-"""Unit + regression tests for the frozen allowlist serializers (task M2-T017).
+"""Unit + regression tests for the allowlist serializers (task M2-T017).
 
-Covers AS-3 (the serializer rejects unknown keys and round-trips only documented
-fields; diagnostic-leak safety) and AS-4 (the serializer is a FROZEN interface -
-not imported by any production route/builder in this task).
+Covers M2-T017 AS-3 (the serializer rejects unknown keys and round-trips only
+documented fields; diagnostic-leak safety).
+
+The final section is the IMPORT TRIPWIRE. Task M2-T017 froze the serializer
+un-wired, so the tripwire asserted that NO production module imported it. Task
+M2-T018 wired it into the profile builder's fail-closed provenance write
+boundary, so the tripwire now asserts the stricter, still-load-bearing
+invariant (M2-T018 AS-3): the serializer is imported at EXACTLY that one
+boundary and nowhere else in ``app/**`` outside ``app/contracts/``. A second
+production module reaching for it - a route serializing its own provenance, a
+worker bypassing the builder - is still a regression, and so is losing the
+wiring at the builder.
 """
 
 from __future__ import annotations
 
+import ast
 import json
 from pathlib import Path
 
@@ -147,25 +157,112 @@ def test_multiple_unknown_keys_reported_sorted_names_only() -> None:
 
 
 # ---------------------------------------------------------------------------
-# AS-4: FROZEN interface - not wired into any production route/builder here.
+# IMPORT TRIPWIRE (M2-T018 AS-3): the serializer is imported at EXACTLY the
+# intended profile write boundary and nowhere else in app/** outside
+# app/contracts/. Amended from the M2-T017 "not imported anywhere" form, whose
+# premise (the serializer is un-wired) M2-T018 deliberately retired.
 # ---------------------------------------------------------------------------
 
+# THE one production module allowed to import the serializer: the profile
+# builder, whose ``_closed_provenance`` is the fail-closed provenance write
+# boundary. Repo-relative POSIX path so the assertion message is identical on
+# Windows and on the Linux CI runner.
+BOUNDARY_MODULE = "services/api/app/profile/builder.py"
 
-def test_serializer_not_imported_by_any_production_module() -> None:
-    """No module under services/api/app (other than the contracts package that
-    DEFINES it) may import the serializer in this task; wiring is deferred to a
-    later controller-contracted integration task (FIRST-WAVE-INTEGRATION-
-    CONTRACT.md lane 3 downstream integration). This test is the regression that
-    keeps the interface frozen until then."""
-    offenders: list[str] = []
-    for py in APP_DIR.rglob("*.py"):
-        # The contracts package is allowed to reference itself.
-        if py.parent.name == "contracts" and py.parent.parent.name == "app":
-            continue
-        text = py.read_text(encoding="utf-8")
-        if "contracts.serializers" in text or "from app.contracts" in text:
-            offenders.append(str(py.relative_to(REPO_ROOT)))
-    assert not offenders, (
-        "the allowlist serializer must NOT be wired into production in M2-T017; "
-        f"found import(s) in: {offenders}"
+
+def _production_modules() -> list[Path]:
+    """Every module under ``app/`` EXCEPT the contracts package that defines
+    the serializer (it is allowed to reference itself)."""
+    return [
+        py
+        for py in sorted(APP_DIR.rglob("*.py"))
+        if not (py.parent.name == "contracts" and py.parent.parent.name == "app")
+    ]
+
+
+def _repo_path(py: Path) -> str:
+    return py.relative_to(REPO_ROOT).as_posix()
+
+
+def _imports_app_contracts(tree: ast.AST) -> bool:
+    """True when the module really IMPORTS from ``app.contracts`` (AST, so a
+    mention inside a docstring or comment is not mistaken for wiring)."""
+    for node in ast.walk(tree):
+        if isinstance(node, ast.ImportFrom):
+            if (node.module or "").startswith("app.contracts"):
+                return True
+        elif isinstance(node, ast.Import):
+            if any(alias.name.startswith("app.contracts") for alias in node.names):
+                return True
+    return False
+
+
+def test_serializer_imported_exactly_at_the_profile_write_boundary() -> None:
+    """Exactly one production module imports the serializer, and it is the
+    profile builder. Fewer means the fail-closed boundary was lost; more means
+    a second component is serializing provenance outside the single boundary
+    (both are M2-T018 regressions)."""
+    importers = [
+        _repo_path(py)
+        for py in _production_modules()
+        if _imports_app_contracts(ast.parse(py.read_text(encoding="utf-8")))
+    ]
+    assert importers == [BOUNDARY_MODULE], (
+        "the allowlist serializer must be imported at exactly the profile "
+        f"write boundary ({BOUNDARY_MODULE}); found: {importers}"
+    )
+
+
+def test_no_other_production_module_even_references_the_serializer() -> None:
+    """Textual companion to the AST check: catches a dynamic
+    ``importlib.import_module('app.contracts.serializers')`` or any other
+    string-based reach for the serializer from outside the boundary."""
+    referencing = [
+        _repo_path(py)
+        for py in _production_modules()
+        if "app.contracts" in (text := py.read_text(encoding="utf-8"))
+        or "contracts.serializers" in text
+    ]
+    assert referencing == [BOUNDARY_MODULE], (
+        "only the profile write boundary may reference the serializer; "
+        f"found: {referencing}"
+    )
+
+
+def test_boundary_imports_only_the_source_fact_serializer() -> None:
+    """The builder takes the narrowest possible dependency: the one serializer
+    it needs, not the package or the error classes it never raises itself."""
+    tree = ast.parse((REPO_ROOT / BOUNDARY_MODULE).read_text(encoding="utf-8"))
+    imported = sorted(
+        alias.name
+        for node in ast.walk(tree)
+        if isinstance(node, ast.ImportFrom)
+        and (node.module or "").startswith("app.contracts")
+        for alias in node.names
+    )
+    assert imported == ["SOURCE_FACT_SERIALIZER"]
+
+
+def test_serializer_is_used_only_inside_the_closed_provenance_boundary() -> None:
+    """Within the builder, the serializer is referenced ONLY inside
+    ``_closed_provenance``. A second call site elsewhere in the builder would
+    mean provenance can enter the array through a path this test does not
+    pin."""
+    tree = ast.parse((REPO_ROOT / BOUNDARY_MODULE).read_text(encoding="utf-8"))
+    boundary = next(
+        node
+        for node in ast.walk(tree)
+        if isinstance(node, ast.FunctionDef) and node.name == "_closed_provenance"
+    )
+    inside = {id(node) for node in ast.walk(boundary)}
+    stray = [
+        node.lineno
+        for node in ast.walk(tree)
+        if isinstance(node, ast.Name)
+        and node.id == "SOURCE_FACT_SERIALIZER"
+        and id(node) not in inside
+    ]
+    assert stray == [], (
+        "SOURCE_FACT_SERIALIZER is used outside _closed_provenance at "
+        f"line(s) {stray}; the write boundary must stay single"
     )
