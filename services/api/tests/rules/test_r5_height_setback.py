@@ -44,6 +44,36 @@ _ENGINE_DIR = Path(__file__).resolve().parents[3] / "services" / "api" / "app" /
 _RULESET_DIR = Path(RuleRegistry().ruleset_dir)
 _FAMILY = "residential_height_setback"
 
+# M4-T008 / DF-6. Every rule in this family carries exception conditions keyed on
+# OPTIONAL modifier flags (commercial overlay, special district, historic district,
+# large site). Omitting one of those flags does NOT mean "no modifier" - it means
+# UNKNOWN, and an unknown modifier makes the exception's applicability
+# indeterminate, so the rule escalates to professional_review_required rather than
+# silently skipping a coverage-downgrading exception (see
+# test_rules_df6_exception_indeterminate.py).
+#
+# The scenarios below that assert a CONFIDENT conditional envelope are therefore
+# stated with their modifier assumption EXPLICIT: "an R5 lot affirmatively known to
+# carry no overlay, no special district, no historic district and no large-site
+# designation". That is the all-inputs-present case, whose behaviour is unchanged
+# by DF-6; the previous spelling relied on the fail-open and asserted a confident
+# envelope from inputs the engine had never seen.
+_NO_MODIFIERS = {
+    "overlay_present": False,
+    "special_district_present": False,
+    "historic_district": False,
+    "large_site": False,
+}
+
+
+def _known_unmodified(rule, **inputs) -> dict:
+    """``inputs`` plus an explicit "no modifier applies" value for every OPTIONAL
+    modifier flag THIS rule actually declares (each rule declares a different
+    subset; an undeclared input would be rejected by the DSL loader's predicate-ref
+    check, so the set is intersected with the rule's own declared inputs)."""
+    declared = {spec.name for spec in rule.inputs}
+    return {**{k: v for k, v in _NO_MODIFIERS.items() if k in declared}, **inputs}
+
 # The six rule ids that make up the family (per-district + the 23-424 alternative).
 _FAMILY_RULE_IDS = [
     "r5-height",
@@ -66,7 +96,10 @@ def registry() -> RuleRegistry:
 # --------------------------------------------------------------------------
 
 def test_as1_r5_height_confident_base_and_building_separate(registry):
-    res = registry.evaluate("r5-height", {"zoning_district": "R5"})
+    res = registry.evaluate(
+        "r5-height",
+        _known_unmodified(registry.rule("r5-height"), zoning_district="R5"),
+    )
     assert res.coverage_status == cov.COVERAGE_CONDITIONAL
     # Two SEPARATE typed constraints, not one collapsed number.
     assert res.outputs == {"max_base_height": 35.0, "max_building_height": 45.0}
@@ -82,7 +115,12 @@ def test_as1_r5_height_confident_base_and_building_separate(registry):
 )
 def test_as1_r5_setback_confident_min_depth_by_street(registry, street_class, expected_depth):
     res = registry.evaluate(
-        "r5-setback", {"zoning_district": "R5", "street_width_class": street_class}
+        "r5-setback",
+        _known_unmodified(
+            registry.rule("r5-setback"),
+            zoning_district="R5",
+            street_width_class=street_class,
+        ),
     )
     assert res.coverage_status == cov.COVERAGE_CONDITIONAL
     assert res.outputs == {"required_setback_depth": expected_depth}
@@ -116,20 +154,29 @@ def test_as1_r5_setback_10_15_are_standard_unmodified_not_final(registry, street
 
 def test_as1_r5a_pitched_confident_wall_and_ridge_separate(registry):
     res = registry.evaluate(
-        "r5a-height", {"zoning_district": "R5A", "building_type": "detached"}
+        "r5a-height",
+        _known_unmodified(
+            registry.rule("r5a-height"), zoning_district="R5A", building_type="detached"
+        ),
     )
     assert res.coverage_status == cov.COVERAGE_CONDITIONAL
     assert res.outputs == {"max_perimeter_wall_height": 25.0, "max_building_height": 35.0}
 
 
 def test_as1_r5b_confident_building_height_only(registry):
-    res = registry.evaluate("r5b-height", {"zoning_district": "R5B"})
+    res = registry.evaluate(
+        "r5b-height",
+        _known_unmodified(registry.rule("r5b-height"), zoning_district="R5B"),
+    )
     assert res.coverage_status == cov.COVERAGE_CONDITIONAL
     assert res.outputs == {"max_building_height": 35.0}
 
 
 def test_as1_r5d_confident_building_height_no_setback(registry):
-    res = registry.evaluate("r5d-height", {"zoning_district": "R5D"})
+    res = registry.evaluate(
+        "r5d-height",
+        _known_unmodified(registry.rule("r5d-height"), zoning_district="R5D"),
+    )
     assert res.coverage_status == cov.COVERAGE_CONDITIONAL
     assert res.outputs == {"max_building_height": 45.0}
     # R5D carries no setback rule; its output set is building height only.
@@ -229,7 +276,13 @@ def test_as3_before_amendment_not_effective(registry, rid, inputs):
     ],
 )
 def test_as3_on_amendment_date_effective(registry, rid, inputs):
-    res = registry.evaluate(rid, inputs, as_of_date="2024-12-05")
+    # Modifier flags stated explicitly: this scenario asserts the CONFIDENT
+    # envelope on the amendment date, which requires the modifier inputs to be
+    # known (DF-6). The temporal boundary itself is unaffected by DF-6 - see
+    # test_df6_as6_* for the not-yet-effective + indeterminate-exception case.
+    res = registry.evaluate(
+        rid, _known_unmodified(registry.rule(rid), **inputs), as_of_date="2024-12-05"
+    )
     assert res.coverage_status == cov.COVERAGE_CONDITIONAL
     assert res.outputs
     assert res.trace.effective_window["in_effect"] is True
