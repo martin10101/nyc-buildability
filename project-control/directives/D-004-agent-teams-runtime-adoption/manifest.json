@@ -1,7 +1,7 @@
 {
   "schema": "directive_manifest/v1",
   "directive_id": "D-004",
-  "version": 10,
+  "version": 11,
   "slug": "agent-teams-runtime-adoption",
   "title": "Agent-teams runtime adoption, staged with pilots",
   "status": "active",
@@ -89,6 +89,14 @@
       "amends": "source-001.md",
       "recorded_at": "2026-07-30T00:00:00+00:00",
       "content_digest_sha256": "3b281586434267e8963471c054539b91534a5cd5aac6cc5cdff37989d5c442cd"
+    },
+    {
+      "file": "source-011-amendment.md",
+      "kind": "amendment",
+      "sequence": 11,
+      "amends": "source-001.md",
+      "recorded_at": "2026-07-30T00:00:00+00:00",
+      "content_digest_sha256": "0d019ee1e77d091bf89b29f05cfaf6ac8cef39494a5712e4c058bc352999b056"
     }
   ],
   "amendments": [
@@ -100,7 +108,8 @@
     "source-007-amendment.md",
     "source-008-amendment.md",
     "source-009-amendment.md",
-    "source-010-amendment.md"
+    "source-010-amendment.md",
+    "source-011-amendment.md"
   ],
   "supersedes": [],
   "superseded_by": null,
@@ -279,6 +288,11 @@
       "at": "2026-07-30T00:00:00+00:00",
       "by": "orchestrator",
       "note": "Amendment 9 captured verbatim as source-010-amendment.md (sha256 3b281586434267e8963471c054539b91534a5cd5aac6cc5cdff37989d5c442cd) at frozen head 1f3fbf18d5e0cfbacb2d8b9da9309a0c03ab8a9b, after live reconciliation confirmed every value the owner stated (main=origin/main=1f3fbf18, PRs #129/#130 merged, M0-T027 blocked at 75%, 52 accepted, CP-0035, M0-T032 backlog, no M0-T029 or M0-T033 task file). Decomposed into 83 atomic append-only rows D-004-R327..R409 across preamble, option decisions, Phase 0-4, the 10 mandatory regression tests, the 10 not-authorized prohibitions, and the 10 required return items; total 409. No existing source file or requirement row was edited. This amendment RESOLVES the owner decision left open by the M0-T027 closeout stop (progress log at 75%, invalid_unblock_roster). Independent verification is written by directive-compliance-verifier at the M0-T033 and M0-T027 gates, never by the producer."
+    },
+    {
+      "at": "2026-07-30T00:00:00+00:00",
+      "by": "orchestrator",
+      "note": "Amendment 10 captured verbatim as source-011-amendment.md (sha256 0d019ee1e77d091bf89b29f05cfaf6ac8cef39494a5712e4c058bc352999b056) at task/M0-T033-unblock-roster-semantics = 170478efc34e52f3479d9bb0ac914ad0c364b245. The owner states NO NEW OWNER DECISION is required: this amendment adds binding EVIDENCE and REVIEW requirements to the already-authorized OPTION B sequence. 11 append-only rows D-004-R410..R420 (total 409 -> 420). It requires that the producer's original frozen-base attestation STOP and the corrected resume be preserved honestly; that every test relied upon for acceptance be proved REGISTERED AND EXECUTED (an uninvoked S10 body cannot count as passing evidence and must be fixed in scope or returned as a blocker); that the required_gates/task_type validation asymmetry be preserved for an EXPLICIT independent-review ruling against R352 and R368; and that the orchestrator perform an exact-diff containment review and a tree-identical port before the authorized M0-T033 gates. It TIGHTENS D-004-R374: M0-T027 stays untouched until M0-T033 is merged AND accepted. No existing source file or requirement row was edited."
     }
   ],
   "locked_requirement_ids": [
@@ -690,8 +704,19 @@
     "D-004-R406",
     "D-004-R407",
     "D-004-R408",
-    "D-004-R409"
+    "D-004-R409",
+    "D-004-R410",
+    "D-004-R411",
+    "D-004-R412",
+    "D-004-R413",
+    "D-004-R414",
+    "D-004-R415",
+    "D-004-R416",
+    "D-004-R417",
+    "D-004-R418",
+    "D-004-R419",
+    "D-004-R420"
   ],
-  "requirements_id_digest_sha256": "1f16c50932ec2e2df7a3d9e88e6a102d39a2524d382d6231662716ef145b73a2",
-  "requirements_content_digest_sha256": "d56b0b827314626bdf84bee4f63db28d076067f5eddc9f80f1624b9de67e7987"
+  "requirements_id_digest_sha256": "9a9d23816eeca15e58b75be42386da6af742208ae91ea4d99ccdf9d8420f692e",
+  "requirements_content_digest_sha256": "f4b66f9a0ada03a922ea27632f5d5c684fdaf2e688c637c03f8901b1b0f2db7d"
 }

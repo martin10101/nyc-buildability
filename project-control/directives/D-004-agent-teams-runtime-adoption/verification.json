@@ -2998,7 +2998,7 @@
       "reviewed_sha": null,
       "reviewed_manifest_sha256": null,
       "state": "pending",
-      "note": "Row created at contracting time per authority_note. Applicable requirement ids were DERIVED through the canonical resolver (directive_registry.derive_applicable) against the M0-T033 packet, not hand-selected (D-004-R341). The producer is backend-engineer; the verdict is written ONLY by the independent directive-compliance-verifier at the G5 gate, at one frozen identity. Producer self-verification is prohibited.",
+      "note": "Row created at contracting time per authority_note. Applicable requirement ids were DERIVED through the canonical resolver (directive_registry.derive_applicable) against the M0-T033 packet, not hand-selected (D-004-R341). The producer is backend-engineer; the verdict is written ONLY by the independent directive-compliance-verifier at the G5 gate, at one frozen identity. Producer self-verification is prohibited. Re-derived after amendment 10 (source-011): the applicable set grew from 42 to 52 ids; the evidence map is regenerated through the canonical resolver, never hand-maintained.",
       "applicable_requirement_ids": [
         "D-004-R332",
         "D-004-R335",
@@ -3041,7 +3041,17 @@
         "D-004-R372",
         "D-004-R373",
         "D-004-R387",
-        "D-004-R389"
+        "D-004-R389",
+        "D-004-R410",
+        "D-004-R411",
+        "D-004-R412",
+        "D-004-R413",
+        "D-004-R414",
+        "D-004-R415",
+        "D-004-R416",
+        "D-004-R417",
+        "D-004-R418",
+        "D-004-R419"
       ],
       "requirements": [
         {
@@ -3374,6 +3384,86 @@
         },
         {
           "id": "D-004-R389",
+          "state": "pending",
+          "evidence": [],
+          "verified_at": null,
+          "verified_by": null,
+          "reviewed_sha": null
+        },
+        {
+          "id": "D-004-R410",
+          "state": "pending",
+          "evidence": [],
+          "verified_at": null,
+          "verified_by": null,
+          "reviewed_sha": null
+        },
+        {
+          "id": "D-004-R411",
+          "state": "pending",
+          "evidence": [],
+          "verified_at": null,
+          "verified_by": null,
+          "reviewed_sha": null
+        },
+        {
+          "id": "D-004-R412",
+          "state": "pending",
+          "evidence": [],
+          "verified_at": null,
+          "verified_by": null,
+          "reviewed_sha": null
+        },
+        {
+          "id": "D-004-R413",
+          "state": "pending",
+          "evidence": [],
+          "verified_at": null,
+          "verified_by": null,
+          "reviewed_sha": null
+        },
+        {
+          "id": "D-004-R414",
+          "state": "pending",
+          "evidence": [],
+          "verified_at": null,
+          "verified_by": null,
+          "reviewed_sha": null
+        },
+        {
+          "id": "D-004-R415",
+          "state": "pending",
+          "evidence": [],
+          "verified_at": null,
+          "verified_by": null,
+          "reviewed_sha": null
+        },
+        {
+          "id": "D-004-R416",
+          "state": "pending",
+          "evidence": [],
+          "verified_at": null,
+          "verified_by": null,
+          "reviewed_sha": null
+        },
+        {
+          "id": "D-004-R417",
+          "state": "pending",
+          "evidence": [],
+          "verified_at": null,
+          "verified_by": null,
+          "reviewed_sha": null
+        },
+        {
+          "id": "D-004-R418",
+          "state": "pending",
+          "evidence": [],
+          "verified_at": null,
+          "verified_by": null,
+          "reviewed_sha": null
+        },
+        {
+          "id": "D-004-R419",
           "state": "pending",
           "evidence": [],
           "verified_at": null,

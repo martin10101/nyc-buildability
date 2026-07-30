@@ -2,7 +2,7 @@
   "schema": "directive_requirements/v1",
   "directive_id": "D-004",
   "version": 1,
-  "requirement_count": 409,
+  "requirement_count": 420,
   "producer": "orchestrator",
   "updated_at": "2026-07-30T00:00:00+00:00",
   "requirements": [
@@ -16331,6 +16331,436 @@
         "tasks": []
       },
       "amendment_sequence": 10
+    },
+    {
+      "id": "D-004-R410",
+      "text": "Continue M0-T033 under the CORRECTED frozen-base dispatch; no new owner decision is required to proceed.",
+      "source_ref": "source-011-amendment.md#continue-corrected-dispatch",
+      "classification": "sequencing",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T033"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [],
+        "lifecycle_events": [
+          "claim",
+          "submit"
+        ],
+        "effective_date": "2026-07-30"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured by amendment 10 (source-011); verified independently at the M0-T033 gates",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      },
+      "amendment_sequence": 11
+    },
+    {
+      "id": "D-004-R411",
+      "text": "Preserve the original producer attestation STOP (frozen-base identity mismatch under worktree isolation) and the corrected resume HONESTLY in the producer evidence; neither may be omitted or smoothed over.",
+      "source_ref": "source-011-amendment.md#continue-corrected-dispatch",
+      "classification": "evidence",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T033"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [],
+        "lifecycle_events": [
+          "submit",
+          "gate"
+        ],
+        "effective_date": "2026-07-30"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured by amendment 10 (source-011); verified independently at the M0-T033 gates",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      },
+      "amendment_sequence": 11
+    },
+    {
+      "id": "D-004-R412",
+      "text": "Do not waive or silently resolve either carried item (the never-executed S10 test body; the required_gates/task_type validation asymmetry).",
+      "source_ref": "source-011-amendment.md#continue-corrected-dispatch",
+      "classification": "prohibition",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T033"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [],
+        "lifecycle_events": [
+          "submit",
+          "gate",
+          "accept"
+        ],
+        "effective_date": "2026-07-30"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured by amendment 10 (source-011); verified independently at the M0-T033 gates",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      },
+      "amendment_sequence": 11
+    },
+    {
+      "id": "D-004-R413",
+      "text": "PROVE that every test relied upon for M0-T033 acceptance is actually REGISTERED and EXECUTED - registration in the suite's test list plus observed execution in the run output, not mere presence of the code.",
+      "source_ref": "source-011-amendment.md#carried-item-test-registration",
+      "classification": "evidence",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T033"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [],
+        "lifecycle_events": [
+          "submit",
+          "gate"
+        ],
+        "effective_date": "2026-07-30"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured by amendment 10 (source-011); verified independently at the M0-T033 gates",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      },
+      "amendment_sequence": 11
+    },
+    {
+      "id": "D-004-R414",
+      "text": "If the S10 body is never invoked it CANNOT count as passing evidence: it must be corrected within M0-T033's authorized scope, or returned as a blocker.",
+      "source_ref": "source-011-amendment.md#carried-item-test-registration",
+      "classification": "sequencing",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T033"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [],
+        "lifecycle_events": [
+          "submit",
+          "gate"
+        ],
+        "effective_date": "2026-07-30"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured by amendment 10 (source-011); verified independently at the M0-T033 gates",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      },
+      "amendment_sequence": 11
+    },
+    {
+      "id": "D-004-R415",
+      "text": "PRESERVE the required_gates/task_type validation asymmetry (both consulted only on the orchestrator-producer path) for an EXPLICIT independent-review ruling weighed against D-004-R352 (malformed data fails closed) and D-004-R368 (normal producer behavior unchanged). The reviewers rule; the producer and orchestrator do not settle it.",
+      "source_ref": "source-011-amendment.md#carried-item-validation-asymmetry",
+      "classification": "decision",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T033"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [],
+        "lifecycle_events": [
+          "gate"
+        ],
+        "effective_date": "2026-07-30"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured by amendment 10 (source-011); verified independently at the M0-T033 gates",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      },
+      "amendment_sequence": 11
+    },
+    {
+      "id": "D-004-R416",
+      "text": "After the producer returns, perform the CONTRACTED EXACT-DIFF CONTAINMENT REVIEW of the producer's changes.",
+      "source_ref": "source-011-amendment.md#port-and-gates",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T033"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [],
+        "lifecycle_events": [
+          "submit"
+        ],
+        "effective_date": "2026-07-30"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured by amendment 10 (source-011); verified independently at the M0-T033 gates",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      },
+      "amendment_sequence": 11
+    },
+    {
+      "id": "D-004-R417",
+      "text": "Perform a TREE-IDENTICAL PORT of the producer's work onto the controlled task branch.",
+      "source_ref": "source-011-amendment.md#port-and-gates",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T033"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [],
+        "lifecycle_events": [
+          "submit"
+        ],
+        "effective_date": "2026-07-30"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured by amendment 10 (source-011); verified independently at the M0-T033 gates",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      },
+      "amendment_sequence": 11
+    },
+    {
+      "id": "D-004-R418",
+      "text": "Proceed through the AUTHORIZED M0-T033 gates ONLY (G0, G2, G3, G5); no other gate, task, or lifecycle action.",
+      "source_ref": "source-011-amendment.md#port-and-gates",
+      "classification": "prohibition",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T033"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [],
+        "lifecycle_events": [
+          "gate",
+          "accept"
+        ],
+        "effective_date": "2026-07-30"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured by amendment 10 (source-011); verified independently at the M0-T033 gates",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      },
+      "amendment_sequence": 11
+    },
+    {
+      "id": "D-004-R419",
+      "text": "Keep M0-T027 UNTOUCHED until M0-T033 is MERGED AND ACCEPTED (tightens D-004-R374, which bound only the implementation window).",
+      "source_ref": "source-011-amendment.md#port-and-gates",
+      "classification": "sequencing",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T033",
+          "M0-T027"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [],
+        "lifecycle_events": [
+          "claim",
+          "gate",
+          "accept"
+        ],
+        "effective_date": "2026-07-30"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured by amendment 10 (source-011); verified independently at the M0-T033 gates",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      },
+      "amendment_sequence": 11
+    },
+    {
+      "id": "D-004-R420",
+      "text": "No Step 5, no M0-T032, and no unrelated work.",
+      "source_ref": "source-011-amendment.md#port-and-gates",
+      "classification": "prohibition",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "D-004-OPTIONB"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [],
+        "lifecycle_events": [
+          "claim",
+          "gate",
+          "accept"
+        ],
+        "effective_date": "2026-07-30"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured by amendment 10 (source-011); verified independently at the M0-T033 gates",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      },
+      "amendment_sequence": 11
     }
   ],
   "amendments_applied": [
@@ -16342,6 +16772,7 @@
     "source-007-amendment.md",
     "source-008-amendment.md",
     "source-009-amendment.md",
-    "source-010-amendment.md"
+    "source-010-amendment.md",
+    "source-011-amendment.md"
   ]
 }
