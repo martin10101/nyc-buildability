@@ -2995,10 +2995,10 @@
       "directive_id": "D-004",
       "producer": "backend-engineer",
       "verifier": "directive-compliance-verifier",
-      "reviewed_sha": null,
-      "reviewed_manifest_sha256": null,
-      "state": "pending",
-      "note": "Row created at contracting time per authority_note. Applicable requirement ids were DERIVED through the canonical resolver (directive_registry.derive_applicable) against the M0-T033 packet, not hand-selected (D-004-R341). The producer is backend-engineer; the verdict is written ONLY by the independent directive-compliance-verifier at the G5 gate, at one frozen identity. Producer self-verification is prohibited. Re-derived after amendment 10 (source-011): the applicable set grew from 42 to 52 ids; the evidence map is regenerated through the canonical resolver, never hand-maintained.",
+      "reviewed_sha": "6dec7a5b6793d188d2627c9f9661c4a19ce8f2fd",
+      "reviewed_manifest_sha256": "cd8f93b76116c1e43b84bb0aa54f5ad621ddc16ae5e0a932cdfe86f65a8e1665",
+      "state": "PASS",
+      "note": "INDEPENDENT VERIFICATION by directive-compliance-verifier (read-only, explicit Opus 5 under D-004-R307). VERDICT PASS with binding corrections V1-V5. 52 of 52 applicable ids reproduced as SATISFIED against PRIMARY repository evidence; 0 VIOLATED, 0 BLOCKED, 0 UNVERIFIABLE. The applicable set was DERIVED through the canonical resolver (52, zero unresolved), and the evidence map is exactly that set. D-004-R420 independently justified NOT_APPLICABLE (scoped to the D-004-OPTIONB arc sentinel) with its substance verified separately. Registry integrity reproduced from checked-out bytes: all 11 source digests match, both requirements digests match, locked ids 420/420 with 0 duplicates, every committed source touched by exactly ONE commit (append-only proven from git, not from the manifest claim), and the .gitattributes LF pin verified by comparing git blob bytes to on-disk bytes so a fresh Windows clone reproduces the digests. Verifier ran all four harnesses itself: project-control 15/15 exit 0 with 10/10 S10 blocks executed; test_directive_compliance 55 tests OK; test_directive_reminder 12 tests OK; validator exit 0. It did NOT rely on the producer tests or the producer NC-1/2/3: it built its own 21,294-shape base-vs-head differential (exactly 96 base-REFUSE->head-ALLOW transitions, 0 outside the four conjunctive conditions, 0 head-side exceptions, 7,098 base crashes and 1,638 base fail-opens converted to explanatory refusals) and its own in-memory negative control proving the executed==expected_blocks assertion is live. It ran the head guard against the REAL M0-T027 packet: admitted by SHAPE alone. RULINGS: OQ-1 R368 dominates (4/4 reviewers, independently); OQ-2 ACCEPT; OQ-3 R345/R346 satisfied absolutely while the packet AS-11 literal clause is NOT met and is recorded as ruled-on rather than ignored; OQ-4 correctly resolved with the trail retained. HONESTY: no completion/acceptance claim, no Fable 5 claim, and the earlier REJECTED execution-proof return is disclosed rather than laundered into a clean single-pass narrative. STATED LIMITS (not inflated): spawn-model identity is not machine-attestable in this repo, and the producer NC transcripts were not re-observed - the verifier substituted its own controls. RESIDUAL (V5): R372/R373/R389 and the post-merge half of R419 are SATISFIED-TO-DATE and MUST be re-verified at accept.",
       "applicable_requirement_ids": [
         "D-004-R332",
         "D-004-R335",
@@ -3056,419 +3056,523 @@
       "requirements": [
         {
           "id": "D-004-R332",
-          "state": "pending",
-          "evidence": [],
-          "verified_at": null,
-          "verified_by": null,
-          "reviewed_sha": null
+          "state": "PASS",
+          "evidence": [
+            "project-control/reports/M0-T033-directive-verification.md (per-requirement table, section 7)"
+          ],
+          "verified_at": "2026-07-30T00:00:00+00:00",
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "6dec7a5b6793d188d2627c9f9661c4a19ce8f2fd"
         },
         {
           "id": "D-004-R335",
-          "state": "pending",
-          "evidence": [],
-          "verified_at": null,
-          "verified_by": null,
-          "reviewed_sha": null
+          "state": "PASS",
+          "evidence": [
+            "project-control/reports/M0-T033-directive-verification.md (per-requirement table, section 7)"
+          ],
+          "verified_at": "2026-07-30T00:00:00+00:00",
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "6dec7a5b6793d188d2627c9f9661c4a19ce8f2fd"
         },
         {
           "id": "D-004-R336",
-          "state": "pending",
-          "evidence": [],
-          "verified_at": null,
-          "verified_by": null,
-          "reviewed_sha": null
+          "state": "PASS",
+          "evidence": [
+            "project-control/reports/M0-T033-directive-verification.md (per-requirement table, section 7)"
+          ],
+          "verified_at": "2026-07-30T00:00:00+00:00",
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "6dec7a5b6793d188d2627c9f9661c4a19ce8f2fd"
         },
         {
           "id": "D-004-R337",
-          "state": "pending",
-          "evidence": [],
-          "verified_at": null,
-          "verified_by": null,
-          "reviewed_sha": null
+          "state": "PASS",
+          "evidence": [
+            "project-control/reports/M0-T033-directive-verification.md (per-requirement table, section 7)"
+          ],
+          "verified_at": "2026-07-30T00:00:00+00:00",
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "6dec7a5b6793d188d2627c9f9661c4a19ce8f2fd"
         },
         {
           "id": "D-004-R338",
-          "state": "pending",
-          "evidence": [],
-          "verified_at": null,
-          "verified_by": null,
-          "reviewed_sha": null
+          "state": "PASS",
+          "evidence": [
+            "project-control/reports/M0-T033-directive-verification.md (per-requirement table, section 7)"
+          ],
+          "verified_at": "2026-07-30T00:00:00+00:00",
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "6dec7a5b6793d188d2627c9f9661c4a19ce8f2fd"
         },
         {
           "id": "D-004-R339",
-          "state": "pending",
-          "evidence": [],
-          "verified_at": null,
-          "verified_by": null,
-          "reviewed_sha": null
+          "state": "PASS",
+          "evidence": [
+            "project-control/reports/M0-T033-directive-verification.md (per-requirement table, section 7)"
+          ],
+          "verified_at": "2026-07-30T00:00:00+00:00",
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "6dec7a5b6793d188d2627c9f9661c4a19ce8f2fd"
         },
         {
           "id": "D-004-R340",
-          "state": "pending",
-          "evidence": [],
-          "verified_at": null,
-          "verified_by": null,
-          "reviewed_sha": null
+          "state": "PASS",
+          "evidence": [
+            "project-control/reports/M0-T033-directive-verification.md (per-requirement table, section 7)"
+          ],
+          "verified_at": "2026-07-30T00:00:00+00:00",
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "6dec7a5b6793d188d2627c9f9661c4a19ce8f2fd"
         },
         {
           "id": "D-004-R341",
-          "state": "pending",
-          "evidence": [],
-          "verified_at": null,
-          "verified_by": null,
-          "reviewed_sha": null
+          "state": "PASS",
+          "evidence": [
+            "project-control/reports/M0-T033-directive-verification.md (per-requirement table, section 7)"
+          ],
+          "verified_at": "2026-07-30T00:00:00+00:00",
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "6dec7a5b6793d188d2627c9f9661c4a19ce8f2fd"
         },
         {
           "id": "D-004-R342",
-          "state": "pending",
-          "evidence": [],
-          "verified_at": null,
-          "verified_by": null,
-          "reviewed_sha": null
+          "state": "PASS",
+          "evidence": [
+            "project-control/reports/M0-T033-directive-verification.md (per-requirement table, section 7)"
+          ],
+          "verified_at": "2026-07-30T00:00:00+00:00",
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "6dec7a5b6793d188d2627c9f9661c4a19ce8f2fd"
         },
         {
           "id": "D-004-R343",
-          "state": "pending",
-          "evidence": [],
-          "verified_at": null,
-          "verified_by": null,
-          "reviewed_sha": null
+          "state": "PASS",
+          "evidence": [
+            "project-control/reports/M0-T033-directive-verification.md (per-requirement table, section 7)"
+          ],
+          "verified_at": "2026-07-30T00:00:00+00:00",
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "6dec7a5b6793d188d2627c9f9661c4a19ce8f2fd"
         },
         {
           "id": "D-004-R344",
-          "state": "pending",
-          "evidence": [],
-          "verified_at": null,
-          "verified_by": null,
-          "reviewed_sha": null
+          "state": "PASS",
+          "evidence": [
+            "project-control/reports/M0-T033-directive-verification.md (per-requirement table, section 7)"
+          ],
+          "verified_at": "2026-07-30T00:00:00+00:00",
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "6dec7a5b6793d188d2627c9f9661c4a19ce8f2fd"
         },
         {
           "id": "D-004-R345",
-          "state": "pending",
-          "evidence": [],
-          "verified_at": null,
-          "verified_by": null,
-          "reviewed_sha": null
+          "state": "PASS",
+          "evidence": [
+            "project-control/reports/M0-T033-directive-verification.md (per-requirement table, section 7)"
+          ],
+          "verified_at": "2026-07-30T00:00:00+00:00",
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "6dec7a5b6793d188d2627c9f9661c4a19ce8f2fd"
         },
         {
           "id": "D-004-R346",
-          "state": "pending",
-          "evidence": [],
-          "verified_at": null,
-          "verified_by": null,
-          "reviewed_sha": null
+          "state": "PASS",
+          "evidence": [
+            "project-control/reports/M0-T033-directive-verification.md (per-requirement table, section 7)"
+          ],
+          "verified_at": "2026-07-30T00:00:00+00:00",
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "6dec7a5b6793d188d2627c9f9661c4a19ce8f2fd"
         },
         {
           "id": "D-004-R347",
-          "state": "pending",
-          "evidence": [],
-          "verified_at": null,
-          "verified_by": null,
-          "reviewed_sha": null
+          "state": "PASS",
+          "evidence": [
+            "project-control/reports/M0-T033-directive-verification.md (per-requirement table, section 7)"
+          ],
+          "verified_at": "2026-07-30T00:00:00+00:00",
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "6dec7a5b6793d188d2627c9f9661c4a19ce8f2fd"
         },
         {
           "id": "D-004-R348",
-          "state": "pending",
-          "evidence": [],
-          "verified_at": null,
-          "verified_by": null,
-          "reviewed_sha": null
+          "state": "PASS",
+          "evidence": [
+            "project-control/reports/M0-T033-directive-verification.md (per-requirement table, section 7)"
+          ],
+          "verified_at": "2026-07-30T00:00:00+00:00",
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "6dec7a5b6793d188d2627c9f9661c4a19ce8f2fd"
         },
         {
           "id": "D-004-R349",
-          "state": "pending",
-          "evidence": [],
-          "verified_at": null,
-          "verified_by": null,
-          "reviewed_sha": null
+          "state": "PASS",
+          "evidence": [
+            "project-control/reports/M0-T033-directive-verification.md (per-requirement table, section 7)"
+          ],
+          "verified_at": "2026-07-30T00:00:00+00:00",
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "6dec7a5b6793d188d2627c9f9661c4a19ce8f2fd"
         },
         {
           "id": "D-004-R350",
-          "state": "pending",
-          "evidence": [],
-          "verified_at": null,
-          "verified_by": null,
-          "reviewed_sha": null
+          "state": "PASS",
+          "evidence": [
+            "project-control/reports/M0-T033-directive-verification.md (per-requirement table, section 7)"
+          ],
+          "verified_at": "2026-07-30T00:00:00+00:00",
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "6dec7a5b6793d188d2627c9f9661c4a19ce8f2fd"
         },
         {
           "id": "D-004-R351",
-          "state": "pending",
-          "evidence": [],
-          "verified_at": null,
-          "verified_by": null,
-          "reviewed_sha": null
+          "state": "PASS",
+          "evidence": [
+            "project-control/reports/M0-T033-directive-verification.md (per-requirement table, section 7)"
+          ],
+          "verified_at": "2026-07-30T00:00:00+00:00",
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "6dec7a5b6793d188d2627c9f9661c4a19ce8f2fd"
         },
         {
           "id": "D-004-R352",
-          "state": "pending",
-          "evidence": [],
-          "verified_at": null,
-          "verified_by": null,
-          "reviewed_sha": null
+          "state": "PASS",
+          "evidence": [
+            "project-control/reports/M0-T033-directive-verification.md (per-requirement table, section 7)"
+          ],
+          "verified_at": "2026-07-30T00:00:00+00:00",
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "6dec7a5b6793d188d2627c9f9661c4a19ce8f2fd"
         },
         {
           "id": "D-004-R353",
-          "state": "pending",
-          "evidence": [],
-          "verified_at": null,
-          "verified_by": null,
-          "reviewed_sha": null
+          "state": "PASS",
+          "evidence": [
+            "project-control/reports/M0-T033-directive-verification.md (per-requirement table, section 7)"
+          ],
+          "verified_at": "2026-07-30T00:00:00+00:00",
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "6dec7a5b6793d188d2627c9f9661c4a19ce8f2fd"
         },
         {
           "id": "D-004-R354",
-          "state": "pending",
-          "evidence": [],
-          "verified_at": null,
-          "verified_by": null,
-          "reviewed_sha": null
+          "state": "PASS",
+          "evidence": [
+            "project-control/reports/M0-T033-directive-verification.md (per-requirement table, section 7)"
+          ],
+          "verified_at": "2026-07-30T00:00:00+00:00",
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "6dec7a5b6793d188d2627c9f9661c4a19ce8f2fd"
         },
         {
           "id": "D-004-R355",
-          "state": "pending",
-          "evidence": [],
-          "verified_at": null,
-          "verified_by": null,
-          "reviewed_sha": null
+          "state": "PASS",
+          "evidence": [
+            "project-control/reports/M0-T033-directive-verification.md (per-requirement table, section 7)"
+          ],
+          "verified_at": "2026-07-30T00:00:00+00:00",
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "6dec7a5b6793d188d2627c9f9661c4a19ce8f2fd"
         },
         {
           "id": "D-004-R356",
-          "state": "pending",
-          "evidence": [],
-          "verified_at": null,
-          "verified_by": null,
-          "reviewed_sha": null
+          "state": "PASS",
+          "evidence": [
+            "project-control/reports/M0-T033-directive-verification.md (per-requirement table, section 7)"
+          ],
+          "verified_at": "2026-07-30T00:00:00+00:00",
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "6dec7a5b6793d188d2627c9f9661c4a19ce8f2fd"
         },
         {
           "id": "D-004-R357",
-          "state": "pending",
-          "evidence": [],
-          "verified_at": null,
-          "verified_by": null,
-          "reviewed_sha": null
+          "state": "PASS",
+          "evidence": [
+            "project-control/reports/M0-T033-directive-verification.md (per-requirement table, section 7)"
+          ],
+          "verified_at": "2026-07-30T00:00:00+00:00",
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "6dec7a5b6793d188d2627c9f9661c4a19ce8f2fd"
         },
         {
           "id": "D-004-R358",
-          "state": "pending",
-          "evidence": [],
-          "verified_at": null,
-          "verified_by": null,
-          "reviewed_sha": null
+          "state": "PASS",
+          "evidence": [
+            "project-control/reports/M0-T033-directive-verification.md (per-requirement table, section 7)"
+          ],
+          "verified_at": "2026-07-30T00:00:00+00:00",
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "6dec7a5b6793d188d2627c9f9661c4a19ce8f2fd"
         },
         {
           "id": "D-004-R359",
-          "state": "pending",
-          "evidence": [],
-          "verified_at": null,
-          "verified_by": null,
-          "reviewed_sha": null
+          "state": "PASS",
+          "evidence": [
+            "project-control/reports/M0-T033-directive-verification.md (per-requirement table, section 7)"
+          ],
+          "verified_at": "2026-07-30T00:00:00+00:00",
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "6dec7a5b6793d188d2627c9f9661c4a19ce8f2fd"
         },
         {
           "id": "D-004-R360",
-          "state": "pending",
-          "evidence": [],
-          "verified_at": null,
-          "verified_by": null,
-          "reviewed_sha": null
+          "state": "PASS",
+          "evidence": [
+            "project-control/reports/M0-T033-directive-verification.md (per-requirement table, section 7)"
+          ],
+          "verified_at": "2026-07-30T00:00:00+00:00",
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "6dec7a5b6793d188d2627c9f9661c4a19ce8f2fd"
         },
         {
           "id": "D-004-R361",
-          "state": "pending",
-          "evidence": [],
-          "verified_at": null,
-          "verified_by": null,
-          "reviewed_sha": null
+          "state": "PASS",
+          "evidence": [
+            "project-control/reports/M0-T033-directive-verification.md (per-requirement table, section 7)"
+          ],
+          "verified_at": "2026-07-30T00:00:00+00:00",
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "6dec7a5b6793d188d2627c9f9661c4a19ce8f2fd"
         },
         {
           "id": "D-004-R362",
-          "state": "pending",
-          "evidence": [],
-          "verified_at": null,
-          "verified_by": null,
-          "reviewed_sha": null
+          "state": "PASS",
+          "evidence": [
+            "project-control/reports/M0-T033-directive-verification.md (per-requirement table, section 7)"
+          ],
+          "verified_at": "2026-07-30T00:00:00+00:00",
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "6dec7a5b6793d188d2627c9f9661c4a19ce8f2fd"
         },
         {
           "id": "D-004-R363",
-          "state": "pending",
-          "evidence": [],
-          "verified_at": null,
-          "verified_by": null,
-          "reviewed_sha": null
+          "state": "PASS",
+          "evidence": [
+            "project-control/reports/M0-T033-directive-verification.md (per-requirement table, section 7)"
+          ],
+          "verified_at": "2026-07-30T00:00:00+00:00",
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "6dec7a5b6793d188d2627c9f9661c4a19ce8f2fd"
         },
         {
           "id": "D-004-R364",
-          "state": "pending",
-          "evidence": [],
-          "verified_at": null,
-          "verified_by": null,
-          "reviewed_sha": null
+          "state": "PASS",
+          "evidence": [
+            "project-control/reports/M0-T033-directive-verification.md (per-requirement table, section 7)"
+          ],
+          "verified_at": "2026-07-30T00:00:00+00:00",
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "6dec7a5b6793d188d2627c9f9661c4a19ce8f2fd"
         },
         {
           "id": "D-004-R365",
-          "state": "pending",
-          "evidence": [],
-          "verified_at": null,
-          "verified_by": null,
-          "reviewed_sha": null
+          "state": "PASS",
+          "evidence": [
+            "project-control/reports/M0-T033-directive-verification.md (per-requirement table, section 7)"
+          ],
+          "verified_at": "2026-07-30T00:00:00+00:00",
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "6dec7a5b6793d188d2627c9f9661c4a19ce8f2fd"
         },
         {
           "id": "D-004-R366",
-          "state": "pending",
-          "evidence": [],
-          "verified_at": null,
-          "verified_by": null,
-          "reviewed_sha": null
+          "state": "PASS",
+          "evidence": [
+            "project-control/reports/M0-T033-directive-verification.md (per-requirement table, section 7)"
+          ],
+          "verified_at": "2026-07-30T00:00:00+00:00",
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "6dec7a5b6793d188d2627c9f9661c4a19ce8f2fd"
         },
         {
           "id": "D-004-R367",
-          "state": "pending",
-          "evidence": [],
-          "verified_at": null,
-          "verified_by": null,
-          "reviewed_sha": null
+          "state": "PASS",
+          "evidence": [
+            "project-control/reports/M0-T033-directive-verification.md (per-requirement table, section 7)"
+          ],
+          "verified_at": "2026-07-30T00:00:00+00:00",
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "6dec7a5b6793d188d2627c9f9661c4a19ce8f2fd"
         },
         {
           "id": "D-004-R368",
-          "state": "pending",
-          "evidence": [],
-          "verified_at": null,
-          "verified_by": null,
-          "reviewed_sha": null
+          "state": "PASS",
+          "evidence": [
+            "project-control/reports/M0-T033-directive-verification.md (per-requirement table, section 7)"
+          ],
+          "verified_at": "2026-07-30T00:00:00+00:00",
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "6dec7a5b6793d188d2627c9f9661c4a19ce8f2fd"
         },
         {
           "id": "D-004-R369",
-          "state": "pending",
-          "evidence": [],
-          "verified_at": null,
-          "verified_by": null,
-          "reviewed_sha": null
+          "state": "PASS",
+          "evidence": [
+            "project-control/reports/M0-T033-directive-verification.md (per-requirement table, section 7)"
+          ],
+          "verified_at": "2026-07-30T00:00:00+00:00",
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "6dec7a5b6793d188d2627c9f9661c4a19ce8f2fd"
         },
         {
           "id": "D-004-R370",
-          "state": "pending",
-          "evidence": [],
-          "verified_at": null,
-          "verified_by": null,
-          "reviewed_sha": null
+          "state": "PASS",
+          "evidence": [
+            "project-control/reports/M0-T033-directive-verification.md (per-requirement table, section 7)"
+          ],
+          "verified_at": "2026-07-30T00:00:00+00:00",
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "6dec7a5b6793d188d2627c9f9661c4a19ce8f2fd"
         },
         {
           "id": "D-004-R371",
-          "state": "pending",
-          "evidence": [],
-          "verified_at": null,
-          "verified_by": null,
-          "reviewed_sha": null
+          "state": "PASS",
+          "evidence": [
+            "project-control/reports/M0-T033-directive-verification.md (per-requirement table, section 7)"
+          ],
+          "verified_at": "2026-07-30T00:00:00+00:00",
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "6dec7a5b6793d188d2627c9f9661c4a19ce8f2fd"
         },
         {
           "id": "D-004-R372",
-          "state": "pending",
-          "evidence": [],
-          "verified_at": null,
-          "verified_by": null,
-          "reviewed_sha": null
+          "state": "PASS",
+          "evidence": [
+            "SATISFIED TO DATE - residual obligation falls due at merge/accept; re-verify per V5 (see project-control/reports/M0-T033-directive-verification.md)"
+          ],
+          "verified_at": "2026-07-30T00:00:00+00:00",
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "6dec7a5b6793d188d2627c9f9661c4a19ce8f2fd"
         },
         {
           "id": "D-004-R373",
-          "state": "pending",
-          "evidence": [],
-          "verified_at": null,
-          "verified_by": null,
-          "reviewed_sha": null
+          "state": "PASS",
+          "evidence": [
+            "SATISFIED TO DATE - residual obligation falls due at merge/accept; re-verify per V5 (see project-control/reports/M0-T033-directive-verification.md)"
+          ],
+          "verified_at": "2026-07-30T00:00:00+00:00",
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "6dec7a5b6793d188d2627c9f9661c4a19ce8f2fd"
         },
         {
           "id": "D-004-R387",
-          "state": "pending",
-          "evidence": [],
-          "verified_at": null,
-          "verified_by": null,
-          "reviewed_sha": null
+          "state": "PASS",
+          "evidence": [
+            "project-control/reports/M0-T033-directive-verification.md (per-requirement table, section 7)"
+          ],
+          "verified_at": "2026-07-30T00:00:00+00:00",
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "6dec7a5b6793d188d2627c9f9661c4a19ce8f2fd"
         },
         {
           "id": "D-004-R389",
-          "state": "pending",
-          "evidence": [],
-          "verified_at": null,
-          "verified_by": null,
-          "reviewed_sha": null
+          "state": "PASS",
+          "evidence": [
+            "SATISFIED TO DATE - residual obligation falls due at merge/accept; re-verify per V5 (see project-control/reports/M0-T033-directive-verification.md)"
+          ],
+          "verified_at": "2026-07-30T00:00:00+00:00",
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "6dec7a5b6793d188d2627c9f9661c4a19ce8f2fd"
         },
         {
           "id": "D-004-R410",
-          "state": "pending",
-          "evidence": [],
-          "verified_at": null,
-          "verified_by": null,
-          "reviewed_sha": null
+          "state": "PASS",
+          "evidence": [
+            "project-control/reports/M0-T033-directive-verification.md (per-requirement table, section 7)"
+          ],
+          "verified_at": "2026-07-30T00:00:00+00:00",
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "6dec7a5b6793d188d2627c9f9661c4a19ce8f2fd"
         },
         {
           "id": "D-004-R411",
-          "state": "pending",
-          "evidence": [],
-          "verified_at": null,
-          "verified_by": null,
-          "reviewed_sha": null
+          "state": "PASS",
+          "evidence": [
+            "project-control/reports/M0-T033-directive-verification.md (per-requirement table, section 7)"
+          ],
+          "verified_at": "2026-07-30T00:00:00+00:00",
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "6dec7a5b6793d188d2627c9f9661c4a19ce8f2fd"
         },
         {
           "id": "D-004-R412",
-          "state": "pending",
-          "evidence": [],
-          "verified_at": null,
-          "verified_by": null,
-          "reviewed_sha": null
+          "state": "PASS",
+          "evidence": [
+            "project-control/reports/M0-T033-directive-verification.md (per-requirement table, section 7)"
+          ],
+          "verified_at": "2026-07-30T00:00:00+00:00",
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "6dec7a5b6793d188d2627c9f9661c4a19ce8f2fd"
         },
         {
           "id": "D-004-R413",
-          "state": "pending",
-          "evidence": [],
-          "verified_at": null,
-          "verified_by": null,
-          "reviewed_sha": null
+          "state": "PASS",
+          "evidence": [
+            "project-control/reports/M0-T033-directive-verification.md (per-requirement table, section 7)"
+          ],
+          "verified_at": "2026-07-30T00:00:00+00:00",
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "6dec7a5b6793d188d2627c9f9661c4a19ce8f2fd"
         },
         {
           "id": "D-004-R414",
-          "state": "pending",
-          "evidence": [],
-          "verified_at": null,
-          "verified_by": null,
-          "reviewed_sha": null
+          "state": "PASS",
+          "evidence": [
+            "project-control/reports/M0-T033-directive-verification.md (per-requirement table, section 7)"
+          ],
+          "verified_at": "2026-07-30T00:00:00+00:00",
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "6dec7a5b6793d188d2627c9f9661c4a19ce8f2fd"
         },
         {
           "id": "D-004-R415",
-          "state": "pending",
-          "evidence": [],
-          "verified_at": null,
-          "verified_by": null,
-          "reviewed_sha": null
+          "state": "PASS",
+          "evidence": [
+            "project-control/reports/M0-T033-directive-verification.md (per-requirement table, section 7)"
+          ],
+          "verified_at": "2026-07-30T00:00:00+00:00",
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "6dec7a5b6793d188d2627c9f9661c4a19ce8f2fd"
         },
         {
           "id": "D-004-R416",
-          "state": "pending",
-          "evidence": [],
-          "verified_at": null,
-          "verified_by": null,
-          "reviewed_sha": null
+          "state": "PASS",
+          "evidence": [
+            "project-control/reports/M0-T033-directive-verification.md (per-requirement table, section 7)"
+          ],
+          "verified_at": "2026-07-30T00:00:00+00:00",
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "6dec7a5b6793d188d2627c9f9661c4a19ce8f2fd"
         },
         {
           "id": "D-004-R417",
-          "state": "pending",
-          "evidence": [],
-          "verified_at": null,
-          "verified_by": null,
-          "reviewed_sha": null
+          "state": "PASS",
+          "evidence": [
+            "project-control/reports/M0-T033-directive-verification.md (per-requirement table, section 7)"
+          ],
+          "verified_at": "2026-07-30T00:00:00+00:00",
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "6dec7a5b6793d188d2627c9f9661c4a19ce8f2fd"
         },
         {
           "id": "D-004-R418",
-          "state": "pending",
-          "evidence": [],
-          "verified_at": null,
-          "verified_by": null,
-          "reviewed_sha": null
+          "state": "PASS",
+          "evidence": [
+            "project-control/reports/M0-T033-directive-verification.md (per-requirement table, section 7)"
+          ],
+          "verified_at": "2026-07-30T00:00:00+00:00",
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "6dec7a5b6793d188d2627c9f9661c4a19ce8f2fd"
         },
         {
           "id": "D-004-R419",
-          "state": "pending",
-          "evidence": [],
-          "verified_at": null,
-          "verified_by": null,
-          "reviewed_sha": null
+          "state": "PASS",
+          "evidence": [
+            "SATISFIED TO DATE - residual obligation falls due at merge/accept; re-verify per V5 (see project-control/reports/M0-T033-directive-verification.md)"
+          ],
+          "verified_at": "2026-07-30T00:00:00+00:00",
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "6dec7a5b6793d188d2627c9f9661c4a19ce8f2fd"
         }
       ]
     }
