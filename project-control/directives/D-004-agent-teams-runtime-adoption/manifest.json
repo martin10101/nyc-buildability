@@ -1,7 +1,7 @@
 {
   "schema": "directive_manifest/v1",
   "directive_id": "D-004",
-  "version": 8,
+  "version": 9,
   "slug": "agent-teams-runtime-adoption",
   "title": "Agent-teams runtime adoption, staged with pilots",
   "status": "active",
@@ -73,6 +73,14 @@
       "amends": "source-001.md",
       "recorded_at": "2026-07-30T00:00:00+00:00",
       "content_digest_sha256": "9cb73c514dfd9a22320a7fce8bfaf92249795afce02b92e0134712b7df34e9df"
+    },
+    {
+      "file": "source-009-amendment.md",
+      "kind": "amendment",
+      "sequence": 9,
+      "amends": "source-001.md",
+      "recorded_at": "2026-07-30T00:00:00+00:00",
+      "content_digest_sha256": "372842e93b0e697e512cc1073e322970a02db2c3050ab286d825f2b78b8033dc"
     }
   ],
   "amendments": [
@@ -82,7 +90,8 @@
     "source-005-amendment.md",
     "source-006-amendment.md",
     "source-007-amendment.md",
-    "source-008-amendment.md"
+    "source-008-amendment.md",
+    "source-009-amendment.md"
   ],
   "supersedes": [],
   "superseded_by": null,
@@ -113,8 +122,8 @@
   },
   "applicability_note": "PHASE0 requirements (task_ids=[D-004-PHASE0], a non-ledger sentinel) are the orient/verify/persist actions performed at capture time in this session. PROCESS requirements (task_ids=[D-004-PROCESS], a non-ledger sentinel) are the standing constraints and stop discipline that bind every phase and are checked against primary repository evidence at the final independent directive verification. The three ledger IDs in scope are RESERVED, not yet contracted: M0-T027 = pilot-governance control task (Steps 1, 2, 4 evidence), M0-T028 = producer-confinement control task (Step 3), M0-T029 = adoption task (Step 5). Each is contracted only on the owner's explicit GO for its step; if a reserved ID cannot be used, an append-only source-00N-amendment.md records the reassignment. M0-T025 is out of scope and must not be touched (D-004-R022/R053).",
   "owner_approval": {
-    "state": "step_3_accepted_phase_8_complete_step_4_authorized",
-    "decision": "Staged pilots, each gated on an explicit owner GO. Step 1 is COMPLETE and its evidence is ACCEPTED AS-IS. Step 2 is COMPLETE (probe FAILED the REMAIN criterion; cwd resets to the primary checkout before every teammate Bash call). STEP 3 IS AUTHORIZED (2026-07-29, source-006): execute M0-T028 only, subject to mandatory packet corrections (the M0-T027 dependency-deadlock removal), primary-evidence H1/H2 diagnosis, prevention-only fix (detection-only requires a new owner GO), the R100/R101 ride-alongs, independent review at a frozen SHA, protected-main merge, and a mandatory fresh-session end-to-end sentinel rerun before B-015 closure or acceptance. Steps 4 and 5 remain un-authorized. PHASE 8 GO (2026-07-30, source-007): the owner authorized executing Step 3 Phase 8 only, in the required fresh session, exactly per the M0-T028 fresh-session capsule; the C2 decision is captured as OPEN (D-004-R296) and must be recorded before acceptance. STEP 4 AUTHORIZED (2026-07-30, source-008): two-producer pilot on lanes 2+3 (M2-T018 + M4-T008); producer model VALUE superseded to Opus 5 ceiling (workers 'opus 5 max', lead stays Fable 5); R065 purpose-satisfied in the post-Phase-8 session by owner approval; STOP after Step 4; Step 5 remains un-authorized.",
+    "state": "step_4_evidence_accepted_m0_t027_closeout_authorized",
+    "decision": "Staged pilots, each gated on an explicit owner GO. Step 1 is COMPLETE and its evidence is ACCEPTED AS-IS. Step 2 is COMPLETE (probe FAILED the REMAIN criterion; cwd resets to the primary checkout before every teammate Bash call). STEP 3 IS AUTHORIZED (2026-07-29, source-006): execute M0-T028 only, subject to mandatory packet corrections (the M0-T027 dependency-deadlock removal), primary-evidence H1/H2 diagnosis, prevention-only fix (detection-only requires a new owner GO), the R100/R101 ride-alongs, independent review at a frozen SHA, protected-main merge, and a mandatory fresh-session end-to-end sentinel rerun before B-015 closure or acceptance. Steps 4 and 5 remain un-authorized. PHASE 8 GO (2026-07-30, source-007): the owner authorized executing Step 3 Phase 8 only, in the required fresh session, exactly per the M0-T028 fresh-session capsule; the C2 decision is captured as OPEN (D-004-R296) and must be recorded before acceptance. STEP 4 AUTHORIZED (2026-07-30, source-008): two-producer pilot on lanes 2+3 (M2-T018 + M4-T008); producer model VALUE superseded to Opus 5 ceiling (workers 'opus 5 max', lead stays Fable 5); R065 purpose-satisfied in the post-Phase-8 session by owner approval; STOP after Step 4; Step 5 remains un-authorized. STEP-4 EVIDENCE ACCEPTED + M0-T027 CLOSEOUT GO (2026-07-30, source-009): the owner accepted the Step-4 pilot evidence and the disclosed post-gate model switch (no rerun), accepted the harness-worktree adaptation as the mechanism of record, declared a TEMPORARY Fable-5-unavailability exception (lead + gate reviewers/verifiers on explicit Opus 5, independence and evidence rules unchanged, no effort key, no settings change), and authorized the controlled M0-T027 closeout ONLY. Step 5, M0-T029, M0-T032, producer waves, and all listed surfaces remain un-authorized.",
     "decided_at": "2026-07-29",
     "merge_authorized": false,
     "accept_authorized": false,
@@ -132,7 +141,8 @@
       "execute D-004 Step 3/M0-T028: primary-evidence B-015 diagnosis (H1 vs H2), a prevention fix only if repairable inside M0-T028's authorized surfaces, the R100/R101 ride-alongs, independent review, protected-main implementation merge",
       "close B-015 and accept M0-T028 ONLY after the mandatory fresh-session end-to-end sentinel rerun passes with every contracted requirement green",
       "execute D-004 Step 3 Phase 8 in the required fresh session exactly per the M0-T028 fresh-session capsule: C1 all-four-hooks proof, on-policy three-reviewer Fable 5 sentinel rerun with independent absence verification, B-015 resolution, final independent directive verification, and CLI acceptance of M0-T028",
-      "execute D-004 Step 4: contract M2-T018 + M4-T008 as the disjoint second-wave pilot tasks, run two unnamed producer teammates at explicit Opus 5 in pre-created worktrees with mandatory attestation, orchestrator-only integration, evidence in AGENT-TEAMS-PILOT-3.md, then STOP and present"
+      "execute D-004 Step 4: contract M2-T018 + M4-T008 as the disjoint second-wave pilot tasks, run two unnamed producer teammates at explicit Opus 5 in pre-created worktrees with mandatory attestation, orchestrator-only integration, evidence in AGENT-TEAMS-PILOT-3.md, then STOP and present",
+      "complete the controlled M0-T027 closeout lifecycle only: reconcile the three pilot reports and B-015, run packet-required gates plus independent directive verification at one frozen identity with explicit Opus 5 reviewers, then submit/PR/CI/merge/accept, checkpoint only if policy requires, clean only closeout branches, and stop with the return packet plus a PROPOSED (unexecuted) Step-5 packet"
     ],
     "prohibits": [
       "starting Step 1, 2, 3, 4, or 5 without the owner's explicit GO for that step",
@@ -160,7 +170,12 @@
       "using an Agent Teams writing producer while B-015 is open",
       "closing B-015, accepting M0-T028, claiming the live sentinel passed, or creating a final checkpoint before the fresh-session rerun passes",
       "accepting M0-T027 or starting its Step 4 merely because the fresh-session rerun passed",
-      "touching M0-T019/PR #64, M0-T025, second-wave product tasks, expansion/survey/Graphify surfaces, product code under M2-M7, or any deployment/hold release under this GO"
+      "touching M0-T019/PR #64, M0-T025, second-wave product tasks, expansion/survey/Graphify surfaces, product code under M2-M7, or any deployment/hold release under this GO",
+      "claiming Fable 5 was used for any review or verification actually run on another model",
+      "modifying teammateDefaultModel or tracked model settings under the temporary exception",
+      "treating the temporary Opus 5 exception as the permanent Step-5 model policy",
+      "M0-T032, another producer wave, predicate-schema follow-ups, or product/legal-rule changes under the closeout GO",
+      "executing the proposed Step-5 packet without the owner's next explicit GO"
     ]
   },
   "lifecycle_state": "active",
@@ -195,7 +210,8 @@
     "Amendment 4 (source-005, rows R129-R167): owner decisions on the Step-1 STOP. Step-1 evidence ACCEPTED AS-IS with no re-run now; the on-policy re-run is deferred until after the B-015 fix merges and then doubles as that fix's end-to-end acceptance test (same three roles, then-current head, explicit Fable 5 per spawn, sentinel repeated, denial independently verified). D-004-R095 is CLOSED by owner confirmation that R081 was the intended row (recorded at R138; R095's own row is not edited). B-015 RATIFIED; its diagnosis/fix plus the R100 and R101 ride-alongs and the index.json affected_tasks correction are assigned to M0-T028, which must NOT start before the owner reviews its packet. STEP 2 AUTHORIZED under safeguards (pre-created worktrees, no Write/Edit tools, Bash limited to pwd/git inspection, post-attestation dirt sweep recorded before teardown, stop on any unexpected file). EFFORT HOLD CLOSED: xhigh stays, session-global, unchanged; MAX rejected; the agent never writes an effort key (R159, permanent). SPAWN MODEL RULE: every teammate spawn passes an explicit model value - Fable 5 for gate-class reviewers, Opus 4.8 for producers; teammateDefaultModel is set only at Step 5 via /config. D-004-R112 CLOSED: PostToolUse/Stop are intentionally unregistered machine-side.",
     "Amendment 5 (source-006, rows D-004-R168-R286): explicit owner GO for D-004 Step 3/M0-T028 only, captured 2026-07-29 at head e5d95b6c58d0d825feb52044d14892035edb9b47 (post PR #119; live-reconciled). Records: the M0-T027/M0-T028 dependency-deadlock correction (M0-T027 removed from the dependencies array, preserved as causal predecessor only, no replacement dependency); the sentinel acceptance clarification (Write/Edit blocked by tool-unavailability is reported honestly as such; the Bash redirection is the load-bearing PreToolUse test and must be denied by readonly_agent_guard.py itself; the orchestrator independently verifies absence); the two-session execution boundary; no detection-only fallback without a new owner decision; explicit model per teammate spawn (Fable 5 gate-class reviewers, Opus 4.8 producers); no machine-specific settings or permission rules in tracked configuration; all unrelated holds standing. affected_tasks corrected to [M0-T027, M0-T028] here and in index.json via the canonical process (satisfies the R144 lane at capture time). The owner's trailing model/effort question is answered as a return-packet item; no effort key is written (R159 permanent).",
     "Amendment 6 (source-007, rows D-004-R287-R296): explicit owner GO for D-004 Step 3 Phase 8 ONLY, captured 2026-07-30 in the required fresh session at head 88045b06ef12ccb9b994b4e8b38ffe40d9cadf04 (post PR #123; live-reconciled; contains implementation merge 9db4ab3). Rows are scoped to the non-ledger sentinel D-004-PHASE8 (same mechanism as D-004-PHASE0/D-004-PROCESS): the executable Phase-8 obligations are already bound to M0-T028 by rows R168-R286, whose registry-derived 177-id applicable set the CLI re-derives and enforces at accept(); joining these GO-event rows to M0-T028 after submission would contradict that pinned verification surface. The C2 owner decision (G5 M-2) is captured as OPEN at D-004-R296 and must be recorded before acceptance. No existing source or requirement row edited.",
-    "Amendment 7 (source-008, rows D-004-R297-R306): explicit owner GO for D-004 Step 4 ONLY, captured 2026-07-30 at head 3a052d2a8a30a48b090f8affc2c0174e85cdbd72 (post PR #124). Value-clause supersession: producer teammates Opus 4.8 -> Opus 5 ceiling per the owner's answer ('workers can be opus 5 max'); the R091/R162 prohibition/explicit-model clauses stand; the Opus-4.8-unselectable STOP condition is discharged. R065 recorded as purpose-satisfied in this session by owner approval (C1 proof; no newer hook merge). Conduct rows binding the two pilot tasks carry task_ids [M2-T018, M4-T008] so the resolver derives them for those packets; session-conduct rows use sentinel D-004-STEP4. M0-T027 stays blocked; Step-4 evidence lands in AGENT-TEAMS-PILOT-3.md and any M0-T027 transition remains a separate owner decision. No existing source or requirement row edited."
+    "Amendment 7 (source-008, rows D-004-R297-R306): explicit owner GO for D-004 Step 4 ONLY, captured 2026-07-30 at head 3a052d2a8a30a48b090f8affc2c0174e85cdbd72 (post PR #124). Value-clause supersession: producer teammates Opus 4.8 -> Opus 5 ceiling per the owner's answer ('workers can be opus 5 max'); the R091/R162 prohibition/explicit-model clauses stand; the Opus-4.8-unselectable STOP condition is discharged. R065 recorded as purpose-satisfied in this session by owner approval (C1 proof; no newer hook merge). Conduct rows binding the two pilot tasks carry task_ids [M2-T018, M4-T008] so the resolver derives them for those packets; session-conduct rows use sentinel D-004-STEP4. M0-T027 stays blocked; Step-4 evidence lands in AGENT-TEAMS-PILOT-3.md and any M0-T027 transition remains a separate owner decision. No existing source or requirement row edited.",
+    "Amendment 8 (source-009, rows D-004-R307-R326): owner decision captured 2026-07-30 at live-reconciled head 87e0ad6d87fa3e45cf647ebe45bf7db4029e7b75 (post PR #128; expected state verified in every particular). Three decisions plus one GO: (1) TEMPORARY model-availability exception - Fable 5 exhausted, so the lead runs Opus 5 and every gate reviewer/verifier is spawned with EXPLICIT Opus 5; this supersedes only the VALUE clauses of R090/R161 and the lead clause of R298, temporarily, until the owner restores Fable 5; independence, verbatim-evidence, effort, and settings clauses are unchanged and re-affirmed; the actual model used must be recorded and never misreported. (2) WORKTREE decision - the harness-isolation + attestation + exact-diff-port mechanism is accepted as disclosed and becomes the mechanism Step 5 must describe; the literal pre-created-worktree wording is superseded as mechanically unsatisfiable. (3) STEP-4 evidence accepted including the disclosed post-gate model switch; no M2-T018/M4-T008 rerun. (4) GO for the M0-T027 closeout ONLY, with an explicit not-authorized list and a STOP-and-present-proposed-Step-5 terminus. Session-conduct rows use the sentinel D-004-STEP4CLOSE; closeout-binding rows carry M0-T027 so the resolver derives them for that packet. No existing source or requirement row edited."
   ],
   "created_at": "2026-07-24T00:00:00+00:00",
   "updated_at": "2026-07-30T00:00:00+00:00",
@@ -239,6 +255,11 @@
       "at": "2026-07-30T00:00:00+00:00",
       "by": "orchestrator",
       "note": "Amendment 7 recorded append-only: source-008-amendment.md registered (sequence 8); rows D-004-R297..R306 appended; rows R001-R296 asserted byte-identical by sorted-key comparison before/after the append; manifest.amendments[] and locked_requirement_ids extended to 306; id + content digests recomputed. Owner decisions captured: Step-4 GO, producer model Opus 5 ceiling (value-clause supersession of R091/R162), R065 purpose satisfaction in-session, pilot tasks = lanes 2+3 (M2-T018, M4-T008). No effort setting applied anywhere; M0-T025 untouched."
+    },
+    {
+      "at": "2026-07-30T00:00:00+00:00",
+      "by": "orchestrator",
+      "note": "Amendment 8 recorded append-only: source-009-amendment.md registered (sequence 9); rows D-004-R307..R326 appended; rows R001-R306 asserted byte-identical by sorted-key comparison before/after the append; manifest.amendments[] and locked_requirement_ids extended to 326; id + content digests recomputed. Live reconciliation before any write confirmed the owner's stated expected state exactly (main 87e0ad6 = origin/main, PR #128 MERGED, CI green, 52 accepted, CP-0035, M0-T027 blocked at 60%, clean tree). Temporary Opus 5 model exception recorded with the actual-model-disclosure duty; harness-worktree adaptation and Step-4 evidence accepted; M0-T027 closeout authorized alone. No effort setting applied anywhere; no settings file touched; M0-T025 untouched."
     }
   ],
   "locked_requirement_ids": [
@@ -547,8 +568,28 @@
     "D-004-R303",
     "D-004-R304",
     "D-004-R305",
-    "D-004-R306"
+    "D-004-R306",
+    "D-004-R307",
+    "D-004-R308",
+    "D-004-R309",
+    "D-004-R310",
+    "D-004-R311",
+    "D-004-R312",
+    "D-004-R313",
+    "D-004-R314",
+    "D-004-R315",
+    "D-004-R316",
+    "D-004-R317",
+    "D-004-R318",
+    "D-004-R319",
+    "D-004-R320",
+    "D-004-R321",
+    "D-004-R322",
+    "D-004-R323",
+    "D-004-R324",
+    "D-004-R325",
+    "D-004-R326"
   ],
-  "requirements_id_digest_sha256": "6f9db4ed6bb11142455ac1668e7111fe6d8b8a4db153d8214092fd382534182b",
-  "requirements_content_digest_sha256": "86552e00e46c0ce47f211ed0b2b45674cdd469edbe19f13cd9873317b267fe43"
+  "requirements_id_digest_sha256": "b2969e1fc5113ad18e1d1d65aa5c97969c91f7d7a91052822146bd44e9879424",
+  "requirements_content_digest_sha256": "9f54f62a07e6070b46e82d56566e6412b90c4b3b3628b2ed1a667f2219bc7347"
 }

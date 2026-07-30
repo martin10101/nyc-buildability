@@ -2,7 +2,7 @@
   "schema": "directive_requirements/v1",
   "directive_id": "D-004",
   "version": 1,
-  "requirement_count": 306,
+  "requirement_count": 326,
   "producer": "orchestrator",
   "updated_at": "2026-07-30T00:00:00+00:00",
   "requirements": [
@@ -12292,6 +12292,807 @@
         "tasks": []
       },
       "amendment_sequence": 8
+    },
+    {
+      "id": "D-004-R307",
+      "text": "TEMPORARY MODEL AVAILABILITY EXCEPTION (owner, 2026-07-30): Fable 5 is temporarily unavailable (usage allowance exhausted). Until the owner explicitly restores Fable 5, the lead/orchestrator runs Opus 5 and every independent gate reviewer and directive verifier is spawned with an EXPLICIT Opus 5 model. This temporarily supersedes the VALUE clauses of D-004-R090/R161 and the lead clause of D-004-R298; those rows' other clauses stand.",
+      "source_ref": "source-009-amendment.md#temporary-model-availability-exception",
+      "classification": "authorization",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "D-004-STEP4CLOSE"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [],
+        "lifecycle_events": [
+          "capture",
+          "gate",
+          "accept"
+        ],
+        "effective_date": "2026-07-30"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured by amendment 8; verified independently at the M0-T027 closeout gate",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      },
+      "amendment_sequence": 9
+    },
+    {
+      "id": "D-004-R308",
+      "text": "Independence requirements are UNCHANGED under the model exception: separate reviewer agents, frozen reviewed SHA, no producer reviewing its own work, and verbatim evidence preservation.",
+      "source_ref": "source-009-amendment.md#temporary-model-availability-exception",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T027",
+          "D-004-STEP4CLOSE"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [
+          "progress",
+          "submit",
+          "gate",
+          "accept"
+        ],
+        "effective_date": "2026-07-30"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured by amendment 8; verified independently at the M0-T027 closeout gate",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      },
+      "amendment_sequence": 9
+    },
+    {
+      "id": "D-004-R309",
+      "text": "Opus 5 use under this amendment is COMPLIANT and does not by itself require any rerun; work already completed under it is not invalidated on model grounds.",
+      "source_ref": "source-009-amendment.md#temporary-model-availability-exception",
+      "classification": "decision",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "D-004-STEP4CLOSE"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [],
+        "lifecycle_events": [
+          "capture",
+          "gate",
+          "accept"
+        ],
+        "effective_date": "2026-07-30"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured by amendment 8; verified independently at the M0-T027 closeout gate",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      },
+      "amendment_sequence": 9
+    },
+    {
+      "id": "D-004-R310",
+      "text": "Record the ACTUAL model used for every review and verification; never claim Fable 5 was used when it was not.",
+      "source_ref": "source-009-amendment.md#temporary-model-availability-exception",
+      "classification": "evidence",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T027",
+          "D-004-STEP4CLOSE"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [
+          "progress",
+          "submit",
+          "gate",
+          "accept"
+        ],
+        "effective_date": "2026-07-30"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured by amendment 8; verified independently at the M0-T027 closeout gate",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      },
+      "amendment_sequence": 9
+    },
+    {
+      "id": "D-004-R311",
+      "text": "Under this exception: no effort key may be written anywhere, and teammateDefaultModel / tracked model settings must not be modified.",
+      "source_ref": "source-009-amendment.md#temporary-model-availability-exception",
+      "classification": "prohibition",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T027",
+          "D-004-STEP4CLOSE"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [
+          "progress",
+          "submit",
+          "gate",
+          "accept"
+        ],
+        "effective_date": "2026-07-30"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured by amendment 8; verified independently at the M0-T027 closeout gate",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      },
+      "amendment_sequence": 9
+    },
+    {
+      "id": "D-004-R312",
+      "text": "This is an AVAILABILITY exception, not the permanent Step-5 model policy. When the owner says Fable 5 is available again, the lead and gate-reviewer preference returns to Fable 5 unless another explicit amendment issues. Do not stop merely because the current session uses Opus 5.",
+      "source_ref": "source-009-amendment.md#temporary-model-availability-exception",
+      "classification": "sequencing",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "D-004-STEP4CLOSE"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [],
+        "lifecycle_events": [
+          "capture",
+          "gate",
+          "accept"
+        ],
+        "effective_date": "2026-07-30"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured by amendment 8; verified independently at the M0-T027 closeout gate",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      },
+      "amendment_sequence": 9
+    },
+    {
+      "id": "D-004-R313",
+      "text": "WORKTREE DECISION (owner accepts the harness-created producer-worktree adaptation exactly as disclosed): isolated harness worktree at the exact frozen base; mandatory pre-write attestation; zero writes on mismatch; packet-path confinement; no producer git/gh/project-control mutations; orchestrator exact-diff containment review; orchestrator port onto the controlled task branch; proof the ported result is tree-identical; orchestrator-only integration. No harness change is required to force the unsatisfiable literal pre-created-worktree wording; this decision is recorded append-only.",
+      "source_ref": "source-009-amendment.md#worktree-decision",
+      "classification": "decision",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "D-004-STEP4CLOSE"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [],
+        "lifecycle_events": [
+          "capture",
+          "gate",
+          "accept"
+        ],
+        "effective_date": "2026-07-30"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured by amendment 8; verified independently at the M0-T027 closeout gate",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": [
+          "M2-T018",
+          "M4-T008",
+          "M0-T027"
+        ]
+      },
+      "amendment_sequence": 9
+    },
+    {
+      "id": "D-004-R314",
+      "text": "Step 5, when it is eventually authorized, must DESCRIBE THE MECHANISM THAT ACTUALLY PASSED (the accepted harness-isolation + attestation + exact-diff-port model), not the superseded literal pre-created-worktree wording.",
+      "source_ref": "source-009-amendment.md#worktree-decision",
+      "classification": "sequencing",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "D-004-STEP4CLOSE"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [],
+        "lifecycle_events": [
+          "capture",
+          "gate",
+          "accept"
+        ],
+        "effective_date": "2026-07-30"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured by amendment 8; verified independently at the M0-T027 closeout gate",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      },
+      "amendment_sequence": 9
+    },
+    {
+      "id": "D-004-R315",
+      "text": "STEP-4 EVIDENCE DECISION: the owner ACCEPTS the Step-4 pilot evidence and the disclosed post-gate model switch. No M2-T018 or M4-T008 rerun is required.",
+      "source_ref": "source-009-amendment.md#step-4-evidence-decision",
+      "classification": "decision",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "D-004-STEP4CLOSE"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [],
+        "lifecycle_events": [
+          "capture",
+          "gate",
+          "accept"
+        ],
+        "effective_date": "2026-07-30"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured by amendment 8; verified independently at the M0-T027 closeout gate",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": [
+          "M2-T018",
+          "M4-T008"
+        ]
+      },
+      "amendment_sequence": 9
+    },
+    {
+      "id": "D-004-R316",
+      "text": "GO: complete the controlled M0-T027 lifecycle ONLY (closeout of the D-004 pilot-governance task). Live-reconcile git, GitHub, CI, and project control FIRST against the owner's stated expected state (main 87e0ad6, PR #128 merged, M2-T018 + M4-T008 accepted, 52 accepted, CP-0035, M0-T027 blocked at 60%), verifying rather than assuming it.",
+      "source_ref": "source-009-amendment.md#go-m0-t027-closeout-only",
+      "classification": "authorization",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T027",
+          "D-004-STEP4CLOSE"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [
+          "progress",
+          "submit",
+          "gate",
+          "accept"
+        ],
+        "effective_date": "2026-07-30"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured by amendment 8; verified independently at the M0-T027 closeout gate",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": [
+          "M0-T027"
+        ]
+      },
+      "amendment_sequence": 9
+    },
+    {
+      "id": "D-004-R317",
+      "text": "Closeout step 1: reconcile all three pilot reports (AGENT-TEAMS-PILOT-1.md, AGENT-TEAMS-PILOT-2-PROBE.md, AGENT-TEAMS-PILOT-3.md) and confirm all required evidence now exists.",
+      "source_ref": "source-009-amendment.md#go-m0-t027-closeout-only",
+      "classification": "evidence",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T027",
+          "D-004-STEP4CLOSE"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [
+          "progress",
+          "submit",
+          "gate",
+          "accept"
+        ],
+        "effective_date": "2026-07-30"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured by amendment 8; verified independently at the M0-T027 closeout gate",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": [
+          "M0-T027"
+        ]
+      },
+      "amendment_sequence": 9
+    },
+    {
+      "id": "D-004-R318",
+      "text": "Closeout step 2: confirm B-015 is resolved and that the Step-1, Step-2, and Step-4 evidence is complete.",
+      "source_ref": "source-009-amendment.md#go-m0-t027-closeout-only",
+      "classification": "evidence",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T027",
+          "D-004-STEP4CLOSE"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [
+          "progress",
+          "submit",
+          "gate",
+          "accept"
+        ],
+        "effective_date": "2026-07-30"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured by amendment 8; verified independently at the M0-T027 closeout gate",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": [
+          "M0-T027"
+        ]
+      },
+      "amendment_sequence": 9
+    },
+    {
+      "id": "D-004-R319",
+      "text": "Closeout step 3: run the packet-required gates AND the independent directive verification at ONE frozen identity.",
+      "source_ref": "source-009-amendment.md#go-m0-t027-closeout-only",
+      "classification": "harness",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T027",
+          "D-004-STEP4CLOSE"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [
+          "progress",
+          "submit",
+          "gate",
+          "accept"
+        ],
+        "effective_date": "2026-07-30"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured by amendment 8; verified independently at the M0-T027 closeout gate",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": [
+          "M0-T027"
+        ]
+      },
+      "amendment_sequence": 9
+    },
+    {
+      "id": "D-004-R320",
+      "text": "Closeout step 4: use EXPLICIT Opus 5 for each independent reviewer/verifier under the temporary exception (D-004-R307).",
+      "source_ref": "source-009-amendment.md#go-m0-t027-closeout-only",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T027",
+          "D-004-STEP4CLOSE"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [
+          "progress",
+          "submit",
+          "gate",
+          "accept"
+        ],
+        "effective_date": "2026-07-30"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured by amendment 8; verified independently at the M0-T027 closeout gate",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": [
+          "M0-T027"
+        ]
+      },
+      "amendment_sequence": 9
+    },
+    {
+      "id": "D-004-R321",
+      "text": "Closeout step 5: STOP on any real non-green or ambiguous finding rather than improvising.",
+      "source_ref": "source-009-amendment.md#go-m0-t027-closeout-only",
+      "classification": "sequencing",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T027",
+          "D-004-STEP4CLOSE"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [
+          "progress",
+          "submit",
+          "gate",
+          "accept"
+        ],
+        "effective_date": "2026-07-30"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured by amendment 8; verified independently at the M0-T027 closeout gate",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": [
+          "M0-T027"
+        ]
+      },
+      "amendment_sequence": 9
+    },
+    {
+      "id": "D-004-R322",
+      "text": "Closeout step 6: only if everything passes - submit, use the protected-main PR workflow, verify CI, merge, accept M0-T027 through project control, and create a checkpoint ONLY if the established policy requires one.",
+      "source_ref": "source-009-amendment.md#go-m0-t027-closeout-only",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T027",
+          "D-004-STEP4CLOSE"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [
+          "progress",
+          "submit",
+          "gate",
+          "accept"
+        ],
+        "effective_date": "2026-07-30"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured by amendment 8; verified independently at the M0-T027 closeout gate",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": [
+          "M0-T027"
+        ]
+      },
+      "amendment_sequence": 9
+    },
+    {
+      "id": "D-004-R323",
+      "text": "Closeout step 7: clean ONLY branches/worktrees created for this closeout.",
+      "source_ref": "source-009-amendment.md#go-m0-t027-closeout-only",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T027",
+          "D-004-STEP4CLOSE"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [
+          "progress",
+          "submit",
+          "gate",
+          "accept"
+        ],
+        "effective_date": "2026-07-30"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured by amendment 8; verified independently at the M0-T027 closeout gate",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": [
+          "M0-T027"
+        ]
+      },
+      "amendment_sequence": 9
+    },
+    {
+      "id": "D-004-R324",
+      "text": "Closeout step 8: STOP and present the complete return packet.",
+      "source_ref": "source-009-amendment.md#go-m0-t027-closeout-only",
+      "classification": "return",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "D-004-STEP4CLOSE"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [],
+        "lifecycle_events": [
+          "capture",
+          "gate",
+          "accept"
+        ],
+        "effective_date": "2026-07-30"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured by amendment 8; verified independently at the M0-T027 closeout gate",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": [
+          "M0-T027"
+        ]
+      },
+      "amendment_sequence": 9
+    },
+    {
+      "id": "D-004-R325",
+      "text": "NOT AUTHORIZED under this GO: Step 5 or M0-T029; M0-T032; another producer wave; product or legal-rule changes; predicate-schema follow-ups; deployment, G6, Graphify, expansion, survey work, or hold releases; M0-T025; teammateDefaultModel or effort-setting changes.",
+      "source_ref": "source-009-amendment.md#go-m0-t027-closeout-only",
+      "classification": "prohibition",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T027",
+          "D-004-STEP4CLOSE"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [
+          "progress",
+          "submit",
+          "gate",
+          "accept"
+        ],
+        "effective_date": "2026-07-30"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured by amendment 8; verified independently at the M0-T027 closeout gate",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      },
+      "amendment_sequence": 9
+    },
+    {
+      "id": "D-004-R326",
+      "text": "After M0-T027 is accepted or genuinely blocked, STOP. Present the EXACT PROPOSED Step-5 packet, but do NOT execute it without the owner's next GO.",
+      "source_ref": "source-009-amendment.md#go-m0-t027-closeout-only",
+      "classification": "return",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "D-004-STEP4CLOSE"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [],
+        "lifecycle_events": [
+          "capture",
+          "gate",
+          "accept"
+        ],
+        "effective_date": "2026-07-30"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured by amendment 8; verified independently at the M0-T027 closeout gate",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      },
+      "amendment_sequence": 9
     }
   ],
   "amendments_applied": [
@@ -12301,6 +13102,7 @@
     "source-005-amendment.md",
     "source-006-amendment.md",
     "source-007-amendment.md",
-    "source-008-amendment.md"
+    "source-008-amendment.md",
+    "source-009-amendment.md"
   ]
 }
