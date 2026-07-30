@@ -1,7 +1,7 @@
 {
   "schema": "directive_manifest/v1",
   "directive_id": "D-004",
-  "version": 9,
+  "version": 10,
   "slug": "agent-teams-runtime-adoption",
   "title": "Agent-teams runtime adoption, staged with pilots",
   "status": "active",
@@ -81,6 +81,14 @@
       "amends": "source-001.md",
       "recorded_at": "2026-07-30T00:00:00+00:00",
       "content_digest_sha256": "372842e93b0e697e512cc1073e322970a02db2c3050ab286d825f2b78b8033dc"
+    },
+    {
+      "file": "source-010-amendment.md",
+      "kind": "amendment",
+      "sequence": 10,
+      "amends": "source-001.md",
+      "recorded_at": "2026-07-30T00:00:00+00:00",
+      "content_digest_sha256": "3b281586434267e8963471c054539b91534a5cd5aac6cc5cdff37989d5c442cd"
     }
   ],
   "amendments": [
@@ -91,13 +99,15 @@
     "source-006-amendment.md",
     "source-007-amendment.md",
     "source-008-amendment.md",
-    "source-009-amendment.md"
+    "source-009-amendment.md",
+    "source-010-amendment.md"
   ],
   "supersedes": [],
   "superseded_by": null,
   "affected_tasks": [
     "M0-T027",
-    "M0-T028"
+    "M0-T028",
+    "M0-T033"
   ],
   "affected_prs": [],
   "affected_branches": [],
@@ -105,7 +115,8 @@
     "task_ids": [
       "M0-T027",
       "M0-T028",
-      "M0-T029"
+      "M0-T029",
+      "M0-T033"
     ],
     "task_types": [
       "governance"
@@ -117,13 +128,15 @@
       "project-control/",
       ".claude/ORCHESTRATION_POLICY.md",
       ".claude/settings.json",
-      ".claude/hooks/"
+      ".claude/hooks/",
+      "tools/",
+      "docs/GATES_AND_CHECKPOINTS.md"
     ]
   },
   "applicability_note": "PHASE0 requirements (task_ids=[D-004-PHASE0], a non-ledger sentinel) are the orient/verify/persist actions performed at capture time in this session. PROCESS requirements (task_ids=[D-004-PROCESS], a non-ledger sentinel) are the standing constraints and stop discipline that bind every phase and are checked against primary repository evidence at the final independent directive verification. The three ledger IDs in scope are RESERVED, not yet contracted: M0-T027 = pilot-governance control task (Steps 1, 2, 4 evidence), M0-T028 = producer-confinement control task (Step 3), M0-T029 = adoption task (Step 5). Each is contracted only on the owner's explicit GO for its step; if a reserved ID cannot be used, an append-only source-00N-amendment.md records the reassignment. M0-T025 is out of scope and must not be touched (D-004-R022/R053).",
   "owner_approval": {
-    "state": "step_4_evidence_accepted_m0_t027_closeout_authorized",
-    "decision": "Staged pilots, each gated on an explicit owner GO. Step 1 is COMPLETE and its evidence is ACCEPTED AS-IS. Step 2 is COMPLETE (probe FAILED the REMAIN criterion; cwd resets to the primary checkout before every teammate Bash call). STEP 3 IS AUTHORIZED (2026-07-29, source-006): execute M0-T028 only, subject to mandatory packet corrections (the M0-T027 dependency-deadlock removal), primary-evidence H1/H2 diagnosis, prevention-only fix (detection-only requires a new owner GO), the R100/R101 ride-alongs, independent review at a frozen SHA, protected-main merge, and a mandatory fresh-session end-to-end sentinel rerun before B-015 closure or acceptance. Steps 4 and 5 remain un-authorized. PHASE 8 GO (2026-07-30, source-007): the owner authorized executing Step 3 Phase 8 only, in the required fresh session, exactly per the M0-T028 fresh-session capsule; the C2 decision is captured as OPEN (D-004-R296) and must be recorded before acceptance. STEP 4 AUTHORIZED (2026-07-30, source-008): two-producer pilot on lanes 2+3 (M2-T018 + M4-T008); producer model VALUE superseded to Opus 5 ceiling (workers 'opus 5 max', lead stays Fable 5); R065 purpose-satisfied in the post-Phase-8 session by owner approval; STOP after Step 4; Step 5 remains un-authorized. STEP-4 EVIDENCE ACCEPTED + M0-T027 CLOSEOUT GO (2026-07-30, source-009): the owner accepted the Step-4 pilot evidence and the disclosed post-gate model switch (no rerun), accepted the harness-worktree adaptation as the mechanism of record, declared a TEMPORARY Fable-5-unavailability exception (lead + gate reviewers/verifiers on explicit Opus 5, independence and evidence rules unchanged, no effort key, no settings change), and authorized the controlled M0-T027 closeout ONLY. Step 5, M0-T029, M0-T032, producer waves, and all listed surfaces remain un-authorized.",
+    "state": "option_b_authorized_guard_fix_then_m0_t027_completion",
+    "decision": "Staged pilots, each gated on an explicit owner GO. Step 1 is COMPLETE and its evidence is ACCEPTED AS-IS. Step 2 is COMPLETE (probe FAILED the REMAIN criterion; cwd resets to the primary checkout before every teammate Bash call). STEP 3 IS AUTHORIZED (2026-07-29, source-006): execute M0-T028 only, subject to mandatory packet corrections (the M0-T027 dependency-deadlock removal), primary-evidence H1/H2 diagnosis, prevention-only fix (detection-only requires a new owner GO), the R100/R101 ride-alongs, independent review at a frozen SHA, protected-main merge, and a mandatory fresh-session end-to-end sentinel rerun before B-015 closure or acceptance. Steps 4 and 5 remain un-authorized. PHASE 8 GO (2026-07-30, source-007): the owner authorized executing Step 3 Phase 8 only, in the required fresh session, exactly per the M0-T028 fresh-session capsule; the C2 decision is captured as OPEN (D-004-R296) and must be recorded before acceptance. STEP 4 AUTHORIZED (2026-07-30, source-008): two-producer pilot on lanes 2+3 (M2-T018 + M4-T008); producer model VALUE superseded to Opus 5 ceiling (workers 'opus 5 max', lead stays Fable 5); R065 purpose-satisfied in the post-Phase-8 session by owner approval; STOP after Step 4; Step 5 remains un-authorized. STEP-4 EVIDENCE ACCEPTED + M0-T027 CLOSEOUT GO (2026-07-30, source-009): the owner accepted the Step-4 pilot evidence and the disclosed post-gate model switch (no rerun), accepted the harness-worktree adaptation as the mechanism of record, declared a TEMPORARY Fable-5-unavailability exception (lead + gate reviewers/verifiers on explicit Opus 5, independence and evidence rules unchanged, no effort key, no settings change), and authorized the controlled M0-T027 closeout ONLY. Step 5, M0-T029, M0-T032, producer waves, and all listed surfaces remain un-authorized. AMENDMENT 9 (source-010, 2026-07-30): the owner REJECTS option (a) (false producer) and option (c) (abandon/route around M0-T027) and AUTHORIZES option (b): a narrow, independently reviewed correction to invalid_unblock_roster contracted as M0-T033 (producer backend-engineer; reviewers code-reviewer, security-reviewer, control-plane-verifier, directive-compliance-verifier; gates G0/G2/G3/G5; paths tools/project_control.py, tools/test_project_control.py, docs/GATES_AND_CHECKPOINTS.md if its invariant must be corrected, and M0-T033's own packet/reports), followed by two truth-preserving M0-T027 acceptance-scenario clarifications (AS-1 obsolete literal 128 total; AS-6 remediation-arc satisfaction that preserves the recorded Step-1 sentinel FAILURE) and completion of M0-T027 only if every required gate passes. Step 5/M0-T029, M0-T032, M0-T025, further producer waves, teammateDefaultModel/effort changes, deployment/G6/Graphify/expansion/survey/hold releases, and unrelated handoff or documentation work remain NOT AUTHORIZED.",
     "decided_at": "2026-07-29",
     "merge_authorized": false,
     "accept_authorized": false,
@@ -186,7 +199,8 @@
   "enforcement_pointers": {
     "tasks": [
       "M0-T027",
-      "M0-T028"
+      "M0-T028",
+      "M0-T033"
     ],
     "gates": [],
     "blockers": [
@@ -260,6 +274,11 @@
       "at": "2026-07-30T00:00:00+00:00",
       "by": "orchestrator",
       "note": "Amendment 8 recorded append-only: source-009-amendment.md registered (sequence 9); rows D-004-R307..R326 appended; rows R001-R306 asserted byte-identical by sorted-key comparison before/after the append; manifest.amendments[] and locked_requirement_ids extended to 326; id + content digests recomputed. Live reconciliation before any write confirmed the owner's stated expected state exactly (main 87e0ad6 = origin/main, PR #128 MERGED, CI green, 52 accepted, CP-0035, M0-T027 blocked at 60%, clean tree). Temporary Opus 5 model exception recorded with the actual-model-disclosure duty; harness-worktree adaptation and Step-4 evidence accepted; M0-T027 closeout authorized alone. No effort setting applied anywhere; no settings file touched; M0-T025 untouched."
+    },
+    {
+      "at": "2026-07-30T00:00:00+00:00",
+      "by": "orchestrator",
+      "note": "Amendment 9 captured verbatim as source-010-amendment.md (sha256 3b281586434267e8963471c054539b91534a5cd5aac6cc5cdff37989d5c442cd) at frozen head 1f3fbf18d5e0cfbacb2d8b9da9309a0c03ab8a9b, after live reconciliation confirmed every value the owner stated (main=origin/main=1f3fbf18, PRs #129/#130 merged, M0-T027 blocked at 75%, 52 accepted, CP-0035, M0-T032 backlog, no M0-T029 or M0-T033 task file). Decomposed into 83 atomic append-only rows D-004-R327..R409 across preamble, option decisions, Phase 0-4, the 10 mandatory regression tests, the 10 not-authorized prohibitions, and the 10 required return items; total 409. No existing source file or requirement row was edited. This amendment RESOLVES the owner decision left open by the M0-T027 closeout stop (progress log at 75%, invalid_unblock_roster). Independent verification is written by directive-compliance-verifier at the M0-T033 and M0-T027 gates, never by the producer."
     }
   ],
   "locked_requirement_ids": [
@@ -588,8 +607,91 @@
     "D-004-R323",
     "D-004-R324",
     "D-004-R325",
-    "D-004-R326"
+    "D-004-R326",
+    "D-004-R327",
+    "D-004-R328",
+    "D-004-R329",
+    "D-004-R330",
+    "D-004-R331",
+    "D-004-R332",
+    "D-004-R333",
+    "D-004-R334",
+    "D-004-R335",
+    "D-004-R336",
+    "D-004-R337",
+    "D-004-R338",
+    "D-004-R339",
+    "D-004-R340",
+    "D-004-R341",
+    "D-004-R342",
+    "D-004-R343",
+    "D-004-R344",
+    "D-004-R345",
+    "D-004-R346",
+    "D-004-R347",
+    "D-004-R348",
+    "D-004-R349",
+    "D-004-R350",
+    "D-004-R351",
+    "D-004-R352",
+    "D-004-R353",
+    "D-004-R354",
+    "D-004-R355",
+    "D-004-R356",
+    "D-004-R357",
+    "D-004-R358",
+    "D-004-R359",
+    "D-004-R360",
+    "D-004-R361",
+    "D-004-R362",
+    "D-004-R363",
+    "D-004-R364",
+    "D-004-R365",
+    "D-004-R366",
+    "D-004-R367",
+    "D-004-R368",
+    "D-004-R369",
+    "D-004-R370",
+    "D-004-R371",
+    "D-004-R372",
+    "D-004-R373",
+    "D-004-R374",
+    "D-004-R375",
+    "D-004-R376",
+    "D-004-R377",
+    "D-004-R378",
+    "D-004-R379",
+    "D-004-R380",
+    "D-004-R381",
+    "D-004-R382",
+    "D-004-R383",
+    "D-004-R384",
+    "D-004-R385",
+    "D-004-R386",
+    "D-004-R387",
+    "D-004-R388",
+    "D-004-R389",
+    "D-004-R390",
+    "D-004-R391",
+    "D-004-R392",
+    "D-004-R393",
+    "D-004-R394",
+    "D-004-R395",
+    "D-004-R396",
+    "D-004-R397",
+    "D-004-R398",
+    "D-004-R399",
+    "D-004-R400",
+    "D-004-R401",
+    "D-004-R402",
+    "D-004-R403",
+    "D-004-R404",
+    "D-004-R405",
+    "D-004-R406",
+    "D-004-R407",
+    "D-004-R408",
+    "D-004-R409"
   ],
-  "requirements_id_digest_sha256": "b2969e1fc5113ad18e1d1d65aa5c97969c91f7d7a91052822146bd44e9879424",
-  "requirements_content_digest_sha256": "9f54f62a07e6070b46e82d56566e6412b90c4b3b3628b2ed1a667f2219bc7347"
+  "requirements_id_digest_sha256": "1f16c50932ec2e2df7a3d9e88e6a102d39a2524d382d6231662716ef145b73a2",
+  "requirements_content_digest_sha256": "d56b0b827314626bdf84bee4f63db28d076067f5eddc9f80f1624b9de67e7987"
 }
