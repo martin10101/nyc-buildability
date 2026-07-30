@@ -336,10 +336,10 @@
       "directive_id": "D-005",
       "producer": "orchestrator",
       "verifier": "directive-compliance-verifier",
-      "reviewed_sha": null,
-      "reviewed_manifest_sha256": null,
-      "state": "pending",
-      "note": "Row created at contracting time (amendment 2). Rows stay pending until the independent directive-compliance-verifier records verdicts at the frozen reviewed identity.",
+      "reviewed_sha": "60ea27ea2154871d7abb903a83c5e3fd4b4307e0",
+      "reviewed_manifest_sha256": "cc0b3fd6ef02f0b69f921ede577ec4f23e595e9531f462ce57c0308ad7dd2f14",
+      "state": "PASS",
+      "note": "Independent directive-compliance-verifier verdicts (21/21 PASS at task head 1891ef3, merged to main as 60ea27e with identical tree for the task paths) transcribed verbatim-faithfully by the orchestrator from project-control/reports/M0-T031-dcv.md. Owner-gated items (reserved surfaces; any future token/time-savings claim) remain open per rows R101/R109 and are NOT claimed complete.",
       "applicable_requirement_ids": [
         "D-005-R090",
         "D-005-R091",
@@ -366,174 +366,279 @@
       "requirements": [
         {
           "id": "D-005-R090",
-          "state": "pending",
-          "evidence": [],
-          "verified_at": null,
-          "verified_by": null,
-          "reviewed_sha": null
+          "state": "PASS",
+          "evidence": [
+            "project-control/reports/M0-T031-dcv.md",
+            "project-control/reports/M0-T031-G3-code-review.md",
+            "project-control/reports/M0-T031-G4-qa.md",
+            "project-control/reports/M0-T031-G5-security.md"
+          ],
+          "verified_at": "2026-07-30T02:56:07+00:00",
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "60ea27ea2154871d7abb903a83c5e3fd4b4307e0"
         },
         {
           "id": "D-005-R091",
-          "state": "pending",
-          "evidence": [],
-          "verified_at": null,
-          "verified_by": null,
-          "reviewed_sha": null
+          "state": "PASS",
+          "evidence": [
+            "project-control/reports/M0-T031-dcv.md",
+            "project-control/reports/M0-T031-G3-code-review.md",
+            "project-control/reports/M0-T031-G4-qa.md",
+            "project-control/reports/M0-T031-G5-security.md"
+          ],
+          "verified_at": "2026-07-30T02:56:07+00:00",
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "60ea27ea2154871d7abb903a83c5e3fd4b4307e0"
         },
         {
           "id": "D-005-R092",
-          "state": "pending",
-          "evidence": [],
-          "verified_at": null,
-          "verified_by": null,
-          "reviewed_sha": null
+          "state": "PASS",
+          "evidence": [
+            "project-control/reports/M0-T031-dcv.md",
+            "project-control/reports/M0-T031-G3-code-review.md",
+            "project-control/reports/M0-T031-G4-qa.md",
+            "project-control/reports/M0-T031-G5-security.md"
+          ],
+          "verified_at": "2026-07-30T02:56:07+00:00",
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "60ea27ea2154871d7abb903a83c5e3fd4b4307e0"
         },
         {
           "id": "D-005-R093",
-          "state": "pending",
-          "evidence": [],
-          "verified_at": null,
-          "verified_by": null,
-          "reviewed_sha": null
+          "state": "PASS",
+          "evidence": [
+            "project-control/reports/M0-T031-dcv.md",
+            "project-control/reports/M0-T031-G3-code-review.md",
+            "project-control/reports/M0-T031-G4-qa.md",
+            "project-control/reports/M0-T031-G5-security.md"
+          ],
+          "verified_at": "2026-07-30T02:56:07+00:00",
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "60ea27ea2154871d7abb903a83c5e3fd4b4307e0"
         },
         {
           "id": "D-005-R094",
-          "state": "pending",
-          "evidence": [],
-          "verified_at": null,
-          "verified_by": null,
-          "reviewed_sha": null
+          "state": "PASS",
+          "evidence": [
+            "project-control/reports/M0-T031-dcv.md",
+            "project-control/reports/M0-T031-G3-code-review.md",
+            "project-control/reports/M0-T031-G4-qa.md",
+            "project-control/reports/M0-T031-G5-security.md"
+          ],
+          "verified_at": "2026-07-30T02:56:07+00:00",
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "60ea27ea2154871d7abb903a83c5e3fd4b4307e0"
         },
         {
           "id": "D-005-R095",
-          "state": "pending",
-          "evidence": [],
-          "verified_at": null,
-          "verified_by": null,
-          "reviewed_sha": null
+          "state": "PASS",
+          "evidence": [
+            "project-control/reports/M0-T031-dcv.md",
+            "project-control/reports/M0-T031-G3-code-review.md",
+            "project-control/reports/M0-T031-G4-qa.md",
+            "project-control/reports/M0-T031-G5-security.md"
+          ],
+          "verified_at": "2026-07-30T02:56:07+00:00",
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "60ea27ea2154871d7abb903a83c5e3fd4b4307e0"
         },
         {
           "id": "D-005-R096",
-          "state": "pending",
-          "evidence": [],
-          "verified_at": null,
-          "verified_by": null,
-          "reviewed_sha": null
+          "state": "PASS",
+          "evidence": [
+            "project-control/reports/M0-T031-dcv.md",
+            "project-control/reports/M0-T031-G3-code-review.md",
+            "project-control/reports/M0-T031-G4-qa.md",
+            "project-control/reports/M0-T031-G5-security.md"
+          ],
+          "verified_at": "2026-07-30T02:56:07+00:00",
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "60ea27ea2154871d7abb903a83c5e3fd4b4307e0"
         },
         {
           "id": "D-005-R097",
-          "state": "pending",
-          "evidence": [],
-          "verified_at": null,
-          "verified_by": null,
-          "reviewed_sha": null
+          "state": "PASS",
+          "evidence": [
+            "project-control/reports/M0-T031-dcv.md",
+            "project-control/reports/M0-T031-G3-code-review.md",
+            "project-control/reports/M0-T031-G4-qa.md",
+            "project-control/reports/M0-T031-G5-security.md"
+          ],
+          "verified_at": "2026-07-30T02:56:07+00:00",
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "60ea27ea2154871d7abb903a83c5e3fd4b4307e0"
         },
         {
           "id": "D-005-R098",
-          "state": "pending",
-          "evidence": [],
-          "verified_at": null,
-          "verified_by": null,
-          "reviewed_sha": null
+          "state": "PASS",
+          "evidence": [
+            "project-control/reports/M0-T031-dcv.md",
+            "project-control/reports/M0-T031-G3-code-review.md",
+            "project-control/reports/M0-T031-G4-qa.md",
+            "project-control/reports/M0-T031-G5-security.md"
+          ],
+          "verified_at": "2026-07-30T02:56:07+00:00",
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "60ea27ea2154871d7abb903a83c5e3fd4b4307e0"
         },
         {
           "id": "D-005-R099",
-          "state": "pending",
-          "evidence": [],
-          "verified_at": null,
-          "verified_by": null,
-          "reviewed_sha": null
+          "state": "PASS",
+          "evidence": [
+            "project-control/reports/M0-T031-dcv.md",
+            "project-control/reports/M0-T031-G3-code-review.md",
+            "project-control/reports/M0-T031-G4-qa.md",
+            "project-control/reports/M0-T031-G5-security.md"
+          ],
+          "verified_at": "2026-07-30T02:56:07+00:00",
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "60ea27ea2154871d7abb903a83c5e3fd4b4307e0"
         },
         {
           "id": "D-005-R100",
-          "state": "pending",
-          "evidence": [],
-          "verified_at": null,
-          "verified_by": null,
-          "reviewed_sha": null
+          "state": "PASS",
+          "evidence": [
+            "project-control/reports/M0-T031-dcv.md",
+            "project-control/reports/M0-T031-G3-code-review.md",
+            "project-control/reports/M0-T031-G4-qa.md",
+            "project-control/reports/M0-T031-G5-security.md"
+          ],
+          "verified_at": "2026-07-30T02:56:07+00:00",
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "60ea27ea2154871d7abb903a83c5e3fd4b4307e0"
         },
         {
           "id": "D-005-R101",
-          "state": "pending",
-          "evidence": [],
-          "verified_at": null,
-          "verified_by": null,
-          "reviewed_sha": null
+          "state": "PASS",
+          "evidence": [
+            "project-control/reports/M0-T031-dcv.md",
+            "project-control/reports/M0-T031-G3-code-review.md",
+            "project-control/reports/M0-T031-G4-qa.md",
+            "project-control/reports/M0-T031-G5-security.md"
+          ],
+          "verified_at": "2026-07-30T02:56:07+00:00",
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "60ea27ea2154871d7abb903a83c5e3fd4b4307e0"
         },
         {
           "id": "D-005-R102",
-          "state": "pending",
-          "evidence": [],
-          "verified_at": null,
-          "verified_by": null,
-          "reviewed_sha": null
+          "state": "PASS",
+          "evidence": [
+            "project-control/reports/M0-T031-dcv.md",
+            "project-control/reports/M0-T031-G3-code-review.md",
+            "project-control/reports/M0-T031-G4-qa.md",
+            "project-control/reports/M0-T031-G5-security.md"
+          ],
+          "verified_at": "2026-07-30T02:56:07+00:00",
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "60ea27ea2154871d7abb903a83c5e3fd4b4307e0"
         },
         {
           "id": "D-005-R103",
-          "state": "pending",
-          "evidence": [],
-          "verified_at": null,
-          "verified_by": null,
-          "reviewed_sha": null
+          "state": "PASS",
+          "evidence": [
+            "project-control/reports/M0-T031-dcv.md",
+            "project-control/reports/M0-T031-G3-code-review.md",
+            "project-control/reports/M0-T031-G4-qa.md",
+            "project-control/reports/M0-T031-G5-security.md"
+          ],
+          "verified_at": "2026-07-30T02:56:07+00:00",
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "60ea27ea2154871d7abb903a83c5e3fd4b4307e0"
         },
         {
           "id": "D-005-R104",
-          "state": "pending",
-          "evidence": [],
-          "verified_at": null,
-          "verified_by": null,
-          "reviewed_sha": null
+          "state": "PASS",
+          "evidence": [
+            "project-control/reports/M0-T031-dcv.md",
+            "project-control/reports/M0-T031-G3-code-review.md",
+            "project-control/reports/M0-T031-G4-qa.md",
+            "project-control/reports/M0-T031-G5-security.md"
+          ],
+          "verified_at": "2026-07-30T02:56:07+00:00",
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "60ea27ea2154871d7abb903a83c5e3fd4b4307e0"
         },
         {
           "id": "D-005-R105",
-          "state": "pending",
-          "evidence": [],
-          "verified_at": null,
-          "verified_by": null,
-          "reviewed_sha": null
+          "state": "PASS",
+          "evidence": [
+            "project-control/reports/M0-T031-dcv.md",
+            "project-control/reports/M0-T031-G3-code-review.md",
+            "project-control/reports/M0-T031-G4-qa.md",
+            "project-control/reports/M0-T031-G5-security.md"
+          ],
+          "verified_at": "2026-07-30T02:56:07+00:00",
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "60ea27ea2154871d7abb903a83c5e3fd4b4307e0"
         },
         {
           "id": "D-005-R106",
-          "state": "pending",
-          "evidence": [],
-          "verified_at": null,
-          "verified_by": null,
-          "reviewed_sha": null
+          "state": "PASS",
+          "evidence": [
+            "project-control/reports/M0-T031-dcv.md",
+            "project-control/reports/M0-T031-G3-code-review.md",
+            "project-control/reports/M0-T031-G4-qa.md",
+            "project-control/reports/M0-T031-G5-security.md"
+          ],
+          "verified_at": "2026-07-30T02:56:07+00:00",
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "60ea27ea2154871d7abb903a83c5e3fd4b4307e0"
         },
         {
           "id": "D-005-R107",
-          "state": "pending",
-          "evidence": [],
-          "verified_at": null,
-          "verified_by": null,
-          "reviewed_sha": null
+          "state": "PASS",
+          "evidence": [
+            "project-control/reports/M0-T031-dcv.md",
+            "project-control/reports/M0-T031-G3-code-review.md",
+            "project-control/reports/M0-T031-G4-qa.md",
+            "project-control/reports/M0-T031-G5-security.md"
+          ],
+          "verified_at": "2026-07-30T02:56:07+00:00",
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "60ea27ea2154871d7abb903a83c5e3fd4b4307e0"
         },
         {
           "id": "D-005-R108",
-          "state": "pending",
-          "evidence": [],
-          "verified_at": null,
-          "verified_by": null,
-          "reviewed_sha": null
+          "state": "PASS",
+          "evidence": [
+            "project-control/reports/M0-T031-dcv.md",
+            "project-control/reports/M0-T031-G3-code-review.md",
+            "project-control/reports/M0-T031-G4-qa.md",
+            "project-control/reports/M0-T031-G5-security.md"
+          ],
+          "verified_at": "2026-07-30T02:56:07+00:00",
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "60ea27ea2154871d7abb903a83c5e3fd4b4307e0"
         },
         {
           "id": "D-005-R109",
-          "state": "pending",
-          "evidence": [],
-          "verified_at": null,
-          "verified_by": null,
-          "reviewed_sha": null
+          "state": "PASS",
+          "evidence": [
+            "project-control/reports/M0-T031-dcv.md",
+            "project-control/reports/M0-T031-G3-code-review.md",
+            "project-control/reports/M0-T031-G4-qa.md",
+            "project-control/reports/M0-T031-G5-security.md"
+          ],
+          "verified_at": "2026-07-30T02:56:07+00:00",
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "60ea27ea2154871d7abb903a83c5e3fd4b4307e0"
         },
         {
           "id": "D-005-R110",
-          "state": "pending",
-          "evidence": [],
-          "verified_at": null,
-          "verified_by": null,
-          "reviewed_sha": null
+          "state": "PASS",
+          "evidence": [
+            "project-control/reports/M0-T031-dcv.md",
+            "project-control/reports/M0-T031-G3-code-review.md",
+            "project-control/reports/M0-T031-G4-qa.md",
+            "project-control/reports/M0-T031-G5-security.md"
+          ],
+          "verified_at": "2026-07-30T02:56:07+00:00",
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "60ea27ea2154871d7abb903a83c5e3fd4b4307e0"
         }
       ]
     }
   ],
-  "updated_at": "2026-07-30T02:12:21+00:00"
+  "updated_at": "2026-07-30T02:56:07+00:00"
 }

@@ -1,0 +1,9 @@
+{
+  "checkpoint_id": "CP-0033",
+  "timestamp": "2026-07-30T02:56:08.964460+00:00",
+  "commit": "60ea27ea2154871d7abb903a83c5e3fd4b4307e0",
+  "branch": "main",
+  "active_milestone": "M4",
+  "summary": "M0-T031 accepted: code-graph integrity hardening (graph_sha256 verify-on-load closes the G5 LOW advisory; realpath cache keys; safe cache/meta error handling; --limit both positions) + SELECTIVE routing guidance (one CLAUDE.md row, one SKILL.md paragraph, README decision model - never universal graph-first, no token/time-savings claims). Gates G0/G3/G4/G5 PASS, zero blocking findings; D-005 R090-R110 21/21 verified PASS; PR #117 merged. Reserved surfaces remain owner-gated.",
+  "updated_at": "2026-07-30T02:56:08.964460+00:00"
+}
