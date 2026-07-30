@@ -1,0 +1,9 @@
+{
+  "checkpoint_id": "CP-0035",
+  "timestamp": "2026-07-30T08:36:54.470721+00:00",
+  "commit": "31226481a62170477c0d6973a3d51bd215751505",
+  "branch": "main",
+  "active_milestone": "M4",
+  "summary": "D-004 Step 4 (two-producer pilot) COMPLETE, awaiting owner review: M2-T018 (fail-closed provenance write boundary; PR #126) and M4-T008 (DF-6 exception-predicate indeterminate routing; PR #127) both ACCEPTED (tasks 51-52) after G0/G2/G3/G5 PASS x2 (independent Fable 5 reviewers at frozen branch SHAs 756f601/2122cd2), 10/10 independent per-task directive verification at merged head 3122648, full-suite 1048/1066 green, contracts byte-unchanged. Producers ran UNNAMED at explicit Opus 5 (owner ceiling per source-008); orchestrator+reviewers Fable 5. Worktree-isolation adaptation (harness auto-isolation vs pre-created worktrees) recorded openly in AGENT-TEAMS-PILOT-3.md attestation event 1 incl. one demonstrated attestation STOP with zero writes; all deviations disclosed and substance-verified, preserved for owner judgment. Step 5 NOT authorized (R305 STOP); M0-T027 remains blocked; expansion/survey/Graphify/deployment holds standing. Follow-ups recorded: r5_height.rule.json stale limitations sentence (legal-reviewer eyes), predicate-schema tightening, most_severe typing, serializers docstring, D-002-R038 evidence supersession note, M0-T032 backlog (C2). Evidence: project-control/reports/AGENT-TEAMS-PILOT-3.md.",
+  "updated_at": "2026-07-30T08:36:54.470721+00:00"
+}
