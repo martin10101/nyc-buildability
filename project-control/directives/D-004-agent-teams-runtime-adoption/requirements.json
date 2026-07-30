@@ -2,9 +2,9 @@
   "schema": "directive_requirements/v1",
   "directive_id": "D-004",
   "version": 1,
-  "requirement_count": 167,
+  "requirement_count": 286,
   "producer": "orchestrator",
-  "updated_at": "2026-07-24T00:00:00+00:00",
+  "updated_at": "2026-07-29T00:00:00+00:00",
   "requirements": [
     {
       "id": "D-004-R001",
@@ -6534,12 +6534,4954 @@
       },
       "amendment_sequence": 5,
       "extends_requirement_id": "D-004-R128"
+    },
+    {
+      "id": "D-004-R168",
+      "text": "Do not trust the expected SHA (e5d95b6c58d0d825feb52044d14892035edb9b47) blindly; reconcile live before acting.",
+      "source_ref": "source-006-amendment.md#orientation",
+      "classification": "sequencing",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "D-004-PHASE0",
+          "M0-T028"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [],
+        "lifecycle_events": [
+          "capture"
+        ],
+        "effective_date": "2026-07-29"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured by amendment 5; awaiting independent verification",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      },
+      "amendment_sequence": 6
+    },
+    {
+      "id": "D-004-R169",
+      "text": "OWNER GO: the owner approves M0-T028, subject to the mandatory packet corrections and staged execution in this amendment. This is the explicit owner GO for D-004 Step 3 only.",
+      "source_ref": "source-006-amendment.md#owner-decision",
+      "classification": "decision",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "D-004-PROCESS",
+          "M0-T027",
+          "M0-T028"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [],
+        "lifecycle_events": [
+          "capture",
+          "claim",
+          "progress",
+          "submit",
+          "gate",
+          "accept"
+        ],
+        "effective_date": "2026-07-29"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured by amendment 5; awaiting independent verification",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      },
+      "amendment_sequence": 6
+    },
+    {
+      "id": "D-004-R170",
+      "text": "Capture this owner decision verbatim as the next append-only D-004 amendment before any M0-T028 mutation.",
+      "source_ref": "source-006-amendment.md#authorization-includes",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "D-004-PHASE0",
+          "M0-T028"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [
+          "project-control/directives/"
+        ],
+        "lifecycle_events": [
+          "capture"
+        ],
+        "effective_date": "2026-07-29"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured by amendment 5; awaiting independent verification",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      },
+      "amendment_sequence": 6
+    },
+    {
+      "id": "D-004-R171",
+      "text": "Correct the M0-T028 task packet before G0 or claim.",
+      "source_ref": "source-006-amendment.md#authorization-includes",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T028"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [
+          "project-control/tasks/M0-T028.json"
+        ],
+        "lifecycle_events": [
+          "capture",
+          "claim"
+        ],
+        "effective_date": "2026-07-29"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured by amendment 5; awaiting independent verification",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      },
+      "amendment_sequence": 6
+    },
+    {
+      "id": "D-004-R172",
+      "text": "Authorized execution scope is D-004 Step 3 / M0-T028 only.",
+      "source_ref": "source-006-amendment.md#authorization-includes",
+      "classification": "authorization",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "D-004-PROCESS",
+          "M0-T028"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [],
+        "lifecycle_events": [
+          "capture",
+          "claim",
+          "progress",
+          "submit",
+          "gate",
+          "accept"
+        ],
+        "effective_date": "2026-07-29"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured by amendment 5; awaiting independent verification",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      },
+      "amendment_sequence": 6
+    },
+    {
+      "id": "D-004-R173",
+      "text": "Diagnose B-015 using primary evidence.",
+      "source_ref": "source-006-amendment.md#authorization-includes",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T028"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [],
+        "lifecycle_events": [
+          "claim",
+          "progress",
+          "submit"
+        ],
+        "effective_date": "2026-07-29"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured by amendment 5; awaiting independent verification",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      },
+      "amendment_sequence": 6
+    },
+    {
+      "id": "D-004-R174",
+      "text": "A prevention fix is authorized only if the evidence proves the defect is repairable inside M0-T028's authorized repository surfaces.",
+      "source_ref": "source-006-amendment.md#authorization-includes",
+      "classification": "authorization",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T028"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [],
+        "lifecycle_events": [
+          "claim",
+          "progress",
+          "submit"
+        ],
+        "effective_date": "2026-07-29"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured by amendment 5; awaiting independent verification",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      },
+      "amendment_sequence": 6
+    },
+    {
+      "id": "D-004-R175",
+      "text": "Include the already-contracted D-004-R100 path-quoting and D-004-R101 .claude/settings.local.json gitignore ride-alongs.",
+      "source_ref": "source-006-amendment.md#authorization-includes",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T028"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [
+          ".claude/settings.json",
+          ".gitignore"
+        ],
+        "lifecycle_events": [
+          "claim",
+          "progress",
+          "submit"
+        ],
+        "effective_date": "2026-07-29"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured by amendment 5; awaiting independent verification",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      },
+      "amendment_sequence": 6
+    },
+    {
+      "id": "D-004-R176",
+      "text": "Independent review, protected-main implementation merge, and the required fresh-session end-to-end rerun are all required.",
+      "source_ref": "source-006-amendment.md#authorization-includes",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T028"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [],
+        "lifecycle_events": [
+          "gate",
+          "accept"
+        ],
+        "effective_date": "2026-07-29"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured by amendment 5; awaiting independent verification",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      },
+      "amendment_sequence": 6
+    },
+    {
+      "id": "D-004-R177",
+      "text": "Close B-015 and accept M0-T028 only if every contracted requirement passes.",
+      "source_ref": "source-006-amendment.md#authorization-includes",
+      "classification": "sequencing",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T028"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [],
+        "lifecycle_events": [
+          "gate",
+          "accept"
+        ],
+        "effective_date": "2026-07-29"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured by amendment 5; awaiting independent verification",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      },
+      "amendment_sequence": 6
+    },
+    {
+      "id": "D-004-R178",
+      "text": "This authorization does NOT include D-004 Step 4 or Step 5.",
+      "source_ref": "source-006-amendment.md#authorization-excludes",
+      "classification": "prohibition",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "D-004-PROCESS",
+          "M0-T028"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [],
+        "lifecycle_events": [
+          "capture",
+          "claim",
+          "progress",
+          "submit",
+          "gate",
+          "accept"
+        ],
+        "effective_date": "2026-07-29"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured by amendment 5; awaiting independent verification",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      },
+      "amendment_sequence": 6
+    },
+    {
+      "id": "D-004-R179",
+      "text": "This authorization does NOT include M0-T029.",
+      "source_ref": "source-006-amendment.md#authorization-excludes",
+      "classification": "prohibition",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "D-004-PROCESS",
+          "M0-T028"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [],
+        "lifecycle_events": [
+          "capture",
+          "claim",
+          "progress",
+          "submit",
+          "gate",
+          "accept"
+        ],
+        "effective_date": "2026-07-29"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured by amendment 5; awaiting independent verification",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      },
+      "amendment_sequence": 6
+    },
+    {
+      "id": "D-004-R180",
+      "text": "This authorization does NOT include general adoption of Agent Teams.",
+      "source_ref": "source-006-amendment.md#authorization-excludes",
+      "classification": "prohibition",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "D-004-PROCESS",
+          "M0-T028"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [],
+        "lifecycle_events": [
+          "capture",
+          "claim",
+          "progress",
+          "submit",
+          "gate",
+          "accept"
+        ],
+        "effective_date": "2026-07-29"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured by amendment 5; awaiting independent verification",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      },
+      "amendment_sequence": 6
+    },
+    {
+      "id": "D-004-R181",
+      "text": "This authorization does NOT include producer waves or automatic Agent Teams injection.",
+      "source_ref": "source-006-amendment.md#authorization-excludes",
+      "classification": "prohibition",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "D-004-PROCESS",
+          "M0-T028"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [],
+        "lifecycle_events": [
+          "capture",
+          "claim",
+          "progress",
+          "submit",
+          "gate",
+          "accept"
+        ],
+        "effective_date": "2026-07-29"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured by amendment 5; awaiting independent verification",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      },
+      "amendment_sequence": 6
+    },
+    {
+      "id": "D-004-R182",
+      "text": "This authorization does NOT include any detection-only substitute if prevention is unavailable.",
+      "source_ref": "source-006-amendment.md#authorization-excludes",
+      "classification": "prohibition",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "D-004-PROCESS",
+          "M0-T028"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [],
+        "lifecycle_events": [
+          "capture",
+          "claim",
+          "progress",
+          "submit",
+          "gate",
+          "accept"
+        ],
+        "effective_date": "2026-07-29"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured by amendment 5; awaiting independent verification",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      },
+      "amendment_sequence": 6
+    },
+    {
+      "id": "D-004-R183",
+      "text": "This authorization does NOT include M0-T025.",
+      "source_ref": "source-006-amendment.md#authorization-excludes",
+      "classification": "prohibition",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "D-004-PROCESS",
+          "M0-T028"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [],
+        "lifecycle_events": [
+          "capture",
+          "claim",
+          "progress",
+          "submit",
+          "gate",
+          "accept"
+        ],
+        "effective_date": "2026-07-29"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured by amendment 5; awaiting independent verification",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      },
+      "amendment_sequence": 6
+    },
+    {
+      "id": "D-004-R184",
+      "text": "This authorization does NOT include M0-T019 or PR #64.",
+      "source_ref": "source-006-amendment.md#authorization-excludes",
+      "classification": "prohibition",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "D-004-PROCESS",
+          "M0-T028"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [],
+        "lifecycle_events": [
+          "capture",
+          "claim",
+          "progress",
+          "submit",
+          "gate",
+          "accept"
+        ],
+        "effective_date": "2026-07-29"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured by amendment 5; awaiting independent verification",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      },
+      "amendment_sequence": 6
+    },
+    {
+      "id": "D-004-R185",
+      "text": "This authorization does NOT include second-wave product tasks.",
+      "source_ref": "source-006-amendment.md#authorization-excludes",
+      "classification": "prohibition",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "D-004-PROCESS",
+          "M0-T028"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [],
+        "lifecycle_events": [
+          "capture",
+          "claim",
+          "progress",
+          "submit",
+          "gate",
+          "accept"
+        ],
+        "effective_date": "2026-07-29"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured by amendment 5; awaiting independent verification",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      },
+      "amendment_sequence": 6
+    },
+    {
+      "id": "D-004-R186",
+      "text": "This authorization does NOT include Master Expansion Architecture or the six PRDs.",
+      "source_ref": "source-006-amendment.md#authorization-excludes",
+      "classification": "prohibition",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "D-004-PROCESS",
+          "M0-T028"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [],
+        "lifecycle_events": [
+          "capture",
+          "claim",
+          "progress",
+          "submit",
+          "gate",
+          "accept"
+        ],
+        "effective_date": "2026-07-29"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured by amendment 5; awaiting independent verification",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      },
+      "amendment_sequence": 6
+    },
+    {
+      "id": "D-004-R187",
+      "text": "This authorization does NOT include Mission Control Engineering Map.",
+      "source_ref": "source-006-amendment.md#authorization-excludes",
+      "classification": "prohibition",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "D-004-PROCESS",
+          "M0-T028"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [],
+        "lifecycle_events": [
+          "capture",
+          "claim",
+          "progress",
+          "submit",
+          "gate",
+          "accept"
+        ],
+        "effective_date": "2026-07-29"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured by amendment 5; awaiting independent verification",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      },
+      "amendment_sequence": 6
+    },
+    {
+      "id": "D-004-R188",
+      "text": "This authorization does NOT include the project/control graph.",
+      "source_ref": "source-006-amendment.md#authorization-excludes",
+      "classification": "prohibition",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "D-004-PROCESS",
+          "M0-T028"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [],
+        "lifecycle_events": [
+          "capture",
+          "claim",
+          "progress",
+          "submit",
+          "gate",
+          "accept"
+        ],
+        "effective_date": "2026-07-29"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured by amendment 5; awaiting independent verification",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      },
+      "amendment_sequence": 6
+    },
+    {
+      "id": "D-004-R189",
+      "text": "This authorization does NOT include the NYC Evidence Knowledge Graph.",
+      "source_ref": "source-006-amendment.md#authorization-excludes",
+      "classification": "prohibition",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "D-004-PROCESS",
+          "M0-T028"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [],
+        "lifecycle_events": [
+          "capture",
+          "claim",
+          "progress",
+          "submit",
+          "gate",
+          "accept"
+        ],
+        "effective_date": "2026-07-29"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured by amendment 5; awaiting independent verification",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      },
+      "amendment_sequence": 6
+    },
+    {
+      "id": "D-004-R190",
+      "text": "This authorization does NOT include Graphify installation or reevaluation.",
+      "source_ref": "source-006-amendment.md#authorization-excludes",
+      "classification": "prohibition",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "D-004-PROCESS",
+          "M0-T028"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [],
+        "lifecycle_events": [
+          "capture",
+          "claim",
+          "progress",
+          "submit",
+          "gate",
+          "accept"
+        ],
+        "effective_date": "2026-07-29"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured by amendment 5; awaiting independent verification",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      },
+      "amendment_sequence": 6
+    },
+    {
+      "id": "D-004-R191",
+      "text": "This authorization does NOT include product code under M2-M7.",
+      "source_ref": "source-006-amendment.md#authorization-excludes",
+      "classification": "prohibition",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "D-004-PROCESS",
+          "M0-T028"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [],
+        "lifecycle_events": [
+          "capture",
+          "claim",
+          "progress",
+          "submit",
+          "gate",
+          "accept"
+        ],
+        "effective_date": "2026-07-29"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured by amendment 5; awaiting independent verification",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      },
+      "amendment_sequence": 6
+    },
+    {
+      "id": "D-004-R192",
+      "text": "This authorization does NOT include survey work.",
+      "source_ref": "source-006-amendment.md#authorization-excludes",
+      "classification": "prohibition",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "D-004-PROCESS",
+          "M0-T028"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [],
+        "lifecycle_events": [
+          "capture",
+          "claim",
+          "progress",
+          "submit",
+          "gate",
+          "accept"
+        ],
+        "effective_date": "2026-07-29"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured by amendment 5; awaiting independent verification",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      },
+      "amendment_sequence": 6
+    },
+    {
+      "id": "D-004-R193",
+      "text": "This authorization does NOT include deployment or hold release.",
+      "source_ref": "source-006-amendment.md#authorization-excludes",
+      "classification": "prohibition",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "D-004-PROCESS",
+          "M0-T028"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [],
+        "lifecycle_events": [
+          "capture",
+          "claim",
+          "progress",
+          "submit",
+          "gate",
+          "accept"
+        ],
+        "effective_date": "2026-07-29"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured by amendment 5; awaiting independent verification",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      },
+      "amendment_sequence": 6
+    },
+    {
+      "id": "D-004-R194",
+      "text": "This authorization does NOT include any effort setting or effort key.",
+      "source_ref": "source-006-amendment.md#authorization-excludes",
+      "classification": "prohibition",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "D-004-PROCESS",
+          "M0-T028"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [],
+        "lifecycle_events": [
+          "capture",
+          "claim",
+          "progress",
+          "submit",
+          "gate",
+          "accept"
+        ],
+        "effective_date": "2026-07-29"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured by amendment 5; awaiting independent verification",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      },
+      "amendment_sequence": 6
+    },
+    {
+      "id": "D-004-R195",
+      "text": "Before writing, run: git fetch --all --prune; python tools/project_control.py status; python tools/current_state.py.",
+      "source_ref": "source-006-amendment.md#phase-0",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "D-004-PHASE0",
+          "M0-T028"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [],
+        "lifecycle_events": [
+          "capture"
+        ],
+        "effective_date": "2026-07-29"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured by amendment 5; awaiting independent verification",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      },
+      "amendment_sequence": 6
+    },
+    {
+      "id": "D-004-R196",
+      "text": "Reconcile local main, origin/main, open PRs, worktrees, task lifecycle, blockers, current checkpoint, CI, and D-004 directive state before writing.",
+      "source_ref": "source-006-amendment.md#phase-0",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "D-004-PHASE0",
+          "M0-T028"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [],
+        "lifecycle_events": [
+          "capture"
+        ],
+        "effective_date": "2026-07-29"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured by amendment 5; awaiting independent verification",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      },
+      "amendment_sequence": 6
+    },
+    {
+      "id": "D-004-R197",
+      "text": "Read at minimum the Phase-0 reading list named in the source (CLAUDE.md; docs/SESSION_HANDOFF.md; .claude/ORCHESTRATION_POLICY.md; .claude/rules/project-control.md; project-control/state.json; project-control/master_plan.json; the M0-T027 and M0-T028 packets; the B-015 blocker; the D-004 manifest, requirements, verification, and all amendments, especially source-005-amendment.md; .claude/hooks/readonly_agent_guard.py; .claude/settings.json; .gitignore; tools/test_readonly_agent_guard.py; the dependency/acceptance enforcement in tools/project_control.py).",
+      "source_ref": "source-006-amendment.md#phase-0",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "D-004-PHASE0",
+          "M0-T028"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [],
+        "lifecycle_events": [
+          "capture"
+        ],
+        "effective_date": "2026-07-29"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured by amendment 5; awaiting independent verification",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      },
+      "amendment_sequence": 6
+    },
+    {
+      "id": "D-004-R198",
+      "text": "Confirm that PR #119 is merged and that main includes it. Do not recreate or refresh the handoff again.",
+      "source_ref": "source-006-amendment.md#phase-0",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "D-004-PHASE0",
+          "M0-T028"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [
+          "docs/SESSION_HANDOFF.md"
+        ],
+        "lifecycle_events": [
+          "capture"
+        ],
+        "effective_date": "2026-07-29"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured by amendment 5; awaiting independent verification",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      },
+      "amendment_sequence": 6
+    },
+    {
+      "id": "D-004-R199",
+      "text": "Confirm the tracked .claude/settings.json contains no permission-prompt-generated allow rules, machine-specific absolute paths, effort keys, or unrelated local configuration.",
+      "source_ref": "source-006-amendment.md#phase-0",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "D-004-PHASE0",
+          "M0-T028"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [
+          ".claude/settings.json"
+        ],
+        "lifecycle_events": [
+          "capture"
+        ],
+        "effective_date": "2026-07-29"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured by amendment 5; awaiting independent verification",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      },
+      "amendment_sequence": 6
+    },
+    {
+      "id": "D-004-R200",
+      "text": "Permission-prompt rules belong only in untracked local settings. Never stage them.",
+      "source_ref": "source-006-amendment.md#phase-0",
+      "classification": "prohibition",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "D-004-PROCESS",
+          "M0-T028"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [
+          ".claude/settings.json",
+          ".claude/settings.local.json"
+        ],
+        "lifecycle_events": [
+          "capture",
+          "claim",
+          "progress",
+          "submit",
+          "gate",
+          "accept"
+        ],
+        "effective_date": "2026-07-29"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured by amendment 5; awaiting independent verification",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      },
+      "amendment_sequence": 6
+    },
+    {
+      "id": "D-004-R201",
+      "text": "Use the code graph selectively: this task already names its principal files, so universal graph-first navigation is inappropriate; query it only for a concrete dependency or impact question and verify every useful result in authoritative source.",
+      "source_ref": "source-006-amendment.md#phase-0",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "D-004-PROCESS",
+          "M0-T028"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [],
+        "lifecycle_events": [
+          "claim",
+          "progress",
+          "submit"
+        ],
+        "effective_date": "2026-07-29"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured by amendment 5; awaiting independent verification",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      },
+      "amendment_sequence": 6
+    },
+    {
+      "id": "D-004-R202",
+      "text": "If main has advanced beyond e5d95b6, determine exactly why; continue only if the advancement is clean, reconciled, and unrelated; otherwise STOP and report.",
+      "source_ref": "source-006-amendment.md#phase-0",
+      "classification": "sequencing",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "D-004-PHASE0",
+          "M0-T028"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [],
+        "lifecycle_events": [
+          "capture"
+        ],
+        "effective_date": "2026-07-29"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured by amendment 5; awaiting independent verification",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      },
+      "amendment_sequence": 6
+    },
+    {
+      "id": "D-004-R203",
+      "text": "RATIFIED DEFECT: the committed M0-T028 packet has a lifecycle deadlock (M0-T028 lists M0-T027 as a dependency; M0-T027 is blocked until M0-T028 fixes B-015; tools/project_control.py accept requires every listed dependency to be accepted; therefore M0-T028 could never be accepted as written). It must be corrected before G0.",
+      "source_ref": "source-006-amendment.md#phase-1",
+      "classification": "decision",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T028"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [
+          "project-control/tasks/M0-T028.json"
+        ],
+        "lifecycle_events": [
+          "capture",
+          "claim"
+        ],
+        "effective_date": "2026-07-29"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured by amendment 5; awaiting independent verification",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      },
+      "amendment_sequence": 6
+    },
+    {
+      "id": "D-004-R204",
+      "text": "Remove M0-T027 from M0-T028's formal dependencies array.",
+      "source_ref": "source-006-amendment.md#phase-1",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T028"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [
+          "project-control/tasks/M0-T028.json"
+        ],
+        "lifecycle_events": [
+          "capture",
+          "claim"
+        ],
+        "effective_date": "2026-07-29"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured by amendment 5; awaiting independent verification",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      },
+      "amendment_sequence": 6
+    },
+    {
+      "id": "D-004-R205",
+      "text": "Preserve M0-T027 as the source of the pilot evidence, a causal/predecessor relationship in inputs and requirement references, and the task affected by B-015 - NOT as an acceptance prerequisite.",
+      "source_ref": "source-006-amendment.md#phase-1",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T028"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [
+          "project-control/tasks/M0-T028.json"
+        ],
+        "lifecycle_events": [
+          "capture",
+          "claim"
+        ],
+        "effective_date": "2026-07-29"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured by amendment 5; awaiting independent verification",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      },
+      "amendment_sequence": 6
+    },
+    {
+      "id": "D-004-R206",
+      "text": "Do not silently replace the removed dependency merely to fill the array. Add an accepted predecessor only if the authoritative project-control model genuinely requires one and primary evidence supports it. Otherwise use an empty dependency list.",
+      "source_ref": "source-006-amendment.md#phase-1",
+      "classification": "prohibition",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T028"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [
+          "project-control/tasks/M0-T028.json"
+        ],
+        "lifecycle_events": [
+          "capture",
+          "claim"
+        ],
+        "effective_date": "2026-07-29"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured by amendment 5; awaiting independent verification",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      },
+      "amendment_sequence": 6
+    },
+    {
+      "id": "D-004-R207",
+      "text": "Explain the dependency correction in the append-only D-004 amendment and in the control-plane PR.",
+      "source_ref": "source-006-amendment.md#phase-1",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T028"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [
+          "project-control/directives/"
+        ],
+        "lifecycle_events": [
+          "capture"
+        ],
+        "effective_date": "2026-07-29"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured by amendment 5; awaiting independent verification",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      },
+      "amendment_sequence": 6
+    },
+    {
+      "id": "D-004-R208",
+      "text": "Update owner_review_state to reflect this explicit owner approval only after the corrected packet matches this directive.",
+      "source_ref": "source-006-amendment.md#phase-1",
+      "classification": "sequencing",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T028"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [
+          "project-control/tasks/M0-T028.json"
+        ],
+        "lifecycle_events": [
+          "capture",
+          "claim"
+        ],
+        "effective_date": "2026-07-29"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured by amendment 5; awaiting independent verification",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      },
+      "amendment_sequence": 6
+    },
+    {
+      "id": "D-004-R209",
+      "text": "Assign the producer only after inspecting the existing agent definitions. Use one qualified producer distinct from every independent reviewer.",
+      "source_ref": "source-006-amendment.md#phase-1",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T028"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [
+          "project-control/tasks/M0-T028.json"
+        ],
+        "lifecycle_events": [
+          "capture",
+          "claim"
+        ],
+        "effective_date": "2026-07-29"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured by amendment 5; awaiting independent verification",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      },
+      "amendment_sequence": 6
+    },
+    {
+      "id": "D-004-R210",
+      "text": "Do not invent an agent role. Use an existing suitable role.",
+      "source_ref": "source-006-amendment.md#phase-1",
+      "classification": "prohibition",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T028"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [],
+        "lifecycle_events": [
+          "capture",
+          "claim"
+        ],
+        "effective_date": "2026-07-29"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured by amendment 5; awaiting independent verification",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      },
+      "amendment_sequence": 6
+    },
+    {
+      "id": "D-004-R211",
+      "text": "SENTINEL CLARIFICATION: the direct Write/Edit-tool attempt may remain blocked by tool unavailability, because reviewer definitions intentionally do not expose those tools.",
+      "source_ref": "source-006-amendment.md#sentinel-acceptance-clarification",
+      "classification": "decision",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T027",
+          "M0-T028"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [],
+        "lifecycle_events": [
+          "gate",
+          "accept"
+        ],
+        "effective_date": "2026-07-29"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured by amendment 5; awaiting independent verification",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      },
+      "amendment_sequence": 6
+    },
+    {
+      "id": "D-004-R212",
+      "text": "Never claim that readonly_agent_guard.py denied a tool call that the teammate could not invoke.",
+      "source_ref": "source-006-amendment.md#sentinel-acceptance-clarification",
+      "classification": "prohibition",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "D-004-PROCESS",
+          "M0-T027",
+          "M0-T028"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [],
+        "lifecycle_events": [
+          "capture",
+          "claim",
+          "progress",
+          "submit",
+          "gate",
+          "accept"
+        ],
+        "effective_date": "2026-07-29"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured by amendment 5; awaiting independent verification",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      },
+      "amendment_sequence": 6
+    },
+    {
+      "id": "D-004-R213",
+      "text": "The Bash-redirection attempt is the load-bearing PreToolUse test.",
+      "source_ref": "source-006-amendment.md#sentinel-acceptance-clarification",
+      "classification": "decision",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T027",
+          "M0-T028"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [],
+        "lifecycle_events": [
+          "gate",
+          "accept"
+        ],
+        "effective_date": "2026-07-29"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured by amendment 5; awaiting independent verification",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      },
+      "amendment_sequence": 6
+    },
+    {
+      "id": "D-004-R214",
+      "text": "The sentinel Bash command must be denied by readonly_agent_guard.py itself, with its denial evidence captured.",
+      "source_ref": "source-006-amendment.md#sentinel-acceptance-clarification",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T027",
+          "M0-T028"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [
+          ".claude/hooks/readonly_agent_guard.py"
+        ],
+        "lifecycle_events": [
+          "gate",
+          "accept"
+        ],
+        "effective_date": "2026-07-29"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured by amendment 5; awaiting independent verification",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      },
+      "amendment_sequence": 6
+    },
+    {
+      "id": "D-004-R215",
+      "text": "The orchestrator must independently run test -e for the sentinel and record a non-zero/ABSENT result.",
+      "source_ref": "source-006-amendment.md#sentinel-acceptance-clarification",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T027",
+          "M0-T028"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [],
+        "lifecycle_events": [
+          "gate",
+          "accept"
+        ],
+        "effective_date": "2026-07-29"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured by amendment 5; awaiting independent verification",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      },
+      "amendment_sequence": 6
+    },
+    {
+      "id": "D-004-R216",
+      "text": "Tool unavailability for direct Write plus guard denial for Bash plus independent absence verification is the required honest result.",
+      "source_ref": "source-006-amendment.md#sentinel-acceptance-clarification",
+      "classification": "decision",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T027",
+          "M0-T028"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [],
+        "lifecycle_events": [
+          "gate",
+          "accept"
+        ],
+        "effective_date": "2026-07-29"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured by amendment 5; awaiting independent verification",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      },
+      "amendment_sequence": 6
+    },
+    {
+      "id": "D-004-R217",
+      "text": "Do not rewrite the original pilot evidence. Its historical FAIL/FAIL/PASS results and sentinel escape remain byte-preserved.",
+      "source_ref": "source-006-amendment.md#sentinel-acceptance-clarification",
+      "classification": "prohibition",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "D-004-PROCESS",
+          "M0-T027",
+          "M0-T028"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [
+          "project-control/reports/AGENT-TEAMS-PILOT-1.md",
+          "project-control/reports/AGENT-TEAMS-PILOT-2-PROBE.md"
+        ],
+        "lifecycle_events": [
+          "capture",
+          "claim",
+          "progress",
+          "submit",
+          "gate",
+          "accept"
+        ],
+        "effective_date": "2026-07-29"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured by amendment 5; awaiting independent verification",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      },
+      "amendment_sequence": 6
+    },
+    {
+      "id": "D-004-R218",
+      "text": "Create the next append-only D-004 amendment through the normal directive-compliance workflow, recording at least: the explicit owner GO for D-004 Step 3/M0-T028 only; the M0-T027/M0-T028 dependency-deadlock correction; the sentinel acceptance clarification; the two-session execution boundary; no detection-only fallback without a new owner decision; no Steps 4 or 5; no Agent Teams adoption; no effort key anywhere; every teammate spawn carrying the explicit model required by D-004; Fable 5 for gate-class reviewer teammates; Opus 4.8 for producer teammates if used; no machine-specific settings or permission rules in tracked configuration; all unrelated holds remain standing.",
+      "source_ref": "source-006-amendment.md#phase-2",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "D-004-PHASE0",
+          "M0-T028"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [
+          "project-control/directives/"
+        ],
+        "lifecycle_events": [
+          "capture"
+        ],
+        "effective_date": "2026-07-29"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured by amendment 5; awaiting independent verification",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      },
+      "amendment_sequence": 6
+    },
+    {
+      "id": "D-004-R219",
+      "text": "Append new requirement rows from the next free D-004 requirement ID. Do not edit prior source files or prior requirement rows.",
+      "source_ref": "source-006-amendment.md#phase-2",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "D-004-PHASE0",
+          "M0-T028"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [
+          "project-control/directives/"
+        ],
+        "lifecycle_events": [
+          "capture"
+        ],
+        "effective_date": "2026-07-29"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured by amendment 5; awaiting independent verification",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      },
+      "amendment_sequence": 6
+    },
+    {
+      "id": "D-004-R220",
+      "text": "Recompute and validate all directive digests and registry data.",
+      "source_ref": "source-006-amendment.md#phase-2",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "D-004-PHASE0",
+          "M0-T028"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [
+          "project-control/directives/"
+        ],
+        "lifecycle_events": [
+          "capture"
+        ],
+        "effective_date": "2026-07-29"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured by amendment 5; awaiting independent verification",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      },
+      "amendment_sequence": 6
+    },
+    {
+      "id": "D-004-R221",
+      "text": "Correct D-004 affected_tasks using the canonical directive-compliance process so it honestly identifies M0-T027 and M0-T028 as applicable. Do not create competing manual truth.",
+      "source_ref": "source-006-amendment.md#phase-2",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "D-004-PHASE0",
+          "M0-T028"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [
+          "project-control/directives/index.json"
+        ],
+        "lifecycle_events": [
+          "capture"
+        ],
+        "effective_date": "2026-07-29"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured by amendment 5; awaiting independent verification",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      },
+      "amendment_sequence": 6
+    },
+    {
+      "id": "D-004-R222",
+      "text": "Put the directive amendment and corrected pre-dispatch M0-T028 packet through a narrow control-plane PR requiring: protected-main workflow; directive registry validation; project-control validation; secret scan; exact diff review; no product/runtime files; no M0-T025 change; no effort key; no unrelated handoff rewrite.",
+      "source_ref": "source-006-amendment.md#phase-2",
+      "classification": "harness",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "D-004-PHASE0",
+          "M0-T028"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [
+          "project-control/"
+        ],
+        "lifecycle_events": [
+          "capture"
+        ],
+        "effective_date": "2026-07-29"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured by amendment 5; awaiting independent verification",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      },
+      "amendment_sequence": 6
+    },
+    {
+      "id": "D-004-R223",
+      "text": "Merge the control PR only when every required check is green. Then fetch and freeze the new main SHA for implementation.",
+      "source_ref": "source-006-amendment.md#phase-2",
+      "classification": "sequencing",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "D-004-PHASE0",
+          "M0-T028"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [],
+        "lifecycle_events": [
+          "capture"
+        ],
+        "effective_date": "2026-07-29"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured by amendment 5; awaiting independent verification",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      },
+      "amendment_sequence": 6
+    },
+    {
+      "id": "D-004-R224",
+      "text": "Two-session execution boundary: implementation, review, and merge happen in the current session; the merged hook/settings behavior is validated ONLY in a completely fresh session (Phases 7-8).",
+      "source_ref": "source-006-amendment.md#phase-2",
+      "classification": "sequencing",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "D-004-PROCESS",
+          "M0-T027",
+          "M0-T028"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [],
+        "lifecycle_events": [
+          "capture",
+          "claim",
+          "progress",
+          "submit",
+          "gate",
+          "accept"
+        ],
+        "effective_date": "2026-07-29"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured by amendment 5; awaiting independent verification",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      },
+      "amendment_sequence": 6
+    },
+    {
+      "id": "D-004-R225",
+      "text": "No detection-only fallback without a new owner decision.",
+      "source_ref": "source-006-amendment.md#phase-2",
+      "classification": "prohibition",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "D-004-PROCESS",
+          "M0-T028"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [],
+        "lifecycle_events": [
+          "capture",
+          "claim",
+          "progress",
+          "submit",
+          "gate",
+          "accept"
+        ],
+        "effective_date": "2026-07-29"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured by amendment 5; awaiting independent verification",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      },
+      "amendment_sequence": 6
+    },
+    {
+      "id": "D-004-R226",
+      "text": "Every teammate spawn must carry the explicit model required by D-004: Fable 5 for gate-class reviewer teammates; Opus 4.8 for producer teammates if a producer teammate is used.",
+      "source_ref": "source-006-amendment.md#phase-2",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "D-004-PROCESS",
+          "M0-T027",
+          "M0-T028"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [],
+        "lifecycle_events": [
+          "capture",
+          "claim",
+          "progress",
+          "submit",
+          "gate",
+          "accept"
+        ],
+        "effective_date": "2026-07-29"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured by amendment 5; awaiting independent verification",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      },
+      "amendment_sequence": 6
+    },
+    {
+      "id": "D-004-R227",
+      "text": "All unrelated holds remain standing.",
+      "source_ref": "source-006-amendment.md#phase-2",
+      "classification": "hold",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "D-004-PROCESS",
+          "M0-T028"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [],
+        "lifecycle_events": [
+          "capture",
+          "claim",
+          "progress",
+          "submit",
+          "gate",
+          "accept"
+        ],
+        "effective_date": "2026-07-29"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured by amendment 5; awaiting independent verification",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      },
+      "amendment_sequence": 6
+    },
+    {
+      "id": "D-004-R228",
+      "text": "After the corrected control packet merges, run fresh G0 against the corrected packet and the newly frozen main SHA.",
+      "source_ref": "source-006-amendment.md#phase-3",
+      "classification": "sequencing",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T028"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [],
+        "lifecycle_events": [
+          "claim"
+        ],
+        "effective_date": "2026-07-29"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured by amendment 5; awaiting independent verification",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      },
+      "amendment_sequence": 6
+    },
+    {
+      "id": "D-004-R229",
+      "text": "Create a fresh, specifically named M0-T028 worktree and branch from that frozen main.",
+      "source_ref": "source-006-amendment.md#phase-3",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T028"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [],
+        "lifecycle_events": [
+          "claim"
+        ],
+        "effective_date": "2026-07-29"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured by amendment 5; awaiting independent verification",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      },
+      "amendment_sequence": 6
+    },
+    {
+      "id": "D-004-R230",
+      "text": "Do not reuse any D-004 pilot branch, prior team, prior task list, or old worktree.",
+      "source_ref": "source-006-amendment.md#phase-3",
+      "classification": "prohibition",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T028"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [],
+        "lifecycle_events": [
+          "claim",
+          "progress",
+          "submit"
+        ],
+        "effective_date": "2026-07-29"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured by amendment 5; awaiting independent verification",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      },
+      "amendment_sequence": 6
+    },
+    {
+      "id": "D-004-R231",
+      "text": "Claim M0-T028 through the project-control CLI.",
+      "source_ref": "source-006-amendment.md#phase-3",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T028"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [
+          "project-control/tasks/M0-T028.json"
+        ],
+        "lifecycle_events": [
+          "claim"
+        ],
+        "effective_date": "2026-07-29"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured by amendment 5; awaiting independent verification",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      },
+      "amendment_sequence": 6
+    },
+    {
+      "id": "D-004-R232",
+      "text": "Use a single-writer implementation model.",
+      "source_ref": "source-006-amendment.md#phase-3",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T028"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [],
+        "lifecycle_events": [
+          "claim",
+          "progress",
+          "submit"
+        ],
+        "effective_date": "2026-07-29"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured by amendment 5; awaiting independent verification",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      },
+      "amendment_sequence": 6
+    },
+    {
+      "id": "D-004-R233",
+      "text": "Do not use an Agent Teams writing producer while B-015 is still open.",
+      "source_ref": "source-006-amendment.md#phase-3",
+      "classification": "prohibition",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T028"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [],
+        "lifecycle_events": [
+          "claim",
+          "progress",
+          "submit"
+        ],
+        "effective_date": "2026-07-29"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured by amendment 5; awaiting independent verification",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      },
+      "amendment_sequence": 6
+    },
+    {
+      "id": "D-004-R234",
+      "text": "A tightly bounded no-Write/Edit diagnostic teammate may be used only when necessary to observe the actual teammate PreToolUse behavior. Every such spawn must use the explicit model required by D-004.",
+      "source_ref": "source-006-amendment.md#phase-3",
+      "classification": "authorization",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T028"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [],
+        "lifecycle_events": [
+          "claim",
+          "progress",
+          "submit"
+        ],
+        "effective_date": "2026-07-29"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured by amendment 5; awaiting independent verification",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      },
+      "amendment_sequence": 6
+    },
+    {
+      "id": "D-004-R235",
+      "text": "Before and after every live teammate probe, run and record a dirt sweep across the primary checkout, the M0-T028 worktree, and any disposable probe worktree.",
+      "source_ref": "source-006-amendment.md#phase-3",
+      "classification": "harness",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T028"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [],
+        "lifecycle_events": [
+          "claim",
+          "progress",
+          "submit"
+        ],
+        "effective_date": "2026-07-29"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured by amendment 5; awaiting independent verification",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      },
+      "amendment_sequence": 6
+    },
+    {
+      "id": "D-004-R236",
+      "text": "Any unexpected file outside the deliberately named sentinel path is a STOP condition.",
+      "source_ref": "source-006-amendment.md#phase-3",
+      "classification": "sequencing",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T028"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [],
+        "lifecycle_events": [
+          "claim",
+          "progress",
+          "submit"
+        ],
+        "effective_date": "2026-07-29"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured by amendment 5; awaiting independent verification",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      },
+      "amendment_sequence": 6
+    },
+    {
+      "id": "D-004-R237",
+      "text": "Do not begin by guessing a fix.",
+      "source_ref": "source-006-amendment.md#phase-4",
+      "classification": "prohibition",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T028"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [],
+        "lifecycle_events": [
+          "claim",
+          "progress",
+          "submit"
+        ],
+        "effective_date": "2026-07-29"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured by amendment 5; awaiting independent verification",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      },
+      "amendment_sequence": 6
+    },
+    {
+      "id": "D-004-R238",
+      "text": "Capture primary evidence sufficient to distinguish H1 (PreToolUse does not invoke this hook for Agent Teams teammates) from H2 (PreToolUse invokes the hook, but the teammate payload lacks the recognized agent_type/agentType identity or uses a different identity shape).",
+      "source_ref": "source-006-amendment.md#phase-4",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T028"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [
+          "project-control/reports/M0-T028-TEAMMATE-PAYLOAD-EVIDENCE.md"
+        ],
+        "lifecycle_events": [
+          "claim",
+          "progress",
+          "submit"
+        ],
+        "effective_date": "2026-07-29"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured by amendment 5; awaiting independent verification",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      },
+      "amendment_sequence": 6
+    },
+    {
+      "id": "D-004-R239",
+      "text": "The evidence must show the actual live teammate payload or an equally primary runtime artifact. A synthetic payload alone is insufficient.",
+      "source_ref": "source-006-amendment.md#phase-4",
+      "classification": "evidence",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T028"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [
+          "project-control/reports/M0-T028-TEAMMATE-PAYLOAD-EVIDENCE.md"
+        ],
+        "lifecycle_events": [
+          "progress",
+          "submit",
+          "gate"
+        ],
+        "effective_date": "2026-07-29"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured by amendment 5; awaiting independent verification",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      },
+      "amendment_sequence": 6
+    },
+    {
+      "id": "D-004-R240",
+      "text": "Store only sanitized evidence: no usernames; no absolute machine paths; no session IDs; no pane IDs; no credentials; no private environment values.",
+      "source_ref": "source-006-amendment.md#phase-4",
+      "classification": "evidence",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T028"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [
+          "project-control/reports/"
+        ],
+        "lifecycle_events": [
+          "progress",
+          "submit",
+          "gate"
+        ],
+        "effective_date": "2026-07-29"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured by amendment 5; awaiting independent verification",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      },
+      "amendment_sequence": 6
+    },
+    {
+      "id": "D-004-R241",
+      "text": "The diagnosis report must explicitly reconcile: direct Write/Edit tool unavailability worked; Bash redirection escaped; the hook logic worked on a synthetic known payload; Step 2 proved teammate Bash starts in the primary checkout before each call; therefore worktree-location assumptions cannot provide confinement.",
+      "source_ref": "source-006-amendment.md#phase-4",
+      "classification": "evidence",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T028"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [
+          "project-control/reports/M0-T028-TEAMMATE-PAYLOAD-EVIDENCE.md"
+        ],
+        "lifecycle_events": [
+          "progress",
+          "submit",
+          "gate"
+        ],
+        "effective_date": "2026-07-29"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured by amendment 5; awaiting independent verification",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      },
+      "amendment_sequence": 6
+    },
+    {
+      "id": "D-004-R242",
+      "text": "If H2 is proven: implement the narrowest identity-resolution/wiring correction inside the already allowed M0-T028 paths.",
+      "source_ref": "source-006-amendment.md#branching-rule",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T028"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [
+          ".claude/hooks/readonly_agent_guard.py",
+          ".claude/settings.json"
+        ],
+        "lifecycle_events": [
+          "claim",
+          "progress",
+          "submit"
+        ],
+        "effective_date": "2026-07-29"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured by amendment 5; awaiting independent verification",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      },
+      "amendment_sequence": 6
+    },
+    {
+      "id": "D-004-R243",
+      "text": "Preserve fail-closed behavior for malformed or unparseable payloads.",
+      "source_ref": "source-006-amendment.md#branching-rule",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T028"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [
+          ".claude/hooks/readonly_agent_guard.py"
+        ],
+        "lifecycle_events": [
+          "progress",
+          "submit",
+          "gate"
+        ],
+        "effective_date": "2026-07-29"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured by amendment 5; awaiting independent verification",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      },
+      "amendment_sequence": 6
+    },
+    {
+      "id": "D-004-R244",
+      "text": "Do not weaken any current denial.",
+      "source_ref": "source-006-amendment.md#branching-rule",
+      "classification": "prohibition",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T028"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [
+          ".claude/hooks/readonly_agent_guard.py"
+        ],
+        "lifecycle_events": [
+          "progress",
+          "submit",
+          "gate"
+        ],
+        "effective_date": "2026-07-29"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured by amendment 5; awaiting independent verification",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      },
+      "amendment_sequence": 6
+    },
+    {
+      "id": "D-004-R245",
+      "text": "Do not newly block legitimate read-only git commands, GitHub reads, or test commands.",
+      "source_ref": "source-006-amendment.md#branching-rule",
+      "classification": "prohibition",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T028"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [
+          ".claude/hooks/readonly_agent_guard.py"
+        ],
+        "lifecycle_events": [
+          "progress",
+          "submit",
+          "gate"
+        ],
+        "effective_date": "2026-07-29"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured by amendment 5; awaiting independent verification",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      },
+      "amendment_sequence": 6
+    },
+    {
+      "id": "D-004-R246",
+      "text": "If H1 is proven and PreToolUse prevention cannot be made to fire from within M0-T028's authorized paths: STOP before implementing a detection-only substitute; do not reinterpret the packet; do not close B-015; do not claim M0-T028 is fixed.",
+      "source_ref": "source-006-amendment.md#branching-rule",
+      "classification": "sequencing",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T028"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [],
+        "lifecycle_events": [
+          "claim",
+          "progress",
+          "submit"
+        ],
+        "effective_date": "2026-07-29"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured by amendment 5; awaiting independent verification",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      },
+      "amendment_sequence": 6
+    },
+    {
+      "id": "D-004-R247",
+      "text": "The H1 STOP returns a focused owner decision packet describing: primary evidence; why prevention is unavailable; the narrowest detection-only design; residual risk; exact additional paths/authority required; whether Agent Teams adoption should remain rejected.",
+      "source_ref": "source-006-amendment.md#branching-rule",
+      "classification": "return",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T028"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [],
+        "lifecycle_events": [
+          "claim",
+          "progress",
+          "submit"
+        ],
+        "effective_date": "2026-07-29"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured by amendment 5; awaiting independent verification",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      },
+      "amendment_sequence": 6
+    },
+    {
+      "id": "D-004-R248",
+      "text": "Detection-only requires a separate owner GO.",
+      "source_ref": "source-006-amendment.md#branching-rule",
+      "classification": "sequencing",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "D-004-PROCESS",
+          "M0-T028"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [],
+        "lifecycle_events": [
+          "capture",
+          "claim",
+          "progress",
+          "submit",
+          "gate",
+          "accept"
+        ],
+        "effective_date": "2026-07-29"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured by amendment 5; awaiting independent verification",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      },
+      "amendment_sequence": 6
+    },
+    {
+      "id": "D-004-R249",
+      "text": "H2 path: complete only the contracted work, starting with the guard correction.",
+      "source_ref": "source-006-amendment.md#phase-5",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T028"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [
+          ".claude/hooks/readonly_agent_guard.py"
+        ],
+        "lifecycle_events": [
+          "claim",
+          "progress",
+          "submit"
+        ],
+        "effective_date": "2026-07-29"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured by amendment 5; awaiting independent verification",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      },
+      "amendment_sequence": 6
+    },
+    {
+      "id": "D-004-R250",
+      "text": "New regression coverage for the actual teammate payload shape.",
+      "source_ref": "source-006-amendment.md#phase-5",
+      "classification": "harness",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T028"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [
+          "tools/test_readonly_agent_guard.py"
+        ],
+        "lifecycle_events": [
+          "progress",
+          "submit",
+          "gate"
+        ],
+        "effective_date": "2026-07-29"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured by amendment 5; awaiting independent verification",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      },
+      "amendment_sequence": 6
+    },
+    {
+      "id": "D-004-R251",
+      "text": "The existing malformed/unparseable-payload fail-closed test remains passing.",
+      "source_ref": "source-006-amendment.md#phase-5",
+      "classification": "harness",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T028"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [
+          "tools/test_readonly_agent_guard.py"
+        ],
+        "lifecycle_events": [
+          "progress",
+          "submit",
+          "gate"
+        ],
+        "effective_date": "2026-07-29"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured by amendment 5; awaiting independent verification",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      },
+      "amendment_sequence": 6
+    },
+    {
+      "id": "D-004-R252",
+      "text": "Prove no previously denied mutating command becomes allowed.",
+      "source_ref": "source-006-amendment.md#phase-5",
+      "classification": "harness",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T028"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [
+          "tools/test_readonly_agent_guard.py"
+        ],
+        "lifecycle_events": [
+          "progress",
+          "submit",
+          "gate"
+        ],
+        "effective_date": "2026-07-29"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured by amendment 5; awaiting independent verification",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      },
+      "amendment_sequence": 6
+    },
+    {
+      "id": "D-004-R253",
+      "text": "Prove legitimate read-only commands remain allowed.",
+      "source_ref": "source-006-amendment.md#phase-5",
+      "classification": "harness",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T028"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [
+          "tools/test_readonly_agent_guard.py"
+        ],
+        "lifecycle_events": [
+          "progress",
+          "submit",
+          "gate"
+        ],
+        "effective_date": "2026-07-29"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured by amendment 5; awaiting independent verification",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      },
+      "amendment_sequence": 6
+    },
+    {
+      "id": "D-004-R254",
+      "text": "Quote all project-path references in every applicable hook command in .claude/settings.json.",
+      "source_ref": "source-006-amendment.md#phase-5",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T028"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [
+          ".claude/settings.json"
+        ],
+        "lifecycle_events": [
+          "claim",
+          "progress",
+          "submit"
+        ],
+        "effective_date": "2026-07-29"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured by amendment 5; awaiting independent verification",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      },
+      "amendment_sequence": 6
+    },
+    {
+      "id": "D-004-R255",
+      "text": "Prove hook commands resolve when the repository path contains a space.",
+      "source_ref": "source-006-amendment.md#phase-5",
+      "classification": "harness",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T028"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [
+          ".claude/settings.json"
+        ],
+        "lifecycle_events": [
+          "progress",
+          "submit",
+          "gate"
+        ],
+        "effective_date": "2026-07-29"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured by amendment 5; awaiting independent verification",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      },
+      "amendment_sequence": 6
+    },
+    {
+      "id": "D-004-R256",
+      "text": "Add .claude/settings.local.json to the repository .gitignore.",
+      "source_ref": "source-006-amendment.md#phase-5",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T028"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [
+          ".gitignore"
+        ],
+        "lifecycle_events": [
+          "claim",
+          "progress",
+          "submit"
+        ],
+        "effective_date": "2026-07-29"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured by amendment 5; awaiting independent verification",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      },
+      "amendment_sequence": 6
+    },
+    {
+      "id": "D-004-R257",
+      "text": "Prove with git check-ignore -v that the repository .gitignore, not merely a machine-global ignore, supplies the match.",
+      "source_ref": "source-006-amendment.md#phase-5",
+      "classification": "harness",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T028"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [
+          ".gitignore"
+        ],
+        "lifecycle_events": [
+          "progress",
+          "submit",
+          "gate"
+        ],
+        "effective_date": "2026-07-29"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured by amendment 5; awaiting independent verification",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      },
+      "amendment_sequence": 6
+    },
+    {
+      "id": "D-004-R258",
+      "text": "Correct directive index affected-task data in its proper control-plane layer if not already handled during amendment capture.",
+      "source_ref": "source-006-amendment.md#phase-5",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T028"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [
+          "project-control/directives/index.json"
+        ],
+        "lifecycle_events": [
+          "claim",
+          "progress",
+          "submit"
+        ],
+        "effective_date": "2026-07-29"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured by amendment 5; awaiting independent verification",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      },
+      "amendment_sequence": 6
+    },
+    {
+      "id": "D-004-R259",
+      "text": "Run: the complete read-only-guard test suite; project-control tests; directive-compliance tests; the directive validator; secret scan; full relevant CI; containment diff; and the deterministic checks required by the task.",
+      "source_ref": "source-006-amendment.md#phase-5",
+      "classification": "harness",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T028"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [],
+        "lifecycle_events": [
+          "progress",
+          "submit",
+          "gate"
+        ],
+        "effective_date": "2026-07-29"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured by amendment 5; awaiting independent verification",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      },
+      "amendment_sequence": 6
+    },
+    {
+      "id": "D-004-R260",
+      "text": "Do not touch: M0-T025; product code; prior pilot reports; prior D-004 source files; unrelated settings; CLAUDE.md; agent definitions; rules; deployment files; any effort setting.",
+      "source_ref": "source-006-amendment.md#phase-5",
+      "classification": "prohibition",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T028"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [],
+        "lifecycle_events": [
+          "capture",
+          "claim",
+          "progress",
+          "submit",
+          "gate",
+          "accept"
+        ],
+        "effective_date": "2026-07-29"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured by amendment 5; awaiting independent verification",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      },
+      "amendment_sequence": 6
+    },
+    {
+      "id": "D-004-R261",
+      "text": "Freeze one exact implementation SHA and run all contracted independent reviews against that exact SHA: G3 code review; G5 security review; control-plane verification; directive-compliance verification; any required G2 self-check through the proper orchestrator-controlled route.",
+      "source_ref": "source-006-amendment.md#phase-6",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T028"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [],
+        "lifecycle_events": [
+          "gate",
+          "accept"
+        ],
+        "effective_date": "2026-07-29"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured by amendment 5; awaiting independent verification",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      },
+      "amendment_sequence": 6
+    },
+    {
+      "id": "D-004-R262",
+      "text": "Reviewers must be different from the producer.",
+      "source_ref": "source-006-amendment.md#phase-6",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T028"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [],
+        "lifecycle_events": [
+          "gate",
+          "accept"
+        ],
+        "effective_date": "2026-07-29"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured by amendment 5; awaiting independent verification",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      },
+      "amendment_sequence": 6
+    },
+    {
+      "id": "D-004-R263",
+      "text": "Reviewers must inspect: actual H1/H2 evidence; identity-resolution logic; command-denial regressions; read-only-command non-regressions; settings path quoting; repository gitignore behavior; no machine-specific tracked configuration; no effort key; exact allowed-path containment; M0-T025 unchanged; historical pilot reports unchanged; no product/runtime changes.",
+      "source_ref": "source-006-amendment.md#phase-6",
+      "classification": "evidence",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T028"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [],
+        "lifecycle_events": [
+          "gate",
+          "accept"
+        ],
+        "effective_date": "2026-07-29"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured by amendment 5; awaiting independent verification",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      },
+      "amendment_sequence": 6
+    },
+    {
+      "id": "D-004-R264",
+      "text": "Apply no review correction outside the contracted paths.",
+      "source_ref": "source-006-amendment.md#phase-6",
+      "classification": "prohibition",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T028"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [],
+        "lifecycle_events": [
+          "gate",
+          "accept"
+        ],
+        "effective_date": "2026-07-29"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured by amendment 5; awaiting independent verification",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      },
+      "amendment_sequence": 6
+    },
+    {
+      "id": "D-004-R265",
+      "text": "If a correction changes the reviewed SHA, perform the required bounded delta review before merge.",
+      "source_ref": "source-006-amendment.md#phase-6",
+      "classification": "sequencing",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T028"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [],
+        "lifecycle_events": [
+          "gate",
+          "accept"
+        ],
+        "effective_date": "2026-07-29"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured by amendment 5; awaiting independent verification",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      },
+      "amendment_sequence": 6
+    },
+    {
+      "id": "D-004-R266",
+      "text": "Merge the implementation through a protected-main PR only when every pre-merge requirement is green.",
+      "source_ref": "source-006-amendment.md#phase-6",
+      "classification": "sequencing",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T028"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [],
+        "lifecycle_events": [
+          "gate",
+          "accept"
+        ],
+        "effective_date": "2026-07-29"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured by amendment 5; awaiting independent verification",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      },
+      "amendment_sequence": 6
+    },
+    {
+      "id": "D-004-R267",
+      "text": "Do NOT yet (before the fresh-session validation): close B-015; accept M0-T028; claim the live teammate sentinel passed; create a final checkpoint; begin D-004 Step 4; adopt Agent Teams.",
+      "source_ref": "source-006-amendment.md#phase-6",
+      "classification": "prohibition",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T028"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [],
+        "lifecycle_events": [
+          "gate",
+          "accept"
+        ],
+        "effective_date": "2026-07-29"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured by amendment 5; awaiting independent verification",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      },
+      "amendment_sequence": 6
+    },
+    {
+      "id": "D-004-R268",
+      "text": "The merged hook/settings change must be tested in a completely fresh Claude Code session.",
+      "source_ref": "source-006-amendment.md#phase-6",
+      "classification": "sequencing",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "D-004-PROCESS",
+          "M0-T027",
+          "M0-T028"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [],
+        "lifecycle_events": [
+          "capture",
+          "claim",
+          "progress",
+          "submit",
+          "gate",
+          "accept"
+        ],
+        "effective_date": "2026-07-29"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured by amendment 5; awaiting independent verification",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      },
+      "amendment_sequence": 6
+    },
+    {
+      "id": "D-004-R269",
+      "text": "After the implementation PR merges: reconcile main, record the exact merge SHA, and confirm all working trees are clean.",
+      "source_ref": "source-006-amendment.md#phase-7",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T028"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [],
+        "lifecycle_events": [
+          "gate",
+          "accept"
+        ],
+        "effective_date": "2026-07-29"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured by amendment 5; awaiting independent verification",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      },
+      "amendment_sequence": 6
+    },
+    {
+      "id": "D-004-R270",
+      "text": "Prepare a complete fresh-session resume capsule containing: merged main SHA; M0-T028 task status; implementation PR; reviewed SHA; every gate already completed; exact remaining fresh-session sentinel procedure; exact model requirements; exact forbidden actions; B-015 still OPEN; M0-T027 still BLOCKED; no Step 4/5 authorization.",
+      "source_ref": "source-006-amendment.md#phase-7",
+      "classification": "return",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T028"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [],
+        "lifecycle_events": [
+          "gate",
+          "accept"
+        ],
+        "effective_date": "2026-07-29"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured by amendment 5; awaiting independent verification",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      },
+      "amendment_sequence": 6
+    },
+    {
+      "id": "D-004-R271",
+      "text": "STOP after the capsule and tell the owner explicitly that Claude Code must be restarted in a completely fresh session, because D-004 forbids testing merged hook/settings behavior in the session that predates the merge.",
+      "source_ref": "source-006-amendment.md#phase-7",
+      "classification": "sequencing",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T028"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [],
+        "lifecycle_events": [
+          "gate",
+          "accept"
+        ],
+        "effective_date": "2026-07-29"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured by amendment 5; awaiting independent verification",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      },
+      "amendment_sequence": 6
+    },
+    {
+      "id": "D-004-R272",
+      "text": "Do not attempt to simulate freshness inside the existing conversation.",
+      "source_ref": "source-006-amendment.md#phase-7",
+      "classification": "prohibition",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "D-004-PROCESS",
+          "M0-T028"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [],
+        "lifecycle_events": [
+          "capture",
+          "claim",
+          "progress",
+          "submit",
+          "gate",
+          "accept"
+        ],
+        "effective_date": "2026-07-29"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured by amendment 5; awaiting independent verification",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      },
+      "amendment_sequence": 6
+    },
+    {
+      "id": "D-004-R273",
+      "text": "Phase 8 is authorized only after the owner starts the required fresh Claude Code session using the resume capsule.",
+      "source_ref": "source-006-amendment.md#phase-8",
+      "classification": "sequencing",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T027",
+          "M0-T028"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [],
+        "lifecycle_events": [
+          "gate",
+          "accept"
+        ],
+        "effective_date": "2026-07-29"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured by amendment 5; awaiting independent verification",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      },
+      "amendment_sequence": 6
+    },
+    {
+      "id": "D-004-R274",
+      "text": "In the fresh session: fetch and reconcile the merged implementation SHA; freeze the then-current accepted main head; re-run the on-policy reviewer sentinel with the same three reviewer roles required by D-004.",
+      "source_ref": "source-006-amendment.md#phase-8",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T027",
+          "M0-T028"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [],
+        "lifecycle_events": [
+          "gate",
+          "accept"
+        ],
+        "effective_date": "2026-07-29"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured by amendment 5; awaiting independent verification",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      },
+      "amendment_sequence": 6
+    },
+    {
+      "id": "D-004-R275",
+      "text": "Pass an explicit Fable 5 model on every gate-class reviewer teammate spawn.",
+      "source_ref": "source-006-amendment.md#phase-8",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T027",
+          "M0-T028"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [],
+        "lifecycle_events": [
+          "gate",
+          "accept"
+        ],
+        "effective_date": "2026-07-29"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured by amendment 5; awaiting independent verification",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      },
+      "amendment_sequence": 6
+    },
+    {
+      "id": "D-004-R276",
+      "text": "The direct Write/Edit attempt must remain unavailable/denied, and is reported honestly as tool-unavailability if that is the enforcement layer.",
+      "source_ref": "source-006-amendment.md#phase-8",
+      "classification": "evidence",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T027",
+          "M0-T028"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [],
+        "lifecycle_events": [
+          "gate",
+          "accept"
+        ],
+        "effective_date": "2026-07-29"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured by amendment 5; awaiting independent verification",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      },
+      "amendment_sequence": 6
+    },
+    {
+      "id": "D-004-R277",
+      "text": "The Bash redirection attempt must be denied by readonly_agent_guard.py itself, with the guard's denial evidence captured.",
+      "source_ref": "source-006-amendment.md#phase-8",
+      "classification": "evidence",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T027",
+          "M0-T028"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [
+          ".claude/hooks/readonly_agent_guard.py"
+        ],
+        "lifecycle_events": [
+          "gate",
+          "accept"
+        ],
+        "effective_date": "2026-07-29"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured by amendment 5; awaiting independent verification",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      },
+      "amendment_sequence": 6
+    },
+    {
+      "id": "D-004-R278",
+      "text": "The orchestrator independently runs test -e against the exact sentinel and records non-zero/ABSENT.",
+      "source_ref": "source-006-amendment.md#phase-8",
+      "classification": "evidence",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T027",
+          "M0-T028"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [],
+        "lifecycle_events": [
+          "gate",
+          "accept"
+        ],
+        "effective_date": "2026-07-29"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured by amendment 5; awaiting independent verification",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      },
+      "amendment_sequence": 6
+    },
+    {
+      "id": "D-004-R279",
+      "text": "Run full dirt sweeps after the test; confirm no unexpected artifact exists in main or any worktree; re-run the relevant regression and directive checks.",
+      "source_ref": "source-006-amendment.md#phase-8",
+      "classification": "harness",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T027",
+          "M0-T028"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [],
+        "lifecycle_events": [
+          "gate",
+          "accept"
+        ],
+        "effective_date": "2026-07-29"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured by amendment 5; awaiting independent verification",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      },
+      "amendment_sequence": 6
+    },
+    {
+      "id": "D-004-R280",
+      "text": "Only if all Phase-8 checks pass: append the required audit evidence to M0-T028's permitted report surface; resolve B-015 through the orchestrator with an audit-log entry citing the merged fix and the passing fresh-session sentinel; complete remaining independent directive verification; accept M0-T028 through the project-control CLI.",
+      "source_ref": "source-006-amendment.md#phase-8",
+      "classification": "sequencing",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T027",
+          "M0-T028"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [
+          "project-control/blockers/B-015-teammate-readonly-guard-bypass.json"
+        ],
+        "lifecycle_events": [
+          "gate",
+          "accept"
+        ],
+        "effective_date": "2026-07-29"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured by amendment 5; awaiting independent verification",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      },
+      "amendment_sequence": 6
+    },
+    {
+      "id": "D-004-R281",
+      "text": "Use the next checkpoint only if the established checkpoint policy actually requires one - do not assume or pre-reserve CP-0034. Clean only the branches/worktrees created by this task.",
+      "source_ref": "source-006-amendment.md#phase-8",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T028"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [],
+        "lifecycle_events": [
+          "gate",
+          "accept"
+        ],
+        "effective_date": "2026-07-29"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured by amendment 5; awaiting independent verification",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      },
+      "amendment_sequence": 6
+    },
+    {
+      "id": "D-004-R282",
+      "text": "Do not accept M0-T027 or start its Step 4 merely because the rerun passed. Any M0-T027 lifecycle transition beyond removing the B-015 condition requires reconciliation with its still-unproduced Step-4 evidence and a separate owner authorization.",
+      "source_ref": "source-006-amendment.md#phase-8",
+      "classification": "prohibition",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T027",
+          "M0-T028"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [
+          "project-control/tasks/M0-T027.json"
+        ],
+        "lifecycle_events": [
+          "gate",
+          "accept"
+        ],
+        "effective_date": "2026-07-29"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured by amendment 5; awaiting independent verification",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      },
+      "amendment_sequence": 6
+    },
+    {
+      "id": "D-004-R283",
+      "text": "Return a concise but complete packet containing: (1) final main SHA; (2) PR numbers and merge SHAs; (3) corrected M0-T028 dependency state; (4) D-004 amendment and requirement-row range; (5) frozen implementation SHA; (6) H1 or H2 result with primary-evidence location; (7) exact fix; (8) exact changed-file inventory; (9) test and CI results; (10) independent reviewer verdicts; (11) fresh-session sentinel result; (12) B-015 status and audit entry; (13) M0-T028 lifecycle state; (14) M0-T027 lifecycle state; (15) current accepted-task count/checkpoint; (16) confirmation that every unrelated hold remains unchanged; (17) confirmation of no M0-T025 change, no effort key, no machine-specific tracked allow rules, no product change, no Agent Teams adoption, no Step 4/5, no Graphify, and no expansion work.",
+      "source_ref": "source-006-amendment.md#final-return-packet",
+      "classification": "return",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "D-004-PROCESS",
+          "M0-T027",
+          "M0-T028"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [],
+        "lifecycle_events": [
+          "gate",
+          "accept"
+        ],
+        "effective_date": "2026-07-29"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured by amendment 5; awaiting independent verification",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      },
+      "amendment_sequence": 6
+    },
+    {
+      "id": "D-004-R284",
+      "text": "Stop and report rather than improvise if: current main cannot be reconciled; the dependency-deadlock correction conflicts with an authoritative rule; required changes escape M0-T028's authorized paths; H1 is proven and prevention cannot be implemented; a detection-only design would be necessary; actual teammate payload evidence cannot be captured safely; any permission prompt writes tracked allow rules; any effort key appears; an expected reviewer model cannot be explicitly selected; a sentinel or unexpected file appears outside the bounded test; any test, CI check, security review, or directive verification is non-green; any prior D-004 source/pilot evidence would need rewriting; M0-T025 or product code would need modification; freshness would have to be simulated without a truly new session.",
+      "source_ref": "source-006-amendment.md#stop-conditions",
+      "classification": "sequencing",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "D-004-PROCESS",
+          "M0-T027",
+          "M0-T028"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [],
+        "lifecycle_events": [
+          "capture",
+          "claim",
+          "progress",
+          "submit",
+          "gate",
+          "accept"
+        ],
+        "effective_date": "2026-07-29"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured by amendment 5; awaiting independent verification",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      },
+      "amendment_sequence": 6
+    },
+    {
+      "id": "D-004-R285",
+      "text": "Do not begin unrelated work after the return packet.",
+      "source_ref": "source-006-amendment.md#stop-conditions",
+      "classification": "prohibition",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "D-004-PROCESS",
+          "M0-T028"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [],
+        "lifecycle_events": [
+          "capture",
+          "claim",
+          "progress",
+          "submit",
+          "gate",
+          "accept"
+        ],
+        "effective_date": "2026-07-29"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured by amendment 5; awaiting independent verification",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      },
+      "amendment_sequence": 6
+    },
+    {
+      "id": "D-004-R286",
+      "text": "Answer in the return packet the owner's trailing question ('ALSO COFRIM IF LOWER END WORKERS ARE USING OPUS 4.8 HIGH'): confirm whether producer-class workers are spawned on Opus 4.8 per D-004-R091/R162, and answer the 'HIGH' effort aspect honestly - effort is session-global with no per-spawn control, the session effort stays xhigh unchanged, and no effort key is ever written (D-004-R096/R124/R159).",
+      "source_ref": "source-006-amendment.md#trailing-question",
+      "classification": "return",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "D-004-PROCESS",
+          "M0-T028"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [],
+        "lifecycle_events": [
+          "gate",
+          "accept"
+        ],
+        "effective_date": "2026-07-29"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured by amendment 5; awaiting independent verification",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      },
+      "amendment_sequence": 6
     }
   ],
   "amendments_applied": [
     "source-002-amendment.md",
     "source-003-amendment.md",
     "source-004-amendment.md",
-    "source-005-amendment.md"
+    "source-005-amendment.md",
+    "source-006-amendment.md"
   ]
 }

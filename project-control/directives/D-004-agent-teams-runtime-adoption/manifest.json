@@ -1,7 +1,7 @@
 {
   "schema": "directive_manifest/v1",
   "directive_id": "D-004",
-  "version": 5,
+  "version": 6,
   "slug": "agent-teams-runtime-adoption",
   "title": "Agent-teams runtime adoption, staged with pilots",
   "status": "active",
@@ -49,18 +49,28 @@
       "amends": "source-001.md",
       "recorded_at": "2026-07-24T00:00:00+00:00",
       "content_digest_sha256": "518348c3a878803a4bcbf1148bed421e22fa50e4d09bee831c01547fd777611f"
+    },
+    {
+      "file": "source-006-amendment.md",
+      "kind": "amendment",
+      "sequence": 6,
+      "amends": "source-001.md",
+      "recorded_at": "2026-07-29T00:00:00+00:00",
+      "content_digest_sha256": "4f697eb9cfead699bf3bd963cb6575fc81c34da78e603e5ea1c7aa66d5d8a89a"
     }
   ],
   "amendments": [
     "source-002-amendment.md",
     "source-003-amendment.md",
     "source-004-amendment.md",
-    "source-005-amendment.md"
+    "source-005-amendment.md",
+    "source-006-amendment.md"
   ],
   "supersedes": [],
   "superseded_by": null,
   "affected_tasks": [
-    "M0-T027"
+    "M0-T027",
+    "M0-T028"
   ],
   "affected_prs": [],
   "affected_branches": [],
@@ -85,9 +95,9 @@
   },
   "applicability_note": "PHASE0 requirements (task_ids=[D-004-PHASE0], a non-ledger sentinel) are the orient/verify/persist actions performed at capture time in this session. PROCESS requirements (task_ids=[D-004-PROCESS], a non-ledger sentinel) are the standing constraints and stop discipline that bind every phase and are checked against primary repository evidence at the final independent directive verification. The three ledger IDs in scope are RESERVED, not yet contracted: M0-T027 = pilot-governance control task (Steps 1, 2, 4 evidence), M0-T028 = producer-confinement control task (Step 3), M0-T029 = adoption task (Step 5). Each is contracted only on the owner's explicit GO for its step; if a reserved ID cannot be used, an append-only source-00N-amendment.md records the reassignment. M0-T025 is out of scope and must not be touched (D-004-R022/R053).",
   "owner_approval": {
-    "state": "step_1_accepted_step_2_authorized",
-    "decision": "Staged pilots, each gated on an explicit owner GO. Step 1 is COMPLETE and its evidence is ACCEPTED AS-IS (FAIL/FAIL/PASS verdicts, off-policy Sonnet spawns, and the sentinel escape all stand as recorded; the UNVERIFIABLE byte-identity finding is accepted with no remediation). Step 2 is AUTHORIZED NOW, deliberately before the B-015 fix, under explicit safeguards. B-015's diagnosis and fix are assigned to M0-T028, whose packet must be presented for owner review before it starts. The effort hold is CLOSED (xhigh, session-global, unchanged; the agent never writes an effort key). Steps 3, 4, and 5 remain un-authorized.",
-    "decided_at": "2026-07-24",
+    "state": "step_1_accepted_step_2_complete_step_3_authorized",
+    "decision": "Staged pilots, each gated on an explicit owner GO. Step 1 is COMPLETE and its evidence is ACCEPTED AS-IS. Step 2 is COMPLETE (probe FAILED the REMAIN criterion; cwd resets to the primary checkout before every teammate Bash call). STEP 3 IS AUTHORIZED (2026-07-29, source-006): execute M0-T028 only, subject to mandatory packet corrections (the M0-T027 dependency-deadlock removal), primary-evidence H1/H2 diagnosis, prevention-only fix (detection-only requires a new owner GO), the R100/R101 ride-alongs, independent review at a frozen SHA, protected-main merge, and a mandatory fresh-session end-to-end sentinel rerun before B-015 closure or acceptance. Steps 4 and 5 remain un-authorized.",
+    "decided_at": "2026-07-29",
     "merge_authorized": false,
     "accept_authorized": false,
     "authorizes": [
@@ -98,7 +108,11 @@
       "record source-004 amendment 3: the conditional Step-1 GO - contract M0-T027, commit the D-004 capture + M0-T027 packet together via the protected-main workflow, run the read-only reviewer pilot with the independently verified sentinel negative test, then present evidence and STOP",
       "record source-005 amendment 4: Step-1 acceptance, the R095 confirmation, the B-015 ratification with expanded M0-T028 scope, the Step-2 GO with safeguards, the effort decision, the spawn-model mechanism, and the R112 closure",
       "execute D-004 Step 2 (no-write worktree capability probe) under the item-4 safeguards, with the probe report written under M0-T027 while it remains blocked",
-      "author and PRESENT the M0-T028 packet for owner review (presentation only, not a start)"
+      "author and PRESENT the M0-T028 packet for owner review (presentation only, not a start)",
+      "record source-006 amendment 5: the explicit owner GO for D-004 Step 3/M0-T028 only, with mandatory packet corrections and staged phases 0-8",
+      "correct the M0-T028 packet before G0/claim: remove the M0-T027 dependency deadlock, keep M0-T027 as causal predecessor only, assign an existing qualified producer distinct from every reviewer",
+      "execute D-004 Step 3/M0-T028: primary-evidence B-015 diagnosis (H1 vs H2), a prevention fix only if repairable inside M0-T028's authorized surfaces, the R100/R101 ride-alongs, independent review, protected-main implementation merge",
+      "close B-015 and accept M0-T028 ONLY after the mandatory fresh-session end-to-end sentinel rerun passes with every contracted requirement green"
     ],
     "prohibits": [
       "starting Step 1, 2, 3, 4, or 5 without the owner's explicit GO for that step",
@@ -120,7 +134,13 @@
       "starting, claiming, or dispatching M0-T028 before the owner reviews its packet",
       "advancing M0-T027 past blocked, or accepting it, before the on-policy re-run passes",
       "writing an effort key anywhere, ever",
-      "spawning any teammate without an explicit model value"
+      "spawning any teammate without an explicit model value",
+      "any D-004 Step 4 or Step 5 work, M0-T029, producer waves, or automatic Agent Teams injection under this GO",
+      "any detection-only substitute without a new owner decision (H1 or detection-only = STOP)",
+      "using an Agent Teams writing producer while B-015 is open",
+      "closing B-015, accepting M0-T028, claiming the live sentinel passed, or creating a final checkpoint before the fresh-session rerun passes",
+      "accepting M0-T027 or starting its Step 4 merely because the fresh-session rerun passed",
+      "touching M0-T019/PR #64, M0-T025, second-wave product tasks, expansion/survey/Graphify surfaces, product code under M2-M7, or any deployment/hold release under this GO"
     ]
   },
   "lifecycle_state": "active",
@@ -130,10 +150,13 @@
   "final_reviewed_manifest_sha256": null,
   "enforcement_pointers": {
     "tasks": [
-      "M0-T027"
+      "M0-T027",
+      "M0-T028"
     ],
     "gates": [],
-    "blockers": [],
+    "blockers": [
+      "B-015"
+    ],
     "rules": [
       ".claude/rules/project-control.md",
       ".claude/ORCHESTRATION_POLICY.md"
@@ -149,10 +172,11 @@
     "Amendment 1 (source-002, rows R087-R095) supersedes the VALUE clause of D-004-R081 only (teammateDefaultModel: null -> Opus 4.8 as the global teammate fallback) and re-affirms R081's prohibition clause unchanged. The owner's text cites R083; R083 has no value or prohibition clause and the quoted clauses are verbatim R081, so the supersession is recorded against R081 with the discrepancy raised as the OPEN row D-004-R095. No pre-existing row was edited.",
     "Amendment 2 (source-003, rows R096-R104): effort application is on a standing hold; the item-3 findings are held OUTSIDE the repository (scratchpad + orchestrator memory, no new tracked files); M0-T027 is contracted and committed with the capture on the Step-1 GO next session; two ride-along items are reserved for M0-T028's future scope (space-safe hook commands; .gitignore entry for .claude/settings.local.json); Step 1 is not started in the capture session.",
     "Amendment 3 (source-004, rows R105-R128): new-session bootstrap plus the CONDITIONAL Step-1 GO. Machine verification recorded: agent-teams env flag active, CLI 2.1.219 >= 2.1.178, project path renamed space-free, machine-global hooks block removed owner-side. OPEN NOTE carried on D-004-R112: UserPromptSubmit (and SessionStart) run clean, but PostToolUse and Stop are not registered in ANY settings file after that removal, so they cannot be shown running and cannot error; zero hooks errored, so the R113 STOP condition did not trigger. Flag-3 option (a) executed: M0-T027 contracted and committed together with this capture. Effort remains on the absolute R096/R124 hold - no effort setting applied anywhere.",
-    "Amendment 4 (source-005, rows R129-R167): owner decisions on the Step-1 STOP. Step-1 evidence ACCEPTED AS-IS with no re-run now; the on-policy re-run is deferred until after the B-015 fix merges and then doubles as that fix's end-to-end acceptance test (same three roles, then-current head, explicit Fable 5 per spawn, sentinel repeated, denial independently verified). D-004-R095 is CLOSED by owner confirmation that R081 was the intended row (recorded at R138; R095's own row is not edited). B-015 RATIFIED; its diagnosis/fix plus the R100 and R101 ride-alongs and the index.json affected_tasks correction are assigned to M0-T028, which must NOT start before the owner reviews its packet. STEP 2 AUTHORIZED under safeguards (pre-created worktrees, no Write/Edit tools, Bash limited to pwd/git inspection, post-attestation dirt sweep recorded before teardown, stop on any unexpected file). EFFORT HOLD CLOSED: xhigh stays, session-global, unchanged; MAX rejected; the agent never writes an effort key (R159, permanent). SPAWN MODEL RULE: every teammate spawn passes an explicit model value - Fable 5 for gate-class reviewers, Opus 4.8 for producers; teammateDefaultModel is set only at Step 5 via /config. D-004-R112 CLOSED: PostToolUse/Stop are intentionally unregistered machine-side."
+    "Amendment 4 (source-005, rows R129-R167): owner decisions on the Step-1 STOP. Step-1 evidence ACCEPTED AS-IS with no re-run now; the on-policy re-run is deferred until after the B-015 fix merges and then doubles as that fix's end-to-end acceptance test (same three roles, then-current head, explicit Fable 5 per spawn, sentinel repeated, denial independently verified). D-004-R095 is CLOSED by owner confirmation that R081 was the intended row (recorded at R138; R095's own row is not edited). B-015 RATIFIED; its diagnosis/fix plus the R100 and R101 ride-alongs and the index.json affected_tasks correction are assigned to M0-T028, which must NOT start before the owner reviews its packet. STEP 2 AUTHORIZED under safeguards (pre-created worktrees, no Write/Edit tools, Bash limited to pwd/git inspection, post-attestation dirt sweep recorded before teardown, stop on any unexpected file). EFFORT HOLD CLOSED: xhigh stays, session-global, unchanged; MAX rejected; the agent never writes an effort key (R159, permanent). SPAWN MODEL RULE: every teammate spawn passes an explicit model value - Fable 5 for gate-class reviewers, Opus 4.8 for producers; teammateDefaultModel is set only at Step 5 via /config. D-004-R112 CLOSED: PostToolUse/Stop are intentionally unregistered machine-side.",
+    "Amendment 5 (source-006, rows D-004-R168-R286): explicit owner GO for D-004 Step 3/M0-T028 only, captured 2026-07-29 at head e5d95b6c58d0d825feb52044d14892035edb9b47 (post PR #119; live-reconciled). Records: the M0-T027/M0-T028 dependency-deadlock correction (M0-T027 removed from the dependencies array, preserved as causal predecessor only, no replacement dependency); the sentinel acceptance clarification (Write/Edit blocked by tool-unavailability is reported honestly as such; the Bash redirection is the load-bearing PreToolUse test and must be denied by readonly_agent_guard.py itself; the orchestrator independently verifies absence); the two-session execution boundary; no detection-only fallback without a new owner decision; explicit model per teammate spawn (Fable 5 gate-class reviewers, Opus 4.8 producers); no machine-specific settings or permission rules in tracked configuration; all unrelated holds standing. affected_tasks corrected to [M0-T027, M0-T028] here and in index.json via the canonical process (satisfies the R144 lane at capture time). The owner's trailing model/effort question is answered as a return-packet item; no effort key is written (R159 permanent)."
   ],
   "created_at": "2026-07-24T00:00:00+00:00",
-  "updated_at": "2026-07-24T00:00:00+00:00",
+  "updated_at": "2026-07-29T00:00:00+00:00",
   "audit_log": [
     {
       "at": "2026-07-24T00:00:00+00:00",
@@ -178,6 +202,11 @@
       "at": "2026-07-24T00:00:00+00:00",
       "by": "orchestrator",
       "note": "Amendment 4 recorded append-only: source-005-amendment.md registered (sequence 5); rows D-004-R129..R167 appended; rows R001-R128 asserted byte-identical by sorted-key comparison before/after the append; manifest.amendments[] and locked_requirement_ids extended to 167; id + content digests recomputed. Owner decisions captured: Step-1 evidence accepted as-is (no re-run now), R095 closed in favour of R081, B-015 ratified and assigned to M0-T028 (packet presented before start), Step 2 authorized under safeguards, effort hold closed at xhigh with a permanent no-write prohibition, spawn model rule recorded, R112 closed. No effort setting applied anywhere. M0-T025 untouched. No existing requirement row edited."
+    },
+    {
+      "at": "2026-07-29T00:00:00+00:00",
+      "by": "orchestrator",
+      "note": "Amendment 5 recorded append-only: source-006-amendment.md registered (kind=amendment, amends source-001.md, sequence 6); rows D-004-R168..R286 appended; rows R001-R167 asserted byte-identical by sorted-key comparison before/after the append; manifest.amendments[] and locked_requirement_ids extended to 286; id + content digests recomputed. M0-T028 packet corrected pre-G0 per Phase 1 (dependency deadlock removed with explanation in dependency_note; producer backend-engineer assigned after roster inspection, distinct from all four reviewers; owner_review_state moved to APPROVED only after the corrected packet matched the directive). affected_tasks and index.json corrected to honestly list M0-T027 + M0-T028. Verification row for M0-T028 created pending with registry-derived applicable ids. No existing requirement row edited; no effort setting applied anywhere; M0-T025 untouched."
     }
   ],
   "locked_requirement_ids": [
@@ -347,8 +376,127 @@
     "D-004-R164",
     "D-004-R165",
     "D-004-R166",
-    "D-004-R167"
+    "D-004-R167",
+    "D-004-R168",
+    "D-004-R169",
+    "D-004-R170",
+    "D-004-R171",
+    "D-004-R172",
+    "D-004-R173",
+    "D-004-R174",
+    "D-004-R175",
+    "D-004-R176",
+    "D-004-R177",
+    "D-004-R178",
+    "D-004-R179",
+    "D-004-R180",
+    "D-004-R181",
+    "D-004-R182",
+    "D-004-R183",
+    "D-004-R184",
+    "D-004-R185",
+    "D-004-R186",
+    "D-004-R187",
+    "D-004-R188",
+    "D-004-R189",
+    "D-004-R190",
+    "D-004-R191",
+    "D-004-R192",
+    "D-004-R193",
+    "D-004-R194",
+    "D-004-R195",
+    "D-004-R196",
+    "D-004-R197",
+    "D-004-R198",
+    "D-004-R199",
+    "D-004-R200",
+    "D-004-R201",
+    "D-004-R202",
+    "D-004-R203",
+    "D-004-R204",
+    "D-004-R205",
+    "D-004-R206",
+    "D-004-R207",
+    "D-004-R208",
+    "D-004-R209",
+    "D-004-R210",
+    "D-004-R211",
+    "D-004-R212",
+    "D-004-R213",
+    "D-004-R214",
+    "D-004-R215",
+    "D-004-R216",
+    "D-004-R217",
+    "D-004-R218",
+    "D-004-R219",
+    "D-004-R220",
+    "D-004-R221",
+    "D-004-R222",
+    "D-004-R223",
+    "D-004-R224",
+    "D-004-R225",
+    "D-004-R226",
+    "D-004-R227",
+    "D-004-R228",
+    "D-004-R229",
+    "D-004-R230",
+    "D-004-R231",
+    "D-004-R232",
+    "D-004-R233",
+    "D-004-R234",
+    "D-004-R235",
+    "D-004-R236",
+    "D-004-R237",
+    "D-004-R238",
+    "D-004-R239",
+    "D-004-R240",
+    "D-004-R241",
+    "D-004-R242",
+    "D-004-R243",
+    "D-004-R244",
+    "D-004-R245",
+    "D-004-R246",
+    "D-004-R247",
+    "D-004-R248",
+    "D-004-R249",
+    "D-004-R250",
+    "D-004-R251",
+    "D-004-R252",
+    "D-004-R253",
+    "D-004-R254",
+    "D-004-R255",
+    "D-004-R256",
+    "D-004-R257",
+    "D-004-R258",
+    "D-004-R259",
+    "D-004-R260",
+    "D-004-R261",
+    "D-004-R262",
+    "D-004-R263",
+    "D-004-R264",
+    "D-004-R265",
+    "D-004-R266",
+    "D-004-R267",
+    "D-004-R268",
+    "D-004-R269",
+    "D-004-R270",
+    "D-004-R271",
+    "D-004-R272",
+    "D-004-R273",
+    "D-004-R274",
+    "D-004-R275",
+    "D-004-R276",
+    "D-004-R277",
+    "D-004-R278",
+    "D-004-R279",
+    "D-004-R280",
+    "D-004-R281",
+    "D-004-R282",
+    "D-004-R283",
+    "D-004-R284",
+    "D-004-R285",
+    "D-004-R286"
   ],
-  "requirements_id_digest_sha256": "3afbac91e6ee7c1f46be8c1f0025e3f721a34d3d6a1f13c2c0de25713199ddde",
-  "requirements_content_digest_sha256": "68645c810ebb804a1856e9df36578dc6db452ebcbbd32eeb1c6abddc208dfbb9"
+  "requirements_id_digest_sha256": "6fb2c5084603a27d0e8947f95c9fc2da9676f5718847b5d5d1c2e87861faf9e5",
+  "requirements_content_digest_sha256": "35427ed16d667f181d4299f79d5a2aea74eca932f7fd5044eb69e96bab9cb1dd"
 }

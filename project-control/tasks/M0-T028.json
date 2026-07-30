@@ -24,9 +24,7 @@
     "project-control/reports/M0-T028-producer-report.md",
     "project-control/reports/M0-T028-TEAMMATE-PAYLOAD-EVIDENCE.md (the primary H1/H2 evidence)"
   ],
-  "dependencies": [
-    "M0-T027"
-  ],
+  "dependencies": [],
   "allowed_paths": [
     ".claude/hooks/readonly_agent_guard.py",
     ".claude/settings.json",
@@ -67,7 +65,7 @@
     "G3",
     "G5"
   ],
-  "producer_agent": null,
+  "producer_agent": "backend-engineer",
   "reviewer_agents": [
     "security-reviewer",
     "code-reviewer",
@@ -85,7 +83,7 @@
   ],
   "blockers": [],
   "created_at": "2026-07-24T19:36:53.815540+00:00",
-  "updated_at": "2026-07-24T19:36:53.831536+00:00",
+  "updated_at": "2026-07-29T00:00:00+00:00",
   "directive_refs": [
     {
       "directive_id": "D-004",
@@ -100,5 +98,7 @@
     "Never modify AGENT-TEAMS-PILOT-1.md or AGENT-TEAMS-PILOT-2-PROBE.md (D-004-R132).",
     "Never write an effort key anywhere (D-004-R159, permanent)."
   ],
-  "owner_review_state": "PROPOSED - presented for owner review per D-004-R145; NOT started, NOT claimed, NOT dispatched."
+  "owner_review_state": "APPROVED - explicit owner GO for D-004 Step 3 recorded 2026-07-29 in source-006-amendment.md (D-004 amendment 5, rows D-004-R168+). Approval is conditional on the staged execution and stop conditions captured there: corrected packet through a control-plane PR before G0/claim; single-writer implementation; primary-evidence H1/H2 diagnosis; H1 or detection-only = STOP for a new owner decision; independent review at a frozen SHA; protected-main merge; mandatory fresh-session sentinel rerun before B-015 closure or acceptance.",
+  "dependency_note": "Owner directive 2026-07-29 (D-004 source-006, Phase 1): M0-T027 was removed from the formal dependencies array to break a lifecycle deadlock - M0-T027 is blocked until M0-T028 fixes B-015, and the CLI's accept() requires every listed dependency to be accepted, so M0-T028 could never have been accepted as written. M0-T027 remains the causal predecessor: it is the source of the pilot evidence (inputs 2-3), the task affected by B-015, and is referenced throughout the requirement rows - but it is NOT an acceptance prerequisite. No replacement dependency was added: the authoritative project-control model does not require a non-empty dependencies array, and no accepted predecessor is genuinely required by primary evidence (the packet's inputs are all merged main-state artifacts).",
+  "producer_note": "Assigned per source-006 Phase 1 items 6-7 after inspecting .claude/agents/: backend-engineer is an existing producer role (worktree isolation, ADR-005 return protocol) qualified for deterministic Python tooling (produced the accepted M0-T030/M0-T031 tools/ lane) and is distinct from all four independent reviewers (security-reviewer, code-reviewer, control-plane-verifier, directive-compliance-verifier). Dispatched as a background subagent, NOT an Agent Teams teammate (source-006 Phase 3 item 6: no Agent Teams writing producer while B-015 is open); on any producer-class teammate spawn the explicit model is Opus 4.8 (D-004-R091/R162)."
 }
