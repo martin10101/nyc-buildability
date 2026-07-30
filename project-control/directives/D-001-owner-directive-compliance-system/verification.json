@@ -1659,7 +1659,20 @@
           "reviewed_sha": "ed8a6776f89c9f2b17ecad35e528a0180fe6bfd1"
         }
       ]
+    },
+    {
+      "directive_id": "D-001",
+      "task_id": "M0-T033",
+      "applicable_requirement_ids": [],
+      "reviewed_sha": "b3018f38f8d715518e5de17c4d87cc7df69079dd",
+      "reviewed_manifest_sha256": "cd8f93b76116c1e43b84bb0aa54f5ad621ddc16ae5e0a932cdfe86f65a8e1665",
+      "producer": "backend-engineer",
+      "verifier": "directive-compliance-verifier",
+      "schema_version": "directive_verification/v2",
+      "verified_at": "2026-07-30T00:00:00+00:00",
+      "note": "EMPTY-SET verification. M0-T033 cites D-001:ALL, but the CANONICAL RESOLVER derives ZERO D-001 requirements applicable to this packet - all 52 applicable ids are D-004 (D-001 rows are scoped to the D-001 regime tasks, chiefly M0-T023, not to every in-regime task). The independent directive-compliance-verifier established exactly this in section 2 of project-control/reports/M0-T033-directive-verification.md, enumerating the derived set as 52 D-004 ids with zero unresolved. This row exists because accept() fail-closes when a CITED directive has no task_verification row, independently of whether any of its requirements are applicable - correct fail-closed behavior, recorded here honestly rather than by dropping the D-001 citation. Verifier is distinct from the producer backend-engineer.",
+      "requirements": []
     }
   ],
-  "updated_at": "2026-07-23T00:00:00+00:00"
+  "updated_at": "2026-07-30T00:00:00+00:00"
 }
