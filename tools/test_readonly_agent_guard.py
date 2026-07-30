@@ -11,11 +11,25 @@ fix removed NO existing denial and NO existing allow, that non-governed
 lead/producer/orchestrator calls still pass through, and that malformed payloads
 fail closed.
 
+M0-T028 (B-015) additions - fail-closed identity resolution, tested against
+the OBSERVED payload shapes (project-control/reports/
+M0-T028-TEAMMATE-PAYLOAD-EVIDENCE.md): a NAMED spawn's agent_type carries the
+SPAWN NAME (not the role) plus a name-derived agent_id and must fail CLOSED;
+an agent_id-only payload is spawned-unknown (fail closed); a roster producer
+identity (backend-engineer) passes through entirely; the lead (no identity
+keys at all) passes through; an unreadable roster fails closed (proven by
+running a byte-identical copy of the guard from a temp tree with no ../agents
+directory); and the D-004-R100 ride-along - every hook command in
+.claude/settings.json keeps its project-path reference double-quoted so a
+repository path containing a space still resolves to ONE script-path token.
+
 Run: python tools/test_readonly_agent_guard.py
 """
 import json
+import shlex
 import subprocess
 import sys
+import tempfile
 from pathlib import Path
 
 REPO = Path(__file__).resolve().parent.parent
@@ -42,10 +56,10 @@ GOVERNED_ROLES = [
 FAILURES = []
 
 
-def run_guard(payload_obj) -> subprocess.CompletedProcess:
+def run_guard(payload_obj, guard_path=None) -> subprocess.CompletedProcess:
     text = payload_obj if isinstance(payload_obj, str) else json.dumps(payload_obj)
     return subprocess.run(
-        [sys.executable, str(GUARD)],
+        [sys.executable, str(guard_path or GUARD)],
         input=text,
         capture_output=True,
         text=True,
@@ -53,10 +67,10 @@ def run_guard(payload_obj) -> subprocess.CompletedProcess:
     )
 
 
-def decision(payload_obj):
+def decision(payload_obj, guard_path=None):
     """Return 'DENY' or 'ALLOW' for a payload. Deny == exit 0 with a
     permissionDecision:deny JSON body (the guard's contract)."""
-    r = run_guard(payload_obj)
+    r = run_guard(payload_obj, guard_path)
     denied = '"permissionDecision": "deny"' in r.stdout
     return "DENY" if denied else "ALLOW", r
 
@@ -77,13 +91,61 @@ def tool_payload(agent, tool):
     return p
 
 
-def check(name, expect, payload_obj):
-    got, r = decision(payload_obj)
+def check(name, expect, payload_obj, guard_path=None):
+    got, r = decision(payload_obj, guard_path)
     ok = got == expect
     print(f"{'PASS' if ok else 'FAIL'}  {name}"
           + ("" if ok else f"  [expect={expect} got={got} rc={r.returncode}]"))
     if not ok:
         FAILURES.append(name)
+
+
+def check_static(name, ok):
+    print(f"{'PASS' if ok else 'FAIL'}  {name}")
+    if not ok:
+        FAILURES.append(name)
+
+
+def check_settings_commands():
+    """D-004-R100 (AS-5): every hook command in .claude/settings.json is the
+    canonical single-string form with the ${CLAUDE_PROJECT_DIR} project-path
+    reference DOUBLE-QUOTED. Proof: substitute a synthetic project root that
+    CONTAINS A SPACE, shlex-split, and require the script path to survive as
+    ONE token; then substitute the REAL repo root and require that token to
+    be an existing hook file. Independent of the checkout path, so it proves
+    resolution on any machine, including one whose repo path has a space."""
+    data = json.loads(
+        (REPO / ".claude" / "settings.json").read_text(encoding="utf-8"))
+    entries = []
+    for matchers in (data.get("hooks") or {}).values():
+        for matcher in matchers:
+            for hook in matcher.get("hooks") or []:
+                entries.append(hook)
+    check_static("settings: hook entries present", len(entries) >= 1)
+    spaced_root = "/srv/nyc zoning/repo"
+    real_root = str(REPO).replace("\\", "/")
+    for i, hook in enumerate(entries):
+        cmd = hook.get("command") or ""
+        label = f"settings hook #{i}"
+        # The legacy {"command": "python", "args": [...]} split form is
+        # retired; a leftover args list would defeat the quoting proof.
+        check_static(f"{label}: no legacy args list", "args" not in hook)
+        try:
+            spaced = shlex.split(
+                cmd.replace("${CLAUDE_PROJECT_DIR}", spaced_root), posix=True)
+        except ValueError:
+            spaced = []
+        check_static(
+            f"{label}: spaced-root script path survives as ONE token",
+            len(spaced) == 2 and spaced[1].startswith(spaced_root + "/"))
+        try:
+            real = shlex.split(
+                cmd.replace("${CLAUDE_PROJECT_DIR}", real_root), posix=True)
+        except ValueError:
+            real = []
+        check_static(
+            f"{label}: real-root token is an existing hook file",
+            len(real) == 2 and Path(real[1]).is_file())
 
 
 def main() -> int:
@@ -237,6 +299,115 @@ def main() -> int:
     # 6. FAIL CLOSED on malformed payloads.
     check("fail-closed: non-JSON payload", "DENY", "this is not json")
     check("fail-closed: JSON non-object (array)", "DENY", "[1,2,3]")
+
+    # 7. B-015 FIX - the ACTUAL teammate payload shape (M0-T028 primary
+    #    evidence): a NAMED spawn's agent_type carries the SPAWN NAME (not
+    #    the role) plus a name-derived agent_id; the role appears in NO
+    #    payload field. Such an identity is not a roster definition and must
+    #    fail CLOSED: mutations denied, read-only inspection still allowed.
+    TM_NAME = "m0t028-diag-probe"
+    TM_ID = "am0t028-diag-probe-0f3a"
+
+    def teammate_bash(command):
+        p = bash_payload(TM_NAME, command)
+        p["agent_id"] = TM_ID
+        return p
+
+    def teammate_tool(tool):
+        p = tool_payload(TM_NAME, tool)
+        p["agent_id"] = TM_ID
+        return p
+
+    for tool in ["Write", "Edit", "MultiEdit", "NotebookEdit"]:
+        check(f"teammate shape: deny {tool}", "DENY", teammate_tool(tool))
+    check("teammate shape: deny git commit", "DENY",
+          teammate_bash("git commit -m x"))
+    check("teammate shape: deny sentinel redirect", "DENY",
+          teammate_bash("echo escaped > sentinel.txt"))
+    check("teammate shape: deny rm -rf", "DENY", teammate_bash("rm -rf build"))
+    check("teammate shape: deny project_control accept", "DENY",
+          teammate_bash("python tools/project_control.py accept M0-T028"))
+    check("teammate shape: deny spaced -C push", "DENY",
+          teammate_bash(f"git -C {DQ} push"))
+    check("teammate shape: allow pwd", "ALLOW", teammate_bash("pwd"))
+    check("teammate shape: allow git status", "ALLOW",
+          teammate_bash("git status"))
+    check("teammate shape: allow git rev-parse HEAD", "ALLOW",
+          teammate_bash("git rev-parse HEAD"))
+    check("teammate shape: allow gh pr view (read)", "ALLOW",
+          teammate_bash("gh pr view 64 --json headRefOid"))
+    check("teammate shape: allow pytest run", "ALLOW",
+          teammate_bash("python -m pytest tools/"))
+
+    # 8. agent_id present WITHOUT agent_type/agentType = spawned-unknown:
+    #    fail CLOSED on mutations, read-only still allowed.
+    def id_only_bash(command):
+        return {"hook_event_name": "PreToolUse", "tool_name": "Bash",
+                "agent_id": "a1b2c3d4e5f6",
+                "tool_input": {"command": command}}
+
+    check("id-only: deny git commit", "DENY", id_only_bash("git commit -m x"))
+    check("id-only: deny redirect to file", "DENY",
+          id_only_bash("echo x > out.txt"))
+    check("id-only: deny Write tool", "DENY",
+          {"hook_event_name": "PreToolUse", "tool_name": "Write",
+           "agent_id": "a1b2c3d4e5f6",
+           "tool_input": {"file_path": "x", "content": "y"}})
+    check("id-only: allow git status", "ALLOW", id_only_bash("git status"))
+    check("id-only: allow pwd", "ALLOW", id_only_bash("pwd"))
+
+    # 9. Roster producer identity (an UNNAMED spawn carries its role in
+    #    agent_type): NOT governed - passes through entirely, mutations
+    #    included, exactly as before the fix.
+    def producer_bash(command):
+        p = bash_payload("backend-engineer", command)
+        p["agent_id"] = "0e1f2a3b4c5d"  # runtime id is present for real spawns
+        return p
+
+    check("producer roster id: mutating git ALLOWED (not governed)", "ALLOW",
+          producer_bash("git commit -m x"))
+    check("producer roster id: spaced -C push ALLOWED (not governed)", "ALLOW",
+          producer_bash(f"git -C {DQ} push"))
+    producer_write = tool_payload("backend-engineer", "Write")
+    producer_write["agent_id"] = "0e1f2a3b4c5d"
+    check("producer roster id: Write tool ALLOWED (not governed)", "ALLOW",
+          producer_write)
+
+    # 9b. Harness built-in agent types are NOT roster definitions -> fail
+    #     closed (intended under ADR-005: only roster identities may write).
+    check("built-in type general-purpose: deny git commit", "DENY",
+          bash_payload("general-purpose", "git commit -m x"))
+    check("built-in type general-purpose: allow git log", "ALLOW",
+          bash_payload("general-purpose", "git log --oneline -5"))
+
+    # 10. Lead/main session payload carries NO identity key at all (observed
+    #     baseline shape) -> passes through even for mutations.
+    check("lead shape (no identity keys): mutation allowed", "ALLOW",
+          {"hook_event_name": "PreToolUse", "tool_name": "Bash",
+           "session_id": "s", "prompt_id": "p", "cwd": "/srv/repo",
+           "tool_input": {"command": "git commit -m x"}})
+
+    # 11. ROSTER-READ FAILURE fails CLOSED. The guard resolves the roster
+    #     RELATIVE to its own file, so running a byte-identical COPY of the
+    #     guard from a temp tree with no `../agents` directory exercises the
+    #     real missing-roster path through this same subprocess harness (no
+    #     monkeypatching or in-process import needed).
+    with tempfile.TemporaryDirectory() as td:
+        hooks_dir = Path(td) / "hooks"
+        hooks_dir.mkdir()
+        guard_copy = hooks_dir / "readonly_agent_guard.py"
+        guard_copy.write_bytes(GUARD.read_bytes())
+        check("roster-fail: producer id fails closed (deny commit)", "DENY",
+              producer_bash("git commit -m x"), guard_path=guard_copy)
+        check("roster-fail: producer id read-only still allowed", "ALLOW",
+              producer_bash("git status"), guard_path=guard_copy)
+        check("roster-fail: governed reviewer still denied", "DENY",
+              bash_payload(R, "git commit -m x"), guard_path=guard_copy)
+        check("roster-fail: lead (no identity) still passes", "ALLOW",
+              bash_payload(None, "git commit -m x"), guard_path=guard_copy)
+
+    # 12. D-004-R100 ride-along: settings.json hook commands are space-safe.
+    check_settings_commands()
 
     if FAILURES:
         print(f"\n{len(FAILURES)} FAILURE(S): " + ", ".join(FAILURES))

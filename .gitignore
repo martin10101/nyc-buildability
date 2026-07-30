@@ -60,6 +60,8 @@ blob-report/
 .env
 .env.*
 !.env.example
+# D-004-R101: machine-local Claude Code settings overrides stay untracked
+.claude/settings.local.json
 .DS_Store
 Thumbs.db
 

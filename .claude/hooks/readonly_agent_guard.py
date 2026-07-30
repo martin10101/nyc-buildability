@@ -1,11 +1,28 @@
-"""PreToolUse guard enforcing OPERATIONAL read-only for the reviewer/auditor roles.
+"""PreToolUse guard enforcing OPERATIONAL read-only for spawned agents.
 
 Wired in tracked `.claude/settings.json` as a PreToolUse hook on
-`Bash|Write|Edit|MultiEdit|NotebookEdit`. It enforces ONLY when the invoking
-subagent's `agent_type` is one of the six read-only roles, so it never affects the
-main orchestrator or the isolated-worktree producers (they retain full write/git
-authority). The `agent_type` field is present in the PreToolUse payload for
-subagent tool calls (Claude Code 2.1.x).
+`Bash|Write|Edit|MultiEdit|NotebookEdit`. Observed payload reality (M0-T028
+primary evidence, project-control/reports/M0-T028-TEAMMATE-PAYLOAD-EVIDENCE.md):
+the lead/main session carries NO agent identity key at all (no `agent_type`,
+`agentType`, or `agent_id`); an UNNAMED spawn carries its `.claude/agents/`
+role in `agent_type`; a NAMED spawn carries the runtime SPAWN NAME in
+`agent_type`, and the role is then unrecoverable from any payload field
+(B-015: named reviewer teammates resolved to "ungoverned" and fell through
+the roster check).
+
+Fail-closed identity resolution (B-015 fix):
+- No identity key at all (`agent_type`/`agentType`/`agent_id` all absent or
+  empty) -> pass through (lead/main session; unchanged).
+- Identity in READ_ONLY_AGENTS -> enforce the read-only rules (unchanged).
+- Identity equal to another KNOWN `.claude/agents/` roster definition -> pass
+  through (write-authorized producer/specialist, e.g. backend-engineer). The
+  roster is listed at runtime from the agents directory resolved RELATIVE to
+  this file, never a hardcoded machine path; if it cannot be read, the roster
+  is EMPTY and every spawned identity fails closed.
+- Identity present but NOT a known roster definition (any arbitrary spawn
+  name, harness built-in agent types) -> enforce the read-only rules (fail
+  closed). An unidentifiable spawned agent must never mutate; writing
+  producers must be spawned UNNAMED so their roster identity resolves.
 
 Enforcement (2.1.x PreToolUse blocking contract):
 - Any file-mutation tool (Write/Edit/MultiEdit/NotebookEdit) -> DENY.
@@ -30,6 +47,7 @@ import json
 import re
 import shlex
 import sys
+from pathlib import Path
 
 READ_ONLY_AGENTS = frozenset(
     {
@@ -44,6 +62,33 @@ READ_ONLY_AGENTS = frozenset(
 )
 
 WRITE_TOOLS = frozenset({"Write", "Edit", "MultiEdit", "NotebookEdit"})
+
+
+def _known_roster_agents():
+    """The `.claude/agents/` roster (file stems), listed at runtime from the
+    agents directory resolved RELATIVE to this hook file - never a hardcoded
+    machine path - so every checkout/worktree resolves its own roster. Any
+    read failure (missing dir, OSError) returns an EMPTY roster: spawned
+    identities then fail CLOSED, never open."""
+    try:
+        agents_dir = Path(__file__).resolve().parent.parent / "agents"
+        return {p.stem for p in agents_dir.iterdir()
+                if p.is_file() and p.suffix == ".md"}
+    except OSError:
+        return set()
+
+
+def _identity(payload, key):
+    """String form of a payload identity field ('' when absent/None). A
+    non-string truthy value is coerced to str so a malformed identity still
+    resolves to spawned-unknown (fail closed) instead of crashing the hook
+    (a crashed hook is a non-blocking error, i.e. fails OPEN)."""
+    value = payload.get(key)
+    if isinstance(value, str):
+        return value.strip()
+    if value is None:
+        return ""
+    return str(value).strip()
 
 # Repository / GitHub / control-plane / filesystem mutation. Read-only git
 # (status/log/show/diff/rev-parse/ls-*/cat-file/blame/branch --list/worktree list/
@@ -299,19 +344,32 @@ def main():
         # Malformed / non-object event on a guarded tool: fail CLOSED.
         _deny("read-only guard: unparseable PreToolUse payload (fail-closed)")
         return 0
-    agent = (payload.get("agent_type") or payload.get("agentType") or "").strip()
-    # Only govern the six read-only roles. Main session / producers pass through.
-    if agent not in READ_ONLY_AGENTS:
+    # Fail-closed identity resolution (B-015 fix; see module docstring).
+    agent = _identity(payload, "agent_type") or _identity(payload, "agentType")
+    agent_id = _identity(payload, "agent_id")
+    if not agent and not agent_id:
+        # No agent identity key of any kind: the lead/main session (the only
+        # payload shape observed without identity). Pass through.
         return 0
+    if agent not in READ_ONLY_AGENTS:
+        if agent and agent in _known_roster_agents():
+            # A KNOWN roster definition outside READ_ONLY_AGENTS is a
+            # write-authorized producer/specialist (unnamed spawn): pass through.
+            return 0
+        # Identity present but NOT a roster definition (a named spawn, a
+        # harness built-in type, or an unreadable roster): FAIL CLOSED -
+        # govern it below exactly like a read-only role. An unidentifiable
+        # spawned agent must never mutate.
+    who = agent or agent_id
     tool = payload.get("tool_name") or ""
     if tool in WRITE_TOOLS:
-        _deny(f"'{agent}' is operationally read-only and may not use {tool}.")
+        _deny(f"'{who}' is operationally read-only and may not use {tool}.")
         return 0
     if tool == "Bash":
         cmd = (payload.get("tool_input") or {}).get("command") or ""
         if _MUTATING.search(cmd) or _REDIRECT.search(cmd) or _git_argv_mutates(cmd):
             _deny(
-                f"'{agent}' is operationally read-only: repository/GitHub/control-plane "
+                f"'{who}' is operationally read-only: repository/GitHub/control-plane "
                 "mutation and shell file-writes are blocked. Read-only git inspection, "
                 "gh reads, and test execution are allowed; return findings via SendMessage."
             )
