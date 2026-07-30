@@ -68,6 +68,7 @@ not imports, precisely so they stay out of every session's base context.
 | Product flow / AI boundaries | `docs/PRODUCT_FLOW_AND_AI_BOUNDARIES.md` |
 | Thin-client / storage limits | `docs/LOW_STORAGE_CLOUD_DEVELOPMENT_POLICY.md` |
 | Parallel / multi-agent execution | `.claude/ORCHESTRATION_POLICY.md` |
+| Code navigation (dependency/impact, who-consumes, traces) — selective, advisory | tools/code_graph/README.md |
 
 Path-scoped rules in `.claude/rules/` auto-load when you touch their paths (project-control, apps/web,
 services/api, geospatial data, legal/rules, deployment). The five standard workflows are on-demand
