@@ -1,0 +1,28 @@
+{
+ "task_id": "M0-T031",
+ "directive_id": "D-005",
+ "reviewed_sha": "60ea27ea2154871d7abb903a83c5e3fd4b4307e0",
+ "requirements": {
+  "D-005-R090": "tools/code_graph hardening + guidance at reviewed head 1891ef3 (merged 60ea27e): 36/36 tests, --check PASS fp 21aa77fb90376adc, context budget PASS; gate reports M0-T031-G3/G4/G5 + M0-T031-dcv.md (21/21 PASS)",
+  "D-005-R091": "tools/code_graph hardening + guidance at reviewed head 1891ef3 (merged 60ea27e): 36/36 tests, --check PASS fp 21aa77fb90376adc, context budget PASS; gate reports M0-T031-G3/G4/G5 + M0-T031-dcv.md (21/21 PASS)",
+  "D-005-R092": "tools/code_graph hardening + guidance at reviewed head 1891ef3 (merged 60ea27e): 36/36 tests, --check PASS fp 21aa77fb90376adc, context budget PASS; gate reports M0-T031-G3/G4/G5 + M0-T031-dcv.md (21/21 PASS)",
+  "D-005-R093": "tools/code_graph hardening + guidance at reviewed head 1891ef3 (merged 60ea27e): 36/36 tests, --check PASS fp 21aa77fb90376adc, context budget PASS; gate reports M0-T031-G3/G4/G5 + M0-T031-dcv.md (21/21 PASS)",
+  "D-005-R094": "tools/code_graph hardening + guidance at reviewed head 1891ef3 (merged 60ea27e): 36/36 tests, --check PASS fp 21aa77fb90376adc, context budget PASS; gate reports M0-T031-G3/G4/G5 + M0-T031-dcv.md (21/21 PASS)",
+  "D-005-R095": "tools/code_graph hardening + guidance at reviewed head 1891ef3 (merged 60ea27e): 36/36 tests, --check PASS fp 21aa77fb90376adc, context budget PASS; gate reports M0-T031-G3/G4/G5 + M0-T031-dcv.md (21/21 PASS)",
+  "D-005-R096": "tools/code_graph hardening + guidance at reviewed head 1891ef3 (merged 60ea27e): 36/36 tests, --check PASS fp 21aa77fb90376adc, context budget PASS; gate reports M0-T031-G3/G4/G5 + M0-T031-dcv.md (21/21 PASS)",
+  "D-005-R097": "tools/code_graph hardening + guidance at reviewed head 1891ef3 (merged 60ea27e): 36/36 tests, --check PASS fp 21aa77fb90376adc, context budget PASS; gate reports M0-T031-G3/G4/G5 + M0-T031-dcv.md (21/21 PASS)",
+  "D-005-R098": "tools/code_graph hardening + guidance at reviewed head 1891ef3 (merged 60ea27e): 36/36 tests, --check PASS fp 21aa77fb90376adc, context budget PASS; gate reports M0-T031-G3/G4/G5 + M0-T031-dcv.md (21/21 PASS)",
+  "D-005-R099": "tools/code_graph hardening + guidance at reviewed head 1891ef3 (merged 60ea27e): 36/36 tests, --check PASS fp 21aa77fb90376adc, context budget PASS; gate reports M0-T031-G3/G4/G5 + M0-T031-dcv.md (21/21 PASS)",
+  "D-005-R100": "tools/code_graph hardening + guidance at reviewed head 1891ef3 (merged 60ea27e): 36/36 tests, --check PASS fp 21aa77fb90376adc, context budget PASS; gate reports M0-T031-G3/G4/G5 + M0-T031-dcv.md (21/21 PASS)",
+  "D-005-R101": "tools/code_graph hardening + guidance at reviewed head 1891ef3 (merged 60ea27e): 36/36 tests, --check PASS fp 21aa77fb90376adc, context budget PASS; gate reports M0-T031-G3/G4/G5 + M0-T031-dcv.md (21/21 PASS)",
+  "D-005-R102": "tools/code_graph hardening + guidance at reviewed head 1891ef3 (merged 60ea27e): 36/36 tests, --check PASS fp 21aa77fb90376adc, context budget PASS; gate reports M0-T031-G3/G4/G5 + M0-T031-dcv.md (21/21 PASS)",
+  "D-005-R103": "tools/code_graph hardening + guidance at reviewed head 1891ef3 (merged 60ea27e): 36/36 tests, --check PASS fp 21aa77fb90376adc, context budget PASS; gate reports M0-T031-G3/G4/G5 + M0-T031-dcv.md (21/21 PASS)",
+  "D-005-R104": "tools/code_graph hardening + guidance at reviewed head 1891ef3 (merged 60ea27e): 36/36 tests, --check PASS fp 21aa77fb90376adc, context budget PASS; gate reports M0-T031-G3/G4/G5 + M0-T031-dcv.md (21/21 PASS)",
+  "D-005-R105": "tools/code_graph hardening + guidance at reviewed head 1891ef3 (merged 60ea27e): 36/36 tests, --check PASS fp 21aa77fb90376adc, context budget PASS; gate reports M0-T031-G3/G4/G5 + M0-T031-dcv.md (21/21 PASS)",
+  "D-005-R106": "tools/code_graph hardening + guidance at reviewed head 1891ef3 (merged 60ea27e): 36/36 tests, --check PASS fp 21aa77fb90376adc, context budget PASS; gate reports M0-T031-G3/G4/G5 + M0-T031-dcv.md (21/21 PASS)",
+  "D-005-R107": "tools/code_graph hardening + guidance at reviewed head 1891ef3 (merged 60ea27e): 36/36 tests, --check PASS fp 21aa77fb90376adc, context budget PASS; gate reports M0-T031-G3/G4/G5 + M0-T031-dcv.md (21/21 PASS)",
+  "D-005-R108": "tools/code_graph hardening + guidance at reviewed head 1891ef3 (merged 60ea27e): 36/36 tests, --check PASS fp 21aa77fb90376adc, context budget PASS; gate reports M0-T031-G3/G4/G5 + M0-T031-dcv.md (21/21 PASS)",
+  "D-005-R109": "tools/code_graph hardening + guidance at reviewed head 1891ef3 (merged 60ea27e): 36/36 tests, --check PASS fp 21aa77fb90376adc, context budget PASS; gate reports M0-T031-G3/G4/G5 + M0-T031-dcv.md (21/21 PASS)",
+  "D-005-R110": "tools/code_graph hardening + guidance at reviewed head 1891ef3 (merged 60ea27e): 36/36 tests, --check PASS fp 21aa77fb90376adc, context budget PASS; gate reports M0-T031-G3/G4/G5 + M0-T031-dcv.md (21/21 PASS)"
+ }
+}

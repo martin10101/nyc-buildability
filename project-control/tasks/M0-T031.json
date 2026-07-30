@@ -58,15 +58,15 @@
     "G4",
     "G5"
   ],
-  "producer_agent": null,
+  "producer_agent": "backend-engineer",
   "reviewer_agents": [
     "code-reviewer",
     "qa-engineer",
     "security-reviewer",
     "directive-compliance-verifier"
   ],
-  "status": "backlog",
-  "progress_percent": 0,
+  "status": "accepted",
+  "progress_percent": 100,
   "risks": [
     "CLAUDE.md is auto-loaded context guarded by tools/context_budget_check.py - the added row must keep the check PASS or the producer must STOP and report (no trimming of other CLAUDE.md content without owner approval).",
     "SKILL.md guidance must not read as mandatory graph use anywhere (owner clarification 2).",
@@ -75,7 +75,7 @@
   ],
   "blockers": [],
   "created_at": "2026-07-30T02:12:21.545579+00:00",
-  "updated_at": "2026-07-30T02:13:08+00:00",
+  "updated_at": "2026-07-30T02:56:08.718099+00:00",
   "directive_refs": [
     {
       "directive_id": "D-005",
@@ -84,5 +84,17 @@
   ],
   "directive_regime_version": "1.0",
   "directive_regime_entered_at": "2026-07-30T02:12:21.545579+00:00",
-  "allowed_paths_note": "The two guidance surfaces are exactly the ones the accepted decision packet contemplated (section H), adjusted to SELECTIVE routing per amendment-2 clarification 2. The SKILL.md edit is additive prose guidance only - NOT a hook, NOT a config change, NOT a confinement change; G5 must verify the diff is a single additive paragraph."
+  "allowed_paths_note": "The two guidance surfaces are exactly the ones the accepted decision packet contemplated (section H), adjusted to SELECTIVE routing per amendment-2 clarification 2. The SKILL.md edit is additive prose guidance only - NOT a hook, NOT a config change, NOT a confinement change; G5 must verify the diff is a single additive paragraph.",
+  "worktree": ".claude/worktrees/M0-T031-codegraph-hardening",
+  "progress_log": [
+    {
+      "at": "2026-07-30T02:22:05.490885+00:00",
+      "agent": "backend-engineer",
+      "percent": 5,
+      "status": "in_progress",
+      "message": "Owner dispatch GO recorded 2026-07-30: dispatch M0-T031 exactly under the contracted packet, no scope expansion (D-005 amendment 2 execution trigger). Producer dispatched to isolated worktree from cc273b5."
+    }
+  ],
+  "accepted_by": "orchestrator",
+  "accepted_at": "2026-07-30T02:56:08.718099+00:00"
 }
