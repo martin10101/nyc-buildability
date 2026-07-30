@@ -66,7 +66,7 @@
     "directive-compliance-verifier"
   ],
   "status": "claimed",
-  "progress_percent": 10,
+  "progress_percent": 55,
   "risks": [
     "Over-broad fix: a helper rewritten to key on 'producer is orchestrator' alone would silently permit non-governance orchestrator producers. AS-1 and AS-5 are the guards; the four conditions must be conjunctive.",
     "Fail-open on malformed data: treating a non-list reviewer_agents or required_gates as 'empty' could flip a refusal into a pass. AS-6 requires an explanatory refusal, not a traceback and not a silent allow.",
@@ -76,7 +76,7 @@
   ],
   "blockers": [],
   "created_at": "2026-07-30T15:25:04.982247+00:00",
-  "updated_at": "2026-07-30T15:39:03.954249+00:00",
+  "updated_at": "2026-07-30T16:42:24.939627+00:00",
   "directive_refs": [
     {
       "directive_id": "D-001",
@@ -90,5 +90,14 @@
   "directive_regime_version": "1.0",
   "directive_regime_entered_at": "2026-07-30T15:25:04.982247+00:00",
   "allowed_paths_note": "D-004-R342 fixes this task's scope to exactly these paths. docs/GATES_AND_CHECKPOINTS.md is CONDITIONAL: it may be touched ONLY if the corrected semantics actually contradict a stated invariant there; if it does not, the file must remain byte-identical and the producer report must state that explicitly. project-control/tasks/M0-T033.json is an ORCHESTRATOR LIFECYCLE path written only by tools/project_control.py (claim/progress/submit/gate/accept); it is never a producer write target and is listed so a containment diff has no unexplained escape.",
-  "worktree": "task/M0-T033-unblock-roster-semantics"
+  "worktree": "task/M0-T033-unblock-roster-semantics",
+  "progress_log": [
+    {
+      "at": "2026-07-30T16:42:24.939627+00:00",
+      "agent": "orchestrator",
+      "percent": 55,
+      "status": "claimed",
+      "message": "PRODUCER REWORK CYCLE 1 (in-scope; no new directive amendment per explicit owner ruling that this is execution guidance within already-captured scope, NOT a new directive - recorded here rather than as an amendment so the instruction stays traceable without amending the registry).\n\nORCHESTRATOR EXACT-DIFF CONTAINMENT REVIEW of the first producer return, at frozen base 170478efc34e52f3479d9bb0ac914ad0c364b245 in isolated worktree .claude/worktrees/agent-af94933c3b313bae5.\n\nVERIFIED CLEAN (orchestrator re-ran everything independently, did not accept producer claims): containment exact - git status -uall shows only tools/project_control.py, tools/test_project_control.py, project-control/reports/M0-T033-producer-report.md plus 2 own-agent-memory files; docs/GATES_AND_CHECKPOINTS.md byte-identical (git diff --exit-code exit 0); zero M0-T027 occurrences in project_control.py; full suite re-run by the orchestrator = 15/15 groups, S10 executing, exit 0; S10 registered in ALL_TESTS with the summary count computed from len(ALL_TESTS), not hardcoded; guard diff matches the required semantics with the four conditions structurally conjunctive (the orchestrator-producer branch is reachable only AFTER the general usable-reviewer check).\n\nPRODUCER FINDING PRESERVED: the producer identified a genuine PRE-EXISTING FAIL-OPEN defect in the original guard - task.get('reviewer_agents') or [] iterated a bare string 'rev-a' into ['r','e','v','-','a'], every element truthy and unequal to orchestrator/producer, so a malformed packet PASSED the roster check. The fix closes it. Disclosed as a finding, not folded in silently.\n\nDEFECT FOUND, REWORK REQUIRED (D-004-R412 forbids waiving; D-004-R414 makes it in-scope correctable): the R413/R414 execution-proof mechanism is incomplete and its own comment overstates it. tools/test_project_control.py:1644-1650 claims each numbered block records on reaching its end, that the exact expected label sequence is asserted at function end, and that per-block counts print with the OK line. In fact _rec() is called for blocks 1-5 ONLY (lines 1673, 1697, 1710, 1723, 1740); blocks 6-9 and the source-level generality proofs never record; the 'executed' list is appended to but NEVER READ, so no label-sequence assertion exists; and the OK line prints no counts. The uncovered blocks are exactly those proving R352/R367, R368, R369, R370. The tests do genuinely run - the orchestrator confirmed that independently - but the mechanism offered as PROOF of execution does not cover more than half the blocks while asserting that it does. That is presence-of-code standing in for proof-of-execution, the precise failure mode D-004-R413/R414 exist to prevent. Additionally the report's per-requirement mapping stops at R373 and never mentions R413/R414.\n\nREWORK DISPATCHED to the same producer (backend-engineer, explicit Opus 5 under D-004-R307), 8 binding items: every block records; assert the COMPLETE expected label sequence; OK line reports executed AND expected block counts plus per-block case counts; regenerate the evidence mapping from the CANONICAL resolver-derived applicable set (52 ids at this head: R332, R335-R373, R387, R389, R410-R419) rather than a hand-picked range, with orchestrator-scope rows marked not-claimed; negative control in the isolated worktree only (inject one controlled guard defect, prove S10 fails FOR THE EXPECTED REASON, restore, prove S10 and full suite pass, prove the defect is absent from the final diff); re-run containment; preserve the fail-open finding as an explicit disclosure; and leave the R368-vs-R352 asymmetry, the whitespace-stripping tightening, and the AS-11 interpretation OPEN for independent reviewers with no self-certification.\n\nThe orchestrator did NOT fix the defect itself: authoring producer evidence would collapse the producer-versus-orchestrator separation this very task is about. NOTHING IS PORTED until the corrected return is complete (D-004-R417). No gate has been recorded beyond the administrative G0. M0-T027 untouched (D-004-R419); Step 5/M0-T029, M0-T032, M0-T025 not begun (D-004-R420)."
+    }
+  ]
 }
