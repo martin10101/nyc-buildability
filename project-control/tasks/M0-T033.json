@@ -67,8 +67,8 @@
     "control-plane-verifier",
     "directive-compliance-verifier"
   ],
-  "status": "awaiting_gate",
-  "progress_percent": 97,
+  "status": "accepted",
+  "progress_percent": 100,
   "risks": [
     "Over-broad fix: a helper rewritten to key on 'producer is orchestrator' alone would silently permit non-governance orchestrator producers. AS-1 and AS-5 are the guards; the four conditions must be conjunctive.",
     "Fail-open on malformed data: treating a non-list reviewer_agents or required_gates as 'empty' could flip a refusal into a pass. AS-6 requires an explanatory refusal, not a traceback and not a silent allow.",
@@ -78,7 +78,7 @@
   ],
   "blockers": [],
   "created_at": "2026-07-30T15:25:04.982247+00:00",
-  "updated_at": "2026-07-30T18:18:20.191785+00:00",
+  "updated_at": "2026-07-30T18:37:24.351328+00:00",
   "directive_refs": [
     {
       "directive_id": "D-001",
@@ -122,5 +122,7 @@
       "status": "awaiting_gate",
       "message": "EVIDENCE-HYGIENE RECONCILIATION (owner pre-merge check). DETERMINATION: no reviewer evidence is altered; a forward-looking convention is recorded instead.\n\nFINDINGS. (1) Machine-specific paths present as bare file citations in three M0-T033 reports: directive-verification 12, control-plane-verification 11, G3 6; G5 has ZERO. (2) NOT a new exposure: branch-wide 59 tracked files carry the pattern and 56 are ALREADY on public main, going back to M0-T002 across roughly 30 merged reviewer reports; commit author metadata additionally publishes the owner name and email by construction. (3) NOTHING more sensitive than a Windows username plus a local directory path: zero credentials, tokens, secrets, private sources or keys. Every hit on password/secret/token/api_key/service_role/supabase/ghp_/sk-/xox is benign PROSE - the words occur inside the G5 reviewer's own security-sweep grep pattern and in assertion text. All 12 commits on this branch passed the gitleaks pre-commit hook (no leaks found).\n\nREMEDIATION CHOSEN (smallest compliant). Reviewer evidence is NOT altered. Redacting only these three files would be security theater: it cannot un-publish the same username already in 56 files on public main, in existing clones and in the public event log, so it would reduce exposure by zero. Altering the bodies would either break the binding verbatim report-preservation rule or force relabelling evidence that four recorded gates depend on. The compliant minimum is this record plus the convention that NEW reports cite repository-relative paths.\n\nVERIFIER REISSUE: NOT REQUIRED. Nothing sensitive is present, and a sanitized reissue of 3 of 59 files would destroy verbatim provenance for no security gain.\n\nHISTORY REWRITE: NOT REQUIRED AND NOT PERFORMED. No force-push, no history rewrite, no rebase - none was authorized, and rewriting could not recall an already-public username. A normal follow-up commit carries this record.\n\nINVARIANTS RE-VERIFIED AT THIS HEAD: content manifest cd8f93b76116c1e43b84bb0aa54f5ad621ddc16ae5e0a932cdfe86f65a8e1665 UNCHANGED; M0-T027 blob 1d226e997866faca7a2912250984254f7251ddc8 IDENTICAL to origin/main (untouched, D-004-R419).\n\nFORWARD CONVENTION (non-blocking, for future dispatches): reviewer dispatch prompts should ask for repository-relative paths in evidence citations. Retrofitting the 56 already-public files is a separate owner decision and is NOT undertaken here."
     }
-  ]
+  ],
+  "accepted_by": "orchestrator",
+  "accepted_at": "2026-07-30T18:37:24.351328+00:00"
 }
