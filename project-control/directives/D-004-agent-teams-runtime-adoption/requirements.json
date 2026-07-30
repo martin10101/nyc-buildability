@@ -2,9 +2,9 @@
   "schema": "directive_requirements/v1",
   "directive_id": "D-004",
   "version": 1,
-  "requirement_count": 286,
+  "requirement_count": 296,
   "producer": "orchestrator",
-  "updated_at": "2026-07-29T00:00:00+00:00",
+  "updated_at": "2026-07-30T00:00:00+00:00",
   "requirements": [
     {
       "id": "D-004-R001",
@@ -11475,6 +11475,416 @@
         "tasks": []
       },
       "amendment_sequence": 6
+    },
+    {
+      "id": "D-004-R287",
+      "text": "Owner GO (2026-07-30, fresh session): execute D-004 Step 3 Phase 8 ONLY, as orchestrator, exactly per project-control/reports/M0-T028-FRESH-SESSION-CAPSULE.md. This GO authorizes no other step, phase, task, or work item.",
+      "source_ref": "source-007-amendment.md#go",
+      "classification": "authorization",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "D-004-PHASE8"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [],
+        "lifecycle_events": [
+          "capture",
+          "gate",
+          "accept"
+        ],
+        "effective_date": "2026-07-30"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured by amendment 6; verified against primary evidence in the Phase-8 independent verification report",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": [
+          "M0-T028"
+        ]
+      },
+      "amendment_sequence": 7
+    },
+    {
+      "id": "D-004-R288",
+      "text": "Reconcile main live FIRST: git fetch --all --prune; local main == origin/main; confirm main contains merge 9db4ab328ea7e1570e347ae19174041d199aedc8; run project_control.py status and current_state.py; freeze the then-current accepted main head (40 chars) before any Phase-8 action.",
+      "source_ref": "source-007-amendment.md#reconcile-first",
+      "classification": "sequencing",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "D-004-PHASE8"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [],
+        "lifecycle_events": [
+          "capture",
+          "gate",
+          "accept"
+        ],
+        "effective_date": "2026-07-30"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured by amendment 6; verified against primary evidence in the Phase-8 independent verification report",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      },
+      "amendment_sequence": 7
+    },
+    {
+      "id": "D-004-R289",
+      "text": "Prove all four .claude/settings.json hook entries fire in their merged single-string form (G5 correction C1): (a) SessionStart directive_reminder.py shows the directive reminder in session-start context; (b) UserPromptSubmit directive_reminder.py shows it on the first prompt; (c) agent_dispatch_guard.py runs without error on an Agent dispatch; (d) readonly_agent_guard.py denies the reviewer Bash-redirection sentinel. If ANY entry does not fire: STOP; revert that entry to the args-array form via a reviewed control change; do not proceed to acceptance.",
+      "source_ref": "source-007-amendment.md#c1-hooks",
+      "classification": "evidence",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "D-004-PHASE8"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [],
+        "lifecycle_events": [
+          "capture",
+          "gate",
+          "accept"
+        ],
+        "effective_date": "2026-07-30"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured by amendment 6; verified against primary evidence in the Phase-8 independent verification report",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      },
+      "amendment_sequence": 7
+    },
+    {
+      "id": "D-004-R290",
+      "text": "Run the on-policy three-reviewer sentinel rerun (D-004-R134/R135): spawn code-reviewer, control-plane-verifier, and directive-compliance-verifier, each UNNAMED so agent_type carries the role, each with an EXPLICIT Fable 5 model on the spawn, each pinning the frozen head and invoking /run-quality-gate; pre/post dirt sweeps across the primary checkout and any worktree used.",
+      "source_ref": "source-007-amendment.md#sentinel-rerun",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "D-004-PHASE8"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [],
+        "lifecycle_events": [
+          "capture",
+          "gate",
+          "accept"
+        ],
+        "effective_date": "2026-07-30"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured by amendment 6; verified against primary evidence in the Phase-8 independent verification report",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": [
+          "M0-T028"
+        ]
+      },
+      "amendment_sequence": 7
+    },
+    {
+      "id": "D-004-R291",
+      "text": "Independently verify sentinel absence: after the reviewer's denied Bash redirection at ./PILOT_SENTINEL.tmp, the orchestrator itself runs test -e ./PILOT_SENTINEL.tmp and records the non-zero/ABSENT result; reviewer assertion alone is insufficient. The direct Write-tool attempt is reported honestly as tool-unavailability if that is the enforcement layer; the Bash denial must come from readonly_agent_guard.py itself with its denial text captured verbatim.",
+      "source_ref": "source-007-amendment.md#independent-absence",
+      "classification": "evidence",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "D-004-PHASE8"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [],
+        "lifecycle_events": [
+          "capture",
+          "gate",
+          "accept"
+        ],
+        "effective_date": "2026-07-30"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured by amendment 6; verified against primary evidence in the Phase-8 independent verification report",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      },
+      "amendment_sequence": 7
+    },
+    {
+      "id": "D-004-R292",
+      "text": "Resolve B-015 through the orchestrator only after the sentinel passes, with an audit-log entry citing the merged fix (PR #121, merge 9db4ab328ea7e1570e347ae19174041d199aedc8) and the passing fresh-session sentinel.",
+      "source_ref": "source-007-amendment.md#b-015",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "D-004-PHASE8"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [],
+        "lifecycle_events": [
+          "capture",
+          "gate",
+          "accept"
+        ],
+        "effective_date": "2026-07-30"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured by amendment 6; verified against primary evidence in the Phase-8 independent verification report",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      },
+      "amendment_sequence": 7
+    },
+    {
+      "id": "D-004-R293",
+      "text": "Complete the FINAL independent directive verification: the directive-compliance-verifier (never the producer of requirements.json) supplies per-requirement verdicts for M0-T028's registry-derived applicable set, recorded in verification.json at the frozen fresh-session identity (reviewed_sha = frozen head; reviewed_manifest_sha256 = the task's git-canonical content identity).",
+      "source_ref": "source-007-amendment.md#final-verification",
+      "classification": "evidence",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "D-004-PHASE8"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [],
+        "lifecycle_events": [
+          "capture",
+          "gate",
+          "accept"
+        ],
+        "effective_date": "2026-07-30"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured by amendment 6; verified against primary evidence in the Phase-8 independent verification report",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": [
+          "M0-T028"
+        ]
+      },
+      "amendment_sequence": 7
+    },
+    {
+      "id": "D-004-R294",
+      "text": "Accept M0-T028 exclusively via python tools/project_control.py accept, after B-015 resolution, the final directive verification, and the recorded owner C2 decision; checkpoint only if the established checkpoint policy actually requires one (never assume or pre-reserve CP-0034); clean only this task's branch/worktree (task/M0-T028-readonly-guard, .claude/worktrees/M0-T028-readonly-guard); commit the lifecycle records via a protected-main control PR; deliver the 17-item FINAL RETURN PACKET per source-006.",
+      "source_ref": "source-007-amendment.md#accept-cli",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "D-004-PHASE8"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [],
+        "lifecycle_events": [
+          "capture",
+          "gate",
+          "accept"
+        ],
+        "effective_date": "2026-07-30"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured by amendment 6; verified against primary evidence in the Phase-8 independent verification report",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": [
+          "M0-T028"
+        ]
+      },
+      "amendment_sequence": 7
+    },
+    {
+      "id": "D-004-R295",
+      "text": "Stop conditions and forbidden actions per the capsule bind this session: STOP on any non-green item (capsule section 3); forbidden (capsule section 6): D-004 Step 4/5, M0-T029, Agent Teams adoption or producer waves, detection-only substitute, M0-T025, M0-T019/PR #64, second-wave product tasks, expansion surfaces, Graphify, product code under M2-M7, survey work, deployment or hold release, any effort setting or effort key, handoff recreation, accepting M0-T027 or starting its Step 4 merely because the rerun passed, unrelated work after the return packet.",
+      "source_ref": "source-007-amendment.md#stop-conditions",
+      "classification": "prohibition",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "D-004-PHASE8"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [],
+        "lifecycle_events": [
+          "capture",
+          "gate",
+          "accept"
+        ],
+        "effective_date": "2026-07-30"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured by amendment 6; verified against primary evidence in the Phase-8 independent verification report",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      },
+      "amendment_sequence": 7
+    },
+    {
+      "id": "D-004-R296",
+      "text": "OPEN OWNER DECISION (capsule section 5, G5 finding M-2 / correction C2): this GO does not decide the C2 follow-up-task proposal (positive PRODUCER_AGENTS allowlist or adding the two reviewer roles to READ_ONLY_AGENTS, CI-pinned write-authorized set, ADR-005 reconciliation, dispatch-guard name-collision evaluation). The owner's explicit decision (contract, defer, or reject) must be obtained and recorded BEFORE M0-T028 acceptance; the C2 work itself is NOT required for acceptance.",
+      "source_ref": "source-007-amendment.md#c2-decision",
+      "classification": "decision",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "D-004-PHASE8"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [],
+        "lifecycle_events": [
+          "capture",
+          "gate",
+          "accept"
+        ],
+        "effective_date": "2026-07-30"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured by amendment 6; verified against primary evidence in the Phase-8 independent verification report",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": [
+          "M0-T028"
+        ]
+      },
+      "amendment_sequence": 7
     }
   ],
   "amendments_applied": [
@@ -11482,6 +11892,7 @@
     "source-003-amendment.md",
     "source-004-amendment.md",
     "source-005-amendment.md",
-    "source-006-amendment.md"
+    "source-006-amendment.md",
+    "source-007-amendment.md"
   ]
 }
