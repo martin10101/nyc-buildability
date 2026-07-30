@@ -2851,6 +2851,144 @@
           "reviewed_sha": "88045b06ef12ccb9b994b4e8b38ffe40d9cadf04"
         }
       ]
+    },
+    {
+      "task_id": "M2-T018",
+      "directive_id": "D-004",
+      "producer": "orchestrator",
+      "verifier": "directive-compliance-verifier",
+      "reviewed_sha": "31226481a62170477c0d6973a3d51bd215751505",
+      "reviewed_manifest_sha256": "f2f28cf55519563f22ca6bbca06dbb42be018164c57d9ed6fa45261ab737d1cc",
+      "state": "PASS",
+      "note": "Independent verification for the D-004 Step-4 pilot task recorded from the directive-compliance-verifier's return (unnamed spawn, explicit Fable 5) at frozen head 31226481a62170477c0d6973a3d51bd215751505, transcribed VERBATIM by the orchestrator per the evidence-capture division of labor; the producer of requirements.json recorded no verdict of its own. Full verifier return: project-control/reports/M2-T018-M4-T008-dcv-report.md.",
+      "applicable_requirement_ids": [
+        "D-004-R298",
+        "D-004-R301",
+        "D-004-R302",
+        "D-004-R303",
+        "D-004-R306"
+      ],
+      "requirements": [
+        {
+          "id": "D-004-R298",
+          "state": "PASS",
+          "evidence": [
+            "Dispatch records consistent across four independent artifacts: task progress_log 08:03 (\"backend-engineer, Opus 5\"); AGENT-TEAMS-PILOT-3.md (\"explicit Opus 5 owner ceiling; orchestrator + all reviewers on Fable 5\"); commit 756f601 message (\"backend-engineer, Opus 5\"); G3/G5 capture headers (\"unnamed spawn, explicit Fable 5\") + lead-session Fable 5 corroborated by the `Co-Authored-By: Claude Fable 5` trailer on 756f601."
+          ],
+          "verified_at": "2026-07-30T00:00:00+00:00",
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "31226481a62170477c0d6973a3d51bd215751505"
+        },
+        {
+          "id": "D-004-R301",
+          "state": "PASS",
+          "evidence": [
+            "Unnamed roster spawn (backend-engineer) with explicit model; work commit 756f601's sole parent is the ONE frozen base `84c1bf2` (git-verified); isolation via harness `agent-*` worktree with guard refusals quoted verbatim in producer report \u00a70.1; section-C matrix recorded in AGENT-TEAMS-PILOT-3.md with orchestrator ratification + task branch as integration target (attestation event 1); disjointness independently verified \u2014 the 7-file and 4-file merged diffs share zero paths and `git diff 84c1bf2..HEAD` contains exactly the union (11 files). [PASS (substance met under the recorded adaptation)]"
+          ],
+          "verified_at": "2026-07-30T00:00:00+00:00",
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "31226481a62170477c0d6973a3d51bd215751505"
+        },
+        {
+          "id": "D-004-R302",
+          "state": "PASS",
+          "evidence": [
+            "Producer report \u00a70 is the FIRST report content and records all four values: assigned-worktree HEAD = `84c1bf2` = EXPECTED_BASE_SHA, actual harness-worktree HEAD = `84c1bf2`, plus SHA-256 byte-identity of all ten in-scope files across both trees before any write; the worktree-location mismatch (harness `agent-*` vs pre-created worktree) was reported with \"orchestrator action required\" rather than hidden, satisfies the adapted single-pass invariants (HEAD==base exactly, own fresh agent worktree, clean tree), and the exact-diff port to 756f601 was tree-identical (0-line diff per progress_log). [PASS (deviation disclosed and adjudicated, not concealed)]"
+          ],
+          "verified_at": "2026-07-30T00:00:00+00:00",
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "31226481a62170477c0d6973a3d51bd215751505"
+        },
+        {
+          "id": "D-004-R303",
+          "state": "PASS",
+          "evidence": [
+            "`git diff --name-only 84c1bf2..756f601` = 7 files, every one inside packet `allowed_paths`, zero forbidden paths (reproduced myself); commit 756f601 author+committer = orchestrator identity `martin10101 <myhappybook212@gmail.com>` (no producer git); producer report states no git/gh/project_control invocations and requests `awaiting_gate` (\u00a70, \u00a7AS-6, final line); G3 Item 6 and G5 dimension 6 independently confirm containment."
+          ],
+          "verified_at": "2026-07-30T00:00:00+00:00",
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "31226481a62170477c0d6973a3d51bd215751505"
+        },
+        {
+          "id": "D-004-R306",
+          "state": "PASS",
+          "evidence": [
+            "Reproduced scans on the full merged range `84c1bf2..HEAD`: grep for `effort`/`teammateDefaultModel` in the diff \u2192 NO MATCHES; `git diff -- project-control/tasks/M0-T025.json` \u2192 empty; changed-file list contains no expansion/Graphify/survey/deployment/settings surface; `git grep teammateDefaultModel` over tracked `.claude/` at HEAD \u2192 no matches; all four reviewer capture headers record explicit Fable 5."
+          ],
+          "verified_at": "2026-07-30T00:00:00+00:00",
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "31226481a62170477c0d6973a3d51bd215751505"
+        }
+      ]
+    },
+    {
+      "task_id": "M4-T008",
+      "directive_id": "D-004",
+      "producer": "orchestrator",
+      "verifier": "directive-compliance-verifier",
+      "reviewed_sha": "31226481a62170477c0d6973a3d51bd215751505",
+      "reviewed_manifest_sha256": "c6a8ec04c301b82fd6d4013ac46ba137b9bdbc742510a6f3d6f66b2df095e6e5",
+      "state": "PASS",
+      "note": "Independent verification for the D-004 Step-4 pilot task recorded from the directive-compliance-verifier's return (unnamed spawn, explicit Fable 5) at frozen head 31226481a62170477c0d6973a3d51bd215751505, transcribed VERBATIM by the orchestrator per the evidence-capture division of labor; the producer of requirements.json recorded no verdict of its own. Full verifier return: project-control/reports/M2-T018-M4-T008-dcv-report.md.",
+      "applicable_requirement_ids": [
+        "D-004-R298",
+        "D-004-R301",
+        "D-004-R302",
+        "D-004-R303",
+        "D-004-R306"
+      ],
+      "requirements": [
+        {
+          "id": "D-004-R298",
+          "state": "PASS",
+          "evidence": [
+            "Dispatch records consistent across the same four artifact classes: progress_log 07:44 + 08:06 (\"rules-engineer, Opus 5\" both spawns); AGENT-TEAMS-PILOT-3.md producer-model statement; commit 2122cd2 message (\"rules-engineer, Opus 5\"); G3/G5 capture headers (\"unnamed spawn, explicit Fable 5\"), G5 header additionally names the producer \"Opus 5 spawn\"; lead Fable 5 per pilot-3 cost-split line and commit trailer."
+          ],
+          "verified_at": "2026-07-30T00:00:00+00:00",
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "31226481a62170477c0d6973a3d51bd215751505"
+        },
+        {
+          "id": "D-004-R301",
+          "state": "PASS",
+          "evidence": [
+            "Unnamed roster spawn (rules-engineer) with explicit model; work commit 2122cd2's sole parent is the same ONE frozen base `84c1bf2` (git-verified); harness-isolated `agent-a44a98e3f5810e4d8` worktree recorded with 4/4 attestation; section-C matrix pre-dispatch record + orchestrator ratification with `task/M4-T008-df6-exceptions` as integration target; disjointness from M2-T018 verified by the non-overlapping merged file sets. [PASS (substance met under the recorded adaptation)]"
+          ],
+          "verified_at": "2026-07-30T00:00:00+00:00",
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "31226481a62170477c0d6973a3d51bd215751505"
+        },
+        {
+          "id": "D-004-R302",
+          "state": "PASS",
+          "evidence": [
+            "First spawn STOPPED on 3/4 mismatch with ZERO writes and returned `blocked` (progress_log 07:44 \u2014 the stop-on-mismatch path demonstrably fired; the merged range contains no first-spawn artifact); re-dispatch recorded the four verified values (HEAD `84c1bf2`, pwd==toplevel==own agent worktree, matching branch, clean tree) as \u00a71 \u2014 the FIRST content of the producer report, with \"This file was the first write\"."
+          ],
+          "verified_at": "2026-07-30T00:00:00+00:00",
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "31226481a62170477c0d6973a3d51bd215751505"
+        },
+        {
+          "id": "D-004-R303",
+          "state": "PASS",
+          "evidence": [
+            "`git diff --name-only 2122cd2^..2122cd2` = 4 files (evaluator.py, two tests/rules files, own producer report), all inside `allowed_paths`, zero forbidden paths (reproduced myself); commit 2122cd2 author+committer = orchestrator identity; producer report \u00a71 states no git/gh/project_control and \u00a711 requests `awaiting_gate` (with needs_split explicitly offered rather than self-resolved); G3/G5 containment findings concur."
+          ],
+          "verified_at": "2026-07-30T00:00:00+00:00",
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "31226481a62170477c0d6973a3d51bd215751505"
+        },
+        {
+          "id": "D-004-R306",
+          "state": "PASS",
+          "evidence": [
+            "Same full-range scans as above cover this diff (effort/teammateDefaultModel: no matches; M0-T025 unchanged; no expansion/Graphify/survey/deployment paths in the 4-file list; both `rule_evaluation.schema.json` copies blob-identical to base per G3 Item 7, corroborating no contract-surface drift); reviewers explicit Fable 5 per capture headers; no teammateDefaultModel in tracked settings at HEAD."
+          ],
+          "verified_at": "2026-07-30T00:00:00+00:00",
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "31226481a62170477c0d6973a3d51bd215751505"
+        }
+      ]
     }
   ],
   "updated_at": "2026-07-30T00:00:00+00:00"

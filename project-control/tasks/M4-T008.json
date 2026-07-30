@@ -51,17 +51,17 @@
     "G3",
     "G5"
   ],
-  "producer_agent": null,
+  "producer_agent": "rules-engineer",
   "reviewer_agents": [
     "code-reviewer",
     "security-reviewer"
   ],
-  "status": "backlog",
-  "progress_percent": 0,
+  "status": "accepted",
+  "progress_percent": 100,
   "risks": [],
   "blockers": [],
   "created_at": "2026-07-30T07:34:13.717357+00:00",
-  "updated_at": "2026-07-30T07:34:13.748111+00:00",
+  "updated_at": "2026-07-30T08:36:32.860460+00:00",
   "directive_refs": [
     {
       "directive_id": "D-004",
@@ -69,5 +69,24 @@
     }
   ],
   "directive_regime_version": "1.0",
-  "directive_regime_entered_at": "2026-07-30T07:34:13.717357+00:00"
+  "directive_regime_entered_at": "2026-07-30T07:34:13.717357+00:00",
+  "worktree": ".claude/worktrees/M4-T008-df6-exceptions",
+  "progress_log": [
+    {
+      "at": "2026-07-30T07:44:15.626748+00:00",
+      "agent": "orchestrator",
+      "percent": 5,
+      "status": "claimed",
+      "message": "ATTESTATION STOP (D-004-R302 honored; zero writes): the producer spawn was harness-isolated into its own auto-provisioned worktree at the CORRECT frozen base 84c1bf2, and the harness refuses commands reaching the orchestrator-pre-created task worktree; 3/4 expected values mismatched, producer returned blocked without writing. This is the mechanism M0-T028's accepted evidence already ratified (D-004-R061: producer in harness-isolated worktree at identical base + orchestrator exact-diff port review before integration). Adaptation, recorded openly: two-phase attestation - phase 1 the spawn reports its actual harness worktree/branch/HEAD read-only; the orchestrator verifies HEAD equals the frozen base and the tree is a fresh isolated agent worktree, then issues those verified values as EXPECTED_*; the producer re-runs the four-way comparison and proceeds only on exact match. The pre-created task branch task/M4-T008-df6-exceptions remains the integration target for the orchestrator's ported, containment-reviewed commit. Producer's read-only defect verification (evaluator.py line 234 fail-open confirmed; notes-only PRR design) is carried into the re-dispatch."
+    },
+    {
+      "at": "2026-07-30T08:06:41.116106+00:00",
+      "agent": "orchestrator",
+      "percent": 70,
+      "status": "claimed",
+      "message": "Re-dispatched producer (rules-engineer, Opus 5) returned awaiting_gate under the adapted attestation (4/4 PASS: frozen base 84c1bf2, own agent-* isolated worktree, matching branch, clean tree; first write was the producer report). Containment review: exactly evaluator.py + two rules test files + producer report inside allowed_paths (own agent-memory excluded from port). Exact-diff port: cherry-picked onto task/M4-T008-df6-exceptions as 2122cd2, tree-identical (0-line diff); orchestrator sanity rerun 328 passed. Producer self-checks: full suite 1066 passed, ruff clean, both rule_evaluation schema copies byte-unchanged. Producer disclosures routed to G3 ruling: (1) reasoned deviation - only the silent-SKIP case routes to PRR (the recorded DF-6 defect); blanket escalation of the holds-true case measured to break 20 tests incl. forbidden-path API surface and override a documented authoring decision; (2) stale sentence in r5_height.rule.json (legal artifact, principle 12) deliberately NOT edited - recommend follow-up task with qualified-reviewer eyes. G3+G5 dispatched at frozen 2122cd2."
+    }
+  ],
+  "accepted_by": "orchestrator",
+  "accepted_at": "2026-07-30T08:36:32.860460+00:00"
 }

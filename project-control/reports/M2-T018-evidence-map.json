@@ -1,0 +1,14 @@
+{
+  "task_id": "M2-T018",
+  "directive_id": "D-004",
+  "reviewed_sha": "31226481a62170477c0d6973a3d51bd215751505",
+  "content_manifest_sha256": "f2f28cf55519563f22ca6bbca06dbb42be018164c57d9ed6fa45261ab737d1cc",
+  "requirements": {
+    "D-004-R298": "Producer spawned with explicit per-spawn model 'opus' resolving to claude-opus-5 (Opus 5 ceiling per owner decision, source-008); no producer above Opus 5; lead session Fable 5; gate reviewers explicit Fable 5 (G3/G5 report headers). Dispatch records in the task progress_log.",
+    "D-004-R301": "Unnamed spawn of roster producer type; disjoint harness-isolated worktree at frozen base 84c1bf29243bb862d344c909099c9bd9a3f6a766; section-C matrix recorded pre-dispatch in project-control/reports/AGENT-TEAMS-PILOT-3.md.",
+    "D-004-R302": "Attestation recorded before first write in the producer report (attestation section); the M4 first-spawn STOP on mismatch and the adapted single-pass protocol are recorded in AGENT-TEAMS-PILOT-3.md (attestation event 1) and both task progress logs.",
+    "D-004-R303": "Producer stayed inside packet allowed_paths (7-file diff verified by orchestrator + G3 + G5 at frozen 756f601), no git/gh/CLI mutation, returned evidence + awaiting_gate with the worktree-delivery deviation disclosed; orchestrator ported tree-identical (0-line diff) and merged via PR #126.",
+    "D-004-R306": "No effort key, no M0-T025, no expansion/Graphify/survey/deployment content in the diff (verified by G3+G5 at the frozen SHA); reviewers explicit Fable 5; no teammateDefaultModel in tracked settings."
+  },
+  "notes": "Producer report: project-control/reports/M2-T018-producer-report.md (merged). Reviews: M2-T018-G3-report.md PASS, M2-T018-G5-report.md PASS at frozen 756f60164e5cf27c56082166047ffc119a5f3d02; merged to main in PR #126."
+}
