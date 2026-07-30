@@ -40,7 +40,8 @@
   "scope": {
     "task_ids": [
       "D-005-REVIEW",
-      "D-005-PILOT"
+      "D-005-PILOT",
+      "M0-T030"
     ],
     "task_types": [
       "governance",
@@ -113,7 +114,7 @@
     "Amendment 1 (source-002, rows R066-R089): owner GO after the WAIT recommendation. D-005-PILOT sentinel is realized as ledger task M0-T030 (in-house index, NOT Graphify). Graphify-specific pilot rows from source-001 (R025-R033, R046, R059, R063) remain recorded but their Graphify-execution reading is inapplicable while the owner-ratified WAIT stands; their generic principles (isolation, honesty, provenance recording, benchmark, success criteria) bind M0-T030 as restated and tightened by R066-R089. No pre-existing row was edited."
   ],
   "created_at": "2026-07-29T20:42:00+00:00",
-  "updated_at": "2026-07-29T21:03:55+00:00",
+  "updated_at": "2026-07-29T21:11:59+00:00",
   "audit_log": [
     {
       "at": "2026-07-29T20:42:00+00:00",
@@ -124,6 +125,11 @@
       "at": "2026-07-29T21:03:55+00:00",
       "by": "orchestrator",
       "note": "Amendment 1 recorded append-only: source-002-amendment.md registered (kind=amendment, amends source-001.md, sequence 2); rows D-005-R066..R089 appended; rows R001-R065 asserted byte-identical by sorted-key comparison before/after the append; manifest.amendments[] set; locked_requirement_ids extended to 89; id + content digests recomputed. M0-T030 contracted in-regime (directive_refs D-005:ALL) and recorded in affected_tasks/enforcement_pointers. Graphify NOT installed; no hook/config surface touched."
+    },
+    {
+      "at": "2026-07-29T21:11:59+00:00",
+      "by": "orchestrator",
+      "note": "Scope maintenance: M0-T030 appended to scope.task_ids so the s19 governance-path guard resolves (the packet touches project-control reports/packet paths). No requirement row or source changed; digests unaffected."
     }
   ],
   "locked_requirement_ids": [

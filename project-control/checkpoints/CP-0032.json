@@ -1,0 +1,9 @@
+{
+  "checkpoint_id": "CP-0032",
+  "timestamp": "2026-07-30T01:53:30.873092+00:00",
+  "commit": "abdda18f7864925baad544baf2904a394a28e1d3",
+  "branch": "main",
+  "active_milestone": "M4",
+  "summary": "M0-T030 accepted: in-house code-navigation index (stdlib generator + bounded query CLI + CI determinism job) merged via PR #114; A/B benchmark B 18/18 vs A 15/18 correct, exploration reduction NOT demonstrated (honest); gates G0/G3/G4/G5 PASS with C1 fingerprint correction delta-reviewed closed; D-005 verification 24/24 applicable rows PASS at abdda18; owner decision packet delivered (GO WITH CONDITIONS recommendation); Graphify remains owner-ratified WAIT; all downstream integrations owner-gated.",
+  "updated_at": "2026-07-30T01:53:30.873906+00:00"
+}

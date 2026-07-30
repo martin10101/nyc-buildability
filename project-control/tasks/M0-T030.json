@@ -47,7 +47,7 @@
   "acceptance_scenarios": [
     "AS-1 (executable): fresh generation - `python tools/code_graph/generate.py --repo . --out <tmp>` exits 0 in under 120s on a CI runner, emitting graph.json + graph.meta.json; meta records source fingerprint, generator version, mode, included path roots, exclusion list, node/edge counts, and per-language edge-confidence tallies.",
     "AS-2 (executable, determinism): two consecutive generations into two temp dirs produce byte-identical graph.json and graph.meta.json (no wall-clock timestamps or nondeterministic ordering inside artifacts; all collections canonically sorted; LF-only output).",
-    "AS-3 (executable, non-self-referential fingerprint): unit tests prove the source fingerprint is computed ONLY over canonical input file paths+bytes (sorted), that editing any indexed source file changes it, and that creating/edit­ing graph artifacts, files under excluded trees, or project-control/reports does NOT change it.",
+    "AS-3 (executable, non-self-referential fingerprint): unit tests prove the source fingerprint is computed ONLY over canonical input file paths+bytes (sorted), that editing any indexed source file changes it, and that creating/edit\u00ading graph artifacts, files under excluded trees, or project-control/reports does NOT change it.",
     "AS-4 (executable, pollution exclusion): fixture test plants sentinel .py/.ts files under .claude/worktrees/, node_modules/, .next/, __pycache__/, .pytest_cache/, .venv/, dist/, build/, coverage/, .git/ inside a temp repo - none appear as nodes and the exclusion list is recorded in graph.meta.json.",
     "AS-5 (executable, honesty labels): every edge carries confidence in {exact, derived, partial, unresolved}; Python import edges resolved to indexed modules are 'exact'; TypeScript import edges are 'exact' as SYNTACTIC import facts with resolution status; imports that cannot be resolved inside the indexed tree are emitted as 'unresolved' with the raw specifier, never guessed; V1 emits NO caller/callee edge type at all (deferred; owner clarification 1); a test asserts no unlabeled edge exists.",
     "AS-6 (executable, bounded query): `python tools/code_graph/query.py` supports find-symbol, file, module, upstream, downstream, neighbors, contract-refs, path, impact; every response includes repo-relative source path (and line where known), is size-capped (documented cap, test-enforced), and the CLI never prints the full graph; querying with a stale cache (fingerprint mismatch) auto-regenerates or exits with an explicit STALE error - a test proves stale results cannot be returned silently.",
@@ -62,15 +62,15 @@
     "G4",
     "G5"
   ],
-  "producer_agent": null,
+  "producer_agent": "backend-engineer",
   "reviewer_agents": [
     "code-reviewer",
     "qa-engineer",
     "security-reviewer",
     "directive-compliance-verifier"
   ],
-  "status": "backlog",
-  "progress_percent": 0,
+  "status": "accepted",
+  "progress_percent": 100,
   "risks": [
     "CRLF byte-identity on Windows vs LF on CI runners - generator must write LF explicitly and tests must compare bytes it wrote, not checkout-normalized files (precedent: tooling-lock CRLF gotcha, M0-T020).",
     "Benchmark objectivity - producer must not judge its own answers; correctness verification is performed independently against source (producer != verifier).",
@@ -80,7 +80,7 @@
   ],
   "blockers": [],
   "created_at": "2026-07-29T21:01:11.506335+00:00",
-  "updated_at": "2026-07-29T21:05:00.000000+00:00",
+  "updated_at": "2026-07-30T01:52:55.229512+00:00",
   "directive_refs": [
     {
       "directive_id": "D-005",
@@ -88,5 +88,8 @@
     }
   ],
   "directive_regime_version": "1.0",
-  "directive_regime_entered_at": "2026-07-29T21:01:11.506335+00:00"
+  "directive_regime_entered_at": "2026-07-29T21:01:11.506335+00:00",
+  "worktree": ".claude/worktrees/M0-T030-codegraph",
+  "accepted_by": "orchestrator",
+  "accepted_at": "2026-07-30T01:52:55.229512+00:00"
 }
