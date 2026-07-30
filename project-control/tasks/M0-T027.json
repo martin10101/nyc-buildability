@@ -67,8 +67,8 @@
     "code-reviewer",
     "security-reviewer"
   ],
-  "status": "blocked",
-  "progress_percent": 75,
+  "status": "in_progress",
+  "progress_percent": 80,
   "risks": [
     "Teammates may not inherit skills frontmatter; each spawn prompt must state the frozen SHA and explicitly instruct /run-quality-gate, or Step-1 item 4 fails.",
     "A reviewer sandbox that cannot execute commands cannot return its own rev-parse; per .claude/rules/project-control.md the orchestrator then captures the executable evidence and the reviewer verifies it, and this substitution is recorded explicitly rather than silently.",
@@ -77,7 +77,7 @@
   ],
   "blockers": [],
   "created_at": "2026-07-24T18:23:08.048623+00:00",
-  "updated_at": "2026-07-30T19:22:53.553945+00:00",
+  "updated_at": "2026-07-30T19:23:23.381489+00:00",
   "directive_refs": [
     {
       "directive_id": "D-004",
@@ -123,6 +123,13 @@
       "percent": 75,
       "status": "blocked",
       "message": "PHASE 3 (owner amendment 11, source-012) applied: pre-flight reviewer-roster correction plus the two authorized truth-preserving acceptance-scenario clarifications. Nothing else in the packet changed. (1) ROSTER CORRECTION (D-004-R424-R427): added exactly 'security-reviewer' to reviewer_agents, which is now [control-plane-verifier, directive-compliance-verifier, code-reviewer, security-reviewer]. RATIONALE, verified mechanically rather than assumed: M0-T027 requires G5; docs/GATES_AND_CHECKPOINTS.md:164 assigns security-sensitive review to security-reviewer; and tools/project_control.py gate() rejects an independent gate whose reviewer is not listed ('Reviewer ... is not in this task's reviewer_agents'). Without the correction the already-required G5 was unsatisfiable by the proper specialist. producer_agent (orchestrator), required_gates (G0/G2/G3/G5), and every pre-existing reviewer identity are UNCHANGED (D-004-R426). reviewer_agents is excluded from directive_registry.MATERIAL_FIELDS, so this correction alone does not alter the packet digest. (2) AS-1 (D-004-R432-R439): the obsolete literal assertion of '128 locked requirement ids' is retired; 128 is preserved explicitly as the 2026-07-24 contract-time historical baseline; the scenario now requires the CURRENT append-only total derived mechanically from the live registry at execution time, matching requirements_id_digest_sha256 and requirements_content_digest_sha256, validator exit 0, and no alteration/deletion/renumbering/rewriting of prior directive history. No literal total (not 128, not the current 516) is hard-coded as permanent. (3) AS-6 (D-004-R440-R451): the original Step-1 FAILURE is preserved exactly - at frozen SHA da0d42b6 the Write attempt was blocked only by TOOL-UNAVAILABILITY (the guard's own denial text was never produced) and the Bash redirection ESCAPED and created the sentinel, with the orchestrator's own test -e returning exit 0 EXISTS. The FAIL/FAIL/PASS verdicts and AGENT-TEAMS-PILOT-1.md are untouched and the original result is never rewritten as a pass. The scenario's control objective is now satisfiable only across the owner-sequenced remediation arc by citing M0-T028's fresh-session Phase-8 evidence at head 88045b06: (a) readonly_agent_guard.py itself denied the load-bearing Bash redirection with verbatim _deny text naming resolved identity 'code-reviewer' (R135/R137 PASS), (b) the ORCHESTRATOR independently verified absence, test -e exit 1 ABSENT with ls and git-status corroboration (R215/R278 PASS), and (c) B-015 was resolved only after that proof. DIGEST IMPACT, recorded rather than assumed (D-004-R450): acceptance_scenarios IS in MATERIAL_FIELDS, so the material packet digest changed from dc5d2979f844675f1f7a9422f2cbea9c7b48e1cdbcdd194fd2b3b1113af830a0 to d6afb9d70cdaac3778faed121beb0e39bdf90cb842c2fde54b781966013cac31. CONTROL-PLANE CONSEQUENCE: NONE for this task. material_digest is consumed only by _legacy_grandfather_check, and submit()/accept() call it only on the not-in-regime branch; M0-T027 carries directive_regime_version 1.0 and _task_in_regime() returns True, so the grandfathering branch is never reached. There was no grandfathering to invalidate (M0-T027 is absent from the frozen migration manifest by design - it was contracted 2026-07-24, well after the regime baseline). Nothing was backdated (D-004-R451). GUARD CONFIRMED RATHER THAN ASSUMED: invalid_unblock_roster() returns None for this packet both BEFORE and AFTER the roster correction - the M0-T033 exception admits M0-T027 on its governance + orchestrator-producer + independent-required-gate + usable-independent-reviewer shape. Validator exit 0 at 516 locked D-004 ids. Task remains blocked pending the Phase-4 CLI unblock."
+    },
+    {
+      "at": "2026-07-30T19:23:23.381489+00:00",
+      "agent": "orchestrator",
+      "percent": 80,
+      "status": "in_progress",
+      "message": "PHASE 4 step 1 (D-004-R453): unblocked through the NORMAL CLI - no direct status edit. The blocked->in_progress transition was accepted by the corrected invalid_unblock_roster guard delivered by M0-T033 (accepted 2026-07-30, PR #132/#133), on the packet's own shape: task_type=governance, producer_agent=orchestrator, required_gates include the independent gates G3 and G5, and reviewer_agents carries four usable independent reviewers distinct from the producer. Confirmed mechanically before attempting the transition (invalid_unblock_roster() -> None), not assumed. The prior blocking condition recorded at 75% is therefore resolved by the owner-authorized OPTION B control-plane fix, not by relabeling the producer: producer_agent remains the truthful orchestrator, which authored all three pilot reports."
     }
   ]
 }
