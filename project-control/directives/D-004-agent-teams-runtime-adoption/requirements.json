@@ -2,7 +2,7 @@
   "schema": "directive_requirements/v1",
   "directive_id": "D-004",
   "version": 1,
-  "requirement_count": 296,
+  "requirement_count": 306,
   "producer": "orchestrator",
   "updated_at": "2026-07-30T00:00:00+00:00",
   "requirements": [
@@ -11885,6 +11885,413 @@
         ]
       },
       "amendment_sequence": 7
+    },
+    {
+      "id": "D-004-R297",
+      "text": "Owner GO (2026-07-30, given in the post-Phase-8 session): execute D-004 Step 4 ONLY - the two-producer pilot per rows R064-R075. This GO authorizes no Step 5, no adoption amendments, and no other work.",
+      "source_ref": "source-008-amendment.md#owner-message-1",
+      "classification": "authorization",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "D-004-STEP4"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [],
+        "lifecycle_events": [
+          "capture",
+          "gate",
+          "accept"
+        ],
+        "effective_date": "2026-07-30"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured by amendment 7; verified independently at the Step-4 evidence gate",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": [
+          "M0-T027"
+        ]
+      },
+      "amendment_sequence": 8
+    },
+    {
+      "id": "D-004-R298",
+      "text": "Producer-model decision ('the main has to stay fable 5 the workers can be opus 5 max'): supersedes the VALUE clause of D-004-R091/D-004-R162 - producer teammates run Opus 5 as a CEILING (explicit per-spawn model 'opus' resolving to claude-opus-5); no producer teammate may run a model above Opus 5; the lead/orchestrator session stays Fable 5; gate-class reviewer spawns stay explicit Fable 5 (D-004-R161 unchanged). The prohibition and explicit-model clauses of R091/R162 are unchanged; the Opus 4.8 STOP condition is discharged by this owner decision.",
+      "source_ref": "source-008-amendment.md#decision-answers",
+      "classification": "decision",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M2-T018",
+          "M4-T008",
+          "D-004-STEP4"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [
+          "claim",
+          "progress",
+          "submit",
+          "gate",
+          "accept"
+        ],
+        "effective_date": "2026-07-30"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured by amendment 7; verified independently at the Step-4 evidence gate",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      },
+      "amendment_sequence": 8
+    },
+    {
+      "id": "D-004-R299",
+      "text": "Session-boundary decision ('Proceed here'): D-004-R065's purpose is satisfied in THIS session by owner approval - the session post-dates the hook merge, the C1 proof showed all four hook entries firing live, and no hook/settings change has merged since session start. R065 itself is not rewritten; this records owner-approved purpose satisfaction for Step 4 only.",
+      "source_ref": "source-008-amendment.md#decision-answers",
+      "classification": "decision",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "D-004-STEP4"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [],
+        "lifecycle_events": [
+          "capture",
+          "gate",
+          "accept"
+        ],
+        "effective_date": "2026-07-30"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured by amendment 7; verified independently at the Step-4 evidence gate",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      },
+      "amendment_sequence": 8
+    },
+    {
+      "id": "D-004-R300",
+      "text": "Pilot-task decision ('Lanes 2+3'): contract M2-T018 (wire the accepted M2-T017 allowlist serializer into the property-profile builder with fail-closed tests) and M4-T008 (DF-6 rule-engine hardening: missing optional inputs inside exception predicates produce indeterminate/professional-review behavior, never silently false) as the two disjoint second-wave pilot tasks. M3-T002 stays excluded while B-001 is open per the owner's D-003 rule.",
+      "source_ref": "source-008-amendment.md#decision-answers",
+      "classification": "decision",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "D-004-STEP4"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [],
+        "lifecycle_events": [
+          "capture",
+          "gate",
+          "accept"
+        ],
+        "effective_date": "2026-07-30"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured by amendment 7; verified independently at the Step-4 evidence gate",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": [
+          "M2-T018",
+          "M4-T008"
+        ]
+      },
+      "amendment_sequence": 8
+    },
+    {
+      "id": "D-004-R301",
+      "text": "Producer spawns are UNNAMED (roster identity resolvable by the read-only guard), use existing roster producer types, carry the explicit model per D-004-R298, and write ONLY in orchestrator-pre-created disjoint worktrees/branches cut from ONE frozen main SHA; the ORCHESTRATION_POLICY section-C matrix (task id, branch, worktree, allowed/forbidden paths, expected shared files = none, merge order) is recorded before dispatch (R067/R068).",
+      "source_ref": "source-008-amendment.md#decision-answers",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M2-T018",
+          "M4-T008",
+          "D-004-STEP4"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [
+          "claim",
+          "progress",
+          "submit",
+          "gate",
+          "accept"
+        ],
+        "effective_date": "2026-07-30"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured by amendment 7; verified independently at the Step-4 evidence gate",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      },
+      "amendment_sequence": 8
+    },
+    {
+      "id": "D-004-R302",
+      "text": "Mandatory attestation before any write (R069/R070): each producer compares EXPECTED_WORKTREE, EXPECTED_BRANCH, and EXPECTED_BASE_SHA against pwd, git toplevel, current branch, and HEAD, and reports the four values; on any mismatch that producer stops and reports instead of writing.",
+      "source_ref": "source-008-amendment.md#decision-answers",
+      "classification": "harness",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M2-T018",
+          "M4-T008",
+          "D-004-STEP4"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [
+          "claim",
+          "progress",
+          "submit",
+          "gate",
+          "accept"
+        ],
+        "effective_date": "2026-07-30"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured by amendment 7; verified independently at the Step-4 evidence gate",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      },
+      "amendment_sequence": 8
+    },
+    {
+      "id": "D-004-R303",
+      "text": "Producers stay inside their packet allowed_paths, run no git/gh/control-CLI mutations, and return evidence plus a requested status of awaiting_gate, blocked, or needs_split; the orchestrator alone performs git integration for the pilot (R071/R072).",
+      "source_ref": "source-008-amendment.md#decision-answers",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M2-T018",
+          "M4-T008",
+          "D-004-STEP4"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [
+          "claim",
+          "progress",
+          "submit",
+          "gate",
+          "accept"
+        ],
+        "effective_date": "2026-07-30"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured by amendment 7; verified independently at the Step-4 evidence gate",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      },
+      "amendment_sequence": 8
+    },
+    {
+      "id": "D-004-R304",
+      "text": "Step-4 evidence is recorded REDACTED in project-control/reports/AGENT-TEAMS-PILOT-3.md under the pilot-governance lane; M0-T027 remains blocked - any M0-T027 lifecycle transition stays a separate owner decision after the Step-4 evidence is presented (R073 + the standing constraint from source-006).",
+      "source_ref": "source-008-amendment.md#decision-answers",
+      "classification": "evidence",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "D-004-STEP4"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [],
+        "lifecycle_events": [
+          "capture",
+          "gate",
+          "accept"
+        ],
+        "effective_date": "2026-07-30"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured by amendment 7; verified independently at the Step-4 evidence gate",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": [
+          "M0-T027"
+        ]
+      },
+      "amendment_sequence": 8
+    },
+    {
+      "id": "D-004-R305",
+      "text": "STOP after Step 4 and present the evidence to the owner; Step 5 begins only on the owner's explicit GO after Step 4 passes (R074/R075).",
+      "source_ref": "source-008-amendment.md#decision-answers",
+      "classification": "sequencing",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "D-004-STEP4"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [],
+        "lifecycle_events": [
+          "capture",
+          "gate",
+          "accept"
+        ],
+        "effective_date": "2026-07-30"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured by amendment 7; verified independently at the Step-4 evidence gate",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      },
+      "amendment_sequence": 8
+    },
+    {
+      "id": "D-004-R306",
+      "text": "Standing constraints bind the pilot: all unrelated holds stand; no effort key anywhere; no M0-T025 change; no expansion surfaces, Graphify, survey work, or deployment/hold release; gate-class reviewers stay explicit Fable 5; no teammateDefaultModel in tracked settings.",
+      "source_ref": "source-008-amendment.md#decision-answers",
+      "classification": "prohibition",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M2-T018",
+          "M4-T008",
+          "D-004-STEP4"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [
+          "claim",
+          "progress",
+          "submit",
+          "gate",
+          "accept"
+        ],
+        "effective_date": "2026-07-30"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured by amendment 7; verified independently at the Step-4 evidence gate",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      },
+      "amendment_sequence": 8
     }
   ],
   "amendments_applied": [
@@ -11893,6 +12300,7 @@
     "source-004-amendment.md",
     "source-005-amendment.md",
     "source-006-amendment.md",
-    "source-007-amendment.md"
+    "source-007-amendment.md",
+    "source-008-amendment.md"
   ]
 }

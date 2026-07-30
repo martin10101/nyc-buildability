@@ -1,0 +1,73 @@
+{
+  "task_id": "M4-T008",
+  "title": "DF-6 rule-engine hardening: missing optional inputs in exception predicates route to indeterminate/PRR, never silently false",
+  "task_type": "engineering",
+  "milestone_id": "M4",
+  "objective": "In services/api/app/rules/evaluator.py, make _apply_exceptions detect when an exception condition reads a missing optional input (reuse _predicate_input_names) and route the evaluation to the existing indeterminate/COVERAGE_PROFESSIONAL_REVIEW_REQUIRED path with a trace note naming the missing input and indeterminate exception, instead of the current fail-open two-valued False that silently skips a coverage-downgrading exception; preserve required/applicability indeterminate behavior and all present-input behavior unchanged; NO contract or schema change (rule_evaluation.schema.json byte-unchanged; reuse existing trace/notes fields) - if a contract change proves genuinely necessary, return needs_split instead of changing it.",
+  "business_reason": "D-003 second-wave lane 3 (D-003-R023) selected by owner decision 2026-07-30 (D-004-R300, source-008): the second of the two disjoint D-004 Step-4 producer-pilot tasks. DF-6 (WHOLE-SYSTEM-TRUST-REPLAN-2026-07-23, High): fail-open miss of an escalation - deterministic code must never silently evaluate a missing legal input as False.",
+  "inputs": [
+    "DF-6 defect record (WHOLE-SYSTEM-TRUST-REPLAN-2026-07-23 defect table) + D-003-R023 lane 3",
+    "Evaluator internals: _eval_predicate (two-valued), _apply_exceptions fail-open skip, _predicate_input_names helper, optional_missing computation, existing three-valued required/applicability path",
+    "Coverage mechanism: COVERAGE_PROFESSIONAL_REVIEW_REQUIRED + most_severe() in coverage.py",
+    "Existing patterns: test_rh_s13_indeterminate_determination_when_proposal_omitted, R5 height/setback exception-bearing rule tests"
+  ],
+  "outputs": [
+    "Exception-predicate missing-optional-input routing to indeterminate/PRR with trace note (no contract change)",
+    "DF-6 regression test cases; all existing rules suites green",
+    "project-control/reports/M4-T008-producer-report.md"
+  ],
+  "dependencies": [],
+  "allowed_paths": [
+    "services/api/app/rules/",
+    "services/api/tests/rules/",
+    "project-control/reports/M4-T008-producer-report.md",
+    "project-control/tasks/M4-T008.json"
+  ],
+  "forbidden_paths": [
+    "services/api/app/profile/",
+    "services/api/app/api/",
+    "services/api/app/contracts/",
+    "services/api/app/connectors/",
+    "packages/contracts/",
+    "services/api/app/_contract_schemas/",
+    "services/api/tests/contracts/",
+    "services/api/tests/profile/",
+    "services/api/tests/api/",
+    ".claude/",
+    "tools/",
+    "docs/"
+  ],
+  "acceptance_scenarios": [
+    "AS-1: exception condition reading a MISSING optional input routes the evaluation to COVERAGE_PROFESSIONAL_REVIEW_REQUIRED with a trace note naming the missing input and the indeterminate exception - never a silent False/skip",
+    "AS-2: all-inputs-present exception behavior unchanged (R5 height/setback and full exception regression suite)",
+    "AS-3: missing optional input NOT referenced by any exception predicate keeps existing COMPLETENESS_MISSING_NONCRITICAL note behavior",
+    "AS-4: required/applicability three-valued indeterminate path unchanged (existing tests)",
+    "AS-5: rule_evaluation contract schemas byte-unchanged (both copies); responses still validate; if a contract change proves necessary the producer returns needs_split instead of changing it",
+    "AS-6: worktree attestation recorded before first write (D-004-R302); evidence + requested status returned, no git/gh/CLI writes (D-004-R303)"
+  ],
+  "required_gates": [
+    "G0",
+    "G2",
+    "G3",
+    "G5"
+  ],
+  "producer_agent": null,
+  "reviewer_agents": [
+    "code-reviewer",
+    "security-reviewer"
+  ],
+  "status": "backlog",
+  "progress_percent": 0,
+  "risks": [],
+  "blockers": [],
+  "created_at": "2026-07-30T07:34:13.717357+00:00",
+  "updated_at": "2026-07-30T07:34:13.748111+00:00",
+  "directive_refs": [
+    {
+      "directive_id": "D-004",
+      "requirement_ids": "ALL"
+    }
+  ],
+  "directive_regime_version": "1.0",
+  "directive_regime_entered_at": "2026-07-30T07:34:13.717357+00:00"
+}

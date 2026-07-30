@@ -1,0 +1,83 @@
+{
+  "task_id": "M2-T018",
+  "title": "Wire the M2-T017 allowlist serializer into the property-profile builder (fail-closed provenance boundary)",
+  "task_type": "integration",
+  "milestone_id": "M2",
+  "objective": "Route every source_fact record entering the property-profile provenance array through the frozen M2-T017 SOURCE_FACT_SERIALIZER at the builder write boundary (services/api/app/profile/builder.py provenance assembly), so an undocumented key fails closed instead of silently passing; handle the documented connector lineage keys (dataset_id, input_vintages, request_url) by documented allowlist/schema extension, never bypass; amend the AS-4 tripwire test (test_serializer_not_imported_by_any_production_module) to pin the single intended import boundary; keep all existing profile/api/contract suites and schema drift checks green.",
+  "business_reason": "D-003 second-wave lane 2 (D-003-R023) selected by owner decision 2026-07-30 (D-004-R300, source-008): one of the two disjoint D-004 Step-4 producer-pilot tasks. Permanent principle 2: every material fact must retain provenance through a closed, fail-closed contract boundary.",
+  "inputs": [
+    "Accepted M2-T017 frozen serializer: services/api/app/contracts/serializers.py (+ __init__ re-exports) and its producer report",
+    "Property-profile builder provenance assembly: services/api/app/profile/builder.py (provenance splice), wave_integration.py, zoning_crosscheck.py, contract.py",
+    "Connector lineage-key evidence: pluto_soda/ztldb_soda/zoning_features_arcgis/mappluto_geometry_arcgis emit dataset_id, input_vintages, request_url",
+    "Contract artifacts: packages/contracts/schemas/v1/source_fact.schema.json + bundled copy + generated property_profile.ts"
+  ],
+  "outputs": [
+    "Serializer-enforced fail-closed provenance write boundary in the profile builder",
+    "Documented allowlist/schema handling of connector lineage keys (no bypass)",
+    "Amended tripwire test pinning the single intended import boundary",
+    "New fail-closed regression tests; all existing suites + drift checks green",
+    "project-control/reports/M2-T018-producer-report.md"
+  ],
+  "dependencies": [],
+  "allowed_paths": [
+    "services/api/app/contracts/serializers.py",
+    "services/api/app/contracts/__init__.py",
+    "services/api/app/profile/builder.py",
+    "services/api/app/profile/wave_integration.py",
+    "services/api/app/profile/zoning_crosscheck.py",
+    "services/api/app/profile/contract.py",
+    "services/api/tests/contracts/test_contract_serializers.py",
+    "services/api/tests/contracts/test_closed_contracts.py",
+    "services/api/tests/profile/",
+    "services/api/tests/api/",
+    "packages/contracts/schemas/v1/source_fact.schema.json",
+    "services/api/app/_contract_schemas/v1/source_fact.schema.json",
+    "packages/contracts/generated/property_profile.ts",
+    "project-control/reports/M2-T018-producer-report.md",
+    "project-control/tasks/M2-T018.json"
+  ],
+  "forbidden_paths": [
+    "services/api/app/rules/",
+    "services/api/app/api/",
+    "services/api/app/connectors/",
+    "services/api/tests/rules/",
+    "packages/contracts/scripts/",
+    "services/api/scripts/",
+    ".claude/",
+    "tools/",
+    "docs/"
+  ],
+  "acceptance_scenarios": [
+    "AS-1: every source_fact entering the provenance array passes through SOURCE_FACT_SERIALIZER; an undocumented injected key fails the build closed (ContractSerializationError path), never a silent pass or invalid 200",
+    "AS-2: recorded fixtures from all four lineage-emitting connectors serialize cleanly via documented allowlist/schema extension of the lineage keys (dataset_id, input_vintages, request_url) - no bypass, both schema copies byte-consistent, generated TS regenerated",
+    "AS-3: tripwire test amended: serializer imported exactly at the intended profile boundary and nowhere else in app/** outside app/contracts/",
+    "AS-4: provenance completeness preserved - no fact dropped or mutated beyond key-level enforcement; provenance count and content asserted",
+    "AS-5: all existing contracts/profile/api suites pass (except deliberately amended tests, each justified); sync_contract_schemas + generate_ts_types drift checks clean",
+    "AS-6: worktree attestation recorded before first write (D-004-R302); evidence + requested status returned, no git/gh/CLI writes (D-004-R303)"
+  ],
+  "required_gates": [
+    "G0",
+    "G2",
+    "G3",
+    "G5"
+  ],
+  "producer_agent": null,
+  "reviewer_agents": [
+    "code-reviewer",
+    "security-reviewer"
+  ],
+  "status": "backlog",
+  "progress_percent": 0,
+  "risks": [],
+  "blockers": [],
+  "created_at": "2026-07-30T07:34:07.531578+00:00",
+  "updated_at": "2026-07-30T07:34:07.565060+00:00",
+  "directive_refs": [
+    {
+      "directive_id": "D-004",
+      "requirement_ids": "ALL"
+    }
+  ],
+  "directive_regime_version": "1.0",
+  "directive_regime_entered_at": "2026-07-30T07:34:07.531578+00:00"
+}
