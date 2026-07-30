@@ -27,6 +27,56 @@ sufficient evidence — for anything touching:
 For those questions the graph may only tell you *where to look*; the
 decision evidence must come from the source files themselves.
 
+## Selective routing (owner decision, D-005 amendment 2)
+
+**Graph use is NEVER required on every task.** The owner decision on the
+M0-T030 packet (GO WITH CONDITIONS) approved the graph as advisory
+navigation infrastructure with *selective* use — not universal graph-first.
+Use ordinary direct navigation for simple/local questions and invoke the
+graph where relationship/dependency knowledge provides material value.
+
+The decision model:
+
+```
+TASK
+  |
+Is relationship/dependency discovery materially useful?
+  |
+YES -> graph query -> narrow candidates -> authoritative source verification
+NO  -> normal direct navigation
+```
+
+Cases where graph use **SHOULD be preferred**:
+
+- dependency/impact analysis;
+- "who consumes X?";
+- "what depends on X?";
+- upstream/downstream questions;
+- cross-layer traces;
+- contract-change impact;
+- unfamiliar subsystem orientation where dependencies are unclear;
+- reviewer blast-radius analysis;
+- multi-agent scoping where agents need bounded subsystem neighborhoods.
+
+Cases where graph use is **NOT mandatory**:
+
+- known file opening;
+- simple symbol lookup;
+- tasks whose packet already names the exact relevant files;
+- a question directly answered by authoritative committed documentation;
+- small localized edits where ordinary search is clearly cheaper.
+
+The graph remains **advisory** in every case: for material conclusions —
+especially legal semantics, security, contracts, control-plane behavior,
+public interfaces, and dependency impact — the path is always
+graph → likely locations → **actual source verification**, never
+graph → assumption.
+
+**No token or time savings are claimed.** That was not demonstrated by the
+M0-T030 benchmark; any such claim requires new evidence. The proven benefit
+is better correctness, better completeness, and fewer false
+dependency/impact claims.
+
 ## Honesty labels
 
 Every edge carries a `confidence` label. The generator never guesses: a
@@ -71,9 +121,13 @@ Artifacts (`graph.json`, `graph.meta.json`) are written **only outside the
 repository** and are **never committed**:
 
 1. `--out DIR` if given, else
-2. `$CODEGRAPH_CACHE_DIR/<repo-root-basename>/`, else
-3. `%LOCALAPPDATA%\nyc-codegraph\<repo-root-basename>\` (Windows) or
-   `~/.cache/nyc-codegraph/<repo-root-basename>/` (POSIX).
+2. `$CODEGRAPH_CACHE_DIR/<key>/`, else
+3. `%LOCALAPPDATA%\nyc-codegraph\<key>\` (Windows) or
+   `~/.cache/nyc-codegraph/<key>/` (POSIX),
+
+where `<key>` = `sha256(realpath(repo_root))[:12] + "-" + basename`, so
+same-named checkouts at different paths never share a cache namespace
+(M0-T031 hardening).
 
 Why: a committed artifact would go stale on every product commit and either
 break unrelated PRs or silently lie. Here, product lanes can never fail CI
@@ -89,8 +143,17 @@ inputs, so the graph cannot invalidate itself (no self-referential SHA).
 
 `query.py` recomputes the fingerprint **first on every invocation**. On
 mismatch it regenerates in-process and prints `regenerated (stale
-fingerprint)`; with `--no-regen` it prints `STALE` and exits 3. A stale
-graph never answers silently.
+fingerprint)`; with `--no-regen` it prints a one-line `STALE (...)` error
+and exits 3. A stale graph never answers silently.
+
+**Cache integrity (M0-T031 hardening):** `graph.meta.json` records
+`graph_sha256` — the sha256 of the exact `graph.json` bytes written — and
+`query.py` verifies it against the cached bytes on **every** load. A hash
+mismatch, a missing `graph_sha256`, a corrupt/unparseable artifact, or an
+`OSError` on either read is treated exactly like a stale fingerprint:
+regenerate (`regenerated (cache integrity)`) or, under `--no-regen`, refuse
+with a one-line error and exit 3. An altered or unreadable cache is never
+served, and these paths never leak a traceback.
 
 `generate.py --check` proves determinism without any committed artifact: it
 runs two fresh generations into temp dirs and fails on any byte divergence.
