@@ -1,0 +1,88 @@
+{
+  "task_id": "M0-T031",
+  "title": "Code-graph hardening + selective navigation routing guidance (D-005 amendment 2)",
+  "task_type": "infrastructure",
+  "milestone_id": "M0",
+  "objective": "Apply the four owner-mandated hardening items to tools/code_graph (hash-bind graph.json in meta with verify-on-load regenerate/refuse; cache identity beyond basename; safe cache/meta read-error handling; preserve stdlib-only/no-network/no-hook/no-product-runtime-dependency) plus the review-identified --limit subcommand-position fix, and add ONLY the minimal SELECTIVE routing guidance from the accepted decision packet: a CLAUDE.md routing-table mention and a start-controlled-task packet-guidance paragraph encoding the owner decision model (relationship/dependency discovery materially useful? YES: graph then narrow then source verification; NO: normal direct navigation), with the owner's SHOULD-prefer and NOT-mandatory case lists. No new graph platform, no reserved surfaces, no watchers/hooks, no universal graph-first.",
+  "business_reason": "Owner decision on the M0-T030 packet (D-005 amendment 2): GO WITH CONDITIONS - preserve the proven correctness gain without imposing graph overhead on easy tasks; close the independent-review hardening advisories before wider advisory use.",
+  "inputs": [
+    "project-control/directives/D-005-codebase-knowledge-graph-pilot/source-003-amendment.md (owner GO WITH CONDITIONS + eight clarifications; rows D-005-R090..R110)",
+    "project-control/reports/M0-T030-owner-decision-packet.md (accepted; section H = the ONLY routing surfaces authorized, now selective)",
+    "project-control/reports/M0-T030-G5-security.md (advisories: hash-bind graph.json LOW; cache-key INFO; OSError INFO) and M0-T030-G3-code-review.md / M0-T030-G4-qa.md (--limit position INFO)",
+    "tools/code_graph/{generate.py,query.py,README.md}, tools/test_code_graph.py (current accepted implementation, generator 1.0.1)",
+    "tools/context_budget_check.py (CLAUDE.md addition must keep the budget check PASS)"
+  ],
+  "outputs": [
+    "tools/code_graph/generate.py + query.py: sha256(graph.json) recorded in graph.meta.json and verified on load (mismatch/corruption -> regenerate, or refuse with explicit error under --no-regen; NEVER silently serve altered cache); cache dir keyed by repo-root path hash + basename; cache/meta read errors (OSError/ValueError) handled as stale->regenerate/refuse, no avoidable traceback; --limit accepted after subcommands as well as before; generator_version bump",
+    "tools/test_code_graph.py: new fixture tests for tamper-detection (edit cached graph.json -> not served), cache-key separation of same-named checkouts, unreadable/corrupt meta handling, --limit both positions; all existing invariants stay green",
+    "tools/code_graph/README.md: SELECTIVE routing section encoding the owner decision model verbatim-faithfully (graph-preferred list; not-mandatory list; never universal graph-first; no token/time-savings claims)",
+    "CLAUDE.md: ONE additive routing-table row pointing dependency/impact/trace questions at tools/code_graph/README.md (context_budget_check must remain PASS)",
+    ".claude/skills/start-controlled-task/SKILL.md: ONE additive paragraph of packet navigation guidance (selective decision model, advisory-only, source verification mandatory) - the 'task-packet template paragraph' contemplated by the accepted packet",
+    "project-control/reports/M0-T031-producer-report.md (design + self-check evidence)"
+  ],
+  "dependencies": [],
+  "allowed_paths": [
+    "tools/code_graph/generate.py",
+    "tools/code_graph/query.py",
+    "tools/code_graph/README.md",
+    "tools/test_code_graph.py",
+    "CLAUDE.md (ONE additive routing-table row only; context budget check must stay PASS)",
+    ".claude/skills/start-controlled-task/SKILL.md (ONE additive navigation-guidance paragraph only)",
+    "project-control/reports/M0-T031-producer-report.md",
+    "project-control/tasks/M0-T031.json (via control CLI only)"
+  ],
+  "forbidden_paths": [
+    ".claude/settings.json, .claude/hooks/**, .claude/agents/**, .claude/rules/** and every other .claude surface except the single SKILL.md paragraph above (D-005-R105/R107)",
+    ".git/hooks/** and any watcher/scheduler/Git hook (D-005-R105)",
+    "services/**, apps/**, packages/**, supabase/** (no product changes; no product runtime dependency, D-005-R094-c4)",
+    "project-control/{master_plan.json,state.json,gates/,checkpoints/,blockers/,directives/**,product-map.json} (orchestrator authority)",
+    "requirements*, package*.json, pyproject.toml - no dependencies (stdlib only)",
+    "ci.yml and all workflows (existing code-graph CI job already covers the tests; no CI change needed - if the producer believes one is needed, STOP and report)",
+    "Mission Control, layer-B graph, six-PRD, evidence-KG, Graphify, Agent-Teams injection surfaces (D-005-R109)",
+    "Any universal graph-first wording: routing guidance must be selective (D-005-R092/R096)"
+  ],
+  "acceptance_scenarios": [
+    "AS-1 (executable): tamper test - generate into a temp cache, flip one byte in graph.json, query WITHOUT source changes: the CLI regenerates (or refuses with explicit error under --no-regen); the altered graph is never served; a fixture test proves it.",
+    "AS-2 (executable): meta corruption/unreadable test - truncate/corrupt graph.meta.json (and simulate an OSError path where practical): query treats it as stale (regenerate/refuse), no traceback leaks; fixture test proves it.",
+    "AS-3 (executable): cache identity - two same-named fixture repos at different paths get DISTINCT cache dirs; fixture test proves no sharing; fingerprint gate still prevents any stale serve regardless.",
+    "AS-4 (executable): --limit works both before and after the subcommand; existing 40-default/200-hard-cap behavior unchanged; test proves both positions.",
+    "AS-5 (executable): python tools/test_code_graph.py exits 0 with all prior invariants (determinism, non-self-referential fingerprint incl. tsconfig, sentinel exclusions, honesty labels, no caller/callee, stdlib-only imports) still green plus the new tests.",
+    "AS-6 (executable): python tools/code_graph/generate.py --repo . --check PASS; python tools/context_budget_check.py PASS with the CLAUDE.md row added.",
+    "AS-7 (evidence): CLAUDE.md diff = exactly one additive routing-table row; SKILL.md diff = exactly one additive paragraph; both encode SELECTIVE routing (decision model + SHOULD-prefer + NOT-mandatory lists faithful to source-003 clarification 2), advisory-only language, and NO token/time-savings claim (D-005-R101).",
+    "AS-8 (evidence): README selective-routing section faithful to the owner decision model; grep proves no 'graph-first for every task' style wording anywhere in the diff.",
+    "AS-9 (evidence): task-branch diff touches only allowed paths; no hooks/watchers/config/product/dependency surfaces; existing CI jobs byte-untouched."
+  ],
+  "required_gates": [
+    "G0",
+    "G3",
+    "G4",
+    "G5"
+  ],
+  "producer_agent": null,
+  "reviewer_agents": [
+    "code-reviewer",
+    "qa-engineer",
+    "security-reviewer",
+    "directive-compliance-verifier"
+  ],
+  "status": "backlog",
+  "progress_percent": 0,
+  "risks": [
+    "CLAUDE.md is auto-loaded context guarded by tools/context_budget_check.py - the added row must keep the check PASS or the producer must STOP and report (no trimming of other CLAUDE.md content without owner approval).",
+    "SKILL.md guidance must not read as mandatory graph use anywhere (owner clarification 2).",
+    "Hash-bind changes meta semantics - generator_version bump required; determinism invariants must stay byte-stable.",
+    "Windows CRLF byte-identity discipline unchanged (LF-only artifact writes)."
+  ],
+  "blockers": [],
+  "created_at": "2026-07-30T02:12:21.545579+00:00",
+  "updated_at": "2026-07-30T02:13:08+00:00",
+  "directive_refs": [
+    {
+      "directive_id": "D-005",
+      "requirement_ids": "ALL"
+    }
+  ],
+  "directive_regime_version": "1.0",
+  "directive_regime_entered_at": "2026-07-30T02:12:21.545579+00:00",
+  "allowed_paths_note": "The two guidance surfaces are exactly the ones the accepted decision packet contemplated (section H), adjusted to SELECTIVE routing per amendment-2 clarification 2. The SKILL.md edit is additive prose guidance only - NOT a hook, NOT a config change, NOT a confinement change; G5 must verify the diff is a single additive paragraph."
+}

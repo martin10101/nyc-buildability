@@ -1,8 +1,8 @@
 {
   "schema": "directive_requirements/v1",
   "directive_id": "D-005",
-  "version": 2,
-  "requirement_count": 89,
+  "version": 3,
+  "requirement_count": 110,
   "producer": "orchestrator",
   "requirements": [
     {
@@ -4243,7 +4243,950 @@
           "M0-T030"
         ]
       }
+    },
+    {
+      "id": "D-005-R090",
+      "text": "Owner accepts the M0-T030 owner-packet recommendation as GO WITH CONDITIONS.",
+      "source_ref": "source-003-amendment.md#decision",
+      "classification": "decision",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T031"
+        ],
+        "task_types": [
+          "infrastructure"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [],
+        "lifecycle_events": [
+          "always"
+        ],
+        "effective_date": "2026-07-30"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured (amendment 2); awaiting independent verification",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": [
+          "M0-T031"
+        ]
+      }
+    },
+    {
+      "id": "D-005-R091",
+      "text": "Interpret the demonstrated benefit honestly: M0-T030 proved a real correctness benefit (correctness, completeness, fewer false claims) but did NOT demonstrate reduced exploration/work; graph-first used substantially more operations.",
+      "source_ref": "source-003-amendment.md#decision",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T031"
+        ],
+        "task_types": [
+          "infrastructure"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [],
+        "lifecycle_events": [
+          "always"
+        ],
+        "effective_date": "2026-07-30"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured (amendment 2); awaiting independent verification",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": [
+          "M0-T031"
+        ]
+      }
+    },
+    {
+      "id": "D-005-R092",
+      "text": "Do NOT interpret this GO as authorization to make every Claude task graph-first; the graph is approved as ADVISORY NAVIGATION INFRASTRUCTURE with SELECTIVE use.",
+      "source_ref": "source-003-amendment.md#decision",
+      "classification": "prohibition",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T031"
+        ],
+        "task_types": [
+          "infrastructure"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [],
+        "lifecycle_events": [
+          "always"
+        ],
+        "effective_date": "2026-07-30"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured (amendment 2); awaiting independent verification",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": [
+          "M0-T031"
+        ]
+      }
+    },
+    {
+      "id": "D-005-R093",
+      "text": "Proceed to propose/contract M0-T031 under the normal control plane, subject to the eight owner clarifications.",
+      "source_ref": "source-003-amendment.md#decision",
+      "classification": "authorization",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T031"
+        ],
+        "task_types": [
+          "infrastructure"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [],
+        "lifecycle_events": [
+          "claim",
+          "submit",
+          "accept"
+        ],
+        "effective_date": "2026-07-30"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured (amendment 2); awaiting independent verification",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": [
+          "M0-T031"
+        ]
+      }
+    },
+    {
+      "id": "D-005-R094",
+      "text": "Hardening: include the small graph hardening items already identified by independent review, at minimum the four listed.",
+      "source_ref": "source-003-amendment.md#clarification-1",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T031"
+        ],
+        "task_types": [
+          "infrastructure"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [],
+        "lifecycle_events": [
+          "claim",
+          "submit",
+          "accept"
+        ],
+        "effective_date": "2026-07-30"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured (amendment 2); awaiting independent verification",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": [
+          "M0-T031"
+        ]
+      },
+      "checklist": [
+        {
+          "sub_id": "D-005-R094-c1",
+          "text": "bind graph.json bytes to a cryptographic hash in metadata and verify it on load; corruption/tampering must cause regeneration/refusal, never silently serve an altered cached graph"
+        },
+        {
+          "sub_id": "D-005-R094-c2",
+          "text": "improve cache identity so separate same-named checkouts do not unnecessarily share one basename-only cache namespace"
+        },
+        {
+          "sub_id": "D-005-R094-c3",
+          "text": "handle cache/meta read errors safely rather than exposing an avoidable traceback"
+        },
+        {
+          "sub_id": "D-005-R094-c4",
+          "text": "preserve stdlib-only / no-network / no-hook / no-product-runtime-dependency architecture"
+        }
+      ]
+    },
+    {
+      "id": "D-005-R095",
+      "text": "Do not expand M0-T031 into a new graph platform.",
+      "source_ref": "source-003-amendment.md#clarification-1",
+      "classification": "prohibition",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T031"
+        ],
+        "task_types": [
+          "infrastructure"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [],
+        "lifecycle_events": [
+          "always"
+        ],
+        "effective_date": "2026-07-30"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured (amendment 2); awaiting independent verification",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": [
+          "M0-T031"
+        ]
+      }
+    },
+    {
+      "id": "D-005-R096",
+      "text": "Do NOT require a graph query on every task; the benchmark did not justify universal graph-first.",
+      "source_ref": "source-003-amendment.md#clarification-2",
+      "classification": "prohibition",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T031"
+        ],
+        "task_types": [
+          "infrastructure"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [],
+        "lifecycle_events": [
+          "always"
+        ],
+        "effective_date": "2026-07-30"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured (amendment 2); awaiting independent verification",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": [
+          "M0-T031"
+        ]
+      }
+    },
+    {
+      "id": "D-005-R097",
+      "text": "Design the routing guidance so Claude uses ordinary direct navigation for simple/local questions and invokes the graph primarily where relationship knowledge provides material value.",
+      "source_ref": "source-003-amendment.md#clarification-2",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T031"
+        ],
+        "task_types": [
+          "infrastructure"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [],
+        "lifecycle_events": [
+          "claim",
+          "submit",
+          "accept"
+        ],
+        "effective_date": "2026-07-30"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured (amendment 2); awaiting independent verification",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": [
+          "M0-T031"
+        ]
+      }
+    },
+    {
+      "id": "D-005-R098",
+      "text": "Routing guidance must name the graph-preferred cases.",
+      "source_ref": "source-003-amendment.md#clarification-2",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T031"
+        ],
+        "task_types": [
+          "infrastructure"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [],
+        "lifecycle_events": [
+          "claim",
+          "submit",
+          "accept"
+        ],
+        "effective_date": "2026-07-30"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured (amendment 2); awaiting independent verification",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": [
+          "M0-T031"
+        ]
+      },
+      "checklist": [
+        {
+          "sub_id": "D-005-R098-c1",
+          "text": "dependency/impact analysis"
+        },
+        {
+          "sub_id": "D-005-R098-c2",
+          "text": "who consumes X?"
+        },
+        {
+          "sub_id": "D-005-R098-c3",
+          "text": "what depends on X?"
+        },
+        {
+          "sub_id": "D-005-R098-c4",
+          "text": "upstream/downstream questions"
+        },
+        {
+          "sub_id": "D-005-R098-c5",
+          "text": "cross-layer traces"
+        },
+        {
+          "sub_id": "D-005-R098-c6",
+          "text": "contract-change impact"
+        },
+        {
+          "sub_id": "D-005-R098-c7",
+          "text": "unfamiliar subsystem orientation where dependencies are unclear"
+        },
+        {
+          "sub_id": "D-005-R098-c8",
+          "text": "reviewer blast-radius analysis"
+        },
+        {
+          "sub_id": "D-005-R098-c9",
+          "text": "multi-agent scoping where agents need bounded subsystem neighborhoods"
+        }
+      ]
+    },
+    {
+      "id": "D-005-R099",
+      "text": "Routing guidance must name the not-mandatory cases.",
+      "source_ref": "source-003-amendment.md#clarification-2",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T031"
+        ],
+        "task_types": [
+          "infrastructure"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [],
+        "lifecycle_events": [
+          "claim",
+          "submit",
+          "accept"
+        ],
+        "effective_date": "2026-07-30"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured (amendment 2); awaiting independent verification",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": [
+          "M0-T031"
+        ]
+      },
+      "checklist": [
+        {
+          "sub_id": "D-005-R099-c1",
+          "text": "known file opening"
+        },
+        {
+          "sub_id": "D-005-R099-c2",
+          "text": "simple symbol lookup"
+        },
+        {
+          "sub_id": "D-005-R099-c3",
+          "text": "tasks whose packet already names the exact relevant files"
+        },
+        {
+          "sub_id": "D-005-R099-c4",
+          "text": "a question directly answered by authoritative committed documentation"
+        },
+        {
+          "sub_id": "D-005-R099-c5",
+          "text": "small localized edits where ordinary search is clearly cheaper"
+        }
+      ]
+    },
+    {
+      "id": "D-005-R100",
+      "text": "Encode the intended decision model: is relationship/dependency discovery materially useful? YES -> graph query -> narrow candidates -> authoritative source verification; NO -> normal direct navigation.",
+      "source_ref": "source-003-amendment.md#clarification-2",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T031"
+        ],
+        "task_types": [
+          "infrastructure"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [],
+        "lifecycle_events": [
+          "claim",
+          "submit",
+          "accept"
+        ],
+        "effective_date": "2026-07-30"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured (amendment 2); awaiting independent verification",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": [
+          "M0-T031"
+        ]
+      }
+    },
+    {
+      "id": "D-005-R101",
+      "text": "Do not claim M0-T030 saves tokens or time (not demonstrated); the proven benefit is better correctness, better completeness, fewer false dependency/impact claims; any later token/time-savings claim requires evidence.",
+      "source_ref": "source-003-amendment.md#clarification-3",
+      "classification": "prohibition",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T031"
+        ],
+        "task_types": [
+          "infrastructure"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [],
+        "lifecycle_events": [
+          "always"
+        ],
+        "effective_date": "2026-07-30"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured (amendment 2); awaiting independent verification",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": [
+          "M0-T031"
+        ]
+      }
+    },
+    {
+      "id": "D-005-R102",
+      "text": "Routing must attempt to preserve the accuracy gain WITHOUT imposing unnecessary graph/query/verification overhead on easy tasks.",
+      "source_ref": "source-003-amendment.md#clarification-3",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T031"
+        ],
+        "task_types": [
+          "infrastructure"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [],
+        "lifecycle_events": [
+          "claim",
+          "submit",
+          "accept"
+        ],
+        "effective_date": "2026-07-30"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured (amendment 2); awaiting independent verification",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": [
+          "M0-T031"
+        ]
+      }
+    },
+    {
+      "id": "D-005-R103",
+      "text": "Authoritative source remains final: graph output is advisory; for material conclusions (especially legal semantics, security, contracts, control-plane behavior, public interfaces, dependency impact) the pattern is graph -> likely locations -> actual source verification; never graph -> assumption.",
+      "source_ref": "source-003-amendment.md#clarification-4",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T031"
+        ],
+        "task_types": [
+          "infrastructure"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [],
+        "lifecycle_events": [
+          "always"
+        ],
+        "effective_date": "2026-07-30"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured (amendment 2); awaiting independent verification",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": [
+          "M0-T031"
+        ]
+      }
+    },
+    {
+      "id": "D-005-R104",
+      "text": "Preserve the current fingerprint-based stale detection; new indexed files or indexed configuration changes must be incorporated when the relevant working tree is next queried/regenerated.",
+      "source_ref": "source-003-amendment.md#clarification-5",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T031"
+        ],
+        "task_types": [
+          "infrastructure"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [],
+        "lifecycle_events": [
+          "claim",
+          "submit",
+          "accept"
+        ],
+        "effective_date": "2026-07-30"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured (amendment 2); awaiting independent verification",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": [
+          "M0-T031"
+        ]
+      }
+    },
+    {
+      "id": "D-005-R105",
+      "text": "Do not build a background watcher or Git hook.",
+      "source_ref": "source-003-amendment.md#clarification-5",
+      "classification": "prohibition",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T031"
+        ],
+        "task_types": [
+          "infrastructure"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [],
+        "lifecycle_events": [
+          "always"
+        ],
+        "effective_date": "2026-07-30"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured (amendment 2); awaiting independent verification",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": [
+          "M0-T031"
+        ]
+      }
+    },
+    {
+      "id": "D-005-R106",
+      "text": "The graph represents the source state of the checkout/worktree being queried; do not combine every Git branch into one global graph; parallel branches may legitimately have different graph states.",
+      "source_ref": "source-003-amendment.md#clarification-6",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T031"
+        ],
+        "task_types": [
+          "infrastructure"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [],
+        "lifecycle_events": [
+          "always"
+        ],
+        "effective_date": "2026-07-30"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured (amendment 2); awaiting independent verification",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": [
+          "M0-T031"
+        ]
+      }
+    },
+    {
+      "id": "D-005-R107",
+      "text": "Do not modify or replace the existing protected-main, PR, CI, secret-scan, dependency-policy, directive-compliance, or security-review processes; the graph is navigation infrastructure only.",
+      "source_ref": "source-003-amendment.md#clarification-7",
+      "classification": "prohibition",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T031"
+        ],
+        "task_types": [
+          "infrastructure"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [],
+        "lifecycle_events": [
+          "always"
+        ],
+        "effective_date": "2026-07-30"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured (amendment 2); awaiting independent verification",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": [
+          "M0-T031"
+        ]
+      }
+    },
+    {
+      "id": "D-005-R108",
+      "text": "M0-T031 may implement ONLY the minimal routing guidance already contemplated in the accepted decision packet (CLAUDE.md routing-table mention; task-packet navigation guidance), adjusted to SELECTIVE routing.",
+      "source_ref": "source-003-amendment.md#clarification-8",
+      "classification": "authorization",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T031"
+        ],
+        "task_types": [
+          "infrastructure"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [],
+        "lifecycle_events": [
+          "claim",
+          "submit",
+          "accept"
+        ],
+        "effective_date": "2026-07-30"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured (amendment 2); awaiting independent verification",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": [
+          "M0-T031"
+        ]
+      }
+    },
+    {
+      "id": "D-005-R109",
+      "text": "Do not implement any of the reserved surfaces; each remains a separate owner decision.",
+      "source_ref": "source-003-amendment.md#clarification-8",
+      "classification": "prohibition",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T031"
+        ],
+        "task_types": [
+          "infrastructure"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [],
+        "lifecycle_events": [
+          "always"
+        ],
+        "effective_date": "2026-07-30"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured (amendment 2); awaiting independent verification",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": [
+          "M0-T031"
+        ]
+      },
+      "checklist": [
+        {
+          "sub_id": "D-005-R109-c1",
+          "text": "Mission Control Engineering Map"
+        },
+        {
+          "sub_id": "D-005-R109-c2",
+          "text": "layer-B project/control graph"
+        },
+        {
+          "sub_id": "D-005-R109-c3",
+          "text": "six-PRD expansion"
+        },
+        {
+          "sub_id": "D-005-R109-c4",
+          "text": "NYC Evidence Knowledge Graph"
+        },
+        {
+          "sub_id": "D-005-R109-c5",
+          "text": "Graphify"
+        },
+        {
+          "sub_id": "D-005-R109-c6",
+          "text": "automatic Agent Teams graph injection beyond what is explicitly contracted"
+        }
+      ]
+    },
+    {
+      "id": "D-005-R110",
+      "text": "Return the M0-T031 packet for normal lifecycle handling.",
+      "source_ref": "source-003-amendment.md#closing",
+      "classification": "return",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T031"
+        ],
+        "task_types": [
+          "infrastructure"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [],
+        "lifecycle_events": [
+          "claim",
+          "submit",
+          "accept"
+        ],
+        "effective_date": "2026-07-30"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured (amendment 2); awaiting independent verification",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": [
+          "M0-T031"
+        ]
+      }
     }
   ],
-  "updated_at": "2026-07-29T21:03:55+00:00"
+  "updated_at": "2026-07-30T02:12:21+00:00"
 }
