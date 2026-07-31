@@ -19,6 +19,7 @@ Registry layout (project-control/directives/):
 """
 from __future__ import annotations
 
+import datetime as dt
 import hashlib
 import json
 import os
@@ -42,6 +43,336 @@ DEAD_STATES = frozenset({"superseded", "withdrawn", "retired", "proposed"})
 SATISFIED_STATE = "PASS"
 UNRESOLVED_VERIFICATION_STATES = frozenset(
     {"pending", "FAIL", "BLOCKED", "UNVERIFIABLE"})
+
+# ==========================================================================
+# ACCEPTANCE-ORDERING LIFECYCLE CLASSIFICATION  (the STATED RULE)
+#
+# Owner directive D-004, Message F item 2(a) == requirement D-004-R629:
+#   "rows whose sole unmet obligations are acceptance-ordering lifecycle acts
+#    (accept, post-accept cleanup, checkpoint, stop-after) must NOT gate
+#    accept() - evaluated, not deleted; verified at the first post-accept
+#    opportunity instead."
+# Classification authority D-004-R632: the per-row classification belongs to
+# the INDEPENDENT VERIFIER, not to the producer and not to this module.
+# Append-only invariant D-004-R627: no requirement row's applicability is ever
+# edited; this mechanism reads rows, it never rewrites them.
+#
+# AUDIT THIS RULE, NOT THE BEHAVIOR.  A requirement row may be treated as an
+# acceptance-ordering lifecycle act -- recorded EVALUATED-AND-DEFERRED instead
+# of gating accept() -- if and ONLY IF ALL SIX conditions below hold TOGETHER.
+# They are CONJUNCTIVE: failing any one leaves the row gating acceptance
+# exactly as it does today.  Every input is either the requirement row's OWN
+# recorded semantics or an independent verifier's per-row attestation.  There
+# is no special-cased task id, no flag, and no environment override.
+#
+#   (1) ACT CLASS.  The verification row carries a `lifecycle_classification`
+#       object whose `act_class` is drawn from ACCEPTANCE_ORDERING_ACT_CLASSES
+#       -- the owner's CLOSED four-item enumeration, transcribed from R629
+#       ("accept, post-accept cleanup, checkpoint, stop-after").  No other
+#       value is accepted and this code never extends the enumeration.
+#
+#   (2) INDEPENDENT, DATED ATTESTATION.  That object records a non-empty
+#       `classified_by` that is NOT the producer of the verification record,
+#       a non-empty `justification`, and a well-formed dated `classified_at`
+#       so the attestation is a point-in-time act rather than an undated
+#       assertion copied forward.  Identities are compared case- and
+#       whitespace-insensitively, so " Reviewer-V " can never pass itself off
+#       as an identity distinct from "reviewer-v".  The PRODUCER IDENTITY
+#       MUST ITSELF BE KNOWN: when the verification record names no producer
+#       the independence test is UNEVALUABLE, and an unevaluable independence
+#       test REFUSES rather than silently permitting self-attestation.  Per
+#       R632 the sufficient judgment is the independent verifier's; this
+#       module supplies NECESSARY conditions only and deliberately refuses to
+#       supply the sufficient one.
+#
+#   (3) LIFECYCLE BINDING (row semantics).  The requirement row's own
+#       `applicability.lifecycle_events` is non-empty and is a SUBSET of
+#       ACCEPTANCE_ORDERING_LIFECYCLE_EVENTS.  This is the mechanical reading
+#       of R629's word "SOLE": a row that also binds an obligation at
+#       claim/progress/submit/gate carries a duty that WAS satisfiable before
+#       acceptance, so it keeps gating.
+#
+#   (4) ELIGIBLE CLASSIFICATION (row semantics).  The row's own
+#       `classification` is in LIFECYCLE_ELIGIBLE_CLASSIFICATIONS -- an
+#       ALLOWLIST, not a denylist.  An acceptance-ordering ACT is something the
+#       executor DOES ("obligation") or an ordering constraint on when it may
+#       stop ("sequencing").  Every other classification the schema permits --
+#       prohibition, hold, decision, authorization, dependency, harness,
+#       evidence, external_fact, return -- is a BAR on acceptance or an
+#       evidentiary/return duty, not an act performed AT acceptance.  Deferring
+#       a prohibition/hold/authorization bound to acceptance would waive the
+#       very bar that says "do not accept yet"; those are excluded
+#       structurally so that NO attestation, however well-formed, can reach
+#       them.
+#
+#   (5) EXPLICITLY PENDING VERIFICATION STATE.  The verification row's `state`
+#       is a STRING drawn from DEFERRABLE_VERIFICATION_STATES -- the single
+#       schema token "pending", meaning the independent verifier has recorded
+#       NO verdict yet.  Only a row that is explicitly still pending can be an
+#       act that has not happened yet, which is the entire premise of
+#       deferral.  This condition is an ALLOWLIST, matching every other
+#       condition in this rule, and the refusal is the DEFAULT: FAIL, BLOCKED,
+#       UNVERIFIABLE, an absent or null state, an unknown string, a case- or
+#       whitespace-variant of an allowed token, and any non-string type all
+#       keep the row gating acceptance however it is classified.  A DENYLIST
+#       here would release every value its author failed to enumerate, and the
+#       value most easily forgotten is the most dangerous one: UNVERIFIABLE is
+#       the independent verifier stating it COULD NOT verify the obligation,
+#       which must never be read as permission to defer it.  The
+#       `isinstance(state, str)` guard is load-bearing rather than defensive
+#       decoration: an unhashable state (e.g. `[]`) must REFUSE, never raise,
+#       or a malformed row would abort the acceptance evaluation instead of
+#       failing closed within it.
+#
+#   (6) IDENTITY-BOUND ATTESTATION.  The attestation records a
+#       `classified_at_identity` that is EXACTLY the reviewed content identity
+#       this deferral is being granted at.  Condition (2) makes the attestation
+#       DATED; this one makes it BOUND, and the two together are what stop it
+#       from being an assertion that travels.  Without it, a verifier who
+#       re-verifies at a NEW content identity and refreshes the record's
+#       `reviewed_manifest_sha256` carries every earlier per-row attestation
+#       forward untouched, and those rows keep releasing at content nobody ever
+#       attested about -- the deferral would be granted on the strength of a
+#       judgment made about different bytes.  The comparison is EXACT STRING
+#       EQUALITY against the identity the caller is evaluating at, and the
+#       refusal is again the DEFAULT: an ABSENT key, a null, an empty or
+#       whitespace-only value, any NON-STRING type, a CASE-VARIANT, a
+#       WHITESPACE-PADDED variant, and any other identity (above all a STALE
+#       one carried forward from an earlier review) all keep the row gating
+#       acceptance.  And when the caller supplies NO identity to bind against,
+#       the condition is UNEVALUABLE and therefore REFUSES, exactly as an
+#       unknown producer does in (2): a missing expectation must gate, never
+#       release, because "nothing to compare against" is not "compared and
+#       equal".
+#
+# WHY (3) ADMITS ONLY "accept": the registry's ACTUAL lifecycle-event
+# vocabulary is {claim, progress, submit, gate, accept}.  "accept" is the only
+# token denoting an act at or after acceptance; claim/progress/submit/gate are
+# all strictly earlier.  All four of the owner's act classes are recorded with
+# the "accept" token by the capture convention, and WHICH of the four a given
+# row is remains the verifier's call under (1)+(2).  Tokens absent from the
+# vocabulary ("checkpoint", "post_accept", ...) are deliberately NOT added:
+# defining semantics for an unused token would widen the rule on speculation,
+# and a rule one notch too permissive silently lowers the acceptance bar for
+# every future task.
+#
+# KNOWN LIMIT, STATED ON PURPOSE: conditions (3) and (4) cannot separate an
+# ordering constraint that is an act ("stop AFTER acceptance") from one that is
+# a bar ("stop BEFORE acceptance") -- both are `sequencing` rows bound to
+# "accept".  That discrimination is exactly the semantic judgment R632 assigns
+# to the independent verifier, and it is why (1)+(2) are mandatory rather than
+# advisory.
+#
+# WHAT DEFERRAL MEANS: the row is EVALUATED -- never deleted, waived, or
+# silently passed.  accept() records every deferral on the task packet and the
+# obligation is verified at the FIRST post-accept opportunity the control plane
+# offers: project_control.checkpoint() REFUSES to record a checkpoint while any
+# registered deferral is still unverified.
+# ==========================================================================
+
+# The owner's closed enumeration of acceptance-ordering acts (D-004-R629).
+ACCEPTANCE_ORDERING_ACT_CLASSES = frozenset({
+    "accept",                # "accept"
+    "post_accept_cleanup",   # "post-accept cleanup"
+    "checkpoint",            # "checkpoint"
+    "stop_after",            # "stop-after"
+})
+
+# Lifecycle-event tokens that denote an act AT OR AFTER acceptance. Derived from
+# the registry's real vocabulary {claim, progress, submit, gate, accept}.
+ACCEPTANCE_ORDERING_LIFECYCLE_EVENTS = frozenset({"accept"})
+
+# Requirement classifications that can describe an ACT (allowlist, see (4)).
+LIFECYCLE_ELIGIBLE_CLASSIFICATIONS = frozenset({"obligation", "sequencing"})
+
+# The per-row attestation key an independent verifier writes into a verification
+# row. `additionalProperties: true` in directive_verification.schema.json admits
+# it without any schema change.
+LIFECYCLE_CLASSIFICATION_KEY = "lifecycle_classification"
+
+# The field inside that attestation naming the reviewed CONTENT IDENTITY it was made
+# at (see (6)). Like the four fields above it is admitted by `additionalProperties:
+# true`; reading it defines no schema. An attestation that does not name the identity
+# it was made at cannot be distinguished from one copied forward to other content.
+ATTESTATION_IDENTITY_KEY = "classified_at_identity"
+
+# The ONLY verification states a lifecycle act may be deferred from (see (5)).
+# An ALLOWLIST, deliberately: every state outside it -- including UNVERIFIABLE,
+# absent, null, unknown, case-variant and non-string values -- keeps gating.
+DEFERRABLE_VERIFICATION_STATES = frozenset({"pending"})
+
+# A dated attestation: date + time, optional fraction, optional UTC offset (see (2)).
+ATTESTATION_TIMESTAMP_RE = re.compile(
+    r"^\d{4}-\d{2}-\d{2}[T ]\d{2}:\d{2}(:\d{2})?(\.\d+)?(Z|[+-]\d{2}:?\d{2})?$")
+
+
+def _is_dated_attestation(value) -> bool:
+    """True iff `value` is an ISO-8601 date-AND-time that is both well SHAPED and
+    CALENDAR-VALID. A date alone is not an act's timestamp, and a well-shaped but
+    impossible instant (month 13) is not a real one; both refuse."""
+    text = value.strip() if isinstance(value, str) else ""
+    if not ATTESTATION_TIMESTAMP_RE.match(text):
+        return False
+    try:
+        dt.datetime.fromisoformat(text.replace("Z", "+00:00"))
+    except ValueError:
+        return False
+    return True
+
+
+def _identity_key(value) -> str:
+    """Canonical comparison form for an AGENT IDENTITY. Two identities differing only
+    by surrounding whitespace or letter case are the SAME identity, so an independence
+    check can never be defeated by re-spelling one of them. A non-string is no identity
+    at all and normalizes to "" (which every caller treats as fail-closed)."""
+    return value.strip().casefold() if isinstance(value, str) else ""
+
+
+def _text(value) -> str:
+    """A trimmed string, or "" for any non-string. Used wherever a malformed field must
+    read as ABSENT rather than raise."""
+    return value.strip() if isinstance(value, str) else ""
+
+
+def acceptance_ordering_deferral(requirement_row, verification_row,
+                                 producer: str = "",
+                                 expected_identity=None) -> tuple:
+    """Apply the six CONJUNCTIVE conditions stated in the section header above.
+
+    Returns (deferral, refusals):
+      * (None, [])         no lifecycle_classification is claimed -> the row
+                           gates acceptance exactly as before (the default);
+      * (None, [reason..]) a claim WAS made and is REFUSED -> the reasons are
+                           surfaced alongside the row's ordinary "not PASS"
+                           reason, so a refused claim is loud, never silent;
+      * (deferral, [])     all six conditions hold -> the caller records the
+                           deferral and does not gate on this row.
+
+    Fails closed on every malformed shape and never raises: every field is
+    read through a type guard, so a missing key, a null, a wrong type
+    (including an unhashable one such as a list), or an unknown token becomes
+    a REFUSAL and never an exception. The producer argument is the identity
+    that PRODUCED the verification record; an attestation by that identity is
+    refused, and so is one whose producer is unknown, because independence
+    that cannot be evaluated has not been established (condition 2).
+    `expected_identity` is the reviewed CONTENT IDENTITY the deferral is being
+    granted at; the attestation must name that same identity (condition 6).
+    BOTH arguments default to the unusable value ON PURPOSE: a caller that
+    supplies neither identity gets a REFUSAL, never a release, so the safe
+    default of this function is to gate."""
+    if not isinstance(verification_row, dict):
+        return None, []
+    claim = verification_row.get(LIFECYCLE_CLASSIFICATION_KEY)
+    if claim is None:
+        return None, []
+    rid = verification_row.get("id") or "<unknown requirement>"
+    if not isinstance(claim, dict):
+        return None, [f"{rid}: {LIFECYCLE_CLASSIFICATION_KEY} is not an object "
+                      f"(fail closed; the row keeps gating acceptance)"]
+    refusals: list[str] = []
+
+    # (1) act class from the owner's closed enumeration.
+    act = claim.get("act_class")
+    act = act.strip() if isinstance(act, str) else ""
+    if act not in ACCEPTANCE_ORDERING_ACT_CLASSES:
+        refusals.append(
+            f"{rid}: lifecycle act_class {claim.get('act_class')!r} is not one of the "
+            f"owner-enumerated acceptance-ordering acts "
+            f"{sorted(ACCEPTANCE_ORDERING_ACT_CLASSES)}")
+
+    # (2) independent, dated attestation.
+    by = _text(claim.get("classified_by"))
+    if not by:
+        refusals.append(f"{rid}: lifecycle classification records no classified_by; "
+                        f"an independent verifier must own the classification")
+    elif not _identity_key(producer):
+        refusals.append(f"{rid}: the verification record names no producer identity, so the "
+                        f"independence of classifier {by!r} cannot be established; an "
+                        f"unevaluable independence test is refused (fail closed)")
+    elif _identity_key(by) == _identity_key(producer):
+        refusals.append(f"{rid}: lifecycle classification by {by!r} equals the verification "
+                        f"producer {_text(producer)!r}; the classification is the INDEPENDENT "
+                        f"verifier's, not the producer's")
+    just = _text(claim.get("justification"))
+    if not just:
+        refusals.append(f"{rid}: lifecycle classification records no justification; "
+                        f"an unreasoned classification is refused")
+    when = _text(claim.get("classified_at"))
+    if not _is_dated_attestation(when):
+        refusals.append(f"{rid}: lifecycle classification records no well-formed dated "
+                        f"classified_at ({claim.get('classified_at')!r}); an undated "
+                        f"attestation is not a point-in-time act and is refused")
+
+    # (3)+(4) the requirement row's OWN recorded semantics.
+    events: list = []
+    if not isinstance(requirement_row, dict):
+        refusals.append(f"{rid}: no requirement row found in requirements.json; the row's "
+                        f"own lifecycle semantics cannot be read (fail closed)")
+    else:
+        cls = requirement_row.get("classification")
+        cls = cls.strip() if isinstance(cls, str) else ""
+        if cls not in LIFECYCLE_ELIGIBLE_CLASSIFICATIONS:
+            refusals.append(
+                f"{rid}: requirement classification {requirement_row.get('classification')!r} "
+                f"cannot describe an acceptance-ordering ACT (eligible: "
+                f"{sorted(LIFECYCLE_ELIGIBLE_CLASSIFICATIONS)}); a bar on acceptance or an "
+                f"evidentiary/return duty is never deferred")
+        applic = requirement_row.get("applicability")
+        raw_events = applic.get("lifecycle_events") if isinstance(applic, dict) else None
+        if (not isinstance(raw_events, list) or not raw_events
+                or not all(isinstance(e, str) for e in raw_events)):
+            refusals.append(f"{rid}: applicability.lifecycle_events is missing, empty or "
+                            f"malformed; the row's lifecycle binding cannot be read "
+                            f"(fail closed)")
+        else:
+            events = [e.strip() for e in raw_events]
+            outside = sorted(set(events) - ACCEPTANCE_ORDERING_LIFECYCLE_EVENTS)
+            if outside:
+                refusals.append(
+                    f"{rid}: lifecycle_events {sorted(set(events))} bind obligations outside "
+                    f"acceptance ordering ({', '.join(outside)}), so this row's unmet "
+                    f"obligations are not SOLELY acceptance-ordering acts")
+
+    # (5) only an EXPLICITLY PENDING row is deferrable. The isinstance() test comes
+    # FIRST so an unhashable state (e.g. []) refuses instead of raising.
+    state = verification_row.get("state")
+    if not isinstance(state, str) or state not in DEFERRABLE_VERIFICATION_STATES:
+        refusals.append(f"{rid}: verification state {state!r} is not an explicitly pending "
+                        f"row (deferrable states: {sorted(DEFERRABLE_VERIFICATION_STATES)}); "
+                        f"a negative finding, an UNVERIFIABLE verdict, an absent, unknown, "
+                        f"case-variant or non-string state keeps gating acceptance however "
+                        f"the row is classified")
+
+    # (6) the attestation must be BOUND to the identity it was made at. The
+    # isinstance() guards come first, and an UNAVAILABLE expectation refuses.
+    expected = expected_identity if isinstance(expected_identity, str) else ""
+    stamped = claim.get(ATTESTATION_IDENTITY_KEY)
+    if not expected.strip():
+        refusals.append(f"{rid}: no reviewed content identity ({expected_identity!r}) is "
+                        f"available to bind the lifecycle classification to; an attestation "
+                        f"that cannot be checked against the content it was made about is "
+                        f"refused (fail closed)")
+    elif not isinstance(stamped, str) or stamped != expected:
+        refusals.append(f"{rid}: lifecycle classification records {ATTESTATION_IDENTITY_KEY} "
+                        f"{stamped!r}, which is not the reviewed content identity this "
+                        f"deferral is granted at ({expected!r}); an attestation carried "
+                        f"forward from other reviewed content -- or absent, empty, "
+                        f"re-cased, re-spaced or of the wrong type -- keeps the row gating "
+                        f"acceptance (exact match required)")
+
+    if refusals:
+        return None, refusals
+    return {
+        "requirement_id": rid,
+        "act_class": act,
+        "classified_by": by,
+        "classified_at": when,
+        "classified_at_identity": stamped,
+        "justification": just,
+        "row_classification": requirement_row.get("classification"),
+        "row_lifecycle_events": sorted(set(events)),
+        "verification_state": state,
+    }, []
 
 
 def _load_json(path: Path):
@@ -427,66 +758,253 @@ class DirectiveRegistry:
 
     # ---- per-task verification (D-001 amendment 3, Section 2) ----------
 
-    def task_unresolved_requirements(self, directive_id: str, task_id: str,
-                                     applicable_ids, reviewed_manifest_sha256: str | None) -> list[str]:
-        """Reasons a SPECIFIC (directive, task) pair is NOT fully verified at the given
-        content identity. Empty list == every requirement APPLICABLE TO THIS TASK is
-        PASS at that identity, by an independent verifier, in a well-formed row.
+    def task_verification_result(self, directive_id: str, task_id: str, applicable_ids,
+                                 reviewed_manifest_sha256: str | None,
+                                 reviewed_sha: str | None = None) -> dict:
+        """Structured per-(directive, task) verification state.
 
-        This is the multi-task replacement for unresolved_requirements(): one directive
-        may govern several tasks, each with its own allowed paths, content identity,
-        evidence, and reviewer. Only the requirements applicable to *this* task are
-        evaluated for *this* task's acceptance ('ALL' means all-applicable-to-this-task).
+        Returns {"reasons": [...], "deferrals": [...]}:
+          * reasons   -- why this pair is NOT fully verified at the given content
+                         identity (empty == every applicable requirement is PASS at
+                         that identity, by an independent verifier, in a well-formed
+                         row, OR is a properly attested acceptance-ordering lifecycle
+                         act);
+          * deferrals -- the acceptance-ordering lifecycle acts that were EVALUATED
+                         and deferred rather than gating (see the module-level
+                         "ACCEPTANCE-ORDERING LIFECYCLE CLASSIFICATION" rule). The
+                         caller MUST record these; they are never waived.
+
+        One directive may govern several tasks, each with its own allowed paths,
+        content identity, evidence, and reviewer, so only the requirements applicable
+        to *this* task are evaluated for *this* task's acceptance ('ALL' means
+        all-applicable-to-this-task).
 
         Supports verification.json schema directive_verification/v2 (task_verifications[])
         and falls back to the v1 single-task shape for legacy/other directives. Missing,
-        duplicate, extra, cross-task, or stale rows FAIL CLOSED."""
+        duplicate, extra, cross-task, or stale rows FAIL CLOSED. When `reviewed_sha` is
+        supplied, the record's reviewed commit must match it (D-004-R630: reviewed_sha is
+        ACTUALLY compared); a record that omits it therefore fails closed too."""
         d = self.directives.get(directive_id)
         if d is None:
-            return [f"directive {directive_id} not found"]
+            return {"reasons": [f"directive {directive_id} not found"], "deferrals": []}
         if d.errors:
-            return [f"directive {directive_id} integrity error: {d.errors[0]}"]
+            return {"reasons": [f"directive {directive_id} integrity error: {d.errors[0]}"],
+                    "deferrals": []}
         v = d.verification
         if not v:
-            return [f"{directive_id}: no verification.json"]
+            return {"reasons": [f"{directive_id}: no verification.json"], "deferrals": []}
         applicable = set(applicable_ids or [])
         schema = v.get("schema")
         if schema == "directive_verification/v2":
-            return self._v2_task_unresolved(d, v, directive_id, task_id, applicable,
-                                            reviewed_manifest_sha256)
-        # v1 back-compat: a single flat requirements[] shape scoped to one task. Evaluate
-        # ONLY the requirements applicable to this task (owner correction: not every
-        # requirement belonging to the directive).
-        return self._v1_task_unresolved(d, v, directive_id, applicable,
-                                         reviewed_manifest_sha256)
+            reasons, deferrals = self._v2_task_unresolved(
+                d, v, directive_id, task_id, applicable, reviewed_manifest_sha256,
+                reviewed_sha)
+        else:
+            # v1 back-compat: a single flat requirements[] shape scoped to one task.
+            # Evaluate ONLY the requirements applicable to this task (owner correction:
+            # not every requirement belonging to the directive).
+            reasons, deferrals = self._v1_task_unresolved(
+                d, v, directive_id, applicable, reviewed_manifest_sha256, reviewed_sha)
+        return {"reasons": reasons, "deferrals": deferrals}
+
+    def task_unresolved_requirements(self, directive_id: str, task_id: str,
+                                     applicable_ids, reviewed_manifest_sha256: str | None,
+                                     reviewed_sha: str | None = None) -> list[str]:
+        """Reasons a SPECIFIC (directive, task) pair is NOT fully verified at the given
+        content identity. Thin projection of task_verification_result()["reasons"];
+        callers that must RECORD the deferred acceptance-ordering rows (accept()) use
+        task_verification_result() instead."""
+        return self.task_verification_result(
+            directive_id, task_id, applicable_ids, reviewed_manifest_sha256,
+            reviewed_sha)["reasons"]
+
+    def _task_verification_container(self, directive_id: str, task_id: str) -> tuple:
+        """(container, rows, error) for ONE task's verification record. The CONTAINER is
+        the object carrying the record-level attestation fields (producer, verifier,
+        reviewed_manifest_sha256, reviewed_sha): the matching task_verifications[] entry
+        under v2, or the whole verification document under v1. Read-only, never raises."""
+        d = self.directives.get(directive_id)
+        if d is None:
+            return None, [], f"directive {directive_id} not found"
+        if d.errors:
+            return None, [], f"directive {directive_id} integrity error: {d.errors[0]}"
+        v = d.verification
+        if not v:
+            return None, [], f"{directive_id}: no verification.json"
+        if v.get("schema") == "directive_verification/v2":
+            matches = [tv for tv in (v.get("task_verifications") or [])
+                       if isinstance(tv, dict) and tv.get("task_id") == task_id
+                       and tv.get("directive_id", directive_id) == directive_id]
+            if not matches:
+                return None, [], f"{directive_id}/{task_id}: no task_verification row"
+            if len(matches) > 1:
+                return None, [], (f"{directive_id}/{task_id}: duplicate task_verification "
+                                  f"rows ({len(matches)})")
+            container = matches[0]
+        else:
+            container = v
+        rows = [r for r in (container.get("requirements") or []) if isinstance(r, dict)]
+        return container, rows, None
+
+    @staticmethod
+    def _row_is_satisfied(row) -> bool:
+        """True iff a verification row is DISCHARGED on its own terms: an outright PASS,
+        or a NOT_APPLICABLE carrying both a justification and an independent approver."""
+        if not isinstance(row, dict):
+            return False
+        st = row.get("state")
+        if st == SATISFIED_STATE:
+            return True
+        return (st == "NOT_APPLICABLE" and bool(row.get("not_applicable_justification"))
+                and bool(row.get("not_applicable_approved_by")))
+
+    def requirement_verification_state(self, directive_id: str, task_id: str,
+                                       requirement_id: str) -> tuple:
+        """(state, row) for ONE requirement row of ONE task, or (None, None) when no such
+        row exists. A PLAIN READ of the recorded state; read-only, never raises.
+
+        NOT sufficient to discharge a deferred acceptance-ordering act: a bare state says
+        nothing about WHO recorded it or at WHICH content identity. Use
+        deferred_requirement_discharge() for that -- deferral is not waiver, so the
+        deferred obligation is held to the SAME standard as the gate it deferred."""
+        _c, rows, err = self._task_verification_container(directive_id, task_id)
+        if err is not None:
+            return None, None
+        for r in rows:
+            if r.get("id") == requirement_id:
+                return r.get("state"), r
+        return None, None
+
+    def deferred_requirement_discharge(self, directive_id: str, task_id: str,
+                                       requirement_id: str,
+                                       expected_identity: str | None = None,
+                                       expected_sha: str | None = None) -> tuple:
+        """(discharged, state, reasons) for ONE requirement DEFERRED as an acceptance-
+        ordering lifecycle act (D-004-R629).
+
+        DEFERRAL IS NOT WAIVER. A deferred row is not released from the acceptance gate,
+        it is MOVED to the first post-accept opportunity, so discharging it demands the
+        SAME standards the gate itself applies -- otherwise the deferred obligation would
+        be held to a LOWER bar than an ordinary requirement and the deferral would be a
+        waiver in all but name. Every one of these must hold:
+
+          * the record is readable and unambiguous (one container for this task);
+          * INDEPENDENCE: a non-empty producer AND a non-empty verifier that is not the
+            producer (compared case/whitespace-insensitively) -- the same test
+            _v2_task_unresolved/_v1_task_unresolved apply at acceptance;
+          * CONTENT IDENTITY: the record's reviewed_manifest_sha256 equals the identity
+            the deferral was granted at, so the discharge attests to the SAME content
+            that was accepted;
+          * REVIEWED COMMIT: the record's reviewed_sha equals the commit the deferral was
+            granted at (D-004-R630: reviewed_sha is ACTUALLY compared);
+          * the row itself is PASS, or NOT_APPLICABLE with justification + independent
+            approver.
+
+        Read-only, never raises; every failure is a reason string, never an exception."""
+        reasons: list[str] = []
+        container, rows, err = self._task_verification_container(directive_id, task_id)
+        if err is not None:
+            return False, None, [f"{err} (fail closed)"]
+        producer = _text(container.get("producer"))
+        if not producer:
+            d = self.directives.get(directive_id)
+            producer = _text((d.verification or {}).get("producer")) if d else ""
+            if not producer and d is not None:
+                producer = _text(d.requirements.get("producer"))
+        verifier = _text(container.get("verifier"))
+        if not producer:
+            reasons.append(f"{directive_id}/{task_id}: no producer identity recorded on the "
+                           f"verification record; verifier independence cannot be established")
+        if not verifier:
+            reasons.append(f"{directive_id}/{task_id}: no independent verifier recorded on "
+                           f"the verification record")
+        elif producer and _identity_key(verifier) == _identity_key(producer):
+            reasons.append(f"{directive_id}/{task_id}: verifier {verifier!r} equals producer "
+                           f"{producer!r}; independent verification required")
+        if expected_identity is not None:
+            got = container.get("reviewed_manifest_sha256")
+            if got != expected_identity:
+                reasons.append(f"{directive_id}/{task_id}: post-accept verification is "
+                               f"recorded at content identity {got}, not at the identity the "
+                               f"deferral was granted at ({expected_identity})")
+        if expected_sha is not None:
+            got_sha = container.get("reviewed_sha")
+            if got_sha != expected_sha:
+                reasons.append(f"{directive_id}/{task_id}: post-accept verification is "
+                               f"recorded at commit {got_sha}, not at the reviewed commit the "
+                               f"deferral was granted at ({expected_sha})")
+        row = next((r for r in rows if r.get("id") == requirement_id), None)
+        state = row.get("state") if isinstance(row, dict) else None
+        if row is None:
+            reasons.append(f"{requirement_id}: no verification row exists for this task; a "
+                           f"deferred obligation cannot be discharged by its own deletion")
+        elif not self._row_is_satisfied(row):
+            reasons.append(f"{requirement_id}: verification state {state!r} is not PASS "
+                           f"(nor a justified, independently approved NOT_APPLICABLE)")
+        return (not reasons), state, reasons
+
+    def outstanding_lifecycle_claims(self, directive_id: str, task_id: str) -> list:
+        """[(requirement_id, state)] for every verification row of this (directive, task)
+        that CLAIMS an acceptance-ordering lifecycle classification and is NOT yet
+        satisfied. Lets a caller RE-DERIVE the outstanding obligation from the registry
+        instead of trusting a single mutable task-packet key: deleting that key must not
+        be able to erase the obligation silently. An unreadable record yields a synthetic
+        row so the caller fails closed rather than reading "nothing outstanding"."""
+        container, rows, err = self._task_verification_container(directive_id, task_id)
+        if err is not None:
+            return [(None, err)]
+        out = []
+        for r in rows:
+            if r.get(LIFECYCLE_CLASSIFICATION_KEY) is None:
+                continue
+            if self._row_is_satisfied(r):
+                continue
+            out.append((r.get("id"), r.get("state")))
+        return out
 
     def _v2_task_unresolved(self, d, v, directive_id, task_id, applicable,
-                            reviewed_manifest_sha256):
+                            reviewed_manifest_sha256, reviewed_sha=None):
         rows_all = v.get("task_verifications")
         if not isinstance(rows_all, list):
-            return [f"{directive_id}: v2 verification missing task_verifications[] (fail closed)"]
+            return ([f"{directive_id}: v2 verification missing task_verifications[] "
+                     f"(fail closed)"], [])
         matches = [tv for tv in rows_all if isinstance(tv, dict)
                    and tv.get("task_id") == task_id
                    and tv.get("directive_id", directive_id) == directive_id]
         if not matches:
-            return [f"{directive_id}/{task_id}: no task_verification row (fail closed)"]
+            return ([f"{directive_id}/{task_id}: no task_verification row (fail closed)"], [])
         if len(matches) > 1:
-            return [f"{directive_id}/{task_id}: duplicate task_verification rows "
-                    f"({len(matches)}) (fail closed)"]
+            return ([f"{directive_id}/{task_id}: duplicate task_verification rows "
+                     f"({len(matches)}) (fail closed)"], [])
         tv = matches[0]
         reasons: list[str] = []
-        producer = (tv.get("producer") or v.get("producer")
-                    or d.requirements.get("producer") or "").strip()
-        verifier = (tv.get("verifier") or "").strip()
+        deferrals: list[dict] = []
+        producer = (_text(tv.get("producer")) or _text(v.get("producer"))
+                    or _text(d.requirements.get("producer")))
+        verifier = _text(tv.get("verifier"))
+        # A MISSING producer is fail-closed, not permissive: without it, verifier
+        # independence is UNEVALUABLE, and an unevaluable independence check would
+        # otherwise silently disable itself and admit self-verification.
+        if not producer:
+            reasons.append(f"{directive_id}/{task_id}: no producer identity recorded on the "
+                           f"verification record; verifier independence cannot be established "
+                           f"(fail closed)")
         if not verifier:
             reasons.append(f"{directive_id}/{task_id}: no independent verifier recorded")
-        elif producer and verifier == producer:
+        elif producer and _identity_key(verifier) == _identity_key(producer):
             reasons.append(f"{directive_id}/{task_id}: verifier {verifier!r} equals producer "
                            f"{producer!r}; independent verification required")
         vsha = tv.get("reviewed_manifest_sha256")
         if reviewed_manifest_sha256 is not None and vsha != reviewed_manifest_sha256:
             reasons.append(f"{directive_id}/{task_id}: verification is stale -- recorded at "
                            f"content identity {vsha}, current is {reviewed_manifest_sha256}")
+        # reviewed_sha is ACTUALLY compared (D-004-R630 / Message F item 2(b)); a record
+        # that omits it therefore fails closed, exactly as a mismatching one does.
+        rsha = tv.get("reviewed_sha")
+        if reviewed_sha is not None and rsha != reviewed_sha:
+            reasons.append(f"{directive_id}/{task_id}: verification reviewed_sha is stale -- "
+                           f"recorded at commit {rsha}, current reviewed commit is "
+                           f"{reviewed_sha} (fail closed)")
         rows = {}
         for r in tv.get("requirements", []):
             rid = r.get("id")
@@ -518,22 +1036,45 @@ class DirectiveRegistry:
                     reasons.append(f"{rid}: NOT_APPLICABLE without justification + independent approver")
                 continue
             if st != SATISFIED_STATE:
+                # The reviewed content identity is passed through so condition (6) can
+                # bind the attestation to it: an attestation carried forward from an
+                # earlier review must not release a row at content it never saw.
+                deferral, refusals = acceptance_ordering_deferral(
+                    d.requirement(rid), r, producer, reviewed_manifest_sha256)
+                if deferral is not None:
+                    deferral["directive_id"] = directive_id
+                    deferral["task_id"] = task_id
+                    deferrals.append(deferral)
+                    continue
+                reasons.extend(refusals)
                 reasons.append(f"{rid}: verification state {st!r} (not PASS)")
-        return reasons
+        return reasons, deferrals
 
-    def _v1_task_unresolved(self, d, v, directive_id, applicable, reviewed_manifest_sha256):
-        producer = (v.get("producer") or d.requirements.get("producer") or "").strip()
-        verifier = (v.get("verifier") or "").strip()
+    def _v1_task_unresolved(self, d, v, directive_id, applicable, reviewed_manifest_sha256,
+                            reviewed_sha=None):
+        producer = _text(v.get("producer")) or _text(d.requirements.get("producer"))
+        verifier = _text(v.get("verifier"))
         reasons: list[str] = []
+        deferrals: list[dict] = []
+        # Same fail-closed rule as the v2 path: an unknown producer makes the
+        # independence check unevaluable, so it refuses instead of disabling itself.
+        if not producer:
+            reasons.append(f"{directive_id}: no producer identity recorded on the verification "
+                           f"record; verifier independence cannot be established (fail closed)")
         if not verifier:
             reasons.append(f"{directive_id}: no independent verifier recorded")
-        elif producer and verifier == producer:
+        elif producer and _identity_key(verifier) == _identity_key(producer):
             reasons.append(f"{directive_id}: verifier {verifier!r} equals producer "
                            f"{producer!r}; independent verification required")
         vsha = v.get("reviewed_manifest_sha256")
         if reviewed_manifest_sha256 is not None and vsha != reviewed_manifest_sha256:
             reasons.append(f"{directive_id}: verification is stale -- recorded at content "
                            f"identity {vsha}, current is {reviewed_manifest_sha256}")
+        rsha = v.get("reviewed_sha")
+        if reviewed_sha is not None and rsha != reviewed_sha:
+            reasons.append(f"{directive_id}: verification reviewed_sha is stale -- recorded "
+                           f"at commit {rsha}, current reviewed commit is {reviewed_sha} "
+                           f"(fail closed)")
         ver_states = {r.get("id"): r for r in v.get("requirements", [])}
         missing_rows = sorted(applicable - set(ver_states))
         if missing_rows:
@@ -548,8 +1089,19 @@ class DirectiveRegistry:
                     reasons.append(f"{rid}: NOT_APPLICABLE without justification + independent approver")
                 continue
             if st != SATISFIED_STATE:
+                # Same identity binding as the v2 path (condition 6): the dormant v1
+                # shape is fixed alongside the live one so it cannot fail open if it is
+                # ever re-wired.
+                deferral, refusals = acceptance_ordering_deferral(
+                    d.requirement(rid), row, producer, reviewed_manifest_sha256)
+                if deferral is not None:
+                    deferral["directive_id"] = directive_id
+                    deferral["task_id"] = None
+                    deferrals.append(deferral)
+                    continue
+                reasons.extend(refusals)
                 reasons.append(f"{rid}: verification state {st!r} (not PASS)")
-        return reasons
+        return reasons, deferrals
 
 
 def _path_intersects(scope_path: str, allowed_paths: list) -> bool:
@@ -685,12 +1237,25 @@ def resolve_commit(root: Path, sha: str | None) -> tuple:
     return full, None
 
 
-def git_tree_manifest(root: Path, commit: str, paths: list,
-                      exclude_prefixes: tuple = ()) -> tuple:
-    """Deterministic SHA-256 over sorted (relpath, mode, type, object-id) for every
-    tracked object at `commit` under `paths` (files or directory trees; `-r` expands
-    directories, gitlinks appear as type 'commit'). Returns (identity_hex, entries,
-    error)."""
+def _hash_manifest_entries(entries: list) -> str:
+    """The ONE canonical encoding of a content-identity manifest: sorted 4-field
+    records, NUL-separated within a record and newline-terminated. Shared by the
+    raw-blob manifest and the control-plane material manifest so an identity built
+    from both components is a single, order-independent hash."""
+    entries = sorted(entries)
+    h = hashlib.sha256()
+    for rel, mode, gtype, value in entries:
+        h.update(rel.encode("utf-8")); h.update(b"\0")
+        h.update(mode.encode("ascii")); h.update(b"\0")
+        h.update(gtype.encode("ascii")); h.update(b"\0")
+        h.update(value.encode("ascii")); h.update(b"\n")
+    return h.hexdigest()
+
+
+def _ls_tree_entries(root: Path, commit: str, paths: list) -> tuple:
+    """(entries, error) of (relpath, mode, gtype, object-id) for every tracked object at
+    `commit` under `paths`; `-r` expands directories and gitlinks appear as type
+    'commit'. No filtering: callers apply their own prefix policy."""
     entries: list = []
     seen: set = set()
     for p in paths:
@@ -699,44 +1264,145 @@ def git_tree_manifest(root: Path, commit: str, paths: list,
             continue
         out, err = _run_git(root, ["ls-tree", "-r", "-z", "--full-tree", commit, "--", pp])
         if err is not None:
-            return None, None, f"git ls-tree failed for {pp!r}: {err}"
+            return None, f"git ls-tree failed for {pp!r}: {err}"
         for rec in out.split(b"\x00"):
             if not rec:
                 continue
             meta, sep, path_b = rec.partition(b"\t")
             if not sep:
-                return None, None, f"unparseable ls-tree record: {rec!r}"
+                return None, f"unparseable ls-tree record: {rec!r}"
             try:
                 mode, gtype, obj = meta.decode("utf-8").split()
             except ValueError:
-                return None, None, f"unparseable ls-tree meta: {meta!r}"
+                return None, f"unparseable ls-tree meta: {meta!r}"
             rel = path_b.decode("utf-8")
-            if rel in seen or any(rel.startswith(pre) for pre in exclude_prefixes):
+            if rel in seen:
                 continue
             seen.add(rel)
             entries.append((rel, mode, gtype, obj))
+    return entries, None
+
+
+def git_tree_manifest(root: Path, commit: str, paths: list,
+                      exclude_prefixes: tuple = ()) -> tuple:
+    """Deterministic SHA-256 over sorted (relpath, mode, type, object-id) for every
+    tracked object at `commit` under `paths` (files or directory trees; `-r` expands
+    directories, gitlinks appear as type 'commit'). Returns (identity_hex, entries,
+    error)."""
+    all_entries, err = _ls_tree_entries(root, commit, paths)
+    if err is not None:
+        return None, None, err
+    entries = [e for e in all_entries
+               if not any(e[0].startswith(pre) for pre in exclude_prefixes)]
     entries.sort()
-    h = hashlib.sha256()
-    for rel, mode, gtype, obj in entries:
-        h.update(rel.encode("utf-8")); h.update(b"\0")
-        h.update(mode.encode("ascii")); h.update(b"\0")
-        h.update(gtype.encode("ascii")); h.update(b"\0")
-        h.update(obj.encode("ascii")); h.update(b"\n")
-    return h.hexdigest(), entries, None
+    return _hash_manifest_entries(entries), entries, None
 
 
-def relevant_working_tree_dirty(root: Path, paths: list,
-                                exclude_prefixes: tuple = ()) -> tuple:
-    """Return (dirty_entries, error). dirty_entries is a list of (xy_status, path) for
-    any tracked file under `paths` that is modified/staged/deleted OR any untracked file
-    under `paths`, excluding exclude_prefixes. A non-empty list is the fail-closed signal
-    that the working tree does not match committed content for the relevant scope."""
+# ==========================================================================
+# CONTROL-PLANE MATERIAL IDENTITY  (owner directive D-004-R630, Message F
+# item 2(b): "governance-shaped tasks (allowed_paths entirely under
+# project-control/) get real staleness/dirt guards").
+#
+# THE PROBLEM.  The raw-blob manifest above deliberately EXCLUDES the
+# control-plane tree, because the control plane rewrites its own records: every
+# submit/gate/accept mutates the task packet it is operating on. For a task
+# whose allowed_paths lie entirely inside that tree the excluded set is
+# everything, so the identity degenerates to the deterministic empty-set hash
+# and the dirt guard sees nothing -- both guards compare a constant with itself.
+#
+# THE RESOLUTION -- MATERIAL CONTENT vs LIFECYCLE BOOKKEEPING.  The exclusion is
+# not removed (that would be unworkable, see below); it is replaced, for the
+# excluded tree, by a MATERIAL identity that measures exactly the content a
+# reviewer reviewed:
+#
+#   * a task packet (project-control/tasks/<id>.json) contributes
+#     material_digest(packet) -- the owner's OWN material/lifecycle boundary
+#     from D-001 amendment 3 Section 1, which already excludes status, progress,
+#     timestamps, reports, gate records, roster, worktree and progress_log;
+#   * EVERY other control-plane file contributes its canonical git blob id,
+#     exactly like ordinary work product: reports, directive sources,
+#     requirements, verification records, config.
+#
+# WHY THE EXCLUSION CANNOT SIMPLY BE DROPPED.  A task packet's raw blob id
+# changes on every lifecycle transition, and the control plane performs such
+# transitions BETWEEN the moment an identity is stamped and the moment it is
+# checked: submit() stamps the identity and then writes status/progress to the
+# packet; gate() writes progress_percent after stamping its own record; accept()
+# then recomputes and compares. A raw-blob control-plane identity is therefore
+# stale by construction the instant it is recorded, and no task could ever be
+# accepted. The material digest is the only boundary that is BOTH non-vacuous
+# and stable across the submit -> gate -> accept window.
+#
+# CONSEQUENCE, STATED PLAINLY: a purely lifecycle-bookkeeping edit to a task
+# packet (status / progress_percent / updated_at / progress_log / reports) does
+# NOT move the identity, by design. A material packet amendment does, and so
+# does any change to any other file in scope. The guard is real, not literal.
+# ==========================================================================
+
+# The one lifecycle-owned file class inside the control-plane tree: task packets,
+# whose non-material fields the control plane rewrites on every transition.
+TASK_PACKET_PREFIX = "project-control/tasks/"
+TASK_PACKET_SUFFIX = ".json"
+# Marker distinguishing a material-digest entry from a git object id in a manifest
+# entry, so the two can never collide in the hashed encoding.
+MATERIAL_ENTRY_PREFIX = "material:"
+
+
+def is_task_packet_path(rel: str) -> bool:
+    """True for a control-plane task packet, whose non-material fields are rewritten
+    by the control plane itself and therefore never bind a reviewed identity."""
+    return str(rel).startswith(TASK_PACKET_PREFIX) and str(rel).endswith(TASK_PACKET_SUFFIX)
+
+
+def _packet_material_at_commit(root: Path, commit: str, rel: str, obj: str) -> tuple:
+    """(material_digest_hex, error) for a task packet stored at object id `obj`."""
+    out, err = _run_git(root, ["cat-file", "blob", obj])
+    if err is not None:
+        return None, f"cannot read {rel} at {commit[:12]}: {err}"
+    try:
+        packet = json.loads(out.decode("utf-8-sig"))
+    except (ValueError, UnicodeDecodeError) as e:
+        return None, f"task packet {rel} at {commit[:12]} is not valid JSON: {e}"
+    if not isinstance(packet, dict):
+        return None, f"task packet {rel} at {commit[:12]} is not a JSON object"
+    return material_digest(packet), None
+
+
+def control_plane_entries(root: Path, commit: str, paths: list,
+                          include_prefixes: tuple = ()) -> tuple:
+    """(entries, error) for the tracked control-plane objects at `commit` under `paths`
+    that fall inside `include_prefixes` -- i.e. exactly the objects the raw-blob
+    manifest excludes. Task packets contribute their MATERIAL digest; everything else
+    contributes its git object id. See the section header for why."""
+    if not include_prefixes:
+        return [], None
+    all_entries, err = _ls_tree_entries(root, commit, paths)
+    if err is not None:
+        return None, err
+    out: list = []
+    for rel, mode, gtype, obj in all_entries:
+        if not any(rel.startswith(pre) for pre in include_prefixes):
+            continue
+        if gtype == "blob" and is_task_packet_path(rel):
+            dig, derr = _packet_material_at_commit(root, commit, rel, obj)
+            if derr is not None:
+                return None, derr
+            out.append((rel, mode, gtype, MATERIAL_ENTRY_PREFIX + dig))
+        else:
+            out.append((rel, mode, gtype, obj))
+    out.sort()
+    return out, None
+
+
+def _status_records(root: Path, paths: list) -> tuple:
+    """(records, error) of (xy_status, path) for every modified/staged/deleted tracked
+    file and every untracked file under `paths`. No prefix filtering."""
     args = ["status", "--porcelain=v1", "-z", "--untracked-files=all", "--"]
     args += [str(p) for p in paths if str(p).strip()]
     out, err = _run_git(root, args)
     if err is not None:
         return None, f"git status failed: {err}"
-    dirty: list = []
+    records: list = []
     tokens = out.split(b"\x00")
     i = 0
     while i < len(tokens):
@@ -750,24 +1416,94 @@ def relevant_working_tree_dirty(root: Path, paths: list,
         # v1 reports the R/C in the index (X) column; check both columns defensively.
         if xy[:1] in ("R", "C") or xy[1:2] in ("R", "C"):
             i += 1
-        if not any(path.startswith(pre) for pre in exclude_prefixes):
-            dirty.append((xy, path))
+        records.append((xy, path))
         i += 1
+    return records, None
+
+
+def relevant_working_tree_dirty(root: Path, paths: list,
+                                exclude_prefixes: tuple = ()) -> tuple:
+    """Return (dirty_entries, error). dirty_entries is a list of (xy_status, path) for
+    any tracked file under `paths` that is modified/staged/deleted OR any untracked file
+    under `paths`, excluding exclude_prefixes. A non-empty list is the fail-closed signal
+    that the working tree does not match committed content for the relevant scope."""
+    records, err = _status_records(root, paths)
+    if err is not None:
+        return None, err
+    return [(xy, path) for xy, path in records
+            if not any(path.startswith(pre) for pre in exclude_prefixes)], None
+
+
+def control_plane_material_dirty(root: Path, paths: list,
+                                 include_prefixes: tuple = ()) -> tuple:
+    """Return (dirty_entries, error) for CONTROL-PLANE files under `paths` (those the
+    raw-blob dirt guard drops via its exclusion tuple). A file is dirty unless it is a
+    tracked, modified task packet whose working-tree MATERIAL digest still equals its
+    HEAD material digest -- i.e. unless the only change is lifecycle bookkeeping.
+    Untracked, deleted, renamed/copied and unreadable files are ALWAYS dirty.
+
+    An EMPTY path list means an empty scope, not the whole repository: `git status --`
+    with no pathspec reports every file, so a task that declares no allowed_paths would
+    otherwise be judged against control-plane records it does not own."""
+    if not include_prefixes:
+        return [], None
+    if not [p for p in paths if str(p).strip()]:
+        return [], None
+    records, err = _status_records(root, paths)
+    if err is not None:
+        return None, err
+    dirty: list = []
+    for xy, path in records:
+        if not any(path.startswith(pre) for pre in include_prefixes):
+            continue
+        if _is_lifecycle_only_packet_change(root, xy, path):
+            continue
+        dirty.append((xy, path))
     return dirty, None
+
+
+def _is_lifecycle_only_packet_change(root: Path, xy: str, path: str) -> bool:
+    """True ONLY for a tracked task packet whose working-tree material digest equals its
+    HEAD material digest. Every other shape -- non-packet file, untracked ('?'), deleted
+    ('D'), renamed/copied ('R'/'C'), unreadable, unparseable, or materially changed --
+    returns False so the caller treats it as dirt (fail closed)."""
+    if not is_task_packet_path(path):
+        return False
+    if any(c in xy for c in ("?", "!", "D", "R", "C", "U")):
+        return False
+    out, err = _run_git(root, ["cat-file", "blob", f"HEAD:{path}"])
+    if err is not None:
+        return False
+    try:
+        head_packet = json.loads(out.decode("utf-8-sig"))
+        work_packet = json.loads((Path(root) / path).read_text(encoding="utf-8-sig"))
+    except (ValueError, OSError, UnicodeDecodeError):
+        return False
+    if not isinstance(head_packet, dict) or not isinstance(work_packet, dict):
+        return False
+    return material_digest(head_packet) == material_digest(work_packet)
 
 
 def frozen_git_identity(paths: list, reviewed_sha: str | None = None,
                         root: Path = ROOT, exclude_prefixes: tuple = (),
-                        require_clean: bool = True) -> tuple:
+                        require_clean: bool = True,
+                        control_plane_prefixes: tuple = ()) -> tuple:
     """The authoritative git-canonical reviewed content identity for a task's paths.
     Returns (identity_hex, resolved_commit_sha, error). Fails closed (error != None) when:
       * `root` is not a git work tree / git is unavailable;
       * reviewed_sha (or HEAD) does not resolve to a commit;
-      * require_clean and a relevant tracked file is dirty or a relevant file is untracked.
-    An empty relevant set (all paths under exclude_prefixes or absent at the commit)
-    yields the deterministic empty-set hash, not an error -- untracked/dirty relevant
-    files are caught by the cleanliness guard above, so an empty set means there is
-    genuinely no reviewable tracked content in scope."""
+      * require_clean and a relevant tracked file is dirty or a relevant file is untracked;
+      * require_clean and a control-plane file in scope carries a MATERIAL (non-lifecycle)
+        working-tree change (D-004-R630).
+
+    The identity has TWO components hashed as one manifest: the raw-blob entries for
+    paths outside `exclude_prefixes`, plus the MATERIAL entries for paths inside
+    `control_plane_prefixes` (see the CONTROL-PLANE MATERIAL IDENTITY section). When
+    `control_plane_prefixes` is empty, or no path in scope falls inside it, the value is
+    byte-identical to the raw-blob identity, so existing identities are unchanged.
+    An empty relevant set yields the deterministic empty-set hash -- which for a
+    governance-shaped task is no longer possible unless its allowed_paths genuinely
+    contain no tracked content at all."""
     top, err = git_work_tree_root(root)
     if err is not None:
         return None, None, f"content identity requires a git work tree: {err}"
@@ -790,6 +1526,10 @@ def frozen_git_identity(paths: list, reviewed_sha: str | None = None,
         dirty, derr = relevant_working_tree_dirty(root, paths, exclude_prefixes)
         if derr is not None:
             return None, None, derr
+        cp_dirty, cderr = control_plane_material_dirty(root, paths, control_plane_prefixes)
+        if cderr is not None:
+            return None, None, cderr
+        dirty = list(dirty) + list(cp_dirty)
         if dirty:
             preview = "; ".join(f"[{xy.strip() or '??'}] {p}" for xy, p in dirty[:8])
             return None, None, (
@@ -798,6 +1538,11 @@ def frozen_git_identity(paths: list, reviewed_sha: str | None = None,
     identity, entries, err = git_tree_manifest(root, commit, paths, exclude_prefixes)
     if err is not None:
         return None, None, err
+    cp_entries, cperr = control_plane_entries(root, commit, paths, control_plane_prefixes)
+    if cperr is not None:
+        return None, None, cperr
+    if cp_entries:
+        identity = _hash_manifest_entries(list(entries) + list(cp_entries))
     return identity, commit, None
 
 
