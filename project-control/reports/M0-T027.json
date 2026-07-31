@@ -2,11 +2,11 @@
   "task_id": "M0-T027",
   "producer_agent": "orchestrator",
   "report_file": "project-control/reports/M0-T027-producer-report.md",
-  "submitted_at": "2026-07-31T04:40:02.441475+00:00",
+  "submitted_at": "2026-07-31T19:32:55.139129+00:00",
   "requested_status": "awaiting_gate",
   "evidence_map": "project-control/reports/M0-T027-evidence-map.json",
-  "content_manifest_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-  "reviewed_sha": "f08769e17b99cc434ddd80f0a91b4e08ecb81dba",
+  "content_manifest_sha256": "29a094ebdf312767b2ffa964a9cfb0398432e8838db0a211a711f1dd8db2bb97",
+  "reviewed_sha": "3b3964f354088353f6f8a261700c94bdb1295bb0",
   "applicable_requirements": [
     "D-004-R010",
     "D-004-R011",
@@ -242,5 +242,5 @@
     "D-004-R515",
     "D-004-R516"
   ],
-  "updated_at": "2026-07-31T04:40:02.961466+00:00"
+  "updated_at": "2026-07-31T19:32:55.935589+00:00"
 }
