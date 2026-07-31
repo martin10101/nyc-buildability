@@ -1,7 +1,7 @@
 {
   "schema": "directive_manifest/v1",
   "directive_id": "D-004",
-  "version": 15,
+  "version": 16,
   "slug": "agent-teams-runtime-adoption",
   "title": "Agent-teams runtime adoption, staged with pilots",
   "status": "active",
@@ -129,6 +129,14 @@
       "amends": "source-001.md",
       "recorded_at": "2026-07-30T00:00:00+00:00",
       "content_digest_sha256": "73605d23d23d1ba1167a94370fc80574b54eaa9e39db8939c83f2dace6b1d095"
+    },
+    {
+      "file": "source-016-amendment.md",
+      "kind": "amendment",
+      "sequence": 16,
+      "amends": "source-001.md",
+      "recorded_at": "2026-07-31T00:00:00+00:00",
+      "content_digest_sha256": "d3a6cc176c52730c7cc2b359495cc0aa38784ed89b7cf6e325f088b3e2516369"
     }
   ],
   "amendments": [
@@ -145,7 +153,8 @@
     "source-012-amendment.md",
     "source-013-amendment.md",
     "source-014-amendment.md",
-    "source-015-amendment.md"
+    "source-015-amendment.md",
+    "source-016-amendment.md"
   ],
   "supersedes": [],
   "superseded_by": null,
@@ -273,7 +282,7 @@
     "Amendment 8 (source-009, rows D-004-R307-R326): owner decision captured 2026-07-30 at live-reconciled head 87e0ad6d87fa3e45cf647ebe45bf7db4029e7b75 (post PR #128; expected state verified in every particular). Three decisions plus one GO: (1) TEMPORARY model-availability exception - Fable 5 exhausted, so the lead runs Opus 5 and every gate reviewer/verifier is spawned with EXPLICIT Opus 5; this supersedes only the VALUE clauses of R090/R161 and the lead clause of R298, temporarily, until the owner restores Fable 5; independence, verbatim-evidence, effort, and settings clauses are unchanged and re-affirmed; the actual model used must be recorded and never misreported. (2) WORKTREE decision - the harness-isolation + attestation + exact-diff-port mechanism is accepted as disclosed and becomes the mechanism Step 5 must describe; the literal pre-created-worktree wording is superseded as mechanically unsatisfiable. (3) STEP-4 evidence accepted including the disclosed post-gate model switch; no M2-T018/M4-T008 rerun. (4) GO for the M0-T027 closeout ONLY, with an explicit not-authorized list and a STOP-and-present-proposed-Step-5 terminus. Session-conduct rows use the sentinel D-004-STEP4CLOSE; closeout-binding rows carry M0-T027 so the resolver derives them for that packet. No existing source or requirement row edited."
   ],
   "created_at": "2026-07-24T00:00:00+00:00",
-  "updated_at": "2026-07-30T00:00:00+00:00",
+  "updated_at": "2026-07-31T00:00:00+00:00",
   "audit_log": [
     {
       "at": "2026-07-24T00:00:00+00:00",
@@ -349,6 +358,11 @@
       "at": "2026-07-30T00:00:00+00:00",
       "by": "orchestrator",
       "note": "Amendment 14 captured verbatim as source-015-amendment.md (sha256 73605d23d23d1ba1167a94370fc80574b54eaa9e39db8939c83f2dace6b1d095) at branch head f4c7c3be0e45c125c2bf1bf4790fc8e5ab053424, origin/main unchanged. 9 append-only rows D-004-R568..R576 (total 567 -> 576), all scoped to the D-004-OPTIONB session sentinel; M0-T027's applicable set remains 233 and no row of this amendment enters it. OWNER-VERBATIM REDACTION, disclosed because it is a more serious category than the reviewer-return redactions: on the owner's explicit Option-4 approval, the truncated session-id prefix was substituted with <REDACTED-SESSION-ID> inside BOTH owner-verbatim captures - once in source-014-amendment.md and twice in source-015-amendment.md. In every instance the original text at that position was the owner NAMING the identifier to be redacted, so the lines now read self-referentially; no instruction, constraint, prohibition, deferral, or ordering was altered. source-014-amendment.md's content_digest_sha256 was RE-DERIVED after its redaction and updated in place from 92816c1b30222674... to f5e5d9a3b9ca37d2...; this is a digest correction for a source that had not yet been committed, not an edit to committed history. Item 3 of amendment 14 (source-014 'won't be committed, no action') is preserved verbatim and recorded as SUPERSEDED by the Option-4 approval, because manifest.json already cited source-014 with a digest and requirements.json already carried R553-R567 against it, so a fresh checkout would have failed validation on a cited-but-missing source."
+    },
+    {
+      "at": "2026-07-31T00:00:00+00:00",
+      "by": "orchestrator",
+      "note": "Amendment 15 captured verbatim as source-016-amendment.md (sha256 d3a6cc176c52730c7cc2b359495cc0aa38784ed89b7cf6e325f088b3e2516369) at branch head 0b8c0dceb08f9cda8cbd1fb2f7e55ea80a5d479c, origin/main unchanged at 11f3540c. 16 append-only rows D-004-R577..R592 (total 576 -> 592), all scoped to the D-004-OPTIONB session sentinel; M0-T027's applicable set remains 233 with no leakage. PURPOSE - CURES THE DEFECT THE THIRD VERIFICATION PASS FOUND: that pass ruled D-004-R024 PASS but found R573 and R575 UNVERIFIABLE, because commit 0b8c0dc performed an act those captured prohibitions forbade while the owner approvals lifting them existed ONLY as orchestrator narrative, never as captured owner text. This amendment captures all three outstanding approvals verbatim - the Option-4 approval (Message A), the commit approval (Message B), and the authorization for THIS commit (Message C) - so the chain is reproducible from the repository alone. By the owner's explicit instruction the authorizing message and the act it authorizes land in the SAME commit, so the recursion terminates here and no further amendment is owed to justify this one. TWO CORRECTIONS FOLDED IN: (1) the pre-existing machine-username count is 76, not 75 - 75 under project-control/ plus 1 under .claude/agent-memory/; audit entry 13 is committed and append-only so the correction is recorded here rather than by editing it. (2) two G5 redaction substitutions fall inside fenced command blocks, so those command STRINGS are not executable-as-printed while no command OUTPUT changed; the clause is added to the G5 annotation. One truncated session-id prefix inside Message A was redacted under the established owner-approved convention, disclosed and confined to the identifier the owner was naming."
     }
   ],
   "locked_requirement_ids": [
@@ -927,8 +941,24 @@
     "D-004-R573",
     "D-004-R574",
     "D-004-R575",
-    "D-004-R576"
+    "D-004-R576",
+    "D-004-R577",
+    "D-004-R578",
+    "D-004-R579",
+    "D-004-R580",
+    "D-004-R581",
+    "D-004-R582",
+    "D-004-R583",
+    "D-004-R584",
+    "D-004-R585",
+    "D-004-R586",
+    "D-004-R587",
+    "D-004-R588",
+    "D-004-R589",
+    "D-004-R590",
+    "D-004-R591",
+    "D-004-R592"
   ],
-  "requirements_id_digest_sha256": "de2517bc7f2d2ee6c76236aa5075bdb1f981bc72ced1711015e087d0be099902",
-  "requirements_content_digest_sha256": "988c8ecc69b323f666048a8227c883f1c03a512817bbe0ca07355c499ef918c6"
+  "requirements_id_digest_sha256": "73e45507b195f9ad8550b930b0b6d58f79a6e75ae74c36511b8062d04b942e2e",
+  "requirements_content_digest_sha256": "e21a84ce19fd130eb1efc144b9342a50c5b125ca816a1a25c53c45f200de0367"
 }

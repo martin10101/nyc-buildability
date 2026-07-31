@@ -25,7 +25,10 @@ substitutions were applied to this file, using D-004's own native convention alr
 
 **Nothing else changed.** No verdict, finding, defect, severity, requirement ruling, SHA, digest,
 count, line reference, or command output was altered, and no text was added to or removed from the
-reviewer's return beyond these substitutions. The return remains verbatim in every respect except
+reviewer's return beyond these substitutions. **One precision, added by owner instruction
+(D-004-R583) after an independent verifier noted it:** two of the substitutions above fall inside
+fenced command blocks, so those command **strings** are no longer executable-as-printed. No command
+**output** was altered, and no finding rests on re-running them. The return remains verbatim in every respect except
 the redaction tokens themselves, which are visible rather than silent so the preservation stays
 honest and auditable.
 
