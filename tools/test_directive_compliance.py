@@ -813,7 +813,7 @@ class MultiTaskVerificationTests(unittest.TestCase):
 # M0-T034 / D-004-R629..R633 — governance acceptance semantics.
 #
 #   (a) LIFECYCLE-AWARE ACCEPTANCE: the acceptance-ordering classifier and its
-#       five conjunctive conditions, plus the source-level proofs that the rule
+#       six conjunctive conditions, plus the source-level proofs that the rule
 #       is GENERAL (no task-id allowlist, flag, or environment override) and is
 #       DOCUMENTED IN THE CODE.
 #   (b) VACUOUS-GUARD GAP: the control-plane MATERIAL identity and dirt guard
@@ -842,31 +842,40 @@ def _ver_row(rid="D-900-R001", state="pending", classification=None):
     return row
 
 
+# The reviewed CONTENT IDENTITY every attestation in this suite is made at. Condition
+# (6) binds the attestation to it, so a probe that does not name it must refuse.
+ATTEST_IDENTITY = "a" * 64
+
+
 def _attestation(**over):
     base = {"act_class": "accept", "classified_by": "verifier-v",
             "classified_at": "2026-07-31T00:00:00+00:00",
+            "classified_at_identity": ATTEST_IDENTITY,
             "justification": "the row's obligation is performed at acceptance itself"}
     base.update(over)
     return base
 
 
 class AcceptanceOrderingClassifierTests(unittest.TestCase):
-    """D-004-R629/R632: the five CONJUNCTIVE conditions, each proven necessary."""
+    """D-004-R629/R632: the six CONJUNCTIVE conditions, each proven necessary."""
 
     def test_well_formed_attestation_on_eligible_row_defers(self):
         d, refusals = dr.acceptance_ordering_deferral(
-            _req_row(), _ver_row(classification=_attestation()), producer="orchestrator")
+            _req_row(), _ver_row(classification=_attestation()), producer="orchestrator",
+            expected_identity=ATTEST_IDENTITY)
         self.assertEqual(refusals, [])
         self.assertIsNotNone(d)
         self.assertEqual(d["act_class"], "accept")
         self.assertEqual(d["classified_by"], "verifier-v")
         self.assertEqual(d["row_lifecycle_events"], ["accept"])
+        self.assertEqual(d["classified_at_identity"], ATTEST_IDENTITY,
+                         "the deferral record must carry the identity it was attested at")
 
     def test_every_owner_enumerated_act_class_is_accepted_and_no_other(self):
         for act in sorted(dr.ACCEPTANCE_ORDERING_ACT_CLASSES):
             d, refusals = dr.acceptance_ordering_deferral(
                 _req_row(), _ver_row(classification=_attestation(act_class=act)),
-                producer="orchestrator")
+                producer="orchestrator", expected_identity=ATTEST_IDENTITY)
             self.assertIsNotNone(d, f"owner-enumerated act class {act!r} must be accepted")
         self.assertEqual(dr.ACCEPTANCE_ORDERING_ACT_CLASSES,
                          frozenset({"accept", "post_accept_cleanup", "checkpoint",
@@ -875,7 +884,7 @@ class AcceptanceOrderingClassifierTests(unittest.TestCase):
         for act in ("merge", "submit", "gate", "cleanup", "", None, 7, "ACCEPT"):
             d, refusals = dr.acceptance_ordering_deferral(
                 _req_row(), _ver_row(classification=_attestation(act_class=act)),
-                producer="orchestrator")
+                producer="orchestrator", expected_identity=ATTEST_IDENTITY)
             self.assertIsNone(d, f"act_class {act!r} is outside the enumeration")
             self.assertTrue(any("act_class" in r for r in refusals))
 
@@ -883,19 +892,19 @@ class AcceptanceOrderingClassifierTests(unittest.TestCase):
         # missing classified_by
         d, refusals = dr.acceptance_ordering_deferral(
             _req_row(), _ver_row(classification=_attestation(classified_by="")),
-            producer="orchestrator")
+            producer="orchestrator", expected_identity=ATTEST_IDENTITY)
         self.assertIsNone(d)
         self.assertTrue(any("classified_by" in r for r in refusals))
         # producer self-attestation
         d, refusals = dr.acceptance_ordering_deferral(
             _req_row(), _ver_row(classification=_attestation(classified_by="orchestrator")),
-            producer="orchestrator")
+            producer="orchestrator", expected_identity=ATTEST_IDENTITY)
         self.assertIsNone(d)
         self.assertTrue(any("INDEPENDENT" in r for r in refusals))
         # unreasoned classification
         d, refusals = dr.acceptance_ordering_deferral(
             _req_row(), _ver_row(classification=_attestation(justification="   ")),
-            producer="orchestrator")
+            producer="orchestrator", expected_identity=ATTEST_IDENTITY)
         self.assertIsNone(d)
         self.assertTrue(any("justification" in r for r in refusals))
 
@@ -906,7 +915,7 @@ class AcceptanceOrderingClassifierTests(unittest.TestCase):
                        ("accept", "claim")):
             d, refusals = dr.acceptance_ordering_deferral(
                 _req_row(events=events), _ver_row(classification=_attestation()),
-                producer="orchestrator")
+                producer="orchestrator", expected_identity=ATTEST_IDENTITY)
             self.assertIsNone(d, f"lifecycle_events {events} must keep gating")
             self.assertTrue(any("SOLE" in r or "outside acceptance ordering" in r
                                 for r in refusals))
@@ -915,7 +924,8 @@ class AcceptanceOrderingClassifierTests(unittest.TestCase):
             row = _req_row()
             row["applicability"]["lifecycle_events"] = events
             d, refusals = dr.acceptance_ordering_deferral(
-                row, _ver_row(classification=_attestation()), producer="orchestrator")
+                row, _ver_row(classification=_attestation()), producer="orchestrator",
+                expected_identity=ATTEST_IDENTITY)
             self.assertIsNone(d, f"lifecycle_events {events!r} must fail closed")
 
     def test_condition4_only_obligation_and_sequencing_are_eligible(self):
@@ -924,14 +934,14 @@ class AcceptanceOrderingClassifierTests(unittest.TestCase):
         for cls in ("obligation", "sequencing"):
             d, _ = dr.acceptance_ordering_deferral(
                 _req_row(classification=cls), _ver_row(classification=_attestation()),
-                producer="orchestrator")
+                producer="orchestrator", expected_identity=ATTEST_IDENTITY)
             self.assertIsNotNone(d, f"{cls} must be eligible")
         # a BAR on acceptance can never be deferred, however well attested.
         for cls in ("prohibition", "hold", "decision", "authorization", "dependency",
                     "harness", "evidence", "external_fact", "return", "", None):
             d, refusals = dr.acceptance_ordering_deferral(
                 _req_row(classification=cls), _ver_row(classification=_attestation()),
-                producer="orchestrator")
+                producer="orchestrator", expected_identity=ATTEST_IDENTITY)
             self.assertIsNone(d, f"classification {cls!r} must never be deferred")
             self.assertTrue(any("acceptance-ordering ACT" in r for r in refusals))
 
@@ -943,7 +953,7 @@ class AcceptanceOrderingClassifierTests(unittest.TestCase):
                          "exactly one state -- explicitly pending -- may be deferred")
         d, refusals = dr.acceptance_ordering_deferral(
             _req_row(), _ver_row(state="pending", classification=_attestation()),
-            producer="orchestrator")
+            producer="orchestrator", expected_identity=ATTEST_IDENTITY)
         self.assertIsNotNone(d, "the positive control must still defer")
         # Every schema-valid non-PASS state OTHER than "pending", plus the malformed and
         # mistyped shapes a denylist silently released.
@@ -952,7 +962,7 @@ class AcceptanceOrderingClassifierTests(unittest.TestCase):
                       False, True, 7.5, [], ["pending"], {}, {"state": "pending"}, ()):
             d, refusals = dr.acceptance_ordering_deferral(
                 _req_row(), _ver_row(state=state, classification=_attestation()),
-                producer="orchestrator")
+                producer="orchestrator", expected_identity=ATTEST_IDENTITY)
             self.assertIsNone(d, f"state {state!r} must never be deferrable")
             self.assertTrue(any("not an explicitly pending row" in r for r in refusals),
                             f"state {state!r} refusal must name the rule: {refusals}")
@@ -960,7 +970,8 @@ class AcceptanceOrderingClassifierTests(unittest.TestCase):
         row = _ver_row(classification=_attestation())
         row.pop("state")
         d, refusals = dr.acceptance_ordering_deferral(_req_row(), row,
-                                                      producer="orchestrator")
+                                                      producer="orchestrator",
+                                                      expected_identity=ATTEST_IDENTITY)
         self.assertIsNone(d, "an absent state must refuse")
         self.assertTrue(any("not an explicitly pending row" in r for r in refusals))
         # UNVERIFIABLE is inside the module's OWN unresolved set: the two must agree.
@@ -976,7 +987,7 @@ class AcceptanceOrderingClassifierTests(unittest.TestCase):
             try:
                 d, refusals = dr.acceptance_ordering_deferral(
                     _req_row(), _ver_row(state=state, classification=_attestation()),
-                    producer="orchestrator")
+                    producer="orchestrator", expected_identity=ATTEST_IDENTITY)
             except Exception as exc:                                    # pragma: no cover
                 self.fail(f"state {state!r} raised {type(exc).__name__}: {exc}")
             self.assertIsNone(d)
@@ -987,19 +998,24 @@ class AcceptanceOrderingClassifierTests(unittest.TestCase):
         self-attestation. Unevaluable independence now refuses."""
         for producer in ("", None, "   ", 7, [], {}):
             d, refusals = dr.acceptance_ordering_deferral(
-                _req_row(), _ver_row(classification=_attestation()), producer=producer)
+                _req_row(), _ver_row(classification=_attestation()), producer=producer,
+                expected_identity=ATTEST_IDENTITY)
             self.assertIsNone(d, f"producer {producer!r} must refuse, not defer")
             self.assertTrue(any("no producer identity" in r for r in refusals), refusals)
-        # the DEFAULT argument is the empty producer, so the default also refuses.
+        # BOTH defaults are unusable on purpose: called with neither identity, the
+        # classifier refuses on the unknown producer AND on the unbindable attestation.
         d, refusals = dr.acceptance_ordering_deferral(
             _req_row(), _ver_row(classification=_attestation()))
         self.assertIsNone(d, "the default (unknown) producer must refuse")
+        self.assertTrue(any("no producer identity" in r for r in refusals), refusals)
+        self.assertTrue(any("no reviewed content identity" in r for r in refusals),
+                        f"the default (absent) expected identity must refuse too: {refusals}")
         # independence is case- and whitespace-insensitive in BOTH directions.
         for by, prod in ((" Orchestrator ", "orchestrator"), ("ORCHESTRATOR", "Orchestrator"),
                          ("orchestrator", " ORCHESTRATOR"), ("Reviewer-V", "reviewer-v ")):
             d, refusals = dr.acceptance_ordering_deferral(
                 _req_row(), _ver_row(classification=_attestation(classified_by=by)),
-                producer=prod)
+                producer=prod, expected_identity=ATTEST_IDENTITY)
             self.assertIsNone(d, f"{by!r} vs {prod!r} is the same identity")
             self.assertTrue(any("INDEPENDENT" in r for r in refusals), refusals)
 
@@ -1010,31 +1026,74 @@ class AcceptanceOrderingClassifierTests(unittest.TestCase):
                    "2026-07-31 00:00:00", "2026-07-31T00:00"):
             d, _r = dr.acceptance_ordering_deferral(
                 _req_row(), _ver_row(classification=_attestation(classified_at=ts)),
-                producer="orchestrator")
+                producer="orchestrator", expected_identity=ATTEST_IDENTITY)
             self.assertIsNotNone(d, f"{ts!r} is a well-formed dated attestation")
             self.assertEqual(d["classified_at"], ts)
         for ts in ("t", "", None, 7, "2026-07-31", "yesterday", "2026-13-99T99:99:99+00:00",
                    "2026-02-30T00:00:00+00:00", [], {"at": "now"}):
             d, refusals = dr.acceptance_ordering_deferral(
                 _req_row(), _ver_row(classification=_attestation(classified_at=ts)),
-                producer="orchestrator")
+                producer="orchestrator", expected_identity=ATTEST_IDENTITY)
             self.assertIsNone(d, f"{ts!r} is not a valid dated attestation")
             self.assertTrue(any("classified_at" in r for r in refusals), refusals)
 
+    def test_condition6_attestation_must_be_bound_to_the_reviewed_identity(self):
+        """A DATED attestation still travels; a BOUND one cannot. Condition (6) refuses
+        any attestation that does not name EXACTLY the reviewed content identity the
+        deferral is being granted at -- above all one carried forward from an earlier
+        review, which is the shape that releases rows at content nobody attested about."""
+        # positive control: the correct identity, exactly, still defers.
+        d, refusals = dr.acceptance_ordering_deferral(
+            _req_row(), _ver_row(classification=_attestation()), producer="orchestrator",
+            expected_identity=ATTEST_IDENTITY)
+        self.assertIsNotNone(d, refusals)
+        # a STALE stamp carried forward from an earlier identity, plus every malformed,
+        # re-cased and re-spaced near-miss: exact string equality, refusal by default.
+        stale = "b" * 64
+        for stamp in (stale, ATTEST_IDENTITY.upper(), " " + ATTEST_IDENTITY,
+                      ATTEST_IDENTITY + " ", ATTEST_IDENTITY + "\n", ATTEST_IDENTITY[:-1],
+                      "", "   ", None, 7, [], {}, True, ATTEST_IDENTITY.encode()):
+            d, refusals = dr.acceptance_ordering_deferral(
+                _req_row(),
+                _ver_row(classification=_attestation(classified_at_identity=stamp)),
+                producer="orchestrator", expected_identity=ATTEST_IDENTITY)
+            self.assertIsNone(d, f"classified_at_identity {stamp!r} must not release")
+            self.assertTrue(any("classified_at_identity" in r for r in refusals), refusals)
+        # ...and an ABSENT key is refused rather than defaulted into deferral.
+        claim = _attestation()
+        claim.pop("classified_at_identity")
+        d, refusals = dr.acceptance_ordering_deferral(
+            _req_row(), _ver_row(classification=claim), producer="orchestrator",
+            expected_identity=ATTEST_IDENTITY)
+        self.assertIsNone(d, "an unstamped attestation must refuse")
+        self.assertTrue(any("classified_at_identity" in r for r in refusals), refusals)
+        # An UNAVAILABLE expectation gates rather than releases: nothing to compare
+        # against is not "compared and equal".
+        for expected in (None, "", "   ", 7, [], {}, True):
+            d, refusals = dr.acceptance_ordering_deferral(
+                _req_row(), _ver_row(classification=_attestation()),
+                producer="orchestrator", expected_identity=expected)
+            self.assertIsNone(d, f"expected identity {expected!r} must refuse, not release")
+            self.assertTrue(any("no reviewed content identity" in r for r in refusals),
+                            refusals)
+
     def test_missing_requirement_row_fails_closed(self):
         d, refusals = dr.acceptance_ordering_deferral(
-            None, _ver_row(classification=_attestation()), producer="orchestrator")
+            None, _ver_row(classification=_attestation()), producer="orchestrator",
+            expected_identity=ATTEST_IDENTITY)
         self.assertIsNone(d)
         self.assertTrue(any("no requirement row" in r for r in refusals))
 
     def test_no_claim_means_ordinary_gating_with_no_noise(self):
         d, refusals = dr.acceptance_ordering_deferral(
-            _req_row(), _ver_row(), producer="orchestrator")
+            _req_row(), _ver_row(), producer="orchestrator",
+            expected_identity=ATTEST_IDENTITY)
         self.assertIsNone(d)
         self.assertEqual(refusals, [], "a row making no lifecycle claim gates silently")
         # a malformed claim object is loud, not silent
         d, refusals = dr.acceptance_ordering_deferral(
-            _req_row(), _ver_row(classification="yes please"), producer="orchestrator")
+            _req_row(), _ver_row(classification="yes please"), producer="orchestrator",
+            expected_identity=ATTEST_IDENTITY)
         self.assertIsNone(d)
         self.assertTrue(refusals)
 
@@ -1078,7 +1137,7 @@ class AcceptanceOrderingClassifierTests(unittest.TestCase):
         src = (HERE / "directive_registry.py").read_text(encoding="utf-8")
         self.assertIn("ACCEPTANCE-ORDERING LIFECYCLE CLASSIFICATION", src)
         self.assertIn("CONJUNCTIVE", src)
-        for n in ("(1)", "(2)", "(3)", "(4)", "(5)"):
+        for n in ("(1)", "(2)", "(3)", "(4)", "(5)", "(6)"):
             self.assertIn(n, src, f"the stated rule must enumerate condition {n}")
         self.assertIn("no special-cased task id, no flag, and no environment override", src,
                       "the rule must state its own generality, matching invalid_unblock_roster")
@@ -1092,6 +1151,78 @@ class AcceptanceOrderingClassifierTests(unittest.TestCase):
         self.assertIn("DEFERRABLE_VERIFICATION_STATES", src)
         self.assertIn("DEFERRAL IS NOT WAIVER", src,
                       "the discharge standard must be stated where a reviewer will read it")
+        # AS-12 for condition (6): the stated rule must enumerate the new refusals as
+        # explicitly as (1)-(5) do, so a reviewer audits the rule and not the behavior.
+        self.assertIn("IDENTITY-BOUND ATTESTATION", src)
+        self.assertIn("ATTESTATION_IDENTITY_KEY", src)
+        for phrase in ("EXACT STRING", "CASE-VARIANT", "UNEVALUABLE"):
+            self.assertIn(phrase, src,
+                          f"condition (6) must state that {phrase} inputs refuse")
+
+
+class CarriedForwardAttestationTests(unittest.TestCase):
+    """Condition (6) on the GRANT path, driven through task_verification_result() -- the
+    path accept() actually calls -- rather than against the classifier in isolation.
+
+    The defect this closes: the attestation carried no identity of its own, so a verifier
+    who re-verified at a NEW content identity and refreshed the RECORD's
+    reviewed_manifest_sha256 carried every per-row attestation forward untouched, and
+    those rows still released at content the classifier had never seen attested."""
+
+    IDA = "a" * 64          # the identity the attestation is made at
+    NEW = "e" * 64          # the identity a later review is recorded at
+    APPLICABLE = {"D-700-R001", "D-700-R002"}
+
+    def setUp(self):
+        self.tmp = Path(tempfile.mkdtemp(prefix="attest-identity-"))
+        self.reg = _make_two_task_v2_registry(self.tmp, idA=self.IDA)
+        self.tv = [tv for tv in self.reg.get("D-700").verification["task_verifications"]
+                   if tv["task_id"] == "M9-T001"][0]
+        self.row = [r for r in self.tv["requirements"] if r["id"] == "D-700-R002"][0]
+        self.row["state"] = "pending"
+        self.claim = _attestation(classified_at_identity=self.IDA)
+        self.row[dr.LIFECYCLE_CLASSIFICATION_KEY] = self.claim
+
+    def tearDown(self):
+        shutil.rmtree(self.tmp, ignore_errors=True)
+
+    def _result(self, identity):
+        return self.reg.task_verification_result("D-700", "M9-T001", self.APPLICABLE,
+                                                 identity)
+
+    def test_an_attestation_defers_at_the_identity_it_was_made_at(self):
+        """Positive control: the refusals below are caused by the stale stamp, not by an
+        unrelated precondition of this fixture."""
+        res = self._result(self.IDA)
+        self.assertEqual(res["reasons"], [])
+        self.assertEqual(len(res["deferrals"]), 1)
+        self.assertEqual(res["deferrals"][0]["classified_at_identity"], self.IDA)
+
+    def test_the_same_attestation_carried_forward_to_a_new_identity_no_longer_releases(self):
+        # The verifier re-verifies at NEW content and refreshes the RECORD's identity,
+        # but carries the per-row attestation forward untouched. This released the row
+        # before condition (6) existed.
+        self.tv["reviewed_manifest_sha256"] = self.NEW
+        res = self._result(self.NEW)
+        self.assertEqual(res["deferrals"], [],
+                         "an attestation made about other content must not release a row")
+        self.assertTrue(any("classified_at_identity" in r for r in res["reasons"]), res)
+        self.assertTrue(any("not PASS" in r for r in res["reasons"]),
+                        f"the row must fall back to ordinary gating: {res}")
+        # Re-stamping the attestation at the NEW identity restores the deferral, so the
+        # refusal above is caused by the stale stamp and by nothing else.
+        self.claim["classified_at_identity"] = self.NEW
+        res = self._result(self.NEW)
+        self.assertEqual(res["reasons"], [])
+        self.assertEqual(len(res["deferrals"]), 1)
+
+    def test_an_unavailable_expected_identity_gates_rather_than_releases(self):
+        """A caller that supplies no identity to bind against gets a refusal: an absent
+        expectation must never read as a satisfied one."""
+        res = self._result(None)
+        self.assertEqual(res["deferrals"], [])
+        self.assertTrue(any("no reviewed content identity" in r for r in res["reasons"]),
+                        res)
 
 
 class DeferredDischargeStandardTests(unittest.TestCase):

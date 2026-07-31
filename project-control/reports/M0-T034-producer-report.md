@@ -713,9 +713,17 @@ elided. I amended line 198 myself (producer evidence stays producer-amended) to:
 $ cd <REPO>/.claude/worktrees/agent-a8497f73f558bac2a
 ```
 
-and re-swept the whole file and `tools/` for `MLFLL`, `/c/Users`, `C:\Users` and
-`Downloads/nyc-zoning` — **no matches remain**. The round-2 transcripts in this section are
-`<REPO>`-relative by construction.
+and re-swept the whole file and `tools/` for four patterns — the machine username (named anywhere
+in this report only as `<user>`), the Git-Bash and the Windows absolute home-directory prefixes,
+and the home-directory path fragment — **no literal match remains**. The patterns are DESCRIBED
+rather than quoted, precisely so this sentence cannot be its own match; quoting them is exactly how
+the round-2 wording re-introduced the leak it was curing (G3 r2 finding D3, G5 r2 correction C1).
+The round-2 transcripts in this section are `<REPO>`-relative by construction.
+
+*Round-3 amendment (producer, 2026-07-31):* the sentence above previously quoted the four sweep
+patterns literally, including the machine username, which falsified its own "no matches remain"
+claim. Amended by the producer under the report-preservation rule; the executed round-3 sweep and
+its masked output are in §11.4.
 
 ### 9.10 Round-2 command evidence (authoritative; base `1298f4b`)
 
@@ -906,3 +914,282 @@ $ python -m ruff check --statistics <the four files, HEAD>     $ ... <the four f
 6. **Try to construct a shape that reaches deferral without satisfying all five conditions.** AS-2
    now runs 35 cases; the interesting attack surface is the interaction between conditions, not
    any single one.
+
+## 11. ROUND 3 — the two returned fixes and one honesty amendment
+
+**Base commit:** `5474b3e2ef6a5eece2948609a0a328dc94cb4759` ("M0-T034: round-2 gate verdicts
+recorded - G3 FAIL, G5 PASS with corrections"), verified by `git rev-parse HEAD` as my first act.
+Changes are left UNCOMMITTED for byte-identical porting by the orchestrator.
+
+**Model disclosure.** I am running as **Opus 5**, exact model id `claude-opus-5[1m]`, dispatched at
+explicit Opus 5 under D-004-R307. I am **not** Fable 5 and make no such claim.
+
+**Scope.** Round 2 came back **G3 FAIL** (D3 and F5 returned to me; F4 and F8 to the orchestrator)
+and **G5 PASS with corrections C1-C3**. This round is deliberately narrow: D3/C1, F5, and the
+in-scope half of C3. I reworked nothing else. Five files touched, all in `allowed_paths`.
+
+### 11.1 F5 — the attestation is now BOUND to the identity it was made at (condition 6)
+
+G3 r2 refuted my round-2 justification, and the refutation is correct: the classifier already reads
+four fields (`act_class`, `classified_by`, `justification`, `classified_at`) that exist in the
+verification schema only by `additionalProperties: true`, so reading a fifth defines no schema; and
+the identity was already a parameter of the calling function. **I accept the finding without
+reservation** - my round-2 reason ("needs a schema field I am forbidden to define") was wrong, and I
+should have traced the call site before writing it.
+
+What I implemented:
+
+- **New condition (6), stated first** - `tools/directive_registry.py:127-150`. It enumerates its
+  refusals exactly as (1)-(5) do: absent key, null, empty or whitespace-only, non-string,
+  case-variant, whitespace-padded variant, any other identity (above all a stale one carried
+  forward), and an UNAVAILABLE expectation. The header's "ALL FIVE conditions" became **ALL SIX** at
+  `tools/directive_registry.py:62`. I chose a separate condition over folding it into (2) because
+  (2) is about WHO attested and (6) is about WHAT CONTENT they attested about; merging them would
+  have hidden a new refusal class inside a condition reviewers have already audited.
+- **The constant** `ATTESTATION_IDENTITY_KEY = "classified_at_identity"` at
+  `tools/directive_registry.py:197`, with a comment recording that reading it defines no schema.
+- **The check** at `tools/directive_registry.py:346-361`, following the module's fail-closed idiom:
+  the `isinstance` guards come first, an unusable `expected_identity` refuses with its own named
+  reason ("no reviewed content identity ... is available to bind"), and a mismatch refuses with a
+  reason naming `classified_at_identity` and the exact-match rule. Comparison is **exact string
+  equality**, so a re-cased or re-spaced stamp refuses rather than being normalised - the same
+  strictness I chose for condition (5), and the opposite of the identity rule in (2). That is
+  deliberate: (2) compares AGENT NAMES that humans type, while (6) compares a MACHINE DIGEST that is
+  never retyped, so any variation in it is evidence of tampering or of a copied attestation.
+- **Signature** `acceptance_ordering_deferral(requirement_row, verification_row, producer="",
+  expected_identity=None)` at `tools/directive_registry.py:237`. **The default REFUSES**: an absent
+  expectation gates, never releases. The docstring at `:239-263` says so explicitly ("BOTH arguments
+  default to the unusable value ON PURPOSE"), and the "never raises" promise is retained because it
+  remains true - see the fuzz below.
+- **Both call sites bound**, not only the live one: `tools/directive_registry.py:1043` (v2, the path
+  `accept()` calls, passing `reviewed_manifest_sha256` straight from `_v2_task_unresolved`'s
+  signature) and `:1096` (the dormant v1 path). I fixed v1 for the same reason F3/F6 were fixed
+  there in round 2: it is the last copy that could fail open if it were ever re-wired.
+- **The deferral record now carries `classified_at_identity`**, so the packet keeps the provenance of
+  WHAT was attested, not merely that something was.
+
+Tests (all executed, none skipped):
+
+- `tools/test_directive_compliance.py:1040-1085` -
+  `test_condition6_attestation_must_be_bound_to_the_reviewed_identity`: a positive control, then 14
+  stamp shapes (stale identity, upper-cased, leading space, trailing space, trailing newline,
+  truncated, empty, whitespace-only, `None`, `7`, `[]`, `{}`, `True`, bytes) plus an ABSENT key, plus
+  7 unusable `expected_identity` values - every one refuses with a named reason.
+- `tools/test_directive_compliance.py:1163-1227` - new class `CarriedForwardAttestationTests`, which
+  drives **`task_verification_result()`, the path `accept()` actually calls**, not the classifier in
+  isolation. It reproduces G3's exact scenario: the row defers at the identity it was attested at;
+  the verifier then re-verifies at a NEW identity and refreshes the record's
+  `reviewed_manifest_sha256` while carrying the attestation forward untouched - and the row **no
+  longer releases**, falling back to ordinary gating; re-stamping the attestation at the new identity
+  restores the deferral, which proves the refusal is caused by the stale stamp and by nothing else. A
+  third test proves an unavailable expected identity gates.
+- `tools/test_project_control.py:2326-2358` - AS-2 case (xi) at the **CLI level**: 12 stamp shapes
+  plus the unstamped attestation, each asserting that accept is refused, the task does not move, no
+  deferral is registered, the refusal names `classified_at_identity`, the row falls back to "not
+  PASS", and no `Traceback` appears. **AS-2's pinned count moved 35 -> 48** (`:2366`), and the
+  printed line was updated rather than left stale.
+- `tools/test_project_control.py:2012-2021` - `vrow_lifecycle()` gained an `identity` parameter whose
+  default is the unusable empty string, so a fixture that forgets it gets a refusal, not a release.
+- `tools/test_directive_compliance.py:1150-1161` - AS-12 now requires the stated rule to contain
+  "(6)", "IDENTITY-BOUND ATTESTATION", `ATTESTATION_IDENTITY_KEY`, and the words EXACT STRING,
+  CASE-VARIANT and UNEVALUABLE, so the rule cannot drift from the behaviour silently.
+
+**The "never raises" promise re-proved, not assumed.** 1,444 shapes (19 heterogeneous stamps x 19
+heterogeneous expected identities x 4 states, including unhashable and non-string values on both
+sides): **0 exceptions**, and **every** one of the 6 releases satisfied `stamp == expected` exactly,
+with a usable expected identity and state `pending`:
+
+```
+shapes: 1444 exceptions: 0 releases: 6
+every release had stamp == expected identity (exact), state pending: OK
+```
+
+**Retro-rejection check (AS-8), re-verified at this base rather than carried over from G5:**
+
+```
+$ python -c "... scan every JSON file under project-control/directives ..."
+registry json files scanned: 22
+files carrying lifecycle_classification or classified_at_identity: []
+```
+
+`grep -rl "lifecycle_classification" project-control/` returns only four **report** files (this
+report and three gate reports) - prose, not records. **No verification record anywhere in the live
+registry carries a `lifecycle_classification` object, so condition (6) retro-rejects nothing**: no
+stored history changes state because of it. The live-ledger measurement agrees - with the new
+condition in place, `_post_accept_verification_blockers()` still returns **0** blockers against the
+real ledger, and the registry loads with **0** errors across **5** directives in about 54 ms.
+
+### 11.2 D3 / C1 — the machine username is out of this report
+
+The round-2 sentence at §9.9 quoted the machine username as one of four sweep patterns and then
+declared "no matches remain" - self-falsifying, and the fourth recurrence of R024. Fixed by the
+producer in the producer's own evidence, per the report-preservation rule.
+
+I did **not** simply swap one token: I replaced the whole quoted pattern list with a DESCRIPTION of
+the four patterns (the username, the two absolute home-directory prefixes, the home-directory path
+fragment), because the other three were falsifying the same sentence in exactly the same way, one
+notch less severely. Quoting a pattern inside the sentence that claims the pattern has no matches IS
+the defect; describing it cannot recur. The section carries an inline round-3 amendment note so that
+no reader mistakes the amended text for what was originally submitted.
+
+The replacement was performed on raw bytes (`read_bytes`/`write_bytes`), with the token taken from
+the environment rather than typed, so the file's CRLF endings are untouched: 908 CRLF / 908 LF
+before, and the only delta since is the text added in this round.
+
+### 11.3 C3 (in-scope half) — the union docstring now claims exactly what the code delivers
+
+`tools/project_control.py:596-612`. The old wording said the outstanding set is read "from TWO
+independent places ... so no single mutable record can erase an obligation". G5 proved that one notch
+too strong and G3 reproduced it (cases C and D): both derivations are reached through the same
+packet, so deleting the deferral record **and** `directive_refs` (or flipping `status` off
+`accepted`) silences both arms, and neither field is in `MATERIAL_FIELDS`, so the material digest
+does not move. The docstring now states, in order: what IS delivered (deleting the packet's deferral
+record alone does not erase the obligation, because arm (b) re-derives it from `verification.json`);
+what is NOT (the two readings are not independent of each other - (b) is reached through the same
+packet's `status` and `directive_refs`, and neither field is material); and where the residual is
+held - the queued owner-decision C1 follow-up on the `MATERIAL_FIELDS` boundary, per the orchestrator
+decision recorded in the task packet on 2026-07-31, subject to owner veto. The module header at
+`:85-90` carried a miniature of the same overstatement ("two independent places") and is corrected to
+match.
+
+**No behaviour changed.** I did not drop the `status == "accepted"` precondition, which is the
+in-task alternative G3 offered: it would make every pre-accept lifecycle row read as a post-accept
+blocker, which is a worse defect than the one it closes. The same header also had to move from "five
+CONJUNCTIVE conditions" to "six" (`:70`) for AS-12 to stay true.
+
+### 11.4 Round-3 command evidence (authoritative)
+
+**Command A - full project-control suite.** Exit code **0**.
+
+```
+$ python tools/test_project_control.py
+...
+OK: S11 lifecycle-aware acceptance + first-post-accept verification (AS-1, AS-4)
+OK: S11 unmet NON-lifecycle rows still block acceptance (AS-2, 48 cases incl. positive control)
+OK: S11 governance-shaped staleness identity + dirt guard (AS-5, AS-6)
+OK: S11 reviewed_sha comparison + no-regression (AS-7, AS-8)
+OK: S11 deferral is not waiver -- post-accept discharge held to the gate's own standard (9 cases incl. positive control)
+OK: S11 an unknown producer identity fails closed (independence is never inert)
+OK: S11 no special-casing; classification rule stated in code (AS-3, AS-12)
+OK: all 22 project-control test groups passed
+PC_EXIT=0
+```
+
+No-regression evidence, unchanged from round 2 and re-printed by the same run:
+
+```
+    S10 [D-004-R413/R414]: 10/10 blocks executed, 118 assertion cases
+    S10 per-block case counts: 1-non-governance-orchestrator-refused=32,
+    2-governance-orchestrator-unblocks=9, 3-governance-orchestrator-no-reviewers-refused=2,
+    4-orchestrator-only-roster-refused=3, 5-governance-no-independent-gate-refused=6,
+    6-malformed-fails-closed=31, 7-normal-producer-unchanged=12,
+    8-cancel-and-message-only-ungated=12, 9-gate-unchanged=8,
+    10-source-level-generality-proofs=3
+OK: S7 backward compatibility (366 real ledger files parse; legacy records accepted; ...)
+```
+
+**Command B - full directive-compliance suite.** Exit code **0**.
+
+```
+$ python tools/test_directive_compliance.py
+----------------------------------------------------------------------
+Ran 102 tests in 55.069s
+
+OK
+DC_EXIT=0
+```
+
+102 tests, up from 98: `test_condition6_attestation_must_be_bound_to_the_reviewed_identity` plus the
+three `CarriedForwardAttestationTests`. No test was deleted or weakened; the 22 existing classifier
+call sites were updated to pass the new argument explicitly rather than through a helper, so each
+test still names the real function and its real parameters.
+
+**Command C - the independent validator.** Exit code **0** both ways.
+
+```
+$ python tools/validate_directive_compliance.py --check
+VAL_EXIT=0
+$ python tools/validate_directive_compliance.py
+directive registry OK: 5 directive(s), 5 active; source hashes, ID append-only,
+and producer/verifier separation verified.
+VAL_FULL_EXIT=0
+```
+
+**Command D - containment.** Exactly the five `allowed_paths` files, nothing else:
+
+```
+$ git diff --name-only
+project-control/reports/M0-T034-producer-report.md
+tools/directive_registry.py
+tools/project_control.py
+tools/test_directive_compliance.py
+tools/test_project_control.py
+$ git status --porcelain
+ M  (the same five paths, no untracked additions)
+```
+
+`project-control/directives/**`, `tools/validate_directive_compliance.py` and
+`project-control/tasks/M0-T034.json` are untouched, exactly as in round 2.
+
+**Command E - R024 sweep of the round-3 diff.** Patterns described, never quoted:
+
+```
+                              ADDED lines   REMOVED lines
+machine username                   0             1
+git-bash home prefix               0             1
+windows home prefix                0             1
+home-directory path fragment       0             1
+hostname                           0             0
+session identifiers                0             0
+added lines: 596   removed lines: 65   (279 of the added lines are this §11 itself)
+
+sweep of the producer report  -> matches: []
+sweep of tracked tools/       -> matches: []
+```
+
+**Every sensitive pattern occurs zero times on the ADDED side.** The single occurrence of each on the
+REMOVED side is the very line being redacted - unavoidable when the fix is a deletion, and it
+introduces nothing new, because that line was already committed in round 2. The working files
+themselves are clean.
+
+One honest note: `tools/__pycache__/*.pyc` embed compile-time absolute paths including the username.
+They are **untracked and gitignored** (`git check-ignore` resolves them to `.gitignore:6:
+__pycache__/`), so nothing reaches the repository; I left them alone rather than deleting build
+artefacts outside my scope.
+
+### 11.5 What I consider contestable in this round
+
+Stated plainly, as in round 2, because both gates credited the discipline:
+
+1. **Exact string equality in condition (6) versus the case-insensitive rule in condition (2).** I
+   argued above why a machine digest and an agent name deserve different rules, but a reviewer could
+   reasonably call the inconsistency a trap for a verifier who pastes an identity with a stray
+   newline. The failure mode is a confusing refusal, never a permissive release.
+2. **Binding the dormant v1 path too.** G3 named only the v2 call site. Fixing v1 is a behaviour
+   change on a path with no live callers today; I judged consistency worth more than minimality, the
+   same call round 2 made for F3/F6. If a reviewer disagrees, reverting `:1096` alone is sufficient
+   and safe.
+3. **The `expected_identity` parameter has a default at all.** A required positional argument would
+   make it impossible to call the classifier unbound. I kept a default because the sibling `producer`
+   parameter has one and because a defaulted-and-refusing argument is what this module's other
+   fail-closed defaults look like - but the honest description is that safety here rests on the
+   refusal, not on the type system.
+4. **I amended more of §9.9 than the one token G3 asked for.** The extra edit removes two further
+   self-falsifying quotations in the same sentence. It is still confined to my own evidence and is
+   annotated in place, but a reviewer who reads "one word" literally should see this and judge it.
+5. **AS-2's case count is now 48, and the count is asserted.** If a future change adds a case and
+   forgets the pin, the suite fails loudly - intended, but the number is now a maintenance
+   obligation.
+6. **F4 and F8 remain open by orchestrator decision, not by my choice.** I touched neither; §11.3
+   records where F4's residual is held. F8 still cannot be closed from inside this task's
+   `allowed_paths`.
+
+### 11.6 What I could NOT prove in this round
+
+- That no OTHER caller of `acceptance_ordering_deferral` exists outside this repository. Inside it,
+  the two call sites at `:1043` and `:1096` plus the tests are the complete set (grep-verified).
+- That the live registry will never carry a `lifecycle_classification` written before this change
+  lands. It carries none today (§11.1), but a record written between this evidence and the merge
+  would need a `classified_at_identity` added; that is a capture-convention consequence of the new
+  condition and belongs in the orchestrator's D-001 capture guidance, which I may not edit.
+- Anything about F4, F8, AS-13, or the `MATERIAL_FIELDS` boundary. Unchanged and out of scope.

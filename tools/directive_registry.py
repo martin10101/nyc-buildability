@@ -59,7 +59,7 @@ UNRESOLVED_VERIFICATION_STATES = frozenset(
 #
 # AUDIT THIS RULE, NOT THE BEHAVIOR.  A requirement row may be treated as an
 # acceptance-ordering lifecycle act -- recorded EVALUATED-AND-DEFERRED instead
-# of gating accept() -- if and ONLY IF ALL FIVE conditions below hold TOGETHER.
+# of gating accept() -- if and ONLY IF ALL SIX conditions below hold TOGETHER.
 # They are CONJUNCTIVE: failing any one leaves the row gating acceptance
 # exactly as it does today.  Every input is either the requirement row's OWN
 # recorded semantics or an independent verifier's per-row attestation.  There
@@ -124,6 +124,27 @@ UNRESOLVED_VERIFICATION_STATES = frozenset(
 #       or a malformed row would abort the acceptance evaluation instead of
 #       failing closed within it.
 #
+#   (6) IDENTITY-BOUND ATTESTATION.  The attestation records a
+#       `classified_at_identity` that is EXACTLY the reviewed content identity
+#       this deferral is being granted at.  Condition (2) makes the attestation
+#       DATED; this one makes it BOUND, and the two together are what stop it
+#       from being an assertion that travels.  Without it, a verifier who
+#       re-verifies at a NEW content identity and refreshes the record's
+#       `reviewed_manifest_sha256` carries every earlier per-row attestation
+#       forward untouched, and those rows keep releasing at content nobody ever
+#       attested about -- the deferral would be granted on the strength of a
+#       judgment made about different bytes.  The comparison is EXACT STRING
+#       EQUALITY against the identity the caller is evaluating at, and the
+#       refusal is again the DEFAULT: an ABSENT key, a null, an empty or
+#       whitespace-only value, any NON-STRING type, a CASE-VARIANT, a
+#       WHITESPACE-PADDED variant, and any other identity (above all a STALE
+#       one carried forward from an earlier review) all keep the row gating
+#       acceptance.  And when the caller supplies NO identity to bind against,
+#       the condition is UNEVALUABLE and therefore REFUSES, exactly as an
+#       unknown producer does in (2): a missing expectation must gate, never
+#       release, because "nothing to compare against" is not "compared and
+#       equal".
+#
 # WHY (3) ADMITS ONLY "accept": the registry's ACTUAL lifecycle-event
 # vocabulary is {claim, progress, submit, gate, accept}.  "accept" is the only
 # token denoting an act at or after acceptance; claim/progress/submit/gate are
@@ -169,6 +190,12 @@ LIFECYCLE_ELIGIBLE_CLASSIFICATIONS = frozenset({"obligation", "sequencing"})
 # it without any schema change.
 LIFECYCLE_CLASSIFICATION_KEY = "lifecycle_classification"
 
+# The field inside that attestation naming the reviewed CONTENT IDENTITY it was made
+# at (see (6)). Like the four fields above it is admitted by `additionalProperties:
+# true`; reading it defines no schema. An attestation that does not name the identity
+# it was made at cannot be distinguished from one copied forward to other content.
+ATTESTATION_IDENTITY_KEY = "classified_at_identity"
+
 # The ONLY verification states a lifecycle act may be deferred from (see (5)).
 # An ALLOWLIST, deliberately: every state outside it -- including UNVERIFIABLE,
 # absent, null, unknown, case-variant and non-string values -- keeps gating.
@@ -208,8 +235,9 @@ def _text(value) -> str:
 
 
 def acceptance_ordering_deferral(requirement_row, verification_row,
-                                 producer: str = "") -> tuple:
-    """Apply the five CONJUNCTIVE conditions stated in the section header above.
+                                 producer: str = "",
+                                 expected_identity=None) -> tuple:
+    """Apply the six CONJUNCTIVE conditions stated in the section header above.
 
     Returns (deferral, refusals):
       * (None, [])         no lifecycle_classification is claimed -> the row
@@ -217,7 +245,7 @@ def acceptance_ordering_deferral(requirement_row, verification_row,
       * (None, [reason..]) a claim WAS made and is REFUSED -> the reasons are
                            surfaced alongside the row's ordinary "not PASS"
                            reason, so a refused claim is loud, never silent;
-      * (deferral, [])     all five conditions hold -> the caller records the
+      * (deferral, [])     all six conditions hold -> the caller records the
                            deferral and does not gate on this row.
 
     Fails closed on every malformed shape and never raises: every field is
@@ -226,7 +254,12 @@ def acceptance_ordering_deferral(requirement_row, verification_row,
     a REFUSAL and never an exception. The producer argument is the identity
     that PRODUCED the verification record; an attestation by that identity is
     refused, and so is one whose producer is unknown, because independence
-    that cannot be evaluated has not been established (condition 2)."""
+    that cannot be evaluated has not been established (condition 2).
+    `expected_identity` is the reviewed CONTENT IDENTITY the deferral is being
+    granted at; the attestation must name that same identity (condition 6).
+    BOTH arguments default to the unusable value ON PURPOSE: a caller that
+    supplies neither identity gets a REFUSAL, never a release, so the safe
+    default of this function is to gate."""
     if not isinstance(verification_row, dict):
         return None, []
     claim = verification_row.get(LIFECYCLE_CLASSIFICATION_KEY)
@@ -310,6 +343,23 @@ def acceptance_ordering_deferral(requirement_row, verification_row,
                         f"case-variant or non-string state keeps gating acceptance however "
                         f"the row is classified")
 
+    # (6) the attestation must be BOUND to the identity it was made at. The
+    # isinstance() guards come first, and an UNAVAILABLE expectation refuses.
+    expected = expected_identity if isinstance(expected_identity, str) else ""
+    stamped = claim.get(ATTESTATION_IDENTITY_KEY)
+    if not expected.strip():
+        refusals.append(f"{rid}: no reviewed content identity ({expected_identity!r}) is "
+                        f"available to bind the lifecycle classification to; an attestation "
+                        f"that cannot be checked against the content it was made about is "
+                        f"refused (fail closed)")
+    elif not isinstance(stamped, str) or stamped != expected:
+        refusals.append(f"{rid}: lifecycle classification records {ATTESTATION_IDENTITY_KEY} "
+                        f"{stamped!r}, which is not the reviewed content identity this "
+                        f"deferral is granted at ({expected!r}); an attestation carried "
+                        f"forward from other reviewed content -- or absent, empty, "
+                        f"re-cased, re-spaced or of the wrong type -- keeps the row gating "
+                        f"acceptance (exact match required)")
+
     if refusals:
         return None, refusals
     return {
@@ -317,6 +367,7 @@ def acceptance_ordering_deferral(requirement_row, verification_row,
         "act_class": act,
         "classified_by": by,
         "classified_at": when,
+        "classified_at_identity": stamped,
         "justification": just,
         "row_classification": requirement_row.get("classification"),
         "row_lifecycle_events": sorted(set(events)),
@@ -985,8 +1036,11 @@ class DirectiveRegistry:
                     reasons.append(f"{rid}: NOT_APPLICABLE without justification + independent approver")
                 continue
             if st != SATISFIED_STATE:
+                # The reviewed content identity is passed through so condition (6) can
+                # bind the attestation to it: an attestation carried forward from an
+                # earlier review must not release a row at content it never saw.
                 deferral, refusals = acceptance_ordering_deferral(
-                    d.requirement(rid), r, producer)
+                    d.requirement(rid), r, producer, reviewed_manifest_sha256)
                 if deferral is not None:
                     deferral["directive_id"] = directive_id
                     deferral["task_id"] = task_id
@@ -1035,8 +1089,11 @@ class DirectiveRegistry:
                     reasons.append(f"{rid}: NOT_APPLICABLE without justification + independent approver")
                 continue
             if st != SATISFIED_STATE:
+                # Same identity binding as the v2 path (condition 6): the dormant v1
+                # shape is fixed alongside the live one so it cannot fail open if it is
+                # ever re-wired.
                 deferral, refusals = acceptance_ordering_deferral(
-                    d.requirement(rid), row, producer)
+                    d.requirement(rid), row, producer, reviewed_manifest_sha256)
                 if deferral is not None:
                     deferral["directive_id"] = directive_id
                     deferral["task_id"] = None

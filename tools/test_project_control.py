@@ -2009,11 +2009,15 @@ def vrow_pass(rid: str) -> dict:
     return {"id": rid, "state": "PASS", "evidence": ["e"], "verified_by": "reviewer-v"}
 
 
-def vrow_lifecycle(rid: str, state: str = "pending", **over) -> dict:
+def vrow_lifecycle(rid: str, state: str = "pending", identity: str = "", **over) -> dict:
     """A verification row carrying an independent verifier's per-row acceptance-ordering
-    attestation. `over` mutates the attestation so each condition can be broken."""
+    attestation. `identity` is the reviewed CONTENT IDENTITY the attestation is made at,
+    which condition (6) requires it to name exactly; the default is the unusable empty
+    string, so a caller that forgets it gets a refusal rather than a release. `over`
+    mutates the attestation so each condition can be broken."""
     claim = {"act_class": "accept", "classified_by": "reviewer-v",
              "classified_at": "2026-07-31T00:00:00+00:00",
+             "classified_at_identity": identity,
              "justification": "the obligation is discharged at acceptance itself"}
     claim.update(over)
     return {"id": rid, "state": state, "evidence": [], "verified_by": None,
@@ -2111,9 +2115,9 @@ def test_s11_lifecycle_aware_acceptance_and_post_accept_verification() -> None:
 
         # R002 (obligation @ accept) and R005 (sequencing @ accept) are attested
         # acceptance-ordering acts; every other applicable row is genuinely PASS.
-        rows = [vrow_pass("D-900-R001"), vrow_lifecycle("D-900-R002"),
+        rows = [vrow_pass("D-900-R001"), vrow_lifecycle("D-900-R002", identity=ident),
                 vrow_pass("D-900-R003"), vrow_pass("D-900-R004"),
-                vrow_lifecycle("D-900-R005", act_class="stop_after")]
+                vrow_lifecycle("D-900-R005", identity=ident, act_class="stop_after")]
         write_v2_verification(pc, "D-900", "gov", tid, _S11_RIDS, rows, ident,
                               head_of(tmp))
         r = run(tmp, "accept", "--task-id", tid, "--agent", "orchestrator")
@@ -2133,6 +2137,8 @@ def test_s11_lifecycle_aware_acceptance_and_post_accept_verification() -> None:
             assert d["classified_by"] == "reviewer-v" and d["justification"], \
                 "the deferral record must carry the independent classification + reason"
             assert d["deferred_at_identity"] == ident and d["deferred_at_sha"] == head_of(tmp)
+            assert d["classified_at_identity"] == ident, \
+                "the attestation must be BOUND to the identity it was granted at (cond. 6)"
 
         # NEVER deleted, waived, or silently passed: the registry row is untouched.
         v = read_json(pc / "directives" / "D-900-gov" / "verification.json")
@@ -2234,34 +2240,37 @@ def test_s11_non_lifecycle_rows_still_block_acceptance() -> None:
         cases += 1
 
         # (ii) condition (3): the row also binds a PRE-acceptance lifecycle event.
-        rows = dict(base); rows["D-900-R003"] = vrow_lifecycle("D-900-R003")
+        rows = dict(base)
+        rows["D-900-R003"] = vrow_lifecycle("D-900-R003", identity=ident)
         err = attempt(list(rows.values()), "mixed lifecycle binding")
         assert "outside acceptance ordering" in err and "not PASS" in err, err
         cases += 1
 
         # (iii) condition (4): a prohibition bound to acceptance is a BAR, never an act.
-        rows = dict(base); rows["D-900-R004"] = vrow_lifecycle("D-900-R004")
+        rows = dict(base)
+        rows["D-900-R004"] = vrow_lifecycle("D-900-R004", identity=ident)
         err = attempt(list(rows.values()), "prohibition")
         assert "acceptance-ordering ACT" in err, err
         cases += 1
 
         # (iv) condition (2): the producer cannot classify its own row.
         rows = dict(base)
-        rows["D-900-R002"] = vrow_lifecycle("D-900-R002", classified_by="orchestrator")
+        rows["D-900-R002"] = vrow_lifecycle("D-900-R002", identity=ident,
+                                            classified_by="orchestrator")
         err = attempt(list(rows.values()), "producer self-classification")
         assert "INDEPENDENT" in err, err
         cases += 1
 
         # (v) condition (2): an unreasoned classification.
         rows = dict(base)
-        rows["D-900-R002"] = vrow_lifecycle("D-900-R002", justification="")
+        rows["D-900-R002"] = vrow_lifecycle("D-900-R002", identity=ident, justification="")
         err = attempt(list(rows.values()), "no justification")
         assert "justification" in err, err
         cases += 1
 
         # (vi) condition (1): an act class outside the owner's closed enumeration.
         rows = dict(base)
-        rows["D-900-R002"] = vrow_lifecycle("D-900-R002", act_class="merge")
+        rows["D-900-R002"] = vrow_lifecycle("D-900-R002", identity=ident, act_class="merge")
         err = attempt(list(rows.values()), "act class outside the enumeration")
         assert "act_class" in err, err
         cases += 1
@@ -2276,14 +2285,14 @@ def test_s11_non_lifecycle_rows_still_block_acceptance() -> None:
                    "Pending", "pending ", "PASSED", "", "wat", None, 0, 1, False, True,
                    [], ["pending"], {}, {"state": "pending"}):
             rows = dict(base)
-            rows["D-900-R002"] = vrow_lifecycle("D-900-R002", state=st)
+            rows["D-900-R002"] = vrow_lifecycle("D-900-R002", state=st, identity=ident)
             err = attempt(list(rows.values()), f"non-pending state {st!r}")
             assert "not an explicitly pending row" in err, f"state {st!r}: {err}"
             assert "Traceback" not in err, \
                 f"state {st!r} must fail closed, never raise: {err}"
             cases += 1
         # ...and an ABSENT state key is refused rather than defaulted into deferral.
-        row = vrow_lifecycle("D-900-R002")
+        row = vrow_lifecycle("D-900-R002", identity=ident)
         row.pop("state")
         rows = dict(base)
         rows["D-900-R002"] = row
@@ -2294,14 +2303,16 @@ def test_s11_non_lifecycle_rows_still_block_acceptance() -> None:
         # (viii) condition (2): an undated attestation is not a point-in-time act.
         for ts in ("t", "", None, "2026-07-31", "2026-13-99T99:99:99+00:00"):
             rows = dict(base)
-            rows["D-900-R002"] = vrow_lifecycle("D-900-R002", classified_at=ts)
+            rows["D-900-R002"] = vrow_lifecycle("D-900-R002", identity=ident,
+                                                classified_at=ts)
             err = attempt(list(rows.values()), f"undated attestation {ts!r}")
             assert "classified_at" in err, err
             cases += 1
 
         # (ix) condition (2): independence is case- and whitespace-insensitive.
         rows = dict(base)
-        rows["D-900-R002"] = vrow_lifecycle("D-900-R002", classified_by=" ORCHESTRATOR ")
+        rows["D-900-R002"] = vrow_lifecycle("D-900-R002", identity=ident,
+                                            classified_by=" ORCHESTRATOR ")
         err = attempt(list(rows.values()), "re-spelled producer self-classification")
         assert "INDEPENDENT" in err, err
         cases += 1
@@ -2312,16 +2323,47 @@ def test_s11_non_lifecycle_rows_still_block_acceptance() -> None:
         assert "missing rows" in err, err
         cases += 1
 
+        # (xi) condition (6): the attestation must be BOUND to the identity the deferral
+        # is granted at. THE SCENARIO THAT MATTERS is the first one: the RECORD is
+        # refreshed to the current identity while the per-row attestation is carried
+        # forward from an earlier review -- a judgment about content that is no longer
+        # the content being accepted. Every near-miss keeps the row gating too: a
+        # case-variant, a whitespace-padded variant, a truncation, an empty or
+        # whitespace-only value, a non-string, and (below) an absent key.
+        stale_identity = "b" * 64          # the identity an earlier review was made at
+        for stamp in (stale_identity, ident.upper(), " " + ident, ident + " ", ident[:-1],
+                      "", "   ", None, 7, [], {}, True):
+            rows = dict(base)
+            rows["D-900-R002"] = vrow_lifecycle("D-900-R002", identity=ident,
+                                                classified_at_identity=stamp)
+            label = ("attestation carried forward from an earlier identity"
+                     if stamp == stale_identity else f"classified_at_identity {stamp!r}")
+            err = attempt(list(rows.values()), label)
+            assert "classified_at_identity" in err, f"{stamp!r}: {err}"
+            assert "not PASS" in err, f"{stamp!r} must fall back to ordinary gating: {err}"
+            assert "Traceback" not in err, f"{stamp!r} must fail closed, never raise: {err}"
+            cases += 1
+        # ...and an attestation with NO identity stamp at all is refused, never defaulted
+        # into deferral (this is the shape every attestation had before condition (6)).
+        row = vrow_lifecycle("D-900-R002", identity=ident)
+        row["lifecycle_classification"].pop("classified_at_identity")
+        rows = dict(base)
+        rows["D-900-R002"] = row
+        err = attempt(list(rows.values()), "unstamped attestation")
+        assert "classified_at_identity" in err, err
+        cases += 1
+
         # POSITIVE CONTROL: with a well-formed attestation on the same fixture, accept
         # succeeds -- so every refusal above was caused by the broken condition, not by
         # some unrelated precondition of this fixture.
-        rows = dict(base); rows["D-900-R002"] = vrow_lifecycle("D-900-R002")
+        rows = dict(base)
+        rows["D-900-R002"] = vrow_lifecycle("D-900-R002", identity=ident)
         write_v2_verification(pc, "D-900", "gov", tid, _S11_RIDS, list(rows.values()),
                               ident, head_of(tmp))
         r = run(tmp, "accept", "--task-id", tid, "--agent", "orchestrator")
         assert r.returncode == 0, f"AS-2 positive control must accept: {r.stdout} {r.stderr}"
         cases += 1
-        assert cases == 35, f"AS-2 executed {cases} cases, expected 35"
+        assert cases == 48, f"AS-2 executed {cases} cases, expected 48"
         print(f"OK: S11 unmet NON-lifecycle rows still block acceptance "
               f"(AS-2, {cases} cases incl. positive control)")
     finally:
@@ -2516,7 +2558,7 @@ def test_s11_deferral_is_not_waiver_at_the_first_post_accept_opportunity() -> No
         tpath = pc / "tasks" / f"{tid}.json"
 
         rows = [vrow_pass(r) for r in _S11_RIDS]
-        rows[1] = vrow_lifecycle("D-900-R002")          # the one deferred row
+        rows[1] = vrow_lifecycle("D-900-R002", identity=ident)   # the one deferred row
         write_v2_verification(pc, "D-900", "gov", tid, _S11_RIDS, rows, ident, head_of(tmp))
         r = run(tmp, "accept", "--task-id", tid, "--agent", "orchestrator")
         assert r.returncode == 0, f"the fixture must accept with one deferral: {r.stderr}"
@@ -2590,7 +2632,7 @@ def test_s11_deferral_is_not_waiver_at_the_first_post_accept_opportunity() -> No
         tv["requirements"] = [x for x in tv["requirements"] if x["id"] != "D-900-R002"] + [
             {"id": "D-900-R002", "state": "PASS", "evidence": ["post-accept"],
              "verified_by": "reviewer-v",
-             "lifecycle_classification": vrow_lifecycle("D-900-R002")[
+             "lifecycle_classification": vrow_lifecycle("D-900-R002", identity=ident)[
                  "lifecycle_classification"]}]
         vpath.write_text(json.dumps(v, indent=2), encoding="utf-8")
         r = cp("proper discharge", cid="cp-ok")
@@ -2672,7 +2714,8 @@ def test_s11_missing_producer_identity_fails_closed() -> None:
         # (b) the same emptiness must not let a producer classify its own row either:
         # the verification's verifier IS the classifier, and nothing distinguishes them.
         rows2 = [vrow_pass(r_) for r_ in _S11_RIDS]
-        rows2[1] = vrow_lifecycle("D-900-R002", classified_by="reviewer-v")
+        rows2[1] = vrow_lifecycle("D-900-R002", identity=ident,
+                                  classified_by="reviewer-v")
         write_v2_verification(pc, "D-900", "gov", tid, _S11_RIDS, rows2, ident,
                               head_of(tmp), verifier="reviewer-v")
         blank_producers()

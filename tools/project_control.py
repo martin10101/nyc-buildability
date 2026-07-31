@@ -67,9 +67,10 @@ LIFECYCLE-AWARE ACCEPTANCE (D-004-R629)
     a row is now EVALUATED and DEFERRED instead of gating: it is never
     deleted, waived, or silently passed. The classification rule is stated in
     full in tools/directive_registry.py ("ACCEPTANCE-ORDERING LIFECYCLE
-    CLASSIFICATION"); it is five CONJUNCTIVE conditions derived from the
+    CLASSIFICATION"); it is six CONJUNCTIVE conditions derived from the
     requirement row's own recorded semantics plus an INDEPENDENT verifier's
-    per-row attestation, with no task-id allowlist, flag, or environment
+    per-row attestation that is dated and BOUND to the reviewed content
+    identity it was made at, with no task-id allowlist, flag, or environment
     override. accept() records every deferral on the task packet under
     `post_accept_verification`, and checkpoint() - the first post-accept
     opportunity - REFUSES to record while any of them is still unverified.
@@ -81,10 +82,12 @@ LIFECYCLE-AWARE ACCEPTANCE (D-004-R629)
     producer), recorded at the content identity AND the reviewed commit the
     deferral was granted at, and a PASS (or a justified, independently
     approved NOT_APPLICABLE). A bare PASS written by anyone at any time
-    discharges nothing. The outstanding set is read from two independent
-    places and unioned - the packet record AND a re-derivation from the
-    registry - so deleting the packet key removes the record, not the
-    obligation.
+    discharges nothing. The outstanding set is read from two places and
+    unioned - the packet record AND a re-derivation from the registry - so
+    deleting the packet's deferral record removes the record, not the
+    obligation. Both readings are still REACHED THROUGH the same task packet
+    (see _post_accept_verification_blockers for the exact residual and where
+    it is held open).
 
 CONTROL-PLANE CONTENT IDENTITY
     The frozen evidence identity excludes the control-plane tree from its
@@ -590,12 +593,22 @@ def _post_accept_verification_blockers() -> list:
     commit the deferral was granted at, and PASS (or NOT_APPLICABLE with justification +
     independent approver). A bare PASS written by anyone at any time discharges nothing.
 
-    The outstanding set is read from TWO independent places and unioned, so no single
-    mutable record can erase an obligation: (a) the deferrals accept() registered on the
-    task packet, and (b) a RE-DERIVATION from the registry itself -- every accepted
-    in-regime task's verification rows that still claim an acceptance-ordering lifecycle
-    classification and are not yet satisfied. Deleting the packet key therefore removes
-    the record, not the obligation.
+    The outstanding set is read from TWO places and unioned: (a) the deferrals accept()
+    registered on the task packet under POST_ACCEPT_VERIFICATION_KEY, and (b) a
+    RE-DERIVATION from the registry itself -- every accepted in-regime task's verification
+    rows that still claim an acceptance-ordering lifecycle classification and are not yet
+    satisfied. WHAT THAT DELIVERS, EXACTLY: deleting the packet's deferral record alone
+    does NOT erase the obligation, because (b) re-derives it from verification.json. WHAT
+    IT DOES NOT DELIVER: the two readings are not independent of each other. (b) is
+    reached through the SAME packet's `status == "accepted"` and its `directive_refs`, so
+    an edit that retracts BOTH the deferral record AND one of those two fields silences
+    both arms, and neither field is in MATERIAL_FIELDS, so such an edit does not move the
+    packet's material identity either. That residual is REAL and is deliberately held
+    open rather than papered over here: dropping the `status == "accepted"` precondition
+    would misclassify pre-accept lifecycle rows as post-accept blockers, so the fix
+    belongs with the queued owner-decision C1 follow-up on the MATERIAL_FIELDS boundary
+    (orchestrator decision recorded in the M0-T034 task packet, 2026-07-31, subject to
+    owner veto), which would pull the retracted fields into the material identity instead.
 
     An unavailable resolver, an unreadable packet, or an unreadable verification record
     FAILS CLOSED."""
