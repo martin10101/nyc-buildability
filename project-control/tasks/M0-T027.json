@@ -67,8 +67,8 @@
     "code-reviewer",
     "security-reviewer"
   ],
-  "status": "in_progress",
-  "progress_percent": 90,
+  "status": "awaiting_gate",
+  "progress_percent": 85,
   "risks": [
     "Teammates may not inherit skills frontmatter; each spawn prompt must state the frozen SHA and explicitly instruct /run-quality-gate, or Step-1 item 4 fails.",
     "A reviewer sandbox that cannot execute commands cannot return its own rev-parse; per .claude/rules/project-control.md the orchestrator then captures the executable evidence and the reviewer verifies it, and this substitution is recorded explicitly rather than silently.",
@@ -77,7 +77,7 @@
   ],
   "blockers": [],
   "created_at": "2026-07-24T18:23:08.048623+00:00",
-  "updated_at": "2026-07-30T20:24:27.966508+00:00",
+  "updated_at": "2026-07-31T04:40:02.965885+00:00",
   "directive_refs": [
     {
       "directive_id": "D-004",
