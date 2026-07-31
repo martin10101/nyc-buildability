@@ -4,3 +4,8 @@
 # Pin to LF so the checked-out bytes match the recorded digests on EVERY platform; a
 # Windows CRLF checkout would otherwise change the bytes and fail the integrity check.
 project-control/directives/** text eol=lf
+
+# Extends the rationale above (M0-T023): this file's bytes are digest-anchored in
+# captured registry text (D-004-R685, SHA-256 426da3bb...). Pin LF so checked-out
+# bytes match the recorded digest on every platform.
+.claude/CODEX_CLAUDE_SUPERVISOR_BUILD_DIRECTIVE_v4.3.md text eol=lf
