@@ -1,0 +1,104 @@
+{
+  "task_id": "M0-T034",
+  "title": "Governance acceptance semantics: lifecycle-aware accept() + real guards for governance-shaped tasks",
+  "task_type": "governance",
+  "milestone_id": "M0",
+  "objective": "Fix two control-plane defects this closeout exposed, both in tools/ only. (a) LIFECYCLE-AWARE ACCEPTANCE: requirement rows whose sole unmet obligations are acceptance-ordering lifecycle acts - accept itself, post-accept cleanup, checkpoint creation, and the stop-after-accept condition - must not gate accept(). They are EVALUATED, never deleted or waived, and are verified at the first post-accept opportunity instead. Today they are structurally unsatisfiable before acceptance yet required for it, which deadlocks every governance closeout. (b) CLOSE THE VACUOUS-GUARD GAP: for governance-shaped tasks whose allowed_paths lie entirely under the excluded project-control/ tree, the frozen content manifest is the deterministic empty-set hash, so accept()'s staleness check and the require_clean dirt check both compare a constant against itself and detect nothing; additionally _v2_task_unresolved never compares reviewed_sha at all. Give those tasks real staleness and dirt guards and an actual reviewed_sha comparison. No requirement row's applicability is edited in place: the append-only invariant is not holed (D-004-R627).",
+  "business_reason": "Owner directive Message F item 2 (D-004-R627..R633), chosen over widening the Option-B fallback precisely because a per-task workaround would recur on every future governance closeout. The fifth independent verification pass proved the gap concretely: between f08769e1 and 16ae4589 a file inside M0-T027's allowed_paths genuinely changed and the recorded identity did not move. Eight requirement rows are currently circular with acceptance; the classification of each belongs to the independent verifier, not the producer.",
+  "inputs": [
+    "project-control/directives/D-004-agent-teams-runtime-adoption/source-017-amendment.md (Message F item 2; rows D-004-R627..R633)",
+    "tools/project_control.py (accept(), _directive_accept_reasons, _task_git_identity, _MANIFEST_EXCLUDE_PREFIXES)",
+    "tools/directive_registry.py (_v2_task_unresolved, git_tree_manifest, frozen_git_identity, relevant_working_tree_dirty)",
+    "project-control/reports/M0-T027-dcv-verification.md (first independent pass, preserved verbatim)",
+    "The eight candidate lifecycle rows: D-004-R322, R323, R388, R389, R486, R487, R488, R501"
+  ],
+  "outputs": [
+    "tools/project_control.py (lifecycle-aware acceptance + real guards for governance-shaped tasks)",
+    "tools/directive_registry.py (reviewed_sha comparison; lifecycle-act classification helper)",
+    "tools/test_project_control.py (regression proofs for both defects)",
+    "tools/test_directive_compliance.py (verification-layer proofs)",
+    "project-control/reports/M0-T034-producer-report.md",
+    "project-control/reports/M0-T034-lifecycle-classification.md (rider 3; orchestrator-written verbatim from the independent verifier's AS-10 return)"
+  ],
+  "dependencies": [
+    "M0-T033"
+  ],
+  "allowed_paths": [
+    "tools/project_control.py",
+    "tools/directive_registry.py",
+    "tools/test_project_control.py",
+    "tools/test_directive_compliance.py",
+    "project-control/reports/M0-T034-producer-report.md",
+    "project-control/tasks/M0-T034.json",
+    "project-control/reports/M0-T034-lifecycle-classification.md"
+  ],
+  "forbidden_paths": [
+    "project-control/directives/** (registry writes are the orchestrator's D-001 capture authority; NO requirement row's applicability may be edited in place - D-004-R627)",
+    "project-control/tasks/** except M0-T034.json (no other packet, and M0-T027 in particular is untouched)",
+    "project-control/state.json, master_plan.json, gates/, checkpoints/, blockers/ (orchestrator lifecycle only)",
+    "project-control/reports/** except M0-T034-producer-report.md",
+    ".claude/**, CLAUDE.md, docs/**, .github/**",
+    "services/**, apps/**, packages/**, render.yaml and any deployment definition",
+    "any other tools/ file, including validate_directive_compliance.py"
+  ],
+  "acceptance_scenarios": [
+    "AS-1 (executable): a governance task whose ONLY unmet applicable rows are acceptance-ordering lifecycle acts can be accepted; the rows are recorded as EVALUATED with an explicit lifecycle classification, never deleted, waived, or silently passed.",
+    "AS-2 (executable, negative): a task with ANY unmet non-lifecycle row still fails accept() exactly as today. Prove with the current M0-T027 shape that a substantive unmet row blocks acceptance.",
+    "AS-3 (executable, negative): lifecycle classification is derived from row semantics, NOT from a task-id allowlist, a bypass flag, or an environment override. Prove no special-casing exists.",
+    "AS-4 (executable): rows classified as lifecycle acts are verified at the FIRST post-accept opportunity - the mechanism exists, is reachable, and is proven by test, not merely asserted.",
+    "AS-5 (executable): for a governance-shaped task (allowed_paths entirely under project-control/), a modification to a file inside allowed_paths now MOVES the recorded staleness identity. Regression-prove the concrete case the fifth pass found: the M0-T027 packet changed between f08769e1 and 16ae4589 while the identity did not.",
+    "AS-6 (executable): for the same task shape, a dirty or untracked file under project-control/ is now DETECTED by the dirt guard, which today drops it via the shared exclusion tuple.",
+    "AS-7 (executable): reviewed_sha is ACTUALLY compared in the verification layer; a stale reviewed_sha fails closed. Today _v2_task_unresolved never compares it.",
+    "AS-8 (executable, no-regression): every existing behavior is preserved - the full project-control and directive-compliance suites pass, stored history is never retro-rejected, and no previously-refused acceptance now succeeds for any non-lifecycle reason.",
+    "AS-9 (executable, containment): git diff --name-only touches only allowed_paths; no requirement row's applicability is edited; project-control/directives/** is unmodified.",
+    "AS-10 (independent, NOT the producer's call): the independent verifier classifies EACH of the eight candidate rows (D-004-R322, R323, R388, R389, R486, R487, R488, R501) as acceptance-ordering-lifecycle or not, per row, with reasons. The producer must NOT pre-classify them.",
+    "AS-11 (fact-check, recorded either way): determine whether option (iii) - re-scoping only the five rows scoped solely to M0-T027 - would ALONE have reached acceptance, given R322/R323/R389 carry additional task bindings. Record the answer and its derivation regardless of which way it comes out.",
+    "AS-12 (rider 2): the classifier's definition of 'acceptance-ordering lifecycle act' is DOCUMENTED IN THE CODE ITSELF - a docstring or spec comment stating the rule, derived from row semantics per AS-3 - so a future reviewer audits a STATED RULE rather than inferring it from behavior. An undocumented classifier fails this scenario even if its behavior is correct.",
+    "AS-13 (rider 3): the independent verifier's per-row classification of the eight (AS-10) is PRESERVED AS A TRACKED REPORT with per-row rationale, so future closeouts reuse the reasoning instead of re-deriving it and M0-T033-shaped rows inherit a precedent on paper. Written by the orchestrator from the verifier's return, verbatim; reviewers remain read-only.",
+    "AS-14 (rider 4): anything AS-5/AS-6 surface as PRE-EXISTING dirt or staleness in this repository is a DISCLOSED FINDING ONLY - reported in the producer report, and NEVER fixed, worked around, or suppressed inside this task's scope. Silently curing such a finding fails this scenario."
+  ],
+  "required_gates": [
+    "G0",
+    "G2",
+    "G3",
+    "G5"
+  ],
+  "producer_agent": "backend-engineer",
+  "reviewer_agents": [
+    "code-reviewer",
+    "security-reviewer",
+    "control-plane-verifier",
+    "directive-compliance-verifier"
+  ],
+  "status": "claimed",
+  "progress_percent": 10,
+  "risks": [
+    "This code decides what gets accepted. A permissive bug here silently lowers the acceptance bar for every future task, so no shortcut is acceptable because it is 'just' a control-plane fix.",
+    "Lifecycle-awareness must not become a general escape hatch: if the classifier is too broad, substantive obligations get reclassified as lifecycle and stop gating.",
+    "Tightening the staleness/dirt guards may surface pre-existing dirt in the working tree and block acceptances that previously passed; that is correct behavior but must be disclosed rather than worked around.",
+    "The producer must not classify the eight rows - that is the independent verifier's call under AS-10 and D-004-R632.",
+    "Rider 1 (owner emphasis): a lifecycle classifier one notch too permissive is the WORST outcome this task can produce - it silently lowers the acceptance bar for every future task. A rejected classifier design is a CHEAPER failure than a permissive one that passes. G3 and G5 are instructed to bear down hardest on AS-2 and AS-3."
+  ],
+  "blockers": [],
+  "created_at": "2026-07-31T05:39:12.800274+00:00",
+  "updated_at": "2026-07-31T05:48:58.334517+00:00",
+  "directive_refs": [
+    {
+      "directive_id": "D-004",
+      "requirement_ids": "ALL"
+    }
+  ],
+  "directive_regime_version": "1.0",
+  "directive_regime_entered_at": "2026-07-31T05:39:12.800274+00:00",
+  "allowed_paths_note": "Entry 6 (the packet itself) is an ORCHESTRATOR LIFECYCLE path written only by tools/project_control.py; it is listed so a containment diff has no unexplained escape. Nothing under project-control/ is producer-writable except this task's own report. tools/validate_directive_compliance.py is deliberately FORBIDDEN: the validator must stay an independent check on the code being changed. Entry 7, the lifecycle-classification report, is written by the ORCHESTRATOR from the independent verifier's return (rider 3); it is not a producer write target, and reviewers remain read-only.",
+  "progress_log": [
+    {
+      "at": "2026-07-31T05:48:45.305753+00:00",
+      "agent": "orchestrator",
+      "percent": 0,
+      "status": "ready",
+      "message": "Packet approved by the owner with four riders, all folded in before dispatch: (1) G3/G5 to bear down hardest on AS-2/AS-3, the over-breadth guards - a classifier one notch too permissive is the worst outcome and a rejected design is the cheaper failure; (2) AS-12 requires the classifier rule DOCUMENTED IN CODE so reviewers audit a stated rule, not inferred behavior; (3) AS-13 preserves the verifier's per-row classification of the eight as a tracked report with rationale, so future closeouts inherit a precedent on paper; (4) AS-14 makes anything AS-5/AS-6 surface as pre-existing dirt or staleness a DISCLOSED FINDING ONLY, never fixed or suppressed in scope. Sequencing unchanged: M0-T034 merges, then final verification per Message F item 3, then the owner's accept call per item 4; M0-T027's own eight rows receive their first post-accept verification at the first opportunity AS-4 makes reachable, so they close rather than dangle."
+    }
+  ],
+  "worktree": "task/M0-T034-governance-acceptance-semantics"
+}
