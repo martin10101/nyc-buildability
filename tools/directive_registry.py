@@ -19,6 +19,7 @@ Registry layout (project-control/directives/):
 """
 from __future__ import annotations
 
+import datetime as dt
 import hashlib
 import json
 import os
@@ -70,11 +71,19 @@ UNRESOLVED_VERIFICATION_STATES = frozenset(
 #       ("accept, post-accept cleanup, checkpoint, stop-after").  No other
 #       value is accepted and this code never extends the enumeration.
 #
-#   (2) INDEPENDENT ATTESTATION.  That object records a non-empty
+#   (2) INDEPENDENT, DATED ATTESTATION.  That object records a non-empty
 #       `classified_by` that is NOT the producer of the verification record,
-#       plus a non-empty `justification`.  Per R632 the sufficient judgment is
-#       the independent verifier's; this module supplies NECESSARY conditions
-#       only and deliberately refuses to supply the sufficient one.
+#       a non-empty `justification`, and a well-formed dated `classified_at`
+#       so the attestation is a point-in-time act rather than an undated
+#       assertion copied forward.  Identities are compared case- and
+#       whitespace-insensitively, so " Reviewer-V " can never pass itself off
+#       as an identity distinct from "reviewer-v".  The PRODUCER IDENTITY
+#       MUST ITSELF BE KNOWN: when the verification record names no producer
+#       the independence test is UNEVALUABLE, and an unevaluable independence
+#       test REFUSES rather than silently permitting self-attestation.  Per
+#       R632 the sufficient judgment is the independent verifier's; this
+#       module supplies NECESSARY conditions only and deliberately refuses to
+#       supply the sufficient one.
 #
 #   (3) LIFECYCLE BINDING (row semantics).  The requirement row's own
 #       `applicability.lifecycle_events` is non-empty and is a SUBSET of
@@ -96,9 +105,24 @@ UNRESOLVED_VERIFICATION_STATES = frozenset(
 #       structurally so that NO attestation, however well-formed, can reach
 #       them.
 #
-#   (5) NO NEGATIVE FINDING.  The verification row's `state` is neither FAIL
-#       nor BLOCKED.  A row the verifier actively failed or found blocked is a
-#       substantive negative finding and keeps gating however it is classified.
+#   (5) EXPLICITLY PENDING VERIFICATION STATE.  The verification row's `state`
+#       is a STRING drawn from DEFERRABLE_VERIFICATION_STATES -- the single
+#       schema token "pending", meaning the independent verifier has recorded
+#       NO verdict yet.  Only a row that is explicitly still pending can be an
+#       act that has not happened yet, which is the entire premise of
+#       deferral.  This condition is an ALLOWLIST, matching every other
+#       condition in this rule, and the refusal is the DEFAULT: FAIL, BLOCKED,
+#       UNVERIFIABLE, an absent or null state, an unknown string, a case- or
+#       whitespace-variant of an allowed token, and any non-string type all
+#       keep the row gating acceptance however it is classified.  A DENYLIST
+#       here would release every value its author failed to enumerate, and the
+#       value most easily forgotten is the most dangerous one: UNVERIFIABLE is
+#       the independent verifier stating it COULD NOT verify the obligation,
+#       which must never be read as permission to defer it.  The
+#       `isinstance(state, str)` guard is load-bearing rather than defensive
+#       decoration: an unhashable state (e.g. `[]`) must REFUSE, never raise,
+#       or a malformed row would abort the acceptance evaluation instead of
+#       failing closed within it.
 #
 # WHY (3) ADMITS ONLY "accept": the registry's ACTUAL lifecycle-event
 # vocabulary is {claim, progress, submit, gate, accept}.  "accept" is the only
@@ -145,8 +169,42 @@ LIFECYCLE_ELIGIBLE_CLASSIFICATIONS = frozenset({"obligation", "sequencing"})
 # it without any schema change.
 LIFECYCLE_CLASSIFICATION_KEY = "lifecycle_classification"
 
-# Verifier verdicts that can NEVER be deferred, however classified (see (5)).
-NEGATIVE_VERIFICATION_STATES = frozenset({"FAIL", "BLOCKED"})
+# The ONLY verification states a lifecycle act may be deferred from (see (5)).
+# An ALLOWLIST, deliberately: every state outside it -- including UNVERIFIABLE,
+# absent, null, unknown, case-variant and non-string values -- keeps gating.
+DEFERRABLE_VERIFICATION_STATES = frozenset({"pending"})
+
+# A dated attestation: date + time, optional fraction, optional UTC offset (see (2)).
+ATTESTATION_TIMESTAMP_RE = re.compile(
+    r"^\d{4}-\d{2}-\d{2}[T ]\d{2}:\d{2}(:\d{2})?(\.\d+)?(Z|[+-]\d{2}:?\d{2})?$")
+
+
+def _is_dated_attestation(value) -> bool:
+    """True iff `value` is an ISO-8601 date-AND-time that is both well SHAPED and
+    CALENDAR-VALID. A date alone is not an act's timestamp, and a well-shaped but
+    impossible instant (month 13) is not a real one; both refuse."""
+    text = value.strip() if isinstance(value, str) else ""
+    if not ATTESTATION_TIMESTAMP_RE.match(text):
+        return False
+    try:
+        dt.datetime.fromisoformat(text.replace("Z", "+00:00"))
+    except ValueError:
+        return False
+    return True
+
+
+def _identity_key(value) -> str:
+    """Canonical comparison form for an AGENT IDENTITY. Two identities differing only
+    by surrounding whitespace or letter case are the SAME identity, so an independence
+    check can never be defeated by re-spelling one of them. A non-string is no identity
+    at all and normalizes to "" (which every caller treats as fail-closed)."""
+    return value.strip().casefold() if isinstance(value, str) else ""
+
+
+def _text(value) -> str:
+    """A trimmed string, or "" for any non-string. Used wherever a malformed field must
+    read as ABSENT rather than raise."""
+    return value.strip() if isinstance(value, str) else ""
 
 
 def acceptance_ordering_deferral(requirement_row, verification_row,
@@ -162,9 +220,13 @@ def acceptance_ordering_deferral(requirement_row, verification_row,
       * (deferral, [])     all five conditions hold -> the caller records the
                            deferral and does not gate on this row.
 
-    Fails closed on every malformed shape and never raises. The producer
-    argument is the identity that PRODUCED the verification record; an
-    attestation by that identity is refused (condition 2)."""
+    Fails closed on every malformed shape and never raises: every field is
+    read through a type guard, so a missing key, a null, a wrong type
+    (including an unhashable one such as a list), or an unknown token becomes
+    a REFUSAL and never an exception. The producer argument is the identity
+    that PRODUCED the verification record; an attestation by that identity is
+    refused, and so is one whose producer is unknown, because independence
+    that cannot be evaluated has not been established (condition 2)."""
     if not isinstance(verification_row, dict):
         return None, []
     claim = verification_row.get(LIFECYCLE_CLASSIFICATION_KEY)
@@ -185,21 +247,28 @@ def acceptance_ordering_deferral(requirement_row, verification_row,
             f"owner-enumerated acceptance-ordering acts "
             f"{sorted(ACCEPTANCE_ORDERING_ACT_CLASSES)}")
 
-    # (2) independent attestation.
-    by = claim.get("classified_by")
-    by = by.strip() if isinstance(by, str) else ""
+    # (2) independent, dated attestation.
+    by = _text(claim.get("classified_by"))
     if not by:
         refusals.append(f"{rid}: lifecycle classification records no classified_by; "
                         f"an independent verifier must own the classification")
-    elif producer and by == producer:
+    elif not _identity_key(producer):
+        refusals.append(f"{rid}: the verification record names no producer identity, so the "
+                        f"independence of classifier {by!r} cannot be established; an "
+                        f"unevaluable independence test is refused (fail closed)")
+    elif _identity_key(by) == _identity_key(producer):
         refusals.append(f"{rid}: lifecycle classification by {by!r} equals the verification "
-                        f"producer {producer!r}; the classification is the INDEPENDENT "
+                        f"producer {_text(producer)!r}; the classification is the INDEPENDENT "
                         f"verifier's, not the producer's")
-    just = claim.get("justification")
-    just = just.strip() if isinstance(just, str) else ""
+    just = _text(claim.get("justification"))
     if not just:
         refusals.append(f"{rid}: lifecycle classification records no justification; "
                         f"an unreasoned classification is refused")
+    when = _text(claim.get("classified_at"))
+    if not _is_dated_attestation(when):
+        refusals.append(f"{rid}: lifecycle classification records no well-formed dated "
+                        f"classified_at ({claim.get('classified_at')!r}); an undated "
+                        f"attestation is not a point-in-time act and is refused")
 
     # (3)+(4) the requirement row's OWN recorded semantics.
     events: list = []
@@ -231,11 +300,15 @@ def acceptance_ordering_deferral(requirement_row, verification_row,
                     f"acceptance ordering ({', '.join(outside)}), so this row's unmet "
                     f"obligations are not SOLELY acceptance-ordering acts")
 
-    # (5) a negative verifier finding is never deferrable.
+    # (5) only an EXPLICITLY PENDING row is deferrable. The isinstance() test comes
+    # FIRST so an unhashable state (e.g. []) refuses instead of raising.
     state = verification_row.get("state")
-    if state in NEGATIVE_VERIFICATION_STATES:
-        refusals.append(f"{rid}: verification state {state!r} is a substantive negative "
-                        f"finding; it keeps gating acceptance however it is classified")
+    if not isinstance(state, str) or state not in DEFERRABLE_VERIFICATION_STATES:
+        refusals.append(f"{rid}: verification state {state!r} is not an explicitly pending "
+                        f"row (deferrable states: {sorted(DEFERRABLE_VERIFICATION_STATES)}); "
+                        f"a negative finding, an UNVERIFIABLE verdict, an absent, unknown, "
+                        f"case-variant or non-string state keeps gating acceptance however "
+                        f"the row is classified")
 
     if refusals:
         return None, refusals
@@ -243,7 +316,7 @@ def acceptance_ordering_deferral(requirement_row, verification_row,
         "requirement_id": rid,
         "act_class": act,
         "classified_by": by,
-        "classified_at": claim.get("classified_at") or "",
+        "classified_at": when,
         "justification": just,
         "row_classification": requirement_row.get("classification"),
         "row_lifecycle_events": sorted(set(events)),
@@ -694,28 +767,149 @@ class DirectiveRegistry:
             directive_id, task_id, applicable_ids, reviewed_manifest_sha256,
             reviewed_sha)["reasons"]
 
+    def _task_verification_container(self, directive_id: str, task_id: str) -> tuple:
+        """(container, rows, error) for ONE task's verification record. The CONTAINER is
+        the object carrying the record-level attestation fields (producer, verifier,
+        reviewed_manifest_sha256, reviewed_sha): the matching task_verifications[] entry
+        under v2, or the whole verification document under v1. Read-only, never raises."""
+        d = self.directives.get(directive_id)
+        if d is None:
+            return None, [], f"directive {directive_id} not found"
+        if d.errors:
+            return None, [], f"directive {directive_id} integrity error: {d.errors[0]}"
+        v = d.verification
+        if not v:
+            return None, [], f"{directive_id}: no verification.json"
+        if v.get("schema") == "directive_verification/v2":
+            matches = [tv for tv in (v.get("task_verifications") or [])
+                       if isinstance(tv, dict) and tv.get("task_id") == task_id
+                       and tv.get("directive_id", directive_id) == directive_id]
+            if not matches:
+                return None, [], f"{directive_id}/{task_id}: no task_verification row"
+            if len(matches) > 1:
+                return None, [], (f"{directive_id}/{task_id}: duplicate task_verification "
+                                  f"rows ({len(matches)})")
+            container = matches[0]
+        else:
+            container = v
+        rows = [r for r in (container.get("requirements") or []) if isinstance(r, dict)]
+        return container, rows, None
+
+    @staticmethod
+    def _row_is_satisfied(row) -> bool:
+        """True iff a verification row is DISCHARGED on its own terms: an outright PASS,
+        or a NOT_APPLICABLE carrying both a justification and an independent approver."""
+        if not isinstance(row, dict):
+            return False
+        st = row.get("state")
+        if st == SATISFIED_STATE:
+            return True
+        return (st == "NOT_APPLICABLE" and bool(row.get("not_applicable_justification"))
+                and bool(row.get("not_applicable_approved_by")))
+
     def requirement_verification_state(self, directive_id: str, task_id: str,
                                        requirement_id: str) -> tuple:
-        """(state, row) for ONE requirement row of ONE task, or (None, None) when no
-        such row exists. Used to confirm a deferred acceptance-ordering act at the
-        first post-accept opportunity; read-only, never raises."""
-        d = self.directives.get(directive_id)
-        if d is None or d.errors or not d.verification:
+        """(state, row) for ONE requirement row of ONE task, or (None, None) when no such
+        row exists. A PLAIN READ of the recorded state; read-only, never raises.
+
+        NOT sufficient to discharge a deferred acceptance-ordering act: a bare state says
+        nothing about WHO recorded it or at WHICH content identity. Use
+        deferred_requirement_discharge() for that -- deferral is not waiver, so the
+        deferred obligation is held to the SAME standard as the gate it deferred."""
+        _c, rows, err = self._task_verification_container(directive_id, task_id)
+        if err is not None:
             return None, None
-        v = d.verification
-        rows = []
-        if v.get("schema") == "directive_verification/v2":
-            for tv in (v.get("task_verifications") or []):
-                if (isinstance(tv, dict) and tv.get("task_id") == task_id
-                        and tv.get("directive_id", directive_id) == directive_id):
-                    rows.extend(r for r in (tv.get("requirements") or [])
-                                if isinstance(r, dict))
-        else:
-            rows.extend(r for r in (v.get("requirements") or []) if isinstance(r, dict))
         for r in rows:
             if r.get("id") == requirement_id:
                 return r.get("state"), r
         return None, None
+
+    def deferred_requirement_discharge(self, directive_id: str, task_id: str,
+                                       requirement_id: str,
+                                       expected_identity: str | None = None,
+                                       expected_sha: str | None = None) -> tuple:
+        """(discharged, state, reasons) for ONE requirement DEFERRED as an acceptance-
+        ordering lifecycle act (D-004-R629).
+
+        DEFERRAL IS NOT WAIVER. A deferred row is not released from the acceptance gate,
+        it is MOVED to the first post-accept opportunity, so discharging it demands the
+        SAME standards the gate itself applies -- otherwise the deferred obligation would
+        be held to a LOWER bar than an ordinary requirement and the deferral would be a
+        waiver in all but name. Every one of these must hold:
+
+          * the record is readable and unambiguous (one container for this task);
+          * INDEPENDENCE: a non-empty producer AND a non-empty verifier that is not the
+            producer (compared case/whitespace-insensitively) -- the same test
+            _v2_task_unresolved/_v1_task_unresolved apply at acceptance;
+          * CONTENT IDENTITY: the record's reviewed_manifest_sha256 equals the identity
+            the deferral was granted at, so the discharge attests to the SAME content
+            that was accepted;
+          * REVIEWED COMMIT: the record's reviewed_sha equals the commit the deferral was
+            granted at (D-004-R630: reviewed_sha is ACTUALLY compared);
+          * the row itself is PASS, or NOT_APPLICABLE with justification + independent
+            approver.
+
+        Read-only, never raises; every failure is a reason string, never an exception."""
+        reasons: list[str] = []
+        container, rows, err = self._task_verification_container(directive_id, task_id)
+        if err is not None:
+            return False, None, [f"{err} (fail closed)"]
+        producer = _text(container.get("producer"))
+        if not producer:
+            d = self.directives.get(directive_id)
+            producer = _text((d.verification or {}).get("producer")) if d else ""
+            if not producer and d is not None:
+                producer = _text(d.requirements.get("producer"))
+        verifier = _text(container.get("verifier"))
+        if not producer:
+            reasons.append(f"{directive_id}/{task_id}: no producer identity recorded on the "
+                           f"verification record; verifier independence cannot be established")
+        if not verifier:
+            reasons.append(f"{directive_id}/{task_id}: no independent verifier recorded on "
+                           f"the verification record")
+        elif producer and _identity_key(verifier) == _identity_key(producer):
+            reasons.append(f"{directive_id}/{task_id}: verifier {verifier!r} equals producer "
+                           f"{producer!r}; independent verification required")
+        if expected_identity is not None:
+            got = container.get("reviewed_manifest_sha256")
+            if got != expected_identity:
+                reasons.append(f"{directive_id}/{task_id}: post-accept verification is "
+                               f"recorded at content identity {got}, not at the identity the "
+                               f"deferral was granted at ({expected_identity})")
+        if expected_sha is not None:
+            got_sha = container.get("reviewed_sha")
+            if got_sha != expected_sha:
+                reasons.append(f"{directive_id}/{task_id}: post-accept verification is "
+                               f"recorded at commit {got_sha}, not at the reviewed commit the "
+                               f"deferral was granted at ({expected_sha})")
+        row = next((r for r in rows if r.get("id") == requirement_id), None)
+        state = row.get("state") if isinstance(row, dict) else None
+        if row is None:
+            reasons.append(f"{requirement_id}: no verification row exists for this task; a "
+                           f"deferred obligation cannot be discharged by its own deletion")
+        elif not self._row_is_satisfied(row):
+            reasons.append(f"{requirement_id}: verification state {state!r} is not PASS "
+                           f"(nor a justified, independently approved NOT_APPLICABLE)")
+        return (not reasons), state, reasons
+
+    def outstanding_lifecycle_claims(self, directive_id: str, task_id: str) -> list:
+        """[(requirement_id, state)] for every verification row of this (directive, task)
+        that CLAIMS an acceptance-ordering lifecycle classification and is NOT yet
+        satisfied. Lets a caller RE-DERIVE the outstanding obligation from the registry
+        instead of trusting a single mutable task-packet key: deleting that key must not
+        be able to erase the obligation silently. An unreadable record yields a synthetic
+        row so the caller fails closed rather than reading "nothing outstanding"."""
+        container, rows, err = self._task_verification_container(directive_id, task_id)
+        if err is not None:
+            return [(None, err)]
+        out = []
+        for r in rows:
+            if r.get(LIFECYCLE_CLASSIFICATION_KEY) is None:
+                continue
+            if self._row_is_satisfied(r):
+                continue
+            out.append((r.get("id"), r.get("state")))
+        return out
 
     def _v2_task_unresolved(self, d, v, directive_id, task_id, applicable,
                             reviewed_manifest_sha256, reviewed_sha=None):
@@ -734,12 +928,19 @@ class DirectiveRegistry:
         tv = matches[0]
         reasons: list[str] = []
         deferrals: list[dict] = []
-        producer = (tv.get("producer") or v.get("producer")
-                    or d.requirements.get("producer") or "").strip()
-        verifier = (tv.get("verifier") or "").strip()
+        producer = (_text(tv.get("producer")) or _text(v.get("producer"))
+                    or _text(d.requirements.get("producer")))
+        verifier = _text(tv.get("verifier"))
+        # A MISSING producer is fail-closed, not permissive: without it, verifier
+        # independence is UNEVALUABLE, and an unevaluable independence check would
+        # otherwise silently disable itself and admit self-verification.
+        if not producer:
+            reasons.append(f"{directive_id}/{task_id}: no producer identity recorded on the "
+                           f"verification record; verifier independence cannot be established "
+                           f"(fail closed)")
         if not verifier:
             reasons.append(f"{directive_id}/{task_id}: no independent verifier recorded")
-        elif producer and verifier == producer:
+        elif producer and _identity_key(verifier) == _identity_key(producer):
             reasons.append(f"{directive_id}/{task_id}: verifier {verifier!r} equals producer "
                            f"{producer!r}; independent verification required")
         vsha = tv.get("reviewed_manifest_sha256")
@@ -797,13 +998,18 @@ class DirectiveRegistry:
 
     def _v1_task_unresolved(self, d, v, directive_id, applicable, reviewed_manifest_sha256,
                             reviewed_sha=None):
-        producer = (v.get("producer") or d.requirements.get("producer") or "").strip()
-        verifier = (v.get("verifier") or "").strip()
+        producer = _text(v.get("producer")) or _text(d.requirements.get("producer"))
+        verifier = _text(v.get("verifier"))
         reasons: list[str] = []
         deferrals: list[dict] = []
+        # Same fail-closed rule as the v2 path: an unknown producer makes the
+        # independence check unevaluable, so it refuses instead of disabling itself.
+        if not producer:
+            reasons.append(f"{directive_id}: no producer identity recorded on the verification "
+                           f"record; verifier independence cannot be established (fail closed)")
         if not verifier:
             reasons.append(f"{directive_id}: no independent verifier recorded")
-        elif producer and verifier == producer:
+        elif producer and _identity_key(verifier) == _identity_key(producer):
             reasons.append(f"{directive_id}: verifier {verifier!r} equals producer "
                            f"{producer!r}; independent verification required")
         vsha = v.get("reviewed_manifest_sha256")

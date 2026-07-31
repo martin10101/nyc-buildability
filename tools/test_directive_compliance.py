@@ -935,14 +935,91 @@ class AcceptanceOrderingClassifierTests(unittest.TestCase):
             self.assertIsNone(d, f"classification {cls!r} must never be deferred")
             self.assertTrue(any("acceptance-ordering ACT" in r for r in refusals))
 
-    def test_condition5_negative_verifier_finding_never_deferred(self):
-        for state in sorted(dr.NEGATIVE_VERIFICATION_STATES):
+    def test_condition5_only_an_explicitly_pending_state_is_deferrable(self):
+        """Condition (5) is an ALLOWLIST, so the refusal is the default. A denylist here
+        released every state its author did not enumerate -- above all UNVERIFIABLE, the
+        independent verifier stating it COULD NOT verify the obligation."""
+        self.assertEqual(dr.DEFERRABLE_VERIFICATION_STATES, frozenset({"pending"}),
+                         "exactly one state -- explicitly pending -- may be deferred")
+        d, refusals = dr.acceptance_ordering_deferral(
+            _req_row(), _ver_row(state="pending", classification=_attestation()),
+            producer="orchestrator")
+        self.assertIsNotNone(d, "the positive control must still defer")
+        # Every schema-valid non-PASS state OTHER than "pending", plus the malformed and
+        # mistyped shapes a denylist silently released.
+        for state in ("UNVERIFIABLE", "FAIL", "BLOCKED", "fail", "blocked", "Pending",
+                      "pending ", " pending", "FAIL ", "PASSED", "", "wat", None, 0, 1,
+                      False, True, 7.5, [], ["pending"], {}, {"state": "pending"}, ()):
             d, refusals = dr.acceptance_ordering_deferral(
                 _req_row(), _ver_row(state=state, classification=_attestation()),
                 producer="orchestrator")
-            self.assertIsNone(d, f"state {state} is a substantive negative finding")
-            self.assertTrue(any("negative finding" in r for r in refusals))
-        self.assertEqual(dr.NEGATIVE_VERIFICATION_STATES, frozenset({"FAIL", "BLOCKED"}))
+            self.assertIsNone(d, f"state {state!r} must never be deferrable")
+            self.assertTrue(any("not an explicitly pending row" in r for r in refusals),
+                            f"state {state!r} refusal must name the rule: {refusals}")
+        # ...and an ABSENT state key is refused, not defaulted into deferral.
+        row = _ver_row(classification=_attestation())
+        row.pop("state")
+        d, refusals = dr.acceptance_ordering_deferral(_req_row(), row,
+                                                      producer="orchestrator")
+        self.assertIsNone(d, "an absent state must refuse")
+        self.assertTrue(any("not an explicitly pending row" in r for r in refusals))
+        # UNVERIFIABLE is inside the module's OWN unresolved set: the two must agree.
+        self.assertIn("UNVERIFIABLE", dr.UNRESOLVED_VERIFICATION_STATES)
+        self.assertFalse(dr.DEFERRABLE_VERIFICATION_STATES
+                         & (dr.UNRESOLVED_VERIFICATION_STATES - {"pending"}))
+
+    def test_classifier_never_raises_on_any_malformed_state(self):
+        """The classifier docstring promises it never raises. An unhashable state made
+        that false (`state in <frozenset>` raised TypeError); the isinstance() guard
+        must come first."""
+        for state in ([], {}, set(), ["pending"], {"a": 1}, (1, 2), bytearray(b"x")):
+            try:
+                d, refusals = dr.acceptance_ordering_deferral(
+                    _req_row(), _ver_row(state=state, classification=_attestation()),
+                    producer="orchestrator")
+            except Exception as exc:                                    # pragma: no cover
+                self.fail(f"state {state!r} raised {type(exc).__name__}: {exc}")
+            self.assertIsNone(d)
+            self.assertTrue(refusals)
+
+    def test_condition2_producer_identity_must_be_known_and_is_case_insensitive(self):
+        """An EMPTY producer made the independence test inert -- it silently permitted
+        self-attestation. Unevaluable independence now refuses."""
+        for producer in ("", None, "   ", 7, [], {}):
+            d, refusals = dr.acceptance_ordering_deferral(
+                _req_row(), _ver_row(classification=_attestation()), producer=producer)
+            self.assertIsNone(d, f"producer {producer!r} must refuse, not defer")
+            self.assertTrue(any("no producer identity" in r for r in refusals), refusals)
+        # the DEFAULT argument is the empty producer, so the default also refuses.
+        d, refusals = dr.acceptance_ordering_deferral(
+            _req_row(), _ver_row(classification=_attestation()))
+        self.assertIsNone(d, "the default (unknown) producer must refuse")
+        # independence is case- and whitespace-insensitive in BOTH directions.
+        for by, prod in ((" Orchestrator ", "orchestrator"), ("ORCHESTRATOR", "Orchestrator"),
+                         ("orchestrator", " ORCHESTRATOR"), ("Reviewer-V", "reviewer-v ")):
+            d, refusals = dr.acceptance_ordering_deferral(
+                _req_row(), _ver_row(classification=_attestation(classified_by=by)),
+                producer=prod)
+            self.assertIsNone(d, f"{by!r} vs {prod!r} is the same identity")
+            self.assertTrue(any("INDEPENDENT" in r for r in refusals), refusals)
+
+    def test_condition2_attestation_must_be_dated(self):
+        """An undated attestation is not a point-in-time act; it is an assertion that can
+        be copied forward. `classified_at` was previously copied unvalidated."""
+        for ts in ("2026-07-31T00:00:00+00:00", "2026-07-31T00:00:00Z",
+                   "2026-07-31 00:00:00", "2026-07-31T00:00"):
+            d, _r = dr.acceptance_ordering_deferral(
+                _req_row(), _ver_row(classification=_attestation(classified_at=ts)),
+                producer="orchestrator")
+            self.assertIsNotNone(d, f"{ts!r} is a well-formed dated attestation")
+            self.assertEqual(d["classified_at"], ts)
+        for ts in ("t", "", None, 7, "2026-07-31", "yesterday", "2026-13-99T99:99:99+00:00",
+                   "2026-02-30T00:00:00+00:00", [], {"at": "now"}):
+            d, refusals = dr.acceptance_ordering_deferral(
+                _req_row(), _ver_row(classification=_attestation(classified_at=ts)),
+                producer="orchestrator")
+            self.assertIsNone(d, f"{ts!r} is not a valid dated attestation")
+            self.assertTrue(any("classified_at" in r for r in refusals), refusals)
 
     def test_missing_requirement_row_fails_closed(self):
         d, refusals = dr.acceptance_ordering_deferral(
@@ -983,8 +1060,11 @@ class AcceptanceOrderingClassifierTests(unittest.TestCase):
         for tok in ("getenv", "environ", "force", "bypass", "override", "skip", "allowlist"):
             self.assertNotIn(tok, body.lower(), f"classifier code must carry no {tok!r} token")
         for const in ("ACCEPTANCE_ORDERING_ACT_CLASSES", "ACCEPTANCE_ORDERING_LIFECYCLE_EVENTS",
-                      "LIFECYCLE_ELIGIBLE_CLASSIFICATIONS", "NEGATIVE_VERIFICATION_STATES"):
+                      "LIFECYCLE_ELIGIBLE_CLASSIFICATIONS", "DEFERRABLE_VERIFICATION_STATES"):
             self.assertIn(const, body, f"the classifier must use the named constant {const}")
+        # every condition is an ALLOWLIST: no denylist-shaped constant may gate a deferral.
+        self.assertNotIn("NEGATIVE_VERIFICATION_STATES", src,
+                         "condition (5) must not be reintroduced as a denylist")
         # AS-10: the eight candidate rows are the independent verifier's call; neither
         # module may name (and thereby pre-classify) any of them.
         pc_src = (HERE / "project_control.py").read_text(encoding="utf-8")
@@ -1004,6 +1084,157 @@ class AcceptanceOrderingClassifierTests(unittest.TestCase):
                       "the rule must state its own generality, matching invalid_unblock_roster")
         self.assertIn("KNOWN LIMIT", src,
                       "the stated rule must disclose what it cannot discriminate")
+        # AS-12: the STATED rule and the CODE must agree. Condition (5) is an allowlist,
+        # and the rule must say so -- naming UNVERIFIABLE, the value a denylist released.
+        self.assertIn("EXPLICITLY PENDING VERIFICATION STATE", src)
+        self.assertIn("UNVERIFIABLE", src,
+                      "the stated rule must name the verdict a denylist silently released")
+        self.assertIn("DEFERRABLE_VERIFICATION_STATES", src)
+        self.assertIn("DEFERRAL IS NOT WAIVER", src,
+                      "the discharge standard must be stated where a reviewer will read it")
+
+
+class DeferredDischargeStandardTests(unittest.TestCase):
+    """DEFERRAL IS NOT WAIVER, proven in code rather than prose: a deferred acceptance-
+    ordering row is discharged only by verification meeting the SAME standards as the
+    gate that deferred it. The defect this closes: a bare `state: PASS`, written at any
+    time, at any identity, by anyone -- including the producer -- discharged it, holding
+    the deferred obligation to a LOWER bar than an ordinary requirement."""
+
+    IDENT = "a" * 64
+    SHA = "c" * 40
+
+    def setUp(self):
+        self.tmp = Path(tempfile.mkdtemp(prefix="discharge-"))
+        self.reg = _make_two_task_v2_registry(self.tmp, idA=self.IDENT)
+        self.tv = [tv for tv in self.reg.get("D-700").verification["task_verifications"]
+                   if tv["task_id"] == "M9-T001"][0]
+        self.tv["reviewed_sha"] = self.SHA
+        self.row = [r for r in self.tv["requirements"] if r["id"] == "D-700-R002"][0]
+        self.row["state"] = "pending"
+        self.row[dr.LIFECYCLE_CLASSIFICATION_KEY] = _attestation()
+
+    def tearDown(self):
+        shutil.rmtree(self.tmp, ignore_errors=True)
+
+    def _discharge(self, **over):
+        kw = {"expected_identity": self.IDENT, "expected_sha": self.SHA}
+        kw.update(over)
+        return self.reg.deferred_requirement_discharge(
+            "D-700", "M9-T001", "D-700-R002", **kw)
+
+    def test_a_fully_standard_verification_discharges(self):
+        """Positive control: every refusal below is caused by the broken standard, not by
+        some unrelated precondition of this fixture."""
+        self.row["state"] = "PASS"
+        ok, state, why = self._discharge()
+        self.assertTrue(ok, why)
+        self.assertEqual((state, why), ("PASS", []))
+
+    def test_bare_pass_without_an_independent_verifier_does_not_discharge(self):
+        self.row["state"] = "PASS"
+        self.tv["verifier"] = ""
+        ok, state, why = self._discharge()
+        self.assertFalse(ok, "a bare PASS with no independent verifier must not discharge")
+        self.assertEqual(state, "PASS")
+        self.assertTrue(any("no independent verifier" in r for r in why), why)
+
+    def test_the_producer_cannot_discharge_its_own_deferral(self):
+        self.row["state"] = "PASS"
+        self.tv["verifier"] = " ORCHESTRATOR "        # == producer, merely re-spelled
+        ok, _state, why = self._discharge()
+        self.assertFalse(ok)
+        self.assertTrue(any("equals producer" in r for r in why), why)
+
+    def test_unknown_producer_identity_fails_closed(self):
+        self.row["state"] = "PASS"
+        self.tv["producer"] = ""
+        self.reg.get("D-700").verification["producer"] = ""
+        self.reg.get("D-700").requirements["producer"] = ""
+        ok, _state, why = self._discharge()
+        self.assertFalse(ok)
+        self.assertTrue(any("no producer identity" in r for r in why), why)
+
+    def test_discharge_at_another_content_identity_is_refused(self):
+        self.row["state"] = "PASS"
+        self.tv["reviewed_manifest_sha256"] = "f" * 64
+        ok, _state, why = self._discharge()
+        self.assertFalse(ok)
+        self.assertTrue(any("content identity" in r for r in why), why)
+
+    def test_discharge_at_another_reviewed_commit_is_refused(self):
+        self.row["state"] = "PASS"
+        self.tv["reviewed_sha"] = "d" * 40
+        ok, _state, why = self._discharge()
+        self.assertFalse(ok)
+        self.assertTrue(any("reviewed commit" in r for r in why), why)
+        self.tv["reviewed_sha"] = None
+        ok, _state, why = self._discharge()
+        self.assertFalse(ok, "an absent reviewed commit fails closed too")
+
+    def test_deleting_the_row_does_not_discharge_it(self):
+        self.tv["requirements"] = [r for r in self.tv["requirements"]
+                                   if r["id"] != "D-700-R002"]
+        ok, state, why = self._discharge()
+        self.assertFalse(ok)
+        self.assertIsNone(state)
+        self.assertTrue(any("no verification row" in r for r in why), why)
+
+    def test_a_still_pending_row_does_not_discharge(self):
+        ok, state, why = self._discharge()
+        self.assertFalse(ok)
+        self.assertEqual(state, "pending")
+        self.assertTrue(any("not PASS" in r for r in why), why)
+
+    def test_not_applicable_discharges_only_when_justified_and_approved(self):
+        self.row["state"] = "NOT_APPLICABLE"
+        ok, _state, why = self._discharge()
+        self.assertFalse(ok, "bare NOT_APPLICABLE must not discharge")
+        self.row["not_applicable_justification"] = "policy requires no such act here"
+        self.row["not_applicable_approved_by"] = "reviewer-b"
+        ok, _state, why = self._discharge()
+        self.assertTrue(ok, why)
+
+    def test_unreadable_records_fail_closed(self):
+        ok, _s, why = self.reg.deferred_requirement_discharge(
+            "D-700", "M9-T999", "D-700-R002",
+            expected_identity=self.IDENT, expected_sha=self.SHA)
+        self.assertFalse(ok)
+        self.assertTrue(any("no task_verification row" in r for r in why), why)
+        ok, _s, why = self.reg.deferred_requirement_discharge("D-701", "M9-T001",
+                                                              "D-700-R002")
+        self.assertFalse(ok)
+        self.assertTrue(any("not found" in r for r in why), why)
+
+    def test_requirement_verification_state_is_a_plain_read_not_a_discharge(self):
+        """The lax accessor still exists and still reports the raw state; what changed is
+        that the post-accept path no longer treats that raw state as sufficient."""
+        self.row["state"] = "PASS"
+        self.tv["verifier"] = ""
+        state, row = self.reg.requirement_verification_state("D-700", "M9-T001",
+                                                             "D-700-R002")
+        self.assertEqual(state, "PASS")
+        self.assertIsNotNone(row)
+        self.assertFalse(self._discharge()[0],
+                         "the same row that reads PASS must NOT discharge the deferral")
+
+    def test_outstanding_claims_are_re_derived_from_the_registry(self):
+        """The obligation must be recoverable from the registry, so deleting the task
+        packet's deferral record cannot erase it silently."""
+        self.assertEqual(self.reg.outstanding_lifecycle_claims("D-700", "M9-T001"),
+                         [("D-700-R002", "pending")])
+        self.row["state"] = "PASS"
+        self.assertEqual(self.reg.outstanding_lifecycle_claims("D-700", "M9-T001"), [])
+        self.row["state"] = "UNVERIFIABLE"
+        self.assertEqual(self.reg.outstanding_lifecycle_claims("D-700", "M9-T001"),
+                         [("D-700-R002", "UNVERIFIABLE")])
+        self.row["state"] = "pending"
+        self.row.pop(dr.LIFECYCLE_CLASSIFICATION_KEY)
+        self.assertEqual(self.reg.outstanding_lifecycle_claims("D-700", "M9-T001"), [],
+                         "a row claiming no lifecycle classification is not this obligation")
+        out = self.reg.outstanding_lifecycle_claims("D-700", "M9-T999")
+        self.assertEqual(len(out), 1)
+        self.assertIsNone(out[0][0], "an unreadable record must fail closed, not read empty")
 
 
 class ReviewedShaComparisonTests(unittest.TestCase):

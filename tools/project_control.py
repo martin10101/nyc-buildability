@@ -75,6 +75,17 @@ LIFECYCLE-AWARE ACCEPTANCE (D-004-R629)
     opportunity - REFUSES to record while any of them is still unverified.
     A task with any unmet NON-lifecycle row fails accept() exactly as before.
 
+    DEFERRAL IS NOT WAIVER, and that is enforced in code rather than asserted
+    in prose. Discharging a deferred row demands the SAME standards as the
+    gate it deferred: an independent verifier (present, and not the
+    producer), recorded at the content identity AND the reviewed commit the
+    deferral was granted at, and a PASS (or a justified, independently
+    approved NOT_APPLICABLE). A bare PASS written by anyone at any time
+    discharges nothing. The outstanding set is read from two independent
+    places and unioned - the packet record AND a re-derivation from the
+    registry - so deleting the packet key removes the record, not the
+    obligation.
+
 CONTROL-PLANE CONTENT IDENTITY
     The frozen evidence identity excludes the control-plane tree from its
     raw-blob component (the control plane rewrites its own records between
@@ -571,15 +582,29 @@ POST_ACCEPT_FIRST_OPPORTUNITY = "checkpoint"
 
 
 def _post_accept_verification_blockers() -> list:
-    """Reasons the FIRST post-accept opportunity may not be recorded: every deferred
-    acceptance-ordering row registered on an accepted task must, by now, be independently
-    verified PASS (or NOT_APPLICABLE with justification + independent approver). Reads the
-    registry; an unavailable resolver or an unreadable packet FAILS CLOSED."""
+    """Reasons the FIRST post-accept opportunity may not be recorded.
+
+    DEFERRAL IS NOT WAIVER, so a deferred row is discharged only by verification meeting
+    the SAME standards as the acceptance gate that deferred it: independent verifier
+    (present, and not the producer), recorded at the content identity AND the reviewed
+    commit the deferral was granted at, and PASS (or NOT_APPLICABLE with justification +
+    independent approver). A bare PASS written by anyone at any time discharges nothing.
+
+    The outstanding set is read from TWO independent places and unioned, so no single
+    mutable record can erase an obligation: (a) the deferrals accept() registered on the
+    task packet, and (b) a RE-DERIVATION from the registry itself -- every accepted
+    in-regime task's verification rows that still claim an acceptance-ordering lifecycle
+    classification and are not yet satisfied. Deleting the packet key therefore removes
+    the record, not the obligation.
+
+    An unavailable resolver, an unreadable packet, or an unreadable verification record
+    FAILS CLOSED."""
     pending = []
     tdir = PC / "tasks"
     if not tdir.exists():
         return pending
-    registered = []
+    registered = []           # (task_id, deferral record) recorded by accept()
+    accepted_in_regime = []   # (task_id, [directive ids]) for re-derivation
     for tp in sorted(tdir.glob("*.json")):
         try:
             t = load(tp)
@@ -587,33 +612,64 @@ def _post_accept_verification_blockers() -> list:
             pending.append(f"task file {tp.name} is unreadable ({e}); fail-closed")
             continue
         block = t.get(POST_ACCEPT_VERIFICATION_KEY)
-        if not isinstance(block, dict):
-            continue
-        for dfr in (block.get("deferred_requirements") or []):
-            if isinstance(dfr, dict):
-                registered.append((t.get("task_id"), dfr))
-    if not registered:
+        if isinstance(block, dict):
+            for dfr in (block.get("deferred_requirements") or []):
+                if isinstance(dfr, dict):
+                    registered.append((t.get("task_id"), dfr))
+        if t.get("status") == "accepted" and _task_in_regime(t):
+            dids = [ref.get("directive_id") for ref in (t.get("directive_refs") or [])
+                    if isinstance(ref, dict) and ref.get("directive_id")]
+            if dids:
+                accepted_in_regime.append((t.get("task_id"), dids))
+    if not registered and not accepted_in_regime:
         return pending
     reg_mod = _resolver()
     if reg_mod is None:
-        return [f"{len(registered)} deferred acceptance-ordering requirement(s) await "
-                f"post-accept verification but the directive resolver is unavailable "
-                f"(fail closed)."]
+        return pending + [
+            f"{len(registered)} registered deferred acceptance-ordering requirement(s) and "
+            f"{len(accepted_in_regime)} accepted in-regime task(s) must be checked for an "
+            f"outstanding post-accept obligation, but the directive resolver is unavailable "
+            f"(fail closed)."]
     reg = reg_mod.load_registry()
+    seen = set()
     for tid, dfr in registered:
         rid = dfr.get("requirement_id")
         did = dfr.get("directive_id")
-        state, row = reg.requirement_verification_state(did, dfr.get("task_id") or tid, rid)
-        if state == reg_mod.SATISFIED_STATE:
+        vtid = dfr.get("task_id") or tid
+        seen.add((vtid, did, rid))
+        ident = dfr.get("deferred_at_identity")
+        sha = dfr.get("deferred_at_sha")
+        if not isinstance(ident, str) or not ident or not isinstance(sha, str) or not sha:
+            pending.append(
+                f"{tid}: the deferral record for {rid} carries no content identity / reviewed "
+                f"commit, so its discharge cannot be bound to what was accepted (fail closed).")
             continue
-        if state == "NOT_APPLICABLE" and row and row.get("not_applicable_justification") \
-                and row.get("not_applicable_approved_by"):
+        discharged, state, why = reg.deferred_requirement_discharge(
+            did, vtid, rid, expected_identity=ident, expected_sha=sha)
+        if discharged:
             continue
         pending.append(
             f"{tid}: deferred acceptance-ordering requirement {rid} "
-            f"(act_class {dfr.get('act_class')!r}) is still {state!r}, not PASS -- it was "
-            f"EVALUATED and deferred at acceptance, not waived, and must be independently "
-            f"verified at this first post-accept opportunity.")
+            f"(act_class {dfr.get('act_class')!r}, state {state!r}) is NOT discharged: "
+            + "; ".join(why) +
+            " -- it was EVALUATED and deferred at acceptance, not waived, and at this first "
+            "post-accept opportunity it is held to the SAME standard as the gate it deferred.")
+    for tid, dids in accepted_in_regime:
+        for did in dids:
+            for rid, state in reg.outstanding_lifecycle_claims(did, tid):
+                if rid is None:
+                    pending.append(
+                        f"{tid}: this accepted task's verification record for {did} cannot be "
+                        f"read ({state}), so whether it still carries an outstanding "
+                        f"acceptance-ordering obligation cannot be determined (fail closed).")
+                    continue
+                if (tid, did, rid) in seen:
+                    continue
+                pending.append(
+                    f"{tid}: the registry still carries an unsatisfied acceptance-ordering "
+                    f"lifecycle claim on {rid} ({did}, state {state!r}) with no matching "
+                    f"deferral record on the task packet. The obligation is re-derived from "
+                    f"the registry, so removing the packet record does not discharge it.")
     return pending
 
 

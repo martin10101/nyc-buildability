@@ -2012,7 +2012,8 @@ def vrow_pass(rid: str) -> dict:
 def vrow_lifecycle(rid: str, state: str = "pending", **over) -> dict:
     """A verification row carrying an independent verifier's per-row acceptance-ordering
     attestation. `over` mutates the attestation so each condition can be broken."""
-    claim = {"act_class": "accept", "classified_by": "reviewer-v", "classified_at": "t",
+    claim = {"act_class": "accept", "classified_by": "reviewer-v",
+             "classified_at": "2026-07-31T00:00:00+00:00",
              "justification": "the obligation is discharged at acceptance itself"}
     claim.update(over)
     return {"id": rid, "state": state, "evidence": [], "verified_by": None,
@@ -2265,15 +2266,47 @@ def test_s11_non_lifecycle_rows_still_block_acceptance() -> None:
         assert "act_class" in err, err
         cases += 1
 
-        # (vii) condition (5): a substantive negative verifier finding.
-        for st in ("FAIL", "BLOCKED"):
+        # (vii) condition (5) is an ALLOWLIST: ONLY an explicitly pending row may be
+        # deferred. The probe deliberately reaches OUTSIDE the old {FAIL, BLOCKED}
+        # denylist, because a denylist certifies only the values it enumerated. The
+        # unbounded case is UNVERIFIABLE -- schema-valid, validator-valid, and reachable
+        # through a clean registry with green CI: the independent verifier stating it
+        # COULD NOT verify the obligation must never read as permission to defer it.
+        for st in ("UNVERIFIABLE", "FAIL", "BLOCKED", "fail", "blocked", "FAIL ",
+                   "Pending", "pending ", "PASSED", "", "wat", None, 0, 1, False, True,
+                   [], ["pending"], {}, {"state": "pending"}):
             rows = dict(base)
             rows["D-900-R002"] = vrow_lifecycle("D-900-R002", state=st)
-            err = attempt(list(rows.values()), f"negative finding {st}")
-            assert "negative finding" in err, err
+            err = attempt(list(rows.values()), f"non-pending state {st!r}")
+            assert "not an explicitly pending row" in err, f"state {st!r}: {err}"
+            assert "Traceback" not in err, \
+                f"state {st!r} must fail closed, never raise: {err}"
+            cases += 1
+        # ...and an ABSENT state key is refused rather than defaulted into deferral.
+        row = vrow_lifecycle("D-900-R002")
+        row.pop("state")
+        rows = dict(base)
+        rows["D-900-R002"] = row
+        err = attempt(list(rows.values()), "absent state key")
+        assert "not an explicitly pending row" in err, err
+        cases += 1
+
+        # (viii) condition (2): an undated attestation is not a point-in-time act.
+        for ts in ("t", "", None, "2026-07-31", "2026-13-99T99:99:99+00:00"):
+            rows = dict(base)
+            rows["D-900-R002"] = vrow_lifecycle("D-900-R002", classified_at=ts)
+            err = attempt(list(rows.values()), f"undated attestation {ts!r}")
+            assert "classified_at" in err, err
             cases += 1
 
-        # (viii) a MISSING verification row can never be deferred (no attestation exists).
+        # (ix) condition (2): independence is case- and whitespace-insensitive.
+        rows = dict(base)
+        rows["D-900-R002"] = vrow_lifecycle("D-900-R002", classified_by=" ORCHESTRATOR ")
+        err = attempt(list(rows.values()), "re-spelled producer self-classification")
+        assert "INDEPENDENT" in err, err
+        cases += 1
+
+        # (x) a MISSING verification row can never be deferred (no attestation exists).
         rows = [v for k, v in base.items() if k != "D-900-R002"]
         err = attempt(rows, "missing row")
         assert "missing rows" in err, err
@@ -2288,7 +2321,7 @@ def test_s11_non_lifecycle_rows_still_block_acceptance() -> None:
         r = run(tmp, "accept", "--task-id", tid, "--agent", "orchestrator")
         assert r.returncode == 0, f"AS-2 positive control must accept: {r.stdout} {r.stderr}"
         cases += 1
-        assert cases == 10, f"AS-2 executed {cases} cases, expected 10"
+        assert cases == 35, f"AS-2 executed {cases} cases, expected 35"
         print(f"OK: S11 unmet NON-lifecycle rows still block acceptance "
               f"(AS-2, {cases} cases incl. positive control)")
     finally:
@@ -2461,6 +2494,203 @@ def test_s11_reviewed_sha_compared_and_no_regression() -> None:
         shutil.rmtree(tmpdir, ignore_errors=True)
 
 
+def test_s11_deferral_is_not_waiver_at_the_first_post_accept_opportunity() -> None:
+    """AS-1/AS-4 hardened: DEFERRAL IS NOT WAIVER must be true IN CODE. Discharging a
+    deferred acceptance-ordering row demands the SAME standards as the gate that deferred
+    it -- independent verifier, the deferral's content identity, and its reviewed commit
+    -- so a deferred obligation is never held to a LOWER bar than an ordinary one. The
+    obligation is also re-derived from the registry, so deleting the packet record does
+    not erase it."""
+    tmpdir = tempfile.mkdtemp(prefix="pc-s11-waiver-")
+    tmp = Path(tmpdir)
+    try:
+        make_temp_project(tmp)
+        setup_regime(tmp)
+        pc = tmp / "project-control"
+        tid = "M9-T344"
+        make_directive(pc, "D-900", "gov", task_ids=[tid], task_types=[], milestones=[],
+                       req_specs=_S11_REQ_SPECS(tid))
+        head, allowed = build_governance_task(tmp, tid, "D-900", "gov", _S11_RIDS)
+        ident = gov_identity(tmp, allowed, head)
+        vpath = pc / "directives" / "D-900-gov" / "verification.json"
+        tpath = pc / "tasks" / f"{tid}.json"
+
+        rows = [vrow_pass(r) for r in _S11_RIDS]
+        rows[1] = vrow_lifecycle("D-900-R002")          # the one deferred row
+        write_v2_verification(pc, "D-900", "gov", tid, _S11_RIDS, rows, ident, head_of(tmp))
+        r = run(tmp, "accept", "--task-id", tid, "--agent", "orchestrator")
+        assert r.returncode == 0, f"the fixture must accept with one deferral: {r.stderr}"
+        dfr = read_json(tpath)["post_accept_verification"]["deferred_requirements"][0]
+        assert dfr["requirement_id"] == "D-900-R002"
+
+        def rewrite(mutate):
+            v = read_json(vpath)
+            tv = v["task_verifications"][0]
+            row = [x for x in tv["requirements"] if x["id"] == "D-900-R002"][0]
+            mutate(tv, row)
+            vpath.write_text(json.dumps(v, indent=2), encoding="utf-8")
+
+        def cp(label, cid="cpx"):
+            r_ = run(tmp, "checkpoint", "--checkpoint-id", cid, "--commit", "c",
+                     "--branch", "b", "--summary", "s")
+            return r_
+
+        attempts = 0
+        # (a) THE DEFECT: a bare PASS, with NO independent verifier, discharged the row.
+        def _bare_pass(tv, row):
+            row["state"] = "PASS"
+            tv["verifier"] = ""
+        rewrite(_bare_pass)
+        r = cp("bare PASS")
+        assert r.returncode != 0 and "no independent verifier" in r.stderr, \
+            f"a bare PASS must NOT discharge a deferral: {r.stderr}"
+        assert "NOT discharged" in r.stderr, r.stderr
+        attempts += 1
+
+        # (b) the PRODUCER cannot discharge its own deferral, however it re-spells itself.
+        rewrite(lambda tv, row: tv.__setitem__("verifier", " ORCHESTRATOR "))
+        r = cp("producer self-discharge")
+        assert r.returncode != 0 and "equals producer" in r.stderr, r.stderr
+        attempts += 1
+
+        # (c) a discharge recorded at ANOTHER content identity is refused.
+        def _other_identity(tv, row):
+            tv["verifier"] = "reviewer-v"
+            tv["reviewed_manifest_sha256"] = "f" * 64
+        rewrite(_other_identity)
+        r = cp("other identity")
+        assert r.returncode != 0 and "content identity" in r.stderr, r.stderr
+        attempts += 1
+
+        # (d) a discharge recorded at ANOTHER reviewed commit is refused.
+        def _other_sha(tv, row):
+            tv["reviewed_manifest_sha256"] = dfr["deferred_at_identity"]
+            tv["reviewed_sha"] = "0" * 40
+        rewrite(_other_sha)
+        r = cp("other reviewed commit")
+        assert r.returncode != 0 and "reviewed commit" in r.stderr, r.stderr
+        attempts += 1
+
+        # (e) DELETING the verification row does not discharge the obligation.
+        def _delete_row(tv, row):
+            tv["reviewed_sha"] = dfr["deferred_at_sha"]
+            tv["requirements"] = [x for x in tv["requirements"] if x["id"] != "D-900-R002"]
+        rewrite(_delete_row)
+        r = cp("deleted row")
+        assert r.returncode != 0 and "no verification row" in r.stderr, r.stderr
+        attempts += 1
+
+        # (f) a PROPER discharge -- independent verifier, same identity, same commit,
+        # PASS -- does proceed. The positive control for (a)-(e).
+        v = read_json(vpath)
+        tv = v["task_verifications"][0]
+        tv["verifier"] = "reviewer-v"
+        tv["reviewed_manifest_sha256"] = dfr["deferred_at_identity"]
+        tv["reviewed_sha"] = dfr["deferred_at_sha"]
+        tv["requirements"] = [x for x in tv["requirements"] if x["id"] != "D-900-R002"] + [
+            {"id": "D-900-R002", "state": "PASS", "evidence": ["post-accept"],
+             "verified_by": "reviewer-v",
+             "lifecycle_classification": vrow_lifecycle("D-900-R002")[
+                 "lifecycle_classification"]}]
+        vpath.write_text(json.dumps(v, indent=2), encoding="utf-8")
+        r = cp("proper discharge", cid="cp-ok")
+        assert r.returncode == 0, f"a properly standard discharge must proceed: {r.stderr}"
+        attempts += 1
+
+        # (g) RE-DERIVATION: put the row back to pending and DELETE the packet's deferral
+        # record entirely. The obligation lives in the registry too, so erasing the single
+        # mutable packet key does not erase it.
+        rewrite(lambda tv_, row_: row_.__setitem__("state", "pending"))
+        t = read_json(tpath)
+        t.pop("post_accept_verification")
+        tpath.write_text(json.dumps(t, indent=2) + "\n", encoding="utf-8")
+        assert "post_accept_verification" not in read_json(tpath)
+        r = cp("packet record deleted", cid="cp-rederived")
+        assert r.returncode != 0, "deleting the packet key must NOT discharge the obligation"
+        assert "re-derived from the registry" in r.stderr, r.stderr
+        assert "D-900-R002" in r.stderr, r.stderr
+        attempts += 1
+
+        # (h) the re-derived obligation closes the same way an ordinary one does.
+        rewrite(lambda tv_, row_: row_.__setitem__("state", "PASS"))
+        r = cp("re-derived then satisfied", cid="cp-rederived")
+        assert r.returncode == 0, f"a satisfied re-derived claim must proceed: {r.stderr}"
+        attempts += 1
+
+        # (i) an UNVERIFIABLE post-accept verdict is not a discharge either.
+        rewrite(lambda tv_, row_: row_.__setitem__("state", "UNVERIFIABLE"))
+        r = cp("unverifiable", cid="cp-unver")
+        assert r.returncode != 0 and "re-derived from the registry" in r.stderr, r.stderr
+        attempts += 1
+        rewrite(lambda tv_, row_: row_.__setitem__("state", "PASS"))
+
+        assert attempts == 9, f"executed {attempts} discharge cases, expected 9"
+        print(f"OK: S11 deferral is not waiver -- post-accept discharge held to the gate's "
+              f"own standard ({attempts} cases incl. positive control)")
+    finally:
+        shutil.rmtree(tmpdir, ignore_errors=True)
+
+
+def test_s11_missing_producer_identity_fails_closed() -> None:
+    """An EMPTY producer silently disabled BOTH the pre-existing verifier-independence
+    check and the classifier's independent-attestation condition: `x and y == x` is never
+    true when x is empty. Independence that cannot be evaluated must refuse."""
+    tmpdir = tempfile.mkdtemp(prefix="pc-s11-producer-")
+    tmp = Path(tmpdir)
+    try:
+        make_temp_project(tmp)
+        setup_regime(tmp)
+        pc = tmp / "project-control"
+        tid = "M9-T345"
+        make_directive(pc, "D-900", "gov", task_ids=[tid], task_types=[], milestones=[],
+                       req_specs=_S11_REQ_SPECS(tid))
+        head, allowed = build_governance_task(tmp, tid, "D-900", "gov", _S11_RIDS)
+        ident = gov_identity(tmp, allowed, head)
+        vpath = pc / "directives" / "D-900-gov" / "verification.json"
+        rpath = pc / "directives" / "D-900-gov" / "requirements.json"
+        rows = [vrow_pass(r) for r in _S11_RIDS]
+
+        def blank_producers():
+            """Blank the producer EVERYWHERE the resolver looks for it."""
+            v = read_json(vpath)
+            v["producer"] = ""
+            v["task_verifications"][0]["producer"] = ""
+            vpath.write_text(json.dumps(v, indent=2), encoding="utf-8")
+            rq = read_json(rpath)
+            rq["producer"] = ""
+            rpath.write_text(json.dumps(rq, indent=2), encoding="utf-8")
+
+        # (a) all rows PASS, but the verifier could be anyone: with no producer identity
+        # the independence check is unevaluable and must refuse, not pass silently.
+        write_v2_verification(pc, "D-900", "gov", tid, _S11_RIDS, rows, ident, head_of(tmp))
+        blank_producers()
+        r = run(tmp, "accept", "--task-id", tid, "--agent", "orchestrator")
+        assert r.returncode != 0 and "no producer identity" in r.stderr, \
+            f"an unknown producer must fail closed: {r.stderr}"
+        assert read_json(pc / "tasks" / f"{tid}.json")["status"] == "awaiting_gate"
+
+        # (b) the same emptiness must not let a producer classify its own row either:
+        # the verification's verifier IS the classifier, and nothing distinguishes them.
+        rows2 = [vrow_pass(r_) for r_ in _S11_RIDS]
+        rows2[1] = vrow_lifecycle("D-900-R002", classified_by="reviewer-v")
+        write_v2_verification(pc, "D-900", "gov", tid, _S11_RIDS, rows2, ident,
+                              head_of(tmp), verifier="reviewer-v")
+        blank_producers()
+        r = run(tmp, "accept", "--task-id", tid, "--agent", "orchestrator")
+        assert r.returncode != 0, "a self-classified row under an unknown producer must refuse"
+        assert "no producer identity" in r.stderr, r.stderr
+        assert "post_accept_verification" not in read_json(pc / "tasks" / f"{tid}.json")
+
+        # (c) positive control: restore the producer and the SAME fixture accepts.
+        write_v2_verification(pc, "D-900", "gov", tid, _S11_RIDS, rows2, ident,
+                              head_of(tmp))
+        r = run(tmp, "accept", "--task-id", tid, "--agent", "orchestrator")
+        assert r.returncode == 0, f"positive control must accept: {r.stdout} {r.stderr}"
+        print("OK: S11 an unknown producer identity fails closed (independence is never inert)")
+    finally:
+        shutil.rmtree(tmpdir, ignore_errors=True)
+
+
 def test_s11_no_special_casing_source_proofs() -> None:
     """AS-3 + AS-12: the lifecycle mechanism is derived from row semantics only -- no
     task-id allowlist, no bypass flag, no environment override -- and its rule is
@@ -2539,6 +2769,8 @@ ALL_TESTS = [
     test_s11_non_lifecycle_rows_still_block_acceptance,
     test_s11_governance_identity_and_dirt_guards,
     test_s11_reviewed_sha_compared_and_no_regression,
+    test_s11_deferral_is_not_waiver_at_the_first_post_accept_opportunity,
+    test_s11_missing_producer_identity_fails_closed,
     test_s11_no_special_casing_source_proofs,
 ]
 
