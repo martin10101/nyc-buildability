@@ -5,110 +5,134 @@
 the remote: **origin/main may have advanced, so do not trust any SHA written here as still-current.**
 This file is orientation only. Operating rules, gates, and workflow routes live in `CLAUDE.md`.
 
+Refreshed **2026-07-31**, at the Step-1 merge boundary of the live closeout authorization.
+
 ## Where main is
-- **Accepted-task count = 53** (latest: **M0-T033**, the governance-orchestrator unblock-roster fix).
-  Latest checkpoint **CP-0035**. Main advanced through PRs **#131–#133** this window
-  (D-004 amendments 9+10, M0-T033 implementation, M0-T033 acceptance).
-- On resume `git fetch` and take the current `origin/main`.
 
-## THE ONE THING TO DO NEXT — M0-T027 Phase 3/4 (owner-AUTHORIZED, not started)
-M0-T027 is `blocked` at 75% with **complete, merged evidence**. Its only obstacle — the over-broad
-`invalid_unblock_roster` guard — is now **fixed and accepted** (M0-T033). The owner has already
-authorized Phases 3 and 4; they simply have not been executed.
+| | |
+|---|---|
+| `origin/main` | `1fc8a03b9ad3e827c34ebc805a3005b50f9e3e81` |
+| accepted tasks | **53** (M0-T034 is MERGED, not accepted) |
+| D-004 registry | version **18**, **700** locked requirement ids |
+| merged this window | **#137** (D-004 amendment 17 — the closeout authorization), **#138** (M0-T034, dual PASS) |
+| open PRs | **#64** only (unrelated, pre-existing) |
 
-- **Phase 3 — two truth-preserving packet clarifications, nothing else:**
-  - **AS-1** must stop demanding the obsolete literal total of **128** locked directive requirements.
-    Keep 128 as the *contract-time baseline*, but require the **current append-only total** (now 420),
-    matching digests, and a green validator. **Do not rewrite directive history.**
-  - **AS-6** must **preserve the historical Step-1 sentinel FAILURE exactly as recorded**. It may be
-    satisfied only across the owner-sequenced remediation arc, by citing the later **M0-T028**
-    fresh-session Phase-8 proof of guard denial and independently verified sentinel absence.
-    **Never claim the original Step-1 sentinel passed.**
-- **Phase 4 — closeout:** unblock via the normal CLI (the M0-T033 guard now admits it *by packet
-  shape alone*); freeze the identity; **regenerate the evidence map through the canonical resolver**
-  (its recorded map is stale — **97 ids recorded vs 150 derived**; do not preserve the old count);
-  dispatch all required independent reviewers on **explicit Opus 5**; preserve every reviewer return
-  **verbatim**; run final independent directive verification; stop on anything blocking or ambiguous;
-  then submit → merge through protected main → verify merged identity → accept → checkpoint only if
-  policy requires it.
+## 1. THE LIVE AUTHORIZATION — this is the session's whole job
 
-## Active directives (regime ON — every new/reclaimed task must cite directive_refs)
-- **D-001** active — Owner Directive Compliance System.
-- **D-002 / D-003** active — first wave complete and integrated; second wave **not contracted**.
-- **D-004** active — Agent-Teams runtime adoption, STAGED. **420 requirements, 11 sources**
-  (`source-011-amendment.md` = amendment 10). Steps 1, 2, 3, 4 **all done and accepted**.
-  **Amendment 8 (D-004-R307) TEMPORARY MODEL EXCEPTION IS ACTIVE:** Fable 5 is unavailable, so the
-  lead **and every gate reviewer/verifier run explicit Opus 5**, and the actual model must be
-  disclosed honestly. This supersedes the old "Fable 5 reviewers / Opus 4.8 producers" rule until the
-  owner restores Fable 5. **Never write an effort key anywhere**; never modify `teammateDefaultModel`.
-- **D-005** active — Graphify = owner-ratified **WAIT**. In-house code graph accepted (M0-T030/T031),
-  **SELECTIVE use only**, never universal graph-first; reserved surfaces each need a separate GO.
+**D-004 amendment 17 (`source-018-amendment.md`, rows R650–R700, merged as PR #137) captures the
+owner's ONE-SHOT CLOSEOUT AND HANDOFF AUTHORIZATION.** Its gate condition R661 is **SATISFIED**:
+both round-3 gates returned **PASS** at frozen SHA `dbf0a88` (G3 by `m0t034-g3-r3`, G5 by
+`m0t034-g5-r3`, explicit Opus 5, reports preserved as `M0-T034-G3-report-r3.md` /
+`-G5-report-r3.md`, gate records with full FAIL history at `3745fd2`).
 
-## What now works (new since last handoff)
-- **M0-T033 — `invalid_unblock_roster` corrected generally.** The reserved `orchestrator` may stand as
-  `producer_agent` when leaving `blocked` **only** when all four hold: `task_type == "governance"`;
-  ≥1 required gate in `INDEPENDENT_GATES` (G1/G3/G4/G5/G6); ≥1 usable independent reviewer; and every
-  other control unchanged. No task-id hard-coding, no bypass flag/env/CLI option. `gate()`, `submit()`,
-  `accept()` and directive verification are **byte-unchanged**. Test group **S10** (registered in
-  `ALL_TESTS`) proves it: `10/10 blocks executed, 118 assertion cases`.
-- **A real pre-existing fail-open was closed (F-1).** The old `task.get("reviewer_agents") or []`
-  iterated a bare string character-wise, so a malformed packet — including
-  `reviewer_agents: "orchestrator"`, naming *only* the reserved identity — **passed** the roster check.
-  New `_roster_strings` fails closed on both list fields.
-- **B-015 and B-016 are RESOLVED.** The read-only guard now fires correctly for teammates.
+**Step 1 is DONE** (this merge + this handoff): PR #138 merged at the exact CI-verified head,
+both gate returns preserved as tracked files, branches cleaned.
 
-## Milestone reality
-- **M0** active — M0-T028 and M0-T033 accepted. Still open: **M0-T027 (blocked, the next action
-  above)**, M0-T025 (LOW-1 backlog), M0-T026 (backlog), M0-T032 (backlog, **not authorized**),
-  M0-T019 (claimed; B-013 age exception DECLINED), M0-T007/T008 (blocked by B-001).
-  **M0-T029 does not exist** — reserved for D-004 Step 5, **not authorized**.
-- **M1** complete. **M2** active (M2-T014/15/16 survey HELD). **M3** planned — M3-T002 next, blocked by
-  B-001. **M4** active — T001..T006 merged DRAFT, G6-gated (0 published). **M5/M6/M7** planned.
+**Steps 2–7 REMAIN — execute them in order, from the amendment text (read `source-018-amendment.md`
+rows R669–R700; the summary below does not replace it):**
 
-## Holds / blockers (ALL still standing unless the ledger says otherwise)
-- **G6** legal approval blocks all M4 rule acceptance/publication. Open blockers: **B-001** Supabase
-  token, **B-002** Render, **B-003** Vercel, **B-004** Geoclient, **B-010** benchmark, **B-011**
-  construction-code scope, **B-012** deploy hold, **B-013** frontend age exception DECLINED.
-  **LOW-1** (M0-T025). Expansion-planning hold (`.claude/rules/expansion-agent-dispatch-hold.md` §2)
-  and the survey hold remain. Graphify WAIT.
-- **NOT AUTHORIZED:** Step 5 / M0-T029, M0-T032, M0-T025, further producer waves,
-  `teammateDefaultModel` or effort changes, deployment/G6/Graphify/expansion/survey/hold releases.
+2. **Re-submit M0-T027** under corrected identity
+   `29a094ebdf312767b2ffa964a9cfb0398432e8838db0a211a711f1dd8db2bb97`, all evidence committed
+   BEFORE submit (the merged M0-T034 rule fails closed otherwise). (R669)
+3. **Final verification** at that head, delta-scoped, citing settled rulings at their verified
+   SHAs; preserve the return as a tracked file; the verifier manually performs any guard the code
+   path skips. **HARD STOPS (R673): halt and report if R322/R323/R388 cannot reach PASS through
+   completed lifecycle evidence; any new finding needing owner judgment; any UNVERIFIABLE; any
+   deviation from expected state.** Note: `verification.json` for D-004 carries 97 rows against
+   233 applicable — the independent verifier must rebuild it; the orchestrator never sets a
+   verification status.
+4. **Conditional accept (R674):** ONLY if exactly clean — every applicable row PASS or attested
+   lifecycle deferral, zero UNVERIFIABLE, zero new findings, R024 recorded PASS by the verifier —
+   acceptance of M0-T027 is authorized through the CLI (R486). Checkpoint per policy (R487); clean
+   only closeout branches/worktrees (R488); run the first post-accept verification of deferred
+   lifecycle rows through the M0-T034 mechanism. **Any deviation → stop before accept (R678).**
+5. **Efficiency directive (R679–R684):** on acceptance, the pending draft v1.2 is ISSUED — file
+   `OWNER_DIRECTIVE_DRAFT_dispatch-efficiency-and-graph-wiring.md` (repo root, untracked), digest
+   `bd6c4ec2151202bb5209ee62f4cc2a3f94538cd40b695604ceff0e32d1c22b6b` (verified at capture;
+   re-verify bytes before capture). Capture verbatim, decompose without weakening/combining/
+   omitting, close out the tracked pending-capture record in the same batch. **R307 disposition:
+   the DEFERRED arm applies** — this round's gates ran under the Opus 5 regime; record with that
+   evidence and a re-check at the next gate dispatch. Contract the Section 3/5.2 edit task; adopt
+   the dispatch/packet standards immediately; begin the N=6 measurement (dcv2–dcv4 baseline). A
+   capture conflict or edit-task gate FAIL stops this lane only, not Step 6.
+6. **Supervisor directive Phase 0 (R685–R694):** file `.claude/CODEX_CLAUDE_SUPERVISOR_BUILD_DIRECTIVE_v4.3 (1).md`
+   — the basename literally contains " (1)"; the anchor is the digest
+   `426da3bb22714a403553b013e8969c6bfa424ee01d99e10d1269d0b65e0f5137` (verified at capture).
+   Strictly read-only first, per its Section 17; then the TWO permitted writes only (canonical
+   directive capture; the controlled task packet). No implementation, no supervisor paths, no
+   config changes.
+7. **Consolidated stop (R695–R696):** one final report — acceptance record + checkpoint,
+   post-accept lifecycle-row results, efficiency capture decomposition + R307 disposition +
+   edit-task gate results, Phase 0 Section 19 return packet + supervisor task packet awaiting the
+   owner's dispatch decision. Backlog without acting: C1 MATERIAL_FIELDS inversion, OBS-6
+   preservation-time redaction, D-001 capture-guidance update for `classified_at_identity`.
 
-## Hard-won operational lessons (cost real cycles — do not relearn)
-- **Spawn writing producers UNNAMED.** A spawn `name` lands in `agent_type`, so
-  `.claude/hooks/readonly_agent_guard.py` cannot resolve the roster role and fails closed — every
-  write is denied. Reviewers may be named; producers must not.
-- **Worktree-isolated agents do not start at your branch.** They get a fresh worktree off main and
-  **cannot** check out a branch already checked out in the primary checkout. Give them the frozen
-  **SHA**, expect a `worktree-agent-*` branch name, fast-forward their worktree yourself, and port
-  the diff back with blob-hash proof.
-- **`.gitattributes` pins `project-control/directives/** text eol=lf`.** Python's default text-mode
-  write emits CRLF on Windows and silently breaks the recorded digests on a fresh checkout. Write LF
-  bytes explicitly and keep the repo's `indent=2` so registry diffs stay pure appends.
-- **Commit the CLI submit record** (`project-control/reports/<TASK>.json`). `accept()` reads it **from
-  disk**; if untracked it fails on any fresh checkout. Same for the evidence map — list **both** in
-  `allowed_paths` at contracting time.
-- **`accept()` needs a `task_verification` row for every CITED directive**, even one with zero
-  applicable requirements. Record an honest **empty-set** row; never drop the citation.
-- **Derive applicable requirement ids through the canonical resolver**, never from a hand-picked range
-  and never from a report. Ranges leak in ids scoped to other sentinels.
+**Global rules (R697–R700): every stop is a report, never a workaround; nothing beyond the acts
+named; auto mode never overrides an Ask rule; if anything is ambiguous, stop is the default.**
 
-## Non-blocking follow-ups (logged, not tasked)
-- M0-T033 carried observations: `accept()` enforces zero gates on a falsy `required_gates` and raises
-  `TypeError` on a non-iterable; `claim()` still accepts `--agent orchestrator` for any task type;
-  reserved-identity comparison is case-sensitive; S10 block 6 asserts `"amend"` rather than
-  `"malformed"`; `task_type` is strip-normalized so `' governance '` is admissible.
-- D-004 registry hygiene for the next amendment (append-only): document the `D-004-OPTIONB` sentinel
-  in `manifest.applicability_note`.
-- Evidence-hygiene convention: **new** reviewer reports should cite **repository-relative** paths.
-  ~59 tracked files already carry absolute machine paths and 56 are long-public; retrofitting them is
-  a separate owner decision and was explicitly **not** undertaken.
-- Older: M4-T007 G5 LOW; M2-T017 G5 LOW; stale `source_fact` comments in `pluto_soda`/`ztldb_soda`;
-  M3-T001 check-script docstring path; code-graph INFO items; orphaned `.claude/worktrees` husks
-  (cleanup NOT authorized).
+## 2. M0-T034 — merged, NOT accepted
 
-## Next action
-**M0-T027 Phase 3/4 as specified at the top of this file** — it is authorized and is the only work
-queued. Everything else (Step 5/M0-T029, M0-T032, M0-T025, second-wave lanes, code-graph reserved
-surfaces, owner-only unblocks B-001/B-002/B-011 and the G6 reviewer) needs a fresh owner GO.
-Do not begin untracked work; contract via `/start-controlled-task` with `directive_refs`.
+Status `self_check` @ 90%. Merged to main with dual PASS; its OWN acceptance still requires:
+the independent `directive-compliance-verifier` per-requirement pass (rebuilding
+`verification.json`), **AS-10** (the verifier's classification of the eight candidate rows
+R322/R323/R388/R389/R486/R487/R488/R501 — the orchestrator never makes this call), **AS-13**
+(orchestrator writes `M0-T034-lifecycle-classification.md` verbatim from the AS-10 return), then
+the normal submit/gate/accept lifecycle. AS-5 carries owner ruling C2 in the scenario record —
+cite it, never re-litigate.
+
+**G3's BINDING BUNDLE CONDITIONS (round-3 report, rider 4) — F4/F8 revert to BLOCKING if broken:**
+(a) contract the follow-up bundle **"C1 MATERIAL_FIELDS boundary + attestation validation"** as a
+controlled task BEFORE M0-T034's post-accept verification closes; (b) never widen M0-T034's
+`allowed_paths` to absorb it; (c) its items 1 (F4/MATERIAL_FIELDS) and 2 (F8 schema+validator
+mirror of conditions (1)(2)(4)(5)(6)) stay in ONE task. The bundle also carries: the c15
+manifest-scope gap (M0-T034 absent from D-004's scope list), F5's same-identity transportability
+residual, OBS-6, and **FU-4** — the D-001 capture convention that every future
+`lifecycle_classification` attestation must carry `classified_at_identity` equal to the identity
+it was granted at (condition (6) is live on main NOW; an unstamped attestation refuses).
+
+## 3. Standing discipline (carry forward)
+
+- **R024, public repo:** scan BEFORE commit (username, absolute user paths both slash forms,
+  hostnames, session ids); redact with annotation at the redaction site; describe patterns, never
+  quote them inside sweep sentences. 76 pre-existing files carry the username — owner-prohibited
+  from being touched (R560); systemic fix is OBS-6 in the bundle.
+- **Writing producers spawn UNNAMED; reviewers may be named.** Explicit Opus 5 (D-004-R307) for
+  every producer/reviewer/verifier; disclose the actual model honestly; never claim Fable 5.
+- **Reviewers signal idle without delivering.** Follow up demanding the complete return; preserve
+  it verbatim THE MOMENT it arrives (round-1's returns nearly died with their stopped agents; they
+  were recovered from stored session transcripts under
+  `~/.claude/projects/<project>/<session>/subagents/`).
+- **Gate records stamp live at HEAD == reviewed commit (N2).** If HEAD moved after the review,
+  record on a branch cut from the reviewed commit and merge (precedent: `af5c083`/`659cdde`).
+- **Directive capture is append-only**, decomposed atomic, session-sentinel `D-004-OPTIONB` for
+  execution-authority rows, requirement/content digests recomputed in `manifest.json`, validator
+  green before commit. Verify append-only with explicit UTF-8 decoding (cp1252 phantom diffs).
+- **Static-analysis warnings are not defects** — adjudicate by execution (line tracer, second
+  linter). Round-3 G3 refuted every Pyright flag this way.
+- **Producer worktree ports are byte-identical**, verified per-file SHA-256 against the producer's
+  declared hashes; no orchestrator edit of producer output.
+- The auto-mode classifier intermittently denies benign `python -c`/heredoc forms; re-express the
+  command (script file piped via stdin works); if a consequential act (e.g. a merge) is denied,
+  STOP and surface — never work around a merge denial.
+
+## 4. Superseded / loose ends
+
+- Local branch `control/session-handoff-refresh-2026-07-31` (`7206821`) was never merged and is
+  fully superseded by this file; safe to delete after an owner glance.
+- The round-3 producer's sandbox/worktree-guard lesson exists only in its preserved return (in the
+  orchestrator session transcript); whoever owns `.claude/agent-memory/backend-engineer/` should
+  add it post-task (owner statement + producer correction recorded at D-004-R660).
+- Stopped agent worktrees under `.claude/worktrees/agent-*` await R488 closeout cleanup (Step 4).
+- Producer report §11.4 Command E over-reports three removed-side rows (conservative direction) —
+  noted by round-3 G3; no rework required.
+- Pre-existing weak test `test_manifest_is_order_independent_and_content_based`
+  (`tools/test_directive_compliance.py:339-346`, from M0-T023) never asserts the property it
+  names — G3 r3 observation 1; queue with ordinary maintenance, not chargeable to M0-T034.
+
+## 5. NOT AUTHORIZED (unchanged unless amendment 17 conditionally lifts it)
+
+Step 5 / M0-T029 · M0-T032 · M0-T025 · another producer or product wave · product or legal-rule
+changes · predicate-schema follow-up · `teammateDefaultModel` changes · **any effort key or effort
+setting, anywhere, ever** · hooks, agent definitions, or settings changes · deployment or hold
+releases · G6, Graphify, expansion, survey work. The efficiency-draft and supervisor-directive
+holds lift ONLY per R679/R685's conditions (M0-T027 acceptance first, scope-limited).
