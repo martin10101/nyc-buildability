@@ -6,8 +6,29 @@ identity `3ed05fda6d434670e5b610e6dad7a8b224a9aa94` on branch
 Model value passed at spawn: **explicit Opus 5** under the still-active temporary availability
 exception (D-004-R307); the reviewer independently discloses its actual model below and it matches.
 No Fable 5 is claimed for this wave. Everything from the horizontal rule to the end of this file is
-the reviewer's return preserved **verbatim** (D-004-R385/R468); the orchestrator altered nothing,
-including the four required corrections it raises against the orchestrator's own work.
+the reviewer's return preserved **verbatim** (D-004-R385/R468); the orchestrator altered nothing
+**except for the R024 redactions enumerated immediately below** — and in particular did not alter
+the four required corrections this return raises against the orchestrator's own work.
+
+**R024 EVIDENCE-HYGIENE REDACTION (applied 2026-07-30, owner amendment 13 / `source-014`,
+D-004-R553-R559).** The independent second-pass verification ruled **D-004-R024 VIOLATED** by this
+file: the reviewer's return, preserved as delivered, carried machine-specific data into a public
+repository. R024 forbids "session IDs, pane IDs, absolute user paths, and all machine-specific
+data" in anything written to the repository. The orchestrator — not the reviewer — owned the
+redaction duty at preservation time and did not discharge it before commit `f301421`. The following
+substitutions were applied to this file, using D-004's own native convention already used in
+`AGENT-TEAMS-PILOT-1.md` (`<REDACTED-USER>`) and `AGENT-TEAMS-PILOT-2-PROBE.md` (`<REPO>`):
+
+| occurrences | substitution |
+|---|---|
+| 16 | absolute repository path -> `<REPO>` |
+
+**Nothing else changed.** No verdict, finding, defect, severity, requirement ruling, SHA, digest,
+count, line reference, or command output was altered, and no text was added to or removed from the
+reviewer's return beyond these substitutions. The return remains verbatim in every respect except
+the redaction tokens themselves, which are visible rather than silent so the preservation stays
+honest and auditable.
+
 
 ---
 
@@ -18,7 +39,7 @@ including the four required corrections it raises against the orchestrator's own
 - **Reviewer:** `m0t027-g3` (agent type `code-reviewer`), Opus 5, read-only
 - **Producer:** `orchestrator` (reviewer ≠ producer — confirmed)
 - **Result:** **PASS with required corrections** — recorded as **PASS** per `.claude/rules/project-control.md` gate-verdict semantics; the four corrections in "Required rework" are **BLOCKING for the next gate and for acceptance**.
-- **Clean environment/worktree used:** primary checkout, `C:\Users\MLFLL\Downloads\nyc-zoning\nyc-development-feasibility-claude-pack`, at the frozen SHA. No file was created, edited, or deleted by me.
+- **Clean environment/worktree used:** primary checkout, `<REPO>`, at the frozen SHA. No file was created, edited, or deleted by me.
 
 ## Frozen head confirmation
 
@@ -349,21 +370,21 @@ Blocking for the next gate and for acceptance. All are append-only and none requ
 
 ## Evidence paths
 
-- `C:\Users\MLFLL\Downloads\nyc-zoning\nyc-development-feasibility-claude-pack\project-control\tasks\M0-T027.json`
-- `C:\Users\MLFLL\Downloads\nyc-zoning\nyc-development-feasibility-claude-pack\project-control\reports\M0-T027-producer-report.md`
-- `C:\Users\MLFLL\Downloads\nyc-zoning\nyc-development-feasibility-claude-pack\project-control\reports\M0-T027-evidence-map.json`
-- `C:\Users\MLFLL\Downloads\nyc-zoning\nyc-development-feasibility-claude-pack\project-control\reports\AGENT-TEAMS-PILOT-1.md`
-- `C:\Users\MLFLL\Downloads\nyc-zoning\nyc-development-feasibility-claude-pack\project-control\reports\M0-T028-PHASE8-fresh-session-report.md`
-- `C:\Users\MLFLL\Downloads\nyc-zoning\nyc-development-feasibility-claude-pack\project-control\directives\D-004-agent-teams-runtime-adoption\manifest.json`
-- `C:\Users\MLFLL\Downloads\nyc-zoning\nyc-development-feasibility-claude-pack\project-control\directives\D-004-agent-teams-runtime-adoption\requirements.json`
-- `C:\Users\MLFLL\Downloads\nyc-zoning\nyc-development-feasibility-claude-pack\project-control\directives\D-004-agent-teams-runtime-adoption\source-012-amendment.md`
-- `C:\Users\MLFLL\Downloads\nyc-zoning\nyc-development-feasibility-claude-pack\project-control\directives\D-004-agent-teams-runtime-adoption\verification.json`
-- `C:\Users\MLFLL\Downloads\nyc-zoning\nyc-development-feasibility-claude-pack\project-control\blockers\B-015-teammate-readonly-guard-bypass.json`
-- `C:\Users\MLFLL\Downloads\nyc-zoning\nyc-development-feasibility-claude-pack\project-control\gates\M0-T027-G0.json`
-- `C:\Users\MLFLL\Downloads\nyc-zoning\nyc-development-feasibility-claude-pack\project-control\gates\M0-T027-G2.json`
-- `C:\Users\MLFLL\Downloads\nyc-zoning\nyc-development-feasibility-claude-pack\tools\directive_registry.py`
-- `C:\Users\MLFLL\Downloads\nyc-zoning\nyc-development-feasibility-claude-pack\tools\project_control.py`
-- `C:\Users\MLFLL\Downloads\nyc-zoning\nyc-development-feasibility-claude-pack\tools\validate_directive_compliance.py`
+- `<REPO>\project-control\tasks\M0-T027.json`
+- `<REPO>\project-control\reports\M0-T027-producer-report.md`
+- `<REPO>\project-control\reports\M0-T027-evidence-map.json`
+- `<REPO>\project-control\reports\AGENT-TEAMS-PILOT-1.md`
+- `<REPO>\project-control\reports\M0-T028-PHASE8-fresh-session-report.md`
+- `<REPO>\project-control\directives\D-004-agent-teams-runtime-adoption\manifest.json`
+- `<REPO>\project-control\directives\D-004-agent-teams-runtime-adoption\requirements.json`
+- `<REPO>\project-control\directives\D-004-agent-teams-runtime-adoption\source-012-amendment.md`
+- `<REPO>\project-control\directives\D-004-agent-teams-runtime-adoption\verification.json`
+- `<REPO>\project-control\blockers\B-015-teammate-readonly-guard-bypass.json`
+- `<REPO>\project-control\gates\M0-T027-G0.json`
+- `<REPO>\project-control\gates\M0-T027-G2.json`
+- `<REPO>\tools\directive_registry.py`
+- `<REPO>\tools\project_control.py`
+- `<REPO>\tools\validate_directive_compliance.py`
 
 ## What I verified independently versus what I could not
 

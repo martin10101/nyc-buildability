@@ -1,7 +1,7 @@
 {
   "schema": "directive_manifest/v1",
   "directive_id": "D-004",
-  "version": 13,
+  "version": 15,
   "slug": "agent-teams-runtime-adoption",
   "title": "Agent-teams runtime adoption, staged with pilots",
   "status": "active",
@@ -113,6 +113,22 @@
       "amends": "source-001.md",
       "recorded_at": "2026-07-30T00:00:00+00:00",
       "content_digest_sha256": "69b6bbdeded7b1162a119fc0e013e02bbaa645cacecf8bcbb9ee7ca0e251e216"
+    },
+    {
+      "file": "source-014-amendment.md",
+      "kind": "amendment",
+      "sequence": 14,
+      "amends": "source-001.md",
+      "recorded_at": "2026-07-30T00:00:00+00:00",
+      "content_digest_sha256": "f5e5d9a3b9ca37d2151b41a8519d6133cefda4caab1974ad4dea61354872016a"
+    },
+    {
+      "file": "source-015-amendment.md",
+      "kind": "amendment",
+      "sequence": 15,
+      "amends": "source-001.md",
+      "recorded_at": "2026-07-30T00:00:00+00:00",
+      "content_digest_sha256": "73605d23d23d1ba1167a94370fc80574b54eaa9e39db8939c83f2dace6b1d095"
     }
   ],
   "amendments": [
@@ -127,7 +143,9 @@
     "source-010-amendment.md",
     "source-011-amendment.md",
     "source-012-amendment.md",
-    "source-013-amendment.md"
+    "source-013-amendment.md",
+    "source-014-amendment.md",
+    "source-015-amendment.md"
   ],
   "supersedes": [],
   "superseded_by": null,
@@ -321,6 +339,16 @@
       "at": "2026-07-30T00:00:00+00:00",
       "by": "orchestrator",
       "note": "Amendment 12 captured verbatim as source-013-amendment.md (sha256 69b6bbdeded7b1162a119fc0e013e02bbaa645cacecf8bcbb9ee7ca0e251e216) at origin/main 11f3540c602849f4100517f35b7b93eca6742a8d (confirmed UNCHANGED before any write per the owner's precondition) with the frozen closeout identity resolved in full to f3014213742a074841ed52cab3e59ea83ccd69c7. The owner authorizes OPTION A first and OPTION B ONLY as the exact conditional fallback for a four-row circularity (R486/R487/R488/R501). 36 append-only rows D-004-R517..R552 (total 516 -> 552). BINDING SCOPE DECISION, owner-mandated: EVERY row carries task_ids ['D-004-OPTIONB'], the session sentinel - the owner states this is execution authority, NOT a new M0-T027 task-content or acceptance requirement, and expressly forbids scoping any newly derived requirement to M0-T027. Mechanical consequence recorded so it is not mistaken for an oversight: none of R517-R552 enters M0-T027's applicable set and accept() will never gate on them; they bind session conduct and are enforced at D-004 final verification, the same structural position as the return items R502-R514. That scoping is exactly what prevents this authorization from re-creating the circularity it exists to resolve. Nothing is waived, weakened, or pre-marked PASS. No existing source file or requirement row was edited."
+    },
+    {
+      "at": "2026-07-30T00:00:00+00:00",
+      "by": "orchestrator",
+      "note": "Amendment 13 captured verbatim as source-014-amendment.md (sha256 92816c1b302226743498893ad5f3451435af6dda569ed7446e5ea9399c5a5711) at branch head f4c7c3be0e45c125c2bf1bf4790fc8e5ab053424, origin/main unchanged at 11f3540c602849f4100517f35b7b93eca6742a8d. Authorizes ITEM 1 ONLY: curing the D-004-R024 evidence-hygiene VIOLATION the second-pass independent verification found (verdict FAIL; 217 PASS / 1 VIOLATED / 15 UNVERIFIABLE) in the two reviewer-return files the orchestrator authored on this branch. 15 append-only rows D-004-R553..R567 (total 552 -> 567), all scoped to the D-004-OPTIONB session sentinel per the owner's standing instruction for execution authorizations; M0-T027's applicable set remains 233 and no row of this amendment enters it. ITEM 2 is an explicit PROHIBITION: the 75 pre-existing files on origin/main carrying the same pattern - including report files under the ACCEPTED M0-T028 and M0-T033 - must not be touched, and the inconsistent-R024-enforcement question plus OBS-6 (the reviewer harness instructs agents to report absolute paths while R024 forbids them) are logged for a separate owner decision. R024 must not be fix-forwarded or reinterpreted under this GO. Ordering is binding: redaction precedes any verification.json rebuild, because a rebuilt block may not record R024 as PASS while a leak stands. No submit, push, merge, or accept."
+    },
+    {
+      "at": "2026-07-30T00:00:00+00:00",
+      "by": "orchestrator",
+      "note": "Amendment 14 captured verbatim as source-015-amendment.md (sha256 73605d23d23d1ba1167a94370fc80574b54eaa9e39db8939c83f2dace6b1d095) at branch head f4c7c3be0e45c125c2bf1bf4790fc8e5ab053424, origin/main unchanged. 9 append-only rows D-004-R568..R576 (total 567 -> 576), all scoped to the D-004-OPTIONB session sentinel; M0-T027's applicable set remains 233 and no row of this amendment enters it. OWNER-VERBATIM REDACTION, disclosed because it is a more serious category than the reviewer-return redactions: on the owner's explicit Option-4 approval, the truncated session-id prefix was substituted with <REDACTED-SESSION-ID> inside BOTH owner-verbatim captures - once in source-014-amendment.md and twice in source-015-amendment.md. In every instance the original text at that position was the owner NAMING the identifier to be redacted, so the lines now read self-referentially; no instruction, constraint, prohibition, deferral, or ordering was altered. source-014-amendment.md's content_digest_sha256 was RE-DERIVED after its redaction and updated in place from 92816c1b30222674... to f5e5d9a3b9ca37d2...; this is a digest correction for a source that had not yet been committed, not an edit to committed history. Item 3 of amendment 14 (source-014 'won't be committed, no action') is preserved verbatim and recorded as SUPERSEDED by the Option-4 approval, because manifest.json already cited source-014 with a digest and requirements.json already carried R553-R567 against it, so a fresh checkout would have failed validation on a cited-but-missing source."
     }
   ],
   "locked_requirement_ids": [
@@ -875,8 +903,32 @@
     "D-004-R549",
     "D-004-R550",
     "D-004-R551",
-    "D-004-R552"
+    "D-004-R552",
+    "D-004-R553",
+    "D-004-R554",
+    "D-004-R555",
+    "D-004-R556",
+    "D-004-R557",
+    "D-004-R558",
+    "D-004-R559",
+    "D-004-R560",
+    "D-004-R561",
+    "D-004-R562",
+    "D-004-R563",
+    "D-004-R564",
+    "D-004-R565",
+    "D-004-R566",
+    "D-004-R567",
+    "D-004-R568",
+    "D-004-R569",
+    "D-004-R570",
+    "D-004-R571",
+    "D-004-R572",
+    "D-004-R573",
+    "D-004-R574",
+    "D-004-R575",
+    "D-004-R576"
   ],
-  "requirements_id_digest_sha256": "df2b18369d4517f579d345ae591d11457d62097908b174c4958eee695b456ce9",
-  "requirements_content_digest_sha256": "a5132a39c73e8d0ed9705c215e35f96b6511e84e66fc5ec604e905d2d5a5a135"
+  "requirements_id_digest_sha256": "de2517bc7f2d2ee6c76236aa5075bdb1f981bc72ced1711015e087d0be099902",
+  "requirements_content_digest_sha256": "988c8ecc69b323f666048a8227c883f1c03a512817bbe0ca07355c499ef918c6"
 }

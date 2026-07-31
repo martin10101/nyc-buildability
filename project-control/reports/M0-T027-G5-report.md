@@ -6,7 +6,29 @@ identity `3ed05fda6d434670e5b610e6dad7a8b224a9aa94` on branch
 Model value passed at spawn: **explicit Opus 5** under the still-active temporary availability
 exception (D-004-R307); the reviewer independently discloses its actual model below and it matches.
 No Fable 5 is claimed for this wave. Everything from the horizontal rule to the end of this file is
-the reviewer's return preserved **verbatim** (D-004-R385/R468); the orchestrator altered nothing.
+the reviewer's return preserved **verbatim** (D-004-R385/R468); the orchestrator altered nothing **except for the R024 redactions enumerated immediately below**.
+
+**R024 EVIDENCE-HYGIENE REDACTION (applied 2026-07-30, owner amendment 13 / `source-014`,
+D-004-R553-R559).** The independent second-pass verification ruled **D-004-R024 VIOLATED** by this
+file: the reviewer's return, preserved as delivered, carried machine-specific data into a public
+repository. R024 forbids "session IDs, pane IDs, absolute user paths, and all machine-specific
+data" in anything written to the repository. The orchestrator — not the reviewer — owned the
+redaction duty at preservation time and did not discharge it before commit `f301421`. The following
+substitutions were applied to this file, using D-004's own native convention already used in
+`AGENT-TEAMS-PILOT-1.md` (`<REDACTED-USER>`) and `AGENT-TEAMS-PILOT-2-PROBE.md` (`<REPO>`):
+
+| occurrences | substitution |
+|---|---|
+| 16 | absolute repository path -> `<REPO>` |
+| 2 | session id -> `<REDACTED-SESSION-ID>` |
+| 1 | bare machine username -> `<REDACTED-USER>` |
+
+**Nothing else changed.** No verdict, finding, defect, severity, requirement ruling, SHA, digest,
+count, line reference, or command output was altered, and no text was added to or removed from the
+reviewer's return beyond these substitutions. The return remains verbatim in every respect except
+the redaction tokens themselves, which are visible rather than silent so the preservation stays
+honest and auditable.
+
 
 ---
 
@@ -176,7 +198,7 @@ $ git diff main...HEAD | grep -E '^\+' | grep -inE 'C:\\Users|C:/Users|/home/[a-
 (no matches)
 
 # session ids, pane ids, machine usernames, hostnames
-$ git diff main...HEAD | grep -E '^\+' | grep -inE 'session_[0-9a-z]{8,}|pane[ _-]?id|MLFLL|DESKTOP-|hostname|machine name|localhost:[0-9]+'
+$ git diff main...HEAD | grep -E '^\+' | grep -inE 'session_[0-9a-z]{8,}|pane[ _-]?id|<REDACTED-USER>|DESKTOP-|hostname|machine name|localhost:[0-9]+'
 (no matches)
 
 # emails, IP addresses, URLs
@@ -460,22 +482,22 @@ I found **no discrepancy between any producer claim and my independent measureme
 
 ## Evidence paths
 
-- `C:\Users\MLFLL\Downloads\nyc-zoning\nyc-development-feasibility-claude-pack\project-control\tasks\M0-T027.json`
-- `C:\Users\MLFLL\Downloads\nyc-zoning\nyc-development-feasibility-claude-pack\project-control\reports\M0-T027-producer-report.md`
-- `C:\Users\MLFLL\Downloads\nyc-zoning\nyc-development-feasibility-claude-pack\project-control\reports\M0-T027-evidence-map.json`
-- `C:\Users\MLFLL\Downloads\nyc-zoning\nyc-development-feasibility-claude-pack\project-control\directives\D-004-agent-teams-runtime-adoption\source-012-amendment.md`
-- `C:\Users\MLFLL\Downloads\nyc-zoning\nyc-development-feasibility-claude-pack\project-control\directives\D-004-agent-teams-runtime-adoption\requirements.json`
-- `C:\Users\MLFLL\Downloads\nyc-zoning\nyc-development-feasibility-claude-pack\project-control\directives\D-004-agent-teams-runtime-adoption\manifest.json`
-- `C:\Users\MLFLL\Downloads\nyc-zoning\nyc-development-feasibility-claude-pack\project-control\directives\D-004-agent-teams-runtime-adoption\verification.json` (unchanged; no M0-T027 entry — correct)
-- `C:\Users\MLFLL\Downloads\nyc-zoning\nyc-development-feasibility-claude-pack\project-control\gates\M0-T027-G0.json` (historical, byte-unchanged)
-- `C:\Users\MLFLL\Downloads\nyc-zoning\nyc-development-feasibility-claude-pack\project-control\gates\M0-T027-G2.json` (new, uncommitted, CLI-written)
-- `C:\Users\MLFLL\Downloads\nyc-zoning\nyc-development-feasibility-claude-pack\project-control\state.json`
-- `C:\Users\MLFLL\Downloads\nyc-zoning\nyc-development-feasibility-claude-pack\.gitattributes`
-- `C:\Users\MLFLL\Downloads\nyc-zoning\nyc-development-feasibility-claude-pack\tools\project_control.py` (read only — `gate()` :864-930, `invalid_unblock_roster()` :700-751, `_directive_submit_check()` :424-459, `_task_git_identity()` :319-327, `_MANIFEST_EXCLUDE_PREFIXES` :311)
-- `C:\Users\MLFLL\Downloads\nyc-zoning\nyc-development-feasibility-claude-pack\tools\directive_registry.py` (read only — `MATERIAL_FIELDS` :814-816)
-- `C:\Users\MLFLL\Downloads\nyc-zoning\nyc-development-feasibility-claude-pack\tools\validate_directive_compliance.py` (read only — digest algorithm :387-401)
-- `C:\Users\MLFLL\Downloads\nyc-zoning\nyc-development-feasibility-claude-pack\.claude\hooks\directive_reminder.py` (read only — injection scope)
-- `C:\Users\MLFLL\Downloads\nyc-zoning\nyc-development-feasibility-claude-pack\.claude\agents\security-reviewer.md` (read only — my own definition: `disallowedTools: Write, Edit, MultiEdit, NotebookEdit, Agent`; `permissionMode: plan`)
+- `<REPO>\project-control\tasks\M0-T027.json`
+- `<REPO>\project-control\reports\M0-T027-producer-report.md`
+- `<REPO>\project-control\reports\M0-T027-evidence-map.json`
+- `<REPO>\project-control\directives\D-004-agent-teams-runtime-adoption\source-012-amendment.md`
+- `<REPO>\project-control\directives\D-004-agent-teams-runtime-adoption\requirements.json`
+- `<REPO>\project-control\directives\D-004-agent-teams-runtime-adoption\manifest.json`
+- `<REPO>\project-control\directives\D-004-agent-teams-runtime-adoption\verification.json` (unchanged; no M0-T027 entry — correct)
+- `<REPO>\project-control\gates\M0-T027-G0.json` (historical, byte-unchanged)
+- `<REPO>\project-control\gates\M0-T027-G2.json` (new, uncommitted, CLI-written)
+- `<REPO>\project-control\state.json`
+- `<REPO>\.gitattributes`
+- `<REPO>\tools\project_control.py` (read only — `gate()` :864-930, `invalid_unblock_roster()` :700-751, `_directive_submit_check()` :424-459, `_task_git_identity()` :319-327, `_MANIFEST_EXCLUDE_PREFIXES` :311)
+- `<REPO>\tools\directive_registry.py` (read only — `MATERIAL_FIELDS` :814-816)
+- `<REPO>\tools\validate_directive_compliance.py` (read only — digest algorithm :387-401)
+- `<REPO>\.claude\hooks\directive_reminder.py` (read only — injection scope)
+- `<REPO>\.claude\agents\security-reviewer.md` (read only — my own definition: `disallowedTools: Write, Edit, MultiEdit, NotebookEdit, Agent`; `permissionMode: plan`)
 
 ---
 
@@ -510,7 +532,7 @@ I traced the consumer before judging it. `_directive_submit_check()` (`tools/pro
 
 ### INFO-1 — Session identifier and owner email in commit trailers of a public repository
 
-The three commits on this branch carry `Claude-Session: https://claude.ai/code/session_01QjuHpbap5KCd13KbDXsgua` and author `martin10101 <myhappybook212@gmail.com>`.
+The three commits on this branch carry `Claude-Session: https://claude.ai/code/<REDACTED-SESSION-ID>` and author `martin10101 <myhappybook212@gmail.com>`.
 
 I checked whether this is introduced here or pre-existing:
 
@@ -518,7 +540,7 @@ I checked whether this is introduced here or pre-existing:
 commits on main carrying a Claude-Session trailer: 28
 total commits on main: 537
 distinct session ids in main history: 3
-$ git grep -l "session_01QjuHpbap5KCd13KbDXsgua" HEAD
+$ git grep -l "<REDACTED-SESSION-ID>" HEAD
 (no output — not present in any tracked file)
 ```
 

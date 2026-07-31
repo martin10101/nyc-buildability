@@ -2,7 +2,7 @@
   "schema": "directive_requirements/v1",
   "directive_id": "D-004",
   "version": 1,
-  "requirement_count": 552,
+  "requirement_count": 576,
   "producer": "orchestrator",
   "updated_at": "2026-07-30T00:00:00+00:00",
   "requirements": [
@@ -21867,6 +21867,926 @@
         "tasks": []
       },
       "amendment_sequence": 13
+    },
+    {
+      "id": "D-004-R553",
+      "text": "ITEM 1 AUTHORIZED: cure D-004-R024 in the two files the orchestrator authored on this branch - M0-T027-G3-report.md and M0-T027-G5-report.md - and in the verifier addendum if it will be written to a tracked file.",
+      "source_ref": "source-014-amendment.md#item-1",
+      "classification": "authorization",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "D-004-OPTIONB"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [],
+        "lifecycle_events": [
+          "gate"
+        ],
+        "effective_date": "2026-07-30"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured by amendment 13 (source-014); session-sentinel scope, deliberately NOT applicable to M0-T027 per the owner's standing instruction; verified at D-004 final verification",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      },
+      "amendment_sequence": 14
+    },
+    {
+      "id": "D-004-R554",
+      "text": "ITEM 1: redact the machine username to <REDACTED-USER>.",
+      "source_ref": "source-014-amendment.md#item-1",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "D-004-OPTIONB"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [],
+        "lifecycle_events": [
+          "gate"
+        ],
+        "effective_date": "2026-07-30"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured by amendment 13 (source-014); session-sentinel scope, deliberately NOT applicable to M0-T027 per the owner's standing instruction; verified at D-004 final verification",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      },
+      "amendment_sequence": 14
+    },
+    {
+      "id": "D-004-R555",
+      "text": "ITEM 1: redact absolute paths to <REPO>/... form.",
+      "source_ref": "source-014-amendment.md#item-1",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "D-004-OPTIONB"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [],
+        "lifecycle_events": [
+          "gate"
+        ],
+        "effective_date": "2026-07-30"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured by amendment 13 (source-014); session-sentinel scope, deliberately NOT applicable to M0-T027 per the owner's standing instruction; verified at D-004 final verification",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      },
+      "amendment_sequence": 14
+    },
+    {
+      "id": "D-004-R556",
+      "text": "ITEM 1: redact the session id to <REDACTED-SESSION-ID>.",
+      "source_ref": "source-014-amendment.md#item-1",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "D-004-OPTIONB"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [],
+        "lifecycle_events": [
+          "gate"
+        ],
+        "effective_date": "2026-07-30"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured by amendment 13 (source-014); session-sentinel scope, deliberately NOT applicable to M0-T027 per the owner's standing instruction; verified at D-004 final verification",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      },
+      "amendment_sequence": 14
+    },
+    {
+      "id": "D-004-R557",
+      "text": "ITEM 1: annotate each redaction inline so preservation stays honest.",
+      "source_ref": "source-014-amendment.md#item-1",
+      "classification": "evidence",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "D-004-OPTIONB"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [],
+        "lifecycle_events": [
+          "gate"
+        ],
+        "effective_date": "2026-07-30"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured by amendment 13 (source-014); session-sentinel scope, deliberately NOT applicable to M0-T027 per the owner's standing instruction; verified at D-004 final verification",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      },
+      "amendment_sequence": 14
+    },
+    {
+      "id": "D-004-R558",
+      "text": "ITEM 1: change NO substance, NO ruled evidence, and NO verbatim reviewer content beyond the redaction tokens themselves.",
+      "source_ref": "source-014-amendment.md#item-1",
+      "classification": "prohibition",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "D-004-OPTIONB"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [],
+        "lifecycle_events": [
+          "gate"
+        ],
+        "effective_date": "2026-07-30"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured by amendment 13 (source-014); session-sentinel scope, deliberately NOT applicable to M0-T027 per the owner's standing instruction; verified at D-004 final verification",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      },
+      "amendment_sequence": 14
+    },
+    {
+      "id": "D-004-R559",
+      "text": "ITEM 1: touch ONLY files authored in this unmerged branch.",
+      "source_ref": "source-014-amendment.md#item-1",
+      "classification": "prohibition",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "D-004-OPTIONB"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [],
+        "lifecycle_events": [
+          "gate"
+        ],
+        "effective_date": "2026-07-30"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured by amendment 13 (source-014); session-sentinel scope, deliberately NOT applicable to M0-T027 per the owner's standing instruction; verified at D-004 final verification",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      },
+      "amendment_sequence": 14
+    },
+    {
+      "id": "D-004-R560",
+      "text": "ITEM 2 PROHIBITION: leave the 75 pre-existing files on origin/main alone; they are accepted, immutable work and rewriting them here would breach the closeout's containment.",
+      "source_ref": "source-014-amendment.md#item-2",
+      "classification": "prohibition",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "D-004-OPTIONB"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [],
+        "lifecycle_events": [
+          "gate",
+          "accept"
+        ],
+        "effective_date": "2026-07-30"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured by amendment 13 (source-014); session-sentinel scope, deliberately NOT applicable to M0-T027 per the owner's standing instruction; verified at D-004 final verification",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      },
+      "amendment_sequence": 14
+    },
+    {
+      "id": "D-004-R561",
+      "text": "ITEM 2: log the inconsistent-R024-enforcement question and OBS-6 (the harness reports absolute paths while R024 forbids them) as a SEPARATE directive-amendment item for the owner's later decision.",
+      "source_ref": "source-014-amendment.md#item-2",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "D-004-OPTIONB"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [],
+        "lifecycle_events": [
+          "gate",
+          "accept"
+        ],
+        "effective_date": "2026-07-30"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured by amendment 13 (source-014); session-sentinel scope, deliberately NOT applicable to M0-T027 per the owner's standing instruction; verified at D-004 final verification",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      },
+      "amendment_sequence": 14
+    },
+    {
+      "id": "D-004-R562",
+      "text": "ITEM 2: do NOT fix-forward or reinterpret R024 under this GO.",
+      "source_ref": "source-014-amendment.md#item-2",
+      "classification": "prohibition",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "D-004-OPTIONB"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [],
+        "lifecycle_events": [
+          "gate",
+          "accept"
+        ],
+        "effective_date": "2026-07-30"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured by amendment 13 (source-014); session-sentinel scope, deliberately NOT applicable to M0-T027 per the owner's standing instruction; verified at D-004 final verification",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      },
+      "amendment_sequence": 14
+    },
+    {
+      "id": "D-004-R563",
+      "text": "ORDERING: apply the redaction FIRST, then rebuild verification.json; it may not record R024 as PASS while any leak stands.",
+      "source_ref": "source-014-amendment.md#ordering",
+      "classification": "sequencing",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "D-004-OPTIONB"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [],
+        "lifecycle_events": [
+          "gate",
+          "accept"
+        ],
+        "effective_date": "2026-07-30"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured by amendment 13 (source-014); session-sentinel scope, deliberately NOT applicable to M0-T027 per the owner's standing instruction; verified at D-004 final verification",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      },
+      "amendment_sequence": 14
+    },
+    {
+      "id": "D-004-R564",
+      "text": "Do NOT submit, push, merge, or accept.",
+      "source_ref": "source-014-amendment.md#ordering",
+      "classification": "prohibition",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "D-004-OPTIONB"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [],
+        "lifecycle_events": [
+          "submit",
+          "accept"
+        ],
+        "effective_date": "2026-07-30"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured by amendment 13 (source-014); session-sentinel scope, deliberately NOT applicable to M0-T027 per the owner's standing instruction; verified at D-004 final verification",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      },
+      "amendment_sequence": 14
+    },
+    {
+      "id": "D-004-R565",
+      "text": "After the redaction STOP and show the owner (a) the exact diff of what changed, (b) confirmation that git grep for the username and the session-id string returns zero matches in the branch's tracked files, and (c) the rebuilt R024 status.",
+      "source_ref": "source-014-amendment.md#ordering",
+      "classification": "return",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "D-004-OPTIONB"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [],
+        "lifecycle_events": [
+          "gate"
+        ],
+        "effective_date": "2026-07-30"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured by amendment 13 (source-014); session-sentinel scope, deliberately NOT applicable to M0-T027 per the owner's standing instruction; verified at D-004 final verification",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      },
+      "amendment_sequence": 14
+    },
+    {
+      "id": "D-004-R566",
+      "text": "Wait for owner review before anything is pushed or accepted.",
+      "source_ref": "source-014-amendment.md#ordering",
+      "classification": "sequencing",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "D-004-OPTIONB"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [],
+        "lifecycle_events": [
+          "accept"
+        ],
+        "effective_date": "2026-07-30"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured by amendment 13 (source-014); session-sentinel scope, deliberately NOT applicable to M0-T027 per the owner's standing instruction; verified at D-004 final verification",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      },
+      "amendment_sequence": 14
+    },
+    {
+      "id": "D-004-R567",
+      "text": "DEFERRED - do NOT act on now: the section 13.11 enum-precision note, the stale current_d004_locked_total refresh, and the AS-9 disclosure completion.",
+      "source_ref": "source-014-amendment.md#ordering",
+      "classification": "hold",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "D-004-OPTIONB"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [],
+        "lifecycle_events": [
+          "gate"
+        ],
+        "effective_date": "2026-07-30"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured by amendment 13 (source-014); session-sentinel scope, deliberately NOT applicable to M0-T027 per the owner's standing instruction; verified at D-004 final verification",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      },
+      "amendment_sequence": 14
+    },
+    {
+      "id": "D-004-R568",
+      "text": "ITEM 1: redact the truncated session-id prefix in M0-T027-dcv-verification.md to <REDACTED-SESSION-ID>, same convention and inline annotation as the others.",
+      "source_ref": "source-015-amendment.md#item-1",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "D-004-OPTIONB"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [],
+        "lifecycle_events": [
+          "gate"
+        ],
+        "effective_date": "2026-07-30"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured by amendment 14 (source-015); session-sentinel scope, deliberately NOT applicable to M0-T027; verified at D-004 final verification",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      },
+      "amendment_sequence": 15
+    },
+    {
+      "id": "D-004-R569",
+      "text": "ITEM 1 RATIONALE: consistency outweighs the 8-versus-10-character detection threshold; no future reader should have to ask why this occurrence was treated differently.",
+      "source_ref": "source-015-amendment.md#item-1",
+      "classification": "decision",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "D-004-OPTIONB"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [],
+        "lifecycle_events": [
+          "gate"
+        ],
+        "effective_date": "2026-07-30"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured by amendment 14 (source-015); session-sentinel scope, deliberately NOT applicable to M0-T027; verified at D-004 final verification",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      },
+      "amendment_sequence": 15
+    },
+    {
+      "id": "D-004-R570",
+      "text": "ITEM 2: LEAVE the email in the G5 report - it is already in every commit trailer, so redacting one report body is cosmetic and does not un-publish it.",
+      "source_ref": "source-015-amendment.md#item-2",
+      "classification": "prohibition",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "D-004-OPTIONB"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [],
+        "lifecycle_events": [
+          "gate"
+        ],
+        "effective_date": "2026-07-30"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured by amendment 14 (source-015); session-sentinel scope, deliberately NOT applicable to M0-T027; verified at D-004 final verification",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      },
+      "amendment_sequence": 15
+    },
+    {
+      "id": "D-004-R571",
+      "text": "ITEM 2: log the email under D-004-R561 as part of the systemic PII question for the owner's later decision, alongside the 4 pre-existing files on origin/main that carry it.",
+      "source_ref": "source-015-amendment.md#item-2",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "D-004-OPTIONB"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [],
+        "lifecycle_events": [
+          "gate",
+          "accept"
+        ],
+        "effective_date": "2026-07-30"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured by amendment 14 (source-015); session-sentinel scope, deliberately NOT applicable to M0-T027; verified at D-004 final verification",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      },
+      "amendment_sequence": 15
+    },
+    {
+      "id": "D-004-R572",
+      "text": "ITEM 3 (as issued): source-014-amendment.md is untracked verbatim capture of the owner's own message and was not to be committed - no action. SUPERSEDED the same day by the owner's Option-4 approval after the orchestrator reported that manifest.json already cited the file with a content digest and requirements.json already carried R553-R567 against it.",
+      "source_ref": "source-015-amendment.md#item-3",
+      "classification": "decision",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "D-004-OPTIONB"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [],
+        "lifecycle_events": [
+          "gate"
+        ],
+        "effective_date": "2026-07-30"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured by amendment 14 (source-015); session-sentinel scope, deliberately NOT applicable to M0-T027; verified at D-004 final verification",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      },
+      "amendment_sequence": 15
+    },
+    {
+      "id": "D-004-R573",
+      "text": "After the item-1 redaction STOP, still uncommitted.",
+      "source_ref": "source-015-amendment.md#ordering",
+      "classification": "sequencing",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "D-004-OPTIONB"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [],
+        "lifecycle_events": [
+          "gate"
+        ],
+        "effective_date": "2026-07-30"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured by amendment 14 (source-015); session-sentinel scope, deliberately NOT applicable to M0-T027; verified at D-004 final verification",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      },
+      "amendment_sequence": 15
+    },
+    {
+      "id": "D-004-R574",
+      "text": "Show the owner (a) the one-line diff for the dcv file and (b) a re-run grep confirming the full session id AND the truncated prefix both return zero matches across tracked files.",
+      "source_ref": "source-015-amendment.md#ordering",
+      "classification": "return",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "D-004-OPTIONB"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [],
+        "lifecycle_events": [
+          "gate"
+        ],
+        "effective_date": "2026-07-30"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured by amendment 14 (source-015); session-sentinel scope, deliberately NOT applicable to M0-T027; verified at D-004 final verification",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      },
+      "amendment_sequence": 15
+    },
+    {
+      "id": "D-004-R575",
+      "text": "Do NOT commit, submit, push, merge, accept, or rebuild verification.json yet.",
+      "source_ref": "source-015-amendment.md#ordering",
+      "classification": "prohibition",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "D-004-OPTIONB"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [],
+        "lifecycle_events": [
+          "submit",
+          "accept"
+        ],
+        "effective_date": "2026-07-30"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured by amendment 14 (source-015); session-sentinel scope, deliberately NOT applicable to M0-T027; verified at D-004 final verification",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      },
+      "amendment_sequence": 15
+    },
+    {
+      "id": "D-004-R576",
+      "text": "D-004-R024 stays 'remediated, pending independent verification'; the orchestrator must NOT set it, and the owner releases the verifier pass in a later turn after seeing the final grep.",
+      "source_ref": "source-015-amendment.md#ordering",
+      "classification": "hold",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "D-004-OPTIONB"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [],
+        "lifecycle_events": [
+          "gate",
+          "accept"
+        ],
+        "effective_date": "2026-07-30"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured by amendment 14 (source-015); session-sentinel scope, deliberately NOT applicable to M0-T027; verified at D-004 final verification",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      },
+      "amendment_sequence": 15
     }
   ],
   "amendments_applied": [
@@ -21881,6 +22801,8 @@
     "source-010-amendment.md",
     "source-011-amendment.md",
     "source-012-amendment.md",
-    "source-013-amendment.md"
+    "source-013-amendment.md",
+    "source-014-amendment.md",
+    "source-015-amendment.md"
   ]
 }

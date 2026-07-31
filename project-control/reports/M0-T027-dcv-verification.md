@@ -12,7 +12,25 @@ pass. 204/233 PASS, **0 FAIL, 0 BLOCKED-by-defect**, 29 UNVERIFIABLE (future-seq
 stale artifact. M0-T027 was **not** accepted on the strength of this return.
 
 The return arrived in four parts and is reproduced below in order, verbatim (D-004-R385/R468); the
-orchestrator altered nothing, including the findings against its own work.
+orchestrator altered nothing, including the findings against its own work, **except for the single R024
+redaction enumerated immediately below**.
+
+**R024 EVIDENCE-HYGIENE REDACTION (applied 2026-07-30, owner amendment 13 / `source-014`,
+D-004-R553-R559, extended by owner instruction of the same date).** One substitution was
+applied to this file:
+
+| occurrences | substitution |
+|---|---|
+| 1 | truncated session-id prefix -> `<REDACTED-SESSION-ID>` |
+
+The occurrence sits inside the verifier's own **OBS-5**, which reported the `Claude-Session`
+commit trailer and had already truncated the identifier itself. The second-pass verification
+scanned this file and ruled it **clean**, because its detection pattern requires ten or more
+identifier characters and this prefix carries eight. The owner nonetheless directed redaction
+for **consistency** rather than threshold compliance, so that no future reader has to ask why
+this occurrence was treated differently from the ones cured in the G3 and G5 returns.
+**Nothing else changed** - no verdict, ruling, tally, requirement id, or observation was
+altered, and the BLOCKED verdict and the 29-id UNVERIFIABLE list stand exactly as returned.
 
 ---
 
@@ -501,7 +519,7 @@ It is mechanically backstopped, which I verified by reading `_v2_task_unresolved
 - **OBS-2** — **AS-9 vs R477 wording gap.** AS-9 requires the diff to touch "only paths in `allowed_paths`". R477 authorizes "M0-T027's authorized paths **and lifecycle artifacts**". Two of the seven changed paths — `project-control/state.json` and `project-control/reports/M0-T027-evidence-map.json` — satisfy R477 but not AS-9 as literally written. I judge this a wording gap and not a violation, because R477 is the later and more specific owner instruction and R448/R380 forbade amending AS-9 in this phase. Worth a truth-preserving clarification in a follow-up so it is not re-argued at every closeout.
 - **OBS-3** — The frozen path-scoped content identity is **`e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855`**, the SHA-256 of the empty string. I reproduced it two ways (`content_manifest` and `git_tree_manifest`, both → 0 entries): every `allowed_path` of this task lies under the excluded `project-control/` prefix. Correct by design and openly disclosed by the producer — but it means the content identity carries **no content-binding force** for M0-T027, so the anti-staleness guarantee rests entirely on `reviewed_sha`. This is **distinct** from the D-001 empty-*applicable-set* issue the owner excluded in R489, and I flag it as its own item rather than letting R489 absorb it.
 - **OBS-4** — `readonly_agent_guard.py` **over-denied two of my purely read-only `python -c` inspection commands**. At least one tripped `_REDIRECT` (`>>?\s*(?!…)`, line 136) on a literal `'->'` inside a Python print string. This is over-denial, not under-denial, so containment is not weakened; it cost two round-trips and both checks were completed by substitute routes (named in Part 1 §4). `.claude/hooks/**` is forbidden to this task, so this belongs in a follow-up, not here.
-- **OBS-5** — All three branch commits carry a `Claude-Session: https://claude.ai/code/session_01QjuHpb…` trailer (31 of 540 commits repo-wide). R024 forbids session IDs in "anything written to the repository", though its `required_evidence` scopes the mechanical check to "every D-004 **report file**" — and the report files are clean. Harness-convention driven and long pre-dating this task, so I do not rule it a violation; I will not pass over it silently either.
+- **OBS-5** — All three branch commits carry a `Claude-Session: https://claude.ai/code/<REDACTED-SESSION-ID>…` trailer (31 of 540 commits repo-wide). R024 forbids session IDs in "anything written to the repository", though its `required_evidence` scopes the mechanical check to "every D-004 **report file**" — and the report files are clean. Harness-convention driven and long pre-dating this task, so I do not rule it a violation; I will not pass over it silently either.
 - **OBS-6** — The 13 owner return items **R502–R514** scope to the non-ledger sentinel `D-004-OPTIONB`, so they correctly fall **outside** M0-T027's applicable set — meaning **no `accept()` will ever enforce them**. They remain binding on the orchestrator's session return to the owner and are enforced only at D-004's own final verification. Structurally consistent with the PHASE0/PROCESS sentinel precedent, but worth naming.
 
 ## 11. What I verified independently vs. what I could not
