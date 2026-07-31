@@ -70,8 +70,8 @@
     "control-plane-verifier",
     "directive-compliance-verifier"
   ],
-  "status": "claimed",
-  "progress_percent": 10,
+  "status": "self_check",
+  "progress_percent": 85,
   "risks": [
     "This code decides what gets accepted. A permissive bug here silently lowers the acceptance bar for every future task, so no shortcut is acceptable because it is 'just' a control-plane fix.",
     "Lifecycle-awareness must not become a general escape hatch: if the classifier is too broad, substantive obligations get reclassified as lifecycle and stop gating.",
@@ -81,7 +81,7 @@
   ],
   "blockers": [],
   "created_at": "2026-07-31T05:39:12.800274+00:00",
-  "updated_at": "2026-07-31T05:48:58.334517+00:00",
+  "updated_at": "2026-07-31T14:45:51.908637+00:00",
   "directive_refs": [
     {
       "directive_id": "D-004",
@@ -98,6 +98,20 @@
       "percent": 0,
       "status": "ready",
       "message": "Packet approved by the owner with four riders, all folded in before dispatch: (1) G3/G5 to bear down hardest on AS-2/AS-3, the over-breadth guards - a classifier one notch too permissive is the worst outcome and a rejected design is the cheaper failure; (2) AS-12 requires the classifier rule DOCUMENTED IN CODE so reviewers audit a stated rule, not inferred behavior; (3) AS-13 preserves the verifier's per-row classification of the eight as a tracked report with rationale, so future closeouts inherit a precedent on paper; (4) AS-14 makes anything AS-5/AS-6 surface as pre-existing dirt or staleness a DISCLOSED FINDING ONLY, never fixed or suppressed in scope. Sequencing unchanged: M0-T034 merges, then final verification per Message F item 3, then the owner's accept call per item 4; M0-T027's own eight rows receive their first post-accept verification at the first opportunity AS-4 makes reachable, so they close rather than dangle."
+    },
+    {
+      "at": "2026-07-31T14:45:50.158162+00:00",
+      "agent": "backend-engineer",
+      "percent": 70,
+      "status": "in_progress",
+      "message": "Producer output ported to the task branch by orchestrator-only integration, verified TREE-IDENTICAL by per-file SHA-256 (the producer was worktree-isolated and could not write to the shared checkout; no orchestrator edit of producer output). Commit a965c216."
+    },
+    {
+      "at": "2026-07-31T14:45:51.908637+00:00",
+      "agent": "backend-engineer",
+      "percent": 85,
+      "status": "self_check",
+      "message": "Producer self-check complete. Suites green: project-control 20 groups exit 0 (S10's 118 assertion cases unchanged), directive-compliance 83 tests exit 0 from a 55-test baseline. Producer SELF-FLAGGED its most contestable choice - including 'sequencing' in the lifecycle allowlist, since 'stop before accept' and 'stop after accept' are structurally identical rows separated only by verifier attestation - and argues literal AS-5 is IMPOSSIBLE (the CLI rewrites the packet between stamping and checking), proved executably, resolved via the owner's material/lifecycle boundary; AS-5 is therefore met in substance but NOT in its most literal reading, stated plainly rather than claimed clean. AS-11 answered NO with derivation. AS-10 deliberately unanswered - the eight-row classification is the independent verifier's call per the packet. AS-14 disclosed and NOT fixed: the 97-vs-233 shortfall, and the tightened identity INVALIDATES M0-T027's stamped e3b0c442 so M0-T027 must be re-submitted and re-verified before acceptance. Orchestrator adds one item the producer did not report: static analysis flags a probable wrong-arity call at directive_registry.py:683 and an Optional-access cluster at project_control.py:258-264; green suites are not a ruling on those."
     }
   ],
   "worktree": "task/M0-T034-governance-acceptance-semantics"
