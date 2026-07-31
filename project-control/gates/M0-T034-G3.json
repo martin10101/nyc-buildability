@@ -4,9 +4,18 @@
   "reviewer": "code-reviewer",
   "role": "independent_review",
   "result": "FAIL",
-  "report_file": "project-control/reports/M0-T034-G3-report.md",
-  "reviewed_at": "2026-07-31T16:15:33.642077+00:00",
-  "content_manifest_sha256": "9a95fdfeff0f9b9e300511bf62e921ebf15bc2b54aefffad234f6e8045adf7bb",
-  "reviewed_sha": "1298f4b85edcc81409afbde23d570a22bbc389ff",
-  "updated_at": "2026-07-31T16:15:34.422539+00:00"
+  "report_file": "project-control/reports/M0-T034-G3-report-r2.md",
+  "reviewed_at": "2026-07-31T16:55:01.078234+00:00",
+  "content_manifest_sha256": "b8f510c805651104e590465e41ced617fc0097b508a02966692d5a42d36d9481",
+  "reviewed_sha": "24d2d8034a753bbe89642ddf35dee13c7bb1aeb9",
+  "history": [
+    {
+      "reviewer": "code-reviewer",
+      "role": "independent_review",
+      "result": "FAIL",
+      "report_file": "project-control/reports/M0-T034-G3-report.md",
+      "reviewed_at": "2026-07-31T16:15:33.642077+00:00"
+    }
+  ],
+  "updated_at": "2026-07-31T16:55:01.873075+00:00"
 }
