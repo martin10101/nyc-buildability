@@ -77,7 +77,7 @@
   ],
   "blockers": [],
   "created_at": "2026-07-24T18:23:08.048623+00:00",
-  "updated_at": "2026-07-31T19:32:55.939732+00:00",
+  "updated_at": "2026-07-31T20:10:57.674236+00:00",
   "directive_refs": [
     {
       "directive_id": "D-004",
@@ -144,6 +144,13 @@
       "percent": 85,
       "status": "rework",
       "message": "STEP 2 of the closeout authorization (D-004-R669, amendment 17): lawful transition awaiting_gate->rework solely to re-submit under the corrected content identity. The prior submit (commit 16ae458) stamped identity e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855 (the pre-M0-T034 empty-set hash) at reviewed_sha f08769e; the merged M0-T034 identity rule now derives 29a094ebdf312767b2ffa964a9cfb0398432e8838db0a211a711f1dd8db2bb97 at 3b3964f. No evidence content changes; all evidence committed BEFORE submit (verified: _task_git_identity returns the corrected identity with no dirty/untracked failure). Re-submit follows immediately."
+    },
+    {
+      "at": "2026-07-31T20:10:57.670237+00:00",
+      "agent": "orchestrator",
+      "percent": 85,
+      "status": "awaiting_gate",
+      "message": "STEP 3 COMPLETE, STEP 4 STOPPED BEFORE ACCEPT (D-004-R673/R678 honored; no workaround). Final independent directive-compliance verification at frozen merged head 2689b1e / identity 29a094eb: VERDICT BLOCKED. 225/233 PASS (204 settled at 3ed05fda cited under R670 + 21 delta rows), 0 FAIL, 5 attested lifecycle deferrals with classified_at_identity stamps (R389/R486/R487/R488/R501), 3 UNVERIFIABLE (R322/R323/R388) - the exact R673 clause-1 hard stop. Root cause per the verifier (F-1): those three are COMPOUND amendment-8/9 rows whose non-accept clauses are fully discharged but whose lifecycle_events span submit/gate/progress, so M0-T034 deferral condition (3) structurally refuses attestation - mechanism behaving as written, not a code defect; amendment 9's atomic decomposition (R481-R488) behaves correctly. New observations for owner judgment: OBS-A (M0-T034 task itself still self_check while its merged mechanism gates this acceptance), OBS-B (evidence map internal identity fields stale vs submit record). R024 ruled PASS by the verifier (not the orchestrator). R672 guard record: ten checks performed manually and recorded. Return preserved VERBATIM as project-control/reports/M0-T027-dcv-final-verification.md (R671) with one annotated R024 preservation-time redaction (9 absolute repository paths -> <REPO>). verification.json NOT rewritten: verifier directs it must not be written as clean; recording the BLOCKED block is an owner decision surfaced in the stop report. Steps 4-7 do not execute: acceptance not authorized (R674 not met), Step 5 fires only on acceptance, Step 6 hold lifts only per R685's conditions (M0-T027 acceptance first), Step 7 replaced by this stop report. Owner decision required on F-1 disposition."
     }
   ]
 }
