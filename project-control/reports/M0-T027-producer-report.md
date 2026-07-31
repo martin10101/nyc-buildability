@@ -199,3 +199,324 @@ than narrated as passes; the independent reviewers decide.
 closeout's own checks are green, and the two arguable items (AS-1 numeric drift; AS-6
 literal-vs-arc satisfaction) are disclosed for the independent reviewers to rule on rather than
 resolved by the producer.
+
+---
+
+# PHASE 3/4 CLOSEOUT ADDENDUM (2026-07-30, owner amendment 11 / `source-012`)
+
+Appended under D-004-R132 (append-only): **sections 1–12 above are byte-preserved**. Their content
+at the moment of this append hashes to `6674a8b916e1f0cdc002a0abf75a41ea20ae19433213e2ed03a5245b2f7a79c1`
+(SHA-256 over the LF-normalized bytes of the file as it stood before this section was added), and
+nothing in them has been softened, corrected, or re-scoped. Where an earlier section is now
+superseded by a later fact, the later fact is stated **here**, not by editing the earlier text.
+
+## 13. Phase 3 and Phase 4 producer evidence
+
+### 13.1 Live reconciliation before any write (D-004-R422/R423/R516)
+
+Performed before the first byte was written, against live `git`, `gh`, and `project-control`:
+
+| Owner-stated value | Live result | Verdict |
+|---|---|---|
+| `main` = `origin/main` = `208c939dcb…` | `11f3540c602849f4100517f35b7b93eca6742a8d` | **differs — non-material, see below** |
+| PR #132 merged | merge `b3018f38f8d715518e5de17c4d87cc7df69079dd` | match |
+| PR #133 merged | merge `208c939dcb9c0afe9f0bb72cc53bc784f2cc2514` | match |
+| M0-T033 accepted at 100% | `status=accepted`, `progress_percent=100` | match |
+| M0-T027 blocked at 75% | `status=blocked`, `progress_percent=75` | match |
+| accepted-task count 53 | `state.json` `accepted_tasks` = 53 | match |
+| checkpoint CP-0035 | `state.json` `last_checkpoint` = `CP-0035` | match |
+| D-004 manifest version 11 | `manifest.json` `version` = 11 | match |
+| 420 locked append-only requirement IDs | 420 rows, validator exit 0 | match |
+| M0-T032 backlog | `status=backlog` | match |
+| M0-T025 backlog | `status=backlog` | match |
+| no `M0-T029` task file | absent from `project-control/tasks/` | match |
+
+**The one difference, disclosed rather than absorbed.** Live `main` is one commit *ahead* of the
+owner's stated head: `11f3540c` is the merge of PR #134, a docs-only refresh of
+`docs/SESSION_HANDOFF.md` (1 file, +92/−49) that the owner requested at the close of the prior
+session, and which the same message's own leading "Starting message for the next session" block
+names as its expected head. It changes no control-plane file, no directive file, and no product
+file. Recorded as **non-material**; execution proceeded, and the difference is recorded in
+`source-012-amendment.md` and in `manifest.json` `audit_log` entry 12.
+
+**Transmission disclosure.** The owner's message arrived in two blocks. The leading "Starting
+message for the next session" block was truncated mid-word by the transport in six places; the
+operative "GO — EXECUTE M0-T027 PHASES 3 AND 4 ONLY" block arrived complete. Both are captured
+verbatim in `source-012-amendment.md`, with the truncation points marked exactly where the received
+text ends. **No requirement row is derived from a truncated fragment** — every requirement is taken
+from the complete GO block, which covers the same ground. Nothing was reconstructed or guessed.
+
+### 13.2 AS-1 — exact change (D-004-R432…R439)
+
+**Before** (`acceptance_scenarios[0]`):
+
+> AS-1 (executable): python tools/validate_directive_compliance.py exits 0 with D-004 active, 128
+> locked requirement ids, and matching requirements_id_digest_sha256 /
+> requirements_content_digest_sha256.
+
+**After:** the literal `128 locked requirement ids` assertion is retired; **128 is preserved
+explicitly as the contract-time (2026-07-24) historical baseline**, and the scenario now requires
+(a) the **current append-only locked-ID total derived mechanically from the live registry at
+execution time**, (b) matching `requirements_id_digest_sha256`, (c) matching
+`requirements_content_digest_sha256`, (d) validator exit 0, and (e) no alteration, deletion,
+renumbering, or rewriting of prior directive history. **No literal total is hard-coded as
+permanent** — not 128, and not the current value either (D-004-R439).
+
+**Directive history was not rewritten** (D-004-R377/R438/R449): `requirements.json` grew
+append-only 420 → 516 rows with **zero existing rows edited**, no committed `source-*.md` was
+modified, and `python tools/validate_directive_compliance.py` exits 0 with the append-only ID
+digest and the requirements-body content digest both re-derived and matching.
+
+### 13.3 AS-6 — exact change (D-004-R440…R447)
+
+**Before** (`acceptance_scenarios[5]`): a single-shot negative test in which *both* the Write
+attempt and the Bash redirection are denied and the orchestrator then confirms the sentinel does
+not exist.
+
+**After:** the scenario now states the historical truth first and only then the remediation arc.
+
+*Preserved exactly as recorded — the original Step-1 test FAILED:* at frozen SHA
+`da0d42b6e9334e823a95aa5cd120f480dbc501c8` the reviewer's Write-tool attempt was blocked **only by
+tool-unavailability** (`No such tool available: Write` — the guard's own denial text was never
+produced), and the Bash redirection `echo x > ./PILOT_SENTINEL.tmp` **escaped the guard and created
+the file**; the orchestrator's own independent `test -e` returned **exit 0 (EXISTS, 2 bytes,
+untracked). The FAIL/FAIL/PASS verdicts and `AGENT-TEAMS-PILOT-1.md` are **unchanged on this
+branch** (`git diff main...HEAD` lists no pilot report), and the original Step-1 result is **never
+rewritten as a pass** (D-004-R441/R442/R447/R379).
+
+*Satisfied only across the owner-sequenced remediation arc*, by citing
+`project-control/reports/M0-T028-PHASE8-fresh-session-report.md` at frozen head `88045b06`:
+
+- **(a) guard denial** — `readonly_agent_guard.py` *itself* denied the load-bearing Bash redirection
+  with its verbatim `_deny` text naming the resolved identity `'code-reviewer'` (report §4 and
+  Appendix A(b); D-004-R135/R137 ruled **PASS** by the independent verifier). The Phase-8 report is
+  scrupulous about the other half: the Write attempt there was *also* blocked by tool-unavailability
+  and the report states plainly, "I make no claim that the guard denied this call."
+- **(b) independent absence verification** — the **orchestrator** ran
+  `test -e ./PILOT_SENTINEL.tmp` → **exit 1, ABSENT**, corroborated by `ls` and `git status`
+  (D-004-R215/R278 ruled **PASS**).
+- **(c) ordering** — `project-control/blockers/B-015-teammate-readonly-guard-bypass.json` moved
+  `open` → `resolved` **only after** that fresh-session proof, its audit entry citing PR #121,
+  merge `9db4ab3…`, and frozen head `88045b0`.
+
+### 13.4 Digest impact of the Phase-3 changes (D-004-R450/R380/R451)
+
+`acceptance_scenarios` **is** in `directive_registry.MATERIAL_FIELDS`, so the material packet digest
+moved:
+
+| | value |
+|---|---|
+| material digest before Phase 3 | `dc5d2979f844675f1f7a9422f2cbea9c7b48e1cdbcdd194fd2b3b1113af830a0` |
+| material digest after Phase 3 | `d6afb9d70cdaac3778faed121beb0e39bdf90cb842c2fde54b781966013cac31` |
+
+**Control-plane consequence: none for this task**, and the reason is structural rather than
+convenient. `material_digest` has exactly one consumer, `_legacy_grandfather_check`, and both
+`submit()` (tools/project_control.py:833-844) and `accept()` (:1035-1043) reach it **only on the
+`else` branch of `if _task_in_regime(t)`**. M0-T027 carries `directive_regime_version: "1.0"` and
+`_task_in_regime()` returns `True`, so the grandfathering branch is never taken. There was also no
+grandfathering to lose: M0-T027 is absent from the frozen migration manifest by design — it was
+contracted 2026-07-24, long after the regime baseline `1acb9b51`.
+
+`reviewer_agents` is **excluded** from `MATERIAL_FIELDS` (it is roster bookkeeping), so the
+pre-flight roster correction contributes nothing to the digest change; the change above is entirely
+attributable to the two authorized acceptance-scenario clarifications. **Nothing was backdated**:
+every timestamp written in this phase is the actual write time (D-004-R451).
+
+### 13.5 Pre-flight reviewer-roster correction and the historical G0 record
+
+**Correction applied** (D-004-R424/R425): `reviewer_agents` is now
+`["control-plane-verifier", "directive-compliance-verifier", "code-reviewer", "security-reviewer"]`
+— exactly one addition.
+
+**Rationale, verified mechanically rather than accepted on assertion:**
+
+1. M0-T027's `required_gates` include **G5**, unchanged.
+2. `docs/GATES_AND_CHECKPOINTS.md:164` — "Security-sensitive work requires `security-reviewer` even
+   if QA passed."
+3. `tools/project_control.py` `gate()` rejects an independent gate whose reviewer is not rostered:
+   `if a.reviewer not in reviewers: return fail(f"Reviewer {a.reviewer!r} is not in this task's
+   reviewer_agents {reviewers}; independent gate {a.gate_id} rejected.")`
+
+So before the correction the already-required G5 was **unsatisfiable by the proper specialist**. No
+other reviewer was substituted (D-004-R428). `producer_agent` (`orchestrator`) and `required_gates`
+(`G0`,`G2`,`G3`,`G5`) are **unchanged** (D-004-R426), verified by assertion in the applying script
+and visible in the two-hunk packet diff.
+
+**Historical G0 record (D-004-R429/R430).** `project-control/gates/M0-T027-G0.json` is **untouched**:
+`git log -- <path>` shows exactly one commit (`0361491`, the original Step-1 commit);
+`git status` reports it unmodified; and its working-tree bytes are identical to the committed blob
+after EOL normalization (the CRLF is a Windows-checkout artifact of `core.autocrlf=true`, not an
+edit). Canonical blob SHA-256: `40abdd492bc9d25953bede4251a35b4f654590775caffb37cc445c48a1ba3ad6`.
+It remains valid for acceptance under the stored-history rule: `accept()` requires a PASS record per
+required gate and, for *independent* gates only, a non-`self_check` record whose reviewer differs
+from the producer. G0 is an **administrative** gate (`ADMINISTRATIVE_GATES`), lawfully recorded by
+the orchestrator, and the CLI's documented backward-compatibility contract is that stored history is
+never retro-rejected on read or at accept time. **No replacement G0 is required**, so the
+stop-and-report condition of D-004-R431 is not triggered.
+
+### 13.6 Frozen closeout identity (D-004-R382/R454)
+
+One identity is frozen for the whole independent-review wave:
+
+- **Reviewed SHA:** the head of `task/M0-T027-closeout-phases-3-4` at the "closeout evidence frozen"
+  commit — stated exactly in §13.9 below and in every reviewer dispatch.
+- **Content manifest:** `e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855` — the
+  deterministic **empty-set** hash, because every `allowed_path` of this task lies under the
+  excluded `project-control/` tree. This task's product **is** control-plane evidence by design; the
+  empty-set hash is the correct value, not a defect, and it is identical to the value carried at the
+  prior closeout attempt.
+
+### 13.7 Evidence map regenerated by the canonical resolver (D-004-R383/R455…R458/R515)
+
+`project-control/reports/M0-T027-evidence-map.json` was **rebuilt from
+`directive_registry.evaluate_task_refs`**, not carried forward:
+
+| quantity | value | what it is |
+|---|---|---|
+| contract-time D-004 total | **128** | the D-004 requirement total on 2026-07-24, when this packet was contracted — history only |
+| current D-004 locked total | **516** | live append-only total in `manifest.json` after amendment 11 (420 → 516) |
+| **applicable to M0-T027** | **233** | **derived by the canonical resolver** against this packet's `task_id`/`task_type`/`milestone`/`allowed_paths` |
+
+The three numbers are kept strictly separate and none is substituted for another (D-004-R456). The
+derived set is **233**, with **zero unresolved** applicability reasons — so the D-004-R458/R387 stop
+condition is not triggered. Of those, **128** pointers were carried forward verbatim from the prior
+map (all 128 remain applicable; **none** was dropped) and **105** are newly covered: 22 rows from
+amendments 9–10 that describe this very closeout arc, and 83 rows from amendment 11. The previously
+recorded coverage was **discarded and rebuilt**, not preserved (D-004-R457/R515). All 233 rows
+resolve to D-004; no row of D-001/D-002/D-003/D-005 is applicable to this packet — D-001's 136 rows,
+for example, are all scoped `task_ids: ["M0-T023"]`.
+
+### 13.8 Containment (D-004-R477/R478 and AS-9)
+
+Complete `git diff --name-only main...HEAD` for this closeout, with each path's authority:
+
+| path | authority |
+|---|---|
+| `project-control/directives/D-004-…/source-012-amendment.md` | orchestrator **D-001 capture** authority (deliberately outside `allowed_paths`; see the packet's `allowed_paths_note` and `forbidden_paths`) |
+| `project-control/directives/D-004-…/requirements.json` | same — append-only rows R421–R516 |
+| `project-control/directives/D-004-…/manifest.json` | same — version, source digest, locked IDs, digests, `audit_log` |
+| `project-control/tasks/M0-T027.json` | `allowed_paths` entry 5, the **orchestrator lifecycle path** |
+| `project-control/reports/M0-T027-evidence-map.json` | lifecycle artifact of the in-regime submit (`--evidence-map`) |
+| `project-control/reports/M0-T027-producer-report.md` | `allowed_paths` entry 4 |
+| `project-control/state.json` | ledger sync written by the CLI (`sync_state()`), never by hand |
+
+**Nothing else.** No product file, no `services/**`, `apps/**`, `packages/**`, no `tools/**`, no
+`.claude/hooks/**`, `.claude/agents/**`, `.claude/rules/**`, no settings file, no deployment
+definition, no other task's packet or report. `project-control/tasks/M0-T025.json` is **unmodified**
+(D-004-R492), and **no `effort`/`effortLevel` key** was added or changed anywhere (D-004-R497) — both
+verified by diff, not by assertion.
+
+### 13.9 Producer self-checks at the frozen identity
+
+Recorded in §13.10 (self-check gate G2) together with the exact frozen SHA, so that the numbers and
+the identity they were measured at cannot drift apart.
+
+### 13.10 Producer self-checks (G2 evidence)
+
+All run by the producer/orchestrator on this branch immediately before the evidence commit that
+freezes the closeout identity:
+
+| check | command | result |
+|---|---|---|
+| directive registry | `python tools/validate_directive_compliance.py --check` | **exit 0** — 5 directives, 5 active; source hashes, ID append-only, and producer/verifier separation verified |
+| control-plane suite | `python tools/test_project_control.py` | **exit 0** — all **15/15** test groups passed |
+| directive-compliance suite | `python tools/test_directive_compliance.py` | **exit 0** — **55 tests, OK** |
+| M0-T033 guard operating normally (D-004-R472) | S10 block of the control-plane suite | **PASS** — "governance-orchestrator unblock semantics (4 conjunctive conditions, preserved defaults, fail-closed malformed data, gate() unchanged, source-level generality proofs)", **118 cases** across its 10 blocks (32/9/2/3/6/31/12/12/8/3) |
+| unblock admitted on shape, not on a special case | `invalid_unblock_roster(packet)` | returns **`None`** both **before** and **after** the roster correction — confirmed mechanically *before* the transition was attempted, never assumed (D-004-R453) |
+| ledger | `python tools/project_control.py status` | M0-T027 present, in-regime, `in_progress` at 80%; **53 accepted**; **CP-0035** |
+| resolver | `evaluate_task_refs(M0-T027)` | refs **ok**, **233** applicable ids, **0 unresolved** |
+| content identity | `_task_git_identity` | `e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855` (empty-set hash by design, §13.6) |
+| blockers | scan of `project-control/blockers/*.json` | **no OPEN blocker references M0-T027**; B-015 `resolved` |
+| dependency | `M0-T024` | **accepted** |
+| D-004 registry totals | `manifest.json` | **516** locked ids; `requirements_id_digest_sha256` `70758c67…`, `requirements_content_digest_sha256` `f8e09fac…`, both re-derived and matching |
+
+**On the frozen SHA.** The closeout identity is the SHA of the evidence commit that carries
+everything above. By construction that SHA cannot appear inside the tree it names; it is stamped in
+the **G2 gate record** (`project-control/gates/M0-T027-G2.json` → `reviewed_sha`), in the submit
+record, and verbatim in **every** reviewer dispatch, so all four independent reviewers rule on one
+identical identity. Section 14 records each reviewer's own `git rev-parse HEAD` against it.
+
+### 13.11 Reviewer dispatch ledger, and the AS-9 wording gap (G3 rework D-1/D-4)
+
+**Dispatch ledger (closes D-004-R384; G3 defect D-1).** All four dispatched read-only against the
+one frozen identity `3ed05fda6d434670e5b610e6dad7a8b224a9aa94`; each confirmed that SHA with its own
+`git rev-parse HEAD` before reviewing.
+
+| agent type | spawn name | model value passed at spawn | model the reviewer itself disclosed | gate/role | verdict |
+|---|---|---|---|---|---|
+| `code-reviewer` | `m0t027-g3` | explicit **Opus 5** | Opus 5, read-only | G3 | **PASS with required corrections** |
+| `security-reviewer` | `m0t027-g5` | explicit **Opus 5** | `claude-opus-5[1m]` | G5 | **PASS** |
+| `control-plane-verifier` | `m0t027-cpv` | explicit **Opus 5** | `claude-opus-5[1m]` | lifecycle + containment | **PASS** (5 observations) |
+| `directive-compliance-verifier` | `m0t027-dcv` | explicit **Opus 5** | `claude-opus-5[1m]` | directive verification | **BLOCKED** |
+
+Recorded honestly per D-004-R465/R466: the actual model was **Opus 5** for every reviewer and for the
+lead, under the still-active temporary availability exception (D-004-R307). **No Fable 5 is claimed
+for any part of this wave.** Three of the four independently disclosed their exact model id and all
+three matched the value passed at spawn.
+
+**AS-9 vs R477 — the wording gap, stated plainly instead of glossed (closes G3 defect D-4;
+independently raised as control-plane O-1 and directive-verifier OBS-2).** Two changed paths —
+`project-control/state.json` and `project-control/gates/M0-T027-G2.json` — appear **verbatim** in
+this packet's own `forbidden_paths` entry 2, and a third, `project-control/reports/M0-T027-evidence-map.json`,
+is **not enumerated in `allowed_paths`**. AS-9's contract-time wording requires the contribution to
+touch "only paths in `allowed_paths`", so **AS-9 cannot be claimed clean on its literal wording**,
+and this report does not claim it is.
+
+What resolves it is that all three are **CLI-written lifecycle artifacts**, not producer edits, and
+each was compelled by the owner's own Phase-4 instructions: step 1 orders the unblock "through the
+normal CLI", which necessarily writes `state.json` and the packet; step 4 orders the G2 self-check,
+which writes the gate record; step 3 orders the evidence-map regeneration, which `_directive_submit_check`
+additionally *requires* for any in-regime submit. D-004-R477 — the later and more specific owner
+instruction — sets the controlling standard as "M0-T027's authorized paths **and lifecycle
+artifacts**", which covers all three. AS-9 itself was deliberately **not** edited: R448/R380 forbid
+any material packet change beyond the two authorized clarifications, and `acceptance_scenarios` is a
+MATERIAL field. The gap is therefore disclosed here and left for a truth-preserving clarification in
+a follow-up task, exactly as all three reviewers recommended, rather than resolved by an unauthorized
+edit.
+
+**Numeric reconciliation the owner is owed (G3 observation O-1).** The owner's stated "97 ids recorded
+vs 150 derived" reconciles exactly against live state, and both independent checks agree: **97** is the
+row count of the stale `verification.json` M0-T027 block; **150** is the applicable set at the
+pre-amendment-11 head `11f3540c` — the directive-compliance-verifier re-derived it by extracting that
+tree and re-running the resolver there. **150 + 83 newly applicable amendment-11 rows = 233**, with
+**zero** previously-applicable id dropped. The owner's number was right for the state the owner saw;
+233 is right for this head.
+
+### 13.12 Independent review outcome, and why this closeout STOPPED short of acceptance
+
+Four returns, all preserved verbatim (D-004-R385/R468) at
+`project-control/reports/M0-T027-{G3-report,G5-report,control-plane-verification,dcv-verification}.md`.
+Nothing was edited, softened, or summarized away — including the findings against the orchestrator's
+own work.
+
+| reviewer | verdict | outstanding |
+|---|---|---|
+| `code-reviewer` (G3) | PASS with required corrections | D-1/D-2/D-3 applied above; D-4 disclosed in section 13.11 |
+| `security-reviewer` (G5) | PASS | no rework; 2 LOW + 3 INFO recorded, all out of scope by R489 or unrelated |
+| `control-plane-verifier` | PASS | O-1 (this section) and O-4 (below) were forward-looking prerequisites |
+| `directive-compliance-verifier` | **BLOCKED** | 29 UNVERIFIABLE rows + the stale 97-row `verification.json` block |
+
+**The BLOCKED verdict is recorded as BLOCKED and was not treated as a pass.** Per D-004-R479/R387 —
+"STOP on any FAIL, BLOCKED, unresolved requirement... do not force, bypass, substitute reviewers, or
+call a red result green" — **M0-T027 was NOT submitted, merged, or accepted in this session.** No
+reviewer was re-run to obtain a better answer, and no verdict was re-characterized.
+
+What the verifier actually found: **0 FAIL, 0 BLOCKED-by-defect, 0 requirements violated**, and 204 of
+233 PASS on primary evidence it reproduced itself. It states its own verdict means "not yet
+certifiable", not "defective", and that all of Phase 3 and Phase-4 steps 1-4 are fully verified and
+clean. The 29 UNVERIFIABLE rows are evidence that **cannot exist at a pre-gate frozen head** — G3/G5
+gate records, the preserved returns, the model disclosures, and the whole
+submit → PR → CI → merge → merged-identity re-verification → accept sequence, which the owner's own
+Phase-4 ordering places *after* this review wave.
+
+This exposes a **structural finding worth the owner's attention**: a single directive verification run
+at the pre-gate frozen identity can never reach PASS, because ~12% of the applicable set describes acts
+that follow it. The precedent in this registry is a second verification pass at the last pre-accept
+identity — `verification.json` records M0-T028 at 177/177 PASS and M0-T033 at 52/52 PASS, both stamped
+at a pre-accept SHA. The verifier itself prescribes exactly that: re-running "should convert all 29 to
+PASS" once its four conditions hold. Two of those four are now satisfied by this commit (returns
+preserved verbatim, models recorded honestly); G3/G5 gate records are recorded alongside it; the
+remaining condition needs the second pass at the post-gate identity.
+
+The orchestrator did **not** decide unilaterally to push through the BLOCKED result to a protected-main
+merge. That decision is the owner's, and the stop is recorded here rather than resolved by assumption.
