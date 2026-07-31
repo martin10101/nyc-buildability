@@ -55,6 +55,38 @@ ACCEPT PRECONDITIONS (all required)
     5. zero open blocker records in project-control/blockers/*.json
        (status == "open", or missing status = fail-closed) referencing the
        task id in their affects/detail fields.
+    6. for an in-regime task: valid directive references, a matching
+       git-canonical content identity, a matching reviewed COMMIT, and
+       independent per-task verification of every applicable requirement.
+
+LIFECYCLE-AWARE ACCEPTANCE (D-004-R629)
+    An applicable requirement whose only unmet obligation is an
+    ACCEPTANCE-ORDERING LIFECYCLE ACT - accept itself, post-accept cleanup,
+    checkpoint, stop-after - is structurally unsatisfiable before acceptance
+    yet was required for it, which deadlocked every governance closeout. Such
+    a row is now EVALUATED and DEFERRED instead of gating: it is never
+    deleted, waived, or silently passed. The classification rule is stated in
+    full in tools/directive_registry.py ("ACCEPTANCE-ORDERING LIFECYCLE
+    CLASSIFICATION"); it is five CONJUNCTIVE conditions derived from the
+    requirement row's own recorded semantics plus an INDEPENDENT verifier's
+    per-row attestation, with no task-id allowlist, flag, or environment
+    override. accept() records every deferral on the task packet under
+    `post_accept_verification`, and checkpoint() - the first post-accept
+    opportunity - REFUSES to record while any of them is still unverified.
+    A task with any unmet NON-lifecycle row fails accept() exactly as before.
+
+CONTROL-PLANE CONTENT IDENTITY
+    The frozen evidence identity excludes the control-plane tree from its
+    raw-blob component (the control plane rewrites its own records between
+    submit and accept) but measures that tree by its MATERIAL identity
+    instead: task packets contribute material_digest(), every other
+    control-plane file contributes its git blob id. A task whose allowed_paths
+    lie entirely under project-control/ therefore no longer stamps the
+    deterministic empty-set hash, and its dirt guard no longer drops every
+    candidate. A purely lifecycle-bookkeeping packet edit (status, progress,
+    timestamps, progress_log, reports) does NOT move the identity - by design,
+    because a raw-blob control-plane identity would be stale the instant it
+    was recorded and no task could ever be accepted.
 
 CONTAINMENT
     Task ids must match ^M\\d+-T\\d{3}(-R\\d+)?$ — derived from the ledger
@@ -305,10 +337,20 @@ def _task_in_regime(t: dict) -> bool:
     return bool(t.get("directive_regime_version")) or bool(t.get("directive_refs"))
 
 
-# Volatile control-plane records excluded from the content-manifest so the frozen
-# evidence identity guards the reviewable code/doc work product and does not churn on
-# lifecycle bookkeeping. Registry integrity is enforced separately by the validator.
+# Volatile control-plane records excluded from the RAW-BLOB content-manifest so the
+# frozen evidence identity guards the reviewable code/doc work product and does not churn
+# on lifecycle bookkeeping. Registry integrity is enforced separately by the validator.
 _MANIFEST_EXCLUDE_PREFIXES = ("project-control/",)
+
+# ...but "excluded from the raw-blob manifest" is NOT "unguarded". The same tree is
+# measured by its MATERIAL identity instead (directive_registry.control_plane_entries /
+# control_plane_material_dirty), so a task whose allowed_paths lie entirely inside it no
+# longer stamps the deterministic empty-set hash and no longer has a dirt guard that
+# drops every candidate. Task packets contribute their material digest (the owner's
+# D-001 amendment-3 material/lifecycle boundary); every other control-plane file
+# contributes its git blob id. See the CONTROL-PLANE MATERIAL IDENTITY section of
+# tools/directive_registry.py for why the exclusion cannot simply be dropped.
+_CONTROL_PLANE_MATERIAL_PREFIXES = _MANIFEST_EXCLUDE_PREFIXES
 
 # Statuses at which a not-in-regime legacy task counts as "already active" and may finish
 # its existing lifecycle without deadlock (D-001 amendment 3, Section 1). ready/backlog/
@@ -317,14 +359,17 @@ _CONTINUATION_STATUSES = frozenset({"claimed", "in_progress", "self_check", "awa
 
 
 def _task_git_identity(reg_mod, t: dict, reviewed_sha=None):
-    """Authoritative git-canonical reviewed content identity for a task's allowed_paths,
-    excluding the volatile control-plane tree. Returns (identity, resolved_sha, error);
-    fails closed (error != None) when `.` is not a git work tree, the reviewed SHA is
-    unresolvable, or a relevant tracked file is dirty / a relevant file is untracked
-    (D-001 amendment 3, Section 3). Submit, gate, and accept all call THIS one function."""
+    """Authoritative git-canonical reviewed content identity for a task's allowed_paths.
+    Returns (identity, resolved_sha, error); fails closed (error != None) when `.` is not
+    a git work tree, the reviewed SHA is unresolvable, a relevant tracked file is dirty /
+    a relevant file is untracked, or a control-plane file in scope carries a MATERIAL
+    working-tree change (D-001 amendment 3 Section 3; D-004-R630). Submit, gate, and
+    accept all call THIS one function, so the raw-blob work-product component and the
+    control-plane material component can never diverge between the three."""
     return reg_mod.frozen_git_identity(
         list(t.get("allowed_paths") or []), reviewed_sha=reviewed_sha, root=ROOT,
-        exclude_prefixes=_MANIFEST_EXCLUDE_PREFIXES, require_clean=True)
+        exclude_prefixes=_MANIFEST_EXCLUDE_PREFIXES, require_clean=True,
+        control_plane_prefixes=_CONTROL_PLANE_MATERIAL_PREFIXES)
 
 
 def _legacy_grandfather_check(t: dict, task_id: str):
@@ -459,23 +504,29 @@ def _directive_submit_check(t: dict, evidence_map_arg, sha_arg):
     return (None, extra)
 
 
-def _directive_accept_reasons(t: dict, task_id: str) -> list:
-    """Reasons an in-regime task must NOT be accepted (appended to accept()'s list).
-    Never a bypass: only adds reasons. Verifies references, git-canonical content-identity
-    freshness, and full independent PER-TASK verification (directive_verification/v2)
+def _directive_accept_reasons(t: dict, task_id: str) -> tuple:
+    """(reasons, deferrals) for an in-regime task. `reasons` are appended to accept()'s
+    list; `deferrals` are the acceptance-ordering lifecycle acts that were EVALUATED and
+    deferred rather than gating (D-004-R629), which accept() must RECORD.
+
+    Never a bypass: it only adds reasons. Verifies references, git-canonical
+    content-identity freshness, the reviewed COMMIT (D-004-R630: reviewed_sha is actually
+    compared), and full independent PER-TASK verification (directive_verification/v2)
     covering exactly the requirements APPLICABLE TO THIS TASK at the current identity
     (D-001 amendment 3, Sections 2+3)."""
     reasons = []
+    deferrals = []
     reg_mod = _resolver()
     if reg_mod is None:
-        return ["directive resolver unavailable; in-regime task cannot be accepted (fail closed)."]
+        return (["directive resolver unavailable; in-regime task cannot be accepted "
+                 "(fail closed)."], [])
     reg = reg_mod.load_registry()
     ev = reg.evaluate_task_refs(t)
     if not ev["ok"]:
         reasons.extend(f"directive refs: {r}" for r in ev["reasons"])
-    identity, _resolved_sha, ierr = _task_git_identity(reg_mod, t)
+    identity, resolved_sha, ierr = _task_git_identity(reg_mod, t)
     if ierr:
-        return reasons + [f"content identity (fail closed): {ierr}"]
+        return (reasons + [f"content identity (fail closed): {ierr}"], [])
     applicable = ev["applicable_ids"]
     rep = None
     rp = report_path(task_id)
@@ -500,8 +551,94 @@ def _directive_accept_reasons(t: dict, task_id: str) -> list:
             continue
         d = reg.get(did)
         did_applicable = applicable_set & (d.requirement_ids() if d else set())
-        reasons.extend(reg.task_unresolved_requirements(did, task_id, did_applicable, identity))
-    return reasons
+        res = reg.task_verification_result(did, task_id, did_applicable, identity,
+                                           reviewed_sha=resolved_sha)
+        reasons.extend(res["reasons"])
+        deferrals.extend(res["deferrals"])
+    for dfr in deferrals:
+        dfr["deferred_at_identity"] = identity
+        dfr["deferred_at_sha"] = resolved_sha
+    return reasons, deferrals
+
+
+# The task-packet key under which accept() records evaluated-but-deferred
+# acceptance-ordering lifecycle acts, and the subcommand that is the FIRST post-accept
+# opportunity to verify them (D-004-R629: "verified at the first post-accept opportunity
+# instead"). checkpoint() refuses to record while any registered deferral is unverified,
+# so the obligation is deferred and never waived.
+POST_ACCEPT_VERIFICATION_KEY = "post_accept_verification"
+POST_ACCEPT_FIRST_OPPORTUNITY = "checkpoint"
+
+
+def _post_accept_verification_blockers() -> list:
+    """Reasons the FIRST post-accept opportunity may not be recorded: every deferred
+    acceptance-ordering row registered on an accepted task must, by now, be independently
+    verified PASS (or NOT_APPLICABLE with justification + independent approver). Reads the
+    registry; an unavailable resolver or an unreadable packet FAILS CLOSED."""
+    pending = []
+    tdir = PC / "tasks"
+    if not tdir.exists():
+        return pending
+    registered = []
+    for tp in sorted(tdir.glob("*.json")):
+        try:
+            t = load(tp)
+        except (ValueError, OSError) as e:
+            pending.append(f"task file {tp.name} is unreadable ({e}); fail-closed")
+            continue
+        block = t.get(POST_ACCEPT_VERIFICATION_KEY)
+        if not isinstance(block, dict):
+            continue
+        for dfr in (block.get("deferred_requirements") or []):
+            if isinstance(dfr, dict):
+                registered.append((t.get("task_id"), dfr))
+    if not registered:
+        return pending
+    reg_mod = _resolver()
+    if reg_mod is None:
+        return [f"{len(registered)} deferred acceptance-ordering requirement(s) await "
+                f"post-accept verification but the directive resolver is unavailable "
+                f"(fail closed)."]
+    reg = reg_mod.load_registry()
+    for tid, dfr in registered:
+        rid = dfr.get("requirement_id")
+        did = dfr.get("directive_id")
+        state, row = reg.requirement_verification_state(did, dfr.get("task_id") or tid, rid)
+        if state == reg_mod.SATISFIED_STATE:
+            continue
+        if state == "NOT_APPLICABLE" and row and row.get("not_applicable_justification") \
+                and row.get("not_applicable_approved_by"):
+            continue
+        pending.append(
+            f"{tid}: deferred acceptance-ordering requirement {rid} "
+            f"(act_class {dfr.get('act_class')!r}) is still {state!r}, not PASS -- it was "
+            f"EVALUATED and deferred at acceptance, not waived, and must be independently "
+            f"verified at this first post-accept opportunity.")
+    return pending
+
+
+def _confirmed_post_accept_verifications() -> dict:
+    """{task_id: [requirement ids]} for deferred acceptance-ordering rows that ARE now
+    verified. Recorded on the checkpoint so the closure is durable evidence rather than a
+    narrative. Only called after _post_accept_verification_blockers() returned empty."""
+    confirmed: dict = {}
+    tdir = PC / "tasks"
+    if not tdir.exists():
+        return confirmed
+    for tp in sorted(tdir.glob("*.json")):
+        try:
+            t = load(tp)
+        except (ValueError, OSError):
+            continue
+        block = t.get(POST_ACCEPT_VERIFICATION_KEY)
+        if not isinstance(block, dict):
+            continue
+        rids = sorted(d.get("requirement_id") for d in
+                      (block.get("deferred_requirements") or [])
+                      if isinstance(d, dict) and d.get("requirement_id"))
+        if rids:
+            confirmed[t.get("task_id")] = rids
+    return confirmed
 
 
 def init(_):
@@ -1032,8 +1169,10 @@ def accept(a):
     # verification at that identity. A not-in-regime task under an enabled regime is
     # accepted only if grandfather-eligible (in the frozen migration manifest, material-
     # unchanged, already-active); otherwise it must enter the regime. Only ADDS reasons.
+    deferrals = []
     if _task_in_regime(t):
-        reasons.extend(_directive_accept_reasons(t, a.task_id))
+        dr_reasons, deferrals = _directive_accept_reasons(t, a.task_id)
+        reasons.extend(dr_reasons)
     else:
         enabled, _rv, _re, _rg = _regime()
         if enabled:
@@ -1046,9 +1185,27 @@ def accept(a):
     t["progress_percent"] = 100
     t["accepted_by"] = a.agent
     t["accepted_at"] = now()
+    # Acceptance-ordering lifecycle acts (D-004-R629) are EVALUATED, never deleted or
+    # waived: record every deferred row on the packet so the obligation is durable and
+    # verifiable. checkpoint() -- the first post-accept opportunity -- refuses to record
+    # while any of them is still unverified.
+    if deferrals:
+        t[POST_ACCEPT_VERIFICATION_KEY] = {
+            "state": "pending",
+            "registered_at": now(),
+            "registered_by": a.agent,
+            "first_opportunity": POST_ACCEPT_FIRST_OPPORTUNITY,
+            "deferred_requirements": deferrals,
+        }
     save(p, t)
     sync_state()
     print(f"Accepted {a.task_id}")
+    if deferrals:
+        print(f"  {len(deferrals)} acceptance-ordering lifecycle requirement(s) recorded as "
+              f"EVALUATED and deferred to the first post-accept opportunity "
+              f"({POST_ACCEPT_FIRST_OPPORTUNITY}): "
+              + ", ".join(f"{d.get('requirement_id')}[{d.get('act_class')}]"
+                          for d in deferrals))
     return 0
 
 
@@ -1057,10 +1214,20 @@ def checkpoint(a):
     if not CHECKPOINT_ID_RE.fullmatch(cp_id or "") or ".." in cp_id:
         return fail(f"Invalid checkpoint id {cp_id!r}: letters, digits, '.', '_', '-' "
                     f"only (no path separators or traversal).")
+    # FIRST POST-ACCEPT OPPORTUNITY (D-004-R629). A requirement deferred at acceptance as
+    # an acceptance-ordering lifecycle act is verified HERE. This is a fail-closed guard,
+    # not a bypass: it can only refuse a checkpoint, never grant one.
+    pending = _post_accept_verification_blockers()
+    if pending:
+        return fail(f"Cannot record checkpoint {cp_id}:\n"
+                    + "\n".join(f"- {r}" for r in pending))
     state = load(PC / "state.json")
     cp = {"checkpoint_id": cp_id, "timestamp": now(), "commit": a.commit,
           "branch": a.branch, "active_milestone": state.get("current_milestone"),
           "summary": a.summary}
+    confirmed = _confirmed_post_accept_verifications()
+    if confirmed:
+        cp["post_accept_verifications_confirmed"] = confirmed
     save(PC / "checkpoints" / f"{cp_id}.json", cp)
     state["last_checkpoint"] = cp_id
     save(PC / "state.json", state)

@@ -63,6 +63,20 @@ the M0-T014 hardening scenarios:
       provenance stays allowed) names no ledger task id, reuses the existing
       INDEPENDENT_GATES constant rather than re-listing gate ids, and carries
       no environment/bypass/override token; `progress` gains no new option.
+  S11 M0-T034 governance acceptance semantics (D-004-R627..R633): (a) a
+      requirement row whose sole unmet obligation is an ACCEPTANCE-ORDERING
+      LIFECYCLE ACT is EVALUATED and DEFERRED rather than gating accept(), is
+      never deleted/waived/silently passed, and is discharged at the FIRST
+      post-accept opportunity (checkpoint refuses until then); each of the five
+      conjunctive classification conditions is broken in turn and still blocks,
+      with a positive control proving the refusals were not incidental.
+      (b) a governance-shaped task (allowed_paths entirely under
+      project-control/) gets a REAL staleness identity and a REAL dirt guard
+      where both previously compared the empty-set hash with itself, and
+      reviewed_sha is ACTUALLY compared. Source-level proofs assert no task-id
+      allowlist, flag, or environment override exists, that neither module names
+      any of the eight candidate rows (their classification is the independent
+      verifier's call), and that the classification rule is STATED in the code.
 
 Stdlib only. Run directly (`python tools/test_project_control.py`) or via
 pytest. Exit code 0 = all assertions passed.
@@ -1126,20 +1140,28 @@ def _sha256_text(s: str) -> str:
 
 def make_directive(pc: Path, did: str, slug: str, task_ids, task_types, milestones,
                    req_specs, paths=None, status="active") -> None:
-    """Write a valid directive into a temp registry (correct source hash, locked ids)."""
+    """Write a valid directive into a temp registry (correct source hash, locked ids).
+
+    req_specs entries are (requirement_id, applicable_task_ids) or, for the M0-T034
+    lifecycle-classification scenarios, (requirement_id, applicable_task_ids, overrides)
+    where overrides may set `classification` and `lifecycle_events` on the row."""
     ddir = pc / "directives" / f"{did}-{slug}"
     ddir.mkdir(parents=True, exist_ok=True)
     src_text = f"Verbatim source for {did}.\n"
     (ddir / "source-001.md").write_text(src_text, encoding="utf-8", newline="\n")
     digest = _hashlib.sha256(src_text.encode("utf-8")).hexdigest()
     reqs, vers, ids = [], [], []
-    for rid, applic_task_ids in req_specs:
+    for spec in req_specs:
+        rid, applic_task_ids = spec[0], spec[1]
+        over = spec[2] if len(spec) > 2 else {}
         ids.append(rid)
         reqs.append({
             "id": rid, "text": "req", "source_ref": "source-001.md#x",
-            "classification": "obligation", "binding": True,
+            "classification": over.get("classification", "obligation"), "binding": True,
             "applicability": {"task_ids": applic_task_ids, "task_types": [],
-                              "milestones": [], "paths": [], "lifecycle_events": ["claim"],
+                              "milestones": [], "paths": [],
+                              "lifecycle_events": list(over.get("lifecycle_events",
+                                                                ["claim"])),
                               "effective_date": "2026-07-23"},
             "dependencies": [], "required_harness": "", "required_evidence": "",
             "producer": "orchestrator", "independent_verifier": "reviewer-v",
@@ -1956,6 +1978,547 @@ def test_s10_governance_orchestrator_unblock() -> None:
         shutil.rmtree(tmpdir, ignore_errors=True)
 
 
+# ---------------------------------------------------------------------------
+# S11 (M0-T034 / D-004-R627..R633) — governance acceptance semantics.
+#   (a) lifecycle-aware acceptance: an acceptance-ordering row is EVALUATED and
+#       DEFERRED, never deleted or waived, and is verified at the first
+#       post-accept opportunity (checkpoint);
+#   (b) the vacuous-guard gap: a governance-shaped task (allowed_paths entirely
+#       under project-control/) gets a real staleness identity, a real dirt
+#       guard, and an actual reviewed_sha comparison.
+# Every negative default is re-proven: any unmet NON-lifecycle row still blocks.
+# ---------------------------------------------------------------------------
+EMPTY_SET_IDENTITY = _hashlib.sha256(b"").hexdigest()  # e3b0c442..., 0 manifest entries
+_CP = ("project-control/",)
+
+
+def head_of(tmp: Path) -> str:
+    return _git(tmp, "rev-parse", "HEAD").stdout.decode().strip()
+
+
+def gov_identity(tmp: Path, paths, sha) -> str:
+    """The identity accept()/submit() compute for a scope, at a specific commit."""
+    ident, _sha, err = _dr.frozen_git_identity(
+        list(paths), reviewed_sha=sha, root=tmp, exclude_prefixes=_CP,
+        require_clean=False, control_plane_prefixes=_CP)
+    assert err is None, f"gov identity error: {err}"
+    return ident
+
+
+def vrow_pass(rid: str) -> dict:
+    return {"id": rid, "state": "PASS", "evidence": ["e"], "verified_by": "reviewer-v"}
+
+
+def vrow_lifecycle(rid: str, state: str = "pending", **over) -> dict:
+    """A verification row carrying an independent verifier's per-row acceptance-ordering
+    attestation. `over` mutates the attestation so each condition can be broken."""
+    claim = {"act_class": "accept", "classified_by": "reviewer-v", "classified_at": "t",
+             "justification": "the obligation is discharged at acceptance itself"}
+    claim.update(over)
+    return {"id": rid, "state": state, "evidence": [], "verified_by": None,
+            "lifecycle_classification": claim}
+
+
+def write_v2_verification(pc: Path, did: str, slug: str, task_id: str, applicable, rows,
+                          identity: str, sha: str, verifier: str = "reviewer-v",
+                          producer: str = "orchestrator") -> None:
+    v2 = {"schema": "directive_verification/v2", "directive_id": did, "producer": producer,
+          "task_verifications": [{
+              "directive_id": did, "task_id": task_id,
+              "applicable_requirement_ids": sorted(applicable), "reviewed_sha": sha,
+              "reviewed_manifest_sha256": identity, "producer": producer,
+              "verifier": verifier, "schema_version": "directive_verification/v2",
+              "verified_at": "t", "requirements": list(rows)}],
+          "updated_at": "t"}
+    (pc / "directives" / f"{did}-{slug}" / "verification.json").write_text(
+        json.dumps(v2, indent=2), encoding="utf-8")
+
+
+def build_governance_task(tmp: Path, tid: str, did: str, slug: str, rids,
+                          producer: str = "producer-p"):
+    """Drive a GOVERNANCE-SHAPED task (allowed_paths entirely under project-control/)
+    to awaiting_gate with every gate PASS and a stamped content identity.
+    Returns (head_sha, allowed_paths)."""
+    report_md = f"project-control/reports/{tid}-producer-report.md"
+    allowed = [f"project-control/tasks/{tid}.json", report_md]
+    r = run(tmp, "new-task", "--task-id", tid, "--title", "t", "--task-type", "governance",
+            "--milestone", "M0", "--objective", "o", "--gates", "G0,G3",
+            "--reviewers", "reviewer-v,reviewer-z", "--directive-refs", f"{did}:ALL")
+    assert r.returncode == 0, f"new-task {tid} failed: {r.stderr}"
+    edit_task(tmp, tid, allowed_paths=allowed)
+    (tmp / report_md).parent.mkdir(parents=True, exist_ok=True)
+    (tmp / report_md).write_text(f"# {tid} producer report\noriginal\n", encoding="utf-8")
+    head = git_commit_all(tmp, f"scaffold {tid}")
+    write_report(tmp, f"{tid}-g0.json", '{"g":0}')
+    r = run(tmp, "gate", "--task-id", tid, "--gate-id", "G0", "--reviewer", "orchestrator",
+            "--result", "PASS", "--report", f"project-control/reports/{tid}-g0.json")
+    assert r.returncode == 0, f"G0 {tid}: {r.stderr}"
+    r = run(tmp, "claim", "--task-id", tid, "--agent", producer, "--worktree", "wt")
+    assert r.returncode == 0, f"claim {tid}: {r.stderr}"
+    run(tmp, "progress", "--task-id", tid, "--agent", producer, "--percent", "40",
+        "--status", "in_progress", "--message", "x")
+    write_report(tmp, f"{tid}-final.json", '{"r":"x"}')
+    write_report(tmp, f"{tid}-emap.json",
+                 json.dumps({"requirements": {rid: ["e"] for rid in rids}}))
+    r = run(tmp, "submit", "--task-id", tid, "--agent", producer, "--report",
+            f"project-control/reports/{tid}-final.json", "--requested-status",
+            "awaiting_gate", "--evidence-map", f"project-control/reports/{tid}-emap.json",
+            "--sha", head)
+    assert r.returncode == 0, f"submit {tid}: {r.stdout} {r.stderr}"
+    write_report(tmp, f"{tid}-g3.json", '{"g":3}')
+    r = run(tmp, "gate", "--task-id", tid, "--gate-id", "G3", "--reviewer", "reviewer-v",
+            "--result", "PASS", "--report", f"project-control/reports/{tid}-g3.json",
+            "--sha", head)
+    assert r.returncode == 0, f"G3 {tid}: {r.stderr}"
+    return head, allowed
+
+
+# The five row shapes every S11 scenario needs. Deliberately generic: the shapes are
+# named for the STRUCTURAL property under test, never for any ledger requirement id.
+_S11_REQ_SPECS = lambda tid: [                                    # noqa: E731
+    ("D-900-R001", [tid], {"classification": "obligation", "lifecycle_events": ["gate"]}),
+    ("D-900-R002", [tid], {"classification": "obligation", "lifecycle_events": ["accept"]}),
+    ("D-900-R003", [tid], {"classification": "obligation",
+                           "lifecycle_events": ["gate", "accept"]}),
+    ("D-900-R004", [tid], {"classification": "prohibition", "lifecycle_events": ["accept"]}),
+    ("D-900-R005", [tid], {"classification": "sequencing", "lifecycle_events": ["accept"]}),
+]
+_S11_RIDS = ["D-900-R001", "D-900-R002", "D-900-R003", "D-900-R004", "D-900-R005"]
+
+
+def test_s11_lifecycle_aware_acceptance_and_post_accept_verification() -> None:
+    """AS-1 + AS-4: an acceptance-ordering row is EVALUATED and deferred (never deleted,
+    waived, or silently passed), and the deferral is discharged at the FIRST post-accept
+    opportunity, which refuses to proceed until then."""
+    tmpdir = tempfile.mkdtemp(prefix="pc-s11-accept-")
+    tmp = Path(tmpdir)
+    try:
+        make_temp_project(tmp)
+        setup_regime(tmp)
+        pc = tmp / "project-control"
+        tid = "M9-T340"
+        make_directive(pc, "D-900", "gov", task_ids=[tid], task_types=[], milestones=[],
+                       req_specs=_S11_REQ_SPECS(tid))
+        head, allowed = build_governance_task(tmp, tid, "D-900", "gov", _S11_RIDS)
+        ident = gov_identity(tmp, allowed, head)
+
+        # The guard is no longer vacuous: the stamped identity is a real manifest.
+        rep = read_json(pc / "reports" / f"{tid}.json")
+        assert rep["content_manifest_sha256"] == ident, "submit must stamp the new identity"
+        assert ident != EMPTY_SET_IDENTITY, \
+            "a governance-shaped scope must no longer stamp the empty-set hash"
+
+        # R002 (obligation @ accept) and R005 (sequencing @ accept) are attested
+        # acceptance-ordering acts; every other applicable row is genuinely PASS.
+        rows = [vrow_pass("D-900-R001"), vrow_lifecycle("D-900-R002"),
+                vrow_pass("D-900-R003"), vrow_pass("D-900-R004"),
+                vrow_lifecycle("D-900-R005", act_class="stop_after")]
+        write_v2_verification(pc, "D-900", "gov", tid, _S11_RIDS, rows, ident,
+                              head_of(tmp))
+        r = run(tmp, "accept", "--task-id", tid, "--agent", "orchestrator")
+        assert r.returncode == 0, f"AS-1 lifecycle-aware accept must succeed: {r.stdout} {r.stderr}"
+        assert "deferred" in r.stdout, f"accept must DISCLOSE the deferrals: {r.stdout}"
+
+        t = read_json(pc / "tasks" / f"{tid}.json")
+        assert t["status"] == "accepted"
+        block = t["post_accept_verification"]
+        assert block["state"] == "pending" and block["first_opportunity"] == "checkpoint"
+        deferred = {d["requirement_id"]: d for d in block["deferred_requirements"]}
+        assert set(deferred) == {"D-900-R002", "D-900-R005"}, \
+            f"exactly the attested acceptance-ordering rows are deferred: {sorted(deferred)}"
+        assert deferred["D-900-R002"]["act_class"] == "accept"
+        assert deferred["D-900-R005"]["act_class"] == "stop_after"
+        for d in deferred.values():
+            assert d["classified_by"] == "reviewer-v" and d["justification"], \
+                "the deferral record must carry the independent classification + reason"
+            assert d["deferred_at_identity"] == ident and d["deferred_at_sha"] == head_of(tmp)
+
+        # NEVER deleted, waived, or silently passed: the registry row is untouched.
+        v = read_json(pc / "directives" / "D-900-gov" / "verification.json")
+        vrows = {r_["id"]: r_ for r_ in v["task_verifications"][0]["requirements"]}
+        assert vrows["D-900-R002"]["state"] == "pending", \
+            "a deferred row must NOT be rewritten to PASS by acceptance"
+        assert "lifecycle_classification" in vrows["D-900-R002"]
+
+        # AS-4: the FIRST post-accept opportunity refuses until the rows are verified.
+        r = run(tmp, "checkpoint", "--checkpoint-id", "cp1", "--commit", "abc",
+                "--branch", "b", "--summary", "s")
+        assert r.returncode != 0, "checkpoint must refuse while a deferral is unverified"
+        assert "D-900-R002" in r.stderr and "post-accept" in r.stderr, \
+            f"the refusal must name the deferred row: {r.stderr}"
+        assert not (pc / "checkpoints" / "cp1.json").exists(), \
+            "a refused checkpoint must write no record"
+
+        # Verify ONE row post-accept: still refused (the other remains).
+        vrows["D-900-R002"]["state"] = "PASS"
+        v["task_verifications"][0]["requirements"] = list(vrows.values())
+        (pc / "directives" / "D-900-gov" / "verification.json").write_text(
+            json.dumps(v, indent=2), encoding="utf-8")
+        r = run(tmp, "checkpoint", "--checkpoint-id", "cp1", "--commit", "abc",
+                "--branch", "b", "--summary", "s")
+        assert r.returncode != 0 and "D-900-R005" in r.stderr, \
+            f"a partially-verified deferral set must still refuse: {r.stderr}"
+
+        # Verify BOTH -> the checkpoint records the closure as durable evidence.
+        vrows["D-900-R005"]["state"] = "PASS"
+        v["task_verifications"][0]["requirements"] = list(vrows.values())
+        (pc / "directives" / "D-900-gov" / "verification.json").write_text(
+            json.dumps(v, indent=2), encoding="utf-8")
+        r = run(tmp, "checkpoint", "--checkpoint-id", "cp1", "--commit", "abc",
+                "--branch", "b", "--summary", "s")
+        assert r.returncode == 0, f"checkpoint must proceed once verified: {r.stderr}"
+        cp = read_json(pc / "checkpoints" / "cp1.json")
+        assert cp["post_accept_verifications_confirmed"][tid] == \
+            ["D-900-R002", "D-900-R005"], f"closure must be recorded: {cp}"
+
+        # NOT_APPLICABLE with justification + independent approver also discharges it;
+        # NOT_APPLICABLE without them does not.
+        vrows["D-900-R005"]["state"] = "NOT_APPLICABLE"
+        v["task_verifications"][0]["requirements"] = list(vrows.values())
+        (pc / "directives" / "D-900-gov" / "verification.json").write_text(
+            json.dumps(v, indent=2), encoding="utf-8")
+        r = run(tmp, "checkpoint", "--checkpoint-id", "cp2", "--commit", "a", "--branch",
+                "b", "--summary", "s")
+        assert r.returncode != 0, "unjustified NOT_APPLICABLE must not discharge a deferral"
+        vrows["D-900-R005"]["not_applicable_justification"] = "policy requires no checkpoint"
+        vrows["D-900-R005"]["not_applicable_approved_by"] = "reviewer-z"
+        v["task_verifications"][0]["requirements"] = list(vrows.values())
+        (pc / "directives" / "D-900-gov" / "verification.json").write_text(
+            json.dumps(v, indent=2), encoding="utf-8")
+        r = run(tmp, "checkpoint", "--checkpoint-id", "cp2", "--commit", "a", "--branch",
+                "b", "--summary", "s")
+        assert r.returncode == 0, f"justified+approved NOT_APPLICABLE discharges it: {r.stderr}"
+        print("OK: S11 lifecycle-aware acceptance + first-post-accept verification "
+              "(AS-1, AS-4)")
+    finally:
+        shutil.rmtree(tmpdir, ignore_errors=True)
+
+
+def test_s11_non_lifecycle_rows_still_block_acceptance() -> None:
+    """AS-2 (negative, the one that matters most): ANY unmet non-lifecycle row still
+    fails accept() exactly as today. Each of the five conjunctive conditions is broken
+    in turn, and a positive control proves the refusals were not incidental."""
+    tmpdir = tempfile.mkdtemp(prefix="pc-s11-block-")
+    tmp = Path(tmpdir)
+    try:
+        make_temp_project(tmp)
+        setup_regime(tmp)
+        pc = tmp / "project-control"
+        tid = "M9-T341"
+        make_directive(pc, "D-900", "gov", task_ids=[tid], task_types=[], milestones=[],
+                       req_specs=_S11_REQ_SPECS(tid))
+        head, allowed = build_governance_task(tmp, tid, "D-900", "gov", _S11_RIDS)
+        ident = gov_identity(tmp, allowed, head)
+        tpath = pc / "tasks" / f"{tid}.json"
+
+        def attempt(rows, label):
+            write_v2_verification(pc, "D-900", "gov", tid, _S11_RIDS, rows, ident,
+                                  head_of(tmp))
+            r = run(tmp, "accept", "--task-id", tid, "--agent", "orchestrator")
+            t = read_json(tpath)
+            assert r.returncode != 0, f"AS-2 {label}: accept must still be refused"
+            assert t["status"] == "awaiting_gate", \
+                f"AS-2 {label}: a refused accept must not move the task"
+            assert "post_accept_verification" not in t, \
+                f"AS-2 {label}: a refused accept must register no deferral"
+            return r.stderr
+
+        base = {rid: vrow_pass(rid) for rid in _S11_RIDS}
+        cases = 0
+
+        # (i) an ordinary unmet row with NO lifecycle claim at all.
+        rows = dict(base); rows["D-900-R001"] = {"id": "D-900-R001", "state": "pending"}
+        err = attempt(list(rows.values()), "plain unmet row")
+        assert "not PASS" in err, err
+        cases += 1
+
+        # (ii) condition (3): the row also binds a PRE-acceptance lifecycle event.
+        rows = dict(base); rows["D-900-R003"] = vrow_lifecycle("D-900-R003")
+        err = attempt(list(rows.values()), "mixed lifecycle binding")
+        assert "outside acceptance ordering" in err and "not PASS" in err, err
+        cases += 1
+
+        # (iii) condition (4): a prohibition bound to acceptance is a BAR, never an act.
+        rows = dict(base); rows["D-900-R004"] = vrow_lifecycle("D-900-R004")
+        err = attempt(list(rows.values()), "prohibition")
+        assert "acceptance-ordering ACT" in err, err
+        cases += 1
+
+        # (iv) condition (2): the producer cannot classify its own row.
+        rows = dict(base)
+        rows["D-900-R002"] = vrow_lifecycle("D-900-R002", classified_by="orchestrator")
+        err = attempt(list(rows.values()), "producer self-classification")
+        assert "INDEPENDENT" in err, err
+        cases += 1
+
+        # (v) condition (2): an unreasoned classification.
+        rows = dict(base)
+        rows["D-900-R002"] = vrow_lifecycle("D-900-R002", justification="")
+        err = attempt(list(rows.values()), "no justification")
+        assert "justification" in err, err
+        cases += 1
+
+        # (vi) condition (1): an act class outside the owner's closed enumeration.
+        rows = dict(base)
+        rows["D-900-R002"] = vrow_lifecycle("D-900-R002", act_class="merge")
+        err = attempt(list(rows.values()), "act class outside the enumeration")
+        assert "act_class" in err, err
+        cases += 1
+
+        # (vii) condition (5): a substantive negative verifier finding.
+        for st in ("FAIL", "BLOCKED"):
+            rows = dict(base)
+            rows["D-900-R002"] = vrow_lifecycle("D-900-R002", state=st)
+            err = attempt(list(rows.values()), f"negative finding {st}")
+            assert "negative finding" in err, err
+            cases += 1
+
+        # (viii) a MISSING verification row can never be deferred (no attestation exists).
+        rows = [v for k, v in base.items() if k != "D-900-R002"]
+        err = attempt(rows, "missing row")
+        assert "missing rows" in err, err
+        cases += 1
+
+        # POSITIVE CONTROL: with a well-formed attestation on the same fixture, accept
+        # succeeds -- so every refusal above was caused by the broken condition, not by
+        # some unrelated precondition of this fixture.
+        rows = dict(base); rows["D-900-R002"] = vrow_lifecycle("D-900-R002")
+        write_v2_verification(pc, "D-900", "gov", tid, _S11_RIDS, list(rows.values()),
+                              ident, head_of(tmp))
+        r = run(tmp, "accept", "--task-id", tid, "--agent", "orchestrator")
+        assert r.returncode == 0, f"AS-2 positive control must accept: {r.stdout} {r.stderr}"
+        cases += 1
+        assert cases == 10, f"AS-2 executed {cases} cases, expected 10"
+        print(f"OK: S11 unmet NON-lifecycle rows still block acceptance "
+              f"(AS-2, {cases} cases incl. positive control)")
+    finally:
+        shutil.rmtree(tmpdir, ignore_errors=True)
+
+
+def test_s11_governance_identity_and_dirt_guards() -> None:
+    """AS-5 + AS-6: a governance-shaped task gets a REAL staleness identity and a REAL
+    dirt guard where both previously compared a constant with itself."""
+    tmpdir = tempfile.mkdtemp(prefix="pc-s11-ident-")
+    tmp = Path(tmpdir)
+    try:
+        make_temp_project(tmp)
+        setup_regime(tmp)
+        pc = tmp / "project-control"
+        tid = "M9-T342"
+        make_directive(pc, "D-900", "gov", task_ids=[tid], task_types=[], milestones=[],
+                       req_specs=_S11_REQ_SPECS(tid))
+        head, allowed = build_governance_task(tmp, tid, "D-900", "gov", _S11_RIDS)
+        report_md = tmp / allowed[1]
+        tpath = pc / "tasks" / f"{tid}.json"
+
+        # (a) the OLD guard was provably vacuous for exactly this shape.
+        old_ident, old_entries, err = _dr.git_tree_manifest(tmp, head, allowed,
+                                                            exclude_prefixes=_CP)
+        assert err is None and old_entries == [] and old_ident == EMPTY_SET_IDENTITY, \
+            "the pre-fix identity for a governance-shaped scope was the empty-set hash"
+        old_dirty, err = _dr.relevant_working_tree_dirty(tmp, allowed, exclude_prefixes=_CP)
+        assert err is None and old_dirty == [], "the pre-fix dirt guard dropped every candidate"
+
+        # (b) the NEW identity is a real 2-entry manifest.
+        ident = gov_identity(tmp, allowed, head)
+        assert ident != EMPTY_SET_IDENTITY
+        entries, err = _dr.control_plane_entries(tmp, head, allowed, _CP)
+        assert err is None and len(entries) == 2, entries
+
+        # (c) AS-6: a DIRTY file in scope is now DETECTED and fails accept closed.
+        rows = [vrow_pass(r) for r in _S11_RIDS]
+        write_v2_verification(pc, "D-900", "gov", tid, _S11_RIDS, rows, ident, head_of(tmp))
+        original_md = report_md.read_text(encoding="utf-8")
+        report_md.write_text("uncommitted edit\n", encoding="utf-8")
+        r = run(tmp, "accept", "--task-id", tid, "--agent", "orchestrator")
+        assert r.returncode != 0 and "dirty" in r.stderr.lower(), \
+            f"AS-6 a dirty control-plane file must fail closed: {r.stderr}"
+        assert allowed[1] in r.stderr, f"the refusal must name the file: {r.stderr}"
+        report_md.write_text(original_md, encoding="utf-8")
+
+        # (d) AS-6: a MATERIAL uncommitted packet edit is dirt; a LIFECYCLE-only one is
+        # not (the control plane rewrites lifecycle fields on every transition, so a
+        # literal dirt rule would deadlock every acceptance).
+        t = read_json(tpath)
+        edit_task(tmp, tid, objective="materially different objective")
+        r = run(tmp, "accept", "--task-id", tid, "--agent", "orchestrator")
+        assert r.returncode != 0 and "dirty" in r.stderr.lower(), \
+            f"AS-6 a material packet edit must fail closed: {r.stderr}"
+        edit_task(tmp, tid, objective=t["objective"], progress_percent=86)
+        r = run(tmp, "accept", "--task-id", tid, "--agent", "orchestrator")
+        assert r.returncode == 0, \
+            f"a lifecycle-only packet delta must NOT be dirt: {r.stdout} {r.stderr}"
+
+        # (e) AS-6: an UNTRACKED file inside allowed_paths fails closed.
+        extra = f"project-control/reports/{tid}-extra.md"
+        edit_task(tmp, tid, allowed_paths=allowed + [extra], status="awaiting_gate")
+        head2 = git_commit_all(tmp, "widen allowed_paths")
+        (tmp / extra).write_text("untracked evidence\n", encoding="utf-8")
+        r = run(tmp, "accept", "--task-id", tid, "--agent", "orchestrator")
+        assert r.returncode != 0 and "dirty or untracked" in r.stderr, \
+            f"AS-6 an untracked file in scope must fail closed: {r.stderr}"
+        (tmp / extra).unlink()
+        edit_task(tmp, tid, allowed_paths=allowed)
+        head2 = git_commit_all(tmp, "restore allowed_paths")
+
+        # (f) AS-5: a COMMITTED change to a file inside allowed_paths MOVES the identity,
+        # so the frozen evidence goes stale and acceptance is refused.
+        ident_before = gov_identity(tmp, allowed, head_of(tmp))
+        report_md.write_text("REVISED report body\n", encoding="utf-8")
+        head3 = git_commit_all(tmp, "edit the report in scope")
+        ident_after = gov_identity(tmp, allowed, head3)
+        assert ident_after != ident_before, \
+            "AS-5 a committed in-scope change must move the identity"
+        edit_task(tmp, tid, status="awaiting_gate")
+        write_v2_verification(pc, "D-900", "gov", tid, _S11_RIDS, rows, ident_after, head3)
+        r = run(tmp, "accept", "--task-id", tid, "--agent", "orchestrator")
+        assert r.returncode != 0 and "frozen-evidence identity mismatch" in r.stderr, \
+            f"AS-5 a moved identity must make the frozen evidence stale: {r.stderr}"
+
+        # (g) AS-5: a MATERIAL packet amendment also moves it; a LIFECYCLE-ONLY packet
+        # change deliberately does NOT. The recorded resolution, proven both ways.
+        base_sha = git_commit_all(tmp, "settle")
+        id0 = gov_identity(tmp, allowed, base_sha)
+        edit_task(tmp, tid, objective="a materially amended objective")
+        sha_material = git_commit_all(tmp, "material amendment")
+        assert gov_identity(tmp, allowed, sha_material) != id0, \
+            "AS-5 a material packet amendment must move the identity"
+        id1 = gov_identity(tmp, allowed, sha_material)
+        before_packet = read_json(tpath)
+        edit_task(tmp, tid, status="rework", progress_percent=60)
+        sha_lifecycle = git_commit_all(tmp, "lifecycle-only transition")
+        after_packet = read_json(tpath)
+        differing = {k for k in set(before_packet) | set(after_packet)
+                     if before_packet.get(k) != after_packet.get(k)}
+        assert differing <= {"status", "progress_percent", "updated_at"}, \
+            f"the probe must be lifecycle-only, differing keys were {sorted(differing)}"
+        assert _dr.material_digest(before_packet) == _dr.material_digest(after_packet)
+        assert gov_identity(tmp, allowed, sha_lifecycle) == id1, \
+            ("a lifecycle-only packet change must NOT read as content staleness -- "
+             "including it would make every acceptance structurally impossible")
+        print("OK: S11 governance-shaped staleness identity + dirt guard (AS-5, AS-6)")
+    finally:
+        shutil.rmtree(tmpdir, ignore_errors=True)
+
+
+def test_s11_reviewed_sha_compared_and_no_regression() -> None:
+    """AS-7 + AS-8: reviewed_sha is ACTUALLY compared and fails closed when stale, and
+    nothing outside the control-plane tree changes value or behavior."""
+    tmpdir = tempfile.mkdtemp(prefix="pc-s11-sha-")
+    tmp = Path(tmpdir)
+    try:
+        make_temp_project(tmp)
+        setup_regime(tmp)
+        pc = tmp / "project-control"
+        tid = "M9-T343"
+        make_directive(pc, "D-900", "gov", task_ids=[tid], task_types=[], milestones=[],
+                       req_specs=_S11_REQ_SPECS(tid))
+        head, allowed = build_governance_task(tmp, tid, "D-900", "gov", _S11_RIDS)
+        ident = gov_identity(tmp, allowed, head)
+        rows = [vrow_pass(r) for r in _S11_RIDS]
+
+        # (a) a STALE reviewed_sha fails closed (this comparison did not exist before).
+        write_v2_verification(pc, "D-900", "gov", tid, _S11_RIDS, rows, ident, "0" * 40)
+        r = run(tmp, "accept", "--task-id", tid, "--agent", "orchestrator")
+        assert r.returncode != 0 and "reviewed_sha is stale" in r.stderr, \
+            f"AS-7 a stale reviewed_sha must fail closed: {r.stderr}"
+
+        # (b) an ABSENT reviewed_sha fails closed too (no silent skip).
+        write_v2_verification(pc, "D-900", "gov", tid, _S11_RIDS, rows, ident, None)
+        r = run(tmp, "accept", "--task-id", tid, "--agent", "orchestrator")
+        assert r.returncode != 0 and "reviewed_sha is stale" in r.stderr, \
+            f"AS-7 an absent reviewed_sha must fail closed: {r.stderr}"
+
+        # (c) the matching reviewed_sha accepts.
+        write_v2_verification(pc, "D-900", "gov", tid, _S11_RIDS, rows, ident, head_of(tmp))
+        r = run(tmp, "accept", "--task-id", tid, "--agent", "orchestrator")
+        assert r.returncode == 0, f"AS-7 a matching reviewed_sha must accept: {r.stderr}"
+
+        # (d) AS-8: a scope with NO control-plane paths keeps its pre-existing identity
+        # value exactly -- the raw-blob manifest, byte for byte.
+        (tmp / "probe.txt").write_text("p\n", encoding="utf-8")
+        sha = git_commit_all(tmp, "probe")
+        raw, _e, err = _dr.git_tree_manifest(tmp, sha, ["probe.txt"], exclude_prefixes=_CP)
+        assert err is None
+        assert gov_identity(tmp, ["probe.txt"], sha) == raw, \
+            "AS-8 an ordinary scope's identity value is unchanged by this task"
+
+        # (e) AS-8: stored history is not retro-rejected and the accepted task is terminal.
+        r = run(tmp, "status")
+        assert r.returncode == 0 and json.loads(r.stdout)["task_counts"].get("accepted") == 1
+        r = run(tmp, "progress", "--task-id", tid, "--agent", "x", "--percent", "50",
+                "--message", "m")
+        assert r.returncode != 0 and "terminal" in r.stderr
+
+        # (f) AS-8: a checkpoint with no registered deferrals still works unchanged.
+        r = run(tmp, "checkpoint", "--checkpoint-id", "cp-plain", "--commit", "c",
+                "--branch", "b", "--summary", "s")
+        assert r.returncode == 0, f"AS-8 an ordinary checkpoint is unaffected: {r.stderr}"
+        cp = read_json(pc / "checkpoints" / "cp-plain.json")
+        assert "post_accept_verifications_confirmed" not in cp
+        print("OK: S11 reviewed_sha comparison + no-regression (AS-7, AS-8)")
+    finally:
+        shutil.rmtree(tmpdir, ignore_errors=True)
+
+
+def test_s11_no_special_casing_source_proofs() -> None:
+    """AS-3 + AS-12: the lifecycle mechanism is derived from row semantics only -- no
+    task-id allowlist, no bypass flag, no environment override -- and its rule is
+    STATED IN THE CODE. Matches the standard set by invalid_unblock_roster."""
+    tmpdir = tempfile.mkdtemp(prefix="pc-s11-general-")
+    tmp = Path(tmpdir)
+    try:
+        make_temp_project(tmp)
+        src = (HERE / "project_control.py").read_text(encoding="utf-8")
+        reg_src = (HERE / "directive_registry.py").read_text(encoding="utf-8")
+        names = ("_directive_accept_reasons", "_post_accept_verification_blockers",
+                 "_confirmed_post_accept_verifications", "accept", "checkpoint",
+                 "_task_git_identity")
+        bodies = {}
+        for node in ast.walk(ast.parse(src)):
+            if isinstance(node, ast.FunctionDef) and node.name in names:
+                body = list(node.body)
+                if (body and isinstance(body[0], ast.Expr)
+                        and isinstance(body[0].value, ast.Constant)
+                        and isinstance(body[0].value.value, str)):
+                    body = body[1:]  # strip docstring: prose provenance stays allowed
+                bodies[node.name] = "\n".join(ast.unparse(s) for s in body)
+        assert set(bodies) == set(names), f"missing functions: {sorted(set(names) - set(bodies))}"
+        code = "\n".join(bodies[n] for n in names)
+        assert not re.search(r"M\d+-T\d{3}", code), \
+            f"lifecycle/identity code must name no ledger task id:\n{code}"
+        assert not re.search(r"D-\d{3}-R\d{3}", code), \
+            f"lifecycle/identity code must name no specific requirement id:\n{code}"
+        for tok in ("getenv", "environ", "force", "bypass", "override", "allowlist"):
+            assert tok not in code.lower(), f"code must carry no {tok!r} token:\n{code}"
+        assert "os.environ" not in src and "getenv" not in src, \
+            "project_control.py must never read the environment"
+        # the eight candidate rows are the INDEPENDENT verifier's call (AS-10): neither
+        # module may name one and thereby pre-classify it.
+        for rid in ("D-004-R322", "D-004-R323", "D-004-R388", "D-004-R389",
+                    "D-004-R486", "D-004-R487", "D-004-R488", "D-004-R501"):
+            assert rid not in src and rid not in reg_src, \
+                f"{rid} must not be named in the implementation"
+        assert "M0-T027" not in src and "M0-T027" not in reg_src, \
+            "the correction must not name the motivating task"
+        # AS-12: the rule is stated where a reviewer will read it.
+        assert "ACCEPTANCE-ORDERING LIFECYCLE CLASSIFICATION" in reg_src
+        assert "no special-cased task id, no flag, and no environment override" in reg_src
+        assert "LIFECYCLE-AWARE ACCEPTANCE" in src and "CONTROL-PLANE CONTENT IDENTITY" in src
+        # accept and checkpoint gain NO new option: no flag, no override, no bypass.
+        r = run(tmp, "accept", "-h")
+        assert r.returncode == 0
+        assert set(re.findall(r"--[a-z][a-z0-9-]*", r.stdout)) == {"--help", "--task-id",
+                                                                   "--agent"}, r.stdout
+        r = run(tmp, "checkpoint", "-h")
+        assert r.returncode == 0
+        assert set(re.findall(r"--[a-z][a-z0-9-]*", r.stdout)) == {
+            "--help", "--checkpoint-id", "--commit", "--branch", "--summary"}, r.stdout
+        print("OK: S11 no special-casing; classification rule stated in code (AS-3, AS-12)")
+    finally:
+        shutil.rmtree(tmpdir, ignore_errors=True)
+
+
 ALL_TESTS = [
     test_original_workflow,
     test_s1_transitions,
@@ -1972,6 +2535,11 @@ ALL_TESTS = [
     test_s9_submit_evidence_and_git_identity,
     test_s9_accept_requires_per_task_verification,
     test_s9_regime_bypass_closed_and_migration,
+    test_s11_lifecycle_aware_acceptance_and_post_accept_verification,
+    test_s11_non_lifecycle_rows_still_block_acceptance,
+    test_s11_governance_identity_and_dirt_guards,
+    test_s11_reviewed_sha_compared_and_no_regression,
+    test_s11_no_special_casing_source_proofs,
 ]
 
 

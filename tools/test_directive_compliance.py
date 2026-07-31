@@ -809,5 +809,445 @@ class MultiTaskVerificationTests(unittest.TestCase):
         self.assertTrue(any("per-task separation" in e for e in errs))
 
 
+# ==========================================================================
+# M0-T034 / D-004-R629..R633 — governance acceptance semantics.
+#
+#   (a) LIFECYCLE-AWARE ACCEPTANCE: the acceptance-ordering classifier and its
+#       five conjunctive conditions, plus the source-level proofs that the rule
+#       is GENERAL (no task-id allowlist, flag, or environment override) and is
+#       DOCUMENTED IN THE CODE.
+#   (b) VACUOUS-GUARD GAP: the control-plane MATERIAL identity and dirt guard
+#       for governance-shaped scopes, and the reviewed_sha comparison.
+# ==========================================================================
+
+EMPTY_SET_IDENTITY = hashlib.sha256(b"").hexdigest()  # e3b0c442... , 0 manifest entries
+
+
+def _req_row(rid="D-900-R001", classification="obligation", events=("accept",)):
+    """A requirement row in the registry's real shape."""
+    return {"id": rid, "text": "t", "source_ref": "s#x", "classification": classification,
+            "binding": True,
+            "applicability": {"task_ids": [], "task_types": [], "milestones": [],
+                              "paths": [], "lifecycle_events": list(events),
+                              "effective_date": "2026-07-31"},
+            "dependencies": [], "required_harness": "", "required_evidence": "",
+            "producer": "orchestrator", "independent_verifier": "verifier-v",
+            "status": "pending", "maps_to": {"files": [], "tests": [], "tasks": []}}
+
+
+def _ver_row(rid="D-900-R001", state="pending", classification=None):
+    row = {"id": rid, "state": state, "evidence": [], "verified_by": None}
+    if classification is not None:
+        row[dr.LIFECYCLE_CLASSIFICATION_KEY] = classification
+    return row
+
+
+def _attestation(**over):
+    base = {"act_class": "accept", "classified_by": "verifier-v",
+            "classified_at": "2026-07-31T00:00:00+00:00",
+            "justification": "the row's obligation is performed at acceptance itself"}
+    base.update(over)
+    return base
+
+
+class AcceptanceOrderingClassifierTests(unittest.TestCase):
+    """D-004-R629/R632: the five CONJUNCTIVE conditions, each proven necessary."""
+
+    def test_well_formed_attestation_on_eligible_row_defers(self):
+        d, refusals = dr.acceptance_ordering_deferral(
+            _req_row(), _ver_row(classification=_attestation()), producer="orchestrator")
+        self.assertEqual(refusals, [])
+        self.assertIsNotNone(d)
+        self.assertEqual(d["act_class"], "accept")
+        self.assertEqual(d["classified_by"], "verifier-v")
+        self.assertEqual(d["row_lifecycle_events"], ["accept"])
+
+    def test_every_owner_enumerated_act_class_is_accepted_and_no_other(self):
+        for act in sorted(dr.ACCEPTANCE_ORDERING_ACT_CLASSES):
+            d, refusals = dr.acceptance_ordering_deferral(
+                _req_row(), _ver_row(classification=_attestation(act_class=act)),
+                producer="orchestrator")
+            self.assertIsNotNone(d, f"owner-enumerated act class {act!r} must be accepted")
+        self.assertEqual(dr.ACCEPTANCE_ORDERING_ACT_CLASSES,
+                         frozenset({"accept", "post_accept_cleanup", "checkpoint",
+                                    "stop_after"}),
+                         "the act-class enumeration is CLOSED and owner-derived (R629)")
+        for act in ("merge", "submit", "gate", "cleanup", "", None, 7, "ACCEPT"):
+            d, refusals = dr.acceptance_ordering_deferral(
+                _req_row(), _ver_row(classification=_attestation(act_class=act)),
+                producer="orchestrator")
+            self.assertIsNone(d, f"act_class {act!r} is outside the enumeration")
+            self.assertTrue(any("act_class" in r for r in refusals))
+
+    def test_condition2_attestation_must_be_independent_and_reasoned(self):
+        # missing classified_by
+        d, refusals = dr.acceptance_ordering_deferral(
+            _req_row(), _ver_row(classification=_attestation(classified_by="")),
+            producer="orchestrator")
+        self.assertIsNone(d)
+        self.assertTrue(any("classified_by" in r for r in refusals))
+        # producer self-attestation
+        d, refusals = dr.acceptance_ordering_deferral(
+            _req_row(), _ver_row(classification=_attestation(classified_by="orchestrator")),
+            producer="orchestrator")
+        self.assertIsNone(d)
+        self.assertTrue(any("INDEPENDENT" in r for r in refusals))
+        # unreasoned classification
+        d, refusals = dr.acceptance_ordering_deferral(
+            _req_row(), _ver_row(classification=_attestation(justification="   ")),
+            producer="orchestrator")
+        self.assertIsNone(d)
+        self.assertTrue(any("justification" in r for r in refusals))
+
+    def test_condition3_row_binding_outside_acceptance_ordering_keeps_gating(self):
+        # ANY pre-acceptance lifecycle event disqualifies the row ("SOLE", R629).
+        for events in (("gate", "accept"), ("submit", "gate", "accept"),
+                       ("progress", "submit", "gate", "accept"), ("claim",),
+                       ("accept", "claim")):
+            d, refusals = dr.acceptance_ordering_deferral(
+                _req_row(events=events), _ver_row(classification=_attestation()),
+                producer="orchestrator")
+            self.assertIsNone(d, f"lifecycle_events {events} must keep gating")
+            self.assertTrue(any("SOLE" in r or "outside acceptance ordering" in r
+                                for r in refusals))
+        # empty/malformed lifecycle_events fail closed
+        for events in ((), None, "accept", [1]):
+            row = _req_row()
+            row["applicability"]["lifecycle_events"] = events
+            d, refusals = dr.acceptance_ordering_deferral(
+                row, _ver_row(classification=_attestation()), producer="orchestrator")
+            self.assertIsNone(d, f"lifecycle_events {events!r} must fail closed")
+
+    def test_condition4_only_obligation_and_sequencing_are_eligible(self):
+        self.assertEqual(dr.LIFECYCLE_ELIGIBLE_CLASSIFICATIONS,
+                         frozenset({"obligation", "sequencing"}))
+        for cls in ("obligation", "sequencing"):
+            d, _ = dr.acceptance_ordering_deferral(
+                _req_row(classification=cls), _ver_row(classification=_attestation()),
+                producer="orchestrator")
+            self.assertIsNotNone(d, f"{cls} must be eligible")
+        # a BAR on acceptance can never be deferred, however well attested.
+        for cls in ("prohibition", "hold", "decision", "authorization", "dependency",
+                    "harness", "evidence", "external_fact", "return", "", None):
+            d, refusals = dr.acceptance_ordering_deferral(
+                _req_row(classification=cls), _ver_row(classification=_attestation()),
+                producer="orchestrator")
+            self.assertIsNone(d, f"classification {cls!r} must never be deferred")
+            self.assertTrue(any("acceptance-ordering ACT" in r for r in refusals))
+
+    def test_condition5_negative_verifier_finding_never_deferred(self):
+        for state in sorted(dr.NEGATIVE_VERIFICATION_STATES):
+            d, refusals = dr.acceptance_ordering_deferral(
+                _req_row(), _ver_row(state=state, classification=_attestation()),
+                producer="orchestrator")
+            self.assertIsNone(d, f"state {state} is a substantive negative finding")
+            self.assertTrue(any("negative finding" in r for r in refusals))
+        self.assertEqual(dr.NEGATIVE_VERIFICATION_STATES, frozenset({"FAIL", "BLOCKED"}))
+
+    def test_missing_requirement_row_fails_closed(self):
+        d, refusals = dr.acceptance_ordering_deferral(
+            None, _ver_row(classification=_attestation()), producer="orchestrator")
+        self.assertIsNone(d)
+        self.assertTrue(any("no requirement row" in r for r in refusals))
+
+    def test_no_claim_means_ordinary_gating_with_no_noise(self):
+        d, refusals = dr.acceptance_ordering_deferral(
+            _req_row(), _ver_row(), producer="orchestrator")
+        self.assertIsNone(d)
+        self.assertEqual(refusals, [], "a row making no lifecycle claim gates silently")
+        # a malformed claim object is loud, not silent
+        d, refusals = dr.acceptance_ordering_deferral(
+            _req_row(), _ver_row(classification="yes please"), producer="orchestrator")
+        self.assertIsNone(d)
+        self.assertTrue(refusals)
+
+    def test_classifier_is_general_no_allowlist_flag_or_env_override(self):
+        """AS-3 / D-004-R632, matching the standard set by invalid_unblock_roster."""
+        src = (HERE / "directive_registry.py").read_text(encoding="utf-8")
+        tree = ast.parse(src)
+        body = None
+        for node in ast.walk(tree):
+            if isinstance(node, ast.FunctionDef) and node.name == "acceptance_ordering_deferral":
+                stmts = list(node.body)
+                self.assertTrue(
+                    stmts and isinstance(stmts[0], ast.Expr)
+                    and isinstance(stmts[0].value, ast.Constant)
+                    and isinstance(stmts[0].value.value, str),
+                    "AS-12: the classifier must carry a docstring stating its contract")
+                body = "\n".join(ast.unparse(s) for s in stmts[1:])
+        self.assertIsNotNone(body, "the classifier function must exist")
+        self.assertNotRegex(body, r"M\d+-T\d{3}",
+                            "classifier code must name no ledger task id")
+        self.assertNotRegex(body, r"D-\d{3}-R\d{3}",
+                            "classifier code must name no specific requirement id")
+        for tok in ("getenv", "environ", "force", "bypass", "override", "skip", "allowlist"):
+            self.assertNotIn(tok, body.lower(), f"classifier code must carry no {tok!r} token")
+        for const in ("ACCEPTANCE_ORDERING_ACT_CLASSES", "ACCEPTANCE_ORDERING_LIFECYCLE_EVENTS",
+                      "LIFECYCLE_ELIGIBLE_CLASSIFICATIONS", "NEGATIVE_VERIFICATION_STATES"):
+            self.assertIn(const, body, f"the classifier must use the named constant {const}")
+        # AS-10: the eight candidate rows are the independent verifier's call; neither
+        # module may name (and thereby pre-classify) any of them.
+        pc_src = (HERE / "project_control.py").read_text(encoding="utf-8")
+        for rid in ("D-004-R322", "D-004-R323", "D-004-R388", "D-004-R389",
+                    "D-004-R486", "D-004-R487", "D-004-R488", "D-004-R501"):
+            self.assertNotIn(rid, src, f"{rid} must not be named in directive_registry.py")
+            self.assertNotIn(rid, pc_src, f"{rid} must not be named in project_control.py")
+
+    def test_as12_rule_is_documented_in_the_code(self):
+        """AS-12: a future reviewer audits a STATED RULE, not inferred behavior."""
+        src = (HERE / "directive_registry.py").read_text(encoding="utf-8")
+        self.assertIn("ACCEPTANCE-ORDERING LIFECYCLE CLASSIFICATION", src)
+        self.assertIn("CONJUNCTIVE", src)
+        for n in ("(1)", "(2)", "(3)", "(4)", "(5)"):
+            self.assertIn(n, src, f"the stated rule must enumerate condition {n}")
+        self.assertIn("no special-cased task id, no flag, and no environment override", src,
+                      "the rule must state its own generality, matching invalid_unblock_roster")
+        self.assertIn("KNOWN LIMIT", src,
+                      "the stated rule must disclose what it cannot discriminate")
+
+
+class ReviewedShaComparisonTests(unittest.TestCase):
+    """D-004-R630: reviewed_sha is ACTUALLY compared; a stale one fails closed."""
+
+    def setUp(self):
+        self.tmp = Path(tempfile.mkdtemp(prefix="revsha-"))
+
+    def tearDown(self):
+        shutil.rmtree(self.tmp, ignore_errors=True)
+
+    def _reg(self, recorded_sha):
+        reg = _make_two_task_v2_registry(self.tmp, idA="a" * 64, idB="b" * 64)
+        d = reg.get("D-700")
+        for tv in d.verification["task_verifications"]:
+            if tv["task_id"] == "M9-T001":
+                tv["reviewed_sha"] = recorded_sha
+        return reg
+
+    def test_matching_reviewed_sha_passes(self):
+        reg = self._reg("c" * 40)
+        self.assertEqual(
+            reg.task_unresolved_requirements("D-700", "M9-T001",
+                                             {"D-700-R001", "D-700-R002"}, "a" * 64,
+                                             reviewed_sha="c" * 40), [])
+
+    def test_stale_reviewed_sha_fails_closed(self):
+        reg = self._reg("c" * 40)
+        rs = reg.task_unresolved_requirements("D-700", "M9-T001",
+                                              {"D-700-R001", "D-700-R002"}, "a" * 64,
+                                              reviewed_sha="d" * 40)
+        self.assertTrue(any("reviewed_sha is stale" in r for r in rs), rs)
+
+    def test_missing_reviewed_sha_fails_closed(self):
+        reg = self._reg(None)
+        rs = reg.task_unresolved_requirements("D-700", "M9-T001",
+                                              {"D-700-R001", "D-700-R002"}, "a" * 64,
+                                              reviewed_sha="d" * 40)
+        self.assertTrue(any("reviewed_sha is stale" in r for r in rs), rs)
+
+    def test_backward_compatible_when_no_sha_supplied(self):
+        """The pre-existing 4-argument call is unchanged (AS-8)."""
+        reg = self._reg(None)
+        self.assertEqual(
+            reg.task_unresolved_requirements("D-700", "M9-T001",
+                                             {"D-700-R001", "D-700-R002"}, "a" * 64), [])
+
+
+class ControlPlaneMaterialIdentityTests(unittest.TestCase):
+    """D-004-R630: governance-shaped scopes get REAL staleness and dirt guards."""
+
+    CP = ("project-control/",)
+    PATHS = ["project-control/tasks/M9-T001.json",
+             "project-control/reports/M9-T001-producer-report.md"]
+
+    def setUp(self):
+        self.tmp = Path(tempfile.mkdtemp(prefix="cpident-"))
+        _init_repo(self.tmp)
+        (self.tmp / "project-control" / "tasks").mkdir(parents=True)
+        (self.tmp / "project-control" / "reports").mkdir(parents=True)
+        self.packet = self.tmp / "project-control" / "tasks" / "M9-T001.json"
+        self.report = self.tmp / "project-control" / "reports" / "M9-T001-producer-report.md"
+        self._write_packet(status="claimed", progress=10, objective="original objective")
+        self.report.write_text("original report\n", encoding="utf-8")
+        self.head = self._commit()
+
+    def tearDown(self):
+        shutil.rmtree(self.tmp, ignore_errors=True)
+
+    def _write_packet(self, status, progress, objective,
+                      updated_at="2026-07-31T00:00:00+00:00"):
+        _write(self.packet, {
+            "task_id": "M9-T001", "title": "t", "task_type": "governance",
+            "milestone_id": "M0", "objective": objective, "inputs": [], "outputs": [],
+            "dependencies": [], "allowed_paths": list(self.PATHS), "forbidden_paths": [],
+            "acceptance_scenarios": [], "required_gates": ["G0", "G3"], "risks": [],
+            "blockers": [], "status": status, "progress_percent": progress,
+            "updated_at": updated_at, "progress_log": []})
+
+    def _commit(self, msg="c"):
+        _git(self.tmp, "add", "-A")
+        _git(self.tmp, "commit", "-q", "-m", msg)
+        return _git(self.tmp, "rev-parse", "HEAD").stdout.decode().strip()
+
+    def _identity(self, sha=None):
+        ident, rsha, err = dr.frozen_git_identity(
+            self.PATHS, reviewed_sha=sha, root=self.tmp, exclude_prefixes=self.CP,
+            require_clean=False, control_plane_prefixes=self.CP)
+        self.assertIsNone(err, err)
+        return ident
+
+    # ---- the defect being closed -----------------------------------------
+
+    def test_old_guard_was_provably_vacuous(self):
+        ident, entries, err = dr.git_tree_manifest(self.tmp, "HEAD", self.PATHS,
+                                                   exclude_prefixes=self.CP)
+        self.assertIsNone(err)
+        self.assertEqual(entries, [], "the raw-blob manifest excludes the whole scope")
+        self.assertEqual(ident, EMPTY_SET_IDENTITY,
+                         "the OLD identity for a governance-shaped scope is the empty-set hash")
+        dirty, err = dr.relevant_working_tree_dirty(self.tmp, self.PATHS,
+                                                    exclude_prefixes=self.CP)
+        self.assertEqual(dirty, [], "the OLD dirt guard drops every candidate")
+
+    def test_new_identity_is_not_the_empty_set_hash(self):
+        ident = self._identity()
+        self.assertNotEqual(ident, EMPTY_SET_IDENTITY)
+        entries, err = dr.control_plane_entries(self.tmp, "HEAD", self.PATHS, self.CP)
+        self.assertIsNone(err)
+        self.assertEqual(len(entries), 2)
+        packet_entry = [e for e in entries if e[0].startswith("project-control/tasks/")][0]
+        self.assertTrue(packet_entry[3].startswith(dr.MATERIAL_ENTRY_PREFIX),
+                        "a task packet contributes its MATERIAL digest")
+        report_entry = [e for e in entries if e[0].endswith(".md")][0]
+        self.assertFalse(report_entry[3].startswith(dr.MATERIAL_ENTRY_PREFIX),
+                         "every other control-plane file contributes its git blob id")
+
+    # ---- what moves the identity, and what deliberately does not ---------
+
+    def test_non_packet_change_moves_the_identity(self):
+        before = self._identity()
+        self.report.write_text("REVISED report\n", encoding="utf-8")
+        self._commit("edit report")
+        self.assertNotEqual(before, self._identity(),
+                            "a committed change to a control-plane file in scope must move it")
+
+    def test_material_packet_amendment_moves_the_identity(self):
+        before = self._identity()
+        self._write_packet(status="claimed", progress=10, objective="MATERIALLY different")
+        self._commit("material amendment")
+        self.assertNotEqual(before, self._identity())
+
+    def test_lifecycle_only_packet_change_does_not_move_the_identity(self):
+        """The stated resolution: lifecycle bookkeeping is not content staleness."""
+        before = self._identity()
+        head_before = self.head
+        # Exactly the delta the fifth independent pass found on the real packet:
+        # status, progress_percent and updated_at, and nothing else.
+        self._write_packet(status="awaiting_gate", progress=85,
+                           objective="original objective",
+                           updated_at="2026-07-31T09:30:00+00:00")
+        after_sha = self._commit("lifecycle-only transition")
+        self.assertNotEqual(head_before, after_sha, "the commit really happened")
+        self.assertEqual(before, self._identity(),
+                         "status/progress/updated_at churn must not read as content staleness")
+        # ...and the differing packet keys really are lifecycle-only.
+        old = json.loads(_git(self.tmp, "show", f"{head_before}:{self.PATHS[0]}"
+                              ).stdout.decode("utf-8-sig"))
+        new = _read(self.packet)
+        differing = {k for k in set(old) | set(new) if old.get(k) != new.get(k)}
+        self.assertEqual(differing, {"status", "progress_percent", "updated_at"})
+        self.assertEqual(dr.material_digest(old), dr.material_digest(new))
+
+    def test_raw_blob_control_plane_identity_would_be_unusable(self):
+        """WHY the exclusion cannot simply be dropped: the packet's blob id changes on a
+        lifecycle-only transition, so a raw-blob control-plane identity stamped at submit
+        is stale before accept() ever runs."""
+        blob_before, _, err = dr.git_tree_manifest(self.tmp, "HEAD", self.PATHS)
+        self.assertIsNone(err)
+        material_before = self._identity()
+        self._write_packet(status="awaiting_gate", progress=85, objective="original objective")
+        self._commit("lifecycle-only transition")
+        blob_after, _, _ = dr.git_tree_manifest(self.tmp, "HEAD", self.PATHS)
+        self.assertNotEqual(blob_before, blob_after,
+                            "a raw-blob identity moves on pure lifecycle bookkeeping, so an "
+                            "identity stamped at submit is stale before accept() runs")
+        self.assertEqual(material_before, self._identity(),
+                         "the material identity is stable across that same transition")
+
+    # ---- the dirt guard ---------------------------------------------------
+
+    def test_dirty_control_plane_file_is_detected(self):
+        self.report.write_text("uncommitted edit\n", encoding="utf-8")
+        dirty, err = dr.control_plane_material_dirty(self.tmp, self.PATHS, self.CP)
+        self.assertIsNone(err)
+        self.assertEqual([p for _xy, p in dirty], [self.PATHS[1]])
+        ident, sha, err = dr.frozen_git_identity(
+            self.PATHS, root=self.tmp, exclude_prefixes=self.CP, require_clean=True,
+            control_plane_prefixes=self.CP)
+        self.assertIsNotNone(err)
+        self.assertIn("dirty", err)
+
+    def test_untracked_control_plane_file_is_detected(self):
+        (self.tmp / "project-control" / "reports" / "M9-T001-extra.md").write_text(
+            "new\n", encoding="utf-8")
+        dirty, err = dr.control_plane_material_dirty(
+            self.tmp, ["project-control/reports"], self.CP)
+        self.assertIsNone(err)
+        self.assertTrue(any(p.endswith("M9-T001-extra.md") for _xy, p in dirty))
+
+    def test_material_uncommitted_packet_edit_is_dirty(self):
+        self._write_packet(status="claimed", progress=10, objective="MATERIALLY different")
+        dirty, err = dr.control_plane_material_dirty(self.tmp, self.PATHS, self.CP)
+        self.assertIsNone(err)
+        self.assertEqual([p for _xy, p in dirty], [self.PATHS[0]])
+
+    def test_lifecycle_only_uncommitted_packet_edit_is_not_dirty(self):
+        """Required for the control plane to function at all: submit/gate write the
+        packet, so a lifecycle-only working-tree delta must not fail the guard closed."""
+        self._write_packet(status="awaiting_gate", progress=85, objective="original objective")
+        dirty, err = dr.control_plane_material_dirty(self.tmp, self.PATHS, self.CP)
+        self.assertIsNone(err)
+        self.assertEqual(dirty, [])
+
+    def test_deleted_packet_is_dirty(self):
+        self.packet.unlink()
+        dirty, err = dr.control_plane_material_dirty(self.tmp, self.PATHS, self.CP)
+        self.assertIsNone(err)
+        self.assertEqual([p for _xy, p in dirty], [self.PATHS[0]])
+
+    def test_unparseable_packet_is_dirty(self):
+        self.packet.write_text("{ not json", encoding="utf-8")
+        dirty, err = dr.control_plane_material_dirty(self.tmp, self.PATHS, self.CP)
+        self.assertIsNone(err)
+        self.assertEqual([p for _xy, p in dirty], [self.PATHS[0]],
+                         "an unreadable packet must fail closed as dirt")
+
+    def test_unparseable_packet_at_commit_fails_the_identity_closed(self):
+        self.packet.write_text("{ not json", encoding="utf-8")
+        self._commit("corrupt packet")
+        entries, err = dr.control_plane_entries(self.tmp, "HEAD", self.PATHS, self.CP)
+        self.assertIsNone(entries)
+        self.assertIn("not valid JSON", err)
+        ident, _sha, ierr = dr.frozen_git_identity(
+            self.PATHS, root=self.tmp, exclude_prefixes=self.CP, require_clean=False,
+            control_plane_prefixes=self.CP)
+        self.assertIsNone(ident)
+        self.assertIn("not valid JSON", ierr)
+
+    # ---- no regression outside the control-plane tree --------------------
+
+    def test_ordinary_scopes_are_byte_identical_to_before(self):
+        (self.tmp / "probe.txt").write_text("p\n", encoding="utf-8")
+        self._commit("probe")
+        raw, _entries, err = dr.git_tree_manifest(self.tmp, "HEAD", ["probe.txt"],
+                                                  exclude_prefixes=self.CP)
+        self.assertIsNone(err)
+        ident, _sha, err = dr.frozen_git_identity(
+            ["probe.txt"], root=self.tmp, exclude_prefixes=self.CP, require_clean=False,
+            control_plane_prefixes=self.CP)
+        self.assertIsNone(err)
+        self.assertEqual(raw, ident,
+                         "a scope with no control-plane paths keeps its existing identity")
+
+
 if __name__ == "__main__":
     unittest.main(verbosity=2)
