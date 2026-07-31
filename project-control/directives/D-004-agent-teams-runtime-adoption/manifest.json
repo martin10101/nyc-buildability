@@ -1,7 +1,7 @@
 {
   "schema": "directive_manifest/v1",
   "directive_id": "D-004",
-  "version": 17,
+  "version": 18,
   "slug": "agent-teams-runtime-adoption",
   "title": "Agent-teams runtime adoption, staged with pilots",
   "status": "active",
@@ -145,6 +145,14 @@
       "amends": "source-001.md",
       "recorded_at": "2026-07-31T00:00:00+00:00",
       "content_digest_sha256": "45c83f0eb1fe2089fe59231a3345467e04d83de1634db7f68ce279c082126a20"
+    },
+    {
+      "file": "source-018-amendment.md",
+      "kind": "amendment",
+      "sequence": 18,
+      "amends": "source-001.md",
+      "recorded_at": "2026-07-31T17:53:52+00:00",
+      "content_digest_sha256": "9606c569c771fcf249f877892a8500178b075c0fb07ab7dfb5ce6fcb57bb7c9e"
     }
   ],
   "amendments": [
@@ -163,7 +171,8 @@
     "source-014-amendment.md",
     "source-015-amendment.md",
     "source-016-amendment.md",
-    "source-017-amendment.md"
+    "source-017-amendment.md",
+    "source-018-amendment.md"
   ],
   "supersedes": [],
   "superseded_by": null,
@@ -291,7 +300,7 @@
     "Amendment 8 (source-009, rows D-004-R307-R326): owner decision captured 2026-07-30 at live-reconciled head 87e0ad6d87fa3e45cf647ebe45bf7db4029e7b75 (post PR #128; expected state verified in every particular). Three decisions plus one GO: (1) TEMPORARY model-availability exception - Fable 5 exhausted, so the lead runs Opus 5 and every gate reviewer/verifier is spawned with EXPLICIT Opus 5; this supersedes only the VALUE clauses of R090/R161 and the lead clause of R298, temporarily, until the owner restores Fable 5; independence, verbatim-evidence, effort, and settings clauses are unchanged and re-affirmed; the actual model used must be recorded and never misreported. (2) WORKTREE decision - the harness-isolation + attestation + exact-diff-port mechanism is accepted as disclosed and becomes the mechanism Step 5 must describe; the literal pre-created-worktree wording is superseded as mechanically unsatisfiable. (3) STEP-4 evidence accepted including the disclosed post-gate model switch; no M2-T018/M4-T008 rerun. (4) GO for the M0-T027 closeout ONLY, with an explicit not-authorized list and a STOP-and-present-proposed-Step-5 terminus. Session-conduct rows use the sentinel D-004-STEP4CLOSE; closeout-binding rows carry M0-T027 so the resolver derives them for that packet. No existing source or requirement row edited."
   ],
   "created_at": "2026-07-24T00:00:00+00:00",
-  "updated_at": "2026-07-31T00:00:00+00:00",
+  "updated_at": "2026-07-31T17:53:52+00:00",
   "audit_log": [
     {
       "at": "2026-07-24T00:00:00+00:00",
@@ -377,6 +386,11 @@
       "at": "2026-07-31T00:00:00+00:00",
       "by": "orchestrator",
       "note": "Amendment 16 captured verbatim as source-017-amendment.md (sha256 45c83f0eb1fe2089fe59231a3345467e04d83de1634db7f68ce279c082126a20) on branch control/M0-T027-consolidated-capture, branched from origin/main ffacee91b738cd742e72d8c52091e8400d932a87 (the merge commit of PR #135). 57 append-only rows D-004-R593..R649 (total 592 -> 649), all scoped to the D-004-OPTIONB session sentinel; M0-T027's applicable set is unchanged and no row of this amendment enters it. THE CONSOLIDATED CAPTURE BATCH the owner ordered. It captures three owner messages verbatim - Message D (the three open items, including the Message C confirmation that resolves the standing condition on R573/R575), Message E (the MERGE AUTHORIZATION that supports R479 for the PR #135 merge, plus the path-3 decision), and Message F (the execution-order decisions that authorize this very batch). It carries a COMMENCEMENT CLAUSE at R593: the captured text authorizes its own commit and the merge of its PR once CI is green and the diff has been shown to the owner. CURES: (1) R479, which was left unsupported when PR #135 merged while 11 requirements were UNVERIFIABLE and the pass-5 verdict was FAIL - the fifth verifier declined to adjudicate without the authorization, which is now Message E in the repository; (2) R578's misattribution, by authoritative new rows R640/R641 - the commit authorization came from Message B, not Message A, which expressly forbade committing; R578's locked text stands unedited by owner ruling; (3) six Message A/B obligations previously omitted or combined, now atomic rows R642-R647; (4) the source-012 arithmetic erratum, corrected at R648/R649 - the map held 128 at origin/main, the resolver derives 233, and 97 was the stale verification.json row count. Decomposed per the intake standard with no weakening, combining, or omission, per R626. PATH 3 IS OPTION (ii): no requirement row's applicability is edited in place; the append-only invariant is not holed. No redaction was required - none of the three messages contains a session identifier, username, absolute path, or hostname."
+    },
+    {
+      "at": "2026-07-31T17:53:52+00:00",
+      "by": "orchestrator",
+      "note": "Amendment 17 captured verbatim as source-018-amendment.md (sha256 9606c569c771fcf249f877892a8500178b075c0fb07ab7dfb5ce6fcb57bb7c9e) on branch control/M0-T034-closeout-authorization-capture, branched from origin/main dc842e87f6f03871dff877331da52feab472a460 (the merge commit of PR #136). 51 append-only rows D-004-R650..R700 (total 649 -> 700), all scoped to the D-004-OPTIONB session sentinel; M0-T027's applicable set is unchanged and no row of this amendment enters it. Captures the owner's round-3 gating riders and the ONE-SHOT CLOSEOUT AND HANDOFF AUTHORIZATION (Steps 0-7), delivered mid-turn into the round-3 producer session, refused by the producer as orchestrator-only authority, and recovered verbatim from that session's stored transcript. Steps 1-7 are CONDITIONAL on both current-round gate verdicts (G3, G5 at frozen SHA dbf0a887) being PASS (R661). Rows record which prohibitions each step lifts and for which acts: R666 (the M0-T034 merge), R674 (conditional M0-T027 acceptance, R486), R679 (the efficiency-draft capture hold), R685 (the supervisor-directive queued-draft hold, Phase 0 scope only). External-fact anchors verified at capture: efficiency draft v1.2 bytes match bd6c4ec2...; supervisor directive bytes match 426da3bb... at an on-disk basename carrying a literal ' (1)' suffix (digest anchors, not basename). The producer's factual correction to the owner's agent-memory sentence is recorded at R660. Commencement clause: this capture authorizes its own commit and the merge of its PR once CI is green. No redaction was required."
     }
   ],
   "locked_requirement_ids": [
@@ -1028,8 +1042,59 @@
     "D-004-R646",
     "D-004-R647",
     "D-004-R648",
-    "D-004-R649"
+    "D-004-R649",
+    "D-004-R650",
+    "D-004-R651",
+    "D-004-R652",
+    "D-004-R653",
+    "D-004-R654",
+    "D-004-R655",
+    "D-004-R656",
+    "D-004-R657",
+    "D-004-R658",
+    "D-004-R659",
+    "D-004-R660",
+    "D-004-R661",
+    "D-004-R662",
+    "D-004-R663",
+    "D-004-R664",
+    "D-004-R665",
+    "D-004-R666",
+    "D-004-R667",
+    "D-004-R668",
+    "D-004-R669",
+    "D-004-R670",
+    "D-004-R671",
+    "D-004-R672",
+    "D-004-R673",
+    "D-004-R674",
+    "D-004-R675",
+    "D-004-R676",
+    "D-004-R677",
+    "D-004-R678",
+    "D-004-R679",
+    "D-004-R680",
+    "D-004-R681",
+    "D-004-R682",
+    "D-004-R683",
+    "D-004-R684",
+    "D-004-R685",
+    "D-004-R686",
+    "D-004-R687",
+    "D-004-R688",
+    "D-004-R689",
+    "D-004-R690",
+    "D-004-R691",
+    "D-004-R692",
+    "D-004-R693",
+    "D-004-R694",
+    "D-004-R695",
+    "D-004-R696",
+    "D-004-R697",
+    "D-004-R698",
+    "D-004-R699",
+    "D-004-R700"
   ],
-  "requirements_id_digest_sha256": "17d725e9d1459e083b4d978a248816a2b16472547c3dfaed8c5da61aa568a428",
-  "requirements_content_digest_sha256": "6669853ace60fb7529c10740884324c62b19f162f2afcde6812f42a07583ce1d"
+  "requirements_id_digest_sha256": "1884bf7966aa879b5f401044e7fcc7bedc9c06f156f560473f2906b20b51fdb0",
+  "requirements_content_digest_sha256": "afa8b8bb4cfb753d04ef09d922e8d6ef35201c7e6086f5f380bddc0676c8d76d"
 }
