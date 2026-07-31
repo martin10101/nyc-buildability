@@ -77,7 +77,7 @@
   ],
   "blockers": [],
   "created_at": "2026-07-24T18:23:08.048623+00:00",
-  "updated_at": "2026-07-31T04:40:02.965885+00:00",
+  "updated_at": "2026-07-31T19:32:55.939732+00:00",
   "directive_refs": [
     {
       "directive_id": "D-004",
@@ -137,6 +137,13 @@
       "percent": 90,
       "status": "in_progress",
       "message": "PHASE 4 steps 5-7 COMPLETE; STOPPED at step 8 on a BLOCKED independent verification. Four independent reviewers dispatched read-only at ONE frozen identity 3ed05fda6d434670e5b610e6dad7a8b224a9aa94, all at EXPLICIT OPUS 5 under D-004-R307; every return preserved VERBATIM (D-004-R385/R468) and nothing edited, softened, or summarized. VERDICTS: code-reviewer G3 = PASS with four required corrections; security-reviewer G5 = PASS, no rework; control-plane-verifier = PASS with five observations; directive-compliance-verifier = BLOCKED. Gates recorded: G0 PASS (historical, byte-verified unaltered), G2 PASS self_check, G3 PASS, G5 PASS - all four required gates now carry a lawful record, no reviewer equals the producer. G3 REWORK APPLIED (all append-only, no historical record touched): D-1 the three evidence-map pointers that named a section and a file not existing at the frozen head are repointed to the artifacts that now exist; D-2 the inherited D-004-R122 pointer that cited sections 2-3 is repointed to section 4 and the carry-forward disclosed rather than silently fixed; D-3 reviewed_sha and content_manifest_sha256 restored to the evidence map; D-4 the AS-9 wording gap disclosed in new section 13.11. Evidence-map id set unchanged at exactly the 233 resolver-derived ids; only pointer text and the two identity fields changed. STOP RECORDED HONESTLY (D-004-R479/R387/R480): the directive-compliance-verifier returned BLOCKED and this closeout did NOT submit, merge, or accept. No reviewer was re-run for a better answer and no red result was called green. What it actually found: ZERO requirements violated - 0 FAIL, 0 BLOCKED-by-defect, 204/233 PASS on primary evidence it reproduced itself, and all of Phase 3 plus Phase-4 steps 1-4 fully verified and clean. Its 29 UNVERIFIABLE rows are evidence that CANNOT exist at a pre-gate frozen head (G3/G5 records, preserved returns, model disclosures, and the whole submit-PR-CI-merge-reverify-accept sequence), which the owner's own Phase-4 ordering places after this wave. STRUCTURAL FINDING FOR THE OWNER: a single directive verification at the pre-gate identity can never reach PASS, because about 12 percent of the applicable set describes acts that follow it; the registry precedent is a second pass at the last pre-accept identity (verification.json records M0-T028 at 177/177 PASS and M0-T033 at 52/52 PASS, both at a pre-accept SHA), which the verifier itself prescribes. Two of its four stated conditions are now satisfied (returns verbatim, models honest) and the G3/G5 records close a third; the remaining one needs the second pass. verification.json still holds the stale 97-row M0-T027 block against 233 derived, so accept() would refuse regardless - fail-closed, verified in code by two reviewers. Owner decision required before merge/accept."
+    },
+    {
+      "at": "2026-07-31T19:32:47.086090+00:00",
+      "agent": "orchestrator",
+      "percent": 85,
+      "status": "rework",
+      "message": "STEP 2 of the closeout authorization (D-004-R669, amendment 17): lawful transition awaiting_gate->rework solely to re-submit under the corrected content identity. The prior submit (commit 16ae458) stamped identity e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855 (the pre-M0-T034 empty-set hash) at reviewed_sha f08769e; the merged M0-T034 identity rule now derives 29a094ebdf312767b2ffa964a9cfb0398432e8838db0a211a711f1dd8db2bb97 at 3b3964f. No evidence content changes; all evidence committed BEFORE submit (verified: _task_git_identity returns the corrected identity with no dirty/untracked failure). Re-submit follows immediately."
     }
   ]
 }
