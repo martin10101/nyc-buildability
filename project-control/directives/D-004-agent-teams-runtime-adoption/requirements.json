@@ -2,9 +2,9 @@
   "schema": "directive_requirements/v1",
   "directive_id": "D-004",
   "version": 1,
-  "requirement_count": 700,
+  "requirement_count": 717,
   "producer": "orchestrator",
-  "updated_at": "2026-07-31T17:53:52+00:00",
+  "updated_at": "2026-07-31T21:07:43+00:00",
   "requirements": [
     {
       "id": "D-004-R001",
@@ -27540,6 +27540,667 @@
         "tasks": []
       },
       "amendment_sequence": 18
+    },
+    {
+      "id": "D-004-R701",
+      "text": "RE-ORIENT correction of record: the branch the orchestrator reported as local-only was never local-only - it was pushed with open PR #141 the whole time; its first commit 148d13b is already reachable from ebb52e1 because the orchestrator's stop branch was built on it, so the tracked supervisor directive v4.3 and the tracked pending-capture record are ALREADY on main via the #142 merge; the branch's only net delta was 9790f8e (the .gitattributes LF pin protecting the R685 digest anchor from autocrlf checkouts), merged by the owner as PR #141. Nothing about that branch remains to push or hold.",
+      "source_ref": "source-019-amendment.md#re-orient-first",
+      "classification": "external_fact",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "D-004-OPTIONB"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [],
+        "lifecycle_events": [
+          "gate",
+          "accept"
+        ],
+        "effective_date": "2026-07-31"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured by amendment 18 (source-019); session-sentinel scope, deliberately NOT applicable to M0-T027; verified at D-004 verification",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      },
+      "amendment_sequence": 19
+    },
+    {
+      "id": "D-004-R702",
+      "text": "RE-ORIENT: pull main; verify .claude/CODEX_CLAUDE_SUPERVISOR_BUILD_DIRECTIVE_v4.3.md hashes to 426da3bb22714a403553b013e8969c6bfa424ee01d99e10d1269d0b65e0f5137 and project-control/directives/PENDING-CAPTURE-dispatch-efficiency-and-graph-wiring.md is present; on any mismatch, stop and report.",
+      "source_ref": "source-019-amendment.md#re-orient-first",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "D-004-OPTIONB"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [],
+        "lifecycle_events": [
+          "gate",
+          "accept"
+        ],
+        "effective_date": "2026-07-31"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured by amendment 18 (source-019); session-sentinel scope, deliberately NOT applicable to M0-T027; verified at D-004 verification",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      },
+      "amendment_sequence": 19
+    },
+    {
+      "id": "D-004-R703",
+      "text": "RE-ORIENT: delete the merged local branch control/track-closeout-artifacts only. (At capture time this deletion had already been performed by the owner's gh pr merge --delete-branch; verified rather than re-performed.)",
+      "source_ref": "source-019-amendment.md#re-orient-first",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "D-004-OPTIONB"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [],
+        "lifecycle_events": [
+          "gate",
+          "accept"
+        ],
+        "effective_date": "2026-07-31"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured by amendment 18 (source-019); session-sentinel scope, deliberately NOT applicable to M0-T027; verified at D-004 verification",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      },
+      "amendment_sequence": 19
+    },
+    {
+      "id": "D-004-R704",
+      "text": "RE-ORIENT prohibition - known owner-plane local state, not the orchestrator's to touch, clean, or reconcile: the local branch bad-amend-backup (owner bookmark); the modified tracked agent-memory file (the 2026-07-29 M0-T031 worktree-isolation learning, preserved by the owner off-repo, backlogged for a controlled reconciliation); the untracked agent-memory files; and the untracked root efficiency draft (untracked by design).",
+      "source_ref": "source-019-amendment.md#re-orient-first",
+      "classification": "prohibition",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "D-004-OPTIONB"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [],
+        "lifecycle_events": [
+          "gate",
+          "accept"
+        ],
+        "effective_date": "2026-07-31"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured by amendment 18 (source-019); session-sentinel scope, deliberately NOT applicable to M0-T027; verified at D-004 verification",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      },
+      "amendment_sequence": 19
+    },
+    {
+      "id": "D-004-R705",
+      "text": "RE-ORIENT: report the KEY NAMES ONLY (no values) of the untracked root .npmrc, without modifying or deleting it.",
+      "source_ref": "source-019-amendment.md#re-orient-first",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "D-004-OPTIONB"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [],
+        "lifecycle_events": [
+          "gate",
+          "accept"
+        ],
+        "effective_date": "2026-07-31"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured by amendment 18 (source-019); session-sentinel scope, deliberately NOT applicable to M0-T027; verified at D-004 verification",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      },
+      "amendment_sequence": 19
+    },
+    {
+      "id": "D-004-R706",
+      "text": "DECISION 1 (F-1, route (a), scoped): the accept-stage clauses of exactly R322, R323, and R388 are ruled DISCHARGED-BY-DECOMPOSITION. Basis, cited as settled findings from project-control/reports/M0-T027-dcv-final-verification.md section 3.3: every non-accept clause of the three rows is individually verified satisfied, and amendment 9's atomic rows R481-R488 govern the identical submit-to-accept sequence correctly (R481-R485 PASS on completed evidence; R486-R488 defer with attestations).",
+      "source_ref": "source-019-amendment.md#decision-1-f1-discharged-by-decomposition",
+      "classification": "decision",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "D-004-OPTIONB"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [],
+        "lifecycle_events": [
+          "gate",
+          "accept"
+        ],
+        "effective_date": "2026-07-31"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured by amendment 18 (source-019); session-sentinel scope, deliberately NOT applicable to M0-T027; verified at D-004 verification",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      },
+      "amendment_sequence": 19
+    },
+    {
+      "id": "D-004-R707",
+      "text": "DECISION 1 restriction: the discharged-by-decomposition ruling names R322, R323, and R388 only; it is not a class rule, not precedent for future compound rows, and does not modify M0-T034 condition (3) or any mechanism.",
+      "source_ref": "source-019-amendment.md#decision-1-f1-discharged-by-decomposition",
+      "classification": "prohibition",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "D-004-OPTIONB"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [],
+        "lifecycle_events": [
+          "gate",
+          "accept"
+        ],
+        "effective_date": "2026-07-31"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured by amendment 18 (source-019); session-sentinel scope, deliberately NOT applicable to M0-T027; verified at D-004 verification",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      },
+      "amendment_sequence": 19
+    },
+    {
+      "id": "D-004-R708",
+      "text": "DECISION 1 sequencing: any future compound-row conflict returns to the owner.",
+      "source_ref": "source-019-amendment.md#decision-1-f1-discharged-by-decomposition",
+      "classification": "sequencing",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "D-004-OPTIONB"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [],
+        "lifecycle_events": [
+          "gate",
+          "accept"
+        ],
+        "effective_date": "2026-07-31"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured by amendment 18 (source-019); session-sentinel scope, deliberately NOT applicable to M0-T027; verified at D-004 verification",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      },
+      "amendment_sequence": 19
+    },
+    {
+      "id": "D-004-R709",
+      "text": "DECISION 2 (verification.json): leave the stale block in place; do not write BLOCKED. The lawful accept path rewrites it at acceptance; record that this staleness is known and deliberate.",
+      "source_ref": "source-019-amendment.md#decision-2-verification-json",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "D-004-OPTIONB"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [],
+        "lifecycle_events": [
+          "accept"
+        ],
+        "effective_date": "2026-07-31"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured by amendment 18 (source-019); session-sentinel scope, deliberately NOT applicable to M0-T027; verified at D-004 verification",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      },
+      "amendment_sequence": 19
+    },
+    {
+      "id": "D-004-R710",
+      "text": "DECISION 2 hard stop: if the accept path rejects the stale verification.json, stop and report - do not rewrite it out of band.",
+      "source_ref": "source-019-amendment.md#decision-2-verification-json",
+      "classification": "prohibition",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "D-004-OPTIONB"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [],
+        "lifecycle_events": [
+          "accept"
+        ],
+        "effective_date": "2026-07-31"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured by amendment 18 (source-019); session-sentinel scope, deliberately NOT applicable to M0-T027; verified at D-004 verification",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      },
+      "amendment_sequence": 19
+    },
+    {
+      "id": "D-004-R711",
+      "text": "DECISION 3 (OBS-A): confirmed as the intended Step-1 posture. M0-T034's mechanism is trusted through PR #138's merged, G3/G5-passed, CI-green state; its lifecycle record is process debt.",
+      "source_ref": "source-019-amendment.md#decision-3-obs-a",
+      "classification": "decision",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "D-004-OPTIONB"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [],
+        "lifecycle_events": [
+          "gate",
+          "accept"
+        ],
+        "effective_date": "2026-07-31"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured by amendment 18 (source-019); session-sentinel scope, deliberately NOT applicable to M0-T027; verified at D-004 verification",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      },
+      "amendment_sequence": 19
+    },
+    {
+      "id": "D-004-R712",
+      "text": "DECISION 3 backlog: add 'drive M0-T034 to submit/accept' to the owner backlog; do not act on it now.",
+      "source_ref": "source-019-amendment.md#decision-3-obs-a",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "D-004-OPTIONB"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [],
+        "lifecycle_events": [
+          "gate",
+          "accept"
+        ],
+        "effective_date": "2026-07-31"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured by amendment 18 (source-019); session-sentinel scope, deliberately NOT applicable to M0-T027; verified at D-004 verification",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      },
+      "amendment_sequence": 19
+    },
+    {
+      "id": "D-004-R713",
+      "text": "RESUME: resume amendment 17 where it stopped - re-rule only the F-1-affected rows at current head (delta-scoped; every other Step 3 finding is settled and cited, not re-derived).",
+      "source_ref": "source-019-amendment.md#then-resume",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "D-004-OPTIONB"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [],
+        "lifecycle_events": [
+          "gate",
+          "accept"
+        ],
+        "effective_date": "2026-07-31"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured by amendment 18 (source-019); session-sentinel scope, deliberately NOT applicable to M0-T027; verified at D-004 verification",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      },
+      "amendment_sequence": 19
+    },
+    {
+      "id": "D-004-R714",
+      "text": "RESUME authorization (owner explicit instruction to minimize owner touches - a self-check gate replaces a show-me stop): if the amendment capture is clean and the re-ruling yields exactly R322/R323/R388 discharged-by-decomposition with an otherwise empty hard-stop set, proceed without a further stop into Step 4 accept -> Step 5 efficiency capture (R307: DEFERRED arm) -> Step 6 Phase 0 -> Step 7 consolidated stop.",
+      "source_ref": "source-019-amendment.md#then-resume",
+      "classification": "authorization",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "D-004-OPTIONB"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [],
+        "lifecycle_events": [
+          "gate",
+          "accept"
+        ],
+        "effective_date": "2026-07-31"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured by amendment 18 (source-019); session-sentinel scope, deliberately NOT applicable to M0-T027; verified at D-004 verification",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      },
+      "amendment_sequence": 19
+    },
+    {
+      "id": "D-004-R715",
+      "text": "RESUME hard stops preserved: any capture conflict, decomposition ambiguity, unexpected re-ruling result, or new finding = stop and report, as always. Every stop is a report.",
+      "source_ref": "source-019-amendment.md#then-resume",
+      "classification": "prohibition",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "D-004-OPTIONB"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [],
+        "lifecycle_events": [
+          "gate",
+          "accept"
+        ],
+        "effective_date": "2026-07-31"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured by amendment 18 (source-019); session-sentinel scope, deliberately NOT applicable to M0-T027; verified at D-004 verification",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      },
+      "amendment_sequence": 19
+    },
+    {
+      "id": "D-004-R716",
+      "text": "STEP 7 deliverable: deliver the Phase 0 return packet and the supervisor task packet for Phases 1-5.",
+      "source_ref": "source-019-amendment.md#step-7-deliverable",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "D-004-OPTIONB"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [],
+        "lifecycle_events": [
+          "gate",
+          "accept"
+        ],
+        "effective_date": "2026-07-31"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured by amendment 18 (source-019); session-sentinel scope, deliberately NOT applicable to M0-T027; verified at D-004 verification",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      },
+      "amendment_sequence": 19
+    },
+    {
+      "id": "D-004-R717",
+      "text": "PROHIBITION: do not begin implementation beyond Phase 0's two permitted writes; the build dispatch is the owner's next and separate decision.",
+      "source_ref": "source-019-amendment.md#step-7-deliverable",
+      "classification": "prohibition",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "D-004-OPTIONB"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [],
+        "lifecycle_events": [
+          "gate",
+          "accept"
+        ],
+        "effective_date": "2026-07-31"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured by amendment 18 (source-019); session-sentinel scope, deliberately NOT applicable to M0-T027; verified at D-004 verification",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      },
+      "amendment_sequence": 19
     }
   ],
   "amendments_applied": [
@@ -27559,6 +28220,7 @@
     "source-015-amendment.md",
     "source-016-amendment.md",
     "source-017-amendment.md",
-    "source-018-amendment.md"
+    "source-018-amendment.md",
+    "source-019-amendment.md"
   ]
 }

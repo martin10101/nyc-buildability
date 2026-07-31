@@ -1,7 +1,7 @@
 {
   "schema": "directive_manifest/v1",
   "directive_id": "D-004",
-  "version": 18,
+  "version": 19,
   "slug": "agent-teams-runtime-adoption",
   "title": "Agent-teams runtime adoption, staged with pilots",
   "status": "active",
@@ -153,6 +153,14 @@
       "amends": "source-001.md",
       "recorded_at": "2026-07-31T17:53:52+00:00",
       "content_digest_sha256": "9606c569c771fcf249f877892a8500178b075c0fb07ab7dfb5ce6fcb57bb7c9e"
+    },
+    {
+      "file": "source-019-amendment.md",
+      "kind": "amendment",
+      "sequence": 19,
+      "amends": "source-001.md",
+      "recorded_at": "2026-07-31T21:07:43+00:00",
+      "content_digest_sha256": "b9dd360dcc355c2f440757541985f4415eb3e1531e21e48244f5f67e51c17cdf"
     }
   ],
   "amendments": [
@@ -172,7 +180,8 @@
     "source-015-amendment.md",
     "source-016-amendment.md",
     "source-017-amendment.md",
-    "source-018-amendment.md"
+    "source-018-amendment.md",
+    "source-019-amendment.md"
   ],
   "supersedes": [],
   "superseded_by": null,
@@ -300,7 +309,7 @@
     "Amendment 8 (source-009, rows D-004-R307-R326): owner decision captured 2026-07-30 at live-reconciled head 87e0ad6d87fa3e45cf647ebe45bf7db4029e7b75 (post PR #128; expected state verified in every particular). Three decisions plus one GO: (1) TEMPORARY model-availability exception - Fable 5 exhausted, so the lead runs Opus 5 and every gate reviewer/verifier is spawned with EXPLICIT Opus 5; this supersedes only the VALUE clauses of R090/R161 and the lead clause of R298, temporarily, until the owner restores Fable 5; independence, verbatim-evidence, effort, and settings clauses are unchanged and re-affirmed; the actual model used must be recorded and never misreported. (2) WORKTREE decision - the harness-isolation + attestation + exact-diff-port mechanism is accepted as disclosed and becomes the mechanism Step 5 must describe; the literal pre-created-worktree wording is superseded as mechanically unsatisfiable. (3) STEP-4 evidence accepted including the disclosed post-gate model switch; no M2-T018/M4-T008 rerun. (4) GO for the M0-T027 closeout ONLY, with an explicit not-authorized list and a STOP-and-present-proposed-Step-5 terminus. Session-conduct rows use the sentinel D-004-STEP4CLOSE; closeout-binding rows carry M0-T027 so the resolver derives them for that packet. No existing source or requirement row edited."
   ],
   "created_at": "2026-07-24T00:00:00+00:00",
-  "updated_at": "2026-07-31T17:53:52+00:00",
+  "updated_at": "2026-07-31T21:07:43+00:00",
   "audit_log": [
     {
       "at": "2026-07-24T00:00:00+00:00",
@@ -391,6 +400,11 @@
       "at": "2026-07-31T17:53:52+00:00",
       "by": "orchestrator",
       "note": "Amendment 17 captured verbatim as source-018-amendment.md (sha256 9606c569c771fcf249f877892a8500178b075c0fb07ab7dfb5ce6fcb57bb7c9e) on branch control/M0-T034-closeout-authorization-capture, branched from origin/main dc842e87f6f03871dff877331da52feab472a460 (the merge commit of PR #136). 51 append-only rows D-004-R650..R700 (total 649 -> 700), all scoped to the D-004-OPTIONB session sentinel; M0-T027's applicable set is unchanged and no row of this amendment enters it. Captures the owner's round-3 gating riders and the ONE-SHOT CLOSEOUT AND HANDOFF AUTHORIZATION (Steps 0-7), delivered mid-turn into the round-3 producer session, refused by the producer as orchestrator-only authority, and recovered verbatim from that session's stored transcript. Steps 1-7 are CONDITIONAL on both current-round gate verdicts (G3, G5 at frozen SHA dbf0a887) being PASS (R661). Rows record which prohibitions each step lifts and for which acts: R666 (the M0-T034 merge), R674 (conditional M0-T027 acceptance, R486), R679 (the efficiency-draft capture hold), R685 (the supervisor-directive queued-draft hold, Phase 0 scope only). External-fact anchors verified at capture: efficiency draft v1.2 bytes match bd6c4ec2...; supervisor directive bytes match 426da3bb... at an on-disk basename carrying a literal ' (1)' suffix (digest anchors, not basename). The producer's factual correction to the owner's agent-memory sentence is recorded at R660. Commencement clause: this capture authorizes its own commit and the merge of its PR once CI is green. No redaction was required."
+    },
+    {
+      "at": "2026-07-31T21:07:43+00:00",
+      "by": "orchestrator",
+      "note": "Amendment 18 captured verbatim as source-019-amendment.md (sha256 b9dd360dcc355c2f440757541985f4415eb3e1531e21e48244f5f67e51c17cdf) on branch control/D-004-amendment-18-capture, branched from origin/main 1f6aaa6553c649c5717823b53526eb1e6e462463 (the merge commit of PR #141). 17 append-only rows D-004-R701..R717 (total 700 -> 717), all scoped to the D-004-OPTIONB session sentinel; M0-T027's applicable set is unchanged at 233 and no row of this amendment enters it. Captures the owner's F-1 disposition (Decision 1: R322/R323/R388 accept-stage clauses DISCHARGED-BY-DECOMPOSITION, scoped to those three rows only), Decision 2 (verification.json stale block left deliberately; lawful accept path rewrites; out-of-band rewrite prohibited), Decision 3 (OBS-A confirmed intended; drive-M0-T034-to-submit/accept backlogged), the re-orientation corrections, and the conditional resume authorization (self-check gate replaces show-me stop) through Step 4 accept -> Step 5 -> Step 6 -> Step 7."
     }
   ],
   "locked_requirement_ids": [
@@ -1093,8 +1107,25 @@
     "D-004-R697",
     "D-004-R698",
     "D-004-R699",
-    "D-004-R700"
+    "D-004-R700",
+    "D-004-R701",
+    "D-004-R702",
+    "D-004-R703",
+    "D-004-R704",
+    "D-004-R705",
+    "D-004-R706",
+    "D-004-R707",
+    "D-004-R708",
+    "D-004-R709",
+    "D-004-R710",
+    "D-004-R711",
+    "D-004-R712",
+    "D-004-R713",
+    "D-004-R714",
+    "D-004-R715",
+    "D-004-R716",
+    "D-004-R717"
   ],
-  "requirements_id_digest_sha256": "1884bf7966aa879b5f401044e7fcc7bedc9c06f156f560473f2906b20b51fdb0",
-  "requirements_content_digest_sha256": "afa8b8bb4cfb753d04ef09d922e8d6ef35201c7e6086f5f380bddc0676c8d76d"
+  "requirements_id_digest_sha256": "3d3c662a1cd2309884e8ba5edd85a619b14101bc65fa49b708375c7633a30e7c",
+  "requirements_content_digest_sha256": "7bf29315571dea002c1fb302dccc17d9c803341449a432c4718fb08022ae8049"
 }
