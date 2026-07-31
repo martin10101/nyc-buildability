@@ -1,7 +1,7 @@
 {
   "schema": "directive_manifest/v1",
   "directive_id": "D-004",
-  "version": 16,
+  "version": 17,
   "slug": "agent-teams-runtime-adoption",
   "title": "Agent-teams runtime adoption, staged with pilots",
   "status": "active",
@@ -137,6 +137,14 @@
       "amends": "source-001.md",
       "recorded_at": "2026-07-31T00:00:00+00:00",
       "content_digest_sha256": "d3a6cc176c52730c7cc2b359495cc0aa38784ed89b7cf6e325f088b3e2516369"
+    },
+    {
+      "file": "source-017-amendment.md",
+      "kind": "amendment",
+      "sequence": 17,
+      "amends": "source-001.md",
+      "recorded_at": "2026-07-31T00:00:00+00:00",
+      "content_digest_sha256": "45c83f0eb1fe2089fe59231a3345467e04d83de1634db7f68ce279c082126a20"
     }
   ],
   "amendments": [
@@ -154,7 +162,8 @@
     "source-013-amendment.md",
     "source-014-amendment.md",
     "source-015-amendment.md",
-    "source-016-amendment.md"
+    "source-016-amendment.md",
+    "source-017-amendment.md"
   ],
   "supersedes": [],
   "superseded_by": null,
@@ -363,6 +372,11 @@
       "at": "2026-07-31T00:00:00+00:00",
       "by": "orchestrator",
       "note": "Amendment 15 captured verbatim as source-016-amendment.md (sha256 d3a6cc176c52730c7cc2b359495cc0aa38784ed89b7cf6e325f088b3e2516369) at branch head 0b8c0dceb08f9cda8cbd1fb2f7e55ea80a5d479c, origin/main unchanged at 11f3540c. 16 append-only rows D-004-R577..R592 (total 576 -> 592), all scoped to the D-004-OPTIONB session sentinel; M0-T027's applicable set remains 233 with no leakage. PURPOSE - CURES THE DEFECT THE THIRD VERIFICATION PASS FOUND: that pass ruled D-004-R024 PASS but found R573 and R575 UNVERIFIABLE, because commit 0b8c0dc performed an act those captured prohibitions forbade while the owner approvals lifting them existed ONLY as orchestrator narrative, never as captured owner text. This amendment captures all three outstanding approvals verbatim - the Option-4 approval (Message A), the commit approval (Message B), and the authorization for THIS commit (Message C) - so the chain is reproducible from the repository alone. By the owner's explicit instruction the authorizing message and the act it authorizes land in the SAME commit, so the recursion terminates here and no further amendment is owed to justify this one. TWO CORRECTIONS FOLDED IN: (1) the pre-existing machine-username count is 76, not 75 - 75 under project-control/ plus 1 under .claude/agent-memory/; audit entry 13 is committed and append-only so the correction is recorded here rather than by editing it. (2) two G5 redaction substitutions fall inside fenced command blocks, so those command STRINGS are not executable-as-printed while no command OUTPUT changed; the clause is added to the G5 annotation. One truncated session-id prefix inside Message A was redacted under the established owner-approved convention, disclosed and confined to the identifier the owner was naming."
+    },
+    {
+      "at": "2026-07-31T00:00:00+00:00",
+      "by": "orchestrator",
+      "note": "Amendment 16 captured verbatim as source-017-amendment.md (sha256 45c83f0eb1fe2089fe59231a3345467e04d83de1634db7f68ce279c082126a20) on branch control/M0-T027-consolidated-capture, branched from origin/main ffacee91b738cd742e72d8c52091e8400d932a87 (the merge commit of PR #135). 57 append-only rows D-004-R593..R649 (total 592 -> 649), all scoped to the D-004-OPTIONB session sentinel; M0-T027's applicable set is unchanged and no row of this amendment enters it. THE CONSOLIDATED CAPTURE BATCH the owner ordered. It captures three owner messages verbatim - Message D (the three open items, including the Message C confirmation that resolves the standing condition on R573/R575), Message E (the MERGE AUTHORIZATION that supports R479 for the PR #135 merge, plus the path-3 decision), and Message F (the execution-order decisions that authorize this very batch). It carries a COMMENCEMENT CLAUSE at R593: the captured text authorizes its own commit and the merge of its PR once CI is green and the diff has been shown to the owner. CURES: (1) R479, which was left unsupported when PR #135 merged while 11 requirements were UNVERIFIABLE and the pass-5 verdict was FAIL - the fifth verifier declined to adjudicate without the authorization, which is now Message E in the repository; (2) R578's misattribution, by authoritative new rows R640/R641 - the commit authorization came from Message B, not Message A, which expressly forbade committing; R578's locked text stands unedited by owner ruling; (3) six Message A/B obligations previously omitted or combined, now atomic rows R642-R647; (4) the source-012 arithmetic erratum, corrected at R648/R649 - the map held 128 at origin/main, the resolver derives 233, and 97 was the stale verification.json row count. Decomposed per the intake standard with no weakening, combining, or omission, per R626. PATH 3 IS OPTION (ii): no requirement row's applicability is edited in place; the append-only invariant is not holed. No redaction was required - none of the three messages contains a session identifier, username, absolute path, or hostname."
     }
   ],
   "locked_requirement_ids": [
@@ -957,8 +971,65 @@
     "D-004-R589",
     "D-004-R590",
     "D-004-R591",
-    "D-004-R592"
+    "D-004-R592",
+    "D-004-R593",
+    "D-004-R594",
+    "D-004-R595",
+    "D-004-R596",
+    "D-004-R597",
+    "D-004-R598",
+    "D-004-R599",
+    "D-004-R600",
+    "D-004-R601",
+    "D-004-R602",
+    "D-004-R603",
+    "D-004-R604",
+    "D-004-R605",
+    "D-004-R606",
+    "D-004-R607",
+    "D-004-R608",
+    "D-004-R609",
+    "D-004-R610",
+    "D-004-R611",
+    "D-004-R612",
+    "D-004-R613",
+    "D-004-R614",
+    "D-004-R615",
+    "D-004-R616",
+    "D-004-R617",
+    "D-004-R618",
+    "D-004-R619",
+    "D-004-R620",
+    "D-004-R621",
+    "D-004-R622",
+    "D-004-R623",
+    "D-004-R624",
+    "D-004-R625",
+    "D-004-R626",
+    "D-004-R627",
+    "D-004-R628",
+    "D-004-R629",
+    "D-004-R630",
+    "D-004-R631",
+    "D-004-R632",
+    "D-004-R633",
+    "D-004-R634",
+    "D-004-R635",
+    "D-004-R636",
+    "D-004-R637",
+    "D-004-R638",
+    "D-004-R639",
+    "D-004-R640",
+    "D-004-R641",
+    "D-004-R642",
+    "D-004-R643",
+    "D-004-R644",
+    "D-004-R645",
+    "D-004-R646",
+    "D-004-R647",
+    "D-004-R648",
+    "D-004-R649"
   ],
-  "requirements_id_digest_sha256": "73e45507b195f9ad8550b930b0b6d58f79a6e75ae74c36511b8062d04b942e2e",
-  "requirements_content_digest_sha256": "e21a84ce19fd130eb1efc144b9342a50c5b125ca816a1a25c53c45f200de0367"
+  "requirements_id_digest_sha256": "17d725e9d1459e083b4d978a248816a2b16472547c3dfaed8c5da61aa568a428",
+  "requirements_content_digest_sha256": "6669853ace60fb7529c10740884324c62b19f162f2afcde6812f42a07583ce1d"
 }
