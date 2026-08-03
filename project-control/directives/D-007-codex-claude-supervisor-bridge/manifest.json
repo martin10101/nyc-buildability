@@ -1,7 +1,7 @@
 {
   "schema": "directive_manifest/v1",
   "directive_id": "D-007",
-  "version": 1,
+  "version": 2,
   "slug": "codex-claude-supervisor-bridge",
   "title": "Codex-Claude Code Supervisor Bridge (v4.3, Autonomy-Tuned) - build directive",
   "status": "active",
@@ -17,9 +17,19 @@
       "sequence": 1,
       "recorded_at": "2026-08-03T03:44:22+00:00",
       "content_digest_sha256": "69f8b7b1c9249af356ac804993a54328feba26a5021e5171b7742d9d065db4dd"
+    },
+    {
+      "file": "source-002-amendment.md",
+      "kind": "amendment",
+      "sequence": 2,
+      "amends": "source-001.md",
+      "recorded_at": "2026-08-03T04:05:27+00:00",
+      "content_digest_sha256": "6bf276c2a693a961228e4384af958feb80cff03e974b3b9a1d9ad3c78f936d1a"
     }
   ],
-  "amendments": [],
+  "amendments": [
+    "source-002-amendment.md"
+  ],
   "supersedes": [],
   "superseded_by": null,
   "affected_tasks": [
@@ -44,8 +54,8 @@
   },
   "applicability_note": "D-007-PHASE0 and D-007-BUILD are NON-LEDGER applicability sentinels (D-004-OPTIONB / D-006-PRACTICE precedent). PHASE0 rows bound the orchestrator's completed Phase 0 (read-only reconciliation + the two permitted writes). BUILD rows additionally carry M0-T036, the contracted build task (Phases 1-5), which remains backlog until the owner's dispatch decision (D-004-R717).",
   "owner_approval": {
-    "state": "phase0_capture_authorized_build_dispatch_pending",
-    "decision": "Capture + contract ordered by D-004 amendment 17 STEP 6 (R685-R694, the two permitted Phase 0 writes) and amendment 18 (R713/R714/R716/R717). The BUILD DISPATCH is the owner's next and separate decision; nothing in this capture starts implementation."
+    "state": "build_dispatched",
+    "decision": "Owner message 2026-08-03 (source-002-amendment.md): M0-T036 DISPATCHED for Phases 1-5; ADR-005 amendment adopted; anchoring Option A; controller location = dedicated read-only checkout; probes as first Phase 1 acts; both standing grants ACTIVE; Phase 5 stops at the activation decision; limited-auto never enabled by this task."
   },
   "lifecycle_state": "active",
   "requirements_file": "requirements.json",
@@ -69,12 +79,17 @@
     "Two claude-side behavioral verifications remain outstanding (classifier-denied in the capture session): --max-turns acceptance and the stream-json canUseTool protocol probe; both are dispatch-time items recorded in the Phase 0 return."
   ],
   "created_at": "2026-08-03T03:44:22+00:00",
-  "updated_at": "2026-08-03T03:44:22+00:00",
+  "updated_at": "2026-08-03T04:05:27+00:00",
   "audit_log": [
     {
       "at": "2026-08-03T03:44:22+00:00",
       "by": "orchestrator",
       "note": "D-007 captured on branch control/D-007-supervisor-capture from origin/main b5589d00eaeb09fc2f8cb637ea6fce9c2e0963ef. source-001.md is a mechanically concatenated byte-faithful copy of the owner-tracked v4.3 file (sha256 426da3bb...); 531 rows D-007-R001..R531 decomposed per the intake standard (drafting delegated to a bounded read-only agent per D-006 Section 4; every row independently re-validated by the orchestrator: sequential ids, schema fields, classification vocabulary, sentinel scoping, hygiene scan). M0-T036 contracted in the same batch as the second permitted Phase 0 write; the build dispatch remains the owner's separate decision."
+    },
+    {
+      "at": "2026-08-03T04:05:27+00:00",
+      "by": "orchestrator",
+      "note": "Amendment 1 captured verbatim as source-002-amendment.md (sha256 6bf276c2a693a961228e4384af958feb80cff03e974b3b9a1d9ad3c78f936d1a) on branch control/M0-T036-dispatch-capture from origin/main e7f5078. 10 append-only rows D-007-R532..R541 (531 -> 541): rulings 3-9 and the M0-T036 build dispatch. Rulings 1-2 captured as D-004 amendment 21 in the same batch. ADR-005 doc note applied and SESSION_HANDOFF refreshed in this batch; both standing grants recorded APPROVED on the packet."
     }
   ],
   "locked_requirement_ids": [
@@ -608,8 +623,18 @@
     "D-007-R528",
     "D-007-R529",
     "D-007-R530",
-    "D-007-R531"
+    "D-007-R531",
+    "D-007-R532",
+    "D-007-R533",
+    "D-007-R534",
+    "D-007-R535",
+    "D-007-R536",
+    "D-007-R537",
+    "D-007-R538",
+    "D-007-R539",
+    "D-007-R540",
+    "D-007-R541"
   ],
-  "requirements_id_digest_sha256": "847e753d1fe1aed5cf775e8e4451992b0059112937a01ec483e90e41f179a0f1",
-  "requirements_content_digest_sha256": "47fa1ac0d1e70250a736a5cfd55464c77714891734f9376daa88a528ab4c7ee6"
+  "requirements_id_digest_sha256": "8d1ad4ec61886e85fd6daf1ac0ae48772d48f38a7813702496247a121cbc20b0",
+  "requirements_content_digest_sha256": "2b8a8beb9100444b9fd07135fb4b598215f5aac44d800ee835f2871d9764f81b"
 }
