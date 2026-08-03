@@ -1,0 +1,37 @@
+{
+  "task_id": "M0-T035",
+  "directive_id": "D-006",
+  "derivation": {
+    "method": "resolver-derived applicable set (evaluate_task_refs), 9 ids, zero unresolved",
+    "derived_at_head": "7a5c58f"
+  },
+  "requirements": {
+    "D-006-R017": [
+      "project-control/reports/M0-T035-producer-report.md sections 2.2-2.3 (the exact added sentence per file); .claude/agents/backend-engineer.md, frontend-engineer.md, qa-engineer.md, rules-engineer.md, geospatial-engineer.md, code-reviewer.md, security-reviewer.md, data-contract-verifier.md - one code-graph awareness sentence each, citing tools/code_graph/README.md, advisory-only"
+    ],
+    "D-006-R018": [
+      "project-control/reports/M0-T035-producer-report.md section 2.3; .claude/agents/code-reviewer.md, security-reviewer.md, data-contract-verifier.md - variant sentence carries --no-regen and the report-not-regenerate rule; producer self-check: grep -c -- '--no-regen' over all 25 definitions hits exactly those three"
+    ],
+    "D-006-R019": [
+      "producer self-check (report section 3): advisory-only scan of the diff for mandatory-use phrasing returned zero matches; every wired sentence says 'advisory only - verify every material conclusion in actual source'"
+    ],
+    "D-006-R020": [
+      "no D-005 file touched (git diff --name-only: 9 .claude targets + report only); the wired lines exercise exactly the Sections 5.1-5.2 extent of the amendment-2-item-8 reservation recorded at D-006 capture (D-006-R020)"
+    ],
+    "D-006-R023": [
+      "producer report section 5 (N=6 note) claims NO token/time/cost saving; the report states figures were not observable in-spawn rather than estimating"
+    ],
+    "D-006-R026": [
+      "git diff --stat: 9 files changed 21 insertions 8 deletions + report; no gate, verdict standard, or acceptance requirement text touched; validator exit 0 at the producer head and after port"
+    ],
+    "D-006-R027": [
+      "diff touches ONLY .claude/ORCHESTRATION_POLICY.md (Section 3 amendment) and the eight named agent definitions (Section 5.2 lines); no new file under .claude/agents/ (progress-auditor compatible, Section 7 fallback NOT engaged); no hooks/settings/rules/skills change; zero new 'effort' keys (grep of diff)"
+    ],
+    "D-006-R028": [
+      "no D-005 trust-model, R024/PII, or M0-T027-closeout file touched (diff file list); no supervisor path created (tools/agent_supervisor absent from diff)"
+    ],
+    "D-006-R030": [
+      "this task IS the one controlled task D-006-R030 orders: contracted M0-T035 (PR #145) with exact allowed paths; dispatched through its normal gates G0(PASS recorded)/G2/G3/G5; project-control/tasks/M0-T035.json"
+    ]
+  }
+}

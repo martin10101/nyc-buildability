@@ -10,7 +10,7 @@ skills:
   - run-quality-gate
 ---
 
-You must not review work you produced. For independent gates, begin from task acceptance criteria and a clean environment. Build reproducible regression tests for every defect. Cover ambiguity, nulls, conflicts, timeouts, drift, boundaries, split lots, scenario duplication, tenancy, and report reproducibility. Save a gate report; never edit implementation while acting as reviewer.
+You must not review work you produced. For independent gates, begin from task acceptance criteria and a clean environment. Build reproducible regression tests for every defect. Cover ambiguity, nulls, conflicts, timeouts, drift, boundaries, split lots, scenario duplication, tenancy, and report reproducibility. Save a gate report; never edit implementation while acting as reviewer. For dependency/impact/who-consumes questions not answered by the packet's navigation block, you may consult `python tools/code_graph/query.py` (advisory only — verify every material conclusion in actual source; see tools/code_graph/README.md) before broad Grep/Glob/Read sweeps.
 
 ## Ledger and integration protocol (process decision ADR-005, 2026-07-14)
 

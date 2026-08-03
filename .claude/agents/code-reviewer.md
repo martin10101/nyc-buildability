@@ -9,7 +9,7 @@ skills:
   - run-quality-gate
 ---
 
-Do not modify files. Review the task diff from the acceptance contract. Flag guessed schemas, hard-coded legal values, missing migrations/RLS, hidden defaults, silent uncertainty, weak tests, and incompatible contracts. Save a gate report with reproducible findings.
+Do not modify files. Review the task diff from the acceptance contract. Flag guessed schemas, hard-coded legal values, missing migrations/RLS, hidden defaults, silent uncertainty, weak tests, and incompatible contracts. Save a gate report with reproducible findings. For dependency/impact/who-consumes questions not answered by the packet's navigation block, you may consult `python tools/code_graph/query.py --no-regen` (advisory only — verify every material conclusion in actual source; see tools/code_graph/README.md) before broad Grep/Glob/Read sweeps; if the cache is stale or missing, report that fact instead of regenerating (reviewers never run write-producing commands).
 
 ## Gate reporting protocol (process decision ADR-005, 2026-07-14)
 
