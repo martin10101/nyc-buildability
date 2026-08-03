@@ -1,0 +1,94 @@
+{
+  "task_id": "M0-T036",
+  "title": "D-007 Supervisor Bridge build (Phases 1-5): core loop, policy+adapters, endurance, validation, shadow pilot - AWAITING OWNER DISPATCH",
+  "task_type": "governance",
+  "milestone_id": "M0",
+  "objective": "Implement the Codex-Claude Supervisor Bridge exactly per the captured D-007 directive (source-001.md, digest 426da3bb): Phase 1 core loop (schemas, models, config incl. Section 3 model selection, state machine, transactional journal, process abstraction, versioned envelope, audit/redaction, controller manifest, circuit breakers, fake-process harness); Phase 2 policy and adapters (four-tier engine, standing grants, approval broker, Claude CLI runner per the Phase 0 decision, Codex reviewer with model selection/fallback, evidence collector, external-effect journal, integrity checks, bounded packet builder); Phase 3 endurance (rotation, handoff, locking, crash recovery, durable wake scheduling, notifications, queued ASK flow, authenticated remote approvals, retention/restore, pause/stop/resume); Phase 4 validation (full Section 15 matrices + historical replay corpus); Phase 5 shadow pilot ending in a decision packet and STOP for the owner's activation decision. Limited-auto is NEVER enabled by this task. This packet is presented for the owner's dispatch decision (D-004-R717) and remains backlog until it.",
+  "business_reason": "D-004 amendment 17 STEP 6 (R685-R694) and amendment 18 (R716/R717) order Phase 0's two permitted writes: the canonical D-007 capture and this controlled task packet, delivered at the Step 7 consolidated stop awaiting the owner's dispatch decision. The build itself is the owner's next and separate decision.",
+  "inputs": [
+    "project-control/directives/D-007-codex-claude-supervisor-bridge/source-001.md (the captured v4.3 directive - the build specification)",
+    "project-control/reports/M0-T036-PHASE0-return.md (Phase 0 Section 19 return packet: verified CLI capabilities, SDK-vs-CLI decision, ADR-005 reconciliation, audit-anchoring proposal, independence-check definition, directive-conflict check)",
+    "project-control/reports/M0-T028-FRESH-SESSION-CAPSULE.md (effort-key prohibition, teammate-confinement posture)",
+    "docs/adr/ADR-005-agent-permission-and-gate-workflow.md (+ the proposed amendment in the Phase 0 return)"
+  ],
+  "outputs": [
+    "Phases 1-4 of D-007 (core loop; policy+adapters; endurance; validation) under tools/agent_supervisor/ with the full Section 15 test matrix",
+    "Phase 5 shadow-pilot decision packet (stops for the owner's activation decision; limited-auto NEVER enabled by this task)",
+    "project-control/reports/M0-T036-producer-report.md"
+  ],
+  "dependencies": [
+    "M0-T027"
+  ],
+  "allowed_paths": [
+    "tools/agent_supervisor/** (create; per D-007 Section 6 layout, adjusted to repository conventions)",
+    "tools/test_agent_supervisor_*.py (create)",
+    "project-control/reports/M0-T036-producer-report.md",
+    "project-control/tasks/M0-T036.json (CLI lifecycle writes only)"
+  ],
+  "forbidden_paths": [
+    ".claude/** (no hook, agent-definition, settings, rules, or skills change; D-007 Sections 5.2/8.4)",
+    ".github/**, render.yaml, any deployment definition (no CI/deploy change)",
+    "services/**, apps/**, packages/** (no product code)",
+    "project-control/** except this packet and the producer report",
+    "tools/** outside agent_supervisor/ and its tests (no change to project_control.py, directive_registry.py, code_graph/)",
+    "any dependency manifest or lockfile without the full admission policy (D-007 Section 5.1: prefer stdlib)",
+    "OWNER GATES (never performed by this task): merge, acceptance, hold release, production deploy, G6, credentials, payments (D-007 Section 5.2, invariants 7/9)"
+  ],
+  "acceptance_scenarios": [
+    "AS-1 (executable): the Section 16 acceptance criteria 1-16 each pass at one frozen SHA with independent code (G3), security (G5), and control-plane reviews; all repository tests and CI green.",
+    "AS-2 (executable): the Section 15 test matrix runs green with fake Claude/Codex executables - parsing/process, state-machine, tier-policy, model-selection, approval-broker, evidence, rotation, recovery/scheduling, adversarial-essentials, and historical-replay suites all present and passing; no real tokens by default.",
+    "AS-3 (executable): tier-policy invariant tests prove every Section 13.12 invariant (1-15), including: no owner gate satisfied by a model, no automatic merge/deploy/credential/payment/G6, no reviewer write access, no worker access to the active controller, HARD-DENY immovable by both models.",
+    "AS-4: the audit log hash chain (mandatory) detects tampering, truncation, and reordering in seeded tests; the external-anchoring decision is implemented as the owner ruled it at dispatch (or its deferral carries the owner+security-review acceptance D-007 Section 13.12 requires).",
+    "AS-5 (executable): replay mode reproduces expected stop/continue behavior on the agreed historical corpus (M0-T031 lifecycle, B-015 sentinel failure, M0-T028 detection-only stop, a clean continuation, a correction, a CI failure, a stale-SHA case, an owner-gated stop).",
+    "AS-6: shadow mode completes at least one real controlled-task lifecycle within the owner-touch budget (default <= 2 would-be synchronous stops, excluding activation), every excess stop dispositioned; the run ends AT the merge/acceptance gate, never past it.",
+    "AS-7 (containment): git diff --name-only touches only allowed_paths; no .claude/, .github/, or product change; no effort key anywhere; no bypass flag anywhere in code, tests, or docs except as HARD-DENY list constants.",
+    "AS-8: limited-auto remains disabled at task end; activation is a separate explicit owner act recorded through directive compliance (D-007 Section 12)."
+  ],
+  "required_gates": [
+    "G0",
+    "G2",
+    "G3",
+    "G4",
+    "G5"
+  ],
+  "producer_agent": null,
+  "reviewer_agents": [
+    "code-reviewer",
+    "security-reviewer",
+    "qa-engineer",
+    "control-plane-verifier",
+    "directive-compliance-verifier"
+  ],
+  "status": "backlog",
+  "progress_percent": 0,
+  "risks": [
+    "Scale: D-007 spans 5 phases; the packet authorizes Phases 1-4 + the Phase 5 shadow pilot, with the activation decision owner-gated. Split into per-phase follow-up tasks at the orchestrator's discretion if a phase exceeds a safe review size - contract splits through the normal process, never widen this packet.",
+    "Windows process-tree control (Job Objects) and durable Task Scheduler wake are the highest-uncertainty areas; Section 18 stop conditions apply if a safe strategy cannot be proven.",
+    "The worker/controller isolation requirement (Section 13.1/13.3) needs an execution location decision from the owner at dispatch: a dedicated read-only controller checkout outside every Claude-writable path.",
+    "codex-cli/claude-cli version drift between Phase 0 verification (codex 0.146.0, claude native 2.1.220) and dispatch time: preflight reverifies every flag on the pinned binaries (Section 8.5/13.4)."
+  ],
+  "blockers": [],
+  "created_at": "2026-08-03T03:44:41.634259+00:00",
+  "updated_at": "2026-08-03T03:44:41.948947+00:00",
+  "directive_refs": [
+    {
+      "directive_id": "D-007",
+      "requirement_ids": "ALL"
+    }
+  ],
+  "directive_regime_version": "1.0",
+  "directive_regime_entered_at": "2026-08-03T03:44:41.634259+00:00",
+  "proposed_standing_grants": {
+    "note": "PROPOSED for the owner to pre-authorize at dispatch (D-007 Section 4.1 standing-grant shape; grants are owner-created - nothing here is active until the owner says so)",
+    "grants": [
+      "auto-approve: python tools/test_agent_supervisor_*.py (test execution inside the task worktree; no credentials)",
+      "auto-approve: push to the exact task branch task/M0-T036-supervisor-bridge after a passing review (supervisor-development pushes; never main)"
+    ]
+  },
+  "stop_conditions": [
+    "Every D-007 Section 18 stop condition, verbatim, plus:",
+    "any directive conflict discovered mid-build returns to the owner (D-004-R708 pattern)",
+    "any need to widen allowed_paths stops (Section 18: 'allowed paths must expand' is a stop)",
+    "B-015-class confinement regression (teammate/worker escape) pauses the lane and surfaces immediately"
+  ]
+}

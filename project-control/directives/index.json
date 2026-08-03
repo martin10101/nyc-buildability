@@ -95,6 +95,20 @@
         "M0-T035"
       ],
       "manifest": "D-006-dispatch-efficiency-and-graph-wiring/manifest.json"
+    },
+    {
+      "directive_id": "D-007",
+      "slug": "codex-claude-supervisor-bridge",
+      "title": "Codex-Claude Code Supervisor Bridge (v4.3, Autonomy-Tuned) - build directive",
+      "status": "active",
+      "issued_at": "2026-07-31",
+      "issued_by": "owner",
+      "supersedes": [],
+      "superseded_by": null,
+      "affected_tasks": [
+        "M0-T036"
+      ],
+      "manifest": "D-007-codex-claude-supervisor-bridge/manifest.json"
     }
   ],
   "updated_at": "2026-07-29T20:42:00+00:00"
