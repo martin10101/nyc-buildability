@@ -81,6 +81,20 @@
       "superseded_by": null,
       "affected_tasks": [],
       "manifest": "D-005-codebase-knowledge-graph-pilot/manifest.json"
+    },
+    {
+      "directive_id": "D-006",
+      "slug": "dispatch-efficiency-and-graph-wiring",
+      "title": "Dispatch Efficiency and Code-Graph Wiring (owner draft v1.2, issued via D-004-R679)",
+      "status": "active",
+      "issued_at": "2026-08-03",
+      "issued_by": "owner",
+      "supersedes": [],
+      "superseded_by": null,
+      "affected_tasks": [
+        "M0-T035"
+      ],
+      "manifest": "D-006-dispatch-efficiency-and-graph-wiring/manifest.json"
     }
   ],
   "updated_at": "2026-07-29T20:42:00+00:00"

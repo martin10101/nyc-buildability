@@ -1,0 +1,80 @@
+{
+  "task_id": "M0-T035",
+  "title": "D-006 Section 3/5.2 edits: ORCHESTRATION_POLICY model-tiering amendment + code-graph awareness lines in eight agent definitions",
+  "task_type": "governance",
+  "milestone_id": "M0",
+  "objective": "Apply exactly the .claude/ edits D-006 authorizes (D-006-R017/R018/R027, source-001.md Sections 3, 5.2, 7): (1) add the Section 3 model-tiering amendment text to .claude/ORCHESTRATION_POLICY.md (spawn-level mechanical-sweep tiering, sweep identity progress-auditor by default, data-not-judgment boundary, dispatch naming/scope/report-split rules, gate-class never on a lower model, never downgrade judgment); (2) add the Section 5.2 one-sentence code-graph awareness line to the eight named agent definitions - backend-engineer, frontend-engineer, code-reviewer, security-reviewer, qa-engineer, rules-engineer, geospatial-engineer, data-contract-verifier - with the read-only reviewer variant (--no-regen; stale cache reported, never regenerated) for code-reviewer, security-reviewer, and data-contract-verifier. NO other .claude/ change; no new agent definition (progress-auditor is compatible as the sweep identity); no effort key anywhere; no hook, settings, or rules change.",
+  "business_reason": "D-004-R681 (amendment 17 Step 5, resumed by amendment 18 R714) orders the Section 3/5.2 edit task contracted and dispatched through its normal gates the moment the efficiency directive is issued; D-006-R030 carries the same obligation from the captured directive itself.",
+  "inputs": [
+    "project-control/directives/D-006-dispatch-efficiency-and-graph-wiring/source-001.md (Sections 3, 5.2, 7 - the exact authorized text)",
+    "project-control/directives/D-006-dispatch-efficiency-and-graph-wiring/requirements.json (applicable rows R017/R018/R019/R020/R023/R026/R027/R028/R030)",
+    ".claude/ORCHESTRATION_POLICY.md (amend: Section 3 spawn-level model-tiering)",
+    ".claude/agents/{backend-engineer,frontend-engineer,code-reviewer,security-reviewer,qa-engineer,rules-engineer,geospatial-engineer,data-contract-verifier}.md (add: one Section 5.2 sentence each; --no-regen variant for the three read-only reviewers)",
+    "tools/code_graph/README.md (the advisory-only framing the wired sentence cites)"
+  ],
+  "outputs": [
+    ".claude/ORCHESTRATION_POLICY.md Section 3 model-tiering amendment",
+    "eight agent-definition awareness lines (three with the --no-regen read-only variant)",
+    "project-control/reports/M0-T035-producer-report.md"
+  ],
+  "dependencies": [
+    "M0-T027"
+  ],
+  "allowed_paths": [
+    ".claude/ORCHESTRATION_POLICY.md",
+    ".claude/agents/backend-engineer.md",
+    ".claude/agents/frontend-engineer.md",
+    ".claude/agents/code-reviewer.md",
+    ".claude/agents/security-reviewer.md",
+    ".claude/agents/qa-engineer.md",
+    ".claude/agents/rules-engineer.md",
+    ".claude/agents/geospatial-engineer.md",
+    ".claude/agents/data-contract-verifier.md",
+    "project-control/reports/M0-T035-producer-report.md",
+    "project-control/tasks/M0-T035.json"
+  ],
+  "forbidden_paths": [
+    ".claude/agents/** other than the eight named definitions (D-006-R027: only the Section 5.2 lines)",
+    ".claude/hooks/**, .claude/rules/**, .claude/settings.json, .claude/settings.local.json, CLAUDE.md (no hook/settings/rules change; no effort key anywhere, D-004 standing hold)",
+    ".claude/skills/**, tools/**, .github/**, services/**, apps/**, packages/**",
+    "project-control/** except this packet and the producer report (lifecycle writes are CLI-only)",
+    "any new agent definition (progress-auditor is compatible as the sweep identity; the Section 7 fallback is NOT engaged)"
+  ],
+  "acceptance_scenarios": [
+    "AS-1 (executable): git diff --name-only for the task's contribution touches ONLY the eight named .claude/agents/*.md files, .claude/ORCHESTRATION_POLICY.md, and the packet/report paths; no new file under .claude/agents/; no hooks/settings/rules/skills change; no effort key anywhere (grep for 'effort' in the diff finds no new key).",
+    "AS-2: each of the eight agent definitions contains exactly one added code-graph awareness sentence carrying 'advisory only' and citing tools/code_graph/README.md; the three read-only reviewers' sentences additionally carry --no-regen and the report-not-regenerate rule (D-006-R017/R018).",
+    "AS-3: .claude/ORCHESTRATION_POLICY.md carries the Section 3 tiering amendment preserving verbatim-critical constraints: sweep identity = existing auditor-class definition (default progress-auditor); data-not-judgment boundary; dispatch names each sweep spawn, model, exact scope; gate-class reviewer identities never on a lower model; never downgrade judgment to save tokens (D-006-R008..R014).",
+    "AS-4 (executable): python tools/validate_directive_compliance.py --check exits 0 at the producer's frozen head.",
+    "AS-5: the producer report records the dispatch under the D-006 standards themselves (exact-file packet, delta scope, settled findings cited) and carries the N=6 measurement note fields for this dispatch (D-006-R024): scope statement, model, and the honest statement of which /usage figures were or were not observable."
+  ],
+  "required_gates": [
+    "G0",
+    "G2",
+    "G3",
+    "G5"
+  ],
+  "producer_agent": null,
+  "reviewer_agents": [
+    "code-reviewer",
+    "security-reviewer",
+    "control-plane-verifier",
+    "directive-compliance-verifier"
+  ],
+  "status": "backlog",
+  "progress_percent": 0,
+  "risks": [
+    "Wiring text drift: the Section 5.2 sentence must stay advisory-only; any 'must use the graph' phrasing violates D-006-R019 (D-005 amendment 2 stands).",
+    "Scope creep into .claude/agents definitions beyond the one sentence; containment is AS-1/AS-2 and the G3 diff review."
+  ],
+  "blockers": [],
+  "created_at": "2026-08-03T02:33:02.122874+00:00",
+  "updated_at": "2026-08-03T02:35:31.923657+00:00",
+  "directive_refs": [
+    {
+      "directive_id": "D-006",
+      "requirement_ids": "ALL"
+    }
+  ],
+  "directive_regime_version": "1.0",
+  "directive_regime_entered_at": "2026-08-03T02:33:02.122874+00:00"
+}
