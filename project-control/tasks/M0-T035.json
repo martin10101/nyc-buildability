@@ -61,14 +61,14 @@
     "directive-compliance-verifier"
   ],
   "status": "awaiting_gate",
-  "progress_percent": 85,
+  "progress_percent": 95,
   "risks": [
     "Wiring text drift: the Section 5.2 sentence must stay advisory-only; any 'must use the graph' phrasing violates D-006-R019 (D-005 amendment 2 stands).",
     "Scope creep into .claude/agents definitions beyond the one sentence; containment is AS-1/AS-2 and the G3 diff review."
   ],
   "blockers": [],
   "created_at": "2026-08-03T02:33:02.122874+00:00",
-  "updated_at": "2026-08-03T02:55:47.650284+00:00",
+  "updated_at": "2026-08-03T03:07:38.084033+00:00",
   "directive_refs": [
     {
       "directive_id": "D-006",
