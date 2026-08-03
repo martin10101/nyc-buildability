@@ -816,8 +816,12 @@ class CliTests(TempCase):
         self.assertFalse(payload["limited_auto_enabled"])
 
     def test_deferred_commands_refuse_by_name(self) -> None:
-        for command in ("replay", "pause", "emergency-stop", "pending-approvals",
-                        "export-handoff", "verify-controller"):
+        # Phase 2 update: `pending-approvals` and `verify-controller` are now
+        # implemented (approval broker + live controller manifest verification), so
+        # they were removed from this list. Everything still deferred continues to
+        # refuse by name.
+        for command in ("replay", "pause", "emergency-stop", "start",
+                        "export-handoff", "recovery-status"):
             with self.assertRaises(NotImplementedError) as ctx:
                 cli.main([command, *self._common()])
             self.assertIn("not implemented", str(ctx.exception).lower())

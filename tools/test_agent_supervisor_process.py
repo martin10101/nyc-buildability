@@ -434,8 +434,16 @@ class ProcessResultTests(unittest.TestCase):
         self.assertIn("ok", result.stdout)
         self.assertTrue(result.ok)
 
-    def test_controller_version_is_reported(self) -> None:
-        self.assertTrue(CONTROLLER_VERSION.endswith("phase1"))
+    def test_controller_version_matches_the_declared_phase(self) -> None:
+        # Phase 2 update: the assertion was `endswith("phase1")`. The controller
+        # version is embedded in the manifest, in every audit record, and in the
+        # durable journal, so a Phase 2 build reporting "phase1" would be a false
+        # provenance claim. The check is now tied to the declared PHASE instead of
+        # to a frozen string, so it stays true across later phases.
+        from tools.agent_supervisor import PHASE
+
+        self.assertRegex(CONTROLLER_VERSION, r"^\d+\.\d+\.\d+-phase\d+$")
+        self.assertTrue(CONTROLLER_VERSION.endswith(f"phase{PHASE}"))
 
 
 if __name__ == "__main__":

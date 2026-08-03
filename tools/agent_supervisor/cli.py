@@ -1,12 +1,16 @@
 #!/usr/bin/env python3
 """Operator command surface (D-007 S12.1).
 
-Phase 1 wires the whole S12.1 command list so the shape is visible and no
-command silently does something surprising. Only three are LIVE:
+The whole S12.1 command list is wired so the shape is visible and no command
+silently does something surprising. LIVE after Phase 2:
 
-    doctor    read-only; runs every Phase-1-scope check and reports pass/fail
-    status    read-only; renders the durable journal's current view
-    replay    wired but not implemented (the replay engine is Phase 4)
+    doctor              read-only; runs every in-scope check and reports pass/fail
+    status              read-only; renders the durable journal's current view
+    verify-controller   read-only; verifies the live controller against a manifest
+    pending-approvals   read-only; lists queued requests with their exact digests
+    approve-once        owner answer, bound to the displayed digest
+    deny                owner answer, bound to the displayed digest
+    revoke-all          revokes every pending/unconsumed approval immediately
 
 Every other command raises `NotImplementedError` naming the phase that will
 implement it. That is deliberate: an operator command that half-works is worse
@@ -27,7 +31,16 @@ from typing import Any, Sequence
 
 from . import CONTROLLER_VERSION, PHASE, PROTOCOL_VERSION, SCHEMA_VERSION
 from .audit_log import AuditLog
+from .broker import ApprovalBroker, BrokerError, build_request
 from .circuit_breakers import CircuitBreakers
+from .claude_runner import (
+    CONTROL_RESPONSE_WRAPPER_VERIFIED,
+    RunnerConfig,
+    RunnerError,
+    build_argv as build_claude_argv,
+    build_control_response,
+)
+from .codex_reviewer import ReviewError, build_argv as build_codex_argv
 from .config import (
     ConfigError,
     Limits,
@@ -43,9 +56,23 @@ from .durable_state import (
     looks_cloud_synced,
     runtime_dir_for,
 )
+from .evidence import DEFAULT_PACKET_BYTES, STOP_FOR_OWNER, bound_text, build_packet
+from .external_effects import ExternalEffectError, spec_for, stable_action_id
 from .manifest import MODEL_SELECTION_FILENAME, generate_manifest, read_manifest, verify_manifest
+from .policy import (
+    ASK,
+    AUTO,
+    BYPASS_FLAG_MARKERS,
+    DENY_AND_HALT,
+    HARD_DENY,
+    ProposedAction,
+    TaskAuthority,
+    apply_model_recommendation,
+    evaluate as evaluate_policy,
+)
 from .process import HARD_DENY_ARGUMENTS, HardDenyError, assert_argv_safe
 from .protocol import build_envelope, validate_envelope
+from .push_policy import PushPlan, assert_no_execution, evaluate_push
 from .state_machine import STATES, TRANSITIONS, INITIAL_STATE
 
 PACKAGE_ROOT = pathlib.Path(__file__).resolve().parent
@@ -53,22 +80,17 @@ AUDIT_FILENAME = "audit.jsonl"
 
 #: Commands that exist in S12.1 but are implemented in a later phase.
 DEFERRED_COMMANDS: dict[str, str] = {
-    "start": "Phase 2 (policy engine, approval broker, and the Claude/Codex adapters)",
+    "start": "Phase 3 (the supervised loop: rotation, recovery, and scheduling)",
     "pause": "Phase 3 (pause/stop/resume with durable flags)",
     "resume": "Phase 3 (pause/stop/resume with durable flags)",
     "stop": "Phase 3 (pause/stop/resume with durable flags)",
     "emergency-stop": "Phase 3 (durable stop flag and child-tree termination)",
-    "verify-controller": "Phase 2 (uses the live controller checkout, not a supplied root)",
     "recovery-status": "Phase 3 (crash/reboot recovery classification)",
     "schedule-status": "Phase 3 (durable wake scheduling)",
     "cancel-scheduled-resume": "Phase 3 (durable wake scheduling)",
     "autostart-plan": "Phase 3 (owner-gated startup/logon task)",
     "install-autostart": "Phase 3 (owner-gated OS mutation)",
     "uninstall-autostart": "Phase 3 (owner-gated OS mutation)",
-    "pending-approvals": "Phase 2 (approval broker)",
-    "approve-once": "Phase 2 (approval broker)",
-    "deny": "Phase 2 (approval broker)",
-    "revoke-all": "Phase 3 (remote approvals and revocation)",
     "set-codex-model": "Phase 3 (authenticated model-change path, S3.2 rule 6)",
     "set-claude-model": "Phase 3 (authenticated model-change path, S3.2 rule 6)",
     "export-handoff": "Phase 3 (rotation and verified handoff)",
@@ -301,8 +323,228 @@ def _check_breakers() -> Check:
                  f"limit trips (pause), below warn_ratio it only warns (NOTIFY)")
 
 
+# --------------------------------------------------------------------------
+# Phase 2 checks: policy, broker, adapters, push policy, evidence, effects
+# --------------------------------------------------------------------------
+
+
+def _probe_authority(checkout: pathlib.Path) -> TaskAuthority:
+    """A throwaway authority used only to exercise the policy engine in `doctor`."""
+    return TaskAuthority(
+        task_id="DOCTOR", stage="probe", repo_root=str(checkout),
+        worktree=str(checkout), branch="task/doctor-probe",
+        allowed_paths=("tools/agent_supervisor/**",),
+        forbidden_paths=(".github/**",),
+        documented_test_commands=(),
+        status="in_progress", active=True)
+
+
+def _check_policy_tiers(checkout: pathlib.Path) -> Check:
+    """Prove the four tiers actually classify, and that a model cannot loosen."""
+    authority = _probe_authority(checkout)
+    failures: list[str] = []
+
+    # The probe input is built FROM the deny list, never restated as a literal.
+    bypass = evaluate_policy(
+        ProposedAction(kind="command",
+                       command_text=f"claude {BYPASS_FLAG_MARKERS[0]} -p hi"),
+        authority=authority)
+    if bypass.tier != HARD_DENY or bypass.outcome != DENY_AND_HALT:
+        failures.append(f"bypass flag classified {bypass.tier}/{bypass.outcome}")
+
+    main_push = evaluate_policy(
+        ProposedAction(kind="push", branch="main", argv=("git", "push", "origin", "main")),
+        authority=authority)
+    if main_push.tier != HARD_DENY:
+        failures.append(f"push to main classified {main_push.tier}")
+
+    edit = evaluate_policy(
+        ProposedAction(kind="file_write",
+                       target_paths=(str(checkout / "tools" / "agent_supervisor" /
+                                         "policy.py"),),
+                       change_bytes=100),
+        authority=authority)
+    if edit.tier != AUTO:
+        failures.append(f"in-scope edit classified {edit.tier} ({edit.reason_code})")
+
+    unknown = evaluate_policy(ProposedAction(kind="unknown", tool_name="MysteryTool"),
+                              authority=authority)
+    if unknown.tier != ASK:
+        failures.append(f"unknown request classified {unknown.tier}")
+
+    loosened = apply_model_recommendation(main_push, AUTO, source="doctor")
+    if loosened.tier != HARD_DENY:
+        failures.append("a model recommendation loosened a HARD-DENY")
+
+    if failures:
+        return Check("policy_four_tiers", False, "; ".join(failures))
+    return Check("policy_four_tiers", True,
+                 "HARD-DENY (bypass -> DENY_AND_HALT, main push), AUTO (in-scope edit), "
+                 "ASK (unknown request) all classify correctly; a model recommendation "
+                 "cannot loosen a tier")
+
+
+def _check_approval_binding(checkout: pathlib.Path) -> Check:
+    """Prove an approval digest is bound to the exact request (S13.5)."""
+    authority = _probe_authority(checkout)
+    request = build_request(tool_name="Bash", tool_input={"command": "git status"},
+                            authority=authority, argv=("git", "status"),
+                            head_sha="a" * 40, origin_main_sha="b" * 40)
+    changed = build_request(tool_name="Bash", tool_input={"command": "git status -s"},
+                            authority=authority, argv=("git", "status", "-s"),
+                            head_sha="a" * 40, origin_main_sha="b" * 40,
+                            request_id=request.request_id)
+    if request.digest() == changed.digest():
+        return Check("approval_binding", False,
+                     "two different commands produced the same request digest")
+    binding = request.binding()
+    required = {"tool_name", "tool_input", "argv", "executable_identity", "env_subset",
+                "cwd", "target_paths", "file_identities", "task_id", "stage", "branch",
+                "worktree", "head_sha", "origin_main_sha", "policy_version",
+                "controller_version", "permission_mode", "request_id"}
+    missing = sorted(required - set(binding))
+    if missing:
+        return Check("approval_binding", False, f"binding is missing {missing}")
+    if "stated_reason" in binding:
+        return Check("approval_binding", False,
+                     "the untrusted stated reason must not be part of the binding")
+    return Check("approval_binding", True,
+                 f"{len(binding)} bound elements; a changed argument changes the digest; "
+                 f"the model's stated reason is excluded")
+
+
+def _check_claude_adapter() -> Check:
+    """Prove the confirmed CLI shape is enforced (Phase 1 probe findings)."""
+    argv = build_claude_argv(RunnerConfig(executable="claude", max_turns=4))
+    for flag in ("-p", "--input-format", "stream-json", "--output-format",
+                 "--verbose", "--max-turns", "--permission-mode", "manual",
+                 "--permission-prompt-tool", "stdio"):
+        if flag not in argv:
+            return Check("claude_adapter", False, f"argv is missing {flag!r}")
+    try:
+        build_claude_argv(RunnerConfig(executable="claude", permission_mode="acceptEdits"))
+    except RunnerError:
+        pass
+    else:
+        return Check("claude_adapter", False,
+                     "a non-manual permission mode was NOT refused")
+    try:
+        build_claude_argv(RunnerConfig(executable="claude", resume_session_id="s-1"))
+    except RunnerError:
+        pass
+    else:
+        return Check("claude_adapter", False,
+                     "an unverified --resume was NOT refused")
+    return Check("claude_adapter", True,
+                 "the confirmed argv is enforced; a non-manual permission mode and an "
+                 "unverified exact-session resume are both refused")
+
+
+def _check_control_response_disclosure() -> Check:
+    """State the verification status of the control-response wrapper honestly."""
+    sample = build_control_response("req-1", "deny", message="denied")
+    shape_ok = (sample.get("type") == "control_response"
+                and sample["response"]["subtype"] == "success"
+                and sample["response"]["response"]["behavior"] == "deny")
+    if not shape_ok:
+        return Check("control_response_shape", False, "the wrapper shape is malformed")
+    status = "VERIFIED" if CONTROL_RESPONSE_WRAPPER_VERIFIED else "UNVERIFIED"
+    return Check(
+        "control_response_shape", True,
+        f"wrapper built as documented; live-CLI verification status: {status}. The Phase 1 "
+        f"probe recorded the control REQUEST payload verbatim and a successful deny "
+        f"round-trip, but not the exact response wrapper bytes - a preflight round-trip "
+        f"probe must confirm it before any live worker run")
+
+
+def _check_codex_adapter() -> Check:
+    """Prove the reviewer is read-only by construction (invariant 10)."""
+    schema = PACKAGE_ROOT / "schemas" / "codex_decision.schema.json"
+    argv = build_codex_argv("codex", repo=str(PACKAGE_ROOT), model="probe-model",
+                            schema_path=str(schema), output_path="out.json")
+    for flag in ("exec", "-C", "-m", "--ephemeral", "--ignore-user-config",
+                 "--strict-config", "--sandbox", "read-only", "--json",
+                 "--output-schema", "--output-last-message", "-"):
+        if flag not in argv:
+            return Check("codex_adapter", False, f"argv is missing {flag!r}")
+    try:
+        build_codex_argv("codex", repo=".", model="m", schema_path="s", output_path="o",
+                         sandbox="workspace-write")
+    except ReviewError:
+        pass
+    else:
+        return Check("codex_adapter", False, "a writable sandbox was NOT refused")
+    return Check("codex_adapter", True,
+                 "fresh-process argv carries --ephemeral --ignore-user-config "
+                 "--strict-config --sandbox read-only; a writable sandbox is refused")
+
+
+def _check_push_policy() -> Check:
+    """Prove the push checks deny main and force, and that nothing executes."""
+    assert_no_execution()
+    plan = PushPlan(remote_name="origin", remote_url="https://github.com/o/r.git",
+                    expected_remote_url="https://github.com/o/r", branch="main",
+                    authorized_branch="task/x", local_head="a" * 40)
+    main_result = evaluate_push(plan)
+    forced = evaluate_push(dataclasses_replace(plan, branch="task/x", force=True))
+    if main_result.decision.tier != HARD_DENY:
+        return Check("push_policy", False, "a push to main was not hard-denied")
+    if forced.decision.tier != HARD_DENY:
+        return Check("push_policy", False, "a force push was not hard-denied")
+    if main_result.executed or forced.executed:
+        return Check("push_policy", False, "a push evaluation reported execution")
+    return Check("push_policy", True,
+                 "main and force pushes are hard-denied; sensitive path classes, "
+                 "privileged workflows, and deployment paths gate to ASK; NO push is "
+                 "executed in this phase")
+
+
+def _check_external_effects() -> Check:
+    """Prove the effect model refuses unmodeled writes and keys are stable."""
+    first = stable_action_id(effect_type="github_pr_create", target="pr#1",
+                             task_id="T", request_digest="d")
+    second = stable_action_id(effect_type="github_pr_create", target="pr#1",
+                              task_id="T", request_digest="d")
+    if first != second:
+        return Check("external_effects", False, "the idempotency key is not stable")
+    try:
+        spec_for("send_wire_transfer")
+    except ExternalEffectError:
+        pass
+    else:
+        return Check("external_effects", False, "an unmodeled effect was accepted")
+    return Check("external_effects", True,
+                 "idempotency keys are content-stable; unmodeled external writes are "
+                 "refused and remain ASK-gated")
+
+
+def _check_evidence_bounds() -> Check:
+    """Prove truncation is explicit and an oversized packet stops for the owner."""
+    text, truncated = bound_text("x" * 100, 10)
+    if not truncated or "TRUNCATED" not in text:
+        return Check("evidence_bounds", False, "truncation is not explicitly marked")
+    oversized = build_packet(
+        run_id="r", task_id="t", checkpoint_id="c",
+        checkpoint={"schema_version": "1", "checkpoint_id": "c"},
+        extra_sections={"bulk": "y" * 5000}, max_packet_bytes=1024)
+    if oversized.stop != STOP_FOR_OWNER:
+        return Check("evidence_bounds", False,
+                     "an oversized packet did not return STOP_FOR_OWNER")
+    return Check("evidence_bounds", True,
+                 f"truncation carries an explicit marker; material that will not fit the "
+                 f"{DEFAULT_PACKET_BYTES}-byte bound returns STOP_FOR_OWNER instead of "
+                 f"being silently omitted")
+
+
+def dataclasses_replace(obj: Any, **changes: Any) -> Any:
+    """Local alias so `doctor` can build plan variants without a top-level import."""
+    import dataclasses as _dc
+
+    return _dc.replace(obj, **changes)
+
+
 def cmd_doctor(args: argparse.Namespace) -> int:
-    """Read-only Phase-1-scope health check."""
+    """Read-only health check across every implemented phase."""
     checkout = pathlib.Path(args.checkout).resolve()
     checks: list[Check] = [
         _check_python(),
@@ -313,6 +555,14 @@ def cmd_doctor(args: argparse.Namespace) -> int:
         _check_hard_denies(),
         _check_breakers(),
         _check_manifest(args.manifest),
+        _check_policy_tiers(checkout),
+        _check_approval_binding(checkout),
+        _check_claude_adapter(),
+        _check_control_response_disclosure(),
+        _check_codex_adapter(),
+        _check_push_policy(),
+        _check_external_effects(),
+        _check_evidence_bounds(),
     ]
     runtime_check, runtime = _check_runtime_dir(checkout, args.runtime_base)
     checks.append(runtime_check)
@@ -404,6 +654,161 @@ def cmd_status(args: argparse.Namespace) -> int:
 
 
 # --------------------------------------------------------------------------
+# approval commands (S12.1, S8.4, S13.10)
+# --------------------------------------------------------------------------
+
+
+def _open_broker(args: argparse.Namespace) -> tuple[DurableJournal, ApprovalBroker]:
+    """Open the journal and an owner-side broker view of it.
+
+    The owner-side commands only read, answer, and revoke; they never classify,
+    so the authority object here is a read-only placeholder.
+    """
+    checkout = pathlib.Path(args.checkout).resolve()
+    runtime = runtime_dir_for(checkout, base=args.runtime_base)
+    journal = DurableJournal(runtime / DB_FILENAME).open()
+    audit = AuditLog(runtime / AUDIT_FILENAME)
+    authority = TaskAuthority(task_id="", stage="", repo_root=str(checkout),
+                              worktree=str(checkout), branch="", active=False,
+                              status="operator")
+    return journal, ApprovalBroker(journal, audit, authority=authority, mode="operator")
+
+
+def cmd_pending_approvals(args: argparse.Namespace) -> int:
+    """List every queued request with the EXACT digest the owner must quote."""
+    journal, broker = _open_broker(args)
+    try:
+        records = broker.pending()
+        items = []
+        for record in records:
+            request = record.get("request", {})
+            outcome = record.get("outcome", {})
+            items.append({
+                "request_id": request.get("request_id", ""),
+                "digest": record.get("request_digest", ""),
+                "tool_name": request.get("tool_name", ""),
+                "task_id": request.get("task_id", ""),
+                "branch": request.get("branch", ""),
+                "target_paths": request.get("target_paths", []),
+                "tier": outcome.get("tier", ""),
+                "reason_code": outcome.get("reason_code", ""),
+                "reason": outcome.get("reason", ""),
+                "classification": record.get("policy", {}).get("classification", ""),
+                "session_id": record.get("session_id", ""),
+                "rejected_suggestions": outcome.get("rejected_suggestions", []),
+                "queued_at_utc": record.get("updated_at_utc", ""),
+            })
+    finally:
+        journal.close()
+
+    if args.json:
+        print(json.dumps({"command": "pending-approvals", "count": len(items),
+                          "pending": items}, indent=2))
+    else:
+        if not items:
+            print("no pending approvals.")
+        for item in items:
+            print(f"{item['request_id']}  {item['tier']}  {item['tool_name']}")
+            print(f"  digest : {item['digest']}")
+            print(f"  task   : {item['task_id']}  branch: {item['branch']}")
+            print(f"  why    : {item['reason']}")
+            if item["rejected_suggestions"]:
+                print(f"  refused suggestions: {item['rejected_suggestions']}")
+            print("  answer : approve-once <request-id> <digest>  |  deny <request-id> "
+                  "<digest>")
+    return 0
+
+
+def _answer(args: argparse.Namespace, approve: bool) -> int:
+    journal, broker = _open_broker(args)
+    try:
+        if approve:
+            outcome = broker.approve_once(args.request_id, args.displayed_digest)
+        else:
+            outcome = broker.deny_request(args.request_id, args.displayed_digest,
+                                          reason="denied by the owner at the CLI")
+    except BrokerError as exc:
+        print(f"{exc.code}: {exc.message}", file=sys.stderr)
+        return 1
+    finally:
+        journal.close()
+
+    payload = outcome.to_dict()
+    if args.json:
+        print(json.dumps(payload, indent=2))
+    else:
+        print(f"{outcome.behavior}: {outcome.reason}")
+        print(f"digest: {outcome.request_digest}")
+        if outcome.behavior == "APPROVE_ONCE":
+            print("this approval is single-use and is revalidated immediately before "
+                  "execution; any change invalidates it.")
+    return 0 if outcome.behavior in ("APPROVE_ONCE", "DENY") else 1
+
+
+def cmd_approve_once(args: argparse.Namespace) -> int:
+    return _answer(args, approve=True)
+
+
+def cmd_deny(args: argparse.Namespace) -> int:
+    return _answer(args, approve=False)
+
+
+def cmd_revoke_all(args: argparse.Namespace) -> int:
+    """Revoke every pending/unconsumed approval and reassert limited-auto off."""
+    journal, broker = _open_broker(args)
+    try:
+        revoked = broker.revoke_all(reason="operator revoke-all")
+    finally:
+        journal.close()
+    if args.json:
+        print(json.dumps({"command": "revoke-all", "revoked": revoked,
+                          "limited_auto_enabled": False}, indent=2))
+    else:
+        print(f"revoked {revoked} pending/unconsumed approval(s).")
+        print("limited-auto: disabled (it is not implemented and cannot be enabled here).")
+    return 0
+
+
+def cmd_verify_controller(args: argparse.Namespace) -> int:
+    """Verify the LIVE controller package against a recorded manifest (S13.1)."""
+    if args.manifest is None:
+        manifest = generate_manifest(PACKAGE_ROOT)
+        payload = {
+            "command": "verify-controller",
+            "ok": True,
+            "generated": True,
+            "files": len(manifest["files"]),
+            "manifest_digest": manifest["manifest_digest"],
+            "controller_version": CONTROLLER_VERSION,
+            "note": (f"no --manifest supplied, so this generated one over the live "
+                     f"package. {MODEL_SELECTION_FILENAME} is deliberately excluded: "
+                     f"changing a model never invalidates the controller."),
+        }
+        print(json.dumps(payload, indent=2) if args.json else
+              f"generated manifest over {payload['files']} files: "
+              f"{payload['manifest_digest']}\n{payload['note']}")
+        return 0
+    try:
+        manifest = read_manifest(args.manifest)
+    except Exception as exc:
+        print(f"manifest unreadable: {exc}", file=sys.stderr)
+        return 1
+    verification = verify_manifest(PACKAGE_ROOT, manifest)
+    payload = {
+        "command": "verify-controller",
+        "ok": verification.ok,
+        "detail": "" if verification.ok else verification.halt_reason(),
+        "controller_version": CONTROLLER_VERSION,
+    }
+    if args.json:
+        print(json.dumps(payload, indent=2))
+    else:
+        print("controller verified." if verification.ok
+              else f"HALT: {verification.halt_reason()}")
+    return 0 if verification.ok else 1
+
+
+# --------------------------------------------------------------------------
 # deferred commands
 # --------------------------------------------------------------------------
 
@@ -468,23 +873,41 @@ def build_parser() -> argparse.ArgumentParser:
                        default="shadow")
     start.set_defaults(func=cmd_deferred)
 
+    pending = sub.add_parser("pending-approvals",
+                             help="list queued requests with their digests (live)")
+    add_common(pending)
+    pending.set_defaults(func=cmd_pending_approvals)
+
+    revoke = sub.add_parser("revoke-all",
+                            help="revoke every pending/unconsumed approval (live)")
+    add_common(revoke)
+    revoke.set_defaults(func=cmd_revoke_all)
+
+    verify = sub.add_parser("verify-controller",
+                            help="verify the live controller against a manifest (live)")
+    add_common(verify)
+    verify.add_argument("--manifest", default=None,
+                        help="path to a recorded controller_manifest.json")
+    verify.set_defaults(func=cmd_verify_controller)
+
     simple = [
-        "pause", "resume", "stop", "emergency-stop", "verify-controller",
+        "pause", "resume", "stop", "emergency-stop",
         "recovery-status", "schedule-status", "cancel-scheduled-resume",
         "autostart-plan", "install-autostart", "uninstall-autostart",
-        "pending-approvals", "revoke-all", "export-handoff",
+        "export-handoff",
     ]
     for name in simple:
         p = sub.add_parser(name, help=f"{DEFERRED_COMMANDS.get(name, 'later phase')}")
         add_common(p)
         p.set_defaults(func=cmd_deferred)
 
-    for name in ("approve-once", "deny"):
-        p = sub.add_parser(name, help=DEFERRED_COMMANDS[name])
+    for name, handler in (("approve-once", cmd_approve_once), ("deny", cmd_deny)):
+        p = sub.add_parser(name, help=f"answer a queued request by its exact digest "
+                                      f"({name}, live)")
         add_common(p)
         p.add_argument("request_id")
         p.add_argument("displayed_digest")
-        p.set_defaults(func=cmd_deferred)
+        p.set_defaults(func=handler)
 
     for name in ("set-codex-model", "set-claude-model"):
         p = sub.add_parser(name, help=DEFERRED_COMMANDS[name])

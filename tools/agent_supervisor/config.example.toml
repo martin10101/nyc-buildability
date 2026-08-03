@@ -55,6 +55,33 @@ max_consecutive_revision_loops = 4
 # Fraction of a hard limit at which a NOTIFY warning is emitted.
 warn_ratio = 0.75
 
+[policy]
+# Deterministic bounds for the four-tier engine (S4.1). Unrecognized keys here
+# are refused, like every other section: the policy fails closed. No model can
+# raise any of these, and no grant can exceed them.
+#
+# A file create/modify is baseline-AUTO only when every canonical target resolves
+# inside allowed_paths AND the isolated task worktree, the file class is
+# ordinary (never a workflow, hook, permission/settings file, dependency
+# manifest, lockfile, launcher script, or deployment definition), and the change
+# stays inside these bounds. Deletes, renames, and oversized changes are never
+# baseline-AUTO.
+max_changed_files_per_checkpoint = 20
+max_change_bytes_per_checkpoint = 262144
+max_single_file_bytes = 131072
+# Branches that may never receive a direct or forced push.
+main_branch_names = ["main", "master"]
+# A read-oriented `git fetch --prune` during evidence collection. Off by default;
+# when off, any decision depending on current remote state must say the refs may
+# be stale rather than claiming success from them (S10).
+allow_remote_reads = false
+# The ONLY categories in which a Codex advisory may resolve an ambiguous tool
+# request (S8.4 step 3). Security-sensitive requests and anything touching an
+# external write are excluded structurally and cannot be added here.
+advisory_eligible_categories = [
+    "read_only_inspection", "in_scope_file_edit", "documented_test_command",
+]
+
 # ---------------------------------------------------------------------------
 # The RUNTIME model selection is a SEPARATE file. Do not add these keys here -
 # the loader refuses a controller config that contains them. Example
