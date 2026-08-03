@@ -60,7 +60,7 @@
     "directive-compliance-verifier"
   ],
   "status": "in_progress",
-  "progress_percent": 5,
+  "progress_percent": 20,
   "risks": [
     "Scale: D-007 spans 5 phases; the packet authorizes Phases 1-4 + the Phase 5 shadow pilot, with the activation decision owner-gated. Split into per-phase follow-up tasks at the orchestrator's discretion if a phase exceeds a safe review size - contract splits through the normal process, never widen this packet.",
     "Windows process-tree control (Job Objects) and durable Task Scheduler wake are the highest-uncertainty areas; Section 18 stop conditions apply if a safe strategy cannot be proven.",
@@ -69,7 +69,7 @@
   ],
   "blockers": [],
   "created_at": "2026-08-03T03:44:41.634259+00:00",
-  "updated_at": "2026-08-03T04:07:53.280209+00:00",
+  "updated_at": "2026-08-03T05:00:12.014433+00:00",
   "directive_refs": [
     {
       "directive_id": "D-007",
@@ -110,6 +110,13 @@
       "percent": 5,
       "status": "in_progress",
       "message": "PHASE 1 DISPATCH under the owner build dispatch (D-007-R540, captured PR #150) and the D-006 standards. Producer: unnamed backend-engineer, explicit Opus 5 (R298 ceiling; R307 discharge governs gate-class spawns, which stay pinned Fable 5), worktree-isolated. Bounded deliverable: the two behavioral probes FIRST (R535: --max-turns acceptance + stream-json canUseTool protocol; stop only if a result contradicts the CLI-adapter decision), then Phase 1 core loop exactly per D-007 Section 17: schemas, models, config incl. Section 3 model selection + startup probe shape, state machine + transactional SQLite journal, process abstraction, versioned envelope/inbox/outbox/capability handshake, audit log with mandatory hash chain + redaction, controller manifest, circuit breakers, fake-process test harness. Standing grant (a) ACTIVE for pytest tools/test_agent_supervisor_*.py in the worktree. N=6 measurement dispatch 6 of 6: scope stated here; per-spawn /usage figures unobservable, recorded honestly; after this dispatch the N=6 summary is due (D-006-R025)."
+    },
+    {
+      "at": "2026-08-03T05:00:12.014433+00:00",
+      "agent": "orchestrator",
+      "percent": 20,
+      "status": "in_progress",
+      "message": "PHASE 1 COMPLETE and integrated. Probes CONFIRMED the CLI-adapter decision (no stop): --max-turns accepted+honored on 2.1.220; stream-json can_use_tool broker exists first-class (hidden --permission-prompt-tool stdio proven; exact control_request payload captured; fails CLOSED at stdin EOF). Phase 2 findings recorded: --permission-mode manual mandatory; never auto-select the setMode/acceptEdits suggestion. 26 files ported with 26/26 per-file LF SHA-256 verification (full hashes in M0-T036-phase1-port-hashes.json); orchestrator re-ran the suites on the ported tree: 139 tests OK (skipped=1, POSIX-only guard; Windows Job Object test ran+passed); zero control-plane regressions (22 groups + directive suites green). Producer checkpoint preserved verbatim (4 annotated R024 path redactions); producer agent-memory files NOT ported (R704 owner-plane collision; learning preserved in the report, R660 pattern). Honest deferrals: Option A external anchor -> Phase 3 (needs controller credentials + ADR amendment in force); Job-Object-as-default -> Phase 3. Orchestrator action queued for owner: CI does not yet invoke the four new test files (.github/** outside packet scope - separate authorization needed). Worktree cleaned post-port. PHASE 2 DISPATCH next: tier policy engine + standing grants + approval broker (seeded with the captured payload schema) + Claude runner (manual mode + stdio prompt tool) + Codex reviewer adapter + evidence collector + external-effect journal + integrity checks + bounded packet builder."
     }
   ]
 }
