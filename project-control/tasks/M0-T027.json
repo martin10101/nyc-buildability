@@ -67,8 +67,8 @@
     "code-reviewer",
     "security-reviewer"
   ],
-  "status": "awaiting_gate",
-  "progress_percent": 85,
+  "status": "accepted",
+  "progress_percent": 100,
   "risks": [
     "Teammates may not inherit skills frontmatter; each spawn prompt must state the frozen SHA and explicitly instruct /run-quality-gate, or Step-1 item 4 fails.",
     "A reviewer sandbox that cannot execute commands cannot return its own rev-parse; per .claude/rules/project-control.md the orchestrator then captures the executable evidence and the reviewer verifies it, and this substitution is recorded explicitly rather than silently.",
@@ -77,7 +77,7 @@
   ],
   "blockers": [],
   "created_at": "2026-07-24T18:23:08.048623+00:00",
-  "updated_at": "2026-07-31T20:10:57.674236+00:00",
+  "updated_at": "2026-08-03T01:52:10.469803+00:00",
   "directive_refs": [
     {
       "directive_id": "D-004",
@@ -152,5 +152,100 @@
       "status": "awaiting_gate",
       "message": "STEP 3 COMPLETE, STEP 4 STOPPED BEFORE ACCEPT (D-004-R673/R678 honored; no workaround). Final independent directive-compliance verification at frozen merged head 2689b1e / identity 29a094eb: VERDICT BLOCKED. 225/233 PASS (204 settled at 3ed05fda cited under R670 + 21 delta rows), 0 FAIL, 5 attested lifecycle deferrals with classified_at_identity stamps (R389/R486/R487/R488/R501), 3 UNVERIFIABLE (R322/R323/R388) - the exact R673 clause-1 hard stop. Root cause per the verifier (F-1): those three are COMPOUND amendment-8/9 rows whose non-accept clauses are fully discharged but whose lifecycle_events span submit/gate/progress, so M0-T034 deferral condition (3) structurally refuses attestation - mechanism behaving as written, not a code defect; amendment 9's atomic decomposition (R481-R488) behaves correctly. New observations for owner judgment: OBS-A (M0-T034 task itself still self_check while its merged mechanism gates this acceptance), OBS-B (evidence map internal identity fields stale vs submit record). R024 ruled PASS by the verifier (not the orchestrator). R672 guard record: ten checks performed manually and recorded. Return preserved VERBATIM as project-control/reports/M0-T027-dcv-final-verification.md (R671) with one annotated R024 preservation-time redaction (9 absolute repository paths -> <REPO>). verification.json NOT rewritten: verifier directs it must not be written as clean; recording the BLOCKED block is an owner decision surfaced in the stop report. Steps 4-7 do not execute: acceptance not authorized (R674 not met), Step 5 fires only on acceptance, Step 6 hold lifts only per R685's conditions (M0-T027 acceptance first), Step 7 replaced by this stop report. Owner decision required on F-1 disposition."
     }
-  ]
+  ],
+  "accepted_by": "orchestrator",
+  "accepted_at": "2026-08-03T01:52:10.469803+00:00",
+  "post_accept_verification": {
+    "state": "pending",
+    "registered_at": "2026-08-03T01:52:10.469803+00:00",
+    "registered_by": "orchestrator",
+    "first_opportunity": "checkpoint",
+    "deferred_requirements": [
+      {
+        "requirement_id": "D-004-R389",
+        "act_class": "post_accept_cleanup",
+        "classified_by": "directive-compliance-verifier",
+        "classified_at": "2026-07-31T21:15:00+00:00",
+        "classified_at_identity": "29a094ebdf312767b2ffa964a9cfb0398432e8838db0a211a711f1dd8db2bb97",
+        "justification": "Cleaning the branches/worktrees created for the two authorized tasks is an act that can only be performed after acceptance; the row is bound solely to the accept lifecycle event and is an obligation, not a bar on acceptance.",
+        "row_classification": "obligation",
+        "row_lifecycle_events": [
+          "accept"
+        ],
+        "verification_state": "pending",
+        "directive_id": "D-004",
+        "task_id": "M0-T027",
+        "deferred_at_identity": "29a094ebdf312767b2ffa964a9cfb0398432e8838db0a211a711f1dd8db2bb97",
+        "deferred_at_sha": "bbbb8ef18cc297ece8759535f0cb9484a0d785bc"
+      },
+      {
+        "requirement_id": "D-004-R486",
+        "act_class": "accept",
+        "classified_by": "directive-compliance-verifier",
+        "classified_at": "2026-07-31T21:15:00+00:00",
+        "classified_at_identity": "29a094ebdf312767b2ffa964a9cfb0398432e8838db0a211a711f1dd8db2bb97",
+        "justification": "Accepting M0-T027 through the CLI is the acceptance act itself; its evidence cannot exist before accept() runs. Bound solely to accept, classified obligation.",
+        "row_classification": "obligation",
+        "row_lifecycle_events": [
+          "accept"
+        ],
+        "verification_state": "pending",
+        "directive_id": "D-004",
+        "task_id": "M0-T027",
+        "deferred_at_identity": "29a094ebdf312767b2ffa964a9cfb0398432e8838db0a211a711f1dd8db2bb97",
+        "deferred_at_sha": "bbbb8ef18cc297ece8759535f0cb9484a0d785bc"
+      },
+      {
+        "requirement_id": "D-004-R487",
+        "act_class": "checkpoint",
+        "classified_by": "directive-compliance-verifier",
+        "classified_at": "2026-07-31T21:15:00+00:00",
+        "classified_at_identity": "29a094ebdf312767b2ffa964a9cfb0398432e8838db0a211a711f1dd8db2bb97",
+        "justification": "Creating a checkpoint only if policy requires one is a conditional post-accept act; checkpoint() is the first post-accept opportunity at which it can be evaluated. Bound solely to accept, classified sequencing.",
+        "row_classification": "sequencing",
+        "row_lifecycle_events": [
+          "accept"
+        ],
+        "verification_state": "pending",
+        "directive_id": "D-004",
+        "task_id": "M0-T027",
+        "deferred_at_identity": "29a094ebdf312767b2ffa964a9cfb0398432e8838db0a211a711f1dd8db2bb97",
+        "deferred_at_sha": "bbbb8ef18cc297ece8759535f0cb9484a0d785bc"
+      },
+      {
+        "requirement_id": "D-004-R488",
+        "act_class": "post_accept_cleanup",
+        "classified_by": "directive-compliance-verifier",
+        "classified_at": "2026-07-31T21:15:00+00:00",
+        "classified_at_identity": "29a094ebdf312767b2ffa964a9cfb0398432e8838db0a211a711f1dd8db2bb97",
+        "justification": "Cleaning only the M0-T027 closeout branches/worktrees follows acceptance; two closeout branches remain on origin by design pending that act. Bound solely to accept, classified obligation.",
+        "row_classification": "obligation",
+        "row_lifecycle_events": [
+          "accept"
+        ],
+        "verification_state": "pending",
+        "directive_id": "D-004",
+        "task_id": "M0-T027",
+        "deferred_at_identity": "29a094ebdf312767b2ffa964a9cfb0398432e8838db0a211a711f1dd8db2bb97",
+        "deferred_at_sha": "bbbb8ef18cc297ece8759535f0cb9484a0d785bc"
+      },
+      {
+        "requirement_id": "D-004-R501",
+        "act_class": "stop_after",
+        "classified_by": "directive-compliance-verifier",
+        "classified_at": "2026-07-31T21:15:00+00:00",
+        "classified_at_identity": "29a094ebdf312767b2ffa964a9cfb0398432e8838db0a211a711f1dd8db2bb97",
+        "justification": "Stopping after M0-T027 is either accepted or genuinely blocked is by construction an act at or after the acceptance decision. Bound solely to accept, classified sequencing.",
+        "row_classification": "sequencing",
+        "row_lifecycle_events": [
+          "accept"
+        ],
+        "verification_state": "pending",
+        "directive_id": "D-004",
+        "task_id": "M0-T027",
+        "deferred_at_identity": "29a094ebdf312767b2ffa964a9cfb0398432e8838db0a211a711f1dd8db2bb97",
+        "deferred_at_sha": "bbbb8ef18cc297ece8759535f0cb9484a0d785bc"
+      }
+    ]
+  }
 }

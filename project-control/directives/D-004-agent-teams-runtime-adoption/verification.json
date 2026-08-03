@@ -9,10 +9,10 @@
       "directive_id": "D-004",
       "producer": "orchestrator",
       "verifier": "directive-compliance-verifier",
-      "reviewed_sha": null,
-      "reviewed_manifest_sha256": null,
-      "state": "pending",
-      "note": "Row created at contracting time per authority_note. Every applicable requirement stays 'pending' until the INDEPENDENT directive-compliance-verifier records a verdict at the frozen reviewed identity. The orchestrator (producer of requirements.json) must never record a PASS here.",
+      "reviewed_sha": "bbbb8ef18cc297ece8759535f0cb9484a0d785bc",
+      "reviewed_manifest_sha256": "29a094ebdf312767b2ffa964a9cfb0398432e8838db0a211a711f1dd8db2bb97",
+      "state": "PASS",
+      "note": "# M0-T027 — DELTA RE-RULING UNDER OWNER DECISION 1 (D-004-R706)\n## Independent directive-compliance verification, resumed at head `bbbb8ef` per D-004-R713\n\n## VERDICT: **PASS** — the R673 hard-stop set is now EMPTY and R674 \"exactly clean\" is MET.\n\n---\n\n# A. Identity verification at `bbbb8ef` and applicable-set confirmation\n\n## A.1 Frozen head — my own commands\n\n```\n$ git rev-parse HEAD\nbbbb8ef18cc297ece8759535f0cb9484a0d785bc          <- MATCHES the required head\n$ git log --first-parent --format=\"%h %p %s\" 2689b1e..HEAD\nbbbb8ef 1f6aaa6 bc486c9  Merge pull request #143 from martin10101/control/D-004-amendment-18-capture\n1f6aaa6 ebb52e1 9790f8e  Merge pull request #141 from martin10101/control/track-closeout-artifacts\nebb52e1 2689b1e f3c3add  Merge pull request #142 from martin10101/control/M0-T027-final-verification-stop\n```\n\nAll three commits added to main since my Part 4 are PR merge commits. **Zero direct pushes to main**, sustained.\n\n## A.2 Content identity — re-derived, unchanged\n\n```\nproject_control._task_git_identity(M0-T027)\n  -> 29a094ebdf312767b2ffa964a9cfb0398432e8838db0a211a711f1dd8db2bb97\n  -> resolved sha bbbb8ef18cc297ece8759535f0cb9484a0d785bc, error None\n```\n\n**Identity `29a094eb…` is STILL the derived identity at `bbbb8ef`.** Confirmed why: the packet's material digest is `d6afb9d70cdaac3778faed121beb0e39…` at both `2689b1e` and `bbbb8ef` — the only packet change is one added `progress_log` entry (8 → 9), which is lifecycle-only and does not move the material identity. Status remains `awaiting_gate`, 85%. Gate records are byte-unchanged (`git diff --name-only 2689b1e..HEAD -- project-control/gates/` is empty).\n\n**Therefore my five deferral attestations, stamped `classified_at_identity 29a094eb…`, remain valid.** I did not assume this — I re-ran the real `acceptance_ordering_deferral` against each at this head:\n\n```\nD-004-R389 post_accept_cleanup  DEFERRAL_GRANTED  (no refusals)\nD-004-R486 accept               DEFERRAL_GRANTED  (no refusals)\nD-004-R487 checkpoint           DEFERRAL_GRANTED  (no refusals)\nD-004-R488 post_accept_cleanup  DEFERRAL_GRANTED  (no refusals)\nD-004-R501 stop_after           DEFERRAL_GRANTED  (no refusals)\n```\n\n## A.3 Applicable set — still exactly 233\n\n```\nDirectiveRegistry.derive_applicable(M0-T027)  ->  233 ids, unresolved reasons: []\nevidence map (233) vs derived (233)           ->  derived-minus-map: []   map-minus-derived: []\namendment-18 rows (R701-R717) applicable to M0-T027: []      <- all sentinel-scoped\n```\n\nI confirmed the scoping directly: every one of `R701`–`R717` carries `applicability.task_ids [\"D-004-OPTIONB\"]`, so none enters M0-T027's set. The set is unchanged at 233.\n\n## A.4 Amendment-18 capture integrity\n\n```\n$ python tools/validate_directive_compliance.py --check     -> EXIT 0\nmanifest version 19 | 19 audit-log entries | 19 source files | 717 requirement rows | 717 locked ids\nsource-019-amendment.md touched by exactly 1 commit          <- append-only, proven from git\n```\n\n**The capture is clean** (R714's first condition). I read `source-019-amendment.md` lines 89–119 verbatim against rows R706–R717 and found the decomposition faithful: Decision 1's ruling, its restriction, and its sequencing are carried as three separate rows (R706/R707/R708) rather than merged; Decision 2 splits into obligation + hard stop (R709/R710); Decision 3 into confirmation + backlog (R711/R712); the resume, authorization and preserved hard stops into R713/R714/R715. Nothing weakened, combined, or omitted. **No capture conflict.**\n\n## A.5 The two other new facts, verified\n\n- **My return is preserved** at `project-control/reports/M0-T027-dcv-final-verification.md` (39,196 bytes). Its orchestrator header discloses one redaction: **9 occurrences, absolute repository path (Windows user-path form) → `<REPO>`**, all in my closing \"Files most relevant to this return\" list. **The redaction changed no ruling** — I verified 16 ruling-bearing markers survive intact (the `CANNOT PASS` rulings, the `ATTESTED LIFECYCLE DEFERRAL` rows, every `DEFERRAL_GRANTED`, and the full `29a094eb…` identity string), and the BLOCKED verdict and R322/R323/R388 rulings stand exactly as I returned them.\n- **The supervisor directive is tracked and its digest anchor holds.** `git show HEAD:.claude/CODEX_CLAUDE_SUPERVISOR_BUILD_DIRECTIVE_v4.3.md | sha256` = `426da3bb22714a403553b013e8969c6bfa424ee01d99e10d1269d0b65e0f5137` — exactly the R702 anchor, so the `.gitattributes` LF pin does what it was added to do. `PENDING-CAPTURE-dispatch-efficiency-and-graph-wiring.md` is present and tracked. My Part 1 dirty-file listing is correspondingly resolved for those files; the identity derivation returns no dirt error.\n\n---\n\n# B. The re-ruling of R322, R323, R388 — my call\n\n**All three reach PASS. There is no ambiguity in application, and no residual obligation is lost.**\n\n## B.1 Reasoning\n\nI stopped at Part 4 because these three compound rows contain accept-stage clauses that had not occurred and that the M0-T034 mechanism structurally cannot defer. That was a question of **legal interpretation of the owner's own directive text**, which is exactly the class of question I am required to escalate rather than resolve. The owner — the author of amendments 8 and 9 — has now ruled on it. That is authority I do not have and did not attempt to exercise.\n\nI accept the ruling as dispositive for these three rows because it is sound on the record, not merely because it was issued:\n\n1. **It is repository-reproducible before the act it authorizes.** Captured verbatim in `source-019-amendment.md`, decomposed into R706–R708, digest-anchored, validator exit 0, merged through protected main as PR #143 — all before any accept.\n2. **Its cited basis is a finding I made and have now re-reproduced.** The owner grounds the ruling in my own settled section 3.3: every non-accept clause of the three rows individually verified satisfied. I re-verified those underlying facts hold at `bbbb8ef` — identity, gates, PR/CI evidence and branch state are all unchanged since Part 4.\n3. **No obligation is waived, only relocated.** The accept-stage substance of R322/R388 is carried by R486 (accept) and R487 (checkpoint); R323's cleanup residue is carried by R488 and R389. All four are **attested lifecycle deferrals re-confirmed granted at this head**, and `checkpoint()` refuses to record while any registered deferral is unverified. The obligations remain enforced, at the same standard.\n4. **It creates no loophole and no mechanism change.** R707 scopes it to three named rows, expressly not a class rule and not a modification of M0-T034 condition (3); R708 returns future compound-row conflicts to the owner.\n5. **It is mechanically clean.** A `PASS` row never reaches the deferral path — `_v2_task_unresolved` only calls `acceptance_ordering_deferral` when `state != PASS`. So ruling these three PASS is consumed by the existing code with **zero mechanism change**, exactly as R707 requires. There is no conflict between this ruling and the refusals I reported.\n\n**Clause-by-clause, at this head:** R322 — submit (`77ca816`), protected-main PR (#140), CI verified (all SUCCESS at `77ca816`), merge (`2689b1e`) all satisfied; accept + checkpoint clauses discharged-by-decomposition. R388 — submit, merge through protected main, merged-identity verification all satisfied (I performed the identity verification twice, at `2689b1e` and again here); accept + checkpoint clauses discharged-by-decomposition. R323 — the \"clean ONLY\" restriction verified with **zero violations** (29 remote heads; the three new PR branches #141/#142/#143 were deleted on merge, and only the two M0-T027 closeout branches remain, pending R488); completion residue discharged-by-decomposition.\n\n## B.2 The three exact verification row objects\n\n```json\n{ \"id\": \"D-004-R322\",\n  \"state\": \"PASS\",\n  \"evidence\": [\n    \"COMPLETED LIFECYCLE EVIDENCE (re-verified at bbbb8ef): submit -- project-control/reports/M0-T027.json submitted_at 2026-07-31T19:32:55.139129+00:00, commit 77ca816; protected-main PR -- PR #140 baseRefName main, MERGED; CI verified -- gh pr view 140 statusCheckRollup, every CheckRun conclusion SUCCESS at headRefOid 77ca816; merge -- mergeCommit.oid 2689b1e24ded98bf20d2d102362579789f47c17c at 2026-07-31T19:40:19Z\",\n    \"ACCEPT-STAGE CLAUSES DISCHARGED-BY-DECOMPOSITION per owner ruling D-004-R706, source-019-amendment.md lines 89-98, merged PR #143; scope restriction D-004-R707\",\n    \"SUBSTANCE CARRIED FORWARD, NOT WAIVED: D-004-R486 (accept) and D-004-R487 (checkpoint) each hold an attested lifecycle deferral re-confirmed DEFERRAL_GRANTED at content identity 29a094eb...; checkpoint() refuses while any registered deferral is unverified\"\n  ],\n  \"verified_at\": \"2026-07-31T22:45:00+00:00\",\n  \"verified_by\": \"directive-compliance-verifier\",\n  \"reviewed_sha\": \"bbbb8ef18cc297ece8759535f0cb9484a0d785bc\" }\n\n{ \"id\": \"D-004-R323\",\n  \"state\": \"PASS\",\n  \"evidence\": [\n    \"COMPLETED LIFECYCLE EVIDENCE (re-verified at bbbb8ef): the 'clean ONLY' restriction is honored with ZERO violations -- git ls-remote --heads origin returns 29 heads; every branch deleted during this closeout arc was created for this closeout (control/M0-T034-closeout-authorization-capture, task/M0-T034-governance-acceptance-semantics, control/session-handoff-refresh-2026-07-31-close, task/M0-T027-resubmit-corrected-identity, plus the #141/#142/#143 branches deleted on merge); no unrelated branch was deleted\",\n    \"ACCEPT-STAGE CLAUSE DISCHARGED-BY-DECOMPOSITION per owner ruling D-004-R706, source-019-amendment.md lines 89-98, merged PR #143; scope restriction D-004-R707\",\n    \"SUBSTANCE CARRIED FORWARD, NOT WAIVED: the two remaining closeout branches (control/M0-T027-consolidated-capture at 5cd0c3e, task/M0-T027-closeout-phases-3-4 at 16ae458) are governed by D-004-R488 and D-004-R389, both attested lifecycle deferrals re-confirmed DEFERRAL_GRANTED at content identity 29a094eb...\"\n  ],\n  \"verified_at\": \"2026-07-31T22:45:00+00:00\",\n  \"verified_by\": \"directive-compliance-verifier\",\n  \"reviewed_sha\": \"bbbb8ef18cc297ece8759535f0cb9484a0d785bc\" }\n\n{ \"id\": \"D-004-R388\",\n  \"state\": \"PASS\",\n  \"evidence\": [\n    \"COMPLETED LIFECYCLE EVIDENCE (re-verified at bbbb8ef): submit -- project-control/reports/M0-T027.json, commit 77ca816; merge through protected main -- PR #140 into main, merge commit 2689b1e, with all six post-3ed05fda main commits confirmed to be PR merge commits (no direct push); merged-identity verification -- _task_git_identity re-derives 29a094ebdf312767b2ffa964a9cfb0398432e8838db0a211a711f1dd8db2bb97 at merged main, performed independently at 2689b1e and again at bbbb8ef\",\n    \"ACCEPT-STAGE CLAUSES DISCHARGED-BY-DECOMPOSITION per owner ruling D-004-R706, source-019-amendment.md lines 89-98, merged PR #143; scope restriction D-004-R707\",\n    \"SUBSTANCE CARRIED FORWARD, NOT WAIVED: D-004-R486 (accept) and D-004-R487 (checkpoint) each hold an attested lifecycle deferral re-confirmed DEFERRAL_GRANTED at content identity 29a094eb...; the identical submit-to-accept sequence is governed atomically by D-004-R481-R485 (all PASS on completed evidence) and D-004-R486-R488 (deferred)\"\n  ],\n  \"verified_at\": \"2026-07-31T22:45:00+00:00\",\n  \"verified_by\": \"directive-compliance-verifier\",\n  \"reviewed_sha\": \"bbbb8ef18cc297ece8759535f0cb9484a0d785bc\" }\n```\n\n**The re-ruling yields exactly R322/R323/R388 discharged-by-decomposition — no more, no fewer** (R714's second condition).\n\n---\n\n# C. Updated record-level `verification.json` object for M0-T027\n\n```json\n{\n  \"task_id\": \"M0-T027\",\n  \"directive_id\": \"D-004\",\n  \"producer\": \"orchestrator\",\n  \"verifier\": \"directive-compliance-verifier\",\n  \"reviewed_sha\": \"bbbb8ef18cc297ece8759535f0cb9484a0d785bc\",\n  \"reviewed_manifest_sha256\": \"29a094ebdf312767b2ffa964a9cfb0398432e8838db0a211a711f1dd8db2bb97\",\n  \"state\": \"PASS\",\n  \"note\": \"<the full text of this re-ruling return, plus the four-part return preserved at project-control/reports/M0-T027-dcv-final-verification.md>\",\n  \"applicable_requirement_ids\": [ ...the 233 derived ids... ],\n  \"requirements\": [ ...233 rows... ]\n}\n```\n\n`reviewed_sha` **must** be `bbbb8ef1…` — `accept()` resolves HEAD and `_v2_task_unresolved` compares it against this field, so any earlier SHA fails closed.\n\n**Exhaustive row-state specification — 228 PASS + 5 pending, total 233:**\n\n1. **204 settled ids — `state: \"PASS\"`.** Every applicable id except the 29 delta ids. Evidence pointer for each: `project-control/reports/M0-T027-dcv-verification.md` (first pass, at verified SHA `3ed05fda6d434670e5b610e6dad7a8b224a9aa94`), cited under D-004-R670 and D-004-R713.\n2. **21 delta ids — `state: \"PASS\"`:** `R319, R320, R384, R385, R386, R387, R461, R462, R463, R465, R467, R468, R474, R475, R479, R481, R482, R483, R484, R485, R515`. Evidence pointer for each: the per-id evidence given in section 3.2 of `project-control/reports/M0-T027-dcv-final-verification.md`.\n3. **3 re-ruled ids — `state: \"PASS\"`:** `R322, R323, R388`, using the three row objects in section B.2 above **verbatim**.\n4. **5 ids — `state: \"pending\"` plus `lifecycle_classification`:** `R389, R486, R487, R488, R501`, using my section 3.4 attestation objects **verbatim and unmodified** — `classified_at_identity` stays `29a094ebdf312767b2ffa964a9cfb0398432e8838db0a211a711f1dd8db2bb97`, `classified_at` stays `2026-07-31T21:15:00+00:00`, `classified_by` stays `directive-compliance-verifier`. All five **re-confirmed DEFERRAL_GRANTED at this head** (section A.2). Do not restamp them: the identity is unchanged, so the binding is live.\n\nRow template for groups 1 and 2 (unchanged from my Part 4.1, with the SHA updated):\n\n```json\n{ \"id\": \"<D-004-Rnnn>\", \"state\": \"PASS\",\n  \"evidence\": [\"<the pointer specified above for that id>\"],\n  \"verified_at\": \"2026-07-31T22:45:00+00:00\",\n  \"verified_by\": \"directive-compliance-verifier\",\n  \"reviewed_sha\": \"bbbb8ef18cc297ece8759535f0cb9484a0d785bc\" }\n```\n\n**Decision 2 (R709/R710) acknowledged:** `verification.json`'s M0-T027 block is still the stale 97-row block with `reviewed_sha: null` and `reviewed_manifest_sha256: null` — I verified this at `bbbb8ef`. Leaving it for the lawful accept-path rewrite is the owner's instruction; I record the staleness as **known and deliberate**, and I make no out-of-band rewrite request. If `accept()` rejects it, that is R710's hard stop.\n\n---\n\n# D. Authorization statement for mechanical assembly\n\n**Confirmed.** The orchestrator may assemble the 233-row block **mechanically and verbatim** from (a) the row-state specification in section C above, (b) the per-id evidence pointers in sections 3.1 and 3.2 of `project-control/reports/M0-T027-dcv-final-verification.md`, (c) the three row objects in section B.2 of this return, and (d) the five attestation objects in section 3.4 of the preserved return — **with zero orchestrator judgment**. Every id's state, evidence pointer, `verified_at`, `verified_by` and `reviewed_sha` is fully determined by that specification; nothing requires interpretation, selection, or substitution.\n\nTwo mechanical constraints, stated so they cannot be got wrong:\n- `reviewed_sha` is `bbbb8ef18cc297ece8759535f0cb9484a0d785bc` on the record-level object **and** on every row.\n- The five `lifecycle_classification` objects are copied **byte-for-byte**, including `classified_at_identity 29a094eb…`. Restamping or re-dating them would invalidate condition (6) or (2) and refuse the deferral.\n\n**I endorse the dry-run gate:** the orchestrator running the assembled block through the real `task_verification_result()` and treating **any** returned reason as a stop is the correct control, and I ask that it be honored strictly. If the function returns a reason, that is evidence my specification or the assembly is wrong — stop and report, do not adjust the block to make it pass.\n\n---\n\n# E. Final statements\n\n**Is the R673 hard-stop set EMPTY? — YES.**\n- R322, R323, R388 all reach PASS (section B). ✔\n- Zero UNVERIFIABLE remain: **228 PASS + 5 attested lifecycle deferrals = 233**. ✔\n- No new finding, defect, or observation has arisen since Part 4 (section E.1). ✔\n- No deviation from expected state: identity, applicable set, gates, packet material digest, branch state, and prohibited-action evidence are all exactly as expected. ✔\n\n**Is R674 \"exactly clean\" MET? — YES.** Every applicable row is PASS or an attested lifecycle deferral; zero UNVERIFIABLE; zero new findings; **R024 is PASS by my ruling** — my section 4.3 ruling stands, and I extend it to the new delta: I re-scanned every added line across all 9 files in `2689b1e..bbbb8ef` for machine usernames, absolute user paths (both slash forms), session ids, pane ids and hostnames. Two matches, **both benign and neither a leak**: one is the literal row `| pane-id markers | 0 |` inside my own preserved scan-results table, and one is a filename ending in `_handoff.md` appearing in a directory listing inside the supervisor directive, which matched a session-id-shaped pattern without being one. No literal username, session id, pane id, absolute user path, or hostname is disclosed. I describe these patterns rather than quoting matched values. The 9-path redaction applied to my own return is disclosed in its header and changed no ruling.\n\n**Final tally over all 233 applicable ids: 228 PASS · 0 FAIL · 0 UNVERIFIABLE · 5 attested lifecycle deferrals · 0 NOT_APPLICABLE.**\n\n## E.1 Findings and observations\n\n**No new finding.** Nothing in `2689b1e..bbbb8ef` raises a new issue: the amendment-18 capture is clean and append-only, the LF pin holds the R685 digest anchor exactly, the preserved return's redaction touched no ruling, and the packet change is lifecycle-only.\n\nStatus of my previously recorded observations, for completeness — **none is new, and none blocks**:\n- **F-1** — resolved by owner Decision 1 (R706/R707/R708). Closed.\n- **OBS-A** (M0-T034 `self_check` while its code is live) — resolved by owner Decision 3 (R711), backlogged by R712. Closed.\n- **OBS-B** (the evidence map's internal `reviewed_sha`/`content_manifest_sha256` still read `3ed05fda`/`e3b0c442`) — **still open, unruled, non-blocking**. `accept()` never reads those fields, so there is no mechanical consequence; it was before the owner in my Part 4 and they did not rule on it. I flag it as open rather than infer consent from silence, and I do not treat it as a stop because it is not new.\n- **OBS-C** (stale local remote-tracking ref) and **OBS-D** (`readonly_agent_guard.py` over-denial, which recurred twice more in this pass on `>=` and `sed`) — informational, unchanged, non-blocking.\n\n## E.2 Independence and model disclosure\n\nI am not the producer of any change I reviewed, and I authored no commit, packet field, gate record, or report in this delta. I ruled no requirement on the strength of a producer claim, checklist, or summary; every fact above was re-derived from a file, git object, control-plane record, deterministic tool run, or GitHub API response I named. I did not soften my earlier BLOCKED verdict — it stood until the owner exercised interpretation authority that is theirs and not mine, and I re-verified the ruling's cited basis before accepting it as dispositive.\n\n**Model: Opus 5, exact id `claude-opus-5[1m]`.** I am not Fable 5 and make no claim to be. Record nothing about Fable 5 for this wave.\n\n— RETURN COMPLETE —\n\n[The preceding text is the verifier's re-ruling return, preserved verbatim at project-control/reports/M0-T027-dcv-final-verification-reruling.md. The four-part return is preserved at project-control/reports/M0-T027-dcv-final-verification.md.]",
       "applicable_requirement_ids": [
         "D-004-R010",
         "D-004-R011",
@@ -110,784 +110,2527 @@
         "D-004-R161",
         "D-004-R162",
         "D-004-R166",
-        "D-004-R167"
+        "D-004-R167",
+        "D-004-R169",
+        "D-004-R211",
+        "D-004-R212",
+        "D-004-R213",
+        "D-004-R215",
+        "D-004-R216",
+        "D-004-R217",
+        "D-004-R224",
+        "D-004-R226",
+        "D-004-R268",
+        "D-004-R273",
+        "D-004-R274",
+        "D-004-R275",
+        "D-004-R276",
+        "D-004-R278",
+        "D-004-R279",
+        "D-004-R282",
+        "D-004-R283",
+        "D-004-R284",
+        "D-004-R308",
+        "D-004-R310",
+        "D-004-R311",
+        "D-004-R316",
+        "D-004-R317",
+        "D-004-R318",
+        "D-004-R319",
+        "D-004-R320",
+        "D-004-R321",
+        "D-004-R322",
+        "D-004-R323",
+        "D-004-R325",
+        "D-004-R330",
+        "D-004-R331",
+        "D-004-R332",
+        "D-004-R335",
+        "D-004-R336",
+        "D-004-R374",
+        "D-004-R375",
+        "D-004-R376",
+        "D-004-R377",
+        "D-004-R378",
+        "D-004-R379",
+        "D-004-R380",
+        "D-004-R381",
+        "D-004-R382",
+        "D-004-R383",
+        "D-004-R384",
+        "D-004-R385",
+        "D-004-R386",
+        "D-004-R387",
+        "D-004-R388",
+        "D-004-R389",
+        "D-004-R419",
+        "D-004-R421",
+        "D-004-R422",
+        "D-004-R423",
+        "D-004-R424",
+        "D-004-R425",
+        "D-004-R426",
+        "D-004-R427",
+        "D-004-R428",
+        "D-004-R429",
+        "D-004-R430",
+        "D-004-R431",
+        "D-004-R432",
+        "D-004-R433",
+        "D-004-R434",
+        "D-004-R435",
+        "D-004-R436",
+        "D-004-R437",
+        "D-004-R438",
+        "D-004-R439",
+        "D-004-R440",
+        "D-004-R441",
+        "D-004-R442",
+        "D-004-R443",
+        "D-004-R444",
+        "D-004-R445",
+        "D-004-R446",
+        "D-004-R447",
+        "D-004-R448",
+        "D-004-R449",
+        "D-004-R450",
+        "D-004-R451",
+        "D-004-R452",
+        "D-004-R453",
+        "D-004-R454",
+        "D-004-R455",
+        "D-004-R456",
+        "D-004-R457",
+        "D-004-R458",
+        "D-004-R459",
+        "D-004-R460",
+        "D-004-R461",
+        "D-004-R462",
+        "D-004-R463",
+        "D-004-R464",
+        "D-004-R465",
+        "D-004-R466",
+        "D-004-R467",
+        "D-004-R468",
+        "D-004-R469",
+        "D-004-R470",
+        "D-004-R471",
+        "D-004-R472",
+        "D-004-R473",
+        "D-004-R474",
+        "D-004-R475",
+        "D-004-R476",
+        "D-004-R477",
+        "D-004-R478",
+        "D-004-R479",
+        "D-004-R480",
+        "D-004-R481",
+        "D-004-R482",
+        "D-004-R483",
+        "D-004-R484",
+        "D-004-R485",
+        "D-004-R486",
+        "D-004-R487",
+        "D-004-R488",
+        "D-004-R489",
+        "D-004-R490",
+        "D-004-R491",
+        "D-004-R492",
+        "D-004-R493",
+        "D-004-R494",
+        "D-004-R495",
+        "D-004-R496",
+        "D-004-R497",
+        "D-004-R498",
+        "D-004-R499",
+        "D-004-R500",
+        "D-004-R501",
+        "D-004-R515",
+        "D-004-R516"
       ],
       "requirements": [
         {
           "id": "D-004-R010",
-          "state": "pending",
-          "evidence": [],
-          "verified_at": null,
-          "verified_by": null,
-          "reviewed_sha": null
+          "state": "PASS",
+          "evidence": [
+            "project-control/reports/M0-T027-dcv-verification.md (first independent pass, at verified SHA 3ed05fda6d434670e5b610e6dad7a8b224a9aa94), cited under D-004-R670 and D-004-R713; re-confirmed not invalidated by the delta per M0-T027-dcv-final-verification.md section 2.3"
+          ],
+          "verified_at": "2026-07-31T22:45:00+00:00",
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "bbbb8ef18cc297ece8759535f0cb9484a0d785bc"
         },
         {
           "id": "D-004-R011",
-          "state": "pending",
-          "evidence": [],
-          "verified_at": null,
-          "verified_by": null,
-          "reviewed_sha": null
+          "state": "PASS",
+          "evidence": [
+            "project-control/reports/M0-T027-dcv-verification.md (first independent pass, at verified SHA 3ed05fda6d434670e5b610e6dad7a8b224a9aa94), cited under D-004-R670 and D-004-R713; re-confirmed not invalidated by the delta per M0-T027-dcv-final-verification.md section 2.3"
+          ],
+          "verified_at": "2026-07-31T22:45:00+00:00",
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "bbbb8ef18cc297ece8759535f0cb9484a0d785bc"
         },
         {
           "id": "D-004-R012",
-          "state": "pending",
-          "evidence": [],
-          "verified_at": null,
-          "verified_by": null,
-          "reviewed_sha": null
+          "state": "PASS",
+          "evidence": [
+            "project-control/reports/M0-T027-dcv-verification.md (first independent pass, at verified SHA 3ed05fda6d434670e5b610e6dad7a8b224a9aa94), cited under D-004-R670 and D-004-R713; re-confirmed not invalidated by the delta per M0-T027-dcv-final-verification.md section 2.3"
+          ],
+          "verified_at": "2026-07-31T22:45:00+00:00",
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "bbbb8ef18cc297ece8759535f0cb9484a0d785bc"
         },
         {
           "id": "D-004-R013",
-          "state": "pending",
-          "evidence": [],
-          "verified_at": null,
-          "verified_by": null,
-          "reviewed_sha": null
+          "state": "PASS",
+          "evidence": [
+            "project-control/reports/M0-T027-dcv-verification.md (first independent pass, at verified SHA 3ed05fda6d434670e5b610e6dad7a8b224a9aa94), cited under D-004-R670 and D-004-R713; re-confirmed not invalidated by the delta per M0-T027-dcv-final-verification.md section 2.3"
+          ],
+          "verified_at": "2026-07-31T22:45:00+00:00",
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "bbbb8ef18cc297ece8759535f0cb9484a0d785bc"
         },
         {
           "id": "D-004-R014",
-          "state": "pending",
-          "evidence": [],
-          "verified_at": null,
-          "verified_by": null,
-          "reviewed_sha": null
+          "state": "PASS",
+          "evidence": [
+            "project-control/reports/M0-T027-dcv-verification.md (first independent pass, at verified SHA 3ed05fda6d434670e5b610e6dad7a8b224a9aa94), cited under D-004-R670 and D-004-R713; re-confirmed not invalidated by the delta per M0-T027-dcv-final-verification.md section 2.3"
+          ],
+          "verified_at": "2026-07-31T22:45:00+00:00",
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "bbbb8ef18cc297ece8759535f0cb9484a0d785bc"
         },
         {
           "id": "D-004-R015",
-          "state": "pending",
-          "evidence": [],
-          "verified_at": null,
-          "verified_by": null,
-          "reviewed_sha": null
+          "state": "PASS",
+          "evidence": [
+            "project-control/reports/M0-T027-dcv-verification.md (first independent pass, at verified SHA 3ed05fda6d434670e5b610e6dad7a8b224a9aa94), cited under D-004-R670 and D-004-R713; re-confirmed not invalidated by the delta per M0-T027-dcv-final-verification.md section 2.3"
+          ],
+          "verified_at": "2026-07-31T22:45:00+00:00",
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "bbbb8ef18cc297ece8759535f0cb9484a0d785bc"
         },
         {
           "id": "D-004-R016",
-          "state": "pending",
-          "evidence": [],
-          "verified_at": null,
-          "verified_by": null,
-          "reviewed_sha": null
+          "state": "PASS",
+          "evidence": [
+            "project-control/reports/M0-T027-dcv-verification.md (first independent pass, at verified SHA 3ed05fda6d434670e5b610e6dad7a8b224a9aa94), cited under D-004-R670 and D-004-R713; re-confirmed not invalidated by the delta per M0-T027-dcv-final-verification.md section 2.3"
+          ],
+          "verified_at": "2026-07-31T22:45:00+00:00",
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "bbbb8ef18cc297ece8759535f0cb9484a0d785bc"
         },
         {
           "id": "D-004-R017",
-          "state": "pending",
-          "evidence": [],
-          "verified_at": null,
-          "verified_by": null,
-          "reviewed_sha": null
+          "state": "PASS",
+          "evidence": [
+            "project-control/reports/M0-T027-dcv-verification.md (first independent pass, at verified SHA 3ed05fda6d434670e5b610e6dad7a8b224a9aa94), cited under D-004-R670 and D-004-R713; re-confirmed not invalidated by the delta per M0-T027-dcv-final-verification.md section 2.3"
+          ],
+          "verified_at": "2026-07-31T22:45:00+00:00",
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "bbbb8ef18cc297ece8759535f0cb9484a0d785bc"
         },
         {
           "id": "D-004-R018",
-          "state": "pending",
-          "evidence": [],
-          "verified_at": null,
-          "verified_by": null,
-          "reviewed_sha": null
+          "state": "PASS",
+          "evidence": [
+            "project-control/reports/M0-T027-dcv-verification.md (first independent pass, at verified SHA 3ed05fda6d434670e5b610e6dad7a8b224a9aa94), cited under D-004-R670 and D-004-R713; re-confirmed not invalidated by the delta per M0-T027-dcv-final-verification.md section 2.3"
+          ],
+          "verified_at": "2026-07-31T22:45:00+00:00",
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "bbbb8ef18cc297ece8759535f0cb9484a0d785bc"
         },
         {
           "id": "D-004-R019",
-          "state": "pending",
-          "evidence": [],
-          "verified_at": null,
-          "verified_by": null,
-          "reviewed_sha": null
+          "state": "PASS",
+          "evidence": [
+            "project-control/reports/M0-T027-dcv-verification.md (first independent pass, at verified SHA 3ed05fda6d434670e5b610e6dad7a8b224a9aa94), cited under D-004-R670 and D-004-R713; re-confirmed not invalidated by the delta per M0-T027-dcv-final-verification.md section 2.3"
+          ],
+          "verified_at": "2026-07-31T22:45:00+00:00",
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "bbbb8ef18cc297ece8759535f0cb9484a0d785bc"
         },
         {
           "id": "D-004-R020",
-          "state": "pending",
-          "evidence": [],
-          "verified_at": null,
-          "verified_by": null,
-          "reviewed_sha": null
+          "state": "PASS",
+          "evidence": [
+            "project-control/reports/M0-T027-dcv-verification.md (first independent pass, at verified SHA 3ed05fda6d434670e5b610e6dad7a8b224a9aa94), cited under D-004-R670 and D-004-R713; re-confirmed not invalidated by the delta per M0-T027-dcv-final-verification.md section 2.3"
+          ],
+          "verified_at": "2026-07-31T22:45:00+00:00",
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "bbbb8ef18cc297ece8759535f0cb9484a0d785bc"
         },
         {
           "id": "D-004-R021",
-          "state": "pending",
-          "evidence": [],
-          "verified_at": null,
-          "verified_by": null,
-          "reviewed_sha": null
+          "state": "PASS",
+          "evidence": [
+            "project-control/reports/M0-T027-dcv-verification.md (first independent pass, at verified SHA 3ed05fda6d434670e5b610e6dad7a8b224a9aa94), cited under D-004-R670 and D-004-R713; re-confirmed not invalidated by the delta per M0-T027-dcv-final-verification.md section 2.3"
+          ],
+          "verified_at": "2026-07-31T22:45:00+00:00",
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "bbbb8ef18cc297ece8759535f0cb9484a0d785bc"
         },
         {
           "id": "D-004-R022",
-          "state": "pending",
-          "evidence": [],
-          "verified_at": null,
-          "verified_by": null,
-          "reviewed_sha": null
+          "state": "PASS",
+          "evidence": [
+            "project-control/reports/M0-T027-dcv-verification.md (first independent pass, at verified SHA 3ed05fda6d434670e5b610e6dad7a8b224a9aa94), cited under D-004-R670 and D-004-R713; re-confirmed not invalidated by the delta per M0-T027-dcv-final-verification.md section 2.3"
+          ],
+          "verified_at": "2026-07-31T22:45:00+00:00",
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "bbbb8ef18cc297ece8759535f0cb9484a0d785bc"
         },
         {
           "id": "D-004-R023",
-          "state": "pending",
-          "evidence": [],
-          "verified_at": null,
-          "verified_by": null,
-          "reviewed_sha": null
+          "state": "PASS",
+          "evidence": [
+            "project-control/reports/M0-T027-dcv-verification.md (first independent pass, at verified SHA 3ed05fda6d434670e5b610e6dad7a8b224a9aa94), cited under D-004-R670 and D-004-R713; re-confirmed not invalidated by the delta per M0-T027-dcv-final-verification.md section 2.3"
+          ],
+          "verified_at": "2026-07-31T22:45:00+00:00",
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "bbbb8ef18cc297ece8759535f0cb9484a0d785bc"
         },
         {
           "id": "D-004-R024",
-          "state": "pending",
-          "evidence": [],
-          "verified_at": null,
-          "verified_by": null,
-          "reviewed_sha": null
+          "state": "PASS",
+          "evidence": [
+            "project-control/reports/M0-T027-dcv-verification.md (first independent pass, at verified SHA 3ed05fda6d434670e5b610e6dad7a8b224a9aa94), cited under D-004-R670 and D-004-R713; re-confirmed not invalidated by the delta per M0-T027-dcv-final-verification.md section 2.3"
+          ],
+          "verified_at": "2026-07-31T22:45:00+00:00",
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "bbbb8ef18cc297ece8759535f0cb9484a0d785bc"
         },
         {
           "id": "D-004-R025",
-          "state": "pending",
-          "evidence": [],
-          "verified_at": null,
-          "verified_by": null,
-          "reviewed_sha": null
+          "state": "PASS",
+          "evidence": [
+            "project-control/reports/M0-T027-dcv-verification.md (first independent pass, at verified SHA 3ed05fda6d434670e5b610e6dad7a8b224a9aa94), cited under D-004-R670 and D-004-R713; re-confirmed not invalidated by the delta per M0-T027-dcv-final-verification.md section 2.3"
+          ],
+          "verified_at": "2026-07-31T22:45:00+00:00",
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "bbbb8ef18cc297ece8759535f0cb9484a0d785bc"
         },
         {
           "id": "D-004-R026",
-          "state": "pending",
-          "evidence": [],
-          "verified_at": null,
-          "verified_by": null,
-          "reviewed_sha": null
+          "state": "PASS",
+          "evidence": [
+            "project-control/reports/M0-T027-dcv-verification.md (first independent pass, at verified SHA 3ed05fda6d434670e5b610e6dad7a8b224a9aa94), cited under D-004-R670 and D-004-R713; re-confirmed not invalidated by the delta per M0-T027-dcv-final-verification.md section 2.3"
+          ],
+          "verified_at": "2026-07-31T22:45:00+00:00",
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "bbbb8ef18cc297ece8759535f0cb9484a0d785bc"
         },
         {
           "id": "D-004-R027",
-          "state": "pending",
-          "evidence": [],
-          "verified_at": null,
-          "verified_by": null,
-          "reviewed_sha": null
+          "state": "PASS",
+          "evidence": [
+            "project-control/reports/M0-T027-dcv-verification.md (first independent pass, at verified SHA 3ed05fda6d434670e5b610e6dad7a8b224a9aa94), cited under D-004-R670 and D-004-R713; re-confirmed not invalidated by the delta per M0-T027-dcv-final-verification.md section 2.3"
+          ],
+          "verified_at": "2026-07-31T22:45:00+00:00",
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "bbbb8ef18cc297ece8759535f0cb9484a0d785bc"
         },
         {
           "id": "D-004-R028",
-          "state": "pending",
-          "evidence": [],
-          "verified_at": null,
-          "verified_by": null,
-          "reviewed_sha": null
+          "state": "PASS",
+          "evidence": [
+            "project-control/reports/M0-T027-dcv-verification.md (first independent pass, at verified SHA 3ed05fda6d434670e5b610e6dad7a8b224a9aa94), cited under D-004-R670 and D-004-R713; re-confirmed not invalidated by the delta per M0-T027-dcv-final-verification.md section 2.3"
+          ],
+          "verified_at": "2026-07-31T22:45:00+00:00",
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "bbbb8ef18cc297ece8759535f0cb9484a0d785bc"
         },
         {
           "id": "D-004-R029",
-          "state": "pending",
-          "evidence": [],
-          "verified_at": null,
-          "verified_by": null,
-          "reviewed_sha": null
+          "state": "PASS",
+          "evidence": [
+            "project-control/reports/M0-T027-dcv-verification.md (first independent pass, at verified SHA 3ed05fda6d434670e5b610e6dad7a8b224a9aa94), cited under D-004-R670 and D-004-R713; re-confirmed not invalidated by the delta per M0-T027-dcv-final-verification.md section 2.3"
+          ],
+          "verified_at": "2026-07-31T22:45:00+00:00",
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "bbbb8ef18cc297ece8759535f0cb9484a0d785bc"
         },
         {
           "id": "D-004-R030",
-          "state": "pending",
-          "evidence": [],
-          "verified_at": null,
-          "verified_by": null,
-          "reviewed_sha": null
+          "state": "PASS",
+          "evidence": [
+            "project-control/reports/M0-T027-dcv-verification.md (first independent pass, at verified SHA 3ed05fda6d434670e5b610e6dad7a8b224a9aa94), cited under D-004-R670 and D-004-R713; re-confirmed not invalidated by the delta per M0-T027-dcv-final-verification.md section 2.3"
+          ],
+          "verified_at": "2026-07-31T22:45:00+00:00",
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "bbbb8ef18cc297ece8759535f0cb9484a0d785bc"
         },
         {
           "id": "D-004-R031",
-          "state": "pending",
-          "evidence": [],
-          "verified_at": null,
-          "verified_by": null,
-          "reviewed_sha": null
+          "state": "PASS",
+          "evidence": [
+            "project-control/reports/M0-T027-dcv-verification.md (first independent pass, at verified SHA 3ed05fda6d434670e5b610e6dad7a8b224a9aa94), cited under D-004-R670 and D-004-R713; re-confirmed not invalidated by the delta per M0-T027-dcv-final-verification.md section 2.3"
+          ],
+          "verified_at": "2026-07-31T22:45:00+00:00",
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "bbbb8ef18cc297ece8759535f0cb9484a0d785bc"
         },
         {
           "id": "D-004-R032",
-          "state": "pending",
-          "evidence": [],
-          "verified_at": null,
-          "verified_by": null,
-          "reviewed_sha": null
+          "state": "PASS",
+          "evidence": [
+            "project-control/reports/M0-T027-dcv-verification.md (first independent pass, at verified SHA 3ed05fda6d434670e5b610e6dad7a8b224a9aa94), cited under D-004-R670 and D-004-R713; re-confirmed not invalidated by the delta per M0-T027-dcv-final-verification.md section 2.3"
+          ],
+          "verified_at": "2026-07-31T22:45:00+00:00",
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "bbbb8ef18cc297ece8759535f0cb9484a0d785bc"
         },
         {
           "id": "D-004-R033",
-          "state": "pending",
-          "evidence": [],
-          "verified_at": null,
-          "verified_by": null,
-          "reviewed_sha": null
+          "state": "PASS",
+          "evidence": [
+            "project-control/reports/M0-T027-dcv-verification.md (first independent pass, at verified SHA 3ed05fda6d434670e5b610e6dad7a8b224a9aa94), cited under D-004-R670 and D-004-R713; re-confirmed not invalidated by the delta per M0-T027-dcv-final-verification.md section 2.3"
+          ],
+          "verified_at": "2026-07-31T22:45:00+00:00",
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "bbbb8ef18cc297ece8759535f0cb9484a0d785bc"
         },
         {
           "id": "D-004-R034",
-          "state": "pending",
-          "evidence": [],
-          "verified_at": null,
-          "verified_by": null,
-          "reviewed_sha": null
+          "state": "PASS",
+          "evidence": [
+            "project-control/reports/M0-T027-dcv-verification.md (first independent pass, at verified SHA 3ed05fda6d434670e5b610e6dad7a8b224a9aa94), cited under D-004-R670 and D-004-R713; re-confirmed not invalidated by the delta per M0-T027-dcv-final-verification.md section 2.3"
+          ],
+          "verified_at": "2026-07-31T22:45:00+00:00",
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "bbbb8ef18cc297ece8759535f0cb9484a0d785bc"
         },
         {
           "id": "D-004-R035",
-          "state": "pending",
-          "evidence": [],
-          "verified_at": null,
-          "verified_by": null,
-          "reviewed_sha": null
+          "state": "PASS",
+          "evidence": [
+            "project-control/reports/M0-T027-dcv-verification.md (first independent pass, at verified SHA 3ed05fda6d434670e5b610e6dad7a8b224a9aa94), cited under D-004-R670 and D-004-R713; re-confirmed not invalidated by the delta per M0-T027-dcv-final-verification.md section 2.3"
+          ],
+          "verified_at": "2026-07-31T22:45:00+00:00",
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "bbbb8ef18cc297ece8759535f0cb9484a0d785bc"
         },
         {
           "id": "D-004-R036",
-          "state": "pending",
-          "evidence": [],
-          "verified_at": null,
-          "verified_by": null,
-          "reviewed_sha": null
+          "state": "PASS",
+          "evidence": [
+            "project-control/reports/M0-T027-dcv-verification.md (first independent pass, at verified SHA 3ed05fda6d434670e5b610e6dad7a8b224a9aa94), cited under D-004-R670 and D-004-R713; re-confirmed not invalidated by the delta per M0-T027-dcv-final-verification.md section 2.3"
+          ],
+          "verified_at": "2026-07-31T22:45:00+00:00",
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "bbbb8ef18cc297ece8759535f0cb9484a0d785bc"
         },
         {
           "id": "D-004-R037",
-          "state": "pending",
-          "evidence": [],
-          "verified_at": null,
-          "verified_by": null,
-          "reviewed_sha": null
+          "state": "PASS",
+          "evidence": [
+            "project-control/reports/M0-T027-dcv-verification.md (first independent pass, at verified SHA 3ed05fda6d434670e5b610e6dad7a8b224a9aa94), cited under D-004-R670 and D-004-R713; re-confirmed not invalidated by the delta per M0-T027-dcv-final-verification.md section 2.3"
+          ],
+          "verified_at": "2026-07-31T22:45:00+00:00",
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "bbbb8ef18cc297ece8759535f0cb9484a0d785bc"
         },
         {
           "id": "D-004-R038",
-          "state": "pending",
-          "evidence": [],
-          "verified_at": null,
-          "verified_by": null,
-          "reviewed_sha": null
+          "state": "PASS",
+          "evidence": [
+            "project-control/reports/M0-T027-dcv-verification.md (first independent pass, at verified SHA 3ed05fda6d434670e5b610e6dad7a8b224a9aa94), cited under D-004-R670 and D-004-R713; re-confirmed not invalidated by the delta per M0-T027-dcv-final-verification.md section 2.3"
+          ],
+          "verified_at": "2026-07-31T22:45:00+00:00",
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "bbbb8ef18cc297ece8759535f0cb9484a0d785bc"
         },
         {
           "id": "D-004-R039",
-          "state": "pending",
-          "evidence": [],
-          "verified_at": null,
-          "verified_by": null,
-          "reviewed_sha": null
+          "state": "PASS",
+          "evidence": [
+            "project-control/reports/M0-T027-dcv-verification.md (first independent pass, at verified SHA 3ed05fda6d434670e5b610e6dad7a8b224a9aa94), cited under D-004-R670 and D-004-R713; re-confirmed not invalidated by the delta per M0-T027-dcv-final-verification.md section 2.3"
+          ],
+          "verified_at": "2026-07-31T22:45:00+00:00",
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "bbbb8ef18cc297ece8759535f0cb9484a0d785bc"
         },
         {
           "id": "D-004-R040",
-          "state": "pending",
-          "evidence": [],
-          "verified_at": null,
-          "verified_by": null,
-          "reviewed_sha": null
+          "state": "PASS",
+          "evidence": [
+            "project-control/reports/M0-T027-dcv-verification.md (first independent pass, at verified SHA 3ed05fda6d434670e5b610e6dad7a8b224a9aa94), cited under D-004-R670 and D-004-R713; re-confirmed not invalidated by the delta per M0-T027-dcv-final-verification.md section 2.3"
+          ],
+          "verified_at": "2026-07-31T22:45:00+00:00",
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "bbbb8ef18cc297ece8759535f0cb9484a0d785bc"
         },
         {
           "id": "D-004-R041",
-          "state": "pending",
-          "evidence": [],
-          "verified_at": null,
-          "verified_by": null,
-          "reviewed_sha": null
+          "state": "PASS",
+          "evidence": [
+            "project-control/reports/M0-T027-dcv-verification.md (first independent pass, at verified SHA 3ed05fda6d434670e5b610e6dad7a8b224a9aa94), cited under D-004-R670 and D-004-R713; re-confirmed not invalidated by the delta per M0-T027-dcv-final-verification.md section 2.3"
+          ],
+          "verified_at": "2026-07-31T22:45:00+00:00",
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "bbbb8ef18cc297ece8759535f0cb9484a0d785bc"
         },
         {
           "id": "D-004-R042",
-          "state": "pending",
-          "evidence": [],
-          "verified_at": null,
-          "verified_by": null,
-          "reviewed_sha": null
+          "state": "PASS",
+          "evidence": [
+            "project-control/reports/M0-T027-dcv-verification.md (first independent pass, at verified SHA 3ed05fda6d434670e5b610e6dad7a8b224a9aa94), cited under D-004-R670 and D-004-R713; re-confirmed not invalidated by the delta per M0-T027-dcv-final-verification.md section 2.3"
+          ],
+          "verified_at": "2026-07-31T22:45:00+00:00",
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "bbbb8ef18cc297ece8759535f0cb9484a0d785bc"
         },
         {
           "id": "D-004-R043",
-          "state": "pending",
-          "evidence": [],
-          "verified_at": null,
-          "verified_by": null,
-          "reviewed_sha": null
+          "state": "PASS",
+          "evidence": [
+            "project-control/reports/M0-T027-dcv-verification.md (first independent pass, at verified SHA 3ed05fda6d434670e5b610e6dad7a8b224a9aa94), cited under D-004-R670 and D-004-R713; re-confirmed not invalidated by the delta per M0-T027-dcv-final-verification.md section 2.3"
+          ],
+          "verified_at": "2026-07-31T22:45:00+00:00",
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "bbbb8ef18cc297ece8759535f0cb9484a0d785bc"
         },
         {
           "id": "D-004-R044",
-          "state": "pending",
-          "evidence": [],
-          "verified_at": null,
-          "verified_by": null,
-          "reviewed_sha": null
+          "state": "PASS",
+          "evidence": [
+            "project-control/reports/M0-T027-dcv-verification.md (first independent pass, at verified SHA 3ed05fda6d434670e5b610e6dad7a8b224a9aa94), cited under D-004-R670 and D-004-R713; re-confirmed not invalidated by the delta per M0-T027-dcv-final-verification.md section 2.3"
+          ],
+          "verified_at": "2026-07-31T22:45:00+00:00",
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "bbbb8ef18cc297ece8759535f0cb9484a0d785bc"
         },
         {
           "id": "D-004-R045",
-          "state": "pending",
-          "evidence": [],
-          "verified_at": null,
-          "verified_by": null,
-          "reviewed_sha": null
+          "state": "PASS",
+          "evidence": [
+            "project-control/reports/M0-T027-dcv-verification.md (first independent pass, at verified SHA 3ed05fda6d434670e5b610e6dad7a8b224a9aa94), cited under D-004-R670 and D-004-R713; re-confirmed not invalidated by the delta per M0-T027-dcv-final-verification.md section 2.3"
+          ],
+          "verified_at": "2026-07-31T22:45:00+00:00",
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "bbbb8ef18cc297ece8759535f0cb9484a0d785bc"
         },
         {
           "id": "D-004-R046",
-          "state": "pending",
-          "evidence": [],
-          "verified_at": null,
-          "verified_by": null,
-          "reviewed_sha": null
+          "state": "PASS",
+          "evidence": [
+            "project-control/reports/M0-T027-dcv-verification.md (first independent pass, at verified SHA 3ed05fda6d434670e5b610e6dad7a8b224a9aa94), cited under D-004-R670 and D-004-R713; re-confirmed not invalidated by the delta per M0-T027-dcv-final-verification.md section 2.3"
+          ],
+          "verified_at": "2026-07-31T22:45:00+00:00",
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "bbbb8ef18cc297ece8759535f0cb9484a0d785bc"
         },
         {
           "id": "D-004-R047",
-          "state": "pending",
-          "evidence": [],
-          "verified_at": null,
-          "verified_by": null,
-          "reviewed_sha": null
+          "state": "PASS",
+          "evidence": [
+            "project-control/reports/M0-T027-dcv-verification.md (first independent pass, at verified SHA 3ed05fda6d434670e5b610e6dad7a8b224a9aa94), cited under D-004-R670 and D-004-R713; re-confirmed not invalidated by the delta per M0-T027-dcv-final-verification.md section 2.3"
+          ],
+          "verified_at": "2026-07-31T22:45:00+00:00",
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "bbbb8ef18cc297ece8759535f0cb9484a0d785bc"
         },
         {
           "id": "D-004-R048",
-          "state": "pending",
-          "evidence": [],
-          "verified_at": null,
-          "verified_by": null,
-          "reviewed_sha": null
+          "state": "PASS",
+          "evidence": [
+            "project-control/reports/M0-T027-dcv-verification.md (first independent pass, at verified SHA 3ed05fda6d434670e5b610e6dad7a8b224a9aa94), cited under D-004-R670 and D-004-R713; re-confirmed not invalidated by the delta per M0-T027-dcv-final-verification.md section 2.3"
+          ],
+          "verified_at": "2026-07-31T22:45:00+00:00",
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "bbbb8ef18cc297ece8759535f0cb9484a0d785bc"
         },
         {
           "id": "D-004-R049",
-          "state": "pending",
-          "evidence": [],
-          "verified_at": null,
-          "verified_by": null,
-          "reviewed_sha": null
+          "state": "PASS",
+          "evidence": [
+            "project-control/reports/M0-T027-dcv-verification.md (first independent pass, at verified SHA 3ed05fda6d434670e5b610e6dad7a8b224a9aa94), cited under D-004-R670 and D-004-R713; re-confirmed not invalidated by the delta per M0-T027-dcv-final-verification.md section 2.3"
+          ],
+          "verified_at": "2026-07-31T22:45:00+00:00",
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "bbbb8ef18cc297ece8759535f0cb9484a0d785bc"
         },
         {
           "id": "D-004-R050",
-          "state": "pending",
-          "evidence": [],
-          "verified_at": null,
-          "verified_by": null,
-          "reviewed_sha": null
+          "state": "PASS",
+          "evidence": [
+            "project-control/reports/M0-T027-dcv-verification.md (first independent pass, at verified SHA 3ed05fda6d434670e5b610e6dad7a8b224a9aa94), cited under D-004-R670 and D-004-R713; re-confirmed not invalidated by the delta per M0-T027-dcv-final-verification.md section 2.3"
+          ],
+          "verified_at": "2026-07-31T22:45:00+00:00",
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "bbbb8ef18cc297ece8759535f0cb9484a0d785bc"
         },
         {
           "id": "D-004-R064",
-          "state": "pending",
-          "evidence": [],
-          "verified_at": null,
-          "verified_by": null,
-          "reviewed_sha": null
+          "state": "PASS",
+          "evidence": [
+            "project-control/reports/M0-T027-dcv-verification.md (first independent pass, at verified SHA 3ed05fda6d434670e5b610e6dad7a8b224a9aa94), cited under D-004-R670 and D-004-R713; re-confirmed not invalidated by the delta per M0-T027-dcv-final-verification.md section 2.3"
+          ],
+          "verified_at": "2026-07-31T22:45:00+00:00",
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "bbbb8ef18cc297ece8759535f0cb9484a0d785bc"
         },
         {
           "id": "D-004-R065",
-          "state": "pending",
-          "evidence": [],
-          "verified_at": null,
-          "verified_by": null,
-          "reviewed_sha": null
+          "state": "PASS",
+          "evidence": [
+            "project-control/reports/M0-T027-dcv-verification.md (first independent pass, at verified SHA 3ed05fda6d434670e5b610e6dad7a8b224a9aa94), cited under D-004-R670 and D-004-R713; re-confirmed not invalidated by the delta per M0-T027-dcv-final-verification.md section 2.3"
+          ],
+          "verified_at": "2026-07-31T22:45:00+00:00",
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "bbbb8ef18cc297ece8759535f0cb9484a0d785bc"
         },
         {
           "id": "D-004-R066",
-          "state": "pending",
-          "evidence": [],
-          "verified_at": null,
-          "verified_by": null,
-          "reviewed_sha": null
+          "state": "PASS",
+          "evidence": [
+            "project-control/reports/M0-T027-dcv-verification.md (first independent pass, at verified SHA 3ed05fda6d434670e5b610e6dad7a8b224a9aa94), cited under D-004-R670 and D-004-R713; re-confirmed not invalidated by the delta per M0-T027-dcv-final-verification.md section 2.3"
+          ],
+          "verified_at": "2026-07-31T22:45:00+00:00",
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "bbbb8ef18cc297ece8759535f0cb9484a0d785bc"
         },
         {
           "id": "D-004-R067",
-          "state": "pending",
-          "evidence": [],
-          "verified_at": null,
-          "verified_by": null,
-          "reviewed_sha": null
+          "state": "PASS",
+          "evidence": [
+            "project-control/reports/M0-T027-dcv-verification.md (first independent pass, at verified SHA 3ed05fda6d434670e5b610e6dad7a8b224a9aa94), cited under D-004-R670 and D-004-R713; re-confirmed not invalidated by the delta per M0-T027-dcv-final-verification.md section 2.3"
+          ],
+          "verified_at": "2026-07-31T22:45:00+00:00",
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "bbbb8ef18cc297ece8759535f0cb9484a0d785bc"
         },
         {
           "id": "D-004-R068",
-          "state": "pending",
-          "evidence": [],
-          "verified_at": null,
-          "verified_by": null,
-          "reviewed_sha": null
+          "state": "PASS",
+          "evidence": [
+            "project-control/reports/M0-T027-dcv-verification.md (first independent pass, at verified SHA 3ed05fda6d434670e5b610e6dad7a8b224a9aa94), cited under D-004-R670 and D-004-R713; re-confirmed not invalidated by the delta per M0-T027-dcv-final-verification.md section 2.3"
+          ],
+          "verified_at": "2026-07-31T22:45:00+00:00",
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "bbbb8ef18cc297ece8759535f0cb9484a0d785bc"
         },
         {
           "id": "D-004-R069",
-          "state": "pending",
-          "evidence": [],
-          "verified_at": null,
-          "verified_by": null,
-          "reviewed_sha": null
+          "state": "PASS",
+          "evidence": [
+            "project-control/reports/M0-T027-dcv-verification.md (first independent pass, at verified SHA 3ed05fda6d434670e5b610e6dad7a8b224a9aa94), cited under D-004-R670 and D-004-R713; re-confirmed not invalidated by the delta per M0-T027-dcv-final-verification.md section 2.3"
+          ],
+          "verified_at": "2026-07-31T22:45:00+00:00",
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "bbbb8ef18cc297ece8759535f0cb9484a0d785bc"
         },
         {
           "id": "D-004-R070",
-          "state": "pending",
-          "evidence": [],
-          "verified_at": null,
-          "verified_by": null,
-          "reviewed_sha": null
+          "state": "PASS",
+          "evidence": [
+            "project-control/reports/M0-T027-dcv-verification.md (first independent pass, at verified SHA 3ed05fda6d434670e5b610e6dad7a8b224a9aa94), cited under D-004-R670 and D-004-R713; re-confirmed not invalidated by the delta per M0-T027-dcv-final-verification.md section 2.3"
+          ],
+          "verified_at": "2026-07-31T22:45:00+00:00",
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "bbbb8ef18cc297ece8759535f0cb9484a0d785bc"
         },
         {
           "id": "D-004-R071",
-          "state": "pending",
-          "evidence": [],
-          "verified_at": null,
-          "verified_by": null,
-          "reviewed_sha": null
+          "state": "PASS",
+          "evidence": [
+            "project-control/reports/M0-T027-dcv-verification.md (first independent pass, at verified SHA 3ed05fda6d434670e5b610e6dad7a8b224a9aa94), cited under D-004-R670 and D-004-R713; re-confirmed not invalidated by the delta per M0-T027-dcv-final-verification.md section 2.3"
+          ],
+          "verified_at": "2026-07-31T22:45:00+00:00",
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "bbbb8ef18cc297ece8759535f0cb9484a0d785bc"
         },
         {
           "id": "D-004-R072",
-          "state": "pending",
-          "evidence": [],
-          "verified_at": null,
-          "verified_by": null,
-          "reviewed_sha": null
+          "state": "PASS",
+          "evidence": [
+            "project-control/reports/M0-T027-dcv-verification.md (first independent pass, at verified SHA 3ed05fda6d434670e5b610e6dad7a8b224a9aa94), cited under D-004-R670 and D-004-R713; re-confirmed not invalidated by the delta per M0-T027-dcv-final-verification.md section 2.3"
+          ],
+          "verified_at": "2026-07-31T22:45:00+00:00",
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "bbbb8ef18cc297ece8759535f0cb9484a0d785bc"
         },
         {
           "id": "D-004-R073",
-          "state": "pending",
-          "evidence": [],
-          "verified_at": null,
-          "verified_by": null,
-          "reviewed_sha": null
+          "state": "PASS",
+          "evidence": [
+            "project-control/reports/M0-T027-dcv-verification.md (first independent pass, at verified SHA 3ed05fda6d434670e5b610e6dad7a8b224a9aa94), cited under D-004-R670 and D-004-R713; re-confirmed not invalidated by the delta per M0-T027-dcv-final-verification.md section 2.3"
+          ],
+          "verified_at": "2026-07-31T22:45:00+00:00",
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "bbbb8ef18cc297ece8759535f0cb9484a0d785bc"
         },
         {
           "id": "D-004-R074",
-          "state": "pending",
-          "evidence": [],
-          "verified_at": null,
-          "verified_by": null,
-          "reviewed_sha": null
+          "state": "PASS",
+          "evidence": [
+            "project-control/reports/M0-T027-dcv-verification.md (first independent pass, at verified SHA 3ed05fda6d434670e5b610e6dad7a8b224a9aa94), cited under D-004-R670 and D-004-R713; re-confirmed not invalidated by the delta per M0-T027-dcv-final-verification.md section 2.3"
+          ],
+          "verified_at": "2026-07-31T22:45:00+00:00",
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "bbbb8ef18cc297ece8759535f0cb9484a0d785bc"
         },
         {
           "id": "D-004-R085",
-          "state": "pending",
-          "evidence": [],
-          "verified_at": null,
-          "verified_by": null,
-          "reviewed_sha": null
+          "state": "PASS",
+          "evidence": [
+            "project-control/reports/M0-T027-dcv-verification.md (first independent pass, at verified SHA 3ed05fda6d434670e5b610e6dad7a8b224a9aa94), cited under D-004-R670 and D-004-R713; re-confirmed not invalidated by the delta per M0-T027-dcv-final-verification.md section 2.3"
+          ],
+          "verified_at": "2026-07-31T22:45:00+00:00",
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "bbbb8ef18cc297ece8759535f0cb9484a0d785bc"
         },
         {
           "id": "D-004-R086",
-          "state": "pending",
-          "evidence": [],
-          "verified_at": null,
-          "verified_by": null,
-          "reviewed_sha": null
+          "state": "PASS",
+          "evidence": [
+            "project-control/reports/M0-T027-dcv-verification.md (first independent pass, at verified SHA 3ed05fda6d434670e5b610e6dad7a8b224a9aa94), cited under D-004-R670 and D-004-R713; re-confirmed not invalidated by the delta per M0-T027-dcv-final-verification.md section 2.3"
+          ],
+          "verified_at": "2026-07-31T22:45:00+00:00",
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "bbbb8ef18cc297ece8759535f0cb9484a0d785bc"
         },
         {
           "id": "D-004-R090",
-          "state": "pending",
-          "evidence": [],
-          "verified_at": null,
-          "verified_by": null,
-          "reviewed_sha": null
+          "state": "PASS",
+          "evidence": [
+            "project-control/reports/M0-T027-dcv-verification.md (first independent pass, at verified SHA 3ed05fda6d434670e5b610e6dad7a8b224a9aa94), cited under D-004-R670 and D-004-R713; re-confirmed not invalidated by the delta per M0-T027-dcv-final-verification.md section 2.3"
+          ],
+          "verified_at": "2026-07-31T22:45:00+00:00",
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "bbbb8ef18cc297ece8759535f0cb9484a0d785bc"
         },
         {
           "id": "D-004-R091",
-          "state": "pending",
-          "evidence": [],
-          "verified_at": null,
-          "verified_by": null,
-          "reviewed_sha": null
+          "state": "PASS",
+          "evidence": [
+            "project-control/reports/M0-T027-dcv-verification.md (first independent pass, at verified SHA 3ed05fda6d434670e5b610e6dad7a8b224a9aa94), cited under D-004-R670 and D-004-R713; re-confirmed not invalidated by the delta per M0-T027-dcv-final-verification.md section 2.3"
+          ],
+          "verified_at": "2026-07-31T22:45:00+00:00",
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "bbbb8ef18cc297ece8759535f0cb9484a0d785bc"
         },
         {
           "id": "D-004-R098",
-          "state": "pending",
-          "evidence": [],
-          "verified_at": null,
-          "verified_by": null,
-          "reviewed_sha": null
+          "state": "PASS",
+          "evidence": [
+            "project-control/reports/M0-T027-dcv-verification.md (first independent pass, at verified SHA 3ed05fda6d434670e5b610e6dad7a8b224a9aa94), cited under D-004-R670 and D-004-R713; re-confirmed not invalidated by the delta per M0-T027-dcv-final-verification.md section 2.3"
+          ],
+          "verified_at": "2026-07-31T22:45:00+00:00",
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "bbbb8ef18cc297ece8759535f0cb9484a0d785bc"
         },
         {
           "id": "D-004-R102",
-          "state": "pending",
-          "evidence": [],
-          "verified_at": null,
-          "verified_by": null,
-          "reviewed_sha": null
+          "state": "PASS",
+          "evidence": [
+            "project-control/reports/M0-T027-dcv-verification.md (first independent pass, at verified SHA 3ed05fda6d434670e5b610e6dad7a8b224a9aa94), cited under D-004-R670 and D-004-R713; re-confirmed not invalidated by the delta per M0-T027-dcv-final-verification.md section 2.3"
+          ],
+          "verified_at": "2026-07-31T22:45:00+00:00",
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "bbbb8ef18cc297ece8759535f0cb9484a0d785bc"
         },
         {
           "id": "D-004-R104",
-          "state": "pending",
-          "evidence": [],
-          "verified_at": null,
-          "verified_by": null,
-          "reviewed_sha": null
+          "state": "PASS",
+          "evidence": [
+            "project-control/reports/M0-T027-dcv-verification.md (first independent pass, at verified SHA 3ed05fda6d434670e5b610e6dad7a8b224a9aa94), cited under D-004-R670 and D-004-R713; re-confirmed not invalidated by the delta per M0-T027-dcv-final-verification.md section 2.3"
+          ],
+          "verified_at": "2026-07-31T22:45:00+00:00",
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "bbbb8ef18cc297ece8759535f0cb9484a0d785bc"
         },
         {
           "id": "D-004-R107",
-          "state": "pending",
-          "evidence": [],
-          "verified_at": null,
-          "verified_by": null,
-          "reviewed_sha": null
+          "state": "PASS",
+          "evidence": [
+            "project-control/reports/M0-T027-dcv-verification.md (first independent pass, at verified SHA 3ed05fda6d434670e5b610e6dad7a8b224a9aa94), cited under D-004-R670 and D-004-R713; re-confirmed not invalidated by the delta per M0-T027-dcv-final-verification.md section 2.3"
+          ],
+          "verified_at": "2026-07-31T22:45:00+00:00",
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "bbbb8ef18cc297ece8759535f0cb9484a0d785bc"
         },
         {
           "id": "D-004-R108",
-          "state": "pending",
-          "evidence": [],
-          "verified_at": null,
-          "verified_by": null,
-          "reviewed_sha": null
+          "state": "PASS",
+          "evidence": [
+            "project-control/reports/M0-T027-dcv-verification.md (first independent pass, at verified SHA 3ed05fda6d434670e5b610e6dad7a8b224a9aa94), cited under D-004-R670 and D-004-R713; re-confirmed not invalidated by the delta per M0-T027-dcv-final-verification.md section 2.3"
+          ],
+          "verified_at": "2026-07-31T22:45:00+00:00",
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "bbbb8ef18cc297ece8759535f0cb9484a0d785bc"
         },
         {
           "id": "D-004-R118",
-          "state": "pending",
-          "evidence": [],
-          "verified_at": null,
-          "verified_by": null,
-          "reviewed_sha": null
+          "state": "PASS",
+          "evidence": [
+            "project-control/reports/M0-T027-dcv-verification.md (first independent pass, at verified SHA 3ed05fda6d434670e5b610e6dad7a8b224a9aa94), cited under D-004-R670 and D-004-R713; re-confirmed not invalidated by the delta per M0-T027-dcv-final-verification.md section 2.3"
+          ],
+          "verified_at": "2026-07-31T22:45:00+00:00",
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "bbbb8ef18cc297ece8759535f0cb9484a0d785bc"
         },
         {
           "id": "D-004-R119",
-          "state": "pending",
-          "evidence": [],
-          "verified_at": null,
-          "verified_by": null,
-          "reviewed_sha": null
+          "state": "PASS",
+          "evidence": [
+            "project-control/reports/M0-T027-dcv-verification.md (first independent pass, at verified SHA 3ed05fda6d434670e5b610e6dad7a8b224a9aa94), cited under D-004-R670 and D-004-R713; re-confirmed not invalidated by the delta per M0-T027-dcv-final-verification.md section 2.3"
+          ],
+          "verified_at": "2026-07-31T22:45:00+00:00",
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "bbbb8ef18cc297ece8759535f0cb9484a0d785bc"
         },
         {
           "id": "D-004-R120",
-          "state": "pending",
-          "evidence": [],
-          "verified_at": null,
-          "verified_by": null,
-          "reviewed_sha": null
+          "state": "PASS",
+          "evidence": [
+            "project-control/reports/M0-T027-dcv-verification.md (first independent pass, at verified SHA 3ed05fda6d434670e5b610e6dad7a8b224a9aa94), cited under D-004-R670 and D-004-R713; re-confirmed not invalidated by the delta per M0-T027-dcv-final-verification.md section 2.3"
+          ],
+          "verified_at": "2026-07-31T22:45:00+00:00",
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "bbbb8ef18cc297ece8759535f0cb9484a0d785bc"
         },
         {
           "id": "D-004-R121",
-          "state": "pending",
-          "evidence": [],
-          "verified_at": null,
-          "verified_by": null,
-          "reviewed_sha": null
+          "state": "PASS",
+          "evidence": [
+            "project-control/reports/M0-T027-dcv-verification.md (first independent pass, at verified SHA 3ed05fda6d434670e5b610e6dad7a8b224a9aa94), cited under D-004-R670 and D-004-R713; re-confirmed not invalidated by the delta per M0-T027-dcv-final-verification.md section 2.3"
+          ],
+          "verified_at": "2026-07-31T22:45:00+00:00",
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "bbbb8ef18cc297ece8759535f0cb9484a0d785bc"
         },
         {
           "id": "D-004-R122",
-          "state": "pending",
-          "evidence": [],
-          "verified_at": null,
-          "verified_by": null,
-          "reviewed_sha": null
+          "state": "PASS",
+          "evidence": [
+            "project-control/reports/M0-T027-dcv-verification.md (first independent pass, at verified SHA 3ed05fda6d434670e5b610e6dad7a8b224a9aa94), cited under D-004-R670 and D-004-R713; re-confirmed not invalidated by the delta per M0-T027-dcv-final-verification.md section 2.3"
+          ],
+          "verified_at": "2026-07-31T22:45:00+00:00",
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "bbbb8ef18cc297ece8759535f0cb9484a0d785bc"
         },
         {
           "id": "D-004-R123",
-          "state": "pending",
-          "evidence": [],
-          "verified_at": null,
-          "verified_by": null,
-          "reviewed_sha": null
+          "state": "PASS",
+          "evidence": [
+            "project-control/reports/M0-T027-dcv-verification.md (first independent pass, at verified SHA 3ed05fda6d434670e5b610e6dad7a8b224a9aa94), cited under D-004-R670 and D-004-R713; re-confirmed not invalidated by the delta per M0-T027-dcv-final-verification.md section 2.3"
+          ],
+          "verified_at": "2026-07-31T22:45:00+00:00",
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "bbbb8ef18cc297ece8759535f0cb9484a0d785bc"
         },
         {
           "id": "D-004-R125",
-          "state": "pending",
-          "evidence": [],
-          "verified_at": null,
-          "verified_by": null,
-          "reviewed_sha": null
+          "state": "PASS",
+          "evidence": [
+            "project-control/reports/M0-T027-dcv-verification.md (first independent pass, at verified SHA 3ed05fda6d434670e5b610e6dad7a8b224a9aa94), cited under D-004-R670 and D-004-R713; re-confirmed not invalidated by the delta per M0-T027-dcv-final-verification.md section 2.3"
+          ],
+          "verified_at": "2026-07-31T22:45:00+00:00",
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "bbbb8ef18cc297ece8759535f0cb9484a0d785bc"
         },
         {
           "id": "D-004-R126",
-          "state": "pending",
-          "evidence": [],
-          "verified_at": null,
-          "verified_by": null,
-          "reviewed_sha": null
+          "state": "PASS",
+          "evidence": [
+            "project-control/reports/M0-T027-dcv-verification.md (first independent pass, at verified SHA 3ed05fda6d434670e5b610e6dad7a8b224a9aa94), cited under D-004-R670 and D-004-R713; re-confirmed not invalidated by the delta per M0-T027-dcv-final-verification.md section 2.3"
+          ],
+          "verified_at": "2026-07-31T22:45:00+00:00",
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "bbbb8ef18cc297ece8759535f0cb9484a0d785bc"
         },
         {
           "id": "D-004-R127",
-          "state": "pending",
-          "evidence": [],
-          "verified_at": null,
-          "verified_by": null,
-          "reviewed_sha": null
+          "state": "PASS",
+          "evidence": [
+            "project-control/reports/M0-T027-dcv-verification.md (first independent pass, at verified SHA 3ed05fda6d434670e5b610e6dad7a8b224a9aa94), cited under D-004-R670 and D-004-R713; re-confirmed not invalidated by the delta per M0-T027-dcv-final-verification.md section 2.3"
+          ],
+          "verified_at": "2026-07-31T22:45:00+00:00",
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "bbbb8ef18cc297ece8759535f0cb9484a0d785bc"
         },
         {
           "id": "D-004-R128",
-          "state": "pending",
-          "evidence": [],
-          "verified_at": null,
-          "verified_by": null,
-          "reviewed_sha": null
+          "state": "PASS",
+          "evidence": [
+            "project-control/reports/M0-T027-dcv-verification.md (first independent pass, at verified SHA 3ed05fda6d434670e5b610e6dad7a8b224a9aa94), cited under D-004-R670 and D-004-R713; re-confirmed not invalidated by the delta per M0-T027-dcv-final-verification.md section 2.3"
+          ],
+          "verified_at": "2026-07-31T22:45:00+00:00",
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "bbbb8ef18cc297ece8759535f0cb9484a0d785bc"
         },
         {
           "id": "D-004-R130",
-          "state": "pending",
-          "evidence": [],
-          "verified_at": null,
-          "verified_by": null,
-          "reviewed_sha": null
+          "state": "PASS",
+          "evidence": [
+            "project-control/reports/M0-T027-dcv-verification.md (first independent pass, at verified SHA 3ed05fda6d434670e5b610e6dad7a8b224a9aa94), cited under D-004-R670 and D-004-R713; re-confirmed not invalidated by the delta per M0-T027-dcv-final-verification.md section 2.3"
+          ],
+          "verified_at": "2026-07-31T22:45:00+00:00",
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "bbbb8ef18cc297ece8759535f0cb9484a0d785bc"
         },
         {
           "id": "D-004-R131",
-          "state": "pending",
-          "evidence": [],
-          "verified_at": null,
-          "verified_by": null,
-          "reviewed_sha": null
+          "state": "PASS",
+          "evidence": [
+            "project-control/reports/M0-T027-dcv-verification.md (first independent pass, at verified SHA 3ed05fda6d434670e5b610e6dad7a8b224a9aa94), cited under D-004-R670 and D-004-R713; re-confirmed not invalidated by the delta per M0-T027-dcv-final-verification.md section 2.3"
+          ],
+          "verified_at": "2026-07-31T22:45:00+00:00",
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "bbbb8ef18cc297ece8759535f0cb9484a0d785bc"
         },
         {
           "id": "D-004-R132",
-          "state": "pending",
-          "evidence": [],
-          "verified_at": null,
-          "verified_by": null,
-          "reviewed_sha": null
+          "state": "PASS",
+          "evidence": [
+            "project-control/reports/M0-T027-dcv-verification.md (first independent pass, at verified SHA 3ed05fda6d434670e5b610e6dad7a8b224a9aa94), cited under D-004-R670 and D-004-R713; re-confirmed not invalidated by the delta per M0-T027-dcv-final-verification.md section 2.3"
+          ],
+          "verified_at": "2026-07-31T22:45:00+00:00",
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "bbbb8ef18cc297ece8759535f0cb9484a0d785bc"
         },
         {
           "id": "D-004-R133",
-          "state": "pending",
-          "evidence": [],
-          "verified_at": null,
-          "verified_by": null,
-          "reviewed_sha": null
+          "state": "PASS",
+          "evidence": [
+            "project-control/reports/M0-T027-dcv-verification.md (first independent pass, at verified SHA 3ed05fda6d434670e5b610e6dad7a8b224a9aa94), cited under D-004-R670 and D-004-R713; re-confirmed not invalidated by the delta per M0-T027-dcv-final-verification.md section 2.3"
+          ],
+          "verified_at": "2026-07-31T22:45:00+00:00",
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "bbbb8ef18cc297ece8759535f0cb9484a0d785bc"
         },
         {
           "id": "D-004-R134",
-          "state": "pending",
-          "evidence": [],
-          "verified_at": null,
-          "verified_by": null,
-          "reviewed_sha": null
+          "state": "PASS",
+          "evidence": [
+            "project-control/reports/M0-T027-dcv-verification.md (first independent pass, at verified SHA 3ed05fda6d434670e5b610e6dad7a8b224a9aa94), cited under D-004-R670 and D-004-R713; re-confirmed not invalidated by the delta per M0-T027-dcv-final-verification.md section 2.3"
+          ],
+          "verified_at": "2026-07-31T22:45:00+00:00",
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "bbbb8ef18cc297ece8759535f0cb9484a0d785bc"
         },
         {
           "id": "D-004-R135",
-          "state": "pending",
-          "evidence": [],
-          "verified_at": null,
-          "verified_by": null,
-          "reviewed_sha": null
+          "state": "PASS",
+          "evidence": [
+            "project-control/reports/M0-T027-dcv-verification.md (first independent pass, at verified SHA 3ed05fda6d434670e5b610e6dad7a8b224a9aa94), cited under D-004-R670 and D-004-R713; re-confirmed not invalidated by the delta per M0-T027-dcv-final-verification.md section 2.3"
+          ],
+          "verified_at": "2026-07-31T22:45:00+00:00",
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "bbbb8ef18cc297ece8759535f0cb9484a0d785bc"
         },
         {
           "id": "D-004-R136",
-          "state": "pending",
-          "evidence": [],
-          "verified_at": null,
-          "verified_by": null,
-          "reviewed_sha": null
+          "state": "PASS",
+          "evidence": [
+            "project-control/reports/M0-T027-dcv-verification.md (first independent pass, at verified SHA 3ed05fda6d434670e5b610e6dad7a8b224a9aa94), cited under D-004-R670 and D-004-R713; re-confirmed not invalidated by the delta per M0-T027-dcv-final-verification.md section 2.3"
+          ],
+          "verified_at": "2026-07-31T22:45:00+00:00",
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "bbbb8ef18cc297ece8759535f0cb9484a0d785bc"
         },
         {
           "id": "D-004-R137",
-          "state": "pending",
-          "evidence": [],
-          "verified_at": null,
-          "verified_by": null,
-          "reviewed_sha": null
+          "state": "PASS",
+          "evidence": [
+            "project-control/reports/M0-T027-dcv-verification.md (first independent pass, at verified SHA 3ed05fda6d434670e5b610e6dad7a8b224a9aa94), cited under D-004-R670 and D-004-R713; re-confirmed not invalidated by the delta per M0-T027-dcv-final-verification.md section 2.3"
+          ],
+          "verified_at": "2026-07-31T22:45:00+00:00",
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "bbbb8ef18cc297ece8759535f0cb9484a0d785bc"
         },
         {
           "id": "D-004-R139",
-          "state": "pending",
-          "evidence": [],
-          "verified_at": null,
-          "verified_by": null,
-          "reviewed_sha": null
+          "state": "PASS",
+          "evidence": [
+            "project-control/reports/M0-T027-dcv-verification.md (first independent pass, at verified SHA 3ed05fda6d434670e5b610e6dad7a8b224a9aa94), cited under D-004-R670 and D-004-R713; re-confirmed not invalidated by the delta per M0-T027-dcv-final-verification.md section 2.3"
+          ],
+          "verified_at": "2026-07-31T22:45:00+00:00",
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "bbbb8ef18cc297ece8759535f0cb9484a0d785bc"
         },
         {
           "id": "D-004-R146",
-          "state": "pending",
-          "evidence": [],
-          "verified_at": null,
-          "verified_by": null,
-          "reviewed_sha": null
+          "state": "PASS",
+          "evidence": [
+            "project-control/reports/M0-T027-dcv-verification.md (first independent pass, at verified SHA 3ed05fda6d434670e5b610e6dad7a8b224a9aa94), cited under D-004-R670 and D-004-R713; re-confirmed not invalidated by the delta per M0-T027-dcv-final-verification.md section 2.3"
+          ],
+          "verified_at": "2026-07-31T22:45:00+00:00",
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "bbbb8ef18cc297ece8759535f0cb9484a0d785bc"
         },
         {
           "id": "D-004-R147",
-          "state": "pending",
-          "evidence": [],
-          "verified_at": null,
-          "verified_by": null,
-          "reviewed_sha": null
+          "state": "PASS",
+          "evidence": [
+            "project-control/reports/M0-T027-dcv-verification.md (first independent pass, at verified SHA 3ed05fda6d434670e5b610e6dad7a8b224a9aa94), cited under D-004-R670 and D-004-R713; re-confirmed not invalidated by the delta per M0-T027-dcv-final-verification.md section 2.3"
+          ],
+          "verified_at": "2026-07-31T22:45:00+00:00",
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "bbbb8ef18cc297ece8759535f0cb9484a0d785bc"
         },
         {
           "id": "D-004-R148",
-          "state": "pending",
-          "evidence": [],
-          "verified_at": null,
-          "verified_by": null,
-          "reviewed_sha": null
+          "state": "PASS",
+          "evidence": [
+            "project-control/reports/M0-T027-dcv-verification.md (first independent pass, at verified SHA 3ed05fda6d434670e5b610e6dad7a8b224a9aa94), cited under D-004-R670 and D-004-R713; re-confirmed not invalidated by the delta per M0-T027-dcv-final-verification.md section 2.3"
+          ],
+          "verified_at": "2026-07-31T22:45:00+00:00",
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "bbbb8ef18cc297ece8759535f0cb9484a0d785bc"
         },
         {
           "id": "D-004-R149",
-          "state": "pending",
-          "evidence": [],
-          "verified_at": null,
-          "verified_by": null,
-          "reviewed_sha": null
+          "state": "PASS",
+          "evidence": [
+            "project-control/reports/M0-T027-dcv-verification.md (first independent pass, at verified SHA 3ed05fda6d434670e5b610e6dad7a8b224a9aa94), cited under D-004-R670 and D-004-R713; re-confirmed not invalidated by the delta per M0-T027-dcv-final-verification.md section 2.3"
+          ],
+          "verified_at": "2026-07-31T22:45:00+00:00",
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "bbbb8ef18cc297ece8759535f0cb9484a0d785bc"
         },
         {
           "id": "D-004-R150",
-          "state": "pending",
-          "evidence": [],
-          "verified_at": null,
-          "verified_by": null,
-          "reviewed_sha": null
+          "state": "PASS",
+          "evidence": [
+            "project-control/reports/M0-T027-dcv-verification.md (first independent pass, at verified SHA 3ed05fda6d434670e5b610e6dad7a8b224a9aa94), cited under D-004-R670 and D-004-R713; re-confirmed not invalidated by the delta per M0-T027-dcv-final-verification.md section 2.3"
+          ],
+          "verified_at": "2026-07-31T22:45:00+00:00",
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "bbbb8ef18cc297ece8759535f0cb9484a0d785bc"
         },
         {
           "id": "D-004-R151",
-          "state": "pending",
-          "evidence": [],
-          "verified_at": null,
-          "verified_by": null,
-          "reviewed_sha": null
+          "state": "PASS",
+          "evidence": [
+            "project-control/reports/M0-T027-dcv-verification.md (first independent pass, at verified SHA 3ed05fda6d434670e5b610e6dad7a8b224a9aa94), cited under D-004-R670 and D-004-R713; re-confirmed not invalidated by the delta per M0-T027-dcv-final-verification.md section 2.3"
+          ],
+          "verified_at": "2026-07-31T22:45:00+00:00",
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "bbbb8ef18cc297ece8759535f0cb9484a0d785bc"
         },
         {
           "id": "D-004-R152",
-          "state": "pending",
-          "evidence": [],
-          "verified_at": null,
-          "verified_by": null,
-          "reviewed_sha": null
+          "state": "PASS",
+          "evidence": [
+            "project-control/reports/M0-T027-dcv-verification.md (first independent pass, at verified SHA 3ed05fda6d434670e5b610e6dad7a8b224a9aa94), cited under D-004-R670 and D-004-R713; re-confirmed not invalidated by the delta per M0-T027-dcv-final-verification.md section 2.3"
+          ],
+          "verified_at": "2026-07-31T22:45:00+00:00",
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "bbbb8ef18cc297ece8759535f0cb9484a0d785bc"
         },
         {
           "id": "D-004-R153",
-          "state": "pending",
-          "evidence": [],
-          "verified_at": null,
-          "verified_by": null,
-          "reviewed_sha": null
+          "state": "PASS",
+          "evidence": [
+            "project-control/reports/M0-T027-dcv-verification.md (first independent pass, at verified SHA 3ed05fda6d434670e5b610e6dad7a8b224a9aa94), cited under D-004-R670 and D-004-R713; re-confirmed not invalidated by the delta per M0-T027-dcv-final-verification.md section 2.3"
+          ],
+          "verified_at": "2026-07-31T22:45:00+00:00",
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "bbbb8ef18cc297ece8759535f0cb9484a0d785bc"
         },
         {
           "id": "D-004-R154",
-          "state": "pending",
-          "evidence": [],
-          "verified_at": null,
-          "verified_by": null,
-          "reviewed_sha": null
+          "state": "PASS",
+          "evidence": [
+            "project-control/reports/M0-T027-dcv-verification.md (first independent pass, at verified SHA 3ed05fda6d434670e5b610e6dad7a8b224a9aa94), cited under D-004-R670 and D-004-R713; re-confirmed not invalidated by the delta per M0-T027-dcv-final-verification.md section 2.3"
+          ],
+          "verified_at": "2026-07-31T22:45:00+00:00",
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "bbbb8ef18cc297ece8759535f0cb9484a0d785bc"
         },
         {
           "id": "D-004-R155",
-          "state": "pending",
-          "evidence": [],
-          "verified_at": null,
-          "verified_by": null,
-          "reviewed_sha": null
+          "state": "PASS",
+          "evidence": [
+            "project-control/reports/M0-T027-dcv-verification.md (first independent pass, at verified SHA 3ed05fda6d434670e5b610e6dad7a8b224a9aa94), cited under D-004-R670 and D-004-R713; re-confirmed not invalidated by the delta per M0-T027-dcv-final-verification.md section 2.3"
+          ],
+          "verified_at": "2026-07-31T22:45:00+00:00",
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "bbbb8ef18cc297ece8759535f0cb9484a0d785bc"
         },
         {
           "id": "D-004-R156",
-          "state": "pending",
-          "evidence": [],
-          "verified_at": null,
-          "verified_by": null,
-          "reviewed_sha": null
+          "state": "PASS",
+          "evidence": [
+            "project-control/reports/M0-T027-dcv-verification.md (first independent pass, at verified SHA 3ed05fda6d434670e5b610e6dad7a8b224a9aa94), cited under D-004-R670 and D-004-R713; re-confirmed not invalidated by the delta per M0-T027-dcv-final-verification.md section 2.3"
+          ],
+          "verified_at": "2026-07-31T22:45:00+00:00",
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "bbbb8ef18cc297ece8759535f0cb9484a0d785bc"
         },
         {
           "id": "D-004-R157",
-          "state": "pending",
-          "evidence": [],
-          "verified_at": null,
-          "verified_by": null,
-          "reviewed_sha": null
+          "state": "PASS",
+          "evidence": [
+            "project-control/reports/M0-T027-dcv-verification.md (first independent pass, at verified SHA 3ed05fda6d434670e5b610e6dad7a8b224a9aa94), cited under D-004-R670 and D-004-R713; re-confirmed not invalidated by the delta per M0-T027-dcv-final-verification.md section 2.3"
+          ],
+          "verified_at": "2026-07-31T22:45:00+00:00",
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "bbbb8ef18cc297ece8759535f0cb9484a0d785bc"
         },
         {
           "id": "D-004-R160",
-          "state": "pending",
-          "evidence": [],
-          "verified_at": null,
-          "verified_by": null,
-          "reviewed_sha": null
+          "state": "PASS",
+          "evidence": [
+            "project-control/reports/M0-T027-dcv-verification.md (first independent pass, at verified SHA 3ed05fda6d434670e5b610e6dad7a8b224a9aa94), cited under D-004-R670 and D-004-R713; re-confirmed not invalidated by the delta per M0-T027-dcv-final-verification.md section 2.3"
+          ],
+          "verified_at": "2026-07-31T22:45:00+00:00",
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "bbbb8ef18cc297ece8759535f0cb9484a0d785bc"
         },
         {
           "id": "D-004-R161",
-          "state": "pending",
-          "evidence": [],
-          "verified_at": null,
-          "verified_by": null,
-          "reviewed_sha": null
+          "state": "PASS",
+          "evidence": [
+            "project-control/reports/M0-T027-dcv-verification.md (first independent pass, at verified SHA 3ed05fda6d434670e5b610e6dad7a8b224a9aa94), cited under D-004-R670 and D-004-R713; re-confirmed not invalidated by the delta per M0-T027-dcv-final-verification.md section 2.3"
+          ],
+          "verified_at": "2026-07-31T22:45:00+00:00",
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "bbbb8ef18cc297ece8759535f0cb9484a0d785bc"
         },
         {
           "id": "D-004-R162",
-          "state": "pending",
-          "evidence": [],
-          "verified_at": null,
-          "verified_by": null,
-          "reviewed_sha": null
+          "state": "PASS",
+          "evidence": [
+            "project-control/reports/M0-T027-dcv-verification.md (first independent pass, at verified SHA 3ed05fda6d434670e5b610e6dad7a8b224a9aa94), cited under D-004-R670 and D-004-R713; re-confirmed not invalidated by the delta per M0-T027-dcv-final-verification.md section 2.3"
+          ],
+          "verified_at": "2026-07-31T22:45:00+00:00",
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "bbbb8ef18cc297ece8759535f0cb9484a0d785bc"
         },
         {
           "id": "D-004-R166",
-          "state": "pending",
-          "evidence": [],
-          "verified_at": null,
-          "verified_by": null,
-          "reviewed_sha": null
+          "state": "PASS",
+          "evidence": [
+            "project-control/reports/M0-T027-dcv-verification.md (first independent pass, at verified SHA 3ed05fda6d434670e5b610e6dad7a8b224a9aa94), cited under D-004-R670 and D-004-R713; re-confirmed not invalidated by the delta per M0-T027-dcv-final-verification.md section 2.3"
+          ],
+          "verified_at": "2026-07-31T22:45:00+00:00",
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "bbbb8ef18cc297ece8759535f0cb9484a0d785bc"
         },
         {
           "id": "D-004-R167",
-          "state": "pending",
-          "evidence": [],
-          "verified_at": null,
-          "verified_by": null,
-          "reviewed_sha": null
+          "state": "PASS",
+          "evidence": [
+            "project-control/reports/M0-T027-dcv-verification.md (first independent pass, at verified SHA 3ed05fda6d434670e5b610e6dad7a8b224a9aa94), cited under D-004-R670 and D-004-R713; re-confirmed not invalidated by the delta per M0-T027-dcv-final-verification.md section 2.3"
+          ],
+          "verified_at": "2026-07-31T22:45:00+00:00",
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "bbbb8ef18cc297ece8759535f0cb9484a0d785bc"
+        },
+        {
+          "id": "D-004-R169",
+          "state": "PASS",
+          "evidence": [
+            "project-control/reports/M0-T027-dcv-verification.md (first independent pass, at verified SHA 3ed05fda6d434670e5b610e6dad7a8b224a9aa94), cited under D-004-R670 and D-004-R713; re-confirmed not invalidated by the delta per M0-T027-dcv-final-verification.md section 2.3"
+          ],
+          "verified_at": "2026-07-31T22:45:00+00:00",
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "bbbb8ef18cc297ece8759535f0cb9484a0d785bc"
+        },
+        {
+          "id": "D-004-R211",
+          "state": "PASS",
+          "evidence": [
+            "project-control/reports/M0-T027-dcv-verification.md (first independent pass, at verified SHA 3ed05fda6d434670e5b610e6dad7a8b224a9aa94), cited under D-004-R670 and D-004-R713; re-confirmed not invalidated by the delta per M0-T027-dcv-final-verification.md section 2.3"
+          ],
+          "verified_at": "2026-07-31T22:45:00+00:00",
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "bbbb8ef18cc297ece8759535f0cb9484a0d785bc"
+        },
+        {
+          "id": "D-004-R212",
+          "state": "PASS",
+          "evidence": [
+            "project-control/reports/M0-T027-dcv-verification.md (first independent pass, at verified SHA 3ed05fda6d434670e5b610e6dad7a8b224a9aa94), cited under D-004-R670 and D-004-R713; re-confirmed not invalidated by the delta per M0-T027-dcv-final-verification.md section 2.3"
+          ],
+          "verified_at": "2026-07-31T22:45:00+00:00",
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "bbbb8ef18cc297ece8759535f0cb9484a0d785bc"
+        },
+        {
+          "id": "D-004-R213",
+          "state": "PASS",
+          "evidence": [
+            "project-control/reports/M0-T027-dcv-verification.md (first independent pass, at verified SHA 3ed05fda6d434670e5b610e6dad7a8b224a9aa94), cited under D-004-R670 and D-004-R713; re-confirmed not invalidated by the delta per M0-T027-dcv-final-verification.md section 2.3"
+          ],
+          "verified_at": "2026-07-31T22:45:00+00:00",
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "bbbb8ef18cc297ece8759535f0cb9484a0d785bc"
+        },
+        {
+          "id": "D-004-R215",
+          "state": "PASS",
+          "evidence": [
+            "project-control/reports/M0-T027-dcv-verification.md (first independent pass, at verified SHA 3ed05fda6d434670e5b610e6dad7a8b224a9aa94), cited under D-004-R670 and D-004-R713; re-confirmed not invalidated by the delta per M0-T027-dcv-final-verification.md section 2.3"
+          ],
+          "verified_at": "2026-07-31T22:45:00+00:00",
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "bbbb8ef18cc297ece8759535f0cb9484a0d785bc"
+        },
+        {
+          "id": "D-004-R216",
+          "state": "PASS",
+          "evidence": [
+            "project-control/reports/M0-T027-dcv-verification.md (first independent pass, at verified SHA 3ed05fda6d434670e5b610e6dad7a8b224a9aa94), cited under D-004-R670 and D-004-R713; re-confirmed not invalidated by the delta per M0-T027-dcv-final-verification.md section 2.3"
+          ],
+          "verified_at": "2026-07-31T22:45:00+00:00",
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "bbbb8ef18cc297ece8759535f0cb9484a0d785bc"
+        },
+        {
+          "id": "D-004-R217",
+          "state": "PASS",
+          "evidence": [
+            "project-control/reports/M0-T027-dcv-verification.md (first independent pass, at verified SHA 3ed05fda6d434670e5b610e6dad7a8b224a9aa94), cited under D-004-R670 and D-004-R713; re-confirmed not invalidated by the delta per M0-T027-dcv-final-verification.md section 2.3"
+          ],
+          "verified_at": "2026-07-31T22:45:00+00:00",
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "bbbb8ef18cc297ece8759535f0cb9484a0d785bc"
+        },
+        {
+          "id": "D-004-R224",
+          "state": "PASS",
+          "evidence": [
+            "project-control/reports/M0-T027-dcv-verification.md (first independent pass, at verified SHA 3ed05fda6d434670e5b610e6dad7a8b224a9aa94), cited under D-004-R670 and D-004-R713; re-confirmed not invalidated by the delta per M0-T027-dcv-final-verification.md section 2.3"
+          ],
+          "verified_at": "2026-07-31T22:45:00+00:00",
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "bbbb8ef18cc297ece8759535f0cb9484a0d785bc"
+        },
+        {
+          "id": "D-004-R226",
+          "state": "PASS",
+          "evidence": [
+            "project-control/reports/M0-T027-dcv-verification.md (first independent pass, at verified SHA 3ed05fda6d434670e5b610e6dad7a8b224a9aa94), cited under D-004-R670 and D-004-R713; re-confirmed not invalidated by the delta per M0-T027-dcv-final-verification.md section 2.3"
+          ],
+          "verified_at": "2026-07-31T22:45:00+00:00",
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "bbbb8ef18cc297ece8759535f0cb9484a0d785bc"
+        },
+        {
+          "id": "D-004-R268",
+          "state": "PASS",
+          "evidence": [
+            "project-control/reports/M0-T027-dcv-verification.md (first independent pass, at verified SHA 3ed05fda6d434670e5b610e6dad7a8b224a9aa94), cited under D-004-R670 and D-004-R713; re-confirmed not invalidated by the delta per M0-T027-dcv-final-verification.md section 2.3"
+          ],
+          "verified_at": "2026-07-31T22:45:00+00:00",
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "bbbb8ef18cc297ece8759535f0cb9484a0d785bc"
+        },
+        {
+          "id": "D-004-R273",
+          "state": "PASS",
+          "evidence": [
+            "project-control/reports/M0-T027-dcv-verification.md (first independent pass, at verified SHA 3ed05fda6d434670e5b610e6dad7a8b224a9aa94), cited under D-004-R670 and D-004-R713; re-confirmed not invalidated by the delta per M0-T027-dcv-final-verification.md section 2.3"
+          ],
+          "verified_at": "2026-07-31T22:45:00+00:00",
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "bbbb8ef18cc297ece8759535f0cb9484a0d785bc"
+        },
+        {
+          "id": "D-004-R274",
+          "state": "PASS",
+          "evidence": [
+            "project-control/reports/M0-T027-dcv-verification.md (first independent pass, at verified SHA 3ed05fda6d434670e5b610e6dad7a8b224a9aa94), cited under D-004-R670 and D-004-R713; re-confirmed not invalidated by the delta per M0-T027-dcv-final-verification.md section 2.3"
+          ],
+          "verified_at": "2026-07-31T22:45:00+00:00",
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "bbbb8ef18cc297ece8759535f0cb9484a0d785bc"
+        },
+        {
+          "id": "D-004-R275",
+          "state": "PASS",
+          "evidence": [
+            "project-control/reports/M0-T027-dcv-verification.md (first independent pass, at verified SHA 3ed05fda6d434670e5b610e6dad7a8b224a9aa94), cited under D-004-R670 and D-004-R713; re-confirmed not invalidated by the delta per M0-T027-dcv-final-verification.md section 2.3"
+          ],
+          "verified_at": "2026-07-31T22:45:00+00:00",
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "bbbb8ef18cc297ece8759535f0cb9484a0d785bc"
+        },
+        {
+          "id": "D-004-R276",
+          "state": "PASS",
+          "evidence": [
+            "project-control/reports/M0-T027-dcv-verification.md (first independent pass, at verified SHA 3ed05fda6d434670e5b610e6dad7a8b224a9aa94), cited under D-004-R670 and D-004-R713; re-confirmed not invalidated by the delta per M0-T027-dcv-final-verification.md section 2.3"
+          ],
+          "verified_at": "2026-07-31T22:45:00+00:00",
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "bbbb8ef18cc297ece8759535f0cb9484a0d785bc"
+        },
+        {
+          "id": "D-004-R278",
+          "state": "PASS",
+          "evidence": [
+            "project-control/reports/M0-T027-dcv-verification.md (first independent pass, at verified SHA 3ed05fda6d434670e5b610e6dad7a8b224a9aa94), cited under D-004-R670 and D-004-R713; re-confirmed not invalidated by the delta per M0-T027-dcv-final-verification.md section 2.3"
+          ],
+          "verified_at": "2026-07-31T22:45:00+00:00",
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "bbbb8ef18cc297ece8759535f0cb9484a0d785bc"
+        },
+        {
+          "id": "D-004-R279",
+          "state": "PASS",
+          "evidence": [
+            "project-control/reports/M0-T027-dcv-verification.md (first independent pass, at verified SHA 3ed05fda6d434670e5b610e6dad7a8b224a9aa94), cited under D-004-R670 and D-004-R713; re-confirmed not invalidated by the delta per M0-T027-dcv-final-verification.md section 2.3"
+          ],
+          "verified_at": "2026-07-31T22:45:00+00:00",
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "bbbb8ef18cc297ece8759535f0cb9484a0d785bc"
+        },
+        {
+          "id": "D-004-R282",
+          "state": "PASS",
+          "evidence": [
+            "project-control/reports/M0-T027-dcv-verification.md (first independent pass, at verified SHA 3ed05fda6d434670e5b610e6dad7a8b224a9aa94), cited under D-004-R670 and D-004-R713; re-confirmed not invalidated by the delta per M0-T027-dcv-final-verification.md section 2.3"
+          ],
+          "verified_at": "2026-07-31T22:45:00+00:00",
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "bbbb8ef18cc297ece8759535f0cb9484a0d785bc"
+        },
+        {
+          "id": "D-004-R283",
+          "state": "PASS",
+          "evidence": [
+            "project-control/reports/M0-T027-dcv-verification.md (first independent pass, at verified SHA 3ed05fda6d434670e5b610e6dad7a8b224a9aa94), cited under D-004-R670 and D-004-R713; re-confirmed not invalidated by the delta per M0-T027-dcv-final-verification.md section 2.3"
+          ],
+          "verified_at": "2026-07-31T22:45:00+00:00",
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "bbbb8ef18cc297ece8759535f0cb9484a0d785bc"
+        },
+        {
+          "id": "D-004-R284",
+          "state": "PASS",
+          "evidence": [
+            "project-control/reports/M0-T027-dcv-verification.md (first independent pass, at verified SHA 3ed05fda6d434670e5b610e6dad7a8b224a9aa94), cited under D-004-R670 and D-004-R713; re-confirmed not invalidated by the delta per M0-T027-dcv-final-verification.md section 2.3"
+          ],
+          "verified_at": "2026-07-31T22:45:00+00:00",
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "bbbb8ef18cc297ece8759535f0cb9484a0d785bc"
+        },
+        {
+          "id": "D-004-R308",
+          "state": "PASS",
+          "evidence": [
+            "project-control/reports/M0-T027-dcv-verification.md (first independent pass, at verified SHA 3ed05fda6d434670e5b610e6dad7a8b224a9aa94), cited under D-004-R670 and D-004-R713; re-confirmed not invalidated by the delta per M0-T027-dcv-final-verification.md section 2.3"
+          ],
+          "verified_at": "2026-07-31T22:45:00+00:00",
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "bbbb8ef18cc297ece8759535f0cb9484a0d785bc"
+        },
+        {
+          "id": "D-004-R310",
+          "state": "PASS",
+          "evidence": [
+            "project-control/reports/M0-T027-dcv-verification.md (first independent pass, at verified SHA 3ed05fda6d434670e5b610e6dad7a8b224a9aa94), cited under D-004-R670 and D-004-R713; re-confirmed not invalidated by the delta per M0-T027-dcv-final-verification.md section 2.3"
+          ],
+          "verified_at": "2026-07-31T22:45:00+00:00",
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "bbbb8ef18cc297ece8759535f0cb9484a0d785bc"
+        },
+        {
+          "id": "D-004-R311",
+          "state": "PASS",
+          "evidence": [
+            "project-control/reports/M0-T027-dcv-verification.md (first independent pass, at verified SHA 3ed05fda6d434670e5b610e6dad7a8b224a9aa94), cited under D-004-R670 and D-004-R713; re-confirmed not invalidated by the delta per M0-T027-dcv-final-verification.md section 2.3"
+          ],
+          "verified_at": "2026-07-31T22:45:00+00:00",
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "bbbb8ef18cc297ece8759535f0cb9484a0d785bc"
+        },
+        {
+          "id": "D-004-R316",
+          "state": "PASS",
+          "evidence": [
+            "project-control/reports/M0-T027-dcv-verification.md (first independent pass, at verified SHA 3ed05fda6d434670e5b610e6dad7a8b224a9aa94), cited under D-004-R670 and D-004-R713; re-confirmed not invalidated by the delta per M0-T027-dcv-final-verification.md section 2.3"
+          ],
+          "verified_at": "2026-07-31T22:45:00+00:00",
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "bbbb8ef18cc297ece8759535f0cb9484a0d785bc"
+        },
+        {
+          "id": "D-004-R317",
+          "state": "PASS",
+          "evidence": [
+            "project-control/reports/M0-T027-dcv-verification.md (first independent pass, at verified SHA 3ed05fda6d434670e5b610e6dad7a8b224a9aa94), cited under D-004-R670 and D-004-R713; re-confirmed not invalidated by the delta per M0-T027-dcv-final-verification.md section 2.3"
+          ],
+          "verified_at": "2026-07-31T22:45:00+00:00",
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "bbbb8ef18cc297ece8759535f0cb9484a0d785bc"
+        },
+        {
+          "id": "D-004-R318",
+          "state": "PASS",
+          "evidence": [
+            "project-control/reports/M0-T027-dcv-verification.md (first independent pass, at verified SHA 3ed05fda6d434670e5b610e6dad7a8b224a9aa94), cited under D-004-R670 and D-004-R713; re-confirmed not invalidated by the delta per M0-T027-dcv-final-verification.md section 2.3"
+          ],
+          "verified_at": "2026-07-31T22:45:00+00:00",
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "bbbb8ef18cc297ece8759535f0cb9484a0d785bc"
+        },
+        {
+          "id": "D-004-R319",
+          "state": "PASS",
+          "evidence": [
+            "project-control/reports/M0-T027-dcv-final-verification.md section 3.2, per-id evidence for D-004-R319 (verified at identity 29a094eb... / 2689b1e, re-confirmed valid at bbbb8ef)"
+          ],
+          "verified_at": "2026-07-31T22:45:00+00:00",
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "bbbb8ef18cc297ece8759535f0cb9484a0d785bc"
+        },
+        {
+          "id": "D-004-R320",
+          "state": "PASS",
+          "evidence": [
+            "project-control/reports/M0-T027-dcv-final-verification.md section 3.2, per-id evidence for D-004-R320 (verified at identity 29a094eb... / 2689b1e, re-confirmed valid at bbbb8ef)"
+          ],
+          "verified_at": "2026-07-31T22:45:00+00:00",
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "bbbb8ef18cc297ece8759535f0cb9484a0d785bc"
+        },
+        {
+          "id": "D-004-R321",
+          "state": "PASS",
+          "evidence": [
+            "project-control/reports/M0-T027-dcv-verification.md (first independent pass, at verified SHA 3ed05fda6d434670e5b610e6dad7a8b224a9aa94), cited under D-004-R670 and D-004-R713; re-confirmed not invalidated by the delta per M0-T027-dcv-final-verification.md section 2.3"
+          ],
+          "verified_at": "2026-07-31T22:45:00+00:00",
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "bbbb8ef18cc297ece8759535f0cb9484a0d785bc"
+        },
+        {
+          "id": "D-004-R322",
+          "state": "PASS",
+          "evidence": [
+            "COMPLETED LIFECYCLE EVIDENCE (re-verified at bbbb8ef): submit -- project-control/reports/M0-T027.json submitted_at 2026-07-31T19:32:55.139129+00:00, commit 77ca816; protected-main PR -- PR #140 baseRefName main, MERGED; CI verified -- gh pr view 140 statusCheckRollup, every CheckRun conclusion SUCCESS at headRefOid 77ca816; merge -- mergeCommit.oid 2689b1e24ded98bf20d2d102362579789f47c17c at 2026-07-31T19:40:19Z",
+            "ACCEPT-STAGE CLAUSES DISCHARGED-BY-DECOMPOSITION per owner ruling D-004-R706, source-019-amendment.md lines 89-98, merged PR #143; scope restriction D-004-R707",
+            "SUBSTANCE CARRIED FORWARD, NOT WAIVED: D-004-R486 (accept) and D-004-R487 (checkpoint) each hold an attested lifecycle deferral re-confirmed DEFERRAL_GRANTED at content identity 29a094eb...; checkpoint() refuses while any registered deferral is unverified"
+          ],
+          "verified_at": "2026-07-31T22:45:00+00:00",
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "bbbb8ef18cc297ece8759535f0cb9484a0d785bc"
+        },
+        {
+          "id": "D-004-R323",
+          "state": "PASS",
+          "evidence": [
+            "COMPLETED LIFECYCLE EVIDENCE (re-verified at bbbb8ef): the 'clean ONLY' restriction is honored with ZERO violations -- git ls-remote --heads origin returns 29 heads; every branch deleted during this closeout arc was created for this closeout (control/M0-T034-closeout-authorization-capture, task/M0-T034-governance-acceptance-semantics, control/session-handoff-refresh-2026-07-31-close, task/M0-T027-resubmit-corrected-identity, plus the #141/#142/#143 branches deleted on merge); no unrelated branch was deleted",
+            "ACCEPT-STAGE CLAUSE DISCHARGED-BY-DECOMPOSITION per owner ruling D-004-R706, source-019-amendment.md lines 89-98, merged PR #143; scope restriction D-004-R707",
+            "SUBSTANCE CARRIED FORWARD, NOT WAIVED: the two remaining closeout branches (control/M0-T027-consolidated-capture at 5cd0c3e, task/M0-T027-closeout-phases-3-4 at 16ae458) are governed by D-004-R488 and D-004-R389, both attested lifecycle deferrals re-confirmed DEFERRAL_GRANTED at content identity 29a094eb..."
+          ],
+          "verified_at": "2026-07-31T22:45:00+00:00",
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "bbbb8ef18cc297ece8759535f0cb9484a0d785bc"
+        },
+        {
+          "id": "D-004-R325",
+          "state": "PASS",
+          "evidence": [
+            "project-control/reports/M0-T027-dcv-verification.md (first independent pass, at verified SHA 3ed05fda6d434670e5b610e6dad7a8b224a9aa94), cited under D-004-R670 and D-004-R713; re-confirmed not invalidated by the delta per M0-T027-dcv-final-verification.md section 2.3"
+          ],
+          "verified_at": "2026-07-31T22:45:00+00:00",
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "bbbb8ef18cc297ece8759535f0cb9484a0d785bc"
+        },
+        {
+          "id": "D-004-R330",
+          "state": "PASS",
+          "evidence": [
+            "project-control/reports/M0-T027-dcv-verification.md (first independent pass, at verified SHA 3ed05fda6d434670e5b610e6dad7a8b224a9aa94), cited under D-004-R670 and D-004-R713; re-confirmed not invalidated by the delta per M0-T027-dcv-final-verification.md section 2.3"
+          ],
+          "verified_at": "2026-07-31T22:45:00+00:00",
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "bbbb8ef18cc297ece8759535f0cb9484a0d785bc"
+        },
+        {
+          "id": "D-004-R331",
+          "state": "PASS",
+          "evidence": [
+            "project-control/reports/M0-T027-dcv-verification.md (first independent pass, at verified SHA 3ed05fda6d434670e5b610e6dad7a8b224a9aa94), cited under D-004-R670 and D-004-R713; re-confirmed not invalidated by the delta per M0-T027-dcv-final-verification.md section 2.3"
+          ],
+          "verified_at": "2026-07-31T22:45:00+00:00",
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "bbbb8ef18cc297ece8759535f0cb9484a0d785bc"
+        },
+        {
+          "id": "D-004-R332",
+          "state": "PASS",
+          "evidence": [
+            "project-control/reports/M0-T027-dcv-verification.md (first independent pass, at verified SHA 3ed05fda6d434670e5b610e6dad7a8b224a9aa94), cited under D-004-R670 and D-004-R713; re-confirmed not invalidated by the delta per M0-T027-dcv-final-verification.md section 2.3"
+          ],
+          "verified_at": "2026-07-31T22:45:00+00:00",
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "bbbb8ef18cc297ece8759535f0cb9484a0d785bc"
+        },
+        {
+          "id": "D-004-R335",
+          "state": "PASS",
+          "evidence": [
+            "project-control/reports/M0-T027-dcv-verification.md (first independent pass, at verified SHA 3ed05fda6d434670e5b610e6dad7a8b224a9aa94), cited under D-004-R670 and D-004-R713; re-confirmed not invalidated by the delta per M0-T027-dcv-final-verification.md section 2.3"
+          ],
+          "verified_at": "2026-07-31T22:45:00+00:00",
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "bbbb8ef18cc297ece8759535f0cb9484a0d785bc"
+        },
+        {
+          "id": "D-004-R336",
+          "state": "PASS",
+          "evidence": [
+            "project-control/reports/M0-T027-dcv-verification.md (first independent pass, at verified SHA 3ed05fda6d434670e5b610e6dad7a8b224a9aa94), cited under D-004-R670 and D-004-R713; re-confirmed not invalidated by the delta per M0-T027-dcv-final-verification.md section 2.3"
+          ],
+          "verified_at": "2026-07-31T22:45:00+00:00",
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "bbbb8ef18cc297ece8759535f0cb9484a0d785bc"
+        },
+        {
+          "id": "D-004-R374",
+          "state": "PASS",
+          "evidence": [
+            "project-control/reports/M0-T027-dcv-verification.md (first independent pass, at verified SHA 3ed05fda6d434670e5b610e6dad7a8b224a9aa94), cited under D-004-R670 and D-004-R713; re-confirmed not invalidated by the delta per M0-T027-dcv-final-verification.md section 2.3"
+          ],
+          "verified_at": "2026-07-31T22:45:00+00:00",
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "bbbb8ef18cc297ece8759535f0cb9484a0d785bc"
+        },
+        {
+          "id": "D-004-R375",
+          "state": "PASS",
+          "evidence": [
+            "project-control/reports/M0-T027-dcv-verification.md (first independent pass, at verified SHA 3ed05fda6d434670e5b610e6dad7a8b224a9aa94), cited under D-004-R670 and D-004-R713; re-confirmed not invalidated by the delta per M0-T027-dcv-final-verification.md section 2.3"
+          ],
+          "verified_at": "2026-07-31T22:45:00+00:00",
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "bbbb8ef18cc297ece8759535f0cb9484a0d785bc"
+        },
+        {
+          "id": "D-004-R376",
+          "state": "PASS",
+          "evidence": [
+            "project-control/reports/M0-T027-dcv-verification.md (first independent pass, at verified SHA 3ed05fda6d434670e5b610e6dad7a8b224a9aa94), cited under D-004-R670 and D-004-R713; re-confirmed not invalidated by the delta per M0-T027-dcv-final-verification.md section 2.3"
+          ],
+          "verified_at": "2026-07-31T22:45:00+00:00",
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "bbbb8ef18cc297ece8759535f0cb9484a0d785bc"
+        },
+        {
+          "id": "D-004-R377",
+          "state": "PASS",
+          "evidence": [
+            "project-control/reports/M0-T027-dcv-verification.md (first independent pass, at verified SHA 3ed05fda6d434670e5b610e6dad7a8b224a9aa94), cited under D-004-R670 and D-004-R713; re-confirmed not invalidated by the delta per M0-T027-dcv-final-verification.md section 2.3"
+          ],
+          "verified_at": "2026-07-31T22:45:00+00:00",
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "bbbb8ef18cc297ece8759535f0cb9484a0d785bc"
+        },
+        {
+          "id": "D-004-R378",
+          "state": "PASS",
+          "evidence": [
+            "project-control/reports/M0-T027-dcv-verification.md (first independent pass, at verified SHA 3ed05fda6d434670e5b610e6dad7a8b224a9aa94), cited under D-004-R670 and D-004-R713; re-confirmed not invalidated by the delta per M0-T027-dcv-final-verification.md section 2.3"
+          ],
+          "verified_at": "2026-07-31T22:45:00+00:00",
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "bbbb8ef18cc297ece8759535f0cb9484a0d785bc"
+        },
+        {
+          "id": "D-004-R379",
+          "state": "PASS",
+          "evidence": [
+            "project-control/reports/M0-T027-dcv-verification.md (first independent pass, at verified SHA 3ed05fda6d434670e5b610e6dad7a8b224a9aa94), cited under D-004-R670 and D-004-R713; re-confirmed not invalidated by the delta per M0-T027-dcv-final-verification.md section 2.3"
+          ],
+          "verified_at": "2026-07-31T22:45:00+00:00",
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "bbbb8ef18cc297ece8759535f0cb9484a0d785bc"
+        },
+        {
+          "id": "D-004-R380",
+          "state": "PASS",
+          "evidence": [
+            "project-control/reports/M0-T027-dcv-verification.md (first independent pass, at verified SHA 3ed05fda6d434670e5b610e6dad7a8b224a9aa94), cited under D-004-R670 and D-004-R713; re-confirmed not invalidated by the delta per M0-T027-dcv-final-verification.md section 2.3"
+          ],
+          "verified_at": "2026-07-31T22:45:00+00:00",
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "bbbb8ef18cc297ece8759535f0cb9484a0d785bc"
+        },
+        {
+          "id": "D-004-R381",
+          "state": "PASS",
+          "evidence": [
+            "project-control/reports/M0-T027-dcv-verification.md (first independent pass, at verified SHA 3ed05fda6d434670e5b610e6dad7a8b224a9aa94), cited under D-004-R670 and D-004-R713; re-confirmed not invalidated by the delta per M0-T027-dcv-final-verification.md section 2.3"
+          ],
+          "verified_at": "2026-07-31T22:45:00+00:00",
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "bbbb8ef18cc297ece8759535f0cb9484a0d785bc"
+        },
+        {
+          "id": "D-004-R382",
+          "state": "PASS",
+          "evidence": [
+            "project-control/reports/M0-T027-dcv-verification.md (first independent pass, at verified SHA 3ed05fda6d434670e5b610e6dad7a8b224a9aa94), cited under D-004-R670 and D-004-R713; re-confirmed not invalidated by the delta per M0-T027-dcv-final-verification.md section 2.3"
+          ],
+          "verified_at": "2026-07-31T22:45:00+00:00",
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "bbbb8ef18cc297ece8759535f0cb9484a0d785bc"
+        },
+        {
+          "id": "D-004-R383",
+          "state": "PASS",
+          "evidence": [
+            "project-control/reports/M0-T027-dcv-verification.md (first independent pass, at verified SHA 3ed05fda6d434670e5b610e6dad7a8b224a9aa94), cited under D-004-R670 and D-004-R713; re-confirmed not invalidated by the delta per M0-T027-dcv-final-verification.md section 2.3"
+          ],
+          "verified_at": "2026-07-31T22:45:00+00:00",
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "bbbb8ef18cc297ece8759535f0cb9484a0d785bc"
+        },
+        {
+          "id": "D-004-R384",
+          "state": "PASS",
+          "evidence": [
+            "project-control/reports/M0-T027-dcv-final-verification.md section 3.2, per-id evidence for D-004-R384 (verified at identity 29a094eb... / 2689b1e, re-confirmed valid at bbbb8ef)"
+          ],
+          "verified_at": "2026-07-31T22:45:00+00:00",
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "bbbb8ef18cc297ece8759535f0cb9484a0d785bc"
+        },
+        {
+          "id": "D-004-R385",
+          "state": "PASS",
+          "evidence": [
+            "project-control/reports/M0-T027-dcv-final-verification.md section 3.2, per-id evidence for D-004-R385 (verified at identity 29a094eb... / 2689b1e, re-confirmed valid at bbbb8ef)"
+          ],
+          "verified_at": "2026-07-31T22:45:00+00:00",
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "bbbb8ef18cc297ece8759535f0cb9484a0d785bc"
+        },
+        {
+          "id": "D-004-R386",
+          "state": "PASS",
+          "evidence": [
+            "project-control/reports/M0-T027-dcv-final-verification.md section 3.2, per-id evidence for D-004-R386 (verified at identity 29a094eb... / 2689b1e, re-confirmed valid at bbbb8ef)"
+          ],
+          "verified_at": "2026-07-31T22:45:00+00:00",
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "bbbb8ef18cc297ece8759535f0cb9484a0d785bc"
+        },
+        {
+          "id": "D-004-R387",
+          "state": "PASS",
+          "evidence": [
+            "project-control/reports/M0-T027-dcv-final-verification.md section 3.2, per-id evidence for D-004-R387 (verified at identity 29a094eb... / 2689b1e, re-confirmed valid at bbbb8ef)"
+          ],
+          "verified_at": "2026-07-31T22:45:00+00:00",
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "bbbb8ef18cc297ece8759535f0cb9484a0d785bc"
+        },
+        {
+          "id": "D-004-R388",
+          "state": "PASS",
+          "evidence": [
+            "COMPLETED LIFECYCLE EVIDENCE (re-verified at bbbb8ef): submit -- project-control/reports/M0-T027.json, commit 77ca816; merge through protected main -- PR #140 into main, merge commit 2689b1e, with all six post-3ed05fda main commits confirmed to be PR merge commits (no direct push); merged-identity verification -- _task_git_identity re-derives 29a094ebdf312767b2ffa964a9cfb0398432e8838db0a211a711f1dd8db2bb97 at merged main, performed independently at 2689b1e and again at bbbb8ef",
+            "ACCEPT-STAGE CLAUSES DISCHARGED-BY-DECOMPOSITION per owner ruling D-004-R706, source-019-amendment.md lines 89-98, merged PR #143; scope restriction D-004-R707",
+            "SUBSTANCE CARRIED FORWARD, NOT WAIVED: D-004-R486 (accept) and D-004-R487 (checkpoint) each hold an attested lifecycle deferral re-confirmed DEFERRAL_GRANTED at content identity 29a094eb...; the identical submit-to-accept sequence is governed atomically by D-004-R481-R485 (all PASS on completed evidence) and D-004-R486-R488 (deferred)"
+          ],
+          "verified_at": "2026-07-31T22:45:00+00:00",
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "bbbb8ef18cc297ece8759535f0cb9484a0d785bc"
+        },
+        {
+          "id": "D-004-R389",
+          "state": "PASS",
+          "lifecycle_classification": {
+            "act_class": "post_accept_cleanup",
+            "classified_by": "directive-compliance-verifier",
+            "classified_at": "2026-07-31T21:15:00+00:00",
+            "classified_at_identity": "29a094ebdf312767b2ffa964a9cfb0398432e8838db0a211a711f1dd8db2bb97",
+            "justification": "Cleaning the branches/worktrees created for the two authorized tasks is an act that can only be performed after acceptance; the row is bound solely to the accept lifecycle event and is an obligation, not a bar on acceptance."
+          },
+          "evidence": [
+            "git ls-remote --heads origin at bbbb8ef contains neither control/M0-T027-consolidated-capture nor task/M0-T027-closeout-phases-3-4; git branch -l contains neither locally",
+            "the three M0-T034 producer worktrees (agent-a8497f73*, agent-aa6a2a03*, agent-aae76d66*) are absent from git worktree list, git branch -l, and .claude/worktrees/",
+            "scope preserved: M0-T030-codegraph (a51b710) and M0-T031-codegraph-hardening (1891ef3) worktrees, the six D-005 agent worktrees at cc273b5/613c4b1, agent-af94933c* (4da0d52), and all unregistered .claude/worktrees/ leftover directories still exist; no unrelated local or remote branch removed",
+            "nothing lost: dbf0a88 (round-3 producer commit) is an ancestor of HEAD and project-control/reports/M0-T034-producer-report.md is tracked at HEAD"
+          ],
+          "verified_at": "2026-08-03T02:13:01+00:00",
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "bbbb8ef18cc297ece8759535f0cb9484a0d785bc"
+        },
+        {
+          "id": "D-004-R419",
+          "state": "PASS",
+          "evidence": [
+            "project-control/reports/M0-T027-dcv-verification.md (first independent pass, at verified SHA 3ed05fda6d434670e5b610e6dad7a8b224a9aa94), cited under D-004-R670 and D-004-R713; re-confirmed not invalidated by the delta per M0-T027-dcv-final-verification.md section 2.3"
+          ],
+          "verified_at": "2026-07-31T22:45:00+00:00",
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "bbbb8ef18cc297ece8759535f0cb9484a0d785bc"
+        },
+        {
+          "id": "D-004-R421",
+          "state": "PASS",
+          "evidence": [
+            "project-control/reports/M0-T027-dcv-verification.md (first independent pass, at verified SHA 3ed05fda6d434670e5b610e6dad7a8b224a9aa94), cited under D-004-R670 and D-004-R713; re-confirmed not invalidated by the delta per M0-T027-dcv-final-verification.md section 2.3"
+          ],
+          "verified_at": "2026-07-31T22:45:00+00:00",
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "bbbb8ef18cc297ece8759535f0cb9484a0d785bc"
+        },
+        {
+          "id": "D-004-R422",
+          "state": "PASS",
+          "evidence": [
+            "project-control/reports/M0-T027-dcv-verification.md (first independent pass, at verified SHA 3ed05fda6d434670e5b610e6dad7a8b224a9aa94), cited under D-004-R670 and D-004-R713; re-confirmed not invalidated by the delta per M0-T027-dcv-final-verification.md section 2.3"
+          ],
+          "verified_at": "2026-07-31T22:45:00+00:00",
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "bbbb8ef18cc297ece8759535f0cb9484a0d785bc"
+        },
+        {
+          "id": "D-004-R423",
+          "state": "PASS",
+          "evidence": [
+            "project-control/reports/M0-T027-dcv-verification.md (first independent pass, at verified SHA 3ed05fda6d434670e5b610e6dad7a8b224a9aa94), cited under D-004-R670 and D-004-R713; re-confirmed not invalidated by the delta per M0-T027-dcv-final-verification.md section 2.3"
+          ],
+          "verified_at": "2026-07-31T22:45:00+00:00",
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "bbbb8ef18cc297ece8759535f0cb9484a0d785bc"
+        },
+        {
+          "id": "D-004-R424",
+          "state": "PASS",
+          "evidence": [
+            "project-control/reports/M0-T027-dcv-verification.md (first independent pass, at verified SHA 3ed05fda6d434670e5b610e6dad7a8b224a9aa94), cited under D-004-R670 and D-004-R713; re-confirmed not invalidated by the delta per M0-T027-dcv-final-verification.md section 2.3"
+          ],
+          "verified_at": "2026-07-31T22:45:00+00:00",
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "bbbb8ef18cc297ece8759535f0cb9484a0d785bc"
+        },
+        {
+          "id": "D-004-R425",
+          "state": "PASS",
+          "evidence": [
+            "project-control/reports/M0-T027-dcv-verification.md (first independent pass, at verified SHA 3ed05fda6d434670e5b610e6dad7a8b224a9aa94), cited under D-004-R670 and D-004-R713; re-confirmed not invalidated by the delta per M0-T027-dcv-final-verification.md section 2.3"
+          ],
+          "verified_at": "2026-07-31T22:45:00+00:00",
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "bbbb8ef18cc297ece8759535f0cb9484a0d785bc"
+        },
+        {
+          "id": "D-004-R426",
+          "state": "PASS",
+          "evidence": [
+            "project-control/reports/M0-T027-dcv-verification.md (first independent pass, at verified SHA 3ed05fda6d434670e5b610e6dad7a8b224a9aa94), cited under D-004-R670 and D-004-R713; re-confirmed not invalidated by the delta per M0-T027-dcv-final-verification.md section 2.3"
+          ],
+          "verified_at": "2026-07-31T22:45:00+00:00",
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "bbbb8ef18cc297ece8759535f0cb9484a0d785bc"
+        },
+        {
+          "id": "D-004-R427",
+          "state": "PASS",
+          "evidence": [
+            "project-control/reports/M0-T027-dcv-verification.md (first independent pass, at verified SHA 3ed05fda6d434670e5b610e6dad7a8b224a9aa94), cited under D-004-R670 and D-004-R713; re-confirmed not invalidated by the delta per M0-T027-dcv-final-verification.md section 2.3"
+          ],
+          "verified_at": "2026-07-31T22:45:00+00:00",
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "bbbb8ef18cc297ece8759535f0cb9484a0d785bc"
+        },
+        {
+          "id": "D-004-R428",
+          "state": "PASS",
+          "evidence": [
+            "project-control/reports/M0-T027-dcv-verification.md (first independent pass, at verified SHA 3ed05fda6d434670e5b610e6dad7a8b224a9aa94), cited under D-004-R670 and D-004-R713; re-confirmed not invalidated by the delta per M0-T027-dcv-final-verification.md section 2.3"
+          ],
+          "verified_at": "2026-07-31T22:45:00+00:00",
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "bbbb8ef18cc297ece8759535f0cb9484a0d785bc"
+        },
+        {
+          "id": "D-004-R429",
+          "state": "PASS",
+          "evidence": [
+            "project-control/reports/M0-T027-dcv-verification.md (first independent pass, at verified SHA 3ed05fda6d434670e5b610e6dad7a8b224a9aa94), cited under D-004-R670 and D-004-R713; re-confirmed not invalidated by the delta per M0-T027-dcv-final-verification.md section 2.3"
+          ],
+          "verified_at": "2026-07-31T22:45:00+00:00",
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "bbbb8ef18cc297ece8759535f0cb9484a0d785bc"
+        },
+        {
+          "id": "D-004-R430",
+          "state": "PASS",
+          "evidence": [
+            "project-control/reports/M0-T027-dcv-verification.md (first independent pass, at verified SHA 3ed05fda6d434670e5b610e6dad7a8b224a9aa94), cited under D-004-R670 and D-004-R713; re-confirmed not invalidated by the delta per M0-T027-dcv-final-verification.md section 2.3"
+          ],
+          "verified_at": "2026-07-31T22:45:00+00:00",
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "bbbb8ef18cc297ece8759535f0cb9484a0d785bc"
+        },
+        {
+          "id": "D-004-R431",
+          "state": "PASS",
+          "evidence": [
+            "project-control/reports/M0-T027-dcv-verification.md (first independent pass, at verified SHA 3ed05fda6d434670e5b610e6dad7a8b224a9aa94), cited under D-004-R670 and D-004-R713; re-confirmed not invalidated by the delta per M0-T027-dcv-final-verification.md section 2.3"
+          ],
+          "verified_at": "2026-07-31T22:45:00+00:00",
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "bbbb8ef18cc297ece8759535f0cb9484a0d785bc"
+        },
+        {
+          "id": "D-004-R432",
+          "state": "PASS",
+          "evidence": [
+            "project-control/reports/M0-T027-dcv-verification.md (first independent pass, at verified SHA 3ed05fda6d434670e5b610e6dad7a8b224a9aa94), cited under D-004-R670 and D-004-R713; re-confirmed not invalidated by the delta per M0-T027-dcv-final-verification.md section 2.3"
+          ],
+          "verified_at": "2026-07-31T22:45:00+00:00",
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "bbbb8ef18cc297ece8759535f0cb9484a0d785bc"
+        },
+        {
+          "id": "D-004-R433",
+          "state": "PASS",
+          "evidence": [
+            "project-control/reports/M0-T027-dcv-verification.md (first independent pass, at verified SHA 3ed05fda6d434670e5b610e6dad7a8b224a9aa94), cited under D-004-R670 and D-004-R713; re-confirmed not invalidated by the delta per M0-T027-dcv-final-verification.md section 2.3"
+          ],
+          "verified_at": "2026-07-31T22:45:00+00:00",
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "bbbb8ef18cc297ece8759535f0cb9484a0d785bc"
+        },
+        {
+          "id": "D-004-R434",
+          "state": "PASS",
+          "evidence": [
+            "project-control/reports/M0-T027-dcv-verification.md (first independent pass, at verified SHA 3ed05fda6d434670e5b610e6dad7a8b224a9aa94), cited under D-004-R670 and D-004-R713; re-confirmed not invalidated by the delta per M0-T027-dcv-final-verification.md section 2.3"
+          ],
+          "verified_at": "2026-07-31T22:45:00+00:00",
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "bbbb8ef18cc297ece8759535f0cb9484a0d785bc"
+        },
+        {
+          "id": "D-004-R435",
+          "state": "PASS",
+          "evidence": [
+            "project-control/reports/M0-T027-dcv-verification.md (first independent pass, at verified SHA 3ed05fda6d434670e5b610e6dad7a8b224a9aa94), cited under D-004-R670 and D-004-R713; re-confirmed not invalidated by the delta per M0-T027-dcv-final-verification.md section 2.3"
+          ],
+          "verified_at": "2026-07-31T22:45:00+00:00",
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "bbbb8ef18cc297ece8759535f0cb9484a0d785bc"
+        },
+        {
+          "id": "D-004-R436",
+          "state": "PASS",
+          "evidence": [
+            "project-control/reports/M0-T027-dcv-verification.md (first independent pass, at verified SHA 3ed05fda6d434670e5b610e6dad7a8b224a9aa94), cited under D-004-R670 and D-004-R713; re-confirmed not invalidated by the delta per M0-T027-dcv-final-verification.md section 2.3"
+          ],
+          "verified_at": "2026-07-31T22:45:00+00:00",
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "bbbb8ef18cc297ece8759535f0cb9484a0d785bc"
+        },
+        {
+          "id": "D-004-R437",
+          "state": "PASS",
+          "evidence": [
+            "project-control/reports/M0-T027-dcv-verification.md (first independent pass, at verified SHA 3ed05fda6d434670e5b610e6dad7a8b224a9aa94), cited under D-004-R670 and D-004-R713; re-confirmed not invalidated by the delta per M0-T027-dcv-final-verification.md section 2.3"
+          ],
+          "verified_at": "2026-07-31T22:45:00+00:00",
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "bbbb8ef18cc297ece8759535f0cb9484a0d785bc"
+        },
+        {
+          "id": "D-004-R438",
+          "state": "PASS",
+          "evidence": [
+            "project-control/reports/M0-T027-dcv-verification.md (first independent pass, at verified SHA 3ed05fda6d434670e5b610e6dad7a8b224a9aa94), cited under D-004-R670 and D-004-R713; re-confirmed not invalidated by the delta per M0-T027-dcv-final-verification.md section 2.3"
+          ],
+          "verified_at": "2026-07-31T22:45:00+00:00",
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "bbbb8ef18cc297ece8759535f0cb9484a0d785bc"
+        },
+        {
+          "id": "D-004-R439",
+          "state": "PASS",
+          "evidence": [
+            "project-control/reports/M0-T027-dcv-verification.md (first independent pass, at verified SHA 3ed05fda6d434670e5b610e6dad7a8b224a9aa94), cited under D-004-R670 and D-004-R713; re-confirmed not invalidated by the delta per M0-T027-dcv-final-verification.md section 2.3"
+          ],
+          "verified_at": "2026-07-31T22:45:00+00:00",
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "bbbb8ef18cc297ece8759535f0cb9484a0d785bc"
+        },
+        {
+          "id": "D-004-R440",
+          "state": "PASS",
+          "evidence": [
+            "project-control/reports/M0-T027-dcv-verification.md (first independent pass, at verified SHA 3ed05fda6d434670e5b610e6dad7a8b224a9aa94), cited under D-004-R670 and D-004-R713; re-confirmed not invalidated by the delta per M0-T027-dcv-final-verification.md section 2.3"
+          ],
+          "verified_at": "2026-07-31T22:45:00+00:00",
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "bbbb8ef18cc297ece8759535f0cb9484a0d785bc"
+        },
+        {
+          "id": "D-004-R441",
+          "state": "PASS",
+          "evidence": [
+            "project-control/reports/M0-T027-dcv-verification.md (first independent pass, at verified SHA 3ed05fda6d434670e5b610e6dad7a8b224a9aa94), cited under D-004-R670 and D-004-R713; re-confirmed not invalidated by the delta per M0-T027-dcv-final-verification.md section 2.3"
+          ],
+          "verified_at": "2026-07-31T22:45:00+00:00",
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "bbbb8ef18cc297ece8759535f0cb9484a0d785bc"
+        },
+        {
+          "id": "D-004-R442",
+          "state": "PASS",
+          "evidence": [
+            "project-control/reports/M0-T027-dcv-verification.md (first independent pass, at verified SHA 3ed05fda6d434670e5b610e6dad7a8b224a9aa94), cited under D-004-R670 and D-004-R713; re-confirmed not invalidated by the delta per M0-T027-dcv-final-verification.md section 2.3"
+          ],
+          "verified_at": "2026-07-31T22:45:00+00:00",
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "bbbb8ef18cc297ece8759535f0cb9484a0d785bc"
+        },
+        {
+          "id": "D-004-R443",
+          "state": "PASS",
+          "evidence": [
+            "project-control/reports/M0-T027-dcv-verification.md (first independent pass, at verified SHA 3ed05fda6d434670e5b610e6dad7a8b224a9aa94), cited under D-004-R670 and D-004-R713; re-confirmed not invalidated by the delta per M0-T027-dcv-final-verification.md section 2.3"
+          ],
+          "verified_at": "2026-07-31T22:45:00+00:00",
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "bbbb8ef18cc297ece8759535f0cb9484a0d785bc"
+        },
+        {
+          "id": "D-004-R444",
+          "state": "PASS",
+          "evidence": [
+            "project-control/reports/M0-T027-dcv-verification.md (first independent pass, at verified SHA 3ed05fda6d434670e5b610e6dad7a8b224a9aa94), cited under D-004-R670 and D-004-R713; re-confirmed not invalidated by the delta per M0-T027-dcv-final-verification.md section 2.3"
+          ],
+          "verified_at": "2026-07-31T22:45:00+00:00",
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "bbbb8ef18cc297ece8759535f0cb9484a0d785bc"
+        },
+        {
+          "id": "D-004-R445",
+          "state": "PASS",
+          "evidence": [
+            "project-control/reports/M0-T027-dcv-verification.md (first independent pass, at verified SHA 3ed05fda6d434670e5b610e6dad7a8b224a9aa94), cited under D-004-R670 and D-004-R713; re-confirmed not invalidated by the delta per M0-T027-dcv-final-verification.md section 2.3"
+          ],
+          "verified_at": "2026-07-31T22:45:00+00:00",
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "bbbb8ef18cc297ece8759535f0cb9484a0d785bc"
+        },
+        {
+          "id": "D-004-R446",
+          "state": "PASS",
+          "evidence": [
+            "project-control/reports/M0-T027-dcv-verification.md (first independent pass, at verified SHA 3ed05fda6d434670e5b610e6dad7a8b224a9aa94), cited under D-004-R670 and D-004-R713; re-confirmed not invalidated by the delta per M0-T027-dcv-final-verification.md section 2.3"
+          ],
+          "verified_at": "2026-07-31T22:45:00+00:00",
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "bbbb8ef18cc297ece8759535f0cb9484a0d785bc"
+        },
+        {
+          "id": "D-004-R447",
+          "state": "PASS",
+          "evidence": [
+            "project-control/reports/M0-T027-dcv-verification.md (first independent pass, at verified SHA 3ed05fda6d434670e5b610e6dad7a8b224a9aa94), cited under D-004-R670 and D-004-R713; re-confirmed not invalidated by the delta per M0-T027-dcv-final-verification.md section 2.3"
+          ],
+          "verified_at": "2026-07-31T22:45:00+00:00",
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "bbbb8ef18cc297ece8759535f0cb9484a0d785bc"
+        },
+        {
+          "id": "D-004-R448",
+          "state": "PASS",
+          "evidence": [
+            "project-control/reports/M0-T027-dcv-verification.md (first independent pass, at verified SHA 3ed05fda6d434670e5b610e6dad7a8b224a9aa94), cited under D-004-R670 and D-004-R713; re-confirmed not invalidated by the delta per M0-T027-dcv-final-verification.md section 2.3"
+          ],
+          "verified_at": "2026-07-31T22:45:00+00:00",
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "bbbb8ef18cc297ece8759535f0cb9484a0d785bc"
+        },
+        {
+          "id": "D-004-R449",
+          "state": "PASS",
+          "evidence": [
+            "project-control/reports/M0-T027-dcv-verification.md (first independent pass, at verified SHA 3ed05fda6d434670e5b610e6dad7a8b224a9aa94), cited under D-004-R670 and D-004-R713; re-confirmed not invalidated by the delta per M0-T027-dcv-final-verification.md section 2.3"
+          ],
+          "verified_at": "2026-07-31T22:45:00+00:00",
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "bbbb8ef18cc297ece8759535f0cb9484a0d785bc"
+        },
+        {
+          "id": "D-004-R450",
+          "state": "PASS",
+          "evidence": [
+            "project-control/reports/M0-T027-dcv-verification.md (first independent pass, at verified SHA 3ed05fda6d434670e5b610e6dad7a8b224a9aa94), cited under D-004-R670 and D-004-R713; re-confirmed not invalidated by the delta per M0-T027-dcv-final-verification.md section 2.3"
+          ],
+          "verified_at": "2026-07-31T22:45:00+00:00",
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "bbbb8ef18cc297ece8759535f0cb9484a0d785bc"
+        },
+        {
+          "id": "D-004-R451",
+          "state": "PASS",
+          "evidence": [
+            "project-control/reports/M0-T027-dcv-verification.md (first independent pass, at verified SHA 3ed05fda6d434670e5b610e6dad7a8b224a9aa94), cited under D-004-R670 and D-004-R713; re-confirmed not invalidated by the delta per M0-T027-dcv-final-verification.md section 2.3"
+          ],
+          "verified_at": "2026-07-31T22:45:00+00:00",
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "bbbb8ef18cc297ece8759535f0cb9484a0d785bc"
+        },
+        {
+          "id": "D-004-R452",
+          "state": "PASS",
+          "evidence": [
+            "project-control/reports/M0-T027-dcv-verification.md (first independent pass, at verified SHA 3ed05fda6d434670e5b610e6dad7a8b224a9aa94), cited under D-004-R670 and D-004-R713; re-confirmed not invalidated by the delta per M0-T027-dcv-final-verification.md section 2.3"
+          ],
+          "verified_at": "2026-07-31T22:45:00+00:00",
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "bbbb8ef18cc297ece8759535f0cb9484a0d785bc"
+        },
+        {
+          "id": "D-004-R453",
+          "state": "PASS",
+          "evidence": [
+            "project-control/reports/M0-T027-dcv-verification.md (first independent pass, at verified SHA 3ed05fda6d434670e5b610e6dad7a8b224a9aa94), cited under D-004-R670 and D-004-R713; re-confirmed not invalidated by the delta per M0-T027-dcv-final-verification.md section 2.3"
+          ],
+          "verified_at": "2026-07-31T22:45:00+00:00",
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "bbbb8ef18cc297ece8759535f0cb9484a0d785bc"
+        },
+        {
+          "id": "D-004-R454",
+          "state": "PASS",
+          "evidence": [
+            "project-control/reports/M0-T027-dcv-verification.md (first independent pass, at verified SHA 3ed05fda6d434670e5b610e6dad7a8b224a9aa94), cited under D-004-R670 and D-004-R713; re-confirmed not invalidated by the delta per M0-T027-dcv-final-verification.md section 2.3"
+          ],
+          "verified_at": "2026-07-31T22:45:00+00:00",
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "bbbb8ef18cc297ece8759535f0cb9484a0d785bc"
+        },
+        {
+          "id": "D-004-R455",
+          "state": "PASS",
+          "evidence": [
+            "project-control/reports/M0-T027-dcv-verification.md (first independent pass, at verified SHA 3ed05fda6d434670e5b610e6dad7a8b224a9aa94), cited under D-004-R670 and D-004-R713; re-confirmed not invalidated by the delta per M0-T027-dcv-final-verification.md section 2.3"
+          ],
+          "verified_at": "2026-07-31T22:45:00+00:00",
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "bbbb8ef18cc297ece8759535f0cb9484a0d785bc"
+        },
+        {
+          "id": "D-004-R456",
+          "state": "PASS",
+          "evidence": [
+            "project-control/reports/M0-T027-dcv-verification.md (first independent pass, at verified SHA 3ed05fda6d434670e5b610e6dad7a8b224a9aa94), cited under D-004-R670 and D-004-R713; re-confirmed not invalidated by the delta per M0-T027-dcv-final-verification.md section 2.3"
+          ],
+          "verified_at": "2026-07-31T22:45:00+00:00",
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "bbbb8ef18cc297ece8759535f0cb9484a0d785bc"
+        },
+        {
+          "id": "D-004-R457",
+          "state": "PASS",
+          "evidence": [
+            "project-control/reports/M0-T027-dcv-verification.md (first independent pass, at verified SHA 3ed05fda6d434670e5b610e6dad7a8b224a9aa94), cited under D-004-R670 and D-004-R713; re-confirmed not invalidated by the delta per M0-T027-dcv-final-verification.md section 2.3"
+          ],
+          "verified_at": "2026-07-31T22:45:00+00:00",
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "bbbb8ef18cc297ece8759535f0cb9484a0d785bc"
+        },
+        {
+          "id": "D-004-R458",
+          "state": "PASS",
+          "evidence": [
+            "project-control/reports/M0-T027-dcv-verification.md (first independent pass, at verified SHA 3ed05fda6d434670e5b610e6dad7a8b224a9aa94), cited under D-004-R670 and D-004-R713; re-confirmed not invalidated by the delta per M0-T027-dcv-final-verification.md section 2.3"
+          ],
+          "verified_at": "2026-07-31T22:45:00+00:00",
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "bbbb8ef18cc297ece8759535f0cb9484a0d785bc"
+        },
+        {
+          "id": "D-004-R459",
+          "state": "PASS",
+          "evidence": [
+            "project-control/reports/M0-T027-dcv-verification.md (first independent pass, at verified SHA 3ed05fda6d434670e5b610e6dad7a8b224a9aa94), cited under D-004-R670 and D-004-R713; re-confirmed not invalidated by the delta per M0-T027-dcv-final-verification.md section 2.3"
+          ],
+          "verified_at": "2026-07-31T22:45:00+00:00",
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "bbbb8ef18cc297ece8759535f0cb9484a0d785bc"
+        },
+        {
+          "id": "D-004-R460",
+          "state": "PASS",
+          "evidence": [
+            "project-control/reports/M0-T027-dcv-verification.md (first independent pass, at verified SHA 3ed05fda6d434670e5b610e6dad7a8b224a9aa94), cited under D-004-R670 and D-004-R713; re-confirmed not invalidated by the delta per M0-T027-dcv-final-verification.md section 2.3"
+          ],
+          "verified_at": "2026-07-31T22:45:00+00:00",
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "bbbb8ef18cc297ece8759535f0cb9484a0d785bc"
+        },
+        {
+          "id": "D-004-R461",
+          "state": "PASS",
+          "evidence": [
+            "project-control/reports/M0-T027-dcv-final-verification.md section 3.2, per-id evidence for D-004-R461 (verified at identity 29a094eb... / 2689b1e, re-confirmed valid at bbbb8ef)"
+          ],
+          "verified_at": "2026-07-31T22:45:00+00:00",
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "bbbb8ef18cc297ece8759535f0cb9484a0d785bc"
+        },
+        {
+          "id": "D-004-R462",
+          "state": "PASS",
+          "evidence": [
+            "project-control/reports/M0-T027-dcv-final-verification.md section 3.2, per-id evidence for D-004-R462 (verified at identity 29a094eb... / 2689b1e, re-confirmed valid at bbbb8ef)"
+          ],
+          "verified_at": "2026-07-31T22:45:00+00:00",
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "bbbb8ef18cc297ece8759535f0cb9484a0d785bc"
+        },
+        {
+          "id": "D-004-R463",
+          "state": "PASS",
+          "evidence": [
+            "project-control/reports/M0-T027-dcv-final-verification.md section 3.2, per-id evidence for D-004-R463 (verified at identity 29a094eb... / 2689b1e, re-confirmed valid at bbbb8ef)"
+          ],
+          "verified_at": "2026-07-31T22:45:00+00:00",
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "bbbb8ef18cc297ece8759535f0cb9484a0d785bc"
+        },
+        {
+          "id": "D-004-R464",
+          "state": "PASS",
+          "evidence": [
+            "project-control/reports/M0-T027-dcv-verification.md (first independent pass, at verified SHA 3ed05fda6d434670e5b610e6dad7a8b224a9aa94), cited under D-004-R670 and D-004-R713; re-confirmed not invalidated by the delta per M0-T027-dcv-final-verification.md section 2.3"
+          ],
+          "verified_at": "2026-07-31T22:45:00+00:00",
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "bbbb8ef18cc297ece8759535f0cb9484a0d785bc"
+        },
+        {
+          "id": "D-004-R465",
+          "state": "PASS",
+          "evidence": [
+            "project-control/reports/M0-T027-dcv-final-verification.md section 3.2, per-id evidence for D-004-R465 (verified at identity 29a094eb... / 2689b1e, re-confirmed valid at bbbb8ef)"
+          ],
+          "verified_at": "2026-07-31T22:45:00+00:00",
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "bbbb8ef18cc297ece8759535f0cb9484a0d785bc"
+        },
+        {
+          "id": "D-004-R466",
+          "state": "PASS",
+          "evidence": [
+            "project-control/reports/M0-T027-dcv-verification.md (first independent pass, at verified SHA 3ed05fda6d434670e5b610e6dad7a8b224a9aa94), cited under D-004-R670 and D-004-R713; re-confirmed not invalidated by the delta per M0-T027-dcv-final-verification.md section 2.3"
+          ],
+          "verified_at": "2026-07-31T22:45:00+00:00",
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "bbbb8ef18cc297ece8759535f0cb9484a0d785bc"
+        },
+        {
+          "id": "D-004-R467",
+          "state": "PASS",
+          "evidence": [
+            "project-control/reports/M0-T027-dcv-final-verification.md section 3.2, per-id evidence for D-004-R467 (verified at identity 29a094eb... / 2689b1e, re-confirmed valid at bbbb8ef)"
+          ],
+          "verified_at": "2026-07-31T22:45:00+00:00",
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "bbbb8ef18cc297ece8759535f0cb9484a0d785bc"
+        },
+        {
+          "id": "D-004-R468",
+          "state": "PASS",
+          "evidence": [
+            "project-control/reports/M0-T027-dcv-final-verification.md section 3.2, per-id evidence for D-004-R468 (verified at identity 29a094eb... / 2689b1e, re-confirmed valid at bbbb8ef)"
+          ],
+          "verified_at": "2026-07-31T22:45:00+00:00",
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "bbbb8ef18cc297ece8759535f0cb9484a0d785bc"
+        },
+        {
+          "id": "D-004-R469",
+          "state": "PASS",
+          "evidence": [
+            "project-control/reports/M0-T027-dcv-verification.md (first independent pass, at verified SHA 3ed05fda6d434670e5b610e6dad7a8b224a9aa94), cited under D-004-R670 and D-004-R713; re-confirmed not invalidated by the delta per M0-T027-dcv-final-verification.md section 2.3"
+          ],
+          "verified_at": "2026-07-31T22:45:00+00:00",
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "bbbb8ef18cc297ece8759535f0cb9484a0d785bc"
+        },
+        {
+          "id": "D-004-R470",
+          "state": "PASS",
+          "evidence": [
+            "project-control/reports/M0-T027-dcv-verification.md (first independent pass, at verified SHA 3ed05fda6d434670e5b610e6dad7a8b224a9aa94), cited under D-004-R670 and D-004-R713; re-confirmed not invalidated by the delta per M0-T027-dcv-final-verification.md section 2.3"
+          ],
+          "verified_at": "2026-07-31T22:45:00+00:00",
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "bbbb8ef18cc297ece8759535f0cb9484a0d785bc"
+        },
+        {
+          "id": "D-004-R471",
+          "state": "PASS",
+          "evidence": [
+            "project-control/reports/M0-T027-dcv-verification.md (first independent pass, at verified SHA 3ed05fda6d434670e5b610e6dad7a8b224a9aa94), cited under D-004-R670 and D-004-R713; re-confirmed not invalidated by the delta per M0-T027-dcv-final-verification.md section 2.3"
+          ],
+          "verified_at": "2026-07-31T22:45:00+00:00",
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "bbbb8ef18cc297ece8759535f0cb9484a0d785bc"
+        },
+        {
+          "id": "D-004-R472",
+          "state": "PASS",
+          "evidence": [
+            "project-control/reports/M0-T027-dcv-verification.md (first independent pass, at verified SHA 3ed05fda6d434670e5b610e6dad7a8b224a9aa94), cited under D-004-R670 and D-004-R713; re-confirmed not invalidated by the delta per M0-T027-dcv-final-verification.md section 2.3"
+          ],
+          "verified_at": "2026-07-31T22:45:00+00:00",
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "bbbb8ef18cc297ece8759535f0cb9484a0d785bc"
+        },
+        {
+          "id": "D-004-R473",
+          "state": "PASS",
+          "evidence": [
+            "project-control/reports/M0-T027-dcv-verification.md (first independent pass, at verified SHA 3ed05fda6d434670e5b610e6dad7a8b224a9aa94), cited under D-004-R670 and D-004-R713; re-confirmed not invalidated by the delta per M0-T027-dcv-final-verification.md section 2.3"
+          ],
+          "verified_at": "2026-07-31T22:45:00+00:00",
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "bbbb8ef18cc297ece8759535f0cb9484a0d785bc"
+        },
+        {
+          "id": "D-004-R474",
+          "state": "PASS",
+          "evidence": [
+            "project-control/reports/M0-T027-dcv-final-verification.md section 3.2, per-id evidence for D-004-R474 (verified at identity 29a094eb... / 2689b1e, re-confirmed valid at bbbb8ef)"
+          ],
+          "verified_at": "2026-07-31T22:45:00+00:00",
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "bbbb8ef18cc297ece8759535f0cb9484a0d785bc"
+        },
+        {
+          "id": "D-004-R475",
+          "state": "PASS",
+          "evidence": [
+            "project-control/reports/M0-T027-dcv-final-verification.md section 3.2, per-id evidence for D-004-R475 (verified at identity 29a094eb... / 2689b1e, re-confirmed valid at bbbb8ef)"
+          ],
+          "verified_at": "2026-07-31T22:45:00+00:00",
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "bbbb8ef18cc297ece8759535f0cb9484a0d785bc"
+        },
+        {
+          "id": "D-004-R476",
+          "state": "PASS",
+          "evidence": [
+            "project-control/reports/M0-T027-dcv-verification.md (first independent pass, at verified SHA 3ed05fda6d434670e5b610e6dad7a8b224a9aa94), cited under D-004-R670 and D-004-R713; re-confirmed not invalidated by the delta per M0-T027-dcv-final-verification.md section 2.3"
+          ],
+          "verified_at": "2026-07-31T22:45:00+00:00",
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "bbbb8ef18cc297ece8759535f0cb9484a0d785bc"
+        },
+        {
+          "id": "D-004-R477",
+          "state": "PASS",
+          "evidence": [
+            "project-control/reports/M0-T027-dcv-verification.md (first independent pass, at verified SHA 3ed05fda6d434670e5b610e6dad7a8b224a9aa94), cited under D-004-R670 and D-004-R713; re-confirmed not invalidated by the delta per M0-T027-dcv-final-verification.md section 2.3"
+          ],
+          "verified_at": "2026-07-31T22:45:00+00:00",
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "bbbb8ef18cc297ece8759535f0cb9484a0d785bc"
+        },
+        {
+          "id": "D-004-R478",
+          "state": "PASS",
+          "evidence": [
+            "project-control/reports/M0-T027-dcv-verification.md (first independent pass, at verified SHA 3ed05fda6d434670e5b610e6dad7a8b224a9aa94), cited under D-004-R670 and D-004-R713; re-confirmed not invalidated by the delta per M0-T027-dcv-final-verification.md section 2.3"
+          ],
+          "verified_at": "2026-07-31T22:45:00+00:00",
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "bbbb8ef18cc297ece8759535f0cb9484a0d785bc"
+        },
+        {
+          "id": "D-004-R479",
+          "state": "PASS",
+          "evidence": [
+            "project-control/reports/M0-T027-dcv-final-verification.md section 3.2, per-id evidence for D-004-R479 (verified at identity 29a094eb... / 2689b1e, re-confirmed valid at bbbb8ef)"
+          ],
+          "verified_at": "2026-07-31T22:45:00+00:00",
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "bbbb8ef18cc297ece8759535f0cb9484a0d785bc"
+        },
+        {
+          "id": "D-004-R480",
+          "state": "PASS",
+          "evidence": [
+            "project-control/reports/M0-T027-dcv-verification.md (first independent pass, at verified SHA 3ed05fda6d434670e5b610e6dad7a8b224a9aa94), cited under D-004-R670 and D-004-R713; re-confirmed not invalidated by the delta per M0-T027-dcv-final-verification.md section 2.3"
+          ],
+          "verified_at": "2026-07-31T22:45:00+00:00",
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "bbbb8ef18cc297ece8759535f0cb9484a0d785bc"
+        },
+        {
+          "id": "D-004-R481",
+          "state": "PASS",
+          "evidence": [
+            "project-control/reports/M0-T027-dcv-final-verification.md section 3.2, per-id evidence for D-004-R481 (verified at identity 29a094eb... / 2689b1e, re-confirmed valid at bbbb8ef)"
+          ],
+          "verified_at": "2026-07-31T22:45:00+00:00",
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "bbbb8ef18cc297ece8759535f0cb9484a0d785bc"
+        },
+        {
+          "id": "D-004-R482",
+          "state": "PASS",
+          "evidence": [
+            "project-control/reports/M0-T027-dcv-final-verification.md section 3.2, per-id evidence for D-004-R482 (verified at identity 29a094eb... / 2689b1e, re-confirmed valid at bbbb8ef)"
+          ],
+          "verified_at": "2026-07-31T22:45:00+00:00",
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "bbbb8ef18cc297ece8759535f0cb9484a0d785bc"
+        },
+        {
+          "id": "D-004-R483",
+          "state": "PASS",
+          "evidence": [
+            "project-control/reports/M0-T027-dcv-final-verification.md section 3.2, per-id evidence for D-004-R483 (verified at identity 29a094eb... / 2689b1e, re-confirmed valid at bbbb8ef)"
+          ],
+          "verified_at": "2026-07-31T22:45:00+00:00",
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "bbbb8ef18cc297ece8759535f0cb9484a0d785bc"
+        },
+        {
+          "id": "D-004-R484",
+          "state": "PASS",
+          "evidence": [
+            "project-control/reports/M0-T027-dcv-final-verification.md section 3.2, per-id evidence for D-004-R484 (verified at identity 29a094eb... / 2689b1e, re-confirmed valid at bbbb8ef)"
+          ],
+          "verified_at": "2026-07-31T22:45:00+00:00",
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "bbbb8ef18cc297ece8759535f0cb9484a0d785bc"
+        },
+        {
+          "id": "D-004-R485",
+          "state": "PASS",
+          "evidence": [
+            "project-control/reports/M0-T027-dcv-final-verification.md section 3.2, per-id evidence for D-004-R485 (verified at identity 29a094eb... / 2689b1e, re-confirmed valid at bbbb8ef)"
+          ],
+          "verified_at": "2026-07-31T22:45:00+00:00",
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "bbbb8ef18cc297ece8759535f0cb9484a0d785bc"
+        },
+        {
+          "id": "D-004-R486",
+          "state": "PASS",
+          "lifecycle_classification": {
+            "act_class": "accept",
+            "classified_by": "directive-compliance-verifier",
+            "classified_at": "2026-07-31T21:15:00+00:00",
+            "classified_at_identity": "29a094ebdf312767b2ffa964a9cfb0398432e8838db0a211a711f1dd8db2bb97",
+            "justification": "Accepting M0-T027 through the CLI is the acceptance act itself; its evidence cannot exist before accept() runs. Bound solely to accept, classified obligation."
+          },
+          "evidence": [
+            "project-control/tasks/M0-T027.json: status accepted, progress_percent 100, accepted_by orchestrator, accepted_at 2026-08-03T01:52:10.469803+00:00; post_accept_verification registered_by orchestrator, first_opportunity checkpoint, matching accept() at tools/project_control.py:1253-1268",
+            "project-control/state.json accepted_tasks contains M0-T027 (54 total)",
+            "accept() preconditions independently re-verified: gates M0-T027-G0/G2/G3/G5 all PASS with G3 by code-reviewer and G5 by security-reviewer as independent_review (never the producer); final progress_log entry is the 85% awaiting_gate record accept() lawfully consumed",
+            "CLI-guarded acceptance act: accept() refuses any agent but orchestrator (tools/project_control.py:1181); deferral stamps deferred_at_identity 29a094eb.. / deferred_at_sha bbbb8ef.. match the accept-time stamping code at tools/project_control.py:572-574"
+          ],
+          "verified_at": "2026-08-03T02:13:01+00:00",
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "bbbb8ef18cc297ece8759535f0cb9484a0d785bc"
+        },
+        {
+          "id": "D-004-R487",
+          "state": "PASS",
+          "lifecycle_classification": {
+            "act_class": "checkpoint",
+            "classified_by": "directive-compliance-verifier",
+            "classified_at": "2026-07-31T21:15:00+00:00",
+            "classified_at_identity": "29a094ebdf312767b2ffa964a9cfb0398432e8838db0a211a711f1dd8db2bb97",
+            "justification": "Creating a checkpoint only if policy requires one is a conditional post-accept act; checkpoint() is the first post-accept opportunity at which it can be evaluated. Bound solely to accept, classified sequencing."
+          },
+          "evidence": [
+            "policy evaluation: docs/GATES_AND_CHECKPOINTS.md 'Checkpoint requirements' requires a checkpoint 'After integrating a task' (line 143) and 'After each accepted or failed gate' (line 140); M0-T027 is accepted, so policy REQUIRES one and the 'ONLY if' prohibitive branch is not engaged",
+            "mechanical design: tools/project_control.py POST_ACCEPT_FIRST_OPPORTUNITY = 'checkpoint' (line 584); checkpoint() fail-closed refuses to record while any deferral is undischarged (_post_accept_verification_blockers, lines 1289-1292) and on success durably records post_accept_verifications_confirmed for M0-T027's five requirement ids (lines 1297-1299)",
+            "the checkpoint recorded immediately after this verification is the mechanically designated first post-accept opportunity; the guard makes the obligation impossible to silently lapse"
+          ],
+          "verified_at": "2026-08-03T02:13:01+00:00",
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "bbbb8ef18cc297ece8759535f0cb9484a0d785bc"
+        },
+        {
+          "id": "D-004-R488",
+          "state": "PASS",
+          "lifecycle_classification": {
+            "act_class": "post_accept_cleanup",
+            "classified_by": "directive-compliance-verifier",
+            "classified_at": "2026-07-31T21:15:00+00:00",
+            "classified_at_identity": "29a094ebdf312767b2ffa964a9cfb0398432e8838db0a211a711f1dd8db2bb97",
+            "justification": "Cleaning only the M0-T027 closeout branches/worktrees follows acceptance; two closeout branches remain on origin by design pending that act. Bound solely to accept, classified obligation."
+          },
+          "evidence": [
+            "the two M0-T027 closeout branches (control/M0-T027-consolidated-capture, task/M0-T027-closeout-phases-3-4) are deleted from origin and locally; the three M0-T034 producer worktrees and their worktree-agent-* branches are removed",
+            "ONLY-scope preserved: D-005 code-graph worktrees (M0-T030/M0-T031 plus six agent worktrees at cc273b5/613c4b1), agent-af94933c* residue, and all unregistered .claude/worktrees/ directories remain; every unrelated remote control/* and task/* branch remains on origin",
+            "merged closeout content durable: dbf0a88 is an ancestor of HEAD; no closeout artifact depends on the removed branches/worktrees"
+          ],
+          "verified_at": "2026-08-03T02:13:01+00:00",
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "bbbb8ef18cc297ece8759535f0cb9484a0d785bc"
+        },
+        {
+          "id": "D-004-R489",
+          "state": "PASS",
+          "evidence": [
+            "project-control/reports/M0-T027-dcv-verification.md (first independent pass, at verified SHA 3ed05fda6d434670e5b610e6dad7a8b224a9aa94), cited under D-004-R670 and D-004-R713; re-confirmed not invalidated by the delta per M0-T027-dcv-final-verification.md section 2.3"
+          ],
+          "verified_at": "2026-07-31T22:45:00+00:00",
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "bbbb8ef18cc297ece8759535f0cb9484a0d785bc"
+        },
+        {
+          "id": "D-004-R490",
+          "state": "PASS",
+          "evidence": [
+            "project-control/reports/M0-T027-dcv-verification.md (first independent pass, at verified SHA 3ed05fda6d434670e5b610e6dad7a8b224a9aa94), cited under D-004-R670 and D-004-R713; re-confirmed not invalidated by the delta per M0-T027-dcv-final-verification.md section 2.3"
+          ],
+          "verified_at": "2026-07-31T22:45:00+00:00",
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "bbbb8ef18cc297ece8759535f0cb9484a0d785bc"
+        },
+        {
+          "id": "D-004-R491",
+          "state": "PASS",
+          "evidence": [
+            "project-control/reports/M0-T027-dcv-verification.md (first independent pass, at verified SHA 3ed05fda6d434670e5b610e6dad7a8b224a9aa94), cited under D-004-R670 and D-004-R713; re-confirmed not invalidated by the delta per M0-T027-dcv-final-verification.md section 2.3"
+          ],
+          "verified_at": "2026-07-31T22:45:00+00:00",
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "bbbb8ef18cc297ece8759535f0cb9484a0d785bc"
+        },
+        {
+          "id": "D-004-R492",
+          "state": "PASS",
+          "evidence": [
+            "project-control/reports/M0-T027-dcv-verification.md (first independent pass, at verified SHA 3ed05fda6d434670e5b610e6dad7a8b224a9aa94), cited under D-004-R670 and D-004-R713; re-confirmed not invalidated by the delta per M0-T027-dcv-final-verification.md section 2.3"
+          ],
+          "verified_at": "2026-07-31T22:45:00+00:00",
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "bbbb8ef18cc297ece8759535f0cb9484a0d785bc"
+        },
+        {
+          "id": "D-004-R493",
+          "state": "PASS",
+          "evidence": [
+            "project-control/reports/M0-T027-dcv-verification.md (first independent pass, at verified SHA 3ed05fda6d434670e5b610e6dad7a8b224a9aa94), cited under D-004-R670 and D-004-R713; re-confirmed not invalidated by the delta per M0-T027-dcv-final-verification.md section 2.3"
+          ],
+          "verified_at": "2026-07-31T22:45:00+00:00",
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "bbbb8ef18cc297ece8759535f0cb9484a0d785bc"
+        },
+        {
+          "id": "D-004-R494",
+          "state": "PASS",
+          "evidence": [
+            "project-control/reports/M0-T027-dcv-verification.md (first independent pass, at verified SHA 3ed05fda6d434670e5b610e6dad7a8b224a9aa94), cited under D-004-R670 and D-004-R713; re-confirmed not invalidated by the delta per M0-T027-dcv-final-verification.md section 2.3"
+          ],
+          "verified_at": "2026-07-31T22:45:00+00:00",
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "bbbb8ef18cc297ece8759535f0cb9484a0d785bc"
+        },
+        {
+          "id": "D-004-R495",
+          "state": "PASS",
+          "evidence": [
+            "project-control/reports/M0-T027-dcv-verification.md (first independent pass, at verified SHA 3ed05fda6d434670e5b610e6dad7a8b224a9aa94), cited under D-004-R670 and D-004-R713; re-confirmed not invalidated by the delta per M0-T027-dcv-final-verification.md section 2.3"
+          ],
+          "verified_at": "2026-07-31T22:45:00+00:00",
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "bbbb8ef18cc297ece8759535f0cb9484a0d785bc"
+        },
+        {
+          "id": "D-004-R496",
+          "state": "PASS",
+          "evidence": [
+            "project-control/reports/M0-T027-dcv-verification.md (first independent pass, at verified SHA 3ed05fda6d434670e5b610e6dad7a8b224a9aa94), cited under D-004-R670 and D-004-R713; re-confirmed not invalidated by the delta per M0-T027-dcv-final-verification.md section 2.3"
+          ],
+          "verified_at": "2026-07-31T22:45:00+00:00",
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "bbbb8ef18cc297ece8759535f0cb9484a0d785bc"
+        },
+        {
+          "id": "D-004-R497",
+          "state": "PASS",
+          "evidence": [
+            "project-control/reports/M0-T027-dcv-verification.md (first independent pass, at verified SHA 3ed05fda6d434670e5b610e6dad7a8b224a9aa94), cited under D-004-R670 and D-004-R713; re-confirmed not invalidated by the delta per M0-T027-dcv-final-verification.md section 2.3"
+          ],
+          "verified_at": "2026-07-31T22:45:00+00:00",
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "bbbb8ef18cc297ece8759535f0cb9484a0d785bc"
+        },
+        {
+          "id": "D-004-R498",
+          "state": "PASS",
+          "evidence": [
+            "project-control/reports/M0-T027-dcv-verification.md (first independent pass, at verified SHA 3ed05fda6d434670e5b610e6dad7a8b224a9aa94), cited under D-004-R670 and D-004-R713; re-confirmed not invalidated by the delta per M0-T027-dcv-final-verification.md section 2.3"
+          ],
+          "verified_at": "2026-07-31T22:45:00+00:00",
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "bbbb8ef18cc297ece8759535f0cb9484a0d785bc"
+        },
+        {
+          "id": "D-004-R499",
+          "state": "PASS",
+          "evidence": [
+            "project-control/reports/M0-T027-dcv-verification.md (first independent pass, at verified SHA 3ed05fda6d434670e5b610e6dad7a8b224a9aa94), cited under D-004-R670 and D-004-R713; re-confirmed not invalidated by the delta per M0-T027-dcv-final-verification.md section 2.3"
+          ],
+          "verified_at": "2026-07-31T22:45:00+00:00",
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "bbbb8ef18cc297ece8759535f0cb9484a0d785bc"
+        },
+        {
+          "id": "D-004-R500",
+          "state": "PASS",
+          "evidence": [
+            "project-control/reports/M0-T027-dcv-verification.md (first independent pass, at verified SHA 3ed05fda6d434670e5b610e6dad7a8b224a9aa94), cited under D-004-R670 and D-004-R713; re-confirmed not invalidated by the delta per M0-T027-dcv-final-verification.md section 2.3"
+          ],
+          "verified_at": "2026-07-31T22:45:00+00:00",
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "bbbb8ef18cc297ece8759535f0cb9484a0d785bc"
+        },
+        {
+          "id": "D-004-R501",
+          "state": "PASS",
+          "lifecycle_classification": {
+            "act_class": "stop_after",
+            "classified_by": "directive-compliance-verifier",
+            "classified_at": "2026-07-31T21:15:00+00:00",
+            "classified_at_identity": "29a094ebdf312767b2ffa964a9cfb0398432e8838db0a211a711f1dd8db2bb97",
+            "justification": "Stopping after M0-T027 is either accepted or genuinely blocked is by construction an act at or after the acceptance decision. Bound solely to accept, classified sequencing."
+          },
+          "evidence": [
+            "the GENUINELY-BLOCKED branch of the stop disjunction was completed and is durable: the closeout STOPPED BEFORE ACCEPT on the BLOCKED final verification - tracked stop record project-control/reports/M0-T027-dcv-final-verification.md (merged PR #142, commits d1533c5/ebb52e1) plus the packet's 85% progress_log entry of 2026-07-31T20:10:57Z ('STEP 4 STOPPED BEFORE ACCEPT, D-004-R673/R678 honored; no workaround')",
+            "resume occurred ONLY on the owner's captured amendment 18 (source-019-amendment.md, rows R701-R717, merged as PR #143 = bbbb8ef); nothing advanced the acceptance between stop and resume",
+            "the accepted-branch stop is bound forward: the Step 7 consolidated stop follows this verification by captured instruction D-004-R695"
+          ],
+          "verified_at": "2026-08-03T02:13:01+00:00",
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "bbbb8ef18cc297ece8759535f0cb9484a0d785bc"
+        },
+        {
+          "id": "D-004-R515",
+          "state": "PASS",
+          "evidence": [
+            "project-control/reports/M0-T027-dcv-final-verification.md section 3.2, per-id evidence for D-004-R515 (verified at identity 29a094eb... / 2689b1e, re-confirmed valid at bbbb8ef)"
+          ],
+          "verified_at": "2026-07-31T22:45:00+00:00",
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "bbbb8ef18cc297ece8759535f0cb9484a0d785bc"
+        },
+        {
+          "id": "D-004-R516",
+          "state": "PASS",
+          "evidence": [
+            "project-control/reports/M0-T027-dcv-verification.md (first independent pass, at verified SHA 3ed05fda6d434670e5b610e6dad7a8b224a9aa94), cited under D-004-R670 and D-004-R713; re-confirmed not invalidated by the delta per M0-T027-dcv-final-verification.md section 2.3"
+          ],
+          "verified_at": "2026-07-31T22:45:00+00:00",
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "bbbb8ef18cc297ece8759535f0cb9484a0d785bc"
         }
       ]
     },
@@ -3577,5 +5320,5 @@
       ]
     }
   ],
-  "updated_at": "2026-07-30T00:00:00+00:00"
+  "updated_at": "2026-07-31T21:32:16+00:00"
 }
