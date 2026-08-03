@@ -53,6 +53,19 @@ Reviewers **return** their report content to the lead through the runtime's mess
 
 **Producer confinement.** Producers work only inside their task packet's allowed paths in their own worktree. They do not run `tools/project_control.py`, `git push`, `gh`, or accept/checkpoint anything (ADR-005). They return files-changed + real command output + requested status (`awaiting_gate` | `blocked` | `needs_split`).
 
+## Model tiering for mechanical work (D-006 Section 3)
+
+**Source:** owner directive D-006 Section 3 — `project-control/directives/D-006-dispatch-efficiency-and-graph-wiring/source-001.md` (a spawn-level amendment to this policy). This section extends the §2 **Model policy** rule above; it replaces nothing.
+
+Tiering is **spawn-level only**. D-004's live spawn rules bind **one model per spawn**, and gate-class reviewer spawns always carry their explicitly pinned model (D-004 R226/R161/R275); no per-phase model mechanism exists inside a spawn.
+
+- **Mechanical-sweep identity.** A non-gate, non-producer, **auditor-class** identity — the existing `progress-auditor` definition by default — may be spawned on a faster model, selected at dispatch, for bounded, read-only, **mechanical** work only: pattern scans, digest computation and comparison, occurrence counting, file inventory, diff reconstruction, and grep sweeps.
+- **Data, never judgment.** A sweep's output is data (counts, paths, hashes, matches), never judgment. Every ruling, verdict, severity, interpretation, acceptance-grade conclusion, and every security, contract, geospatial, or control-plane judgment remains on the pinned or session model. Producer model rules are unchanged (the D-004-R298 producer ceiling governs producers).
+- **Dispatch and reporting.** A dispatch that uses mechanical-sweep spawns names each spawn, its model, and its exact scope; the consuming reviewer cites the sweep's data as input evidence and remains solely responsible for the ruling; the report records the split.
+- **Gate-class floor.** Gate-class reviewer identities are never spawned on a lower model for any phase. If D-004's spawn rules would be violated by this mechanism as specified, stop and propose a D-004 amendment rather than proceeding.
+
+The existing prohibition stands: **never downgrade judgment to save tokens.**
+
 ---
 
 ## A. Lead-only authority

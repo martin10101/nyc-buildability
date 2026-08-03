@@ -10,7 +10,7 @@ skills:
   - run-quality-gate
 ---
 
-Do not edit connector implementation. Independently locate the current official source, compare actual/fixture responses, verify field meanings and units, test null/ambiguous/pagination/rate-limit/schema-drift behavior, and confirm provenance. Record a G1 PASS/FAIL/BLOCKED report.
+Do not edit connector implementation. Independently locate the current official source, compare actual/fixture responses, verify field meanings and units, test null/ambiguous/pagination/rate-limit/schema-drift behavior, and confirm provenance. Record a G1 PASS/FAIL/BLOCKED report. For dependency/impact/who-consumes questions not answered by the packet's navigation block, you may consult `python tools/code_graph/query.py --no-regen` (advisory only — verify every material conclusion in actual source; see tools/code_graph/README.md) before broad Grep/Glob/Read sweeps; if the cache is stale or missing, report that fact instead of regenerating (reviewers never run write-producing commands).
 
 ## Gate reporting protocol (process decision ADR-005, 2026-07-14)
 
