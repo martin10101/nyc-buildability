@@ -266,3 +266,164 @@ The 2 skips: `process` has the pre-existing POSIX-only guard; `policy` has the s
 **Measurement note (D-006):** scope was Phase 2 of 5 (policy + adapters), built on Phase 1 in an isolated worktree. `/usage` is unobservable from inside a spawn, so I cannot report consumption; no token, time, or efficiency claim is made.
 
 **Model disclosure (Phase 2):** spawned explicitly as **Opus 5** (`claude-opus-5[1m]`), the R298 producer ceiling. No effort setting applied anywhere.
+
+---
+
+# PHASE 3 CHECKPOINT (appended by the orchestrator; Phases 1–2 content above byte-preserved)
+
+**Orchestrator header (NOT part of the producer's return).** Third unnamed `backend-engineer`
+producer, spawned explicit Opus 5, worktree-isolated, dispatched 2026-08-03 for Phase 3
+(endurance). Preserved verbatim below — **no R024 redaction required** (the producer wrote with
+`<TEMP>`/`<USERHOME>` placeholders itself). The producer's §0 tip-SHA discrepancy note is
+resolved: `6f4208f6` in the dispatch was the orchestrator's transcription typo for `6f4208f2` —
+one branch tip, no divergence. Its disclosed single live probe (one bounded run closing the
+Phase 2 control-response residual with a VERIFIED result) was within the packet's authorization.
+Port: 21 files verified against declared full LF SHA-256 digests (21/21) and all 17
+claimed-unchanged Phase 1/2 modules verified byte-identical; orchestrator re-ran all thirteen
+suites on the ported tree (result recorded in the integration commit). Port hashes:
+`M0-T036-phase1-port-hashes.json` (phase3 block).
+
+---
+
+## M0-T036 — PHASE 3 PRODUCER CHECKPOINT
+
+Requested status: **awaiting_gate**
+
+### 0. Worktree state note (read first)
+
+HEAD was `e7f5078b2c3668c255fe65bc22afde576f65c75e` (the merge-base) with no `tools/agent_supervisor/` present — the Phase 2 precedent condition. I ran exactly the prescribed command, `git merge --ff-only task/M0-T036-supervisor-bridge`, which fast-forwarded `worktree-agent-a50dd215f93da92e1` to the Phase 2 tip. **No commit, no push, no `gh`, no `project_control.py`.**
+
+**One discrepancy to record:** the packet named the tip `6f4208f6`; the actual branch tip is **`6f4208f28f64d418280451b1e67b015e1e71c834`** — the last hex digit of the short form differs (`…f2` not `…f6`). It is a descendant of `d1f0f74` on `task/M0-T036-supervisor-bridge` with Phase 2 state present, so the packet's alternative condition is satisfied. I proceeded; flagging it as a transcription difference, not a divergent branch.
+
+Branch: `worktree-agent-a50dd215f93da92e1` · base `6f4208f2` + the uncommitted Phase 3 work below.
+
+### 1. Files created (15) and modified (6), with full LF-normalized SHA-256
+
+**Created**
+```
+f2223595afbd12946d3b3c461be4344b1ae577cd142d68900d099be47f20a92e  tools/agent_supervisor/rotation.py
+3974c29da9a05961cb6580ea8b0fd7a399b7250bca7aec4be12981e9926e01ff  tools/agent_supervisor/resume_scheduler.py
+851c8f2694e8f25107572cc929f85f737aff266f2831823e45169563c0ebf960  tools/agent_supervisor/recovery.py
+8f69e396db18dfafaf808362745a87e8693b2375bb2d078eb1ff2388217e451f  tools/agent_supervisor/locking.py
+a4f2ee79a11939b3ac469482f239484c57e9d60bd172b875c60351196abbc0d9  tools/agent_supervisor/notifications.py
+a3cb9298d763f51a535bd95e3ab7ff9033ea2d61f61ec4202d3646bc503c74f1  tools/agent_supervisor/remote_approvals.py
+cf2d747bfe1861c4397b610f7e27810a142156039bbf71015509244c94c42ca0  tools/agent_supervisor/model_change_ipc.py
+fdce7c494af9d9e6b0591769d54cc721695eb42cb5d71a28e0ce1be5c287d7e5  tools/agent_supervisor/retention.py
+2a7fd7a93bbaf57cddabc0c8877f2fc64392c0eeb8ab822706c5cda6ddc75c70  tools/agent_supervisor/anchor.py
+9e5a9f69e01284410da5e24b5b99d05470b6011b6dff15259d2323de0f5a13c0  tools/agent_supervisor/preflight.py
+e70e43551ff7ebf4b49177f0baed57e3bb07c5756e412e8df1a74fed8c36f070  tools/test_agent_supervisor_rotation.py
+3198d3cfab575f3cd6957e5f83f50043a71702de7ad4cb6010294cf3fc6362da  tools/test_agent_supervisor_scheduler.py
+6bccc3270ddc7ac5ad3f67666faced9aa52ea8a7d9b38d6d13d145413b1c4785  tools/test_agent_supervisor_recovery.py
+4736f2c2610b346b1a0ce37a8e88b8b7e04f22a12aad5b93e16cdd4f3361b4cf  tools/test_agent_supervisor_ipc.py
+7c8eac450ba252268ab2e1b4a73d209b4f6970b839c4de960ad27d437cbce508  tools/test_agent_supervisor_endurance.py
+```
+**Modified**
+```
+b42fec4f9cd3c44e96bef61355dedd790673023c649eb7a2ba36cb3a84312f35  tools/agent_supervisor/__init__.py
+e1852ffd92428531a6f6fd02c3cf15ab5efab0148d0b002e6ec3905d810d195a  tools/agent_supervisor/cli.py
+571afacfe4565c572618e0cc70cbb6ef5105417391792ba63d93e31af286297f  tools/agent_supervisor/README.md
+bc7440db4cd06e52b7d8716500f0434e74720e243579520321ff9eac79f6ca69  tools/agent_supervisor/config.example.toml
+5d152626312f5f099b831f746528ba73f67689af52662154226f042b40789b90  tools/test_agent_supervisor_phase1.py
+f353701f6a4831a20540c48876f75836fe7640f7348362c7af865168b6c68571  tools/test_agent_supervisor_reviewer.py
+```
+(21 files, 588,476 LF-normalized bytes.)
+
+**Per-modification justification**
+
+1. **`__init__.py`** — `CONTROLLER_VERSION` `0.2.0-phase2`→`0.3.0-phase3`, `PHASE` 2→3. The version is embedded in the manifest, every audit record, and the journal; a Phase 3 build reporting "phase2" is a false provenance claim. Docstring lists the ten new modules and restates what is still *not* built.
+2. **`cli.py`** — the Phase 3 interface. Implements 13 previously-deferred S12.1 commands, adds 10 Phase 3 `doctor` checks plus `--live`, and retargets `start` from "refuses" to "runs the pre-dispatch sequence and stops".
+3. **`README.md`** — owner-facing status said "Phases 1 and 2 exist"; leaving it would misdescribe the package. Rewritten for Phase 3, caveats updated (3→4), and the D-007 §12.1 non-technical owner guide added, which no earlier phase had.
+4. **`config.example.toml`** — added `[rotation]` (the §11.1 thresholds incl. the three suggested defaults) and `[retention]` (per-class §13.11 limits). `config.py` was **not** modified: both land in `ControllerConfig.raw` and are parsed by `RotationThresholds.from_controller_config` / `RetentionPolicy.from_controller_config` with their own strict unknown-key refusal.
+5. **`tests/…_phase1.py`** — one test asserted `pause`/`emergency-stop`/`start`/`export-handoff`/`recovery-status` still raise `NotImplementedError`. Phase 3 implements them. Narrowed to `replay` and strengthened with `assertEqual(set(DEFERRED_COMMANDS), {"replay"})` so a future deferral cannot slip past.
+6. **`tests/…_reviewer.py`** — one test asserted `--codex-model` was *deferred*. Phase 3 builds the path, so the assertion inverts: it now pins that the commands are live, that the override delegates to `request_change` (i.e. no weaker bypass appeared), and that the reviewer adapter still exposes no override of its own.
+
+**Verified unchanged:** `git diff --stat` over the other 17 Phase 1/2 modules plus `schemas/` and `prompts/` is empty — all byte-identical.
+
+### 2. Per-module notes and honest deferrals
+
+- **`rotation.py`** — §11.1 classification is a deterministic `max()` over per-feature verdicts, so an unrecognizable shape lands in `UNKNOWN`, never optimistically `SMALL`. §11.2's `MidUnitOutcome` **has no `terminate` field at all** — the type cannot express killing a unit for pressure — and `may_interrupt_in_flight` *raises* on any pressure reason rather than returning False. `decide_pre_dispatch` refuses to run unless `at_safe_checkpoint=True`, so "rotate now" is unreachable mid-unit by construction. Handoff verification refuses the advisory role, the advisory model, and any model that is not the configured `review_model`.
+  - **Real bug its own test caught:** with usage *and* context pressure both unreadable, I set the job size to `UNKNOWN` but never engaged the large-job bound, so the decision fell through to "no rotation required" **on no evidence whatsoever** — the exact opposite of §11.1's "choose the conservative pre-dispatch action". Fixed with a comment naming the test.
+- **`resume_scheduler.py`** — six distinct limit classes; structured metadata strictly preferred. **Honest deferral:** the structured key names are DOCUMENTED CANDIDATES, not verified — the Phase 1 probe saw a `rate_limit_event` but did not capture its payload keys. `StructuredKeys.verified_against_installed_cli` is `False` and a test pins that. The notice parser recognizes only four enumerated forms and is version-stamped.
+  - **Two real bugs its own tests caught:** (a) `resets 3:30 pm` matched *both* the 12- and 24-hour patterns, so the more-than-one-form guard rejected a perfectly documented notice; fixed with a negative lookahead. (b) My DST check tested the fold offsets before the round trip — under PEP 495 both differ in a gap *and* an overlap, so **every spring-forward gap was misreported as a fall-back overlap**. Reordered, with the reason in a comment.
+- **`recovery.py`** — a **missing** revalidation step is a failed step (tested for all 12). A child whose liveness cannot be *determined* counts as unaccounted, not as "probably gone". Drift dominates ambiguity. A restored deadline overrides an otherwise-safe resume. Contains no `subprocess`/`socket`/`urllib` import — asserted structurally.
+- **`locking.py`** — Windows liveness uses `OpenProcess(PROCESS_QUERY_LIMITED_INFORMATION)` + `GetExitCodeProcess`, **never `os.kill(pid, 0)`**: CPython implements `os.kill` on Windows with `TerminateProcess`, so the POSIX idiom would kill the process it was probing. `ERROR_ACCESS_DENIED` is a determined *positive* (another account's process exists) and is never stolen. Pid reuse is caught via the creation-time token. Undeterminable liveness fails closed.
+- **`notifications.py`** — a fixed field set with no attachment slot, so a transcript cannot be smuggled through. Raw commands, auth links, source excerpts, and private user paths are **refused with a named reason**, not silently stripped.
+- **`remote_approvals.py`** — every failure mode has its own reason code (`nonce_replayed`, `expired_nonce`, `wrong_digest`, `wrong_owner`, `repository_state_changed`, `unbound_answer`). An expired binding is *consumed* so it cannot be retried. No network I/O.
+- **`model_change_ipc.py`** — origin denial walks **real** process ancestry (Toolhelp32 / `/proc`), so a descendant of a worker is denied, not just the leaf. The confirmation challenge is derived from the change digest, so a captured "yes" cannot be replayed against a different change.
+  - **Proven, not asserted:** a named pipe with an SDDL DACL restricted to the owner SID + SYSTEM is **created and closed on this host** via stdlib `ctypes` (`doctor` runs it). **Deferred:** the long-lived unattended pipe *server* loop. The transport in use is a controller-owned runtime directory whose isolation from every worker-writable root is re-checked per request. Account SIDs are masked everywhere they surface.
+- **`retention.py`** — deletion requires identity proven **three ways** (inside the runtime dir, inside its class directory, in the supervisor's own inventory) *and* provable age; a plan is built read-only and **re-proved at execution**, so a forged plan entry deletes nothing (tested). The drill really destroys the source before restoring.
+- **`anchor.py`** — **mechanism only.** No `subprocess`, no call site; `EXECUTION_SURFACE_NAMES` is the sole place those words appear (the AS-7 constants exception), and a test pins `source.count("Popen") == 1`. `main`/`master`/`HEAD` are refused as anchor targets. Publication requires **both** controller credentials and an explicit owner activation; `activation_status()` names which is missing.
+- **`preflight.py`** — the round-trip probe is opt-in, bounded, and works in a throwaway directory. It counts as verified only if the CLI accepts our bytes, denies the tool, **and** echoes our deny message; a protocol error, a hang, or a tool that runs anyway all read as not verified.
+
+**Still not built and not pretended:** the assembled supervisor **loop**, the replay engine and historical corpus, push **execution**, anchor **publication**, the named-pipe **server** loop, and Job-Objects-as-default (which I did **not** advance — it moves from "Phase 3" to Phase 4 and the README says so rather than quietly claiming it).
+
+### 3. The Phase 2 residual — CLOSED, with exact disclosure
+
+I ran the live probe **exactly once**, as the packet permits.
+
+```
+python -m tools.agent_supervisor doctor --live --json --runtime-base <TEMP>/rt_live
+EXIT=0   OVERALL_OK=True
+```
+```
+control_response_live_probe:
+"VERIFIED (live run): the installed CLI accepted the exact control_response bytes
+ this build emits, denied the tool, and echoed our deny message back in
+ permission_denials. The wrapper shape is confirmed against the live CLI."
+```
+One bounded turn (`--max-turns 1`), one denied Write, throwaway directory, nothing written in the repository. Executable: `<USERHOME>\.local\bin\claude.exe` (the Phase 1 canonical binary).
+
+**Two honest caveats on this result.** (a) I kept `CONTROL_RESPONSE_WRAPPER_VERIFIED = False` as a module constant, because verification is host- and binary-specific; I wired the result to persist per checkout instead. (b) **That persistence wiring landed *after* my one run**, so no probe record exists in any journal and `doctor` still reports `UNVERIFIED` — correctly, since it has no record. I did not re-run to populate it, and I did not fabricate a record. The recorded-probe branch is covered by a seeded unit test that makes no live call.
+
+### 4. Test output
+
+**All thirteen suites together**
+```
+python -m unittest tools.test_agent_supervisor_phase1 tools.test_agent_supervisor_protocol \
+  tools.test_agent_supervisor_audit tools.test_agent_supervisor_process \
+  tools.test_agent_supervisor_policy tools.test_agent_supervisor_broker \
+  tools.test_agent_supervisor_runner tools.test_agent_supervisor_reviewer \
+  tools.test_agent_supervisor_rotation tools.test_agent_supervisor_scheduler \
+  tools.test_agent_supervisor_recovery tools.test_agent_supervisor_ipc \
+  tools.test_agent_supervisor_endurance
+Ran 735 tests in 71.297s
+OK (skipped=2)
+```
+**Standalone, as CI invokes control-plane tests** (all exit 0)
+```
+phase1 68 OK   protocol 29 OK   audit 15 OK   process 27 OK (skipped=1)
+policy 98 OK (skipped=1)   broker 50 OK   runner 41 OK   reviewer 55 OK
+rotation 67 OK   scheduler 96 OK   recovery 55 OK   ipc 42 OK   endurance 92 OK
+```
+Phase 1+2 = **383, unchanged, no regression**. Phase 3 adds **352 new tests**. The 2 skips are the pre-existing POSIX-only guard and the symlink-privilege guard.
+
+**Repository regressions (all green):** `test_project_control.py` → "all 22 project-control test groups passed"; `test_directive_compliance.py` → "Ran 102 tests … OK"; `test_agent_dispatch_guard.py` → "ALL CHECKS PASSED".
+
+**Live `doctor`: 30 checks, all PASS, exit 0**, `controller 0.3.0-phase3 (phase 3)`, and PASS again against `config.example.toml` with the new `[rotation]`/`[retention]` sections.
+
+### 5. Self-checks
+
+- **No effort key:** **zero** occurrences of `effort` in any of the 15 new files. The only literals in the package remain the Phase 1/2 deny-list constants and refusal tests.
+- **argv-only:** `grep -rn "shell=True"` → two **prose** hits (a `process.py` docstring, a README line); zero code occurrences. The one `Popen` I added (`preflight.py`) passes an argv array with `shell=False` explicit, built by the shipped adapter.
+- **Bypass flags:** no new literal anywhere. `grep -- "--dangerously\|--yolo\|--bypass"` returns only `process.py:52-56` (the deny list) and two comment/test references to it.
+- **Stdlib-only:** 43 files, 33 distinct top-level imports, checked against `sys.stdlib_module_names` → **"NONE - 100% standard library"**. No dependency manifest or lockfile touched.
+- **Containment:** `git status --porcelain -uall` shows **only** `tools/agent_supervisor/**` and `tools/test_agent_supervisor_*.py` — 21 entries, nothing else. No `.claude/`, `.github/`, `project-control/`, `services/`, `apps/`, `packages/`, or other `tools/` file.
+- **Owner gates:** no merge, acceptance, hold release, deploy, G6, credential, or payment action taken or automated. `limited-auto` remains unimplemented; `start --mode limited-auto` refuses by name (tested). No OS task was created — `install-autostart` refuses without a plan digest, and I never supplied one.
+- **Deliberate omission:** I wrote **no** `.claude/agent-memory/` files this session. `.claude/**` is a forbidden path, and both prior phases' memory writes were explicitly *not* ported (D-004-R704). The learnings are preserved in §2 above instead.
+
+### 6. §18 stop-condition statement
+
+**No Section 18 stop condition fired.** Specifically checked and cleared: a safe Windows process-control strategy is proven (§4 caveat unchanged from Phase 1); recovery *does* distinguish a proven safe checkpoint from an ambiguous in-flight effect; startup/wake recovery never blindly reruns an effect; no active unit would need termination for a context/usage threshold; every reset time is parsed and scheduled without guessing or else refuses; the restore drill **passes**; no runtime secret is stored; no bypass permission is required; allowed paths did **not** need to expand; no directive conflict was discovered.
+
+### 7. Limitations, assumptions, blockers
+
+- **Assumption for G3:** that `start` performing the real pre-dispatch sequence and then stopping is the right reading of "be honest about what start can and cannot do", versus keeping it a flat refusal. It classifies `UNSAFE_OR_DRIFTED` today because the six live checks it cannot make read-only are reported `False` — that is deliberate fail-closed behaviour, not a defect.
+- **Assumption for G3:** that the POSIX runtime-dir branch and the LF-normalized manifest digests (both Phase 1 deviations) remain acceptable.
+- Still open from Phases 1–2: CI does not invoke the supervisor test files. Wiring the five **new** files plus the eight existing ones needs a `.github/**` edit — a forbidden path for this packet, so it needs separate authorization.
+- I did **not** write `project-control/reports/M0-T036-producer-report.md`; this return is the producer evidence, for you to append verbatim (same as Phases 1 and 2).
+- No ledger command, `git commit`/`push`, or `gh` was run. The single `--ff-only` merge in §0 is the only git state change, and it was the prescribed first act.
+- **Network:** exactly one bounded provider call, the disclosed live probe. Every Claude, Codex, and `schtasks` in the test suite is a local fake.
+
+**Measurement note (D-006):** scope was Phase 3 of 5 (endurance), built on Phases 1–2 in an isolated worktree. `/usage` is unobservable from inside a spawn, so I cannot report consumption; no token, time, or efficiency claim is made.
+
+**Model disclosure (Phase 3):** spawned explicitly as **Opus 5** (`claude-opus-5[1m]`), the R298 producer ceiling. No effort setting applied anywhere.

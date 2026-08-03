@@ -82,6 +82,74 @@ advisory_eligible_categories = [
     "read_only_inspection", "in_scope_file_edit", "documented_test_command",
 ]
 
+[rotation]
+# Pre-dispatch rotation thresholds (S11.1). These are OWNER POLICY numbers and
+# are NOT capacity claims about any model's real context window: the supervisor
+# never predicts token counts, it only classifies the next unit SMALL / MEDIUM /
+# LARGE / UNKNOWN from objective features and applies these bounds.
+#
+# At preflight_large_job_rotation, rotate before a LARGE or UNKNOWN unit.
+# At preflight_mandatory_rotation, rotate before ANY unit.
+# These are the values D-007 S11.1 suggests; change them deliberately.
+preflight_large_job_rotation = 400000
+preflight_mandatory_rotation = 500000
+max_checkpoints_per_session = 8
+# Claude-REPORTED context pressure, as a fraction. When cumulative usage is
+# unavailable, pressure at or above _high (or any compaction event) forces the
+# conservative pre-dispatch action; at or above _elevated it engages the
+# large-job bound.
+context_pressure_high = 0.75
+context_pressure_elevated = 0.55
+# Consecutive instruction-adherence failures that force a fresh session. A
+# louder prompt is not the remedy for a session that has stopped following one.
+max_adherence_failures = 2
+# A checkpoint or evidence packet larger than this is itself a rotation signal.
+oversized_checkpoint_bytes = 262144
+
+[retention]
+# Retention limits per artifact class (S13.11). Cleanup deletes ONLY
+# supervisor-owned artifacts whose identity is proven three ways (inside the
+# runtime directory, inside the class's own directory, and present in the
+# supervisor's recorded inventory) and whose age is proven from the recorded
+# creation time. Backup creation is never permission to delete: a plan is built
+# read-only and every entry is re-proved at execution time.
+[retention.checkpoints]
+max_items = 200
+max_age_days = 90
+max_total_bytes = 50000000
+
+[retention.redacted_logs]
+max_items = 60
+max_age_days = 30
+max_total_bytes = 50000000
+
+[retention.handoffs]
+max_items = 50
+max_age_days = 180
+max_total_bytes = 10000000
+
+[retention.quarantine]
+max_items = 40
+max_age_days = 60
+max_total_bytes = 200000000
+
+[retention.event_streams]
+max_items = 40
+max_age_days = 14
+max_total_bytes = 100000000
+
+[retention.crash_dumps]
+max_items = 20
+max_age_days = 30
+max_total_bytes = 200000000
+
+[retention.provider_transcripts]
+# Codex `exec` runs pass --ephemeral, so no transcript SHOULD persist. Retention
+# applies anyway, tightly, in case one ever does.
+max_items = 10
+max_age_days = 7
+max_total_bytes = 20000000
+
 # ---------------------------------------------------------------------------
 # The RUNTIME model selection is a SEPARATE file. Do not add these keys here -
 # the loader refuses a controller config that contains them. Example

@@ -45,5 +45,28 @@
   "tools/agent_supervisor/config.example.toml": "a9e84fa6eb7dd07547298c6bd1b2e313cef58864e936decaf81abbab31d8518a",
   "tools/test_agent_supervisor_phase1.py": "9bb247b4ce75dd611aacfb7e56ee303670587f8765f436c3f06983d99d3a5393",
   "tools/test_agent_supervisor_process.py": "9b82d8154cc6bee63ad5434219338d3b7b7af802957f3dc22373470434cb3d69"
+ },
+ "phase3": {
+  "tools/agent_supervisor/rotation.py": "f2223595afbd12946d3b3c461be4344b1ae577cd142d68900d099be47f20a92e",
+  "tools/agent_supervisor/resume_scheduler.py": "3974c29da9a05961cb6580ea8b0fd7a399b7250bca7aec4be12981e9926e01ff",
+  "tools/agent_supervisor/recovery.py": "851c8f2694e8f25107572cc929f85f737aff266f2831823e45169563c0ebf960",
+  "tools/agent_supervisor/locking.py": "8f69e396db18dfafaf808362745a87e8693b2375bb2d078eb1ff2388217e451f",
+  "tools/agent_supervisor/notifications.py": "a4f2ee79a11939b3ac469482f239484c57e9d60bd172b875c60351196abbc0d9",
+  "tools/agent_supervisor/remote_approvals.py": "a3cb9298d763f51a535bd95e3ab7ff9033ea2d61f61ec4202d3646bc503c74f1",
+  "tools/agent_supervisor/model_change_ipc.py": "cf2d747bfe1861c4397b610f7e27810a142156039bbf71015509244c94c42ca0",
+  "tools/agent_supervisor/retention.py": "fdce7c494af9d9e6b0591769d54cc721695eb42cb5d71a28e0ce1be5c287d7e5",
+  "tools/agent_supervisor/anchor.py": "2a7fd7a93bbaf57cddabc0c8877f2fc64392c0eeb8ab822706c5cda6ddc75c70",
+  "tools/agent_supervisor/preflight.py": "9e5a9f69e01284410da5e24b5b99d05470b6011b6dff15259d2323de0f5a13c0",
+  "tools/test_agent_supervisor_rotation.py": "e70e43551ff7ebf4b49177f0baed57e3bb07c5756e412e8df1a74fed8c36f070",
+  "tools/test_agent_supervisor_scheduler.py": "3198d3cfab575f3cd6957e5f83f50043a71702de7ad4cb6010294cf3fc6362da",
+  "tools/test_agent_supervisor_recovery.py": "6bccc3270ddc7ac5ad3f67666faced9aa52ea8a7d9b38d6d13d145413b1c4785",
+  "tools/test_agent_supervisor_ipc.py": "4736f2c2610b346b1a0ce37a8e88b8b7e04f22a12aad5b93e16cdd4f3361b4cf",
+  "tools/test_agent_supervisor_endurance.py": "7c8eac450ba252268ab2e1b4a73d209b4f6970b839c4de960ad27d437cbce508",
+  "tools/agent_supervisor/__init__.py": "b42fec4f9cd3c44e96bef61355dedd790673023c649eb7a2ba36cb3a84312f35",
+  "tools/agent_supervisor/cli.py": "e1852ffd92428531a6f6fd02c3cf15ab5efab0148d0b002e6ec3905d810d195a",
+  "tools/agent_supervisor/README.md": "571afacfe4565c572618e0cc70cbb6ef5105417391792ba63d93e31af286297f",
+  "tools/agent_supervisor/config.example.toml": "bc7440db4cd06e52b7d8716500f0434e74720e243579520321ff9eac79f6ca69",
+  "tools/test_agent_supervisor_phase1.py": "5d152626312f5f099b831f746528ba73f67689af52662154226f042b40789b90",
+  "tools/test_agent_supervisor_reviewer.py": "f353701f6a4831a20540c48876f75836fe7640f7348362c7af865168b6c68571"
  }
 }

@@ -548,17 +548,29 @@ class ModelSelectionTests(ReviewerTestBase):
         self.assertNotIn("model_selection.toml", covered)
         self.assertTrue(verify_manifest(package, manifest).ok)
 
-    def test_a_single_run_model_override_is_deferred_to_the_authenticated_path(
-            self) -> None:
+    def test_a_single_run_model_override_uses_the_authenticated_path(self) -> None:
         # S3.2 rule 2: `--codex-model` must pass the same authenticated
         # model-change path as rule 6 (controller-owned IPC, OS access control,
-        # interactive owner confirmation). That path is Phase 3, so this phase
-        # exposes no override at all rather than a weaker one.
+        # interactive owner confirmation).
+        # Phase 2 asserted that path did not exist yet and that no override was
+        # exposed. Phase 3 BUILDS it, so the assertion inverts: the commands are
+        # implemented, and the single-run override is reachable only through
+        # `ModelChangeEndpoint.request_run_override`, which runs every rule-6 gate.
+        # The behavioural proof lives in tools/test_agent_supervisor_ipc.py
+        # (RunOverrideTests); this test pins that no WEAKER path appeared.
         from tools.agent_supervisor import cli
+        from tools.agent_supervisor import model_change_ipc as ipc
 
-        self.assertIn("set-codex-model", cli.DEFERRED_COMMANDS)
-        self.assertIn("Phase 3", cli.DEFERRED_COMMANDS["set-codex-model"])
-        self.assertIn("set-claude-model", cli.DEFERRED_COMMANDS)
+        self.assertNotIn("set-codex-model", cli.DEFERRED_COMMANDS)
+        self.assertNotIn("set-claude-model", cli.DEFERRED_COMMANDS)
+        self.assertTrue(hasattr(ipc.ModelChangeEndpoint, "request_run_override"))
+        # The override never bypasses the gated path: it delegates to it.
+        import inspect
+
+        source = inspect.getsource(ipc.ModelChangeEndpoint.request_run_override)
+        self.assertIn("self.request_change(", source)
+        # The reviewer adapter itself still exposes no override of its own.
+        self.assertNotIn("--codex-model", inspect.getsource(rv.build_argv))
 
 
 # --------------------------------------------------------------------------

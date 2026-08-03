@@ -818,13 +818,18 @@ class CliTests(TempCase):
     def test_deferred_commands_refuse_by_name(self) -> None:
         # Phase 2 update: `pending-approvals` and `verify-controller` are now
         # implemented (approval broker + live controller manifest verification), so
-        # they were removed from this list. Everything still deferred continues to
-        # refuse by name.
-        for command in ("replay", "pause", "emergency-stop", "start",
-                        "export-handoff", "recovery-status"):
+        # they were removed from this list.
+        # Phase 3 update: `pause`, `emergency-stop`, `start`, `export-handoff`, and
+        # `recovery-status` are now implemented too (durable flags, child-tree
+        # termination, the pre-dispatch RECOVER_BOOT sequence, the verified handoff
+        # export, and the read-only recovery view). `replay` is the only S12.1
+        # command still deferred, and it still refuses by name.
+        for command in ("replay",):
             with self.assertRaises(NotImplementedError) as ctx:
                 cli.main([command, *self._common()])
             self.assertIn("not implemented", str(ctx.exception).lower())
+        self.assertEqual(set(cli.DEFERRED_COMMANDS), {"replay"},
+                         "any newly deferred command must be added to this test")
 
     def test_limited_auto_is_refused_by_name(self) -> None:
         with self.assertRaises(NotImplementedError) as ctx:
