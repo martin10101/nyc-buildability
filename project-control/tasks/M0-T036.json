@@ -51,7 +51,7 @@
     "G4",
     "G5"
   ],
-  "producer_agent": null,
+  "producer_agent": "backend-engineer",
   "reviewer_agents": [
     "code-reviewer",
     "security-reviewer",
@@ -59,8 +59,8 @@
     "control-plane-verifier",
     "directive-compliance-verifier"
   ],
-  "status": "backlog",
-  "progress_percent": 0,
+  "status": "in_progress",
+  "progress_percent": 5,
   "risks": [
     "Scale: D-007 spans 5 phases; the packet authorizes Phases 1-4 + the Phase 5 shadow pilot, with the activation decision owner-gated. Split into per-phase follow-up tasks at the orchestrator's discretion if a phase exceeds a safe review size - contract splits through the normal process, never widen this packet.",
     "Windows process-tree control (Job Objects) and durable Task Scheduler wake are the highest-uncertainty areas; Section 18 stop conditions apply if a safe strategy cannot be proven.",
@@ -69,7 +69,7 @@
   ],
   "blockers": [],
   "created_at": "2026-08-03T03:44:41.634259+00:00",
-  "updated_at": "2026-08-03T04:05:27+00:00",
+  "updated_at": "2026-08-03T04:07:53.280209+00:00",
   "directive_refs": [
     {
       "directive_id": "D-007",
@@ -101,5 +101,15 @@
       "auto-approve: python tools/test_agent_supervisor_*.py (test execution inside the task worktree; no credentials)",
       "auto-approve: push to the exact task branch task/M0-T036-supervisor-bridge after a passing review (supervisor-development pushes; never main)"
     ]
-  }
+  },
+  "worktree": "agent-isolated-worktree-M0-T036",
+  "progress_log": [
+    {
+      "at": "2026-08-03T04:07:53.280209+00:00",
+      "agent": "orchestrator",
+      "percent": 5,
+      "status": "in_progress",
+      "message": "PHASE 1 DISPATCH under the owner build dispatch (D-007-R540, captured PR #150) and the D-006 standards. Producer: unnamed backend-engineer, explicit Opus 5 (R298 ceiling; R307 discharge governs gate-class spawns, which stay pinned Fable 5), worktree-isolated. Bounded deliverable: the two behavioral probes FIRST (R535: --max-turns acceptance + stream-json canUseTool protocol; stop only if a result contradicts the CLI-adapter decision), then Phase 1 core loop exactly per D-007 Section 17: schemas, models, config incl. Section 3 model selection + startup probe shape, state machine + transactional SQLite journal, process abstraction, versioned envelope/inbox/outbox/capability handshake, audit log with mandatory hash chain + redaction, controller manifest, circuit breakers, fake-process test harness. Standing grant (a) ACTIVE for pytest tools/test_agent_supervisor_*.py in the worktree. N=6 measurement dispatch 6 of 6: scope stated here; per-spawn /usage figures unobservable, recorded honestly; after this dispatch the N=6 summary is due (D-006-R025)."
+    }
+  ]
 }
