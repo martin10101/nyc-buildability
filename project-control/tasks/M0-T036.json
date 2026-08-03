@@ -69,7 +69,7 @@
   ],
   "blockers": [],
   "created_at": "2026-08-03T03:44:41.634259+00:00",
-  "updated_at": "2026-08-03T03:44:41.948947+00:00",
+  "updated_at": "2026-08-03T04:05:27+00:00",
   "directive_refs": [
     {
       "directive_id": "D-007",
@@ -79,7 +79,7 @@
   "directive_regime_version": "1.0",
   "directive_regime_entered_at": "2026-08-03T03:44:41.634259+00:00",
   "proposed_standing_grants": {
-    "note": "PROPOSED for the owner to pre-authorize at dispatch (D-007 Section 4.1 standing-grant shape; grants are owner-created - nothing here is active until the owner says so)",
+    "note": "SUPERSEDED by standing_grants (owner ruling 7, D-007-R536/R537): the two proposed grants were APPROVED exactly as written on 2026-08-03.",
     "grants": [
       "auto-approve: python tools/test_agent_supervisor_*.py (test execution inside the task worktree; no credentials)",
       "auto-approve: push to the exact task branch task/M0-T036-supervisor-bridge after a passing review (supervisor-development pushes; never main)"
@@ -90,5 +90,16 @@
     "any directive conflict discovered mid-build returns to the owner (D-004-R708 pattern)",
     "any need to widen allowed_paths stops (Section 18: 'allowed paths must expand' is a stop)",
     "B-015-class confinement regression (teammate/worker escape) pauses the lane and surfaces immediately"
-  ]
+  ],
+  "standing_grants": {
+    "state": "APPROVED_AND_ACTIVE",
+    "approved_by": "owner",
+    "approved_at": "2026-08-03T04:05:27+00:00",
+    "authority": "D-007-R536/R537 (source-002-amendment.md, owner ruling 7)",
+    "scope": "task-scoped, expiring with M0-T036, never widened",
+    "grants": [
+      "auto-approve: python tools/test_agent_supervisor_*.py (test execution inside the task worktree; no credentials)",
+      "auto-approve: push to the exact task branch task/M0-T036-supervisor-bridge after a passing review (supervisor-development pushes; never main)"
+    ]
+  }
 }

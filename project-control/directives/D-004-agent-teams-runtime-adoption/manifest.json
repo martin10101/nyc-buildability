@@ -1,7 +1,7 @@
 {
   "schema": "directive_manifest/v1",
   "directive_id": "D-004",
-  "version": 21,
+  "version": 22,
   "slug": "agent-teams-runtime-adoption",
   "title": "Agent-teams runtime adoption, staged with pilots",
   "status": "active",
@@ -177,6 +177,14 @@
       "amends": "source-001.md",
       "recorded_at": "2026-08-03T03:30:44+00:00",
       "content_digest_sha256": "a1af1b98e6760f59e3deb9cd41c0aea6f5a51051e304c270434705e911c32de5"
+    },
+    {
+      "file": "source-022-amendment.md",
+      "kind": "amendment",
+      "sequence": 22,
+      "amends": "source-001.md",
+      "recorded_at": "2026-08-03T04:05:27+00:00",
+      "content_digest_sha256": "4b44762970114b6bf17761dae4180b60f2ba96cc09e2ce33f7843c1573a08bab"
     }
   ],
   "amendments": [
@@ -199,7 +207,8 @@
     "source-018-amendment.md",
     "source-019-amendment.md",
     "source-020-amendment.md",
-    "source-021-amendment.md"
+    "source-021-amendment.md",
+    "source-022-amendment.md"
   ],
   "supersedes": [],
   "superseded_by": null,
@@ -327,7 +336,7 @@
     "Amendment 8 (source-009, rows D-004-R307-R326): owner decision captured 2026-07-30 at live-reconciled head 87e0ad6d87fa3e45cf647ebe45bf7db4029e7b75 (post PR #128; expected state verified in every particular). Three decisions plus one GO: (1) TEMPORARY model-availability exception - Fable 5 exhausted, so the lead runs Opus 5 and every gate reviewer/verifier is spawned with EXPLICIT Opus 5; this supersedes only the VALUE clauses of R090/R161 and the lead clause of R298, temporarily, until the owner restores Fable 5; independence, verbatim-evidence, effort, and settings clauses are unchanged and re-affirmed; the actual model used must be recorded and never misreported. (2) WORKTREE decision - the harness-isolation + attestation + exact-diff-port mechanism is accepted as disclosed and becomes the mechanism Step 5 must describe; the literal pre-created-worktree wording is superseded as mechanically unsatisfiable. (3) STEP-4 evidence accepted including the disclosed post-gate model switch; no M2-T018/M4-T008 rerun. (4) GO for the M0-T027 closeout ONLY, with an explicit not-authorized list and a STOP-and-present-proposed-Step-5 terminus. Session-conduct rows use the sentinel D-004-STEP4CLOSE; closeout-binding rows carry M0-T027 so the resolver derives them for that packet. No existing source or requirement row edited."
   ],
   "created_at": "2026-07-24T00:00:00+00:00",
-  "updated_at": "2026-08-03T03:30:44+00:00",
+  "updated_at": "2026-08-03T04:05:27+00:00",
   "audit_log": [
     {
       "at": "2026-07-24T00:00:00+00:00",
@@ -433,6 +442,11 @@
       "at": "2026-08-03T03:30:44+00:00",
       "by": "orchestrator",
       "note": "Amendment 20 captured verbatim as source-021-amendment.md (sha256 a1af1b98e6760f59e3deb9cd41c0aea6f5a51051e304c270434705e911c32de5) on branch control/D-004-amendment-20-settings-grant from origin/main b5589d0. 7 append-only rows D-004-R725..R731 (724 -> 731), all D-004-OPTIONB sentinel. Captures the owner's one-time exact-shape settings-tightening grant: remove the broad 'Bash(gh pr *)' user-global allow in favor of five narrow gh pr allows (view/checks/diff/list/create - merge deliberately absent), and narrow the project-local 'git merge*' rules to the ADR-005 intent 'git merge --no-ff task/*'. Tightening-only constraint, backups + pre/post SHA-256 reporting, no tracked file touched, grant expires on completion, R721 queue-every-merge unaffected. This capture's own PR is QUEUED for the owner per R721."
+    },
+    {
+      "at": "2026-08-03T04:05:27+00:00",
+      "by": "orchestrator",
+      "note": "Amendment 21 captured as source-022-amendment.md (sha256 4b44762970114b6bf17761dae4180b60f2ba96cc09e2ce33f7843c1573a08bab) on branch control/M0-T036-dispatch-capture from origin/main e7f5078. 2 append-only rows D-004-R732..R733 (731 -> 733): R307 DISCHARGED effective 2026-08-03 (temporary Opus-5 exception closed); merges #143/#144/#145 RATIFIED with the R718-R724 incident finding standing unmodified. The complete owner message is captured verbatim in D-007 source-002-amendment.md, same batch."
     }
   ],
   "locked_requirement_ids": [
@@ -1166,8 +1180,10 @@
     "D-004-R728",
     "D-004-R729",
     "D-004-R730",
-    "D-004-R731"
+    "D-004-R731",
+    "D-004-R732",
+    "D-004-R733"
   ],
-  "requirements_id_digest_sha256": "51443b2a294f113470b89571026e044a64f045cb3bbde22397ff4f5c95383b50",
-  "requirements_content_digest_sha256": "1d51fe82eca6e2c8bad019df17eb4b71ebe81715d66cbe00d1e7e5bf5396c683"
+  "requirements_id_digest_sha256": "d693272980c9661d61aedf568f62dfbc45c922ac095fc1aefb050b8d9e5aaf4e",
+  "requirements_content_digest_sha256": "6fc50b09f89441c245aadb1204fb36e468161dfb64e44e1035001c838fee0b3e"
 }

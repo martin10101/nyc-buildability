@@ -2,9 +2,9 @@
   "schema": "directive_requirements/v1",
   "directive_id": "D-007",
   "version": 1,
-  "requirement_count": 531,
+  "requirement_count": 541,
   "producer": "orchestrator",
-  "updated_at": "2026-08-03T03:44:22+00:00",
+  "updated_at": "2026-08-03T04:05:27+00:00",
   "requirements": [
     {
       "id": "D-007-R001",
@@ -20194,7 +20194,409 @@
         "tasks": []
       },
       "amendment_sequence": 1
+    },
+    {
+      "id": "D-007-R532",
+      "text": "OWNER RULING 3: the ADR-005 amendment text proposed in the Phase 0 return (project-control/reports/M0-T036-PHASE0-return.md, ADR-005 reconciliation section) is ADOPTED VERBATIM, captured through this row plus a dated amendment note in docs/adr/ADR-005-agent-permission-and-gate-workflow.md (same batch). It must be in force before any pushing supervisor mode activates.",
+      "source_ref": "source-002-amendment.md#the-owner-message",
+      "classification": "decision",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "D-007-BUILD",
+          "M0-T036"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [
+          "gate",
+          "accept"
+        ],
+        "effective_date": "2026-08-03"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured from the owner's Step 7 rulings + build dispatch (2026-08-03); verified at directive verification",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": [
+          "M0-T036"
+        ]
+      },
+      "amendment_sequence": 2
+    },
+    {
+      "id": "D-007-R533",
+      "text": "OWNER RULING 4: external audit anchoring = Option A - the controller, at every checkpoint, pushes the audit chain-head digest to a dedicated anchor branch with controller-held credentials the worker never receives (Section 13.12 default-required rule satisfied; no deferral).",
+      "source_ref": "source-002-amendment.md#the-owner-message",
+      "classification": "decision",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "D-007-BUILD",
+          "M0-T036"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [
+          "gate",
+          "accept"
+        ],
+        "effective_date": "2026-08-03"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured from the owner's Step 7 rulings + build dispatch (2026-08-03); verified at directive verification",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": [
+          "M0-T036"
+        ]
+      },
+      "amendment_sequence": 2
+    },
+    {
+      "id": "D-007-R534",
+      "text": "OWNER RULING 5: controller location = the packet's recorded recommendation - a dedicated read-only controller checkout outside every Claude-writable path, pinned to an accepted SHA (Section 13.1 first option). The first-ASK fallback was not engaged because the recommendation exists.",
+      "source_ref": "source-002-amendment.md#the-owner-message",
+      "classification": "decision",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "D-007-BUILD",
+          "M0-T036"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [
+          "gate",
+          "accept"
+        ],
+        "effective_date": "2026-08-03"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured from the owner's Step 7 rulings + build dispatch (2026-08-03); verified at directive verification",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": [
+          "M0-T036"
+        ]
+      },
+      "amendment_sequence": 2
+    },
+    {
+      "id": "D-007-R535",
+      "text": "OWNER RULING 6: the two outstanding behavioral probes (--max-turns acceptance; the stream-json canUseTool protocol) run as the FIRST Phase 1 acts under this task's own rules; results are recorded in the Phase 1 checkpoint; stop only if a result contradicts the CLI-adapter decision.",
+      "source_ref": "source-002-amendment.md#the-owner-message",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "D-007-BUILD",
+          "M0-T036"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [
+          "gate",
+          "accept"
+        ],
+        "effective_date": "2026-08-03"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured from the owner's Step 7 rulings + build dispatch (2026-08-03); verified at directive verification",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": [
+          "M0-T036"
+        ]
+      },
+      "amendment_sequence": 2
+    },
+    {
+      "id": "D-007-R536",
+      "text": "OWNER RULING 7 / STANDING GRANT (a), APPROVED AND ACTIVE exactly as written, task-scoped, expiring with M0-T036, never widened: auto-approve python tools/test_agent_supervisor_*.py inside the task worktree.",
+      "source_ref": "source-002-amendment.md#the-owner-message",
+      "classification": "authorization",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "D-007-BUILD",
+          "M0-T036"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [
+          "gate",
+          "accept"
+        ],
+        "effective_date": "2026-08-03"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured from the owner's Step 7 rulings + build dispatch (2026-08-03); verified at directive verification",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": [
+          "M0-T036"
+        ]
+      },
+      "amendment_sequence": 2
+    },
+    {
+      "id": "D-007-R537",
+      "text": "OWNER RULING 7 / STANDING GRANT (b), APPROVED AND ACTIVE exactly as written, task-scoped, expiring with M0-T036, never widened: auto-approve push to task/M0-T036-supervisor-bridge after a passing review - never main. (R721 governs merges regardless.)",
+      "source_ref": "source-002-amendment.md#the-owner-message",
+      "classification": "authorization",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "D-007-BUILD",
+          "M0-T036"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [
+          "gate",
+          "accept"
+        ],
+        "effective_date": "2026-08-03"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured from the owner's Step 7 rulings + build dispatch (2026-08-03); verified at directive verification",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": [
+          "M0-T036"
+        ]
+      },
+      "amendment_sequence": 2
+    },
+    {
+      "id": "D-007-R538",
+      "text": "OWNER RULING 8: refresh docs/SESSION_HANDOFF.md as part of normal practice once this dispatch is captured. (Executed in this batch.)",
+      "source_ref": "source-002-amendment.md#the-owner-message",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "D-007-BUILD",
+          "M0-T036"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [
+          "gate",
+          "accept"
+        ],
+        "effective_date": "2026-08-03"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured from the owner's Step 7 rulings + build dispatch (2026-08-03); verified at directive verification",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": [
+          "M0-T036"
+        ]
+      },
+      "amendment_sequence": 2
+    },
+    {
+      "id": "D-007-R539",
+      "text": "OWNER RULING 9: everything else on the recorded backlog stays backlog; M0-T035 and M0-T034 acceptance runs happen later on the owner's instruction.",
+      "source_ref": "source-002-amendment.md#the-owner-message",
+      "classification": "hold",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "D-007-BUILD",
+          "M0-T036"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [
+          "gate",
+          "accept"
+        ],
+        "effective_date": "2026-08-03"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured from the owner's Step 7 rulings + build dispatch (2026-08-03); verified at directive verification",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": [
+          "M0-T036"
+        ]
+      },
+      "amendment_sequence": 2
+    },
+    {
+      "id": "D-007-R540",
+      "text": "DISPATCH: M0-T036 is DISPATCHED. Execute Phases 1-5 per the captured D-007 directive and the task packet: every Section 18 stop condition live; D-004-R721 unchanged (every merge queues for the owner); all gates as contracted; the D-006 measurement discipline continuing.",
+      "source_ref": "source-002-amendment.md#the-owner-message",
+      "classification": "authorization",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "D-007-BUILD",
+          "M0-T036"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [
+          "gate",
+          "accept"
+        ],
+        "effective_date": "2026-08-03"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured from the owner's Step 7 rulings + build dispatch (2026-08-03); verified at directive verification",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": [
+          "M0-T036"
+        ]
+      },
+      "amendment_sequence": 2
+    },
+    {
+      "id": "D-007-R541",
+      "text": "DISPATCH boundary: Phase 5 ends at the shadow-pilot decision packet and STOPS for the owner's activation decision. Limited-auto is never enabled by this task.",
+      "source_ref": "source-002-amendment.md#the-owner-message",
+      "classification": "prohibition",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "D-007-BUILD",
+          "M0-T036"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [
+          "gate",
+          "accept"
+        ],
+        "effective_date": "2026-08-03"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured from the owner's Step 7 rulings + build dispatch (2026-08-03); verified at directive verification",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": [
+          "M0-T036"
+        ]
+      },
+      "amendment_sequence": 2
     }
   ],
-  "amendments_applied": []
+  "amendments_applied": [
+    "source-002-amendment.md"
+  ]
 }

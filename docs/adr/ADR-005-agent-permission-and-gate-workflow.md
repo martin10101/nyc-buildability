@@ -37,3 +37,16 @@ Two implementation waves stalled on the same failure class:
 - Subagent prompts disappear from the critical path; the orchestrator becomes the single ledger writer, matching the authority rules in `docs/PROJECT_CONTROL_PROTOCOL.md`.
 - Producer reports must carry real command outputs since reviewers and the orchestrator act on evidence, not claims.
 - M0-T002 and M0-T004 resume from their existing evidence; no completed research or implementation is rerun.
+
+## Amendment (2026-08-03, owner ruling — D-007-R532, source-002-amendment.md)
+
+Adopted verbatim from the D-007 Phase 0 return (`project-control/reports/M0-T036-PHASE0-return.md`),
+in force before any pushing supervisor mode activates:
+
+> *ADR-005 amendment (proposed):* "The deterministic Agent Supervisor controller (D-007), when
+> operating under an owner-activated mode and an owner-granted standing task grant, MAY perform
+> the orchestrator-side integration actions `git push` to the exact authorized non-main task
+> branch and PR create/update for that branch, after a passing independent review, subject to
+> every ADR-005 prohibition (no merge, no acceptance, no direct/force push to main, no gate
+> satisfaction). The worker process never pushes and never holds push credentials. All other
+> ADR-005 authority is unchanged."

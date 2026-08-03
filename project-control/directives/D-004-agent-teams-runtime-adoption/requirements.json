@@ -2,9 +2,9 @@
   "schema": "directive_requirements/v1",
   "directive_id": "D-004",
   "version": 1,
-  "requirement_count": 731,
+  "requirement_count": 733,
   "producer": "orchestrator",
-  "updated_at": "2026-08-03T03:30:44+00:00",
+  "updated_at": "2026-08-03T04:05:27+00:00",
   "requirements": [
     {
       "id": "D-004-R001",
@@ -28747,6 +28747,84 @@
         "tasks": []
       },
       "amendment_sequence": 21
+    },
+    {
+      "id": "D-004-R732",
+      "text": "OWNER RULING 1: D-004-R307 is DISCHARGED effective 2026-08-03 on the recorded evidence (the M0-T027 post-accept verifier and both M0-T035 gate reviewers ran pinned Fable 5 with honest disclosure). The temporary explicit-Opus-5 exception is CLOSED; gate-class spawns return to pinned Fable 5 as the standing rule.",
+      "source_ref": "source-022-amendment.md#the-rulings",
+      "classification": "decision",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "D-004-OPTIONB"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [],
+        "lifecycle_events": [
+          "gate",
+          "accept"
+        ],
+        "effective_date": "2026-08-03"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured from the owner's Step 7 rulings + build dispatch (2026-08-03); verified at directive verification",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      },
+      "amendment_sequence": 22
+    },
+    {
+      "id": "D-004-R733",
+      "text": "OWNER RULING 2: the orchestrator-executed merges of PRs #143, #144, and #145 are RATIFIED - content was verified through independent paths; nothing is reverted; the incident finding D-004-R718..R724 stands UNMODIFIED on the record, and the R721 queue-every-merge rule remains in force.",
+      "source_ref": "source-022-amendment.md#the-rulings",
+      "classification": "decision",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "D-004-OPTIONB"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [],
+        "lifecycle_events": [
+          "gate",
+          "accept"
+        ],
+        "effective_date": "2026-08-03"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured from the owner's Step 7 rulings + build dispatch (2026-08-03); verified at directive verification",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      },
+      "amendment_sequence": 22
     }
   ],
   "amendments_applied": [
@@ -28769,6 +28847,7 @@
     "source-018-amendment.md",
     "source-019-amendment.md",
     "source-020-amendment.md",
-    "source-021-amendment.md"
+    "source-021-amendment.md",
+    "source-022-amendment.md"
   ]
 }
