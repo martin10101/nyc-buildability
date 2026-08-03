@@ -1,0 +1,18 @@
+{
+  "checkpoint_id": "CP-0036",
+  "timestamp": "2026-08-03T02:19:29.213610+00:00",
+  "commit": "bbbb8ef18cc297ece8759535f0cb9484a0d785bc",
+  "branch": "main",
+  "active_milestone": "M4",
+  "summary": "M0-T027 ACCEPTED (54th) under the amendment-17/18 closeout: re-submitted at corrected identity 29a094eb (PR #140), final verification BLOCKED then re-ruled PASS under owner Decision 1 (amendment 18, PR #143), accepted via CLI with 5 attested lifecycle deferrals, R488 cleanup done (2 closeout branches + 3 M0-T034 producer worktrees removed, ONLY-scope preserved), all 5 deferrals independently verified PASS at deferral identity/sha by directive-compliance-verifier (pinned Fable 5 - the R307 re-check succeeded). Steps 5 (efficiency capture) and 6 (supervisor Phase 0) proceed next per R714; consolidated stop at Step 7.",
+  "post_accept_verifications_confirmed": {
+    "M0-T027": [
+      "D-004-R389",
+      "D-004-R486",
+      "D-004-R487",
+      "D-004-R488",
+      "D-004-R501"
+    ]
+  },
+  "updated_at": "2026-08-03T02:19:29.224163+00:00"
+}
