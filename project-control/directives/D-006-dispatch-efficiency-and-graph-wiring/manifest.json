@@ -1,0 +1,115 @@
+{
+  "schema": "directive_manifest/v1",
+  "directive_id": "D-006",
+  "version": 1,
+  "slug": "dispatch-efficiency-and-graph-wiring",
+  "title": "Dispatch Efficiency and Code-Graph Wiring (owner draft v1.2, issued via D-004-R679)",
+  "status": "active",
+  "issued_by": "owner",
+  "issued_at": "2026-08-03",
+  "captured_at": "2026-08-03T02:32:41+00:00",
+  "channel": "owner_draft_issued_on_condition",
+  "frozen_baseline_sha": "aa257b88d6a0fb13b9d6bfc5372b352f05c6d234",
+  "sources": [
+    {
+      "file": "source-001.md",
+      "kind": "original",
+      "sequence": 1,
+      "recorded_at": "2026-08-03T02:32:41+00:00",
+      "content_digest_sha256": "c9827b51e702aa3012fb457235098a4987a6fe4683cba4cce3d84b359dc77a91"
+    }
+  ],
+  "amendments": [],
+  "supersedes": [],
+  "superseded_by": null,
+  "affected_tasks": [
+    "M0-T035"
+  ],
+  "affected_prs": [],
+  "affected_branches": [],
+  "scope": {
+    "task_ids": [
+      "D-006-PRACTICE",
+      "M0-T035"
+    ],
+    "task_types": [
+      "governance"
+    ],
+    "milestones": [],
+    "paths": [
+      ".claude/ORCHESTRATION_POLICY.md",
+      ".claude/agents/"
+    ]
+  },
+  "applicability_note": "D-006-PRACTICE is a NON-LEDGER applicability sentinel (D-004-OPTIONB / D-005-REVIEW precedent): orchestrator dispatch/packet practice rows bound by owner instruction and verified at directive verifications, never entering a ledger task's accept() set. M0-T035 is the one controlled edit task (Section 3 policy amendment + Section 5.2 definition lines).",
+  "owner_approval": {
+    "state": "issued_via_d004_r679",
+    "decision": "The Section 8 decision was exercised in advance by D-004 amendment 17 (R679: on M0-T027 acceptance the pending v1.2 draft IS ISSUED - capture verbatim, decompose without weakening/combining/omitting, close the pending-capture record in the same batch) and confirmed by the amendment-18 conditional resume (R714). M0-T027 accepted 2026-08-03 (PR #144, CP-0036)."
+  },
+  "lifecycle_state": "active",
+  "requirements_file": "requirements.json",
+  "verification_file": "verification.json",
+  "final_reviewed_sha": null,
+  "final_reviewed_manifest_sha256": null,
+  "enforcement_pointers": {
+    "tasks": [
+      "M0-T035"
+    ],
+    "gates": [],
+    "blockers": [],
+    "rules": [
+      ".claude/rules/project-control.md"
+    ],
+    "hold": false
+  },
+  "notes": [
+    "R307 disposition recorded at capture (rows R029/R032): DEFERRED per the D-004-R680 mechanical rule; the carried re-check succeeded at the next gate dispatch (m0t027-poav pinned Fable 5, claude-fable-5 disclosed); formal discharge is the owner's call, surfaced in the Step 7 consolidated report.",
+    "The tracked pending-capture record PENDING-CAPTURE-dispatch-efficiency-and-graph-wiring.md received its final disposition (CAPTURED as D-006) in this same batch, per D-004-R679.",
+    "The untracked repo-root draft remains untracked by design ('untracked transient owner input'); its bytes are digest-anchored here."
+  ],
+  "created_at": "2026-08-03T02:32:41+00:00",
+  "updated_at": "2026-08-03T02:32:41+00:00",
+  "audit_log": [
+    {
+      "at": "2026-08-03T02:32:41+00:00",
+      "by": "orchestrator",
+      "note": "D-006 captured verbatim as source-001.md (sha256 c9827b51e702aa3012fb457235098a4987a6fe4683cba4cce3d84b359dc77a91) on branch control/D-006-efficiency-capture from origin/main aa257b88d6a0fb13b9d6bfc5372b352f05c6d234 (merge of PR #144, the M0-T027 acceptance batch). 32 rows D-006-R001..R032 decomposed per the intake standard. Draft bytes re-verified == bd6c4ec2... immediately before capture; capture body verified byte-faithful (LF-normalized) to the draft. Section 5.4's 11f3540c ancestor claim re-verified at the capture head."
+    }
+  ],
+  "locked_requirement_ids": [
+    "D-006-R001",
+    "D-006-R002",
+    "D-006-R003",
+    "D-006-R004",
+    "D-006-R005",
+    "D-006-R006",
+    "D-006-R007",
+    "D-006-R008",
+    "D-006-R009",
+    "D-006-R010",
+    "D-006-R011",
+    "D-006-R012",
+    "D-006-R013",
+    "D-006-R014",
+    "D-006-R015",
+    "D-006-R016",
+    "D-006-R017",
+    "D-006-R018",
+    "D-006-R019",
+    "D-006-R020",
+    "D-006-R021",
+    "D-006-R022",
+    "D-006-R023",
+    "D-006-R024",
+    "D-006-R025",
+    "D-006-R026",
+    "D-006-R027",
+    "D-006-R028",
+    "D-006-R029",
+    "D-006-R030",
+    "D-006-R031",
+    "D-006-R032"
+  ],
+  "requirements_id_digest_sha256": "e5ca3861ed6e72456a91171479f01f59bf716c4acf45199c0a1b82076d0a6bce",
+  "requirements_content_digest_sha256": "62478c194fcf889dff8282b9802acd88491a24eaac7e32ac51908f34171e92b0"
+}

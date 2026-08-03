@@ -1,0 +1,1229 @@
+{
+  "schema": "directive_requirements/v1",
+  "directive_id": "D-006",
+  "version": 1,
+  "requirement_count": 32,
+  "producer": "orchestrator",
+  "updated_at": "2026-08-03T02:32:41+00:00",
+  "requirements": [
+    {
+      "id": "D-006-R001",
+      "text": "PROVENANCE: the v1.2 draft (digest bd6c4ec2151202bb5209ee62f4cc2a3f94538cd40b695604ceff0e32d1c22b6b, re-verified byte-for-byte immediately before capture) was ISSUED by D-004-R679 on M0-T027's acceptance (2026-08-03, PR #144, CP-0036), confirmed by the amendment-18 resume (D-004-R714). The tracked pending-capture record's final disposition (CAPTURED as D-006) is committed in this same batch, as R679 directs.",
+      "source_ref": "source-001.md#capture-provenance",
+      "classification": "external_fact",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "D-006-PRACTICE"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [
+          "gate",
+          "accept"
+        ],
+        "effective_date": "2026-08-03"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured from the issued v1.2 draft (D-004-R679 issuance condition satisfied at M0-T027 acceptance); verified at D-006 verification",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      },
+      "amendment_sequence": 1
+    },
+    {
+      "id": "D-006-R002",
+      "text": "Capture verbatim through the directive-compliance process; the orchestrator decomposes into rows per the intake standard; do not weaken, combine, or omit obligations. (Satisfied by this capture; verified independently.)",
+      "source_ref": "source-001.md#capture-provenance",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "D-006-PRACTICE"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [
+          "gate",
+          "accept"
+        ],
+        "effective_date": "2026-08-03"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured from the issued v1.2 draft (D-004-R679 issuance condition satisfied at M0-T027 acceptance); verified at D-006 verification",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      },
+      "amendment_sequence": 1
+    },
+    {
+      "id": "D-006-R003",
+      "text": "Section 1: verification and review dispatches must state an explicit evidence scope, defaulting to the files changed since the last independently verified HEAD (named by SHA in the dispatch) plus any registry rows whose source or subject those files touch.",
+      "source_ref": "source-001.md#1-delta-scoped-verification",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "D-006-PRACTICE"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [
+          "gate",
+          "accept"
+        ],
+        "effective_date": "2026-08-03"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured from the issued v1.2 draft (D-004-R679 issuance condition satisfied at M0-T027 acceptance); verified at D-006 verification",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      },
+      "amendment_sequence": 1
+    },
+    {
+      "id": "D-006-R004",
+      "text": "Section 1: whole-tree or whole-registry re-scans require a stated trigger in the dispatch (first pass on a branch, integrity alarm, registry migration, or a finding that impeaches earlier scope). 'Scan everything again' is no longer a permissible default.",
+      "source_ref": "source-001.md#1-delta-scoped-verification",
+      "classification": "prohibition",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "D-006-PRACTICE"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [
+          "gate",
+          "accept"
+        ],
+        "effective_date": "2026-08-03"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured from the issued v1.2 draft (D-004-R679 issuance condition satisfied at M0-T027 acceptance); verified at D-006 verification",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      },
+      "amendment_sequence": 1
+    },
+    {
+      "id": "D-006-R005",
+      "text": "Section 1: no gate is weakened - a verifier that finds cause may always widen its own scope, and must say it did.",
+      "source_ref": "source-001.md#1-delta-scoped-verification",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "D-006-PRACTICE"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [
+          "gate",
+          "accept"
+        ],
+        "effective_date": "2026-08-03"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured from the issued v1.2 draft (D-004-R679 issuance condition satisfied at M0-T027 acceptance); verified at D-006 verification",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      },
+      "amendment_sequence": 1
+    },
+    {
+      "id": "D-006-R006",
+      "text": "Section 2: a dispatch must enumerate the prior passes' settled rulings (verdicts, counts, digests, boundaries already independently verified at a named HEAD); settled findings are cited, not re-derived.",
+      "source_ref": "source-001.md#2-settled-findings",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "D-006-PRACTICE"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [
+          "gate",
+          "accept"
+        ],
+        "effective_date": "2026-08-03"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured from the issued v1.2 draft (D-004-R679 issuance condition satisfied at M0-T027 acceptance); verified at D-006 verification",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      },
+      "amendment_sequence": 1
+    },
+    {
+      "id": "D-006-R007",
+      "text": "Section 2: a verifier may reopen a settled finding only with new evidence that contradicts it, and must flag the reopening explicitly.",
+      "source_ref": "source-001.md#2-settled-findings",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "D-006-PRACTICE"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [
+          "gate",
+          "accept"
+        ],
+        "effective_date": "2026-08-03"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured from the issued v1.2 draft (D-004-R679 issuance condition satisfied at M0-T027 acceptance); verified at D-006 verification",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      },
+      "amendment_sequence": 1
+    },
+    {
+      "id": "D-006-R008",
+      "text": "Section 3: tiering is implemented at the SPAWN level only; D-004's live spawn rules bind one model per spawn and gate-class reviewer spawns carry their explicitly pinned model (R226/R161/R275); no per-phase model mechanism exists inside a spawn.",
+      "source_ref": "source-001.md#3-model-tiering",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "D-006-PRACTICE"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [
+          "gate",
+          "accept"
+        ],
+        "effective_date": "2026-08-03"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured from the issued v1.2 draft (D-004-R679 issuance condition satisfied at M0-T027 acceptance); verified at D-006 verification",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      },
+      "amendment_sequence": 1
+    },
+    {
+      "id": "D-006-R009",
+      "text": "Section 3: a dedicated mechanical-sweep identity - non-gate, non-producer, auditor-class; the existing definition progress-auditor by default where compatible - may be spawned on a faster model, selected at dispatch, for bounded read-only mechanical work only: pattern scans, digest computation and comparison, occurrence counting, file inventory, diff reconstruction, and grep sweeps. Only if no existing definition is compatible does Section 7 authorize creating exactly one new sweep-identity definition.",
+      "source_ref": "source-001.md#3-model-tiering",
+      "classification": "authorization",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "D-006-PRACTICE"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [
+          "gate",
+          "accept"
+        ],
+        "effective_date": "2026-08-03"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured from the issued v1.2 draft (D-004-R679 issuance condition satisfied at M0-T027 acceptance); verified at D-006 verification",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      },
+      "amendment_sequence": 1
+    },
+    {
+      "id": "D-006-R010",
+      "text": "Section 3: sweep output is data (counts, paths, hashes, matches), never judgment. Every ruling, verdict, severity, interpretation, acceptance-grade conclusion, and security/contract/geospatial/control-plane judgment remains on the pinned or session model; gate-class reviewer and producer spawns keep their existing model rules unchanged (R298's ceiling governs producers).",
+      "source_ref": "source-001.md#3-model-tiering",
+      "classification": "prohibition",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "D-006-PRACTICE"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [
+          "gate",
+          "accept"
+        ],
+        "effective_date": "2026-08-03"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured from the issued v1.2 draft (D-004-R679 issuance condition satisfied at M0-T027 acceptance); verified at D-006 verification",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      },
+      "amendment_sequence": 1
+    },
+    {
+      "id": "D-006-R011",
+      "text": "Section 3: a dispatch using mechanical-sweep spawns names each spawn, its model, and its exact scope; the consuming reviewer cites the sweep's data as input evidence and remains solely responsible for the ruling; the report records the split.",
+      "source_ref": "source-001.md#3-model-tiering",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "D-006-PRACTICE"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [
+          "gate",
+          "accept"
+        ],
+        "effective_date": "2026-08-03"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured from the issued v1.2 draft (D-004-R679 issuance condition satisfied at M0-T027 acceptance); verified at D-006 verification",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      },
+      "amendment_sequence": 1
+    },
+    {
+      "id": "D-006-R012",
+      "text": "Section 3: gate-class reviewer identities are never spawned on a lower model for any phase.",
+      "source_ref": "source-001.md#3-model-tiering",
+      "classification": "prohibition",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "D-006-PRACTICE"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [
+          "gate",
+          "accept"
+        ],
+        "effective_date": "2026-08-03"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured from the issued v1.2 draft (D-004-R679 issuance condition satisfied at M0-T027 acceptance); verified at D-006 verification",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      },
+      "amendment_sequence": 1
+    },
+    {
+      "id": "D-006-R013",
+      "text": "Section 3: if D-004's spawn rules would still be violated by this mechanism as specified, stop and propose a D-004 amendment rather than proceeding.",
+      "source_ref": "source-001.md#3-model-tiering",
+      "classification": "sequencing",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "D-006-PRACTICE"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [
+          "gate",
+          "accept"
+        ],
+        "effective_date": "2026-08-03"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured from the issued v1.2 draft (D-004-R679 issuance condition satisfied at M0-T027 acceptance); verified at D-006 verification",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      },
+      "amendment_sequence": 1
+    },
+    {
+      "id": "D-006-R014",
+      "text": "Section 3: the existing prohibition stands - never downgrade judgment to save tokens.",
+      "source_ref": "source-001.md#3-model-tiering",
+      "classification": "prohibition",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "D-006-PRACTICE"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [
+          "gate",
+          "accept"
+        ],
+        "effective_date": "2026-08-03"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured from the issued v1.2 draft (D-004-R679 issuance condition satisfied at M0-T027 acceptance); verified at D-006 verification",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      },
+      "amendment_sequence": 1
+    },
+    {
+      "id": "D-006-R015",
+      "text": "Section 4: one focused question or bounded deliverable per teammate spawn. Omnibus dispatches that ask a single teammate to re-derive broad state are split; prefer sequential focused spawns or a single spawn with an explicit enumerated scope over one open-ended mandate.",
+      "source_ref": "source-001.md#4-small-tasks",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "D-006-PRACTICE"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [
+          "gate",
+          "accept"
+        ],
+        "effective_date": "2026-08-03"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured from the issued v1.2 draft (D-004-R679 issuance condition satisfied at M0-T027 acceptance); verified at D-006 verification",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      },
+      "amendment_sequence": 1
+    },
+    {
+      "id": "D-006-R016",
+      "text": "Section 5.1: task packets and dispatch prompts should name the exact files (and where useful, line ranges) the work concerns. For relationship or dependency questions where the file set is not already known, the orchestrator runs one bounded tools/code_graph/query.py query and pastes the resulting file list into the packet as an advisory navigation block.",
+      "source_ref": "source-001.md#5-1-navigation-block",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "D-006-PRACTICE"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [
+          "gate",
+          "accept"
+        ],
+        "effective_date": "2026-08-03"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured from the issued v1.2 draft (D-004-R679 issuance condition satisfied at M0-T027 acceptance); verified at D-006 verification",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      },
+      "amendment_sequence": 1
+    },
+    {
+      "id": "D-006-R017",
+      "text": "Section 5.2: add the specified one-sentence code-graph awareness line to the eight named agent definitions: backend-engineer, frontend-engineer, code-reviewer, security-reviewer, qa-engineer, rules-engineer, geospatial-engineer, data-contract-verifier.",
+      "source_ref": "source-001.md#5-2-subagent-awareness",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T035"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [
+          "claim",
+          "submit",
+          "gate",
+          "accept"
+        ],
+        "effective_date": "2026-08-03"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured from the issued v1.2 draft (D-004-R679 issuance condition satisfied at M0-T027 acceptance); verified at D-006 verification",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": [
+          "M0-T035"
+        ]
+      },
+      "amendment_sequence": 1
+    },
+    {
+      "id": "D-006-R018",
+      "text": "Section 5.2 read-only reviewer variant: for code-reviewer, security-reviewer, and data-contract-verifier the wired sentence additionally requires --no-regen; a stale or missing cache is reported, never regenerated (reviewers never run write-producing commands, ADR-005; default regeneration writes outside the repository past the B-015-hardened guard's scope).",
+      "source_ref": "source-001.md#5-2-subagent-awareness",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T035"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [
+          "claim",
+          "submit",
+          "gate",
+          "accept"
+        ],
+        "effective_date": "2026-08-03"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured from the issued v1.2 draft (D-004-R679 issuance condition satisfied at M0-T027 acceptance); verified at D-006 verification",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": [
+          "M0-T035"
+        ]
+      },
+      "amendment_sequence": 1
+    },
+    {
+      "id": "D-006-R019",
+      "text": "Section 5.3: D-005 amendment 2 stands unchanged - graph use remains selective and advisory, never required on every task, and graph output is never authoritative evidence. Nothing in this directive makes graph use mandatory.",
+      "source_ref": "source-001.md#5-3-selectivity",
+      "classification": "hold",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "D-006-PRACTICE",
+          "M0-T035"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [
+          "gate",
+          "accept"
+        ],
+        "effective_date": "2026-08-03"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured from the issued v1.2 draft (D-004-R679 issuance condition satisfied at M0-T027 acceptance); verified at D-006 verification",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": [
+          "M0-T035"
+        ]
+      },
+      "amendment_sequence": 1
+    },
+    {
+      "id": "D-006-R020",
+      "text": "Section 5.3 citation relationship (stated so rows read as exercising the reservation, not conflicting): D-005 amendment 2 is the M0-T030 GO-WITH-CONDITIONS decision in project-control/directives/D-005-codebase-knowledge-graph-pilot/source-003-amendment.md; its item 8 reserved graph injection into Agent Teams workflows as a separate owner decision; THIS directive IS that decision, exercised exactly to the extent of Sections 5.1-5.2 and no further.",
+      "source_ref": "source-001.md#5-3-selectivity",
+      "classification": "external_fact",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "D-006-PRACTICE",
+          "M0-T035"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [
+          "gate",
+          "accept"
+        ],
+        "effective_date": "2026-08-03"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured from the issued v1.2 draft (D-004-R679 issuance condition satisfied at M0-T027 acceptance); verified at D-006 verification",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": [
+          "M0-T035"
+        ]
+      },
+      "amendment_sequence": 1
+    },
+    {
+      "id": "D-006-R021",
+      "text": "Section 5.4: when a dispatch or packet involves a graph-eligible question (dependency/impact/who-consumes/blast-radius), the report records either the graph query used (command + one-line result summary) or the stated reason direct navigation was chosen.",
+      "source_ref": "source-001.md#5-4-usage-visibility",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "D-006-PRACTICE"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [
+          "gate",
+          "accept"
+        ],
+        "effective_date": "2026-08-03"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured from the issued v1.2 draft (D-004-R679 issuance condition satisfied at M0-T027 acceptance); verified at D-006 verification",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      },
+      "amendment_sequence": 1
+    },
+    {
+      "id": "D-006-R022",
+      "text": "Section 5.4 external fact: the no-audit-trail claim was anchored at origin/main 11f3540c and required re-verification at capture-time head. RE-VERIFIED at capture: 11f3540c is an ancestor of aa257b8 (git merge-base --is-ancestor succeeds).",
+      "source_ref": "source-001.md#5-4-usage-visibility",
+      "classification": "external_fact",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "D-006-PRACTICE"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [
+          "gate",
+          "accept"
+        ],
+        "effective_date": "2026-08-03"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured from the issued v1.2 draft (D-004-R679 issuance condition satisfied at M0-T027 acceptance); verified at D-006 verification",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      },
+      "amendment_sequence": 1
+    },
+    {
+      "id": "D-006-R023",
+      "text": "Section 6: no token, time, or cost saving may be claimed from any change in this directive without measurement (consistent with D-005-R039).",
+      "source_ref": "source-001.md#6-measurement",
+      "classification": "prohibition",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "D-006-PRACTICE",
+          "M0-T035"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [
+          "gate",
+          "accept"
+        ],
+        "effective_date": "2026-08-03"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured from the issued v1.2 draft (D-004-R679 issuance condition satisfied at M0-T027 acceptance); verified at D-006 verification",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": [
+          "M0-T035"
+        ]
+      },
+      "amendment_sequence": 1
+    },
+    {
+      "id": "D-006-R024",
+      "text": "Section 6: for the first N=6 dispatches after adoption (mix of verifier and producer), record the /usage Session figures at dispatch start and end, alongside the dispatch's scope statement and model tiering, in the task's report or a single adoption note.",
+      "source_ref": "source-001.md#6-measurement",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "D-006-PRACTICE"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [
+          "gate",
+          "accept"
+        ],
+        "effective_date": "2026-08-03"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured from the issued v1.2 draft (D-004-R679 issuance condition satisfied at M0-T027 acceptance); verified at D-006 verification",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      },
+      "amendment_sequence": 1
+    },
+    {
+      "id": "D-006-R025",
+      "text": "Section 6: after N=6, the orchestrator summarizes observed deltas versus comparable pre-adoption dispatches (the M0-T027 verification passes may serve as the pre-adoption baseline) and reports to the owner. Claims follow the data; if a lever shows no benefit, say so.",
+      "source_ref": "source-001.md#6-measurement",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "D-006-PRACTICE"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [
+          "gate",
+          "accept"
+        ],
+        "effective_date": "2026-08-03"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured from the issued v1.2 draft (D-004-R679 issuance condition satisfied at M0-T027 acceptance); verified at D-006 verification",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      },
+      "amendment_sequence": 1
+    },
+    {
+      "id": "D-006-R026",
+      "text": "Section 7: no file accepted on origin/main is modified by this directive beyond the authorized edits; no gate, verdict standard, adversarial-framing practice, or acceptance requirement is weakened - these changes narrow scope defaults and model assignment for mechanical work, not rigor.",
+      "source_ref": "source-001.md#7-containment",
+      "classification": "prohibition",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "D-006-PRACTICE",
+          "M0-T035"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [
+          "claim",
+          "submit",
+          "gate",
+          "accept"
+        ],
+        "effective_date": "2026-08-03"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured from the issued v1.2 draft (D-004-R679 issuance condition satisfied at M0-T027 acceptance); verified at D-006 verification",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": [
+          "M0-T035"
+        ]
+      },
+      "amendment_sequence": 1
+    },
+    {
+      "id": "D-006-R027",
+      "text": "Section 7: the ONLY .claude/ edits authorized are the Section 5.2 one-line additions, the Section 3 policy amendment text if required, and - only if no existing auditor-class definition is compatible - one new mechanical-sweep agent definition under .claude/agents/.",
+      "source_ref": "source-001.md#7-containment",
+      "classification": "prohibition",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "D-006-PRACTICE",
+          "M0-T035"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [
+          "claim",
+          "submit",
+          "gate",
+          "accept"
+        ],
+        "effective_date": "2026-08-03"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured from the issued v1.2 draft (D-004-R679 issuance condition satisfied at M0-T027 acceptance); verified at D-006 verification",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": [
+          "M0-T035"
+        ]
+      },
+      "amendment_sequence": 1
+    },
+    {
+      "id": "D-006-R028",
+      "text": "Section 7: nothing here amends D-005's trust model, R024/PII handling, or the M0-T027 closeout; this directive does not authorize the Codex-Claude supervisor work (separate directive, separate task).",
+      "source_ref": "source-001.md#7-containment",
+      "classification": "prohibition",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "D-006-PRACTICE",
+          "M0-T035"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [
+          "gate",
+          "accept"
+        ],
+        "effective_date": "2026-08-03"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured from the issued v1.2 draft (D-004-R679 issuance condition satisfied at M0-T027 acceptance); verified at D-006 verification",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": [
+          "M0-T035"
+        ]
+      },
+      "amendment_sequence": 1
+    },
+    {
+      "id": "D-006-R029",
+      "text": "Section 8 owner decision: ISSUED AS-IS. The owner exercised the requested decision through D-004 amendment 17 (R679: 'on acceptance, the pending draft v1.2 is ISSUED') and confirmed it in the amendment-18 resume (R714); no further issuance act is required or awaited.",
+      "source_ref": "source-001.md#8-owner-decision",
+      "classification": "decision",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "D-006-PRACTICE"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [
+          "gate",
+          "accept"
+        ],
+        "effective_date": "2026-08-03"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured from the issued v1.2 draft (D-004-R679 issuance condition satisfied at M0-T027 acceptance); verified at D-006 verification",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      },
+      "amendment_sequence": 1
+    },
+    {
+      "id": "D-006-R030",
+      "text": "Section 8: create ONE controlled task for the Section 3 policy amendment and Section 5.2 definition edits, with exact allowed paths, dispatched through its normal gates (D-004-R681). Contracted as M0-T035 in this capture batch's flow.",
+      "source_ref": "source-001.md#8-owner-decision",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T035"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [
+          "claim",
+          "submit",
+          "gate",
+          "accept"
+        ],
+        "effective_date": "2026-08-03"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured from the issued v1.2 draft (D-004-R679 issuance condition satisfied at M0-T027 acceptance); verified at D-006 verification",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": [
+          "M0-T035"
+        ]
+      },
+      "amendment_sequence": 1
+    },
+    {
+      "id": "D-006-R031",
+      "text": "Section 8: adopt the dispatch/packet standards (Sections 1, 2, 4, 5.1, 5.4, 6) as orchestrator practice from the next dispatch onward (D-004-R682: immediately).",
+      "source_ref": "source-001.md#8-owner-decision",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "D-006-PRACTICE"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [
+          "gate",
+          "accept"
+        ],
+        "effective_date": "2026-08-03"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured from the issued v1.2 draft (D-004-R679 issuance condition satisfied at M0-T027 acceptance); verified at D-006 verification",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      },
+      "amendment_sequence": 1
+    },
+    {
+      "id": "D-006-R032",
+      "text": "Section 8 R307 disposition, recorded at capture per the D-004-R680 mechanical rule and the owner's amendment-18 resume instruction: DEFERRED - the amendment-17 closeout round's gate-class spawns ran under the temporary explicit-Opus-5 regime. The carried re-check was PERFORMED at the next gate dispatch (m0t027-poav, the M0-T027 post-accept deferral verification, 2026-08-03): spawned pinned Fable 5, honestly disclosed claude-fable-5, SUCCEEDED - Fable 5 pinning is restored for gate-class spawns from that dispatch onward. The formal DISCHARGE determination of the temporary exception remains the owner's, surfaced in the Step 7 consolidated report.",
+      "source_ref": "source-001.md#8-owner-decision",
+      "classification": "decision",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "D-006-PRACTICE"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [
+          "gate",
+          "accept"
+        ],
+        "effective_date": "2026-08-03"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured from the issued v1.2 draft (D-004-R679 issuance condition satisfied at M0-T027 acceptance); verified at D-006 verification",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      },
+      "amendment_sequence": 1
+    }
+  ],
+  "amendments_applied": []
+}

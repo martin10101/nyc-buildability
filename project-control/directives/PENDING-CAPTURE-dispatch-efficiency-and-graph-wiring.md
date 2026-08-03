@@ -56,3 +56,15 @@ This standalone record is outside the index walk and keeps
 (§3 names an existing auditor-class definition, default `progress-auditor`, as the sweep
 identity; §7 authorizes creating exactly one new definition only as a fallback if no existing
 definition is compatible). No open pre-flight findings remain against v1.2.
+
+## FINAL DISPOSITION - CAPTURED (2026-08-03)
+
+**Status: CLOSED - captured as `D-006` (`D-006-dispatch-efficiency-and-graph-wiring/`).**
+The issuance condition fired: M0-T027 was accepted 2026-08-03 (54th accepted task, PR #144,
+checkpoint CP-0036), which under D-004 amendment 17 (D-004-R679) ISSUED the pending v1.2 draft,
+confirmed by the amendment-18 resume authorization (D-004-R714). Draft bytes re-verified
+immediately before capture: `bd6c4ec2151202bb5209ee62f4cc2a3f94538cd40b695604ceff0e32d1c22b6b`
+(match). Captured verbatim as `D-006-dispatch-efficiency-and-graph-wiring/source-001.md`;
+decomposed into rows D-006-R001..R032 without weakening, combining, or omitting; this
+disposition is committed in the same batch as the capture, exactly as R679 directs. This file
+remains a provenance breadcrumb only and is now historical.
