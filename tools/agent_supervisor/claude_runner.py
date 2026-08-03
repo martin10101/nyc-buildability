@@ -50,6 +50,7 @@ from .models import ClaudeCheckpoint, RecordError, digest_of, to_utc_iso
 from .policy import neutralize_untrusted
 from .process import (
     DEFAULT_ENV_ALLOWLIST,
+    ProcessContainer,
     assert_argv_safe,
     executable_identity,
     minimal_env,
@@ -113,6 +114,10 @@ class RunnerConfig:
     resume_capability_verified: bool = False
     env_allowlist: tuple[str, ...] = DEFAULT_ENV_ALLOWLIST
     extra_env: Mapping[str, str] = dataclasses.field(default_factory=dict)
+    #: Phase 4: the Job Object is the DEFAULT container on Windows. Setting this
+    #: False is an explicit, recorded downgrade to the taskkill fallback; it is
+    #: never selected implicitly by a default, a config parse error, or a model.
+    use_job_object: bool = True
 
 
 def build_argv(config: RunnerConfig) -> list[str]:
@@ -464,6 +469,8 @@ class RunResult:
     timed_out: bool = False
     cancelled: bool = False
     tree_terminated: bool = False
+    containment: str = ""
+    containment_fallback_reason: str = ""
     stderr_tail: str = ""
     injection_labels: tuple[str, ...] = ()
     raw_events: tuple[dict[str, Any], ...] = ()
@@ -519,11 +526,16 @@ class ClaudeRunner:
         tree_terminated = False
 
         started = time.monotonic()
+        # Phase 4: the worker is launched INSIDE the default container (a
+        # kill-on-close Job Object on Windows). Nothing it spawns can outlive the
+        # container, and the containment actually achieved is recorded.
+        container = ProcessContainer(prefer_job_object=self.config.use_job_object)
         process = subprocess.Popen(  # noqa: S603 - argv array, shell=False
             argv, shell=False,
             cwd=self.config.cwd or None, env=env,
             stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE,
             text=True, encoding="utf-8", errors="replace", bufsize=1)
+        container.adopt(process.pid)
 
         def drain_stderr() -> None:
             assert process.stderr is not None
@@ -544,9 +556,12 @@ class ClaudeRunner:
                 time.sleep(0.05)
             if timed_out.is_set() or cancelled.is_set():
                 try:
-                    terminate_process_tree(process.pid)
+                    container.terminate_all()
                 except Exception:  # pragma: no cover - defensive
-                    pass
+                    try:
+                        terminate_process_tree(process.pid)
+                    except Exception:
+                        pass
 
         stderr_thread = threading.Thread(target=drain_stderr, daemon=True)
         watch_thread = threading.Thread(target=watchdog, daemon=True)
@@ -597,6 +612,8 @@ class ClaudeRunner:
                     pass
             if timed_out.is_set() or cancelled.is_set():
                 tree_terminated = True
+            containment_report = container.report()
+            container.close()
 
         duration = time.monotonic() - started
         checkpoint: ClaudeCheckpoint | None = None
@@ -624,6 +641,8 @@ class ClaudeRunner:
             timed_out=timed_out.is_set(),
             cancelled=cancelled.is_set(),
             tree_terminated=tree_terminated,
+            containment=containment_report.kind,
+            containment_fallback_reason=containment_report.fallback_reason,
             stderr_tail="".join(stderr_chunks)[-4000:],
             injection_labels=untrusted.labels,
             raw_events=tuple(events),

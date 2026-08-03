@@ -427,3 +427,194 @@ Phase 1+2 = **383, unchanged, no regression**. Phase 3 adds **352 new tests**. T
 **Measurement note (D-006):** scope was Phase 3 of 5 (endurance), built on Phases 1–2 in an isolated worktree. `/usage` is unobservable from inside a spawn, so I cannot report consumption; no token, time, or efficiency claim is made.
 
 **Model disclosure (Phase 3):** spawned explicitly as **Opus 5** (`claude-opus-5[1m]`), the R298 producer ceiling. No effort setting applied anywhere.
+
+---
+
+# PHASE 4 CHECKPOINT (appended by the orchestrator; Phases 1–3 content above byte-preserved)
+
+**Orchestrator header (NOT part of the producer's return).** Fourth unnamed `backend-engineer`
+producer, spawned explicit Opus 5, worktree-isolated, dispatched 2026-08-03 for Phase 4
+(validation). Mid-session the producer's API connection dropped; the orchestrator resumed the
+same agent with its worktree and context intact, and the producer corrected the orchestrator's
+stale mid-edit diagnostic on resume (§0 below) — recorded as relayed. Preserved verbatim below
+**except one R024 redaction**: the closing "Key file paths" absolute-path block → `<WORKTREE>`
+repository-relative form. Port: 25 files verified against declared full LF SHA-256 digests
+(25/25) and all 26 claimed-unchanged modules verified byte-identical; the orchestrator re-ran
+all nineteen suites on the ported tree (result in the integration commit — this run also
+adjudicates, by execution, the static-analysis flags observed during the build). Port hashes:
+`M0-T036-phase1-port-hashes.json` (phase4 block).
+
+---
+
+# M0-T036 — PHASE 4 PRODUCER CHECKPOINT
+
+Requested status: **awaiting_gate**
+
+## 0. Worktree state note (read first)
+
+HEAD was `e7f5078b2c3668c255fe65bc22afde576f65c75e` (the merge-base), no `tools/agent_supervisor/` present — the Phase 2/3 precedent condition. I ran exactly the prescribed command, `git merge --ff-only task/M0-T036-supervisor-bridge`, which fast-forwarded to **`7b179ec625146968148ead3f2419ae1b75918564`** (the Phase 3 tip named in the dispatch). **No commit, no push, no `gh`, no `project_control.py`.**
+
+Branch: `worktree-agent-a25895576c5bd30bd` · base `7b179ec` + the uncommitted Phase 4 work below.
+
+**Mid-session interruption, disclosed.** An API error ("Connection closed mid-response") cut the session after `process.py`/`claude_runner.py` were wired. On resume the coordinator relayed a diagnostic that `claude_runner.py` was mid-edit with an undefined `ProcessContainer` and no `RunnerConfig.use_job_object`. **That diagnostic was stale** — I re-verified live before continuing: `ProcessContainer` imported (True), `use_job_object` default (True), `default_containment_kind()` → `job_object`, and the `process`+`runner` suites green at 68 tests. Nothing was lost or ambiguous; I state this rather than let a false "recovered from corruption" narrative stand.
+
+## 1. Files created (17) and modified (8), with full LF-normalized SHA-256
+
+**CREATED (17)**
+```
+a7b52be10d2ff8f7a601807887b82001dbb17173a5ee90f14f1a7d82fb30b820  tools/agent_supervisor/loop.py
+d75fb697e1aeaa42a5e14b7a96af9cebd7f8568d4e00023c92ee9d8eb2b2a5af  tools/agent_supervisor/replay.py
+24bd6db5929c1d6778d768bdecd222e7321425ea6a3e39e087dec7f773a7f835  tools/agent_supervisor/replay_corpus/manifest.json
+500370f5df16a1c2e5591281339b29e8c5c94fda8e6dd14723781ce338db9b41  tools/agent_supervisor/replay_corpus/b015_sentinel_failure.json
+72c7b9bf92cb810d41e096fc54fc0e5e8735e0947d7ba44240ebacb6ff70b7d8  tools/agent_supervisor/replay_corpus/ci_failure.json
+43f2741e08a5ccc7ae5755161c94dece069d26c20aa33527b799755adbf1bf7e  tools/agent_supervisor/replay_corpus/clean_continuation.json
+8909df6311c808ae4697e810bdb2d845e79dc864daa03cdc69d97aa3ef68ebec  tools/agent_supervisor/replay_corpus/m0_t028_detection_only_stop.json
+84da7ec5f882de85a0046ccdb2eae1329bce13f927380dfd9151bd450bb498d0  tools/agent_supervisor/replay_corpus/m0_t031_accepted_lifecycle.json
+b957a3151c78b5280cecd32134568cdf60d6c3a3f9fc431c0d75f93aab1110f4  tools/agent_supervisor/replay_corpus/owner_gated_stop.json
+d790217d5cdf1628bb74a5a1f5239b87f9fdc3271df2c29a9648a55ac831b826  tools/agent_supervisor/replay_corpus/review_required_correction.json
+d040e6e646fb8e4fb9f316bd08b135adbd9e056fbdb07802eb732a54a819ecc6  tools/agent_supervisor/replay_corpus/stale_sha_mismatched_review.json
+97c70056683ca1c5138b170ed1c19083725eabc9d750791a481efe20bd7bb6fb  tools/test_agent_supervisor_loop.py
+716fb75028b2291e3df5a3ac7dca449c317c6b7c81bacd74ab12fa54b7d5b7b0  tools/test_agent_supervisor_replay.py
+697a7beab03bd81da853875285f55aa43ada350a7dfb72a7ef14769a5330073f  tools/test_agent_supervisor_invariants.py
+e6a5df80956d46092b0959941af1c75db41021dad02593134fdb2ee2079dcde0  tools/test_agent_supervisor_adversarial.py
+6eb5fd093c766ac88179a8a5d7a86f94f6cedeeb32063dec8b27008bffead24c  tools/test_agent_supervisor_crash.py
+a8e833a564a1327ab4e14c470b3d6bb8a89a41a1834734bf64a89a3180b3b0b5  tools/test_agent_supervisor_fuzz.py
+```
+**MODIFIED (8)**
+```
+c2cf228d45d8e6e8e10688ad3b46bfa4d93d0881f03c527dfbe47edd46d77ca1  tools/agent_supervisor/__init__.py
+ba9f396a3ec5e69076cd6febb0c6902c27b83586db15648e7c62e11402a684a5  tools/agent_supervisor/cli.py
+efbccc1d546e2cba2a44148e3c9726b289227833f5ef31b166c96a2eadac5cc1  tools/agent_supervisor/policy.py
+8664bc79d9e9796a4e6f4e3d7a755f2a4c5e6461383f00decedc51bb18978a4a  tools/agent_supervisor/process.py
+5018373047d1e14072e31c49c5bb0c483ebed6ea177e3ddd94739300723cbdab  tools/agent_supervisor/claude_runner.py
+83e480988effe33b1d8f7ff7afa50f7cdc575fc7fbaf0fdaff5f56abf59a1bd8  tools/agent_supervisor/README.md
+fd0e16f77744c2e60b33af1fad1c6ee58099defbc13e91dbf5d5eb961f1156d5  tools/test_agent_supervisor_phase1.py
+0cf0c944ce92b699874d65416b26422298f2339036d9c213013825e7bdb56d79  tools/test_agent_supervisor_endurance.py
+```
+(25 files, 672,654 LF-normalized bytes.)
+
+**Per-modification justification**
+
+1. **`__init__.py`** — `CONTROLLER_VERSION` `0.3.0-phase3`→`0.4.0-phase4`, `PHASE` 3→4. The version is embedded in the manifest, every audit record, and the journal; a Phase 4 build reporting "phase3" is a false provenance claim. Docstring lists `loop.py`/`replay.py` and restates what is still *not* built.
+2. **`cli.py`** — the Phase 4 interface. Implements `replay`; makes `start` really dispatch; adds 6 Phase 4 `doctor` checks; empties `DEFERRED_COMMANDS`.
+3. **`policy.py`** — two additions, both strengthening: the S13.2 **trust-zone** rule (invariant 10 was previously inexpressible because a `ProposedAction` carried no origin) and the **device-name path fix** (§3, defect 1). `origin_zone` defaults to `WORKER`, so every pre-existing call site classifies exactly as before — the 98 Phase 2 policy tests pass unchanged.
+4. **`process.py`** — `ProcessContainer` makes the Job Object the default container (the carried deferral), with breakaway refusal, nested-job detection, `IsProcessInJob` verification, and a *recorded* taskkill fallback. `run()` gained `container`/`use_job_object`; `ProcessResult` gained `containment`/`containment_fallback_reason`.
+5. **`claude_runner.py`** — the worker now launches inside the container. `RunnerConfig.use_job_object` (default True) makes any downgrade explicit and recorded; `RunResult` reports the containment achieved.
+6. **`README.md`** — owner-facing status said "Phase 3 … the loop is Phase 4". Leaving it would misdescribe the package. Rewritten for Phase 4; caveat 2 (Job Objects) **closed**; a new section documents the fuzzer-found defect.
+7. **`tests/…_phase1.py`** — one test asserted `DEFERRED_COMMANDS == {"replay"}`. It **inverts**: it now pins that the map is *empty* and that `cmd_deferred` still refuses, so a future phase cannot wire a command to a silent no-op.
+8. **`tests/…_endurance.py`** — same inversion, plus `test_replay_still_refuses` → `test_replay_is_live_and_makes_no_model_call`, which asserts the properties that matter now (exit 0, 0 provider calls, 0 project-control writes).
+
+**Verified unchanged:** `git diff --stat` over the other 24 Phase 1–3 modules plus `schemas/`, `prompts/`, `config.example.toml`, and `__main__.py` is **empty** — all byte-identical.
+
+## 2. Per-module notes and honest deferrals
+
+- **`loop.py`** — the cycle is real transitions on the S7 table, so the journal is the truth about where a run got to. **Shadow forwards nothing structurally**: it never touches the outbox at all (an outbox row is a commitment to send), never enters `FORWARD_PROMPT`, and `assert_forwarding_allowed()` raises if any caller tries. **Supervised** holds every prompt at `WAIT_FOR_OWNER` and denies when no approval gate is reachable — an unanswerable approval never becomes an implicit yes. Exactly-once forwarding journals before sending; a duplicate is *suppressed*, a crash between enqueue and send *resumes the same message*. The owner-touch ledger counts **only** would-be synchronous stops and blocking ASKs; supervised approvals are recorded `counted=False` because they are a property of the debugging mode, not of the target operating mode — counting them would make the S16.7 budget measure the wrong thing. A source-level test proves the module names no grant constructor, no `TIER_ORDER`, and binds `authority`/`policy_config`/`config` exactly once each.
+- **`replay.py`** — three properties proven from the module source, not promised: `assert_no_execution()` (no process, no adapter), `assert_no_writes()` (no filesystem write at all), and `assert_never_writes()` for any path under `project-control/`, `.github/`, `.claude/`. A test additionally runs the whole corpus against a **chmod'd read-only** copy, and another reads every cited ledger record before and after a full run and asserts byte-identity. `matched` was deliberately separated from provenance: pointing the engine at a scratch directory is not a reproduction failure, so the two signals are reported apart (`doctor`, which uses the real checkout, fails on missing provenance).
+- **`replay_corpus/`** — eight fixtures derived by **quoting and summarizing** committed records. No project-control file was modified to build them. Each carries `provenance` (verified present in this checkout), `recorded_ledger_outcome`, and a `notes` field explaining what the case is guarding. `manifest.json` records per-file digests; `check_manifest()` fails closed on drift, and `doctor` runs it.
+- **`process.py` / Job Objects** — **the carried deferral is closed.** Proven on this host with a real child: create → configure kill-on-close → assign → ask the *kernel* (`IsProcessInJob`) → close → child dies. Breakaway is refused rather than offered (`JOB_OBJECT_LIMIT_BREAKAWAY_OK`, `..._SILENT_BREAKAWAY_OK`, `CREATE_BREAKAWAY_FROM_JOB`) because a containment mechanism must not opt into its own bypass. Nested-job refusal (`ERROR_ACCESS_DENIED`) degrades to taskkill and **records the reason**; taskkill is genuinely weaker (a grandchild can escape enumeration) so nothing claims job-strength containment it did not get.
+
+**Still not built and not pretended:** push **execution**, anchor **publication**, the named-pipe **server** loop, and the Phase 5 shadow pilot. `limited-auto` is not implemented in any form.
+
+## 3. Defects found and fixed (four; none weakens a stop or a hard deny)
+
+1. **`resolve_target` crashed on Windows reserved device names.** *Found by the path-normalization fuzzer, input `.env;/nul`.* `os.path.realpath` maps a trailing `nul` to `\\.\nul` and `os.path.relpath` then raises `ValueError` — so the classifier raised instead of denying. An unhandled exception mid-decision is fail-open, not a denial. **Fix:** refuse all reserved device names (`nul`, `con`, `aux`, `prn`, `com1–9`, `lpt1–9`) before resolution, return the existing `device_path` reason, and guard `realpath`/`relpath`. Enforced on every platform so Linux CI enforces what Windows does. Regression tests cover both the denial and that `console.py`/`nullable.py`/`connection.py` are unaffected. **Adds a denial; removes none.**
+2. **`start` could never dispatch.** *Found by running it.* I gated dispatch on `outcome.resume_permitted`, which answers "may this resume **automatically**, unattended" — it is `False` on a perfectly healthy checkout precisely because limited-auto is off, and its own reason text says recovery "waits for an explicit operator start". **Fix:** gate on `classification == SAFE_CHECKPOINT`. `AMBIGUOUS_EFFECT` and `UNSAFE_OR_DRIFTED` still stop.
+3. **Two missing CLI imports** (`StateMachine`, `ClaudeRunner`, `CodexReviewer`) and a **missing `IDLE→PREFLIGHT` transition** — `start` *is* the S7 `start_command` trigger, and the loop's first cycle begins at `PREFLIGHT`. **Fix:** import them; apply the transition explicitly and record it. Also hardened: `run_cycle` now refuses a bad entry state by name (`CYCLE_ENTRY_STATES`) rather than blundering into an illegal transition.
+4. **The digest-bound supervised approval could never match.** *Found by running `start --mode supervised` end to end — twice, for two independent reasons.* The approval bound to the **rendered** prompt, which carries a `FORWARDED AT:` timestamp and an evidence-packet reference whose own digest moves with the clock and live git state. A digest-bound approval that can never match is not a gate, it is a dead end. Scrubbing volatile lines fixed one cause and not the other, and would break again on the third. **Fix:** `approval_digest()` over the **instruction fields** — the exact five things §9 says every forwarded prompt carries, plus task and stage. Changing any of them invalidates the approval (§13.5); changing only the clock does not. The exact-bytes digest is still recorded separately for provenance, and the outbox message id keys on the instruction so a crash-and-re-render resumes rather than duplicating.
+
+**A note on how 4 was found:** every unit test passed throughout, because each computed both sides of the comparison inside one process. A value that must survive a restart cannot be validated that way — only the end-to-end run caught it. That is the generalizable lesson from this phase.
+
+## 4. Test output
+
+**All nineteen suites together**
+```
+python -m unittest tools.test_agent_supervisor_phase1 ... tools.test_agent_supervisor_fuzz
+Ran 1042 tests in 79.015s
+OK (skipped=2)
+```
+**Standalone, as CI invokes control-plane tests** (all exit 0)
+```
+phase1       Ran 69 tests   OK            policy       Ran 98 tests   OK (skipped=1)
+protocol     Ran 29 tests   OK            broker       Ran 50 tests   OK
+audit        Ran 15 tests   OK            runner       Ran 41 tests   OK
+process      Ran 27 tests   OK (skip=1)   reviewer     Ran 55 tests   OK
+rotation     Ran 67 tests   OK            scheduler    Ran 96 tests   OK
+recovery     Ran 55 tests   OK            ipc          Ran 42 tests   OK
+endurance    Ran 92 tests   OK            loop         Ran 58 tests   OK   [P4]
+replay       Ran 38 tests   OK   [P4]     invariants   Ran 45 tests   OK   [P4]
+adversarial  Ran 93 tests   OK   [P4]     crash        Ran 32 tests   OK   [P4]
+fuzz         Ran 40 tests   OK   [P4]
+
+TOTAL standalone: 1042 across 19 suites; suites not OK: 0
+```
+Phases 1–3 = **735 → 736**, no regression (the +1 is the split of the inverted deferral test). Phase 4 adds **306 new tests**. The 2 skips are the pre-existing POSIX-only guard and the symlink-privilege guard.
+
+**Repository regressions (all green):** `test_project_control.py` → "all 22 project-control test groups passed"; `test_directive_compliance.py` → "Ran 102 tests … OK"; `test_agent_dispatch_guard.py` → "ALL CHECKS PASSED".
+
+**Live `doctor`: 36 checks, all PASS, exit 0**, `controller 0.4.0-phase4 (phase 4)`, including the six new ones: `replay_corpus`, `replay_inert`, `loop_modes`, `containment_default` (`job_object` on this host), `trust_zones`, `deferred_commands`.
+
+**Live `replay`, whole corpus**
+```
+python -m tools.agent_supervisor replay --repo .
+8/8 cases reproduce their recorded behaviour.
+provider calls: 0 | project-control writes: 0 | manifest ok: True | provenance ok: True
+corpus digest: 768eea1ec6bb9e839fc0ecc10344b953b5ecbf5ed90db5e579fd71fcf04a6843
+```
+| case | outcome | tier |
+|---|---|---|
+| `clean_continuation` | continue | AUTO |
+| `review_required_correction` | revise | AUTO |
+| `ci_failure` | revise | AUTO |
+| `stale_sha_mismatched_review` | stop_for_owner | ASK |
+| `owner_gated_stop` | stop_for_owner | HARD_DENY |
+| `m0_t031_accepted_lifecycle` | stage_complete | ASK |
+| `b015_sentinel_failure` | **halt** | **HARD_DENY** |
+| `m0_t028_detection_only_stop` | stop_for_owner | ASK |
+
+**Live `start` against FAKE executables** (both modes really dispatch; no provider, no network):
+```
+start --mode shadow      dispatched=True  final=POLICY_CHECK   forwarded=[]  touches counted=0/2
+  cycle 1: START_CLAUDE -> CLAUDE_RUNNING -> CHECKPOINT_RECEIVED -> COLLECT_EVIDENCE
+           -> CODEX_REVIEW -> VALIDATE_DECISION -> POLICY_CHECK
+           WOULD have forwarded -> FORWARD_PROMPT, digest c16e8214...   (forwarded nothing)
+
+start --mode supervised  dispatched=True  final=WAIT_FOR_OWNER stopped=operator_declined  forwarded=[]
+
+start --mode supervised --approve-prompt-digest c16e8214f3a884d4...
+                         dispatched=True  final=CLAUDE_RUNNING  forwarded=True
+  path: ... -> POLICY_CHECK -> WAIT_FOR_OWNER -> FORWARD_PROMPT -> CLAUDE_RUNNING
+  forwarded message ids: ['run-e2e-supervised/fwd/1/c16e8214f3a884d4']
+```
+
+## 5. Self-checks
+
+- **No effort key:** **zero** occurrences of `effort` in any of the 17 new files (measured per-file). The only literals in the package remain the Phase 1/2 deny-list constants and refusal tests.
+- **argv-only:** `grep -rn "shell=True"` → two **prose** hits (a `process.py` docstring, a README line); **zero code occurrences**. Every launch site passes an argv array with `shell=False` explicit.
+- **Bypass flags:** no new literal. `grep -- "--dangerously|--yolo|--allow-dangerously"` returns only `process.py:71-75` (the deny list), the `policy.py` injection regex + its explanatory comment, and one Phase 2 test comment. Phase 4 files build hostile inputs *from* the constants.
+- **Stdlib-only:** 51 files, 37 distinct top-level imports, checked against `sys.stdlib_module_names` → **"NONE - 100% standard library"**. No dependency manifest or lockfile touched.
+- **Containment:** `git status --porcelain -uall` shows **exactly 25 entries, all under `tools/agent_supervisor/**` and `tools/test_agent_supervisor_*.py`**. Explicit grep for `.claude/`, `.github/`, `services/`, `apps/`, `packages/`, `project-control/`, `render.yaml` → **NONE**.
+- **Owner gates:** no merge, acceptance, hold release, deploy, G6, credential, or payment action taken or automated. `limited-auto` remains unimplemented; refused by name in `LoopConfig`, in `cmd_start`, and by `doctor`.
+- **Deliberate omission (disclosed):** I initially wrote an agent-memory file capturing the defect-4 lesson, then **reverted it** — `.claude/**` is a forbidden path for this packet and Phase 3 set that precedent. The learning is preserved in §3 above instead, for the path owner to add post-task.
+
+## 6. §18 stop-condition statement
+
+**No Section 18 stop condition fired.** Specifically checked and cleared: a safe Windows process-control strategy is now *proven as the default*, not merely available; the cross-CLI protocol is versioned, integrity-bound, and fuzz-tested; every external action is idempotent or reconciled (crash-injected before and after each boundary); the never-send rules are enforced and seeded-secret-tested; circuit breakers are enforced and injected-failure-tested; recovery distinguishes a proven safe checkpoint from an ambiguous in-flight effect; startup/wake recovery never blindly reruns an effect; no active unit needs termination for a context/usage threshold; the restore drill **passes**; no runtime secret is stored; **no bypass permission is required**; **allowed paths did not need to expand**; no directive conflict was discovered.
+
+## 7. Limitations, assumptions, blockers
+
+- **Assumption for G3:** that binding the supervised approval to the **instruction fields** rather than the rendered prompt bytes is the correct reading of §13.5 ("bind every approval to a digest of: tool name and full input…"). My reasoning is in §3 defect 4 and in a code comment; the alternative (scrubbing volatile lines from rendered text) is strictly more fragile. **Flagging this as the single most reviewable judgement call in Phase 4.**
+- **Assumption for G3:** that adding `origin_zone` to `ProposedAction` (default `WORKER`) is the right way to make invariant 10 expressible, rather than a separate reviewer-specific evaluator.
+- **Assumption for G3:** that the `owner_gated_stop` fixture correctly expects `HARD_DENY`/`protected_path_mutation` rather than `owner_gate:policy_exception` — the S4.4 hard-deny runs *before* the owner-gate branch, which is the stricter and earlier answer. The owner-gate ASK path is exercised by the two other fixtures where the target is inside `allowed_paths`. My first expectation here was wrong and I corrected the fixture, not the engine.
+- Still open from Phases 1–3: **CI does not invoke the supervisor test files.** Wiring the six new files plus the thirteen existing ones needs a `.github/**` edit — a forbidden path for this packet, so it needs separate authorization. This is now 19 suites / 1042 tests running only locally.
+- The **control-response wrapper** remains `UNVERIFIED` in `doctor` on a fresh runtime, correctly — Phase 3's one live probe predated the persistence wiring and I did not re-run it or fabricate a record.
+- I did **not** write `project-control/reports/M0-T036-producer-report.md`; this return is the producer evidence, for you to append verbatim (same as Phases 1–3).
+- No ledger command, `git commit`/`push`, or `gh` was run. The single `--ff-only` merge in §0 is the only git state change, and it was the prescribed first act.
+- **Network: none.** Zero provider calls this phase. Every Claude, Codex, and `schtasks` in the tests and in the end-to-end `start` runs is a local fake script.
+
+**Measurement note (D-006):** scope was Phase 4 of 5 (validation), built on Phases 1–3 in an isolated worktree. `/usage` is unobservable from inside a spawn, so I cannot report consumption; no token, time, or efficiency claim is made.
+
+**Model disclosure (Phase 4):** spawned explicitly as **Opus 5** (`claude-opus-5[1m]`), the R298 producer ceiling. No effort setting applied anywhere.
+
+---
+
+**Key file paths (repository-relative; redacted from absolute form at preservation per R024):** `<WORKTREE>/tools/agent_supervisor/{loop.py, replay.py, replay_corpus/, policy.py, process.py, cli.py, README.md}` and `<WORKTREE>/tools/test_agent_supervisor_{loop,replay,invariants,adversarial,crash,fuzz}.py`

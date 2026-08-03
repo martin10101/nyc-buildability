@@ -1,39 +1,39 @@
-# Agent Supervisor — Phase 3 status
+# Agent Supervisor — Phase 4 status
 
 This is the deterministic Codex ↔ Claude supervisor bridge described by owner
-directive **D-007**. It is being built in five phases. **Phases 1, 2 and 3 exist
-today.**
+directive **D-007**. It is being built in five phases. **Phases 1, 2, 3 and 4
+exist today.**
 
-**Nothing in this package runs your project unattended.** There is still no loop
-that starts Claude on its own, no push, no merge, and no acceptance. The
-unattended writing mode (`limited-auto`) is not implemented at all, and turning
-it on later is a separate, explicit decision that only you can make.
+**Nothing in this package runs your project unattended.** The loop exists now,
+but it only runs in the two modes that cannot act on their own: `shadow` (which
+forwards *nothing*) and `supervised` (where you approve every single prompt).
+There is still no push, no merge, and no acceptance. The unattended writing mode
+(`limited-auto`) is not implemented at all, and turning it on later is a
+separate, explicit decision that only you can make.
 
-What Phase 3 added — *endurance*, the part that makes long unattended operation
-survivable:
+What Phase 4 added — *validation*, the part that proves the first three phases
+actually behave:
 
-* **rotation** — deciding, before a unit starts, whether to hand over to a fresh
-  session, and never interrupting a unit that is already running;
-* **recovery** — what to do after a crash, a reboot, sleep, or a power cut,
-  including proving whether a half-finished external action actually happened;
-* **waiting** — when a provider says "you have hit a limit, come back at X",
-  parsing X safely, sleeping at the operating-system level, and waking up;
-* **locking** — exactly one supervisor per checkout, ever;
-* **telling you things** — view-only notifications and authenticated,
-  single-use remote approvals;
-* **not losing your work** — quarantine copies, retention limits, and a restore
-  drill that actually destroys and restores a file;
-* **changing models safely** — the authenticated, confirmation-bound path;
-* **audit anchoring** — the Option A mechanism you chose (produced, not published).
-
-`start` now does everything that happens *before* the first provider call and
-then stops. The loop itself is Phase 4.
+* **the assembled loop** — the pieces Phases 1–3 built are now wired into one
+  cycle (start Claude → checkpoint → collect evidence → Codex review → validate
+  → policy → forward), with every step a real state-machine transition;
+* **shadow mode** — runs the whole cycle against a real workflow and forwards
+  nothing, recording what it *would* have done and counting how many times it
+  would have had to stop and ask you;
+* **supervised mode** — the same loop, except each prompt is held until you
+  approve that exact prompt by its digest;
+* **replay** — feeds eight real cases out of this repository's own history back
+  through the policy engine and checks that it stops where the humans stopped;
+* **containment** — on Windows, every process the supervisor starts now runs
+  inside a Job Object, so nothing it spawns can outlive it;
+* **the adversarial matrix** — several hundred tests that attack the supervisor
+  the way a compromised worker or a confused CLI would.
 
 ---
 
 ## What you can actually run today
 
-Every operator command from the directive except `replay`.
+**Every** operator command from the directive. Nothing is deferred any more.
 
 **Look at things (read-only, changes nothing):**
 
@@ -45,7 +45,16 @@ python -m tools.agent_supervisor schedule-status
 python -m tools.agent_supervisor verify-controller
 python -m tools.agent_supervisor pending-approvals
 python -m tools.agent_supervisor autostart-plan
+python -m tools.agent_supervisor replay
 ```
+
+`replay` is worth running first if you want to see what this thing believes.
+It takes eight moments out of this repository's real history — a clean stretch of
+work, a review that demanded corrections, a red CI job, a review that no longer
+covered the branch head, a decision that was yours to make, M0-T031's completed
+lifecycle, the B-015 sentinel failure, and M0-T028's contracted stop — and asks:
+*would this supervisor have stopped where you stopped?* It calls no model and
+writes nothing.
 
 **Stop and start things:**
 
@@ -55,7 +64,25 @@ python -m tools.agent_supervisor resume
 python -m tools.agent_supervisor stop
 python -m tools.agent_supervisor emergency-stop
 python -m tools.agent_supervisor start --mode shadow
+python -m tools.agent_supervisor start --mode supervised
 ```
+
+`start` runs the safety sequence first, every time — one supervisor per checkout,
+the after-a-crash check, and the integrity checks on its own records. Then it
+looks at whether you gave it everything it needs to actually run:
+
+```
+python -m tools.agent_supervisor start --mode shadow \
+    --claude-executable <path> --codex-executable <path> \
+    --task-packet project-control/tasks/M0-T036.json \
+    --config <path>/config.toml --model-selection <path>/model_selection.toml
+```
+
+If any of those five is missing it stops and tells you which one. It never
+searches your PATH for a tool and never picks a default that would result in
+contacting a provider. In `supervised` mode it prints the exact prompt it wants
+to send and stops; you re-run with `--approve-prompt-digest <digest>` if you want
+that exact prompt to go out, and nothing else will.
 
 **Answer, revoke, hand over, and change models:**
 
@@ -170,8 +197,7 @@ questions, and whether the audit chain still verifies. It reads; it never writes
 
 ### Everything else
 
-`replay` is the only operator command still deferred. It exists, and it refuses
-clearly, naming the phase that will implement it (Phase 4).
+Nothing is deferred. Every command in the directive's list is implemented.
 
 ---
 
@@ -188,7 +214,7 @@ clearly, naming the phase that will implement it (Phase 4).
 | `redaction.py` | **complete for Phase 1.** Pattern- and key-based redaction before anything is persisted, with a reported count. |
 | `manifest.py` | **complete for Phase 1.** Controller manifest generation and verification; halts on any change. `model_selection.toml` is deliberately excluded. |
 | `circuit_breakers.py` | **complete for Phase 1.** Counter and gauge breakers with warn (notify) and trip (pause) verdicts. Wiring them to live resource sampling is Phase 2/3. |
-| `process.py` | **mostly complete.** Argv-array-only execution, hard-deny argument refusal, minimal child environment, per-process timeouts, process-tree termination, executable identity and repo-shadow refusal. See the Windows note below. |
+| `process.py` | **complete for Phase 4.** Argv-array-only execution, hard-deny argument refusal, minimal child environment, per-process timeouts, executable identity and repo-shadow refusal, and `ProcessContainer` — the Job Object is now the DEFAULT container on Windows, with breakaway flags refused, nested-job failure detected, and the taskkill fallback recorded rather than silently taken. |
 | `policy.py` | **complete for Phase 2.** The four-tier engine: HARD-DENY (with `DENY_AND_CONTINUE` vs `DENY_AND_HALT`), AUTO, NOTIFY (notify-exactly-once ledger), ASK. Owner standing grants, per-provider model selection, the five-clause independence check, injection labelling, and path canonicalization. A model recommendation may only *stricten*. |
 | `broker.py` | **complete for Phase 2.** Digest-bound approvals over the full Section 13.5 binding, recompute-before-execute invalidation, single-use approvals, the queue, the Codex advisory step bounded to pre-marked categories, and `revoke-all`. Never selects "always allow"; contains no file-write path at all. |
 | `claude_runner.py` | **complete for Phase 2.** The confirmed CLI shape, tolerant stream parsing, checkpoint extraction and validation, and the `can_use_tool` control loop wired to the broker. See the caveat below about the response wrapper. |
@@ -206,18 +232,19 @@ clearly, naming the phase that will implement it (Phase 4).
 | `retention.py` | **complete for Phase 3.** Pre-operation manifests, quarantine copies verified by hash, per-class retention limits, deletion only of artifacts whose identity is proven three ways, and a restore drill that really destroys and restores a file. |
 | `anchor.py` | **mechanism only, by design.** Produces the anchor content and the exact push argv for the dedicated anchor branch. Executes nothing (see caveat 1). |
 | `preflight.py` | **complete for Phase 3.** Capability probes, including the opt-in live control-response round trip. |
-| `cli.py` | **every S12.1 command is live except `replay`.** `start` runs the pre-dispatch sequence and stops; `limited-auto` refuses by name. |
+| `loop.py` | **complete for Phase 4.** The assembled cycle over the real S7 table. Shadow forwards nothing and cannot be made to (`assert_forwarding_allowed` raises). Supervised holds every prompt at `WAIT_FOR_OWNER` until an operator approves that exact digest, and denies when no approval path is reachable. Exactly-once forwarding through the transactional outbox, including the crash window between enqueue and send. The owner-touch ledger counts would-be synchronous stops and can widen nothing. |
+| `replay.py` | **complete for Phase 4.** The replay engine over `replay_corpus/`. No process launch, no provider adapter, no filesystem write — all three proven from the module source. Corpus integrity is checked against a manifest of per-file digests. |
+| `cli.py` | **every S12.1 command is live; `DEFERRED_COMMANDS` is empty.** `start` always runs the pre-dispatch sequence and dispatches only when every input is named explicitly; `limited-auto` refuses by name. |
 
 ### Not built yet (and not pretended)
 
-* **The supervisor loop.** Nothing yet strings checkpoint → evidence → review →
-  policy → forward together. `start` stops before the first provider call.
-* **The replay engine** and the historical corpus (Phase 4).
 * **Push EXECUTION.** The push *checks* are complete; no push happens.
 * **Anchor publication.** The mechanism exists; publishing is gated (caveat 1).
 * **The named-pipe server loop.** Creating a properly restricted pipe is proven;
   running a long-lived unattended pipe server is not built (caveat 4).
-* **Job Objects as the default container** for every launched worker (caveat 2).
+* **The Phase 5 shadow pilot** — one real controlled task run in shadow mode,
+  measured against the owner-touch budget, ending in a decision packet.
+* **`limited-auto`.** Not implemented at all, in any form.
 
 ---
 
@@ -249,21 +276,32 @@ Neither is assumed. Until both hold, the honest statement is: *anchors are
 produced locally and detect a rewritten or truncated log on this machine only.*
 `doctor` and `activation_status()` both say so.
 
-### 2. Windows process control — what is proven vs deferred
+### 2. Windows process control — the Job Object is now the default
 
-Proven now, with tests that spawn real processes:
+This caveat is **closed** in Phase 4. The Job Object is no longer an opt-in
+mechanism; it is the container every launched child gets on Windows, through
+`ProcessContainer`. Proven with tests that spawn real processes:
 
-* terminating a process **and its descendants** (`taskkill /T /F`, invoked as an
-  argument array, never a shell string);
 * creating a Windows **Job Object**, configuring it to kill everything on close,
-  assigning a real child to it, and confirming the child dies when the job
-  closes.
+  assigning a real child, asking the *kernel* (`IsProcessInJob`) whether the
+  child is really inside it, and confirming the child dies when the job closes;
+* terminating a process **and its descendants** via the fallback path
+  (`taskkill /T /F`, invoked as an argument array, never a shell string).
 
-Still deferred (now to **Phase 4**): making the Job Object the *default*
-container for every launched worker — that needs breakaway handling and
-compatibility with hosts that already place the shell inside a job. The taskkill
-path remains the default and the proven Job Object stays available. Phase 3 did
-not change this and does not claim to have.
+Two things worth knowing about how it behaves:
+
+* **Breakaway is refused, deliberately.** `JOB_OBJECT_LIMIT_BREAKAWAY_OK`,
+  `JOB_OBJECT_LIMIT_SILENT_BREAKAWAY_OK`, and `CREATE_BREAKAWAY_FROM_JOB` all
+  exist to let a child *escape* the job. A containment mechanism must not offer
+  its own bypass, so `assert_no_breakaway()` refuses all three.
+* **The fallback is recorded, never silent.** If a host refuses to create a job,
+  or refuses to nest ours inside one the process is already in (pre-Windows-8
+  behaviour), the container degrades to `taskkill` and writes the reason into
+  `ContainmentReport.fallback_reason`. `taskkill` is genuinely weaker — a
+  grandchild spawned between enumeration and kill can escape it, where it could
+  not escape a job — so nothing is allowed to claim job-strength containment it
+  did not actually get. `doctor`'s `containment_default` check reports which one
+  this host gives you.
 
 ### 3. The Claude control protocol — now verified, but verify it again after an upgrade
 
@@ -443,7 +481,25 @@ python -m unittest tools.test_agent_supervisor_scheduler
 python -m unittest tools.test_agent_supervisor_recovery
 python -m unittest tools.test_agent_supervisor_ipc
 python -m unittest tools.test_agent_supervisor_endurance
+python -m unittest tools.test_agent_supervisor_loop
+python -m unittest tools.test_agent_supervisor_replay
+python -m unittest tools.test_agent_supervisor_invariants
+python -m unittest tools.test_agent_supervisor_adversarial
+python -m unittest tools.test_agent_supervisor_crash
+python -m unittest tools.test_agent_supervisor_fuzz
 ```
+
+The last six are Phase 4's. Three of them are worth explaining:
+
+* **`invariants`** is a register: each of the fifteen executable invariants in
+  the directive has a test whose *name* carries its number, and a meta-test
+  fails if any invariant loses its coverage.
+* **`crash`** kills the journal handle and reopens it at every external-effect
+  and journal boundary — before and after each one — and checks that the run
+  either resumes exactly or refuses, never repeating a performed effect.
+* **`fuzz`** is seeded (`SEED = 20260803`), so it fuzzes the same corpus on every
+  machine. A fuzz test that only sometimes finds a defect is not evidence. It
+  found a real one: see "a defect this phase found and fixed", below.
 
 Standard-library `unittest` only — no new dependency anywhere in this package.
 The provider executables in the tests are **fake** local scripts, and `schtasks`
@@ -452,6 +508,29 @@ network call, uses a token, or touches your real runtime directory.
 
 The only code path in the package that contacts a provider is `doctor --live`,
 which is opt-in, bounded to one turn, and never runs during the test suite.
+
+---
+
+## A defect this phase found and fixed
+
+The path-normalization fuzzer generated `.env;/nul` and **crashed the policy
+engine**. On Windows, `os.path.realpath` maps a trailing `nul` to the device
+`\\.\nul`, and `os.path.relpath` then raises `ValueError` rather than returning a
+path. `resolve_target` promises never to raise and always to return a named
+reason; instead it propagated an exception out of the classifier.
+
+That is a fail-open shape: an unhandled exception in the middle of a policy
+decision is not a denial, it is a crash whose consequences depend entirely on who
+catches it. The fix refuses every Windows reserved device name (`nul`, `con`,
+`aux`, `prn`, `com1`–`com9`, `lpt1`–`lpt9`) *before* resolution is attempted,
+returns the existing `device_path` reason, and additionally guards the
+`realpath`/`relpath` calls so a cross-mount comparison degrades to a refusal
+instead of an exception.
+
+The check runs on every platform, not just Windows, so a Linux CI run enforces
+the same rule a Windows host does. Ordinary names that merely *contain* a device
+word — `console.py`, `nullable.py`, `connection.py` — are unaffected, and there is
+a test for that too. The fix only ever adds a denial; it removes none.
 
 ---
 

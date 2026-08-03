@@ -1,10 +1,12 @@
 #!/usr/bin/env python3
 """Agent Supervisor - deterministic Codex <-> Claude supervisor bridge (D-007).
 
-PHASES 1-3. Phase 1 built the deterministic substrate; Phase 2 added the policy
-engine and the provider adapters; Phase 3 adds endurance - rotation, recovery,
+PHASES 1-4. Phase 1 built the deterministic substrate; Phase 2 added the policy
+engine and the provider adapters; Phase 3 added endurance - rotation, recovery,
 durable wake scheduling, notifications, retention, and the authenticated
-model-change path:
+model-change path; Phase 4 ASSEMBLES them into the loop, adds the replay engine
+and its historical corpus, makes the Windows Job Object the default container,
+and runs the Section 15 matrices against all of it:
 
     config.py           immutable controller config + runtime model selection (D-007 S3.1)
     models.py           dataclasses for checkpoint / decision / envelope / journal records
@@ -34,12 +36,14 @@ model-change path:
     retention.py        pre-op manifests, quarantine, retention, restore     [P3]
     anchor.py           Option A audit anchoring - MECHANISM ONLY (S13.12)   [P3]
     preflight.py        capability probes incl. the control-response probe   [P3]
-    cli.py              operator commands (S12.1)
+    loop.py             the assembled shadow/supervised loop (S7, S12)       [P4]
+    replay.py           the replay engine over replay_corpus/ (S12, S15)     [P4]
+    cli.py              operator commands (S12.1) - none deferred
 
-NOT in this build (deliberately): the assembled supervisor LOOP (`start` runs
-preflight and recovery classification and then stops before dispatching any
-provider work), the replay engine and the historical corpus, push EXECUTION, and
-Option A anchor PUBLICATION. Those are Phases 4-5 and the owner's activation.
+NOT in this build (deliberately, and named rather than implied): push EXECUTION,
+Option A anchor PUBLICATION, the long-lived named-pipe IPC server loop, and the
+Phase 5 shadow pilot with its decision packet. `limited-auto` is not implemented
+at all.
 
 The supervisor is a coordinator, evidence collector, and state machine. It is
 NOT a source of project truth: `project-control/` and git remain authoritative.
@@ -59,7 +63,7 @@ __all__ = [
 #: Version of the deterministic controller itself. Recorded in the manifest, in
 #: every audit record, and in the durable journal so a resumed run can refuse to
 #: continue under a different controller build (D-007 S7, S13.1).
-CONTROLLER_VERSION = "0.3.0-phase3"
+CONTROLLER_VERSION = "0.4.0-phase4"
 
 #: Version of the cross-CLI envelope protocol (D-007 S8.5). Bumped whenever the
 #: envelope's required field set or framing rules change.
@@ -69,4 +73,4 @@ PROTOCOL_VERSION = "1.0.0"
 SCHEMA_VERSION = "1.0.0"
 
 #: Implementation phase this build corresponds to (D-007 S17).
-PHASE = 3
+PHASE = 4

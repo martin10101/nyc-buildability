@@ -16,7 +16,7 @@ Hard rules this module exists to make structural rather than aspirational:
 * **Smallest practical child environment**, and environment contents are never
   logged.
 
-Windows process-tree control - what is PROVEN here vs deferred:
+Windows process-tree control - what is PROVEN here:
 
     PROVEN in Phase 1  `terminate_process_tree()` via `taskkill /T /F`, exercised
                        against a real spawned child tree in the Phase 1 tests;
@@ -24,12 +24,31 @@ Windows process-tree control - what is PROVEN here vs deferred:
     PROVEN in Phase 1  `WindowsJobObject` creation, configuration with
                        JOB_OBJECT_LIMIT_KILL_ON_JOB_CLOSE, assignment of a real
                        child, and kill-on-close, via stdlib `ctypes`.
-    DEFERRED to Phase 3 Using a Job Object as the DEFAULT containment for every
-                       launched worker (including breakaway handling, nested job
-                       compatibility on hosts that already job-object the shell,
-                       and resource ceilings via job limits). Phase 1 wires the
-                       taskkill fallback as the default and keeps the Job Object
-                       as a proven, opt-in mechanism.
+    PHASE 4 (here)     `ProcessContainer` makes the Job Object the DEFAULT
+                       container for every launched child on Windows. Every
+                       `run()` and every `ClaudeRunner` unit now launches inside
+                       a kill-on-close job unless the host refuses one, in which
+                       case the container falls back to `taskkill /T /F` and
+                       RECORDS the fallback reason instead of silently degrading.
+
+Breakaway and nested jobs (Phase 4, the carried deferral):
+
+* The container deliberately does NOT set `JOB_OBJECT_LIMIT_BREAKAWAY_OK` or
+  `JOB_OBJECT_LIMIT_SILENT_BREAKAWAY_OK`. Those flags exist to let a child ESCAPE
+  the job; a containment mechanism must never opt into its own bypass. They are
+  listed in `FORBIDDEN_JOB_LIMIT_FLAGS` and `assert_no_breakaway()` refuses them
+  wherever a caller could supply limit flags or creation flags.
+* `CREATE_BREAKAWAY_FROM_JOB` is likewise refused as a creation flag.
+* Nested jobs: since Windows 8 / Server 2012 a process may belong to a job
+  hierarchy, so assigning a child that is already inside the terminal's or CI
+  runner's job normally succeeds. When it does not (an old host, or a parent job
+  without nesting), `AssignProcessToJobObject` fails with ERROR_ACCESS_DENIED and
+  the container records `nested_job_assignment_denied` and falls back to
+  `taskkill /T /F`. The fallback is reported, never assumed.
+* `taskkill` fallback is weaker on purpose-honesty grounds: a grandchild spawned
+  between enumeration and kill can escape `taskkill`; it cannot escape a job it
+  was created inside. `ContainmentReport.kind` always says which one was actually
+  achieved so no caller can claim job-strength containment it did not get.
 
 Phase 1 scope note: `resolve_executable()` implements the repo-shadowing refusal
 and identity recording of S13.4. Comparing that identity against an APPROVED
@@ -259,6 +278,45 @@ _JOB_OBJECT_LIMIT_KILL_ON_JOB_CLOSE = 0x00002000
 _JOB_OBJECT_EXTENDED_LIMIT_INFORMATION = 9
 _PROCESS_SET_QUOTA = 0x0100
 _PROCESS_TERMINATE = 0x0001
+_PROCESS_QUERY_LIMITED_INFORMATION = 0x1000
+
+#: Job limit flags that would let a contained child ESCAPE the job. A containment
+#: mechanism never opts into its own bypass, so these are refused rather than
+#: offered as options (S13.3 "process ceilings", S13.12 invariant 2).
+_JOB_OBJECT_LIMIT_BREAKAWAY_OK = 0x00000800
+_JOB_OBJECT_LIMIT_SILENT_BREAKAWAY_OK = 0x00001000
+FORBIDDEN_JOB_LIMIT_FLAGS: dict[str, int] = {
+    "JOB_OBJECT_LIMIT_BREAKAWAY_OK": _JOB_OBJECT_LIMIT_BREAKAWAY_OK,
+    "JOB_OBJECT_LIMIT_SILENT_BREAKAWAY_OK": _JOB_OBJECT_LIMIT_SILENT_BREAKAWAY_OK,
+}
+
+#: The creation flag that lets a NEW process start outside its parent's job.
+_CREATE_BREAKAWAY_FROM_JOB = 0x01000000
+FORBIDDEN_CREATION_FLAGS: dict[str, int] = {
+    "CREATE_BREAKAWAY_FROM_JOB": _CREATE_BREAKAWAY_FROM_JOB,
+}
+
+_ERROR_ACCESS_DENIED = 5
+
+#: Containment kinds, strongest first.
+CONTAINMENT_JOB_OBJECT = "job_object"
+CONTAINMENT_PROCESS_GROUP = "process_group"
+CONTAINMENT_TASKKILL = "taskkill"
+
+
+def assert_no_breakaway(*, limit_flags: int = 0, creation_flags: int = 0) -> None:
+    """Refuse any flag that would let a contained child escape its container."""
+    for name, bit in FORBIDDEN_JOB_LIMIT_FLAGS.items():
+        if limit_flags & bit:
+            raise ProcessError(
+                "breakaway_flag_refused",
+                f"{name} lets an assigned process leave the job; containment never enables "
+                f"its own bypass")
+    for name, bit in FORBIDDEN_CREATION_FLAGS.items():
+        if creation_flags & bit:
+            raise ProcessError(
+                "breakaway_flag_refused",
+                f"{name} starts the child OUTSIDE the supervisor's job object; refused")
 
 
 def job_objects_available() -> bool:
@@ -334,6 +392,9 @@ class WindowsJobObject:
         self._kernel32.SetInformationJobObject.restype = wintypes.BOOL
         self._kernel32.SetInformationJobObject.argtypes = [
             wintypes.HANDLE, ctypes.c_int, ctypes.c_void_p, wintypes.DWORD]
+        self._kernel32.IsProcessInJob.restype = wintypes.BOOL
+        self._kernel32.IsProcessInJob.argtypes = [
+            wintypes.HANDLE, wintypes.HANDLE, ctypes.POINTER(wintypes.BOOL)]
 
         handle = self._kernel32.CreateJobObjectW(None, None)
         if not handle:
@@ -341,8 +402,13 @@ class WindowsJobObject:
                                f"CreateJobObjectW failed: {ctypes.get_last_error()}")
         self._handle = handle
 
+        # Kill-on-close ONLY. `assert_no_breakaway` proves no escape bit is set.
+        limit_flags = _JOB_OBJECT_LIMIT_KILL_ON_JOB_CLOSE
+        assert_no_breakaway(limit_flags=limit_flags)
+        self.limit_flags = limit_flags
+
         info = JOBOBJECT_EXTENDED_LIMIT_INFORMATION()
-        info.BasicLimitInformation.LimitFlags = _JOB_OBJECT_LIMIT_KILL_ON_JOB_CLOSE
+        info.BasicLimitInformation.LimitFlags = limit_flags
         ok = self._kernel32.SetInformationJobObject(
             handle, _JOB_OBJECT_EXTENDED_LIMIT_INFORMATION,
             ctypes.byref(info), ctypes.sizeof(info))
@@ -353,7 +419,13 @@ class WindowsJobObject:
                                f"SetInformationJobObject failed: {error}")
 
     def assign_pid(self, pid: int) -> None:
-        """Assign a running process to this job."""
+        """Assign a running process to this job.
+
+        A nested-job refusal (ERROR_ACCESS_DENIED on a host whose parent job does
+        not permit nesting) raises `nested_job_assignment_denied` specifically, so
+        `ProcessContainer` can fall back to taskkill and SAY it fell back rather
+        than reporting job-strength containment it did not achieve.
+        """
         ctypes = self._ctypes
         process_handle = self._kernel32.OpenProcess(
             _PROCESS_SET_QUOTA | _PROCESS_TERMINATE, False, pid)
@@ -362,9 +434,41 @@ class WindowsJobObject:
                                f"OpenProcess({pid}) failed: {ctypes.get_last_error()}")
         try:
             if not self._kernel32.AssignProcessToJobObject(self._handle, process_handle):
+                error = ctypes.get_last_error()
+                if error == _ERROR_ACCESS_DENIED:
+                    raise ProcessError(
+                        "nested_job_assignment_denied",
+                        f"AssignProcessToJobObject({pid}) denied: this host does not permit "
+                        f"the supervisor's job to nest inside the job the process is already "
+                        f"in (pre-Windows-8 behaviour, or a parent job created without "
+                        f"nesting). The caller must fall back and record the fallback")
                 raise ProcessError(
                     "assign_job_failed",
-                    f"AssignProcessToJobObject failed: {ctypes.get_last_error()}")
+                    f"AssignProcessToJobObject failed: {error}")
+        finally:
+            self._kernel32.CloseHandle(process_handle)
+
+    def contains_pid(self, pid: int) -> bool:
+        """True when `pid` is a member of THIS job (IsProcessInJob).
+
+        This is the containment PROOF: it asks the kernel, not the code that just
+        tried to assign.
+        """
+        ctypes = self._ctypes
+        from ctypes import wintypes
+
+        process_handle = self._kernel32.OpenProcess(
+            _PROCESS_QUERY_LIMITED_INFORMATION, False, pid)
+        if not process_handle:
+            raise ProcessError("open_process_failed",
+                               f"OpenProcess({pid}) failed: {ctypes.get_last_error()}")
+        try:
+            result = wintypes.BOOL(0)
+            if not self._kernel32.IsProcessInJob(process_handle, self._handle,
+                                                 ctypes.byref(result)):
+                raise ProcessError("is_process_in_job_failed",
+                                   f"IsProcessInJob failed: {ctypes.get_last_error()}")
+            return bool(result.value)
         finally:
             self._kernel32.CloseHandle(process_handle)
 
@@ -383,6 +487,128 @@ class WindowsJobObject:
 
 
 # --------------------------------------------------------------------------
+# The DEFAULT container (Phase 4)
+# --------------------------------------------------------------------------
+
+
+@dataclasses.dataclass(frozen=True)
+class ContainmentReport:
+    """What containment was ACTUALLY achieved, never what was hoped for."""
+
+    kind: str
+    job_object_used: bool
+    adopted_pids: tuple[int, ...] = ()
+    fallback_reason: str = ""
+    verified_in_job: bool = False
+
+    def to_dict(self) -> dict[str, Any]:
+        return dataclasses.asdict(self)
+
+
+class ProcessContainer:
+    """Default containment for every child the supervisor launches.
+
+    On Windows the container IS a kill-on-close Job Object: a child assigned to
+    it, and every descendant that child creates, dies when the job handle closes,
+    with no enumeration race. `taskkill /T /F` remains as the fallback for hosts
+    where a job cannot be created or assigned, and the fallback is recorded in
+    `ContainmentReport.fallback_reason` so nothing claims job-strength
+    containment it did not get.
+
+    Off Windows the container is the POSIX process group (`start_new_session` +
+    `killpg`), which `run()` already establishes.
+    """
+
+    def __init__(self, *, prefer_job_object: bool = True) -> None:
+        self.prefer_job_object = prefer_job_object
+        self._job: "WindowsJobObject | None" = None
+        self._pids: list[int] = []
+        self._fallback_reason = ""
+        self._verified = False
+        if os.name != "nt":
+            self.kind = CONTAINMENT_PROCESS_GROUP
+            return
+        if not prefer_job_object:
+            self.kind = CONTAINMENT_TASKKILL
+            self._fallback_reason = "caller explicitly disabled the job object"
+            return
+        try:
+            self._job = WindowsJobObject()
+            self.kind = CONTAINMENT_JOB_OBJECT
+        except Exception as exc:  # host refused a job object
+            self._job = None
+            self.kind = CONTAINMENT_TASKKILL
+            self._fallback_reason = f"job object unavailable: {exc}"
+
+    @property
+    def job_object_used(self) -> bool:
+        return self._job is not None
+
+    def adopt(self, pid: int) -> str:
+        """Put a running child under containment. Returns the kind achieved."""
+        self._pids.append(pid)
+        if self._job is None:
+            return self.kind
+        try:
+            self._job.assign_pid(pid)
+        except ProcessError as exc:
+            # Nested-job refusal or a race with an already-exited child: degrade
+            # HONESTLY to taskkill rather than pretending the job holds it.
+            self._job.close()
+            self._job = None
+            self.kind = CONTAINMENT_TASKKILL
+            self._fallback_reason = f"{exc.code}: {exc.message}"
+            return self.kind
+        try:
+            self._verified = self._job.contains_pid(pid)
+        except ProcessError:
+            self._verified = False
+        return self.kind
+
+    def terminate_all(self) -> bool:
+        """Terminate every adopted process tree. Returns True when all succeeded."""
+        if self._job is not None:
+            self._job.close()          # kill-on-close terminates the whole job
+            self._job = None
+            return True
+        ok = True
+        for pid in self._pids:
+            try:
+                ok = terminate_process_tree(pid) and ok
+            except ProcessError:
+                ok = False
+        return ok
+
+    def close(self) -> None:
+        """Release the container. On Windows this KILLS anything still inside."""
+        if self._job is not None:
+            self._job.close()
+            self._job = None
+
+    def report(self) -> ContainmentReport:
+        return ContainmentReport(
+            kind=self.kind,
+            job_object_used=self._job is not None or self.kind == CONTAINMENT_JOB_OBJECT,
+            adopted_pids=tuple(self._pids),
+            fallback_reason=self._fallback_reason,
+            verified_in_job=self._verified,
+        )
+
+    def __enter__(self) -> "ProcessContainer":
+        return self
+
+    def __exit__(self, *_exc: Any) -> None:
+        self.close()
+
+
+def default_containment_kind() -> str:
+    """The containment `run()` uses on this host with no configuration at all."""
+    if os.name != "nt":
+        return CONTAINMENT_PROCESS_GROUP
+    return CONTAINMENT_JOB_OBJECT if job_objects_available() else CONTAINMENT_TASKKILL
+
+
+# --------------------------------------------------------------------------
 # Running
 # --------------------------------------------------------------------------
 
@@ -396,6 +622,8 @@ class ProcessResult:
     duration_seconds: float
     timed_out: bool = False
     tree_terminated: bool = False
+    containment: str = ""
+    containment_fallback_reason: str = ""
 
     @property
     def ok(self) -> bool:
@@ -409,11 +637,15 @@ def run(
     env: Mapping[str, str] | None = None,
     timeout: float = DEFAULT_TIMEOUT_SECONDS,
     input_text: str | None = None,
+    container: "ProcessContainer | None" = None,
+    use_job_object: bool = True,
 ) -> ProcessResult:
     """Run a bounded subprocess from an argv array. Never uses a shell.
 
-    On timeout the whole process TREE is terminated and `timed_out` is True. A
-    timeout is never interpreted as success (S14).
+    Phase 4: the child is launched INSIDE a `ProcessContainer`, which on Windows
+    is a kill-on-close Job Object by default. On timeout the whole contained tree
+    is terminated and `timed_out` is True. A timeout is never interpreted as
+    success (S14). `result.containment` records the containment actually achieved.
     """
     checked = assert_argv_safe(argv)
     child_env = dict(env) if env is not None else minimal_env()
@@ -432,20 +664,29 @@ def run(
     if os.name != "nt":
         popen_kwargs["start_new_session"] = True   # own process group for killpg
 
+    owns_container = container is None
+    box = container or ProcessContainer(prefer_job_object=use_job_object)
+
     started = time.monotonic()
     process = subprocess.Popen(checked, **popen_kwargs)  # noqa: S603 - argv array, shell=False
+    box.adopt(process.pid)
     timed_out = False
     tree_terminated = False
     try:
-        stdout, stderr = process.communicate(input=input_text, timeout=timeout)
-    except subprocess.TimeoutExpired:
-        timed_out = True
-        tree_terminated = terminate_process_tree(process.pid)
         try:
-            stdout, stderr = process.communicate(timeout=10)
+            stdout, stderr = process.communicate(input=input_text, timeout=timeout)
         except subprocess.TimeoutExpired:
-            process.kill()
-            stdout, stderr = process.communicate()
+            timed_out = True
+            tree_terminated = box.terminate_all()
+            try:
+                stdout, stderr = process.communicate(timeout=10)
+            except subprocess.TimeoutExpired:
+                process.kill()
+                stdout, stderr = process.communicate()
+        report = box.report()
+    finally:
+        if owns_container:
+            box.close()
 
     return ProcessResult(
         argv=tuple(checked),
@@ -455,6 +696,8 @@ def run(
         duration_seconds=time.monotonic() - started,
         timed_out=timed_out,
         tree_terminated=tree_terminated,
+        containment=report.kind,
+        containment_fallback_reason=report.fallback_reason,
     )
 
 

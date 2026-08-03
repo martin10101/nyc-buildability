@@ -68,5 +68,36 @@
   "tools/agent_supervisor/config.example.toml": "bc7440db4cd06e52b7d8716500f0434e74720e243579520321ff9eac79f6ca69",
   "tools/test_agent_supervisor_phase1.py": "5d152626312f5f099b831f746528ba73f67689af52662154226f042b40789b90",
   "tools/test_agent_supervisor_reviewer.py": "f353701f6a4831a20540c48876f75836fe7640f7348362c7af865168b6c68571"
+ },
+ "phase4": {
+  "tools/agent_supervisor/loop.py": "a7b52be10d2ff8f7a601807887b82001dbb17173a5ee90f14f1a7d82fb30b820",
+  "tools/agent_supervisor/replay.py": "d75fb697e1aeaa42a5e14b7a96af9cebd7f8568d4e00023c92ee9d8eb2b2a5af",
+  "tools/agent_supervisor/replay_corpus/manifest.json": "24bd6db5929c1d6778d768bdecd222e7321425ea6a3e39e087dec7f773a7f835",
+  "tools/agent_supervisor/replay_corpus/b015_sentinel_failure.json": "500370f5df16a1c2e5591281339b29e8c5c94fda8e6dd14723781ce338db9b41",
+  "tools/agent_supervisor/replay_corpus/ci_failure.json": "72c7b9bf92cb810d41e096fc54fc0e5e8735e0947d7ba44240ebacb6ff70b7d8",
+  "tools/agent_supervisor/replay_corpus/clean_continuation.json": "43f2741e08a5ccc7ae5755161c94dece069d26c20aa33527b799755adbf1bf7e",
+  "tools/agent_supervisor/replay_corpus/m0_t028_detection_only_stop.json": "8909df6311c808ae4697e810bdb2d845e79dc864daa03cdc69d97aa3ef68ebec",
+  "tools/agent_supervisor/replay_corpus/m0_t031_accepted_lifecycle.json": "84da7ec5f882de85a0046ccdb2eae1329bce13f927380dfd9151bd450bb498d0",
+  "tools/agent_supervisor/replay_corpus/owner_gated_stop.json": "b957a3151c78b5280cecd32134568cdf60d6c3a3f9fc431c0d75f93aab1110f4",
+  "tools/agent_supervisor/replay_corpus/review_required_correction.json": "d790217d5cdf1628bb74a5a1f5239b87f9fdc3271df2c29a9648a55ac831b826",
+  "tools/agent_supervisor/replay_corpus/stale_sha_mismatched_review.json": "d040e6e646fb8e4fb9f316bd08b135adbd9e056fbdb07802eb732a54a819ecc6",
+  "tools/test_agent_supervisor_loop.py": "97c70056683ca1c5138b170ed1c19083725eabc9d750791a481efe20bd7bb6fb",
+  "tools/test_agent_supervisor_replay.py": "716fb75028b2291e3df5a3ac7dca449c317c6b7c81bacd74ab12fa54b7d5b7b0",
+  "tools/test_agent_supervisor_invariants.py": "697a7beab03bd81da853875285f55aa43ada350a7dfb72a7ef14769a5330073f",
+  "tools/test_agent_supervisor_adversarial.py": "248cf595a1fabf33f6f7ce256a98e61c74c3802eaf283dab2d30a71821c2bdfa",
+  "tools/test_agent_supervisor_crash.py": "6eb5fd093c766ac88179a8a5d7a86f94f6cedeeb32063dec8b27008bffead24c",
+  "tools/test_agent_supervisor_fuzz.py": "a8e833a564a1327ab4e14c470b3d6bb8a89a41a1834734bf64a89a3180b3b0b5",
+  "tools/agent_supervisor/__init__.py": "c2cf228d45d8e6e8e10688ad3b46bfa4d93d0881f03c527dfbe47edd46d77ca1",
+  "tools/agent_supervisor/cli.py": "ba9f396a3ec5e69076cd6febb0c6902c27b83586db15648e7c62e11402a684a5",
+  "tools/agent_supervisor/policy.py": "efbccc1d546e2cba2a44148e3c9726b289227833f5ef31b166c96a2eadac5cc1",
+  "tools/agent_supervisor/process.py": "8664bc79d9e9796a4e6f4e3d7a755f2a4c5e6461383f00decedc51bb18978a4a",
+  "tools/agent_supervisor/claude_runner.py": "5018373047d1e14072e31c49c5bb0c483ebed6ea177e3ddd94739300723cbdab",
+  "tools/agent_supervisor/README.md": "83e480988effe33b1d8f7ff7afa50f7cdc575fc7fbaf0fdaff5f56abf59a1bd8",
+  "tools/test_agent_supervisor_phase1.py": "fd0e16f77744c2e60b33af1fad1c6ee58099defbc13e91dbf5d5eb961f1156d5",
+  "tools/test_agent_supervisor_endurance.py": "0cf0c944ce92b699874d65416b26422298f2339036d9c213013825e7bdb56d79"
+ },
+ "phase4_amendment": {
+  "file": "tools/test_agent_supervisor_adversarial.py",
+  "reason": "seeded fake-secret fixture made non-literal (runtime assembly) after the gitleaks pre-commit hook flagged the literal; producer-authored patch applied verbatim by the orchestrator; pre e6a5df80.. -> post 248cf595..; adversarial suite re-run green; no scanner suppression used"
  }
 }

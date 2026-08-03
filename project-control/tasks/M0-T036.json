@@ -60,7 +60,7 @@
     "directive-compliance-verifier"
   ],
   "status": "in_progress",
-  "progress_percent": 60,
+  "progress_percent": 80,
   "risks": [
     "Scale: D-007 spans 5 phases; the packet authorizes Phases 1-4 + the Phase 5 shadow pilot, with the activation decision owner-gated. Split into per-phase follow-up tasks at the orchestrator's discretion if a phase exceeds a safe review size - contract splits through the normal process, never widen this packet.",
     "Windows process-tree control (Job Objects) and durable Task Scheduler wake are the highest-uncertainty areas; Section 18 stop conditions apply if a safe strategy cannot be proven.",
@@ -69,7 +69,7 @@
   ],
   "blockers": [],
   "created_at": "2026-08-03T03:44:41.634259+00:00",
-  "updated_at": "2026-08-03T16:30:35.005634+00:00",
+  "updated_at": "2026-08-03T19:54:45.724150+00:00",
   "directive_refs": [
     {
       "directive_id": "D-007",
@@ -131,6 +131,13 @@
       "percent": 60,
       "status": "in_progress",
       "message": "PHASE 3 COMPLETE and integrated. 735 tests OK on the ported tree; doctor 30/30; control-response wrapper VERIFIED live (one disclosed probe); restore drill passes; no Section 18 stop. PHASE 4 DISPATCH next: validation - assemble the supervised/shadow loop, replay engine + historical corpus (M0-T031 lifecycle, B-015 sentinel, M0-T028 detection-only stop, clean continuation, correction, CI failure, stale-SHA, owner-gated stop), full Section 15 adversarial-essentials + remaining matrices, Job-Objects-default, correct defects without weakening stops."
+    },
+    {
+      "at": "2026-08-03T19:54:45.723130+00:00",
+      "agent": "orchestrator",
+      "percent": 80,
+      "status": "in_progress",
+      "message": "PHASE 4 COMPLETE and integrated. 1042 tests OK across 19 suites on the ported tree; replay corpus 8/8; doctor 36/36; Job-Objects default closed; four defects fixed without weakening stops. PHASE 5 DISPATCH next: the shadow pilot per D-007 Section 17 - run one real controlled-task lifecycle in shadow mode, measure the owner-touch count against the budget (default <=2), then return the decision packet (frozen SHA, CI, reviews, replay results, shadow comparison + touch count, all stops and false positives, residual risks, exact proposed AUTO allowlist + standing grants, emergency-stop behavior, keep-supervised-vs-activate recommendation) and STOP for the owner's activation decision (D-007-R541)."
     }
   ]
 }

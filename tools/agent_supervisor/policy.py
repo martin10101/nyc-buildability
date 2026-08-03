@@ -248,6 +248,27 @@ def _norm(path: str) -> str:
     return os.path.normcase(os.path.normpath(path))
 
 
+#: Windows reserved DEVICE names. A path component equal to one of these (with or
+#: without an extension) is not a file at all - `os.path.realpath` maps it to
+#: `\\.\nul` and friends, and `os.path.relpath` then RAISES rather than returning
+#: a path. Found by the Phase 4 path-normalization fuzzer with the input
+#: `.env;/nul`, which crashed `resolve_target` instead of denying it.
+WINDOWS_RESERVED_DEVICE_NAMES: frozenset[str] = frozenset({
+    "con", "prn", "aux", "nul",
+    *(f"com{n}" for n in range(1, 10)),
+    *(f"lpt{n}" for n in range(1, 10)),
+})
+
+
+def _names_a_reserved_device(text: str) -> bool:
+    """True when any path component is a Windows reserved device name."""
+    for part in re.split(r"[\\/]+", text):
+        stem = part.split(".", 1)[0].strip().lower()
+        if stem in WINDOWS_RESERVED_DEVICE_NAMES:
+            return True
+    return False
+
+
 def file_identity(path: str | os.PathLike[str]) -> str:
     """A stable identity string for an existing file (S13.5 file identity).
 
@@ -280,15 +301,28 @@ def resolve_target(raw: str, root: str | os.PathLike[str]) -> ResolvedTarget:
         # An unexpanded variable means the true target is unknown at policy time.
         return ResolvedTarget(text, "", "", False, "unresolved_variable")
 
-    root_real = os.path.realpath(str(root))
-    candidate = text if os.path.isabs(text) else os.path.join(root_real, text)
-    real = os.path.realpath(candidate)
+    # A reserved DEVICE name is refused before any resolution is attempted: it
+    # never denotes a file, and letting it reach `realpath`/`relpath` makes them
+    # raise. Checked on every platform so a POSIX CI run enforces the same rule a
+    # Windows host does.
+    if _names_a_reserved_device(text):
+        return ResolvedTarget(text, "", "", False, "device_path")
+
+    try:
+        root_real = os.path.realpath(str(root))
+        candidate = text if os.path.isabs(text) else os.path.join(root_real, text)
+        real = os.path.realpath(candidate)
+    except (OSError, ValueError):
+        # Canonicalization itself failed: the true target cannot be established,
+        # so it is refused rather than guessed.
+        return ResolvedTarget(text, "", "", False, "unresolvable_path")
 
     # Alternate data stream / device path shapes on Windows.
     tail = os.path.basename(real)
     if os.name == "nt" and tail.count(":") >= 1:
         return ResolvedTarget(text, real, "", False, "alternate_data_stream")
-    if text.startswith("\\\\.\\") or text.startswith("\\\\?\\GLOBALROOT"):
+    if text.startswith("\\\\.\\") or text.startswith("\\\\?\\GLOBALROOT") \
+            or real.startswith("\\\\.\\") or real.startswith("\\\\?\\GLOBALROOT"):
         return ResolvedTarget(text, real, "", False, "device_path")
 
     inside = _norm(real) == _norm(root_real) or _norm(real).startswith(
@@ -296,7 +330,11 @@ def resolve_target(raw: str, root: str | os.PathLike[str]) -> ResolvedTarget:
     relative = ""
     escape = ""
     if inside:
-        relative = pathlib.PurePath(os.path.relpath(real, root_real)).as_posix()
+        try:
+            relative = pathlib.PurePath(os.path.relpath(real, root_real)).as_posix()
+        except ValueError:
+            # Different mounts/devices: not a relative path at all.
+            return ResolvedTarget(text, real, "", False, "device_path")
         if relative == ".":
             relative = ""
     else:
@@ -939,6 +977,35 @@ ACTION_KINDS: frozenset[str] = frozenset({
     "network", "unknown",
 })
 
+# --------------------------------------------------------------------------
+# Trust zones (S13.2) - added in Phase 4
+# --------------------------------------------------------------------------
+#
+# S13.2 names three zones, and S13.12 turns two of them into invariants:
+# invariant 10 "no reviewer write access" and invariant 11 "no worker access to
+# the active controller". Invariant 11 was already enforced by the S13.1
+# controller-mutation rule below. Invariant 10 was NOT expressible before,
+# because a `ProposedAction` carried no origin - the Phase 4 adversarial matrix
+# is what surfaced that. `origin_zone` defaults to WORKER, so every action built
+# before this existed classifies exactly as it did.
+
+ZONE_CONTROLLER = "CONTROLLER"
+ZONE_WORKER = "WORKER"
+ZONE_REVIEWER = "REVIEWER"
+
+TRUST_ZONES: tuple[str, ...] = (ZONE_CONTROLLER, ZONE_WORKER, ZONE_REVIEWER)
+
+#: The ONLY action kinds a REVIEWER may ever propose. The reviewer reads
+#: evidence; it does not write, and it does not execute worker-modified code to
+#: review it (S13.2).
+REVIEWER_PERMITTED_KINDS: frozenset[str] = frozenset({"read"})
+
+#: Kinds that mutate something, anywhere.
+MUTATING_KINDS: frozenset[str] = frozenset({
+    "file_write", "file_delete", "file_rename", "runtime_file_write", "push",
+    "pr_mutation", "external_write",
+})
+
 
 @dataclasses.dataclass(frozen=True)
 class ProposedAction:
@@ -963,11 +1030,18 @@ class ProposedAction:
     category: str = ""
     request_id: str = ""
     stated_reason: str = ""
+    #: Which S13.2 trust zone proposed this. Defaults to WORKER, which is what
+    #: every pre-Phase-4 call site meant.
+    origin_zone: str = ZONE_WORKER
 
     def __post_init__(self) -> None:
         if self.kind not in ACTION_KINDS:
             raise PolicyError("unknown_action_kind",
                               f"{self.kind!r} is not one of {sorted(ACTION_KINDS)}")
+        if self.origin_zone not in TRUST_ZONES:
+            raise PolicyError("unknown_trust_zone",
+                              f"{self.origin_zone!r} is not one of {list(TRUST_ZONES)}; an "
+                              f"unrecognized origin is never treated as trusted")
 
     def command_shape(self) -> CommandShape:
         if self.argv:
@@ -1007,6 +1081,24 @@ def _hard_deny(action: ProposedAction, authority: TaskAuthority,
     joined = " ".join(action.argv) if action.argv else action.command_text
     lowered = f"{joined} {action.tool_name}".lower()
 
+    # 0. Trust-zone containment (S13.2, S13.12 invariants 10 and 11).
+    #
+    # The reviewer is read-only, full stop. A reviewer-originated mutation is not
+    # a policy question to weigh - it is evidence that the confinement layer
+    # failed, which is exactly the B-015 class of defect, so it halts rather than
+    # merely being refused.
+    if action.origin_zone == ZONE_REVIEWER and action.kind not in REVIEWER_PERMITTED_KINDS:
+        if action.kind in MUTATING_KINDS:
+            return _deny(
+                DENY_AND_HALT, "S13.2/reviewer_readonly", "reviewer_write_attempt",
+                f"a {action.kind!r} was proposed from the REVIEWER zone. The reviewer never "
+                f"gets write permissions; a write reaching this point means confinement "
+                f"failed, which is a synchronous stop, not a denial to log and continue")
+        return _deny(
+            DENY_AND_HALT, "S13.2/reviewer_readonly", "reviewer_execution_attempt",
+            f"a {action.kind!r} was proposed from the REVIEWER zone. The reviewer inspects "
+            f"the worker diff from a read-only view and must NOT execute worker-modified "
+            f"code to review it")
     # 1. Permission/sandbox/hook-trust bypass, and effort flags.
     for flag in BYPASS_FLAG_MARKERS:
         if flag in lowered:
@@ -1125,7 +1217,8 @@ def _hard_deny(action: ProposedAction, authority: TaskAuthority,
             resolved = resolve_target(path, authority.worktree or authority.repo_root)
             if resolved.escape_reason in ("symlink_or_junction_escape", "device_path",
                                           "alternate_data_stream", "unresolved_variable",
-                                          "nul_byte", "empty_path"):
+                                          "nul_byte", "empty_path",
+                                          "unresolvable_path"):
                 return _deny(DENY_AND_CONTINUE, "S13.5/canonicalization",
                              resolved.escape_reason,
                              f"{path!r} is refused: {resolved.escape_reason}")

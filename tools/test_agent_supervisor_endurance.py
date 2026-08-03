@@ -666,8 +666,11 @@ class CliTests(unittest.TestCase):
         }
         self.assertEqual(expected - registered, set())
 
-    def test_only_replay_remains_deferred(self) -> None:
-        self.assertEqual(set(cli.DEFERRED_COMMANDS), {"replay"})
+    def test_nothing_remains_deferred(self) -> None:
+        # Phase 4 inverts the Phase 3 assertion: `replay` is implemented, so the
+        # deferral map is empty. The assertion is kept (rather than deleted) so
+        # that a later phase cannot quietly defer a command again.
+        self.assertEqual(cli.DEFERRED_COMMANDS, {})
 
     def test_limited_auto_refuses_by_name(self) -> None:
         with self.assertRaises(NotImplementedError) as raised:
@@ -796,10 +799,19 @@ class CliTests(unittest.TestCase):
                          "audit_anchor_option_a", "notification_hygiene"):
             self.assertIn(expected, names)
 
-    def test_replay_still_refuses(self) -> None:
-        with self.assertRaises(NotImplementedError) as raised:
-            self.run_cli("replay")
-        self.assertIn("Phase 4", str(raised.exception))
+    def test_replay_is_live_and_makes_no_model_call(self) -> None:
+        # Phase 3 pinned that `replay` refused. Phase 4 builds it, so the
+        # assertion inverts to the property that actually matters now: the
+        # command runs, exits 0, and reports zero provider calls and zero writes
+        # to project-control.
+        code, out, _ = self.run_cli("replay", "--json")
+        payload = json.loads(out)
+        self.assertEqual(code, 0)
+        self.assertEqual(payload["provider_calls_made"], 0)
+        self.assertEqual(payload["project_control_writes"], 0)
+        self.assertFalse(payload["limited_auto_enabled"])
+        self.assertEqual(payload["cases"], len(payload["required_case_ids"]))
+        self.assertTrue(payload["ok"])
 
 
 if __name__ == "__main__":  # pragma: no cover

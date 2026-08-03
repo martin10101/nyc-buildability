@@ -1,0 +1,112 @@
+{
+  "corpus_version": "1.0.0",
+  "purpose": "D-007 S15 historical replay corpus. Each case is DERIVED (quoted and summarized) from committed project-control records; no project-control file was modified to build them.",
+  "required_case_ids": [
+    "clean_continuation",
+    "review_required_correction",
+    "ci_failure",
+    "stale_sha_mismatched_review",
+    "owner_gated_stop",
+    "m0_t031_accepted_lifecycle",
+    "b015_sentinel_failure",
+    "m0_t028_detection_only_stop"
+  ],
+  "cases": [
+    {
+      "case_id": "clean_continuation",
+      "title": "A clean continuation - in-scope edits plus the packet-documented test command",
+      "expected_outcome": "continue",
+      "expected_tier": "AUTO",
+      "provenance": [
+        "project-control/tasks/M0-T031.json",
+        "project-control/reports/M0-T031-dcv.md"
+      ]
+    },
+    {
+      "case_id": "review_required_correction",
+      "title": "A review-required correction - the gate returned corrections that block the next gate",
+      "expected_outcome": "revise",
+      "expected_tier": "AUTO",
+      "provenance": [
+        "project-control/reports/M0-T028-G5-delta-report.md",
+        "project-control/reports/M0-T000-G3-fail-evidence.json",
+        "project-control/reports/M0-T000-G3-pass-evidence.json"
+      ]
+    },
+    {
+      "case_id": "ci_failure",
+      "title": "A CI failure - the control-plane job is red and the checkpoint claims success anyway",
+      "expected_outcome": "revise",
+      "expected_tier": "AUTO",
+      "provenance": [
+        "project-control/tasks/M0-T017.json",
+        "project-control/reports/M0-T017-G3-G4-code-review.md"
+      ]
+    },
+    {
+      "case_id": "stale_sha_mismatched_review",
+      "title": "A stale-SHA / mismatched-review case - the head moved past the reviewed SHA",
+      "expected_outcome": "stop_for_owner",
+      "expected_tier": "ASK",
+      "provenance": [
+        "project-control/reports/M0-T028-G5-delta-report.md",
+        "project-control/reports/M0-T028-G5-report.md"
+      ]
+    },
+    {
+      "case_id": "owner_gated_stop",
+      "title": "An owner-gated stop - a decision packet that ends AT the owner's decision",
+      "expected_outcome": "stop_for_owner",
+      "expected_tier": "HARD_DENY",
+      "provenance": [
+        "project-control/reports/M0-T030-owner-decision-packet.md",
+        "project-control/directives/D-005-codebase-knowledge-graph-pilot/source-003-amendment.md",
+        "project-control/tasks/M0-T031.json"
+      ]
+    },
+    {
+      "case_id": "m0_t031_accepted_lifecycle",
+      "title": "M0-T031's accepted lifecycle - stage complete, acceptance still an owner gate",
+      "expected_outcome": "stage_complete",
+      "expected_tier": "ASK",
+      "provenance": [
+        "project-control/tasks/M0-T031.json",
+        "project-control/reports/M0-T031-dcv.md"
+      ]
+    },
+    {
+      "case_id": "b015_sentinel_failure",
+      "title": "The B-015 sentinel failure - a read-only reviewer's write was NOT denied",
+      "expected_outcome": "halt",
+      "expected_tier": "HARD_DENY",
+      "provenance": [
+        "project-control/blockers/B-015-teammate-readonly-guard-bypass.json",
+        "project-control/reports/AGENT-TEAMS-PILOT-1.md"
+      ]
+    },
+    {
+      "case_id": "m0_t028_detection_only_stop",
+      "title": "The M0-T028 detection-only stop - a substituted design must stop, not proceed",
+      "expected_outcome": "stop_for_owner",
+      "expected_tier": "ASK",
+      "provenance": [
+        "project-control/tasks/M0-T028.json",
+        "project-control/reports/M0-T028-PHASE8-fresh-session-report.md",
+        "project-control/reports/M0-T028-FRESH-SESSION-CAPSULE.md"
+      ]
+    }
+  ],
+  "file_digests_sha256_of_canonical_text": {
+    "b015_sentinel_failure.json": "9e82970a396b98ffe3d1cf8d13e471a4dd8dca595dcf8dab0cfa19ce13280b96",
+    "ci_failure.json": "aac68c6cb49f6551045568358e471195f2914c69618566006c5b39e6b72e6838",
+    "clean_continuation.json": "d74077206970aa4f26cdee363d470519ddb21dc4534ce03254de7bd691ae474b",
+    "m0_t028_detection_only_stop.json": "a31e110741b5316683a78f9a8087868e5da1a6b80938279ebe526959167b4c9c",
+    "m0_t031_accepted_lifecycle.json": "1ba73fab468ec6559b5f8448f608ced97b7dcf85e5152345fa5fd08e02295e26",
+    "owner_gated_stop.json": "e8f726a6d90155a0401f26d79b19e2feb87a5cc61df9cd75166d1de000e76b84",
+    "review_required_correction.json": "efe03b3736c4f24bed76c77606da55d3eb1e09b0c7664bc474f4cd5271e00d29",
+    "stale_sha_mismatched_review.json": "a93749311b43118902243edbbdc891d0e5199808c2faf6ebdce0b9a22cd91b80"
+  },
+  "corpus_digest": "768eea1ec6bb9e839fc0ecc10344b953b5ecbf5ed90db5e579fd71fcf04a6843",
+  "regenerate": "python -m tools.agent_supervisor doctor recomputes and compares; the digests are SHA-256 over each case file decoded as utf-8-sig, canonically JSON-encoded by models.digest_of.",
+  "immutability_note": "Replay never rewrites historical reports. These fixtures are the only writable surface of the replay lane, and they are inputs, not evidence."
+}

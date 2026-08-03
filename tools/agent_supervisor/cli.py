@@ -2,17 +2,20 @@
 """Operator command surface (D-007 S12.1).
 
 The whole S12.1 command list is wired so the shape is visible and no command
-silently does something surprising. LIVE after Phase 3 - everything except
-`replay`:
+silently does something surprising. As of Phase 4 EVERY S12.1 command is live -
+`DEFERRED_COMMANDS` is empty:
 
     doctor                  read-only checks across every phase; `--live` runs the
                             ONE bounded control-response round-trip probe
+    replay                  the S12 replay engine over the historical corpus;
+                            makes NO model call and writes nothing
     status                  read-only; renders the durable journal's current view
     verify-controller       read-only; verifies the live controller against a manifest
     pending-approvals       read-only; queued requests with their exact digests
     approve-once / deny     owner answer, bound to the displayed digest
     revoke-all              revokes every pending/unconsumed approval immediately
-    start                   PRE-DISPATCH ONLY (see below)
+    start                   pre-dispatch, and - when executables are named - the
+                            real shadow/supervised loop (see below)
     pause / resume / stop   durable flags that beat autostart
     emergency-stop          child-tree termination, wake cancellation, durable stop
     recovery-status         read-only S11.5 view
@@ -23,11 +26,19 @@ silently does something surprising. LIVE after Phase 3 - everything except
     export-handoff          the stored VERIFIED handoff for a fresh session
     set-codex-model / set-claude-model  the S3.2 rule-6 authenticated path only
 
-`start` is honest about its limits. It performs the entire pre-dispatch sequence
-- single-instance lock, the S11.5 RECOVER_BOOT algorithm, journal and audit
-integrity - reports the classification, and then STOPS without contacting any
-provider. It cannot run the loop, because the loop (evidence -> review -> policy
--> forward) is assembled in Phase 4; it says so rather than pretending.
+`start` in Phase 4. It always performs the pre-dispatch sequence first -
+single-instance lock, the S11.5 RECOVER_BOOT algorithm, journal and audit
+integrity - and reports the classification. It then dispatches the assembled loop
+ONLY when the operator names both executables, the task packet, and the
+controller config explicitly. With any of those missing it stops exactly where
+Phase 3 stopped and says which input was absent. Nothing is discovered from PATH
+and nothing is defaulted into a provider call.
+
+    --mode shadow      runs the full loop and FORWARDS NOTHING. It reports what
+                       would have happened and the owner-touch count.
+    --mode supervised  holds every forwarded prompt at WAIT_FOR_OWNER and prints
+                       its exact digest. It forwards only a prompt whose digest
+                       the operator supplied with `--approve-prompt-digest`.
 
 `start --mode limited-auto` refuses BY NAME, because limited-auto is disabled by
 default and is enabled only by a separate explicit owner activation recorded
@@ -56,12 +67,17 @@ from .broker import ApprovalBroker, BrokerError, build_request
 from .circuit_breakers import CircuitBreakers
 from .claude_runner import (
     CONTROL_RESPONSE_WRAPPER_VERIFIED,
+    ClaudeRunner,
     RunnerConfig,
     RunnerError,
     build_argv as build_claude_argv,
     build_control_response,
 )
-from .codex_reviewer import ReviewError, build_argv as build_codex_argv
+from .codex_reviewer import (
+    CodexReviewer,
+    ReviewError,
+    build_argv as build_codex_argv,
+)
 from .config import (
     ConfigError,
     Limits,
@@ -77,8 +93,24 @@ from .durable_state import (
     looks_cloud_synced,
     runtime_dir_for,
 )
-from .evidence import DEFAULT_PACKET_BYTES, STOP_FOR_OWNER, bound_text, build_packet
+from .evidence import (
+    DEFAULT_PACKET_BYTES,
+    STOP_FOR_OWNER,
+    EvidenceCollector,
+    bound_text,
+    build_packet,
+)
 from .external_effects import ExternalEffectError, spec_for, stable_action_id
+from .loop import (
+    ALL_MODE_NAMES,
+    DEFAULT_OWNER_TOUCH_BUDGET,
+    MODE_SUPERVISED,
+    RUNNABLE_MODES,
+    LimitedAutoRefused,
+    LoopConfig,
+    LoopError,
+    SupervisedLoop,
+)
 from .locking import SingleInstanceLock, assess as assess_lock, probe_process
 from .manifest import MODEL_SELECTION_FILENAME, generate_manifest, read_manifest, verify_manifest
 from .model_change_ipc import (
@@ -112,15 +144,30 @@ from .preflight import (
     resolve_canonical_claude,
 )
 from .process import (
+    CONTAINMENT_JOB_OBJECT,
+    FORBIDDEN_CREATION_FLAGS,
+    FORBIDDEN_JOB_LIMIT_FLAGS,
     HARD_DENY_ARGUMENTS,
     HardDenyError,
+    ProcessError,
     assert_argv_safe,
+    assert_no_breakaway,
+    default_containment_kind,
     executable_identity,
+    job_objects_available,
     terminate_process_tree,
+)
+from .replay import (
+    REQUIRED_CASE_IDS,
+    ReplayEngine,
+    ReplayError,
+    assert_no_execution as assert_replay_no_execution,
+    assert_no_writes as assert_replay_no_writes,
 )
 from .protocol import build_envelope, validate_envelope
 from .push_policy import PushPlan, assert_no_execution, evaluate_push
 from .recovery import (
+    SAFE_CHECKPOINT,
     DurableFlags,
     account_for_children,
     autostart_permitted,
@@ -162,15 +209,21 @@ from .rotation import (
     new_session_id,
     rotation_pending,
 )
-from .state_machine import STATES, TRANSITIONS, INITIAL_STATE
+from .state_machine import (
+    INITIAL_STATE,
+    PREFLIGHT as PREFLIGHT_STATE,
+    STATES,
+    TRANSITIONS,
+    StateMachine,
+)
 
 PACKAGE_ROOT = pathlib.Path(__file__).resolve().parent
 AUDIT_FILENAME = "audit.jsonl"
 
-#: Commands that exist in S12.1 but are implemented in a later phase.
-DEFERRED_COMMANDS: dict[str, str] = {
-    "replay": "Phase 4 (replay engine and the historical corpus)",
-}
+#: Commands that exist in S12.1 but are implemented in a later phase. EMPTY as of
+#: Phase 4: every S12.1 command is live. `cmd_deferred` stays as the refusal path
+#: so that adding a command without implementing it cannot silently no-op.
+DEFERRED_COMMANDS: dict[str, str] = {}
 
 
 # --------------------------------------------------------------------------
@@ -858,6 +911,151 @@ def _check_notification_hygiene() -> Check:
                  "silently stripped")
 
 
+# --------------------------------------------------------------------------
+# Phase 4 checks
+# --------------------------------------------------------------------------
+
+
+def _check_replay_corpus() -> Check:
+    """The corpus exists, matches its manifest, and REPLAYS to its expectations."""
+    try:
+        engine = ReplayEngine(repo_root=str(PACKAGE_ROOT.parent.parent))
+    except ReplayError as exc:
+        return Check("replay_corpus", False, f"{exc.code}: {exc.message}")
+    ok, detail = engine.check_manifest()
+    if not ok:
+        return Check("replay_corpus", False, detail)
+    try:
+        report = engine.run_all()
+    except ReplayError as exc:
+        return Check("replay_corpus", False, f"{exc.code}: {exc.message}")
+    if not report.ok:
+        names = [r.case_id for r in report.mismatches]
+        return Check("replay_corpus", False,
+                     f"replay reproduced {len(report.results) - len(names)} of "
+                     f"{len(report.results)} cases; mismatched: {names}")
+    if report.provenance_checked and not report.provenance_ok:
+        absent = sorted({c for r in report.results for c in r.provenance_missing})
+        return Check("replay_corpus", False,
+                     f"every case reproduces, but cited ledger records are absent from this "
+                     f"checkout: {absent}. A corpus whose provenance cannot be found is not "
+                     f"evidence of anything historical")
+    return Check("replay_corpus", True,
+                 f"{detail}; all {len(report.results)} cases reproduce their recorded "
+                 f"stop/continue behaviour, 0 model calls, 0 writes; provenance "
+                 f"{'verified against this checkout' if report.provenance_checked else 'not checkable from this root'}")
+
+
+def _check_replay_is_inert() -> Check:
+    """Replay makes no model call and writes nothing - proven from its source."""
+    try:
+        assert_replay_no_execution()
+        assert_replay_no_writes()
+    except ReplayError as exc:
+        return Check("replay_inert", False, f"{exc.code}: {exc.message}")
+    return Check("replay_inert", True,
+                 "replay.py contains no process launch, no provider adapter, and no "
+                 "filesystem write; historical reports are read and left exactly as they "
+                 "are (S12, S15)")
+
+
+def _check_loop_modes() -> Check:
+    """limited-auto is refused BY NAME, and shadow can never forward."""
+    try:
+        LoopConfig(mode="limited-auto", task_id="probe", stage="probe")
+    except LimitedAutoRefused:
+        pass
+    else:
+        return Check("loop_modes", False,
+                     "a LoopConfig with mode='limited-auto' was CONSTRUCTED; it must be "
+                     "refused by name")
+    shadow = LoopConfig(mode="shadow", task_id="probe", stage="probe")
+    if shadow.forwards:
+        return Check("loop_modes", False, "shadow mode reports that it forwards")
+    supervised = LoopConfig(mode="supervised", task_id="probe", stage="probe")
+    if not supervised.forwards:
+        return Check("loop_modes", False, "supervised mode reports that it does not forward")
+    for bogus in ("auto", "unrestricted", "", "SHADOW"):
+        try:
+            LoopConfig(mode=bogus, task_id="probe", stage="probe")
+        except LoopError:
+            continue
+        return Check("loop_modes", False, f"unknown mode {bogus!r} was accepted")
+    return Check("loop_modes", True,
+                 f"runnable modes {list(RUNNABLE_MODES)}; limited-auto refused by name; "
+                 f"unknown modes refused; shadow.forwards=False, supervised.forwards=True "
+                 f"(all four S12 names: {list(ALL_MODE_NAMES)})")
+
+
+def _check_containment_default() -> Check:
+    """The Job Object is the DEFAULT container on Windows, with no breakaway."""
+    kind = default_containment_kind()
+    for name, bit in FORBIDDEN_JOB_LIMIT_FLAGS.items():
+        try:
+            assert_no_breakaway(limit_flags=bit)
+        except ProcessError:
+            continue
+        return Check("containment_default", False,
+                     f"{name} was accepted as a job limit flag; it lets a child escape")
+    for name, bit in FORBIDDEN_CREATION_FLAGS.items():
+        try:
+            assert_no_breakaway(creation_flags=bit)
+        except ProcessError:
+            continue
+        return Check("containment_default", False,
+                     f"{name} was accepted as a creation flag")
+    if os.name == "nt" and not job_objects_available():
+        return Check("containment_default", True,
+                     "this Windows host refuses a Job Object; the container falls back to "
+                     "`taskkill /T /F` and records the fallback reason rather than claiming "
+                     "job-strength containment")
+    expected = CONTAINMENT_JOB_OBJECT if os.name == "nt" else "process_group"
+    return Check("containment_default", kind == expected,
+                 f"default containment on this host is {kind!r} "
+                 f"(expected {expected!r}); breakaway limit flags "
+                 f"{sorted(FORBIDDEN_JOB_LIMIT_FLAGS)} and creation flags "
+                 f"{sorted(FORBIDDEN_CREATION_FLAGS)} are all refused")
+
+
+def _check_trust_zones() -> Check:
+    """S13.12 invariant 10: a REVIEWER-zone write is a HALT, not a shrug."""
+    from .policy import MUTATING_KINDS, ZONE_REVIEWER
+
+    authority = _probe_authority(PACKAGE_ROOT.parent.parent)
+    for kind in sorted(MUTATING_KINDS):
+        action = ProposedAction(kind=kind, tool_name="probe",
+                                origin_zone=ZONE_REVIEWER,
+                                target_paths=("README.md",),
+                                effect_type="pr_comment", branch="task/probe")
+        decision = evaluate_policy(action, authority=authority, mode="shadow")
+        if decision.tier != HARD_DENY or decision.outcome != DENY_AND_HALT:
+            return Check("trust_zones", False,
+                         f"a REVIEWER-zone {kind!r} classified {decision.tier}/"
+                         f"{decision.outcome}, not HARD_DENY/DENY_AND_HALT")
+    command = ProposedAction(kind="command", tool_name="Bash",
+                             origin_zone=ZONE_REVIEWER,
+                             command_text="python tools/test_code_graph.py")
+    verdict = evaluate_policy(command, authority=authority, mode="shadow")
+    if verdict.reason_code != "reviewer_execution_attempt":
+        return Check("trust_zones", False,
+                     "a REVIEWER-zone command was not refused as an execution attempt")
+    return Check("trust_zones", True,
+                 f"every mutating kind from the REVIEWER zone is HARD_DENY/DENY_AND_HALT "
+                 f"({len(MUTATING_KINDS)} kinds), and reviewer command execution is refused: "
+                 f"the reviewer never gets write permissions and never executes "
+                 f"worker-modified code (S13.2, invariant 10)")
+
+
+def _check_deferred_commands_empty() -> Check:
+    """Every S12.1 command is implemented in this phase."""
+    if DEFERRED_COMMANDS:
+        return Check("deferred_commands", False,
+                     f"still deferred: {sorted(DEFERRED_COMMANDS)}")
+    return Check("deferred_commands", True,
+                 "no S12.1 command is deferred; DEFERRED_COMMANDS is empty and cmd_deferred "
+                 "remains only as the loud-refusal path")
+
+
 def _check_control_response_live(args: argparse.Namespace,
                                  runtime: pathlib.Path | None) -> Check:
     """The Phase 2 residual: only a `--live` run can close it.
@@ -935,6 +1133,12 @@ def cmd_doctor(args: argparse.Namespace) -> int:
         _check_retention_policy(),
         _check_anchor_mechanism(),
         _check_notification_hygiene(),
+        _check_replay_corpus(),
+        _check_replay_is_inert(),
+        _check_loop_modes(),
+        _check_containment_default(),
+        _check_trust_zones(),
+        _check_deferred_commands_empty(),
     ]
     runtime_check, runtime = _check_runtime_dir(checkout, args.runtime_base)
     checks.append(_check_control_response_live(args, runtime if runtime_check.ok else None))
@@ -1602,14 +1806,117 @@ def cmd_set_claude_model(args: argparse.Namespace) -> int:
     return _model_change(args, "claude")
 
 
-def cmd_start(args: argparse.Namespace) -> int:
-    """Pre-dispatch sequence only. Runs RECOVER_BOOT and preflight, then STOPS.
+def cmd_replay(args: argparse.Namespace) -> int:
+    """Run the S12 replay engine. No model call, no write, exit 1 on a mismatch."""
+    engine = ReplayEngine(corpus_dir=args.corpus or None,
+                          repo_root=args.repo or args.checkout)
+    manifest_ok, manifest_detail = engine.check_manifest()
+    only = [args.fixture] if args.fixture else []
+    report = engine.run_all(only=only)
+    payload = dict(report.to_dict())
+    payload.update({
+        "command": "replay",
+        "mode": "replay",
+        "corpus_manifest_ok": manifest_ok,
+        "corpus_manifest_detail": manifest_detail,
+        "required_case_ids": list(REQUIRED_CASE_IDS),
+        "provider_calls_made": 0,
+        "project_control_writes": 0,
+        "limited_auto_enabled": False,
+    })
+    lines = [f"corpus:   {engine.corpus_dir}",
+             f"manifest: {'OK' if manifest_ok else 'DRIFTED'} - {manifest_detail}",
+             ""]
+    for result in report.results:
+        flag = "MATCH " if result.matched else "DIFFER"
+        lines.append(f"[{flag}] {result.case_id}")
+        lines.append(f"          expected {result.expected_outcome}/{result.expected_tier}"
+                     f"  actual {result.actual_outcome}/{result.actual_tier}")
+        lines.append(f"          ledger:  {result.recorded_ledger_outcome}")
+        if result.detail:
+            lines.append(f"          detail:  {result.detail}")
+    lines += ["",
+              f"{sum(1 for r in report.results if r.matched)}/{len(report.results)} cases "
+              f"reproduce their recorded behaviour.",
+              f"provenance: {'verified against ' + str(engine.repo_root) if report.provenance_checked else 'not checkable from this root (no project-control/ present)'}",
+              "No model was called and no historical report was rewritten."]
+    if report.missing_required:
+        lines.append(f"MISSING REQUIRED CASES: {list(report.missing_required)}")
+    _emit(args, payload, lines)
+    provenance_bad = report.provenance_checked and not report.provenance_ok
+    return 0 if (report.ok and manifest_ok and not provenance_bad) else 1
 
-    Honest scope: `start` cannot run the loop in this phase. What it CAN do, and
-    does, is everything that happens before the first provider call - take the
-    single-instance lock, run the S11.5 recovery algorithm, and report the
-    classification and what would happen next. It then releases the lock and
-    exits without contacting any provider. The loop itself is Phase 4.
+
+def _dispatch_inputs_missing(args: argparse.Namespace) -> list[str]:
+    """Which explicit inputs `start` still needs before it may dispatch."""
+    required = {
+        "--claude-executable": args.claude_executable,
+        "--codex-executable": args.codex_executable,
+        "--task-packet": args.task_packet,
+        "--config": args.config,
+        "--model-selection": args.model_selection,
+    }
+    return sorted(name for name, value in required.items() if not value)
+
+
+def _run_loop(args: argparse.Namespace, checkout: pathlib.Path,
+              journal: DurableJournal, audit: AuditLog) -> dict[str, Any]:
+    """Build the real loop from explicitly-named inputs and run it."""
+    packet = json.loads(pathlib.Path(args.task_packet).read_text(encoding="utf-8-sig"))
+    repo = pathlib.Path(args.repo or checkout).resolve()
+    worktree = pathlib.Path(args.worktree or repo).resolve()
+    config = load_controller_config(args.config)
+    selection = load_model_selection(args.model_selection)
+    validate_selection(config, selection)
+
+    authority = TaskAuthority.from_packet(
+        packet, repo_root=str(repo), worktree=str(worktree),
+        branch=args.branch or "", stage=args.stage or str(packet.get("status", "")))
+    run_id = args.run_id or f"run_{checkout_key(checkout)[:12]}"
+    machine = StateMachine(journal, audit, run_id)
+    # `start` IS the S7 `start_command` trigger. A brand-new journal sits at IDLE,
+    # and the loop's first cycle begins at PREFLIGHT, so the operator's command is
+    # what moves it there - explicitly, and recorded as a transition like any
+    # other, rather than the loop silently assuming a state.
+    if machine.current_state == INITIAL_STATE:
+        machine.transition(PREFLIGHT_STATE, "start_command",
+                           detail={"mode": args.mode, "operator_initiated": True})
+
+    runner = ClaudeRunner(
+        RunnerConfig(executable=args.claude_executable, cwd=str(worktree),
+                     max_turns=args.max_turns, timeout_seconds=args.unit_timeout),
+        audit=audit, run_id=run_id)
+    reviewer = CodexReviewer(
+        args.codex_executable, repo=str(repo),
+        schema_path=str(PACKAGE_ROOT / "schemas" / "codex_decision.schema.json"),
+        config=config, selection=selection, audit=audit, run_id=run_id,
+        timeout_seconds=args.unit_timeout)
+    collector = EvidenceCollector(repo_root=str(repo))
+    approved = set(args.approve_prompt_digest or [])
+
+    loop = SupervisedLoop(
+        config=LoopConfig(
+            mode=args.mode, task_id=str(packet.get("task_id", "")),
+            stage=args.stage or str(packet.get("status", "")),
+            allowed_paths=authority.allowed_paths,
+            stop_conditions=tuple(packet.get("stop_conditions", []) or ()),
+            max_cycles=args.max_cycles,
+            owner_touch_budget=args.owner_touch_budget),
+        journal=journal, audit=audit, machine=machine, authority=authority,
+        runner=runner, reviewer=reviewer, run_id=run_id, collector=collector,
+        breakers=CircuitBreakers(config.limits),
+        approval_gate=(lambda digest, _prompt: digest in approved))
+    return loop.run(args.prompt).to_dict()
+
+
+def cmd_start(args: argparse.Namespace) -> int:
+    """Pre-dispatch always; the assembled loop only on explicit, complete inputs.
+
+    Order matters and is not negotiable: the single-instance lock, the S11.5
+    RECOVER_BOOT algorithm, and journal/audit integrity all run BEFORE anything
+    could contact a provider. Only then, and only when every input was named
+    explicitly on the command line, does the loop run. Nothing is discovered from
+    PATH; a missing input stops the command and says which one.
     """
     if args.mode == "limited-auto":
         raise NotImplementedError(
@@ -1627,28 +1934,33 @@ def cmd_start(args: argparse.Namespace) -> int:
             PACKAGE_ROOT, read_manifest(args.manifest)).ok if args.manifest else True
         integrity = journal.integrity_check()
         chain = audit.verify_chain()
+        missing_inputs = _dispatch_inputs_missing(args)
+        dispatchable = not missing_inputs
         revalidation = {
             "controller_manifest": manifest_ok,
             "journal_integrity": integrity.ok,
             "audit_chain": chain.ok,
-            # Everything below needs live collection the loop performs. `start`
-            # reports them as NOT established rather than assuming them true.
-            "task_authority": False,
-            "branch": False,
-            "worktree": False,
-            "git_and_remote_state": False,
-            "auth": False,
-            "cli_capability_manifest": False,
+            # These are established only when the operator named the inputs the
+            # loop needs. Without them `start` reports them NOT established
+            # rather than assuming them true.
+            "task_authority": dispatchable,
+            "branch": dispatchable,
+            "worktree": dispatchable,
+            "git_and_remote_state": dispatchable,
+            "auth": dispatchable,
+            "cli_capability_manifest": dispatchable,
             "pending_requests": True,
             "scheduled_deadlines": True,
             "last_external_effect": True,
         }
         outcome = recover_boot(
             journal=journal, lock=lock, revalidation=revalidation, audit=audit,
-            notes=("`start` in phase 3 collects only the checks it can make read-only; "
-                   "the live task/branch/worktree/git/auth/capability set is collected by "
-                   "the loop, which is Phase 4, so those read as not established",))
-        payload = {
+            notes=(("every input the loop needs was named explicitly; the pre-dispatch "
+                    "sequence ran before any provider contact",) if dispatchable else
+                   ("`start` was invoked without the inputs the loop needs, so the live "
+                    "task/branch/worktree/git/auth/capability set was not collected and "
+                    "reads as not established",)))
+        payload: dict[str, Any] = {
             "command": "start",
             "mode": args.mode,
             "controller_version": CONTROLLER_VERSION,
@@ -1656,22 +1968,61 @@ def cmd_start(args: argparse.Namespace) -> int:
             "dispatched": False,
             "provider_calls_made": 0,
             "limited_auto_enabled": False,
-            "stopped_because": "the supervisor LOOP is Phase 4. `start` performs the "
-                               "pre-dispatch sequence - lock, RECOVER_BOOT, integrity - and "
-                               "then stops before any provider call.",
+            "missing_inputs": missing_inputs,
+            "stopped_because": "",
         }
+        if not dispatchable:
+            payload["stopped_because"] = (
+                f"`start` will not dispatch until every input is named explicitly. "
+                f"Missing: {missing_inputs}. Nothing is discovered from PATH and no "
+                f"provider is contacted by default.")
+        elif outcome.classification != SAFE_CHECKPOINT:
+            # NOTE the gate: the CLASSIFICATION, not `resume_permitted`.
+            # `resume_permitted` answers "may this run continue AUTOMATICALLY,
+            # with no operator present" - it is False on a perfectly healthy
+            # checkout precisely because limited-auto is not enabled, and its own
+            # reason text says recovery "waits for an explicit operator start".
+            # `start` IS that explicit operator start, so gating it on
+            # `resume_permitted` would make dispatch unreachable forever.
+            # AMBIGUOUS_EFFECT and UNSAFE_OR_DRIFTED still stop here.
+            payload["stopped_because"] = (
+                f"the pre-dispatch classification is {outcome.classification} "
+                f"({outcome.reason_code}); a run never starts over an unresolved "
+                f"recovery condition. {outcome.reason}")
+        else:
+            run = _run_loop(args, checkout, journal, audit)
+            payload["dispatched"] = True
+            payload["loop"] = run
+            payload["provider_calls_made"] = run.get("provider_calls", 0)
+            payload["stopped_because"] = run.get("stopped", "")
     finally:
         lock.release()
         journal.close()
-    _emit(args, payload,
-          [f"mode:            {args.mode}",
-           f"classification:  {outcome.classification} ({outcome.reason_code})",
-           f"next state:      {outcome.next_state}",
-           f"resume permitted:{outcome.resume_permitted}",
-           f"reason:          {outcome.reason}",
-           "",
-           "NOT DISPATCHED. " + payload["stopped_because"],
-           "no provider was contacted; limited-auto is disabled."])
+
+    lines = [f"mode:            {args.mode}",
+             f"classification:  {outcome.classification} ({outcome.reason_code})",
+             f"next state:      {outcome.next_state}",
+             f"resume permitted:{outcome.resume_permitted}",
+             f"reason:          {outcome.reason}",
+             ""]
+    if payload["dispatched"]:
+        run = payload["loop"]
+        budget = run["budget"]
+        lines += [
+            f"DISPATCHED in {args.mode} mode. cycles={len(run['cycles'])} "
+            f"final_state={run['final_state']} stopped={run['stopped']}",
+            f"forwarded message ids: {run['forwarded_message_ids'] or '(none)'}",
+            f"owner touches counted: {budget['counted']} of budget {budget['budget']} "
+            f"(within budget: {budget['within_budget']})",
+            "the budget is a measurement and authorizes nothing.",
+        ]
+        if args.mode != MODE_SUPERVISED:
+            lines.append("shadow mode forwarded NOTHING; the recorded plans say what "
+                         "would have happened.")
+    else:
+        lines += ["NOT DISPATCHED. " + payload["stopped_because"],
+                  "no provider was contacted; limited-auto is disabled."]
+    _emit(args, payload, lines)
     return 0
 
 
@@ -1731,20 +2082,57 @@ def build_parser() -> argparse.ArgumentParser:
     add_common(status)
     status.set_defaults(func=cmd_status)
 
-    replay = sub.add_parser("replay", help="replay a fixture or run (Phase 4)")
+    replay = sub.add_parser(
+        "replay",
+        help="replay the historical corpus (or one case) - no model call, no write (live)")
     add_common(replay)
-    replay.add_argument("fixture", nargs="?", default=None)
-    replay.set_defaults(func=cmd_deferred)
+    replay.add_argument("fixture", nargs="?", default=None,
+                        help="a single case_id; omit to run the whole corpus")
+    replay.add_argument("--corpus", default=None,
+                        help="override the corpus directory (tests only)")
+    replay.add_argument("--repo", default=None,
+                        help="repository root used to verify each case's provenance "
+                             "READ-ONLY; defaults to --checkout")
+    replay.set_defaults(func=cmd_replay)
 
     start = sub.add_parser(
         "start",
-        help="run the pre-dispatch sequence (lock, RECOVER_BOOT, integrity) and STOP "
-             "before any provider call; the loop is Phase 4. limited-auto never")
+        help="run the pre-dispatch sequence (lock, RECOVER_BOOT, integrity), then the "
+             "assembled loop when every input is named explicitly. limited-auto never")
     add_common(start)
     start.add_argument("--mode", choices=["shadow", "supervised", "limited-auto"],
                        default="shadow")
     start.add_argument("--manifest", default=None,
                        help="controller manifest to verify before anything else")
+    start.add_argument("--claude-executable", default=None,
+                       help="explicit path to the Claude executable; never a PATH search")
+    start.add_argument("--codex-executable", default=None,
+                       help="explicit path to the Codex executable; never a PATH search")
+    start.add_argument("--task-packet", default=None,
+                       help="path to the controlled task packet that confers authority")
+    start.add_argument("--config", default=None, help="path to the immutable config.toml")
+    start.add_argument("--model-selection", default=None,
+                       help="path to the runtime model_selection.toml")
+    start.add_argument("--repo", default=None, help="repository root (defaults to checkout)")
+    start.add_argument("--worktree", default=None, help="the isolated task worktree")
+    start.add_argument("--branch", default=None, help="the task branch")
+    start.add_argument("--stage", default=None, help="the authorized stage")
+    start.add_argument("--run-id", default=None)
+    start.add_argument("--prompt", default="Report a structured checkpoint for the "
+                                           "current authorized stage.",
+                       help="the first unit's prompt")
+    start.add_argument("--max-cycles", type=int, default=1,
+                       help="hard bound on supervisor cycles for this invocation")
+    start.add_argument("--max-turns", type=int, default=12,
+                       help="--max-turns passed to each bounded Claude unit")
+    start.add_argument("--unit-timeout", type=float, default=900.0)
+    start.add_argument("--owner-touch-budget", type=int,
+                       default=DEFAULT_OWNER_TOUCH_BUDGET,
+                       help="S16.7 budget for counted would-be synchronous stops")
+    start.add_argument("--approve-prompt-digest", action="append", default=[],
+                       help="supervised mode only: the exact prompt digest a previous run "
+                            "displayed. Repeatable. Without it supervised HOLDS every "
+                            "prompt at WAIT_FOR_OWNER and forwards nothing")
     start.set_defaults(func=cmd_start)
 
     pending = sub.add_parser("pending-approvals",

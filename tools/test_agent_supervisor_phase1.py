@@ -15,6 +15,7 @@ D-007 S15 families covered at Phase-1 depth here:
 """
 from __future__ import annotations
 
+import argparse
 import json
 import pathlib
 import sys
@@ -815,21 +816,25 @@ class CliTests(TempCase):
         self.assertEqual(payload["current_state"], sm.IDLE)
         self.assertFalse(payload["limited_auto_enabled"])
 
-    def test_deferred_commands_refuse_by_name(self) -> None:
-        # Phase 2 update: `pending-approvals` and `verify-controller` are now
-        # implemented (approval broker + live controller manifest verification), so
-        # they were removed from this list.
-        # Phase 3 update: `pause`, `emergency-stop`, `start`, `export-handoff`, and
-        # `recovery-status` are now implemented too (durable flags, child-tree
-        # termination, the pre-dispatch RECOVER_BOOT sequence, the verified handoff
-        # export, and the read-only recovery view). `replay` is the only S12.1
-        # command still deferred, and it still refuses by name.
-        for command in ("replay",):
-            with self.assertRaises(NotImplementedError) as ctx:
-                cli.main([command, *self._common()])
-            self.assertIn("not implemented", str(ctx.exception).lower())
-        self.assertEqual(set(cli.DEFERRED_COMMANDS), {"replay"},
-                         "any newly deferred command must be added to this test")
+    def test_no_s12_1_command_is_deferred(self) -> None:
+        # Phase 2 update: `pending-approvals` and `verify-controller` became
+        # implemented. Phase 3 update: `pause`, `emergency-stop`, `start`,
+        # `export-handoff`, and `recovery-status` did too.
+        # Phase 4 update: `replay` is implemented, so DEFERRED_COMMANDS is EMPTY
+        # and this test inverts - it now pins that nothing is deferred, and that
+        # the refusal path still exists so a future command cannot be wired to a
+        # silent no-op.
+        self.assertEqual(cli.DEFERRED_COMMANDS, {},
+                         "every S12.1 command is implemented in phase 4; a newly "
+                         "deferred command must be justified here")
+        namespace = argparse.Namespace(command="some-future-command")
+        with self.assertRaises(NotImplementedError) as ctx:
+            cli.cmd_deferred(namespace)
+        self.assertIn("not implemented", str(ctx.exception).lower())
+
+    def test_replay_runs_the_corpus_without_any_model_call(self) -> None:
+        code = cli.main(["replay", *self._common(), "--json"])
+        self.assertEqual(code, 0)
 
     def test_limited_auto_is_refused_by_name(self) -> None:
         with self.assertRaises(NotImplementedError) as ctx:
