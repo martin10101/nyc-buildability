@@ -1,0 +1,93 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://nyc-buildability.local/agent_supervisor/durable_state.schema.json",
+  "title": "Durable supervisor state (journal document view)",
+  "description": "The minimum record D-007 Section 7 requires the journal to persist, expressed as a document. The AUTHORITATIVE store is the SQLite journal (durable_state.py); this schema describes the key/value view of it and is what `status` renders. A replace-written JSON status view may exist for humans but is never the recovery source of truth. Secrets and hidden model reasoning are NEVER persisted.",
+  "type": "object",
+  "additionalProperties": true,
+  "required": [
+    "protocol_version",
+    "schema_version",
+    "controller_version",
+    "controller_manifest_digest",
+    "run_id",
+    "task_id",
+    "current_state",
+    "last_completed_transition"
+  ],
+  "properties": {
+    "protocol_version": {"type": "string"},
+    "schema_version": {"type": "string"},
+    "controller_version": {"type": "string"},
+    "controller_manifest_digest": {"type": "string"},
+
+    "run_id": {"type": "string"},
+    "task_id": {"type": "string"},
+    "action_id": {"type": "string"},
+    "message_id": {"type": "string"},
+    "correlation_id": {"type": "string"},
+    "checkpoint_id": {"type": "string"},
+
+    "claude_session_id": {"type": "string"},
+    "last_complete_event_sequence": {"type": "integer"},
+
+    "current_state": {"type": "string"},
+    "last_completed_transition": {"type": "integer"},
+
+    "task_stage": {"type": "string"},
+    "starting_sha": {"type": "string"},
+    "current_sha": {"type": "string"},
+    "branch": {"type": "string"},
+    "canonical_worktree": {"type": "string"},
+
+    "pending_prompt_digest": {"type": "string"},
+    "pending_approval_digest": {"type": "string"},
+    "pending_command_digest": {"type": "string"},
+    "pending_tool_call_digest": {"type": "string"},
+
+    "external_effects": {
+      "type": "array",
+      "description": "Idempotency keys and reconciliation status. A PENDING entry at recovery time means an effect MAY have occurred and must be reconciled, never blindly retried.",
+      "items": {
+        "type": "object",
+        "required": ["action_id", "status"],
+        "properties": {
+          "action_id": {"type": "string"},
+          "status": {"type": "string", "enum": ["PENDING", "CONFIRMED", "FAILED"]},
+          "reconciliation": {"type": "string"}
+        }
+      }
+    },
+
+    "evidence_packet_digest": {"type": "string"},
+    "decision_digest": {"type": "string"},
+    "model_used": {"type": "string"},
+    "model_selection_digest": {
+      "type": "string",
+      "description": "Digest of the model_selection.toml in force. Recorded with every decision; deliberately OUTSIDE the controller manifest (Section 3.1)."
+    },
+
+    "rotation_pending": {"type": "boolean"},
+    "next_unit_size_class": {"type": "string", "enum": ["SMALL", "MEDIUM", "LARGE", "UNKNOWN"]},
+
+    "usage_limit_class": {"type": "string"},
+    "usage_limit_raw_notice": {"type": "string"},
+    "usage_limit_parsed_reset_utc": {"type": "string"},
+    "usage_limit_parse_source": {"type": "string"},
+    "usage_limit_parse_confidence": {"type": "string"},
+    "resume_not_before_utc": {"type": "string"},
+    "scheduled_trigger_identity": {"type": "string"},
+
+    "queued_asks": {"type": "array", "items": {"type": "object"}},
+
+    "manual_pause": {"type": "boolean"},
+    "emergency_stop": {"type": "boolean"},
+    "owner_gate_pending": {"type": "boolean"},
+
+    "mode": {
+      "type": "string",
+      "enum": ["replay", "shadow", "supervised", "limited-auto"],
+      "description": "limited-auto is never reachable from a default value, a missing config, a parse error, a migration, or a downgrade (Section 12)."
+    }
+  }
+}

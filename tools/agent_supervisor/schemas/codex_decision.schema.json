@@ -1,0 +1,62 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://nyc-buildability.local/agent_supervisor/codex_decision.schema.json",
+  "title": "Codex reviewer decision",
+  "description": "Exactly ONE structured decision from a fresh, read-only Codex review (D-007 Section 9). Unknown fields are rejected. Conditional requirements: CONTINUE/REVISE need a nonempty next_claude_prompt; STOP_FOR_OWNER needs one concise owner_question and NO executable next prompt; ROTATE_SESSION needs a rotation_reason; COMPLETE needs evidence_refs and never merges or accepts anything; HALT_UNSAFE needs a concrete blocking finding.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "decision",
+    "reviewed_task_id",
+    "reviewed_checkpoint_id",
+    "verified_repo_head",
+    "verified_origin_main",
+    "model_used"
+  ],
+  "properties": {
+    "schema_version": {"type": "string"},
+    "decision": {
+      "type": "string",
+      "enum": ["CONTINUE", "REVISE", "STOP_FOR_OWNER", "ROTATE_SESSION", "COMPLETE", "HALT_UNSAFE"]
+    },
+    "reviewed_task_id": {"type": "string", "minLength": 1},
+    "reviewed_checkpoint_id": {"type": "string", "minLength": 1},
+    "verified_repo_head": {"type": "string"},
+    "verified_origin_main": {"type": "string"},
+    "model_used": {
+      "type": "string",
+      "description": "Recorded by the SUPERVISOR, not trusted from the model. Accompanied in the audit record by any provider-reported model/version identifier and the digest of the model_selection.toml in force (Section 3.2 rule 5)."
+    },
+    "verified_facts": {"type": "array", "items": {"type": "object"}},
+    "unverified_claims": {"type": "array", "items": {"type": "object"}},
+    "blocking_findings": {"type": "array", "items": {"type": "object"}},
+    "reason_codes": {"type": "array", "items": {"type": "string"}},
+    "next_claude_prompt": {"type": "string"},
+    "owner_question": {"type": "string"},
+    "rotation_reason": {"type": "string"},
+    "evidence_refs": {"type": "array", "items": {"type": "object"}}
+  },
+  "allOf": [
+    {
+      "if": {"properties": {"decision": {"enum": ["CONTINUE", "REVISE"]}}, "required": ["decision"]},
+      "then": {"properties": {"next_claude_prompt": {"type": "string", "minLength": 1}}, "required": ["next_claude_prompt"]}
+    },
+    {
+      "if": {"properties": {"decision": {"const": "STOP_FOR_OWNER"}}, "required": ["decision"]},
+      "then": {"properties": {"owner_question": {"type": "string", "minLength": 1}, "next_claude_prompt": {"const": ""}}, "required": ["owner_question"]}
+    },
+    {
+      "if": {"properties": {"decision": {"const": "ROTATE_SESSION"}}, "required": ["decision"]},
+      "then": {"properties": {"rotation_reason": {"type": "string", "minLength": 1}}, "required": ["rotation_reason"]}
+    },
+    {
+      "if": {"properties": {"decision": {"const": "COMPLETE"}}, "required": ["decision"]},
+      "then": {"properties": {"evidence_refs": {"type": "array", "minItems": 1}}, "required": ["evidence_refs"]}
+    },
+    {
+      "if": {"properties": {"decision": {"const": "HALT_UNSAFE"}}, "required": ["decision"]},
+      "then": {"properties": {"blocking_findings": {"type": "array", "minItems": 1}}, "required": ["blocking_findings"]}
+    }
+  ]
+}

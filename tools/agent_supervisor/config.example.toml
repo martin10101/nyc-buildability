@@ -1,0 +1,75 @@
+# Example IMMUTABLE controller configuration (D-007 S3.1).
+#
+# PLACEHOLDERS ONLY. This tracked file contains no secrets, no real model names,
+# and no credentials, and it is never the active configuration. Copy it to the
+# controller checkout as `config.toml`, fill in the owner's choices, and note
+# that any change to the active file follows the full controller-update process
+# of S13.1 (stop the controller, separate controlled task, independent review,
+# new manifest and version, replay corpus, explicit operator restart).
+#
+# There is NO effort key here, and there must never be one in any configuration
+# file, prompt, or CLI invocation. That prohibition is permanent.
+#
+# The runtime model SELECTION lives in a separate file (`model_selection.toml`,
+# see the bottom of this file) which is deliberately OUTSIDE the controller
+# manifest, so changing a model never invalidates the controller.
+
+[controller]
+# Only "shadow" or "supervised" may appear here. limited-auto is never reachable
+# from a configuration file, a default, a parse error, a migration, or a
+# downgrade: it activates only by an explicit owner act recorded through
+# directive compliance.
+default_mode = "shadow"
+
+[codex]
+# Every Codex model the owner permits IN ANY ROLE. Nothing outside this list may
+# ever run as Codex - not as a primary, not as a fallback, not because the
+# provider defaulted to it.
+allowed_models = ["<owner-chosen-codex-model>", "<owner-chosen-codex-fallback>"]
+
+[claude]
+# Every Claude model the owner permits for the worker. An EMPTY list means only
+# the account/CLI default may be used and no explicit Claude selection is
+# permitted.
+allowed_models = ["<owner-chosen-claude-model>"]
+
+[limits]
+# Fail-closed circuit breakers (S13.8, S7). Every value is a positive integer
+# except warn_ratio. Warnings below a hard threshold are NOTIFY; hard thresholds
+# pause. These are supervisor-enforced and no model can raise them.
+max_claude_turns_per_run = 12
+max_subprocess_seconds = 900
+max_restart_attempts = 3
+max_consecutive_invalid_outputs = 3
+max_supervisor_cycles_per_task = 60
+max_retained_log_bytes = 50000000
+max_review_packet_bytes = 262144
+max_model_calls_per_task = 200
+max_external_writes_per_task = 20
+max_processes = 24
+min_free_disk_bytes = 1073741824
+max_consecutive_no_progress = 3
+max_consecutive_hard_denies = 3
+max_codex_reviews_per_checkpoint = 3
+max_consecutive_revision_loops = 4
+# Fraction of a hard limit at which a NOTIFY warning is emitted.
+warn_ratio = 0.75
+
+# ---------------------------------------------------------------------------
+# The RUNTIME model selection is a SEPARATE file. Do not add these keys here -
+# the loader refuses a controller config that contains them. Example
+# `model_selection.toml` (each file must parse as valid standalone TOML):
+#
+#   [codex]
+#   review_model = "<owner-chosen-codex-model>"
+#   advisory_model = ""
+#   fallback_models = []
+#
+#   [claude]
+#   model = ""
+#   fallback_models = []
+#
+# Every entry is validated against ITS OWN provider's allowed_models list only:
+# a Codex entry can never satisfy the Claude list, and a Claude entry can never
+# satisfy the Codex list.
+# ---------------------------------------------------------------------------
