@@ -2,9 +2,9 @@
   "schema": "directive_requirements/v1",
   "directive_id": "D-004",
   "version": 1,
-  "requirement_count": 724,
+  "requirement_count": 731,
   "producer": "orchestrator",
-  "updated_at": "2026-08-03T03:22:47+00:00",
+  "updated_at": "2026-08-03T03:30:44+00:00",
   "requirements": [
     {
       "id": "D-004-R001",
@@ -28474,6 +28474,279 @@
         "tasks": []
       },
       "amendment_sequence": 20
+    },
+    {
+      "id": "D-004-R725",
+      "text": "OWNER GRANT (one-time, exact-shape): the orchestrator executes the two named settings-tightening edits itself rather than routing them back to the owner; the message is captured per the compliance process FIRST, then the edits proceed.",
+      "source_ref": "source-021-amendment.md#the-owner-message",
+      "classification": "authorization",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "D-004-OPTIONB"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [],
+        "lifecycle_events": [
+          "gate",
+          "accept"
+        ],
+        "effective_date": "2026-08-03"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured by amendment 20 (source-021); session-sentinel scope; verified at D-004 verification",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      },
+      "amendment_sequence": 21
+    },
+    {
+      "id": "D-004-R726",
+      "text": "Edit 1 exact shape: in the user-global settings file's permissions.allow, REMOVE 'Bash(gh pr *)' and ADD exactly 'Bash(gh pr view *)', 'Bash(gh pr checks *)', 'Bash(gh pr diff *)', 'Bash(gh pr list *)', 'Bash(gh pr create *)'. Change nothing else in the file.",
+      "source_ref": "source-021-amendment.md#the-owner-message",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "D-004-OPTIONB"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [],
+        "lifecycle_events": [
+          "gate",
+          "accept"
+        ],
+        "effective_date": "2026-08-03"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured by amendment 20 (source-021); session-sentinel scope; verified at D-004 verification",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      },
+      "amendment_sequence": 21
+    },
+    {
+      "id": "D-004-R727",
+      "text": "Edit 2 exact shape: in the project-local settings file, narrow 'Bash(git merge*)' and 'PowerShell(git merge*)' to the exact intended shape the orchestrator recorded - the ADR-005 rule-5 intent 'git merge --no-ff task/*' - i.e. 'Bash(git merge --no-ff task/*)' and 'PowerShell(git merge --no-ff task/*)'.",
+      "source_ref": "source-021-amendment.md#the-owner-message",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "D-004-OPTIONB"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [],
+        "lifecycle_events": [
+          "gate",
+          "accept"
+        ],
+        "effective_date": "2026-08-03"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured by amendment 20 (source-021); session-sentinel scope; verified at D-004 verification",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      },
+      "amendment_sequence": 21
+    },
+    {
+      "id": "D-004-R728",
+      "text": "Constraint: TIGHTENING ONLY - the post-state permission set must be a strict subset of the pre-state plus the five named narrow allows; nothing else in either file changes.",
+      "source_ref": "source-021-amendment.md#the-owner-message",
+      "classification": "prohibition",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "D-004-OPTIONB"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [],
+        "lifecycle_events": [
+          "gate",
+          "accept"
+        ],
+        "effective_date": "2026-08-03"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured by amendment 20 (source-021); session-sentinel scope; verified at D-004 verification",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      },
+      "amendment_sequence": 21
+    },
+    {
+      "id": "D-004-R729",
+      "text": "Constraints: back up both files before editing; report before/after of the changed arrays with SHA-256 of each file pre and post; touch no tracked file.",
+      "source_ref": "source-021-amendment.md#the-owner-message",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "D-004-OPTIONB"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [],
+        "lifecycle_events": [
+          "gate",
+          "accept"
+        ],
+        "effective_date": "2026-08-03"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured by amendment 20 (source-021); session-sentinel scope; verified at D-004 verification",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      },
+      "amendment_sequence": 21
+    },
+    {
+      "id": "D-004-R730",
+      "text": "The grant covers exactly these edits, EXPIRES on completion, and sets no precedent: settings files remain otherwise untouchable to the orchestrator.",
+      "source_ref": "source-021-amendment.md#the-owner-message",
+      "classification": "hold",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "D-004-OPTIONB"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [],
+        "lifecycle_events": [
+          "gate",
+          "accept"
+        ],
+        "effective_date": "2026-08-03"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured by amendment 20 (source-021); session-sentinel scope; verified at D-004 verification",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      },
+      "amendment_sequence": 21
+    },
+    {
+      "id": "D-004-R731",
+      "text": "Every merge still queues for the owner under D-004-R721 regardless of what any allowlist says; nothing in this grant weakens R721.",
+      "source_ref": "source-021-amendment.md#the-owner-message",
+      "classification": "prohibition",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "D-004-OPTIONB"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [],
+        "lifecycle_events": [
+          "gate",
+          "accept"
+        ],
+        "effective_date": "2026-08-03"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured by amendment 20 (source-021); session-sentinel scope; verified at D-004 verification",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      },
+      "amendment_sequence": 21
     }
   ],
   "amendments_applied": [
@@ -28495,6 +28768,7 @@
     "source-017-amendment.md",
     "source-018-amendment.md",
     "source-019-amendment.md",
-    "source-020-amendment.md"
+    "source-020-amendment.md",
+    "source-021-amendment.md"
   ]
 }

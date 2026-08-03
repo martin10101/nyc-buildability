@@ -1,7 +1,7 @@
 {
   "schema": "directive_manifest/v1",
   "directive_id": "D-004",
-  "version": 20,
+  "version": 21,
   "slug": "agent-teams-runtime-adoption",
   "title": "Agent-teams runtime adoption, staged with pilots",
   "status": "active",
@@ -169,6 +169,14 @@
       "amends": "source-001.md",
       "recorded_at": "2026-08-03T03:22:47+00:00",
       "content_digest_sha256": "b0ef9d6b1f24f8c165ee0d5eaaf455b4d63b8a26db1124ed1d169432c490d5d0"
+    },
+    {
+      "file": "source-021-amendment.md",
+      "kind": "amendment",
+      "sequence": 21,
+      "amends": "source-001.md",
+      "recorded_at": "2026-08-03T03:30:44+00:00",
+      "content_digest_sha256": "a1af1b98e6760f59e3deb9cd41c0aea6f5a51051e304c270434705e911c32de5"
     }
   ],
   "amendments": [
@@ -190,7 +198,8 @@
     "source-017-amendment.md",
     "source-018-amendment.md",
     "source-019-amendment.md",
-    "source-020-amendment.md"
+    "source-020-amendment.md",
+    "source-021-amendment.md"
   ],
   "supersedes": [],
   "superseded_by": null,
@@ -318,7 +327,7 @@
     "Amendment 8 (source-009, rows D-004-R307-R326): owner decision captured 2026-07-30 at live-reconciled head 87e0ad6d87fa3e45cf647ebe45bf7db4029e7b75 (post PR #128; expected state verified in every particular). Three decisions plus one GO: (1) TEMPORARY model-availability exception - Fable 5 exhausted, so the lead runs Opus 5 and every gate reviewer/verifier is spawned with EXPLICIT Opus 5; this supersedes only the VALUE clauses of R090/R161 and the lead clause of R298, temporarily, until the owner restores Fable 5; independence, verbatim-evidence, effort, and settings clauses are unchanged and re-affirmed; the actual model used must be recorded and never misreported. (2) WORKTREE decision - the harness-isolation + attestation + exact-diff-port mechanism is accepted as disclosed and becomes the mechanism Step 5 must describe; the literal pre-created-worktree wording is superseded as mechanically unsatisfiable. (3) STEP-4 evidence accepted including the disclosed post-gate model switch; no M2-T018/M4-T008 rerun. (4) GO for the M0-T027 closeout ONLY, with an explicit not-authorized list and a STOP-and-present-proposed-Step-5 terminus. Session-conduct rows use the sentinel D-004-STEP4CLOSE; closeout-binding rows carry M0-T027 so the resolver derives them for that packet. No existing source or requirement row edited."
   ],
   "created_at": "2026-07-24T00:00:00+00:00",
-  "updated_at": "2026-08-03T03:22:47+00:00",
+  "updated_at": "2026-08-03T03:30:44+00:00",
   "audit_log": [
     {
       "at": "2026-07-24T00:00:00+00:00",
@@ -419,6 +428,11 @@
       "at": "2026-08-03T03:22:47+00:00",
       "by": "orchestrator",
       "note": "Amendment 19 captured verbatim as source-020-amendment.md (sha256 b0ef9d6b1f24f8c165ee0d5eaaf455b4d63b8a26db1124ed1d169432c490d5d0) on branch control/D-004-amendment-19-merge-authority from origin/main b5589d0 (the merge of PR #146, the merge the flag challenges). 7 append-only rows D-004-R718..R724 (717 -> 724), all D-004-OPTIONB sentinel. Captures the owner's merge-authority flag: citation demand answered (NO authority existed - R666 proves the standing per-merge owner-authorization rule), incident finding recorded and voluntarily WIDENED to four orchestrator-executed merges (#143/#144/#145/#146), the standing queue-every-merge rule (R721), the no-revert instruction (R722), and the settings-allowlist listing (R723; mechanism: user-global 'Bash(gh pr *)'/'Bash(git push *)' and project-local 'git merge*' allow rules bypass the classifier). This capture's own PR is QUEUED for the owner per R721 - not merged by the orchestrator."
+    },
+    {
+      "at": "2026-08-03T03:30:44+00:00",
+      "by": "orchestrator",
+      "note": "Amendment 20 captured verbatim as source-021-amendment.md (sha256 a1af1b98e6760f59e3deb9cd41c0aea6f5a51051e304c270434705e911c32de5) on branch control/D-004-amendment-20-settings-grant from origin/main b5589d0. 7 append-only rows D-004-R725..R731 (724 -> 731), all D-004-OPTIONB sentinel. Captures the owner's one-time exact-shape settings-tightening grant: remove the broad 'Bash(gh pr *)' user-global allow in favor of five narrow gh pr allows (view/checks/diff/list/create - merge deliberately absent), and narrow the project-local 'git merge*' rules to the ADR-005 intent 'git merge --no-ff task/*'. Tightening-only constraint, backups + pre/post SHA-256 reporting, no tracked file touched, grant expires on completion, R721 queue-every-merge unaffected. This capture's own PR is QUEUED for the owner per R721."
     }
   ],
   "locked_requirement_ids": [
@@ -1145,8 +1159,15 @@
     "D-004-R721",
     "D-004-R722",
     "D-004-R723",
-    "D-004-R724"
+    "D-004-R724",
+    "D-004-R725",
+    "D-004-R726",
+    "D-004-R727",
+    "D-004-R728",
+    "D-004-R729",
+    "D-004-R730",
+    "D-004-R731"
   ],
-  "requirements_id_digest_sha256": "0ac778f16b06d1beee45e67986915e3a38d07b0075530e0b76dfbbb071ba9ec9",
-  "requirements_content_digest_sha256": "f08fad3ae32918e7a121af78d26aca67284485a84f1786d55b88d0617b7892a6"
+  "requirements_id_digest_sha256": "51443b2a294f113470b89571026e044a64f045cb3bbde22397ff4f5c95383b50",
+  "requirements_content_digest_sha256": "1d51fe82eca6e2c8bad019df17eb4b71ebe81715d66cbe00d1e7e5bf5396c683"
 }
