@@ -62,3 +62,15 @@
 Each completed cycle recorded exactly 1 would-be synchronous stop (the checkpoint rejection),
 within the ≤2 budget. No stop was a policy false-positive: every stop was a true defect signal
 (F-3/F-4). The budget is a measurement and authorizes nothing.
+
+## Erratum (2026-08-04, appended per the G4 QA review's required correction — append-only, history preserved)
+
+The run-4 root-cause line above and F-3's "run 3 captured it, runs 1 and 4 lost it" sentence are
+WRONG on the checkpoint-survival detail. Run 4's own audit chain records checkpoint_id
+`cp-m0t035-accept-ready-r4` with an empty error_category — the checkpoint SURVIVED and validated;
+the S4.5 stop was driven by `timed_out=true` (the fail-closed rule that a timed-out unit is never
+OK), not by checkpoint loss. Run 3 is the inverse (checkpoint present but invalid). Corrected
+account: all three pre-fix runs rode the 900 s wall (F-3 stands, live-validated by runs 5/6);
+run 1 lost/never produced a checkpoint, run 3's was invalid, run 4's was valid but the unit's
+timeout made the run un-OK. The SessionCloseTests docstring repeats the old wording — cosmetic,
+noted for V1.1.
