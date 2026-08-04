@@ -1957,9 +1957,16 @@ def _run_loop(args: argparse.Namespace, checkout: pathlib.Path,
         machine.transition(PREFLIGHT_STATE, "start_command",
                            detail={"mode": args.mode, "operator_initiated": True})
 
+    # D-004-R739: every supervised session launches the worker with an explicit
+    # --model = the resolved primary from model_selection. `expected_model` is
+    # what the stream is VERIFIED against on every event; it equals the pinned
+    # model unless a synthetic mismatch probe overrides it (never in production).
+    pinned_model = selection.selection("claude").primary
+    expected_model = args.expected_worker_model or pinned_model
     runner = ClaudeRunner(
         RunnerConfig(executable=args.claude_executable, cwd=str(worktree),
-                     max_turns=args.max_turns, timeout_seconds=args.unit_timeout),
+                     max_turns=args.max_turns, timeout_seconds=args.unit_timeout,
+                     model=pinned_model, expected_model=expected_model),
         audit=audit, run_id=run_id)
     reviewer = CodexReviewer(
         args.codex_executable, repo=str(repo),
@@ -1968,6 +1975,22 @@ def _run_loop(args: argparse.Namespace, checkout: pathlib.Path,
         timeout_seconds=args.unit_timeout)
     collector = EvidenceCollector(repo_root=str(repo))
     approved = set(args.approve_prompt_digest or [])
+    breakers = CircuitBreakers(config.limits)
+
+    # G3 V-1: the approval broker is built and WIRED into the assembled loop. In
+    # supervised mode the loop routes each in-scope tool request through it; in
+    # shadow mode the loop's handler permits nothing (the broker is inert).
+    broker = ApprovalBroker(
+        journal, audit, authority=authority, mode=args.mode, run_id=run_id,
+        breakers=breakers)
+
+    # C: the context-rotation threshold comes from [rotation] in the immutable
+    # config (default 400000), overridable per-run for a synthetic probe.
+    rotation_thresholds = RotationThresholds.from_controller_config(config)
+    context_rotation_threshold = (
+        args.context_rotation_threshold
+        if getattr(args, "context_rotation_threshold", None) is not None
+        else rotation_thresholds.context_rotation_threshold)
 
     loop = SupervisedLoop(
         config=LoopConfig(
@@ -1979,7 +2002,9 @@ def _run_loop(args: argparse.Namespace, checkout: pathlib.Path,
             owner_touch_budget=args.owner_touch_budget),
         journal=journal, audit=audit, machine=machine, authority=authority,
         runner=runner, reviewer=reviewer, run_id=run_id, collector=collector,
-        breakers=CircuitBreakers(config.limits),
+        broker=broker, breakers=breakers,
+        pinned_model=pinned_model,
+        context_rotation_threshold=context_rotation_threshold,
         approval_gate=(lambda digest, _prompt: digest in approved))
     return loop.run(args.prompt).to_dict()
 
@@ -2228,6 +2253,18 @@ def build_parser() -> argparse.ArgumentParser:
                        help="supervised mode only: the exact prompt digest a previous run "
                             "displayed. Repeatable. Without it supervised HOLDS every "
                             "prompt at WAIT_FOR_OWNER and forwards nothing")
+    start.add_argument("--context-rotation-threshold", type=int, default=None,
+                       help="D-004 probe knob: override the [rotation] "
+                            "context_rotation_threshold for this run only. Set it low on a "
+                            "synthetic supervised unit to force a seam rotation once "
+                            "cumulative stream usage crosses it. Omit to use the config "
+                            "value (default 400000)")
+    start.add_argument("--expected-worker-model", default=None,
+                       help="D-004 probe knob: the model the worker's stream is VERIFIED "
+                            "against (defaults to the pinned --model primary). Set it to a "
+                            "model the live worker will NOT report to induce a detected "
+                            "downgrade on a synthetic unit; the worker still LAUNCHES on the "
+                            "real primary, so nothing runs on an unavailable model")
     start.set_defaults(func=cmd_start)
 
     pending = sub.add_parser("pending-approvals",

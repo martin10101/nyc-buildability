@@ -32,8 +32,10 @@ HERE = pathlib.Path(__file__).resolve().parent
 REPO = HERE.parent
 sys.path.insert(0, str(REPO))
 
+from tools.agent_supervisor import broker as bk  # noqa: E402
 from tools.agent_supervisor import loop as lp  # noqa: E402
 from tools.agent_supervisor import policy as pol  # noqa: E402
+from tools.agent_supervisor import rotation as rot  # noqa: E402
 from tools.agent_supervisor import state_machine as sm  # noqa: E402
 from tools.agent_supervisor.audit_log import AuditLog  # noqa: E402
 from tools.agent_supervisor.claude_runner import RunResult  # noqa: E402
@@ -148,7 +150,8 @@ class LoopTestBase(unittest.TestCase):
 
     def build(self, *, mode: str = "shadow", runner=None, reviewer=None,
               approval_gate=None, budget: int = 2, max_cycles: int = 4,
-              breakers=None) -> lp.SupervisedLoop:
+              breakers=None, broker=None, pinned_model: str = "",
+              context_rotation_threshold: int = 0, model_available=None) -> lp.SupervisedLoop:
         return lp.SupervisedLoop(
             config=lp.LoopConfig(mode=mode, task_id="M0-T036", stage="phase4",
                                  allowed_paths=self.authority.allowed_paths,
@@ -158,7 +161,10 @@ class LoopTestBase(unittest.TestCase):
             authority=self.authority,
             runner=runner or FakeRunner(run_result()),
             reviewer=reviewer or FakeReviewer(outcome()),
-            run_id=self.run_id, approval_gate=approval_gate, breakers=breakers)
+            run_id=self.run_id, approval_gate=approval_gate, breakers=breakers,
+            broker=broker, pinned_model=pinned_model,
+            context_rotation_threshold=context_rotation_threshold,
+            model_available=model_available)
 
 
 # --------------------------------------------------------------------------
@@ -1185,6 +1191,217 @@ class CliReplayTests(LoopTestBase):
                              "--corpus", str(corpus), "--json"])
         self.assertEqual(code, 1, "a corpus mismatch must fail the command")
         self.assertFalse(json.loads(stdout.getvalue())["ok"])
+
+
+# --------------------------------------------------------------------------
+# V1.2 G3 V-1: the approval broker is WIRED into the assembled loop
+# --------------------------------------------------------------------------
+
+
+def can_use_tool(tool_name: str, tool_input: dict, request_id: str = "creq-1") -> dict:
+    """A `can_use_tool` control request as the CLI stdio channel delivers it."""
+    return {"type": "control_request", "request_id": request_id,
+            "request": {"subtype": "can_use_tool", "tool_name": tool_name,
+                        "input": tool_input, "tool_use_id": "tu-1",
+                        "permission_suggestions": [
+                            {"type": "setMode", "mode": "acceptEdits",
+                             "destination": "session"}]}}
+
+
+class BrokerWiringTests(LoopTestBase):
+    """G3 finding V-1: `_run_loop` built the loop with NO permission handler, so
+    `deny_everything` denied EVERY worker tool request in both modes and the
+    broker was dead. The loop now wires the broker in supervised mode; shadow
+    permits nothing."""
+
+    def _broker(self) -> bk.ApprovalBroker:
+        return bk.ApprovalBroker(self.journal, self.audit, authority=self.authority,
+                                 mode="supervised", run_id=self.run_id)
+
+    def test_supervised_permits_an_in_scope_auto_tool(self) -> None:
+        broker = self._broker()
+        loop = self.build(mode="supervised", broker=broker)
+        handler = loop._permission_handler()
+        self.assertIsNotNone(handler, "supervised must wire a broker-backed handler")
+        decision = handler(can_use_tool("Bash", {"command": "git status"}))
+        # PERMITTED: an allow control-response is what the runner will send.
+        self.assertEqual(decision.behavior, "allow")
+        record = broker.record("creq-1")
+        self.assertEqual(record["outcome"]["tier"], pol.AUTO)
+
+    def test_supervised_ask_holds_for_the_owner(self) -> None:
+        broker = self._broker()
+        loop = self.build(mode="supervised", broker=broker)
+        handler = loop._permission_handler()
+        decision = handler(can_use_tool("Bash", {"command": "npm ci"}))
+        # An ASK is deferred: this call is denied while the exact request queues.
+        self.assertEqual(decision.behavior, "deny")
+        self.assertTrue(broker.pending(), "the ASK must be queued for the owner")
+
+    def test_supervised_hard_deny_is_immovable(self) -> None:
+        broker = self._broker()
+        loop = self.build(mode="supervised", broker=broker)
+        handler = loop._permission_handler()
+        forbidden = str(self.repo / ".github" / "workflows" / "ci.yml")
+        decision = handler(can_use_tool("Write", {"file_path": forbidden,
+                                                  "content": "x"}))
+        self.assertEqual(decision.behavior, "deny")
+        self.assertEqual(broker.record("creq-1")["outcome"]["tier"], pol.HARD_DENY)
+
+    def test_shadow_permits_nothing(self) -> None:
+        # Shadow forwards nothing and permits nothing: no handler is wired, so the
+        # runner falls back to deny_everything (deny/observe only).
+        loop = self.build(mode="shadow", broker=self._broker())
+        self.assertIsNone(loop._permission_handler())
+
+    def test_supervised_without_a_broker_fails_closed(self) -> None:
+        loop = self.build(mode="supervised", broker=None)
+        self.assertIsNone(loop._permission_handler(),
+                          "no broker in supervised must permit nothing, never allow")
+
+    def test_the_dead_broker_parameter_is_now_consumed(self) -> None:
+        # The broker is no longer a dead parameter: the supervised handler routes
+        # through it (proven above) and the shadow handler deliberately does not.
+        broker = self._broker()
+        loop = self.build(mode="supervised", broker=broker)
+        self.assertIs(loop.broker, broker)
+
+
+# --------------------------------------------------------------------------
+# V1.2 D-004: seam-only rotation on model downgrade (B) and threshold (C)
+# --------------------------------------------------------------------------
+
+
+class SeamRotationTests(LoopTestBase):
+    """B (D-004-R739) and C (D-004-R743..R745) share ONE rotation code path,
+    reached only at a seam (finish-current-unit invariant, S11.2)."""
+
+    def _downgrade_runner(self) -> FakeRunner:
+        # Cycle 1 reports a model downgrade; cycle 2 is clean (the relaunch).
+        return FakeRunner(run_result(model_mismatch=True,
+                                     mismatch_detail="reported claude-substitute"),
+                          run_result())
+
+    def _threshold_runner(self) -> FakeRunner:
+        return FakeRunner(run_result(context_tokens=500_000, usage_known=True),
+                          run_result())
+
+    def test_a_model_downgrade_rotates_at_the_seam_and_relaunches_pinned(self) -> None:
+        self.at_preflight()
+        runner = self._downgrade_runner()
+        loop = self.build(mode="supervised", runner=runner, max_cycles=2,
+                          pinned_model="claude-pinned",
+                          approval_gate=lambda d, p: True)
+        run = loop.run("first unit")
+        # dispatch-nothing-new before rotating + relaunch-pinned: two units ran,
+        # the second AFTER a single rotation.
+        self.assertEqual(len(runner.prompts), 2)
+        self.assertEqual(len(run.rotations), 1)
+        rotation_record = run.rotations[0]
+        self.assertEqual(rotation_record["reason_code"], "model_downgrade")
+        self.assertEqual(rotation_record["cycle"], 2, "rotation fires at the seam")
+        # relaunch-pinned + never-substitute: the record names the CONFIGURED model
+        # and a brand-new session id, and carries no substitute model.
+        self.assertEqual(rotation_record["pinned_model"], "claude-pinned")
+        self.assertNotEqual(rotation_record["new_session_id"],
+                            rotation_record["old_session_id"])
+        self.assertNotIn("substitute_model", rotation_record)
+        # rotate reused rotation.py: the pending flag is cleared and the outgoing
+        # session archived.
+        self.assertFalse(rot.rotation_pending(self.journal))
+        ledger = rot.RotationLedger(self.journal)
+        self.assertIn(rotation_record["old_session_id"], ledger.archived_sessions())
+        events = {r["event_type"] for r in self.audit.read_all()}
+        self.assertIn("rotation_pending_flagged", events)
+        self.assertIn("session_handoff_refreshed", events)
+        self.assertIn("rotation_complete", events)
+        self.assertIn("supervisor_rotation_relaunch", events)
+
+    def test_pinned_model_unavailable_pauses_and_notifies(self) -> None:
+        self.at_preflight()
+        runner = self._downgrade_runner()
+        loop = self.build(mode="supervised", runner=runner, max_cycles=2,
+                          pinned_model="claude-pinned",
+                          model_available=lambda _m: False,
+                          approval_gate=lambda d, p: True)
+        run = loop.run("first unit")
+        self.assertEqual(run.stopped, "rotation_paused_model_unavailable")
+        self.assertEqual(self.machine.current_state, sm.PAUSED_RECOVERY)
+        # dispatch-nothing-new: the second unit is NEVER launched on a substitute.
+        self.assertEqual(len(runner.prompts), 1)
+        self.assertEqual(run.rotations, ())
+        asks = self.journal.open_asks()
+        self.assertTrue(asks, "a queued ASK must notify the owner")
+        # An orchestrator-role session never continues on a substitute: it paused.
+        self.assertGreaterEqual(run.budget.counted, 1)
+
+    def test_context_threshold_crossing_rotates_via_the_same_path(self) -> None:
+        self.at_preflight()
+        runner = self._threshold_runner()
+        loop = self.build(mode="supervised", runner=runner, max_cycles=2,
+                          pinned_model="claude-pinned",
+                          context_rotation_threshold=100_000,
+                          approval_gate=lambda d, p: True)
+        run = loop.run("first unit")
+        self.assertEqual(len(run.rotations), 1)
+        self.assertEqual(run.rotations[0]["reason_code"], "context_threshold")
+        self.assertEqual(run.rotations[0]["cycle"], 2)
+        # SAME rotation.py path as the downgrade: last_rotation recorded, archived.
+        self.assertIsNotNone(self.journal.get_state("last_rotation"))
+        self.assertEqual(len(runner.prompts), 2)
+
+    def test_a_below_threshold_run_never_rotates(self) -> None:
+        self.at_preflight()
+        runner = FakeRunner(run_result(context_tokens=50_000, usage_known=True),
+                            run_result())
+        loop = self.build(mode="supervised", runner=runner, max_cycles=2,
+                          pinned_model="claude-pinned",
+                          context_rotation_threshold=100_000,
+                          approval_gate=lambda d, p: True)
+        run = loop.run("first unit")
+        self.assertEqual(run.rotations, ())
+        self.assertFalse(rot.rotation_pending(self.journal))
+
+    def test_rotation_is_seam_only_never_mid_unit(self) -> None:
+        # The pre-dispatch rotation decision is unreachable while a unit is in
+        # flight: _rotate_at_seam refuses without a durable pending flag (which is
+        # set only after a unit finishes), and a crossing never interrupts the
+        # in-flight unit - cycle 1 completes fully and forwards.
+        self.at_preflight()
+        loop = self.build(mode="supervised", pinned_model="claude-pinned",
+                          approval_gate=lambda d, p: True)
+        with self.assertRaises(lp.LoopError) as raised:
+            loop._rotate_at_seam(cycle=1)
+        self.assertEqual(raised.exception.code, "rotate_without_pending")
+
+    def test_a_crossing_flags_but_does_not_interrupt_the_running_unit(self) -> None:
+        self.at_preflight()
+        loop = self.build(mode="supervised",
+                          runner=FakeRunner(run_result(context_tokens=500_000,
+                                                       usage_known=True)),
+                          pinned_model="claude-pinned",
+                          context_rotation_threshold=100_000,
+                          approval_gate=lambda d, p: True)
+        result = loop.run_cycle("only unit", cycle=1)
+        # The unit ran to a valid checkpoint and forwarded - it was NOT terminated.
+        self.assertTrue(result.forwarded)
+        self.assertEqual(self.machine.current_state, sm.CLAUDE_RUNNING)
+        # But rotation_pending is now set, to be acted on at the NEXT seam only.
+        self.assertTrue(result.rotation_pending)
+        self.assertTrue(rot.rotation_pending(self.journal))
+
+    def test_shadow_never_flags_a_rotation(self) -> None:
+        # Shadow forwards nothing and stays purely observational: a downgrade or a
+        # crossing observed in shadow sets no durable rotation flag.
+        self.at_preflight()
+        loop = self.build(mode="shadow",
+                          runner=FakeRunner(run_result(model_mismatch=True,
+                                                       context_tokens=500_000,
+                                                       usage_known=True)),
+                          pinned_model="claude-pinned",
+                          context_rotation_threshold=100_000)
+        loop.run("only observation")
+        self.assertFalse(rot.rotation_pending(self.journal))
 
 
 if __name__ == "__main__":  # pragma: no cover

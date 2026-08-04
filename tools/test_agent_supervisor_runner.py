@@ -917,5 +917,114 @@ class RunnerAuditTests(RunnerTestBase):
         self.assertTrue(record["output_digest"])
 
 
+# --------------------------------------------------------------------------
+# V1.2 (D-004-R739/R743): model identity + context usage on the stream
+# --------------------------------------------------------------------------
+
+
+FAKE_CLAUDE_MODEL = textwrap.dedent('''
+    """FAKE claude that emits an explicit model id and token usage."""
+    import json, os, sys
+
+    def emit(obj):
+        sys.stdout.write(json.dumps(obj) + "\\n"); sys.stdout.flush()
+
+    model = os.environ.get("FAKE_MODEL", "claude-primary")
+    emit({"type": "system", "subtype": "init", "session_id": "sess-model-1",
+          "model": model, "permissionMode": "manual"})
+    emit({"type": "assistant", "uuid": "u-a",
+          "message": {"role": "assistant", "model": model,
+                      "usage": {"input_tokens": 120, "output_tokens": 30,
+                                "cache_read_input_tokens": 4000}}})
+    CHECKPOINT = {
+        "schema_version": "1.0.0", "run_id": "run-1", "checkpoint_id": "cp-1",
+        "task_id": "M0-T036", "claude_session_id": "sess-model-1",
+        "status": "UNIT_COMPLETE", "summary": "model unit",
+        "starting_sha": "a" * 40, "current_sha": "b" * 40,
+        "branch": "task/M0-T036-supervisor-bridge", "worktree": "/fake",
+        "proposed_next_action": "await review", "usage": "unknown",
+        "context_pressure": "unknown"}
+    emit({"type": "result", "subtype": "success", "uuid": "u-r",
+          "result": json.dumps(CHECKPOINT),
+          "usage": {"input_tokens": 120, "output_tokens": 60,
+                    "cache_read_input_tokens": 4000}})
+''')
+
+
+class ModelIdentityAndUsageTests(RunnerTestBase):
+    """D-004: the model is verified on every stream event and the context usage
+    is read off the stream, so a downgrade or a threshold crossing is detectable
+    at the seam."""
+
+    def _run(self, *, expected_model: str = "",
+             fake_model: str = "claude-primary") -> cr.RunResult:
+        script = self.tmp / "fake_model.py"
+        script.write_text(FAKE_CLAUDE_MODEL, encoding="utf-8")
+        config = cr.RunnerConfig(
+            executable=sys.executable, max_turns=2, timeout_seconds=60.0,
+            cwd=str(self.tmp), model="claude-primary",
+            expected_model=expected_model,
+            extra_env={"FAKE_MODEL": fake_model, "PYTHONIOENCODING": "utf-8"})
+        return _ScriptRunner(config, script=str(script)).run_unit("go")
+
+    def test_no_mismatch_when_the_stream_matches_the_pinned_model(self) -> None:
+        result = self._run(expected_model="claude-primary", fake_model="claude-primary")
+        self.assertTrue(result.ok, result.checkpoint_error)
+        self.assertFalse(result.model_mismatch)
+        self.assertIn("claude-primary", result.observed_models)
+
+    def test_context_tokens_are_read_off_the_stream(self) -> None:
+        result = self._run(expected_model="claude-primary")
+        self.assertTrue(result.usage_known)
+        # Peak cumulative over the events (result event: 120 + 60 + 4000).
+        self.assertEqual(result.context_tokens, 4180)
+
+    def test_a_detected_downgrade_is_flagged_on_the_result(self) -> None:
+        # The worker LAUNCHES on the pinned primary but the stream reports another
+        # model: a detected downgrade the seam rotates on.
+        result = self._run(expected_model="claude-pinned", fake_model="claude-substitute")
+        self.assertTrue(result.model_mismatch)
+        self.assertIn("claude-substitute", result.observed_models)
+        self.assertIn("claude-substitute", result.mismatch_detail)
+
+    def test_inspect_stream_verifies_the_model_on_every_event(self) -> None:
+        events = [
+            {"type": "system", "subtype": "init", "model": "claude-pinned"},
+            {"type": "assistant", "message": {"model": "claude-downgrade",
+                                              "usage": {"input_tokens": 10}}},
+        ]
+        observed, mismatch, detail, tokens, known = cr.inspect_stream(
+            events, expected_model="claude-pinned")
+        self.assertEqual(observed, ("claude-pinned", "claude-downgrade"))
+        self.assertTrue(mismatch)
+        self.assertIn("claude-downgrade", detail)
+        self.assertTrue(known)
+        self.assertEqual(tokens, 10)
+
+    def test_inspect_stream_no_expected_model_never_reports_a_mismatch(self) -> None:
+        _, mismatch, _, _, _ = cr.inspect_stream(
+            [{"type": "assistant", "message": {"model": "anything"}}],
+            expected_model="")
+        self.assertFalse(mismatch)
+
+    def test_inspect_stream_peaks_the_usage_and_excludes_non_token_fields(self) -> None:
+        events = [
+            {"type": "assistant", "message": {"usage": {"input_tokens": 100,
+                                                        "output_tokens": 20,
+                                                        "service_tier": "standard"}}},
+            {"type": "result", "usage": {"input_tokens": 100, "output_tokens": 60,
+                                         "cache_read_input_tokens": 1000}},
+        ]
+        _, _, _, tokens, known = cr.inspect_stream(events)
+        self.assertTrue(known)
+        self.assertEqual(tokens, 1160)  # peak of (120, 1160); non-token fields skipped
+
+    def test_inspect_stream_reports_unknown_usage_when_none_present(self) -> None:
+        _, _, _, tokens, known = cr.inspect_stream(
+            [{"type": "assistant", "message": {"content": "hi"}}])
+        self.assertFalse(known)
+        self.assertEqual(tokens, 0)
+
+
 if __name__ == "__main__":
     unittest.main(verbosity=2)

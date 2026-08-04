@@ -52,10 +52,12 @@ import re
 from typing import Any, Callable, Mapping, Sequence
 
 from . import CONTROLLER_VERSION
+from . import rotation
+from .claude_runner import broker_permission_handler
 from .codex_reviewer import build_forwarded_prompt
 from .durable_state import JournalError
 from .evidence import STOP_FOR_OWNER, build_packet
-from .models import ClaudeCheckpoint, CodexDecision, digest_of, to_utc_iso
+from .models import ClaudeCheckpoint, CodexDecision, QueuedAsk, digest_of, to_utc_iso
 from .policy import (
     ASK,
     DENY_AND_HALT,
@@ -349,6 +351,11 @@ class CycleResult:
     stopped: str = ""
     packet_digest: str = ""
     notes: tuple[str, ...] = ()
+    #: V1.2 (D-004): what the just-finished unit reported. Surfaced so the SEAM
+    #: in run() can decide a pre-dispatch rotation without re-reading the runner.
+    model_mismatch: bool = False
+    context_tokens: int = 0
+    rotation_pending: bool = False
 
     @property
     def continues(self) -> bool:
@@ -381,6 +388,9 @@ class LoopRun:
     budget: BudgetReport
     forwarded_message_ids: tuple[str, ...] = ()
     provider_calls: int = 0
+    #: V1.2 (D-004): one record per seam rotation performed (model downgrade or
+    #: context-threshold crossing). Empty on a run that never rotated.
+    rotations: tuple[dict[str, Any], ...] = ()
 
     def to_dict(self) -> dict[str, Any]:
         return {
@@ -392,8 +402,22 @@ class LoopRun:
             "budget": self.budget.to_dict(),
             "forwarded_message_ids": list(self.forwarded_message_ids),
             "provider_calls": self.provider_calls,
+            "rotations": [dict(r) for r in self.rotations],
             "limited_auto_enabled": False,
         }
+
+
+@dataclasses.dataclass
+class SeamRotation:
+    """The outcome of one seam rotation attempt (D-004). Never terminates a unit."""
+
+    relaunched: bool
+    reason_code: str
+    reason: str = ""
+    paused: bool = False
+    stopped: str = ""
+    touch: OwnerTouch | None = None
+    record: dict[str, Any] | None = None
 
 
 # --------------------------------------------------------------------------
@@ -482,6 +506,12 @@ class SupervisedLoop:
         packet_builder: Callable[..., Any] | None = None,
         approval_gate: Callable[[str, str], bool] | None = None,
         never_send: Sequence[str] = (),
+        pinned_model: str = "",
+        context_rotation_threshold: int = 0,
+        model_available: Callable[[str], bool] | None = None,
+        head_sha: str = "",
+        origin_main_sha: str = "",
+        executable_identity: Mapping[str, Any] | None = None,
     ) -> None:
         self.config = config
         self.journal = journal
@@ -498,6 +528,18 @@ class SupervisedLoop:
         self._build_packet = packet_builder or build_packet
         self._approval_gate = approval_gate
         self.never_send = tuple(never_send)
+        # V1.2 (D-004): the model the worker is pinned to, the context-usage
+        # rotation threshold (0 disables it), and a strict availability probe used
+        # ONLY at a rotation seam. `model_available` defaulting to always-True is
+        # the production stance; a live availability check is an operator concern.
+        self.pinned_model = pinned_model
+        self.context_rotation_threshold = context_rotation_threshold
+        self._model_available_probe = model_available or (lambda _model: True)
+        self._head_sha = head_sha
+        self._origin_main_sha = origin_main_sha
+        self._executable_identity = dict(executable_identity or {})
+        self._current_session_id = ""
+        self._rotations: list[dict[str, Any]] = []
         self.touches = OwnerTouchLedger(journal, run_id=run_id,
                                         budget=config.owner_touch_budget)
         self.notify_ledger = NotifyOnceLedger(journal)
@@ -544,6 +586,200 @@ class SupervisedLoop:
         if verdict.warning:
             return False, verdict.message
         return False, ""
+
+    # -- broker wiring (G3 V-1) ---------------------------------------------
+
+    def _permission_handler(self) -> Any:
+        """The `can_use_tool` handler for the bounded unit's control channel.
+
+        SUPERVISED: route every in-scope tool request through the four-tier
+        policy + approval broker, so an AUTO/approved tool is PERMITTED and
+        executes (allow control-response), an ASK holds for the owner, and a
+        HARD-DENY is immovable. SHADOW (or a missing broker): return None, so the
+        runner falls back to `deny_everything` - shadow permits nothing and never
+        forwards, observing only (S8.4 / S12).
+        """
+        if not self.config.forwards or self.broker is None:
+            return None
+        return broker_permission_handler(
+            self.broker,
+            authority=self.authority,
+            head_sha=self._head_sha,
+            origin_main_sha=self._origin_main_sha,
+            session_id_getter=lambda: self._current_session_id,
+            executable_identity_data=self._executable_identity)
+
+    # -- seam-only rotation (D-004-R739, R743..R745) ------------------------
+
+    def rotation_pending(self) -> bool:
+        """True when a rotation was flagged and not yet consumed (durable)."""
+        return rotation.rotation_pending(self.journal)
+
+    def _model_available(self, model: str) -> bool:
+        """Strict, no-substitute availability probe for the pinned model."""
+        try:
+            return bool(self._model_available_probe(model))
+        except Exception:  # pragma: no cover - a failing probe fails closed
+            return False
+
+    def _flag_rotation_if_needed(self, run_result: Any, *, cycle: int) -> None:
+        """Set rotation_pending if THIS unit downgraded or crossed the threshold.
+
+        Flag-only. It never interrupts the unit (which has already returned) and
+        never rotates here: `observe_mid_unit` persists the flag and the actual
+        rotation happens at the next seam. Restricted to forwarding (supervised)
+        mode so a shadow observation stays purely observational.
+        """
+        if not self.config.forwards:
+            return
+        reason_code = ""
+        detail = ""
+        if getattr(run_result, "model_mismatch", False):
+            reason_code = "model_downgrade"
+            detail = str(getattr(run_result, "mismatch_detail", "") or "")
+        elif (self.context_rotation_threshold > 0
+              and getattr(run_result, "usage_known", False)
+              and int(getattr(run_result, "context_tokens", 0) or 0)
+              >= self.context_rotation_threshold):
+            reason_code = "context_threshold"
+            detail = (f"cumulative context usage "
+                      f"{int(getattr(run_result, 'context_tokens', 0) or 0)} crossed the "
+                      f"configured threshold {self.context_rotation_threshold}")
+        if not reason_code:
+            return
+        if self.rotation_pending():
+            return
+        # observe_mid_unit persists rotation_pending durably and, by construction,
+        # cannot terminate the unit - neither reason is an S11.2 interrupt reason.
+        rotation.observe_mid_unit(self.journal, reason_code=reason_code, detail=detail)
+        self.journal.set_state(rotation.ROTATION_REASON_KEY, reason_code)
+        if self.audit is not None:
+            self.audit.append(
+                "rotation_pending_flagged", run_id=self.run_id,
+                policy_result=reason_code,
+                detail={"cycle": cycle, "reason_code": reason_code, "detail": detail,
+                        "note": "the in-flight unit is NOT interrupted (S11.2); rotation "
+                                "happens before the next dispatch"})
+
+    def _refresh_session_handoff(self, *, cycle: int, reason_code: str) -> str:
+        """Refresh the durable SESSION_HANDOFF snapshot before rotating.
+
+        A bounded continuity record the rotated-to session binds to: the task,
+        stage, branch, worktree, the reason, and the outgoing session id, with a
+        digest. It is NOT the full S11.3 Codex-verified handoff (that needs a live
+        worker + reviewer and is out of fake-harness scope); it is the refresh
+        step named by D-004, recorded durably and in the audit chain.
+        """
+        snapshot = {
+            "task_id": self.config.task_id,
+            "stage": self.config.stage,
+            "branch": self.authority.branch,
+            "worktree": self.authority.worktree,
+            "reason_code": reason_code,
+            "outgoing_session_id": self._current_session_id,
+            "pinned_model": self.pinned_model,
+            "cycle": cycle,
+            "refreshed_at_utc": to_utc_iso(),
+        }
+        digest = digest_of(snapshot)
+        self.journal.set_state(f"session_handoff/{self.run_id}",
+                               {**snapshot, "digest": digest})
+        if self.audit is not None:
+            self.audit.append("session_handoff_refreshed", run_id=self.run_id,
+                              output_digest=digest, policy_result=reason_code,
+                              detail={"cycle": cycle, "reason_code": reason_code})
+        return digest
+
+    def _rotate_at_seam(self, *, cycle: int) -> "SeamRotation":
+        """Rotate the session BEFORE dispatching the next unit (B and C share this).
+
+        The single rotation code path for both a detected model downgrade (B) and
+        a context-threshold crossing (C). Structurally seam-only: only run() calls
+        it, always between cycles, and it asserts nothing is in flight by requiring
+        the durable rotation_pending flag. Order: refresh handoff -> strict pinned-
+        model check -> rotate via rotation.py (archive old, mint new, complete) or
+        PAUSE+notify when the pinned model is unavailable.
+        """
+        if not self.rotation_pending():  # pragma: no cover - guarded by caller
+            raise LoopError("rotate_without_pending",
+                            "a seam rotation was attempted with no rotation_pending flag; "
+                            "rotation is only reachable at a safe seam")
+        reason_code = str(self.journal.get_state(rotation.ROTATION_REASON_KEY, "")
+                          or "context_threshold")
+        handoff_digest = self._refresh_session_handoff(cycle=cycle,
+                                                       reason_code=reason_code)
+
+        # Strict, no-substitute pin: an orchestrator-role session never continues
+        # on a substitute model silently. If the configured model is unavailable,
+        # PAUSE and notify (queued ASK) instead of rotating onto anything else.
+        if self.pinned_model and not self._model_available(self.pinned_model):
+            self.machine.transition(
+                PAUSED_RECOVERY, "unsafe_condition",
+                detail={"cycle": cycle, "reason": "pinned_model_unavailable",
+                        "pinned_model": self.pinned_model, "rotation_reason": reason_code})
+            touch = self._touch(
+                TOUCH_SYNCHRONOUS_STOP, reason_code="pinned_model_unavailable",
+                reason=(f"the configured model {self.pinned_model!r} is unavailable; a "
+                        f"rotation may not silently substitute another model (D-004)"),
+                cycle=cycle, basis="D-004 model pinning / S3.2")
+            ask_id = f"rotation_pause/{self.run_id}/{cycle}"
+            try:
+                self.journal.queue_ask(QueuedAsk(
+                    ask_id=ask_id, run_id=self.run_id, task_id=self.config.task_id,
+                    question=(f"The configured model {self.pinned_model!r} is unavailable "
+                              f"after a {reason_code} rotation. An orchestrator-role "
+                              f"session will not continue on a substitute; how should it "
+                              f"proceed?"),
+                    request_digest=handoff_digest, created_at_utc=to_utc_iso(),
+                    classification="security"))
+            except Exception:
+                # A duplicate ask id means the same pause is already queued.
+                pass
+            if self.audit is not None:
+                self.audit.append(
+                    "rotation_paused_model_unavailable", run_id=self.run_id,
+                    decision="deny", policy_result="pinned_model_unavailable",
+                    detail={"cycle": cycle, "pinned_model": self.pinned_model,
+                            "reason_code": reason_code, "ask_id": ask_id,
+                            "handoff_digest": handoff_digest})
+            return SeamRotation(
+                relaunched=False, paused=True,
+                stopped="rotation_paused_model_unavailable",
+                reason=(f"the configured model {self.pinned_model!r} is unavailable; the "
+                        f"session is paused for the owner rather than continuing on a "
+                        f"substitute"),
+                reason_code=reason_code, touch=touch)
+
+        # Rotate via rotation.py: archive the outgoing session, clear the pending
+        # flag, mint a brand-new session id, record the NOTIFY event.
+        old_session = self._current_session_id
+        new_session = rotation.new_session_id(old_session)
+        ledger = rotation.RotationLedger(self.journal, audit=self.audit)
+        record = ledger.complete_rotation(
+            old_session_id=old_session, new_session_id_value=new_session,
+            handoff_digest=handoff_digest)
+        self._current_session_id = new_session
+        self.journal.set_state(rotation.ROTATION_REASON_KEY, "")
+        relaunch = {
+            "cycle": cycle, "reason_code": reason_code,
+            "old_session_id": old_session, "new_session_id": new_session,
+            "handoff_digest": handoff_digest, "pinned_model": self.pinned_model,
+            "tier": NOTIFY, "recorded_at_utc": to_utc_iso(),
+        }
+        self._rotations.append(relaunch)
+        if self.audit is not None:
+            self.audit.append(
+                "supervisor_rotation_relaunch", run_id=self.run_id,
+                policy_result=reason_code, output_digest=handoff_digest,
+                detail={**relaunch,
+                        "note": "relaunch continues on the CONFIGURED model in a brand-new "
+                                "session; a completed rotation is a NOTIFY event (S11.3)"})
+        pinned_label = self.pinned_model or "the configured model"
+        return SeamRotation(relaunched=True, paused=False, stopped="",
+                            reason=(f"rotated {reason_code}: archived {old_session!r}, "
+                                    f"relaunching pinned on {pinned_label} in "
+                                    f"{new_session!r}"),
+                            reason_code=reason_code, record=relaunch)
 
     # -- the cycle ----------------------------------------------------------
 
@@ -600,8 +836,17 @@ class SupervisedLoop:
             notify.append("circuit_breaker_warning")
 
         # --- run the bounded unit -------------------------------------------
+        # G3 V-1: the approval broker is now WIRED. In supervised mode each
+        # in-scope tool request the worker makes routes through the four-tier
+        # policy + broker; an AUTO/approved tool is PERMITTED and executes. In
+        # shadow mode the handler permits nothing (deny/observe only) - shadow
+        # semantics unchanged.
         self.provider_calls += 1
-        run_result = self.runner.run_unit(prompt)
+        run_result = self.runner.run_unit(
+            prompt, permission_handler=self._permission_handler())
+        session_id = str(getattr(run_result, "session_id", "") or "")
+        if session_id:
+            self._current_session_id = session_id
         if self.machine.current_state == START_CLAUDE:
             self.machine.transition(
                 CLAUDE_RUNNING, "claude_process_started",
@@ -662,6 +907,17 @@ class SupervisedLoop:
             # reviews of THIS checkpoint, so it resets when a new checkpoint is
             # received - without this it silently measured reviews-per-run.
             self.breakers.reset("codex_reviews_per_checkpoint")
+
+        # --- V1.2 (D-004-R739 / R743): seam-only rotation triggers ------------
+        # A detected model downgrade or a context-threshold crossing during THIS
+        # unit sets rotation_pending. Per S11.2 the in-flight unit is NEVER
+        # interrupted for pressure: it already returned above, and the actual
+        # rotation decision runs at the next seam in run() - unreachable while a
+        # unit is in flight. Surfaced on the CycleResult for the seam to read.
+        result.model_mismatch = bool(getattr(run_result, "model_mismatch", False))
+        result.context_tokens = int(getattr(run_result, "context_tokens", 0) or 0)
+        self._flag_rotation_if_needed(run_result, cycle=cycle)
+        result.rotation_pending = self.rotation_pending()
 
         # --- COLLECT_EVIDENCE ------------------------------------------------
         self.machine.transition(COLLECT_EVIDENCE, "checkpoint_validated",
@@ -1085,6 +1341,21 @@ class SupervisedLoop:
                     f"{result.forward.message_id!r} sent but carried no prompt bytes "
                     f"for the next unit; refusing to fall back to the original prompt")
             prompt = result.forward.sent_prompt
+            # V1.2 (D-004): SEAM. Honor any pending rotation BEFORE dispatching
+            # the next unit. This is structurally the only place rotation acts:
+            # the just-finished unit has returned and no new unit is in flight, so
+            # the finish-current-unit invariant (S11.2) holds by construction. A
+            # detected downgrade (B) and a context-threshold crossing (C) share
+            # this one path. Only fires when there IS a next unit to relaunch.
+            if index < self.config.max_cycles and self.rotation_pending():
+                seam = self._rotate_at_seam(cycle=index + 1)
+                if seam.paused:
+                    # Pinned model unavailable: PAUSE + notify. An orchestrator-
+                    # role session never continues on a substitute model.
+                    stopped = seam.stopped
+                    break
+                # Relaunched: the next cycle dispatches the SAME forwarded prompt
+                # on the fresh session id, still pinned to the configured model.
         else:
             stopped = "max_cycles_reached"
         return LoopRun(
@@ -1092,4 +1363,5 @@ class SupervisedLoop:
             final_state=self.machine.current_state, stopped=stopped,
             budget=self.touches.report(),
             forwarded_message_ids=tuple(self._forwarded),
-            provider_calls=self.provider_calls)
+            provider_calls=self.provider_calls,
+            rotations=tuple(self._rotations))

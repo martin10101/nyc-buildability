@@ -250,6 +250,25 @@ class PreDispatchDecisionTests(unittest.TestCase):
             rot.RotationThresholds.from_controller_config(FakeConfig())
         self.assertEqual(raised.exception.code, "threshold_order")
 
+    def test_context_rotation_threshold_defaults_to_400000(self) -> None:
+        # D-004-R743: the context-token rotation threshold defaults to 400000.
+        self.assertEqual(rot.RotationThresholds().context_rotation_threshold, 400_000)
+
+    def test_context_rotation_threshold_is_configurable(self) -> None:
+        # D-004-R744: it reads from [rotation] in the immutable controller config.
+        class FakeConfig:
+            raw = {"rotation": {"context_rotation_threshold": 123_456}}
+
+        thresholds = rot.RotationThresholds.from_controller_config(FakeConfig())
+        self.assertEqual(thresholds.context_rotation_threshold, 123_456)
+
+    def test_context_rotation_threshold_rejects_a_non_positive_value(self) -> None:
+        class FakeConfig:
+            raw = {"rotation": {"context_rotation_threshold": 0}}
+
+        with self.assertRaises(rot.RotationError):
+            rot.RotationThresholds.from_controller_config(FakeConfig())
+
 
 # --------------------------------------------------------------------------
 # S11.2 - the finish-the-current-unit invariant

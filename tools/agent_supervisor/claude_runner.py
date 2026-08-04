@@ -128,6 +128,12 @@ class RunnerConfig:
     close_grace_seconds: float = GRACEFUL_CLOSE_GRACE_SECONDS
     cwd: str = ""
     model: str = ""
+    #: D-004-R739: the model each stream-json event is VERIFIED against. Defaults
+    #: to `model` (verify exactly what was pinned). A distinct value is only for a
+    #: synthetic mismatch probe: it pins `--model` to the real primary but checks
+    #: against a deliberately-wrong id, so a live worker cleanly triggers the
+    #: detected-downgrade path without launching on an unavailable model.
+    expected_model: str = ""
     permission_mode: str = REQUIRED_PERMISSION_MODE
     permission_prompt_tool: str = REQUIRED_PERMISSION_PROMPT_TOOL
     resume_session_id: str = ""
@@ -352,6 +358,104 @@ def _event_text(event: Mapping[str, Any]) -> str:
                 if isinstance(block, Mapping) and isinstance(block.get("text"), str):
                     parts.append(block["text"])
     return "\n".join(parts)
+
+
+# --------------------------------------------------------------------------
+# Model identity and context usage on the stream (D-004-R739, R743..R745)
+# --------------------------------------------------------------------------
+#
+# These read what the stream ACTUALLY reports. They never guess a schema: each
+# is a total scan over the known places a stream-json event can carry a model
+# identifier or a token-usage object, and any one absent place is simply skipped
+# rather than assumed. The `system/init` event and the per-turn `assistant` /
+# terminal `result` events are the observed carriers (Phase 0/1 stdio probes).
+
+
+def _event_models(event: Mapping[str, Any]) -> list[str]:
+    """Every model identifier this one event carries, in the order seen."""
+    models: list[str] = []
+    top = event.get("model")
+    if isinstance(top, str) and top:
+        models.append(top)
+    message = event.get("message")
+    if isinstance(message, Mapping):
+        nested = message.get("model")
+        if isinstance(nested, str) and nested:
+            models.append(nested)
+    model_usage = event.get("modelUsage")
+    if isinstance(model_usage, Mapping):
+        for key in model_usage:
+            if isinstance(key, str) and key:
+                models.append(key)
+    return models
+
+
+def _event_usage(event: Mapping[str, Any]) -> Mapping[str, Any] | None:
+    """The token-usage object this event carries, or None."""
+    usage = event.get("usage")
+    if isinstance(usage, Mapping):
+        return usage
+    message = event.get("message")
+    if isinstance(message, Mapping):
+        nested = message.get("usage")
+        if isinstance(nested, Mapping):
+            return nested
+    return None
+
+
+def _sum_usage_tokens(usage: Mapping[str, Any]) -> int | None:
+    """Sum every `*token*` integer field in a usage object (None if none present).
+
+    This is a POLICY signal (cumulative processed tokens), not a claim about any
+    model's real context window - the same stance rotation.RotationThresholds
+    takes. Booleans are excluded (a bool is an int subclass).
+    """
+    total = 0
+    seen = False
+    for key, value in usage.items():
+        if not isinstance(key, str) or "token" not in key.lower():
+            continue
+        if isinstance(value, bool) or not isinstance(value, int):
+            continue
+        total += value
+        seen = True
+    return total if seen else None
+
+
+def inspect_stream(
+    events: Sequence[Mapping[str, Any]],
+    *,
+    expected_model: str = "",
+) -> tuple[tuple[str, ...], bool, str, int, bool]:
+    """Verify model identity on EVERY event and total the context usage.
+
+    Returns `(observed_models, model_mismatch, mismatch_detail, context_tokens,
+    usage_known)`. When `expected_model` is set, any event whose model identifier
+    differs from it is a mismatch (a detected downgrade); the first such event is
+    reported. `context_tokens` is the peak cumulative usage seen on any single
+    event's usage object.
+    """
+    observed: list[str] = []
+    mismatch = False
+    detail = ""
+    context_tokens = 0
+    usage_known = False
+    for event in events:
+        for model in _event_models(event):
+            if model not in observed:
+                observed.append(model)
+            if expected_model and model != expected_model and not mismatch:
+                mismatch = True
+                detail = (f"a stream event reported model {model!r} but this worker was "
+                          f"pinned to {expected_model!r}; a detected downgrade rotates "
+                          f"before the next unit and never continues on the substitute")
+        usage = _event_usage(event)
+        if usage is not None:
+            total = _sum_usage_tokens(usage)
+            if total is not None:
+                usage_known = True
+                context_tokens = max(context_tokens, total)
+    return tuple(observed), mismatch, detail, context_tokens, usage_known
 
 
 def extract_checkpoint(events: Sequence[Mapping[str, Any]]) -> ClaudeCheckpoint:
@@ -581,6 +685,18 @@ class RunResult:
     #: checkpoint-contract block to the dispatched prompt (False means the
     #: prompt already carried it).
     checkpoint_contract_appended: bool = False
+    #: V1.2 (D-004-R739): every distinct model id the stream reported.
+    observed_models: tuple[str, ...] = ()
+    #: V1.2 (D-004-R739): a stream event reported a model other than the pinned
+    #: one - a detected downgrade. The seam rotates before the next unit.
+    model_mismatch: bool = False
+    #: Human-readable description of the first observed mismatch.
+    mismatch_detail: str = ""
+    #: V1.2 (D-004-R743): peak cumulative token usage read off the stream. A
+    #: policy signal for the context-threshold rotation, never a capacity claim.
+    context_tokens: int = 0
+    #: True when at least one usage object was readable on the stream.
+    usage_known: bool = False
 
     @property
     def ok(self) -> bool:
@@ -809,6 +925,13 @@ class ClaudeRunner:
         narrative = "\n".join(_event_text(event) for event in events)
         untrusted = neutralize_untrusted(narrative)
 
+        # D-004-R739/R743: verify the model on EVERY stream event and total the
+        # context usage. The check runs on the fully-drained event list (after the
+        # threads join above), so it stays single-threaded and sees every event.
+        observed_models, model_mismatch, mismatch_detail, context_tokens, usage_known = \
+            inspect_stream(events, expected_model=self.config.expected_model
+                           or self.config.model)
+
         result = RunResult(
             argv=tuple(argv),
             returncode=process.returncode if process.returncode is not None else -1,
@@ -829,6 +952,11 @@ class ClaudeRunner:
             injection_labels=untrusted.labels,
             raw_events=tuple(events),
             checkpoint_contract_appended=contract_appended,
+            observed_models=observed_models,
+            model_mismatch=model_mismatch,
+            mismatch_detail=mismatch_detail,
+            context_tokens=context_tokens,
+            usage_known=usage_known,
         )
         self._audit_run(result)
         return result
@@ -886,6 +1014,11 @@ class ClaudeRunner:
                 "injection_labels": list(result.injection_labels),
                 "session_id_recorded": bool(result.session_id),
                 "checkpoint_contract_appended": result.checkpoint_contract_appended,
+                "observed_models": list(result.observed_models),
+                "expected_model": self.config.expected_model or self.config.model,
+                "model_mismatch": result.model_mismatch,
+                "context_tokens": result.context_tokens,
+                "usage_known": result.usage_known,
             })
 
 

@@ -82,6 +82,13 @@ class RotationThresholds:
     max_adherence_failures: int = 2
     #: A checkpoint or evidence packet larger than this is itself a signal.
     oversized_checkpoint_bytes: int = 262_144
+    #: D-004-R743..R745: cumulative context-token usage (read off the stream) at
+    #: or above which the assembled loop rotates the session before dispatching
+    #: the next unit - the same code path as a detected model downgrade. Like the
+    #: bounds above this is an owner-policy number, not a capacity claim. It is a
+    #: SEAM decision (finish-current-unit invariant, S11.2): the flag is set while
+    #: a unit is in flight but only ACTED ON before the next dispatch.
+    context_rotation_threshold: int = 400_000
 
     @classmethod
     def from_controller_config(cls, config: Any) -> "RotationThresholds":
@@ -417,6 +424,10 @@ def decide_pre_dispatch(
 
 ROTATION_PENDING_KEY = "rotation_pending"
 JOB_SIZE_KEY = "job_size_class"
+#: D-004: why rotation_pending was set (model_downgrade | context_threshold |
+#: owner_request | ...). Persisted alongside the flag so the seam knows what to
+#: report and audit, and cleared with the flag by complete_rotation.
+ROTATION_REASON_KEY = "rotation_pending_reason"
 
 #: The ONLY reasons a dispatched unit may be interrupted (S11.2). Context or
 #: cumulative-usage pressure is deliberately absent and can never be added by
