@@ -60,7 +60,7 @@
     "directive-compliance-verifier"
   ],
   "status": "in_progress",
-  "progress_percent": 95,
+  "progress_percent": 97,
   "risks": [
     "Scale: D-007 spans 5 phases; the packet authorizes Phases 1-4 + the Phase 5 shadow pilot, with the activation decision owner-gated. Split into per-phase follow-up tasks at the orchestrator's discretion if a phase exceeds a safe review size - contract splits through the normal process, never widen this packet.",
     "Windows process-tree control (Job Objects) and durable Task Scheduler wake are the highest-uncertainty areas; Section 18 stop conditions apply if a safe strategy cannot be proven.",
@@ -69,7 +69,7 @@
   ],
   "blockers": [],
   "created_at": "2026-08-03T03:44:41.634259+00:00",
-  "updated_at": "2026-08-04T07:19:36.968258+00:00",
+  "updated_at": "2026-08-04T08:14:43.666847+00:00",
   "directive_refs": [
     {
       "directive_id": "D-007",
@@ -173,6 +173,13 @@
       "percent": 95,
       "status": "in_progress",
       "message": "PHASE 5 COMPLETE - DECISION PACKET DELIVERED AND STOPPED (R541/R555/R576). All five independent gate reviews returned at frozen 43848bd (CI 30886102559 all 13 jobs green): G3 PASS with B-1..B-4 blocking corrections (supervised multi-cycle prompt-threading; POLICY_CHECK stranding; distinct-checkpoint-id last-wins; discarded review-breaker verdict); G5 PASS 0-blocking; G4 QA PASS (totals reproduced, run-4 erratum applied, 7 ranked gaps); CPV PASS (C1 CLI re-record + C2 audit_log catch-up discharged); DCV PASS (R532-R576: 36 satisfied, 9 pending-by-design, 0 violated; activation/acceptance boundary affirmatively held). Packet at reports/M0-T036-PHASE5-DECISION-PACKET.md recommends KEEP SHADOW-ONLY / DO NOT ACTIVATE. Awaiting the owner's activation decision and V1.1 disposition; M0-T035 acceptance separately owner-gated. No agent action pending."
+    },
+    {
+      "at": "2026-08-04T08:14:43.666847+00:00",
+      "agent": "orchestrator",
+      "percent": 97,
+      "status": "in_progress",
+      "message": "V1.1 CORRECTION UNIT RE-GATE COMPLETE - ALL FIVE PASS at frozen c193a52 (CI run 30890198955 green). G3 code (raised B-1..B-4) confirms all four blocking fixes genuine with real tests; G5 security 0-blocking (3 informational); G4 QA reproduced 1091/2 (+26, each fix pinned); control-plane PASS no-corrections (C1/C2 confirmed discharged, own 1091 re-run matched); directive-compliance PASS R577-R584 (6 satisfied/2 pending-by-design/0 violated, boundaries affirmatively held). New V1.2-candidate observations only (G3 N-1..N-4, G4 3 LOW spots, G5 3 informational, CPV F-CPD-1..4 incl. G2-record-needed-before-acceptance) - none blocking. Shadow-only in force; limited-auto never enabled. NOT AUTHORIZED and returning to owner separately: doctor --live probe, supervised single-forward rehearsal. M0-T035 acceptance owner-typed only."
     }
   ]
 }
