@@ -1,7 +1,7 @@
 {
  "schema": "directive_manifest/v1",
  "directive_id": "D-004",
- "version": 25,
+ "version": 26,
  "slug": "agent-teams-runtime-adoption",
  "title": "Agent-teams runtime adoption, staged with pilots",
  "status": "active",
@@ -209,6 +209,14 @@
    "amends": "source-023-amendment.md",
    "recorded_at": "2026-08-04T17:05:00+00:00",
    "content_digest_sha256": "4401a69cfc5805ec0e0e1edbbf085885b7709d00226525564dc06085f8079c03"
+  },
+  {
+   "file": "source-026-amendment.md",
+   "kind": "amendment",
+   "sequence": 26,
+   "amends": "source-025-amendment.md",
+   "recorded_at": "2026-08-04T19:05:00+00:00",
+   "content_digest_sha256": "978ab745f925c115de0329a2b0ad3ae295feabaaa0741e190a97be24eb336bd7"
   }
  ],
  "amendments": [
@@ -235,7 +243,8 @@
   "source-022-amendment.md",
   "source-023-amendment.md",
   "source-024-amendment.md",
-  "source-025-amendment.md"
+  "source-025-amendment.md",
+  "source-026-amendment.md"
  ],
  "supersedes": [],
  "superseded_by": null,
@@ -489,6 +498,11 @@
    "at": "2026-08-04T17:05:00+00:00",
    "by": "orchestrator",
    "note": "Amendment 24 (source-025-amendment.md): V1.2 scope extension (same unit as R739) - context-threshold rotation for orchestrator-role sessions, 400k-token configurable threshold treated exactly like a detected downgrade, seam-only never mid-unit; acceptance must include one live rotation (closes QA gap 4) + one live model mismatch, both evidenced. Rows R743-R745."
+  },
+  {
+   "at": "2026-08-04T19:05:00+00:00",
+   "by": "orchestrator",
+   "note": "Amendment 26 (source-026-amendment.md): owner evening authorization - orchestrator-role quota-exhausted substitution to claude-opus-4-8 (R746: explicit, first-class event, return at next seam; R747: never silent, orchestrator-role only; R748: reviewer pins unchanged, reviews wait for Fable 5); Fable-5 window LIVE, wait-for-reset lifted (R749); M0-T034 drive-to-submit as normal unit, queues at submit, nothing merges/accepts unattended (R750). Same message captured as D-007 am.11 (R597-R602)."
   }
  ],
  "locked_requirement_ids": [
@@ -1236,8 +1250,13 @@
   "D-004-R742",
   "D-004-R743",
   "D-004-R744",
-  "D-004-R745"
+  "D-004-R745",
+  "D-004-R746",
+  "D-004-R747",
+  "D-004-R748",
+  "D-004-R749",
+  "D-004-R750"
  ],
- "requirements_id_digest_sha256": "8ebeb597c63686865128d688d01291c1e3edfb0f505a3b3c3c5cd2559e20e741",
- "requirements_content_digest_sha256": "fc1b3d470705dfdd8bf1feb3e6dc0beae795a5864146b94e390d572da7f40167"
+ "requirements_id_digest_sha256": "bdd181185f4ee9b2c7f77816a8d2f94cb4a5e30235d554f47fc6cd9686e52aac",
+ "requirements_content_digest_sha256": "4a46e5417e0f52e9151d0ac976366d3e0cedee6303907e2f2fd6f27ae06a86ad"
 }

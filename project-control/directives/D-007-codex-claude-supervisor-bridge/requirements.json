@@ -1,10 +1,10 @@
 {
  "schema": "directive_requirements/v1",
  "directive_id": "D-007",
- "version": 1,
- "requirement_count": 596,
+ "version": 2,
+ "requirement_count": 602,
  "producer": "orchestrator",
- "updated_at": "2026-08-04T18:00:00+00:00",
+ "updated_at": "2026-08-04T19:05:00+00:00",
  "requirements": [
   {
    "id": "D-007-R001",
@@ -22835,6 +22835,254 @@
     ]
    },
    "amendment_sequence": 10
+  },
+  {
+   "id": "D-007-R597",
+   "text": "V1.2 UNIT SCOPE EXTENSION (fold-in before freeze): the model-policy correction (orchestrator-role quota-exhausted substitution, see R598) is folded INTO the V1.2 unit with its own dedicated test, and lands BEFORE the V1.2 SHA freeze that gates the Fable-5 reviews.",
+   "source_ref": "source-012-amendment.md#the-owner-message",
+   "classification": "sequencing",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-007-BUILD",
+     "M0-T036"
+    ],
+    "task_types": [
+     "governance"
+    ],
+    "milestones": [],
+    "paths": [
+     "tools/agent_supervisor/",
+     "tools/test_agent_supervisor_"
+    ],
+    "lifecycle_events": [
+     "gate"
+    ],
+    "effective_date": "2026-08-04"
+   },
+   "dependencies": [
+    "D-007-R592"
+   ],
+   "required_harness": "dedicated unit test for the substitution path in the V1.2 unit",
+   "required_evidence": "test present + passing at the frozen SHA; substitution path implemented in tools/agent_supervisor/",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "captured from the owner evening authorization (2026-08-04); verified at directive verification",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": [
+     "M0-T036"
+    ]
+   },
+   "amendment_sequence": 11
+  },
+  {
+   "id": "D-007-R598",
+   "text": "ORCHESTRATOR-ROLE QUOTA SUBSTITUTION (behavior; mirrors D-004-R746..R748): when the orchestrator-role pinned model (Fable 5) is unavailable because quota is exhausted, the supervisor relaunches explicitly on claude-opus-4-8, records the substitution as a FIRST-CLASS event, and returns to Fable 5 at the next seam once available. Never silent. Orchestrator-role only: reviewer pins unchanged, and reviews WAIT for Fable 5 rather than fall back.",
+   "source_ref": "source-012-amendment.md#the-owner-message",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-007-BUILD",
+     "M0-T036"
+    ],
+    "task_types": [
+     "governance"
+    ],
+    "milestones": [],
+    "paths": [
+     "tools/agent_supervisor/"
+    ],
+    "lifecycle_events": [
+     "gate"
+    ],
+    "effective_date": "2026-08-04"
+   },
+   "dependencies": [
+    "D-007-R592"
+   ],
+   "required_harness": "",
+   "required_evidence": "first-class substitution event in audit/journal; explicit relaunch model; seam return-to-pinned",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "captured from the owner evening authorization (2026-08-04); verified at directive verification",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": [
+     "M0-T036"
+    ]
+   },
+   "amendment_sequence": 11
+  },
+  {
+   "id": "D-007-R599",
+   "text": "FABLE-5 REVIEW DISPATCH (owner window LIVE; updates R596 trigger): after the three V1.2 live exercises complete AND the SHA freezes, dispatch the V1.2 delta re-gate AND the held G2 wave IMMEDIATELY, Fable-5-pinned as recorded. The wait-for-reset hold is lifted by this message.",
+   "source_ref": "source-012-amendment.md#the-owner-message",
+   "classification": "sequencing",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-007-BUILD",
+     "M0-T036"
+    ],
+    "task_types": [
+     "governance"
+    ],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [
+     "gate"
+    ],
+    "effective_date": "2026-08-04"
+   },
+   "dependencies": [
+    "D-007-R596",
+    "D-007-R597"
+   ],
+   "required_harness": "",
+   "required_evidence": "both review waves dispatched at the frozen SHA on the Fable-5-pinned reviewer set",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "captured from the owner evening authorization (2026-08-04); verified at directive verification",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": [
+     "M0-T036"
+    ]
+   },
+   "amendment_sequence": 11
+  },
+  {
+   "id": "D-007-R600",
+   "text": "STANDING PROHIBITION (reaffirmed): the supervised single-forward rehearsal and ALL activation remain NOT authorized; shadow-only stays in force for real work.",
+   "source_ref": "source-012-amendment.md#the-owner-message",
+   "classification": "prohibition",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-007-BUILD",
+     "M0-T036"
+    ],
+    "task_types": [
+     "governance"
+    ],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [
+     "gate"
+    ],
+    "effective_date": "2026-08-04"
+   },
+   "dependencies": [
+    "D-007-R595"
+   ],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "captured from the owner evening authorization (2026-08-04); verified at directive verification",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": [
+     "M0-T036"
+    ]
+   },
+   "amendment_sequence": 11
+  },
+  {
+   "id": "D-007-R601",
+   "text": "UNATTENDED-EXECUTION DISCIPLINE: verify the live repo state before acting; stop at every owner gate; nothing merges, nothing is accepted, and no owner gate closes in the owner's absence.",
+   "source_ref": "source-012-amendment.md#the-owner-message",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-007-BUILD",
+     "M0-T036"
+    ],
+    "task_types": [
+     "governance"
+    ],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [
+     "gate"
+    ],
+    "effective_date": "2026-08-04"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "captured from the owner evening authorization (2026-08-04); verified at directive verification",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": [
+     "M0-T036"
+    ]
+   },
+   "amendment_sequence": 11
+  },
+  {
+   "id": "D-007-R602",
+   "text": "RETURN ITEM: refresh docs/SESSION_HANDOFF.md once tonight's returns land.",
+   "source_ref": "source-012-amendment.md#the-owner-message",
+   "classification": "return",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-007-BUILD",
+     "M0-T036"
+    ],
+    "task_types": [
+     "governance"
+    ],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [
+     "gate"
+    ],
+    "effective_date": "2026-08-04"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "refreshed SESSION_HANDOFF.md committed",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "captured from the owner evening authorization (2026-08-04); verified at directive verification",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": [
+     "M0-T036"
+    ]
+   },
+   "amendment_sequence": 11
   }
  ],
  "amendments_applied": [
@@ -22847,6 +23095,7 @@
   "source-008-amendment.md",
   "source-009-amendment.md",
   "source-010-amendment.md",
-  "source-011-amendment.md"
+  "source-011-amendment.md",
+  "source-012-amendment.md"
  ]
 }

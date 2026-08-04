@@ -1,7 +1,7 @@
 {
  "schema": "directive_manifest/v1",
  "directive_id": "D-007",
- "version": 11,
+ "version": 12,
  "slug": "codex-claude-supervisor-bridge",
  "title": "Codex-Claude Code Supervisor Bridge (v4.3, Autonomy-Tuned) - build directive",
  "status": "active",
@@ -97,6 +97,14 @@
    "amends": "source-010-amendment.md",
    "recorded_at": "2026-08-04T18:00:00+00:00",
    "content_digest_sha256": "6e95fc8b2703f8b8f478ce9f64eea189554f6614becb2561dafa936b861bbcc9"
+  },
+  {
+   "file": "source-012-amendment.md",
+   "kind": "amendment",
+   "sequence": 12,
+   "amends": "source-011-amendment.md",
+   "recorded_at": "2026-08-04T19:05:00+00:00",
+   "content_digest_sha256": "1dc7c925014a023712b91eca50bdfeef887a649593f6a38e85d02b18a6517390"
   }
  ],
  "amendments": [
@@ -109,7 +117,8 @@
   "source-008-amendment.md",
   "source-009-amendment.md",
   "source-010-amendment.md",
-  "source-011-amendment.md"
+  "source-011-amendment.md",
+  "source-012-amendment.md"
  ],
  "supersedes": [],
  "superseded_by": null,
@@ -221,6 +230,11 @@
    "at": "2026-08-04T18:00:00+00:00",
    "by": "orchestrator",
    "note": "Amendment 10 (source-011-amendment.md): probe decision (deny-leg satisfies R739/R582; allow-leg circular pre-broker); V1.2 CONTRACTED+DISPATCHED (model-identity R739 + context-threshold rotation R743-745 + broker wiring G3 V-1); acceptance needs live allow round-trip (QA gap 1) + live rotation (QA gap 4) + live model mismatch, all verbatim, synthetic probe units only, shadow-only; supervised rehearsal still not authorized (post-delta-regate); Fable-5 reviews (V1.2 delta re-gate + G2 wave) after owner window reset. Rows R591-R596."
+  },
+  {
+   "at": "2026-08-04T19:05:00+00:00",
+   "by": "orchestrator",
+   "note": "Amendment 11 (source-012-amendment.md): owner evening authorization - model-policy correction folded into V1.2 with dedicated test before freeze (R597; R598: orchestrator-role quota-exhausted relaunch on claude-opus-4-8, first-class event, return at next seam, never silent; reviewer pins unchanged, reviews wait); Fable-5 window LIVE - dispatch V1.2 delta re-gate + held G2 wave immediately after exercises+freeze (R599); rehearsal/activation still NOT authorized, shadow-only (R600); unattended discipline (R601); SESSION_HANDOFF refresh return item (R602). Same message captured as D-004 am.26 (R746-R750, incl. M0-T034 drive-to-submit)."
   }
  ],
  "locked_requirement_ids": [
@@ -819,8 +833,14 @@
   "D-007-R593",
   "D-007-R594",
   "D-007-R595",
-  "D-007-R596"
+  "D-007-R596",
+  "D-007-R597",
+  "D-007-R598",
+  "D-007-R599",
+  "D-007-R600",
+  "D-007-R601",
+  "D-007-R602"
  ],
- "requirements_id_digest_sha256": "313dc09cbd8e2a365ad4f4e42edf4da67190dcfd8038c2b23f939954afbf23af",
- "requirements_content_digest_sha256": "b2fe7c8de1927be4a908584623b3551891c3d8a289cbcbf337366d46d54efb86"
+ "requirements_id_digest_sha256": "828b825fd897dec846081ef19d1e80eda26f3904cb538826b05691da697552b9",
+ "requirements_content_digest_sha256": "06c0fe057a4b41e5d68455ee0451236562be56408fc6eb7e023b19299d0f0652"
 }

@@ -1,10 +1,10 @@
 {
  "schema": "directive_requirements/v1",
  "directive_id": "D-004",
- "version": 1,
- "requirement_count": 745,
+ "version": 2,
+ "requirement_count": 750,
  "producer": "orchestrator",
- "updated_at": "2026-08-04T17:05:00+00:00",
+ "updated_at": "2026-08-04T19:05:00+00:00",
  "requirements": [
   {
    "id": "D-004-R001",
@@ -5229,7 +5229,7 @@
   },
   {
    "id": "D-004-R137",
-   "text": "In the re-run the guard DENIAL must be observed and independently verified \u00e2\u20ac\u201d not merely asserted by the reviewer.",
+   "text": "In the re-run the guard DENIAL must be observed and independently verified â€” not merely asserted by the reviewer.",
    "source_ref": "source-005-amendment.md#item-1",
    "classification": "evidence",
    "binding": true,
@@ -5399,7 +5399,7 @@
   },
   {
    "id": "D-004-R141",
-   "text": "M0-T028 scope (a): determine WITH EVIDENCE why the PreToolUse guard did not deny the teammate's Bash redirection \u00e2\u20ac\u201d hook not firing for teammates versus firing without agent_type \u00e2\u20ac\u201d factoring in the positive finding that per-spawn tool-unavailability WAS enforced by the harness.",
+   "text": "M0-T028 scope (a): determine WITH EVIDENCE why the PreToolUse guard did not deny the teammate's Bash redirection â€” hook not firing for teammates versus firing without agent_type â€” factoring in the positive finding that per-spawn tool-unavailability WAS enforced by the harness.",
    "source_ref": "source-005-amendment.md#item-3",
    "classification": "obligation",
    "binding": true,
@@ -5756,7 +5756,7 @@
   },
   {
    "id": "D-004-R150",
-   "text": "Step-2 safeguard: after the SECOND attestation, run a full dirt sweep \u00e2\u20ac\u201d git status in the main checkout AND in both worktrees.",
+   "text": "Step-2 safeguard: after the SECOND attestation, run a full dirt sweep â€” git status in the main checkout AND in both worktrees.",
    "source_ref": "source-005-amendment.md#item-4",
    "classification": "obligation",
    "binding": true,
@@ -29313,6 +29313,228 @@
     ]
    },
    "amendment_sequence": 25
+  },
+  {
+   "id": "D-004-R746",
+   "text": "ORCHESTRATOR-ROLE QUOTA SUBSTITUTION (corrects the R739 'unavailable -> pause+notify' leg for ONE named case): when the orchestrator-role pinned model (Fable 5) is unavailable because QUOTA IS EXHAUSTED, the supervisor relaunches explicitly on claude-opus-4-8 (explicit model selection, never inherited), records the substitution as a FIRST-CLASS event, and returns to Fable 5 at the NEXT SEAM once available.",
+   "source_ref": "source-026-amendment.md#the-owner-message",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-004-MODELGOV"
+    ],
+    "task_types": [
+     "governance"
+    ],
+    "milestones": [
+     "M0"
+    ],
+    "paths": [
+     "tools/agent_supervisor/"
+    ],
+    "lifecycle_events": [
+     "claim",
+     "submit",
+     "gate",
+     "accept"
+    ],
+    "effective_date": "2026-08-04"
+   },
+   "dependencies": [
+    "D-004-R739"
+   ],
+   "required_harness": "dedicated unit test in the V1.2 unit (per D-007-R597)",
+   "required_evidence": "first-class substitution event; explicit relaunch model; seam return-to-pinned",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "captured from the owner evening authorization (2026-08-04); verified at directive verification",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": [
+     "M0-T036"
+    ]
+   },
+   "amendment_sequence": 26
+  },
+  {
+   "id": "D-004-R747",
+   "text": "SUBSTITUTION BOUNDS: the quota substitution is NEVER silent and applies to the ORCHESTRATOR ROLE ONLY. No other role, mode, or reason inherits it; every other unavailable case keeps the R739 pause+notify behavior.",
+   "source_ref": "source-026-amendment.md#the-owner-message",
+   "classification": "prohibition",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-004-MODELGOV"
+    ],
+    "task_types": [
+     "governance"
+    ],
+    "milestones": [
+     "M0"
+    ],
+    "paths": [
+     "tools/agent_supervisor/"
+    ],
+    "lifecycle_events": [
+     "claim",
+     "submit",
+     "gate",
+     "accept"
+    ],
+    "effective_date": "2026-08-04"
+   },
+   "dependencies": [
+    "D-004-R746"
+   ],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "captured from the owner evening authorization (2026-08-04); verified at directive verification",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": [
+     "M0-T036"
+    ]
+   },
+   "amendment_sequence": 26
+  },
+  {
+   "id": "D-004-R748",
+   "text": "REVIEWER PINS UNCHANGED: the Fable-5-pinned reviewer set stays pinned; reviews WAIT for Fable 5 rather than fall back to any other model. The quota substitution never applies to a reviewer.",
+   "source_ref": "source-026-amendment.md#the-owner-message",
+   "classification": "prohibition",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-004-MODELGOV"
+    ],
+    "task_types": [
+     "governance"
+    ],
+    "milestones": [
+     "M0"
+    ],
+    "paths": [],
+    "lifecycle_events": [
+     "claim",
+     "submit",
+     "gate",
+     "accept"
+    ],
+    "effective_date": "2026-08-04"
+   },
+   "dependencies": [
+    "D-004-R746"
+   ],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "captured from the owner evening authorization (2026-08-04); verified at directive verification",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": [
+     "M0-T036"
+    ]
+   },
+   "amendment_sequence": 26
+  },
+  {
+   "id": "D-004-R749",
+   "text": "FABLE-5 WINDOW LIVE (owner statement 2026-08-04 evening): the owner's Fable 5 window is live now and the wait-for-reset hold is lifted; Fable-5-pinned review dispatch proceeds per D-007-R599 sequencing (after the three live exercises complete and the SHA freezes).",
+   "source_ref": "source-026-amendment.md#the-owner-message",
+   "classification": "authorization",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-004-MODELGOV"
+    ],
+    "task_types": [
+     "governance"
+    ],
+    "milestones": [
+     "M0"
+    ],
+    "paths": [],
+    "lifecycle_events": [
+     "gate"
+    ],
+    "effective_date": "2026-08-04"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "captured from the owner evening authorization (2026-08-04); verified at directive verification",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": [
+     "M0-T036"
+    ]
+   },
+   "amendment_sequence": 26
+  },
+  {
+   "id": "D-004-R750",
+   "text": "M0-T034 DRIVE-TO-SUBMIT: dispatch M0-T034 as a NORMAL unit under standard gates; it queues AT SUBMIT for the owner's return. Nothing merges, nothing is accepted, and no owner gate closes in the owner's absence.",
+   "source_ref": "source-026-amendment.md#the-owner-message",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T034"
+    ],
+    "task_types": [
+     "governance"
+    ],
+    "milestones": [
+     "M0"
+    ],
+    "paths": [],
+    "lifecycle_events": [
+     "claim",
+     "submit",
+     "gate",
+     "accept"
+    ],
+    "effective_date": "2026-08-04"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "M0-T034 producer unit dispatched; checkpoint submitted; task parked at submit/awaiting review",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "captured from the owner evening authorization (2026-08-04); verified at directive verification",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": [
+     "M0-T034"
+    ]
+   },
+   "amendment_sequence": 26
   }
  ],
  "amendments_applied": [
@@ -29339,6 +29561,7 @@
   "source-022-amendment.md",
   "source-023-amendment.md",
   "source-024-amendment.md",
-  "source-025-amendment.md"
+  "source-025-amendment.md",
+  "source-026-amendment.md"
  ]
 }
