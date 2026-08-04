@@ -1,7 +1,7 @@
 {
  "schema": "directive_manifest/v1",
  "directive_id": "D-007",
- "version": 7,
+ "version": 8,
  "slug": "codex-claude-supervisor-bridge",
  "title": "Codex-Claude Code Supervisor Bridge (v4.3, Autonomy-Tuned) - build directive",
  "status": "active",
@@ -65,6 +65,14 @@
    "amends": "source-006-amendment.md",
    "recorded_at": "2026-08-04T07:55:00+00:00",
    "content_digest_sha256": "cd0a523ac431ab6f1b2134a4cdf202c4775e0586436c54c9a33e325529202c67"
+  },
+  {
+   "file": "source-008-amendment.md",
+   "kind": "amendment",
+   "sequence": 8,
+   "amends": "source-007-amendment.md",
+   "recorded_at": "2026-08-04T08:40:00+00:00",
+   "content_digest_sha256": "107b1cd22d49d45236f478c3e881bd0f046c5095cda3e84b07c6136ebb8ee2cb"
   }
  ],
  "amendments": [
@@ -73,7 +81,8 @@
   "source-004-amendment.md",
   "source-005-amendment.md",
   "source-006-amendment.md",
-  "source-007-amendment.md"
+  "source-007-amendment.md",
+  "source-008-amendment.md"
  ],
  "supersedes": [],
  "superseded_by": null,
@@ -124,7 +133,7 @@
   "Two claude-side behavioral verifications remain outstanding (classifier-denied in the capture session): --max-turns acceptance and the stream-json canUseTool protocol probe; both are dispatch-time items recorded in the Phase 0 return."
  ],
  "created_at": "2026-08-03T03:44:22+00:00",
- "updated_at": "2026-08-04T07:11:24+00:00",
+ "updated_at": "2026-08-04T08:40:00+00:00",
  "audit_log": [
   {
    "at": "2026-08-03T03:44:22+00:00",
@@ -165,6 +174,11 @@
    "at": "2026-08-04T07:11:24+00:00",
    "by": "orchestrator",
    "note": "C2 CORRECTIVE APPEND (F-CP-2, control-plane review at 43848bd): amendments 2-6 were recorded in sources[] and requirements.json at capture time but their audit_log entries were omitted (validator does not enforce rule 2 mechanically). This append-only corrective write adds the five missing entries above with their original capture timestamps, marked RETROACTIVELY RECORDED; no source, requirement, or digest is altered."
+  },
+  {
+   "at": "2026-08-04T08:40:00+00:00",
+   "by": "orchestrator",
+   "note": "Amendment 7 (source-008-amendment.md): owner packet decision - DO NOT ACTIVATE adopted; allowlist proposal inert; V1.1 correction unit authorized (B-1..B-4, F-2, F-4, F-5-doctor-tz; hardening items only delta-scoped+cited); re-gate at a new frozen SHA; doctor --live and supervised rehearsal NOT authorized; M0-T035 acceptance owner-typed only; handoff refresh. Rows R577-R584."
   }
  ],
  "locked_requirement_ids": [
@@ -743,8 +757,16 @@
   "D-007-R573",
   "D-007-R574",
   "D-007-R575",
-  "D-007-R576"
+  "D-007-R576",
+  "D-007-R577",
+  "D-007-R578",
+  "D-007-R579",
+  "D-007-R580",
+  "D-007-R581",
+  "D-007-R582",
+  "D-007-R583",
+  "D-007-R584"
  ],
- "requirements_id_digest_sha256": "eaaf7cefd52f16fd18b0dcb036613aa0cb73f504c7e4899114e9bf02817fd54e",
- "requirements_content_digest_sha256": "7a5da495b247d3e637b23c19758a57b2d72649d3d863f4caae65e6b9a71b9440"
+ "requirements_id_digest_sha256": "80413939b3c7f57212c54b9018f25f2a541a219e8e8a89f8d19f5647cc73915e",
+ "requirements_content_digest_sha256": "7ae11578986e0e096fc786dcf29dcf6e09adbf578d9d6cb2594dbc5f9a7ae4f1"
 }
