@@ -45,6 +45,7 @@ from .policy import (
 )
 from .process import ProcessResult, assert_argv_safe, minimal_env
 from .process import run as run_process
+from .redaction import redact_text
 
 #: The exact S2.2 flag set, in order, minus the value-carrying pairs.
 REQUIRED_FLAGS: tuple[str, ...] = (
@@ -62,6 +63,15 @@ FORBIDDEN_REVIEWER_FLAGS: frozenset[str] = frozenset({
 })
 
 DEFAULT_REVIEW_TIMEOUT_SECONDS = 600.0
+
+#: `--json` event types that mean the PROVIDER (or the turn itself) failed
+#: before any decision could be produced - e.g. a structured-output schema the
+#: provider's strict validator rejects (HTTP 400 -> `turn.failed`).
+PROVIDER_FAILURE_EVENT_TYPES: frozenset[str] = frozenset({"turn.failed", "error"})
+
+#: Hard bound on the provider error reason carried into errors and audit
+#: records. Bounded and redacted - never a raw packet echo.
+PROVIDER_REASON_BOUND_CHARS = 600
 
 
 class ReviewError(Exception):
@@ -131,6 +141,57 @@ REQUIRED_BY_DECISION: Mapping[str, tuple[str, ...]] = {
     "HALT_UNSAFE": ("blocking_findings",),
 }
 
+#: Field-type map the pre-flattening JSON schema used to enforce. The schema is
+#: now restricted to the provider's strict structured-output subset, so the
+#: supervisor-side validator is the single authority for these shapes (S9).
+DECISION_STRING_FIELDS: tuple[str, ...] = (
+    "schema_version", "decision", "reviewed_task_id", "reviewed_checkpoint_id",
+    "verified_repo_head", "verified_origin_main", "model_used",
+    "next_claude_prompt", "owner_question", "rotation_reason",
+)
+
+DECISION_OBJECT_LIST_FIELDS: tuple[str, ...] = (
+    "verified_facts", "unverified_claims", "blocking_findings", "evidence_refs",
+)
+
+DECISION_STRING_LIST_FIELDS: tuple[str, ...] = ("reason_codes",)
+
+#: Identifier fields the old schema required with `minLength: 1` regardless of
+#: the decision value.
+DECISION_NONEMPTY_FIELDS: tuple[str, ...] = (
+    "reviewed_task_id", "reviewed_checkpoint_id",
+)
+
+
+def _reject_wrong_types(payload: Mapping[str, Any]) -> None:
+    """Enforce the field types the old (allOf-bearing) schema declared.
+
+    Runs on the RAW payload, before dataclass construction, so a wrong-typed
+    field becomes a clean ReviewError instead of an AttributeError deep inside
+    the per-decision checks. `bool` is not accepted where a string is required.
+    """
+    for field in DECISION_STRING_FIELDS:
+        if field in payload and not isinstance(payload[field], str):
+            raise ReviewError(
+                "wrong_field_type",
+                f"{field} must be a string, got {type(payload[field]).__name__}")
+    for field in DECISION_OBJECT_LIST_FIELDS:
+        if field not in payload:
+            continue
+        value = payload[field]
+        if not isinstance(value, list) or not all(
+                isinstance(item, Mapping) for item in value):
+            raise ReviewError("wrong_field_type",
+                              f"{field} must be an array of objects")
+    for field in DECISION_STRING_LIST_FIELDS:
+        if field not in payload:
+            continue
+        value = payload[field]
+        if not isinstance(value, list) or not all(
+                isinstance(item, str) for item in value):
+            raise ReviewError("wrong_field_type",
+                              f"{field} must be an array of strings")
+
 
 def validate_decision(
     payload: Mapping[str, Any],
@@ -138,9 +199,17 @@ def validate_decision(
     expected_task_id: str = "",
     expected_checkpoint_id: str = "",
 ) -> CodexDecision:
-    """Validate one decision object. Unknown fields are rejected (S9)."""
+    """Validate one decision object. Unknown fields are rejected (S9).
+
+    This function is the single authority for every constraint the old
+    (allOf-bearing) JSON schema expressed: field types, the six decision
+    values, per-decision required fields, nonempty identifiers, and the
+    STOP_FOR_OWNER empty-prompt rule. The provider-facing schema file is only
+    a flattened strict-subset mirror and may be weaker; never rely on it.
+    """
     if not isinstance(payload, Mapping):
         raise ReviewError("not_an_object", "a decision must be one JSON object")
+    _reject_wrong_types(payload)
     try:
         decision = CodexDecision.from_dict(payload)
         decision.validate()
@@ -152,6 +221,16 @@ def validate_decision(
     if missing:
         raise ReviewError("missing_required_field",
                           f"{decision.decision} requires {missing}")
+    for field in DECISION_NONEMPTY_FIELDS:
+        if not getattr(decision, field):
+            # The old schema said `minLength: 1`; the flattened one cannot.
+            raise ReviewError("empty_required_field",
+                              f"{field} must be a nonempty string")
+    if decision.decision == "STOP_FOR_OWNER" and decision.next_claude_prompt != "":
+        # The old schema said `const: ""`; whitespace is not empty either.
+        raise ReviewError("prompt_with_stop",
+                          "STOP_FOR_OWNER must carry next_claude_prompt == \"\" "
+                          "exactly; no executable next prompt, not even whitespace")
     if expected_task_id and decision.reviewed_task_id != expected_task_id:
         raise ReviewError(
             "decision_correlation_mismatch",
@@ -195,6 +274,67 @@ def map_decision_to_tier(decision: CodexDecision) -> PolicyDecision:
                    "never merges or accepts anything")
     return PolicyDecision(tier=AUTO, reason_code=f"decision:{decision.decision}",
                           rule_id="S9", reason="a forwarded prompt follows")
+
+
+# --------------------------------------------------------------------------
+# Provider-failure surfacing
+# --------------------------------------------------------------------------
+
+
+def provider_failure_reason(stdout: str) -> str:
+    """Scan a captured `--json` event stream for a provider/turn failure.
+
+    Returns a BOUNDED, REDACTED reason string, or "" when no failure event is
+    present. Only the provider's own error text is taken - never any echo of
+    the review packet - and it passes through the package redaction pass
+    before it can reach an exception message or an audit record.
+    """
+    for line in stdout.splitlines():
+        stripped = line.strip()
+        if not stripped.startswith("{"):
+            continue
+        try:
+            event = json.loads(stripped)
+        except json.JSONDecodeError:
+            continue
+        if not isinstance(event, dict):
+            continue
+        if event.get("type") not in PROVIDER_FAILURE_EVENT_TYPES:
+            continue
+        error = event.get("error")
+        if isinstance(error, Mapping):
+            reason = str(error.get("message")
+                         or json.dumps(error, ensure_ascii=False))
+        elif error:
+            reason = str(error)
+        else:
+            reason = str(event.get("message") or event.get("type"))
+        reason = redact_text(reason).value
+        if len(reason) > PROVIDER_REASON_BOUND_CHARS:
+            reason = (reason[:PROVIDER_REASON_BOUND_CHARS]
+                      + f"...[TRUNCATED {len(reason)} chars]")
+        return reason
+    return ""
+
+
+def no_decision_error(result: ProcessResult) -> ReviewError:
+    """Classify a review attempt that produced no parseable decision.
+
+    A provider rejection (a `turn.failed` / `error` event in the `--json`
+    stream, e.g. the structured-output validator refusing the schema with an
+    HTTP 400) is `provider_rejected_request`; a genuinely absent decision file
+    stays `missing_decision_file`. Both carry the child returncode.
+    """
+    reason = provider_failure_reason(result.stdout)
+    if reason:
+        return ReviewError(
+            "provider_rejected_request",
+            f"the provider rejected the review request (child returncode "
+            f"{result.returncode}): {reason}")
+    return ReviewError(
+        "missing_decision_file",
+        f"the reviewer produced no parseable decision file (child returncode "
+        f"{result.returncode})")
 
 
 # --------------------------------------------------------------------------
@@ -296,6 +436,7 @@ class CodexReviewer:
         packet_body = dict(packet)
         packet_digest = digest_of(packet_body)
         last_error: ReviewError | None = None
+        last_returncode = 0
 
         for attempt in range(1, self.max_attempts + 1):
             payload = dict(packet_body)
@@ -305,20 +446,21 @@ class CodexReviewer:
                     "instruction": "Return exactly one schema-valid decision object.",
                 }
             argv, result, raw = self._invoke(payload, resolution.model)
+            last_returncode = result.returncode
             if result.timed_out:
                 last_error = ReviewError("review_timeout",
                                          "the reviewer timed out; partial output discarded")
                 continue
             try:
                 if raw is None:
-                    raise ReviewError("missing_decision_file",
-                                      "the reviewer wrote no last-message file")
+                    raise no_decision_error(result)
                 decision = validate_decision(
                     raw, expected_task_id=expected_task_id,
                     expected_checkpoint_id=expected_checkpoint_id)
             except ReviewError as exc:
                 last_error = exc
-                self._audit_attempt(attempt, resolution.model, packet_digest, exc)
+                self._audit_attempt(attempt, resolution.model, packet_digest, exc,
+                                    returncode=result.returncode)
                 continue
 
             mismatch = ""
@@ -340,10 +482,14 @@ class CodexReviewer:
 
         message = (f"{self.max_attempts} bounded attempts produced no schema-valid "
                    f"decision; halting rather than forwarding an unreviewed unit")
+        if last_error is not None:
+            # The last error message is already bounded and redacted.
+            message += f" (last error: {last_error.message})"
         outcome = ReviewOutcome(
             None, resolution.model, resolution.selection_digest, self.max_attempts,
             error_code=(last_error.code if last_error else "schema_retry_exhausted"),
             error_message=message, packet_digest=packet_digest,
+            returncode=last_returncode,
             tier=PolicyDecision(tier=ASK, reason_code="schema_retry_exhausted",
                                 reason=message, rule_id="S9",
                                 classification="unclassified", synchronous_stop=False),
@@ -366,7 +512,12 @@ class CodexReviewer:
             text = pathlib.Path(output_path).read_text(encoding="utf-8-sig").strip() \
                 if pathlib.Path(output_path).exists() else ""
             if not text:
-                text = result.stdout.strip()
+                # Fall back to stdout ONLY when the stream carries no
+                # provider/turn failure event; a `turn.failed` payload must
+                # never be mistaken for a decision object.
+                stdout_text = result.stdout.strip()
+                if stdout_text and not provider_failure_reason(stdout_text):
+                    text = stdout_text
             if text:
                 try:
                     parsed = json.loads(text)
@@ -383,13 +534,17 @@ class CodexReviewer:
     # -- audit --------------------------------------------------------------
 
     def _audit_attempt(self, attempt: int, model: str, packet_digest: str,
-                       error: ReviewError) -> None:
+                       error: ReviewError, *,
+                       returncode: int | None = None) -> None:
         if self.audit is None:
             return
+        detail: dict[str, Any] = {"attempt": attempt, "model": model,
+                                  "message": error.message}
+        if returncode is not None:
+            detail["returncode"] = returncode
         self.audit.append("codex_review_invalid_output", run_id=self.run_id,
                           input_digest=packet_digest, error_category=error.code,
-                          detail={"attempt": attempt, "model": model,
-                                  "message": error.message})
+                          detail=detail)
 
     def _audit_outcome(self, outcome: ReviewOutcome) -> None:
         if self.audit is None:

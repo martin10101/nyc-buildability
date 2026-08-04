@@ -154,6 +154,18 @@ FAKE_CODEX = textwrap.dedent('''
         decision["confidence"] = 0.5
     if MODE == "no_file":
         raise SystemExit(0)
+    if MODE == "provider_rejected":
+        # The live shadow-pilot signature: the provider's strict structured-
+        # output validator rejects the schema (HTTP 400), the stream carries a
+        # turn.failed event, no last-message file is written, and the child
+        # exits 1.
+        message = os.environ.get(
+            "FAKE_PROVIDER_ERROR",
+            "Invalid schema for response_format 'codex_output_schema': "
+            "In context=(), 'allOf' is not permitted.")
+        sys.stdout.write(json.dumps(
+            {"type": "turn.failed", "error": {"message": message}}) + "\\n")
+        raise SystemExit(1)
 
     pathlib.Path(output_path).write_text(json.dumps(decision), encoding="utf-8")
     sys.stdout.write(json.dumps({"event": "codex_done", "model": model}) + "\\n")
@@ -336,6 +348,227 @@ class DecisionValidationTests(ReviewerTestBase):
         self.assertEqual(record["detail"]["model_used"], "codex-primary")
         self.assertEqual(record["detail"]["model_selection_digest"],
                          self.selection.digest())
+
+
+# --------------------------------------------------------------------------
+# Provider-rejection surfacing (shadow-pilot run 5 defect)
+# --------------------------------------------------------------------------
+
+
+class ProviderRejectionTests(ReviewerTestBase):
+    """A provider-rejected turn is never misreported as a missing file."""
+
+    def invalid_output_records(self) -> list[dict]:
+        return [record for record in self.audit.read_all()
+                if record["event_type"] == "codex_review_invalid_output"]
+
+    def test_a_turn_failed_stream_is_reported_as_provider_rejected(self) -> None:
+        outcome = self.reviewer(mode="provider_rejected", max_attempts=1).review(
+            self.packet())
+        self.assertFalse(outcome.ok)
+        self.assertEqual(outcome.error_code, "provider_rejected_request")
+        self.assertEqual(outcome.returncode, 1)
+        self.assertIn("'allOf' is not permitted", outcome.error_message)
+        self.assertIn("returncode 1", outcome.error_message)
+
+    def test_the_attempt_audit_carries_the_reason_and_returncode(self) -> None:
+        self.reviewer(mode="provider_rejected", max_attempts=1).review(self.packet())
+        record = self.invalid_output_records()[-1]
+        self.assertEqual(record["error_category"], "provider_rejected_request")
+        self.assertEqual(record["detail"]["returncode"], 1)
+        self.assertIn("Invalid schema for response_format",
+                      record["detail"]["message"])
+
+    def test_a_genuinely_absent_file_stays_missing_decision_file(self) -> None:
+        outcome = self.reviewer(mode="no_file", max_attempts=1).review(self.packet())
+        self.assertFalse(outcome.ok)
+        self.assertEqual(outcome.error_code, "missing_decision_file")
+        self.assertEqual(outcome.returncode, 0)
+        record = self.invalid_output_records()[-1]
+        self.assertEqual(record["error_category"], "missing_decision_file")
+        self.assertEqual(record["detail"]["returncode"], 0)
+
+    def test_the_provider_reason_is_redacted_before_error_and_audit(self) -> None:
+        seeded = "schema rejected; header carried ghp_FAKESEEDEDGITHUBTOKEN0000"
+        outcome = self.reviewer(
+            mode="provider_rejected", max_attempts=1,
+            extra_env={"FAKE_PROVIDER_ERROR": seeded}).review(self.packet())
+        self.assertEqual(outcome.error_code, "provider_rejected_request")
+        self.assertNotIn("ghp_FAKESEEDEDGITHUBTOKEN0000", outcome.error_message)
+        self.assertIn("[REDACTED:", outcome.error_message)
+        body = json.dumps(self.invalid_output_records()[-1])
+        self.assertNotIn("ghp_FAKESEEDEDGITHUBTOKEN0000", body)
+
+    def test_the_provider_reason_is_bounded_never_a_packet_echo(self) -> None:
+        seeded = "x" * 50_000
+        outcome = self.reviewer(
+            mode="provider_rejected", max_attempts=1,
+            extra_env={"FAKE_PROVIDER_ERROR": seeded}).review(self.packet())
+        self.assertLess(len(outcome.error_message), 2000)
+        self.assertIn("TRUNCATED", outcome.error_message)
+
+    def test_scanning_helper_ignores_healthy_streams(self) -> None:
+        healthy = ('{"type":"turn.started"}\n'
+                   'not json at all\n'
+                   '{"type":"item.completed","item":{"text":"ok"}}\n')
+        self.assertEqual(rv.provider_failure_reason(healthy), "")
+        failed = healthy + ('{"type":"turn.failed","error":'
+                            '{"message":"boom"}}\n')
+        self.assertEqual(rv.provider_failure_reason(failed), "boom")
+
+
+# --------------------------------------------------------------------------
+# Strict provider schema subset (regression guard)
+# --------------------------------------------------------------------------
+
+
+class SchemaStrictSubsetTests(unittest.TestCase):
+    """The decision schema must stay inside the provider strict subset.
+
+    The live provider rejected the old schema with: "Invalid schema for
+    response_format 'codex_output_schema': In context=(), 'allOf' is not
+    permitted." No composition/conditional keyword may reappear at any depth.
+    """
+
+    FORBIDDEN = ("allOf", "anyOf", "oneOf", "if", "then", "else", "not",
+                 "patternProperties")
+
+    @classmethod
+    def setUpClass(cls) -> None:
+        path = (REPO / "tools" / "agent_supervisor" / "schemas" /
+                "codex_decision.schema.json")
+        cls.schema = json.loads(path.read_text(encoding="utf-8"))
+
+    def walk(self, node, path="", in_properties=False):
+        """Yield (path, key, value) for every dict key outside property-name maps."""
+        if isinstance(node, dict):
+            for key, value in node.items():
+                if not in_properties:
+                    yield f"{path}/{key}", key, value
+                yield from self.walk(value, f"{path}/{key}",
+                                     in_properties=(key == "properties"
+                                                    and not in_properties))
+        elif isinstance(node, list):
+            for index, item in enumerate(node):
+                yield from self.walk(item, f"{path}[{index}]", False)
+
+    def test_no_forbidden_keyword_at_any_depth(self) -> None:
+        offenders = [where for where, key, _value in self.walk(self.schema)
+                     if key in self.FORBIDDEN]
+        self.assertEqual(offenders, [])
+
+    def test_every_object_schema_is_closed_and_fully_required(self) -> None:
+        # OpenAI strict subset: every object sets additionalProperties false
+        # and lists every property in required.
+        objects = [(where, value) for where, key, value in self.walk(self.schema)
+                   if key in ("items",)] + [("", self.schema)]
+        for where, node in objects:
+            if not (isinstance(node, dict) and node.get("type") == "object"):
+                continue
+            with self.subTest(where=where or "<root>"):
+                self.assertIs(node.get("additionalProperties"), False)
+                self.assertEqual(sorted(node.get("required", [])),
+                                 sorted(node.get("properties", {})))
+
+    def test_the_original_seven_fields_remain_required(self) -> None:
+        self.assertLessEqual(
+            {"schema_version", "decision", "reviewed_task_id",
+             "reviewed_checkpoint_id", "verified_repo_head",
+             "verified_origin_main", "model_used"},
+            set(self.schema["required"]))
+
+    def test_the_decision_enum_is_unchanged(self) -> None:
+        self.assertEqual(
+            self.schema["properties"]["decision"]["enum"],
+            ["CONTINUE", "REVISE", "STOP_FOR_OWNER", "ROTATE_SESSION",
+             "COMPLETE", "HALT_UNSAFE"])
+
+
+# --------------------------------------------------------------------------
+# Constraints moved from the old schema's allOf/types into validate_decision
+# --------------------------------------------------------------------------
+
+
+class FlattenedConstraintTests(unittest.TestCase):
+    """Every constraint only the old schema enforced now lives in code."""
+
+    @staticmethod
+    def payload(**overrides) -> dict:
+        base = {
+            "schema_version": "1.0.0", "decision": "CONTINUE",
+            "reviewed_task_id": "M0-T036", "reviewed_checkpoint_id": "cp-1",
+            "verified_repo_head": "b" * 40, "verified_origin_main": "c" * 40,
+            "model_used": "codex-primary",
+            "next_claude_prompt": "proceed with the next authorized unit",
+        }
+        base.update(overrides)
+        return base
+
+    def reject(self, code: str, **overrides) -> None:
+        with self.assertRaises(rv.ReviewError) as ctx:
+            rv.validate_decision(self.payload(**overrides))
+        self.assertEqual(ctx.exception.code, code)
+
+    def test_string_fields_reject_non_strings(self) -> None:
+        for field in rv.DECISION_STRING_FIELDS:
+            for bad in (123, ["x"], {"x": 1}, None, True):
+                with self.subTest(field=field, bad=bad):
+                    self.reject("wrong_field_type", **{field: bad})
+
+    def test_object_list_fields_reject_non_lists_and_non_object_items(self) -> None:
+        for field in rv.DECISION_OBJECT_LIST_FIELDS:
+            for bad in ("not-a-list", {"fact": "x"}, [["nested"]],
+                        [{"fact": "ok"}, "loose string"], [3]):
+                with self.subTest(field=field, bad=bad):
+                    self.reject("wrong_field_type", **{field: bad})
+
+    def test_reason_codes_items_must_be_strings(self) -> None:
+        for bad in ("code", [{"code": "x"}], [1], ["ok", 2]):
+            with self.subTest(bad=bad):
+                self.reject("wrong_field_type", reason_codes=bad)
+
+    def test_valid_list_shapes_still_pass(self) -> None:
+        decision = rv.validate_decision(self.payload(
+            verified_facts=[{"fact": "tests reproduced"}],
+            unverified_claims=[{"claim": "done", "why": "no CI evidence"}],
+            blocking_findings=[], reason_codes=["ci_green"],
+            evidence_refs=[{"path": "project-control/tasks/M0-T036.json"}]))
+        self.assertEqual(decision.decision, "CONTINUE")
+
+    def test_reviewed_task_id_must_be_nonempty(self) -> None:
+        self.reject("empty_required_field", reviewed_task_id="")
+
+    def test_reviewed_checkpoint_id_must_be_nonempty(self) -> None:
+        self.reject("empty_required_field", reviewed_checkpoint_id="")
+
+    def test_stop_for_owner_rejects_even_a_whitespace_prompt(self) -> None:
+        # The old schema said `const: ""`; `.strip()` alone would let " " by.
+        self.reject("prompt_with_stop", decision="STOP_FOR_OWNER",
+                    owner_question="Merge?", next_claude_prompt=" ")
+
+    def test_every_per_decision_required_field_is_still_enforced(self) -> None:
+        cases = [
+            ("missing_next_prompt", {"decision": "CONTINUE",
+                                     "next_claude_prompt": ""}),
+            ("missing_next_prompt", {"decision": "REVISE",
+                                     "next_claude_prompt": ""}),
+            ("missing_owner_question", {"decision": "STOP_FOR_OWNER",
+                                        "next_claude_prompt": "",
+                                        "owner_question": ""}),
+            ("missing_rotation_reason", {"decision": "ROTATE_SESSION",
+                                         "next_claude_prompt": ""}),
+            ("missing_completion_evidence", {"decision": "COMPLETE",
+                                             "next_claude_prompt": ""}),
+            ("missing_halt_reason", {"decision": "HALT_UNSAFE",
+                                     "next_claude_prompt": ""}),
+        ]
+        for code, overrides in cases:
+            with self.subTest(code=code):
+                self.reject(code, **overrides)
+
+    def test_unknown_fields_and_bad_decisions_are_still_rejected(self) -> None:
+        self.reject("unknown_fields", confidence=0.99)
+        self.reject("bad_decision", decision="APPROVE")
 
 
 # --------------------------------------------------------------------------

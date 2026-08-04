@@ -17,6 +17,7 @@
 | 2 | run_m0t035_shadow_pilot_r2 | Refused before acting: `IllegalTransitionError` PAUSED_RECOVERY → act | n/a (no cycle) | F-2: no CLI exit from PAUSED_RECOVERY |
 | 3 | run_m0t035_shadow_pilot_r3 | S4.5 stop `invalid_checkpoint` (status vocabulary); PAUSED_RECOVERY | 1/2 (in budget) | Checkpoint emitted but `status: awaiting_gate` is not in the S8.3 unit vocabulary (IN_PROGRESS/UNIT_COMPLETE/BLOCKED/READY/FAILED); prompt bug |
 | 4 | run_m0t035_shadow_pilot_r4 | S4.5 stop, worker exited without a valid checkpoint; PAUSED_RECOVERY | 1/2 (in budget) | F-3: checkpoint text lost to the timeout kill (see below) |
+| 5 | run_m0t035_shadow_pilot_r5 | Worker unit PERFECT on the F-3 fix (~2 min, schema-valid checkpoint validated + correlated; evidence packet bounded + digest-bound). Codex review failed 3/3 attempts → `review_unavailable`, WAIT_FOR_OWNER | 1/2 (in budget; blocking_ask) | F-6: provider rejects the decision schema (`allOf` not permitted); F-7: adapter masked it as `missing_decision_file` |
 
 ## Findings (decision-packet inputs)
 
@@ -39,6 +40,18 @@
   prompt.** Nothing injects the checkpoint schema or the status vocabulary automatically; three
   of four run failures trace to this. Recommendation: the supervisor should append a canonical
   checkpoint-contract instruction block to every dispatched unit prompt.
+- **F-6 (adapter defect, live-confirmed run 5): the provider rejects the decision schema.**
+  `codex exec --output-schema` fails HTTP 400: "Invalid schema for response_format
+  'codex_output_schema': 'allOf' is not permitted" — `codex_decision.schema.json` uses `allOf`
+  for per-decision conditional requireds, outside the OpenAI strict structured-output subset.
+  Every review attempt turn-failed; the fallback chain could not help (same schema). Fix
+  dispatched 2026-08-04: flatten the schema to the accepted subset; `validate_decision`
+  (already the in-code S9 authority) absorbs any constraint the old schema alone carried.
+- **F-7 (reporting defect): the provider rejection was masked.** The adapter reported
+  `missing_decision_file` and defaulted returncode 0 in the failure outcome; the real child
+  returncode (1) and the `turn.failed` provider error never reached the audit. Fix in the same
+  unit: distinguish provider rejection from a genuinely absent file; record the bounded,
+  redacted provider error and the real returncode per attempt.
 - **F-5 (recorded per owner directive, D-007-R561/R562):** tzdata hidden runtime dependency —
   RESOLVED-BY-ADMISSION; recommend doctor/preflight verify timezone-database resolvability so a
   fresh machine fails at setup, not at its first wake (no build work now).
