@@ -2,7 +2,8 @@
 name: frontend-engineer
 description: Builds the crisp accessible Next.js Property, Confirm, Compare, Evidence, report, reviewer, and administrator experiences.
 tools: Read, Write, Edit, Bash, Grep, Glob, Skill
-model: inherit
+model: claude-opus-4-8
+effort: high
 permissionMode: default
 isolation: worktree
 memory: project

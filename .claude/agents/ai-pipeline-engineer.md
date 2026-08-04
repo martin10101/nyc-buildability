@@ -2,7 +2,8 @@
 name: ai-pipeline-engineer
 description: Implements schema-constrained AI extraction, RAG, source comparison, explanations, evaluations, injection defenses, metadata, and cost tracking.
 tools: Read, Write, Edit, Bash, Grep, Glob, Skill
-model: inherit
+model: claude-opus-4-8
+effort: high
 permissionMode: default
 isolation: worktree
 memory: project

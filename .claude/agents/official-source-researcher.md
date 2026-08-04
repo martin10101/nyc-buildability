@@ -2,7 +2,8 @@
 name: official-source-researcher
 description: Researches current official NYC and New York State APIs, datasets, documents, authentication, limits, update cadence, schemas, and source limitations before connector implementation.
 tools: WebSearch, WebFetch, Read, Write, Edit, Bash, Grep, Glob, Skill
-model: inherit
+model: claude-opus-4-8
+effort: high
 permissionMode: default
 isolation: worktree
 memory: project

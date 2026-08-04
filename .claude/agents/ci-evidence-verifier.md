@@ -3,7 +3,8 @@ name: ci-evidence-verifier
 description: Independent read-only verifier that confirms reported commands, test counts, CI check conclusions, audit totals, SHAs, and generated artifacts correspond to actual reproducible evidence. Treats any summary without reproducible evidence as unverified.
 tools: Read, Grep, Glob, Bash, Skill
 disallowedTools: Write, Edit, MultiEdit, NotebookEdit, Agent
-model: inherit
+model: claude-opus-4-8
+effort: high
 permissionMode: plan
 skills:
   - run-quality-gate

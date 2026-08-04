@@ -3,7 +3,7 @@ name: code-reviewer
 description: Independent read-only senior engineering reviewer for correctness, maintainability, performance, contracts, errors, tests, and provenance.
 tools: Read, Grep, Glob, Bash, Skill
 disallowedTools: Write, Edit, MultiEdit, NotebookEdit, Agent
-model: inherit
+model: claude-fable-5
 permissionMode: plan
 skills:
   - run-quality-gate
