@@ -2,9 +2,9 @@
  "schema": "directive_requirements/v1",
  "directive_id": "D-007",
  "version": 1,
- "requirement_count": 587,
+ "requirement_count": 590,
  "producer": "orchestrator",
- "updated_at": "2026-08-04T09:10:00+00:00",
+ "updated_at": "2026-08-04T17:25:00+00:00",
  "requirements": [
   {
    "id": "D-007-R001",
@@ -22460,6 +22460,129 @@
     ]
    },
    "amendment_sequence": 9
+  },
+  {
+   "id": "D-007-R588",
+   "text": "DOCTOR --LIVE AUTHORIZED (supersedes the R582 hold for this ONE act only): exactly ONE bounded doctor --live probe on the controller checkout - a single disclosed allow-and-deny round-trip, shadow config UNTOUCHED, NOTHING forwarded to any real task, full runtime evidence preserved verbatim; report the result and STOP. Per R739/R582 this gates the V1.2 unit.",
+   "source_ref": "source-010-amendment.md#the-owner-message",
+   "classification": "authorization",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-007-BUILD",
+     "M0-T036"
+    ],
+    "task_types": [
+     "governance"
+    ],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [
+     "submit",
+     "gate"
+    ],
+    "effective_date": "2026-08-04"
+   },
+   "dependencies": [
+    "D-007-R582"
+   ],
+   "required_harness": "",
+   "required_evidence": "preserved doctor --live runtime evidence + result report",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "captured from the owner probe+G2 authorization (2026-08-04); verified at directive verification",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": [
+     "M0-T036"
+    ]
+   },
+   "amendment_sequence": 9
+  },
+  {
+   "id": "D-007-R589",
+   "text": "G2 WAVE FOR M0-T036 (satisfies control-plane F-CPD-3): dispatch the G2 review - read-only, pinned reviewer, frozen SHA stated. The G2 reviewer is Fable-5-pinned now, so SCHEDULE the dispatch for after the owner Fable 5 window resets rather than letting it fail or fall back to another model. NOT dispatched until the window resets.",
+   "source_ref": "source-010-amendment.md#the-owner-message",
+   "classification": "sequencing",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-007-BUILD",
+     "M0-T036"
+    ],
+    "task_types": [
+     "governance"
+    ],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [
+     "gate"
+    ],
+    "effective_date": "2026-08-04"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "captured from the owner probe+G2 authorization (2026-08-04); verified at directive verification",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": [
+     "M0-T036"
+    ]
+   },
+   "amendment_sequence": 9
+  },
+  {
+   "id": "D-007-R590",
+   "text": "SUPERVISED REHEARSAL STILL NOT AUTHORIZED: the supervised single-forward rehearsal remains not authorized; it returns to the owner after the probe result.",
+   "source_ref": "source-010-amendment.md#the-owner-message",
+   "classification": "prohibition",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-007-BUILD",
+     "M0-T036"
+    ],
+    "task_types": [
+     "governance"
+    ],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [
+     "gate",
+     "accept"
+    ],
+    "effective_date": "2026-08-04"
+   },
+   "dependencies": [
+    "D-007-R555"
+   ],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "captured from the owner probe+G2 authorization (2026-08-04); verified at directive verification",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": [
+     "M0-T036"
+    ]
+   },
+   "amendment_sequence": 9
   }
  ],
  "amendments_applied": [
@@ -22470,6 +22593,7 @@
   "source-006-amendment.md",
   "source-007-amendment.md",
   "source-008-amendment.md",
-  "source-009-amendment.md"
+  "source-009-amendment.md",
+  "source-010-amendment.md"
  ]
 }

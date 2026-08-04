@@ -1,7 +1,7 @@
 {
  "schema": "directive_manifest/v1",
  "directive_id": "D-007",
- "version": 9,
+ "version": 10,
  "slug": "codex-claude-supervisor-bridge",
  "title": "Codex-Claude Code Supervisor Bridge (v4.3, Autonomy-Tuned) - build directive",
  "status": "active",
@@ -81,6 +81,14 @@
    "amends": "source-008-amendment.md",
    "recorded_at": "2026-08-04T09:10:00+00:00",
    "content_digest_sha256": "7c9352ef7149b25026013c4df20efd93ad9b39f99b4ef91b655428ef99d597a4"
+  },
+  {
+   "file": "source-010-amendment.md",
+   "kind": "amendment",
+   "sequence": 10,
+   "amends": "source-009-amendment.md",
+   "recorded_at": "2026-08-04T17:25:00+00:00",
+   "content_digest_sha256": "9d080779a085e2bfba5a85e2fd4dfe1fbb1563de46cf0695b756bce68e871993"
   }
  ],
  "amendments": [
@@ -91,7 +99,8 @@
   "source-006-amendment.md",
   "source-007-amendment.md",
   "source-008-amendment.md",
-  "source-009-amendment.md"
+  "source-009-amendment.md",
+  "source-010-amendment.md"
  ],
  "supersedes": [],
  "superseded_by": null,
@@ -142,7 +151,7 @@
   "Two claude-side behavioral verifications remain outstanding (classifier-denied in the capture session): --max-turns acceptance and the stream-json canUseTool protocol probe; both are dispatch-time items recorded in the Phase 0 return."
  ],
  "created_at": "2026-08-03T03:44:22+00:00",
- "updated_at": "2026-08-04T09:10:00+00:00",
+ "updated_at": "2026-08-04T17:25:00+00:00",
  "audit_log": [
   {
    "at": "2026-08-03T03:44:22+00:00",
@@ -193,6 +202,11 @@
    "at": "2026-08-04T09:10:00+00:00",
    "by": "orchestrator",
    "note": "Amendment 8 (source-009-amendment.md): two records not changing V1.1 scope - (1) 2026-08-04 npm-worm supply-chain check CLEAN + house rule freezing npm/lockfile; (2) bastani-inc/atomic read-only evaluation-reference backlog note. Rows R585-R587."
+  },
+  {
+   "at": "2026-08-04T17:25:00+00:00",
+   "by": "orchestrator",
+   "note": "Amendment 9 (source-010-amendment.md): (1) ONE bounded doctor --live probe authorized on the controller checkout (allow-and-deny round-trip, shadow untouched, nothing forwarded, evidence verbatim, report+stop; gates V1.2 per R739/R582); (2) G2 wave for M0-T036 dispatch SCHEDULED for after the owner Fable 5 window resets (Fable-5-pinned reviewer, no fail/fallback); (3) supervised rehearsal still NOT authorized. Rows R588-R590."
   }
  ],
  "locked_requirement_ids": [
@@ -782,8 +796,11 @@
   "D-007-R584",
   "D-007-R585",
   "D-007-R586",
-  "D-007-R587"
+  "D-007-R587",
+  "D-007-R588",
+  "D-007-R589",
+  "D-007-R590"
  ],
- "requirements_id_digest_sha256": "c9f5e00fa555884418645c434dab874bc180c731ce9dd8eae2fc440414f7fcef",
- "requirements_content_digest_sha256": "10395769ccf5706e97d76d16800c6698e6daaf7e98025f36faa624b42a1a8e69"
+ "requirements_id_digest_sha256": "8ed8b8f0a56c3f5856a7b2b59de72bcdfada31e5813c016d21eb9bd35d6988b0",
+ "requirements_content_digest_sha256": "a5fd533b09934865f3a173a8568d1c8d4a81e32f6c6f9119b2263813f5c62fbc"
 }
