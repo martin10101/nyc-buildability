@@ -1,0 +1,13 @@
+{
+ "task_id": "M0-T034",
+ "directive_id": "D-004",
+ "derivation": "Applicable set derived by the shared resolver (directive_registry.evaluate_task_refs) at submit time on 2026-08-04: exactly one row, D-004-R750 (owner evening authorization, source-026-amendment.md). The packet's directive_refs cite D-004 ALL; the resolver's applicability metadata narrows the binding set for this task. Rows D-004-R627..R633 bind through their own sentinels and are evidenced by the task's gate history rather than this map.",
+ "requirements": {
+  "D-004-R750": [
+   "project-control/reports/M0-T034-producer-report.md - the completed producer work product (rounds 1-3), produced as a normal unit under standard gates",
+   "project-control/gates/ - round-3 independent verdicts G3 PASS (m0t034-g3-r3) and G5 PASS (m0t034-g5-r3) at frozen SHA dbf0a88, recorded through the CLI with full FAIL history retained",
+   "project-control/reports/M0-T034-lifecycle-classification.md - AS-13 tracked report: the independent verifier's AS-10 eight-row classification (3 NOT-LIFECYCLE, 5 ACCEPTANCE-ORDERING-LIFECYCLE), preserved verbatim on arrival 2026-08-04; producer did not pre-classify (AS-10 discipline held)",
+   "project-control/tasks/M0-T034.json progress_log - this submission drives the task to awaiting_gate where it QUEUES for the owner's return; no merge performed, no acceptance recorded, no owner gate closed (unattended discipline per D-007-R601)"
+  ]
+ }
+}
