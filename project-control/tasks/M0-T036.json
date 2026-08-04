@@ -69,7 +69,7 @@
  ],
  "blockers": [],
  "created_at": "2026-08-03T03:44:41.634259+00:00",
- "updated_at": "2026-08-03T23:11:06.337815+00:00",
+ "updated_at": "2026-08-04T00:56:13.111023+00:00",
  "directive_refs": [
   {
    "directive_id": "D-007",
@@ -152,6 +152,13 @@
    "percent": 82,
    "status": "in_progress",
    "message": "OWNER MESSAGE captured as D-007 amendment 2 (source-003-amendment.md, R542-R555; PR #151). PART 1 executed: additive supervisor-bridge CI job PR #152 (base = task branch because the suite is absent from main; +20/-0, exact grant-(a) invocation, no new actions/secrets); grant-(b) review citations recorded at reports/M0-T036-grant-b-review-citations.md with the honest boundary statement (orchestrator verification reviews, independent gate reviews still ahead). Pre-existing secret-scan failure (4 seeded fixtures, red since Phase 3) fixed by a bounded producer unit and integrated at 1d83803: 3/3 hashes match, scanner PASS with zero allowlist changes, 1042 collected (1040 passed, 2 skipped), byte-identity AST-proven, no assertion weakened. PART 2: section-17 fit assessment recorded at reports/M0-T036-phase5-shadow-fit.md - selected lifecycle = M0-T035 acceptance run (real lifecycle ending AT the acceptance gate per AS-6); pilot launch blocked on the controller dedicated read-only checkout outside Claude-writable paths (owner-side step) + controller config authoring; decision packet waits for the Part 1 CI PR merged+green (R554). Owner merged PR #150 (amendment-1 capture) to main = cb9a999."
+  },
+  {
+   "at": "2026-08-04T00:56:13.111023+00:00",
+   "agent": "orchestrator",
+   "percent": 85,
+   "status": "in_progress",
+   "message": "PART 1 COMPLETE AND MERGED. Owner merged PR #152 (2026-08-04T00:55:17Z, all 31 checks green) into the task branch at 24dd2ee: additive supervisor-bridge CI job (windows-latest after the ubuntu runner-death finding; exact grant-(a) invocation) + tzdata 2025.2 admission per owner authorization D-007-R557 (one .in line + regenerated hash-pinned lock; byte-identity, age gate 498.45d, dual pip-audit all CI-verified). Supervisor suite in CI: 1041 passed, 1 skipped, 68s. R548/R554 preconditions MET. Findings for the packet: (1) ubuntu runner death - suite is not Linux-safe, target platform is Windows (residual risk); (2) hidden tzdata runtime dependency masked by out-of-lock local install - RESOLVED-BY-ADMISSION (R561) + doctor/preflight tz-check recommendation (R562). CRITICAL PATH NOW: owner creates the controller dedicated read-only checkout -> shadow pilot (M0-T035 acceptance lifecycle per the recorded fit assessment) -> independent gate reviews at the frozen post-pilot SHA (avoids stale-SHA re-review) -> decision packet -> STOP for activation decision (R541/R555). PR #151 (captures R542-R563) still queued for owner merge."
   }
  ]
 }
