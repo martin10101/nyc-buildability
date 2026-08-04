@@ -151,12 +151,14 @@ class LoopTestBase(unittest.TestCase):
     def build(self, *, mode: str = "shadow", runner=None, reviewer=None,
               approval_gate=None, budget: int = 2, max_cycles: int = 4,
               breakers=None, broker=None, pinned_model: str = "",
-              context_rotation_threshold: int = 0, model_available=None) -> lp.SupervisedLoop:
+              context_rotation_threshold: int = 0, model_available=None,
+              session_role: str = "") -> lp.SupervisedLoop:
         return lp.SupervisedLoop(
             config=lp.LoopConfig(mode=mode, task_id="M0-T036", stage="phase4",
                                  allowed_paths=self.authority.allowed_paths,
                                  stop_conditions=("no bypass flags",),
-                                 max_cycles=max_cycles, owner_touch_budget=budget),
+                                 max_cycles=max_cycles, owner_touch_budget=budget,
+                                 session_role=session_role),
             journal=self.journal, audit=self.audit, machine=self.machine,
             authority=self.authority,
             runner=runner or FakeRunner(run_result()),
@@ -1402,6 +1404,171 @@ class SeamRotationTests(LoopTestBase):
                           context_rotation_threshold=100_000)
         loop.run("only observation")
         self.assertFalse(rot.rotation_pending(self.journal))
+
+
+# --------------------------------------------------------------------------
+# V1.2.1 D-004 am.26 / D-007 am.11: orchestrator-role model substitution
+# --------------------------------------------------------------------------
+
+
+class ModelSubstitutionTests(LoopTestBase):
+    """When the orchestrator-role pin (Fable 5) is unavailable because its QUOTA
+    is exhausted, the seam relaunches EXPLICITLY on claude-opus-4-8, records a
+    first-class model_substitution event, and returns to the pin at the next seam
+    it is available. Never silent; orchestrator-role only; fail closed on any
+    other reason or role (D-004 am.26 / D-007 am.11; R746-R748)."""
+
+    def _downgrade_runner(self) -> FakeRunner:
+        # Cycle 1 reports a model downgrade (sets rotation_pending); later cycles
+        # are clean relaunches.
+        return FakeRunner(run_result(model_mismatch=True,
+                                     mismatch_detail="reported claude-substitute"),
+                          run_result())
+
+    def _sub_key(self) -> str:
+        return f"model_substitution/{self.run_id}"
+
+    def test_quota_exhausted_orchestrator_relaunches_on_opus(self) -> None:
+        self.at_preflight()
+        runner = self._downgrade_runner()
+        loop = self.build(mode="supervised", runner=runner, max_cycles=2,
+                          pinned_model="claude-pinned", session_role="orchestrator",
+                          model_available=lambda _m: (False, "quota_exhausted"),
+                          approval_gate=lambda d, p: True)
+        run = loop.run("first unit")
+        # NOT paused: the run continued on the substitute; the second unit ran.
+        self.assertNotEqual(run.stopped, "rotation_paused_model_unavailable")
+        self.assertEqual(len(runner.prompts), 2)
+        self.assertEqual(len(run.rotations), 1)
+        rec = run.rotations[0]
+        # relaunch config carries the substitute model EXPLICITLY.
+        self.assertEqual(rec["model"], "claude-opus-4-8")
+        self.assertEqual(rec["substitute_model"], "claude-opus-4-8")
+        self.assertEqual(rec["pinned_model"], "claude-pinned")
+        self.assertNotEqual(rec["new_session_id"], rec["old_session_id"])
+        # durable journal record present, carrying pinned/substitute/reason/cycle/ids.
+        sub = self.journal.get_state(self._sub_key())
+        self.assertTrue(sub["active"])
+        self.assertEqual(sub["pinned_model"], "claude-pinned")
+        self.assertEqual(sub["substitute_model"], "claude-opus-4-8")
+        self.assertEqual(sub["reason_code"], "quota_exhausted")
+        self.assertIn("cycle", sub)
+        self.assertIn("new_session_id", sub)
+        self.assertIn("old_session_id", sub)
+        # first-class audit event, never silent, carrying the same fields.
+        events = [r for r in self.audit.read_all()
+                  if r["event_type"] == "model_substitution"]
+        self.assertEqual(len(events), 1)
+        detail = events[0]["detail"]
+        self.assertEqual(detail["pinned_model"], "claude-pinned")
+        self.assertEqual(detail["substitute_model"], "claude-opus-4-8")
+        self.assertEqual(detail["reason_code"], "quota_exhausted")
+
+    def test_quota_exhausted_non_orchestrator_still_pauses(self) -> None:
+        # Same quota exhaustion, but the WORKER default role: the existing
+        # PAUSE+notify is unchanged and nothing runs on a substitute.
+        self.at_preflight()
+        runner = self._downgrade_runner()
+        loop = self.build(mode="supervised", runner=runner, max_cycles=2,
+                          pinned_model="claude-pinned",  # session_role default ""
+                          model_available=lambda _m: (False, "quota_exhausted"),
+                          approval_gate=lambda d, p: True)
+        run = loop.run("first unit")
+        self.assertEqual(run.stopped, "rotation_paused_model_unavailable")
+        self.assertEqual(self.machine.current_state, sm.PAUSED_RECOVERY)
+        self.assertEqual(len(runner.prompts), 1)
+        self.assertEqual(run.rotations, ())
+        self.assertIsNone(self.journal.get_state(self._sub_key()))
+        self.assertTrue(self.journal.open_asks())
+
+    def test_non_quota_unavailability_orchestrator_still_pauses(self) -> None:
+        # Orchestrator role, but the unavailability reason is NOT quota exhaustion:
+        # fail closed to the existing PAUSE+notify.
+        self.at_preflight()
+        runner = self._downgrade_runner()
+        loop = self.build(mode="supervised", runner=runner, max_cycles=2,
+                          pinned_model="claude-pinned", session_role="orchestrator",
+                          model_available=lambda _m: (False, "provider_error"),
+                          approval_gate=lambda d, p: True)
+        run = loop.run("first unit")
+        self.assertEqual(run.stopped, "rotation_paused_model_unavailable")
+        self.assertEqual(len(runner.prompts), 1)
+        self.assertEqual(run.rotations, ())
+        self.assertIsNone(self.journal.get_state(self._sub_key()))
+
+    def test_bare_false_probe_is_not_quota_and_pauses(self) -> None:
+        # Backward compatibility: a bare bool carries NO reason, so it is never
+        # quota exhaustion even for an orchestrator - it pauses (fail closed).
+        self.at_preflight()
+        runner = self._downgrade_runner()
+        loop = self.build(mode="supervised", runner=runner, max_cycles=2,
+                          pinned_model="claude-pinned", session_role="orchestrator",
+                          model_available=lambda _m: False,
+                          approval_gate=lambda d, p: True)
+        run = loop.run("first unit")
+        self.assertEqual(run.stopped, "rotation_paused_model_unavailable")
+        self.assertEqual(run.rotations, ())
+        self.assertIsNone(self.journal.get_state(self._sub_key()))
+
+    def test_return_to_pinned_at_next_available_seam(self) -> None:
+        # Substitution active, then the pinned model is available again at a later
+        # seam: rotate back to the pin + record model_substitution_ended.
+        self.at_preflight()
+        runner = FakeRunner(
+            run_result(model_mismatch=True, mismatch_detail="reported substitute"),
+            run_result(), run_result())
+
+        class Probe:
+            def __init__(self, sequence):
+                self.sequence = sequence
+                self.calls = 0
+
+            def __call__(self, _model):
+                value = self.sequence[min(self.calls, len(self.sequence) - 1)]
+                self.calls += 1
+                return value
+
+        probe = Probe([(False, "quota_exhausted"), (True, "")])
+        loop = self.build(mode="supervised", runner=runner, max_cycles=3,
+                          pinned_model="claude-pinned", session_role="orchestrator",
+                          model_available=probe, approval_gate=lambda d, p: True)
+        run = loop.run("first unit")
+        # Two rotations: the substitution, then the return-to-pinned.
+        self.assertEqual(len(run.rotations), 2)
+        self.assertEqual(run.rotations[0]["model"], "claude-opus-4-8")
+        self.assertEqual(run.rotations[1]["reason_code"], "model_substitution_ended")
+        self.assertEqual(run.rotations[1]["model"], "claude-pinned")
+        self.assertEqual(run.rotations[1]["restored_from_substitute"], "claude-opus-4-8")
+        # The durable record is marked ended, not silently deleted.
+        sub = self.journal.get_state(self._sub_key())
+        self.assertFalse(sub["active"])
+        self.assertIn("ended_cycle", sub)
+        # Both first-class events present; the return is never silent.
+        events = {r["event_type"] for r in self.audit.read_all()}
+        self.assertIn("model_substitution", events)
+        self.assertIn("model_substitution_ended", events)
+
+    def test_substitution_never_touches_reviewer_or_shadow(self) -> None:
+        # Shadow observing a downgrade with a quota-exhausted pin sets no rotation
+        # flag and never substitutes: shadow stays purely observational.
+        self.at_preflight()
+        loop = self.build(mode="shadow", session_role="orchestrator",
+                          runner=FakeRunner(run_result(model_mismatch=True,
+                                                       context_tokens=500_000,
+                                                       usage_known=True)),
+                          pinned_model="claude-pinned",
+                          context_rotation_threshold=100_000,
+                          model_available=lambda _m: (False, "quota_exhausted"))
+        run = loop.run("only observation")
+        self.assertFalse(rot.rotation_pending(self.journal))
+        self.assertEqual(run.rotations, ())
+        self.assertIsNone(self.journal.get_state(self._sub_key()))
+
+    def test_unknown_session_role_is_refused(self) -> None:
+        with self.assertRaises(lp.LoopError) as raised:
+            lp.LoopConfig(mode="supervised", task_id="M0-T036", stage="phase4",
+                          session_role="admin")
+        self.assertEqual(raised.exception.code, "unknown_session_role")
 
 
 if __name__ == "__main__":  # pragma: no cover

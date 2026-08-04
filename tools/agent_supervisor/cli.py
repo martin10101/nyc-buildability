@@ -1999,7 +1999,11 @@ def _run_loop(args: argparse.Namespace, checkout: pathlib.Path,
             allowed_paths=authority.allowed_paths,
             stop_conditions=tuple(packet.get("stop_conditions", []) or ()),
             max_cycles=args.max_cycles,
-            owner_touch_budget=args.owner_touch_budget),
+            owner_touch_budget=args.owner_touch_budget,
+            # D-004 am.26 / D-007 am.11: orchestrator-continuity role, default
+            # absent. Only an orchestrator-role session substitutes the pinned
+            # model (and only for quota exhaustion); the worker default pauses.
+            session_role=(args.session_role or "")),
         journal=journal, audit=audit, machine=machine, authority=authority,
         runner=runner, reviewer=reviewer, run_id=run_id, collector=collector,
         broker=broker, breakers=breakers,
@@ -2265,6 +2269,17 @@ def build_parser() -> argparse.ArgumentParser:
                             "model the live worker will NOT report to induce a detected "
                             "downgrade on a synthetic unit; the worker still LAUNCHES on the "
                             "real primary, so nothing runs on an unavailable model")
+    start.add_argument("--session-role", choices=["orchestrator"], default=None,
+                       help="D-004 am.26 / D-007 am.11 ORCHESTRATOR-CONTINUITY role - NOT "
+                            "the worker default. Set to 'orchestrator' ONLY for the "
+                            "orchestrator (main) session: when the pinned Fable-5 model's "
+                            "quota is exhausted at a rotation seam, an orchestrator-role "
+                            "session relaunches EXPLICITLY on the substitute model "
+                            "claude-opus-4-8 (recorded as a first-class model_substitution "
+                            "event) and returns to the pinned model at the next seam it is "
+                            "available. Absent = the worker default, which PAUSES for the "
+                            "owner instead of ever substituting a pinned model. Reviewer "
+                            "pins are never affected")
     start.set_defaults(func=cmd_start)
 
     pending = sub.add_parser("pending-approvals",

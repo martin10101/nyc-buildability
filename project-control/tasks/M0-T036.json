@@ -60,7 +60,7 @@
     "directive-compliance-verifier"
   ],
   "status": "in_progress",
-  "progress_percent": 98,
+  "progress_percent": 99,
   "risks": [
     "Scale: D-007 spans 5 phases; the packet authorizes Phases 1-4 + the Phase 5 shadow pilot, with the activation decision owner-gated. Split into per-phase follow-up tasks at the orchestrator's discretion if a phase exceeds a safe review size - contract splits through the normal process, never widen this packet.",
     "Windows process-tree control (Job Objects) and durable Task Scheduler wake are the highest-uncertainty areas; Section 18 stop conditions apply if a safe strategy cannot be proven.",
@@ -69,7 +69,7 @@
   ],
   "blockers": [],
   "created_at": "2026-08-03T03:44:41.634259+00:00",
-  "updated_at": "2026-08-04T18:24:05.033153+00:00",
+  "updated_at": "2026-08-04T19:19:04.206990+00:00",
   "directive_refs": [
     {
       "directive_id": "D-007",
@@ -201,6 +201,13 @@
       "percent": 98,
       "status": "in_progress",
       "message": "V1.2 BUILD INTEGRATED at 33e3336 (grant b). Producer delivered all three scope items; orchestrator verification: 7/7 file hashes match the producer worktree, 1114 passed 2 skipped (+23, zero regressions), doctor PASS (rotation_invariants confirms seam-only + pressure-never-interrupts; loop_modes confirms shadow.forwards=False unchanged), scanner PASS. (A) broker wired into the assembled loop (G3 V-1 closed - supervised allow path reachable, shadow permits/forwards nothing); (B) model-identity discipline (R739); (C) context-threshold rotation 400k configurable (R743-745); B+C share one seam-only actuator. NEXT: the three orchestrator-run LIVE exercises on the controller with SYNTHETIC probe units, shadow-only for real work, nothing forwards to a real task (R593/R594): live allow round-trip (QA gap 1), live rotation (QA gap 4), live model mismatch. These need the controller updated to 33e3336 (owner-plane pull). Fable-5-pinned V1.2 delta re-gate + held G2 wave wait for the owner Fable 5 window reset (R596)."
+    },
+    {
+      "at": "2026-08-04T19:19:04.200647+00:00",
+      "agent": "orchestrator",
+      "percent": 99,
+      "status": "in_progress",
+      "message": "V1.2 live exercises complete to structural limit + V1.2.1 integrated. Exercise 1 (live allow round-trip) PASS - QA gap 1 CLOSED: broker permitted AUTO in_scope_file_write live, tool executed, setMode suggestion rejected, full cycle to stage_complete. Live model-mismatch detection PASS (R745 leg closed): induced mismatch flagged on a real stream in all 3 ex3 runs; worker never launched on the fake id. Seam-rotation actuation NOT reachable live - FIRST-CLASS FINDING recorded (reports/M0-T036-V1.2-live-exercises/README.md): held supervised prompt has no operator continuation path (owner_approved_pending_prompt fired by no command; F-2 analogue) and digest pre-approval cannot converge on live reviewer wording (6 runs, 6 unique digests). Rotation triggers ARMED live both ways (context_threshold + model_downgrade), audited; actuator remains unit-suite-proven. V1.2.1 quota-substitution unit (D-007-R597/R598, D-004-R746-748) produced in isolated worktree, hashes 3/3 MATCH, full sweep reproduced by orchestrator: 1121 passed / 2 skipped (+7 ModelSubstitutionTests). Producer flagged: no live quota probe wired (matches pre-existing injected-probe stance); rotation.py untouched. Diff preserved verbatim reports/M0-T036-V1.2.1.diff. This commit FREEZES the SHA for the Fable-5 delta re-gate + held G2 wave (R599)."
     }
   ]
 }
