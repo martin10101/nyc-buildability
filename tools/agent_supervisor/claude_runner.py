@@ -76,6 +76,16 @@ FORBIDDEN_SESSION_FLAGS: frozenset[str] = frozenset({"--continue", "-c", "--last
 #: Recorded so `doctor` can state the uncertainty plainly.
 CONTROL_RESPONSE_WRAPPER_VERIFIED = False
 
+#: Bounded grace between "every written turn has its terminal `result` event,
+#: stdin closed" and "the worker process must have exited". Under
+#: `--input-format stream-json` the CLI keeps the session open awaiting further
+#: input after its final `result` event (confirmed by three shadow-pilot runs
+#: that each rode the full wall timeout), so the runner closes stdin and waits
+#: this long for a clean exit. A worker still alive after the grace is
+#: tree-terminated and recorded as `graceful_close_failed` - distinct from the
+#: wall timeout, which remains reserved for genuinely runaway units.
+GRACEFUL_CLOSE_GRACE_SECONDS = 30.0
+
 
 class RunnerError(Exception):
     """The worker adapter refused to run, or the run could not be trusted."""
@@ -106,6 +116,9 @@ class RunnerConfig:
     executable: str
     max_turns: int = 12
     timeout_seconds: float = 900.0
+    #: See `GRACEFUL_CLOSE_GRACE_SECONDS`. Configurable so tests can shrink it;
+    #: the default is the module constant.
+    close_grace_seconds: float = GRACEFUL_CLOSE_GRACE_SECONDS
     cwd: str = ""
     model: str = ""
     permission_mode: str = REQUIRED_PERMISSION_MODE
@@ -468,6 +481,11 @@ class RunResult:
     checkpoint_error: str = ""
     timed_out: bool = False
     cancelled: bool = False
+    #: The unit finished (every turn's terminal `result` event arrived) and stdin
+    #: was closed, but the worker did not exit within the bounded grace and had to
+    #: be tree-terminated. Distinct from `timed_out` (the wall watchdog for
+    #: runaway units) and recorded honestly rather than folded into it.
+    graceful_close_failed: bool = False
     tree_terminated: bool = False
     containment: str = ""
     containment_fallback_reason: str = ""
@@ -480,10 +498,15 @@ class RunResult:
         """A run is OK only with a valid checkpoint, a clean exit, and no timeout.
 
         A nonzero exit, a timeout, a cancellation, or a malformed final object is
-        never interpreted as success (S14).
+        never interpreted as success (S14). A worker that had to be killed because
+        it ignored stdin closure (`graceful_close_failed`) did not exit cleanly,
+        so it is not OK either - even with a valid checkpoint in hand; on Windows
+        a tree-terminated process has been observed to report returncode 0, so
+        the flag is checked explicitly rather than trusting the returncode.
         """
         return (self.checkpoint is not None and not self.checkpoint_error
-                and self.returncode == 0 and not self.timed_out and not self.cancelled)
+                and self.returncode == 0 and not self.timed_out
+                and not self.cancelled and not self.graceful_close_failed)
 
 
 class ClaudeRunner:
@@ -512,6 +535,11 @@ class ClaudeRunner:
         The prompt is written as a stream-json user turn on stdin; every
         `can_use_tool` control request is answered from the handler; the process
         tree is terminated on timeout or cancellation.
+
+        The read loop ends when every written turn has received its terminal
+        `result` event OR the process exits, whichever comes first; stdin stays
+        open until then so mid-turn control traffic can be answered, and is then
+        closed with a bounded grace (`close_grace_seconds`) for a clean exit.
         """
         argv = build_argv(self.config)
         handler = permission_handler or deny_everything
@@ -524,6 +552,13 @@ class ClaudeRunner:
         timed_out = threading.Event()
         cancelled = threading.Event()
         tree_terminated = False
+        graceful_close_failed = False
+        # One terminal `result` event per written user turn ends the unit. The CLI
+        # keeps the stream-json session open after it (shadow-pilot finding), so
+        # waiting for stdout EOF alone would always ride the wall timeout.
+        expected_results = 0
+        results_seen = 0
+        unit_complete = False
 
         started = time.monotonic()
         # Phase 4: the worker is launched INSIDE the default container (a
@@ -579,8 +614,10 @@ class ClaudeRunner:
 
         try:
             write(user_message(prompt))
+            expected_results += 1
             for turn in extra_turns:
                 write(user_message(turn))
+                expected_results += 1
 
             assert process.stdout is not None
             for chunk in process.stdout:
@@ -590,18 +627,66 @@ class ClaudeRunner:
                     if kind == "system" and event.get("subtype") == "init":
                         session_id = str(event.get("session_id", "")) or session_id
                     elif kind == "control_request":
+                        # stdin is still open here: control traffic flows
+                        # mid-turn, before the turn's terminal result event.
                         decision = self._answer_control_request(event, handler, write)
                         if decision is not None:
                             decisions.append(decision)
-            for event in parser.close():
-                events.append(event)
+                    elif kind == "result":
+                        results_seen += 1
+                if results_seen >= expected_results:
+                    # Every written turn has its terminal result. Stop reading
+                    # here rather than waiting for an EOF the CLI never sends;
+                    # stdin is closed below and the process gets a bounded grace.
+                    unit_complete = True
+                    break
         finally:
             try:
                 if process.stdin is not None and not process.stdin.closed:
                     process.stdin.close()
             except Exception:  # pragma: no cover - defensive
                 pass
-            process.wait()
+
+            # After an early exit from the read loop, keep draining stdout in the
+            # background: a filling pipe must not stop the CLI from exiting, and
+            # any trailing events (e.g. a conflicting duplicate checkpoint) must
+            # still be seen. The main thread only rejoins the parser/events after
+            # this thread is joined, so access stays single-threaded in sequence.
+            drain_thread: threading.Thread | None = None
+            if unit_complete and process.stdout is not None:
+                def drain_stdout_tail() -> None:
+                    try:
+                        assert process.stdout is not None
+                        for chunk in process.stdout:
+                            for event in parser.feed(chunk):
+                                events.append(event)
+                    except Exception:  # pragma: no cover - defensive
+                        pass
+
+                drain_thread = threading.Thread(target=drain_stdout_tail, daemon=True)
+                drain_thread.start()
+
+            try:
+                process.wait(timeout=self.config.close_grace_seconds)
+            except subprocess.TimeoutExpired:
+                # The unit finished but the worker ignored stdin closure. This is
+                # NOT the wall timeout (which the watchdog still owns for runaway
+                # units); it is recorded under its own honest flag.
+                if not timed_out.is_set() and not cancelled.is_set():
+                    graceful_close_failed = True
+                try:
+                    container.terminate_all()
+                except Exception:  # pragma: no cover - defensive
+                    try:
+                        terminate_process_tree(process.pid)
+                    except Exception:
+                        pass
+                process.wait()
+            if drain_thread is not None:
+                drain_thread.join(timeout=2)
+            if drain_thread is None or not drain_thread.is_alive():
+                for event in parser.close():
+                    events.append(event)
             watch_thread.join(timeout=2)
             stderr_thread.join(timeout=2)
             for pipe in (process.stdout, process.stderr):
@@ -610,7 +695,7 @@ class ClaudeRunner:
                         pipe.close()
                 except Exception:  # pragma: no cover - defensive
                     pass
-            if timed_out.is_set() or cancelled.is_set():
+            if timed_out.is_set() or cancelled.is_set() or graceful_close_failed:
                 tree_terminated = True
             containment_report = container.report()
             container.close()
@@ -640,6 +725,7 @@ class ClaudeRunner:
             checkpoint_error=checkpoint_error,
             timed_out=timed_out.is_set(),
             cancelled=cancelled.is_set(),
+            graceful_close_failed=graceful_close_failed,
             tree_terminated=tree_terminated,
             containment=containment_report.kind,
             containment_fallback_reason=containment_report.fallback_reason,
@@ -694,6 +780,7 @@ class ClaudeRunner:
                 "returncode": result.returncode,
                 "timed_out": result.timed_out,
                 "cancelled": result.cancelled,
+                "graceful_close_failed": result.graceful_close_failed,
                 "events": result.events,
                 "noise_lines": result.stats.noise_lines,
                 "malformed_lines": result.stats.malformed_lines,
