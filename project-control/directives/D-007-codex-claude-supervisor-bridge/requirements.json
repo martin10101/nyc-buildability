@@ -2,9 +2,9 @@
  "schema": "directive_requirements/v1",
  "directive_id": "D-007",
  "version": 1,
- "requirement_count": 570,
+ "requirement_count": 576,
  "producer": "orchestrator",
- "updated_at": "2026-08-04T07:20:00+00:00",
+ "updated_at": "2026-08-04T07:55:00+00:00",
  "requirements": [
   {
    "id": "D-007-R001",
@@ -21774,6 +21774,248 @@
     ]
    },
    "amendment_sequence": 6
+  },
+  {
+   "id": "D-007-R571",
+   "text": "CLOSE-OUT ORDER: (1) commit the diagnostics-triage record, (2) freeze the SHA and state it with its green CI run id, (3) dispatch the five gate reviews, (4) assemble the decision packet only after all five return, (5) stop per R541/R555.",
+   "source_ref": "source-007-amendment.md#the-owner-message",
+   "classification": "sequencing",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-007-BUILD",
+     "M0-T036"
+    ],
+    "task_types": [
+     "governance"
+    ],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [
+     "submit",
+     "gate",
+     "accept"
+    ],
+    "effective_date": "2026-08-04"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "captured from the owner Phase 5 close-out dispatch (2026-08-04); verified at directive verification",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": [
+     "M0-T036"
+    ]
+   },
+   "amendment_sequence": 7
+  },
+  {
+   "id": "D-007-R572",
+   "text": "RECORD: the 17- and 19-diagnostic enumerations committed verbatim as a diagnostics-triage record under project-control/reports/M0-T036-shadow-pilot/ with per-line verdicts and executing-test proof, citable by the packet (discharges R564/R569 durably).",
+   "source_ref": "source-007-amendment.md#the-owner-message",
+   "classification": "return",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-007-BUILD",
+     "M0-T036"
+    ],
+    "task_types": [
+     "governance"
+    ],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [
+     "submit",
+     "gate"
+    ],
+    "effective_date": "2026-08-04"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "diagnostics-triage record file",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "captured from the owner Phase 5 close-out dispatch (2026-08-04); verified at directive verification",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": [
+     "M0-T036"
+    ]
+   },
+   "amendment_sequence": 7
+  },
+  {
+   "id": "D-007-R573",
+   "text": "FREEZE: all five gate reviews pin to one stated frozen SHA (387378f or the tip including the triage record); the statement names the SHA and cites its green CI run id.",
+   "source_ref": "source-007-amendment.md#the-owner-message",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-007-BUILD",
+     "M0-T036"
+    ],
+    "task_types": [
+     "governance"
+    ],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [
+     "gate"
+    ],
+    "effective_date": "2026-08-04"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "frozen-SHA statement + CI run id",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "captured from the owner Phase 5 close-out dispatch (2026-08-04); verified at directive verification",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": [
+     "M0-T036"
+    ]
+   },
+   "amendment_sequence": 7
+  },
+  {
+   "id": "D-007-R574",
+   "text": "REVIEW DISPATCH CONSTRAINTS: five pinned reviewers (code-reviewer, security-reviewer, qa-engineer, control-plane-verifier, directive-compliance-verifier), read-only, delta-scoped packets, settled findings cited, no merges and no accepts anywhere.",
+   "source_ref": "source-007-amendment.md#the-owner-message",
+   "classification": "prohibition",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-007-BUILD",
+     "M0-T036"
+    ],
+    "task_types": [
+     "governance"
+    ],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [
+     "gate"
+    ],
+    "effective_date": "2026-08-04"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "captured from the owner Phase 5 close-out dispatch (2026-08-04); verified at directive verification",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": [
+     "M0-T036"
+    ]
+   },
+   "amendment_sequence": 7
+  },
+  {
+   "id": "D-007-R575",
+   "text": "PACKET CONTENTS: frozen SHA + CI run id; the five reviews; replay results; shadow comparison with touch counts across runs 1-6; every stop with true/false-positive classification; residual risks with F-2 (PAUSED_RECOVERY CLI exit) and F-4 (checkpoint-contract injection) as V1.1 conditions and F-5 (doctor verifies timezone-database resolvability) as a recommendation; proposed AUTO allowlist and standing grants; emergency-stop behavior; keep-supervised-vs-activate recommendation.",
+   "source_ref": "source-007-amendment.md#the-owner-message",
+   "classification": "return",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-007-BUILD",
+     "M0-T036"
+    ],
+    "task_types": [
+     "governance"
+    ],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [
+     "gate",
+     "accept"
+    ],
+    "effective_date": "2026-08-04"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "the decision packet",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "captured from the owner Phase 5 close-out dispatch (2026-08-04); verified at directive verification",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": [
+     "M0-T036"
+    ]
+   },
+   "amendment_sequence": 7
+  },
+  {
+   "id": "D-007-R576",
+   "text": "PROHIBITION: after the packet, STOP per R541/R555. No activation steps, no M0-T035 acceptance - both are owner decisions after the packet.",
+   "source_ref": "source-007-amendment.md#the-owner-message",
+   "classification": "prohibition",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-007-BUILD",
+     "M0-T036"
+    ],
+    "task_types": [
+     "governance"
+    ],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [
+     "gate",
+     "accept"
+    ],
+    "effective_date": "2026-08-04"
+   },
+   "dependencies": [
+    "D-007-R541",
+    "D-007-R555"
+   ],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "captured from the owner Phase 5 close-out dispatch (2026-08-04); verified at directive verification",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": [
+     "M0-T036"
+    ]
+   },
+   "amendment_sequence": 7
   }
  ],
  "amendments_applied": [
@@ -21781,6 +22023,7 @@
   "source-003-amendment.md",
   "source-004-amendment.md",
   "source-005-amendment.md",
-  "source-006-amendment.md"
+  "source-006-amendment.md",
+  "source-007-amendment.md"
  ]
 }
