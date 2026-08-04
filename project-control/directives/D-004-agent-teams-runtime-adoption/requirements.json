@@ -2,9 +2,9 @@
  "schema": "directive_requirements/v1",
  "directive_id": "D-004",
  "version": 1,
- "requirement_count": 742,
+ "requirement_count": 745,
  "producer": "orchestrator",
- "updated_at": "2026-08-04T16:45:00+00:00",
+ "updated_at": "2026-08-04T17:05:00+00:00",
  "requirements": [
   {
    "id": "D-004-R001",
@@ -29178,6 +29178,141 @@
     "tasks": []
    },
    "amendment_sequence": 24
+  },
+  {
+   "id": "D-004-R743",
+   "text": "V1.2 SCOPE EXTENSION (same unit as R739, not a new one): add context-threshold rotation for orchestrator-role sessions. The supervisor tracks context usage from the stream; when usage crosses the owner-set threshold it treats the crossing EXACTLY like a detected downgrade - dispatch nothing new, let in-flight subagents and the current unit finish bounded, refresh SESSION_HANDOFF, rotate via the existing rotation path, relaunch pinned on Fable 5.",
+   "source_ref": "source-025-amendment.md#the-owner-message",
+   "classification": "authorization",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-004-MODELGOV"
+    ],
+    "task_types": [
+     "governance"
+    ],
+    "milestones": [
+     "M0"
+    ],
+    "paths": [],
+    "lifecycle_events": [
+     "claim",
+     "submit",
+     "gate",
+     "accept"
+    ],
+    "effective_date": "2026-08-04"
+   },
+   "dependencies": [
+    "D-004-R739"
+   ],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "captured from the owner V1.2 scope extension (2026-08-04); verified at directive verification",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": [
+     "M0-T036"
+    ]
+   },
+   "amendment_sequence": 25
+  },
+  {
+   "id": "D-004-R744",
+   "text": "CONTEXT THRESHOLD: the rotation threshold is 400000 tokens, configurable in the supervisor config. Rotation fires ONLY at a seam, NEVER mid-unit.",
+   "source_ref": "source-025-amendment.md#the-owner-message",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-004-MODELGOV"
+    ],
+    "task_types": [
+     "governance"
+    ],
+    "milestones": [
+     "M0"
+    ],
+    "paths": [],
+    "lifecycle_events": [
+     "claim",
+     "submit",
+     "gate",
+     "accept"
+    ],
+    "effective_date": "2026-08-04"
+   },
+   "dependencies": [
+    "D-004-R739"
+   ],
+   "required_harness": "",
+   "required_evidence": "supervisor config threshold key + seam-only rotation test",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "captured from the owner V1.2 scope extension (2026-08-04); verified at directive verification",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": [
+     "M0-T036"
+    ]
+   },
+   "amendment_sequence": 25
+  },
+  {
+   "id": "D-004-R745",
+   "text": "V1.2 ACCEPTANCE EVIDENCE (extends R739 acceptance): the unit's acceptance must include at least one LIVE-EXERCISED rotation (closing QA gap 4) and one LIVE-DETECTED model mismatch, both evidenced. The mismatch may be induced deliberately for the test.",
+   "source_ref": "source-025-amendment.md#the-owner-message",
+   "classification": "evidence",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-004-MODELGOV"
+    ],
+    "task_types": [
+     "governance"
+    ],
+    "milestones": [
+     "M0"
+    ],
+    "paths": [],
+    "lifecycle_events": [
+     "claim",
+     "submit",
+     "gate",
+     "accept"
+    ],
+    "effective_date": "2026-08-04"
+   },
+   "dependencies": [
+    "D-004-R739"
+   ],
+   "required_harness": "",
+   "required_evidence": "live rotation evidence + live model-mismatch evidence",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "captured from the owner V1.2 scope extension (2026-08-04); verified at directive verification",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": [
+     "M0-T036"
+    ]
+   },
+   "amendment_sequence": 25
   }
  ],
  "amendments_applied": [
@@ -29203,6 +29338,7 @@
   "source-021-amendment.md",
   "source-022-amendment.md",
   "source-023-amendment.md",
-  "source-024-amendment.md"
+  "source-024-amendment.md",
+  "source-025-amendment.md"
  ]
 }

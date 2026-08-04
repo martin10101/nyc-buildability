@@ -1,7 +1,7 @@
 {
  "schema": "directive_manifest/v1",
  "directive_id": "D-004",
- "version": 24,
+ "version": 25,
  "slug": "agent-teams-runtime-adoption",
  "title": "Agent-teams runtime adoption, staged with pilots",
  "status": "active",
@@ -201,6 +201,14 @@
    "amends": "source-023-amendment.md",
    "recorded_at": "2026-08-04T16:45:00+00:00",
    "content_digest_sha256": "d6cd1d7e8a54d47a2a011cf6d11e2ecea305517f0e70603d9614129b136278a4"
+  },
+  {
+   "file": "source-025-amendment.md",
+   "kind": "amendment",
+   "sequence": 25,
+   "amends": "source-023-amendment.md",
+   "recorded_at": "2026-08-04T17:05:00+00:00",
+   "content_digest_sha256": "4401a69cfc5805ec0e0e1edbbf085885b7709d00226525564dc06085f8079c03"
   }
  ],
  "amendments": [
@@ -226,7 +234,8 @@
   "source-021-amendment.md",
   "source-022-amendment.md",
   "source-023-amendment.md",
-  "source-024-amendment.md"
+  "source-024-amendment.md",
+  "source-025-amendment.md"
  ],
  "supersedes": [],
  "superseded_by": null,
@@ -354,7 +363,7 @@
   "Amendment 8 (source-009, rows D-004-R307-R326): owner decision captured 2026-07-30 at live-reconciled head 87e0ad6d87fa3e45cf647ebe45bf7db4029e7b75 (post PR #128; expected state verified in every particular). Three decisions plus one GO: (1) TEMPORARY model-availability exception - Fable 5 exhausted, so the lead runs Opus 5 and every gate reviewer/verifier is spawned with EXPLICIT Opus 5; this supersedes only the VALUE clauses of R090/R161 and the lead clause of R298, temporarily, until the owner restores Fable 5; independence, verbatim-evidence, effort, and settings clauses are unchanged and re-affirmed; the actual model used must be recorded and never misreported. (2) WORKTREE decision - the harness-isolation + attestation + exact-diff-port mechanism is accepted as disclosed and becomes the mechanism Step 5 must describe; the literal pre-created-worktree wording is superseded as mechanically unsatisfiable. (3) STEP-4 evidence accepted including the disclosed post-gate model switch; no M2-T018/M4-T008 rerun. (4) GO for the M0-T027 closeout ONLY, with an explicit not-authorized list and a STOP-and-present-proposed-Step-5 terminus. Session-conduct rows use the sentinel D-004-STEP4CLOSE; closeout-binding rows carry M0-T027 so the resolver derives them for that packet. No existing source or requirement row edited."
  ],
  "created_at": "2026-07-24T00:00:00+00:00",
- "updated_at": "2026-08-04T16:45:00+00:00",
+ "updated_at": "2026-08-04T17:05:00+00:00",
  "audit_log": [
   {
    "at": "2026-07-24T00:00:00+00:00",
@@ -475,6 +484,11 @@
    "at": "2026-08-04T16:45:00+00:00",
    "by": "orchestrator",
    "note": "Amendment 23 (source-024-amendment.md): correction to amendment 22 - orchestrator agent stays Fable 5 (six-file Fable-5 pinned set incl. the 5 reviewers); durable-effort key effortLevel stays unwritten (high is the Fable 5 default). Rows R741-R742."
+  },
+  {
+   "at": "2026-08-04T17:05:00+00:00",
+   "by": "orchestrator",
+   "note": "Amendment 24 (source-025-amendment.md): V1.2 scope extension (same unit as R739) - context-threshold rotation for orchestrator-role sessions, 400k-token configurable threshold treated exactly like a detected downgrade, seam-only never mid-unit; acceptance must include one live rotation (closes QA gap 4) + one live model mismatch, both evidenced. Rows R743-R745."
   }
  ],
  "locked_requirement_ids": [
@@ -1219,8 +1233,11 @@
   "D-004-R739",
   "D-004-R740",
   "D-004-R741",
-  "D-004-R742"
+  "D-004-R742",
+  "D-004-R743",
+  "D-004-R744",
+  "D-004-R745"
  ],
- "requirements_id_digest_sha256": "2aeaf3909758f6920cf87ab873a8346f37c7afee56537f5c7b418312a82c154a",
- "requirements_content_digest_sha256": "245fbb108ee0400baf62805ee4e0604a109f9547dfc6a438338c760a07ee2461"
+ "requirements_id_digest_sha256": "8ebeb597c63686865128d688d01291c1e3edfb0f505a3b3c3c5cd2559e20e741",
+ "requirements_content_digest_sha256": "fc1b3d470705dfdd8bf1feb3e6dc0beae795a5864146b94e390d572da7f40167"
 }
