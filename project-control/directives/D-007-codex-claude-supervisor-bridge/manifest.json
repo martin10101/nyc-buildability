@@ -1,7 +1,7 @@
 {
  "schema": "directive_manifest/v1",
  "directive_id": "D-007",
- "version": 10,
+ "version": 11,
  "slug": "codex-claude-supervisor-bridge",
  "title": "Codex-Claude Code Supervisor Bridge (v4.3, Autonomy-Tuned) - build directive",
  "status": "active",
@@ -89,6 +89,14 @@
    "amends": "source-009-amendment.md",
    "recorded_at": "2026-08-04T17:25:00+00:00",
    "content_digest_sha256": "9d080779a085e2bfba5a85e2fd4dfe1fbb1563de46cf0695b756bce68e871993"
+  },
+  {
+   "file": "source-011-amendment.md",
+   "kind": "amendment",
+   "sequence": 11,
+   "amends": "source-010-amendment.md",
+   "recorded_at": "2026-08-04T18:00:00+00:00",
+   "content_digest_sha256": "6e95fc8b2703f8b8f478ce9f64eea189554f6614becb2561dafa936b861bbcc9"
   }
  ],
  "amendments": [
@@ -100,7 +108,8 @@
   "source-007-amendment.md",
   "source-008-amendment.md",
   "source-009-amendment.md",
-  "source-010-amendment.md"
+  "source-010-amendment.md",
+  "source-011-amendment.md"
  ],
  "supersedes": [],
  "superseded_by": null,
@@ -151,7 +160,7 @@
   "Two claude-side behavioral verifications remain outstanding (classifier-denied in the capture session): --max-turns acceptance and the stream-json canUseTool protocol probe; both are dispatch-time items recorded in the Phase 0 return."
  ],
  "created_at": "2026-08-03T03:44:22+00:00",
- "updated_at": "2026-08-04T17:25:00+00:00",
+ "updated_at": "2026-08-04T18:00:00+00:00",
  "audit_log": [
   {
    "at": "2026-08-03T03:44:22+00:00",
@@ -207,6 +216,11 @@
    "at": "2026-08-04T17:25:00+00:00",
    "by": "orchestrator",
    "note": "Amendment 9 (source-010-amendment.md): (1) ONE bounded doctor --live probe authorized on the controller checkout (allow-and-deny round-trip, shadow untouched, nothing forwarded, evidence verbatim, report+stop; gates V1.2 per R739/R582); (2) G2 wave for M0-T036 dispatch SCHEDULED for after the owner Fable 5 window resets (Fable-5-pinned reviewer, no fail/fallback); (3) supervised rehearsal still NOT authorized. Rows R588-R590."
+  },
+  {
+   "at": "2026-08-04T18:00:00+00:00",
+   "by": "orchestrator",
+   "note": "Amendment 10 (source-011-amendment.md): probe decision (deny-leg satisfies R739/R582; allow-leg circular pre-broker); V1.2 CONTRACTED+DISPATCHED (model-identity R739 + context-threshold rotation R743-745 + broker wiring G3 V-1); acceptance needs live allow round-trip (QA gap 1) + live rotation (QA gap 4) + live model mismatch, all verbatim, synthetic probe units only, shadow-only; supervised rehearsal still not authorized (post-delta-regate); Fable-5 reviews (V1.2 delta re-gate + G2 wave) after owner window reset. Rows R591-R596."
   }
  ],
  "locked_requirement_ids": [
@@ -799,8 +813,14 @@
   "D-007-R587",
   "D-007-R588",
   "D-007-R589",
-  "D-007-R590"
+  "D-007-R590",
+  "D-007-R591",
+  "D-007-R592",
+  "D-007-R593",
+  "D-007-R594",
+  "D-007-R595",
+  "D-007-R596"
  ],
- "requirements_id_digest_sha256": "8ed8b8f0a56c3f5856a7b2b59de72bcdfada31e5813c016d21eb9bd35d6988b0",
- "requirements_content_digest_sha256": "a5fd533b09934865f3a173a8568d1c8d4a81e32f6c6f9119b2263813f5c62fbc"
+ "requirements_id_digest_sha256": "313dc09cbd8e2a365ad4f4e42edf4da67190dcfd8038c2b23f939954afbf23af",
+ "requirements_content_digest_sha256": "b2fe7c8de1927be4a908584623b3551891c3d8a289cbcbf337366d46d54efb86"
 }

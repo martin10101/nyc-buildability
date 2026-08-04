@@ -2,9 +2,9 @@
  "schema": "directive_requirements/v1",
  "directive_id": "D-007",
  "version": 1,
- "requirement_count": 590,
+ "requirement_count": 596,
  "producer": "orchestrator",
- "updated_at": "2026-08-04T17:25:00+00:00",
+ "updated_at": "2026-08-04T18:00:00+00:00",
  "requirements": [
   {
    "id": "D-007-R001",
@@ -22583,6 +22583,258 @@
     ]
    },
    "amendment_sequence": 9
+  },
+  {
+   "id": "D-007-R591",
+   "text": "PROBE DECISION: the deny-leg live verification SATISFIES the R739/R582 gate. The allow leg has no code path until the broker is wired (G3 V-1), so requiring it first would be circular; surfacing that rather than fabricating an allow result was correct.",
+   "source_ref": "source-011-amendment.md#the-owner-message",
+   "classification": "decision",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-007-BUILD",
+     "M0-T036"
+    ],
+    "task_types": [
+     "governance"
+    ],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [
+     "gate"
+    ],
+    "effective_date": "2026-08-04"
+   },
+   "dependencies": [
+    "D-007-R588"
+   ],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "captured from the owner V1.2 contract+dispatch (2026-08-04); verified at directive verification",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": [
+     "M0-T036"
+    ]
+   },
+   "amendment_sequence": 10
+  },
+  {
+   "id": "D-007-R592",
+   "text": "V1.2 CONTRACTED AND DISPATCHED now, scope: (a) model-identity discipline as bound (R739), (b) context-threshold rotation as bound (R743-R745), (c) approval-broker wiring (G3 V-1).",
+   "source_ref": "source-011-amendment.md#the-owner-message",
+   "classification": "authorization",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-007-BUILD",
+     "M0-T036"
+    ],
+    "task_types": [
+     "governance"
+    ],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [
+     "claim",
+     "submit",
+     "gate"
+    ],
+    "effective_date": "2026-08-04"
+   },
+   "dependencies": [
+    "D-004-R739",
+    "D-004-R743",
+    "D-004-R744",
+    "D-004-R745"
+   ],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "captured from the owner V1.2 contract+dispatch (2026-08-04); verified at directive verification",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": [
+     "M0-T036"
+    ]
+   },
+   "amendment_sequence": 10
+  },
+  {
+   "id": "D-007-R593",
+   "text": "V1.2 ACCEPTANCE EVIDENCE (all preserved verbatim): one LIVE ALLOW round-trip through the wired broker in which an in-scope tool is permitted and ACTUALLY EXECUTES (closes QA gap 1); one LIVE-EXERCISED rotation (closes QA gap 4); one LIVE-DETECTED model mismatch (may be induced for the test).",
+   "source_ref": "source-011-amendment.md#the-owner-message",
+   "classification": "evidence",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-007-BUILD",
+     "M0-T036"
+    ],
+    "task_types": [
+     "governance"
+    ],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [
+     "gate",
+     "accept"
+    ],
+    "effective_date": "2026-08-04"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "preserved live allow-round-trip + rotation + model-mismatch evidence",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "captured from the owner V1.2 contract+dispatch (2026-08-04); verified at directive verification",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": [
+     "M0-T036"
+    ]
+   },
+   "amendment_sequence": 10
+  },
+  {
+   "id": "D-007-R594",
+   "text": "V1.2 LIVE-EXERCISE CONSTRAINT: all live exercises use SYNTHETIC PROBE UNITS ONLY - shadow-only remains in force and NOTHING forwards to any real task.",
+   "source_ref": "source-011-amendment.md#the-owner-message",
+   "classification": "prohibition",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-007-BUILD",
+     "M0-T036"
+    ],
+    "task_types": [
+     "governance"
+    ],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [
+     "gate",
+     "accept"
+    ],
+    "effective_date": "2026-08-04"
+   },
+   "dependencies": [
+    "D-007-R555"
+   ],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "captured from the owner V1.2 contract+dispatch (2026-08-04); verified at directive verification",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": [
+     "M0-T036"
+    ]
+   },
+   "amendment_sequence": 10
+  },
+  {
+   "id": "D-007-R595",
+   "text": "SUPERVISED REHEARSAL STILL NOT AUTHORIZED: the supervised single-forward rehearsal remains not authorized; it returns to the owner AFTER the V1.2 delta re-gate.",
+   "source_ref": "source-011-amendment.md#the-owner-message",
+   "classification": "prohibition",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-007-BUILD",
+     "M0-T036"
+    ],
+    "task_types": [
+     "governance"
+    ],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [
+     "gate",
+     "accept"
+    ],
+    "effective_date": "2026-08-04"
+   },
+   "dependencies": [
+    "D-007-R590"
+   ],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "captured from the owner V1.2 contract+dispatch (2026-08-04); verified at directive verification",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": [
+     "M0-T036"
+    ]
+   },
+   "amendment_sequence": 10
+  },
+  {
+   "id": "D-007-R596",
+   "text": "FABLE-5 REVIEW SCHEDULING: the Fable-5-pinned reviews - the V1.2 delta re-gate AND the held G2 wave - run only AFTER the owner says the Fable 5 window has reset.",
+   "source_ref": "source-011-amendment.md#the-owner-message",
+   "classification": "sequencing",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-007-BUILD",
+     "M0-T036"
+    ],
+    "task_types": [
+     "governance"
+    ],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [
+     "gate"
+    ],
+    "effective_date": "2026-08-04"
+   },
+   "dependencies": [
+    "D-007-R589"
+   ],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "captured from the owner V1.2 contract+dispatch (2026-08-04); verified at directive verification",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": [
+     "M0-T036"
+    ]
+   },
+   "amendment_sequence": 10
   }
  ],
  "amendments_applied": [
@@ -22594,6 +22846,7 @@
   "source-007-amendment.md",
   "source-008-amendment.md",
   "source-009-amendment.md",
-  "source-010-amendment.md"
+  "source-010-amendment.md",
+  "source-011-amendment.md"
  ]
 }
