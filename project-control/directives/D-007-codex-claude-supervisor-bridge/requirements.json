@@ -2,9 +2,9 @@
  "schema": "directive_requirements/v1",
  "directive_id": "D-007",
  "version": 1,
- "requirement_count": 563,
+ "requirement_count": 567,
  "producer": "orchestrator",
- "updated_at": "2026-08-04T00:32:38+00:00",
+ "updated_at": "2026-08-04T06:50:00+00:00",
  "requirements": [
   {
    "id": "D-007-R001",
@@ -21492,11 +21492,173 @@
     ]
    },
    "amendment_sequence": 4
+  },
+  {
+   "id": "D-007-R564",
+   "text": "PRE-RUN RETURN: enumerate the 17 fixer-surfaced diagnostics (7 in claude_runner.py, 10 in test_agent_supervisor_runner.py), file plus one line each, with an honest statement of whether each touches the session-close path or the watchdog and whether any is a functional defect.",
+   "source_ref": "source-005-amendment.md#the-owner-message",
+   "classification": "return",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-007-BUILD",
+     "M0-T036"
+    ],
+    "task_types": [
+     "governance"
+    ],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [
+     "submit",
+     "gate"
+    ],
+    "effective_date": "2026-08-04"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "diagnostics enumeration in the return report",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "captured from the owner pre-run instructions (2026-08-04); verified at directive verification",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": [
+     "M0-T036"
+    ]
+   },
+   "amendment_sequence": 5
+  },
+  {
+   "id": "D-007-R565",
+   "text": "PRE-RUN RETURN: put CI status for task-branch commit bc83092 on record before the pilot run (R554 context: CI-green is a packet precondition).",
+   "source_ref": "source-005-amendment.md#the-owner-message",
+   "classification": "return",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-007-BUILD",
+     "M0-T036"
+    ],
+    "task_types": [
+     "governance"
+    ],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [
+     "submit",
+     "gate"
+    ],
+    "effective_date": "2026-08-04"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "CI run conclusions for bc83092",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "captured from the owner pre-run instructions (2026-08-04); verified at directive verification",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": [
+     "M0-T036"
+    ]
+   },
+   "amendment_sequence": 5
+  },
+  {
+   "id": "D-007-R566",
+   "text": "PILOT RUN CONSTRAINTS (reaffirmed): shadow mode only; forward nothing; owner-touch budget unchanged; runtime evidence preserved verbatim per run (prior committed run evidence is never overwritten - the next run records to runtime-run6 given runtime-run5 is already committed).",
+   "source_ref": "source-005-amendment.md#the-owner-message",
+   "classification": "prohibition",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-007-BUILD",
+     "M0-T036"
+    ],
+    "task_types": [
+     "governance"
+    ],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [
+     "submit",
+     "gate"
+    ],
+    "effective_date": "2026-08-04"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "captured from the owner pre-run instructions (2026-08-04); verified at directive verification",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": [
+     "M0-T036"
+    ]
+   },
+   "amendment_sequence": 5
+  },
+  {
+   "id": "D-007-R567",
+   "text": "PILOT RUN RETURN: report the full cycle - checkpoint validation, the Codex review outcome, the ShadowPlan, and the shadow_observation_complete record at the acceptance gate.",
+   "source_ref": "source-005-amendment.md#the-owner-message",
+   "classification": "return",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-007-BUILD",
+     "M0-T036"
+    ],
+    "task_types": [
+     "governance"
+    ],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [
+     "submit",
+     "gate",
+     "accept"
+    ],
+    "effective_date": "2026-08-04"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "full-cycle run report",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "captured from the owner pre-run instructions (2026-08-04); verified at directive verification",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": [
+     "M0-T036"
+    ]
+   },
+   "amendment_sequence": 5
   }
  ],
  "amendments_applied": [
   "source-002-amendment.md",
   "source-003-amendment.md",
-  "source-004-amendment.md"
+  "source-004-amendment.md",
+  "source-005-amendment.md"
  ]
 }
