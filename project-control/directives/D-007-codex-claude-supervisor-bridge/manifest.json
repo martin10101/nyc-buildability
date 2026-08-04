@@ -1,7 +1,7 @@
 {
  "schema": "directive_manifest/v1",
  "directive_id": "D-007",
- "version": 8,
+ "version": 9,
  "slug": "codex-claude-supervisor-bridge",
  "title": "Codex-Claude Code Supervisor Bridge (v4.3, Autonomy-Tuned) - build directive",
  "status": "active",
@@ -73,6 +73,14 @@
    "amends": "source-007-amendment.md",
    "recorded_at": "2026-08-04T08:40:00+00:00",
    "content_digest_sha256": "107b1cd22d49d45236f478c3e881bd0f046c5095cda3e84b07c6136ebb8ee2cb"
+  },
+  {
+   "file": "source-009-amendment.md",
+   "kind": "amendment",
+   "sequence": 9,
+   "amends": "source-008-amendment.md",
+   "recorded_at": "2026-08-04T09:10:00+00:00",
+   "content_digest_sha256": "7c9352ef7149b25026013c4df20efd93ad9b39f99b4ef91b655428ef99d597a4"
   }
  ],
  "amendments": [
@@ -82,7 +90,8 @@
   "source-005-amendment.md",
   "source-006-amendment.md",
   "source-007-amendment.md",
-  "source-008-amendment.md"
+  "source-008-amendment.md",
+  "source-009-amendment.md"
  ],
  "supersedes": [],
  "superseded_by": null,
@@ -133,7 +142,7 @@
   "Two claude-side behavioral verifications remain outstanding (classifier-denied in the capture session): --max-turns acceptance and the stream-json canUseTool protocol probe; both are dispatch-time items recorded in the Phase 0 return."
  ],
  "created_at": "2026-08-03T03:44:22+00:00",
- "updated_at": "2026-08-04T08:40:00+00:00",
+ "updated_at": "2026-08-04T09:10:00+00:00",
  "audit_log": [
   {
    "at": "2026-08-03T03:44:22+00:00",
@@ -179,6 +188,11 @@
    "at": "2026-08-04T08:40:00+00:00",
    "by": "orchestrator",
    "note": "Amendment 7 (source-008-amendment.md): owner packet decision - DO NOT ACTIVATE adopted; allowlist proposal inert; V1.1 correction unit authorized (B-1..B-4, F-2, F-4, F-5-doctor-tz; hardening items only delta-scoped+cited); re-gate at a new frozen SHA; doctor --live and supervised rehearsal NOT authorized; M0-T035 acceptance owner-typed only; handoff refresh. Rows R577-R584."
+  },
+  {
+   "at": "2026-08-04T09:10:00+00:00",
+   "by": "orchestrator",
+   "note": "Amendment 8 (source-009-amendment.md): two records not changing V1.1 scope - (1) 2026-08-04 npm-worm supply-chain check CLEAN + house rule freezing npm/lockfile; (2) bastani-inc/atomic read-only evaluation-reference backlog note. Rows R585-R587."
   }
  ],
  "locked_requirement_ids": [
@@ -765,8 +779,11 @@
   "D-007-R581",
   "D-007-R582",
   "D-007-R583",
-  "D-007-R584"
+  "D-007-R584",
+  "D-007-R585",
+  "D-007-R586",
+  "D-007-R587"
  ],
- "requirements_id_digest_sha256": "80413939b3c7f57212c54b9018f25f2a541a219e8e8a89f8d19f5647cc73915e",
- "requirements_content_digest_sha256": "7ae11578986e0e096fc786dcf29dcf6e09adbf578d9d6cb2594dbc5f9a7ae4f1"
+ "requirements_id_digest_sha256": "c9f5e00fa555884418645c434dab874bc180c731ce9dd8eae2fc440414f7fcef",
+ "requirements_content_digest_sha256": "10395769ccf5706e97d76d16800c6698e6daaf7e98025f36faa624b42a1a8e69"
 }

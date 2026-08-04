@@ -2,9 +2,9 @@
  "schema": "directive_requirements/v1",
  "directive_id": "D-007",
  "version": 1,
- "requirement_count": 584,
+ "requirement_count": 587,
  "producer": "orchestrator",
- "updated_at": "2026-08-04T08:40:00+00:00",
+ "updated_at": "2026-08-04T09:10:00+00:00",
  "requirements": [
   {
    "id": "D-007-R001",
@@ -22340,6 +22340,126 @@
     ]
    },
    "amendment_sequence": 8
+  },
+  {
+   "id": "D-007-R585",
+   "text": "SUPPLY-CHAIN RECORD: the 2026-08-04 npm worm (keyv/cacheable family, Shai-Hulud variant) was checked against this repo - CLEAN. apps/web/package-lock.json (committed 2026-07-17) pins keyv 4.5.4, flat-cache 4.0.1, file-entry-cache 8.0.0 (pre-attack majors, integrity-pinned); no cacheable/cache-manager/cacheable-request/@cacheable/spread-org-scope entries; CI is npm ci only (no poisoned resolution possible); the supervisor is pure Python.",
+   "source_ref": "source-009-amendment.md#the-owner-message",
+   "classification": "external_fact",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-007-BUILD",
+     "M0-T036"
+    ],
+    "task_types": [
+     "governance"
+    ],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [
+     "gate"
+    ],
+    "effective_date": "2026-08-04"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "captured from the owner supply-chain + backlog records (2026-08-04); verified at directive verification",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": [
+     "M0-T036"
+    ]
+   },
+   "amendment_sequence": 9
+  },
+  {
+   "id": "D-007-R586",
+   "text": "HOUSE RULE (until the owner lifts it): no npm install or update anywhere in this repo; the apps/web lockfile is FROZEN.",
+   "source_ref": "source-009-amendment.md#the-owner-message",
+   "classification": "prohibition",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-007-BUILD",
+     "M0-T036"
+    ],
+    "task_types": [
+     "governance"
+    ],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [
+     "claim",
+     "submit",
+     "gate",
+     "accept"
+    ],
+    "effective_date": "2026-08-04"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "captured from the owner supply-chain + backlog records (2026-08-04); verified at directive verification",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": [
+     "M0-T036"
+    ]
+   },
+   "amendment_sequence": 9
+  },
+  {
+   "id": "D-007-R587",
+   "text": "BACKLOG RECORD: bastani-inc/atomic (MIT, TypeScript+Rust coding-agent runtime) is a READ-ONLY evaluation reference for B-1 (stage-to-stage handoff prior art), F-4 (schema-declared stage outputs), and future V2 multi-lane input. NO adoption, NO dependency, NOT in V1.1 scope; any future adoption is a separate owner decision through the dependency-admission process.",
+   "source_ref": "source-009-amendment.md#the-owner-message",
+   "classification": "decision",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-007-BUILD",
+     "M0-T036"
+    ],
+    "task_types": [
+     "governance"
+    ],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [
+     "gate"
+    ],
+    "effective_date": "2026-08-04"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "captured from the owner supply-chain + backlog records (2026-08-04); verified at directive verification",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": [
+     "M0-T036"
+    ]
+   },
+   "amendment_sequence": 9
   }
  ],
  "amendments_applied": [
@@ -22349,6 +22469,7 @@
   "source-005-amendment.md",
   "source-006-amendment.md",
   "source-007-amendment.md",
-  "source-008-amendment.md"
+  "source-008-amendment.md",
+  "source-009-amendment.md"
  ]
 }
