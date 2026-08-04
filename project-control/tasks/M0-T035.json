@@ -60,15 +60,15 @@
     "control-plane-verifier",
     "directive-compliance-verifier"
   ],
-  "status": "awaiting_gate",
-  "progress_percent": 85,
+  "status": "accepted",
+  "progress_percent": 100,
   "risks": [
     "Wiring text drift: the Section 5.2 sentence must stay advisory-only; any 'must use the graph' phrasing violates D-006-R019 (D-005 amendment 2 stands).",
     "Scope creep into .claude/agents definitions beyond the one sentence; containment is AS-1/AS-2 and the G3 diff review."
   ],
   "blockers": [],
   "created_at": "2026-08-03T02:33:02.122874+00:00",
-  "updated_at": "2026-08-03T02:55:47.650284+00:00",
+  "updated_at": "2026-08-04T16:11:53.514132+00:00",
   "directive_refs": [
     {
       "directive_id": "D-006",
@@ -93,5 +93,7 @@
       "status": "self_check",
       "message": "Producer returned; work ported to task branch with per-file SHA-256 verification (10/10 LF hashes MATCH, zero orchestrator edits, commit 7a5c58f). Producer self-checks all green: 9 files + report only, one changed line per agent definition, no frontmatter, --no-regen exactly on the three read-only reviewers, zero new effort keys, no mandatory-graph phrasing, validator exit 0. Producer worktree and branch removed post-port. Evidence map committed BEFORE submit (M0-T034 rule). Producer disclosed Opus 5 honestly. Producer style notes for reviewers: unnumbered policy heading; D-004-R298 id form; both flagged, neither material."
     }
-  ]
+  ],
+  "accepted_by": "orchestrator",
+  "accepted_at": "2026-08-04T16:11:53.514132+00:00"
 }
