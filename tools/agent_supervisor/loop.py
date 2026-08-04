@@ -311,9 +311,20 @@ class ForwardResult:
     duplicate_suppressed: bool = False
     resumed_unsent: bool = False
     reason: str = ""
+    #: V1.1 correction B-1: the EXACT prompt bytes of the outbox row this attempt
+    #: marked sent - the durable handoff's consumer is `run()`, which passes these
+    #: bytes to the next cycle's unit. On a resumed-unsent row this is the
+    #: PREVIOUSLY journaled prompt (the row is resumed, never re-rendered).
+    #: Empty when nothing was sent.
+    sent_prompt: str = ""
 
     def to_dict(self) -> dict[str, Any]:
-        return dataclasses.asdict(self)
+        data = dataclasses.asdict(self)
+        # The full prompt is journaled in the outbox envelope; the run report
+        # carries its digest rather than duplicating the bytes.
+        prompt = data.pop("sent_prompt")
+        data["sent_prompt_digest"] = digest_of(prompt) if prompt else ""
+        return data
 
 
 @dataclasses.dataclass
@@ -341,8 +352,14 @@ class CycleResult:
 
     @property
     def continues(self) -> bool:
-        """True only when the loop may legitimately run another cycle."""
-        return self.reached_state in (CLAUDE_RUNNING, POLICY_CHECK) and not self.stopped
+        """True only when the loop may legitimately run another cycle.
+
+        V1.1 correction B-2: POLICY_CHECK is no longer a continuing state. Every
+        POLICY_CHECK outcome now either stops the cycle or closes it explicitly
+        (`cycle_closed` -> PREFLIGHT), so the only state a further cycle may
+        proceed from mid-run is CLAUDE_RUNNING - after a prompt was forwarded.
+        """
+        return self.reached_state == CLAUDE_RUNNING and not self.stopped
 
     def to_dict(self) -> dict[str, Any]:
         data = dataclasses.asdict(self)
@@ -597,8 +614,24 @@ class SupervisedLoop:
             # S14: a timeout, a nonzero exit, or a missing checkpoint is NEVER
             # success. Reconcile the external-effect journal before any retry.
             unreconciled = list(self.journal.pending_effects())
-            reason = (getattr(run_result, "checkpoint_error", "")
-                      or "the worker exited without a valid checkpoint")
+            # V1.1 correction V-4: say precisely WHY the unit is not OK. A unit
+            # that produced a valid checkpoint but had to be tree-terminated (or
+            # hit the wall) is a different fact from "exited without a valid
+            # checkpoint", and the recorded reason must not conflate them.
+            reason = str(getattr(run_result, "checkpoint_error", "") or "")
+            if not reason:
+                if checkpoint is not None and getattr(run_result, "graceful_close_failed",
+                                                      False):
+                    reason = ("the unit completed its turns and produced a valid "
+                              "checkpoint, but the worker did not exit within the close "
+                              "grace and was tree-terminated (graceful_close_failed); a "
+                              "killed worker is never success (S14)")
+                elif checkpoint is not None and getattr(run_result, "timed_out", False):
+                    reason = ("the unit produced a valid checkpoint but hit the wall "
+                              "timeout and was tree-terminated; a timed-out unit is "
+                              "never success (S14)")
+                else:
+                    reason = "the worker exited without a valid checkpoint"
             if unreconciled:
                 self.machine.transition(
                     PAUSED_RECOVERY, "unsafe_condition",
@@ -624,6 +657,11 @@ class SupervisedLoop:
                     "checkpoint_digest": digest_of(checkpoint.to_dict())})
         land(CHECKPOINT_RECEIVED)
         result.checkpoint_id = checkpoint.checkpoint_id
+        if self.breakers is not None:
+            # V1.1 correction B-4: the per-checkpoint review counter measures
+            # reviews of THIS checkpoint, so it resets when a new checkpoint is
+            # received - without this it silently measured reviews-per-run.
+            self.breakers.reset("codex_reviews_per_checkpoint")
 
         # --- COLLECT_EVIDENCE ------------------------------------------------
         self.machine.transition(COLLECT_EVIDENCE, "checkpoint_validated",
@@ -651,7 +689,21 @@ class SupervisedLoop:
         land(CODEX_REVIEW)
 
         # --- CODEX_REVIEW ----------------------------------------------------
-        self._breaker("codex_reviews_per_checkpoint")
+        # V1.1 correction B-4: the breaker verdict is HONORED, not discarded. A
+        # tripped S13.8 review breaker pauses synchronously before the reviewer
+        # is contacted, exactly like the claude_runs breaker above.
+        tripped, message = self._breaker("codex_reviews_per_checkpoint")
+        if tripped:
+            self.machine.transition(
+                PAUSED_RECOVERY, "unsafe_condition",
+                detail={"cycle": cycle, "breaker": "codex_reviews_per_checkpoint"})
+            touches.append(self._touch(TOUCH_SYNCHRONOUS_STOP,
+                                       reason_code="circuit_breaker_hard_threshold",
+                                       reason=message, cycle=cycle,
+                                       basis="S13.8 hard threshold"))
+            return stop("circuit_breaker_hard_threshold", message, PAUSED_RECOVERY)
+        if message:
+            notify.append("circuit_breaker_warning")
         self.provider_calls += 1
         outcome = self.reviewer.review(
             packet.to_dict(), expected_task_id=self.config.task_id,
@@ -711,12 +763,20 @@ class SupervisedLoop:
                     TOUCH_SYNCHRONOUS_STOP, reason_code=verdict.reason_code,
                     reason=verdict.reason, cycle=cycle, basis="S4.4 DENY_AND_HALT"))
                 return stop("deny_and_halt", verdict.reason, PAUSED_RECOVERY)
-            # DENY_AND_CONTINUE: the action is refused, the run is not stopped.
-            result.reason = verdict.reason
+            # DENY_AND_CONTINUE: the proposed forward is refused; the machine is
+            # NOT paused or halted. V1.1 correction B-2: the cycle CLOSES into a
+            # resumable state and the run reports the refusal honestly - the old
+            # behaviour left the journal at POLICY_CHECK with no legal exit, and
+            # in supervised multi-cycle mode the next iteration crashed with
+            # bad_cycle_entry_state. A refused forward means there is nothing to
+            # send to the worker, so the run does not auto-retry the same
+            # instruction; the operator decides whether to start again.
+            self.machine.transition(PREFLIGHT, "cycle_closed",
+                                    detail={"cycle": cycle,
+                                            "reason_code": verdict.reason_code,
+                                            "closed_after": "deny_and_continue"})
             result.notes += ("deny_and_continue",)
-            result.owner_touches = tuple(touches)
-            result.notify_events = tuple(notify)
-            return result
+            return stop("deny_and_continue", verdict.reason, PREFLIGHT)
 
         if decision.decision == "HALT_UNSAFE":
             self.machine.transition(HALTED, "decision_halt_unsafe",
@@ -797,6 +857,15 @@ class SupervisedLoop:
                             "forwarded": False,
                             "note": "shadow mode forwards nothing; this records what "
                                     "WOULD have happened"})
+            # V1.1 correction B-2: a completed shadow observation CLOSES the
+            # cycle rather than stranding the journal at POLICY_CHECK (which had
+            # no legal exit, so the next `start` against the same journal
+            # crashed and the only remedy was parking it). The journal now rests
+            # at PREFLIGHT, a legal cycle-entry state.
+            self.machine.transition(PREFLIGHT, "cycle_closed",
+                                    detail={"cycle": cycle,
+                                            "closed_after": "shadow_observation"})
+            land(PREFLIGHT)
             result.shadow_plan = plan
             result.forwarded = False
             result.reason = "shadow mode: recorded, not forwarded"
@@ -913,18 +982,6 @@ class SupervisedLoop:
                else digest_of(prompt))
         return f"{self.run_id}/fwd/{cycle}/{key[:16]}"
 
-    def _outbox_state(self, message_id: str) -> str:
-        """`unsent` | `sent` for a row the outbox already holds.
-
-        Called only after `enqueue_outbound` reported a duplicate, i.e. the row
-        exists for certain. If it is still in the unsent set the previous attempt
-        crashed between enqueue and send; otherwise it was sent.
-        """
-        for envelope in self.journal.unsent_outbound():
-            if envelope.get("message_id") == message_id:
-                return "unsent"
-        return "sent"
-
     def forward_exactly_once(self, prompt: str, *, cycle: int,
                              decision: CodexDecision) -> ForwardResult:
         """Journal, then send, then mark sent. A repeat never sends twice."""
@@ -948,13 +1005,15 @@ class SupervisedLoop:
             message_id=message_id)
 
         resumed = False
+        sent_prompt = prompt
         try:
             self.journal.enqueue_outbound(message_id, envelope.to_dict())
         except JournalError as exc:
             if exc.code != "duplicate_outbound":
                 raise
-            state = self._outbox_state(message_id)
-            if state == "sent":
+            unsent_row = next((e for e in self.journal.unsent_outbound()
+                               if e.get("message_id") == message_id), None)
+            if unsent_row is None:
                 if self.audit is not None:
                     self.audit.append(
                         "forward_duplicate_suppressed", run_id=self.run_id,
@@ -966,17 +1025,28 @@ class SupervisedLoop:
                     message_id, sent=False, duplicate_suppressed=True,
                     reason="already forwarded exactly once; not sent again")
             resumed = True
+            # V1.1 correction B-1: the resumed row's OWN journaled prompt is
+            # what gets marked sent, so that is what the next unit must receive
+            # - never a fresh re-render of it.
+            previous_payload = unsent_row.get("payload")
+            if isinstance(previous_payload, Mapping):
+                previous_prompt = previous_payload.get("prompt")
+                if isinstance(previous_prompt, str) and previous_prompt:
+                    sent_prompt = previous_prompt
 
         # The "send" is the durable handoff to the worker's next unit. It is
         # marked sent only AFTER the outbox row exists, so a crash between the
-        # two leaves an unsent row that is resumed, never re-minted.
+        # two leaves an unsent row that is resumed, never re-minted. The
+        # CONSUMER of the handoff is `run()`, which passes `sent_prompt` to the
+        # next cycle's unit (V1.1 correction B-1).
         self.journal.mark_sent(message_id)
         if self.audit is not None:
             self.audit.append("prompt_forwarded", run_id=self.run_id,
-                              output_digest=digest_of(prompt),
+                              output_digest=digest_of(sent_prompt),
                               detail={"message_id": message_id, "cycle": cycle,
                                       "resumed_unsent": resumed})
-        return ForwardResult(message_id, sent=True, resumed_unsent=resumed)
+        return ForwardResult(message_id, sent=True, resumed_unsent=resumed,
+                             sent_prompt=sent_prompt)
 
     # -- the run ------------------------------------------------------------
 
@@ -991,15 +1061,30 @@ class SupervisedLoop:
             if result.stopped:
                 stopped = result.stopped
                 break
+            if not self.config.forwards:
+                # Shadow forwards nothing, so one observation is the whole run.
+                # (Checked before `continues`: since V1.1 correction B-2 a shadow
+                # cycle closes into PREFLIGHT, which is not a continuing state.)
+                stopped = "shadow_observation_complete"
+                break
             if not result.continues:
                 stopped = "cycle_did_not_continue"
                 break
-            if not self.config.forwards:
-                stopped = "shadow_observation_complete"
-                break
-            if result.forward is not None and not result.forward.sent:
+            if result.forward is None or not result.forward.sent:
                 stopped = "forward_suppressed"
                 break
+            # V1.1 correction B-1: the durable handoff has a CONSUMER. The next
+            # cycle's unit receives EXACTLY the prompt whose outbox row was just
+            # marked sent - never the original first prompt again. Fails closed:
+            # a sent forward without its prompt bytes refuses rather than
+            # silently re-sending the wrong instruction.
+            if not result.forward.sent_prompt:
+                raise LoopError(
+                    "forwarded_prompt_unavailable",
+                    f"cycle {index} marked outbox message "
+                    f"{result.forward.message_id!r} sent but carried no prompt bytes "
+                    f"for the next unit; refusing to fall back to the original prompt")
+            prompt = result.forward.sent_prompt
         else:
             stopped = "max_cycles_reached"
         return LoopRun(

@@ -275,7 +275,18 @@ class AuditLog:
 
         # Truncation: the chain is internally consistent but shorter than the
         # anchor says it should be.
-        anchor = self._read_head_anchor()
+        anchor, anchor_error = self._read_head_anchor()
+        if anchor_error:
+            # V1.1 hardening V-6 (G3 review): a CORRUPT anchor (present but
+            # unparseable or malformed) fails CLOSED. Returning "no anchor" here
+            # disabled truncation detection exactly when the sidecar looked
+            # tampered with. An ABSENT anchor remains legitimate (a brand-new
+            # log has none yet).
+            return ChainVerification(
+                False, len(seen), head_seq, prev, "head_anchor_corrupt",
+                f"the head anchor sidecar exists but is unusable ({anchor_error}); "
+                f"a corrupt anchor disables truncation detection, so verification "
+                f"fails closed pending an explicit operator repair", head_seq)
         if anchor is not None:
             if head_seq < int(anchor["sequence"]):
                 return ChainVerification(
@@ -289,16 +300,25 @@ class AuditLog:
 
         return ChainVerification(True, len(seen), head_seq, prev)
 
-    def _read_head_anchor(self) -> dict[str, Any] | None:
+    def _read_head_anchor(self) -> tuple[dict[str, Any] | None, str]:
+        """`(anchor, "")`, `(None, "")` when absent, `(None, reason)` when CORRUPT.
+
+        V1.1 hardening V-6 (G3 review): absent and corrupt are DIFFERENT facts.
+        Absent is legitimate (a brand-new log); corrupt is reported so
+        `verify_chain` can fail closed instead of silently losing truncation
+        detection.
+        """
         if not self.head_path.exists():
-            return None
+            return None, ""
         try:
             data = json.loads(self.head_path.read_text(encoding="utf-8-sig"))
         except json.JSONDecodeError:
-            return None
+            return None, "not parseable as JSON"
         if not isinstance(data, dict) or "sequence" not in data or "digest" not in data:
-            return None
-        return data
+            return None, "missing the required sequence/digest fields"
+        if not isinstance(data["sequence"], int) or not isinstance(data["digest"], str):
+            return None, "sequence/digest fields have the wrong types"
+        return data, ""
 
     def require_valid(self) -> ChainVerification:
         """Verify and raise `AuditChainError` on failure (startup / recovery use)."""

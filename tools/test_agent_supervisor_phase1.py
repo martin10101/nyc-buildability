@@ -774,6 +774,47 @@ class CliTests(TempCase):
         self.assertTrue(payload["ok"])
         self.assertIn("NOT IMPLEMENTED", payload["limited_auto"])
 
+    def test_doctor_checks_the_timezone_database(self) -> None:
+        """V1.1 correction F-5: tzdata is a checked setup dependency."""
+        import contextlib
+        import io
+
+        buffer = io.StringIO()
+        with contextlib.redirect_stdout(buffer):
+            code = cli.main(["doctor", *self._common(), "--json"])
+        self.assertEqual(code, 0)
+        payload = json.loads(buffer.getvalue())
+        checks = {c["check"]: c for c in payload["checks"]}
+        self.assertIn("timezone_database", checks)
+        self.assertTrue(checks["timezone_database"]["ok"])
+        self.assertIn("America/New_York", checks["timezone_database"]["detail"])
+
+    def test_a_missing_timezone_database_fails_doctor_closed(self) -> None:
+        """V1.1 correction F-5: a fresh machine without tzdata fails at SETUP,
+        with a message that names tzdata - not at its first scheduled wake."""
+        import contextlib
+        import io
+        import zoneinfo as real_zoneinfo
+        from unittest import mock
+
+        class _BrokenZoneInfo:
+            ZoneInfoNotFoundError = real_zoneinfo.ZoneInfoNotFoundError
+
+            @staticmethod
+            def ZoneInfo(name):  # noqa: N802 - mirrors the stdlib name
+                raise real_zoneinfo.ZoneInfoNotFoundError(f"no time zone found: {name}")
+
+        buffer = io.StringIO()
+        with mock.patch.object(cli, "zoneinfo", _BrokenZoneInfo), \
+                contextlib.redirect_stdout(buffer):
+            code = cli.main(["doctor", *self._common(), "--json"])
+        self.assertEqual(code, 1, "an unresolvable timezone database must fail doctor")
+        payload = json.loads(buffer.getvalue())
+        checks = {c["check"]: c for c in payload["checks"]}
+        self.assertFalse(checks["timezone_database"]["ok"])
+        self.assertIn("tzdata", checks["timezone_database"]["detail"])
+        self.assertIn("first wake", checks["timezone_database"]["detail"])
+
     def test_doctor_validates_supplied_configuration(self) -> None:
         import contextlib
         import io

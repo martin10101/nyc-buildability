@@ -36,6 +36,19 @@ WARN = "WARN"
 TRIP = "TRIP"
 
 #: counter name -> the `Limits` field holding its hard threshold.
+#:
+#: V1.1 note (G3 finding B-4, reviewed): the first mapping is imprecise on BOTH
+#: sides and is DOCUMENTED here rather than renamed. What the counter actually
+#: measures: Claude units dispatched by ONE supervisor invocation (a fresh
+#: `CircuitBreakers` is built per `start`, and the counter never resets), i.e.
+#: units-per-run - not per-task, and not CLI "turns" (turns are the intra-unit
+#: `--max-turns` bound). Renaming `max_claude_turns_per_run` would invalidate
+#: every owner-placed, manifest-covered config.toml (S3.1: limits are immutable
+#: config), and renaming the counter would silently decouple historical audit
+#: events from new ones; both renames are config/audit-schema changes for a
+#: separately owner-approved version, so V1.1 records the semantics instead.
+#: `codex_reviews_per_checkpoint` DOES measure what its name claims as of V1.1:
+#: the loop resets it on every newly received checkpoint (correction B-4).
 COUNTER_LIMITS: Mapping[str, str] = {
     "claude_runs_per_task": "max_claude_turns_per_run",
     "codex_reviews_per_checkpoint": "max_codex_reviews_per_checkpoint",

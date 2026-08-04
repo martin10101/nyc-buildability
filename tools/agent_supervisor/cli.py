@@ -52,6 +52,7 @@ import json
 import os
 import pathlib
 import sys
+import zoneinfo
 from typing import Any, Sequence
 
 from . import CONTROLLER_VERSION, PHASE, PROTOCOL_VERSION, SCHEMA_VERSION
@@ -211,6 +212,8 @@ from .rotation import (
 )
 from .state_machine import (
     INITIAL_STATE,
+    IllegalTransitionError,
+    PAUSED_RECOVERY as PAUSED_RECOVERY_STATE,
     PREFLIGHT as PREFLIGHT_STATE,
     STATES,
     TRANSITIONS,
@@ -249,6 +252,33 @@ def _check_python() -> Check:
         "python_version", ok,
         f"{sys.version.split()[0]} (>= 3.11 required for tomllib; stdlib only, no new "
         f"dependency)")
+
+
+def _check_timezone_database() -> Check:
+    """V1.1 correction F-5: the tzdata hidden runtime dependency fails at SETUP.
+
+    Wake scheduling (S11.4) resolves IANA zone names through `zoneinfo`, which on
+    Windows has no system zone database and silently depends on the `tzdata`
+    package. Without this check a fresh machine passed doctor and then failed at
+    its FIRST scheduled wake. Fail-closed: an unresolvable database is a doctor
+    FAILURE, named plainly, before any run.
+    """
+    probe = "America/New_York"
+    try:
+        zoneinfo.ZoneInfo(probe)
+    except Exception as exc:  # zoneinfo raises several types; all mean "unusable"
+        return Check(
+            "timezone_database", False,
+            f"the IANA timezone database is NOT resolvable (ZoneInfo({probe!r}) "
+            f"failed: {exc.__class__.__name__}: {exc}). Wake scheduling (S11.4) "
+            f"cannot compute a reset instant without it, so a run on this machine "
+            f"would fail at its first wake instead of at setup. Install the "
+            f"`tzdata` package (python -m pip install tzdata) or provide a system "
+            f"zoneinfo database, then re-run doctor")
+    return Check(
+        "timezone_database", True,
+        f"ZoneInfo({probe!r}) resolved; S11.4 wake scheduling can compute reset "
+        f"instants on this machine")
 
 
 def _check_schemas() -> Check:
@@ -1109,6 +1139,7 @@ def cmd_doctor(args: argparse.Namespace) -> int:
     checkout = pathlib.Path(args.checkout).resolve()
     checks: list[Check] = [
         _check_python(),
+        _check_timezone_database(),
         _check_schemas(),
         _check_prompts(),
         _check_state_machine(),
@@ -1438,6 +1469,50 @@ def cmd_resume(args: argparse.Namespace) -> int:
     _emit(args, {"command": "resume", **record},
           ["manual pause cleared. Nothing is dispatched by this command; the loop itself "
            "is Phase 4."])
+    return 0
+
+
+def cmd_clear_recovery(args: argparse.Namespace) -> int:
+    """Explicit operator exit from PAUSED_RECOVERY (V1.1 correction F-2).
+
+    Fires the S7 `PAUSED_RECOVERY -> PREFLIGHT` transition on trigger
+    `owner_cleared_pause` - the edge the state machine always defined but no
+    command could reach, so the only exit from a recovery pause was parking the
+    journal and losing run continuity (pilot run 2). This is an explicit,
+    audited operator act: it refuses while a durable emergency stop is set, and
+    it refuses when the journal is not actually in PAUSED_RECOVERY. It clears
+    NO flags and dispatches nothing.
+    """
+    _, journal, audit = _open_runtime(args)
+    try:
+        flags = DurableFlags.read(journal)
+        if flags.emergency_stop:
+            print("refusing to clear recovery: a durable emergency stop is set. Clear "
+                  "it with an explicit `stop --clear` first; clear-recovery never "
+                  "overrides it.", file=sys.stderr)
+            return 1
+        state = str(journal.get_state("current_state", INITIAL_STATE))
+        if state != PAUSED_RECOVERY_STATE:
+            print(f"nothing to clear: the journal is in {state}, not "
+                  f"{PAUSED_RECOVERY_STATE}. clear-recovery fires only the "
+                  f"PAUSED_RECOVERY -> PREFLIGHT owner_cleared_pause transition.",
+                  file=sys.stderr)
+            return 1
+        last = journal.last_transition()
+        run_id = (last.run_id if last is not None and last.run_id else "operator")
+        machine = StateMachine(journal, audit, run_id)
+        machine.transition(PREFLIGHT_STATE, "owner_cleared_pause",
+                           detail={"operator_initiated": True,
+                                   "command": "clear-recovery"})
+    finally:
+        journal.close()
+    _emit(args,
+          {"command": "clear-recovery", "cleared": True,
+           "state": PREFLIGHT_STATE, "run_id": run_id},
+          [f"recovery pause cleared by an explicit operator command; the journal now "
+           f"rests at {PREFLIGHT_STATE}.",
+           "nothing was dispatched and no flag was changed; `start` may now resume "
+           "this run without parking the journal."])
     return 0
 
 
@@ -1990,11 +2065,31 @@ def cmd_start(args: argparse.Namespace) -> int:
                 f"({outcome.reason_code}); a run never starts over an unresolved "
                 f"recovery condition. {outcome.reason}")
         else:
-            run = _run_loop(args, checkout, journal, audit)
-            payload["dispatched"] = True
-            payload["loop"] = run
-            payload["provider_calls_made"] = run.get("provider_calls", 0)
-            payload["stopped_because"] = run.get("stopped", "")
+            # V1.1 correction B-2: a loop REFUSAL is a report, not a traceback.
+            # This covers both the loop's own refusals (LoopError, e.g.
+            # bad_cycle_entry_state) and the state machine's blocking-state
+            # refusal (IllegalTransitionError from assert_can_act, e.g. a
+            # journal still in PAUSED_RECOVERY - pilot finding F-2's run 2).
+            # (`LimitedAutoRefused` is a LoopError subclass, but limited-auto is
+            # already refused by name above, before anything is built.)
+            try:
+                run = _run_loop(args, checkout, journal, audit)
+            except (LoopError, IllegalTransitionError) as exc:
+                code = getattr(exc, "code", "illegal_transition")
+                message = getattr(exc, "message", str(exc))
+                payload["loop_refusal"] = {
+                    "code": code, "message": message,
+                    "note": "provider_calls_made reports 0 because the per-run "
+                            "counter lives inside the refused loop; a refusal "
+                            "AFTER a completed cycle may have contacted providers "
+                            "first - the audit log is the authoritative count"}
+                payload["stopped_because"] = (
+                    f"the loop refused to run: {code}: {message}")
+            else:
+                payload["dispatched"] = True
+                payload["loop"] = run
+                payload["provider_calls_made"] = run.get("provider_calls", 0)
+                payload["stopped_because"] = run.get("stopped", "")
     finally:
         lock.release()
         journal.close()
@@ -2155,6 +2250,9 @@ def build_parser() -> argparse.ArgumentParser:
     simple = [
         ("pause", cmd_pause, "set the durable manual pause (live)"),
         ("resume", cmd_resume, "clear the manual pause (live)"),
+        ("clear-recovery", cmd_clear_recovery,
+         "explicit operator exit from PAUSED_RECOVERY: fires the audited "
+         "owner_cleared_pause transition to PREFLIGHT (live)"),
         ("recovery-status", cmd_recovery_status, "read-only recovery view (live)"),
         ("schedule-status", cmd_schedule_status, "read-only wake schedule view (live)"),
         ("cancel-scheduled-resume", cmd_cancel_scheduled_resume,

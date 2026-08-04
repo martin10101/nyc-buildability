@@ -659,6 +659,7 @@ class CliTests(unittest.TestCase):
             registered |= set(action.choices)
         expected = {
             "doctor", "replay", "start", "status", "pause", "resume", "stop",
+            "clear-recovery",
             "emergency-stop", "verify-controller", "recovery-status", "schedule-status",
             "cancel-scheduled-resume", "autostart-plan", "install-autostart",
             "uninstall-autostart", "pending-approvals", "approve-once", "deny",
@@ -704,6 +705,19 @@ class CliTests(unittest.TestCase):
         code, _, err = self.run_cli("resume")
         self.assertEqual(code, 1)
         self.assertIn("emergency stop", err)
+
+    def test_clear_recovery_refuses_while_an_emergency_stop_stands(self) -> None:
+        """V1.1 correction F-2: the recovery exit never overrides a stop flag."""
+        self.run_cli("emergency-stop")
+        code, _, err = self.run_cli("clear-recovery")
+        self.assertEqual(code, 1)
+        self.assertIn("emergency stop", err)
+
+    def test_clear_recovery_refuses_when_there_is_nothing_to_clear(self) -> None:
+        """V1.1 correction F-2: a fresh IDLE journal has no recovery pause."""
+        code, _, err = self.run_cli("clear-recovery")
+        self.assertEqual(code, 1)
+        self.assertIn("not PAUSED_RECOVERY", err)
 
     def test_stop_clear_is_an_explicit_owner_command(self) -> None:
         self.run_cli("emergency-stop")

@@ -143,7 +143,11 @@ def assert_argv_safe(argv: Sequence[Any]) -> list[str]:
         if "\x00" in item:
             raise ProcessError("argv_nul", f"argv[{index}] contains a NUL byte")
         lowered = item.lower()
-        if lowered in HARD_DENY_ARGUMENTS:
+        # V1.1 hardening L-1 (G3 review): the `=`-form of a bypass flag
+        # (`--flag=value`) is hard-denied exactly like the bare token, matching
+        # the effort-prefix rule below - previously only the exact token matched.
+        if lowered in HARD_DENY_ARGUMENTS or any(
+                lowered.startswith(flag + "=") for flag in HARD_DENY_ARGUMENTS):
             raise HardDenyError(
                 item,
                 "permission-bypass, sandbox-bypass, and hook-trust-bypass flags are denied "

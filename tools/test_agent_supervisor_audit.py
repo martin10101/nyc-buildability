@@ -210,6 +210,27 @@ class AuditChainTests(unittest.TestCase):
         self.assertEqual(anchor["sequence"], 3)
         self.assertEqual(anchor["digest"], log.head_digest)
 
+    def test_a_corrupt_head_anchor_fails_closed(self) -> None:
+        """V1.1 hardening V-6 (G3 review): a CORRUPT anchor must not silently
+        disable truncation detection - exactly when it looks tampered with."""
+        log = self.seed(3)
+        for corrupt in ("{not json at all",
+                        json.dumps({"sequence": 3}),                    # no digest
+                        json.dumps({"digest": "x"}),                    # no sequence
+                        json.dumps({"sequence": "three", "digest": 5}),  # wrong types
+                        json.dumps([1, 2, 3])):                          # not a dict
+            with self.subTest(corrupt=corrupt[:30]):
+                log.head_path.write_text(corrupt, encoding="utf-8")
+                verification = log.verify_chain()
+                self.assertFalse(verification.ok)
+                self.assertEqual(verification.code, "head_anchor_corrupt")
+
+    def test_an_absent_head_anchor_is_still_legitimate(self) -> None:
+        """V-6 distinguishes absent (a brand-new log) from corrupt."""
+        log = self.seed(2)
+        log.head_path.unlink()
+        self.assertTrue(log.verify_chain().ok)
+
 
 if __name__ == "__main__":
     unittest.main(verbosity=2)

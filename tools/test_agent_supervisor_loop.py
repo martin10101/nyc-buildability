@@ -341,7 +341,10 @@ class ShadowTests(LoopTestBase):
         loop.run_cycle("first unit", cycle=1)
         states = {t.state_to for t in self.journal.transitions()}
         self.assertNotIn(sm.FORWARD_PROMPT, states)
-        self.assertEqual(self.machine.current_state, sm.POLICY_CHECK)
+        # V1.1 correction B-2: the completed observation CLOSES the cycle into
+        # PREFLIGHT (a legal cycle-entry state) instead of stranding the journal
+        # at POLICY_CHECK, which had no legal exit.
+        self.assertEqual(self.machine.current_state, sm.PREFLIGHT)
 
     def test_calling_forward_in_shadow_raises_structurally(self) -> None:
         self.at_preflight()
@@ -612,6 +615,180 @@ class ExactlyOnceTests(LoopTestBase):
 
 
 # --------------------------------------------------------------------------
+# V1.1 correction B-1: the forwarded prompt has a CONSUMER
+# --------------------------------------------------------------------------
+
+
+class ForwardedPromptThreadingTests(LoopTestBase):
+    """G3 finding B-1: run() re-sent the ORIGINAL prompt every cycle while the
+    outbox and audit trail asserted the reviewer's forwarded prompt was sent.
+    The durable handoff now has a consumer: the next unit receives exactly the
+    prompt whose outbox row was marked sent."""
+
+    def test_cycle_two_receives_the_forwarded_prompt_not_the_original(self) -> None:
+        self.at_preflight()
+        runner = FakeRunner(run_result(), run_result())
+        loop = self.build(mode="supervised", runner=runner, max_cycles=2,
+                          approval_gate=lambda d, p: True)
+        run = loop.run("the ORIGINAL first prompt")
+        self.assertEqual(len(run.cycles), 2)
+        self.assertEqual(len(runner.prompts), 2)
+        self.assertEqual(runner.prompts[0], "the ORIGINAL first prompt")
+        # The SECOND unit's received prompt is the reviewer's rendered forwarded
+        # prompt - never the original re-sent.
+        self.assertNotEqual(runner.prompts[1], "the ORIGINAL first prompt")
+        self.assertIn("TASK: M0-T036", runner.prompts[1])
+        self.assertIn("Do the next bounded unit.", runner.prompts[1])
+
+    def test_the_threaded_prompt_is_the_exact_outbox_row_marked_sent(self) -> None:
+        self.at_preflight()
+        runner = FakeRunner(run_result(), run_result())
+        loop = self.build(mode="supervised", runner=runner, max_cycles=2,
+                          approval_gate=lambda d, p: True)
+        run = loop.run("first prompt")
+        first_forward = run.cycles[0].forward
+        self.assertTrue(first_forward.sent)
+        row = self.journal.conn.execute(
+            "SELECT envelope FROM outbox WHERE message_id = ?",
+            (first_forward.message_id,)).fetchone()
+        journaled_prompt = json.loads(row["envelope"])["payload"]["prompt"]
+        self.assertEqual(runner.prompts[1], journaled_prompt,
+                         "the next unit must receive EXACTLY the bytes the outbox "
+                         "marked sent")
+
+    def test_a_resumed_unsent_row_threads_its_own_journaled_prompt(self) -> None:
+        self.at_preflight()
+        loop = self.build(mode="supervised", approval_gate=lambda d, p: True)
+        message_id = loop.forward_message_id(1, "re-rendered later", decision=decision())
+        # The crash window: a previous attempt journaled the row, unsent.
+        self.journal.enqueue_outbound(
+            message_id, {"message_id": message_id,
+                         "payload": {"prompt": "the PREVIOUSLY journaled render"}})
+        result = loop.forward_exactly_once("re-rendered later", cycle=1,
+                                           decision=decision())
+        self.assertTrue(result.sent)
+        self.assertTrue(result.resumed_unsent)
+        self.assertEqual(result.sent_prompt, "the PREVIOUSLY journaled render",
+                         "the resumed row's OWN prompt is what was marked sent")
+
+    def test_the_run_report_carries_a_digest_not_the_prompt_bytes(self) -> None:
+        self.at_preflight()
+        loop = self.build(mode="supervised", approval_gate=lambda d, p: True)
+        result = loop.run_cycle("unit", cycle=1)
+        data = result.forward.to_dict()
+        self.assertNotIn("sent_prompt", data)
+        self.assertEqual(data["sent_prompt_digest"],
+                         digest_of(result.forward.sent_prompt))
+
+
+# --------------------------------------------------------------------------
+# V1.1 correction B-2: every cycle ends in a resumable state
+# --------------------------------------------------------------------------
+
+
+class CycleCloseTests(LoopTestBase):
+    """G3 finding B-2: completed shadow observations and DENY_AND_CONTINUE left
+    the journal stranded at POLICY_CHECK (no legal exit), and supervised
+    multi-cycle runs crashed with bad_cycle_entry_state."""
+
+    def fresh_loop(self, **kwargs) -> lp.SupervisedLoop:
+        return self.build(**kwargs)
+
+    def test_the_journal_is_restartable_after_a_completed_shadow_cycle(self) -> None:
+        self.at_preflight()
+        first = self.build(mode="shadow").run("first observation")
+        self.assertEqual(first.stopped, "shadow_observation_complete")
+        self.assertEqual(self.machine.current_state, sm.PREFLIGHT)
+        # A SECOND run against the SAME journal must work - before B-2 this
+        # raised bad_cycle_entry_state and the only remedy was parking the
+        # journal (the F-2 continuity loss, in a second state).
+        second = self.build(mode="shadow").run("second observation")
+        self.assertEqual(second.stopped, "shadow_observation_complete")
+        self.assertEqual(self.machine.current_state, sm.PREFLIGHT)
+
+    def test_deny_and_continue_in_supervised_does_not_crash_and_reports(self) -> None:
+        self.at_preflight()
+        # An effort flag in the reviewer's next prompt is DENY_AND_CONTINUE
+        # (policy S4.4): the forward is refused, the run is not halted.
+        poisoned = decision(
+            next_claude_prompt="Re-run the suite with --effort high please.")
+        loop = self.build(mode="supervised", reviewer=FakeReviewer(outcome(poisoned)),
+                          approval_gate=lambda d, p: True, max_cycles=3)
+        run = loop.run("first unit")   # must NOT raise bad_cycle_entry_state
+        self.assertEqual(run.stopped, "deny_and_continue")
+        self.assertEqual(len(run.cycles), 1)
+        self.assertIn("deny_and_continue", run.cycles[0].notes)
+        self.assertEqual(run.cycles[0].tier, pol.HARD_DENY)
+        self.assertFalse(run.cycles[0].forwarded)
+        self.assertEqual(run.forwarded_message_ids, ())
+        # The journal rests at a resumable state, not a stranded one.
+        self.assertEqual(self.machine.current_state, sm.PREFLIGHT)
+        rerun = self.build(mode="shadow").run("try again in shadow")
+        self.assertEqual(rerun.stopped, "shadow_observation_complete")
+
+    def test_deny_and_halt_still_pauses_hard(self) -> None:
+        """The close edge must not have weakened DENY_AND_HALT."""
+        self.at_preflight()
+        poisoned = decision(
+            next_claude_prompt="run with --dangerously-skip-permissions now")
+        loop = self.build(mode="supervised", reviewer=FakeReviewer(outcome(poisoned)),
+                          approval_gate=lambda d, p: True)
+        result = loop.run_cycle("unit", cycle=1)
+        self.assertEqual(result.stopped, "deny_and_halt")
+        self.assertEqual(self.machine.current_state, sm.PAUSED_RECOVERY)
+
+
+# --------------------------------------------------------------------------
+# V1.1 correction B-4: the review breaker verdict is honored
+# --------------------------------------------------------------------------
+
+
+class ReviewBreakerTests(LoopTestBase):
+    """G3 finding B-4: the codex_reviews_per_checkpoint verdict was discarded
+    and the counter never reset, so a tripped S13.8 review breaker stopped
+    nothing and measured reviews-per-run."""
+
+    def breakers(self, reviews_limit: int):
+        from tools.agent_supervisor.circuit_breakers import CircuitBreakers
+        from tools.agent_supervisor.config import Limits
+
+        return CircuitBreakers(Limits(max_codex_reviews_per_checkpoint=reviews_limit))
+
+    def test_a_tripped_review_breaker_pauses_before_contacting_the_reviewer(self) -> None:
+        self.at_preflight()
+        breakers = self.breakers(1)
+        reviewer = FakeReviewer(outcome())
+        loop = self.build(mode="shadow", reviewer=reviewer, breakers=breakers)
+        # With the limit at 1, the per-checkpoint reset zeroes the counter and
+        # the pre-review record() lands AT the limit (1 >= 1): TRIP.
+        result = loop.run_cycle("first unit", cycle=1)
+        self.assertEqual(result.stopped, "circuit_breaker_hard_threshold")
+        self.assertEqual(self.machine.current_state, sm.PAUSED_RECOVERY)
+        self.assertEqual(reviewer.packets, [],
+                         "a tripped review breaker must stop the reviewer call")
+        self.assertEqual([t.kind for t in result.owner_touches],
+                         [lp.TOUCH_SYNCHRONOUS_STOP])
+        self.assertEqual(loop.provider_calls, 1,
+                         "only the worker unit ran; the reviewer was never invoked")
+
+    def test_the_counter_resets_per_checkpoint_so_multi_cycle_runs_survive(self) -> None:
+        self.at_preflight()
+        breakers = self.breakers(2)
+        runner = FakeRunner(run_result(), run_result())
+        loop = self.build(mode="supervised", runner=runner, breakers=breakers,
+                          max_cycles=2, approval_gate=lambda d, p: True)
+        run = loop.run("first unit")
+        # Two cycles, one review each: without the per-checkpoint reset the
+        # second cycle's record() would sit at 2 >= 2 and trip spuriously.
+        self.assertEqual(run.stopped, "max_cycles_reached")
+        self.assertEqual(len(run.cycles), 2)
+        self.assertNotIn("circuit_breaker_hard_threshold",
+                         [c.stopped for c in run.cycles])
+        self.assertEqual(breakers.value("codex_reviews_per_checkpoint"), 1,
+                         "the counter measures reviews of the CURRENT checkpoint")
+
+
+# --------------------------------------------------------------------------
 # Owner-touch budget
 # --------------------------------------------------------------------------
 
@@ -854,6 +1031,109 @@ class CliStartTests(LoopTestBase):
         with self.assertRaises(NotImplementedError) as ctx:
             self.run_cli("start", "--mode", "limited-auto")
         self.assertIn("limited-auto is disabled", str(ctx.exception))
+
+    def test_run2_scenario_clear_recovery_then_start_works(self) -> None:
+        """V1.1 correction F-2, the pilot run-2 scenario end to end.
+
+        A journal parked in PAUSED_RECOVERY refused every `start` with an
+        uncaught IllegalTransitionError; the only remedy was parking the journal
+        (losing continuity). Now: the refusal is a report, `clear-recovery`
+        fires the audited owner_cleared_pause transition, and the SAME journal
+        dispatches again.
+        """
+        from tools.agent_supervisor.audit_log import AuditLog
+        from tools.agent_supervisor.durable_state import (
+            DB_FILENAME,
+            DurableJournal,
+            runtime_dir_for,
+        )
+        from tools.agent_supervisor.state_machine import StateMachine
+
+        runtime_dir = runtime_dir_for(self.repo, base=str(self.runtime))
+        journal = DurableJournal(runtime_dir / DB_FILENAME).open()
+        try:
+            machine = StateMachine(journal,
+                                   AuditLog(runtime_dir / "audit.jsonl", fsync=False),
+                                   "run-f2")
+            machine.transition(sm.PREFLIGHT, "start_command")
+            machine.transition(sm.PAUSED_RECOVERY, "controller_integrity_failure")
+        finally:
+            journal.close()
+
+        full_inputs = ("start", "--mode", "shadow",
+                       "--claude-executable", sys.executable,
+                       "--codex-executable", sys.executable,
+                       "--task-packet", str(self.packet),
+                       "--config", str(self.config),
+                       "--model-selection", str(self.selection))
+
+        # 1. The parked journal refuses with a REPORT, not a traceback (B-2/F-2).
+        code, payload = self.run_cli(*full_inputs)
+        self.assertEqual(code, 0)
+        self.assertFalse(payload["dispatched"])
+        self.assertIn("PAUSED_RECOVERY", payload["loop_refusal"]["message"])
+
+        # 2. The explicit operator act clears the recovery pause.
+        code, payload = self.run_cli("clear-recovery")
+        self.assertEqual(code, 0)
+        self.assertTrue(payload["cleared"])
+        self.assertEqual(payload["state"], sm.PREFLIGHT)
+
+        # 3. The SAME journal now dispatches - no parking, no fresh journal.
+        # (sys.executable is not a real worker, so the cycle ends in the honest
+        # no_valid_checkpoint stop; what F-2 requires is that `start` RAN.)
+        code, payload = self.run_cli(*full_inputs)
+        self.assertEqual(code, 0)
+        self.assertTrue(payload["dispatched"],
+                        "after clear-recovery the run must resume without a new journal")
+        self.assertEqual(payload["stopped_because"], "no_valid_checkpoint")
+
+    def test_clear_recovery_refuses_outside_paused_recovery(self) -> None:
+        """F-2: the command fires ONE specific transition; anything else refuses."""
+        code, _ = 0, None
+        import contextlib
+        import io
+
+        stderr = io.StringIO()
+        argv = ["clear-recovery", "--checkout", str(self.repo),
+                "--runtime-base", str(self.runtime), "--json"]
+        with contextlib.redirect_stderr(stderr), \
+                contextlib.redirect_stdout(io.StringIO()):
+            code = self.cli.main(list(argv))
+        self.assertEqual(code, 1)
+        self.assertIn("not PAUSED_RECOVERY", stderr.getvalue())
+
+    def test_a_loop_refusal_is_a_report_not_a_traceback(self) -> None:
+        """V1.1 correction B-2(b): `cmd_start` catches LoopError honestly.
+
+        A journal stranded in a non-entry state (exactly what pre-V1.1 shadow
+        cycles produced) made `start` die with an uncaught traceback and lose
+        the report. It must now report the refusal by name.
+        """
+        from tools.agent_supervisor.durable_state import (
+            DB_FILENAME,
+            DurableJournal,
+            runtime_dir_for,
+        )
+
+        runtime_dir = runtime_dir_for(self.repo, base=str(self.runtime))
+        stranded = DurableJournal(runtime_dir / DB_FILENAME).open()
+        try:
+            stranded.set_state("current_state", sm.COLLECT_EVIDENCE)
+        finally:
+            stranded.close()
+
+        code, payload = self.run_cli(
+            "start", "--mode", "shadow",
+            "--claude-executable", sys.executable,
+            "--codex-executable", sys.executable,
+            "--task-packet", str(self.packet),
+            "--config", str(self.config),
+            "--model-selection", str(self.selection))
+        self.assertEqual(code, 0, "a refusal is a reported outcome, not a crash")
+        self.assertFalse(payload["dispatched"])
+        self.assertEqual(payload["loop_refusal"]["code"], "bad_cycle_entry_state")
+        self.assertIn("bad_cycle_entry_state", payload["stopped_because"])
 
     def test_start_never_searches_the_path_for_an_executable(self) -> None:
         source = (REPO / "tools" / "agent_supervisor" / "cli.py").read_text(

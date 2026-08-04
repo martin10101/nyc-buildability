@@ -174,6 +174,12 @@ TRANSITIONS: tuple[Transition, ...] = (
        "unreviewed."),
     _t(CODEX_REVIEW, WAIT_FOR_OWNER, "codex_unavailable_ask",
        "The reviewer is unavailable and its provider fallback chain is exhausted."),
+    # V1.1 correction B-4: the per-checkpoint review breaker (S13.8) trips BEFORE
+    # the reviewer is invoked, and a trip is a synchronous pause exactly like the
+    # claude_runs breaker - which needs a legal pause edge from CODEX_REVIEW.
+    _t(CODEX_REVIEW, PAUSED_RECOVERY, "unsafe_condition",
+       "A S4.5 synchronous-stop condition fired before dispatching the review (for "
+       "example the per-checkpoint review circuit breaker tripped)."),
 
     _t(VALIDATE_DECISION, POLICY_CHECK, "decision_schema_valid",
        "Exactly one schema-valid decision, correlated to this checkpoint and evidence."),
@@ -195,6 +201,18 @@ TRANSITIONS: tuple[Transition, ...] = (
        "attempt (S4.4)."),
     _t(POLICY_CHECK, HALTED, "decision_halt_unsafe",
        "A valid HALT_UNSAFE decision with a concrete safety reason."),
+    # V1.1 correction B-2: POLICY_CHECK previously had no legal exit after a
+    # completed shadow observation or a DENY_AND_CONTINUE refusal, so every such
+    # cycle stranded the journal (the only remedy was parking it - the exact
+    # continuity loss pilot finding F-2 describes, in a second state). The cycle
+    # now CLOSES explicitly into PREFLIGHT, which is a legal cycle-entry state,
+    # so the same journal is re-startable. PREFLIGHT rather than IDLE because
+    # IDLE's only outbound trigger is the operator's `start_command`, which was
+    # already given for this run.
+    _t(POLICY_CHECK, PREFLIGHT, "cycle_closed",
+       "The policy evaluation concluded without forwarding (a completed shadow "
+       "observation, or a DENY_AND_CONTINUE refusal of the proposed forward); the "
+       "cycle closes into a resumable state instead of stranding the journal."),
 
     _t(FORWARD_PROMPT, CLAUDE_RUNNING, "prompt_forwarded",
        "Exactly-once forwarding of the next authorized prompt to the recorded session."),
