@@ -2,9 +2,9 @@
  "schema": "directive_requirements/v1",
  "directive_id": "D-007",
  "version": 1,
- "requirement_count": 555,
+ "requirement_count": 563,
  "producer": "orchestrator",
- "updated_at": "2026-08-03T22:52:13+00:00",
+ "updated_at": "2026-08-04T00:32:38+00:00",
  "requirements": [
   {
    "id": "D-007-R001",
@@ -21168,10 +21168,335 @@
     ]
    },
    "amendment_sequence": 3
+  },
+  {
+   "id": "D-007-R556",
+   "text": "OPTION-A INTAKE + ORDER: capture the 2026-08-04 owner authorization verbatim first, then execute under PR #152.",
+   "source_ref": "source-004-amendment.md#the-owner-message",
+   "classification": "sequencing",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-007-BUILD",
+     "M0-T036"
+    ],
+    "task_types": [
+     "governance"
+    ],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [
+     "submit",
+     "gate"
+    ],
+    "effective_date": "2026-08-04"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "captured from the owner's Option A tzdata-admission authorization (2026-08-04); verified at directive verification",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": [
+     "M0-T036"
+    ]
+   },
+   "amendment_sequence": 4
+  },
+  {
+   "id": "D-007-R557",
+   "text": "OPTION-A AUTHORIZATION: admit tzdata 2025.2 (the version proven on the owner's machine) through the standing dependency-security process - one additive line in services/api/requirements-tools.in, regenerate the hash-pinned tooling lock via the pinned-uv workflow, age gate and scans as normal.",
+   "source_ref": "source-004-amendment.md#the-owner-message",
+   "classification": "authorization",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-007-BUILD",
+     "M0-T036"
+    ],
+    "task_types": [
+     "governance"
+    ],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [
+     "submit",
+     "gate"
+    ],
+    "effective_date": "2026-08-04"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "requirements-tools.in additive line + regenerated hash-pinned lock + age-gate/scan results",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "captured from the owner's Option A tzdata-admission authorization (2026-08-04); verified at directive verification",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": [
+     "M0-T036"
+    ]
+   },
+   "amendment_sequence": 4
+  },
+  {
+   "id": "D-007-R558",
+   "text": "OPTION-A RESTRICTION: the diff is confined to the requirements-tools.in line plus the regenerated lock file(s); nothing else in services/api/** changes.",
+   "source_ref": "source-004-amendment.md#the-owner-message",
+   "classification": "prohibition",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-007-BUILD",
+     "M0-T036"
+    ],
+    "task_types": [
+     "governance"
+    ],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [
+     "submit",
+     "gate"
+    ],
+    "effective_date": "2026-08-04"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "PR diff scope",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "captured from the owner's Option A tzdata-admission authorization (2026-08-04); verified at directive verification",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": [
+     "M0-T036"
+    ]
+   },
+   "amendment_sequence": 4
+  },
+  {
+   "id": "D-007-R559",
+   "text": "OPTION-A PROHIBITION: no workflow edit for the tzdata admission; the CI job keeps installing from the lock.",
+   "source_ref": "source-004-amendment.md#the-owner-message",
+   "classification": "prohibition",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-007-BUILD",
+     "M0-T036"
+    ],
+    "task_types": [
+     "governance"
+    ],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [
+     "submit",
+     "gate"
+    ],
+    "effective_date": "2026-08-04"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "captured from the owner's Option A tzdata-admission authorization (2026-08-04); verified at directive verification",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": [
+     "M0-T036"
+    ]
+   },
+   "amendment_sequence": 4
+  },
+  {
+   "id": "D-007-R560",
+   "text": "OPTION-A SEQUENCING: PR #152 continues to queue for the owner's merge with the new run green (D-004-R721 unchanged).",
+   "source_ref": "source-004-amendment.md#the-owner-message",
+   "classification": "sequencing",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-007-BUILD",
+     "M0-T036"
+    ],
+    "task_types": [
+     "governance"
+    ],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [
+     "submit",
+     "gate",
+     "accept"
+    ],
+    "effective_date": "2026-08-04"
+   },
+   "dependencies": [
+    "D-004-R721",
+    "D-007-R548"
+   ],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "captured from the owner's Option A tzdata-admission authorization (2026-08-04); verified at directive verification",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": [
+     "M0-T036"
+    ]
+   },
+   "amendment_sequence": 4
+  },
+  {
+   "id": "D-007-R561",
+   "text": "PACKET RECORD: the decision packet's residual-risks section records the tzdata finding as RESOLVED-BY-ADMISSION with the root cause: a hidden runtime dependency masked by an out-of-lock local install.",
+   "source_ref": "source-004-amendment.md#the-owner-message",
+   "classification": "return",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-007-BUILD",
+     "M0-T036"
+    ],
+    "task_types": [
+     "governance"
+    ],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [
+     "gate",
+     "accept"
+    ],
+    "effective_date": "2026-08-04"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "captured from the owner's Option A tzdata-admission authorization (2026-08-04); verified at directive verification",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": [
+     "M0-T036"
+    ]
+   },
+   "amendment_sequence": 4
+  },
+  {
+   "id": "D-007-R562",
+   "text": "PACKET RECOMMENDATION (no build work now): the decision packet includes one recommendation on whether doctor/preflight should verify timezone-database resolvability so a fresh machine fails at setup, not at its first wake.",
+   "source_ref": "source-004-amendment.md#the-owner-message",
+   "classification": "return",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-007-BUILD",
+     "M0-T036"
+    ],
+    "task_types": [
+     "governance"
+    ],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [
+     "gate",
+     "accept"
+    ],
+    "effective_date": "2026-08-04"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "captured from the owner's Option A tzdata-admission authorization (2026-08-04); verified at directive verification",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": [
+     "M0-T036"
+    ]
+   },
+   "amendment_sequence": 4
+  },
+  {
+   "id": "D-007-R563",
+   "text": "OWNER DECISION RECORD: Option B (ubuntu + bisect) DECLINED - wrong platform, the target is Windows. Option C (leave red) DECLINED - no stalling the finale over a one-line admission the age gate trivially passes.",
+   "source_ref": "source-004-amendment.md#the-owner-message",
+   "classification": "decision",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-007-BUILD",
+     "M0-T036"
+    ],
+    "task_types": [
+     "governance"
+    ],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [
+     "gate",
+     "accept"
+    ],
+    "effective_date": "2026-08-04"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "captured from the owner's Option A tzdata-admission authorization (2026-08-04); verified at directive verification",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": [
+     "M0-T036"
+    ]
+   },
+   "amendment_sequence": 4
   }
  ],
  "amendments_applied": [
   "source-002-amendment.md",
-  "source-003-amendment.md"
+  "source-003-amendment.md",
+  "source-004-amendment.md"
  ]
 }

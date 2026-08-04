@@ -1,7 +1,7 @@
 {
  "schema": "directive_manifest/v1",
  "directive_id": "D-007",
- "version": 3,
+ "version": 4,
  "slug": "codex-claude-supervisor-bridge",
  "title": "Codex-Claude Code Supervisor Bridge (v4.3, Autonomy-Tuned) - build directive",
  "status": "active",
@@ -33,11 +33,20 @@
    "amends": "source-002-amendment.md",
    "recorded_at": "2026-08-03T22:52:13+00:00",
    "content_digest_sha256": "9447115df206a3e7e3e24f4ff6f2da540cb3db4328c7264d9ad41b6ad8a46499"
+  },
+  {
+   "file": "source-004-amendment.md",
+   "kind": "amendment",
+   "sequence": 4,
+   "amends": "source-003-amendment.md",
+   "recorded_at": "2026-08-04T00:32:38+00:00",
+   "content_digest_sha256": "21664378014f047ebfb229a19c91b6d8b53d9b9ed5d4164cbfcd7632e9bcc2ce"
   }
  ],
  "amendments": [
   "source-002-amendment.md",
-  "source-003-amendment.md"
+  "source-003-amendment.md",
+  "source-004-amendment.md"
  ],
  "supersedes": [],
  "superseded_by": null,
@@ -656,8 +665,16 @@
   "D-007-R552",
   "D-007-R553",
   "D-007-R554",
-  "D-007-R555"
+  "D-007-R555",
+  "D-007-R556",
+  "D-007-R557",
+  "D-007-R558",
+  "D-007-R559",
+  "D-007-R560",
+  "D-007-R561",
+  "D-007-R562",
+  "D-007-R563"
  ],
- "requirements_id_digest_sha256": "3c64d82ba7403030967bc2284e75249983d1a88520e721b0e11b87b9ad3e6b8f",
- "requirements_content_digest_sha256": "4ffb610ab25aaa4c5cb08b690f7120ff2dd625970e089b0ce7ace9cb9cdd4be5"
+ "requirements_id_digest_sha256": "abe0d8c5c4321128e542870c0730f4e7883762f65cfe015a5d5f90ebbe0514aa",
+ "requirements_content_digest_sha256": "7c1bfba101d58d48bb266b6a9c4ddea38cc07d905c7d4ca0aa69c8e1f064babf"
 }
