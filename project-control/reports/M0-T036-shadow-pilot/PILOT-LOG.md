@@ -18,6 +18,7 @@
 | 3 | run_m0t035_shadow_pilot_r3 | S4.5 stop `invalid_checkpoint` (status vocabulary); PAUSED_RECOVERY | 1/2 (in budget) | Checkpoint emitted but `status: awaiting_gate` is not in the S8.3 unit vocabulary (IN_PROGRESS/UNIT_COMPLETE/BLOCKED/READY/FAILED); prompt bug |
 | 4 | run_m0t035_shadow_pilot_r4 | S4.5 stop, worker exited without a valid checkpoint; PAUSED_RECOVERY | 1/2 (in budget) | F-3: checkpoint text lost to the timeout kill (see below) |
 | 5 | run_m0t035_shadow_pilot_r5 | Worker unit PERFECT on the F-3 fix (~2 min, schema-valid checkpoint validated + correlated; evidence packet bounded + digest-bound). Codex review failed 3/3 attempts → `review_unavailable`, WAIT_FOR_OWNER | 1/2 (in budget; blocking_ask) | F-6: provider rejects the decision schema (`allOf` not permitted); F-7: adapter masked it as `missing_decision_file` |
+| 6 | run_m0t035_shadow_pilot_r6 | **FULL CYCLE COMPLETE.** Preflight verified → worker checkpoint `cp-m0t035-accept-ready-r6` schema-valid, validated, correlated → bounded digest-bound evidence packet → live Codex decision **COMPLETE** (model gpt-5.6-sol, attempt 1, returncode 0, no self-report mismatch, selection digest recorded) → stage evidenced complete with the 4 gate records + packet as evidence_refs → `stopped=stage_complete`, final state COMPLETE, ends AT the gate ("This never merges or accepts anything") | **0/2** (no would-be stop) | — |
 
 ## Findings (decision-packet inputs)
 

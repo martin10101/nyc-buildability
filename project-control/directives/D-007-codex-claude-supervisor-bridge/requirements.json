@@ -2,9 +2,9 @@
  "schema": "directive_requirements/v1",
  "directive_id": "D-007",
  "version": 1,
- "requirement_count": 567,
+ "requirement_count": 570,
  "producer": "orchestrator",
- "updated_at": "2026-08-04T06:50:00+00:00",
+ "updated_at": "2026-08-04T07:20:00+00:00",
  "requirements": [
   {
    "id": "D-007-R001",
@@ -21653,12 +21653,134 @@
     ]
    },
    "amendment_sequence": 5
+  },
+  {
+   "id": "D-007-R568",
+   "text": "RETURN: workflow-level CI conclusions on record for bc83092 AND 307b7c6 (not just wired), acknowledging 307b7c6 concurrency supersession honestly.",
+   "source_ref": "source-006-amendment.md#the-owner-message",
+   "classification": "return",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-007-BUILD",
+     "M0-T036"
+    ],
+    "task_types": [
+     "governance"
+    ],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [
+     "submit",
+     "gate"
+    ],
+    "effective_date": "2026-08-04"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "per-SHA CI run conclusions",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "captured from the owner run-6 pre-launch instructions (2026-08-04); verified at directive verification",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": [
+     "M0-T036"
+    ]
+   },
+   "amendment_sequence": 6
+  },
+  {
+   "id": "D-007-R569",
+   "text": "RETURN: enumerate the 19 codex-fix diagnostics (file + one line each) with an honest statement on whether each touches validate_decision, the provider-failure classifier, or the audit path; the 17 runner-fix diagnostics stand as already enumerated; the returncode spot-check is settled and not re-litigated.",
+   "source_ref": "source-006-amendment.md#the-owner-message",
+   "classification": "return",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-007-BUILD",
+     "M0-T036"
+    ],
+    "task_types": [
+     "governance"
+    ],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [
+     "submit",
+     "gate"
+    ],
+    "effective_date": "2026-08-04"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "diagnostics enumeration",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "captured from the owner run-6 pre-launch instructions (2026-08-04); verified at directive verification",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": [
+     "M0-T036"
+    ]
+   },
+   "amendment_sequence": 6
+  },
+  {
+   "id": "D-007-R570",
+   "text": "RUN-6 RETURN: full-cycle report including checkpoint validation, the live Codex decision with model and attempt number, correlation fields verified, policy classification, the ShadowPlan, and the shadow_observation_complete/stage-end record at the acceptance gate; evidence verbatim to runtime-run6; shadow only; forward nothing; budget unchanged.",
+   "source_ref": "source-006-amendment.md#the-owner-message",
+   "classification": "return",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-007-BUILD",
+     "M0-T036"
+    ],
+    "task_types": [
+     "governance"
+    ],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [
+     "submit",
+     "gate",
+     "accept"
+    ],
+    "effective_date": "2026-08-04"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "full-cycle run-6 report + runtime-run6 evidence",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "captured from the owner run-6 pre-launch instructions (2026-08-04); verified at directive verification",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": [
+     "M0-T036"
+    ]
+   },
+   "amendment_sequence": 6
   }
  ],
  "amendments_applied": [
   "source-002-amendment.md",
   "source-003-amendment.md",
   "source-004-amendment.md",
-  "source-005-amendment.md"
+  "source-005-amendment.md",
+  "source-006-amendment.md"
  ]
 }
