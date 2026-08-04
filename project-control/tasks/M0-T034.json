@@ -70,8 +70,8 @@
     "control-plane-verifier",
     "directive-compliance-verifier"
   ],
-  "status": "self_check",
-  "progress_percent": 90,
+  "status": "awaiting_gate",
+  "progress_percent": 85,
   "risks": [
     "This code decides what gets accepted. A permissive bug here silently lowers the acceptance bar for every future task, so no shortcut is acceptable because it is 'just' a control-plane fix.",
     "Lifecycle-awareness must not become a general escape hatch: if the classifier is too broad, substantive obligations get reclassified as lifecycle and stop gating.",
@@ -81,7 +81,7 @@
   ],
   "blockers": [],
   "created_at": "2026-07-31T05:39:12.800274+00:00",
-  "updated_at": "2026-07-31T18:59:52.558154+00:00",
+  "updated_at": "2026-08-04T19:10:51.872394+00:00",
   "directive_refs": [
     {
       "directive_id": "D-004",
@@ -133,6 +133,13 @@
       "percent": 90,
       "status": "self_check",
       "message": "ROUND-3 GATE VERDICTS at frozen SHA dbf0a88: G3 PASS (m0t034-g3-r3, code-reviewer role) and G5 PASS (m0t034-g5-r3, security-reviewer role), both at explicit Opus 5, both preserved verbatim on arrival as -r3 reports and recorded through the CLI with the full FAIL history retained. All six owner riders of 2026-07-31 received EXPLICIT dispositions in both reports: riders 1-3 and 6 SATISFIED with independent re-derivation (26-value outside-denylist probe, 24,000-shape and 50-shape adversarial batteries, exhaustive AST function-delta proof that round-2 fixes survived byte-exact, condition (6) proven non-circular and bound at both call sites, D3 zero-hit on added lines and all tracked files); rider 5 all three producer disclosures ACCEPTABLE with the v1-revert offer DECLINED; rider 4 ruled affirmatively by BOTH gates - F4 and F8 DO NOT BLOCK and are accepted into the named follow-up bundle 'C1 MATERIAL_FIELDS boundary + attestation validation' carrying: (1) F4 two-key packet retraction cases C/D, (2) F8 schema + validator mirror of conditions (1)(2)(4)(5)(6), (3) the c15 manifest-scope gap (M0-T034 absent from D-004 scope), (4) F5's same-identity transportability residual, (5) OBS-6 preservation-time redaction; G5 adds FU-4, the D-001 capture convention requiring classified_at_identity on future lifecycle attestations. G3'S BINDING CONDITIONS ON THAT ACCEPTANCE: (a) the bundle must exist as a controlled task before M0-T034's post-accept verification closes, (b) M0-T034 allowed_paths must NOT be widened to absorb any of it, (c) bundle items 1 and 2 must not be split - otherwise F4/F8 REVERT TO BLOCKING. Non-blocking G3 observations carried: producer report \u00a711.4 Command E over-reports three removed-side rows (conservative direction); a pre-existing weak order-independence test from M0-T023; stale 'five conditions' prose at test_project_control.py:2206; Pyright/Ruff flags adjudicated FALSE POSITIVE by line-tracer execution. OUTSTANDING FOR ACCEPTANCE (not gate defects): AS-10 (independent verifier's eight-row classification) and AS-13 (orchestrator's lifecycle-classification report from the AS-10 return). R661 SATISFIED: both verdicts PASS - the captured closeout authorization's Steps 1-7 (D-004 amendment 17, R650-R700, merged as PR #137) are now LIVE. Step 1 proceeding: PR, CI at the exact head, merge, handoff refresh, fresh session."
+    },
+    {
+      "at": "2026-08-04T19:10:46.735149+00:00",
+      "agent": "orchestrator",
+      "percent": 95,
+      "status": "self_check",
+      "message": "AS-10 complete: independent verifier (directive-compliance-verifier role) classified the eight rows - R322/R323/R388 NOT-LIFECYCLE, R389/R486/R487/R488/R501 ACCEPTANCE-ORDERING-LIFECYCLE - stated in-code rule and independent judgment agree on all eight; one recorded tension (R323 amendment-9 lifecycle binding) noted as rule-working-as-designed. AS-13 preserved verbatim on arrival as M0-T034-lifecycle-classification.md. Driving to submit per owner evening authorization (D-004-R750): task queues at submit for the owner's return; nothing merges, nothing is accepted."
     }
   ],
   "worktree": "task/M0-T034-governance-acceptance-semantics"
