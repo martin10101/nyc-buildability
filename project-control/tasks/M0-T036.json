@@ -60,7 +60,7 @@
     "directive-compliance-verifier"
   ],
   "status": "in_progress",
-  "progress_percent": 97,
+  "progress_percent": 98,
   "risks": [
     "Scale: D-007 spans 5 phases; the packet authorizes Phases 1-4 + the Phase 5 shadow pilot, with the activation decision owner-gated. Split into per-phase follow-up tasks at the orchestrator's discretion if a phase exceeds a safe review size - contract splits through the normal process, never widen this packet.",
     "Windows process-tree control (Job Objects) and durable Task Scheduler wake are the highest-uncertainty areas; Section 18 stop conditions apply if a safe strategy cannot be proven.",
@@ -69,7 +69,7 @@
   ],
   "blockers": [],
   "created_at": "2026-08-03T03:44:41.634259+00:00",
-  "updated_at": "2026-08-04T17:26:10.806854+00:00",
+  "updated_at": "2026-08-04T18:24:05.033153+00:00",
   "directive_refs": [
     {
       "directive_id": "D-007",
@@ -194,6 +194,13 @@
       "percent": 97,
       "status": "in_progress",
       "message": "V1.2 UNIT CONTRACTED AND DISPATCHED (owner authorization D-007-R592, captured am.10). Producer (unnamed backend-engineer, opus-4-8 per the new frontmatter, worktree-isolated) building three scope items + fake-process tests: (A) approval-broker wiring into the assembled loop (closes G3 V-1 - supervised allow path reachable, shadow still permits nothing); (B) model-identity discipline (R739 - explicit --model, per-event model verification, downgrade -> dispatch-nothing-new + finish-bounded + refresh-handoff + rotate + relaunch-pinned, unavailable -> pause+notify); (C) context-threshold rotation (R743-R745 - 400k configurable default, treated exactly like a downgrade, seam-only). Producer builds code+fake tests only; the THREE LIVE EXERCISES (live allow round-trip closing QA gap 1, live rotation closing QA gap 4, live model mismatch) are orchestrator-run on the controller with SYNTHETIC PROBE UNITS, shadow-only, nothing forwarded (R593/R594) - after integration. Fable-5-pinned V1.2 delta re-gate + held G2 wave wait for the owner Fable 5 window reset (R596). Supervised rehearsal still not authorized (R595)."
+    },
+    {
+      "at": "2026-08-04T18:24:05.033153+00:00",
+      "agent": "orchestrator",
+      "percent": 98,
+      "status": "in_progress",
+      "message": "V1.2 BUILD INTEGRATED at 33e3336 (grant b). Producer delivered all three scope items; orchestrator verification: 7/7 file hashes match the producer worktree, 1114 passed 2 skipped (+23, zero regressions), doctor PASS (rotation_invariants confirms seam-only + pressure-never-interrupts; loop_modes confirms shadow.forwards=False unchanged), scanner PASS. (A) broker wired into the assembled loop (G3 V-1 closed - supervised allow path reachable, shadow permits/forwards nothing); (B) model-identity discipline (R739); (C) context-threshold rotation 400k configurable (R743-745); B+C share one seam-only actuator. NEXT: the three orchestrator-run LIVE exercises on the controller with SYNTHETIC probe units, shadow-only for real work, nothing forwards to a real task (R593/R594): live allow round-trip (QA gap 1), live rotation (QA gap 4), live model mismatch. These need the controller updated to 33e3336 (owner-plane pull). Fable-5-pinned V1.2 delta re-gate + held G2 wave wait for the owner Fable 5 window reset (R596)."
     }
   ]
 }
