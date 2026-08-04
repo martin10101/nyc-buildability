@@ -85,3 +85,12 @@ pip-audit==2.10.1
 #                (2026-05-28, 53.61d, advisory-free). Via pip-audit.
 filelock==3.29.7
 platformdirs==4.10.0
+
+# --- supervisor-bridge CI (M0-T036; owner authorization D-007-R557, 2026-08-04) ---
+# The supervisor's wake scheduler resolves IANA timezones via zoneinfo, which has
+# no data source on Windows without the tzdata package. The dependency was hidden
+# locally by an out-of-lock install; admitted here so the supervisor-bridge CI job
+# (windows-latest) installs it from this lock like every other tool.
+#   tzdata 2025.2   IANA timezone data (498.45d at admission, advisory-free,
+#                   verified against live PyPI 2026-08-04; pure-data package).
+tzdata==2025.2
