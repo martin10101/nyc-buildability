@@ -124,7 +124,7 @@
   "Two claude-side behavioral verifications remain outstanding (classifier-denied in the capture session): --max-turns acceptance and the stream-json canUseTool protocol probe; both are dispatch-time items recorded in the Phase 0 return."
  ],
  "created_at": "2026-08-03T03:44:22+00:00",
- "updated_at": "2026-08-03T04:05:27+00:00",
+ "updated_at": "2026-08-04T07:11:24+00:00",
  "audit_log": [
   {
    "at": "2026-08-03T03:44:22+00:00",
@@ -135,6 +135,36 @@
    "at": "2026-08-03T04:05:27+00:00",
    "by": "orchestrator",
    "note": "Amendment 1 captured verbatim as source-002-amendment.md (sha256 6bf276c2a693a961228e4384af958feb80cff03e974b3b9a1d9ad3c78f936d1a) on branch control/M0-T036-dispatch-capture from origin/main e7f5078. 10 append-only rows D-007-R532..R541 (531 -> 541): rulings 3-9 and the M0-T036 build dispatch. Rulings 1-2 captured as D-004 amendment 21 in the same batch. ADR-005 doc note applied and SESSION_HANDOFF refreshed in this batch; both standing grants recorded APPROVED on the packet."
+  },
+  {
+   "at": "2026-08-03T22:52:13+00:00",
+   "by": "orchestrator",
+   "note": "Amendment 2 (source-003-amendment.md): CI-grant + Phase 5 GO owner message; rows R542-R555 appended; digests re-stamped; commit c72b32a (PR #151). RETROACTIVELY RECORDED - see the corrective entry below."
+  },
+  {
+   "at": "2026-08-04T00:32:38+00:00",
+   "by": "orchestrator",
+   "note": "Amendment 3 (source-004-amendment.md): Option A tzdata-admission authorization; rows R556-R563; commit caa15c7 (PR #151). RETROACTIVELY RECORDED."
+  },
+  {
+   "at": "2026-08-04T06:50:00+00:00",
+   "by": "orchestrator",
+   "note": "Amendment 4 (source-005-amendment.md): owner pre-run instructions (diagnostics enumeration, CI-on-record, run constraints); rows R564-R567; commit f68f578. RETROACTIVELY RECORDED."
+  },
+  {
+   "at": "2026-08-04T07:20:00+00:00",
+   "by": "orchestrator",
+   "note": "Amendment 5 (source-006-amendment.md): owner run-6 pre-launch instructions; rows R568-R570; commit 387378f. RETROACTIVELY RECORDED."
+  },
+  {
+   "at": "2026-08-04T07:55:00+00:00",
+   "by": "orchestrator",
+   "note": "Amendment 6 (source-007-amendment.md): Phase 5 close-out dispatch; rows R571-R576; commit 43848bd. RETROACTIVELY RECORDED."
+  },
+  {
+   "at": "2026-08-04T07:11:24+00:00",
+   "by": "orchestrator",
+   "note": "C2 CORRECTIVE APPEND (F-CP-2, control-plane review at 43848bd): amendments 2-6 were recorded in sources[] and requirements.json at capture time but their audit_log entries were omitted (validator does not enforce rule 2 mechanically). This append-only corrective write adds the five missing entries above with their original capture timestamps, marked RETROACTIVELY RECORDED; no source, requirement, or digest is altered."
   }
  ],
  "locked_requirement_ids": [

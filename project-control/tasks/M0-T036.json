@@ -1,164 +1,171 @@
 {
- "task_id": "M0-T036",
- "title": "D-007 Supervisor Bridge build (Phases 1-5): core loop, policy+adapters, endurance, validation, shadow pilot - AWAITING OWNER DISPATCH",
- "task_type": "governance",
- "milestone_id": "M0",
- "objective": "Implement the Codex-Claude Supervisor Bridge exactly per the captured D-007 directive (source-001.md, digest 426da3bb): Phase 1 core loop (schemas, models, config incl. Section 3 model selection, state machine, transactional journal, process abstraction, versioned envelope, audit/redaction, controller manifest, circuit breakers, fake-process harness); Phase 2 policy and adapters (four-tier engine, standing grants, approval broker, Claude CLI runner per the Phase 0 decision, Codex reviewer with model selection/fallback, evidence collector, external-effect journal, integrity checks, bounded packet builder); Phase 3 endurance (rotation, handoff, locking, crash recovery, durable wake scheduling, notifications, queued ASK flow, authenticated remote approvals, retention/restore, pause/stop/resume); Phase 4 validation (full Section 15 matrices + historical replay corpus); Phase 5 shadow pilot ending in a decision packet and STOP for the owner's activation decision. Limited-auto is NEVER enabled by this task. This packet is presented for the owner's dispatch decision (D-004-R717) and remains backlog until it.",
- "business_reason": "D-004 amendment 17 STEP 6 (R685-R694) and amendment 18 (R716/R717) order Phase 0's two permitted writes: the canonical D-007 capture and this controlled task packet, delivered at the Step 7 consolidated stop awaiting the owner's dispatch decision. The build itself is the owner's next and separate decision.",
- "inputs": [
-  "project-control/directives/D-007-codex-claude-supervisor-bridge/source-001.md (the captured v4.3 directive - the build specification)",
-  "project-control/reports/M0-T036-PHASE0-return.md (Phase 0 Section 19 return packet: verified CLI capabilities, SDK-vs-CLI decision, ADR-005 reconciliation, audit-anchoring proposal, independence-check definition, directive-conflict check)",
-  "project-control/reports/M0-T028-FRESH-SESSION-CAPSULE.md (effort-key prohibition, teammate-confinement posture)",
-  "docs/adr/ADR-005-agent-permission-and-gate-workflow.md (+ the proposed amendment in the Phase 0 return)"
- ],
- "outputs": [
-  "Phases 1-4 of D-007 (core loop; policy+adapters; endurance; validation) under tools/agent_supervisor/ with the full Section 15 test matrix",
-  "Phase 5 shadow-pilot decision packet (stops for the owner's activation decision; limited-auto NEVER enabled by this task)",
-  "project-control/reports/M0-T036-producer-report.md"
- ],
- "dependencies": [
-  "M0-T027"
- ],
- "allowed_paths": [
-  "tools/agent_supervisor/** (create; per D-007 Section 6 layout, adjusted to repository conventions)",
-  "tools/test_agent_supervisor_*.py (create)",
-  "project-control/reports/M0-T036-producer-report.md",
-  "project-control/tasks/M0-T036.json (CLI lifecycle writes only)"
- ],
- "forbidden_paths": [
-  ".claude/** (no hook, agent-definition, settings, rules, or skills change; D-007 Sections 5.2/8.4)",
-  ".github/**, render.yaml, any deployment definition (no CI/deploy change)",
-  "services/**, apps/**, packages/** (no product code)",
-  "project-control/** except this packet and the producer report",
-  "tools/** outside agent_supervisor/ and its tests (no change to project_control.py, directive_registry.py, code_graph/)",
-  "any dependency manifest or lockfile without the full admission policy (D-007 Section 5.1: prefer stdlib)",
-  "OWNER GATES (never performed by this task): merge, acceptance, hold release, production deploy, G6, credentials, payments (D-007 Section 5.2, invariants 7/9)"
- ],
- "acceptance_scenarios": [
-  "AS-1 (executable): the Section 16 acceptance criteria 1-16 each pass at one frozen SHA with independent code (G3), security (G5), and control-plane reviews; all repository tests and CI green.",
-  "AS-2 (executable): the Section 15 test matrix runs green with fake Claude/Codex executables - parsing/process, state-machine, tier-policy, model-selection, approval-broker, evidence, rotation, recovery/scheduling, adversarial-essentials, and historical-replay suites all present and passing; no real tokens by default.",
-  "AS-3 (executable): tier-policy invariant tests prove every Section 13.12 invariant (1-15), including: no owner gate satisfied by a model, no automatic merge/deploy/credential/payment/G6, no reviewer write access, no worker access to the active controller, HARD-DENY immovable by both models.",
-  "AS-4: the audit log hash chain (mandatory) detects tampering, truncation, and reordering in seeded tests; the external-anchoring decision is implemented as the owner ruled it at dispatch (or its deferral carries the owner+security-review acceptance D-007 Section 13.12 requires).",
-  "AS-5 (executable): replay mode reproduces expected stop/continue behavior on the agreed historical corpus (M0-T031 lifecycle, B-015 sentinel failure, M0-T028 detection-only stop, a clean continuation, a correction, a CI failure, a stale-SHA case, an owner-gated stop).",
-  "AS-6: shadow mode completes at least one real controlled-task lifecycle within the owner-touch budget (default <= 2 would-be synchronous stops, excluding activation), every excess stop dispositioned; the run ends AT the merge/acceptance gate, never past it.",
-  "AS-7 (containment): git diff --name-only touches only allowed_paths; no .claude/, .github/, or product change; no effort key anywhere; no bypass flag anywhere in code, tests, or docs except as HARD-DENY list constants.",
-  "AS-8: limited-auto remains disabled at task end; activation is a separate explicit owner act recorded through directive compliance (D-007 Section 12)."
- ],
- "required_gates": [
-  "G0",
-  "G2",
-  "G3",
-  "G4",
-  "G5"
- ],
- "producer_agent": "backend-engineer",
- "reviewer_agents": [
-  "code-reviewer",
-  "security-reviewer",
-  "qa-engineer",
-  "control-plane-verifier",
-  "directive-compliance-verifier"
- ],
- "status": "in_progress",
- "progress_percent": 80,
- "risks": [
-  "Scale: D-007 spans 5 phases; the packet authorizes Phases 1-4 + the Phase 5 shadow pilot, with the activation decision owner-gated. Split into per-phase follow-up tasks at the orchestrator's discretion if a phase exceeds a safe review size - contract splits through the normal process, never widen this packet.",
-  "Windows process-tree control (Job Objects) and durable Task Scheduler wake are the highest-uncertainty areas; Section 18 stop conditions apply if a safe strategy cannot be proven.",
-  "The worker/controller isolation requirement (Section 13.1/13.3) needs an execution location decision from the owner at dispatch: a dedicated read-only controller checkout outside every Claude-writable path.",
-  "codex-cli/claude-cli version drift between Phase 0 verification (codex 0.146.0, claude native 2.1.220) and dispatch time: preflight reverifies every flag on the pinned binaries (Section 8.5/13.4)."
- ],
- "blockers": [],
- "created_at": "2026-08-03T03:44:41.634259+00:00",
- "updated_at": "2026-08-04T00:56:13.111023+00:00",
- "directive_refs": [
-  {
-   "directive_id": "D-007",
-   "requirement_ids": "ALL"
-  }
- ],
- "directive_regime_version": "1.0",
- "directive_regime_entered_at": "2026-08-03T03:44:41.634259+00:00",
- "proposed_standing_grants": {
-  "note": "SUPERSEDED by standing_grants (owner ruling 7, D-007-R536/R537): the two proposed grants were APPROVED exactly as written on 2026-08-03.",
-  "grants": [
-   "auto-approve: python tools/test_agent_supervisor_*.py (test execution inside the task worktree; no credentials)",
-   "auto-approve: push to the exact task branch task/M0-T036-supervisor-bridge after a passing review (supervisor-development pushes; never main)"
+  "task_id": "M0-T036",
+  "title": "D-007 Supervisor Bridge build (Phases 1-5): core loop, policy+adapters, endurance, validation, shadow pilot - AWAITING OWNER DISPATCH",
+  "task_type": "governance",
+  "milestone_id": "M0",
+  "objective": "Implement the Codex-Claude Supervisor Bridge exactly per the captured D-007 directive (source-001.md, digest 426da3bb): Phase 1 core loop (schemas, models, config incl. Section 3 model selection, state machine, transactional journal, process abstraction, versioned envelope, audit/redaction, controller manifest, circuit breakers, fake-process harness); Phase 2 policy and adapters (four-tier engine, standing grants, approval broker, Claude CLI runner per the Phase 0 decision, Codex reviewer with model selection/fallback, evidence collector, external-effect journal, integrity checks, bounded packet builder); Phase 3 endurance (rotation, handoff, locking, crash recovery, durable wake scheduling, notifications, queued ASK flow, authenticated remote approvals, retention/restore, pause/stop/resume); Phase 4 validation (full Section 15 matrices + historical replay corpus); Phase 5 shadow pilot ending in a decision packet and STOP for the owner's activation decision. Limited-auto is NEVER enabled by this task. This packet is presented for the owner's dispatch decision (D-004-R717) and remains backlog until it.",
+  "business_reason": "D-004 amendment 17 STEP 6 (R685-R694) and amendment 18 (R716/R717) order Phase 0's two permitted writes: the canonical D-007 capture and this controlled task packet, delivered at the Step 7 consolidated stop awaiting the owner's dispatch decision. The build itself is the owner's next and separate decision.",
+  "inputs": [
+    "project-control/directives/D-007-codex-claude-supervisor-bridge/source-001.md (the captured v4.3 directive - the build specification)",
+    "project-control/reports/M0-T036-PHASE0-return.md (Phase 0 Section 19 return packet: verified CLI capabilities, SDK-vs-CLI decision, ADR-005 reconciliation, audit-anchoring proposal, independence-check definition, directive-conflict check)",
+    "project-control/reports/M0-T028-FRESH-SESSION-CAPSULE.md (effort-key prohibition, teammate-confinement posture)",
+    "docs/adr/ADR-005-agent-permission-and-gate-workflow.md (+ the proposed amendment in the Phase 0 return)"
+  ],
+  "outputs": [
+    "Phases 1-4 of D-007 (core loop; policy+adapters; endurance; validation) under tools/agent_supervisor/ with the full Section 15 test matrix",
+    "Phase 5 shadow-pilot decision packet (stops for the owner's activation decision; limited-auto NEVER enabled by this task)",
+    "project-control/reports/M0-T036-producer-report.md"
+  ],
+  "dependencies": [
+    "M0-T027"
+  ],
+  "allowed_paths": [
+    "tools/agent_supervisor/** (create; per D-007 Section 6 layout, adjusted to repository conventions)",
+    "tools/test_agent_supervisor_*.py (create)",
+    "project-control/reports/M0-T036-producer-report.md",
+    "project-control/tasks/M0-T036.json (CLI lifecycle writes only)"
+  ],
+  "forbidden_paths": [
+    ".claude/** (no hook, agent-definition, settings, rules, or skills change; D-007 Sections 5.2/8.4)",
+    ".github/**, render.yaml, any deployment definition (no CI/deploy change)",
+    "services/**, apps/**, packages/** (no product code)",
+    "project-control/** except this packet and the producer report",
+    "tools/** outside agent_supervisor/ and its tests (no change to project_control.py, directive_registry.py, code_graph/)",
+    "any dependency manifest or lockfile without the full admission policy (D-007 Section 5.1: prefer stdlib)",
+    "OWNER GATES (never performed by this task): merge, acceptance, hold release, production deploy, G6, credentials, payments (D-007 Section 5.2, invariants 7/9)"
+  ],
+  "acceptance_scenarios": [
+    "AS-1 (executable): the Section 16 acceptance criteria 1-16 each pass at one frozen SHA with independent code (G3), security (G5), and control-plane reviews; all repository tests and CI green.",
+    "AS-2 (executable): the Section 15 test matrix runs green with fake Claude/Codex executables - parsing/process, state-machine, tier-policy, model-selection, approval-broker, evidence, rotation, recovery/scheduling, adversarial-essentials, and historical-replay suites all present and passing; no real tokens by default.",
+    "AS-3 (executable): tier-policy invariant tests prove every Section 13.12 invariant (1-15), including: no owner gate satisfied by a model, no automatic merge/deploy/credential/payment/G6, no reviewer write access, no worker access to the active controller, HARD-DENY immovable by both models.",
+    "AS-4: the audit log hash chain (mandatory) detects tampering, truncation, and reordering in seeded tests; the external-anchoring decision is implemented as the owner ruled it at dispatch (or its deferral carries the owner+security-review acceptance D-007 Section 13.12 requires).",
+    "AS-5 (executable): replay mode reproduces expected stop/continue behavior on the agreed historical corpus (M0-T031 lifecycle, B-015 sentinel failure, M0-T028 detection-only stop, a clean continuation, a correction, a CI failure, a stale-SHA case, an owner-gated stop).",
+    "AS-6: shadow mode completes at least one real controlled-task lifecycle within the owner-touch budget (default <= 2 would-be synchronous stops, excluding activation), every excess stop dispositioned; the run ends AT the merge/acceptance gate, never past it.",
+    "AS-7 (containment): git diff --name-only touches only allowed_paths; no .claude/, .github/, or product change; no effort key anywhere; no bypass flag anywhere in code, tests, or docs except as HARD-DENY list constants.",
+    "AS-8: limited-auto remains disabled at task end; activation is a separate explicit owner act recorded through directive compliance (D-007 Section 12)."
+  ],
+  "required_gates": [
+    "G0",
+    "G2",
+    "G3",
+    "G4",
+    "G5"
+  ],
+  "producer_agent": "backend-engineer",
+  "reviewer_agents": [
+    "code-reviewer",
+    "security-reviewer",
+    "qa-engineer",
+    "control-plane-verifier",
+    "directive-compliance-verifier"
+  ],
+  "status": "in_progress",
+  "progress_percent": 85,
+  "risks": [
+    "Scale: D-007 spans 5 phases; the packet authorizes Phases 1-4 + the Phase 5 shadow pilot, with the activation decision owner-gated. Split into per-phase follow-up tasks at the orchestrator's discretion if a phase exceeds a safe review size - contract splits through the normal process, never widen this packet.",
+    "Windows process-tree control (Job Objects) and durable Task Scheduler wake are the highest-uncertainty areas; Section 18 stop conditions apply if a safe strategy cannot be proven.",
+    "The worker/controller isolation requirement (Section 13.1/13.3) needs an execution location decision from the owner at dispatch: a dedicated read-only controller checkout outside every Claude-writable path.",
+    "codex-cli/claude-cli version drift between Phase 0 verification (codex 0.146.0, claude native 2.1.220) and dispatch time: preflight reverifies every flag on the pinned binaries (Section 8.5/13.4)."
+  ],
+  "blockers": [],
+  "created_at": "2026-08-03T03:44:41.634259+00:00",
+  "updated_at": "2026-08-04T07:10:56.775542+00:00",
+  "directive_refs": [
+    {
+      "directive_id": "D-007",
+      "requirement_ids": "ALL"
+    }
+  ],
+  "directive_regime_version": "1.0",
+  "directive_regime_entered_at": "2026-08-03T03:44:41.634259+00:00",
+  "proposed_standing_grants": {
+    "note": "SUPERSEDED by standing_grants (owner ruling 7, D-007-R536/R537): the two proposed grants were APPROVED exactly as written on 2026-08-03.",
+    "grants": [
+      "auto-approve: python tools/test_agent_supervisor_*.py (test execution inside the task worktree; no credentials)",
+      "auto-approve: push to the exact task branch task/M0-T036-supervisor-bridge after a passing review (supervisor-development pushes; never main)"
+    ]
+  },
+  "stop_conditions": [
+    "Every D-007 Section 18 stop condition, verbatim, plus:",
+    "any directive conflict discovered mid-build returns to the owner (D-004-R708 pattern)",
+    "any need to widen allowed_paths stops (Section 18: 'allowed paths must expand' is a stop)",
+    "B-015-class confinement regression (teammate/worker escape) pauses the lane and surfaces immediately"
+  ],
+  "standing_grants": {
+    "state": "APPROVED_AND_ACTIVE",
+    "approved_by": "owner",
+    "approved_at": "2026-08-03T04:05:27+00:00",
+    "authority": "D-007-R536/R537 (source-002-amendment.md, owner ruling 7)",
+    "scope": "task-scoped, expiring with M0-T036, never widened",
+    "grants": [
+      "auto-approve: python tools/test_agent_supervisor_*.py (test execution inside the task worktree; no credentials)",
+      "auto-approve: push to the exact task branch task/M0-T036-supervisor-bridge after a passing review (supervisor-development pushes; never main)"
+    ]
+  },
+  "worktree": "agent-isolated-worktree-M0-T036",
+  "progress_log": [
+    {
+      "at": "2026-08-03T04:07:53.280209+00:00",
+      "agent": "orchestrator",
+      "percent": 5,
+      "status": "in_progress",
+      "message": "PHASE 1 DISPATCH under the owner build dispatch (D-007-R540, captured PR #150) and the D-006 standards. Producer: unnamed backend-engineer, explicit Opus 5 (R298 ceiling; R307 discharge governs gate-class spawns, which stay pinned Fable 5), worktree-isolated. Bounded deliverable: the two behavioral probes FIRST (R535: --max-turns acceptance + stream-json canUseTool protocol; stop only if a result contradicts the CLI-adapter decision), then Phase 1 core loop exactly per D-007 Section 17: schemas, models, config incl. Section 3 model selection + startup probe shape, state machine + transactional SQLite journal, process abstraction, versioned envelope/inbox/outbox/capability handshake, audit log with mandatory hash chain + redaction, controller manifest, circuit breakers, fake-process test harness. Standing grant (a) ACTIVE for pytest tools/test_agent_supervisor_*.py in the worktree. N=6 measurement dispatch 6 of 6: scope stated here; per-spawn /usage figures unobservable, recorded honestly; after this dispatch the N=6 summary is due (D-006-R025)."
+    },
+    {
+      "at": "2026-08-03T05:00:12.014433+00:00",
+      "agent": "orchestrator",
+      "percent": 20,
+      "status": "in_progress",
+      "message": "PHASE 1 COMPLETE and integrated. Probes CONFIRMED the CLI-adapter decision (no stop): --max-turns accepted+honored on 2.1.220; stream-json can_use_tool broker exists first-class (hidden --permission-prompt-tool stdio proven; exact control_request payload captured; fails CLOSED at stdin EOF). Phase 2 findings recorded: --permission-mode manual mandatory; never auto-select the setMode/acceptEdits suggestion. 26 files ported with 26/26 per-file LF SHA-256 verification (full hashes in M0-T036-phase1-port-hashes.json); orchestrator re-ran the suites on the ported tree: 139 tests OK (skipped=1, POSIX-only guard; Windows Job Object test ran+passed); zero control-plane regressions (22 groups + directive suites green). Producer checkpoint preserved verbatim (4 annotated R024 path redactions); producer agent-memory files NOT ported (R704 owner-plane collision; learning preserved in the report, R660 pattern). Honest deferrals: Option A external anchor -> Phase 3 (needs controller credentials + ADR amendment in force); Job-Object-as-default -> Phase 3. Orchestrator action queued for owner: CI does not yet invoke the four new test files (.github/** outside packet scope - separate authorization needed). Worktree cleaned post-port. PHASE 2 DISPATCH next: tier policy engine + standing grants + approval broker (seeded with the captured payload schema) + Claude runner (manual mode + stdio prompt tool) + Codex reviewer adapter + evidence collector + external-effect journal + integrity checks + bounded packet builder."
+    },
+    {
+      "at": "2026-08-03T06:09:10.769177+00:00",
+      "agent": "orchestrator",
+      "percent": 40,
+      "status": "in_progress",
+      "message": "PHASE 2 COMPLETE and integrated at d1f0f74. 17 files ported (17/17 full-hash verified; 10 claimed-unchanged Phase 1 modules verified byte-identical); orchestrator re-ran all eight suites: 383 tests OK (skipped=2, both justified on-host), zero Phase 1 regressions, doctor 20/20, repo regressions green. Producer-caught bugs fixed with regression tests (dotfile classification; bypass-variant injection labelling). Honest residuals carried: control-response wrapper UNVERIFIED vs live CLI (preflight round-trip probe REQUIRED before any live run - Phase 3 first act candidate); --codex-model deferred to the Phase 3 authenticated IPC path; Option A anchor + Job-Object-default + push execution all Phase 3, ADR amendment in force via D-007-R532. Checkpoint appended verbatim to the producer report. PHASE 3 DISPATCH next: endurance - rotation/finish-current-unit, verified handoff + fresh-session readiness, single-instance locking, SAFE/AMBIGUOUS/UNSAFE recovery + external-effect reconciliation, reset parsing + durable wake scheduling, notifications + queued ASK + authenticated remote approvals, quarantine/restore/retention, pause/stop/resume, the authenticated model-change IPC path, the control-response preflight probe, Option A anchor mechanism (activation still owner-gated)."
+    },
+    {
+      "at": "2026-08-03T16:30:35.003620+00:00",
+      "agent": "orchestrator",
+      "percent": 60,
+      "status": "in_progress",
+      "message": "PHASE 3 COMPLETE and integrated. 735 tests OK on the ported tree; doctor 30/30; control-response wrapper VERIFIED live (one disclosed probe); restore drill passes; no Section 18 stop. PHASE 4 DISPATCH next: validation - assemble the supervised/shadow loop, replay engine + historical corpus (M0-T031 lifecycle, B-015 sentinel, M0-T028 detection-only stop, clean continuation, correction, CI failure, stale-SHA, owner-gated stop), full Section 15 adversarial-essentials + remaining matrices, Job-Objects-default, correct defects without weakening stops."
+    },
+    {
+      "at": "2026-08-03T19:54:45.723130+00:00",
+      "agent": "orchestrator",
+      "percent": 80,
+      "status": "in_progress",
+      "message": "PHASE 4 COMPLETE and integrated. 1042 tests OK across 19 suites on the ported tree; replay corpus 8/8; doctor 36/36; Job-Objects default closed; four defects fixed without weakening stops. PHASE 5 DISPATCH next: the shadow pilot per D-007 Section 17 - run one real controlled-task lifecycle in shadow mode, measure the owner-touch count against the budget (default <=2), then return the decision packet (frozen SHA, CI, reviews, replay results, shadow comparison + touch count, all stops and false positives, residual risks, exact proposed AUTO allowlist + standing grants, emergency-stop behavior, keep-supervised-vs-activate recommendation) and STOP for the owner's activation decision (D-007-R541)."
+    },
+    {
+      "at": "2026-08-03T20:42:21.375654+00:00",
+      "agent": "orchestrator",
+      "percent": 80,
+      "status": "in_progress",
+      "message": "PHASE 4 COMPLETE and integrated at f49ae74. 1042 tests OK across 19 suites on the ported tree; replay corpus 8/8; doctor 36/36; Job-Objects default closed; four defects fixed without weakening stops. Integration amendment recorded: the gitleaks hook caught the seeded fake-secret fixture literal; producer-authored runtime-assembly patch applied verbatim (post-hash 248cf595 verified; no scanner suppression); adversarial suite green. PHASE 5 NEXT: shadow pilot per D-007 Section 17 - one real controlled-task lifecycle observed in shadow mode, owner-touch count vs the <=2 budget, then the decision packet and STOP for the owner's activation decision (D-007-R541)."
+    },
+    {
+      "at": "2026-08-03T23:11:06.337815+00:00",
+      "agent": "orchestrator",
+      "percent": 82,
+      "status": "in_progress",
+      "message": "OWNER MESSAGE captured as D-007 amendment 2 (source-003-amendment.md, R542-R555; PR #151). PART 1 executed: additive supervisor-bridge CI job PR #152 (base = task branch because the suite is absent from main; +20/-0, exact grant-(a) invocation, no new actions/secrets); grant-(b) review citations recorded at reports/M0-T036-grant-b-review-citations.md with the honest boundary statement (orchestrator verification reviews, independent gate reviews still ahead). Pre-existing secret-scan failure (4 seeded fixtures, red since Phase 3) fixed by a bounded producer unit and integrated at 1d83803: 3/3 hashes match, scanner PASS with zero allowlist changes, 1042 collected (1040 passed, 2 skipped), byte-identity AST-proven, no assertion weakened. PART 2: section-17 fit assessment recorded at reports/M0-T036-phase5-shadow-fit.md - selected lifecycle = M0-T035 acceptance run (real lifecycle ending AT the acceptance gate per AS-6); pilot launch blocked on the controller dedicated read-only checkout outside Claude-writable paths (owner-side step) + controller config authoring; decision packet waits for the Part 1 CI PR merged+green (R554). Owner merged PR #150 (amendment-1 capture) to main = cb9a999."
+    },
+    {
+      "at": "2026-08-04T00:56:13.111023+00:00",
+      "agent": "orchestrator",
+      "percent": 85,
+      "status": "in_progress",
+      "message": "PART 1 COMPLETE AND MERGED. Owner merged PR #152 (2026-08-04T00:55:17Z, all 31 checks green) into the task branch at 24dd2ee: additive supervisor-bridge CI job (windows-latest after the ubuntu runner-death finding; exact grant-(a) invocation) + tzdata 2025.2 admission per owner authorization D-007-R557 (one .in line + regenerated hash-pinned lock; byte-identity, age gate 498.45d, dual pip-audit all CI-verified). Supervisor suite in CI: 1041 passed, 1 skipped, 68s. R548/R554 preconditions MET. Findings for the packet: (1) ubuntu runner death - suite is not Linux-safe, target platform is Windows (residual risk); (2) hidden tzdata runtime dependency masked by out-of-lock local install - RESOLVED-BY-ADMISSION (R561) + doctor/preflight tz-check recommendation (R562). CRITICAL PATH NOW: owner creates the controller dedicated read-only checkout -> shadow pilot (M0-T035 acceptance lifecycle per the recorded fit assessment) -> independent gate reviews at the frozen post-pilot SHA (avoids stale-SHA re-review) -> decision packet -> STOP for activation decision (R541/R555). PR #151 (captures R542-R563) still queued for owner merge."
+    },
+    {
+      "at": "2026-08-04T07:10:56.775542+00:00",
+      "agent": "orchestrator",
+      "percent": 85,
+      "status": "in_progress",
+      "message": "C1 CORRECTIVE RE-RECORD (F-CP-1, control-plane review at 43848bd): the 82% (2026-08-03T23:11) and 85% (2026-08-04T00:56) progress entries were hand-appended to this file outside the CLI - a mechanism deviation (indent drift, stale header percent, state.json unsynced), content truthful and externally corroborated (PR #152 merged 2026-08-04T00:55:17Z all green; PR #150 merge cb9a999). This CLI write re-records the 85% state, restores header/format/state-sync coherence, and preserves the deviant entries as history per the reviewer's do-not-rewrite instruction. Substance re-stated: Part 1 complete and merged; run-6 full-cycle shadow pilot COMPLETE (gpt-5.6-sol attempt 1, 0/2 touches, forwarded nothing, ends AT the gate); five independent gate reviews dispatched at frozen 43848bd; G5 PASS (0 blocking) and CPV PASS-with-corrections preserved verbatim."
+    }
   ]
- },
- "stop_conditions": [
-  "Every D-007 Section 18 stop condition, verbatim, plus:",
-  "any directive conflict discovered mid-build returns to the owner (D-004-R708 pattern)",
-  "any need to widen allowed_paths stops (Section 18: 'allowed paths must expand' is a stop)",
-  "B-015-class confinement regression (teammate/worker escape) pauses the lane and surfaces immediately"
- ],
- "standing_grants": {
-  "state": "APPROVED_AND_ACTIVE",
-  "approved_by": "owner",
-  "approved_at": "2026-08-03T04:05:27+00:00",
-  "authority": "D-007-R536/R537 (source-002-amendment.md, owner ruling 7)",
-  "scope": "task-scoped, expiring with M0-T036, never widened",
-  "grants": [
-   "auto-approve: python tools/test_agent_supervisor_*.py (test execution inside the task worktree; no credentials)",
-   "auto-approve: push to the exact task branch task/M0-T036-supervisor-bridge after a passing review (supervisor-development pushes; never main)"
-  ]
- },
- "worktree": "agent-isolated-worktree-M0-T036",
- "progress_log": [
-  {
-   "at": "2026-08-03T04:07:53.280209+00:00",
-   "agent": "orchestrator",
-   "percent": 5,
-   "status": "in_progress",
-   "message": "PHASE 1 DISPATCH under the owner build dispatch (D-007-R540, captured PR #150) and the D-006 standards. Producer: unnamed backend-engineer, explicit Opus 5 (R298 ceiling; R307 discharge governs gate-class spawns, which stay pinned Fable 5), worktree-isolated. Bounded deliverable: the two behavioral probes FIRST (R535: --max-turns acceptance + stream-json canUseTool protocol; stop only if a result contradicts the CLI-adapter decision), then Phase 1 core loop exactly per D-007 Section 17: schemas, models, config incl. Section 3 model selection + startup probe shape, state machine + transactional SQLite journal, process abstraction, versioned envelope/inbox/outbox/capability handshake, audit log with mandatory hash chain + redaction, controller manifest, circuit breakers, fake-process test harness. Standing grant (a) ACTIVE for pytest tools/test_agent_supervisor_*.py in the worktree. N=6 measurement dispatch 6 of 6: scope stated here; per-spawn /usage figures unobservable, recorded honestly; after this dispatch the N=6 summary is due (D-006-R025)."
-  },
-  {
-   "at": "2026-08-03T05:00:12.014433+00:00",
-   "agent": "orchestrator",
-   "percent": 20,
-   "status": "in_progress",
-   "message": "PHASE 1 COMPLETE and integrated. Probes CONFIRMED the CLI-adapter decision (no stop): --max-turns accepted+honored on 2.1.220; stream-json can_use_tool broker exists first-class (hidden --permission-prompt-tool stdio proven; exact control_request payload captured; fails CLOSED at stdin EOF). Phase 2 findings recorded: --permission-mode manual mandatory; never auto-select the setMode/acceptEdits suggestion. 26 files ported with 26/26 per-file LF SHA-256 verification (full hashes in M0-T036-phase1-port-hashes.json); orchestrator re-ran the suites on the ported tree: 139 tests OK (skipped=1, POSIX-only guard; Windows Job Object test ran+passed); zero control-plane regressions (22 groups + directive suites green). Producer checkpoint preserved verbatim (4 annotated R024 path redactions); producer agent-memory files NOT ported (R704 owner-plane collision; learning preserved in the report, R660 pattern). Honest deferrals: Option A external anchor -> Phase 3 (needs controller credentials + ADR amendment in force); Job-Object-as-default -> Phase 3. Orchestrator action queued for owner: CI does not yet invoke the four new test files (.github/** outside packet scope - separate authorization needed). Worktree cleaned post-port. PHASE 2 DISPATCH next: tier policy engine + standing grants + approval broker (seeded with the captured payload schema) + Claude runner (manual mode + stdio prompt tool) + Codex reviewer adapter + evidence collector + external-effect journal + integrity checks + bounded packet builder."
-  },
-  {
-   "at": "2026-08-03T06:09:10.769177+00:00",
-   "agent": "orchestrator",
-   "percent": 40,
-   "status": "in_progress",
-   "message": "PHASE 2 COMPLETE and integrated at d1f0f74. 17 files ported (17/17 full-hash verified; 10 claimed-unchanged Phase 1 modules verified byte-identical); orchestrator re-ran all eight suites: 383 tests OK (skipped=2, both justified on-host), zero Phase 1 regressions, doctor 20/20, repo regressions green. Producer-caught bugs fixed with regression tests (dotfile classification; bypass-variant injection labelling). Honest residuals carried: control-response wrapper UNVERIFIED vs live CLI (preflight round-trip probe REQUIRED before any live run - Phase 3 first act candidate); --codex-model deferred to the Phase 3 authenticated IPC path; Option A anchor + Job-Object-default + push execution all Phase 3, ADR amendment in force via D-007-R532. Checkpoint appended verbatim to the producer report. PHASE 3 DISPATCH next: endurance - rotation/finish-current-unit, verified handoff + fresh-session readiness, single-instance locking, SAFE/AMBIGUOUS/UNSAFE recovery + external-effect reconciliation, reset parsing + durable wake scheduling, notifications + queued ASK + authenticated remote approvals, quarantine/restore/retention, pause/stop/resume, the authenticated model-change IPC path, the control-response preflight probe, Option A anchor mechanism (activation still owner-gated)."
-  },
-  {
-   "at": "2026-08-03T16:30:35.003620+00:00",
-   "agent": "orchestrator",
-   "percent": 60,
-   "status": "in_progress",
-   "message": "PHASE 3 COMPLETE and integrated. 735 tests OK on the ported tree; doctor 30/30; control-response wrapper VERIFIED live (one disclosed probe); restore drill passes; no Section 18 stop. PHASE 4 DISPATCH next: validation - assemble the supervised/shadow loop, replay engine + historical corpus (M0-T031 lifecycle, B-015 sentinel, M0-T028 detection-only stop, clean continuation, correction, CI failure, stale-SHA, owner-gated stop), full Section 15 adversarial-essentials + remaining matrices, Job-Objects-default, correct defects without weakening stops."
-  },
-  {
-   "at": "2026-08-03T19:54:45.723130+00:00",
-   "agent": "orchestrator",
-   "percent": 80,
-   "status": "in_progress",
-   "message": "PHASE 4 COMPLETE and integrated. 1042 tests OK across 19 suites on the ported tree; replay corpus 8/8; doctor 36/36; Job-Objects default closed; four defects fixed without weakening stops. PHASE 5 DISPATCH next: the shadow pilot per D-007 Section 17 - run one real controlled-task lifecycle in shadow mode, measure the owner-touch count against the budget (default <=2), then return the decision packet (frozen SHA, CI, reviews, replay results, shadow comparison + touch count, all stops and false positives, residual risks, exact proposed AUTO allowlist + standing grants, emergency-stop behavior, keep-supervised-vs-activate recommendation) and STOP for the owner's activation decision (D-007-R541)."
-  },
-  {
-   "at": "2026-08-03T20:42:21.375654+00:00",
-   "agent": "orchestrator",
-   "percent": 80,
-   "status": "in_progress",
-   "message": "PHASE 4 COMPLETE and integrated at f49ae74. 1042 tests OK across 19 suites on the ported tree; replay corpus 8/8; doctor 36/36; Job-Objects default closed; four defects fixed without weakening stops. Integration amendment recorded: the gitleaks hook caught the seeded fake-secret fixture literal; producer-authored runtime-assembly patch applied verbatim (post-hash 248cf595 verified; no scanner suppression); adversarial suite green. PHASE 5 NEXT: shadow pilot per D-007 Section 17 - one real controlled-task lifecycle observed in shadow mode, owner-touch count vs the <=2 budget, then the decision packet and STOP for the owner's activation decision (D-007-R541)."
-  },
-  {
-   "at": "2026-08-03T23:11:06.337815+00:00",
-   "agent": "orchestrator",
-   "percent": 82,
-   "status": "in_progress",
-   "message": "OWNER MESSAGE captured as D-007 amendment 2 (source-003-amendment.md, R542-R555; PR #151). PART 1 executed: additive supervisor-bridge CI job PR #152 (base = task branch because the suite is absent from main; +20/-0, exact grant-(a) invocation, no new actions/secrets); grant-(b) review citations recorded at reports/M0-T036-grant-b-review-citations.md with the honest boundary statement (orchestrator verification reviews, independent gate reviews still ahead). Pre-existing secret-scan failure (4 seeded fixtures, red since Phase 3) fixed by a bounded producer unit and integrated at 1d83803: 3/3 hashes match, scanner PASS with zero allowlist changes, 1042 collected (1040 passed, 2 skipped), byte-identity AST-proven, no assertion weakened. PART 2: section-17 fit assessment recorded at reports/M0-T036-phase5-shadow-fit.md - selected lifecycle = M0-T035 acceptance run (real lifecycle ending AT the acceptance gate per AS-6); pilot launch blocked on the controller dedicated read-only checkout outside Claude-writable paths (owner-side step) + controller config authoring; decision packet waits for the Part 1 CI PR merged+green (R554). Owner merged PR #150 (amendment-1 capture) to main = cb9a999."
-  },
-  {
-   "at": "2026-08-04T00:56:13.111023+00:00",
-   "agent": "orchestrator",
-   "percent": 85,
-   "status": "in_progress",
-   "message": "PART 1 COMPLETE AND MERGED. Owner merged PR #152 (2026-08-04T00:55:17Z, all 31 checks green) into the task branch at 24dd2ee: additive supervisor-bridge CI job (windows-latest after the ubuntu runner-death finding; exact grant-(a) invocation) + tzdata 2025.2 admission per owner authorization D-007-R557 (one .in line + regenerated hash-pinned lock; byte-identity, age gate 498.45d, dual pip-audit all CI-verified). Supervisor suite in CI: 1041 passed, 1 skipped, 68s. R548/R554 preconditions MET. Findings for the packet: (1) ubuntu runner death - suite is not Linux-safe, target platform is Windows (residual risk); (2) hidden tzdata runtime dependency masked by out-of-lock local install - RESOLVED-BY-ADMISSION (R561) + doctor/preflight tz-check recommendation (R562). CRITICAL PATH NOW: owner creates the controller dedicated read-only checkout -> shadow pilot (M0-T035 acceptance lifecycle per the recorded fit assessment) -> independent gate reviews at the frozen post-pilot SHA (avoids stale-SHA re-review) -> decision packet -> STOP for activation decision (R541/R555). PR #151 (captures R542-R563) still queued for owner merge."
-  }
- ]
 }
