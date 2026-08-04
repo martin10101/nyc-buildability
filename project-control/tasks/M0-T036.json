@@ -69,7 +69,7 @@
   ],
   "blockers": [],
   "created_at": "2026-08-03T03:44:41.634259+00:00",
-  "updated_at": "2026-08-04T08:14:43.666847+00:00",
+  "updated_at": "2026-08-04T17:03:07.246046+00:00",
   "directive_refs": [
     {
       "directive_id": "D-007",
@@ -180,6 +180,13 @@
       "percent": 97,
       "status": "in_progress",
       "message": "V1.1 CORRECTION UNIT RE-GATE COMPLETE - ALL FIVE PASS at frozen c193a52 (CI run 30890198955 green). G3 code (raised B-1..B-4) confirms all four blocking fixes genuine with real tests; G5 security 0-blocking (3 informational); G4 QA reproduced 1091/2 (+26, each fix pinned); control-plane PASS no-corrections (C1/C2 confirmed discharged, own 1091 re-run matched); directive-compliance PASS R577-R584 (6 satisfied/2 pending-by-design/0 violated, boundaries affirmatively held). New V1.2-candidate observations only (G3 N-1..N-4, G4 3 LOW spots, G5 3 informational, CPV F-CPD-1..4 incl. G2-record-needed-before-acceptance) - none blocking. Shadow-only in force; limited-auto never enabled. NOT AUTHORIZED and returning to owner separately: doctor --live probe, supervised single-forward rehearsal. M0-T035 acceptance owner-typed only."
+    },
+    {
+      "at": "2026-08-04T17:03:07.246046+00:00",
+      "agent": "orchestrator",
+      "percent": 97,
+      "status": "in_progress",
+      "message": "DOCTOR --LIVE PROBE COMPLETE (owner-authorized D-007-R588). Ran ONE bounded probe on the controller checkout (C:\\SupervisorController, f68f578): control_response_live_probe VERIFIED (live run, exe sha256_head:9d22d0d348ba14a2) - the installed CLI accepted the exact control_response bytes, denied the tool (target_file_created=false, permission_denials=1, deny_message_echoed=true), closing the Phase-2 control-response wrapper residual. Shadow config untouched; nothing forwarded; evidence verbatim at reports/M0-T036-doctor-live-probe.md. HONEST SCOPE: built-in doctor --live is DENY-ONLY; the ALLOW leg (QA gap 1) was NOT exercised and remains open for the V1.2 broker-wiring unit - surfaced, not fabricated. G2 wave for M0-T036 (F-CPD-3) is SCHEDULED for after the owner Fable 5 window resets (Fable-5-pinned reviewer, no fail/fallback), NOT dispatched now (R589). Supervised rehearsal still NOT authorized (R590), returns to owner. STOPPED per R588."
     }
   ]
 }
