@@ -34,6 +34,7 @@ from tools.agent_supervisor import state_machine as sm  # noqa: E402
 from tools.agent_supervisor.audit_log import AuditLog  # noqa: E402
 from tools.agent_supervisor.circuit_breakers import (  # noqa: E402
     OK,
+    PER_DAY_COUNTERS,
     TRIP,
     WARN,
     BreakerError,
@@ -217,6 +218,37 @@ class ConfigTests(TempCase):
         with self.assertRaises(cfg.ConfigError) as ctx:
             cfg.load_controller_config(config_path)
         self.assertEqual(ctx.exception.code, "unknown_limit")
+
+    def test_the_r207_per_day_and_resource_limits_are_configurable(self) -> None:
+        config_text = VALID_CONFIG + (
+            "max_model_calls_per_day = 500\n"
+            "max_external_writes_per_day = 40\n"
+            "max_cpu_percent = 80\n"
+            "max_memory_bytes = 4294967296\n")
+        config_path, _ = self._files(config_text=config_text)
+        config = cfg.load_controller_config(config_path)
+        self.assertEqual(config.limits.max_model_calls_per_day, 500)
+        self.assertEqual(config.limits.max_external_writes_per_day, 40)
+        self.assertEqual(config.limits.max_cpu_percent, 80)
+        self.assertEqual(config.limits.max_memory_bytes, 4294967296)
+
+    def test_the_r207_limits_have_bounded_fail_closed_defaults(self) -> None:
+        limits = cfg.Limits()
+        self.assertGreater(limits.max_model_calls_per_day, 0)
+        self.assertGreater(limits.max_external_writes_per_day, 0)
+        self.assertGreater(limits.max_cpu_percent, 0)
+        self.assertGreater(limits.max_memory_bytes, 0)
+
+    def test_a_malformed_r207_limit_fails_closed(self) -> None:
+        for bad in ("max_model_calls_per_day = 0\n",
+                    "max_external_writes_per_day = -5\n",
+                    "max_cpu_percent = 0\n",
+                    'max_memory_bytes = "lots"\n'):
+            config_text = VALID_CONFIG + bad
+            config_path, _ = self._files(config_text=config_text)
+            with self.assertRaises(cfg.ConfigError) as ctx:
+                cfg.load_controller_config(config_path)
+            self.assertEqual(ctx.exception.code, "bad_limit")
 
     def test_example_config_carries_no_effort_key_and_no_secret(self) -> None:
         example = (PACKAGE_ROOT / "config.example.toml").read_text(encoding="utf-8")
@@ -597,6 +629,54 @@ class CircuitBreakerTests(unittest.TestCase):
         breakers = self.breakers(max_restart_attempts=1)
         breakers.record("restart_attempts")
         self.assertEqual([v.name for v in breakers.tripped()], ["restart_attempts"])
+
+    # -- D-007-R207 completion: per-day caps + CPU/memory gauges --------------
+
+    def test_per_day_model_call_cap_warns_then_trips(self) -> None:
+        breakers = self.breakers(max_model_calls_per_day=4, warn_ratio=0.5)
+        day = "2026-08-05"
+        self.assertEqual(breakers.record_daily("model_calls_per_day", day).verdict, OK)
+        self.assertEqual(breakers.record_daily("model_calls_per_day", day).verdict, WARN)
+        self.assertEqual(breakers.record_daily("model_calls_per_day", day).verdict, WARN)
+        verdict = breakers.record_daily("model_calls_per_day", day)
+        self.assertEqual(verdict.verdict, TRIP)
+        self.assertTrue(verdict.tripped)
+
+    def test_per_day_external_write_cap_trips_at_its_bound(self) -> None:
+        breakers = self.breakers(max_external_writes_per_day=2)
+        day = "2026-08-05"
+        self.assertFalse(breakers.record_daily("external_writes_per_day", day).tripped)
+        self.assertTrue(breakers.record_daily("external_writes_per_day", day).tripped)
+
+    def test_a_new_day_resets_the_per_day_counters(self) -> None:
+        breakers = self.breakers(max_model_calls_per_day=2)
+        breakers.record_daily("model_calls_per_day", "2026-08-05")
+        self.assertTrue(
+            breakers.record_daily("model_calls_per_day", "2026-08-05").tripped)
+        verdict = breakers.record_daily("model_calls_per_day", "2026-08-06")
+        self.assertEqual(breakers.value("model_calls_per_day"), 1)
+        self.assertFalse(verdict.tripped)
+
+    def test_a_per_day_tick_without_a_date_fails_closed(self) -> None:
+        breakers = self.breakers()
+        with self.assertRaises(BreakerError):
+            breakers.record_daily("model_calls_per_day", "")
+
+    def test_record_daily_refuses_a_non_per_day_counter(self) -> None:
+        breakers = self.breakers()
+        with self.assertRaises(BreakerError):
+            breakers.record_daily("restart_attempts", "2026-08-05")
+        self.assertEqual(
+            PER_DAY_COUNTERS,
+            frozenset({"model_calls_per_day", "external_writes_per_day"}))
+
+    def test_cpu_and_memory_gauges_trip_on_their_ceiling(self) -> None:
+        breakers = self.breakers(max_cpu_percent=90, max_memory_bytes=1000, warn_ratio=0.5)
+        self.assertEqual(breakers.gauge("cpu_percent", 90).verdict, TRIP)
+        self.assertEqual(breakers.gauge("cpu_percent", 60).verdict, WARN)
+        self.assertEqual(breakers.gauge("cpu_percent", 10).verdict, OK)
+        self.assertEqual(breakers.gauge("memory_bytes", 1000).verdict, TRIP)
+        self.assertEqual(breakers.gauge("memory_bytes", 10).verdict, OK)
 
 
 # --------------------------------------------------------------------------

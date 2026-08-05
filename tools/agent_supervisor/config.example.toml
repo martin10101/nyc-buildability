@@ -64,6 +64,14 @@ max_retained_log_bytes = 50000000
 max_review_packet_bytes = 262144
 max_model_calls_per_task = 200
 max_external_writes_per_task = 20
+# Per-DAY companions to the two per-task caps above. Rolled on the UTC day.
+max_model_calls_per_day = 2000
+max_external_writes_per_day = 200
+# Resource gauges. CPU is a whole-percent ceiling (a busy multi-core box can
+# exceed 100, so this is an owner policy ceiling, not a hardware fact); memory
+# is a resident-bytes ceiling. Both trip at or above the ceiling.
+max_cpu_percent = 90
+max_memory_bytes = 8589934592
 max_processes = 24
 min_free_disk_bytes = 1073741824
 max_consecutive_no_progress = 3

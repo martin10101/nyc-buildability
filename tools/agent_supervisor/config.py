@@ -178,6 +178,18 @@ class Limits:
     max_review_packet_bytes: int = 262_144
     max_model_calls_per_task: int = 200
     max_external_writes_per_task: int = 20
+    #: Per-DAY companions to the per-task model-call/external-write caps (S7).
+    #: Bounded and fail-closed like every peer; the per-day window is rolled by
+    #: the supervisor-supplied UTC date (CircuitBreakers.record_daily) so the
+    #: bound is genuinely daily, never merely cumulative-per-run.
+    max_model_calls_per_day: int = 2_000
+    max_external_writes_per_day: int = 200
+    #: Resource-reading ceilings sampled as gauges (S7). CPU is a whole-percent
+    #: ceiling (a busy multi-core box can legitimately exceed 100, so this is an
+    #: owner POLICY ceiling, not a hardware fact); memory is a resident-bytes
+    #: ceiling. Both trip at/above the ceiling exactly like process_count.
+    max_cpu_percent: int = 90
+    max_memory_bytes: int = 8_589_934_592
     max_processes: int = 24
     min_free_disk_bytes: int = 1_073_741_824
     max_consecutive_no_progress: int = 3

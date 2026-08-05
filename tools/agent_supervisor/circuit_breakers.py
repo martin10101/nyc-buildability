@@ -5,10 +5,13 @@ Breakers are SUPERVISOR-enforced, never prompt-enforced: no model is asked to
 respect a limit, and no model can raise one. Two shapes:
 
 * **counters** - monotonically increasing tallies (Claude runs, Codex reviews,
-  model calls, external writes, consecutive revision loops, consecutive hard
-  denies, consecutive no-progress cycles). Some reset on evidence of progress.
+  model calls and external writes per task AND per day, consecutive revision
+  loops, consecutive hard denies, consecutive no-progress cycles). Some reset on
+  evidence of progress; the per-day counters reset when the UTC day rolls
+  (`record_daily`).
 * **gauges** - observed resource readings compared to a ceiling or floor
-  (process count, free disk).
+  (process count, free disk, retained-log/review-packet size, CPU percent,
+  resident memory).
 
 Each evaluation returns one of three verdicts:
 
@@ -55,6 +58,8 @@ COUNTER_LIMITS: Mapping[str, str] = {
     "supervisor_cycles_per_task": "max_supervisor_cycles_per_task",
     "model_calls_per_task": "max_model_calls_per_task",
     "external_writes_per_task": "max_external_writes_per_task",
+    "model_calls_per_day": "max_model_calls_per_day",
+    "external_writes_per_day": "max_external_writes_per_day",
     "restart_attempts": "max_restart_attempts",
     "consecutive_invalid_outputs": "max_consecutive_invalid_outputs",
     "consecutive_revision_loops": "max_consecutive_revision_loops",
@@ -74,7 +79,18 @@ GAUGE_LIMITS: Mapping[str, tuple[str, str]] = {
     "free_disk_bytes": ("min_free_disk_bytes", "min"),
     "retained_log_bytes": ("max_retained_log_bytes", "max"),
     "review_packet_bytes": ("max_review_packet_bytes", "max"),
+    "cpu_percent": ("max_cpu_percent", "max"),
+    "memory_bytes": ("max_memory_bytes", "max"),
 }
+
+#: Counters whose bound is PER DAY, not per run. They live in COUNTER_LIMITS
+#: like every other counter (so evaluate/tripped/snapshot include them), but are
+#: ticked through `record_daily`, which rolls the day window first so the bound
+#: is genuinely daily. The day is supplied by the caller (a UTC date string) so
+#: the breaker never reads the clock itself and stays deterministic.
+PER_DAY_COUNTERS: frozenset[str] = frozenset({
+    "model_calls_per_day", "external_writes_per_day",
+})
 
 
 class BreakerError(Exception):
@@ -104,6 +120,10 @@ class CircuitBreakers:
     def __init__(self, limits: Limits) -> None:
         self.limits = limits
         self._counters: dict[str, int] = {name: 0 for name in COUNTER_LIMITS}
+        #: The UTC calendar day the per-day counters are currently accruing
+        #: against. `None` until the first per-day tick. Crossing to a new day
+        #: resets every per-day counter before the tick (see `record_daily`).
+        self._day: str | None = None
 
     # -- counters ------------------------------------------------------------
 
@@ -127,6 +147,37 @@ class CircuitBreakers:
         """Evidence of real progress clears the livelock counters (S13.8)."""
         for name in RESET_ON_PROGRESS:
             self._counters[name] = 0
+
+    def record_daily(self, name: str, day: str, amount: int = 1) -> BreakerVerdict:
+        """Tick a PER-DAY counter, rolling the day window first, then evaluate.
+
+        `day` is a caller-supplied UTC calendar date (e.g. "2026-08-05"). The
+        supervisor injects it so the breaker never reads the clock and stays
+        deterministic and replayable. Crossing to a new day resets every per-day
+        counter to zero BEFORE this tick, so the bound is genuinely per-day and
+        not a cumulative-per-run tally. Fail closed: a per-day tick without a
+        real date, or against a counter that is not per-day, raises rather than
+        silently passing - a typo or a missing date must never disable the cap.
+        """
+        if name not in PER_DAY_COUNTERS:
+            raise BreakerError(
+                f"{name!r} is not a per-day counter; per-day counters: "
+                f"{sorted(PER_DAY_COUNTERS)}")
+        self._roll_day(day)
+        return self.record(name, amount)
+
+    def _roll_day(self, day: str) -> None:
+        """Reset the per-day counters when the supplied UTC day advances."""
+        if not isinstance(day, str) or not day.strip():
+            raise BreakerError(
+                "a per-day counter tick requires a non-empty UTC date string; "
+                "refusing to accrue against an unknown day (fail closed)")
+        if self._day is None:
+            self._day = day
+        elif day != self._day:
+            self._day = day
+            for counter in PER_DAY_COUNTERS:
+                self._counters[counter] = 0
 
     def evaluate(self, name: str) -> BreakerVerdict:
         self._require_counter(name)
