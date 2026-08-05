@@ -1,10 +1,24 @@
 name: Generate web lockfile
 
-# One-shot utility (M0-T004 follow-up): generates apps/web/package-lock.json
-# on a GitHub-hosted runner (never on the owner's PC, per
-# docs/LOW_STORAGE_CLOUD_DEVELOPMENT_POLICY.md) and commits it back to the
-# branch it was dispatched on. After the lockfile lands, ci.yml switches the
-# web job from `npm install` to `npm ci`.
+# One-shot utility (M0-T004 follow-up; extended for M0-T019): regenerates
+# apps/web/package-lock.json on a GitHub-hosted runner (never on the owner's
+# ~7 GB PC, per docs/LOW_STORAGE_CLOUD_DEVELOPMENT_POLICY.md) and commits it
+# back to the branch it was dispatched on.
+#
+# M0-T019: the owner PC cannot run npm, so this is the AUTHORITATIVE way the
+# security-patched Next/React lock (next 15.5.21, react/react-dom 19.1.2,
+# eslint-config-next 15.5.21, postcss override 8.5.23) is produced. The job:
+#   1. pins the reviewed npm CLI 11.18.0 (FE-S4);
+#   2. regenerates the lock with --package-lock-only (no node_modules), which
+#      honours package.json `overrides` AND apps/web/.npmrc (min-release-age=7,
+#      save-exact) — defence-in-depth at resolution time;
+#   3. PROVES the freshly generated lock before committing: deterministic
+#      npm ci integrity, BLOCKING npm audit (all severities), the committed-
+#      lockfile release-age gate (FE-S9), and the npm CLI advisory check
+#      (FE-S11). The bot never commits a lock that is not advisory-free,
+#      integrity-verified, and >= 7 days old across the whole tree.
+# After the lock lands, ci.yml's web / web-e2e / web-dependency-security jobs
+# run npm ci + the same gates on every push.
 
 on:
   workflow_dispatch:
@@ -15,15 +29,34 @@ permissions:
 jobs:
   lockfile:
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: apps/web
     steps:
       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
       - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
         with:
           node-version: 22
-      - name: Generate package-lock.json (no node_modules)
-        working-directory: apps/web
+      - name: Pin npm CLI to 11.18.0
+        run: |
+          npm install -g npm@11.18.0
+          test "$(npm -v)" = "11.18.0" || { echo "npm pin failed: $(npm -v)"; exit 1; }
+      # Regenerate the lockfile only (no node_modules). Honours `overrides` and
+      # .npmrc (min-release-age, save-exact). Exact pins in package.json mean
+      # the direct deps resolve to exactly those versions (FE-S1/FE-S10).
+      - name: Regenerate package-lock.json (no node_modules)
         run: npm install --package-lock-only --no-audit --no-fund
+      # Prove the freshly generated lock BEFORE committing it.
+      - name: Deterministic install check (npm ci; integrity + lock↔package.json)
+        run: npm ci --no-audit --no-fund
+      - name: Blocking npm audit (--audit-level=low; dev deps included)
+        run: npm audit --audit-level=low
+      - name: Committed-lockfile release-age gate (>= 7 days, fail-closed)
+        run: node scripts/dependency_age_gate.mjs package-lock.json
+      - name: npm CLI tooling advisory verification (npm@11.18.0, fail-closed)
+        run: node scripts/dependency_age_gate.mjs --npm-cli-advisory 11.18.0
       - name: Commit lockfile to this branch
+        working-directory: .
         run: |
           git add apps/web/package-lock.json
           if git diff --cached --quiet; then
@@ -32,5 +65,5 @@ jobs:
           fi
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git commit -m "chore(web): generate package-lock.json on CI runner (M0-T004)"
+          git commit -m "chore(web): regenerate package-lock.json (M0-T019 security tree, validated)"
           git push
