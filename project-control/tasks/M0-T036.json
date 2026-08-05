@@ -69,7 +69,7 @@
   ],
   "blockers": [],
   "created_at": "2026-08-03T03:44:41.634259+00:00",
-  "updated_at": "2026-08-05T01:45:23.422919+00:00",
+  "updated_at": "2026-08-05T15:17:54.267739+00:00",
   "directive_refs": [
     {
       "directive_id": "D-007",
@@ -222,6 +222,13 @@
       "percent": 99,
       "status": "in_progress",
       "message": "V1.2.2 model-chain rework INTEGRATED (D-007 am.12 / D-004 am.27; R603-R608, R751-R760). Producer worktree-isolated, 8/8 file hashes MATCH, verbatim diff reports/M0-T036-V1.2.2.diff. Orchestrator verification: supervisor suite 1148 passed/2 skipped (+27 over the 1121 baseline, zero regressions); whole tools/ tree 1348 passed/2 skipped. HARD REQUIREMENT (D-007-R605) INDEPENDENTLY VERIFIED: RealProcessSwitchTests::test_a_real_process_comes_up_on_opus_4_8_after_a_fable_5_exhaustion passes, and my own MUTATION CHECK (removing self._actuate_model(selected) from _switch_at_seam) makes it FAIL at model_chain.py:317 - the test genuinely proves a real spawned process received --model claude-opus-4-8 on its actual argv, not merely that an event was written; loop.py restored to hash f08902111ce44692 after the mutation. Built: [model_chain] orchestrator_preference in the IMMUTABLE config (R751/R758), launch-probe availability via probe_model_launch/make_launch_probe wired ONLY for --session-role orchestrator (R752/R756), never reads a picker (R753), _actuate_model refuses ids outside the chain (R754), CHAIN_EXHAUSTED_STOP stops+refreshes handoff+queues an owner ask (R755), reviewer path untouched (R757), crash-resume rebuilds the runner on the EFFECTIVE model via effective_model() (R605 mirrored). PRODUCER-DISCLOSED LIMITATIONS carried to the gate, not resolved: (1) QUOTA_EXHAUSTION_SIGNAL_VERIFIED=False - the live CLI's account-quota stderr/exit signal has never been captured, so no classifier is wired in production and the chain step will NOT fire live until it is (fail-closed pause holds); surfaced by doctor. (2) The switch fires at a rotation SEAM; a quota exhaustion arriving as a mid-unit launch failure still ends at no_valid_checkpoint. (3) expected_model now moves with the switched model, changing --expected-worker-model probe-knob behavior after a switch. (4) V1.2.1 ModelSubstitutionTests rewritten as ModelChainSwitchTests (single-substitute semantics superseded); SUBSTITUTE_MODEL constant deleted. SEPARATELY: registry integrity defect found BY THE PRODUCER and fixed at 7df44b3 - tonight's capture scripts wrote CRLF while .gitattributes pins directives to LF, so recorded digests matched only this working copy and failed on every fresh checkout/CI (D-004 source-027 + both requirements.json bodies); LF-normalized and re-stamped, owner text unchanged (body hashes f4639a39/8eea398b/290687b5 identical before and after), all registries now validate against canonical committed bytes. This commit FREEZES the SHA for the HELD Fable-5 re-review (R607: NOT dispatched - awaits the owner's window reset, stated Thursday)."
+    },
+    {
+      "at": "2026-08-05T15:17:54.267739+00:00",
+      "agent": "orchestrator",
+      "percent": 99,
+      "status": "in_progress",
+      "message": "V1.2.2 FINAL delta re-review + held G2 wave COMPLETE at frozen b95ebf7, run on claude-opus-4-8 xhigh (owner override D-007-R609 lifting R607 for M0-T036 only; reviewer-model-fallback 2026-08-05). All SIX legs PASS, preserved verbatim: G2/G3/G4/G5 formal gates + CPV + DCV. G4 FAIL(F1)->PASS; F1 record-vs-actuation divergence CONFIRMED-RESOLVED and MUTATION-PROVEN (G4 + DCV). failed_gates cleared. Findings are activation-only (live quota classifier unwired -> fail-closed pause) or defense-in-depth; NONE acceptance-blocking. M0-T036 stays SHADOW-ONLY; limited-auto NOT activated (owner's separate decision). Accept awaits the owner's typed line; the in-regime submit (577-req D-007 evidence-map + independent directive verification) is the remaining producer packet before accept()."
     }
   ]
 }
