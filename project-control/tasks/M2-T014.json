@@ -56,7 +56,7 @@
     "security-reviewer"
   ],
   "status": "awaiting_gate",
-  "progress_percent": 85,
+  "progress_percent": 95,
   "risks": [
     "DISPATCH HOLD: contracted 2026-07-20 but dispatch awaits owner review of the returned planning report (owner directive: return dependency graph + packet summaries before dispatching survey work)",
     "ACRIS/BIS document images may be viewer-gated; the honest finding may be 'manual upload required' for the most valuable class (licensed surveys are typically NOT in any public system - private documents held by owners/surveyors); the research must say so plainly",
@@ -66,7 +66,7 @@
   ],
   "blockers": [],
   "created_at": "2026-07-20T06:34:25.367762+00:00",
-  "updated_at": "2026-08-05T04:06:07.220968+00:00",
+  "updated_at": "2026-08-05T04:15:00.154797+00:00",
   "progress_log": [
     {
       "at": "2026-08-05T03:40:41.394581+00:00",
