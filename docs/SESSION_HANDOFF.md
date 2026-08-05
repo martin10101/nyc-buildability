@@ -5,8 +5,40 @@
 the remote: **origin/main may have advanced, so do not trust any SHA written here as still-current.**
 This file is orientation only. Operating rules, gates, and workflow routes live in `CLAUDE.md`.
 
-Refreshed **2026-08-05**, at the **D-009 + M0-T019 + M2-T014 batch-in-flight** point (owner stood the
-session down after the reviewer-model/fresh-session decision was surfaced).
+Refreshed **2026-08-05 (late)** after a long session. **The block below supersedes the older
+"Where things are" sections further down** (kept only as history); the ledger wins on any conflict.
+
+## CURRENT STATE (2026-08-05 late — confirm against the ledger + git)
+
+- **`task/M0-T036-supervisor-bridge`** (this branch) tip **`b1ab12b`**, **NOT pushed** (owner runs the
+  push). M0-T036 `in_progress`@99%, all 6 V1.2.2-wave gates PASS; **NOT accepted**.
+  - D-007 amendments 13–14 captured (`source-014`/`source-015`): **R609** = the Fable-hold override
+    (done — reviews ran on `claude-opus-4-8` xhigh); **R615/R616/R617** = build R207+R593, re-verify, accept.
+  - **Independent 577-req D-007 verification recorded** (`reports/M0-T036-D007-verification-577.json`):
+    575 PASS, **2 gating UNVERIFIABLE → R207 and R593**. (9-cluster workflow; worst-of dedup.)
+  - **R207 BUILT** (4 missing limit knobs; suite 1157/2; commit `c6a2c59`).
+  - **R593** close-out = owner chose "build it for real": step-1 **`resume-pending-prompt`** command
+    BUILT + verified (suite 1163/2; commit `b1ab12b`). **REMAINING: owner runs the live rotation
+    capture** (command sequence in the producer report / owner message), THEN re-verify R207+R593 +
+    re-attest the 575 at the NEW code identity → hand the accept line.
+- **`control/D-009-depsec-and-m0t019-dispatch`** (batch branch, `…/ctl` worktree) tip **`eb80a4d`**,
+  **NOT pushed**. M0-T019 transitive-advisory remediation applied (sharp 0.35.3 + brace-expansion
+  1.1.18 overrides; +8 tests → 40; stricter `total==0` audit step). **DEFERRED pending owner A/B age
+  decision:** lockfile regen + FE-S9 threshold. B-017 open. M0-T019 stays `claimed`.
+- **Reviewers run `claude-opus-4-8` + effort `xhigh`** (Fable out; reviewer-model-fallback). The 5
+  flipped reviewer agent files are uncommitted in the working tree — **revert to `claude-fable-5`
+  (no effort key) when the owner says "Fable is back."**
+- **Nothing accepted/merged/activated this session** (accepted count **55**). M0-T036 stays SHADOW-ONLY;
+  limited-auto never activated.
+- Environment note: the API was flaky this session (agent stalls / ENOTFOUND); workflow synthesis of
+  577 rows exceeds a single agent's 64k output — assemble verification.json in the orchestrator from
+  the workflow journal (worst-of dedup, since re-runs can flip a stricter verdict to PASS).
+
+---
+
+_History (pre-this-session, may be stale):_ Refreshed earlier 2026-08-05 at the **D-009 + M0-T019 +
+M2-T014 batch-in-flight** point (owner stood the session down after the reviewer-model/fresh-session
+decision was surfaced).
 
 ## Where things are
 
