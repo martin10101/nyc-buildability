@@ -1134,6 +1134,201 @@ class CliStartTests(LoopTestBase):
         self.assertEqual(code, 1)
         self.assertIn("not PAUSED_RECOVERY", stderr.getvalue())
 
+    # -- resume-pending-prompt (M0-T036, D-007) -----------------------------
+    #
+    # A supervised run whose forwarded prompt was declined parks its journal at
+    # WAIT_FOR_OWNER with a `pending_prompt/<run_id>` record holding the exact
+    # held digest. `resume-pending-prompt` is the operator's controller channel
+    # for the WAIT_FOR_OWNER -> FORWARD_PROMPT owner_approved_pending_prompt
+    # decision the state machine already defines. These tests build the parked
+    # journal directly - exactly as the clear-recovery tests build PAUSED_RECOVERY.
+
+    def _park_wait_for_owner(self, *, digest: str, run_id: str = "run-pp",
+                             set_pending: bool = True) -> pathlib.Path:
+        """Build a journal genuinely parked at WAIT_FOR_OWNER, optionally with a
+        pending-prompt record, and return the audit path for assertions."""
+        from tools.agent_supervisor.audit_log import AuditLog
+        from tools.agent_supervisor.durable_state import (
+            DB_FILENAME,
+            DurableJournal,
+            runtime_dir_for,
+        )
+        from tools.agent_supervisor.state_machine import StateMachine
+
+        runtime_dir = runtime_dir_for(self.repo, base=str(self.runtime))
+        journal = DurableJournal(runtime_dir / DB_FILENAME).open()
+        try:
+            machine = StateMachine(
+                journal, AuditLog(runtime_dir / "audit.jsonl", fsync=False), run_id)
+            machine.transition(sm.PREFLIGHT, "start_command")
+            machine.transition(sm.WAIT_FOR_OWNER, "preflight_requires_owner")
+            if set_pending:
+                journal.set_state(f"pending_prompt/{run_id}",
+                                  {"cycle": 1, "digest": digest,
+                                   "decision": "forward",
+                                   "created_at_utc": "2026-08-05T00:00:00Z"})
+        finally:
+            journal.close()
+        return runtime_dir / "audit.jsonl"
+
+    def _run_cli_capture(self, *args: str) -> tuple[int, str, str]:
+        """Run a command capturing stdout+stderr WITHOUT assuming JSON output."""
+        import contextlib
+        import io
+
+        stdout, stderr = io.StringIO(), io.StringIO()
+        argv = [*args, "--checkout", str(self.repo),
+                "--runtime-base", str(self.runtime)]
+        with contextlib.redirect_stdout(stdout), contextlib.redirect_stderr(stderr):
+            code = self.cli.main(list(argv))
+        return code, stdout.getvalue(), stderr.getvalue()
+
+    def test_resume_pending_prompt_happy_path(self) -> None:
+        """Parked WAIT_FOR_OWNER + matching digest -> FORWARD_PROMPT + audit."""
+        import json as _json
+
+        from tools.agent_supervisor.durable_state import (
+            DB_FILENAME,
+            DurableJournal,
+            runtime_dir_for,
+        )
+
+        digest = "a1b2c3d4e5f6"
+        audit_path = self._park_wait_for_owner(digest=digest)
+
+        code, payload = self.run_cli("resume-pending-prompt",
+                                     "--approve-prompt-digest", digest)
+        self.assertEqual(code, 0)
+        self.assertTrue(payload["resumed"])
+        self.assertEqual(payload["state"], sm.FORWARD_PROMPT)
+        self.assertEqual(payload["prompt_digest"], digest)
+
+        # The journal actually advanced, durably.
+        runtime_dir = runtime_dir_for(self.repo, base=str(self.runtime))
+        journal = DurableJournal(runtime_dir / DB_FILENAME).open()
+        try:
+            self.assertEqual(journal.get_state("current_state"), sm.FORWARD_PROMPT)
+        finally:
+            journal.close()
+
+        # A first-class operator-decision audit event was written, redacted like
+        # its peers, alongside the state_transition event.
+        events = [_json.loads(line)
+                  for line in audit_path.read_text(encoding="utf-8").splitlines()]
+        decision = [e for e in events
+                    if e["event_type"] == "operator_resume_pending_prompt"]
+        self.assertEqual(len(decision), 1)
+        self.assertEqual(decision[0]["input_digest"], digest)
+        self.assertEqual(decision[0]["decision"], "approve")
+        self.assertEqual(decision[0]["state_from"], sm.WAIT_FOR_OWNER)
+        self.assertEqual(decision[0]["state_to"], sm.FORWARD_PROMPT)
+
+    def test_resume_pending_prompt_refuses_wrong_digest(self) -> None:
+        """A mismatched digest refuses (non-zero) and mutates nothing."""
+        from tools.agent_supervisor.durable_state import (
+            DB_FILENAME,
+            DurableJournal,
+            runtime_dir_for,
+        )
+
+        self._park_wait_for_owner(digest="the-real-digest")
+        code, _, stderr = self._run_cli_capture(
+            "resume-pending-prompt", "--approve-prompt-digest", "not-the-digest")
+        self.assertEqual(code, 1)
+        self.assertIn("does not match", stderr)
+        self.assertIn("digest", stderr)
+
+        runtime_dir = runtime_dir_for(self.repo, base=str(self.runtime))
+        journal = DurableJournal(runtime_dir / DB_FILENAME).open()
+        try:
+            self.assertEqual(journal.get_state("current_state"), sm.WAIT_FOR_OWNER,
+                             "a rejected digest must not advance the journal")
+        finally:
+            journal.close()
+
+    def test_resume_pending_prompt_refuses_when_no_pending_prompt(self) -> None:
+        """WAIT_FOR_OWNER but no parked prompt record refuses; no wildcard."""
+        self._park_wait_for_owner(digest="unused", set_pending=False)
+        code, _, stderr = self._run_cli_capture(
+            "resume-pending-prompt", "--approve-prompt-digest", "anything")
+        self.assertEqual(code, 1)
+        self.assertIn("no pending-prompt record", stderr)
+
+    def test_resume_pending_prompt_refuses_outside_wait_for_owner(self) -> None:
+        """The command fires ONE specific transition; a wrong state refuses."""
+        from tools.agent_supervisor.audit_log import AuditLog
+        from tools.agent_supervisor.durable_state import (
+            DB_FILENAME,
+            DurableJournal,
+            runtime_dir_for,
+        )
+        from tools.agent_supervisor.state_machine import StateMachine
+
+        # Park in PAUSED_RECOVERY instead, plus a stray pending-prompt record to
+        # prove the STATE guard - not merely the record - gates the command.
+        runtime_dir = runtime_dir_for(self.repo, base=str(self.runtime))
+        journal = DurableJournal(runtime_dir / DB_FILENAME).open()
+        try:
+            machine = StateMachine(
+                journal, AuditLog(runtime_dir / "audit.jsonl", fsync=False), "run-pr")
+            machine.transition(sm.PREFLIGHT, "start_command")
+            machine.transition(sm.PAUSED_RECOVERY, "controller_integrity_failure")
+            journal.set_state("pending_prompt/run-pr",
+                              {"cycle": 1, "digest": "d", "decision": "forward"})
+        finally:
+            journal.close()
+
+        code, _, stderr = self._run_cli_capture(
+            "resume-pending-prompt", "--approve-prompt-digest", "d")
+        self.assertEqual(code, 1)
+        self.assertIn(f"not {sm.WAIT_FOR_OWNER}", stderr)
+
+    def test_resume_pending_prompt_refuses_malformed_journal(self) -> None:
+        """An unreadable journal fails closed with a report, not a traceback."""
+        from tools.agent_supervisor.durable_state import (
+            DB_FILENAME,
+            runtime_dir_for,
+        )
+
+        runtime_dir = runtime_dir_for(self.repo, base=str(self.runtime))
+        runtime_dir.mkdir(parents=True, exist_ok=True)
+        # A non-SQLite file at the journal path: open() must reject it.
+        (runtime_dir / DB_FILENAME).write_bytes(b"this is not a sqlite database at all")
+
+        code, _, stderr = self._run_cli_capture(
+            "resume-pending-prompt", "--approve-prompt-digest", "anything")
+        self.assertEqual(code, 1)
+        self.assertIn("unreadable", stderr)
+
+    def test_resume_pending_prompt_refuses_under_emergency_stop(self) -> None:
+        """A durable emergency stop beats resume, exactly like clear-recovery."""
+        from tools.agent_supervisor.durable_state import (
+            DB_FILENAME,
+            DurableJournal,
+            runtime_dir_for,
+        )
+        from tools.agent_supervisor.recovery import set_emergency_stop
+
+        digest = "digest-under-stop"
+        self._park_wait_for_owner(digest=digest)
+        runtime_dir = runtime_dir_for(self.repo, base=str(self.runtime))
+        journal = DurableJournal(runtime_dir / DB_FILENAME).open()
+        try:
+            set_emergency_stop(journal, reason="test emergency stop")
+        finally:
+            journal.close()
+
+        code, _, stderr = self._run_cli_capture(
+            "resume-pending-prompt", "--approve-prompt-digest", digest)
+        self.assertEqual(code, 1)
+        self.assertIn("emergency stop", stderr)
+
+        journal = DurableJournal(runtime_dir / DB_FILENAME).open()
+        try:
+            self.assertEqual(journal.get_state("current_state"), sm.WAIT_FOR_OWNER)
+        finally:
+            journal.close()
+
     def test_a_loop_refusal_is_a_report_not_a_traceback(self) -> None:
         """V1.1 correction B-2(b): `cmd_start` catches LoopError honestly.
 

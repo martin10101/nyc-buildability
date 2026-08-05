@@ -218,10 +218,12 @@ from .rotation import (
 from .state_machine import (
     INITIAL_STATE,
     IllegalTransitionError,
+    FORWARD_PROMPT as FORWARD_PROMPT_STATE,
     PAUSED_RECOVERY as PAUSED_RECOVERY_STATE,
     PREFLIGHT as PREFLIGHT_STATE,
     STATES,
     TRANSITIONS,
+    WAIT_FOR_OWNER as WAIT_FOR_OWNER_STATE,
     StateMachine,
 )
 
@@ -1542,6 +1544,99 @@ def cmd_clear_recovery(args: argparse.Namespace) -> int:
     return 0
 
 
+def cmd_resume_pending_prompt(args: argparse.Namespace) -> int:
+    """Explicit operator resume of a run parked at WAIT_FOR_OWNER with a pending
+    prompt (D-007 M0-T036). The direct analogue of `clear-recovery`.
+
+    A supervised run whose forwarded prompt was declined (or was reached with no
+    operator approval gate attached) ends `operator_declined` and PARKS its
+    journal at WAIT_FOR_OWNER, having recorded a `pending_prompt/<run_id>` entry
+    that holds the EXACT digest of the held prompt. The two exits from
+    WAIT_FOR_OWNER for that record - `owner_approved_pending_prompt` ->
+    FORWARD_PROMPT and `owner_answer_validated` -> PREFLIGHT - were until now
+    fired only inside `loop.run()`; no command let the operator resume a parked
+    journal from the controller. This is that missing channel.
+
+    It fires the S15 `WAIT_FOR_OWNER -> FORWARD_PROMPT` transition on trigger
+    `owner_approved_pending_prompt` - the edge whose meaning is exactly "the
+    owner approved the exact pending prompt; forward it unchanged", which is what
+    a parked `pending_prompt` record is. (`owner_answer_validated` -> PREFLIGHT
+    is the resume for an owner *question* that must re-run preflight, not for a
+    held-and-approved prompt, so it is deliberately NOT used here.)
+
+    It is digest-bound: the operator MUST name the exact recorded digest with
+    `--approve-prompt-digest`. It records a decision about ONE specific prompt,
+    never a wildcard, and it FAILS CLOSED (non-zero, no state change, no audit
+    decision event) on: a wrong/missing digest, a journal not at WAIT_FOR_OWNER,
+    a missing/malformed pending-prompt record, an unreadable journal, or a
+    durable emergency stop. It clears NO flags and dispatches nothing.
+    """
+    try:
+        _, journal, audit = _open_runtime(args)
+    except JournalError as exc:
+        print(f"refusing to resume the pending prompt: the journal is unreadable "
+              f"({exc.args[0] if exc.args else exc}). A damaged journal is never "
+              f"guessed at.", file=sys.stderr)
+        return 1
+    try:
+        flags = DurableFlags.read(journal)
+        if flags.emergency_stop:
+            print("refusing to resume the pending prompt: a durable emergency stop is "
+                  "set. Clear it with an explicit `stop --clear` first; "
+                  "resume-pending-prompt never overrides it.", file=sys.stderr)
+            return 1
+        state = str(journal.get_state("current_state", INITIAL_STATE))
+        if state != WAIT_FOR_OWNER_STATE:
+            print(f"nothing to resume: the journal is in {state}, not "
+                  f"{WAIT_FOR_OWNER_STATE}. resume-pending-prompt fires only the "
+                  f"{WAIT_FOR_OWNER_STATE} -> {FORWARD_PROMPT_STATE} "
+                  f"owner_approved_pending_prompt transition.", file=sys.stderr)
+            return 1
+        last = journal.last_transition()
+        run_id = (last.run_id if last is not None and last.run_id else "operator")
+        pending = journal.get_state(f"pending_prompt/{run_id}", None)
+        if not isinstance(pending, dict) or not pending.get("digest"):
+            print(f"nothing to resume: no pending-prompt record for run {run_id!r}. "
+                  f"resume-pending-prompt records a decision about ONE specific held "
+                  f"prompt and refuses when none is parked.", file=sys.stderr)
+            return 1
+        recorded = str(pending.get("digest"))
+        supplied = str(args.approve_prompt_digest)
+        if supplied != recorded:
+            print("refusing to resume: the supplied --approve-prompt-digest does not "
+                  "match the recorded pending prompt. This command approves ONE exact "
+                  "prompt by its digest, never a wildcard, and never mutates on a "
+                  "mismatch.", file=sys.stderr)
+            return 1
+        machine = StateMachine(journal, audit, run_id)
+        # Journal-durable transition first (it writes its own state_transition audit
+        # event); only then the first-class operator-decision event, so no decision
+        # is ever recorded without the effect it authorized.
+        machine.transition(FORWARD_PROMPT_STATE, "owner_approved_pending_prompt",
+                           detail={"operator_initiated": True,
+                                   "command": "resume-pending-prompt",
+                                   "prompt_digest": recorded,
+                                   "cycle": pending.get("cycle")})
+        audit.append("operator_resume_pending_prompt", run_id=run_id,
+                     input_digest=recorded, decision="approve",
+                     state_from=WAIT_FOR_OWNER_STATE, state_to=FORWARD_PROMPT_STATE,
+                     detail={"operator_initiated": True,
+                             "command": "resume-pending-prompt",
+                             "cycle": pending.get("cycle"),
+                             "held_decision": pending.get("decision")})
+    finally:
+        journal.close()
+    _emit(args,
+          {"command": "resume-pending-prompt", "resumed": True,
+           "state": FORWARD_PROMPT_STATE, "run_id": run_id,
+           "prompt_digest": recorded},
+          [f"pending prompt {recorded} approved by an explicit operator command; the "
+           f"journal now rests at {FORWARD_PROMPT_STATE}.",
+           "nothing was dispatched and no flag was changed; `start` may now resume this "
+           "run and forward the approved prompt unchanged."])
+    return 0
+
+
 def cmd_stop(args: argparse.Namespace) -> int:
     """Stop the run durably: pause, cancel any scheduled resume, keep evidence."""
     _, journal, audit = _open_runtime(args)
@@ -2375,6 +2470,19 @@ def build_parser() -> argparse.ArgumentParser:
     stop.add_argument("--clear", action="store_true",
                       help="explicit owner command clearing the durable stop flags")
     stop.set_defaults(func=cmd_stop)
+
+    resume_pp = sub.add_parser(
+        "resume-pending-prompt",
+        help="explicit operator resume of a run parked at WAIT_FOR_OWNER with a "
+             "pending prompt: fires the audited owner_approved_pending_prompt "
+             "transition to FORWARD_PROMPT, bound to the exact prompt digest (live)")
+    add_common(resume_pp)
+    resume_pp.add_argument(
+        "--approve-prompt-digest", required=True,
+        help="the EXACT digest of the parked pending prompt (as the supervised run "
+             "that parked printed, or as `status` shows). Digest-bound: a mismatch, "
+             "a wrong state, or no parked prompt refuses with no state change")
+    resume_pp.set_defaults(func=cmd_resume_pending_prompt)
 
     for name, handler in (("approve-once", cmd_approve_once), ("deny", cmd_deny)):
         p = sub.add_parser(name, help=f"answer a queued request by its exact digest "
