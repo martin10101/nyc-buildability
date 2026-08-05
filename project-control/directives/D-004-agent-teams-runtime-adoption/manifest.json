@@ -224,7 +224,7 @@
    "sequence": 27,
    "amends": "source-026-amendment.md",
    "recorded_at": "2026-08-04T21:45:00+00:00",
-   "content_digest_sha256": "37ad1618e161a48800aedce7a4886c16bafd68a8ccd7a6e1f5d163aef6bfb1d4"
+   "content_digest_sha256": "0c9ad6be86b4b763d7e768c97238eea157d3eefa43a953eea804f3ad1241411c"
   }
  ],
  "amendments": [
@@ -1282,5 +1282,5 @@
   "D-004-R760"
  ],
  "requirements_id_digest_sha256": "4f01d3002696083fce735de07ff93e8a128ff4c7d12708fa8cfface9afd823b8",
- "requirements_content_digest_sha256": "5582ce7333e7f1623a4ec49e5f6cdc09af11bb5277d360924e6bd2141cfc95c1"
+ "requirements_content_digest_sha256": "54c6cbfaaa3aae563677d57310a58c7b7ad3058f85ab721c2b23543ff14f66bf"
 }
