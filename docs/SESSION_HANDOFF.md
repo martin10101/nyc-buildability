@@ -10,8 +10,9 @@ Refreshed **2026-08-05 (late)** after a long session. **The block below supersed
 
 ## CURRENT STATE (2026-08-05 late — confirm against the ledger + git)
 
-- **`task/M0-T036-supervisor-bridge`** (this branch) tip **`b1ab12b`**, **NOT pushed** (owner runs the
-  push). M0-T036 `in_progress`@99%, all 6 V1.2.2-wave gates PASS; **NOT accepted**.
+- **`task/M0-T036-supervisor-bridge`** (this branch) **pushed to origin** through **`3100436`** (a
+  later handoff-refresh commit may sit on top locally — push it too). M0-T036 `in_progress`@99%, all
+  6 V1.2.2-wave gates PASS; **NOT accepted**.
   - D-007 amendments 13–14 captured (`source-014`/`source-015`): **R609** = the Fable-hold override
     (done — reviews ran on `claude-opus-4-8` xhigh); **R615/R616/R617** = build R207+R593, re-verify, accept.
   - **Independent 577-req D-007 verification recorded** (`reports/M0-T036-D007-verification-577.json`):
@@ -21,10 +22,35 @@ Refreshed **2026-08-05 (late)** after a long session. **The block below supersed
     BUILT + verified (suite 1163/2; commit `b1ab12b`). **REMAINING: owner runs the live rotation
     capture** (command sequence in the producer report / owner message), THEN re-verify R207+R593 +
     re-attest the 575 at the NEW code identity → hand the accept line.
-- **`control/D-009-depsec-and-m0t019-dispatch`** (batch branch, `…/ctl` worktree) tip **`eb80a4d`**,
-  **NOT pushed**. M0-T019 transitive-advisory remediation applied (sharp 0.35.3 + brace-expansion
+- **`control/D-009-depsec-and-m0t019-dispatch`** (batch branch, `…/ctl` worktree) **pushed to origin**
+  through **`eb80a4d`**. M0-T019 transitive-advisory remediation applied (sharp 0.35.3 + brace-expansion
   1.1.18 overrides; +8 tests → 40; stricter `total==0` audit step). **DEFERRED pending owner A/B age
   decision:** lockfile regen + FE-S9 threshold. B-017 open. M0-T019 stays `claimed`.
+
+## NEXT SESSION — resume checklist (2 owner-gated workstreams)
+
+Start-of-session: `python tools/project_control.py status` + reconcile git/CI. Both branches are on
+origin. Reviewers still run `claude-opus-4-8` + `xhigh` (Fable out).
+
+1. **Finish M0-T036 accept** (branch `task/M0-T036-supervisor-bridge`). Blocked ONLY on the owner's
+   R593 live rotation capture. When the owner provides the resulting `audit.jsonl` (from
+   `start --mode supervised --context-rotation-threshold 1 --max-cycles 2` → `resume-pending-prompt
+   --approve-prompt-digest <digest>` → re-run `start`, on the controller checkout under owner creds):
+   (a) integrate the live-rotation evidence under `project-control/reports/M0-T036-V1.2-live-exercises/`;
+   (b) **re-verify at the NEW code identity** — R207 + R593 freshly PASS, and re-attest the other 575
+   (delta check: only R207/R593 areas changed; confirm the delta doesn't disturb the rest) — assemble
+   the v2 `verification.json` (see memory `in-regime-accept-mechanics`: material-identity +
+   reviewed_sha==HEAD, worst-of dedup, assemble in-orchestrator not via a synthesis agent);
+   (c) build the in-regime **evidence-map** over all applicable ids; (d) `submit` → `awaiting_gate`;
+   (e) verify every accept precondition; (f) hand the owner the one-line accept
+   (`accept --task-id M0-T036 --agent orchestrator`) — DO NOT activate limited-auto (keep shadow-only).
+   Independent gate re-review (G3/G4/G5) of the R207 + `resume-pending-prompt` code deltas is owed
+   before accept (producer was backend-engineer; use different reviewers).
+2. **Finish M0-T019** (batch branch). Blocked on the owner's **A/B age decision** (brace-expansion
+   1.1.18: Option A hold-to-7-days, clears 2026-08-06T10:17Z, no gate change / Option B 6-day verified
+   exception editing FE-S9). Then: regenerate the lockfile via `generate-lockfile.yml` on the branch →
+   full CI green on the new lock → submit → G2/G3/G4/G5 → batch accept (M0-T019 + M2-T014). B-017 clears
+   with the regenerated-lock CI evidence. See `reports/M0-T019-transitive-advisory-blocker-2026-08-05.md`.
 - **Reviewers run `claude-opus-4-8` + effort `xhigh`** (Fable out; reviewer-model-fallback). The 5
   flipped reviewer agent files are uncommitted in the working tree — **revert to `claude-fable-5`
   (no effort key) when the owner says "Fable is back."**
