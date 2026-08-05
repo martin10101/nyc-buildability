@@ -68,7 +68,7 @@
     "code-reviewer",
     "security-reviewer"
   ],
-  "status": "claimed",
+  "status": "blocked",
   "progress_percent": 10,
   "risks": [
     "P0 SEQUENCING (owner 2026-07-20): dispatched only AFTER M0-T018 is accepted; accepted BEFORE M2-T013/M2-T014 dispatch. Producer (frontend-engineer) cannot self-approve; G3 code-reviewer + G5 security-reviewer, both != producer.",
@@ -84,7 +84,7 @@
     "POLICY-ENFORCEMENT AMENDMENT (owner 2026-07-20, after the first independent review of task PR #64): the initial implementation enforced release-age only at lock RESOLUTION (.npmrc min-release-age), leaving the committed lock that `npm ci` installs ungated - a BLOCKING gap for a policy meant to stop every future lockfile change from admitting a too-new package. Acceptance now additionally requires FE-S9 (deterministic fail-closed committed-lockfile age gate apps/web/scripts/dependency_age_gate.mjs + tests), FE-S10 (exact direct/dev pins with zero resolution change), and FE-S11 (continuous npm@11.18.0 tooling advisory verification), all wired into CI + the scheduled npm-audit workflow. New allowed path: apps/web/scripts/**. SUPERSEDED-BRANCH RULE (owner directive 2026-07-23, overrides any earlier text): PR #64 is SUPERSEDED  -  it must NOT receive further implementation commits and must NOT be merged or mechanically rebased. Implementation is a fresh build from a newly frozen current-main SHA under a new worktree/branch (see POST-APPROVAL LIFECYCLE). NOT accepted; no checkpoint; no hold released; M0-T020 unchanged."
   ],
   "blockers": [
-    "B-013"
+    "B-017"
   ],
   "requirement_refs": [
     "Owner directive 2026-07-23 P0 dependency-reconciliation (Part 1)",
@@ -94,7 +94,7 @@
     "docs/DEPENDENCY_SECURITY_POLICY.md (age exception fields; no advisory waiver)"
   ],
   "created_at": "2026-07-20T08:21:46.465870+00:00",
-  "updated_at": "2026-08-05T03:36:59.046663+00:00",
+  "updated_at": "2026-08-05T05:04:09.290664+00:00",
   "worktree": "C:/Users/MLFLL/Downloads/nyc-zoning/t19",
   "progress_log": [
     {
@@ -110,6 +110,13 @@
       "percent": 5,
       "status": "ready",
       "message": "Ready: full scope, D-009 authorizes governance-path edits; fresh G0 next."
+    },
+    {
+      "at": "2026-08-05T05:04:09.290664+00:00",
+      "agent": "orchestrator",
+      "percent": 10,
+      "status": "blocked",
+      "message": "Lockfile CI (generate-web-lockfile runs 30974409084 + 30976237680, 2026-08-05) fails closed at the BLOCKING npm audit: the regenerated next@15.5.21 tree carries HIGH transitive advisories. sharp<0.35.0 is override-fixable tonight (sharp 0.35.3, aged), but brace-expansion's only advisory-free fixes (>=1.1.18 / 2.1.4 / 5.0.9) are ALL <7 days old (publish 2026-07-30; clear 7 days 2026-08-06T10:00-10:17Z). Owner-declined age exceptions + FE-S9 no-exception design = true STOP, not an Opus/Fable or build issue. Recorded B-017; resolved stale B-013 (next/eslint aged in ~14.5d). Remediation plan + advisory pre-gate code review: project-control/reports/M0-T019-transitive-advisory-blocker-2026-08-05.md. Gates held until the finalized head (per batch sequencing)."
     }
   ],
   "directive_refs": [
