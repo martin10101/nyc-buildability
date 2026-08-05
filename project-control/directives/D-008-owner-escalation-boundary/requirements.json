@@ -1,0 +1,305 @@
+{
+  "schema": "directive_requirements/v1",
+  "directive_id": "D-008",
+  "version": 1,
+  "requirement_count": 8,
+  "producer": "orchestrator",
+  "updated_at": "2026-08-05T02:56:30+00:00",
+  "requirements": [
+    {
+      "id": "D-008-R001",
+      "text": "STOP and ask the owner is REQUIRED for category 1: credentials, accounts, or payment (e.g. storage provisioning, API keys).",
+      "source_ref": "source-001.md#stop-categories",
+      "classification": "authorization",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "D-008-BOUNDARY"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [
+          "blocker"
+        ],
+        "effective_date": "2026-08-04"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured verbatim on owner instruction; verified at D-008 verification",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      },
+      "amendment_sequence": 1
+    },
+    {
+      "id": "D-008-R002",
+      "text": "STOP and ask the owner is REQUIRED for category 2: legal/professional sign-offs (e.g. the survey professional-confirmation attestation).",
+      "source_ref": "source-001.md#stop-categories",
+      "classification": "authorization",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "D-008-BOUNDARY"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [
+          "blocker",
+          "accept"
+        ],
+        "effective_date": "2026-08-04"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured verbatim on owner instruction; verified at D-008 verification",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      },
+      "amendment_sequence": 1
+    },
+    {
+      "id": "D-008-R003",
+      "text": "Do NOT ask the owner about anything else; specifically never ask routine dispatch, sequencing, or 'which task next' questions.",
+      "source_ref": "source-001.md#do-not-ask",
+      "classification": "prohibition",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "D-008-BOUNDARY"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [
+          "dispatch"
+        ],
+        "effective_date": "2026-08-04"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured verbatim on owner instruction; verified at D-008 verification",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      },
+      "amendment_sequence": 1
+    },
+    {
+      "id": "D-008-R004",
+      "text": "Never ask the owner to lift a hold that is not one of the two categories (R001/R002).",
+      "source_ref": "source-001.md#no-hold-lift-asks",
+      "classification": "prohibition",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "D-008-BOUNDARY"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [
+          "dispatch",
+          "blocker"
+        ],
+        "effective_date": "2026-08-04"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured verbatim on owner instruction; verified at D-008 verification",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      },
+      "amendment_sequence": 1
+    },
+    {
+      "id": "D-008-R005",
+      "text": "Walk the accepted-dependency chain forward autonomously under standard gates (dispatch the next unblocked task on acceptance, without asking).",
+      "source_ref": "source-001.md#walk-chain-forward",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "D-008-BOUNDARY"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [
+          "dispatch",
+          "accept"
+        ],
+        "effective_date": "2026-08-04"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured verbatim on owner instruction; verified at D-008 verification",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      },
+      "amendment_sequence": 1
+    },
+    {
+      "id": "D-008-R006",
+      "text": "Surface a blocker ONLY if it falls into the two categories OR is a genuine contradiction that cannot be resolved.",
+      "source_ref": "source-001.md#blocker-exception",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "D-008-BOUNDARY"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [
+          "blocker"
+        ],
+        "effective_date": "2026-08-04"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured verbatim on owner instruction; verified at D-008 verification",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      },
+      "amendment_sequence": 1
+    },
+    {
+      "id": "D-008-R007",
+      "text": "When stopping, tell the owner in plain English what is needed and why, and give the exact line to type.",
+      "source_ref": "source-001.md#stop-protocol",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "D-008-BOUNDARY"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [
+          "blocker"
+        ],
+        "effective_date": "2026-08-04"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured verbatim on owner instruction; verified at D-008 verification",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      },
+      "amendment_sequence": 1
+    },
+    {
+      "id": "D-008-R008",
+      "text": "STANDING scope: this boundary applies to all future work, not just the issuing session.",
+      "source_ref": "source-001.md#standing-scope",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "D-008-BOUNDARY"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [
+          "dispatch",
+          "gate",
+          "accept",
+          "blocker"
+        ],
+        "effective_date": "2026-08-04"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured verbatim on owner instruction; verified at D-008 verification",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      },
+      "amendment_sequence": 1
+    }
+  ],
+  "amendments_applied": []
+}

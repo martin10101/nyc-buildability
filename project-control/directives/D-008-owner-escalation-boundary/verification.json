@@ -1,0 +1,8 @@
+{
+  "schema": "directive_verification/v2",
+  "directive_id": "D-008",
+  "producer": "orchestrator",
+  "authority_note": "Pending independent verification by directive-compliance-verifier (producer != verifier). No requirement verified yet; capture only.",
+  "task_verifications": [],
+  "updated_at": "2026-08-05T02:56:30+00:00"
+}
