@@ -1,0 +1,8 @@
+{
+  "schema": "directive_verification/v2",
+  "directive_id": "D-009",
+  "producer": "orchestrator",
+  "authority_note": "Pending independent verification by directive-compliance-verifier (producer != verifier). Verified at M0-T019 gates/accept.",
+  "task_verifications": [],
+  "updated_at": "2026-08-05T03:35:52+00:00"
+}

@@ -1,0 +1,320 @@
+{
+  "schema": "directive_requirements/v1",
+  "directive_id": "D-009",
+  "version": 1,
+  "requirement_count": 7,
+  "producer": "orchestrator",
+  "updated_at": "2026-08-05T03:35:52+00:00",
+  "requirements": [
+    {
+      "id": "D-009-R001",
+      "text": "AUTHORIZATION: this directive authorizes M0-T019 (and future dependency-admission work) to create/modify the governance-classed paths .github/workflows/ and CLAUDE.md to implement the dependency-security rules.",
+      "source_ref": "source-001.md#authorization",
+      "classification": "authorization",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T019"
+        ],
+        "task_types": [
+          "frontend"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [
+          ".github/workflows/",
+          "CLAUDE.md"
+        ],
+        "lifecycle_events": [
+          "dispatch",
+          "gate",
+          "accept"
+        ],
+        "effective_date": "2026-08-04"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "fresh owner-activated governance directive 2026-08-04; verified at M0-T019 gates/accept",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": [
+          "M0-T019"
+        ]
+      },
+      "amendment_sequence": 1
+    },
+    {
+      "id": "D-009-R002",
+      "text": "No dependency (runtime/dev/build/CI-tooling) may carry an unresolved advisory affecting the installed version; audits fail closed on any finding; no agent may waive an advisory.",
+      "source_ref": "source-001.md#rules",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T019"
+        ],
+        "task_types": [
+          "frontend"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [
+          ".github/workflows/",
+          "CLAUDE.md"
+        ],
+        "lifecycle_events": [
+          "gate",
+          "accept"
+        ],
+        "effective_date": "2026-08-04"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "fresh owner-activated governance directive 2026-08-04; verified at M0-T019 gates/accept",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": [
+          "M0-T019"
+        ]
+      },
+      "amendment_sequence": 1
+    },
+    {
+      "id": "D-009-R003",
+      "text": "Minimum release age 7 days (min-release-age=7); exact version pins (save-exact); committed-lockfile integrity retained.",
+      "source_ref": "source-001.md#rules",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T019"
+        ],
+        "task_types": [
+          "frontend"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [
+          ".github/workflows/",
+          "CLAUDE.md"
+        ],
+        "lifecycle_events": [
+          "gate",
+          "accept"
+        ],
+        "effective_date": "2026-08-04"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "fresh owner-activated governance directive 2026-08-04; verified at M0-T019 gates/accept",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": [
+          "M0-T019"
+        ]
+      },
+      "amendment_sequence": 1
+    },
+    {
+      "id": "D-009-R004",
+      "text": "Machine-enforced: deterministic fail-closed committed-lockfile release-age gate + blocking audit on every change + scheduled re-audit; never warning-only; registry/network failure fails closed as infrastructure_unavailable, never advisory-free.",
+      "source_ref": "source-001.md#rules",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T019"
+        ],
+        "task_types": [
+          "frontend"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [
+          ".github/workflows/",
+          "CLAUDE.md"
+        ],
+        "lifecycle_events": [
+          "gate",
+          "accept"
+        ],
+        "effective_date": "2026-08-04"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "fresh owner-activated governance directive 2026-08-04; verified at M0-T019 gates/accept",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": [
+          "M0-T019"
+        ]
+      },
+      "amendment_sequence": 1
+    },
+    {
+      "id": "D-009-R005",
+      "text": "New-package provenance review (name/maintainers/lifecycle-scripts/registry-origin/publication-date/ownership); prefer existing deps/stdlib over new packages.",
+      "source_ref": "source-001.md#rules",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T019"
+        ],
+        "task_types": [
+          "frontend"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [
+          ".github/workflows/",
+          "CLAUDE.md"
+        ],
+        "lifecycle_events": [
+          "gate",
+          "accept"
+        ],
+        "effective_date": "2026-08-04"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "fresh owner-activated governance directive 2026-08-04; verified at M0-T019 gates/accept",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": [
+          "M0-T019"
+        ]
+      },
+      "amendment_sequence": 1
+    },
+    {
+      "id": "D-009-R006",
+      "text": "Emergency exception: age-requirement ONLY, never an advisory affecting the installed version, owner-authorized only, full record, auto-expiry 7 days; no wildcard/org-wide/permanent/undocumented exceptions.",
+      "source_ref": "source-001.md#rules",
+      "classification": "prohibition",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T019"
+        ],
+        "task_types": [
+          "frontend"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [
+          ".github/workflows/",
+          "CLAUDE.md"
+        ],
+        "lifecycle_events": [
+          "gate",
+          "accept"
+        ],
+        "effective_date": "2026-08-04"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "fresh owner-activated governance directive 2026-08-04; verified at M0-T019 gates/accept",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": [
+          "M0-T019"
+        ]
+      },
+      "amendment_sequence": 1
+    },
+    {
+      "id": "D-009-R007",
+      "text": "The concise permanent dependency-security rule is recorded in CLAUDE.md so future orchestrators read it.",
+      "source_ref": "source-001.md#rules",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T019"
+        ],
+        "task_types": [
+          "frontend"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [
+          ".github/workflows/",
+          "CLAUDE.md"
+        ],
+        "lifecycle_events": [
+          "gate",
+          "accept"
+        ],
+        "effective_date": "2026-08-04"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "fresh owner-activated governance directive 2026-08-04; verified at M0-T019 gates/accept",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": [
+          "M0-T019"
+        ]
+      },
+      "amendment_sequence": 1
+    }
+  ],
+  "amendments_applied": []
+}

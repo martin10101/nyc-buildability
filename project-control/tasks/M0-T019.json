@@ -94,6 +94,30 @@
     "docs/DEPENDENCY_SECURITY_POLICY.md (age exception fields; no advisory waiver)"
   ],
   "created_at": "2026-07-20T08:21:46.465870+00:00",
-  "updated_at": "2026-07-23T14:30:00.000000+00:00",
-  "worktree": ".claude/worktrees/M0-T019-frontend"
+  "updated_at": "2026-08-05T03:36:59.046663+00:00",
+  "worktree": "C:/Users/MLFLL/Downloads/nyc-zoning/t19",
+  "progress_log": [
+    {
+      "at": "2026-08-05T03:36:57.686605+00:00",
+      "agent": "orchestrator",
+      "percent": 5,
+      "status": "blocked",
+      "message": "Reset stale claim for full-scope re-dispatch under D-009, frozen main d5d9b50."
+    },
+    {
+      "at": "2026-08-05T03:36:58.494550+00:00",
+      "agent": "orchestrator",
+      "percent": 5,
+      "status": "ready",
+      "message": "Ready: full scope, D-009 authorizes governance-path edits; fresh G0 next."
+    }
+  ],
+  "directive_refs": [
+    {
+      "directive_id": "D-009",
+      "requirement_ids": "ALL"
+    }
+  ],
+  "directive_regime_version": "1.0",
+  "directive_regime_entered_at": "2026-08-05T03:36:58.984931+00:00"
 }
