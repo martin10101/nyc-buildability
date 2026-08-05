@@ -1,7 +1,7 @@
 {
  "schema": "directive_manifest/v1",
  "directive_id": "D-007",
- "version": 13,
+ "version": 14,
  "slug": "codex-claude-supervisor-bridge",
  "title": "Codex-Claude Code Supervisor Bridge (v4.3, Autonomy-Tuned) - build directive",
  "status": "active",
@@ -113,6 +113,14 @@
    "amends": "source-012-amendment.md",
    "recorded_at": "2026-08-04T21:45:00+00:00",
    "content_digest_sha256": "ac5c1cbc697c33141628e5558cc0d21928d58e805eb3adb802e6f9455c9bd806"
+  },
+  {
+   "file": "source-014-amendment.md",
+   "kind": "amendment",
+   "sequence": 14,
+   "amends": "source-013-amendment.md",
+   "recorded_at": "2026-08-05T14:28:24+00:00",
+   "content_digest_sha256": "50ba86f93968baaa10ab52b3fab632da5c5f06f405fd3124dfaa8cff3e83fdf8"
   }
  ],
  "amendments": [
@@ -127,7 +135,8 @@
   "source-010-amendment.md",
   "source-011-amendment.md",
   "source-012-amendment.md",
-  "source-013-amendment.md"
+  "source-013-amendment.md",
+  "source-014-amendment.md"
  ],
  "supersedes": [],
  "superseded_by": null,
@@ -178,7 +187,7 @@
   "Two claude-side behavioral verifications remain outstanding (classifier-denied in the capture session): --max-turns acceptance and the stream-json canUseTool protocol probe; both are dispatch-time items recorded in the Phase 0 return."
  ],
  "created_at": "2026-08-03T03:44:22+00:00",
- "updated_at": "2026-08-04T18:00:00+00:00",
+ "updated_at": "2026-08-05T14:28:24+00:00",
  "audit_log": [
   {
    "at": "2026-08-03T03:44:22+00:00",
@@ -249,6 +258,11 @@
    "at": "2026-08-04T21:45:00+00:00",
    "by": "orchestrator",
    "note": "Amendment 12 (source-013-amendment.md): owner three-part model-chain correction, all three parts preserved verbatim in arrival order. INTERNAL SUPERSESSION: part B reverses part A item (2) - detect-and-HOLD is SUPERSEDED and must not be built (R603); the effective spec is part B as extended by part C (detect-and-SWITCH, automatic, fixed config chain). V1.2.2 re-scoped to detect-and-switch actuation (R604); hard requirement that the relaunch ACTUALLY launches a real process on claude-opus-4-8 with a test proving it, not an event (R605); distinct triggers, do not conflate with 400k rotation or security downgrade (R606); Fable-5 re-review HELD until the owner says the window reset, stated as Thursday (R607); return item confirming the 19+1 pins verbatim and reporting claude --version / /model resolution (R608). Model-chain rows are D-004 am.27 (R751-R760)."
+  },
+  {
+   "at": "2026-08-05T14:28:24+00:00",
+   "by": "orchestrator",
+   "note": "Amendment 13 (source-014): fresh-session owner message 2026-08-05. Adds R609 (lift D-007-R607 Fable-5 wait-for-Thursday hold for M0-T036 only; run on claude-opus-4-8 xhigh), R610 (run final delta re-review + held G2 wave at b95ebf7, verbatim verdicts), R611 (no limited-auto activation), R612 (accept-line return; nothing accepts/merges without owner typed line), R613 (standing-discipline reaffirmation), R614 (cross-registry pointer: Task-1 M0-T019 remediation decomposed under D-009 on the batch branch). Base origin/main d5d9b506c8be63eafd00ad92bd2d3dab2012d067. Requirements digests re-stamped over LF bytes."
   }
  ],
  "locked_requirement_ids": [
@@ -859,8 +873,14 @@
   "D-007-R605",
   "D-007-R606",
   "D-007-R607",
-  "D-007-R608"
+  "D-007-R608",
+  "D-007-R609",
+  "D-007-R610",
+  "D-007-R611",
+  "D-007-R612",
+  "D-007-R613",
+  "D-007-R614"
  ],
- "requirements_id_digest_sha256": "a7fa16c24046253842c05fbb115bb795673c277b91909069cd37827c08e2a7b2",
- "requirements_content_digest_sha256": "7db850c41eef26f9b0689113010baafd184757867dce18c2314bf1f2eadba201"
+ "requirements_id_digest_sha256": "b2aed8d6b0d9f6436ff1830346699ea4453a201d8353c3ca3bd1dd8eb509607d",
+ "requirements_content_digest_sha256": "b49f38007d2fad29a0b17b01efeb660e52f49e9f6f6d3969d2f5071080cd1c72"
 }

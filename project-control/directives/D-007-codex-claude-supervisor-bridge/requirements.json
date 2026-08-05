@@ -1,10 +1,10 @@
 {
  "schema": "directive_requirements/v1",
  "directive_id": "D-007",
- "version": 3,
- "requirement_count": 608,
+ "version": 4,
+ "requirement_count": 614,
  "producer": "orchestrator",
- "updated_at": "2026-08-04T21:45:00+00:00",
+ "updated_at": "2026-08-05T14:28:24+00:00",
  "requirements": [
   {
    "id": "D-007-R001",
@@ -23339,6 +23339,252 @@
     ]
    },
    "amendment_sequence": 12
+  },
+  {
+   "id": "D-007-R609",
+   "text": "OVERRIDE (owner, fresh session 2026-08-05): the owner LIFTS the D-007-R607 Fable-5 wait-for-Thursday hold FOR M0-T036's held reviews ONLY and authorizes running them NOW on claude-opus-4-8 with effort xhigh (the proven reviewer-model fallback, reviewer-model-fallback rule 2026-08-05). Rationale given verbatim: the fallback exists and is proven, and the code has been frozen for days, so there is no reason to wait. R607's text is unchanged and remains the standing hold for any OTHER Fable-5-pinned review until the owner says the Fable window is reset; this override is scoped to THIS task (M0-T036) only.",
+   "source_ref": "source-014-amendment.md#decision-on-m0-t036s-held-reviews",
+   "classification": "decision",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-007-BUILD",
+     "M0-T036"
+    ],
+    "task_types": [
+     "governance"
+    ],
+    "milestones": [],
+    "paths": [
+     ".claude/agents/"
+    ],
+    "lifecycle_events": [
+     "gate"
+    ],
+    "effective_date": "2026-08-05"
+   },
+   "dependencies": [
+    "D-007-R607"
+   ],
+   "required_harness": "",
+   "required_evidence": "M0-T036 gate records stamped with reviewer model claude-opus-4-8 effort xhigh at frozen SHA b95ebf7",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "captured from the owner fresh-session message (2026-08-05); verified at directive verification",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": [
+     "M0-T036"
+    ]
+   },
+   "amendment_sequence": 13
+  },
+  {
+   "id": "D-007-R610",
+   "text": "Run M0-T036's FINAL Fable-5 delta re-review AND the held G2 wave at the frozen SHA b95ebf7, on claude-opus-4-8 effort xhigh. Record every reviewer verdict VERBATIM in the gate records (the reviewer's own PASS/FAIL/BLOCKED report content, no paraphrase).",
+   "source_ref": "source-014-amendment.md#item-2-run-m0-t036-reviews",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-007-BUILD",
+     "M0-T036"
+    ],
+    "task_types": [
+     "governance"
+    ],
+    "milestones": [],
+    "paths": [
+     "project-control/gates/",
+     "project-control/reports/"
+    ],
+    "lifecycle_events": [
+     "gate"
+    ],
+    "effective_date": "2026-08-05"
+   },
+   "dependencies": [
+    "D-007-R609"
+   ],
+   "required_harness": "",
+   "required_evidence": "verbatim reviewer reports + recorded gate entries at reviewed_sha b95ebf7",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "captured from the owner fresh-session message (2026-08-05); verified at directive verification",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": [
+     "M0-T036"
+    ]
+   },
+   "amendment_sequence": 13
+  },
+  {
+   "id": "D-007-R611",
+   "text": "PROHIBITION: do NOT activate limited-auto for M0-T036. Activation stays the owner's SEPARATE decision; the packet recommendation is keep-shadow-only. Passing the gates does NOT authorize activation.",
+   "source_ref": "source-014-amendment.md#item-2-run-m0-t036-reviews",
+   "classification": "prohibition",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-007-BUILD",
+     "M0-T036"
+    ],
+    "task_types": [
+     "governance"
+    ],
+    "milestones": [],
+    "paths": [
+     "tools/agent_supervisor/"
+    ],
+    "lifecycle_events": [
+     "gate"
+    ],
+    "effective_date": "2026-08-05"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "captured from the owner fresh-session message (2026-08-05); verified at directive verification",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": [
+     "M0-T036"
+    ]
+   },
+   "amendment_sequence": 13
+  },
+  {
+   "id": "D-007-R612",
+   "text": "RETURN ITEM: when the M0-T036 gates pass, hand the owner the EXACT accept line for M0-T036. Do NOT accept or merge without the owner's typed line (reaffirms D-004-R721). Nothing merges or accepts in the owner's absence.",
+   "source_ref": "source-014-amendment.md#item-2-run-m0-t036-reviews",
+   "classification": "return",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-007-BUILD",
+     "M0-T036"
+    ],
+    "task_types": [
+     "governance"
+    ],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [
+     "gate"
+    ],
+    "effective_date": "2026-08-05"
+   },
+   "dependencies": [
+    "D-007-R610"
+   ],
+   "required_harness": "",
+   "required_evidence": "the accept line surfaced to the owner; acceptance recorded only after the owner's typed line",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "captured from the owner fresh-session message (2026-08-05); verified at directive verification",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": [
+     "M0-T036"
+    ]
+   },
+   "amendment_sequence": 13
+  },
+  {
+   "id": "D-007-R613",
+   "text": "STANDING DISCIPLINE (reaffirmation, not new scope; authoritative homes cited): (a) gate reviewers run on claude-opus-4-8 effort xhigh while Fable is unavailable and do NOT wait (reviewer-model-fallback rule 2026-08-05); revert the five reviewer agent files to claude-fable-5 with no effort key when the owner says 'Fable is back'. (b) Batch commits locally; one larger push after real work lands; no push-per-step (batching rule 2026-08-04). (c) Stop ONLY at a true gate -- accept, merge, credentials, legal sign-off, or a genuine unresolvable contradiction (D-008 escalation boundary). Homes: D-008, D-004-R721, and the 2026-08-05 reviewer-model-fallback / batching rules.",
+   "source_ref": "source-014-amendment.md#keep-building-per-d-008-and-last-nights-rules",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-007-BUILD",
+     "M0-T036"
+    ],
+    "task_types": [
+     "governance"
+    ],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [
+     "gate"
+    ],
+    "effective_date": "2026-08-05"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "captured from the owner fresh-session message (2026-08-05); verified at directive verification",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": [
+     "M0-T036"
+    ]
+   },
+   "amendment_sequence": 13
+  },
+  {
+   "id": "D-007-R614",
+   "text": "CROSS-REGISTRY POINTER: Task 1 of this same owner message -- the producer-validated M0-T019 remediation (sharp 0.35.3 + brace-expansion 1.1.18 overrides, age-gate comment, stricter total==0 audit step, 8 new age-gate tests 32->40, producer-report subsection; producer spawned UNNAMED; run node --test; commit locally with NO push; do NOT change the FE-S9 age threshold; do NOT regenerate the lockfile -- both wait on the owner's pending A/B age decision) -- is decomposed under directive D-009 (dependency-security) on branch control/D-009-depsec-and-m0t019-dispatch, bound to M0-T019, NOT here. D-007 governs only the supervisor-bridge / M0-T036 items above. Mirrors the source-013 -> D-004 cross-registry split precedent.",
+   "source_ref": "source-014-amendment.md#item-1-apply-the-m0-t019-remediation",
+   "classification": "sequencing",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T019"
+    ],
+    "task_types": [
+     "governance"
+    ],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [
+     "gate"
+    ],
+    "effective_date": "2026-08-05"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "captured from the owner fresh-session message (2026-08-05); verified at directive verification",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": [
+     "M0-T019"
+    ]
+   },
+   "amendment_sequence": 13
   }
  ],
  "amendments_applied": [
@@ -23353,6 +23599,7 @@
   "source-010-amendment.md",
   "source-011-amendment.md",
   "source-012-amendment.md",
-  "source-013-amendment.md"
+  "source-013-amendment.md",
+  "source-014-amendment.md"
  ]
 }
