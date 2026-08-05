@@ -1,0 +1,88 @@
+name: scheduled-web-audit
+
+# Task M0-T019 (FE-S7): continuous supply-chain re-audit of the EXACT committed
+# web dependency tree (apps/web/package-lock.json).
+#
+# WHY A SEPARATE SCHEDULED WORKFLOW
+# --------------------------------
+# The web-dependency-security job in ci.yml audits the tree on every push/PR,
+# but new advisories are published against ALREADY-PINNED versions AFTER a lock
+# lands. This workflow re-runs the same blocking checks on a schedule so a
+# freshly disclosed advisory (in the app tree OR in the pinned npm CLI) turns
+# the run red and is visible/actionable even when no code changed. It also runs
+# on PRs that touch the web dependency artifacts so a change is audited before
+# merge.
+#
+# BLOCKING, fail-closed, no allowlist/suppression:
+#   * npm audit exits non-zero on ANY finding (all severities, dev deps incl.);
+#   * the committed-lockfile release-age gate fails closed on a too-new package,
+#     integrity mismatch, unexpected host, or (after bounded retries) a registry
+#     outage — a red scheduled run is the actionable signal;
+#   * the npm CLI advisory check fails the run on any advisory affecting the
+#     pinned npm 11.18.0.
+
+on:
+  schedule:
+    # 06:41 UTC daily (offset from the top of the hour and from the Python
+    # scheduled-audit at :17; GitHub does not guarantee exact cron times).
+    - cron: "41 6 * * *"
+  pull_request:
+    paths:
+      - "apps/web/package.json"
+      - "apps/web/package-lock.json"
+      - "apps/web/.npmrc"
+      - "apps/web/scripts/dependency_age_gate.mjs"
+      - "apps/web/scripts/tests/**"
+      - ".github/workflows/scheduled-web-audit.yml"
+  # Manual trigger so the owner/orchestrator can re-audit on demand.
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: scheduled-web-audit-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  audit:
+    name: web tree re-audit (blocking on any finding / too-new / outage)
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: apps/web
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: apps/web/package-lock.json
+      - name: Pin npm CLI to 11.18.0
+        run: |
+          npm install -g npm@11.18.0
+          test "$(npm -v)" = "11.18.0" || { echo "npm pin failed: $(npm -v)"; exit 1; }
+      - name: Age-gate + npm-CLI-advisory deterministic unit tests
+        run: node --test scripts/tests/*.test.mjs
+      - name: Deterministic install (npm ci; lockfile + integrity verified)
+        run: npm ci --no-audit --no-fund
+      - name: Blocking npm audit (--audit-level=low; dev deps included)
+        run: npm audit --audit-level=low
+      - name: Blocking npm audit (JSON total vulnerabilities must be 0)
+        run: |
+          set -o pipefail
+          npm audit --json > "$RUNNER_TEMP/audit.json" || true
+          node -e '
+            const a = require(process.env.RUNNER_TEMP + "/audit.json");
+            const v = (a.metadata && a.metadata.vulnerabilities) || {};
+            const total = Object.values(v).reduce((s, n) => s + (typeof n === "number" ? n : 0), 0);
+            if (total !== 0) {
+              console.error("npm audit JSON reports " + total + " vulnerabilities:", JSON.stringify(v));
+              process.exit(1);
+            }
+            console.log("npm audit JSON: total vulnerabilities == 0 across all severities");
+          '
+      - name: Committed-lockfile release-age gate (>= 7 days, fail-closed)
+        run: node scripts/dependency_age_gate.mjs package-lock.json
+      - name: npm CLI tooling advisory verification (npm@11.18.0, fail-closed)
+        run: node scripts/dependency_age_gate.mjs --npm-cli-advisory 11.18.0
