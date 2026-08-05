@@ -51,6 +51,22 @@ jobs:
         run: npm ci --no-audit --no-fund
       - name: Blocking npm audit (--audit-level=low; dev deps included)
         run: npm audit --audit-level=low
+      # Stricter belt-and-suspenders, mirroring ci.yml's FE-S2 (b): parse the
+      # audit JSON and fail if the total across EVERY severity bucket is non-zero.
+      - name: Blocking npm audit (JSON total vulnerabilities must be 0)
+        run: |
+          set -o pipefail
+          npm audit --json > "$RUNNER_TEMP/audit.json" || true
+          node -e '
+            const a = require(process.env.RUNNER_TEMP + "/audit.json");
+            const v = (a.metadata && a.metadata.vulnerabilities) || {};
+            const total = Object.values(v).reduce((s, n) => s + (typeof n === "number" ? n : 0), 0);
+            if (total !== 0) {
+              console.error("npm audit JSON reports " + total + " vulnerabilities:", JSON.stringify(v));
+              process.exit(1);
+            }
+            console.log("npm audit JSON: total vulnerabilities == 0 across all severities");
+          '
       - name: Committed-lockfile release-age gate (>= 7 days, fail-closed)
         run: node scripts/dependency_age_gate.mjs package-lock.json
       - name: npm CLI tooling advisory verification (npm@11.18.0, fail-closed)

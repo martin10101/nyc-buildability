@@ -73,6 +73,28 @@ Each pinned to the version already resolved at the frozen-main lockfile root; ea
 `@vitejs/plugin-react 4.7.0` (383.0d), `eslint 9.39.5` (25.3d), `jsdom 26.1.0` (478.7d),
 `typescript 5.9.3` (308.3d), `vitest 3.2.7` (29.9d).
 
+### Transitive-advisory override remediation (2026-08-05)
+
+Blocker B-017 (`project-control/reports/M0-T019-transitive-advisory-blocker-2026-08-05.md`)
+recorded that the CI-regenerated full tree failed the blocking `npm audit` on 3 HIGH advisories
+from two transitive lines (`sharp` under `next`'s optionalDependency, and `brace-expansion` under
+the eslint/minimatch/glob tooling). This applies that report's §4 plan at source by adding two
+exact-pin overrides to `apps/web/package.json`, so the fresh lock resolves the patched versions
+without pulling `next@16` (hard-prohibited):
+
+| Override | Version | npm publish (UTC) | Age gate | Provenance (B-017 §2 / §6b) |
+|---|---|---|---|---|
+| `sharp` | **0.35.3** | 2026-07-01T11:28:34.077Z | ~35 d — clears 604800s comfortably | Advisory-free (Snyk lists 0.35.3 as latest non-vulnerable); released by maintainer Lovell Fuller, GPG-verified. Overrides `next@15.5.21`'s `sharp: ^0.34.3` optionalDependency, which capped below the patched 0.35.0 line (inherited libvips CVE-2026-33327/33328/35590/35591, GHSA-f88m-g3jw-g9cj). |
+| `brace-expansion` | **1.1.18** | 2026-07-30T10:17:06.961Z | first advisory-free 1.x; clears 604800s at **2026-08-06T10:17:06.961Z** | Legitimate long-time maintainer @juliangruber, GPG-verified. Verified clean vs the active 2026-08-04 npm bad-publish incident (its 2026 issues are genuine DoS/ReDoS CVEs, not a cover for a bad publish; published 5 days before the incident and not on its affected list). |
+
+**Applied at source now; lockfile + any age-threshold change DEFERRED to the owner.** The overrides
+are written into `package.json` only. The lockfile is NOT regenerated here, so no under-age package
+is installed by this change. `brace-expansion 1.1.18` does not clear the 7-day FE-S9 age gate until
+2026-08-06T10:17:06.961Z; the regeneration via `generate-lockfile.yml` (which re-runs `npm ci` +
+blocking audit + FE-S9 age gate + FE-S11) and any FE-S9 A/B age decision (B-017 §6b Option A hold-to-7-days
+vs Option B 6-day verified path) are the **owner's pending decision** and are not taken in this edit.
+The FE-S9 machine threshold remains 604800s with no exception/allowlist path added.
+
 ---
 
 ## 3. Local self-checks run (Node runtime only — no npm, disk-safe)

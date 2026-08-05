@@ -12,6 +12,9 @@
 
 import test from "node:test";
 import assert from "node:assert/strict";
+import { mkdtempSync, writeFileSync, rmSync } from "node:fs";
+import { tmpdir } from "node:os";
+import { join } from "node:path";
 
 import {
   MIN_AGE_SECONDS,
@@ -24,6 +27,7 @@ import {
   RegistryClient,
   decideNpmCli,
   runNpmCliAdvisory,
+  run,
 } from "../dependency_age_gate.mjs";
 
 const NOW = new Date("2026-08-05T00:00:00.000Z");
@@ -362,4 +366,168 @@ test("runNpmCliAdvisory fails closed (returns 1) when the advisory endpoint is u
 test("runNpmCliAdvisory fails closed when no version is supplied", async () => {
   const code = await runNpmCliAdvisory(undefined, new RegistryClient(async () => ({ status: 200, headers: {}, body: "{}" })));
   assert.equal(code, 1);
+});
+
+// --------------------------------------------------------------------------- //
+// Host-slash boundary (nit 5a): the registry-origin prefix check must admit the
+// exact `https://registry.npmjs.org/…` origin and reject a look-alike host whose
+// authority merely begins with those characters (…npmjs.org.evil.com/…).
+// --------------------------------------------------------------------------- //
+test("resolved host exactly registry.npmjs.org passes the host check", () => {
+  const r = decide(entry({ resolved: `${REG}/demo/-/demo-1.0.0.tgz` }), packument("1.0.0"), NOW);
+  assert.equal(r.passed, true);
+  assert.equal(r.kind, Kind.OK);
+});
+
+test("look-alike registry host (registry.npmjs.org.evil.com) fails UNEXPECTED_HOST", () => {
+  const r = decide(
+    entry({ resolved: "https://registry.npmjs.org.evil.com/demo/-/demo-1.0.0.tgz" }),
+    packument("1.0.0"),
+    NOW,
+  );
+  assert.equal(r.passed, false);
+  assert.equal(r.kind, Kind.UNEXPECTED_HOST);
+});
+
+// --------------------------------------------------------------------------- //
+// run() end-to-end aggregation (nit 5b): drives the full CLI path with an
+// injected RegistryClient (registry Date header for the clock + per-package
+// packuments) over a lock written to a temp dir. No network, no real npm.
+// --------------------------------------------------------------------------- //
+const CLOCK_DATE_HEADER = "Wed, 05 Aug 2026 00:00:00 GMT"; // == NOW
+
+// One request function that serves both surfaces run() touches:
+//   * HEAD  -> the registry `Date` header (RegistryClient.utcNow)
+//   * GET   -> a per-package packument keyed by the name in the URL tail
+// `pkgTimes[name]` is that package's published-at ISO string.
+function fakeRegistryRequest(pkgTimes) {
+  return async (url, opts = {}) => {
+    if ((opts.method || "GET") === "HEAD") {
+      return { status: 200, headers: { date: CLOCK_DATE_HEADER }, body: "" };
+    }
+    const name = decodeURIComponent(url.slice(REG.length + 1));
+    const time = pkgTimes[name];
+    return {
+      status: 200,
+      headers: {},
+      body: JSON.stringify({
+        versions: { "1.0.0": { dist: { integrity: INTEG_A } } },
+        time: { "1.0.0": time },
+      }),
+    };
+  };
+}
+
+function lockWith(names) {
+  const packages = { "": { name: "root" } };
+  for (const name of names) {
+    packages[`node_modules/${name}`] = {
+      version: "1.0.0",
+      resolved: `${REG}/${name}/-/${name}-1.0.0.tgz`,
+      integrity: INTEG_A,
+    };
+  }
+  return JSON.stringify({ lockfileVersion: 3, packages });
+}
+
+async function runOnLock(lockText, client) {
+  const dir = mkdtempSync(join(tmpdir(), "agegate-run-"));
+  const lockPath = join(dir, "package-lock.json");
+  writeFileSync(lockPath, lockText);
+  const out = [];
+  const origLog = console.log;
+  const origErr = console.error;
+  console.log = (...a) => out.push(a.join(" "));
+  console.error = (...a) => out.push(a.join(" "));
+  try {
+    const code = await run(lockPath, client);
+    return { code, output: out.join("\n") };
+  } finally {
+    console.log = origLog;
+    console.error = origErr;
+    rmSync(dir, { recursive: true, force: true });
+  }
+}
+
+test("run() fails (exit 1) and names the too-new package when one entry is under age", async () => {
+  const client = new RegistryClient(
+    fakeRegistryRequest({
+      oldpkg: uploadedSecondsAgo(30 * 86400),
+      newpkg: uploadedSecondsAgo(MIN_AGE_SECONDS - 1),
+    }),
+  );
+  const { code, output } = await runOnLock(lockWith(["oldpkg", "newpkg"]), client);
+  assert.equal(code, 1);
+  assert.match(output, /FAIL/);
+  assert.match(output, /newpkg@1\.0\.0/);
+  assert.match(output, /PASS  oldpkg@1\.0\.0/);
+});
+
+test("run() passes (exit 0) for an all-valid multi-entry lock", async () => {
+  const client = new RegistryClient(
+    fakeRegistryRequest({
+      alpha: uploadedSecondsAgo(30 * 86400),
+      beta: uploadedSecondsAgo(MIN_AGE_SECONDS),
+    }),
+  );
+  const { code, output } = await runOnLock(lockWith(["alpha", "beta"]), client);
+  assert.equal(code, 0);
+  assert.match(output, /RESULT: PASS/);
+});
+
+// --------------------------------------------------------------------------- //
+// Success paths not otherwise covered (nit 5c): a null-`resolved` entry still
+// binds identity through the integrity match and passes the host check as a
+// no-op (it is not rejected merely for lacking a registry host string).
+// --------------------------------------------------------------------------- //
+test("null-resolved entry with matching integrity passes (host check is a no-op)", () => {
+  const r = decide(entry({ resolved: null }), packument("1.0.0"), NOW);
+  assert.equal(r.passed, true);
+  assert.equal(r.kind, Kind.OK);
+});
+
+// --------------------------------------------------------------------------- //
+// parseLock robustness (nit 5d): malformed structural input fails closed; a
+// name@version listed with conflicting `resolved` values is flagged ambiguous
+// (fail-closed downstream in decide).
+// --------------------------------------------------------------------------- //
+test("parseLock throws on a malformed (non-object) lock entry", () => {
+  const lock = JSON.stringify({
+    lockfileVersion: 3,
+    packages: {
+      "": { name: "root" },
+      "node_modules/broken": "not-an-object",
+    },
+  });
+  assert.throws(() => parseLock(lock), (err) => err instanceof AgeGateError && err.kind === Kind.MALFORMED);
+});
+
+test("parseLock throws when a resolved entry's version is not a string", () => {
+  const lock = JSON.stringify({
+    lockfileVersion: 3,
+    packages: {
+      "": { name: "root" },
+      "node_modules/badver": { version: 5, resolved: `${REG}/badver/-/badver-5.tgz`, integrity: INTEG_A },
+    },
+  });
+  assert.throws(() => parseLock(lock), (err) => err instanceof AgeGateError && err.kind === Kind.MALFORMED);
+});
+
+test("parseLock flags a name@version with conflicting resolved as ambiguous (fails closed)", () => {
+  const lock = JSON.stringify({
+    lockfileVersion: 3,
+    packages: {
+      "": { name: "root" },
+      "node_modules/dup": { version: "1.0.0", resolved: `${REG}/dup/-/dup-1.0.0.tgz`, integrity: INTEG_A },
+      "node_modules/a/node_modules/dup": {
+        version: "1.0.0",
+        resolved: `${REG}/dup/-/dup-1.0.0-mirror.tgz`,
+        integrity: INTEG_A,
+      },
+    },
+  });
+  const entries = parseLock(lock);
+  assert.equal(entries.length, 1);
+  assert.equal(entries[0].ambiguous, true);
+  assert.equal(decide(entries[0], packument("1.0.0"), NOW).kind, Kind.AMBIGUOUS);
 });

@@ -118,8 +118,12 @@ export function parseLock(lockText) {
       throw new AgeGateError(`malformed lock entry at "${pkgPath}"`, Kind.MALFORMED);
     }
     if (meta.link === true) continue; // workspace symlink, not a registry tarball
-    // Only registry-installed packages carry `resolved`. Entries without it
-    // (the workspace root, local file: deps) are not registry tarballs.
+    // Only registry-installed packages carry `resolved`. Entries without a
+    // `resolved` field (the workspace root, workspace/link entries, and local
+    // `file:`/root deps) are not registry tarballs, so there is no registry
+    // packument to age-check and this gate deliberately skips them. Their
+    // identity is instead pinned by `npm ci`'s integrity verification against
+    // the committed lock, which is the intended backstop for these entries.
     if (meta.resolved === undefined) continue;
 
     const name = meta.name || nameFromLockPath(pkgPath);
@@ -177,6 +181,11 @@ export function decide(entry, packument, now) {
     return result(entry, Kind.AMBIGUOUS, null, null,
       "lock lists this name@version with conflicting integrity/resolved values");
   }
+  // Host check. When `resolved` is a non-empty string it MUST point at the
+  // official registry origin. When `resolved` is explicit-null (parseLock
+  // normalises a non-string `resolved` to null) this check is a no-op — but the
+  // integrity match below still binds the tarball identity, so a null-`resolved`
+  // entry is not admitted on host trust alone.
   if (entry.resolved && !entry.resolved.startsWith(`${REGISTRY_ORIGIN}/`)) {
     return result(entry, Kind.UNEXPECTED_HOST, null, null,
       `resolved host is not ${REGISTRY_HOST}: ${entry.resolved}`);
