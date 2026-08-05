@@ -322,3 +322,109 @@ dependency** on either (Acceptance NC-3).
 | Provenance / use | **Presentation-only (reaffirmed).** This platform must never scrape or depend on the ZoLa interface. Production provenance comes from the underlying official datasets/services (GIS Zoning Features, ZTLDB, PLUTO/MapPLUTO — sections 1–4). ZoLa may be used by a human for a manual cross-check only, recorded as a secondary presentation, never as machine provenance. See Governance rule 1 |
 | Program requirement | **The program does not require the ZoLa interface.** No runtime dependency (unchanged from Governance rule 1) |
 | Last policy verification | governed by Governance rule 1 (unchanged); reaffirmed 2026-07-23 by M3-T001 |
+
+---
+
+## 11. Survey & official-document sources (M2-T014 Packet A) — ADDITIVE (2026-08-05)
+
+**Additive note (task M2-T014, owner directive 2026-07-20 Packet A; dispatch hold lifted 2026-08-04).**
+The rows below govern the survey / site-plan / tax-map / architectural-filing sources feeding the M2-T015
+ingestion pipeline. Every "AVAILABLE" endpoint was fetched **live 2026-08-05 UTC** (fixtures under
+`docs/research/fixtures/m2-t014/`); full evidence chain + the seven-way document-class distinction is in
+`docs/research/survey-document-sources-2026-07.md`; format decisions in
+`docs/SURVEY_DOCUMENT_FORMAT_POLICY.md`; raw draft rows in
+`docs/research/source-registry-drafts/survey-document-sources.json`. **Core finding:** the most
+authoritative class (licensed boundary/topographic survey) exists in **no** public system, and the richest
+scanned-document channels (ACRIS images, DOB plans) have **no authorized programmatic retrieval** — so the
+pipeline is an **upload** pipeline; public systems supply only administrative geometry (DTM/MapPLUTO,
+AVAILABLE) and metadata linkage (ACRIS index, DOB filing metadata, AVAILABLE).
+
+### 11.1 DOF Digital Tax Map (DTM) — ArcGIS FeatureServer — AVAILABLE
+
+| Field | Record |
+|---|---|
+| Official source | NYC DOF, Digital Tax Map — ArcGIS `DTM_ETL_DAILY_view/FeatureServer` (layer 0 TAX_LOT_POLYGON, layer 1 TAX_BLOCK_POLYGON; tables 2–19 incl AIR_LOT/CONDO/CONDO_UNIT/REUC_LOT/SUB_LOT/MAPLIBRARY_MAP/DAB_*/PTS_*) |
+| Endpoint URLs | `https://services6.arcgis.com/yG5s3afENB5iO9fj/ArcGIS/rest/services/DTM_ETL_DAILY_view/FeatureServer/{0,1}/query` (ArcGIS REST) |
+| Access mode | API (live request); deterministic paging mandatory (`maxRecordCount 1000`) |
+| Authentication | None (anonymous per-BBL query HTTP 200 verified live 2026-08-05; keyless) |
+| Published quota / rate limits | Response header `x-esri-org-request-units-per-min: usage=23;max=28800` (observed 2026-08-05); no separate numeric quota documented; page cap `maxRecordCount 1000` |
+| CRS | **EPSG:3857** (wkid 102100 / latestWkid 3857) — Web Mercator; DIFFERENT from the DCP chain's EPSG:2263 — validate/reproject before overlay |
+| Retrieval / refresh cadence | Source monthly (DOF extraction; refreshed on ArcGIS Online on the 1st); freshness = ArcGIS `Last-Modified` (2026-08-04 observed) + `EFFECTIVE_TAX_YEAR` |
+| Terms / attribution | DOF official; **tax-administration cartographic product, NOT a legal survey** (class 2/3); no permanence/SLA (governance rule 2) |
+| Last policy verification | 2026-08-05 (M2-T014; fixtures `dtm_taxlot_query_1000010010.json`, `dtm_taxlot_layer0_meta.json`, `dtm_taxlot_query_headers.txt`) |
+| Suitability | Live per-BBL/per-block queries: YES. Citywide ingestion: cloud-worker paged extraction. NOT a survey/boundary determination |
+
+### 11.2 DOF DTM — NYC Open Data layers — AVAILABLE
+
+| Field | Record |
+|---|---|
+| Official source | NYC DOF, Digital Tax Map Collection on NYC Open Data; TAX_LOT_POLYGON dataset `i38t-6if2` (+ sibling layers/tables) |
+| Endpoint URLs | Data `https://data.cityofnewyork.us/resource/i38t-6if2.json` — Metadata `https://data.cityofnewyork.us/api/views/i38t-6if2.json` |
+| Access mode | API (live request) SODA; bulk layer download |
+| Authentication | None; optional Socrata app token (platform baseline) |
+| Published quota / rate limits | Socrata platform baseline (governance rule 5) |
+| Retrieval / refresh cadence | Monthly (DOF); `rowsUpdatedAt`; dataset created 2024-10-16 |
+| Schema | 17 columns (`the_geom, BORO, BLOCK, LOT, BBL, CONDO_FLAG, REUC_FLAG, AIR_LOT_FLAG, SUB_LOT_FLAG, EASEMENT_FLAG, LOT_NOTE, EFFECTIVE_TAX_YEAR, BILL_BBL_FLAG, NYCMAP_BLDG_FLAG, CONVERSION_EXCEPTION_FLAG, VALUE_REFLECTED_OUT_FLAG`); dictionary XLSX `e044ecb0-689c-498c-a7de-432a54cb8c9a` (extraction OQ-A1) |
+| Terms / attribution | NYC Open Data terms; provenance official; DOF |
+| Last policy verification | 2026-08-05 (M2-T014, `api/views`) |
+| Suitability | Live requests + bulk layer download. **Legacy blob `smk3-tmxj` RETIRING by Oct 2025 — do not use** |
+
+### 11.3 DOF tax-map SHEET PDFs (Property Information Portal `map_library`) — RESTRICTED
+
+| Field | Record |
+|---|---|
+| Official source | NYC DOF Property Information Portal, tax-map sheet PDFs `https://propertyinformationportal.nyc.gov/pdf/home/index/map_library/<id>` |
+| Access mode | RESTRICTED — human portal; URL is **generation-stamped, NOT documented as stable**; no API |
+| Authentication | None (viewer) |
+| Observed behavior | One probe HTTP 200 `application/pdf` ~2.0 MB on 2026-08-05 (NOT stored; thin-client budget) |
+| Terms / attribution | Presentation artifact, not machine provenance (governance rule 1) |
+| Disposition | **Manual / where a human obtains the specific sheet**; do NOT enumerate/guess programmatically. Machine geometry channel is §11.1 |
+| Last policy verification | 2026-08-05 (M2-T014) |
+
+### 11.4 ACRIS INDEX metadata — NYC Open Data — AVAILABLE (metadata only)
+
+| Field | Record |
+|---|---|
+| Official source | NYC DOF City Register, ACRIS index on NYC Open Data — Real Property Legals `8h5j-fqxa`, Real Property Master `bnx9-e6tj` (+ Parties/References/Remarks/Doc-Control-Codes family) |
+| Endpoint URLs | `https://data.cityofnewyork.us/resource/8h5j-fqxa.json`, `.../bnx9-e6tj.json` (+ `api/views` for schema) |
+| Access mode | API (live request) SODA |
+| Authentication | None; optional Socrata app token |
+| Published quota / rate limits | Socrata platform baseline (governance rule 5) |
+| Linkage | **Legals = BBL→document_id join** (`borough/block/lot` + `document_id`, ~22.7M rows); Master = document metadata (`document_id, crfn, doc_type, dates, reel_yr/reel_nbr/reel_pg`). **No image URL in any column** |
+| Terms / attribution | NYC Open Data terms; provenance official; DOF. Use for citation/linkage only — never presented as the image |
+| Last policy verification | 2026-08-05 (M2-T014, `api/views` for both) |
+| Suitability | Metadata/linkage: YES. Document image: NO (see §11.5) |
+
+### 11.5 ACRIS document IMAGES — NO AUTHORIZED PROGRAMMATIC ACCESS (SR-S5)
+
+| Field | Record |
+|---|---|
+| Official source | NYC DOF City Register, ACRIS Document Search viewer `https://a836-acris.nyc.gov/DS/DocumentSearch/Index` (scanned recorded instruments; 5 boroughs, Manhattan 1966+, others ~2003+) |
+| Access mode | **NO AUTHORIZED PROGRAMMATIC ACCESS** — viewer only; automated capture **explicitly prohibited** |
+| Authentication | None (public viewer) but automation blocked |
+| Published policy | ACRIS **Bandwidth Notice** references *"detection of automated scripts/robots that are capturing data from the website"* and blocking clients that *"exceeded the bandwidth limits"*; viewer HTTP 307 → `BandwidthPolicy/ACRIS-BW-POL.html` (fixture `acris_viewer_307_headers.txt`, 2026-08-05) |
+| STOP conditions | Automated capture prohibited (**do NOT bypass**); bulk = **paid subscription** (City Register 212-487-6300) → not procured, owner-only |
+| Disposition | **Manual upload required** — human retrieves the image via the viewer under its terms; linkage from §11.4 |
+| Last policy verification | 2026-08-05 (M2-T014) |
+
+### 11.6 DOB plans / site plans / architectural drawings — RESTRICTED → manual upload (SR-S5)
+
+| Field | Record |
+|---|---|
+| Official source | NYC DOB — DOB NOW Public Portal viewer `https://a810-dobnow.nyc.gov/publish/`; BIS microfilm / borough-office records; formal records request |
+| Access mode | **RESTRICTED — no documented API**; viewer-only for *some newer* DOB NOW digital plan uploads; most approved plans only via borough-office microfilm or a formal **records request** |
+| Authentication | Records request requires **eFiling account login** (credentialed) — STOP; not automated |
+| Official guidance | DOB NOW Public Portal manual (`www.nyc.gov/assets/buildings/pdf/DOB_NOW_public_portal_manual.pdf`), DOB Records Request User Guide (`www.nyc.gov/assets/buildings/pdf/records_request_user_guide.pdf`) — search-verified 2026-08-05 |
+| Disposition | **Manual upload required** for the plan/drawing itself; DOB filing **metadata** (registry §6/§7) proves the filing exists and supplies provenance. Do NOT scrape the portal |
+| Document classes served | site plan (4), architectural drawing (5), proposed plan (6), historical filing attachment (7) |
+| Last policy verification | 2026-08-05 (M2-T014) |
+
+### 11.7 Licensed boundary / topographic survey — NO PUBLIC SYSTEM (SR-S5)
+
+| Field | Record |
+|---|---|
+| Official source | Private — survey sealed by a **NYS-licensed land surveyor** (NYS Education Law Article 145); held by owner/surveyor/title/lender |
+| Access mode | **NONE** — no public NYC system holds it (programmatic or otherwise) |
+| Document class | Class 1 — **highest evidentiary weight** for actual boundaries/topography |
+| Disposition | **Manual upload required** — the only path. DTM/MapPLUTO polygons are administrative (class 2), never a substitute. Only in ACRIS if separately recorded as an exhibit, and then viewer-gated (§11.5) |
+| Last policy verification | 2026-08-05 (M2-T014) |
