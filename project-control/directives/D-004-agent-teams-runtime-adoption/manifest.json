@@ -1,7 +1,7 @@
 {
  "schema": "directive_manifest/v1",
  "directive_id": "D-004",
- "version": 26,
+ "version": 27,
  "slug": "agent-teams-runtime-adoption",
  "title": "Agent-teams runtime adoption, staged with pilots",
  "status": "active",
@@ -217,6 +217,14 @@
    "amends": "source-025-amendment.md",
    "recorded_at": "2026-08-04T19:05:00+00:00",
    "content_digest_sha256": "978ab745f925c115de0329a2b0ad3ae295feabaaa0741e190a97be24eb336bd7"
+  },
+  {
+   "file": "source-027-amendment.md",
+   "kind": "amendment",
+   "sequence": 27,
+   "amends": "source-026-amendment.md",
+   "recorded_at": "2026-08-04T21:45:00+00:00",
+   "content_digest_sha256": "37ad1618e161a48800aedce7a4886c16bafd68a8ccd7a6e1f5d163aef6bfb1d4"
   }
  ],
  "amendments": [
@@ -244,7 +252,8 @@
   "source-023-amendment.md",
   "source-024-amendment.md",
   "source-025-amendment.md",
-  "source-026-amendment.md"
+  "source-026-amendment.md",
+  "source-027-amendment.md"
  ],
  "supersedes": [],
  "superseded_by": null,
@@ -503,6 +512,11 @@
    "at": "2026-08-04T19:05:00+00:00",
    "by": "orchestrator",
    "note": "Amendment 26 (source-026-amendment.md): owner evening authorization - orchestrator-role quota-exhausted substitution to claude-opus-4-8 (R746: explicit, first-class event, return at next seam; R747: never silent, orchestrator-role only; R748: reviewer pins unchanged, reviews wait for Fable 5); Fable-5 window LIVE, wait-for-reset lifted (R749); M0-T034 drive-to-submit as normal unit, queues at submit, nothing merges/accepts unattended (R750). Same message captured as D-007 am.11 (R597-R602)."
+  },
+  {
+   "at": "2026-08-04T21:45:00+00:00",
+   "by": "orchestrator",
+   "note": "Amendment 27 (source-027-amendment.md): owner three-part model-chain correction (same message as D-007 am.12; three verbatim bodies byte-identical across both registries). Effective spec = part B + part C: fixed config-defined preference chain claude-fable-5 -> claude-opus-4-8 -> claude-opus-4-7 -> STOP+notify (R751), first-available-wins by ACTUAL LAUNCH PROBE (R752), never by picker/menu (R753), unlisted ids incl. Opus 5 never selectable (R754), chain exhaustion stops+refreshes handoff+notifies and never silently continues (R755), orchestrator-role only (R756), reviewer Fable-5 pins never fall back and wait for reset (R757), chain in immutable owner-editable config (R758), exact claude-opus-4-8 id discipline with the picker/build-label external fact (R759), automatic with no owner tap - superseding the detect-and-hold design (R760). Supervisor-unit/hold rows are D-007 am.12 (R603-R608)."
   }
  ],
  "locked_requirement_ids": [
@@ -1255,8 +1269,18 @@
   "D-004-R747",
   "D-004-R748",
   "D-004-R749",
-  "D-004-R750"
+  "D-004-R750",
+  "D-004-R751",
+  "D-004-R752",
+  "D-004-R753",
+  "D-004-R754",
+  "D-004-R755",
+  "D-004-R756",
+  "D-004-R757",
+  "D-004-R758",
+  "D-004-R759",
+  "D-004-R760"
  ],
- "requirements_id_digest_sha256": "bdd181185f4ee9b2c7f77816a8d2f94cb4a5e30235d554f47fc6cd9686e52aac",
- "requirements_content_digest_sha256": "4a46e5417e0f52e9151d0ac976366d3e0cedee6303907e2f2fd6f27ae06a86ad"
+ "requirements_id_digest_sha256": "4f01d3002696083fce735de07ff93e8a128ff4c7d12708fa8cfface9afd823b8",
+ "requirements_content_digest_sha256": "5582ce7333e7f1623a4ec49e5f6cdc09af11bb5277d360924e6bd2141cfc95c1"
 }

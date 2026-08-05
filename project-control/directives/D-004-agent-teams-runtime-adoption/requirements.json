@@ -1,10 +1,10 @@
 {
  "schema": "directive_requirements/v1",
  "directive_id": "D-004",
- "version": 2,
- "requirement_count": 750,
+ "version": 3,
+ "requirement_count": 760,
  "producer": "orchestrator",
- "updated_at": "2026-08-04T19:05:00+00:00",
+ "updated_at": "2026-08-04T21:45:00+00:00",
  "requirements": [
   {
    "id": "D-004-R001",
@@ -29535,6 +29535,477 @@
     ]
    },
    "amendment_sequence": 26
+  },
+  {
+   "id": "D-004-R751",
+   "text": "FIXED PREFERENCE CHAIN (orchestrator-role model selection): the orchestrator does NOT choose a model by judgment. It walks a fixed, config-defined preference chain, first-available-wins, in exactly this order: claude-fable-5 -> claude-opus-4-8 -> claude-opus-4-7 -> STOP+notify-owner.",
+   "source_ref": "source-027-amendment.md#the-owner-message--part-c-extends-part-b",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T034"
+    ],
+    "task_types": [
+     "governance"
+    ],
+    "milestones": [
+     "M0"
+    ],
+    "paths": [
+     "tools/agent_supervisor/"
+    ],
+    "lifecycle_events": [
+     "claim",
+     "submit",
+     "gate",
+     "accept"
+    ],
+    "effective_date": "2026-08-04"
+   },
+   "dependencies": [
+    "D-004-R746"
+   ],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "captured from the owner three-part model-chain correction (2026-08-04); verified at directive verification",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": [
+     "M0-T036"
+    ]
+   },
+   "amendment_sequence": 27
+  },
+  {
+   "id": "D-004-R752",
+   "text": "AVAILABILITY IS DETERMINED BY ACTUAL LAUNCH PROBE: availability of a chain entry is established by PROBING THE EXACT MODEL ID - attempt the launch and confirm a real process comes up on that id. First-available-wins is decided by that probe, never by inference.",
+   "source_ref": "source-027-amendment.md#the-owner-message--part-c-extends-part-b",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T034"
+    ],
+    "task_types": [
+     "governance"
+    ],
+    "milestones": [
+     "M0"
+    ],
+    "paths": [
+     "tools/agent_supervisor/"
+    ],
+    "lifecycle_events": [
+     "claim",
+     "submit",
+     "gate",
+     "accept"
+    ],
+    "effective_date": "2026-08-04"
+   },
+   "dependencies": [
+    "D-004-R751"
+   ],
+   "required_harness": "launch-probe based availability determination",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "captured from the owner three-part model-chain correction (2026-08-04); verified at directive verification",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": [
+     "M0-T036"
+    ]
+   },
+   "amendment_sequence": 27
+  },
+  {
+   "id": "D-004-R753",
+   "text": "NEVER READ THE PICKER/MENU: availability must NEVER be determined by reading the model picker or menu. Owner-stated basis: the session of 2026-08-04 proved the menu can hide a model that is still usable by explicit string.",
+   "source_ref": "source-027-amendment.md#the-owner-message--part-c-extends-part-b",
+   "classification": "prohibition",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T034"
+    ],
+    "task_types": [
+     "governance"
+    ],
+    "milestones": [
+     "M0"
+    ],
+    "paths": [
+     "tools/agent_supervisor/"
+    ],
+    "lifecycle_events": [
+     "claim",
+     "submit",
+     "gate",
+     "accept"
+    ],
+    "effective_date": "2026-08-04"
+   },
+   "dependencies": [
+    "D-004-R752"
+   ],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "captured from the owner three-part model-chain correction (2026-08-04); verified at directive verification",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": [
+     "M0-T036"
+    ]
+   },
+   "amendment_sequence": 27
+  },
+  {
+   "id": "D-004-R754",
+   "text": "UNLISTED IDS NEVER SELECTABLE: Opus 5 - or any model id not in the chain - is NEVER selectable, regardless of what the picker shows.",
+   "source_ref": "source-027-amendment.md#the-owner-message--part-c-extends-part-b",
+   "classification": "prohibition",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T034"
+    ],
+    "task_types": [
+     "governance"
+    ],
+    "milestones": [
+     "M0"
+    ],
+    "paths": [
+     "tools/agent_supervisor/",
+     ".claude/"
+    ],
+    "lifecycle_events": [
+     "claim",
+     "submit",
+     "gate",
+     "accept"
+    ],
+    "effective_date": "2026-08-04"
+   },
+   "dependencies": [
+    "D-004-R751"
+   ],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "captured from the owner three-part model-chain correction (2026-08-04); verified at directive verification",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": [
+     "M0-T036"
+    ]
+   },
+   "amendment_sequence": 27
+  },
+  {
+   "id": "D-004-R755",
+   "text": "CHAIN EXHAUSTION = STOP + NOTIFY: if no chain entry actually launches, the supervisor STOPS, refreshes SESSION_HANDOFF, and notifies the owner. It NEVER silently continues on an unlisted or substitute model.",
+   "source_ref": "source-027-amendment.md#the-owner-message--part-c-extends-part-b",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T034"
+    ],
+    "task_types": [
+     "governance"
+    ],
+    "milestones": [
+     "M0"
+    ],
+    "paths": [
+     "tools/agent_supervisor/"
+    ],
+    "lifecycle_events": [
+     "claim",
+     "submit",
+     "gate",
+     "accept"
+    ],
+    "effective_date": "2026-08-04"
+   },
+   "dependencies": [
+    "D-004-R751"
+   ],
+   "required_harness": "",
+   "required_evidence": "stop + handoff refresh + owner notification on full chain exhaustion; no silent continuation path",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "captured from the owner three-part model-chain correction (2026-08-04); verified at directive verification",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": [
+     "M0-T036"
+    ]
+   },
+   "amendment_sequence": 27
+  },
+  {
+   "id": "D-004-R756",
+   "text": "ORCHESTRATOR-ROLE ONLY: the preference chain and the Fable-exhaustion auto-switch govern ORCHESTRATOR-ROLE sessions only. No other role auto-switches.",
+   "source_ref": "source-027-amendment.md#the-owner-message--part-c-extends-part-b",
+   "classification": "prohibition",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T034"
+    ],
+    "task_types": [
+     "governance"
+    ],
+    "milestones": [
+     "M0"
+    ],
+    "paths": [
+     "tools/agent_supervisor/"
+    ],
+    "lifecycle_events": [
+     "claim",
+     "submit",
+     "gate",
+     "accept"
+    ],
+    "effective_date": "2026-08-04"
+   },
+   "dependencies": [
+    "D-004-R751",
+    "D-004-R747"
+   ],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "captured from the owner three-part model-chain correction (2026-08-04); verified at directive verification",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": [
+     "M0-T036"
+    ]
+   },
+   "amendment_sequence": 27
+  },
+  {
+   "id": "D-004-R757",
+   "text": "REVIEWER PINS NEVER FALL BACK (restated and reinforced): reviewer Fable-5 pins do not fall back and instead WAIT for the window reset. The chain never applies to a reviewer.",
+   "source_ref": "source-027-amendment.md#the-owner-message--part-c-extends-part-b",
+   "classification": "prohibition",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T034"
+    ],
+    "task_types": [
+     "governance"
+    ],
+    "milestones": [
+     "M0"
+    ],
+    "paths": [
+     ".claude/agents/"
+    ],
+    "lifecycle_events": [
+     "claim",
+     "submit",
+     "gate",
+     "accept"
+    ],
+    "effective_date": "2026-08-04"
+   },
+   "dependencies": [
+    "D-004-R748"
+   ],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "captured from the owner three-part model-chain correction (2026-08-04); verified at directive verification",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": [
+     "M0-T036"
+    ]
+   },
+   "amendment_sequence": 27
+  },
+  {
+   "id": "D-004-R758",
+   "text": "CHAIN LIVES IN IMMUTABLE CONFIG, OWNER-EDITABLE ONLY: the chain and its order live in the immutable supervisor config and are owner-editable only.",
+   "source_ref": "source-027-amendment.md#the-owner-message--part-c-extends-part-b",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T034"
+    ],
+    "task_types": [
+     "governance"
+    ],
+    "milestones": [
+     "M0"
+    ],
+    "paths": [
+     "tools/agent_supervisor/"
+    ],
+    "lifecycle_events": [
+     "claim",
+     "submit",
+     "gate",
+     "accept"
+    ],
+    "effective_date": "2026-08-04"
+   },
+   "dependencies": [
+    "D-004-R751"
+   ],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "captured from the owner three-part model-chain correction (2026-08-04); verified at directive verification",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": [
+     "M0-T036"
+    ]
+   },
+   "amendment_sequence": 27
+  },
+  {
+   "id": "D-004-R759",
+   "text": "EXACT MODEL ID DISCIPLINE: keep the exact id claude-opus-4-8 everywhere (.claude/settings.json and every Opus-pinned agent file); do not let anything resolve to opus-5. Owner-stated external fact: Opus 4.8 left the picker because Claude Code updated past the Opus 5 release - a build/label change, not this repository's config and unrelated to the Fable limit.",
+   "source_ref": "source-027-amendment.md#the-owner-message--part-a-first-item-2-superseded-by-part-b",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T034"
+    ],
+    "task_types": [
+     "governance"
+    ],
+    "milestones": [
+     "M0"
+    ],
+    "paths": [
+     ".claude/agents/",
+     ".claude/settings.json"
+    ],
+    "lifecycle_events": [
+     "claim",
+     "submit",
+     "gate",
+     "accept"
+    ],
+    "effective_date": "2026-08-04"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "on-disk verbatim pins: 19 producer agent files + settings default",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "captured from the owner three-part model-chain correction (2026-08-04); verified at directive verification",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": [
+     "M0-T036"
+    ]
+   },
+   "amendment_sequence": 27
+  },
+  {
+   "id": "D-004-R760",
+   "text": "AUTOMATIC, NO OWNER TAP (supersedes the detect-and-hold design): when an orchestrator-role session hits the Fable-5 account-quota-exhausted pause, the supervisor IMMEDIATELY relaunches the SAME session's continuation on claude-opus-4-8 and proceeds - detect-and-switch. Owner's stated basis: Opus 4.8 is the pre-authorized destination and there is nothing for the owner to decide at that moment.",
+   "source_ref": "source-027-amendment.md#the-owner-message--part-b-supersedes-part-a-item-2",
+   "classification": "authorization",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T034"
+    ],
+    "task_types": [
+     "governance"
+    ],
+    "milestones": [
+     "M0"
+    ],
+    "paths": [
+     "tools/agent_supervisor/"
+    ],
+    "lifecycle_events": [
+     "claim",
+     "submit",
+     "gate",
+     "accept"
+    ],
+    "effective_date": "2026-08-04"
+   },
+   "dependencies": [
+    "D-004-R746"
+   ],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "captured from the owner three-part model-chain correction (2026-08-04); verified at directive verification",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": [
+     "M0-T036"
+    ]
+   },
+   "amendment_sequence": 27
   }
  ],
  "amendments_applied": [
@@ -29562,6 +30033,7 @@
   "source-023-amendment.md",
   "source-024-amendment.md",
   "source-025-amendment.md",
-  "source-026-amendment.md"
+  "source-026-amendment.md",
+  "source-027-amendment.md"
  ]
 }

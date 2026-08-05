@@ -1,7 +1,7 @@
 {
  "schema": "directive_manifest/v1",
  "directive_id": "D-007",
- "version": 12,
+ "version": 13,
  "slug": "codex-claude-supervisor-bridge",
  "title": "Codex-Claude Code Supervisor Bridge (v4.3, Autonomy-Tuned) - build directive",
  "status": "active",
@@ -105,6 +105,14 @@
    "amends": "source-011-amendment.md",
    "recorded_at": "2026-08-04T19:05:00+00:00",
    "content_digest_sha256": "1dc7c925014a023712b91eca50bdfeef887a649593f6a38e85d02b18a6517390"
+  },
+  {
+   "file": "source-013-amendment.md",
+   "kind": "amendment",
+   "sequence": 13,
+   "amends": "source-012-amendment.md",
+   "recorded_at": "2026-08-04T21:45:00+00:00",
+   "content_digest_sha256": "ac5c1cbc697c33141628e5558cc0d21928d58e805eb3adb802e6f9455c9bd806"
   }
  ],
  "amendments": [
@@ -118,7 +126,8 @@
   "source-009-amendment.md",
   "source-010-amendment.md",
   "source-011-amendment.md",
-  "source-012-amendment.md"
+  "source-012-amendment.md",
+  "source-013-amendment.md"
  ],
  "supersedes": [],
  "superseded_by": null,
@@ -235,6 +244,11 @@
    "at": "2026-08-04T19:05:00+00:00",
    "by": "orchestrator",
    "note": "Amendment 11 (source-012-amendment.md): owner evening authorization - model-policy correction folded into V1.2 with dedicated test before freeze (R597; R598: orchestrator-role quota-exhausted relaunch on claude-opus-4-8, first-class event, return at next seam, never silent; reviewer pins unchanged, reviews wait); Fable-5 window LIVE - dispatch V1.2 delta re-gate + held G2 wave immediately after exercises+freeze (R599); rehearsal/activation still NOT authorized, shadow-only (R600); unattended discipline (R601); SESSION_HANDOFF refresh return item (R602). Same message captured as D-004 am.26 (R746-R750, incl. M0-T034 drive-to-submit)."
+  },
+  {
+   "at": "2026-08-04T21:45:00+00:00",
+   "by": "orchestrator",
+   "note": "Amendment 12 (source-013-amendment.md): owner three-part model-chain correction, all three parts preserved verbatim in arrival order. INTERNAL SUPERSESSION: part B reverses part A item (2) - detect-and-HOLD is SUPERSEDED and must not be built (R603); the effective spec is part B as extended by part C (detect-and-SWITCH, automatic, fixed config chain). V1.2.2 re-scoped to detect-and-switch actuation (R604); hard requirement that the relaunch ACTUALLY launches a real process on claude-opus-4-8 with a test proving it, not an event (R605); distinct triggers, do not conflate with 400k rotation or security downgrade (R606); Fable-5 re-review HELD until the owner says the window reset, stated as Thursday (R607); return item confirming the 19+1 pins verbatim and reporting claude --version / /model resolution (R608). Model-chain rows are D-004 am.27 (R751-R760)."
   }
  ],
  "locked_requirement_ids": [
@@ -839,8 +853,14 @@
   "D-007-R599",
   "D-007-R600",
   "D-007-R601",
-  "D-007-R602"
+  "D-007-R602",
+  "D-007-R603",
+  "D-007-R604",
+  "D-007-R605",
+  "D-007-R606",
+  "D-007-R607",
+  "D-007-R608"
  ],
- "requirements_id_digest_sha256": "828b825fd897dec846081ef19d1e80eda26f3904cb538826b05691da697552b9",
- "requirements_content_digest_sha256": "06c0fe057a4b41e5d68455ee0451236562be56408fc6eb7e023b19299d0f0652"
+ "requirements_id_digest_sha256": "a7fa16c24046253842c05fbb115bb795673c277b91909069cd37827c08e2a7b2",
+ "requirements_content_digest_sha256": "1b33ad88a7727a8149a736a5127e9eaee6943ed85eceb3e0b1521c283d204010"
 }

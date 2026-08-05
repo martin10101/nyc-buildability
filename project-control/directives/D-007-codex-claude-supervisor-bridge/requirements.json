@@ -1,10 +1,10 @@
 {
  "schema": "directive_requirements/v1",
  "directive_id": "D-007",
- "version": 2,
- "requirement_count": 602,
+ "version": 3,
+ "requirement_count": 608,
  "producer": "orchestrator",
- "updated_at": "2026-08-04T19:05:00+00:00",
+ "updated_at": "2026-08-04T21:45:00+00:00",
  "requirements": [
   {
    "id": "D-007-R001",
@@ -23083,6 +23083,262 @@
     ]
    },
    "amendment_sequence": 11
+  },
+  {
+   "id": "D-007-R603",
+   "text": "SUPERSESSION (within the same owner turn): part A item (2)'s DETECT-AND-HOLD design - dispatch nothing new, finish in-flight bounded, refresh handoff, notify the owner on the phone bridge with a 'Fable exhausted - reply to continue on claude-opus-4-8' prompt, proceed only on the owner's reply - is SUPERSEDED by part B and MUST NOT be built. There is no owner tap at switch time.",
+   "source_ref": "source-013-amendment.md#the-owner-message--part-b-supersedes-part-a-item-2",
+   "classification": "prohibition",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-007-BUILD",
+     "M0-T036"
+    ],
+    "task_types": [
+     "governance"
+    ],
+    "milestones": [],
+    "paths": [
+     "tools/agent_supervisor/"
+    ],
+    "lifecycle_events": [
+     "gate"
+    ],
+    "effective_date": "2026-08-04"
+   },
+   "dependencies": [
+    "D-007-R598"
+   ],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "captured from the owner three-part model-chain correction (2026-08-04); verified at directive verification",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": [
+     "M0-T036"
+    ]
+   },
+   "amendment_sequence": 12
+  },
+  {
+   "id": "D-007-R604",
+   "text": "V1.2.2 RE-SCOPE: the record-only substitution defect G4 caught STAYS in rework, and its fix is re-scoped to DETECT-AND-SWITCH actuation (per part B), not detect-and-hold actuation and not the earlier silent-substitution spec.",
+   "source_ref": "source-013-amendment.md#the-owner-message--part-b-supersedes-part-a-item-2",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-007-BUILD",
+     "M0-T036"
+    ],
+    "task_types": [
+     "governance"
+    ],
+    "milestones": [],
+    "paths": [
+     "tools/agent_supervisor/"
+    ],
+    "lifecycle_events": [
+     "gate"
+    ],
+    "effective_date": "2026-08-04"
+   },
+   "dependencies": [
+    "D-007-R603"
+   ],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "captured from the owner three-part model-chain correction (2026-08-04); verified at directive verification",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": [
+     "M0-T036"
+    ]
+   },
+   "amendment_sequence": 12
+  },
+  {
+   "id": "D-007-R605",
+   "text": "HARD ACTUATION REQUIREMENT (the owner's 'one hard requirement'): the relaunch must ACTUALLY launch the worker/continuation on the effective model (claude-opus-4-8), not merely write an audit record. The acceptance test must PROVE A REAL PROCESS CAME UP on 4.8 after a simulated Fable-exhaustion - proving only that a switch event was written is explicitly insufficient.",
+   "source_ref": "source-013-amendment.md#the-owner-message--part-b-supersedes-part-a-item-2",
+   "classification": "evidence",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-007-BUILD",
+     "M0-T036"
+    ],
+    "task_types": [
+     "governance"
+    ],
+    "milestones": [],
+    "paths": [
+     "tools/agent_supervisor/",
+     "tools/test_agent_supervisor_"
+    ],
+    "lifecycle_events": [
+     "gate"
+    ],
+    "effective_date": "2026-08-04"
+   },
+   "dependencies": [
+    "D-007-R604"
+   ],
+   "required_harness": "acceptance test proving a real launched process on claude-opus-4-8 after simulated Fable-5 exhaustion (effective launched model, not the audit record)",
+   "required_evidence": "test asserting the effective launched model/argv of a real process, not an event payload",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "captured from the owner three-part model-chain correction (2026-08-04); verified at directive verification",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": [
+     "M0-T036"
+    ]
+   },
+   "amendment_sequence": 12
+  },
+  {
+   "id": "D-007-R606",
+   "text": "DISTINCT TRIGGERS - DO NOT CONFLATE: the Fable-exhaustion auto-switch is a DISTINCT trigger from (a) the 400k context-rotation (already built) and (b) a mid-task security downgrade. Each keeps its own trigger, semantics, and records.",
+   "source_ref": "source-013-amendment.md#the-owner-message--part-b-supersedes-part-a-item-2",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-007-BUILD",
+     "M0-T036"
+    ],
+    "task_types": [
+     "governance"
+    ],
+    "milestones": [],
+    "paths": [
+     "tools/agent_supervisor/"
+    ],
+    "lifecycle_events": [
+     "gate"
+    ],
+    "effective_date": "2026-08-04"
+   },
+   "dependencies": [
+    "D-007-R604"
+   ],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "captured from the owner three-part model-chain correction (2026-08-04); verified at directive verification",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": [
+     "M0-T036"
+    ]
+   },
+   "amendment_sequence": 12
+  },
+  {
+   "id": "D-007-R607",
+   "text": "HOLD (owner-gated): do NOT dispatch the Fable-5 re-review of any of this work until the owner says the Fable 5 window is reset - the owner states it resets Thursday. The hold covers the fresh G3/G4 verdicts over the V1.2.2 rework and any other Fable-5-pinned review of it.",
+   "source_ref": "source-013-amendment.md#the-owner-message--part-b-supersedes-part-a-item-2",
+   "classification": "hold",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-007-BUILD",
+     "M0-T036"
+    ],
+    "task_types": [
+     "governance"
+    ],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [
+     "gate"
+    ],
+    "effective_date": "2026-08-04"
+   },
+   "dependencies": [
+    "D-007-R599"
+   ],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "captured from the owner three-part model-chain correction (2026-08-04); verified at directive verification",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": [
+     "M0-T036"
+    ]
+   },
+   "amendment_sequence": 12
+  },
+  {
+   "id": "D-007-R608",
+   "text": "RETURN ITEM (part A item (1)): confirm ON DISK that all 19 producer pins and the settings default still read the exact id claude-opus-4-8 verbatim, and report the `claude --version` output and whether `/model claude-opus-4-8` resolves.",
+   "source_ref": "source-013-amendment.md#the-owner-message--part-a-first-item-2-superseded-by-part-b",
+   "classification": "return",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-007-BUILD",
+     "M0-T036"
+    ],
+    "task_types": [
+     "governance"
+    ],
+    "milestones": [],
+    "paths": [
+     ".claude/agents/",
+     ".claude/settings.json"
+    ],
+    "lifecycle_events": [
+     "gate"
+    ],
+    "effective_date": "2026-08-04"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "on-disk pin audit of .claude/agents/*.md + .claude/settings.json; claude --version output; observed /model resolution result",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "captured from the owner three-part model-chain correction (2026-08-04); verified at directive verification",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": [
+     "M0-T036"
+    ]
+   },
+   "amendment_sequence": 12
   }
  ],
  "amendments_applied": [
@@ -23096,6 +23352,7 @@
   "source-009-amendment.md",
   "source-010-amendment.md",
   "source-011-amendment.md",
-  "source-012-amendment.md"
+  "source-012-amendment.md",
+  "source-013-amendment.md"
  ]
 }
