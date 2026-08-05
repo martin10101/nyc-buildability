@@ -68,11 +68,13 @@ from .broker import ApprovalBroker, BrokerError, build_request
 from .circuit_breakers import CircuitBreakers
 from .claude_runner import (
     CONTROL_RESPONSE_WRAPPER_VERIFIED,
+    QUOTA_EXHAUSTION_SIGNAL_VERIFIED,
     ClaudeRunner,
     RunnerConfig,
     RunnerError,
     build_argv as build_claude_argv,
     build_control_response,
+    make_launch_probe,
 )
 from .codex_reviewer import (
     CodexReviewer,
@@ -80,6 +82,7 @@ from .codex_reviewer import (
     build_argv as build_codex_argv,
 )
 from .config import (
+    DEFAULT_ORCHESTRATOR_MODEL_CHAIN,
     ConfigError,
     Limits,
     load_controller_config,
@@ -107,10 +110,12 @@ from .loop import (
     DEFAULT_OWNER_TOUCH_BUDGET,
     MODE_SUPERVISED,
     RUNNABLE_MODES,
+    SESSION_ROLE_ORCHESTRATOR,
     LimitedAutoRefused,
     LoopConfig,
     LoopError,
     SupervisedLoop,
+    effective_model,
 )
 from .locking import SingleInstanceLock, assess as assess_lock, probe_process
 from .manifest import MODEL_SELECTION_FILENAME, generate_manifest, read_manifest, verify_manifest
@@ -227,6 +232,11 @@ AUDIT_FILENAME = "audit.jsonl"
 #: Phase 4: every S12.1 command is live. `cmd_deferred` stays as the refusal path
 #: so that adding a command without implementing it cannot silently no-op.
 DEFERRED_COMMANDS: dict[str, str] = {}
+
+#: Bound on ONE model launch probe (D-004-R752). A probe only has to establish
+#: "did a real process come up reporting this exact id", so it is bounded far
+#: below the unit timeout: a seam must not stall on an unresponsive launch.
+MODEL_PROBE_TIMEOUT_SECONDS = 120.0
 
 
 # --------------------------------------------------------------------------
@@ -613,6 +623,21 @@ def _check_control_response_disclosure() -> Check:
         f"probe recorded the control REQUEST payload verbatim and a successful deny "
         f"round-trip, but not the exact response wrapper bytes - a preflight round-trip "
         f"probe must confirm it before any live worker run")
+
+
+def _check_model_chain_disclosure() -> Check:
+    """State how a model switch decides availability, and what is NOT verified."""
+    status = "VERIFIED" if QUOTA_EXHAUSTION_SIGNAL_VERIFIED else "UNVERIFIED"
+    return Check(
+        "model_chain_availability", True,
+        f"orchestrator-role model selection walks the fixed [model_chain] preference chain "
+        f"(default {list(DEFAULT_ORCHESTRATOR_MODEL_CHAIN)}) and decides availability ONLY by "
+        f"an actual launch probe of the exact id - no model picker or menu is read, and an id "
+        f"outside the chain is never selectable. Live-CLI account-quota signal status: "
+        f"{status}. The exact stderr/exit code the installed CLI emits on account-quota "
+        f"exhaustion has not been captured from a live exhaustion, so the probe never infers "
+        f"that reason: an unclassified failure stays 'unknown', which is not quota exhaustion "
+        f"and keeps the fail-closed pause")
 
 
 def _check_codex_adapter() -> Check:
@@ -1151,6 +1176,7 @@ def cmd_doctor(args: argparse.Namespace) -> int:
         _check_approval_binding(checkout),
         _check_claude_adapter(),
         _check_control_response_disclosure(),
+        _check_model_chain_disclosure(),
         _check_codex_adapter(),
         _check_push_policy(),
         _check_external_effects(),
@@ -1962,12 +1988,17 @@ def _run_loop(args: argparse.Namespace, checkout: pathlib.Path,
     # what the stream is VERIFIED against on every event; it equals the pinned
     # model unless a synthetic mismatch probe overrides it (never in production).
     pinned_model = selection.selection("claude").primary
-    expected_model = args.expected_worker_model or pinned_model
-    runner = ClaudeRunner(
-        RunnerConfig(executable=args.claude_executable, cwd=str(worktree),
-                     max_turns=args.max_turns, timeout_seconds=args.unit_timeout,
-                     model=pinned_model, expected_model=expected_model),
-        audit=audit, run_id=run_id)
+    # D-007-R605 (crash resume): a durable orchestrator-role model switch outlives
+    # the process. Rebuilding the runner on the PIN here would relaunch the resumed
+    # run on the exhausted model while its records said otherwise, so the launch
+    # config is built from the EFFECTIVE model - the pin unless a switch is active.
+    launch_model = effective_model(journal, run_id, pinned_model)
+    expected_model = args.expected_worker_model or launch_model
+    runner_config = RunnerConfig(
+        executable=args.claude_executable, cwd=str(worktree),
+        max_turns=args.max_turns, timeout_seconds=args.unit_timeout,
+        model=launch_model, expected_model=expected_model)
+    runner = ClaudeRunner(runner_config, audit=audit, run_id=run_id)
     reviewer = CodexReviewer(
         args.codex_executable, repo=str(repo),
         schema_path=str(PACKAGE_ROOT / "schemas" / "codex_decision.schema.json"),
@@ -1992,6 +2023,17 @@ def _run_loop(args: argparse.Namespace, checkout: pathlib.Path,
         if getattr(args, "context_rotation_threshold", None) is not None
         else rotation_thresholds.context_rotation_threshold)
 
+    # D-004-R752/R753/R756: availability is decided by an ACTUAL LAUNCH PROBE of
+    # the exact model id, never by reading a model picker. The probe is wired for
+    # ORCHESTRATOR-ROLE sessions only; every other session keeps the previous
+    # seam default, so the reviewer and worker paths are untouched.
+    session_role = args.session_role or ""
+    model_available = None
+    if session_role == SESSION_ROLE_ORCHESTRATOR:
+        model_available = make_launch_probe(
+            runner_config, timeout_seconds=MODEL_PROBE_TIMEOUT_SECONDS,
+            audit=audit, run_id=run_id)
+
     loop = SupervisedLoop(
         config=LoopConfig(
             mode=args.mode, task_id=str(packet.get("task_id", "")),
@@ -2003,12 +2045,16 @@ def _run_loop(args: argparse.Namespace, checkout: pathlib.Path,
             # D-004 am.26 / D-007 am.11: orchestrator-continuity role, default
             # absent. Only an orchestrator-role session substitutes the pinned
             # model (and only for quota exhaustion); the worker default pauses.
-            session_role=(args.session_role or "")),
+            session_role=session_role),
         journal=journal, audit=audit, machine=machine, authority=authority,
         runner=runner, reviewer=reviewer, run_id=run_id, collector=collector,
         broker=broker, breakers=breakers,
         pinned_model=pinned_model,
         context_rotation_threshold=context_rotation_threshold,
+        # D-004-R751/R758: the FIXED preference chain, straight out of the
+        # IMMUTABLE controller config. Owner-editable only; never a runtime value.
+        model_chain=config.model_chain,
+        model_available=model_available,
         approval_gate=(lambda digest, _prompt: digest in approved))
     return loop.run(args.prompt).to_dict()
 
@@ -2270,16 +2316,21 @@ def build_parser() -> argparse.ArgumentParser:
                             "downgrade on a synthetic unit; the worker still LAUNCHES on the "
                             "real primary, so nothing runs on an unavailable model")
     start.add_argument("--session-role", choices=["orchestrator"], default=None,
-                       help="D-004 am.26 / D-007 am.11 ORCHESTRATOR-CONTINUITY role - NOT "
+                       help="D-004 am.26 / D-007 am.11-12 ORCHESTRATOR-CONTINUITY role - NOT "
                             "the worker default. Set to 'orchestrator' ONLY for the "
                             "orchestrator (main) session: when the pinned Fable-5 model's "
                             "quota is exhausted at a rotation seam, an orchestrator-role "
-                            "session relaunches EXPLICITLY on the substitute model "
-                            "claude-opus-4-8 (recorded as a first-class model_substitution "
-                            "event) and returns to the pinned model at the next seam it is "
-                            "available. Absent = the worker default, which PAUSES for the "
-                            "owner instead of ever substituting a pinned model. Reviewer "
-                            "pins are never affected")
+                            "session walks the FIXED [model_chain] preference chain from the "
+                            "immutable config (default claude-fable-5 -> claude-opus-4-8 -> "
+                            "claude-opus-4-7), decides availability by an ACTUAL LAUNCH "
+                            "PROBE of each exact id (never by reading a model picker), and "
+                            "relaunches EXPLICITLY on the first entry that really launches - "
+                            "recorded as a first-class model_substitution event - returning "
+                            "to the pinned model at the next seam it is available. If NO "
+                            "chain entry launches the session STOPS and notifies the owner; "
+                            "an id outside the chain is never selectable. Absent = the "
+                            "worker default, which PAUSES for the owner instead of ever "
+                            "substituting a pinned model. Reviewer pins are never affected")
     start.set_defaults(func=cmd_start)
 
     pending = sub.add_parser("pending-approvals",

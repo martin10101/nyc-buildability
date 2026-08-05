@@ -71,6 +71,21 @@ _RUNTIME_ONLY_KEYS = frozenset({
     "review_model", "advisory_model", "model", "fallback_models",
 })
 
+#: D-004-R751/R754/R758: the FIXED orchestrator-role model preference chain, in
+#: order. It is owner policy, so it lives in the IMMUTABLE controller config
+#: ([model_chain] below) and is owner-editable only; this tuple is the
+#: fail-closed default used when the section is absent, and it matches the order
+#: the owner named exactly. The ids are EXACT strings: nothing here normalizes,
+#: aliases, or resolves an id, so no entry can ever become a different model
+#: (notably never "claude-opus-5" - an id outside this chain is never selectable
+#: regardless of what a model picker shows).
+DEFAULT_ORCHESTRATOR_MODEL_CHAIN: tuple[str, ...] = (
+    "claude-fable-5", "claude-opus-4-8", "claude-opus-4-7",
+)
+
+#: The one key `[model_chain]` carries.
+_MODEL_CHAIN_KEY = "orchestrator_preference"
+
 
 class ConfigError(ValueError):
     """A configuration file was rejected. Always fail closed, never default."""
@@ -196,6 +211,55 @@ class Limits:
 
 
 @dataclasses.dataclass(frozen=True)
+class ModelChain:
+    """The FIXED orchestrator-role model preference chain (D-004-R751/R758).
+
+    Owner policy, not a judgement: an orchestrator-role session walks THIS list
+    in THIS order, first-available-wins, availability decided by an actual launch
+    probe (never by reading a model picker - D-004-R752/R753). An id that is not
+    in the list is never selectable (D-004-R754), and when no entry launches the
+    supervisor stops and notifies the owner rather than continuing on a
+    substitute (D-004-R755).
+
+    Immutable, and read only from the immutable controller config, so a runtime
+    file can never widen or reorder it.
+    """
+
+    entries: tuple[str, ...] = DEFAULT_ORCHESTRATOR_MODEL_CHAIN
+
+    def __post_init__(self) -> None:
+        if not self.entries:
+            raise ConfigError(
+                "empty_model_chain",
+                f"[model_chain] {_MODEL_CHAIN_KEY} must name at least one model; an empty "
+                f"chain would leave an orchestrator-role session with nothing to launch")
+
+    def __contains__(self, model: object) -> bool:
+        """EXACT string membership. No normalization, no aliasing, no prefixes."""
+        return any(model == entry for entry in self.entries)
+
+    def index_of(self, model: str) -> int:
+        """The position of `model` in the chain, or -1 when it is not listed."""
+        for position, entry in enumerate(self.entries):
+            if entry == model:
+                return position
+        return -1
+
+    def candidates_after(self, model: str) -> tuple[str, ...]:
+        """The chain entries to try after `model` failed, in chain order.
+
+        When `model` IS in the chain the walk resumes at the next entry. When it
+        is not (a pin the owner did not list), the walk starts at the head of the
+        chain but never re-offers the id that just failed. Either way every
+        returned id came out of the chain, so nothing outside it is selectable.
+        """
+        position = self.index_of(model)
+        if position >= 0:
+            return self.entries[position + 1:]
+        return tuple(entry for entry in self.entries if entry != model)
+
+
+@dataclasses.dataclass(frozen=True)
 class ControllerConfig:
     """Parsed immutable controller configuration (manifest-covered)."""
 
@@ -205,6 +269,9 @@ class ControllerConfig:
     limits: Limits
     source_path: str
     raw: dict[str, Any] = dataclasses.field(default_factory=dict, repr=False)
+    #: D-004-R751/R758. Defaults to the fail-closed chain when `[model_chain]` is
+    #: absent, so a config that predates this section still has the owner's order.
+    model_chain: ModelChain = dataclasses.field(default_factory=ModelChain)
 
     def allowlist(self, provider: str) -> tuple[str, ...]:
         """The allowlist for ONE provider. Never merged across providers."""
@@ -269,6 +336,8 @@ def load_controller_config(path: str | os.PathLike[str]) -> ControllerConfig:
         raise ConfigError("bad_section", "[limits] must be a table", source)
     limits = Limits.from_mapping(limits_section, source)
 
+    model_chain = _load_model_chain(data, source)
+
     return ControllerConfig(
         codex_allowed_models=codex_allowed,
         claude_allowed_models=claude_allowed,
@@ -276,7 +345,43 @@ def load_controller_config(path: str | os.PathLike[str]) -> ControllerConfig:
         limits=limits,
         source_path=source,
         raw=data,
+        model_chain=model_chain,
     )
+
+
+def _load_model_chain(data: Mapping[str, Any], source: str) -> ModelChain:
+    """Read `[model_chain]` out of the immutable controller config (D-004-R758).
+
+    Absent -> the fail-closed default chain, in the owner's order. Present but
+    malformed -> refused; the chain is never silently repaired, reordered, or
+    partially applied, because a wrong chain is a wrong model selection.
+    """
+    section = data.get("model_chain", None)
+    if section is None:
+        return ModelChain()
+    if not isinstance(section, Mapping):
+        raise ConfigError("bad_section", "[model_chain] must be a table", source)
+    unknown = sorted(set(section) - {_MODEL_CHAIN_KEY})
+    if unknown:
+        raise ConfigError("unknown_model_chain_key",
+                          f"unrecognized [model_chain] keys: {unknown}; the only key is "
+                          f"{_MODEL_CHAIN_KEY!r}", source)
+    if _MODEL_CHAIN_KEY not in section:
+        raise ConfigError(
+            "missing_model_chain",
+            f"[model_chain] must declare {_MODEL_CHAIN_KEY} (the ordered list of models an "
+            f"orchestrator-role session may launch on); omit the whole section to accept "
+            f"the default chain {list(DEFAULT_ORCHESTRATOR_MODEL_CHAIN)}", source)
+    entries = _require_string_list(section[_MODEL_CHAIN_KEY],
+                                   f"model_chain.{_MODEL_CHAIN_KEY}", source)
+    for entry in entries:
+        if entry != entry.strip():
+            raise ConfigError(
+                "bad_model_name",
+                f"model_chain.{_MODEL_CHAIN_KEY} entry {entry!r} carries surrounding "
+                f"whitespace; chain ids are used verbatim as the launched --model and are "
+                f"never trimmed, normalized, or aliased", source)
+    return ModelChain(entries=entries)
 
 
 # --------------------------------------------------------------------------

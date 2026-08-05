@@ -53,8 +53,9 @@ from typing import Any, Callable, Mapping, Sequence
 
 from . import CONTROLLER_VERSION
 from . import rotation
-from .claude_runner import broker_permission_handler
+from .claude_runner import QUOTA_EXHAUSTED_REASON, broker_permission_handler
 from .codex_reviewer import build_forwarded_prompt
+from .config import DEFAULT_ORCHESTRATOR_MODEL_CHAIN, ModelChain
 from .durable_state import JournalError
 from .evidence import STOP_FOR_OWNER, build_packet
 from .models import ClaudeCheckpoint, CodexDecision, QueuedAsk, digest_of, to_utc_iso
@@ -121,22 +122,55 @@ CYCLE_ENTRY_STATES: frozenset[str] = frozenset({PREFLIGHT, CLAUDE_RUNNING})
 # PAUSES for the owner (never a silent substitute). This is the ONE authorized
 # exception, and it is deliberately narrow. When the orchestrator-role session's
 # pinned model (Fable 5) is unavailable SPECIFICALLY because its quota is
-# exhausted, the seam relaunches EXPLICITLY on the substitute model below,
-# records the substitution as a first-class event, and returns to the pinned
-# model at the next seam it is available. It is never silent, it applies to the
-# orchestrator role only, and it never touches the reviewer pins (reviews wait
-# for Fable 5 rather than fall back - see codex_reviewer.py, untouched here).
+# exhausted, the seam walks the FIXED owner-configured preference chain and
+# relaunches EXPLICITLY on the first entry that ACTUALLY launches, records the
+# switch as a first-class event, and returns to the pinned model at the next seam
+# it is available. It is never silent, it applies to the orchestrator role only,
+# and it never touches the reviewer pins (reviews wait for Fable 5 rather than
+# fall back - see codex_reviewer.py, untouched here).
+#
+# D-004-R751/R754/R758 (owner correction, D-007 am.12): the orchestrator does NOT
+# choose a model by judgement. It walks the chain in the config, in order,
+# first-available-wins, availability decided by an ACTUAL LAUNCH PROBE of the
+# exact id (D-004-R752/R753) - never by reading a model picker, which can hide a
+# model that is still usable by string. An id outside the chain is never
+# selectable, and chain exhaustion STOPS and notifies the owner (D-004-R755); it
+# never silently continues on an unlisted or substitute model.
+#
+# D-007-R606: this trigger is DISTINCT from the 400k context rotation and from a
+# mid-task security downgrade. They share this one seam actuator - the safe place
+# where no unit is in flight - and nothing else: separate triggers, separate
+# reason codes, separate records.
 
-#: The ONLY substitute an orchestrator-role session may relaunch on, and only for
-#: quota exhaustion. It is an EXPLICIT model selection on the relaunched runner
-#: config - never inherited, never an account default - and it is not configurable
-#: beyond this named constant (D-004 am.26 / D-007 am.11).
-SUBSTITUTE_MODEL = "claude-opus-4-8"
+#: The fail-closed default chain, defined once in config.py and re-exported here
+#: for callers that build a loop without a controller config.
+DEFAULT_MODEL_CHAIN: tuple[str, ...] = DEFAULT_ORCHESTRATOR_MODEL_CHAIN
 
-#: The one availability reason_code that authorizes the substitution. Any other
-#: reason (unknown, error, a bare False with no reason) is NOT quota exhaustion
-#: and keeps the pause behaviour: fail closed.
-QUOTA_EXHAUSTED_REASON = "quota_exhausted"
+# `QUOTA_EXHAUSTED_REASON` is imported from claude_runner and re-exported here: it
+# is the ONE availability reason_code that authorizes a chain step, and the probe
+# that produces it and the seam that consumes it must not be able to drift apart.
+# Any other reason (unknown, error, a bare False with no reason) is NOT quota
+# exhaustion and keeps the fail-closed pause.
+
+#: The stop code when NO chain entry actually launches (D-004-R755).
+CHAIN_EXHAUSTED_STOP = "model_chain_exhausted"
+
+
+def effective_model(journal: Any, run_id: str, pinned_model: str) -> str:
+    """The model this run is ACTUALLY on right now (D-007-R605).
+
+    The pinned model unless a durable orchestrator-role switch is active, in
+    which case it is the chain entry that switch selected. Read from the journal
+    so a process restart rebuilds the runner on the model the run is really on
+    rather than silently reverting to an exhausted pin - the crash-resume half of
+    "the switch must reach the actuation".
+    """
+    record = journal.get_state(f"model_substitution/{run_id}", None)
+    if isinstance(record, Mapping) and record.get("active"):
+        selected = str(record.get("substitute_model", "") or "")
+        if selected:
+            return selected
+    return pinned_model
 
 #: The one explicit session role the substitution branch requires. Absent (the
 #: default) is the worker role, for which an unavailable pin always pauses.
@@ -569,6 +603,7 @@ class SupervisedLoop:
         pinned_model: str = "",
         context_rotation_threshold: int = 0,
         model_available: Callable[[str], bool] | None = None,
+        model_chain: "ModelChain | Sequence[str] | None" = None,
         head_sha: str = "",
         origin_main_sha: str = "",
         executable_identity: Mapping[str, Any] | None = None,
@@ -595,19 +630,29 @@ class SupervisedLoop:
         self.pinned_model = pinned_model
         self.context_rotation_threshold = context_rotation_threshold
         self._model_available_probe = model_available or (lambda _model: True)
+        # D-004-R751/R758: the FIXED, owner-configured preference chain. Passed in
+        # from the immutable controller config; the default is the same order,
+        # fail closed. The loop never invents an entry and never reorders one.
+        if model_chain is None:
+            self.model_chain = ModelChain()
+        elif isinstance(model_chain, ModelChain):
+            self.model_chain = model_chain
+        else:
+            self.model_chain = ModelChain(entries=tuple(model_chain))
         self._head_sha = head_sha
         self._origin_main_sha = origin_main_sha
         self._executable_identity = dict(executable_identity or {})
         self._current_session_id = ""
-        # D-004 am.26 / D-007 am.11: the model the CURRENT session runs on. It is
-        # the pinned model unless an orchestrator-role substitution is active, in
-        # which case it is SUBSTITUTE_MODEL. A durable substitution record survives
-        # a process restart, so the model is re-derived from it here rather than
-        # silently reverting to the pin on resume.
-        self._current_model = pinned_model
-        active = journal.get_state(f"model_substitution/{run_id}", None)
-        if isinstance(active, Mapping) and active.get("active"):
-            self._current_model = SUBSTITUTE_MODEL
+        # D-004 am.26 / D-007 am.11 / am.12: the model the CURRENT session runs
+        # on. It is the pinned model unless an orchestrator-role switch is active,
+        # in which case it is the chain entry that switch selected. The durable
+        # record survives a process restart, so the model is re-derived from it
+        # here rather than silently reverting to an exhausted pin on resume - and
+        # the RUNNER is rebound to it below, so the resumed run launches on the
+        # model it says it is on (D-007-R605).
+        self._current_model = effective_model(journal, run_id, pinned_model)
+        if self._current_model != pinned_model:
+            self._actuate_model(self._current_model)
         self._rotations: list[dict[str, Any]] = []
         self.touches = OwnerTouchLedger(journal, run_id=run_id,
                                         budget=config.owner_touch_budget)
@@ -700,7 +745,9 @@ class SupervisedLoop:
         """
         try:
             raw = self._model_available_probe(model)
-        except Exception:  # pragma: no cover - a failing probe fails closed
+        except Exception:
+            # A failing probe fails closed, and `probe_error` is NOT quota
+            # exhaustion, so it pauses rather than switching models.
             return ModelAvailability(available=False, reason_code="probe_error")
         if isinstance(raw, ModelAvailability):
             return raw
@@ -712,6 +759,44 @@ class SupervisedLoop:
     def _model_available(self, model: str) -> bool:
         """Strict, no-substitute availability probe for the pinned model (bool view)."""
         return self._probe_model(model).available
+
+    # -- actuation: the switch must reach the LAUNCH (D-007-R605) -----------
+
+    def _actuate_model(self, model: str) -> None:
+        """Rebind the RUNNER so the next unit actually launches on `model`.
+
+        This is the fix for the record-only defect: writing a `model_substitution`
+        record while the runner kept its original `--model` made the audit trail
+        assert a model selection that was never made. Actuation happens BEFORE any
+        record is written, and a runner that cannot be rebound is a refusal, not a
+        record - the loop never claims a launch it could not perform.
+        """
+        if model not in self.model_chain and model != self.pinned_model:
+            # Belt and braces for D-004-R754: the only ids that can reach the
+            # launch config are the pin and the chain entries.
+            raise LoopError(
+                "model_not_in_chain",
+                f"{model!r} is not in the configured model chain "
+                f"{list(self.model_chain.entries)} and is not the pinned model; an id "
+                f"outside the chain is never selectable no matter what a picker shows")
+        rebind = getattr(self.runner, "with_model", None)
+        if not callable(rebind):
+            raise LoopError(
+                "model_actuation_unavailable",
+                f"the runner cannot be rebound to {model!r}, so the switch would be a "
+                f"record without a launch; refusing rather than recording a model "
+                f"selection that never reached the process")
+        self.runner = rebind(model)
+
+    def launched_model(self) -> str:
+        """The model the runner will ACTUALLY launch with, read off its config.
+
+        Evidence, not bookkeeping: it reads the launch config the argv is built
+        from, so a test (or `doctor`) can compare what the records claim with what
+        the next process will really be started on.
+        """
+        config = getattr(self.runner, "config", None)
+        return str(getattr(config, "model", "") or "")
 
     # -- orchestrator-role model substitution (D-004 am.26 / D-007 am.11) ---
 
@@ -821,11 +906,11 @@ class SupervisedLoop:
                 return self._return_to_pinned(cycle=cycle, substitution=substitution)
             if not pending:
                 # Pinned still unavailable and nothing new to rotate for: the
-                # substitution simply continues on the substitute model.
+                # switched session simply continues on its current chain entry.
                 return SeamRotation(
                     relaunched=False, paused=False, stopped="", substituted=True,
                     reason=(f"substitution active: pinned model {self.pinned_model!r} is "
-                            f"still unavailable, continuing on {SUBSTITUTE_MODEL!r}"),
+                            f"still unavailable, continuing on {self._current_model!r}"),
                     reason_code="model_substitution_active")
 
         reason_code = str(self.journal.get_state(rotation.ROTATION_REASON_KEY, "")
@@ -833,61 +918,29 @@ class SupervisedLoop:
         handoff_digest = self._refresh_session_handoff(cycle=cycle,
                                                        reason_code=reason_code)
 
-        # Pinned-model availability gate. Evaluated only when NOT already
-        # substituted (a substitution that reaches here was confirmed pinned-
-        # unavailable above and rotates on the substitute model). The pin is
-        # strict by default: an unavailable pin PAUSES for the owner and never
-        # silently substitutes. The ONE exception (D-004 am.26 / D-007 am.11) is
-        # an ORCHESTRATOR-ROLE session whose pin is unavailable SPECIFICALLY
-        # because its quota is exhausted - it relaunches on the substitute model
-        # instead. Every OTHER unavailability reason (unknown, error, a bare
-        # False with no reason), and every non-orchestrator loop, keeps the
-        # PAUSE+notify below byte-for-byte: fail closed.
-        if self.pinned_model and substitution is None:
-            availability = self._probe_model(self.pinned_model)
+        # Availability gate on the model this seam would relaunch on: the pin
+        # normally, or the current chain entry while a switch is active. The pin is
+        # strict by default: an unavailable model PAUSES for the owner and never
+        # silently substitutes. The ONE exception (D-004 am.26 / D-007 am.11/12) is
+        # an ORCHESTRATOR-ROLE session whose model is unavailable SPECIFICALLY
+        # because its quota is exhausted - it walks the configured chain and
+        # relaunches on the first entry that ACTUALLY launches. Every OTHER
+        # unavailability reason (unknown, error, a bare False with no reason), and
+        # every non-orchestrator loop, keeps the PAUSE+notify below byte-for-byte:
+        # fail closed.
+        gated_model = self._current_model if substitution is not None else self.pinned_model
+        if gated_model:
+            availability = self._probe_model(gated_model)
             if not availability.available:
                 if (self.config.session_role == SESSION_ROLE_ORCHESTRATOR
                         and availability.reason_code == QUOTA_EXHAUSTED_REASON):
-                    return self._substitute_at_seam(
+                    return self._switch_at_seam(
                         cycle=cycle, reason_code=reason_code,
-                        handoff_digest=handoff_digest)
-                self.machine.transition(
-                    PAUSED_RECOVERY, "unsafe_condition",
-                    detail={"cycle": cycle, "reason": "pinned_model_unavailable",
-                            "pinned_model": self.pinned_model,
-                            "rotation_reason": reason_code})
-                touch = self._touch(
-                    TOUCH_SYNCHRONOUS_STOP, reason_code="pinned_model_unavailable",
-                    reason=(f"the configured model {self.pinned_model!r} is unavailable; a "
-                            f"rotation may not silently substitute another model (D-004)"),
-                    cycle=cycle, basis="D-004 model pinning / S3.2")
-                ask_id = f"rotation_pause/{self.run_id}/{cycle}"
-                try:
-                    self.journal.queue_ask(QueuedAsk(
-                        ask_id=ask_id, run_id=self.run_id, task_id=self.config.task_id,
-                        question=(f"The configured model {self.pinned_model!r} is "
-                                  f"unavailable after a {reason_code} rotation. An "
-                                  f"orchestrator-role session will not continue on a "
-                                  f"substitute; how should it proceed?"),
-                        request_digest=handoff_digest, created_at_utc=to_utc_iso(),
-                        classification="security"))
-                except Exception:
-                    # A duplicate ask id means the same pause is already queued.
-                    pass
-                if self.audit is not None:
-                    self.audit.append(
-                        "rotation_paused_model_unavailable", run_id=self.run_id,
-                        decision="deny", policy_result="pinned_model_unavailable",
-                        detail={"cycle": cycle, "pinned_model": self.pinned_model,
-                                "reason_code": reason_code, "ask_id": ask_id,
-                                "handoff_digest": handoff_digest})
-                return SeamRotation(
-                    relaunched=False, paused=True,
-                    stopped="rotation_paused_model_unavailable",
-                    reason=(f"the configured model {self.pinned_model!r} is unavailable; "
-                            f"the session is paused for the owner rather than continuing "
-                            f"on a substitute"),
-                    reason_code=reason_code, touch=touch)
+                        handoff_digest=handoff_digest, exhausted_model=gated_model,
+                        substitution=substitution)
+                return self._pause_model_unavailable(
+                    cycle=cycle, reason_code=reason_code, model=gated_model,
+                    handoff_digest=handoff_digest)
 
         # Rotate via rotation.py: archive the outgoing session, clear the pending
         # flag, mint a brand-new session id, record the NOTIFY event. The relaunch
@@ -923,19 +976,90 @@ class SupervisedLoop:
                                     f"relaunching on {model_label} in {new_session!r}"),
                             reason_code=reason_code, record=relaunch)
 
-    def _substitute_at_seam(self, *, cycle: int, reason_code: str,
-                            handoff_digest: str) -> "SeamRotation":
-        """Relaunch an orchestrator-role session on the substitute model (quota).
+    def _pause_model_unavailable(self, *, cycle: int, reason_code: str, model: str,
+                                 handoff_digest: str) -> "SeamRotation":
+        """PAUSE + notify: the model this seam would relaunch on is unavailable.
+
+        The strict default, unchanged: a rotation never silently substitutes
+        another model. Reached for every unavailability reason that is NOT a
+        quota exhaustion on an orchestrator-role session, and for every
+        non-orchestrator loop whatever the reason.
+        """
+        self.machine.transition(
+            PAUSED_RECOVERY, "unsafe_condition",
+            detail={"cycle": cycle, "reason": "pinned_model_unavailable",
+                    "pinned_model": self.pinned_model,
+                    "unavailable_model": model,
+                    "rotation_reason": reason_code})
+        touch = self._touch(
+            TOUCH_SYNCHRONOUS_STOP, reason_code="pinned_model_unavailable",
+            reason=(f"the configured model {model!r} is unavailable; a "
+                    f"rotation may not silently substitute another model (D-004)"),
+            cycle=cycle, basis="D-004 model pinning / S3.2")
+        ask_id = f"rotation_pause/{self.run_id}/{cycle}"
+        try:
+            self.journal.queue_ask(QueuedAsk(
+                ask_id=ask_id, run_id=self.run_id, task_id=self.config.task_id,
+                question=(f"The configured model {model!r} is "
+                          f"unavailable after a {reason_code} rotation. An "
+                          f"orchestrator-role session will not continue on a "
+                          f"substitute; how should it proceed?"),
+                request_digest=handoff_digest, created_at_utc=to_utc_iso(),
+                classification="security"))
+        except Exception:
+            # A duplicate ask id means the same pause is already queued.
+            pass
+        if self.audit is not None:
+            self.audit.append(
+                "rotation_paused_model_unavailable", run_id=self.run_id,
+                decision="deny", policy_result="pinned_model_unavailable",
+                detail={"cycle": cycle, "pinned_model": self.pinned_model,
+                        "unavailable_model": model,
+                        "reason_code": reason_code, "ask_id": ask_id,
+                        "handoff_digest": handoff_digest})
+        return SeamRotation(
+            relaunched=False, paused=True,
+            stopped="rotation_paused_model_unavailable",
+            reason=(f"the configured model {model!r} is unavailable; "
+                    f"the session is paused for the owner rather than continuing "
+                    f"on a substitute"),
+            reason_code=reason_code, touch=touch)
+
+    def _switch_at_seam(self, *, cycle: int, reason_code: str, handoff_digest: str,
+                        exhausted_model: str,
+                        substitution: Mapping[str, Any] | None = None) -> "SeamRotation":
+        """Walk the configured chain and relaunch on the first entry that LAUNCHES.
 
         The single authorized exception to strict pinning (D-004 am.26 / D-007
-        am.11): the pinned model (Fable 5) is unavailable specifically because its
-        quota is exhausted, and this is an orchestrator-role session. It relaunches
-        EXPLICITLY on SUBSTITUTE_MODEL in a brand-new session, records the
-        substitution as a FIRST-CLASS `model_substitution` audit event AND a
-        durable journal record (pinned model, substitute model, reason, cycle,
-        session ids), and continues the run. Never silent. The reviewer pins are
-        untouched - this is orchestrator-role continuity only.
+        am.11, corrected by D-007 am.12): the current model is unavailable
+        specifically because its quota is exhausted, and this is an
+        orchestrator-role session. There is no judgement here and no owner tap
+        (D-004-R760): the seam walks the FIXED config chain in order from the
+        entry after the exhausted one, probes each by ACTUAL LAUNCH (D-004-R752),
+        and takes the first that brings up a real process on that exact id.
+
+        The selected id is ACTUATED on the runner BEFORE anything is recorded
+        (D-007-R605), so the `model_substitution` event and the durable record
+        describe a launch configuration that really changed - never a record
+        without a relaunch. If NO entry launches, nothing is recorded as a switch:
+        the run STOPS and notifies the owner (D-004-R755).
         """
+        attempts: list[dict[str, Any]] = []
+        selected = ""
+        for candidate in self.model_chain.candidates_after(exhausted_model):
+            availability = self._probe_model(candidate)
+            attempts.append({"model": candidate, "available": availability.available,
+                             "reason_code": availability.reason_code})
+            if availability.available:
+                selected = candidate
+                break
+        if not selected:
+            return self._stop_chain_exhausted(
+                cycle=cycle, reason_code=reason_code, exhausted_model=exhausted_model,
+                attempts=attempts)
+
+        # ACTUATION FIRST: the next unit must really launch on `selected`.
+        self._actuate_model(selected)
         old_session = self._current_session_id
         new_session = rotation.new_session_id(old_session)
         ledger = rotation.RotationLedger(self.journal, audit=self.audit)
@@ -943,12 +1067,17 @@ class SupervisedLoop:
             old_session_id=old_session, new_session_id_value=new_session,
             handoff_digest=handoff_digest)
         self._current_session_id = new_session
-        self._current_model = SUBSTITUTE_MODEL
+        self._current_model = selected
         self.journal.set_state(rotation.ROTATION_REASON_KEY, "")
-        substitution = {
+        record = {
             "active": True,
             "pinned_model": self.pinned_model,
-            "substitute_model": SUBSTITUTE_MODEL,
+            "exhausted_model": exhausted_model,
+            "substitute_model": selected,
+            "effective_model": selected,
+            "launched_model": self.launched_model(),
+            "chain": list(self.model_chain.entries),
+            "chain_attempts": attempts,
             "reason_code": QUOTA_EXHAUSTED_REASON,
             "rotation_reason": reason_code,
             "cycle": cycle,
@@ -957,12 +1086,18 @@ class SupervisedLoop:
             "handoff_digest": handoff_digest,
             "started_at_utc": to_utc_iso(),
         }
-        self.journal.set_state(self._substitution_key(), substitution)
+        if substitution is not None:
+            record["previous_switch_started_at_utc"] = str(
+                substitution.get("started_at_utc", "") or "")
+        self.journal.set_state(self._substitution_key(), record)
         relaunch = {
             "cycle": cycle, "reason_code": reason_code,
             "old_session_id": old_session, "new_session_id": new_session,
             "handoff_digest": handoff_digest, "pinned_model": self.pinned_model,
-            "model": SUBSTITUTE_MODEL, "substitute_model": SUBSTITUTE_MODEL,
+            "model": selected, "substitute_model": selected,
+            "launched_model": self.launched_model(),
+            "chain": list(self.model_chain.entries), "chain_attempts": attempts,
+            "exhausted_model": exhausted_model,
             "substitution": True, "availability_reason": QUOTA_EXHAUSTED_REASON,
             "tier": NOTIFY, "recorded_at_utc": to_utc_iso(),
         }
@@ -971,19 +1106,82 @@ class SupervisedLoop:
             self.audit.append(
                 "model_substitution", run_id=self.run_id,
                 policy_result=QUOTA_EXHAUSTED_REASON, output_digest=handoff_digest,
-                detail={**substitution,
-                        "note": "orchestrator-role continuity: the pinned model's quota is "
+                detail={**record,
+                        "note": "orchestrator-role continuity: this model's quota is "
                                 "exhausted at this seam, so the session relaunches EXPLICITLY "
-                                "on the substitute model in a brand-new session. Never "
-                                "silent; never a reviewer substitute; the pinned model is "
-                                "probed at every subsequent seam and restored the moment it "
-                                "is available (D-004 am.26 / D-007 am.11)"})
+                                "on the next chain entry that ACTUALLY launched, in a "
+                                "brand-new session, with the runner rebound to that exact id "
+                                "before this record was written. Never silent; never a "
+                                "reviewer substitute; never an id outside the chain; the "
+                                "pinned model is probed at every subsequent seam and restored "
+                                "the moment it is available (D-004 am.26 / D-007 am.11, "
+                                "corrected by am.12)"})
         return SeamRotation(
             relaunched=True, paused=False, stopped="", substituted=True,
-            reason=(f"pinned model {self.pinned_model!r} quota exhausted; the "
-                    f"orchestrator-role session relaunched on substitute "
-                    f"{SUBSTITUTE_MODEL!r} in {new_session!r}"),
+            reason=(f"model {exhausted_model!r} quota exhausted; the orchestrator-role "
+                    f"session relaunched on chain entry {selected!r} in {new_session!r}"),
             reason_code=reason_code, record=relaunch)
+
+    def _stop_chain_exhausted(self, *, cycle: int, reason_code: str,
+                              exhausted_model: str,
+                              attempts: Sequence[Mapping[str, Any]]) -> "SeamRotation":
+        """No chain entry launched: STOP, refresh the handoff, notify (D-004-R755).
+
+        The end of the chain is a full stop, never a fallback. Nothing outside the
+        chain is tried, no substitute is chosen, and the run does not continue: the
+        handoff is refreshed under this reason code, the owner is notified through
+        the existing pause/ask surface, and the seam reports the stop.
+        """
+        handoff_digest = self._refresh_session_handoff(cycle=cycle,
+                                                       reason_code=CHAIN_EXHAUSTED_STOP)
+        self.machine.transition(
+            PAUSED_RECOVERY, "unsafe_condition",
+            detail={"cycle": cycle, "reason": CHAIN_EXHAUSTED_STOP,
+                    "pinned_model": self.pinned_model,
+                    "exhausted_model": exhausted_model,
+                    "chain": list(self.model_chain.entries),
+                    "rotation_reason": reason_code})
+        touch = self._touch(
+            TOUCH_SYNCHRONOUS_STOP, reason_code=CHAIN_EXHAUSTED_STOP,
+            reason=(f"no entry in the configured model chain "
+                    f"{list(self.model_chain.entries)} actually launched after "
+                    f"{exhausted_model!r} was exhausted; the session stops rather than "
+                    f"continuing on an unlisted or substitute model (D-004-R755)"),
+            cycle=cycle, basis="D-004 model chain / D-007 am.12")
+        ask_id = f"model_chain_exhausted/{self.run_id}/{cycle}"
+        try:
+            self.journal.queue_ask(QueuedAsk(
+                ask_id=ask_id, run_id=self.run_id, task_id=self.config.task_id,
+                question=(f"No model in the configured chain "
+                          f"{list(self.model_chain.entries)} could be launched after "
+                          f"{exhausted_model!r} was exhausted. The session has stopped and "
+                          f"will not continue on any other model; how should it proceed?"),
+                request_digest=handoff_digest, created_at_utc=to_utc_iso(),
+                classification="security"))
+        except Exception:
+            # A duplicate ask id means the same stop is already queued.
+            pass
+        if self.audit is not None:
+            self.audit.append(
+                CHAIN_EXHAUSTED_STOP, run_id=self.run_id,
+                decision="deny", policy_result=CHAIN_EXHAUSTED_STOP,
+                output_digest=handoff_digest,
+                detail={"cycle": cycle, "pinned_model": self.pinned_model,
+                        "exhausted_model": exhausted_model,
+                        "chain": list(self.model_chain.entries),
+                        "chain_attempts": [dict(a) for a in attempts],
+                        "launched_model": self.launched_model(),
+                        "reason_code": reason_code, "ask_id": ask_id,
+                        "handoff_digest": handoff_digest,
+                        "note": "every chain entry was tried by an actual launch attempt and "
+                                "none came up; the supervisor NEVER continues on an unlisted "
+                                "or substitute model (D-004-R754/R755)"})
+        return SeamRotation(
+            relaunched=False, paused=True, stopped=CHAIN_EXHAUSTED_STOP,
+            reason=(f"no entry in the configured model chain launched after "
+                    f"{exhausted_model!r} was exhausted; the session stopped and the owner "
+                    f"was notified"),
+            reason_code=CHAIN_EXHAUSTED_STOP, touch=touch)
 
     def _return_to_pinned(self, *, cycle: int,
                           substitution: Mapping[str, Any]) -> "SeamRotation":
@@ -992,12 +1190,17 @@ class SupervisedLoop:
         The pinned model is available again at this seam, so the orchestrator-role
         session returns to it in a brand-new session and records a FIRST-CLASS
         `model_substitution_ended` event. Never silent. Called only from
-        `_rotate_at_seam`, i.e. only at a seam.
+        `_rotate_at_seam`, i.e. only at a seam. The return is ACTUATED on the
+        runner before it is recorded, exactly like the outbound switch: the
+        mirrored half of D-007-R605.
         """
+        left_behind = self._current_model or str(
+            substitution.get("substitute_model", "") or "")
         handoff_digest = self._refresh_session_handoff(
             cycle=cycle, reason_code="model_substitution_ended")
         old_session = self._current_session_id
         new_session = rotation.new_session_id(old_session)
+        self._actuate_model(self.pinned_model)
         ledger = rotation.RotationLedger(self.journal, audit=self.audit)
         ledger.complete_rotation(
             old_session_id=old_session, new_session_id_value=new_session,
@@ -1013,7 +1216,8 @@ class SupervisedLoop:
             "cycle": cycle, "reason_code": "model_substitution_ended",
             "old_session_id": old_session, "new_session_id": new_session,
             "handoff_digest": handoff_digest, "pinned_model": self.pinned_model,
-            "model": self.pinned_model, "restored_from_substitute": SUBSTITUTE_MODEL,
+            "model": self.pinned_model, "restored_from_substitute": left_behind,
+            "launched_model": self.launched_model(),
             "tier": NOTIFY, "recorded_at_utc": to_utc_iso(),
         }
         self._rotations.append(relaunch)
@@ -1021,14 +1225,16 @@ class SupervisedLoop:
             self.audit.append(
                 "model_substitution_ended", run_id=self.run_id,
                 policy_result="pinned_model_available", output_digest=handoff_digest,
-                detail={**relaunch, "substitute_model": SUBSTITUTE_MODEL,
+                detail={**relaunch, "substitute_model": left_behind,
                         "note": "the pinned model is available again at this seam; the "
                                 "orchestrator-role session returns to it in a brand-new "
-                                "session. Never silent (D-004 am.26 / D-007 am.11)"})
+                                "session, with the runner rebound to the pin before this "
+                                "record was written. Never silent (D-004 am.26 / D-007 "
+                                "am.11)"})
         return SeamRotation(
             relaunched=True, paused=False, stopped="", substituted=False,
             reason=(f"pinned model {self.pinned_model!r} available again; returned from "
-                    f"substitute {SUBSTITUTE_MODEL!r} in {new_session!r}"),
+                    f"substitute {left_behind!r} in {new_session!r}"),
             reason_code="model_substitution_ended", record=relaunch)
 
     # -- the cycle ----------------------------------------------------------

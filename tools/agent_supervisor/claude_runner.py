@@ -37,6 +37,7 @@ is untrusted data. This module never derives an action from it.
 """
 from __future__ import annotations
 
+import copy
 import dataclasses
 import json
 import re
@@ -82,6 +83,31 @@ FORBIDDEN_SESSION_FLAGS: frozenset[str] = frozenset({"--continue", "-c", "--last
 
 #: Recorded so `doctor` can state the uncertainty plainly.
 CONTROL_RESPONSE_WRAPPER_VERIFIED = False
+
+#: D-004-R752/R753: a model is AVAILABLE only when attempting the launch on that
+#: exact id brings up a real process that reports that exact id. This is the one
+#: authorized availability test; a model picker/menu is never consulted, because
+#: the menu can hide a model that is still usable by explicit string.
+#:
+#: HONEST UNCERTAINTY, recorded like the control-response wrapper above: the exact
+#: bytes the installed CLI emits when an ACCOUNT QUOTA is exhausted (its stderr
+#: text and exit code) have NOT been captured from a live exhaustion on this
+#: build. The probe therefore never GUESSES that reason: it reports availability
+#: from what it observed and leaves the unavailability REASON to an injected
+#: classifier (`classify_unavailable`), whose default returns "" (unknown).
+#: "unknown" is not quota exhaustion, so the fail-closed pause path keeps running
+#: until a real exhaustion signal is captured and wired here.
+QUOTA_EXHAUSTION_SIGNAL_VERIFIED = False
+
+#: The one availability reason_code that authorizes a chain step (kept here so the
+#: probe and the loop cannot drift apart; `loop.py` re-exports it).
+QUOTA_EXHAUSTED_REASON = "quota_exhausted"
+
+#: Probe reason codes for an unavailable model. All are observations, not guesses.
+PROBE_NO_PROCESS = "launch_failed"          # the executable never started
+PROBE_MODEL_NOT_REPORTED = "model_not_reported"   # a process, but no id at all
+PROBE_MODEL_ID_MISMATCH = "model_id_mismatch"     # a process reporting ANOTHER id
+PROBE_TIMEOUT = "probe_timeout"
 
 #: Bounded grace between "every written turn has its terminal `result` event,
 #: stdin closed" and "the worker process must have exited". Under
@@ -727,6 +753,31 @@ class ClaudeRunner:
         identity = executable_identity(self.config.executable, name="claude")
         return dataclasses.asdict(identity)
 
+    def with_model(self, model: str) -> "ClaudeRunner":
+        """A NEW runner whose next launch really is `--model <model>` (D-007-R605).
+
+        The V1.2.1 defect this closes: a model switch that only wrote an audit
+        record while the runner kept launching the exhausted pin. The switch has
+        to reach the ACTUATION, so it is applied to the launch config itself -
+        `build_argv` emits `config.model`, and `expected_model` moves with it so
+        stream verification checks the model that is actually running instead of
+        flagging every event as a downgrade of the model that is not.
+
+        A copy, never a mutation: the outgoing session's runner keeps its own
+        config for anything still holding a reference, and a subclass (the tests'
+        script runner) keeps its own state. The id is used VERBATIM - not
+        trimmed, normalized, or aliased - so it can never resolve to a different
+        model than the caller named.
+        """
+        if not isinstance(model, str) or not model or model != model.strip():
+            raise RunnerError(
+                "bad_model_rebind",
+                f"a model rebind needs the exact model id to launch on, got {model!r}; the "
+                f"id is passed through to --model verbatim and is never repaired")
+        clone = copy.copy(self)
+        clone.config = dataclasses.replace(self.config, model=model, expected_model=model)
+        return clone
+
     def run_unit(
         self,
         prompt: str,
@@ -1020,6 +1071,214 @@ class ClaudeRunner:
                 "context_tokens": result.context_tokens,
                 "usage_known": result.usage_known,
             })
+
+
+# --------------------------------------------------------------------------
+# Model availability: the ACTUAL LAUNCH PROBE (D-004-R752/R753)
+# --------------------------------------------------------------------------
+
+
+@dataclasses.dataclass(frozen=True)
+class LaunchProbe:
+    """What one launch attempt on one exact model id actually established."""
+
+    model: str
+    available: bool
+    reason_code: str = ""
+    observed_models: tuple[str, ...] = ()
+    returncode: int | None = None
+    detail: str = ""
+
+    def as_tuple(self) -> tuple[bool, str]:
+        """The `(available, reason_code)` shape the loop's probe seam accepts."""
+        return self.available, self.reason_code
+
+
+def probe_model_launch(
+    config: RunnerConfig,
+    model: str,
+    *,
+    timeout_seconds: float = 60.0,
+    classify_unavailable: Callable[[int | None, str], str] | None = None,
+) -> LaunchProbe:
+    """Attempt the launch on EXACTLY `model` and report what came up.
+
+    This is the only availability test the supervisor performs. It launches the
+    real executable with `--model <model>` and reads the process's own stream
+    until an event reports a model identifier:
+
+    * the process reports EXACTLY `model` -> available;
+    * the process reports some OTHER id -> unavailable, `model_id_mismatch`. This
+      is the case that keeps an unlisted id (Opus 5, say) from being used because
+      a picker silently resolved to it: the id asked for is the id that has to
+      answer;
+    * a process that never reports an id, exits first, or never starts ->
+      unavailable, with the observation that says which.
+
+    The probe never reads a model picker or menu, and it never infers a reason it
+    did not observe: `classify_unavailable(returncode, stderr_text)` is where an
+    account-quota signal is recognized once its real bytes have been captured
+    (see `QUOTA_EXHAUSTION_SIGNAL_VERIFIED`). Its default returns "", and "" is
+    not quota exhaustion, so an unclassified failure keeps the fail-closed pause.
+    """
+    if not isinstance(model, str) or not model or model != model.strip():
+        raise RunnerError("bad_probe_model",
+                          f"a launch probe needs the exact model id to attempt, got {model!r}")
+    probe_config = dataclasses.replace(config, model=model, expected_model=model)
+    argv = build_argv(probe_config)
+    env = minimal_env(dict(probe_config.extra_env), probe_config.env_allowlist)
+    parser = ClaudeStreamParser()
+    observed: list[str] = []
+    stderr_chunks: list[str] = []
+    timed_out = threading.Event()
+    started = time.monotonic()
+    container = ProcessContainer(prefer_job_object=probe_config.use_job_object)
+    try:
+        process = subprocess.Popen(  # noqa: S603 - argv array, shell=False
+            argv, shell=False, cwd=probe_config.cwd or None, env=env,
+            stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE,
+            text=True, encoding="utf-8", errors="replace", bufsize=1)
+    except OSError as exc:
+        container.close()
+        return LaunchProbe(model=model, available=False, reason_code=PROBE_NO_PROCESS,
+                           detail=f"the executable did not start: {exc}")
+    container.adopt(process.pid)
+
+    def drain_stderr() -> None:
+        assert process.stderr is not None
+        for line in process.stderr:
+            stderr_chunks.append(line)
+            if len(stderr_chunks) > 200:
+                del stderr_chunks[:50]
+
+    def watchdog() -> None:
+        deadline = started + timeout_seconds
+        while process.poll() is None:
+            if time.monotonic() >= deadline:
+                timed_out.set()
+                break
+            time.sleep(0.05)
+        if timed_out.is_set():
+            try:
+                container.terminate_all()
+            except Exception:  # pragma: no cover - defensive
+                try:
+                    terminate_process_tree(process.pid)
+                except Exception:
+                    pass
+
+    stderr_thread = threading.Thread(target=drain_stderr, daemon=True)
+    watch_thread = threading.Thread(target=watchdog, daemon=True)
+    stderr_thread.start()
+    watch_thread.start()
+    try:
+        # One trivial turn, so a CLI that reports its model only after receiving
+        # input still answers. The probe reads identity, never a checkpoint, and
+        # nothing it reads is treated as an instruction.
+        try:
+            assert process.stdin is not None
+            process.stdin.write(json.dumps(user_message("report your model id"),
+                                           ensure_ascii=False) + "\n")
+            process.stdin.flush()
+        except (BrokenPipeError, ValueError, OSError):
+            pass
+        assert process.stdout is not None
+        for chunk in process.stdout:
+            for event in parser.feed(chunk):
+                for reported in _event_models(event):
+                    if reported not in observed:
+                        observed.append(reported)
+            if observed:
+                break
+    finally:
+        try:
+            if process.stdin is not None and not process.stdin.closed:
+                process.stdin.close()
+        except Exception:  # pragma: no cover - defensive
+            pass
+        # The probe is done the moment identity is known: end the process rather
+        # than letting a live session continue unattended.
+        try:
+            container.terminate_all()
+        except Exception:  # pragma: no cover - defensive
+            try:
+                terminate_process_tree(process.pid)
+            except Exception:
+                pass
+        try:
+            process.wait(timeout=10)
+        except subprocess.TimeoutExpired:  # pragma: no cover - defensive
+            pass
+        watch_thread.join(timeout=2)
+        stderr_thread.join(timeout=2)
+        for pipe in (process.stdout, process.stderr):
+            try:
+                if pipe is not None and not pipe.closed:
+                    pipe.close()
+            except Exception:  # pragma: no cover - defensive
+                pass
+        container.close()
+
+    # The worker's stderr is UNTRUSTED DATA: it is labelled and carried as data,
+    # never read as an instruction. Only a classifier the caller supplied ever
+    # looks at it, and only to name a reason code.
+    untrusted = neutralize_untrusted("".join(stderr_chunks))
+    stderr_text = untrusted.text[:2000]
+    returncode = process.returncode
+    if any(reported == model for reported in observed):
+        # A real process came up and reported this exact id. Nothing else counts.
+        return LaunchProbe(model=model, available=True,
+                           observed_models=tuple(observed), returncode=returncode,
+                           detail="a real process reported this exact model id")
+    classifier = classify_unavailable or (lambda _code, _text: "")
+    classified = str(classifier(returncode, stderr_text) or "")
+    if observed:
+        reason = classified or PROBE_MODEL_ID_MISMATCH
+        detail = (f"a process came up but reported {list(observed)!r}, not {model!r}; the id "
+                  f"asked for is the id that must answer, so this launch does not make "
+                  f"{model!r} available")
+    elif timed_out.is_set():
+        reason = classified or PROBE_TIMEOUT
+        detail = f"no model id was reported within {timeout_seconds}s"
+    else:
+        reason = classified or PROBE_MODEL_NOT_REPORTED
+        detail = (f"the process exited (returncode {returncode}) without reporting a model "
+                  f"id; stderr excerpt: {stderr_text[:400]}")
+    return LaunchProbe(model=model, available=False, reason_code=reason,
+                       observed_models=tuple(observed), returncode=returncode,
+                       detail=detail)
+
+
+def make_launch_probe(
+    config: RunnerConfig,
+    *,
+    timeout_seconds: float = 60.0,
+    classify_unavailable: Callable[[int | None, str], str] | None = None,
+    audit: Any = None,
+    run_id: str = "",
+) -> Callable[[str], tuple[bool, str]]:
+    """The loop's `model_available` seam, backed by a real launch attempt.
+
+    Returns the `(available, reason_code)` shape `SupervisedLoop._probe_model`
+    already normalizes, so this EXTENDS the existing probe seam instead of adding
+    a parallel one. Every attempt is audited, because "we tried to launch on this
+    exact id and this is what came up" is the evidence a model switch rests on.
+    """
+    def probe(model: str) -> tuple[bool, str]:
+        result = probe_model_launch(config, model, timeout_seconds=timeout_seconds,
+                                    classify_unavailable=classify_unavailable)
+        if audit is not None:
+            audit.append("model_launch_probe", run_id=run_id,
+                         policy_result=result.reason_code or "available",
+                         detail={"model": result.model, "available": result.available,
+                                 "observed_models": list(result.observed_models),
+                                 "returncode": result.returncode,
+                                 "detail": result.detail,
+                                 "basis": "actual launch attempt on the exact model id; no "
+                                          "model picker or menu was read (D-004-R752/R753)"})
+        return result.as_tuple()
+
+    return probe
 
 
 # --------------------------------------------------------------------------

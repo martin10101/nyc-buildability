@@ -487,6 +487,7 @@ python -m unittest tools.test_agent_supervisor_invariants
 python -m unittest tools.test_agent_supervisor_adversarial
 python -m unittest tools.test_agent_supervisor_crash
 python -m unittest tools.test_agent_supervisor_fuzz
+python -m unittest tools.test_agent_supervisor_model_chain
 ```
 
 The last six are Phase 4's. Three of them are worth explaining:

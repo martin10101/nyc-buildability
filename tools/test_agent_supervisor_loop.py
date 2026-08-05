@@ -38,7 +38,7 @@ from tools.agent_supervisor import policy as pol  # noqa: E402
 from tools.agent_supervisor import rotation as rot  # noqa: E402
 from tools.agent_supervisor import state_machine as sm  # noqa: E402
 from tools.agent_supervisor.audit_log import AuditLog  # noqa: E402
-from tools.agent_supervisor.claude_runner import RunResult  # noqa: E402
+from tools.agent_supervisor.claude_runner import RunnerConfig, RunResult  # noqa: E402
 from tools.agent_supervisor.codex_reviewer import ReviewOutcome  # noqa: E402
 from tools.agent_supervisor.durable_state import DurableJournal  # noqa: E402
 from tools.agent_supervisor.models import ClaudeCheckpoint, CodexDecision, digest_of  # noqa: E402
@@ -47,6 +47,9 @@ from tools.agent_supervisor.state_machine import StateMachine  # noqa: E402
 # --------------------------------------------------------------------------
 # Fakes
 # --------------------------------------------------------------------------
+
+#: The launch config a FakeRunner carries, so `--model` actuation is visible.
+_FAKE_LAUNCH_CONFIG = RunnerConfig(executable="fake-claude")
 
 
 def checkpoint(**overrides) -> ClaudeCheckpoint:
@@ -71,14 +74,33 @@ def decision(**overrides) -> CodexDecision:
 
 
 class FakeRunner:
-    """Returns a scripted `RunResult`. Records every prompt it was given."""
+    """Returns a scripted `RunResult`. Records every prompt it was given.
 
-    def __init__(self, *results: RunResult) -> None:
+    It also carries a LAUNCH CONFIG (`config.model`) and honours `with_model`, the
+    way the real runner does, so the loop's model actuation is exercised here too.
+    The launch config is bookkeeping, not proof: the proof that a real process
+    comes up on the switched model lives in
+    `tools/test_agent_supervisor_model_chain.py`, which asserts on the argv a
+    spawned process actually received (D-007-R605).
+    """
+
+    def __init__(self, *results: RunResult, model: str = "") -> None:
         self.results = list(results)
         self.prompts: list[str] = []
+        #: Every model this runner was asked to launch with, one per unit.
+        self.models: list[str] = []
+        self.config = dataclasses.replace(_FAKE_LAUNCH_CONFIG, model=model,
+                                          expected_model=model)
+
+    def with_model(self, model: str) -> "FakeRunner":
+        clone = FakeRunner(*self.results, model=model)
+        clone.prompts = self.prompts
+        clone.models = self.models
+        return clone
 
     def run_unit(self, prompt: str, **_kwargs) -> RunResult:
         self.prompts.append(prompt)
+        self.models.append(self.config.model)
         return self.results[min(len(self.prompts) - 1, len(self.results) - 1)]
 
 
@@ -152,7 +174,7 @@ class LoopTestBase(unittest.TestCase):
               approval_gate=None, budget: int = 2, max_cycles: int = 4,
               breakers=None, broker=None, pinned_model: str = "",
               context_rotation_threshold: int = 0, model_available=None,
-              session_role: str = "") -> lp.SupervisedLoop:
+              model_chain=None, session_role: str = "") -> lp.SupervisedLoop:
         return lp.SupervisedLoop(
             config=lp.LoopConfig(mode=mode, task_id="M0-T036", stage="phase4",
                                  allowed_paths=self.authority.allowed_paths,
@@ -161,11 +183,12 @@ class LoopTestBase(unittest.TestCase):
                                  session_role=session_role),
             journal=self.journal, audit=self.audit, machine=self.machine,
             authority=self.authority,
-            runner=runner or FakeRunner(run_result()),
+            runner=runner or FakeRunner(run_result(), model=pinned_model),
             reviewer=reviewer or FakeReviewer(outcome()),
             run_id=self.run_id, approval_gate=approval_gate, breakers=breakers,
             broker=broker, pinned_model=pinned_model,
             context_rotation_threshold=context_rotation_threshold,
+            model_chain=model_chain,
             model_available=model_available)
 
 
@@ -1407,50 +1430,92 @@ class SeamRotationTests(LoopTestBase):
 
 
 # --------------------------------------------------------------------------
-# V1.2.1 D-004 am.26 / D-007 am.11: orchestrator-role model substitution
+# V1.2.2 D-004 am.27 / D-007 am.12: the orchestrator-role MODEL CHAIN
 # --------------------------------------------------------------------------
 
+#: The chain these tests use. Named locally so the assertions read as "the
+#: configured chain", not as a hard-coded substitute: the chain is CONFIGURATION
+#: (D-004-R751/R758) and the loop walks whatever the owner put in it.
+PIN = "claude-fable-5"
+NEXT_1 = "claude-opus-4-8"
+NEXT_2 = "claude-opus-4-7"
+CHAIN = (PIN, NEXT_1, NEXT_2)
 
-class ModelSubstitutionTests(LoopTestBase):
+
+class ChainProbe:
+    """A probe with a per-model answer, recording the order models were tried."""
+
+    def __init__(self, answers, *, sequence=None) -> None:
+        self.answers = dict(answers)
+        self.sequence = list(sequence or [])
+        self.tried: list[str] = []
+
+    def __call__(self, model: str):
+        self.tried.append(model)
+        if self.sequence:
+            return self.sequence.pop(0)
+        return self.answers.get(model, (False, "unknown"))
+
+
+class ModelChainSwitchTests(LoopTestBase):
     """When the orchestrator-role pin (Fable 5) is unavailable because its QUOTA
-    is exhausted, the seam relaunches EXPLICITLY on claude-opus-4-8, records a
-    first-class model_substitution event, and returns to the pin at the next seam
-    it is available. Never silent; orchestrator-role only; fail closed on any
-    other reason or role (D-004 am.26 / D-007 am.11; R746-R748)."""
+    is exhausted, the seam walks the FIXED configured chain in order, relaunches
+    EXPLICITLY on the first entry that is available, records a first-class
+    model_substitution event, and returns to the pin at the next seam it is
+    available. Never silent; orchestrator-role only; fail closed on any other
+    reason or role; STOP when nothing in the chain launches.
+
+    These tests own the RECORDS and the ordering. The proof that a real process
+    actually comes up on the switched model is in
+    `tools/test_agent_supervisor_model_chain.py` (D-007-R605)."""
 
     def _downgrade_runner(self) -> FakeRunner:
         # Cycle 1 reports a model downgrade (sets rotation_pending); later cycles
         # are clean relaunches.
         return FakeRunner(run_result(model_mismatch=True,
                                      mismatch_detail="reported claude-substitute"),
-                          run_result())
+                          run_result(), model=PIN)
 
     def _sub_key(self) -> str:
         return f"model_substitution/{self.run_id}"
 
-    def test_quota_exhausted_orchestrator_relaunches_on_opus(self) -> None:
+    def _build(self, runner, probe, **overrides) -> lp.SupervisedLoop:
+        params = dict(mode="supervised", runner=runner, max_cycles=2,
+                      pinned_model=PIN, session_role="orchestrator",
+                      model_chain=CHAIN, model_available=probe,
+                      approval_gate=lambda d, p: True)
+        params.update(overrides)
+        return self.build(**params)
+
+    def test_quota_exhausted_orchestrator_takes_the_first_chain_entry(self) -> None:
         self.at_preflight()
         runner = self._downgrade_runner()
-        loop = self.build(mode="supervised", runner=runner, max_cycles=2,
-                          pinned_model="claude-pinned", session_role="orchestrator",
-                          model_available=lambda _m: (False, "quota_exhausted"),
-                          approval_gate=lambda d, p: True)
+        probe = ChainProbe({PIN: (False, "quota_exhausted"), NEXT_1: (True, ""),
+                            NEXT_2: (True, "")})
+        loop = self._build(runner, probe)
         run = loop.run("first unit")
-        # NOT paused: the run continued on the substitute; the second unit ran.
+        # NOT paused: the run continued on the next chain entry; unit 2 ran.
         self.assertNotEqual(run.stopped, "rotation_paused_model_unavailable")
+        self.assertNotEqual(run.stopped, lp.CHAIN_EXHAUSTED_STOP)
         self.assertEqual(len(runner.prompts), 2)
+        # ACTUATION: the second unit was dispatched on the chain entry, not the pin.
+        self.assertEqual(loop.runner.models, [PIN, NEXT_1])
+        self.assertEqual(loop.launched_model(), NEXT_1)
+        # first-available-wins, in chain order, and it stopped at the first hit.
+        self.assertEqual(probe.tried, [PIN, NEXT_1])
         self.assertEqual(len(run.rotations), 1)
         rec = run.rotations[0]
-        # relaunch config carries the substitute model EXPLICITLY.
-        self.assertEqual(rec["model"], "claude-opus-4-8")
-        self.assertEqual(rec["substitute_model"], "claude-opus-4-8")
-        self.assertEqual(rec["pinned_model"], "claude-pinned")
+        self.assertEqual(rec["model"], NEXT_1)
+        self.assertEqual(rec["substitute_model"], NEXT_1)
+        self.assertEqual(rec["launched_model"], NEXT_1)
+        self.assertEqual(rec["pinned_model"], PIN)
+        self.assertEqual(rec["chain"], list(CHAIN))
         self.assertNotEqual(rec["new_session_id"], rec["old_session_id"])
-        # durable journal record present, carrying pinned/substitute/reason/cycle/ids.
+        # durable journal record present, carrying pin/selection/reason/cycle/ids.
         sub = self.journal.get_state(self._sub_key())
         self.assertTrue(sub["active"])
-        self.assertEqual(sub["pinned_model"], "claude-pinned")
-        self.assertEqual(sub["substitute_model"], "claude-opus-4-8")
+        self.assertEqual(sub["pinned_model"], PIN)
+        self.assertEqual(sub["substitute_model"], NEXT_1)
         self.assertEqual(sub["reason_code"], "quota_exhausted")
         self.assertIn("cycle", sub)
         self.assertIn("new_session_id", sub)
@@ -1460,24 +1525,75 @@ class ModelSubstitutionTests(LoopTestBase):
                   if r["event_type"] == "model_substitution"]
         self.assertEqual(len(events), 1)
         detail = events[0]["detail"]
-        self.assertEqual(detail["pinned_model"], "claude-pinned")
-        self.assertEqual(detail["substitute_model"], "claude-opus-4-8")
+        self.assertEqual(detail["pinned_model"], PIN)
+        self.assertEqual(detail["substitute_model"], NEXT_1)
         self.assertEqual(detail["reason_code"], "quota_exhausted")
+
+    def test_the_chain_is_walked_in_order_past_an_unavailable_entry(self) -> None:
+        self.at_preflight()
+        runner = self._downgrade_runner()
+        probe = ChainProbe({PIN: (False, "quota_exhausted"),
+                            NEXT_1: (False, "quota_exhausted"), NEXT_2: (True, "")})
+        loop = self._build(runner, probe)
+        run = loop.run("first unit")
+        self.assertEqual(probe.tried, [PIN, NEXT_1, NEXT_2], "strict chain order")
+        self.assertEqual(loop.runner.models, [PIN, NEXT_2])
+        self.assertEqual(run.rotations[0]["model"], NEXT_2)
+        attempts = run.rotations[0]["chain_attempts"]
+        self.assertEqual([a["model"] for a in attempts], [NEXT_1, NEXT_2])
+        self.assertFalse(attempts[0]["available"])
+        self.assertTrue(attempts[1]["available"])
+
+    def test_no_chain_entry_available_stops_and_notifies(self) -> None:
+        # D-004-R755: chain exhaustion is a STOP, never a fallback.
+        self.at_preflight()
+        runner = self._downgrade_runner()
+        probe = ChainProbe({PIN: (False, "quota_exhausted"),
+                            NEXT_1: (False, "quota_exhausted"),
+                            NEXT_2: (False, "quota_exhausted")})
+        loop = self._build(runner, probe)
+        run = loop.run("first unit")
+        self.assertEqual(run.stopped, lp.CHAIN_EXHAUSTED_STOP)
+        self.assertEqual(self.machine.current_state, sm.PAUSED_RECOVERY)
+        # Nothing new was dispatched and nothing was switched to.
+        self.assertEqual(len(runner.prompts), 1)
+        self.assertEqual(loop.launched_model(), PIN)
+        self.assertEqual(run.rotations, ())
+        self.assertIsNone(self.journal.get_state(self._sub_key()))
+        self.assertTrue(self.journal.open_asks(), "the owner must be notified")
+        self.assertGreaterEqual(run.budget.counted, 1)
+        handoff = self.journal.get_state(f"session_handoff/{self.run_id}")
+        self.assertEqual(handoff["reason_code"], lp.CHAIN_EXHAUSTED_STOP)
+
+    def test_an_unlisted_id_is_never_probed_or_selected(self) -> None:
+        # D-004-R754: Opus 5 is available and is still never chosen.
+        self.at_preflight()
+        runner = self._downgrade_runner()
+        probe = ChainProbe({PIN: (False, "quota_exhausted"),
+                            NEXT_1: (False, "quota_exhausted"),
+                            NEXT_2: (False, "quota_exhausted"),
+                            "claude-opus-5": (True, "")})
+        loop = self._build(runner, probe)
+        run = loop.run("first unit")
+        self.assertEqual(run.stopped, lp.CHAIN_EXHAUSTED_STOP)
+        self.assertNotIn("claude-opus-5", probe.tried)
+        with self.assertRaises(lp.LoopError) as raised:
+            loop._actuate_model("claude-opus-5")
+        self.assertEqual(raised.exception.code, "model_not_in_chain")
 
     def test_quota_exhausted_non_orchestrator_still_pauses(self) -> None:
         # Same quota exhaustion, but the WORKER default role: the existing
         # PAUSE+notify is unchanged and nothing runs on a substitute.
         self.at_preflight()
         runner = self._downgrade_runner()
-        loop = self.build(mode="supervised", runner=runner, max_cycles=2,
-                          pinned_model="claude-pinned",  # session_role default ""
-                          model_available=lambda _m: (False, "quota_exhausted"),
-                          approval_gate=lambda d, p: True)
+        probe = ChainProbe({PIN: (False, "quota_exhausted"), NEXT_1: (True, "")})
+        loop = self._build(runner, probe, session_role="")
         run = loop.run("first unit")
         self.assertEqual(run.stopped, "rotation_paused_model_unavailable")
         self.assertEqual(self.machine.current_state, sm.PAUSED_RECOVERY)
         self.assertEqual(len(runner.prompts), 1)
         self.assertEqual(run.rotations, ())
+        self.assertEqual(probe.tried, [PIN], "the worker default never walks the chain")
         self.assertIsNone(self.journal.get_state(self._sub_key()))
         self.assertTrue(self.journal.open_asks())
 
@@ -1486,14 +1602,13 @@ class ModelSubstitutionTests(LoopTestBase):
         # fail closed to the existing PAUSE+notify.
         self.at_preflight()
         runner = self._downgrade_runner()
-        loop = self.build(mode="supervised", runner=runner, max_cycles=2,
-                          pinned_model="claude-pinned", session_role="orchestrator",
-                          model_available=lambda _m: (False, "provider_error"),
-                          approval_gate=lambda d, p: True)
+        probe = ChainProbe({PIN: (False, "provider_error"), NEXT_1: (True, "")})
+        loop = self._build(runner, probe)
         run = loop.run("first unit")
         self.assertEqual(run.stopped, "rotation_paused_model_unavailable")
         self.assertEqual(len(runner.prompts), 1)
         self.assertEqual(run.rotations, ())
+        self.assertEqual(probe.tried, [PIN])
         self.assertIsNone(self.journal.get_state(self._sub_key()))
 
     def test_bare_false_probe_is_not_quota_and_pauses(self) -> None:
@@ -1501,44 +1616,49 @@ class ModelSubstitutionTests(LoopTestBase):
         # quota exhaustion even for an orchestrator - it pauses (fail closed).
         self.at_preflight()
         runner = self._downgrade_runner()
-        loop = self.build(mode="supervised", runner=runner, max_cycles=2,
-                          pinned_model="claude-pinned", session_role="orchestrator",
-                          model_available=lambda _m: False,
-                          approval_gate=lambda d, p: True)
+        loop = self._build(runner, lambda _m: False)
         run = loop.run("first unit")
         self.assertEqual(run.stopped, "rotation_paused_model_unavailable")
         self.assertEqual(run.rotations, ())
         self.assertIsNone(self.journal.get_state(self._sub_key()))
 
+    def test_a_probe_that_raises_fails_closed_to_a_pause(self) -> None:
+        # A probe error is NOT quota exhaustion: no switch, no chain walk.
+        self.at_preflight()
+
+        def exploding(_model):
+            raise RuntimeError("probe blew up")
+
+        runner = self._downgrade_runner()
+        loop = self._build(runner, exploding)
+        self.assertEqual(loop._probe_model(PIN).reason_code, "probe_error")
+        run = loop.run("first unit")
+        self.assertEqual(run.stopped, "rotation_paused_model_unavailable")
+        self.assertIsNone(self.journal.get_state(self._sub_key()))
+
     def test_return_to_pinned_at_next_available_seam(self) -> None:
-        # Substitution active, then the pinned model is available again at a later
+        # Switch active, then the pinned model is available again at a later
         # seam: rotate back to the pin + record model_substitution_ended.
         self.at_preflight()
         runner = FakeRunner(
             run_result(model_mismatch=True, mismatch_detail="reported substitute"),
-            run_result(), run_result())
-
-        class Probe:
-            def __init__(self, sequence):
-                self.sequence = sequence
-                self.calls = 0
-
-            def __call__(self, _model):
-                value = self.sequence[min(self.calls, len(self.sequence) - 1)]
-                self.calls += 1
-                return value
-
-        probe = Probe([(False, "quota_exhausted"), (True, "")])
-        loop = self.build(mode="supervised", runner=runner, max_cycles=3,
-                          pinned_model="claude-pinned", session_role="orchestrator",
-                          model_available=probe, approval_gate=lambda d, p: True)
+            run_result(), run_result(), model=PIN)
+        # First seam: the pin is exhausted and NEXT_1 answers. Second seam: the pin
+        # is available again.
+        probe = ChainProbe({}, sequence=[(False, "quota_exhausted"), (True, ""),
+                                         (True, "")])
+        loop = self._build(runner, probe, max_cycles=3)
         run = loop.run("first unit")
-        # Two rotations: the substitution, then the return-to-pinned.
+        # Two rotations: the switch, then the return-to-pinned.
         self.assertEqual(len(run.rotations), 2)
-        self.assertEqual(run.rotations[0]["model"], "claude-opus-4-8")
+        self.assertEqual(run.rotations[0]["model"], NEXT_1)
         self.assertEqual(run.rotations[1]["reason_code"], "model_substitution_ended")
-        self.assertEqual(run.rotations[1]["model"], "claude-pinned")
-        self.assertEqual(run.rotations[1]["restored_from_substitute"], "claude-opus-4-8")
+        self.assertEqual(run.rotations[1]["model"], PIN)
+        self.assertEqual(run.rotations[1]["restored_from_substitute"], NEXT_1)
+        self.assertEqual(run.rotations[1]["launched_model"], PIN)
+        # ACTUATION, mirrored: unit 2 on the chain entry, unit 3 back on the pin.
+        self.assertEqual(loop.runner.models, [PIN, NEXT_1, PIN])
+        self.assertEqual(loop.launched_model(), PIN)
         # The durable record is marked ended, not silently deleted.
         sub = self.journal.get_state(self._sub_key())
         self.assertFalse(sub["active"])
@@ -1548,6 +1668,54 @@ class ModelSubstitutionTests(LoopTestBase):
         self.assertIn("model_substitution", events)
         self.assertIn("model_substitution_ended", events)
 
+    def test_a_resumed_loop_rebinds_the_runner_to_the_active_switch(self) -> None:
+        # Crash resume inside the loop: the durable record decides the model the
+        # rebuilt runner launches with, not the pin.
+        self.journal.set_state(self._sub_key(), {
+            "active": True, "pinned_model": PIN, "substitute_model": NEXT_1})
+        runner = FakeRunner(run_result(), model=PIN)
+        loop = self.build(mode="supervised", runner=runner, pinned_model=PIN,
+                          session_role="orchestrator", model_chain=CHAIN)
+        self.assertEqual(loop._current_model, NEXT_1)
+        self.assertEqual(loop.launched_model(), NEXT_1)
+        self.assertEqual(lp.effective_model(self.journal, self.run_id, PIN), NEXT_1)
+
+    def test_a_switched_session_continues_on_its_entry_when_the_pin_stays_down(self) -> None:
+        # Switch active, pin still unavailable, nothing new pending: the run simply
+        # continues on the current chain entry - no second switch, no new records.
+        self.at_preflight()
+        self.journal.set_state(self._sub_key(), {
+            "active": True, "pinned_model": PIN, "substitute_model": NEXT_1})
+        runner = FakeRunner(run_result(), run_result(), model=PIN)
+        probe = ChainProbe({PIN: (False, "quota_exhausted"), NEXT_1: (True, "")})
+        loop = self._build(runner, probe, max_cycles=2)
+        seam = loop._rotate_at_seam(cycle=2)
+        self.assertFalse(seam.relaunched)
+        self.assertFalse(seam.paused)
+        self.assertTrue(seam.substituted)
+        self.assertEqual(seam.reason_code, "model_substitution_active")
+        self.assertIn(NEXT_1, seam.reason)
+        self.assertEqual(loop.launched_model(), NEXT_1)
+
+    def test_a_switched_session_walks_further_when_its_entry_is_exhausted_too(self) -> None:
+        # The chain does not stop after one step: an entry whose quota runs out is
+        # itself walked past, still in chain order, still first-available-wins.
+        self.at_preflight()
+        self.journal.set_state(self._sub_key(), {
+            "active": True, "pinned_model": PIN, "substitute_model": NEXT_1})
+        runner = FakeRunner(run_result(), run_result(), model=PIN)
+        probe = ChainProbe({PIN: (False, "quota_exhausted"),
+                            NEXT_1: (False, "quota_exhausted"), NEXT_2: (True, "")})
+        loop = self._build(runner, probe, max_cycles=2)
+        rot.observe_mid_unit(self.journal, reason_code="model_downgrade", detail="d")
+        self.journal.set_state(rot.ROTATION_REASON_KEY, "model_downgrade")
+        seam = loop._rotate_at_seam(cycle=2)
+        self.assertTrue(seam.relaunched)
+        self.assertTrue(seam.substituted)
+        self.assertEqual(loop.launched_model(), NEXT_2)
+        self.assertEqual(seam.record["exhausted_model"], NEXT_1)
+        self.assertEqual(probe.tried, [PIN, NEXT_1, NEXT_2])
+
     def test_substitution_never_touches_reviewer_or_shadow(self) -> None:
         # Shadow observing a downgrade with a quota-exhausted pin sets no rotation
         # flag and never substitutes: shadow stays purely observational.
@@ -1555,14 +1723,15 @@ class ModelSubstitutionTests(LoopTestBase):
         loop = self.build(mode="shadow", session_role="orchestrator",
                           runner=FakeRunner(run_result(model_mismatch=True,
                                                        context_tokens=500_000,
-                                                       usage_known=True)),
-                          pinned_model="claude-pinned",
+                                                       usage_known=True), model=PIN),
+                          pinned_model=PIN, model_chain=CHAIN,
                           context_rotation_threshold=100_000,
                           model_available=lambda _m: (False, "quota_exhausted"))
         run = loop.run("only observation")
         self.assertFalse(rot.rotation_pending(self.journal))
         self.assertEqual(run.rotations, ())
         self.assertIsNone(self.journal.get_state(self._sub_key()))
+        self.assertEqual(loop.launched_model(), PIN)
 
     def test_unknown_session_role_is_refused(self) -> None:
         with self.assertRaises(lp.LoopError) as raised:

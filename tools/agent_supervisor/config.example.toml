@@ -33,6 +33,24 @@ allowed_models = ["<owner-chosen-codex-model>", "<owner-chosen-codex-fallback>"]
 # permitted.
 allowed_models = ["<owner-chosen-claude-model>"]
 
+[model_chain]
+# The FIXED orchestrator-role model preference chain (D-004-R751..R758), in
+# order. An orchestrator-role session whose current model's account quota is
+# exhausted walks THIS list, first-available-wins, and availability is decided by
+# an ACTUAL LAUNCH PROBE of the exact id - never by reading a model picker or
+# menu, which can hide a model that is still usable by explicit string.
+#
+# Nothing here is a judgement call: the supervisor never chooses a model, it
+# walks this list. An id that is not listed is NEVER selectable no matter what a
+# picker shows, the ids are used verbatim (no normalization, no aliasing), and if
+# NO entry actually launches the supervisor stops, refreshes SESSION_HANDOFF, and
+# notifies the owner rather than continuing on a substitute.
+#
+# Owner-editable only, and only through the S13.1 controller-update process; this
+# section is manifest-covered like every other part of this file. Omitting the
+# whole section accepts the same default order.
+orchestrator_preference = ["claude-fable-5", "claude-opus-4-8", "claude-opus-4-7"]
+
 [limits]
 # Fail-closed circuit breakers (S13.8, S7). Every value is a positive integer
 # except warn_ratio. Warnings below a hard threshold are NOTIFY; hard thresholds
