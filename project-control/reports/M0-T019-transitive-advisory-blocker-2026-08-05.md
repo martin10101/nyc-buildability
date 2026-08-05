@@ -101,7 +101,21 @@ when the overrides land — the FE-S9/FE-S11 machine gate `dependency_age_gate.m
 CI/workflow wiring, package.json/.npmrc, the policy doc, and the CLAUDE.md rule. Result recorded
 below (advisory only — the formal G3 runs at the finalized head):
 
-> _(pre-gate reviewer verdict + findings appended when the reviewer returns)_
+**Pre-gate verdict: PASS-WITH-NITS.** The FE-S9 age-gate script is sound — the 604800 s boundary
+(604800 passes / 604799 fails, full-second, no day rounding), the registry-Date clock source, the
+integrity+host binding to the official registry, the fail-closed semantics on every error kind, the
+distinct infrastructure-unavailable outcome (bounded retries + backoff), the FE-S11 npm-CLI path, and
+the blocking CI/scheduled/generate wiring (SHA-pinned actions) are all confirmed correct, with no
+allowlist/exception path. No blocking or major defects. Six minor/nit items, each already backstopped
+(none block finalization); fold them into the remediation edit since they touch the same allowed paths:
+(1) host check is a no-op when a lock entry's `resolved` is explicit-null — integrity match still binds
+identity; (2) entries lacking `resolved` are skipped — npm ci is the intended backstop; add a clarifying
+comment; (3) the JSON `total==0` step fail-opens if audit metadata is absent — backstopped by the
+preceding blocking audit; (4) generate-lockfile pre-commit validation omits the stricter JSON total==0
+check ci.yml runs — consider adding for consistency; (5) test-coverage nits (host-slash boundary,
+run() aggregation, success paths, parseLock throws) — the load-bearing properties are well covered;
+(6) perf: sequential per-entry packument fetches can be slow under a partial outage — correctness
+unaffected (still fails closed).
 
 ## 6b. Supply-chain deep verification (owner directive 2026-08-05)
 
