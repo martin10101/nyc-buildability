@@ -1,0 +1,83 @@
+{
+  "schema": "directive_manifest/v1",
+  "directive_id": "D-008",
+  "version": 1,
+  "slug": "owner-escalation-boundary",
+  "title": "Owner escalation boundary — the only two categories to stop and ask about",
+  "status": "active",
+  "issued_by": "owner",
+  "issued_at": "2026-08-04",
+  "captured_at": "2026-08-05T02:56:30+00:00",
+  "channel": "owner_typed_instruction",
+  "frozen_baseline_sha": "cb9a9995da213f33d70e467773d595b3dfea0b57",
+  "sources": [
+    {
+      "file": "source-001.md",
+      "kind": "original",
+      "sequence": 1,
+      "recorded_at": "2026-08-05T02:56:30+00:00",
+      "content_digest_sha256": "534259af80904e80691e61b38b049fa60d3970c59a6baecf1c7056b9921449e1"
+    }
+  ],
+  "amendments": [],
+  "supersedes": [],
+  "superseded_by": null,
+  "affected_tasks": [],
+  "affected_prs": [],
+  "affected_branches": [],
+  "scope": {
+    "task_ids": [
+      "D-008-BOUNDARY"
+    ],
+    "task_types": [
+      "governance"
+    ],
+    "milestones": [],
+    "paths": []
+  },
+  "applicability_note": "D-008-BOUNDARY is a NON-LEDGER governance sentinel (D-006-PRACTICE precedent): a standing escalation-boundary bound by owner instruction, verified at directive verifications, never entering a ledger task's accept() set. The two operative stop-categories align with CLAUDE.md 'Authority and human-only actions'; the owner's '4./5./one of the five above' numbering continues that established human-only-actions list, and the two explicitly listed categories are operative. Merges/accepts still require the owner's typed line (D-004-R721) as an approval gate presented with the exact line, which is NOT an 'ask' prohibited by R003.",
+  "owner_approval": {
+    "state": "issued_owner_typed",
+    "decision": "Owner typed this standing boundary 2026-08-04 and explicitly directed: 'Capture this boundary verbatim as a standing directive.'"
+  },
+  "lifecycle_state": "active",
+  "requirements_file": "requirements.json",
+  "verification_file": "verification.json",
+  "final_reviewed_sha": null,
+  "final_reviewed_manifest_sha256": null,
+  "requirements_content_digest_sha256": "4a3811220d5a628fc7879e4979982c02ee10539e8ea2639cabf81ce8c46d58e2",
+  "requirements_id_digest_sha256": "cd6bce56dd8a661a004e258375dab98e3690f7401271d12d8be8a9c679559b96",
+  "enforcement_pointers": {
+    "tasks": [],
+    "gates": [],
+    "blockers": [],
+    "rules": [
+      ".claude/rules/project-control.md",
+      "CLAUDE.md"
+    ],
+    "hold": false
+  },
+  "notes": [
+    "Verification pending independent directive-compliance-verifier at a frozen head (producer != verifier).",
+    "Numbering '4/5/five' preserved verbatim in source-001.md; interpreted as continuation of CLAUDE.md human-only actions (applicability_note)."
+  ],
+  "locked_requirement_ids": [
+    "D-008-R001",
+    "D-008-R002",
+    "D-008-R003",
+    "D-008-R004",
+    "D-008-R005",
+    "D-008-R006",
+    "D-008-R007",
+    "D-008-R008"
+  ],
+  "created_at": "2026-08-05T02:56:30+00:00",
+  "updated_at": "2026-08-05T02:56:30+00:00",
+  "audit_log": [
+    {
+      "at": "2026-08-05T02:56:30+00:00",
+      "by": "orchestrator",
+      "note": "D-008 captured verbatim as source-001.md (sha256 534259af80904e80691e61b38b049fa60d3970c59a6baecf1c7056b9921449e1) on branch control/D-008-boundary-and-m0t019-restart from origin/main cb9a9995da213f33d70e467773d595b3dfea0b57. 8 rows D-008-R001..R008 decomposed. Owner explicitly directed capture as a standing directive. Verification deferred to the independent verifier."
+    }
+  ]
+}

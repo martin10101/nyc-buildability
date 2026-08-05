@@ -109,7 +109,19 @@
         "M0-T036"
       ],
       "manifest": "D-007-codex-claude-supervisor-bridge/manifest.json"
+    },
+    {
+      "directive_id": "D-008",
+      "slug": "owner-escalation-boundary",
+      "title": "Owner escalation boundary (stop-and-ask only for credentials/payment or legal sign-offs)",
+      "status": "active",
+      "issued_at": "2026-08-04",
+      "issued_by": "owner",
+      "supersedes": [],
+      "superseded_by": null,
+      "affected_tasks": [],
+      "manifest": "D-008-owner-escalation-boundary/manifest.json"
     }
   ],
-  "updated_at": "2026-07-29T20:42:00+00:00"
+  "updated_at": "2026-08-05T02:56:30+00:00"
 }
