@@ -1,10 +1,10 @@
 {
  "schema": "directive_requirements/v1",
  "directive_id": "D-007",
- "version": 4,
- "requirement_count": 614,
+ "version": 5,
+ "requirement_count": 617,
  "producer": "orchestrator",
- "updated_at": "2026-08-05T14:28:24+00:00",
+ "updated_at": "2026-08-05T18:43:54+00:00",
  "requirements": [
   {
    "id": "D-007-R001",
@@ -23585,6 +23585,136 @@
     ]
    },
    "amendment_sequence": 13
+  },
+  {
+   "id": "D-007-R615",
+   "text": "OWNER CLOSE-OUT (2026-08-05): BUILD the missing D-007-R207 resource limits rather than scope them out. Add bounded, configurable, fail-closed knobs for per-day model-call cap, per-day external-write cap, CPU limit, and memory limit to the supervisor config + circuit breakers, with deterministic tests. Completes D-007-R207.",
+   "source_ref": "source-015-amendment.md#decomposition-this-amendment",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-007-BUILD",
+     "M0-T036"
+    ],
+    "task_types": [
+     "governance"
+    ],
+    "milestones": [],
+    "paths": [
+     "tools/agent_supervisor/"
+    ],
+    "lifecycle_events": [
+     "gate"
+    ],
+    "effective_date": "2026-08-05"
+   },
+   "dependencies": [
+    "D-007-R207"
+   ],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "captured from the owner M0-T036 close-out decision (2026-08-05); verified at directive verification",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": [
+     "M0-T036"
+    ]
+   },
+   "amendment_sequence": 14
+  },
+  {
+   "id": "D-007-R616",
+   "text": "OWNER CLOSE-OUT (2026-08-05): BUILD a live exercise that ACTUALLY actuates the context-threshold rotation seam (the third live leg D-007-R593 requires) and preserve its live audit evidence. If live seam actuation is structurally infeasible in the shadow/thin-client environment, STOP and report to the owner rather than fabricating the evidence. Completes D-007-R593 (or surfaces its infeasibility).",
+   "source_ref": "source-015-amendment.md#decomposition-this-amendment",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-007-BUILD",
+     "M0-T036"
+    ],
+    "task_types": [
+     "governance"
+    ],
+    "milestones": [],
+    "paths": [
+     "tools/agent_supervisor/"
+    ],
+    "lifecycle_events": [
+     "gate"
+    ],
+    "effective_date": "2026-08-05"
+   },
+   "dependencies": [
+    "D-007-R593"
+   ],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "captured from the owner M0-T036 close-out decision (2026-08-05); verified at directive verification",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": [
+     "M0-T036"
+    ]
+   },
+   "amendment_sequence": 14
+  },
+  {
+   "id": "D-007-R617",
+   "text": "SEQUENCING (2026-08-05): after the R615/R616 fixes land, re-gate the delta and RE-VERIFY at the NEW content identity (producer != verifier; the 575 prior PASS rows re-attested at the new identity, R207/R593 freshly verified), then hand the owner the accept line. Nothing accepts or merges without the owner's typed line (D-004-R721).",
+   "source_ref": "source-015-amendment.md#decomposition-this-amendment",
+   "classification": "sequencing",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-007-BUILD",
+     "M0-T036"
+    ],
+    "task_types": [
+     "governance"
+    ],
+    "milestones": [],
+    "paths": [
+     "tools/agent_supervisor/"
+    ],
+    "lifecycle_events": [
+     "gate"
+    ],
+    "effective_date": "2026-08-05"
+   },
+   "dependencies": [
+    "D-007-R615",
+    "D-007-R616"
+   ],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "captured from the owner M0-T036 close-out decision (2026-08-05); verified at directive verification",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": [
+     "M0-T036"
+    ]
+   },
+   "amendment_sequence": 14
   }
  ],
  "amendments_applied": [
@@ -23600,6 +23730,7 @@
   "source-011-amendment.md",
   "source-012-amendment.md",
   "source-013-amendment.md",
-  "source-014-amendment.md"
+  "source-014-amendment.md",
+  "source-015-amendment.md"
  ]
 }

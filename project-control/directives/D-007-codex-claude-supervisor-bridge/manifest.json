@@ -1,7 +1,7 @@
 {
  "schema": "directive_manifest/v1",
  "directive_id": "D-007",
- "version": 14,
+ "version": 15,
  "slug": "codex-claude-supervisor-bridge",
  "title": "Codex-Claude Code Supervisor Bridge (v4.3, Autonomy-Tuned) - build directive",
  "status": "active",
@@ -121,6 +121,14 @@
    "amends": "source-013-amendment.md",
    "recorded_at": "2026-08-05T14:28:24+00:00",
    "content_digest_sha256": "50ba86f93968baaa10ab52b3fab632da5c5f06f405fd3124dfaa8cff3e83fdf8"
+  },
+  {
+   "file": "source-015-amendment.md",
+   "kind": "amendment",
+   "sequence": 15,
+   "amends": "source-014-amendment.md",
+   "recorded_at": "2026-08-05T18:43:54+00:00",
+   "content_digest_sha256": "e2a1b59f3776a0b11a56bd09fcfe78edaec58d4740687d544d26c0f30172fd15"
   }
  ],
  "amendments": [
@@ -136,7 +144,8 @@
   "source-011-amendment.md",
   "source-012-amendment.md",
   "source-013-amendment.md",
-  "source-014-amendment.md"
+  "source-014-amendment.md",
+  "source-015-amendment.md"
  ],
  "supersedes": [],
  "superseded_by": null,
@@ -187,7 +196,7 @@
   "Two claude-side behavioral verifications remain outstanding (classifier-denied in the capture session): --max-turns acceptance and the stream-json canUseTool protocol probe; both are dispatch-time items recorded in the Phase 0 return."
  ],
  "created_at": "2026-08-03T03:44:22+00:00",
- "updated_at": "2026-08-05T14:28:24+00:00",
+ "updated_at": "2026-08-05T18:43:54+00:00",
  "audit_log": [
   {
    "at": "2026-08-03T03:44:22+00:00",
@@ -263,6 +272,11 @@
    "at": "2026-08-05T14:28:24+00:00",
    "by": "orchestrator",
    "note": "Amendment 13 (source-014): fresh-session owner message 2026-08-05. Adds R609 (lift D-007-R607 Fable-5 wait-for-Thursday hold for M0-T036 only; run on claude-opus-4-8 xhigh), R610 (run final delta re-review + held G2 wave at b95ebf7, verbatim verdicts), R611 (no limited-auto activation), R612 (accept-line return; nothing accepts/merges without owner typed line), R613 (standing-discipline reaffirmation), R614 (cross-registry pointer: Task-1 M0-T019 remediation decomposed under D-009 on the batch branch). Base origin/main d5d9b506c8be63eafd00ad92bd2d3dab2012d067. Requirements digests re-stamped over LF bytes."
+  },
+  {
+   "at": "2026-08-05T18:43:54+00:00",
+   "by": "orchestrator",
+   "note": "Amendment 14 (source-015): owner M0-T036 close-out decision BUILD-the-2-gaps. Adds R615 (build R207 limit knobs), R616 (build R593 live rotation exercise or report infeasible), R617 (re-gate + re-verify at new identity + accept-line). Digests re-stamped over LF."
   }
  ],
  "locked_requirement_ids": [
@@ -879,8 +893,11 @@
   "D-007-R611",
   "D-007-R612",
   "D-007-R613",
-  "D-007-R614"
+  "D-007-R614",
+  "D-007-R615",
+  "D-007-R616",
+  "D-007-R617"
  ],
- "requirements_id_digest_sha256": "b2aed8d6b0d9f6436ff1830346699ea4453a201d8353c3ca3bd1dd8eb509607d",
- "requirements_content_digest_sha256": "b49f38007d2fad29a0b17b01efeb660e52f49e9f6f6d3969d2f5071080cd1c72"
+ "requirements_id_digest_sha256": "90210b84492aafa63d57e223d3a762b84e47ba6bcc8e149c4082c5cb7736aec6",
+ "requirements_content_digest_sha256": "46c313a246ff03f6e9a95754ab229d64ae91488ba2ecb9f0452875ffe5fd9448"
 }
