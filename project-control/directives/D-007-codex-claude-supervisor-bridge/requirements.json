@@ -1,10 +1,10 @@
 {
  "schema": "directive_requirements/v1",
  "directive_id": "D-007",
- "version": 5,
- "requirement_count": 617,
+ "version": 6,
+ "requirement_count": 622,
  "producer": "orchestrator",
- "updated_at": "2026-08-05T18:43:54+00:00",
+ "updated_at": "2026-08-06T19:41:13+00:00",
  "requirements": [
   {
    "id": "D-007-R001",
@@ -23715,6 +23715,229 @@
     ]
    },
    "amendment_sequence": 14
+  },
+  {
+   "id": "D-007-R618",
+   "text": "OWNER DECISION (2026-08-06) = OPTION A: R593's un-provable third live leg (context-threshold rotation seam actuation, QA-gap-4) is recorded as an EXPLICITLY ACCEPTED RESIDUAL deferred to the R595 supervised rehearsal. This does NOT waive or remove the live-rotation requirement - it changes WHEN that evidence must be produced. M0-T036 MAY complete and be accepted WITHOUT manufacturing substitute evidence for the unprovable leg. In the verification, R593 is recorded NOT_APPLICABLE-to-the-shadow-only-acceptance with this owner-approved justification (independently approved), never PASS.",
+   "source_ref": "source-016-amendment.md#the-owner-decision-verbatim",
+   "classification": "decision",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-007-BUILD",
+     "M0-T036"
+    ],
+    "task_types": [
+     "governance"
+    ],
+    "milestones": [],
+    "paths": [
+     "tools/agent_supervisor/"
+    ],
+    "lifecycle_events": [
+     "gate",
+     "accept"
+    ],
+    "effective_date": "2026-08-06"
+   },
+   "dependencies": [
+    "D-007-R593",
+    "D-007-R594"
+   ],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "captured from the owner R593 close-out decision Option A (2026-08-06); verified at directive verification",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": [
+     "M0-T036"
+    ]
+   },
+   "amendment_sequence": 15
+  },
+  {
+   "id": "D-007-R619",
+   "text": "MANDATORY BLOCKING PREREQUISITE (hold): the R595 supervised rehearsal (live rotation-seam actuation evidence) is a mandatory blocking prerequisite BEFORE any of: (a) supervised-auto activation; (b) limited-auto activation; (c) automatic product-task execution; (d) any claim that live session rotation has been proven. Until R595 is satisfied, none of (a)-(d) may proceed.",
+   "source_ref": "source-016-amendment.md#the-owner-decision-verbatim",
+   "classification": "hold",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-007-BUILD",
+     "M0-T036"
+    ],
+    "task_types": [
+     "governance"
+    ],
+    "milestones": [],
+    "paths": [
+     "tools/agent_supervisor/"
+    ],
+    "lifecycle_events": [
+     "gate",
+     "accept"
+    ],
+    "effective_date": "2026-08-06"
+   },
+   "dependencies": [
+    "D-007-R618",
+    "D-007-R595"
+   ],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "captured from the owner R593 close-out decision Option A (2026-08-06); verified at directive verification",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": [
+     "M0-T036"
+    ]
+   },
+   "amendment_sequence": 15
+  },
+  {
+   "id": "D-007-R620",
+   "text": "VISIBILITY + SHADOW-ONLY (obligation): the supervisor remains SHADOW-ONLY; the R593/QA-gap-4 residual must be VISIBLE in all of: M0-T036 task state; the acceptance evidence; SESSION_HANDOFF.md; the relevant gate/evidence-map; and the activation checklist (project-control/reports/M0-T036-ACTIVATION-CHECKLIST.md).",
+   "source_ref": "source-016-amendment.md#the-owner-decision-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-007-BUILD",
+     "M0-T036"
+    ],
+    "task_types": [
+     "governance"
+    ],
+    "milestones": [],
+    "paths": [
+     "tools/agent_supervisor/"
+    ],
+    "lifecycle_events": [
+     "gate",
+     "accept"
+    ],
+    "effective_date": "2026-08-06"
+   },
+   "dependencies": [
+    "D-007-R618"
+   ],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "captured from the owner R593 close-out decision Option A (2026-08-06); verified at directive verification",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": [
+     "M0-T036"
+    ]
+   },
+   "amendment_sequence": 15
+  },
+  {
+   "id": "D-007-R621",
+   "text": "PROHIBITION: do NOT represent R593 as fully live-proven anywhere. Two of three V1.2 live legs are proven; the rotation-seam live actuation is an accepted, deferred residual, not proven live.",
+   "source_ref": "source-016-amendment.md#the-owner-decision-verbatim",
+   "classification": "prohibition",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-007-BUILD",
+     "M0-T036"
+    ],
+    "task_types": [
+     "governance"
+    ],
+    "milestones": [],
+    "paths": [
+     "tools/agent_supervisor/"
+    ],
+    "lifecycle_events": [
+     "gate",
+     "accept"
+    ],
+    "effective_date": "2026-08-06"
+   },
+   "dependencies": [
+    "D-007-R618"
+   ],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "captured from the owner R593 close-out decision Option A (2026-08-06); verified at directive verification",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": [
+     "M0-T036"
+    ]
+   },
+   "amendment_sequence": 15
+  },
+  {
+   "id": "D-007-R622",
+   "text": "AUTHORIZATION + SEQUENCING (2026-08-06): re-run all now-provable evidence at the CURRENT repository identity (R207 -> PASS; evidence-map review; directive/registry validation; current-HEAD verification; final M0-T036 acceptance checks). IF all remaining checks pass: complete and ACCEPT M0-T036; commit the decision + evidence; PUSH ONLY the exact task/M0-T036-supervisor-bridge branch; update or create the appropriate PR; complete ordinary integration permitted by current repo policy; do NOT activate anything beyond shadow. Leave no active children/writable subprocesses/unresolved git effects/uncommitted M0-T036 deliverables; refresh SESSION_HANDOFF; return the final clean-stop report. Owner authorized proceeding without another routine approval.",
+   "source_ref": "source-016-amendment.md#the-owner-decision-verbatim",
+   "classification": "authorization",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-007-BUILD",
+     "M0-T036"
+    ],
+    "task_types": [
+     "governance"
+    ],
+    "milestones": [],
+    "paths": [
+     "tools/agent_supervisor/"
+    ],
+    "lifecycle_events": [
+     "gate",
+     "accept"
+    ],
+    "effective_date": "2026-08-06"
+   },
+   "dependencies": [
+    "D-007-R618",
+    "D-007-R617"
+   ],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "captured from the owner R593 close-out decision Option A (2026-08-06); verified at directive verification",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": [
+     "M0-T036"
+    ]
+   },
+   "amendment_sequence": 15
   }
  ],
  "amendments_applied": [
@@ -23731,6 +23954,7 @@
   "source-012-amendment.md",
   "source-013-amendment.md",
   "source-014-amendment.md",
-  "source-015-amendment.md"
+  "source-015-amendment.md",
+  "source-016-amendment.md"
  ]
 }
