@@ -18,39 +18,50 @@ Refreshed **2026-08-05 (late)** after a long session. **The block below supersed
   - **Independent 577-req D-007 verification recorded** (`reports/M0-T036-D007-verification-577.json`):
     575 PASS, **2 gating UNVERIFIABLE → R207 and R593**. (9-cluster workflow; worst-of dedup.)
   - **R207 BUILT** (4 missing limit knobs; suite 1157/2; commit `c6a2c59`).
-  - **R593** close-out = owner chose "build it for real": step-1 **`resume-pending-prompt`** command
-    BUILT + verified (suite 1163/2; commit `b1ab12b`). **REMAINING: owner runs the live rotation
-    capture** (command sequence in the producer report / owner message), THEN re-verify R207+R593 +
-    re-attest the 575 at the NEW code identity → hand the accept line.
-- **`control/D-009-depsec-and-m0t019-dispatch`** (batch branch, `…/ctl` worktree) **pushed to origin**
-  through **`eb80a4d`**. M0-T019 transitive-advisory remediation applied (sharp 0.35.3 + brace-expansion
-  1.1.18 overrides; +8 tests → 40; stricter `total==0` audit step). **DEFERRED pending owner A/B age
-  decision:** lockfile regen + FE-S9 threshold. B-017 open. M0-T019 stays `claimed`.
+  - **R593 — CORRECTED 2026-08-06 (structurally infeasible as a synthetic probe; STOP-and-report).**
+    Reconciled vs **R594** (synthetic-probe-only, shadow-only in force, NOTHING forwards to a real
+    task) + **R595** (supervised rehearsal not authorized): the rotation seam needs a real forward
+    (`forwards=True`), which shadow mode disables and R594 forbids → a live rotation demo **cannot** be
+    a synthetic probe. The `resume-pending-prompt` command was BUILT + verified (suite 1163/2; commit
+    `b1ab12b`) and is a valid operator affordance, but it does **NOT** open an R594-compliant path to
+    the seam. The earlier "build it for real / owner live-capture" plan is **RETRACTED** (a supervised
+    real-forward run would violate R594/R595). **R593 rotation leg AWAITS AN OWNER DECISION:** (A)
+    record QA-gap-4 as an **accepted residual** deferred to the R595 supervised rehearsal → then M0-T036
+    accepts shadow-only; or (B) owner separately **authorizes a supervised rehearsal** (lifts R595,
+    which returns to the owner after the now-done V1.2 delta re-gate). Do NOT produce substitute evidence.
+- **`control/D-009-depsec-and-m0t019-dispatch`** (batch branch, `…/ctl` worktree) local tip **`a953d0d`**
+  (origin at `eb80a4d`, **ahead 1 — not pushed**). M0-T019 transitive-advisory remediation applied
+  (sharp 0.35.3 + brace-expansion 1.1.18 overrides; +8 tests → 40; stricter `total==0` audit step).
+  **A/B AGE DECISION RESOLVED → OPTION B** (scoped FE-S9 age exception): a **CONCURRENT session**
+  (`session_01SQGGRo6sqwzHFhk2gbMTFT`, NOT this one) captured **D-009 amendment 1** (`e96d718`) +
+  rebound M0-T019 `blocked→ready→claimed` (`a953d0d`) and is running the exception increment on worktree
+  **`…/t19x`** (`task/M0-T019-fes9-exception @ e96d718`). **That session owns this workstream — do NOT
+  touch/merge/push it from here.** B-017 stays open until the regenerated-lock CI evidence lands.
 
 ## NEXT SESSION — resume checklist (2 owner-gated workstreams)
 
 Start-of-session: `python tools/project_control.py status` + reconcile git/CI. Both branches are on
 origin. Reviewers still run `claude-opus-4-8` + `xhigh` (Fable out).
 
-1. **Finish M0-T036 accept** (branch `task/M0-T036-supervisor-bridge`). Blocked ONLY on the owner's
-   R593 live rotation capture. When the owner provides the resulting `audit.jsonl` (from
-   `start --mode supervised --context-rotation-threshold 1 --max-cycles 2` → `resume-pending-prompt
-   --approve-prompt-digest <digest>` → re-run `start`, on the controller checkout under owner creds):
-   (a) integrate the live-rotation evidence under `project-control/reports/M0-T036-V1.2-live-exercises/`;
-   (b) **re-verify at the NEW code identity** — R207 + R593 freshly PASS, and re-attest the other 575
-   (delta check: only R207/R593 areas changed; confirm the delta doesn't disturb the rest) — assemble
-   the v2 `verification.json` (see memory `in-regime-accept-mechanics`: material-identity +
-   reviewed_sha==HEAD, worst-of dedup, assemble in-orchestrator not via a synthesis agent);
-   (c) build the in-regime **evidence-map** over all applicable ids; (d) `submit` → `awaiting_gate`;
-   (e) verify every accept precondition; (f) hand the owner the one-line accept
-   (`accept --task-id M0-T036 --agent orchestrator`) — DO NOT activate limited-auto (keep shadow-only).
-   Independent gate re-review (G3/G4/G5) of the R207 + `resume-pending-prompt` code deltas is owed
-   before accept (producer was backend-engineer; use different reviewers).
-2. **Finish M0-T019** (batch branch). Blocked on the owner's **A/B age decision** (brace-expansion
-   1.1.18: Option A hold-to-7-days, clears 2026-08-06T10:17Z, no gate change / Option B 6-day verified
-   exception editing FE-S9). Then: regenerate the lockfile via `generate-lockfile.yml` on the branch →
-   full CI green on the new lock → submit → G2/G3/G4/G5 → batch accept (M0-T019 + M2-T014). B-017 clears
-   with the regenerated-lock CI evidence. See `reports/M0-T019-transitive-advisory-blocker-2026-08-05.md`.
+1. **Finish M0-T036 accept** (branch `task/M0-T036-supervisor-bridge`). **Blocked on the owner's
+   R593 decision** (see the corrected R593 block above — NOT a live capture): (A) accepted-residual
+   deferred to the R595 supervised rehearsal, or (B) owner authorizes a supervised rehearsal. Once the
+   owner picks: capture it as a D-007 amendment; then to reach accept — (a) **re-verify at the current
+   code identity**: R207 should now verify **PASS** (built, `c6a2c59`), R593 recorded per the owner's
+   decision (independently-approved NOT_APPLICABLE/deferred residual, or PASS after a real rehearsal),
+   and re-attest the other 575 (delta check — only the R207 / `resume-pending-prompt` areas changed) —
+   assemble the v2 `verification.json` (memory `in-regime-accept-mechanics`: material-identity +
+   `reviewed_sha`==HEAD, **worst-of dedup**, assemble in-orchestrator, NOT via a synthesis agent);
+   (b) build the in-regime **evidence-map** over all applicable ids; (c) `submit` → `awaiting_gate`;
+   (d) owed **independent G3/G4/G5 delta re-review** of the R207 + `resume-pending-prompt` code
+   (producer was backend-engineer; use different reviewers); (e) verify every accept precondition;
+   (f) hand the owner the one-line accept (`accept --task-id M0-T036 --agent orchestrator`) — DO NOT
+   activate limited-auto (keep shadow-only).
+2. **M0-T019 — OWNED BY THE CONCURRENT SESSION** (`session_01SQGGRo…`), do NOT act on it here. A/B
+   resolved → **Option B** (scoped FE-S9 exception; D-009 amendment 1 `e96d718`, batch tip `a953d0d`,
+   worktree `…/t19x`). Its remaining path: FE-S9 scoped exception + lockfile regen via
+   `generate-lockfile.yml` → CI green → submit → G2/G3/G4/G5 → batch accept (M0-T019 + M2-T014); B-017
+   clears with the regenerated-lock CI evidence. Ref `reports/M0-T019-transitive-advisory-blocker-2026-08-05.md`.
 - **Reviewers run `claude-opus-4-8` + effort `xhigh`** (Fable out; reviewer-model-fallback). The 5
   flipped reviewer agent files are uncommitted in the working tree — **revert to `claude-fable-5`
   (no effort key) when the owner says "Fable is back."**
