@@ -69,7 +69,7 @@
   ],
   "blockers": [],
   "created_at": "2026-08-03T03:44:41.634259+00:00",
-  "updated_at": "2026-08-05T15:17:54.267739+00:00",
+  "updated_at": "2026-08-06T19:30:46.961844+00:00",
   "directive_refs": [
     {
       "directive_id": "D-007",
@@ -229,6 +229,20 @@
       "percent": 99,
       "status": "in_progress",
       "message": "V1.2.2 FINAL delta re-review + held G2 wave COMPLETE at frozen b95ebf7, run on claude-opus-4-8 xhigh (owner override D-007-R609 lifting R607 for M0-T036 only; reviewer-model-fallback 2026-08-05). All SIX legs PASS, preserved verbatim: G2/G3/G4/G5 formal gates + CPV + DCV. G4 FAIL(F1)->PASS; F1 record-vs-actuation divergence CONFIRMED-RESOLVED and MUTATION-PROVEN (G4 + DCV). failed_gates cleared. Findings are activation-only (live quota classifier unwired -> fail-closed pause) or defense-in-depth; NONE acceptance-blocking. M0-T036 stays SHADOW-ONLY; limited-auto NOT activated (owner's separate decision). Accept awaits the owner's typed line; the in-regime submit (577-req D-007 evidence-map + independent directive verification) is the remaining producer packet before accept()."
+    },
+    {
+      "at": "2026-08-05T19:24:34.636141+00:00",
+      "agent": "orchestrator",
+      "percent": 99,
+      "status": "in_progress",
+      "message": "R207 [R615] COMPLETE + verified (4 limit knobs; 1157/2 suite; committed c6a2c59). R593 [R616]: producer returned a TRUTHFUL INFEASIBILITY report - live rotation-seam actuation is blocked by (1) a missing resume/continuation CLI command (fires owner_approved_pending_prompt against a parked WAIT_FOR_OWNER journal; clear-recovery precedent) and (2) a CREDENTIAL/OWNER-AUTHORITY boundary (a real live supervised run needs real claude.exe+codex.cmd under the owner's account). Owner close-out decision 2026-08-05: CLOSE IT FOR REAL (2 steps) - orchestrator builds the continuation command (own G3/G4/G5 review, security-sensitive owner-approval control surface), THEN the owner personally runs the live capture. R593 flips to PASS only after the owner's live run. This is the execution path for D-007-R616/R617."
+    },
+    {
+      "at": "2026-08-06T19:30:46.953672+00:00",
+      "agent": "orchestrator",
+      "percent": 99,
+      "status": "in_progress",
+      "message": "R593 CORRECTION (2026-08-06), reconciled against R593/R594/R595 verbatim: the 'close it for real' 2-step path (R616) is MIS-FRAMED and RETRACTED. R594 mandates SYNTHETIC PROBE UNITS ONLY - shadow-only stays in force and NOTHING forwards to a real task; the rotation seam (_rotate_at_seam) is reachable only after a real forward is marked sent (forwards=True), which shadow mode disables and R594 forbids. Therefore live rotation-seam actuation AS A SYNTHETIC PROBE is STRUCTURALLY INFEASIBLE = the R616 STOP-and-report condition is MET. The resume-pending-prompt command (b1ab12b) is a valid operator affordance but does NOT open an R594-compliant path to the seam; my earlier owner-facing live-capture commands were WRONG (a supervised real-forward run violates R594/R595) and are RETRACTED - no substitute evidence to be produced. R593's rotation leg now awaits an OWNER decision: (A) record QA-gap-4 as an accepted residual belonging to the R595-deferred supervised rehearsal, or (B) the owner separately authorizes a supervised rehearsal (lifting R595, which returns to the owner after the now-done V1.2 delta re-gate). Session brought to a clean stop pending that decision; NO new work begun."
     }
   ]
 }
