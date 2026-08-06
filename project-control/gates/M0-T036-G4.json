@@ -4,10 +4,10 @@
   "reviewer": "qa-engineer",
   "role": "independent_review",
   "result": "PASS",
-  "report_file": "project-control/reports/M0-T036-V1.2.2-G4-qa-delta-review.md",
-  "reviewed_at": "2026-08-05T15:16:55.260223+00:00",
+  "report_file": "project-control/reports/M0-T036-V1.2.3-G4-qa-delta-review.md",
+  "reviewed_at": "2026-08-06T20:15:11.622293+00:00",
   "content_manifest_sha256": "08f8db0ea957a4fcbb8acdee4b3bbf1e2886e513b07132cc7dbd654706cabc49",
-  "reviewed_sha": "1d8276c194a9ccd98f6386d622c447bc5d8c818e",
+  "reviewed_sha": "4ff4d889504565c676f41951e3b9b9b549322ea2",
   "history": [
     {
       "reviewer": "qa-engineer",
@@ -15,7 +15,14 @@
       "result": "FAIL",
       "report_file": "project-control/reports/M0-T036-V1.2-G4-qa-delta-review.md",
       "reviewed_at": "2026-08-04T19:33:16.357310+00:00"
+    },
+    {
+      "reviewer": "qa-engineer",
+      "role": "independent_review",
+      "result": "PASS",
+      "report_file": "project-control/reports/M0-T036-V1.2.2-G4-qa-delta-review.md",
+      "reviewed_at": "2026-08-05T15:16:55.260223+00:00"
     }
   ],
-  "updated_at": "2026-08-05T15:16:56.421779+00:00"
+  "updated_at": "2026-08-06T20:15:13.291304+00:00"
 }

@@ -59,8 +59,8 @@
     "control-plane-verifier",
     "directive-compliance-verifier"
   ],
-  "status": "in_progress",
-  "progress_percent": 99,
+  "status": "accepted",
+  "progress_percent": 100,
   "risks": [
     "Scale: D-007 spans 5 phases; the packet authorizes Phases 1-4 + the Phase 5 shadow pilot, with the activation decision owner-gated. Split into per-phase follow-up tasks at the orchestrator's discretion if a phase exceeds a safe review size - contract splits through the normal process, never widen this packet.",
     "Windows process-tree control (Job Objects) and durable Task Scheduler wake are the highest-uncertainty areas; Section 18 stop conditions apply if a safe strategy cannot be proven.",
@@ -69,7 +69,7 @@
   ],
   "blockers": [],
   "created_at": "2026-08-03T03:44:41.634259+00:00",
-  "updated_at": "2026-08-06T19:30:46.961844+00:00",
+  "updated_at": "2026-08-06T20:15:42.947991+00:00",
   "directive_refs": [
     {
       "directive_id": "D-007",
@@ -243,6 +243,15 @@
       "percent": 99,
       "status": "in_progress",
       "message": "R593 CORRECTION (2026-08-06), reconciled against R593/R594/R595 verbatim: the 'close it for real' 2-step path (R616) is MIS-FRAMED and RETRACTED. R594 mandates SYNTHETIC PROBE UNITS ONLY - shadow-only stays in force and NOTHING forwards to a real task; the rotation seam (_rotate_at_seam) is reachable only after a real forward is marked sent (forwards=True), which shadow mode disables and R594 forbids. Therefore live rotation-seam actuation AS A SYNTHETIC PROBE is STRUCTURALLY INFEASIBLE = the R616 STOP-and-report condition is MET. The resume-pending-prompt command (b1ab12b) is a valid operator affordance but does NOT open an R594-compliant path to the seam; my earlier owner-facing live-capture commands were WRONG (a supervised real-forward run violates R594/R595) and are RETRACTED - no substitute evidence to be produced. R593's rotation leg now awaits an OWNER decision: (A) record QA-gap-4 as an accepted residual belonging to the R595-deferred supervised rehearsal, or (B) the owner separately authorizes a supervised rehearsal (lifting R595, which returns to the owner after the now-done V1.2 delta re-gate). Session brought to a clean stop pending that decision; NO new work begun."
+    },
+    {
+      "at": "2026-08-06T20:14:51.758419+00:00",
+      "agent": "orchestrator",
+      "percent": 99,
+      "status": "in_progress",
+      "message": "OWNER OPTION A implemented (D-007-R618): R593 recorded NOT_APPLICABLE = accepted residual deferred to R595 (never PASS, R621); R595 = mandatory blocking activation prerequisite (R619); residual visible in task/evidence/handoff/evidence-map/activation-checklist (R620). Delta re-gate V1.2.3 at HEAD 4ff4d88 (claude-opus-4-8 xhigh): G3 PASS, G4 PASS (1163/2 + mutation-proven), G5 PASS, DCV PASS. R207 built -> PASS. 585-req verification.json rebuilt (584 PASS + R593 NA); validate exit 0. Acceptance-ready shadow-only."
     }
-  ]
+  ],
+  "accepted_by": "orchestrator",
+  "accepted_at": "2026-08-06T20:15:42.947991+00:00"
 }
