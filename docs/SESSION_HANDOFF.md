@@ -10,25 +10,26 @@ Refreshed **2026-08-05 (late)** after a long session. **The block below supersed
 
 ## CURRENT STATE (2026-08-05 late — confirm against the ledger + git)
 
-- **`task/M0-T036-supervisor-bridge`** (this branch) **pushed to origin** through **`3100436`** (a
-  later handoff-refresh commit may sit on top locally — push it too). M0-T036 `in_progress`@99%, all
-  6 V1.2.2-wave gates PASS; **NOT accepted**.
+- **`task/M0-T036-supervisor-bridge`** (this branch) — **M0-T036 ACCEPTED (shadow-only) 2026-08-06**
+  (owner Option A). accepted count **56**. Delta re-gate V1.2.3 at `4ff4d88` all PASS (G3/G4/G5 + DCV);
+  585-req independent `verification.json` (584 PASS + R593 NA); acceptance commit `9d7573f`. Branch
+  ahead of origin (`3100436`) with the acceptance commits — push the exact task branch + open the PR.
+  **SHADOW-ONLY; nothing activated.**
   - D-007 amendments 13–14 captured (`source-014`/`source-015`): **R609** = the Fable-hold override
     (done — reviews ran on `claude-opus-4-8` xhigh); **R615/R616/R617** = build R207+R593, re-verify, accept.
   - **Independent 577-req D-007 verification recorded** (`reports/M0-T036-D007-verification-577.json`):
     575 PASS, **2 gating UNVERIFIABLE → R207 and R593**. (9-cluster workflow; worst-of dedup.)
   - **R207 BUILT** (4 missing limit knobs; suite 1157/2; commit `c6a2c59`).
-  - **R593 — CORRECTED 2026-08-06 (structurally infeasible as a synthetic probe; STOP-and-report).**
-    Reconciled vs **R594** (synthetic-probe-only, shadow-only in force, NOTHING forwards to a real
-    task) + **R595** (supervised rehearsal not authorized): the rotation seam needs a real forward
-    (`forwards=True`), which shadow mode disables and R594 forbids → a live rotation demo **cannot** be
-    a synthetic probe. The `resume-pending-prompt` command was BUILT + verified (suite 1163/2; commit
-    `b1ab12b`) and is a valid operator affordance, but it does **NOT** open an R594-compliant path to
-    the seam. The earlier "build it for real / owner live-capture" plan is **RETRACTED** (a supervised
-    real-forward run would violate R594/R595). **R593 rotation leg AWAITS AN OWNER DECISION:** (A)
-    record QA-gap-4 as an **accepted residual** deferred to the R595 supervised rehearsal → then M0-T036
-    accepts shadow-only; or (B) owner separately **authorizes a supervised rehearsal** (lifts R595,
-    which returns to the owner after the now-done V1.2 delta re-gate). Do NOT produce substitute evidence.
+  - **R593 — RESOLVED via owner Option A (2026-08-06, D-007-R618).** The live rotation-seam actuation
+    (QA-gap-4) is structurally infeasible as a synthetic probe under R594, so it is an **explicitly
+    accepted RESIDUAL deferred to the R595 supervised rehearsal** — recorded `NOT_APPLICABLE` (never
+    PASS, R621), independent approver = directive-compliance-verifier. **NOT waived.** ⛔ **R595 is a
+    MANDATORY BLOCKING prerequisite before ANY activation** (supervised-auto / limited-auto / auto
+    product-task / any "live rotation proven" claim) — R619; see `project-control/reports/M0-T036-ACTIVATION-CHECKLIST.md`.
+    The `resume-pending-prompt` command (`b1ab12b`) is a built, gate-reviewed operator affordance that
+    the future R595 rehearsal will use (G5 flagged one LOW pre-R595 hardening: consume/clear the
+    `pending_prompt` record on resume). 2 of 3 V1.2 live legs proven; rotation leg unit/real-process-proven,
+    not live-actuated.
 - **`control/D-009-depsec-and-m0t019-dispatch`** (batch branch, `…/ctl` worktree) local tip **`a953d0d`**
   (origin at `eb80a4d`, **ahead 1 — not pushed**). M0-T019 transitive-advisory remediation applied
   (sharp 0.35.3 + brace-expansion 1.1.18 overrides; +8 tests → 40; stricter `total==0` audit step).
@@ -43,20 +44,15 @@ Refreshed **2026-08-05 (late)** after a long session. **The block below supersed
 Start-of-session: `python tools/project_control.py status` + reconcile git/CI. Both branches are on
 origin. Reviewers still run `claude-opus-4-8` + `xhigh` (Fable out).
 
-1. **Finish M0-T036 accept** (branch `task/M0-T036-supervisor-bridge`). **Blocked on the owner's
-   R593 decision** (see the corrected R593 block above — NOT a live capture): (A) accepted-residual
-   deferred to the R595 supervised rehearsal, or (B) owner authorizes a supervised rehearsal. Once the
-   owner picks: capture it as a D-007 amendment; then to reach accept — (a) **re-verify at the current
-   code identity**: R207 should now verify **PASS** (built, `c6a2c59`), R593 recorded per the owner's
-   decision (independently-approved NOT_APPLICABLE/deferred residual, or PASS after a real rehearsal),
-   and re-attest the other 575 (delta check — only the R207 / `resume-pending-prompt` areas changed) —
-   assemble the v2 `verification.json` (memory `in-regime-accept-mechanics`: material-identity +
-   `reviewed_sha`==HEAD, **worst-of dedup**, assemble in-orchestrator, NOT via a synthesis agent);
-   (b) build the in-regime **evidence-map** over all applicable ids; (c) `submit` → `awaiting_gate`;
-   (d) owed **independent G3/G4/G5 delta re-review** of the R207 + `resume-pending-prompt` code
-   (producer was backend-engineer; use different reviewers); (e) verify every accept precondition;
-   (f) hand the owner the one-line accept (`accept --task-id M0-T036 --agent orchestrator`) — DO NOT
-   activate limited-auto (keep shadow-only).
+1. **M0-T036 — ACCEPTED (shadow-only), DONE this session.** No further acceptance work. Forward items
+   (all owner/activation-gated, NOT acceptance blockers): (i) **R595 supervised rehearsal** — the
+   deferred live rotation-seam evidence; **mandatory blocking prerequisite before ANY activation**
+   (R619); owner-authorized + independently reviewed when the owner elects to activate. (ii) Before that
+   rehearsal, the G5 **LOW hardening**: consume/clear the `pending_prompt/<run_id>` record on a
+   successful `resume-pending-prompt` (or record+check the WAIT trigger) so a stale record can't be
+   re-approved. (iii) **Follow-up (integrity):** M0-T036's `allowed_paths` carry parenthetical
+   annotations, so the content-identity matcher covers no code (identity `08f8db0e` is stable across
+   code changes) — worth a control-plane fix so future supervisor edits are identity-tracked.
 2. **M0-T019 — OWNED BY THE CONCURRENT SESSION** (`session_01SQGGRo…`), do NOT act on it here. A/B
    resolved → **Option B** (scoped FE-S9 exception; D-009 amendment 1 `e96d718`, batch tip `a953d0d`,
    worktree `…/t19x`). Its remaining path: FE-S9 scoped exception + lockfile regen via
