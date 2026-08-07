@@ -126,3 +126,49 @@ Explicit opinion on the NA-by-lapse proposals the packet asked me to evaluate:
 - **D-009-R021 NA-by-lapse: REFUTED as stated → the blocking defect.** The "no exception path" assertions in the gate header and policy doc were correctly left intact and remain true — but the task-file acceptance scenarios (FE-S5/FE-S8/FE-S9/FE-S12) were affirmatively edited to describe a machine-realized exception and its (non-existent) unit tests, and were never reverted. At the reviewed head, committed text therefore contradicts the shipped gate behavior — precisely the condition R021 forbids. The security control and all code deliverables are correct; the fix is a text/consistency reconciliation of the task-file scenarios (and the two reports that repeat the inaccurate claim), after which this G3 should be re-run.
 
 The orchestrator should record this gate as FAIL and route the reconciliation rework; do not accept M0-T019 until the committed acceptance-scenario text matches the shipped no-exception gate.
+
+---
+
+<!-- VERBATIM delta re-review return (same code-reviewer agent, continued transcript), appended
+unchanged by the orchestrator per the report-preservation rule, 2026-08-07. The original FAIL
+verdict above is preserved as history; the delta re-review below supersedes it at the reconciled
+head f2dd11f. -->
+
+# PASS 1 — G3 DELTA RE-REVIEW (M0-T019, reconciled head)
+
+- **Gate ID:** M0-T019-G3 (delta re-review over Defect 1 rework)
+- **Task ID:** M0-T019
+- **Reviewer:** code-reviewer (independent; != producer / != orchestrator)
+- **Reconciled head:** `f2dd11fd10deb6c450365ae7c3c8372a794c4229` on `control/D-009-batch-close`
+- **Prior report:** `project-control/reports/M0-T019-g3-code-review.md` (verdict FAIL, single blocking Defect 1: D-009-R021)
+- **Result: PASS** — Defect 1 fully resolved; no committed text now contradicts the shipped no-exception gate; the reconciliation introduced no new inaccuracy.
+
+## Delta reviewed
+
+`git diff 2aee4ff..f2dd11f` is confined to ledger records (G2/G3/G5 gate files, state, progress), the two saved gate reports (G3, G5), the orchestrator's reconciliation of `project-control/tasks/M0-T019.json` scenarios FE-S5/FE-S8/FE-S9/FE-S12, and the producer's lockstep corrections to `M0-T019-fes9-mootness-2026-08-07.md` §6/§7, `M0-T019-evidence-map.json` R021, and `M0-T019-producer-report.md` (new §7h). No code, workflow, lockfile, `.npmrc`, policy-doc, or test change — the shipped gate remains byte-identical to the head I already reviewed (correct; the defect was documentation/consistency only).
+
+## Defect 1 resolution — verified point by point
+
+1. **FE-S5** now reads "…RESOLVED by time lapse (2026-08-07): the authorized scoped age-only exception … became MOOT before implementation … **FE-S9 ships with NO exception path**; the global 7-day threshold is unchanged and nothing is exempted." — matches the shipped gate. ✔
+2. **FE-S8** now reads "…the D-009 amendment-1-authorized machine-realization of this exception **became moot by time lapse before implementation** … **the machine gates carry NO exception path and the policy's owner-action-outside-the-tool model stands**." — resolves the prior self-contradiction with `DEPENDENCY_SECURITY_POLICY.md` §6. ✔
+3. **FE-S9** now reads "…a scoped … exception **was AUTHORIZED** … **it became MOOT BY TIME LAPSE before implementation** … **so the tool carries NO exception path — no allowlist, no suppression, no override**." — matches the shipped gate. ✔
+4. **FE-S12** rewritten as a resolution record: "RESOLVED MOOT BY TIME LAPSE (2026-08-07) … ZERO exception entries were needed and NO exception path was implemented … **The exception-path unit tests originally specified here are NOT APPLICABLE BY TIME LAPSE — no exception code exists to test**." — the false unit-test claim is removed. ✔
+5. **Corrected artifacts:** the evidence-map R021 entry and mootness §6 R021 row now explicitly **retract** the earlier "remains literally TRUE / must NOT be edited" premise and attribute the fix to the G3-caught contradiction; mootness §7 item 4 and producer report §7h document the FAIL→reconcile→re-review chain honestly. ✔
+
+## No-new-inaccuracy check (the reconciled FE-S12 resolution record)
+
+Every factual claim in the rewritten FE-S12 is independently verifiable and true:
+- R011 "upper bound … an entry only where actually needed" and R012 "expired/invalid entries IGNORED … revert to plain 7-day gate" — faithful to the requirement text.
+- brace-expansion@1.1.18 cleared 2026-08-06T10:17:06.961Z (publish 2026-07-30T10:17:06.961Z + 604800s) ✔; js-yaml@4.3.1 cleared 2026-08-07T17:39:51.183Z (publish 2026-07-31T17:39:51.183Z + 604800s) ✔ — both arithmetically correct and consistent with the committed fixtures.
+- "dependency_age_gate.mjs ships byte-unchanged with no allowlist/suppression/exception path and the hard-set 604800s threshold" — confirmed (gate unchanged; grep-clean of version literals).
+- "the 40 shipped unit tests cover the unchanged fail-closed gate (boundary 604800/604799, advisory/integrity/host/timestamp/ambiguous/outage)" — re-ran at the reconciled head: **40 pass / 0 fail**; coverage confirmed.
+
+## Residual-assertion sweep
+
+Full-tree grep for `MACHINE-REALIZED | carries a SCOPED | carries EXACTLY ONE narrow exception path | name@version allowlist` at the reconciled head returns hits only in `M0-T019-g3-code-review.md` and the mootness §6 R021 row — both **past-tense/corrective framing** quoting the now-fixed defect, not live assertions. The task file (the actual acceptance criteria) carries no present-tense exception assertion; its only "exception"/"allowlist" mentions assert the **absence** of one.
+
+## Note on my earlier verification request
+
+The orchestrator supplied PR #176 (33/33 green including `web-dependency-security` over the regenerated lock) as the live CI corroboration my prior non-blocking note requested. I cannot re-fetch it under the read-only harness, but it corroborates the failure→remediation→success lockfile narrative I verified structurally.
+
+**Pass 1 verdict: PASS.** The single blocking defect from the original G3 is resolved; the code deliverables (unchanged) already passed. M0-T019 is code-review-clean at `f2dd11f`.
