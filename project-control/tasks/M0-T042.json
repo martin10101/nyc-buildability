@@ -54,14 +54,14 @@
     "control-plane-verifier",
     "directive-compliance-verifier"
   ],
-  "status": "claimed",
-  "progress_percent": 10,
+  "status": "awaiting_gate",
+  "progress_percent": 85,
   "risks": [
     "Codex CLI event shapes drift across versions - capability-probe and fixture before live use (AD-022)."
   ],
   "blockers": [],
   "created_at": "2026-08-07T01:32:54.176279+00:00",
-  "updated_at": "2026-08-07T05:28:52.337957+00:00",
+  "updated_at": "2026-08-07T06:25:31.094034+00:00",
   "directive_refs": [
     {
       "directive_id": "D-010",
@@ -84,5 +84,21 @@
   ],
   "directive_regime_version": "1.0",
   "directive_regime_entered_at": "2026-08-07T01:32:54.176279+00:00",
-  "worktree": "C:/Users/MLFLL/Downloads/nyc-zoning/orch"
+  "worktree": "C:/Users/MLFLL/Downloads/nyc-zoning/orch",
+  "progress_log": [
+    {
+      "at": "2026-08-07T06:25:30.007160+00:00",
+      "agent": "backend-engineer",
+      "percent": 70,
+      "status": "in_progress",
+      "message": "Producer implementation complete in worktree: 3 new modules + telemetry surfacing + root AGENTS.md + 23 tests"
+    },
+    {
+      "at": "2026-08-07T06:25:30.253750+00:00",
+      "agent": "backend-engineer",
+      "percent": 90,
+      "status": "self_check",
+      "message": "Self-check green: full suite 1212/1210/0/2 (baseline 1189/1187/0/2) verified by producer and orchestrator re-run"
+    }
+  ]
 }
