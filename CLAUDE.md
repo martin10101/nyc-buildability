@@ -94,9 +94,19 @@ skills — invoke the one that matches the work:
 ## Authority and human-only actions
 
 The orchestrator (main session) alone runs `tools/project_control.py`, git, and `gh`, and integrates
-branches (ADR-005). Producers edit files inside their scope and return evidence; independent reviewers
-are read-only. Ask the user to perform only actions that require ownership or private authority:
+branches (ADR-005 core, unchanged). Producers edit files inside their scope and return evidence;
+independent reviewers are read-only.
+
+Merge/continuation authority follows the ADR-006 autonomy tiers (D-010 Section 5): **Tier A** ordinary
+work — routine coding, tests, commits, task-branch pushes, PRs, ordinary merges after required checks
+pass, corrections, CI reruns, and continuation to the next accepted dependency — proceeds without owner
+approval (this narrows the former per-merge owner queue, D-004-R721, for Tier A only). **Tier B**
+sensitive changes proceed after the named specialist review, not owner approval. **Tier C** items are
+queued and the next accepted dependency continues. **Tier D** items hard-deny or stop for the owner and
+are unchanged. Ask the user to perform only actions that require ownership or private authority:
 paid-account creation, payment, secrets, verification codes, production approval, and legal/zoning
-approval. Do not delegate ordinary coding, research, testing, documentation, or configuration to the
-user. Nothing here — and no `.claude/ORCHESTRATION_POLICY.md`, rule, or skill — overrides these rules,
-the gates, or an active owner hold.
+approval (the Section 20 / Tier D hard stops). Do not delegate ordinary coding, research, testing,
+documentation, or configuration to the user. Nothing here — and no `.claude/ORCHESTRATION_POLICY.md`,
+rule, or skill — overrides these rules, the gates, the Tier D hard stops, or an active owner hold.
+(Live automated merging by the supervisor additionally requires the R595 activation path; until then
+the orchestrator executes Tier A actions manually under this policy — ADR-006, D-010-R104.)

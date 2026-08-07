@@ -118,6 +118,8 @@ Agents prepare:
 
 A qualified human zoning reviewer must approve publication. Agent consensus cannot substitute for this gate.
 
+**G6 engineering-vs-publication split (ADR-006, D-010 Section 6 / AD-061..AD-063).** G6 gates *publication* only, not engineering progress. A legal/rules task may be **engineering-accepted** — letting downstream product development and the architect pilot continue — while the rule stays `draft`/`extracted_draft`/`needs_review`, the output is never labeled `verified`, and UI/reports clearly show the draft/provisional state (Section 6.1). G6 is **required only** for the transition to `approved` (where it legally implies professional approval), `published`, `verified`, or any external claim of professional reliance (Section 6.2). Publishing/labeling a rule `published`/`verified` without the qualified professional event, and representing a pilot result as a legal opinion or certification, remain Tier D hard-denies (ADR-006).
+
 ### G7 — Release gate
 
 Required for production release:

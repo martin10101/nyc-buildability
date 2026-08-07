@@ -96,6 +96,7 @@ The orchestrator must:
 - One task per branch
 - No direct producer merge to main
 - Merge only after required gates pass
+- Merge/continuation authority follows the ADR-006 autonomy tiers (D-010 Section 5): an ordinary Tier A task PR merges after all required checks pass **without owner approval** (superseding the former per-merge owner queue, D-004-R721, for Tier A only); Tier B sensitive changes merge after the named specialist review; Tier D items and Section 20 hard stops are unchanged. Execution authority is unchanged (ADR-005 core): the orchestrator alone runs the ledger CLI, git, and gh.
 
 ## Communication contract
 
