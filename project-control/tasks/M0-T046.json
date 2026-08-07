@@ -63,8 +63,8 @@
     "control-plane-verifier",
     "directive-compliance-verifier"
   ],
-  "status": "backlog",
-  "progress_percent": 0,
+  "status": "in_progress",
+  "progress_percent": 20,
   "risks": [
     "OS-ACL hardening touches the live owner config path: probes must be bounded and non-destructive (R128); a wrong ACL could lock the OWNER out - the change must be applied via a documented, reversible elevated action and verified before the unelevated probes run.",
     "Estop-fork regression test involves process concurrency - keep it deterministic (inject the fork shape, do not race real processes).",
@@ -72,7 +72,7 @@
   ],
   "blockers": [],
   "created_at": "2026-08-07T20:41:12.063773+00:00",
-  "updated_at": "2026-08-07T20:41:12.148014+00:00",
+  "updated_at": "2026-08-07T20:44:42.416146+00:00",
   "directive_refs": [
     {
       "directive_id": "D-010",
@@ -93,5 +93,22 @@
     }
   ],
   "directive_regime_version": "1.0",
-  "directive_regime_entered_at": "2026-08-07T20:41:12.063773+00:00"
+  "directive_regime_entered_at": "2026-08-07T20:41:12.063773+00:00",
+  "worktree": "C:/Users/MLFLL/Downloads/nyc-zoning/orch",
+  "progress_log": [
+    {
+      "at": "2026-08-07T20:44:24.716836+00:00",
+      "agent": "backend-engineer",
+      "percent": 10,
+      "status": "in_progress",
+      "message": "Claimed after G0 PASS; packet bound to D-010 R122-R133; producer dispatch next (orch worktree, branch from origin/main)"
+    },
+    {
+      "at": "2026-08-07T20:44:42.416146+00:00",
+      "agent": "backend-engineer",
+      "percent": 20,
+      "status": "in_progress",
+      "message": "Acceptance scenarios AS-1..AS-6 recorded in packet (executable; adversarial pair for R124, R126-shape lock for estop fork, bounded unelevated ACL probes + fail-closed ambiguity handling, prohibition scenario over diff surface)"
+    }
+  ]
 }
