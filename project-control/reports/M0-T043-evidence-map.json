@@ -1,0 +1,64 @@
+{
+ "schema": "evidence_map/v1",
+ "task_id": "M0-T043",
+ "producer": "backend-engineer",
+ "requirements": {
+  "D-010-R044": {
+   "summary": "Bounded context-pack generator built: tools/context_pack.py --task/--role/--provider/--max-bytes/--out per Section 12 CLI; gathers the 12.1 inputs (task packet, ledger state, git diff/changed paths, bounded code-graph queries, routing table, contracts-conditional, latest checkpoint, task-referencing blockers, injectable CI, explicit --include files, previous handoff), honors 12.2 default exclusions, emits context.md + context.meta.json + evidence/ (12.3). Deterministic: repo-SHA time anchor, canonical JSON, POSIX-normalized paths; build-twice byte-identity proven by test and by a live-repo e2e run.",
+   "evidence": [
+    "tools/context_pack.py",
+    "tools/test_context_pack.py",
+    "docs/CONTEXT_PACKS.md",
+    "project-control/reports/M0-T043-producer-report.md"
+   ]
+  },
+  "D-010-R045": {
+   "summary": "Every included context source is sha256-digested: context.meta.json included[] records path+digest+bytes per source and evidence/ carries the excerpt files; summarized/truncated sources additionally record the ORIGINAL digest and byte counts. AS-1 schema test asserts every included file is digested.",
+   "evidence": [
+    "tools/context_pack.py",
+    "tools/test_context_pack.py",
+    "project-control/reports/M0-T043-producer-report.md"
+   ]
+  },
+  "D-010-R046": {
+   "summary": "AD-046 split-not-truncate: overflow first summarizes only non-material log-class sources (originals preserved+digested, exact artifact references), and when material content still cannot fit the builder FAILS CLOSED with exit 2 and a deterministic bin-packed split proposal (exact source lists per sub-packet). No silent-truncation path exists; AS-3 exercises both the summarize and fail-closed branches.",
+   "evidence": [
+    "tools/context_pack.py",
+    "tools/test_context_pack.py",
+    "project-control/reports/M0-T043-producer-report.md"
+   ]
+  },
+  "D-010-R085": {
+   "summary": "0A.4 ceilings enforced: target 32,000 / ordinary 64,000 / relative 20%-of-window estimated tokens, effective = lower (recorded with basis in meta; live e2e recorded effective 40,000 via relative basis on a 200k window). Deterministic 4-bytes/token ceil estimate. A drift-lock test imports tools.agent_supervisor.review_packet (read-only) and asserts constant/estimate equality so the mirrored budgets can never diverge silently; the supervisor tree is untouched.",
+   "evidence": [
+    "tools/context_pack.py",
+    "tools/test_context_pack.py",
+    "docs/CONTEXT_PACKS.md",
+    "project-control/reports/M0-T043-producer-report.md"
+   ]
+  },
+  "D-010-R093": {
+   "summary": "No speculative feature: deliverables are exactly the Section 12/0A.4-directed capability (0A.8 item 5, a BLOCKING minimum-autonomy item; qualifying evidence recorded at G0). SHADOW-ONLY preserved: nothing wired into loop.py/cli.py/hooks/CI; no supervisor edits.",
+   "evidence": [
+    "project-control/reports/M0-T043-g0-readiness.md",
+    "project-control/reports/M0-T043-producer-report.md",
+    "tools/context_pack.py"
+   ]
+  },
+  "D-010-R116": {
+   "summary": "Session-2 re-dispatch row (no new obligations): M0-T043 executed inside the wave-1 chain it orders, sequential task branch from origin/main in the orch worktree, proven workflow, producer spawned UNNAMED per the guard rule. Holds/SHADOW-ONLY/R595 untouched.",
+   "evidence": [
+    "project-control/reports/M0-T043-g0-readiness.md",
+    "project-control/reports/M0-T043-producer-report.md"
+   ]
+  },
+  "D-010-R117": {
+   "summary": "Session-3 re-dispatch row (no new obligations): this unit is the handoff's next dependency-valid task (CP-0038; digest-verified session-handoff-2026-08-07-2.json). Dormant D-009/M0-T019/M2-T014 batch, primary checkout, and all holds untouched; capture merged as PR #168 before any work.",
+   "evidence": [
+    "project-control/directives/D-010-autonomous-engineering-restructure/source-007-amendment.md",
+    "project-control/reports/M0-T043-g0-readiness.md",
+    "project-control/reports/M0-T043-producer-report.md"
+   ]
+  }
+ }
+}
