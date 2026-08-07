@@ -64,7 +64,7 @@
     "directive-compliance-verifier"
   ],
   "status": "awaiting_gate",
-  "progress_percent": 85,
+  "progress_percent": 90,
   "risks": [
     "OS-ACL hardening touches the live owner config path: probes must be bounded and non-destructive (R128); a wrong ACL could lock the OWNER out - the change must be applied via a documented, reversible elevated action and verified before the unelevated probes run.",
     "Estop-fork regression test involves process concurrency - keep it deterministic (inject the fork shape, do not race real processes).",
@@ -72,7 +72,7 @@
   ],
   "blockers": [],
   "created_at": "2026-08-07T20:41:12.063773+00:00",
-  "updated_at": "2026-08-07T21:33:23.918684+00:00",
+  "updated_at": "2026-08-07T22:12:26.809570+00:00",
   "directive_refs": [
     {
       "directive_id": "D-010",
@@ -109,6 +109,41 @@
       "percent": 20,
       "status": "in_progress",
       "message": "Acceptance scenarios AS-1..AS-6 recorded in packet (executable; adversarial pair for R124, R126-shape lock for estop fork, bounded unelevated ACL probes + fail-closed ambiguity handling, prohibition scenario over diff surface)"
+    },
+    {
+      "at": "2026-08-07T21:35:45.256629+00:00",
+      "agent": "orchestrator",
+      "percent": 70,
+      "status": "awaiting_gate",
+      "message": "Producer increment committed (code head 569d1a7, +39 tests, suite 1356/2 orchestrator-reproduced); submitted with evidence map R122-R133; G0+G2 PASS; independent G3/G4/G5 reviewers dispatched in parallel on frozen identity (control head 77a5eef)"
+    },
+    {
+      "at": "2026-08-07T21:50:09.632925+00:00",
+      "agent": "orchestrator",
+      "percent": 75,
+      "status": "awaiting_gate",
+      "message": "G3 PASS (code-reviewer): no blocking code defect; 39 new tests reproduced; two acceptance conditions carried - (1) DCV must adjudicate R124 literal wording vs park-time byte-anchor design (S1-1 MAJOR), (2) post-apply live PROTECTED capture (AS-4 live leg). Non-blocking: S3-1 allowlist-inversion flag to G5, S3-2 locale caveat, S2-1 non-adjacent-dup test, README nit. G4/G5 still running"
+    },
+    {
+      "at": "2026-08-07T21:52:16.029780+00:00",
+      "agent": "orchestrator",
+      "percent": 80,
+      "status": "awaiting_gate",
+      "message": "G5 PASS (security-reviewer) with BLOCKING corrections: C1 (os_acl icacls bare-name fail-open -> absolute System32 path; MUST be applied+validated+committed before acceptance) and C2 (journal-resident byte anchor -> owner-accepted residual in activation decision line OR content-binding fix; blocks ACTIVATION not acceptance). R124 ruling: single-field tamper window genuinely closed, residual = same class original LOW-1 excluded, but literal operator-named binding unmet -> DCV adjudication required. L-1 ownership check + L-2 PS absolute paths = pre-activation hardening. Awaiting G4; C1 rework will batch with any G4 corrections"
+    },
+    {
+      "at": "2026-08-07T21:56:38.909813+00:00",
+      "agent": "orchestrator",
+      "percent": 85,
+      "status": "awaiting_gate",
+      "message": "G4 PASS (qa-engineer, no blocking corrections; mutation-proven non-vacuity; G1 carry-forward = post-apply live PROTECTED verification, pre-activation not pre-acceptance). All five gates PASS at 569d1a7. Now dispatching bounded rework: G5-C1 (icacls absolute path, blocking) + in-scope hardening L-1/L-2/S3-1/S2-1/README nit; then delta re-review + gate re-record at final identity + DCV"
+    },
+    {
+      "at": "2026-08-07T22:12:26.809570+00:00",
+      "agent": "orchestrator",
+      "percent": 90,
+      "status": "awaiting_gate",
+      "message": "Rework increment committed (a27068d): G5-C1 closed (absolute System32 icacls), L-1 owner assertion wired into PROTECTED path (verified evaluate_file:425/evaluate_directory:454), L-2, S3-1 safe-subset inversion, S2-1 non-adjacent test, README fix; +7 tests, suite 1363/2 reproduced. Delta re-reviews dispatched to G3/G4/G5 reviewers; gates re-record at final identity next, then DCV"
     }
   ]
 }
