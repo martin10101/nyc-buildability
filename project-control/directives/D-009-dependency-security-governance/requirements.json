@@ -1,0 +1,926 @@
+{
+  "schema": "directive_requirements/v1",
+  "directive_id": "D-009",
+  "version": 1,
+  "requirement_count": 21,
+  "producer": "orchestrator",
+  "updated_at": "2026-08-05T22:40:00+00:00",
+  "requirements": [
+    {
+      "id": "D-009-R001",
+      "text": "AUTHORIZATION: this directive authorizes M0-T019 (and future dependency-admission work) to create/modify the governance-classed paths .github/workflows/ and CLAUDE.md to implement the dependency-security rules.",
+      "source_ref": "source-001.md#authorization",
+      "classification": "authorization",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T019"
+        ],
+        "task_types": [
+          "frontend"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [
+          ".github/workflows/",
+          "CLAUDE.md"
+        ],
+        "lifecycle_events": [
+          "dispatch",
+          "gate",
+          "accept"
+        ],
+        "effective_date": "2026-08-04"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "fresh owner-activated governance directive 2026-08-04; verified at M0-T019 gates/accept",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": [
+          "M0-T019"
+        ]
+      },
+      "amendment_sequence": 1
+    },
+    {
+      "id": "D-009-R002",
+      "text": "No dependency (runtime/dev/build/CI-tooling) may carry an unresolved advisory affecting the installed version; audits fail closed on any finding; no agent may waive an advisory.",
+      "source_ref": "source-001.md#rules",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T019"
+        ],
+        "task_types": [
+          "frontend"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [
+          ".github/workflows/",
+          "CLAUDE.md"
+        ],
+        "lifecycle_events": [
+          "gate",
+          "accept"
+        ],
+        "effective_date": "2026-08-04"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "fresh owner-activated governance directive 2026-08-04; verified at M0-T019 gates/accept",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": [
+          "M0-T019"
+        ]
+      },
+      "amendment_sequence": 1
+    },
+    {
+      "id": "D-009-R003",
+      "text": "Minimum release age 7 days (min-release-age=7); exact version pins (save-exact); committed-lockfile integrity retained.",
+      "source_ref": "source-001.md#rules",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T019"
+        ],
+        "task_types": [
+          "frontend"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [
+          ".github/workflows/",
+          "CLAUDE.md"
+        ],
+        "lifecycle_events": [
+          "gate",
+          "accept"
+        ],
+        "effective_date": "2026-08-04"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "fresh owner-activated governance directive 2026-08-04; verified at M0-T019 gates/accept",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": [
+          "M0-T019"
+        ]
+      },
+      "amendment_sequence": 1
+    },
+    {
+      "id": "D-009-R004",
+      "text": "Machine-enforced: deterministic fail-closed committed-lockfile release-age gate + blocking audit on every change + scheduled re-audit; never warning-only; registry/network failure fails closed as infrastructure_unavailable, never advisory-free.",
+      "source_ref": "source-001.md#rules",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T019"
+        ],
+        "task_types": [
+          "frontend"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [
+          ".github/workflows/",
+          "CLAUDE.md"
+        ],
+        "lifecycle_events": [
+          "gate",
+          "accept"
+        ],
+        "effective_date": "2026-08-04"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "fresh owner-activated governance directive 2026-08-04; verified at M0-T019 gates/accept",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": [
+          "M0-T019"
+        ]
+      },
+      "amendment_sequence": 1
+    },
+    {
+      "id": "D-009-R005",
+      "text": "New-package provenance review (name/maintainers/lifecycle-scripts/registry-origin/publication-date/ownership); prefer existing deps/stdlib over new packages.",
+      "source_ref": "source-001.md#rules",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T019"
+        ],
+        "task_types": [
+          "frontend"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [
+          ".github/workflows/",
+          "CLAUDE.md"
+        ],
+        "lifecycle_events": [
+          "gate",
+          "accept"
+        ],
+        "effective_date": "2026-08-04"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "fresh owner-activated governance directive 2026-08-04; verified at M0-T019 gates/accept",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": [
+          "M0-T019"
+        ]
+      },
+      "amendment_sequence": 1
+    },
+    {
+      "id": "D-009-R006",
+      "text": "Emergency exception: age-requirement ONLY, never an advisory affecting the installed version, owner-authorized only, full record, auto-expiry 7 days; no wildcard/org-wide/permanent/undocumented exceptions.",
+      "source_ref": "source-001.md#rules",
+      "classification": "prohibition",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T019"
+        ],
+        "task_types": [
+          "frontend"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [
+          ".github/workflows/",
+          "CLAUDE.md"
+        ],
+        "lifecycle_events": [
+          "gate",
+          "accept"
+        ],
+        "effective_date": "2026-08-04"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "fresh owner-activated governance directive 2026-08-04; verified at M0-T019 gates/accept",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": [
+          "M0-T019"
+        ]
+      },
+      "amendment_sequence": 1
+    },
+    {
+      "id": "D-009-R007",
+      "text": "The concise permanent dependency-security rule is recorded in CLAUDE.md so future orchestrators read it.",
+      "source_ref": "source-001.md#rules",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T019"
+        ],
+        "task_types": [
+          "frontend"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [
+          ".github/workflows/",
+          "CLAUDE.md"
+        ],
+        "lifecycle_events": [
+          "gate",
+          "accept"
+        ],
+        "effective_date": "2026-08-04"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "fresh owner-activated governance directive 2026-08-04; verified at M0-T019 gates/accept",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": [
+          "M0-T019"
+        ]
+      },
+      "amendment_sequence": 1
+    },
+    {
+      "id": "D-009-R008",
+      "text": "OWNER DECISION: the owner selects Option B (the '6-day verified path') for M0-T019 and authorizes a scoped, owner-authorized, auto-expiring FE-S9 exception. This supersedes, for the two named versions ONLY, the prior WAIT default (B-017) and the earlier owner DECLINE of age exceptions for M0-T019 (B-013). The owner's stated concern is age solely as npm-incident 'infection protection'.",
+      "source_ref": "source-002-amendment.md#the-directive",
+      "classification": "decision",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T019"
+        ],
+        "task_types": [
+          "frontend"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [
+          "apps/web/scripts/dependency_age_gate.mjs",
+          "docs/DEPENDENCY_SECURITY_POLICY.md"
+        ],
+        "lifecycle_events": [
+          "gate",
+          "accept"
+        ],
+        "effective_date": "2026-08-05"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured from owner amendment 1 (Option B, 2026-08-05); verified at M0-T019 gates/accept",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": [
+          "M0-T019"
+        ]
+      },
+      "amendment_sequence": 2
+    },
+    {
+      "id": "D-009-R009",
+      "text": "Implement a scoped, owner-authorized, auto-expiring exception in the FE-S9 committed-lockfile release-age gate (apps/web/scripts/dependency_age_gate.mjs) that admits AT MOST the exact pins brace-expansion@1.1.18 and sharp@0.35.3, and only while the entry is unexpired. Matching is by exact name@version; a non-matching pin is never admitted under age.",
+      "source_ref": "source-002-amendment.md#the-directive",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T019"
+        ],
+        "task_types": [
+          "frontend"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [
+          "apps/web/scripts/dependency_age_gate.mjs",
+          "apps/web/scripts/tests/",
+          "docs/DEPENDENCY_SECURITY_POLICY.md",
+          "apps/web/package.json"
+        ],
+        "lifecycle_events": [
+          "gate",
+          "accept"
+        ],
+        "effective_date": "2026-08-05"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured from owner amendment 1 (Option B, 2026-08-05); verified at M0-T019 gates/accept",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": [
+          "M0-T019"
+        ]
+      },
+      "amendment_sequence": 2
+    },
+    {
+      "id": "D-009-R010",
+      "text": "PROHIBITION: do NOT lower the global 7-day (604800 s) min-release-age threshold; it remains unchanged for every package outside the scoped exception.",
+      "source_ref": "source-002-amendment.md#the-directive",
+      "classification": "prohibition",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T019"
+        ],
+        "task_types": [
+          "frontend"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [
+          "apps/web/scripts/dependency_age_gate.mjs",
+          "docs/DEPENDENCY_SECURITY_POLICY.md"
+        ],
+        "lifecycle_events": [
+          "gate",
+          "accept"
+        ],
+        "effective_date": "2026-08-05"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured from owner amendment 1 (Option B, 2026-08-05); verified at M0-T019 gates/accept",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": [
+          "M0-T019"
+        ]
+      },
+      "amendment_sequence": 2
+    },
+    {
+      "id": "D-009-R011",
+      "text": "PROHIBITION: do NOT exempt anything else. No other package, no other version, no wildcard, org-wide, category-wide, or permanent exception. The exception set is exactly the two named exact pins (an upper bound; the implementation may create an entry only where actually needed).",
+      "source_ref": "source-002-amendment.md#the-directive",
+      "classification": "prohibition",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T019"
+        ],
+        "task_types": [
+          "frontend"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [
+          "apps/web/scripts/dependency_age_gate.mjs",
+          "apps/web/scripts/tests/"
+        ],
+        "lifecycle_events": [
+          "gate",
+          "accept"
+        ],
+        "effective_date": "2026-08-05"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured from owner amendment 1 (Option B, 2026-08-05); verified at M0-T019 gates/accept",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": [
+          "M0-T019"
+        ]
+      },
+      "amendment_sequence": 2
+    },
+    {
+      "id": "D-009-R012",
+      "text": "The exception auto-expires (age-only, consistent with D-009-R006's <=7-day auto-expiry): an expired or invalid entry is IGNORED and the gate reverts to the unchanged 7-day age requirement. Expiry is evaluated against the authoritative registry UTC clock (never the local/CI clock), so a tampered clock cannot extend an exception.",
+      "source_ref": "source-002-amendment.md#the-directive",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T019"
+        ],
+        "task_types": [
+          "frontend"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [
+          "apps/web/scripts/dependency_age_gate.mjs",
+          "apps/web/scripts/tests/"
+        ],
+        "lifecycle_events": [
+          "gate",
+          "accept"
+        ],
+        "effective_date": "2026-08-05"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured from owner amendment 1 (Option B, 2026-08-05); verified at M0-T019 gates/accept",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": [
+          "M0-T019"
+        ]
+      },
+      "amendment_sequence": 2
+    },
+    {
+      "id": "D-009-R013",
+      "text": "The exception waives the AGE requirement ONLY. It never waives an advisory affecting the installed version, an integrity mismatch, an unexpected resolved host, a missing/malformed timestamp, or any other fail-closed condition; all of those remain fail-closed for the exempted pins exactly as for every other package.",
+      "source_ref": "source-002-amendment.md#the-directive",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T019"
+        ],
+        "task_types": [
+          "frontend"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [
+          "apps/web/scripts/dependency_age_gate.mjs",
+          "docs/DEPENDENCY_SECURITY_POLICY.md"
+        ],
+        "lifecycle_events": [
+          "gate",
+          "accept"
+        ],
+        "effective_date": "2026-08-05"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured from owner amendment 1 (Option B, 2026-08-05); verified at M0-T019 gates/accept",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": [
+          "M0-T019"
+        ]
+      },
+      "amendment_sequence": 2
+    },
+    {
+      "id": "D-009-R014",
+      "text": "EXTERNAL FACT (owner-asserted, independently re-verifiable): brace-expansion@1.1.18 and sharp@0.35.3 are advisory-free and were published before the 2026-08-04 npm bad-publish incident window (maintainer GPG-signed, genuine fixes). Re-verify via the npm bulk advisory endpoint (/-/npm/v1/security/advisories/bulk) and the registry publish timestamps (brace-expansion 1.1.18 = 2026-07-30T10:17:06.961Z; sharp 0.35.3 = 2026-07-01T11:28:34.077Z).",
+      "source_ref": "source-002-amendment.md#the-directive",
+      "classification": "external_fact",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T019"
+        ],
+        "task_types": [
+          "frontend"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [
+          "apps/web/package.json"
+        ],
+        "lifecycle_events": [
+          "gate",
+          "accept"
+        ],
+        "effective_date": "2026-08-05"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured from owner amendment 1 (Option B, 2026-08-05); verified at M0-T019 gates/accept",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": [
+          "M0-T019"
+        ]
+      },
+      "amendment_sequence": 2
+    },
+    {
+      "id": "D-009-R015",
+      "text": "Re-run G3 (code-reviewer, independent, != producer) over the exception change at the finalized head. It is a deliberate, reviewed weakening of a previously-reviewed security control, not a silent one.",
+      "source_ref": "source-002-amendment.md#the-directive",
+      "classification": "sequencing",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T019"
+        ],
+        "task_types": [
+          "frontend"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [],
+        "lifecycle_events": [
+          "gate"
+        ],
+        "effective_date": "2026-08-05"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured from owner amendment 1 (Option B, 2026-08-05); verified at M0-T019 gates/accept",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": [
+          "M0-T019"
+        ]
+      },
+      "amendment_sequence": 2
+    },
+    {
+      "id": "D-009-R016",
+      "text": "Re-run G5 (security-reviewer, independent, != producer) over the exception change at the finalized head; the security-control weakening is explicitly security-reviewed.",
+      "source_ref": "source-002-amendment.md#the-directive",
+      "classification": "sequencing",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T019"
+        ],
+        "task_types": [
+          "frontend"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [],
+        "lifecycle_events": [
+          "gate"
+        ],
+        "effective_date": "2026-08-05"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured from owner amendment 1 (Option B, 2026-08-05); verified at M0-T019 gates/accept",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": [
+          "M0-T019"
+        ]
+      },
+      "amendment_sequence": 2
+    },
+    {
+      "id": "D-009-R017",
+      "text": "Regenerate apps/web/package-lock.json via CI (.github/workflows/generate-lockfile.yml), NOT by hand; the freshly regenerated lock is validated (npm ci integrity + blocking npm audit total==0 + FE-S9 committed-lock age gate + FE-S11 npm CLI advisory) before the bot commits it.",
+      "source_ref": "source-002-amendment.md#the-directive",
+      "classification": "harness",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T019"
+        ],
+        "task_types": [
+          "frontend"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [
+          ".github/workflows/generate-lockfile.yml",
+          "apps/web/package-lock.json"
+        ],
+        "lifecycle_events": [
+          "gate"
+        ],
+        "effective_date": "2026-08-05"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured from owner amendment 1 (Option B, 2026-08-05); verified at M0-T019 gates/accept",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": [
+          "M0-T019"
+        ]
+      },
+      "amendment_sequence": 2
+    },
+    {
+      "id": "D-009-R018",
+      "text": "Run M0-T019's remaining required gates (G2 producer self-check, G3, G4 qa, G5) on the finalized regenerated-lock head; gates are not recorded against a non-final head (lockfile CI before gates).",
+      "source_ref": "source-002-amendment.md#the-directive",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T019"
+        ],
+        "task_types": [
+          "frontend"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [],
+        "lifecycle_events": [
+          "gate",
+          "accept"
+        ],
+        "effective_date": "2026-08-05"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured from owner amendment 1 (Option B, 2026-08-05); verified at M0-T019 gates/accept",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": [
+          "M0-T019"
+        ]
+      },
+      "amendment_sequence": 2
+    },
+    {
+      "id": "D-009-R019",
+      "text": "Capture the FE-S9 exception AND the owner's Option-B authorization VERBATIM in durable repository state (this directive amendment source-002; the in-repo exception record under apps/web/scripts/; and the M0-T019 producer report).",
+      "source_ref": "source-002-amendment.md#the-directive",
+      "classification": "evidence",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T019"
+        ],
+        "task_types": [
+          "frontend"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [
+          "project-control/directives/D-009-dependency-security-governance/",
+          "apps/web/scripts/",
+          "project-control/reports/M0-T019-producer-report.md"
+        ],
+        "lifecycle_events": [
+          "gate",
+          "accept"
+        ],
+        "effective_date": "2026-08-05"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured from owner amendment 1 (Option B, 2026-08-05); verified at M0-T019 gates/accept",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": [
+          "M0-T019"
+        ]
+      },
+      "amendment_sequence": 2
+    },
+    {
+      "id": "D-009-R020",
+      "text": "Report M0-T019 accept-readiness once the gates pass (required owner return item).",
+      "source_ref": "source-002-amendment.md#the-directive",
+      "classification": "return",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T019"
+        ],
+        "task_types": [
+          "frontend"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [],
+        "lifecycle_events": [
+          "gate",
+          "accept"
+        ],
+        "effective_date": "2026-08-05"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured from owner amendment 1 (Option B, 2026-08-05); verified at M0-T019 gates/accept",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": [
+          "M0-T019"
+        ]
+      },
+      "amendment_sequence": 2
+    },
+    {
+      "id": "D-009-R021",
+      "text": "Update EVERY in-repo assertion that FE-S9 has 'no exception path' to accurately describe the new scoped, owner-authorized, auto-expiring exception, so no committed text contradicts the shipped gate behavior: the dependency_age_gate.mjs header; DEPENDENCY_SECURITY_POLICY.md sections 1, 2(b), and 6; and the M0-T019 FE-S5/FE-S8/FE-S9 acceptance-scenario language.",
+      "source_ref": "source-002-amendment.md#the-directive",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T019"
+        ],
+        "task_types": [
+          "frontend"
+        ],
+        "milestones": [
+          "M0"
+        ],
+        "paths": [
+          "apps/web/scripts/dependency_age_gate.mjs",
+          "docs/DEPENDENCY_SECURITY_POLICY.md",
+          "project-control/tasks/M0-T019.json"
+        ],
+        "lifecycle_events": [
+          "gate",
+          "accept"
+        ],
+        "effective_date": "2026-08-05"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured from owner amendment 1 (Option B, 2026-08-05); verified at M0-T019 gates/accept",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": [
+          "M0-T019"
+        ]
+      },
+      "amendment_sequence": 2
+    }
+  ],
+  "amendments_applied": [
+    "source-002-amendment.md"
+  ]
+}

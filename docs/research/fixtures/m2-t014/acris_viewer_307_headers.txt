@@ -1,0 +1,14 @@
+HTTP/1.1 307 Moved Temporarily
+Content-Type: text/html; charset=UTF-8
+Content-Length: 183
+Connection: keep-alive
+Location: https://a836-acris.nyc.gov/BandwidthPolicy/ACRIS-BW-POL.html
+Server: 
+X-Powered-By: ASP.NET
+X-Content-Type-Options: nosniff
+X-XSS-Protection: 1; mode=block
+Strict-Transport-Security: max-age=31536000
+Content-Security-Policy: default-src * data: 'self' 'unsafe-eval' 'unsafe-inline' blob:
+X-Frame-Options: SAMEORIGIN
+Date: Wed, 05 Aug 2026 03:49:20 GMT
+

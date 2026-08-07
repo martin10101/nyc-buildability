@@ -1,10 +1,10 @@
 {
  "schema": "directive_requirements/v1",
  "directive_id": "D-010",
- "version": 11,
+ "version": 12,
  "requirement_count": 133,
  "producer": "orchestrator",
- "updated_at": "2026-08-07T19:40:00+00:00",
+ "updated_at": "2026-08-07T19:58:00+00:00",
  "requirements": [
   {
    "id": "D-010-R001",
@@ -4298,7 +4298,6 @@
     "task_ids": [
      "M0-T037",
      "M0-T019",
-     "M2-T014",
      "M2-T015",
      "M2-T016"
     ],
@@ -4317,7 +4316,7 @@
    "producer": "orchestrator",
    "independent_verifier": "directive-compliance-verifier",
    "status": "pending",
-   "status_reason": "session-5 launch instruction 2026-08-07; re-dispatch into product work with no new obligations",
+   "status_reason": "session-5 launch instruction 2026-08-07; re-dispatch into product work with no new obligations (binding narrowed per source-013: M2-T014 dropped - gated pre-am.11, retroactive stamp infeasible)",
    "evidence_paths": [],
    "reviewed_sha": null,
    "maps_to": {

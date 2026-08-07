@@ -5,71 +5,66 @@
 the remote: **origin/main may have advanced, so do not trust any SHA written here as still-current.**
 This file is orientation only. Operating rules, gates, and workflow routes live in `CLAUDE.md`.
 
-Refreshed **2026-08-07 (D-010 session-4 rotation, CP-0041)**. **The block below supersedes the older
-sections further down** (kept only as history); the ledger wins on any conflict.
+Refreshed **2026-08-07 (session 5, CP-0042)**. **The block below supersedes the older sections**
+(pruned per the context-budget guard); the ledger wins on any conflict.
 
-## CURRENT STATE (2026-08-07, session 4 — confirm against the ledger + git)
+## CURRENT STATE (2026-08-07, session 5 — confirm against the ledger + git)
 
-**D-010 wave-1 minimum-autonomy control chain COMPLETE.** Session 4 rotated at the post-merge seam
-per R113/R115; accepted count **64**. Owner touches this session: **8 typed operator acts** (2
-authorizations + 6 launch/approval commands — the supervised R595 window).
+**Dormant batch CLOSED; accepted count 66.** The D-009/M0-T019/M2-T014 batch was reconciled onto
+main (merge of `a953d0d`, two additive-union conflict resolutions) and closed on
+`control/D-009-batch-close` (PR #176):
 
-- **D-010 am.7 captured** (PR #172, merged `f61a735`): session-4 launch instruction verbatim, row
-  **R118** (re-dispatch, no new obligations).
-- **M0-T045 ACCEPTED + MERGED** (PR #173, merge `8533635`; accepted 64; identity `2a259525…`):
-  **the R595 supervised rehearsal is COMPLETE with every leg LIVE-PROVEN** — threshold trip + armed
-  seam (ctx 134,497, unit never interrupted), owner digest-bound approval, **LIVE SEAM ACTUATION**
-  (forward exactly once `fwd/1/a4c3d170…` → digest-verified handoff `e75d07c0…` → new session
-  `sup-5b5f59ac…` minted → relaunch → successor completed cycle 2 through live Codex review),
-  re-approval fail-closed, emergency stop mid-unit (child tree terminated, autostart refused,
-  recovery report). **The R593 residual is CLOSED BY EVIDENCE, never waiver** (D-007-R621).
-  Owner authorizations R119 (am.8) + R120 (am.9) captured verbatim BEFORE the acts.
-- **Live finding R595-F1** (approved FORWARD_PROMPT journal had no continuation path; parked record
-  text-less → cross-process forward impossible) found by the rehearsal → **fixed + cross-process-
-  locked same-window** (`afc2da5`, +10 tests). Pre-R595 hardening: all three pinned checklist sets
-  resolved (`4db6a71`, +36 tests). Suite **1317/2, zero regressions**, reproduced independently 4×.
-- **Five legs PASS:** G3; G4 (85/85 adversarial probes, audit chain cryptographically verified;
-  material non-blocking: **estop audit-chain fork**, self-reported via `audit_chain_ok:false`);
-  G5 (no HIGH/MEDIUM; **LOW-1** park→approve binding → activation checklist); control-plane 8/8;
-  DCV **19/19** at identity `2a259525…`. Evidence sealed: 26 files, SHA-256 manifest.
-- ⛔ **SHADOW-ONLY still in force. Nothing activated.** The supervised-auto **promotion pack is
-  COMPLETE and owner-decision-ready** (`M0-T045-promotion-evidence.md`; AS-3 ceiling binding).
-  Remaining pre-activation items pinned to `M0-T036-ACTIVATION-CHECKLIST.md`: G5 LOW-1 (bind
-  forwarded bytes to the operator-named approval), G4 estop-fork follow-up, OS-ACL judgment,
-  per-tier owner authorization. **Activation is an explicit owner decision.**
+- **M0-T019 ACCEPTED** — frontend security tree final (next 15.5.21 / react+react-dom 19.1.2;
+  overrides postcss 8.5.23 / sharp 0.35.3 / brace-expansion 1.1.18 / js-yaml 4.3.1). The D-009 am.1
+  FE-S9 exception went **MOOT BY TIME LAPSE — never implemented; gate ships byte-unchanged, no
+  exception path** (R009 NOT_APPLICABLE approved by DCV; R021 satisfied-by-reconciliation after a
+  real G3 FAIL→reconcile→PASS cycle over pre-edited scenario text). Round-2 advisory js-yaml
+  CVE-2026-59870 remediated (4.3.1, ≥7d, advisory-free, no exception). Lock regenerated + validated
+  by CI (run 31211311419, bot commit `1d678fd`); PR #176 checks 33/33 green. Gates G0/G2/G3/G4/G5
+  PASS at identity `46e4d83e`; DCV 19 PASS + 1 NA. **B-017 + B-012 + B-013 resolved** (the standing
+  owner deployment/G6 hold is separate and REMAINS IN FORCE).
+- **M2-T014 ACCEPTED** — survey research Packet A; gates G0/G2/G3 at stable identity `73b36e60`;
+  its findings now feed the (HELD) survey-ingestion product tasks.
+- **D-010 amendments captured:** am.11 = session-5 launch [R121] (PR #175); **am.12 = OWNER
+  PRE-ACTIVATION DECISION [R122–R133]** (PR #177); am.13 = R121 binding correction. Registry
+  validates clean.
+- G5 non-blocking residue: **LOW-1 evaluate `ignore-scripts=true` for apps/web** (defense-in-depth;
+  fold into future dep-sec work). G4 LOW observations recorded in the reports.
 
-## NEXT SESSION — resume checklist (session 4 → 5)
+## NEXT SESSION — resume checklist (session 5 → 6)
 
-1. Start-of-session: `python tools/project_control.py status` + reconcile git/CI (origin/main was
-   `8533635` + this rotation PR at rotation; checkpoint CP-0041). Machine-readable handoff:
-   `project-control/reports/session-handoff-2026-08-07-4.json`
-   (digest `8b3804ab5f25bae051acb480406b203d4487facdbafac94f66f573c442f83951`) — verify: sha256
+1. Start-of-session: `python tools/project_control.py status` + reconcile git/CI (origin/main should
+   contain the PR #176 merge; checkpoint CP-0042). Machine-readable handoff:
+   `project-control/reports/session-handoff-2026-08-07-5.json`
+   (digest `c3b545b210d46e159fcd96cda0ca456b425522826b25d841bf3eb5aaf73a01f5`) — verify: sha256
    over `json.dumps(doc, sort_keys=True)` with `digest=""`.
-2. **Wave-1 is COMPLETE (M0-T036..M0-T045 accepted).** Per D-010 R116/0A.11 the next
-   dependency-valid work is **PRODUCT work: two real product tasks** through the pipeline under
-   the 80/20 rule (initiative-plan Lane 2: survey ingestion per accepted M2-T014 findings; M3
-   corpus tasks remain blocked by B-001). Contract fresh product tasks; do NOT start new
-   supervisor features (0A.10 freeze; only directive-cited defects).
-3. **Owner-decision-ready, surface without pushing:** the supervised-auto promotion decision
-   (pack complete; checklist items above outstanding). If the owner activates, the R595-gated
-   automatic-continuation capability (R114) is now evidence-complete.
-4. Carried rules (verbatim intent): task branch from origin/main in the orch worktree; spawn
-   PRODUCERS UNNAMED (a named spawn makes readonly_agent_guard fail closed; reviewers unaffected);
-   classifier denial => STOP, surface the exact `!` line, owner executes, capture any typed
-   authorization as a D-010 amendment, never route around. NEW proven pattern: owner-executed
-   launchers via `powershell Start-Process '<path>.cmd'` (never `cmd /c start` from `!` — Git
-   Bash strips the title quotes and opens an empty window).
-5. **Reviewer models:** gate reviewers ran `claude-opus-4-8` + `xhigh` (standing fallback; the 5
-   flipped agent files remain uncommitted in the PRIMARY checkout; revert to `claude-fable-5`
-   pins when the owner says "Fable is back"). Orchestrator ran `claude-fable-5`.
-6. **Primary checkout** (task/M0-T036-supervisor-bridge @ 57ccb44): untouched per R099/R109.
-   **Dormant batch** (D-009 + M0-T019 + M2-T014): untouched. All standing holds unchanged
-   (deployment/G6/Graphify/expansion). Rehearsal scratch (`%TEMP%
-595`) is disposable; the
-   committed sealed evidence is authoritative.
+2. **NEXT UNIT (owner am.12, R123–R130): the PRE-ACTIVATION task.** Contract ONE narrowly bounded
+   task (fresh M0-Txxx via /start-controlled-task, bind D-010 refs incl. R122–R133) containing ONLY:
+   (a) M0-T045 G5 LOW-1 fix — bind forwarded prompt bytes to the OPERATOR-NAMED approval digest at
+   approval time + adversarial tests; (b) M0-T045 G4 estop-fork follow-up — regression test locking
+   the fail-closed forked-audit-chain behavior per the owner acknowledgement (R126 verbatim);
+   (c) Windows OS-ACL hardening of the immutable controller config per the R128 boundary (read-only
+   to the unelevated process, parent-dir protection, UAC elevation, digest verification retained,
+   bounded unelevated probes). NO service/daemon/enterprise identity/separate infra/redesign (R129).
+   Normal G3/G4/G5 + DCV gates (R130).
+3. **After that task is accepted:** mechanically reconcile ALL remaining
+   `M0-T036-ACTIVATION-CHECKLIST.md` items as satisfied, then **present the owner the exact
+   supervised-auto activation decision line** (R131/R132). ⛔ Do NOT activate without the owner's
+   typed decision. ⛔ **M2-T015/M2-T016 stay HELD until supervised-auto activation** (R133) — they
+   are the supervised-auto proof tasks.
+4. Carried rules: task branches from origin/main in the orch worktree (`…/orch`); spawn PRODUCERS
+   UNNAMED; classifier denial ⇒ try exact-path staging first, else STOP and surface the `!` line;
+   `project-control/directives/**` explicit LF; task files CRLF-tolerant via CLI; ADR-006 Tier A
+   merges after green checks; commits stage exact paths (no directory adds).
+5. **Reviewer models:** gate reviewers run `claude-opus-4-8` + `xhigh` (standing fallback; the 5
+   flipped agent files remain uncommitted in the PRIMARY checkout — revert to `claude-fable-5` pins
+   when the owner says "Fable is back"). Orchestrator ran `claude-fable-5`. Primary checkout now
+   sits on `main` (synced this session; flips preserved).
+6. Standing holds unchanged: deployment/G6/Graphify/expansion; SHADOW-ONLY posture intact; R595
+   activation boundary now governed by am.12 (R131).
 
 ---
 
-_History: superseded session blocks (session 3 = CP-0039 / rotation PR #171; session 2 = CP-0038;
-session 1 = CP-0037; the 2026-08-05 M0-T036/D-009 states) are pruned per the context-budget guard —
-recover any of them with `git log -p docs/SESSION_HANDOFF.md`; the ledger remains authoritative._
+_History: superseded session blocks (sessions 1–4 = CP-0037..CP-0041; the 2026-08-05 batch states)
+are pruned per the context-budget guard — recover with `git log -p docs/SESSION_HANDOFF.md`; the
+ledger remains authoritative._

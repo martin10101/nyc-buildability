@@ -1,7 +1,7 @@
 {
  "schema": "directive_manifest/v1",
  "directive_id": "D-010",
- "version": 13,
+ "version": 14,
  "slug": "autonomous-engineering-restructure",
  "title": "Autonomous Engineering Restructure and NYC Buildability Pilot Acceleration (Autonomous Engineering V2)",
  "status": "active",
@@ -105,6 +105,14 @@
    "amends": "source-011-amendment.md",
    "recorded_at": "2026-08-07T19:40:00+00:00",
    "content_digest_sha256": "24801b1f7b02f93f746ec6a67c629946cddd77de6b4000825dc8404df3f6dba0"
+  },
+  {
+   "file": "source-013-amendment.md",
+   "kind": "amendment",
+   "sequence": 13,
+   "amends": "source-011-amendment.md",
+   "recorded_at": "2026-08-07T19:58:00+00:00",
+   "content_digest_sha256": "b419759edcd96e861719ee041f5e4dae8daf1e07a6d57c08ad62d6e518bcf840"
   }
  ],
  "amendments": [
@@ -118,7 +126,8 @@
   "source-009-amendment.md",
   "source-010-amendment.md",
   "source-011-amendment.md",
-  "source-012-amendment.md"
+  "source-012-amendment.md",
+  "source-013-amendment.md"
  ],
  "supersedes": [],
  "superseded_by": null,
@@ -157,7 +166,7 @@
  "verification_file": "verification.json",
  "final_reviewed_sha": null,
  "final_reviewed_manifest_sha256": null,
- "requirements_content_digest_sha256": "bf429f6ca4f622734d6f12cd2130e6854e90c99f6bc7f5f3d856b96e7ee8ee50",
+ "requirements_content_digest_sha256": "88eb298ec41dfa9e2dea74a5e809cc0046cc231e5ddf9dddb47f6188d2905d6a",
  "requirements_id_digest_sha256": "5d454806aa863fae00b8ac166ff8499795b2cb38d5a3fc23150583b178c4fd3e",
  "enforcement_pointers": {
   "tasks": [
@@ -410,6 +419,11 @@
    "at": "2026-08-07T19:50:00+00:00",
    "actor": "orchestrator",
    "action": "pre-merge correction: R122 applicability narrowed to M0-T037 (session-ordering rule; avoids retroactive ref-coverage churn on in-flight M0-T019/M2-T014); content digest restamped"
+  },
+  {
+   "at": "2026-08-07T19:58:00+00:00",
+   "actor": "orchestrator",
+   "action": "amendment source-013 recorded (correction: R121 task binding narrowed, M2-T014 dropped - retroactive stamp would regress gated lifecycle); digests restamped"
   }
  ]
 }

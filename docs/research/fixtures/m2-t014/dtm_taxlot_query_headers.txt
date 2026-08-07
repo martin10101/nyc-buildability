@@ -1,0 +1,29 @@
+HTTP/1.1 200 OK
+Date: Wed, 05 Aug 2026 03:47:14 GMT
+Content-Type: application/json; charset=utf-8
+Content-Length: 1150
+Connection: keep-alive
+Cache-Control: public, max-age=3600, s-maxage=3600
+Last-Modified: Tue, 04 Aug 2026 14:27:51 GMT
+ETag: sd71950_-1714632812
+Vary: X-Esri-Authorization
+x-arcgis-upstream: us1h06c00-services
+Strict-Transport-Security: max-age=63072000
+X-ArcGIS-Trace-Id: 20260805T034714Z-15cc547cdbdzjz9thC1ATLf8tc0000000gkg00000000259b
+x-esri-query-readonly-replica: true
+x-esri-query-request-units: 2
+x-esri-tiles-basic-query-mode: true
+x-esri-tiles-basic-query-type: Basic
+x-esri-org-request-units-per-min: usage=23;max=28800
+X-ArcGIS-Correlation-Id: 0cb4317643b4aa1d
+X-ArcGIS-Instance: hkmzlsa5v00000L
+Request-Context: appId=cid-v1:3e91b07b-c431-4e18-b74c-dc5ab3a0cdf7
+Access-Control-Expose-Headers: Request-Context
+Access-Control-Allow-Origin: *
+Access-Control-Allow-Headers: Content-Type, Authorization, X-Esri-Authorization
+Access-Control-Allow-Credentials: true
+x-azure-ref: 20260805T034714Z-15cc547cdbdzjz9thC1ATLf8tc0000000gkg00000000259b
+x-fd-int-roxy-purgeid: 0
+X-Cache: TCP_MISS
+Accept-Ranges: bytes
+

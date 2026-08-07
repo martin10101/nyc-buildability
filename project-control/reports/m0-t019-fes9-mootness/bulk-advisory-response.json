@@ -1,0 +1,13 @@
+{
+ "captured_at": "2026-08-07T19:20:32.535152+00:00",
+ "request": {
+  "brace-expansion": [
+   "1.1.18"
+  ],
+  "sharp": [
+   "0.35.3"
+  ]
+ },
+ "response": {},
+ "meaning": "empty object = zero advisories for the queried versions"
+}

@@ -123,6 +123,20 @@
    "manifest": "D-008-owner-escalation-boundary/manifest.json"
   },
   {
+   "directive_id": "D-009",
+   "slug": "dependency-security-governance",
+   "title": "Dependency-Security Governance Directive (fresh, owner-activated 2026-08-04)",
+   "status": "active",
+   "issued_at": "2026-08-04",
+   "issued_by": "owner",
+   "supersedes": [],
+   "superseded_by": null,
+   "affected_tasks": [
+    "M0-T019"
+   ],
+   "manifest": "D-009-dependency-security-governance/manifest.json"
+  },
+  {
    "directive_id": "D-010",
    "slug": "autonomous-engineering-restructure",
    "title": "Autonomous Engineering Restructure and NYC Buildability Pilot Acceleration (Autonomous Engineering V2)",
@@ -145,5 +159,5 @@
    "manifest": "D-010-autonomous-engineering-restructure/manifest.json"
   }
  ],
- "updated_at": "2026-08-07T01:36:53+00:00"
+ "updated_at": "2026-08-07T19:20:00+00:00"
 }

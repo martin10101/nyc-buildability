@@ -1,0 +1,14 @@
+{
+ "captured_at": "2026-08-07T19:23:57.080028+00:00",
+ "captured_by": "orchestrator (evidence-capture rule: live curl to registry.npmjs.org)",
+ "advisory": "CVE-2026-59870 / GHSA-5p4m-2wfm-xmqj: js-yaml 4.0.0-4.3.0 HIGH, quadratic CPU in !!omap resolution; surfaced by generate-lockfile.yml run 31211100620 blocking-audit step on 2026-08-07 (post-2026-08-05 disclosure)",
+ "fix": "js-yaml@4.3.1 (v4-legacy tag), published 2026-07-31T17:39:51.183Z, age 7.07 days at capture (cleared the 7-day FE-S9 gate 2026-08-07T17:39:51Z), bulk advisory endpoint returns {} for 4.3.1",
+ "tree_position": "single dev-tree instance node_modules/js-yaml (4.3.0) in committed lock",
+ "action": "package.json overrides js-yaml=4.3.1 (minimum advisory-free AND >=7-day version on the v4 line; same remediation pattern as eb80a4d sharp/brace-expansion)",
+ "time_excerpt": {
+  "4.3.0": "2026-06-26T22:29:00.874Z",
+  "4.3.1": "2026-07-31T17:39:51.183Z",
+  "3.15.1": "2026-07-31T17:48:53.128Z",
+  "5.2.3": "2026-08-01T06:25:05.164Z"
+ }
+}
