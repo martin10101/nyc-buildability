@@ -123,3 +123,46 @@ Key file paths reviewed (all absolute):
 - `C:/Users/MLFLL/Downloads/nyc-zoning/orch/project-control/reports/m0-t019-fes9-mootness/{brace-expansion-packument-excerpt,sharp-packument-excerpt,bulk-advisory-response,js-yaml-remediation-evidence}.json`
 
 Note to orchestrator: I did not write any file or run the control CLI/git-write. Please save this report verbatim to `project-control/reports/M0-T019-g5-security.md` and record the G5 gate result (PASS) yourself.
+
+---
+
+<!-- VERBATIM delta re-confirmation return (same security-reviewer agent, continued transcript),
+appended unchanged by the orchestrator per the report-preservation rule, 2026-08-07. -->
+
+Delta verification complete. I have everything needed to attest.
+
+The four changed files are all documentation/task-ledger; the entire security-material surface (gate, tests, `.npmrc`, `package.json`, lockfile, all three workflows, policy doc, CLAUDE.md, fixtures) is byte-identical between my reviewed identity `2aee4ff` and current HEAD `693c302`. The changes are honesty corrections, not new claims.
+
+---
+
+# G5 Security Review — Delta Re-Confirmation (append to reports/M0-T019-g5-security.md)
+
+**Reviewer:** security-reviewer (independent)
+**Original G5 verdict:** PASS (material identity `b8af26bc` / head `2aee4ff`)
+**Delta reviewed at:** current head `693c302d030cf9fe8ce43a4c8f4e5eeb80e5cfd8`, material identity `46e4d83e`, branch `control/D-009-batch-close`
+**Date:** 2026-08-07
+
+## DELTA VERDICT: PASS (original PASS stands; no security-material change, no new overstatement)
+
+### D1. Security-material byte-identity — CONFIRMED unchanged
+`git diff --stat 2aee4ff..HEAD` over the full security surface — `apps/web/scripts/dependency_age_gate.mjs`, its test file, `apps/web/.npmrc`, `apps/web/package.json`, `apps/web/package-lock.json`, `.github/workflows/{ci.yml,generate-lockfile.yml,scheduled-web-audit.yml}`, `docs/DEPENDENCY_SECURITY_POLICY.md`, `CLAUDE.md`, and the four `m0-t019-fes9-mootness/` fixtures — returns **empty**. The gate ships byte-identical to what I reviewed: still no allowlist/`--ignore`/suppression/exception path, no `process.env` threshold override, hard-set `MIN_AGE_SECONDS = 604_800`. Every §3/§4/§5/§6/§7 conclusion of the original report is preserved verbatim.
+
+### D2. What actually changed — 4 documentation/ledger files only
+`git diff 2aee4ff..HEAD` touches only: `project-control/reports/M0-T019-producer-report.md` (added §7h), `project-control/reports/M0-T019-fes9-mootness-2026-08-07.md` (§6 R021 row + §7 item 4 corrected), `project-control/reports/M0-T019-evidence-map.json` (R021 entry corrected), and `project-control/tasks/M0-T019.json` (FE-S5/S8/S9/S12 reconciled; status/progress/progress-log). None is security-material.
+
+### D3. R021 correction is an honesty improvement, not a new overstatement — CONFIRMED
+The prior R021 disposition claimed the task-file acceptance scenarios FE-S5/FE-S8/FE-S9/FE-S12 "remain literally TRUE and must NOT be edited." G3 (Defect 1) correctly found those scenarios had been pre-edited at am.1 (commit `e96d718`) to assert a **machine-realized** FE-S9 exception plus **deterministic unit tests** that the mootness pivot never implemented — i.e., they were false about the shipped byte-unchanged gate. The corrected artifacts now:
+- **Retract** the inaccurate "remains literally TRUE" claim (explicitly labelled "factually inaccurate" in the mootness §6 R021 row and producer §7h).
+- **Split** R021 correctly: the gate-header and `DEPENDENCY_SECURITY_POLICY.md` §1/§2(b)/§6 assertions were left untouched and remained literally TRUE (→ NA-by-lapse); the task-file scenarios were reconciled to the mootness outcome.
+- **Reconcile** FE-S5/S8/S9/S12 to honest text: FE-S9 now reads "the tool carries NO exception path — no allowlist, no suppression, no override"; FE-S12 reads "ZERO exception entries were needed and NO exception path was implemented… the 40 shipped unit tests cover the unchanged fail-closed gate." These now match exactly what I independently verified (byte-unchanged gate; 40-test suite; all fail-closed branches).
+
+This removes a documentation overstatement and introduces no new claim about the code. It is a strengthening of the honesty posture, consistent with my original §8 honesty findings.
+
+### D4. Effect on my original §9 opinion — unaffected
+My original R021 concurrence was scoped to the gate-header and policy-doc "no exception path" assertions (the security-material doc surface), which **did** remain true and untouched — that assessment stands and matches the corrected disposition. The task-file acceptance-scenario contradiction fell in G3's review scope (acceptance-scenario consistency), was correctly caught there, and has been reconciled; it does not alter any security-material conclusion. My R009 NA-by-lapse concurrence is likewise unchanged (byte-unchanged gate, zero exception entries).
+
+### D5. LOW-2 / LOW-3 disposition update
+The orchestrator-reported PR #176 result (33/33 green checks including `web-dependency-security` over the regenerated lock) is the live-CI artifact I requested in LOW-3 — **LOW-3 is discharged** (accepted as orchestrator-captured evidence per the read-only reviewer protocol). LOW-2's operational point is partially met (the `web-dependency-security` job demonstrably ran green over the regenerated lock); the branch-protection required-check configuration remains a repo-settings assurance item outside the reviewed tree. **LOW-1 (evaluate `ignore-scripts=true`) is unchanged** — non-blocking hardening recommendation.
+
+### Conclusion
+No security-material changed; the fail-closed committed-lock age gate remains byte-identical with no exception path; the delta consists solely of documentation/ledger honesty corrections that retract a prior overstatement and reconcile the task-file scenarios to the shipped no-exception gate. **My G5 verdict stands: PASS at material identity `46e4d83e` (head `693c302`).** No new blocking findings; LOW-1 open (non-blocking), LOW-3 discharged, LOW-2 partially addressed.
