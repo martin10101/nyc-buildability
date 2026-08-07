@@ -116,7 +116,7 @@ from .loop import (
     LoopConfig,
     LoopError,
     SupervisedLoop,
-    consume_pending_prompt,
+    approve_pending_prompt,
     effective_model,
 )
 from .locking import SingleInstanceLock, assess as assess_lock, probe_process
@@ -1588,6 +1588,13 @@ def cmd_resume_pending_prompt(args: argparse.Namespace) -> int:
     decision event) on: a wrong/missing digest, a journal not at WAIT_FOR_OWNER,
     a missing/malformed pending-prompt record, an unreadable journal, or a
     durable emergency stop. It clears NO flags and dispatches nothing.
+
+    M0-T045: on success it does NOT consume the record. Approval and the forward
+    can happen in DIFFERENT processes, so it rewrites the record to the APPROVED
+    shape - the exact held prompt bytes plus an `approved_digest` binding - while
+    dropping the `digest` key so this same command re-run stays fail-closed. A
+    later `start` (this process or a fresh one) reads that approved record and
+    forwards the prompt unchanged, exactly once, then consumes it.
     """
     try:
         _, journal, audit = _open_runtime(args)
@@ -1642,12 +1649,18 @@ def cmd_resume_pending_prompt(args: argparse.Namespace) -> int:
                              "command": "resume-pending-prompt",
                              "cycle": pending.get("cycle"),
                              "held_decision": pending.get("decision")})
-        # AS-4 (G5 V1.2.3 LOW): consume the pending_prompt record on success so a
-        # stale record can never be re-approved. Done AFTER the durable
-        # transition and the operator-decision audit event, so the record is
-        # only dropped once the approval it authorized is recorded. A re-run now
-        # fails closed at the "no pending-prompt record" guard above.
-        consume_pending_prompt(journal, run_id, prior_digest=recorded)
+        # AS-4 (G5 V1.2.3 LOW) + M0-T045: record the approval WITHOUT discarding
+        # what a later, separate `start` needs to forward. The old code consumed
+        # (dropped the prompt bytes AND the digest) here, which is why the loop -
+        # in a DIFFERENT process - had nothing to forward. `approve_pending_prompt`
+        # keeps the exact held prompt text plus an `approved_digest` binding while
+        # still removing the `digest` key, so this same command re-run fails closed
+        # at the "no pending-prompt record" guard above (re-approval stays dead),
+        # yet a fresh `start` can forward the approved prompt unchanged. Done AFTER
+        # the durable transition and the operator-decision audit event, so the
+        # record only advances once the approval it authorized is recorded.
+        approve_pending_prompt(journal, run_id, pending=pending,
+                               approval_binding=recorded)
     finally:
         journal.close()
     _emit(args,
@@ -1656,8 +1669,10 @@ def cmd_resume_pending_prompt(args: argparse.Namespace) -> int:
            "prompt_digest": recorded},
           [f"pending prompt {recorded} approved by an explicit operator command; the "
            f"journal now rests at {FORWARD_PROMPT_STATE}.",
-           "nothing was dispatched and no flag was changed; `start` may now resume this "
-           "run and forward the approved prompt unchanged."])
+           "the exact held prompt is retained under an approved_digest binding while "
+           "the re-approvable digest is dropped, so this command re-run fails closed "
+           "but a fresh `start` - even in a separate process - forwards the approved "
+           "prompt unchanged, exactly once. Nothing was dispatched and no flag changed."])
     return 0
 
 

@@ -114,6 +114,42 @@ class FailClosedProductionTests(unittest.TestCase):
         self.assertEqual(classify_quota_exhaustion(1, "429 rate limited"), "")
 
 
+class EmptyShapeFixtureTests(unittest.TestCase):
+    """AS-1 (G4 QA review section 6): an empty-shape VERIFIED fixture must be a
+    catch-NOTHING, not a catch-all. This locks the final guard line of
+    `matches()` (`return bool(self.return_codes) or self.stderr_regex is not
+    None`); dropping it goes fail-OPEN - an empty shape would then match every
+    input and fabricate a quota signal - and this test fails.
+    """
+
+    def _empty_verified(self) -> QuotaSignalFixture:
+        # verified_live=True but NEITHER a return-code set NOR a stderr pattern.
+        return QuotaSignalFixture(
+            name="empty_shape_verified", verified_live=True,
+            cli_version="test-empty-1.0.0",
+            provenance="a verified fixture that constrains neither code nor stderr")
+
+    def test_an_empty_shape_fixture_matches_nothing(self) -> None:
+        fixture = self._empty_verified()
+        self.assertEqual(fixture.return_codes, frozenset())
+        self.assertIsNone(fixture.stderr_regex)
+        for rc, txt in ((1, "account quota exhausted"), (0, ""),
+                        (None, "anything at all"), (7, "usage limit reached")):
+            with self.subTest(rc=rc, txt=txt):
+                self.assertFalse(fixture.matches(rc, txt),
+                                 "an empty shape must never match")
+
+    def test_an_empty_verified_fixture_authorizes_no_classification(self) -> None:
+        # Even though it is verified_live, an empty shape authorizes nothing:
+        # the classifier returns "" for every input.
+        corpus = (self._empty_verified(),)
+        for rc, txt in ((1, "account quota exhausted"), (1, "TypeError: boom"),
+                        (0, ""), (None, "usage limit reached")):
+            with self.subTest(rc=rc, txt=txt):
+                self.assertEqual(
+                    classify_quota_exhaustion(rc, txt, corpus=corpus), "")
+
+
 class SeamWiringTests(unittest.TestCase):
     """The classifier flows through probe_model_launch into the reason_code."""
 

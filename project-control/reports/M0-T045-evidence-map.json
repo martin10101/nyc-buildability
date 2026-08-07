@@ -1,0 +1,151 @@
+{
+ "schema": "evidence_map/v1",
+ "task_id": "M0-T045",
+ "producer": "backend-engineer",
+ "requirements": {
+  "D-010-R026": {
+   "summary": "Rotation occurred ONLY at the safe seam: R1b armed the threshold mid-unit but the unit ran to its checkpoint uninterrupted; actuation happened at the cycle boundary after the owner-approved forward.",
+   "evidence": [
+    "project-control/reports/M0-T045-r595-rehearsal/main-run/r1b-start-output.json",
+    "project-control/reports/M0-T045-r595-rehearsal/main-run/r4b-start-output.json",
+    "project-control/reports/M0-T045-r595-rehearsal/main-run/supervisor_journal.sqlite3",
+    "tools/test_agent_supervisor_*.py suite 1317 passed / 2 skipped at afc2da5 (orchestrator-reproduced)"
+   ]
+  },
+  "D-010-R031": {
+   "summary": "No parent rotation while a child/write process was active: journal ordering shows trip -> armed -> unit completion -> seam; the quiesce barrier held live; unit tests lock both directions.",
+   "evidence": [
+    "project-control/reports/M0-T045-r595-rehearsal/main-run/audit.jsonl",
+    "project-control/reports/M0-T045-r595-rehearsal/main-run/r1b-start-output.json",
+    "tools/test_agent_supervisor_*.py suite 1317 passed / 2 skipped at afc2da5 (orchestrator-reproduced)"
+   ]
+  },
+  "D-010-R074": {
+   "summary": "Staged promotion honored: the pack claims at most shadow->supervised-auto readiness (AS-3 ceiling stated first); limited-auto explicitly gated on its own evidence incl. two real product tasks; all activation tiers remain owner-gated.",
+   "evidence": [
+    "project-control/reports/M0-T045-promotion-evidence.md",
+    "project-control/reports/M0-T045-r595-rehearsal.md"
+   ]
+  },
+  "D-010-R075": {
+   "summary": "Emergency stop + crash recovery live: mid-unit stop -> HALTED, child process tree terminated (PID-verified), durable flag blocks all new dispatch, owner-only clear, recovery report with zero unaccounted children; crash-reconciliation proofs carried from accepted M0-T044.",
+   "evidence": [
+    "project-control/reports/M0-T045-r595-rehearsal/estop-run/r6-estop-output.json",
+    "project-control/reports/M0-T045-r595-rehearsal/estop-run/r6-recovery-status.json",
+    "project-control/reports/M0-T045-r595-rehearsal/estop-run/audit.jsonl",
+    "project-control/reports/M0-T045-r595-rehearsal.md"
+   ]
+  },
+  "D-010-R076": {
+   "summary": "Proven no rotation with active children: live journal ordering (R1b/R4b) + the Section 19.2 quiesce/orphan suites green at head.",
+   "evidence": [
+    "project-control/reports/M0-T045-r595-rehearsal/main-run/audit.jsonl",
+    "project-control/reports/M0-T045-r595-rehearsal/main-run/supervisor_journal.sqlite3",
+    "tools/test_agent_supervisor_*.py suite 1317 passed / 2 skipped at afc2da5 (orchestrator-reproduced)"
+   ]
+  },
+  "D-010-R077": {
+   "summary": "Automatic safe GitHub flow proven per owner decision R119: stands on accepted M0-T044 Section 19.4 evidence (57 tests, ten 5.5 predicates both directions, PR #170) + real PR history #155..#172; increment-1 SET C hardened the flow (catch-all Tier routing, authorize_push, extra_specs, redaction, audit_flow_result).",
+   "evidence": [
+    "project-control/reports/M0-T044-g3-code-review.md",
+    "project-control/reports/M0-T045-promotion-evidence.md",
+    "commit 4db6a71",
+    "tools/test_agent_supervisor_*.py suite 1317 passed / 2 skipped at afc2da5 (orchestrator-reproduced)"
+   ]
+  },
+  "D-010-R078": {
+   "summary": "Owner-touch count measured: session-3 window 0; this rehearsal window 8 typed operator acts (2 authorizations R119/R120 + 6 launch/approval commands, 1 no-op), enumerated in the rehearsal report.",
+   "evidence": [
+    "project-control/reports/M0-T045-r595-rehearsal.md",
+    "project-control/reports/M0-T045-promotion-evidence.md"
+   ]
+  },
+  "D-010-R079": {
+   "summary": "Automatic continuation between phases unless a hard stop: this session continued capture->claim->hardening->rehearsal->fix->re-run->seal without owner pauses except the directive-required supervised acts and the classifier hard stop, each dispositioned per protocol.",
+   "evidence": [
+    "project-control/reports/M0-T045-r595-rehearsal.md",
+    "project-control/tasks/M0-T045.json progress history"
+   ]
+  },
+  "D-010-R089": {
+   "summary": "Provider usage measured live per unit: worker context read off the real stream (134,036 discovery / 134,497 and 209,260 main run); codex usage telemetry surfaced per review (M0-T042 capability); per-PRODUCT-task measurement is the limited-auto gate evidence, stated as such (no overclaim).",
+   "evidence": [
+    "project-control/reports/M0-T045-r595-rehearsal/main-run/r1b-start-output.json",
+    "project-control/reports/M0-T045-r595-rehearsal/main-run/r4b-start-output.json",
+    "project-control/reports/M0-T045-promotion-evidence.md"
+   ]
+  },
+  "D-010-R090": {
+   "summary": "M0-T045 is the final 0A.8 minimum-control item; the pack closes the control-plane ceiling and the next dependency-valid work is product work (stated in the pack's ceiling/reconciliation).",
+   "evidence": [
+    "project-control/reports/M0-T045-promotion-evidence.md",
+    "project-control/reports/D-010-INITIATIVE-PLAN.md"
+   ]
+  },
+  "D-010-R104": {
+   "summary": "R595 occurred BEFORE any activation and stayed bounded: three targeted increments (enumerated hardening, one live-discovered defect fix, rehearsal execution) - no open-ended supervisor development; nothing activated.",
+   "evidence": [
+    "project-control/reports/M0-T045-r595-rehearsal.md",
+    "commits 4db6a71 + afc2da5",
+    "project-control/reports/M0-T045-promotion-evidence.md"
+   ]
+  },
+  "D-010-R113": {
+   "summary": "Orchestrator ~400k ceiling respected: this session ran the whole unit within the sanctioned window with seam checks between bounded increments (context telemetry at the 19% mark mid-session).",
+   "evidence": [
+    "docs/SESSION_HANDOFF.md (next refresh)",
+    "project-control/reports/M0-T045-r595-rehearsal.md"
+   ]
+  },
+  "D-010-R114": {
+   "summary": "Rotation-continues capability now live-proven at the supervisor level (digest-verified handoff -> successor continued the unit); orchestrator-level auto-continuation remains R595-gated activation, now evidence-complete for the owner decision.",
+   "evidence": [
+    "project-control/reports/M0-T045-r595-rehearsal/main-run/r4b-start-output.json",
+    "project-control/reports/M0-T045-promotion-evidence.md"
+   ]
+  },
+  "D-010-R115": {
+   "summary": "Soft-ceiling conduct: no corner-cutting under context pressure - the live finding forced a full fix increment + re-run rather than a waiver; reviews and evidence completed in full.",
+   "evidence": [
+    "project-control/reports/M0-T045-r595-rehearsal.md",
+    "commit afc2da5"
+   ]
+  },
+  "D-010-R116": {
+   "summary": "Session-2 re-dispatch chain honored: wave-1 chain reached and completed its final unit M0-T045 under the proven workflow.",
+   "evidence": [
+    "project-control/tasks/M0-T045.json",
+    "project-control/reports/M0-T045-r595-rehearsal.md"
+   ]
+  },
+  "D-010-R117": {
+   "summary": "Session-3 re-dispatch honored: dormant batch, primary checkout, and all holds untouched this session; M0-T045 executed as the next dependency-valid unit.",
+   "evidence": [
+    "docs/SESSION_HANDOFF.md",
+    "git log task/M0-T045-r595-rehearsal"
+   ]
+  },
+  "D-010-R118": {
+   "summary": "Session-4 re-dispatch executed: resumed from CP-0039/digest-verified handoff; M0-T045 claimed, executed, and completed with no new obligations violated (SHADOW-ONLY, holds, non-interference all intact).",
+   "evidence": [
+    "project-control/directives/D-010-autonomous-engineering-restructure/source-008-amendment.md",
+    "project-control/reports/M0-T045-r595-rehearsal.md"
+   ]
+  },
+  "D-010-R119": {
+   "summary": "Owner rehearsal authorization executed exactly: window now (owner performed all operator acts), GitHub leg on M0-T044 evidence (pack row 6), successor resumed the unit's continuation; begin honored; nothing activated.",
+   "evidence": [
+    "project-control/directives/D-010-autonomous-engineering-restructure/source-009-amendment.md",
+    "project-control/reports/M0-T045-r595-rehearsal.md",
+    "project-control/reports/M0-T045-promotion-evidence.md"
+   ]
+  },
+  "D-010-R120": {
+   "summary": "Same-window retry agreement executed: fix increment completed and rehearsal re-run in fresh runtime on fixed code, closing the seam-actuation leg.",
+   "evidence": [
+    "project-control/directives/D-010-autonomous-engineering-restructure/source-010-amendment.md",
+    "project-control/reports/M0-T045-r595-rehearsal/main-run/r4b-start-output.json"
+   ]
+  }
+ }
+}

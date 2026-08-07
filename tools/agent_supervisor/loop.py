@@ -73,6 +73,7 @@ from .policy import (
     DEFAULT_POLICY_CONFIG,
 )
 from .protocol import build_envelope
+from .resume_scheduler import EMERGENCY_STOP_KEY
 from .state_machine import (
     CHECKPOINT_RECEIVED,
     CLAUDE_RUNNING,
@@ -581,6 +582,24 @@ def pending_prompt_key(run_id: str) -> str:
 
     Kept here so the writer (`run_cycle`), the loop consumer, and the CLI
     `resume-pending-prompt` command cannot drift apart on the key shape.
+
+    The record travels through three shapes, and every consumer keys off the
+    field that is present (never a positional guess):
+
+    * PARKED (written by `run_cycle` at the supervised WAIT) -
+      ``{"cycle", "digest", "prompt", "reviewed_checkpoint_id", "decision",
+      "created_at_utc"}``. ``digest`` is the approval binding the operator must
+      name; ``prompt`` is the EXACT held prompt bytes, parked so a DIFFERENT
+      process can forward them unchanged (M0-T045).
+    * APPROVED (written by `approve_pending_prompt` on a successful
+      `resume-pending-prompt`) - ``{"approved": True, "cycle", "prompt",
+      "approved_digest", "decision", "prior_digest", "approved_at_utc"}``. The
+      ``digest`` key is DROPPED so the re-approval guards (`not
+      pending.get("digest")`) stay closed, while ``prompt`` + ``approved_digest``
+      carry exactly what a fresh `start` needs to forward once.
+    * CONSUMED (written by `consume_pending_prompt` after the forward is sent) -
+      ``{"consumed": True, "consumed_at_utc", "prior_digest"}``. Nothing
+      approvable and nothing forwardable remains.
     """
     return f"pending_prompt/{run_id}"
 
@@ -602,6 +621,38 @@ def consume_pending_prompt(journal: Any, run_id: str, *, prior_digest: str = "")
         pending_prompt_key(run_id),
         {"consumed": True, "consumed_at_utc": to_utc_iso(),
          "prior_digest": prior_digest})
+
+
+def approve_pending_prompt(journal: Any, run_id: str, *, pending: Mapping[str, Any],
+                           approval_binding: str) -> None:
+    """Record a PARKED prompt as APPROVED without dropping what the forward needs.
+
+    M0-T045: the approval and the forward can happen in DIFFERENT processes -
+    `resume-pending-prompt` fires the owner_approved_pending_prompt transition,
+    and a later, separate `start` completes the forward. The old code called
+    `consume_pending_prompt` at approval time, which dropped the held prompt
+    bytes and the digest, so the resuming process had nothing to forward and the
+    loop refused. This keeps the exact held prompt text plus an `approved_digest`
+    binding (the digest of those bytes, frozen at approval time) so the resuming
+    loop can verify integrity and forward once - while STILL removing the
+    `digest` key so every re-approval guard (`not pending.get("digest")`) stays
+    fail-closed. An OLD-shape parked record with no held prompt leaves behind an
+    approved record with no `prompt`/`approved_digest`, which the loop refuses to
+    forward (it never fabricates a prompt).
+    """
+    prompt = pending.get("prompt")
+    record: dict[str, Any] = {
+        "approved": True,
+        "cycle": pending.get("cycle"),
+        "decision": pending.get("decision"),
+        "reviewed_checkpoint_id": pending.get("reviewed_checkpoint_id"),
+        "approved_at_utc": to_utc_iso(),
+        "prior_digest": approval_binding,
+    }
+    if isinstance(prompt, str) and prompt:
+        record["prompt"] = prompt
+        record["approved_digest"] = digest_of(prompt)
+    journal.set_state(pending_prompt_key(run_id), record)
 
 
 class SupervisedLoop:
@@ -1678,8 +1729,16 @@ class SupervisedLoop:
                     "note": "supervised mode holds every forwarded prompt for an explicit "
                             "operator approval bound to this digest (S12)"})
         land(WAIT_FOR_OWNER)
+        # M0-T045: park the EXACT held prompt bytes alongside the approval
+        # digest. Prompt text is digest-only everywhere else, but a cross-process
+        # resume (approve in one invocation, forward in a fresh `start`) has
+        # nothing to forward unless the bytes are durable here. `digest` stays the
+        # approval binding; `prompt` is what gets forwarded unchanged on resume.
         self.journal.set_state(pending_prompt_key(self.run_id),
                                {"cycle": cycle, "digest": prompt_digest,
+                                "prompt": forwarded_prompt,
+                                "reviewed_checkpoint_id":
+                                    decision.reviewed_checkpoint_id,
                                 "decision": decision.decision,
                                 "created_at_utc": to_utc_iso()})
         touches.append(self._touch(
@@ -1800,11 +1859,54 @@ class SupervisedLoop:
             "task_id": self.config.task_id,
             "stage": self.config.stage,
         }
+        return self._forward_outbox(
+            prompt, cycle=cycle, message_id=message_id, payload=payload,
+            correlation_id=decision.reviewed_checkpoint_id or self.run_id)
+
+    def _resume_forward(self, prompt: str, *, cycle: int, approval_binding: str,
+                        decision_str: str,
+                        reviewed_checkpoint_id: str) -> ForwardResult:
+        """Forward a CROSS-PROCESS approved prompt with no live decision in hand.
+
+        M0-T045: on a fresh `start` that resumes a run parked-and-approved in an
+        earlier invocation, the CodexDecision object is gone - only the durable
+        approved record survives. This mirrors `forward_exactly_once` exactly (same
+        outbox mechanics, same exactly-once suppression, same message-id keyed on
+        the approval binding) so a crash between approval and forward, or a second
+        resume, never double-sends. The approval binding IS the id key, so this
+        method and the in-loop `forward_message_id` mint the SAME id for the same
+        instruction.
+        """
+        self.assert_forwarding_allowed()
+        self._guard()
+        message_id = f"{self.run_id}/fwd/{cycle}/{approval_binding[:16]}"
+        payload = {
+            "prompt": prompt,
+            "prompt_digest": digest_of(prompt),
+            "approval_digest": approval_binding,
+            "decision": decision_str,
+            "reviewed_checkpoint_id": reviewed_checkpoint_id,
+            "task_id": self.config.task_id,
+            "stage": self.config.stage,
+        }
+        return self._forward_outbox(
+            prompt, cycle=cycle, message_id=message_id, payload=payload,
+            correlation_id=reviewed_checkpoint_id or self.run_id)
+
+    def _forward_outbox(self, prompt: str, *, cycle: int, message_id: str,
+                        payload: dict[str, Any],
+                        correlation_id: str) -> ForwardResult:
+        """The durable outbox mechanic shared by both forward callers.
+
+        Journal, then send, then mark sent. Extracted verbatim so the in-loop
+        forward and the cross-process resume forward cannot drift on the
+        exactly-once guarantee (M0-T045).
+        """
         envelope = build_envelope(
             payload=payload, payload_type="forwarded_prompt", run_id=self.run_id,
             task_id=self.config.task_id, sequence=max(1, cycle),
             producer="supervisor", producer_version=CONTROLLER_VERSION,
-            correlation_id=decision.reviewed_checkpoint_id or self.run_id,
+            correlation_id=correlation_id,
             message_id=message_id)
 
         resumed = False
@@ -1851,6 +1953,88 @@ class SupervisedLoop:
         return ForwardResult(message_id, sent=True, resumed_unsent=resumed,
                              sent_prompt=sent_prompt)
 
+    # -- cross-process resume (M0-T045) -------------------------------------
+
+    def _resume_approved_forward(self) -> tuple[str, int]:
+        """Complete a forward that was APPROVED in an earlier, separate process.
+
+        M0-T045: a supervised WAIT parked a prompt; the operator ran
+        `resume-pending-prompt`, which fired owner_approved_pending_prompt and
+        left the journal at FORWARD_PROMPT with an APPROVED record; and THIS fresh
+        `start` must forward it. The S7 table already carries the legal exit
+        FORWARD_PROMPT -> CLAUDE_RUNNING on prompt_forwarded; the only thing
+        missing was a caller that read the approved record, forwarded it exactly
+        once, and continued. That is this method.
+
+        It fails closed - a structured `forwarded_prompt_unavailable` refusal, no
+        provider call, journal unchanged - on every degenerate entry: a durable
+        emergency stop, a journal whose last trigger is not the owner approval, a
+        missing/old-shape/consumed record, no held prompt bytes (a pre-fix record
+        that never parked the text), or a held prompt whose digest does not match
+        what was approved. Returns ``(forwarded_prompt, parked_cycle)`` on success.
+        """
+        # A durable emergency stop is absolute: never forward around it.
+        if bool(self.journal.get_state(EMERGENCY_STOP_KEY, False)):
+            raise LoopError(
+                "forwarded_prompt_unavailable",
+                "refusing to resume the approved forward: a durable emergency stop "
+                "is set. Clear it with an explicit `stop --clear` first; a resume "
+                "never overrides it")
+        # The journal must ACTUALLY record the owner approval that leads here.
+        if self.machine.last_trigger != "owner_approved_pending_prompt":
+            raise LoopError(
+                "forwarded_prompt_unavailable",
+                f"the journal rests at {FORWARD_PROMPT} but its last trigger is "
+                f"{self.machine.last_trigger!r}, not owner_approved_pending_prompt; "
+                f"only an explicitly approved pending prompt is forwarded from here")
+        record = self.journal.get_state(pending_prompt_key(self.run_id), None)
+        if not isinstance(record, dict) or not record.get("approved"):
+            raise LoopError(
+                "forwarded_prompt_unavailable",
+                "no approved pending-prompt record to forward; a resume forwards "
+                "exactly one explicitly approved prompt and refuses when none is "
+                "recorded (a consumed or missing record forwards nothing)")
+        prompt = record.get("prompt")
+        approved_digest = record.get("approved_digest")
+        if not isinstance(prompt, str) or not prompt:
+            raise LoopError(
+                "forwarded_prompt_unavailable",
+                "the approved pending-prompt record carries no held prompt bytes "
+                "(an old-shape record parked before the held text was durable); "
+                "refusing to fabricate a prompt to forward")
+        if not approved_digest or digest_of(prompt) != approved_digest:
+            raise LoopError(
+                "forwarded_prompt_unavailable",
+                "the held prompt does not match the approved digest; refusing to "
+                "forward bytes that differ from what the operator approved")
+        approval_binding = str(record.get("prior_digest") or "") or digest_of(prompt)
+        parked_cycle = record.get("cycle")
+        if not isinstance(parked_cycle, int) or parked_cycle < 1:
+            parked_cycle = 1
+        forward = self._resume_forward(
+            prompt, cycle=parked_cycle, approval_binding=approval_binding,
+            decision_str=str(record.get("decision") or ""),
+            reviewed_checkpoint_id=str(record.get("reviewed_checkpoint_id") or ""))
+        # prompt_forwarded -> CLAUDE_RUNNING (the legal S7 exit). Reached whether
+        # the send happened now or was already durable from a crashed prior
+        # attempt (duplicate-suppressed): the journal still lands at CLAUDE_RUNNING
+        # exactly once.
+        self.machine.transition(
+            CLAUDE_RUNNING, "prompt_forwarded",
+            detail={"cycle": parked_cycle, "message_id": forward.message_id,
+                    "cross_process_resume": True,
+                    "duplicate_suppressed": forward.duplicate_suppressed})
+        if forward.sent:
+            self._forwarded.append(forward.message_id)
+            if self.breakers is not None:
+                self.breakers.record_progress()
+        # Delete the record only AFTER the forward + transition succeeded, mirroring
+        # the in-loop consume point, so a crash before this leaves the approved
+        # record intact for an idempotent retry rather than losing the handoff.
+        consume_pending_prompt(self.journal, self.run_id,
+                               prior_digest=approval_binding)
+        return (forward.sent_prompt or prompt), parked_cycle
+
     # -- the run ------------------------------------------------------------
 
     def run(self, first_prompt: str) -> LoopRun:
@@ -1858,7 +2042,29 @@ class SupervisedLoop:
         cycles: list[CycleResult] = []
         prompt = first_prompt
         stopped = ""
-        for index in range(1, self.config.max_cycles + 1):
+        start_index = 1
+        # M0-T045: cross-process resume. A run approved at WAIT (via
+        # `resume-pending-prompt`, in a separate invocation) rests at
+        # FORWARD_PROMPT. Complete that approved forward here BEFORE the cycle loop,
+        # so run_cycle only ever sees its legal entry states, then continue from
+        # CLAUDE_RUNNING - including actuating an ARMED rotation at the safe seam,
+        # which is the whole point of the R595 rehearsal.
+        if self.machine.current_state == FORWARD_PROMPT:
+            prompt, parked_cycle = self._resume_approved_forward()
+            next_index = parked_cycle + 1
+            if next_index <= self.config.max_cycles and (
+                    self.rotation_pending() or self._active_substitution() is not None):
+                seam = self._rotate_at_seam(cycle=next_index)
+                if seam.paused:
+                    return LoopRun(
+                        run_id=self.run_id, mode=self.mode, cycles=(),
+                        final_state=self.machine.current_state, stopped=seam.stopped,
+                        budget=self.touches.report(),
+                        forwarded_message_ids=tuple(self._forwarded),
+                        provider_calls=self.provider_calls,
+                        rotations=tuple(self._rotations))
+            start_index = next_index
+        for index in range(start_index, self.config.max_cycles + 1):
             result = self.run_cycle(prompt, cycle=index)
             cycles.append(result)
             if result.stopped:

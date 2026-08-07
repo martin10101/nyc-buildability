@@ -26,6 +26,17 @@ every historical report, unrelated task packets, the entire repository, all logs
 a full code-graph dump. The guard detects each category and either REJECTS the
 packet (fail-closed default) or STRIPS the offending section, recording a finding
 either way. It never edits a packet silently.
+
+The key-name/completeness-flag detection is STRUCTURAL: it catches whole material
+carried under a known key or self-declared complete, but it cannot see a whole
+transcript smuggled as a string VALUE under an innocuous key (G5 M0-T042 I-1). The
+primary control against that is `evidence.build_packet` remaining the SOLE packet
+constructor on the review path (it never emits transcripts), locked by a structural
+test. As defense-in-depth the guard also enforces a conservative STRUCTURAL byte
+cap (`DEFAULT_GUARD_MAX_PACKET_BYTES`) on the serialized packet, BEFORE the 0A.4
+token budget: it is far above any legitimate bounded packet, so it never trips a
+normal review, but it refuses an oversized packet outright - the one size signal a
+value-smuggled dump cannot hide behind an innocuous key name.
 """
 from __future__ import annotations
 
@@ -284,6 +295,14 @@ PROHIBITED_MARKER_KEYS: Mapping[str, frozenset[str]] = {
         "full_code_graph", "code_graph_dump", "code_graph_full", "graph_dump"}),
 }
 
+#: I-1 defense-in-depth: a conservative STRUCTURAL byte cap enforced at the guard
+#: itself, before the 0A.4 token budget. It is far above any legitimate bounded
+#: packet (the 0A.4 ordinary ceiling is ~64k tokens ~= 256 KB) so it never trips a
+#: normal review, but it refuses a whole transcript / repository dump smuggled as a
+#: string VALUE under an innocuous key - the exact gap the key-name/flag guard
+#: cannot see - by size (fail closed).
+DEFAULT_GUARD_MAX_PACKET_BYTES = 8_000_000
+
 #: A boolean flag inside a section that self-declares it carries whole material.
 COMPLETENESS_FLAGS: tuple[str, ...] = (
     "complete", "full", "complete_history", "all_history", "complete_registry",
@@ -377,8 +396,28 @@ def _scan_completeness_flags(sections: Mapping[str, Any],
                 break
 
 
+def _scan_packet_size(packet: Mapping[str, Any], max_bytes: int,
+                      findings: list[GuardFinding], action: str) -> None:
+    """A serialized packet over the structural byte cap is refused (I-1).
+
+    This is the one signal a whole-material dump smuggled as a string VALUE under
+    an innocuous key cannot hide: its SIZE. The cap is far above any legitimate
+    bounded packet, so a normal review never trips it.
+    """
+    if max_bytes <= 0:
+        return
+    size = len(canonical_json(packet))
+    if size > max_bytes:
+        findings.append(GuardFinding(
+            category="oversized_packet", location="packet", action=action,
+            detail=f"the serialized packet is {size} bytes, over the structural guard "
+                   f"cap of {max_bytes}; whole material may be smuggled as a string "
+                   f"value under an innocuous key (0A.1/AD-083 I-1)"))
+
+
 def guard_packet(packet: Mapping[str, Any], *, current_task_id: str,
-                 strip: bool = False) -> GuardResult:
+                 strip: bool = False,
+                 max_packet_bytes: int = DEFAULT_GUARD_MAX_PACKET_BYTES) -> GuardResult:
     """Detect (and optionally strip) prohibited whole-material (AD-083 / 0A.1).
 
     Default (`strip=False`) is fail-closed: any finding REJECTS the packet
@@ -386,6 +425,10 @@ def guard_packet(packet: Mapping[str, Any], *, current_task_id: str,
     returns a sanitized copy with the offending sections/keys removed and each
     removal recorded as a `stripped` finding. Either way nothing is dropped
     silently - every category caught is a recorded `GuardFinding`.
+
+    A conservative STRUCTURAL byte cap (`max_packet_bytes`) is enforced here too,
+    catching whole material smuggled as a string value under an innocuous key -
+    the I-1 gap the key-name/flag detection cannot see - by size (fail closed).
     """
     action = "stripped" if strip else "rejected"
     findings: list[GuardFinding] = []
@@ -395,6 +438,7 @@ def guard_packet(packet: Mapping[str, Any], *, current_task_id: str,
     _scan_marker_keys(sections, "sections", findings, action)
     _scan_unrelated_task_packets(sections, current_task_id, findings, action)
     _scan_completeness_flags(sections, findings, action)
+    _scan_packet_size(packet, max_packet_bytes, findings, action)
     if not findings:
         return GuardResult(ok=True, findings=(), packet=dict(packet))
     if not strip:

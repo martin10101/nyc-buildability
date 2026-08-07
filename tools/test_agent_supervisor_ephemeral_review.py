@@ -333,6 +333,50 @@ class AS3Guard(Base):
         self.assertTrue(result.ok)
         self.assertEqual(result.findings, ())
 
+    def test_the_structural_byte_cap_refuses_value_smuggled_whole_material(self):
+        """G5 M0-T042 I-1: whole material smuggled as a string VALUE under an
+        innocuous key passes the key-name/flag guard but is caught by the
+        structural byte cap - by SIZE, the one signal it cannot hide."""
+        smuggled = {"sections": {"notes": "x" * 5000}}
+        # The key-name/flag guard alone does NOT catch it (no prohibited key, no
+        # completeness flag): with a generous cap it passes.
+        lenient = rp.guard_packet(smuggled, current_task_id="M0-T042",
+                                  max_packet_bytes=1_000_000)
+        self.assertTrue(lenient.ok, "the key-name guard cannot see a smuggled value")
+        # With the structural cap the oversized packet is REJECTED (fail closed).
+        result = rp.guard_packet(smuggled, current_task_id="M0-T042",
+                                 max_packet_bytes=500)
+        self.assertTrue(result.rejected)
+        self.assertEqual(result.findings[0].category, "oversized_packet")
+        self.assertIsNone(result.packet)
+        # A clean, bounded packet is under the default cap and still passes.
+        self.assertTrue(rp.guard_packet(self.packet(),
+                                        current_task_id="M0-T042").ok)
+
+    def test_build_packet_is_the_sole_review_packet_constructor(self):
+        """I-1 primary control: `evidence.build_packet` remains the ONLY review
+        packet constructor on the review path (it never emits transcripts), and
+        the loop wires it as its default. Locked structurally so a second
+        constructor cannot be introduced silently."""
+        import re
+
+        import tools.agent_supervisor as pkg
+        pkg_dir = pathlib.Path(pkg.__file__).resolve().parent
+        definers = sorted(
+            path.name for path in pkg_dir.glob("*.py")
+            if re.search(r"^def build_packet\b", path.read_text(encoding="utf-8"),
+                         re.MULTILINE))
+        self.assertEqual(definers, ["evidence.py"],
+                         "build_packet must be defined once, in evidence.py")
+        self.assertTrue(ev.build_packet.__module__.endswith("evidence"))
+        # The loop's default packet builder IS evidence.build_packet.
+        loop_src = (pkg_dir / "loop.py").read_text(encoding="utf-8")
+        self.assertIn("from .evidence import STOP_FOR_OWNER, build_packet", loop_src)
+        self.assertIn("packet_builder or build_packet", loop_src)
+        # The ephemeral review path CONSUMES the packet dict; it never builds one.
+        er_src = (pkg_dir / "ephemeral_review.py").read_text(encoding="utf-8")
+        self.assertNotIn("def build_packet", er_src)
+
     def test_strip_mode_removes_the_section_and_records_the_removal(self):
         packet = {"sections": {"git": {"head": "x"}, "transcript": "chat"}}
         result = rp.guard_packet(packet, current_task_id="M0-T042", strip=True)
@@ -462,6 +506,28 @@ class RolesAndUsage(Base):
             '{"usage":{"input_tokens":10,"output_tokens":4,"total_tokens":14}}')
         self.assertEqual(u2["total_tokens"], 14)                # no double-count
         self.assertEqual(rv.parse_usage_telemetry("no json at all"), USAGE_UNKNOWN)
+
+    def test_a_huge_integer_usage_line_is_unknown_not_a_crash(self):
+        """G5 M0-T042 L-1: `json.loads` on a >4300-digit integer in the untrusted
+        `--json` stream raises a plain `ValueError` (not `JSONDecodeError`). The
+        guard now catches it, so a pathological usage line yields USAGE_UNKNOWN
+        instead of crashing the review."""
+        pathological = '{"usage":{"input_tokens":' + "9" * 5000 + "}}"
+        # Reproduce the raw defect first: the bare parse raises a plain ValueError.
+        with self.assertRaises(ValueError):
+            json.loads(pathological)
+        # The reviewer's parser survives it: unknown, never raised.
+        self.assertEqual(rv.parse_usage_telemetry(pathological), USAGE_UNKNOWN)
+        # A valid usage event AFTER the poison line is still parsed (the poison
+        # line is skipped, not fatal to the whole scan).
+        stream = pathological + '\n{"usage":{"input_tokens":10,"total_tokens":10}}'
+        self.assertEqual(rv.parse_usage_telemetry(stream)["total_tokens"], 10)
+
+    def test_the_provider_failure_scan_also_survives_a_huge_integer_line(self):
+        """The same untrusted `--json` stream is scanned a second time by
+        `provider_failure_reason`; it must survive the huge-int line too."""
+        pathological = '{"type":"turn.failed","code":' + "9" * 5000 + "}"
+        self.assertIsInstance(rv.provider_failure_reason(pathological), str)  # no crash
 
 
 if __name__ == "__main__":

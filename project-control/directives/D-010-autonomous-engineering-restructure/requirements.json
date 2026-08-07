@@ -1,10 +1,10 @@
 {
  "schema": "directive_requirements/v1",
  "directive_id": "D-010",
- "version": 7,
- "requirement_count": 118,
+ "version": 9,
+ "requirement_count": 120,
  "producer": "orchestrator",
- "updated_at": "2026-08-07T15:30:25+00:00",
+ "updated_at": "2026-08-07T16:53:10+00:00",
  "requirements": [
   {
    "id": "D-010-R001",
@@ -4215,6 +4215,78 @@
     "tasks": []
    },
    "amendment_sequence": 8
+  },
+  {
+   "id": "D-010-R119",
+   "text": "R595 rehearsal authorization (owner typed 2026-08-07): approve the R595 supervised rehearsal per the M0-T045 runbook (project-control/reports/M0-T045-r595-rehearsal.md); the supervised window is NOW (owner present in-session); the Section 16.2 GitHub push/PR/merge leg stands on M0-T044 evidence plus the real PR history rather than a live leg inside the window; the successor session resumes the next dependency-valid unit; begin. This authorizes executing the rehearsal under the runbook's R0-R7 script, abort rule, and evidence duties. It activates NOTHING: SHADOW-ONLY remains in force for every autonomy tier, the promotion decision remains owner-gated, and the AS-3 claim ceiling (at most shadow-to-supervised-auto readiness) is binding.",
+   "source_ref": "source-009-amendment.md#r595-authorization",
+   "classification": "authorization",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T037",
+     "M0-T045"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [
+     "dispatch",
+     "accept"
+    ],
+    "effective_date": "2026-08-07"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "owner R595 rehearsal authorization 2026-08-07; pins runbook section-6 agenda decisions (window now; GitHub leg on M0-T044 evidence; successor resumes next dependency-valid unit)",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "amendment_sequence": 9
+  },
+  {
+   "id": "D-010-R120",
+   "text": "R595 same-window retry agreement (owner typed 2026-08-07, after finding R595-F1): continue with the FORWARD_PROMPT-resume fix increment and re-run the rehearsal legs (fresh runtime, fixed code) in the same supervised window. This is the owner agreement the runbook's abort rule requires before any same-window retry, and it authorizes the additional provider spend of the re-run. No other obligation changes; R119's boundaries (SHADOW-ONLY, owner-gated promotion, AS-3 ceiling) remain binding.",
+   "source_ref": "source-010-amendment.md#retry-agreement",
+   "classification": "authorization",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T037",
+     "M0-T045"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [
+     "dispatch",
+     "accept"
+    ],
+    "effective_date": "2026-08-07"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "owner same-window retry agreement 2026-08-07 (runbook abort-rule requirement)",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "amendment_sequence": 10
   }
  ]
 }

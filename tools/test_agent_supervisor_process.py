@@ -359,6 +359,31 @@ class FakeExecutableTests(ProcessTestCase):
         self.assertEqual(len(self.parse(result)), 1)
 
 
+class CaptureBoundTests(ProcessTestCase):
+    """G5 M0-T042 I-3: child stdout capture is bounded, with a visible marker."""
+
+    def test_oversized_stdout_is_capped_with_a_structured_marker(self) -> None:
+        # A child that floods stdout with 100k characters.
+        result = pc.run(
+            [sys.executable, "-c", "import sys; sys.stdout.write('x' * 100000)"],
+            env=self.env(), timeout=60, max_capture_bytes=1000)
+        self.assertTrue(result.stdout_truncated)
+        # Retained bytes are bounded to the cap plus the (bounded) marker, never
+        # the full 100k, and the truncation is never silent.
+        self.assertLess(len(result.stdout), 100000)
+        self.assertTrue(result.stdout.startswith("x" * 1000))
+        self.assertIn("[STDOUT TRUNCATED", result.stdout)
+        self.assertIn("retained 1000 of 100000", result.stdout)
+
+    def test_output_within_the_cap_is_untouched_and_not_flagged(self) -> None:
+        result = pc.run(
+            [sys.executable, "-c", "import sys; sys.stdout.write('hello')"],
+            env=self.env(), timeout=60, max_capture_bytes=1000)
+        self.assertFalse(result.stdout_truncated)
+        self.assertEqual(result.stdout, "hello")
+        self.assertNotIn("TRUNCATED", result.stdout)
+
+
 # --------------------------------------------------------------------------
 # Timeouts and process-tree termination
 # --------------------------------------------------------------------------

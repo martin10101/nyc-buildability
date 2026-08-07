@@ -722,14 +722,218 @@
   {
    "task_id": "M0-T045",
    "directive_id": "D-010",
-   "producer": "orchestrator",
+   "producer": "backend-engineer",
    "verifier": "directive-compliance-verifier",
-   "applicable_requirement_ids": [],
-   "requirements": [],
-   "reviewed_sha": null,
-   "reviewed_manifest_sha256": null,
-   "note": "pending: placeholder at task contracting; the applicable set and per-requirement rows are produced by the independent verifier at this task gates/accept (fail-closed at accept)."
+   "applicable_requirement_ids": [
+    "D-010-R026",
+    "D-010-R031",
+    "D-010-R074",
+    "D-010-R075",
+    "D-010-R076",
+    "D-010-R077",
+    "D-010-R078",
+    "D-010-R079",
+    "D-010-R089",
+    "D-010-R090",
+    "D-010-R104",
+    "D-010-R113",
+    "D-010-R114",
+    "D-010-R115",
+    "D-010-R116",
+    "D-010-R117",
+    "D-010-R118",
+    "D-010-R119",
+    "D-010-R120"
+   ],
+   "requirements": [
+    {
+     "id": "D-010-R026",
+     "state": "PASS",
+     "evidence": [
+      "main-run/audit.jsonl seq: claude_unit_completed(5) BEFORE rotation_pending_flagged(8); rotation_complete(24) only AFTER prompt_forwarded(20)+session_handoff_refreshed(22)",
+      "r1b-start-output.json rotations:[] with rotation_pending:true (armed mid-unit, not rotated)",
+      "suite 1317/2 reproduced",
+      "note: rotation only at the cycle-2 safe seam after owner-approved forward; verified from sealed journal ordering"
+     ]
+    },
+    {
+     "id": "D-010-R031",
+     "state": "PASS",
+     "evidence": [
+      "main-run/audit.jsonl: unit completed before any rotation event",
+      "r4b-start-output.json rotation at cycle boundary post-forward",
+      "quiesce-barrier tests green in 1317/2",
+      "note: no parent rotation while a child unit was active"
+     ]
+    },
+    {
+     "id": "D-010-R074",
+     "state": "PASS",
+     "evidence": [
+      "M0-T045-promotion-evidence.md AS-3 ceiling stated first",
+      "G5: no activation flips, SHADOW-ONLY intact",
+      "D-010-INITIATIVE-PLAN.md staged order",
+      "note: staged promotion honored; pack claims at most supervised-auto readiness"
+     ]
+    },
+    {
+     "id": "D-010-R075",
+     "state": "PASS",
+     "evidence": [
+      "estop-run/r6-estop-output.json emergency_stop:true, children:[], owner-only clear",
+      "estop-run/r6-recovery-status.json HALTED, autostart refused, zero unaccounted",
+      "M0-T044 accepted crash-reconciliation proofs",
+      "note: live mid-unit e-stop with durable no-dispatch flag; crash recovery from accepted M0-T044"
+     ]
+    },
+    {
+     "id": "D-010-R076",
+     "state": "PASS",
+     "evidence": [
+      "main-run/audit.jsonl ordering (armed-not-rotated R1b; seam-only R4b)",
+      "live R6 child-tree termination",
+      "Section 19.2 suites green",
+      "note: no rotation with active children proven live + in suite"
+     ]
+    },
+    {
+     "id": "D-010-R077",
+     "state": "PASS",
+     "evidence": [
+      "M0-T044.json status=accepted, gates G0/G2/G3/G4/G5 all PASS",
+      "M0-T044-g3-code-review.md: 57 tests, ten S5.5 conditions both directions",
+      "source-009-amendment.md owner decision verbatim",
+      "4db6a71 hardened github_flow.py",
+      "note: GitHub leg stands on ACCEPTED M0-T044 gates per owner decision R119; anchor confirmed accepted"
+     ]
+    },
+    {
+     "id": "D-010-R078",
+     "state": "PASS",
+     "evidence": [
+      "M0-T045-r595-rehearsal.md: 8 typed operator acts enumerated",
+      "r1b/r4b budget.touches records in sealed outputs",
+      "note: owner-touch count measured and corroborated by sealed budget-touch records"
+     ]
+    },
+    {
+     "id": "D-010-R079",
+     "state": "PASS",
+     "evidence": [
+      "M0-T045.json progress_log: continuous capture->hardening->rehearsal->fix->re-run->seal",
+      "rehearsal report phase narrative",
+      "note: continuous progression; stops only for directive-required supervised acts + classifier hard stop, dispositioned per protocol"
+     ]
+    },
+    {
+     "id": "D-010-R089",
+     "state": "PASS",
+     "evidence": [
+      "r1b context_tokens 134497; r4b context_tokens 209260 (live per-unit usage)",
+      "pack row honestly defers per-product-task measurement to the limited-auto gate",
+      "note: usage measurement capability proven live per unit; product-task scope honestly deferred, no overclaim"
+     ]
+    },
+    {
+     "id": "D-010-R090",
+     "state": "PASS",
+     "evidence": [
+      "D-010-INITIATIVE-PLAN.md: M0-T045 = final (order 8) Section 0A.8 item",
+      "pack control-ceiling reconciliation",
+      "note: last minimum-control item; next dependency-valid work is product work"
+     ]
+    },
+    {
+     "id": "D-010-R104",
+     "state": "PASS",
+     "evidence": [
+      "exactly two code commits 4db6a71+afc2da5, both tools/-only (git show name-only)",
+      "G5: nothing activated",
+      "discovery-run corroborates one live-found defect fixed same-window",
+      "note: R595 before any activation, bounded to targeted increments; no open-ended development"
+     ]
+    },
+    {
+     "id": "D-010-R113",
+     "state": "PASS",
+     "evidence": [
+      "source-006-amendment.md rotation rule captured",
+      "bounded increments in M0-T045.json; no gross-overrun evidence",
+      "CP-0037..CP-0040 lineage",
+      "note: session-conduct row verified to its repo-verifiable scope (live token curve not repo-reproducible)"
+     ]
+    },
+    {
+     "id": "D-010-R114",
+     "state": "PASS",
+     "evidence": [
+      "r4b forwarded_message_ids [run_r595_rehearsal_b/fwd/1/a4c3d170]; rotations[0] context_threshold, session sup-5b5f59ac, handoff e75d07c0",
+      "audit seq 24->25->28: rotation_complete -> relaunch -> successor unit completed",
+      "note: supervisor-level rotation-CONTINUES live-proven from sealed main-run"
+     ]
+    },
+    {
+     "id": "D-010-R115",
+     "state": "PASS",
+     "evidence": [
+      "afc2da5 full fix increment + re-run at fixed code",
+      "G3/G4/G5 full reviews PASS; +10 tests; 1317/2",
+      "source-005-amendment.md soft-ceiling text",
+      "note: no corner-cutting: live finding forced full fix + re-run + complete reviews, never a waiver"
+     ]
+    },
+    {
+     "id": "D-010-R116",
+     "state": "PASS",
+     "evidence": [
+      "source-006-amendment.md verbatim; append-only (7955b08)",
+      "chain reached and completed M0-T045",
+      "note: session-conduct row: verbatim append-only capture + chain completion verified"
+     ]
+    },
+    {
+     "id": "D-010-R117",
+     "state": "PASS",
+     "evidence": [
+      "source-007-amendment.md verbatim; append-only (22c2b71)",
+      "holds/primary-checkout untouched (control-plane review check 6)",
+      "note: session-conduct row: capture + non-interference verified"
+     ]
+    },
+    {
+     "id": "D-010-R118",
+     "state": "PASS",
+     "evidence": [
+      "source-008-amendment.md verbatim; append-only (088480d)",
+      "M0-T045 executed under SHADOW-ONLY (G5)",
+      "note: session-4 re-dispatch executed with no obligation violated"
+     ]
+    },
+    {
+     "id": "D-010-R119",
+     "state": "PASS",
+     "evidence": [
+      "source-009-amendment.md verbatim owner authorization",
+      "rehearsal executed per runbook R0-R7 (sealed evidence)",
+      "AS-3 ceiling binding; G5 nothing activated",
+      "note: authorization captured BEFORE the acts (control-plane check 5) and executed exactly"
+     ]
+    },
+    {
+     "id": "D-010-R120",
+     "state": "PASS",
+     "evidence": [
+      "source-010-amendment.md verbatim retry agreement",
+      "afc2da5 fix + fresh-runtime re-run closed the seam leg",
+      "note: same-window retry agreement captured before the retry and executed"
+     ]
+    }
+   ],
+   "reviewed_sha": "abd50060dab27e4e9bbd0cd04242311b06117ac3",
+   "reviewed_manifest_sha256": "2a259525c732d752a65cb5ecb2e4a094c2a8dfb270a51ba4f93b4f7044f2ca65",
+   "note": "FINAL record; verifier's verbatim verdict at project-control/reports/M0-T045-dcv-final.md. Verifier reproduced: suite 1317/2; 26/26 sealed manifest hashes; main-run audit chain (37 records, links intact, rotation only at the seam); seam-actuation JSON (forward-once -> rotation -> new session -> digest-verified handoff -> successor cycle 2); estop recovery record; three append-only amendment sources; ACCEPTED M0-T044 anchor for R077. All 19 rows PASS. Material identity 2a259525 invariant across G2..G5 (control-plane check 3). reviewed_sha stamped at accept-time HEAD, committed together with the accept ledger write. Pre-activation items pinned to M0-T036-ACTIVATION-CHECKLIST.md (G5 LOW-1; G4 estop-fork follow-up); SHADOW-ONLY preserved; activation stays owner-gated.",
+   "verified_at": "2026-08-07T18:38:29+00:00"
   }
  ],
- "updated_at": "2026-08-07T12:37:29+00:00"
+ "updated_at": "2026-08-07T18:38:29+00:00"
 }

@@ -329,6 +329,31 @@ class InvariantsSevenToNine(InvariantTestBase):
             self.assertNotIn("merge", name)
             self.assertNotIn("deploy", name)
 
+    def test_invariant_9_instance_extra_specs_cannot_smuggle_a_gated_effect(self) -> None:
+        """D-010 SEC-1: the instance `extra_specs` override is consulted BEFORE
+        MODELED_EFFECTS, so the invariant-9 lock must cover it too - a live-path
+        journal cannot shadow a modeled effect or admit a destructive/deploy
+        override through this channel."""
+        collide = {"git_push_task_branch": ex.EffectSpec(
+            "git_push_task_branch", "shadow override", read_before_write=False,
+            destructive=False, compensating_action="none")}
+        destructive = {"delete_release": ex.EffectSpec(
+            "delete_release", "d", read_before_write=False, destructive=True,
+            compensating_action="none")}
+        deploy = {"deploy_prod": ex.EffectSpec(
+            "deploy_prod", "d", read_before_write=False, destructive=False,
+            compensating_action="none")}
+        journal = DurableJournal(self.tmp / "eff9.sqlite3").open()
+        try:
+            for bad in (collide, destructive, deploy):
+                with self.subTest(extra=sorted(bad)):
+                    with self.assertRaises(ex.ExternalEffectError):
+                        ex.ExternalEffectJournal(journal, extra_specs=bad)
+            # A plain live-path journal carries NO extra specs at all.
+            self.assertEqual(dict(ex.ExternalEffectJournal(journal).extra_specs), {})
+        finally:
+            journal.close()
+
 
 # --------------------------------------------------------------------------
 # 10-12

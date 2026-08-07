@@ -1,0 +1,18 @@
+{
+  "task_id": "SYNTH-R595-REHEARSAL",
+  "title": "Synthetic continuity workload for the M0-T045 supervised rehearsal (NOT a real ledger task)",
+  "objective": "Drive bounded supervised cycles on a throwaway repository so the controller's ordinary cycle mechanics run end to end. Synthetic-only; references no real task; shadow-only remains in force for all real work.",
+  "status": "in_progress",
+  "allowed_paths": [
+    "README.md",
+    "docs/**"
+  ],
+  "forbidden_paths": [
+    ".github/",
+    "project-control/",
+    "tools/agent_supervisor/"
+  ],
+  "acceptance_scenarios": [],
+  "required_gates": [],
+  "directive_refs": []
+}

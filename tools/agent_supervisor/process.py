@@ -90,6 +90,15 @@ DEFAULT_ENV_ALLOWLIST: tuple[str, ...] = (
 
 DEFAULT_TIMEOUT_SECONDS = 900
 
+#: Cap on the child stdout/stderr characters RETAINED and propagated by `run()`.
+#: The reviewer's `--json` stdout is untrusted output that `parse_usage_telemetry`
+#: then `splitlines()` over; without a cap a runaway or adversarial child could
+#: balloon what is buffered, split, and written into the durable record. The cap
+#: bounds what is retained - never silently: an overflow appends a structured
+#: truncation marker and sets the truncation flag, and truncation never raises
+#: (G5 M0-T042 I-3).
+MAX_CAPTURE_BYTES = 8 * 1024 * 1024
+
 #: Very large executables (the Claude CLI is a ~265 MB single-file binary) are
 #: identified by size + mtime + a bounded head digest instead of a full hash, so
 #: preflight does not read a quarter of a gigabyte on every action. Recorded
@@ -617,6 +626,20 @@ def default_containment_kind() -> str:
 # --------------------------------------------------------------------------
 
 
+def _bounded_capture(text: str, cap: int, stream: str) -> tuple[str, bool]:
+    """Cap a captured stream, appending a structured marker on overflow (I-3).
+
+    Returns `(possibly-truncated text, truncated?)`. A truncation is NEVER
+    silent - the marker names how much was retained of the total - and this
+    function never raises, so a bounded capture cannot itself crash `run()`.
+    """
+    if cap <= 0 or len(text) <= cap:
+        return text, False
+    marker = (f"\n[{stream.upper()} TRUNCATED: retained {cap} of {len(text)} "
+              f"characters at the supervisor capture cap]")
+    return text[:cap] + marker, True
+
+
 @dataclasses.dataclass(frozen=True)
 class ProcessResult:
     argv: tuple[str, ...]
@@ -628,6 +651,8 @@ class ProcessResult:
     tree_terminated: bool = False
     containment: str = ""
     containment_fallback_reason: str = ""
+    stdout_truncated: bool = False
+    stderr_truncated: bool = False
 
     @property
     def ok(self) -> bool:
@@ -643,6 +668,7 @@ def run(
     input_text: str | None = None,
     container: "ProcessContainer | None" = None,
     use_job_object: bool = True,
+    max_capture_bytes: int = MAX_CAPTURE_BYTES,
 ) -> ProcessResult:
     """Run a bounded subprocess from an argv array. Never uses a shell.
 
@@ -692,16 +718,26 @@ def run(
         if owns_container:
             box.close()
 
+    # I-3: bound what is RETAINED and propagated. The child ran under a timeout
+    # and containment; the cap keeps a runaway/adversarial stream from ballooning
+    # the durable record and the `splitlines()` scans over it, with a visible
+    # marker so the truncation is never silent.
+    stdout_text, stdout_truncated = _bounded_capture(
+        stdout or "", max_capture_bytes, "stdout")
+    stderr_text, stderr_truncated = _bounded_capture(
+        stderr or "", max_capture_bytes, "stderr")
     return ProcessResult(
         argv=tuple(checked),
         returncode=process.returncode if process.returncode is not None else -1,
-        stdout=stdout or "",
-        stderr=stderr or "",
+        stdout=stdout_text,
+        stderr=stderr_text,
         duration_seconds=time.monotonic() - started,
         timed_out=timed_out,
         tree_terminated=tree_terminated,
         containment=report.kind,
         containment_fallback_reason=report.fallback_reason,
+        stdout_truncated=stdout_truncated,
+        stderr_truncated=stderr_truncated,
     )
 
 

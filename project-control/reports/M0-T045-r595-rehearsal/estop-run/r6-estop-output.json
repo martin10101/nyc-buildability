@@ -1,0 +1,9 @@
+{
+  "command": "emergency-stop",
+  "children": [],
+  "scheduled_resume_cancelled": false,
+  "emergency_stop": true,
+  "reason": "operator `emergency-stop`",
+  "at_utc": "2026-08-07T17:57:29.376Z",
+  "clears_by": "an explicit owner command only"
+}

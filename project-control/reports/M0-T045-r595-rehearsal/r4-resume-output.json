@@ -1,0 +1,7 @@
+{
+  "command": "resume-pending-prompt",
+  "resumed": true,
+  "state": "FORWARD_PROMPT",
+  "run_id": "run_r595_rehearsal",
+  "prompt_digest": "e6f112c60334b5692082bb50c3e25a1b86e19e33be475b46489f8a2e3587cdb7"
+}

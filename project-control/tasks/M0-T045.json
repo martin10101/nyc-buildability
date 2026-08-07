@@ -46,7 +46,7 @@
     "G4",
     "G5"
   ],
-  "producer_agent": null,
+  "producer_agent": "backend-engineer",
   "reviewer_agents": [
     "code-reviewer",
     "security-reviewer",
@@ -54,14 +54,14 @@
     "control-plane-verifier",
     "directive-compliance-verifier"
   ],
-  "status": "backlog",
-  "progress_percent": 0,
+  "status": "accepted",
+  "progress_percent": 100,
   "risks": [
     "Rehearsal needs a real supervised run window - bounded by design; if it cannot complete in one unit, split (D-010-R103) rather than extend open-endedly (R104)."
   ],
   "blockers": [],
   "created_at": "2026-08-07T01:33:11.693328+00:00",
-  "updated_at": "2026-08-07T15:30:25+00:00",
+  "updated_at": "2026-08-07T18:38:31.250638+00:00",
   "directive_refs": [
     {
       "directive_id": "D-010",
@@ -82,10 +82,45 @@
         "D-010-R115",
         "D-010-R116",
         "D-010-R117",
-        "D-010-R118"
+        "D-010-R118",
+        "D-010-R119",
+        "D-010-R120"
       ]
     }
   ],
   "directive_regime_version": "1.0",
-  "directive_regime_entered_at": "2026-08-07T01:33:11.693328+00:00"
+  "directive_regime_entered_at": "2026-08-07T01:33:11.693328+00:00",
+  "worktree": "C:/Users/MLFLL/Downloads/nyc-zoning/orch",
+  "progress_log": [
+    {
+      "at": "2026-08-07T15:41:52.697661+00:00",
+      "agent": "backend-engineer",
+      "percent": 15,
+      "status": "in_progress",
+      "message": "Increment 1 dispatched: pre-R595 hardening (three pinned checklist sets A1-A4/B1-B3/C1-C5) in tools/agent_supervisor + tests; producer working in orch worktree; rehearsal runbook drafting in parallel (orchestrator)"
+    },
+    {
+      "at": "2026-08-07T16:16:55.515232+00:00",
+      "agent": "backend-engineer",
+      "percent": 45,
+      "status": "self_check",
+      "message": "Increment 1 complete: three pinned pre-R595 hardening sets resolved (A1-A4/B1-B3/C1-C5), +36 tests, suite 1307/2 reproduced by orchestrator, validator exit 0. Remaining: owner-supervised R595 rehearsal (runbook drafted, owner window required) + promotion-pack completion + gates."
+    },
+    {
+      "at": "2026-08-07T16:47:47.481240+00:00",
+      "agent": "backend-engineer",
+      "percent": 55,
+      "status": "self_check",
+      "message": "R595 rehearsal LIVE FINDING (R4): resume-pending-prompt legally parks the journal at FORWARD_PROMPT but loop CYCLE_ENTRY_STATES={PREFLIGHT,CLAUDE_RUNNING} refuses that entry (bad_cycle_entry_state, fail-closed, 0 provider calls); parked record stores digest only, no prompt text, so a cross-process forward is impossible by construction. R1 park + R4 approval/consume PROVEN live; seam actuation blocked pending fix. Fix increment dispatched: durable held-prompt text + FORWARD_PROMPT loop entry (digest-verified forward-exactly-once) + cross-process integration tests. Evidence preserved (r1/r4 outputs, journal, audit)."
+    },
+    {
+      "at": "2026-08-07T18:01:54.623983+00:00",
+      "agent": "backend-engineer",
+      "percent": 80,
+      "status": "self_check",
+      "message": "R595 rehearsal COMPLETE, all legs live-proven at afc2da5: R1b trip+park (ctx 134,497, armed, unit uninterrupted); R4b owner approval + SEAM ACTUATION (forward-once fwd/1/a4c3d170, handoff e75d07c0 digest-verified, session sup-5b5f59ac minted, successor completed cycle 2 through live review); R5 re-approval fail-closed; R6 emergency stop (child tree terminated, autostart refused, recovery report). Finding R595-F1 found->fixed->locked same-window (+10 tests, suite 1317/2). Evidence sealed: 26 files, SHA-256 manifest. Promotion pack populated, AS-3 ceiling stated. Owner touches: 8. Next: submit + 5 gates + DCV."
+    }
+  ],
+  "accepted_by": "orchestrator",
+  "accepted_at": "2026-08-07T18:38:31.250638+00:00"
 }
