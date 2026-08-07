@@ -34,7 +34,7 @@ import pathlib
 import tempfile
 from typing import Any, Callable, Mapping, Sequence
 
-from .models import CodexDecision, RecordError, digest_of, to_utc_iso
+from .models import USAGE_UNKNOWN, CodexDecision, RecordError, digest_of, to_utc_iso
 from .policy import (
     ASK,
     AUTO,
@@ -317,6 +317,73 @@ def provider_failure_reason(stdout: str) -> str:
     return ""
 
 
+#: `--json` event keys under which Codex may report token usage. Event shapes
+#: drift across CLI versions (the task's AD-022 risk note), so the parser scans
+#: every plausible carrier rather than trusting one path.
+USAGE_CARRIER_KEYS: tuple[str, ...] = ("usage", "token_usage", "token_count")
+
+
+def _event_usage_object(event: Mapping[str, Any]) -> Mapping[str, Any] | None:
+    """The token-usage mapping this one event carries, or None."""
+    for key in USAGE_CARRIER_KEYS:
+        value = event.get(key)
+        if isinstance(value, Mapping):
+            return value
+    info = event.get("info")
+    if isinstance(info, Mapping):
+        for key in USAGE_CARRIER_KEYS:
+            value = info.get(key)
+            if isinstance(value, Mapping):
+                return value
+    return None
+
+
+def parse_usage_telemetry(stdout: str) -> dict[str, Any] | str:
+    """Extract Codex token-usage telemetry from a `--json` event stream.
+
+    Returns the observed token fields plus a computed `total_tokens`, or the
+    string ``USAGE_UNKNOWN`` when no usage object is present. A missing reading is
+    NEVER reported as zero: the durable record must not imply a review was free
+    when the provider simply did not report usage (the S8.3 "unknown, not zero"
+    rule applied to the reviewer side; 0A.1 item 7 requires usage telemetry in
+    durable state). When several events carry usage, the PEAK cumulative reading
+    is kept - the stance `claude_runner.inspect_stream` takes for the worker.
+    """
+    best: dict[str, Any] | None = None
+    best_total = -1
+    for line in stdout.splitlines():
+        stripped = line.strip()
+        if not stripped.startswith("{"):
+            continue
+        try:
+            event = json.loads(stripped)
+        except json.JSONDecodeError:
+            continue
+        if not isinstance(event, dict):
+            continue
+        usage = _event_usage_object(event)
+        if usage is None:
+            continue
+        tokens = {key: value for key, value in usage.items()
+                  if isinstance(key, str) and "token" in key.lower()
+                  and isinstance(value, int) and not isinstance(value, bool)}
+        if not tokens:
+            continue
+        # Prefer the provider's own total (a `*total*token*` field) to avoid
+        # double-counting when input/output/total all appear together.
+        provider_total = next(
+            (value for key, value in tokens.items() if "total" in key.lower()), None)
+        total = provider_total if provider_total is not None else sum(tokens.values())
+        if total > best_total:
+            best_total = total
+            usage_record = dict(tokens)
+            usage_record["total_tokens"] = total
+            usage_record["source_event"] = str(event.get("type")
+                                                or event.get("event") or "")
+            best = usage_record
+    return best if best is not None else USAGE_UNKNOWN
+
+
 def no_decision_error(result: ProcessResult) -> ReviewError:
     """Classify a review attempt that produced no parseable decision.
 
@@ -359,6 +426,10 @@ class ReviewOutcome:
     model_self_report_mismatch: str = ""
     tier: PolicyDecision | None = None
     notify_events: tuple[str, ...] = ()
+    #: Token-usage telemetry parsed from the fresh process's `--json` stream, or
+    #: USAGE_UNKNOWN when the provider reported none (never zeroed - 0A.1 item 7
+    #: requires usage telemetry in the durable record, honestly unknown if absent).
+    usage_telemetry: dict[str, Any] | str = USAGE_UNKNOWN
 
     @property
     def ok(self) -> bool:
@@ -437,6 +508,7 @@ class CodexReviewer:
         packet_digest = digest_of(packet_body)
         last_error: ReviewError | None = None
         last_returncode = 0
+        last_stdout = ""
 
         for attempt in range(1, self.max_attempts + 1):
             payload = dict(packet_body)
@@ -447,6 +519,7 @@ class CodexReviewer:
                 }
             argv, result, raw = self._invoke(payload, resolution.model)
             last_returncode = result.returncode
+            last_stdout = result.stdout
             if result.timed_out:
                 last_error = ReviewError("review_timeout",
                                          "the reviewer timed out; partial output discarded")
@@ -475,6 +548,7 @@ class CodexReviewer:
                 decision_digest=digest_of(recorded.to_dict()),
                 model_self_report_mismatch=mismatch,
                 tier=map_decision_to_tier(recorded),
+                usage_telemetry=parse_usage_telemetry(result.stdout),
                 notify_events=tuple(notify + (["schema_retry_succeeded"]
                                               if attempt > 1 else [])))
             self._audit_outcome(outcome)
@@ -493,6 +567,7 @@ class CodexReviewer:
             tier=PolicyDecision(tier=ASK, reason_code="schema_retry_exhausted",
                                 reason=message, rule_id="S9",
                                 classification="unclassified", synchronous_stop=False),
+            usage_telemetry=parse_usage_telemetry(last_stdout),
             notify_events=tuple(notify))
         self._audit_outcome(outcome)
         return outcome

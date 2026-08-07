@@ -1,0 +1,103 @@
+{
+ "schema": "evidence_map/v1",
+ "task_id": "M0-T042",
+ "producer": "backend-engineer",
+ "requirements": {
+  "D-010-R027": {
+   "summary": "Reviews are fresh and ephemeral end to end: conduct_ephemeral_review drives the existing fresh-process CodexReviewer (one new read-only process per review, exit after one schema-valid decision); the sealed record's independence block proves a second review shares no state with the first (distinct packet digests, no carried conversation).",
+   "evidence": [
+    "tools/agent_supervisor/ephemeral_review.py",
+    "tools/test_agent_supervisor_ephemeral_review.py",
+    "project-control/reports/M0-T042-producer-report.md"
+   ]
+  },
+  "D-010-R041": {
+   "summary": "Concise root AGENTS.md created covering exactly the Section 11.1 topic list (mission, authoritative state, session start, never-guess, deterministic boundary, five-borough scope, task/path discipline, evidence, autonomy authority, hard stops, routing, code graph/context packs, checkpoint reporting); executable coverage test AS5AgentsMd.",
+   "evidence": [
+    "AGENTS.md",
+    "tools/test_agent_supervisor_ephemeral_review.py",
+    "project-control/reports/M0-T042-producer-report.md"
+   ]
+  },
+  "D-010-R042": {
+   "summary": "AGENTS.md does not duplicate CLAUDE.md wholesale: paraphrased, byte-shorter than CLAUDE.md, under 120 lines, zero shared >=40-char lines (test allows <=2, actual 0); canonical-authority note defers to CLAUDE.md/project-control on any conflict.",
+   "evidence": [
+    "AGENTS.md",
+    "tools/test_agent_supervisor_ephemeral_review.py"
+   ]
+  },
+  "D-010-R081": {
+   "summary": "Fresh ephemeral review is the default and only path: the sole loop entry point conduct_ephemeral_review launches a brand-new process per call and refuses any non-reviewer role; no persistent-controller code path exists in the new modules.",
+   "evidence": [
+    "tools/agent_supervisor/ephemeral_review.py",
+    "tools/test_agent_supervisor_ephemeral_review.py"
+   ]
+  },
+  "D-010-R082": {
+   "summary": "Respected/confirmed: nothing maintains a growing Codex thread or session resume; each attempt is a fresh process and the durable record asserts shares_conversation_state=False. No persistent-controller experiment was created (none authorized).",
+   "evidence": [
+    "tools/agent_supervisor/ephemeral_review.py",
+    "tools/agent_supervisor/codex_reviewer.py",
+    "tools/test_agent_supervisor_ephemeral_review.py"
+   ]
+  },
+  "D-010-R083": {
+   "summary": "guard_packet detects the 0A.1 whole-material categories (full transcript, full directive registry, all historical reports, whole repository, all logs, full code-graph dump) plus unrelated task packets by task-id correlation; default fail-closed rejection, optional strip with every removal recorded; refusal happens before any process starts (fixture tests per category).",
+   "evidence": [
+    "tools/agent_supervisor/review_packet.py",
+    "tools/test_agent_supervisor_ephemeral_review.py"
+   ]
+  },
+  "D-010-R084": {
+   "summary": "decide_review implements the 0A.3 cadence in both directions: each of the seven meaningful-checkpoint triggers warrants a review; a passing formatter/linter/unit-test alone is a reasoned refusal (never a silent skip); a real trigger beats a coincident deterministic pass.",
+   "evidence": [
+    "tools/agent_supervisor/review_cadence.py",
+    "tools/test_agent_supervisor_ephemeral_review.py"
+   ]
+  },
+  "D-010-R085": {
+   "summary": "ReviewBudget enforces the 0A.4 numbers as configurable policy: target 32k estimated input tokens, ordinary hard ceiling 64k, relative hard ceiling 20% of the reported model window, effective ceiling the lower of the two (unknown window honestly recorded, never fabricated); every assessment records estimated tokens, bytes, included sources, omissions, truncation status.",
+   "evidence": [
+    "tools/agent_supervisor/review_packet.py",
+    "tools/test_agent_supervisor_ephemeral_review.py",
+    "project-control/reports/M0-T042-producer-report.md"
+   ]
+  },
+  "D-010-R086": {
+   "summary": "An over-ceiling packet is refused with the six-point split/summarize guidance (explicitly forbidding silent omission and a giant persistent session) and a durable refusal record; the reviewer is provably never invoked on an oversized packet (RecordingReviewer assertion).",
+   "evidence": [
+    "tools/agent_supervisor/review_packet.py",
+    "tools/agent_supervisor/ephemeral_review.py",
+    "tools/test_agent_supervisor_ephemeral_review.py"
+   ]
+  },
+  "D-010-R087": {
+   "summary": "Anti-duplication: the bounded packet lets Codex challenge the worker without inheriting its context; _reopened_sources records every source the decision cites that the packet did not supply, with the 0A.6 reason, so reopening beyond the packet is visible rather than a silent duplicate investigation.",
+   "evidence": [
+    "tools/agent_supervisor/ephemeral_review.py",
+    "tools/test_agent_supervisor_ephemeral_review.py"
+   ]
+  },
+  "D-010-R088": {
+   "summary": "Role honesty: the durable record carries role (reviewer vs worker); conduct_ephemeral_review refuses role!=reviewer (role_not_activatable); record_worker_fallback builds an auditable role=worker exception record without launching anything or granting writes.",
+   "evidence": [
+    "tools/agent_supervisor/ephemeral_review.py",
+    "tools/test_agent_supervisor_ephemeral_review.py"
+   ]
+  },
+  "D-010-R093": {
+   "summary": "No speculative feature: every change cites its qualifying basis (0A.8 item 4 names fresh ephemeral Codex review a BLOCKING capability; AD-081..AD-088 are explicit rows). Bounded additive diff (3 modules + telemetry surfacing + AGENTS.md + tests); deliberately NOT wired into loop.py/cli.py - live wiring is an R595-gated activation step out of scope; shadow-only posture preserved.",
+   "evidence": [
+    "project-control/reports/M0-T042-producer-report.md",
+    "tools/agent_supervisor/ephemeral_review.py"
+   ]
+  },
+  "D-010-R116": {
+   "summary": "Session-2 re-dispatch honored: M0-T042 executed as the first dependency-valid wave-1 unit through the proven controlled-task workflow (G0+claim, isolated producer, executable AS-1..AS-5 evidence, independent gates to follow); no new obligations introduced; holds, SHADOW-ONLY, and the R595 blocking prerequisite unchanged.",
+   "evidence": [
+    "project-control/reports/M0-T042-producer-report.md",
+    "project-control/reports/M0-T042-g0-readiness.md"
+   ]
+  }
+ }
+}

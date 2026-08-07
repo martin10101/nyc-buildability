@@ -420,13 +420,144 @@
   {
    "task_id": "M0-T042",
    "directive_id": "D-010",
-   "producer": "orchestrator",
+   "producer": "backend-engineer",
    "verifier": "directive-compliance-verifier",
-   "applicable_requirement_ids": [],
-   "requirements": [],
-   "reviewed_sha": null,
-   "reviewed_manifest_sha256": null,
-   "note": "pending: placeholder at task contracting; the applicable set and per-requirement rows are produced by the independent verifier at this task gates/accept (fail-closed at accept)."
+   "applicable_requirement_ids": [
+    "D-010-R027",
+    "D-010-R041",
+    "D-010-R042",
+    "D-010-R081",
+    "D-010-R082",
+    "D-010-R083",
+    "D-010-R084",
+    "D-010-R085",
+    "D-010-R086",
+    "D-010-R087",
+    "D-010-R088",
+    "D-010-R093",
+    "D-010-R116"
+   ],
+   "requirements": [
+    {
+     "id": "D-010-R027",
+     "state": "PASS",
+     "evidence": [
+      "tools/agent_supervisor/ephemeral_review.py:225-317 fresh process per call",
+      "_independence_proof L130-143",
+      "test_a_second_review_shares_no_state_with_the_first L173-190 executed OK (distinct packet_digests + packet_bytes)"
+     ]
+    },
+    {
+     "id": "D-010-R041",
+     "state": "PASS",
+     "evidence": [
+      "AGENTS.md covers all 13 Section 11.1 items (lines 7,12,17,23,28,33,37,41,46,53,58,65,73)",
+      "referenced schemas/codex_decision.schema.json and tools/code_graph/query.py exist",
+      "test_agents_md_exists_and_covers_the_11_1_topics OK"
+     ]
+    },
+    {
+     "id": "D-010-R042",
+     "state": "PASS",
+     "evidence": [
+      "AGENTS.md:3-5 explicit non-duplication",
+      "test_agents_md_does_not_duplicate_claude_md_wholesale OK (bytes<CLAUDE, <120 lines, <=2 shared >=40char lines)"
+     ]
+    },
+    {
+     "id": "D-010-R081",
+     "state": "PASS",
+     "evidence": [
+      "conduct_ephemeral_review sole loop entry runs only fresh read-only reviewer",
+      "no persistent-default path (grep empty)",
+      "AS-1 green"
+     ]
+    },
+    {
+     "id": "D-010-R082",
+     "state": "PASS",
+     "evidence": [
+      "grep persistent-controller/session-resume in new modules returns none",
+      "role_not_activatable guard ephemeral_review.py:248-253",
+      "G3/G5 concur no persistent session"
+     ]
+    },
+    {
+     "id": "D-010-R083",
+     "state": "PASS",
+     "evidence": [
+      "guard_packet review_packet.py:380-403 fails closed on all 0A.1 categories",
+      "conduct_ephemeral_review step1 refuses before process",
+      "test file L294-375 incl rework all_logs/full_code_graph/completeness fixtures pass"
+     ]
+    },
+    {
+     "id": "D-010-R084",
+     "state": "PASS",
+     "evidence": [
+      "review_cadence.decide_review L114-128 both-directions",
+      "REVIEW_TRIGGERS maps to 0A.3 list",
+      "AS4 tests OK"
+     ]
+    },
+    {
+     "id": "D-010-R085",
+     "state": "PASS",
+     "evidence": [
+      "ReviewBudget defaults 32k/64k/20%",
+      "effective_ceiling L113-135 lower-of; re-derived None->64000,400k->64000,200k->40000",
+      "AS2 tests OK"
+     ]
+    },
+    {
+     "id": "D-010-R086",
+     "state": "PASS",
+     "evidence": [
+      "SPLIT_SUMMARIZE_GUIDANCE review_packet.py:141-148 incl no-giant-persistent-conversation",
+      "durable refusal record, reviewer.calls==0 test"
+     ]
+    },
+    {
+     "id": "D-010-R087",
+     "state": "PASS",
+     "evidence": [
+      "_reopened_sources ephemeral_review.py:146-167 records cited-not-supplied with reason",
+      "AS-1 asserts engine.py reopened, tasks json not"
+     ]
+    },
+    {
+     "id": "D-010-R088",
+     "state": "PASS",
+     "evidence": [
+      "role_not_activatable ephemeral_review.py:248-253",
+      "record_worker_fallback L320-350 launches nothing/no write",
+      "test_worker_role_is_never_activated + test_worker_fallback_is_a_recorded_exception OK"
+     ]
+    },
+    {
+     "id": "D-010-R093",
+     "state": "PASS",
+     "evidence": [
+      "all 30 public surfaces in 3 new modules + parse_usage_telemetry trace to cited reqs (0A.1/0A.3/0A.4/AD-083/AD-085/AD-086/AD-087/AD-088/0A.7/AD-022)",
+      "qualifying evidence 0A.8 item 4 blocking capability",
+      "additive bounded diff, no forbidden path"
+     ]
+    },
+    {
+     "id": "D-010-R116",
+     "state": "PASS",
+     "evidence": [
+      "M0-T041 accepted state.json:38 -> M0-T042 first dependency-valid unit per source-006-amendment.md:28",
+      "git log G0->producer->submit->G3 PASS/G4 FAIL(ac9d89b)->rework(dc9e961)->resubmit(9a1c7e1)->G3/G4/G5 PASS->DCV",
+      "project-control/directives/ diff 0ed2cdb..HEAD empty (no new obligations)",
+      "SHADOW-ONLY/R595 unchanged; L-1/I-1/I-3 on M0-T036-ACTIVATION-CHECKLIST.md:45-58; HEAD not merged to origin/main; M0-T042 not accepted at verification"
+     ]
+    }
+   ],
+   "reviewed_sha": "e490d504196161b6892936f9f0c12a7eea281aef",
+   "reviewed_manifest_sha256": "2db3109265d55ab3cf7b5c1b22eaea87fa3b752f7d951f4ea3b29b69a8f3fb17",
+   "note": "FINAL record; full verbatim verdict at project-control/reports/M0-T042-dcv-final.md. Verifier reproduced the identity (manifest 2db31092.. invariant across G2..G5; work-product tree component 5725cafb.. identical across e6a1b51/9a1c7e1/ba1d045) and the full suite 1216/1214/0/2. Honest G4 FAIL->rework->delta-PASS cycle preserved in history. Method disclosed: DEEP on 12 rows, continuity on R116. reviewed_sha stamped at accept-time HEAD, committed together with the accept ledger write.",
+   "verified_at": "2026-08-07T07:16:29+00:00"
   },
   {
    "task_id": "M0-T043",
@@ -462,5 +593,5 @@
    "note": "pending: placeholder at task contracting; the applicable set and per-requirement rows are produced by the independent verifier at this task gates/accept (fail-closed at accept)."
   }
  ],
- "updated_at": "2026-08-07T04:52:15+00:00"
+ "updated_at": "2026-08-07T07:16:29+00:00"
 }
