@@ -1,79 +1,79 @@
 {
- "task_id": "M0-T044",
- "title": "Automatic safe GitHub flow (0A.8 item 8; AD-077; Section 19.4 proofs)",
- "task_type": "backend",
- "milestone_id": "M0",
- "objective": "Implement and prove the supervisor's automatic ordinary GitHub flow in shadow/dry-run harness: task-branch push allowed, main/force push hard-denied, PR creation, ordinary green-PR merge path, secret-finding block, stale-remote-SHA reconciliation, specialist-review routing for workflow/dependency classes without owner approval, safe merged-branch cleanup, and crash-during-push/merge reconciliation without blind retry - the Section 19.4 test list, each as an executable proof.",
- "business_reason": "0A.8 item 8 (automatic ordinary commit/push/PR/CI/merge/ledger continuation) is a blocking minimum-autonomy capability; AD-006/AD-007/AD-077 are explicit directive requirements.",
- "inputs": [
-  "tools/agent_supervisor/push_policy.py + external_effects.py (existing)",
-  "D-010 Sections 5.1, 5.5, 19.4"
- ],
- "outputs": [
-  "automatic-GitHub-flow capability + proofs",
-  "producer report"
- ],
- "dependencies": [
-  "M0-T039",
-  "M0-T040"
- ],
- "allowed_paths": [
-  "tools/agent_supervisor/",
-  "tools/test_agent_supervisor_*.py",
-  "project-control/reports/M0-T044-producer-report.md",
-  "project-control/tasks/M0-T044.json"
- ],
- "forbidden_paths": [
-  ".github/",
-  ".claude/",
-  "apps/",
-  "services/",
-  "project-control/directives/",
-  "any dependency manifest or lockfile"
- ],
- "acceptance_scenarios": [
-  "AS-1 (executable): ordinary task-branch push allowed; direct main push and force push hard-denied (tests; Section 19.4).",
-  "AS-2 (executable): PR creation and the ordinary green-PR merge path proven in the dry-run harness; merge refuses on failing required check, secret finding, unresolved blocking finding, or stale remote SHA (one test each; Section 5.5).",
-  "AS-3 (executable): workflow/dependency change classes route to specialist review without owner approval (Tier B policy test).",
-  "AS-4 (executable): branch cleanup deletes only proven-merged task branches; unusual/evidence branches retained (test; Section 5.4).",
-  "AS-5 (executable): simulated crash mid-push/mid-merge reconciles from the external-effect journal without blind retry (test; Section 19.4)."
- ],
- "required_gates": [
-  "G0",
-  "G2",
-  "G3",
-  "G4",
-  "G5"
- ],
- "producer_agent": null,
- "reviewer_agents": [
-  "code-reviewer",
-  "security-reviewer",
-  "qa-engineer",
-  "control-plane-verifier",
-  "directive-compliance-verifier"
- ],
- "status": "backlog",
- "progress_percent": 0,
- "risks": [
-  "All proofs run in dry-run/shadow harness - no live merge occurs before activation (R104)."
- ],
- "blockers": [],
- "created_at": "2026-08-07T01:33:11.425300+00:00",
- "updated_at": "2026-08-07T01:36:53+00:00",
- "directive_refs": [
-  {
-   "directive_id": "D-010",
-   "requirement_ids": [
-    "D-010-R006",
-    "D-010-R007",
-    "D-010-R010",
-    "D-010-R077",
-    "D-010-R093",
-    "D-010-R116"
-   ]
-  }
- ],
- "directive_regime_version": "1.0",
- "directive_regime_entered_at": "2026-08-07T01:33:11.425300+00:00"
+  "task_id": "M0-T044",
+  "title": "Automatic safe GitHub flow (0A.8 item 8; AD-077; Section 19.4 proofs)",
+  "task_type": "backend",
+  "milestone_id": "M0",
+  "objective": "Implement and prove the supervisor's automatic ordinary GitHub flow in shadow/dry-run harness: task-branch push allowed, main/force push hard-denied, PR creation, ordinary green-PR merge path, secret-finding block, stale-remote-SHA reconciliation, specialist-review routing for workflow/dependency classes without owner approval, safe merged-branch cleanup, and crash-during-push/merge reconciliation without blind retry - the Section 19.4 test list, each as an executable proof.",
+  "business_reason": "0A.8 item 8 (automatic ordinary commit/push/PR/CI/merge/ledger continuation) is a blocking minimum-autonomy capability; AD-006/AD-007/AD-077 are explicit directive requirements.",
+  "inputs": [
+    "tools/agent_supervisor/push_policy.py + external_effects.py (existing)",
+    "D-010 Sections 5.1, 5.5, 19.4"
+  ],
+  "outputs": [
+    "automatic-GitHub-flow capability + proofs",
+    "producer report"
+  ],
+  "dependencies": [
+    "M0-T039",
+    "M0-T040"
+  ],
+  "allowed_paths": [
+    "tools/agent_supervisor/",
+    "tools/test_agent_supervisor_*.py",
+    "project-control/reports/M0-T044-producer-report.md",
+    "project-control/tasks/M0-T044.json"
+  ],
+  "forbidden_paths": [
+    ".github/",
+    ".claude/",
+    "apps/",
+    "services/",
+    "project-control/directives/",
+    "any dependency manifest or lockfile"
+  ],
+  "acceptance_scenarios": [
+    "AS-1 (executable): ordinary task-branch push allowed; direct main push and force push hard-denied (tests; Section 19.4).",
+    "AS-2 (executable): PR creation and the ordinary green-PR merge path proven in the dry-run harness; merge refuses on failing required check, secret finding, unresolved blocking finding, or stale remote SHA (one test each; Section 5.5).",
+    "AS-3 (executable): workflow/dependency change classes route to specialist review without owner approval (Tier B policy test).",
+    "AS-4 (executable): branch cleanup deletes only proven-merged task branches; unusual/evidence branches retained (test; Section 5.4).",
+    "AS-5 (executable): simulated crash mid-push/mid-merge reconciles from the external-effect journal without blind retry (test; Section 19.4)."
+  ],
+  "required_gates": [
+    "G0",
+    "G2",
+    "G3",
+    "G4",
+    "G5"
+  ],
+  "producer_agent": null,
+  "reviewer_agents": [
+    "code-reviewer",
+    "security-reviewer",
+    "qa-engineer",
+    "control-plane-verifier",
+    "directive-compliance-verifier"
+  ],
+  "status": "backlog",
+  "progress_percent": 0,
+  "risks": [
+    "All proofs run in dry-run/shadow harness - no live merge occurs before activation (R104)."
+  ],
+  "blockers": [],
+  "created_at": "2026-08-07T01:33:11.425300+00:00",
+  "updated_at": "2026-08-07T01:36:53+00:00",
+  "directive_refs": [
+    {
+      "directive_id": "D-010",
+      "requirement_ids": [
+        "D-010-R006",
+        "D-010-R007",
+        "D-010-R010",
+        "D-010-R077",
+        "D-010-R093",
+        "D-010-R116"
+      ]
+    }
+  ],
+  "directive_regime_version": "1.0",
+  "directive_regime_entered_at": "2026-08-07T01:33:11.425300+00:00"
 }
