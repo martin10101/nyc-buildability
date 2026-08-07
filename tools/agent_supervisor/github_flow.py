@@ -26,6 +26,17 @@ module wires nothing into a live path (it does not lift the R595 activation gate
 
 Decision logic is deterministic and takes NO wall-clock input: every timestamp
 that matters is journaled by the effect layer, not read inside a predicate.
+
+Two live-caller DUTIES this module makes available but cannot enforce from here:
+
+* **Audit every `FlowResult`, including refusals (D-010 INFO-1).** The effect
+  journal records only performed external effects; a refusal is returned as data.
+  A live caller MUST pass every `FlowResult` through `audit_flow_result`, so the
+  audit trail carries the outcome of every attempt.
+* **Redaction discipline (D-010 SEC-3).** `MergeRequest.secret_scan_findings` must
+  carry redacted descriptors (enforced at construction), and any caller-side
+  logging of `MergeEvaluation.conditions` MUST route through
+  `redacted_condition_log`, so a scanner's raw finding text can never leak.
 """
 from __future__ import annotations
 
@@ -33,6 +44,7 @@ import dataclasses
 import re
 from typing import Any, Callable, Mapping, Protocol, Sequence
 
+from . import redaction
 from .external_effects import (
     EffectSpec,
     ExternalEffectJournal,
@@ -72,6 +84,7 @@ def shadow_effects_journal(journal: Any, **kwargs: Any) -> ExternalEffectJournal
 from .policy import (
     CONTROLLER_PATHS,
     HARD_DENY,
+    SECURITY_RELEVANT_CLASSES,
     file_class,
     path_matches,
 )
@@ -100,13 +113,43 @@ SPECIALIST_REVIEW_TABLE: Mapping[str, tuple[str, ...]] = {
     "supervisor_code": ("control-plane", "security", "crash-replay"),
 }
 
-#: Map a `policy.file_class` result to its D-010 S5.2 change-class label. Classes
-#: that S5.2 does not enumerate (e.g. a bare `deploy_definition`, which is Tier D
-#: territory handled by `push_policy`) are intentionally absent.
+#: Map a `policy.file_class` result to its D-010 S5.2 change-class label. Only the
+#: three classes derivable from `file_class` alone are here; the rest of the S5.2
+#: table is semantic (not derivable from a path) and is handled by the CATCH-ALL
+#: below rather than routed to a specific S5.2 row.
 _FILE_CLASS_TO_CHANGE_CLASS: Mapping[str, str] = {
     "workflow": "github_actions_and_ci",
     "lockfile": "dependencies_and_lockfiles",
     "dependency_manifest": "dependencies_and_lockfiles",
+}
+
+#: D-010 SEC-2 / MINOR-1 CATCH-ALL. `policy.file_class` also returns the detectable
+#: security-relevant classes below. Left unrouted they would fall through to Tier A
+#: (auto-permit) - fail-OPEN. This module routes every one of them TOWARD review so
+#: an undetected-but-sensitive change can never auto-merge with no review.
+#:
+#: * permission/hook configuration is a D-010 S5.4 item 3 concern (weakening review
+#:   requirements or the hard-deny policy) -> Tier D OWNER-STOP: no specialist
+#:   review suffices, it never auto-merges;
+#: * every other detectable security-relevant class (deploy_definition,
+#:   secret_bearing, launcher_script, submodule_config, attributes_filter) fails
+#:   TOWARD security + control-plane review (Tier B).
+#:
+#: The catch-all set is DERIVED from `SECURITY_RELEVANT_CLASSES` minus the classes
+#: already routed explicitly, so it cannot drift as the policy table grows.
+_OWNER_STOP_FILE_CLASSES: frozenset[str] = frozenset({"permission_settings", "hook"})
+_CATCHALL_SECURITY_FILE_CLASSES: frozenset[str] = (
+    SECURITY_RELEVANT_CLASSES
+    - frozenset(_FILE_CLASS_TO_CHANGE_CLASS)
+    - _OWNER_STOP_FILE_CLASSES)
+
+#: The change-class labels the catch-all introduces, and their routing. The
+#: owner-stop label carries no specialist reviews (none suffices); the other
+#: security-relevant label fails toward security + control-plane review.
+_OWNER_STOP_CHANGE_CLASS = "permission_or_hook_configuration"
+_OTHER_SECURITY_CHANGE_CLASS = "other_security_relevant_change"
+_CATCHALL_REVIEW_TABLE: Mapping[str, tuple[str, ...]] = {
+    _OTHER_SECURITY_CHANGE_CLASS: ("control-plane", "security"),
 }
 
 
@@ -131,6 +174,11 @@ def change_classes_for(paths: Sequence[str]) -> dict[str, tuple[str, ...]]:
     Returns a mapping of change-class label -> the sorted paths that put it there.
     A supervisor-code path is recognized by controller-path match even though its
     `file_class` is ordinary; that is why this cannot be a pure `file_class` map.
+
+    Every detectable security-relevant class is mapped to a class that fails
+    TOWARD review (never Tier A): the three explicit S5.2 rows, supervisor code,
+    permission/hook configuration (an owner-stop label), and a catch-all label for
+    the remaining security-relevant classes (D-010 SEC-2 / MINOR-1).
     """
     found: dict[str, list[str]] = {}
     for raw in paths:
@@ -138,26 +186,34 @@ def change_classes_for(paths: Sequence[str]) -> dict[str, tuple[str, ...]]:
         if _is_supervisor_code(rel):
             found.setdefault("supervisor_code", []).append(rel)
             continue
-        label = _FILE_CLASS_TO_CHANGE_CLASS.get(file_class(rel))
+        klass = file_class(rel)
+        label = _FILE_CLASS_TO_CHANGE_CLASS.get(klass)
         if label is not None:
             found.setdefault(label, []).append(rel)
+        elif klass in _OWNER_STOP_FILE_CLASSES:
+            found.setdefault(_OWNER_STOP_CHANGE_CLASS, []).append(rel)
+        elif klass in _CATCHALL_SECURITY_FILE_CLASSES:
+            found.setdefault(_OTHER_SECURITY_CHANGE_CLASS, []).append(rel)
     return {label: tuple(sorted(paths)) for label, paths in found.items()}
 
 
 @dataclasses.dataclass(frozen=True)
 class ReviewRouting:
-    """The Tier decision for a changed-path set (D-010 S5.1/S5.2).
+    """The Tier decision for a changed-path set (D-010 S5.1/S5.2/S5.4).
 
-    `tier` is "A" when no change class needs a specialist review and "B" when at
-    least one does. `owner_approval_required` is ALWAYS False: neither Tier A nor
-    Tier B routes to the owner (S5.1 "the owner is not asked"; S5.2 "do not
-    require an owner response merely because they are important").
+    `tier` is "A" when no change class needs review, "B" when at least one needs a
+    specialist review, and "D" when a change is an owner-stop (permission/hook
+    configuration, S5.4 item 3). `owner_approval_required` stays False for Tier A
+    and Tier B (S5.1 "the owner is not asked"; S5.2 "do not require an owner
+    response merely because they are important"); `owner_stop` is True only for
+    Tier D, where no specialist review suffices and the change never auto-merges.
     """
 
     tier: str
     change_classes: tuple[str, ...]
     required_reviews: tuple[str, ...]
     owner_approval_required: bool = False
+    owner_stop: bool = False
     reason: str = ""
 
     def review_set(self) -> frozenset[str]:
@@ -167,18 +223,30 @@ class ReviewRouting:
 def route_for_review(paths: Sequence[str]) -> ReviewRouting:
     """Route a changed-path set to its Tier and required specialist reviews.
 
-    Never routes to owner approval. Workflow / dependency / supervisor-code
-    classes each map to their S5.2 review tuple; a purely ordinary diff is Tier A
-    with no required review.
+    Fails TOWARD review, never toward Tier A, for any detectable security-relevant
+    change (D-010 SEC-2 / MINOR-1). Ordinary diffs are Tier A with no review; the
+    three explicit S5.2 rows, supervisor code, and the catch-all security classes
+    are Tier B; a permission/hook configuration change is a Tier D owner-stop
+    (S5.4 item 3) that no specialist review can clear. Never routes to owner
+    approval (Tier D is an owner STOP, a different thing from an owner approval).
     """
     classes = change_classes_for(paths)
     if not classes:
         return ReviewRouting(
             tier="A", change_classes=(), required_reviews=(),
             reason="all changed paths are ordinary product code/docs/tests (D-010 S5.1)")
+    if _OWNER_STOP_CHANGE_CLASS in classes:
+        return ReviewRouting(
+            tier="D", change_classes=tuple(sorted(classes)), required_reviews=(),
+            owner_approval_required=False, owner_stop=True,
+            reason=("a permission/hook configuration change weakens review "
+                    "requirements or the hard-deny policy; it is a D-010 S5.4 item 3 "
+                    "owner-stop and never auto-merges, not even after a specialist "
+                    "review"))
     reviews: set[str] = set()
     for label in classes:
         reviews.update(SPECIALIST_REVIEW_TABLE.get(label, ()))
+        reviews.update(_CATCHALL_REVIEW_TABLE.get(label, ()))
     return ReviewRouting(
         tier="B",
         change_classes=tuple(sorted(classes)),
@@ -231,6 +299,16 @@ def authorize_push(plan: PushPlan) -> PushAuthorization:
     if hard:
         first = hard[0]
         return PushAuthorization(PUSH_HARD_DENY, first.reason_code, first.detail, evaluation)
+    # D-010 MINOR-2 defense-in-depth: `push_policy` falls through to ALLOW for any
+    # non-main branch when the grant's `authorized_branch` is empty. main/master/
+    # `*/main`/force are already HARD-DENIED above regardless; this refuses the
+    # remaining permissive edge so a push is authorized ONLY against a named exact
+    # branch, never a blank one.
+    if not plan.authorized_branch.strip():
+        return PushAuthorization(
+            PUSH_HARD_DENY, "no_authorized_branch",
+            "the grant carries no authorized branch; an automatic task-branch push "
+            "requires the exact authorized non-default branch (D-010 S5.4)", evaluation)
     return PushAuthorization(
         PUSH_ALLOW, "task_branch_push_permitted",
         "the exact authorized non-default task branch may be pushed automatically "
@@ -328,6 +406,21 @@ class MergeRequest:
     remote_state_known: bool = True
     mergeable: bool = True
 
+    def __post_init__(self) -> None:
+        # D-010 SEC-3: `secret_scan_findings` must carry REDACTED descriptors
+        # (e.g. "aws_key in services/api/app.py"), never raw secret material. A
+        # finding that still contains a detectable secret is refused, so raw
+        # secret bytes can never enter a condition `detail` string or an audit
+        # record through this field.
+        for finding in self.secret_scan_findings:
+            result = redaction.redact_text(str(finding))
+            if result.redacted:
+                raise GitHubFlowError(
+                    "raw_secret_in_findings",
+                    f"a secret_scan_findings entry carries raw secret material "
+                    f"({list(result.labels)}); pass a redacted descriptor, not the "
+                    f"secret itself (D-010 SEC-3)")
+
 
 @dataclasses.dataclass(frozen=True)
 class MergeCondition:
@@ -423,6 +516,14 @@ def cond_secret_scan_clean(req: MergeRequest) -> MergeCondition:
 
 def cond_specialist_reviews_pass(req: MergeRequest) -> MergeCondition:
     routing = route_for_review(req.changed_paths)
+    if routing.owner_stop:
+        # A Tier D owner-stop (permission/hook configuration, S5.4 item 3): no
+        # specialist review clears it, so the merge is refused rather than fed a
+        # vacuously-satisfied review set (D-010 SEC-2).
+        return MergeCondition(
+            "specialist_reviews_pass", False, "owner_stop_required",
+            "the diff changes permission/hook configuration; that is a D-010 S5.4 "
+            "item 3 owner-stop and never auto-merges")
     required = routing.required_reviews
     missing = sorted(name for name in required
                      if not bool(req.completed_reviews.get(name, False)))
@@ -498,6 +599,21 @@ def evaluate_merge(req: MergeRequest) -> MergeEvaluation:
         eligible=all(c.ok for c in conditions),
         conditions=conditions,
         required_reviews=routing.required_reviews)
+
+
+def redacted_condition_log(evaluation: MergeEvaluation) -> list[dict[str, Any]]:
+    """An audit-safe view of the S5.5 conditions (D-010 SEC-3).
+
+    A condition `detail` embeds the finding/path lists a scanner supplied. A live
+    caller that logs `MergeEvaluation.conditions` must route them through here, so
+    every `detail` string passes through `redaction.py` first and no raw secret
+    material a scanner passed can leak into a log or audit record.
+    """
+    return [
+        {"name": c.name, "ok": c.ok, "reason_code": c.reason_code,
+         "detail": redaction.redact_text(c.detail).value}
+        for c in evaluation.conditions
+    ]
 
 
 # --------------------------------------------------------------------------
@@ -621,6 +737,32 @@ class FlowResult:
     resulting_state: str
     reason_code: str
     detail: str
+
+
+def audit_flow_result(result: FlowResult, *, task_id: str, operation: str,
+                      audit: Any = None, run_id: str = "") -> dict[str, Any]:
+    """Build (and optionally emit) the audit record for ANY FlowResult (D-010 INFO-1).
+
+    The effect journal records only PERFORMED external effects; a REFUSAL
+    (`merge_ineligible`, a push/PR/cleanup denial) is returned as a
+    `FlowResult(performed=False, ...)` and is otherwise unaudited. **The live
+    caller MUST call this for every FlowResult it acts on** - performed or refused
+    - so the audit trail carries the outcome of every attempt, not only the ones
+    that touched a remote. The `detail` string is routed through `redaction.py`.
+    """
+    record = {
+        "operation": operation,
+        "task_id": task_id,
+        "outcome": "performed" if result.performed else "refused",
+        "performed": result.performed,
+        "action_id": result.action_id,
+        "resulting_state": result.resulting_state,
+        "reason_code": result.reason_code,
+        "detail": redaction.redact_text(result.detail).value,
+    }
+    if audit is not None:
+        audit.append("github_flow_result", run_id=run_id, detail=record)
+    return record
 
 
 class GitHubFlow:

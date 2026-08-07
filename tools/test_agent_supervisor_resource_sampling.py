@@ -182,6 +182,23 @@ class LoopResourceGateTests(LoopTestBase):
         self.assertNotEqual(result.stopped, "resource_gauge_hard_threshold")
         self.assertEqual(loop.runner.prompts, ["first unit"])
 
+    def test_a_warn_reading_notifies_but_does_not_pause(self) -> None:
+        """AS-3 (G4 QA review section 6): a measured reading in the WARN band
+        (approaching a limit) emits a circuit_breaker_warning NOTIFY and lets the
+        cycle proceed to dispatch - a WARN is not a pause."""
+        self.at_preflight()
+        # The free-disk floor is 1 GiB (min_free_disk_bytes) with warn_ratio 0.75,
+        # so a WARN fires for observed <= floor / 0.75 (~1.43 GB) but > the floor.
+        # 1.2 GB is above the floor (no trip) and inside the WARN band.
+        sampler = FakeSampler(
+            GaugeSample(GAUGE_FREE_DISK, known=True, value=1_200_000_000))
+        loop = self._build(sampler)
+        result = loop.run_cycle("first unit", cycle=1)
+        self.assertNotEqual(result.stopped, "resource_gauge_hard_threshold")
+        self.assertIn("circuit_breaker_warning", result.notify_events)
+        self.assertEqual(loop.runner.prompts, ["first unit"],
+                         "a WARN notifies but never blocks dispatch")
+
     def test_no_sampler_is_a_noop_backward_compatible(self) -> None:
         """With no sampler injected (every pre-AS-3 caller) the resource gate is
         a no-op: behavior is unchanged."""
@@ -198,6 +215,26 @@ class LoopResourceGateTests(LoopTestBase):
         result = loop.run_cycle("first unit", cycle=1)
         self.assertNotEqual(result.stopped, "resource_gauge_hard_threshold")
         self.assertEqual(loop.runner.prompts, ["first unit"])
+
+
+class DoctorResourceSamplingCheckTests(unittest.TestCase):
+    """AS-3 (G4 QA review section 6): a direct unit test for the doctor
+    `_check_resource_sampling` disclosure check."""
+
+    def test_check_discloses_live_and_unmonitored_gauges(self) -> None:
+        from tools.agent_supervisor import cli
+
+        check = cli._check_resource_sampling()
+        self.assertEqual(check.name, "resource_sampling")
+        self.assertTrue(check.ok)
+        for gauge in MEASURABLE_GAUGES:
+            self.assertIn(gauge, check.detail)
+        for gauge in STRUCTURAL_UNKNOWN_GAUGES:
+            self.assertIn(gauge, check.detail)
+        # It states the AD-025 honesty rule and the fail-closed outage behaviour.
+        self.assertIn("fabricated OK", check.detail)
+        self.assertIn("conservative pause", check.detail)
+        self.assertIn("AD-025", check.detail)
 
 
 if __name__ == "__main__":  # pragma: no cover

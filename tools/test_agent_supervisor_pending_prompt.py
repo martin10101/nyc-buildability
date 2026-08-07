@@ -144,6 +144,75 @@ class CliResumeConsumeTests(unittest.TestCase):
                          "a refused resume never mutates state")
 
 
+class CliMismatchPreservesRecordTests(CliResumeConsumeTests):
+    """AS-4 FAILURE-path lock (G4 QA review section 6): a mismatched digest must
+    refuse WITHOUT consuming or mutating the pending record."""
+
+    def test_a_mismatched_digest_refuses_and_preserves_the_record(self) -> None:
+        digest = "a1b2c3d4e5f6"
+        self._park(pending={"cycle": 1, "digest": digest, "decision": "forward",
+                            "created_at_utc": "2026-08-05T00:00:00Z"})
+        code, _out, err = self.run_cli(
+            "resume-pending-prompt", "--approve-prompt-digest", "deadbeefdead0")
+        self.assertEqual(code, 1)
+        self.assertIn("does not", err)
+        # State unchanged and the record still carries its exact, unconsumed digest.
+        self.assertEqual(self._state(), sm.WAIT_FOR_OWNER)
+        record = self._pending()
+        self.assertIsInstance(record, dict)
+        self.assertFalse(record.get("consumed"),
+                         "a mismatched digest must NOT consume the record")
+        self.assertEqual(record.get("digest"), digest)
+
+
+class LoopFailurePreservesRecordTests(LoopTestBase):
+    """AS-4 FAILURE-path lock (G4 QA review section 6): a declined approval and an
+    unsent forward each leave the pending_prompt record intact (digest survives,
+    never consumed), so the record can only be consumed by a genuine approve+send."""
+
+    def _supervised_loop(self, *, approval, forward_patch=None) -> lp.SupervisedLoop:
+        self.at_preflight()
+        loop = lp.SupervisedLoop(
+            config=lp.LoopConfig(mode="supervised", task_id="M0-T036",
+                                 stage="phase4",
+                                 allowed_paths=self.authority.allowed_paths,
+                                 stop_conditions=("no bypass flags",),
+                                 max_cycles=1, owner_touch_budget=4),
+            journal=self.journal, audit=self.audit, machine=self.machine,
+            authority=self.authority,
+            runner=FakeRunner(run_result()), reviewer=FakeReviewer(outcome()),
+            run_id=self.run_id, approval_gate=approval)
+        if forward_patch is not None:
+            loop.forward_exactly_once = forward_patch  # type: ignore[assignment]
+        return loop
+
+    def test_a_declined_approval_does_not_consume_the_record(self) -> None:
+        loop = self._supervised_loop(approval=lambda _digest, _prompt: False)
+        result = loop.run_cycle("first unit", cycle=1)
+        self.assertFalse(result.forwarded)
+        self.assertEqual(result.stopped, "operator_declined")
+        record = self.journal.get_state(pending_prompt_key(self.run_id))
+        self.assertIsInstance(record, dict)
+        self.assertFalse(record.get("consumed"),
+                         "a declined approval must NOT consume the record")
+        self.assertTrue(record.get("digest"),
+                        "the held digest must survive a decline (nothing dropped)")
+
+    def test_an_unsent_forward_does_not_consume_the_record(self) -> None:
+        # Approval passes, but the forward is not sent (e.g. duplicate-suppressed).
+        # Consume is gated on `forward.sent`, so the record must survive intact.
+        loop = self._supervised_loop(
+            approval=lambda _digest, _prompt: True,
+            forward_patch=lambda *a, **k: lp.ForwardResult("m", sent=False))
+        result = loop.run_cycle("first unit", cycle=1)
+        self.assertFalse(result.forwarded)
+        record = self.journal.get_state(pending_prompt_key(self.run_id))
+        self.assertIsInstance(record, dict)
+        self.assertFalse(record.get("consumed"),
+                         "an unsent forward must NOT consume the record")
+        self.assertTrue(record.get("digest"))
+
+
 class LoopInProcessConsumeTests(LoopTestBase):
     def test_supervised_forward_consumes_the_pending_prompt(self) -> None:
         """The in-loop supervised path also consumes the record after it forwards

@@ -138,6 +138,26 @@ class PushAuthorizationTests(unittest.TestCase):
         self.assertFalse(auth.allowed)
         self.assertEqual(auth.reason_code, "remote_identity_mismatch")
 
+    def test_an_empty_authorized_branch_is_denied(self) -> None:
+        """D-010 MINOR-2 defense-in-depth: an empty `authorized_branch` let
+        push_policy fall through to ALLOW for any non-main branch. authorize_push
+        now asserts a non-empty authorized branch."""
+        auth = gf.authorize_push(
+            clean_push_plan(branch="task/M0-T044-github-flow", authorized_branch=""))
+        self.assertFalse(auth.allowed)
+        self.assertEqual(auth.decision, gf.PUSH_HARD_DENY)
+        self.assertEqual(auth.reason_code, "no_authorized_branch")
+
+    def test_main_and_force_stay_denied_even_with_an_empty_authorized_branch(self) -> None:
+        # The new guard must not mask the pre-existing hard-denies: main/master/
+        # force keep their own reason codes when authorized_branch is empty.
+        self.assertEqual(
+            gf.authorize_push(clean_push_plan(branch="main", authorized_branch="")).reason_code,
+            "push_to_main")
+        self.assertEqual(
+            gf.authorize_push(clean_push_plan(force=True, authorized_branch="")).reason_code,
+            "force_push")
+
 
 # ==========================================================================
 # AS-2 - PR creation + green-PR merge; refuse on each blocking condition
@@ -601,6 +621,213 @@ class ShadowPostureTests(unittest.TestCase):
 
     def test_the_shadow_merge_spec_is_not_destructive(self) -> None:
         self.assertFalse(gf.SHADOW_EFFECT_SPECS["github_pr_merge"].destructive)
+
+
+# ==========================================================================
+# C1 (G3 MINOR-1 / G5 SEC-2) - Tier routing CATCH-ALL: fail toward review
+# ==========================================================================
+
+
+class Section52CatchAllRoutingTests(unittest.TestCase):
+    """Every detectable security-relevant change fails TOWARD review; only
+    ordinary product code/docs/tests stays Tier A (D-010 SEC-2 / MINOR-1)."""
+
+    def test_permission_and_hook_configuration_are_tier_d_owner_stop(self) -> None:
+        for path in (".claude/settings.json", ".claude/rules/x.md",
+                     ".claude/agents/y.md", ".pre-commit-config.yaml"):
+            with self.subTest(path=path):
+                routing = gf.route_for_review((path,))
+                self.assertEqual(routing.tier, "D", path)
+                self.assertTrue(routing.owner_stop, path)
+                self.assertFalse(routing.owner_approval_required, path)
+
+    def test_other_security_relevant_classes_fail_toward_review_not_tier_a(self) -> None:
+        for path in (".env", "scripts/setup.sh", ".gitmodules", ".gitattributes",
+                     "render.yaml"):
+            with self.subTest(path=path):
+                routing = gf.route_for_review((path,))
+                self.assertEqual(routing.tier, "B", path)
+                self.assertEqual(routing.review_set(),
+                                 frozenset({"control-plane", "security"}), path)
+                self.assertFalse(routing.owner_approval_required, path)
+
+    def test_ordinary_product_code_is_still_tier_a(self) -> None:
+        for path in ("services/api/app.py", "tests/test_app.py",
+                     "docs/readme.md", "apps/web/page.tsx"):
+            with self.subTest(path=path):
+                self.assertEqual(gf.route_for_review((path,)).tier, "A", path)
+
+    def test_no_security_relevant_class_ever_routes_tier_a(self) -> None:
+        """Anti-drift: a representative path for EVERY SECURITY_RELEVANT_CLASSES
+        entry must route away from Tier A (the catch-all is derived from that set
+        so it cannot silently fall behind the policy table)."""
+        from tools.agent_supervisor.policy import (
+            FILE_CLASS_PATTERNS, SECURITY_RELEVANT_CLASSES)
+        first_pattern = {name: patterns[0] for name, patterns in FILE_CLASS_PATTERNS}
+        for klass in SECURITY_RELEVANT_CLASSES:
+            path = first_pattern[klass].replace("**", "x").replace("*", "x").strip("/")
+            with self.subTest(klass=klass, path=path):
+                self.assertNotEqual(gf.route_for_review((path,)).tier, "A",
+                                    f"{klass} ({path}) must never be Tier A")
+
+    def test_a_permission_config_change_never_auto_merges(self) -> None:
+        # Even with every named review passed, an owner-stop change is ineligible.
+        req = green_merge_request(
+            changed_paths=(".claude/settings.json",),
+            task_allowed_paths=(".claude/**",),
+            completed_reviews={"security": True, "control-plane": True})
+        evaluation = gf.evaluate_merge(req)
+        self.assertFalse(evaluation.eligible)
+        self.assertIn("owner_stop_required", evaluation.refusal_codes())
+
+    def test_a_deploy_definition_merges_only_after_the_catch_all_review(self) -> None:
+        # Fail TOWARD review (not owner-stop): eligible once the catch-all
+        # security + control-plane reviews pass.
+        missing = gf.evaluate_merge(green_merge_request(
+            changed_paths=("render.yaml",), task_allowed_paths=("render.yaml",),
+            completed_reviews={"security": True}))  # control-plane missing
+        self.assertFalse(missing.eligible)
+        self.assertIn("specialist_review_missing", missing.refusal_codes())
+        passed = gf.evaluate_merge(green_merge_request(
+            changed_paths=("render.yaml",), task_allowed_paths=("render.yaml",),
+            completed_reviews={"security": True, "control-plane": True}))
+        self.assertTrue(passed.eligible, passed.refusal_codes())
+
+
+# ==========================================================================
+# C3 (G5 SEC-1) - the extra_specs override channel fails closed
+# ==========================================================================
+
+
+class ExtraSpecsGuardTests(unittest.TestCase):
+    def _journal(self) -> DurableJournal:
+        tmp = pathlib.Path(tempfile.mkdtemp())
+        journal = DurableJournal(tmp / "j.sqlite3").open()
+        self.addCleanup(journal.close)
+        return journal
+
+    def test_a_colliding_extra_spec_key_is_refused(self) -> None:
+        colliding = {"git_push_task_branch": ex.EffectSpec(
+            "git_push_task_branch", "shadow override", read_before_write=False,
+            destructive=False, compensating_action="none")}
+        with self.assertRaises(ex.ExternalEffectError) as ctx:
+            ex.ExternalEffectJournal(self._journal(), extra_specs=colliding)
+        self.assertEqual(ctx.exception.code, "extra_spec_collision")
+
+    def test_a_destructive_extra_spec_is_refused(self) -> None:
+        for spec in (
+                ex.EffectSpec("delete_thing", "d", read_before_write=False,
+                              destructive=True, compensating_action="none"),
+                ex.EffectSpec("wipe_remote", "d", read_before_write=False,
+                              destructive=False, compensating_action="none")):
+            with self.subTest(effect=spec.effect_type):
+                with self.assertRaises(ex.ExternalEffectError) as ctx:
+                    ex.ExternalEffectJournal(
+                        self._journal(), extra_specs={spec.effect_type: spec})
+                self.assertEqual(ctx.exception.code, "destructive_extra_spec")
+
+    def test_the_legitimate_shadow_merge_spec_is_still_admissible(self) -> None:
+        j = gf.shadow_effects_journal(self._journal())
+        self.assertIn("github_pr_merge", j.extra_specs)
+
+    def test_every_live_journal_construction_site_uses_empty_extra_specs(self) -> None:
+        """Source scan: the ONLY ExternalEffectJournal construction that passes
+        extra_specs anywhere in the package is github_flow's shadow path."""
+        import re
+
+        import tools.agent_supervisor as pkg
+        pkg_dir = pathlib.Path(pkg.__file__).resolve().parent
+        offenders = []
+        for path in pkg_dir.glob("*.py"):
+            if path.name == "github_flow.py":
+                continue
+            text = path.read_text(encoding="utf-8")
+            if re.search(r"ExternalEffectJournal\([^)]*extra_specs", text, re.DOTALL):
+                offenders.append(path.name)
+        self.assertEqual(offenders, [],
+                         "only the github_flow shadow path may pass extra_specs")
+
+
+# ==========================================================================
+# C4 (G5 SEC-3) - redaction discipline for findings and condition logging
+# ==========================================================================
+
+
+class SecretRedactionDisciplineTests(unittest.TestCase):
+    def test_a_redacted_descriptor_finding_is_accepted(self) -> None:
+        req = green_merge_request(
+            secret_scan_findings=("aws_key in services/api/app.py",))
+        self.assertEqual(req.secret_scan_findings,
+                         ("aws_key in services/api/app.py",))
+
+    def test_a_raw_secret_in_findings_is_refused(self) -> None:
+        for raw in ("sk-ant-" + "A" * 40, "ghp_" + "B" * 36, "AKIA" + "C" * 16):
+            with self.subTest(raw=raw[:8]):
+                with self.assertRaises(gf.GitHubFlowError) as ctx:
+                    green_merge_request(secret_scan_findings=(raw,))
+                self.assertEqual(ctx.exception.code, "raw_secret_in_findings")
+
+    def test_condition_logging_is_routed_through_redaction(self) -> None:
+        secret = "sk-ant-" + "Z" * 40
+        condition = gf.MergeCondition(
+            "secret_scan_clean", False, "secret_finding",
+            f"the scan reported {secret}")
+        evaluation = gf.MergeEvaluation(
+            eligible=False, conditions=(condition,), required_reviews=())
+        logged = gf.redacted_condition_log(evaluation)
+        self.assertEqual(len(logged), 1)
+        self.assertNotIn(secret, logged[0]["detail"])
+        self.assertIn("[REDACTED", logged[0]["detail"])
+        self.assertEqual(logged[0]["reason_code"], "secret_finding")
+
+
+# ==========================================================================
+# C5 (G5 INFO-1) - audit every FlowResult, including refusals
+# ==========================================================================
+
+
+class AuditFlowResultTests(unittest.TestCase):
+    def test_a_performed_result_produces_a_performed_record(self) -> None:
+        result = gf.FlowResult(True, "eff_1", "c" * 40, "merged",
+                               "ordinary green PR merged")
+        record = gf.audit_flow_result(result, task_id="M0-T044", operation="merge")
+        self.assertTrue(record["performed"])
+        self.assertEqual(record["outcome"], "performed")
+        self.assertEqual(record["reason_code"], "merged")
+        self.assertEqual(record["action_id"], "eff_1")
+
+    def test_a_refused_result_is_still_audited(self) -> None:
+        result = gf.FlowResult(False, "", "", "merge_ineligible",
+                               "automatic merge refused: secret_finding")
+        record = gf.audit_flow_result(result, task_id="M0-T044", operation="merge")
+        self.assertFalse(record["performed"])
+        self.assertEqual(record["outcome"], "refused")
+        self.assertEqual(record["reason_code"], "merge_ineligible")
+
+    def test_the_helper_emits_to_an_audit_log_when_supplied(self) -> None:
+        class RecordingAudit:
+            def __init__(self) -> None:
+                self.events: list = []
+
+            def append(self, event, *, run_id="", detail=None) -> None:
+                self.events.append((event, run_id, detail))
+
+        audit = RecordingAudit()
+        gf.audit_flow_result(
+            gf.FlowResult(False, "", "", "unauthorized_branch", "denied"),
+            task_id="M0-T044", operation="push", audit=audit, run_id="run-x")
+        self.assertEqual(len(audit.events), 1)
+        self.assertEqual(audit.events[0][0], "github_flow_result")
+        self.assertEqual(audit.events[0][1], "run-x")
+
+    def test_the_audit_detail_is_routed_through_redaction(self) -> None:
+        secret = "ghp_" + "D" * 36
+        record = gf.audit_flow_result(
+            gf.FlowResult(False, "", "", "secret_finding",
+                          f"the scan reported {secret}"),
+            task_id="M0-T044", operation="merge")
+        self.assertNotIn(secret, record["detail"])
+        self.assertIn("[REDACTED", record["detail"])
 
 
 # ==========================================================================

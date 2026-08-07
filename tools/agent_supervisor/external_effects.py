@@ -94,6 +94,50 @@ MODELED_EFFECTS: Mapping[str, EffectSpec] = {
 }
 
 
+#: Substrings that mark an effect name/type as destructive. A merge is additive
+#: (a merge commit) and is deliberately NOT here, so the shadow `github_pr_merge`
+#: spec is admissible; a delete/overwrite/deploy/force/reset shape is not.
+DESTRUCTIVE_EFFECT_MARKERS: tuple[str, ...] = (
+    "delete", "destroy", "overwrite", "wipe", "purge", "drop", "remove",
+    "rmdir", "force_push", "deploy",
+)
+
+
+def _looks_destructive(name: str) -> bool:
+    lowered = str(name).lower()
+    return any(marker in lowered for marker in DESTRUCTIVE_EFFECT_MARKERS)
+
+
+def guard_extra_specs(
+    extra_specs: Mapping[str, EffectSpec] | None) -> dict[str, EffectSpec]:
+    """Validate a per-instance `extra_specs` override channel (D-010 SEC-1).
+
+    The override is consulted BEFORE `MODELED_EFFECTS`, so an unguarded live-path
+    journal built with `extra_specs` could shadow a registry spec or make an
+    unmodeled destructive effect performable without appearing in the registry
+    the invariant-9 lock guards. This fails those shapes closed at construction:
+
+    * a key that collides with a modeled live-path effect is REFUSED (an override
+      may never shadow the production registry);
+    * a spec marked `destructive`, or whose name/effect_type matches a destructive
+      marker, is REFUSED (the supervisor never auto-deletes/overwrites/deploys).
+    """
+    specs = dict(extra_specs or {})
+    for name, spec in specs.items():
+        if name in MODELED_EFFECTS:
+            raise ExternalEffectError(
+                "extra_spec_collision",
+                f"{name!r} collides with a modeled live-path effect; an extra spec may "
+                f"never shadow or override the production registry (D-010 SEC-1)")
+        if getattr(spec, "destructive", False) or _looks_destructive(name) or \
+                _looks_destructive(getattr(spec, "effect_type", "")):
+            raise ExternalEffectError(
+                "destructive_extra_spec",
+                f"{name!r} is a destructive extra spec; a destructive external effect is "
+                f"never journaled-and-performed through this channel (D-010 SEC-1)")
+    return specs
+
+
 def is_modeled(effect_type: str) -> bool:
     return effect_type in MODELED_EFFECTS
 
@@ -163,7 +207,10 @@ class ExternalEffectJournal:
         #: never mutated, so a directed/shadow capability can be journaled and
         #: reconciled through this machinery without wiring a new automatic effect
         #: into the live path (D-007 invariant 9 stays true of `MODELED_EFFECTS`).
-        self.extra_specs: Mapping[str, EffectSpec] = dict(extra_specs or {})
+        #: `guard_extra_specs` fails closed on a registry collision or a
+        #: destructive override, so this channel can never shadow a modeled effect
+        #: or smuggle a delete/overwrite/deploy past invariant 9 (D-010 SEC-1).
+        self.extra_specs: Mapping[str, EffectSpec] = guard_extra_specs(extra_specs)
 
     def _spec_for(self, effect_type: str) -> EffectSpec:
         """Resolve a spec from the instance's shadow specs, then the registry."""

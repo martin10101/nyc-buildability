@@ -706,6 +706,61 @@ class CrashResumeTests(ChainTestBase):
         self.assertTrue(started)
         self.assertEqual(started[0]["model"], PIN)
 
+    def test_run_loop_wires_a_real_resource_sampler_into_the_loop(self) -> None:
+        """AS-3 (G4 QA review section 6): cli._run_loop wires a REAL
+        ResourceSampler (not a fake) into the assembled loop, rooted at the
+        runtime dir. `SupervisedLoop` is captured so no worker process launches;
+        the assertion is on the sampler the loop actually received."""
+        import contextlib as _contextlib
+        import io
+
+        from tools.agent_supervisor.resource_sampling import ResourceSampler
+
+        captured: dict[str, object] = {}
+        original = cli.SupervisedLoop
+
+        class CapturingLoop:
+            def __init__(self, **kwargs: object) -> None:
+                captured.update(kwargs)
+
+            def run(self, _prompt: object) -> object:
+                class _Result:
+                    def to_dict(self_inner) -> dict:
+                        # The keys cmd_start reads for its summary line; the loop
+                        # itself is captured, so these are inert placeholders.
+                        return {"cycles": [], "final_state": "SHADOW",
+                                "stopped": "", "forwarded_message_ids": [],
+                                "provider_calls": 0,
+                                "budget": {"counted": 0, "budget": 4,
+                                           "within_budget": True}}
+
+                return _Result()
+
+        cli.SupervisedLoop = CapturingLoop  # type: ignore[assignment]
+        self.addCleanup(setattr, cli, "SupervisedLoop", original)
+        argv = ["start", "--mode", "supervised",
+                "--claude-executable", sys.executable,
+                "--codex-executable", sys.executable,
+                "--task-packet", str(self.packet),
+                "--config", str(self.config_path),
+                "--model-selection", str(self.selection_path),
+                "--run-id", "run-sampler", "--max-cycles", "1",
+                "--unit-timeout", "60",
+                "--checkout", str(self.repo),
+                "--runtime-base", str(self.runtime), "--json"]
+        with _contextlib.redirect_stdout(io.StringIO()):
+            cli.main(list(argv))
+        sampler = captured.get("resource_sampler")
+        self.assertIsInstance(
+            sampler, ResourceSampler,
+            "the loop must receive a REAL ResourceSampler, not a fake or None")
+        # It watches the retained logs (audit + journal), rooted at the runtime
+        # dir, and lists exactly the stdlib-measurable gauges as live.
+        self.assertTrue(sampler.log_paths, "the sampler must watch the retained logs")
+        self.assertEqual(
+            tuple(sampler.capability_report()["live_sampled"]),
+            ("free_disk_bytes", "retained_log_bytes"))
+
 
 # --------------------------------------------------------------------------
 # The chain is configuration, not judgement (D-004-R751/R758)

@@ -175,10 +175,14 @@ class QuotaSignalFixture:
 #: `resume_scheduler.classify_limit` (usage-limit / quota / rate-limit prose) and
 #: from the module docstring's confirmed base CLI (claude 2.1.220). NONE is
 #: captured from a live account-quota exhaustion, so `verified_live` is False for
-#: every entry and the classifier is fail-closed in production. When a real
-#: exhaustion is captured under owner credentials, record its exact stderr/exit
-#: code here with `verified_live=True` and the exact `cli_version`, and the
-#: model-chain switch begins to recognize it -- no other code changes.
+#: every entry and the classifier is fail-closed in production. Flipping any entry
+#: to `verified_live=True` is a REHEARSAL-TIME (R595) activation step, not a code
+#: task done here (M0-T045 A4, procedural): it requires exact live bytes captured
+#: under owner credentials that are PROVEN, under independent review, to be a TRUE
+#: account-quota exhaustion -- specifically NOT a transient 429/rate-limit, which
+#: the `rate_limit_429_prose` candidate deliberately stays unverified to guard
+#: against (G5 M0-T041 INFO-1). Record the exact stderr/exit code and
+#: `cli_version` with the flag; no other code changes.
 _UNCAPTURED = ("UNCAPTURED - no live account-quota exhaustion recorded on this "
                "build; base CLI probed at claude 2.1.220 (see module docstring)")
 

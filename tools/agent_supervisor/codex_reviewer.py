@@ -295,7 +295,11 @@ def provider_failure_reason(stdout: str) -> str:
             continue
         try:
             event = json.loads(stripped)
-        except json.JSONDecodeError:
+        except (json.JSONDecodeError, ValueError):
+            # Same untrusted-input guard as `parse_usage_telemetry`: a >4300-digit
+            # integer literal raises a plain `ValueError`, not a `JSONDecodeError`.
+            # Skip the line rather than crash this second scan of the same stream
+            # (G5 M0-T042 L-1).
             continue
         if not isinstance(event, dict):
             continue
@@ -357,7 +361,13 @@ def parse_usage_telemetry(stdout: str) -> dict[str, Any] | str:
             continue
         try:
             event = json.loads(stripped)
-        except json.JSONDecodeError:
+        except (json.JSONDecodeError, ValueError):
+            # `--json` stdout is UNTRUSTED model output. A malformed line raises
+            # `json.JSONDecodeError`, but a line carrying an integer literal with
+            # >4300 digits raises a plain `ValueError` ("Exceeds the limit (4300
+            # digits) for integer string conversion") that is NOT a
+            # `JSONDecodeError`. Both are skipped so a pathological usage line
+            # yields USAGE_UNKNOWN instead of crashing the review (G5 M0-T042 L-1).
             continue
         if not isinstance(event, dict):
             continue
