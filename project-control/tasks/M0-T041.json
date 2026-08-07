@@ -20,7 +20,9 @@
     "tools/agent_supervisor/",
     "tools/test_agent_supervisor_*.py",
     "project-control/reports/M0-T041-producer-report.md",
-    "project-control/tasks/M0-T041.json"
+    "project-control/tasks/M0-T041.json",
+    "project-control/reports/M0-T041-evidence-map.json",
+    "project-control/reports/M0-T041-g0-readiness.md"
   ],
   "forbidden_paths": [
     ".claude/",
@@ -87,8 +89,6 @@
         "D-010-R040",
         "D-010-R075",
         "D-010-R076",
-        "D-010-R078",
-        "D-010-R089",
         "D-010-R093"
       ]
     }
