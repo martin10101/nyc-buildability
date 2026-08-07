@@ -86,13 +86,106 @@
   {
    "task_id": "M0-T040",
    "directive_id": "D-010",
-   "producer": "orchestrator",
+   "producer": "backend-engineer",
    "verifier": "directive-compliance-verifier",
-   "applicable_requirement_ids": [],
-   "requirements": [],
-   "reviewed_sha": null,
-   "reviewed_manifest_sha256": null,
-   "note": "pending: placeholder at task contracting; the applicable set and per-requirement rows are produced by the independent verifier at this task gates/accept (fail-closed at accept)."
+   "applicable_requirement_ids": [
+    "D-010-R006",
+    "D-010-R007",
+    "D-010-R008",
+    "D-010-R009",
+    "D-010-R010",
+    "D-010-R061",
+    "D-010-R062",
+    "D-010-R063",
+    "D-010-R111",
+    "D-010-R112"
+   ],
+   "requirements": [
+    {
+     "id": "D-010-R006",
+     "state": "PASS",
+     "evidence": [
+      "ADR-006 Tier A = Section 5.1 verbatim (18 actions); CLAUDE.md routes Tier A without owner approval; no lingering owner-approval passage; R721 supersession Tier-A-scoped",
+      "project-control/reports/M0-T040-dcv-final.md"
+     ]
+    },
+    {
+     "id": "D-010-R007",
+     "state": "PASS",
+     "evidence": [
+      "Section 5.5 verbatim (10 conditions) + use-PRs/no-direct-main; Tier D items 1-2; protocol retains no-direct-producer-merge",
+      "project-control/reports/M0-T040-dcv-final.md"
+     ]
+    },
+    {
+     "id": "D-010-R008",
+     "state": "PASS",
+     "evidence": [
+      "Tier B map = Section 5.2 verbatim, 11 rows, each bound to its named specialist review (test-enforced)",
+      "project-control/reports/M0-T040-dcv-final.md"
+     ]
+    },
+    {
+     "id": "D-010-R009",
+     "state": "PASS",
+     "evidence": [
+      "Tier D = Section 5.4 verbatim, 14 items in order (spot-checked 1/7/14); CLAUDE.md human-only list verbatim; Section 20 projection stated",
+      "project-control/reports/M0-T040-dcv-final.md"
+     ]
+    },
+    {
+     "id": "D-010-R010",
+     "state": "PASS",
+     "evidence": [
+      "Tier C = Section 5.3 verbatim, 7 items; continues another accepted dependency, never escalates to owner stop (test-enforced)",
+      "project-control/reports/M0-T040-dcv-final.md"
+     ]
+    },
+    {
+     "id": "D-010-R061",
+     "state": "PASS",
+     "evidence": [
+      "ADR 6.1/6.2 reproduce source; GATES doc: G6 gates publication only, not engineering progress",
+      "project-control/reports/M0-T040-dcv-final.md"
+     ]
+    },
+    {
+     "id": "D-010-R062",
+     "state": "PASS",
+     "evidence": [
+      "6.1 block (draft/needs_review, never verified, provisional UI) + explicit downstream-consumption statement",
+      "project-control/reports/M0-T040-dcv-final.md"
+     ]
+    },
+    {
+     "id": "D-010-R063",
+     "state": "PASS",
+     "evidence": [
+      "6.2 G6-only-for-publication verbatim; gates doc mirrors; Tier D 10-11 hard-deny kept",
+      "project-control/reports/M0-T040-dcv-final.md"
+     ]
+    },
+    {
+     "id": "D-010-R111",
+     "state": "PASS",
+     "evidence": [
+      "source-003 verbatim owner authorization (sha256 6c55718f... == manifest); b841b4f = exactly the 7 reviewed files; author+committer = owner, no Claude trailers",
+      "project-control/reports/M0-T040-dcv-final.md"
+     ]
+    },
+    {
+     "id": "D-010-R112",
+     "state": "PASS",
+     "evidence": [
+      "G3(code-reviewer)+G5(security-reviewer) PASS gates on file at identity ff2b7f85...; DCV = final leg; verified before any merge (no PR, b841b4f on no remote, task unaccepted)",
+      "project-control/reports/M0-T040-dcv-final.md"
+     ]
+    }
+   ],
+   "reviewed_sha": "f76f10cef861f9ae29673257358a4d374ff1e29a",
+   "reviewed_manifest_sha256": "ff2b7f851dac418907cea1784d68b1405c265c7c56d69a6e728fb46eb5dd52fb",
+   "verified_at": "2026-08-07T03:42:54+00:00",
+   "note": "FINAL record; full verbatim verdict at project-control/reports/M0-T040-dcv-final.md. Verifier examined HEAD 1e28a2e and recomputed the identity there; the only subsequent commit is the DCV-report preservation (control-plane only, identity unchanged). reviewed_sha stamped at accept-time HEAD, committed together with the accept ledger write. Owner authorization D-010-R111/R112 (source-003) satisfied: G3+G5+DCV all recorded before any merge."
   },
   {
    "task_id": "M0-T041",
@@ -150,5 +243,5 @@
    "note": "pending: placeholder at task contracting; the applicable set and per-requirement rows are produced by the independent verifier at this task gates/accept (fail-closed at accept)."
   }
  ],
- "updated_at": "2026-08-07T02:38:14+00:00"
+ "updated_at": "2026-08-07T03:42:54+00:00"
 }

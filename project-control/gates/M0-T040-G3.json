@@ -1,0 +1,12 @@
+{
+  "task_id": "M0-T040",
+  "gate_id": "G3",
+  "reviewer": "code-reviewer",
+  "role": "independent_review",
+  "result": "PASS",
+  "report_file": "project-control/reports/M0-T040-g3-code-review.md",
+  "reviewed_at": "2026-08-07T03:23:08.996466+00:00",
+  "content_manifest_sha256": "ff2b7f851dac418907cea1784d68b1405c265c7c56d69a6e728fb46eb5dd52fb",
+  "reviewed_sha": "ca7a84a1d1bd0158c49ec6b39cf1adf6cc16cb79",
+  "updated_at": "2026-08-07T03:23:09.859191+00:00"
+}

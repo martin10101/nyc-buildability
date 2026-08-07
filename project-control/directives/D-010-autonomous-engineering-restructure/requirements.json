@@ -1,10 +1,10 @@
 {
  "schema": "directive_requirements/v1",
  "directive_id": "D-010",
- "version": 2,
- "requirement_count": 110,
+ "version": 3,
+ "requirement_count": 112,
  "producer": "orchestrator",
- "updated_at": "2026-08-07T01:45:52+00:00",
+ "updated_at": "2026-08-07T03:04:05+00:00",
  "requirements": [
   {
    "id": "D-010-R001",
@@ -3925,6 +3925,76 @@
     "tasks": []
    },
    "amendment_sequence": 2
+  },
+  {
+   "id": "D-010-R111",
+   "text": "Proceed with the M0-T040 commit exactly as reviewed.",
+   "source_ref": "source-003-amendment.md#owner-line",
+   "classification": "authorization",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T037",
+     "M0-T040"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [
+     "dispatch"
+    ],
+    "effective_date": "2026-08-06"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "owner typed authorization 2026-08-06 resolving the auto-mode classifier hold on the M0-T040 commit",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "amendment_sequence": 3
+  },
+  {
+   "id": "D-010-R112",
+   "text": "Require independent G3, security G5, and directive-compliance verification before any merge (M0-T040).",
+   "source_ref": "source-003-amendment.md#owner-line",
+   "classification": "sequencing",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T037",
+     "M0-T040"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [
+     "accept"
+    ],
+    "effective_date": "2026-08-06"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "owner typed authorization 2026-08-06 resolving the auto-mode classifier hold on the M0-T040 commit",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "amendment_sequence": 3
   }
  ]
 }
