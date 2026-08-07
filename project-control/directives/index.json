@@ -1,127 +1,139 @@
 {
-  "schema": "directive_index/v1",
-  "version": 1,
-  "note": "Registry of owner directives. MULTIPLE directives may be status 'active' at once; this is a keyed list, never a single global current-directive pointer (D-001-R010/R018). Records are provenance only: all work-blocking decisions flow through tools/project_control.py, blockers, holds, and gates (two-lane principle, D-001-R118).",
-  "directive_states": [
-    "proposed",
-    "active",
-    "superseded",
-    "withdrawn",
-    "retired"
-  ],
-  "directives": [
-    {
-      "directive_id": "D-001",
-      "slug": "owner-directive-compliance-system",
-      "title": "Durable Owner Directive Compliance System",
-      "status": "active",
-      "issued_at": "2026-07-23",
-      "issued_by": "owner",
-      "supersedes": [],
-      "superseded_by": null,
-      "affected_tasks": [
-        "M0-T023"
-      ],
-      "manifest": "D-001-owner-directive-compliance-system/manifest.json"
-    },
-    {
-      "directive_id": "D-002",
-      "slug": "activate-control-system-first-wave",
-      "title": "Activate the control system, consolidate the plan, and prepare the first blind-isolated parallel build wave",
-      "status": "active",
-      "issued_at": "2026-07-24",
-      "issued_by": "owner",
-      "supersedes": [],
-      "superseded_by": null,
-      "affected_tasks": [
-        "M0-T024",
-        "M3-T001",
-        "M4-T007",
-        "M2-T017"
-      ],
-      "manifest": "D-002-activate-control-system-first-wave/manifest.json"
-    },
-    {
-      "directive_id": "D-003",
-      "slug": "first-wave-integration-and-second-wave",
-      "title": "Integrate first wave (D-002 sequential integration) and prepare second wave",
-      "status": "active",
-      "issued_at": "2026-07-24",
-      "issued_by": "owner",
-      "supersedes": [],
-      "superseded_by": null,
-      "affected_tasks": [
-        "M0-T026"
-      ],
-      "manifest": "D-003-first-wave-integration-and-second-wave/manifest.json"
-    },
-    {
-      "directive_id": "D-004",
-      "slug": "agent-teams-runtime-adoption",
-      "title": "Agent-teams runtime adoption, staged with pilots",
-      "status": "active",
-      "issued_at": "2026-07-24",
-      "issued_by": "owner",
-      "supersedes": [],
-      "superseded_by": null,
-      "affected_tasks": [
-        "M0-T027",
-        "M0-T028"
-      ],
-      "manifest": "D-004-agent-teams-runtime-adoption/manifest.json"
-    },
-    {
-      "directive_id": "D-005",
-      "slug": "codebase-knowledge-graph-pilot",
-      "title": "Codebase knowledge graph pilot (Graphify) - controlled evaluation before any adoption",
-      "status": "active",
-      "issued_at": "2026-07-29",
-      "issued_by": "owner",
-      "supersedes": [],
-      "superseded_by": null,
-      "affected_tasks": [],
-      "manifest": "D-005-codebase-knowledge-graph-pilot/manifest.json"
-    },
-    {
-      "directive_id": "D-006",
-      "slug": "dispatch-efficiency-and-graph-wiring",
-      "title": "Dispatch Efficiency and Code-Graph Wiring (owner draft v1.2, issued via D-004-R679)",
-      "status": "active",
-      "issued_at": "2026-08-03",
-      "issued_by": "owner",
-      "supersedes": [],
-      "superseded_by": null,
-      "affected_tasks": [
-        "M0-T035"
-      ],
-      "manifest": "D-006-dispatch-efficiency-and-graph-wiring/manifest.json"
-    },
-    {
-      "directive_id": "D-007",
-      "slug": "codex-claude-supervisor-bridge",
-      "title": "Codex-Claude Code Supervisor Bridge (v4.3, Autonomy-Tuned) - build directive",
-      "status": "active",
-      "issued_at": "2026-07-31",
-      "issued_by": "owner",
-      "supersedes": [],
-      "superseded_by": null,
-      "affected_tasks": [
-        "M0-T036"
-      ],
-      "manifest": "D-007-codex-claude-supervisor-bridge/manifest.json"
-    },
-    {
-      "directive_id": "D-008",
-      "slug": "owner-escalation-boundary",
-      "title": "Owner escalation boundary (stop-and-ask only for credentials/payment or legal sign-offs)",
-      "status": "active",
-      "issued_at": "2026-08-04",
-      "issued_by": "owner",
-      "supersedes": [],
-      "superseded_by": null,
-      "affected_tasks": [],
-      "manifest": "D-008-owner-escalation-boundary/manifest.json"
-    }
-  ],
-  "updated_at": "2026-08-05T02:56:30+00:00"
+ "schema": "directive_index/v1",
+ "version": 1,
+ "note": "Registry of owner directives. MULTIPLE directives may be status 'active' at once; this is a keyed list, never a single global current-directive pointer (D-001-R010/R018). Records are provenance only: all work-blocking decisions flow through tools/project_control.py, blockers, holds, and gates (two-lane principle, D-001-R118).",
+ "directive_states": [
+  "proposed",
+  "active",
+  "superseded",
+  "withdrawn",
+  "retired"
+ ],
+ "directives": [
+  {
+   "directive_id": "D-001",
+   "slug": "owner-directive-compliance-system",
+   "title": "Durable Owner Directive Compliance System",
+   "status": "active",
+   "issued_at": "2026-07-23",
+   "issued_by": "owner",
+   "supersedes": [],
+   "superseded_by": null,
+   "affected_tasks": [
+    "M0-T023"
+   ],
+   "manifest": "D-001-owner-directive-compliance-system/manifest.json"
+  },
+  {
+   "directive_id": "D-002",
+   "slug": "activate-control-system-first-wave",
+   "title": "Activate the control system, consolidate the plan, and prepare the first blind-isolated parallel build wave",
+   "status": "active",
+   "issued_at": "2026-07-24",
+   "issued_by": "owner",
+   "supersedes": [],
+   "superseded_by": null,
+   "affected_tasks": [
+    "M0-T024",
+    "M3-T001",
+    "M4-T007",
+    "M2-T017"
+   ],
+   "manifest": "D-002-activate-control-system-first-wave/manifest.json"
+  },
+  {
+   "directive_id": "D-003",
+   "slug": "first-wave-integration-and-second-wave",
+   "title": "Integrate first wave (D-002 sequential integration) and prepare second wave",
+   "status": "active",
+   "issued_at": "2026-07-24",
+   "issued_by": "owner",
+   "supersedes": [],
+   "superseded_by": null,
+   "affected_tasks": [
+    "M0-T026"
+   ],
+   "manifest": "D-003-first-wave-integration-and-second-wave/manifest.json"
+  },
+  {
+   "directive_id": "D-004",
+   "slug": "agent-teams-runtime-adoption",
+   "title": "Agent-teams runtime adoption, staged with pilots",
+   "status": "active",
+   "issued_at": "2026-07-24",
+   "issued_by": "owner",
+   "supersedes": [],
+   "superseded_by": null,
+   "affected_tasks": [
+    "M0-T027",
+    "M0-T028"
+   ],
+   "manifest": "D-004-agent-teams-runtime-adoption/manifest.json"
+  },
+  {
+   "directive_id": "D-005",
+   "slug": "codebase-knowledge-graph-pilot",
+   "title": "Codebase knowledge graph pilot (Graphify) - controlled evaluation before any adoption",
+   "status": "active",
+   "issued_at": "2026-07-29",
+   "issued_by": "owner",
+   "supersedes": [],
+   "superseded_by": null,
+   "affected_tasks": [],
+   "manifest": "D-005-codebase-knowledge-graph-pilot/manifest.json"
+  },
+  {
+   "directive_id": "D-006",
+   "slug": "dispatch-efficiency-and-graph-wiring",
+   "title": "Dispatch Efficiency and Code-Graph Wiring (owner draft v1.2, issued via D-004-R679)",
+   "status": "active",
+   "issued_at": "2026-08-03",
+   "issued_by": "owner",
+   "supersedes": [],
+   "superseded_by": null,
+   "affected_tasks": [
+    "M0-T035"
+   ],
+   "manifest": "D-006-dispatch-efficiency-and-graph-wiring/manifest.json"
+  },
+  {
+   "directive_id": "D-007",
+   "slug": "codex-claude-supervisor-bridge",
+   "title": "Codex-Claude Code Supervisor Bridge (v4.3, Autonomy-Tuned) - build directive",
+   "status": "active",
+   "issued_at": "2026-07-31",
+   "issued_by": "owner",
+   "supersedes": [],
+   "superseded_by": null,
+   "affected_tasks": [
+    "M0-T036"
+   ],
+   "manifest": "D-007-codex-claude-supervisor-bridge/manifest.json"
+  },
+  {
+   "directive_id": "D-008",
+   "slug": "owner-escalation-boundary",
+   "title": "Owner escalation boundary (stop-and-ask only for credentials/payment or legal sign-offs)",
+   "status": "active",
+   "issued_at": "2026-08-04",
+   "issued_by": "owner",
+   "supersedes": [],
+   "superseded_by": null,
+   "affected_tasks": [],
+   "manifest": "D-008-owner-escalation-boundary/manifest.json"
+  },
+  {
+   "directive_id": "D-010",
+   "slug": "autonomous-engineering-restructure",
+   "title": "Autonomous Engineering Restructure and NYC Buildability Pilot Acceleration (Autonomous Engineering V2)",
+   "status": "active",
+   "issued_at": "2026-08-06",
+   "issued_by": "owner",
+   "supersedes": [],
+   "superseded_by": null,
+   "affected_tasks": [],
+   "manifest": "D-010-autonomous-engineering-restructure/manifest.json"
+  }
+ ],
+ "updated_at": "2026-08-05T02:56:30+00:00"
 }
