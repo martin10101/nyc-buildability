@@ -57,3 +57,52 @@ activation, alongside the existing checklist items:
    at activation (concurs with M0-T042 G3 INFO-1).
 3. **I-3:** bound the child-process stdout capture (process.py `communicate()`, pre-existing)
    before the ephemeral reviewer runs against a live untrusted Codex process.
+
+
+---
+
+## M0-T044 G3 additions (2026-08-07) - pre-activation items for the GitHub flow
+
+Registered at M0-T044 gating (G3 code review PASS with pinned MINOR findings; see
+`project-control/reports/M0-T044-g3-code-review.md`). Both are MUST-RESOLVE before the
+automatic GitHub flow is wired into any live path (R595-gated activation):
+
+1. **MINOR-1 (fail-open Tier B detection):** `github_flow.py` change-class detection derives only
+   3 of the 11 Section 5.2 classes (workflow, lockfile/dependency-manifest, supervisor-code path);
+   the 8 semantic classes (auth/session, additive DB migration, contract/schema addition,
+   official-source connector, legal-corpus ingestion, draft-rule, scenario-calc, survey/PDF parser)
+   and `deploy_definition` are not derivable from `policy.file_class` and would route Tier A
+   (auto-permit) - fail-open. Before live wiring: make undetected-but-sensitive classes fail
+   TOWARD review, or wire a semantic classifier. (Scoped AS-3 - workflow/dependency - is proven;
+   the full 5.2 table is present as data.)
+2. **MINOR-2 (defense-in-depth):** `authorize_push` inherits push_policy's empty-`authorized_branch`
+   fall-through (non-main branch allowed when the grant's authorized_branch is ""). main/master/
+   force remain hard-denied regardless. Before live wiring: assert a non-empty `authorized_branch`
+   in `authorize_push`.
+
+
+---
+
+## M0-T044 G5 additions (2026-08-07) - pre-activation items (SEC-1/SEC-2/SEC-3/INFO-1)
+
+Registered at M0-T044 gating (G5 security review PASS shadow-only; see
+`project-control/reports/M0-T044-g5-security.md`). All MUST-RESOLVE before any live-path/R595
+activation of the GitHub flow or the effect journal:
+
+1. **SEC-1 (MEDIUM):** guard the live-path `ExternalEffectJournal.extra_specs` override channel -
+   reject keys colliding with MODELED_EFFECTS, reject destructive extra specs, add a test that
+   every live journal constructs with empty extra_specs, and extend the invariant-9 lock to
+   instance extra_specs (today it inspects only the module-level registry).
+2. **SEC-2 (MEDIUM, BROADENS the M0-T044 G3 MINOR-1 entry above):** the Tier B fail-open covers
+   more than the 8 semantic classes + deploy_definition - detectable SECURITY_RELEVANT_CLASSES
+   (permission_settings, hook, secret_bearing, launcher_script, submodule_config,
+   attributes_filter) also route Tier A. Remediation is a CATCH-ALL: any file_class in
+   SECURITY_RELEVANT_CLASSES not explicitly routed (and specifically permission/hook
+   configuration per Section 5.4 item 3) must fail TOWARD security/control-plane review or
+   Tier-D owner-stop, with tests. Treat the MINOR-1 entry as remediation spec ONLY together
+   with this broadening.
+3. **SEC-3 (LOW):** redaction discipline - require redacted descriptors in
+   `MergeRequest.secret_scan_findings`; route caller-side logging of MergeEvaluation.conditions
+   through redaction.py.
+4. **INFO-1:** the live caller must audit every `FlowResult`, including refusals (this module
+   journals only performed effects).

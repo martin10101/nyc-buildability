@@ -643,13 +643,81 @@
   {
    "task_id": "M0-T044",
    "directive_id": "D-010",
-   "producer": "orchestrator",
+   "producer": "backend-engineer",
    "verifier": "directive-compliance-verifier",
-   "applicable_requirement_ids": [],
-   "requirements": [],
-   "reviewed_sha": null,
-   "reviewed_manifest_sha256": null,
-   "note": "pending: placeholder at task contracting; the applicable set and per-requirement rows are produced by the independent verifier at this task gates/accept (fail-closed at accept)."
+   "applicable_requirement_ids": [
+    "D-010-R006",
+    "D-010-R007",
+    "D-010-R010",
+    "D-010-R077",
+    "D-010-R093",
+    "D-010-R116",
+    "D-010-R117"
+   ],
+   "requirements": [
+    {
+     "id": "D-010-R006",
+     "state": "PASS",
+     "evidence": [
+      "github_flow.py:160,186 owner_approval_required hard-False, no setter; evaluate_merge :489-500 has no owner predicate",
+      "test_no_tier_b_routing_ever_requires_owner_approval + test_merge_proceeds_once_all_specialist_reviews_pass_no_owner executed PASS"
+     ]
+    },
+    {
+     "id": "D-010-R007",
+     "state": "PASS",
+     "evidence": [
+      "authorize_push :221-237 delegates to push_policy; main/master/*/main/force HARD_DENY tests executed PASS",
+      "GitHubRunner protocol :601-608 exposes no direct-main-push; merge only via PR record"
+     ]
+    },
+    {
+     "id": "D-010-R010",
+     "state": "PASS",
+     "evidence": [
+      "refusals are non-terminal structured FlowResult data :615-624 with machine-readable refusal_codes",
+      "test_an_ineligible_merge_leaves_no_external_effect: runner.merges==[] AND pending_effects()==[] (no residue; caller can continue)",
+      "scope note: queue-continue loop lives in loop.py (outside allowed_paths); in-scope enabling property met and reproduced"
+     ]
+    },
+    {
+     "id": "D-010-R077",
+     "state": "PASS",
+     "evidence": [
+      "verifier executed: new file 57/57; full supervisor suite 1271 passed / 2 skipped",
+      "ten Section 19.4 items map 1:1 to real tests (register meta-test re-derived against source-001 L1884-1895)",
+      "ten Section 5.5 conditions exist as individual predicates (MERGE_CONDITIONS :475-486, re-derived against L684-695)"
+     ]
+    },
+    {
+     "id": "D-010-R093",
+     "state": "PASS",
+     "evidence": [
+      "producer diff af46b3e = exactly the 19.4/5.5/5.2 surface + additive extra_specs + tests; forbidden paths untouched",
+      "github_pr_merge ABSENT from MODELED_EFFECTS; invariants suite 45 passed (invariant-9 lock); zero live importers of github_flow (grep)"
+     ]
+    },
+    {
+     "id": "D-010-R116",
+     "state": "PASS",
+     "evidence": [
+      "source-006 sha256 2ac4eb04..900b == manifest digest (recomputed)",
+      "M0-T044 is the handoff-ordered unit after accepted M0-T043 (branch base 341fa4d = M0-T043 merge); holds/SHADOW-ONLY/R595 untouched"
+     ]
+    },
+    {
+     "id": "D-010-R117",
+     "state": "PASS",
+     "evidence": [
+      "source-007 sha256 6f9e2eb0..df33 == manifest digest (recomputed)",
+      "order M0-T043->M0-T044->M0-T045 consistent with acceptance state; dormant batch/primary checkout/holds untouched by branch"
+     ]
+    }
+   ],
+   "reviewed_sha": "0152b0da44ff37b8c474e745ef1879497bc46ad9",
+   "reviewed_manifest_sha256": "16149fc32263f4ed9509e3c15b71f328cc4701b88252c7bf22bbcaff13ac4a59",
+   "note": "FINAL record; full verbatim verdict at project-control/reports/M0-T044-dcv-final.md. Verifier reproduced the material identity (16149fc3.. invariant across G2..G5; == recomputed frozen_git_identity at clean HEAD) and executed the suites (57/57 new; 1271/2 full supervisor; 45 invariants; 102 directive-compliance; 22 project-control groups; validator exit 0). All five gates PASS first pass (G3 MINOR-1/2, G5 SEC-1/2/3 + INFO-1 pinned as pre-activation MUST-RESOLVE on M0-T036-ACTIVATION-CHECKLIST.md; G4 OBS rows cross-referenced as duplicates). SHADOW-ONLY preserved; R595 not lifted. Method: DEEP on R006/R007/R010/R077/R093, DEEP process facts on R116/R117. reviewed_sha stamped at accept-time HEAD, committed together with the accept ledger write.",
+   "verified_at": "2026-08-07T12:37:29+00:00"
   },
   {
    "task_id": "M0-T045",
@@ -663,5 +731,5 @@
    "note": "pending: placeholder at task contracting; the applicable set and per-requirement rows are produced by the independent verifier at this task gates/accept (fail-closed at accept)."
   }
  ],
- "updated_at": "2026-08-07T11:25:24+00:00"
+ "updated_at": "2026-08-07T12:37:29+00:00"
 }

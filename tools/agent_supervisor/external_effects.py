@@ -153,10 +153,23 @@ class ExternalEffectJournal:
     """The S13.7 journal, layered on the Phase 1 durable effects table."""
 
     def __init__(self, journal: DurableJournal, *, audit: Any = None,
-                 run_id: str = "") -> None:
+                 run_id: str = "",
+                 extra_specs: Mapping[str, EffectSpec] | None = None) -> None:
         self.journal = journal
         self.audit = audit
         self.run_id = run_id
+        #: SHADOW-SCOPED specs, merged with `MODELED_EFFECTS` for lookups ONLY on
+        #: this instance. The production registry (the live-path authority) is
+        #: never mutated, so a directed/shadow capability can be journaled and
+        #: reconciled through this machinery without wiring a new automatic effect
+        #: into the live path (D-007 invariant 9 stays true of `MODELED_EFFECTS`).
+        self.extra_specs: Mapping[str, EffectSpec] = dict(extra_specs or {})
+
+    def _spec_for(self, effect_type: str) -> EffectSpec:
+        """Resolve a spec from the instance's shadow specs, then the registry."""
+        if effect_type in self.extra_specs:
+            return self.extra_specs[effect_type]
+        return spec_for(effect_type)
 
     # -- before / after ------------------------------------------------------
 
@@ -176,7 +189,7 @@ class ExternalEffectJournal:
         repeated `begin()` for the same logical effect is recognized, not
         duplicated.
         """
-        spec = spec_for(effect_type)
+        spec = self._spec_for(effect_type)
         action_id = stable_action_id(effect_type=effect_type, target=target,
                                      task_id=task_id, request_digest=request_digest,
                                      logical_sequence=logical_sequence)
@@ -302,7 +315,7 @@ class ExternalEffectJournal:
 
     def assert_not_destructive(self, effect_type: str) -> None:
         """No automatic delete or overwrite of an external resource (S13.7)."""
-        spec = spec_for(effect_type)
+        spec = self._spec_for(effect_type)
         if spec.destructive:
             raise ExternalEffectError(
                 "destructive_external_effect",
