@@ -1,10 +1,10 @@
 {
  "schema": "directive_requirements/v1",
  "directive_id": "D-010",
- "version": 10,
- "requirement_count": 121,
+ "version": 11,
+ "requirement_count": 133,
  "producer": "orchestrator",
- "updated_at": "2026-08-07T19:03:32+00:00",
+ "updated_at": "2026-08-07T19:40:00+00:00",
  "requirements": [
   {
    "id": "D-010-R001",
@@ -4326,6 +4326,420 @@
     "tasks": []
    },
    "amendment_sequence": 11
+  },
+  {
+   "id": "D-010-R122",
+   "text": "Do not interrupt the bounded unit in progress at capture (the D-009/M0-T019/M2-T014 batch reconciliation): finish it to a clean, committed, verified seam; apply this amendment at the next clean seam.",
+   "source_ref": "source-012-amendment.md#pre-activation",
+   "classification": "sequencing",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T037",
+     "M0-T019",
+     "M2-T014"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [
+     "accept"
+    ],
+    "effective_date": "2026-08-07"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "owner ordering: current unit completes first",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "amendment_sequence": 12
+  },
+  {
+   "id": "D-010-R123",
+   "text": "BEFORE beginning Product Task 1 (M2-T015), insert exactly ONE narrowly bounded PRE-ACTIVATION task containing ONLY the three scopes of R124/R125/R128; keep it strictly limited to these pre-activation requirements.",
+   "source_ref": "source-012-amendment.md#pre-activation",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T037",
+     "M2-T015"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [
+     "dispatch"
+    ],
+    "effective_date": "2026-08-07"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "owner ordering: pre-activation task precedes product work",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "amendment_sequence": 12
+  },
+  {
+   "id": "D-010-R124",
+   "text": "Pre-activation scope 1: fix the M0-T045 G5 LOW-1 park-to-approve integrity issue - bind the forwarded prompt bytes to the OPERATOR-NAMED approval digest at approval time, with adversarial tests.",
+   "source_ref": "source-012-amendment.md#pre-activation",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T037"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [
+     "accept"
+    ],
+    "effective_date": "2026-08-07"
+   },
+   "dependencies": [],
+   "required_harness": "adversarial tests",
+   "required_evidence": "test run + G5 re-review",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "M0-T045 G5 LOW-1 finding",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "amendment_sequence": 12
+  },
+  {
+   "id": "D-010-R125",
+   "text": "Pre-activation scope 2: complete the M0-T045 G4 emergency-stop audit-fork follow-up - add the required regression test locking the known fail-closed forked-audit-chain behavior.",
+   "source_ref": "source-012-amendment.md#pre-activation",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T037"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [
+     "accept"
+    ],
+    "effective_date": "2026-08-07"
+   },
+   "dependencies": [],
+   "required_harness": "regression test",
+   "required_evidence": "test run + G4 re-review",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "M0-T045 G4 material non-blocking finding",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "amendment_sequence": 12
+  },
+  {
+   "id": "D-010-R126",
+   "text": "OWNER ACKNOWLEDGEMENT (verbatim): \"I acknowledge that an emergency stop may leave the audit log forked/unappendable until repaired, provided the system fails closed, does not silently repair or hide the fork, clearly records the condition, and refuses unsafe continuation.\" The R125 regression test must lock exactly these acknowledged conditions (fail closed; no silent repair or hiding; condition clearly recorded; unsafe continuation refused). Satisfies the activation-checklist owner-acknowledgement item for the estop fork.",
+   "source_ref": "source-012-amendment.md#pre-activation",
+   "classification": "decision",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T037"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [
+     "accept"
+    ],
+    "effective_date": "2026-08-07"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "owner acknowledgement resolving the G4 estop-fork checklist item",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "amendment_sequence": 12
+  },
+  {
+   "id": "D-010-R127",
+   "text": "WINDOWS OS-ACL DECISION (owner): the current single-account writable ACL is NOT sufficient for activation; harden the immutable controller configuration before supervised-auto. Resolves the activation-checklist OS-ACL judgment item.",
+   "source_ref": "source-012-amendment.md#pre-activation",
+   "classification": "decision",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T037"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [
+     "accept"
+    ],
+    "effective_date": "2026-08-07"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "owner OS-ACL decision",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "amendment_sequence": 12
+  },
+  {
+   "id": "D-010-R128",
+   "text": "Pre-activation scope 3 required boundary: the normal unelevated Claude/supervisor process may READ the controller configuration but must NOT be able to modify, overwrite, delete, rename, replace, or change ACLs on it; the parent directory is protected against replacement/bypass as well as the file itself; modification requires an elevated owner action / Windows UAC boundary; fail-closed controller-config identity/digest verification is retained; bounded Windows tests/probes prove the ordinary unelevated process cannot modify, delete, replace, rename, or weaken the protected configuration.",
+   "source_ref": "source-012-amendment.md#pre-activation",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T037"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [
+     "accept"
+    ],
+    "effective_date": "2026-08-07"
+   },
+   "dependencies": [],
+   "required_harness": "bounded Windows probes (unelevated)",
+   "required_evidence": "probe transcript + test run",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "owner-specified hardening boundary",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "amendment_sequence": 12
+  },
+  {
+   "id": "D-010-R129",
+   "text": "PROHIBITION: do not create a service, daemon, enterprise identity system, separate infrastructure project, or broader supervisor redesign as part of the pre-activation task.",
+   "source_ref": "source-012-amendment.md#pre-activation",
+   "classification": "prohibition",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T037"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [
+     "accept"
+    ],
+    "effective_date": "2026-08-07"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "owner scope limit",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "amendment_sequence": 12
+  },
+  {
+   "id": "D-010-R130",
+   "text": "Run the normal independent engineering, QA/security, and directive-compliance gates on the pre-activation task (G3/G4/G5 + DCV; producer != reviewer).",
+   "source_ref": "source-012-amendment.md#pre-activation",
+   "classification": "sequencing",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T037"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [
+     "accept"
+    ],
+    "effective_date": "2026-08-07"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "owner gate requirement",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "amendment_sequence": 12
+  },
+  {
+   "id": "D-010-R131",
+   "text": "PROHIBITION: do NOT activate supervised-auto until the pre-activation task is accepted AND all remaining activation-checklist blockers have been mechanically reconciled as satisfied.",
+   "source_ref": "source-012-amendment.md#pre-activation",
+   "classification": "prohibition",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T037"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [
+     "accept"
+    ],
+    "effective_date": "2026-08-07"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "owner activation gate",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "amendment_sequence": 12
+  },
+  {
+   "id": "D-010-R132",
+   "text": "RETURN ITEM: after R131 preconditions are met, present the owner with the exact supervised-auto activation decision line.",
+   "source_ref": "source-012-amendment.md#pre-activation",
+   "classification": "return",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T037"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [
+     "accept"
+    ],
+    "effective_date": "2026-08-07"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "owner return item",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "amendment_sequence": 12
+  },
+  {
+   "id": "D-010-R133",
+   "text": "Do NOT begin M2-T015 or M2-T016 before supervised-auto activation. Those two real product tasks are the supervised-auto proof tasks required before consideration of limited-auto. For these two tasks ONLY this supersedes the immediate product-work sequencing of R116/R121/0A.11 (explicit visible supersession, not a silent change).",
+   "source_ref": "source-012-amendment.md#pre-activation",
+   "classification": "prohibition",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T037",
+     "M2-T015",
+     "M2-T016"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [
+     "dispatch",
+     "accept"
+    ],
+    "effective_date": "2026-08-07"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "owner ordering: proof tasks gated on activation",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "amendment_sequence": 12
   }
  ]
 }
