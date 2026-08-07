@@ -54,14 +54,14 @@
     "control-plane-verifier",
     "directive-compliance-verifier"
   ],
-  "status": "in_progress",
-  "progress_percent": 15,
+  "status": "self_check",
+  "progress_percent": 45,
   "risks": [
     "Rehearsal needs a real supervised run window - bounded by design; if it cannot complete in one unit, split (D-010-R103) rather than extend open-endedly (R104)."
   ],
   "blockers": [],
   "created_at": "2026-08-07T01:33:11.693328+00:00",
-  "updated_at": "2026-08-07T15:41:52.697661+00:00",
+  "updated_at": "2026-08-07T16:16:55.515232+00:00",
   "directive_refs": [
     {
       "directive_id": "D-010",
@@ -96,6 +96,13 @@
       "percent": 15,
       "status": "in_progress",
       "message": "Increment 1 dispatched: pre-R595 hardening (three pinned checklist sets A1-A4/B1-B3/C1-C5) in tools/agent_supervisor + tests; producer working in orch worktree; rehearsal runbook drafting in parallel (orchestrator)"
+    },
+    {
+      "at": "2026-08-07T16:16:55.515232+00:00",
+      "agent": "backend-engineer",
+      "percent": 45,
+      "status": "self_check",
+      "message": "Increment 1 complete: three pinned pre-R595 hardening sets resolved (A1-A4/B1-B3/C1-C5), +36 tests, suite 1307/2 reproduced by orchestrator, validator exit 0. Remaining: owner-supervised R595 rehearsal (runbook drafted, owner window required) + promotion-pack completion + gates."
     }
   ]
 }
