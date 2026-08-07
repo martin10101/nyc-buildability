@@ -1,0 +1,61 @@
+{
+ "schema": "evidence_map/v1",
+ "task_id": "M0-T044",
+ "producer": "backend-engineer",
+ "requirements": {
+  "D-010-R006": {
+   "summary": "No owner approval in the routine flow: every Tier A decision (task-branch push, PR create, green-PR merge, cleanup, ledger continuation) auto-permits after checks; Tier B routes to SPECIALIST review with owner_approval_required=False proven by test_no_tier_b_routing_ever_requires_owner_approval; no decision path returns an owner-approval requirement for ordinary work.",
+   "evidence": [
+    "tools/agent_supervisor/github_flow.py",
+    "tools/test_agent_supervisor_github_flow.py",
+    "project-control/reports/M0-T044-producer-report.md"
+   ]
+  },
+  "D-010-R007": {
+   "summary": "PRs + protected-main preserved: direct main push and force push HARD-DENY (Tier D) with machine-readable refusals; the merge path exists only via a PR record; 'use pull requests; do not replace them with direct pushes to main' enforced by test_direct_main_push_is_hard_denied / test_force_push_is_hard_denied.",
+   "evidence": [
+    "tools/agent_supervisor/github_flow.py",
+    "tools/test_agent_supervisor_github_flow.py"
+   ]
+  },
+  "D-010-R010": {
+   "summary": "Continue-on-noncritical-block: a refused merge (failing check / pending specialist review / stale SHA) yields a structured non-terminal refusal that leaves the flow able to proceed to another accepted dependency; refusal reasons are data, not exceptions that kill the loop.",
+   "evidence": [
+    "tools/agent_supervisor/github_flow.py",
+    "tools/test_agent_supervisor_github_flow.py",
+    "project-control/reports/M0-T044-producer-report.md"
+   ]
+  },
+  "D-010-R077": {
+   "summary": "Automatic safe GitHub flow PROVEN: all ten Section 19.4 items map to named executable tests (register meta-test Section194RegisterTests keeps the map honest); ten S5.5 merge predicates individually tested in both directions; crash-mid-push/mid-merge reconciles from the external-effects journal idempotently without blind retry; 57 tests, full supervisor suite 1271/2 zero regressions.",
+   "evidence": [
+    "tools/agent_supervisor/github_flow.py",
+    "tools/test_agent_supervisor_github_flow.py",
+    "tools/agent_supervisor/external_effects.py",
+    "project-control/reports/M0-T044-producer-report.md"
+   ]
+  },
+  "D-010-R093": {
+   "summary": "No speculative feature: surface is exactly the Section 19.4/5.5/5.2 directed capability (0A.8 item 8, blocking; qualifying evidence at G0); shadow posture proven - github_pr_merge deliberately NOT in live MODELED_EFFECTS (D-007 invariant 9 test still passes), shadow-scoped extra_specs journal instead; a live-path journal refuses merge as unmodeled_effect (ShadowPostureTests).",
+   "evidence": [
+    "project-control/reports/M0-T044-g0-readiness.md",
+    "tools/agent_supervisor/github_flow.py",
+    "tools/test_agent_supervisor_github_flow.py"
+   ]
+  },
+  "D-010-R116": {
+   "summary": "Session-2 re-dispatch row (no new obligations): M0-T044 executed inside the ordered wave-1 chain after accepted M0-T043; sequential task branch from origin/main in the orch worktree; producer spawned UNNAMED; holds/SHADOW-ONLY/R595 untouched.",
+   "evidence": [
+    "project-control/reports/M0-T044-g0-readiness.md",
+    "project-control/reports/M0-T044-producer-report.md"
+   ]
+  },
+  "D-010-R117": {
+   "summary": "Session-3 re-dispatch row (no new obligations): M0-T044 is the handoff-ordered unit after M0-T043 (CP-0038 chain); dormant D-009/M0-T019/M2-T014 batch, primary checkout, and all holds untouched.",
+   "evidence": [
+    "project-control/directives/D-010-autonomous-engineering-restructure/source-007-amendment.md",
+    "project-control/reports/M0-T044-g0-readiness.md"
+   ]
+  }
+ }
+}
