@@ -57,3 +57,25 @@ activation, alongside the existing checklist items:
    at activation (concurs with M0-T042 G3 INFO-1).
 3. **I-3:** bound the child-process stdout capture (process.py `communicate()`, pre-existing)
    before the ephemeral reviewer runs against a live untrusted Codex process.
+
+
+---
+
+## M0-T044 G3 additions (2026-08-07) - pre-activation items for the GitHub flow
+
+Registered at M0-T044 gating (G3 code review PASS with pinned MINOR findings; see
+`project-control/reports/M0-T044-g3-code-review.md`). Both are MUST-RESOLVE before the
+automatic GitHub flow is wired into any live path (R595-gated activation):
+
+1. **MINOR-1 (fail-open Tier B detection):** `github_flow.py` change-class detection derives only
+   3 of the 11 Section 5.2 classes (workflow, lockfile/dependency-manifest, supervisor-code path);
+   the 8 semantic classes (auth/session, additive DB migration, contract/schema addition,
+   official-source connector, legal-corpus ingestion, draft-rule, scenario-calc, survey/PDF parser)
+   and `deploy_definition` are not derivable from `policy.file_class` and would route Tier A
+   (auto-permit) - fail-open. Before live wiring: make undetected-but-sensitive classes fail
+   TOWARD review, or wire a semantic classifier. (Scoped AS-3 - workflow/dependency - is proven;
+   the full 5.2 table is present as data.)
+2. **MINOR-2 (defense-in-depth):** `authorize_push` inherits push_policy's empty-`authorized_branch`
+   fall-through (non-main branch allowed when the grant's authorized_branch is ""). main/master/
+   force remain hard-denied regardless. Before live wiring: assert a non-empty `authorized_branch`
+   in `authorize_push`.
