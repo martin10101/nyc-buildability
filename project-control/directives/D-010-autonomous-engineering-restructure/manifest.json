@@ -1,7 +1,7 @@
 {
  "schema": "directive_manifest/v1",
  "directive_id": "D-010",
- "version": 5,
+ "version": 6,
  "slug": "autonomous-engineering-restructure",
  "title": "Autonomous Engineering Restructure and NYC Buildability Pilot Acceleration (Autonomous Engineering V2)",
  "status": "active",
@@ -41,12 +41,21 @@
    "amends": "source-001.md",
    "recorded_at": "2026-08-07T05:06:12+00:00",
    "content_digest_sha256": "4ccec28c97f377604c951967a158b5280173770475c6ec1e07245d5b6aee5886"
+  },
+  {
+   "file": "source-005-amendment.md",
+   "kind": "amendment",
+   "sequence": 5,
+   "amends": "source-004-amendment.md",
+   "recorded_at": "2026-08-07T05:12:55+00:00",
+   "content_digest_sha256": "76a91f098efd1ab6ffdb0210b1833fad9dade622a6d5f8e7fd1fcd0ff9ddba88"
   }
  ],
  "amendments": [
   "source-002-launch-instruction.md",
   "source-003-amendment.md",
-  "source-004-amendment.md"
+  "source-004-amendment.md",
+  "source-005-amendment.md"
  ],
  "supersedes": [],
  "superseded_by": null,
@@ -85,8 +94,8 @@
  "verification_file": "verification.json",
  "final_reviewed_sha": null,
  "final_reviewed_manifest_sha256": null,
- "requirements_content_digest_sha256": "03063fbae038172983ecce75f17f1037877359343f5f27133b725b46888e392f",
- "requirements_id_digest_sha256": "efc0f995f9ccac6726f82623fac5f0c9ee77123d4b1bb6070903ede3ed485eae",
+ "requirements_content_digest_sha256": "ad3f996100220216cd86e808e1d6fec05cb9ce238202b08fe7fd7a5a4d0616a6",
+ "requirements_id_digest_sha256": "4ec0371ab745bb4c6d744f168d24170caf6c3401f8bc86448ed5aa822f5cbc19",
  "enforcement_pointers": {
   "tasks": [
    "M0-T037",
@@ -230,10 +239,11 @@
   "D-010-R111",
   "D-010-R112",
   "D-010-R113",
-  "D-010-R114"
+  "D-010-R114",
+  "D-010-R115"
  ],
  "created_at": "2026-08-07T01:09:55+00:00",
- "updated_at": "2026-08-07T05:06:12+00:00",
+ "updated_at": "2026-08-07T05:12:55+00:00",
  "audit_log": [
   {
    "at": "2026-08-07T01:09:55+00:00",
@@ -269,6 +279,11 @@
    "at": "2026-08-07T05:06:12+00:00",
    "by": "orchestrator",
    "note": "Captured owner rotation-test feedback VERBATIM as source-004-amendment.md (sha256 4ccec28c97f377604c951967a158b5280173770475c6ec1e07245d5b6aee5886). Rows R113-R114 appended; digests restamped per c14 mechanics."
+  },
+  {
+   "at": "2026-08-07T05:12:55+00:00",
+   "by": "orchestrator",
+   "note": "Captured owner soft-ceiling clarification VERBATIM as source-005-amendment.md (sha256 76a91f098efd1ab6ffdb0210b1833fad9dade622a6d5f8e7fd1fcd0ff9ddba88); row R115 appended refining R113 (soft guidance, never kill mid-work, 20-40k overage fine, no corner-cutting); digests restamped."
   }
  ]
 }
