@@ -1,0 +1,1 @@
+nothing to resume: no pending-prompt record for run 'run_r595_rehearsal_b'. resume-pending-prompt records a decision about ONE specific held prompt and refuses when none is parked.

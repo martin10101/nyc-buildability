@@ -41,12 +41,37 @@ Evidence: `M0-T045-r595-rehearsal/r4-start-output.json`. Root causes:
 
 Same class as the original V1.2 structural finding (a state with no operator exit), one level
 deeper: the M0-T036 cure added the CLI edge but no loop entry, and no test crossed the process
-boundary (park → CLI approve → fresh start). Disposition: fix increment dispatched inside this
-task's scope (durable held-prompt text; FORWARD_PROMPT loop entry with digest-verified
-forward-exactly-once; fail-closed on old-shape records; cross-process integration lock).
+boundary (park → CLI approve → fresh start). **Disposition: FIXED same-window** (owner retry
+agreement D-010-R120), commit `afc2da5`: durable held-prompt text (F1), text-preserving approval
+with re-approval dead (F2), FORWARD_PROMPT loop resume with digest-verified forward-exactly-once
+via the shared outbox core (F3), fail-closed on every degenerate entry incl. old-shape records
+(F4), truthful CLI contract (F5); +10 tests incl. the cross-process integration lock that would
+have caught it; suite 1317/2, zero regressions, reproduced independently by the orchestrator.
 The parked `run_r595_rehearsal` journal (old-shape, text-less record) is intentionally
-UNRESUMABLE after the fix (fail-closed) and is preserved as discovery evidence; the seam-actuation
-legs re-run in a FRESH runtime on the fixed code.
+UNRESUMABLE after the fix (fail-closed) and is preserved as discovery evidence
+(`M0-T045-r595-rehearsal/discovery-run/`).
+
+## FINAL RESULTS — all legs live-proven (2026-08-07 window, fixed code @ afc2da5)
+
+| Phase | Result | Primary evidence (`M0-T045-r595-rehearsal/`) |
+|---|---|---|
+| R0 doctor | PASS (runtime minted, journal v1, audit chain, config verified) | doctor run recorded in session; config = owner `C:\SupervisorController` |
+| R1b threshold trip + park | **PROVEN LIVE**: ctx 134,497 ≥ threshold → `rotation_pending=True` armed, unit NEVER interrupted; REVISE prompt HELD (nothing forwarded); parked WAIT_FOR_OWNER, digest `a4c3d170…` | `main-run/r1b-start-output.json` |
+| R4b step 1 owner approval | **PROVEN LIVE**: digest-bound `owner_approved_pending_prompt` → FORWARD_PROMPT; text preserved under `approved_digest` | `main-run/r4b-resume-output.json` |
+| R4b step 2 SEAM ACTUATION | **PROVEN LIVE** (the R593 missing leg): forward exactly once (`run_r595_rehearsal_b/fwd/1/a4c3d170…`) → rotation on `context_threshold`: **digest-verified handoff `e75d07c0…`, new session `sup-5b5f59ac…` minted, relaunched**; successor ran cycle 2 through checkpoint → evidence → live Codex review → policy check; parked safely (STOP_FOR_OWNER hold). Audit chain intact, 37 events. | `main-run/r4b-start-output.json`, `main-run/audit.jsonl`, `main-run/supervisor_journal.sqlite3` |
+| R5 re-approval refusal | **PROVEN LIVE**: consumed digest re-approval → exit 1, "no pending-prompt record", zero mutation | `main-run/r5-reapprove-output.json`, `…-stderr.txt` |
+| R6 emergency stop (16.3) | **PROVEN LIVE**: fired mid-unit with a real worker child running → run `halt_unsafe` → HALTED; child process tree terminated (verified by PID); durable flag blocks all new dispatch (`autostart refused`); clears only by explicit owner command; recovery report produced, zero unaccounted children/pending effects | `estop-run/r6-estop-output.json`, `estop-run/r6-recovery-status.json`, `estop-run/audit.jsonl` |
+| R7 evidence seal | 26 files, SHA-256 manifest | `EVIDENCE_MANIFEST.json` |
+
+**Owner-touch count (R078), this window:** 8 typed operator acts — 2 authorizations (R119 approve,
+R120 same-window retry) + 6 launch/approval commands (one of which was a no-op due to a launcher
+quoting defect on the first attempt, corrected same-window). All operator acts were owner-typed;
+the auto-mode classifier denial of the orchestrator's own launch is preserved as part of the
+supervised posture evidence.
+
+**Boundaries honored:** synthetic workload only (throwaway repo, own bare origin); the only
+forwarded prompt was the owner-approved synthetic continuation; SHADOW-ONLY untouched for all
+real work; no activation flag changed; promotion remains owner-gated (AS-3 ceiling).
 
 ## 1. What this rehearsal closes
 

@@ -1,0 +1,33 @@
+{
+  "command": "recovery-status",
+  "controller_version": "0.4.0-phase4",
+  "current_state": "HALTED",
+  "flags": {
+    "emergency_stop": true,
+    "manual_pause": false,
+    "owner_gate_open": false,
+    "limited_auto_enabled": false,
+    "resume_not_before_utc": ""
+  },
+  "autostart_permitted": false,
+  "autostart_reason": "autostart refused: a durable emergency stop is set. A durable stop or pause never clears itself and never yields to a startup task (S11.5)",
+  "children": [],
+  "pending_effects": [],
+  "last_recovery": {
+    "classification": "SAFE_CHECKPOINT",
+    "failed_steps": [],
+    "missing_steps": [],
+    "next_state": "PREFLIGHT",
+    "notes": [
+      "every input the loop needs was named explicitly; the pre-dispatch sequence ran before any provider contact"
+    ],
+    "pending_effect_ids": [],
+    "reason": "the last action has a verified after-effect and every invariant matches, but limited-auto was NOT already owner-enabled, so recovery does not resume by itself: it re-runs preflight and waits for an explicit operator start (S11.5). Recovery never enables or broadens limited-auto",
+    "reason_code": "safe_no_auto_resume",
+    "resume_permitted": false,
+    "trigger": "recovery_safe_checkpoint",
+    "unaccounted_children": []
+  },
+  "audit_chain_ok": false,
+  "note": "read-only: this command classifies nothing new, takes no lock, and never resumes. `start` runs the RECOVER_BOOT algorithm."
+}

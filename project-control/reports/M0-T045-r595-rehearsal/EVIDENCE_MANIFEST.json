@@ -1,0 +1,31 @@
+{
+ "sealed_at_utc": "2026-08-07T18:02:00+00:00",
+ "files": {
+  "packet.json": "7221c2da67dc3de6d6d460ea756d1bfbe44f43f6bd51d913d0f2940a1178b1f3",
+  "r1-start-output.json": "05253f623988672490667a4a8f20488f498a4f76c8a043303125db6c455643c1",
+  "r4-resume-output.json": "590adc584cef1b969c0fe525cab2fe0eef80fb097e5e77db7c4d2d20019e85ec",
+  "r4-start-output.json": "31168bc6dc0bc60103ec4ac0587bc89920d794cdf5cbf664e5161d792ac9e722",
+  "run-r1.cmd": "9793e0f9735dc25714befabd9c4dea2f4243f997e9df7ecf3958b9896d910a16",
+  "run-r4.cmd": "5332179181784e476fe4d3fcf30cc0053d86c69a1ade7c7ff1d2345442991e3c",
+  "discovery-run/audit.jsonl": "de5b7beba98a7fafcc4ad152532eedf1274c7dfc72e1593f9aadf375a75ef899",
+  "discovery-run/audit.jsonl.head.json": "bd7917ad0aa6fae48e5c863553671dec31e40808af251b64dbe6d2bb6063f6ff",
+  "discovery-run/supervisor_journal.sqlite3": "cdaffa17fe8d95827f356b3a34df7feaa9b6cf2503dbe71e7cc1310c9dc59007",
+  "estop-run/audit.jsonl": "2f3dd1cd9549cf7c6b17464efeda2fd761cab0e8f5348b58bd211f313e4cc302",
+  "estop-run/audit.jsonl.head.json": "f98faef19d64319414b329761ceadef96f3474e7861da76b1408b4dcf039d796",
+  "estop-run/r6-estop-output.json": "8523fa0bfb0984373d366cd81996feffd4b22a3d64e1a70a560bb58776c9ac4a",
+  "estop-run/r6-recovery-status.json": "91283a09e5a9dd8ba447f354726656efa2456f6d461edf065e704c2fe56aef77",
+  "estop-run/r6a-start-output.json": "fa397a4bc549d83e034ad3e8c79ba467140fa321284fde01886720baea6c3566",
+  "estop-run/run-r6a.cmd": "489f1be9f19e7c371e3d7d418acd1a341b0550d2b8e06b89885c324e9d826719",
+  "estop-run/supervisor_journal.sqlite3": "ab3fb2bd43ac31d0362d717d20abed25c51020111859c091620bb1bb373ae554",
+  "main-run/audit.jsonl": "ac32d4dab9d249b22996359196f2e622fdb20541275310f7673ab313651dd31a",
+  "main-run/audit.jsonl.head.json": "57545288780559ea471d734770377b6663f2d180be34ca9dd98848d163402a7b",
+  "main-run/r1b-start-output.json": "e16db087a2f6b80a10f520a034027f42872781fbf909db835172a0d862dad982",
+  "main-run/r4b-resume-output.json": "d0ba49597fdec5147274e1fe99c7e3938aa841a94c021889ac011ea379a8f465",
+  "main-run/r4b-start-output.json": "a5fcfb1d8ea5d1355230bf6013342245280b01661baaa18d3a11c1300164ac25",
+  "main-run/r5-reapprove-output.json": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "main-run/r5-reapprove-stderr.txt": "c74bf090c391b88e93f4191d9290afcf5de1750565ca5da304636327d2cb673f",
+  "main-run/run-r1b.cmd": "6967ad6633944a5d07ffa2462b857b8b6a6111b1e9cc10382d4a485276d7ace8",
+  "main-run/run-r4b.cmd": "2f2e1d9411abb7b9243a68fc77df78cac831e726af21a6eb04e09abf582cbb8b",
+  "main-run/supervisor_journal.sqlite3": "a9a2546689a21419a831d872c979849b0bbab08294188bb856764adce49da1b4"
+ }
+}
