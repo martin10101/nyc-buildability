@@ -562,13 +562,83 @@
   {
    "task_id": "M0-T043",
    "directive_id": "D-010",
-   "producer": "orchestrator",
+   "producer": "backend-engineer",
    "verifier": "directive-compliance-verifier",
-   "applicable_requirement_ids": [],
-   "requirements": [],
-   "reviewed_sha": null,
-   "reviewed_manifest_sha256": null,
-   "note": "pending: placeholder at task contracting; the applicable set and per-requirement rows are produced by the independent verifier at this task gates/accept (fail-closed at accept)."
+   "applicable_requirement_ids": [
+    "D-010-R044",
+    "D-010-R045",
+    "D-010-R046",
+    "D-010-R085",
+    "D-010-R093",
+    "D-010-R116",
+    "D-010-R117"
+   ],
+   "requirements": [
+    {
+     "id": "D-010-R044",
+     "state": "PASS",
+     "evidence": [
+      "tools/context_pack.py:1020-1048 build_parser matches Section 12 CLI (--task/--role/--provider/--max-bytes/--out)",
+      "verifier real e2e exit 0: context.md + context.meta.json + evidence/ emitted (12.3); 12.1 inputs gathered; 12.2 8 default exclusions recorded",
+      "gather_sources L229-383 supports all twelve 12.1 inputs"
+     ]
+    },
+    {
+     "id": "D-010-R045",
+     "state": "PASS",
+     "evidence": [
+      "make_meta L862-879 records sha256 per included file; _render_source_block L587-609 embeds it",
+      "verifier recomputed 4 evidence digests vs meta (task_packet 852b0917, ledger_state b91d18c2, changed_paths 62eea66b, code_graph a9def76a) - all MATCH incl. bytes"
+     ]
+    },
+    {
+     "id": "D-010-R046",
+     "state": "PASS",
+     "evidence": [
+      "REDUCIBLE_GROUPS L187 + Source.material L212-214: only non-material logs summarizable; summarize loop gated on not src.material (L714-715)",
+      "verifier fail-closed probe: material include + --max-bytes 9000 -> exit 2 split_required, material byte-identical 47448B preserved in evidence/",
+      "test_as3_material_never_silently_truncated_failclosed executed OK"
+     ]
+    },
+    {
+     "id": "D-010-R085",
+     "state": "PASS",
+     "evidence": [
+      "constants 32000/64000/0.20/lower-of match source-001 0A.4 L135-160; drift-lock tests RAN (not skipped; loud-fail import L447-453) and passed vs real review_packet.py",
+      "F1 fix verified in content: _finalize_md L623-645 footer fixpoint used identically by build() decision (L689-698) and emit() (L963-969); exit 0 => emitted context.md <= effective bound",
+      "test_as3_bound_boundary_never_over_bound_exit0 executed OK across the old footer-blind window; honest G3 first-pass FAIL -> rework e41dad3 -> G3/G4 delta PASS trail preserved"
+     ]
+    },
+    {
+     "id": "D-010-R093",
+     "state": "PASS",
+     "evidence": [
+      "branch diff f9c79d53..HEAD code paths = only tools/context_pack.py, tools/test_context_pack.py, docs/CONTEXT_PACKS.md + project-control/**",
+      "no .github/.claude/services/apps/tools/agent_supervisor/hooks edits; stdlib-only imports; supervisor import test-only read-only (drift-lock)",
+      "0A.8 item-5 blocking minimum-autonomy capability (qualifying evidence at G0), not speculative"
+     ]
+    },
+    {
+     "id": "D-010-R116",
+     "state": "PASS",
+     "evidence": [
+      "source-006 digest 2ac4eb04 MATCH; M0-T043 is the handoff-ordered next unit after accepted M0-T042 (state.json)",
+      "SHADOW-ONLY/R595/holds untouched by branch (no .claude edit, no hold/blocker change, no activation wiring); re-dispatch row introduces no new obligations"
+     ]
+    },
+    {
+     "id": "D-010-R117",
+     "state": "PASS",
+     "evidence": [
+      "source-007-amendment.md sha256 6f9e2eb0.. recomputed = manifest sources[7] digest (MATCH)",
+      "names M0-T043 as next dependency-valid unit (CP-0038 / session-handoff-2026-08-07-2.json) - consistent with ledger; dormant batch/primary checkout/holds untouched by branch"
+     ]
+    }
+   ],
+   "reviewed_sha": "2032b09a82585931c98313ea8427c06811b92f3f",
+   "reviewed_manifest_sha256": "bb58eafa7db4c4b1d7c14f7e3f8b4a95e86a732cbc95edc7a149a7bbd7409b1a",
+   "note": "FINAL record; full verbatim verdict at project-control/reports/M0-T043-dcv-final.md. Verifier reproduced the material identity (bb58eafa.. invariant across post-rework control-plane commits; == recomputed frozen_git_identity at HEAD) and executed the suites (15/15 context-pack; 102 directive-compliance; 22 project-control groups; validator exit 0). Honest G3 FAIL (F1 footer-blind bound, MAJOR) -> rework 1 e41dad3 -> G3+G4 delta PASS cycle preserved in history. Method: DEEP on R044/R045/R046/R085/R093, DEEP process facts on R116/R117. reviewed_sha stamped at accept-time HEAD, committed together with the accept ledger write.",
+   "verified_at": "2026-08-07T11:25:24+00:00"
   },
   {
    "task_id": "M0-T044",
@@ -593,5 +663,5 @@
    "note": "pending: placeholder at task contracting; the applicable set and per-requirement rows are produced by the independent verifier at this task gates/accept (fail-closed at accept)."
   }
  ],
- "updated_at": "2026-08-07T07:16:29+00:00"
+ "updated_at": "2026-08-07T11:25:24+00:00"
 }

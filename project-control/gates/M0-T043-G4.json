@@ -1,0 +1,21 @@
+{
+  "task_id": "M0-T043",
+  "gate_id": "G4",
+  "reviewer": "qa-engineer",
+  "role": "independent_review",
+  "result": "PASS",
+  "report_file": "project-control/reports/M0-T043-g4-delta-review.md",
+  "reviewed_at": "2026-08-07T11:07:29.621922+00:00",
+  "content_manifest_sha256": "bb58eafa7db4c4b1d7c14f7e3f8b4a95e86a732cbc95edc7a149a7bbd7409b1a",
+  "reviewed_sha": "11ba914020bdf7e73dcdfec5be0b9542f73940be",
+  "history": [
+    {
+      "reviewer": "qa-engineer",
+      "role": "independent_review",
+      "result": "PASS",
+      "report_file": "project-control/reports/M0-T043-g4-qa-review.md",
+      "reviewed_at": "2026-08-07T10:32:43.426168+00:00"
+    }
+  ],
+  "updated_at": "2026-08-07T11:07:30.044180+00:00"
+}

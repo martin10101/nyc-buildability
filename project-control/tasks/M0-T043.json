@@ -42,20 +42,20 @@
     "G3",
     "G4"
   ],
-  "producer_agent": null,
+  "producer_agent": "backend-engineer",
   "reviewer_agents": [
     "code-reviewer",
     "qa-engineer",
     "directive-compliance-verifier"
   ],
-  "status": "backlog",
-  "progress_percent": 0,
+  "status": "accepted",
+  "progress_percent": 100,
   "risks": [
     "Token estimation is heuristic - record bytes AND estimated tokens; ceilings are engineering policy, not billing claims."
   ],
   "blockers": [],
   "created_at": "2026-08-07T01:32:54.430033+00:00",
-  "updated_at": "2026-08-07T09:50:11+00:00",
+  "updated_at": "2026-08-07T11:25:25.219346+00:00",
   "directive_refs": [
     {
       "directive_id": "D-010",
@@ -71,5 +71,45 @@
     }
   ],
   "directive_regime_version": "1.0",
-  "directive_regime_entered_at": "2026-08-07T01:32:54.431075+00:00"
+  "directive_regime_entered_at": "2026-08-07T01:32:54.431075+00:00",
+  "worktree": "C:/Users/MLFLL/Downloads/nyc-zoning/orch",
+  "progress_log": [
+    {
+      "at": "2026-08-07T09:57:34.939137+00:00",
+      "agent": "backend-engineer",
+      "percent": 10,
+      "status": "in_progress",
+      "message": "Producer dispatched (unnamed backend-engineer): context_pack.py + tests + docs per Section 12/0A.4; base f9c79d53"
+    },
+    {
+      "at": "2026-08-07T10:13:28.093664+00:00",
+      "agent": "backend-engineer",
+      "percent": 80,
+      "status": "self_check",
+      "message": "Producer complete: 13/13 tests both runners (orchestrator re-ran independently); live e2e build deterministic; evidence map written"
+    },
+    {
+      "at": "2026-08-07T10:32:44.138471+00:00",
+      "agent": "orchestrator",
+      "percent": 85,
+      "status": "rework",
+      "message": "G3 FAIL governs (worst-of): fix F1 footer-aware bound decision + boundary test; F2 drift-lock fail-not-skip; F3 dead code; advisories F4/F5/F6 as cheap. G4 PASS recorded (same defect graded MINOR)."
+    },
+    {
+      "at": "2026-08-07T10:46:53.802892+00:00",
+      "agent": "backend-engineer",
+      "percent": 88,
+      "status": "in_progress",
+      "message": "Rework 1 applied (commit landed); moving through lifecycle"
+    },
+    {
+      "at": "2026-08-07T10:46:54.047881+00:00",
+      "agent": "backend-engineer",
+      "percent": 90,
+      "status": "self_check",
+      "message": "Rework 1 self-check: 15/15 both runners twice, no flake; G3 F1 + G4 D-1 repros now exit-2 fail-closed; F2/F3 + F4/F5/F6 done; orchestrator re-verified"
+    }
+  ],
+  "accepted_by": "orchestrator",
+  "accepted_at": "2026-08-07T11:25:25.219346+00:00"
 }
