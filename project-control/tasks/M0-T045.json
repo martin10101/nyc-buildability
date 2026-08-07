@@ -55,13 +55,13 @@
     "directive-compliance-verifier"
   ],
   "status": "self_check",
-  "progress_percent": 45,
+  "progress_percent": 55,
   "risks": [
     "Rehearsal needs a real supervised run window - bounded by design; if it cannot complete in one unit, split (D-010-R103) rather than extend open-endedly (R104)."
   ],
   "blockers": [],
   "created_at": "2026-08-07T01:33:11.693328+00:00",
-  "updated_at": "2026-08-07T16:20:58+00:00",
+  "updated_at": "2026-08-07T16:47:47.481240+00:00",
   "directive_refs": [
     {
       "directive_id": "D-010",
@@ -104,6 +104,13 @@
       "percent": 45,
       "status": "self_check",
       "message": "Increment 1 complete: three pinned pre-R595 hardening sets resolved (A1-A4/B1-B3/C1-C5), +36 tests, suite 1307/2 reproduced by orchestrator, validator exit 0. Remaining: owner-supervised R595 rehearsal (runbook drafted, owner window required) + promotion-pack completion + gates."
+    },
+    {
+      "at": "2026-08-07T16:47:47.481240+00:00",
+      "agent": "backend-engineer",
+      "percent": 55,
+      "status": "self_check",
+      "message": "R595 rehearsal LIVE FINDING (R4): resume-pending-prompt legally parks the journal at FORWARD_PROMPT but loop CYCLE_ENTRY_STATES={PREFLIGHT,CLAUDE_RUNNING} refuses that entry (bad_cycle_entry_state, fail-closed, 0 provider calls); parked record stores digest only, no prompt text, so a cross-process forward is impossible by construction. R1 park + R4 approval/consume PROVEN live; seam actuation blocked pending fix. Fix increment dispatched: durable held-prompt text + FORWARD_PROMPT loop entry (digest-verified forward-exactly-once) + cross-process integration tests. Evidence preserved (r1/r4 outputs, journal, audit)."
     }
   ]
 }
