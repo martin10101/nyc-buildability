@@ -38,3 +38,22 @@ Until R595 is satisfied and independently reviewed, none of the above may procee
 - **R593 / QA-gap-4** — live rotation-seam actuation: **ACCEPTED RESIDUAL, deferred to R595.** 2 of 3
   V1.2 live legs proven (allow round-trip, model-mismatch detection); the rotation leg is unit- and
   real-process-proven but **not live-actuated**. Owner directive D-007-R618 (Option A), 2026-08-06.
+
+
+---
+
+## M0-T042 G5 additions (2026-08-07) — pre-R595 hardening items
+
+Registered at M0-T042 acceptance (G5 security review, PASS with pinned residuals; see
+`project-control/reports/M0-T042-g5-security.md`). All three are MUST-RESOLVE before any
+activation, alongside the existing checklist items:
+
+1. **L-1 (must-fix-before-activation):** `parse_usage_telemetry` (codex_reviewer.py) must catch
+   non-`JSONDecodeError` `ValueError` from `json.loads` on a >4300-digit integer in the untrusted
+   `--json` stream (reproduced), so a pathological usage line yields USAGE_UNKNOWN / a sealed
+   refusal record instead of crashing the review.
+2. **I-1:** the AD-083 prohibited-content guard is structural (key-name/flag) detection only —
+   add a semantic/size check or re-confirm `evidence.build_packet` remains the sole packet source
+   at activation (concurs with M0-T042 G3 INFO-1).
+3. **I-3:** bound the child-process stdout capture (process.py `communicate()`, pre-existing)
+   before the ephemeral reviewer runs against a live untrusted Codex process.
