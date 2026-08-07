@@ -9,12 +9,175 @@
    "directive_id": "D-009",
    "producer": "frontend-engineer",
    "verifier": "directive-compliance-verifier",
-   "applicable_requirement_ids": [],
-   "requirements": [],
-   "reviewed_sha": null,
-   "reviewed_manifest_sha256": null,
-   "note": "pending: placeholder at batch reconciliation (2026-08-07); the applicable set and per-requirement rows are produced by the independent verifier at this task gates/accept (fail-closed at accept)."
+   "applicable_requirement_ids": [
+    "D-009-R001",
+    "D-009-R002",
+    "D-009-R003",
+    "D-009-R004",
+    "D-009-R005",
+    "D-009-R006",
+    "D-009-R007",
+    "D-009-R008",
+    "D-009-R009",
+    "D-009-R010",
+    "D-009-R011",
+    "D-009-R012",
+    "D-009-R013",
+    "D-009-R015",
+    "D-009-R016",
+    "D-009-R018",
+    "D-009-R019",
+    "D-009-R020",
+    "D-009-R021"
+   ],
+   "requirements": [
+    {
+     "id": "D-009-R001",
+     "state": "PASS",
+     "evidence": [
+      ".github/workflows/{ci,generate-lockfile,scheduled-web-audit}.yml all present + CLAUDE.md:26 principle #15 - governance-classed paths created/modified under this authorization"
+     ]
+    },
+    {
+     "id": "D-009-R002",
+     "state": "PASS",
+     "evidence": [
+      "ci.yml web-dependency-security: blocking npm audit --audit-level=low + JSON total==0, no continue-on-error",
+      "dependency_age_gate.mjs:417 'no suppression/allowlist is permitted'; bulk-advisory fixture {} for override pins - audits fail closed, no agent waiver"
+     ]
+    },
+    {
+     "id": "D-009-R003",
+     "state": "PASS",
+     "evidence": [
+      "apps/web/.npmrc: min-release-age=7, save-exact=true, package-lock=true",
+      "package.json exact pins (next 15.5.21, react/react-dom 19.1.2); gate INTEGRITY_MISMATCH enforces committed-lock integrity"
+     ]
+    },
+    {
+     "id": "D-009-R004",
+     "state": "PASS",
+     "evidence": [
+      "dependency_age_gate.mjs:46 MIN_AGE 604800, INFRASTRUCTURE_UNAVAILABLE kind, MAX_ATTEMPTS=4 bounded retries",
+      "ci.yml web-dependency-security blocking on push+PR; scheduled-web-audit.yml cron+PR+dispatch, all fail-closed"
+     ]
+    },
+    {
+     "id": "D-009-R005",
+     "state": "PASS",
+     "evidence": [
+      "DEPENDENCY_SECURITY_POLICY.md par.5: provenance review fields; task adds no NEW package (overrides/version bumps only)"
+     ]
+    },
+    {
+     "id": "D-009-R006",
+     "state": "PASS",
+     "evidence": [
+      "DEPENDENCY_SECURITY_POLICY.md par.6: age-only, owner-only, single package==version, no wildcard/permanent, auto-expiry 7 days; CLAUDE.md:26 echoes"
+     ]
+    },
+    {
+     "id": "D-009-R007",
+     "state": "PASS",
+     "evidence": [
+      "CLAUDE.md:26 permanent principle #15 concise machine-enforced dependency-security rule pointing to the policy doc"
+     ]
+    },
+    {
+     "id": "D-009-R008",
+     "state": "PASS",
+     "evidence": [
+      "directives/D-009/source-002-amendment.md: owner Option-B decision captured verbatim; supersedes B-017 WAIT + B-013 DECLINE for the two named pins only"
+     ]
+    },
+    {
+     "id": "D-009-R009",
+     "state": "NOT_APPLICABLE",
+     "evidence": [
+      "dependency_age_gate.mjs byte-unchanged: MIN_AGE_SECONDS=604800, no allowlist/version literal (grep-clean)",
+      "fixtures: bulk-advisory {} + brace-expansion@1.1.18 pub 2026-07-30 (cleared 2026-08-06) / sharp@0.35.3 pub 2026-07-01 - both clear the unchanged 7-day gate on real registry age; empty exception set within R011 upper bound"
+     ],
+     "not_applicable_justification": "APPROVED as NOT_APPLICABLE-by-time-lapse by the independent verifier (directive-compliance-verifier, approver of record; see reports/M0-T019-dcv-verification.md). R011 makes the two-pin set an explicit upper bound ('create an entry only where actually needed') and R012 makes the exception's decay end-state the plain 7-day gate. At the frozen head both named pins clear the unchanged 604800s gate on independently-confirmed registry age, so zero exception entries are needed; not building the exception path is a strictly stronger, fully fail-closed outcome; R010 threshold untouched, R013 conditions preserved.",
+     "not_applicable_approved_by": "directive-compliance-verifier"
+    },
+    {
+     "id": "D-009-R010",
+     "state": "PASS",
+     "evidence": [
+      "dependency_age_gate.mjs:46 MIN_AGE_SECONDS=604_800 unchanged; boundary '604800 s PASSES; 604799 s FAILS'; no env override"
+     ]
+    },
+    {
+     "id": "D-009-R011",
+     "state": "PASS",
+     "evidence": [
+      "grep of gate: no allowlist data structure, no version literal in gate logic - empty exception set, nothing exempted at all"
+     ]
+    },
+    {
+     "id": "D-009-R012",
+     "state": "PASS",
+     "evidence": [
+      "utcNow() reads registry Date header (authoritative UTC, tamper-resistant)",
+      "shipped end-state is the plain 7-day gate (the exact decay end-state R012 mandates)"
+     ]
+    },
+    {
+     "id": "D-009-R013",
+     "state": "PASS",
+     "evidence": [
+      "all fail-closed branches (INTEGRITY_MISMATCH/UNEXPECTED_HOST/MISSING_TIMESTAMP/AMBIGUOUS/INFRASTRUCTURE_UNAVAILABLE) apply to every package; age-only waiver never exercised"
+     ]
+    },
+    {
+     "id": "D-009-R015",
+     "state": "PASS",
+     "evidence": [
+      "gates/M0-T019-G3.json PASS, code-reviewer independent; FAIL(Defect 1 R021)->delta re-review PASS at f2dd11f; recorded at content 46e4d83e after lockfile regen 1d678fd - deliberate reviewed change, not silent"
+     ]
+    },
+    {
+     "id": "D-009-R016",
+     "state": "PASS",
+     "evidence": [
+      "gates/M0-T019-G5.json PASS, security-reviewer independent; control shipped unweakened, all fail-closed conditions intact, 3 LOW non-blocking",
+      "G5 delta re-confirmation PASS at identity 46e4d83e (head 693c302); gate re-recorded at the finalized identity"
+     ]
+    },
+    {
+     "id": "D-009-R018",
+     "state": "PASS",
+     "evidence": [
+      "all five gate records (G0/G2/G3/G4/G5) PASS on file; G2/G3/G4/G5 stamped at content identity 46e4d83e; every gate SHA has lockfile-regen 1d678fd as ancestor (gates on the finalized regenerated-lock head)"
+     ]
+    },
+    {
+     "id": "D-009-R019",
+     "state": "PASS",
+     "evidence": [
+      "source-002-amendment.md (owner authorization VERBATIM) + producer report par.7 + mootness record - durable verbatim capture; the in-repo exception-record sub-clause is moot (no exception implemented, consistent with R009 NA)"
+     ]
+    },
+    {
+     "id": "D-009-R020",
+     "state": "PASS",
+     "evidence": [
+      "producer report par.7d accept-readiness surfaced + evidence-map R020 entry; surfaced to the owner in the session close-out report"
+     ]
+    },
+    {
+     "id": "D-009-R021",
+     "state": "PASS",
+     "evidence": [
+      "reconciled tasks/M0-T019.json FE-S5/S8/S9/S12 match the no-exception gate; gate header + policy doc assertions remain literally TRUE; G3 delta PASS confirms no committed text contradicts the shipped gate - satisfied-by-reconciliation"
+     ]
+    }
+   ],
+   "reviewed_sha": "1438c549da1b72f76207cee051b0c35754363f68",
+   "reviewed_manifest_sha256": "46e4d83eb80bcfe63e405b537db914a58a8fbad94820d62874635c3b9955a6eb",
+   "verified_at": "2026-08-07T21:35:00+00:00",
+   "note": "Assembled by the orchestrator from the independent directive-compliance-verifier return (verbatim: reports/M0-T019-dcv-verification.md; verifier ran at frozen head 4d9e117, verdict PASS 19+1 NA; the delta 4d9e117..HEAD is ledger/report-only - G5 re-record at the finalized identity + the saved DCV report; material identity 46e4d83e unchanged throughout, independently confirmed). Verifier state 'SATISFIED' maps to 'PASS'."
   }
  ],
- "updated_at": "2026-08-07T19:25:00+00:00"
+ "updated_at": "2026-08-07T21:35:00+00:00"
 }

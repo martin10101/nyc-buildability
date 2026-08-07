@@ -933,7 +933,30 @@
    "reviewed_manifest_sha256": "2a259525c732d752a65cb5ecb2e4a094c2a8dfb270a51ba4f93b4f7044f2ca65",
    "note": "FINAL record; verifier's verbatim verdict at project-control/reports/M0-T045-dcv-final.md. Verifier reproduced: suite 1317/2; 26/26 sealed manifest hashes; main-run audit chain (37 records, links intact, rotation only at the seam); seam-actuation JSON (forward-once -> rotation -> new session -> digest-verified handoff -> successor cycle 2); estop recovery record; three append-only amendment sources; ACCEPTED M0-T044 anchor for R077. All 19 rows PASS. Material identity 2a259525 invariant across G2..G5 (control-plane check 3). reviewed_sha stamped at accept-time HEAD, committed together with the accept ledger write. Pre-activation items pinned to M0-T036-ACTIVATION-CHECKLIST.md (G5 LOW-1; G4 estop-fork follow-up); SHADOW-ONLY preserved; activation stays owner-gated.",
    "verified_at": "2026-08-07T18:38:29+00:00"
+  },
+  {
+   "task_id": "M0-T019",
+   "directive_id": "D-010",
+   "producer": "frontend-engineer",
+   "verifier": "directive-compliance-verifier",
+   "applicable_requirement_ids": [
+    "D-010-R121"
+   ],
+   "requirements": [
+    {
+     "id": "D-010-R121",
+     "state": "PASS",
+     "evidence": [
+      "tasks/M0-T019.json directive_refs = D-009:ALL + D-010-R121 (restamped via sanctioned reclaim, am.13/source-013); the dormant batch was resolved FIRST through the full gate cycle on control/D-009-batch-close",
+      "state.json: M2-T015/M2-T016 backlog, not dispatched - product tasks held per D-010 am.12 (supervised-auto activation gate R133)"
+     ]
+    }
+   ],
+   "reviewed_sha": "1438c549da1b72f76207cee051b0c35754363f68",
+   "reviewed_manifest_sha256": "46e4d83eb80bcfe63e405b537db914a58a8fbad94820d62874635c3b9955a6eb",
+   "verified_at": "2026-08-07T21:35:00+00:00",
+   "note": "Assembled by the orchestrator from the independent directive-compliance-verifier return (verbatim: reports/M0-T019-dcv-verification.md; verifier ran at frozen head 4d9e117, verdict PASS 19+1 NA; the delta 4d9e117..HEAD is ledger/report-only - G5 re-record at the finalized identity + the saved DCV report; material identity 46e4d83e unchanged throughout, independently confirmed). Verifier state 'SATISFIED' maps to 'PASS'."
   }
  ],
- "updated_at": "2026-08-07T18:38:29+00:00"
+ "updated_at": "2026-08-07T21:35:00+00:00"
 }

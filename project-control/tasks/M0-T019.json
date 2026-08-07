@@ -69,8 +69,8 @@
     "code-reviewer",
     "security-reviewer"
   ],
-  "status": "awaiting_gate",
-  "progress_percent": 95,
+  "status": "accepted",
+  "progress_percent": 100,
   "risks": [
     "P0 SEQUENCING (owner 2026-07-20): dispatched only AFTER M0-T018 is accepted; accepted BEFORE M2-T013/M2-T014 dispatch. Producer (frontend-engineer) cannot self-approve; G3 code-reviewer + G5 security-reviewer, both != producer.",
     "RECONCILED 2026-07-23 (owner directive): the prior exact target (next/eslint-config-next 15.5.20) is STALE. New target next/eslint-config-next==15.5.21 (Next.js July-20-2026 Maintenance-LTS security release, 4 HIGH + 5 MEDIUM). react/react-dom==19.1.2 retained (CVE-2025-55182 fix) but re-verify against later React CVEs. TARGET VERSIONS remain PROVISIONAL on full lock re-verification + advisory re-check at implementation; STOP and report if registry/advisory state changed.",
@@ -95,7 +95,7 @@
     "docs/DEPENDENCY_SECURITY_POLICY.md (age exception fields; no advisory waiver)"
   ],
   "created_at": "2026-07-20T08:21:46.465870+00:00",
-  "updated_at": "2026-08-07T20:01:24.624228+00:00",
+  "updated_at": "2026-08-07T20:24:30.260878+00:00",
   "worktree": "C:/Users/MLFLL/Downloads/nyc-zoning/orch (control/D-009-batch-close)",
   "progress_log": [
     {
@@ -168,5 +168,7 @@
     }
   ],
   "directive_regime_version": "1.0",
-  "directive_regime_entered_at": "2026-08-05T03:36:58.984931+00:00"
+  "directive_regime_entered_at": "2026-08-05T03:36:58.984931+00:00",
+  "accepted_by": "orchestrator",
+  "accepted_at": "2026-08-07T20:24:30.260878+00:00"
 }

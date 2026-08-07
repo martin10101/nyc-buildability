@@ -55,8 +55,8 @@
     "data-contract-verifier",
     "security-reviewer"
   ],
-  "status": "awaiting_gate",
-  "progress_percent": 95,
+  "status": "accepted",
+  "progress_percent": 100,
   "risks": [
     "DISPATCH HOLD: contracted 2026-07-20 but dispatch awaits owner review of the returned planning report (owner directive: return dependency graph + packet summaries before dispatching survey work)",
     "ACRIS/BIS document images may be viewer-gated; the honest finding may be 'manual upload required' for the most valuable class (licensed surveys are typically NOT in any public system - private documents held by owners/surveyors); the research must say so plainly",
@@ -66,7 +66,7 @@
   ],
   "blockers": [],
   "created_at": "2026-07-20T06:34:25.367762+00:00",
-  "updated_at": "2026-08-05T04:15:00.154797+00:00",
+  "updated_at": "2026-08-07T20:24:33.318838+00:00",
   "progress_log": [
     {
       "at": "2026-08-05T03:40:41.394581+00:00",
@@ -91,5 +91,7 @@
   ],
   "directive_regime_version": "1.0",
   "directive_regime_entered_at": "2026-08-05T03:40:41.880547+00:00",
-  "worktree": "C:/Users/MLFLL/Downloads/nyc-zoning/t14"
+  "worktree": "C:/Users/MLFLL/Downloads/nyc-zoning/t14",
+  "accepted_by": "orchestrator",
+  "accepted_at": "2026-08-07T20:24:33.318838+00:00"
 }
