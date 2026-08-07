@@ -39,3 +39,13 @@ content was mixed in (D-010-R098: "do not mix it into unrelated work").
 - **D-010-R107** (begin the first dependency-valid bounded task automatically; no routine
   approval stops): M0-T038 was started immediately after the D-010 capture + task
   architecture merged, without owner prompting.
+
+## Rework note (G3 D1)
+
+The prior session's uncommitted update carried the PR #154 merge SHA with a missing 9th hex
+digit (39 chars, non-resolving). G3 (code-reviewer) caught it as BLOCKING D1. Corrected in
+this rework commit to the full 40-char merge SHA taken programmatically from `git rev-parse`
+(no manual transcription); token verified to resolve to the PR #154 merge commit. This is a
+preserve-with-correction under D-010-R098's accuracy clause ('verify it against the actual
+merged repository state'); every other byte of the preserved update is unchanged. N2 applied:
+packet allowed_paths now enumerate the evidence-map and G0-readiness lifecycle artifacts.

@@ -15,7 +15,9 @@
   "allowed_paths": [
     "docs/SESSION_HANDOFF.md",
     "project-control/tasks/M0-T038.json",
-    "project-control/reports/M0-T038-producer-report.md"
+    "project-control/reports/M0-T038-producer-report.md",
+    "project-control/reports/M0-T038-evidence-map.json",
+    "project-control/reports/M0-T038-g0-readiness.md"
   ],
   "forbidden_paths": [
     "project-control/directives/",
