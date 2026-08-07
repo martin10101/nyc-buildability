@@ -77,9 +77,13 @@ Modified:
    packet would NOT be refused and the staged test would have FAILED. I lowered the window to **100** (20-token /
    80-byte ceiling); 163 > 20 refuses deterministically regardless of small packet-size drift. Assertion tokens
    updated to 20. No acceptance scenario weakened — the refusal is now genuinely exercised.
-8. **AS-5 thresholds vs the REAL CLAUDE.md** — measured: `AGENTS.md` = 3893 bytes / 78 lines; `CLAUDE.md` = 8227
-   bytes. `3893 < 8227` ✓; `78 < 120` ✓; shared lines ≥40 chars = **0** (≤ 2) ✓. AGENTS.md left as written; no
-   threshold changed.
+8. **AS-5 thresholds vs the REAL CLAUDE.md** — measured (corrected in Rework 1 per G3 I-5): the test reads both
+   files with `read_text(encoding="utf-8-sig")`, which applies universal-newline translation, so the assertion
+   compares LF-normalized UTF-8 byte lengths: `AGENTS.md` = **3893** bytes / 78 lines; `CLAUDE.md` = **8227** bytes
+   / 112 lines. `3893 < 8227` ✓; `78 < 120` ✓; shared lines ≥40 chars = **0** (≤ 2) ✓. (Raw on-disk bytes via
+   `wc -c` are 3893 for AGENTS.md — written with LF — and **8339** for CLAUDE.md, which is stored CRLF; the 112-byte
+   gap is exactly the CR bytes on its 112 line breaks. The test's comparison is on the LF-normalized figures, so
+   8227 is the load-bearing number.) AGENTS.md left as written; no threshold changed.
 9. **AGENTS.md factual claims** — `tools/code_graph/query.py` exists (verified). The six decision values in the
    "Reporting a checkpoint" section match the `codex_decision.schema.json` `decision` enum EXACTLY (CONTINUE,
    REVISE, STOP_FOR_OWNER, ROTATE_SESSION, COMPLETE, HALT_UNSAFE). Every routed doc path exists: `PRD.md`,
@@ -161,9 +165,14 @@ new tests pass; zero failures/errors introduced. Duration 73.8s.
   reviewer; there is no persistent-controller path. Evidence: `ephemeral_review.py`; AS-1 tests.
 - **D-010-R082 (AD-082, no persistent Codex controller):** no long-lived session is created or resumed; each review is a
   single fresh process discarded on completion. Evidence: `codex_reviewer.review` (fresh process per attempt) + loop.
-- **D-010-R083 (AD-083, no full transcript / unrelated history):** `guard_packet` rejects/strips full transcript, full
-  directive registry, all historical reports, unrelated task packets, whole repository, all logs, full code-graph.
-  Evidence: `review_packet.guard_packet`; AS-3 tests incl. mixed-list strip.
+- **D-010-R083 (AD-083, no full transcript / unrelated history):** `guard_packet` rejects/strips every directive-enumerated
+  whole-material category. After Rework 1 the AS-3 rejection fixtures cover ALL SEVEN marker categories — full
+  transcript, full directive registry, all historical reports, unrelated task packets, whole repository, all logs,
+  and full code-graph — PLUS the `_scan_completeness_flags` path (a section self-declaring completeness, e.g.
+  `reports.all_history` → `all_historical_reports`, `directives.full_registry` → `full_directive_registry`).
+  Evidence: `review_packet.guard_packet`; `test_each_prohibited_category_is_rejected` (7 categories),
+  `test_a_completeness_flag_is_rejected_as_whole_history`, `test_unrelated_task_packets_are_detected_by_correlation`,
+  and the two mixed/all-unrelated strip tests.
 - **D-010-R084 (AD-084, meaningful-checkpoint cadence):** `decide_review` reviews the 0A.3 triggers and refuses to spend
   a review on a deterministic pass alone. Evidence: `review_cadence.py`; AS-4 tests.
 - **D-010-R085 (AD-085, packet token & relative-context ceilings):** `ReviewBudget.effective_ceiling` enforces the lower
@@ -208,3 +217,48 @@ and their anchors verified present.
 - `parse_usage_telemetry` scans multiple carrier keys (`usage`/`token_usage`/`token_count`, incl. nested `info`)
   to tolerate Codex `--json` event-shape drift (the AD-022 risk note); a live-CLI fixture should re-confirm the
   real event shape before any activation.
+
+## Rework 1 (2026-08-07) — G4 gate: G3 PASS, G4 FAIL on one scoped defect
+
+Gate outcome on the initial submission: **G3 (code review) PASS; G4 (QA) FAIL** on one scoped defect (D1). This
+rework touches the TEST FILE and this report only — **no production code changed** (`git diff --stat` for
+`tools/agent_supervisor/` shows nothing pending; only `tools/test_agent_supervisor_ephemeral_review.py` is
+modified). Added **4 new test methods** (23 → 27 in the module).
+
+**G4 D1 (blocking — AS-3/R083 coverage):**
+1. Extended `test_each_prohibited_category_is_rejected` with rejection fixtures for the two previously-uncovered
+   directive-enumerated categories: `all_logs` (`{"sections": {"all_logs": ...}}`) and `full_code_graph`
+   (`{"sections": {"full_code_graph": ...}}`). All SEVEN marker categories now have rejection fixtures.
+2. Added `test_a_completeness_flag_is_rejected_as_whole_history` covering the previously-untested
+   `_scan_completeness_flags` path: `reports.all_history` → `all_historical_reports` (asserting category AND
+   location), and `directives.full_registry` → `full_directive_registry`.
+
+**Named recommendations (all included):**
+3. `test_the_ceiling_is_inclusive_at_the_exact_boundary` — a packet estimated at EXACTLY the effective ceiling
+   (64,000 tokens = 256,000 bytes) is within budget with no guidance; one byte over (64,001 tokens) refuses with
+   guidance. Confirms the `<=` inclusivity of `assess_packet_budget`.
+4. `test_signals_from_mapping_fails_closed_on_bad_input` — `CheckpointSignals.from_mapping` raises
+   `CadenceError("unknown_signal")` on an unknown key and `CadenceError("non_boolean_signal")` on a non-bool
+   value, and a valid mapping round-trips into a working decision. Closes the asymmetry with the already-tested
+   `ReviewBudget.from_mapping`.
+5. `test_a_failed_review_still_seals_a_verifiable_record` (G3 M-2) — an `ok=False, decision=None`
+   (schema-retry-exhausted) reviewer outcome still yields a durable record: empty `evidence_refs`/`reopened_sources`,
+   `decision_value==""`, the outcome's `error_code`/`error_message`/`attempts`/`returncode` carried,
+   `usage_telemetry==USAGE_UNKNOWN`, a nonempty `record_digest` that verifies, and a clean journal round-trip.
+
+**Report fixes:** R083 evidence row corrected to state the full seven-category + completeness-flag fixture
+coverage (item 6); the AS-5 CLAUDE.md byte figure corrected and disambiguated — 8227 LF-normalized (what the test
+asserts on) vs 8339 raw on-disk CRLF via `wc -c` (item 7).
+
+**Re-run results (Rework 1):**
+```
+$ python -m unittest tools.test_agent_supervisor_ephemeral_review -v
+Ran 27 tests in 0.444s
+OK
+
+$ python -m unittest discover -s tools -p "test_agent_supervisor_*.py"
+Ran 1216 tests in 67.608s
+OK (skipped=2)
+```
+Full suite: **1216 run / 1214 pass / 0 fail / 2 skip** (was 1212 before rework; +4 net-new tests). Zero
+failures/errors. No production code changed.

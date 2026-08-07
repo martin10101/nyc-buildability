@@ -125,6 +125,21 @@ class RecordingReviewer:
         raise AssertionError("the reviewer must not run on a refused packet")
 
 
+class ExhaustedReviewer:
+    """Returns the schema-retry-exhausted outcome shape: ok=False, decision=None.
+
+    Mirrors `CodexReviewer.review` when the bounded retry produces no schema-valid
+    decision and it HALTS rather than forwarding an unreviewed unit (S9).
+    """
+    def review(self, packet, **kwargs):
+        return rv.ReviewOutcome(
+            None, "codex-primary", "sel-digest", 3,
+            returncode=1, error_code="schema_retry_exhausted",
+            error_message="3 bounded attempts produced no schema-valid decision; "
+                          "halting rather than forwarding an unreviewed unit",
+            packet_digest="pd")
+
+
 # ---- AS-1: end-to-end fresh ephemeral review + durable record --------------
 class AS1EndToEnd(Base):
     def test_fresh_process_returns_a_decision_and_a_durable_record(self):
@@ -184,6 +199,32 @@ class AS1EndToEnd(Base):
         data["model_used"] = "some-other-model"
         self.assertFalse(er.verify_record(data))
 
+    def test_a_failed_review_still_seals_a_verifiable_record(self):
+        # G3 M-2: an ok=False/decision=None outcome (schema-retry-exhausted) must
+        # still produce a durable, sealed, verifiable record - empty evidence_refs,
+        # the outcome's error fields carried, and the digest still binds it.
+        journal = er.ReviewJournal(self.tmp / "reviews.jsonl", fsync=False)
+        record = er.conduct_ephemeral_review(
+            ExhaustedReviewer(), self.packet(), reviewed_task_id="M0-T042",
+            reviewed_checkpoint_id="cp-1", budget=rp.ReviewBudget(),
+            model_context_window=400000, journal=journal)
+        self.assertFalse(record.ok)
+        self.assertIsNone(record.decision)
+        self.assertEqual(record.decision_value, "")
+        self.assertEqual(record.evidence_refs, [])
+        self.assertEqual(record.reopened_sources, [])
+        self.assertEqual(record.error_code, "schema_retry_exhausted")
+        self.assertIn("no schema-valid decision", record.error_message)
+        self.assertEqual(record.attempts, 3)
+        self.assertEqual(record.returncode, 1)
+        self.assertEqual(record.usage_telemetry, USAGE_UNKNOWN)
+        self.assertTrue(record.record_digest)
+        self.assertTrue(er.verify_record(record.to_dict()))
+        # It is durable too: it round-trips from the journal and verifies.
+        rows = journal.load()
+        self.assertEqual(len(rows), 1)
+        self.assertTrue(journal.verify())
+
 
 # ---- AS-2: 0A.4 packet-budget enforcement ----------------------------------
 class AS2Budget(Base):
@@ -229,6 +270,24 @@ class AS2Budget(Base):
         with self.assertRaises(rp.BudgetError):
             rp.ReviewBudget.from_mapping({"bogus": 1})
 
+    def test_the_ceiling_is_inclusive_at_the_exact_boundary(self):
+        # The ceiling is <= (inclusive): a packet estimated at EXACTLY the ceiling
+        # is within budget; one token over refuses with guidance.
+        budget = rp.ReviewBudget()
+        ceiling = budget.effective_ceiling(None).tokens             # 64,000 tokens
+        exact = rp.assess_packet_budget(
+            size_bytes=ceiling * 4, included_sources=[], budget=budget,
+            model_context_window=None)
+        self.assertEqual(exact.estimated_tokens, ceiling)
+        self.assertTrue(exact.within_ceiling)
+        self.assertEqual(exact.guidance, ())
+        over = rp.assess_packet_budget(
+            size_bytes=ceiling * 4 + 1, included_sources=[], budget=budget,
+            model_context_window=None)
+        self.assertEqual(over.estimated_tokens, ceiling + 1)
+        self.assertFalse(over.within_ceiling)
+        self.assertTrue(over.guidance)
+
 
 # ---- AS-3: AD-083 prohibited-content guard ---------------------------------
 class AS3Guard(Base):
@@ -238,6 +297,8 @@ class AS3Guard(Base):
             "full_directive_registry": {"sections": {"directive_registry": "all of it"}},
             "all_historical_reports": {"sections": {"all_reports": "every report"}},
             "whole_repository": {"sections": {"whole_repository": "the entire tree"}},
+            "all_logs": {"sections": {"all_logs": "every log line ever"}},
+            "full_code_graph": {"sections": {"full_code_graph": "the entire graph dump"}},
         }
         for category, packet in cases.items():
             with self.subTest(category=category):
@@ -251,6 +312,21 @@ class AS3Guard(Base):
         result = rp.guard_packet(packet, current_task_id="M0-T042")
         self.assertTrue(result.rejected)
         self.assertEqual(result.findings[0].category, "unrelated_task_packets")
+
+    def test_a_completeness_flag_is_rejected_as_whole_history(self):
+        # _scan_completeness_flags: a section that self-declares completeness
+        # (reports carrying the whole history rather than the bounded slice).
+        packet = {"sections": {"reports": {"all_history": True}}}
+        result = rp.guard_packet(packet, current_task_id="M0-T042")
+        self.assertTrue(result.rejected)
+        self.assertEqual(result.findings[0].category, "all_historical_reports")
+        self.assertEqual(result.findings[0].location, "sections.reports.all_history")
+        # The directives/logs completeness watches fire on their own categories too.
+        directives = rp.guard_packet(
+            {"sections": {"directives": {"full_registry": True}}},
+            current_task_id="M0-T042")
+        self.assertTrue(directives.rejected)
+        self.assertEqual(directives.findings[0].category, "full_directive_registry")
 
     def test_a_clean_bounded_packet_passes(self):
         result = rp.guard_packet(self.packet(), current_task_id="M0-T042")
@@ -322,6 +398,21 @@ class AS4Cadence(unittest.TestCase):
 
     def test_no_signal_is_no_review(self):
         self.assertFalse(rc.decide_review(rc.CheckpointSignals()).review)
+
+    def test_signals_from_mapping_fails_closed_on_bad_input(self):
+        # Symmetry with ReviewBudget.from_mapping: unknown and non-boolean signals
+        # are refused rather than silently coerced.
+        with self.assertRaises(rc.CadenceError) as unknown:
+            rc.CheckpointSignals.from_mapping({"bogus_signal": True})
+        self.assertEqual(unknown.exception.code, "unknown_signal")
+        with self.assertRaises(rc.CadenceError) as non_bool:
+            rc.CheckpointSignals.from_mapping({"unit_complete": "yes"})
+        self.assertEqual(non_bool.exception.code, "non_boolean_signal")
+        # A valid mapping round-trips into a working decision.
+        signals = rc.CheckpointSignals.from_mapping({"before_merge": True})
+        decision = rc.decide_review(signals)
+        self.assertTrue(decision.review)
+        self.assertIn("before_merge", decision.triggers)
 
 
 # ---- AS-5: root AGENTS.md ---------------------------------------------------
