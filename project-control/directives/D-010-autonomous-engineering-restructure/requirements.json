@@ -1,10 +1,10 @@
 {
  "schema": "directive_requirements/v1",
  "directive_id": "D-010",
- "version": 5,
- "requirement_count": 114,
+ "version": 6,
+ "requirement_count": 115,
  "producer": "orchestrator",
- "updated_at": "2026-08-07T05:06:12+00:00",
+ "updated_at": "2026-08-07T05:12:55+00:00",
  "requirements": [
   {
    "id": "D-010-R001",
@@ -4066,6 +4066,42 @@
     "tasks": []
    },
    "amendment_sequence": 4
+  },
+  {
+   "id": "D-010-R115",
+   "text": "The ~400k orchestrator ceiling (R113) is SOFT guidance, not a kill switch: never interrupt a session while subagents are working or a bounded unit is mid-flight; overshooting by twenty/thirty/forty thousand tokens to reach a clean seam is acceptable; nearing the ceiling means be cautious and plan the next seam as the rotation point - and it must NEVER cause corner-cutting, thinner reviews, or degraded work quality from constant token anxiety. The ceiling shapes WHERE the session stops, never HOW WELL it works.",
+   "source_ref": "source-005-amendment.md#owner-clarification",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T037",
+     "M0-T045"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [
+     "dispatch",
+     "accept"
+    ],
+    "effective_date": "2026-08-07"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "owner clarification 2026-08-07 refining R113 semantics",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "amendment_sequence": 5
   }
  ]
 }
