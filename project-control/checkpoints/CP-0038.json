@@ -1,0 +1,18 @@
+{
+  "checkpoint_id": "CP-0038",
+  "timestamp": "2026-08-07T07:21:27.129003+00:00",
+  "commit": "dc0c60589b467aa738c66f13c09e90e53bb296ab",
+  "branch": "main",
+  "active_milestone": "M4",
+  "summary": "D-010 session-2 rotation at safe seam: session-2 launch captured (am.5/R116, PR #165); M0-T042 ACCEPTED+MERGED (PR #166, accepted 61; honest G4 FAIL->rework->delta-PASS cycle; G5 residuals L-1/I-1/I-3 on activation checklist); next dependency-valid unit M0-T043; SHADOW-ONLY preserved, R595 mandatory-blocking",
+  "post_accept_verifications_confirmed": {
+    "M0-T027": [
+      "D-004-R389",
+      "D-004-R486",
+      "D-004-R487",
+      "D-004-R488",
+      "D-004-R501"
+    ]
+  },
+  "updated_at": "2026-08-07T07:21:27.129003+00:00"
+}

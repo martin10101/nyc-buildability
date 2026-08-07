@@ -5,101 +5,103 @@
 the remote: **origin/main may have advanced, so do not trust any SHA written here as still-current.**
 This file is orientation only. Operating rules, gates, and workflow routes live in `CLAUDE.md`.
 
-Refreshed **2026-08-07 (D-010 session rotation)**. **The block below supersedes the older sections
-further down** (kept only as history); the ledger wins on any conflict.
+Refreshed **2026-08-07 (D-010 session-2 rotation, CP-0038)**. **The block below supersedes the older
+sections further down** (kept only as history); the ledger wins on any conflict.
 
-## CURRENT STATE (2026-08-07 — confirm against the ledger + git)
+## CURRENT STATE (2026-08-07, session 2 — confirm against the ledger + git)
 
-**Owner directive D-010 (Autonomous Engineering V2) is captured, verified, and executing.** This
-session (rotated at a safe seam per D-010-R108 after M0-T041) merged six PRs; accepted count **60**.
+**D-010 (Autonomous Engineering V2) wave-1 continues to execute.** Session 2 rotated at a safe
+post-merge seam per D-010-R113/R115; accepted count **61**.
 
-- **D-010 captured** as the canonical directive (PR #155): source-001 = verbatim intake file
-  (`.claude/OWNER_DIRECTIVE_AUTONOMOUS_ENGINEERING_v2.md`, retained per R101 until a cleanup decision);
-  source-002 = owner launch instruction; 110 reqs (R001..R096 = AD-001..AD-096 1:1; R097..R110
-  launch rows) + independent capture verification PASS. Amendments: v2 applicability binding
-  (PR #157 — conjunction-semantics fix, rows were inert); **source-003 = owner-typed authorization
-  for the M0-T040 commit + pre-merge G3/G5/DCV sequence (R111/R112)**; v4 = R078/R089 → M0-T045.
-- **Task architecture** (PR #156): parent **M0-T037** + wave-1 **M0-T038..M0-T045**
-  (minimum-autonomy lane per 0A.8) + backlog B-1..B-6 + product lane — see
-  `project-control/reports/D-010-INITIATIVE-PLAN.md` (AD traceability + rollback points).
-- **ACCEPTED + MERGED this session:** M0-T038 (handoff preservation, PR #158 — G3 caught a real
-  39-char-SHA defect in the prior session's update; preserve-with-correction); M0-T039 (supervisor
-  freeze, PR #159 — tree `e8eeb4fa`, suite baseline 1165/1163/0/2, defect-only lane rule);
-  **M0-T040 (ADR-006 autonomy tiers, PR #160)** — Tier A/B/C/D verbatim from D-010 §5, D-004-R721
-  superseded FOR TIER A ONLY, G6 split recorded, 22-test policy suite; the commit itself was
-  **owner-executed** (`b841b4f`) after the auto-mode classifier twice denied the permission-model
-  edit — authorization captured as D-010 source-003; G3+G5(security)+DCV all PASS **before** merge
-  per R112; M0-T041 (supervisor gap-closure A, PR #161) — quota classifier (fail-closed, no
-  verified_live fixture), R207 live sampling, pending_prompt hardening; B-1..B-4 verified already
-  fixed in V1.1; suite 1189/1187/0/2; G3+G4+G5+DCV PASS at identity `78ed0cc1`.
+- **D-010 am.5 captured** (PR #165, merged `0ed2cdb`): the owner's session-2 launch instruction,
+  verbatim, as append-only `source-006-amendment.md` + row **R116** (re-dispatch; introduces NO new
+  obligations — R097..R115, holds, SHADOW-ONLY, R595 blocking prerequisite unchanged). Manifest
+  digests restamped per c14; task packets M0-T042..M0-T045 `directive_refs` widened to cover R116.
+- **M0-T042 ACCEPTED + MERGED** (PR #166, merge `dc0c605...`; accepted 61): Codex ephemeral review
+  loop operational end to end (`ephemeral_review.py` — guard → budget → fresh read-only process →
+  sealed durable record with decision/evidence-refs/model-identity/usage-telemetry/digest + journal;
+  AD-027 independence, AD-087 reopened-sources, AD-088 worker-fallback record never activated),
+  0A.4 budgets (`review_packet.py`: 32k target / 64k ordinary / 20%-of-window relative, effective =
+  lower, fail-closed refusal + split/summarize guidance) + AD-083 content guard, 0A.3 cadence policy
+  (`review_cadence.py`), usage-telemetry surfacing in `codex_reviewer.py`, root `AGENTS.md`
+  (Section 11.1, no CLAUDE.md duplication), 27-test module. Suite **1216/1214/0/2**. Pipeline had an
+  **honest G4 FAIL** (AS-3 fixture gap) → test-only rework 1 (+4 tests) → G3/G4 delta PASS → G5 PASS
+  → DCV **13/13 rows PASS** at identity `2db31092...`; verification row at `e490d50`.
+- **G5 residuals pinned to the activation checklist** (`M0-T036-ACTIVATION-CHECKLIST.md`, M0-T042
+  G5 additions): **L-1** parse_usage_telemetry uncaught ValueError on >4300-digit ints in untrusted
+  stdout (must-fix-before-activation); **I-1** AD-083 guard is structural not semantic; **I-3**
+  unbounded child-stdout capture (pre-existing). All MUST-RESOLVE before any activation.
 - ⛔ **SHADOW-ONLY throughout; R595 supervised rehearsal remains the MANDATORY BLOCKING prerequisite
-  before ANY activation** (M0-T036-ACTIVATION-CHECKLIST; D-010-R104). ADR-006 changes the authority
-  MODEL only; the orchestrator executes Tier A actions manually until the activation path completes.
+  before ANY activation** (D-010-R104). The new loop is deliberately NOT wired into loop.py/cli.py.
 
 ## NEXT SESSION — resume checklist
 
 1. Start-of-session: `python tools/project_control.py status` + reconcile git/CI (origin/main was
-   `24b0ff6` at rotation).
-2. **Next dependency-valid unit: M0-T042** (Codex ephemeral review integration + root AGENTS.md;
-   deps M0-T041 accepted). **M0-T043** (context-pack builder, no deps, disjoint paths) may run
-   parallel under the 2-agent cap — but note ledger writes serialize through state.json, so prefer
-   sequential task branches (T042 then T043) unless prepared to reconcile a state.json merge.
-   Then M0-T044 (GitHub flow; deps T039+T040 ✓), then **M0-T045 (R595 rehearsal + promotion pack)**.
-3. **Pre-R595 hardening items registered for M0-T045** (from M0-T041 reviews, all non-blocking):
-   G4 coverage locks — (a) pending_prompt failure-path-preserves-record regression, (b) empty-shape
-   verified-fixture-not-catch-all lock, (c) real-sampler CLI wiring integration test + WARN-notify
-   path + doctor unit test; G5 INFO-1 — before flipping any quota fixture to `verified_live=True`,
-   confirm captured live bytes are TRUE account-quota exhaustion (not transient 429).
-4. Task workflow that works (proven ×4 this session): task branch from origin/main → G0 + claim →
-   producer (isolated scope) → commit deliverables → evidence map + packet N2-widening → progress →
-   submit (identity stamps at HEAD; commit ledger writes) → parallel independent reviews (≤2 agents)
-   → record gates (reports committed FIRST, gates stamp at HEAD) → DCV → verification row stamped at
-   accept-time HEAD **uncommitted**, accept, commit together → push → PR → CI green → merge (Tier A
-   per ADR-006). Worst-case rework loop proven on M0-T038 (honest FAIL recorded → fix → delta
-   re-reviews → PASS).
-5. **Classifier-denial protocol (proven on M0-T040):** if the auto-mode classifier denies a commit of
-   permission-model/self-instruction files, STOP, surface to the owner with the exact `!` command
-   line; owner types authorization (capture verbatim as a D-010 amendment) and runs the commit
-   in-session; then the mandated independent reviews before merge. Never route around the classifier.
-- **Reviewer models:** gate reviewers ran `claude-opus-4-8` + `xhigh` (the 5 flipped agent files
-  remain **uncommitted in the PRIMARY checkout** per the standing fallback; revert to
-  `claude-fable-5` pins when the owner says "Fable is back"). Orchestrator ran `claude-fable-5`.
-- **Primary checkout** (`…\nyc-development-feasibility-claude-pack`, branch task/M0-T036-supervisor-bridge
-  @ 57ccb44): left intact per D-010-R109/R099. Its uncommitted docs/SESSION_HANDOFF.md diff is now
-  OBSOLETE (superseded by the corrected, merged M0-T038 version + this refresh) and may be discarded
-  at next convenience; the 5 reviewer-pin edits stay by design; other untracked files classified in
-  the Phase 0 record (D-010 capture PR #155 context).
+   `dc0c605` at rotation; checkpoint CP-0038). Machine-readable handoff:
+   `project-control/reports/session-handoff-2026-08-07-2.json`
+   (digest `2a0e46606e9c89f574134a66e3fabe388a0508df3f41b97adc2c08fc935e7361`) — verify the digest.
+2. **Next dependency-valid unit: M0-T043** (bounded context-pack builder; Section 12,
+   AD-044..AD-046; no deps). Then M0-T044 (GitHub flow; deps T039+T040 ✓), then **M0-T045
+   (R595 rehearsal + Section 16.2 promotion pack)**. Prefer sequential task branches from
+   origin/main in the orch worktree (`C:/Users/MLFLL/Downloads/nyc-zoning/orch`) — ledger
+   serializes through state.json.
+3. **Pre-R595 hardening items for M0-T045** now live in TWO places, both binding: (a) the M0-T041
+   items in the previous rotation's checklist entry (pending_prompt regression locks, empty-shape
+   fixture lock, real-sampler CLI wiring, quota-fixture live-bytes confirmation); (b) the M0-T042
+   G5 additions L-1/I-1/I-3 on `M0-T036-ACTIVATION-CHECKLIST.md`. M0-T045 binds R113-R115.
+4. Task workflow (proven ×5 across sessions, incl. a full honest-FAIL→rework→delta-PASS cycle this
+   session): task branch from origin/main → G0 + claim (refs from the packet's directive_refs) →
+   producer → commit deliverables → evidence map → progress (claimed→in_progress→self_check) →
+   submit (identity stamps at HEAD; commit ledger writes) → parallel independent reviews (≤2) →
+   record gates (reports committed FIRST; gate stamps at current HEAD — material identity is what
+   stays stable across control-plane commits) → G5 → DCV → verification row at accept-time HEAD
+   uncommitted → accept → commit together → push → PR → CI green → merge (Tier A per ADR-006).
+5. **PRODUCER SPAWN RULE (incident this session):** spawn producers UNNAMED. A custom-named spawn
+   makes `.claude/hooks/readonly_agent_guard.py` fail closed to read-only (roster identity
+   unrecoverable — the guard's own docs, line 25). If it happens: do NOT proxy-write the denied
+   agent's files (permission laundering); let it return design as data, then re-dispatch unnamed —
+   the accountable producer verifies/adapts/writes/tests under its own resolved permissions.
+   Read-only gate reviewers are unaffected (they are read-only by design).
+6. Classifier-denial protocol unchanged (proven M0-T040): STOP, surface to owner with the exact `!`
+   line; owner-typed authorization captured as a D-010 amendment; never route around the classifier.
+- **Reviewer models:** gate reviewers ran `claude-opus-4-8` + `xhigh` (standing fallback; the 5
+  flipped agent files remain uncommitted in the PRIMARY checkout; revert to `claude-fable-5` pins
+  when the owner says "Fable is back"). Orchestrator ran `claude-fable-5`.
+- **Primary checkout** (`...\nyc-development-feasibility-claude-pack`, branch
+  task/M0-T036-supervisor-bridge @ 57ccb44): untouched per R099/R109.
 - **Dormant batch (Lane 3 item 1, AD-066):** D-009 + M0-T019 + M2-T014 preserved on origin
   (`control/D-009-depsec-and-m0t019-dispatch @ a953d0d`, `task/M0-T019-fes9-exception @ e96d718`);
-  resume after the minimum-autonomy lane or as the product chain restarts; B-017 clears with the
-  regenerated-lock CI evidence. Old PR #64 is stale (supersede/close when the batch resumes).
-- **Owner touches this session: 1** (the M0-T040 authorization — exactly the touch the safety
-  surfaces exist to require). Standing holds unchanged: deployment/G6/Graphify/expansion.
+  stale PR #64 supersede/close when the batch resumes. Untouched this session.
+- **Owner touches this session: 0.** Standing holds unchanged: deployment/G6/Graphify/expansion.
 
 ## Machine-readable handoff (D-010 §7.2; sha256 digest over the JSON with digest="")
 
 ```json
-SEE project-control/reports/session-handoff-2026-08-07.json (digest 641b086ed6ec12fb9eff1f46a63c79d5de39654b57defd91583e574e2a211b4b)
+SEE project-control/reports/session-handoff-2026-08-07-2.json (digest 2a0e46606e9c89f574134a66e3fabe388a0508df3f41b97adc2c08fc935e7361)
 ```
 
 ---
 
 _History (pre-this-session, may be stale):_
 
+## PRIOR STATE (2026-08-07 session 1, superseded — CP-0037)
+
+Session 1 captured D-010 (PR #155; 110 reqs + capture verification PASS), contracted the task
+architecture M0-T037..M0-T045 (PR #156), fixed applicability binding (PR #157), and
+ACCEPTED+MERGED M0-T038 (handoff preservation, PR #158), M0-T039 (supervisor freeze, PR #159;
+tree `e8eeb4fa`, suite 1165/1163/0/2), M0-T040 (ADR-006 autonomy tiers, PR #160; owner-executed
+commit `b841b4f` after classifier denials — captured as source-003 R111/R112), and M0-T041
+(supervisor gap-closure A, PR #161; quota classifier fail-closed, R207 live sampling,
+pending_prompt hardening; suite 1189/1187/0/2; identity `78ed0cc1`). Rotation record CP-0037 +
+digest-verified handoff (PR #162, `session-handoff-2026-08-07.json`); owner rotation feedback
+R113/R114 (PR #163); soft-ceiling clarification R115 (PR #164). Accepted count reached 60.
+Owner touches: 1 (the M0-T040 authorization).
+
 ## PRIOR STATE (2026-08-05 late, superseded)
 
-- **`task/M0-T036-supervisor-bridge`** — **M0-T036 ACCEPTED (shadow-only) 2026-08-06; MERGED to `main`
-  2026-08-07T00:06:56Z (owner-authorized).** accepted count **56**. Delta re-gate V1.2.3 at `4ff4d88`
-  all PASS (G3/G4/G5 + DCV); 585-req independent `verification.json` (584 PASS + R593 NA); acceptance
-  commit `9d7573f`. **PR #154 MERGED → `main` = `cec785f97ac1037df1fb2e1b114260eb106b7de0`** via the
-  repository-required **merge-commit** method (no bypass; branch not deleted). The merged head was a
-  **content-empty trigger commit `57ccb44`** (git tree `67e97dda` — byte-identical to acceptance head
-  `4f8c1d2`); it existed ONLY to emit a push/PR event so the **8 required checks** could run during the
-  **2026-08-06 GitHub Actions major outage** (15:22 UTC; webhooks throttled) — no file content changed.
-  All 8 required checks PASS on `57ccb44` (plus 8 non-required, 16/16 green). **SHADOW-ONLY; nothing
-  activated.** R593 resolved via owner Option A (accepted residual deferred to R595, D-007-R618/R621).
-- **M0-T019 / D-009 / M2-T014 batch** — see the dormant-batch note above; historical detail in
-  `project-control/reports/BATCH-RESUME-2026-08-05.md` (on the batch branch).
-- Standing rules carried forward: reviewer-model fallback (revert on "Fable is back"); owner
-  escalation boundary (D-008); batching at submit; ledger writes via `tools/project_control.py` only;
-  directives written with explicit LF; task files CRLF-preserved on edit.
+M0-T036 ACCEPTED (shadow-only) 2026-08-06, MERGED via PR #154 (merge-commit; content-empty trigger
+commit `57ccb44` during the GitHub Actions outage; 16/16 checks green). R593 resolved via owner
+Option A (accepted residual deferred to R595, D-007-R618/R621). The M0-T019/D-009/M2-T014 batch
+went dormant on origin. Standing rules carried forward: reviewer-model fallback (revert on "Fable
+is back"); owner escalation boundary (D-008); batching at submit; ledger writes via
+`tools/project_control.py` only; directives written with explicit LF; task files preserved as found.

@@ -1,0 +1,48 @@
+{
+ "schema_version": "1",
+ "session_id": "session_01KeH6dyvN4DupSTepPMSF4s",
+ "provider": "claude",
+ "model": "claude-fable-5",
+ "repo": "martin10101/nyc-buildability",
+ "worktree": "C:/Users/MLFLL/Downloads/nyc-zoning/orch",
+ "branch": "control/D-010-session2-rotation",
+ "repo_head": null,
+ "origin_main": "dc0c60589b467aa738c66f13c09e90e53bb296ab",
+ "checkpoint_id": "CP-0038",
+ "task_id": "M0-T037",
+ "task_digest": null,
+ "created_at": "2026-08-07T07:22:04+00:00",
+ "completed_units": [
+  "D-010 am.5 session-2 launch instruction captured verbatim (source-006, R116, no new obligations; digests restamped; T042..T045 refs widened; PR #165 merged 0ed2cdb)",
+  "M0-T042 Codex ephemeral review integration + root AGENTS.md ACCEPTED+MERGED (PR #166 merge dc0c605; accepted count 61; identity 2db31092..; suite 1216/1214/0/2; honest G4 FAIL (AS-3 coverage) -> rework 1 (test-only, +4 tests) -> G3/G4 delta PASS -> G5 PASS -> DCV 13/13 PASS)"
+ ],
+ "incomplete_unit": null,
+ "active_children": [],
+ "pending_reviews": [],
+ "pending_external_effects": [],
+ "known_failures": [
+  "Named producer spawn incident: spawning the M0-T042 producer WITH a custom name made readonly_agent_guard fail closed to read-only (roster identity unrecoverable). Resolution: producers must be spawned UNNAMED (per the guard's own docs, .claude/hooks/readonly_agent_guard.py:25); no permission laundering - the read-only agent returned design only, an unnamed backend-engineer re-dispatch owned/wrote/tested the deliverable."
+ ],
+ "next_action": "Resume wave-1 at M0-T043 (bounded context-pack builder; Section 12, AD-044..AD-046; disjoint paths but prefer sequential task branches - ledger serializes through state.json). Then M0-T044 (deps T039+T040 accepted), then M0-T045 (R595 rehearsal + Section 16.2 promotion pack; pre-R595 hardening now ALSO includes M0-T042 G5 L-1/I-1/I-3 on M0-T036-ACTIVATION-CHECKLIST.md). Task branch from origin/main in the orch worktree; proven workflow per SESSION_HANDOFF resume checklist.",
+ "required_files": [
+  "docs/SESSION_HANDOFF.md",
+  "project-control/reports/D-010-INITIATIVE-PLAN.md",
+  "project-control/reports/M0-T036-ACTIVATION-CHECKLIST.md",
+  "project-control/directives/D-010-autonomous-engineering-restructure/requirements.json"
+ ],
+ "evidence_refs": [
+  "project-control/reports/M0-T042-dcv-final.md",
+  "project-control/reports/M0-T042-g3-code-review.md",
+  "project-control/reports/M0-T042-g4-qa-review.md",
+  "project-control/reports/M0-T042-g5-security.md",
+  "project-control/reports/M0-T042-evidence-map.json",
+  "project-control/directives/D-010-autonomous-engineering-restructure/verification.json"
+ ],
+ "context_telemetry": {
+  "note": "rotation at post-merge seam per D-010-R113/R115 (soft ~400k ceiling; M0-T042 unit consumed the bulk of the window; starting M0-T043 here would overshoot beyond the sanctioned 20-40k band)"
+ },
+ "quota_telemetry": {
+  "note": "no provider quota failures this session; reviewers ran claude-opus-4-8 xhigh per standing fallback"
+ },
+ "digest": "2a0e46606e9c89f574134a66e3fabe388a0508df3f41b97adc2c08fc935e7361"
+}
