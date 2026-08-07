@@ -106,3 +106,24 @@ activation of the GitHub flow or the effect journal:
    through redaction.py.
 4. **INFO-1:** the live caller must audit every `FlowResult`, including refusals (this module
    journals only performed effects).
+
+
+---
+
+## M0-T045 G5/G4 additions (2026-08-07) - pre-activation items registered at gating
+
+1. **G5 LOW-1 (MUST-RESOLVE before supervised-auto/limited-auto activation):** bind the
+   cross-process forwarded bytes to the OPERATOR-NAMED approval at approval time
+   (`approve_pending_prompt` currently freezes `approved_digest = digest_of(parked bytes)`
+   without cross-checking the operator-supplied `--approve-prompt-digest` serialization), so
+   the park->approve window does not rest solely on the journal file ACL. loop.py:626-654 +
+   cli.py:1628-1662; see M0-T045-g5-security.md.
+2. **G4 estop audit-fork follow-up:** the `emergency-stop` command and the main loop can write
+   CONCURRENT audit sequence numbers (fork honestly surfaced via `audit_chain_ok:false`).
+   Before activation: a test locking the forked-chain shape + explicit owner acknowledgement
+   that an emergency stop leaves the audit log unappendable-without-repair (fail-closed).
+   See M0-T045-g4-qa-review.md.
+
+Note: the R595 supervised rehearsal itself is COMPLETE (all legs live-proven at `afc2da5`;
+sealed evidence M0-T045-r595-rehearsal/). The R593 residual is closed BY EVIDENCE. Items above
+are the remaining pre-ACTIVATION hardening set; activation stays an explicit owner decision.
