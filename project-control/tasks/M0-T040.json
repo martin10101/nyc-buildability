@@ -57,14 +57,14 @@
     "directive-compliance-verifier"
   ],
   "status": "awaiting_gate",
-  "progress_percent": 85,
+  "progress_percent": 95,
   "risks": [
     "Policy text must not drift from D-010 verbatim tiers - reviewer checks quote fidelity.",
     "CLAUDE.md is a governance path: claim requires the cited governance directive (D-010, satisfied)."
   ],
   "blockers": [],
   "created_at": "2026-08-07T01:32:33.917997+00:00",
-  "updated_at": "2026-08-07T03:08:23.869932+00:00",
+  "updated_at": "2026-08-07T03:23:11.135119+00:00",
   "directive_refs": [
     {
       "directive_id": "D-010",
