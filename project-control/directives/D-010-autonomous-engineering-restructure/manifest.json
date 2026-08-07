@@ -1,7 +1,7 @@
 {
  "schema": "directive_manifest/v1",
  "directive_id": "D-010",
- "version": 2,
+ "version": 3,
  "slug": "autonomous-engineering-restructure",
  "title": "Autonomous Engineering Restructure and NYC Buildability Pilot Acceleration (Autonomous Engineering V2)",
  "status": "active",
@@ -25,10 +25,19 @@
    "amends": "source-001.md",
    "recorded_at": "2026-08-07T01:09:55+00:00",
    "content_digest_sha256": "ca8c1e9fbfa1d384fc9c8d981b2dda102ac327aa44e0272f513a052ac9af2d2f"
+  },
+  {
+   "file": "source-003-amendment.md",
+   "kind": "amendment",
+   "sequence": 3,
+   "amends": "source-001.md",
+   "recorded_at": "2026-08-07T03:04:05+00:00",
+   "content_digest_sha256": "6c55718f9a746c56df597f9a8f50261bb87f38e9d61498cac2a05ca264e48342"
   }
  ],
  "amendments": [
-  "source-002-launch-instruction.md"
+  "source-002-launch-instruction.md",
+  "source-003-amendment.md"
  ],
  "supersedes": [],
  "superseded_by": null,
@@ -67,8 +76,8 @@
  "verification_file": "verification.json",
  "final_reviewed_sha": null,
  "final_reviewed_manifest_sha256": null,
- "requirements_content_digest_sha256": "9f78432087b2ac4c144883cd238398e9ff963797d475ec521e88d6c66e313bee",
- "requirements_id_digest_sha256": "162f89306847a46bad6f8c7a99373df57cf11113809825620e60e2b3143278f2",
+ "requirements_content_digest_sha256": "c0f72b0bc70b27e7eded7c965e9b5d0072e058b7dded27b7e06966fd2d01bc81",
+ "requirements_id_digest_sha256": "0b5e3eef3568d789ca35c1e31c6a1163eedf59dec341158614e2a85e84eaf577",
  "enforcement_pointers": {
   "tasks": [
    "M0-T037",
@@ -94,7 +103,8 @@
   "R595 supervised rehearsal remains a MANDATORY BLOCKING prerequisite before ANY activation (M0-T036 activation checklist; D-007-R619); D-010 does not lift it (R104).",
   "The in-repo intake file .claude/OWNER_DIRECTIVE_AUTONOMOUS_ENGINEERING_v2.md is RETAINED (untracked) until a dedicated cleanup decision (R101); this project-control copy is authoritative once capture is independently verified.",
   "Verification pending independent directive-compliance-verifier at a frozen head (producer != verifier).",
-  "Version 2 (applicability-binding amendment, administrative): capture rows carried the D-010-PROGRAM sentinel in per-row applicability.task_ids together with task_types=['governance']; under the resolver's conjunction semantics no real ledger task could match any row, making the requirement set mechanically inert at submit/accept. Rows are now bound to the wave-1 tasks that cite them plus parent M0-T037 (close-out verification per AD-080). Requirement IDs and texts UNCHANGED (id digest stable); content digest restamped per c14 amendment mechanics."
+  "Version 2 (applicability-binding amendment, administrative): capture rows carried the D-010-PROGRAM sentinel in per-row applicability.task_ids together with task_types=['governance']; under the resolver's conjunction semantics no real ledger task could match any row, making the requirement set mechanically inert at submit/accept. Rows are now bound to the wave-1 tasks that cite them plus parent M0-T037 (close-out verification per AD-080). Requirement IDs and texts UNCHANGED (id digest stable); content digest restamped per c14 amendment mechanics.",
+  "Amendment 2 (source-003, 2026-08-06): owner typed authorization resolving the auto-mode classifier hold on the M0-T040 commit; rows R111 (proceed with the commit exactly as reviewed) + R112 (independent G3 + security G5 + directive-compliance verification required before any merge). Bound to M0-T037/M0-T040."
  ],
  "locked_requirement_ids": [
   "D-010-R001",
@@ -206,10 +216,12 @@
   "D-010-R107",
   "D-010-R108",
   "D-010-R109",
-  "D-010-R110"
+  "D-010-R110",
+  "D-010-R111",
+  "D-010-R112"
  ],
  "created_at": "2026-08-07T01:09:55+00:00",
- "updated_at": "2026-08-07T01:45:52+00:00",
+ "updated_at": "2026-08-07T03:04:05+00:00",
  "audit_log": [
   {
    "at": "2026-08-07T01:09:55+00:00",
@@ -230,6 +242,11 @@
    "at": "2026-08-07T01:45:52+00:00",
    "by": "orchestrator",
    "note": "Applicability-binding amendment (version 2) on branch control/D-010-applicability-binding: per-row task_ids now bind rows to citing wave-1 tasks + M0-T037; task_types cleared (conjunction semantics). No requirement id or text changed; requirements_content_digest restamped. Defect found while wiring M0-T038 submit mechanics (derive_applicable returned an empty set for every real task)."
+  },
+  {
+   "at": "2026-08-07T03:04:05+00:00",
+   "by": "orchestrator",
+   "note": "Captured owner line VERBATIM as source-003-amendment.md (sha256 6c55718f9a746c56df597f9a8f50261bb87f38e9d61498cac2a05ca264e48342) on branch task/M0-T040-authority-policy. Context: the auto-mode classifier twice denied committing M0-T040's reviewed authority-policy changes (CLAUDE.md/.claude-rules permission-model edits); the orchestrator stopped per the denial guidance and the owner authorized proceeding with the exact reviewed file set, with independent G3 + security G5 + DCV required before any merge. Rows R111-R112 appended; digests restamped per c14 amendment mechanics."
   }
  ]
 }
