@@ -2,7 +2,9 @@
  "schema": "evidence_map/v1",
  "task_id": "M0-T046",
  "producer": "backend-engineer",
- "code_head": "569d1a7bc2447b6884753b813de431a1def365a8",
+ "code_head": "a27068db17ff20426a587fd04ed00eea827c909d",
+ "code_head_initial": "569d1a7bc2447b6884753b813de431a1def365a8 (pre-rework; all five gates first recorded here)",
+ "rework_note": "Rework increment a27068d applied after the G3/G4/G5 wave: G5-C1 absolute System32 icacls path (fail-open closed), G5-L-1 owner-elevation assertion in the PROTECTED path, G5-L-2 absolute paths in the elevated script, G3-S3-1 safe-subset rights inversion, G3-S2-1 non-adjacent-duplicate test, README fix. +7 tests; full suite 1363 passed / 2 skipped (orchestrator-reproduced). Scope-1 binding code untouched per G5 C2 disposition (owner activation-time decision).",
  "code_branch": "task/M0-T046-preactivation",
  "requirements": {
   "D-010-R122": {
@@ -56,10 +58,10 @@
   "D-010-R128": {
    "summary": "Boundary implemented per the verbatim spec: unelevated READ preserved; modify/overwrite/delete/rename/replace/re-ACL denied via Administrators ownership + user RX-only grants; parent directory protected against replacement/bypass (user Read+Execute only on parent); modification requires elevated owner action (script refuses unelevated - test RAN unelevated and PASSED); config.py fail-closed digest verification untouched; probes bounded and non-destructive (write-open zero-byte probe; rename/delete assessed from governing ACL rights, never destructive attempts); ambiguity/error -> UNKNOWN fail-closed, never 'protected'. Live PROTECTED-state proof against the real owner config DEFERRED to after the owner's elevated apply (unelevated process cannot mint a UAC-required file) - every unelevated-reachable state proven now; disclosed as producer limitation 1.",
    "evidence": [
-    "tools/agent_supervisor/os_acl.py (evaluate_controller_config_acl; PROTECTED requires file AND parent)",
-    "tools/agent_supervisor/harden_controller_config.ps1 (apply/rollback/dry-run; refuses unelevated)",
+    "tools/agent_supervisor/os_acl.py (evaluate_controller_config_acl; PROTECTED requires file AND parent AND elevated owner; absolute System32 tool paths; safe-subset rights rule - unknown token => dangerous)",
+    "tools/agent_supervisor/harden_controller_config.ps1 (apply/rollback/dry-run; refuses unelevated; absolute System32 takeown/icacls)",
     "tools/agent_supervisor/cli.py:428-465,1245-1249,1266,1282 (doctor posture, fail-closed, shadow-safe)",
-    "tools/test_agent_supervisor_os_acl.py (25 tests: fixtures, fail-closed, live bounded probes, doctor surface, harden-script refusal)"
+    "tools/test_agent_supervisor_os_acl.py (31 tests post-rework: fixtures, fail-closed, live bounded probes, doctor surface, harden-script refusal, absolute-argv pinning, owner-verdict trio, unknown-token fail-closed)"
    ]
   },
   "D-010-R129": {
@@ -70,10 +72,11 @@
    ]
   },
   "D-010-R130": {
-   "summary": "Normal independent gates run on this task: G0 PASS recorded (administrative readiness at af7ae05); G2 self-check + independent G3 (code-reviewer) + G4 (qa-engineer) + G5 (security-reviewer) + DCV final verification follow; producer != any reviewer.",
+   "summary": "Normal independent gates run on this task, producer != any reviewer: G0 PASS (orchestrator, administrative); G2 PASS (self-check + orchestrator reproduction); G3 PASS (code-reviewer; no blocking code defect; S1-1 routed to DCV); G4 PASS (qa-engineer; no corrections; mutation-proven non-vacuity); G5 PASS (security-reviewer; blocking correction C1 applied in rework a27068d, C2 = activation-time owner item). Delta re-reviews over 569d1a7..a27068d confirm the corrections; gates re-recorded at the final identity; DCV final verification follows.",
    "evidence": [
-    "project-control/gates/M0-T046-G0.json",
-    "gate records M0-T046-G2/G3/G4/G5 + DCV verification rows (populated as recorded)"
+    "project-control/gates/M0-T046-G0.json / -G2.json / -G3.json / -G4.json / -G5.json",
+    "project-control/reports/M0-T046-g3-code-review.md / -g4-qa-review.md / -g5-security.md (+ delta re-review reports)",
+    "project-control/reports/M0-T046-dcv-final.md (when recorded)"
    ]
   },
   "D-010-R131": {
