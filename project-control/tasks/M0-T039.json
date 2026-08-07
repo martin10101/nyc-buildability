@@ -1,0 +1,63 @@
+{
+  "task_id": "M0-T039",
+  "title": "Phase 1: freeze M0-T036 supervisor behavior identity + defect-only maintenance lane (AD-065)",
+  "task_type": "governance",
+  "milestone_id": "M0",
+  "objective": "Record the frozen behavior identity of the accepted shadow-only supervisor (merged main SHA, supervisor tree identity, test-suite baseline) and establish the defect-only maintenance lane: no supervisor feature additions unrelated to D-010 requirements or reproduced defects (Section 18 Phase 1; AD-065; 0A.10).",
+  "business_reason": "D-010 Phase 1 requires finishing and freezing the current supervisor before further work; M0-T036 is accepted+merged, so the remaining Phase 1 scope is the freeze record and maintenance-lane rule.",
+  "inputs": [
+    "project-control/reports/M0-T036-ACTIVATION-CHECKLIST.md",
+    "D-010 source-001 Section 18 Phase 1"
+  ],
+  "outputs": [
+    "project-control/reports/M0-T039-supervisor-freeze.md",
+    ".claude/rules/supervisor-freeze.md"
+  ],
+  "dependencies": [],
+  "allowed_paths": [
+    "project-control/reports/M0-T039-supervisor-freeze.md",
+    ".claude/rules/supervisor-freeze.md",
+    "project-control/tasks/M0-T039.json"
+  ],
+  "forbidden_paths": [
+    "tools/agent_supervisor/",
+    "apps/",
+    "services/",
+    "project-control/directives/",
+    ".github/"
+  ],
+  "acceptance_scenarios": [
+    "AS-1 (executable): the freeze record pins the accepted supervisor identity - merged main SHA, git tree hash of tools/agent_supervisor/ at that SHA, and the passing test-suite baseline - and each value reproduces via the exact git/pytest commands recorded in the report.",
+    "AS-2 (executable): .claude/rules/supervisor-freeze.md states the defect-only maintenance lane using the AD-093 qualifying-evidence list verbatim and requires every future supervisor task to cite its evidence.",
+    "AS-3 (executable): registry validator and control-plane test suite green at the frozen head; the rule change is itself reviewed under the governance gates (G3/G5)."
+  ],
+  "required_gates": [
+    "G0",
+    "G2",
+    "G3",
+    "G5"
+  ],
+  "producer_agent": null,
+  "reviewer_agents": [
+    "code-reviewer",
+    "security-reviewer",
+    "control-plane-verifier",
+    "directive-compliance-verifier"
+  ],
+  "status": "backlog",
+  "progress_percent": 0,
+  "risks": [
+    "Freeze must not block the defect lane (M0-T041 depends on it being explicitly carved out)."
+  ],
+  "blockers": [],
+  "created_at": "2026-08-07T01:32:33.626796+00:00",
+  "updated_at": "2026-08-07T01:36:53+00:00",
+  "directive_refs": [
+    {
+      "directive_id": "D-010",
+      "requirement_ids": "ALL"
+    }
+  ],
+  "directive_regime_version": "1.0",
+  "directive_regime_entered_at": "2026-08-07T01:32:33.626796+00:00"
+}

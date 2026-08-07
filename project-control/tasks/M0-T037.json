@@ -1,0 +1,64 @@
+{
+  "task_id": "M0-T037",
+  "title": "D-010 parent initiative: Autonomous Engineering V2 restructure (traceability, division, sequencing)",
+  "task_type": "governance",
+  "milestone_id": "M0",
+  "objective": "Coordinate the dependency-ordered bounded implementation of owner directive D-010: own the AD-001..AD-096 traceability matrix, the minimum-autonomy / non-blocking-supervisor-backlog / NYC-product division, rollback points, allocation measurement (80/20 after two limited-auto product tasks), and the consolidated Section 21 close-out report. Coordination-only: no product or supervisor code paths.",
+  "business_reason": "Owner directive D-010 (captured+verified, PR #155) requires one parent initiative with bounded dependency-ordered implementation tasks (D-010-R102); this packet is that parent.",
+  "inputs": [
+    "project-control/directives/D-010-autonomous-engineering-restructure/",
+    "project-control/reports/M0-T036-ACTIVATION-CHECKLIST.md"
+  ],
+  "outputs": [
+    "project-control/reports/D-010-INITIATIVE-PLAN.md",
+    "project-control/reports/D-010-close-out-report.md"
+  ],
+  "dependencies": [],
+  "allowed_paths": [
+    "project-control/reports/D-010-INITIATIVE-PLAN.md",
+    "project-control/reports/D-010-close-out-report.md",
+    "project-control/tasks/M0-T037.json"
+  ],
+  "forbidden_paths": [
+    "apps/",
+    "services/",
+    "packages/",
+    "tools/",
+    "docs/adr/",
+    "project-control/directives/ (registry writes are separate orchestrator commits)"
+  ],
+  "acceptance_scenarios": [
+    "AS-1 (executable): D-010-INITIATIVE-PLAN.md exists on main with the three-way division (minimum autonomy / non-blocking supervisor backlog / NYC product), a complete AD-001..AD-096 traceability table with no unmapped row, dependency order, and per-task rollback points; validate_directive_compliance.py exits 0.",
+    "AS-2 (executable): allocation measurement per AD-092 is defined (rolling ten completed bounded units, whole-% only) and, once two limited-auto product tasks complete, reported with reproducible counts in the close-out report.",
+    "AS-3 (executable): the Section 21 close-out report enumerates items 1-17 with evidence references and is generated from the completed matrix - never while any child task is pending (no narrative completion)."
+  ],
+  "required_gates": [
+    "G0",
+    "G2",
+    "G3",
+    "G5"
+  ],
+  "producer_agent": null,
+  "reviewer_agents": [
+    "code-reviewer",
+    "security-reviewer",
+    "control-plane-verifier",
+    "directive-compliance-verifier"
+  ],
+  "status": "backlog",
+  "progress_percent": 0,
+  "risks": [
+    "Coordination-only packet: any temptation to widen into implementation violates D-010-R103 and must spawn a bounded child task instead."
+  ],
+  "blockers": [],
+  "created_at": "2026-08-07T01:30:43.240123+00:00",
+  "updated_at": "2026-08-07T01:36:53+00:00",
+  "directive_refs": [
+    {
+      "directive_id": "D-010",
+      "requirement_ids": "ALL"
+    }
+  ],
+  "directive_regime_version": "1.0",
+  "directive_regime_entered_at": "2026-08-07T01:30:43.240123+00:00"
+}

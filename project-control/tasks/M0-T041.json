@@ -1,0 +1,98 @@
+{
+  "task_id": "M0-T041",
+  "title": "Supervisor 0A.8 gap-closure A: quota-exhaustion classifier, activation-checklist B-rows, R207 live sampling",
+  "task_type": "backend",
+  "milestone_id": "M0",
+  "objective": "Close the reproduced activation-checklist gaps in the frozen supervisor's defect lane: wire the live-CLI account-quota exhaustion classifier (QUOTA_EXHAUSTION_SIGNAL_VERIFIED currently False, fail-closed PAUSE), fix and re-gate the activation-blocking G3 B-rows (B-1..B-4), wire live resource sampling for the R207 limit set, add the pending_prompt consume/clear hardening (G5 LOW), and keep unknown telemetry conservative (AD-025); every change cites its checklist/defect evidence (AD-093).",
+  "business_reason": "0A.10 evidence: project-control/reports/M0-T036-ACTIVATION-CHECKLIST.md enumerates these as standing activation prerequisites (reproduced gaps, not speculative features); 0A.8 items 2/3/7/9/10 depend on them.",
+  "inputs": [
+    "project-control/reports/M0-T036-ACTIVATION-CHECKLIST.md",
+    "M0-T036 G3/G4/G5 reports (B-rows, LOW finding)"
+  ],
+  "outputs": [
+    "defect-lane supervisor fixes + tests",
+    "project-control/reports/M0-T041-producer-report.md"
+  ],
+  "dependencies": [
+    "M0-T039"
+  ],
+  "allowed_paths": [
+    "tools/agent_supervisor/",
+    "tools/test_agent_supervisor_*.py",
+    "project-control/reports/M0-T041-producer-report.md",
+    "project-control/tasks/M0-T041.json"
+  ],
+  "forbidden_paths": [
+    ".claude/",
+    "apps/",
+    "services/",
+    "project-control/directives/",
+    ".github/",
+    "any dependency manifest or lockfile (stdlib-only lane per D-007 Section 5.1)"
+  ],
+  "acceptance_scenarios": [
+    "AS-1 (executable): the quota-exhaustion classifier consumes recorded live-CLI fixtures, reports verified only on proven signal shapes, and fail-closes to PAUSE on unknown/absent shapes; unit tests cover proven, unknown, and absent cases (AD-025: unknown never treated as zero).",
+    "AS-2 (executable): each activation-blocking G3 B-row (B-1..B-4) has a reproducing test that fails at the frozen baseline and passes after the fix; the re-gate records the per-row delta verdicts.",
+    "AS-3 (executable): live resource sampling feeds the R207 limit knobs in the running loop with fail-closed defaults; sampling outage degrades to the conservative path (test).",
+    "AS-4 (executable): resume-pending-prompt consumes/clears the pending_prompt record on success so a stale record cannot be re-approved (regression test for the G5 LOW finding).",
+    "AS-5 (executable): full supervisor suite green; the producer report lists every change with its activation-checklist/defect citation (AD-093) - no uncited feature."
+  ],
+  "required_gates": [
+    "G0",
+    "G2",
+    "G3",
+    "G4",
+    "G5"
+  ],
+  "producer_agent": null,
+  "reviewer_agents": [
+    "code-reviewer",
+    "security-reviewer",
+    "qa-engineer",
+    "control-plane-verifier",
+    "directive-compliance-verifier"
+  ],
+  "status": "backlog",
+  "progress_percent": 0,
+  "risks": [
+    "Live-CLI fixture capture may hit provider variance - record exact CLI version and shapes; fail-closed stays default until shapes proven."
+  ],
+  "blockers": [],
+  "created_at": "2026-08-07T01:32:53.929188+00:00",
+  "updated_at": "2026-08-07T01:36:53+00:00",
+  "directive_refs": [
+    {
+      "directive_id": "D-010",
+      "requirement_ids": [
+        "D-010-R019",
+        "D-010-R020",
+        "D-010-R021",
+        "D-010-R022",
+        "D-010-R023",
+        "D-010-R024",
+        "D-010-R025",
+        "D-010-R026",
+        "D-010-R028",
+        "D-010-R029",
+        "D-010-R030",
+        "D-010-R031",
+        "D-010-R032",
+        "D-010-R033",
+        "D-010-R034",
+        "D-010-R035",
+        "D-010-R036",
+        "D-010-R037",
+        "D-010-R038",
+        "D-010-R039",
+        "D-010-R040",
+        "D-010-R075",
+        "D-010-R076",
+        "D-010-R078",
+        "D-010-R089",
+        "D-010-R093"
+      ]
+    }
+  ],
+  "directive_regime_version": "1.0",
+  "directive_regime_entered_at": "2026-08-07T01:32:53.929188+00:00"
+}

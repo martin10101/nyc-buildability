@@ -1,0 +1,74 @@
+{
+  "task_id": "M0-T040",
+  "title": "Phase 2: authority policy simplification - Tier A/B/C/D, ADR-006, policy tests (AD-006..AD-010)",
+  "task_type": "governance",
+  "milestone_id": "M0",
+  "objective": "Replace the per-merge owner-queue posture for ordinary work with the D-010 Section 5 tier model: author ADR-006 (superseding the ADR-005 merge posture while keeping orchestrator-only CLI/git authority), update CLAUDE.md and .claude/rules/project-control.md, record the D-004-R721 supersession for Tier A, encode the G6 engineering-vs-publication split (AD-061..AD-063), add deterministic policy tests for every tier, and replay the PRs 143-146 allowlist incident under the new policy.",
+  "business_reason": "D-010 Section 5 verbatim: replace the owner-approves-nearly-every-merge posture; AD-006..AD-010 and AD-061..AD-063 are explicit directive requirements.",
+  "inputs": [
+    "D-010 source-001 Sections 5, 6, 20",
+    "docs/adr/ (ADR-005)",
+    "merge-queue incident history (PRs 143-146)"
+  ],
+  "outputs": [
+    "docs/adr/ADR-006-autonomy-tiers.md",
+    "tools/test_authority_policy.py",
+    "updated CLAUDE.md/rules/protocol docs"
+  ],
+  "dependencies": [
+    "M0-T039"
+  ],
+  "allowed_paths": [
+    "docs/adr/ADR-006-autonomy-tiers.md",
+    "CLAUDE.md",
+    ".claude/rules/project-control.md",
+    "docs/PROJECT_CONTROL_PROTOCOL.md",
+    "docs/GATES_AND_CHECKPOINTS.md",
+    "tools/test_authority_policy.py",
+    "project-control/reports/M0-T040-producer-report.md",
+    "project-control/tasks/M0-T040.json"
+  ],
+  "forbidden_paths": [
+    "tools/project_control.py (behavioral CLI changes require a dedicated defect-lane task)",
+    "tools/agent_supervisor/",
+    "apps/",
+    "services/",
+    ".github/workflows/"
+  ],
+  "acceptance_scenarios": [
+    "AS-1 (executable): ADR-006 defines Tiers A-D exactly per D-010 Section 5, records the D-004-R721 supersession for Tier A ordinary merges, keeps orchestrator-only CLI/git authority (ADR-005 core), and preserves every Section 5.4 hard-deny item and Section 20 hard stop.",
+    "AS-2 (executable): tools/test_authority_policy.py encodes the full tier table deterministically - every Tier A action allowed-after-checks, every Tier B class bound to its required specialist review, Tier C queue-and-continue, every Tier D item hard-deny - and the suite is green.",
+    "AS-3 (executable): the PRs 143-146 allowlist incident replayed under the new policy yields queue-for-specialist-review, never silent merge (regression test present and green).",
+    "AS-4 (executable): CLAUDE.md/rules diffs leave no passage requiring owner approval for ordinary Tier A work; the G6 engineering-acceptance vs publication split (AD-061..AD-063) is recorded; the diff weakens no Tier D item and does not touch the R595 prerequisite (D-010-R104)."
+  ],
+  "required_gates": [
+    "G0",
+    "G2",
+    "G3",
+    "G5"
+  ],
+  "producer_agent": null,
+  "reviewer_agents": [
+    "code-reviewer",
+    "security-reviewer",
+    "control-plane-verifier",
+    "directive-compliance-verifier"
+  ],
+  "status": "backlog",
+  "progress_percent": 0,
+  "risks": [
+    "Policy text must not drift from D-010 verbatim tiers - reviewer checks quote fidelity.",
+    "CLAUDE.md is a governance path: claim requires the cited governance directive (D-010, satisfied)."
+  ],
+  "blockers": [],
+  "created_at": "2026-08-07T01:32:33.917997+00:00",
+  "updated_at": "2026-08-07T01:36:53+00:00",
+  "directive_refs": [
+    {
+      "directive_id": "D-010",
+      "requirement_ids": "ALL"
+    }
+  ],
+  "directive_regime_version": "1.0",
+  "directive_regime_entered_at": "2026-08-07T01:32:33.917997+00:00"
+}

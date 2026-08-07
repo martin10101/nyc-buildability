@@ -32,7 +32,17 @@
  ],
  "supersedes": [],
  "superseded_by": null,
- "affected_tasks": [],
+ "affected_tasks": [
+  "M0-T037",
+  "M0-T038",
+  "M0-T039",
+  "M0-T040",
+  "M0-T041",
+  "M0-T042",
+  "M0-T043",
+  "M0-T044",
+  "M0-T045"
+ ],
  "affected_prs": [],
  "affected_branches": [
   "control/D-010-autonomous-engineering-capture"
@@ -60,7 +70,17 @@
  "requirements_content_digest_sha256": "91b745e81b9bbaae6cd1a6e11cce41daa04e3244663702ae05c35558a0a7c6ff",
  "requirements_id_digest_sha256": "162f89306847a46bad6f8c7a99373df57cf11113809825620e60e2b3143278f2",
  "enforcement_pointers": {
-  "tasks": [],
+  "tasks": [
+   "M0-T037",
+   "M0-T038",
+   "M0-T039",
+   "M0-T040",
+   "M0-T041",
+   "M0-T042",
+   "M0-T043",
+   "M0-T044",
+   "M0-T045"
+  ],
   "gates": [],
   "blockers": [],
   "rules": [
@@ -188,7 +208,7 @@
   "D-010-R110"
  ],
  "created_at": "2026-08-07T01:09:55+00:00",
- "updated_at": "2026-08-07T01:25:44+00:00",
+ "updated_at": "2026-08-07T01:36:53+00:00",
  "audit_log": [
   {
    "at": "2026-08-07T01:09:55+00:00",
@@ -199,6 +219,11 @@
    "at": "2026-08-07T01:25:44+00:00",
    "by": "orchestrator",
    "note": "Independent capture-fidelity verification by directive-compliance-verifier at frozen head c0516f37effb7d76d43e87a78acf54feb022bed3: VERDICT PASS (all 8 checks on reproduced primary evidence; findings F1-F4 all NON-BLOCKING). Verbatim verdict preserved at project-control/reports/D-010-capture-verification.md. F1 dispositioned from the directive verbatim text (Section 5 opening + Section 0 item 4 + AD-006 + R107): D-004-R721 per-merge owner queue is superseded for ordinary Tier A work; Tier B/D and R595 (R104) unchanged. F3: index.json updated_at bumped. Per D-010-R101 this project-control copy is now AUTHORITATIVE; the .claude intake file is retained until a dedicated cleanup decision."
+  },
+  {
+   "at": "2026-08-07T01:36:53+00:00",
+   "by": "orchestrator",
+   "note": "D-010 task architecture contracted on branch control/D-010-task-architecture: parent initiative M0-T037 + bounded dependency-ordered wave-1 tasks M0-T038..M0-T045 (minimum-autonomy lane per Section 0A.8), with the non-blocking supervisor backlog and NYC product lanes registered in project-control/reports/D-010-INITIATIVE-PLAN.md (D-010-R102/R103). Requirement bodies unchanged (digests intact); tasks bind via directive_refs."
   }
  ]
 }
