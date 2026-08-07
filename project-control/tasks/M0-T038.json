@@ -41,14 +41,14 @@
     "code-reviewer",
     "directive-compliance-verifier"
   ],
-  "status": "awaiting_gate",
-  "progress_percent": 95,
+  "status": "accepted",
+  "progress_percent": 100,
   "risks": [
     "The primary checkout's uncommitted diff is the only copy until this task lands - do not clean/reset the primary working tree before acceptance."
   ],
   "blockers": [],
   "created_at": "2026-08-07T01:32:33.388907+00:00",
-  "updated_at": "2026-08-07T02:05:49.595951+00:00",
+  "updated_at": "2026-08-07T02:07:28.709803+00:00",
   "directive_refs": [
     {
       "directive_id": "D-010",
@@ -90,5 +90,7 @@
       "status": "self_check",
       "message": "Rework self-check: corrected token resolves via git rev-parse; diff otherwise unchanged"
     }
-  ]
+  ],
+  "accepted_by": "orchestrator",
+  "accepted_at": "2026-08-07T02:07:28.709803+00:00"
 }
