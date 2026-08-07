@@ -44,10 +44,10 @@
      "note": "Holds under rework: corrections/continuation handled without stopping, exactly as R107 requires."
     }
    ],
-   "reviewed_sha": "b9e710aa4b18c13e547078251a8f88fa4f67d461",
+   "reviewed_sha": "7af77d22ebbc783d2a2b83e172e44c6010963218",
    "reviewed_manifest_sha256": "090ad4208921069e83087500facedad6ac4856671b580f6a3eafcd0862d8ac6c",
    "verified_at": "2026-08-07T02:06:10+00:00",
-   "note": "FINAL record (supersedes preserved first-pass FAIL, M0-T038-dcv-first-pass.md). Full verbatim verdict: project-control/reports/M0-T038-dcv-final.md."
+   "note": "FINAL record (supersedes preserved first-pass FAIL, M0-T038-dcv-first-pass.md). Full verbatim verdict: project-control/reports/M0-T038-dcv-final.md. Commit-stamp note: the verifier examined the content at commit b9e710a (identity 090ad420...); the only allowed-path changes since are non-material ledger lifecycle writes (G2/G3 gate records at 7af77d2), and the CLI confirms the material identity is unchanged at 7af77d2 (same content_manifest_sha256). reviewed_sha stamped at the current resolved commit accordingly."
   },
   {
    "task_id": "M0-T039",
@@ -127,5 +127,5 @@
    "note": "pending: placeholder at task contracting; the applicable set and per-requirement rows are produced by the independent verifier at this task gates/accept (fail-closed at accept)."
   }
  ],
- "updated_at": "2026-08-07T02:06:10+00:00"
+ "updated_at": "2026-08-07T02:07:00+00:00"
 }
