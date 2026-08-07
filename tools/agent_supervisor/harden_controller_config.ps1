@@ -73,6 +73,14 @@ param(
 
 $ErrorActionPreference = "Stop"
 
+# G5 L-2: resolve the trusted tools by ABSOLUTE System32 path. Invoking `icacls`/
+# `takeown` by bare name would let CreateProcess resolve them through the CWD (or a
+# tampered PATH) before System32 - a hijack vector even under elevation. Bind them
+# to System32 explicitly.
+$System32 = Join-Path $env:SystemRoot "System32"
+$Icacls = Join-Path $System32 "icacls.exe"
+$Takeown = Join-Path $System32 "takeown.exe"
+
 function Test-IsElevated {
     $identity = [Security.Principal.WindowsIdentity]::GetCurrent()
     $principal = New-Object Security.Principal.WindowsPrincipal($identity)
@@ -118,14 +126,14 @@ Write-Host ""
 if ($Rollback) {
     Write-Host "=== ROLLBACK: restoring inheritance + user Modify ==="
     # Re-enable inheritance and give the user Modify back on both objects.
-    Invoke-Step "icacls" @($file, "/inheritance:e")
-    Invoke-Step "icacls" @($file, "/grant", "$UnelevatedUser:(M)")
-    Invoke-Step "icacls" @($dir, "/inheritance:e")
-    Invoke-Step "icacls" @($dir, "/grant", "$UnelevatedUser:(M)")
+    Invoke-Step $Icacls @($file, "/inheritance:e")
+    Invoke-Step $Icacls @($file, "/grant", "$UnelevatedUser:(M)")
+    Invoke-Step $Icacls @($dir, "/inheritance:e")
+    Invoke-Step $Icacls @($dir, "/grant", "$UnelevatedUser:(M)")
     Write-Host ""
     Write-Host "=== resulting ACLs ==="
-    Invoke-Step "icacls" @($file)
-    Invoke-Step "icacls" @($dir)
+    Invoke-Step $Icacls @($file)
+    Invoke-Step $Icacls @($dir)
     Write-Host ""
     Write-Host "rollback complete: the prior single-account-writable posture is restored."
     exit 0
@@ -134,13 +142,13 @@ if ($Rollback) {
 Write-Host "=== APPLY: Administrators owns; unelevated user READ+EXECUTE only ==="
 
 # 1) Ownership -> Administrators group (/A) for both the file and its parent.
-Invoke-Step "takeown" @("/F", $file, "/A")
-Invoke-Step "takeown" @("/F", $dir, "/A")
+Invoke-Step $Takeown @("/F", $file, "/A")
+Invoke-Step $Takeown @("/F", $dir, "/A")
 
 # 2) File: strip inheritance, then explicit ACL. /grant:r REPLACES any existing
 #    grant for the principal, so re-running is idempotent.
-Invoke-Step "icacls" @($file, "/inheritance:r")
-Invoke-Step "icacls" @($file, "/grant:r",
+Invoke-Step $Icacls @($file, "/inheritance:r")
+Invoke-Step $Icacls @($file, "/grant:r",
     "BUILTIN\Administrators:(F)",
     "NT AUTHORITY\SYSTEM:(F)",
     "$UnelevatedUser:(RX)")
@@ -150,16 +158,16 @@ Invoke-Step "icacls" @($file, "/grant:r",
 #    WriteOwner), which blocks delete/rename/replace of the config and dropping a
 #    sibling to bypass. Administrators/SYSTEM keep full control with (OI)(CI) so
 #    future contents inherit their control, not the user's.
-Invoke-Step "icacls" @($dir, "/inheritance:r")
-Invoke-Step "icacls" @($dir, "/grant:r",
+Invoke-Step $Icacls @($dir, "/inheritance:r")
+Invoke-Step $Icacls @($dir, "/grant:r",
     "BUILTIN\Administrators:(OI)(CI)(F)",
     "NT AUTHORITY\SYSTEM:(OI)(CI)(F)",
     "$UnelevatedUser:(RX)")
 
 Write-Host ""
 Write-Host "=== resulting ACLs (verify the unelevated user shows only (RX)) ==="
-Invoke-Step "icacls" @($file)
-Invoke-Step "icacls" @($dir)
+Invoke-Step $Icacls @($file)
+Invoke-Step $Icacls @($dir)
 
 Write-Host ""
 Write-Host ("apply complete. Verify from an UNELEVATED shell that the OS-ACL verdict is " +

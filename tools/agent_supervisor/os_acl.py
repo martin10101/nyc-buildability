@@ -53,29 +53,30 @@ UNKNOWN = "UNKNOWN"  # fail-closed: never read as protected
 #: ambiguous state, not a pass: it times out and fails closed.
 PROBE_TIMEOUT_SECONDS = 20.0
 
-#: icacls permission codes that let a principal MODIFY / overwrite / delete /
-#: rename-or-replace (via the parent) / change the ACL / take ownership. Presence
-#: of ANY of these for a non-elevated principal means the boundary is not held.
-DANGEROUS_RIGHTS: frozenset[str] = frozenset({
-    "F",    # full control
-    "M",    # modify
-    "W",    # write
-    "D",    # delete
-    "DE",   # delete
-    "WDAC",  # write DAC (change permissions)
-    "WO",   # write owner (take ownership)
-    "WD",   # write data / add file
-    "AD",   # append data / add subdirectory
-    "DC",   # delete child (rename/replace a file within a directory)
-    "WEA",  # write extended attributes
-    "WA",   # write attributes
-    "GW",   # generic write
-    "GA",   # generic all
+#: The ONLY icacls permission codes an unelevated principal may hold without
+#: weakening the boundary: pure read/execute/list rights. This is a SAFE-SUBSET
+#: allowlist (G3 S3-1): rather than enumerate every dangerous code (and risk an
+#: unknown/new code slipping through as "safe"), any non-inheritance right token
+#: NOT in this set is treated as DANGEROUS and fails TOWARD NOT_PROTECTED. So an
+#: unrecognised, malformed, or newly-introduced token can never read as safe.
+READ_ONLY_RIGHTS: frozenset[str] = frozenset({
+    "R",    # read (simple)
+    "RX",   # read and execute (simple)
+    "RD",   # read data / list directory
+    "REA",  # read extended attributes
+    "RA",   # read attributes
+    "RC",   # read control (read the DACL)
+    "X",    # execute / traverse
+    "S",    # synchronize
+    "GR",   # generic read
+    "GE",   # generic execute
+    "L",    # list (directory)
 })
 
-#: Read/execute codes that are ALLOWED for the unelevated process (it may READ).
-READ_ONLY_RIGHTS: frozenset[str] = frozenset({
-    "R", "RX", "RC", "RD", "REA", "RA", "X", "S", "GR", "GE", "L", "Rc",
+#: Illustrative only (NOT the gate): codes known to grant modify/delete/rename/
+#: change-ACL/take-ownership. The gate is the READ_ONLY_RIGHTS safe subset above.
+DANGEROUS_RIGHTS: frozenset[str] = frozenset({
+    "F", "M", "W", "D", "DE", "WDAC", "WO", "WD", "AD", "DC", "WEA", "WA", "GW", "GA",
 })
 
 #: icacls inheritance/scope flags - NOT rights. `IO` (inherit-only) means the ACE
@@ -110,7 +111,10 @@ class AceEntry:
 
     @property
     def dangerous_rights(self) -> frozenset[str]:
-        return self.rights & DANGEROUS_RIGHTS
+        # Safe-subset rule (G3 S3-1): any right token that is not a recognised
+        # read/execute/list code is dangerous - an unknown token fails toward
+        # NOT_PROTECTED. `rights` already excludes inheritance/scope flags.
+        return frozenset(r for r in self.rights if r not in READ_ONLY_RIGHTS)
 
 
 @dataclasses.dataclass(frozen=True)
@@ -248,16 +252,31 @@ def evaluate_acl_entries(entries: list[AceEntry], *, target: str,
 # -- live inspection + bounded probe ----------------------------------------
 
 
+def _system32(exe: str) -> str:
+    """Absolute path to a System32 executable.
+
+    G5 C1 (MEDIUM M-2): invoking `icacls`/`powershell` by BARE NAME lets Windows
+    `CreateProcess` resolve them through the process CWD before System32, so an
+    unelevated attacker who can write the supervisor's CWD could plant a fake
+    `icacls.exe` and SPOOF a clean ACL into a false PROTECTED (the parent verdict
+    is ACL-only, with no write probe to corroborate). Resolving the absolute
+    System32 path removes that CWD-hijack vector.
+    """
+    root = os.environ.get("SystemRoot", r"C:\Windows")
+    return os.path.join(root, "System32", exe)
+
+
 def _run_icacls(path: pathlib.Path) -> tuple[str, str]:
-    """Run `icacls <path>`; `(stdout, error)`. Any failure is a fail-closed error."""
+    """Run icacls (ABSOLUTE System32 path) on `path`; `(stdout, error)`. Any
+    failure is a fail-closed error."""
     try:
         proc = subprocess.run(
-            ["icacls", str(path)],
+            [_system32("icacls.exe"), str(path)],
             capture_output=True, text=True, timeout=PROBE_TIMEOUT_SECONDS,
             check=False,
         )
     except FileNotFoundError:
-        return "", "icacls not found (not a Windows platform, or PATH stripped)"
+        return "", "icacls not found (not a Windows platform, or System32 missing)"
     except subprocess.TimeoutExpired:
         return "", "icacls timed out"
     except OSError as exc:  # pragma: no cover - defensive
@@ -266,6 +285,70 @@ def _run_icacls(path: pathlib.Path) -> tuple[str, str]:
         detail = (proc.stderr or proc.stdout or "").strip().splitlines()
         return "", f"icacls exit {proc.returncode}: {detail[0] if detail else 'no detail'}"
     return proc.stdout, ""
+
+
+def _query_owner(path: pathlib.Path) -> tuple[str, str]:
+    """Query the OWNER of `path` via Get-Acl (ABSOLUTE System32 powershell path);
+    `(owner, error)`. Read-only and bounded; any failure is a fail-closed error.
+
+    G5 L-1: a clean DACL is not sufficient. If the FILE or PARENT owner is a
+    non-elevated principal, that owner retains implicit WRITE_DAC/WRITE_OWNER and
+    can silently re-grant itself write - so a user-owner defeats the boundary even
+    with a read-only DACL. The verdict must therefore also assert an elevated owner.
+    """
+    ps = _system32(os.path.join("WindowsPowerShell", "v1.0", "powershell.exe"))
+    literal = str(path).replace("'", "''")  # single-quote escape for PowerShell
+    try:
+        proc = subprocess.run(
+            [ps, "-NoProfile", "-NonInteractive", "-Command",
+             f"(Get-Acl -LiteralPath '{literal}').Owner"],
+            capture_output=True, text=True, timeout=PROBE_TIMEOUT_SECONDS,
+            check=False,
+        )
+    except FileNotFoundError:
+        return "", "powershell not found (not a Windows platform, or System32 missing)"
+    except subprocess.TimeoutExpired:
+        return "", "owner query timed out"
+    except OSError as exc:  # pragma: no cover - defensive
+        return "", f"owner query could not run: {exc}"
+    if proc.returncode != 0:
+        detail = (proc.stderr or proc.stdout or "").strip().splitlines()
+        return "", f"owner query exit {proc.returncode}: {detail[0] if detail else 'no detail'}"
+    owner = proc.stdout.strip()
+    if not owner:
+        return "", "owner query returned an empty owner"
+    return owner, ""
+
+
+def _owner_is_elevated(owner: str) -> bool:
+    return owner.strip().upper() in ELEVATED_PRINCIPALS
+
+
+def _confirm_owner_elevated(path: pathlib.Path, target: str, kind: str,
+                            protected: AclVerdict, ev: dict[str, Any]) -> AclVerdict:
+    """Downgrade a PROTECTED-candidate verdict unless the owner is elevated
+    (G5 L-1). Owner-query error -> fail-closed UNKNOWN; non-elevated owner ->
+    NOT_PROTECTED; elevated owner -> PROTECTED confirmed."""
+    owner, oerr = _query_owner(path)
+    ev = dict(ev)
+    ev["owner"] = owner or None
+    if oerr:
+        return _unknown(target, kind,
+                        f"the {kind} DACL is clean but the OWNER could not be "
+                        f"established ({oerr}); failing closed - a clean DACL under an "
+                        f"unknown owner is not proof of protection", ev)
+    if not _owner_is_elevated(owner):
+        return AclVerdict(
+            NOT_PROTECTED, target, kind,
+            protected.reasons + (
+                f"the {kind} is OWNED by {owner!r}, a non-elevated principal, which "
+                f"retains implicit WRITE_DAC/WRITE_OWNER and can re-grant write; owner "
+                f"must be Administrators/SYSTEM",),
+            ev)
+    return AclVerdict(
+        PROTECTED, target, kind,
+        protected.reasons + (f"the {kind} is owned by the elevated principal {owner!r}",),
+        ev)
 
 
 def probe_write_open(path: pathlib.Path) -> str:
@@ -333,11 +416,13 @@ def evaluate_file(path: str | os.PathLike[str]) -> AclVerdict:
     # probe == "denied": require the ACL to ALSO be clean for PROTECTED.
     if acl_verdict.state != PROTECTED:
         return dataclasses.replace(acl_verdict, evidence=ev)
-    return AclVerdict(
+    candidate = AclVerdict(
         PROTECTED, target, "file",
         acl_verdict.reasons + (
             "an unelevated open-for-write was DENIED, corroborating the ACL",),
         ev)
+    # G5 L-1: a clean DACL is not enough - the owner must be elevated too.
+    return _confirm_owner_elevated(p, target, "file", candidate, ev)
 
 
 def evaluate_directory(path: str | os.PathLike[str]) -> AclVerdict:
@@ -361,7 +446,13 @@ def evaluate_directory(path: str | os.PathLike[str]) -> AclVerdict:
     if perr:
         return _unknown(target, "directory", f"ACL output ambiguous: {perr}",
                         {"raw": output})
-    return evaluate_acl_entries(entries, target=target, kind="directory")
+    acl_verdict = evaluate_acl_entries(entries, target=target, kind="directory")
+    if acl_verdict.state != PROTECTED:
+        return acl_verdict
+    # G5 L-1: a clean directory DACL is not enough - the owner must be elevated
+    # (a user-owner retains WRITE_DAC and can re-open the container).
+    return _confirm_owner_elevated(p, target, "directory", acl_verdict,
+                                   acl_verdict.evidence)
 
 
 def _combine(file_v: AclVerdict, parent_v: AclVerdict) -> str:

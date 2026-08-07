@@ -214,6 +214,21 @@ class VerdictLogicTests(unittest.TestCase):
                           target=r"C:\controller\config.toml", kind="file"),
             NOT_PROTECTED)
 
+    def test_unrecognised_token_fails_toward_not_protected(self) -> None:
+        """G3 S3-1: the gate is a SAFE-SUBSET allowlist, so an unknown/new right
+        token (here `ZZ`) held by an unelevated principal counts as dangerous and
+        fails toward NOT_PROTECTED - it can never slip through as 'safe'."""
+        unknown = (
+            r"C:\controller\config.toml BUILTIN\Administrators:(F)" "\n"
+            r"                          NT AUTHORITY\SYSTEM:(F)" "\n"
+            r"                          DESKTOP-ABC\owner:(RX,ZZ)" "\n"
+            "\n"
+            "Successfully processed 1 files; Failed processing 0 files\n"
+        )
+        self.assertEqual(
+            self._verdict(unknown, target=r"C:\controller\config.toml", kind="file"),
+            NOT_PROTECTED)
+
 
 class FailClosedTests(unittest.TestCase):
     """Every ambiguity/error path yields UNKNOWN, and UNKNOWN never reads protected."""
@@ -289,6 +304,111 @@ class FailClosedTests(unittest.TestCase):
         finally:
             os_acl.evaluate_file = orig
             os_acl.evaluate_directory = orig_dir
+        self.assertEqual(v.state, UNKNOWN)
+        self.assertFalse(v.is_protected())
+
+
+class AbsoluteToolPathTests(unittest.TestCase):
+    """G5 C1 (MEDIUM M-2): the ACL tools are invoked by ABSOLUTE System32 path, not
+    a bare name that CreateProcess could resolve through the attacker-writable CWD."""
+
+    def test_run_icacls_uses_absolute_system32_path(self) -> None:
+        captured: dict[str, list[str]] = {}
+
+        class _Result:
+            returncode = 0
+            stdout = PROTECTED_FILE_ICACLS
+            stderr = ""
+
+        orig = os_acl.subprocess.run
+        os_acl.subprocess.run = lambda argv, **kw: (
+            captured.__setitem__("argv", argv) or _Result())
+        try:
+            os_acl._run_icacls(pathlib.Path(r"C:\controller\config.toml"))
+        finally:
+            os_acl.subprocess.run = orig
+        argv0 = captured["argv"][0]
+        self.assertTrue(os.path.isabs(argv0), argv0)
+        self.assertTrue(argv0.lower().replace("/", "\\").endswith(
+            r"\system32\icacls.exe"), argv0)
+        # It resolves under SystemRoot (default C:\Windows when unset).
+        root = os.environ.get("SystemRoot", r"C:\Windows").lower()
+        self.assertTrue(argv0.lower().startswith(root), argv0)
+
+    def test_query_owner_uses_absolute_system32_powershell(self) -> None:
+        captured: dict[str, list[str]] = {}
+
+        class _Result:
+            returncode = 0
+            stdout = "BUILTIN\\Administrators\n"
+            stderr = ""
+
+        orig = os_acl.subprocess.run
+        os_acl.subprocess.run = lambda argv, **kw: (
+            captured.__setitem__("argv", argv) or _Result())
+        try:
+            owner, err = os_acl._query_owner(pathlib.Path(r"C:\controller\config.toml"))
+        finally:
+            os_acl.subprocess.run = orig
+        self.assertEqual(err, "")
+        self.assertEqual(owner, "BUILTIN\\Administrators")
+        argv0 = captured["argv"][0]
+        self.assertTrue(os.path.isabs(argv0), argv0)
+        self.assertIn(r"\system32\windowspowershell\v1.0\powershell.exe",
+                      argv0.lower().replace("/", "\\"))
+
+
+class OwnerVerdictTests(unittest.TestCase):
+    """G5 L-1: a clean DACL is not proof - the OWNER must be elevated, else the
+    owner retains implicit WRITE_DAC and can re-grant write."""
+
+    def setUp(self) -> None:
+        self._tmp = tempfile.TemporaryDirectory()
+        self.addCleanup(self._tmp.cleanup)
+        self.cfg = pathlib.Path(self._tmp.name) / "config.toml"
+        self.cfg.write_text("[controller]\n", encoding="utf-8")
+
+    def _protected_output(self) -> str:
+        # A clean DACL whose first-line path matches the real target, so the
+        # parser strips it correctly and the DACL reads PROTECTED.
+        return (
+            f"{self.cfg} BUILTIN\\Administrators:(F)\n"
+            r"                          NT AUTHORITY\SYSTEM:(F)" "\n"
+            r"                          DESKTOP-ABC\owner:(RX)" "\n"
+            "\n"
+            "Successfully processed 1 files; Failed processing 0 files\n"
+        )
+
+    def _evaluate_with(self, owner_result):
+        orig_run = os_acl._run_icacls
+        orig_probe = os_acl.probe_write_open
+        orig_owner = os_acl._query_owner
+        orig_platform = sys.platform
+        os_acl._run_icacls = lambda p: (self._protected_output(), "")
+        os_acl.probe_write_open = lambda p: "denied"
+        os_acl._query_owner = lambda p: owner_result
+        # evaluate_file guards on sys.platform; force the Windows path.
+        os_acl.sys.platform = "win32"
+        try:
+            return evaluate_file(self.cfg)
+        finally:
+            os_acl._run_icacls = orig_run
+            os_acl.probe_write_open = orig_probe
+            os_acl._query_owner = orig_owner
+            os_acl.sys.platform = orig_platform
+
+    def test_elevated_owner_plus_clean_dacl_is_protected(self) -> None:
+        v = self._evaluate_with(("BUILTIN\\Administrators", ""))
+        self.assertEqual(v.state, PROTECTED)
+        self.assertTrue(v.is_protected())
+
+    def test_user_owner_plus_clean_dacl_is_not_protected(self) -> None:
+        v = self._evaluate_with(("DESKTOP-ABC\\owner", ""))
+        self.assertEqual(v.state, NOT_PROTECTED)
+        self.assertIn("owner", v.evidence)
+
+    def test_owner_query_error_fails_closed_unknown(self) -> None:
+        v = self._evaluate_with(("", "owner query exit 1: access denied"))
         self.assertEqual(v.state, UNKNOWN)
         self.assertFalse(v.is_protected())
 

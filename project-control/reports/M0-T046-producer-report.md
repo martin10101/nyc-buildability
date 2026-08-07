@@ -227,3 +227,63 @@ python -m tools.agent_supervisor doctor --config "<ABSOLUTE PATH TO config.toml>
 4. **AS text unavailable** (see the AS map note): `M0-T046.json` is absent from the worktree.
 5. **No ledger/git/gh actions taken** (ADR-005): the orchestrator records the transition and
    integrates.
+
+---
+
+## Rework increment (G5 C1 + hardening)
+
+Gate results on the first increment: G3 PASS, G4 PASS (no corrections), G5 PASS with one blocking
+correction (C1) plus recommended hardening. Applied exactly the coordinator's list; SCOPE-1 code
+(loop.py/cli.py binding) deliberately untouched (G5 C2 is an owner decision at activation time).
+
+**C1 (MANDATORY, G5 M-2 — blocks acceptance).** `os_acl.py` invoked the ACL tools by BARE NAME, so
+Windows `CreateProcess` could resolve a planted `icacls.exe`/`powershell.exe` from the
+attacker-writable CWD before System32 and spoof a clean parent ACL into a false PROTECTED. Fixed:
+`_system32(exe)` (os_acl.py:255-266) resolves `%SystemRoot%\System32\<exe>`; `_run_icacls`
+(os_acl.py:269) now calls `_system32("icacls.exe")`; the new owner query uses the absolute
+System32 `powershell.exe`. Tests: `AbsoluteToolPathTests.test_run_icacls_uses_absolute_system32_path`
+and `test_query_owner_uses_absolute_system32_powershell` (monkeypatch `subprocess.run`, assert
+`argv[0]` is the absolute System32 path).
+
+**L-1 (G5, owner check).** A clean DACL is not proof: a non-elevated file/parent OWNER retains
+implicit WRITE_DAC/WRITE_OWNER and can re-grant write. Added `_query_owner` (bounded, read-only
+`Get-Acl ... .Owner` via absolute-path PowerShell), `_owner_is_elevated`, and
+`_confirm_owner_elevated` (os_acl.py:302-360); wired into the PROTECTED path of both `evaluate_file`
+(os_acl.py:~430) and `evaluate_directory` (os_acl.py:~455). Elevated owner + clean DACL → PROTECTED;
+user owner → NOT_PROTECTED; owner-query error → fail-closed UNKNOWN. Tests:
+`OwnerVerdictTests` (3).
+
+**L-2 (G5, script hardening).** `harden_controller_config.ps1` now resolves `icacls`/`takeown` via
+absolute `$env:SystemRoot\System32\...` (`$Icacls`/`$Takeown`, script lines 76-82; all `Invoke-Step`
+calls updated) — defense-in-depth against a tampered PATH under elevation. PowerShell tokenizer
+parse: OK.
+
+**S3-1 (G3, safe-subset inversion).** `os_acl.py` rights gate inverted to an allowlist:
+`AceEntry.dangerous_rights` is now `rights - READ_ONLY_RIGHTS` (os_acl.py:111-116), so any
+unrecognised/new right token fails TOWARD NOT_PROTECTED. `READ_ONLY_RIGHTS` is now the authoritative
+safe subset; `DANGEROUS_RIGHTS` is retained illustratively only. Test:
+`VerdictLogicTests.test_unrecognised_token_fails_toward_not_protected` (`(RX,ZZ)` → NOT_PROTECTED).
+
+**S2-1 (G3, non-adjacent duplicate).** Added
+`ForkIsReported.test_1_non_adjacent_duplicate_is_also_detected`: an earlier sequence re-appearing
+after later records is caught (verify_chain → duplicate_sequence at seq 2, reopened `load_error`,
+append refuses). The `_load_head_from_log` `seen`-set spans the whole file, so this already held;
+the test locks it.
+
+**README nit (G3 S3).** Fixed the garbled Tests-section sentence to "Three of the Phase-4 tests are
+worth explaining:".
+
+**Files changed in this increment:** `tools/agent_supervisor/os_acl.py`,
+`tools/agent_supervisor/harden_controller_config.ps1`, `tools/agent_supervisor/README.md`,
+`tools/test_agent_supervisor_os_acl.py`, `tools/test_agent_supervisor_audit_fork_lock.py`. No
+SCOPE-1/SCOPE-2 production logic changed (SCOPE-2 gained only a test); no other surface widened; no
+dependency added; no forbidden path touched.
+
+**Counts after rework:**
+- `python -m pytest tools/test_agent_supervisor_os_acl.py tools/test_agent_supervisor_audit_fork_lock.py -q` → **38 passed** (os_acl 31, audit_fork_lock 7).
+- FULL suite `python -m pytest tools/test_agent_supervisor_*.py -q` → **1363 passed, 2 skipped**
+  (197.27s), up from 1356 pre-rework; +7 new tests (os_acl +6: 2 abs-path, 3 owner, 1 unknown-token;
+  audit_fork_lock +1 non-adjacent). Zero regressions; the 2 skips are the same POSIX guards.
+
+**Deviation:** none. All six items (C1, L-1, L-2, S3-1, S2-1, README) applied; SCOPE-1 binding code
+untouched per the instruction.

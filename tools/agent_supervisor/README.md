@@ -527,7 +527,7 @@ The last three are M0-T046's pre-activation hardening: park→approve operator-d
 binding (D-010-R124), the emergency-stop audit-fork regression lock
 (D-010-R125/R126), and the controller-config OS-ACL boundary (D-010-R127/R128).
 
-The Phase-4 set. Three of the earlier ones are worth explaining:
+Three of the Phase-4 tests are worth explaining:
 
 * **`invariants`** is a register: each of the fifteen executable invariants in
   the directive has a test whose *name* carries its number, and a meta-test

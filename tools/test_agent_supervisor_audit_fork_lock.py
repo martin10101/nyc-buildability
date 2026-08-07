@@ -101,6 +101,30 @@ class ForkIsReported(_ForkFixture):
         self.assertEqual(verification.code, "duplicate_sequence")
         self.assertEqual(verification.failed_sequence, 5)
 
+    def test_1_non_adjacent_duplicate_is_also_detected(self) -> None:
+        """G3 S2-1: a duplicate that is NOT adjacent to its twin (an EARLIER
+        sequence re-appearing after later records) is still caught - verify_chain
+        reports it, the reopened log records a load_error, and append refuses. The
+        `seen`-set check spans the whole file, not just neighbours."""
+        self._seed(5)
+        records = self._records()
+        dup = dict(records[1])  # sequence 2, re-appended after sequence 5
+        dup["detail"] = {"note": "non-adjacent duplicate"}
+        dup["digest"] = compute_record_digest(dup)
+        records.append(dup)
+        self._write(records)
+
+        log = AuditLog(self.path, fsync=False)
+        verification = log.verify_chain()
+        self.assertFalse(verification.ok)
+        self.assertEqual(verification.code, "duplicate_sequence")
+        self.assertEqual(verification.failed_sequence, 2)
+        self.assertIsNotNone(log.load_error)
+        self.assertEqual(log.load_error.code, "duplicate_sequence")
+        with self.assertRaises(AuditChainError) as ctx:
+            log.append("probe", run_id="run-estop")
+        self.assertEqual(ctx.exception.code, "append_to_damaged_chain")
+
 
 class FailsClosed(_ForkFixture):
     def test_2_reopen_records_a_load_error_and_append_refuses(self) -> None:
