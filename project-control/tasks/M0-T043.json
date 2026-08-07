@@ -48,14 +48,14 @@
     "qa-engineer",
     "directive-compliance-verifier"
   ],
-  "status": "awaiting_gate",
+  "status": "rework",
   "progress_percent": 85,
   "risks": [
     "Token estimation is heuristic - record bytes AND estimated tokens; ceilings are engineering policy, not billing claims."
   ],
   "blockers": [],
   "created_at": "2026-08-07T01:32:54.430033+00:00",
-  "updated_at": "2026-08-07T10:13:38.325933+00:00",
+  "updated_at": "2026-08-07T10:24:21.039742+00:00",
   "directive_refs": [
     {
       "directive_id": "D-010",
