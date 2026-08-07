@@ -53,14 +53,14 @@
     "control-plane-verifier",
     "directive-compliance-verifier"
   ],
-  "status": "awaiting_gate",
-  "progress_percent": 95,
+  "status": "accepted",
+  "progress_percent": 100,
   "risks": [
     "All proofs run in dry-run/shadow harness - no live merge occurs before activation (R104)."
   ],
   "blockers": [],
   "created_at": "2026-08-07T01:33:11.425300+00:00",
-  "updated_at": "2026-08-07T12:20:40.480671+00:00",
+  "updated_at": "2026-08-07T12:37:30.571700+00:00",
   "directive_refs": [
     {
       "directive_id": "D-010",
@@ -93,5 +93,7 @@
       "status": "self_check",
       "message": "Producer complete: 57/57 new tests + full supervisor suite 1271/2 (orchestrator re-ran both independently); shadow posture proven (invariant 9 intact); evidence map written"
     }
-  ]
+  ],
+  "accepted_by": "orchestrator",
+  "accepted_at": "2026-08-07T12:37:30.571700+00:00"
 }
