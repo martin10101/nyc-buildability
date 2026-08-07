@@ -1,0 +1,12 @@
+{
+  "task_id": "M0-T039",
+  "gate_id": "G2",
+  "reviewer": "orchestrator",
+  "role": "self_check",
+  "result": "PASS",
+  "report_file": "project-control/reports/M0-T039-supervisor-freeze.md",
+  "reviewed_at": "2026-08-07T02:30:47.169036+00:00",
+  "content_manifest_sha256": "987e4dc7ddb33e021d8a85e83092bf689d008dd484c641fe45abca99966a43fb",
+  "reviewed_sha": "8ca3d2fbd551b05b0d79b177c568c7279f9cd5e2",
+  "updated_at": "2026-08-07T02:30:47.727679+00:00"
+}
