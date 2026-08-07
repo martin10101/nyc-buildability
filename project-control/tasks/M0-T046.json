@@ -63,8 +63,8 @@
     "control-plane-verifier",
     "directive-compliance-verifier"
   ],
-  "status": "in_progress",
-  "progress_percent": 20,
+  "status": "awaiting_gate",
+  "progress_percent": 85,
   "risks": [
     "OS-ACL hardening touches the live owner config path: probes must be bounded and non-destructive (R128); a wrong ACL could lock the OWNER out - the change must be applied via a documented, reversible elevated action and verified before the unelevated probes run.",
     "Estop-fork regression test involves process concurrency - keep it deterministic (inject the fork shape, do not race real processes).",
@@ -72,7 +72,7 @@
   ],
   "blockers": [],
   "created_at": "2026-08-07T20:41:12.063773+00:00",
-  "updated_at": "2026-08-07T20:44:42.416146+00:00",
+  "updated_at": "2026-08-07T21:33:23.918684+00:00",
   "directive_refs": [
     {
       "directive_id": "D-010",
