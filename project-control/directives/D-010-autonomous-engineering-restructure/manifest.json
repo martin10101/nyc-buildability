@@ -1,7 +1,7 @@
 {
  "schema": "directive_manifest/v1",
  "directive_id": "D-010",
- "version": 10,
+ "version": 11,
  "slug": "autonomous-engineering-restructure",
  "title": "Autonomous Engineering Restructure and NYC Buildability Pilot Acceleration (Autonomous Engineering V2)",
  "status": "active",
@@ -81,6 +81,14 @@
    "amends": "source-001.md",
    "recorded_at": "2026-08-07T16:20:58+00:00",
    "content_digest_sha256": "ec34c03e05fb6238b11de89b95330be01af1d9de0e89135560951d2d41fbbb91"
+  },
+  {
+   "file": "source-010-amendment.md",
+   "kind": "amendment",
+   "sequence": 10,
+   "amends": "source-009-amendment.md",
+   "recorded_at": "2026-08-07T16:53:10+00:00",
+   "content_digest_sha256": "736d797b2fb125ac75de8af827a72cd1043352dd859ba89f24ab4e43f5e2d55b"
   }
  ],
  "amendments": [
@@ -91,7 +99,8 @@
   "source-006-amendment.md",
   "source-007-amendment.md",
   "source-008-amendment.md",
-  "source-009-amendment.md"
+  "source-009-amendment.md",
+  "source-010-amendment.md"
  ],
  "supersedes": [],
  "superseded_by": null,
@@ -130,8 +139,8 @@
  "verification_file": "verification.json",
  "final_reviewed_sha": null,
  "final_reviewed_manifest_sha256": null,
- "requirements_content_digest_sha256": "9996ef81e6d89538ac4b85850aec73a15d0b0fad7e39d4d56f1fd0a450b6244a",
- "requirements_id_digest_sha256": "209a93685ce28f26f14e5ea74817dc9159c5211bc467517b3241a66b5af02cb8",
+ "requirements_content_digest_sha256": "2470e454b2135094c2a10e02b41b152c506d03d2484b85f40d79a4747390f0bb",
+ "requirements_id_digest_sha256": "7cf8cd63432e9b69fff426b65d95415398e7308c1ee00d72314dfd46eebde3c8",
  "enforcement_pointers": {
   "tasks": [
    "M0-T037",
@@ -163,7 +172,8 @@
   "Version 7 (session-2 launch amendment): source-006 captures the owner's session-2 launch instruction verbatim (fresh primary orchestrator re-dispatch after the CP-0037 rotation). One new row D-010-R116 (re-dispatch obligation; introduces NO new obligations - confirms R097..R115, holds, SHADOW-ONLY, and the R595 blocking prerequisite unchanged). Existing requirement ids/texts UNCHANGED; id + content digests restamped per c14 amendment mechanics; in-flight task packets M0-T042..M0-T045 directive_refs widened to cover R116.",
   "Version 8 (session-3 launch amendment): source-007 captures the owner's session-3 launch instruction verbatim (fresh primary orchestrator re-dispatch after the CP-0038 rotation). One new row D-010-R117 (re-dispatch obligation; introduces NO new obligations - confirms R097..R116, holds, SHADOW-ONLY, the R595 blocking prerequisite, and the primary-checkout/dormant-batch non-interference rule unchanged). Existing requirement ids/texts UNCHANGED; id + content digests restamped per c14 amendment mechanics; in-flight task packets M0-T043..M0-T045 directive_refs widened to cover R117 (M0-T042 is accepted and immutable).",
   "Version 9 (session-4 launch amendment): source-008 captures the owner's session-4 launch instruction verbatim (fresh primary orchestrator re-dispatch after the CP-0039 rotation). One new row D-010-R118 (re-dispatch obligation; introduces NO new obligations - confirms R097..R117, holds, SHADOW-ONLY, the R595 blocking prerequisite, and the primary-checkout/dormant-batch non-interference rule unchanged). Existing requirement ids/texts UNCHANGED; id + content digests restamped per c14 amendment mechanics; in-flight task packet M0-T045 directive_refs widened to cover R118 (M0-T043/M0-T044 are accepted and immutable).",
-  "Version 10 (R595 rehearsal authorization): source-009 captures the owner's typed authorization verbatim (mid-M0-T045, captured on the task branch per the source-003/M0-T040 precedent). One new row D-010-R119 (classification: authorization) pinning the runbook section-6 agenda decisions: window NOW, GitHub 16.2 leg on M0-T044 evidence, successor resumes the next dependency-valid unit. Activates nothing - SHADOW-ONLY, owner-gated promotion, and the AS-3 claim ceiling unchanged. Existing requirement ids/texts UNCHANGED; id + content digests restamped per c14; M0-T045 directive_refs widened to cover R119."
+  "Version 10 (R595 rehearsal authorization): source-009 captures the owner's typed authorization verbatim (mid-M0-T045, captured on the task branch per the source-003/M0-T040 precedent). One new row D-010-R119 (classification: authorization) pinning the runbook section-6 agenda decisions: window NOW, GitHub 16.2 leg on M0-T044 evidence, successor resumes the next dependency-valid unit. Activates nothing - SHADOW-ONLY, owner-gated promotion, and the AS-3 claim ceiling unchanged. Existing requirement ids/texts UNCHANGED; id + content digests restamped per c14; M0-T045 directive_refs widened to cover R119.",
+  "Version 11 (R595 retry agreement): source-010 captures the owner's same-window retry line verbatim (post-finding R595-F1). Row D-010-R120 (authorization) - the runbook abort-rule's required owner agreement for a same-window re-run + the re-run's provider spend. Digests restamped per c14; M0-T045 refs widened to R120."
  ],
  "locked_requirement_ids": [
   "D-010-R001",
@@ -284,10 +294,11 @@
   "D-010-R116",
   "D-010-R117",
   "D-010-R118",
-  "D-010-R119"
+  "D-010-R119",
+  "D-010-R120"
  ],
  "created_at": "2026-08-07T01:09:55+00:00",
- "updated_at": "2026-08-07T16:20:58+00:00",
+ "updated_at": "2026-08-07T16:53:10+00:00",
  "audit_log": [
   {
    "at": "2026-08-07T01:09:55+00:00",
@@ -348,6 +359,11 @@
    "at": "2026-08-07T16:20:58+00:00",
    "actor": "orchestrator",
    "action": "amendment source-009 recorded (R595 rehearsal authorization); R119 appended; digests restamped"
+  },
+  {
+   "at": "2026-08-07T16:53:10+00:00",
+   "actor": "orchestrator",
+   "action": "amendment source-010 recorded (R595 same-window retry agreement); R120 appended; digests restamped"
   }
  ]
 }
