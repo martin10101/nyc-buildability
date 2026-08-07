@@ -47,22 +47,22 @@
     "G3",
     "G5"
   ],
-  "producer_agent": null,
+  "producer_agent": "backend-engineer",
   "reviewer_agents": [
     "code-reviewer",
     "security-reviewer",
     "control-plane-verifier",
     "directive-compliance-verifier"
   ],
-  "status": "backlog",
-  "progress_percent": 0,
+  "status": "claimed",
+  "progress_percent": 10,
   "risks": [
     "Policy text must not drift from D-010 verbatim tiers - reviewer checks quote fidelity.",
     "CLAUDE.md is a governance path: claim requires the cited governance directive (D-010, satisfied)."
   ],
   "blockers": [],
   "created_at": "2026-08-07T01:32:33.917997+00:00",
-  "updated_at": "2026-08-07T01:36:53+00:00",
+  "updated_at": "2026-08-07T02:42:18.612339+00:00",
   "directive_refs": [
     {
       "directive_id": "D-010",
@@ -70,5 +70,6 @@
     }
   ],
   "directive_regime_version": "1.0",
-  "directive_regime_entered_at": "2026-08-07T01:32:33.917997+00:00"
+  "directive_regime_entered_at": "2026-08-07T01:32:33.917997+00:00",
+  "worktree": "C:/Users/MLFLL/Downloads/nyc-zoning/orch"
 }
