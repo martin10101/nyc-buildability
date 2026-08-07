@@ -1,8 +1,20 @@
 {
-  "schema": "directive_verification/v2",
-  "directive_id": "D-009",
-  "producer": "orchestrator",
-  "authority_note": "Pending independent verification by directive-compliance-verifier (producer != verifier). Verified at M0-T019 gates/accept.",
-  "task_verifications": [],
-  "updated_at": "2026-08-05T03:35:52+00:00"
+ "schema": "directive_verification/v2",
+ "directive_id": "D-009",
+ "producer": "orchestrator",
+ "authority_note": "Pending independent verification by directive-compliance-verifier (producer != verifier). Verified at M0-T019 gates/accept.",
+ "task_verifications": [
+  {
+   "task_id": "M0-T019",
+   "directive_id": "D-009",
+   "producer": "frontend-engineer",
+   "verifier": "directive-compliance-verifier",
+   "applicable_requirement_ids": [],
+   "requirements": [],
+   "reviewed_sha": null,
+   "reviewed_manifest_sha256": null,
+   "note": "pending: placeholder at batch reconciliation (2026-08-07); the applicable set and per-requirement rows are produced by the independent verifier at this task gates/accept (fail-closed at accept)."
+  }
+ ],
+ "updated_at": "2026-08-07T19:25:00+00:00"
 }

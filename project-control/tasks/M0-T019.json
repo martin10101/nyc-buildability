@@ -95,8 +95,8 @@
     "docs/DEPENDENCY_SECURITY_POLICY.md (age exception fields; no advisory waiver)"
   ],
   "created_at": "2026-07-20T08:21:46.465870+00:00",
-  "updated_at": "2026-08-05T22:49:55.077486+00:00",
-  "worktree": "C:/Users/MLFLL/Downloads/nyc-zoning/t19x",
+  "updated_at": "2026-08-07T19:11:46.772583+00:00",
+  "worktree": "C:/Users/MLFLL/Downloads/nyc-zoning/orch (control/D-009-batch-close)",
   "progress_log": [
     {
       "at": "2026-08-05T03:36:57.686605+00:00",
@@ -125,12 +125,32 @@
       "percent": 12,
       "status": "ready",
       "message": "Owner selected Option B (D-009 amendment 1, 2026-08-05): scoped auto-expiring FE-S9 age exception authorized. Resuming for the exception-mechanism increment; B-017 WAIT posture superseded (blocker stays open until regenerated-lock CI evidence). Fresh producer worktree t19x from batch tip e96d718."
+    },
+    {
+      "at": "2026-08-07T19:11:46.189372+00:00",
+      "agent": "orchestrator",
+      "percent": 10,
+      "status": "blocked",
+      "message": "Administrative restamp: D-010 am.11 (R121) added M0-T019 to its applicability; cycling blocked->ready->reclaim to stamp combined directive_refs (D-009:ALL + D-010-R121). No producer work invalidated."
+    },
+    {
+      "at": "2026-08-07T19:11:46.479580+00:00",
+      "agent": "orchestrator",
+      "percent": 10,
+      "status": "ready",
+      "message": "Restamp cycle: ready for reclaim with combined refs"
     }
   ],
   "directive_refs": [
     {
       "directive_id": "D-009",
       "requirement_ids": "ALL"
+    },
+    {
+      "directive_id": "D-010",
+      "requirement_ids": [
+        "D-010-R121"
+      ]
     }
   ],
   "directive_regime_version": "1.0",
