@@ -1,0 +1,18 @@
+{
+  "checkpoint_id": "CP-0037",
+  "timestamp": "2026-08-07T04:57:49.708355+00:00",
+  "commit": "24b0ff697066289d5f4094e65f1fcb94799f893b",
+  "branch": "control/D-010-session-handoff-2026-08-07",
+  "active_milestone": "M4",
+  "summary": "D-010 session rotation at safe seam: capture+verification (PR 155), task architecture (156), applicability amendments (157/v3/v4), M0-T038..M0-T041 accepted+merged (158-161), accepted count 60; SHADOW-ONLY intact, R595 blocking; next unit M0-T042; owner touches: 1 (M0-T040 authorization, D-010 source-003)",
+  "post_accept_verifications_confirmed": {
+    "M0-T027": [
+      "D-004-R389",
+      "D-004-R486",
+      "D-004-R487",
+      "D-004-R488",
+      "D-004-R501"
+    ]
+  },
+  "updated_at": "2026-08-07T04:57:49.717375+00:00"
+}

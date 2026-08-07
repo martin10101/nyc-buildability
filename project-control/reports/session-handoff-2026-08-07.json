@@ -1,0 +1,47 @@
+{
+ "active_children": [],
+ "branch": "control/D-010-session-handoff-2026-08-07",
+ "checkpoint_id": "CP-0037",
+ "completed_units": [
+  "D-010 capture+verify (PR #155, D-010 c0516f3, capture-verification PASS)",
+  "D-010 task architecture M0-T037..M0-T045 (PR #156)",
+  "D-010 v2 applicability binding (PR #157); v3 owner-auth am. source-003 R111/R112; v4 R078/R089->T045",
+  "M0-T038 handoff preservation ACCEPTED (PR #158; G3 D1 catch + preserve-with-correction)",
+  "M0-T039 supervisor freeze ACCEPTED (PR #159; tree e8eeb4fa; suite 1165/1163/0/2)",
+  "M0-T040 ADR-006 autonomy tiers ACCEPTED (PR #160; owner-authorized commit b841b4f; G3+G5sec+DCV pre-merge)",
+  "M0-T041 supervisor gap-closure ACCEPTED (PR #161; suite 1189/1187/0/2; identity 78ed0cc1)"
+ ],
+ "context_telemetry": {
+  "orchestrator_context_est": "~62% of 1M at rotation decision",
+  "rotation_reason": "safe seam after M0-T041 merge; next unit LARGE"
+ },
+ "created_at": "2026-08-07T04:56:33+00:00",
+ "digest": "641b086ed6ec12fb9eff1f46a63c79d5de39654b57defd91583e574e2a211b4b",
+ "evidence_refs": [
+  "project-control/reports/M0-T041-{g3-code-review,g4-qa-review,g5-security,dcv-final}.md",
+  "project-control/reports/M0-T040-{g3-code-review,g5-security,dcv-final}.md"
+ ],
+ "incomplete_unit": null,
+ "known_failures": [],
+ "model": "claude-fable-5",
+ "next_action": "Claim M0-T042 (Codex ephemeral review, deps T041 accepted) on a task branch from origin/main; T043 may run parallel (disjoint paths); then T044, T045 (R595 rehearsal).",
+ "origin_main": "24b0ff697066289d5f4094e65f1fcb94799f893b",
+ "pending_external_effects": [],
+ "pending_reviews": [],
+ "provider": "claude",
+ "quota_telemetry": {
+  "note": "reviewers ran claude-opus-4-8 xhigh (uncommitted primary-checkout pins per standing fallback); orchestrator ran claude-fable-5"
+ },
+ "repo": "martin10101/nyc-buildability",
+ "repo_head": "24b0ff697066289d5f4094e65f1fcb94799f893b",
+ "required_files": [
+  "project-control/reports/D-010-INITIATIVE-PLAN.md",
+  "project-control/reports/M0-T036-ACTIVATION-CHECKLIST.md",
+  "project-control/directives/D-010-autonomous-engineering-restructure/manifest.json"
+ ],
+ "schema_version": "1",
+ "session_id": "session_01SHfJa6hMeWQTqa1XuL7Vcu",
+ "task_digest": null,
+ "task_id": null,
+ "worktree": "C:/Users/MLFLL/Downloads/nyc-zoning/orch"
+}
