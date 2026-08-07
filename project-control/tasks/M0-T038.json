@@ -39,14 +39,14 @@
     "code-reviewer",
     "directive-compliance-verifier"
   ],
-  "status": "self_check",
-  "progress_percent": 90,
+  "status": "awaiting_gate",
+  "progress_percent": 85,
   "risks": [
     "The primary checkout's uncommitted diff is the only copy until this task lands - do not clean/reset the primary working tree before acceptance."
   ],
   "blockers": [],
   "created_at": "2026-08-07T01:32:33.388907+00:00",
-  "updated_at": "2026-08-07T01:52:11.381833+00:00",
+  "updated_at": "2026-08-07T01:52:12.803901+00:00",
   "directive_refs": [
     {
       "directive_id": "D-010",
