@@ -54,13 +54,13 @@
     "directive-compliance-verifier"
   ],
   "status": "awaiting_gate",
-  "progress_percent": 85,
+  "progress_percent": 95,
   "risks": [
     "All proofs run in dry-run/shadow harness - no live merge occurs before activation (R104)."
   ],
   "blockers": [],
   "created_at": "2026-08-07T01:33:11.425300+00:00",
-  "updated_at": "2026-08-07T12:07:45.843875+00:00",
+  "updated_at": "2026-08-07T12:20:40.480671+00:00",
   "directive_refs": [
     {
       "directive_id": "D-010",

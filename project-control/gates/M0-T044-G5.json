@@ -1,0 +1,12 @@
+{
+  "task_id": "M0-T044",
+  "gate_id": "G5",
+  "reviewer": "security-reviewer",
+  "role": "independent_review",
+  "result": "PASS",
+  "report_file": "project-control/reports/M0-T044-g5-security.md",
+  "reviewed_at": "2026-08-07T12:20:40.088756+00:00",
+  "content_manifest_sha256": "16149fc32263f4ed9509e3c15b71f328cc4701b88252c7bf22bbcaff13ac4a59",
+  "reviewed_sha": "cc3d2154c6557621e07a40edb96f7d0944e9b2f1",
+  "updated_at": "2026-08-07T12:20:40.475158+00:00"
+}
