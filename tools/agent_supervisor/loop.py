@@ -633,12 +633,22 @@ def approve_pending_prompt(journal: Any, run_id: str, *, pending: Mapping[str, A
     `consume_pending_prompt` at approval time, which dropped the held prompt
     bytes and the digest, so the resuming process had nothing to forward and the
     loop refused. This keeps the exact held prompt text plus an `approved_digest`
-    binding (the digest of those bytes, frozen at approval time) so the resuming
-    loop can verify integrity and forward once - while STILL removing the
-    `digest` key so every re-approval guard (`not pending.get("digest")`) stays
-    fail-closed. An OLD-shape parked record with no held prompt leaves behind an
-    approved record with no `prompt`/`approved_digest`, which the loop refuses to
-    forward (it never fabricates a prompt).
+    binding so the resuming loop can verify integrity and forward once - while
+    STILL removing the `digest` key so every re-approval guard (`not
+    pending.get("digest")`) stays fail-closed. An OLD-shape parked record with no
+    held prompt leaves behind an approved record with no `prompt`/`approved_digest`,
+    which the loop refuses to forward (it never fabricates a prompt).
+
+    M0-T046 (D-010-R124), G5 LOW-1: the `approved_digest` is NO LONGER re-hashed
+    from whatever bytes are parked AT APPROVAL time. It is bound to the park-time
+    byte anchor (`prompt_bytes_digest`) recorded when the bytes were authentic,
+    and this function REFUSES fail-closed when the parked bytes no longer hash to
+    that anchor. Previously an attacker with journal write who tampered the
+    `prompt` field between park and approval got the tampered bytes forwarded
+    under a self-consistent, freshly re-hashed digest; now the approval binds only
+    bytes that still match the anchor frozen at park. The CLI performs the same
+    check BEFORE it transitions/audits, so in the normal path this is defense in
+    depth; a direct caller still cannot bind unverified bytes.
     """
     prompt = pending.get("prompt")
     record: dict[str, Any] = {
@@ -650,8 +660,23 @@ def approve_pending_prompt(journal: Any, run_id: str, *, pending: Mapping[str, A
         "prior_digest": approval_binding,
     }
     if isinstance(prompt, str) and prompt:
+        anchor = pending.get("prompt_bytes_digest")
+        if not (isinstance(anchor, str) and anchor):
+            raise LoopError(
+                "pending_prompt_unanchored",
+                "the parked prompt carries no park-time byte anchor "
+                "(prompt_bytes_digest); refusing to bind an approval to bytes "
+                "whose integrity was never anchored")
+        if digest_of(prompt) != anchor:
+            raise LoopError(
+                "pending_prompt_tampered",
+                "the parked prompt bytes no longer match the byte anchor frozen "
+                "at park; the held prompt was altered after it was parked. "
+                "Refusing fail-closed: no approval is written")
         record["prompt"] = prompt
-        record["approved_digest"] = digest_of(prompt)
+        # Bind to the park-time anchor (== digest_of(prompt), just verified),
+        # never a fresh re-hash of the current (possibly tampered) bytes.
+        record["approved_digest"] = anchor
     journal.set_state(pending_prompt_key(run_id), record)
 
 
@@ -1737,6 +1762,18 @@ class SupervisedLoop:
         self.journal.set_state(pending_prompt_key(self.run_id),
                                {"cycle": cycle, "digest": prompt_digest,
                                 "prompt": forwarded_prompt,
+                                # M0-T046 (D-010-R124): the byte anchor of the EXACT
+                                # forwarded bytes, frozen here at park time when the
+                                # bytes are authentic. `digest` is the instruction-
+                                # level S13.5 approval binding (timestamp-free); the
+                                # forwarded bytes carry an ephemeral `FORWARDED AT`
+                                # stamp, so their integrity needs its OWN anchor. The
+                                # approval re-verifies the parked bytes against this
+                                # anchor and binds `approved_digest` to it, so a
+                                # journal-write tamper of `prompt` between park and
+                                # approval is caught fail-closed instead of being
+                                # re-hashed into a self-consistent approval.
+                                "prompt_bytes_digest": digest_of(forwarded_prompt),
                                 "reviewed_checkpoint_id":
                                     decision.reviewed_checkpoint_id,
                                 "decision": decision.decision,

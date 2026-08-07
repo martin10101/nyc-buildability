@@ -117,6 +117,7 @@ from .loop import (
     LoopError,
     SupervisedLoop,
     approve_pending_prompt,
+    digest_of,
     effective_model,
 )
 from .locking import SingleInstanceLock, assess as assess_lock, probe_process
@@ -133,6 +134,8 @@ from .model_change_ipc import (
     probe_named_pipe_support,
 )
 from .notifications import NotificationError, build_notification
+from . import os_acl
+from .os_acl import evaluate_controller_config_acl
 from .resource_sampling import ResourceSampler
 from .policy import (
     ASK,
@@ -420,6 +423,40 @@ def _check_manifest(manifest_path: str | None) -> Check:
     return Check("controller_manifest", True,
                  f"{len(manifest['files'])} files verified against "
                  f"{manifest.get('manifest_digest', '')[:16]}...")
+
+
+def _controller_config_acl_posture(config_path: str | None) -> dict[str, Any]:
+    """M0-T046 (D-010-R127/R128): the fail-closed Windows OS-ACL posture of the
+    immutable controller config FILE and its PARENT directory.
+
+    Reported as POSTURE, never a pass/fail check: shadow-mode must not break before
+    the owner runs `harden_controller_config.ps1` under UAC. Activation gating (a
+    separate explicit owner act) reads `protected`, which is True ONLY for a
+    definitive PROTECTED verdict; a missing/ambiguous/UNKNOWN posture is fail-closed
+    and NEVER reads as protected. This surface computes the verdict but changes
+    nothing and never attempts elevation.
+    """
+    if config_path is None:
+        return {
+            "state": "SKIPPED", "protected": False,
+            "note": "no --config supplied; supply it to report the controller-config "
+                    "OS-ACL boundary posture. A skipped posture is not 'protected'.",
+        }
+    try:
+        verdict = evaluate_controller_config_acl(config_path)
+    except Exception as exc:  # noqa: BLE001 - any inspection failure fails closed
+        return {
+            "state": os_acl.UNKNOWN, "protected": False,
+            "note": f"the OS-ACL inspection raised ({exc.__class__.__name__}); failing "
+                    f"closed - an unresolvable posture is never read as protected.",
+        }
+    payload = verdict.to_dict()
+    payload["note"] = (
+        "PROTECTED requires BOTH the file and its parent directory to deny the "
+        "unelevated process modify/delete/rename/replace/change-ACL; run "
+        "tools/agent_supervisor/harden_controller_config.ps1 under UAC to apply."
+    )
+    return payload
 
 
 def _check_config(config_path: str | None, selection_path: str | None) -> list[Check]:
@@ -1226,6 +1263,7 @@ def cmd_doctor(args: argparse.Namespace) -> int:
     checks.extend(_check_config(args.config, args.model_selection))
 
     ok = all(check.ok for check in checks)
+    acl_posture = _controller_config_acl_posture(args.config)
     payload = {
         "command": "doctor",
         "controller_version": CONTROLLER_VERSION,
@@ -1235,6 +1273,13 @@ def cmd_doctor(args: argparse.Namespace) -> int:
         "checkout": str(checkout),
         "ok": ok,
         "checks": [check.to_dict() for check in checks],
+        # M0-T046 (D-010-R127/R128): the controller-config OS-ACL boundary is a
+        # POSTURE reported fail-closed, NOT a pass/fail check - shadow-mode must not
+        # break before the owner runs the elevated hardening. Activation gating (a
+        # separate explicit owner act) reads `protected`, which is True ONLY for a
+        # definitive PROTECTED verdict; a missing/ambiguous/UNKNOWN posture never
+        # reads as protected.
+        "controller_config_acl": acl_posture,
         "limited_auto": "NOT IMPLEMENTED and disabled; activation is a separate explicit "
                         "owner act recorded through directive compliance",
     }
@@ -1245,6 +1290,10 @@ def cmd_doctor(args: argparse.Namespace) -> int:
         print(f"checkout: {checkout}")
         for check in checks:
             print(f"  [{'PASS' if check.ok else 'FAIL'}] {check.name}: {check.detail}")
+        acl_state = acl_posture.get("state", "SKIPPED")
+        print(f"\ncontroller-config OS-ACL posture: {acl_state} "
+              f"(protected={acl_posture.get('protected', False)}; "
+              f"blocks supervised-auto ACTIVATION, not shadow) - {acl_posture.get('note', '')}")
         print(f"\noverall: {'PASS' if ok else 'FAIL'}")
         print("limited-auto: NOT IMPLEMENTED and disabled.")
     return 0 if ok else 1
@@ -1627,12 +1676,51 @@ def cmd_resume_pending_prompt(args: argparse.Namespace) -> int:
             return 1
         recorded = str(pending.get("digest"))
         supplied = str(args.approve_prompt_digest)
+        # M0-T046 (D-010-R124): a malformed operator digest is refused explicitly
+        # before any match, so a blank/whitespace argument can never coincide with
+        # a blank recorded field. (`--approve-prompt-digest` is required by argparse,
+        # so a MISSING digest already exits non-zero before we get here.)
+        if not supplied.strip():
+            print("refusing to resume: --approve-prompt-digest is empty/blank. This "
+                  "command approves ONE exact prompt by its non-empty digest.",
+                  file=sys.stderr)
+            return 1
         if supplied != recorded:
             print("refusing to resume: the supplied --approve-prompt-digest does not "
                   "match the recorded pending prompt. This command approves ONE exact "
                   "prompt by its digest, never a wildcard, and never mutates on a "
                   "mismatch.", file=sys.stderr)
             return 1
+        # M0-T046 (D-010-R124), G5 LOW-1: when the parked record carries the held
+        # prompt BYTES (the cross-process forward shape), re-verify those bytes
+        # against the byte anchor frozen at park BEFORE we transition or audit an
+        # approval. Previously park->approve integrity for the forwarded bytes
+        # rested on the journal-file ACL alone: an attacker with journal write who
+        # tampered `prompt` between park and approval had the tampered bytes
+        # re-hashed into a self-consistent `approved_digest` and forwarded. Now a
+        # tamper of the parked bytes is caught here, fail-closed - no state change,
+        # only a SEALED (hash-chained) refusal record. An OLD-shape record with no
+        # held bytes keeps its prior behaviour (the loop refuses to forward it).
+        held_prompt = pending.get("prompt")
+        if isinstance(held_prompt, str) and held_prompt:
+            anchor = pending.get("prompt_bytes_digest")
+            if not (isinstance(anchor, str) and anchor) or \
+                    digest_of(held_prompt) != anchor:
+                audit.append(
+                    "operator_resume_pending_prompt_refused", run_id=run_id,
+                    input_digest=recorded, decision="refuse",
+                    state_from=WAIT_FOR_OWNER_STATE, state_to=WAIT_FOR_OWNER_STATE,
+                    detail={"operator_initiated": True,
+                            "command": "resume-pending-prompt",
+                            "reason": "prompt_bytes_unanchored_or_tampered",
+                            "cycle": pending.get("cycle")})
+                print("refusing to resume: the parked prompt bytes do not match the "
+                      "byte anchor recorded at park (or no anchor is present). The "
+                      "held prompt was altered after it was parked, or was never "
+                      "anchored. Fail-closed: no approval is recorded and the journal "
+                      "is unchanged; a sealed refusal was written to the audit log.",
+                      file=sys.stderr)
+                return 1
         machine = StateMachine(journal, audit, run_id)
         # Journal-durable transition first (it writes its own state_transition audit
         # event); only then the first-class operator-decision event, so no decision

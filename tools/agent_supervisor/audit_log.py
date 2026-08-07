@@ -118,11 +118,34 @@ class AuditLog:
         return self._prev_digest
 
     def _load_head_from_log(self) -> tuple[int, str]:
-        """Read the log's own tail to resume the chain (no trust in the sidecar)."""
+        """Read the log's own tail to resume the chain (no trust in the sidecar).
+
+        M0-T046 (D-010-R125/R126): a DUPLICATE sequence - the emergency-stop
+        audit-fork shape, where the `emergency-stop` command and the main loop
+        wrote the same sequence concurrently with a shared prev_digest - is
+        detected HERE, at open, and raised so `__init__` records it as a
+        load_error. That makes `append()` REFUSE to extend a forked chain
+        (fail-closed, no silent repair, no hiding), while `verify_chain()` still
+        reports the exact fork (`duplicate_sequence`). The owner ACKNOWLEDGED that
+        an emergency stop may leave the audit log forked/unappendable until an
+        explicit repair; this is where "unappendable until repair" is enforced.
+        The fork itself is a same-machine concurrency race the owner accepted; what
+        is NOT accepted is silently appending onto it as if nothing happened.
+        """
         if not self.path.exists():
             return 0, GENESIS_DIGEST
         last: dict[str, Any] | None = None
+        seen: set[int] = set()
         for record in self._iter_raw():
+            seq = record.get("sequence")
+            if isinstance(seq, int):
+                if seq in seen:
+                    raise AuditChainError(
+                        "duplicate_sequence",
+                        f"sequence {seq} appears more than once; the audit chain is "
+                        f"forked and will not be extended until an explicit repair",
+                        seq)
+                seen.add(seq)
             last = record
         if last is None:
             return 0, GENESIS_DIGEST

@@ -466,6 +466,33 @@ and `process.py` refuses an `--effort` flag like a bypass flag.
 Each provider's list is checked against **itself only**: a Codex model can never
 satisfy a Claude role and vice versa.
 
+### Controller-config OS-ACL boundary (`os_acl.py`, M0-T046)
+
+The manifest/digest gate proves the config *content* is the approved content; it
+does not, by itself, stop an unelevated process from *replacing* the file. The
+owner ruled (D-010-R127/R128) that before supervised-auto activation the ordinary
+unelevated supervisor must be able to **read** the controller config but not
+modify, overwrite, delete, rename, replace, or change ACLs on it — nor bypass it
+through the parent directory — with modification gated behind an elevated (UAC)
+owner action.
+
+* **`os_acl.py`** inspects that boundary from an unelevated process (`icacls`
+  parse + a bounded, non-destructive open-for-write probe that writes no bytes)
+  and returns a single **fail-closed** verdict for the config file *and* its
+  parent directory: `PROTECTED` only when both deny the unelevated process every
+  modify/delete/rename/change-ACL right; otherwise `NOT_PROTECTED`; and `UNKNOWN`
+  on any ambiguity or probe error. **`UNKNOWN` is never read as protected.** It
+  never attempts elevation and never repairs anything.
+* **`doctor --config <path>`** reports the verdict as **posture**, not a pass/fail
+  check: shadow mode is not broken before hardening is applied. Activation gating
+  (a separate explicit owner act) reads `controller_config_acl.protected`, which
+  is true only for a definitive `PROTECTED` verdict.
+* **`harden_controller_config.ps1`** is the elevated apply/rollback the **owner**
+  runs via UAC: it transfers ownership to Administrators, grants the unelevated
+  user Read+Execute only on the file and its parent, is idempotent, and reverses
+  with `-Rollback`. It refuses to run unelevated. Verify the result from an
+  unelevated shell with `doctor --config` (expect `protected: true`).
+
 ---
 
 ## Tests
@@ -491,9 +518,16 @@ python -m unittest tools.test_agent_supervisor_adversarial
 python -m unittest tools.test_agent_supervisor_crash
 python -m unittest tools.test_agent_supervisor_fuzz
 python -m unittest tools.test_agent_supervisor_model_chain
+python -m unittest tools.test_agent_supervisor_park_approve_binding
+python -m unittest tools.test_agent_supervisor_audit_fork_lock
+python -m unittest tools.test_agent_supervisor_os_acl
 ```
 
-The last six are Phase 4's. Three of them are worth explaining:
+The last three are M0-T046's pre-activation hardening: park→approve operator-digest
+binding (D-010-R124), the emergency-stop audit-fork regression lock
+(D-010-R125/R126), and the controller-config OS-ACL boundary (D-010-R127/R128).
+
+The Phase-4 set. Three of the earlier ones are worth explaining:
 
 * **`invariants`** is a register: each of the fifteen executable invariants in
   the directive has a test whose *name* carries its number, and a meta-test
