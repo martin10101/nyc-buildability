@@ -1,0 +1,175 @@
+{
+ "schema": "evidence_map/v1",
+ "task_id": "M0-T041",
+ "producer": "backend-engineer",
+ "requirements": {
+  "D-010-R019": {
+   "summary": "Existing frozen-supervisor capability, confirmed unchanged by this defect-lane task: the 20-module baseline suite (1165/1163/0/2 per the M0-T039 freeze record) covers registries, telemetry separation, thresholds, safe-seam rotation, child lifecycle, provider fallback, emergency stop, and quiescence; this branch re-ran the full suite after the four cited closures with 0 failures (1189/1187/0/2 including 24 new tests).",
+   "evidence": [
+    "project-control/reports/M0-T039-supervisor-freeze.md",
+    "project-control/reports/M0-T041-producer-report.md"
+   ]
+  },
+  "D-010-R020": {
+   "summary": "Existing frozen-supervisor capability, confirmed unchanged by this defect-lane task: the 20-module baseline suite (1165/1163/0/2 per the M0-T039 freeze record) covers registries, telemetry separation, thresholds, safe-seam rotation, child lifecycle, provider fallback, emergency stop, and quiescence; this branch re-ran the full suite after the four cited closures with 0 failures (1189/1187/0/2 including 24 new tests).",
+   "evidence": [
+    "project-control/reports/M0-T039-supervisor-freeze.md",
+    "project-control/reports/M0-T041-producer-report.md"
+   ]
+  },
+  "D-010-R021": {
+   "summary": "Existing frozen-supervisor capability, confirmed unchanged by this defect-lane task: the 20-module baseline suite (1165/1163/0/2 per the M0-T039 freeze record) covers registries, telemetry separation, thresholds, safe-seam rotation, child lifecycle, provider fallback, emergency stop, and quiescence; this branch re-ran the full suite after the four cited closures with 0 failures (1189/1187/0/2 including 24 new tests).",
+   "evidence": [
+    "project-control/reports/M0-T039-supervisor-freeze.md",
+    "project-control/reports/M0-T041-producer-report.md"
+   ]
+  },
+  "D-010-R022": {
+   "summary": "Existing frozen-supervisor capability, confirmed unchanged by this defect-lane task: the 20-module baseline suite (1165/1163/0/2 per the M0-T039 freeze record) covers registries, telemetry separation, thresholds, safe-seam rotation, child lifecycle, provider fallback, emergency stop, and quiescence; this branch re-ran the full suite after the four cited closures with 0 failures (1189/1187/0/2 including 24 new tests).",
+   "evidence": [
+    "project-control/reports/M0-T039-supervisor-freeze.md",
+    "project-control/reports/M0-T041-producer-report.md"
+   ]
+  },
+  "D-010-R023": {
+   "summary": "Existing frozen-supervisor capability, confirmed unchanged by this defect-lane task: the 20-module baseline suite (1165/1163/0/2 per the M0-T039 freeze record) covers registries, telemetry separation, thresholds, safe-seam rotation, child lifecycle, provider fallback, emergency stop, and quiescence; this branch re-ran the full suite after the four cited closures with 0 failures (1189/1187/0/2 including 24 new tests).",
+   "evidence": [
+    "project-control/reports/M0-T039-supervisor-freeze.md",
+    "project-control/reports/M0-T041-producer-report.md"
+   ]
+  },
+  "D-010-R024": {
+   "summary": "Existing frozen-supervisor capability, confirmed unchanged by this defect-lane task: the 20-module baseline suite (1165/1163/0/2 per the M0-T039 freeze record) covers registries, telemetry separation, thresholds, safe-seam rotation, child lifecycle, provider fallback, emergency stop, and quiescence; this branch re-ran the full suite after the four cited closures with 0 failures (1189/1187/0/2 including 24 new tests).",
+   "evidence": [
+    "project-control/reports/M0-T039-supervisor-freeze.md",
+    "project-control/reports/M0-T041-producer-report.md"
+   ]
+  },
+  "D-010-R026": {
+   "summary": "Existing frozen-supervisor capability, confirmed unchanged by this defect-lane task: the 20-module baseline suite (1165/1163/0/2 per the M0-T039 freeze record) covers registries, telemetry separation, thresholds, safe-seam rotation, child lifecycle, provider fallback, emergency stop, and quiescence; this branch re-ran the full suite after the four cited closures with 0 failures (1189/1187/0/2 including 24 new tests).",
+   "evidence": [
+    "project-control/reports/M0-T039-supervisor-freeze.md",
+    "project-control/reports/M0-T041-producer-report.md"
+   ]
+  },
+  "D-010-R028": {
+   "summary": "Existing frozen-supervisor capability, confirmed unchanged by this defect-lane task: the 20-module baseline suite (1165/1163/0/2 per the M0-T039 freeze record) covers registries, telemetry separation, thresholds, safe-seam rotation, child lifecycle, provider fallback, emergency stop, and quiescence; this branch re-ran the full suite after the four cited closures with 0 failures (1189/1187/0/2 including 24 new tests).",
+   "evidence": [
+    "project-control/reports/M0-T039-supervisor-freeze.md",
+    "project-control/reports/M0-T041-producer-report.md"
+   ]
+  },
+  "D-010-R029": {
+   "summary": "Existing frozen-supervisor capability, confirmed unchanged by this defect-lane task: the 20-module baseline suite (1165/1163/0/2 per the M0-T039 freeze record) covers registries, telemetry separation, thresholds, safe-seam rotation, child lifecycle, provider fallback, emergency stop, and quiescence; this branch re-ran the full suite after the four cited closures with 0 failures (1189/1187/0/2 including 24 new tests).",
+   "evidence": [
+    "project-control/reports/M0-T039-supervisor-freeze.md",
+    "project-control/reports/M0-T041-producer-report.md"
+   ]
+  },
+  "D-010-R030": {
+   "summary": "Existing frozen-supervisor capability, confirmed unchanged by this defect-lane task: the 20-module baseline suite (1165/1163/0/2 per the M0-T039 freeze record) covers registries, telemetry separation, thresholds, safe-seam rotation, child lifecycle, provider fallback, emergency stop, and quiescence; this branch re-ran the full suite after the four cited closures with 0 failures (1189/1187/0/2 including 24 new tests).",
+   "evidence": [
+    "project-control/reports/M0-T039-supervisor-freeze.md",
+    "project-control/reports/M0-T041-producer-report.md"
+   ]
+  },
+  "D-010-R031": {
+   "summary": "Existing frozen-supervisor capability, confirmed unchanged by this defect-lane task: the 20-module baseline suite (1165/1163/0/2 per the M0-T039 freeze record) covers registries, telemetry separation, thresholds, safe-seam rotation, child lifecycle, provider fallback, emergency stop, and quiescence; this branch re-ran the full suite after the four cited closures with 0 failures (1189/1187/0/2 including 24 new tests).",
+   "evidence": [
+    "project-control/reports/M0-T039-supervisor-freeze.md",
+    "project-control/reports/M0-T041-producer-report.md"
+   ]
+  },
+  "D-010-R032": {
+   "summary": "Existing frozen-supervisor capability, confirmed unchanged by this defect-lane task: the 20-module baseline suite (1165/1163/0/2 per the M0-T039 freeze record) covers registries, telemetry separation, thresholds, safe-seam rotation, child lifecycle, provider fallback, emergency stop, and quiescence; this branch re-ran the full suite after the four cited closures with 0 failures (1189/1187/0/2 including 24 new tests).",
+   "evidence": [
+    "project-control/reports/M0-T039-supervisor-freeze.md",
+    "project-control/reports/M0-T041-producer-report.md"
+   ]
+  },
+  "D-010-R033": {
+   "summary": "Existing frozen-supervisor capability, confirmed unchanged by this defect-lane task: the 20-module baseline suite (1165/1163/0/2 per the M0-T039 freeze record) covers registries, telemetry separation, thresholds, safe-seam rotation, child lifecycle, provider fallback, emergency stop, and quiescence; this branch re-ran the full suite after the four cited closures with 0 failures (1189/1187/0/2 including 24 new tests).",
+   "evidence": [
+    "project-control/reports/M0-T039-supervisor-freeze.md",
+    "project-control/reports/M0-T041-producer-report.md"
+   ]
+  },
+  "D-010-R034": {
+   "summary": "Existing frozen-supervisor capability, confirmed unchanged by this defect-lane task: the 20-module baseline suite (1165/1163/0/2 per the M0-T039 freeze record) covers registries, telemetry separation, thresholds, safe-seam rotation, child lifecycle, provider fallback, emergency stop, and quiescence; this branch re-ran the full suite after the four cited closures with 0 failures (1189/1187/0/2 including 24 new tests).",
+   "evidence": [
+    "project-control/reports/M0-T039-supervisor-freeze.md",
+    "project-control/reports/M0-T041-producer-report.md"
+   ]
+  },
+  "D-010-R035": {
+   "summary": "Existing frozen-supervisor capability, confirmed unchanged by this defect-lane task: the 20-module baseline suite (1165/1163/0/2 per the M0-T039 freeze record) covers registries, telemetry separation, thresholds, safe-seam rotation, child lifecycle, provider fallback, emergency stop, and quiescence; this branch re-ran the full suite after the four cited closures with 0 failures (1189/1187/0/2 including 24 new tests).",
+   "evidence": [
+    "project-control/reports/M0-T039-supervisor-freeze.md",
+    "project-control/reports/M0-T041-producer-report.md"
+   ]
+  },
+  "D-010-R036": {
+   "summary": "Existing frozen-supervisor capability, confirmed unchanged by this defect-lane task: the 20-module baseline suite (1165/1163/0/2 per the M0-T039 freeze record) covers registries, telemetry separation, thresholds, safe-seam rotation, child lifecycle, provider fallback, emergency stop, and quiescence; this branch re-ran the full suite after the four cited closures with 0 failures (1189/1187/0/2 including 24 new tests).",
+   "evidence": [
+    "project-control/reports/M0-T039-supervisor-freeze.md",
+    "project-control/reports/M0-T041-producer-report.md"
+   ]
+  },
+  "D-010-R037": {
+   "summary": "Existing frozen-supervisor capability, confirmed unchanged by this defect-lane task: the 20-module baseline suite (1165/1163/0/2 per the M0-T039 freeze record) covers registries, telemetry separation, thresholds, safe-seam rotation, child lifecycle, provider fallback, emergency stop, and quiescence; this branch re-ran the full suite after the four cited closures with 0 failures (1189/1187/0/2 including 24 new tests).",
+   "evidence": [
+    "project-control/reports/M0-T039-supervisor-freeze.md",
+    "project-control/reports/M0-T041-producer-report.md"
+   ]
+  },
+  "D-010-R038": {
+   "summary": "Existing frozen-supervisor capability, confirmed unchanged by this defect-lane task: the 20-module baseline suite (1165/1163/0/2 per the M0-T039 freeze record) covers registries, telemetry separation, thresholds, safe-seam rotation, child lifecycle, provider fallback, emergency stop, and quiescence; this branch re-ran the full suite after the four cited closures with 0 failures (1189/1187/0/2 including 24 new tests).",
+   "evidence": [
+    "project-control/reports/M0-T039-supervisor-freeze.md",
+    "project-control/reports/M0-T041-producer-report.md"
+   ]
+  },
+  "D-010-R039": {
+   "summary": "Existing frozen-supervisor capability, confirmed unchanged by this defect-lane task: the 20-module baseline suite (1165/1163/0/2 per the M0-T039 freeze record) covers registries, telemetry separation, thresholds, safe-seam rotation, child lifecycle, provider fallback, emergency stop, and quiescence; this branch re-ran the full suite after the four cited closures with 0 failures (1189/1187/0/2 including 24 new tests).",
+   "evidence": [
+    "project-control/reports/M0-T039-supervisor-freeze.md",
+    "project-control/reports/M0-T041-producer-report.md"
+   ]
+  },
+  "D-010-R040": {
+   "summary": "Existing frozen-supervisor capability, confirmed unchanged by this defect-lane task: the 20-module baseline suite (1165/1163/0/2 per the M0-T039 freeze record) covers registries, telemetry separation, thresholds, safe-seam rotation, child lifecycle, provider fallback, emergency stop, and quiescence; this branch re-ran the full suite after the four cited closures with 0 failures (1189/1187/0/2 including 24 new tests).",
+   "evidence": [
+    "project-control/reports/M0-T039-supervisor-freeze.md",
+    "project-control/reports/M0-T041-producer-report.md"
+   ]
+  },
+  "D-010-R075": {
+   "summary": "Existing frozen-supervisor capability, confirmed unchanged by this defect-lane task: the 20-module baseline suite (1165/1163/0/2 per the M0-T039 freeze record) covers registries, telemetry separation, thresholds, safe-seam rotation, child lifecycle, provider fallback, emergency stop, and quiescence; this branch re-ran the full suite after the four cited closures with 0 failures (1189/1187/0/2 including 24 new tests).",
+   "evidence": [
+    "project-control/reports/M0-T039-supervisor-freeze.md",
+    "project-control/reports/M0-T041-producer-report.md"
+   ]
+  },
+  "D-010-R076": {
+   "summary": "Existing frozen-supervisor capability, confirmed unchanged by this defect-lane task: the 20-module baseline suite (1165/1163/0/2 per the M0-T039 freeze record) covers registries, telemetry separation, thresholds, safe-seam rotation, child lifecycle, provider fallback, emergency stop, and quiescence; this branch re-ran the full suite after the four cited closures with 0 failures (1189/1187/0/2 including 24 new tests).",
+   "evidence": [
+    "project-control/reports/M0-T039-supervisor-freeze.md",
+    "project-control/reports/M0-T041-producer-report.md"
+   ]
+  },
+  "D-010-R025": {
+   "summary": "AD-025 unknown-telemetry conservatism DIRECTLY exercised by this task: quota classifier returns quota_exhausted only on verified_live fixtures, unknown/absent/malformed -> fail-closed; resource sampler reports structurally-unmeasurable metrics as unknown -> conservative path, never fabricated OK (tests in all three new modules).",
+   "evidence": [
+    "tools/test_agent_supervisor_quota_classifier.py",
+    "tools/test_agent_supervisor_resource_sampling.py"
+   ]
+  },
+  "D-010-R093": {
+   "summary": "Every change cites its qualifying evidence (activation-checklist items; G3-A1/G5-L-1/G4-A1; G5 V1.2.3 LOW; R207 boundary) per the supervisor-freeze rule; B-1..B-4 honestly reported already-fixed rather than fabricating reproductions; no uncited feature added.",
+   "evidence": [
+    "project-control/reports/M0-T041-producer-report.md",
+    ".claude/rules/supervisor-freeze.md"
+   ]
+  }
+ }
+}
