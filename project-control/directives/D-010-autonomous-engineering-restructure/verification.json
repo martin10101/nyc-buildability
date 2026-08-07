@@ -190,13 +190,232 @@
   {
    "task_id": "M0-T041",
    "directive_id": "D-010",
-   "producer": "orchestrator",
+   "producer": "backend-engineer",
    "verifier": "directive-compliance-verifier",
-   "applicable_requirement_ids": [],
-   "requirements": [],
-   "reviewed_sha": null,
-   "reviewed_manifest_sha256": null,
-   "note": "pending: placeholder at task contracting; the applicable set and per-requirement rows are produced by the independent verifier at this task gates/accept (fail-closed at accept)."
+   "applicable_requirement_ids": [
+    "D-010-R019",
+    "D-010-R020",
+    "D-010-R021",
+    "D-010-R022",
+    "D-010-R023",
+    "D-010-R024",
+    "D-010-R025",
+    "D-010-R026",
+    "D-010-R028",
+    "D-010-R029",
+    "D-010-R030",
+    "D-010-R031",
+    "D-010-R032",
+    "D-010-R033",
+    "D-010-R034",
+    "D-010-R035",
+    "D-010-R036",
+    "D-010-R037",
+    "D-010-R038",
+    "D-010-R039",
+    "D-010-R040",
+    "D-010-R075",
+    "D-010-R076",
+    "D-010-R093"
+   ],
+   "requirements": [
+    {
+     "id": "D-010-R019",
+     "state": "PASS",
+     "evidence": [
+      "Capability continuity: supervisor diff confined to the four cited closures; full 23-module suite green at reviewed source (1189/1187/0/2); M0-T036 acceptance lineage + M0-T039 freeze baseline (tree e8eeb4fa)",
+      "project-control/reports/M0-T041-dcv-final.md"
+     ]
+    },
+    {
+     "id": "D-010-R020",
+     "state": "PASS",
+     "evidence": [
+      "Capability continuity: supervisor diff confined to the four cited closures; full 23-module suite green at reviewed source (1189/1187/0/2); M0-T036 acceptance lineage + M0-T039 freeze baseline (tree e8eeb4fa)",
+      "project-control/reports/M0-T041-dcv-final.md"
+     ]
+    },
+    {
+     "id": "D-010-R021",
+     "state": "PASS",
+     "evidence": [
+      "Capability continuity: supervisor diff confined to the four cited closures; full 23-module suite green at reviewed source (1189/1187/0/2); M0-T036 acceptance lineage + M0-T039 freeze baseline (tree e8eeb4fa)",
+      "project-control/reports/M0-T041-dcv-final.md"
+     ]
+    },
+    {
+     "id": "D-010-R022",
+     "state": "PASS",
+     "evidence": [
+      "Capability continuity: supervisor diff confined to the four cited closures; full 23-module suite green at reviewed source (1189/1187/0/2); M0-T036 acceptance lineage + M0-T039 freeze baseline (tree e8eeb4fa)",
+      "project-control/reports/M0-T041-dcv-final.md"
+     ]
+    },
+    {
+     "id": "D-010-R023",
+     "state": "PASS",
+     "evidence": [
+      "SPOT: inspect_stream peak-context (not lifetime cumulative) + unknown-usage tests; unchanged; green",
+      "project-control/reports/M0-T041-dcv-final.md"
+     ]
+    },
+    {
+     "id": "D-010-R024",
+     "state": "PASS",
+     "evidence": [
+      "Capability continuity: supervisor diff confined to the four cited closures; full 23-module suite green at reviewed source (1189/1187/0/2); M0-T036 acceptance lineage + M0-T039 freeze baseline (tree e8eeb4fa)",
+      "project-control/reports/M0-T041-dcv-final.md"
+     ]
+    },
+    {
+     "id": "D-010-R025",
+     "state": "PASS",
+     "evidence": [
+      "DEEP: classifier fail-closed on unknown/absent/malformed/unverified (never raises; VERIFIED flag derived False); sampler unknown-conservative; _check_resources fail-closed both directions; 20 new tests green",
+      "project-control/reports/M0-T041-dcv-final.md"
+     ]
+    },
+    {
+     "id": "D-010-R026",
+     "state": "PASS",
+     "evidence": [
+      "Capability continuity: supervisor diff confined to the four cited closures; full 23-module suite green at reviewed source (1189/1187/0/2); M0-T036 acceptance lineage + M0-T039 freeze baseline (tree e8eeb4fa)",
+      "project-control/reports/M0-T041-dcv-final.md"
+     ]
+    },
+    {
+     "id": "D-010-R028",
+     "state": "PASS",
+     "evidence": [
+      "Capability continuity: supervisor diff confined to the four cited closures; full 23-module suite green at reviewed source (1189/1187/0/2); M0-T036 acceptance lineage + M0-T039 freeze baseline (tree e8eeb4fa)",
+      "project-control/reports/M0-T041-dcv-final.md"
+     ]
+    },
+    {
+     "id": "D-010-R029",
+     "state": "PASS",
+     "evidence": [
+      "Capability continuity: supervisor diff confined to the four cited closures; full 23-module suite green at reviewed source (1189/1187/0/2); M0-T036 acceptance lineage + M0-T039 freeze baseline (tree e8eeb4fa)",
+      "project-control/reports/M0-T041-dcv-final.md"
+     ]
+    },
+    {
+     "id": "D-010-R030",
+     "state": "PASS",
+     "evidence": [
+      "Capability continuity: supervisor diff confined to the four cited closures; full 23-module suite green at reviewed source (1189/1187/0/2); M0-T036 acceptance lineage + M0-T039 freeze baseline (tree e8eeb4fa)",
+      "project-control/reports/M0-T041-dcv-final.md"
+     ]
+    },
+    {
+     "id": "D-010-R031",
+     "state": "PASS",
+     "evidence": [
+      "SPOT: UnsafeMomentTests rotation-refusal on every unsafe condition; unchanged; green",
+      "project-control/reports/M0-T041-dcv-final.md"
+     ]
+    },
+    {
+     "id": "D-010-R032",
+     "state": "PASS",
+     "evidence": [
+      "Capability continuity: supervisor diff confined to the four cited closures; full 23-module suite green at reviewed source (1189/1187/0/2); M0-T036 acceptance lineage + M0-T039 freeze baseline (tree e8eeb4fa)",
+      "project-control/reports/M0-T041-dcv-final.md"
+     ]
+    },
+    {
+     "id": "D-010-R033",
+     "state": "PASS",
+     "evidence": [
+      "Capability continuity: supervisor diff confined to the four cited closures; full 23-module suite green at reviewed source (1189/1187/0/2); M0-T036 acceptance lineage + M0-T039 freeze baseline (tree e8eeb4fa)",
+      "project-control/reports/M0-T041-dcv-final.md"
+     ]
+    },
+    {
+     "id": "D-010-R034",
+     "state": "PASS",
+     "evidence": [
+      "Capability continuity: supervisor diff confined to the four cited closures; full 23-module suite green at reviewed source (1189/1187/0/2); M0-T036 acceptance lineage + M0-T039 freeze baseline (tree e8eeb4fa)",
+      "project-control/reports/M0-T041-dcv-final.md"
+     ]
+    },
+    {
+     "id": "D-010-R035",
+     "state": "PASS",
+     "evidence": [
+      "Capability continuity: supervisor diff confined to the four cited closures; full 23-module suite green at reviewed source (1189/1187/0/2); M0-T036 acceptance lineage + M0-T039 freeze baseline (tree e8eeb4fa)",
+      "project-control/reports/M0-T041-dcv-final.md"
+     ]
+    },
+    {
+     "id": "D-010-R036",
+     "state": "PASS",
+     "evidence": [
+      "SPOT: CodexRateLimitTests + RealProcessSwitch/ChainExhaustion; fail-closed wiring preserved; green",
+      "project-control/reports/M0-T041-dcv-final.md"
+     ]
+    },
+    {
+     "id": "D-010-R037",
+     "state": "PASS",
+     "evidence": [
+      "Capability continuity: supervisor diff confined to the four cited closures; full 23-module suite green at reviewed source (1189/1187/0/2); M0-T036 acceptance lineage + M0-T039 freeze baseline (tree e8eeb4fa)",
+      "project-control/reports/M0-T041-dcv-final.md"
+     ]
+    },
+    {
+     "id": "D-010-R038",
+     "state": "PASS",
+     "evidence": [
+      "Capability continuity: supervisor diff confined to the four cited closures; full 23-module suite green at reviewed source (1189/1187/0/2); M0-T036 acceptance lineage + M0-T039 freeze baseline (tree e8eeb4fa)",
+      "project-control/reports/M0-T041-dcv-final.md"
+     ]
+    },
+    {
+     "id": "D-010-R039",
+     "state": "PASS",
+     "evidence": [
+      "Capability continuity: supervisor diff confined to the four cited closures; full 23-module suite green at reviewed source (1189/1187/0/2); M0-T036 acceptance lineage + M0-T039 freeze baseline (tree e8eeb4fa)",
+      "project-control/reports/M0-T041-dcv-final.md"
+     ]
+    },
+    {
+     "id": "D-010-R040",
+     "state": "PASS",
+     "evidence": [
+      "Capability continuity: supervisor diff confined to the four cited closures; full 23-module suite green at reviewed source (1189/1187/0/2); M0-T036 acceptance lineage + M0-T039 freeze baseline (tree e8eeb4fa)",
+      "project-control/reports/M0-T041-dcv-final.md"
+     ]
+    },
+    {
+     "id": "D-010-R075",
+     "state": "PASS",
+     "evidence": [
+      "Capability continuity: supervisor diff confined to the four cited closures; full 23-module suite green at reviewed source (1189/1187/0/2); M0-T036 acceptance lineage + M0-T039 freeze baseline (tree e8eeb4fa)",
+      "project-control/reports/M0-T041-dcv-final.md"
+     ]
+    },
+    {
+     "id": "D-010-R076",
+     "state": "PASS",
+     "evidence": [
+      "Capability continuity: supervisor diff confined to the four cited closures; full 23-module suite green at reviewed source (1189/1187/0/2); M0-T036 acceptance lineage + M0-T039 freeze baseline (tree e8eeb4fa)",
+      "project-control/reports/M0-T041-dcv-final.md"
+     ]
+    },
+    {
+     "id": "D-010-R093",
+     "state": "PASS",
+     "evidence": [
+      "DEEP: every closure citation verified against ACTIVATION-CHECKLIST lines 27/30/33-34 + V1.2.3 G5 LOW; B-rows honestly reported already-fixed; no uncited feature",
+      "project-control/reports/M0-T041-dcv-final.md"
+     ]
+    }
+   ],
+   "reviewed_sha": "e45f750132ebe5267ee71a3ca8065bfd50a3757d",
+   "reviewed_manifest_sha256": "78ed0cc1bedd2c6c15de251fd01e1c905d6624b7a79cd751d8b9eee1ccb50a4f",
+   "verified_at": "2026-08-07T04:52:15+00:00",
+   "note": "FINAL record; full verbatim verdict at project-control/reports/M0-T041-dcv-final.md. Verifier reproduced the identity byte-exact at 8a6dd54 and proved tools/ invariance through the gate-record commits; reviewed_sha stamped at accept-time HEAD, committed together with the accept ledger write. Method disclosed: DEEP on R025/R093, SPOT on R031/R023/R036, capability-continuity on the remaining 19."
   },
   {
    "task_id": "M0-T042",
@@ -243,5 +462,5 @@
    "note": "pending: placeholder at task contracting; the applicable set and per-requirement rows are produced by the independent verifier at this task gates/accept (fail-closed at accept)."
   }
  ],
- "updated_at": "2026-08-07T03:42:54+00:00"
+ "updated_at": "2026-08-07T04:52:15+00:00"
 }
