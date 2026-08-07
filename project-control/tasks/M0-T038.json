@@ -41,14 +41,14 @@
     "code-reviewer",
     "directive-compliance-verifier"
   ],
-  "status": "rework",
-  "progress_percent": 85,
+  "status": "self_check",
+  "progress_percent": 90,
   "risks": [
     "The primary checkout's uncommitted diff is the only copy until this task lands - do not clean/reset the primary working tree before acceptance."
   ],
   "blockers": [],
   "created_at": "2026-08-07T01:32:33.388907+00:00",
-  "updated_at": "2026-08-07T02:00:43.852188+00:00",
+  "updated_at": "2026-08-07T02:01:11.980608+00:00",
   "directive_refs": [
     {
       "directive_id": "D-010",
@@ -75,6 +75,20 @@
       "percent": 90,
       "status": "self_check",
       "message": "Producer report + evidence map committed; all factual claims reproduced against primary evidence"
+    },
+    {
+      "at": "2026-08-07T02:01:11.779152+00:00",
+      "agent": "orchestrator",
+      "percent": 60,
+      "status": "in_progress",
+      "message": "G3 D1 rework applied: merge SHA corrected programmatically; N2 allowed_paths widened"
+    },
+    {
+      "at": "2026-08-07T02:01:11.980608+00:00",
+      "agent": "orchestrator",
+      "percent": 90,
+      "status": "self_check",
+      "message": "Rework self-check: corrected token resolves via git rev-parse; diff otherwise unchanged"
     }
   ]
 }
