@@ -55,7 +55,7 @@
   ],
   "blockers": [],
   "created_at": "2026-08-07T01:32:54.430033+00:00",
-  "updated_at": "2026-08-07T10:24:21.039742+00:00",
+  "updated_at": "2026-08-07T10:32:44.138471+00:00",
   "directive_refs": [
     {
       "directive_id": "D-010",
@@ -87,6 +87,13 @@
       "percent": 80,
       "status": "self_check",
       "message": "Producer complete: 13/13 tests both runners (orchestrator re-ran independently); live e2e build deterministic; evidence map written"
+    },
+    {
+      "at": "2026-08-07T10:32:44.138471+00:00",
+      "agent": "orchestrator",
+      "percent": 85,
+      "status": "rework",
+      "message": "G3 FAIL governs (worst-of): fix F1 footer-aware bound decision + boundary test; F2 drift-lock fail-not-skip; F3 dead code; advisories F4/F5/F6 as cheap. G4 PASS recorded (same defect graded MINOR)."
     }
   ]
 }
