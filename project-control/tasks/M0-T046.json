@@ -1,0 +1,97 @@
+{
+  "task_id": "M0-T046",
+  "title": "Owner am.12 pre-activation hardening: park-to-approve operator-digest binding, estop audit-fork regression lock, controller-config Windows OS-ACL boundary",
+  "task_type": "backend",
+  "milestone_id": "M0",
+  "objective": "Execute the owner pre-activation decision (D-010 am.12) as exactly ONE narrowly bounded task containing ONLY: (1) fix the M0-T045 G5 LOW-1 park-to-approve integrity issue by binding the forwarded prompt bytes to the OPERATOR-NAMED approval digest at approval time, with adversarial tests (R124); (2) complete the M0-T045 G4 emergency-stop audit-fork follow-up with a regression test locking the fail-closed forked-audit-chain behavior exactly as acknowledged by the owner in R126 (fail closed; no silent repair or hiding; condition clearly recorded; unsafe continuation refused); (3) harden the immutable controller configuration with the R128 Windows OS-ACL boundary (unelevated process READ-only; no modify/overwrite/delete/rename/replace/re-ACL; parent-directory protection; UAC elevation for modification; fail-closed digest verification retained; bounded unelevated probes). NO service, daemon, enterprise identity system, separate infrastructure project, or broader supervisor redesign (R129).",
+  "business_reason": "Owner directive D-010 am.12 (R122-R133): this task is the mandatory gate between the closed D-009 batch seam and supervised-auto activation; M2-T015/T016 are the supervised-auto proof tasks and may not begin before activation (R133); activation itself stays an owner-typed decision (R131/R132).",
+  "inputs": [
+    "project-control/directives/D-010-autonomous-engineering-restructure/source-012-amendment.md (verbatim owner decision; R122-R133)",
+    "project-control/reports/M0-T045-g5-security.md (LOW-1 finding: approve_pending_prompt freezes approved_digest from parked bytes without cross-checking --approve-prompt-digest; loop.py:626-654 + cli.py:1628-1662)",
+    "project-control/reports/M0-T045-g4-qa-review.md (MATERIAL FINDING: estop-run duplicate_sequence seq 12/13, emergency-stop command and main loop wrote concurrently, fork surfaced via audit_chain_ok:false)",
+    "project-control/reports/M0-T036-ACTIVATION-CHECKLIST.md (G5-L-2 OS-ACL item + 'M0-T045 G5/G4 additions' section)",
+    "tools/agent_supervisor/config.py (immutable controller config load + manifest/digest verification, D-007 S13.1)",
+    "tools/agent_supervisor/loop.py (approve_pending_prompt; resume digest check at loop.py:2005)",
+    "tools/agent_supervisor/cli.py (digest-bound CLI approval, cli.py:1628-1662)",
+    "tools/agent_supervisor/audit_log.py + tools/test_agent_supervisor_audit.py (chain verify/append surface for the estop-fork regression lock)"
+  ],
+  "outputs": [
+    "Operator-named approval digest binding at approval time + adversarial tamper tests",
+    "Estop forked-audit-chain regression test locking the four R126 acknowledged conditions",
+    "Windows OS-ACL hardening of the immutable controller config + bounded unelevated probes",
+    "project-control/reports/M0-T046-producer-report.md"
+  ],
+  "dependencies": [
+    "M0-T045"
+  ],
+  "allowed_paths": [
+    "tools/agent_supervisor/",
+    "tools/test_agent_supervisor_*.py",
+    "project-control/reports/M0-T046-producer-report.md",
+    "project-control/tasks/M0-T046.json"
+  ],
+  "forbidden_paths": [
+    ".claude/",
+    "apps/",
+    "services/",
+    ".github/",
+    "project-control/directives/",
+    "package.json",
+    "package-lock.json",
+    "requirements*.txt"
+  ],
+  "acceptance_scenarios": [
+    "AS-1 (primary, R124): at approval time approve_pending_prompt requires the operator-supplied --approve-prompt-digest, verifies it against digest_of(parked prompt bytes) using the same canonical serialization, and binds approved_digest to the OPERATOR-NAMED value; on match the approval is recorded; the forwarded bytes therefore verify against the operator-named digest at resume (loop.py:2005 path unchanged or strengthened, never weakened).",
+    "AS-2 (adversarial/failure, R124): an attacker WITH JOURNAL WRITE tampers the parked prompt field between park and approval; approval is REFUSED fail-closed (digest mismatch, no approved_digest written, nothing forwardable); a second adversarial variant tampering AFTER approval is caught at the resume-time digest check. Both are executable tests.",
+    "AS-3 (primary, R125/R126): a regression test reproduces the concurrent estop-vs-loop audit write and locks EXACTLY the owner-acknowledged shape: verify_chain reports the fork (duplicate_sequence) deterministically; the system fails closed; the fork is NEVER silently repaired or hidden; the condition is clearly recorded (audit_chain_ok:false surface); appends/continuation on the forked chain are refused until explicit repair.",
+    "AS-4 (primary, R127/R128): with the hardened ACLs applied, the ordinary unelevated process CAN read the controller config, and bounded Windows probes prove it CANNOT modify, overwrite, delete, rename, replace, or change ACLs on the file, and CANNOT bypass via the parent directory (replace/rename/re-create); modification succeeds only through the elevated owner/UAC path; the fail-closed config identity/digest verification remains in force.",
+    "AS-5 (missing/ambiguous, R128): if ACL state cannot be determined (probe error, ambiguous icacls output, unexpected principal set) the verification reports the condition and fails closed - it never assumes 'protected'; probes are bounded (no elevation attempts, no destructive fallback).",
+    "AS-6 (boundary/prohibition, R123/R129): the change surface contains ONLY the three scopes - no service, daemon, enterprise identity system, separate infrastructure project, or broader supervisor redesign; diff confined to allowed_paths; SHADOW-ONLY posture untouched; no activation flag flips (R131 remains an owner-typed decision)."
+  ],
+  "required_gates": [
+    "G0",
+    "G2",
+    "G3",
+    "G4",
+    "G5"
+  ],
+  "producer_agent": "backend-engineer",
+  "reviewer_agents": [
+    "code-reviewer",
+    "security-reviewer",
+    "qa-engineer",
+    "control-plane-verifier",
+    "directive-compliance-verifier"
+  ],
+  "status": "backlog",
+  "progress_percent": 0,
+  "risks": [
+    "OS-ACL hardening touches the live owner config path: probes must be bounded and non-destructive (R128); a wrong ACL could lock the OWNER out - the change must be applied via a documented, reversible elevated action and verified before the unelevated probes run.",
+    "Estop-fork regression test involves process concurrency - keep it deterministic (inject the fork shape, do not race real processes).",
+    "R131/R132/R133 are orchestrator/owner sequencing constraints carried on this task for visibility; they are satisfied by conduct (no activation, no M2-T015/T016 start) and the R132 return item occurs after acceptance."
+  ],
+  "blockers": [],
+  "created_at": "2026-08-07T20:41:12.063773+00:00",
+  "updated_at": "2026-08-07T20:41:12.148014+00:00",
+  "directive_refs": [
+    {
+      "directive_id": "D-010",
+      "requirement_ids": [
+        "D-010-R122",
+        "D-010-R123",
+        "D-010-R124",
+        "D-010-R125",
+        "D-010-R126",
+        "D-010-R127",
+        "D-010-R128",
+        "D-010-R129",
+        "D-010-R130",
+        "D-010-R131",
+        "D-010-R132",
+        "D-010-R133"
+      ]
+    }
+  ],
+  "directive_regime_version": "1.0",
+  "directive_regime_entered_at": "2026-08-07T20:41:12.063773+00:00"
+}
