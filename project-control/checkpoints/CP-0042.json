@@ -1,0 +1,18 @@
+{
+  "checkpoint_id": "CP-0042",
+  "timestamp": "2026-08-07T20:25:53.475032+00:00",
+  "commit": "d082585",
+  "branch": "control/D-009-batch-close",
+  "active_milestone": "M4",
+  "summary": "Session-5: dormant batch CLOSED - D-009+M0-T019+M2-T014 reconciled onto main and both tasks ACCEPTED (accepted 66). FE-S9 exception moot-by-lapse (R009 NA approved; gate unweakened); js-yaml CVE-2026-59870 remediated (4.3.1); B-017+B-012 resolved (deployment hold unchanged); B-013 already resolved. Owner am.12 captured (R122-R133): pre-activation task (G5 LOW-1 + G4 estop-fork test + Windows OS-ACL hardening) is the NEXT unit; M2-T015/T016 held as supervised-auto proof tasks. SHADOW-ONLY intact.",
+  "post_accept_verifications_confirmed": {
+    "M0-T027": [
+      "D-004-R389",
+      "D-004-R486",
+      "D-004-R487",
+      "D-004-R488",
+      "D-004-R501"
+    ]
+  },
+  "updated_at": "2026-08-07T20:25:53.525181+00:00"
+}

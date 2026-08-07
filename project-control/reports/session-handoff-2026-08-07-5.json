@@ -1,0 +1,58 @@
+{
+ "schema_version": "1",
+ "session_id": "session_01SVxtTFwcrhTXAy5guoENux",
+ "provider": "claude",
+ "model": "claude-fable-5",
+ "repo": "martin10101/nyc-buildability",
+ "worktree": "C:/Users/MLFLL/Downloads/nyc-zoning/orch",
+ "branch": "control/D-009-batch-close",
+ "repo_head": null,
+ "origin_main": "3109836",
+ "checkpoint_id": "CP-0042",
+ "task_id": "M0-T037",
+ "task_digest": null,
+ "created_at": "2026-08-07T21:55:00+00:00",
+ "completed_units": [
+  "D-010 am.11 captured (source-011, R121; PR #175 merged): session-5 launch verbatim",
+  "OWNER am.12 captured mid-session (source-012, R122-R133; PR #177 merged): pre-activation decision - pre-activation task before M2-T015; supervised-auto activation gated on it + mechanical checklist reconciliation; M2-T015/T016 = supervised-auto proof tasks; estop acknowledgement (R126) + OS-ACL decision (R127/R128) captured verbatim. am.13 = R121 binding correction (M2-T014 dropped).",
+  "Dormant batch CLOSED on control/D-009-batch-close (PR #176): merge a953d0d onto main (2 additive-union conflict resolutions: state.json active_tasks + directives/index.json D-009 entry); M0-T019 refs restamped (D-009:ALL + D-010-R121) via sanctioned reclaim cycle; D-009 registry valid.",
+  "M0-T019 ACCEPTED (accepted 66; identity 46e4d83e; reviewed commit 1438c54): FE-S9 exception MOOT-BY-LAPSE - never implemented, gate byte-unchanged (R009 NA approved by DCV; R011 empty-set basis; R012 plain-gate end-state); js-yaml CVE-2026-59870 round-2 remediation (4.3.1 override, >=7d, advisory-free); lock regenerated+validated via generate-lockfile.yml run 31211311419 (bot 1d678fd) after run 31211100620 FAILED catching the new advisory; G3 FAIL(R021 scenario contradiction)->orchestrator reconciliation of FE-S5/S8/S9/S12->G3 delta PASS; G4 PASS; G5 PASS + delta re-confirmation at finalized identity; DCV 19 PASS + R009 NA; PR #176 33/33 green; B-017+B-012+B-013 resolved (owner deployment/G6 hold unchanged)",
+  "M2-T014 ACCEPTED (survey research Packet A; gates G0/G2/G3 at stable identity 73b36e60; D-001 empty-applicable-set row attested)",
+  "CP-0042 recorded; SESSION_HANDOFF refreshed (session-5 block)"
+ ],
+ "incomplete_unit": null,
+ "active_children": [],
+ "pending_reviews": [],
+ "pending_external_effects": [
+  "PR #176 merge to main (checks running on d082585 at handoff-write time; merge under ADR-006 Tier A when green)"
+ ],
+ "known_failures": [
+  "M0-T043 CI residual carried: tools/test_context_pack.py still not in ci.yml (needs a .github-scoped follow-up)",
+  "G5 LOW-1 (M0-T019, non-blocking): apps/web/.npmrc lacks ignore-scripts=true - evaluate feasibility in future dep-sec work",
+  "Control-plane B-5 backlog: M0-T019 allowed_paths annotations still defeat parts of the content-identity matcher (known defect, registered in D-010 initiative plan backlog)"
+ ],
+ "next_action": "NEXT UNIT (owner am.12, R123-R130): contract the ONE narrowly bounded PRE-ACTIVATION task (fresh M0-Txxx; bind D-010 refs incl R122-R133) containing ONLY: (a) G5 LOW-1 fix - bind forwarded prompt bytes to the OPERATOR-NAMED approval digest at approval time + adversarial tests; (b) G4 estop-fork regression test locking fail-closed forked-audit-chain behavior per R126 verbatim acknowledgement; (c) Windows OS-ACL hardening per R128 boundary (unelevated read-only, parent-dir protection, UAC elevation, digest verification retained, bounded unelevated probes). R129 prohibitions apply (no service/daemon/enterprise identity/separate infra/redesign). Normal G3/G4/G5 + DCV gates (R130). AFTER acceptance: mechanically reconcile ALL remaining M0-T036-ACTIVATION-CHECKLIST items, then PRESENT THE OWNER THE EXACT SUPERVISED-AUTO ACTIVATION DECISION LINE (R131/R132). Do NOT activate without the owner's typed decision. M2-T015/M2-T016 stay HELD until activation (R133). Standing: reviewers claude-opus-4-8 xhigh until owner says Fable is back (5 flipped files uncommitted in PRIMARY checkout, now on main); all holds unchanged; SHADOW-ONLY intact.",
+ "required_files": [
+  "docs/SESSION_HANDOFF.md",
+  "project-control/reports/D-010-INITIATIVE-PLAN.md",
+  "project-control/reports/M0-T036-ACTIVATION-CHECKLIST.md",
+  "project-control/reports/M0-T045-promotion-evidence.md",
+  "project-control/directives/D-010-autonomous-engineering-restructure/source-012-amendment.md"
+ ],
+ "evidence_refs": [
+  "project-control/reports/M0-T019-dcv-verification.md",
+  "project-control/reports/M0-T019-g3-code-review.md",
+  "project-control/reports/M0-T019-g4-qa-review.md",
+  "project-control/reports/M0-T019-g5-security.md",
+  "project-control/reports/M0-T019-fes9-mootness-2026-08-07.md",
+  "project-control/reports/M2-T014-G3-datacontract-review.md",
+  "project-control/checkpoints/CP-0042.json"
+ ],
+ "context_telemetry": {
+  "note": "session 5 ran the full batch close-out as one bounded unit (capture x2 + reconcile + producer increment + lockfile CI x2 + G2/G3-FAIL/rework/G3-PASS/G4/G5+delta + DCV + 2 accepts + checkpoint); rotation at this post-accept seam per R113/R115; next unit (pre-activation task) wants a fresh session"
+ },
+ "quota_telemetry": {
+  "note": "orchestrator claude-fable-5; producers/reviewers per standing fallback (opus-4-8 xhigh reviewers); no provider quota failures; 2 generate-lockfile CI runs + PR checks on owner GitHub account"
+ },
+ "digest": "c3b545b210d46e159fcd96cda0ca456b425522826b25d841bf3eb5aaf73a01f5"
+}
