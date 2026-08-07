@@ -1,0 +1,84 @@
+{
+  "task_id": "M0-T045",
+  "title": "R595 supervised rehearsal + supervised-auto promotion evidence (Section 16.2; D-010-R104)",
+  "task_type": "integration",
+  "milestone_id": "M0",
+  "objective": "Design, execute, and independently review the R595 supervised rehearsal that live-actuates the rotation seam (the R593 accepted residual) with full audit evidence, then assemble the Section 16.2 promotion-evidence pack (tests, replay, crash simulation, context rotation, child cleanup, GitHub push/PR/merge, stale-SHA rejection, secret scan, branch-protection verification, rollback, owner-touch count) for the shadow-to-supervised-auto step; bounded - not an open-ended supervisor-development project (R104).",
+  "business_reason": "R595 is the mandatory blocking prerequisite before ANY activation (M0-T036-ACTIVATION-CHECKLIST; D-007-R619; D-010-R104); AD-074/AD-076 require staged promotion with evidence.",
+  "inputs": [
+    "project-control/reports/M0-T036-ACTIVATION-CHECKLIST.md",
+    "D-010 Sections 16, 19; M0-T041..M0-T044 outputs"
+  ],
+  "outputs": [
+    "R595 rehearsal evidence",
+    "Section 16.2 promotion pack"
+  ],
+  "dependencies": [
+    "M0-T040",
+    "M0-T041",
+    "M0-T042",
+    "M0-T043",
+    "M0-T044"
+  ],
+  "allowed_paths": [
+    "tools/agent_supervisor/",
+    "tools/test_agent_supervisor_*.py",
+    "project-control/reports/M0-T045-r595-rehearsal.md",
+    "project-control/reports/M0-T045-promotion-evidence.md",
+    "project-control/tasks/M0-T045.json"
+  ],
+  "forbidden_paths": [
+    ".claude/",
+    "apps/",
+    "services/",
+    ".github/",
+    "project-control/directives/"
+  ],
+  "acceptance_scenarios": [
+    "AS-1 (executable): the R595 supervised rehearsal live-actuates the rotation seam in a real supervised run (threshold reached, rotation at the safe seam, children quiesced, digest-verified handoff) with the complete audit trail preserved and independently reviewed; the R593 residual is closed by evidence, never by waiver (D-007-R621).",
+    "AS-2 (executable): the Section 16.2 promotion-evidence pack links every listed proof (tests, replay, crash simulation, context rotation, child cleanup, GitHub push/PR/merge, stale-SHA rejection, secret scan, branch-protection verification, rollback, owner-touch count) to reproducible evidence.",
+    "AS-3 (executable): the pack claims at most shadow-to-supervised-auto readiness; limited-auto remains gated on its own evidence including two real product tasks; the pack states this explicitly (no activation overclaim)."
+  ],
+  "required_gates": [
+    "G0",
+    "G2",
+    "G3",
+    "G4",
+    "G5"
+  ],
+  "producer_agent": null,
+  "reviewer_agents": [
+    "code-reviewer",
+    "security-reviewer",
+    "qa-engineer",
+    "control-plane-verifier",
+    "directive-compliance-verifier"
+  ],
+  "status": "backlog",
+  "progress_percent": 0,
+  "risks": [
+    "Rehearsal needs a real supervised run window - bounded by design; if it cannot complete in one unit, split (D-010-R103) rather than extend open-endedly (R104)."
+  ],
+  "blockers": [],
+  "created_at": "2026-08-07T01:33:11.693328+00:00",
+  "updated_at": "2026-08-07T01:36:53+00:00",
+  "directive_refs": [
+    {
+      "directive_id": "D-010",
+      "requirement_ids": [
+        "D-010-R026",
+        "D-010-R031",
+        "D-010-R074",
+        "D-010-R075",
+        "D-010-R076",
+        "D-010-R077",
+        "D-010-R078",
+        "D-010-R079",
+        "D-010-R090",
+        "D-010-R104"
+      ]
+    }
+  ],
+  "directive_regime_version": "1.0",
+  "directive_regime_entered_at": "2026-08-07T01:33:11.693328+00:00"
+}

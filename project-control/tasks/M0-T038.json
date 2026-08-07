@@ -1,0 +1,61 @@
+{
+  "task_id": "M0-T038",
+  "title": "Preserve post-merge SESSION_HANDOFF update via dedicated PR (D-010-R098)",
+  "task_type": "implementation",
+  "milestone_id": "M0",
+  "objective": "Commit the verified, accurate uncommitted post-merge update of docs/SESSION_HANDOFF.md (recording the PR #154 merge, main SHA cec785f9, shadow-only status, R595 prerequisite) through this dedicated bounded task and a normal PR, mixing in no unrelated work.",
+  "business_reason": "Owner launch instruction D-010-R098: the post-merge handoff update was verified accurate against GitHub state in Phase 0 reconciliation and must be preserved, not discarded or mixed into unrelated work.",
+  "inputs": [
+    "uncommitted docs/SESSION_HANDOFF.md diff preserved in the primary checkout (verified accurate in D-010 Phase 0 reconciliation)"
+  ],
+  "outputs": [
+    "docs/SESSION_HANDOFF.md (committed post-merge update)"
+  ],
+  "dependencies": [],
+  "allowed_paths": [
+    "docs/SESSION_HANDOFF.md",
+    "project-control/tasks/M0-T038.json",
+    "project-control/reports/M0-T038-producer-report.md"
+  ],
+  "forbidden_paths": [
+    "project-control/directives/",
+    "apps/",
+    "services/",
+    "tools/",
+    ".claude/",
+    ".github/"
+  ],
+  "acceptance_scenarios": [
+    "AS-1 (executable): the task-branch diff vs main touches exactly docs/SESSION_HANDOFF.md plus this packet and the producer report; the handoff change equals the preserved post-merge update (PR #154 MERGED 2026-08-07T00:06:56Z, main cec785f9, shadow-only, R595 blocking prerequisite) with no unrelated content mixed in.",
+    "AS-2 (executable): every factual claim in the added lines reproduces against primary evidence recorded in the producer report: gh pr view 154 (state/mergedAt/mergeCommit), required-check conclusions on 57ccb44, and the tree byte-identity claim (git cat-file 57ccb44^{tree} == 4f8c1d2^{tree} == 67e97dda)."
+  ],
+  "required_gates": [
+    "G0",
+    "G2",
+    "G3"
+  ],
+  "producer_agent": null,
+  "reviewer_agents": [
+    "code-reviewer",
+    "directive-compliance-verifier"
+  ],
+  "status": "backlog",
+  "progress_percent": 0,
+  "risks": [
+    "The primary checkout's uncommitted diff is the only copy until this task lands - do not clean/reset the primary working tree before acceptance."
+  ],
+  "blockers": [],
+  "created_at": "2026-08-07T01:32:33.388907+00:00",
+  "updated_at": "2026-08-07T01:36:53+00:00",
+  "directive_refs": [
+    {
+      "directive_id": "D-010",
+      "requirement_ids": [
+        "D-010-R098",
+        "D-010-R107"
+      ]
+    }
+  ],
+  "directive_regime_version": "1.0",
+  "directive_regime_entered_at": "2026-08-07T01:32:33.388907+00:00"
+}

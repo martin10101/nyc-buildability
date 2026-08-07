@@ -1,0 +1,73 @@
+{
+  "task_id": "M0-T043",
+  "title": "Bounded context-pack builder (AD-044..AD-046; 0A.4 budgets)",
+  "task_type": "backend",
+  "milestone_id": "M0",
+  "objective": "Build tools/context_pack.py producing the smallest complete packet for a task/role/provider under explicit byte and estimated-token bounds: Section 12 inputs and default exclusions, context.md + context.meta.json + evidence/ output with per-source digests, omission and truncation records, sufficiency flag, and overflow behavior that splits or summarizes deterministically but never silently truncates material sources (AD-046).",
+  "business_reason": "0A.8 item 5 (bounded context packets) is a blocking minimum-autonomy capability; AD-044..AD-046 and the 0A.4 ceilings are explicit directive requirements.",
+  "inputs": [
+    "D-010 source-001 Section 12 + 0A.4",
+    "tools/code_graph/ query interface (read-only)"
+  ],
+  "outputs": [
+    "tools/context_pack.py",
+    "tools/test_context_pack.py",
+    "docs/CONTEXT_PACKS.md"
+  ],
+  "dependencies": [],
+  "allowed_paths": [
+    "tools/context_pack.py",
+    "tools/test_context_pack.py",
+    "docs/CONTEXT_PACKS.md",
+    "project-control/reports/M0-T043-producer-report.md",
+    "project-control/tasks/M0-T043.json"
+  ],
+  "forbidden_paths": [
+    "tools/agent_supervisor/",
+    ".claude/",
+    "apps/",
+    "services/",
+    ".github/",
+    "any dependency manifest or lockfile (stdlib only)"
+  ],
+  "acceptance_scenarios": [
+    "AS-1 (executable): context_pack.py --task --role --provider --max-bytes --out produces context.md + context.meta.json + evidence/ with every included file digested, omitted categories listed, bounds and truncation status recorded, and a role-sufficiency flag (all Section 12.3 fields; schema test).",
+    "AS-2 (executable): default exclusions honored - whole PRD, directive registry, historical reports, transcripts, unrelated packets, generated artifacts, city datasets, whole code graph (fixture test; Section 12.2).",
+    "AS-3 (executable): overflow triggers deterministic split/summarize with exact artifact references; a material source is never silently truncated (AD-046 test).",
+    "AS-4 (executable): a reviewer-role packet includes primary-source hunks sufficient to verify a worker claim, not merely the worker's summary (fixture assertion; Section 12.3)."
+  ],
+  "required_gates": [
+    "G0",
+    "G2",
+    "G3",
+    "G4"
+  ],
+  "producer_agent": null,
+  "reviewer_agents": [
+    "code-reviewer",
+    "qa-engineer",
+    "directive-compliance-verifier"
+  ],
+  "status": "backlog",
+  "progress_percent": 0,
+  "risks": [
+    "Token estimation is heuristic - record bytes AND estimated tokens; ceilings are engineering policy, not billing claims."
+  ],
+  "blockers": [],
+  "created_at": "2026-08-07T01:32:54.430033+00:00",
+  "updated_at": "2026-08-07T01:36:53+00:00",
+  "directive_refs": [
+    {
+      "directive_id": "D-010",
+      "requirement_ids": [
+        "D-010-R044",
+        "D-010-R045",
+        "D-010-R046",
+        "D-010-R085",
+        "D-010-R093"
+      ]
+    }
+  ],
+  "directive_regime_version": "1.0",
+  "directive_regime_entered_at": "2026-08-07T01:32:54.431075+00:00"
+}

@@ -131,9 +131,19 @@
    "issued_by": "owner",
    "supersedes": [],
    "superseded_by": null,
-   "affected_tasks": [],
+   "affected_tasks": [
+    "M0-T037",
+    "M0-T038",
+    "M0-T039",
+    "M0-T040",
+    "M0-T041",
+    "M0-T042",
+    "M0-T043",
+    "M0-T044",
+    "M0-T045"
+   ],
    "manifest": "D-010-autonomous-engineering-restructure/manifest.json"
   }
  ],
- "updated_at": "2026-08-07T01:25:44+00:00"
+ "updated_at": "2026-08-07T01:36:53+00:00"
 }
