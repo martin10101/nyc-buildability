@@ -204,6 +204,10 @@ class Source:
         self.origin = origin
         self.lang = lang
         self.content = content
+        # Rendered form placed in the packet (full pre-overflow content by
+        # default; build() may replace it with a summary). Initialized here so the
+        # slot is never read unset (F5).
+        self.content_rendered = content
 
     @property
     def material(self) -> bool:
@@ -255,7 +259,7 @@ def gather_sources(repo: str, task_id: str, diff_base: str, include: list[str],
 
     # 3/4. git diff + changed paths --------------------------------------
     rc_diff, diff_out = run_git(repo, ["diff", diff_base])
-    rc_names, names_out = run_git(repo, ["diff", "--name-only", diff_base])
+    _, names_out = run_git(repo, ["diff", "--name-only", diff_base])
     changed = sorted(p for p in names_out.splitlines() if p.strip())
     if rc_diff == 0 and diff_out.strip():
         sources.append(Source(
@@ -382,7 +386,10 @@ def gather_sources(repo: str, task_id: str, diff_base: str, include: list[str],
 def _run_graph_query(repo: str, query_py: str, sub: str, arg: str, limit: int) -> tuple[int, str]:
     try:
         proc = subprocess.run(
-            [sys.executable, query_py, "--repo", repo, sub, arg, "--limit", str(limit)],
+            # --no-regen: this builder only reads bounded advisory hints; it must
+            # not trigger an out-of-repo code-graph cache rebuild as a side effect (F4).
+            [sys.executable, query_py, "--repo", repo, "--no-regen", sub, arg,
+             "--limit", str(limit)],
             cwd=repo, stdout=subprocess.PIPE, stderr=subprocess.PIPE, timeout=90)
     except (OSError, subprocess.SubprocessError):
         return 1, ""
@@ -613,6 +620,31 @@ def build_context_md(header: str, sources: list[Source], digests: dict,
     return "\n".join(parts).rstrip() + "\n"
 
 
+def _finalize_md(header: str, sources: list[Source], digests: dict,
+                 truncations: dict, footer_fn) -> tuple[str, int]:
+    """Render context.md, iterating the footer's self-referential size to a fixpoint.
+
+    ``footer_fn(total_bytes)`` returns the REAL footer given the total context.md
+    byte size shown inside it. This makes the emitted-size decision footer-aware:
+    the bound is enforced against header + source blocks + the ACTUAL footer, not a
+    placeholder (F1). Converges because the only self-reference is the decimal
+    byte/token count, whose digit width stabilizes after one or two passes (the
+    total is monotone and bounded). Deterministic: same inputs -> same iterations.
+    Returns ``(md, byte_len)`` where ``byte_len == len(md.encode("utf-8"))``.
+    """
+    total = 0
+    md = ""
+    new_total = 0
+    for _ in range(8):
+        footer = footer_fn(total)
+        md = build_context_md(header, sources, digests, truncations, footer)
+        new_total = len(md.encode("utf-8"))
+        if new_total == total:
+            break
+        total = new_total
+    return md, new_total
+
+
 def summarize_content(content: str) -> str:
     head = content.splitlines()[:SUMMARY_HEAD_LINES]
     return "\n".join(head)
@@ -640,25 +672,44 @@ def build(args) -> dict:
     present_groups = {s.group for s in sources}
     sufficiency = assess_sufficiency(args.role, present_groups)
 
-    def digests_and_size():
-        digests = {}
-        for s in sources:
-            digests[s.sid] = sha256_hex(s.content_rendered.encode("utf-8"))
-        header = _make_header(args, repo_sha, effective_bound_bytes, ceiling)
-        footer = "PLACEHOLDER_FOOTER"
-        md = build_context_md(header, sources, digests, {}, footer)
-        return digests, len(md.encode("utf-8"))
+    header = _make_header(args, repo_sha, effective_bound_bytes, ceiling)
 
-    # First pass: full content.
+    def _footer_for(overflow_state: dict, total_bytes: int) -> str:
+        # Render the REAL footer for a candidate overflow state and total size, so
+        # the bound decision counts the footer that emit() actually writes (F1).
+        partial = {
+            "omissions": omissions,
+            "sufficiency": sufficiency,
+            "overflow": overflow_state,
+            "effective_bound_bytes": effective_bound_bytes,
+        }
+        estimated = estimate_tokens(total_bytes, args.bytes_per_token)
+        return _make_footer(partial, total_bytes, estimated, args)
+
+    def _emitted_bytes(cur_digests: dict, cur_truncations: dict,
+                       overflow_state: dict) -> int:
+        # The REAL emitted context.md byte size (header + source blocks + REAL
+        # footer), footer-aware to a fixpoint -- identical to what emit() writes on
+        # the non-split path, so exit-0 within_bound/summarized always respects the
+        # effective byte bound.
+        _, total = _finalize_md(
+            header, sources, cur_digests, cur_truncations,
+            lambda tb: _footer_for(overflow_state, tb))
+        return total
+
+    # First pass: full content, footer-aware.
     truncations: dict[str, dict] = {}
     original_digests = {s.sid: sha256_hex(s.content.encode("utf-8")) for s in sources}
-    digests, full_bytes = digests_and_size()
+    digests = {s.sid: sha256_hex(s.content_rendered.encode("utf-8")) for s in sources}
 
     overflow = {"triggered": False, "resolved": "within_bound", "guidance": [],
                 "split_proposal": None}
+    full_bytes = _emitted_bytes(digests, truncations, overflow)
 
     if full_bytes > effective_bound_bytes:
-        overflow["triggered"] = True
+        # Candidate resolution: summarize non-material logs and re-check.
+        overflow = {"triggered": True, "resolved": "summarized",
+                    "guidance": list(SPLIT_SUMMARIZE_GUIDANCE), "split_proposal": None}
         # Step 1: summarize NON-material reducible logs, preserving originals.
         for src in sources:
             if not src.material and len(src.content.encode("utf-8")) > 0:
@@ -676,19 +727,15 @@ def build(args) -> dict:
                     summary + "\n\n[summarized: full original preserved at "
                     f"evidence/{artifact}; sha256 {original_digests[src.sid]}]")
         digests = {s.sid: sha256_hex(s.content_rendered.encode("utf-8")) for s in sources}
-        header = _make_header(args, repo_sha, effective_bound_bytes, ceiling)
-        md_probe = build_context_md(header, sources, digests, truncations, "PLACEHOLDER_FOOTER")
-        after_bytes = len(md_probe.encode("utf-8"))
+        # Re-check against the REAL summarized footer at the fixpoint size.
+        after_bytes = _emitted_bytes(digests, truncations, overflow)
 
-        if after_bytes <= effective_bound_bytes:
-            overflow["resolved"] = "summarized"
-            overflow["guidance"] = list(SPLIT_SUMMARIZE_GUIDANCE)
-        else:
+        if after_bytes > effective_bound_bytes:
             # Step 2: material still too big -> FAIL CLOSED with a split proposal.
-            overflow["resolved"] = "split_required"
-            overflow["guidance"] = list(SPLIT_SUMMARIZE_GUIDANCE)
-            overflow["split_proposal"] = _make_split_proposal(
-                sources, effective_bound_bytes, original_digests)
+            overflow = {"triggered": True, "resolved": "split_required",
+                        "guidance": list(SPLIT_SUMMARIZE_GUIDANCE),
+                        "split_proposal": _make_split_proposal(
+                            sources, effective_bound_bytes, original_digests)}
 
     # Recompute final digests/size with truncations applied.
     final_digests = {s.sid: sha256_hex(s.content_rendered.encode("utf-8")) for s in sources}
@@ -777,21 +824,29 @@ def _make_footer(result, actual_bytes, estimated, args) -> str:
               f"- actual_bytes: {actual_bytes}",
               f"- estimated_tokens: {estimated}",
               f"- effective_bound_bytes: {result['effective_bound_bytes']}", ""]
-    if ov["resolved"] == "split_required":
-        lines.append("- FAIL-CLOSED: material does not fit. Split proposal:")
-        lines.append("")
-        lines.append("```json")
-        lines.append(json.dumps(ov["split_proposal"], sort_keys=True, indent=2))
-        lines.append("```")
-        lines.append("")
+    # Note: _make_footer is only ever rendered on the non-split path
+    # (resolved in {within_bound, summarized}); the split_required path renders via
+    # _render_split_report and never reaches here, so no split branch belongs here (F3).
     return "\n".join(lines)
 
 
 def _safe_name(sid: str) -> str:
     out = []
+    flattened = False
     for ch in sid:
-        out.append(ch if (ch.isalnum() or ch in "._-") else "__")
-    return "".join(out)
+        if ch.isalnum() or ch in "._-":
+            out.append(ch)
+        else:
+            out.append("__")
+            flattened = True
+    name = "".join(out)
+    # Collision-proofing (F6): flattening separators could map two distinct source
+    # ids to the same evidence filename (e.g. `a/b` vs `a__b`). When any separator
+    # was flattened, suffix a short deterministic sha256 of the ORIGINAL id so the
+    # mapping is injective. Deterministic: same id -> same name across runs.
+    if flattened:
+        name += "-" + sha256_hex(sid.encode("utf-8"))[:8]
+    return name
 
 
 def _ext_for(lang: str) -> str:
@@ -884,9 +939,9 @@ def emit(result, args) -> tuple[dict, int]:
     header = _make_header(args, result["repo_sha"], result["effective_bound_bytes"],
                           result["ceiling"])
 
-    # Compute context.md with a placeholder footer first, then finalize with the
-    # real footer (footer content does not depend on md size beyond the numbers
-    # we already resolved during build()).
+    # The split-required path renders a bounded overflow report; the normal /
+    # summarized path renders the packet with a footer-aware fixpoint (below),
+    # matching the size build() enforced the bound against.
     split_required = result["overflow"]["resolved"] == "split_required"
 
     if split_required:
@@ -902,29 +957,22 @@ def emit(result, args) -> tuple[dict, int]:
         _atomic_write(os.path.join(out, "context.meta.json"), canon_json_bytes(meta))
         return meta, 2
 
-    # Normal / summarized path.
-    footer = _make_footer_two_pass(result, args, header)
-    _write_evidence(evidence, result)
-    _atomic_write(os.path.join(out, "context.md"), footer.encode("utf-8"))
-    actual_bytes = len(footer.encode("utf-8"))
+    # Normal / summarized path -- footer-aware fixpoint (identical render to the
+    # size build() enforced the bound against, so exit 0 => emitted context.md
+    # respects the effective byte bound, footer included).
+    def _footer_for(total_bytes: int) -> str:
+        estimated = estimate_tokens(total_bytes, args.bytes_per_token)
+        return _make_footer(result, total_bytes, estimated, args)
+
+    md, actual_bytes = _finalize_md(
+        header, result["sources"], result["final_digests"],
+        result["truncations"], _footer_for)
     estimated = estimate_tokens(actual_bytes, args.bytes_per_token)
+    _write_evidence(evidence, result)
+    _atomic_write(os.path.join(out, "context.md"), md.encode("utf-8"))
     meta = make_meta(result, args, actual_bytes, estimated)
     _atomic_write(os.path.join(out, "context.meta.json"), canon_json_bytes(meta))
     return meta, 0
-
-
-def _make_footer_two_pass(result, args, header) -> str:
-    # Two-pass: build once with placeholder numbers to learn the byte size, then
-    # rebuild the footer with the true byte/token totals so context.md is
-    # self-consistent and deterministic.
-    md0 = build_context_md(header, result["sources"], result["final_digests"],
-                           result["truncations"], "PLACEHOLDER_FOOTER")
-    size0 = len(md0.replace("PLACEHOLDER_FOOTER",
-                            _make_footer(result, 0, 0, args)).encode("utf-8"))
-    est0 = estimate_tokens(size0, args.bytes_per_token)
-    footer = _make_footer(result, size0, est0, args)
-    return build_context_md(header, result["sources"], result["final_digests"],
-                            result["truncations"], footer)
 
 
 def _render_split_report(result, args, header) -> str:
@@ -939,7 +987,8 @@ def _render_split_report(result, args, header) -> str:
         lines.append(f"- `{s.sid}` — {b} bytes — sha256 `{result['original_digests'][s.sid]}` "
                      f"— evidence/{_safe_name(s.sid)}.{_ext_for(s.lang)}")
     lines += ["", "### Split proposal", "", "```json",
-              json.dumps(result["overflow"]["split_proposal"], sort_keys=True, indent=2),
+              json.dumps(result["overflow"]["split_proposal"], sort_keys=True,
+                         indent=2, ensure_ascii=False),
               "```", "", "### Guidance", ""]
     for g in result["overflow"]["guidance"]:
         lines.append(f"- {g}")

@@ -55,6 +55,17 @@ Exit codes: `0` success (within bound, possibly after summarizing non-material
 logs); `2` **fail-closed** — a material source does not fit even after
 summarization, so a split proposal is emitted instead of a quietly smaller packet.
 
+**Exit-0 byte-bound guarantee.** Whenever the process exits `0`
+(`overflow.resolved` is `within_bound` or `summarized`), the **real emitted
+`context.md` — footer included — is `≤` the effective byte bound.** The bound
+decision is *footer-aware*: the builder renders the actual footer (omitted
+categories, role sufficiency, overflow block) and iterates its self-referential
+size to a fixpoint before deciding, so what is measured against the bound is
+exactly what is written. When that cannot be achieved without reducing *material*
+content, the builder takes the fail-closed exit-`2` split path instead — it never
+emits an over-bound packet at exit `0`. (The exit-`2` split *report* is a bounded
+diagnostic and is exempt from this guarantee.)
+
 ## Output (§12.3)
 
 ```
@@ -114,7 +125,11 @@ cannot be computed and is **not** applied — the ordinary ceiling stands, recor
 honestly (`relative_applied: false`; a window is never fabricated).
 
 The **effective byte bound** actually enforced is
-`min(--max-bytes, effective_ceiling_tokens × bytes_per_token)`.
+`min(--max-bytes, effective_ceiling_tokens × bytes_per_token)`. Enforcement is
+**footer-inclusive**: the size compared against this bound is the full emitted
+`context.md` (header + source blocks + the real footer), resolved to a fixpoint —
+not a footer-less estimate. So an exit-`0` packet is guaranteed to sit at or under
+the effective byte bound.
 
 These constants and the estimate are a **local mirror** of
 `tools/agent_supervisor/review_packet.py` (the shadow-only supervisor's review

@@ -137,6 +137,30 @@ def read_md(out: str) -> str:
         return fh.read().decode("utf-8")
 
 
+def md_bytes(out: str) -> int:
+    return os.path.getsize(os.path.join(out, "context.md"))
+
+
+def assert_bound_invariant(tc: unittest.TestCase, out: str, returncode: int) -> None:
+    """The F1 contract: whenever the process exits 0 (within_bound or summarized),
+    the REAL emitted context.md (footer included) must respect the effective byte
+    bound. Exit 2 is the fail-closed split path and is exempt (the split report is
+    a diagnostic, not the work packet)."""
+    meta = load_meta(out)
+    emitted = md_bytes(out)
+    eff = meta["bounds"]["effective_bound_bytes"]
+    if returncode == 0:
+        tc.assertLessEqual(
+            emitted, eff,
+            f"exit 0 but emitted context.md {emitted} B > effective bound {eff} B "
+            f"(overflow.resolved={meta['overflow']['resolved']})")
+        tc.assertTrue(meta["actuals"]["within_effective_bound"])
+        tc.assertIn(meta["overflow"]["resolved"], ("within_bound", "summarized"))
+    else:
+        tc.assertEqual(returncode, 2)
+        tc.assertEqual(meta["overflow"]["resolved"], "split_required")
+
+
 # --------------------------------------------------------------------------
 # AS-1: schema / all Section 12.3 fields
 # --------------------------------------------------------------------------
@@ -151,6 +175,8 @@ class TestAS1Schema(unittest.TestCase):
                                   "--provider", "claude", "--max-bytes", "500000",
                                   "--out", out, "--context-window", "200000"])
             self.assertEqual(proc.returncode, 0, proc.stderr.decode())
+            # F1 invariant: an exit-0 packet respects the effective byte bound.
+            assert_bound_invariant(self, out, proc.returncode)
             # files exist
             self.assertTrue(os.path.isfile(os.path.join(out, "context.md")))
             self.assertTrue(os.path.isfile(os.path.join(out, "context.meta.json")))
@@ -269,8 +295,11 @@ class TestAS3Overflow(unittest.TestCase):
             self.assertTrue(os.path.isfile(art))
             with open(art, "rb") as fh:
                 self.assertEqual(fh.read().count(b"CI_LINE"), 4000)
-            # packet now fits
+            # packet now fits -- and the emitted file (footer included) respects
+            # the effective bound (F1: footer-aware enforcement).
             self.assertTrue(meta["actuals"]["within_effective_bound"])
+            assert_bound_invariant(self, out, proc.returncode)
+            self.assertLessEqual(md_bytes(out), 9000)
 
     def test_as3_material_never_silently_truncated_failclosed(self):
         with tempfile.TemporaryDirectory() as root:
@@ -305,6 +334,46 @@ class TestAS3Overflow(unittest.TestCase):
             self.assertTrue(os.path.isfile(ev))
             with open(ev, "rb") as fh:
                 self.assertEqual(fh.read().count(b"MATERIAL_LINE"), 4000)
+
+    def test_as3_bound_boundary_never_over_bound_exit0(self):
+        # F1 regression: sweep bounds just BELOW the natural size (the old
+        # footer-blind window). Every result must be either exit-0 with the emitted
+        # file inside the bound, or exit-2 fail-closed split -- NEVER exit 0 with an
+        # over-bound context.md.
+        with tempfile.TemporaryDirectory() as root:
+            build_fixture(root)
+            base = ["--task", "M0-T099", "--role", "worker", "--provider", "claude"]
+            nat_out = os.path.join(root, "nat")
+            natp = run_cli(root, base + ["--max-bytes", "500000", "--out", nat_out])
+            self.assertEqual(natp.returncode, 0, natp.stderr.decode())
+            natural = md_bytes(nat_out)
+            self.assertGreater(natural, 0)
+            # bounds inside the footer-blind window and well below it
+            candidates = sorted({natural - 1, natural - 40, natural - 200,
+                                 natural - 900, natural - 1500,
+                                 natural // 2, max(200, natural // 4)})
+            saw_exit0 = False
+            saw_exit2 = False
+            for bound in candidates:
+                if bound <= 0:
+                    continue
+                out = os.path.join(root, f"bnd_{bound}")
+                proc = run_cli(root, base + ["--max-bytes", str(bound), "--out", out])
+                self.assertIn(proc.returncode, (0, 2),
+                              f"unexpected exit {proc.returncode} at max_bytes={bound}")
+                # the core invariant, at every swept bound
+                assert_bound_invariant(self, out, proc.returncode)
+                if proc.returncode == 0:
+                    saw_exit0 = True
+                    # explicit over-bound guard on the raw file size
+                    self.assertLessEqual(md_bytes(out), bound,
+                                         f"emitted > requested --max-bytes {bound}")
+                else:
+                    saw_exit2 = True
+            # the sweep must exercise the fail-closed path at least once (bounds
+            # this far below natural cannot fit the material for this fixture)
+            self.assertTrue(saw_exit2, "boundary sweep never hit the fail-closed path")
+            del saw_exit0  # exit-0 near the bound is fixture-dependent; not required
 
     def test_as3_split_proposal_bins_multiple_material_sources(self):
         with tempfile.TemporaryDirectory() as root:
@@ -375,8 +444,13 @@ class TestBudgetDriftLock(unittest.TestCase):
         sys.path.insert(0, os.path.dirname(_HERE))  # repo root so `tools` is a package
         try:
             from tools.agent_supervisor import review_packet as rp
-        except Exception as exc:  # pragma: no cover - environment guard
-            self.skipTest(f"agent_supervisor not importable: {exc}")
+        except Exception as exc:  # F2/A-4: fail loudly, never skip
+            # This module is expected to exist in this repo; the drift-lock is the
+            # only guarantee the local budget mirror stays honest. A move/break must
+            # break the suite, not silently disarm the lock.
+            self.fail(f"drift-lock target tools/agent_supervisor/review_packet.py "
+                      f"is not importable ({exc}); the budget mirror can no longer "
+                      f"be drift-checked -- fix the import, do not skip")
         return rp
 
     def test_drift_constants_equal(self):
@@ -434,6 +508,33 @@ class TestDeterminism(unittest.TestCase):
             with open(os.path.join(out_b, "context.meta.json"), "rb") as fh:
                 meta_b = fh.read()
             self.assertEqual(meta_a, meta_b, "context.meta.json not byte-identical")
+
+    def test_determinism_byte_identical_summarized_fixpoint(self):
+        # Determinism must hold across the new footer-aware fixpoint (F1). The
+        # summarized regime is the one that iterates the footer to a fixpoint, so
+        # build-twice must still be byte-identical there.
+        with tempfile.TemporaryDirectory() as root:
+            build_fixture(root)
+            ci = os.path.join(root, "ci.txt")
+            with open(ci, "wb") as fh:
+                fh.write(("CI_LINE step passed\n" * 4000).encode("utf-8"))
+            common = ["--task", "M0-T099", "--role", "worker", "--provider",
+                      "claude", "--max-bytes", "9000", "--ci-summary", ci]
+            out_a = os.path.join(root, "a")
+            out_b = os.path.join(root, "b")
+            pa = run_cli(root, common + ["--out", out_a])
+            pb = run_cli(root, common + ["--out", out_b])
+            self.assertEqual(pa.returncode, 0, pa.stderr.decode())
+            self.assertEqual(pb.returncode, 0, pb.stderr.decode())
+            # confirm we are in the fixpoint (summarized) regime, not trivial
+            self.assertEqual(load_meta(out_a)["overflow"]["resolved"], "summarized")
+            with open(os.path.join(out_a, "context.md"), "rb") as fh:
+                a = fh.read()
+            with open(os.path.join(out_b, "context.md"), "rb") as fh:
+                b = fh.read()
+            self.assertEqual(a, b, "summarized context.md not byte-identical")
+            # and the fixpoint result respects the bound (F1 invariant)
+            assert_bound_invariant(self, out_a, pa.returncode)
 
 
 if __name__ == "__main__":
