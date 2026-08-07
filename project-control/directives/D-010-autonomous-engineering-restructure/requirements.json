@@ -1,10 +1,10 @@
 {
  "schema": "directive_requirements/v1",
  "directive_id": "D-010",
- "version": 4,
- "requirement_count": 112,
+ "version": 5,
+ "requirement_count": 114,
  "producer": "orchestrator",
- "updated_at": "2026-08-07T04:22:33+00:00",
+ "updated_at": "2026-08-07T05:06:12+00:00",
  "requirements": [
   {
    "id": "D-010-R001",
@@ -3994,6 +3994,78 @@
     "tasks": []
    },
    "amendment_sequence": 3
+  },
+  {
+   "id": "D-010-R113",
+   "text": "Primary-orchestrator sessions rotate at approximately 400,000 tokens: the effective rotate-at-next-safe-seam threshold is min(400k absolute, the Section 8.6 percentage thresholds x reported window) REGARDLESS of model strength (a 1M-window model does not raise the ceiling); the check happens at clean-up/seam points between bounded units, never mid-subagent work; approximate compliance suffices, gross over-runs do not.",
+   "source_ref": "source-004-amendment.md#owner-feedback",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T037",
+     "M0-T045"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [
+     "dispatch",
+     "accept"
+    ],
+    "effective_date": "2026-08-07"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "owner feedback 2026-08-07 on the first D-010 session-rotation test",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "amendment_sequence": 4
+  },
+  {
+   "id": "D-010-R114",
+   "text": "Session rotation must CONTINUE, not merely stop: on rotation the successor primary session starts fresh automatically from the digest-verified handoff, selecting the orchestrator model by availability (Fable 5 when available, else claude-opus-4-8 xhigh per the owner chain). Until the supervisor rotation capability is activated (R595-gated), a session that must rotate creates the handoff and stops, and the gap to automatic continuation is tracked as an open capability requirement proven at the R595 rehearsal.",
+   "source_ref": "source-004-amendment.md#owner-feedback",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T037",
+     "M0-T045"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [
+     "dispatch",
+     "accept"
+    ],
+    "effective_date": "2026-08-07"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "owner feedback 2026-08-07 on the first D-010 session-rotation test",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "amendment_sequence": 4
   }
  ]
 }
