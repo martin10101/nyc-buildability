@@ -54,14 +54,14 @@
     "control-plane-verifier",
     "directive-compliance-verifier"
   ],
-  "status": "claimed",
-  "progress_percent": 10,
+  "status": "in_progress",
+  "progress_percent": 15,
   "risks": [
     "Rehearsal needs a real supervised run window - bounded by design; if it cannot complete in one unit, split (D-010-R103) rather than extend open-endedly (R104)."
   ],
   "blockers": [],
   "created_at": "2026-08-07T01:33:11.693328+00:00",
-  "updated_at": "2026-08-07T15:38:42.388413+00:00",
+  "updated_at": "2026-08-07T15:41:52.697661+00:00",
   "directive_refs": [
     {
       "directive_id": "D-010",
@@ -88,5 +88,14 @@
   ],
   "directive_regime_version": "1.0",
   "directive_regime_entered_at": "2026-08-07T01:33:11.693328+00:00",
-  "worktree": "C:/Users/MLFLL/Downloads/nyc-zoning/orch"
+  "worktree": "C:/Users/MLFLL/Downloads/nyc-zoning/orch",
+  "progress_log": [
+    {
+      "at": "2026-08-07T15:41:52.697661+00:00",
+      "agent": "backend-engineer",
+      "percent": 15,
+      "status": "in_progress",
+      "message": "Increment 1 dispatched: pre-R595 hardening (three pinned checklist sets A1-A4/B1-B3/C1-C5) in tools/agent_supervisor + tests; producer working in orch worktree; rehearsal runbook drafting in parallel (orchestrator)"
+    }
+  ]
 }
