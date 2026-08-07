@@ -24,6 +24,8 @@ REPO = HERE.parent
 sys.path.insert(0, str(REPO))
 
 from tools.agent_supervisor import loop as lp  # noqa: E402
+from tools.agent_supervisor import policy as pol  # noqa: E402
+from tools.agent_supervisor import rotation as rot  # noqa: E402
 from tools.agent_supervisor import state_machine as sm  # noqa: E402
 from tools.agent_supervisor.audit_log import AuditLog  # noqa: E402
 from tools.agent_supervisor.durable_state import (  # noqa: E402
@@ -31,12 +33,18 @@ from tools.agent_supervisor.durable_state import (  # noqa: E402
     DurableJournal,
     runtime_dir_for,
 )
-from tools.agent_supervisor.loop import consume_pending_prompt, pending_prompt_key  # noqa: E402
+from tools.agent_supervisor.loop import (  # noqa: E402
+    approve_pending_prompt,
+    consume_pending_prompt,
+    pending_prompt_key,
+)
+from tools.agent_supervisor.resume_scheduler import EMERGENCY_STOP_KEY  # noqa: E402
 from tools.agent_supervisor.state_machine import StateMachine  # noqa: E402
 from tools.test_agent_supervisor_loop import (  # noqa: E402
     FakeRunner,
     FakeReviewer,
     LoopTestBase,
+    decision as make_decision,
     outcome,
     run_result,
 )
@@ -113,9 +121,15 @@ class CliResumeConsumeTests(unittest.TestCase):
             code = self.cli.main(list(argv))
         return code, stdout.getvalue(), stderr.getvalue()
 
-    def test_successful_resume_consumes_the_record(self) -> None:
+    def test_successful_resume_marks_the_record_approved_not_consumed(self) -> None:
+        """M0-T045: the contract changed. A successful resume no longer CONSUMES
+        the record (which dropped the prompt bytes and stranded a cross-process
+        forward); it marks it APPROVED, dropping only the re-approvable `digest`
+        key so re-approval still fails closed while the held prompt survives."""
         digest = "a1b2c3d4e5f6"
-        self._park(pending={"cycle": 1, "digest": digest, "decision": "forward",
+        self._park(pending={"cycle": 1, "digest": digest,
+                            "prompt": "REQUESTED ACTION:\nship it\n",
+                            "decision": "forward",
                             "created_at_utc": "2026-08-05T00:00:00Z"})
         code, _out, _err = self.run_cli(
             "resume-pending-prompt", "--approve-prompt-digest", digest)
@@ -123,9 +137,40 @@ class CliResumeConsumeTests(unittest.TestCase):
         self.assertEqual(self._state(), sm.FORWARD_PROMPT)
         record = self._pending()
         self.assertIsInstance(record, dict)
-        self.assertTrue(record.get("consumed"))
+        self.assertTrue(record.get("approved"))
         self.assertFalse(record.get("digest"),
-                         "the record must be consumed so it cannot be re-approved")
+                         "the re-approvable digest must be dropped so it cannot be "
+                         "re-approved")
+        self.assertEqual(record.get("prompt"), "REQUESTED ACTION:\nship it\n",
+                         "the held prompt bytes must survive approval for a "
+                         "cross-process forward")
+        self.assertEqual(record.get("approved_digest"),
+                         lp.digest_of("REQUESTED ACTION:\nship it\n"))
+
+    def test_a_second_resume_of_an_approved_record_fails_closed(self) -> None:
+        """The re-approval guard is `not pending.get("digest")`; an approved record
+        drops that key, so a second resume for the old digest refuses."""
+        digest = "a1b2c3d4e5f6"
+        self._park(pending={"cycle": 1, "digest": digest,
+                            "prompt": "REQUESTED ACTION:\nship it\n",
+                            "decision": "forward",
+                            "created_at_utc": "2026-08-05T00:00:00Z"})
+        code, _out, _err = self.run_cli(
+            "resume-pending-prompt", "--approve-prompt-digest", digest)
+        self.assertEqual(code, 0)
+        # State is now FORWARD_PROMPT, so a second resume is refused first by the
+        # state guard; force it back to WAIT_FOR_OWNER to prove the DIGEST guard
+        # (not merely the state guard) also fails closed on an approved record.
+        runtime_dir = self._runtime_dir()
+        journal = DurableJournal(runtime_dir / DB_FILENAME).open()
+        try:
+            journal.set_state("current_state", sm.WAIT_FOR_OWNER)
+        finally:
+            journal.close()
+        code2, _out2, err2 = self.run_cli(
+            "resume-pending-prompt", "--approve-prompt-digest", digest)
+        self.assertEqual(code2, 1)
+        self.assertIn("no pending-prompt record", err2)
 
     def test_a_consumed_record_cannot_be_re_approved(self) -> None:
         """The regression: a journal parked at WAIT_FOR_OWNER whose pending record
@@ -235,6 +280,300 @@ class LoopInProcessConsumeTests(LoopTestBase):
         self.assertIsInstance(record, dict)
         self.assertTrue(record.get("consumed"))
         self.assertFalse(record.get("digest"))
+
+
+class CrossProcessResumeTests(unittest.TestCase):
+    """M0-T045 T1: the integration lock across the process boundary. Park via a
+    real supervised loop run, approve via a SEPARATE `resume-pending-prompt` CLI
+    call, then forward via a FRESH loop.run() that shares only the durable
+    journal - exactly the sequence the live R595 rehearsal broke on. With a
+    rotation armed, the resume must also actuate the seam (archive -> mint ->
+    relaunch), which is the point of the rehearsal.
+    """
+
+    def setUp(self) -> None:
+        from tools.agent_supervisor import cli
+        self.cli = cli
+        self._tmp = tempfile.TemporaryDirectory()
+        self.addCleanup(self._tmp.cleanup)
+        self.tmp = pathlib.Path(self._tmp.name).resolve()
+        self.repo = self.tmp / "repo"
+        (self.repo / "tools").mkdir(parents=True)
+        self.runtime = self.tmp / "runtime"
+        self.run_id = "run-xproc"
+        self.runtime_dir = runtime_dir_for(self.repo, base=str(self.runtime))
+
+    # -- infrastructure shared with the real loop + real CLI --------------------
+
+    def _open(self) -> DurableJournal:
+        return DurableJournal(self.runtime_dir / DB_FILENAME).open()
+
+    def _authority(self) -> pol.TaskAuthority:
+        return pol.TaskAuthority.from_packet(
+            {"task_id": "M0-T036",
+             "allowed_paths": ["tools/agent_supervisor/**",
+                               "tools/test_agent_supervisor_*.py"],
+             "forbidden_paths": [".github/**", ".claude/**"],
+             "status": "in_progress"},
+            repo_root=str(self.repo), worktree=str(self.repo),
+            branch="task/M0-T036-supervisor-bridge", stage="phase4",
+            documented_test_commands=("python tools/test_agent_supervisor_loop.py",))
+
+    def _build_loop(self, journal: DurableJournal, *, runner, reviewer,
+                    approval_gate, max_cycles: int) -> lp.SupervisedLoop:
+        audit = AuditLog(self.runtime_dir / "audit.jsonl", fsync=False)
+        machine = StateMachine(journal, audit, self.run_id)
+        authority = self._authority()
+        return lp.SupervisedLoop(
+            config=lp.LoopConfig(mode="supervised", task_id="M0-T036", stage="phase4",
+                                 allowed_paths=authority.allowed_paths,
+                                 stop_conditions=("no bypass flags",),
+                                 max_cycles=max_cycles, owner_touch_budget=4),
+            journal=journal, audit=audit, machine=machine, authority=authority,
+            runner=runner, reviewer=reviewer, run_id=self.run_id,
+            approval_gate=approval_gate)
+
+    def run_cli(self, *args: str) -> tuple[int, str, str]:
+        stdout, stderr = io.StringIO(), io.StringIO()
+        argv = [*args, "--checkout", str(self.repo),
+                "--runtime-base", str(self.runtime)]
+        with contextlib.redirect_stdout(stdout), contextlib.redirect_stderr(stderr):
+            code = self.cli.main(list(argv))
+        return code, stdout.getvalue(), stderr.getvalue()
+
+    def _outbox_rows(self, message_id: str) -> list[dict]:
+        journal = self._open()
+        try:
+            rows = journal.conn.execute(
+                "SELECT envelope FROM outbox WHERE message_id = ?",
+                (message_id,)).fetchall()
+        finally:
+            journal.close()
+        return [json.loads(r["envelope"]) for r in rows]
+
+    # -- the test ---------------------------------------------------------------
+
+    def test_park_then_cli_approve_then_fresh_start_forwards_once_and_rotates(
+            self) -> None:
+        # PROCESS 1: a supervised run reaches the WAIT with no approval and PARKS
+        # the held prompt (approval declined => operator_declined, journal at
+        # WAIT_FOR_OWNER with the new-shape record that carries the prompt bytes).
+        j1 = self._open()
+        loop1 = self._build_loop(
+            j1, runner=FakeRunner(run_result()), reviewer=FakeReviewer(outcome()),
+            approval_gate=lambda _d, _p: False, max_cycles=1)
+        loop1.machine.transition(sm.PREFLIGHT, "start_command")
+        result1 = loop1.run_cycle("first unit", cycle=1)
+        self.assertEqual(result1.stopped, "operator_declined")
+        parked = j1.get_state(pending_prompt_key(self.run_id))
+        j1.close()
+        self.assertIsInstance(parked, dict)
+        held_prompt = parked["prompt"]
+        binding_digest = parked["digest"]
+        self.assertTrue(held_prompt, "the held prompt bytes must be parked durably")
+
+        # PROCESS 2: a SEPARATE resume-pending-prompt CLI call approves it. The
+        # journal advances to FORWARD_PROMPT and the record retains the prompt.
+        code, _out, _err = self.run_cli(
+            "resume-pending-prompt", "--approve-prompt-digest", binding_digest)
+        self.assertEqual(code, 0)
+        approved = self._open()
+        try:
+            self.assertEqual(str(approved.get_state("current_state")),
+                             sm.FORWARD_PROMPT)
+            approved_record = approved.get_state(pending_prompt_key(self.run_id))
+        finally:
+            approved.close()
+        self.assertTrue(approved_record.get("approved"))
+        self.assertEqual(approved_record.get("prompt"), held_prompt)
+
+        # PROCESS 3: a fresh `start`/loop that shares only the durable journal.
+        # Arm a rotation so the resume MUST actuate the seam. Cycle 2 completes so
+        # the run ends cleanly without re-parking.
+        j3 = self._open()
+        j3.set_state(rot.ROTATION_PENDING_KEY, True)
+        complete = outcome(make_decision(decision="COMPLETE", next_claude_prompt="",
+                                         evidence_refs=[{"path": "report.md"}]))
+        loop3 = self._build_loop(
+            j3, runner=FakeRunner(run_result(), run_result()),
+            reviewer=FakeReviewer(complete), approval_gate=lambda _d, _p: True,
+            max_cycles=2)
+        run = loop3.run("ignored - the approved prompt is read from the journal")
+        final_state = str(j3.get_state("current_state"))
+        post = j3.get_state(pending_prompt_key(self.run_id))
+        j3.close()
+
+        # Exactly one forward, byte-identical to what was held (digest verified by
+        # the loop before it forwarded).
+        self.assertEqual(len(run.forwarded_message_ids), 1,
+                         "the approved prompt is forwarded exactly once")
+        message_id = run.forwarded_message_ids[0]
+        rows = self._outbox_rows(message_id)
+        self.assertEqual(len(rows), 1, "exactly one outbox row for the forward")
+        self.assertEqual(rows[0]["payload"]["prompt"], held_prompt,
+                         "the forwarded bytes are identical to what was held")
+        self.assertEqual(lp.digest_of(rows[0]["payload"]["prompt"]),
+                         approved_record["approved_digest"])
+        # The seam actuated: a rotation was recorded (archive -> mint -> relaunch).
+        self.assertTrue(run.rotations, "an armed rotation must actuate at the seam")
+        # The record is consumed, so a re-approval fails closed.
+        self.assertTrue(post.get("consumed"))
+        self.assertFalse(post.get("digest"))
+        self.assertFalse(post.get("approved_digest"))
+        self.assertIn(final_state, (sm.COMPLETE, sm.CLAUDE_RUNNING))
+
+        # And a second resume-pending-prompt CLI call now refuses (nothing parked).
+        code2, _out2, err2 = self.run_cli(
+            "resume-pending-prompt", "--approve-prompt-digest", binding_digest)
+        self.assertEqual(code2, 1)
+
+
+class LoopResumeFailClosedTests(LoopTestBase):
+    """M0-T045 T2: every degenerate FORWARD_PROMPT entry refuses with a structured
+    forwarded_prompt_unavailable, contacts no provider, and leaves the journal
+    unchanged. Exercised through the real loop.run() entry."""
+
+    def _at_forward_prompt(self) -> None:
+        self.machine.transition(sm.PREFLIGHT, "start_command")
+        self.machine.transition(sm.WAIT_FOR_OWNER, "preflight_requires_owner")
+        self.machine.transition(sm.FORWARD_PROMPT, "owner_approved_pending_prompt")
+
+    def _loop(self, *, runner=None) -> lp.SupervisedLoop:
+        return lp.SupervisedLoop(
+            config=lp.LoopConfig(mode="supervised", task_id="M0-T036", stage="phase4",
+                                 allowed_paths=self.authority.allowed_paths,
+                                 stop_conditions=("no bypass flags",),
+                                 max_cycles=2, owner_touch_budget=4),
+            journal=self.journal, audit=self.audit, machine=self.machine,
+            authority=self.authority,
+            runner=runner or FakeRunner(run_result()),
+            reviewer=FakeReviewer(outcome()), run_id=self.run_id,
+            approval_gate=lambda _d, _p: True)
+
+    def _assert_refused(self, loop: lp.SupervisedLoop, *, runner) -> None:
+        state_before = self.machine.current_state
+        with self.assertRaises(lp.LoopError) as ctx:
+            loop.run("ignored")
+        self.assertEqual(ctx.exception.code, "forwarded_prompt_unavailable")
+        self.assertEqual(loop.provider_calls, 0, "no provider call on a refusal")
+        self.assertEqual(runner.prompts, [], "the worker was never contacted")
+        self.assertEqual(self.machine.current_state, state_before,
+                         "a refused resume never advances the journal")
+
+    def test_old_shape_record_without_prompt_bytes_refuses(self) -> None:
+        self._at_forward_prompt()
+        # A pre-fix approved record: no held prompt bytes were ever parked.
+        self.journal.set_state(pending_prompt_key(self.run_id),
+                               {"approved": True, "cycle": 1, "decision": "CONTINUE",
+                                "prior_digest": "b" * 64})
+        runner = FakeRunner(run_result())
+        self._assert_refused(self._loop(runner=runner), runner=runner)
+
+    def test_digest_mismatch_refuses(self) -> None:
+        self._at_forward_prompt()
+        prompt = "REQUESTED ACTION:\ndo it\n"
+        self.journal.set_state(
+            pending_prompt_key(self.run_id),
+            {"approved": True, "cycle": 1, "prompt": prompt,
+             "approved_digest": "deadbeef" * 8,  # NOT digest_of(prompt)
+             "decision": "CONTINUE", "prior_digest": "b" * 64})
+        runner = FakeRunner(run_result())
+        self._assert_refused(self._loop(runner=runner), runner=runner)
+
+    def test_missing_record_refuses(self) -> None:
+        self._at_forward_prompt()
+        # No pending_prompt record at all.
+        runner = FakeRunner(run_result())
+        self._assert_refused(self._loop(runner=runner), runner=runner)
+
+    def test_consumed_record_refuses(self) -> None:
+        self._at_forward_prompt()
+        self.journal.set_state(pending_prompt_key(self.run_id),
+                               {"consumed": True, "prior_digest": "b" * 64})
+        runner = FakeRunner(run_result())
+        self._assert_refused(self._loop(runner=runner), runner=runner)
+
+    def test_journal_not_actually_approved_refuses(self) -> None:
+        # State is FORWARD_PROMPT but the last trigger is NOT the owner approval.
+        self.journal.set_state("current_state", sm.FORWARD_PROMPT)
+        self.journal.set_state("last_trigger", "prompt_forwarded")
+        prompt = "REQUESTED ACTION:\ndo it\n"
+        self.journal.set_state(
+            pending_prompt_key(self.run_id),
+            {"approved": True, "cycle": 1, "prompt": prompt,
+             "approved_digest": lp.digest_of(prompt), "decision": "CONTINUE",
+             "prior_digest": "b" * 64})
+        runner = FakeRunner(run_result())
+        self._assert_refused(self._loop(runner=runner), runner=runner)
+
+    def test_emergency_stop_refuses(self) -> None:
+        self._at_forward_prompt()
+        prompt = "REQUESTED ACTION:\ndo it\n"
+        self.journal.set_state(
+            pending_prompt_key(self.run_id),
+            {"approved": True, "cycle": 1, "prompt": prompt,
+             "approved_digest": lp.digest_of(prompt), "decision": "CONTINUE",
+             "prior_digest": "b" * 64})
+        self.journal.set_state(EMERGENCY_STOP_KEY, True)
+        runner = FakeRunner(run_result())
+        self._assert_refused(self._loop(runner=runner), runner=runner)
+
+
+class LoopResumeForwardExactlyOnceTests(LoopTestBase):
+    """M0-T045 T4: a crash between the approved send and its consume must not
+    double-forward. A second FORWARD_PROMPT entry re-uses the same message id and
+    the outbox suppresses the duplicate: exactly one send survives."""
+
+    def _approved_at_forward_prompt(self, prompt: str, binding: str) -> str:
+        self.journal.set_state("current_state", sm.FORWARD_PROMPT)
+        self.journal.set_state("last_trigger", "owner_approved_pending_prompt")
+        self.journal.set_state(
+            pending_prompt_key(self.run_id),
+            {"approved": True, "cycle": 1, "prompt": prompt,
+             "approved_digest": lp.digest_of(prompt), "decision": "CONTINUE",
+             "reviewed_checkpoint_id": "cp-1", "prior_digest": binding})
+        return f"{self.run_id}/fwd/1/{binding[:16]}"
+
+    def _loop(self, *, runner) -> lp.SupervisedLoop:
+        return lp.SupervisedLoop(
+            config=lp.LoopConfig(mode="supervised", task_id="M0-T036", stage="phase4",
+                                 allowed_paths=self.authority.allowed_paths,
+                                 stop_conditions=("no bypass flags",),
+                                 max_cycles=1, owner_touch_budget=4),
+            journal=self.journal, audit=self.audit, machine=self.machine,
+            authority=self.authority, runner=runner,
+            reviewer=FakeReviewer(outcome()), run_id=self.run_id,
+            approval_gate=lambda _d, _p: True)
+
+    def test_a_second_resume_does_not_double_forward(self) -> None:
+        prompt = "REQUESTED ACTION:\ndo it\n"
+        binding = "c" * 64
+        message_id = self._approved_at_forward_prompt(prompt, binding)
+
+        # CRASH SIMULATION: the send happened durably, but the process died before
+        # the CLAUDE_RUNNING transition and the consume (state still FORWARD_PROMPT,
+        # record still approved). Perform just the forward, nothing after.
+        crashed = self._loop(runner=FakeRunner(run_result()))
+        first = crashed._resume_forward(
+            prompt, cycle=1, approval_binding=binding, decision_str="CONTINUE",
+            reviewed_checkpoint_id="cp-1")
+        self.assertTrue(first.sent)
+
+        # A fresh loop resumes from the same FORWARD_PROMPT. The outbox row is
+        # already sent, so forward_exactly_once suppresses the duplicate: no
+        # second send, and the journal still advances to CLAUDE_RUNNING once.
+        runner2 = FakeRunner(run_result())
+        loop2 = self._loop(runner=runner2)
+        loop2.run("ignored")
+
+        rows = self.journal.conn.execute(
+            "SELECT COUNT(*) AS n FROM outbox WHERE message_id = ?",
+            (message_id,)).fetchone()
+        self.assertEqual(rows["n"], 1, "exactly one outbox row: no double-send")
+        self.assertEqual(self.machine.current_state, sm.CLAUDE_RUNNING)
+        record = self.journal.get_state(pending_prompt_key(self.run_id))
+        self.assertTrue(record.get("consumed"),
+                        "the second resume consumes the record after the forward")
 
 
 if __name__ == "__main__":  # pragma: no cover
