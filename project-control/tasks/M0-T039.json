@@ -46,14 +46,14 @@
     "control-plane-verifier",
     "directive-compliance-verifier"
   ],
-  "status": "awaiting_gate",
-  "progress_percent": 95,
+  "status": "accepted",
+  "progress_percent": 100,
   "risks": [
     "Freeze must not block the defect lane (M0-T041 depends on it being explicitly carved out)."
   ],
   "blockers": [],
   "created_at": "2026-08-07T01:32:33.626796+00:00",
-  "updated_at": "2026-08-07T02:30:49.506667+00:00",
+  "updated_at": "2026-08-07T02:38:15.271262+00:00",
   "directive_refs": [
     {
       "directive_id": "D-010",
@@ -78,5 +78,7 @@
       "status": "self_check",
       "message": "Self-check: identity values computed from git/gh primaries; suite baseline 1165/1163/2skip; AD-093 list verbatim-confirmed"
     }
-  ]
+  ],
+  "accepted_by": "orchestrator",
+  "accepted_at": "2026-08-07T02:38:15.271262+00:00"
 }
