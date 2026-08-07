@@ -1,7 +1,7 @@
 {
  "schema": "directive_manifest/v1",
  "directive_id": "D-010",
- "version": 7,
+ "version": 8,
  "slug": "autonomous-engineering-restructure",
  "title": "Autonomous Engineering Restructure and NYC Buildability Pilot Acceleration (Autonomous Engineering V2)",
  "status": "active",
@@ -57,6 +57,14 @@
    "amends": "source-001.md",
    "recorded_at": "2026-08-07T05:21:59+00:00",
    "content_digest_sha256": "2ac4eb04980f43a55afd25cd64309ff8c6961f161559c87cb82f1cc62615900b"
+  },
+  {
+   "file": "source-007-amendment.md",
+   "kind": "amendment",
+   "sequence": 7,
+   "amends": "source-001.md",
+   "recorded_at": "2026-08-07T09:50:11+00:00",
+   "content_digest_sha256": "6f9e2eb021046ab3a73d678a035dae8066b79f3944184ce7b48ba8a0bae7df33"
   }
  ],
  "amendments": [
@@ -64,7 +72,8 @@
   "source-003-amendment.md",
   "source-004-amendment.md",
   "source-005-amendment.md",
-  "source-006-amendment.md"
+  "source-006-amendment.md",
+  "source-007-amendment.md"
  ],
  "supersedes": [],
  "superseded_by": null,
@@ -103,8 +112,8 @@
  "verification_file": "verification.json",
  "final_reviewed_sha": null,
  "final_reviewed_manifest_sha256": null,
- "requirements_content_digest_sha256": "6a01c289043ccc8005eaf1bb009031e50b5ddde0e73274582971c794b1387b82",
- "requirements_id_digest_sha256": "4d3836fa4c26da9d4de9b367f967b648af21e18f24d354ecd6b6d2eba4237363",
+ "requirements_content_digest_sha256": "258c9aaaf53d5403a2ed4da8c76acb09959c60a53b10cee0b8ba46db927276e2",
+ "requirements_id_digest_sha256": "e1864ebdc6700b86cf3e019e63933a56c2777029095c159b8ba03c24530fd0e1",
  "enforcement_pointers": {
   "tasks": [
    "M0-T037",
@@ -133,7 +142,8 @@
   "Version 2 (applicability-binding amendment, administrative): capture rows carried the D-010-PROGRAM sentinel in per-row applicability.task_ids together with task_types=['governance']; under the resolver's conjunction semantics no real ledger task could match any row, making the requirement set mechanically inert at submit/accept. Rows are now bound to the wave-1 tasks that cite them plus parent M0-T037 (close-out verification per AD-080). Requirement IDs and texts UNCHANGED (id digest stable); content digest restamped per c14 amendment mechanics.",
   "Amendment 2 (source-003, 2026-08-06): owner typed authorization resolving the auto-mode classifier hold on the M0-T040 commit; rows R111 (proceed with the commit exactly as reviewed) + R112 (independent G3 + security G5 + directive-compliance verification required before any merge). Bound to M0-T037/M0-T040.",
   "Amendment 3 (source-004, 2026-08-07): owner feedback on the first session-rotation test - the ~400k absolute ceiling applies to the primary orchestrator at seam points regardless of model window (this session over-ran to ~620k before rotating: R113), and rotation must automatically continue in a fresh session with availability-based model selection rather than merely stopping (R114; automatic continuation is the supervisor rotation capability, R595-gated, proven at M0-T045).",
-  "Version 7 (session-2 launch amendment): source-006 captures the owner's session-2 launch instruction verbatim (fresh primary orchestrator re-dispatch after the CP-0037 rotation). One new row D-010-R116 (re-dispatch obligation; introduces NO new obligations - confirms R097..R115, holds, SHADOW-ONLY, and the R595 blocking prerequisite unchanged). Existing requirement ids/texts UNCHANGED; id + content digests restamped per c14 amendment mechanics; in-flight task packets M0-T042..M0-T045 directive_refs widened to cover R116."
+  "Version 7 (session-2 launch amendment): source-006 captures the owner's session-2 launch instruction verbatim (fresh primary orchestrator re-dispatch after the CP-0037 rotation). One new row D-010-R116 (re-dispatch obligation; introduces NO new obligations - confirms R097..R115, holds, SHADOW-ONLY, and the R595 blocking prerequisite unchanged). Existing requirement ids/texts UNCHANGED; id + content digests restamped per c14 amendment mechanics; in-flight task packets M0-T042..M0-T045 directive_refs widened to cover R116.",
+  "Version 8 (session-3 launch amendment): source-007 captures the owner's session-3 launch instruction verbatim (fresh primary orchestrator re-dispatch after the CP-0038 rotation). One new row D-010-R117 (re-dispatch obligation; introduces NO new obligations - confirms R097..R116, holds, SHADOW-ONLY, the R595 blocking prerequisite, and the primary-checkout/dormant-batch non-interference rule unchanged). Existing requirement ids/texts UNCHANGED; id + content digests restamped per c14 amendment mechanics; in-flight task packets M0-T043..M0-T045 directive_refs widened to cover R117 (M0-T042 is accepted and immutable)."
  ],
  "locked_requirement_ids": [
   "D-010-R001",
@@ -251,10 +261,11 @@
   "D-010-R113",
   "D-010-R114",
   "D-010-R115",
-  "D-010-R116"
+  "D-010-R116",
+  "D-010-R117"
  ],
  "created_at": "2026-08-07T01:09:55+00:00",
- "updated_at": "2026-08-07T05:22:50+00:00",
+ "updated_at": "2026-08-07T09:50:11+00:00",
  "audit_log": [
   {
    "at": "2026-08-07T01:09:55+00:00",
@@ -300,6 +311,11 @@
    "at": "2026-08-07T05:22:50+00:00",
    "actor": "orchestrator",
    "action": "amendment source-006 recorded (session-2 launch instruction); R116 appended; digests restamped"
+  },
+  {
+   "at": "2026-08-07T09:50:11+00:00",
+   "actor": "orchestrator",
+   "action": "amendment source-007 recorded (session-3 launch instruction); R117 appended; digests restamped"
   }
  ]
 }

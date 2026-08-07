@@ -1,0 +1,1 @@
+resume from docs/SESSION_HANDOFF.md (CP-0038; digest-verified handoff session-handoff-2026-08-07-2.json). Next unit is M0-T043 (context-pack builder), then M0-T044, then M0-T045 — the R595 rehearsal that gates everything else. The dormant D-009/M0-T019/M2-T014 batch, the primary checkout, and all holds are untouched
