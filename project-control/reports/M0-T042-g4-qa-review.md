@@ -112,3 +112,43 @@ Optional but recommended: AS-2 exact-boundary test and a `CheckpointSignals.from
 **FAIL** — solely on the AS-3 / D-010-R083 coverage gap (two directive-enumerated prohibited categories and the completeness-flag mechanism have no fixtures guarding a bound safety requirement, and the producer report overstates AS-3 coverage). Everything else is strong and independently verified: 1212/1210/0/2 full suite, 23 new tests, no flakiness, additive-only, deterministic, AS-1/AS-2/AS-4/AS-5 proven, both flagged deviations correct and scenario-strengthening, and the guard code itself is correct across all seven categories. The remediation is small (≈3 test assertions, no implementation change). The orchestrator may reasonably choose rework-then-accept or accept-with-an-immediate-follow-up; on the evidence and my explicit AS-3 duty, my gate verdict is FAIL. Nothing here is BLOCKED — I executed every required command myself.
 
 Unverifiable from the QA lens (deferred to the named specialist reviewers, not blockers for G4): D-010-R093 (no-speculative-feature judgment) and D-010-R116 (session-2 re-dispatch lifecycle) are process/traceability requirements outside unit-test scope; the authoritative directive pass belongs to the directive-compliance-verifier.
+
+
+---
+
+# Gate Report (Delta re-review — Rework 1)
+
+- **Gate ID:** G4 (QA) — delta re-review
+- **Reviewer:** qa-engineer (independent; not the producer)
+- **Result: PASS** for head `9a1c7e1700d4e6c6dd57f963ce162e95c632024b`
+- **Prior verdict:** FAIL @ `fa69f9e` on one scoped defect (D1). **D1 is now genuinely closed.**
+
+## Delta duty 1 — diff touches only the test file + producer report
+
+`git diff fa69f9e..9a1c7e1 --name-status`: only implementation-relevant changes are `M tools/test_agent_supervisor_ephemeral_review.py` and `M project-control/reports/M0-T042-producer-report.md`; everything else is orchestrator ledger/gate recording (ADR-005). **Zero `tools/agent_supervisor/*.py` production-code change confirmed.**
+
+## Delta duty 2 — observed counts
+
+Module: **Ran 27 — OK**; full suite: **Ran 1216 — OK (skipped=2)** ⇒ **1216 / 1214 / 0 / 2** (matches claim; +4 net-new). Module re-run identical (no flakiness); the 4 new tests pass in isolation (no order dependence).
+
+## Delta duty 3 — D1 genuinely closed
+
+Enumerated `PROHIBITED_MARKER_KEYS` directly from code (6 marker categories) and ran `guard_packet` on each — all reject. Post-rework fixture coverage is complete across every prohibited detection path: full_transcript ✓, full_directive_registry ✓ (marker + completeness), all_historical_reports ✓ (marker + completeness), whole_repository ✓, **all_logs ✓ (new)**, **full_code_graph ✓ (new)**, unrelated_task_packets ✓ (correlation), completeness mechanism ✓ (**new** test asserting category AND location). The R083 report row no longer overstates; the CLAUDE.md byte figure is honestly disambiguated (8339 raw CRLF − 8227 LF-normalized = 112 CR bytes on 112 line breaks — independently verified; 8227 is the load-bearing number).
+
+**Trivial non-blocking nit:** the report says "ALL SEVEN marker categories"; precisely there are 6 marker-key categories + unrelated_task_packets detected by correlation = 7 prohibited categories. Prose imprecision only — every category is genuinely fixtured. No action required.
+
+## Delta duty 4 — NICE-TO-HAVE re-check
+
+NTH-1 (exact boundary) **ADDRESSED**; NTH-2 (from_mapping validation) **ADDRESSED**; NTH-3 (usage peak/decode-error), NTH-4 (on-disk journal tamper), NTH-5 (top-level marker key / other strip categories) **remain, non-blocking**. Bonus: the G3 M-2 sealed-failed-record test is real (verified the `ExhaustedReviewer` outcome flows through the seal path, not a refusal branch) and strengthens AS-1.
+
+## Regression / determinism
+
+CLEAN on both: additive test-only delta, no existing test touched, full suite green 1214 pass / 0 fail; the 4 new tests are pure (no subprocess/network/wall-clock dependence).
+
+## Directive rows (delta)
+
+**D-010-R083 now PASS** (was PARTIAL/FAIL): every directive-enumerated prohibited category has a rejecting fixture, re-run and confirmed. R027/R041/R042/R081/R082/R084/R085/R086/R087/R088 PASS unchanged. R093/R116 remain UNVERIFIABLE from the QA lens (deferred to directive-compliance-verifier / control-plane-verifier; not G4 blockers).
+
+## Conclusion
+
+**PASS** @ `9a1c7e1`. Prior FAIL fully remediated; residual NICE-TO-HAVEs non-blocking; nothing BLOCKED — every required command executed by the reviewer.

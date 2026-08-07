@@ -80,3 +80,32 @@ The read-only guard blocked inline `python -c` and scratchpad file writes, so th
 - `AGENTS.md`
 
 **Recommendation: PASS.** M-1 and M-2 are optional test-hardening follow-ups (not gate blockers); I-1 belongs on the R595 activation checklist.
+
+
+---
+
+# G3 Delta Review — M0-T042 (Rework 1)
+
+## Verdict: **PASS holds** at head `9a1c7e1700d4e6c6dd57f963ce162e95c632024b`
+
+`git rev-parse HEAD` == `9a1c7e1...`; worktree clean. Delta reviewed: `fa69f9e..9a1c7e1`.
+
+## Duty 1 — No production-code drift since the G3 PASS: CONFIRMED
+
+`git diff --name-only fa69f9e..9a1c7e1 -- tools/agent_supervisor/ AGENTS.md` returns **empty**. The only code file in the delta is `tools/test_agent_supervisor_ephemeral_review.py`. Every production module and `AGENTS.md` are byte-identical to the head passed at G3. Remaining delta paths are orchestrator lifecycle artifacts plus the producer-report edit. The entire G3 analysis (correctness, contract fit, shadow-only preservation, AGENTS.md factual accuracy) carries forward unchanged.
+
+## Duty 2 — The 4 new test methods (+ M-1 fixtures): correct and non-vacuous
+
+- **M-2 — `AS1EndToEnd.test_a_failed_review_still_seals_a_verifiable_record`**: genuinely exercises the flagged `ephemeral_review.py:294-314` path. `ExhaustedReviewer` returns the real schema-retry-exhaustion `ReviewOutcome` shape; the packet passes guard+budget so the loop reaches the seal block with `decision is None`. Asserts empty `evidence_refs`/`reopened_sources`, carried error fields (`attempts=3`, `returncode=1`, `error_code`), `usage_telemetry == USAGE_UNKNOWN`, non-empty `record_digest`, `verify_record(...) == True`, and a JSONL journal round-trip that re-verifies. The exact path — not a refusal record. Not vacuous.
+- **AS-2 inclusive boundary — `AS2Budget.test_the_ceiling_is_inclusive_at_the_exact_boundary`**: at exactly `ceiling*4` bytes → estimate 64,000 == ceiling → within, no guidance; at `ceiling*4 + 1` → `ceil` → 64,001 → refused with guidance. Proves inclusive-at-equality and strict-refuse-one-over. Not vacuous.
+- **`AS3Guard.test_a_completeness_flag_is_rejected_as_whole_history`**: exercises `_scan_completeness_flags` for both watched mappings — `reports/all_history` → `all_historical_reports` at `sections.reports.all_history`, and `directives/full_registry` → `full_directive_registry`. Not vacuous.
+- **`AS4Cadence.test_signals_from_mapping_fails_closed_on_bad_input`**: `unknown_signal`, `non_boolean_signal`, plus a valid round-trip yielding `review=True` with `before_merge`. Not vacuous.
+- **M-1 fixtures**: `all_logs` and `full_code_graph` added to `test_each_prohibited_category_is_rejected`; all six marker categories (plus `unrelated_task_packets`) now have direct rejection fixtures.
+
+## Duty 3 — Observed counts
+
+Module: **Ran 27 tests — OK**. The 5 new/updated tests by name: **Ran 5 — OK**. Full suite: **Ran 1216 tests in 80.718s — OK (skipped=2)** ⇒ **1216 / 1214 / 0 / 2**, matching the claim; strictly +4 net tests over the G3 baseline.
+
+## Duty 4 — Verdict
+
+**PASS.** Test-only, strictly additive rework over byte-identical production code; resolves M-1 and M-2. INFO items I-1..I-5 unchanged, advisory, non-blocking. No new findings. All AS-1..AS-5 remain satisfied with tighter coverage.
