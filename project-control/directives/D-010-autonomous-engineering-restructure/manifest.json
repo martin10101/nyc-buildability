@@ -1,7 +1,7 @@
 {
  "schema": "directive_manifest/v1",
  "directive_id": "D-010",
- "version": 11,
+ "version": 12,
  "slug": "autonomous-engineering-restructure",
  "title": "Autonomous Engineering Restructure and NYC Buildability Pilot Acceleration (Autonomous Engineering V2)",
  "status": "active",
@@ -89,6 +89,14 @@
    "amends": "source-009-amendment.md",
    "recorded_at": "2026-08-07T16:53:10+00:00",
    "content_digest_sha256": "736d797b2fb125ac75de8af827a72cd1043352dd859ba89f24ab4e43f5e2d55b"
+  },
+  {
+   "file": "source-011-amendment.md",
+   "kind": "amendment",
+   "sequence": 11,
+   "amends": "source-010-amendment.md",
+   "recorded_at": "2026-08-07T19:03:32+00:00",
+   "content_digest_sha256": "11feaa98310d1b10dd5b0d4fbbdedda1842d9bc3452174991c55b1d123448fc3"
   }
  ],
  "amendments": [
@@ -100,7 +108,8 @@
   "source-007-amendment.md",
   "source-008-amendment.md",
   "source-009-amendment.md",
-  "source-010-amendment.md"
+  "source-010-amendment.md",
+  "source-011-amendment.md"
  ],
  "supersedes": [],
  "superseded_by": null,
@@ -139,8 +148,8 @@
  "verification_file": "verification.json",
  "final_reviewed_sha": null,
  "final_reviewed_manifest_sha256": null,
- "requirements_content_digest_sha256": "2470e454b2135094c2a10e02b41b152c506d03d2484b85f40d79a4747390f0bb",
- "requirements_id_digest_sha256": "7cf8cd63432e9b69fff426b65d95415398e7308c1ee00d72314dfd46eebde3c8",
+ "requirements_content_digest_sha256": "37af353b5d0fb4cf0cc55fbf4edc3d078c8d2103df013d9083b3c80ac1b27d34",
+ "requirements_id_digest_sha256": "d4a8cd9e7cfbb9c2e1bd05d0642a3467470f2d1f7c53e23d0cfa220317d0a248",
  "enforcement_pointers": {
   "tasks": [
    "M0-T037",
@@ -295,7 +304,8 @@
   "D-010-R117",
   "D-010-R118",
   "D-010-R119",
-  "D-010-R120"
+  "D-010-R120",
+  "D-010-R121"
  ],
  "created_at": "2026-08-07T01:09:55+00:00",
  "updated_at": "2026-08-07T16:53:10+00:00",
@@ -364,6 +374,11 @@
    "at": "2026-08-07T16:53:10+00:00",
    "actor": "orchestrator",
    "action": "amendment source-010 recorded (R595 same-window retry agreement); R120 appended; digests restamped"
+  },
+  {
+   "at": "2026-08-07T19:03:32+00:00",
+   "actor": "orchestrator",
+   "action": "amendment source-011 recorded (session-5 launch: product work per R116/0A.11); R121 appended; digests restamped"
   }
  ]
 }
