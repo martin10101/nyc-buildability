@@ -1,10 +1,52 @@
-# M0-T045 — R595 Supervised Rehearsal (DRAFT design — pending owner planning session)
+# M0-T045 — R595 Supervised Rehearsal (IN PROGRESS — owner window active 2026-08-07)
 
-**Status: DRAFT.** The rehearsal is SUPERVISED by definition (D-007-R619; D-010-R104): it executes
-only in an owner-attended window, and this document is the orchestrator's prepared input to that
-planning conversation (CP-0039 `next_action`: "plan it WITH the owner present"). Nothing in this
-file authorizes execution; the promotion decision itself remains owner-gated. SHADOW-ONLY stays in
-force for every autonomy tier throughout.
+**Status: EXECUTING under owner authorization D-010-R119** (source-009, typed 2026-08-07:
+"Approve R595 rehearsal per runbook: window now; GitHub leg on M0-T044 evidence; successor resumes
+the next dependency-valid unit; begin."). The owner personally performs the operator acts
+(launches + approvals) via `!` commands; the auto-mode classifier independently denied the
+orchestrator's own launch attempt, and per the captured classifier-denial protocol the owner
+executes — which is also the correct supervised-rehearsal shape (the acts ARE the R078 owner
+touches). SHADOW-ONLY stays in force for every autonomy tier throughout; the promotion decision
+remains owner-gated.
+
+## LIVE RESULTS (2026-08-07 window)
+
+- **R0 doctor: PASS** (fresh runtime minted; journal v1 intact; audit chain intact; owner config +
+  model selection verified; no effort key anywhere).
+- **R1 park: PROVEN LIVE.** Run `run_r595_rehearsal` (code under test = this branch @ `492a0f4`;
+  owner-immutable config; synthetic workload; threshold 1): cycle 1 ran end to end
+  (`START_CLAUDE → … → CODEX_REVIEW → VALIDATE_DECISION → POLICY_CHECK → WAIT_FOR_OWNER`), live
+  usage 134,036 tripped the threshold → **`rotation_pending=True` armed with the unit never
+  interrupted**, decision REVISE, continuation prompt HELD (nothing forwarded;
+  `forwarded_message_ids: []`), parked with digest `e6f112c6…`. Evidence:
+  `M0-T045-r595-rehearsal/r1-start-output.json`.
+- **R4 step 1 (owner approval): PROVEN LIVE.** Owner-run `resume-pending-prompt` with the exact
+  digest → audited `owner_approved_pending_prompt` transition to FORWARD_PROMPT, record consumed.
+  Evidence: `M0-T045-r595-rehearsal/r4-resume-output.json`.
+- **R4 step 2: FAIL-CLOSED REFUSAL — FIRST-CLASS LIVE FINDING (see below).** Seam actuation NOT
+  yet live-proven.
+
+## FINDING R595-F1 (live, 2026-08-07): approved FORWARD_PROMPT journal has no continuation path
+
+The resume `start` refused: `bad_cycle_entry_state: a cycle starts from ['CLAUDE_RUNNING',
+'PREFLIGHT'], not from 'FORWARD_PROMPT'` (fail-closed; 0 provider calls; journal unchanged).
+Evidence: `M0-T045-r595-rehearsal/r4-start-output.json`. Root causes:
+
+1. `loop.py:116` `CYCLE_ENTRY_STATES = {PREFLIGHT, CLAUDE_RUNNING}` — the loop cannot enter from
+   FORWARD_PROMPT although the S7 table has the legal exit (`FORWARD_PROMPT → CLAUDE_RUNNING` on
+   `prompt_forwarded`, `state_machine.py:217`).
+2. The parked record (`loop.py:1681`) stores `{cycle, digest, decision, created_at_utc}` — no
+   prompt TEXT (text is digest-only everywhere by design) — so a cross-process resume has nothing
+   to forward; the CLI success message promised what the loop refuses.
+
+Same class as the original V1.2 structural finding (a state with no operator exit), one level
+deeper: the M0-T036 cure added the CLI edge but no loop entry, and no test crossed the process
+boundary (park → CLI approve → fresh start). Disposition: fix increment dispatched inside this
+task's scope (durable held-prompt text; FORWARD_PROMPT loop entry with digest-verified
+forward-exactly-once; fail-closed on old-shape records; cross-process integration lock).
+The parked `run_r595_rehearsal` journal (old-shape, text-less record) is intentionally
+UNRESUMABLE after the fix (fail-closed) and is preserved as discovery evidence; the seam-actuation
+legs re-run in a FRESH runtime on the fixed code.
 
 ## 1. What this rehearsal closes
 
