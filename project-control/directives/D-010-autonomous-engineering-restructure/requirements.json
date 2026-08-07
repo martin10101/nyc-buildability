@@ -1,10 +1,10 @@
 {
  "schema": "directive_requirements/v1",
  "directive_id": "D-010",
- "version": 6,
- "requirement_count": 117,
+ "version": 7,
+ "requirement_count": 118,
  "producer": "orchestrator",
- "updated_at": "2026-08-07T09:50:11+00:00",
+ "updated_at": "2026-08-07T15:30:25+00:00",
  "requirements": [
   {
    "id": "D-010-R001",
@@ -4179,6 +4179,42 @@
     "tasks": []
    },
    "amendment_sequence": 7
+  },
+  {
+   "id": "D-010-R118",
+   "text": "Session-4 re-dispatch (owner launch instruction 2026-08-07): resume from docs/SESSION_HANDOFF.md at checkpoint CP-0039 with the digest-verified handoff session-handoff-2026-08-07-3.json; the next dependency-valid unit is M0-T045 - the R595 supervised rehearsal and the Section 16.2 promotion-evidence pack (dependencies M0-T040..M0-T044 all accepted). This amendment introduces NO new obligations: the dormant D-009/M0-T019/M2-T014 batch, the primary checkout, and all standing holds remain untouched; R097..R117, the SHADOW-ONLY posture, and the R595 mandatory-blocking activation prerequisite remain binding unchanged.",
+   "source_ref": "source-008-amendment.md#session-4-launch",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T037",
+     "M0-T045"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [
+     "dispatch",
+     "accept"
+    ],
+    "effective_date": "2026-08-07"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "session-4 launch instruction 2026-08-07; re-dispatch with no new obligations",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "amendment_sequence": 8
   }
  ]
 }
