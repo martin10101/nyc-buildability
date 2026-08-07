@@ -20,11 +20,34 @@
    "directive_id": "D-010",
    "producer": "orchestrator",
    "verifier": "directive-compliance-verifier",
-   "applicable_requirement_ids": [],
-   "requirements": [],
-   "reviewed_sha": null,
-   "reviewed_manifest_sha256": null,
-   "note": "pending: placeholder at task contracting; the applicable set and per-requirement rows are produced by the independent verifier at this task gates/accept (fail-closed at accept)."
+   "applicable_requirement_ids": [
+    "D-010-R098",
+    "D-010-R107"
+   ],
+   "requirements": [
+    {
+     "id": "D-010-R098",
+     "state": "PASS",
+     "evidence": [
+      "docs/SESSION_HANDOFF.md line 16: token cec785f97ac1037df1fb2e1b114260eb106b7de0 (40 hex) resolves via git rev-parse and equals gh pr view 154 mergeCommit.oid; delta vs first-pass reviewed content is exactly that one token; preserve-with-correction documented in project-control/reports/M0-T038-producer-report.md Rework note; all other sub-obligations re-confirmed (see M0-T038-dcv-final.md)",
+      "project-control/reports/M0-T038-dcv-final.md",
+      "project-control/reports/M0-T038-dcv-first-pass.md (first-pass VIOLATION preserved; remediated at 030e7a6)"
+     ],
+     "note": "First-pass FAIL (malformed 39-char merge SHA) remediated by rework 030e7a6; re-verified independently at the reworked identity."
+    },
+    {
+     "id": "D-010-R107",
+     "state": "PASS",
+     "evidence": [
+      "Capture PR #155 (45dfdc2), architecture PR #156 (16aa47e), binding PR #157 (aa5eec3) ancestors of origin/main before task start; M0-T038 dependencies []; continuous autonomous flow incl. the G3 FAIL -> rework -> resubmit chain with no owner-approval stop; no blocker references T038; no Section 20 hard-stop implicated (see M0-T038-dcv-final.md)"
+     ],
+     "note": "Holds under rework: corrections/continuation handled without stopping, exactly as R107 requires."
+    }
+   ],
+   "reviewed_sha": "b9e710aa4b18c13e547078251a8f88fa4f67d461",
+   "reviewed_manifest_sha256": "090ad4208921069e83087500facedad6ac4856671b580f6a3eafcd0862d8ac6c",
+   "verified_at": "2026-08-07T02:06:10+00:00",
+   "note": "FINAL record (supersedes preserved first-pass FAIL, M0-T038-dcv-first-pass.md). Full verbatim verdict: project-control/reports/M0-T038-dcv-final.md."
   },
   {
    "task_id": "M0-T039",
@@ -104,5 +127,5 @@
    "note": "pending: placeholder at task contracting; the applicable set and per-requirement rows are produced by the independent verifier at this task gates/accept (fail-closed at accept)."
   }
  ],
- "updated_at": "2026-08-07T01:37:41+00:00"
+ "updated_at": "2026-08-07T02:06:10+00:00"
 }
