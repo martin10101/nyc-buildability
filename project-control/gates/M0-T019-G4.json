@@ -1,0 +1,12 @@
+{
+  "task_id": "M0-T019",
+  "gate_id": "G4",
+  "reviewer": "code-reviewer",
+  "role": "independent_review",
+  "result": "PASS",
+  "report_file": "project-control/reports/M0-T019-g4-qa-review.md",
+  "reviewed_at": "2026-08-07T19:55:12.688759+00:00",
+  "content_manifest_sha256": "46e4d83eb80bcfe63e405b537db914a58a8fbad94820d62874635c3b9955a6eb",
+  "reviewed_sha": "02cdc9b932938ea0f99bb7209e3c27718dbfbf1d",
+  "updated_at": "2026-08-07T19:55:13.237896+00:00"
+}
