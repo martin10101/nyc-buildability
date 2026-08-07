@@ -1,0 +1,21 @@
+{
+ "schema": "evidence_map/v1",
+ "task_id": "M0-T038",
+ "producer": "orchestrator",
+ "requirements": {
+  "D-010-R098": {
+   "summary": "Post-merge SESSION_HANDOFF update preserved through dedicated bounded task M0-T038 + normal PR; diff inspected, verified against merged repository state, not discarded, not mixed with unrelated work.",
+   "evidence": [
+    "docs/SESSION_HANDOFF.md (the preserved 11+/5- update, sole deliverable)",
+    "project-control/reports/M0-T038-producer-report.md (claim-by-claim reproduction table)"
+   ]
+  },
+  "D-010-R107": {
+   "summary": "First dependency-valid bounded task begun automatically after reconciliation + canonical capture; no routine-approval stop was requested.",
+   "evidence": [
+    "project-control/reports/M0-T038-g0-readiness.md",
+    "PRs #155/#156/#157 merged autonomously after green required checks (Tier A per D-010 Section 5.1)"
+   ]
+  }
+ }
+}

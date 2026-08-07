@@ -10,11 +10,17 @@ Refreshed **2026-08-05 (late)** after a long session. **The block below supersed
 
 ## CURRENT STATE (2026-08-05 late — confirm against the ledger + git)
 
-- **`task/M0-T036-supervisor-bridge`** (this branch) — **M0-T036 ACCEPTED (shadow-only) 2026-08-06**
-  (owner Option A). accepted count **56**. Delta re-gate V1.2.3 at `4ff4d88` all PASS (G3/G4/G5 + DCV);
-  585-req independent `verification.json` (584 PASS + R593 NA); acceptance commit `9d7573f`. Branch
-  ahead of origin (`3100436`) with the acceptance commits — push the exact task branch + open the PR.
-  **SHADOW-ONLY; nothing activated.**
+- **`task/M0-T036-supervisor-bridge`** — **M0-T036 ACCEPTED (shadow-only) 2026-08-06; MERGED to `main`
+  2026-08-07T00:06:56Z (owner-authorized).** accepted count **56**. Delta re-gate V1.2.3 at `4ff4d88`
+  all PASS (G3/G4/G5 + DCV); 585-req independent `verification.json` (584 PASS + R593 NA); acceptance
+  commit `9d7573f`. **PR #154 MERGED → `main` = `cec785f9ac1037df1fb2e1b114260eb106b7de0`** via the
+  repository-required **merge-commit** method (no bypass; branch not deleted). The merged head was a
+  **content-empty trigger commit `57ccb44`** (git tree `67e97dda` — byte-identical to acceptance head
+  `4f8c1d2`); it existed ONLY to emit a push/PR event so the **8 required checks** could run during the
+  **2026-08-06 GitHub Actions major outage** (15:22 UTC; webhooks throttled) — no file content changed.
+  All 8 required checks PASS on `57ccb44` (plus 8 non-required, 16/16 green). **SHADOW-ONLY; nothing
+  activated.** ⛔ **R595 supervised rehearsal remains a MANDATORY BLOCKING prerequisite before ANY
+  activation** (R619; `project-control/reports/M0-T036-ACTIVATION-CHECKLIST.md`).
   - D-007 amendments 13–14 captured (`source-014`/`source-015`): **R609** = the Fable-hold override
     (done — reviews ran on `claude-opus-4-8` xhigh); **R615/R616/R617** = build R207+R593, re-verify, accept.
   - **Independent 577-req D-007 verification recorded** (`reports/M0-T036-D007-verification-577.json`):
