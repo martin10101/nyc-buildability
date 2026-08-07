@@ -55,13 +55,13 @@
     "directive-compliance-verifier"
   ],
   "status": "awaiting_gate",
-  "progress_percent": 85,
+  "progress_percent": 95,
   "risks": [
     "Rehearsal needs a real supervised run window - bounded by design; if it cannot complete in one unit, split (D-010-R103) rather than extend open-endedly (R104)."
   ],
   "blockers": [],
   "created_at": "2026-08-07T01:33:11.693328+00:00",
-  "updated_at": "2026-08-07T18:26:25.180558+00:00",
+  "updated_at": "2026-08-07T18:27:08.345158+00:00",
   "directive_refs": [
     {
       "directive_id": "D-010",
