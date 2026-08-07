@@ -17,7 +17,9 @@
   "allowed_paths": [
     "project-control/reports/M0-T039-supervisor-freeze.md",
     ".claude/rules/supervisor-freeze.md",
-    "project-control/tasks/M0-T039.json"
+    "project-control/tasks/M0-T039.json",
+    "project-control/reports/M0-T039-evidence-map.json",
+    "project-control/reports/M0-T039-g0-readiness.md"
   ],
   "forbidden_paths": [
     "tools/agent_supervisor/",
@@ -37,21 +39,21 @@
     "G3",
     "G5"
   ],
-  "producer_agent": null,
+  "producer_agent": "backend-engineer",
   "reviewer_agents": [
     "code-reviewer",
     "security-reviewer",
     "control-plane-verifier",
     "directive-compliance-verifier"
   ],
-  "status": "backlog",
-  "progress_percent": 0,
+  "status": "accepted",
+  "progress_percent": 100,
   "risks": [
     "Freeze must not block the defect lane (M0-T041 depends on it being explicitly carved out)."
   ],
   "blockers": [],
   "created_at": "2026-08-07T01:32:33.626796+00:00",
-  "updated_at": "2026-08-07T01:36:53+00:00",
+  "updated_at": "2026-08-07T02:38:15.271262+00:00",
   "directive_refs": [
     {
       "directive_id": "D-010",
@@ -59,5 +61,24 @@
     }
   ],
   "directive_regime_version": "1.0",
-  "directive_regime_entered_at": "2026-08-07T01:32:33.626796+00:00"
+  "directive_regime_entered_at": "2026-08-07T01:32:33.626796+00:00",
+  "worktree": "C:/Users/MLFLL/Downloads/nyc-zoning/orch",
+  "progress_log": [
+    {
+      "at": "2026-08-07T02:17:24.879079+00:00",
+      "agent": "backend-engineer",
+      "percent": 60,
+      "status": "in_progress",
+      "message": "Producer deliverables committed: freeze record + defect-only lane rule"
+    },
+    {
+      "at": "2026-08-07T02:17:25.104536+00:00",
+      "agent": "backend-engineer",
+      "percent": 90,
+      "status": "self_check",
+      "message": "Self-check: identity values computed from git/gh primaries; suite baseline 1165/1163/2skip; AD-093 list verbatim-confirmed"
+    }
+  ],
+  "accepted_by": "orchestrator",
+  "accepted_at": "2026-08-07T02:38:15.271262+00:00"
 }

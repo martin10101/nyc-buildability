@@ -1,0 +1,21 @@
+{
+ "schema": "evidence_map/v1",
+ "task_id": "M0-T039",
+ "producer": "backend-engineer",
+ "requirements": {
+  "D-010-R065": {
+   "summary": "AD-065 Finish and freeze M0-T036 before further supervisor expansion: M0-T036 accepted+merged (PR #154); freeze record pins main SHA, supervisor tree hash (identical at merge/main/HEAD - no drift), and the 1165-test suite baseline; .claude/rules/supervisor-freeze.md freezes features to the defect-only lane.",
+   "evidence": [
+    "project-control/reports/M0-T039-supervisor-freeze.md",
+    ".claude/rules/supervisor-freeze.md"
+   ]
+  },
+  "D-010-R093": {
+   "summary": "AD-093 No speculative supervisor features: the rule reproduces the Section 0A.10 qualifying-evidence list verbatim and imposes the citation duty on every future supervisor change; the freeze itself cites its qualifying basis (explicit directive requirement AD-065/Phase 1).",
+   "evidence": [
+    ".claude/rules/supervisor-freeze.md",
+    "project-control/directives/D-010-autonomous-engineering-restructure/source-001.md"
+   ]
+  }
+ }
+}

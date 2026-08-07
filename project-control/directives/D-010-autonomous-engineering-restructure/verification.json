@@ -52,13 +52,36 @@
   {
    "task_id": "M0-T039",
    "directive_id": "D-010",
-   "producer": "orchestrator",
+   "producer": "backend-engineer",
    "verifier": "directive-compliance-verifier",
-   "applicable_requirement_ids": [],
-   "requirements": [],
-   "reviewed_sha": null,
-   "reviewed_manifest_sha256": null,
-   "note": "pending: placeholder at task contracting; the applicable set and per-requirement rows are produced by the independent verifier at this task gates/accept (fail-closed at accept)."
+   "applicable_requirement_ids": [
+    "D-010-R065",
+    "D-010-R093"
+   ],
+   "requirements": [
+    {
+     "id": "D-010-R065",
+     "state": "PASS",
+     "evidence": [
+      "M0-T036 ledger accepted; PR #154 MERGED oid cec785f97ac1037df1fb2e1b114260eb106b7de0 (40 hex, ancestor of origin/main); tools/agent_supervisor tree e8eeb4fa240013c508042654968b2a5fc25dcbeb identical at merge/main/HEAD; freeze record values reproduced; suite baseline 1165/1163/0/2 reproduced independently by G3+G5 (see M0-T039-dcv-final.md)",
+      "project-control/reports/M0-T039-supervisor-freeze.md",
+      ".claude/rules/supervisor-freeze.md"
+     ]
+    },
+    {
+     "id": "D-010-R093",
+     "state": "PASS",
+     "evidence": [
+      "Rule section 2 char-identical to source-001 Section 0A.10 list (8 bullets); citation duty in packet+commit; task cites AD-065/Phase-1 qualifying basis; branch diff touches no supervisor or forbidden path (see M0-T039-dcv-final.md)",
+      ".claude/rules/supervisor-freeze.md",
+      "project-control/reports/M0-T039-dcv-final.md"
+     ]
+    }
+   ],
+   "reviewed_sha": "6e839793eb5140fb3066e315b7175cc02a456500",
+   "reviewed_manifest_sha256": "987e4dc7ddb33e021d8a85e83092bf689d008dd484c641fe45abca99966a43fb",
+   "verified_at": "2026-08-07T02:38:14+00:00",
+   "note": "FINAL record; full verbatim verdict at project-control/reports/M0-T039-dcv-final.md. The verifier examined content at reviewed commit b35d59c (identity 987e4dc7...) and proved the material identity stable through the gate-record commits; reviewed_sha is stamped at accept-time HEAD, committed together with the accept ledger write."
   },
   {
    "task_id": "M0-T040",
@@ -127,5 +150,5 @@
    "note": "pending: placeholder at task contracting; the applicable set and per-requirement rows are produced by the independent verifier at this task gates/accept (fail-closed at accept)."
   }
  ],
- "updated_at": "2026-08-07T02:07:28+00:00"
+ "updated_at": "2026-08-07T02:38:14+00:00"
 }
