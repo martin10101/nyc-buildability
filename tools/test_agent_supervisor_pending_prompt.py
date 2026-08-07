@@ -127,8 +127,10 @@ class CliResumeConsumeTests(unittest.TestCase):
         forward); it marks it APPROVED, dropping only the re-approvable `digest`
         key so re-approval still fails closed while the held prompt survives."""
         digest = "a1b2c3d4e5f6"
+        prompt = "REQUESTED ACTION:\nship it\n"
         self._park(pending={"cycle": 1, "digest": digest,
-                            "prompt": "REQUESTED ACTION:\nship it\n",
+                            "prompt": prompt,
+                            "prompt_bytes_digest": lp.digest_of(prompt),
                             "decision": "forward",
                             "created_at_utc": "2026-08-05T00:00:00Z"})
         code, _out, _err = self.run_cli(
@@ -151,8 +153,10 @@ class CliResumeConsumeTests(unittest.TestCase):
         """The re-approval guard is `not pending.get("digest")`; an approved record
         drops that key, so a second resume for the old digest refuses."""
         digest = "a1b2c3d4e5f6"
+        prompt = "REQUESTED ACTION:\nship it\n"
         self._park(pending={"cycle": 1, "digest": digest,
-                            "prompt": "REQUESTED ACTION:\nship it\n",
+                            "prompt": prompt,
+                            "prompt_bytes_digest": lp.digest_of(prompt),
                             "decision": "forward",
                             "created_at_utc": "2026-08-05T00:00:00Z"})
         code, _out, _err = self.run_cli(
