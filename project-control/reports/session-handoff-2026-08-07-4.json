@@ -1,0 +1,51 @@
+{
+ "schema_version": "1",
+ "session_id": "session_01P5eFw9c4FaQ6BNd71cShua",
+ "provider": "claude",
+ "model": "claude-fable-5",
+ "repo": "martin10101/nyc-buildability",
+ "worktree": "C:/Users/MLFLL/Downloads/nyc-zoning/orch",
+ "branch": "control/D-010-session4-rotation",
+ "repo_head": null,
+ "origin_main": "8533635",
+ "checkpoint_id": "CP-0041",
+ "task_id": "M0-T037",
+ "task_digest": null,
+ "created_at": "2026-08-07T18:44:22+00:00",
+ "completed_units": [
+  "D-010 am.7 session-4 launch captured verbatim (source-008, R118; PR #172 merged f61a735)",
+  "M0-T045 ACCEPTED+MERGED (PR #173 merge 8533635; accepted 64; identity 2a259525): R595 supervised rehearsal COMPLETE, all legs LIVE-PROVEN - threshold trip/armed seam (ctx 134,497, unit uninterrupted), owner digest-bound approval, LIVE SEAM ACTUATION (forward-once fwd/1/a4c3d170 -> digest-verified handoff e75d07c0 -> session sup-5b5f59ac minted -> relaunch -> successor cycle 2 through live Codex review), re-approval fail-closed, emergency stop mid-unit (child tree terminated, autostart refused, recovery report). R593 residual CLOSED BY EVIDENCE (never waiver). Owner window: authorizations R119 (am.8) + R120 (am.9) captured verbatim BEFORE the acts; 8 owner touches. Live finding R595-F1 (approved FORWARD_PROMPT journal had no continuation path; parked record text-less) found -> fixed -> cross-process-locked same-window (afc2da5, +10 tests). Pre-R595 hardening: all three pinned checklist sets resolved (4db6a71, +36 tests). Suite 1317/2 zero regressions, reproduced independently 4x. Evidence sealed 26 files SHA-256. Five legs PASS: G3, G4 (85/85 adversarial probes, audit chain cryptographically verified; MATERIAL non-blocking: estop audit-chain fork, honestly surfaced by audit_chain_ok:false), G5 (no HIGH/MEDIUM; LOW-1 park->approve binding -> activation checklist), control-plane 8/8, DCV 19/19."
+ ],
+ "incomplete_unit": null,
+ "active_children": [],
+ "pending_reviews": [],
+ "pending_external_effects": [],
+ "known_failures": [
+  "M0-T043 CI residual carried: tools/test_context_pack.py still not in ci.yml (needs a .github-scoped follow-up)",
+  "estop audit-chain fork (G4 material, non-blocking): emergency-stop + main loop can write concurrent audit sequence numbers; system self-reports audit_chain_ok:false; follow-up test + owner acknowledgement pinned to the activation checklist"
+ ],
+ "next_action": "Wave-1 control chain COMPLETE (M0-T036..M0-T045 all accepted; R595 evidence-complete). Per D-010 R116/0A.11 the next dependency-valid work is PRODUCT work: two real product tasks through the pipeline under the 80/20 rule. Candidates from the initiative plan Lane 2/3 (survey ingestion per accepted M2-T014 findings; M3 corpus tasks blocked by B-001). ALSO owner-decision-ready: the supervised-auto promotion pack (M0-T045-promotion-evidence.md) is complete - activation is the owner's explicit decision, gated on the remaining checklist items (G5 LOW-1 binding fix, estop-fork follow-up, OS-ACL judgment, per-tier authorization). Standing: reviewers stay claude-opus-4-8 xhigh until owner says Fable is back (5 flipped files still uncommitted in PRIMARY checkout); dormant D-009/M0-T019/M2-T014 batch untouched; all holds unchanged.",
+ "required_files": [
+  "docs/SESSION_HANDOFF.md",
+  "project-control/reports/D-010-INITIATIVE-PLAN.md",
+  "project-control/reports/M0-T036-ACTIVATION-CHECKLIST.md",
+  "project-control/reports/M0-T045-promotion-evidence.md"
+ ],
+ "evidence_refs": [
+  "project-control/reports/M0-T045-r595-rehearsal.md",
+  "project-control/reports/M0-T045-r595-rehearsal/EVIDENCE_MANIFEST.json",
+  "project-control/reports/M0-T045-dcv-final.md",
+  "project-control/reports/M0-T045-g3-code-review.md",
+  "project-control/reports/M0-T045-g4-qa-review.md",
+  "project-control/reports/M0-T045-g5-security.md",
+  "project-control/reports/M0-T045-control-plane-review.md",
+  "project-control/directives/D-010-autonomous-engineering-restructure/verification.json"
+ ],
+ "context_telemetry": {
+  "note": "rotation at the post-merge seam per R113/R115: one full unit (M0-T045: two producer increments + live owner-window rehearsal with a fix/re-run cycle + five gates + accept + merge) plus two directive captures consumed the sanctioned window; the next unit is a fresh product-work chain and wants a fresh session"
+ },
+ "quota_telemetry": {
+  "note": "rehearsal consumed ~3 live worker cycles (~478k worker-stream tokens) + 3 live codex reviews on the owner's accounts, all owner-authorized (R119/R120); no provider quota failures; orchestrator ran claude-fable-5; gate reviewers claude-opus-4-8 xhigh per standing fallback"
+ },
+ "digest": "8b3804ab5f25bae051acb480406b203d4487facdbafac94f66f573c442f83951"
+}
