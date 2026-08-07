@@ -48,14 +48,14 @@
     "qa-engineer",
     "directive-compliance-verifier"
   ],
-  "status": "claimed",
+  "status": "in_progress",
   "progress_percent": 10,
   "risks": [
     "Token estimation is heuristic - record bytes AND estimated tokens; ceilings are engineering policy, not billing claims."
   ],
   "blockers": [],
   "created_at": "2026-08-07T01:32:54.430033+00:00",
-  "updated_at": "2026-08-07T09:55:01.016476+00:00",
+  "updated_at": "2026-08-07T09:57:34.939137+00:00",
   "directive_refs": [
     {
       "directive_id": "D-010",
@@ -72,5 +72,14 @@
   ],
   "directive_regime_version": "1.0",
   "directive_regime_entered_at": "2026-08-07T01:32:54.431075+00:00",
-  "worktree": "C:/Users/MLFLL/Downloads/nyc-zoning/orch"
+  "worktree": "C:/Users/MLFLL/Downloads/nyc-zoning/orch",
+  "progress_log": [
+    {
+      "at": "2026-08-07T09:57:34.939137+00:00",
+      "agent": "backend-engineer",
+      "percent": 10,
+      "status": "in_progress",
+      "message": "Producer dispatched (unnamed backend-engineer): context_pack.py + tests + docs per Section 12/0A.4; base f9c79d53"
+    }
+  ]
 }
