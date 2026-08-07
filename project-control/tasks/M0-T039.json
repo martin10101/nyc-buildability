@@ -46,14 +46,14 @@
     "control-plane-verifier",
     "directive-compliance-verifier"
   ],
-  "status": "claimed",
-  "progress_percent": 10,
+  "status": "self_check",
+  "progress_percent": 90,
   "risks": [
     "Freeze must not block the defect lane (M0-T041 depends on it being explicitly carved out)."
   ],
   "blockers": [],
   "created_at": "2026-08-07T01:32:33.626796+00:00",
-  "updated_at": "2026-08-07T02:11:52.039916+00:00",
+  "updated_at": "2026-08-07T02:17:25.104536+00:00",
   "directive_refs": [
     {
       "directive_id": "D-010",
@@ -62,5 +62,21 @@
   ],
   "directive_regime_version": "1.0",
   "directive_regime_entered_at": "2026-08-07T01:32:33.626796+00:00",
-  "worktree": "C:/Users/MLFLL/Downloads/nyc-zoning/orch"
+  "worktree": "C:/Users/MLFLL/Downloads/nyc-zoning/orch",
+  "progress_log": [
+    {
+      "at": "2026-08-07T02:17:24.879079+00:00",
+      "agent": "backend-engineer",
+      "percent": 60,
+      "status": "in_progress",
+      "message": "Producer deliverables committed: freeze record + defect-only lane rule"
+    },
+    {
+      "at": "2026-08-07T02:17:25.104536+00:00",
+      "agent": "backend-engineer",
+      "percent": 90,
+      "status": "self_check",
+      "message": "Self-check: identity values computed from git/gh primaries; suite baseline 1165/1163/2skip; AD-093 list verbatim-confirmed"
+    }
+  ]
 }
