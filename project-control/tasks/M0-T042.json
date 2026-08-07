@@ -55,13 +55,13 @@
     "directive-compliance-verifier"
   ],
   "status": "awaiting_gate",
-  "progress_percent": 85,
+  "progress_percent": 95,
   "risks": [
     "Codex CLI event shapes drift across versions - capability-probe and fixture before live use (AD-022)."
   ],
   "blockers": [],
   "created_at": "2026-08-07T01:32:54.176279+00:00",
-  "updated_at": "2026-08-07T06:53:35.380402+00:00",
+  "updated_at": "2026-08-07T07:03:07.894517+00:00",
   "directive_refs": [
     {
       "directive_id": "D-010",
