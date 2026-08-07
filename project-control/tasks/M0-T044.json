@@ -53,14 +53,14 @@
     "control-plane-verifier",
     "directive-compliance-verifier"
   ],
-  "status": "claimed",
+  "status": "in_progress",
   "progress_percent": 10,
   "risks": [
     "All proofs run in dry-run/shadow harness - no live merge occurs before activation (R104)."
   ],
   "blockers": [],
   "created_at": "2026-08-07T01:33:11.425300+00:00",
-  "updated_at": "2026-08-07T11:31:17.412642+00:00",
+  "updated_at": "2026-08-07T11:32:08.299205+00:00",
   "directive_refs": [
     {
       "directive_id": "D-010",
@@ -77,5 +77,14 @@
   ],
   "directive_regime_version": "1.0",
   "directive_regime_entered_at": "2026-08-07T01:33:11.425300+00:00",
-  "worktree": "C:/Users/MLFLL/Downloads/nyc-zoning/orch"
+  "worktree": "C:/Users/MLFLL/Downloads/nyc-zoning/orch",
+  "progress_log": [
+    {
+      "at": "2026-08-07T11:32:08.299205+00:00",
+      "agent": "backend-engineer",
+      "percent": 10,
+      "status": "in_progress",
+      "message": "Producer dispatched (unnamed backend-engineer): Section 19.4 proof set over push_policy/external_effects in dry-run harness; base 341fa4d"
+    }
+  ]
 }
