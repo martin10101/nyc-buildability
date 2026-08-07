@@ -17,7 +17,9 @@
   "allowed_paths": [
     "project-control/reports/M0-T039-supervisor-freeze.md",
     ".claude/rules/supervisor-freeze.md",
-    "project-control/tasks/M0-T039.json"
+    "project-control/tasks/M0-T039.json",
+    "project-control/reports/M0-T039-evidence-map.json",
+    "project-control/reports/M0-T039-g0-readiness.md"
   ],
   "forbidden_paths": [
     "tools/agent_supervisor/",
