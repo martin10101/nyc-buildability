@@ -267,6 +267,18 @@ zero weakening of the security control. Evidence:
 `postcss 8.5.23` / `sharp 0.35.3` / `brace-expansion 1.1.18` / `js-yaml 4.3.1` — each advisory-free
 and ≥7 days old; all installed as overrides and all passing the unchanged FE-S9 gate.
 
+### 7h. G3 FAIL → scenario reconciliation → G3 re-review (D-009-R021)
+
+G3 (`project-control/reports/M0-T019-g3-code-review.md`, Defect 1) returned **FAIL**: the task-file
+acceptance scenarios FE-S5/FE-S8/FE-S9/FE-S12 had been pre-edited at am.1 (commit e96d718) to assert
+a machine-realized FE-S9 exception + deterministic unit tests that the mootness pivot never
+implemented, contradicting the shipped byte-unchanged gate (my earlier "scenario language remains
+literally TRUE" claim was factually wrong). The orchestrator reconciled those four scenarios in
+`project-control/tasks/M0-T019.json` to the mootness outcome (moot/unimplemented; no exception path;
+FE-S12 NA-by-time-lapse; false unit-test claim removed) on 2026-08-07, and this producer report,
+`M0-T019-fes9-mootness-2026-08-07.md` §6, and `M0-T019-evidence-map.json` were corrected in lockstep;
+G3 is to be re-run over the reconciled head.
+
 ### 7d. Accept-readiness surfaced (D-009-R020)
 
 The required owner return item — report M0-T019 accept-readiness — is **discharged via this
