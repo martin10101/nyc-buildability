@@ -1,0 +1,75 @@
+{
+ "schema": "evidence_map/v1",
+ "task_id": "M0-T040",
+ "producer": "backend-engineer",
+ "requirements": {
+  "D-010-R006": {
+   "summary": "AD-006 owner approval removed from routine ops: ADR-006 Tier A (Section 5.1 verbatim) + CLAUDE.md authority section + protocol docs route ordinary work through tiers",
+   "evidence": [
+    "docs/adr/ADR-006-autonomy-tiers.md",
+    "CLAUDE.md"
+   ]
+  },
+  "D-010-R007": {
+   "summary": "AD-007 PRs + protected-main kept: Section 5.5 merge conditions verbatim in ADR-006; classifier test requires all 10 conditions; no direct-main path anywhere",
+   "evidence": [
+    "docs/adr/ADR-006-autonomy-tiers.md",
+    "tools/test_authority_policy.py"
+   ]
+  },
+  "D-010-R008": {
+   "summary": "AD-008 Tier B specialist-review classes: Section 5.2 table verbatim; test maps every class to its named review",
+   "evidence": [
+    "docs/adr/ADR-006-autonomy-tiers.md",
+    "tools/test_authority_policy.py"
+   ]
+  },
+  "D-010-R009": {
+   "summary": "AD-009 Section 20 hard stops kept: Tier D reproduced 14-item verbatim in order; test fails if any item dropped; CLAUDE.md human-only items intact",
+   "evidence": [
+    "docs/adr/ADR-006-autonomy-tiers.md",
+    "tools/test_authority_policy.py",
+    "CLAUDE.md"
+   ]
+  },
+  "D-010-R010": {
+   "summary": "AD-010 continue-on-noncritical-block: Tier C (Section 5.3, 7 items) queue-report-continue; test asserts Tier C never escalates to owner",
+   "evidence": [
+    "docs/adr/ADR-006-autonomy-tiers.md",
+    "tools/test_authority_policy.py"
+   ]
+  },
+  "D-010-R061": {
+   "summary": "AD-061 engineering vs publication split recorded (Section 6.1/6.2 conditions) in ADR-006 + GATES_AND_CHECKPOINTS",
+   "evidence": [
+    "docs/adr/ADR-006-autonomy-tiers.md",
+    "docs/GATES_AND_CHECKPOINTS.md"
+   ]
+  },
+  "D-010-R062": {
+   "summary": "AD-062 draft/needs-review rules usable downstream with visible status per Section 6.1 in ADR-006 G6 split",
+   "evidence": [
+    "docs/adr/ADR-006-autonomy-tiers.md"
+   ]
+  },
+  "D-010-R063": {
+   "summary": "AD-063 G6 required only for publication/verified claims per Section 6.2 in ADR-006 + gates doc",
+   "evidence": [
+    "docs/adr/ADR-006-autonomy-tiers.md",
+    "docs/GATES_AND_CHECKPOINTS.md"
+   ]
+  },
+  "D-010-R111": {
+   "summary": "Owner-authorized commit b841b4f contains the exact reviewed file set (owner executed the commit in-session via ! after typing the authorization; captured verbatim as D-010 source-003)",
+   "evidence": [
+    "project-control/directives/D-010-autonomous-engineering-restructure/source-003-amendment.md"
+   ]
+  },
+  "D-010-R112": {
+   "summary": "Pre-merge sequence enforced: gates G3 (code-reviewer) + G5 (security-reviewer) + DCV verification all recorded before accept; merge only after acceptance + green checks",
+   "evidence": [
+    "project-control/tasks/M0-T040.json"
+   ]
+  }
+ }
+}

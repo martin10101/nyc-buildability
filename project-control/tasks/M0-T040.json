@@ -26,7 +26,9 @@
     "docs/GATES_AND_CHECKPOINTS.md",
     "tools/test_authority_policy.py",
     "project-control/reports/M0-T040-producer-report.md",
-    "project-control/tasks/M0-T040.json"
+    "project-control/tasks/M0-T040.json",
+    "project-control/reports/M0-T040-evidence-map.json",
+    "project-control/reports/M0-T040-g0-readiness.md"
   ],
   "forbidden_paths": [
     "tools/project_control.py (behavioral CLI changes require a dedicated defect-lane task)",
