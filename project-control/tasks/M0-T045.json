@@ -54,14 +54,14 @@
     "control-plane-verifier",
     "directive-compliance-verifier"
   ],
-  "status": "awaiting_gate",
-  "progress_percent": 95,
+  "status": "accepted",
+  "progress_percent": 100,
   "risks": [
     "Rehearsal needs a real supervised run window - bounded by design; if it cannot complete in one unit, split (D-010-R103) rather than extend open-endedly (R104)."
   ],
   "blockers": [],
   "created_at": "2026-08-07T01:33:11.693328+00:00",
-  "updated_at": "2026-08-07T18:27:08.345158+00:00",
+  "updated_at": "2026-08-07T18:38:31.250638+00:00",
   "directive_refs": [
     {
       "directive_id": "D-010",
@@ -120,5 +120,7 @@
       "status": "self_check",
       "message": "R595 rehearsal COMPLETE, all legs live-proven at afc2da5: R1b trip+park (ctx 134,497, armed, unit uninterrupted); R4b owner approval + SEAM ACTUATION (forward-once fwd/1/a4c3d170, handoff e75d07c0 digest-verified, session sup-5b5f59ac minted, successor completed cycle 2 through live review); R5 re-approval fail-closed; R6 emergency stop (child tree terminated, autostart refused, recovery report). Finding R595-F1 found->fixed->locked same-window (+10 tests, suite 1317/2). Evidence sealed: 26 files, SHA-256 manifest. Promotion pack populated, AS-3 ceiling stated. Owner touches: 8. Next: submit + 5 gates + DCV."
     }
-  ]
+  ],
+  "accepted_by": "orchestrator",
+  "accepted_at": "2026-08-07T18:38:31.250638+00:00"
 }
