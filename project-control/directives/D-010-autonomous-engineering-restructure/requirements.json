@@ -1,10 +1,10 @@
 {
  "schema": "directive_requirements/v1",
  "directive_id": "D-010",
- "version": 1,
+ "version": 2,
  "requirement_count": 110,
  "producer": "orchestrator",
- "updated_at": "2026-08-07T01:09:55+00:00",
+ "updated_at": "2026-08-07T01:45:52+00:00",
  "requirements": [
   {
    "id": "D-010-R001",
@@ -14,11 +14,9 @@
    "binding": true,
    "applicability": {
     "task_ids": [
-     "D-010-PROGRAM"
+     "M0-T037"
     ],
-    "task_types": [
-     "governance"
-    ],
+    "task_types": [],
     "milestones": [],
     "paths": [],
     "lifecycle_events": [
@@ -51,11 +49,9 @@
    "binding": true,
    "applicability": {
     "task_ids": [
-     "D-010-PROGRAM"
+     "M0-T037"
     ],
-    "task_types": [
-     "governance"
-    ],
+    "task_types": [],
     "milestones": [],
     "paths": [],
     "lifecycle_events": [
@@ -88,11 +84,9 @@
    "binding": true,
    "applicability": {
     "task_ids": [
-     "D-010-PROGRAM"
+     "M0-T037"
     ],
-    "task_types": [
-     "governance"
-    ],
+    "task_types": [],
     "milestones": [],
     "paths": [],
     "lifecycle_events": [
@@ -125,11 +119,9 @@
    "binding": true,
    "applicability": {
     "task_ids": [
-     "D-010-PROGRAM"
+     "M0-T037"
     ],
-    "task_types": [
-     "governance"
-    ],
+    "task_types": [],
     "milestones": [],
     "paths": [],
     "lifecycle_events": [
@@ -162,11 +154,9 @@
    "binding": true,
    "applicability": {
     "task_ids": [
-     "D-010-PROGRAM"
+     "M0-T037"
     ],
-    "task_types": [
-     "governance"
-    ],
+    "task_types": [],
     "milestones": [],
     "paths": [],
     "lifecycle_events": [
@@ -199,11 +189,11 @@
    "binding": true,
    "applicability": {
     "task_ids": [
-     "D-010-PROGRAM"
+     "M0-T037",
+     "M0-T040",
+     "M0-T044"
     ],
-    "task_types": [
-     "governance"
-    ],
+    "task_types": [],
     "milestones": [],
     "paths": [],
     "lifecycle_events": [
@@ -236,11 +226,11 @@
    "binding": true,
    "applicability": {
     "task_ids": [
-     "D-010-PROGRAM"
+     "M0-T037",
+     "M0-T040",
+     "M0-T044"
     ],
-    "task_types": [
-     "governance"
-    ],
+    "task_types": [],
     "milestones": [],
     "paths": [],
     "lifecycle_events": [
@@ -273,11 +263,10 @@
    "binding": true,
    "applicability": {
     "task_ids": [
-     "D-010-PROGRAM"
+     "M0-T037",
+     "M0-T040"
     ],
-    "task_types": [
-     "governance"
-    ],
+    "task_types": [],
     "milestones": [],
     "paths": [],
     "lifecycle_events": [
@@ -310,11 +299,10 @@
    "binding": true,
    "applicability": {
     "task_ids": [
-     "D-010-PROGRAM"
+     "M0-T037",
+     "M0-T040"
     ],
-    "task_types": [
-     "governance"
-    ],
+    "task_types": [],
     "milestones": [],
     "paths": [],
     "lifecycle_events": [
@@ -347,11 +335,11 @@
    "binding": true,
    "applicability": {
     "task_ids": [
-     "D-010-PROGRAM"
+     "M0-T037",
+     "M0-T040",
+     "M0-T044"
     ],
-    "task_types": [
-     "governance"
-    ],
+    "task_types": [],
     "milestones": [],
     "paths": [],
     "lifecycle_events": [
@@ -384,11 +372,9 @@
    "binding": true,
    "applicability": {
     "task_ids": [
-     "D-010-PROGRAM"
+     "M0-T037"
     ],
-    "task_types": [
-     "governance"
-    ],
+    "task_types": [],
     "milestones": [],
     "paths": [],
     "lifecycle_events": [
@@ -421,11 +407,9 @@
    "binding": true,
    "applicability": {
     "task_ids": [
-     "D-010-PROGRAM"
+     "M0-T037"
     ],
-    "task_types": [
-     "governance"
-    ],
+    "task_types": [],
     "milestones": [],
     "paths": [],
     "lifecycle_events": [
@@ -458,11 +442,9 @@
    "binding": true,
    "applicability": {
     "task_ids": [
-     "D-010-PROGRAM"
+     "M0-T037"
     ],
-    "task_types": [
-     "governance"
-    ],
+    "task_types": [],
     "milestones": [],
     "paths": [],
     "lifecycle_events": [
@@ -495,11 +477,9 @@
    "binding": true,
    "applicability": {
     "task_ids": [
-     "D-010-PROGRAM"
+     "M0-T037"
     ],
-    "task_types": [
-     "governance"
-    ],
+    "task_types": [],
     "milestones": [],
     "paths": [],
     "lifecycle_events": [
@@ -532,11 +512,9 @@
    "binding": true,
    "applicability": {
     "task_ids": [
-     "D-010-PROGRAM"
+     "M0-T037"
     ],
-    "task_types": [
-     "governance"
-    ],
+    "task_types": [],
     "milestones": [],
     "paths": [],
     "lifecycle_events": [
@@ -569,11 +547,9 @@
    "binding": true,
    "applicability": {
     "task_ids": [
-     "D-010-PROGRAM"
+     "M0-T037"
     ],
-    "task_types": [
-     "governance"
-    ],
+    "task_types": [],
     "milestones": [],
     "paths": [],
     "lifecycle_events": [
@@ -606,11 +582,9 @@
    "binding": true,
    "applicability": {
     "task_ids": [
-     "D-010-PROGRAM"
+     "M0-T037"
     ],
-    "task_types": [
-     "governance"
-    ],
+    "task_types": [],
     "milestones": [],
     "paths": [],
     "lifecycle_events": [
@@ -643,11 +617,9 @@
    "binding": true,
    "applicability": {
     "task_ids": [
-     "D-010-PROGRAM"
+     "M0-T037"
     ],
-    "task_types": [
-     "governance"
-    ],
+    "task_types": [],
     "milestones": [],
     "paths": [],
     "lifecycle_events": [
@@ -680,11 +652,10 @@
    "binding": true,
    "applicability": {
     "task_ids": [
-     "D-010-PROGRAM"
+     "M0-T037",
+     "M0-T041"
     ],
-    "task_types": [
-     "governance"
-    ],
+    "task_types": [],
     "milestones": [],
     "paths": [],
     "lifecycle_events": [
@@ -717,11 +688,10 @@
    "binding": true,
    "applicability": {
     "task_ids": [
-     "D-010-PROGRAM"
+     "M0-T037",
+     "M0-T041"
     ],
-    "task_types": [
-     "governance"
-    ],
+    "task_types": [],
     "milestones": [],
     "paths": [],
     "lifecycle_events": [
@@ -754,11 +724,10 @@
    "binding": true,
    "applicability": {
     "task_ids": [
-     "D-010-PROGRAM"
+     "M0-T037",
+     "M0-T041"
     ],
-    "task_types": [
-     "governance"
-    ],
+    "task_types": [],
     "milestones": [],
     "paths": [],
     "lifecycle_events": [
@@ -791,11 +760,10 @@
    "binding": true,
    "applicability": {
     "task_ids": [
-     "D-010-PROGRAM"
+     "M0-T037",
+     "M0-T041"
     ],
-    "task_types": [
-     "governance"
-    ],
+    "task_types": [],
     "milestones": [],
     "paths": [],
     "lifecycle_events": [
@@ -828,11 +796,10 @@
    "binding": true,
    "applicability": {
     "task_ids": [
-     "D-010-PROGRAM"
+     "M0-T037",
+     "M0-T041"
     ],
-    "task_types": [
-     "governance"
-    ],
+    "task_types": [],
     "milestones": [],
     "paths": [],
     "lifecycle_events": [
@@ -865,11 +832,10 @@
    "binding": true,
    "applicability": {
     "task_ids": [
-     "D-010-PROGRAM"
+     "M0-T037",
+     "M0-T041"
     ],
-    "task_types": [
-     "governance"
-    ],
+    "task_types": [],
     "milestones": [],
     "paths": [],
     "lifecycle_events": [
@@ -902,11 +868,10 @@
    "binding": true,
    "applicability": {
     "task_ids": [
-     "D-010-PROGRAM"
+     "M0-T037",
+     "M0-T041"
     ],
-    "task_types": [
-     "governance"
-    ],
+    "task_types": [],
     "milestones": [],
     "paths": [],
     "lifecycle_events": [
@@ -939,11 +904,11 @@
    "binding": true,
    "applicability": {
     "task_ids": [
-     "D-010-PROGRAM"
+     "M0-T037",
+     "M0-T041",
+     "M0-T045"
     ],
-    "task_types": [
-     "governance"
-    ],
+    "task_types": [],
     "milestones": [],
     "paths": [],
     "lifecycle_events": [
@@ -976,11 +941,10 @@
    "binding": true,
    "applicability": {
     "task_ids": [
-     "D-010-PROGRAM"
+     "M0-T037",
+     "M0-T042"
     ],
-    "task_types": [
-     "governance"
-    ],
+    "task_types": [],
     "milestones": [],
     "paths": [],
     "lifecycle_events": [
@@ -1013,11 +977,10 @@
    "binding": true,
    "applicability": {
     "task_ids": [
-     "D-010-PROGRAM"
+     "M0-T037",
+     "M0-T041"
     ],
-    "task_types": [
-     "governance"
-    ],
+    "task_types": [],
     "milestones": [],
     "paths": [],
     "lifecycle_events": [
@@ -1050,11 +1013,10 @@
    "binding": true,
    "applicability": {
     "task_ids": [
-     "D-010-PROGRAM"
+     "M0-T037",
+     "M0-T041"
     ],
-    "task_types": [
-     "governance"
-    ],
+    "task_types": [],
     "milestones": [],
     "paths": [],
     "lifecycle_events": [
@@ -1087,11 +1049,10 @@
    "binding": true,
    "applicability": {
     "task_ids": [
-     "D-010-PROGRAM"
+     "M0-T037",
+     "M0-T041"
     ],
-    "task_types": [
-     "governance"
-    ],
+    "task_types": [],
     "milestones": [],
     "paths": [],
     "lifecycle_events": [
@@ -1124,11 +1085,11 @@
    "binding": true,
    "applicability": {
     "task_ids": [
-     "D-010-PROGRAM"
+     "M0-T037",
+     "M0-T041",
+     "M0-T045"
     ],
-    "task_types": [
-     "governance"
-    ],
+    "task_types": [],
     "milestones": [],
     "paths": [],
     "lifecycle_events": [
@@ -1161,11 +1122,10 @@
    "binding": true,
    "applicability": {
     "task_ids": [
-     "D-010-PROGRAM"
+     "M0-T037",
+     "M0-T041"
     ],
-    "task_types": [
-     "governance"
-    ],
+    "task_types": [],
     "milestones": [],
     "paths": [],
     "lifecycle_events": [
@@ -1198,11 +1158,10 @@
    "binding": true,
    "applicability": {
     "task_ids": [
-     "D-010-PROGRAM"
+     "M0-T037",
+     "M0-T041"
     ],
-    "task_types": [
-     "governance"
-    ],
+    "task_types": [],
     "milestones": [],
     "paths": [],
     "lifecycle_events": [
@@ -1235,11 +1194,10 @@
    "binding": true,
    "applicability": {
     "task_ids": [
-     "D-010-PROGRAM"
+     "M0-T037",
+     "M0-T041"
     ],
-    "task_types": [
-     "governance"
-    ],
+    "task_types": [],
     "milestones": [],
     "paths": [],
     "lifecycle_events": [
@@ -1272,11 +1230,10 @@
    "binding": true,
    "applicability": {
     "task_ids": [
-     "D-010-PROGRAM"
+     "M0-T037",
+     "M0-T041"
     ],
-    "task_types": [
-     "governance"
-    ],
+    "task_types": [],
     "milestones": [],
     "paths": [],
     "lifecycle_events": [
@@ -1309,11 +1266,10 @@
    "binding": true,
    "applicability": {
     "task_ids": [
-     "D-010-PROGRAM"
+     "M0-T037",
+     "M0-T041"
     ],
-    "task_types": [
-     "governance"
-    ],
+    "task_types": [],
     "milestones": [],
     "paths": [],
     "lifecycle_events": [
@@ -1346,11 +1302,10 @@
    "binding": true,
    "applicability": {
     "task_ids": [
-     "D-010-PROGRAM"
+     "M0-T037",
+     "M0-T041"
     ],
-    "task_types": [
-     "governance"
-    ],
+    "task_types": [],
     "milestones": [],
     "paths": [],
     "lifecycle_events": [
@@ -1383,11 +1338,10 @@
    "binding": true,
    "applicability": {
     "task_ids": [
-     "D-010-PROGRAM"
+     "M0-T037",
+     "M0-T041"
     ],
-    "task_types": [
-     "governance"
-    ],
+    "task_types": [],
     "milestones": [],
     "paths": [],
     "lifecycle_events": [
@@ -1420,11 +1374,10 @@
    "binding": true,
    "applicability": {
     "task_ids": [
-     "D-010-PROGRAM"
+     "M0-T037",
+     "M0-T041"
     ],
-    "task_types": [
-     "governance"
-    ],
+    "task_types": [],
     "milestones": [],
     "paths": [],
     "lifecycle_events": [
@@ -1457,11 +1410,10 @@
    "binding": true,
    "applicability": {
     "task_ids": [
-     "D-010-PROGRAM"
+     "M0-T037",
+     "M0-T041"
     ],
-    "task_types": [
-     "governance"
-    ],
+    "task_types": [],
     "milestones": [],
     "paths": [],
     "lifecycle_events": [
@@ -1494,11 +1446,10 @@
    "binding": true,
    "applicability": {
     "task_ids": [
-     "D-010-PROGRAM"
+     "M0-T037",
+     "M0-T042"
     ],
-    "task_types": [
-     "governance"
-    ],
+    "task_types": [],
     "milestones": [],
     "paths": [],
     "lifecycle_events": [
@@ -1531,11 +1482,10 @@
    "binding": true,
    "applicability": {
     "task_ids": [
-     "D-010-PROGRAM"
+     "M0-T037",
+     "M0-T042"
     ],
-    "task_types": [
-     "governance"
-    ],
+    "task_types": [],
     "milestones": [],
     "paths": [],
     "lifecycle_events": [
@@ -1568,11 +1518,9 @@
    "binding": true,
    "applicability": {
     "task_ids": [
-     "D-010-PROGRAM"
+     "M0-T037"
     ],
-    "task_types": [
-     "governance"
-    ],
+    "task_types": [],
     "milestones": [],
     "paths": [],
     "lifecycle_events": [
@@ -1605,11 +1553,10 @@
    "binding": true,
    "applicability": {
     "task_ids": [
-     "D-010-PROGRAM"
+     "M0-T037",
+     "M0-T043"
     ],
-    "task_types": [
-     "governance"
-    ],
+    "task_types": [],
     "milestones": [],
     "paths": [],
     "lifecycle_events": [
@@ -1642,11 +1589,10 @@
    "binding": true,
    "applicability": {
     "task_ids": [
-     "D-010-PROGRAM"
+     "M0-T037",
+     "M0-T043"
     ],
-    "task_types": [
-     "governance"
-    ],
+    "task_types": [],
     "milestones": [],
     "paths": [],
     "lifecycle_events": [
@@ -1679,11 +1625,10 @@
    "binding": true,
    "applicability": {
     "task_ids": [
-     "D-010-PROGRAM"
+     "M0-T037",
+     "M0-T043"
     ],
-    "task_types": [
-     "governance"
-    ],
+    "task_types": [],
     "milestones": [],
     "paths": [],
     "lifecycle_events": [
@@ -1716,11 +1661,9 @@
    "binding": true,
    "applicability": {
     "task_ids": [
-     "D-010-PROGRAM"
+     "M0-T037"
     ],
-    "task_types": [
-     "governance"
-    ],
+    "task_types": [],
     "milestones": [],
     "paths": [],
     "lifecycle_events": [
@@ -1753,11 +1696,9 @@
    "binding": true,
    "applicability": {
     "task_ids": [
-     "D-010-PROGRAM"
+     "M0-T037"
     ],
-    "task_types": [
-     "governance"
-    ],
+    "task_types": [],
     "milestones": [],
     "paths": [],
     "lifecycle_events": [
@@ -1790,11 +1731,9 @@
    "binding": true,
    "applicability": {
     "task_ids": [
-     "D-010-PROGRAM"
+     "M0-T037"
     ],
-    "task_types": [
-     "governance"
-    ],
+    "task_types": [],
     "milestones": [],
     "paths": [],
     "lifecycle_events": [
@@ -1827,11 +1766,9 @@
    "binding": true,
    "applicability": {
     "task_ids": [
-     "D-010-PROGRAM"
+     "M0-T037"
     ],
-    "task_types": [
-     "governance"
-    ],
+    "task_types": [],
     "milestones": [],
     "paths": [],
     "lifecycle_events": [
@@ -1864,11 +1801,9 @@
    "binding": true,
    "applicability": {
     "task_ids": [
-     "D-010-PROGRAM"
+     "M0-T037"
     ],
-    "task_types": [
-     "governance"
-    ],
+    "task_types": [],
     "milestones": [],
     "paths": [],
     "lifecycle_events": [
@@ -1901,11 +1836,9 @@
    "binding": true,
    "applicability": {
     "task_ids": [
-     "D-010-PROGRAM"
+     "M0-T037"
     ],
-    "task_types": [
-     "governance"
-    ],
+    "task_types": [],
     "milestones": [],
     "paths": [],
     "lifecycle_events": [
@@ -1938,11 +1871,9 @@
    "binding": true,
    "applicability": {
     "task_ids": [
-     "D-010-PROGRAM"
+     "M0-T037"
     ],
-    "task_types": [
-     "governance"
-    ],
+    "task_types": [],
     "milestones": [],
     "paths": [],
     "lifecycle_events": [
@@ -1975,11 +1906,9 @@
    "binding": true,
    "applicability": {
     "task_ids": [
-     "D-010-PROGRAM"
+     "M0-T037"
     ],
-    "task_types": [
-     "governance"
-    ],
+    "task_types": [],
     "milestones": [],
     "paths": [],
     "lifecycle_events": [
@@ -2012,11 +1941,9 @@
    "binding": true,
    "applicability": {
     "task_ids": [
-     "D-010-PROGRAM"
+     "M0-T037"
     ],
-    "task_types": [
-     "governance"
-    ],
+    "task_types": [],
     "milestones": [],
     "paths": [],
     "lifecycle_events": [
@@ -2049,11 +1976,9 @@
    "binding": true,
    "applicability": {
     "task_ids": [
-     "D-010-PROGRAM"
+     "M0-T037"
     ],
-    "task_types": [
-     "governance"
-    ],
+    "task_types": [],
     "milestones": [],
     "paths": [],
     "lifecycle_events": [
@@ -2086,11 +2011,9 @@
    "binding": true,
    "applicability": {
     "task_ids": [
-     "D-010-PROGRAM"
+     "M0-T037"
     ],
-    "task_types": [
-     "governance"
-    ],
+    "task_types": [],
     "milestones": [],
     "paths": [],
     "lifecycle_events": [
@@ -2123,11 +2046,9 @@
    "binding": true,
    "applicability": {
     "task_ids": [
-     "D-010-PROGRAM"
+     "M0-T037"
     ],
-    "task_types": [
-     "governance"
-    ],
+    "task_types": [],
     "milestones": [],
     "paths": [],
     "lifecycle_events": [
@@ -2160,11 +2081,9 @@
    "binding": true,
    "applicability": {
     "task_ids": [
-     "D-010-PROGRAM"
+     "M0-T037"
     ],
-    "task_types": [
-     "governance"
-    ],
+    "task_types": [],
     "milestones": [],
     "paths": [],
     "lifecycle_events": [
@@ -2197,11 +2116,9 @@
    "binding": true,
    "applicability": {
     "task_ids": [
-     "D-010-PROGRAM"
+     "M0-T037"
     ],
-    "task_types": [
-     "governance"
-    ],
+    "task_types": [],
     "milestones": [],
     "paths": [],
     "lifecycle_events": [
@@ -2234,11 +2151,10 @@
    "binding": true,
    "applicability": {
     "task_ids": [
-     "D-010-PROGRAM"
+     "M0-T037",
+     "M0-T040"
     ],
-    "task_types": [
-     "governance"
-    ],
+    "task_types": [],
     "milestones": [],
     "paths": [],
     "lifecycle_events": [
@@ -2271,11 +2187,10 @@
    "binding": true,
    "applicability": {
     "task_ids": [
-     "D-010-PROGRAM"
+     "M0-T037",
+     "M0-T040"
     ],
-    "task_types": [
-     "governance"
-    ],
+    "task_types": [],
     "milestones": [],
     "paths": [],
     "lifecycle_events": [
@@ -2308,11 +2223,10 @@
    "binding": true,
    "applicability": {
     "task_ids": [
-     "D-010-PROGRAM"
+     "M0-T037",
+     "M0-T040"
     ],
-    "task_types": [
-     "governance"
-    ],
+    "task_types": [],
     "milestones": [],
     "paths": [],
     "lifecycle_events": [
@@ -2345,11 +2259,9 @@
    "binding": true,
    "applicability": {
     "task_ids": [
-     "D-010-PROGRAM"
+     "M0-T037"
     ],
-    "task_types": [
-     "governance"
-    ],
+    "task_types": [],
     "milestones": [],
     "paths": [],
     "lifecycle_events": [
@@ -2382,11 +2294,10 @@
    "binding": true,
    "applicability": {
     "task_ids": [
-     "D-010-PROGRAM"
+     "M0-T037",
+     "M0-T039"
     ],
-    "task_types": [
-     "governance"
-    ],
+    "task_types": [],
     "milestones": [],
     "paths": [],
     "lifecycle_events": [
@@ -2419,11 +2330,9 @@
    "binding": true,
    "applicability": {
     "task_ids": [
-     "D-010-PROGRAM"
+     "M0-T037"
     ],
-    "task_types": [
-     "governance"
-    ],
+    "task_types": [],
     "milestones": [],
     "paths": [],
     "lifecycle_events": [
@@ -2456,11 +2365,9 @@
    "binding": true,
    "applicability": {
     "task_ids": [
-     "D-010-PROGRAM"
+     "M0-T037"
     ],
-    "task_types": [
-     "governance"
-    ],
+    "task_types": [],
     "milestones": [],
     "paths": [],
     "lifecycle_events": [
@@ -2493,11 +2400,9 @@
    "binding": true,
    "applicability": {
     "task_ids": [
-     "D-010-PROGRAM"
+     "M0-T037"
     ],
-    "task_types": [
-     "governance"
-    ],
+    "task_types": [],
     "milestones": [],
     "paths": [],
     "lifecycle_events": [
@@ -2530,11 +2435,9 @@
    "binding": true,
    "applicability": {
     "task_ids": [
-     "D-010-PROGRAM"
+     "M0-T037"
     ],
-    "task_types": [
-     "governance"
-    ],
+    "task_types": [],
     "milestones": [],
     "paths": [],
     "lifecycle_events": [
@@ -2567,11 +2470,9 @@
    "binding": true,
    "applicability": {
     "task_ids": [
-     "D-010-PROGRAM"
+     "M0-T037"
     ],
-    "task_types": [
-     "governance"
-    ],
+    "task_types": [],
     "milestones": [],
     "paths": [],
     "lifecycle_events": [
@@ -2604,11 +2505,9 @@
    "binding": true,
    "applicability": {
     "task_ids": [
-     "D-010-PROGRAM"
+     "M0-T037"
     ],
-    "task_types": [
-     "governance"
-    ],
+    "task_types": [],
     "milestones": [],
     "paths": [],
     "lifecycle_events": [
@@ -2641,11 +2540,9 @@
    "binding": true,
    "applicability": {
     "task_ids": [
-     "D-010-PROGRAM"
+     "M0-T037"
     ],
-    "task_types": [
-     "governance"
-    ],
+    "task_types": [],
     "milestones": [],
     "paths": [],
     "lifecycle_events": [
@@ -2678,11 +2575,9 @@
    "binding": true,
    "applicability": {
     "task_ids": [
-     "D-010-PROGRAM"
+     "M0-T037"
     ],
-    "task_types": [
-     "governance"
-    ],
+    "task_types": [],
     "milestones": [],
     "paths": [],
     "lifecycle_events": [
@@ -2715,11 +2610,10 @@
    "binding": true,
    "applicability": {
     "task_ids": [
-     "D-010-PROGRAM"
+     "M0-T037",
+     "M0-T045"
     ],
-    "task_types": [
-     "governance"
-    ],
+    "task_types": [],
     "milestones": [],
     "paths": [],
     "lifecycle_events": [
@@ -2752,11 +2646,11 @@
    "binding": true,
    "applicability": {
     "task_ids": [
-     "D-010-PROGRAM"
+     "M0-T037",
+     "M0-T041",
+     "M0-T045"
     ],
-    "task_types": [
-     "governance"
-    ],
+    "task_types": [],
     "milestones": [],
     "paths": [],
     "lifecycle_events": [
@@ -2789,11 +2683,11 @@
    "binding": true,
    "applicability": {
     "task_ids": [
-     "D-010-PROGRAM"
+     "M0-T037",
+     "M0-T041",
+     "M0-T045"
     ],
-    "task_types": [
-     "governance"
-    ],
+    "task_types": [],
     "milestones": [],
     "paths": [],
     "lifecycle_events": [
@@ -2826,11 +2720,11 @@
    "binding": true,
    "applicability": {
     "task_ids": [
-     "D-010-PROGRAM"
+     "M0-T037",
+     "M0-T044",
+     "M0-T045"
     ],
-    "task_types": [
-     "governance"
-    ],
+    "task_types": [],
     "milestones": [],
     "paths": [],
     "lifecycle_events": [
@@ -2863,11 +2757,11 @@
    "binding": true,
    "applicability": {
     "task_ids": [
-     "D-010-PROGRAM"
+     "M0-T037",
+     "M0-T041",
+     "M0-T045"
     ],
-    "task_types": [
-     "governance"
-    ],
+    "task_types": [],
     "milestones": [],
     "paths": [],
     "lifecycle_events": [
@@ -2900,11 +2794,10 @@
    "binding": true,
    "applicability": {
     "task_ids": [
-     "D-010-PROGRAM"
+     "M0-T037",
+     "M0-T045"
     ],
-    "task_types": [
-     "governance"
-    ],
+    "task_types": [],
     "milestones": [],
     "paths": [],
     "lifecycle_events": [
@@ -2937,11 +2830,9 @@
    "binding": true,
    "applicability": {
     "task_ids": [
-     "D-010-PROGRAM"
+     "M0-T037"
     ],
-    "task_types": [
-     "governance"
-    ],
+    "task_types": [],
     "milestones": [],
     "paths": [],
     "lifecycle_events": [
@@ -2974,11 +2865,10 @@
    "binding": true,
    "applicability": {
     "task_ids": [
-     "D-010-PROGRAM"
+     "M0-T037",
+     "M0-T042"
     ],
-    "task_types": [
-     "governance"
-    ],
+    "task_types": [],
     "milestones": [],
     "paths": [],
     "lifecycle_events": [
@@ -3011,11 +2901,10 @@
    "binding": true,
    "applicability": {
     "task_ids": [
-     "D-010-PROGRAM"
+     "M0-T037",
+     "M0-T042"
     ],
-    "task_types": [
-     "governance"
-    ],
+    "task_types": [],
     "milestones": [],
     "paths": [],
     "lifecycle_events": [
@@ -3048,11 +2937,10 @@
    "binding": true,
    "applicability": {
     "task_ids": [
-     "D-010-PROGRAM"
+     "M0-T037",
+     "M0-T042"
     ],
-    "task_types": [
-     "governance"
-    ],
+    "task_types": [],
     "milestones": [],
     "paths": [],
     "lifecycle_events": [
@@ -3085,11 +2973,10 @@
    "binding": true,
    "applicability": {
     "task_ids": [
-     "D-010-PROGRAM"
+     "M0-T037",
+     "M0-T042"
     ],
-    "task_types": [
-     "governance"
-    ],
+    "task_types": [],
     "milestones": [],
     "paths": [],
     "lifecycle_events": [
@@ -3122,11 +3009,11 @@
    "binding": true,
    "applicability": {
     "task_ids": [
-     "D-010-PROGRAM"
+     "M0-T037",
+     "M0-T042",
+     "M0-T043"
     ],
-    "task_types": [
-     "governance"
-    ],
+    "task_types": [],
     "milestones": [],
     "paths": [],
     "lifecycle_events": [
@@ -3159,11 +3046,10 @@
    "binding": true,
    "applicability": {
     "task_ids": [
-     "D-010-PROGRAM"
+     "M0-T037",
+     "M0-T042"
     ],
-    "task_types": [
-     "governance"
-    ],
+    "task_types": [],
     "milestones": [],
     "paths": [],
     "lifecycle_events": [
@@ -3196,11 +3082,10 @@
    "binding": true,
    "applicability": {
     "task_ids": [
-     "D-010-PROGRAM"
+     "M0-T037",
+     "M0-T042"
     ],
-    "task_types": [
-     "governance"
-    ],
+    "task_types": [],
     "milestones": [],
     "paths": [],
     "lifecycle_events": [
@@ -3233,11 +3118,10 @@
    "binding": true,
    "applicability": {
     "task_ids": [
-     "D-010-PROGRAM"
+     "M0-T037",
+     "M0-T042"
     ],
-    "task_types": [
-     "governance"
-    ],
+    "task_types": [],
     "milestones": [],
     "paths": [],
     "lifecycle_events": [
@@ -3270,11 +3154,10 @@
    "binding": true,
    "applicability": {
     "task_ids": [
-     "D-010-PROGRAM"
+     "M0-T037",
+     "M0-T041"
     ],
-    "task_types": [
-     "governance"
-    ],
+    "task_types": [],
     "milestones": [],
     "paths": [],
     "lifecycle_events": [
@@ -3307,11 +3190,10 @@
    "binding": true,
    "applicability": {
     "task_ids": [
-     "D-010-PROGRAM"
+     "M0-T037",
+     "M0-T045"
     ],
-    "task_types": [
-     "governance"
-    ],
+    "task_types": [],
     "milestones": [],
     "paths": [],
     "lifecycle_events": [
@@ -3344,11 +3226,9 @@
    "binding": true,
    "applicability": {
     "task_ids": [
-     "D-010-PROGRAM"
+     "M0-T037"
     ],
-    "task_types": [
-     "governance"
-    ],
+    "task_types": [],
     "milestones": [],
     "paths": [],
     "lifecycle_events": [
@@ -3381,11 +3261,9 @@
    "binding": true,
    "applicability": {
     "task_ids": [
-     "D-010-PROGRAM"
+     "M0-T037"
     ],
-    "task_types": [
-     "governance"
-    ],
+    "task_types": [],
     "milestones": [],
     "paths": [],
     "lifecycle_events": [
@@ -3418,11 +3296,14 @@
    "binding": true,
    "applicability": {
     "task_ids": [
-     "D-010-PROGRAM"
+     "M0-T037",
+     "M0-T039",
+     "M0-T041",
+     "M0-T042",
+     "M0-T043",
+     "M0-T044"
     ],
-    "task_types": [
-     "governance"
-    ],
+    "task_types": [],
     "milestones": [],
     "paths": [],
     "lifecycle_events": [
@@ -3455,11 +3336,9 @@
    "binding": true,
    "applicability": {
     "task_ids": [
-     "D-010-PROGRAM"
+     "M0-T037"
     ],
-    "task_types": [
-     "governance"
-    ],
+    "task_types": [],
     "milestones": [],
     "paths": [],
     "lifecycle_events": [
@@ -3492,11 +3371,9 @@
    "binding": true,
    "applicability": {
     "task_ids": [
-     "D-010-PROGRAM"
+     "M0-T037"
     ],
-    "task_types": [
-     "governance"
-    ],
+    "task_types": [],
     "milestones": [],
     "paths": [],
     "lifecycle_events": [
@@ -3529,11 +3406,9 @@
    "binding": true,
    "applicability": {
     "task_ids": [
-     "D-010-PROGRAM"
+     "M0-T037"
     ],
-    "task_types": [
-     "governance"
-    ],
+    "task_types": [],
     "milestones": [],
     "paths": [],
     "lifecycle_events": [
@@ -3566,11 +3441,9 @@
    "binding": true,
    "applicability": {
     "task_ids": [
-     "D-010-PROGRAM"
+     "M0-T037"
     ],
-    "task_types": [
-     "governance"
-    ],
+    "task_types": [],
     "milestones": [],
     "paths": [],
     "lifecycle_events": [
@@ -3603,11 +3476,10 @@
    "binding": true,
    "applicability": {
     "task_ids": [
-     "D-010-PROGRAM"
+     "M0-T037",
+     "M0-T038"
     ],
-    "task_types": [
-     "governance"
-    ],
+    "task_types": [],
     "milestones": [],
     "paths": [],
     "lifecycle_events": [
@@ -3640,11 +3512,9 @@
    "binding": true,
    "applicability": {
     "task_ids": [
-     "D-010-PROGRAM"
+     "M0-T037"
     ],
-    "task_types": [
-     "governance"
-    ],
+    "task_types": [],
     "milestones": [],
     "paths": [],
     "lifecycle_events": [
@@ -3677,11 +3547,9 @@
    "binding": true,
    "applicability": {
     "task_ids": [
-     "D-010-PROGRAM"
+     "M0-T037"
     ],
-    "task_types": [
-     "governance"
-    ],
+    "task_types": [],
     "milestones": [],
     "paths": [],
     "lifecycle_events": [
@@ -3714,11 +3582,9 @@
    "binding": true,
    "applicability": {
     "task_ids": [
-     "D-010-PROGRAM"
+     "M0-T037"
     ],
-    "task_types": [
-     "governance"
-    ],
+    "task_types": [],
     "milestones": [],
     "paths": [],
     "lifecycle_events": [
@@ -3751,11 +3617,9 @@
    "binding": true,
    "applicability": {
     "task_ids": [
-     "D-010-PROGRAM"
+     "M0-T037"
     ],
-    "task_types": [
-     "governance"
-    ],
+    "task_types": [],
     "milestones": [],
     "paths": [],
     "lifecycle_events": [
@@ -3788,11 +3652,9 @@
    "binding": true,
    "applicability": {
     "task_ids": [
-     "D-010-PROGRAM"
+     "M0-T037"
     ],
-    "task_types": [
-     "governance"
-    ],
+    "task_types": [],
     "milestones": [],
     "paths": [],
     "lifecycle_events": [
@@ -3825,11 +3687,10 @@
    "binding": true,
    "applicability": {
     "task_ids": [
-     "D-010-PROGRAM"
+     "M0-T037",
+     "M0-T045"
     ],
-    "task_types": [
-     "governance"
-    ],
+    "task_types": [],
     "milestones": [],
     "paths": [],
     "lifecycle_events": [
@@ -3862,11 +3723,9 @@
    "binding": true,
    "applicability": {
     "task_ids": [
-     "D-010-PROGRAM"
+     "M0-T037"
     ],
-    "task_types": [
-     "governance"
-    ],
+    "task_types": [],
     "milestones": [],
     "paths": [],
     "lifecycle_events": [
@@ -3899,11 +3758,9 @@
    "binding": true,
    "applicability": {
     "task_ids": [
-     "D-010-PROGRAM"
+     "M0-T037"
     ],
-    "task_types": [
-     "governance"
-    ],
+    "task_types": [],
     "milestones": [],
     "paths": [],
     "lifecycle_events": [
@@ -3936,11 +3793,10 @@
    "binding": true,
    "applicability": {
     "task_ids": [
-     "D-010-PROGRAM"
+     "M0-T037",
+     "M0-T038"
     ],
-    "task_types": [
-     "governance"
-    ],
+    "task_types": [],
     "milestones": [],
     "paths": [],
     "lifecycle_events": [
@@ -3973,11 +3829,9 @@
    "binding": true,
    "applicability": {
     "task_ids": [
-     "D-010-PROGRAM"
+     "M0-T037"
     ],
-    "task_types": [
-     "governance"
-    ],
+    "task_types": [],
     "milestones": [],
     "paths": [],
     "lifecycle_events": [
@@ -4010,11 +3864,9 @@
    "binding": true,
    "applicability": {
     "task_ids": [
-     "D-010-PROGRAM"
+     "M0-T037"
     ],
-    "task_types": [
-     "governance"
-    ],
+    "task_types": [],
     "milestones": [],
     "paths": [],
     "lifecycle_events": [
@@ -4047,11 +3899,9 @@
    "binding": true,
    "applicability": {
     "task_ids": [
-     "D-010-PROGRAM"
+     "M0-T037"
     ],
-    "task_types": [
-     "governance"
-    ],
+    "task_types": [],
     "milestones": [],
     "paths": [],
     "lifecycle_events": [
