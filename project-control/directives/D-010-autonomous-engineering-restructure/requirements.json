@@ -1,10 +1,10 @@
 {
  "schema": "directive_requirements/v1",
  "directive_id": "D-010",
- "version": 9,
- "requirement_count": 120,
+ "version": 10,
+ "requirement_count": 121,
  "producer": "orchestrator",
- "updated_at": "2026-08-07T16:53:10+00:00",
+ "updated_at": "2026-08-07T19:03:32+00:00",
  "requirements": [
   {
    "id": "D-010-R001",
@@ -4287,6 +4287,45 @@
     "tasks": []
    },
    "amendment_sequence": 10
+  },
+  {
+   "id": "D-010-R121",
+   "text": "Session-5 re-dispatch (owner launch instruction 2026-08-07): resume from docs/SESSION_HANDOFF.md at checkpoint CP-0041 with the digest-verified handoff session-handoff-2026-08-07-4.json. Wave-1 is complete (M0-T036..M0-T045 accepted), so the next dependency-valid work is PRODUCT work per R116/0A.11: first resolve the dormant D-009/M0-T019/M2-T014 batch (0A.11 item 1, AD-066), then run the two real product tasks through the pipeline (survey ingestion per the M2-T014 findings; 0A.11 item 2, AD-067). This amendment introduces NO new obligations: R097..R120, all standing holds, the SHADOW-ONLY posture, the 0A.10 supervisor-feature freeze (directive-cited defects only), and the R595-gated activation boundary (activation remains an explicit owner decision) remain binding unchanged.",
+   "source_ref": "source-011-amendment.md#session-5-launch",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T037",
+     "M0-T019",
+     "M2-T014",
+     "M2-T015",
+     "M2-T016"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [
+     "dispatch",
+     "accept"
+    ],
+    "effective_date": "2026-08-07"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "session-5 launch instruction 2026-08-07; re-dispatch into product work with no new obligations",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "amendment_sequence": 11
   }
  ]
 }
