@@ -53,6 +53,7 @@ from typing import Any, Callable, Mapping, Sequence
 
 from . import CONTROLLER_VERSION
 from . import rotation
+from .circuit_breakers import GAUGE_LIMITS
 from .claude_runner import QUOTA_EXHAUSTED_REASON, broker_permission_handler
 from .codex_reviewer import build_forwarded_prompt
 from .config import DEFAULT_ORCHESTRATOR_MODEL_CHAIN, ModelChain
@@ -575,6 +576,34 @@ def is_synchronous_stop(decision: Any) -> bool:
         getattr(decision, "outcome", "") == DENY_AND_HALT
 
 
+def pending_prompt_key(run_id: str) -> str:
+    """The durable key the supervised WAIT parks its held prompt under.
+
+    Kept here so the writer (`run_cycle`), the loop consumer, and the CLI
+    `resume-pending-prompt` command cannot drift apart on the key shape.
+    """
+    return f"pending_prompt/{run_id}"
+
+
+def consume_pending_prompt(journal: Any, run_id: str, *, prior_digest: str = "") -> None:
+    """Clear the pending_prompt record after it is approved and forwarded (AS-4).
+
+    G5 V1.2.3 LOW finding (project-control/reports/
+    M0-T036-V1.2.3-G5-security-delta-review.md): "neither it nor the loop
+    consumes/clears the record after use", so in an active supervised
+    multi-cycle run a later WAIT for a DIFFERENT ask could still carry a prior
+    cycle's pending_prompt, and an operator supplying that (genuine, system-
+    recorded) digest would re-fire owner_approved_pending_prompt. Consuming the
+    record on a SUCCESSFUL resume drops the digest, so the WAIT guards ("no
+    pending-prompt record" / digest mismatch) fail closed on any re-approval:
+    a stale record can never be approved twice.
+    """
+    journal.set_state(
+        pending_prompt_key(run_id),
+        {"consumed": True, "consumed_at_utc": to_utc_iso(),
+         "prior_digest": prior_digest})
+
+
 class SupervisedLoop:
     """One controlled task's supervised or shadow loop.
 
@@ -607,6 +636,7 @@ class SupervisedLoop:
         head_sha: str = "",
         origin_main_sha: str = "",
         executable_identity: Mapping[str, Any] | None = None,
+        resource_sampler: Any = None,
     ) -> None:
         self.config = config
         self.journal = journal
@@ -659,6 +689,12 @@ class SupervisedLoop:
         self.notify_ledger = NotifyOnceLedger(journal)
         self.provider_calls = 0
         self._forwarded: list[str] = []
+        # AS-3 (activation-checklist: "live resource sampling wired into the loop
+        # for the R207 limit set"). Default None keeps every existing caller and
+        # test unchanged: sampling is a no-op unless a sampler is injected (the
+        # CLI wires a real one). When present it feeds the gauge breakers with
+        # fail-closed defaults; an outage degrades to the conservative pause.
+        self._resource_sampler = resource_sampler
 
     # -- guards -------------------------------------------------------------
 
@@ -699,6 +735,42 @@ class SupervisedLoop:
             return True, verdict.message
         if verdict.warning:
             return False, verdict.message
+        return False, ""
+
+    def _check_resources(self, cycle: int, notify: list[str]) -> tuple[bool, str]:
+        """Sample live resources and evaluate the R207 gauge breakers (AS-3).
+
+        Returns (tripped, message). Fail-closed by construction:
+
+        * a MEASURED reading is fed to `breakers.gauge`; a TRIP is a synchronous
+          pause, a WARN is a notify;
+        * a sampling OUTAGE of a normally-measurable gauge (known=False,
+          structural=False) degrades to the conservative path -> TRIP (a resource
+          guard that cannot read the resource never assumes it is fine);
+        * a STRUCTURALLY unmeasurable gauge (known=False, structural=True) is
+          never fed a fabricated OK value and never causes a per-cycle pause -- it
+          is disclosed by `doctor` via the sampler's capability report instead
+          (AD-025: unknown is not success, but a permanent capability gap is not a
+          spurious trip either).
+        """
+        if self._resource_sampler is None or self.breakers is None:
+            return False, ""
+        for sample in self._resource_sampler.sample():
+            if sample.gauge not in GAUGE_LIMITS:
+                continue
+            if sample.known:
+                verdict = self.breakers.gauge(sample.gauge, sample.value)
+                if verdict.tripped:
+                    return True, verdict.message
+                if verdict.warning:
+                    notify.append("circuit_breaker_warning")
+            elif not sample.structural:
+                return True, (f"{sample.gauge} could not be sampled "
+                              f"({sample.reason}); a resource guard that cannot "
+                              f"read the resource pauses rather than assuming it "
+                              f"is within limits (fail closed)")
+            # structural-unknown: neither trip nor a fabricated OK; disclosed by
+            # doctor's resource_sampling capability check.
         return False, ""
 
     # -- broker wiring (G3 V-1) ---------------------------------------------
@@ -1272,6 +1344,19 @@ class SupervisedLoop:
                 f"Refusing rather than attempting a transition the S7 table does not "
                 f"contain: an illegal transition here would mean the caller and the "
                 f"journal disagree about where the run is")
+
+        # AS-3: sample live resources BEFORE spending a provider call. A trip (a
+        # measured limit crossing, or a sampling outage of a measurable gauge)
+        # ends the cycle at its current LEGAL entry state (no transition, no
+        # stranding, no provider call), reported honestly.
+        tripped, message = self._check_resources(cycle, notify)
+        if tripped:
+            touches.append(self._touch(
+                TOUCH_SYNCHRONOUS_STOP, reason_code="resource_gauge_hard_threshold",
+                reason=message, cycle=cycle,
+                basis="S13.8 gauge breaker fed by R207 live resource sampling"))
+            return stop("resource_gauge_hard_threshold", message, entry)
+
         if entry == PREFLIGHT:
             self.machine.transition(START_CLAUDE, "preflight_pass",
                                     detail={"cycle": cycle, "mode": self.mode})
@@ -1593,7 +1678,7 @@ class SupervisedLoop:
                     "note": "supervised mode holds every forwarded prompt for an explicit "
                             "operator approval bound to this digest (S12)"})
         land(WAIT_FOR_OWNER)
-        self.journal.set_state(f"pending_prompt/{self.run_id}",
+        self.journal.set_state(pending_prompt_key(self.run_id),
                                {"cycle": cycle, "digest": prompt_digest,
                                 "decision": decision.decision,
                                 "created_at_utc": to_utc_iso()})
@@ -1623,6 +1708,12 @@ class SupervisedLoop:
                                     detail={"cycle": cycle,
                                             "message_id": forward.message_id})
             land(CLAUDE_RUNNING)
+            # AS-4 (G5 V1.2.3 LOW): the held prompt has now been approved AND
+            # forwarded, so consume its pending_prompt record. Without this a
+            # later WAIT for a different ask would still carry this cycle's
+            # digest and could be re-approved against a stale record.
+            consume_pending_prompt(self.journal, self.run_id,
+                                   prior_digest=prompt_digest)
             if self.breakers is not None:
                 self.breakers.record_progress()
         result.owner_touches = tuple(touches)

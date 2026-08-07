@@ -74,6 +74,7 @@ from .claude_runner import (
     RunnerError,
     build_argv as build_claude_argv,
     build_control_response,
+    classify_quota_exhaustion,
     make_launch_probe,
 )
 from .codex_reviewer import (
@@ -115,6 +116,7 @@ from .loop import (
     LoopConfig,
     LoopError,
     SupervisedLoop,
+    consume_pending_prompt,
     effective_model,
 )
 from .locking import SingleInstanceLock, assess as assess_lock, probe_process
@@ -131,6 +133,7 @@ from .model_change_ipc import (
     probe_named_pipe_support,
 )
 from .notifications import NotificationError, build_notification
+from .resource_sampling import ResourceSampler
 from .policy import (
     ASK,
     AUTO,
@@ -640,6 +643,20 @@ def _check_model_chain_disclosure() -> Check:
         f"exhaustion has not been captured from a live exhaustion, so the probe never infers "
         f"that reason: an unclassified failure stays 'unknown', which is not quota exhaustion "
         f"and keeps the fail-closed pause")
+
+
+def _check_resource_sampling() -> Check:
+    """Disclose which R207 resource gauges are live-sampled vs unmonitored (AS-3)."""
+    from .resource_sampling import MEASURABLE_GAUGES, STRUCTURAL_UNKNOWN_GAUGES
+    return Check(
+        "resource_sampling", True,
+        f"live resource sampling feeds the R207 gauge breakers in the loop. "
+        f"Live-sampled stdlib-only on this host: {list(MEASURABLE_GAUGES)}. "
+        f"Structurally UNMONITORED (not measurable with the standard library alone "
+        f"on Windows; psutil is not an admitted dependency): "
+        f"{list(STRUCTURAL_UNKNOWN_GAUGES)} - these are reported as unknown and are "
+        f"NEVER fed a fabricated OK reading (AD-025). A sampling outage of a "
+        f"measurable gauge degrades to a conservative pause")
 
 
 def _check_codex_adapter() -> Check:
@@ -1179,6 +1196,7 @@ def cmd_doctor(args: argparse.Namespace) -> int:
         _check_claude_adapter(),
         _check_control_response_disclosure(),
         _check_model_chain_disclosure(),
+        _check_resource_sampling(),
         _check_codex_adapter(),
         _check_push_policy(),
         _check_external_effects(),
@@ -1624,6 +1642,12 @@ def cmd_resume_pending_prompt(args: argparse.Namespace) -> int:
                              "command": "resume-pending-prompt",
                              "cycle": pending.get("cycle"),
                              "held_decision": pending.get("decision")})
+        # AS-4 (G5 V1.2.3 LOW): consume the pending_prompt record on success so a
+        # stale record can never be re-approved. Done AFTER the durable
+        # transition and the operator-decision audit event, so the record is
+        # only dropped once the approval it authorized is recorded. A re-run now
+        # fails closed at the "no pending-prompt record" guard above.
+        consume_pending_prompt(journal, run_id, prior_digest=recorded)
     finally:
         journal.close()
     _emit(args,
@@ -2103,6 +2127,18 @@ def _run_loop(args: argparse.Namespace, checkout: pathlib.Path,
     approved = set(args.approve_prompt_digest or [])
     breakers = CircuitBreakers(config.limits)
 
+    # AS-3: wire live resource sampling into the loop for the R207 gauge set. The
+    # runtime directory (never inside the repo) is the volume whose free space is
+    # sampled; the audit log, its head sidecar, and the journal DB are the
+    # retained-log bytes. CPU/memory/process-count are not measurable stdlib-only
+    # on Windows, so the sampler reports them as unknown (never a fabricated OK)
+    # and doctor's resource_sampling check discloses which gauges are live.
+    _runtime_dir = audit.path.parent
+    resource_sampler = ResourceSampler(
+        disk_path=str(_runtime_dir),
+        log_paths=(str(audit.path), str(audit.head_path),
+                   str(_runtime_dir / DB_FILENAME)))
+
     # G3 V-1: the approval broker is built and WIRED into the assembled loop. In
     # supervised mode the loop routes each in-scope tool request through it; in
     # shadow mode the loop's handler permits nothing (the broker is inert).
@@ -2125,8 +2161,15 @@ def _run_loop(args: argparse.Namespace, checkout: pathlib.Path,
     session_role = args.session_role or ""
     model_available = None
     if session_role == SESSION_ROLE_ORCHESTRATOR:
+        # M0-T041 AS-1: wire the account-quota exhaustion classifier into the
+        # launch probe (activation-checklist item "classifier wired"; G3-A1 /
+        # G5-L-1 / G4-A1). The classifier is corpus-gated and fail-closed: it
+        # names quota_exhausted only on a verified-live signal shape, of which
+        # there are none on this build, so an unclassified failure stays
+        # "unknown" and keeps the fail-closed PAUSE (AD-025).
         model_available = make_launch_probe(
             runner_config, timeout_seconds=MODEL_PROBE_TIMEOUT_SECONDS,
+            classify_unavailable=classify_quota_exhaustion,
             audit=audit, run_id=run_id)
 
     loop = SupervisedLoop(
@@ -2150,6 +2193,7 @@ def _run_loop(args: argparse.Namespace, checkout: pathlib.Path,
         # IMMUTABLE controller config. Owner-editable only; never a runtime value.
         model_chain=config.model_chain,
         model_available=model_available,
+        resource_sampler=resource_sampler,
         approval_gate=(lambda digest, _prompt: digest in approved))
     return loop.run(args.prompt).to_dict()
 
