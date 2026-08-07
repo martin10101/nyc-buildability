@@ -2,9 +2,9 @@
  "schema": "directive_requirements/v1",
  "directive_id": "D-010",
  "version": 6,
- "requirement_count": 115,
+ "requirement_count": 116,
  "producer": "orchestrator",
- "updated_at": "2026-08-07T05:12:55+00:00",
+ "updated_at": "2026-08-07T05:21:59+00:00",
  "requirements": [
   {
    "id": "D-010-R001",
@@ -4102,6 +4102,45 @@
     "tasks": []
    },
    "amendment_sequence": 5
+  },
+  {
+   "id": "D-010-R116",
+   "text": "Session-2 re-dispatch (owner launch instruction 2026-08-07): the fresh primary orchestrator performs Phase 0 reconciliation, then resumes the wave-1 minimum-autonomy chain at the first dependency-valid unit - M0-T042, then M0-T043 (prefer sequential task branches; ledger serializes through state.json), M0-T044, M0-T045 - then two real product tasks through the pipeline under the 80/20 rule with automatic product-chain resume, using the proven task workflow and the classifier-denial protocol. This amendment introduces NO new obligations: R097..R115, all standing holds, the SHADOW-ONLY posture, the R595 mandatory-blocking activation prerequisite, the primary-checkout/dormant-batch non-interference rule, and the opus-4.8 xhigh reviewer fallback (until the owner says Fable is back) remain binding unchanged.",
+   "source_ref": "source-006-amendment.md#session-2-launch",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T037",
+     "M0-T042",
+     "M0-T043",
+     "M0-T044",
+     "M0-T045"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [
+     "dispatch",
+     "accept"
+    ],
+    "effective_date": "2026-08-07"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "session-2 launch instruction 2026-08-07; re-dispatch with no new obligations",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "amendment_sequence": 6
   }
  ]
 }

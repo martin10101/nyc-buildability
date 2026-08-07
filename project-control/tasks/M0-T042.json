@@ -1,86 +1,87 @@
 {
-  "task_id": "M0-T042",
-  "title": "Codex ephemeral review integration (0A.8 item 4; AD-081..AD-088) + minimal root AGENTS.md",
-  "task_type": "backend",
-  "milestone_id": "M0",
-  "objective": "Make the fresh-ephemeral-Codex-review loop operational end to end: bounded role-specific context packet in, read-only review, one schema-valid decision out, process exit, durable record with model identity/usage telemetry/digest; enforce the 0A.4 packet budgets; prevent Claude/Codex duplicate investigation (AD-087); record worker-fallback roles (AD-088); add a concise root AGENTS.md without duplicating CLAUDE.md (AD-041/AD-042).",
-  "business_reason": "0A.8 item 4 (fresh ephemeral Codex review) is a blocking minimum-autonomy capability; AD-081..AD-088 are explicit directive requirements.",
-  "inputs": [
-    "tools/agent_supervisor/codex_reviewer.py (existing)",
-    "D-010 source-001 Sections 0A.1-0A.7, 11.1"
-  ],
-  "outputs": [
-    "operational ephemeral-review loop + tests",
-    "AGENTS.md",
-    "producer report"
-  ],
-  "dependencies": [
-    "M0-T041"
-  ],
-  "allowed_paths": [
-    "tools/agent_supervisor/",
-    "tools/test_agent_supervisor_*.py",
-    "AGENTS.md",
-    "project-control/reports/M0-T042-producer-report.md",
-    "project-control/tasks/M0-T042.json"
-  ],
-  "forbidden_paths": [
-    ".claude/",
-    "apps/",
-    "services/",
-    ".github/",
-    "project-control/directives/",
-    "any dependency manifest or lockfile"
-  ],
-  "acceptance_scenarios": [
-    "AS-1 (executable): fake-Codex end-to-end - a fresh process receives a bounded role-specific packet, runs read-only, returns one schema-valid decision, exits; the durable record holds decision, evidence refs, model identity, usage telemetry, and digest; a second review provably shares no state with the first (AD-027).",
-    "AS-2 (executable): packet-budget enforcement - a packet exceeding the effective ceiling (lower of the 64k-token ordinary ceiling and 20% of the reported model window) is refused with split/summarize guidance and an explicit record; no silent omission of a material requirement (0A.4).",
-    "AS-3 (executable): prohibited-content guard - packets never include full transcripts, the full directive registry, all historical reports, unrelated task packets, or the whole repository by default (fixture tests; AD-083).",
-    "AS-4 (executable): review-cadence policy invokes Codex at meaningful checkpoints only (0A.3 list) and never merely to restate a deterministic pass (policy test; AD-084).",
-    "AS-5 (executable): a concise root AGENTS.md exists covering the Section 11.1 list with a check that it does not duplicate CLAUDE.md wholesale (AD-041/AD-042)."
-  ],
-  "required_gates": [
-    "G0",
-    "G2",
-    "G3",
-    "G4",
-    "G5"
-  ],
-  "producer_agent": null,
-  "reviewer_agents": [
-    "code-reviewer",
-    "security-reviewer",
-    "qa-engineer",
-    "control-plane-verifier",
-    "directive-compliance-verifier"
-  ],
-  "status": "backlog",
-  "progress_percent": 0,
-  "risks": [
-    "Codex CLI event shapes drift across versions - capability-probe and fixture before live use (AD-022)."
-  ],
-  "blockers": [],
-  "created_at": "2026-08-07T01:32:54.176279+00:00",
-  "updated_at": "2026-08-07T01:36:53+00:00",
-  "directive_refs": [
-    {
-      "directive_id": "D-010",
-      "requirement_ids": [
-        "D-010-R027",
-        "D-010-R041",
-        "D-010-R042",
-        "D-010-R081",
-        "D-010-R082",
-        "D-010-R083",
-        "D-010-R084",
-        "D-010-R085",
-        "D-010-R086",
-        "D-010-R087",
-        "D-010-R088",
-        "D-010-R093"
-      ]
-    }
-  ],
-  "directive_regime_version": "1.0",
-  "directive_regime_entered_at": "2026-08-07T01:32:54.176279+00:00"
+ "task_id": "M0-T042",
+ "title": "Codex ephemeral review integration (0A.8 item 4; AD-081..AD-088) + minimal root AGENTS.md",
+ "task_type": "backend",
+ "milestone_id": "M0",
+ "objective": "Make the fresh-ephemeral-Codex-review loop operational end to end: bounded role-specific context packet in, read-only review, one schema-valid decision out, process exit, durable record with model identity/usage telemetry/digest; enforce the 0A.4 packet budgets; prevent Claude/Codex duplicate investigation (AD-087); record worker-fallback roles (AD-088); add a concise root AGENTS.md without duplicating CLAUDE.md (AD-041/AD-042).",
+ "business_reason": "0A.8 item 4 (fresh ephemeral Codex review) is a blocking minimum-autonomy capability; AD-081..AD-088 are explicit directive requirements.",
+ "inputs": [
+  "tools/agent_supervisor/codex_reviewer.py (existing)",
+  "D-010 source-001 Sections 0A.1-0A.7, 11.1"
+ ],
+ "outputs": [
+  "operational ephemeral-review loop + tests",
+  "AGENTS.md",
+  "producer report"
+ ],
+ "dependencies": [
+  "M0-T041"
+ ],
+ "allowed_paths": [
+  "tools/agent_supervisor/",
+  "tools/test_agent_supervisor_*.py",
+  "AGENTS.md",
+  "project-control/reports/M0-T042-producer-report.md",
+  "project-control/tasks/M0-T042.json"
+ ],
+ "forbidden_paths": [
+  ".claude/",
+  "apps/",
+  "services/",
+  ".github/",
+  "project-control/directives/",
+  "any dependency manifest or lockfile"
+ ],
+ "acceptance_scenarios": [
+  "AS-1 (executable): fake-Codex end-to-end - a fresh process receives a bounded role-specific packet, runs read-only, returns one schema-valid decision, exits; the durable record holds decision, evidence refs, model identity, usage telemetry, and digest; a second review provably shares no state with the first (AD-027).",
+  "AS-2 (executable): packet-budget enforcement - a packet exceeding the effective ceiling (lower of the 64k-token ordinary ceiling and 20% of the reported model window) is refused with split/summarize guidance and an explicit record; no silent omission of a material requirement (0A.4).",
+  "AS-3 (executable): prohibited-content guard - packets never include full transcripts, the full directive registry, all historical reports, unrelated task packets, or the whole repository by default (fixture tests; AD-083).",
+  "AS-4 (executable): review-cadence policy invokes Codex at meaningful checkpoints only (0A.3 list) and never merely to restate a deterministic pass (policy test; AD-084).",
+  "AS-5 (executable): a concise root AGENTS.md exists covering the Section 11.1 list with a check that it does not duplicate CLAUDE.md wholesale (AD-041/AD-042)."
+ ],
+ "required_gates": [
+  "G0",
+  "G2",
+  "G3",
+  "G4",
+  "G5"
+ ],
+ "producer_agent": null,
+ "reviewer_agents": [
+  "code-reviewer",
+  "security-reviewer",
+  "qa-engineer",
+  "control-plane-verifier",
+  "directive-compliance-verifier"
+ ],
+ "status": "backlog",
+ "progress_percent": 0,
+ "risks": [
+  "Codex CLI event shapes drift across versions - capability-probe and fixture before live use (AD-022)."
+ ],
+ "blockers": [],
+ "created_at": "2026-08-07T01:32:54.176279+00:00",
+ "updated_at": "2026-08-07T01:36:53+00:00",
+ "directive_refs": [
+  {
+   "directive_id": "D-010",
+   "requirement_ids": [
+    "D-010-R027",
+    "D-010-R041",
+    "D-010-R042",
+    "D-010-R081",
+    "D-010-R082",
+    "D-010-R083",
+    "D-010-R084",
+    "D-010-R085",
+    "D-010-R086",
+    "D-010-R087",
+    "D-010-R088",
+    "D-010-R093",
+    "D-010-R116"
+   ]
+  }
+ ],
+ "directive_regime_version": "1.0",
+ "directive_regime_entered_at": "2026-08-07T01:32:54.176279+00:00"
 }
