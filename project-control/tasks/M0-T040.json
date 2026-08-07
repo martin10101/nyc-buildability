@@ -56,15 +56,15 @@
     "control-plane-verifier",
     "directive-compliance-verifier"
   ],
-  "status": "claimed",
-  "progress_percent": 10,
+  "status": "self_check",
+  "progress_percent": 90,
   "risks": [
     "Policy text must not drift from D-010 verbatim tiers - reviewer checks quote fidelity.",
     "CLAUDE.md is a governance path: claim requires the cited governance directive (D-010, satisfied)."
   ],
   "blockers": [],
   "created_at": "2026-08-07T01:32:33.917997+00:00",
-  "updated_at": "2026-08-07T02:42:18.612339+00:00",
+  "updated_at": "2026-08-07T03:08:21.485724+00:00",
   "directive_refs": [
     {
       "directive_id": "D-010",
@@ -73,5 +73,21 @@
   ],
   "directive_regime_version": "1.0",
   "directive_regime_entered_at": "2026-08-07T01:32:33.917997+00:00",
-  "worktree": "C:/Users/MLFLL/Downloads/nyc-zoning/orch"
+  "worktree": "C:/Users/MLFLL/Downloads/nyc-zoning/orch",
+  "progress_log": [
+    {
+      "at": "2026-08-07T03:08:21.233640+00:00",
+      "agent": "backend-engineer",
+      "percent": 60,
+      "status": "in_progress",
+      "message": "Deliverables committed b841b4f (owner-authorized R111): ADR-006 + 4 doc updates + 22-test policy suite"
+    },
+    {
+      "at": "2026-08-07T03:08:21.485724+00:00",
+      "agent": "backend-engineer",
+      "percent": 90,
+      "status": "self_check",
+      "message": "Self-check: suite 22/22 OK; validator OK; control-plane 22 groups OK; Section 5/6 carried verbatim"
+    }
+  ]
 }
