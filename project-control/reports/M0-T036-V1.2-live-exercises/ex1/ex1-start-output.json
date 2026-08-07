@@ -1,0 +1,78 @@
+{
+  "command": "start",
+  "mode": "supervised",
+  "controller_version": "0.4.0-phase4",
+  "recovery": {
+    "classification": "SAFE_CHECKPOINT",
+    "next_state": "PREFLIGHT",
+    "trigger": "recovery_safe_checkpoint",
+    "reason_code": "safe_no_auto_resume",
+    "reason": "the last action has a verified after-effect and every invariant matches, but limited-auto was NOT already owner-enabled, so recovery does not resume by itself: it re-runs preflight and waits for an explicit operator start (S11.5). Recovery never enables or broadens limited-auto",
+    "resume_permitted": false,
+    "failed_steps": [],
+    "missing_steps": [],
+    "unaccounted_children": [],
+    "pending_effect_ids": [],
+    "notes": [
+      "every input the loop needs was named explicitly; the pre-dispatch sequence ran before any provider contact"
+    ]
+  },
+  "dispatched": true,
+  "provider_calls_made": 2,
+  "limited_auto_enabled": false,
+  "missing_inputs": [],
+  "stopped_because": "stage_complete",
+  "loop": {
+    "run_id": "run_v12_ex1_allow",
+    "mode": "supervised",
+    "final_state": "COMPLETE",
+    "stopped": "stage_complete",
+    "cycles": [
+      {
+        "cycle": 1,
+        "mode": "supervised",
+        "reached_state": "COMPLETE",
+        "path": [
+          "START_CLAUDE",
+          "CLAUDE_RUNNING",
+          "CHECKPOINT_RECEIVED",
+          "COLLECT_EVIDENCE",
+          "CODEX_REVIEW",
+          "VALIDATE_DECISION",
+          "POLICY_CHECK",
+          "COMPLETE"
+        ],
+        "checkpoint_id": "cp-v12-ex1-1",
+        "decision": "COMPLETE",
+        "tier": "NOTIFY",
+        "reason_code": "forwarded_prompt",
+        "reason": "the authorized stage is evidenced complete",
+        "forwarded": false,
+        "forward": null,
+        "shadow_plan": null,
+        "pending_prompt_digest": "",
+        "owner_touches": [],
+        "notify_events": [],
+        "stopped": "stage_complete",
+        "packet_digest": "38745a88c2e836a93048af95f871766110510305ad5d2a7cd869e6bf4f7277f7",
+        "notes": [],
+        "model_mismatch": false,
+        "context_tokens": 64694,
+        "rotation_pending": false
+      }
+    ],
+    "budget": {
+      "budget": 2,
+      "counted": 0,
+      "within_budget": true,
+      "excess": 0,
+      "touches": [],
+      "authorizes_nothing": true,
+      "note": "The budget is a MEASUREMENT. Every excess stop must be dispositioned either as an accepted permanent gate or as a PROPOSED deterministic policy change that has passed security and control-plane review, replay testing, and explicit owner approval. The budget itself authorizes nothing (D-007 S16.7)."
+    },
+    "forwarded_message_ids": [],
+    "provider_calls": 2,
+    "rotations": [],
+    "limited_auto_enabled": false
+  }
+}

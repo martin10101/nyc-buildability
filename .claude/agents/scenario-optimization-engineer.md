@@ -2,7 +2,8 @@
 name: scenario-optimization-engineer
 description: Implements constrained scenario generation, objective weighting, diversity, scoring, stability, and explainable development-feasibility outputs.
 tools: Read, Write, Edit, Bash, Grep, Glob, Skill
-model: inherit
+model: claude-opus-4-8
+effort: high
 permissionMode: default
 isolation: worktree
 memory: project

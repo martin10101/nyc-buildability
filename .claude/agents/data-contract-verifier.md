@@ -3,7 +3,8 @@ name: data-contract-verifier
 description: Independent reviewer for official-source connectors and normalized field mappings. Use for every API, Open Data, bulk dataset, HTML, PDF, or GIS connector before acceptance.
 tools: WebSearch, WebFetch, Read, Grep, Glob, Bash, Skill
 disallowedTools: Write, Edit, MultiEdit, NotebookEdit, Agent
-model: inherit
+model: claude-opus-4-8
+effort: high
 permissionMode: plan
 skills:
   - verify-official-source

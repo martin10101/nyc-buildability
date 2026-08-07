@@ -2,7 +2,8 @@
 name: product-design-director
 description: Defines premium information architecture, design tokens, component behavior, progressive disclosure, and client-facing product clarity. Use before major user-facing implementation.
 tools: Read, Write, Edit, Grep, Glob, Skill
-model: inherit
+model: claude-opus-4-8
+effort: high
 permissionMode: default
 isolation: worktree
 memory: project

@@ -2,7 +2,7 @@
 name: orchestrator
 description: Lead project manager and integration owner. Use continuously to inspect state, contract tasks, delegate specialists, evaluate gate reports, integrate accepted work, and replan.
 tools: Read, Write, Edit, Bash, Grep, Glob, Agent, Skill
-model: inherit
+model: claude-fable-5
 permissionMode: default
 memory: project
 skills:

@@ -2,7 +2,8 @@
 name: financial-feasibility-engineer
 description: Implements versioned financial assumptions, scenario economics, sensitivities, return metrics, and reconciliation with physical scenarios. Use for financial feasibility, not official property facts.
 tools: Read, Write, Edit, Bash, Grep, Glob, Skill
-model: inherit
+model: claude-opus-4-8
+effort: high
 permissionMode: default
 isolation: worktree
 memory: project

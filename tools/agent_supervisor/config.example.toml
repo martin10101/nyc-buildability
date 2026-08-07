@@ -1,0 +1,196 @@
+# Example IMMUTABLE controller configuration (D-007 S3.1).
+#
+# PLACEHOLDERS ONLY. This tracked file contains no secrets, no real model names,
+# and no credentials, and it is never the active configuration. Copy it to the
+# controller checkout as `config.toml`, fill in the owner's choices, and note
+# that any change to the active file follows the full controller-update process
+# of S13.1 (stop the controller, separate controlled task, independent review,
+# new manifest and version, replay corpus, explicit operator restart).
+#
+# There is NO effort key here, and there must never be one in any configuration
+# file, prompt, or CLI invocation. That prohibition is permanent.
+#
+# The runtime model SELECTION lives in a separate file (`model_selection.toml`,
+# see the bottom of this file) which is deliberately OUTSIDE the controller
+# manifest, so changing a model never invalidates the controller.
+
+[controller]
+# Only "shadow" or "supervised" may appear here. limited-auto is never reachable
+# from a configuration file, a default, a parse error, a migration, or a
+# downgrade: it activates only by an explicit owner act recorded through
+# directive compliance.
+default_mode = "shadow"
+
+[codex]
+# Every Codex model the owner permits IN ANY ROLE. Nothing outside this list may
+# ever run as Codex - not as a primary, not as a fallback, not because the
+# provider defaulted to it.
+allowed_models = ["<owner-chosen-codex-model>", "<owner-chosen-codex-fallback>"]
+
+[claude]
+# Every Claude model the owner permits for the worker. An EMPTY list means only
+# the account/CLI default may be used and no explicit Claude selection is
+# permitted.
+allowed_models = ["<owner-chosen-claude-model>"]
+
+[model_chain]
+# The FIXED orchestrator-role model preference chain (D-004-R751..R758), in
+# order. An orchestrator-role session whose current model's account quota is
+# exhausted walks THIS list, first-available-wins, and availability is decided by
+# an ACTUAL LAUNCH PROBE of the exact id - never by reading a model picker or
+# menu, which can hide a model that is still usable by explicit string.
+#
+# Nothing here is a judgement call: the supervisor never chooses a model, it
+# walks this list. An id that is not listed is NEVER selectable no matter what a
+# picker shows, the ids are used verbatim (no normalization, no aliasing), and if
+# NO entry actually launches the supervisor stops, refreshes SESSION_HANDOFF, and
+# notifies the owner rather than continuing on a substitute.
+#
+# Owner-editable only, and only through the S13.1 controller-update process; this
+# section is manifest-covered like every other part of this file. Omitting the
+# whole section accepts the same default order.
+orchestrator_preference = ["claude-fable-5", "claude-opus-4-8", "claude-opus-4-7"]
+
+[limits]
+# Fail-closed circuit breakers (S13.8, S7). Every value is a positive integer
+# except warn_ratio. Warnings below a hard threshold are NOTIFY; hard thresholds
+# pause. These are supervisor-enforced and no model can raise them.
+max_claude_turns_per_run = 12
+max_subprocess_seconds = 900
+max_restart_attempts = 3
+max_consecutive_invalid_outputs = 3
+max_supervisor_cycles_per_task = 60
+max_retained_log_bytes = 50000000
+max_review_packet_bytes = 262144
+max_model_calls_per_task = 200
+max_external_writes_per_task = 20
+# Per-DAY companions to the two per-task caps above. Rolled on the UTC day.
+max_model_calls_per_day = 2000
+max_external_writes_per_day = 200
+# Resource gauges. CPU is a whole-percent ceiling (a busy multi-core box can
+# exceed 100, so this is an owner policy ceiling, not a hardware fact); memory
+# is a resident-bytes ceiling. Both trip at or above the ceiling.
+max_cpu_percent = 90
+max_memory_bytes = 8589934592
+max_processes = 24
+min_free_disk_bytes = 1073741824
+max_consecutive_no_progress = 3
+max_consecutive_hard_denies = 3
+max_codex_reviews_per_checkpoint = 3
+max_consecutive_revision_loops = 4
+# Fraction of a hard limit at which a NOTIFY warning is emitted.
+warn_ratio = 0.75
+
+[policy]
+# Deterministic bounds for the four-tier engine (S4.1). Unrecognized keys here
+# are refused, like every other section: the policy fails closed. No model can
+# raise any of these, and no grant can exceed them.
+#
+# A file create/modify is baseline-AUTO only when every canonical target resolves
+# inside allowed_paths AND the isolated task worktree, the file class is
+# ordinary (never a workflow, hook, permission/settings file, dependency
+# manifest, lockfile, launcher script, or deployment definition), and the change
+# stays inside these bounds. Deletes, renames, and oversized changes are never
+# baseline-AUTO.
+max_changed_files_per_checkpoint = 20
+max_change_bytes_per_checkpoint = 262144
+max_single_file_bytes = 131072
+# Branches that may never receive a direct or forced push.
+main_branch_names = ["main", "master"]
+# A read-oriented `git fetch --prune` during evidence collection. Off by default;
+# when off, any decision depending on current remote state must say the refs may
+# be stale rather than claiming success from them (S10).
+allow_remote_reads = false
+# The ONLY categories in which a Codex advisory may resolve an ambiguous tool
+# request (S8.4 step 3). Security-sensitive requests and anything touching an
+# external write are excluded structurally and cannot be added here.
+advisory_eligible_categories = [
+    "read_only_inspection", "in_scope_file_edit", "documented_test_command",
+]
+
+[rotation]
+# Pre-dispatch rotation thresholds (S11.1). These are OWNER POLICY numbers and
+# are NOT capacity claims about any model's real context window: the supervisor
+# never predicts token counts, it only classifies the next unit SMALL / MEDIUM /
+# LARGE / UNKNOWN from objective features and applies these bounds.
+#
+# At preflight_large_job_rotation, rotate before a LARGE or UNKNOWN unit.
+# At preflight_mandatory_rotation, rotate before ANY unit.
+# These are the values D-007 S11.1 suggests; change them deliberately.
+preflight_large_job_rotation = 400000
+preflight_mandatory_rotation = 500000
+max_checkpoints_per_session = 8
+# Claude-REPORTED context pressure, as a fraction. When cumulative usage is
+# unavailable, pressure at or above _high (or any compaction event) forces the
+# conservative pre-dispatch action; at or above _elevated it engages the
+# large-job bound.
+context_pressure_high = 0.75
+context_pressure_elevated = 0.55
+# Consecutive instruction-adherence failures that force a fresh session. A
+# louder prompt is not the remedy for a session that has stopped following one.
+max_adherence_failures = 2
+# A checkpoint or evidence packet larger than this is itself a rotation signal.
+oversized_checkpoint_bytes = 262144
+
+[retention]
+# Retention limits per artifact class (S13.11). Cleanup deletes ONLY
+# supervisor-owned artifacts whose identity is proven three ways (inside the
+# runtime directory, inside the class's own directory, and present in the
+# supervisor's recorded inventory) and whose age is proven from the recorded
+# creation time. Backup creation is never permission to delete: a plan is built
+# read-only and every entry is re-proved at execution time.
+[retention.checkpoints]
+max_items = 200
+max_age_days = 90
+max_total_bytes = 50000000
+
+[retention.redacted_logs]
+max_items = 60
+max_age_days = 30
+max_total_bytes = 50000000
+
+[retention.handoffs]
+max_items = 50
+max_age_days = 180
+max_total_bytes = 10000000
+
+[retention.quarantine]
+max_items = 40
+max_age_days = 60
+max_total_bytes = 200000000
+
+[retention.event_streams]
+max_items = 40
+max_age_days = 14
+max_total_bytes = 100000000
+
+[retention.crash_dumps]
+max_items = 20
+max_age_days = 30
+max_total_bytes = 200000000
+
+[retention.provider_transcripts]
+# Codex `exec` runs pass --ephemeral, so no transcript SHOULD persist. Retention
+# applies anyway, tightly, in case one ever does.
+max_items = 10
+max_age_days = 7
+max_total_bytes = 20000000
+
+# ---------------------------------------------------------------------------
+# The RUNTIME model selection is a SEPARATE file. Do not add these keys here -
+# the loader refuses a controller config that contains them. Example
+# `model_selection.toml` (each file must parse as valid standalone TOML):
+#
+#   [codex]
+#   review_model = "<owner-chosen-codex-model>"
+#   advisory_model = ""
+#   fallback_models = []
+#
+#   [claude]
+#   model = ""
+#   fallback_models = []
+#
+# Every entry is validated against ITS OWN provider's allowed_models list only:
+# a Codex entry can never satisfy the Claude list, and a Claude entry can never
+# satisfy the Codex list.
+# ---------------------------------------------------------------------------

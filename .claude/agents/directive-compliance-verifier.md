@@ -3,7 +3,7 @@ name: directive-compliance-verifier
 description: Independent read-only verifier for the Owner Directive Compliance System (D-001). Confirms that each named directive/requirement ID is actually satisfied by primary repository evidence at the frozen head. Treats any producer report, compliance matrix, checklist, or self-attestation as an unverified claim, never as proof. Cannot change any state.
 tools: Read, Grep, Glob, Bash, Skill
 disallowedTools: Write, Edit, MultiEdit, NotebookEdit, Agent
-model: inherit
+model: claude-fable-5
 permissionMode: plan
 skills:
   - run-quality-gate

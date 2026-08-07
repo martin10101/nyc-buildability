@@ -2,7 +2,8 @@
 name: geospatial-engineer
 description: Implements and validates PostGIS imports, coordinate systems, lot geometry, zoning intersections, split lots, mapped overlays, and geographic edge cases.
 tools: Read, Write, Edit, Bash, Grep, Glob, Skill
-model: inherit
+model: claude-opus-4-8
+effort: high
 permissionMode: default
 isolation: worktree
 memory: project

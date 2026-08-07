@@ -59,8 +59,8 @@
     "control-plane-verifier",
     "directive-compliance-verifier"
   ],
-  "status": "in_progress",
-  "progress_percent": 5,
+  "status": "accepted",
+  "progress_percent": 100,
   "risks": [
     "Scale: D-007 spans 5 phases; the packet authorizes Phases 1-4 + the Phase 5 shadow pilot, with the activation decision owner-gated. Split into per-phase follow-up tasks at the orchestrator's discretion if a phase exceeds a safe review size - contract splits through the normal process, never widen this packet.",
     "Windows process-tree control (Job Objects) and durable Task Scheduler wake are the highest-uncertainty areas; Section 18 stop conditions apply if a safe strategy cannot be proven.",
@@ -69,7 +69,7 @@
   ],
   "blockers": [],
   "created_at": "2026-08-03T03:44:41.634259+00:00",
-  "updated_at": "2026-08-03T04:07:53.280209+00:00",
+  "updated_at": "2026-08-06T20:15:42.947991+00:00",
   "directive_refs": [
     {
       "directive_id": "D-007",
@@ -110,6 +110,148 @@
       "percent": 5,
       "status": "in_progress",
       "message": "PHASE 1 DISPATCH under the owner build dispatch (D-007-R540, captured PR #150) and the D-006 standards. Producer: unnamed backend-engineer, explicit Opus 5 (R298 ceiling; R307 discharge governs gate-class spawns, which stay pinned Fable 5), worktree-isolated. Bounded deliverable: the two behavioral probes FIRST (R535: --max-turns acceptance + stream-json canUseTool protocol; stop only if a result contradicts the CLI-adapter decision), then Phase 1 core loop exactly per D-007 Section 17: schemas, models, config incl. Section 3 model selection + startup probe shape, state machine + transactional SQLite journal, process abstraction, versioned envelope/inbox/outbox/capability handshake, audit log with mandatory hash chain + redaction, controller manifest, circuit breakers, fake-process test harness. Standing grant (a) ACTIVE for pytest tools/test_agent_supervisor_*.py in the worktree. N=6 measurement dispatch 6 of 6: scope stated here; per-spawn /usage figures unobservable, recorded honestly; after this dispatch the N=6 summary is due (D-006-R025)."
+    },
+    {
+      "at": "2026-08-03T05:00:12.014433+00:00",
+      "agent": "orchestrator",
+      "percent": 20,
+      "status": "in_progress",
+      "message": "PHASE 1 COMPLETE and integrated. Probes CONFIRMED the CLI-adapter decision (no stop): --max-turns accepted+honored on 2.1.220; stream-json can_use_tool broker exists first-class (hidden --permission-prompt-tool stdio proven; exact control_request payload captured; fails CLOSED at stdin EOF). Phase 2 findings recorded: --permission-mode manual mandatory; never auto-select the setMode/acceptEdits suggestion. 26 files ported with 26/26 per-file LF SHA-256 verification (full hashes in M0-T036-phase1-port-hashes.json); orchestrator re-ran the suites on the ported tree: 139 tests OK (skipped=1, POSIX-only guard; Windows Job Object test ran+passed); zero control-plane regressions (22 groups + directive suites green). Producer checkpoint preserved verbatim (4 annotated R024 path redactions); producer agent-memory files NOT ported (R704 owner-plane collision; learning preserved in the report, R660 pattern). Honest deferrals: Option A external anchor -> Phase 3 (needs controller credentials + ADR amendment in force); Job-Object-as-default -> Phase 3. Orchestrator action queued for owner: CI does not yet invoke the four new test files (.github/** outside packet scope - separate authorization needed). Worktree cleaned post-port. PHASE 2 DISPATCH next: tier policy engine + standing grants + approval broker (seeded with the captured payload schema) + Claude runner (manual mode + stdio prompt tool) + Codex reviewer adapter + evidence collector + external-effect journal + integrity checks + bounded packet builder."
+    },
+    {
+      "at": "2026-08-03T06:09:10.769177+00:00",
+      "agent": "orchestrator",
+      "percent": 40,
+      "status": "in_progress",
+      "message": "PHASE 2 COMPLETE and integrated at d1f0f74. 17 files ported (17/17 full-hash verified; 10 claimed-unchanged Phase 1 modules verified byte-identical); orchestrator re-ran all eight suites: 383 tests OK (skipped=2, both justified on-host), zero Phase 1 regressions, doctor 20/20, repo regressions green. Producer-caught bugs fixed with regression tests (dotfile classification; bypass-variant injection labelling). Honest residuals carried: control-response wrapper UNVERIFIED vs live CLI (preflight round-trip probe REQUIRED before any live run - Phase 3 first act candidate); --codex-model deferred to the Phase 3 authenticated IPC path; Option A anchor + Job-Object-default + push execution all Phase 3, ADR amendment in force via D-007-R532. Checkpoint appended verbatim to the producer report. PHASE 3 DISPATCH next: endurance - rotation/finish-current-unit, verified handoff + fresh-session readiness, single-instance locking, SAFE/AMBIGUOUS/UNSAFE recovery + external-effect reconciliation, reset parsing + durable wake scheduling, notifications + queued ASK + authenticated remote approvals, quarantine/restore/retention, pause/stop/resume, the authenticated model-change IPC path, the control-response preflight probe, Option A anchor mechanism (activation still owner-gated)."
+    },
+    {
+      "at": "2026-08-03T16:30:35.003620+00:00",
+      "agent": "orchestrator",
+      "percent": 60,
+      "status": "in_progress",
+      "message": "PHASE 3 COMPLETE and integrated. 735 tests OK on the ported tree; doctor 30/30; control-response wrapper VERIFIED live (one disclosed probe); restore drill passes; no Section 18 stop. PHASE 4 DISPATCH next: validation - assemble the supervised/shadow loop, replay engine + historical corpus (M0-T031 lifecycle, B-015 sentinel, M0-T028 detection-only stop, clean continuation, correction, CI failure, stale-SHA, owner-gated stop), full Section 15 adversarial-essentials + remaining matrices, Job-Objects-default, correct defects without weakening stops."
+    },
+    {
+      "at": "2026-08-03T19:54:45.723130+00:00",
+      "agent": "orchestrator",
+      "percent": 80,
+      "status": "in_progress",
+      "message": "PHASE 4 COMPLETE and integrated. 1042 tests OK across 19 suites on the ported tree; replay corpus 8/8; doctor 36/36; Job-Objects default closed; four defects fixed without weakening stops. PHASE 5 DISPATCH next: the shadow pilot per D-007 Section 17 - run one real controlled-task lifecycle in shadow mode, measure the owner-touch count against the budget (default <=2), then return the decision packet (frozen SHA, CI, reviews, replay results, shadow comparison + touch count, all stops and false positives, residual risks, exact proposed AUTO allowlist + standing grants, emergency-stop behavior, keep-supervised-vs-activate recommendation) and STOP for the owner's activation decision (D-007-R541)."
+    },
+    {
+      "at": "2026-08-03T20:42:21.375654+00:00",
+      "agent": "orchestrator",
+      "percent": 80,
+      "status": "in_progress",
+      "message": "PHASE 4 COMPLETE and integrated at f49ae74. 1042 tests OK across 19 suites on the ported tree; replay corpus 8/8; doctor 36/36; Job-Objects default closed; four defects fixed without weakening stops. Integration amendment recorded: the gitleaks hook caught the seeded fake-secret fixture literal; producer-authored runtime-assembly patch applied verbatim (post-hash 248cf595 verified; no scanner suppression); adversarial suite green. PHASE 5 NEXT: shadow pilot per D-007 Section 17 - one real controlled-task lifecycle observed in shadow mode, owner-touch count vs the <=2 budget, then the decision packet and STOP for the owner's activation decision (D-007-R541)."
+    },
+    {
+      "at": "2026-08-03T23:11:06.337815+00:00",
+      "agent": "orchestrator",
+      "percent": 82,
+      "status": "in_progress",
+      "message": "OWNER MESSAGE captured as D-007 amendment 2 (source-003-amendment.md, R542-R555; PR #151). PART 1 executed: additive supervisor-bridge CI job PR #152 (base = task branch because the suite is absent from main; +20/-0, exact grant-(a) invocation, no new actions/secrets); grant-(b) review citations recorded at reports/M0-T036-grant-b-review-citations.md with the honest boundary statement (orchestrator verification reviews, independent gate reviews still ahead). Pre-existing secret-scan failure (4 seeded fixtures, red since Phase 3) fixed by a bounded producer unit and integrated at 1d83803: 3/3 hashes match, scanner PASS with zero allowlist changes, 1042 collected (1040 passed, 2 skipped), byte-identity AST-proven, no assertion weakened. PART 2: section-17 fit assessment recorded at reports/M0-T036-phase5-shadow-fit.md - selected lifecycle = M0-T035 acceptance run (real lifecycle ending AT the acceptance gate per AS-6); pilot launch blocked on the controller dedicated read-only checkout outside Claude-writable paths (owner-side step) + controller config authoring; decision packet waits for the Part 1 CI PR merged+green (R554). Owner merged PR #150 (amendment-1 capture) to main = cb9a999."
+    },
+    {
+      "at": "2026-08-04T00:56:13.111023+00:00",
+      "agent": "orchestrator",
+      "percent": 85,
+      "status": "in_progress",
+      "message": "PART 1 COMPLETE AND MERGED. Owner merged PR #152 (2026-08-04T00:55:17Z, all 31 checks green) into the task branch at 24dd2ee: additive supervisor-bridge CI job (windows-latest after the ubuntu runner-death finding; exact grant-(a) invocation) + tzdata 2025.2 admission per owner authorization D-007-R557 (one .in line + regenerated hash-pinned lock; byte-identity, age gate 498.45d, dual pip-audit all CI-verified). Supervisor suite in CI: 1041 passed, 1 skipped, 68s. R548/R554 preconditions MET. Findings for the packet: (1) ubuntu runner death - suite is not Linux-safe, target platform is Windows (residual risk); (2) hidden tzdata runtime dependency masked by out-of-lock local install - RESOLVED-BY-ADMISSION (R561) + doctor/preflight tz-check recommendation (R562). CRITICAL PATH NOW: owner creates the controller dedicated read-only checkout -> shadow pilot (M0-T035 acceptance lifecycle per the recorded fit assessment) -> independent gate reviews at the frozen post-pilot SHA (avoids stale-SHA re-review) -> decision packet -> STOP for activation decision (R541/R555). PR #151 (captures R542-R563) still queued for owner merge."
+    },
+    {
+      "at": "2026-08-04T07:10:56.775542+00:00",
+      "agent": "orchestrator",
+      "percent": 85,
+      "status": "in_progress",
+      "message": "C1 CORRECTIVE RE-RECORD (F-CP-1, control-plane review at 43848bd): the 82% (2026-08-03T23:11) and 85% (2026-08-04T00:56) progress entries were hand-appended to this file outside the CLI - a mechanism deviation (indent drift, stale header percent, state.json unsynced), content truthful and externally corroborated (PR #152 merged 2026-08-04T00:55:17Z all green; PR #150 merge cb9a999). This CLI write re-records the 85% state, restores header/format/state-sync coherence, and preserves the deviant entries as history per the reviewer's do-not-rewrite instruction. Substance re-stated: Part 1 complete and merged; run-6 full-cycle shadow pilot COMPLETE (gpt-5.6-sol attempt 1, 0/2 touches, forwarded nothing, ends AT the gate); five independent gate reviews dispatched at frozen 43848bd; G5 PASS (0 blocking) and CPV PASS-with-corrections preserved verbatim."
+    },
+    {
+      "at": "2026-08-04T07:19:36.961036+00:00",
+      "agent": "orchestrator",
+      "percent": 95,
+      "status": "in_progress",
+      "message": "PHASE 5 COMPLETE - DECISION PACKET DELIVERED AND STOPPED (R541/R555/R576). All five independent gate reviews returned at frozen 43848bd (CI 30886102559 all 13 jobs green): G3 PASS with B-1..B-4 blocking corrections (supervised multi-cycle prompt-threading; POLICY_CHECK stranding; distinct-checkpoint-id last-wins; discarded review-breaker verdict); G5 PASS 0-blocking; G4 QA PASS (totals reproduced, run-4 erratum applied, 7 ranked gaps); CPV PASS (C1 CLI re-record + C2 audit_log catch-up discharged); DCV PASS (R532-R576: 36 satisfied, 9 pending-by-design, 0 violated; activation/acceptance boundary affirmatively held). Packet at reports/M0-T036-PHASE5-DECISION-PACKET.md recommends KEEP SHADOW-ONLY / DO NOT ACTIVATE. Awaiting the owner's activation decision and V1.1 disposition; M0-T035 acceptance separately owner-gated. No agent action pending."
+    },
+    {
+      "at": "2026-08-04T08:14:43.666847+00:00",
+      "agent": "orchestrator",
+      "percent": 97,
+      "status": "in_progress",
+      "message": "V1.1 CORRECTION UNIT RE-GATE COMPLETE - ALL FIVE PASS at frozen c193a52 (CI run 30890198955 green). G3 code (raised B-1..B-4) confirms all four blocking fixes genuine with real tests; G5 security 0-blocking (3 informational); G4 QA reproduced 1091/2 (+26, each fix pinned); control-plane PASS no-corrections (C1/C2 confirmed discharged, own 1091 re-run matched); directive-compliance PASS R577-R584 (6 satisfied/2 pending-by-design/0 violated, boundaries affirmatively held). New V1.2-candidate observations only (G3 N-1..N-4, G4 3 LOW spots, G5 3 informational, CPV F-CPD-1..4 incl. G2-record-needed-before-acceptance) - none blocking. Shadow-only in force; limited-auto never enabled. NOT AUTHORIZED and returning to owner separately: doctor --live probe, supervised single-forward rehearsal. M0-T035 acceptance owner-typed only."
+    },
+    {
+      "at": "2026-08-04T17:03:07.246046+00:00",
+      "agent": "orchestrator",
+      "percent": 97,
+      "status": "in_progress",
+      "message": "DOCTOR --LIVE PROBE COMPLETE (owner-authorized D-007-R588). Ran ONE bounded probe on the controller checkout (C:\\SupervisorController, f68f578): control_response_live_probe VERIFIED (live run, exe sha256_head:9d22d0d348ba14a2) - the installed CLI accepted the exact control_response bytes, denied the tool (target_file_created=false, permission_denials=1, deny_message_echoed=true), closing the Phase-2 control-response wrapper residual. Shadow config untouched; nothing forwarded; evidence verbatim at reports/M0-T036-doctor-live-probe.md. HONEST SCOPE: built-in doctor --live is DENY-ONLY; the ALLOW leg (QA gap 1) was NOT exercised and remains open for the V1.2 broker-wiring unit - surfaced, not fabricated. G2 wave for M0-T036 (F-CPD-3) is SCHEDULED for after the owner Fable 5 window resets (Fable-5-pinned reviewer, no fail/fallback), NOT dispatched now (R589). Supervised rehearsal still NOT authorized (R590), returns to owner. STOPPED per R588."
+    },
+    {
+      "at": "2026-08-04T17:26:10.806854+00:00",
+      "agent": "orchestrator",
+      "percent": 97,
+      "status": "in_progress",
+      "message": "V1.2 UNIT CONTRACTED AND DISPATCHED (owner authorization D-007-R592, captured am.10). Producer (unnamed backend-engineer, opus-4-8 per the new frontmatter, worktree-isolated) building three scope items + fake-process tests: (A) approval-broker wiring into the assembled loop (closes G3 V-1 - supervised allow path reachable, shadow still permits nothing); (B) model-identity discipline (R739 - explicit --model, per-event model verification, downgrade -> dispatch-nothing-new + finish-bounded + refresh-handoff + rotate + relaunch-pinned, unavailable -> pause+notify); (C) context-threshold rotation (R743-R745 - 400k configurable default, treated exactly like a downgrade, seam-only). Producer builds code+fake tests only; the THREE LIVE EXERCISES (live allow round-trip closing QA gap 1, live rotation closing QA gap 4, live model mismatch) are orchestrator-run on the controller with SYNTHETIC PROBE UNITS, shadow-only, nothing forwarded (R593/R594) - after integration. Fable-5-pinned V1.2 delta re-gate + held G2 wave wait for the owner Fable 5 window reset (R596). Supervised rehearsal still not authorized (R595)."
+    },
+    {
+      "at": "2026-08-04T18:24:05.033153+00:00",
+      "agent": "orchestrator",
+      "percent": 98,
+      "status": "in_progress",
+      "message": "V1.2 BUILD INTEGRATED at 33e3336 (grant b). Producer delivered all three scope items; orchestrator verification: 7/7 file hashes match the producer worktree, 1114 passed 2 skipped (+23, zero regressions), doctor PASS (rotation_invariants confirms seam-only + pressure-never-interrupts; loop_modes confirms shadow.forwards=False unchanged), scanner PASS. (A) broker wired into the assembled loop (G3 V-1 closed - supervised allow path reachable, shadow permits/forwards nothing); (B) model-identity discipline (R739); (C) context-threshold rotation 400k configurable (R743-745); B+C share one seam-only actuator. NEXT: the three orchestrator-run LIVE exercises on the controller with SYNTHETIC probe units, shadow-only for real work, nothing forwards to a real task (R593/R594): live allow round-trip (QA gap 1), live rotation (QA gap 4), live model mismatch. These need the controller updated to 33e3336 (owner-plane pull). Fable-5-pinned V1.2 delta re-gate + held G2 wave wait for the owner Fable 5 window reset (R596)."
+    },
+    {
+      "at": "2026-08-04T19:19:04.200647+00:00",
+      "agent": "orchestrator",
+      "percent": 99,
+      "status": "in_progress",
+      "message": "V1.2 live exercises complete to structural limit + V1.2.1 integrated. Exercise 1 (live allow round-trip) PASS - QA gap 1 CLOSED: broker permitted AUTO in_scope_file_write live, tool executed, setMode suggestion rejected, full cycle to stage_complete. Live model-mismatch detection PASS (R745 leg closed): induced mismatch flagged on a real stream in all 3 ex3 runs; worker never launched on the fake id. Seam-rotation actuation NOT reachable live - FIRST-CLASS FINDING recorded (reports/M0-T036-V1.2-live-exercises/README.md): held supervised prompt has no operator continuation path (owner_approved_pending_prompt fired by no command; F-2 analogue) and digest pre-approval cannot converge on live reviewer wording (6 runs, 6 unique digests). Rotation triggers ARMED live both ways (context_threshold + model_downgrade), audited; actuator remains unit-suite-proven. V1.2.1 quota-substitution unit (D-007-R597/R598, D-004-R746-748) produced in isolated worktree, hashes 3/3 MATCH, full sweep reproduced by orchestrator: 1121 passed / 2 skipped (+7 ModelSubstitutionTests). Producer flagged: no live quota probe wired (matches pre-existing injected-probe stance); rotation.py untouched. Diff preserved verbatim reports/M0-T036-V1.2.1.diff. This commit FREEZES the SHA for the Fable-5 delta re-gate + held G2 wave (R599)."
+    },
+    {
+      "at": "2026-08-04T19:37:03.548094+00:00",
+      "agent": "orchestrator",
+      "percent": 99,
+      "status": "in_progress",
+      "message": "V1.2 delta re-gate verdicts recorded (frozen 98da15e): G2 PASS, G3 PASS with correction F-1 BLOCKING, G4 FAIL (F1), G5 PASS, CPV PASS. THREE reviewers converged on the same defect from independent lenses (G3 F-1 = G4 F1 = G5 F-1): the quota substitution is record-only - _substitute_at_seam updates bookkeeping/audit but the relaunched unit still launches on the pinned model (RunnerConfig frozen at assembly, cli.py:1966-1970; build_argv --model config.model); expected_model also stays pinned so a corrected launch would perpetually re-flag model_downgrade; crash-resume rebuilds on the pin even with an active substitution. BLOCKING CONDITION (per gate-verdict semantics): V1.2.2 rework must thread model+expected_model into the per-unit launch (relaunch, return-to-pinned, and resume paths) with an actuation-side regression test (FakeRunner records per-call model / build_argv assertion) before fresh G3/G4 verdicts at a new frozen SHA; no next gate, no acceptance until then. Also carried to rework or follow-ups: G5 F-2/G3 F-3 (empty head_sha/origin_main_sha/executable_identity in live approval bindings - precondition for any future continuation command), G4 F2 (untested substitution branches), G3 F-5 (continuation broader than entry authorization - owner-visible note), G3 F-7 (rotation_pending survives across runs), G5 F-3 (redaction advisory if repo ever goes public). CPV informational F-CPD2-1..5 noted; state.json sweep done."
+    },
+    {
+      "at": "2026-08-05T01:45:23.422919+00:00",
+      "agent": "orchestrator",
+      "percent": 99,
+      "status": "in_progress",
+      "message": "V1.2.2 model-chain rework INTEGRATED (D-007 am.12 / D-004 am.27; R603-R608, R751-R760). Producer worktree-isolated, 8/8 file hashes MATCH, verbatim diff reports/M0-T036-V1.2.2.diff. Orchestrator verification: supervisor suite 1148 passed/2 skipped (+27 over the 1121 baseline, zero regressions); whole tools/ tree 1348 passed/2 skipped. HARD REQUIREMENT (D-007-R605) INDEPENDENTLY VERIFIED: RealProcessSwitchTests::test_a_real_process_comes_up_on_opus_4_8_after_a_fable_5_exhaustion passes, and my own MUTATION CHECK (removing self._actuate_model(selected) from _switch_at_seam) makes it FAIL at model_chain.py:317 - the test genuinely proves a real spawned process received --model claude-opus-4-8 on its actual argv, not merely that an event was written; loop.py restored to hash f08902111ce44692 after the mutation. Built: [model_chain] orchestrator_preference in the IMMUTABLE config (R751/R758), launch-probe availability via probe_model_launch/make_launch_probe wired ONLY for --session-role orchestrator (R752/R756), never reads a picker (R753), _actuate_model refuses ids outside the chain (R754), CHAIN_EXHAUSTED_STOP stops+refreshes handoff+queues an owner ask (R755), reviewer path untouched (R757), crash-resume rebuilds the runner on the EFFECTIVE model via effective_model() (R605 mirrored). PRODUCER-DISCLOSED LIMITATIONS carried to the gate, not resolved: (1) QUOTA_EXHAUSTION_SIGNAL_VERIFIED=False - the live CLI's account-quota stderr/exit signal has never been captured, so no classifier is wired in production and the chain step will NOT fire live until it is (fail-closed pause holds); surfaced by doctor. (2) The switch fires at a rotation SEAM; a quota exhaustion arriving as a mid-unit launch failure still ends at no_valid_checkpoint. (3) expected_model now moves with the switched model, changing --expected-worker-model probe-knob behavior after a switch. (4) V1.2.1 ModelSubstitutionTests rewritten as ModelChainSwitchTests (single-substitute semantics superseded); SUBSTITUTE_MODEL constant deleted. SEPARATELY: registry integrity defect found BY THE PRODUCER and fixed at 7df44b3 - tonight's capture scripts wrote CRLF while .gitattributes pins directives to LF, so recorded digests matched only this working copy and failed on every fresh checkout/CI (D-004 source-027 + both requirements.json bodies); LF-normalized and re-stamped, owner text unchanged (body hashes f4639a39/8eea398b/290687b5 identical before and after), all registries now validate against canonical committed bytes. This commit FREEZES the SHA for the HELD Fable-5 re-review (R607: NOT dispatched - awaits the owner's window reset, stated Thursday)."
+    },
+    {
+      "at": "2026-08-05T15:17:54.267739+00:00",
+      "agent": "orchestrator",
+      "percent": 99,
+      "status": "in_progress",
+      "message": "V1.2.2 FINAL delta re-review + held G2 wave COMPLETE at frozen b95ebf7, run on claude-opus-4-8 xhigh (owner override D-007-R609 lifting R607 for M0-T036 only; reviewer-model-fallback 2026-08-05). All SIX legs PASS, preserved verbatim: G2/G3/G4/G5 formal gates + CPV + DCV. G4 FAIL(F1)->PASS; F1 record-vs-actuation divergence CONFIRMED-RESOLVED and MUTATION-PROVEN (G4 + DCV). failed_gates cleared. Findings are activation-only (live quota classifier unwired -> fail-closed pause) or defense-in-depth; NONE acceptance-blocking. M0-T036 stays SHADOW-ONLY; limited-auto NOT activated (owner's separate decision). Accept awaits the owner's typed line; the in-regime submit (577-req D-007 evidence-map + independent directive verification) is the remaining producer packet before accept()."
+    },
+    {
+      "at": "2026-08-05T19:24:34.636141+00:00",
+      "agent": "orchestrator",
+      "percent": 99,
+      "status": "in_progress",
+      "message": "R207 [R615] COMPLETE + verified (4 limit knobs; 1157/2 suite; committed c6a2c59). R593 [R616]: producer returned a TRUTHFUL INFEASIBILITY report - live rotation-seam actuation is blocked by (1) a missing resume/continuation CLI command (fires owner_approved_pending_prompt against a parked WAIT_FOR_OWNER journal; clear-recovery precedent) and (2) a CREDENTIAL/OWNER-AUTHORITY boundary (a real live supervised run needs real claude.exe+codex.cmd under the owner's account). Owner close-out decision 2026-08-05: CLOSE IT FOR REAL (2 steps) - orchestrator builds the continuation command (own G3/G4/G5 review, security-sensitive owner-approval control surface), THEN the owner personally runs the live capture. R593 flips to PASS only after the owner's live run. This is the execution path for D-007-R616/R617."
+    },
+    {
+      "at": "2026-08-06T19:30:46.953672+00:00",
+      "agent": "orchestrator",
+      "percent": 99,
+      "status": "in_progress",
+      "message": "R593 CORRECTION (2026-08-06), reconciled against R593/R594/R595 verbatim: the 'close it for real' 2-step path (R616) is MIS-FRAMED and RETRACTED. R594 mandates SYNTHETIC PROBE UNITS ONLY - shadow-only stays in force and NOTHING forwards to a real task; the rotation seam (_rotate_at_seam) is reachable only after a real forward is marked sent (forwards=True), which shadow mode disables and R594 forbids. Therefore live rotation-seam actuation AS A SYNTHETIC PROBE is STRUCTURALLY INFEASIBLE = the R616 STOP-and-report condition is MET. The resume-pending-prompt command (b1ab12b) is a valid operator affordance but does NOT open an R594-compliant path to the seam; my earlier owner-facing live-capture commands were WRONG (a supervised real-forward run violates R594/R595) and are RETRACTED - no substitute evidence to be produced. R593's rotation leg now awaits an OWNER decision: (A) record QA-gap-4 as an accepted residual belonging to the R595-deferred supervised rehearsal, or (B) the owner separately authorizes a supervised rehearsal (lifting R595, which returns to the owner after the now-done V1.2 delta re-gate). Session brought to a clean stop pending that decision; NO new work begun."
+    },
+    {
+      "at": "2026-08-06T20:14:51.758419+00:00",
+      "agent": "orchestrator",
+      "percent": 99,
+      "status": "in_progress",
+      "message": "OWNER OPTION A implemented (D-007-R618): R593 recorded NOT_APPLICABLE = accepted residual deferred to R595 (never PASS, R621); R595 = mandatory blocking activation prerequisite (R619); residual visible in task/evidence/handoff/evidence-map/activation-checklist (R620). Delta re-gate V1.2.3 at HEAD 4ff4d88 (claude-opus-4-8 xhigh): G3 PASS, G4 PASS (1163/2 + mutation-proven), G5 PASS, DCV PASS. R207 built -> PASS. 585-req verification.json rebuilt (584 PASS + R593 NA); validate exit 0. Acceptance-ready shadow-only."
     }
-  ]
+  ],
+  "accepted_by": "orchestrator",
+  "accepted_at": "2026-08-06T20:15:42.947991+00:00"
 }

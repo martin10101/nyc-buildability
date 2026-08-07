@@ -1,0 +1,249 @@
+#!/usr/bin/env python3
+"""Controller manifest: generation and verification (D-007 S13.1).
+
+The active supervisor verifies a digest manifest covering its own code, policy
+rules, schemas, review prompts, the immutable controller configuration, and
+launcher scripts - at startup and before every forwarded action. ANY change
+halts the run. Claude, Codex, repository text, hooks, tests, and task code may
+never modify the active controller.
+
+`model_selection.toml` is DELIBERATELY OUTSIDE the manifest (S3.1): its digest is
+recorded with every decision and it changes only through the owner-authenticated
+path, but editing it must never invalidate the controller. `EXCLUDED_NAMES`
+enforces that, and a test asserts it.
+
+Deviation note (S6 layout): S6's intended file list does not name a manifest
+module, yet S13.1 requires manifest generation and verification. This module is
+therefore an addition to the S6 shape, not a rename of anything in it.
+
+Phase 1 scope note: generation, verification, and halt-on-change are complete.
+The controller-update PROCESS around them (stop the controller, separate
+controlled task, independent review, new version, replay corpus, explicit
+operator restart, keep the old version for rollback) is an operational procedure
+documented in README.md; it is not code and is not automated - S13.1 is explicit
+that the supervisor never supervises its own live update.
+"""
+from __future__ import annotations
+
+import dataclasses
+import fnmatch
+import json
+import os
+import pathlib
+from typing import Any, Iterable, Sequence
+
+from . import CONTROLLER_VERSION
+from .models import digest_of, sha256_hex, to_utc_iso
+
+MANIFEST_FILENAME = "controller_manifest.json"
+
+#: The runtime model selection is never manifest-covered (S3.1).
+MODEL_SELECTION_FILENAME = "model_selection.toml"
+
+#: Glob patterns covered by the manifest, relative to the controller root.
+COVERED_PATTERNS: tuple[str, ...] = (
+    "*.py",
+    "schemas/*.json",
+    "prompts/*.md",
+    "config.toml",
+    "config.example.toml",
+    "launchers/*.cmd",
+    "launchers/*.ps1",
+    "README.md",
+)
+
+#: Never covered, whatever the patterns say.
+EXCLUDED_NAMES: frozenset[str] = frozenset({
+    MODEL_SELECTION_FILENAME,
+    MANIFEST_FILENAME,
+})
+
+EXCLUDED_DIR_PARTS: frozenset[str] = frozenset({"__pycache__", ".pytest_cache", ".git"})
+
+
+class ManifestError(Exception):
+    """The manifest could not be built or read."""
+
+    def __init__(self, code: str, message: str) -> None:
+        super().__init__(f"{code}: {message}")
+        self.code = code
+        self.message = message
+
+
+@dataclasses.dataclass(frozen=True)
+class ManifestVerification:
+    """Result of verifying a controller root against a recorded manifest."""
+
+    ok: bool
+    changed: tuple[str, ...] = ()
+    missing: tuple[str, ...] = ()
+    unexpected: tuple[str, ...] = ()
+    manifest_digest: str = ""
+    message: str = ""
+
+    def halt_reason(self) -> str:
+        """A single operator-readable reason, or "" when nothing changed."""
+        if self.ok:
+            return ""
+        parts: list[str] = []
+        if self.changed:
+            parts.append(f"changed: {list(self.changed)}")
+        if self.missing:
+            parts.append(f"missing: {list(self.missing)}")
+        if self.unexpected:
+            parts.append(f"unexpected: {list(self.unexpected)}")
+        return "controller manifest verification failed - " + "; ".join(parts)
+
+
+def _is_excluded(relative: pathlib.PurePath) -> bool:
+    if relative.name in EXCLUDED_NAMES:
+        return True
+    return any(part in EXCLUDED_DIR_PARTS for part in relative.parts)
+
+
+def covered_files(
+    root: str | os.PathLike[str],
+    *,
+    patterns: Sequence[str] = COVERED_PATTERNS,
+) -> list[pathlib.Path]:
+    """Every file the manifest covers, sorted, relative paths resolved from `root`."""
+    root_path = pathlib.Path(root).resolve()
+    if not root_path.is_dir():
+        raise ManifestError("missing_root", f"controller root not found: {root_path}")
+
+    found: set[pathlib.Path] = set()
+    for path in root_path.rglob("*"):
+        if not path.is_file():
+            continue
+        relative = path.relative_to(root_path)
+        if _is_excluded(relative):
+            continue
+        posix = relative.as_posix()
+        if any(fnmatch.fnmatch(posix, pattern) for pattern in patterns):
+            found.add(relative)
+    return sorted(found)
+
+
+def _hash_file(path: pathlib.Path) -> str:
+    """SHA-256 of the file's bytes, with line endings normalized to LF.
+
+    Normalizing means a CRLF checkout on Windows and an LF checkout in CI produce
+    the same manifest, so the manifest detects real content changes rather than
+    checkout settings. Binary files are not expected under the covered patterns.
+    """
+    data = path.read_bytes().replace(b"\r\n", b"\n")
+    return sha256_hex(data)
+
+
+def generate_manifest(
+    root: str | os.PathLike[str],
+    *,
+    patterns: Sequence[str] = COVERED_PATTERNS,
+    extra_files: Iterable[tuple[str, str | os.PathLike[str]]] = (),
+    controller_version: str = CONTROLLER_VERSION,
+) -> dict[str, Any]:
+    """Build a manifest over `root`, plus any externally located covered files.
+
+    `extra_files` carries `(logical_name, path)` pairs - used for the active
+    `config.toml` when it lives outside the package directory. A logical name
+    equal to `model_selection.toml` is refused outright.
+    """
+    root_path = pathlib.Path(root).resolve()
+    entries: dict[str, str] = {}
+
+    for relative in covered_files(root_path, patterns=patterns):
+        entries[relative.as_posix()] = _hash_file(root_path / relative)
+
+    for logical_name, path in extra_files:
+        if pathlib.PurePath(logical_name).name in EXCLUDED_NAMES:
+            raise ManifestError(
+                "excluded_file_offered",
+                f"{logical_name!r} is deliberately outside the controller manifest; "
+                f"covering it would make an authenticated model change invalidate the "
+                f"controller (S3.1)")
+        file_path = pathlib.Path(path)
+        if not file_path.is_file():
+            raise ManifestError("missing_extra_file", f"covered file not found: {file_path}")
+        entries[logical_name] = _hash_file(file_path)
+
+    manifest = {
+        "manifest_version": 1,
+        "controller_version": controller_version,
+        "generated_at_utc": to_utc_iso(),
+        "root": root_path.name,
+        "patterns": list(patterns),
+        "excluded": sorted(EXCLUDED_NAMES),
+        "files": dict(sorted(entries.items())),
+    }
+    manifest["manifest_digest"] = digest_of(
+        {"files": manifest["files"], "controller_version": controller_version})
+    return manifest
+
+
+def write_manifest(manifest: dict[str, Any], path: str | os.PathLike[str]) -> pathlib.Path:
+    target = pathlib.Path(path)
+    target.parent.mkdir(parents=True, exist_ok=True)
+    target.write_text(json.dumps(manifest, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+    return target
+
+
+def read_manifest(path: str | os.PathLike[str]) -> dict[str, Any]:
+    source = pathlib.Path(path)
+    if not source.exists():
+        raise ManifestError("missing_manifest", f"manifest not found: {source}")
+    try:
+        data = json.loads(source.read_text(encoding="utf-8-sig"))
+    except json.JSONDecodeError as exc:
+        raise ManifestError("invalid_manifest", f"manifest is not valid JSON: {exc}") from exc
+    if not isinstance(data, dict) or "files" not in data:
+        raise ManifestError("invalid_manifest", "manifest has no `files` map")
+    return data
+
+
+def verify_manifest(
+    root: str | os.PathLike[str],
+    manifest: dict[str, Any],
+    *,
+    extra_files: Iterable[tuple[str, str | os.PathLike[str]]] = (),
+) -> ManifestVerification:
+    """Recompute digests and compare. ANY difference means halt (S13.1)."""
+    root_path = pathlib.Path(root).resolve()
+    recorded: dict[str, str] = dict(manifest.get("files", {}))
+    patterns = tuple(manifest.get("patterns", COVERED_PATTERNS))
+
+    observed: dict[str, str] = {}
+    for relative in covered_files(root_path, patterns=patterns):
+        observed[relative.as_posix()] = _hash_file(root_path / relative)
+    for logical_name, path in extra_files:
+        file_path = pathlib.Path(path)
+        if file_path.is_file():
+            observed[logical_name] = _hash_file(file_path)
+
+    changed = sorted(
+        name for name, digest in recorded.items()
+        if name in observed and observed[name] != digest)
+    missing = sorted(name for name in recorded if name not in observed)
+    unexpected = sorted(name for name in observed if name not in recorded)
+
+    ok = not (changed or missing or unexpected)
+    verification = ManifestVerification(
+        ok=ok,
+        changed=tuple(changed),
+        missing=tuple(missing),
+        unexpected=tuple(unexpected),
+        manifest_digest=str(manifest.get("manifest_digest", "")),
+    )
+    return dataclasses.replace(verification, message=verification.halt_reason())
+
+
+def require_verified(
+    root: str | os.PathLike[str],
+    manifest: dict[str, Any],
+    *,
+    extra_files: Iterable[tuple[str, str | os.PathLike[str]]] = (),
+) -> ManifestVerification:
+    """Verify and raise on any change. Callers use this before a forwarded action."""
+    verification = verify_manifest(root, manifest, extra_files=extra_files)
+    if not verification.ok:
+        raise ManifestError("manifest_changed", verification.halt_reason())
+    return verification

@@ -1,104 +1,132 @@
 {
-  "schema": "directive_verification/v2",
-  "directive_id": "D-006",
-  "producer": "orchestrator",
-  "authority_note": "Per-task independent verification (v2). Rows are created when each D-006 task is independently verified by a verifier != producer at a frozen identity; the registry is evidence the CLI consumes, never a second gate.",
-  "task_verifications": [
+ "schema": "directive_verification/v2",
+ "directive_id": "D-006",
+ "producer": "orchestrator",
+ "authority_note": "Per-task independent verification (v2). Rows are created when each D-006 task is independently verified by a verifier != producer at a frozen identity; the registry is evidence the CLI consumes, never a second gate.",
+ "task_verifications": [
+  {
+   "task_id": "M0-T035",
+   "directive_id": "D-006",
+   "producer": "backend-engineer",
+   "verifier": "directive-compliance-verifier",
+   "reviewed_sha": "10b8db4b90eade1748dacd9ed4b929bd4d729717",
+   "reviewed_manifest_sha256": "d5a548e3264702e894a8179275b669eba761f661ddf12c1c3f92045092437092",
+   "state": "PASS",
+   "note": "Independent verification recorded 2026-08-04 (dcv-m0t035): all 9 applicable rows SATISFIED-BY-EVIDENCE at manifest d5a548e32647. reviewed_sha RE-ATTESTED to 10b8db4b90ea at frozen HEAD before acceptance because the orchestrator HEAD advanced past the original review commit 42659944 through unrelated M0-T036 commits (D-004-R630 compares reviewed_sha literally); the re-attestation (verbatim at project-control/reports/M0-T035-D006-reattestation-10b8db4.md) independently confirmed all 9 product files byte-identical and the accept-path content identity exact-match at 10b8db4b90ea - a content re-confirmation at the acceptance commit, not a cross-commit transplant. Full prior per-row analysis: project-control/reports/M0-T035-D006-independent-verification.md.",
+   "applicable_requirement_ids": [
+    "D-006-R017",
+    "D-006-R018",
+    "D-006-R019",
+    "D-006-R020",
+    "D-006-R023",
+    "D-006-R026",
+    "D-006-R027",
+    "D-006-R028",
+    "D-006-R030"
+   ],
+   "requirements": [
     {
-      "task_id": "M0-T035",
-      "directive_id": "D-006",
-      "producer": null,
-      "verifier": "directive-compliance-verifier",
-      "reviewed_sha": null,
-      "reviewed_manifest_sha256": null,
-      "state": "pending",
-      "note": "Placeholder created at contract time (task backlog, producer not yet claimed): rows pending over the resolver-derived 9-id applicable set. The independent verifier rebuilds this block at the pre-accept identity; the orchestrator never sets a verification status (M0-T027 precedent).",
-      "applicable_requirement_ids": [
-        "D-006-R017",
-        "D-006-R018",
-        "D-006-R019",
-        "D-006-R020",
-        "D-006-R023",
-        "D-006-R026",
-        "D-006-R027",
-        "D-006-R028",
-        "D-006-R030"
-      ],
-      "requirements": [
-        {
-          "id": "D-006-R017",
-          "state": "pending",
-          "evidence": [],
-          "verified_at": null,
-          "verified_by": null,
-          "reviewed_sha": null
-        },
-        {
-          "id": "D-006-R018",
-          "state": "pending",
-          "evidence": [],
-          "verified_at": null,
-          "verified_by": null,
-          "reviewed_sha": null
-        },
-        {
-          "id": "D-006-R019",
-          "state": "pending",
-          "evidence": [],
-          "verified_at": null,
-          "verified_by": null,
-          "reviewed_sha": null
-        },
-        {
-          "id": "D-006-R020",
-          "state": "pending",
-          "evidence": [],
-          "verified_at": null,
-          "verified_by": null,
-          "reviewed_sha": null
-        },
-        {
-          "id": "D-006-R023",
-          "state": "pending",
-          "evidence": [],
-          "verified_at": null,
-          "verified_by": null,
-          "reviewed_sha": null
-        },
-        {
-          "id": "D-006-R026",
-          "state": "pending",
-          "evidence": [],
-          "verified_at": null,
-          "verified_by": null,
-          "reviewed_sha": null
-        },
-        {
-          "id": "D-006-R027",
-          "state": "pending",
-          "evidence": [],
-          "verified_at": null,
-          "verified_by": null,
-          "reviewed_sha": null
-        },
-        {
-          "id": "D-006-R028",
-          "state": "pending",
-          "evidence": [],
-          "verified_at": null,
-          "verified_by": null,
-          "reviewed_sha": null
-        },
-        {
-          "id": "D-006-R030",
-          "state": "pending",
-          "evidence": [],
-          "verified_at": null,
-          "verified_by": null,
-          "reviewed_sha": null
-        }
-      ]
+     "id": "D-006-R017",
+     "state": "PASS",
+     "evidence": [
+      "project-control/reports/M0-T035-D006-independent-verification.md",
+      "project-control/reports/M0-T035-D006-reattestation-10b8db4.md"
+     ],
+     "verified_at": "2026-08-04T16:11:42+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "10b8db4b90eade1748dacd9ed4b929bd4d729717"
+    },
+    {
+     "id": "D-006-R018",
+     "state": "PASS",
+     "evidence": [
+      "project-control/reports/M0-T035-D006-independent-verification.md",
+      "project-control/reports/M0-T035-D006-reattestation-10b8db4.md"
+     ],
+     "verified_at": "2026-08-04T16:11:42+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "10b8db4b90eade1748dacd9ed4b929bd4d729717"
+    },
+    {
+     "id": "D-006-R019",
+     "state": "PASS",
+     "evidence": [
+      "project-control/reports/M0-T035-D006-independent-verification.md",
+      "project-control/reports/M0-T035-D006-reattestation-10b8db4.md"
+     ],
+     "verified_at": "2026-08-04T16:11:42+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "10b8db4b90eade1748dacd9ed4b929bd4d729717"
+    },
+    {
+     "id": "D-006-R020",
+     "state": "PASS",
+     "evidence": [
+      "project-control/reports/M0-T035-D006-independent-verification.md",
+      "project-control/reports/M0-T035-D006-reattestation-10b8db4.md"
+     ],
+     "verified_at": "2026-08-04T16:11:42+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "10b8db4b90eade1748dacd9ed4b929bd4d729717"
+    },
+    {
+     "id": "D-006-R023",
+     "state": "PASS",
+     "evidence": [
+      "project-control/reports/M0-T035-D006-independent-verification.md",
+      "project-control/reports/M0-T035-D006-reattestation-10b8db4.md"
+     ],
+     "verified_at": "2026-08-04T16:11:42+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "10b8db4b90eade1748dacd9ed4b929bd4d729717"
+    },
+    {
+     "id": "D-006-R026",
+     "state": "PASS",
+     "evidence": [
+      "project-control/reports/M0-T035-D006-independent-verification.md",
+      "project-control/reports/M0-T035-D006-reattestation-10b8db4.md"
+     ],
+     "verified_at": "2026-08-04T16:11:42+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "10b8db4b90eade1748dacd9ed4b929bd4d729717"
+    },
+    {
+     "id": "D-006-R027",
+     "state": "PASS",
+     "evidence": [
+      "project-control/reports/M0-T035-D006-independent-verification.md",
+      "project-control/reports/M0-T035-D006-reattestation-10b8db4.md"
+     ],
+     "verified_at": "2026-08-04T16:11:42+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "10b8db4b90eade1748dacd9ed4b929bd4d729717"
+    },
+    {
+     "id": "D-006-R028",
+     "state": "PASS",
+     "evidence": [
+      "project-control/reports/M0-T035-D006-independent-verification.md",
+      "project-control/reports/M0-T035-D006-reattestation-10b8db4.md"
+     ],
+     "verified_at": "2026-08-04T16:11:42+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "10b8db4b90eade1748dacd9ed4b929bd4d729717"
+    },
+    {
+     "id": "D-006-R030",
+     "state": "PASS",
+     "evidence": [
+      "project-control/reports/M0-T035-D006-independent-verification.md",
+      "project-control/reports/M0-T035-D006-reattestation-10b8db4.md"
+     ],
+     "verified_at": "2026-08-04T16:11:42+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "10b8db4b90eade1748dacd9ed4b929bd4d729717"
     }
-  ],
-  "updated_at": "2026-08-03T02:35:31+00:00"
+   ],
+   "verified_at": "2026-08-04T16:11:42+00:00"
+  }
+ ],
+ "updated_at": "2026-08-04T16:11:42+00:00"
 }

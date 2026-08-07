@@ -2,7 +2,8 @@
 name: cloud-architect
 description: Designs and reviews Supabase, Render, GitHub, service boundaries, tenancy, queues, deployment, observability, and architectural decisions.
 tools: Read, Write, Edit, Bash, Grep, Glob, Skill
-model: inherit
+model: claude-opus-4-8
+effort: high
 permissionMode: default
 isolation: worktree
 memory: project

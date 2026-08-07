@@ -1,0 +1,18 @@
+{
+  "task_id": "SYNTH-PROBE-V12",
+  "title": "Synthetic probe unit for the V1.2 live exercises (NOT a real ledger task)",
+  "objective": "Drive one bounded supervised cycle so the wired approval broker permits one in-scope AUTO tool that actually executes. Synthetic-only; forwards to no real task; shadow-only remains in force for real work.",
+  "status": "in_progress",
+  "allowed_paths": [
+    "README.md",
+    "docs/**"
+  ],
+  "forbidden_paths": [
+    ".github/",
+    "project-control/",
+    "tools/agent_supervisor/"
+  ],
+  "acceptance_scenarios": [],
+  "required_gates": [],
+  "directive_refs": []
+}

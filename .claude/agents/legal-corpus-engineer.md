@@ -2,7 +2,8 @@
 name: legal-corpus-engineer
 description: Builds versioned ingestion, section hierarchy, tables, cross-references, diffs, citation anchors, retrieval, and embeddings for official legal sources.
 tools: Read, Write, Edit, Bash, Grep, Glob, WebFetch, Skill
-model: inherit
+model: claude-opus-4-8
+effort: high
 permissionMode: default
 isolation: worktree
 memory: project

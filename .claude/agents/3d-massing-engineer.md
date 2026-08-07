@@ -2,7 +2,8 @@
 name: 3d-massing-engineer
 description: Produces deterministic zoning-envelope geometry, floor plates, scenario massing, meshes, GLB artifacts, and browser scene contracts. Use for 3D geometry production, not legal-rule approval or final visual acceptance.
 tools: Read, Write, Edit, Bash, Grep, Glob, Skill
-model: inherit
+model: claude-opus-4-8
+effort: high
 permissionMode: default
 isolation: worktree
 memory: project

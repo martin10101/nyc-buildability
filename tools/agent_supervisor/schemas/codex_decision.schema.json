@@ -1,0 +1,101 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://nyc-buildability.local/agent_supervisor/codex_decision.schema.json",
+  "title": "Codex reviewer decision",
+  "description": "Exactly ONE structured decision from a fresh, read-only Codex review (D-007 Section 9). This schema is deliberately flattened to the provider's strict structured-output subset: no allOf/anyOf/oneOf/if-then-else/not/patternProperties, additionalProperties always false, every property required. Emit \"\" for unused strings and [] for unused arrays. The supervisor-side validate_decision (tools/agent_supervisor/codex_reviewer.py) remains the single authority for the per-decision conditional rules the old schema expressed with allOf: CONTINUE/REVISE need a nonempty next_claude_prompt; STOP_FOR_OWNER needs one concise owner_question and next_claude_prompt must be exactly \"\"; ROTATE_SESSION needs a rotation_reason; COMPLETE needs at least one evidence_refs entry and never merges or accepts anything; HALT_UNSAFE needs at least one concrete blocking finding; reviewed_task_id and reviewed_checkpoint_id must be nonempty. Unknown fields are rejected.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "decision",
+    "reviewed_task_id",
+    "reviewed_checkpoint_id",
+    "verified_repo_head",
+    "verified_origin_main",
+    "model_used",
+    "verified_facts",
+    "unverified_claims",
+    "blocking_findings",
+    "reason_codes",
+    "next_claude_prompt",
+    "owner_question",
+    "rotation_reason",
+    "evidence_refs"
+  ],
+  "properties": {
+    "schema_version": {"type": "string"},
+    "decision": {
+      "type": "string",
+      "enum": ["CONTINUE", "REVISE", "STOP_FOR_OWNER", "ROTATE_SESSION", "COMPLETE", "HALT_UNSAFE"]
+    },
+    "reviewed_task_id": {
+      "type": "string",
+      "description": "Nonempty; must match the reviewed packet's task_id (enforced by the supervisor)."
+    },
+    "reviewed_checkpoint_id": {
+      "type": "string",
+      "description": "Nonempty; must match the reviewed packet's checkpoint_id (enforced by the supervisor)."
+    },
+    "verified_repo_head": {"type": "string"},
+    "verified_origin_main": {"type": "string"},
+    "model_used": {
+      "type": "string",
+      "description": "Recorded by the SUPERVISOR, not trusted from the model. Accompanied in the audit record by any provider-reported model/version identifier and the digest of the model_selection.toml in force (Section 3.2 rule 5)."
+    },
+    "verified_facts": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["fact"],
+        "properties": {
+          "fact": {"type": "string", "description": "One independently verified fact, citing evidence paths, commands, SHAs, PRs, or checks."}
+        }
+      }
+    },
+    "unverified_claims": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["claim", "why"],
+        "properties": {
+          "claim": {"type": "string", "description": "A worker claim that could NOT be verified."},
+          "why": {"type": "string", "description": "Why it could not be verified; \"\" when self-evident."}
+        }
+      }
+    },
+    "blocking_findings": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["finding"],
+        "properties": {
+          "finding": {"type": "string", "description": "One concrete safety, integrity, or scope finding."}
+        }
+      }
+    },
+    "reason_codes": {
+      "type": "array",
+      "items": {"type": "string"}
+    },
+    "next_claude_prompt": {
+      "type": "string",
+      "description": "Nonempty for CONTINUE/REVISE; exactly \"\" for STOP_FOR_OWNER (supervisor-enforced)."
+    },
+    "owner_question": {"type": "string"},
+    "rotation_reason": {"type": "string"},
+    "evidence_refs": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["path"],
+        "properties": {
+          "path": {"type": "string", "description": "Repository-relative path of the evidence artifact."}
+        }
+      }
+    }
+  }
+}

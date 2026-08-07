@@ -1,0 +1,78 @@
+{
+  "command": "start",
+  "mode": "supervised",
+  "controller_version": "0.4.0-phase4",
+  "recovery": {
+    "classification": "SAFE_CHECKPOINT",
+    "next_state": "PREFLIGHT",
+    "trigger": "recovery_safe_checkpoint",
+    "reason_code": "safe_no_auto_resume",
+    "reason": "the last action has a verified after-effect and every invariant matches, but limited-auto was NOT already owner-enabled, so recovery does not resume by itself: it re-runs preflight and waits for an explicit operator start (S11.5). Recovery never enables or broadens limited-auto",
+    "resume_permitted": false,
+    "failed_steps": [],
+    "missing_steps": [],
+    "unaccounted_children": [],
+    "pending_effect_ids": [],
+    "notes": [
+      "every input the loop needs was named explicitly; the pre-dispatch sequence ran before any provider contact"
+    ]
+  },
+  "dispatched": true,
+  "provider_calls_made": 2,
+  "limited_auto_enabled": false,
+  "missing_inputs": [],
+  "stopped_because": "rotate_session",
+  "loop": {
+    "run_id": "run_v12_ex2_rotation",
+    "mode": "supervised",
+    "final_state": "PREPARE_ROTATION",
+    "stopped": "rotate_session",
+    "cycles": [
+      {
+        "cycle": 1,
+        "mode": "supervised",
+        "reached_state": "PREPARE_ROTATION",
+        "path": [
+          "START_CLAUDE",
+          "CLAUDE_RUNNING",
+          "CHECKPOINT_RECEIVED",
+          "COLLECT_EVIDENCE",
+          "CODEX_REVIEW",
+          "VALIDATE_DECISION",
+          "POLICY_CHECK",
+          "PREPARE_ROTATION"
+        ],
+        "checkpoint_id": "cp-v12-ex2-1",
+        "decision": "ROTATE_SESSION",
+        "tier": "NOTIFY",
+        "reason_code": "forwarded_prompt",
+        "reason": "This is an explicit synthetic rotation probe with step 1 checkpointed and a small, well-defined step 2 ready for fresh-session continuation.",
+        "forwarded": false,
+        "forward": null,
+        "shadow_plan": null,
+        "pending_prompt_digest": "",
+        "owner_touches": [],
+        "notify_events": [],
+        "stopped": "rotate_session",
+        "packet_digest": "8cd73cf59a727d870136877f522bdf5a4930da88b55289844e2ac9613afc21f2",
+        "notes": [],
+        "model_mismatch": false,
+        "context_tokens": 64215,
+        "rotation_pending": true
+      }
+    ],
+    "budget": {
+      "budget": 2,
+      "counted": 0,
+      "within_budget": true,
+      "excess": 0,
+      "touches": [],
+      "authorizes_nothing": true,
+      "note": "The budget is a MEASUREMENT. Every excess stop must be dispositioned either as an accepted permanent gate or as a PROPOSED deterministic policy change that has passed security and control-plane review, replay testing, and explicit owner approval. The budget itself authorizes nothing (D-007 S16.7)."
+    },
+    "forwarded_message_ids": [],
+    "provider_calls": 2,
+    "rotations": [],
+    "limited_auto_enabled": false
+  }
+}
