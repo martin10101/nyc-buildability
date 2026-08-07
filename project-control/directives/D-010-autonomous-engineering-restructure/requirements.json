@@ -4335,9 +4335,7 @@
    "binding": true,
    "applicability": {
     "task_ids": [
-     "M0-T037",
-     "M0-T019",
-     "M2-T014"
+     "M0-T037"
     ],
     "task_types": [],
     "milestones": [],
@@ -4353,7 +4351,7 @@
    "producer": "orchestrator",
    "independent_verifier": "directive-compliance-verifier",
    "status": "pending",
-   "status_reason": "owner ordering: current unit completes first",
+   "status_reason": "owner ordering: current unit completes first (binds to parent M0-T037; session-ordering rule, verified at parent close-out, not re-stamped onto in-flight batch tasks)",
    "evidence_paths": [],
    "reviewed_sha": null,
    "maps_to": {

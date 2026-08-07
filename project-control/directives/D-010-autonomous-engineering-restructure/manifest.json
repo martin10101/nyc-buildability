@@ -157,7 +157,7 @@
  "verification_file": "verification.json",
  "final_reviewed_sha": null,
  "final_reviewed_manifest_sha256": null,
- "requirements_content_digest_sha256": "7bff5859ceb828d90ab59bb19f2878feb0bf066ea9ccd47e5b692f4042b8c384",
+ "requirements_content_digest_sha256": "bf429f6ca4f622734d6f12cd2130e6854e90c99f6bc7f5f3d856b96e7ee8ee50",
  "requirements_id_digest_sha256": "5d454806aa863fae00b8ac166ff8499795b2cb38d5a3fc23150583b178c4fd3e",
  "enforcement_pointers": {
   "tasks": [
@@ -405,6 +405,11 @@
    "at": "2026-08-07T19:40:00+00:00",
    "actor": "orchestrator",
    "action": "amendment source-012 recorded (owner pre-activation decision and ordering); R122-R133 appended; digests restamped"
+  },
+  {
+   "at": "2026-08-07T19:50:00+00:00",
+   "actor": "orchestrator",
+   "action": "pre-merge correction: R122 applicability narrowed to M0-T037 (session-ordering rule; avoids retroactive ref-coverage churn on in-flight M0-T019/M2-T014); content digest restamped"
   }
  ]
 }
