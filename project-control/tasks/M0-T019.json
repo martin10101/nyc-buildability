@@ -48,13 +48,14 @@
     "FE-S2 audit zero (BLOCKING): `npm audit --audit-level=low` AND JSON total == 0; the audit step fails the build on any finding; dev deps included",
     "FE-S3 deterministic install: npm ci reproduces the committed lockfile; integrity/lockfile verification intact; any --no-audit is followed by an explicit blocking audit",
     "FE-S4 npm tooling + config: CI uses the pinned npm 11.18.0 (>7 days); min-release-age=7 and save-exact=true configured and effective",
-    "FE-S5 release-age (NO exception path): every changed/overridden package  -  including next@15.5.21 and eslint-config-next@15.5.21  -  must be >= 7 complete days old at commit time, with per-package official npm registry publish timestamps + source URLs in the report. next/eslint-config-next@15.5.21 clear 7 days at 2026-07-28T15:59:32.231Z; per the owner wait decision, implementation does not begin before then (B-013 blocks). FE-S9 has NO allowlist/suppression/exception path; a paper exception cannot pass it. STOP if any package is under age at commit time.",
+    "FE-S5 release-age (NO exception path): every changed/overridden package  -  including next@15.5.21 and eslint-config-next@15.5.21  -  must be >= 7 complete days old at commit time, with per-package official npm registry publish timestamps + source URLs in the report. next/eslint-config-next@15.5.21 clear 7 days at 2026-07-28T15:59:32.231Z; the next/eslint-config-next age condition long since cleared (B-013 resolved). UPDATED by D-009 amendment 1 (owner Option B, 2026-08-05): FE-S9 now carries a SCOPED, owner-authorized, auto-expiring age-only exception for ONLY brace-expansion@1.1.18 and sharp@0.35.3 (see FE-S12); the global 7-day threshold is unchanged and nothing else is exempted, so for every non-exempted package a paper exception still cannot pass the gate. STOP if any non-exempted package is under age at commit time.",
     "FE-S6 full regression: npm ci; npm audit zero; lint pass; typecheck pass; complete Vitest suite pass; production Next build pass; existing Playwright journeys pass; secret scan pass",
     "FE-S7 scheduled audit: a scheduled workflow re-audits the tree; failure path proven visible/actionable",
-    "FE-S8 permanent policy: docs/DEPENDENCY_SECURITY_POLICY.md contains the full owner-specified rule set (advisory-free tree across runtime/dev/build/audit-tooling; 7-day age; exact pins + lockfile integrity; audits on every change + schedule; no agent waiver; post-merge advisory reopens security work + blocks deploy; new-package provenance review of names/maintainers/lifecycle-scripts/registry-origin/publication-date/ownership-changes; prefer existing deps/stdlib over new packages) AND the emergency exception (age-requirement ONLY, never an advisory affecting the installed version, owner-authorized only, full record fields, auto-expiry at 7 days, no wildcard/org-wide/permanent/undocumented exceptions); CLAUDE.md carries the concise permanent rule pointer",
-    "FE-S9 committed-lockfile release-age gate (BLOCKING, machine-enforced, fail-closed) - the gap this amendment closes: .npmrc min-release-age is RESOLVER-TIME only and does NOT gate the committed lock that `npm ci` installs, so a hand-edited lockfile could smuggle a <7-day package past npm ci + npm audit. apps/web/scripts/dependency_age_gate.mjs must parse the ENTIRE committed apps/web/package-lock.json, enumerate every unique registry package name+version (direct, transitive, dev, test, build, optional, scoped, platform-specific), validate each entry resolves to registry.npmjs.org and carries an integrity that MATCHES the official registry dist.integrity for that version, obtain the official publication timestamp, and require age >= EXACTLY 604800 seconds against an authoritative current UTC (the npm registry Date header; injectable for tests). Boundary: 604800s PASSES, 604799s FAILS (full-second arithmetic, no day rounding). FAILS CLOSED (non-zero exit, package marked FAIL, never skipped) on registry outage/network error, missing/malformed publication timestamp, malformed lock entry, missing integrity, integrity mismatch, unexpected resolved host, or any unverifiable/ambiguous package. No allowlist / suppression / --ignore / exception path in the tool. Runs in required PR+push CI and in the scheduled npm-audit workflow. .npmrc min-release-age=7 is retained as defense-in-depth for regeneration.",
+    "FE-S8 permanent policy: docs/DEPENDENCY_SECURITY_POLICY.md contains the full owner-specified rule set (advisory-free tree across runtime/dev/build/audit-tooling; 7-day age; exact pins + lockfile integrity; audits on every change + schedule; no agent waiver; post-merge advisory reopens security work + blocks deploy; new-package provenance review of names/maintainers/lifecycle-scripts/registry-origin/publication-date/ownership-changes; prefer existing deps/stdlib over new packages) AND the emergency exception (age-requirement ONLY, never an advisory affecting the installed version, owner-authorized only, full record fields, auto-expiry at 7 days, no wildcard/org-wide/permanent/undocumented exceptions; under D-009 amendment 1 this exception is MACHINE-REALIZED in FE-S9 as a scoped, auto-expiring name@version allowlist rather than an owner-action-outside-the-tool - see FE-S12); CLAUDE.md carries the concise permanent rule pointer",
+    "FE-S9 committed-lockfile release-age gate (BLOCKING, machine-enforced, fail-closed) - the gap this amendment closes: .npmrc min-release-age is RESOLVER-TIME only and does NOT gate the committed lock that `npm ci` installs, so a hand-edited lockfile could smuggle a <7-day package past npm ci + npm audit. apps/web/scripts/dependency_age_gate.mjs must parse the ENTIRE committed apps/web/package-lock.json, enumerate every unique registry package name+version (direct, transitive, dev, test, build, optional, scoped, platform-specific), validate each entry resolves to registry.npmjs.org and carries an integrity that MATCHES the official registry dist.integrity for that version, obtain the official publication timestamp, and require age >= EXACTLY 604800 seconds against an authoritative current UTC (the npm registry Date header; injectable for tests). Boundary: 604800s PASSES, 604799s FAILS (full-second arithmetic, no day rounding). FAILS CLOSED (non-zero exit, package marked FAIL, never skipped) on registry outage/network error, missing/malformed publication timestamp, malformed lock entry, missing integrity, integrity mismatch, unexpected resolved host, or any unverifiable/ambiguous package. Per D-009 amendment 1 (owner Option B, 2026-08-05) the tool carries EXACTLY ONE narrow exception path: a scoped, owner-authorized, auto-expiring AGE-ONLY allowlist keyed by exact name@version (see FE-S12); it never waives advisory/integrity/host/timestamp/ambiguous conditions, and the global 604800s threshold is unchanged for every non-exempted package. Runs in required PR+push CI and in the scheduled npm-audit workflow. .npmrc min-release-age=7 is retained as defense-in-depth for regeneration.",
     "FE-S10 exact direct pins: every direct dependency AND devDependency in apps/web/package.json is an EXACT version (no ^ or ~), equal to the version already resolved at the package-lock root. Converting the existing ranges introduces ZERO package-resolution change - the regenerated lock's resolved versions + integrity hashes are byte-for-byte the same set (proof: regenerate via the authorized npm 11.18.0 path and diff resolved versions; if ANY resolved version would change, STOP and report before proceeding). save-exact=true is retained for future adds.",
-    "FE-S11 npm CLI tooling continuous advisory verification (BLOCKING, fail-closed): the exact pinned npm@11.18.0 CLI tooling is checked for advisories affecting that version on every relevant CI run and in the scheduled npm-audit workflow (against the official advisory source); ANY advisory affecting npm@11.18.0 fails the run. No suppression/allowlist. This gives the dependency-management/audit tooling the same continuous machine advisory coverage the application tree has (parallels M0-T020's Python tooling-lock pip-audit). docs/DEPENDENCY_SECURITY_POLICY.md must accurately DISTINGUISH the four layers: (a) .npmrc resolver-time filtering, (b) independent committed-lockfile age verification in CI, (c) application-lock advisory auditing (npm audit), (d) npm CLI tooling advisory verification."
+    "FE-S11 npm CLI tooling continuous advisory verification (BLOCKING, fail-closed): the exact pinned npm@11.18.0 CLI tooling is checked for advisories affecting that version on every relevant CI run and in the scheduled npm-audit workflow (against the official advisory source); ANY advisory affecting npm@11.18.0 fails the run. No suppression/allowlist. This gives the dependency-management/audit tooling the same continuous machine advisory coverage the application tree has (parallels M0-T020's Python tooling-lock pip-audit). docs/DEPENDENCY_SECURITY_POLICY.md must accurately DISTINGUISH the four layers: (a) .npmrc resolver-time filtering, (b) independent committed-lockfile age verification in CI, (c) application-lock advisory auditing (npm audit), (d) npm CLI tooling advisory verification.",
+    "FE-S12 scoped owner-authorized age exception (D-009 amendment 1; owner Option B, 2026-08-05; BLOCKING properties): FE-S9 carries a SCOPED, owner-authorized, auto-expiring AGE-ONLY exception that admits AT MOST the exact pins brace-expansion@1.1.18 and sharp@0.35.3 while unexpired, matched by exact name@version. It waives the >=604800s AGE requirement ONLY - it NEVER waives an advisory affecting the installed version, an integrity mismatch, an unexpected resolved host, a missing/malformed timestamp, or any other fail-closed condition (all remain fail-closed for the exempted pins). The global 7-day threshold (604800s) is UNCHANGED for every other package; no wildcard/org-wide/category/permanent exception; nothing else is exempted. Auto-expiry is evaluated against the authoritative registry UTC clock (never the local/CI clock); an expired or invalid entry is IGNORED and the gate reverts to the unchanged 7-day requirement. The exception record and the owner authorization are captured verbatim (D-009 source-002-amendment.md + the in-repo exception record + the producer report). Deterministic unit tests cover: an exempted pin under age PASSES while unexpired; the same pin FAILS once expired; a non-listed under-age pin FAILS; an exempted pin with an advisory/integrity/host failure still FAILS. Every in-repo 'no exception path' assertion (the dependency_age_gate.mjs header; DEPENDENCY_SECURITY_POLICY.md sections 1/2(b)/6; FE-S5/FE-S8/FE-S9) is updated to match the shipped behavior."
   ],
   "required_gates": [
     "G0",
@@ -84,7 +85,7 @@
     "POLICY-ENFORCEMENT AMENDMENT (owner 2026-07-20, after the first independent review of task PR #64): the initial implementation enforced release-age only at lock RESOLUTION (.npmrc min-release-age), leaving the committed lock that `npm ci` installs ungated - a BLOCKING gap for a policy meant to stop every future lockfile change from admitting a too-new package. Acceptance now additionally requires FE-S9 (deterministic fail-closed committed-lockfile age gate apps/web/scripts/dependency_age_gate.mjs + tests), FE-S10 (exact direct/dev pins with zero resolution change), and FE-S11 (continuous npm@11.18.0 tooling advisory verification), all wired into CI + the scheduled npm-audit workflow. New allowed path: apps/web/scripts/**. SUPERSEDED-BRANCH RULE (owner directive 2026-07-23, overrides any earlier text): PR #64 is SUPERSEDED  -  it must NOT receive further implementation commits and must NOT be merged or mechanically rebased. Implementation is a fresh build from a newly frozen current-main SHA under a new worktree/branch (see POST-APPROVAL LIFECYCLE). NOT accepted; no checkpoint; no hold released; M0-T020 unchanged."
   ],
   "blockers": [
-    "B-013"
+    "B-017"
   ],
   "requirement_refs": [
     "Owner directive 2026-07-23 P0 dependency-reconciliation (Part 1)",
@@ -94,6 +95,44 @@
     "docs/DEPENDENCY_SECURITY_POLICY.md (age exception fields; no advisory waiver)"
   ],
   "created_at": "2026-07-20T08:21:46.465870+00:00",
-  "updated_at": "2026-07-23T14:30:00.000000+00:00",
-  "worktree": ".claude/worktrees/M0-T019-frontend"
+  "updated_at": "2026-08-05T22:49:55.077486+00:00",
+  "worktree": "C:/Users/MLFLL/Downloads/nyc-zoning/t19x",
+  "progress_log": [
+    {
+      "at": "2026-08-05T03:36:57.686605+00:00",
+      "agent": "orchestrator",
+      "percent": 5,
+      "status": "blocked",
+      "message": "Reset stale claim for full-scope re-dispatch under D-009, frozen main d5d9b50."
+    },
+    {
+      "at": "2026-08-05T03:36:58.494550+00:00",
+      "agent": "orchestrator",
+      "percent": 5,
+      "status": "ready",
+      "message": "Ready: full scope, D-009 authorizes governance-path edits; fresh G0 next."
+    },
+    {
+      "at": "2026-08-05T05:04:09.290664+00:00",
+      "agent": "orchestrator",
+      "percent": 10,
+      "status": "blocked",
+      "message": "Lockfile CI (generate-web-lockfile runs 30974409084 + 30976237680, 2026-08-05) fails closed at the BLOCKING npm audit: the regenerated next@15.5.21 tree carries HIGH transitive advisories. sharp<0.35.0 is override-fixable tonight (sharp 0.35.3, aged), but brace-expansion's only advisory-free fixes (>=1.1.18 / 2.1.4 / 5.0.9) are ALL <7 days old (publish 2026-07-30; clear 7 days 2026-08-06T10:00-10:17Z). Owner-declined age exceptions + FE-S9 no-exception design = true STOP, not an Opus/Fable or build issue. Recorded B-017; resolved stale B-013 (next/eslint aged in ~14.5d). Remediation plan + advisory pre-gate code review: project-control/reports/M0-T019-transitive-advisory-blocker-2026-08-05.md. Gates held until the finalized head (per batch sequencing)."
+    },
+    {
+      "at": "2026-08-05T22:49:54.176382+00:00",
+      "agent": "orchestrator",
+      "percent": 12,
+      "status": "ready",
+      "message": "Owner selected Option B (D-009 amendment 1, 2026-08-05): scoped auto-expiring FE-S9 age exception authorized. Resuming for the exception-mechanism increment; B-017 WAIT posture superseded (blocker stays open until regenerated-lock CI evidence). Fresh producer worktree t19x from batch tip e96d718."
+    }
+  ],
+  "directive_refs": [
+    {
+      "directive_id": "D-009",
+      "requirement_ids": "ALL"
+    }
+  ],
+  "directive_regime_version": "1.0",
+  "directive_regime_entered_at": "2026-08-05T03:36:58.984931+00:00"
 }

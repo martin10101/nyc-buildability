@@ -1,7 +1,9 @@
 {
   "blocker_id": "B-013",
   "title": "Temporary age blocker: next@15.5.21 + eslint-config-next@15.5.21 under the 7-day gate (owner DECLINED an exception; wait until 2026-07-28T15:59:32.231Z)",
-  "status": "open",
+  "status": "resolved",
+  "resolution": "RESOLVED 2026-08-05 by the orchestrator with registry-time evidence (as B-013 itself specified: the orchestrator, not the owner, resolves this by attaching registry-time evidence at/after the threshold). next@15.5.21 published 2026-07-21T15:59:32.231Z and eslint-config-next@15.5.21 published 2026-07-21T15:59:04.475Z; both are >=7 complete days old as of 2026-08-05 (~14.5 days). The next/eslint-config-next age condition is cleared. NOTE: M0-T019 is now blocked by a DIFFERENT, newly-disclosed condition tracked as B-017 (transitive brace-expansion advisory whose only fixes are <7 days old, + a sharp advisory) - B-013's resolution does NOT unblock M0-T019.",
+  "resolved_at": "2026-08-05T05:05:00Z",
   "owner_decision": "DECLINED age exception; wait for the full 7-complete-day threshold (owner directive 2026-07-23).",
   "affects": [
     "M0-T019 (frontend framework-security P0 upgrade)  -  blocked from implementation/acceptance until the age threshold is met",

@@ -23,6 +23,7 @@ document only when the task at hand needs it (routing table below).
 12. No rule becomes `published` without source linkage, deterministic tests, independent review, and qualified-reviewer approval.
 13. Stop and create a blocker when a legal interpretation, secret, payment, production approval, or unavailable credential requires a human.
 14. The owner's PC has ~7 GB free — thin client only: no local databases, Docker stack, citywide datasets, bulk documents, or large caches (see `docs/LOW_STORAGE_CLOUD_DEVELOPMENT_POLICY.md`).
+15. Dependency security is permanent and machine-enforced, with no agent waiver (npm and Python alike): every admitted version must be advisory-free at every severity, exact-pinned, integrity-matched to the official registry, and **at least 7 complete days old (604800 s passes, 604799 fails)**; audits run on every change and on a schedule; all gates FAIL CLOSED on any outage/missing/malformed/ambiguous evidence and are never warning-only; a new package needs a G5 provenance review; the ONLY exception is an owner-authorized, single-package, auto-expiring waiver of the AGE requirement (never of an advisory). Full policy: `docs/DEPENDENCY_SECURITY_POLICY.md`; canonical wording: `.claude/ORCHESTRATION_POLICY.md` §G.
 
 ## Source of truth (never a chat transcript or agent memory)
 
