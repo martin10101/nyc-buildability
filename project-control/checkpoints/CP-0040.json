@@ -1,0 +1,18 @@
+{
+  "checkpoint_id": "CP-0040",
+  "timestamp": "2026-08-07T16:17:38.828598+00:00",
+  "commit": "8115e75",
+  "branch": "task/M0-T045-r595-rehearsal",
+  "active_milestone": "M4",
+  "summary": "M0-T045 increment 1 (pre-R595 hardening) complete at self_check 45%: three pinned checklist sets resolved (+36 tests, suite 1307/2 reproduced independently, validator exit 0); DRAFT rehearsal runbook + 16.2 promotion-pack skeleton committed. Session-4 launch captured as D-010 am.7/R118 (PR #172 merged, main f61a735). Remaining: owner-supervised R595 rehearsal window (runbook section 6 agenda), promotion-pack completion, submit + 5 gates + DCV.",
+  "post_accept_verifications_confirmed": {
+    "M0-T027": [
+      "D-004-R389",
+      "D-004-R486",
+      "D-004-R487",
+      "D-004-R488",
+      "D-004-R501"
+    ]
+  },
+  "updated_at": "2026-08-07T16:17:38.844265+00:00"
+}
