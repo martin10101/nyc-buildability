@@ -54,3 +54,18 @@
 
 **G2 result: PASS (self-check + orchestrator reproduction consistent; independent G3/G4/G5 + DCV
 proceed on this identity).**
+
+---
+
+## Addendum — rework increment + final identity (recorded at re-stamp)
+
+After the first G3/G4/G5 wave, the G5 blocking correction C1 and the recommended hardening
+(L-1/L-2/S3-1/S2-1/README) were applied as a bounded rework (code head `a27068d`; scope-1 binding
+code untouched per the G5 C2 disposition). Orchestrator reproduction on the rework: targeted
+38 passed; FULL suite **1363 passed / 2 skipped** (+7 tests over 1356; zero regressions). The
+L-1 owner-check wiring was verified directly in source (`_confirm_owner_elevated` called from
+`evaluate_file` and `evaluate_directory`). All three independent delta re-reviews returned
+**PASS at a27068d** (G5: C1 CLOSED; G3: all findings resolved; G4: mutation-proven non-vacuous
+new tests). The task branch was merged into the control branch (`681f7df`) so the final content
+identity covers the delta-reviewed code; the task was resubmitted at that identity with no
+material change relative to `a27068d`. This addendum re-stamps G2 at the final identity.

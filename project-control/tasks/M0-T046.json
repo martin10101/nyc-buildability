@@ -64,7 +64,7 @@
     "directive-compliance-verifier"
   ],
   "status": "awaiting_gate",
-  "progress_percent": 90,
+  "progress_percent": 85,
   "risks": [
     "OS-ACL hardening touches the live owner config path: probes must be bounded and non-destructive (R128); a wrong ACL could lock the OWNER out - the change must be applied via a documented, reversible elevated action and verified before the unelevated probes run.",
     "Estop-fork regression test involves process concurrency - keep it deterministic (inject the fork shape, do not race real processes).",
@@ -72,7 +72,7 @@
   ],
   "blockers": [],
   "created_at": "2026-08-07T20:41:12.063773+00:00",
-  "updated_at": "2026-08-07T22:12:26.809570+00:00",
+  "updated_at": "2026-08-07T22:28:18.064019+00:00",
   "directive_refs": [
     {
       "directive_id": "D-010",
@@ -144,6 +144,20 @@
       "percent": 90,
       "status": "awaiting_gate",
       "message": "Rework increment committed (a27068d): G5-C1 closed (absolute System32 icacls), L-1 owner assertion wired into PROTECTED path (verified evaluate_file:425/evaluate_directory:454), L-2, S3-1 safe-subset inversion, S2-1 non-adjacent test, README fix; +7 tests, suite 1363/2 reproduced. Delta re-reviews dispatched to G3/G4/G5 reviewers; gates re-record at final identity next, then DCV"
+    },
+    {
+      "at": "2026-08-07T22:28:16.803312+00:00",
+      "agent": "orchestrator",
+      "percent": 90,
+      "status": "rework",
+      "message": "Identity-refresh cycle: task code merged into control branch (681f7df); resubmitting at the final content identity per the frozen-evidence rule (all three delta re-reviews PASS at a27068d)"
+    },
+    {
+      "at": "2026-08-07T22:28:17.075879+00:00",
+      "agent": "backend-engineer",
+      "percent": 92,
+      "status": "in_progress",
+      "message": "Resubmission increment: no material change; code identical to delta-reviewed a27068d"
     }
   ]
 }
