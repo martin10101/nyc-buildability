@@ -20,7 +20,9 @@
     "tools/agent_supervisor/",
     "tools/test_agent_supervisor_*.py",
     "project-control/reports/M0-T041-producer-report.md",
-    "project-control/tasks/M0-T041.json"
+    "project-control/tasks/M0-T041.json",
+    "project-control/reports/M0-T041-evidence-map.json",
+    "project-control/reports/M0-T041-g0-readiness.md"
   ],
   "forbidden_paths": [
     ".claude/",
@@ -44,7 +46,7 @@
     "G4",
     "G5"
   ],
-  "producer_agent": null,
+  "producer_agent": "backend-engineer",
   "reviewer_agents": [
     "code-reviewer",
     "security-reviewer",
@@ -52,14 +54,14 @@
     "control-plane-verifier",
     "directive-compliance-verifier"
   ],
-  "status": "backlog",
-  "progress_percent": 0,
+  "status": "accepted",
+  "progress_percent": 100,
   "risks": [
     "Live-CLI fixture capture may hit provider variance - record exact CLI version and shapes; fail-closed stays default until shapes proven."
   ],
   "blockers": [],
   "created_at": "2026-08-07T01:32:53.929188+00:00",
-  "updated_at": "2026-08-07T01:36:53+00:00",
+  "updated_at": "2026-08-07T04:52:16.495114+00:00",
   "directive_refs": [
     {
       "directive_id": "D-010",
@@ -87,12 +89,29 @@
         "D-010-R040",
         "D-010-R075",
         "D-010-R076",
-        "D-010-R078",
-        "D-010-R089",
         "D-010-R093"
       ]
     }
   ],
   "directive_regime_version": "1.0",
-  "directive_regime_entered_at": "2026-08-07T01:32:53.929188+00:00"
+  "directive_regime_entered_at": "2026-08-07T01:32:53.929188+00:00",
+  "worktree": "C:/Users/MLFLL/Downloads/nyc-zoning/orch",
+  "progress_log": [
+    {
+      "at": "2026-08-07T04:23:21.804771+00:00",
+      "agent": "backend-engineer",
+      "percent": 60,
+      "status": "in_progress",
+      "message": "Four defect closures committed; B-1..B-4 confirmed already fixed in V1.1 (honest report); suite 1189/1187/0/2"
+    },
+    {
+      "at": "2026-08-07T04:23:22.045017+00:00",
+      "agent": "backend-engineer",
+      "percent": 90,
+      "status": "self_check",
+      "message": "Self-check: full suite green before+after; validator exit 0; fail-closed defaults preserved; SHADOW-ONLY intact"
+    }
+  ],
+  "accepted_by": "orchestrator",
+  "accepted_at": "2026-08-07T04:52:16.480407+00:00"
 }

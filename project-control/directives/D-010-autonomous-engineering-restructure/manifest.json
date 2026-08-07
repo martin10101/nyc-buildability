@@ -1,7 +1,7 @@
 {
  "schema": "directive_manifest/v1",
  "directive_id": "D-010",
- "version": 3,
+ "version": 4,
  "slug": "autonomous-engineering-restructure",
  "title": "Autonomous Engineering Restructure and NYC Buildability Pilot Acceleration (Autonomous Engineering V2)",
  "status": "active",
@@ -76,7 +76,7 @@
  "verification_file": "verification.json",
  "final_reviewed_sha": null,
  "final_reviewed_manifest_sha256": null,
- "requirements_content_digest_sha256": "c0f72b0bc70b27e7eded7c965e9b5d0072e058b7dded27b7e06966fd2d01bc81",
+ "requirements_content_digest_sha256": "2d943475ca817f09e465fa0134b421a5298e8fbebdf2e81c22e2fa1a46bb90d6",
  "requirements_id_digest_sha256": "0b5e3eef3568d789ca35c1e31c6a1163eedf59dec341158614e2a85e84eaf577",
  "enforcement_pointers": {
   "tasks": [
@@ -221,7 +221,7 @@
   "D-010-R112"
  ],
  "created_at": "2026-08-07T01:09:55+00:00",
- "updated_at": "2026-08-07T03:04:05+00:00",
+ "updated_at": "2026-08-07T04:22:33+00:00",
  "audit_log": [
   {
    "at": "2026-08-07T01:09:55+00:00",
@@ -247,6 +247,11 @@
    "at": "2026-08-07T03:04:05+00:00",
    "by": "orchestrator",
    "note": "Captured owner line VERBATIM as source-003-amendment.md (sha256 6c55718f9a746c56df597f9a8f50261bb87f38e9d61498cac2a05ca264e48342) on branch task/M0-T040-authority-policy. Context: the auto-mode classifier twice denied committing M0-T040's reviewed authority-policy changes (CLAUDE.md/.claude-rules permission-model edits); the orchestrator stopped per the denial guidance and the owner authorized proceeding with the exact reviewed file set, with independent G3 + security G5 + DCV required before any merge. Rows R111-R112 appended; digests restamped per c14 amendment mechanics."
+  },
+  {
+   "at": "2026-08-07T04:22:33+00:00",
+   "by": "orchestrator",
+   "note": "Applicability correction (version 4, administrative): R078 (owner-touch count) and R089 (usage per completed product task) are promotion/product-phase measurements, not M0-T041 defect closures; bindings moved M0-T041 -> M0-T045 so verification demands evidence where the capability is actually delivered. No id or text changed; content digest restamped per c14 amendment mechanics."
   }
  ]
 }

@@ -97,11 +97,142 @@ CONTROL_RESPONSE_WRAPPER_VERIFIED = False
 #: classifier (`classify_unavailable`), whose default returns "" (unknown).
 #: "unknown" is not quota exhaustion, so the fail-closed pause path keeps running
 #: until a real exhaustion signal is captured and wired here.
-QUOTA_EXHAUSTION_SIGNAL_VERIFIED = False
-
 #: The one availability reason_code that authorizes a chain step (kept here so the
 #: probe and the loop cannot drift apart; `loop.py` re-exports it).
 QUOTA_EXHAUSTED_REASON = "quota_exhausted"
+
+
+# --------------------------------------------------------------------------
+# Account-quota exhaustion classifier (M0-T041 AS-1)
+# --------------------------------------------------------------------------
+#
+# Activation-checklist evidence (project-control/reports/M0-T036-ACTIVATION-
+# CHECKLIST.md, "Other standing activation prerequisites"): "Live-CLI account-
+# quota exhaustion classifier wired (QUOTA_EXHAUSTION_SIGNAL_VERIFIED=False today
+# -> the model-chain switch fail-closes to PAUSE; disclosed by doctor)". Also
+# named G3-A1 / G5-L-1 / G4-A1. Until M0-T041 the `classify_unavailable` seam of
+# `probe_model_launch` / `make_launch_probe` was never wired by the CLI, so the
+# default `lambda: ""` ran and no code recognized a quota signal at all. This
+# section wires a REAL, corpus-gated classifier while preserving AD-025 (unknown
+# is never treated as zero/success): the fixture corpus is the single source of
+# what a PROVEN signal shape is, and a shape only authorizes the model-chain step
+# when a fixture recording it is marked `verified_live` (i.e. its exact bytes were
+# captured from a real account-quota exhaustion). No such live capture exists on
+# this build (that capture is an owner-credentialed live act, adjacent to R595),
+# so every production fixture is `verified_live=False` and the classifier returns
+# "" for every real input -> the fail-closed PAUSE stays the default. The packet
+# risk note says exactly this: "fail-closed stays default until shapes proven".
+
+
+@dataclasses.dataclass(frozen=True)
+class QuotaSignalFixture:
+    """One recorded CLI signal shape that MIGHT indicate account-quota exhaustion.
+
+    A fixture is authoritative ONLY when `verified_live` is True, which means its
+    exact bytes (stderr text and/or exit code) were captured from a real account-
+    quota exhaustion on the recorded `cli_version`. A `verified_live=False`
+    fixture is a DOCUMENTED CANDIDATE only: it is kept so the corpus is reviewable
+    and a later live capture can flip one flag to activate it, but it never
+    authorizes a model-chain switch (AD-025: an unproven shape is not success).
+    """
+
+    name: str
+    #: Exit codes this shape is recognized by. Empty means "any exit code";
+    #: `None` in the set matches a process that never produced an exit code.
+    return_codes: frozenset[int | None] = frozenset()
+    #: A regex matched (case-insensitively, `search`) against the stderr excerpt.
+    #: `None` means stderr is not part of the match.
+    stderr_regex: str | None = None
+    #: The exact CLI version string the shape was recorded against. For a
+    #: documented candidate this states plainly that no live capture exists.
+    cli_version: str = ""
+    #: True ONLY when captured from a real live exhaustion; drives whether the
+    #: shape authorizes the chain step, and the module-level VERIFIED flag.
+    verified_live: bool = False
+    #: Where the shape came from, for provenance in review.
+    provenance: str = ""
+
+    def matches(self, returncode: int | None, stderr_text: str) -> bool:
+        """True when this fixture's shape recognizes (returncode, stderr_text).
+
+        Fail-closed on any malformed input: a non-str stderr or an unexpected
+        returncode type never matches (it can only ever yield the unknown "").
+        """
+        if self.return_codes and returncode not in self.return_codes:
+            return False
+        if self.stderr_regex is not None:
+            if not isinstance(stderr_text, str):
+                return False
+            if re.search(self.stderr_regex, stderr_text, re.IGNORECASE) is None:
+                return False
+        # A fixture with neither a code set nor a stderr pattern matches nothing:
+        # an empty shape must never be a catch-all that fabricates a signal.
+        return bool(self.return_codes) or self.stderr_regex is not None
+
+
+#: The production corpus. Every entry is a DOCUMENTED CANDIDATE derived from the
+#: limit-signal vocabulary the codebase already documents in
+#: `resume_scheduler.classify_limit` (usage-limit / quota / rate-limit prose) and
+#: from the module docstring's confirmed base CLI (claude 2.1.220). NONE is
+#: captured from a live account-quota exhaustion, so `verified_live` is False for
+#: every entry and the classifier is fail-closed in production. When a real
+#: exhaustion is captured under owner credentials, record its exact stderr/exit
+#: code here with `verified_live=True` and the exact `cli_version`, and the
+#: model-chain switch begins to recognize it -- no other code changes.
+_UNCAPTURED = ("UNCAPTURED - no live account-quota exhaustion recorded on this "
+               "build; base CLI probed at claude 2.1.220 (see module docstring)")
+
+QUOTA_EXHAUSTION_FIXTURES: tuple[QuotaSignalFixture, ...] = (
+    QuotaSignalFixture(
+        name="usage_limit_reached_prose",
+        stderr_regex=r"\busage limit\b|\bquota\b|\bplan limit\b",
+        cli_version=_UNCAPTURED,
+        verified_live=False,
+        provenance="derived from resume_scheduler.classify_limit's documented "
+                   "'usage limit' vocabulary; account-quota wording candidate"),
+    QuotaSignalFixture(
+        name="rate_limit_429_prose",
+        stderr_regex=r"\b429\b|\brate limit(ed)?\b",
+        cli_version=_UNCAPTURED,
+        verified_live=False,
+        provenance="derived from resume_scheduler.classify_limit's 429/rate-limit "
+                   "vocabulary; a 429 is usually a TEMPORARY rate limit, not "
+                   "account-quota exhaustion, so this candidate stays unverified "
+                   "until a live capture proves it authorizes a chain switch"),
+)
+
+#: Live-verification status, DERIVED from the corpus so the flag and the corpus
+#: can never disagree. It is True only once at least one fixture is captured from
+#: a live exhaustion; today that is False, which `doctor` discloses verbatim.
+QUOTA_EXHAUSTION_SIGNAL_VERIFIED = any(
+    f.verified_live for f in QUOTA_EXHAUSTION_FIXTURES)
+
+
+def classify_quota_exhaustion(
+    returncode: int | None,
+    stderr_text: str,
+    *,
+    corpus: Sequence[QuotaSignalFixture] = QUOTA_EXHAUSTION_FIXTURES,
+) -> str:
+    """The wired `classify_unavailable` seam: name a quota-exhaustion reason.
+
+    Returns `QUOTA_EXHAUSTED_REASON` ONLY when a `verified_live` fixture in
+    `corpus` recognizes (returncode, stderr_text). For every other input -- an
+    unknown shape, an absent signal (a clean/empty failure), a documented but
+    UNVERIFIED candidate, or a malformed payload -- it returns "" (unknown),
+    which is not quota exhaustion and keeps the fail-closed PAUSE (AD-025). It
+    never raises: a classifier that crashed mid-decision would be a fail-open
+    shape, so any unexpected input degrades to the unknown "".
+    """
+    try:
+        if not isinstance(stderr_text, str):
+            return ""
+        for fixture in corpus:
+            if fixture.verified_live and fixture.matches(returncode, stderr_text):
+                return QUOTA_EXHAUSTED_REASON
+        return ""
+    except Exception:  # pragma: no cover - defensive: unknown, never a crash
+        return ""
 
 #: Probe reason codes for an unavailable model. All are observations, not guesses.
 PROBE_NO_PROCESS = "launch_failed"          # the executable never started
