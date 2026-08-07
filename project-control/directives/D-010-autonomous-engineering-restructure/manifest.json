@@ -1,7 +1,7 @@
 {
  "schema": "directive_manifest/v1",
  "directive_id": "D-010",
- "version": 12,
+ "version": 13,
  "slug": "autonomous-engineering-restructure",
  "title": "Autonomous Engineering Restructure and NYC Buildability Pilot Acceleration (Autonomous Engineering V2)",
  "status": "active",
@@ -97,6 +97,14 @@
    "amends": "source-010-amendment.md",
    "recorded_at": "2026-08-07T19:03:32+00:00",
    "content_digest_sha256": "11feaa98310d1b10dd5b0d4fbbdedda1842d9bc3452174991c55b1d123448fc3"
+  },
+  {
+   "file": "source-012-amendment.md",
+   "kind": "amendment",
+   "sequence": 12,
+   "amends": "source-011-amendment.md",
+   "recorded_at": "2026-08-07T19:40:00+00:00",
+   "content_digest_sha256": "24801b1f7b02f93f746ec6a67c629946cddd77de6b4000825dc8404df3f6dba0"
   }
  ],
  "amendments": [
@@ -109,7 +117,8 @@
   "source-008-amendment.md",
   "source-009-amendment.md",
   "source-010-amendment.md",
-  "source-011-amendment.md"
+  "source-011-amendment.md",
+  "source-012-amendment.md"
  ],
  "supersedes": [],
  "superseded_by": null,
@@ -148,8 +157,8 @@
  "verification_file": "verification.json",
  "final_reviewed_sha": null,
  "final_reviewed_manifest_sha256": null,
- "requirements_content_digest_sha256": "37af353b5d0fb4cf0cc55fbf4edc3d078c8d2103df013d9083b3c80ac1b27d34",
- "requirements_id_digest_sha256": "d4a8cd9e7cfbb9c2e1bd05d0642a3467470f2d1f7c53e23d0cfa220317d0a248",
+ "requirements_content_digest_sha256": "bf429f6ca4f622734d6f12cd2130e6854e90c99f6bc7f5f3d856b96e7ee8ee50",
+ "requirements_id_digest_sha256": "5d454806aa863fae00b8ac166ff8499795b2cb38d5a3fc23150583b178c4fd3e",
  "enforcement_pointers": {
   "tasks": [
    "M0-T037",
@@ -305,7 +314,19 @@
   "D-010-R118",
   "D-010-R119",
   "D-010-R120",
-  "D-010-R121"
+  "D-010-R121",
+  "D-010-R122",
+  "D-010-R123",
+  "D-010-R124",
+  "D-010-R125",
+  "D-010-R126",
+  "D-010-R127",
+  "D-010-R128",
+  "D-010-R129",
+  "D-010-R130",
+  "D-010-R131",
+  "D-010-R132",
+  "D-010-R133"
  ],
  "created_at": "2026-08-07T01:09:55+00:00",
  "updated_at": "2026-08-07T16:53:10+00:00",
@@ -379,6 +400,16 @@
    "at": "2026-08-07T19:03:32+00:00",
    "actor": "orchestrator",
    "action": "amendment source-011 recorded (session-5 launch: product work per R116/0A.11); R121 appended; digests restamped"
+  },
+  {
+   "at": "2026-08-07T19:40:00+00:00",
+   "actor": "orchestrator",
+   "action": "amendment source-012 recorded (owner pre-activation decision and ordering); R122-R133 appended; digests restamped"
+  },
+  {
+   "at": "2026-08-07T19:50:00+00:00",
+   "actor": "orchestrator",
+   "action": "pre-merge correction: R122 applicability narrowed to M0-T037 (session-ordering rule; avoids retroactive ref-coverage churn on in-flight M0-T019/M2-T014); content digest restamped"
   }
  ]
 }
