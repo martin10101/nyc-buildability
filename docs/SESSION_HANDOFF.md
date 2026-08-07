@@ -5,10 +5,68 @@
 the remote: **origin/main may have advanced, so do not trust any SHA written here as still-current.**
 This file is orientation only. Operating rules, gates, and workflow routes live in `CLAUDE.md`.
 
-Refreshed **2026-08-07 (D-010 session-2 rotation, CP-0038)**. **The block below supersedes the older
+Refreshed **2026-08-07 (D-010 session-3 rotation, CP-0039)**. **The block below supersedes the older
 sections further down** (kept only as history); the ledger wins on any conflict.
 
-## CURRENT STATE (2026-08-07, session 2 — confirm against the ledger + git)
+## CURRENT STATE (2026-08-07, session 3 — confirm against the ledger + git)
+
+**D-010 (Autonomous Engineering V2) wave-1 continues to execute.** Session 3 rotated at a safe
+post-merge seam per D-010-R113/R115; accepted count **63**. Owner touches this session: **0**.
+
+- **D-010 am.6 captured** (PR #168, merged `f9c79d5`): the owner's session-3 launch instruction,
+  verbatim, as append-only `source-007-amendment.md` + row **R117** (re-dispatch; NO new
+  obligations). Manifest v8, digests restamped per c14; packets M0-T043..M0-T045 refs widened.
+- **M0-T043 ACCEPTED + MERGED** (PR #169, merge `341fa4d`; accepted 62): bounded context-pack
+  builder (`tools/context_pack.py`, stdlib-only deterministic; Section 12 CLI/inputs/exclusions/
+  meta; 0A.4 budgets drift-locked to `review_packet.py`; AD-046 fail-closed overflow + split
+  proposal), 15-test suite, `docs/CONTEXT_PACKS.md`. **Honest G3 FAIL** (F1 MAJOR: footer-blind
+  bound decision could emit over-bound packets at exit 0) → rework 1 `e41dad3` (footer-aware
+  fixpoint at all 3 decision points; exit 0 ⇒ emitted ≤ effective bound) → G3+G4 delta PASS →
+  DCV 7/7 at identity `bb58eafa`. **CI residual:** `tools/test_context_pack.py` is NOT in ci.yml
+  (`.github/` forbidden in the packet) — follow-up task should add one line to the control-plane job.
+- **M0-T044 ACCEPTED + MERGED** (PR #170, merge `1c34def`; accepted 63): automatic safe GitHub
+  flow (`tools/agent_supervisor/github_flow.py` + 57 tests, auto-collected by the CI
+  supervisor-bridge glob): push authorization (main/force hard-deny), ten §5.5 merge predicates
+  individually tested both directions, Tier B routing without owner approval, proven-merged-only
+  cleanup, journal-replay crash reconciliation without blind retry. Suite **1271/2, zero
+  regressions**, reproduced by 6 independent runs. Shadow posture verified 4×: `github_pr_merge`
+  NOT in live `MODELED_EFFECTS`, D-007 invariant 9 intact, zero live importers. Five gates
+  first-pass PASS (G3/G4/G5 + control-plane §5.2 leg) + DCV 7/7 at identity `16149fc3`.
+- **8 residuals pinned to `M0-T036-ACTIVATION-CHECKLIST.md`** (M0-T044 G3 + G5 sections): MINOR-1
+  (Tier B detection covers 3 of 11 §5.2 classes — fail-open), MINOR-2 (empty-`authorized_branch`
+  fall-through), SEC-1 (`extra_specs` live-path override channel unguarded by invariant-9 lock),
+  SEC-2 (broadens MINOR-1 to a CATCH-ALL over SECURITY_RELEVANT_CLASSES incl. permission/hook
+  configs per §5.4 item 3), SEC-3 (redaction of secret-scan findings), INFO-1 (live caller must
+  audit every FlowResult). All MUST-RESOLVE before any activation.
+- ⛔ **SHADOW-ONLY throughout; R595 supervised rehearsal remains the MANDATORY BLOCKING
+  prerequisite before ANY activation** (D-010-R104). Nothing wired live.
+
+## NEXT SESSION — resume checklist (session 3 → 4)
+
+1. Start-of-session: `python tools/project_control.py status` + reconcile git/CI (origin/main was
+   `1c34def` at rotation; checkpoint CP-0039). Machine-readable handoff:
+   `project-control/reports/session-handoff-2026-08-07-3.json`
+   (digest `bddcbdbcbb285699850bfe24a2ed2df6f2cce42ca591cd585f1be8c33a0f70eb`) — verify the digest:
+   sha256 over `json.dumps(doc, sort_keys=True)` with `digest=""`.
+2. **Next dependency-valid unit: M0-T045** (R595 supervised rehearsal + Section 16.2 promotion
+   pack; deps all accepted). The rehearsal is SUPERVISED — plan it with the owner present; the
+   promotion decision is owner-gated. Pre-R595 hardening obligations live in THREE pinned sets on
+   `M0-T036-ACTIVATION-CHECKLIST.md`: (a) M0-T041 items; (b) M0-T042 G5 L-1/I-1/I-3;
+   (c) M0-T044 MINOR-1/2 + SEC-1/2/3 + INFO-1. M0-T045 binds R113-R115.
+3. Proven task workflow + producer-spawn rule (UNNAMED) + classifier-denial protocol: unchanged
+   from the session-2 checklist below.
+4. **Reviewer models:** gate reviewers ran `claude-opus-4-8` + `xhigh` (standing fallback; the 5
+   flipped agent files remain uncommitted in the PRIMARY checkout; revert to `claude-fable-5`
+   pins when the owner says "Fable is back"). Orchestrator ran `claude-fable-5`.
+5. **Primary checkout** (branch task/M0-T036-supervisor-bridge @ 57ccb44): untouched per
+   R099/R109. **Dormant batch** (D-009 + M0-T019 + M2-T014 on origin): untouched. All standing
+   holds unchanged: deployment/G6/Graphify/expansion.
+
+---
+
+_History (pre-this-session, may be stale):_
+
+## PRIOR STATE (2026-08-07 session 2, superseded — CP-0038)
 
 **D-010 (Autonomous Engineering V2) wave-1 continues to execute.** Session 2 rotated at a safe
 post-merge seam per D-010-R113/R115; accepted count **61**.
