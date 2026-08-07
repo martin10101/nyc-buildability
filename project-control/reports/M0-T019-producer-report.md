@@ -177,3 +177,110 @@ is therefore STILL the pre-patch 15.3.4 tree.
 
 Requested status: **awaiting_gate** (G3 + G5), with the §4 CI lockfile round-trip to be run by the
 orchestrator so FE-S1/S2/S3/S6/S10 produce their CI artifacts on the regenerated lock.
+
+---
+
+## 7. Increment 3 (2026-08-07, Option B close-out — FE-S9 exception is MOOT by time-lapse)
+
+This increment closes out D-009 amendment 1 ("Option B", source-002, owner 2026-08-05). The
+detailed dated record is `project-control/reports/M0-T019-fes9-mootness-2026-08-07.md`; this section
+summarizes it and records the accept-readiness surfacing (D-009-R020).
+
+### 7a. What lapsed and why no exception path ships
+
+am.1 authorized a scoped, owner-authorized, auto-expiring FE-S9 age-gate exception for EXACTLY
+`brace-expansion@1.1.18` and `sharp@0.35.3`, to unblock M0-T019 **before** those pins cleared the
+global 7-day age gate. am.1's own timing note predicted `brace-expansion@1.1.18` would clear 7
+complete days at 2026-08-06T10:17:06.961Z; `sharp@0.35.3` (published 2026-07-01) already passed.
+As of 2026-08-07 **both pins pass the UNCHANGED global 7-day (604800 s) FE-S9 gate on real registry
+age**, so per D-009-R011 ("an upper bound; the implementation may create an entry only where
+actually needed") and D-009-R012 (an expired/invalid entry is IGNORED and the gate reverts to the
+plain 7-day requirement) **no exception entry is created**:
+
+- `apps/web/scripts/dependency_age_gate.mjs` stays **byte-unchanged** — hard-set 7 days, no
+  allowlist, no `--ignore`, no suppression, no exception path (verified against the tree this
+  increment). The previously-reviewed security control is **NOT weakened**.
+- This is a **strictly stronger** security outcome than the authorized weakening (the weakening was
+  authorized but is never exercised; the control ships intact while still admitting the needed pins).
+
+Requirement dispositions (full table in the mootness record §6): **R010** trivially satisfied
+(threshold byte-unchanged); **R011** satisfied with an empty exception set (∅ ⊆ the two-pin upper
+bound); **R012** vacuously/preservingly satisfied (the plain 7-day end-state is exactly what ships);
+**R013** vacuously preserved (no exempted pins → every package flows through identical fail-closed
+logic). **R009** (implement the exception) and **R021** (update every "no exception path" assertion)
+are proposed **NOT_APPLICABLE-BY-TIME-LAPSE** — subject to independent verifier approval and G3/G5
+re-review at the finalized head. Note on R021: because no exception path ships, the existing "no
+exception path" assertions remain literally TRUE and must NOT be edited to describe a path that does
+not exist.
+
+### 7b. D-009-R014 re-verification result (live registry, 2026-08-07)
+
+Orchestrator-captured fixtures under `project-control/reports/m0-t019-fes9-mootness/`
+(captured `2026-08-07T19:20:32.535Z` via live curl to registry.npmjs.org):
+
+| Pin | Publish timestamp (UTC) | Age at capture | Advisory (bulk endpoint) |
+|---|---|---|---|
+| `brace-expansion@1.1.18` | 2026-07-30T10:17:06.961Z | ~8.38 d (cleared 7 d at 2026-08-06T10:17:06.961Z) | `{}` = none |
+| `sharp@0.35.3` | 2026-07-01T11:28:34.077Z | ~37.3 d | `{}` = none |
+| `js-yaml@4.3.1` | 2026-07-31T17:39:51.183Z | ~7.07 d (cleared 7 d at 2026-08-07T17:39:51Z, ~1.7 h before capture) | `{}` = none |
+
+The npm bulk advisory endpoint returned `{}` (zero advisories) for all pins → **D-009-R014
+external fact re-verified** (`brace-expansion`/`sharp` advisory-free, both published before the
+2026-08-04 npm bad-publish incident window). The `js-yaml@4.3.1` pin (round-2 remediation, §7f
+below) is likewise advisory-free and ≥7 days old — evidence fixture
+`project-control/reports/m0-t019-fes9-mootness/js-yaml-remediation-evidence.json`.
+
+### 7c. Lockfile CI step (D-009-R017) — failure → remediation → success
+
+`apps/web/package-lock.json` is regenerated via `.github/workflows/generate-lockfile.yml` on
+`control/D-009-batch-close`, 2026-08-07. The sequence:
+
+1. **Run 31211100620 FAILED** at the blocking `npm audit` step — it caught a NEW HIGH advisory
+   disclosed after 2026-08-05: `js-yaml` 4.0.0–4.3.0 (CVE-2026-59870 / GHSA-5p4m-2wfm-xmqj,
+   quadratic CPU in `!!omap` resolution), present as the single dev-tree instance
+   `node_modules/js-yaml@4.3.0`. The fail-closed gate worked as designed (§7f).
+2. **Remediation** (orchestrator, same pattern as `eb80a4d`): `apps/web/package.json` overrides now
+   also pin `js-yaml=4.3.1` — the minimum advisory-free AND ≥7-day version on the v4 line.
+3. **Run 31211311419 SUCCEEDED** (bot commit `1d678fd`, "chore(web): regenerate
+   package-lock.json"). The regenerated lock resolves `js-yaml` to exactly `4.3.1` and passes npm ci
+   integrity + both blocking `npm audit` total==0 + FE-S9 committed-lock age gate + FE-S11 npm CLI
+   advisory. This is the finalized head.
+
+G3/G5 and the remaining M0-T019 gates (D-009-R015/R016/R018) run over that finalized head.
+
+### 7f. Round-2 transitive advisory (js-yaml) — resolved with NO age exception
+
+After the round-1 `brace-expansion` remediation, a second transitive advisory surfaced during
+lockfile regeneration (round 1 and round 2 are consecutive; both resolved under the UNCHANGED gate).
+The blocking `npm audit` in run 31211100620 flagged `js-yaml@4.3.0` (HIGH, CVE-2026-59870 /
+GHSA-5p4m-2wfm-xmqj). It was remediated by pinning `js-yaml@4.3.1` (published
+2026-07-31T17:39:51.183Z; ~7.07 days old at the 2026-08-07T19:23:57Z capture — it cleared the plain
+7-day FE-S9 gate at 2026-08-07T17:39:51Z, ~1.7 h earlier; bulk advisory `{}`). Like
+`brace-expansion@1.1.18` and `sharp@0.35.3`, `js-yaml@4.3.1` is advisory-free AND ≥7 days old, so it
+passes the UNCHANGED gate with **no age exception**. This strengthens the mootness narrative: two
+consecutive transitive advisories were both closed with advisory-free, comfortably-aged versions and
+zero weakening of the security control. Evidence:
+`project-control/reports/m0-t019-fes9-mootness/js-yaml-remediation-evidence.json`.
+
+### 7g. Final `apps/web/package.json` overrides set
+
+`postcss 8.5.23` / `sharp 0.35.3` / `brace-expansion 1.1.18` / `js-yaml 4.3.1` — each advisory-free
+and ≥7 days old; all installed as overrides and all passing the unchanged FE-S9 gate.
+
+### 7d. Accept-readiness surfaced (D-009-R020)
+
+The required owner return item — report M0-T019 accept-readiness — is **discharged via this
+increment being surfaced to the owner**: with the FE-S9 exception moot, M0-T019 is accept-ready
+pending only the orchestrator-run lockfile CI (R017) and the independent G3/G5/remaining gates
+(R015/R016/R018) over the finalized regenerated-lock head, plus independent confirmation of the
+R009/R021 NA-by-lapse proposals. The producer does NOT self-accept; completeness is decided by the
+gates and the orchestrator.
+
+### 7e. Note on the increment-1 test count
+
+Increment 1 §1/§3 recorded "32 deterministic offline unit tests" in
+`apps/web/scripts/tests/dependency_age_gate.test.mjs`. The current tree on
+`control/D-009-batch-close` contains **40** test cases in that file. The gate module itself is
+unchanged in its fail-closed/no-exception behavior; the higher count reflects tests added after
+increment 1 was written. The exact live count over the finalized head is a G3/G4 artifact; this note
+records the discrepancy so no committed text is silently contradicted.

@@ -1,0 +1,31 @@
+{
+  "schema": "task_evidence_map/v1",
+  "task_id": "M0-T019",
+  "directive_ids": ["D-009", "D-010"],
+  "producer": "frontend-engineer",
+  "increment": "3 (Option B close-out, FE-S9 exception moot by time-lapse)",
+  "generated_at": "2026-08-07",
+  "note": "Evidence pointers only. Producer does NOT self-accept; G3/G5 + remaining gates over the finalized regenerated-lock head, and the R009/R021 NA-by-lapse proposals, are confirmed by independent review/orchestrator. Covers exactly 20 ids (D-009-R014 and D-009-R017 deliberately excluded per packet: R014 re-verified in producer report increment 3, R017 is the orchestrator-run lockfile-CI harness).",
+  "requirements": {
+    "D-009-R001": "apps/web + .github/workflows/{ci.yml,generate-lockfile.yml,scheduled-web-audit.yml} + CLAUDE.md principle #15 (governance-classed paths modified under this authorization) — M0-T019-producer-report.md §1.",
+    "D-009-R002": "M0-T019-producer-report.md §2 (all changed/overridden packages advisory-free via npm bulk advisory endpoint) + §5 FE-S2; apps/web/scripts/dependency_age_gate.mjs FE-S11 advisory decision fails closed, no suppression — audits fail closed, no waiver.",
+    "D-009-R003": "apps/web/.npmrc (min-release-age=7, save-exact=true, package-lock=true) + apps/web/package.json exact pins (FE-S10) + apps/web/scripts/dependency_age_gate.mjs committed-lock integrity gate — M0-T019-producer-report.md §1.",
+    "D-009-R004": "apps/web/scripts/dependency_age_gate.mjs (deterministic fail-closed committed-lock age gate; INFRASTRUCTURE_UNAVAILABLE never advisory-free) + .github/workflows/ci.yml web-dependency-security (blocking) + .github/workflows/scheduled-web-audit.yml (daily/PR re-audit) — M0-T019-producer-report.md §1, §5 (FE-S9/FE-S7).",
+    "D-009-R005": "docs/DEPENDENCY_SECURITY_POLICY.md new-package provenance-review section + M0-T019-producer-report.md §2 (sharp 0.35.3 / brace-expansion 1.1.18 maintainer/GPG/publish-date/ownership provenance).",
+    "D-009-R006": "docs/DEPENDENCY_SECURITY_POLICY.md §6 age-only, owner-authorized, auto-expiring emergency exception + M0-T019-producer-report.md §1 (CLAUDE.md principle #15).",
+    "D-009-R007": "CLAUDE.md appended permanent principle #15 (concise dependency-security rule) — M0-T019-producer-report.md §1.",
+    "D-009-R008": "project-control/directives/D-009-dependency-security-governance/source-002-amendment.md#the-directive (owner selects Option B; authorizes scoped auto-expiring FE-S9 exception; supersedes B-017 WAIT and B-013 DECLINE for the two named pins only) — captured verbatim.",
+    "D-009-R009": "project-control/reports/M0-T019-fes9-mootness-2026-08-07.md §6 — PROPOSED NOT_APPLICABLE-BY-TIME-LAPSE: no exception entry needed (R011 upper-bound); both pins pass the unchanged gate on real age; apps/web/scripts/dependency_age_gate.mjs stays byte-unchanged. Subject to independent verifier approval + G3/G5.",
+    "D-009-R010": "project-control/reports/M0-T019-fes9-mootness-2026-08-07.md §5 + apps/web/scripts/dependency_age_gate.mjs (byte-unchanged; boundary '604800 s PASSES; 604799 s FAILS'; global threshold not lowered) — trivially satisfied.",
+    "D-009-R011": "project-control/reports/M0-T019-fes9-mootness-2026-08-07.md §4/§5 + apps/web/scripts/dependency_age_gate.mjs (no allowlist/exception literal; grep-clean apart from header prose) — satisfied with an EMPTY exception set (∅ subset of the two-pin upper bound).",
+    "D-009-R012": "project-control/reports/M0-T019-fes9-mootness-2026-08-07.md §4/§6 + apps/web/scripts/dependency_age_gate.mjs (the plain 7-day end-state is exactly what ships; no entry exists to expire) — vacuously/preservingly satisfied.",
+    "D-009-R013": "project-control/reports/M0-T019-fes9-mootness-2026-08-07.md §5/§6 + apps/web/scripts/dependency_age_gate.mjs FAIL-CLOSED header (advisory/integrity/host/timestamp remain fail-closed for every package incl. the two pins) — vacuously preserved (no exempted pins).",
+    "D-009-R015": "G3 (code-reviewer, independent, != producer) re-review at the finalized regenerated-lock head (gate record to be recorded by the orchestrator). Scope: the FE-S9 change — which under time-lapse is a byte-unchanged gate (M0-T019-fes9-mootness-2026-08-07.md §5).",
+    "D-009-R016": "G5 (security-reviewer, independent, != producer) re-review at the finalized regenerated-lock head (gate record to be recorded by the orchestrator). Scope: the FE-S9 control — shipped unweakened (M0-T019-fes9-mootness-2026-08-07.md §5/§7).",
+    "D-009-R018": "Remaining M0-T019 gates (G2/G3/G4/G5) run over the finalized regenerated-lock head (gates not recorded against a non-final head) — orchestrator-run.",
+    "D-009-R019": "project-control/directives/D-009-dependency-security-governance/source-002-amendment.md (owner Option-B authorization + exception, verbatim) + project-control/reports/M0-T019-producer-report.md (§7 increment 3) + project-control/reports/M0-T019-fes9-mootness-2026-08-07.md (durable in-repo record).",
+    "D-009-R020": "project-control/reports/M0-T019-producer-report.md §7d — accept-readiness surfaced to the owner via this increment (accept-ready pending orchestrator lockfile CI R017 + independent G3/G5/remaining gates + confirmation of R009/R021 NA-by-lapse). Producer does not self-accept.",
+    "D-009-R021": "project-control/reports/M0-T019-fes9-mootness-2026-08-07.md §6 — PROPOSED NOT_APPLICABLE-BY-TIME-LAPSE: since no exception path ships, the existing 'no exception path' assertions (dependency_age_gate.mjs header; DEPENDENCY_SECURITY_POLICY.md §1/§2(b)/§6; FE-S5/FE-S8/FE-S9 language) remain literally TRUE and must NOT be edited to describe a non-existent path. Subject to independent verifier approval + G3/G5.",
+    "D-010-R121": "Session-5 re-dispatch followed: the dependency-security batch is resolved first (this Option-B close-out of M0-T019 within control/D-009-batch-close); product tasks are held per D-010 am.12. See project-control/reports/M0-T019-fes9-mootness-2026-08-07.md §8 (residual gate/CI ordering) + M0-T019-producer-report.md §7."
+  }
+}

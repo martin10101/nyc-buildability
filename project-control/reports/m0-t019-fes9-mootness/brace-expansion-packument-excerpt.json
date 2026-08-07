@@ -1,0 +1,19 @@
+{
+ "name": "brace-expansion",
+ "captured_at": "2026-08-07T19:20:32.535152+00:00",
+ "captured_by": "orchestrator (evidence-capture rule: live curl to registry.npmjs.org)",
+ "time": {
+  "1.1.18": "2026-07-30T10:17:06.961Z",
+  "1.1.17": "2026-07-29T10:45:03.143Z",
+  "2.0.2": "2025-06-11T08:48:36.535Z"
+ },
+ "dist_tags": {
+  "3.x": "3.0.1",
+  "2.x": "2.0.2",
+  "1.x": "1.1.12",
+  "maintenance-v1": "1.1.18",
+  "latest": "5.0.9",
+  "maintenance-v3": "3.0.6",
+  "maintenance-v2": "2.1.4"
+ }
+}
