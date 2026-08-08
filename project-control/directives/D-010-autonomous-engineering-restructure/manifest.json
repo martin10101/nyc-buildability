@@ -265,7 +265,7 @@
  "verification_file": "verification.json",
  "final_reviewed_sha": null,
  "final_reviewed_manifest_sha256": null,
- "requirements_content_digest_sha256": "e071bb5771e91d9aa952321fd2ba770e82cc9cc12f9d2101931ef79a766b3aeb",
+ "requirements_content_digest_sha256": "ab55283d32c6664365f522d610ad1ba2183def78fabd9b47682722931d7dcb4c",
  "requirements_id_digest_sha256": "9d79a795170f351a4031dcb50a7c02a21691f0fb46723454e28f1c7626677ac7",
  "enforcement_pointers": {
   "tasks": [
@@ -545,7 +545,7 @@
   "D-010-R241"
  ],
  "created_at": "2026-08-07T01:09:55+00:00",
- "updated_at": "2026-08-08T20:12:07+00:00",
+ "updated_at": "2026-08-08T20:15:36+00:00",
  "audit_log": [
   {
    "at": "2026-08-07T01:09:55+00:00",
@@ -686,6 +686,11 @@
    "at": "2026-08-08T20:12:07+00:00",
    "actor": "orchestrator",
    "action": "amendment source-024 recorded (owner B-018 Option A approval + stranded-START_CLAUDE defect-fix order; R236-R241 added); digests restamped"
+  },
+  {
+   "at": "2026-08-08T20:15:36+00:00",
+   "actor": "orchestrator",
+   "action": "applicability restamp: R237/R239/R240/R241 task_ids += M0-T052 (the B-018 defect-lane task created under source-024); IDs and texts unchanged (id digest stable); content digest restamped (D-009 v2 precedent)"
   }
  ]
 }

@@ -4,7 +4,7 @@
  "version": 22,
  "requirement_count": 241,
  "producer": "orchestrator",
- "updated_at": "2026-08-08T20:12:07+00:00",
+ "updated_at": "2026-08-08T20:15:36+00:00",
  "requirements": [
   {
    "id": "D-010-R001",
@@ -8386,7 +8386,8 @@
     "task_ids": [
      "M0-T037",
      "M2-T015",
-     "M2-T016"
+     "M2-T016",
+     "M0-T052"
     ],
     "task_types": [],
     "milestones": [],
@@ -8459,7 +8460,8 @@
     "task_ids": [
      "M0-T037",
      "M2-T015",
-     "M2-T016"
+     "M2-T016",
+     "M0-T052"
     ],
     "task_types": [],
     "milestones": [],
@@ -8496,7 +8498,8 @@
     "task_ids": [
      "M0-T037",
      "M2-T015",
-     "M2-T016"
+     "M2-T016",
+     "M0-T052"
     ],
     "task_types": [],
     "milestones": [],
@@ -8533,7 +8536,8 @@
     "task_ids": [
      "M0-T037",
      "M2-T015",
-     "M2-T016"
+     "M2-T016",
+     "M0-T052"
     ],
     "task_types": [],
     "milestones": [],
