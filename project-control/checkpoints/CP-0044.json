@@ -1,0 +1,18 @@
+{
+  "checkpoint_id": "CP-0044",
+  "timestamp": "2026-08-08T05:27:15.147301+00:00",
+  "commit": "70d27b240633f4583295bc6fada03099e5fb1e86",
+  "branch": "control/M0-T048-c2-close",
+  "active_milestone": "M4",
+  "summary": "Session-6 rotation seam (ceiling ~400k, D-010 R113/R114). Completed this session: M0-T046 ACCEPTED+merged (67, PR #178); activation checklist reconciled; owner decision package presented; nanoid GHSA-2v37-7h3g-55p8 discovered -> M0-T047 contracted (age-eligible 2026-08-10T10:39:22Z, PR #179 merged); owner am.14 captured (C2 close-before-activation, R134-R143); M0-T048 contracted+implemented, ALL FIVE GATES PASS at ec0f55d (G5: C2 RULED CLOSED no corrections; G4: mutation-proven, no corrections; G3: PASS + MAJOR-1 resume-window forgery routed to DCV vs G5-N-1 outside-premise ruling). Session 7: DCV adjudication -> verification row -> accept -> Tier A merge -> activation package with MAJOR-1/N-1 verbatim. M2-T015/T016 HELD.",
+  "post_accept_verifications_confirmed": {
+    "M0-T027": [
+      "D-004-R389",
+      "D-004-R486",
+      "D-004-R487",
+      "D-004-R488",
+      "D-004-R501"
+    ]
+  },
+  "updated_at": "2026-08-08T05:27:15.171267+00:00"
+}

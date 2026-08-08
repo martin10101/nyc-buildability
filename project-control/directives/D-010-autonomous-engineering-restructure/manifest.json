@@ -1,7 +1,7 @@
 {
  "schema": "directive_manifest/v1",
  "directive_id": "D-010",
- "version": 14,
+ "version": 16,
  "slug": "autonomous-engineering-restructure",
  "title": "Autonomous Engineering Restructure and NYC Buildability Pilot Acceleration (Autonomous Engineering V2)",
  "status": "active",
@@ -113,6 +113,30 @@
    "amends": "source-011-amendment.md",
    "recorded_at": "2026-08-07T19:58:00+00:00",
    "content_digest_sha256": "b419759edcd96e861719ee041f5e4dae8daf1e07a6d57c08ad62d6e518bcf840"
+  },
+  {
+   "file": "source-014-amendment.md",
+   "kind": "amendment",
+   "sequence": 14,
+   "amends": "source-012-amendment.md",
+   "recorded_at": "2026-08-08T04:29:07+00:00",
+   "content_digest_sha256": "3d1c9fe91944848dbdd3c0304b764758fa87f16c06ddf44100176805471219e8"
+  },
+  {
+   "file": "source-015-amendment.md",
+   "kind": "amendment",
+   "sequence": 15,
+   "amends": "source-014-amendment.md",
+   "recorded_at": "2026-08-08T05:38:36+00:00",
+   "content_digest_sha256": "acc7b5e4358e0e9dd12d353c9767dcd504d592f49835862937417931ab54419f"
+  },
+  {
+   "file": "source-016-amendment.md",
+   "kind": "amendment",
+   "sequence": 16,
+   "amends": "source-015-amendment.md",
+   "recorded_at": "2026-08-08T06:16:37+00:00",
+   "content_digest_sha256": "b22838759d0742a9e02b3b739671a02ff37c6757dc4700a6277b0652e701d8de"
   }
  ],
  "amendments": [
@@ -127,7 +151,10 @@
   "source-010-amendment.md",
   "source-011-amendment.md",
   "source-012-amendment.md",
-  "source-013-amendment.md"
+  "source-013-amendment.md",
+  "source-014-amendment.md",
+  "source-015-amendment.md",
+  "source-016-amendment.md"
  ],
  "supersedes": [],
  "superseded_by": null,
@@ -166,8 +193,8 @@
  "verification_file": "verification.json",
  "final_reviewed_sha": null,
  "final_reviewed_manifest_sha256": null,
- "requirements_content_digest_sha256": "88eb298ec41dfa9e2dea74a5e809cc0046cc231e5ddf9dddb47f6188d2905d6a",
- "requirements_id_digest_sha256": "5d454806aa863fae00b8ac166ff8499795b2cb38d5a3fc23150583b178c4fd3e",
+ "requirements_content_digest_sha256": "a0d180addee607d9e35c089646bd935bbfe0fffde59c082cb73d461df459db46",
+ "requirements_id_digest_sha256": "74747ef738002bf46757da68be025825be33cc859709018ef672da12d1d93f0b",
  "enforcement_pointers": {
   "tasks": [
    "M0-T037",
@@ -335,10 +362,33 @@
   "D-010-R130",
   "D-010-R131",
   "D-010-R132",
-  "D-010-R133"
+  "D-010-R133",
+  "D-010-R134",
+  "D-010-R135",
+  "D-010-R136",
+  "D-010-R137",
+  "D-010-R138",
+  "D-010-R139",
+  "D-010-R140",
+  "D-010-R141",
+  "D-010-R142",
+  "D-010-R143",
+  "D-010-R144",
+  "D-010-R145",
+  "D-010-R146",
+  "D-010-R147",
+  "D-010-R148",
+  "D-010-R149",
+  "D-010-R150",
+  "D-010-R151",
+  "D-010-R152",
+  "D-010-R153",
+  "D-010-R154",
+  "D-010-R155",
+  "D-010-R156"
  ],
  "created_at": "2026-08-07T01:09:55+00:00",
- "updated_at": "2026-08-07T16:53:10+00:00",
+ "updated_at": "2026-08-08T04:29:07+00:00",
  "audit_log": [
   {
    "at": "2026-08-07T01:09:55+00:00",
@@ -424,6 +474,21 @@
    "at": "2026-08-07T19:58:00+00:00",
    "actor": "orchestrator",
    "action": "amendment source-013 recorded (correction: R121 task binding narrowed, M2-T014 dropped - retroactive stamp would regress gated lifecycle); digests restamped"
+  },
+  {
+   "at": "2026-08-08T04:29:07+00:00",
+   "actor": "orchestrator",
+   "action": "amendment source-014 recorded (owner C2 decision 2026-08-08: close-before-activation; R134-R143 added, bound to M0-T037/M0-T048 + M2-T015/T016 hold re-affirmation); digests restamped"
+  },
+  {
+   "at": "2026-08-08T05:38:36+00:00",
+   "actor": "orchestrator",
+   "action": "amendment source-015 recorded (owner G3 MAJOR-1 decision 2026-08-08: close resume-window trust anchor before acceptance; R144-R154 added, bound to M0-T037/M0-T048 + activation-package sequencing); digests restamped"
+  },
+  {
+   "at": "2026-08-08T06:16:37+00:00",
+   "actor": "orchestrator",
+   "action": "amendment source-016 recorded (owner skip-evidence instruction 2026-08-08: name the two skipped tests + reasons as gate evidence, adjudicate stale-vs-environment-conditional; R155-R156 added); digests restamped"
   }
  ]
 }

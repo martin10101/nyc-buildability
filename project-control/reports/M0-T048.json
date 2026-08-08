@@ -1,0 +1,31 @@
+{
+  "task_id": "M0-T048",
+  "producer_agent": "backend-engineer",
+  "report_file": "project-control/reports/M0-T048-producer-report.md",
+  "submitted_at": "2026-08-08T06:12:08.191669+00:00",
+  "requested_status": "awaiting_gate",
+  "evidence_map": "project-control/reports/M0-T048-evidence-map.json",
+  "content_manifest_sha256": "84cf81477792f65859e6bdb577403b6bca882d36961197b8d94d739ed2b93d91",
+  "reviewed_sha": "fee612ae724085576aad23c0fd1d387fa89e800d",
+  "applicable_requirements": [
+    "D-010-R134",
+    "D-010-R135",
+    "D-010-R136",
+    "D-010-R137",
+    "D-010-R138",
+    "D-010-R139",
+    "D-010-R140",
+    "D-010-R141",
+    "D-010-R144",
+    "D-010-R145",
+    "D-010-R146",
+    "D-010-R147",
+    "D-010-R148",
+    "D-010-R149",
+    "D-010-R150",
+    "D-010-R151",
+    "D-010-R152",
+    "D-010-R154"
+  ],
+  "updated_at": "2026-08-08T06:12:08.704943+00:00"
+}

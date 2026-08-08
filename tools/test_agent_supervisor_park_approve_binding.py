@@ -136,6 +136,19 @@ class _CrossProcessHarness(unittest.TestCase):
         self.assertEqual(lp.digest_of(parked["prompt"]),
                          parked["prompt_bytes_digest"],
                          "the anchor must be the digest of the authentic bytes")
+        # M0-T048 (R136): the structured approved instruction is parked, and it
+        # reproduces both the operator-named digest and the parked body (the forwarded
+        # content is thus bound to operator-covered material, not journal bytes).
+        instruction = parked.get("approved_instruction")
+        self.assertIsInstance(instruction, dict,
+                              "the structured approved instruction must be parked")
+        self.assertEqual(lp.approval_digest(**instruction), parked["digest"],
+                         "the parked instruction must reproduce the operator digest")
+        self.assertEqual(lp.build_forwarded_prompt(**instruction), parked["prompt"],
+                         "the parked body must be the deterministic reconstruction")
+        self.assertNotIn("FORWARDED AT", parked["prompt"],
+                         "the parked body is timestamp-free; the clock is added at "
+                         "forward time only")
         return parked
 
     def _set_pending(self, record: dict) -> None:
@@ -218,8 +231,9 @@ class TamperAfterApproval(_CrossProcessHarness):
         approved = self._pending()
         self.assertTrue(approved.get("approved"))
         self.assertEqual(approved.get("approved_digest"),
-                         parked["prompt_bytes_digest"],
-                         "approved_digest must bind to the park-time anchor")
+                         parked["digest"],
+                         "M0-T048: approved_digest binds to the OPERATOR-NAMED "
+                         "approval digest, not a journal-resident byte anchor")
 
         # ATTACK: now tamper the approved record's held prompt.
         tampered = dict(approved)
@@ -269,13 +283,21 @@ class HappyPath(_CrossProcessHarness):
         post = self._pending()
         self.assertTrue(post.get("consumed"))
         self.assertFalse(post.get("digest"))
-        # Byte identity: what was forwarded equals what was held and anchored.
+        # M0-T048: the forwarded bytes are the deterministic reconstruction (bound to
+        # the operator-covered instruction) plus the forward-time clock. Stripping the
+        # non-authoritative FORWARDED AT stamp yields exactly the held/anchored body.
         message_id = run.forwarded_message_ids[0]
         rows = self._outbox_rows(message_id)
         self.assertEqual(len(rows), 1)
-        self.assertEqual(rows[0]["payload"]["prompt"], held_prompt)
-        self.assertEqual(lp.digest_of(rows[0]["payload"]["prompt"]),
-                         parked["prompt_bytes_digest"])
+        forwarded = rows[0]["payload"]["prompt"]
+        self.assertTrue(forwarded.startswith(held_prompt),
+                        "the forwarded body is the anchored body plus the clock stamp")
+        self.assertIn("FORWARDED AT: ", forwarded)
+        body, _, _ = forwarded.partition("FORWARDED AT: ")
+        self.assertEqual(body, held_prompt,
+                         "everything before the clock stamp is the operator-covered "
+                         "body, byte-identical to what was held and anchored")
+        self.assertEqual(lp.digest_of(body), parked["prompt_bytes_digest"])
 
     def _outbox_rows(self, message_id: str) -> list[dict]:
         j = self._open()
@@ -307,51 +329,89 @@ class CliArgPath(_CrossProcessHarness):
         self.assertNotEqual(ctx.exception.code, 0)
 
 
+def covered_pending(**overrides: object) -> dict:
+    """A well-formed parked record whose structured instruction reproduces both the
+    operator-named approval digest and the deterministic forwarded body. Callers pass
+    overrides to introduce a specific tamper."""
+    instruction = {
+        "task_id": "M0-T036", "stage": "phase4",
+        "allowed_paths": ["tools/agent_supervisor/**",
+                          "tools/test_agent_supervisor_*.py"],
+        "requested_action": "Do the next bounded unit.",
+        "stop_conditions": ["no bypass flags"],
+    }
+    prompt = lp.build_forwarded_prompt(**instruction)
+    record = {
+        "cycle": 1, "digest": lp.approval_digest(**instruction),
+        "approved_instruction": instruction, "prompt": prompt,
+        "prompt_bytes_digest": lp.digest_of(prompt), "decision": "forward",
+    }
+    record.update(overrides)
+    return record
+
+
 class ApprovePendingPromptUnitTests(unittest.TestCase):
-    """The binding function itself fails closed, independent of the CLI."""
+    """The binding function itself fails closed, independent of the CLI (M0-T048)."""
 
     def _journal(self) -> DurableJournal:
         tmp = pathlib.Path(tempfile.mkdtemp())
         return DurableJournal(tmp / "j.sqlite3").open()
 
-    def test_missing_anchor_refuses(self) -> None:
+    def test_missing_instruction_refuses(self) -> None:
+        """An old-shape record with held bytes but NO structured instruction refuses
+        fail-closed - it is never verified journal-resident-only (AS-6)."""
         journal = self._journal()
         try:
-            pending = {"cycle": 1, "prompt": "held bytes", "decision": "forward"}
+            pending = {"cycle": 1, "prompt": "held bytes",
+                       "prompt_bytes_digest": lp.digest_of("held bytes"),
+                       "decision": "forward"}
             with self.assertRaises(LoopError) as ctx:
                 approve_pending_prompt(journal, "r", pending=pending,
                                        approval_binding="a" * 64)
-            self.assertEqual(ctx.exception.code, "pending_prompt_unanchored")
+            self.assertEqual(ctx.exception.code, "pending_prompt_uncovered")
             self.assertIsNone(journal.get_state(pending_prompt_key("r")),
                               "a refused approval writes nothing")
         finally:
             journal.close()
 
-    def test_anchor_mismatch_refuses(self) -> None:
+    def test_instruction_not_reproducing_operator_digest_refuses(self) -> None:
+        """A record whose structured instruction does NOT reproduce the operator-named
+        approval binding refuses - the content would be uncovered."""
         journal = self._journal()
         try:
-            pending = {"cycle": 1, "prompt": "held bytes",
-                       "prompt_bytes_digest": lp.digest_of("DIFFERENT bytes"),
-                       "decision": "forward"}
+            pending = covered_pending()
             with self.assertRaises(LoopError) as ctx:
                 approve_pending_prompt(journal, "r", pending=pending,
-                                       approval_binding="a" * 64)
+                                       approval_binding="a" * 64)  # != digest
+            self.assertEqual(ctx.exception.code, "pending_prompt_uncovered")
+        finally:
+            journal.close()
+
+    def test_byte_tamper_against_covered_instruction_refuses(self) -> None:
+        """The held bytes no longer match the reconstruction from the (intact)
+        operator-covered instruction: refuse fail-closed."""
+        journal = self._journal()
+        try:
+            pending = covered_pending(prompt="held bytes",
+                                      prompt_bytes_digest=lp.digest_of("held bytes"))
+            with self.assertRaises(LoopError) as ctx:
+                approve_pending_prompt(journal, "r", pending=pending,
+                                       approval_binding=pending["digest"])
             self.assertEqual(ctx.exception.code, "pending_prompt_tampered")
         finally:
             journal.close()
 
-    def test_matching_anchor_binds_to_the_anchor(self) -> None:
+    def test_matching_instruction_binds_to_the_operator_digest(self) -> None:
         journal = self._journal()
         try:
-            prompt = "held bytes"
-            anchor = lp.digest_of(prompt)
-            pending = {"cycle": 1, "prompt": prompt,
-                       "prompt_bytes_digest": anchor, "decision": "forward"}
+            pending = covered_pending()
             approve_pending_prompt(journal, "r", pending=pending,
-                                   approval_binding="a" * 64)
+                                   approval_binding=pending["digest"])
             record = journal.get_state(pending_prompt_key("r"))
             self.assertTrue(record.get("approved"))
-            self.assertEqual(record.get("approved_digest"), anchor)
+            self.assertEqual(record.get("approved_digest"), pending["digest"],
+                             "M0-T048: bound to the OPERATOR-NAMED approval digest")
+            self.assertEqual(record.get("prompt"), pending["prompt"])
             self.assertFalse(record.get("digest"),
                              "the re-approvable digest key is dropped")
         finally:

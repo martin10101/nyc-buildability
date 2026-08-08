@@ -968,7 +968,235 @@
    "reviewed_sha": "f6a3702c4f42e292cee9ee64f2039fbf69fb7574",
    "verified_at": "2026-08-08T03:57:02.309132+00:00",
    "note": "Derived applicable set is EMPTY by registry conjunction: every am.12 row (R122-R133) binds applicability.task_ids=[M0-T037] (session task; R123/R133 also M2-T015/T016) because the pre-activation task id did not exist at capture; applicability is append-only and task_ids are never bound onto an already-gated task. M0-T046 cites R122-R133 via directive_refs for provenance. Substantive independent verification of all twelve requirements against this task work product: reports/M0-T046-dcv-final.md (R124 adjudicated PASS; 11 PASS + R132 acceptance-ordering DEFERRAL; no FAIL/UNVERIFIABLE) at identity 660bf133/32ea6f1, code head a27068d."
+  },
+  {
+   "task_id": "M0-T048",
+   "directive_id": "D-010",
+   "producer": "backend-engineer",
+   "verifier": "directive-compliance-verifier",
+   "applicable_requirement_ids": [
+    "D-010-R134",
+    "D-010-R135",
+    "D-010-R136",
+    "D-010-R137",
+    "D-010-R138",
+    "D-010-R139",
+    "D-010-R140",
+    "D-010-R141",
+    "D-010-R144",
+    "D-010-R145",
+    "D-010-R146",
+    "D-010-R147",
+    "D-010-R148",
+    "D-010-R149",
+    "D-010-R150",
+    "D-010-R151",
+    "D-010-R152",
+    "D-010-R154",
+    "D-010-R155",
+    "D-010-R156"
+   ],
+   "requirements": [
+    {
+     "id": "D-010-R134",
+     "state": "PASS",
+     "evidence": [
+      "project-control/tasks/M0-T048.json (awaiting_gate pre-accept, accepted_at None at verification)",
+      "git merge-base: c31043d not in origin/main at verification",
+      "project-control/reports/M0-T048-dcv-final-rework.md"
+     ],
+     "note": "Owner C2 decision executed; residual NOT accepted; no activation."
+    },
+    {
+     "id": "D-010-R135",
+     "state": "PASS",
+     "evidence": [
+      "task commits ec0f55d (C2 design) + 9c450a5 (am.15 fix); diff-filter=A empty (no new modules)",
+      "project-control/reports/M0-T048-dcv-final-rework.md"
+     ],
+     "note": "One bounded design; the rework is the separately-ordered source-015 fix, not scope creep."
+    },
+    {
+     "id": "D-010-R136",
+     "state": "PASS",
+     "evidence": [
+      "tools/agent_supervisor/loop.py:640-704, 2276/2290 (forward = reconstruction)",
+      "tools/test_agent_supervisor_c2_binding.py TwoFieldForgery + non-vacuity",
+      "project-control/reports/M0-T048-dcv-final-rework.md"
+     ],
+     "note": "Park->approve window property verified from primary code + DCV's own suite run."
+    },
+    {
+     "id": "D-010-R137",
+     "state": "PASS",
+     "evidence": [
+      "loop.py:2287-2290 stamp_forwarded_at at forward time; approval_digest excludes clock (568-583)",
+      "ClockInvariant test green",
+      "project-control/reports/M0-T048-dcv-final-rework.md"
+     ],
+     "note": "S13.5 clock invariant preserved; smallest design."
+    },
+    {
+     "id": "D-010-R138",
+     "state": "PASS",
+     "evidence": [
+      "tools/test_agent_supervisor_c2_binding.py two-field forgery tests + non-vacuity (68-99)",
+      "project-control/reports/M0-T048-dcv-final-rework.md"
+     ],
+     "note": "All 7 owner properties concretely asserted."
+    },
+    {
+     "id": "D-010-R139",
+     "state": "PASS",
+     "evidence": [
+      "c2_binding.py HappyPathBinding (157-191), ClockInvariant (209-227), post-approval refusal (127-153), PostureUnchanged (234-239)",
+      "project-control/reports/M0-T048-dcv-final-rework.md"
+     ],
+     "note": "Also-prove properties verified."
+    },
+    {
+     "id": "D-010-R140",
+     "state": "PASS",
+     "evidence": [
+      "git diff --diff-filter=A a27068d..9c450a5 -- tools/agent_supervisor/ = empty; dead LoopConfig.packet_reference retained",
+      "project-control/reports/M0-T048-dcv-final-rework.md"
+     ],
+     "note": "No redesign/features/infrastructure/cleanup."
+    },
+    {
+     "id": "D-010-R141",
+     "state": "PASS",
+     "evidence": [
+      "project-control/gates/M0-T048-G0/G2/G3/G4/G5.json (all PASS)",
+      "origin/main=9c2ec25 (nothing merged pre-checks)",
+      "project-control/reports/M0-T048-dcv-final-rework.md"
+     ],
+     "note": "Normal gates run; merge deferred to post-accept Tier A path."
+    },
+    {
+     "id": "D-010-R144",
+     "state": "PASS",
+     "evidence": [
+      "task lifecycle history (awaiting_gate->rework->claimed->awaiting_gate); c31043d not in main at verification",
+      "project-control/reports/M0-T048-dcv-final-rework.md"
+     ],
+     "note": "Hold honored by conduct until reruns + DCV PASS."
+    },
+    {
+     "id": "D-010-R145",
+     "state": "PASS",
+     "evidence": [
+      "loop.py +138 only: OPERATOR_APPROVAL_EVENT (711), verify_approved_digest_against_audit (714-795), sealer (2177-2201), guard (2260-2269)",
+      "project-control/reports/M0-T048-dcv-final-rework.md"
+     ],
+     "note": "Smallest bounded fix; reuses existing sealed audit log."
+    },
+    {
+     "id": "D-010-R146",
+     "state": "PASS",
+     "evidence": [
+      "loop.py:770-795 cross-check vs sealed operator_resume_pending_prompt input_digest before any forward (2260)",
+      "cli.py:1736-1742 seals operator-named digest; audit_log.py:256-324 tamper-evident chain",
+      "project-control/reports/M0-T048-dcv-final-rework.md"
+     ],
+     "note": "Resume trust-anchor property verified from primary code; six distinct fail-closed reason codes."
+    },
+    {
+     "id": "D-010-R147",
+     "state": "PASS",
+     "evidence": [
+      "tools/test_agent_supervisor_audit_anchor.py:117-148 (owner steps 1-7 incl. provider_calls==0 AND outbox==0 AND sealed refusal AND chain valid)",
+      "RED proof 150-176; FailClosedEdges missing/ambiguous/chain-tamper",
+      "project-control/reports/M0-T048-dcv-final-rework.md"
+     ],
+     "note": "Owner adversarial harness realized exactly; RED-on-pre-fix proven."
+    },
+    {
+     "id": "D-010-R148",
+     "state": "PASS",
+     "evidence": [
+      "DCV's own run: python -m pytest tools/test_agent_supervisor_*.py -q -rs -> 1380 passed, 2 skipped at c31043d",
+      "project-control/reports/M0-T048-dcv-final-rework.md"
+     ],
+     "note": "All existing C2/happy/exactly-once/clock/shadow tests green."
+    },
+    {
+     "id": "D-010-R149",
+     "state": "PASS",
+     "evidence": [
+      "DCV grep of fix delta: no signing/PKI/HMAC keywords; no new source files; existing AuditLog append API only",
+      "project-control/reports/M0-T048-dcv-final-rework.md"
+     ],
+     "note": "Prohibitions honored."
+    },
+    {
+     "id": "D-010-R150",
+     "state": "PASS",
+     "evidence": [
+      "G5 posture scan empty; PostureUnchanged green; nothing merged/activated; M2-T015/T016 held",
+      "project-control/reports/M0-T048-dcv-final-rework.md"
+     ],
+     "note": "R140 + SHADOW-ONLY preserved; nothing activated."
+    },
+    {
+     "id": "D-010-R151",
+     "state": "PASS",
+     "evidence": [
+      "project-control/gates/M0-T048-G3/G4/G5.json rerun records (reviewed 31a8075/a2cde35, content_manifest 84cf814..)",
+      "this DCV run completes the 'and DCV' clause",
+      "project-control/reports/M0-T048-dcv-final-rework.md"
+     ],
+     "note": "Rerun wave complete at material-identity-stable content."
+    },
+    {
+     "id": "D-010-R152",
+     "state": "pending",
+     "lifecycle_classification": {
+      "act_class": "accept",
+      "classified_by": "directive-compliance-verifier",
+      "classified_at": "2026-08-08T06:47:32+00:00",
+      "classified_at_identity": "84cf81477792f65859e6bdb577403b6bca882d36961197b8d94d739ed2b93d91",
+      "justification": "Accept + Tier A merge ARE the acceptance-ordering act itself; the row is classification 'sequencing' bound solely to the accept lifecycle event, and its completion legitimately follows this verification (precedent: M0-T046 R132 / D-004-R389). Deferral granted at the reviewed content identity; discharge is checked at the first post-accept opportunity."
+     },
+     "evidence": [
+      "project-control/reports/M0-T048-dcv-final-rework.md"
+     ],
+     "note": "DEFERRED(acceptance-ordering) by the independent verifier; not a FAIL."
+    },
+    {
+     "id": "D-010-R154",
+     "state": "PASS",
+     "evidence": [
+      "source-015-amendment.md verbatim authorization line; no owner-only boundary crossed in this unit",
+      "project-control/reports/M0-T048-dcv-final-rework.md"
+     ],
+     "note": "Authorization consumed as granted."
+    },
+    {
+     "id": "D-010-R155",
+     "state": "PASS",
+     "evidence": [
+      "project-control/reports/M0-T048-skipped-tests-evidence.md",
+      "DCV's own pytest -rs run reproduced both skips + reasons",
+      "project-control/reports/M0-T048-dcv-final-rework.md"
+     ],
+     "note": "Both skipped tests named with reasons at the frozen identity."
+    },
+    {
+     "id": "D-010-R156",
+     "state": "PASS",
+     "evidence": [
+      "skip conditions verified in code: policy.py:449-458 runtime skipTest; process.py:448 skipIf nt; junction-variant compensating coverage (policy.py:467)",
+      "project-control/reports/M0-T048-dcv-final-rework.md"
+     ],
+     "note": "Legitimately environment-conditional; no follow-up task; adjudication matches code reality."
+    }
+   ],
+   "reviewed_manifest_sha256": "84cf81477792f65859e6bdb577403b6bca882d36961197b8d94d739ed2b93d91",
+   "reviewed_sha": "c31043d4c30c37767894fda6ffd5bffecd86626e",
+   "verified_at": "2026-08-08T06:47:32+00:00",
+   "note": "Post-rework FINAL verification (owner source-015/source-016). 19 SATISFIED + R152 DEFERRED(acceptance-ordering). Centerpiece R136+R146 both verified from primary code with the verifier's own suite runs (1380/2). Full report: project-control/reports/M0-T048-dcv-final-rework.md. Gate reruns G3/G4/G5 PASS at content identity 84cf814.. (reviewed_sha 31a8075/a2cde35, tools/ byte-identical to c31043d)."
   }
  ],
- "updated_at": "2026-08-08T03:57:02.309132+00:00"
+ "updated_at": "2026-08-08T06:47:32+00:00"
 }

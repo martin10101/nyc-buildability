@@ -117,8 +117,8 @@ from .loop import (
     LoopError,
     SupervisedLoop,
     approve_pending_prompt,
-    digest_of,
     effective_model,
+    verify_covered_instruction,
 )
 from .locking import SingleInstanceLock, assess as assess_lock, probe_process
 from .manifest import MODEL_SELECTION_FILENAME, generate_manifest, read_manifest, verify_manifest
@@ -1691,34 +1691,37 @@ def cmd_resume_pending_prompt(args: argparse.Namespace) -> int:
                   "prompt by its digest, never a wildcard, and never mutates on a "
                   "mismatch.", file=sys.stderr)
             return 1
-        # M0-T046 (D-010-R124), G5 LOW-1: when the parked record carries the held
-        # prompt BYTES (the cross-process forward shape), re-verify those bytes
-        # against the byte anchor frozen at park BEFORE we transition or audit an
-        # approval. Previously park->approve integrity for the forwarded bytes
-        # rested on the journal-file ACL alone: an attacker with journal write who
-        # tampered `prompt` between park and approval had the tampered bytes
-        # re-hashed into a self-consistent `approved_digest` and forwarded. Now a
-        # tamper of the parked bytes is caught here, fail-closed - no state change,
-        # only a SEALED (hash-chained) refusal record. An OLD-shape record with no
-        # held bytes keeps its prior behaviour (the loop refuses to forward it).
+        # M0-T046 (D-010-R124) / M0-T048 (D-010 am.14, R136): when the parked record
+        # carries the held prompt BYTES (the cross-process forward shape), RECONSTRUCT
+        # the forwarded body from the operator-covered structured instruction and
+        # verify it reproduces the operator-named digest BEFORE we transition or audit
+        # an approval. Previously an attacker with journal write who rewrote both
+        # `prompt` and `prompt_bytes_digest` consistently (leaving the operator digest
+        # intact) got the tampered bytes forwarded. Now the content is bound to
+        # operator-covered material; a missing/old-shape/uncovered (`pending_prompt_
+        # uncovered`) or tampered (`pending_prompt_tampered`) record is caught here,
+        # fail-closed - no state change, only a SEALED (hash-chained) refusal record.
         held_prompt = pending.get("prompt")
         if isinstance(held_prompt, str) and held_prompt:
-            anchor = pending.get("prompt_bytes_digest")
-            if not (isinstance(anchor, str) and anchor) or \
-                    digest_of(held_prompt) != anchor:
+            try:
+                verify_covered_instruction(
+                    pending.get("approved_instruction"), recorded, held_prompt,
+                    pending.get("prompt_bytes_digest"))
+            except LoopError as exc:
                 audit.append(
                     "operator_resume_pending_prompt_refused", run_id=run_id,
                     input_digest=recorded, decision="refuse",
                     state_from=WAIT_FOR_OWNER_STATE, state_to=WAIT_FOR_OWNER_STATE,
                     detail={"operator_initiated": True,
                             "command": "resume-pending-prompt",
-                            "reason": "prompt_bytes_unanchored_or_tampered",
+                            "reason": exc.code,
                             "cycle": pending.get("cycle")})
-                print("refusing to resume: the parked prompt bytes do not match the "
-                      "byte anchor recorded at park (or no anchor is present). The "
-                      "held prompt was altered after it was parked, or was never "
-                      "anchored. Fail-closed: no approval is recorded and the journal "
-                      "is unchanged; a sealed refusal was written to the audit log.",
+                print("refusing to resume: the parked prompt is not bound to the "
+                      "operator-named approval digest (the byte anchor / reconstruction "
+                      f"from the covered instruction failed: {exc.code}). The held "
+                      "prompt was altered after park, or the record is old-shape. "
+                      "Fail-closed: no approval is recorded and the journal is "
+                      "unchanged; a sealed refusal was written to the audit log.",
                       file=sys.stderr)
                 return 1
         machine = StateMachine(journal, audit, run_id)

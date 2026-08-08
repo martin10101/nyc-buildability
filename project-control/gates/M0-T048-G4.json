@@ -1,0 +1,21 @@
+{
+  "task_id": "M0-T048",
+  "gate_id": "G4",
+  "reviewer": "qa-engineer",
+  "role": "independent_review",
+  "result": "PASS",
+  "report_file": "project-control/reports/M0-T048-g4-rework-review.md",
+  "reviewed_at": "2026-08-08T06:28:42.197491+00:00",
+  "content_manifest_sha256": "84cf81477792f65859e6bdb577403b6bca882d36961197b8d94d739ed2b93d91",
+  "reviewed_sha": "a2cde35f4f6888bd3ce10ccd8a17d459845ba229",
+  "history": [
+    {
+      "reviewer": "qa-engineer",
+      "role": "independent_review",
+      "result": "PASS",
+      "report_file": "project-control/reports/M0-T048-g4-qa-review.md",
+      "reviewed_at": "2026-08-08T05:26:27.337934+00:00"
+    }
+  ],
+  "updated_at": "2026-08-08T06:28:42.595292+00:00"
+}

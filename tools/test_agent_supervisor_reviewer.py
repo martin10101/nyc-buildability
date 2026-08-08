@@ -599,21 +599,25 @@ class TierMappingTests(ReviewerTestBase):
     def test_a_forwarded_prompt_carries_the_five_required_elements(self) -> None:
         outcome = self.reviewer().review(self.packet())
         prompt = rv.build_forwarded_prompt(
-            outcome.decision, task_id="M0-T036", stage="phase-2",
+            task_id="M0-T036", stage="phase-2",
             allowed_paths=("tools/agent_supervisor/**",),
-            packet_reference="project-control/tasks/M0-T036.json",
+            requested_action=outcome.decision.next_claude_prompt,
             stop_conditions=("allowed paths must expand",))
         for fragment in ("TASK: M0-T036", "AUTHORIZED STAGE: phase-2",
                          "PERMITTED PATHS", "REQUESTED ACTION", "STOP CONDITIONS",
                          "claude_checkpoint.schema.json"):
             self.assertIn(fragment, prompt)
+        # M0-T048: the bound body is deterministic - no volatile FORWARDED AT clock
+        # (appended only at forward time) and no volatile packet reference.
+        self.assertNotIn("FORWARDED AT", prompt)
 
     def test_a_decision_with_no_prompt_cannot_be_forwarded(self) -> None:
         outcome = self.reviewer(mode="stop_for_owner").review(self.packet())
         with self.assertRaises(rv.ReviewError):
-            rv.build_forwarded_prompt(outcome.decision, task_id="t", stage="s",
-                                      allowed_paths=(), packet_reference="p",
-                                      stop_conditions=())
+            rv.build_forwarded_prompt(
+                task_id="t", stage="s", allowed_paths=(),
+                requested_action=outcome.decision.next_claude_prompt,
+                stop_conditions=())
 
 
 # --------------------------------------------------------------------------

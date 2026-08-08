@@ -5,8 +5,53 @@
 the remote: **origin/main may have advanced, so do not trust any SHA written here as still-current.**
 This file is orientation only. Operating rules, gates, and workflow routes live in `CLAUDE.md`.
 
-Refreshed **2026-08-08 (session 6, CP-0043)**. **The block below supersedes the older sections**
-(pruned per the context-budget guard); the ledger wins on any conflict.
+Refreshed **2026-08-08 (session 6 close, CP-0044 — rotation at the ~400k ceiling, D-010 R113/R114)**.
+**The block below supersedes the older sections** (pruned per the context-budget guard); the ledger
+wins on any conflict.
+
+## SESSION 6 CLOSE — M0-T048 gate wave complete; DCV + accept + merge = session 7's first unit
+
+**Owner am.14 captured (source-014, R134–R143): C2 = CLOSE BEFORE ACTIVATION.** M0-T048 contracted
+(bound R134–R143), producer delivered, ALL FIVE GATES PASS at final identity (control branch
+`control/M0-T048-c2-close`, code head `ec0f55d`, merged into the control branch; submit + G0/G2/G3/
+G4/G5 all recorded; suite 1374/2 triple-reproduced):
+
+- **Design:** deterministic timestamp-free forwarded body = pure function of the five
+  approval_digest-covered fields; FORWARDED-AT stamped only at actual forward time;
+  `approved_digest` bound to the OPERATOR-NAMED digest; `verify_covered_instruction` reconstructs
+  and refuses fail-closed (`pending_prompt_uncovered`/`_tampered`); old-shape records refuse, no
+  fallback. The one non-covered input (packet_reference) was REMOVED from the body (dead
+  LoopConfig field left per R140).
+- **G5 (original C2 finder): PASS, no corrections — C2 RULED CLOSED** (two- and three-field
+  forgeries fail closed; canonicalisation second-preimage-sound; INFO N-1/N-2/N-3 only).
+- **G4: PASS, no corrections** — independently mutation-proved the forgery tests turn RED on
+  pre-fix behavior; all 7 owner R138 properties concretely asserted; 4 advisory notes.
+- **G3: PASS with MAJOR-1 routed to DCV** — post-approval `(approved_instruction, approved_digest)`
+  resume-window forgery (attacker rewrites BOTH, self-consistently): reproduced at function level;
+  G5 ruled the SAME shape INFO N-1 = outside R136's premise (that attack CHANGES the operator-named
+  digest; standing full-journal-write trust-domain limit; true closure needs journal signing barred
+  by R140 "no new infrastructure"). G3's suggested minimal remedy: anchor the resume verification's
+  operator digest to the sealed hash-chained audit event instead of the mutable `approved_digest`.
+
+**SESSION 7 FIRST UNIT — finish M0-T048:**
+1. Dispatch directive-compliance-verifier over D-010 R134–R143 at the frozen control-branch head.
+   CENTERPIECE: adjudicate G3-MAJOR-1 vs G5-N-1 — is R136 ("…rather than relying solely on mutable
+   journal fields") satisfied at the CROSS-PROCESS RESUME given `approved_digest` is journal-resident?
+   Give the DCV both reports (`M0-T048-g3-code-review.md`, `M0-T048-g5-security.md`) + producer
+   report §8.5 disclosure. If DCV rules PASS → verification row (task_verifications append,
+   applicable set likely EMPTY again — am.14 rows bind task_ids [M0-T037, M0-T048]... NOTE: R134-
+   R141 DO name M0-T048, so the derived applicable set is NON-empty this time; assemble the full
+   per-requirement row set from the DCV verdicts, reviewed_manifest from the gate records,
+   reviewed_sha = accept-time HEAD, row written UNCOMMITTED then accept then commit). If DCV rules
+   R136 unmet → bounded rework (G3's audit-event anchoring) → delta re-reviews → re-gate → DCV.
+2. Accept M0-T048; Tier A merge of `control/M0-T048-c2-close` → main after the 8 required checks
+   (web-dependency-security stays red repo-wide until M0-T047 — NON-required, merge proceeds as
+   PR #178/#179 did).
+3. **Then the activation sequence resumes (R142):** elevated ACL apply + live PROTECTED capture +
+   present the owner the activation decision line, WITH G3-MAJOR-1/G5-N-1 disclosed verbatim
+   (mirroring the original C2 handling). ⛔ No activation without the owner's typed decision (R131).
+4. **M0-T047 (nanoid)**: age-eligible 2026-08-10T10:39:22Z — execute then if that time has passed.
+5. ⛔ M2-T015/T016 stay HELD (R133/R143).
 
 ## CURRENT STATE (2026-08-08, session 6 — confirm against the ledger + git)
 
