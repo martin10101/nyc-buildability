@@ -507,6 +507,44 @@ class HardenScriptTests(unittest.TestCase):
         self.assertIn("-Rollback", text)
 
     @unittest.skipUnless(
+        IS_WINDOWS and shutil.which("powershell"),
+        "requires Windows PowerShell 5.1 (powershell.exe) for the parser API")
+    def test_script_parses_cleanly_under_windows_powershell_51(self) -> None:
+        """M0-T049 (D-010-R174/R177): the elevated hardening script must PARSE
+        with zero errors under Windows PowerShell 5.1.
+
+        A demonstrated defect had `"$UnelevatedUser:(M)"` /
+        `"$UnelevatedUser:(RX)"` parse the ':' after an interpolated variable as
+        a scope/drive qualifier, making the WHOLE file a parse error before any
+        ACL change ran. Exit codes cannot catch this: a parse failure ALSO exits
+        non-zero, so it masqueraded as the intended "refuses unelevated" refusal
+        in test_script_refuses_to_run_unelevated. We must therefore assert on the
+        PARSER's error list directly, via the Windows PowerShell 5.1 language
+        parser API (powershell.exe, NOT pwsh, so 5.1 tokenizer semantics apply).
+        """
+        # Ask the WinPS 5.1 parser to parse the file and print the error count
+        # plus each error message (line-prefixed) so a failure is diagnosable.
+        cmd = (
+            "$t=$null;$e=$null;"
+            "[System.Management.Automation.Language.Parser]::ParseFile("
+            "'" + str(self.script) + "',[ref]$t,[ref]$e)|Out-Null;"
+            "Write-Output ('parse_errors=' + $e.Count);"
+            "$e|ForEach-Object{Write-Output "
+            "($_.Extent.StartLineNumber.ToString() + ': ' + $_.Message)}"
+        )
+        proc = subprocess.run(
+            ["powershell", "-NoProfile", "-NonInteractive", "-Command", cmd],
+            capture_output=True, text=True, timeout=60)
+        out = proc.stdout.strip()
+        self.assertIn("parse_errors=", out,
+                      "parser API produced no count; stderr=%r" % proc.stderr)
+        first = out.splitlines()[0].strip()
+        self.assertEqual(
+            first, "parse_errors=0",
+            "harden_controller_config.ps1 has PowerShell 5.1 parse errors:\n"
+            + out + "\nstderr=" + proc.stderr)
+
+    @unittest.skipUnless(
         IS_WINDOWS and shutil.which("powershell") and not _is_admin(),
         "requires an UNELEVATED Windows shell with powershell")
     def test_script_refuses_to_run_unelevated(self) -> None:
@@ -520,6 +558,11 @@ class HardenScriptTests(unittest.TestCase):
         self.assertNotEqual(proc.returncode, 0,
                             "the script must refuse to run unelevated")
         self.assertIn("elevated", (proc.stderr + proc.stdout).lower())
+        # The refusal must be the script's OWN elevation refusal, not a parse
+        # error masquerading as one (the M0-T049 defect class).
+        combined = (proc.stderr + proc.stdout).lower()
+        self.assertNotIn("variable reference is not valid", combined,
+                         "refusal must not be a parse error")
 
 
 if __name__ == "__main__":  # pragma: no cover

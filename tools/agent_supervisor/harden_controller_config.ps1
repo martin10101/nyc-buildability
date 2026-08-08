@@ -127,9 +127,9 @@ if ($Rollback) {
     Write-Host "=== ROLLBACK: restoring inheritance + user Modify ==="
     # Re-enable inheritance and give the user Modify back on both objects.
     Invoke-Step $Icacls @($file, "/inheritance:e")
-    Invoke-Step $Icacls @($file, "/grant", "$UnelevatedUser:(M)")
+    Invoke-Step $Icacls @($file, "/grant", "${UnelevatedUser}:(M)")
     Invoke-Step $Icacls @($dir, "/inheritance:e")
-    Invoke-Step $Icacls @($dir, "/grant", "$UnelevatedUser:(M)")
+    Invoke-Step $Icacls @($dir, "/grant", "${UnelevatedUser}:(M)")
     Write-Host ""
     Write-Host "=== resulting ACLs ==="
     Invoke-Step $Icacls @($file)
@@ -151,7 +151,7 @@ Invoke-Step $Icacls @($file, "/inheritance:r")
 Invoke-Step $Icacls @($file, "/grant:r",
     "BUILTIN\Administrators:(F)",
     "NT AUTHORITY\SYSTEM:(F)",
-    "$UnelevatedUser:(RX)")
+    "${UnelevatedUser}:(RX)")
 
 # 3) Parent directory: strip inheritance, then explicit ACL. The unelevated user
 #    gets Read+Execute only (no AddFile / DeleteChild / Write / WriteDAC /
@@ -162,7 +162,7 @@ Invoke-Step $Icacls @($dir, "/inheritance:r")
 Invoke-Step $Icacls @($dir, "/grant:r",
     "BUILTIN\Administrators:(OI)(CI)(F)",
     "NT AUTHORITY\SYSTEM:(OI)(CI)(F)",
-    "$UnelevatedUser:(RX)")
+    "${UnelevatedUser}:(RX)")
 
 Write-Host ""
 Write-Host "=== resulting ACLs (verify the unelevated user shows only (RX)) ==="
