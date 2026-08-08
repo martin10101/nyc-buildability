@@ -1198,7 +1198,135 @@
    "reviewed_sha": "c31043d4c30c37767894fda6ffd5bffecd86626e",
    "verified_at": "2026-08-08T06:47:32+00:00",
    "note": "Post-rework FINAL verification (owner source-015/source-016). 19 SATISFIED + R152 DEFERRED(acceptance-ordering). Centerpiece R136+R146 both verified from primary code with the verifier's own suite runs (1380/2). Full report: project-control/reports/M0-T048-dcv-final-rework.md. Gate reruns G3/G4/G5 PASS at content identity 84cf814.. (reviewed_sha 31a8075/a2cde35, tools/ byte-identical to c31043d)."
+  },
+  {
+   "task_id": "M0-T049",
+   "directive_id": "D-010",
+   "producer": "backend-engineer",
+   "verifier": "directive-compliance-verifier",
+   "applicable_requirement_ids": [
+    "D-010-R173",
+    "D-010-R174",
+    "D-010-R175",
+    "D-010-R176",
+    "D-010-R177",
+    "D-010-R178",
+    "D-010-R179",
+    "D-010-R180",
+    "D-010-R181",
+    "D-010-R182",
+    "D-010-R183"
+   ],
+   "requirements": [
+    {
+     "id": "D-010-R173",
+     "state": "PASS",
+     "evidence": [
+      "config unmoved at C:\\Program Files\\SupervisorConfig\\config.toml; DCV re-measured SHA 29eb765e..da1cb intact; file ACL still Authenticated Users:(M) proves hardening never ran (nothing activated)",
+      "project-control/reports/M0-T049-dcv-final.md"
+     ],
+     "note": "Hold respected across the unit."
+    },
+    {
+     "id": "D-010-R174",
+     "state": "PASS",
+     "evidence": [
+      "DCV reproduced under WinPS 5.1: defective blob 0f01d649 -> 4 parse errors at 130/132/154/165; fixed blob ca3811cd -> 0",
+      "project-control/reports/M0-T049-dcv-final.md"
+     ],
+     "note": "Bounded parser-defect fix delivered."
+    },
+    {
+     "id": "D-010-R175",
+     "state": "PASS",
+     "evidence": [
+      "project-control/reports/M0-T049-acl-posture-inspection.md",
+      "DCV independently re-ran icacls/Get-Acl/Get-FileHash: file NOT protected, parent protected, SHA intact - report honest",
+      "project-control/reports/M0-T049-dcv-final.md"
+     ],
+     "note": "Read-only inspection first; PROTECTED never assumed."
+    },
+    {
+     "id": "D-010-R176",
+     "state": "PASS",
+     "evidence": [
+      "git diff c298159..47a2721: exactly 4 brace changes; grep at frozen head: zero remaining $UnelevatedUser: tokens; $env: uses legitimate",
+      "project-control/reports/M0-T049-dcv-final.md"
+     ],
+     "note": "Only the interpolation defect corrected, at every occurrence."
+    },
+    {
+     "id": "D-010-R177",
+     "state": "PASS",
+     "evidence": [
+      "tools/test_agent_supervisor_os_acl.py::HardenScriptTests::test_script_parses_cleanly_under_windows_powershell_51 (Parser::ParseFile via powershell.exe, parse_errors=0 asserted; RAN not skipped)",
+      "RED-on-defective proven (4 errors) by producer + G3 + G5 + DCV independently",
+      "project-control/reports/M0-T049-dcv-final.md"
+     ],
+     "note": "Whole-script PS 5.1 parse regression test in place; masquerade hole closed."
+    },
+    {
+     "id": "D-010-R178",
+     "state": "PASS",
+     "evidence": [
+      "os_acl file: 32 passed; full suite: 1381 passed / 2 skipped (producer + orchestrator + G3 + G5 + DCV reproductions)",
+      "project-control/reports/M0-T049-dcv-final.md"
+     ],
+     "note": "Existing OS-ACL/hardening tests + new parse test all green."
+    },
+    {
+     "id": "D-010-R179",
+     "state": "PASS",
+     "evidence": [
+      "project-control/gates/M0-T049-G3.json (PASS, code-reviewer, d6c501d) + M0-T049-G5.json (PASS, security-reviewer, 58db7a0), both at blob ca3811cd; no elevated execution occurred (file ACL unhardened at verification)",
+      "project-control/reports/M0-T049-dcv-final.md"
+     ],
+     "note": "Both independent reviews recorded PASS before any elevation."
+    },
+    {
+     "id": "D-010-R180",
+     "state": "PASS",
+     "evidence": [
+      "new reviewed blob ca3811cd7e38a044bd0e01056e95b5028b6ce615 at frozen head and both gate SHAs; old 0f01d649 confirmed defective (4 parse errors) and barred",
+      "G3-A3 carry-forward: stale source-017 expected-blob row superseded; activation package pins ca3811cd only",
+      "project-control/reports/M0-T049-dcv-final.md"
+     ],
+     "note": "New reviewed blob identity produced."
+    },
+    {
+     "id": "D-010-R181",
+     "state": "PASS",
+     "evidence": [
+      "G5 report SS6 (exact elevated rerun command + pre/post SHA re-verification + DryRun principal check)",
+      "no premature owner return issued pre-merge (DCV SS6 R181)",
+      "project-control/reports/M0-T049-dcv-final.md"
+     ],
+     "note": "PASS on conduct-to-date per DCV: committed + reviewed; the owner-facing return is issued immediately post-merge by the orchestrator (not discharged by acceptance; classification 'return' not deferral-eligible)."
+    },
+    {
+     "id": "D-010-R182",
+     "state": "PASS",
+     "evidence": [
+      "C:\\SupervisorController\\model_selection.toml LastWriteUtc 2026-08-04 (pre-task), ACL mutable (Authenticated Users:(I)(M)); no .toml in the delta",
+      "project-control/reports/M0-T049-dcv-final.md"
+     ],
+     "note": "model_selection preserved unchanged and mutable."
+    },
+    {
+     "id": "D-010-R183",
+     "state": "PASS",
+     "evidence": [
+      "whole-branch engineering delta c298159..e942b28 excluding project-control = exactly 2 files (script + test); no supervisor .py, no ACL redesign",
+      "project-control/reports/M0-T049-dcv-final.md"
+     ],
+     "note": "No broadening."
+    }
+   ],
+   "reviewed_manifest_sha256": "0821cb814126f2ffa824c87dd9842da5f301f2aff5618f0af31a63ac70af8ccc",
+   "reviewed_sha": "e942b28e6f10525b179c6af43134358e73a7ff31",
+   "verified_at": "2026-08-08T08:31:48+00:00",
+   "note": "Source-019 parser-defect unit. All 11 applicable rows PASS on the DCV's reproduced primary evidence (script blob ca3811cd, defective 0f01d649 barred). R181 PASS is conduct-to-date: the owner-facing return (new blob + elevated command) is an orchestrator act issued immediately after the Tier A merge - acceptance does NOT discharge it. Full report: project-control/reports/M0-T049-dcv-final.md."
   }
  ],
- "updated_at": "2026-08-08T06:59:54+00:00"
+ "updated_at": "2026-08-08T08:31:48+00:00"
 }

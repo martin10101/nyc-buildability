@@ -27,12 +27,12 @@
     "code-reviewer",
     "security-reviewer"
   ],
-  "status": "awaiting_gate",
-  "progress_percent": 95,
+  "status": "accepted",
+  "progress_percent": 100,
   "risks": [],
   "blockers": [],
   "created_at": "2026-08-08T07:44:33.251299+00:00",
-  "updated_at": "2026-08-08T08:08:17.700071+00:00",
+  "updated_at": "2026-08-08T08:31:49.308895+00:00",
   "directive_refs": [
     {
       "directive_id": "D-010",
@@ -53,5 +53,7 @@
   ],
   "directive_regime_version": "1.0",
   "directive_regime_entered_at": "2026-08-08T07:44:33.251299+00:00",
-  "worktree": "C:/Users/MLFLL/Downloads/nyc-zoning/orch"
+  "worktree": "C:/Users/MLFLL/Downloads/nyc-zoning/orch",
+  "accepted_by": "orchestrator",
+  "accepted_at": "2026-08-08T08:31:49.308895+00:00"
 }
