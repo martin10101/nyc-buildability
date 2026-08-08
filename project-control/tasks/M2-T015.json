@@ -24,19 +24,26 @@
     "M2-T014"
   ],
   "allowed_paths": [
-    "services/api/app/documents/** (new module)",
-    "services/api/tests/documents/** (tests + synthetic fixture pack)",
-    "packages/contracts/schemas/v1/survey_evidence.schema.json + its generated artifacts via the M2-T010 tooling",
-    "docs/SURVEY_DOCUMENT_INGESTION_ARCHITECTURE.md, docs/UPLOAD_THREAT_MODEL.md, docs/SURVEY_EVIDENCE_CONTRACT.md, docs/SURVEY_FIXTURE_MATRIX.md",
+    "services/api/app/documents/**",
+    "services/api/tests/documents/**",
+    "packages/contracts/schemas/v1/survey_evidence.schema.json",
+    "packages/contracts/generated/survey_evidence.ts",
+    "packages/contracts/fixtures/valid/survey_evidence/**",
+    "packages/contracts/fixtures/invalid/survey_evidence/**",
+    "docs/SURVEY_DOCUMENT_INGESTION_ARCHITECTURE.md",
+    "docs/UPLOAD_THREAT_MODEL.md",
+    "docs/SURVEY_EVIDENCE_CONTRACT.md",
+    "docs/SURVEY_FIXTURE_MATRIX.md",
     "project-control/reports/M2-T015-producer-report.md"
   ],
   "forbidden_paths": [
+    "services/api/app/profile/**",
+    "services/api/app/connectors/**",
+    "apps/web/**",
+    "project-control/**",
+    ".claude/**",
     "Production storage provisioning of any kind (B-001 hold: no Supabase buckets, no credentials, no deployment)",
-    "services/api/app/profile/**, services/api/app/connectors/** (cross-check consumes domain models read-only)",
-    "apps/web/** (UI is Packet C / M2-T016)",
-    "Any fixture derived from a private client document without recorded owner authorization + redaction evidence",
-    "project-control/** (except own producer report)",
-    ".claude/**"
+    "Any fixture derived from a private client document without recorded owner authorization + redaction evidence"
   ],
   "acceptance_scenarios": [
     "SB-S1 primary: a clean synthetic vector PDF survey is ingested, extracted via the vector path (not OCR), every extracted fact carries the full evidence record, deterministic checks pass, state reaches auto_extracted/needs_review correctly",
@@ -57,14 +64,14 @@
     "G4",
     "G5"
   ],
-  "producer_agent": null,
+  "producer_agent": "supervised-auto-worker",
   "reviewer_agents": [
     "data-contract-verifier",
     "code-reviewer",
     "security-reviewer"
   ],
-  "status": "backlog",
-  "progress_percent": 0,
+  "status": "in_progress",
+  "progress_percent": 15,
   "risks": [
     "DISPATCH HOLD: awaits owner review of the 2026-07-20 planning report AND M2-T014 acceptance (format policy is a hard input)",
     "B-001: production storage/tenant-isolation/retention remain blocked; the architecture doc must design for them and mark them deferred - G3 verifies the honesty of that split",
@@ -75,5 +82,37 @@
   ],
   "blockers": [],
   "created_at": "2026-07-20T06:34:25.468863+00:00",
-  "updated_at": "2026-07-20T06:34:25.468863+00:00"
+  "updated_at": "2026-08-08T19:54:03.142373+00:00",
+  "directive_refs": [
+    {
+      "directive_id": "D-010",
+      "requirement_ids": "ALL"
+    }
+  ],
+  "directive_regime_version": "1.0",
+  "directive_regime_entered_at": "2026-08-08T19:04:30.805090+00:00",
+  "worktree": "C:/Users/MLFLL/Downloads/nyc-zoning/wt-m2t015",
+  "progress_log": [
+    {
+      "at": "2026-08-08T19:10:36.114150+00:00",
+      "agent": "supervised-auto-worker",
+      "percent": 5,
+      "status": "in_progress",
+      "message": "SUPERVISED-AUTO dispatch: unit 1 (survey-evidence contract) launched under tools/agent_supervisor start --mode supervised (run_id run_m2t015_supervised, worktree wt-m2t015, branch task/M2-T015-survey-ingestion). Packet allowed_paths/forbidden_paths normalized by orchestrator for machine authority parsing (same semantic scope; comma-joined and prose-annotated entries split into clean patterns). Owner activation decision captured as D-010 source-023 (R214-R235), merged PR #189 (d2b6e87). G0 PASS at d2b6e87."
+    },
+    {
+      "at": "2026-08-08T19:31:51.551503+00:00",
+      "agent": "supervised-auto-worker",
+      "percent": 12,
+      "status": "in_progress",
+      "message": "Supervised cycle 1 complete: worker produced survey_evidence.schema.json + SURVEY_EVIDENCE_CONTRACT.md + 4 valid/8 invalid fixtures (checkpoint M2-T015-U1-CP1); Codex review REVISE (run validation + evidence resubmit); continuation approved by operator digest; live rotation actuated at seam (context 2.83M > 400k); cycle 2 running on fresh session. Orchestrator evidence capture: validate_contracts.py 10 schemas 0 failures in worktree. printenv hard-denied (S4.4/credentials) - fail-closed protections live."
+    },
+    {
+      "at": "2026-08-08T19:54:03.142373+00:00",
+      "agent": "supervised-auto-worker",
+      "percent": 15,
+      "status": "in_progress",
+      "message": "Unit-1 deliverables committed on task/M2-T015-survey-ingestion (cabe128, pushed): survey_evidence.schema.json + contract doc + 4 valid/8 invalid fixtures; validate_contracts.py 10 schemas 0 failures. Supervised runtime story: cycle-1 full path + checkpoint M2-T015-U1-CP1 + Codex REVISE + digest-approved forward + LIVE rotation seam; cycle-2 missing_checkpoint fail-close; cleared via clear-recovery; re-dispatch externally killed in the START_CLAUDE crash window -> journal stranded (no CLI driver: AD-093-qualifying recovery gap, registered). Both operator recovery paths classifier-denied -> B-018 OPEN awaiting owner choice (fresh --runtime-base vs StateMachine repair). No gate weakened; stranded runtime preserved as evidence."
+    }
+  ]
 }
