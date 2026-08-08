@@ -1,0 +1,89 @@
+{
+ "schema": "evidence_map/v1",
+ "task_id": "M0-T050",
+ "producer": "backend-engineer",
+ "code_head": "b1817ff1367d3c65e5f85cef610cba6196f1f3aa",
+ "code_branch": "task/M0-T050-dryrun-args-fix",
+ "requirements": {
+  "D-010-R184": {
+   "summary": "HOLD honored: config untouched/unmoved (delta touches only script+tests+report in the worktree); nothing activated.",
+   "evidence": [
+    "task commit b1817ff diff scope (3 files)"
+   ]
+  },
+  "D-010-R185": {
+   "summary": "Defect treated as ONE bounded fix: parameter rename + wording branch + regression tests; root-cause mechanics documented (automatic $args precedence under WinPS 5.1).",
+   "evidence": [
+    "producer report root-cause section",
+    "script comment at Invoke-Step"
+   ]
+  },
+  "D-010-R186": {
+   "summary": "Invoke-Step parameter renamed to [string[]]$CommandArgs; both uses updated exactly as the owner specified ($shown join + & $Exe @CommandArgs).",
+   "evidence": [
+    "tools/agent_supervisor/harden_controller_config.ps1 Invoke-Step (~90-107)"
+   ]
+  },
+  "D-010-R187": {
+   "summary": "All FOURTEEN Invoke-Step call sites enumerated via AST (owner's list said 12; its own ranges sum to 14 - flagged honestly) and proven to retain full positional argument vectors; live replay shows complete [dry-run] lines.",
+   "evidence": [
+    "producer report 14-call-site retention table",
+    "test_apply_path_call_sites_carry_full_argument_arrays"
+   ]
+  },
+  "D-010-R188": {
+   "summary": "Full-vector WinPS 5.1 dry-run regression tests added: generic vector + replay of ALL SIX apply-path vectors asserting every path, /F, /A, /inheritance:r, /grant:r, and every ACL principal (Administrators, SYSTEM, unelevated-user RX, (OI)(CI) variants).",
+   "evidence": [
+    "test_dryrun_emits_the_full_generic_vector",
+    "test_dryrun_replays_all_six_apply_path_vectors",
+    "static call-site fidelity + no-$Args checks"
+   ]
+  },
+  "D-010-R189": {
+   "summary": "RED-on-defective proven: identical AST harness against merged blob ca3811cd (git show 1e649a8) emits '[dry-run] icacls.exe' with NO arguments -> permanent test fails on the defective content, passes on the fix.",
+   "evidence": [
+    "test_dryrun_line_is_red_on_the_defective_merged_content",
+    "producer report RED transcript"
+   ]
+  },
+  "D-010-R190": {
+   "summary": "Completion wording branched: dry run now ends 'dry run complete. NO changes were made...' and can no longer claim application; apply-path wording unchanged (statically asserted).",
+   "evidence": [
+    "script tail if($DryRun) branch",
+    "test_dryrun_completion_wording_cannot_claim_application"
+   ]
+  },
+  "D-010-R191": {
+   "summary": "Sequencing honored by conduct: affected tests run (os_acl 38 passed; full suite 1387/2, orchestrator-reproduced); independent G3+G5 delta reviews dispatched at the frozen identity post-submit.",
+   "evidence": [
+    "pytest outputs",
+    "project-control/gates/M0-T050-G3/G5.json (populated post-submit)"
+   ]
+  },
+  "D-010-R192": {
+   "summary": "Candidate NEW blob 9625514e79a34c901258975d4964529a9c02378e at the frozen identity (becomes the reviewed blob at merge); ca3811cd and 0f01d649 both recorded defective and barred from the real apply.",
+   "evidence": [
+    "git hash-object at b1817ff = 9625514e79a34c901258975d4964529a9c02378e"
+   ]
+  },
+  "D-010-R193": {
+   "summary": "Return discipline honored by conduct: the owner return LEADS with the exact new dry-run command, issued only after review+merge; the real apply waits for the owner's personal full-vector dry-run inspection.",
+   "evidence": [
+    "owner return message (post-merge)"
+   ]
+  },
+  "D-010-R194": {
+   "summary": "No broadening: delta = Invoke-Step rename + wording branch + tests + report; rollback-path wording flagged as candidate follow-up but NOT changed (bounded out).",
+   "evidence": [
+    "git diff --stat b1817ff (3 files)"
+   ]
+  },
+  "D-010-R195": {
+   "summary": "Standing rule encoded and honored: the full-vector visibility is now machine-asserted (R188 tests) and the real ACL change is sequenced behind the owner's dry-run inspection.",
+   "evidence": [
+    "R188 tests",
+    "owner-return sequencing"
+   ]
+  }
+ }
+}
