@@ -1,0 +1,119 @@
+{
+  "command": "start",
+  "mode": "supervised",
+  "controller_version": "0.4.0-phase4",
+  "recovery": {
+    "classification": "SAFE_CHECKPOINT",
+    "next_state": "PREFLIGHT",
+    "trigger": "recovery_safe_checkpoint",
+    "reason_code": "safe_no_auto_resume",
+    "reason": "the last action has a verified after-effect and every invariant matches, but limited-auto was NOT already owner-enabled, so recovery does not resume by itself: it re-runs preflight and waits for an explicit operator start (S11.5). Recovery never enables or broadens limited-auto",
+    "resume_permitted": false,
+    "failed_steps": [],
+    "missing_steps": [],
+    "unaccounted_children": [],
+    "pending_effect_ids": [],
+    "notes": [
+      "every input the loop needs was named explicitly; the pre-dispatch sequence ran before any provider contact"
+    ]
+  },
+  "dispatched": true,
+  "provider_calls_made": 2,
+  "limited_auto_enabled": false,
+  "missing_inputs": [],
+  "stopped_because": "operator_declined",
+  "loop": {
+    "run_id": "run_m2t015_supervised_r2",
+    "mode": "supervised",
+    "final_state": "WAIT_FOR_OWNER",
+    "stopped": "operator_declined",
+    "cycles": [
+      {
+        "cycle": 2,
+        "mode": "supervised",
+        "reached_state": "WAIT_FOR_OWNER",
+        "path": [
+          "CHECKPOINT_RECEIVED",
+          "COLLECT_EVIDENCE",
+          "CODEX_REVIEW",
+          "VALIDATE_DECISION",
+          "POLICY_CHECK",
+          "WAIT_FOR_OWNER"
+        ],
+        "checkpoint_id": "M2-T015-unit2-rework-2026-08-08-parser-isolation-t11-cleanup",
+        "decision": "REVISE",
+        "tier": "AUTO",
+        "reason_code": "forwarded_prompt",
+        "reason": "the operator did not approve the pending prompt",
+        "forwarded": false,
+        "forward": null,
+        "shadow_plan": null,
+        "pending_prompt_digest": "e9ab4e1d5d0e5c509abaa7ee02e60c8985665f9c8d37e21e22703b226d8cb848",
+        "owner_touches": [
+          {
+            "kind": "supervised_mode_approval",
+            "reason_code": "supervised_mode_operator_approval",
+            "reason": "supervised mode requires the owner to approve this exact prompt",
+            "cycle": 2,
+            "counted": false,
+            "basis": "S12 - a debugging and fallback mode, not the destination; NOT counted against the S16.7 budget, which measures the target operating mode",
+            "at_utc": "2026-08-08T20:35:05.354Z"
+          }
+        ],
+        "notify_events": [],
+        "stopped": "operator_declined",
+        "packet_digest": "ffd1991b2ff61f390af210bca3aecfed1ce2df3d99a21983cef143087c821ac5",
+        "notes": [],
+        "model_mismatch": false,
+        "context_tokens": 1672627,
+        "rotation_pending": true
+      }
+    ],
+    "budget": {
+      "budget": 2,
+      "counted": 0,
+      "within_budget": true,
+      "excess": 0,
+      "touches": [
+        {
+          "kind": "supervised_mode_approval",
+          "reason_code": "supervised_mode_operator_approval",
+          "reason": "supervised mode requires the owner to approve this exact prompt",
+          "cycle": 1,
+          "counted": false,
+          "basis": "S12 - a debugging and fallback mode, not the destination; NOT counted against the S16.7 budget, which measures the target operating mode",
+          "at_utc": "2026-08-08T20:23:25.372Z"
+        },
+        {
+          "kind": "supervised_mode_approval",
+          "reason_code": "supervised_mode_operator_approval",
+          "reason": "supervised mode requires the owner to approve this exact prompt",
+          "cycle": 2,
+          "counted": false,
+          "basis": "S12 - a debugging and fallback mode, not the destination; NOT counted against the S16.7 budget, which measures the target operating mode",
+          "at_utc": "2026-08-08T20:35:05.354Z"
+        }
+      ],
+      "authorizes_nothing": true,
+      "note": "The budget is a MEASUREMENT. Every excess stop must be dispositioned either as an accepted permanent gate or as a PROPOSED deterministic policy change that has passed security and control-plane review, replay testing, and explicit owner approval. The budget itself authorizes nothing (D-007 S16.7)."
+    },
+    "forwarded_message_ids": [
+      "run_m2t015_supervised_r2/fwd/1/a78444e485e7d4e6"
+    ],
+    "provider_calls": 2,
+    "rotations": [
+      {
+        "cycle": 2,
+        "reason_code": "context_threshold",
+        "old_session_id": "",
+        "new_session_id": "sup-066eeb2bff184786840675f705c84053",
+        "handoff_digest": "47cf0a26ab9c00eda6d68cbf0a6c6ceb69b8407f88354054726390b2bf32e67e",
+        "pinned_model": "",
+        "model": "",
+        "tier": "NOTIFY",
+        "recorded_at_utc": "2026-08-08T20:24:45.766Z"
+      }
+    ],
+    "limited_auto_enabled": false
+  }
+}

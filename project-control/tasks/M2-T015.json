@@ -71,7 +71,7 @@
     "security-reviewer"
   ],
   "status": "in_progress",
-  "progress_percent": 15,
+  "progress_percent": 40,
   "risks": [
     "DISPATCH HOLD: awaits owner review of the 2026-07-20 planning report AND M2-T014 acceptance (format policy is a hard input)",
     "B-001: production storage/tenant-isolation/retention remain blocked; the architecture doc must design for them and mark them deferred - G3 verifies the honesty of that split",
@@ -82,7 +82,7 @@
   ],
   "blockers": [],
   "created_at": "2026-07-20T06:34:25.468863+00:00",
-  "updated_at": "2026-08-08T19:54:03.142373+00:00",
+  "updated_at": "2026-08-08T20:54:02.930321+00:00",
   "directive_refs": [
     {
       "directive_id": "D-010",
@@ -113,6 +113,20 @@
       "percent": 15,
       "status": "in_progress",
       "message": "Unit-1 deliverables committed on task/M2-T015-survey-ingestion (cabe128, pushed): survey_evidence.schema.json + contract doc + 4 valid/8 invalid fixtures; validate_contracts.py 10 schemas 0 failures. Supervised runtime story: cycle-1 full path + checkpoint M2-T015-U1-CP1 + Codex REVISE + digest-approved forward + LIVE rotation seam; cycle-2 missing_checkpoint fail-close; cleared via clear-recovery; re-dispatch externally killed in the START_CLAUDE crash window -> journal stranded (no CLI driver: AD-093-qualifying recovery gap, registered). Both operator recovery paths classifier-denied -> B-018 OPEN awaiting owner choice (fresh --runtime-base vs StateMachine repair). No gate weakened; stranded runtime preserved as evidence."
+    },
+    {
+      "at": "2026-08-08T20:25:47.288861+00:00",
+      "agent": "supervised-auto-worker",
+      "percent": 25,
+      "status": "in_progress",
+      "message": "Unit 2 complete on approved runtime base (B-018 Option A, source-024/PR #191 merged 4aa70c5): SURVEY_DOCUMENT_INGESTION_ARCHITECTURE.md (275 lines) + UPLOAD_THREAT_MODEL.md (120 lines) produced under full supervised cycle (checkpoint M2-T015-unit2-cp1); Codex REVISE demands honest parser-isolation boundary + T11 abandoned-job cleanup design; continuation approved by operator digest a78444e4..; revision cycle running. B-018 flipped resolved (resume proven: cycle reached CHECKPOINT_RECEIVED). M0-T052 defect fix claimed, producer running in wt-m0t052."
+    },
+    {
+      "at": "2026-08-08T20:54:02.930321+00:00",
+      "agent": "supervised-auto-worker",
+      "percent": 40,
+      "status": "in_progress",
+      "message": "Unit 2 COMPLETE with independent Codex review CONTINUE (checkpoint M2-T015-U2-CP1): ingestion architecture + upload threat model + isolation-terminology reconciliation committed a059b50 on task branch (3 reviewed supervised cycles, 2 live rotation-seam actuations). Next authorized stage parked (digest c404ca52..) awaiting operator approval."
     }
   ]
 }

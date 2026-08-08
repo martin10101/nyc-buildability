@@ -169,3 +169,32 @@ evidence. What remains before supervised-auto is exactly the owner-held set: (a)
 ACL apply + orchestrator live-PROTECTED capture, (b) the C2 residual decision, and (c) the
 owner-typed activation decision line (R131/R132). ⛔ Activation itself remains prohibited until
 the owner types the decision (R131); M2-T015/T016 stay HELD until then (R133).
+
+---
+
+# ACTIVATION-RECORD PIN — 2026-08-08 (M0-T052 G5 C1/C2; recorded by the orchestrator)
+
+Registered at the M0-T052 G5 security review (`M0-T052-g5-security.md`, SEC-MAJOR residual;
+required corrections C1/C2). BINDING for supervised-auto operation from this date:
+
+1. **C1 — host containment precondition (HARD; wording required by the G5 delta attestation).**
+   SUPERVISED-AUTO — and any run that spawns a live worker — may be activated/run ONLY on a host
+   where BOTH (1) `doctor` reports `containment_default: ok, job_object` AND (2) the run's own
+   worker-launch audit records `containment: job_object` for that cycle. If either the `doctor`
+   snapshot or a live launch reports `taskkill` or `process_group`, activation/continuation is
+   REFUSED. Rationale: a supervisor externally killed during the `START_CLAUDE` window leaves an
+   orphaned worker that `recover_boot` cannot detect (the production launch path does not record
+   child pids until M0-T053), so an operator `start` would double-launch over the live worker.
+   Until M0-T053 lands the fail-closed launch-path containment gate, this bar is a WRITTEN
+   precondition only (not runtime-enforced); the live `containment: job_object` audit line MUST
+   be re-verified on every activation. Live host evidence at this activation satisfies both
+   criteria: `containment_default: ok — "default containment on this host is 'job_object'"`
+   (doctor-pre-activation.json) and the cycle-1 worker-launch audit line
+   `containment: job_object`.
+2. **C2 — child-accounting wiring (follow-up M0-T053).** `record_launched_child` /
+   `clear_child_record` are not wired to the production launch path, so `recover_boot`'s
+   surviving-child fail-closed is inert in production; until M0-T053 lands, double-launch
+   protection rests on the Job Object alone (hence pin 1).
+
+These pins ADD restrictions; they relax nothing. The N-4 / N-5 / MINOR-2 residuals accepted in
+the owner's activation decision (D-010 source-023) are unchanged.
