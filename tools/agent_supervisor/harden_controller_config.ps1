@@ -150,19 +150,46 @@ Write-Host "=== APPLY: Administrators owns; unelevated user READ+EXECUTE only ==
 Invoke-Step $Takeown @("/F", $file, "/A")
 Invoke-Step $Takeown @("/F", $dir, "/A")
 
-# 2) File: strip inheritance, then explicit ACL. /grant:r REPLACES any existing
-#    grant for the principal, so re-running is idempotent.
+# 2) File: RESET first (M0-T051 / D-010-R199), THEN strip inheritance, THEN the
+#    explicit three-ACE grant.
+#
+#    ROOT CAUSE of the M0-T051 defect: `/inheritance:r` strips only INHERITED
+#    ACEs and `/grant:r` replaces the grant only for the NAMED principals, so a
+#    PRE-EXISTING EXPLICIT ACE for an unrelated principal SURVIVES both (the
+#    owner's real elevated apply hit a surviving explicit
+#    `NT AUTHORITY\Authenticated Users:(M)`, leaving the config
+#    unelevated-writable). `/reset` removes ALL explicit ACEs and re-enables
+#    inheritance; the immediately-following `/inheritance:r` then removes the
+#    re-inherited ACEs too, leaving an EMPTY DACL that the three `/grant:r` calls
+#    fill DETERMINISTICALLY - exactly Administrators:(F), SYSTEM:(F),
+#    ${UnelevatedUser}:(RX), nothing else, regardless of any prior explicit ACE.
+#    /grant:r still makes each re-run idempotent (it REPLACES the named grants),
+#    and /reset makes the END STATE independent of the starting DACL.
+#
+#    ORDERING: `/reset` and `/inheritance:r` run back-to-back inside this ONE
+#    elevated session. On /reset the file briefly re-inherits the parent's ACEs,
+#    but the next line strips inheritance before any window matters and no
+#    unelevated process can observe the transient state. /reset never writes file
+#    CONTENT (it rewrites only the security descriptor).
+Invoke-Step $Icacls @($file, "/reset")
 Invoke-Step $Icacls @($file, "/inheritance:r")
 Invoke-Step $Icacls @($file, "/grant:r",
     "BUILTIN\Administrators:(F)",
     "NT AUTHORITY\SYSTEM:(F)",
     "${UnelevatedUser}:(RX)")
 
-# 3) Parent directory: strip inheritance, then explicit ACL. The unelevated user
-#    gets Read+Execute only (no AddFile / DeleteChild / Write / WriteDAC /
-#    WriteOwner), which blocks delete/rename/replace of the config and dropping a
-#    sibling to bypass. Administrators/SYSTEM keep full control with (OI)(CI) so
-#    future contents inherit their control, not the user's.
+# 3) Parent directory: the SAME reset-then-strip-then-grant, for the same reason
+#    (a surviving explicit ACE on the directory would let the user re-create /
+#    rename / replace the config). On /reset the directory briefly re-inherits
+#    its grandparent's (possibly permissive) ACEs, but the immediately-following
+#    /inheritance:r removes them within this same elevated session before any
+#    window matters. The reset is NON-recursive (no /T), so it rewrites only the
+#    directory's own DACL and never the already-set config file inside it. The
+#    unelevated user gets Read+Execute only (no AddFile / DeleteChild / Write /
+#    WriteDAC / WriteOwner), which blocks delete/rename/replace of the config and
+#    dropping a sibling to bypass. Administrators/SYSTEM keep full control with
+#    (OI)(CI) so future contents inherit their control, not the user's.
+Invoke-Step $Icacls @($dir, "/reset")
 Invoke-Step $Icacls @($dir, "/inheritance:r")
 Invoke-Step $Icacls @($dir, "/grant:r",
     "BUILTIN\Administrators:(OI)(CI)(F)",
