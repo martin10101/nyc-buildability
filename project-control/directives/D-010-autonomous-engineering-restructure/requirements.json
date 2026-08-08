@@ -2,9 +2,9 @@
  "schema": "directive_requirements/v1",
  "directive_id": "D-010",
  "version": 22,
- "requirement_count": 241,
+ "requirement_count": 284,
  "producer": "orchestrator",
- "updated_at": "2026-08-08T20:15:36+00:00",
+ "updated_at": "2026-08-08T22:19:25+00:00",
  "requirements": [
   {
    "id": "D-010-R001",
@@ -8562,6 +8562,1490 @@
     "tasks": []
    },
    "amendment_sequence": 24
+  },
+  {
+   "id": "D-010-R242",
+   "text": "Do not reopen or redo accepted M0-T052 work.",
+   "source_ref": "source-025-amendment.md#holds",
+   "classification": "prohibition",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M2-T015",
+     "M2-T016",
+     "M0-T053"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [
+     "dispatch",
+     "accept"
+    ],
+    "effective_date": "2026-08-08"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "owner product-first M2-T015 hardening directive 2026-08-08",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "amendment_sequence": 25
+  },
+  {
+   "id": "D-010-R243",
+   "text": "Do not start another broad supervisor, controller, ACL, configuration, autonomy, or infrastructure-improvement cycle. The supervisor exists to deliver the product.",
+   "source_ref": "source-025-amendment.md#holds",
+   "classification": "prohibition",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M2-T015",
+     "M2-T016"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [
+     "dispatch",
+     "accept"
+    ],
+    "effective_date": "2026-08-08"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "owner product-first M2-T015 hardening directive 2026-08-08",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "amendment_sequence": 25
+  },
+  {
+   "id": "D-010-R244",
+   "text": "Keep M0-T053 in backlog for now; it MUST become blocking before any of: supervised execution on a host that cannot prove the existing C1 Job-Object requirement; a failure of the per-launch C1 containment proof; migration away from the currently verified host; any future LIMITED-AUTO consideration.",
+   "source_ref": "source-025-amendment.md#holds",
+   "classification": "hold",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T053",
+     "M2-T015",
+     "M2-T016"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [
+     "dispatch",
+     "accept"
+    ],
+    "effective_date": "2026-08-08"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "owner product-first M2-T015 hardening directive 2026-08-08",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "amendment_sequence": 25
+  },
+  {
+   "id": "D-010-R245",
+   "text": "M0-T053 does not need to interrupt M2-T015 or M2-T016 while both remain on the verified, C1-pinned Job-Object host; unless the C1 proof fails, finish the two product proofs first.",
+   "source_ref": "source-025-amendment.md#holds",
+   "classification": "sequencing",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T053",
+     "M2-T015",
+     "M2-T016"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [
+     "dispatch"
+    ],
+    "effective_date": "2026-08-08"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "owner product-first M2-T015 hardening directive 2026-08-08",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "amendment_sequence": 25
+  },
+  {
+   "id": "D-010-R246",
+   "text": "Do not touch the M0-T047 nanoid age gate as part of this work; it remains a separate dependency task and follows its existing date/policy.",
+   "source_ref": "source-025-amendment.md#holds",
+   "classification": "hold",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T047"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [
+     "dispatch",
+     "accept"
+    ],
+    "effective_date": "2026-08-08"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "owner product-first M2-T015 hardening directive 2026-08-08",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "amendment_sequence": 25
+  },
+  {
+   "id": "D-010-R247",
+   "text": "After the directive capture and routing record are durable, resume M2-T015 from the clean r3 paused checkpoint under SUPERVISED-AUTO.",
+   "source_ref": "source-025-amendment.md#primary",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M2-T015"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [
+     "dispatch"
+    ],
+    "effective_date": "2026-08-08"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "owner product-first M2-T015 hardening directive 2026-08-08",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "amendment_sequence": 25
+  },
+  {
+   "id": "D-010-R248",
+   "text": "Continue the already-planned Unit 3b upload gate and Unit 3c storage/test work.",
+   "source_ref": "source-025-amendment.md#primary",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M2-T015"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [
+     "dispatch",
+     "accept"
+    ],
+    "effective_date": "2026-08-08"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "owner product-first M2-T015 hardening directive 2026-08-08",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "amendment_sequence": 25
+  },
+  {
+   "id": "D-010-R249",
+   "text": "Do not declare M2-T015 complete merely because Unit 3b and Unit 3c finish; the hardening areas (R252-R280) and the SB-S1..S9 scope closure (R272-R275) are part of completion.",
+   "source_ref": "source-025-amendment.md#primary",
+   "classification": "prohibition",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M2-T015"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [
+     "accept"
+    ],
+    "effective_date": "2026-08-08"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "owner product-first M2-T015 hardening directive 2026-08-08",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "amendment_sequence": 25
+  },
+  {
+   "id": "D-010-R250",
+   "text": "Inspect the current M2-T015 plan, acceptance scenarios SB-S1..SB-S9, the Unit-1 contract, the Unit-2 architecture/threat model, and the Unit-3a code before assigning the exact remaining units.",
+   "source_ref": "source-025-amendment.md#primary",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M2-T015"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [
+     "dispatch"
+    ],
+    "effective_date": "2026-08-08"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "owner product-first M2-T015 hardening directive 2026-08-08",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "amendment_sequence": 25
+  },
+  {
+   "id": "D-010-R251",
+   "text": "Use additional bounded M2-T015 implementation units/checkpoints where necessary instead of forcing all work into an oversized Unit 3c diff.",
+   "source_ref": "source-025-amendment.md#primary",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M2-T015"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [
+     "dispatch"
+    ],
+    "effective_date": "2026-08-08"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "owner product-first M2-T015 hardening directive 2026-08-08",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "amendment_sequence": 25
+  },
+  {
+   "id": "D-010-R252",
+   "text": "Develop a grounded canonical taxonomy for the survey fact types the deterministic implementation actually supports.",
+   "source_ref": "source-025-amendment.md#h1-taxonomy",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M2-T015"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [
+     "accept"
+    ],
+    "effective_date": "2026-08-08"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "owner product-first M2-T015 hardening directive 2026-08-08",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "amendment_sequence": 25
+  },
+  {
+   "id": "D-010-R253",
+   "text": "Do not close or narrow the existing v1 fact_type open wire field if that would invalidate previously valid v1 records (closing an open string to a closed enum is not additive).",
+   "source_ref": "source-025-amendment.md#h1-taxonomy",
+   "classification": "prohibition",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M2-T015"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [
+     "accept"
+    ],
+    "effective_date": "2026-08-08"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "owner product-first M2-T015 hardening directive 2026-08-08",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "amendment_sequence": 25
+  },
+  {
+   "id": "D-010-R254",
+   "text": "For v1: keep the fact_type wire field compatible; enforce the supported taxonomy through deterministic application validation; return a typed unsupported_fact_type result for unknown types; never silently accept an unknown fact as a material buildability input.",
+   "source_ref": "source-025-amendment.md#h1-taxonomy",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M2-T015"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [
+     "accept"
+    ],
+    "effective_date": "2026-08-08"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "owner product-first M2-T015 hardening directive 2026-08-08",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "amendment_sequence": 25
+  },
+  {
+   "id": "D-010-R255",
+   "text": "Design a properly versioned v2 ONLY if a genuine wire-contract requirement justifies it; do not create v2 merely for neatness. A necessary breaking v2 that cannot be avoided compatibly is an owner-return stop condition (R284).",
+   "source_ref": "source-025-amendment.md#h1-taxonomy",
+   "classification": "decision",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M2-T015"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [
+     "accept"
+    ],
+    "effective_date": "2026-08-08"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "owner product-first M2-T015 hardening directive 2026-08-08",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "amendment_sequence": 25
+  },
+  {
+   "id": "D-010-R256",
+   "text": "Create deterministic rules connecting fact_type <-> normalized_value shape <-> units (boundary distance -> numeric + distance unit; stated lot area -> numeric + area unit; bearing/orientation -> canonical representation + unit; elevation -> numeric + elevation unit; scale statement -> canonical scale representation; address/BBL -> string + unitless).",
+   "source_ref": "source-025-amendment.md#h2-units",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M2-T015"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [
+     "accept"
+    ],
+    "effective_date": "2026-08-08"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "owner product-first M2-T015 hardening directive 2026-08-08",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "amendment_sequence": 25
+  },
+  {
+   "id": "D-010-R257",
+   "text": "Do not silently coerce, infer, or guess units; ambiguous, mixed, missing, or unsupported units MUST produce a typed visible failure/unresolved condition and must not be promoted.",
+   "source_ref": "source-025-amendment.md#h2-units",
+   "classification": "prohibition",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M2-T015"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [
+     "accept"
+    ],
+    "effective_date": "2026-08-08"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "owner product-first M2-T015 hardening directive 2026-08-08",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "amendment_sequence": 25
+  },
+  {
+   "id": "D-010-R258",
+   "text": "Enforce the fact_type/value/unit relationships in application validators preserving v1 compatibility unless a properly justified v2 becomes necessary.",
+   "source_ref": "source-025-amendment.md#h2-units",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M2-T015"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [
+     "accept"
+    ],
+    "effective_date": "2026-08-08"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "owner product-first M2-T015 hardening directive 2026-08-08",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "amendment_sequence": 25
+  },
+  {
+   "id": "D-010-R259",
+   "text": "Implement deterministic application-level validation for relationships JSON Schema cannot prove, at minimum: x_min<=x_max; y_min<=y_max; finite numeric coordinates; coordinates valid for the declared coordinate space; bounding-box requirements consistent with locator kind; object-reference requirements consistent with vector-object locator kind; no malformed mixing of raster/PDF-page/survey-world/other coordinate systems; plus any additional real implementation invariants.",
+   "source_ref": "source-025-amendment.md#h3-geometry",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M2-T015"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [
+     "accept"
+    ],
+    "effective_date": "2026-08-08"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "owner product-first M2-T015 hardening directive 2026-08-08",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "amendment_sequence": 25
+  },
+  {
+   "id": "D-010-R260",
+   "text": "Invalid or contradictory location/geometry evidence must fail closed with a typed, visible result and must not become canonical geometry.",
+   "source_ref": "source-025-amendment.md#h3-geometry",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M2-T015"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [
+     "accept"
+    ],
+    "effective_date": "2026-08-08"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "owner product-first M2-T015 hardening directive 2026-08-08",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "amendment_sequence": 25
+  },
+  {
+   "id": "D-010-R261",
+   "text": "Implement deterministic correction-history integrity validation proving: original_value immutable; history append-only; entries chronological; every previous_normalized_value/previous_units matches the immediately preceding state; every corrected value/units becomes the next state; latest corrected value/units agrees with the record's current normalized_value/units; AI cannot author or impersonate a human correction; correcting actors use a closed authority model; qualified-professional corrections/confirmations carry required identity and time evidence; a malformed or tampered history cannot be loaded, promoted, confirmed, or used.",
+   "source_ref": "source-025-amendment.md#h4-correction-history",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M2-T015"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [
+     "accept"
+    ],
+    "effective_date": "2026-08-08"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "owner product-first M2-T015 hardening directive 2026-08-08",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "amendment_sequence": 25
+  },
+  {
+   "id": "D-010-R262",
+   "text": "Add adversarial tests for correction-history deletion, reordering, insertion, timestamp reversal, mismatched previous values, mismatched latest values, actor spoofing, and history mutation.",
+   "source_ref": "source-025-amendment.md#h4-correction-history",
+   "classification": "harness",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M2-T015"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [
+     "accept"
+    ],
+    "effective_date": "2026-08-08"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "owner product-first M2-T015 hardening directive 2026-08-08",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "amendment_sequence": 25
+  },
+  {
+   "id": "D-010-R263",
+   "text": "Implement the backend/application promotion rule: a material survey fact must not become canonical geometry, a buildability calculation input, an auto_extracted usable result, a professionally usable result, or any other authoritative downstream value while required deterministic validation is absent, empty, failed, unresolved, incomplete for that fact type, internally inconsistent, or based only on AI/OCR confidence.",
+   "source_ref": "source-025-amendment.md#h5-promotion-gate",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M2-T015"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [
+     "accept"
+    ],
+    "effective_date": "2026-08-08"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "owner product-first M2-T015 hardening directive 2026-08-08",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "amendment_sequence": 25
+  },
+  {
+   "id": "D-010-R264",
+   "text": "High confidence never substitutes for deterministic validation.",
+   "source_ref": "source-025-amendment.md#h5-promotion-gate",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M2-T015"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [
+     "accept"
+    ],
+    "effective_date": "2026-08-08"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "owner product-first M2-T015 hardening directive 2026-08-08",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "amendment_sequence": 25
+  },
+  {
+   "id": "D-010-R265",
+   "text": "The processing->auto_extracted and professional-confirmation paths must prove the required evidence/validation preconditions (Unit-3a transition authority alone is not the complete promotion gate); integrate this WITHOUT allowing AI input to trigger or veto state transitions.",
+   "source_ref": "source-025-amendment.md#h5-promotion-gate",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M2-T015"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [
+     "accept"
+    ],
+    "effective_date": "2026-08-08"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "owner product-first M2-T015 hardening directive 2026-08-08",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "amendment_sequence": 25
+  },
+  {
+   "id": "D-010-R266",
+   "text": "Add executable tests proving empty, failed, unresolved, incomplete, tampered, or AI-only material evidence cannot cross the promotion gate.",
+   "source_ref": "source-025-amendment.md#h5-promotion-gate",
+   "classification": "harness",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M2-T015"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [
+     "accept"
+    ],
+    "effective_date": "2026-08-08"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "owner product-first M2-T015 hardening directive 2026-08-08",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "amendment_sequence": 25
+  },
+  {
+   "id": "D-010-R267",
+   "text": "Expand the synthetic fixture/test matrix to cover: unsupported fact types; illegal fact_type/value/unit combinations; ambiguous/unsupported/mixed units; invalid or reversed bounding boxes; non-finite coordinates; malformed coordinate-space combinations; correction-history deletion/reordering/insertion/tampering; current normalized value inconsistent with the latest correction; material evidence with validation_results=[]; failed or unresolved material evidence attempting promotion; AI/OCR confidence substituting for validation; confirmation without qualified identity; confirmation without a valid timestamp; actor-role spoofing; conflicting dimensions; conflicting bearings/orientations; conflicting area representations; wrong-address/BBL evidence; tax-lot divergence where licensed-survey evidence stays visible and is never silently overwritten. Synthetic/redacted fixtures only; no private client documents.",
+   "source_ref": "source-025-amendment.md#h6-fixtures",
+   "classification": "harness",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M2-T015"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [
+     "accept"
+    ],
+    "effective_date": "2026-08-08"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "owner product-first M2-T015 hardening directive 2026-08-08",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "amendment_sequence": 25
+  },
+  {
+   "id": "D-010-R268",
+   "text": "Every deterministic rule added must have executable tests joined to the appropriate normal CI/gate path; no documentation-only assertions.",
+   "source_ref": "source-025-amendment.md#h7-ci-typegen",
+   "classification": "harness",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M2-T015"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [
+     "accept"
+    ],
+    "effective_date": "2026-08-08"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "owner product-first M2-T015 hardening directive 2026-08-08",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "amendment_sequence": 25
+  },
+  {
+   "id": "D-010-R269",
+   "text": "Before M2-T015 acceptance, reconcile the contract pipeline completely: canonical survey_evidence schema; deterministic application validators; generated TypeScript artifact if required by the M2-T010/type-generation discipline; runtime schema bundle if required by the contract pipeline; valid and invalid fixtures; byte-identical drift checks; API/backend tests; normal repository CI.",
+   "source_ref": "source-025-amendment.md#h7-ci-typegen",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M2-T015"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [
+     "accept"
+    ],
+    "effective_date": "2026-08-08"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "owner product-first M2-T015 hardening directive 2026-08-08",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "amendment_sequence": 25
+  },
+  {
+   "id": "D-010-R270",
+   "text": "Either generate and validate packages/contracts/generated/survey_evidence.ts through the established tooling, or record a concrete, architecture-supported reason why this schema is lawfully excluded; do not silently leave contract consumers behind.",
+   "source_ref": "source-025-amendment.md#h7-ci-typegen",
+   "classification": "decision",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M2-T015"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [
+     "accept"
+    ],
+    "effective_date": "2026-08-08"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "owner product-first M2-T015 hardening directive 2026-08-08",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "amendment_sequence": 25
+  },
+  {
+   "id": "D-010-R271",
+   "text": "Keep intact: immutable original-document SHA-256 identity; per-fact evidence lineage; original uploaded bytes never overwritten; OCR advisory only; AI classification bounded and schema-constrained; AI confidence never authoritative; deterministic normalization/reconstruction/calculation/validation; qualified-human confirmation boundary; tax-lot/MapPLUTO geometry as a typed cross-check only; licensed-survey evidence never silently overwritten by tax-lot geometry; B-001 production-storage hold stated honestly; no production bucket/credentials/tenant-isolation claim/live tenant-blind upload endpoint while B-001 is unresolved; safe temp-file cleanup and abandoned-job scavenging; no parsing outside a verified isolation boundary.",
+   "source_ref": "source-025-amendment.md#h8-preserve",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M2-T015"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [
+     "accept"
+    ],
+    "effective_date": "2026-08-08"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "owner product-first M2-T015 hardening directive 2026-08-08",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "amendment_sequence": 25
+  },
+  {
+   "id": "D-010-R272",
+   "text": "Before declaring M2-T015 complete, create a concise implementation-and-test coverage matrix for every existing acceptance scenario SB-S1 through SB-S9.",
+   "source_ref": "source-025-amendment.md#s9-scope-closure",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M2-T015"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [
+     "accept"
+    ],
+    "effective_date": "2026-08-08"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "owner product-first M2-T015 hardening directive 2026-08-08",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "amendment_sequence": 25
+  },
+  {
+   "id": "D-010-R273",
+   "text": "Do not mark a scenario complete based only on a schema, architecture document, model class, fake adapter, or a test that never exercises the production implementation path.",
+   "source_ref": "source-025-amendment.md#s9-scope-closure",
+   "classification": "prohibition",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M2-T015"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [
+     "accept"
+    ],
+    "effective_date": "2026-08-08"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "owner product-first M2-T015 hardening directive 2026-08-08",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "amendment_sequence": 25
+  },
+  {
+   "id": "D-010-R274",
+   "text": "At least one clean synthetic supported survey path must run through the REAL implementation end to end and produce per-fact evidence with deterministic verification.",
+   "source_ref": "source-025-amendment.md#s9-scope-closure",
+   "classification": "evidence",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M2-T015"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [
+     "accept"
+    ],
+    "effective_date": "2026-08-08"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "owner product-first M2-T015 hardening directive 2026-08-08",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "amendment_sequence": 25
+  },
+  {
+   "id": "D-010-R275",
+   "text": "If the required Landlock/seccomp parser-isolation capability cannot be proven on the intended Render substrate: do not fall back to unisolated parsing; implement and test the fail-closed capability-gated path in the environment where it can be proven; keep production parsing disabled; record the exact deployment blocker/follow-up; continue every M2-T015 component that does not require pretending the production substrate is ready.",
+   "source_ref": "source-025-amendment.md#s9-scope-closure",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M2-T015"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [
+     "accept"
+    ],
+    "effective_date": "2026-08-08"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "owner product-first M2-T015 hardening directive 2026-08-08",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "amendment_sequence": 25
+  },
+  {
+   "id": "D-010-R276",
+   "text": "Do not spend days redesigning hosting merely to erase the honest parser-isolation blocker.",
+   "source_ref": "source-025-amendment.md#s9-scope-closure",
+   "classification": "prohibition",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M2-T015"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [
+     "accept"
+    ],
+    "effective_date": "2026-08-08"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "owner product-first M2-T015 hardening directive 2026-08-08",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "amendment_sequence": 25
+  },
+  {
+   "id": "D-010-R277",
+   "text": "Keep the eight hardening areas inside M2-T015 unless the lawful task packet genuinely forbids a required path or the work depends on an external blocked capability.",
+   "source_ref": "source-025-amendment.md#s10-routing",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M2-T015"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [
+     "dispatch",
+     "accept"
+    ],
+    "effective_date": "2026-08-08"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "owner product-first M2-T015 hardening directive 2026-08-08",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "amendment_sequence": 25
+  },
+  {
+   "id": "D-010-R278",
+   "text": "If something must become a follow-up: give it a clear product-facing task name; state the exact reason it cannot lawfully or technically complete inside M2-T015; preserve the acceptance hold it creates; do not silently omit the item; do not create a vague research task.",
+   "source_ref": "source-025-amendment.md#s10-routing",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M2-T015"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [
+     "dispatch",
+     "accept"
+    ],
+    "effective_date": "2026-08-08"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "owner product-first M2-T015 hardening directive 2026-08-08",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "amendment_sequence": 25
+  },
+  {
+   "id": "D-010-R279",
+   "text": "Every new implementation unit must produce working product code and executable tests; documentation may accompany code but is not a substitute for it.",
+   "source_ref": "source-025-amendment.md#s10-routing",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M2-T015",
+     "M2-T016"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [
+     "accept"
+    ],
+    "effective_date": "2026-08-08"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "owner product-first M2-T015 hardening directive 2026-08-08",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "amendment_sequence": 25
+  },
+  {
+   "id": "D-010-R280",
+   "text": "No speculative enterprise features; no general framework rewrite; no supervisor redesign; no new ACL/config hardening; no infrastructure detour without demonstrated product-blocking evidence; no deletion of five-borough, zoning, legal, source, survey, scenario, reporting, visualization, or Revit scope.",
+   "source_ref": "source-025-amendment.md#s10-routing",
+   "classification": "prohibition",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M2-T015",
+     "M2-T016"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [
+     "dispatch",
+     "accept"
+    ],
+    "effective_date": "2026-08-08"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "owner product-first M2-T015 hardening directive 2026-08-08",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "amendment_sequence": 25
+  },
+  {
+   "id": "D-010-R281",
+   "text": "After the owner amendment and routing records are durable, return one concise table showing: (1) each hardening requirement; (2) whether it remains inside M2-T015 or becomes a follow-up; (3) its exact task and unit/checkpoint ID; (4) the code/test paths assigned to it; (5) any compatibility reason requiring v2 rather than compatible v1 application validation; (6) the SB-S1..SB-S9 coverage assignment.",
+   "source_ref": "source-025-amendment.md#return-sequence",
+   "classification": "return",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M2-T015"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [
+     "dispatch"
+    ],
+    "effective_date": "2026-08-08"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "owner product-first M2-T015 hardening directive 2026-08-08",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "amendment_sequence": 25
+  },
+  {
+   "id": "D-010-R282",
+   "text": "If the routing faithfully follows this directive and no genuine owner-only choice is required, do not wait for another general confirmation; resume M2-T015 autonomously under SUPERVISED-AUTO from the clean r3 checkpoint.",
+   "source_ref": "source-025-amendment.md#return-sequence",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M2-T015"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [
+     "dispatch"
+    ],
+    "effective_date": "2026-08-08"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "owner product-first M2-T015 hardening directive 2026-08-08",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "amendment_sequence": 25
+  },
+  {
+   "id": "D-010-R283",
+   "text": "Required sequence: (1) capture this owner directive durably; (2) publish the bounded routing/coverage map; (3) resume and complete M2-T015 implementation; (4) run its full required G0-G5 lifecycle, directive-compliance verification, CI, PR, merge, and acceptance; (5) proceed to M2-T016 as supervised-auto product proof #2; (6) keep M0-T053 in backlog until both product proofs finish unless the C1 Job-Object proof fails or the execution host changes; (7) after M2-T016, complete M0-T053 before any host relaxation or LIMITED-AUTO discussion; (8) LIMITED-AUTO remains unauthorized and requires a separate explicit future owner decision.",
+   "source_ref": "source-025-amendment.md#return-sequence",
+   "classification": "sequencing",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M2-T015",
+     "M2-T016",
+     "M0-T053"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [
+     "dispatch",
+     "accept"
+    ],
+    "effective_date": "2026-08-08"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "owner product-first M2-T015 hardening directive 2026-08-08",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "amendment_sequence": 25
+  },
+  {
+   "id": "D-010-R284",
+   "text": "Stop and return ONLY for: a genuine owner-only decision; production credentials or provisioning; a real external-service blocker; inability to prove the required parser-isolation boundary; a necessary breaking v2 decision that cannot be avoided compatibly; a failed required gate that cannot be corrected within the bounded task; or a demonstrated safety condition requiring the current supervised run to stop. Otherwise continue building the actual NYC Buildability product.",
+   "source_ref": "source-025-amendment.md#return-sequence",
+   "classification": "return",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M2-T015",
+     "M2-T016"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [
+     "dispatch",
+     "accept"
+    ],
+    "effective_date": "2026-08-08"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "owner product-first M2-T015 hardening directive 2026-08-08",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "amendment_sequence": 25
   }
  ]
 }
