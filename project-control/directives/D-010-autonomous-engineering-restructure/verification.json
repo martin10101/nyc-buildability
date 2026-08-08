@@ -1150,7 +1150,7 @@
     },
     {
      "id": "D-010-R152",
-     "state": "pending",
+     "state": "PASS",
      "lifecycle_classification": {
       "act_class": "accept",
       "classified_by": "directive-compliance-verifier",
@@ -1159,9 +1159,11 @@
       "justification": "Accept + Tier A merge ARE the acceptance-ordering act itself; the row is classification 'sequencing' bound solely to the accept lifecycle event, and its completion legitimately follows this verification (precedent: M0-T046 R132 / D-004-R389). Deferral granted at the reviewed content identity; discharge is checked at the first post-accept opportunity."
      },
      "evidence": [
+      "project-control/reports/M0-T048-r152-discharge.md (verifier's read-only reproduction: accept 06:47:56Z precedes merge 06:51:54Z; PR #180 MERGED, merge commit 0a7cc4c parents 9c2ec25+b066778; all 8 ruleset-required checks pass; non_fast_forward + merge-method enforced; tools/ byte-identical c31043d..0a7cc4c)",
       "project-control/reports/M0-T048-dcv-final-rework.md"
      ],
-     "note": "DEFERRED(acceptance-ordering) by the independent verifier; not a FAIL."
+     "note": "SATISFIED - discharged from DEFERRED(acceptance-ordering) by the independent directive-compliance-verifier at the same container identity the deferral was granted (reviewed_sha c31043d, reviewed_manifest_sha256 84cf814..); accept then ordinary Tier A merge verified read-only (see M0-T048-r152-discharge.md). Discharged 2026-08-08T06:59:54+00:00",
+     "discharged_at": "2026-08-08T06:59:54+00:00"
     },
     {
      "id": "D-010-R154",
@@ -1198,5 +1200,5 @@
    "note": "Post-rework FINAL verification (owner source-015/source-016). 19 SATISFIED + R152 DEFERRED(acceptance-ordering). Centerpiece R136+R146 both verified from primary code with the verifier's own suite runs (1380/2). Full report: project-control/reports/M0-T048-dcv-final-rework.md. Gate reruns G3/G4/G5 PASS at content identity 84cf814.. (reviewed_sha 31a8075/a2cde35, tools/ byte-identical to c31043d)."
   }
  ],
- "updated_at": "2026-08-08T06:47:32+00:00"
+ "updated_at": "2026-08-08T06:59:54+00:00"
 }
