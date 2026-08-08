@@ -1,10 +1,10 @@
 {
  "schema": "directive_requirements/v1",
  "directive_id": "D-010",
- "version": 19,
- "requirement_count": 183,
+ "version": 20,
+ "requirement_count": 195,
  "producer": "orchestrator",
- "updated_at": "2026-08-08T07:43:37+00:00",
+ "updated_at": "2026-08-08T08:45:01+00:00",
  "requirements": [
   {
    "id": "D-010-R001",
@@ -6491,6 +6491,426 @@
     "tasks": []
    },
    "amendment_sequence": 19
+  },
+  {
+   "id": "D-010-R184",
+   "text": "HOLD: do not touch or move C:\\Program Files\\SupervisorConfig\\config.toml; do not modify its contents; do not activate anything.",
+   "source_ref": "source-020-amendment.md#dryrun-argument-drop",
+   "classification": "hold",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T037",
+     "M0-T050"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [
+     "accept"
+    ],
+    "effective_date": "2026-08-08"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "owner dry-run argument-drop remediation order 2026-08-08",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "amendment_sequence": 20
+  },
+  {
+   "id": "D-010-R185",
+   "text": "Treat the demonstrated dry-run argument drop (Invoke-Step param([string[]]$Args) collides with PowerShell's automatic $args; live WinPS 5.1 elevated -DryRun printed six executable-only lines with NO arguments, violating the DryRun contract) as ONE narrowly bounded pre-activation defect.",
+   "source_ref": "source-020-amendment.md#dryrun-argument-drop",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T037",
+     "M0-T050"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [
+     "accept"
+    ],
+    "effective_date": "2026-08-08"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "owner dry-run argument-drop remediation order 2026-08-08",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "amendment_sequence": 20
+  },
+  {
+   "id": "D-010-R186",
+   "text": "Replace the Invoke-Step argument parameter with a non-reserved unambiguous name (e.g. [string[]]$CommandArgs) and use it consistently: $shown = \"$Exe \" + ($CommandArgs -join \" \"); & $Exe @CommandArgs.",
+   "source_ref": "source-020-amendment.md#dryrun-argument-drop",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T037",
+     "M0-T050"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [
+     "accept"
+    ],
+    "effective_date": "2026-08-08"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "owner dry-run argument-drop remediation order 2026-08-08",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "amendment_sequence": 20
+  },
+  {
+   "id": "D-010-R187",
+   "text": "Inspect EVERY Invoke-Step invocation and prove the complete argument vector is retained end-to-end.",
+   "source_ref": "source-020-amendment.md#dryrun-argument-drop",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T037",
+     "M0-T050"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [
+     "accept"
+    ],
+    "effective_date": "2026-08-08"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "owner dry-run argument-drop remediation order 2026-08-08",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "amendment_sequence": 20
+  },
+  {
+   "id": "D-010-R188",
+   "text": "Add a Windows PowerShell 5.1 regression test proving -DryRun output contains the FULL expected commands and arguments, at minimum: takeown /F <config> /A; takeown /F <parent> /A; icacls <config> /inheritance:r; icacls <config> /grant:r with Administrators, SYSTEM, and unelevated-user RX; icacls <parent> /inheritance:r; icacls <parent> /grant:r with the required principals.",
+   "source_ref": "source-020-amendment.md#dryrun-argument-drop",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T037",
+     "M0-T050"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [
+     "accept"
+    ],
+    "effective_date": "2026-08-08"
+   },
+   "dependencies": [],
+   "required_harness": "Executable WinPS 5.1 test asserting the full dry-run argument vectors (paths, /F, /A, /inheritance:r, /grant:r, every ACL principal).",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "owner dry-run argument-drop remediation order 2026-08-08",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "amendment_sequence": 20
+  },
+  {
+   "id": "D-010-R189",
+   "text": "The new test must FAIL on the currently merged defective script (blob ca3811cd).",
+   "source_ref": "source-020-amendment.md#dryrun-argument-drop",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T037",
+     "M0-T050"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [
+     "accept"
+    ],
+    "effective_date": "2026-08-08"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "RED-on-defective proof transcript.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "owner dry-run argument-drop remediation order 2026-08-08",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "amendment_sequence": 20
+  },
+  {
+   "id": "D-010-R190",
+   "text": "Correct the misleading DryRun completion wording if necessary so a dry run cannot claim that ACL hardening was actually applied.",
+   "source_ref": "source-020-amendment.md#dryrun-argument-drop",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T037",
+     "M0-T050"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [
+     "accept"
+    ],
+    "effective_date": "2026-08-08"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "owner dry-run argument-drop remediation order 2026-08-08",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "amendment_sequence": 20
+  },
+  {
+   "id": "D-010-R191",
+   "text": "SEQUENCING: run the affected tests and independent G3 and G5 review on this delta.",
+   "source_ref": "source-020-amendment.md#dryrun-argument-drop",
+   "classification": "sequencing",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T037",
+     "M0-T050"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [
+     "accept"
+    ],
+    "effective_date": "2026-08-08"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "owner dry-run argument-drop remediation order 2026-08-08",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "amendment_sequence": 20
+  },
+  {
+   "id": "D-010-R192",
+   "text": "Return a NEW reviewed Git blob identity; ca3811cd7e38a044bd0e01056e95b5028b6ce615 is demonstrated defective and MUST NOT be elevated for the real apply.",
+   "source_ref": "source-020-amendment.md#dryrun-argument-drop",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T037",
+     "M0-T050"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [
+     "accept"
+    ],
+    "effective_date": "2026-08-08"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "owner dry-run argument-drop remediation order 2026-08-08",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "amendment_sequence": 20
+  },
+  {
+   "id": "D-010-R193",
+   "text": "RETURN + SEQUENCING: return the exact new DRY-RUN command FIRST; the owner personally runs it and inspects that it prints the COMPLETE argument vectors before any real elevated apply.",
+   "source_ref": "source-020-amendment.md#dryrun-argument-drop",
+   "classification": "return",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T037",
+     "M0-T050"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [
+     "accept"
+    ],
+    "effective_date": "2026-08-08"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "owner dry-run argument-drop remediation order 2026-08-08",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "amendment_sequence": 20
+  },
+  {
+   "id": "D-010-R194",
+   "text": "PROHIBITION: do not broaden into other supervisor or ACL redesign work.",
+   "source_ref": "source-020-amendment.md#dryrun-argument-drop",
+   "classification": "prohibition",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T037",
+     "M0-T050"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [
+     "accept"
+    ],
+    "effective_date": "2026-08-08"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "owner dry-run argument-drop remediation order 2026-08-08",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "amendment_sequence": 20
+  },
+  {
+   "id": "D-010-R195",
+   "text": "STANDING RULE: the next dry-run must visibly show every path, /F, /A, /inheritance:r, /grant:r, and every ACL principal; ONLY when that output is seen may the actual ACL change be run.",
+   "source_ref": "source-020-amendment.md#dryrun-argument-drop",
+   "classification": "decision",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T037",
+     "M0-T050"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [
+     "accept"
+    ],
+    "effective_date": "2026-08-08"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "owner dry-run argument-drop remediation order 2026-08-08",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "amendment_sequence": 20
   }
  ]
 }

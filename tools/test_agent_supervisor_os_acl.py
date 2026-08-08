@@ -564,6 +564,268 @@ class HardenScriptTests(unittest.TestCase):
         self.assertNotIn("variable reference is not valid", combined,
                          "refusal must not be a parse error")
 
+    # ---- M0-T050 (D-010-R184..R195): dry-run argument-vector fidelity --------
+    #
+    # SECOND demonstrated pre-activation defect: the owner's ELEVATED -DryRun
+    # printed every command as the executable ONLY, with NO arguments. Root
+    # cause: Invoke-Step's parameter was named `$Args`, which under Windows
+    # PowerShell 5.1 collides with the AUTOMATIC $Args variable, so the bound
+    # argument vector was dropped from BOTH the `$shown` display AND the
+    # `& $Exe @Args` splat. The fix renames the parameter to `$CommandArgs`.
+    #
+    # We cannot run the whole script unelevated (the elevation refusal precedes
+    # DryRun handling - existing reviewed behavior), so the dry-run contract is
+    # proven in two layers: (A) DYNAMIC - extract Invoke-Step from the script via
+    # the WinPS 5.1 parser AST, run it with $DryRun=$true and full vectors, and
+    # assert the emitted [dry-run] line carries every element; (B) STATIC - parse
+    # the AST and assert the real apply-path call sites carry exactly those
+    # vectors, so the dynamic replay cannot drift from the script.
+
+    # The six apply-path (exe, args) vectors, with representative substitutions
+    # for $file / $dir / $UnelevatedUser. These MIRROR the script's apply calls
+    # and are pinned to the real call sites by test B1 below.
+    _CFG = r"C:\controller\config.toml"
+    _DIR = r"C:\controller"
+    _USER = r"DESKTOP-ABC\owner"
+    APPLY_VECTORS = [
+        ("takeown.exe", ["/F", _CFG, "/A"]),
+        ("takeown.exe", ["/F", _DIR, "/A"]),
+        ("icacls.exe", [_CFG, "/inheritance:r"]),
+        ("icacls.exe", [_CFG, "/grant:r",
+                        r"BUILTIN\Administrators:(F)",
+                        r"NT AUTHORITY\SYSTEM:(F)",
+                        r"DESKTOP-ABC\owner:(RX)"]),
+        ("icacls.exe", [_DIR, "/inheritance:r"]),
+        ("icacls.exe", [_DIR, "/grant:r",
+                        r"BUILTIN\Administrators:(OI)(CI)(F)",
+                        r"NT AUTHORITY\SYSTEM:(OI)(CI)(F)",
+                        r"DESKTOP-ABC\owner:(RX)"]),
+    ]
+
+    @staticmethod
+    def _ps_single_quote(value: str) -> str:
+        return "'" + value.replace("'", "''") + "'"
+
+    def _dryrun_line(self, script_path, exe, vector):
+        """Extract Invoke-Step from `script_path` via the WinPS 5.1 parser AST,
+        define it in a scope where $DryRun is $true, invoke it with (exe, vector),
+        and return the captured process. Because the dry-run path returns BEFORE
+        `& $Exe @CommandArgs`, no external command is ever executed."""
+        q = self._ps_single_quote
+        ps_arr = "@(" + ",".join(q(v) for v in vector) + ")"
+        cmd = (
+            "$t=$null;$e=$null;"
+            "$ast=[System.Management.Automation.Language.Parser]::ParseFile("
+            + q(str(script_path)) + ",[ref]$t,[ref]$e);"
+            "$fn=$ast.FindAll({param($n) $n -is "
+            "[System.Management.Automation.Language.FunctionDefinitionAst] "
+            "-and $n.Name -eq 'Invoke-Step'},$true)[0];"
+            "Invoke-Expression $fn.Extent.Text;"
+            "$DryRun=$true;"
+            "Invoke-Step " + q(exe) + " " + ps_arr + ";"
+        )
+        return subprocess.run(
+            ["powershell", "-NoProfile", "-NonInteractive", "-Command", cmd],
+            capture_output=True, text=True, timeout=60)
+
+    def _invoke_step_call_sites(self, script_path):
+        """Return [(line, [element_texts...]), ...] for every Invoke-Step call in
+        the script, extracted via the WinPS 5.1 parser AST (CommandAst)."""
+        q = self._ps_single_quote
+        cmd = (
+            "$t=$null;$e=$null;"
+            "$ast=[System.Management.Automation.Language.Parser]::ParseFile("
+            + q(str(script_path)) + ",[ref]$t,[ref]$e);"
+            "$calls=$ast.FindAll({param($n) $n -is "
+            "[System.Management.Automation.Language.CommandAst] "
+            "-and $n.GetCommandName() -eq 'Invoke-Step'},$true);"
+            "foreach($c in $calls){$parts=@();"
+            "foreach($el in $c.CommandElements){"
+            "$parts += ($el.Extent.Text -replace \"`r`n\",' ' -replace \"`n\",' ')};"
+            "Write-Output ($c.Extent.StartLineNumber.ToString() + '|' + "
+            "($parts -join '\\x1f'))}"
+        )
+        proc = subprocess.run(
+            ["powershell", "-NoProfile", "-NonInteractive", "-Command", cmd],
+            capture_output=True, text=True, timeout=60)
+        self.assertEqual(proc.returncode, 0, proc.stderr)
+        sites = []
+        for raw in proc.stdout.splitlines():
+            raw = raw.strip()
+            if not raw or "|" not in raw:
+                continue
+            line, rest = raw.split("|", 1)
+            elems = [e.strip() for e in rest.split("\\x1f")]
+            sites.append((int(line), elems))
+        return sites
+
+    @staticmethod
+    def _norm_ws(text: str) -> str:
+        return " ".join(text.split())
+
+    @unittest.skipUnless(
+        IS_WINDOWS and shutil.which("powershell"),
+        "requires Windows PowerShell 5.1 (powershell.exe) for the parser API")
+    def test_dryrun_emits_the_full_generic_vector(self) -> None:
+        """A1 (R188): a generic full vector survives into the [dry-run] line -
+        proving the argument vector is neither dropped nor truncated."""
+        vector = ["A", "/flag", "principal:(RX)", "with space:(F)"]
+        proc = self._dryrun_line(self.script, "tool.exe", vector)
+        out = proc.stdout
+        self.assertIn("[dry-run]", out, "no dry-run line; stderr=%r" % proc.stderr)
+        for element in vector:
+            self.assertIn(element, out,
+                          "element %r dropped from dry-run line:\n%s" % (element, out))
+
+    @unittest.skipUnless(
+        IS_WINDOWS and shutil.which("powershell"),
+        "requires Windows PowerShell 5.1 (powershell.exe) for the parser API")
+    def test_dryrun_replays_all_six_apply_path_vectors(self) -> None:
+        """A2 (R188/R195): replay each of the script's SIX apply-path vectors and
+        assert the dry-run line carries the FULL vector - every path, /F, /A,
+        /inheritance:r, /grant:r, and every ACL principal (owner's minimum)."""
+        for exe, vector in self.APPLY_VECTORS:
+            proc = self._dryrun_line(self.script, exe, vector)
+            out = proc.stdout
+            self.assertIn("[dry-run]", out,
+                          "no dry-run line for %s; stderr=%r" % (exe, proc.stderr))
+            for element in vector:
+                self.assertIn(
+                    element, out,
+                    "element %r dropped for %s vector:\n%s" % (element, exe, out))
+        # The union of the six vectors covers each owner-enumerated token at least
+        # once; assert them explicitly against the concatenated transcript.
+        all_out = "".join(
+            self._dryrun_line(self.script, exe, vector).stdout
+            for exe, vector in self.APPLY_VECTORS)
+        for token in ["/F", "/A", "/inheritance:r", "/grant:r",
+                      r"BUILTIN\Administrators:(F)", r"NT AUTHORITY\SYSTEM:(F)",
+                      r"BUILTIN\Administrators:(OI)(CI)(F)",
+                      r"NT AUTHORITY\SYSTEM:(OI)(CI)(F)",
+                      r"DESKTOP-ABC\owner:(RX)"]:
+            self.assertIn(token, all_out,
+                          "owner-enumerated token %r never appeared" % token)
+
+    @unittest.skipUnless(
+        IS_WINDOWS and shutil.which("powershell"),
+        "requires Windows PowerShell 5.1 (powershell.exe) for the parser API")
+    def test_apply_path_call_sites_carry_full_argument_arrays(self) -> None:
+        """B1 (R188): parse the script AST and assert the SIX apply-path
+        Invoke-Step call sites carry exactly the expected argument arrays, so the
+        dynamic replay in A2 cannot silently drift from the script's real calls."""
+        sites = self._invoke_step_call_sites(self.script)
+        # element[0] is 'Invoke-Step', [1] is the exe var, [2] is the arg array.
+        arrays = {self._norm_ws(elems[2]) for _line, elems in sites
+                  if len(elems) >= 3}
+        expected_apply = {
+            r'@("/F", $file, "/A")',
+            r'@("/F", $dir, "/A")',
+            r'@($file, "/inheritance:r")',
+            (r'@($file, "/grant:r", "BUILTIN\Administrators:(F)", '
+             r'"NT AUTHORITY\SYSTEM:(F)", "${UnelevatedUser}:(RX)")'),
+            r'@($dir, "/inheritance:r")',
+            (r'@($dir, "/grant:r", "BUILTIN\Administrators:(OI)(CI)(F)", '
+             r'"NT AUTHORITY\SYSTEM:(OI)(CI)(F)", "${UnelevatedUser}:(RX)")'),
+        }
+        missing = expected_apply - arrays
+        self.assertEqual(missing, set(),
+                         "apply-path call-site argument arrays missing/changed: "
+                         "%r\nfound: %r" % (missing, sorted(arrays)))
+        # The exe for takeown vectors is $Takeown; for icacls vectors it is $Icacls.
+        for _line, elems in sites:
+            if len(elems) >= 3 and "/F" in elems[2] and "/A" in elems[2]:
+                self.assertEqual(elems[1], "$Takeown", elems)
+
+    @unittest.skipUnless(
+        IS_WINDOWS and shutil.which("powershell"),
+        "requires Windows PowerShell 5.1 (powershell.exe) for the parser API")
+    def test_invoke_step_has_no_args_automatic_variable_collision(self) -> None:
+        """B2 (R186): the Invoke-Step function must NOT declare or use an $Args
+        parameter (the automatic-variable collision), and MUST use $CommandArgs."""
+        q = self._ps_single_quote
+        cmd = (
+            "$t=$null;$e=$null;"
+            "$ast=[System.Management.Automation.Language.Parser]::ParseFile("
+            + q(str(self.script)) + ",[ref]$t,[ref]$e);"
+            "$fn=$ast.FindAll({param($n) $n -is "
+            "[System.Management.Automation.Language.FunctionDefinitionAst] "
+            "-and $n.Name -eq 'Invoke-Step'},$true)[0];"
+            "Write-Output $fn.Extent.Text"
+        )
+        proc = subprocess.run(
+            ["powershell", "-NoProfile", "-NonInteractive", "-Command", cmd],
+            capture_output=True, text=True, timeout=60)
+        self.assertEqual(proc.returncode, 0, proc.stderr)
+        body = proc.stdout
+        self.assertIn("$CommandArgs", body,
+                      "Invoke-Step must use $CommandArgs:\n" + body)
+        # Strip PowerShell line comments so the CODE (not the explanatory comment
+        # that names the retired $Args defect) is what we assert on.
+        import re
+        code = "\n".join(re.sub(r"#.*$", "", ln) for ln in body.splitlines())
+        # PowerShell variable names are case-insensitive, so $Args and $args are
+        # the same automatic variable. Neither may appear in the executable code.
+        self.assertIsNone(
+            re.search(r"(?i)\$args\b", code),
+            "Invoke-Step still references the automatic $Args variable:\n" + body)
+
+    @unittest.skipUnless(
+        IS_WINDOWS and shutil.which("powershell") and shutil.which("git"),
+        "requires Windows PowerShell 5.1 and git to reconstruct the defective blob")
+    def test_dryrun_line_is_red_on_the_defective_merged_content(self) -> None:
+        """C (R189): reconstruct the CURRENTLY MERGED defective content (blob
+        ca3811cd, git show 1e649a8:...) OUTSIDE the repo, apply the SAME layer-A
+        harness, and prove the dry-run line contains ONLY the exe (arguments
+        dropped) - i.e. the fidelity assertions above turn RED on the pre-fix
+        code. This is the RED-on-defective proof that the new tests are load-bearing."""
+        show = subprocess.run(
+            ["git", "show",
+             "1e649a8:tools/agent_supervisor/harden_controller_config.ps1"],
+            capture_output=True, text=True, timeout=60, cwd=str(REPO))
+        if show.returncode != 0:
+            self.skipTest("defective blob 1e649a8 unreachable: " + show.stderr)
+        tmp = pathlib.Path(tempfile.mkdtemp())
+        self.addCleanup(shutil.rmtree, tmp, ignore_errors=True)
+        defective = tmp / "defective_harden.ps1"
+        defective.write_text(show.stdout, encoding="utf-8")
+        exe, vector = self.APPLY_VECTORS[3]  # the icacls /grant:r file vector
+        proc = self._dryrun_line(defective, exe, vector)
+        out = proc.stdout
+        self.assertIn("[dry-run]", out,
+                      "no dry-run line from defective content; stderr=%r" % proc.stderr)
+        # RED proof: on the defective content EVERY argument is dropped.
+        for element in vector:
+            self.assertNotIn(
+                element, out,
+                "defective content unexpectedly RETAINED %r:\n%s" % (element, out))
+        # And the fixed script RETAINS them under the identical harness (GREEN).
+        fixed = self._dryrun_line(self.script, exe, vector).stdout
+        for element in vector:
+            self.assertIn(element, fixed,
+                          "fixed script dropped %r:\n%s" % (element, fixed))
+
+    def test_dryrun_completion_wording_cannot_claim_application(self) -> None:
+        """D (R190): the dry-run completion path must state NO changes were made
+        and must not print the unconditional 'apply complete.' text, while the
+        real apply path keeps its 'apply complete.' wording unchanged."""
+        import re
+        text = self.script.read_text(encoding="utf-8")
+        # The completion wording is now branched on $DryRun.
+        self.assertRegex(
+            text,
+            r"if \(\$DryRun\)[\s\S]*?dry run complete\. NO changes were made"
+            r"[\s\S]*?\} else \{[\s\S]*?apply complete\.",
+            "the completion wording must branch: dry-run says NO changes were "
+            "made; the else/apply path keeps 'apply complete.'")
+        # Isolate the dry-run branch and prove it cannot claim application.
+        m = re.search(r"if \(\$DryRun\) \{([\s\S]*?)\} else \{", text)
+        self.assertIsNotNone(m, "dry-run completion branch not found")
+        dry_branch = m.group(1)
+        self.assertIn("dry run complete", dry_branch)
+        self.assertIn("NO changes were made", dry_branch)
+        self.assertNotIn("apply complete", dry_branch,
+                         "the dry-run branch must never claim application")
+
 
 if __name__ == "__main__":  # pragma: no cover
     unittest.main()

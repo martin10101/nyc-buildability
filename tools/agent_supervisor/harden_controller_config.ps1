@@ -88,14 +88,19 @@ function Test-IsElevated {
 }
 
 function Invoke-Step {
-    param([string]$Exe, [string[]]$Args)
-    $shown = "$Exe " + ($Args -join " ")
+    # NOTE: the parameter MUST NOT be named $Args. Under Windows PowerShell 5.1
+    # $Args is an AUTOMATIC variable (the unbound-argument array); a param named
+    # $Args does not reliably receive the bound value, so the argument vector was
+    # dropped from BOTH $shown and the `& $Exe @Args` splat, printing the exe with
+    # NO arguments (M0-T050 defect). $CommandArgs cannot collide with any automatic.
+    param([string]$Exe, [string[]]$CommandArgs)
+    $shown = "$Exe " + ($CommandArgs -join " ")
     if ($DryRun) {
         Write-Host "[dry-run] $shown"
         return
     }
     Write-Host "[run] $shown"
-    & $Exe @Args
+    & $Exe @CommandArgs
     if ($LASTEXITCODE -ne 0) {
         throw "command failed (exit $LASTEXITCODE): $shown"
     }
@@ -170,10 +175,17 @@ Invoke-Step $Icacls @($file)
 Invoke-Step $Icacls @($dir)
 
 Write-Host ""
-Write-Host ("apply complete. Verify from an UNELEVATED shell that the OS-ACL verdict is " +
-    "PROTECTED (doctor --config, or os_acl.evaluate_controller_config_acl). NOTE: this " +
-    "hardens the config file and its IMMEDIATE parent; if the parent is a SHARED " +
-    "directory, place the controller config in a DEDICATED directory so removing " +
-    "inheritance does not affect unrelated files, and consider hardening the " +
-    "grandparent's DeleteChild for the parent to block renaming the parent itself.")
+if ($DryRun) {
+    Write-Host ("dry run complete. NO changes were made: the icacls/takeown commands " +
+        "above were only PRINTED, not executed. Re-run WITHOUT -DryRun from an elevated " +
+        "shell to apply, then verify from an UNELEVATED shell that the OS-ACL verdict is " +
+        "PROTECTED (doctor --config, or os_acl.evaluate_controller_config_acl).")
+} else {
+    Write-Host ("apply complete. Verify from an UNELEVATED shell that the OS-ACL verdict is " +
+        "PROTECTED (doctor --config, or os_acl.evaluate_controller_config_acl). NOTE: this " +
+        "hardens the config file and its IMMEDIATE parent; if the parent is a SHARED " +
+        "directory, place the controller config in a DEDICATED directory so removing " +
+        "inheritance does not affect unrelated files, and consider hardening the " +
+        "grandparent's DeleteChild for the parent to block renaming the parent itself.")
+}
 exit 0

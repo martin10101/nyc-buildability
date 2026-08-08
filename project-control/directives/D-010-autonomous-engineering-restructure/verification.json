@@ -1326,7 +1326,141 @@
    "reviewed_sha": "e942b28e6f10525b179c6af43134358e73a7ff31",
    "verified_at": "2026-08-08T08:31:48+00:00",
    "note": "Source-019 parser-defect unit. All 11 applicable rows PASS on the DCV's reproduced primary evidence (script blob ca3811cd, defective 0f01d649 barred). R181 PASS is conduct-to-date: the owner-facing return (new blob + elevated command) is an orchestrator act issued immediately after the Tier A merge - acceptance does NOT discharge it. Full report: project-control/reports/M0-T049-dcv-final.md."
+  },
+  {
+   "task_id": "M0-T050",
+   "directive_id": "D-010",
+   "producer": "backend-engineer",
+   "verifier": "directive-compliance-verifier",
+   "applicable_requirement_ids": [
+    "D-010-R184",
+    "D-010-R185",
+    "D-010-R186",
+    "D-010-R187",
+    "D-010-R188",
+    "D-010-R189",
+    "D-010-R190",
+    "D-010-R191",
+    "D-010-R192",
+    "D-010-R193",
+    "D-010-R194",
+    "D-010-R195"
+   ],
+   "requirements": [
+    {
+     "id": "D-010-R184",
+     "state": "PASS",
+     "evidence": [
+      "DCV re-measured config SHA 29eb765e..da1cb + LastWrite 2026-08-04 (pre-task) + ACL still Authenticated Users:(M) (hardening not run, nothing activated); delta touches no config path",
+      "project-control/reports/M0-T050-dcv-final.md"
+     ],
+     "note": "Hold respected."
+    },
+    {
+     "id": "D-010-R185",
+     "state": "PASS",
+     "evidence": [
+      "DCV extracted Invoke-Step from both blobs: defective drops all args, fixed emits full vector; root cause documented in-script (lines 90-95)",
+      "project-control/reports/M0-T050-dcv-final.md"
+     ],
+     "note": "One bounded defect fix."
+    },
+    {
+     "id": "D-010-R186",
+     "state": "PASS",
+     "evidence": [
+      "diff: param $CommandArgs + $shown join + & $Exe @CommandArgs; DCV proved display AND real-process splat forward the vector; test B2 (no $args) PASS",
+      "project-control/reports/M0-T050-dcv-final.md"
+     ],
+     "note": "Rename exactly as owner specified."
+    },
+    {
+     "id": "D-010-R187",
+     "state": "PASS",
+     "evidence": [
+      "14 Invoke-Step call sites AST-enumerated (owner text said 12; producer+G3+G5+DCV independently count 14; requirement wording 'EVERY invocation' is count-agnostic); all retain full positional vectors",
+      "project-control/reports/M0-T050-dcv-final.md"
+     ],
+     "note": "Every invocation proven."
+    },
+    {
+     "id": "D-010-R188",
+     "state": "PASS",
+     "evidence": [
+      "tests A1/A2/B1 executed (not skipped) on real WinPS 5.1; DCV replayed all six apply vectors with every path, /F, /A, /inheritance:r, /grant:r, and every principal",
+      "project-control/reports/M0-T050-dcv-final.md"
+     ],
+     "note": "Owner's enumerated minimum machine-asserted."
+    },
+    {
+     "id": "D-010-R189",
+     "state": "PASS",
+     "evidence": [
+      "test C RED-on-defective (git show 1e649a8 blob ca3811cd drops every argument) / GREEN on fix; DCV reproduced independently",
+      "project-control/reports/M0-T050-dcv-final.md"
+     ],
+     "note": "Fails on the merged defective script."
+    },
+    {
+     "id": "D-010-R190",
+     "state": "PASS",
+     "evidence": [
+      "script tail branches on $DryRun ('dry run complete. NO changes were made...' vs unchanged apply text); test D PASS",
+      "project-control/reports/M0-T050-dcv-final.md"
+     ],
+     "note": "Dry run can no longer claim application."
+    },
+    {
+     "id": "D-010-R191",
+     "state": "PASS",
+     "evidence": [
+      "os_acl 38 passed; full suite 1387/2 (DCV's own runs); G3 + G5 PASS records, independent reviewers, recorded before any elevated execution",
+      "project-control/reports/M0-T050-dcv-final.md"
+     ],
+     "note": "Tests + both independent reviews complete."
+    },
+    {
+     "id": "D-010-R192",
+     "state": "PASS",
+     "evidence": [
+      "new blob 9625514e79a34c901258975d4964529a9c02378e at frozen head; ca3811cd and 0f01d649 barred (unmerged/superseded)",
+      "project-control/reports/M0-T050-dcv-final.md"
+     ],
+     "note": "PASS conduct-to-date; post-merge remainder: orchestrator confirms 9625514 is the merged/elevated blob (verified at merge)."
+    },
+    {
+     "id": "D-010-R193",
+     "state": "PASS",
+     "evidence": [
+      "exact dry-run command prepared in both gate reports; no premature owner return, no premature elevated apply (config unprotected at verification)",
+      "project-control/reports/M0-T050-dcv-final.md"
+     ],
+     "note": "PASS conduct-to-date per M0-T049 R181 precedent: the owner-facing return (dry-run command FIRST) is issued immediately post-merge by the orchestrator; the real apply waits for the owner's personal full-vector inspection. Acceptance does NOT discharge this."
+    },
+    {
+     "id": "D-010-R194",
+     "state": "PASS",
+     "evidence": [
+      "material delta = exactly 3 files (2 script hunks + 6 tests + report); elevation refusal, braces, tool binding unchanged; rollback wording bounded out and flagged",
+      "project-control/reports/M0-T050-dcv-final.md"
+     ],
+     "note": "No broadening."
+    },
+    {
+     "id": "D-010-R195",
+     "state": "PASS",
+     "evidence": [
+      "test A2 machine-asserts every owner-enumerated token; DCV reproduced visible full vectors; real ACL change sequenced behind the owner's dry-run inspection",
+      "project-control/reports/M0-T050-dcv-final.md"
+     ],
+     "note": "Standing rule encoded and honored."
+    }
+   ],
+   "reviewed_manifest_sha256": "c5e8a1e2f2e1aa372ec390b02d86b084e484d1804631276e0a49c98e268c0e68",
+   "reviewed_sha": "7f0ac94e4e3711d96e86cccfe76caa0398d966fb",
+   "verified_at": "2026-08-08T09:45:55+00:00",
+   "note": "Source-020 dry-run argument-drop unit (second demonstrated script defect). All 12 rows PASS on the DCV's reproduced primary evidence (script blob 9625514e; ca3811cd + 0f01d649 barred). R192/R193 are conduct-to-date: post-merge the orchestrator confirms the merged blob and returns the exact dry-run command FIRST; the real elevated apply waits for the owner's personal full-vector inspection (R195). G5-report truncation at 99fe467 adjudicated as an honestly-disclosed preservation artifact (restored at 7f0ac94, material identity byte-stable, verdicts unaffected). Full report: project-control/reports/M0-T050-dcv-final.md."
   }
  ],
- "updated_at": "2026-08-08T08:31:48+00:00"
+ "updated_at": "2026-08-08T09:45:55+00:00"
 }
