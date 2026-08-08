@@ -1,93 +1,103 @@
 {
- "task_id": "M0-T048",
- "title": "Close G5-C2: cryptographically bind forwarded prompt content to the operator-named approval digest (owner am.14)",
- "task_type": "backend",
- "milestone_id": "M0",
- "objective": "Close the G5-C2 journal-write two-field-forgery residual per owner am.14 (D-010 R134-R143) with exactly ONE narrowly bounded security fix: an attacker who modifies BOTH the parked prompt bytes AND prompt_bytes_digest while leaving the operator-named approval digest unchanged MUST NOT be able to cause altered prompt content to be forwarded; bind the forwarded content cryptographically to information independently covered by the operator-named approval_digest rather than relying solely on mutable journal fields (R136). Preserve the S13.5 timestamp/clock invariant; smallest correct design - e.g. generate the non-authoritative FORWARDED AT stamp only at actual forward time, or persist/recompute the structured approved instruction at approve/resume (R137). Mandatory 7-property adversarial test (R138) + the four also-prove properties (R139). NO supervisor redesign, additional features, new infrastructure, or broader cleanup (R140).",
- "business_reason": "Owner am.14 resolves the C2 branch of the supervised-auto activation sequence as CLOSE-BEFORE-ACTIVATION (R134); activation (am.12 R131/R132) resumes only after this task; M2-T015/T016 remain held (R143).",
- "inputs": [
-  "project-control/directives/D-010-autonomous-engineering-restructure/source-014-amendment.md (verbatim owner C2 decision; R134-R143)",
-  "project-control/reports/M0-T046-g5-security.md (C2/M-1 finding: operator-named digest covers only the S13.5 instruction envelope, cli.py:1678/loop.py:1712; byte anchor prompt_bytes_digest is journal-resident; two-field forgery forwards)",
-  "project-control/reports/M0-T046-dcv-final.md (R124 adjudication: FORWARDED-AT ephemeral stamp at codex_reviewer.py:684 makes parked bytes non-reproducible - the property this fix must remove or work around)",
-  "tools/agent_supervisor/codex_reviewer.py (build_forwarded_prompt ~:660-684)",
-  "tools/agent_supervisor/loop.py (park ~:1764-1776; approve_pending_prompt ~:626-681; approval_digest_for ~:550-569,1712; resume check ~:2042)",
-  "tools/agent_supervisor/cli.py (cmd_resume_pending_prompt ~:1678-1750)",
-  "tools/test_agent_supervisor_park_approve_binding.py + tools/test_agent_supervisor_pending_prompt.py (existing binding/approval test surface)"
- ],
- "outputs": [
-  "Deterministic cryptographic binding of forwarded content to information covered by the operator-named approval_digest (design per R137: e.g. FORWARDED-AT injected only at actual forward time, or structured instruction persisted/recomputed at approve/resume)",
-  "R138 7-property adversarial test + R139 four also-prove tests",
-  "project-control/reports/M0-T048-producer-report.md"
- ],
- "dependencies": [
-  "M0-T046"
- ],
- "allowed_paths": [
-  "tools/agent_supervisor/",
-  "tools/test_agent_supervisor_*.py",
-  "project-control/reports/M0-T048-producer-report.md",
-  "project-control/tasks/M0-T048.json"
- ],
- "forbidden_paths": [
-  ".claude/",
-  "apps/",
-  "services/",
-  ".github/",
-  "project-control/directives/",
-  "package.json",
-  "package-lock.json",
-  "requirements*.txt"
- ],
- "acceptance_scenarios": [
-  "AS-1 (primary adversarial, R136/R138 - the verbatim owner test): park an authentic approval; mutate BOTH prompt and prompt_bytes_digest consistently in the journal; leave the operator-named approval digest unchanged; attempt approval/resume; it FAILS CLOSED; provider calls == 0; the refusal is durably/auditably recorded (sealed hash-chained audit event). Executable and non-vacuous (must fail on the pre-fix code).",
-  "AS-2 (R139a): the ordinary happy path still forwards exactly once, and the forwarded bytes verify against the binding derived from the operator-named approval digest.",
-  "AS-3 (R137/R139b): clock-only differences do NOT invalidate the operator's approval - the S13.5 'change only the clock and the approval does not change' invariant is preserved by an executable test.",
-  "AS-4 (R139c): post-approval tampering of the journal still refuses fail-closed at resume.",
-  "AS-5 (R139d/R140 prohibition): no SHADOW/supervised/limited-auto authority change; no forwarding-guard, activation-flag, or tier change; diff confined to allowed_paths; no redesign/features/infrastructure/cleanup beyond the single bounded fix.",
-  "AS-6 (negative/degenerate): a record missing the new binding material (old-shape park) refuses fail-closed rather than falling back to journal-resident-only verification; malformed/absent binding inputs refuse with distinct honest reason codes."
- ],
- "required_gates": [
-  "G0",
-  "G2",
-  "G3",
-  "G4",
-  "G5"
- ],
- "producer_agent": "backend-engineer",
- "reviewer_agents": [
-  "code-reviewer",
-  "security-reviewer",
-  "qa-engineer",
-  "control-plane-verifier",
-  "directive-compliance-verifier"
- ],
- "status": "backlog",
- "progress_percent": 0,
- "risks": [
-  "The binding must be deterministic: any residual non-reproducible content in the parked bytes (beyond the clock) breaks the recompute/verify path - the producer must inventory build_forwarded_prompt inputs and either derive them from approval-covered material or move them to forward time.",
-  "Backward shape: pre-fix parked records lack the new binding material; they must refuse (AS-6), never silently fall back to the journal-resident anchor.",
-  "Keep the M0-T046 anchor checks intact or strictly strengthened - no weakening of tamper-before/after coverage while re-anchoring."
- ],
- "blockers": [],
- "created_at": "2026-08-08T04:29:33.186954+00:00",
- "updated_at": "2026-08-08T04:29:33.283127+00:00",
- "directive_refs": [
-  {
-   "directive_id": "D-010",
-   "requirement_ids": [
-    "D-010-R134",
-    "D-010-R135",
-    "D-010-R136",
-    "D-010-R137",
-    "D-010-R138",
-    "D-010-R139",
-    "D-010-R140",
-    "D-010-R141",
-    "D-010-R142",
-    "D-010-R143"
-   ]
-  }
- ],
- "directive_regime_version": "1.0",
- "directive_regime_entered_at": "2026-08-08T04:29:33.186954+00:00"
+  "task_id": "M0-T048",
+  "title": "Close G5-C2: cryptographically bind forwarded prompt content to the operator-named approval digest (owner am.14)",
+  "task_type": "backend",
+  "milestone_id": "M0",
+  "objective": "Close the G5-C2 journal-write two-field-forgery residual per owner am.14 (D-010 R134-R143) with exactly ONE narrowly bounded security fix: an attacker who modifies BOTH the parked prompt bytes AND prompt_bytes_digest while leaving the operator-named approval digest unchanged MUST NOT be able to cause altered prompt content to be forwarded; bind the forwarded content cryptographically to information independently covered by the operator-named approval_digest rather than relying solely on mutable journal fields (R136). Preserve the S13.5 timestamp/clock invariant; smallest correct design - e.g. generate the non-authoritative FORWARDED AT stamp only at actual forward time, or persist/recompute the structured approved instruction at approve/resume (R137). Mandatory 7-property adversarial test (R138) + the four also-prove properties (R139). NO supervisor redesign, additional features, new infrastructure, or broader cleanup (R140).",
+  "business_reason": "Owner am.14 resolves the C2 branch of the supervised-auto activation sequence as CLOSE-BEFORE-ACTIVATION (R134); activation (am.12 R131/R132) resumes only after this task; M2-T015/T016 remain held (R143).",
+  "inputs": [
+    "project-control/directives/D-010-autonomous-engineering-restructure/source-014-amendment.md (verbatim owner C2 decision; R134-R143)",
+    "project-control/reports/M0-T046-g5-security.md (C2/M-1 finding: operator-named digest covers only the S13.5 instruction envelope, cli.py:1678/loop.py:1712; byte anchor prompt_bytes_digest is journal-resident; two-field forgery forwards)",
+    "project-control/reports/M0-T046-dcv-final.md (R124 adjudication: FORWARDED-AT ephemeral stamp at codex_reviewer.py:684 makes parked bytes non-reproducible - the property this fix must remove or work around)",
+    "tools/agent_supervisor/codex_reviewer.py (build_forwarded_prompt ~:660-684)",
+    "tools/agent_supervisor/loop.py (park ~:1764-1776; approve_pending_prompt ~:626-681; approval_digest_for ~:550-569,1712; resume check ~:2042)",
+    "tools/agent_supervisor/cli.py (cmd_resume_pending_prompt ~:1678-1750)",
+    "tools/test_agent_supervisor_park_approve_binding.py + tools/test_agent_supervisor_pending_prompt.py (existing binding/approval test surface)"
+  ],
+  "outputs": [
+    "Deterministic cryptographic binding of forwarded content to information covered by the operator-named approval_digest (design per R137: e.g. FORWARDED-AT injected only at actual forward time, or structured instruction persisted/recomputed at approve/resume)",
+    "R138 7-property adversarial test + R139 four also-prove tests",
+    "project-control/reports/M0-T048-producer-report.md"
+  ],
+  "dependencies": [
+    "M0-T046"
+  ],
+  "allowed_paths": [
+    "tools/agent_supervisor/",
+    "tools/test_agent_supervisor_*.py",
+    "project-control/reports/M0-T048-producer-report.md",
+    "project-control/tasks/M0-T048.json"
+  ],
+  "forbidden_paths": [
+    ".claude/",
+    "apps/",
+    "services/",
+    ".github/",
+    "project-control/directives/",
+    "package.json",
+    "package-lock.json",
+    "requirements*.txt"
+  ],
+  "acceptance_scenarios": [
+    "AS-1 (primary adversarial, R136/R138 - the verbatim owner test): park an authentic approval; mutate BOTH prompt and prompt_bytes_digest consistently in the journal; leave the operator-named approval digest unchanged; attempt approval/resume; it FAILS CLOSED; provider calls == 0; the refusal is durably/auditably recorded (sealed hash-chained audit event). Executable and non-vacuous (must fail on the pre-fix code).",
+    "AS-2 (R139a): the ordinary happy path still forwards exactly once, and the forwarded bytes verify against the binding derived from the operator-named approval digest.",
+    "AS-3 (R137/R139b): clock-only differences do NOT invalidate the operator's approval - the S13.5 'change only the clock and the approval does not change' invariant is preserved by an executable test.",
+    "AS-4 (R139c): post-approval tampering of the journal still refuses fail-closed at resume.",
+    "AS-5 (R139d/R140 prohibition): no SHADOW/supervised/limited-auto authority change; no forwarding-guard, activation-flag, or tier change; diff confined to allowed_paths; no redesign/features/infrastructure/cleanup beyond the single bounded fix.",
+    "AS-6 (negative/degenerate): a record missing the new binding material (old-shape park) refuses fail-closed rather than falling back to journal-resident-only verification; malformed/absent binding inputs refuse with distinct honest reason codes."
+  ],
+  "required_gates": [
+    "G0",
+    "G2",
+    "G3",
+    "G4",
+    "G5"
+  ],
+  "producer_agent": "backend-engineer",
+  "reviewer_agents": [
+    "code-reviewer",
+    "security-reviewer",
+    "qa-engineer",
+    "control-plane-verifier",
+    "directive-compliance-verifier"
+  ],
+  "status": "in_progress",
+  "progress_percent": 20,
+  "risks": [
+    "The binding must be deterministic: any residual non-reproducible content in the parked bytes (beyond the clock) breaks the recompute/verify path - the producer must inventory build_forwarded_prompt inputs and either derive them from approval-covered material or move them to forward time.",
+    "Backward shape: pre-fix parked records lack the new binding material; they must refuse (AS-6), never silently fall back to the journal-resident anchor.",
+    "Keep the M0-T046 anchor checks intact or strictly strengthened - no weakening of tamper-before/after coverage while re-anchoring."
+  ],
+  "blockers": [],
+  "created_at": "2026-08-08T04:29:33.186954+00:00",
+  "updated_at": "2026-08-08T04:31:01.961697+00:00",
+  "directive_refs": [
+    {
+      "directive_id": "D-010",
+      "requirement_ids": [
+        "D-010-R134",
+        "D-010-R135",
+        "D-010-R136",
+        "D-010-R137",
+        "D-010-R138",
+        "D-010-R139",
+        "D-010-R140",
+        "D-010-R141",
+        "D-010-R142",
+        "D-010-R143"
+      ]
+    }
+  ],
+  "directive_regime_version": "1.0",
+  "directive_regime_entered_at": "2026-08-08T04:29:33.186954+00:00",
+  "worktree": "C:/Users/MLFLL/Downloads/nyc-zoning/orch",
+  "progress_log": [
+    {
+      "at": "2026-08-08T04:31:01.961697+00:00",
+      "agent": "backend-engineer",
+      "percent": 20,
+      "status": "in_progress",
+      "message": "Claimed after G0 PASS; am.14 R134-R143 bound; scenarios AS-1..AS-6 recorded in packet (AS-1 = owner verbatim 7-step adversarial test, non-vacuity required); producer dispatch next"
+    }
+  ]
 }
