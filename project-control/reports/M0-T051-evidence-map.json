@@ -1,0 +1,87 @@
+{
+ "schema": "evidence_map/v1",
+ "task_id": "M0-T051",
+ "producer": "backend-engineer",
+ "code_head": "bbdfb76c72222c835416ce9c31a86fff73d4c688",
+ "code_branch": "task/M0-T051-explicit-ace-strip",
+ "requirements": {
+  "D-010-R196": {
+   "summary": "HOLD honored: nothing activated; M2-T015/T016 untouched; config untouched/unmoved; NO manual ACL repair (the fix goes only through the reviewed script path; the live NOT_PROTECTED posture is left as-is for the owner's next elevated apply).",
+   "evidence": [
+    "task commit bbdfb76 diff scope (script+tests+report only)"
+   ]
+  },
+  "D-010-R197": {
+   "summary": "Unelevated doctor captured FIRST and committed as primary evidence: controller_config_acl NOT_PROTECTED / protected:false with reasons 'Authenticated Users holds M on the file' + 'unelevated open-for-write SUCCEEDED'.",
+   "evidence": [
+    "project-control/reports/M0-T051-doctor-notprotected-evidence.json"
+   ]
+  },
+  "D-010-R198": {
+   "summary": "ONE narrowly bounded fix contracted and delivered: /reset inserted before /inheritance:r on file and parent (one extra icacls flag per target inside the existing path).",
+   "evidence": [
+    "harden_controller_config.ps1 apply path (8-step sequence)",
+    "producer report mechanism justification"
+   ]
+  },
+  "D-010-R199": {
+   "summary": "Required property implemented BY CONSTRUCTION: /reset removes all explicit ACEs, /inheritance:r empties the DACL, three /grant:r fill it deterministically - end state exactly Administrators F / SYSTEM F / user RX on file and parent regardless of pre-existing explicit ACEs; never merely re-grants the named principals.",
+   "evidence": [
+    "script comments + sequence",
+    "test_adversarial_explicit_ace_is_stripped_file_and_parent"
+   ]
+  },
+  "D-010-R200": {
+   "summary": "Owner's 5-step adversarial regression implemented on a disposable poisoned fixture (explicit Authenticated Users:(M) on the file): REAL icacls sequence executed; poison GONE; DACL == exactly the three intended ACEs; evaluate_acl_entries == PROTECTED at ACE level; honest boundary documented (takeown ownership-transfer sub-property needs the owner's elevated run).",
+   "evidence": [
+    "HardenExplicitAceStripTests (5 tests, all RAN not skipped)",
+    "producer report fixture design + proof-boundary section"
+   ]
+  },
+  "D-010-R201": {
+   "summary": "Ordinary read access preserved: fixture asserts unelevated user retains read post-sequence.",
+   "evidence": [
+    "test_new_sequence_preserves_unelevated_user_read"
+   ]
+  },
+  "D-010-R202": {
+   "summary": "Contents byte-for-byte preserved: sha256 identical before/after the sequence (icacls/takeown never write content).",
+   "evidence": [
+    "test_new_sequence_preserves_file_contents_byte_for_byte"
+   ]
+  },
+  "D-010-R203": {
+   "summary": "Dedicated parent protections preserved: parent end state exactly Admins/SYSTEM (OI)(CI)(F) + user RX; dir /reset non-recursive.",
+   "evidence": [
+    "adversarial test parent assertions",
+    "script ordering comment"
+   ]
+  },
+  "D-010-R204": {
+   "summary": "Idempotent: sequence run twice on the fixture yields identical end-state DACL.",
+   "evidence": [
+    "test_new_sequence_is_idempotent"
+   ]
+  },
+  "D-010-R205": {
+   "summary": "RED-on-current-cleared-blob proven: blob 9625514e's sequence (git show 33b2e24) leaves the poisoned explicit ACE EFFECTIVE (NOT_PROTECTED, all three property assertions fail); the new sequence removes it.",
+   "evidence": [
+    "test_red_on_current_cleared_blob_leaves_poison_effective",
+    "producer report RED transcript"
+   ]
+  },
+  "D-010-R206": {
+   "summary": "Sequencing honored by conduct: G3/G5 dispatched post-submit at the frozen identity; DCV at accept; the NEW blob (candidate b6ee6589d93b4cd95283ce6d45c22f7010aba56a) is returned to the owner only after review+merge, before any further elevated apply.",
+   "evidence": [
+    "gate records (populated post-submit)",
+    "owner return (post-merge)"
+   ]
+  },
+  "D-010-R207": {
+   "summary": "No broadening: delta = script apply-path insertion + comments, test updates/additions, report; no ACL architecture change, no supervisor code, rollback untouched.",
+   "evidence": [
+    "git diff --stat bbdfb76 (3 files)"
+   ]
+  }
+ }
+}

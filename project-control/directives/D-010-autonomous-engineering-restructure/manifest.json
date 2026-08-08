@@ -1,7 +1,7 @@
 {
  "schema": "directive_manifest/v1",
  "directive_id": "D-010",
- "version": 20,
+ "version": 21,
  "slug": "autonomous-engineering-restructure",
  "title": "Autonomous Engineering Restructure and NYC Buildability Pilot Acceleration (Autonomous Engineering V2)",
  "status": "active",
@@ -169,6 +169,14 @@
    "amends": "source-019-amendment.md",
    "recorded_at": "2026-08-08T08:45:01+00:00",
    "content_digest_sha256": "162bcfdfcad9867642b440a9528260ea5b88fa1c76ea08c1bac3faebfe85aecd"
+  },
+  {
+   "file": "source-021-amendment.md",
+   "kind": "amendment",
+   "sequence": 21,
+   "amends": "source-020-amendment.md",
+   "recorded_at": "2026-08-08T17:14:37+00:00",
+   "content_digest_sha256": "6792de3564a9a6131f41bb26a124d65f07b620dcd7710c3efb740363b67c5824"
   }
  ],
  "amendments": [
@@ -190,7 +198,8 @@
   "source-017-amendment.md",
   "source-018-amendment.md",
   "source-019-amendment.md",
-  "source-020-amendment.md"
+  "source-020-amendment.md",
+  "source-021-amendment.md"
  ],
  "supersedes": [],
  "superseded_by": null,
@@ -229,8 +238,8 @@
  "verification_file": "verification.json",
  "final_reviewed_sha": null,
  "final_reviewed_manifest_sha256": null,
- "requirements_content_digest_sha256": "fa50eb3d93395129a5a9aba54dbd35c2fc1a4789f950958b76d22d963f3babf6",
- "requirements_id_digest_sha256": "9db16417b8e960ac150fe226d73775915d2a9f97f04e6462c5e3809adf3dd2ee",
+ "requirements_content_digest_sha256": "f6434715f086875be6fc092c71faa80f637af1d21beb7b893d9f71ad4409d093",
+ "requirements_id_digest_sha256": "be1b9e7e8e005e9e09986eb6c89730596efba8c771b15763ad176914b941044f",
  "enforcement_pointers": {
   "tasks": [
    "M0-T037",
@@ -460,7 +469,19 @@
   "D-010-R192",
   "D-010-R193",
   "D-010-R194",
-  "D-010-R195"
+  "D-010-R195",
+  "D-010-R196",
+  "D-010-R197",
+  "D-010-R198",
+  "D-010-R199",
+  "D-010-R200",
+  "D-010-R201",
+  "D-010-R202",
+  "D-010-R203",
+  "D-010-R204",
+  "D-010-R205",
+  "D-010-R206",
+  "D-010-R207"
  ],
  "created_at": "2026-08-07T01:09:55+00:00",
  "updated_at": "2026-08-08T04:29:07+00:00",
@@ -584,6 +605,11 @@
    "at": "2026-08-08T08:45:01+00:00",
    "actor": "orchestrator",
    "action": "amendment source-020 recorded (owner dry-run argument-drop defect 2026-08-08: $Args automatic-variable collision; bounded fix + full-vector dry-run regression test + G3/G5 + new blob + owner dry-run-first rule; R184-R195 added, bound to M0-T037/M0-T050); digests restamped"
+  },
+  {
+   "at": "2026-08-08T17:14:37+00:00",
+   "actor": "orchestrator",
+   "action": "amendment source-021 recorded (owner explicit-ACE-survival defect 2026-08-08: apply must strip unrelated explicit ACEs; adversarial poisoned-fixture regression + PROTECTED probe + RED vs 9625514e + G3/G5/DCV + new blob before next elevated apply; R196-R207 added, bound to M0-T037/M0-T051); digests restamped"
   }
  ]
 }
