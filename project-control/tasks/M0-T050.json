@@ -1,57 +1,58 @@
 {
- "task_id": "M0-T050",
- "title": "Fix Invoke-Step $Args automatic-variable collision (dry-run argument drop) + full-vector dry-run regression test (owner source-020)",
- "task_type": "engineering",
- "milestone_id": "M0",
- "objective": "Rename Invoke-Step's argument parameter to a non-reserved name (CommandArgs) and use it in shown-string + splat; prove every invocation retains the complete argument vector; add a WinPS 5.1 regression test asserting the FULL dry-run command vectors (paths, /F, /A, /inheritance:r, /grant:r, every principal) that FAILS on the merged defective blob ca3811cd; correct the misleading unconditional 'apply complete' wording for dry runs; no other change.",
- "business_reason": "Owner's personal elevated -DryRun demonstrated all six commands print with NO arguments (automatic $args collision) - second pre-activation defect caught before any privileged ACL change; blocks the hardening leg until fixed, G3+G5 reviewed, merged, and the owner has inspected a full-vector dry-run.",
- "inputs": [],
- "outputs": [],
- "dependencies": [],
- "allowed_paths": [
-  "tools/agent_supervisor/harden_controller_config.ps1",
-  "tools/test_agent_supervisor_*.py",
-  "project-control/reports/M0-T050-producer-report.md",
-  "project-control/tasks/M0-T050.json"
- ],
- "forbidden_paths": [],
- "acceptance_scenarios": [],
- "required_gates": [
-  "G0",
-  "G2",
-  "G3",
-  "G5"
- ],
- "producer_agent": null,
- "reviewer_agents": [
-  "code-reviewer",
-  "security-reviewer"
- ],
- "status": "backlog",
- "progress_percent": 0,
- "risks": [],
- "blockers": [],
- "created_at": "2026-08-08T08:45:18.498582+00:00",
- "updated_at": "2026-08-08T08:45:18.589866+00:00",
- "directive_refs": [
-  {
-   "directive_id": "D-010",
-   "requirement_ids": [
-    "D-010-R184",
-    "D-010-R185",
-    "D-010-R186",
-    "D-010-R187",
-    "D-010-R188",
-    "D-010-R189",
-    "D-010-R190",
-    "D-010-R191",
-    "D-010-R192",
-    "D-010-R193",
-    "D-010-R194",
-    "D-010-R195"
-   ]
-  }
- ],
- "directive_regime_version": "1.0",
- "directive_regime_entered_at": "2026-08-08T08:45:18.498582+00:00"
+  "task_id": "M0-T050",
+  "title": "Fix Invoke-Step $Args automatic-variable collision (dry-run argument drop) + full-vector dry-run regression test (owner source-020)",
+  "task_type": "engineering",
+  "milestone_id": "M0",
+  "objective": "Rename Invoke-Step's argument parameter to a non-reserved name (CommandArgs) and use it in shown-string + splat; prove every invocation retains the complete argument vector; add a WinPS 5.1 regression test asserting the FULL dry-run command vectors (paths, /F, /A, /inheritance:r, /grant:r, every principal) that FAILS on the merged defective blob ca3811cd; correct the misleading unconditional 'apply complete' wording for dry runs; no other change.",
+  "business_reason": "Owner's personal elevated -DryRun demonstrated all six commands print with NO arguments (automatic $args collision) - second pre-activation defect caught before any privileged ACL change; blocks the hardening leg until fixed, G3+G5 reviewed, merged, and the owner has inspected a full-vector dry-run.",
+  "inputs": [],
+  "outputs": [],
+  "dependencies": [],
+  "allowed_paths": [
+    "tools/agent_supervisor/harden_controller_config.ps1",
+    "tools/test_agent_supervisor_*.py",
+    "project-control/reports/M0-T050-producer-report.md",
+    "project-control/tasks/M0-T050.json"
+  ],
+  "forbidden_paths": [],
+  "acceptance_scenarios": [],
+  "required_gates": [
+    "G0",
+    "G2",
+    "G3",
+    "G5"
+  ],
+  "producer_agent": "backend-engineer",
+  "reviewer_agents": [
+    "code-reviewer",
+    "security-reviewer"
+  ],
+  "status": "claimed",
+  "progress_percent": 10,
+  "risks": [],
+  "blockers": [],
+  "created_at": "2026-08-08T08:45:18.498582+00:00",
+  "updated_at": "2026-08-08T08:45:40.981129+00:00",
+  "directive_refs": [
+    {
+      "directive_id": "D-010",
+      "requirement_ids": [
+        "D-010-R184",
+        "D-010-R185",
+        "D-010-R186",
+        "D-010-R187",
+        "D-010-R188",
+        "D-010-R189",
+        "D-010-R190",
+        "D-010-R191",
+        "D-010-R192",
+        "D-010-R193",
+        "D-010-R194",
+        "D-010-R195"
+      ]
+    }
+  ],
+  "directive_regime_version": "1.0",
+  "directive_regime_entered_at": "2026-08-08T08:45:18.498582+00:00",
+  "worktree": "C:/Users/MLFLL/Downloads/nyc-zoning/orch"
 }
