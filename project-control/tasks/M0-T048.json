@@ -61,8 +61,8 @@
     "control-plane-verifier",
     "directive-compliance-verifier"
   ],
-  "status": "awaiting_gate",
-  "progress_percent": 95,
+  "status": "accepted",
+  "progress_percent": 100,
   "risks": [
     "The binding must be deterministic: any residual non-reproducible content in the parked bytes (beyond the clock) breaks the recompute/verify path - the producer must inventory build_forwarded_prompt inputs and either derive them from approval-covered material or move them to forward time.",
     "Backward shape: pre-fix parked records lack the new binding material; they must refuse (AS-6), never silently fall back to the journal-resident anchor.",
@@ -70,7 +70,7 @@
   ],
   "blockers": [],
   "created_at": "2026-08-08T04:29:33.186954+00:00",
-  "updated_at": "2026-08-08T06:28:43.282758+00:00",
+  "updated_at": "2026-08-08T06:47:56.028566+00:00",
   "directive_refs": [
     {
       "directive_id": "D-010",
@@ -95,7 +95,9 @@
         "D-010-R151",
         "D-010-R152",
         "D-010-R153",
-        "D-010-R154"
+        "D-010-R154",
+        "D-010-R155",
+        "D-010-R156"
       ]
     }
   ],
@@ -131,5 +133,32 @@
       "status": "rework",
       "message": "Owner decision 2026-08-08 (D-010 source-015, R144-R154): close G3 MAJOR-1 (cross-process resume-window approved_digest trust anchor) with smallest bounded fix BEFORE acceptance; rerun G3/G4/G5 + DCV at new frozen identity; accept+merge only after all reruns PASS (R144 hold). DCV-first session-7 branch superseded by owner adjudication."
     }
-  ]
+  ],
+  "accepted_by": "orchestrator",
+  "accepted_at": "2026-08-08T06:47:56.028566+00:00",
+  "post_accept_verification": {
+    "state": "pending",
+    "registered_at": "2026-08-08T06:47:56.028566+00:00",
+    "registered_by": "orchestrator",
+    "first_opportunity": "checkpoint",
+    "deferred_requirements": [
+      {
+        "requirement_id": "D-010-R152",
+        "act_class": "accept",
+        "classified_by": "directive-compliance-verifier",
+        "classified_at": "2026-08-08T06:47:32+00:00",
+        "classified_at_identity": "84cf81477792f65859e6bdb577403b6bca882d36961197b8d94d739ed2b93d91",
+        "justification": "Accept + Tier A merge ARE the acceptance-ordering act itself; the row is classification 'sequencing' bound solely to the accept lifecycle event, and its completion legitimately follows this verification (precedent: M0-T046 R132 / D-004-R389). Deferral granted at the reviewed content identity; discharge is checked at the first post-accept opportunity.",
+        "row_classification": "sequencing",
+        "row_lifecycle_events": [
+          "accept"
+        ],
+        "verification_state": "pending",
+        "directive_id": "D-010",
+        "task_id": "M0-T048",
+        "deferred_at_identity": "84cf81477792f65859e6bdb577403b6bca882d36961197b8d94d739ed2b93d91",
+        "deferred_at_sha": "c31043d4c30c37767894fda6ffd5bffecd86626e"
+      }
+    ]
+  }
 }
