@@ -138,7 +138,7 @@
     },
     "extraction_run_id": {
       "$ref": "common.schema.json#/$defs/non_empty_string",
-      "description": "OPTIONAL identifier of the extraction run (one sandboxed processing job over one document); all facts produced by the same run share it, so a whole extraction can be traced, reviewed, or superseded together (analogous to the retrieval-event segment of source_fact.observation_id). A re-extraction of the same document mints a NEW run id and NEW evidence records; it never mutates existing ones."
+      "description": "OPTIONAL identifier of the extraction run (one isolated processing job over one document - a job that runs only inside the verified, fail-closed parser isolation boundary of docs/SURVEY_DOCUMENT_INGESTION_ARCHITECTURE.md section 5, kernel-enforced and proven by a capability probe; a plain child process is never that boundary, and when the boundary cannot be verified parsing is disabled with a typed isolation_unavailable outcome, so no run - and therefore no run id - can ever come from unisolated parsing); all facts produced by the same run share it, so a whole extraction can be traced, reviewed, or superseded together (analogous to the retrieval-event segment of source_fact.observation_id). A re-extraction of the same document mints a NEW run id and NEW evidence records; it never mutates existing ones."
     },
     "extracted_at": {
       "$ref": "common.schema.json#/$defs/date_time",

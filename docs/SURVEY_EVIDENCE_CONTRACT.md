@@ -66,7 +66,7 @@ Three permanent rules shape every field:
 | Evidence record | `evidence_id` | Unique platform-wide; how downstream consumers cite the fact. |
 | Original document | `document_digest` | Content identity of the exact original uploaded bytes; shared by all facts of one document; survives any storage migration. |
 | Ingestion record | `document_ref` (optional) | Platform id of the document record; optional while B-001 blocks production storage ids. |
-| Extraction run | `extraction_run_id` (optional) | One sandboxed processing job; shared by all facts it produced (analogous to the retrieval-event segment of `source_fact.observation_id`). |
+| Extraction run | `extraction_run_id` (optional) | One isolated processing job over one document, run only inside the verified, fail-closed parser isolation boundary (`docs/SURVEY_DOCUMENT_INGESTION_ARCHITECTURE.md` §5) — never a plain, merely-separated child process; when the boundary cannot be verified, parsing is disabled (typed `isolation_unavailable`) and no run id is ever minted. Shared by all facts the run produced (analogous to the retrieval-event segment of `source_fact.observation_id`). |
 
 Re-extraction of the same document mints a **new** run id and **new** evidence records; existing
 records are never mutated. Corrections append to `correction_history`; `original_value` is
