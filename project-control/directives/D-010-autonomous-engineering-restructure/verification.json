@@ -1460,7 +1460,141 @@
    "reviewed_sha": "7f0ac94e4e3711d96e86cccfe76caa0398d966fb",
    "verified_at": "2026-08-08T09:45:55+00:00",
    "note": "Source-020 dry-run argument-drop unit (second demonstrated script defect). All 12 rows PASS on the DCV's reproduced primary evidence (script blob 9625514e; ca3811cd + 0f01d649 barred). R192/R193 are conduct-to-date: post-merge the orchestrator confirms the merged blob and returns the exact dry-run command FIRST; the real elevated apply waits for the owner's personal full-vector inspection (R195). G5-report truncation at 99fe467 adjudicated as an honestly-disclosed preservation artifact (restored at 7f0ac94, material identity byte-stable, verdicts unaffected). Full report: project-control/reports/M0-T050-dcv-final.md."
+  },
+  {
+   "task_id": "M0-T051",
+   "directive_id": "D-010",
+   "producer": "backend-engineer",
+   "verifier": "directive-compliance-verifier",
+   "applicable_requirement_ids": [
+    "D-010-R196",
+    "D-010-R197",
+    "D-010-R198",
+    "D-010-R199",
+    "D-010-R200",
+    "D-010-R201",
+    "D-010-R202",
+    "D-010-R203",
+    "D-010-R204",
+    "D-010-R205",
+    "D-010-R206",
+    "D-010-R207"
+   ],
+   "requirements": [
+    {
+     "id": "D-010-R196",
+     "state": "PASS",
+     "evidence": [
+      "live config SHA 29eb765e.. + poison ACE still present (no out-of-band repair) + SHADOW-ONLY + M2-T015/T016 backlog, DCV re-measured",
+      "project-control/reports/M0-T051-dcv-final.md"
+     ],
+     "note": "Hold respected."
+    },
+    {
+     "id": "D-010-R197",
+     "state": "PASS",
+     "evidence": [
+      "project-control/reports/M0-T051-doctor-notprotected-evidence.json; DCV re-ran the unelevated doctor with identical NOT_PROTECTED result",
+      "project-control/reports/M0-T051-dcv-final.md"
+     ],
+     "note": "Primary evidence captured first."
+    },
+    {
+     "id": "D-010-R198",
+     "state": "PASS",
+     "evidence": [
+      "script diff: /reset inserted before /inheritance:r on file and parent, nothing else in code",
+      "project-control/reports/M0-T051-dcv-final.md"
+     ],
+     "note": "One bounded fix."
+    },
+    {
+     "id": "D-010-R199",
+     "state": "PASS",
+     "evidence": [
+      "test_adversarial_explicit_ace_is_stripped_file_and_parent (real icacls, poison gone, exactly 3 ACEs, evaluate_acl_entries PROTECTED both targets)",
+      "project-control/reports/M0-T051-dcv-final.md"
+     ],
+     "note": "Property satisfied at DACL/ACE level; ownership sub-property closes at the owner's elevated run (R206)."
+    },
+    {
+     "id": "D-010-R200",
+     "state": "PASS",
+     "evidence": [
+      "HardenExplicitAceStripTests 5/5 RAN (producer + G3 + G5 + DCV independently)",
+      "project-control/reports/M0-T051-dcv-final.md"
+     ],
+     "note": "Owner steps 1-5 executed against the real behavior."
+    },
+    {
+     "id": "D-010-R201",
+     "state": "PASS",
+     "evidence": [
+      "test_new_sequence_preserves_unelevated_user_read",
+      "project-control/reports/M0-T051-dcv-final.md"
+     ],
+     "note": "Read preserved."
+    },
+    {
+     "id": "D-010-R202",
+     "state": "PASS",
+     "evidence": [
+      "test_new_sequence_preserves_file_contents_byte_for_byte (sha256 equal)",
+      "project-control/reports/M0-T051-dcv-final.md"
+     ],
+     "note": "Contents byte-for-byte."
+    },
+    {
+     "id": "D-010-R203",
+     "state": "PASS",
+     "evidence": [
+      "parent end-state exactly three ACEs + PROTECTED; dir /reset non-recursive",
+      "project-control/reports/M0-T051-dcv-final.md"
+     ],
+     "note": "Parent protections preserved."
+    },
+    {
+     "id": "D-010-R204",
+     "state": "PASS",
+     "evidence": [
+      "test_new_sequence_is_idempotent (identical DACL across two runs)",
+      "project-control/reports/M0-T051-dcv-final.md"
+     ],
+     "note": "Idempotent."
+    },
+    {
+     "id": "D-010-R205",
+     "state": "PASS",
+     "evidence": [
+      "test_red_on_current_cleared_blob_leaves_poison_effective (RED on 9625514e live, GREEN on fix; bidirectional differential)",
+      "project-control/reports/M0-T051-dcv-final.md"
+     ],
+     "note": "RED-on-cleared-blob proven."
+    },
+    {
+     "id": "D-010-R206",
+     "state": "PASS",
+     "evidence": [
+      "gates M0-T051-G3/G5 PASS at content identity 835f996e; DCV this row; new blob b6ee6589 cleared by both reviewers",
+      "project-control/reports/M0-T051-dcv-final.md"
+     ],
+     "note": "PASS conduct-to-date per R181/R193 precedent: post-merge the orchestrator confirms the merged blob b6ee6589 and returns the dry-run-first command; the owner's elevated apply + unelevated doctor PROTECTED-or-STOP closes the loop. Acceptance does NOT discharge this."
+    },
+    {
+     "id": "D-010-R207",
+     "state": "PASS",
+     "evidence": [
+      "3-file delta; rollback untouched; no ACL architecture or supervisor change",
+      "project-control/reports/M0-T051-dcv-final.md"
+     ],
+     "note": "No broadening."
+    }
+   ],
+   "reviewed_manifest_sha256": "835f996e4cb826c81ec5f02eb40a696f1aaa411109a6fa036d3f943ebbb7a81f",
+   "reviewed_sha": "ebd75def98a1afe75879485cb7ba85f278ebd187",
+   "verified_at": "2026-08-08T18:13:15+00:00",
+   "note": "Source-021 explicit-ACE-survival unit (third demonstrated script defect). All 12 rows PASS on the DCV's reproduced primary evidence (script blob b6ee6589; 9625514e/ca3811cd/0f01d649 barred). R206 conduct-to-date: post-merge blob confirmation + dry-run-first owner return + elevated apply + unelevated doctor PROTECTED-or-STOP remain. Full report: project-control/reports/M0-T051-dcv-final.md."
   }
  ],
- "updated_at": "2026-08-08T09:45:55+00:00"
+ "updated_at": "2026-08-08T18:13:15+00:00"
 }
