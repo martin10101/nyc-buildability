@@ -2,9 +2,9 @@
  "schema": "directive_requirements/v1",
  "directive_id": "D-010",
  "version": 22,
- "requirement_count": 213,
+ "requirement_count": 235,
  "producer": "orchestrator",
- "updated_at": "2026-08-08T18:31:21+00:00",
+ "updated_at": "2026-08-08T18:53:09+00:00",
  "requirements": [
   {
    "id": "D-010-R001",
@@ -7541,6 +7541,804 @@
     "tasks": []
    },
    "amendment_sequence": 22
+  },
+  {
+   "id": "D-010-R214",
+   "text": "Ground the fresh session from HANDOFF.md (docs/SESSION_HANDOFF.md) and the live repository (current main, project-control state, D-010 records, accepted tasks, gates, most recent merged PRs); durable repository evidence is authoritative over anything stale in the owner message or the handoff.",
+   "source_ref": "source-023-amendment.md#session-grounding",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T037",
+     "M2-T015",
+     "M2-T016"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [
+     "dispatch"
+    ],
+    "effective_date": "2026-08-08"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "owner activation decision 2026-08-08",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "amendment_sequence": 23
+  },
+  {
+   "id": "D-010-R215",
+   "text": "Verify PR #187 ('PROTECTED live proof + source-022 capture') completed its normal required-check/merge lifecycle and that the live UNELEVATED controller-config proof landed durably on main before acting on the activation decision; never bypass a required check.",
+   "source_ref": "source-023-amendment.md#pr187-verification",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T037",
+     "M2-T015",
+     "M2-T016"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [
+     "dispatch"
+    ],
+    "effective_date": "2026-08-08"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "owner activation decision 2026-08-08",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "amendment_sequence": 23
+  },
+  {
+   "id": "D-010-R216",
+   "text": "Do not begin another broad audit and do not redesign the supervisor.",
+   "source_ref": "source-023-amendment.md#pr187-verification",
+   "classification": "prohibition",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T037",
+     "M2-T015",
+     "M2-T016"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [
+     "dispatch"
+    ],
+    "effective_date": "2026-08-08"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "owner activation decision 2026-08-08",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "amendment_sequence": 23
+  },
+  {
+   "id": "D-010-R217",
+   "text": "Do not alter the ACLs and do not reopen the prior hardening work unless genuinely new evidence demonstrates a defect.",
+   "source_ref": "source-023-amendment.md#pr187-verification",
+   "classification": "prohibition",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T037",
+     "M2-T015",
+     "M2-T016"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [
+     "dispatch",
+     "accept"
+    ],
+    "effective_date": "2026-08-08"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "owner activation decision 2026-08-08",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "amendment_sequence": 23
+  },
+  {
+   "id": "D-010-R218",
+   "text": "controller.default_mode = \"shadow\" in the immutable config is the intentional safe fallback/default and MUST remain unchanged; do NOT edit config.toml to change that value. The authorization is for the ACTIVE supervisor runtime to come OUT OF SHADOW MODE and operate in the already-implemented SUPERVISED mode (no further shadow rehearsal).",
+   "source_ref": "source-023-amendment.md#activation-decision",
+   "classification": "prohibition",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T037",
+     "M2-T015",
+     "M2-T016"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [
+     "dispatch",
+     "accept"
+    ],
+    "effective_date": "2026-08-08"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "owner activation decision 2026-08-08",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "amendment_sequence": 23
+  },
+  {
+   "id": "D-010-R219",
+   "text": "OWNER ACTIVATION DECISION (typed 2026-08-08, fresh session): 'ACTIVATE SUPERVISED-AUTO — I have read and accept the N-4/N-5/MINOR-2 residuals; proceed per R595/R131.' Treat the line as owner-issued in this session without asking for a repeat. This is the R212 return; it discharges the owner-decision precondition of R131/R133/R143/R153/R167/R196/R213 once the durable prerequisites verify (R220).",
+   "source_ref": "source-023-amendment.md#activation-decision",
+   "classification": "decision",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T037",
+     "M2-T015",
+     "M2-T016"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [
+     "dispatch"
+    ],
+    "effective_date": "2026-08-08"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "owner activation decision 2026-08-08",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "amendment_sequence": 23
+  },
+  {
+   "id": "D-010-R220",
+   "text": "Before acting on the activation decision, verify that PR #187 and the required activation evidence are durably present on main; if a prerequisite is actually missing or failing, STOP and report exactly what failed; do not silently weaken any gate.",
+   "source_ref": "source-023-amendment.md#activation-decision",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T037",
+     "M2-T015",
+     "M2-T016"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [
+     "dispatch"
+    ],
+    "effective_date": "2026-08-08"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "owner activation decision 2026-08-08",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "amendment_sequence": 23
+  },
+  {
+   "id": "D-010-R221",
+   "text": "If all prerequisites are present, record the activation decision durably through the existing D-010/directive-compliance mechanism.",
+   "source_ref": "source-023-amendment.md#activation-decision",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T037",
+     "M2-T015",
+     "M2-T016"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [
+     "dispatch"
+    ],
+    "effective_date": "2026-08-08"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "owner activation decision 2026-08-08",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "amendment_sequence": 23
+  },
+  {
+   "id": "D-010-R222",
+   "text": "Use the EXISTING implemented supervisor runtime mechanism to make SUPERVISED-AUTO effective: read the current implementation and use its canonical runtime/start mechanism, determining the exact command/runtime invocation from the repository rather than guessing; do not invent a new activation mechanism or redesign the supervisor.",
+   "source_ref": "source-023-amendment.md#runtime-transition",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T037",
+     "M2-T015",
+     "M2-T016"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [
+     "dispatch"
+    ],
+    "effective_date": "2026-08-08"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "owner activation decision 2026-08-08",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "amendment_sequence": 23
+  },
+  {
+   "id": "D-010-R223",
+   "text": "Activation is NOT complete merely because an activation record was written: require proof that the ACTIVE runtime is no longer operating in shadow mode - immutable controller.default_mode stays 'shadow' while the actual active execution posture for the product task is active runtime mode = supervised with limited-auto = OFF.",
+   "source_ref": "source-023-amendment.md#runtime-transition",
+   "classification": "evidence",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T037",
+     "M2-T015",
+     "M2-T016"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [
+     "dispatch",
+     "accept"
+    ],
+    "effective_date": "2026-08-08"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "owner activation decision 2026-08-08",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "amendment_sequence": 23
+  },
+  {
+   "id": "D-010-R224",
+   "text": "Before starting the product task, verify and report through the normal evidence path that: (1) the owner activation record is valid; (2) the controller ACL is PROTECTED; (3) the immutable config SHA-256 remains 29eb765eabce05b81dcbea33fd4d28800479596e9b23fd4d4fa334f6ee7da1cb; (4) the immutable default_mode remains shadow as the safe fallback; (5) the ACTIVE supervisor runtime mode is supervised; (6) limited-auto remains disabled; (7) M2-T015 is released for supervised-auto execution.",
+   "source_ref": "source-023-amendment.md#pre-product-verification",
+   "classification": "evidence",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T037",
+     "M2-T015",
+     "M2-T016"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [
+     "dispatch"
+    ],
+    "effective_date": "2026-08-08"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "owner activation decision 2026-08-08",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "amendment_sequence": 23
+  },
+  {
+   "id": "D-010-R225",
+   "text": "If the active runtime still says shadow, do NOT call activation complete and do NOT run the product task; resolve the existing runtime transition correctly first.",
+   "source_ref": "source-023-amendment.md#pre-product-verification",
+   "classification": "prohibition",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T037",
+     "M2-T015",
+     "M2-T016"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [
+     "dispatch"
+    ],
+    "effective_date": "2026-08-08"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "owner activation decision 2026-08-08",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "amendment_sequence": 23
+  },
+  {
+   "id": "D-010-R226",
+   "text": "Once the ACTIVE supervisor is genuinely running in SUPERVISED mode, stop working on supervisor architecture and immediately return to the actual NYC Buildability product.",
+   "source_ref": "source-023-amendment.md#product-proofs",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T037",
+     "M2-T015",
+     "M2-T016"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [
+     "dispatch"
+    ],
+    "effective_date": "2026-08-08"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "owner activation decision 2026-08-08",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "amendment_sequence": 23
+  },
+  {
+   "id": "D-010-R227",
+   "text": "Execute M2-T015 as the FIRST REAL supervised-auto product proof - not a simulation and not a shadow rehearsal: the worker actually performs the authorized bounded product work, with the existing supervisor, reviews, gates, approval/park/resume protections, fail-closed mechanisms, and normal PR lifecycle operating as designed.",
+   "source_ref": "source-023-amendment.md#product-proofs",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T037",
+     "M2-T015"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [
+     "dispatch",
+     "accept"
+    ],
+    "effective_date": "2026-08-08"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "owner activation decision 2026-08-08",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "amendment_sequence": 23
+  },
+  {
+   "id": "D-010-R228",
+   "text": "Be self-sufficient across investigation, implementation, tests, reviews, required PR work, and the normal lifecycle without requiring the owner to copy instructions between agents; stop for the owner only when an existing owner-only decision, genuine safety boundary, external credential, unavailable service, or other truly non-delegable dependency requires it.",
+   "source_ref": "source-023-amendment.md#product-proofs",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T037",
+     "M2-T015",
+     "M2-T016"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [
+     "dispatch",
+     "accept"
+    ],
+    "effective_date": "2026-08-08"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "owner activation decision 2026-08-08",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "amendment_sequence": 23
+  },
+  {
+   "id": "D-010-R229",
+   "text": "Do not broaden M2-T015 into unrelated work.",
+   "source_ref": "source-023-amendment.md#product-proofs",
+   "classification": "prohibition",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T037",
+     "M2-T015"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [
+     "dispatch",
+     "accept"
+    ],
+    "effective_date": "2026-08-08"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "owner activation decision 2026-08-08",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "amendment_sequence": 23
+  },
+  {
+   "id": "D-010-R230",
+   "text": "After M2-T015 completes its full required supervised-auto lifecycle successfully, proceed to M2-T016 as supervised-auto product proof #2, sequenced after M2-T015 rather than unnecessarily running both simultaneously.",
+   "source_ref": "source-023-amendment.md#product-proofs",
+   "classification": "sequencing",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T037",
+     "M2-T016"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [
+     "dispatch"
+    ],
+    "effective_date": "2026-08-08"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "owner activation decision 2026-08-08",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "amendment_sequence": 23
+  },
+  {
+   "id": "D-010-R231",
+   "text": "LIMITED-AUTO IS NOT AUTHORIZED. Successful completion of M2-T015 and M2-T016 does not itself authorize limited-auto; after both product proofs are complete, return the evidence package and WAIT for a separate future owner decision concerning any broader autonomy promotion.",
+   "source_ref": "source-023-amendment.md#limited-auto-hold",
+   "classification": "prohibition",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T037",
+     "M2-T015",
+     "M2-T016"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [
+     "dispatch",
+     "accept"
+    ],
+    "effective_date": "2026-08-08"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "owner activation decision 2026-08-08",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "amendment_sequence": 23
+  },
+  {
+   "id": "D-010-R232",
+   "text": "Preserve all existing product scope and data: the product remains the five-borough NYC Development Feasibility & Zoning Intelligence Platform (address/BBL to official NYC data, deterministic zoning/legal calculations, development scenarios, provenance/explanations, reports, later visualization/3D); the architect pilot and actual user-facing product are the execution priority; do not fall back into months of supervisor self-improvement.",
+   "source_ref": "source-023-amendment.md#product-scope",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T037",
+     "M2-T015",
+     "M2-T016"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [
+     "dispatch",
+     "accept"
+    ],
+    "effective_date": "2026-08-08"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "owner activation decision 2026-08-08",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "amendment_sequence": 23
+  },
+  {
+   "id": "D-010-R233",
+   "text": "M0-T047 (nanoid advisory) is age-eligible on/after 2026-08-10T10:39:22Z: do not bypass its package-age rule and do not let it distract from the activation and M2-T015 work unless it becomes an actual blocking dependency.",
+   "source_ref": "source-023-amendment.md#m0-t047-age-gate",
+   "classification": "hold",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T047"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [
+     "dispatch",
+     "accept"
+    ],
+    "effective_date": "2026-08-08"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "owner activation decision 2026-08-08",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "amendment_sequence": 23
+  },
+  {
+   "id": "D-010-R234",
+   "text": "Owner working rules remain: one main orchestrator; bounded internal agents/reviewers allowed; avoid destructive git operations such as reset/clean or unsafe worktree manipulation; no deletion of important zoning/rules/five-borough data; no broad autonomy redesign; preserve required gates; do not claim something passed unless evidence proves it.",
+   "source_ref": "source-023-amendment.md#working-rules",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T037",
+     "M2-T015",
+     "M2-T016"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [
+     "dispatch",
+     "accept"
+    ],
+    "effective_date": "2026-08-08"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "owner activation decision 2026-08-08",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "amendment_sequence": 23
+  },
+  {
+   "id": "D-010-R235",
+   "text": "No long historical recap; proceed autonomously and report back when there is a meaningful result, a genuine blocker requiring the owner, or the M2-T015 supervised product proof has reached its required owner-visible checkpoint.",
+   "source_ref": "source-023-amendment.md#reporting",
+   "classification": "return",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T037",
+     "M2-T015",
+     "M2-T016"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [
+     "dispatch",
+     "accept"
+    ],
+    "effective_date": "2026-08-08"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "owner activation decision 2026-08-08",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "amendment_sequence": 23
   }
  ]
 }
