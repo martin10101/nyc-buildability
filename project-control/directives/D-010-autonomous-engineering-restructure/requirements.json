@@ -1,10 +1,10 @@
 {
  "schema": "directive_requirements/v1",
  "directive_id": "D-010",
- "version": 15,
- "requirement_count": 154,
+ "version": 16,
+ "requirement_count": 156,
  "producer": "orchestrator",
- "updated_at": "2026-08-08T05:38:36+00:00",
+ "updated_at": "2026-08-08T06:16:37+00:00",
  "requirements": [
   {
    "id": "D-010-R001",
@@ -5475,6 +5475,78 @@
     "tasks": []
    },
    "amendment_sequence": 15
+  },
+  {
+   "id": "D-010-R155",
+   "text": "The orchestrator must name the two skipped supervisor-suite tests and the pytest-reported skip reason for each, as part of the M0-T048 gate evidence.",
+   "source_ref": "source-016-amendment.md#skipped-test-evidence",
+   "classification": "evidence",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T037",
+     "M0-T048"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [
+     "accept"
+    ],
+    "effective_date": "2026-08-08"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "pytest -rs output naming both skipped tests + reasons, captured into a committed project-control/reports/ artifact at the frozen identity.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "owner skip-evidence instruction 2026-08-08",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "amendment_sequence": 16
+  },
+  {
+   "id": "D-010-R156",
+   "text": "Adjudicate each skip reason: if stale (a test that could run here but is skipped by accident), contract a small follow-up task to unskip it; if legitimately environment-conditional, record that and leave it skipped (normal and safe).",
+   "source_ref": "source-016-amendment.md#skipped-test-evidence",
+   "classification": "decision",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T037",
+     "M0-T048"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [
+     "accept"
+    ],
+    "effective_date": "2026-08-08"
+   },
+   "dependencies": [
+    "D-010-R155"
+   ],
+   "required_harness": "",
+   "required_evidence": "Written adjudication per skipped test in the same evidence artifact; a new ledger task id if and only if a skip is stale.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "owner skip-evidence instruction 2026-08-08",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "amendment_sequence": 16
   }
  ]
 }
