@@ -1,0 +1,81 @@
+{
+ "schema": "evidence_map/v1",
+ "task_id": "M0-T048",
+ "producer": "backend-engineer",
+ "code_head": "ec0f55d28da90d57467321ad65c922fdde09f043",
+ "code_branch": "task/M0-T048-c2-close",
+ "requirements": {
+  "D-010-R134": {
+   "summary": "Owner decision executed: the G5-C2 residual is NOT accepted - this task closes it before supervised-auto activation; no activation occurred.",
+   "evidence": [
+    "project-control/directives/D-010-autonomous-engineering-restructure/source-014-amendment.md (verbatim decision)",
+    "task branch commit ec0f55d (the closure implementation)",
+    "SHADOW-ONLY posture unchanged (PostureUnchanged test + grep-proof in producer report)"
+   ]
+  },
+  "D-010-R135": {
+   "summary": "Exactly ONE narrowly bounded security fix: 8 files (3 modules + 4 test files + producer report), all inside allowed_paths; a single design (deterministic approval-covered body + forward-time clock stamp + reconstruction verification).",
+   "evidence": [
+    "task branch commit ec0f55d diff surface (+829/-153)",
+    "project-control/reports/M0-T048-producer-report.md (design section)"
+   ]
+  },
+  "D-010-R136": {
+   "summary": "Security property implemented: build_forwarded_prompt now emits a deterministic timestamp-free body that is a pure function of exactly the five fields covered by the operator-named approval_digest (canonicalised identically); verify_covered_instruction reconstructs the body at approve/resume and refuses fail-closed unless approval_digest(instruction) equals the operator-named digest; approved_digest is bound to the OPERATOR-NAMED digest itself. A two-field forgery (prompt + prompt_bytes_digest mutated, operator digest unchanged) can no longer forward altered content: the binding derives from approval-covered material, not mutable journal fields.",
+   "evidence": [
+    "tools/agent_supervisor/codex_reviewer.py:663-702 (deterministic body); loop.py:627-692 (verify_covered_instruction); loop.py:694-735 (approve binding to operator-named digest); cli.py:1695-1724 (resume verification)",
+    "tools/test_agent_supervisor_c2_binding.py TwoFieldForgery tests (approve-time and post-approval variants)",
+    "project-control/reports/M0-T048-producer-report.md (end-to-end binding chain park->approve->resume->forward)"
+   ]
+  },
+  "D-010-R137": {
+   "summary": "S13.5 clock invariant preserved (clock-only differences never invalidate the approval - executable ClockInvariant test); smallest correct design = hybrid of BOTH owner-named candidates (FORWARDED-AT generated only at actual forward time AND the structured approved instruction persisted/recomputed at approve/resume). Determinism inventory: the one non-covered non-clock input (packet_reference, deliberately excluded from approval_digest per ApprovalDigestStabilityTests) was removed from the forwarded body - the gap was closed, not worked around.",
+   "evidence": [
+    "tools/agent_supervisor/codex_reviewer.py:705-715 (stamp_forwarded_at at forward time); loop.py:1882-1887, 2124-2149 (forward-time stamping sites)",
+    "tools/test_agent_supervisor_c2_binding.py ClockInvariant tests",
+    "producer report determinism-inventory section"
+   ]
+  },
+  "D-010-R138": {
+   "summary": "Mandatory 7-property adversarial test implemented exactly: authentic park; BOTH prompt and prompt_bytes_digest mutated consistently; operator-named digest unchanged; approval/resume attempted; FAILS CLOSED; provider_calls == 0; refusal durably recorded as a sealed hash-chained audit event (chain still verifies). Non-vacuity proven: test_non_vacuity_pre_fix_checks_pass shows the forged record satisfies BOTH pre-fix acceptance predicates (the pre-fix code would have forwarded the injection).",
+   "evidence": [
+    "tools/test_agent_supervisor_c2_binding.py TwoFieldForgery::test_two_field_forgery_at_approve_* and ::*_after_approval_is_refused_no_provider",
+    "tools/test_agent_supervisor_c2_binding.py test_non_vacuity_pre_fix_checks_pass"
+   ]
+  },
+  "D-010-R139": {
+   "summary": "All four also-prove properties covered by executable evidence: (a) happy path forwards exactly once with bytes verifying against the approval-covered binding; (b) clock-only differences do not invalidate the approval; (c) post-approval tampering refuses at resume; (d) no SHADOW/supervised/limited-auto authority change (PostureUnchanged test + grep-proof: no forwarding-guard/activation/tier surface in the diff).",
+   "evidence": [
+    "tools/test_agent_supervisor_c2_binding.py HappyPathBinding/HappyPath, ClockInvariant, after-approval forgery test, PostureUnchanged",
+    "producer report R139(d) grep-proof section"
+   ]
+  },
+  "D-010-R140": {
+   "summary": "Prohibition honored: no supervisor redesign, no additional features, no new infrastructure, no broader cleanup - the dead LoopConfig.packet_reference field was deliberately LEFT IN PLACE because removing it would be broader cleanup; zero new dependencies; forbidden paths untouched.",
+   "evidence": [
+    "task branch commit ec0f55d diff surface (8 files, all in allowed_paths)",
+    "producer report limitations section (packet_reference disposition)"
+   ]
+  },
+  "D-010-R141": {
+   "summary": "Normal gates running on this task: G0 PASS recorded (07c64d1); G2 self-check + independent G3/G4/G5 + DCV follow at the merged final identity; merge to main only after all required checks pass.",
+   "evidence": [
+    "project-control/gates/M0-T048-G0.json",
+    "gate records M0-T048-G2/G3/G4/G5 + DCV report (populated as recorded)"
+   ]
+  },
+  "D-010-R142": {
+   "summary": "Sequencing respected by conduct: the activation sequence (am.12 R131/R132 - elevated ACL apply + live PROTECTED capture + owner-typed decision line) resumes only AFTER this task is accepted and merged; nothing activation-related was touched in this unit.",
+   "evidence": [
+    "docs/SESSION_HANDOFF.md session-6 owner-package state",
+    "no activation surface in the ec0f55d diff (R139d evidence)"
+   ]
+  },
+  "D-010-R143": {
+   "summary": "M2-T015 and M2-T016 not started: both remain backlog with no claim.",
+   "evidence": [
+    "project-control/tasks/M2-T015.json status backlog; M2-T016.json status backlog"
+   ]
+  }
+ }
+}
