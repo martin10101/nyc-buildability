@@ -154,6 +154,19 @@
    "evidence": [
     "project-control/directives/D-010-autonomous-engineering-restructure/source-015-amendment.md (verbatim: 'Proceed without another routine approval.')"
    ]
+  },
+  "D-010-R155": {
+   "summary": "Both skipped tests named with pytest -rs reasons at the frozen identity: PolicyEscapeTests::test_symlink_escape_is_denied (policy.py:451; WinError 1314 - symlink privilege not held in this non-elevated session) and test_job_objects_report_unavailable_off_windows (process.py:449; POSIX-only guard, skipIf nt). Captured into a committed gate-evidence artifact.",
+   "evidence": [
+    "project-control/reports/M0-T048-skipped-tests-evidence.md",
+    "pytest -rs run 2026-08-08: 1380 passed, 2 skipped"
+   ]
+  },
+  "D-010-R156": {
+   "summary": "Adjudicated: both skips legitimately environment-conditional, neither stale/accidental - no follow-up unskip task contracted (owner criterion not met). Compensating coverage runs here (junction-variant escape denial, Windows job-object counterparts). Advisory notes on CI skip transparency recorded in the artifact.",
+   "evidence": [
+    "project-control/reports/M0-T048-skipped-tests-evidence.md (R156 adjudication + advisory notes)"
+   ]
   }
  }
 }
