@@ -63,8 +63,8 @@
     "control-plane-verifier",
     "directive-compliance-verifier"
   ],
-  "status": "awaiting_gate",
-  "progress_percent": 85,
+  "status": "accepted",
+  "progress_percent": 100,
   "risks": [
     "OS-ACL hardening touches the live owner config path: probes must be bounded and non-destructive (R128); a wrong ACL could lock the OWNER out - the change must be applied via a documented, reversible elevated action and verified before the unelevated probes run.",
     "Estop-fork regression test involves process concurrency - keep it deterministic (inject the fork shape, do not race real processes).",
@@ -72,7 +72,7 @@
   ],
   "blockers": [],
   "created_at": "2026-08-07T20:41:12.063773+00:00",
-  "updated_at": "2026-08-07T22:28:18.064019+00:00",
+  "updated_at": "2026-08-08T03:57:03.706548+00:00",
   "directive_refs": [
     {
       "directive_id": "D-010",
@@ -158,6 +158,15 @@
       "percent": 92,
       "status": "in_progress",
       "message": "Resubmission increment: no material change; code identical to delta-reviewed a27068d"
+    },
+    {
+      "at": "2026-08-07T22:29:49.685204+00:00",
+      "agent": "orchestrator",
+      "percent": 95,
+      "status": "awaiting_gate",
+      "message": "Final identity assembled: task code merged (681f7df), resubmitted, G2/G3/G4/G5 re-recorded PASS at 32ea6f1 after three delta re-reviews all PASS at a27068d (G5 C1 CLOSED). DCV final verification dispatched over R122-R133 with the R124 adjudication as the gating question"
     }
-  ]
+  ],
+  "accepted_by": "orchestrator",
+  "accepted_at": "2026-08-08T03:57:03.698240+00:00"
 }

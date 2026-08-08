@@ -956,7 +956,19 @@
    "reviewed_manifest_sha256": "46e4d83eb80bcfe63e405b537db914a58a8fbad94820d62874635c3b9955a6eb",
    "verified_at": "2026-08-07T21:35:00+00:00",
    "note": "Assembled by the orchestrator from the independent directive-compliance-verifier return (verbatim: reports/M0-T019-dcv-verification.md; verifier ran at frozen head 4d9e117, verdict PASS 19+1 NA; the delta 4d9e117..HEAD is ledger/report-only - G5 re-record at the finalized identity + the saved DCV report; material identity 46e4d83e unchanged throughout, independently confirmed). Verifier state 'SATISFIED' maps to 'PASS'."
+  },
+  {
+   "task_id": "M0-T046",
+   "directive_id": "D-010",
+   "producer": "backend-engineer",
+   "verifier": "directive-compliance-verifier",
+   "applicable_requirement_ids": [],
+   "requirements": [],
+   "reviewed_manifest_sha256": "660bf1336461eb3db761b7881cf7c25005b2ca3dbd1cd7c1e046a851dc54437b",
+   "reviewed_sha": "f6a3702c4f42e292cee9ee64f2039fbf69fb7574",
+   "verified_at": "2026-08-08T03:57:02.309132+00:00",
+   "note": "Derived applicable set is EMPTY by registry conjunction: every am.12 row (R122-R133) binds applicability.task_ids=[M0-T037] (session task; R123/R133 also M2-T015/T016) because the pre-activation task id did not exist at capture; applicability is append-only and task_ids are never bound onto an already-gated task. M0-T046 cites R122-R133 via directive_refs for provenance. Substantive independent verification of all twelve requirements against this task work product: reports/M0-T046-dcv-final.md (R124 adjudicated PASS; 11 PASS + R132 acceptance-ordering DEFERRAL; no FAIL/UNVERIFIABLE) at identity 660bf133/32ea6f1, code head a27068d."
   }
  ],
- "updated_at": "2026-08-07T21:35:00+00:00"
+ "updated_at": "2026-08-08T03:57:02.309132+00:00"
 }
