@@ -2,9 +2,9 @@
  "schema": "directive_requirements/v1",
  "directive_id": "D-010",
  "version": 22,
- "requirement_count": 235,
+ "requirement_count": 241,
  "producer": "orchestrator",
- "updated_at": "2026-08-08T18:53:09+00:00",
+ "updated_at": "2026-08-08T20:12:07+00:00",
  "requirements": [
   {
    "id": "D-010-R001",
@@ -8339,6 +8339,225 @@
     "tasks": []
    },
    "amendment_sequence": 23
+  },
+  {
+   "id": "D-010-R236",
+   "text": "OWNER DECISION (B-018 resolution, Option A): resume supervised runs on --runtime-base C:/Users/MLFLL/AppData/Local/NYCBuildabilitySupervisor-r2. The stranded runtime (LOCALAPPDATA NYCBuildabilitySupervisor/289bba68..) is preserved untouched as defect evidence; B-018 moves to resolved once a supervised cycle on the approved runtime base reaches CHECKPOINT_RECEIVED.",
+   "source_ref": "source-024-amendment.md#option-a-approval",
+   "classification": "decision",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T037",
+     "M2-T015",
+     "M2-T016"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [
+     "dispatch"
+    ],
+    "effective_date": "2026-08-08"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "owner B-018 decision + defect-fix order 2026-08-08",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "amendment_sequence": 24
+  },
+  {
+   "id": "D-010-R237",
+   "text": "Treat B-018 as a real supervised-runtime reliability defect, not merely a one-time incident.",
+   "source_ref": "source-024-amendment.md#defect-fix-order",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T037",
+     "M2-T015",
+     "M2-T016"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [
+     "dispatch",
+     "accept"
+    ],
+    "effective_date": "2026-08-08"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "owner B-018 decision + defect-fix order 2026-08-08",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "amendment_sequence": 24
+  },
+  {
+   "id": "D-010-R238",
+   "text": "AFTER safely resuming M2-T015, determine the narrow root cause of the stranded START_CLAUDE recovery window.",
+   "source_ref": "source-024-amendment.md#defect-fix-order",
+   "classification": "sequencing",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T037",
+     "M2-T015",
+     "M2-T016"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [
+     "dispatch"
+    ],
+    "effective_date": "2026-08-08"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "owner B-018 decision + defect-fix order 2026-08-08",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "amendment_sequence": 24
+  },
+  {
+   "id": "D-010-R239",
+   "text": "Implement and test the SMALLEST durable fix so that a future claude_start_failed event can recover through an authorized deterministic path without requiring the owner each time. The fix runs as a bounded defect-lane task under the supervisor-freeze rules (qualifying evidence: B-018 / the reproduced stranded-START_CLAUDE window; standard gates; evidence cited in packet and commit message).",
+   "source_ref": "source-024-amendment.md#defect-fix-order",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T037",
+     "M2-T015",
+     "M2-T016"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [
+     "dispatch",
+     "accept"
+    ],
+    "effective_date": "2026-08-08"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "owner B-018 decision + defect-fix order 2026-08-08",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "amendment_sequence": 24
+  },
+  {
+   "id": "D-010-R240",
+   "text": "Do not broaden the B-018 fix into supervisor redesign.",
+   "source_ref": "source-024-amendment.md#defect-fix-order",
+   "classification": "prohibition",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T037",
+     "M2-T015",
+     "M2-T016"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [
+     "dispatch",
+     "accept"
+    ],
+    "effective_date": "2026-08-08"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "owner B-018 decision + defect-fix order 2026-08-08",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "amendment_sequence": 24
+  },
+  {
+   "id": "D-010-R241",
+   "text": "Do not interrupt M2-T015 unnecessarily: handle the fix at the proper bounded checkpoint (disjoint file scope from M2-T015; the running supervised unit is never cut short for it).",
+   "source_ref": "source-024-amendment.md#defect-fix-order",
+   "classification": "sequencing",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T037",
+     "M2-T015",
+     "M2-T016"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [
+     "dispatch"
+    ],
+    "effective_date": "2026-08-08"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "owner B-018 decision + defect-fix order 2026-08-08",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "amendment_sequence": 24
   }
  ]
 }

@@ -1,7 +1,7 @@
 {
  "schema": "directive_manifest/v1",
  "directive_id": "D-010",
- "version": 23,
+ "version": 24,
  "slug": "autonomous-engineering-restructure",
  "title": "Autonomous Engineering Restructure and NYC Buildability Pilot Acceleration (Autonomous Engineering V2)",
  "status": "active",
@@ -193,6 +193,14 @@
    "amends": "source-022-amendment.md",
    "recorded_at": "2026-08-08T18:53:09+00:00",
    "content_digest_sha256": "cedd907f022871b64cc32b614ce97086c691749c186d8cada4762da717c8d831"
+  },
+  {
+   "file": "source-024-amendment.md",
+   "kind": "amendment",
+   "sequence": 24,
+   "amends": "source-023-amendment.md",
+   "recorded_at": "2026-08-08T20:12:07+00:00",
+   "content_digest_sha256": "4cc585813ac68b572d65a4e50cb0112d8294498cfc43088e082407835af7410e"
   }
  ],
  "amendments": [
@@ -217,7 +225,8 @@
   "source-020-amendment.md",
   "source-021-amendment.md",
   "source-022-amendment.md",
-  "source-023-amendment.md"
+  "source-023-amendment.md",
+  "source-024-amendment.md"
  ],
  "supersedes": [],
  "superseded_by": null,
@@ -256,8 +265,8 @@
  "verification_file": "verification.json",
  "final_reviewed_sha": null,
  "final_reviewed_manifest_sha256": null,
- "requirements_content_digest_sha256": "b101fc63a1f489588abb64c29f1623ebf063f5486f2c59225e8a7d00a93382dc",
- "requirements_id_digest_sha256": "fe2f5ffbe75708ad25aab0d7372d81c95580063f0279f2fb296e3218efedb2a4",
+ "requirements_content_digest_sha256": "e071bb5771e91d9aa952321fd2ba770e82cc9cc12f9d2101931ef79a766b3aeb",
+ "requirements_id_digest_sha256": "9d79a795170f351a4031dcb50a7c02a21691f0fb46723454e28f1c7626677ac7",
  "enforcement_pointers": {
   "tasks": [
    "M0-T037",
@@ -527,10 +536,16 @@
   "D-010-R232",
   "D-010-R233",
   "D-010-R234",
-  "D-010-R235"
+  "D-010-R235",
+  "D-010-R236",
+  "D-010-R237",
+  "D-010-R238",
+  "D-010-R239",
+  "D-010-R240",
+  "D-010-R241"
  ],
  "created_at": "2026-08-07T01:09:55+00:00",
- "updated_at": "2026-08-08T18:53:09+00:00",
+ "updated_at": "2026-08-08T20:12:07+00:00",
  "audit_log": [
   {
    "at": "2026-08-07T01:09:55+00:00",
@@ -666,6 +681,11 @@
    "at": "2026-08-08T18:53:09+00:00",
    "actor": "orchestrator",
    "action": "amendment source-023 recorded (owner SUPERVISED-AUTO activation decision 2026-08-08: typed R212 decision line accepting N-4/N-5/MINOR-2 residuals; M2-T015/T016 released as supervised-auto product proofs, sequenced; limited-auto NOT authorized; R214-R235 added); digests restamped"
+  },
+  {
+   "at": "2026-08-08T20:12:07+00:00",
+   "actor": "orchestrator",
+   "action": "amendment source-024 recorded (owner B-018 Option A approval + stranded-START_CLAUDE defect-fix order; R236-R241 added); digests restamped"
   }
  ]
 }
