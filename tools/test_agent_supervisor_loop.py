@@ -558,9 +558,14 @@ class CycleEntryStateTests(LoopTestBase):
             loop.run_cycle("unit", cycle=1)
         self.assertEqual(ctx.exception.code, "bad_cycle_entry_state")
 
-    def test_the_only_entry_states_are_preflight_and_claude_running(self) -> None:
+    def test_the_only_entry_states_are_preflight_start_claude_and_claude_running(
+            self) -> None:
+        # B-018: START_CLAUDE joins the entry set so an externally-killed launch
+        # (journal stranded at START_CLAUDE with nothing launched) can be RESUMED
+        # rather than being permanently unrecoverable. It is the ONLY addition;
+        # every other non-entry state is still refused (see the IDLE case above).
         self.assertEqual(lp.CYCLE_ENTRY_STATES,
-                         frozenset({sm.PREFLIGHT, sm.CLAUDE_RUNNING}))
+                         frozenset({sm.PREFLIGHT, sm.START_CLAUDE, sm.CLAUDE_RUNNING}))
 
     def test_no_transition_is_recorded_when_the_entry_state_is_refused(self) -> None:
         loop = self.build(mode="shadow")
