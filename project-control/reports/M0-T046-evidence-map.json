@@ -1,0 +1,104 @@
+{
+ "schema": "evidence_map/v1",
+ "task_id": "M0-T046",
+ "producer": "backend-engineer",
+ "code_head": "a27068db17ff20426a587fd04ed00eea827c909d",
+ "code_head_initial": "569d1a7bc2447b6884753b813de431a1def365a8 (pre-rework; all five gates first recorded here)",
+ "rework_note": "Rework increment a27068d applied after the G3/G4/G5 wave: G5-C1 absolute System32 icacls path (fail-open closed), G5-L-1 owner-elevation assertion in the PROTECTED path, G5-L-2 absolute paths in the elevated script, G3-S3-1 safe-subset rights inversion, G3-S2-1 non-adjacent-duplicate test, README fix. +7 tests; full suite 1363 passed / 2 skipped (orchestrator-reproduced). Scope-1 binding code untouched per G5 C2 disposition (owner activation-time decision).",
+ "code_branch": "task/M0-T046-preactivation",
+ "requirements": {
+  "D-010-R122": {
+   "summary": "The D-009/M0-T019/M2-T014 batch reached its clean committed verified seam BEFORE this task was contracted: PR #176 merged as origin/main ae627e5, checkpoint CP-0042, accepted count 66; the am.12 amendment was applied at that seam, not mid-unit.",
+   "evidence": [
+    "git: origin/main ae627e5 (merge PR #176) parent chain 332ea88/d082585",
+    "project-control/reports/session-handoff-2026-08-07-5.json (digest c3b545b2... verified this session)",
+    "project-control/reports/M0-T046-g0-readiness.md (sequencing section)"
+   ]
+  },
+  "D-010-R123": {
+   "summary": "Exactly ONE narrowly bounded pre-activation task was inserted before M2-T015: M0-T046, containing ONLY the three R124/R125-R126/R127-R128 scopes; the committed diff surface is 11 files, all inside allowed_paths, no product work.",
+   "evidence": [
+    "project-control/tasks/M0-T046.json (packet: objective, allowed/forbidden paths, AS-1..AS-6)",
+    "task branch commit 569d1a7 (11 files: 4 supervisor modules + README + 4 test files + producer report)",
+    "ledger: M2-T015/M2-T016 status backlog (never claimed)"
+   ]
+  },
+  "D-010-R124": {
+   "summary": "Park now freezes a park-time byte anchor (prompt_bytes_digest) over the forwarded prompt bytes; approve_pending_prompt refuses fail-closed unless the parked bytes still hash to the anchor and binds approved_digest to the anchor (not a fresh re-hash); the CLI re-verifies before any transition and writes a sealed refusal on mismatch; resume-time digest check retained. Adversarial tests cover tamper-before-approval (refused), tamper-after-approval (caught at resume), happy path, blank/missing digest. Design note for reviewers: forwarded bytes carry an ephemeral FORWARDED-AT timestamp, so the operator continues to name the S13.5 approval-envelope digest while the byte binding anchors at park - see producer report SCOPE 1 'key discovery' + residual 3.",
+   "evidence": [
+    "tools/agent_supervisor/loop.py:1776 (anchor at park); loop.py:626-681 (fail-closed binding)",
+    "tools/agent_supervisor/cli.py:1683-1728 (verify + sealed refusal + blank-digest refusal)",
+    "tools/test_agent_supervisor_park_approve_binding.py (8 tests)",
+    "project-control/reports/M0-T046-producer-report.md (SCOPE 1)"
+   ]
+  },
+  "D-010-R125": {
+   "summary": "Regression test suite locks the forked-audit-chain behavior on a deterministically injected fork (no real-process race); gap found and minimally fixed: append() previously SUCCEEDED on a forked chain - _load_head_from_log now detects duplicate_sequence at open and append refuses (append_to_damaged_chain).",
+   "evidence": [
+    "tools/agent_supervisor/audit_log.py:120-153",
+    "tools/test_agent_supervisor_audit_fork_lock.py (6 tests)",
+    "project-control/reports/M0-T046-producer-report.md (SCOPE 2)"
+   ]
+  },
+  "D-010-R126": {
+   "summary": "The four owner-acknowledged conditions are each locked by a named test: (1) fork reported deterministically (verify_chain duplicate_sequence), (2) fail closed (load_error -> append refused), (3) no silent repair or hiding (file bytes unchanged, verify still reports), (4) condition clearly recorded (recovery-status/status report audit_chain_ok:false, status exits non-zero) and continuation refused until explicit repair (only explicit repair restores appendability).",
+   "evidence": [
+    "tools/test_agent_supervisor_audit_fork_lock.py tests 1-4 (names map 1:1 to the acknowledged conditions)",
+    "project-control/directives/D-010-autonomous-engineering-restructure/source-012-amendment.md (verbatim acknowledgement)"
+   ]
+  },
+  "D-010-R127": {
+   "summary": "The owner OS-ACL decision (single-account writable ACL NOT sufficient) is executed by scope 3: hardening artifacts delivered (probe module + elevated apply/rollback script + doctor posture wiring); resolves the activation-checklist G5-L-2 judgment item in the direction the owner decided.",
+   "evidence": [
+    "tools/agent_supervisor/os_acl.py; tools/agent_supervisor/harden_controller_config.ps1",
+    "project-control/reports/M0-T036-ACTIVATION-CHECKLIST.md (G5-L-2 item)",
+    "project-control/reports/M0-T046-producer-report.md (SCOPE 3)"
+   ]
+  },
+  "D-010-R128": {
+   "summary": "Boundary implemented per the verbatim spec: unelevated READ preserved; modify/overwrite/delete/rename/replace/re-ACL denied via Administrators ownership + user RX-only grants; parent directory protected against replacement/bypass (user Read+Execute only on parent); modification requires elevated owner action (script refuses unelevated - test RAN unelevated and PASSED); config.py fail-closed digest verification untouched; probes bounded and non-destructive (write-open zero-byte probe; rename/delete assessed from governing ACL rights, never destructive attempts); ambiguity/error -> UNKNOWN fail-closed, never 'protected'. Live PROTECTED-state proof against the real owner config DEFERRED to after the owner's elevated apply (unelevated process cannot mint a UAC-required file) - every unelevated-reachable state proven now; disclosed as producer limitation 1.",
+   "evidence": [
+    "tools/agent_supervisor/os_acl.py (evaluate_controller_config_acl; PROTECTED requires file AND parent AND elevated owner; absolute System32 tool paths; safe-subset rights rule - unknown token => dangerous)",
+    "tools/agent_supervisor/harden_controller_config.ps1 (apply/rollback/dry-run; refuses unelevated; absolute System32 takeown/icacls)",
+    "tools/agent_supervisor/cli.py:428-465,1245-1249,1266,1282 (doctor posture, fail-closed, shadow-safe)",
+    "tools/test_agent_supervisor_os_acl.py (31 tests post-rework: fixtures, fail-closed, live bounded probes, doctor surface, harden-script refusal, absolute-argv pinning, owner-verdict trio, unknown-token fail-closed)"
+   ]
+  },
+  "D-010-R129": {
+   "summary": "Prohibition honored: no service, daemon, enterprise identity system, separate infrastructure project, or supervisor redesign; zero new dependencies (stdlib only, no manifest/lockfile edits); no .claude/apps/services/.github/directives writes; SHADOW-ONLY, activation flags, forwarding guards, and the config digest gate untouched.",
+   "evidence": [
+    "task branch commit 569d1a7 diff surface (11 files, all in allowed_paths)",
+    "project-control/reports/M0-T046-producer-report.md (R129 section)"
+   ]
+  },
+  "D-010-R130": {
+   "summary": "Normal independent gates run on this task, producer != any reviewer: G0 PASS (orchestrator, administrative); G2 PASS (self-check + orchestrator reproduction); G3 PASS (code-reviewer; no blocking code defect; S1-1 routed to DCV); G4 PASS (qa-engineer; no corrections; mutation-proven non-vacuity); G5 PASS (security-reviewer; blocking correction C1 applied in rework a27068d, C2 = activation-time owner item). Delta re-reviews over 569d1a7..a27068d confirm the corrections; gates re-recorded at the final identity; DCV final verification follows.",
+   "evidence": [
+    "project-control/gates/M0-T046-G0.json / -G2.json / -G3.json / -G4.json / -G5.json",
+    "project-control/reports/M0-T046-g3-code-review.md / -g4-qa-review.md / -g5-security.md (+ delta re-review reports)",
+    "project-control/reports/M0-T046-dcv-final.md (when recorded)"
+   ]
+  },
+  "D-010-R131": {
+   "summary": "PROHIBITION respected by conduct: supervised-auto NOT activated; no activation flag, config, or posture change anywhere in the diff; activation remains an owner-typed decision due only AFTER acceptance + mechanical checklist reconciliation.",
+   "evidence": [
+    "task branch commit 569d1a7 (no activation-surface changes; SHADOW-ONLY guards untouched)",
+    "project-control/reports/M0-T036-ACTIVATION-CHECKLIST.md (still lists activation as owner-gated)"
+   ]
+  },
+  "D-010-R132": {
+   "summary": "RETURN ITEM not yet due: the exact supervised-auto activation decision line is presented to the owner only after R131 preconditions (task accepted + checklist mechanically reconciled). Tracked as the next orchestrator step after acceptance.",
+   "evidence": [
+    "project-control/tasks/M0-T046.json (risk row 3 records the sequencing)",
+    "docs/SESSION_HANDOFF.md session-5 checklist item 3"
+   ]
+  },
+  "D-010-R133": {
+   "summary": "M2-T015 and M2-T016 have NOT begun and remain held as the supervised-auto proof tasks; ledger shows both backlog with no claim; the explicit visible supersession of R116/R121/0A.11 for these two tasks is recorded in the am.12 capture preamble.",
+   "evidence": [
+    "ledger: M2-T015/M2-T016 status backlog (python tools/project_control.py status)",
+    "project-control/directives/D-010-autonomous-engineering-restructure/source-012-amendment.md (sequencing preamble)"
+   ]
+  }
+ }
+}

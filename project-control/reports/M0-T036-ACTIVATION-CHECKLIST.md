@@ -127,3 +127,45 @@ activation of the GitHub flow or the effect journal:
 Note: the R595 supervised rehearsal itself is COMPLETE (all legs live-proven at `afc2da5`;
 sealed evidence M0-T045-r595-rehearsal/). The R593 residual is closed BY EVIDENCE. Items above
 are the remaining pre-ACTIVATION hardening set; activation stays an explicit owner decision.
+
+---
+
+# MECHANICAL RECONCILIATION — 2026-08-08 (owner am.12 R131 step; recorded at M0-T046 acceptance)
+
+Per D-010 am.12 ("Do NOT activate supervised-auto until this pre-activation task is accepted and
+all remaining activation-checklist blockers have been mechanically reconciled as satisfied"),
+each remaining item above is reconciled against ledger evidence. M0-T046 ACCEPTED (gates
+G0/G2/G3/G4/G5 PASS at identity `660bf133`/`32ea6f1`, code `a27068d`; DCV: R124 adjudicated
+PASS, 11 PASS + R132 deferral; accepted count 67).
+
+| Checklist item | Status | Evidence |
+|---|---|---|
+| ⛔ R595 supervised rehearsal (D-007-R619) | **SATISFIED** | M0-T045 ACCEPTED — all legs live-proven at `afc2da5`; sealed evidence `M0-T045-r595-rehearsal/` (SHA-256 manifest); R593 closed BY EVIDENCE, never waiver (D-007-R621). |
+| Quota-exhaustion classifier wired (G3-A1/G5-L-1/G4-A1) | **SATISFIED** | M0-T041 ACCEPTED AS-1: `classify_quota_exhaustion` + fixture corpus wired into `make_launch_probe`; `QUOTA_EXHAUSTION_SIGNAL_VERIFIED=False` BY DESIGN (fail-closes to PAUSE, doctor disclosure) until a live exhaustion is captured under owner credentials during supervised operation — the wiring + security look the item demanded are done (M0-T041 G3/G4/G5 PASS). |
+| Activation-blocking G3 B-rows (B-1..B-4) | **SATISFIED** | Fixed in V1.1 (frozen `c193a52`), independently re-gated (`M0-T036-V1.1-G3-code-delta-review.md` §2); re-verified per-row with regression tests at M0-T041 AS-2 (producer report table, M0-T041 gates PASS). |
+| Single-account Windows OS-ACL (G5-L-2) | **SATISFIED (mechanism); live apply = owner UAC step** | Owner RESOLVED the judgment item in am.12 R127 (single-account writable ACL NOT sufficient). M0-T046 delivered the R128 boundary: `os_acl.py` fail-closed verdict (DACL + owner-elevation + bounded probes; absolute System32 tools), `harden_controller_config.ps1` (elevated apply/rollback, refuses unelevated), doctor posture wiring; 31 tests. The live `PROTECTED` capture on the real config happens at the owner's elevated apply (R128's own UAC clause) and is a named precondition in the activation decision step below. |
+| R207 live resource sampling | **SATISFIED** | M0-T041 ACCEPTED AS-3: `resource_sampling.ResourceSampler` + loop `_check_resources` at cycle entry (fail-closed both directions; honest structural-unknowns), doctor disclosure; 10 tests. |
+| Owner authorization at each tier | **OPEN — owner-typed decision (R131/R132)** | This is the activation decision itself; never reconciled by an agent. |
+| M0-T042 G5 additions (L-1, I-1, I-3) | **SATISFIED** | Resolved in M0-T045 increment 1 (pinned set A1-A4; producer report + gates PASS; M0-T045 ACCEPTED). |
+| M0-T044 G3 additions (MINOR-1, MINOR-2) | **SATISFIED** | Resolved in M0-T045 increment 1 (pinned set B1-B3; M0-T045 ACCEPTED). |
+| M0-T044 G5 additions (SEC-1/2/3, INFO-1) | **SATISFIED** | Resolved in M0-T045 increment 1 (pinned set C1-C5; M0-T045 ACCEPTED). |
+| M0-T045 G5 LOW-1 (park→approve) | **SATISFIED** | M0-T046 scope 1: park-time byte anchor, fail-closed approval binding, sealed refusals, 8 adversarial tests; DCV R124 adjudicated PASS (LOW-1 window closed; literal construction proven impossible-to-strengthen). |
+| M0-T045 G4 estop audit-fork follow-up | **SATISFIED** | M0-T046 scope 2: append now refuses on a detected fork (real behavior fix) + 7 regression tests locking the four R126-acknowledged conditions 1:1 (mutation-proven non-vacuous, G4). |
+
+## NEW pre-ACTIVATION items registered at M0-T046 gating (fold into the decision step)
+
+1. **G5 C2 (M0-T046):** the park→approve byte anchor is journal-resident; a consistent two-field
+   journal forgery (`prompt` + `prompt_bytes_digest`) still forwards under a valid approval —
+   same excluded class as the original LOW-1, SHADOW forwards nothing. Before supervised-auto:
+   owner ACCEPTS this residual verbatim in the activation decision line, or orders the
+   content-binding fix (bind forwarded content to the operator-known `approval_digest`, e.g.
+   inject FORWARDED-AT at forward time). See `M0-T046-g5-security.md` C2.
+2. **Live PROTECTED capture (M0-T046 AS-4 live leg / G4 G1):** after the owner's elevated
+   `harden_controller_config.ps1` apply, orchestrator captures `doctor --config <path> --json`
+   showing `controller_config_acl.protected: true` and files it as evidence. Precedes activation.
+
+**Bottom line:** every mechanically reconcilable checklist blocker is SATISFIED with ledger
+evidence. What remains before supervised-auto is exactly the owner-held set: (a) the elevated
+ACL apply + orchestrator live-PROTECTED capture, (b) the C2 residual decision, and (c) the
+owner-typed activation decision line (R131/R132). ⛔ Activation itself remains prohibited until
+the owner types the decision (R131); M2-T015/T016 stay HELD until then (R133).

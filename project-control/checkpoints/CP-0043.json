@@ -1,0 +1,18 @@
+{
+  "checkpoint_id": "CP-0043",
+  "timestamp": "2026-08-08T04:01:20.483788+00:00",
+  "commit": "3197e1f",
+  "branch": "control/M0-T046-preactivation",
+  "active_milestone": "M4",
+  "summary": "M0-T046 (am.12 pre-activation task) ACCEPTED, accepted count 67: park-to-approve byte-anchor binding (R124, DCV-adjudicated PASS), estop fork append-refusal + R126 regression lock, controller-config OS-ACL boundary (os_acl.py + elevated apply script + doctor posture; G5 C1 closed in rework a27068d). Suite 1363/2. Activation checklist mechanically reconciled - all reconcilable blockers SATISFIED; remaining owner-held set: elevated ACL apply + live PROTECTED capture, C2 residual decision, typed supervised-auto activation line (R131/R132). M2-T015/T016 stay HELD (R133).",
+  "post_accept_verifications_confirmed": {
+    "M0-T027": [
+      "D-004-R389",
+      "D-004-R486",
+      "D-004-R487",
+      "D-004-R488",
+      "D-004-R501"
+    ]
+  },
+  "updated_at": "2026-08-08T04:01:20.533097+00:00"
+}

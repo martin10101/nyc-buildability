@@ -1,0 +1,21 @@
+{
+  "task_id": "M0-T046",
+  "gate_id": "G5",
+  "reviewer": "security-reviewer",
+  "role": "independent_review",
+  "result": "PASS",
+  "report_file": "project-control/reports/M0-T046-g5-delta-review.md",
+  "reviewed_at": "2026-08-07T22:28:45.042438+00:00",
+  "content_manifest_sha256": "660bf1336461eb3db761b7881cf7c25005b2ca3dbd1cd7c1e046a851dc54437b",
+  "reviewed_sha": "32ea6f1645aeaefd39354a633eaecb554dce3c54",
+  "history": [
+    {
+      "reviewer": "security-reviewer",
+      "role": "independent_review",
+      "result": "PASS",
+      "report_file": "project-control/reports/M0-T046-g5-security.md",
+      "reviewed_at": "2026-08-07T21:52:13.889045+00:00"
+    }
+  ],
+  "updated_at": "2026-08-07T22:28:45.441517+00:00"
+}
