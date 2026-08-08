@@ -1,10 +1,10 @@
 {
  "schema": "directive_requirements/v1",
  "directive_id": "D-010",
- "version": 20,
- "requirement_count": 195,
+ "version": 21,
+ "requirement_count": 207,
  "producer": "orchestrator",
- "updated_at": "2026-08-08T08:45:01+00:00",
+ "updated_at": "2026-08-08T17:14:37+00:00",
  "requirements": [
   {
    "id": "D-010-R001",
@@ -6911,6 +6911,429 @@
     "tasks": []
    },
    "amendment_sequence": 20
+  },
+  {
+   "id": "D-010-R196",
+   "text": "HOLD: do not activate; do not dispatch M2-T015 or M2-T016; do not modify or move config.toml; do not manually repair the ACL outside the reviewed hardening path. Post-apply posture is treated as NOT_PROTECTED (explicit NT AUTHORITY\\Authenticated Users:(M) survived on the file).",
+   "source_ref": "source-021-amendment.md#explicit-ace-survived",
+   "classification": "hold",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T037",
+     "M0-T051",
+     "M2-T015",
+     "M2-T016"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [
+     "dispatch",
+     "accept"
+    ],
+    "effective_date": "2026-08-08"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "owner explicit-ACE-survival remediation order 2026-08-08",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "amendment_sequence": 21
+  },
+  {
+   "id": "D-010-R197",
+   "text": "FIRST capture, from an UNELEVATED process, the doctor result (--config new location --model-selection old location --json); it must fail closed / report controller_config_acl.protected == false / NOT_PROTECTED because Authenticated Users holds M; commit as primary evidence.",
+   "source_ref": "source-021-amendment.md#explicit-ace-survived",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T037",
+     "M0-T051"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [
+     "accept"
+    ],
+    "effective_date": "2026-08-08"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "Committed doctor JSON showing NOT_PROTECTED with the Authenticated-Users-M reason.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "owner explicit-ACE-survival remediation order 2026-08-08",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "amendment_sequence": 21
+  },
+  {
+   "id": "D-010-R198",
+   "text": "Contract ONE narrowly bounded hardening-script defect fix.",
+   "source_ref": "source-021-amendment.md#explicit-ace-survived",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T037",
+     "M0-T051"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [
+     "accept"
+    ],
+    "effective_date": "2026-08-08"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "owner explicit-ACE-survival remediation order 2026-08-08",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "amendment_sequence": 21
+  },
+  {
+   "id": "D-010-R199",
+   "text": "Required property: after the elevated apply, the effective FILE and PARENT DACLs must contain no non-elevated principal with any write/modify/delete/rename/replace/WriteDAC/WriteOwner right; the apply must not merely replace grants for the three intended principals while leaving unrelated explicit ACEs behind.",
+   "source_ref": "source-021-amendment.md#explicit-ace-survived",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T037",
+     "M0-T051"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [
+     "accept"
+    ],
+    "effective_date": "2026-08-08"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "owner explicit-ACE-survival remediation order 2026-08-08",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "amendment_sequence": 21
+  },
+  {
+   "id": "D-010-R200",
+   "text": "Adversarial regression (items 1-5): disposable test config + dedicated parent with an extra explicit NT AUTHORITY\\Authenticated Users:(M) on the file; run the REAL hardening behavior against the fixture under Windows; verify the extra explicit Modify ACE is removed or cannot grant effective modification; unelevated probe requires controller_config_acl / evaluator == PROTECTED; prove final effective posture (Administrators Full, SYSTEM Full, ordinary supervisor identity RX only, no other non-elevated principal with dangerous rights).",
+   "source_ref": "source-021-amendment.md#explicit-ace-survived",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T037",
+     "M0-T051"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [
+     "accept"
+    ],
+    "effective_date": "2026-08-08"
+   },
+   "dependencies": [],
+   "required_harness": "Executable Windows adversarial fixture test driving the real hardening behavior to PROTECTED from a poisoned explicit-ACE start.",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "owner explicit-ACE-survival remediation order 2026-08-08",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "amendment_sequence": 21
+  },
+  {
+   "id": "D-010-R201",
+   "text": "Preserve ordinary read access.",
+   "source_ref": "source-021-amendment.md#explicit-ace-survived",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T037",
+     "M0-T051"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [
+     "accept"
+    ],
+    "effective_date": "2026-08-08"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "owner explicit-ACE-survival remediation order 2026-08-08",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "amendment_sequence": 21
+  },
+  {
+   "id": "D-010-R202",
+   "text": "Preserve config contents byte-for-byte.",
+   "source_ref": "source-021-amendment.md#explicit-ace-survived",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T037",
+     "M0-T051"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [
+     "accept"
+    ],
+    "effective_date": "2026-08-08"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "owner explicit-ACE-survival remediation order 2026-08-08",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "amendment_sequence": 21
+  },
+  {
+   "id": "D-010-R203",
+   "text": "Preserve the dedicated parent protections.",
+   "source_ref": "source-021-amendment.md#explicit-ace-survived",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T037",
+     "M0-T051"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [
+     "accept"
+    ],
+    "effective_date": "2026-08-08"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "owner explicit-ACE-survival remediation order 2026-08-08",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "amendment_sequence": 21
+  },
+  {
+   "id": "D-010-R204",
+   "text": "Make the fix idempotent.",
+   "source_ref": "source-021-amendment.md#explicit-ace-survived",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T037",
+     "M0-T051"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [
+     "accept"
+    ],
+    "effective_date": "2026-08-08"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "owner explicit-ACE-survival remediation order 2026-08-08",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "amendment_sequence": 21
+  },
+  {
+   "id": "D-010-R205",
+   "text": "Add RED-on-current-cleared-blob proof against 9625514e79a34c901258975d4964529a9c02378e (the blob's apply leaves the poisoned explicit ACE effective).",
+   "source_ref": "source-021-amendment.md#explicit-ace-survived",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T037",
+     "M0-T051"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [
+     "accept"
+    ],
+    "effective_date": "2026-08-08"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "RED transcript against blob 9625514e.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "owner explicit-ACE-survival remediation order 2026-08-08",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "amendment_sequence": 21
+  },
+  {
+   "id": "D-010-R206",
+   "text": "SEQUENCING + RETURN: run G3/G5/DCV on the narrow delta and return a NEW reviewed Git blob identity BEFORE the owner runs another elevated apply.",
+   "source_ref": "source-021-amendment.md#explicit-ace-survived",
+   "classification": "return",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T037",
+     "M0-T051"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [
+     "accept"
+    ],
+    "effective_date": "2026-08-08"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "owner explicit-ACE-survival remediation order 2026-08-08",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "amendment_sequence": 21
+  },
+  {
+   "id": "D-010-R207",
+   "text": "PROHIBITION: do not broaden into ACL architecture or supervisor redesign.",
+   "source_ref": "source-021-amendment.md#explicit-ace-survived",
+   "classification": "prohibition",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T037",
+     "M0-T051"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [
+     "accept"
+    ],
+    "effective_date": "2026-08-08"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "owner explicit-ACE-survival remediation order 2026-08-08",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "amendment_sequence": 21
   }
  ]
 }

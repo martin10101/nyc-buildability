@@ -1,0 +1,318 @@
+{
+  "command": "doctor",
+  "controller_version": "0.4.0-phase4",
+  "phase": 4,
+  "protocol_version": "1.0.0",
+  "schema_version": "1.0.0",
+  "checkout": "C:\\Users\\MLFLL\\Downloads\\nyc-zoning\\nyc-development-feasibility-claude-pack",
+  "ok": true,
+  "checks": [
+    {
+      "check": "python_version",
+      "ok": true,
+      "detail": "3.11.9 (>= 3.11 required for tomllib; stdlib only, no new dependency)"
+    },
+    {
+      "check": "timezone_database",
+      "ok": true,
+      "detail": "ZoneInfo('America/New_York') resolved; S11.4 wake scheduling can compute reset instants on this machine"
+    },
+    {
+      "check": "schemas_present",
+      "ok": true,
+      "detail": "4 schemas parse as valid JSON"
+    },
+    {
+      "check": "prompts_present",
+      "ok": true,
+      "detail": "3 prompt templates present"
+    },
+    {
+      "check": "state_machine",
+      "ok": true,
+      "detail": "23 states, 66 documented transitions, every state reachable"
+    },
+    {
+      "check": "protocol_roundtrip",
+      "ok": true,
+      "detail": "protocol 1.0.0/schema 1.0.0: valid envelope accepted, digest-mismatched envelope refused"
+    },
+    {
+      "check": "hard_deny_enforced",
+      "ok": true,
+      "detail": "5 bypass flags and every effort flag are refused by argv validation"
+    },
+    {
+      "check": "circuit_breakers",
+      "ok": true,
+      "detail": "12 counters configured; a counter at its hard limit trips (pause), below warn_ratio it only warns (NOTIFY)"
+    },
+    {
+      "check": "controller_manifest",
+      "ok": true,
+      "detail": "no manifest supplied; generated one over 47 files (digest 2d80f93698dc48a7...). model_selection.toml is deliberately excluded"
+    },
+    {
+      "check": "policy_four_tiers",
+      "ok": true,
+      "detail": "HARD-DENY (bypass -> DENY_AND_HALT, main push), AUTO (in-scope edit), ASK (unknown request) all classify correctly; a model recommendation cannot loosen a tier"
+    },
+    {
+      "check": "approval_binding",
+      "ok": true,
+      "detail": "18 bound elements; a changed argument changes the digest; the model's stated reason is excluded"
+    },
+    {
+      "check": "claude_adapter",
+      "ok": true,
+      "detail": "the confirmed argv is enforced; a non-manual permission mode and an unverified exact-session resume are both refused"
+    },
+    {
+      "check": "control_response_shape",
+      "ok": true,
+      "detail": "wrapper built as documented; live-CLI verification status: UNVERIFIED. The Phase 1 probe recorded the control REQUEST payload verbatim and a successful deny round-trip, but not the exact response wrapper bytes - a preflight round-trip probe must confirm it before any live worker run"
+    },
+    {
+      "check": "model_chain_availability",
+      "ok": true,
+      "detail": "orchestrator-role model selection walks the fixed [model_chain] preference chain (default ['claude-fable-5', 'claude-opus-4-8', 'claude-opus-4-7']) and decides availability ONLY by an actual launch probe of the exact id - no model picker or menu is read, and an id outside the chain is never selectable. Live-CLI account-quota signal status: UNVERIFIED. The exact stderr/exit code the installed CLI emits on account-quota exhaustion has not been captured from a live exhaustion, so the probe never infers that reason: an unclassified failure stays 'unknown', which is not quota exhaustion and keeps the fail-closed pause"
+    },
+    {
+      "check": "resource_sampling",
+      "ok": true,
+      "detail": "live resource sampling feeds the R207 gauge breakers in the loop. Live-sampled stdlib-only on this host: ['free_disk_bytes', 'retained_log_bytes']. Structurally UNMONITORED (not measurable with the standard library alone on Windows; psutil is not an admitted dependency): ['cpu_percent', 'memory_bytes', 'process_count'] - these are reported as unknown and are NEVER fed a fabricated OK reading (AD-025). A sampling outage of a measurable gauge degrades to a conservative pause"
+    },
+    {
+      "check": "codex_adapter",
+      "ok": true,
+      "detail": "fresh-process argv carries --ephemeral --ignore-user-config --strict-config --sandbox read-only; a writable sandbox is refused"
+    },
+    {
+      "check": "push_policy",
+      "ok": true,
+      "detail": "main and force pushes are hard-denied; sensitive path classes, privileged workflows, and deployment paths gate to ASK; NO push is executed in this phase"
+    },
+    {
+      "check": "external_effects",
+      "ok": true,
+      "detail": "idempotency keys are content-stable; unmodeled external writes are refused and remain ASK-gated"
+    },
+    {
+      "check": "evidence_bounds",
+      "ok": true,
+      "detail": "truncation carries an explicit marker; material that will not fit the 262144-byte bound returns STOP_FOR_OWNER instead of being silently omitted"
+    },
+    {
+      "check": "rotation_invariants",
+      "ok": true,
+      "detail": "context/usage pressure can never interrupt a dispatched unit; the mandatory threshold rotates before ANY unit; the pre-dispatch decision is unreachable while a unit is in flight"
+    },
+    {
+      "check": "reset_parser",
+      "ok": true,
+      "detail": "parser 1.0.0: documented forms parse; adversarial text, expired, implausible, ambiguous, and DST-undefined times all refuse and queue an ASK. 6 distinct limit classes"
+    },
+    {
+      "check": "fixed_scheduler_action",
+      "ok": true,
+      "detail": "the scheduled action is exactly the manifest-verified launcher plus its fixed arguments; model-generated commands, extra arguments, and a different program are all refused"
+    },
+    {
+      "check": "recovery_classification",
+      "ok": true,
+      "detail": "SAFE/AMBIGUOUS/UNSAFE classify per S11.5; a missing check counts as a failed check; a verified safe checkpoint still does NOT auto-resume because limited-auto was never owner-enabled"
+    },
+    {
+      "check": "single_instance_lock",
+      "ok": true,
+      "detail": "liveness is probed with OpenProcess/GetExitCodeProcess (never os.kill, which TERMINATES on Windows); a live lock is never stolen and pid reuse is detected via the creation-time token"
+    },
+    {
+      "check": "model_change_ipc",
+      "ok": true,
+      "detail": "channel windows_named_pipe; named-pipe support probe: creatable (created and closed an SDDL-restricted pipe (D:P(A;;GA;;;SY)(A;;GA;;;S-1-5-21-...))). model_selection.toml is outside the manifest: a runtime model change never invalidates the controller, while editing the immutable config does. The confirmation challenge is derived from the exact change, so a captured 'yes' cannot be replayed against a different one"
+    },
+    {
+      "check": "retention_policy",
+      "ok": true,
+      "detail": "7 artifact classes each carry item/age/size limits; cleanup proves identity three ways (inside the runtime dir, in its class directory, in the supervisor's own inventory) and a plan is built read-only and re-proved at execution"
+    },
+    {
+      "check": "audit_anchor_option_a",
+      "ok": true,
+      "detail": "Option A mechanism present: anchor content + the exact push argv for audit/supervisor-anchors are produced, main is refused as a target, and the module has no execution surface. NOT ACTIVE: publication needs controller credentials AND an explicit owner activation"
+    },
+    {
+      "check": "notification_hygiene",
+      "ok": true,
+      "detail": "notifications are a fixed field set, redacted, and bounded; raw commands, auth links, source excerpts, and private paths are REFUSED rather than silently stripped"
+    },
+    {
+      "check": "replay_corpus",
+      "ok": true,
+      "detail": "8 case files, all 8 required S15 cases present, corpus digest 768eea1ec6bb9e83...; all 8 cases reproduce their recorded stop/continue behaviour, 0 model calls, 0 writes; provenance verified against this checkout"
+    },
+    {
+      "check": "replay_inert",
+      "ok": true,
+      "detail": "replay.py contains no process launch, no provider adapter, and no filesystem write; historical reports are read and left exactly as they are (S12, S15)"
+    },
+    {
+      "check": "loop_modes",
+      "ok": true,
+      "detail": "runnable modes ['shadow', 'supervised']; limited-auto refused by name; unknown modes refused; shadow.forwards=False, supervised.forwards=True (all four S12 names: ['replay', 'shadow', 'supervised', 'limited-auto'])"
+    },
+    {
+      "check": "containment_default",
+      "ok": true,
+      "detail": "default containment on this host is 'job_object' (expected 'job_object'); breakaway limit flags ['JOB_OBJECT_LIMIT_BREAKAWAY_OK', 'JOB_OBJECT_LIMIT_SILENT_BREAKAWAY_OK'] and creation flags ['CREATE_BREAKAWAY_FROM_JOB'] are all refused"
+    },
+    {
+      "check": "trust_zones",
+      "ok": true,
+      "detail": "every mutating kind from the REVIEWER zone is HARD_DENY/DENY_AND_HALT (7 kinds), and reviewer command execution is refused: the reviewer never gets write permissions and never executes worker-modified code (S13.2, invariant 10)"
+    },
+    {
+      "check": "deferred_commands",
+      "ok": true,
+      "detail": "no S12.1 command is deferred; DEFERRED_COMMANDS is empty and cmd_deferred remains only as the loud-refusal path"
+    },
+    {
+      "check": "control_response_live_probe",
+      "ok": true,
+      "detail": "UNVERIFIED: no live call was made. The control-response WRAPPER shape is implemented as the SDK documents it and is exercised against a fake in the test suite, but the exact bytes the installed CLI accepts have not been observed by this build. Run `doctor --live` (one bounded run of the canonical executable, one turn, one denied tool call, in a throwaway directory) to close it."
+    },
+    {
+      "check": "runtime_dir",
+      "ok": true,
+      "detail": "C:\\Users\\MLFLL\\AppData\\Local\\NYCBuildabilitySupervisor\\289bba68d79b4fbbf43e07a51432a496cc1e705ce0cdbaddca16952edc76805e; key=289bba68d79b4fbb... (sha256 of the canonical full checkout path)"
+    },
+    {
+      "check": "journal_integrity",
+      "ok": true,
+      "detail": "schema v1; sqlite_integrity=ok, schema_version=1, tables=7, transitions=0"
+    },
+    {
+      "check": "audit_chain",
+      "ok": true,
+      "detail": "0 records verified; head sequence 0"
+    },
+    {
+      "check": "controller_config",
+      "ok": true,
+      "detail": "codex allowlist ['gpt-5.6-sol', 'gpt-5.6-terra']; claude allowlist []; default_mode 'shadow'; no effort key present"
+    },
+    {
+      "check": "model_selection",
+      "ok": true,
+      "detail": "codex review_model 'gpt-5.6-sol', claude model ''; selection digest b2b927c65342579d...; no effort key present"
+    },
+    {
+      "check": "model_selection_allowlists",
+      "ok": true,
+      "detail": "every selected and fallback model is in its OWN provider's allowlist"
+    }
+  ],
+  "controller_config_acl": {
+    "state": "NOT_PROTECTED",
+    "protected": false,
+    "file": {
+      "state": "NOT_PROTECTED",
+      "target": "C:\\Program Files\\SupervisorConfig\\config.toml",
+      "kind": "file",
+      "protected": false,
+      "reasons": [
+        "unelevated principal 'NT AUTHORITY\\\\Authenticated Users' holds M on the file",
+        "an unelevated open-for-write SUCCEEDED (the file is writable)"
+      ],
+      "evidence": {
+        "aces": [
+          {
+            "principal": "LAPTOP-M7D730QA\\MLFLL",
+            "rights": [
+              "RX"
+            ],
+            "inherit_only": false
+          },
+          {
+            "principal": "NT AUTHORITY\\Authenticated Users",
+            "rights": [
+              "M"
+            ],
+            "inherit_only": false
+          },
+          {
+            "principal": "NT AUTHORITY\\SYSTEM",
+            "rights": [
+              "F"
+            ],
+            "inherit_only": false
+          },
+          {
+            "principal": "BUILTIN\\Administrators",
+            "rights": [
+              "F"
+            ],
+            "inherit_only": false
+          },
+          {
+            "principal": "BUILTIN\\Users",
+            "rights": [
+              "RX"
+            ],
+            "inherit_only": false
+          }
+        ],
+        "dangerous": [
+          {
+            "principal": "NT AUTHORITY\\Authenticated Users",
+            "rights": [
+              "M"
+            ],
+            "raw": "NT AUTHORITY\\Authenticated Users:(M)"
+          }
+        ],
+        "write_open_probe": "writable"
+      }
+    },
+    "parent": {
+      "state": "PROTECTED",
+      "target": "C:\\Program Files\\SupervisorConfig",
+      "kind": "directory",
+      "protected": true,
+      "reasons": [
+        "no unelevated principal holds a modify/delete/rename/change-ACL right on the directory; only elevated principals (Administrators/SYSTEM) do",
+        "the directory is owned by the elevated principal 'BUILTIN\\\\Administrators'"
+      ],
+      "evidence": {
+        "aces": [
+          {
+            "principal": "LAPTOP-M7D730QA\\MLFLL",
+            "rights": [
+              "RX"
+            ],
+            "inherit_only": false
+          },
+          {
+            "principal": "NT AUTHORITY\\SYSTEM",
+            "rights": [
+              "F"
+            ],
+            "inherit_only": false
+          },
+          {
+            "principal": "BUILTIN\\Administrators",
+            "rights": [
+              "F"
+            ],
+            "inherit_only": false
+          }
+        ],
+        "dangerous": [],
+        "owner": "BUILTIN\\Administrators"
+      }
+    },
+    "note": "PROTECTED requires BOTH the file and its parent directory to deny the unelevated process modify/delete/rename/replace/change-ACL; run tools/agent_supervisor/harden_controller_config.ps1 under UAC to apply."
+  },
+  "limited_auto": "NOT IMPLEMENTED and disabled; activation is a separate explicit owner act recorded through directive compliance"
+}
