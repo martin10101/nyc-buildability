@@ -115,7 +115,26 @@ DEFAULT_OWNER_TOUCH_BUDGET = 2
 #: CLAUDE_RUNNING is every subsequent cycle, after a prompt was forwarded. Any
 #: other entry state means the caller's idea of where the run is disagrees with
 #: the journal's, which is refused rather than transitioned around.
-CYCLE_ENTRY_STATES: frozenset[str] = frozenset({PREFLIGHT, CLAUDE_RUNNING})
+#:
+#: B-018 (crash-window recovery): START_CLAUDE is ALSO a legal re-entry, but only
+#: to RESUME an interrupted launch, never to invent one. The window is narrow and
+#: durable: the `preflight_pass -> START_CLAUDE` transition commits (run_cycle
+#: ~1607) BEFORE the worker is launched (~1632), and the
+#: `START_CLAUDE -> CLAUDE_RUNNING` transition commits only AFTER a real process
+#: started (~1637). An external kill inside that gap strands the durable journal
+#: at START_CLAUDE with NOTHING launched. The state's own meaning - "about to
+#: launch, nothing has launched yet" - is precisely a safe re-entry: run_cycle
+#: skips the duplicate preflight transition (the `if entry == PREFLIGHT` guard),
+#: dispatches exactly once, and transitions to CLAUDE_RUNNING only on a real
+#: process. This never widens who may dispatch: `start` still gates every launch
+#: on recover_boot's SAFE_CHECKPOINT classification (cmd_start), which fails
+#: closed if any recorded child SURVIVED the crash or a competing writer exists,
+#: so a resume can never double-launch or run over an unaccounted worker. Before
+#: this, START_CLAUDE's omission left an externally-killed launch permanently
+#: unrecoverable: run_cycle raised bad_cycle_entry_state on every operator start
+#: even after recover_boot classified SAFE_CHECKPOINT, and no production code drove
+#: the S7 exits from START_CLAUDE.
+CYCLE_ENTRY_STATES: frozenset[str] = frozenset({PREFLIGHT, START_CLAUDE, CLAUDE_RUNNING})
 
 # --------------------------------------------------------------------------
 # Orchestrator-role model substitution (D-004 am.26 / D-007 am.11; R746-R748)
