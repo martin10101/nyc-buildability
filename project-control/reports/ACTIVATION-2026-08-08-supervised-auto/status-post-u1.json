@@ -1,0 +1,66 @@
+{
+  "command": "status",
+  "controller_version": "0.4.0-phase4",
+  "phase": 4,
+  "checkout": "C:\\Users\\MLFLL\\Downloads\\nyc-zoning\\nyc-development-feasibility-claude-pack",
+  "runtime_dir": "C:\\Users\\MLFLL\\AppData\\Local\\NYCBuildabilitySupervisor\\289bba68d79b4fbbf43e07a51432a496cc1e705ce0cdbaddca16952edc76805e",
+  "journal_ok": true,
+  "journal_detail": "sqlite_integrity=ok, schema_version=1, tables=7, transitions=9",
+  "current_state": "WAIT_FOR_OWNER",
+  "last_transition": {
+    "sequence": 9,
+    "state_from": "POLICY_CHECK",
+    "state_to": "WAIT_FOR_OWNER",
+    "trigger": "tier_ask_blocking",
+    "run_id": "run_m2t015_supervised",
+    "committed_at_utc": "2026-08-08T19:25:06.016Z",
+    "detail": {
+      "cycle": 1,
+      "note": "supervised mode holds every forwarded prompt for an explicit operator approval bound to this digest (S12)",
+      "prompt_digest": "538a23878bc37244fd4ca79dc0bc25303eddd6cdc1c4aaa6a980221e575a7551",
+      "reason_code": "supervised_mode_operator_approval"
+    }
+  },
+  "pending_effects": [],
+  "open_asks": [
+    {
+      "ask_id": "ask_2ba180e1-9432-4523-9e74-c01989bac10d",
+      "run_id": "run_m2t015_supervised",
+      "task_id": "M2-T015",
+      "question": "Approve Bash for task M2-T015? the command is not an enumerated read-only git command and is not a packet-documented test command",
+      "request_digest": "320463f8be199053765dc00871e27698058060e05bfc44f363d572953dfc6aa6",
+      "created_at_utc": "2026-08-08T19:14:55.044Z",
+      "classification": "unclassified",
+      "answered_at_utc": "",
+      "answer": ""
+    },
+    {
+      "ask_id": "ask_f228dd26-a09c-48bd-94f6-336ad4d548e3",
+      "run_id": "run_m2t015_supervised",
+      "task_id": "M2-T015",
+      "question": "Approve Bash for task M2-T015? the command is not an enumerated read-only git command and is not a packet-documented test command",
+      "request_digest": "b7ac165e058ae1732a56d10ad9cf81d74123096fe0e421dcf0ed5603583f9c9f",
+      "created_at_utc": "2026-08-08T19:19:57.939Z",
+      "classification": "unclassified",
+      "answered_at_utc": "",
+      "answer": ""
+    },
+    {
+      "ask_id": "ask_731070fb-e7ba-466a-9c6e-147a7e50e301",
+      "run_id": "run_m2t015_supervised",
+      "task_id": "M2-T015",
+      "question": "Approve PowerShell for task M2-T015? the policy cannot confidently classify a 'unknown' request ('PowerShell'); unclassifiable means ASK, never AUTO",
+      "request_digest": "d99686a3229bfe1694ba1babb4e66294a299d13bf8dc59a5c7fe3bfaf6a4d7ea",
+      "created_at_utc": "2026-08-08T19:20:09.293Z",
+      "classification": "unclassified",
+      "answered_at_utc": "",
+      "answer": ""
+    }
+  ],
+  "unsent_outbound": 0,
+  "audit_chain_ok": true,
+  "audit_head_sequence": 33,
+  "audit_detail": "",
+  "mode": "none",
+  "limited_auto_enabled": false
+}

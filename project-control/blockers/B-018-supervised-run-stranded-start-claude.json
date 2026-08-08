@@ -1,0 +1,20 @@
+{
+ "blocker_id": "B-018",
+ "title": "Supervised run continuation blocked: journal stranded at START_CLAUDE (crash window with no CLI driver) and both operator recovery paths denied by the session permission classifier",
+ "status": "open",
+ "affects": [
+  "M2-T015 (supervised-auto product proof #1: unit 1 deliverables complete, committed cabe128 on task/M2-T015-survey-ingestion; units 2+ cannot dispatch until the supervised runtime is recoverable)",
+  "M2-T016 (sequenced after M2-T015 per D-010-R230)"
+ ],
+ "detail": "SUPERVISED-AUTO activation itself succeeded and is fully evidenced (D-010 source-023; PR #189; project-control/reports/ACTIVATION-2026-08-08-supervised-auto/). During M2-T015, after the operator's legal clear-recovery, a re-dispatched start was externally killed between the preflight_pass->START_CLAUDE journal commit and the worker launch (Job Object took the child down; zero orphans; zero pending external effects; audit chain verifies). The journal is stranded at START_CLAUDE: the S7 table's only exits (claude_start_failed->HALTED, then HALTED->IDLE via owner_explicit_restart) have NO CLI or production driver for this window; recover_boot classifies SAFE_CHECKPOINT but records only; start correctly refuses with bad_cycle_entry_state. This is an AD-093-qualifying unresolved crash/recovery gap (supervisor-freeze rule section 2) registered for a future defect-lane task - NOT fixed inside M2-T015 (D-010-R216/R229). The orchestrator attempted two recovery paths and the session permission classifier denied both: (1) firing the two S7-legal, factually-true transitions through the supervisor's own StateMachine/AuditLog API from the checkout; (2) continuing on a fresh --runtime-base (existing CLI input; R595-leg precedent) with the stranded runtime preserved untouched as defect evidence. Per the denial guidance and D-008, the orchestrator stopped and returned the choice to the owner instead of working around the classifier.",
+ "exact_human_action": "Choose one and reply in chat (or run the line yourself with the ! prefix): OPTION A (fresh runtime, preserves the stranded journal as evidence; recommended): reply 'Approved: resume supervised runs on --runtime-base C:/Users/MLFLL/AppData/Local/NYCBuildabilitySupervisor-r2' - the orchestrator will then re-run the exact denied start command (it is recorded verbatim in this session) and continue M2-T015 units under the same protections. OPTION B (repair the stranded journal through the supervisor's own state machine): reply 'Approved: fire claude_start_failed then owner_explicit_restart on run_m2t015_supervised via the StateMachine API' - both transitions are in the S7 table and describe what actually happened. OPTION C: order anything else (including HOLD).",
+ "how_it_will_be_tested": "After the chosen recovery, python -m tools.agent_supervisor status --checkout <primary> (--runtime-base ... for option A) must show a dispatchable state (IDLE/PREFLIGHT lineage, audit_chain_ok true), and the next supervised start must dispatch a cycle that reaches CHECKPOINT_RECEIVED. The stranded runtime folder 289bba68... under %LOCALAPPDATA%/NYCBuildabilitySupervisor is preserved read-only either way and its final audit lines match the evidence pack.",
+ "created_at": "2026-08-08T20:00:00+00:00",
+ "audit_log": [
+  {
+   "at": "2026-08-08T20:00:00+00:00",
+   "actor": "orchestrator",
+   "action": "created after two classifier denials on the recovery line; M2-T015 unit-1 product work committed (cabe128) before stopping; activation evidence finalized"
+  }
+ ]
+}

@@ -1,0 +1,53 @@
+{
+  "command": "pending-approvals",
+  "count": 3,
+  "pending": [
+    {
+      "request_id": "2ba180e1-9432-4523-9e74-c01989bac10d",
+      "digest": "320463f8be199053765dc00871e27698058060e05bfc44f363d572953dfc6aa6",
+      "tool_name": "Bash",
+      "task_id": "M2-T015",
+      "branch": "task/M2-T015-survey-ingestion",
+      "target_paths": [],
+      "tier": "ASK",
+      "reason_code": "undocumented_command",
+      "reason": "the command is not an enumerated read-only git command and is not a packet-documented test command",
+      "classification": "unclassified",
+      "session_id": "",
+      "rejected_suggestions": [],
+      "queued_at_utc": "2026-08-08T19:14:55.042Z"
+    },
+    {
+      "request_id": "f228dd26-a09c-48bd-94f6-336ad4d548e3",
+      "digest": "b7ac165e058ae1732a56d10ad9cf81d74123096fe0e421dcf0ed5603583f9c9f",
+      "tool_name": "Bash",
+      "task_id": "M2-T015",
+      "branch": "task/M2-T015-survey-ingestion",
+      "target_paths": [],
+      "tier": "ASK",
+      "reason_code": "undocumented_command",
+      "reason": "the command is not an enumerated read-only git command and is not a packet-documented test command",
+      "classification": "unclassified",
+      "session_id": "",
+      "rejected_suggestions": [
+        "addRules"
+      ],
+      "queued_at_utc": "2026-08-08T19:19:57.930Z"
+    },
+    {
+      "request_id": "731070fb-e7ba-466a-9c6e-147a7e50e301",
+      "digest": "d99686a3229bfe1694ba1babb4e66294a299d13bf8dc59a5c7fe3bfaf6a4d7ea",
+      "tool_name": "PowerShell",
+      "task_id": "M2-T015",
+      "branch": "task/M2-T015-survey-ingestion",
+      "target_paths": [],
+      "tier": "ASK",
+      "reason_code": "unclassified_request",
+      "reason": "the policy cannot confidently classify a 'unknown' request ('PowerShell'); unclassifiable means ASK, never AUTO",
+      "classification": "unclassified",
+      "session_id": "",
+      "rejected_suggestions": [],
+      "queued_at_utc": "2026-08-08T19:20:09.289Z"
+    }
+  ]
+}
