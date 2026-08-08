@@ -4737,6 +4737,357 @@
     "tasks": []
    },
    "amendment_sequence": 12
+  },
+  {
+   "id": "D-010-R134",
+   "text": "OWNER C2 DECISION: do NOT accept the G5-C2 journal-write two-field-forgery residual; close C2 BEFORE supervised-auto activation.",
+   "source_ref": "source-014-amendment.md#c2-decision",
+   "classification": "decision",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T037",
+     "M0-T048"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [
+     "accept"
+    ],
+    "effective_date": "2026-08-08"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "owner C2 decision 2026-08-08",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "amendment_sequence": 14
+  },
+  {
+   "id": "D-010-R135",
+   "text": "Close C2 with exactly ONE narrowly bounded security fix, before supervised-auto activation.",
+   "source_ref": "source-014-amendment.md#c2-decision",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T037",
+     "M0-T048"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [
+     "accept"
+    ],
+    "effective_date": "2026-08-08"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "owner C2 decision 2026-08-08",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "amendment_sequence": 14
+  },
+  {
+   "id": "D-010-R136",
+   "text": "Required security property: an attacker who can modify BOTH the parked prompt bytes AND prompt_bytes_digest, while leaving the operator-named approval digest unchanged, MUST NOT be able to cause altered prompt content to be forwarded. The forwarded content must be cryptographically bound to information independently covered by the operator-named approval_digest, rather than relying solely on mutable journal fields.",
+   "source_ref": "source-014-amendment.md#c2-decision",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T037",
+     "M0-T048"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [
+     "accept"
+    ],
+    "effective_date": "2026-08-08"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "owner C2 decision 2026-08-08",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "amendment_sequence": 14
+  },
+  {
+   "id": "D-010-R137",
+   "text": "Preserve the existing S13.5 timestamp/clock invariant. Use the smallest correct design - for example, generate the non-authoritative FORWARDED AT timestamp only at actual forward time, or persist/recompute the structured approved instruction at approve/resume time - whichever produces the cleanest deterministic binding.",
+   "source_ref": "source-014-amendment.md#c2-decision",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T037",
+     "M0-T048"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [
+     "accept"
+    ],
+    "effective_date": "2026-08-08"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "owner C2 decision 2026-08-08",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "amendment_sequence": 14
+  },
+  {
+   "id": "D-010-R138",
+   "text": "Mandatory adversarial test (verbatim steps): (1) park an authentic approval; (2) mutate BOTH prompt and prompt_bytes_digest consistently in the journal; (3) leave the operator-named approval digest unchanged; (4) attempt approval/resume; (5) it must fail closed; (6) provider calls must equal zero; (7) the refusal must be durably/auditably recorded.",
+   "source_ref": "source-014-amendment.md#c2-decision",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T037",
+     "M0-T048"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [
+     "accept"
+    ],
+    "effective_date": "2026-08-08"
+   },
+   "dependencies": [],
+   "required_harness": "executable adversarial test with all seven properties",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "owner C2 decision 2026-08-08",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "amendment_sequence": 14
+  },
+  {
+   "id": "D-010-R139",
+   "text": "Also prove: ordinary happy path still forwards exactly once; clock-only differences do not invalidate the operator's approval; post-approval tampering still refuses; no SHADOW/supervised/limited-auto authority change is introduced.",
+   "source_ref": "source-014-amendment.md#c2-decision",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T037",
+     "M0-T048"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [
+     "accept"
+    ],
+    "effective_date": "2026-08-08"
+   },
+   "dependencies": [],
+   "required_harness": "executable tests for all four properties",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "owner C2 decision 2026-08-08",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "amendment_sequence": 14
+  },
+  {
+   "id": "D-010-R140",
+   "text": "PROHIBITION: no supervisor redesign, no additional features, no new infrastructure, no broader cleanup.",
+   "source_ref": "source-014-amendment.md#c2-decision",
+   "classification": "prohibition",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T037",
+     "M0-T048"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [
+     "accept"
+    ],
+    "effective_date": "2026-08-08"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "owner C2 decision 2026-08-08",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "amendment_sequence": 14
+  },
+  {
+   "id": "D-010-R141",
+   "text": "Run the normal G3/G4/G5/DCV gates and merge only after all required checks pass.",
+   "source_ref": "source-014-amendment.md#c2-decision",
+   "classification": "sequencing",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T037",
+     "M0-T048"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [
+     "accept"
+    ],
+    "effective_date": "2026-08-08"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "owner C2 decision 2026-08-08",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "amendment_sequence": 14
+  },
+  {
+   "id": "D-010-R142",
+   "text": "After C2 is closed, return to the existing activation sequence (am.12 R131/R132 path: checklist already reconciled; elevated ACL apply + live PROTECTED capture; owner-typed activation decision line).",
+   "source_ref": "source-014-amendment.md#c2-decision",
+   "classification": "sequencing",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T037"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [
+     "accept"
+    ],
+    "effective_date": "2026-08-08"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "owner C2 decision 2026-08-08",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "amendment_sequence": 14
+  },
+  {
+   "id": "D-010-R143",
+   "text": "Do not start M2-T015 or M2-T016 yet (re-affirms R133).",
+   "source_ref": "source-014-amendment.md#c2-decision",
+   "classification": "prohibition",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T037",
+     "M2-T015",
+     "M2-T016"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [
+     "dispatch",
+     "accept"
+    ],
+    "effective_date": "2026-08-08"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "owner C2 decision 2026-08-08",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "amendment_sequence": 14
   }
  ]
 }

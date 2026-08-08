@@ -113,6 +113,14 @@
    "amends": "source-011-amendment.md",
    "recorded_at": "2026-08-07T19:58:00+00:00",
    "content_digest_sha256": "b419759edcd96e861719ee041f5e4dae8daf1e07a6d57c08ad62d6e518bcf840"
+  },
+  {
+   "file": "source-014-amendment.md",
+   "kind": "amendment",
+   "sequence": 14,
+   "amends": "source-012-amendment.md",
+   "recorded_at": "2026-08-08T04:29:07+00:00",
+   "content_digest_sha256": "3d1c9fe91944848dbdd3c0304b764758fa87f16c06ddf44100176805471219e8"
   }
  ],
  "amendments": [
@@ -127,7 +135,8 @@
   "source-010-amendment.md",
   "source-011-amendment.md",
   "source-012-amendment.md",
-  "source-013-amendment.md"
+  "source-013-amendment.md",
+  "source-014-amendment.md"
  ],
  "supersedes": [],
  "superseded_by": null,
@@ -166,8 +175,8 @@
  "verification_file": "verification.json",
  "final_reviewed_sha": null,
  "final_reviewed_manifest_sha256": null,
- "requirements_content_digest_sha256": "88eb298ec41dfa9e2dea74a5e809cc0046cc231e5ddf9dddb47f6188d2905d6a",
- "requirements_id_digest_sha256": "5d454806aa863fae00b8ac166ff8499795b2cb38d5a3fc23150583b178c4fd3e",
+ "requirements_content_digest_sha256": "d135ccd0f0383294d913689741cecce1770efd718c2ea083455713810ddd3d9a",
+ "requirements_id_digest_sha256": "d711488ff0697e88794ce58264d77a61b29401addff0d8817aba8542e3eef0a3",
  "enforcement_pointers": {
   "tasks": [
    "M0-T037",
@@ -335,10 +344,20 @@
   "D-010-R130",
   "D-010-R131",
   "D-010-R132",
-  "D-010-R133"
+  "D-010-R133",
+  "D-010-R134",
+  "D-010-R135",
+  "D-010-R136",
+  "D-010-R137",
+  "D-010-R138",
+  "D-010-R139",
+  "D-010-R140",
+  "D-010-R141",
+  "D-010-R142",
+  "D-010-R143"
  ],
  "created_at": "2026-08-07T01:09:55+00:00",
- "updated_at": "2026-08-07T16:53:10+00:00",
+ "updated_at": "2026-08-08T04:29:07+00:00",
  "audit_log": [
   {
    "at": "2026-08-07T01:09:55+00:00",
@@ -424,6 +443,11 @@
    "at": "2026-08-07T19:58:00+00:00",
    "actor": "orchestrator",
    "action": "amendment source-013 recorded (correction: R121 task binding narrowed, M2-T014 dropped - retroactive stamp would regress gated lifecycle); digests restamped"
+  },
+  {
+   "at": "2026-08-08T04:29:07+00:00",
+   "actor": "orchestrator",
+   "action": "amendment source-014 recorded (owner C2 decision 2026-08-08: close-before-activation; R134-R143 added, bound to M0-T037/M0-T048 + M2-T015/T016 hold re-affirmation); digests restamped"
   }
  ]
 }
