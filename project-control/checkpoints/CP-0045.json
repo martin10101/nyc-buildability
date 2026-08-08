@@ -1,0 +1,21 @@
+{
+  "checkpoint_id": "CP-0045",
+  "timestamp": "2026-08-08T07:00:51.361711+00:00",
+  "commit": "ab3c7ff",
+  "branch": "control/M0-T048-close",
+  "active_milestone": "M4",
+  "summary": "Session-7 close: M0-T048 ACCEPTED+MERGED (PR #180, main 0a7cc4c; accepted count 68). Owner source-015 (G3 MAJOR-1 close-before-accept) + source-016 (skip evidence) captured, executed, re-gated (G3/G4/G5 PASS zero corrections), DCV all-20 SATISFIED, R152 deferred-then-DISCHARGED post-merge. Resume-window trust anchor: journal approved_digest cross-checked against sealed operator-approval audit event, fail-closed, zero provider calls. Residuals for activation record: G5 N-4 (full-local-write chain rewrite, R140-excluded), N-5 (approved-content replay, narrowed), G3 MINOR-2 (fail-closed ambiguity edge). NEXT: activation package - elevated ACL apply + PROTECTED capture, owner-typed activation decision (R131), then M2-T015/T016 (held until decision). M0-T047 nanoid eligible 2026-08-10T10:39:22Z.",
+  "post_accept_verifications_confirmed": {
+    "M0-T027": [
+      "D-004-R389",
+      "D-004-R486",
+      "D-004-R487",
+      "D-004-R488",
+      "D-004-R501"
+    ],
+    "M0-T048": [
+      "D-010-R152"
+    ]
+  },
+  "updated_at": "2026-08-08T07:00:51.377361+00:00"
+}
