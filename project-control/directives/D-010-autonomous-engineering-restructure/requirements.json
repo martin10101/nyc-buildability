@@ -1,10 +1,10 @@
 {
  "schema": "directive_requirements/v1",
  "directive_id": "D-010",
- "version": 21,
- "requirement_count": 207,
+ "version": 22,
+ "requirement_count": 213,
  "producer": "orchestrator",
- "updated_at": "2026-08-08T17:14:37+00:00",
+ "updated_at": "2026-08-08T18:31:21+00:00",
  "requirements": [
   {
    "id": "D-010-R001",
@@ -7334,6 +7334,213 @@
     "tasks": []
    },
    "amendment_sequence": 21
+  },
+  {
+   "id": "D-010-R208",
+   "text": "Run the live UNELEVATED activation proof: python -m tools.agent_supervisor doctor --config \"C:\\Program Files\\SupervisorConfig\\config.toml\" --model-selection \"C:\\SupervisorController\\model_selection.toml\" --json.",
+   "source_ref": "source-022-amendment.md#live-activation-proof",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T037"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [
+     "accept"
+    ],
+    "effective_date": "2026-08-08"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "owner live-proof order 2026-08-08",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "amendment_sequence": 22
+  },
+  {
+   "id": "D-010-R209",
+   "text": "Require ALL of: controller_config_acl.protected == true; state == PROTECTED; file.state == PROTECTED; parent.state == PROTECTED; the protected config remains readable; the config SHA remains unchanged (29eb765e..da1cb); model_selection.toml remains writable by the ordinary unelevated account; no activation has occurred yet.",
+   "source_ref": "source-022-amendment.md#live-activation-proof",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T037"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [
+     "accept"
+    ],
+    "effective_date": "2026-08-08"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "owner live-proof order 2026-08-08",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "amendment_sequence": 22
+  },
+  {
+   "id": "D-010-R210",
+   "text": "Capture the live proof durably through the normal control-plane path.",
+   "source_ref": "source-022-amendment.md#live-activation-proof",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T037"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [
+     "accept"
+    ],
+    "effective_date": "2026-08-08"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "owner live-proof order 2026-08-08",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "amendment_sequence": 22
+  },
+  {
+   "id": "D-010-R211",
+   "text": "DECISION RULE: if ANY ACL verdict is not PROTECTED, STOP and report it.",
+   "source_ref": "source-022-amendment.md#live-activation-proof",
+   "classification": "decision",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T037"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [
+     "accept"
+    ],
+    "effective_date": "2026-08-08"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "owner live-proof order 2026-08-08",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "amendment_sequence": 22
+  },
+  {
+   "id": "D-010-R212",
+   "text": "RETURN: if all prerequisites pass, return the exact owner-typed supervised-auto activation decision line.",
+   "source_ref": "source-022-amendment.md#live-activation-proof",
+   "classification": "return",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T037"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [
+     "accept"
+    ],
+    "effective_date": "2026-08-08"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "owner live-proof order 2026-08-08",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "amendment_sequence": 22
+  },
+  {
+   "id": "D-010-R213",
+   "text": "PROHIBITION (continues R133/R143/R153/R167/R196): do not begin any product proof task before the owner types the activation decision line.",
+   "source_ref": "source-022-amendment.md#live-activation-proof",
+   "classification": "prohibition",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T037",
+     "M2-T015",
+     "M2-T016"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [
+     "dispatch",
+     "accept"
+    ],
+    "effective_date": "2026-08-08"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "owner live-proof order 2026-08-08",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "amendment_sequence": 22
   }
  ]
 }
