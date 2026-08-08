@@ -50,6 +50,26 @@ from tools.test_agent_supervisor_loop import (  # noqa: E402
 )
 
 
+def covered_pending(**overrides: object) -> dict:
+    """M0-T048: a well-formed parked forward record whose structured instruction
+    reproduces both the operator-named approval digest and the deterministic body."""
+    instruction = {
+        "task_id": "M0-T036", "stage": "phase4",
+        "allowed_paths": ["tools/agent_supervisor/**"],
+        "requested_action": "ship it",
+        "stop_conditions": ["no bypass flags"],
+    }
+    prompt = lp.build_forwarded_prompt(**instruction)
+    record = {
+        "cycle": 1, "digest": lp.approval_digest(**instruction),
+        "approved_instruction": instruction, "prompt": prompt,
+        "prompt_bytes_digest": lp.digest_of(prompt), "decision": "forward",
+        "created_at_utc": "2026-08-05T00:00:00Z",
+    }
+    record.update(overrides)
+    return record
+
+
 class ConsumeHelperTests(unittest.TestCase):
     def test_consume_writes_a_marker_with_no_truthy_digest(self) -> None:
         tmp = pathlib.Path(tempfile.mkdtemp())
@@ -126,13 +146,9 @@ class CliResumeConsumeTests(unittest.TestCase):
         the record (which dropped the prompt bytes and stranded a cross-process
         forward); it marks it APPROVED, dropping only the re-approvable `digest`
         key so re-approval still fails closed while the held prompt survives."""
-        digest = "a1b2c3d4e5f6"
-        prompt = "REQUESTED ACTION:\nship it\n"
-        self._park(pending={"cycle": 1, "digest": digest,
-                            "prompt": prompt,
-                            "prompt_bytes_digest": lp.digest_of(prompt),
-                            "decision": "forward",
-                            "created_at_utc": "2026-08-05T00:00:00Z"})
+        pending = covered_pending()
+        digest = pending["digest"]
+        self._park(pending=pending)
         code, _out, _err = self.run_cli(
             "resume-pending-prompt", "--approve-prompt-digest", digest)
         self.assertEqual(code, 0)
@@ -143,22 +159,18 @@ class CliResumeConsumeTests(unittest.TestCase):
         self.assertFalse(record.get("digest"),
                          "the re-approvable digest must be dropped so it cannot be "
                          "re-approved")
-        self.assertEqual(record.get("prompt"), "REQUESTED ACTION:\nship it\n",
+        self.assertEqual(record.get("prompt"), pending["prompt"],
                          "the held prompt bytes must survive approval for a "
                          "cross-process forward")
-        self.assertEqual(record.get("approved_digest"),
-                         lp.digest_of("REQUESTED ACTION:\nship it\n"))
+        self.assertEqual(record.get("approved_digest"), digest,
+                         "M0-T048: approved_digest binds to the operator-named digest")
 
     def test_a_second_resume_of_an_approved_record_fails_closed(self) -> None:
         """The re-approval guard is `not pending.get("digest")`; an approved record
         drops that key, so a second resume for the old digest refuses."""
-        digest = "a1b2c3d4e5f6"
-        prompt = "REQUESTED ACTION:\nship it\n"
-        self._park(pending={"cycle": 1, "digest": digest,
-                            "prompt": prompt,
-                            "prompt_bytes_digest": lp.digest_of(prompt),
-                            "decision": "forward",
-                            "created_at_utc": "2026-08-05T00:00:00Z"})
+        pending = covered_pending()
+        digest = pending["digest"]
+        self._park(pending=pending)
         code, _out, _err = self.run_cli(
             "resume-pending-prompt", "--approve-prompt-digest", digest)
         self.assertEqual(code, 0)
@@ -414,10 +426,14 @@ class CrossProcessResumeTests(unittest.TestCase):
         message_id = run.forwarded_message_ids[0]
         rows = self._outbox_rows(message_id)
         self.assertEqual(len(rows), 1, "exactly one outbox row for the forward")
-        self.assertEqual(rows[0]["payload"]["prompt"], held_prompt,
-                         "the forwarded bytes are identical to what was held")
-        self.assertEqual(lp.digest_of(rows[0]["payload"]["prompt"]),
-                         approved_record["approved_digest"])
+        # M0-T048: forwarded == the operator-covered body (== held) + forward-time clock.
+        forwarded = rows[0]["payload"]["prompt"]
+        body, _, _ = forwarded.partition("FORWARDED AT: ")
+        self.assertEqual(body, held_prompt,
+                         "the operator-covered body forwarded is identical to what was "
+                         "held; only the non-authoritative clock stamp is appended")
+        self.assertEqual(approved_record["approved_digest"], binding_digest,
+                         "approved_digest is the operator-named approval digest")
         # The seam actuated: a rotation was recorded (archive -> mint -> relaunch).
         self.assertTrue(run.rotations, "an armed rotation must actuate at the seam")
         # The record is consumed, so a re-approval fails closed.
@@ -528,15 +544,18 @@ class LoopResumeForwardExactlyOnceTests(LoopTestBase):
     double-forward. A second FORWARD_PROMPT entry re-uses the same message id and
     the outbox suppresses the duplicate: exactly one send survives."""
 
-    def _approved_at_forward_prompt(self, prompt: str, binding: str) -> str:
+    def _approved_at_forward_prompt(self, binding: str) -> tuple[str, str]:
+        base = covered_pending()
+        record = {"approved": True, "cycle": 1, "prompt": base["prompt"],
+                  "approved_instruction": base["approved_instruction"],
+                  "prompt_bytes_digest": base["prompt_bytes_digest"],
+                  # M0-T048: approved_digest is the operator-named approval digest.
+                  "approved_digest": base["digest"], "decision": "CONTINUE",
+                  "reviewed_checkpoint_id": "cp-1", "prior_digest": binding}
         self.journal.set_state("current_state", sm.FORWARD_PROMPT)
         self.journal.set_state("last_trigger", "owner_approved_pending_prompt")
-        self.journal.set_state(
-            pending_prompt_key(self.run_id),
-            {"approved": True, "cycle": 1, "prompt": prompt,
-             "approved_digest": lp.digest_of(prompt), "decision": "CONTINUE",
-             "reviewed_checkpoint_id": "cp-1", "prior_digest": binding})
-        return f"{self.run_id}/fwd/1/{binding[:16]}"
+        self.journal.set_state(pending_prompt_key(self.run_id), record)
+        return f"{self.run_id}/fwd/1/{binding[:16]}", base["prompt"]
 
     def _loop(self, *, runner) -> lp.SupervisedLoop:
         return lp.SupervisedLoop(
@@ -550,9 +569,8 @@ class LoopResumeForwardExactlyOnceTests(LoopTestBase):
             approval_gate=lambda _d, _p: True)
 
     def test_a_second_resume_does_not_double_forward(self) -> None:
-        prompt = "REQUESTED ACTION:\ndo it\n"
         binding = "c" * 64
-        message_id = self._approved_at_forward_prompt(prompt, binding)
+        message_id, prompt = self._approved_at_forward_prompt(binding)
 
         # CRASH SIMULATION: the send happened durably, but the process died before
         # the CLAUDE_RUNNING transition and the consume (state still FORWARD_PROMPT,

@@ -55,7 +55,7 @@ from . import CONTROLLER_VERSION
 from . import rotation
 from .circuit_breakers import GAUGE_LIMITS
 from .claude_runner import QUOTA_EXHAUSTED_REASON, broker_permission_handler
-from .codex_reviewer import build_forwarded_prompt
+from .codex_reviewer import build_forwarded_prompt, stamp_forwarded_at
 from .config import DEFAULT_ORCHESTRATOR_MODEL_CHAIN, ModelChain
 from .durable_state import JournalError
 from .evidence import STOP_FOR_OWNER, build_packet
@@ -524,18 +524,17 @@ class ModelAvailability:
 # Prompt digests: what an approval actually binds to
 # --------------------------------------------------------------------------
 #
-# A rendered forwarded prompt is NOT stable across renders: it carries a
-# `FORWARDED AT:` timestamp and a reference to the evidence packet, whose own
-# digest moves with the clock and with live git state. Binding an approval to
-# those bytes makes a digest-bound approval impossible to honour - the operator
-# is shown one digest, and by the time they answer with it the prompt has
-# re-rendered to a different one. (Found by running `start --mode supervised`
-# end to end: the approval never matched, twice, for two different reasons.)
+# Historically a rendered forwarded prompt was NOT stable across renders: it
+# carried a `FORWARDED AT:` timestamp and a reference to the evidence packet,
+# whose own digest moved with the clock and with live git state. Binding an
+# approval to those bytes makes a digest-bound approval impossible to honour - the
+# operator is shown one digest, and by the time they answer with it the prompt has
+# re-rendered to a different one. (Found by running `start --mode supervised` end
+# to end: the approval never matched, twice, for two different reasons.)
 #
-# Scrubbing the volatile lines out of the rendered text would work until someone
-# adds a third one. So the approval digest is computed from the INSTRUCTION
-# FIELDS directly - the exact five things S9 says every forwarded prompt carries,
-# plus the task and stage that confer authority:
+# So the approval digest is computed from the INSTRUCTION FIELDS directly - the
+# exact five things S9 says every forwarded prompt carries, plus the task and stage
+# that confer authority:
 #
 #   approval_digest   "is this the same INSTRUCTION?"   Binds the approval, the
 #                     pending-prompt record, and the outbox message id, so a
@@ -546,6 +545,20 @@ class ModelAvailability:
 # Change the task, the stage, a permitted path, the requested action, or a stop
 # condition, and the approval digest changes - so the approval is invalidated,
 # which is exactly S13.5's rule. Change only the clock, and it does not.
+#
+# M0-T048 (D-010 am.14, R136/R137) went one step further so the FORWARDED CONTENT
+# itself - not just the approval - is bound to that operator-named digest.
+# `build_forwarded_prompt` now emits a DETERMINISTIC, timestamp-free body that is a
+# pure function of the same five canonical fields; the `FORWARDED AT:` clock is
+# appended only at actual forward time (`stamp_forwarded_at`) and the volatile
+# packet reference is gone. So the timestamp-free body is reconstructable from
+# approval-covered material, and `verify_covered_instruction` (below) recomputes it
+# at approve/resume and refuses fail-closed unless the persisted structured
+# instruction reproduces the operator-named approval digest. An attacker who
+# rewrites the parked prompt bytes AND their journal-resident `prompt_bytes_digest`,
+# leaving the operator digest untouched, can no longer get altered content
+# forwarded: the content is derived from the operator-covered instruction, never
+# trusted from the mutable journal bytes.
 
 APPROVAL_DIGEST_FIELDS: tuple[str, ...] = (
     "task_id", "stage", "allowed_paths", "requested_action", "stop_conditions")
@@ -623,6 +636,73 @@ def consume_pending_prompt(journal: Any, run_id: str, *, prior_digest: str = "")
          "prior_digest": prior_digest})
 
 
+def verify_covered_instruction(
+        instruction: Any, operator_digest: str, prompt: str, anchor: Any) -> str:
+    """Reconstruct the forwarded body from OPERATOR-COVERED material, or fail closed.
+
+    M0-T048 (D-010 am.14, R136): the forwarded content must be cryptographically
+    bound to information the operator-named ``approval_digest`` covers, never trusted
+    from the mutable journal ``prompt``/``prompt_bytes_digest`` fields alone. This
+    recomputes the instruction body from the persisted structured instruction and
+    returns it ONLY when:
+
+      1. the persisted structured instruction is present and well-formed (an
+         old-shape/missing record REFUSES - it is never treated as journal-resident-
+         only verification, AS-6);
+      2. ``approval_digest(instruction)`` reproduces the operator-named digest - so
+         every field that determines the body is exactly what the operator approved;
+      3. (defence in depth, preserving the M0-T046 sealed byte anchor) the park-time
+         ``prompt_bytes_digest`` and the parked ``prompt`` bytes both still match the
+         reconstruction.
+
+    Because ``build_forwarded_prompt`` is a pure function of the same canonical fields
+    ``approval_digest`` covers, step 2 alone already fixes every byte of the returned
+    body; steps 1/3 give distinct fail-closed reason codes and keep the earlier
+    guarantees intact. Raises ``LoopError`` (``pending_prompt_uncovered`` or
+    ``pending_prompt_tampered``) with no side effect on any refusal.
+    """
+    if not isinstance(instruction, Mapping):
+        raise LoopError(
+            "pending_prompt_uncovered",
+            "the parked record carries no structured approved instruction; refusing "
+            "to forward bytes that are not bound to the operator-named approval digest "
+            "(old-shape/missing binding material). Fail-closed: no fallback to "
+            "journal-resident-only verification")
+    try:
+        fields = {
+            "task_id": str(instruction["task_id"]),
+            "stage": str(instruction["stage"]),
+            "allowed_paths": list(instruction["allowed_paths"]),
+            "requested_action": str(instruction["requested_action"]),
+            "stop_conditions": list(instruction["stop_conditions"]),
+        }
+    except (KeyError, TypeError) as exc:
+        raise LoopError(
+            "pending_prompt_uncovered",
+            f"the parked approved instruction is malformed ({exc!r}); refusing "
+            f"fail-closed rather than forward uncovered content") from exc
+    if approval_digest(**fields) != operator_digest:
+        raise LoopError(
+            "pending_prompt_uncovered",
+            "the parked approved instruction does not reproduce the operator-named "
+            "approval digest; the forwarded content would not be covered by the "
+            "operator's approval. Fail-closed: no approval is written")
+    expected_body = build_forwarded_prompt(**fields)
+    if isinstance(anchor, str) and anchor and digest_of(expected_body) != anchor:
+        raise LoopError(
+            "pending_prompt_tampered",
+            "the park-time byte anchor no longer matches the body reconstructed from "
+            "the operator-covered instruction; the parked record was altered after "
+            "park. Fail-closed: no approval is written")
+    if digest_of(prompt) != digest_of(expected_body):
+        raise LoopError(
+            "pending_prompt_tampered",
+            "the parked prompt bytes no longer match the byte anchor / reconstruction "
+            "from the operator-covered instruction; the held prompt was altered after "
+            "it was parked. Refusing fail-closed: no approval is written")
+    return expected_body
+
+
 def approve_pending_prompt(journal: Any, run_id: str, *, pending: Mapping[str, Any],
                            approval_binding: str) -> None:
     """Record a PARKED prompt as APPROVED without dropping what the forward needs.
@@ -639,16 +719,20 @@ def approve_pending_prompt(journal: Any, run_id: str, *, pending: Mapping[str, A
     held prompt leaves behind an approved record with no `prompt`/`approved_digest`,
     which the loop refuses to forward (it never fabricates a prompt).
 
-    M0-T046 (D-010-R124), G5 LOW-1: the `approved_digest` is NO LONGER re-hashed
-    from whatever bytes are parked AT APPROVAL time. It is bound to the park-time
-    byte anchor (`prompt_bytes_digest`) recorded when the bytes were authentic,
-    and this function REFUSES fail-closed when the parked bytes no longer hash to
-    that anchor. Previously an attacker with journal write who tampered the
-    `prompt` field between park and approval got the tampered bytes forwarded
-    under a self-consistent, freshly re-hashed digest; now the approval binds only
-    bytes that still match the anchor frozen at park. The CLI performs the same
-    check BEFORE it transitions/audits, so in the normal path this is defense in
-    depth; a direct caller still cannot bind unverified bytes.
+    M0-T046 (D-010-R124), G5 LOW-1: a park-time byte anchor (`prompt_bytes_digest`)
+    was frozen when the bytes were authentic and re-verified before any state change.
+
+    M0-T048 (D-010 am.14, R136/R137): closes the G5 C2 residual. The parked record
+    now carries the STRUCTURED approved instruction, and this function reconstructs
+    the forwarded body from it and REFUSES fail-closed unless that instruction
+    reproduces the OPERATOR-NAMED approval digest (`approval_binding`). `approved_digest`
+    is bound to that operator-named digest - not a journal-resident byte anchor - so an
+    attacker who rewrites BOTH the parked `prompt` and `prompt_bytes_digest`
+    consistently, leaving the operator digest unchanged, still cannot get altered
+    content forwarded: the body is derived from operator-covered material, and any
+    edit to a covered field breaks the digest match. Old-shape records (no structured
+    instruction) refuse (AS-6). The CLI performs the same check BEFORE it
+    transitions/audits, so in the normal path this is defense in depth.
     """
     prompt = pending.get("prompt")
     record: dict[str, Any] = {
@@ -660,23 +744,17 @@ def approve_pending_prompt(journal: Any, run_id: str, *, pending: Mapping[str, A
         "prior_digest": approval_binding,
     }
     if isinstance(prompt, str) and prompt:
-        anchor = pending.get("prompt_bytes_digest")
-        if not (isinstance(anchor, str) and anchor):
-            raise LoopError(
-                "pending_prompt_unanchored",
-                "the parked prompt carries no park-time byte anchor "
-                "(prompt_bytes_digest); refusing to bind an approval to bytes "
-                "whose integrity was never anchored")
-        if digest_of(prompt) != anchor:
-            raise LoopError(
-                "pending_prompt_tampered",
-                "the parked prompt bytes no longer match the byte anchor frozen "
-                "at park; the held prompt was altered after it was parked. "
-                "Refusing fail-closed: no approval is written")
-        record["prompt"] = prompt
-        # Bind to the park-time anchor (== digest_of(prompt), just verified),
-        # never a fresh re-hash of the current (possibly tampered) bytes.
-        record["approved_digest"] = anchor
+        # Reconstruct + verify against the OPERATOR-NAMED digest; raises fail-closed.
+        expected_body = verify_covered_instruction(
+            pending.get("approved_instruction"), approval_binding, prompt,
+            pending.get("prompt_bytes_digest"))
+        record["approved_instruction"] = dict(pending["approved_instruction"])
+        # Persist the canonical reconstruction (== the verified parked bytes), never a
+        # possibly-tampered journal value.
+        record["prompt"] = expected_body
+        # Bind to the OPERATOR-NAMED approval digest itself (R136), now that the body
+        # is a verified pure function of the material that digest covers.
+        record["approved_digest"] = approval_binding
     journal.set_state(pending_prompt_key(run_id), record)
 
 
@@ -1702,13 +1780,20 @@ class SupervisedLoop:
         if verdict.tier == NOTIFY:
             notify.append(verdict.reason_code)
 
-        forwarded_prompt = build_forwarded_prompt(
-            decision,
-            task_id=self.config.task_id,
-            stage=self.config.stage,
-            allowed_paths=self.config.allowed_paths or self.authority.allowed_paths,
-            packet_reference=self.config.packet_reference or packet.packet_digest,
-            stop_conditions=self.config.stop_conditions)
+        # M0-T048 (D-010 am.14): the structured approved instruction is the single
+        # source for BOTH the operator-named approval digest and the reconstructable
+        # forwarded body, so they cannot drift. `build_forwarded_prompt` emits a
+        # deterministic, timestamp-free body (the `FORWARDED AT:` clock is appended
+        # only at forward time); the volatile packet reference is no longer embedded.
+        instruction = {
+            "task_id": self.config.task_id,
+            "stage": self.config.stage,
+            "allowed_paths": list(
+                self.config.allowed_paths or self.authority.allowed_paths),
+            "requested_action": decision.next_claude_prompt,
+            "stop_conditions": list(self.config.stop_conditions),
+        }
+        forwarded_prompt = build_forwarded_prompt(**instruction)
         prompt_digest = self.approval_digest_for(decision)
         result.pending_prompt_digest = prompt_digest
 
@@ -1758,21 +1843,22 @@ class SupervisedLoop:
         # digest. Prompt text is digest-only everywhere else, but a cross-process
         # resume (approve in one invocation, forward in a fresh `start`) has
         # nothing to forward unless the bytes are durable here. `digest` stays the
-        # approval binding; `prompt` is what gets forwarded unchanged on resume.
+        # approval binding; `prompt` is the deterministic timestamp-free body.
         self.journal.set_state(pending_prompt_key(self.run_id),
                                {"cycle": cycle, "digest": prompt_digest,
+                                # M0-T048 (D-010 am.14, R136): the STRUCTURED approved
+                                # instruction. approve/resume reconstruct the forwarded
+                                # body from this and verify it reproduces the
+                                # operator-named `digest`, so the forwarded content is
+                                # bound to operator-covered material - never trusted
+                                # from the mutable `prompt`/`prompt_bytes_digest` fields.
+                                "approved_instruction": instruction,
                                 "prompt": forwarded_prompt,
-                                # M0-T046 (D-010-R124): the byte anchor of the EXACT
-                                # forwarded bytes, frozen here at park time when the
-                                # bytes are authentic. `digest` is the instruction-
-                                # level S13.5 approval binding (timestamp-free); the
-                                # forwarded bytes carry an ephemeral `FORWARDED AT`
-                                # stamp, so their integrity needs its OWN anchor. The
-                                # approval re-verifies the parked bytes against this
-                                # anchor and binds `approved_digest` to it, so a
-                                # journal-write tamper of `prompt` between park and
-                                # approval is caught fail-closed instead of being
-                                # re-hashed into a self-consistent approval.
+                                # M0-T046 (D-010-R124): the park-time byte anchor of the
+                                # deterministic body, kept as defense in depth. The body
+                                # is now reconstructable from covered material, so a
+                                # journal-write tamper of `prompt` (and/or this anchor)
+                                # is caught fail-closed by the reconstruction check.
                                 "prompt_bytes_digest": digest_of(forwarded_prompt),
                                 "reviewed_checkpoint_id":
                                     decision.reviewed_checkpoint_id,
@@ -1794,8 +1880,12 @@ class SupervisedLoop:
                                 detail={"cycle": cycle, "prompt_digest": prompt_digest})
         land(FORWARD_PROMPT)
 
-        forward = self.forward_exactly_once(forwarded_prompt, cycle=cycle,
-                                            decision=decision)
+        # M0-T048 (R137): append the non-authoritative FORWARDED AT clock at the
+        # ACTUAL forward, excluded from the binding. The parked body stays timestamp-
+        # free; the message id keys on the approval digest, not these bytes, so the
+        # stamp never affects exactly-once identity.
+        forward = self.forward_exactly_once(stamp_forwarded_at(forwarded_prompt),
+                                            cycle=cycle, decision=decision)
         result.forward = forward
         result.forwarded = forward.sent
         if forward.sent:
@@ -2039,17 +2129,27 @@ class SupervisedLoop:
                 "the approved pending-prompt record carries no held prompt bytes "
                 "(an old-shape record parked before the held text was durable); "
                 "refusing to fabricate a prompt to forward")
-        if not approved_digest or digest_of(prompt) != approved_digest:
+        # M0-T048 (D-010 am.14, R136): RECONSTRUCT the forwarded body from the
+        # operator-covered structured instruction and verify it reproduces the
+        # operator-named `approved_digest`, rather than trusting the parked bytes. A
+        # missing/old-shape/uncovered or tampered record refuses fail-closed (AS-6) -
+        # never a fallback to journal-resident-only byte comparison.
+        try:
+            body = verify_covered_instruction(
+                record.get("approved_instruction"), str(approved_digest or ""),
+                prompt, record.get("prompt_bytes_digest"))
+        except LoopError as exc:
             raise LoopError(
                 "forwarded_prompt_unavailable",
-                "the held prompt does not match the approved digest; refusing to "
-                "forward bytes that differ from what the operator approved")
-        approval_binding = str(record.get("prior_digest") or "") or digest_of(prompt)
+                f"refusing to forward: {exc.message}") from exc
+        approval_binding = str(record.get("prior_digest") or "") or str(approved_digest)
         parked_cycle = record.get("cycle")
         if not isinstance(parked_cycle, int) or parked_cycle < 1:
             parked_cycle = 1
+        # Append the non-authoritative clock at the actual forward (R137); the parked
+        # `body` stays deterministic and the message id keys on the approval binding.
         forward = self._resume_forward(
-            prompt, cycle=parked_cycle, approval_binding=approval_binding,
+            stamp_forwarded_at(body), cycle=parked_cycle, approval_binding=approval_binding,
             decision_str=str(record.get("decision") or ""),
             reviewed_checkpoint_id=str(record.get("reviewed_checkpoint_id") or ""))
         # prompt_forwarded -> CLAUDE_RUNNING (the legal S7 exit). Reached whether
