@@ -1,57 +1,58 @@
 {
- "task_id": "M0-T051",
- "title": "Hardening apply must strip unrelated explicit ACEs (Authenticated Users M survived); adversarial poisoned-fixture regression (owner source-021)",
- "task_type": "engineering",
- "milestone_id": "M0",
- "objective": "Make the elevated apply produce a DETERMINISTIC final DACL on file and parent (exactly Administrators F, SYSTEM F, unelevated user RX) regardless of pre-existing explicit ACEs - e.g. icacls /reset before /inheritance:r, or enumerate-and-/remove all unexpected principals - never merely /grant:r the three intended principals; adversarial fixture regression drives the REAL hardening behavior from a poisoned explicit Authenticated Users:(M) start to evaluator PROTECTED; RED against cleared blob 9625514e; idempotent; contents byte-preserved; read access preserved; parent protections preserved. No ACL architecture or supervisor redesign.",
- "business_reason": "Owner's real elevated apply demonstrated the explicit Modify ACE survives /inheritance:r + /grant:r, leaving the immutable config unelevated-writable (doctor NOT_PROTECTED captured as primary evidence); third pre-activation defect; blocks the activation package until fixed, G3/G5/DCV reviewed, merged, and a new blob returned.",
- "inputs": [],
- "outputs": [],
- "dependencies": [],
- "allowed_paths": [
-  "tools/agent_supervisor/harden_controller_config.ps1",
-  "tools/test_agent_supervisor_*.py",
-  "project-control/reports/M0-T051-producer-report.md",
-  "project-control/tasks/M0-T051.json"
- ],
- "forbidden_paths": [],
- "acceptance_scenarios": [],
- "required_gates": [
-  "G0",
-  "G2",
-  "G3",
-  "G5"
- ],
- "producer_agent": null,
- "reviewer_agents": [
-  "code-reviewer",
-  "security-reviewer"
- ],
- "status": "backlog",
- "progress_percent": 0,
- "risks": [],
- "blockers": [],
- "created_at": "2026-08-08T17:15:12.584938+00:00",
- "updated_at": "2026-08-08T17:15:12.662959+00:00",
- "directive_refs": [
-  {
-   "directive_id": "D-010",
-   "requirement_ids": [
-    "D-010-R196",
-    "D-010-R197",
-    "D-010-R198",
-    "D-010-R199",
-    "D-010-R200",
-    "D-010-R201",
-    "D-010-R202",
-    "D-010-R203",
-    "D-010-R204",
-    "D-010-R205",
-    "D-010-R206",
-    "D-010-R207"
-   ]
-  }
- ],
- "directive_regime_version": "1.0",
- "directive_regime_entered_at": "2026-08-08T17:15:12.584938+00:00"
+  "task_id": "M0-T051",
+  "title": "Hardening apply must strip unrelated explicit ACEs (Authenticated Users M survived); adversarial poisoned-fixture regression (owner source-021)",
+  "task_type": "engineering",
+  "milestone_id": "M0",
+  "objective": "Make the elevated apply produce a DETERMINISTIC final DACL on file and parent (exactly Administrators F, SYSTEM F, unelevated user RX) regardless of pre-existing explicit ACEs - e.g. icacls /reset before /inheritance:r, or enumerate-and-/remove all unexpected principals - never merely /grant:r the three intended principals; adversarial fixture regression drives the REAL hardening behavior from a poisoned explicit Authenticated Users:(M) start to evaluator PROTECTED; RED against cleared blob 9625514e; idempotent; contents byte-preserved; read access preserved; parent protections preserved. No ACL architecture or supervisor redesign.",
+  "business_reason": "Owner's real elevated apply demonstrated the explicit Modify ACE survives /inheritance:r + /grant:r, leaving the immutable config unelevated-writable (doctor NOT_PROTECTED captured as primary evidence); third pre-activation defect; blocks the activation package until fixed, G3/G5/DCV reviewed, merged, and a new blob returned.",
+  "inputs": [],
+  "outputs": [],
+  "dependencies": [],
+  "allowed_paths": [
+    "tools/agent_supervisor/harden_controller_config.ps1",
+    "tools/test_agent_supervisor_*.py",
+    "project-control/reports/M0-T051-producer-report.md",
+    "project-control/tasks/M0-T051.json"
+  ],
+  "forbidden_paths": [],
+  "acceptance_scenarios": [],
+  "required_gates": [
+    "G0",
+    "G2",
+    "G3",
+    "G5"
+  ],
+  "producer_agent": "backend-engineer",
+  "reviewer_agents": [
+    "code-reviewer",
+    "security-reviewer"
+  ],
+  "status": "claimed",
+  "progress_percent": 10,
+  "risks": [],
+  "blockers": [],
+  "created_at": "2026-08-08T17:15:12.584938+00:00",
+  "updated_at": "2026-08-08T17:15:14.766214+00:00",
+  "directive_refs": [
+    {
+      "directive_id": "D-010",
+      "requirement_ids": [
+        "D-010-R196",
+        "D-010-R197",
+        "D-010-R198",
+        "D-010-R199",
+        "D-010-R200",
+        "D-010-R201",
+        "D-010-R202",
+        "D-010-R203",
+        "D-010-R204",
+        "D-010-R205",
+        "D-010-R206",
+        "D-010-R207"
+      ]
+    }
+  ],
+  "directive_regime_version": "1.0",
+  "directive_regime_entered_at": "2026-08-08T17:15:12.584938+00:00",
+  "worktree": "C:/Users/MLFLL/Downloads/nyc-zoning/orch"
 }
