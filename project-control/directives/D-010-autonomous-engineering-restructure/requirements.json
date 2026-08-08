@@ -1,10 +1,10 @@
 {
  "schema": "directive_requirements/v1",
  "directive_id": "D-010",
- "version": 16,
- "requirement_count": 156,
+ "version": 17,
+ "requirement_count": 167,
  "producer": "orchestrator",
- "updated_at": "2026-08-08T06:16:37+00:00",
+ "updated_at": "2026-08-08T07:24:57+00:00",
  "requirements": [
   {
    "id": "D-010-R001",
@@ -5547,6 +5547,390 @@
     "tasks": []
    },
    "amendment_sequence": 16
+  },
+  {
+   "id": "D-010-R157",
+   "text": "AUTHORIZATION: proceed with the safe controller-config relocation (C:\\SupervisorController\\config.toml to C:\\SupervisorConfig\\config.toml) per the enumerated preflight and unelevated steps.",
+   "source_ref": "source-017-amendment.md#relocation-decision",
+   "classification": "authorization",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T037"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [
+     "accept"
+    ],
+    "effective_date": "2026-08-08"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "owner relocation decision 2026-08-08",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "amendment_sequence": 17
+  },
+  {
+   "id": "D-010-R158",
+   "text": "PROHIBITION: do NOT apply ACL hardening and do NOT activate anything in this relocation unit.",
+   "source_ref": "source-017-amendment.md#relocation-decision",
+   "classification": "prohibition",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T037"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [
+     "accept"
+    ],
+    "effective_date": "2026-08-08"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "owner relocation decision 2026-08-08",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "amendment_sequence": 17
+  },
+  {
+   "id": "D-010-R159",
+   "text": "Quiescence precondition before relocating: no child agents, no background writer, no process modifying C:\\SupervisorController, no new task dispatch.",
+   "source_ref": "source-017-amendment.md#relocation-decision",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T037"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [
+     "accept"
+    ],
+    "effective_date": "2026-08-08"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "owner relocation decision 2026-08-08",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "amendment_sequence": 17
+  },
+  {
+   "id": "D-010-R160",
+   "text": "Read-only preflight items 1-4: confirm the three exact paths (old config, new config, mutable model selection remaining in place); confirm config.toml is NOT a tracked repository file (STOP and report if tracked); record the exact pre-move SHA-256 of config.toml; verify no hard-coded runtime/scheduled-task dependency requires the old config path.",
+   "source_ref": "source-017-amendment.md#relocation-decision",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T037"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [
+     "accept"
+    ],
+    "effective_date": "2026-08-08"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "Committed preflight evidence: git tracking check output, pre-move SHA-256, scheduled-task/reference scan results.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "owner relocation decision 2026-08-08",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "amendment_sequence": 17
+  },
+  {
+   "id": "D-010-R161",
+   "text": "Read-only preflight item 5: inspect the effective ACL posture of grandparent C:\\ and determine whether the ordinary unelevated identity, Users, Authenticated Users, or Everyone holds a grant through C:\\ permitting delete/rename/replace of C:\\SupervisorConfig itself (DeleteChild / DeleteSubdirectoriesAndFiles / Modify / FullControl). STOP if such a right exists or the result is ambiguous; do NOT weaken or rewrite C:\\ ACLs; on STOP return the smallest safe alternative location/design.",
+   "source_ref": "source-017-amendment.md#relocation-decision",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T037"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [
+     "accept"
+    ],
+    "effective_date": "2026-08-08"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "icacls/effective-rights output for C:\\ + written conclusion.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "owner relocation decision 2026-08-08",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "amendment_sequence": 17
+  },
+  {
+   "id": "D-010-R162",
+   "text": "Read-only preflight item 6: verify C:\\SupervisorController\tools\u0007gent_supervisor\\harden_controller_config.ps1 is byte-identical to the script on merged main; expected Git blob identity 0f01d649a64a4fcb1f96b805564cc40889d9a389; never execute an elevated script whose identity does not match.",
+   "source_ref": "source-017-amendment.md#relocation-decision",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T037"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [
+     "accept"
+    ],
+    "effective_date": "2026-08-08"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "git hash-object of the local script + main blob id comparison.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "owner relocation decision 2026-08-08",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "amendment_sequence": 17
+  },
+  {
+   "id": "D-010-R163",
+   "text": "Unelevated relocation steps 7-9 (only after all preflight passes): create ONLY C:\\SupervisorConfig; move ONLY config.toml to C:\\SupervisorConfig\\config.toml; do not move or modify model_selection.toml.",
+   "source_ref": "source-017-amendment.md#relocation-decision",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T037"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [
+     "accept"
+    ],
+    "effective_date": "2026-08-08"
+   },
+   "dependencies": [
+    "D-010-R159",
+    "D-010-R160",
+    "D-010-R161",
+    "D-010-R162"
+   ],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "owner relocation decision 2026-08-08",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "amendment_sequence": 17
+  },
+  {
+   "id": "D-010-R164",
+   "text": "Post-move verification items 10-11: post-move SHA-256 byte-identical to the recorded pre-move SHA-256; unelevated doctor run with BOTH independent paths (--config C:\\SupervisorConfig\\config.toml --model-selection C:\\SupervisorController\\model_selection.toml --json). controller_config_acl NOT_PROTECTED is EXPECTED pre-hardening; required green items: config parses, model selection parses, controller/config identity checks valid, nothing points to the obsolete config location, no other safety check regresses.",
+   "source_ref": "source-017-amendment.md#relocation-decision",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T037"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [
+     "accept"
+    ],
+    "effective_date": "2026-08-08"
+   },
+   "dependencies": [
+    "D-010-R163"
+   ],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "owner relocation decision 2026-08-08",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "amendment_sequence": 17
+  },
+  {
+   "id": "D-010-R165",
+   "text": "PROHIBITION: do not modify config contents merely to accommodate the move.",
+   "source_ref": "source-017-amendment.md#relocation-decision",
+   "classification": "prohibition",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T037"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [
+     "accept"
+    ],
+    "effective_date": "2026-08-08"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "owner relocation decision 2026-08-08",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "amendment_sequence": 17
+  },
+  {
+   "id": "D-010-R166",
+   "text": "Sequencing + return: STOP after the relocation and sanity proof; return (a) config SHA-256 before and after, (b) the C:\\ grandparent DeleteChild/effective-rights conclusion, (c) the local hardening-script Git blob identity, (d) the doctor result, (e) confirmation model_selection.toml remains at the old mutable location, (f) the exact elevated PowerShell command the owner must personally run.",
+   "source_ref": "source-017-amendment.md#relocation-decision",
+   "classification": "return",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T037"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [
+     "accept"
+    ],
+    "effective_date": "2026-08-08"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "owner relocation decision 2026-08-08",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "amendment_sequence": 17
+  },
+  {
+   "id": "D-010-R167",
+   "text": "PROHIBITION (re-affirms R131/R133/R143/R153): do not activate supervised-auto; do not begin M2-T015 or M2-T016.",
+   "source_ref": "source-017-amendment.md#relocation-decision",
+   "classification": "prohibition",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T037",
+     "M2-T015",
+     "M2-T016"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [
+     "dispatch",
+     "accept"
+    ],
+    "effective_date": "2026-08-08"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "owner relocation decision 2026-08-08",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "amendment_sequence": 17
   }
  ]
 }
