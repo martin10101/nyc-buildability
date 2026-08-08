@@ -1,10 +1,10 @@
 {
  "schema": "directive_requirements/v1",
  "directive_id": "D-010",
- "version": 17,
- "requirement_count": 167,
+ "version": 18,
+ "requirement_count": 172,
  "producer": "orchestrator",
- "updated_at": "2026-08-08T07:24:57+00:00",
+ "updated_at": "2026-08-08T07:35:04+00:00",
  "requirements": [
   {
    "id": "D-010-R001",
@@ -5931,6 +5931,181 @@
     "tasks": []
    },
    "amendment_sequence": 17
+  },
+  {
+   "id": "D-010-R168",
+   "text": "AUTHORIZATION (conditional): the dedicated location C:\\Program Files\\SupervisorConfig is approved in principle, subject to the final pre-hardening config-content check.",
+   "source_ref": "source-018-amendment.md#final-prehardening-check",
+   "classification": "authorization",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T037"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [
+     "accept"
+    ],
+    "effective_date": "2026-08-08"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "owner final pre-hardening check 2026-08-08",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "amendment_sequence": 18
+  },
+  {
+   "id": "D-010-R169",
+   "text": "Before the config is made immutable: determine read-only whether the CURRENT contents of C:\\SupervisorController\\config.toml are correct for the supervised-auto activation (answer the owner's five questions: default_mode semantics; whether the product-task pipeline launches Claude through the controller; validity of claude.allowed_models = []; comparison against model_selection.toml and the intended M2-T015/T016 execution path; list of every immutable field needing change).",
+   "source_ref": "source-018-amendment.md#final-prehardening-check",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T037"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [
+     "accept"
+    ],
+    "effective_date": "2026-08-08"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "owner final pre-hardening check 2026-08-08",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "amendment_sequence": 18
+  },
+  {
+   "id": "D-010-R170",
+   "text": "PROHIBITION: do not change any config during this check unit.",
+   "source_ref": "source-018-amendment.md#final-prehardening-check",
+   "classification": "prohibition",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T037"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [
+     "accept"
+    ],
+    "effective_date": "2026-08-08"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "owner final pre-hardening check 2026-08-08",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "amendment_sequence": 18
+  },
+  {
+   "id": "D-010-R171",
+   "text": "DECISION RULE: if the existing config is already exactly correct, state that explicitly and prove why; if ANY immutable config change is required, STOP and present the smallest exact owner-reviewed config diff BEFORE relocation/hardening.",
+   "source_ref": "source-018-amendment.md#final-prehardening-check",
+   "classification": "decision",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T037"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [
+     "accept"
+    ],
+    "effective_date": "2026-08-08"
+   },
+   "dependencies": [
+    "D-010-R169"
+   ],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "owner final pre-hardening check 2026-08-08",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "amendment_sequence": 18
+  },
+  {
+   "id": "D-010-R172",
+   "text": "PROHIBITION (re-affirms R158/R167): do not activate; do not move the config; do not apply ACLs; do not begin M2-T015 or M2-T016.",
+   "source_ref": "source-018-amendment.md#final-prehardening-check",
+   "classification": "prohibition",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T037",
+     "M2-T015",
+     "M2-T016"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [
+     "dispatch",
+     "accept"
+    ],
+    "effective_date": "2026-08-08"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "owner final pre-hardening check 2026-08-08",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "amendment_sequence": 18
   }
  ]
 }
