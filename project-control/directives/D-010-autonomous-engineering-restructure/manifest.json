@@ -1,7 +1,7 @@
 {
  "schema": "directive_manifest/v1",
  "directive_id": "D-010",
- "version": 21,
+ "version": 22,
  "slug": "autonomous-engineering-restructure",
  "title": "Autonomous Engineering Restructure and NYC Buildability Pilot Acceleration (Autonomous Engineering V2)",
  "status": "active",
@@ -177,6 +177,14 @@
    "amends": "source-020-amendment.md",
    "recorded_at": "2026-08-08T17:14:37+00:00",
    "content_digest_sha256": "6792de3564a9a6131f41bb26a124d65f07b620dcd7710c3efb740363b67c5824"
+  },
+  {
+   "file": "source-022-amendment.md",
+   "kind": "amendment",
+   "sequence": 22,
+   "amends": "source-021-amendment.md",
+   "recorded_at": "2026-08-08T18:31:21+00:00",
+   "content_digest_sha256": "6e3b2e768a713837c95c4871621182ec2ac9fffe1301c849cc39bcd25a756b4d"
   }
  ],
  "amendments": [
@@ -199,7 +207,8 @@
   "source-018-amendment.md",
   "source-019-amendment.md",
   "source-020-amendment.md",
-  "source-021-amendment.md"
+  "source-021-amendment.md",
+  "source-022-amendment.md"
  ],
  "supersedes": [],
  "superseded_by": null,
@@ -238,8 +247,8 @@
  "verification_file": "verification.json",
  "final_reviewed_sha": null,
  "final_reviewed_manifest_sha256": null,
- "requirements_content_digest_sha256": "f6434715f086875be6fc092c71faa80f637af1d21beb7b893d9f71ad4409d093",
- "requirements_id_digest_sha256": "be1b9e7e8e005e9e09986eb6c89730596efba8c771b15763ad176914b941044f",
+ "requirements_content_digest_sha256": "e8a988f63f66be6f8d60be15c62d3c4ef060ac69d139f592d756adbec3ad7721",
+ "requirements_id_digest_sha256": "a84133c4817afa5ad7fb536c7430c94fa701ebfe9b2d88d4ce46ad8408581d91",
  "enforcement_pointers": {
   "tasks": [
    "M0-T037",
@@ -481,7 +490,13 @@
   "D-010-R204",
   "D-010-R205",
   "D-010-R206",
-  "D-010-R207"
+  "D-010-R207",
+  "D-010-R208",
+  "D-010-R209",
+  "D-010-R210",
+  "D-010-R211",
+  "D-010-R212",
+  "D-010-R213"
  ],
  "created_at": "2026-08-07T01:09:55+00:00",
  "updated_at": "2026-08-08T04:29:07+00:00",
@@ -610,6 +625,11 @@
    "at": "2026-08-08T17:14:37+00:00",
    "actor": "orchestrator",
    "action": "amendment source-021 recorded (owner explicit-ACE-survival defect 2026-08-08: apply must strip unrelated explicit ACEs; adversarial poisoned-fixture regression + PROTECTED probe + RED vs 9625514e + G3/G5/DCV + new blob before next elevated apply; R196-R207 added, bound to M0-T037/M0-T051); digests restamped"
+  },
+  {
+   "at": "2026-08-08T18:31:21+00:00",
+   "actor": "orchestrator",
+   "action": "amendment source-022 recorded (owner live-proof order 2026-08-08: corrected apply succeeded; unelevated doctor proof + 8 conditions + durable capture + activation-decision-line return; R208-R213 added); digests restamped"
   }
  ]
 }
