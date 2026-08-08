@@ -139,3 +139,19 @@ failures and widens no authority/tier/gate semantics.
 - The surviving-child test uses the current test process PID as a provably-live
   child; it records no `start_token`, so the PID-reuse branch is intentionally
   not exercised (covered elsewhere in the recovery suite).
+
+---
+
+## G5 C3 correction (appended by the orchestrator, 2026-08-08)
+
+The G5 security review (M0-T052-g5-security.md, SEC-MINOR + required correction C3) found the
+safety rationale above and the loop.py doc-comment overstated the double-launch guarantee: the
+`recover_boot` surviving-child fail-closed applies only to RECORDED children, and the production
+launch path does not currently record children (`record_launched_child` has no production
+caller). The OPERATIVE guarantee against resuming over an orphaned worker is the platform
+kill-on-close containment (Windows Job Object; verified live on this host:
+`containment_default: job_object`). The loop.py comment was corrected accordingly (C3);
+supervised-auto is barred on hosts without live kill-on-close by the activation-record pin (C1);
+wiring production child accounting is the bounded M0-T053 follow-up (C2). This note corrects the
+producer report per the report-preservation rule - the original text above is preserved
+unchanged.

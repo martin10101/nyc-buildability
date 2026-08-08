@@ -127,9 +127,15 @@ DEFAULT_OWNER_TOUCH_BUDGET = 2
 #: skips the duplicate preflight transition (the `if entry == PREFLIGHT` guard),
 #: dispatches exactly once, and transitions to CLAUDE_RUNNING only on a real
 #: process. This never widens who may dispatch: `start` still gates every launch
-#: on recover_boot's SAFE_CHECKPOINT classification (cmd_start), which fails
-#: closed if any recorded child SURVIVED the crash or a competing writer exists,
-#: so a resume can never double-launch or run over an unaccounted worker. Before
+#: on recover_boot's SAFE_CHECKPOINT classification (cmd_start) plus the
+#: single-instance lock. HONEST LIMIT (M0-T052 G5 C3): the operative guarantee
+#: against resuming OVER AN ORPHANED WORKER is the platform kill-on-close
+#: containment (the Windows Job Object). recover_boot's surviving-child check
+#: fails closed only for RECORDED children, and the production launch path does
+#: not yet record children (wiring them is the M0-T053 follow-up), so on a host
+#: without live kill-on-close (POSIX, or the Windows taskkill fallback) a
+#: START_CLAUDE resume is NOT double-launch-safe and is barred by the
+#: supervised-auto activation record (M0-T052 G5 C1 pin). Before
 #: this, START_CLAUDE's omission left an externally-killed launch permanently
 #: unrecoverable: run_cycle raised bad_cycle_entry_state on every operator start
 #: even after recover_boot classified SAFE_CHECKPOINT, and no production code drove
