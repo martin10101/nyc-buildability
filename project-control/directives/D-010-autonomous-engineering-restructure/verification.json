@@ -1594,7 +1594,63 @@
    "reviewed_sha": "ebd75def98a1afe75879485cb7ba85f278ebd187",
    "verified_at": "2026-08-08T18:13:15+00:00",
    "note": "Source-021 explicit-ACE-survival unit (third demonstrated script defect). All 12 rows PASS on the DCV's reproduced primary evidence (script blob b6ee6589; 9625514e/ca3811cd/0f01d649 barred). R206 conduct-to-date: post-merge blob confirmation + dry-run-first owner return + elevated apply + unelevated doctor PROTECTED-or-STOP remain. Full report: project-control/reports/M0-T051-dcv-final.md."
+  },
+  {
+   "task_id": "M0-T052",
+   "directive_id": "D-010",
+   "producer": "backend-engineer",
+   "verifier": "directive-compliance-verifier",
+   "applicable_requirement_ids": [
+    "D-010-R237",
+    "D-010-R239",
+    "D-010-R240",
+    "D-010-R241"
+   ],
+   "requirements": [
+    {
+     "id": "D-010-R237",
+     "state": "PASS",
+     "evidence": [
+      "Dedicated defect-lane task M0-T052 objective + commit 867b1bf message cite B-018 as a reproduced unresolved crash/recovery problem (supervisor-freeze section 2/3); B-018 blocker resolved; fix landed on main (867b1bf+6a61c6b, ancestors of HEAD via PR #192)",
+      "project-control/reports/M0-T052-g3-code-review.md",
+      "project-control/reports/M0-T052-g5-security.md"
+     ],
+     "note": "DCV reproduced from primary evidence at 22ef5c6; carried to 109f36e (material identity stable across control-plane commits)."
+    },
+    {
+     "id": "D-010-R239",
+     "state": "PASS",
+     "evidence": [
+      "one-constant CYCLE_ENTRY_STATES admission of START_CLAUDE (loop.py); 10 regression tests re-run green at HEAD; deterministic owner-free recovery via operator start -> recover_boot SAFE_CHECKPOINT gate (cli.py:2374)",
+      "project-control/reports/M0-T052-g3-code-review.md",
+      "project-control/reports/M0-T052-g5-security.md"
+     ],
+     "note": "G3 PASS + G5 PASS both delta-attested PASS-STANDS at 6a61c6b; full suite 1402/2/0."
+    },
+    {
+     "id": "D-010-R240",
+     "state": "PASS",
+     "evidence": [
+      "git diff --stat 867b1bf~1 6a61c6b -- tools/agent_supervisor/ shows only loop.py changed among supervisor modules; 6a61c6b comment/report-only; no state-machine/recovery/cli/locking/process change",
+      "project-control/reports/M0-T052-g3-code-review.md"
+     ],
+     "note": "No supervisor redesign."
+    },
+    {
+     "id": "D-010-R241",
+     "state": "PASS",
+     "evidence": [
+      "both commits touch only loop.py + two test files + own report, disjoint from M2-T015 allowed_paths; M2-T015 advanced in parallel worktree (unit 2 complete a059b50) and its running unit reached CHECKPOINT_RECEIVED before M0-T052 was contracted",
+      "project-control/reports/ACTIVATION-2026-08-08-supervised-auto/"
+     ],
+     "note": "M2-T015 never interrupted."
+    }
+   ],
+   "reviewed_manifest_sha256": "e8144ba01b8c1d06aa930a9170973c89a56e87f0e777132532f29dfecfe198b0",
+   "reviewed_sha": "109f36e53e7cb1ec330894ae3052b3c501a7c8f9",
+   "verified_at": "2026-08-08T21:05:41+00:00",
+   "note": "Independent DCV (directive-compliance-verifier) at frozen 22ef5c6; all four applicable rows PASS from reproduced primary evidence (loop.py:143 constant, 10 tests green, diff --stat, B-018 resolved, M2-T015 parallel). Material identity e8144ba0.. is control-plane-stable; reviewed_sha stamped to current HEAD 109f36e for the accept."
   }
  ],
- "updated_at": "2026-08-08T18:13:15+00:00"
+ "updated_at": "2026-08-08T21:05:41+00:00"
 }
