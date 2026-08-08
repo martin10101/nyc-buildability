@@ -70,7 +70,7 @@
   ],
   "blockers": [],
   "created_at": "2026-08-08T04:29:33.186954+00:00",
-  "updated_at": "2026-08-08T05:07:58.741764+00:00",
+  "updated_at": "2026-08-08T05:26:27.991722+00:00",
   "directive_refs": [
     {
       "directive_id": "D-010",
@@ -98,6 +98,20 @@
       "percent": 20,
       "status": "in_progress",
       "message": "Claimed after G0 PASS; am.14 R134-R143 bound; scenarios AS-1..AS-6 recorded in packet (AS-1 = owner verbatim 7-step adversarial test, non-vacuity required); producer dispatch next"
+    },
+    {
+      "at": "2026-08-08T05:09:18.781828+00:00",
+      "agent": "orchestrator",
+      "percent": 70,
+      "status": "awaiting_gate",
+      "message": "Producer increment committed (ec0f55d, +11 tests, suite 1374/2 orchestrator-reproduced) and merged into control branch (submit/G2 at final identity ce432c1). Design: deterministic approval-covered forwarded body + forward-time clock stamp + verify_covered_instruction reconstruction; approved_digest bound to operator-named digest. G3/G4/G5 dispatched in parallel; G5 briefed to attack instruction-forgery, second-preimage/field-escape, stamp smuggling, and downgrade paths"
+    },
+    {
+      "at": "2026-08-08T05:26:27.991722+00:00",
+      "agent": "orchestrator",
+      "percent": 85,
+      "status": "awaiting_gate",
+      "message": "All five gates PASS (G0/G2/G3/G4/G5) at final identity; G5 rules C2 CLOSED (no corrections); G4 mutation-proved non-vacuity (no corrections); G3 PASS with MAJOR-1 routed to DCV: post-approval (approved_instruction,approved_digest) resume-window forgery - G5 ruled same shape INFO N-1 outside R136 premise (attack changes the operator-named digest; standing full-journal-write trust-domain limit; true closure needs journal signing barred by R140). NEXT (session 7): DCV over R134-R143 with the G3-MAJOR-1 vs G5-N-1 adjudication as centerpiece; then verification row + accept + Tier A merge; then activation package (MAJOR-1/N-1 disclosed verbatim in the decision line). Session rotating at ceiling"
     }
   ]
 }
