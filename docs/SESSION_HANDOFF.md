@@ -5,10 +5,58 @@
 the remote: **origin/main may have advanced, so do not trust any SHA written here as still-current.**
 This file is orientation only. Operating rules, gates, and workflow routes live in `CLAUDE.md`.
 
-Refreshed **2026-08-08 (session 7, post-PROTECTED-proof seam; last checkpoint CP-0045)**. **The
-block below supersedes the older sections**; the ledger wins on any conflict.
+Refreshed **2026-08-08 (session 8, SUPERVISED-AUTO active; M2-T015 in progress)**. **This block
+supersedes older sections**; the ledger wins on any conflict.
 
-## SESSION 7 STATE — ALL ACTIVATION PREREQUISITES CLOSED; waiting ONLY on the owner-typed decision
+## SESSION 8 STATE — SUPERVISED-AUTO ACTIVATED; building M2-T015 product proof #1
+
+**Accepted count 72.** Main `7b4f30f` (at refresh; may have advanced — verify). Task branch
+`task/M2-T015-survey-ingestion` @ **`9120a02`** carries the M2-T015 product work (not yet PR'd;
+opens at task completion).
+
+**Activation done + durable (do not redo):** owner typed SUPERVISED-AUTO decision captured
+(D-010 source-023, PR #189/#190); active runtime = supervised, `default_mode=shadow` untouched,
+limited-auto OFF. B-018 resolved; **M0-T052** (START_CLAUDE crash-window fix) ACCEPTED (PR
+#192/#193). **M0-T053** contracted BACKLOG (child-accounting + C1 launch-path containment gate) —
+becomes blocking only if the per-launch C1 Job-Object proof fails or the host changes (D-010
+source-025 R244/R245); otherwise finish M2-T015+M2-T016 first. Activation-record C1 pin
+(per-launch `containment: job_object`) is in `M0-T036-ACTIVATION-CHECKLIST.md`.
+
+**Owner directive D-010 source-025 (R242-R284)** = product-first M2-T015 hardening + SB-S1..S9
+scope closure. Routing/coverage map: `project-control/reports/M2-T015-ROUTING-COVERAGE-MAP.md`
+(all 8 hardening areas INSIDE M2-T015 via **v1 application validators**, no v2 wire break; only
+deferred item = production parser-isolation/storage DEPLOYMENT under B-001; code lands in-task +
+CI-proven).
+
+**M2-T015 progress = 68%.** Committed micro-units on the task branch (each with passing tests):
+3a models+state machine, 3b S1 upload gate (3b-1 sniff+extension, 3b-2 size+SHA256, 3b-3
+temp-path), 3c immutable-original storage abstraction, 3d-1 fact-type taxonomy (H1). Full
+`services/api/tests/documents/` suite: **161 passed / 1 skipped** (symlink-forbidden host;
+runs on Linux CI). **NEXT micro-units** (routing map order): 3d-2 unit typing (H2), 3e
+geometry+correction-history (H3/H4), 3f promotion gate (H5), 3g deterministic checks (SB-S3),
+3h tax-lot cross-check (SB-S4), 3i extraction+parser-isolation gate (SB-S1/S2/S7), 3j adversarial
+fixtures + contract pipeline + `survey_evidence.ts` (H6/H7/SB-S8), 3k end-to-end real path +
+SB-S1..S9 coverage matrix + full CI (R272/R274/SB-S9). Then M2-T015 gate lifecycle (G0-G5 + DCV +
+CI + PR + merge + accept), then **M2-T016** (proof #2).
+
+**SUPERVISED EXECUTION MECHANICS (critical for resume):** run the worker via
+`python -m tools.agent_supervisor start --mode supervised --runtime-base <fresh base per unit>
+--config "C:\Program Files\SupervisorConfig\config.toml" --model-selection
+"C:\SupervisorController\model_selection.toml" --task-packet project-control/tasks/M2-T015.json
+--worktree C:/Users/MLFLL/Downloads/nyc-zoning/wt-m2t015 --branch task/M2-T015-survey-ingestion`.
+**The harness kills long background commands unpredictably**, so: keep each unit tiny (≤~16
+max-turns), one small module + its tests; on kill, the M0-T052 fix lets `start` re-enter from
+START_CLAUDE, and worker output already written is preserved — **accumulate surviving code/test
+halves across retries, never commit code without its passing tests**. Orchestrator captures the
+test/commit evidence (evidence-capture division of labor). Reviewer models `claude-opus-4-8`
+xhigh (Fable fallback); producer/orchestrator per D-004.
+
+_History: session-7 block (activation prerequisites) recoverable via `git log -p
+docs/SESSION_HANDOFF.md`._
+
+<!-- superseded session-7 block retained below for reference -->
+
+## SESSION 7 STATE — ALL ACTIVATION PREREQUISITES CLOSED (superseded by Session 8)
 
 **Accepted count 71.** Main (at refresh) `1fd9983`. Full supervisor suite **1392 passed / 2
 skipped** (the 2 skips adjudicated legitimately environment-conditional, R155/R156).

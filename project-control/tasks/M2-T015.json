@@ -71,7 +71,7 @@
     "security-reviewer"
   ],
   "status": "in_progress",
-  "progress_percent": 55,
+  "progress_percent": 68,
   "risks": [
     "DISPATCH HOLD: awaits owner review of the 2026-07-20 planning report AND M2-T014 acceptance (format policy is a hard input)",
     "B-001: production storage/tenant-isolation/retention remain blocked; the architecture doc must design for them and mark them deferred - G3 verifies the honesty of that split",
@@ -82,7 +82,7 @@
   ],
   "blockers": [],
   "created_at": "2026-07-20T06:34:25.468863+00:00",
-  "updated_at": "2026-08-08T21:53:40.981235+00:00",
+  "updated_at": "2026-08-08T23:07:48.070882+00:00",
   "directive_refs": [
     {
       "directive_id": "D-010",
@@ -141,6 +141,27 @@
       "percent": 55,
       "status": "in_progress",
       "message": "Unit 3a COMPLETE + committed 7802c62 on task branch: document domain models + lifecycle state machine (state.py/models.py/errors.py/limits.py + 44 passing tests); Codex REVISE reconciled (IllegalTransition subclasses both bases). Validated M0-T052 fix LIVE (re-entry from stranded START_CLAUDE after harness kills; no orphan worker). Runtime r3 cleared to PREFLIGHT + durable pause set. HELD at owner request for upgrade injection. Remaining: unit 3b (upload gate controls), unit 3c (storage abstraction + tests), then M2-T016."
+    },
+    {
+      "at": "2026-08-08T22:49:47.079472+00:00",
+      "agent": "supervised-auto-worker",
+      "percent": 62,
+      "status": "in_progress",
+      "message": "Unit 3b COMPLETE (S1 synchronous upload gate) on task branch a826ce1: 3b-1 content/MIME sniff + extension-mismatch (8069f7f), 3b-2 streaming size cap + SHA-256 immutable-original digest (7021ad9), 3b-3 safe temp-path T07/T11 (a826ce1). 68 gate tests pass + 1 environment-conditional skip (symlink-forbidden host; runs on Linux CI). Cadence: micro-units ~15 turns to fit the harness background-window; kills are variable/external and either resume from START_CLAUDE (M0-T052) or, when the worker finished before the checkpoint, orchestrator captures the completed work. Next: Unit 3c storage abstraction + abandoned-job scavenging (SB-S6 immutable originals / no temp residue)."
+    },
+    {
+      "at": "2026-08-08T23:01:02.288933+00:00",
+      "agent": "supervised-auto-worker",
+      "percent": 66,
+      "status": "in_progress",
+      "message": "Unit 3c COMPLETE (immutable-original storage abstraction + TempDirStorage, B-001-honest) committed eaa2807; 16 storage tests, full documents suite 128 passed/1 skipped. Ingestion FOUNDATION done: 3a models+state machine, 3b S1 upload gate, 3c storage. Next validator cluster: 3d taxonomy+unit typing (H1/H2), 3e geometry+correction-history (H3/H4), 3f promotion gate (H5). Note: harness background-window kills are frequent; mitigated by micro-units + partial-accumulation (surviving code/test halves kept across retries; nothing committed without passing tests)."
+    },
+    {
+      "at": "2026-08-08T23:07:48.070882+00:00",
+      "agent": "supervised-auto-worker",
+      "percent": 68,
+      "status": "in_progress",
+      "message": "Unit 3d-1 COMPLETE (fact-type taxonomy H1, v1-compatible app validation) committed 9120a02; 33 taxonomy tests, full documents suite 161 passed/1 skipped. Orchestrator rotating at clean unit seam (context ceiling). RESUME POINT: task branch task/M2-T015-survey-ingestion @ 9120a02; next micro-units per routing map (project-control/reports/M2-T015-ROUTING-COVERAGE-MAP.md): 3d-2 unit typing (H2), 3e geometry+correction-history (H3/H4), 3f promotion gate (H5), 3g deterministic checks, 3h tax-lot cross-check, 3i extraction+isolation, 3j fixtures+contract-pipeline+survey_evidence.ts, 3k e2e+SB matrix+CI; then gate lifecycle + M2-T016."
     }
   ]
 }
