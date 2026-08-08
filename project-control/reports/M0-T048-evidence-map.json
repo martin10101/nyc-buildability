@@ -2,7 +2,7 @@
  "schema": "evidence_map/v1",
  "task_id": "M0-T048",
  "producer": "backend-engineer",
- "code_head": "ec0f55d28da90d57467321ad65c922fdde09f043",
+ "code_head": "9c450a5b2cc2e52474fa95253218c7b1d92ea775",
  "code_branch": "task/M0-T048-c2-close",
  "requirements": {
   "D-010-R134": {
@@ -47,7 +47,8 @@
    "summary": "All four also-prove properties covered by executable evidence: (a) happy path forwards exactly once with bytes verifying against the approval-covered binding; (b) clock-only differences do not invalidate the approval; (c) post-approval tampering refuses at resume; (d) no SHADOW/supervised/limited-auto authority change (PostureUnchanged test + grep-proof: no forwarding-guard/activation/tier surface in the diff).",
    "evidence": [
     "tools/test_agent_supervisor_c2_binding.py HappyPathBinding/HappyPath, ClockInvariant, after-approval forgery test, PostureUnchanged",
-    "producer report R139(d) grep-proof section"
+    "producer report R139(d) grep-proof section",
+    "tools/test_agent_supervisor_audit_anchor.py (rework: the post-approval approved_instruction+approved_digest self-consistent variant - G3 MAJOR-1 / MINOR-1 coverage gap - now refuses fail-closed)"
    ]
   },
   "D-010-R140": {
@@ -75,6 +76,83 @@
    "summary": "M2-T015 and M2-T016 not started: both remain backlog with no claim.",
    "evidence": [
     "project-control/tasks/M2-T015.json status backlog; M2-T016.json status backlog"
+   ]
+  },
+  "D-010-R144": {
+   "summary": "HOLD honored by conduct: no accept/merge performed; task moved awaiting_gate->rework->claimed for the bounded fix; accept/merge deferred until the rerun G3/G4/G5 + DCV all PASS at the new frozen identity (this row is re-checked at accept).",
+   "evidence": [
+    "project-control/tasks/M0-T048.json lifecycle history (rework 2026-08-08 citing source-015)",
+    "commits e3fadda/8140497 (rework/re-claim, refs widened R134..R154)"
+   ]
+  },
+  "D-010-R145": {
+   "summary": "Smallest bounded fix delivered: one pure verification function (verify_approved_digest_against_audit) + one refusal-sealing helper + one guard insertion in _resume_approved_forward, all in tools/agent_supervisor/loop.py (+138 lines, no other production file touched); no signing, no new store/format/service; consumes ONLY the already-sealed M0-T046 hash-chained audit log.",
+   "evidence": [
+    "task-branch commit 9c450a5 diff (loop.py +138)",
+    "producer report REWORK section (design + smallest-fix rationale)"
+   ]
+  },
+  "D-010-R146": {
+   "summary": "Required property implemented: at cross-process resume the journal approved_digest is cross-checked against the operator-named input_digest of the sealed operator_resume_pending_prompt approve event (hash-chained audit evidence) BEFORE any forward; the mutable journal is never the sole record. Fail-closed with distinct reason codes on mismatch/missing/ambiguous/unavailable/unreadable/chain-invalid.",
+   "evidence": [
+    "tools/agent_supervisor/loop.py verify_approved_digest_against_audit + guard in _resume_approved_forward",
+    "cli.py:1736-1742 seals the operator-named digest at genuine approval (pre-existing; consulted, not rebuilt)"
+   ]
+  },
+  "D-010-R147": {
+   "summary": "Owner adversarial test implemented exactly (steps 1-7): genuine approval -> self-consistent journal mutation of approved_instruction+approved_digest(+prompt/prompt_bytes_digest) -> sealed audit unchanged -> resume refuses fail-closed, provider_calls==0 asserted, durable sealed cross_process_resume_refused record asserted. RED-on-pre-fix proven (monkeypatch-disable -> forgery forwards; also always-on test_red_when_crosscheck_disabled).",
+   "evidence": [
+    "tools/test_agent_supervisor_audit_anchor.py AuditAnchorForgery::test_two_field_plus_digest_forgery_fails_closed_no_provider",
+    "AuditAnchorForgery::test_red_when_crosscheck_disabled",
+    "FailClosedEdges (missing/ambiguous/chain-tamper)"
+   ]
+  },
+  "D-010-R148": {
+   "summary": "All existing C2, happy-path, exactly-once, clock-invariant, and shadow-posture tests remain green: full suite 1380 passed / 2 skipped at code head 9c450a5 (baseline 1374/2 at ec0f55d; delta +6 = the new adversarial/edge tests), independently reproduced by the orchestrator.",
+   "evidence": [
+    "python -m pytest tools/test_agent_supervisor_*.py -> 1380 passed, 2 skipped (orchestrator reproduction 2026-08-08)",
+    "producer report REWORK suite section"
+   ]
+  },
+  "D-010-R149": {
+   "summary": "Prohibitions honored: no journal signing; no service/daemon/PKI/enterprise-identity/new infrastructure (the fix only READS the existing sealed audit log and appends one refusal event type through the existing append API); no supervisor redesign (guard inserted into the existing resume path); nothing beyond the resume-window trust anchor (diff limited to loop.py + tests + report).",
+   "evidence": [
+    "task-branch commit 9c450a5 diff scope",
+    "producer report REWORK boundary-compliance section"
+   ]
+  },
+  "D-010-R150": {
+   "summary": "R140 preserved (am.14 prohibition unchanged; same no-new-infrastructure discipline); SHADOW-ONLY preserved (no forwarding-guard/tier/activation surface in the diff; posture tests green); nothing activated (no activation artifact, config, or CLI touched).",
+   "evidence": [
+    "shadow-posture tests green in 1380/2 suite",
+    "diff contains no activation/authority surface (grep-proof in producer report REWORK section)"
+   ]
+  },
+  "D-010-R151": {
+   "summary": "Sequencing in progress by conduct: after this bounded fix, the affected G3/G4/G5 reviews and DCV are re-dispatched at the new frozen identity (control branch head containing 9c450a5); their PASS records in project-control/gates/ and the DCV report are the completion evidence checked at accept.",
+   "evidence": [
+    "project-control/gates/ M0-T048 rerun records (populated post-submit)",
+    "this evidence map code_head pin 9c450a5"
+   ]
+  },
+  "D-010-R152": {
+   "summary": "Conditional sequencing honored by conduct: accept + Tier A merge are executed ONLY after all rerun gates and DCV PASS (R144 hold); the acceptance record and merged PR are the completion evidence.",
+   "evidence": [
+    "project-control/tasks/M0-T048.json acceptance record (populated at accept)",
+    "Tier A merge PR (populated at merge)"
+   ]
+  },
+  "D-010-R153": {
+   "summary": "Activation-package sequencing honored by conduct: nothing activation-related is touched in this unit; after accept+merge the session returns to (1) elevated OS-ACL apply + protected:true proof, (2) the final supervised-auto activation decision (owner-typed, R131), (3) M2-T015/T016 as the supervised-auto product proofs - in that order; M2-T015/T016 remain HELD (R133/R143) until that point.",
+   "evidence": [
+    "docs/SESSION_HANDOFF.md activation-package state",
+    "no activation surface in the 9c450a5 diff"
+   ]
+  },
+  "D-010-R154": {
+   "summary": "Owner authorization consumed as granted: the bounded fix, gate reruns, DCV, acceptance, and Tier A merge proceed without another routine approval; no owner-only boundary (credentials/payment/legal/activation decision) is crossed by this unit.",
+   "evidence": [
+    "project-control/directives/D-010-autonomous-engineering-restructure/source-015-amendment.md (verbatim: 'Proceed without another routine approval.')"
    ]
   }
  }
