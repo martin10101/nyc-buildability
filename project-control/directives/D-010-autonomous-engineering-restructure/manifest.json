@@ -1,7 +1,7 @@
 {
  "schema": "directive_manifest/v1",
  "directive_id": "D-010",
- "version": 24,
+ "version": 25,
  "slug": "autonomous-engineering-restructure",
  "title": "Autonomous Engineering Restructure and NYC Buildability Pilot Acceleration (Autonomous Engineering V2)",
  "status": "active",
@@ -201,6 +201,14 @@
    "amends": "source-023-amendment.md",
    "recorded_at": "2026-08-08T20:12:07+00:00",
    "content_digest_sha256": "4cc585813ac68b572d65a4e50cb0112d8294498cfc43088e082407835af7410e"
+  },
+  {
+   "file": "source-025-amendment.md",
+   "kind": "amendment",
+   "sequence": 25,
+   "amends": "source-024-amendment.md",
+   "recorded_at": "2026-08-08T22:19:25+00:00",
+   "content_digest_sha256": "3240d1867fa344fc1343d8cbf8a3575af065abb351494ed30cecf12fc667a95e"
   }
  ],
  "amendments": [
@@ -226,7 +234,8 @@
   "source-021-amendment.md",
   "source-022-amendment.md",
   "source-023-amendment.md",
-  "source-024-amendment.md"
+  "source-024-amendment.md",
+  "source-025-amendment.md"
  ],
  "supersedes": [],
  "superseded_by": null,
@@ -265,8 +274,8 @@
  "verification_file": "verification.json",
  "final_reviewed_sha": null,
  "final_reviewed_manifest_sha256": null,
- "requirements_content_digest_sha256": "ab55283d32c6664365f522d610ad1ba2183def78fabd9b47682722931d7dcb4c",
- "requirements_id_digest_sha256": "9d79a795170f351a4031dcb50a7c02a21691f0fb46723454e28f1c7626677ac7",
+ "requirements_content_digest_sha256": "93faeda3c7a231e61190cb70d81067b00f865f4afd4d8e89d271741204c012f0",
+ "requirements_id_digest_sha256": "958bfbed69344af6c3e93806ad3873a4d9cfc131ba6acc0724b37adf24c8c660",
  "enforcement_pointers": {
   "tasks": [
    "M0-T037",
@@ -542,10 +551,53 @@
   "D-010-R238",
   "D-010-R239",
   "D-010-R240",
-  "D-010-R241"
+  "D-010-R241",
+  "D-010-R242",
+  "D-010-R243",
+  "D-010-R244",
+  "D-010-R245",
+  "D-010-R246",
+  "D-010-R247",
+  "D-010-R248",
+  "D-010-R249",
+  "D-010-R250",
+  "D-010-R251",
+  "D-010-R252",
+  "D-010-R253",
+  "D-010-R254",
+  "D-010-R255",
+  "D-010-R256",
+  "D-010-R257",
+  "D-010-R258",
+  "D-010-R259",
+  "D-010-R260",
+  "D-010-R261",
+  "D-010-R262",
+  "D-010-R263",
+  "D-010-R264",
+  "D-010-R265",
+  "D-010-R266",
+  "D-010-R267",
+  "D-010-R268",
+  "D-010-R269",
+  "D-010-R270",
+  "D-010-R271",
+  "D-010-R272",
+  "D-010-R273",
+  "D-010-R274",
+  "D-010-R275",
+  "D-010-R276",
+  "D-010-R277",
+  "D-010-R278",
+  "D-010-R279",
+  "D-010-R280",
+  "D-010-R281",
+  "D-010-R282",
+  "D-010-R283",
+  "D-010-R284"
  ],
  "created_at": "2026-08-07T01:09:55+00:00",
- "updated_at": "2026-08-08T20:15:36+00:00",
+ "updated_at": "2026-08-08T22:19:25+00:00",
  "audit_log": [
   {
    "at": "2026-08-07T01:09:55+00:00",
@@ -691,6 +743,11 @@
    "at": "2026-08-08T20:15:36+00:00",
    "actor": "orchestrator",
    "action": "applicability restamp: R237/R239/R240/R241 task_ids += M0-T052 (the B-018 defect-lane task created under source-024); IDs and texts unchanged (id digest stable); content digest restamped (D-009 v2 precedent)"
+  },
+  {
+   "at": "2026-08-08T22:19:25+00:00",
+   "actor": "orchestrator",
+   "action": "amendment source-025 recorded (owner product-first M2-T015 hardening + SB-S1..S9 scope closure + resumption; R242-R284 added; 8 hardening areas routed inside M2-T015); digests restamped"
   }
  ]
 }
