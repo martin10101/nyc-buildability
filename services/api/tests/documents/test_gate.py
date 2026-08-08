@@ -17,13 +17,19 @@ Proves, against docs/SURVEY_DOCUMENT_FORMAT_POLICY.md and the upload threat mode
    independent reads), and composes with ``check_extension_matches``;
 6. the streaming cap trips typed ``UploadTooLargeError`` at exactly cap + 1 bytes,
    reading no further — never buffering the whole file — and empty input yields a
-   deterministic empty-digest result, not a crash.
+   deterministic empty-digest result, not a crash;
+7. ``safe_temp_upload_path`` yields a purely system-named path that is a direct child
+   of the caller's root (fresh name every call, nothing created on disk), and every
+   hostile candidate shape — traversal, absolute, drive/UNC/stream, reserved device
+   name, separator, NUL — raises the typed ``UnsafeTempPathError`` naming the exact
+   violation (threats T07/T11).
 """
 
 from __future__ import annotations
 
 import hashlib
 import io
+import os
 import re
 
 import pytest
@@ -31,17 +37,23 @@ import pytest
 from app.documents.errors import (
     DocumentIngestionError,
     ExtensionMismatchError,
+    UnsafeTempPathError,
     UnsupportedExtensionError,
     UploadTooLargeError,
 )
 from app.documents.gate import (
     EXTENSION_FORMATS,
     MAGIC_SIGNATURES,
+    TEMP_NAME_RANDOM_BYTES,
+    TEMP_UPLOAD_SUFFIX,
+    WINDOWS_RESERVED_DEVICE_NAMES,
     SniffResult,
     StreamGateResult,
     check_extension_matches,
+    safe_temp_upload_path,
     sniff_content,
     stream_gate,
+    validate_temp_upload_path,
 )
 from app.documents.limits import (
     DEFAULT_GATE_LIMITS,
@@ -218,3 +230,93 @@ def test_stream_gate_rejects_non_binary_input_as_type_error():
         stream_gate(io.StringIO("%PDF-1.7"))  # type: ignore[arg-type]
     with pytest.raises(TypeError):
         stream_gate(b"raw bytes are not a stream")  # type: ignore[arg-type]
+
+
+# ------------------------------------------------------- control 3: safe temp paths
+
+
+def test_generated_temp_path_is_a_direct_child_of_the_root_with_system_name(tmp_path):
+    path = safe_temp_upload_path(tmp_path)
+    root_real = os.path.realpath(str(tmp_path))
+    # Strictly inside the root: a direct child, never the root itself.
+    assert os.path.normcase(os.path.dirname(path)) == os.path.normcase(root_real)
+    assert os.path.normcase(path) != os.path.normcase(root_real)
+    # Purely system-generated name: hex randomness + fixed suffix, nothing else.
+    assert re.fullmatch(
+        rf"[0-9a-f]{{{2 * TEMP_NAME_RANDOM_BYTES}}}{re.escape(TEMP_UPLOAD_SUFFIX)}",
+        os.path.basename(path),
+    )
+    assert not os.path.exists(path)  # computes+validates only; storage is unit 3c
+
+
+def test_two_generated_temp_paths_have_different_names(tmp_path):
+    assert safe_temp_upload_path(tmp_path) != safe_temp_upload_path(tmp_path)
+
+
+HOSTILE_TEMP_NAMES = [
+    ("../escape.pdf", "path_traversal"),
+    ("..", "path_traversal"),
+    ("a/../b.pdf", "path_traversal"),
+    ("/etc/passwd", "absolute_path"),
+    ("\\evil.pdf", "absolute_path"),
+    ("C:\\evil.pdf", "drive_or_unc_prefix"),
+    ("C:evil.pdf", "drive_or_unc_prefix"),  # drive-relative
+    ("\\\\attacker\\share\\evil.pdf", "drive_or_unc_prefix"),  # UNC
+    ("survey.pdf:stream", "drive_or_unc_prefix"),  # NTFS alternate data stream
+    ("nul", "reserved_device_name"),
+    ("NUL.pdf", "reserved_device_name"),
+    ("con", "reserved_device_name"),
+    ("COM1.tiff", "reserved_device_name"),
+    ("lpt9", "reserved_device_name"),
+    ("sub/inner.pdf", "path_separator"),
+    ("", "empty_name"),
+    ("a\x00b.pdf", "nul_byte"),
+]
+
+
+@pytest.mark.parametrize("name, violation", HOSTILE_TEMP_NAMES)
+def test_hostile_temp_name_raises_typed_unsafe_temp_path(tmp_path, name, violation):
+    with pytest.raises(UnsafeTempPathError) as excinfo:
+        validate_temp_upload_path(tmp_path, name)
+    err = excinfo.value
+    assert isinstance(err, DocumentIngestionError)
+    payload = err.to_payload()
+    assert payload["reject_code"] == "unsafe_temp_path"
+    assert payload["violation"] == violation
+    assert not any(isinstance(v, (bytes, bytearray)) for v in payload.values())
+
+
+def test_every_reserved_device_name_is_refused_in_any_case_with_or_without_extension(tmp_path):
+    assert WINDOWS_RESERVED_DEVICE_NAMES == {
+        "con", "prn", "aux", "nul",
+        *(f"com{n}" for n in range(1, 10)),
+        *(f"lpt{n}" for n in range(1, 10)),
+    }
+    for device in sorted(WINDOWS_RESERVED_DEVICE_NAMES):
+        for spelling in (device, device.upper(), f"{device}.pdf", f"{device.upper()}.TIF"):
+            with pytest.raises(UnsafeTempPathError) as excinfo:
+                validate_temp_upload_path(tmp_path, spelling)
+            assert excinfo.value.to_payload()["violation"] == "reserved_device_name"
+
+
+def test_symlink_resolving_outside_the_root_fails_realpath_containment(tmp_path):
+    outside = tmp_path.parent / f"{tmp_path.name}-outside"
+    outside.mkdir()
+    try:
+        os.symlink(str(outside), str(tmp_path / "sneaky"))
+    except (OSError, NotImplementedError):
+        pytest.skip("host forbids symlink creation")
+    with pytest.raises(UnsafeTempPathError) as excinfo:
+        validate_temp_upload_path(tmp_path, "sneaky")
+    assert excinfo.value.to_payload()["violation"] == "escapes_root"
+
+
+def test_empty_temp_root_is_refused_not_resolved_to_cwd():
+    with pytest.raises(UnsafeTempPathError) as excinfo:
+        safe_temp_upload_path("")
+    assert excinfo.value.to_payload()["violation"] == "empty_root"
+
+
+def test_non_string_candidate_name_is_a_type_error_not_a_typed_rejection(tmp_path):
+    with pytest.raises(TypeError):
+        validate_temp_upload_path(tmp_path, b"raw-bytes-name")  # type: ignore[arg-type]

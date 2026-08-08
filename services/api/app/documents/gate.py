@@ -1,4 +1,4 @@
-"""S1 gate controls 1-2: content sniffing + streaming size cap / digest (M2-T015).
+"""S1 gate controls 1-3: content sniffing, streaming size cap / digest, temp paths (M2-T015).
 
 First control of the synchronous upload gate (docs/SURVEY_DOCUMENT_INGESTION_ARCHITECTURE.md
 section 2, S1): the declared filename extension NEVER selects handling — the sniffed
@@ -13,17 +13,28 @@ Control 2 (``stream_gate``) is the single-pass streaming loop: it consumes the u
 (typed ``UploadTooLargeError``, threat T03 — never buffering the whole file, never reading
 more than cap + 1 bytes), and hashes the EXACT original bytes into the immutable-original
 identity ``sha256:<64 lowercase hex>`` (survey_evidence ``document_digest`` wire format).
-Temp spooling, storage, and structural parsing are separate controls in later units.
+
+Control 3 (``safe_temp_upload_path``) computes+validates the temp spool path (threats
+T07/T11): the name is ONLY system randomness — no client-supplied filename, or fragment
+of one, ever reaches a filesystem path — validated by ``validate_temp_upload_path``
+(reserved-device / traversal / absolute / drive-UNC refusal, then strict realpath
+containment as a direct child of the root). It never creates or writes files; actual
+spooling/storage and structural parsing are separate controls in later units.
 """
 
 from __future__ import annotations
 
 import hashlib
+import ntpath
+import os
+import re
+import secrets
 from dataclasses import dataclass
 from typing import BinaryIO, NamedTuple, Union
 
 from app.documents.errors import (
     ExtensionMismatchError,
+    UnsafeTempPathError,
     UnsupportedExtensionError,
     UploadTooLargeError,
 )
@@ -32,11 +43,16 @@ from app.documents.limits import DEFAULT_GATE_LIMITS, SNIFF_HEADER_BYTES, GateLi
 __all__ = [
     "EXTENSION_FORMATS",
     "MAGIC_SIGNATURES",
+    "TEMP_NAME_RANDOM_BYTES",
+    "TEMP_UPLOAD_SUFFIX",
+    "WINDOWS_RESERVED_DEVICE_NAMES",
     "SniffResult",
     "StreamGateResult",
     "check_extension_matches",
+    "safe_temp_upload_path",
     "sniff_content",
     "stream_gate",
+    "validate_temp_upload_path",
 ]
 
 # Fixed magic-number table: (leading-byte signature, canonical format id, media type).
@@ -193,3 +209,95 @@ def stream_gate(
         size_bytes=size,
         digest=f"sha256:{hasher.hexdigest()}",
     )
+
+
+# ------------------------------------------------------- control 3: safe temp paths
+
+# Bytes of system randomness in a generated temp name (32 lowercase hex chars).
+TEMP_NAME_RANDOM_BYTES = 16
+
+# Fixed suffix marking gate-generated upload spool names.
+TEMP_UPLOAD_SUFFIX = ".upload"
+
+# Windows reserved DEVICE names (mirrors tools/agent_supervisor/policy.py). A path
+# component equal to one of these — with or without an extension — never denotes a
+# file: ``os.path.realpath`` maps it to ``\\.\nul`` and friends, and ``os.path.relpath``
+# then raises. Refused before any resolution is attempted, on every platform, so a
+# POSIX CI run enforces the same rule a Windows host does.
+WINDOWS_RESERVED_DEVICE_NAMES: frozenset[str] = frozenset({
+    "con", "prn", "aux", "nul",
+    *(f"com{n}" for n in range(1, 10)),
+    *(f"lpt{n}" for n in range(1, 10)),
+})
+
+
+def _names_a_reserved_device(text: str) -> bool:
+    """True when any path component's stem is a Windows reserved device name."""
+    for part in re.split(r"[\\/]+", text):
+        stem = part.split(".", 1)[0].strip().lower()
+        if stem in WINDOWS_RESERVED_DEVICE_NAMES:
+            return True
+    return False
+
+
+def validate_temp_upload_path(
+    temp_root: Union[str, os.PathLike], candidate_name: str
+) -> str:
+    """Validate one temp-name candidate against T07/T11 and return its contained path.
+
+    Defense-in-depth primitive behind ``safe_temp_upload_path`` (which only ever passes
+    system-generated names): every escape shape a name could carry is refused with the
+    typed ``UnsafeTempPathError`` whose ``violation`` names the exact failed condition —
+    reserved device names before any resolution, then traversal (``..``/``.``),
+    absolute paths, drive/UNC/stream prefixes, embedded separators, and finally strict
+    realpath containment as a direct child of the resolved root. Both NT and POSIX
+    shapes are judged on every platform. Computes and validates only — never creates,
+    opens, writes, or deletes anything (a failing candidate is a typed anomaly, T11).
+    """
+    if not isinstance(candidate_name, str):
+        raise TypeError("candidate_name must be str")
+    name = candidate_name
+    violation: Union[str, None] = None
+    if not os.fspath(temp_root):
+        violation = "empty_root"
+    elif not name.strip():
+        violation = "empty_name"
+    elif "\x00" in name:
+        violation = "nul_byte"
+    elif _names_a_reserved_device(name):
+        violation = "reserved_device_name"
+    elif any(part in ("..", ".") for part in re.split(r"[\\/]+", name)):
+        violation = "path_traversal"
+    elif ntpath.splitdrive(name)[0] or ":" in name:
+        violation = "drive_or_unc_prefix"
+    elif name.startswith(("/", "\\")):
+        violation = "absolute_path"
+    elif re.search(r"[\\/]", name):
+        violation = "path_separator"
+    else:
+        root_real = os.path.realpath(os.fspath(temp_root))
+        real = os.path.realpath(os.path.join(root_real, name))
+        if os.path.normcase(os.path.dirname(real)) != os.path.normcase(root_real):
+            violation = "escapes_root"
+        else:
+            return real
+    raise UnsafeTempPathError(
+        f"unsafe temp path candidate: {violation}",
+        violation=violation,
+        candidate_name=name,
+    )
+
+
+def safe_temp_upload_path(temp_root: Union[str, os.PathLike]) -> str:
+    """Compute a safe, system-named temp path for an upload spool (threats T07/T11).
+
+    The name is ONLY system randomness (``secrets.token_hex``) plus a fixed suffix —
+    no client-supplied filename, or fragment of one, ever reaches a filesystem path
+    (T07: filenames are metadata for display, never path material). The composed
+    candidate still passes the full ``validate_temp_upload_path`` check (realpath
+    containment strictly under the caller's root) before it is returned. Two calls
+    yield two names. Computes and validates only — creating/writing the spool file
+    is the storage control of a later unit, not this one.
+    """
+    name = secrets.token_hex(TEMP_NAME_RANDOM_BYTES) + TEMP_UPLOAD_SUFFIX
+    return validate_temp_upload_path(temp_root, name)
