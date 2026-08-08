@@ -1,0 +1,60 @@
+{
+  "task_id": "M0-T052",
+  "title": "B-018 defect fix: stranded-START_CLAUDE recovery window (smallest durable re-entry path)",
+  "task_type": "backend",
+  "milestone_id": "M0",
+  "objective": "QUALIFYING EVIDENCE (supervisor-freeze section 2/3): B-018 - a reproduced, unresolved crash/recovery problem discovered by the first live supervised product run (2026-08-08). The window: an external kill between the preflight_pass->START_CLAUDE journal commit and the worker launch strands the journal at START_CLAUDE; CYCLE_ENTRY_STATES (tools/agent_supervisor/loop.py:118) omits START_CLAUDE, so every subsequent operator start refuses with bad_cycle_entry_state even after recover_boot classifies SAFE_CHECKPOINT - no CLI or production path drives the S7 exits (claude_start_failed->HALTED->owner_explicit_restart->IDLE), so recovery required the owner. OWNER ORDER (D-010 source-024, R237-R241): treat as a real reliability defect; implement and test the SMALLEST durable fix so a future claude_start_failed/stranded-start event recovers through an authorized deterministic path without the owner each time; NO supervisor redesign; do not interrupt M2-T015 (disjoint file scope). PROPOSED SMALLEST FIX (producer verifies or refutes): admit START_CLAUDE to CYCLE_ENTRY_STATES - the state means 'about to launch, nothing launched'; run_cycle already skips the duplicate preflight_pass transition (entry==PREFLIGHT guard), already transitions START_CLAUDE->CLAUDE_RUNNING on real process start, and dispatch remains gated by the operator start command + recover_boot SAFE_CHECKPOINT classification + single-instance lock + child accounting + Job-Object kill-on-close containment. REQUIRED TESTS (adversarial, real-journal): (1) crash-window regression - journal committed to START_CLAUDE with no recorded/surviving children, restart dispatches exactly-once and reaches CLAUDE_RUNNING with a fake executable; (2) fail-closed negative - recover_boot classification not SAFE (e.g. competing writer or unaccounted child) still refuses dispatch from START_CLAUDE; (3) the full supervisor suite re-establishes the M0-T039 freeze baseline (0 failures). Change scope is loop.py plus tests only; any wider need is a STOP-and-report, not scope growth.",
+  "business_reason": "Owner directive source-024 after B-018: supervised-runtime reliability must not depend on per-incident owner intervention; the fix keeps the R595-activated supervised-auto path operable across crash windows without weakening any fail-closed gate.",
+  "inputs": [],
+  "outputs": [],
+  "dependencies": [],
+  "allowed_paths": [
+    "tools/agent_supervisor/loop.py",
+    "tools/test_agent_supervisor_crash.py",
+    "tools/test_agent_supervisor_loop.py",
+    "tools/test_agent_supervisor_start_reentry.py",
+    "project-control/reports/M0-T052-producer-report.md"
+  ],
+  "forbidden_paths": [
+    "tools/agent_supervisor/** (every other supervisor module: the fix is loop.py entry-state admission only; any wider need is STOP-and-report)",
+    "project-control/** (except own producer report)",
+    ".claude/**",
+    "services/**, apps/**, packages/** (M2-T015 scope stays untouched - R241)"
+  ],
+  "acceptance_scenarios": [],
+  "required_gates": [
+    "G0",
+    "G2",
+    "G3",
+    "G5"
+  ],
+  "producer_agent": "backend-engineer",
+  "reviewer_agents": [
+    "code-reviewer",
+    "security-reviewer"
+  ],
+  "status": "awaiting_gate",
+  "progress_percent": 85,
+  "risks": [],
+  "blockers": [],
+  "created_at": "2026-08-08T20:15:04.512517+00:00",
+  "updated_at": "2026-08-08T20:51:46.491466+00:00",
+  "directive_refs": [
+    {
+      "directive_id": "D-010",
+      "requirement_ids": "ALL"
+    }
+  ],
+  "directive_regime_version": "1.0",
+  "directive_regime_entered_at": "2026-08-08T20:15:04.513063+00:00",
+  "worktree": "C:/Users/MLFLL/Downloads/nyc-zoning/wt-m0t052",
+  "progress_log": [
+    {
+      "at": "2026-08-08T20:51:16.588336+00:00",
+      "agent": "backend-engineer",
+      "percent": 90,
+      "status": "in_progress",
+      "message": "Fix merged to main via PR #192 (fix 867b1bf + C3 correction 6a61c6b; main 22ef5c6). G3 PASS + G5 PASS both delta-attested PASS-STANDS at 6a61c6b. C1 pinned to activation checklist (G5-required per-launch wording); C2 contracted as M0-T053."
+    }
+  ]
+}

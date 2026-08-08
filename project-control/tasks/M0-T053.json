@@ -1,0 +1,57 @@
+{
+  "task_id": "M0-T053",
+  "title": "Wire production child accounting + enforce the C1 job-object containment gate in the start launch path",
+  "task_type": "backend",
+  "milestone_id": "M0",
+  "objective": "QUALIFYING EVIDENCE (supervisor-freeze section 2/3): M0-T052 G5 security review (project-control/reports/M0-T052-g5-security.md) SEC-MAJOR - demonstrated security risk: (a) record_launched_child (recovery.py:181) has NO production caller, so recover_boot's surviving-child fail-closed is inert in production (the runner spawns via subprocess.Popen + container.adopt at claude_runner.py:965-971 without journaling the pid); (b) kill-on-close containment is platform-conditional (Job Object only) and cmd_start has no fail-closed containment gate, so on non-Job-Object hosts a stranded-START_CLAUDE resume (M0-T052) could double-launch over an orphaned worker. SCOPE (smallest durable set, G5 C1+C2 verbatim): (1) call record_launched_child at worker spawn and clear_child_record on verified clean exit, in the production launch path, so a surviving recorded child forces UNSAFE_OR_DRIFTED refusal on resume; (2) enforce the C1 activation pin fail-closed IN THE START LAUNCH PATH: refuse supervised dispatch when the host's default containment is not the Job Object (doctor-parity check at cmd_start/loop construction), with an explicit refusal reason; (3) correct nothing else - no redesign (D-010-R240 pattern). REQUIRED TESTS: surviving-recorded-child refusal now exercised through the PRODUCTION recording path (spawn->record->kill supervisor->resume refuses); clean-exit clears the record and the subsequent resume proceeds; non-job-object containment refuses supervised dispatch fail-closed with the recorded reason; full supervisor suite re-establishes the M0-T052 baseline (1402 passed/2 skipped) plus the new tests, 0 failures.",
+  "business_reason": "M0-T052 G5 required corrections C1 (host containment precondition, launch-path enforcement) and C2 (child-accounting wiring) - BLOCKING for continued supervised-auto operation beyond the verified Job-Object host; closes the double-launch residual so protection does not rest on kill-on-close alone.",
+  "inputs": [],
+  "outputs": [],
+  "dependencies": [
+    "M0-T052"
+  ],
+  "allowed_paths": [
+    "tools/agent_supervisor/claude_runner.py",
+    "tools/agent_supervisor/recovery.py",
+    "tools/agent_supervisor/cli.py",
+    "tools/agent_supervisor/loop.py",
+    "tools/agent_supervisor/process.py",
+    "tools/test_agent_supervisor_recovery.py",
+    "tools/test_agent_supervisor_start_reentry.py",
+    "tools/test_agent_supervisor_runner.py",
+    "tools/test_agent_supervisor_process.py",
+    "project-control/reports/M0-T053-producer-report.md"
+  ],
+  "forbidden_paths": [
+    "tools/agent_supervisor/** (modules not named in allowed_paths: smallest durable set only; wider need = STOP-and-report)",
+    "project-control/** (except own producer report)",
+    ".claude/**",
+    "services/**, apps/**, packages/** (M2-T015 scope stays untouched)"
+  ],
+  "acceptance_scenarios": [],
+  "required_gates": [
+    "G0",
+    "G2",
+    "G3",
+    "G5"
+  ],
+  "producer_agent": null,
+  "reviewer_agents": [
+    "code-reviewer",
+    "security-reviewer"
+  ],
+  "status": "backlog",
+  "progress_percent": 0,
+  "risks": [],
+  "blockers": [],
+  "created_at": "2026-08-08T20:47:25.688693+00:00",
+  "updated_at": "2026-08-08T20:47:25.767118+00:00",
+  "directive_refs": [
+    {
+      "directive_id": "D-010",
+      "requirement_ids": "ALL"
+    }
+  ],
+  "directive_regime_version": "1.0",
+  "directive_regime_entered_at": "2026-08-08T20:47:25.688693+00:00"
+}

@@ -1,7 +1,7 @@
 {
  "blocker_id": "B-018",
  "title": "Supervised run continuation blocked: journal stranded at START_CLAUDE (crash window with no CLI driver) and both operator recovery paths denied by the session permission classifier",
- "status": "open",
+ "status": "resolved",
  "affects": [
   "M2-T015 (supervised-auto product proof #1: unit 1 deliverables complete, committed cabe128 on task/M2-T015-survey-ingestion; units 2+ cannot dispatch until the supervised runtime is recoverable)",
   "M2-T016 (sequenced after M2-T015 per D-010-R230)"
@@ -15,6 +15,12 @@
    "at": "2026-08-08T20:00:00+00:00",
    "actor": "orchestrator",
    "action": "created after two classifier denials on the recovery line; M2-T015 unit-1 product work committed (cabe128) before stopping; activation evidence finalized"
+  },
+  {
+   "at": "2026-08-08T20:25:47+00:00",
+   "actor": "orchestrator",
+   "action": "RESOLVED: resume proven on the approved runtime base - supervised run run_m2t015_supervised_r2 dispatched M2-T015 unit 2, full cycle reached CHECKPOINT_RECEIVED (checkpoint M2-T015-unit2-cp1, Codex REVISE, continuation parked/approved). Test condition from how_it_will_be_tested met. Defect fix tracked as M0-T052 (claimed; producer running)."
   }
- ]
+ ],
+ "owner_decision": "Option A approved verbatim by the owner 2026-08-08 (D-010 source-024, R236): resume supervised runs on --runtime-base C:/Users/MLFLL/AppData/Local/NYCBuildabilitySupervisor-r2; stranded runtime preserved untouched as defect evidence. Additionally ordered the narrow defect fix (R237-R241) -> contracted as M0-T052."
 }

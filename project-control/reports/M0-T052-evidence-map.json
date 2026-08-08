@@ -1,0 +1,23 @@
+{
+ "requirements": {
+  "D-010-R237": [
+   "project-control/blockers/B-018-supervised-run-stranded-start-claude.json (defect record; resolved via Option A + fix)",
+   "project-control/tasks/M0-T052.json (defect-lane task citing B-018 qualifying evidence)",
+   "project-control/reports/M0-T052-producer-report.md"
+  ],
+  "D-010-R239": [
+   "tools/agent_supervisor/loop.py (CYCLE_ENTRY_STATES admits START_CLAUDE; merged PR #192, main 22ef5c6)",
+   "tools/test_agent_supervisor_start_reentry.py (10 tests: crash-window resume regression, fail-closed negatives, positive control)",
+   "project-control/reports/M0-T052-g3-code-review.md (independent PASS + delta attestation at 6a61c6b)",
+   "project-control/reports/M0-T052-g5-security.md (independent PASS + delta attestation; full suite 1402/2/0 reproduced twice)"
+  ],
+  "D-010-R240": [
+   "project-control/reports/M0-T052-g3-code-review.md (scope discipline verified: one constant + comment + tests; no other supervisor module changed)",
+   "project-control/reports/M0-T052-g5-security.md (no authority/tier/gate widening verified from code)"
+  ],
+  "D-010-R241": [
+   "project-control/reports/M0-T052-g3-code-review.md (R241 row: disjoint file scope verified; M2-T015 scope untouched and forbidden)",
+   "project-control/reports/ACTIVATION-2026-08-08-supervised-auto/ (M2-T015 supervised units ran in parallel throughout; no unit interrupted)"
+  ]
+ }
+}
