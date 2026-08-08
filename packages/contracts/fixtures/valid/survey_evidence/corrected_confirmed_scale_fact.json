@@ -1,0 +1,55 @@
+{
+  "evidence_id": "sev:test-fixture-synthetic:c0ffee02:p1:007",
+  "bbl": "1000010010",
+  "document_digest": "sha256:c0ffee02c0ffee02c0ffee02c0ffee02c0ffee02c0ffee02c0ffee02c0ffee02",
+  "page_number": 1,
+  "location": {
+    "kind": "bounding_box",
+    "bounding_box": {
+      "x_min": 118.0,
+      "y_min": 1902.0,
+      "x_max": 342.0,
+      "y_max": 1938.0,
+      "coordinate_space": "raster_pixels"
+    }
+  },
+  "fact_type": "scale_statement",
+  "original_value": "SCALE: 1\" = 2O'",
+  "normalized_value": 30,
+  "units": "feet_per_inch",
+  "extraction_method": "ocr_text",
+  "extraction_tool": {
+    "name": "test-fixture-synthetic-ocr",
+    "version": "0.0.0"
+  },
+  "extraction_run_id": "ser:test-fixture-synthetic:run-0002",
+  "extracted_at": "2026-08-08T12:05:00Z",
+  "confidence": 0.61,
+  "validation_results": [
+    {
+      "check_id": "scale_consistency",
+      "status": "pass",
+      "detail": "Corrected scale of 30 feet per inch is consistent with the measured graphic scale bar on the same page.",
+      "expected_value": 30,
+      "observed_value": 29.8
+    }
+  ],
+  "correction_history": [
+    {
+      "corrected_at": "2026-08-08T15:30:00Z",
+      "corrected_by_role": "qualified_professional",
+      "corrected_by": "test-fixture-synthetic-professional-001",
+      "previous_normalized_value": 20,
+      "corrected_normalized_value": 30,
+      "previous_units": "feet_per_inch",
+      "corrected_units": "feet_per_inch",
+      "reason": "OCR read the scale text as '2O' (letter O) and normalization initially resolved it to 20; the drawn graphic scale bar on the same page measures 30 feet per inch. Original detected text preserved verbatim in original_value."
+    }
+  ],
+  "professional_confirmation": {
+    "state": "confirmed",
+    "confirmed_by": "test-fixture-synthetic-professional-001",
+    "confirmed_at": "2026-08-08T15:31:00Z",
+    "note": "Scale confirmed against the graphic scale bar after correcting the OCR misread."
+  }
+}
