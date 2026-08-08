@@ -31,6 +31,7 @@ from __future__ import annotations
 
 import contextlib
 import ctypes
+import hashlib
 import io
 import json
 import os
@@ -581,20 +582,30 @@ class HardenScriptTests(unittest.TestCase):
     # the AST and assert the real apply-path call sites carry exactly those
     # vectors, so the dynamic replay cannot drift from the script.
 
-    # The six apply-path (exe, args) vectors, with representative substitutions
+    # The EIGHT apply-path (exe, args) vectors, with representative substitutions
     # for $file / $dir / $UnelevatedUser. These MIRROR the script's apply calls
     # and are pinned to the real call sites by test B1 below.
+    #
+    # M0-T051 (D-010-R199/R207): the sequence now RESETs each target FIRST
+    # (`/reset` removes ALL explicit ACEs and re-enables inheritance) BEFORE the
+    # existing `/inheritance:r` (which then empties the DACL) and the `/grant:r`
+    # trio (which fills it deterministically). Without the /reset a PRE-EXISTING
+    # EXPLICIT ACE for an unrelated principal (e.g. NT AUTHORITY\Authenticated
+    # Users:(M)) survives both /inheritance:r and /grant:r and leaves the config
+    # unelevated-writable.
     _CFG = r"C:\controller\config.toml"
     _DIR = r"C:\controller"
     _USER = r"DESKTOP-ABC\owner"
     APPLY_VECTORS = [
         ("takeown.exe", ["/F", _CFG, "/A"]),
         ("takeown.exe", ["/F", _DIR, "/A"]),
+        ("icacls.exe", [_CFG, "/reset"]),
         ("icacls.exe", [_CFG, "/inheritance:r"]),
         ("icacls.exe", [_CFG, "/grant:r",
                         r"BUILTIN\Administrators:(F)",
                         r"NT AUTHORITY\SYSTEM:(F)",
                         r"DESKTOP-ABC\owner:(RX)"]),
+        ("icacls.exe", [_DIR, "/reset"]),
         ("icacls.exe", [_DIR, "/inheritance:r"]),
         ("icacls.exe", [_DIR, "/grant:r",
                         r"BUILTIN\Administrators:(OI)(CI)(F)",
@@ -680,10 +691,11 @@ class HardenScriptTests(unittest.TestCase):
     @unittest.skipUnless(
         IS_WINDOWS and shutil.which("powershell"),
         "requires Windows PowerShell 5.1 (powershell.exe) for the parser API")
-    def test_dryrun_replays_all_six_apply_path_vectors(self) -> None:
-        """A2 (R188/R195): replay each of the script's SIX apply-path vectors and
-        assert the dry-run line carries the FULL vector - every path, /F, /A,
-        /inheritance:r, /grant:r, and every ACL principal (owner's minimum)."""
+    def test_dryrun_replays_all_apply_path_vectors(self) -> None:
+        """A2 (R188/R195 + M0-T051/R199): replay each of the script's EIGHT
+        apply-path vectors and assert the dry-run line carries the FULL vector -
+        every path, /F, /A, /reset, /inheritance:r, /grant:r, and every ACL
+        principal (owner's minimum)."""
         for exe, vector in self.APPLY_VECTORS:
             proc = self._dryrun_line(self.script, exe, vector)
             out = proc.stdout
@@ -693,12 +705,12 @@ class HardenScriptTests(unittest.TestCase):
                 self.assertIn(
                     element, out,
                     "element %r dropped for %s vector:\n%s" % (element, exe, out))
-        # The union of the six vectors covers each owner-enumerated token at least
-        # once; assert them explicitly against the concatenated transcript.
+        # The union of the eight vectors covers each owner-enumerated token at
+        # least once; assert them explicitly against the concatenated transcript.
         all_out = "".join(
             self._dryrun_line(self.script, exe, vector).stdout
             for exe, vector in self.APPLY_VECTORS)
-        for token in ["/F", "/A", "/inheritance:r", "/grant:r",
+        for token in ["/F", "/A", "/reset", "/inheritance:r", "/grant:r",
                       r"BUILTIN\Administrators:(F)", r"NT AUTHORITY\SYSTEM:(F)",
                       r"BUILTIN\Administrators:(OI)(CI)(F)",
                       r"NT AUTHORITY\SYSTEM:(OI)(CI)(F)",
@@ -710,9 +722,10 @@ class HardenScriptTests(unittest.TestCase):
         IS_WINDOWS and shutil.which("powershell"),
         "requires Windows PowerShell 5.1 (powershell.exe) for the parser API")
     def test_apply_path_call_sites_carry_full_argument_arrays(self) -> None:
-        """B1 (R188): parse the script AST and assert the SIX apply-path
-        Invoke-Step call sites carry exactly the expected argument arrays, so the
-        dynamic replay in A2 cannot silently drift from the script's real calls."""
+        """B1 (R188 + M0-T051/R199): parse the script AST and assert the EIGHT
+        apply-path Invoke-Step call sites carry exactly the expected argument
+        arrays (now including the two `/reset` calls), so the dynamic replay in A2
+        cannot silently drift from the script's real calls."""
         sites = self._invoke_step_call_sites(self.script)
         # element[0] is 'Invoke-Step', [1] is the exe var, [2] is the arg array.
         arrays = {self._norm_ws(elems[2]) for _line, elems in sites
@@ -720,9 +733,11 @@ class HardenScriptTests(unittest.TestCase):
         expected_apply = {
             r'@("/F", $file, "/A")',
             r'@("/F", $dir, "/A")',
+            r'@($file, "/reset")',
             r'@($file, "/inheritance:r")',
             (r'@($file, "/grant:r", "BUILTIN\Administrators:(F)", '
              r'"NT AUTHORITY\SYSTEM:(F)", "${UnelevatedUser}:(RX)")'),
+            r'@($dir, "/reset")',
             r'@($dir, "/inheritance:r")',
             (r'@($dir, "/grant:r", "BUILTIN\Administrators:(OI)(CI)(F)", '
              r'"NT AUTHORITY\SYSTEM:(OI)(CI)(F)", "${UnelevatedUser}:(RX)")'),
@@ -825,6 +840,282 @@ class HardenScriptTests(unittest.TestCase):
         self.assertIn("NO changes were made", dry_branch)
         self.assertNotIn("apply complete", dry_branch,
                          "the dry-run branch must never claim application")
+
+
+@unittest.skipUnless(
+    IS_WINDOWS and shutil.which("powershell"),
+    "requires Windows + PowerShell 5.1 (AST extraction) and icacls")
+class HardenExplicitAceStripTests(unittest.TestCase):
+    """M0-T051 (D-010-R199..R207): THIRD demonstrated pre-activation defect.
+
+    ROOT CAUSE: `/inheritance:r` strips only INHERITED ACEs and `/grant:r`
+    replaces the grant only for the NAMED principals, so a PRE-EXISTING EXPLICIT
+    ACE for an UNRELATED principal (the owner's real elevated apply hit an
+    explicit `NT AUTHORITY\\Authenticated Users:(M)`) SURVIVES both and leaves the
+    immutable config unelevated-writable (doctor: NOT_PROTECTED).
+
+    R199 property: after the apply, the effective FILE and PARENT DACLs must
+    contain NO non-elevated principal with any write/modify/delete/rename/replace/
+    WriteDAC/WriteOwner right - the apply must not merely replace grants for the
+    three intended principals while leaving unrelated explicit ACEs behind.
+
+    FIX (R207, smallest inside the existing icacls path): `/reset` FIRST (removes
+    all explicit ACEs, re-enables inheritance), THEN `/inheritance:r` (empties the
+    DACL), THEN the three `/grant:r` calls -> a deterministic three-ACE end state
+    regardless of any prior explicit ACE.
+
+    UNELEVATED-vs-ELEVATED BOUNDARY (honest): the real script refuses unelevated
+    and takeown/A (ownership -> Administrators) needs elevation. So these tests
+    extract the apply-path COMMAND SEQUENCE from the script's AST (M0-T050
+    technique), assert the takeown commands are PRESENT, and execute the
+    DACL-affecting icacls subset against a DISPOSABLE fixture (granting/resetting
+    the ACL of one's OWN file needs no elevation). They then assert the DACL
+    end-state and the ACE-level verdict `evaluate_acl_entries` on the resulting
+    DACL. What ONLY the owner's real elevated run can prove end-to-end: that the
+    file's OWNER becomes Administrators (so `evaluate_file`'s owner-elevation check
+    and the denied write-open probe pass) - unelevated, the fixture stays
+    user-owned and thus user-writable, so `evaluate_file` correctly still reports
+    NOT_PROTECTED even though the DACL is exactly the three intended ACEs. The
+    ACE-level DACL property (R199) is exactly what these tests prove.
+    """
+
+    _ICACLS = os.path.join(os.environ.get("SystemRoot", r"C:\Windows"),
+                           "System32", "icacls.exe")
+    # NT AUTHORITY\Authenticated Users, well-known SID - the poison principal.
+    _AUTH_USERS_SID = "*S-1-5-11"
+    _AUTH_USERS_NAMES = ("Authenticated Users", "S-1-5-11")
+
+    def setUp(self) -> None:
+        self.script = HERE / "agent_supervisor" / "harden_controller_config.ps1"
+        # Disposable fixture OUTSIDE the repo.
+        self._tmp = tempfile.mkdtemp(prefix="m0t051_acl_")
+        self.addCleanup(shutil.rmtree, self._tmp, ignore_errors=True)
+        self.fx_dir = pathlib.Path(self._tmp) / "cfgdir"
+        self.fx_dir.mkdir()
+        self.cfg = self.fx_dir / "config.toml"
+        self.cfg.write_text("[controller]\nx=1\n", encoding="utf-8")
+        self.user = f"{os.environ.get('USERDOMAIN', '')}\\{os.environ.get('USERNAME', '')}"
+
+    # -- helpers ------------------------------------------------------------
+
+    def _icacls(self, *args: str) -> subprocess.CompletedProcess:
+        return subprocess.run([self._ICACLS, *args],
+                              capture_output=True, text=True, timeout=60)
+
+    def _poison(self, target: pathlib.Path) -> None:
+        """Add an EXPLICIT `Authenticated Users:(M)` ACE (no elevation needed on
+        one's own object). This is the owner's real-world starting condition."""
+        proc = self._icacls(str(target), "/grant", f"{self._AUTH_USERS_SID}:(M)")
+        self.assertEqual(proc.returncode, 0,
+                         "could not poison fixture: %s" % (proc.stdout + proc.stderr))
+
+    def _dacl(self, target: pathlib.Path) -> tuple[list, str]:
+        proc = self._icacls(str(target))
+        self.assertEqual(proc.returncode, 0, proc.stderr)
+        return parse_icacls(proc.stdout, target=str(target))
+
+    def _principals(self, target: pathlib.Path) -> set[str]:
+        entries, err = self._dacl(target)
+        self.assertEqual(err, "", "icacls output unparseable for %s" % target)
+        return {e.principal for e in entries}
+
+    def _ace_verdict(self, target: pathlib.Path, kind: str) -> str:
+        entries, err = self._dacl(target)
+        self.assertEqual(err, "", "icacls output unparseable for %s" % target)
+        return evaluate_acl_entries(entries, target=str(target), kind=kind).state
+
+    def _poison_present(self, target: pathlib.Path) -> bool:
+        entries, _ = self._dacl(target)
+        return any(any(n.upper() in e.principal.upper() for n in self._AUTH_USERS_NAMES)
+                   for e in entries)
+
+    def _extract_apply_sequence(self, script_path: pathlib.Path):
+        """Extract the apply-path command sequence from `script_path` via the
+        WinPS 5.1 parser AST, resolving $file/$dir/$UnelevatedUser to the fixture
+        and $Icacls/$Takeown to sentinels. Returns
+        (takeown_calls, icacls_apply_calls) where each call is a list of concrete
+        argument strings (the DACL-affecting icacls subset preserves script
+        order). This is the SAME AST technique as the M0-T050 dry-run tests, but
+        it EVALUATES the argument-array literal so the concrete argv the script
+        would pass is what we replay - the test cannot drift from the script."""
+        q = HardenScriptTests._ps_single_quote
+        cmd = (
+            "$t=$null;$e=$null;"
+            "$ast=[System.Management.Automation.Language.Parser]::ParseFile("
+            + q(str(script_path)) + ",[ref]$t,[ref]$e);"
+            "$file=" + q(str(self.cfg)) + ";"
+            "$dir=" + q(str(self.fx_dir)) + ";"
+            "$UnelevatedUser=" + q(self.user) + ";"
+            "$Icacls='ICACLS';$Takeown='TAKEOWN';"
+            "$calls=$ast.FindAll({param($n) $n -is "
+            "[System.Management.Automation.Language.CommandAst] "
+            "-and $n.GetCommandName() -eq 'Invoke-Step'},$true);"
+            "foreach($c in $calls){$els=$c.CommandElements;"
+            "if($els.Count -lt 3){continue};"
+            "$exe=Invoke-Expression $els[1].Extent.Text;"
+            "$arr=@(Invoke-Expression $els[2].Extent.Text);"
+            "Write-Output ($exe + '|~|' + ($arr -join '|~|'))}"
+        )
+        proc = subprocess.run(
+            ["powershell", "-NoProfile", "-NonInteractive", "-Command", cmd],
+            capture_output=True, text=True, timeout=60)
+        self.assertEqual(proc.returncode, 0, proc.stderr)
+        takeown_calls: list[list[str]] = []
+        icacls_apply: list[list[str]] = []
+        apply_flags = {"/reset", "/inheritance:r", "/grant:r"}
+        for raw in proc.stdout.splitlines():
+            raw = raw.rstrip("\r\n")
+            if "|~|" not in raw:
+                continue
+            parts = raw.split("|~|")
+            exe, args = parts[0], parts[1:]
+            if exe == "TAKEOWN":
+                takeown_calls.append(args)
+            elif exe == "ICACLS" and apply_flags.intersection(args):
+                icacls_apply.append(args)
+        return takeown_calls, icacls_apply
+
+    def _run_apply_icacls(self, icacls_apply: list[list[str]]) -> None:
+        for args in icacls_apply:
+            proc = self._icacls(*args)
+            self.assertEqual(proc.returncode, 0,
+                             "apply icacls failed for %r: %s"
+                             % (args, proc.stdout + proc.stderr))
+
+    # -- tests --------------------------------------------------------------
+
+    def test_adversarial_explicit_ace_is_stripped_file_and_parent(self) -> None:
+        """R199/R200 (owner steps 1-5): poison the FILE and PARENT with an
+        explicit Authenticated Users:(M), drive the REAL script's apply-path
+        icacls subset against the fixture, and prove the poisoned ACE is GONE, the
+        DACL is exactly the three intended principals, and the ACE-level verdict
+        reports no unelevated-writable principal on BOTH file and parent."""
+        self._poison(self.cfg)
+        self._poison(self.fx_dir)
+        self.assertTrue(self._poison_present(self.cfg), "fixture file not poisoned")
+        self.assertTrue(self._poison_present(self.fx_dir), "fixture dir not poisoned")
+
+        takeown_calls, icacls_apply = self._extract_apply_sequence(self.script)
+        # The takeown (ownership -> Administrators) commands MUST be present in the
+        # sequence, even though we cannot EXECUTE them unelevated.
+        self.assertEqual(len(takeown_calls), 2,
+                         "expected two takeown commands (file+dir): %r" % takeown_calls)
+        for tk in takeown_calls:
+            self.assertIn("/F", tk)
+            self.assertIn("/A", tk)
+        # The DACL-affecting icacls subset: /reset + /inheritance:r + /grant:r for
+        # BOTH file and dir = six calls, in script order (/reset first per target).
+        self.assertEqual(len(icacls_apply), 6,
+                         "expected six apply icacls calls: %r" % icacls_apply)
+        self.assertIn("/reset", icacls_apply[0],
+                      "the FIRST apply icacls call per target must be /reset: %r"
+                      % icacls_apply)
+
+        self._run_apply_icacls(icacls_apply)
+
+        # File: poison gone; exactly the three intended principals; ACE verdict OK.
+        self.assertFalse(self._poison_present(self.cfg),
+                         "FILE still carries the poisoned Authenticated Users ACE")
+        self.assertEqual(self._principals(self.cfg),
+                         {"BUILTIN\\Administrators", "NT AUTHORITY\\SYSTEM", self.user},
+                         "FILE DACL is not exactly the three intended ACEs")
+        self.assertEqual(self._ace_verdict(self.cfg, "file"), PROTECTED,
+                         "FILE ACE-level verdict is not PROTECTED")
+        # Parent: same.
+        self.assertFalse(self._poison_present(self.fx_dir),
+                         "PARENT still carries the poisoned Authenticated Users ACE")
+        self.assertEqual(self._principals(self.fx_dir),
+                         {"BUILTIN\\Administrators", "NT AUTHORITY\\SYSTEM", self.user},
+                         "PARENT DACL is not exactly the three intended ACEs")
+        self.assertEqual(self._ace_verdict(self.fx_dir, "directory"), PROTECTED,
+                         "PARENT ACE-level verdict is not PROTECTED")
+
+    def test_red_on_current_cleared_blob_leaves_poison_effective(self) -> None:
+        """R205: the SAME fixture driven through the currently-merged (defective)
+        blob 9625514e's apply sequence (git show 33b2e24:...) leaves the poisoned
+        Authenticated Users:(M) EFFECTIVE and the ACE verdict NOT_PROTECTED - the
+        old sequence FAILS the R199 property; the new sequence REMOVES it."""
+        show = subprocess.run(
+            ["git", "show",
+             "33b2e24:tools/agent_supervisor/harden_controller_config.ps1"],
+            capture_output=True, text=True, timeout=60, cwd=str(REPO))
+        if show.returncode != 0:
+            self.skipTest("defective blob (33b2e24 script) unreachable: " + show.stderr)
+        old = pathlib.Path(self._tmp) / "defective_harden.ps1"
+        old.write_text(show.stdout, encoding="utf-8")
+
+        # RED: old sequence on a poisoned fixture -> poison SURVIVES.
+        self._poison(self.cfg)
+        _tk_old, icacls_old = self._extract_apply_sequence(old)
+        # The defective sequence has NO /reset - only /inheritance:r + /grant:r.
+        self.assertEqual(len(icacls_old), 4,
+                         "defective sequence expected four icacls calls: %r" % icacls_old)
+        self.assertFalse(any("/reset" in c for c in icacls_old),
+                         "defective blob must NOT contain /reset: %r" % icacls_old)
+        self._run_apply_icacls(icacls_old)
+        self.assertTrue(self._poison_present(self.cfg),
+                        "RED expectation broken: defective sequence removed the poison")
+        self.assertEqual(self._ace_verdict(self.cfg, "file"), NOT_PROTECTED,
+                         "defective sequence must leave the file NOT_PROTECTED")
+
+        # GREEN: the fixed script's sequence on the SAME (now still-poisoned) file
+        # removes it and yields exactly the three intended ACEs.
+        _tk_new, icacls_new = self._extract_apply_sequence(self.script)
+        self.assertTrue(any("/reset" in c for c in icacls_new),
+                        "fixed script must contain /reset: %r" % icacls_new)
+        self._run_apply_icacls(icacls_new)
+        self.assertFalse(self._poison_present(self.cfg),
+                         "fixed sequence failed to remove the poison")
+        self.assertEqual(self._ace_verdict(self.cfg, "file"), PROTECTED)
+
+    def test_new_sequence_is_idempotent(self) -> None:
+        """R204: run the new apply sequence TWICE on the poisoned fixture; the
+        end-state DACL is identical both times (file and parent)."""
+        self._poison(self.cfg)
+        self._poison(self.fx_dir)
+        _tk, icacls_apply = self._extract_apply_sequence(self.script)
+
+        self._run_apply_icacls(icacls_apply)
+        file_once = self._icacls(str(self.cfg)).stdout
+        dir_once = self._icacls(str(self.fx_dir)).stdout
+
+        self._run_apply_icacls(icacls_apply)
+        file_twice = self._icacls(str(self.cfg)).stdout
+        dir_twice = self._icacls(str(self.fx_dir)).stdout
+
+        self.assertEqual(file_once, file_twice, "FILE DACL not idempotent")
+        self.assertEqual(dir_once, dir_twice, "PARENT DACL not idempotent")
+        # And still exactly the three intended ACEs after the second run.
+        self.assertEqual(self._principals(self.cfg),
+                         {"BUILTIN\\Administrators", "NT AUTHORITY\\SYSTEM", self.user})
+
+    def test_new_sequence_preserves_file_contents_byte_for_byte(self) -> None:
+        """R202: icacls/takeown NEVER write file CONTENT. The fixture file's bytes
+        (and sha256) are identical before and after the apply sequence."""
+        before = self.cfg.read_bytes()
+        before_hash = hashlib.sha256(before).hexdigest()
+        self._poison(self.cfg)
+        _tk, icacls_apply = self._extract_apply_sequence(self.script)
+        self._run_apply_icacls(icacls_apply)
+        after = self.cfg.read_bytes()
+        after_hash = hashlib.sha256(after).hexdigest()
+        self.assertEqual(before, after, "file CONTENT changed during ACL hardening")
+        self.assertEqual(before_hash, after_hash)
+
+    def test_new_sequence_preserves_unelevated_user_read(self) -> None:
+        """R201: after the apply the unelevated user retains READ access (RX), so
+        the ordinary supervisor can still read the config it must not modify."""
+        self._poison(self.cfg)
+        _tk, icacls_apply = self._extract_apply_sequence(self.script)
+        self._run_apply_icacls(icacls_apply)
+        entries, err = self._dacl(self.cfg)
+        self.assertEqual(err, "")
+        mine = [e for e in entries if e.principal.upper() == self.user.upper()]
+        self.assertEqual(len(mine), 1, "the unelevated user must have exactly one ACE")
+        self.assertIn("RX", mine[0].rights,
+                      "the unelevated user must retain Read+Execute")
+        # And still able to actually read the bytes.
+        self.assertEqual(self.cfg.read_text(encoding="utf-8"), "[controller]\nx=1\n")
 
 
 if __name__ == "__main__":  # pragma: no cover
