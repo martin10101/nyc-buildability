@@ -61,8 +61,8 @@
     "control-plane-verifier",
     "directive-compliance-verifier"
   ],
-  "status": "in_progress",
-  "progress_percent": 20,
+  "status": "awaiting_gate",
+  "progress_percent": 85,
   "risks": [
     "The binding must be deterministic: any residual non-reproducible content in the parked bytes (beyond the clock) breaks the recompute/verify path - the producer must inventory build_forwarded_prompt inputs and either derive them from approval-covered material or move them to forward time.",
     "Backward shape: pre-fix parked records lack the new binding material; they must refuse (AS-6), never silently fall back to the journal-resident anchor.",
@@ -70,7 +70,7 @@
   ],
   "blockers": [],
   "created_at": "2026-08-08T04:29:33.186954+00:00",
-  "updated_at": "2026-08-08T04:31:01.961697+00:00",
+  "updated_at": "2026-08-08T05:07:58.741764+00:00",
   "directive_refs": [
     {
       "directive_id": "D-010",
