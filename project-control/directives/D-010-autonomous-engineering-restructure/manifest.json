@@ -1,7 +1,7 @@
 {
  "schema": "directive_manifest/v1",
  "directive_id": "D-010",
- "version": 16,
+ "version": 17,
  "slug": "autonomous-engineering-restructure",
  "title": "Autonomous Engineering Restructure and NYC Buildability Pilot Acceleration (Autonomous Engineering V2)",
  "status": "active",
@@ -137,6 +137,14 @@
    "amends": "source-015-amendment.md",
    "recorded_at": "2026-08-08T06:16:37+00:00",
    "content_digest_sha256": "b22838759d0742a9e02b3b739671a02ff37c6757dc4700a6277b0652e701d8de"
+  },
+  {
+   "file": "source-017-amendment.md",
+   "kind": "amendment",
+   "sequence": 17,
+   "amends": "source-015-amendment.md",
+   "recorded_at": "2026-08-08T07:24:57+00:00",
+   "content_digest_sha256": "67bd928fa62a640bb81ec6131b75b425b82cd23088f7a0cc19e7919bacd16653"
   }
  ],
  "amendments": [
@@ -154,7 +162,8 @@
   "source-013-amendment.md",
   "source-014-amendment.md",
   "source-015-amendment.md",
-  "source-016-amendment.md"
+  "source-016-amendment.md",
+  "source-017-amendment.md"
  ],
  "supersedes": [],
  "superseded_by": null,
@@ -193,8 +202,8 @@
  "verification_file": "verification.json",
  "final_reviewed_sha": null,
  "final_reviewed_manifest_sha256": null,
- "requirements_content_digest_sha256": "a0d180addee607d9e35c089646bd935bbfe0fffde59c082cb73d461df459db46",
- "requirements_id_digest_sha256": "74747ef738002bf46757da68be025825be33cc859709018ef672da12d1d93f0b",
+ "requirements_content_digest_sha256": "bd8a43a44e69e060c906a20a7e38957b57998c989f0757ba6a0d6649a0eb79e6",
+ "requirements_id_digest_sha256": "f2017c3fc2f93cc0feb59c5967e90ef76e234445aaa32f5c7bf0ccdabf803124",
  "enforcement_pointers": {
   "tasks": [
    "M0-T037",
@@ -385,7 +394,18 @@
   "D-010-R153",
   "D-010-R154",
   "D-010-R155",
-  "D-010-R156"
+  "D-010-R156",
+  "D-010-R157",
+  "D-010-R158",
+  "D-010-R159",
+  "D-010-R160",
+  "D-010-R161",
+  "D-010-R162",
+  "D-010-R163",
+  "D-010-R164",
+  "D-010-R165",
+  "D-010-R166",
+  "D-010-R167"
  ],
  "created_at": "2026-08-07T01:09:55+00:00",
  "updated_at": "2026-08-08T04:29:07+00:00",
@@ -489,6 +509,11 @@
    "at": "2026-08-08T06:16:37+00:00",
    "actor": "orchestrator",
    "action": "amendment source-016 recorded (owner skip-evidence instruction 2026-08-08: name the two skipped tests + reasons as gate evidence, adjudicate stale-vs-environment-conditional; R155-R156 added); digests restamped"
+  },
+  {
+   "at": "2026-08-08T07:24:57+00:00",
+   "actor": "orchestrator",
+   "action": "amendment source-017 recorded (owner relocation decision 2026-08-08: safe controller-config relocation with quiescence + 6-item preflight + unelevated move + sanity proof + stop; R157-R167 added); digests restamped"
   }
  ]
 }
