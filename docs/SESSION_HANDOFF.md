@@ -41,9 +41,18 @@ Refreshed **2026-08-08 (session 6, CP-0043)**. **The block below supersedes the 
 ## NEXT SESSION — resume checklist (session 6 → 7)
 
 1. Start-of-session: `python tools/project_control.py status` + reconcile git/CI (checkpoint
-   CP-0043; confirm whether the `control/M0-T046-preactivation` → main PR is merged; if not,
-   merge it under Tier A after green checks).
-2. **Blocked on owner:** the supervised-auto decision package is on the table (activation decision
+   CP-0043; **PR #178 MERGED** — origin/main `92f5d07` contains the full M0-T046 unit; both
+   checkouts synced; M0-T046 branches deleted).
+2. **M0-T047 (backlog, contracted): nanoid round-3 advisory.** GHSA-2v37-7h3g-55p8 (HIGH,
+   nanoid <3.3.17) surfaced 2026-08-08 against the committed apps/web lock (in-lock 3.3.16,
+   transitive via postcss). Every safe version fails the 7-day age gate until **2026-08-10T10:39:22Z**
+   (3.3.17 publish + 604800s) — no agent waiver exists; the D-009 am.1 exception path was never
+   implemented. Until remediation the NON-REQUIRED `web-dependency-security` context is red
+   repo-wide (the 8-context required ruleset is unaffected — merges of dependency-untouched work
+   may proceed Tier A, as PR #178 did). **At/after the eligibility instant:** claim M0-T047
+   (packet complete: exact-pin override + CI-bot lock regeneration, NO local npm; AS-1..AS-5),
+   re-verify 3.3.17 is still advisory-free, execute, gate (G0/G2/G3/G5 + DCV), merge.
+3. **Blocked on owner:** the supervised-auto decision package is on the table (activation decision
    line + elevated ACL command, presented at session 6 close). If the owner has typed the
    activation decision, follow it exactly; if the owner ran the elevated apply, capture
    `python -m tools.agent_supervisor doctor --config "<path>" --json` →
