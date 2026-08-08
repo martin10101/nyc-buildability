@@ -1,4 +1,4 @@
-"""S1 gate control 1: deterministic content sniffing from leading bytes (M2-T015).
+"""S1 gate controls 1-2: content sniffing + streaming size cap / digest (M2-T015).
 
 First control of the synchronous upload gate (docs/SURVEY_DOCUMENT_INGESTION_ARCHITECTURE.md
 section 2, S1): the declared filename extension NEVER selects handling — the sniffed
@@ -8,24 +8,35 @@ only, no heuristics and no third-party detector. Signatures cover exactly the SU
 rows of the format policy matrix (PDF, TIFF, PNG, JPEG); DXF/DWG are refused upstream by
 extension (rows 6-7) and deliberately have no signature here.
 
-This module is ONLY the sniff + extension/content agreement check. Size caps, digests,
-temp spooling, storage, and structural parsing are separate controls in later units.
+Control 2 (``stream_gate``) is the single-pass streaming loop: it consumes the upload in
+``stream_chunk_bytes`` reads, enforces ``max_upload_bytes`` the moment the cap is exceeded
+(typed ``UploadTooLargeError``, threat T03 — never buffering the whole file, never reading
+more than cap + 1 bytes), and hashes the EXACT original bytes into the immutable-original
+identity ``sha256:<64 lowercase hex>`` (survey_evidence ``document_digest`` wire format).
+Temp spooling, storage, and structural parsing are separate controls in later units.
 """
 
 from __future__ import annotations
 
+import hashlib
 from dataclasses import dataclass
-from typing import BinaryIO, Union
+from typing import BinaryIO, NamedTuple, Union
 
-from app.documents.errors import ExtensionMismatchError, UnsupportedExtensionError
-from app.documents.limits import SNIFF_HEADER_BYTES
+from app.documents.errors import (
+    ExtensionMismatchError,
+    UnsupportedExtensionError,
+    UploadTooLargeError,
+)
+from app.documents.limits import DEFAULT_GATE_LIMITS, SNIFF_HEADER_BYTES, GateLimits
 
 __all__ = [
     "EXTENSION_FORMATS",
     "MAGIC_SIGNATURES",
     "SniffResult",
+    "StreamGateResult",
     "check_extension_matches",
     "sniff_content",
+    "stream_gate",
 ]
 
 # Fixed magic-number table: (leading-byte signature, canonical format id, media type).
@@ -126,3 +137,59 @@ def check_extension_matches(declared_ext: str, sniffed: SniffResult) -> str:
             sniffed_media_type=sniffed.media_type,
         )
     return expected
+
+
+class StreamGateResult(NamedTuple):
+    """Single-pass stream outcome: sniffed type, exact size, immutable-original digest.
+
+    ``digest`` is ``sha256:`` + 64 lowercase hex over the EXACT original bytes — the
+    survey_evidence ``document_digest`` wire format (``^sha256:[0-9a-f]{64}$``), the
+    content identity of the stored original. Metadata only; never the bytes themselves.
+    """
+
+    sniffed: SniffResult
+    size_bytes: int
+    digest: str
+
+
+def stream_gate(
+    stream: BinaryIO, limits: GateLimits = DEFAULT_GATE_LIMITS
+) -> StreamGateResult:
+    """Consume an upload stream exactly once: cap, digest, and sniff in a single pass.
+
+    Reads bounded chunks (``limits.stream_chunk_bytes``) and raises the typed
+    ``UploadTooLargeError`` the moment more than ``limits.max_upload_bytes`` arrives:
+    each read is clamped to the remaining allowance + 1, so at most cap + 1 bytes are
+    ever read and at most one chunk is ever held in memory (threat T03). The SHA-256
+    digest and the sniff header accumulate over the same pass — no rewind, no second
+    read, no whole-file buffer. The oversize payload carries metadata only;
+    ``observed_bytes`` is a lower bound because reading stops at the first over-cap byte.
+    """
+    read = getattr(stream, "read", None)
+    if read is None:
+        raise TypeError("stream_gate expects a binary stream with read()")
+    cap = limits.max_upload_bytes
+    hasher = hashlib.sha256()
+    size = 0
+    header = b""
+    while True:
+        chunk = read(min(limits.stream_chunk_bytes, cap - size + 1))
+        if not isinstance(chunk, bytes):
+            raise TypeError("stream_gate requires a binary stream, not a text stream")
+        if not chunk:
+            break
+        size += len(chunk)
+        if size > cap:
+            raise UploadTooLargeError(
+                f"upload exceeds the {cap}-byte cap; rejected at the first over-cap byte",
+                max_upload_bytes=cap,
+                observed_bytes=size,
+            )
+        hasher.update(chunk)
+        if len(header) < limits.sniff_header_bytes:
+            header += chunk[: limits.sniff_header_bytes - len(header)]
+    return StreamGateResult(
+        sniffed=sniff_content(header),
+        size_bytes=size,
+        digest=f"sha256:{hasher.hexdigest()}",
+    )

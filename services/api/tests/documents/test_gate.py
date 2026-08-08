@@ -11,12 +11,20 @@ Proves, against docs/SURVEY_DOCUMENT_FORMAT_POLICY.md and the upload threat mode
 3. unknown, empty, and truncated leading bytes are unrecognized (never guessed) and
    fail the check for any declared extension;
 4. sniffing reads at most ``SNIFF_HEADER_BYTES`` from a stream, and typed-error
-   payloads carry metadata only — never document bytes.
+   payloads carry metadata only — never document bytes;
+5. ``stream_gate`` consumes the stream once in bounded chunks, returns the exact size
+   and the known-answer ``sha256:`` digest of the EXACT original bytes (stable across
+   independent reads), and composes with ``check_extension_matches``;
+6. the streaming cap trips typed ``UploadTooLargeError`` at exactly cap + 1 bytes,
+   reading no further — never buffering the whole file — and empty input yields a
+   deterministic empty-digest result, not a crash.
 """
 
 from __future__ import annotations
 
+import hashlib
 import io
+import re
 
 import pytest
 
@@ -24,15 +32,24 @@ from app.documents.errors import (
     DocumentIngestionError,
     ExtensionMismatchError,
     UnsupportedExtensionError,
+    UploadTooLargeError,
 )
 from app.documents.gate import (
     EXTENSION_FORMATS,
     MAGIC_SIGNATURES,
     SniffResult,
+    StreamGateResult,
     check_extension_matches,
     sniff_content,
+    stream_gate,
 )
-from app.documents.limits import SNIFF_HEADER_BYTES
+from app.documents.limits import (
+    DEFAULT_GATE_LIMITS,
+    MAX_UPLOAD_BYTES,
+    SNIFF_HEADER_BYTES,
+    STREAM_CHUNK_BYTES,
+    GateLimits,
+)
 
 PDF_BYTES = b"%PDF-1.7\n%\xe2\xe3\xcf\xd3\n1 0 obj\n<< /Type /Catalog >>\nendobj\n"
 PNG_BYTES = b"\x89PNG\r\n\x1a\n\x00\x00\x00\rIHDR\x00\x00\x00\x01\x00\x00\x00\x01"
@@ -130,3 +147,74 @@ def test_non_binary_input_is_a_type_error_not_a_typed_rejection():
         sniff_content("not bytes")  # type: ignore[arg-type]
     with pytest.raises(TypeError):
         sniff_content(io.StringIO("%PDF-1.7"))  # type: ignore[arg-type]
+
+
+# --------------------------------------------------- control 2: streaming cap + digest
+
+# Small injectable limits prove the enforcement mechanism at exact boundaries without
+# allocating 50 MiB fixtures; the reviewed production bounds are asserted verbatim below.
+SMALL = GateLimits(max_upload_bytes=8, sniff_header_bytes=8, stream_chunk_bytes=3)
+
+DIGEST_PATTERN = re.compile(r"^sha256:[0-9a-f]{64}$")  # survey_evidence document_digest
+
+
+def known_digest(data: bytes) -> str:
+    return "sha256:" + hashlib.sha256(data).hexdigest()
+
+
+def test_production_limits_are_the_reviewed_constants_verbatim():
+    assert DEFAULT_GATE_LIMITS.max_upload_bytes == MAX_UPLOAD_BYTES == 50 * 1024 * 1024
+    assert DEFAULT_GATE_LIMITS.stream_chunk_bytes == STREAM_CHUNK_BYTES == 64 * 1024
+    assert DEFAULT_GATE_LIMITS.sniff_header_bytes == SNIFF_HEADER_BYTES == 512
+
+
+@pytest.mark.parametrize("data, ext, format_id", [(PDF_BYTES, "pdf", "pdf"), (PNG_BYTES, "png", "png")])
+def test_stream_gate_under_cap_yields_size_digest_and_composable_sniff(data, ext, format_id):
+    sniffed, size_bytes, digest = stream_gate(io.BytesIO(data))
+    assert size_bytes == len(data)
+    assert digest == known_digest(data)
+    assert DIGEST_PATTERN.fullmatch(digest)
+    # Composes with the 3b-1 control: the same pass's sniff feeds the agreement check.
+    assert check_extension_matches(ext, sniffed) == format_id
+
+
+def test_stream_digest_is_exact_over_chunk_boundaries_and_stable_across_two_reads():
+    data = bytes(range(256)) * 5  # 1280 bytes: many 3-byte chunks, not chunk-aligned
+    limits = GateLimits(max_upload_bytes=2048, sniff_header_bytes=8, stream_chunk_bytes=3)
+    first = stream_gate(io.BytesIO(data), limits)
+    second = stream_gate(io.BytesIO(data), limits)
+    assert first == second == StreamGateResult(SniffResult(None, None), len(data), known_digest(data))
+
+
+def test_over_cap_raises_typed_oversize_exactly_at_the_boundary():
+    assert stream_gate(io.BytesIO(b"x" * 8), SMALL).size_bytes == 8  # cap itself passes
+    with pytest.raises(UploadTooLargeError) as excinfo:
+        stream_gate(io.BytesIO(b"x" * 9), SMALL)  # cap + 1 fails
+    payload = excinfo.value.to_payload()
+    assert payload["reject_code"] == "upload_too_large"
+    assert payload["max_upload_bytes"] == 8
+    assert payload["observed_bytes"] == 9
+    assert not any(isinstance(v, (bytes, bytearray)) for v in payload.values())
+
+
+def test_over_cap_stops_reading_immediately_without_buffering_whole_stream():
+    stream = io.BytesIO(b"x" * 10_000)
+    with pytest.raises(UploadTooLargeError):
+        stream_gate(stream, SMALL)
+    assert stream.tell() <= SMALL.max_upload_bytes + 1  # never read past cap + 1
+
+
+def test_empty_input_yields_empty_known_digest_and_unrecognized_sniff():
+    result = stream_gate(io.BytesIO(b""))
+    assert result.size_bytes == 0
+    assert result.digest == known_digest(b"")
+    assert not result.sniffed.recognized
+    with pytest.raises(ExtensionMismatchError):  # empty upload can never pass the gate
+        check_extension_matches("pdf", result.sniffed)
+
+
+def test_stream_gate_rejects_non_binary_input_as_type_error():
+    with pytest.raises(TypeError):
+        stream_gate(io.StringIO("%PDF-1.7"))  # type: ignore[arg-type]
+    with pytest.raises(TypeError):
+        stream_gate(b"raw bytes are not a stream")  # type: ignore[arg-type]
