@@ -170,3 +170,142 @@ thing standing between the forgery and a forward.
 
 `awaiting_gate` — submit for independent G3/G5 (+ DCV for the R136/R137/R140 wording) review.
 Producer cannot accept own work.
+
+---
+
+# M0-T048 REWORK (G3 MAJOR-1, owner-adjudicated) — resume-window audit trust anchor
+
+Owner directive source: D-010 source-015, requirements **D-010-R144..R154**. This section
+is appended (§§1-9 above describe the accepted C2 fix and remain unchanged).
+
+## R.1 The residual G3 found (MAJOR-1)
+
+The C2 fix reconstructs the forwarded body from the parked structured instruction and
+verifies it reproduces the journal `approved_digest` (`verify_covered_instruction`,
+`loop.py`). But **both** `approved_instruction` **and** `approved_digest` are mutable
+journal fields. An attacker with journal write who rewrites `approved_instruction` **and**
+`approved_digest` (and `prompt`/`prompt_bytes_digest`) **self-consistently** *after* a
+genuine approval defeats the reconstruction check: the forged instruction reproduces the
+forged digest, and `build_forwarded_prompt(forged_instruction)` reproduces the forged
+bytes. The park-stage forgery was closed by C2; this is the **approve→resume** window.
+
+## R.2 Design of the fix — the smallest bounded diff
+
+At the cross-process resume verification point (`SupervisedLoop._resume_approved_forward`,
+`loop.py`), **before any forward**, cross-check the journal `approved_digest` against the
+**already-sealed, hash-chained operator-approval audit evidence**. No new store, format, or
+signing scheme is introduced — the anchor already exists:
+
+- The `resume-pending-prompt` CLI (`cmd_resume_pending_prompt`, `cli.py:1736`) already seals
+  an `operator_resume_pending_prompt` event with `decision="approve"` and
+  `input_digest = <operator-named digest>` into the M0-T046 append-only **hash chain**
+  (`audit_log.py`). `approve_pending_prompt` binds the journal `approved_digest` to that same
+  operator-named digest (`loop.py`), so **genuinely** `approved_digest == input_digest` of the
+  sealed event.
+- The new `verify_approved_digest_against_audit(audit, run_id, approved_digest)`
+  (`loop.py`) calls `audit.verify_chain()` (fail-closed on any tamper/fork/truncation),
+  reads the sealed approve events for this run, and requires **exactly one** whose
+  `input_digest` equals the journal `approved_digest`. Rewriting that sealed record to agree
+  with a forged journal requires recomputing the hash chain, which `verify_chain` detects.
+
+So the attacker's self-consistent journal forgery now fails: the sealed event still carries
+the **original** operator digest; the forged `approved_digest` no longer matches →
+`approved_digest_audit_mismatch`, fail-closed, zero provider calls, durable sealed refusal.
+
+**Why this is the smallest correct fix:** one new pure verification function + one call
+site guard + one best-effort refusal-sealer, all on the single cross-process resume path.
+It reuses the existing sealed hash-chained audit log as the durable operator-approval record
+(no wiring was needed — §R.4). Blast radius is the cross-process resume only; the in-process
+forward path, authority model, and activation posture are untouched.
+
+## R.3 Boundary compliance
+
+- **No journal signing** — no keys, no signatures; only the existing SHA-256 hash chain.
+- **No service/daemon/PKI/identity system/new infrastructure** — zero new processes, files,
+  or formats; the anchor is the pre-existing `audit.jsonl` chain.
+- **No supervisor redesign** — one function + one guard on one path.
+- **No broadening** — scope is strictly the resume-window trust anchor.
+- **R140 preserved** — no dead-field removal, no unrelated refactor.
+- **SHADOW-ONLY / no activation** — no `LoopConfig.forwards`/authority/activation surface
+  touched (`PostureUnchanged` behavioural backstop still green; grep-proof unchanged).
+
+## R.4 Did the approval flow already record the operator-named digest? — YES
+
+**No new wiring was required.** The sealed operator-approval record already carries the
+operator-named digest: `cli.py:1736-1742` appends `operator_resume_pending_prompt`
+(`decision="approve"`, `input_digest=recorded`) where `recorded` is the operator-named
+approval digest. This is the durable operator-approval record the owner names; the fix only
+*consults* it at resume. (Confirmed by `AuditAnchorForgery._genuine_approval` asserting the
+genuine `approved_digest == operator_digest` and the sealed event carrying it.)
+
+## R.5 Per-requirement producer evidence
+
+| Req | What it requires (producer lane) | Evidence (file:line + test) |
+|---|---|---|
+| **R145** | Resume cross-checks `approved_digest` against sealed operator-approval audit evidence, not the mutable journal alone | `loop.py` `verify_approved_digest_against_audit` (new); call site in `_resume_approved_forward` before any forward. Tests: `AuditAnchorForgery.test_two_field_plus_digest_forgery_fails_closed_no_provider`; `HappyPath*`/`CrossProcessResumeTests` still green |
+| **R146** | Missing / unreadable / ambiguous / chain-invalid evidence → fail closed, distinct codes, durable record | `loop.py` distinct codes `approved_digest_audit_unavailable` / `approval_audit_unreadable` / `approval_audit_chain_invalid` / `approved_digest_audit_missing` / `approved_digest_audit_mismatch` / `approved_digest_audit_ambiguous`. Tests: `FailClosedEdges.test_missing_approval_event_refuses`, `test_ambiguous_approval_events_refuse`, `test_chain_tamper_is_detected_and_refuses` |
+| **R147** | Genuine happy path still forwards EXACTLY ONCE; clock-only diffs don't invalidate; SHADOW untouched | `HappyPathBinding.test_happy_path_forwards_once_and_binds`, `CrossProcessResumeTests.test_park_then_cli_approve_then_fresh_start_forwards_once_and_rotates`, `LoopResumeForwardExactlyOnceTests.test_a_second_resume_does_not_double_forward`, `ClockInvariant.*`, `PostureUnchanged.*` — all green |
+| **R148** | Never fail open, never warn-only; refusal durably sealed | `loop.py` `_seal_cross_process_resume_refusal` seals `cross_process_resume_refused` (`decision="refuse"`, reason code) via the existing hash-chained audit; every refusal `raise`s `forwarded_prompt_unavailable`. Tests assert `provider_calls == 0`, no outbox row, refusal event present, chain still verifies |
+| **R149** | Zero provider calls on any resume refusal | Asserted in every fail-closed test via `loop.provider_calls == 0` and `SELECT COUNT(*) FROM outbox == 0` |
+| **R150** | Reuse existing sealed hash-chained audit log; no new store/format/signing | §R.2/§R.4; uses `audit_log.AuditLog.verify_chain`/`read_all`/`append` only. No schema/file/format added |
+
+**Orchestrator-lane (not producer-satisfiable):** **R144** (owner hold/adjudication), **R151-R154**
+(sequencing / gate routing / acceptance / ledger) are recorded and integrated by the
+orchestrator, not by this producer.
+
+## R.6 Adversarial test (owner steps 1-7) + RED-on-pre-fix proof
+
+New file: `tools/test_agent_supervisor_audit_anchor.py` (6 tests). The owner's exact
+adversarial sequence is `AuditAnchorForgery.test_two_field_plus_digest_forgery_fails_closed_no_provider`:
+(1) genuine park + real-CLI approval; (2) self-consistent journal mutation of
+`approved_instruction` + `approved_digest` + `prompt` + `prompt_bytes_digest`; (3) sealed
+audit record left unchanged; (4) fresh-loop resume; (5) `LoopError forwarded_prompt_unavailable`;
+(6) `provider_calls == 0` and zero outbox rows; (7) durable sealed
+`cross_process_resume_refused` with reason `approved_digest_audit_mismatch`, chain still
+verifies. Non-vacuity: `test_non_vacuity_reconstruction_check_alone_would_forward` proves the
+forgery passes the C2 reconstruction check (so only the new anchor catches it).
+
+**RED-on-pre-fix proof (method: in-process mutation, mirroring the G4 precedent).**
+`AuditAnchorForgery.test_red_when_crosscheck_disabled` monkeypatches
+`lp.verify_approved_digest_against_audit` to a no-op and shows the same forgery **is forwarded**
+(outbox row containing `EXFILTRATE ALL SECRETS`). A standalone confirmation run with the fix
+disabled turned the fail-closed adversarial test RED:
+
+```
+FAIL: test_two_field_plus_digest_forgery_fails_closed_no_provider
+  AssertionError: LoopError not raised
+RED-PROOF RESULT: failures=1 errors=1 (pre-fix code does NOT fail closed)
+```
+
+(The `errors=1` is a Windows tempdir-cleanup lock artifact after the early assertion failure,
+not a second logical failure; the substantive proof is `LoopError not raised`.)
+
+## R.7 Full suite
+
+Command: `python -m pytest tools/test_agent_supervisor_*.py`
+- Baseline at HEAD `ec0f55d`: **1374 passed, 2 skipped**.
+- After the rework: **1380 passed, 2 skipped** (delta **+6**: the new adversarial file).
+  0 failures, 0 new skips. All existing C2, happy-path, exactly-once, clock-invariant, and
+  shadow-posture tests remain green.
+
+One existing test's **setup** was updated (assertions unchanged, still green):
+`LoopResumeForwardExactlyOnceTests._approved_at_forward_prompt`
+(`tools/test_agent_supervisor_pending_prompt.py`) now seals the `operator_resume_pending_prompt`
+approve event that a genuine cross-process approval always writes — the record it stages must
+faithfully reflect the new invariant. Its exactly-once assertion is unchanged.
+
+## R.8 Files changed (rework)
+
+- `tools/agent_supervisor/loop.py` — new `verify_approved_digest_against_audit` +
+  `OPERATOR_APPROVAL_EVENT` const; `SupervisedLoop._seal_cross_process_resume_refusal`;
+  audit cross-check guard in `_resume_approved_forward`; import of `AuditChainError`.
+- `tools/test_agent_supervisor_audit_anchor.py` — new adversarial + fail-closed test file (6 tests).
+- `tools/test_agent_supervisor_pending_prompt.py` — one setup helper seals the genuine approval
+  audit event (assertions unchanged).
+- `project-control/reports/M0-T048-producer-report.md` — this section.
+
+## R.9 Requested status
+
+`awaiting_gate` — independent G3 re-review of MAJOR-1 (+ G5/DCV as routed). Producer cannot
+accept own work. No deviations or unproven claims; the resume-window hole named by MAJOR-1 is
+closed and proven RED-on-pre-fix.

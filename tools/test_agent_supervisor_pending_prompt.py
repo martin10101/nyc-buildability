@@ -555,6 +555,14 @@ class LoopResumeForwardExactlyOnceTests(LoopTestBase):
         self.journal.set_state("current_state", sm.FORWARD_PROMPT)
         self.journal.set_state("last_trigger", "owner_approved_pending_prompt")
         self.journal.set_state(pending_prompt_key(self.run_id), record)
+        # M0-T048 REWORK (D-010 R145..R150): a GENUINE cross-process approval always
+        # seals an operator-approval audit event naming the operator digest; the resume
+        # now cross-checks approved_digest against it, so a faithful stage must include
+        # it (this mirrors what `resume-pending-prompt` writes on a real approval).
+        self.audit.append(lp.OPERATOR_APPROVAL_EVENT, run_id=self.run_id,
+                          input_digest=base["digest"], decision="approve",
+                          state_from=sm.WAIT_FOR_OWNER, state_to=sm.FORWARD_PROMPT,
+                          detail={"operator_initiated": True, "cycle": 1})
         return f"{self.run_id}/fwd/1/{binding[:16]}", base["prompt"]
 
     def _loop(self, *, runner) -> lp.SupervisedLoop:

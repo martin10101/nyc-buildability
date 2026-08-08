@@ -53,6 +53,7 @@ from typing import Any, Callable, Mapping, Sequence
 
 from . import CONTROLLER_VERSION
 from . import rotation
+from .audit_log import AuditChainError
 from .circuit_breakers import GAUGE_LIMITS
 from .claude_runner import QUOTA_EXHAUSTED_REASON, broker_permission_handler
 from .codex_reviewer import build_forwarded_prompt, stamp_forwarded_at
@@ -701,6 +702,97 @@ def verify_covered_instruction(
             "from the operator-covered instruction; the held prompt was altered after "
             "it was parked. Refusing fail-closed: no approval is written")
     return expected_body
+
+
+#: The sealed, hash-chained audit event the `resume-pending-prompt` CLI writes on a
+#: genuine operator approval. Its ``input_digest`` is the operator-named approval
+#: digest; the event lives in the append-only local hash chain (audit_log.py, M0-T046),
+#: so forging or rewriting it requires breaking the chain, which `verify_chain` detects.
+OPERATOR_APPROVAL_EVENT = "operator_resume_pending_prompt"
+
+
+def verify_approved_digest_against_audit(
+        audit: Any, run_id: str, approved_digest: str) -> None:
+    """Cross-check the journal ``approved_digest`` against the SEALED operator approval.
+
+    M0-T048 REWORK (D-010 R145..R150; G3 MAJOR-1): the cross-process resume path must
+    NOT trust the mutable journal ``approved_digest`` as the sole record of what the
+    operator approved. An attacker with journal write who rewrites ``approved_instruction``
+    AND ``approved_digest`` (AND ``prompt``/``prompt_bytes_digest``) self-consistently
+    AFTER a genuine approval otherwise slips altered content through the reconstruction
+    check (the forged instruction reproduces the forged digest). This anchors the resume
+    to the ALREADY-SEALED, hash-chained operator-approval audit evidence instead: the
+    ``resume-pending-prompt`` CLI seals an ``operator_resume_pending_prompt``
+    (``decision="approve"``) event whose ``input_digest`` is the operator-named digest.
+    Rewriting that event requires breaking the chain, which ``verify_chain`` detects.
+
+    Fails closed with a DISTINCT reason code (never fails open, never warn-only) on:
+      * no audit log to consult                    -> ``approved_digest_audit_unavailable``
+      * an unreadable audit log                    -> ``approval_audit_unreadable``
+      * a chain that does not verify (tamper/fork/
+        truncate)                                  -> ``approval_audit_chain_invalid``
+      * no sealed approval event for this run      -> ``approved_digest_audit_missing``
+      * a sealed approval whose operator-named
+        digest differs from the journal's          -> ``approved_digest_audit_mismatch``
+      * conflicting/duplicated sealed approvals of
+        the same digest                            -> ``approved_digest_audit_ambiguous``
+
+    No side effects. The caller seals the refusal (owner requirement: the mismatch must
+    be durably recorded) and re-raises fail-closed.
+    """
+    if audit is None:
+        raise LoopError(
+            "approved_digest_audit_unavailable",
+            "no sealed operator-approval audit evidence is available to cross-check the "
+            "journal approved_digest against; refusing fail-closed rather than treating "
+            "the mutable journal as the sole record of what the operator approved")
+    try:
+        verification = audit.verify_chain()
+    except Exception as exc:  # a damaged/unreadable log must never fail open
+        raise LoopError(
+            "approval_audit_unreadable",
+            f"the operator-approval audit log is unreadable ({exc}); refusing to forward "
+            f"without a verifiable sealed record of the approval") from exc
+    if not getattr(verification, "ok", False):
+        raise LoopError(
+            "approval_audit_chain_invalid",
+            f"the operator-approval audit chain does not verify "
+            f"({getattr(verification, 'code', '')}: {getattr(verification, 'message', '')}); "
+            f"a tampered, forked, or truncated chain can no longer anchor what the "
+            f"operator approved, so the resume refuses fail-closed")
+    try:
+        records = audit.read_all()
+    except Exception as exc:
+        raise LoopError(
+            "approval_audit_unreadable",
+            f"the operator-approval audit log could not be read ({exc}); refusing to "
+            f"forward without a verifiable sealed record of the approval") from exc
+    approvals = [
+        r for r in records
+        if r.get("event_type") == OPERATOR_APPROVAL_EVENT
+        and r.get("decision") == "approve"
+        and (r.get("run_id") or "") == run_id]
+    if not approvals:
+        raise LoopError(
+            "approved_digest_audit_missing",
+            "no sealed operator-approval event records an approval for this run; the "
+            "journal claims an approval that the hash-chained audit evidence does not "
+            "hold. Refusing fail-closed - a missing durable approval is never trusted")
+    matching = [r for r in approvals
+                if (r.get("input_digest") or "") == approved_digest]
+    if not matching:
+        raise LoopError(
+            "approved_digest_audit_mismatch",
+            "the journal approved_digest does not match the operator-named digest sealed "
+            "in the operator-approval audit evidence; the mutable journal was altered "
+            "after a genuine approval. Refusing fail-closed - the sealed, hash-chained "
+            "record, not the journal, is the authoritative record of the approval")
+    if len(matching) > 1:
+        raise LoopError(
+            "approved_digest_audit_ambiguous",
+            "multiple sealed operator-approval events name the same approved_digest for "
+            "this run; the approval evidence is ambiguous or replayed. Refusing "
+            "fail-closed rather than guessing which approval is authoritative")
 
 
 def approve_pending_prompt(journal: Any, run_id: str, *, pending: Mapping[str, Any],
@@ -2082,6 +2174,32 @@ class SupervisedLoop:
 
     # -- cross-process resume (M0-T045) -------------------------------------
 
+    def _seal_cross_process_resume_refusal(
+            self, exc: LoopError, *, approved_digest: str, cycle: Any) -> None:
+        """Durably seal a fail-closed cross-process-resume refusal (M0-T048 R149/R150).
+
+        The security guarantee is the caller's fail-closed raise (no forward, zero
+        provider calls). This records WHY, in the same sealed, hash-chained audit log the
+        approval used, so the mismatch/refusal is durable. It is best-effort ONLY when the
+        chain itself is already broken (`append` REFUSES to extend a damaged chain): in
+        that case the broken chain is itself the recorded evidence, and the caller still
+        refuses. The journal is never mutated here."""
+        if self.audit is None:
+            return
+        try:
+            self.audit.append(
+                "cross_process_resume_refused", run_id=self.run_id,
+                input_digest=approved_digest, decision="refuse",
+                state_from=FORWARD_PROMPT, state_to=FORWARD_PROMPT,
+                detail={"reason": exc.code, "cross_process_resume": True,
+                        "cycle": cycle,
+                        "note": "the journal approved_digest failed the sealed operator-"
+                                "approval audit cross-check; no forward, no provider call"})
+        except AuditChainError:
+            # The chain is already damaged (that IS the finding); it cannot be extended.
+            # The caller's fail-closed raise remains the security guarantee.
+            pass
+
     def _resume_approved_forward(self) -> tuple[str, int]:
         """Complete a forward that was APPROVED in an earlier, separate process.
 
@@ -2129,6 +2247,26 @@ class SupervisedLoop:
                 "the approved pending-prompt record carries no held prompt bytes "
                 "(an old-shape record parked before the held text was durable); "
                 "refusing to fabricate a prompt to forward")
+        # M0-T048 REWORK (D-010 R145..R150; G3 MAJOR-1): the mutable journal
+        # `approved_digest` is NOT the sole record of what the operator approved. BEFORE
+        # any forward, cross-check it against the ALREADY-SEALED, hash-chained operator-
+        # approval audit evidence (the `operator_resume_pending_prompt` approve event's
+        # operator-named `input_digest`). An attacker who rewrites `approved_instruction`
+        # + `approved_digest` (+ `prompt`/`prompt_bytes_digest`) self-consistently after a
+        # genuine approval passes the reconstruction check below, but cannot match the
+        # operator-named digest sealed in the immutable chain. Fail-closed on any
+        # mismatch/missing/ambiguous/chain-invalid evidence, with a DISTINCT reason code,
+        # a durable sealed refusal, and zero provider calls (the forward is never reached).
+        try:
+            verify_approved_digest_against_audit(
+                self.audit, self.run_id, str(approved_digest or ""))
+        except LoopError as exc:
+            self._seal_cross_process_resume_refusal(
+                exc, approved_digest=str(approved_digest or ""),
+                cycle=record.get("cycle"))
+            raise LoopError(
+                "forwarded_prompt_unavailable",
+                f"refusing to forward: {exc.message}") from exc
         # M0-T048 (D-010 am.14, R136): RECONSTRUCT the forwarded body from the
         # operator-covered structured instruction and verify it reproduces the
         # operator-named `approved_digest`, rather than trusting the parked bytes. A
