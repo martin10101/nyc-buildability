@@ -27,12 +27,12 @@
     "code-reviewer",
     "security-reviewer"
   ],
-  "status": "claimed",
-  "progress_percent": 10,
+  "status": "awaiting_gate",
+  "progress_percent": 85,
   "risks": [],
   "blockers": [],
   "created_at": "2026-08-08T08:45:18.498582+00:00",
-  "updated_at": "2026-08-08T08:45:40.981129+00:00",
+  "updated_at": "2026-08-08T09:00:54.476348+00:00",
   "directive_refs": [
     {
       "directive_id": "D-010",
