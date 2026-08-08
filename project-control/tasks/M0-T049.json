@@ -1,0 +1,59 @@
+{
+  "task_id": "M0-T049",
+  "title": "Fix hardening-script PS5.1 parser defect + whole-script parse regression test (owner source-019)",
+  "task_type": "engineering",
+  "milestone_id": "M0",
+  "objective": "Correct ONLY the four ${UnelevatedUser} interpolation defects in tools/agent_supervisor/harden_controller_config.ps1 (lines 130/132/154/165); add a regression test that PARSES the entire script under Windows PowerShell 5.1 semantics via the PS parser API (RED on defective, GREEN on fixed; exit codes insufficient); re-run OS-ACL/hardening tests + new parse test; produce a new reviewed blob identity (old 0f01d649 defective, barred from elevation). No ACL redesign, no supervisor work, no config move/content change, model_selection untouched.",
+  "business_reason": "Owner-demonstrated pre-activation defect: elevated hardening failed to parse, leaving the relocated controller config file-level NOT protected; blocks the activation package until fixed, G3+G5 reviewed, merged.",
+  "inputs": [],
+  "outputs": [],
+  "dependencies": [],
+  "allowed_paths": [
+    "tools/agent_supervisor/harden_controller_config.ps1",
+    "tools/test_agent_supervisor_*.py",
+    "project-control/reports/M0-T049-producer-report.md",
+    "project-control/tasks/M0-T049.json"
+  ],
+  "forbidden_paths": [],
+  "acceptance_scenarios": [],
+  "required_gates": [
+    "G0",
+    "G2",
+    "G3",
+    "G5"
+  ],
+  "producer_agent": "backend-engineer",
+  "reviewer_agents": [
+    "code-reviewer",
+    "security-reviewer"
+  ],
+  "status": "accepted",
+  "progress_percent": 100,
+  "risks": [],
+  "blockers": [],
+  "created_at": "2026-08-08T07:44:33.251299+00:00",
+  "updated_at": "2026-08-08T08:31:49.308895+00:00",
+  "directive_refs": [
+    {
+      "directive_id": "D-010",
+      "requirement_ids": [
+        "D-010-R173",
+        "D-010-R174",
+        "D-010-R175",
+        "D-010-R176",
+        "D-010-R177",
+        "D-010-R178",
+        "D-010-R179",
+        "D-010-R180",
+        "D-010-R181",
+        "D-010-R182",
+        "D-010-R183"
+      ]
+    }
+  ],
+  "directive_regime_version": "1.0",
+  "directive_regime_entered_at": "2026-08-08T07:44:33.251299+00:00",
+  "worktree": "C:/Users/MLFLL/Downloads/nyc-zoning/orch",
+  "accepted_by": "orchestrator",
+  "accepted_at": "2026-08-08T08:31:49.308895+00:00"
+}

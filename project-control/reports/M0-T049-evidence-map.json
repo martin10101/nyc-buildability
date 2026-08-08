@@ -1,0 +1,82 @@
+{
+ "schema": "evidence_map/v1",
+ "task_id": "M0-T049",
+ "producer": "backend-engineer",
+ "code_head": "47a2721d4144c5447b79c7ca693e8b4065154fd4",
+ "code_branch": "task/M0-T049-hardening-parse-fix",
+ "requirements": {
+  "D-010-R173": {
+   "summary": "HOLD honored by conduct: no activation, no config move, no config content change anywhere in this unit; the fix touches only the script + tests + report inside the worktree.",
+   "evidence": [
+    "task-branch commit 47a2721 diff scope (3 files)",
+    "project-control/reports/M0-T049-acl-posture-inspection.md (config untouched, SHA 29eb765e.. re-verified)"
+   ]
+  },
+  "D-010-R174": {
+   "summary": "Defect treated as the narrowly bounded pre-activation fix: four-line interpolation correction only, no other script change.",
+   "evidence": [
+    "git diff 47a2721: exactly 4 changed script lines (130/132/154/165)",
+    "project-control/reports/M0-T049-producer-report.md"
+   ]
+  },
+  "D-010-R175": {
+   "summary": "Read-only inspection performed FIRST and reported honestly: file NOT protected (moved descriptor retained Authenticated Users Modify; owner MLFLL); parent protected (inherited Program Files DACL); contents SHA intact.",
+   "evidence": [
+    "project-control/reports/M0-T049-acl-posture-inspection.md"
+   ]
+  },
+  "D-010-R176": {
+   "summary": "Exactly the unambiguous brace form applied at every affected occurrence (130/132 rollback (M); 154/165 apply (RX)); whole-file sweep found NO additional same-class occurrence (env: namespace uses at 40/67/80 are legitimate).",
+   "evidence": [
+    "tools/agent_supervisor/harden_controller_config.ps1 lines 130/132/154/165",
+    "producer report sweep section"
+   ]
+  },
+  "D-010-R177": {
+   "summary": "Whole-script Windows PowerShell 5.1 parse regression test added using the parser API (Parser::ParseFile, asserts zero parse errors, prints messages on failure); RED on pre-fix (parse_errors=4, each naming the ':' variable-reference error); exit codes proven insufficient (defective script's parse death masquerades as the unelevated refusal).",
+   "evidence": [
+    "tools/test_agent_supervisor_os_acl.py::HardenScriptTests::test_script_parses_cleanly_under_windows_powershell_51",
+    "producer report RED-proof transcript",
+    "hardened test_script_refuses_to_run_unelevated (refusal must NOT be a parse error)"
+   ]
+  },
+  "D-010-R178": {
+   "summary": "Existing OS-ACL/hardening tests + new parse test re-run: os_acl file 32 passed; full supervisor suite 1381 passed / 2 skipped (baseline 1380/2, delta = the one new test), independently reproduced by the orchestrator.",
+   "evidence": [
+    "python -m pytest tools/test_agent_supervisor_os_acl.py -q -> 32 passed",
+    "python -m pytest tools/test_agent_supervisor_*.py -q -> 1381 passed, 2 skipped (orchestrator reproduction)"
+   ]
+  },
+  "D-010-R179": {
+   "summary": "Sequencing honored by conduct: independent G3 + G5 delta reviews dispatched at the frozen identity post-submit; their PASS records precede any elevated execution by the owner.",
+   "evidence": [
+    "project-control/gates/M0-T049-G3.json / -G5.json (populated post-submit)"
+   ]
+  },
+  "D-010-R180": {
+   "summary": "Candidate NEW blob identity of the corrected script at the frozen identity: ca3811cd7e38a044bd0e01056e95b5028b6ce615 (becomes the reviewed blob when G3/G5 pass and the merge lands; old blob 0f01d649a64a4fcb1f96b805564cc40889d9a389 recorded defective and barred from elevation).",
+   "evidence": [
+    "git hash-object --path tools/agent_supervisor/harden_controller_config.ps1 at 47a2721 = ca3811cd7e38a044bd0e01056e95b5028b6ce615"
+   ]
+  },
+  "D-010-R181": {
+   "summary": "Return-report discipline honored by conduct: the owner return is issued only after commit + G3/G5 review + DCV + merge, with the exact new blob identity and elevated rerun command.",
+   "evidence": [
+    "owner return message (post-merge)"
+   ]
+  },
+  "D-010-R182": {
+   "summary": "model_selection.toml preserved unchanged and mutable at C:\\SupervisorController\\model_selection.toml; not touched by any step of this unit.",
+   "evidence": [
+    "diff scope (no path outside the worktree)",
+    "M0-T049-acl-posture-inspection.md scope statement"
+   ]
+  },
+  "D-010-R183": {
+   "summary": "No broadening: diff = 4 script lines + 1 test class addition + report; no ACL redesign, no supervisor code change, no new files beyond the report.",
+   "evidence": [
+    "git diff --stat 47a2721 (3 files, +220/-4)"
+   ]
+  }
+ }
+}

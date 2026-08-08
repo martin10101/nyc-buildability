@@ -1,7 +1,7 @@
 {
  "schema": "directive_manifest/v1",
  "directive_id": "D-010",
- "version": 18,
+ "version": 19,
  "slug": "autonomous-engineering-restructure",
  "title": "Autonomous Engineering Restructure and NYC Buildability Pilot Acceleration (Autonomous Engineering V2)",
  "status": "active",
@@ -153,6 +153,14 @@
    "amends": "source-017-amendment.md",
    "recorded_at": "2026-08-08T07:35:04+00:00",
    "content_digest_sha256": "f4320332692c7cc92ccba0b48cafb444593d1da40eb033c84af80903eda81231"
+  },
+  {
+   "file": "source-019-amendment.md",
+   "kind": "amendment",
+   "sequence": 19,
+   "amends": "source-018-amendment.md",
+   "recorded_at": "2026-08-08T07:43:37+00:00",
+   "content_digest_sha256": "9c5a24bf0d88125cbefb502a2a1bbc525087dec6979e9f01e9428b70b70e8c05"
   }
  ],
  "amendments": [
@@ -172,7 +180,8 @@
   "source-015-amendment.md",
   "source-016-amendment.md",
   "source-017-amendment.md",
-  "source-018-amendment.md"
+  "source-018-amendment.md",
+  "source-019-amendment.md"
  ],
  "supersedes": [],
  "superseded_by": null,
@@ -211,8 +220,8 @@
  "verification_file": "verification.json",
  "final_reviewed_sha": null,
  "final_reviewed_manifest_sha256": null,
- "requirements_content_digest_sha256": "7350ca3afde2404ed31f3841c65d3d6cb829ddea4f7b20d3febc88dfc1ef7a6c",
- "requirements_id_digest_sha256": "fdb8ff633562658faa2ea1c154fd1d4bdab39190bf7f79aa0a41da1b451184fb",
+ "requirements_content_digest_sha256": "ecb8765d781d12c2f169b89a8e86180fae4674a299c9eb279b8bbc98afb4f6e4",
+ "requirements_id_digest_sha256": "e9385e61757c142ff0251ba93c8276552cb74ad1584ecba9945af14efc6c60f4",
  "enforcement_pointers": {
   "tasks": [
    "M0-T037",
@@ -419,7 +428,18 @@
   "D-010-R169",
   "D-010-R170",
   "D-010-R171",
-  "D-010-R172"
+  "D-010-R172",
+  "D-010-R173",
+  "D-010-R174",
+  "D-010-R175",
+  "D-010-R176",
+  "D-010-R177",
+  "D-010-R178",
+  "D-010-R179",
+  "D-010-R180",
+  "D-010-R181",
+  "D-010-R182",
+  "D-010-R183"
  ],
  "created_at": "2026-08-07T01:09:55+00:00",
  "updated_at": "2026-08-08T04:29:07+00:00",
@@ -533,6 +553,11 @@
    "at": "2026-08-08T07:35:04+00:00",
    "actor": "orchestrator",
    "action": "amendment source-018 recorded (owner final pre-hardening check 2026-08-08: Program Files location approved in principle; config-content correctness determination before immutability; R168-R172 added); digests restamped"
+  },
+  {
+   "at": "2026-08-08T07:43:37+00:00",
+   "actor": "orchestrator",
+   "action": "amendment source-019 recorded (owner demonstrated parser defect 2026-08-08: bounded fix + PS5.1 parse regression test + G3/G5 delta review + new blob identity before elevation; R173-R183 added, bound to M0-T037/M0-T049); digests restamped"
   }
  ]
 }

@@ -1,10 +1,10 @@
 {
  "schema": "directive_requirements/v1",
  "directive_id": "D-010",
- "version": 18,
- "requirement_count": 172,
+ "version": 19,
+ "requirement_count": 183,
  "producer": "orchestrator",
- "updated_at": "2026-08-08T07:35:04+00:00",
+ "updated_at": "2026-08-08T07:43:37+00:00",
  "requirements": [
   {
    "id": "D-010-R001",
@@ -6106,6 +6106,391 @@
     "tasks": []
    },
    "amendment_sequence": 18
+  },
+  {
+   "id": "D-010-R173",
+   "text": "HOLD: STOP activation; do not move the controller config again; do not modify its contents. (Relocation leg complete: config at C:\\Program Files\\SupervisorConfig\\config.toml, SHA-256 29eb765eabce05b81dcbea33fd4d28800479596e9b23fd4d4fa334f6ee7da1cb verified; hardening DID NOT RUN.)",
+   "source_ref": "source-019-amendment.md#parser-defect",
+   "classification": "hold",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T037",
+     "M0-T049"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [
+     "accept"
+    ],
+    "effective_date": "2026-08-08"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "owner parser-defect remediation order 2026-08-08",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "amendment_sequence": 19
+  },
+  {
+   "id": "D-010-R174",
+   "text": "Treat the PowerShell 5.1 parser failure in tools/agent_supervisor/harden_controller_config.ps1 (interpolations \"$UnelevatedUser:(M)\" / \"$UnelevatedUser:(RX)\" - ':' after an interpolated variable parses as part of the variable reference) as a narrowly bounded pre-activation defect fix.",
+   "source_ref": "source-019-amendment.md#parser-defect",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T037",
+     "M0-T049"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [
+     "accept"
+    ],
+    "effective_date": "2026-08-08"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "owner parser-defect remediation order 2026-08-08",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "amendment_sequence": 19
+  },
+  {
+   "id": "D-010-R175",
+   "text": "FIRST perform read-only inspection of the CURRENT file and parent ACLs at C:\\Program Files\\SupervisorConfig\\config.toml and C:\\Program Files\\SupervisorConfig; report the present posture honestly; do not assume PROTECTED (a same-volume NTFS move can preserve the moved file's old security descriptor).",
+   "source_ref": "source-019-amendment.md#parser-defect",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T037",
+     "M0-T049"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [
+     "accept"
+    ],
+    "effective_date": "2026-08-08"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "Committed icacls/ownership output + honest posture statement.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "owner parser-defect remediation order 2026-08-08",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "amendment_sequence": 19
+  },
+  {
+   "id": "D-010-R176",
+   "text": "Correct ONLY the PowerShell interpolation defect using an unambiguous form such as \"${UnelevatedUser}:(M)\" / \"${UnelevatedUser}:(RX)\" at EVERY affected occurrence.",
+   "source_ref": "source-019-amendment.md#parser-defect",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T037",
+     "M0-T049"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [
+     "accept"
+    ],
+    "effective_date": "2026-08-08"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "owner parser-defect remediation order 2026-08-08",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "amendment_sequence": 19
+  },
+  {
+   "id": "D-010-R177",
+   "text": "Add a test that actually PARSES the entire hardening script under Windows PowerShell 5.1 semantics, so this class of parser failure cannot pass again (the prior unelevated-execution test did not catch whole-script parsing defects).",
+   "source_ref": "source-019-amendment.md#parser-defect",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T037",
+     "M0-T049"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [
+     "accept"
+    ],
+    "effective_date": "2026-08-08"
+   },
+   "dependencies": [],
+   "required_harness": "Whole-script PS 5.1 parse test in the supervisor test suite; RED on the defective script, GREEN on the fixed script.",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "owner parser-defect remediation order 2026-08-08",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "amendment_sequence": 19
+  },
+  {
+   "id": "D-010-R178",
+   "text": "Re-run the existing OS-ACL/hardening tests plus the new parse test.",
+   "source_ref": "source-019-amendment.md#parser-defect",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T037",
+     "M0-T049"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [
+     "accept"
+    ],
+    "effective_date": "2026-08-08"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "Test run output at the fixed identity.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "owner parser-defect remediation order 2026-08-08",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "amendment_sequence": 19
+  },
+  {
+   "id": "D-010-R179",
+   "text": "SEQUENCING: independent G3 and G5 review of this delta is REQUIRED before the owner executes any repaired script elevated.",
+   "source_ref": "source-019-amendment.md#parser-defect",
+   "classification": "sequencing",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T037",
+     "M0-T049"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [
+     "accept"
+    ],
+    "effective_date": "2026-08-08"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "owner parser-defect remediation order 2026-08-08",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "amendment_sequence": 19
+  },
+  {
+   "id": "D-010-R180",
+   "text": "Produce a NEW reviewed Git blob identity for harden_controller_config.ps1; the old expected blob 0f01d649a64a4fcb1f96b805564cc40889d9a389 is known defective and MUST NOT be used for elevation.",
+   "source_ref": "source-019-amendment.md#parser-defect",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T037",
+     "M0-T049"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [
+     "accept"
+    ],
+    "effective_date": "2026-08-08"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "owner parser-defect remediation order 2026-08-08",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "amendment_sequence": 19
+  },
+  {
+   "id": "D-010-R181",
+   "text": "RETURN: report back only after the corrected script is committed, reviewed, merged, with the exact new blob identity plus the exact elevated rerun command.",
+   "source_ref": "source-019-amendment.md#parser-defect",
+   "classification": "return",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T037",
+     "M0-T049"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [
+     "accept"
+    ],
+    "effective_date": "2026-08-08"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "owner parser-defect remediation order 2026-08-08",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "amendment_sequence": 19
+  },
+  {
+   "id": "D-010-R182",
+   "text": "PROHIBITION: preserve C:\\SupervisorController\\model_selection.toml unchanged and mutable.",
+   "source_ref": "source-019-amendment.md#parser-defect",
+   "classification": "prohibition",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T037",
+     "M0-T049"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [
+     "accept"
+    ],
+    "effective_date": "2026-08-08"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "owner parser-defect remediation order 2026-08-08",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "amendment_sequence": 19
+  },
+  {
+   "id": "D-010-R183",
+   "text": "PROHIBITION: do not broaden into ACL redesign or supervisor work; only the demonstrated parser defect plus the missing regression test.",
+   "source_ref": "source-019-amendment.md#parser-defect",
+   "classification": "prohibition",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T037",
+     "M0-T049"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [
+     "accept"
+    ],
+    "effective_date": "2026-08-08"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "owner parser-defect remediation order 2026-08-08",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "amendment_sequence": 19
   }
  ]
 }
