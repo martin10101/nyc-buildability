@@ -24,11 +24,11 @@
     "control-plane-verifier"
   ],
   "status": "in_progress",
-  "progress_percent": 90,
+  "progress_percent": 95,
   "risks": [],
   "blockers": [],
   "created_at": "2026-08-09T09:04:52.369280+00:00",
-  "updated_at": "2026-08-09T09:09:01.526694+00:00",
+  "updated_at": "2026-08-09T09:17:34.441156+00:00",
   "directive_refs": [
     {
       "directive_id": "D-010",
@@ -51,6 +51,13 @@
       "percent": 90,
       "status": "in_progress",
       "message": "Phase 1 IMPLEMENTED (policy-only): docs/LEAN_OPERATING_PROCESS.md (A1 duplication map; canonical record = per-task progress_log + git + CI; lean 7-field <=2000-tok handoff + 6 seam triggers; 1-2 routine-control-PR batching rule; generated objective reporting; concise-code B2-B8 + parameterized adversarial tests B6 + safer-packets A7; no-safety-loss proof) + CLAUDE.md routing pointer (effective M2-T016 onward). NO product/supervisor-core code changed; no existing evidence deleted; prospective. Return items 1-8 answered in the doc; 9-10 pending M2-T016. NEXT: Part-D independent review (code-reviewer/security-reviewer/control-plane-verifier)."
+    },
+    {
+      "at": "2026-08-09T09:17:34.441156+00:00",
+      "agent": "orchestrator",
+      "percent": 95,
+      "status": "in_progress",
+      "message": "Part-D independent review (control-plane-verifier) = PASS, preserved verbatim at project-control/reports/M0-T055-partD-review.md. All 7 owner Part-D checks CLEAN (no evidence loss, no weakened fail-closed, no directive-compliance incompatibility, clear source-of-truth, no excessive abstraction, no less-diagnostic tests, no product delay) + verbatim capture confirmed (source-029 SHA matches manifest), validator PASS (343 reqs), prospective marking correct, R595 record-intent resolution consistent with holds. Two non-blocking accept-time advisories: (1) M0-T055 empty acceptance_scenarios/allowed_paths acceptable (orchestrator producer, no code paths); (2) return items 9-10 legitimately deferred to Phase 2/3 - carry as justified pending/NA in verification.json at acceptance (R342/R338/R339). REMAINING for M0-T055 acceptance: record G0/G2 + the G3/G5 independent-reviewer gates (dispatch code-reviewer G3 + security-reviewer G5) + directive verification.json (R320-R343 rows; R338/R339/R342 pending-with-justification; R336 NA-post-acceptance) + accept. Phase 1 policy is on main (PR #206, 7c529f1); it governs M2-T016 onward."
     }
   ],
   "worktree": "C:/Users/MLFLL/Downloads/nyc-zoning/nyc-development-feasibility-claude-pack"
