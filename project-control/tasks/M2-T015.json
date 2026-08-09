@@ -34,7 +34,9 @@
     "docs/UPLOAD_THREAT_MODEL.md",
     "docs/SURVEY_EVIDENCE_CONTRACT.md",
     "docs/SURVEY_FIXTURE_MATRIX.md",
-    "project-control/reports/M2-T015-producer-report.md"
+    "project-control/reports/M2-T015-producer-report.md",
+    "packages/contracts/scripts/generate_ts_types.py",
+    "packages/contracts/scripts/tests/test_generate_survey_evidence_ts.py"
   ],
   "forbidden_paths": [
     "services/api/app/profile/**",
@@ -71,7 +73,7 @@
     "security-reviewer"
   ],
   "status": "in_progress",
-  "progress_percent": 68,
+  "progress_percent": 98,
   "risks": [
     "DISPATCH HOLD: awaits owner review of the 2026-07-20 planning report AND M2-T014 acceptance (format policy is a hard input)",
     "B-001: production storage/tenant-isolation/retention remain blocked; the architecture doc must design for them and mark them deferred - G3 verifies the honesty of that split",
@@ -82,7 +84,7 @@
   ],
   "blockers": [],
   "created_at": "2026-07-20T06:34:25.468863+00:00",
-  "updated_at": "2026-08-08T23:07:48.070882+00:00",
+  "updated_at": "2026-08-09T06:28:49.646741+00:00",
   "directive_refs": [
     {
       "directive_id": "D-010",
@@ -162,6 +164,153 @@
       "percent": 68,
       "status": "in_progress",
       "message": "Unit 3d-1 COMPLETE (fact-type taxonomy H1, v1-compatible app validation) committed 9120a02; 33 taxonomy tests, full documents suite 161 passed/1 skipped. Orchestrator rotating at clean unit seam (context ceiling). RESUME POINT: task branch task/M2-T015-survey-ingestion @ 9120a02; next micro-units per routing map (project-control/reports/M2-T015-ROUTING-COVERAGE-MAP.md): 3d-2 unit typing (H2), 3e geometry+correction-history (H3/H4), 3f promotion gate (H5), 3g deterministic checks, 3h tax-lot cross-check, 3i extraction+isolation, 3j fixtures+contract-pipeline+survey_evidence.ts, 3k e2e+SB matrix+CI; then gate lifecycle + M2-T016."
+    },
+    {
+      "at": "2026-08-09T00:19:39.934412+00:00",
+      "agent": "supervised-auto-worker",
+      "percent": 72,
+      "status": "in_progress",
+      "message": "Unit 3d-2 COMPLETE (H2 normalized-value + unit typing, D-010 R256-R258) committed b3d2398 + pushed: closed exact-match unit vocabularies (distance/area/angle/elevation), canonical 1:N scale, unitless address/BBL, typed UnresolvedNormalizedValue refusal (never promoted/coerced), import-time full-taxonomy governance guard. 55 new tests; documents suite 216 passed / 1 skipped. Supervised run run_m2t015_u3d2 on runtime r8: attempt 1 exhausted turns with no output (no_valid_checkpoint recorded honestly), clear-recovery to PREFLIGHT, retry with write-first no-shell prompt produced checkpoint M2-T015-3d-2-retry-ckpt-001. Next per routing map: 3e geometry+correction-history (H3/H4)."
+    },
+    {
+      "at": "2026-08-09T00:31:00.613626+00:00",
+      "agent": "supervised-auto-worker",
+      "percent": 76,
+      "status": "in_progress",
+      "message": "Unit 3e-1 COMPLETE (H3 cross-field geometry/location validation, D-010 R259-R260) committed 2174505 + pushed: extent ordering, finite coords, per-space validity, closed coordinate-space vocabulary, locator-kind + extraction-method consistency, closed shapes (no CRS side channel); typed UnresolvedLocation refusal, nothing promotable; every invariant grounded in verbatim schema statements (orchestrator-verified against the wire contract). 57 new tests; documents suite 273 passed / 1 skipped. Supervised run run_m2t015_u3e1 (runtime r9): worker checkpoint M2-T015-unit-3e-1-cp1 valid; in-loop Codex review HALT_UNSAFE on evidence-packet grounds (no target-worktree diff/tests in packet; packet git evidence from canonical checkout) - resolved via orchestrator out-of-loop evidence capture (real diff scope check, schema grounding verification, full suite run), per the evidence-capture division of labor. Next: 3e-2 correction-history integrity (H4, R261-R262)."
+    },
+    {
+      "at": "2026-08-09T00:43:30.762046+00:00",
+      "agent": "supervised-auto-worker",
+      "percent": 80,
+      "status": "in_progress",
+      "message": "Unit 3e-2 COMPLETE (H4 correction-history integrity, D-010 R261-R262) committed 3b0f2bc + pushed: original immutable, append-only, chronological, state chaining, latest-agrees-with-current, closed human authority model (AI unrepresentable as correcting principal), professional identity+time evidence, tampered history never resolves; full R262 adversarial matrix. 105 new tests; documents suite 378 passed / 1 skipped. Supervised run run_m2t015_u3e2 (runtime r10) harness-killed after final in-scope write (7 approved writes, no unit-complete event); surviving work verified complete + green out-of-loop by orchestrator per accumulate-surviving-halves rule. Unit 3e (H3+H4) now fully done. Next per routing map: 3f promotion gate (H5, R263-R266)."
+    },
+    {
+      "at": "2026-08-09T01:19:06.439130+00:00",
+      "agent": "supervised-auto-worker",
+      "percent": 83,
+      "status": "in_progress",
+      "message": "Unit 3f-1 COMPLETE (H5 standalone promotion gate, D-010 R263/R264/R266) committed + pushed: REQUIRED_VALIDATIONS per-fact-type map with dual import guards, frozen typed verdicts, zero-weight confidence rule (never read numerically). 39 new tests; suite 417 passed / 1 skipped. Operational note: background-kill window shrank below worker time-to-first-write (3 killed attempts of full 3f, zero survival); switched to FOREGROUND supervised runs (600s Bash window, unit-timeout 540) and split 3f into 3f-1 (module, done) + 3f-2 (state.py R265 wiring, next). Unit 3f run also timed out pre-write at full scope - scope split was required, not just foreground."
+    },
+    {
+      "at": "2026-08-09T01:29:30.183143+00:00",
+      "agent": "supervised-auto-worker",
+      "percent": 85,
+      "status": "in_progress",
+      "message": "Unit 3f-2 COMPLETE (H5/R265 promotion-gate wiring) committed + pushed: three gated evidence-promoting edges require frozen PromotionAllowed per material fact via promotion_gated_transition (precondition, not new authority); structural AI exclusion (isinstance-only, nothing else weighed); typed IllegalTransition refusals with gate_refusal reason. 28 new tests; suite 445 passed / 1 skipped; all pre-existing state tests intact. Codex REVISE (wanted orchestrator-captured diff+test evidence) satisfied out-of-loop. FORWARD-NOTE for 3i/3k: every gated-edge call site must use promotion_gated_transition, raw transition() is authority-only - verify at e2e/R274. Unit 3f (H5) now fully done. Next: 3g deterministic checks (SB-S3)."
+    },
+    {
+      "at": "2026-08-09T01:39:40.383773+00:00",
+      "agent": "supervised-auto-worker",
+      "percent": 87,
+      "status": "in_progress",
+      "message": "Unit 3g-1 COMPLETE (SB-S3 part 1: checks package + boundary_closure + segment_sum_consistency) committed + pushed; frozen typed check results, required explicit tolerances, UNEVALUABLE fail-closed conditions. 30 new tests; suite 475 passed / 1 skipped. Foreground supervised run r14 timed out pre-checkpoint; files verified complete+green out-of-loop. Remaining 3g parts: 3g-2 area-vs-stated + contradictory dimensions, 3g-3 scale/north-orientation/elevation/address-BBL-match."
+    },
+    {
+      "at": "2026-08-09T01:49:26.027619+00:00",
+      "agent": "supervised-auto-worker",
+      "percent": 89,
+      "status": "in_progress",
+      "message": "Unit 3g-2 COMPLETE (SB-S3 part 2: calculated_vs_stated_area shoelace + contradictory_dimensions) committed + pushed; grounded feet->square_feet pairing only, required tolerances, frozen typed results. 36 new tests; suite 511 passed / 1 skipped. Codex REVISE satisfied out-of-loop. Next: 3g-3 (scale, north/orientation, elevation, address/BBL-match checks + unify checks package re-exports), then 3h tax-lot cross-check."
+    },
+    {
+      "at": "2026-08-09T01:59:16.766919+00:00",
+      "agent": "supervised-auto-worker",
+      "percent": 91,
+      "status": "in_progress",
+      "message": "Unit 3g-3 COMPLETE - UNIT 3g (SB-S3 deterministic checks) FULLY DONE: all eight checks (closure, segment sums, area-vs-stated, contradictory dimensions, scale, north/orientation, elevation, address/BBL) with passing+failing+UNEVALUABLE coverage, unified package exports. 26 new tests; suite 537 passed / 1 skipped. First in-loop Codex CONTINUE of the session (honest-checkpoint pattern working). Next per routing map: 3h tax-lot/MapPLUTO cross-check (SB-S4), then 3i extraction+isolation, 3j fixtures+contracts, 3k e2e+CI."
+    },
+    {
+      "at": "2026-08-09T02:09:15.670668+00:00",
+      "agent": "supervised-auto-worker",
+      "percent": 93,
+      "status": "in_progress",
+      "message": "Unit 3h COMPLETE (SB-S4 tax-lot cross-check) committed + pushed: read-only frozen TaxLotReference with required provenance, typed BBL + area cross-checks, structural never-override doctrine (no write path exists). 44 new tests; suite 581 passed / 1 skipped. Remaining: 3i extraction+parser-isolation gate (SB-S1/S2/S7), 3j fixtures+contract pipeline (H6/H7/SB-S8), 3k e2e+coverage-matrix+CI (R272/R274/SB-S9)."
+    },
+    {
+      "at": "2026-08-09T02:19:50.894635+00:00",
+      "agent": "supervised-auto-worker",
+      "percent": 94,
+      "status": "in_progress",
+      "message": "Unit 3i-1 COMPLETE (parser-isolation capability gate, R275-R276) committed + pushed: fail-closed require_isolation with no bypass path of any kind; Windows host always ParsingDisabled; Linux CI is the provable substrate. 16 new tests; suite 597 passed / 1 skipped; Codex CONTINUE. Next: 3i-2 extraction pipeline + format routing (SB-S1/S2) + wrong-address routing (SB-S7)."
+    },
+    {
+      "at": "2026-08-09T02:31:22.261357+00:00",
+      "agent": "supervised-auto-worker",
+      "percent": 95,
+      "status": "in_progress",
+      "message": "Unit 3i-2 COMPLETE (SB-S2 format routing + isolation-gated extraction entry + SB-S7 wrong-address routing) committed + pushed; closed matrix verbatim, no-bypass begin_extraction_job, DecoderSeam protocol for the vector decoder. 50 new tests; suite 647 passed / 1 skipped. DESIGN NOTE recorded: no PDF library is admitted and requirements.in is outside packet scope, so the SB-S1/R274 real vector path will be an in-repo deterministic grounded-subset PDF reader (fail-closed outside its subset), consistent with the architecture; third-party parser admission remains a lawful later G5 step. Next: 3i-3 deterministic vector-PDF reader + primitive collection (SB-S1)."
+    },
+    {
+      "at": "2026-08-09T03:07:32.988321+00:00",
+      "agent": "supervised-auto-worker",
+      "percent": 96,
+      "status": "in_progress",
+      "message": "Unit 3i-3a-1 COMPLETE (PDF primitive lexer + tests, split across runs r20-r23 under accumulate rule after zero-output windows on larger scopes) committed + pushed; 102 new tests; suite 749 passed / 1 skipped. Cadence lesson recorded: novel-design units must be pre-split to single-file slices; pattern-mirroring units fit whole. Remaining 3i chain: 3i-3a-2 composite object parser, 3i-3a-3 xref/page-tree container, 3i-3b content-stream interpreter (paths+text), then 3j fixtures/contracts, 3k e2e+CI."
+    },
+    {
+      "at": "2026-08-09T03:17:36.252784+00:00",
+      "agent": "supervised-auto-worker",
+      "percent": 97,
+      "status": "in_progress",
+      "message": "Unit 3i-3a-2 COMPLETE (PDF composite object parser + 48 test functions) committed + pushed; suite 797 passed / 1 skipped. Next: 3i-3a-3 container assembly (xref table, trailer, page tree, FlateDecode with decompression cap, read_pdf_container API), then 3i-3b content-stream interpreter, 3j, 3k."
+    },
+    {
+      "at": "2026-08-09T03:38:09.476581+00:00",
+      "agent": "supervised-auto-worker",
+      "percent": 97,
+      "status": "in_progress",
+      "message": "Unit 3i-3a-3a COMPLETE (xref/trailer/object-table reader) committed + pushed; 14 new tests; suite 811 passed / 1 skipped. Next: 3i-3a-3b page tree + MediaBox + Contents + FlateDecode cap + read_pdf_container API, then 3i-3b content-stream interpreter."
+    },
+    {
+      "at": "2026-08-09T03:49:10.378725+00:00",
+      "agent": "supervised-auto-worker",
+      "percent": 98,
+      "status": "in_progress",
+      "message": "Unit 3i-3a-3b COMPLETE (page tree + stream decode + read_pdf_container; PDF container reader DONE across parts 1-4) committed + pushed; 17 new tests; suite 828 passed / 1 skipped. Next: 3i-3b content-stream interpreter (path/text operators -> typed vector primitives, DecoderSeam implementation), then 3j fixtures+contract pipeline (H6/H7/SB-S8), 3k e2e+coverage matrix+CI (R272/R274/SB-S9)."
+    },
+    {
+      "at": "2026-08-09T04:28:14.561022+00:00",
+      "agent": "supervised-auto-worker",
+      "percent": 98,
+      "status": "in_progress",
+      "message": "Unit 3i-3b COMPLETE - the SB-S1 in-repo deterministic vector-PDF reader is DONE end to end (pdf_lexer -> pdf_objects -> pdf_xref -> pdf_container -> pdf_content), all fail-closed strict-subset with typed refusals; suite 888 passed / 1 skipped. UNIT 3i FULLY DONE (isolation gate + routing + reader). Remaining: 3j fixtures + contract pipeline + survey_evidence.ts or lawful exclusion (H6/H7/SB-S8), 3k DecoderSeam wiring + e2e real path + SB coverage matrix + full CI (R272/R274/SB-S9), then producer report + gate lifecycle."
+    },
+    {
+      "at": "2026-08-09T04:49:37.183331+00:00",
+      "agent": "supervised-auto-worker",
+      "percent": 98,
+      "status": "in_progress",
+      "message": "Unit 3j-1 (survey_evidence.ts generator extension): TWO supervised runs (r32, r33) produced checkpoints but ZERO edits - generate_ts_types.py is large and the read+design consumed each 540s window before any Edit landed; no repository change made, generated artifacts verified untouched (autocrlf churn from an orchestrator generator dry-run reverted, committed bytes never moved). Root cause = unit window (540s inside the 600s foreground Bash cap) too small for read-heavy edit units; owner asked about a permanent fix for the harness kill/window problem - options presented (raise BASH_MAX_TIMEOUT_MS via settings; or owner-detached supervisor runs). Dispatches paused at this seam pending that choice; suite remains 888 passed / 1 skipped at 733df60."
+    },
+    {
+      "at": "2026-08-09T05:27:11.259650+00:00",
+      "agent": "supervised-auto-worker",
+      "percent": 98,
+      "status": "in_progress",
+      "message": "D-010 source-026 captured+merged (PR #198, R285-R291): Bash-timeout raise + Fable-exhaustion orchestrator/worker fallback to claude-opus-4-8 xhigh + pre-registered expectation log (project-control/reports/D-010-R288-fallback-expectation-log.md, committed BEFORE the event). Settings edit classifier-blocked; staged file awaits owner application + restart; after owner applies, commit .claude/settings.json diff via control PR. SUCCESSOR-SESSION INSTRUCTIONS (any model): confirm own model identity, record it here, if not Fable flip C:/SupervisorController/model_selection.toml worker to claude-opus-4-8 before dispatching (R291), then continue M2-T015 unit 3j-1 (survey_evidence.ts generator extension - 3 window-starved attempts recorded; with the raised timeout use --unit-timeout 1200 inside a 1500000ms foreground Bash call, fresh runtime base r35+)."
+    },
+    {
+      "at": "2026-08-09T05:47:16.620379+00:00",
+      "agent": "orchestrator",
+      "percent": 98,
+      "status": "in_progress",
+      "message": "D-010 source-026 fallback-test checkpoint (session-10 start, per R288 step-4 protocol): orchestrator model identity = claude-fable-5 (stated from session system identity). NO Fable-exhaustion switch has occurred - this session still runs on Fable, so the R288 pre-registered log is left UNTOUCHED (no verification section until the event) and the R291 model_selection.toml worker flip stays dormant (only fires when the orchestrator is not Fable). R285/R286 settings diff confirmed owner-applied AND committed+merged (PR #199, c9dd8b1: fallbackModel=[claude-opus-4-8], effortLevel=xhigh, BASH_MAX_TIMEOUT_MS=1800000) - nothing left to commit; primary checkout fast-forwarded 0f1d3df -> 40c848b. Proceeding: M2-T015 unit 3j-1 (survey_evidence.ts generator extension) with raised foreground window (Bash 1500000 ms / --unit-timeout 1200, fresh runtime base r35+)."
+    },
+    {
+      "at": "2026-08-09T05:51:58.027073+00:00",
+      "agent": "orchestrator",
+      "percent": 98,
+      "status": "in_progress",
+      "message": "Packet amendment (orchestrator, executing the r32/r33 supervisor REVISE instruction recorded in the runtime journals): allowed_paths extended with packages/contracts/scripts/generate_ts_types.py and packages/contracts/scripts/tests/test_generate_survey_evidence_ts.py. Journal evidence shows the 3j-1 worker's generator edit was policy-blocked outside_allowed_paths (rule S4.1) in r32/r33 - the earlier 'window too small' reading was incomplete; both the scope amendment and the raised window are applied. Redispatching unit 3j-1 as fresh runtime base r35, --unit-timeout 1200 inside a 1500000 ms foreground Bash window, --max-cycles 1, worker model unchanged (account default = Fable; R291 flip dormant, orchestrator still claude-fable-5)."
+    },
+    {
+      "at": "2026-08-09T06:28:49.644724+00:00",
+      "agent": "orchestrator",
+      "percent": 98,
+      "status": "in_progress",
+      "message": "Unit 3j-1 COMPLETE (survey_evidence.ts generator extension, H7/SB-S8) committed to task branch @ 1e4125c. Safe partial work from the scope-blocked r32/r33 worker attempts (generate_ts_types.py extension + test file) was PRESERVED per R298, packet allowed_paths amended for the generator script + its test, generator run deterministically, focused suite captured: packages/contracts/scripts/tests 29 passed (5 new survey_evidence tests: byte-identity vs committed, determinism, LF discipline, no-change-to-the-other-three regression, closed-vocabulary/digest pins). property_profile.ts/rule_evaluation.ts/scenario.ts byte-identical (verified). R296 APPLIED: C:/SupervisorController/model_selection.toml [claude] model flipped to claude-opus-4-8 (mutable path only; protected config + LIMITED-AUTO untouched). Latest safe committed checkpoint confirmed = 733df60 before this unit; task branch now 1e4125c. Orchestrator running as manually-recovered claude-opus-4-8 xhigh successor (owner /model after Fable-5 weekly-limit hard stop; R289=DID-NOT-SWITCH). NEXT: remaining 3j (adversarial survey_evidence fixture matrix + contract-pipeline reconciliation, H6/SB-S8), then 3k."
     }
   ]
 }

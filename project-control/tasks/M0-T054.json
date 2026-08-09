@@ -1,0 +1,40 @@
+{
+  "task_id": "M0-T054",
+  "title": "Unattended main-orchestrator model-turnover watchdog (R289 fallback-defect)",
+  "task_type": "backend",
+  "milestone_id": "M0",
+  "objective": "Add a SMALL, independently-live turnover watchdog (a process OUTSIDE the main Claude session) that provides genuine unattended main-orchestrator model turnover on quota hard stop. Required capabilities: (a) recognize a structured quota/hard-stop result from the orchestrator session; (b) preserve the stopped-session evidence (transcript + failure message) durably; (c) launch EXACTLY ONE successor session explicitly on claude-opus-4-8 with xhigh effort; (d) load the durable handoff (docs/SESSION_HANDOFF.md + ledger); (e) update the lawful MUTABLE worker-model selection (C:/SupervisorController/model_selection.toml) where required, never the protected immutable config; (f) resume from the latest safe committed checkpoint WITHOUT duplicate workers or duplicate commits (idempotent, exactly-once); (g) FAIL CLOSED if the result is ambiguous. Deterministic tests REQUIRED (R301): session-restart configuration loading; quota hard-stop detection; exactly-once successor launch; audit/evidence preservation; duplicate prevention; and safe (fail-closed) failure. CONSTRAINTS (R302): keep it small - do NOT redesign the supervisor and do NOT modify the immutable protected configuration or LIMITED-AUTO authorization. SCHEDULING (R302): implement at the next clean seam, preferably AFTER M2-T015 acceptance and BEFORE M2-T016, unless it becomes necessary for safe continuation. Stays BACKLOG until then.",
+  "business_reason": "The source-026 fallback test observed R289=DID-NOT-SWITCH: when Fable 5 hit its weekly usage limit the built-in fallbackModel did NOT automatically move the main orchestrator to claude-opus-4-8; the session hard-stopped and required a manual owner /model switch. Root cause (R294 finding 3): no process outside the exhausted Claude session existed to detect the hard stop and launch an Opus successor. A session at its own limit cannot reliably relaunch itself. This bounded reliability fix closes that gap (owner directive D-010 source-027, R300-R302).",
+  "inputs": [],
+  "outputs": [],
+  "dependencies": [],
+  "allowed_paths": [],
+  "forbidden_paths": [],
+  "acceptance_scenarios": [],
+  "required_gates": [
+    "G0",
+    "G2",
+    "G3",
+    "G5"
+  ],
+  "producer_agent": null,
+  "reviewer_agents": [
+    "code-reviewer",
+    "security-reviewer",
+    "control-plane-verifier"
+  ],
+  "status": "backlog",
+  "progress_percent": 0,
+  "risks": [],
+  "blockers": [],
+  "created_at": "2026-08-09T06:29:35.652832+00:00",
+  "updated_at": "2026-08-09T06:29:35.985003+00:00",
+  "directive_refs": [
+    {
+      "directive_id": "D-010",
+      "requirement_ids": "ALL"
+    }
+  ],
+  "directive_regime_version": "1.0",
+  "directive_regime_entered_at": "2026-08-09T06:29:35.652832+00:00"
+}

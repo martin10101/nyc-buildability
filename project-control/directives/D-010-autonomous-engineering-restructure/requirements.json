@@ -1,10 +1,10 @@
 {
  "schema": "directive_requirements/v1",
  "directive_id": "D-010",
- "version": 22,
- "requirement_count": 291,
+ "version": 23,
+ "requirement_count": 303,
  "producer": "orchestrator",
- "updated_at": "2026-08-09T05:20:00+00:00",
+ "updated_at": "2026-08-09T06:10:00+00:00",
  "requirements": [
   {
    "id": "D-010-R001",
@@ -10300,6 +10300,433 @@
     "tasks": []
    },
    "amendment_sequence": 26
+  },
+  {
+   "id": "D-010-R292",
+   "text": "Record the source-026 fallback-test result durably as verdict DID-NOT-SWITCH: Fable 5 weekly usage-limit exhaustion presented as a hard stop (the limit message telling the user to run /usage-credits or switch models with /model), no automatic claude-opus-4-8 successor appeared, and product execution stopped. The R288 pre-registered log gets an APPENDED dated verification section (never an edit). Do not claim the fallback succeeded.",
+   "source_ref": "source-027-amendment.md#verbatim-owner-text",
+   "classification": "evidence",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M2-T015",
+     "M2-T016"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [
+     "dispatch",
+     "accept"
+    ],
+    "effective_date": "2026-08-09"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "Appended dated verification section in project-control/reports/D-010-R288-fallback-expectation-log.md quoting the limit message; R289 verdict = DID-NOT-SWITCH.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "owner R289 incident + bounded turnover-defect directive 2026-08-09 (source-027)",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "amendment_sequence": 27
+  },
+  {
+   "id": "D-010-R293",
+   "text": "Preserve the stopped Fable transcript and failure message (the limit hard-stop screenshot) as durable repository evidence.",
+   "source_ref": "source-027-amendment.md#verbatim-owner-text",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M2-T015",
+     "M2-T016"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [
+     "dispatch",
+     "accept"
+    ],
+    "effective_date": "2026-08-09"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "project-control/reports/D-010-R289-fallback-incident/fable5-limit-hardstop-screenshot.jpg committed.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "owner R289 incident + bounded turnover-defect directive 2026-08-09 (source-027)",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "amendment_sequence": 27
+  },
+  {
+   "id": "D-010-R294",
+   "text": "State honestly, without silently choosing one, all three candidate causes for the non-switch: (1) fallback configuration possibly not reloaded because the session was never restarted; (2) weekly-quota exhaustion possibly not qualifying for Claude Code built-in fallbackModel behavior; (3) architectural gap: no process outside the exhausted main Claude session existed to detect the hard stop and launch an Opus successor.",
+   "source_ref": "source-027-amendment.md#verbatim-owner-text",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M2-T015",
+     "M2-T016"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [
+     "dispatch",
+     "accept"
+    ],
+    "effective_date": "2026-08-09"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "All three distinctions recorded in the durable R289 incident record.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "owner R289 incident + bounded turnover-defect directive 2026-08-09 (source-027)",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "amendment_sequence": 27
+  },
+  {
+   "id": "D-010-R295",
+   "text": "Proceed as the manually recovered claude-opus-4-8 xhigh orchestrator successor already authorized by R286 (the switch was manual via owner-typed /model, i.e. the source-026 pre-registered FAILURE CASE).",
+   "source_ref": "source-027-amendment.md#verbatim-owner-text",
+   "classification": "authorization",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M2-T015",
+     "M2-T016"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [
+     "dispatch",
+     "accept"
+    ],
+    "effective_date": "2026-08-09"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "owner R289 incident + bounded turnover-defect directive 2026-08-09 (source-027)",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "amendment_sequence": 27
+  },
+  {
+   "id": "D-010-R296",
+   "text": "Apply R291 through the lawful mutable model-selection path so supervised Claude workers use claude-opus-4-8 while Fable is exhausted: edit ONLY C:/SupervisorController/model_selection.toml [claude] model, recording the flip in the ledger.",
+   "source_ref": "source-027-amendment.md#verbatim-owner-text",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M2-T015",
+     "M2-T016"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [
+     "C:/SupervisorController/model_selection.toml"
+    ],
+    "lifecycle_events": [
+     "dispatch"
+    ],
+    "effective_date": "2026-08-09"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "model_selection.toml [claude] model = claude-opus-4-8; ledger progress entry recording the flip.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "owner R289 incident + bounded turnover-defect directive 2026-08-09 (source-027)",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "amendment_sequence": 27
+  },
+  {
+   "id": "D-010-R297",
+   "text": "PROHIBITION: do not modify the immutable protected configuration (C:/Program Files/SupervisorConfig/config.toml) and do not touch LIMITED-AUTO authorization during this recovery.",
+   "source_ref": "source-027-amendment.md#verbatim-owner-text",
+   "classification": "prohibition",
+   "binding": true,
+   "applicability": {
+    "task_ids": [],
+    "task_types": [],
+    "milestones": [],
+    "paths": [
+     "C:/Program Files/SupervisorConfig/config.toml"
+    ],
+    "lifecycle_events": [
+     "dispatch",
+     "accept"
+    ],
+    "effective_date": "2026-08-09"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "owner R289 incident + bounded turnover-defect directive 2026-08-09 (source-027)",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "amendment_sequence": 27
+  },
+  {
+   "id": "D-010-R298",
+   "text": "Preserve any safe partial work created after PR #199, confirm the latest committed M2-T015 checkpoint before continuing, and do not repeat completed product work.",
+   "source_ref": "source-027-amendment.md#verbatim-owner-text",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M2-T015"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [
+     "dispatch"
+    ],
+    "effective_date": "2026-08-09"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "Latest committed M2-T015 checkpoint SHA confirmed; safe partial work evaluated and either committed with its passing tests or discarded per the accumulate rule.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "owner R289 incident + bounded turnover-defect directive 2026-08-09 (source-027)",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "amendment_sequence": 27
+  },
+  {
+   "id": "D-010-R299",
+   "text": "Resume and finish M2-T015 units 3j and 3k from the latest safe seam.",
+   "source_ref": "source-027-amendment.md#verbatim-owner-text",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M2-T015"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [
+     "dispatch",
+     "accept"
+    ],
+    "effective_date": "2026-08-09"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "owner R289 incident + bounded turnover-defect directive 2026-08-09 (source-027)",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "amendment_sequence": 27
+  },
+  {
+   "id": "D-010-R300",
+   "text": "Create ONE narrowly bounded reliability-defect task for genuine unattended main-orchestrator model turnover: an independently live process (NOT the exhausted Claude session) can (a) recognize a structured quota/hard-stop result, (b) preserve the stopped-session evidence, (c) launch exactly one successor session explicitly on claude-opus-4-8 xhigh, (d) load the durable handoff, (e) update the lawful mutable worker-model selection where required, (f) resume from the latest safe checkpoint without duplicate workers or duplicate commits, and (g) fail closed if the result is ambiguous.",
+   "source_ref": "source-027-amendment.md#verbatim-owner-text",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T054"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [
+     "create",
+     "accept"
+    ],
+    "effective_date": "2026-08-09"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "M0-T054 contracted with the seven required capabilities in its objective/acceptance scenarios.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "owner R289 incident + bounded turnover-defect directive 2026-08-09 (source-027)",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "amendment_sequence": 27
+  },
+  {
+   "id": "D-010-R301",
+   "text": "The bounded turnover-defect task must include deterministic tests for: session-restart configuration loading; quota hard-stop detection; exactly-once successor launch; audit preservation; duplicate prevention; and safe (fail-closed) failure.",
+   "source_ref": "source-027-amendment.md#verbatim-owner-text",
+   "classification": "harness",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T054"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [
+     "accept"
+    ],
+    "effective_date": "2026-08-09"
+   },
+   "dependencies": [],
+   "required_harness": "Deterministic tests: restart-config-loading, quota-hardstop-detection, exactly-once-successor-launch, audit-preservation, duplicate-prevention, safe-failure.",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "owner R289 incident + bounded turnover-defect directive 2026-08-09 (source-027)",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "amendment_sequence": 27
+  },
+  {
+   "id": "D-010-R302",
+   "text": "Keep the turnover fix small: do not redesign the supervisor and do not derail the nearly complete M2-T015 product task. Schedule implementation at the next clean seam, preferably after M2-T015 acceptance and before M2-T016, unless it becomes necessary for safe continuation.",
+   "source_ref": "source-027-amendment.md#verbatim-owner-text",
+   "classification": "sequencing",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T054",
+     "M2-T015",
+     "M2-T016"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [
+     "create",
+     "dispatch"
+    ],
+    "effective_date": "2026-08-09"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "owner R289 incident + bounded turnover-defect directive 2026-08-09 (source-027)",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "amendment_sequence": 27
+  },
+  {
+   "id": "D-010-R303",
+   "text": "Return, generated from the completed matrix: (1) the durable R289 incident record; (2) the exact recovered M2-T015 checkpoint; (3) proof the active orchestrator and supervised worker selection are now claude-opus-4-8; (4) the bounded defect task ID and its scheduling; (5) confirmation M2-T015 product work has resumed.",
+   "source_ref": "source-027-amendment.md#verbatim-owner-text",
+   "classification": "return",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M2-T015",
+     "M2-T016"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [
+     "dispatch",
+     "accept"
+    ],
+    "effective_date": "2026-08-09"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "Return report with all five items, generated from the requirement matrix.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "owner R289 incident + bounded turnover-defect directive 2026-08-09 (source-027)",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "amendment_sequence": 27
   }
  ]
 }
