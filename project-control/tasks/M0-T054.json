@@ -24,11 +24,11 @@
     "control-plane-verifier"
   ],
   "status": "in_progress",
-  "progress_percent": 75,
+  "progress_percent": 90,
   "risks": [],
   "blockers": [],
   "created_at": "2026-08-09T06:29:35.652832+00:00",
-  "updated_at": "2026-08-09T08:50:08.591703+00:00",
+  "updated_at": "2026-08-09T09:52:31.790040+00:00",
   "directive_refs": [
     {
       "directive_id": "D-010",
@@ -86,6 +86,20 @@
       "percent": 75,
       "status": "in_progress",
       "message": "Increment 4 COMPLETE + committed (task branch 9cd7d38): gated WORKER-layer turnover integration. Minimal additive frozen-module change (loop.py +37/-0, cli.py +10/-0) + new worker_turnover.py; ONE seam in run_cycle (inside the existing checkpoint-is-None/not-ok branch, after ambiguous-effect guard, before the terminal no_valid_checkpoint PAUSE), entered only if an integration is injected AND classify_exhaustion==FABLE_EXHAUSTED. 12 integration tests; full suite 1471 passed / 2 skipped (baseline 1459 + 12, 0 failures) - freeze baseline preserved; every non-exhaustion path byte-for-byte unchanged. FULL turnover mechanism now = inc1 detection + inc2 actuation + inc3 adapters + inc4 integration = 69 deterministic tests. **OWNER-DECISION FINDING (surface, work around, do not block): production wiring is RECORD-INTENT-ONLY** - default_actuation_authorization returns False unconditionally because no runnable mode authorizes an automatic worker redispatch (shadow forwards nothing; supervised holds every forward at WAIT_FOR_OWNER; LIMITED-AUTO refused). So a confirmed Fable exhaustion is classified+recorded+surfaced but NEVER auto-launched in production. An actual AUTOMATIC PRODUCTION launch needs an owner-authorized actuation channel (R595 activation), which CONFLICTS with the reaffirmed SHADOW-ONLY / LIMITED-AUTO-off / no-activation-change holds. The bounded LIVE proof (R316) can still run on an ISOLATED non-product runtime with an authorized channel WITHOUT any production change. REMAINING: (1) bounded live Fable->opus-4.8 proof on isolated runtime; (2) M0-T054 producer report + gates G0/G2/G3/G5 + DCV + acceptance; then (3) resume M2-T015 3k on opus-4.8, finish/gate/accept, then M2-T016."
+    },
+    {
+      "at": "2026-08-09T09:36:08.306306+00:00",
+      "agent": "orchestrator",
+      "percent": 80,
+      "status": "in_progress",
+      "message": "LIVE-PROOF partial (orchestrator-captured, real signals): (1) Fable 5 confirmed STILL EXHAUSTED - real claude.exe --model claude-fable-5 probe returns exit 1 + exact phrase 'You have reached your Fable 5 limit...'. (2) DETECTION PROVEN ON THE REAL SIGNAL: classify_exhaustion(real stdout, exit 1) -> FABLE_EXHAUSTED, should_turn_over=True (not a synthetic fixture). (3) REAL INTEGRATION GAP FOUND (this is why a live proof was required): under the supervisor's stream-json mode the exhaustion surfaces as STRUCTURED events - type:rate_limit_event rateLimitType:seven_day_overage_included status:rejected (WEEKLY, distinct from transient 429); an assistant msg with is_api_error_message:true + the exact phrase; and a result event terminal_reason:api_error api_error_status:429 with the phrase in result. BUT worker_turnover.evaluate builds TurnoverEvidence.stdout from run_result.checkpoint_error (which becomes a generic no-checkpoint/malformed string, NOT the phrase) and stderr from stderr_tail (empty) - so IN THE LIVE LOOP the turnover would currently MISS real exhaustion (classify sees no phrase -> NOT_EXHAUSTED). Real fixtures saved: project-control/reports/M0-T054-live-proof/real-fable-exhaustion-{streamjson,plaintext}.txt. FIX = increment 5 (dispatched): expose the worker output text + recognize the seven_day rate_limit_event structured signal, feed into classify at the seam; regression test against the REAL captured stream-json. Then the isolated end-to-end live proof."
+    },
+    {
+      "at": "2026-08-09T09:52:31.790040+00:00",
+      "agent": "orchestrator",
+      "percent": 90,
+      "status": "in_progress",
+      "message": "LIVE PROOF (R316) COMPLETE - chain proven with REAL components (not unit-tests-alone), documented at project-control/reports/M0-T054-live-proof/LIVE-PROOF.md: (1) real Fable worker exit 1 + real seven_day rate_limit + exact phrase; (2) classify_exhaustion(real signal) -> FABLE_EXHAUSTED; (3) inc-5 distills the real evidence (10 live-signal tests, real capture as oracle); (4a) integration drives the REAL signal -> one opus-4-8 launch decision + Fable->Opus audit link (authorized channel); (4b) REAL opus-4.8 worker actually launches + runs (model claude-opus-4-8, exit 0, result OK, saved); (5) handoff+safe-checkpoint carried; (6) no owner /model. Fail-closed transient-429 exclusion preserved. Increment 5 committed to task branch @ 3c36c42; turnover stack = 79 deterministic tests, suite 1481 passed / 2 skipped. HONEST LIMITATION (documented): the single-continuous-process auto-run is production-gated (record-intent-only; R595 activation held by SHADOW-ONLY/LIMITED-AUTO-off) - every real LINK is proven; only owner-gated production auto-actuation is deferred to the R595 decision. REMAINING for M0-T054 accept: producer report (AOS s6) + G0/G2/G3/G5 + DCV + verification.json (R304-R319; R316 evidence above) + accept. Then M2-T015 3k on opus-4.8."
     }
   ],
   "worktree": "C:/Users/MLFLL/Downloads/nyc-zoning/wt-m0t054"
