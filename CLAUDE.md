@@ -70,6 +70,7 @@ not imports, precisely so they stay out of every session's base context.
 | Thin-client / storage limits | `docs/LOW_STORAGE_CLOUD_DEVELOPMENT_POLICY.md` |
 | Parallel / multi-agent execution | `.claude/ORCHESTRATION_POLICY.md` |
 | Code navigation (dependency/impact, who-consumes, traces) — selective, advisory | tools/code_graph/README.md |
+| Lean operating process (handoffs, control-PR batching, minimal unit events, concise code) — **M2-T016 onward** | `docs/LEAN_OPERATING_PROCESS.md` |
 
 Path-scoped rules in `.claude/rules/` auto-load when you touch their paths (project-control, apps/web,
 services/api, geospatial data, legal/rules, deployment). The five standard workflows are on-demand

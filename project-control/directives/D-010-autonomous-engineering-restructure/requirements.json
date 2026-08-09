@@ -1,10 +1,10 @@
 {
  "schema": "directive_requirements/v1",
  "directive_id": "D-010",
- "version": 24,
- "requirement_count": 319,
+ "version": 25,
+ "requirement_count": 343,
  "producer": "orchestrator",
- "updated_at": "2026-08-09T08:00:00+00:00",
+ "updated_at": "2026-08-09T10:00:00+00:00",
  "requirements": [
   {
    "id": "D-010-R001",
@@ -11293,6 +11293,892 @@
     "tasks": []
    },
    "amendment_sequence": 28
+  },
+  {
+   "id": "D-010-R320",
+   "text": "GUIDING RULE (standing, all future work): cut duplicated explanation + manual bookkeeping, NOT verification/testing/provenance/safety. Line-count reduction is never itself an acceptance criterion. No repo-wide refactor; no multi-day supervisor-improvement project. Not authorization to weaken verification, remove required evidence, reduce adversarial testing, bypass safety boundaries, or redesign the supervisor.",
+   "source_ref": "source-029-amendment.md#verbatim-owner-text",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T055",
+     "M2-T016"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [
+     "create",
+     "dispatch",
+     "accept"
+    ],
+    "effective_date": "2026-08-09"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "owner product-efficiency directive 2026-08-09 (source-029); Phase 1 authorized now",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "amendment_sequence": 29
+  },
+  {
+   "id": "D-010-R321",
+   "text": "A1: establish ONE canonical routine execution record - inspect overlap across task JSON/state JSON/journal/handoff/producer report/directive verification/PR description/gate evidence; identify routine facts written manually in >1 place (task status, progress %, latest safe commit, completed unit, test result, review verdict, current blocker, next action); pick the SMALLEST existing machine-readable record (prefer the journal/event log) as canonical for ordinary unit progress; project other views from it. No new DB/service/parallel source of truth. No deletion/rewrite/invalidation of historical evidence. Prospective.",
+   "source_ref": "source-029-amendment.md#verbatim-owner-text",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T055",
+     "M2-T016"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [
+     "create",
+     "dispatch",
+     "accept"
+    ],
+    "effective_date": "2026-08-09"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "A1 duplication map + selected canonical record documented.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "owner product-efficiency directive 2026-08-09 (source-029); Phase 1 authorized now",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "amendment_sequence": 29
+  },
+  {
+   "id": "D-010-R322",
+   "text": "A2: per completed product unit record ONE small structured event (task id, unit/checkpoint id, branch, exact commit SHA, tests+result, reviewer verdict, blocker, next authorized action, evidence links/digests). Do not re-narrate the same info into several files per unit.",
+   "source_ref": "source-029-amendment.md#verbatim-owner-text",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T055",
+     "M2-T016"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [
+     "create",
+     "dispatch",
+     "accept"
+    ],
+    "effective_date": "2026-08-09"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "owner product-efficiency directive 2026-08-09 (source-029); Phase 1 authorized now",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "amendment_sequence": 29
+  },
+  {
+   "id": "D-010-R323",
+   "text": "A3: create/refresh a handoff ONLY at real seams (context rotation; model turnover; owner-decision stop; material failure/recovery; task submission/acceptance; a successor cannot safely continue from canonical records). Routine handoff = 7 fields (active task+status; active branch+latest safe SHA; completed units; current unfinished unit; blockers/owner-decisions; exact next action; links to authoritative evidence), <=~2000 tokens; link to Git/journal for history; never paste old session histories.",
+   "source_ref": "source-029-amendment.md#verbatim-owner-text",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T055",
+     "M2-T016"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [
+     "create",
+     "dispatch",
+     "accept"
+    ],
+    "effective_date": "2026-08-09"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "owner product-efficiency directive 2026-08-09 (source-029); Phase 1 authorized now",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "amendment_sequence": 29
+  },
+  {
+   "id": "D-010-R324",
+   "text": "A4: batch routine control-plane updates into 1-2 meaningful seam PRs per ordinary product task (product work stays as task-branch commits; routine machine-readable evidence accumulates). Immediate standalone control PRs ONLY for: new owner decisions needing pre-action durability; security incidents; protected-config changes; material recovery; legal/policy decisions; a rule genuinely requiring pre-action durability. Never combine unrelated product code + privileged controller changes to cut PR count.",
+   "source_ref": "source-029-amendment.md#verbatim-owner-text",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T055",
+     "M2-T016"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [
+     "create",
+     "dispatch",
+     "accept"
+    ],
+    "effective_date": "2026-08-09"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "owner product-efficiency directive 2026-08-09 (source-029); Phase 1 authorized now",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "amendment_sequence": 29
+  },
+  {
+   "id": "D-010-R325",
+   "text": "A5: generate objective report/PR sections from authoritative evidence (commits, changed files, test cmds/results, gate verdicts, requirement coverage, evidence paths); reserve hand-authored narrative for engineering judgment (architecture, unresolved risk, compatibility, material limits, deployment holds, professional/legal boundaries). Do not restate machine-verifiable facts in multiple places.",
+   "source_ref": "source-029-amendment.md#verbatim-owner-text",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T055",
+     "M2-T016"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [
+     "create",
+     "dispatch",
+     "accept"
+    ],
+    "effective_date": "2026-08-09"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "owner product-efficiency directive 2026-08-09 (source-029); Phase 1 authorized now",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "amendment_sequence": 29
+  },
+  {
+   "id": "D-010-R326",
+   "text": "A6: routine control-plane administration <=~15-20% of execution effort (target, not license to skip evidence). If exceeded without a security incident / owner decision / protected change / failed gate, report the duplicated work and return attention to the product. Do not build a supervisor feature solely to compute this %.",
+   "source_ref": "source-029-amendment.md#verbatim-owner-text",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T055",
+     "M2-T016"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [
+     "create",
+     "dispatch",
+     "accept"
+    ],
+    "effective_date": "2026-08-09"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "owner product-efficiency directive 2026-08-09 (source-029); Phase 1 authorized now",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "amendment_sequence": 29
+  },
+  {
+   "id": "D-010-R327",
+   "text": "A7: safer packets - at packet creation inspect dependency/generator impact so naturally-necessary files are in the bounded allowed_paths from the start (generated artifacts + their source generator + focused tests + directly required wiring). Keep paths exact and bounded; no broad wildcards to dodge scope decisions. Do not weaken path/scope enforcement.",
+   "source_ref": "source-029-amendment.md#verbatim-owner-text",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T055",
+     "M2-T016"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [
+     "create",
+     "dispatch",
+     "accept"
+    ],
+    "effective_date": "2026-08-09"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "Packet allowed_paths include generator+artifact+tests+wiring at creation.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "owner product-efficiency directive 2026-08-09 (source-029); Phase 1 authorized now",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "amendment_sequence": 29
+  },
+  {
+   "id": "D-010-R328",
+   "text": "B1: PRESERVE behavior + safety - do not simplify away deterministic calculations, typed failures, fail-closed behavior, immutable provenance, per-fact evidence lineage, correction-history integrity, material-evidence promotion gates, qualified-human approval boundaries, adversarial document handling, tax-lot-as-cross-check-only, B-001 deployment honesty, five-borough scope, or normal tests/gates. Line-count reduction is not an acceptance criterion.",
+   "source_ref": "source-029-amendment.md#verbatim-owner-text",
+   "classification": "prohibition",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T055",
+     "M2-T016"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [
+     "create",
+     "dispatch",
+     "accept"
+    ],
+    "effective_date": "2026-08-09"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "owner product-efficiency directive 2026-08-09 (source-029); Phase 1 authorized now",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "amendment_sequence": 29
+  },
+  {
+   "id": "D-010-R329",
+   "text": "B2: centralize doctrine in architecture/security docs; in code keep module docs (purpose, authority boundary, unusual security assumptions) + function docs (inputs/outputs/non-obvious invariants) concise; comments explain WHY a surprising decision exists, not restating visible code or reproducing project philosophy; reference the canonical architecture doc instead of duplicating paragraphs. Do NOT remove comments preserving a security rationale or a demonstrated past defect.",
+   "source_ref": "source-029-amendment.md#verbatim-owner-text",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T055",
+     "M2-T016"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [
+     "create",
+     "dispatch",
+     "accept"
+    ],
+    "effective_date": "2026-08-09"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "owner product-efficiency directive 2026-08-09 (source-029); Phase 1 authorized now",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "amendment_sequence": 29
+  },
+  {
+   "id": "D-010-R330",
+   "text": "B3: prefer a minimal common set of typed result/refusal patterns (accepted/refused/immutable verdict/typed error payload/malformed-input refusal/fail-closed serialization) over bespoke near-identical dataclasses - ONLY where repetition is real and semantics genuinely identical. No elaborate framework or internal DSL.",
+   "source_ref": "source-029-amendment.md#verbatim-owner-text",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T055",
+     "M2-T016"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [
+     "create",
+     "dispatch",
+     "accept"
+    ],
+    "effective_date": "2026-08-09"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "owner product-efficiency directive 2026-08-09 (source-029); Phase 1 authorized now",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "amendment_sequence": 29
+  },
+  {
+   "id": "D-010-R331",
+   "text": "B4: where appropriate, define grounded survey relationships in ONE canonical rule table/registry (fact type, accepted normalized-value shape, supported units, required deterministic validations, geometry/location requirement, professional-confirmation requirement, material/non-material classification); validators consume the same grounded rules. The table stays closed, typed, deterministic, test-covered; unknown combinations still fail closed.",
+   "source_ref": "source-029-amendment.md#verbatim-owner-text",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T055",
+     "M2-T016"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [
+     "create",
+     "dispatch",
+     "accept"
+    ],
+    "effective_date": "2026-08-09"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "owner product-efficiency directive 2026-08-09 (source-029); Phase 1 authorized now",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "amendment_sequence": 29
+  },
+  {
+   "id": "D-010-R332",
+   "text": "B5: short typed errors - stable typed code + concise message + structured metadata (submitted value, expected rule, failed condition). No architecture essay in runtime error strings; long explanations belong in docs/UI. Preserve enough detail for debugging, evidence review, professional use.",
+   "source_ref": "source-029-amendment.md#verbatim-owner-text",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T055",
+     "M2-T016"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [
+     "create",
+     "dispatch",
+     "accept"
+    ],
+    "effective_date": "2026-08-09"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "owner product-efficiency directive 2026-08-09 (source-029); Phase 1 authorized now",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "amendment_sequence": 29
+  },
+  {
+   "id": "D-010-R333",
+   "text": "B6: do NOT reduce adversarial coverage. Where tests repeat setup/assertion shape, use parameterized fixture tables (case name, input, expected result, expected typed error, material invariant proved). Preserve EVERY malicious/malformed/ambiguous/tampered/unresolved case; do not merge tests when that would hide which security invariant failed.",
+   "source_ref": "source-029-amendment.md#verbatim-owner-text",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T055",
+     "M2-T016"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [
+     "create",
+     "dispatch",
+     "accept"
+    ],
+    "effective_date": "2026-08-09"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "owner product-efficiency directive 2026-08-09 (source-029); Phase 1 authorized now",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "amendment_sequence": 29
+  },
+  {
+   "id": "D-010-R334",
+   "text": "B7: keep deterministic, drift-checked, CI-covered generation for contract-derived TS/Python types; do not maintain parallel hand-written representations when they can be generated from the authoritative schema.",
+   "source_ref": "source-029-amendment.md#verbatim-owner-text",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T055",
+     "M2-T016"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [
+     "create",
+     "dispatch",
+     "accept"
+    ],
+    "effective_date": "2026-08-09"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "owner product-efficiency directive 2026-08-09 (source-029); Phase 1 authorized now",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "amendment_sequence": 29
+  },
+  {
+   "id": "D-010-R335",
+   "text": "B8: cohesive modules with small public interfaces; do not split files merely for a line limit; do not mix unrelated parsing/validation/persistence/business-rule authority in one module; prefer straightforward functions + data tables over excessive wrapper classes/layers; add a new abstraction only when it removes demonstrated repetition or protects a material invariant.",
+   "source_ref": "source-029-amendment.md#verbatim-owner-text",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T055",
+     "M2-T016"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [
+     "create",
+     "dispatch",
+     "accept"
+    ],
+    "effective_date": "2026-08-09"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "owner product-efficiency directive 2026-08-09 (source-029); Phase 1 authorized now",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "amendment_sequence": 29
+  },
+  {
+   "id": "D-010-R336",
+   "text": "B9: AFTER M2-T015 acceptance, perform only a BOUNDED assessment of the custom PDF lexer/container/object/xref/content implementation (security/malformed handling, determinism, dependency/advisory exposure, features, maintenance, sandbox compat, test coverage, mature-library equivalence). Do NOT replace it merely to reduce line count; do NOT begin a broad rewrite under this directive. Retain + identify focused simplifications if it protects unique requirements; a replacement is a separate scoped task with migration + regression evidence.",
+   "source_ref": "source-029-amendment.md#verbatim-owner-text",
+   "classification": "sequencing",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M2-T016"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [
+     "create",
+     "dispatch",
+     "accept"
+    ],
+    "effective_date": "2026-08-09"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "owner product-efficiency directive 2026-08-09 (source-029); Phase 1 authorized now",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "amendment_sequence": 29
+  },
+  {
+   "id": "D-010-R337",
+   "text": "C-Phase1 (policy-only, authorized now): make the smallest prospective operating-policy changes to establish one routine execution source of truth, minimal unit events, seam-only handoffs, batched control PRs, generated objective reporting, concise-code expectations, parameterized-test expectations. Do NOT modify the supervisor core to write these policies; do NOT rewrite existing product modules during Phase 1.",
+   "source_ref": "source-029-amendment.md#verbatim-owner-text",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T055"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [
+     "create",
+     "dispatch",
+     "accept"
+    ],
+    "effective_date": "2026-08-09"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "owner product-efficiency directive 2026-08-09 (source-029); Phase 1 authorized now",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "amendment_sequence": 29
+  },
+  {
+   "id": "D-010-R338",
+   "text": "C-Phase2: run M2-T016 under the new rules; measure + return product units/commits completed, number of handoff rewrites, number of routine control PRs, approx control-vs-product effort, duplicated records eliminated, whether required evidence became harder to locate, whether any gate/reviewer lost necessary context. If evidence quality/recoverability deteriorates, STOP and correct the lean policy - never weaken required evidence to meet an efficiency target.",
+   "source_ref": "source-029-amendment.md#verbatim-owner-text",
+   "classification": "harness",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M2-T016"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [
+     "create",
+     "dispatch",
+     "accept"
+    ],
+    "effective_date": "2026-08-09"
+   },
+   "dependencies": [],
+   "required_harness": "M2-T016 before/after efficiency measurements (7 metrics).",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "owner product-efficiency directive 2026-08-09 (source-029); Phase 1 authorized now",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "amendment_sequence": 29
+  },
+  {
+   "id": "D-010-R339",
+   "text": "C-Phase3: ONLY if M2-T016 still shows material duplicated manual bookkeeping - implement ONE small bounded helper projecting existing canonical events into required status/report views. Constraints: no new DB/service; no supervisor redesign; deterministic; idempotent regeneration; drift test; no deletion of authoritative evidence; no silent overwrite of owner-authored judgment; independent Codex review; normal CI. Broader automation = separate owner decision.",
+   "source_ref": "source-029-amendment.md#verbatim-owner-text",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M2-T016"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [
+     "create",
+     "dispatch",
+     "accept"
+    ],
+    "effective_date": "2026-08-09"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "owner product-efficiency directive 2026-08-09 (source-029); Phase 1 authorized now",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "amendment_sequence": 29
+  },
+  {
+   "id": "D-010-R340",
+   "text": "PART D: Codex independently reviews the efficiency changes for accidental evidence loss, weakened fail-closed behavior, hidden directive-compliance incompatibility, unclear authority/source-of-truth ownership, excessive new abstraction, tests removed/less-diagnostic, product delayed by process optimization. Verdict is REVISE if efficiency is achieved by deleting required evidence, combining materially different safety cases, or weakening gates.",
+   "source_ref": "source-029-amendment.md#verbatim-owner-text",
+   "classification": "harness",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T055",
+     "M2-T016"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [
+     "create",
+     "dispatch",
+     "accept"
+    ],
+    "effective_date": "2026-08-09"
+   },
+   "dependencies": [],
+   "required_harness": "Independent review (code-reviewer/security-reviewer/control-plane-verifier); REVISE on evidence-loss/merged-safety-cases/weakened-gates.",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "owner product-efficiency directive 2026-08-09 (source-029); Phase 1 authorized now",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "amendment_sequence": 29
+  },
+  {
+   "id": "D-010-R341",
+   "text": "PART E PROHIBITIONS: do not interrupt the current M0-T054/M2-T015 sequence; reopen accepted supervisor defects without new qualifying evidence; alter protected config/ACLs under this directive; authorize LIMITED-AUTO; change supervised-auto activation; weaken command/path/credential protections; rewrite Git history; delete existing evidence; perform a repo-wide style cleanup; create a multi-week refactor; count deleted lines as product progress; delay the architect/browser MVP for cosmetic neatness; replace functioning security-sensitive code without comparative evidence.",
+   "source_ref": "source-029-amendment.md#verbatim-owner-text",
+   "classification": "prohibition",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T055",
+     "M2-T015",
+     "M2-T016"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [
+     "create",
+     "dispatch",
+     "accept"
+    ],
+    "effective_date": "2026-08-09"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "owner product-efficiency directive 2026-08-09 (source-029); Phase 1 authorized now",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "amendment_sequence": 29
+  },
+  {
+   "id": "D-010-R342",
+   "text": "RETURN at the appropriate post-M2-T015 seam: (1) map of duplicated control-plane facts; (2) selected canonical routine record; (3) lean handoff format; (4) exact future handoff triggers; (5) routine control-PR batching rule; (6) concise-code + parameterized-test guidance adopted; (7) exact files changed for Phase 1; (8) proof no safety/evidence/gate/provenance requirement was removed; (9) M2-T016 before/after efficiency measurements; (10) any narrowly-justified follow-up helper task.",
+   "source_ref": "source-029-amendment.md#verbatim-owner-text",
+   "classification": "return",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T055",
+     "M2-T016"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [
+     "create",
+     "dispatch",
+     "accept"
+    ],
+    "effective_date": "2026-08-09"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "owner product-efficiency directive 2026-08-09 (source-029); Phase 1 authorized now",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "amendment_sequence": 29
+  },
+  {
+   "id": "D-010-R343",
+   "text": "OWNER FOLLOW-UP AUTHORIZATION (2026-08-09): 'do the lean process implementation' + 'do all 3 while I sleep, do not ask any questions, use best practice and follow instructions' authorizes Phase 1 NOW (policy-only) + autonomous continuation through the build and Phases 2-3 as gating allows, without owner questions, resolving surfaced decisions by best practice within the standing holds - notably the R595 turnover-actuation decision: KEEP production record-intent-only and prove the turnover on an ISOLATED runtime; do NOT self-authorize R595 production activation (the reaffirmed SHADOW-ONLY / LIMITED-AUTO-off / no-activation-change holds forbid it).",
+   "source_ref": "source-029-amendment.md#verbatim-owner-text",
+   "classification": "authorization",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T055",
+     "M2-T015",
+     "M2-T016"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [
+     "create",
+     "dispatch",
+     "accept"
+    ],
+    "effective_date": "2026-08-09"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "owner product-efficiency directive 2026-08-09 (source-029); Phase 1 authorized now",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "amendment_sequence": 29
   }
  ]
 }
