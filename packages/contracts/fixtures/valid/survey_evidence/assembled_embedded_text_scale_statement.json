@@ -1,0 +1,37 @@
+{
+  "evidence_id": "sev:test-fixture-synthetic:c0ffee01:p1:001",
+  "bbl": "1000010010",
+  "document_digest": "sha256:c0ffee01c0ffee01c0ffee01c0ffee01c0ffee01c0ffee01c0ffee01c0ffee01",
+  "page_number": 1,
+  "location": {
+    "kind": "bounding_box",
+    "bounding_box": {
+      "x_min": 96.0,
+      "y_min": 700.0,
+      "x_max": 96.0,
+      "y_max": 700.0,
+      "coordinate_space": "pdf_user_space_points"
+    }
+  },
+  "fact_type": "scale_statement",
+  "original_value": "1:240",
+  "normalized_value": "1:240",
+  "units": null,
+  "extraction_method": "embedded_text_extraction",
+  "extraction_run_id": "ser:test-fixture-synthetic:run-0001",
+  "extracted_at": "2026-08-08T12:00:00Z",
+  "confidence": 1.0,
+  "validation_results": [
+    {
+      "check_id": "scale_consistency",
+      "status": "pass",
+      "detail": null
+    }
+  ],
+  "correction_history": [],
+  "professional_confirmation": {
+    "state": "unconfirmed",
+    "confirmed_by": null,
+    "confirmed_at": null
+  }
+}

@@ -16,9 +16,12 @@ here, all of them frozen typed values, none of them parsers:
   S2-S8 never run, and no unisolated fallback path exists structurally — there is no
   parameter, flag, or ambient state through which this function can skip the gate.
   Only on ParsingPermitted plus a supported route does it return
-  :class:`ExtractionJobAuthorized`, carrying the route and the :class:`DecoderSeam`
-  protocol reference. The first decoder (vector PDF) is deliberately the NEXT unit;
-  this module contains NO decode implementation.
+  :class:`ExtractionJobAuthorized`, carrying the route, the :class:`DecoderSeam`
+  protocol reference, and — for the digitally-authored PDF routes — the CONCRETE
+  :class:`~app.documents.extraction.vector_pdf_decoder.VectorPdfDecoder` (unit 3k).
+  The decode implementation itself lives in that module and in the ``pdf_*`` reader;
+  this module only SELECTS and hands out the decoder inside a proven-boundary
+  authorization — it still runs no bytes of its own.
 - :func:`wrong_address_routing` — SB-S7: a FAILED or UNEVALUABLE
   ``address_bbl_match`` check routes the document to ``needs_review`` (flagged,
   never ingested as usable). The decision is a value; performing the transition —
@@ -42,6 +45,7 @@ from enum import Enum
 from typing import Protocol, runtime_checkable
 
 from app.documents.checks import CheckFailed, CheckUnevaluable
+from app.documents.extraction.vector_pdf_decoder import VectorPdfDecoder
 from app.documents.isolation import ParsingDisabled, require_isolation
 from app.documents.state import PROMOTION_GATED_TRANSITIONS, DocumentState
 
@@ -273,9 +277,11 @@ class DecoderSeam(Protocol):
 
     A conforming decoder decodes the immutable original's exact bytes into
     structured extraction primitives inside the section-5 parser isolation boundary.
-    This unit deliberately ships NO implementation of this protocol — the first
-    concrete decoder (vector PDF, section-3 row 2) is the next unit — and a Protocol
-    class cannot be instantiated, so no unimplemented decode path is reachable here.
+    The first concrete implementation is
+    :class:`~app.documents.extraction.vector_pdf_decoder.VectorPdfDecoder` (unit 3k,
+    the digitally-authored PDF routes); a Protocol class itself cannot be
+    instantiated, so the bare seam is never a runnable decode path — only a concrete
+    conforming decoder is.
     """
 
     def decode(self, original_bytes: bytes) -> Sequence[object]:
@@ -318,14 +324,24 @@ class ExtractionJobAuthorized:
     """Typed authorization of one extraction job: isolation affirmatively proven AND
     the format routed to a supported matrix row.
 
-    Carries the :class:`RouteSupported` route and the :class:`DecoderSeam` protocol
-    reference the eventual per-format decoder must satisfy. Authorization is
-    capability plus routing only — running the decoder inside the applied,
-    self-verified boundary remains the isolated parser path's duty (section 5).
+    Carries the :class:`RouteSupported` route, the :class:`DecoderSeam` protocol
+    reference the per-format decoder must satisfy, and — for a route whose concrete
+    stage-S4 decoder exists — the CONCRETE :class:`DecoderSeam` implementation itself
+    (``decoder``). The digitally-authored PDF routes (born-digital and vector PDF,
+    format-policy rows 1-2, SB-S1) carry a concrete
+    :class:`~app.documents.extraction.vector_pdf_decoder.VectorPdfDecoder`; the
+    advisory raster routes (rows 3-5) still carry ``decoder=None`` because their
+    concrete decoder is a later unit — an authorization for them routes but does not
+    yet decode. Authorization is capability plus routing plus decoder selection only —
+    RUNNING the decoder inside the applied, self-verified isolation boundary remains
+    the isolated parser path's duty (section 5); a decoder is handed out ONLY inside
+    this value, which :func:`begin_extraction_job` returns exclusively on a proven
+    boundary, so no decoder is ever reachable without one.
     """
 
     route: RouteSupported
     decoder_protocol: type
+    decoder: DecoderSeam | None = None
 
     authorized = True
 
@@ -335,12 +351,26 @@ class ExtractionJobAuthorized:
             "outcome": "extraction_job_authorized",
             "route": self.route.to_payload(),
             "decoder_protocol": self.decoder_protocol.__name__,
+            "decoder": None if self.decoder is None else type(self.decoder).__name__,
         }
 
 
 ExtractionEntryOutcome = (
     IsolationUnavailable | ExtractionJobAuthorized | RouteDeferred | RouteRejected
 )
+
+
+#: The one shared, stateless concrete decoder for the digitally-authored PDF routes
+#: (born-digital + vector PDF, format-policy rows 1-2, SB-S1). Both rows are decoded by
+#: the same in-repo strict-subset reader — it extracts BOTH vector objects and the
+#: embedded text layer — so one instance serves both. The advisory raster rows (3-5)
+#: are deliberately ABSENT: their concrete decoder is a later unit, so a supported
+#: raster route authorizes with ``decoder=None`` and does not yet decode. A shared
+#: instance is safe because ``VectorPdfDecoder.decode`` is a pure function of its bytes.
+_CONCRETE_DECODERS: Mapping[SurveyDocumentFormat, DecoderSeam] = {
+    SurveyDocumentFormat.VECTOR_PDF: VectorPdfDecoder(),
+    SurveyDocumentFormat.BORN_DIGITAL_PDF: VectorPdfDecoder(),
+}
 
 
 def begin_extraction_job(format_identity: object) -> ExtractionEntryOutcome:
@@ -365,7 +395,11 @@ def begin_extraction_job(format_identity: object) -> ExtractionEntryOutcome:
         return IsolationUnavailable(verdict=capability.verdict)
     route = route_format(format_identity)
     if isinstance(route, RouteSupported):
-        return ExtractionJobAuthorized(route=route, decoder_protocol=DecoderSeam)
+        return ExtractionJobAuthorized(
+            route=route,
+            decoder_protocol=DecoderSeam,
+            decoder=_CONCRETE_DECODERS.get(route.format),
+        )
     return route
 
 
