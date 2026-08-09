@@ -9,7 +9,47 @@ Old session blocks (1–10) are recoverable via `git log -p docs/SESSION_HANDOFF
 Refreshed **2026-08-09 (session 11; running on claude-opus-4-8)**. Supersedes older sections; the
 ledger wins on any conflict. (Lean per the parked efficiency directive — see below.)
 
-## SESSION 11 STATE — M0-T054 turnover mechanism IMPLEMENTED (awaiting-gate); one owner-decision surfaced
+## SESSION 12 STATE — M0-T054 + M2-T015 BOTH ACCEPTED (74); next = M2-T016 / M0-T055
+
+Refreshed **2026-08-09 (session 12; claude-opus-4-8)**. **Accepted count 74.** Main **`d265269`** (verify).
+
+- **M0-T054 ACCEPTED (73)** — unattended Fable→Opus turnover watchdog. Code merged PR #211; acceptance
+  PR #212. Gates G0/G2/G3/G5 + DCV 16/16 PASS. **Mechanism only (record-intent-only in production); live
+  auto-actuation = owner-gated R595 (follow-up M0-T056), NOT a defect.** SHADOW-ONLY / LIMITED-AUTO-off /
+  protected-config holds unchanged.
+- **M2-T015 ACCEPTED (74)** — secure survey/official-document ingestion + deterministic-verification
+  pipeline (Packet B). Units 3k (DecoderSeam behind isolation gate) + 3l (SB-S4 tax-lot BBL cross-check)
+  → code PR #213 → acceptance PR #214. **97/97 D-010 PASS; gates G0–G5 + DCV all PASS.** A full 4-reviewer
+  gate wave (897e7df) correctly FAILED it (ruff + missing named outputs + stale report); reworked
+  (whole-tree ruff 0.13.0 clean, committed synthetic fixture pack SVY01–SVY14 + MANIFEST +
+  `docs/SURVEY_FIXTURE_MATRIX.md`, report current) → re-gated at 1b3af35 → accepted.
+  **Honestly-deferred LATER units (documented in SURVEY_FIXTURE_MATRIX + coverage matrix):** SB-S4 AREA
+  cross-check (needs lot-area geometry reconstruction), OCR/raster extraction, rotation-normalization,
+  distance/bearing normalization, boundary/area reconstruction. B-001 storage still designed-but-deferred.
+
+**⚠ ENV LANDMINE — PEP 695 / Python 3.12:** `services/api/app/documents/units.py::_match_unit` uses PEP 695
+generics (correct: `requires-python>=3.12`, ruff `target-version=py312`, CI `api` job = Python **3.12**).
+**This sandbox has only Python 3.11.9** (the `py -0p`-listed 3.13 exe is MISSING) → `pytest` cannot even
+collect `tests/documents/` (SyntaxError on import). Verify Python via the **captured 3.12 CI evidence**
+(evidence-capture division of labor); ruff parses independently so `ruff check .` still works locally. Also:
+**local ruff was 0.9.9 but CI pins 0.13.0** — always `pip install ruff==0.13.0` before trusting a local ruff
+result (0.9.9 flags UP038 which 0.13.0 dropped, and misses I001/UP047 sorting differences → a false "clean").
+
+**NEXT (no owner needed):**
+1. **M0-T055** (lean operating process) — Part-D review PASS on file; remaining: G3 (code-reviewer) + G5
+   (security-reviewer) gates + verification.json (R320–R343) + accept. Small acceptance cycle.
+2. **M2-T016** — first product task under the lean process (needs M2-T015 accepted — now done). Contract
+   via `/start-controlled-task`, then dispatch under `docs/LEAN_OPERATING_PROCESS.md`.
+3. Optional follow-ups: **M0-T056** (R595 live-activation, owner-gated), the M2-T015 deferred later units,
+   rework queue (M0-T021/M0-T034), the M3 chain (under blockers).
+
+**Repo hygiene done this session:** reviewer-model fallback flip + agent-memory flush committed; redundant
+owner-directive intake copies + `.npmrc` + settings backups gitignored; transient `*.sqlite3-wal/-shm`
+gitignored; survey fixture pack marked `binary` in `.gitattributes`.
+
+---
+
+## SESSION 11 STATE (historical) — M0-T054 turnover mechanism IMPLEMENTED (awaiting-gate); one owner-decision surfaced
 
 **Accepted count 72.** Main `dd4a0c9` (PRs #200–#204 merged — verify). Two active task branches:
 - `task/M2-T015-survey-ingestion` @ **`1e4125c`** — 3j done; **3k is the only remaining product unit**,
