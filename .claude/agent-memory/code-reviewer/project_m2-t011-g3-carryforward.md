@@ -1,0 +1,19 @@
+---
+name: m2-t011-g3-carryforward
+description: M2-T011 shared transport/retry consolidation G3+G4 PASS at 555d68a; 538 tests green (522 unmodified + 16 new); lazy PEP562 __init__ shim + startup bypass; L2 micro-behaviors judged non-observable; registry TC-S6 is G1 scope
+metadata:
+  type: project
+---
+
+M2-T011 (extract duplicated transport+retry loop from the four connectors into `services/api/app/resilience/transport.py` via a `RetryHooks` seam; connector semantics stay in connectors) reviewed 2026-07-20: G3 (null-hypothesis/behavior-unchanged) + G4 (integration) PASS at merged commit 555d68a. Independently reproduced on Windows/py3.11.9: `ruff check .` clean, `python -m pytest tests/ -q` = **538 passed** (baseline 522 + 16 new in `tests/resilience/test_transport_shared.py`), TC-S2 grep = loop marker 0 in all four connectors, exactly 1 in transport.py.
+
+**Why:** carry-forwards for M2-T012/persistence and the fifth-connector tasks (Geoclient, DOB NOW) that will consume `standard_retry_hooks`+`request_with_retry`.
+
+**How to apply:**
+- The retry loop `for attempt in range(1, max_attempts + 1)` now lives ONLY in `app/resilience/transport.py:451` (`request_with_retry`). Any future connector must delegate — a duplicated loop is a TC-S2 regression (guard tests `test_s2_*` in test_transport_shared.py enforce this).
+- Delay policies are the only per-connector retry-arithmetic difference: `fixed_exponential_delay` (legacy pluto, no jitter, `max_attempts=1` in production via ResilientPlutoFetcher) vs `jittered_retry_after_delay` (M2-wave: full-jitter + Retry-After honor, over-cap→stop-not-retry returning None). Both preserved verbatim.
+- LAZY PEP 562 `__getattr__` in `app/resilience/__init__.py` breaks a real import cycle (fetcher→pluto_soda→transport). It is SAFE: (a) `app.resilience.fetcher` imports clean standalone, (b) the actual startup consumer `app/api/v1/properties.py:127` imports `build_default_resilient_fetcher` DIRECTLY from `app.resilience.fetcher`, bypassing the shim — so a genuine fetcher ImportError surfaces at first request build, not hidden. The shim only covers the convenience `from app.resilience import X` re-export (verified still works). R2 in producer report is accurate.
+- L2 disclosed micro-behaviors all judged NON-observable (no regression): (1) `get_retry_after` non-mapping guard — defensive-only, no caller; (2) shared header dict reused across attempts vs fresh-per-attempt — observable only to a header-mutating transport, none exists; (3) log format `"%s timeout"` + label arg vs literal prefix — RENDERED message byte-identical, logger names unchanged, caplog tests assert `token not in caplog.text` (getMessage) and pass; (4) `TransportResponse/Timeout/Failure.__module__` moved to transport.py (single identity, isinstance unchanged) but `pluto_soda.urllib_transport.__module__` STAYS `app.connectors.pluto_soda` (guard test_mappluto:1245 passes); (5) default-transport binding change never affected any test's monkeypatch of `pluto_soda._OPENER`; (6) lazy exports drop from `dir()` without access.
+- pluto compat seam intact: `_NoRedirectHandler`/`_OPENER` module-level, `urllib_transport` wrapper reads `_OPENER` at call time (transport.py grew additive `opener=` kwarg). No existing test file modified (only new file added).
+- L1 disclosed: RAW app LOC rose +236 (shared module carries ~44% docs); code-only SLOC flat (+17); four loop copies→one. Packet said "net LOC reduction"; not met on raw metric, owner-disclosed, ACCEPTABLE (duplication genuinely eliminated).
+- TC-S6 (registry live-page spot-verification of quota/terms/attribution/last-policy-verification dates) is DATA-CONTRACT-VERIFIER/G1 scope, NOT G3/G4. `docs/SOURCE_ACCESS_REGISTRY.md` (203 lines) has ZoLa-non-API (gov rule 1) + no-SLA/permanence (gov rule 2) + "none published" markers; unevidenced rows marked "to verify at G1" (never guessed). [[m2-t007-g3-carryforward]] [[m2-t008-g3-carryforward]] [[m2-t006-g3-carryforward]]

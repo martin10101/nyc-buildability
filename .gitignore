@@ -72,3 +72,11 @@ _quarantine/
 # (auto-project-setup.sh) re-installs the generic pack whenever this marker is missing.
 # Do not quarantine or delete it. Durable fix = owner removes that hook from global settings.
 .claude/.auto-setup-complete
+
+# Redundant owner-directive intake copies (already captured verbatim in project-control/directives/)
+.claude/OWNER_DIRECTIVE_AUTONOMOUS_ENGINEERING_v2.md
+OWNER_DIRECTIVE_DRAFT_dispatch-efficiency-and-graph-wiring.md
+# Machine-local settings backups
+.claude/settings.local.json.bak*
+# Project npmrc is created locally by new-repo tooling (ignore-scripts=true); not version-controlled
+.npmrc

@@ -1,0 +1,20 @@
+---
+name: orchestration-policy-config-pr-review
+description: G5 method for config-only .claude orchestration-governance PRs (PR #68 / ORCHESTRATION_POLICY.md + 2 read-only verifier agents) — additive-scope, agent-parity, policy-restatement checks
+metadata:
+  type: project
+---
+
+PR #68 (head 7995f90, branch control/agent-orchestration-setup) added parallel-agent orchestration config: `.claude/ORCHESTRATION_POLICY.md` (99 lines), two new read-only verifier agents (`ci-evidence-verifier`, `control-plane-verifier`), a 1-line CLAUDE.md pointer, and a SESSION_HANDOFF note. Purely additive (+141/-0, 5 files). Reviewed PASS at 7995f90. Method for any future `.claude/` governance/orchestration config PR:
+
+**Scope containment (do first):** `git show <sha> --name-status` must show ONLY config/doc files. Then byte-identity-check the security-critical assets are untouched: iterate `git rev-parse main:<f>` vs `<sha>:<f>` for `.claude/settings.json`, `.claude/hooks/agent_dispatch_guard.py`, `project-control/blockers/B-007-*.json`, and the dependency-security set (services/api/requirements*.lock, dependency_age_gate.py, ci.yml, package-lock.json). CAVEAT: my shell equality-check mislabeled two absent files as CHANGED because `git rev-parse <ref>:<missing>` prints the path+"MISSING" to stdout — use `git cat-file -e <ref>:<f>` to prove absence instead. apps/web/.npmrc + docs/DEPENDENCY_SECURITY_POLICY.md are absent on BOTH main and head because M0-T019 (PR #64) is still unmerged — expected, not a regression.
+
+**New-agent read-only parity (the core check):** diff the new agent frontmatter against an accepted reviewer (security-reviewer.md / code-reviewer.md). Must match EXACTLY: `tools: Read, Grep, Glob, Bash, Skill, Write` (NO `Edit`), `model: inherit`, `permissionMode: default`, `memory: project`, and the verbatim "## Gate reporting protocol (process decision ADR-005…)" section. `Write` is present but the ADR-005 body confines writes to `.claude/agent-memory/<own-name>/` — same posture as the 5 accepted reviewers, so it is NOT an escalation. Grep both bodies for escalation verbs (project_control|git push|gh|commit|push|ledger|accept|merge|checkpoint) and confirm every hit sits inside a "Do NOT / Cannot" prohibition, never a grant.
+
+**B-007 hook non-regression:** `agent_dispatch_guard.py` BLOCKED_AGENTS is a fixed frozenset of the five expansion agents (3d-massing-engineer, product-design-director, visual-quality-reviewer, financial-feasibility-engineer, opportunity-search-engineer). New agents must NOT be in that set (they aren't) AND the hook/blocker must be byte-identical (they are). New reviewer agents auto-register as dispatchable but grant no ledger-write authority (ADR-005 rests on the embedded protocol text, which they carry) — so no B-007-class regression.
+
+**Dependency-policy restatement (§G) must not weaken M0-T019/M0-T020:** confirm literal `604800 seconds passes, 604799 fails`, "No known advisory at any severity", official-registry timestamps + integrity, "Fail closed on unavailable/missing/malformed/ambiguous/unmatched", "No agent waiver. No unlocked bootstrap tool. No dynamic dependency download outside an explicitly reviewed lock." It's a prose restatement of the machine gates, explicitly labeled "enforcement policy, not advisory" — a doc cannot loosen a CI gate, and this one re-states it faithfully.
+
+**Authority language:** ORCHESTRATION_POLICY.md header + §A + §H must self-subordinate ("does NOT override CLAUDE.md/gates/ADR-005/owner hold", "confers no authority to … dispatch a held task / accept / change ledger / release a hold"). §3 references .claude/rules/expansion-agent-dispatch-hold.md as "still-active planning hold" — preserves the owner hold. Secret scan: grep the changed blobs for key/token/PEM/authToken patterns; PR #68 hits were all the WORDS secret/token in policy prose + "secret scanning ON" — zero credential material.
+
+Related: [[claude-execution-surface-review]], [[python-tooling-lock-agegate-review]], [[npm-supply-chain-agegate-review]], [[g5-gate-recording-protocol]].
