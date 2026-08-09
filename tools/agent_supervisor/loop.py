@@ -908,6 +908,7 @@ class SupervisedLoop:
         origin_main_sha: str = "",
         executable_identity: Mapping[str, Any] | None = None,
         resource_sampler: Any = None,
+        worker_turnover: Any = None,
     ) -> None:
         self.config = config
         self.journal = journal
@@ -966,6 +967,16 @@ class SupervisedLoop:
         # CLI wires a real one). When present it feeds the gauge breakers with
         # fail-closed defaults; an outage degrades to the conservative pause.
         self._resource_sampler = resource_sampler
+        # M0-T054 increment 4 (qualifying evidence: reproduced R289 incident,
+        # D-010 source-028): the optional WORKER-layer Fable->Opus turnover seam.
+        # Default None keeps every existing caller and test byte-for-byte: when
+        # absent the missing-checkpoint path is 100% unchanged. When injected it is
+        # consulted at that ONE seam, and only a confirmed FABLE_EXHAUSTED verdict
+        # ever diverges (worker_turnover.WorkerTurnoverIntegration).
+        self._worker_turnover = worker_turnover
+        #: The last valid checkpoint id this run received - the safe checkpoint a
+        #: turnover redispatch resumes the SAME bounded unit from.
+        self._last_checkpoint_id = ""
 
     # -- guards -------------------------------------------------------------
 
@@ -1701,6 +1712,30 @@ class SupervisedLoop:
                            "retried until the effect is proven",
                     cycle=cycle, basis="S11.5 / S14"))
                 return stop("ambiguous_effect", reason, PAUSED_RECOVERY)
+            # M0-T054 increment 4 (qualifying evidence: reproduced R289 incident,
+            # D-010 source-028): before treating this failed unit as an ordinary
+            # terminal stop, classify it for a grounded Fable weekly-limit
+            # exhaustion. Reached ONLY with no unreconciled external effect (the
+            # guard above), so a same-unit redispatch is never attempted while an
+            # effect is unproven. FAIL-CLOSED: only a confirmed FABLE_EXHAUSTED
+            # verdict (decision.triggered) diverges; every other verdict - and an
+            # absent integration - falls through to the existing path unchanged.
+            if self._worker_turnover is not None:
+                decision = self._worker_turnover.evaluate(
+                    run_result, current_model=self._current_model,
+                    config=self.config, run_id=self.run_id, cycle=cycle,
+                    safe_checkpoint_id=self._last_checkpoint_id)
+                if decision.triggered:
+                    self.machine.transition(
+                        PAUSED_RECOVERY, "unsafe_condition",
+                        detail={"cycle": cycle, "reason": decision.reason_code,
+                                "turnover": decision.audit_summary})
+                    touches.append(self._touch(
+                        TOUCH_SYNCHRONOUS_STOP, reason_code=decision.reason_code,
+                        reason=decision.reason, cycle=cycle,
+                        basis="M0-T054 Fable->Opus worker turnover (R289 / D-010 "
+                              "source-028)"))
+                    return stop(decision.reason_code, decision.reason, PAUSED_RECOVERY)
             self.machine.transition(PAUSED_RECOVERY, "unsafe_condition",
                                     detail={"cycle": cycle, "reason": reason})
             touches.append(self._touch(
@@ -1714,6 +1749,8 @@ class SupervisedLoop:
                     "checkpoint_digest": digest_of(checkpoint.to_dict())})
         land(CHECKPOINT_RECEIVED)
         result.checkpoint_id = checkpoint.checkpoint_id
+        # M0-T054: remember the safe checkpoint a later turnover would resume from.
+        self._last_checkpoint_id = checkpoint.checkpoint_id
         if self.breakers is not None:
             # V1.1 correction B-4: the per-checkpoint review counter measures
             # reviews of THIS checkpoint, so it resets when a new checkpoint is

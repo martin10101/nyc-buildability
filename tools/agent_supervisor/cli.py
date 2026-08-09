@@ -207,6 +207,7 @@ from .resume_scheduler import (
     wake_suppressed,
 )
 from .retention import RetentionPolicy, file_sha256
+from .worker_turnover import WorkerTurnoverIntegration
 from .rotation import (
     Handoff,
     HandoffVerification,
@@ -2300,6 +2301,15 @@ def _run_loop(args: argparse.Namespace, checkout: pathlib.Path,
         model_chain=config.model_chain,
         model_available=model_available,
         resource_sampler=resource_sampler,
+        # M0-T054 increment 4 (qualifying evidence: reproduced R289 incident,
+        # D-010 source-028): wire the WORKER-layer Fable->Opus turnover seam. It is
+        # RECORD-INTENT-ONLY here: the supervisor is SHADOW-ONLY (supervisor-freeze
+        # §4, R595 pre-activation blocking), and no runnable mode authorizes an
+        # automatic worker redispatch, so a confirmed exhaustion is classified,
+        # recorded, and surfaced but NEVER auto-launched. The authorized-actuation
+        # channel (real adapters + survivor detector) is supplied only at R595
+        # activation; every non-exhaustion path is unchanged.
+        worker_turnover=WorkerTurnoverIntegration(),
         approval_gate=(lambda digest, _prompt: digest in approved))
     return loop.run(args.prompt).to_dict()
 
