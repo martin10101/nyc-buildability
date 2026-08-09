@@ -69,7 +69,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 
-from .pdf_lexer import LexedToken, PdfName, PdfSyntaxError, lex_primitive
+from .pdf_lexer import PdfName, PdfSyntaxError, lex_primitive
 
 __all__ = [
     "MAX_COLLECTION_ITEMS",

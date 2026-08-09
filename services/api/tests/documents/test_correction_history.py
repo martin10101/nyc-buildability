@@ -202,7 +202,10 @@ def test_empty_history_with_drifted_current_value_refused():
 
 
 def test_latest_value_disagreement_refused():
-    _refused(_validate([_entry(), _professional_entry()], normalized_value=999.9), "current normalized_value")
+    _refused(
+        _validate([_entry(), _professional_entry()], normalized_value=999.9),
+        "current normalized_value",
+    )
 
 
 def test_latest_units_disagreement_refused():
@@ -260,7 +263,8 @@ def test_unknown_key_refused_as_tampering():
 
 @pytest.mark.parametrize(
     "corrected_at",
-    [1234, None, "08/01/2026", "2026-08-01 12:00:00", "2026-08-01T12:00:00", "2026-13-01T00:00:00Z"],
+    [1234, None, "08/01/2026", "2026-08-01 12:00:00",
+     "2026-08-01T12:00:00", "2026-13-01T00:00:00Z"],
     ids=["int", "none", "us-date", "no-T", "no-offset", "month-13"],
 )
 def test_malformed_corrected_at_refused(corrected_at):
@@ -339,7 +343,9 @@ def test_extension_insertion_refused():
 def test_extension_mutation_of_accepted_entry_refused():
     mutated = _entry(reason="rewritten after acceptance")
     _refused(
-        validate_history_extension([_entry(), _professional_entry()], [mutated, _professional_entry()]),
+        validate_history_extension(
+            [_entry(), _professional_entry()], [mutated, _professional_entry()]
+        ),
         "append-only",
     )
 
@@ -514,7 +520,7 @@ def test_refusal_is_a_frozen_visible_value_never_raised():
     assert payload["reject_code"] == "unresolved_correction_history"
     assert set(payload) == {"reject_code", "submitted", "reason"}
     with pytest.raises(dataclasses.FrozenInstanceError):
-        setattr(result, "reason", "rewritten")
+        result.reason = "rewritten"
 
 
 def test_refusal_carries_verbatim_submission_only():
@@ -529,6 +535,6 @@ def test_resolved_history_is_frozen():
     result = _validate([_entry(), _professional_entry()])
     assert isinstance(result, ValidatedCorrectionHistory)
     with pytest.raises(dataclasses.FrozenInstanceError):
-        setattr(result, "correction_count", 0)
+        result.correction_count = 0
     with pytest.raises(dataclasses.FrozenInstanceError):
-        setattr(result.entries[0], "corrected_normalized_value", 999.0)
+        result.entries[0].corrected_normalized_value = 999.0

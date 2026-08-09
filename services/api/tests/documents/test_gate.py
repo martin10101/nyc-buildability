@@ -180,7 +180,9 @@ def test_production_limits_are_the_reviewed_constants_verbatim():
     assert DEFAULT_GATE_LIMITS.sniff_header_bytes == SNIFF_HEADER_BYTES == 512
 
 
-@pytest.mark.parametrize("data, ext, format_id", [(PDF_BYTES, "pdf", "pdf"), (PNG_BYTES, "png", "png")])
+@pytest.mark.parametrize(
+    "data, ext, format_id", [(PDF_BYTES, "pdf", "pdf"), (PNG_BYTES, "png", "png")]
+)
 def test_stream_gate_under_cap_yields_size_digest_and_composable_sniff(data, ext, format_id):
     sniffed, size_bytes, digest = stream_gate(io.BytesIO(data))
     assert size_bytes == len(data)
@@ -195,7 +197,8 @@ def test_stream_digest_is_exact_over_chunk_boundaries_and_stable_across_two_read
     limits = GateLimits(max_upload_bytes=2048, sniff_header_bytes=8, stream_chunk_bytes=3)
     first = stream_gate(io.BytesIO(data), limits)
     second = stream_gate(io.BytesIO(data), limits)
-    assert first == second == StreamGateResult(SniffResult(None, None), len(data), known_digest(data))
+    expected = StreamGateResult(SniffResult(None, None), len(data), known_digest(data))
+    assert first == second == expected
 
 
 def test_over_cap_raises_typed_oversize_exactly_at_the_boundary():

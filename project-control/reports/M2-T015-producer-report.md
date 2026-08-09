@@ -6,6 +6,14 @@ branch `task/M2-T015-survey-ingestion`. This report is the AOS §6 return packet
 Unit 1 (survey-evidence contract + fixtures) is committed at `cabe128` with its evidence in that
 commit's message (orchestrator-verified `python .github/scripts/validate_contracts.py` → exit 0).
 
+**Currency:** this report is current **through unit 3l + the G3/G5-gate rework of 2026-08-09**.
+Section "Units 3a–3l — the deterministic ingestion/extraction pipeline" (below) consolidates the
+implementation delivery; section "Rework 2026-08-09 — gate corrections 1–3" records the three
+concrete corrections the 4-reviewer wave required (lint parity under pinned ruff 0.13.0, the named
+synthetic fixture pack + matrix, and this report update). The reviewers found the pipeline
+logic/security/contract SOUND (G1 PASS, G5 PASS, G3 ruled the logic correct); the rework changed **no
+pipeline behavior** and left every existing passing assertion byte-for-byte intact.
+
 ---
 
 ## Unit 2 — architecture + threat model + isolation-terminology reconciliation (2026-08-08)
@@ -257,5 +265,204 @@ new dependencies.
 
 Orchestrator: execute §U2.9 items 1–2, then dispatch `security-reviewer` (G5) against the recorded
 SHA with this report, the two docs, the contract doc, and the schema as the review set.
+
+---
+
+## Units 3a–3l — the deterministic ingestion/extraction pipeline (through 2026-08-08)
+
+This section is the AOS §6 summary of the implementation delivery under
+`services/api/app/documents/**` and `services/api/tests/documents/**`. The reviewers found this body
+of work SOUND (G1 data-contract PASS, G5 security PASS, G3 ruled the logic correct); the details
+below are the honest map of what ships live vs what is deferred.
+
+### U3.1 What was built (module-by-module)
+
+| Area | Module(s) | What it does |
+| --- | --- | --- |
+| S1 upload gate | `gate.py`, `limits.py`, `errors.py` | Content sniffing + extension agreement (typed `ExtensionMismatchError`), streaming byte cap (`UploadTooLargeError` at `MAX_UPLOAD_BYTES+1`), known-answer `sha256:` digest over exact bytes, safe temp-path construction. Metadata-only typed errors (no document bytes in any payload). |
+| Isolation boundary | `isolation.py` | Fail-closed capability probe (`require_isolation`) → `ParsingPermitted` / `ParsingDisabled`; the only condition under which untrusted bytes are decoded. |
+| Format routing | `extraction/routing.py` | CLOSED per-format matrix (`route_format`), single isolation-gated pipeline entry (`begin_extraction_job`), wrong-address routing (`wrong_address_routing`). No parser lives here — it only selects and hands out a decoder inside a proven-boundary authorization. |
+| PDF reader | `extraction/pdf_lexer.py`, `pdf_xref.py`, `pdf_objects.py`, `pdf_content.py`, `pdf_container.py` | Strict-subset PDF reader: real xref, objects, content operators; embedded-text runs, vector segments/rects. Every refusal is a typed VALUE, never an exception. |
+| Vector/embedded decoder | `extraction/vector_pdf_decoder.py` | First concrete `DecoderSeam`: decodes a digitally-authored PDF into ordered `DecodedPage` primitives; a curve (or any out-of-subset construct) is a `pdf_decode_refusal` value; one bad page fails the whole decode. Pure function of its bytes. |
+| Fact taxonomy + typing | `taxonomy.py`, `units.py`, `models.py` | Canonical `fact_type` vocabulary; deterministic normalized-value + stated-unit typing (`units.py`) that NEVER coerces/infers/converts a unit (typed `UnresolvedNormalizedValue` refusal-as-value). |
+| Deterministic checks | `checks/` (`boundary.py`, `area.py`, `metadata.py`) | The screening checks (`scale_consistency`, `address_bbl_match`, boundary/area/metadata) as typed `CheckPassed`/`CheckFailed`/`CheckUnevaluable` values. |
+| Correction history | `correction_history.py` | Append-only correction-history integrity validation (deterministic, no AI judgment). |
+| Geometry/location validation | `geometry_validation.py` | Deterministic cross-field `location` validation (closed coordinate-space/kind vocabularies, fail-closed on smuggled keys). |
+| Tax-lot cross-check | `crosscheck.py` | Read-only, non-promotable `tax_lot_bbl_crosscheck` (SB-S4): context-only, `overrides_survey = False`, never mutates a survey value. |
+| Promotion + state | `promotion.py`, `state.py` | Per-fact promotion (confidence never substitutes for a resolved validator) and the promotion-gated state machine (`promotion_gated_transition`); wrong-address/needs-review edges. |
+| Pipeline composition | `extraction/survey_pipeline.py` | `run_survey_extraction`: upload → route → isolate → decode → assemble facts → deterministic checks → per-fact promotion → gated transition, returning a typed `ExtractionCompleted` / `ExtractionNotStarted` / `DecoderUnavailable` outcome. |
+
+### U3.2 SB-S1..S9 coverage (summary; full map in `docs/M2-T015-SB-COVERAGE-MATRIX.md`)
+
+- **SB-S1** digitally-authored path → `auto_extracted` through the H5 gate (clean scale+BBL doc).
+- **SB-S2** closed format routing; unsupported → typed rejection; raster → `DecoderUnavailable`.
+- **SB-S3** deterministic checks; failures/decode-refusals/empty extractions route to `needs_review`, recorded, never silent.
+- **SB-S4** MapPLUTO/tax-lot BBL cross-check wired context-only (unit 3l); divergence routes to review and never mutates a survey value; facts byte-for-byte identical across none/match/divergent references. (AREA cross-check deferred — follows boundary/area reconstruction.)
+- **SB-S5** fail-closed AI/confidence boundary; confidence promotes nothing.
+- **SB-S6** isolation boundary fail-closed; with the boundary unproven no byte is decoded (spy decoder proves `decode` is never called).
+- **SB-S7** wrong-address document → `needs_review` with the typed wrong-address routing value.
+- **SB-S8** every assembled `survey_evidence` record validates against the canonical v1 schema.
+- **SB-S9** the whole pack is a permanent CI regression backstop.
+
+### U3.3 Honest deferrals (unchanged by the rework)
+
+1. **Boundary/area reconstruction** is NOT performed by units 3k/3l — assembly is deliberately narrow (exact canonical `1:N` scale + 10-digit BBL). Distance/bearing/area normalization and free-text address labeling are a later deterministic-association unit; no boundary polygon or lot-area fact is fabricated. The tax-lot AREA cross-check follows that reconstruction and is therefore not wired yet (the mechanism is unit-tested in `test_crosscheck.py`).
+2. **OCR / raster extraction** is deferred: raster formats (scanned PDF, TIFF, PNG, JPEG) route but carry `decoder=None` → `DecoderUnavailable`. Rotated-page normalization is likewise a later unit.
+3. **B-001 durable private storage** is deferred; store-only DWG acceptance and durable evidence storage wait on it. Native DWG / DXF are typed deferrals with the vector-PDF-export alternative.
+4. **Isolation application vs presence:** `require_isolation` proves the boundary is PRESENT; applying the Landlock ruleset + seccomp filter before the first untrusted byte is the deployed isolated-parser path's duty (architecture §5, B-001/deployment-gated). CI runs on Linux where the real path exists (R274).
+
+---
+
+## Rework 2026-08-09 — gate corrections 1–3
+
+The 4-reviewer wave accepted the pipeline logic/security/contract but required three concrete
+closures. None changed pipeline behavior; the excluded-from-edit modules (routing, survey_pipeline,
+vector_pdf_decoder, crosscheck, checks/, promotion, state, models) are byte-for-byte unchanged in
+behavior.
+
+### R.1 Correction 1 — `ruff check .` exit 0 under pinned ruff 0.13.0
+
+CI's `api` job runs `cd services/api && ruff check .` with ruff **0.13.0** (pinned in
+`requirements-tools.lock`; `pyproject.toml select = [E,F,I,UP,B]`, line-length 100). After the
+orchestrator's auto-fix, 16 findings remained; all fixed **without any `# noqa`**:
+
+- **15 × E501** — three module-docstring first lines (`units.py`, `geometry_validation.py`,
+  `correction_history.py`) reworded (`application-level` → `app-level`, meaning preserved); and long
+  tuple/call lines in `test_correction_history.py` (205, 263, 342), `test_gate.py` (183, 198), and
+  `test_geometry_validation.py` (246, 248, 249, 251, 255, 266, 276) wrapped across lines — **pure
+  formatting; no test value or behavior changed**.
+- **1 × UP047** — `units.py::_match_unit` converted to PEP 695 type-parameter syntax; the now-unused
+  module-level `_UnitT = TypeVar(...)` and the `from typing import TypeVar` import were removed
+  (ruff confirmed no new F401). Ruff 0.13.0 additionally raised **UP049** (PEP 695 params must not be
+  private), so the parameter is named `UnitT` (no leading underscore). The migration is semantically
+  identical to the old bounded `TypeVar` (both a generic function bounded by `enum.Enum`).
+
+Result: `python -m ruff check .` → **All checks passed!** (exit 0) over the whole `services/api` tree.
+
+**Runtime note (honest limitation):** the project targets Python 3.12 (`requires-python >=3.12`,
+ruff `target-version = "py312"`) and **CI's `api` job runs Python 3.12** (verified in
+`.github/workflows/ci.yml`: every `setup-python` pin is `python-version: "3.12"`). PEP 695 function
+type-parameter syntax requires 3.12+. The producer sandbox on this session has only a working Python
+**3.11.9** (the local 3.12/3.13 install is a gutted directory with no `python.exe`), which cannot
+*parse* PEP 695 syntax. Because ruff parses independently of the runtime, `ruff check .` verifies at
+exit 0 locally on the pinned 0.13.0. For pytest, I proved the suite green on 3.11 with the
+semantically-identical bounded-`TypeVar` form of `_match_unit`, then re-applied the PEP 695 form
+(the shipped state) for ruff/CI parity; on CI (3.12) both `ruff check .` exit 0 and the full pytest
+run hold simultaneously. This is a producer-sandbox limitation, not a code defect — the orchestrator
+should capture the authoritative 3.12 pytest banner in CI.
+
+### R.2 Correction 2 — the named synthetic fixture pack + matrix
+
+Delivered the objective FIXTURES clause: a committed **all-synthetic** fixture pack with MANIFEST
+digests, following the `mappluto_geometry/build_fixture_pack.py` pattern, plus the fixture matrix doc.
+
+- **Location:** `services/api/tests/documents/fixtures/survey_documents/` — `build_fixture_pack.py`
+  (deterministic generator), 14 committed fixture files, and `MANIFEST.json`.
+- **All-synthetic + provenance:** surveys have no live official source, so every fixture is
+  deterministically synthesized (no real client survey, no captured official response, no private
+  document). Each MANIFEST entry carries `classification: synthetic`, `category`, `format`,
+  `builder`, honest `extraction_status`, `byte_size`, `purpose`, `supported_scenarios`, and a
+  `sha256:<hex>` over the exact committed bytes.
+- **Builders mirror the suite:** PDF fixtures use the exact `_assemble_pdf` / `_one_page_pdf` byte
+  assemblers from `test_survey_pipeline.py` / `test_vector_pdf_decoder.py`; raster fixtures are
+  structural PNG stubs (signature + IHDR + IEND with valid CRC32, no zlib → byte-identical on every
+  host); malicious fixtures reuse the T01/T02 threat vectors from `test_gate.py`.
+- **All 12 objective categories covered** (fixture → status):
+  digital PDFs `SVY01` (live), vector PDFs `SVY02` (live), clean scans `SVY03` (deferred→OCR/raster),
+  poor scans `SVY04` (deferred→OCR/raster), rotated pages `SVY05` (deferred→rotation-normalization),
+  mixed units `SVY06` (deferred→distance/unit-normalization), decimal ambiguities `SVY07`
+  (deferred→distance/bearing-normalization), conflicting dimensions `SVY08` (live: scale_consistency
+  fail→needs_review), incomplete boundaries `SVY09` (deferred→boundary-reconstruction), multi-page
+  `SVY10` (live), wrong-address `SVY11` (live: address_bbl_match fail→needs_review),
+  malicious/oversized `SVY12`+`SVY13`+`SVY14` (live: S1 gate reject + streaming cap).
+- **Matrix doc:** `docs/SURVEY_FIXTURE_MATRIX.md` maps each of the 12 categories → fixture id(s) →
+  deterministic check(s)/scenario(s) → extraction_status (live vs deferred), honest about every
+  deferral. It is a DIFFERENT document from `docs/M2-T015-SB-COVERAGE-MATRIX.md`; both are kept.
+- **MANIFEST-integrity + representativeness test:** `tests/documents/test_survey_fixture_pack.py`
+  (14 tests) asserts every committed fixture's bytes match its recorded `sha256`/`byte_size`; the
+  pack round-trips byte-identically through `build_fixture_pack.py` (fixtures AND MANIFEST); all 12
+  categories are present; and the live/deferred/malicious fixtures decode/route through the real
+  pipeline / S1 gate exactly as documented (ties the matrix to executable behavior, not prose).
+
+### R.3 Correction 3 — this report
+
+Brought current through unit 3l + the rework (was Unit 2 only): the intro currency note, the
+"Units 3a–3l" consolidation (U3.1–U3.3), and this rework section.
+
+### R.4 Self-verify — verbatim command output (2026-08-09)
+
+From `C:/Users/MLFLL/Downloads/nyc-zoning/wt-m2t015/services/api`:
+
+```
+> python -m ruff --version
+ruff 0.13.0
+
+> python -m ruff check .
+All checks passed!
+```
+
+Full-suite pytest on the shipped (PEP 695) code cannot run on this sandbox's Python 3.11 (it cannot
+parse PEP 695). The suite was proven green on 3.11 with the semantically-identical bounded-`TypeVar`
+form of `_match_unit`, immediately before re-applying the shipped PEP 695 form:
+
+```
+> python -m pytest tests/documents/ -q        # units.py temporarily in bounded-TypeVar form (3.11-parseable)
+939 passed, 1 skipped in 1.46s
+```
+
+(939 = the prior 925 + the 14 new `test_survey_fixture_pack.py` tests. The bounded-`TypeVar` and
+PEP 695 forms are the same generic function bounded by `enum.Enum`; ruff's UP047 treats them as the
+identical upgrade. The orchestrator captures the authoritative 3.12 pytest banner in CI, where the
+shipped PEP 695 code parses and both ruff exit 0 and the full run hold together.)
+
+Contract validator from the worktree root (ran clean in this session):
+
+```
+> python .github/scripts/validate_contracts.py
+meta-schema engines : stdlib-structural + jsonschema 4.26.0
+instance engines    : stdlib mini-validator + jsonschema 4.26.0 (cross-checked)
+... (10 schemas + all valid/invalid fixtures OK) ...
+Checked 10 schema file(s); 0 failure(s).
+```
+
+(The rework touched no `packages/contracts/**` file, so this is unchanged from the contract's prior
+green state; captured here for completeness. Exit 0.)
+
+### R.5 Files changed/created in the rework (exact paths + one-line purpose)
+
+| File | Change | Purpose |
+| --- | --- | --- |
+| `services/api/app/documents/units.py` | edited | docstring first line ≤100; `_match_unit` → PEP 695 `[UnitT: enum.Enum]`; removed unused `TypeVar` import + module-level alias (UP047/UP049/E501). No behavior change. |
+| `services/api/app/documents/geometry_validation.py` | edited | docstring first line reworded ≤100 (E501). No behavior change. |
+| `services/api/app/documents/correction_history.py` | edited | docstring first line reworded ≤100 (E501). No behavior change. |
+| `services/api/tests/documents/test_correction_history.py` | edited | wrapped 3 long lines (205, 263, 342); no test values changed. |
+| `services/api/tests/documents/test_gate.py` | edited | wrapped 2 long lines (183, 198); no test values changed. |
+| `services/api/tests/documents/test_geometry_validation.py` | edited | wrapped 7 long parametrize tuples; no test values changed. |
+| `services/api/tests/documents/fixtures/survey_documents/build_fixture_pack.py` | NEW | deterministic all-synthetic fixture-pack builder (12 categories, 14 fixtures). |
+| `services/api/tests/documents/fixtures/survey_documents/SVY01..SVY14 (14 files)` | NEW | committed synthetic fixtures (PDF/PNG/binary), one+ per objective category. |
+| `services/api/tests/documents/fixtures/survey_documents/MANIFEST.json` | NEW | per-fixture digests, classification, category, extraction_status, scenarios. |
+| `services/api/tests/documents/test_survey_fixture_pack.py` | NEW | MANIFEST-integrity + deterministic round-trip + representativeness tests (14 tests). |
+| `docs/SURVEY_FIXTURE_MATRIX.md` | NEW | 12-category → fixture → check/scenario → extraction_status matrix (honest deferrals). |
+| `project-control/reports/M2-T015-producer-report.md` | edited | this rework update (Corrections 1–3). |
+
+### R.6 Assumptions / limitations of the rework
+
+1. **PEP 695 was orchestrator-directed** as the UP047 fix; it is the only way to satisfy UP047 under
+   `target-version = py312` without a prohibited `# noqa`. UP049 forced the non-private name `UnitT`.
+   Consequence: `units.py` (and anything importing it — the whole pipeline) now requires Python 3.12+
+   to *import*; this is consistent with `requires-python >=3.12` and CI's 3.12, but it is the first
+   3.12-only syntax in this package (the code was previously de-facto 3.11-parseable). Flagged for
+   visibility.
+2. **Pytest on the shipped code was not run locally** (Python 3.11-only sandbox cannot parse PEP 695);
+   green was proven on the semantically-identical bounded-`TypeVar` form (R.4). Authoritative 3.12
+   pytest is an orchestrator/CI capture.
+3. **Oversize fixture is a small sentinel**, not a >50 MiB file (thin-client storage policy); the cap
+   boundary (`UploadTooLargeError` at `MAX_UPLOAD_BYTES+1`) is proven in-memory in the integrity test.
+4. **Contract validator** (`python .github/scripts/validate_contracts.py`) — the rework touched no
+   contract/schema/fixture under `packages/contracts/**` (all edits are in `services/api/app/documents`,
+   `services/api/tests/documents`, and `docs/`). Ran clean in this session: "Checked 10 schema
+   file(s); 0 failure(s)." exit 0 (R.4). No contract verdict changed.
+5. No self-acceptance: this is producer evidence only; an independent gate re-runs `ruff check .`
+   (0.13.0) and pytest on 3.12 to confirm exit 0 / green.
 
 **Report path:** `project-control/reports/M2-T015-producer-report.md`

@@ -273,7 +273,7 @@ def _result_refusal(
         return (
             f"result at index {position} of validation kind {kind.value!r} is "
             "internally contradictory: it claims to be resolved yet carries "
-            f"reject_code {getattr(result, 'reject_code')!r}; contradictory evidence "
+            f"reject_code {result.reject_code!r}; contradictory evidence "
             "is treated as tampered and fails closed"
         )
     if carries_reject_code:
@@ -281,7 +281,7 @@ def _result_refusal(
         detail = f": {stated}" if isinstance(stated, str) else ""
         return (
             f"result at index {position} of validation kind {kind.value!r} is a typed "
-            f"refusal value (reject_code={getattr(result, 'reject_code')!r}){detail}; "
+            f"refusal value (reject_code={result.reject_code!r}){detail}; "
             "a fact with any refused validation is never promotable"
         )
     if not affirms_resolved:

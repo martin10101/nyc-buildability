@@ -1,0 +1,237 @@
+{
+  "manifest_version": 1,
+  "task": "M2-T015",
+  "pack": "survey_documents",
+  "classification": "all-synthetic",
+  "source": "No live official source exists for private survey documents; every fixture is deterministically synthesized by build_fixture_pack.py. No real client survey, captured official response, or private document is present.",
+  "generated_by": "build_fixture_pack.py",
+  "digest_algorithm": "sha256:<hex> over the exact committed fixture bytes",
+  "categories": [
+    "clean_scan",
+    "conflicting_dimensions",
+    "decimal_ambiguities",
+    "digital_pdf",
+    "incomplete_boundaries",
+    "malicious_oversized",
+    "mixed_units",
+    "multi_page",
+    "poor_scan",
+    "rotated_pages",
+    "vector_pdf",
+    "wrong_address"
+  ],
+  "fixtures": [
+    {
+      "file": "SVY01_digital_scale_bbl.pdf",
+      "fixture_id": "SVY01",
+      "classification": "synthetic",
+      "category": "digital_pdf",
+      "format": "born_digital_pdf",
+      "builder": "_one_page_pdf(embedded_text)",
+      "extraction_status": "live-embedded-text-extraction",
+      "byte_size": 479,
+      "sha256": "sha256:d6d7a656f0db8d587c19c9375fcc0ab9a7666e4d5fe03e4bbbd391d7dd89f8e9",
+      "purpose": "Clean digitally-authored survey: canonical 1:240 scale statement + the subject BBL 1002920001 in embedded text. Decodes via embedded_text_extraction and promotes to auto_extracted through the H5 gate when every check passes (the SB-S1 happy path).",
+      "supported_scenarios": [
+        "SB-S1",
+        "SB-S8"
+      ]
+    },
+    {
+      "file": "SVY02_vector_segments_rect.pdf",
+      "fixture_id": "SVY02",
+      "classification": "synthetic",
+      "category": "vector_pdf",
+      "format": "vector_pdf",
+      "builder": "_one_page_pdf(vector_ops)",
+      "extraction_status": "live-vector-object-extraction",
+      "byte_size": 448,
+      "sha256": "sha256:c973e05154cd4c881e8c7f2e182f4ed44cc94ced46b2f09160140b0ace4c06f1",
+      "purpose": "Vector-authored survey primitives: a straight segment (m/l S) and a rectangle (re f) inside the strict straight-line survey subset. Decodes via vector_object_extraction into device-space VectorSegment/VectorRect primitives (no curve operator, so no decode refusal).",
+      "supported_scenarios": [
+        "SB-S1"
+      ]
+    },
+    {
+      "file": "SVY03_clean_scan.png",
+      "fixture_id": "SVY03",
+      "classification": "synthetic",
+      "category": "clean_scan",
+      "format": "png",
+      "builder": "_raster_png_stub(64, 64)",
+      "extraction_status": "deferred-to-OCR/raster-unit",
+      "byte_size": 45,
+      "sha256": "sha256:38bd497a8b0bae64df6236ce95e4d13998219dbf5a3bdfd085c7498be31314ff",
+      "purpose": "Clean raster scan (structural PNG stub, 64x64 grayscale IHDR, valid CRCs, no pixel IDAT). Exercises the S1 magic sniff and the raster route: PNG is a supported format but has no concrete decoder yet, so the pipeline returns DecoderUnavailable. Real pixel content and OCR land in the deferred OCR/raster unit.",
+      "supported_scenarios": [
+        "SB-S2"
+      ]
+    },
+    {
+      "file": "SVY04_poor_scan.png",
+      "fixture_id": "SVY04",
+      "classification": "synthetic",
+      "category": "poor_scan",
+      "format": "png",
+      "builder": "_raster_png_stub(8, 8)",
+      "extraction_status": "deferred-to-OCR/raster-unit",
+      "byte_size": 45,
+      "sha256": "sha256:83759f5c2f58aaea7bbe253865fc6966433593cc4a8731015c12a9ebf6e2e38f",
+      "purpose": "Poor/low-resolution raster scan (structural PNG stub, 8x8 grayscale IHDR) — distinct bytes from the clean scan to represent a degraded capture. Same raster route/DecoderUnavailable behavior; OCR quality handling is the deferred OCR/raster unit's responsibility.",
+      "supported_scenarios": [
+        "SB-S2"
+      ]
+    },
+    {
+      "file": "SVY05_rotated_page.pdf",
+      "fixture_id": "SVY05",
+      "classification": "synthetic",
+      "category": "rotated_pages",
+      "format": "born_digital_pdf",
+      "builder": "_one_page_pdf(embedded_text, /Rotate 90)",
+      "extraction_status": "deferred-to-rotation-normalization-unit",
+      "byte_size": 463,
+      "sha256": "sha256:581b4cb1228bf7310067ee5a166393ef72a52155e125f63eb7ea4a3604a5a554",
+      "purpose": "Digitally-authored page carrying a /Rotate 90 page attribute. The content stream still decodes (embedded text), but mapping rotated device space into a normalized survey orientation is deferred to a later rotation-normalization unit, so rotation-aware extraction is not asserted live.",
+      "supported_scenarios": [
+        "SB-S1",
+        "SB-S2"
+      ]
+    },
+    {
+      "file": "SVY06_mixed_units.pdf",
+      "fixture_id": "SVY06",
+      "classification": "synthetic",
+      "category": "mixed_units",
+      "format": "born_digital_pdf",
+      "builder": "_one_page_pdf(embedded_text)",
+      "extraction_status": "deferred-to-distance/unit-normalization-unit",
+      "byte_size": 506,
+      "sha256": "sha256:281b9af4802ac6eec1792f1acc2ca01a3d94778b177e0ccdc0c87346f302b974",
+      "purpose": "A survey stating a boundary distance in FEET on one course and METERS on another (mixed units). units.py is the deterministic authority that refuses mixed/unsupported units (never coerces), but assembling distance facts from free text is a deferred distance-normalization unit; unit 3k classifies only scale + BBL, so no distance fact is fabricated here.",
+      "supported_scenarios": [
+        "SB-S3"
+      ]
+    },
+    {
+      "file": "SVY07_decimal_ambiguity.pdf",
+      "fixture_id": "SVY07",
+      "classification": "synthetic",
+      "category": "decimal_ambiguities",
+      "format": "born_digital_pdf",
+      "builder": "_one_page_pdf(embedded_text)",
+      "extraction_status": "deferred-to-distance/bearing-normalization-unit",
+      "byte_size": 487,
+      "sha256": "sha256:de3d5fce60c389022680d8aa195336a78f9ff970884076e220fd99fef888510f",
+      "purpose": "A value written with ambiguous decimal/thousands separators (1,234.5 vs 1.234,5) that must never be silently disambiguated. Numeric distance/bearing normalization is the deferred normalization unit's job (fail-closed on ambiguity); 3k assembles no numeric distance fact from this text.",
+      "supported_scenarios": [
+        "SB-S3"
+      ]
+    },
+    {
+      "file": "SVY08_conflicting_scale.pdf",
+      "fixture_id": "SVY08",
+      "classification": "synthetic",
+      "category": "conflicting_dimensions",
+      "format": "born_digital_pdf",
+      "builder": "_one_page_pdf(embedded_text)",
+      "extraction_status": "live-embedded-text-extraction",
+      "byte_size": 474,
+      "sha256": "sha256:a6baef5c46a6a8c84d176eea0005c6a49b295147e39420517e35dfb0f62b13c3",
+      "purpose": "Two conflicting scale statements (1:240 and 1:480) in one document. Unit 3k assembles two scale_statement facts and the deterministic scale_consistency check FAILS, routing the document to needs_review (never a silent pass) — a live SB-S3 fail-closed path.",
+      "supported_scenarios": [
+        "SB-S3"
+      ]
+    },
+    {
+      "file": "SVY09_incomplete_boundary.pdf",
+      "fixture_id": "SVY09",
+      "classification": "synthetic",
+      "category": "incomplete_boundaries",
+      "format": "vector_pdf",
+      "builder": "_one_page_pdf(vector_ops)",
+      "extraction_status": "deferred-to-boundary-reconstruction-unit",
+      "byte_size": 442,
+      "sha256": "sha256:59d044c6fe3be14d73a4ca379ba52a7574de1bd7983b0799be0a8a2a736eb617",
+      "purpose": "An open (non-closing) polyline of three straight segments — a partial boundary. The segments decode via vector_object_extraction, but boundary closure / lot-area reconstruction (and the tax-lot AREA cross-check that follows it) is a deferred reconstruction unit, so no boundary/area fact is reconstructed here.",
+      "supported_scenarios": [
+        "SB-S3"
+      ]
+    },
+    {
+      "file": "SVY10_multipage_survey.pdf",
+      "fixture_id": "SVY10",
+      "classification": "synthetic",
+      "category": "multi_page",
+      "format": "born_digital_pdf",
+      "builder": "_two_page_pdf(embedded_text, embedded_text)",
+      "extraction_status": "live-embedded-text-extraction",
+      "byte_size": 677,
+      "sha256": "sha256:61faf94138a51b698b39d6963b2053454ae00b45fc476764616a2dbfdb6532c0",
+      "purpose": "A two-page survey: the scale statement on page 1 and the subject BBL on page 2. The decoder returns both DecodedPages in order and 3k assembles one fact per page — proving multi-page decode, not a page-1-only shortcut.",
+      "supported_scenarios": [
+        "SB-S1"
+      ]
+    },
+    {
+      "file": "SVY11_wrong_bbl.pdf",
+      "fixture_id": "SVY11",
+      "classification": "synthetic",
+      "category": "wrong_address",
+      "format": "born_digital_pdf",
+      "builder": "_one_page_pdf(embedded_text)",
+      "extraction_status": "live-embedded-text-extraction",
+      "byte_size": 479,
+      "sha256": "sha256:7af022bf9763a6896cd2416c39d1e6cf4ad3d8da68b58b71749ad14473f779b7",
+      "purpose": "A well-formed survey whose stated BBL (3001230045) does NOT match the subject property. The address_bbl_match check fails and the document routes to needs_review with the typed wrong-address routing value — never silently ingested (SB-S7).",
+      "supported_scenarios": [
+        "SB-S7"
+      ]
+    },
+    {
+      "file": "SVY12_exe_renamed_as_pdf.pdf",
+      "fixture_id": "SVY12",
+      "classification": "synthetic",
+      "category": "malicious_oversized",
+      "format": "octet-stream (PE executable)",
+      "builder": "EXE_BYTES (test_gate T01)",
+      "extraction_status": "live-S1-gate-rejected",
+      "byte_size": 10,
+      "sha256": "sha256:7ccd9bfcb65bb96e2e9e0603b91e790701508ead48aec4da8a2dd4b563b0576e",
+      "purpose": "Threat T01: a PE executable (MZ header) renamed with a .pdf extension. The S1 content sniff recognizes it is not a PDF and check_extension_matches raises the typed ExtensionMismatchError — content decides, never the extension.",
+      "supported_scenarios": [
+        "SB-S2"
+      ]
+    },
+    {
+      "file": "SVY13_html_renamed_as_tiff.tiff",
+      "fixture_id": "SVY13",
+      "classification": "synthetic",
+      "category": "malicious_oversized",
+      "format": "text/html",
+      "builder": "HTML_BYTES (test_gate T02)",
+      "extraction_status": "live-S1-gate-rejected",
+      "byte_size": 53,
+      "sha256": "sha256:396931edce18e232ff3e6132855a0cf87d3e0a2cb5a7177f25bfa423564798fd",
+      "purpose": "Threat T02: an HTML document renamed with a .tiff extension. Its bytes sniff as unrecognized (never guessed) and check_extension_matches raises the typed ExtensionMismatchError for the declared tiff extension.",
+      "supported_scenarios": [
+        "SB-S2"
+      ]
+    },
+    {
+      "file": "SVY14_oversize_sentinel.pdf",
+      "fixture_id": "SVY14",
+      "classification": "synthetic",
+      "category": "malicious_oversized",
+      "format": "born_digital_pdf",
+      "builder": "_one_page_pdf(embedded_text)",
+      "extraction_status": "live-S1-streaming-cap (boundary tested in-memory)",
+      "byte_size": 464,
+      "sha256": "sha256:5018632972dddac1f559b1e0aecc36f3133dc4d7ce14a76f2aca487ef3fa07c5",
+      "purpose": "Threat T03 sentinel: oversize uploads are rejected by the S1 streaming byte cap (UploadTooLargeError at MAX_UPLOAD_BYTES + 1). A >50 MiB file is intentionally NOT committed (thin-client storage policy); this small valid PDF documents the category, and the cap boundary is proven in-memory in test_survey_fixture_pack.py and test_gate.py without allocating a 50 MiB fixture.",
+      "supported_scenarios": [
+        "SB-S2"
+      ]
+    }
+  ]
+}

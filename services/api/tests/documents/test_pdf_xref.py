@@ -12,9 +12,9 @@ from __future__ import annotations
 
 import pytest
 
+import app.documents.extraction.pdf_xref as pdf_xref
 from app.documents.extraction.pdf_lexer import PdfName, PdfSyntaxError
 from app.documents.extraction.pdf_objects import PdfRef
-import app.documents.extraction.pdf_xref as pdf_xref
 from app.documents.extraction.pdf_xref import (
     PdfObjectTable,
     UnsupportedPdfFeature,

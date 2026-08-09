@@ -1,4 +1,4 @@
-"""Deterministic cross-field geometry/location validation for survey facts (application-level; M2-T015).
+"""Deterministic cross-field geometry/location validation for survey facts (app-level; M2-T015).
 
 Enforces the ``location`` relationships of
 ``packages/contracts/schemas/v1/survey_evidence.schema.json`` (contract 1.0.0) that the

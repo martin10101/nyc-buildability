@@ -31,12 +31,12 @@ import pytest
 
 from app.documents.taxonomy import SurveyFactType
 from app.documents.units import (
+    FACT_TYPES_WITH_UNIT_RULE,
+    FACT_TYPES_WITHOUT_UNIT_RULE,
     AngleUnit,
     AreaUnit,
     DistanceUnit,
     ElevationUnit,
-    FACT_TYPES_WITH_UNIT_RULE,
-    FACT_TYPES_WITHOUT_UNIT_RULE,
     UnresolvedNormalizedValue,
     ValidatedArea,
     ValidatedBearing,

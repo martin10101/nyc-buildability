@@ -1,4 +1,4 @@
-"""Deterministic normalized-value and stated-unit typing for survey facts (application-level; M2-T015).
+"""Deterministic normalized-value and stated-unit typing for survey facts (app-level; M2-T015).
 
 Connects each canonical ``fact_type`` (:mod:`app.documents.taxonomy`) to the exact
 ``normalized_value`` shape and stated-unit vocabulary the deterministic checks can
@@ -36,7 +36,6 @@ import enum
 import math
 import re
 from dataclasses import dataclass
-from typing import TypeVar
 
 from app.documents.models import BBL_PATTERN
 from app.documents.taxonomy import (
@@ -245,9 +244,6 @@ NormalizedValueValidation = (
 # ---------------------------------------------------------------------- helpers
 
 
-_UnitT = TypeVar("_UnitT", bound=enum.Enum)
-
-
 def _unresolved(
     submitted_fact_type: str, value: object, unit: object, reason: str
 ) -> UnresolvedNormalizedValue:
@@ -277,7 +273,9 @@ def _as_number(value: object, quantity: str, *, require_positive: bool) -> int |
     return value
 
 
-def _match_unit(unit_enum: type[_UnitT], unit: str | None, quantity: str) -> _UnitT | str:
+def _match_unit[UnitT: enum.Enum](
+    unit_enum: type[UnitT], unit: str | None, quantity: str
+) -> UnitT | str:
     """The exactly matched unit member of one closed vocabulary, or the refusal reason.
 
     A missing unit is its own stated reason — it is never defaulted.

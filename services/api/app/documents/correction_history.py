@@ -1,4 +1,4 @@
-"""Deterministic correction-history integrity validation for survey facts (application-level; M2-T015 H4).
+"""Deterministic correction-history integrity validation for survey facts (app-level; M2-T015 H4).
 
 Proves, with deterministic code and no AI judgment, that a survey fact's recorded
 correction history is exactly what the provenance doctrine requires
@@ -51,7 +51,7 @@ from __future__ import annotations
 import enum
 import re
 from dataclasses import dataclass
-from datetime import datetime, timedelta, timezone
+from datetime import UTC, datetime, timedelta, timezone
 
 __all__ = [
     "CorrectingActorRole",
@@ -302,7 +302,7 @@ def _json_equal(a: object, b: object) -> bool:
     if isinstance(a, dict) and isinstance(b, dict):
         return a.keys() == b.keys() and all(_json_equal(a[key], b[key]) for key in a)
     if isinstance(a, list) and isinstance(b, list):
-        return len(a) == len(b) and all(_json_equal(x, y) for x, y in zip(a, b))
+        return len(a) == len(b) and all(_json_equal(x, y) for x, y in zip(a, b, strict=False))
     return a == b
 
 
@@ -330,7 +330,7 @@ def _parse_rfc3339(value: object, field: str) -> datetime | str:
     offset_text = match.group(8)
     try:
         if offset_text == "Z":
-            tzinfo = timezone.utc
+            tzinfo = UTC
         else:
             sign = 1 if offset_text[0] == "+" else -1
             delta = timedelta(

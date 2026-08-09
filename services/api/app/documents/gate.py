@@ -30,7 +30,7 @@ import os
 import re
 import secrets
 from dataclasses import dataclass
-from typing import BinaryIO, NamedTuple, Union
+from typing import BinaryIO, NamedTuple
 
 from app.documents.errors import (
     ExtensionMismatchError,
@@ -86,15 +86,15 @@ class SniffResult:
     typed-error payloads and audit records (threat T11).
     """
 
-    format: Union[str, None]
-    media_type: Union[str, None]
+    format: str | None
+    media_type: str | None
 
     @property
     def recognized(self) -> bool:
         return self.format is not None
 
 
-def _read_header(data_or_stream: Union[bytes, bytearray, memoryview, BinaryIO]) -> bytes:
+def _read_header(data_or_stream: bytes | bytearray | memoryview | BinaryIO) -> bytes:
     if isinstance(data_or_stream, (bytes, bytearray, memoryview)):
         return bytes(memoryview(data_or_stream)[:SNIFF_HEADER_BYTES])
     read = getattr(data_or_stream, "read", None)
@@ -109,7 +109,7 @@ def _read_header(data_or_stream: Union[bytes, bytearray, memoryview, BinaryIO]) 
 
 
 def sniff_content(
-    data_or_stream: Union[bytes, bytearray, memoryview, BinaryIO],
+    data_or_stream: bytes | bytearray | memoryview | BinaryIO,
 ) -> SniffResult:
     """Deterministically identify content from at most ``SNIFF_HEADER_BYTES`` leading bytes.
 
@@ -241,7 +241,7 @@ def _names_a_reserved_device(text: str) -> bool:
 
 
 def validate_temp_upload_path(
-    temp_root: Union[str, os.PathLike], candidate_name: str
+    temp_root: str | os.PathLike, candidate_name: str
 ) -> str:
     """Validate one temp-name candidate against T07/T11 and return its contained path.
 
@@ -257,7 +257,7 @@ def validate_temp_upload_path(
     if not isinstance(candidate_name, str):
         raise TypeError("candidate_name must be str")
     name = candidate_name
-    violation: Union[str, None] = None
+    violation: str | None = None
     if not os.fspath(temp_root):
         violation = "empty_root"
     elif not name.strip():
@@ -288,7 +288,7 @@ def validate_temp_upload_path(
     )
 
 
-def safe_temp_upload_path(temp_root: Union[str, os.PathLike]) -> str:
+def safe_temp_upload_path(temp_root: str | os.PathLike) -> str:
     """Compute a safe, system-named temp path for an upload spool (threats T07/T11).
 
     The name is ONLY system randomness (``secrets.token_hex``) plus a fixed suffix —

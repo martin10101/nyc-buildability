@@ -310,7 +310,7 @@ class _Interpreter:
         ops = self._operands
         if len(ops) != len(kinds):
             return None, PdfSyntaxError(offset, expected, f"{len(ops)} operand(s)")
-        for value, kind in zip(ops, kinds):
+        for value, kind in zip(ops, kinds, strict=False):
             if not self._matches_kind(value, kind):
                 found = "operand types " + ", ".join(self._type_name(v) for v in ops)
                 return None, PdfSyntaxError(offset, expected, found)

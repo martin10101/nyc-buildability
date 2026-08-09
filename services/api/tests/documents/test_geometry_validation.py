@@ -32,9 +32,9 @@ import pytest
 
 from app.documents.geometry_validation import (
     BOUNDING_BOX_KEYS,
+    LOCATION_KEYS,
     CoordinateSpace,
     ExtractionMethod,
-    LOCATION_KEYS,
     LocatorKind,
     UnresolvedLocation,
     ValidatedBoundingBox,
@@ -243,16 +243,36 @@ UNRESOLVED_CASES = [
     # coordinates valid for the declared space
     ("negative-raster-pixel", bbox_location(raster_box(x_min=-5)), "ocr_text"),
     # closed coordinate-space vocabulary — page coordinates are never survey/world
-    ("alias-space", bbox_location(pdf_box(coordinate_space="pdf_points")), "embedded_text_extraction"),
+    (
+        "alias-space",
+        bbox_location(pdf_box(coordinate_space="pdf_points")),
+        "embedded_text_extraction",
+    ),
     ("case-folded-space", bbox_location(raster_box(coordinate_space="RASTER_PIXELS")), "ocr_text"),
-    ("survey-world-crs", bbox_location(pdf_box(coordinate_space="epsg:2263")), "embedded_text_extraction"),
-    ("survey-world-name", bbox_location(pdf_box(coordinate_space="survey_world")), "embedded_text_extraction"),
+    (
+        "survey-world-crs",
+        bbox_location(pdf_box(coordinate_space="epsg:2263")),
+        "embedded_text_extraction",
+    ),
+    (
+        "survey-world-name",
+        bbox_location(pdf_box(coordinate_space="survey_world")),
+        "embedded_text_extraction",
+    ),
     ("non-string-space", bbox_location(pdf_box(coordinate_space=72)), "embedded_text_extraction"),
-    ("missing-space", bbox_location(without(pdf_box(), "coordinate_space")), "embedded_text_extraction"),
+    (
+        "missing-space",
+        bbox_location(without(pdf_box(), "coordinate_space")),
+        "embedded_text_extraction",
+    ),
     # closed shapes — no smuggled coordinate-system side channel, no partial rectangles
     ("smuggled-crs-key", bbox_location(pdf_box(crs="EPSG:2263")), "embedded_text_extraction"),
     ("missing-y-max", bbox_location(without(pdf_box(), "y_max")), "embedded_text_extraction"),
-    ("unknown-location-key", dict(bbox_location(pdf_box()), page_rotation=90), "embedded_text_extraction"),
+    (
+        "unknown-location-key",
+        dict(bbox_location(pdf_box()), page_rotation=90),
+        "embedded_text_extraction",
+    ),
     ("box-not-an-object", bbox_location([100.5, 200.0, 150.25, 240.0]), "embedded_text_extraction"),
     # locator-kind consistency
     ("bounding-box-kind-missing-box", {"kind": "bounding_box"}, "embedded_text_extraction"),
@@ -263,7 +283,11 @@ UNRESOLVED_CASES = [
     ),
     ("vector-kind-missing-reference", {"kind": "vector_object"}, "vector_object_extraction"),
     ("vector-kind-empty-reference", vector_location(reference=""), "vector_object_extraction"),
-    ("vector-kind-whitespace-reference", vector_location(reference="   "), "vector_object_extraction"),
+    (
+        "vector-kind-whitespace-reference",
+        vector_location(reference="   "),
+        "vector_object_extraction",
+    ),
     ("vector-kind-non-string-reference", vector_location(reference=12), "vector_object_extraction"),
     ("vector-kind-non-vector-method", vector_location(), "ocr_text"),
     (
@@ -273,7 +297,11 @@ UNRESOLVED_CASES = [
     ),
     # closed kind vocabulary
     ("missing-kind", {"bounding_box": pdf_box()}, "embedded_text_extraction"),
-    ("case-folded-kind", dict(bbox_location(pdf_box()), kind="BOUNDING_BOX"), "embedded_text_extraction"),
+    (
+        "case-folded-kind",
+        dict(bbox_location(pdf_box()), kind="BOUNDING_BOX"),
+        "embedded_text_extraction",
+    ),
     ("unknown-kind", dict(bbox_location(pdf_box()), kind="polygon"), "embedded_text_extraction"),
     ("non-string-kind", dict(bbox_location(pdf_box()), kind=None), "embedded_text_extraction"),
     # non-object locators

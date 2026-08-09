@@ -15,7 +15,7 @@ hand-built — so these tests exercise the actual gate contract end to end.
 from __future__ import annotations
 
 from dataclasses import dataclass
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 
 import pytest
 
@@ -28,7 +28,6 @@ from app.documents.promotion import (
 from app.documents.state import (
     PROMOTION_GATED_TRANSITIONS,
     ActorKind,
-    DocumentState as S,
     IllegalTransition,
     TransitionActor,
     TransitionRecord,
@@ -36,8 +35,11 @@ from app.documents.state import (
     promotion_gated_transition,
     transition,
 )
+from app.documents.state import (
+    DocumentState as S,
+)
 
-WHEN = datetime(2026, 8, 8, 12, 0, tzinfo=timezone.utc)
+WHEN = datetime(2026, 8, 8, 12, 0, tzinfo=UTC)
 PIPELINE = TransitionActor(ActorKind.DETERMINISTIC_PIPELINE, actor_id="worker-7")
 HUMAN = TransitionActor(ActorKind.QUALIFIED_HUMAN, actor_id="reviewer-1")
 
