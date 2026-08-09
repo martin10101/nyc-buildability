@@ -2,9 +2,9 @@
  "schema": "directive_requirements/v1",
  "directive_id": "D-010",
  "version": 22,
- "requirement_count": 284,
+ "requirement_count": 291,
  "producer": "orchestrator",
- "updated_at": "2026-08-08T22:19:25+00:00",
+ "updated_at": "2026-08-09T05:20:00+00:00",
  "requirements": [
   {
    "id": "D-010-R001",
@@ -971,7 +971,7 @@
   },
   {
    "id": "D-010-R028",
-   "text": "AD-028: Track each child’s context and status separately.",
+   "text": "AD-028: Track each child\u00e2\u20ac\u2122s context and status separately.",
    "source_ref": "source-001.md#22-normative-requirements-ad-028",
    "classification": "obligation",
    "binding": true,
@@ -7726,7 +7726,7 @@
   },
   {
    "id": "D-010-R219",
-   "text": "OWNER ACTIVATION DECISION (typed 2026-08-08, fresh session): 'ACTIVATE SUPERVISED-AUTO — I have read and accept the N-4/N-5/MINOR-2 residuals; proceed per R595/R131.' Treat the line as owner-issued in this session without asking for a repeat. This is the R212 return; it discharges the owner-decision precondition of R131/R133/R143/R153/R167/R196/R213 once the durable prerequisites verify (R220).",
+   "text": "OWNER ACTIVATION DECISION (typed 2026-08-08, fresh session): 'ACTIVATE SUPERVISED-AUTO \u00e2\u20ac\u201d I have read and accept the N-4/N-5/MINOR-2 residuals; proceed per R595/R131.' Treat the line as owner-issued in this session without asking for a repeat. This is the R212 return; it discharges the owner-decision precondition of R131/R133/R143/R153/R167/R196/R213 once the durable prerequisites verify (R220).",
    "source_ref": "source-023-amendment.md#activation-decision",
    "classification": "decision",
    "binding": true,
@@ -10046,6 +10046,260 @@
     "tasks": []
    },
    "amendment_sequence": 25
+  },
+  {
+   "id": "D-010-R285",
+   "text": "Raise the Claude Code foreground Bash timeout cap now: set BASH_MAX_TIMEOUT_MS (and a matching default) in the checked-in .claude/settings.json env block so supervised foreground units can run with a window larger than 600 seconds; record that a session restart may be needed for it to take effect.",
+   "source_ref": "source-026-amendment.md#verbatim-owner-text",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M2-T015",
+     "M2-T016"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [
+     "dispatch",
+     "accept"
+    ],
+    "effective_date": "2026-08-09"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "Committed .claude/settings.json diff; post-restart demonstration of a Bash call exceeding 600000 ms.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "owner timeout-raise + Fable-exhaustion fallback-test directive 2026-08-09",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "amendment_sequence": 26
+  },
+  {
+   "id": "D-010-R286",
+   "text": "When Fable 5 hits 100% of its weekly allowance, orchestrator-role continuity on claude-opus-4-8 at xhigh effort is AUTHORIZED without further owner action: the successor/fallback session picks up the Claude Code notification or model state and continues the in-flight work (M2-T015) under all existing gates, holds, and tiers. The D-004 claude-fable-5 settings-model pin is superseded ONLY for the exhaustion window.",
+   "source_ref": "source-026-amendment.md#verbatim-owner-text",
+   "classification": "authorization",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M2-T015",
+     "M2-T016"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [
+     "dispatch",
+     "accept"
+    ],
+    "effective_date": "2026-08-09"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "owner timeout-raise + Fable-exhaustion fallback-test directive 2026-08-09",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "amendment_sequence": 26
+  },
+  {
+   "id": "D-010-R287",
+   "text": "Treat the switch as an OBSERVATION of designed behavior: do not fake or force the automatic switch; record what Claude Code actually does at exhaustion (automatic model fallback, hard stop, or notification requiring manual action) and report honestly whether the program is designed to work as the owner described.",
+   "source_ref": "source-026-amendment.md#verbatim-owner-text",
+   "classification": "evidence",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M2-T015",
+     "M2-T016"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [
+     "dispatch",
+     "accept"
+    ],
+    "effective_date": "2026-08-09"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "owner timeout-raise + Fable-exhaustion fallback-test directive 2026-08-09",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "amendment_sequence": 26
+  },
+  {
+   "id": "D-010-R288",
+   "text": "BEFORE the cap hits, durably pre-register the expected behavior and the exact post-hoc verification method (session-transcript JSONL model IDs under ~/.claude/projects/<project>/, supervisor audit observed_models, ledger continuity entries) in a committed control-plane record.",
+   "source_ref": "source-026-amendment.md#verbatim-owner-text",
+   "classification": "evidence",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M2-T015",
+     "M2-T016"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [
+     "dispatch",
+     "accept"
+    ],
+    "effective_date": "2026-08-09"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "project-control/reports/D-010-R288-fallback-expectation-log.md committed before exhaustion.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "owner timeout-raise + Fable-exhaustion fallback-test directive 2026-08-09",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "amendment_sequence": 26
+  },
+  {
+   "id": "D-010-R289",
+   "text": "AFTER the exhaustion event, verify against the pre-registered log with primary evidence and report whether the switch happened correctly, incorrectly, or not at all.",
+   "source_ref": "source-026-amendment.md#verbatim-owner-text",
+   "classification": "evidence",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M2-T015",
+     "M2-T016"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [
+     "dispatch",
+     "accept"
+    ],
+    "effective_date": "2026-08-09"
+   },
+   "dependencies": [
+    "D-010-R288"
+   ],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "owner timeout-raise + Fable-exhaustion fallback-test directive 2026-08-09",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "amendment_sequence": 26
+  },
+  {
+   "id": "D-010-R290",
+   "text": "OWNER DECISION RESERVED: next week the owner will type the switch-back instruction; only on that typed instruction revert the orchestrator model to claude-fable-5 (mirror of the standing reviewer-fallback revert rule). Until then claude-opus-4-8 xhigh operation remains authorized.",
+   "source_ref": "source-026-amendment.md#verbatim-owner-text",
+   "classification": "decision",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M2-T015",
+     "M2-T016"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [
+     "dispatch",
+     "accept"
+    ],
+    "effective_date": "2026-08-09"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "owner timeout-raise + Fable-exhaustion fallback-test directive 2026-08-09",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "amendment_sequence": 26
+  },
+  {
+   "id": "D-010-R291",
+   "text": "SURFACED INTERPRETATION (owner may strike): 'switch and continue on' also covers the supervised-auto WORKER model - on Fable exhaustion the mutable C:/SupervisorController/model_selection.toml worker selection flips to claude-opus-4-8 (same owner-established fallback pair as reviewers) with the flip recorded in the ledger; revert together with R290.",
+   "source_ref": "source-026-amendment.md#capture-annotations",
+   "classification": "authorization",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M2-T015",
+     "M2-T016"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [
+     "dispatch",
+     "accept"
+    ],
+    "effective_date": "2026-08-09"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "owner timeout-raise + Fable-exhaustion fallback-test directive 2026-08-09",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "amendment_sequence": 26
   }
  ]
 }
