@@ -34,8 +34,14 @@ __all__ = [
     "CheckPassed",
     "CheckResult",
     "CheckUnevaluable",
+    "address_bbl_match",
+    "boundary_closure",
     "calculated_vs_stated_area",
     "contradictory_dimensions",
+    "elevation_consistency",
+    "north_orientation_consistency",
+    "scale_consistency",
+    "segment_sum_consistency",
 ]
 
 
@@ -140,4 +146,14 @@ CheckResult = CheckPassed | CheckFailed | CheckUnevaluable
 from app.documents.checks.area import (  # noqa: E402
     calculated_vs_stated_area,
     contradictory_dimensions,
+)
+from app.documents.checks.boundary import (  # noqa: E402
+    boundary_closure,
+    segment_sum_consistency,
+)
+from app.documents.checks.metadata import (  # noqa: E402
+    address_bbl_match,
+    elevation_consistency,
+    north_orientation_consistency,
+    scale_consistency,
 )
