@@ -24,7 +24,7 @@ are deterministic on every host platform.
 from __future__ import annotations
 
 import json
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 
 import pytest
@@ -49,7 +49,7 @@ from app.documents.state import (
     transition,
 )
 
-WHEN = datetime(2026, 8, 8, 12, 0, tzinfo=timezone.utc)
+WHEN = datetime(2026, 8, 8, 12, 0, tzinfo=UTC)
 PIPELINE_ACTOR = TransitionActor(ActorKind.DETERMINISTIC_PIPELINE, actor_id="worker-7")
 DIGEST = "sha256:" + "ab" * 32
 
@@ -433,3 +433,163 @@ class TestAssembly:
     ) -> None:
         outcome = _run(NO_CLASSIFIABLE_TEXT_PDF)
         assert outcome.facts == ()
+
+
+# ------------------------------------------------ SB-S4 tax-lot cross-check wiring
+
+
+#: A scale statement but NO BBL text -> one fact, no BBL fact to cross-check against.
+SCALE_ONLY_PDF = _one_page_pdf(b"BT /F1 12 Tf 100 700 Td (1:240) Tj ET")
+
+
+def _tax_lot_reference(bbl: str = "1002920001", **overrides: object):
+    """The accepted MapPLUTO/tax-lot reference for the subject property. Defaults to the
+    subject BBL of the clean ``SCALE_AND_BBL_PDF`` so a matching cross-check is the norm
+    and only the ``bbl`` override introduces a divergence."""
+    from app.documents.crosscheck import TaxLotReference
+
+    fields: dict = {
+        "bbl": bbl,
+        "lot_area_square_feet": 2500.0,
+        "source_dataset": "mappluto",
+        "source_version": "24v4",
+        "retrieved_at": "2026-08-01T00:00:00Z",
+    }
+    fields.update(overrides)
+    return TaxLotReference(**fields)
+
+
+def _run_with_reference(pdf: bytes, reference, context=None):
+    return sp.run_survey_extraction(
+        format_identity="vector_pdf",
+        original_bytes=pdf,
+        context=context or _context(),
+        actor=PIPELINE_ACTOR,
+        occurred_at=WHEN,
+        tax_lot_reference=reference,
+    )
+
+
+class TestTaxLotCrosscheckWiring:
+    def test_matching_bbl_records_pass_and_preserves_auto_extract(
+        self, isolation_permitted: None
+    ) -> None:
+        from app.documents.checks import CheckPassed
+        from app.documents.promotion import PromotionAllowed
+
+        outcome = _run_with_reference(SCALE_AND_BBL_PDF, _tax_lot_reference())
+        assert isinstance(outcome, sp.ExtractionCompleted)
+        # PASS leaves the deterministic 3k decision (auto_extracted) exactly as it stood.
+        assert outcome.target_state is DocumentState.AUTO_EXTRACTED
+        assert isinstance(outcome.tax_lot_crosscheck, CheckPassed)
+        assert outcome.tax_lot_crosscheck.check_name == "tax_lot_bbl_crosscheck"
+        assert outcome.tax_lot_crosscheck.computed["mismatched_fact_count"] == 0
+        # promotion is preserved untouched by the context-only cross-check
+        assert all(
+            isinstance(v, PromotionAllowed) for v in outcome.fact_verdicts.values()
+        )
+        # the survey facts are byte-for-byte identical to the reference-free run
+        assert outcome.facts == _run(SCALE_AND_BBL_PDF).facts
+
+    def test_divergent_bbl_routes_to_needs_review_with_typed_fail(
+        self, isolation_permitted: None
+    ) -> None:
+        from app.documents.checks import CheckFailed
+
+        reference_free = _run(SCALE_AND_BBL_PDF)
+        # baseline: with no reference this exact document auto-extracts
+        assert reference_free.target_state is DocumentState.AUTO_EXTRACTED
+
+        outcome = _run_with_reference(
+            SCALE_AND_BBL_PDF, _tax_lot_reference(bbl="3001230045")
+        )
+        assert isinstance(outcome, sp.ExtractionCompleted)
+        # the cross-check is the SOLE cause of the review routing (address matched)
+        assert outcome.wrong_address is None
+        assert outcome.target_state is DocumentState.NEEDS_REVIEW
+        assert outcome.transition_record.to_state is DocumentState.NEEDS_REVIEW
+        assert isinstance(outcome.tax_lot_crosscheck, CheckFailed)
+        assert outcome.tax_lot_crosscheck.check_name == "tax_lot_bbl_crosscheck"
+        assert outcome.tax_lot_crosscheck.computed["mismatched_fact_count"] == 1
+        # NEVER overwritten/mutated: the survey facts are byte-for-byte the 3k facts
+        assert outcome.facts == reference_free.facts
+        bbl_fact = next(f for f in outcome.facts if f["fact_type"] == "bbl_text")
+        assert bbl_fact["original_value"] == "1002920001"
+        assert bbl_fact["normalized_value"] == "1002920001"
+
+    def test_no_reference_is_byte_for_byte_identical_to_3k(
+        self, isolation_permitted: None
+    ) -> None:
+        baseline = _run(SCALE_AND_BBL_PDF)
+        explicit_none = _run_with_reference(SCALE_AND_BBL_PDF, None)
+        assert explicit_none.tax_lot_crosscheck is None
+        assert explicit_none.target_state is baseline.target_state
+        assert explicit_none.facts == baseline.facts
+        assert explicit_none.to_payload() == baseline.to_payload()
+        assert baseline.to_payload()["tax_lot_crosscheck"] is None
+
+    def test_unevaluable_when_no_bbl_fact_records_and_routes_review(
+        self, isolation_permitted: None
+    ) -> None:
+        from app.documents.checks import CheckUnevaluable
+
+        # baseline: with no reference the scale-only document auto-extracts
+        assert _run(SCALE_ONLY_PDF).target_state is DocumentState.AUTO_EXTRACTED
+
+        outcome = _run_with_reference(SCALE_ONLY_PDF, _tax_lot_reference())
+        assert isinstance(outcome, sp.ExtractionCompleted)
+        # fail-safe: an unevaluable cross-check is recorded, never dropped, and routes
+        # the document to review rather than silently auto-extracting.
+        assert isinstance(outcome.tax_lot_crosscheck, CheckUnevaluable)
+        assert outcome.tax_lot_crosscheck.check_name == "tax_lot_bbl_crosscheck"
+        assert outcome.target_state is DocumentState.NEEDS_REVIEW
+
+    def test_malformed_reference_is_unevaluable_and_routes_review(
+        self, isolation_permitted: None
+    ) -> None:
+        from app.documents.checks import CheckUnevaluable
+
+        # the reference model performs no validation of its own; a malformed BBL makes
+        # the cross-check refuse closed (fail-safe) rather than yielding a corrected value
+        outcome = _run_with_reference(SCALE_AND_BBL_PDF, _tax_lot_reference(bbl="123"))
+        assert isinstance(outcome.tax_lot_crosscheck, CheckUnevaluable)
+        assert outcome.target_state is DocumentState.NEEDS_REVIEW
+
+    def test_crosscheck_is_context_only_never_promotable_never_a_survey_check(
+        self, isolation_permitted: None
+    ) -> None:
+        outcome = _run_with_reference(SCALE_AND_BBL_PDF, _tax_lot_reference())
+        # non-promotable, and kept OUT of the authoritative deterministic check set so it
+        # can never gate promotion — it lives only in the context-only outcome field
+        assert outcome.tax_lot_crosscheck.promotable is False
+        assert "tax_lot_bbl_crosscheck" not in {
+            c.check_name for c in outcome.check_results
+        }
+        # the cross-check leaves no trace on any fact's recorded validation_results
+        for fact in outcome.facts:
+            recorded = {v["check_id"] for v in fact["validation_results"]}
+            assert "tax_lot_bbl_crosscheck" not in recorded
+
+    def test_facts_identical_across_none_match_and_divergent_references(
+        self, isolation_permitted: None
+    ) -> None:
+        none_run = _run_with_reference(SCALE_AND_BBL_PDF, None).facts
+        match_run = _run_with_reference(SCALE_AND_BBL_PDF, _tax_lot_reference()).facts
+        diverge_run = _run_with_reference(
+            SCALE_AND_BBL_PDF, _tax_lot_reference(bbl="3001230045")
+        ).facts
+        # the survey is never overwritten: the assembled facts are byte-for-byte the same
+        # regardless of the reference outcome
+        assert none_run == match_run == diverge_run
+
+    def test_payload_is_json_serializable_with_crosscheck(
+        self, isolation_permitted: None
+    ) -> None:
+        for reference in (
+            _tax_lot_reference(),
+            _tax_lot_reference(bbl="3001230045"),
+            _tax_lot_reference(bbl="123"),
+        ):
+            payload = _run_with_reference(SCALE_AND_BBL_PDF, reference).to_payload()
+            assert json.loads(json.dumps(payload)) == payload
+            assert payload["tax_lot_crosscheck"]["check_name"] == "tax_lot_bbl_crosscheck"

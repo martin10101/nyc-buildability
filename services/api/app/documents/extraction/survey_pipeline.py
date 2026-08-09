@@ -7,6 +7,7 @@ flow for the digitally-authored PDF routes (SB-S1):
         -> VectorPdfDecoder.decode  (S4 decode, unit 3k / pdf_* reader)
         -> assemble survey_evidence facts  (this module)
         -> deterministic checks  (app.documents.checks, unit 3d)
+        -> tax-lot cross-check  (app.documents.crosscheck, unit 3l, OPTIONAL / context-only)
         -> per-fact promotion verdicts  (app.documents.promotion, unit 3f)
         -> gated state transition  (promotion_gated_transition, unit 3f-2)
 
@@ -32,6 +33,18 @@ by convention:
   deterministic check passes. Any failing/unresolved check, any unproven fact, a
   wrong-address ``address_bbl_match`` (SB-S7), a decode refusal, or an empty extraction
   routes the document to ``needs_review`` — never a silent pass, never a silent drop.
+* **The tax-lot (MapPLUTO) cross-check is context, never authority (SB-S4).** When the
+  caller supplies the accepted :class:`TaxLotReference`, this pipeline runs the read-only
+  :func:`tax_lot_bbl_crosscheck` over the assembled survey BBL fact and records the frozen
+  TYPED comparison result on the outcome. The cross-check NEVER promotes, NEVER becomes a
+  survey fact, and NEVER overwrites, corrects, or mutates any assembled fact — it can only
+  pull the routing toward review, never toward auto-extraction: a divergent (FAIL) or
+  unevaluable comparison forces ``needs_review`` (fail-safe, recorded, never dropped),
+  while a matching (PASS) comparison leaves the deterministic promotion decision exactly
+  as it stood. With no reference supplied the cross-check is skipped and behavior is
+  byte-for-byte identical to the reference-free path. The tax-lot AREA cross-check
+  legitimately follows lot-area geometry reconstruction (a later unit) and is NOT wired
+  here — no lot-area fact is fabricated to force it.
 
 The pipeline is a pure function of its inputs plus the injected isolation verdict: it
 mutates no global state and performs no I/O. The gated ``processing -> auto_extracted``
@@ -61,6 +74,7 @@ from app.documents.correction_history import (
     ValidatedCorrectionHistory,
     validate_correction_history,
 )
+from app.documents.crosscheck import TaxLotReference, tax_lot_bbl_crosscheck
 from app.documents.extraction.routing import (
     ExtractionEntryOutcome,
     ExtractionJobAuthorized,
@@ -219,6 +233,14 @@ class ExtractionCompleted:
     the review routing; ``decode_refusal`` carries the typed reader refusal when the
     document was routed to review because it could not be decoded within the strict
     subset. Both are ``None`` on the clean auto-extracted path.
+
+    ``tax_lot_crosscheck`` carries the frozen TYPED tax-lot (MapPLUTO) BBL comparison
+    result (SB-S4) when the caller supplied a :class:`TaxLotReference` — a
+    :class:`CheckPassed` / :class:`CheckFailed` / :class:`CheckUnevaluable` — and is
+    ``None`` when no reference was supplied (the cross-check was not run). It is context
+    only: recorded here, never promoted, and never overwriting or mutating any assembled
+    survey fact. A FAIL or UNEVALUABLE result is the typed cause of a fail-safe
+    ``needs_review`` routing; a PASS leaves the deterministic promotion decision unchanged.
     """
 
     facts: tuple[dict, ...]
@@ -228,6 +250,7 @@ class ExtractionCompleted:
     transition_record: TransitionRecord
     wrong_address: NeedsReviewRouting | None
     decode_refusal: PdfDecodeRefusal | None
+    tax_lot_crosscheck: CheckResult | None = None
 
     started = True
 
@@ -245,6 +268,11 @@ class ExtractionCompleted:
                 )
                 for fact_id, verdict in self.fact_verdicts.items()
             },
+            "tax_lot_crosscheck": (
+                None
+                if self.tax_lot_crosscheck is None
+                else self.tax_lot_crosscheck.to_payload()
+            ),
             "wrong_address": (
                 None if self.wrong_address is None else self.wrong_address.to_payload()
             ),
@@ -540,6 +568,38 @@ def _run_document_checks(
     return tuple(results), wrong_address
 
 
+# --------------------------------------------------------- tax-lot cross-check (SB-S4)
+
+
+def _tax_lot_crosscheck(
+    facts: Sequence[AssembledFact], reference: TaxLotReference | None
+) -> CheckResult | None:
+    """The frozen TYPED tax-lot (MapPLUTO) BBL comparison result for this document, or
+    ``None`` when the caller supplied no reference (the cross-check is not run).
+
+    Context only — this reads the assembled survey BBL fact's resolved
+    ``ValidatedUnitlessText`` and defers ENTIRELY to :func:`tax_lot_bbl_crosscheck`
+    (:mod:`app.documents.crosscheck`); it writes nothing back onto any fact and produces
+    no survey value. When no resolved BBL fact was assembled the reference is passed a
+    ``None`` survey input, so the cross-check refuses closed as UNEVALUABLE (fail-safe,
+    recorded, never dropped) rather than being skipped. The tax-lot AREA cross-check
+    legitimately follows lot-area geometry reconstruction (a later unit) and is not run
+    here — no lot-area fact is fabricated to force it.
+    """
+    if reference is None:
+        return None
+    survey_bbl = next(
+        (
+            fact.normalized_validation
+            for fact in facts
+            if fact.fact_type is SurveyFactType.BBL_TEXT
+            and isinstance(fact.normalized_validation, ValidatedUnitlessText)
+        ),
+        None,
+    )
+    return tax_lot_bbl_crosscheck(survey_bbl, reference)  # type: ignore[arg-type]
+
+
 # ----------------------------------------------------------------- the pipeline
 
 
@@ -551,11 +611,22 @@ def run_survey_extraction(
     actor: TransitionActor,
     occurred_at: datetime,
     current_state: DocumentState = DocumentState.PROCESSING,
+    tax_lot_reference: TaxLotReference | None = None,
 ) -> SurveyExtractionOutcome:
     """Run the full deterministic extraction pipeline for one document.
 
     ``current_state`` is the document's lifecycle state as the extraction job runs
-    (``processing`` after the worker claimed it). Returns:
+    (``processing`` after the worker claimed it). ``tax_lot_reference`` is the OPTIONAL
+    accepted :class:`TaxLotReference` (MapPLUTO / tax-lot geometry) for the subject
+    property: when supplied, the pipeline runs the read-only
+    :func:`tax_lot_bbl_crosscheck` over the assembled survey BBL fact and records the
+    frozen typed result on the outcome's ``tax_lot_crosscheck`` (SB-S4). When ``None``
+    (the default) the cross-check is skipped and the result is byte-for-byte identical to
+    the reference-free path. The cross-check is context only — it never promotes, never
+    becomes a survey value, and never overwrites or mutates any assembled fact; it can
+    only pull the routing toward review: a divergent (FAIL) or unevaluable comparison
+    forces ``needs_review`` (fail-safe, recorded), while a matching (PASS) comparison
+    leaves the deterministic promotion decision exactly as it stood. Returns:
 
     - :class:`ExtractionNotStarted` when the isolation gate or S3 routing refused
       (``isolation_unavailable`` / deferred / rejected) — nothing decoded, no
@@ -610,6 +681,16 @@ def run_survey_extraction(
     )
     auto_extract = bool(facts) and every_check_passed and every_fact_promotes
 
+    # SB-S4 context-only cross-check. It can only pull routing TOWARD review — never
+    # toward auto-extraction — so a divergent (FAIL) or unevaluable comparison forces
+    # needs_review, while a PASS (or no reference) leaves the decision above untouched.
+    # The result is recorded on the outcome; it never mutates a fact or promotes.
+    tax_lot_crosscheck = _tax_lot_crosscheck(facts, tax_lot_reference)
+    crosscheck_clean = tax_lot_crosscheck is None or isinstance(
+        tax_lot_crosscheck, CheckPassed
+    )
+    auto_extract = auto_extract and crosscheck_clean
+
     fact_dicts = tuple(fact.evidence for fact in facts)
     if auto_extract:
         record = promotion_gated_transition(
@@ -627,6 +708,7 @@ def run_survey_extraction(
             transition_record=record,
             wrong_address=None,
             decode_refusal=None,
+            tax_lot_crosscheck=tax_lot_crosscheck,
         )
 
     record = transition(
@@ -640,4 +722,5 @@ def run_survey_extraction(
         transition_record=record,
         wrong_address=wrong_address,
         decode_refusal=None,
+        tax_lot_crosscheck=tax_lot_crosscheck,
     )
