@@ -1,0 +1,57 @@
+{
+  "task_id": "M0-T055",
+  "title": "Lean operating process \u2014 Phase 1 policy (product-efficiency directive)",
+  "task_type": "backend",
+  "milestone_id": "M0",
+  "objective": "PHASE 1 (policy-only, no product/supervisor-code changes, no repo-wide refactor): establish the lean operating rules. Deliverables: (1) A1 map of duplicated control-plane facts + the SELECTED canonical routine execution record (smallest existing machine-readable record; prefer the journal/ledger; no new DB; no deletion of historical evidence); (2) a concise lean-operating-process POLICY (canonical record; minimal unit-completion event; seam-only handoffs with the 6 triggers + 7-field <=2000-tok format; 1-2 routine control-PR batching rule; generated objective reporting; concise-code + parameterized-test + safer-packet expectations); (3) proof no safety/evidence/gate/provenance requirement was removed. Rules apply PROSPECTIVELY (M2-T016 first). Independent Part-D review (evidence loss, weakened fail-closed, directive-compliance incompatibility, source-of-truth ownership, excessive abstraction, less-diagnostic tests, product delay).",
+  "business_reason": "Owner product-efficiency directive (D-010 source-029, R320-R343): reduce duplicated control-plane work + code verbosity WITHOUT weakening verification/testing/provenance/safety. Phase 1 = smallest prospective policy-only changes; Part D requires independent review; prospective (M2-T016 is the first task under it).",
+  "inputs": [],
+  "outputs": [],
+  "dependencies": [],
+  "allowed_paths": [],
+  "forbidden_paths": [],
+  "acceptance_scenarios": [],
+  "required_gates": [
+    "G0",
+    "G2",
+    "G3",
+    "G5"
+  ],
+  "producer_agent": "orchestrator",
+  "reviewer_agents": [
+    "code-reviewer",
+    "security-reviewer",
+    "control-plane-verifier"
+  ],
+  "status": "in_progress",
+  "progress_percent": 90,
+  "risks": [],
+  "blockers": [],
+  "created_at": "2026-08-09T09:04:52.369280+00:00",
+  "updated_at": "2026-08-09T09:09:01.526694+00:00",
+  "directive_refs": [
+    {
+      "directive_id": "D-010",
+      "requirement_ids": "ALL"
+    }
+  ],
+  "directive_regime_version": "1.0",
+  "directive_regime_entered_at": "2026-08-09T09:04:52.370235+00:00",
+  "progress_log": [
+    {
+      "at": "2026-08-09T09:09:00.910776+00:00",
+      "agent": "orchestrator",
+      "percent": 0,
+      "status": "ready",
+      "message": "Phase-1 lean-operating-process policy contracted (D-010 source-029 R320-R343)."
+    },
+    {
+      "at": "2026-08-09T09:09:01.526694+00:00",
+      "agent": "orchestrator",
+      "percent": 90,
+      "status": "in_progress",
+      "message": "Phase 1 IMPLEMENTED (policy-only): docs/LEAN_OPERATING_PROCESS.md (A1 duplication map; canonical record = per-task progress_log + git + CI; lean 7-field <=2000-tok handoff + 6 seam triggers; 1-2 routine-control-PR batching rule; generated objective reporting; concise-code B2-B8 + parameterized adversarial tests B6 + safer-packets A7; no-safety-loss proof) + CLAUDE.md routing pointer (effective M2-T016 onward). NO product/supervisor-core code changed; no existing evidence deleted; prospective. Return items 1-8 answered in the doc; 9-10 pending M2-T016. NEXT: Part-D independent review (code-reviewer/security-reviewer/control-plane-verifier)."
+    }
+  ],
+  "worktree": "C:/Users/MLFLL/Downloads/nyc-zoning/nyc-development-feasibility-claude-pack"
+}

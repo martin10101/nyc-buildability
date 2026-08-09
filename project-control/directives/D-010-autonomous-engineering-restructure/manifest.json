@@ -233,6 +233,14 @@
    "amends": "source-027-amendment.md",
    "recorded_at": "2026-08-09T08:00:00+00:00",
    "content_digest_sha256": "ff7df672e6d6b7cae9c33d63de47c69f820bad19b56ec16bf0419917d8b0ad3d"
+  },
+  {
+   "file": "source-029-amendment.md",
+   "kind": "amendment",
+   "sequence": 29,
+   "amends": "source-028-amendment.md",
+   "recorded_at": "2026-08-09T10:00:00+00:00",
+   "content_digest_sha256": "0ca7870630bbd36fa3125ae890bd8cf2c6c5c4d3aed91029d8a0aa409aa045a7"
   }
  ],
  "amendments": [
@@ -262,7 +270,8 @@
   "source-025-amendment.md",
   "source-026-amendment.md",
   "source-027-amendment.md",
-  "source-028-amendment.md"
+  "source-028-amendment.md",
+  "source-029-amendment.md"
  ],
  "supersedes": [],
  "superseded_by": null,
@@ -301,8 +310,8 @@
  "verification_file": "verification.json",
  "final_reviewed_sha": null,
  "final_reviewed_manifest_sha256": null,
- "requirements_content_digest_sha256": "690cb482077423aa3dcdd69c917cc17d39547cae9d3c1701499279b95fb2b22d",
- "requirements_id_digest_sha256": "90721c130d39cd04d22d7ea0aa2415c50c27e963fb41f6d9726956be18857ef6",
+ "requirements_content_digest_sha256": "3748645ef846bbd4e84e6340decfdcb770f2951a65f4fd625e0cfcfc9f59a625",
+ "requirements_id_digest_sha256": "d9d105ddeab2ead749de7c7a1192960a556726201808482bf6783a95e2222490",
  "enforcement_pointers": {
   "tasks": [
    "M0-T037",
@@ -656,10 +665,34 @@
   "D-010-R316",
   "D-010-R317",
   "D-010-R318",
-  "D-010-R319"
+  "D-010-R319",
+  "D-010-R320",
+  "D-010-R321",
+  "D-010-R322",
+  "D-010-R323",
+  "D-010-R324",
+  "D-010-R325",
+  "D-010-R326",
+  "D-010-R327",
+  "D-010-R328",
+  "D-010-R329",
+  "D-010-R330",
+  "D-010-R331",
+  "D-010-R332",
+  "D-010-R333",
+  "D-010-R334",
+  "D-010-R335",
+  "D-010-R336",
+  "D-010-R337",
+  "D-010-R338",
+  "D-010-R339",
+  "D-010-R340",
+  "D-010-R341",
+  "D-010-R342",
+  "D-010-R343"
  ],
  "created_at": "2026-08-07T01:09:55+00:00",
- "updated_at": "2026-08-09T08:00:00+00:00",
+ "updated_at": "2026-08-09T10:00:00+00:00",
  "audit_log": [
   {
    "at": "2026-08-07T01:09:55+00:00",
@@ -828,6 +861,12 @@
    "actor": "orchestrator",
    "action": "amendment-captured",
    "detail": "source-028 captured (PRIORITY CORRECTION: implement/test/prove automatic Fable->Opus turnover as M0-T054, now an immediate blocking dependency of M2-T015 3k; protected allowlist add authorized; R304-R319); supersedes R302 scheduling; frozen base 7cd3273dde65e8cabbe3dfa163833513985bb841"
+  },
+  {
+   "at": "2026-08-09T10:00:00+00:00",
+   "actor": "orchestrator",
+   "action": "amendment-captured",
+   "detail": "source-029 captured (product-efficiency directive: lean control-plane + concise code without weakening safety; Phase 1 authorized now; R320-R343); frozen base 14abf8e"
   }
  ]
 }
