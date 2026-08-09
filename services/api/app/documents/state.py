@@ -22,6 +22,19 @@ Entry into the machine is not a transition: the S1 upload gate creates the docum
 record already in ``uploaded`` (:data:`INITIAL_STATE`); a stream-cap failure before
 durable storage is a typed API error with no record at all.
 
+H5 promotion-gate wiring: the three evidence-promoting edges — ``processing ->
+auto_extracted`` and both professional-confirmation edges
+(:data:`PROMOTION_GATED_TRANSITIONS`) — carry a PRECONDITION on top of the table's
+authority check. :func:`promotion_gated_transition` is the lifecycle entry for those
+edges: it refuses them unless the caller proves the evidence by submitting a frozen
+typed :class:`~app.documents.promotion.PromotionAllowed` verdict for EVERY material
+fact, then delegates the authority decision unchanged to :func:`transition`. The gate
+adds a precondition, never a new authority, and it adds no AI channel: the only value
+weighed is an ``isinstance`` check against the deterministic gate's own allowed
+verdict, so a confidence, classification, or model output can neither trigger nor
+veto a transition — it simply fails the check and the edge is refused with the same
+typed :class:`IllegalTransition` the machine already uses.
+
 Error-hierarchy reconciliation: the state machine's refusals are MEMBERS of the
 module-wide typed hierarchy in ``errors.py``, not a parallel one. Each class below
 subclasses its ``errors.py`` counterpart (:class:`IllegalTransition` IS the raised form
@@ -33,6 +46,7 @@ payloads — both catch the same raised object.
 
 from __future__ import annotations
 
+from collections.abc import Mapping
 from dataclasses import dataclass
 from datetime import datetime
 from enum import Enum
@@ -44,10 +58,12 @@ from app.documents.errors import (
     TransitionReasonRequiredError,
     UnauthorizedTransitionActorError,
 )
+from app.documents.promotion import PromotionAllowed
 
 __all__ = [
     "ALLOWED_TRANSITIONS",
     "INITIAL_STATE",
+    "PROMOTION_GATED_TRANSITIONS",
     "TERMINAL_STATES",
     "ActorKind",
     "DocumentState",
@@ -60,6 +76,7 @@ __all__ = [
     "UnauthorizedTransitionActor",
     "allowed_transitions_from",
     "is_terminal",
+    "promotion_gated_transition",
     "transition",
 ]
 
@@ -113,17 +130,33 @@ class IllegalTransition(IllegalTransitionError, DocumentStateError):
     :class:`~app.documents.errors.IllegalTransitionError` (``reject_code``
     ``illegal_transition``). Carries the edge as :class:`DocumentState` members on
     ``from_state``/``to_state`` and their string values in the structured payload.
+
+    Also the typed refusal of the H5 promotion gate
+    (:func:`promotion_gated_transition`): a gated edge whose evidence precondition
+    is unproven is an illegal transition for that document, with the gate's stated
+    reason in ``gate_refusal`` — the same class, never a new ad-hoc exception.
     """
 
-    def __init__(self, from_state: DocumentState, to_state: DocumentState) -> None:
+    def __init__(
+        self,
+        from_state: DocumentState,
+        to_state: DocumentState,
+        gate_refusal: str | None = None,
+    ) -> None:
+        detail = (
+            "is not an edge of the section-4 transition table"
+            if gate_refusal is None
+            else f"is refused by the H5 promotion gate: {gate_refusal}"
+        )
         super().__init__(
             f"illegal document state transition: {from_state.value!r} -> {to_state.value!r} "
-            "is not an edge of the section-4 transition table",
+            f"{detail}",
             from_state=from_state.value,
             to_state=to_state.value,
         )
         self.from_state = from_state
         self.to_state = to_state
+        self.gate_refusal = gate_refusal
 
 
 class UnauthorizedTransitionActor(UnauthorizedTransitionActorError, DocumentStateError):
@@ -369,6 +402,89 @@ def transition(
         occurred_at=occurred_at,
         reason=reason,
     )
+
+
+#: The H5-gated evidence-promoting edges: promotion into ``auto_extracted`` and both
+#: professional-confirmation edges. Exactly these three edges carry the promotion-gate
+#: precondition; every other edge of the section-4 table is untouched by the gate.
+PROMOTION_GATED_TRANSITIONS: frozenset[tuple[DocumentState, DocumentState]] = frozenset(
+    {
+        (DocumentState.PROCESSING, DocumentState.AUTO_EXTRACTED),
+        (DocumentState.AUTO_EXTRACTED, DocumentState.PROFESSIONALLY_CONFIRMED),
+        (DocumentState.NEEDS_REVIEW, DocumentState.PROFESSIONALLY_CONFIRMED),
+    }
+)
+
+
+def _promotion_gate_refusal(material_fact_verdicts: object) -> str | None:
+    """The stated reason a submission fails the H5 gate, or ``None`` when it proves it.
+
+    Fail-closed and structural: the ONLY object that counts as proof for a material
+    fact is the frozen typed :class:`~app.documents.promotion.PromotionAllowed` the
+    deterministic ``evaluate_promotion`` returned for that fact. A
+    ``PromotionRefused`` is already-refused typed evidence and refuses here too;
+    every other value — a confidence number, an AI classification, model output, or
+    any ad-hoc object — is not typed evidence at all and refuses identically. No
+    code path here reads a confidence, score, or model output.
+    """
+    if not isinstance(material_fact_verdicts, Mapping):
+        return (
+            "no material-fact promotion verdicts were submitted; this edge requires "
+            "a PromotionAllowed verdict from app.documents.promotion for every "
+            "material fact"
+        )
+    if not material_fact_verdicts:
+        return (
+            "the material-fact verdict mapping is empty; zero submitted verdicts "
+            "prove nothing about the document's evidence (fail-closed)"
+        )
+    for fact_id, verdict in material_fact_verdicts.items():
+        if not isinstance(fact_id, str) or not fact_id.strip():
+            return f"material-fact id {fact_id!r} is not a non-empty string"
+        if not isinstance(verdict, PromotionAllowed):
+            return (
+                f"material fact {fact_id!r} does not carry a PromotionAllowed "
+                f"verdict (got {type(verdict).__name__}); a PromotionRefused, a "
+                "confidence, or any other value never promotes"
+            )
+    return None
+
+
+def promotion_gated_transition(
+    current: DocumentState,
+    to: DocumentState,
+    *,
+    actor: TransitionActor,
+    occurred_at: datetime,
+    reason: str | None = None,
+    material_fact_verdicts: Mapping[str, object] | None = None,
+) -> TransitionRecord:
+    """:func:`transition` plus the H5 promotion-gate precondition.
+
+    The lifecycle entry point for the three :data:`PROMOTION_GATED_TRANSITIONS`
+    edges: before the table's authority check runs, the caller must PROVE the
+    evidence precondition by submitting ``material_fact_verdicts`` — a mapping from
+    material-fact id to the frozen typed verdict ``evaluate_promotion`` returned
+    for that fact — with a :class:`~app.documents.promotion.PromotionAllowed` for
+    EVERY entry. A missing, empty, partial, refused, or non-typed submission raises
+    the same typed :class:`IllegalTransition` the machine already uses, carrying
+    the gate's stated reason. On any other edge the gate is inert and this function
+    behaves exactly like :func:`transition`.
+
+    The gate adds a precondition, not a new authority: edge legality, actor
+    authority, and reason requirements remain decided solely by :func:`transition`
+    and the section-4 table. And it adds no AI channel: the only value weighed is
+    an ``isinstance`` check against the deterministic gate's own allowed verdict,
+    so no confidence, classification, or model output can trigger or veto a
+    transition — such a value simply fails the check and the edge is refused.
+    """
+    _require_state(current, "current")
+    _require_state(to, "to")
+    if (current, to) in PROMOTION_GATED_TRANSITIONS:
+        refusal = _promotion_gate_refusal(material_fact_verdicts)
+        if refusal is not None:
+            raise IllegalTransition(current, to, refusal)
+    return transition(current, to, actor=actor, occurred_at=occurred_at, reason=reason)
 
 
 def allowed_transitions_from(state: DocumentState) -> frozenset[DocumentState]:
