@@ -1,0 +1,30 @@
+{
+  "_expected_failure": "M2-T015: units key omitted entirely. The key is REQUIRED and explicitly null when unitless, so absent units are always a visible statement - mixed-unit and decimal-ambiguity surveys are a core fixture class of this task and a silently unit-less dimension would hide exactly that defect.",
+  "evidence_id": "sev:test-fixture-synthetic:c0ffee01:p1:001",
+  "bbl": "1000010010",
+  "document_digest": "sha256:c0ffee01c0ffee01c0ffee01c0ffee01c0ffee01c0ffee01c0ffee01c0ffee01",
+  "page_number": 1,
+  "location": {
+    "kind": "bounding_box",
+    "bounding_box": {
+      "x_min": 96.0,
+      "y_min": 402.5,
+      "x_max": 318.25,
+      "y_max": 418.0,
+      "coordinate_space": "pdf_user_space_points"
+    }
+  },
+  "fact_type": "boundary_segment_distance",
+  "original_value": "125.00'",
+  "normalized_value": 125.0,
+  "extraction_method": "embedded_text_extraction",
+  "extracted_at": "2026-08-08T12:00:00Z",
+  "confidence": 1.0,
+  "validation_results": [],
+  "correction_history": [],
+  "professional_confirmation": {
+    "state": "unconfirmed",
+    "confirmed_by": null,
+    "confirmed_at": null
+  }
+}

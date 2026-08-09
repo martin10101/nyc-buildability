@@ -1,0 +1,40 @@
+{
+  "evidence_id": "sev:test-fixture-synthetic:c0ffee02:p2:012",
+  "bbl": "1000010010",
+  "document_digest": "sha256:c0ffee02c0ffee02c0ffee02c0ffee02c0ffee02c0ffee02c0ffee02c0ffee02",
+  "page_number": 2,
+  "location": {
+    "kind": "bounding_box",
+    "bounding_box": {
+      "x_min": 1710.0,
+      "y_min": 120.0,
+      "x_max": 1840.0,
+      "y_max": 290.0,
+      "coordinate_space": "raster_pixels"
+    }
+  },
+  "fact_type": "north_arrow_orientation",
+  "original_value": {
+    "classified_symbol": "north_arrow",
+    "azimuth_degrees": 347.0
+  },
+  "normalized_value": 347.0,
+  "units": "degrees",
+  "extraction_method": "ai_assisted_classification",
+  "extraction_run_id": "ser:test-fixture-synthetic:run-0002",
+  "extracted_at": "2026-08-08T12:06:00Z",
+  "confidence": 0.98,
+  "validation_results": [
+    {
+      "check_id": "north_orientation",
+      "status": "unresolved",
+      "detail": "No independent deterministic corroboration available: the line/symbol detector could not locate the arrow geometry on this poor-quality scan, so the AI-classified orientation cannot be independently validated. High model confidence does not promote the value; it fails closed as a visible unresolved condition and never becomes canonical orientation."
+    }
+  ],
+  "correction_history": [],
+  "professional_confirmation": {
+    "state": "unconfirmed",
+    "confirmed_by": null,
+    "confirmed_at": null
+  }
+}

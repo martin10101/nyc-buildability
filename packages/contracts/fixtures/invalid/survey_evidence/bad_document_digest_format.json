@@ -1,0 +1,31 @@
+{
+  "_expected_failure": "M2-T015: document_digest 'md5:abc' violates the raw_bytes_digest_sha256 pattern '^sha256:[0-9a-f]{64}$'. Only the documented SHA-256 raw-bytes form is a legal document digest; weaker or unlabeled hash forms are rejected so original-document identity is never ambiguous.",
+  "evidence_id": "sev:test-fixture-synthetic:c0ffee01:p1:001",
+  "bbl": "1000010010",
+  "document_digest": "md5:abc",
+  "page_number": 1,
+  "location": {
+    "kind": "bounding_box",
+    "bounding_box": {
+      "x_min": 96.0,
+      "y_min": 402.5,
+      "x_max": 318.25,
+      "y_max": 418.0,
+      "coordinate_space": "pdf_user_space_points"
+    }
+  },
+  "fact_type": "boundary_segment_distance",
+  "original_value": "125.00'",
+  "normalized_value": 125.0,
+  "units": "feet",
+  "extraction_method": "embedded_text_extraction",
+  "extracted_at": "2026-08-08T12:00:00Z",
+  "confidence": 1.0,
+  "validation_results": [],
+  "correction_history": [],
+  "professional_confirmation": {
+    "state": "unconfirmed",
+    "confirmed_by": null,
+    "confirmed_at": null
+  }
+}

@@ -1,0 +1,47 @@
+{
+  "evidence_id": "sev:test-fixture-synthetic:c0ffee02:p1:004",
+  "bbl": "1000010010",
+  "document_digest": "sha256:c0ffee02c0ffee02c0ffee02c0ffee02c0ffee02c0ffee02c0ffee02c0ffee02",
+  "page_number": 1,
+  "location": {
+    "kind": "bounding_box",
+    "bounding_box": {
+      "x_min": 210.0,
+      "y_min": 1480.0,
+      "x_max": 655.0,
+      "y_max": 1516.0,
+      "coordinate_space": "raster_pixels"
+    }
+  },
+  "fact_type": "stated_lot_area",
+  "original_value": "AREA = 4,000 SQ. FT.",
+  "normalized_value": 4000,
+  "units": "square_feet",
+  "extraction_method": "ocr_text",
+  "extraction_tool": {
+    "name": "test-fixture-synthetic-ocr",
+    "version": "0.0.0"
+  },
+  "extraction_run_id": "ser:test-fixture-synthetic:run-0002",
+  "extracted_at": "2026-08-08T12:05:00Z",
+  "confidence": 0.97,
+  "validation_results": [
+    {
+      "check_id": "address_bbl_match",
+      "status": "pass",
+      "detail": null
+    },
+    {
+      "check_id": "area_vs_stated",
+      "status": "unresolved",
+      "detail": "Calculated polygon area unavailable: boundary reconstruction is incomplete (2 of 4 segment dimensions unreadable on this scan), so the stated area cannot be independently validated. Fact fails closed; OCR value stays advisory and the unresolved condition is surfaced for review.",
+      "expected_value": 4000
+    }
+  ],
+  "correction_history": [],
+  "professional_confirmation": {
+    "state": "unconfirmed",
+    "confirmed_by": null,
+    "confirmed_at": null
+  }
+}

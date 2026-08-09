@@ -97,6 +97,20 @@ SCENARIO_SCHEMA_FILES = (
     "common.schema.json",
 )
 
+# FOURTH GENERATED TS ARTIFACT (task M2-T015): the survey_evidence contract.
+# Generated INDEPENDENTLY of the other three artifacts so property_profile.ts,
+# rule_evaluation.ts, and scenario.ts all stay byte-identical (mirrors the
+# M4-T005/M5-T001 pattern). survey_evidence only $refs common (never
+# property_profile or source_fact - it is a SIBLING per-fact provenance record
+# joined by document_digest, not an embedding).
+SURVEY_EVIDENCE_OUTPUT_PATH = (
+    Path(__file__).resolve().parents[1] / "generated" / "survey_evidence.ts"
+)
+SURVEY_EVIDENCE_SCHEMA_FILES = (
+    "survey_evidence.schema.json",
+    "common.schema.json",
+)
+
 # ---------------------------------------------------------------------------
 # Schema loading + $ref resolution across the four files
 # ---------------------------------------------------------------------------
@@ -208,6 +222,17 @@ SCENARIO_NAMED_DEFS: dict[tuple[str, str], str] = {
     ("scenario.schema.json", "/$defs/assumption"): "ScenarioAssumption",
     ("scenario.schema.json", "/$defs/coverage_matrix_row"): "CoverageMatrixRow",
     ("scenario.schema.json", "/$defs/integrity_check"): "IntegrityCheck",
+}
+
+# Named aliases for the survey_evidence artifact (task M2-T015). A SEPARATE map
+# so the other three emissions are untouched and their .ts files stay
+# byte-identical. Shared scalars are re-declared in survey_evidence.ts so the
+# generated file is standalone.
+SURVEY_EVIDENCE_NAMED_DEFS: dict[tuple[str, str], str] = {
+    ("common.schema.json", "/$defs/bbl"): "Bbl",
+    ("common.schema.json", "/$defs/non_empty_string"): "NonEmptyString",
+    ("common.schema.json", "/$defs/date_time"): "DateTime",
+    ("survey_evidence.schema.json", "/$defs/raw_bytes_digest_sha256"): "RawBytesDigestSha256",
 }
 
 
@@ -535,6 +560,92 @@ def write_scenario() -> int:
 
 
 # ---------------------------------------------------------------------------
+# survey_evidence artifact (task M2-T015)
+# ---------------------------------------------------------------------------
+
+
+def load_survey_evidence_schemas() -> dict[str, dict]:
+    """Return {filename: parsed schema} for the survey_evidence $ref set
+    (survey_evidence + common). Uses SCHEMA_DIR so a monkeypatched schema dir
+    is honored; callers guard the missing-file case (the property_profile
+    drift-test harness copies only the four profile schemas)."""
+    return {
+        name: json.loads((SCHEMA_DIR / name).read_text(encoding="utf-8"))
+        for name in SURVEY_EVIDENCE_SCHEMA_FILES
+    }
+
+
+def generate_survey_evidence() -> str:
+    """Generate the survey_evidence.ts source. Independent of generate(),
+    generate_rule_evaluation(), and generate_scenario() so the other three
+    .ts files stay byte-identical."""
+    schemas = load_survey_evidence_schemas()
+    root = schemas["survey_evidence.schema.json"]
+    resolver = Resolver(schemas, "survey_evidence.schema.json")
+
+    header = (
+        "// GENERATED FILE - DO NOT EDIT BY HAND.\n"
+        "// Source of truth: packages/contracts/schemas/v1/survey_evidence.schema.json\n"
+        "// (+ common). Regenerate with:\n"
+        "//   python packages/contracts/scripts/generate_ts_types.py\n"
+        "// CI fails if this file diverges from a fresh generation (task M2-T015).\n"
+        "//\n"
+        "// One canonical per-fact survey-evidence contract shared by API, workers,\n"
+        "// and the evidence UI (PRD section 32.3). Document-extracted facts carry\n"
+        "// document/page/location identity (document_digest, page_number,\n"
+        "// location); original_value is immutable, correction_history is\n"
+        "// append-only, and nothing is born professionally confirmed -\n"
+        "// confidence never promotes a value (fail-closed principle).\n"
+    )
+
+    body: list[str] = [header]
+    body.extend(emit_named_defs(schemas, SURVEY_EVIDENCE_NAMED_DEFS))
+
+    root_expr = object_expr(root, resolver, 0, SURVEY_EVIDENCE_NAMED_DEFS)
+    body.append(f"export interface SurveyEvidence {root_expr}\n")
+
+    return "\n".join(block.rstrip("\n") for block in body) + "\n"
+
+
+def check_survey_evidence() -> int:
+    """--check half for survey_evidence.ts: exit non-zero unless the committed
+    file is byte-identical to a fresh generation. Skips (rc 0) when the active
+    schema dir has no survey_evidence.schema.json (the property_profile
+    drift-test harness copies only the four profile schemas; real CI always
+    has the file)."""
+    if not (SCHEMA_DIR / "survey_evidence.schema.json").exists():
+        return 0
+    generated = generate_survey_evidence()
+    if not SURVEY_EVIDENCE_OUTPUT_PATH.exists():
+        sys.stderr.write(
+            f"ERROR: {SURVEY_EVIDENCE_OUTPUT_PATH} is missing; run the generator and commit it.\n"
+        )
+        return 1
+    if SURVEY_EVIDENCE_OUTPUT_PATH.read_text(encoding="utf-8") != generated:
+        sys.stderr.write(
+            "ERROR: generated survey_evidence TypeScript types are out of date.\n"
+            "Run: python packages/contracts/scripts/generate_ts_types.py\n"
+            "and commit packages/contracts/generated/survey_evidence.ts.\n"
+        )
+        return 1
+    sys.stdout.write("OK: generated survey_evidence TypeScript types are up to date.\n")
+    return 0
+
+
+def write_survey_evidence() -> int:
+    """Write mode for survey_evidence.ts. Skips when the active schema dir has
+    no survey_evidence.schema.json (see check_survey_evidence)."""
+    if not (SCHEMA_DIR / "survey_evidence.schema.json").exists():
+        return 0
+    SURVEY_EVIDENCE_OUTPUT_PATH.parent.mkdir(parents=True, exist_ok=True)
+    SURVEY_EVIDENCE_OUTPUT_PATH.write_text(
+        generate_survey_evidence(), encoding="utf-8", newline="\n"
+    )
+    sys.stdout.write(f"wrote {SURVEY_EVIDENCE_OUTPUT_PATH}\n")
+    return 0
+
+
+# ---------------------------------------------------------------------------
 # Client SUPPORTED_CONTRACT_VERSIONS block (task M2-T010)
 # ---------------------------------------------------------------------------
 
@@ -688,7 +799,8 @@ def main() -> int:
         rc_client = check_client_block(schemas)
         rc_rule = check_rule_evaluation()
         rc_scenario = check_scenario()
-        return rc_client or rc_rule or rc_scenario
+        rc_survey = check_survey_evidence()
+        return rc_client or rc_rule or rc_scenario or rc_survey
 
     OUTPUT_PATH.parent.mkdir(parents=True, exist_ok=True)
     OUTPUT_PATH.write_text(generated, encoding="utf-8", newline="\n")
@@ -696,7 +808,8 @@ def main() -> int:
     rc_client = write_client_block(schemas)
     rc_rule = write_rule_evaluation()
     rc_scenario = write_scenario()
-    return rc_client or rc_rule or rc_scenario
+    rc_survey = write_survey_evidence()
+    return rc_client or rc_rule or rc_scenario or rc_survey
 
 
 if __name__ == "__main__":

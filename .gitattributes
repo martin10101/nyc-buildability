@@ -9,3 +9,8 @@ project-control/directives/** text eol=lf
 # captured registry text (D-004-R685, SHA-256 426da3bb...). Pin LF so checked-out
 # bytes match the recorded digest on every platform.
 .claude/CODEX_CLAUDE_SUPERVISOR_BUILD_DIRECTIVE_v4.3.md text eol=lf
+
+# M2-T015 survey fixture pack: binary fixtures (exact bytes, sha256-pinned in MANIFEST)
+services/api/tests/documents/fixtures/survey_documents/*.pdf binary
+services/api/tests/documents/fixtures/survey_documents/*.png binary
+services/api/tests/documents/fixtures/survey_documents/*.tiff binary

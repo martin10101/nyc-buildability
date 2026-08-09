@@ -1,0 +1,310 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/martin10101/nyc-buildability/packages/contracts/schemas/v1/survey_evidence.schema.json",
+  "title": "Survey Evidence Fact (Per-Fact Document Provenance Record)",
+  "description": "Canonical v1 contract for ONE fact extracted from an uploaded survey / official document (task M2-T015 Packet B, owner directive 2026-07-20 section 3; contract-first unit). Every extracted fact preserves the full evidence record the directive requires: original document digest, page number, bounding box or object reference, original detected text/value, normalized value and units, extraction method, confidence, validation results, correction history, and professional-confirmation state. EXTRACTION DOCTRINE: the pipeline is never 'OCR reads the survey' - extraction_method records which per-format path (docs/SURVEY_DOCUMENT_FORMAT_POLICY.md) actually produced the detection, and OCR output is advisory, never authoritative. FAIL-CLOSED PRINCIPLE: no value in this record becomes canonical geometry or a material buildability input because confidence is high; only deterministic validation plus qualified-human confirmation promote it, and a material value that cannot be independently validated must surface as a visible 'unresolved' validation result, never a silent pass. RELATIONSHIP TO source_fact: this is a SIBLING canonical provenance record, not a replacement - document-extracted facts have document/page/location identity (document_digest, page_number, location) where API-retrieved facts have dataset/request lineage (dataset_version, request_url); both share common.schema.json definitions and the same provenance discipline (PRD section 9). Document-LEVEL provenance (original filename, uploader, upload timestamp, declared class, sniffed MIME type, storage location) lives on the document ingestion record defined by docs/SURVEY_DOCUMENT_INGESTION_ARCHITECTURE.md and is joined via document_digest; it is deliberately not duplicated per fact. CLOSED CONTRACT: additionalProperties:false from birth (following the M2-T017 source_fact hardening) so an undocumented or mistyped key is rejected, never silently accepted. SCOPE: hand-authored, static, versioned by the /v1/ $id directory; changes within v1 are additive only (new OPTIONAL keys, additive enum extensions). Not yet a TypeScript typegen target: the first cross-tier TS consumer is the Packet C UI (M2-T016), and joining packages/contracts/scripts SCHEMA_FILES is an additive follow-up decided with it.",
+  "$comment": "survey_evidence contract version 1.0.0. Storage honesty: production private-object storage is blocked by B-001, which is why document_ref is optional - document_digest, not a storage reference, is the content identity of the original.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "evidence_id",
+    "bbl",
+    "document_digest",
+    "page_number",
+    "location",
+    "fact_type",
+    "original_value",
+    "normalized_value",
+    "units",
+    "extraction_method",
+    "extracted_at",
+    "confidence",
+    "validation_results",
+    "correction_history",
+    "professional_confirmation"
+  ],
+  "properties": {
+    "evidence_id": {
+      "$ref": "common.schema.json#/$defs/non_empty_string",
+      "description": "Stable identifier of this evidence record, unique platform-wide; downstream consumers reference facts by this id. Construction is implementation-defined and documented by the ingestion module (suggested: 'sev:<document-digest-prefix>:p<page>:<sequence>'). Synthetic/test records must use a clearly non-official construction."
+    },
+    "bbl": {
+      "$ref": "common.schema.json#/$defs/bbl",
+      "description": "TARGET property BBL the document upload was submitted against. This is the upload INTENT, never a verified association: the address_bbl_match validation result records whether the document actually pertains to this property, and a mismatching document is flagged, never silently ingested into the property's evidence (acceptance scenario SB-S7)."
+    },
+    "document_digest": {
+      "$ref": "#/$defs/raw_bytes_digest_sha256",
+      "description": "REQUIRED content digest of the EXACT ORIGINAL uploaded bytes ('sha256:' + 64 lowercase hex over raw bytes - NOT the canonical-JSON digest form). The original is stored immutably; this digest ties every extracted fact to that immutable original, and all facts extracted from one document share it. When extraction ran on a converted derivative (e.g. DXF converted to vector PDF under a future validated converter), this key still digests the ORIGINAL upload; the conversion lineage lives on the document ingestion record."
+    },
+    "document_ref": {
+      "$ref": "common.schema.json#/$defs/non_empty_string",
+      "description": "OPTIONAL platform identifier of the document ingestion record this fact was extracted from (join key alongside document_digest). Optional because production private-object storage and its record ids are blocked by B-001; document_digest, not this reference, is the content identity, so the evidence record stays complete without it."
+    },
+    "page_number": {
+      "type": "integer",
+      "minimum": 1,
+      "description": "1-based page index within the ORIGINAL document on which this fact was detected. Single-image uploads (PNG/JPEG, single-frame TIFF) use 1; each frame of a multi-frame TIFF counts as one page. Page identity is preserved per fact so a reviewer can open the exact page of the immutable original."
+    },
+    "location": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["kind"],
+      "description": "WHERE on the page the fact was detected: a bounding box (raster paths, text runs) or a reference to the source content object (vector-object extraction), per the directive's 'bounding box or object reference'. kind selects which locator is mandatory; a vector_object location MAY additionally carry a bounding_box for display highlighting.",
+      "properties": {
+        "kind": {
+          "type": "string",
+          "enum": ["bounding_box", "vector_object"],
+          "description": "PLATFORM-DEFINED locator discriminator. 'bounding_box': the fact is located by page-region coordinates (OCR, line/symbol detection, embedded-text runs, AI-classified regions). 'vector_object': the fact is located by a stable reference to a vector content object of the open PDF container (vector-object extraction path)."
+        },
+        "bounding_box": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["x_min", "y_min", "x_max", "y_max", "coordinate_space"],
+          "description": "Axis-aligned page-region rectangle. x_min <= x_max and y_min <= y_max are enforced by the deterministic validation code (cross-field numeric comparison is outside this contract's keyword subset); the contract enforces presence, types, and the declared coordinate space.",
+          "properties": {
+            "x_min": { "type": "number", "description": "Left edge in the declared coordinate_space." },
+            "y_min": { "type": "number", "description": "Lower edge (pdf_user_space_points) or top edge (raster_pixels) in the declared coordinate_space." },
+            "x_max": { "type": "number", "description": "Right edge in the declared coordinate_space." },
+            "y_max": { "type": "number", "description": "Upper edge (pdf_user_space_points) or bottom edge (raster_pixels) in the declared coordinate_space." },
+            "coordinate_space": {
+              "type": "string",
+              "enum": ["pdf_user_space_points", "raster_pixels"],
+              "description": "Coordinate space the box is expressed in - never guessed. 'pdf_user_space_points': default PDF user space of the UNROTATED page, 1 unit = 1/72 inch (ISO 32000 default; a page-level UserUnit override, where present, is recorded by the implementation on the document record), origin lower-left, y increases upward. 'raster_pixels': pixel coordinates of the decoded page/frame image, origin top-left, y increases downward. Page coordinates are NEVER survey/world coordinates; geo-interpretation is a deterministic-check concern, not a locator concern."
+            }
+          }
+        },
+        "object_reference": {
+          "$ref": "common.schema.json#/$defs/non_empty_string",
+          "description": "Stable implementation-documented reference to the vector content object the fact came from (e.g. a page content-stream object path). Meaningful only for the vector-object extraction path of the open PDF container; construction is documented by the ingestion module and must be stable for the stored immutable original."
+        }
+      },
+      "allOf": [
+        {
+          "$comment": "kind 'bounding_box' => bounding_box is required; kind 'vector_object' => object_reference is required. Encoded with anyOf/const because if/then is outside the validate_contracts.py keyword subset (same pattern as property_profile reproducibility.staleness).",
+          "anyOf": [
+            { "properties": { "kind": { "const": "vector_object" } } },
+            { "required": ["bounding_box"] }
+          ]
+        },
+        {
+          "anyOf": [
+            { "properties": { "kind": { "const": "bounding_box" } } },
+            { "required": ["object_reference"] }
+          ]
+        }
+      ]
+    },
+    "fact_type": {
+      "$ref": "common.schema.json#/$defs/non_empty_string",
+      "description": "PLATFORM-DEFINED classification of WHAT this fact is, e.g. 'boundary_segment_distance', 'boundary_bearing', 'stated_lot_area', 'scale_statement', 'north_arrow_orientation', 'elevation_value', 'address_text'. OPEN-WITH-FLAG: deliberately an open non-empty string in contract 1.0.0 - the closed taxonomy is produced by the M2-T015 implementation unit together with its deterministic checks and lands as an additive enum then (mirrors the v1 precedent of not enumerating zoning district codes before the grounding work exists). The examples here are illustrative, grounded in the deterministic checks the task objective names; they are not a closed set."
+    },
+    "original_value": {
+      "description": "Verbatim value as DETECTED by the extraction path, before any cleanup, trimming, correction, or normalization: for OCR the raw recognized text, for embedded-text extraction the exact text-run content, for vector-object extraction the raw object data (may be structured JSON), for AI-assisted classification the schema-constrained model output verbatim. Any JSON type. IMMUTABLE: corrections change normalized_value via correction_history entries and NEVER touch this key - the original detection stays visible forever, mirroring the immutability of the original document bytes."
+    },
+    "normalized_value": {
+      "description": "Platform-normalized value derived DETERMINISTICALLY from original_value by normalization code - never by AI (CLAUDE.md principle 1). Any JSON type. When a recorded correction exists, this key holds the CURRENT (post-correction) value and correction_history preserves every prior value; when validation cannot independently confirm a material normalized value, the fact fails closed via an 'unresolved' validation result rather than this key being silently blanked or coerced."
+    },
+    "units": {
+      "type": ["string", "null"],
+      "description": "Units of normalized_value; REQUIRED key, explicitly null when the fact is unitless (e.g. address text), so absence of units is always a visible statement, never a silent omission. Open vocabulary in 1.0.0 (mirrors source_fact.units); survey-relevant examples: 'feet', 'square_feet', 'degrees', 'feet_per_inch'. Units are stated by deterministic normalization, never guessed: a unit-ambiguous detection (mixed units, decimal ambiguity - both fixture classes of the task objective) keeps original_value verbatim and surfaces the ambiguity as a failing/unresolved units_consistency validation result, never as a silently guessed unit."
+    },
+    "extraction_method": {
+      "type": "string",
+      "enum": [
+        "vector_object_extraction",
+        "embedded_text_extraction",
+        "ocr_text",
+        "line_symbol_detection",
+        "ai_assisted_classification",
+        "deterministic_geometry_reconstruction"
+      ],
+      "description": "PLATFORM-DEFINED CLOSED enum of the per-format extraction paths the M2-T015 extraction doctrine and docs/SURVEY_DOCUMENT_FORMAT_POLICY.md authorize - never an improvised parser. 'vector_object_extraction': vector/CAD object extraction from the open PDF container (vector PDF path). 'embedded_text_extraction': embedded PDF text-layer extraction (born-digital PDF path). 'ocr_text': OCR on scanned/raster text - ADVISORY ONLY, never authoritative geometry or authoritative text (format policy rows 3-5). 'line_symbol_detection': line/symbol detection on scanned geometry - advisory raster interpretation. 'ai_assisted_classification': bounded, schema-constrained AI classification; its output NEVER becomes canonical geometry or a material input without independent deterministic validation (fail-closed principle). 'deterministic_geometry_reconstruction': a DERIVED fact produced deterministically from already-extracted primitives (e.g. a reconstructed boundary polygon), carrying its own validation results. Unapproved formats/paths (e.g. native DWG parsing - format policy row 7, DEFERRED) are rejected at ingestion and can never appear here; new paths are added ADDITIVELY only after the format policy approves them."
+    },
+    "extraction_tool": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name", "version"],
+      "description": "OPTIONAL tool provenance of the extraction that produced this detection (mirrors the format policy's conversion rule 'records the tool + version'). Both keys required when the object is present - a tool without a version is not reproducible.",
+      "properties": {
+        "name": {
+          "$ref": "common.schema.json#/$defs/non_empty_string",
+          "description": "Extractor/library identifier as pinned in the dependency manifest."
+        },
+        "version": {
+          "$ref": "common.schema.json#/$defs/non_empty_string",
+          "description": "Exact pinned version of the extractor actually used for this detection."
+        }
+      }
+    },
+    "extraction_run_id": {
+      "$ref": "common.schema.json#/$defs/non_empty_string",
+      "description": "OPTIONAL identifier of the extraction run (one isolated processing job over one document - a job that runs only inside the verified, fail-closed parser isolation boundary of docs/SURVEY_DOCUMENT_INGESTION_ARCHITECTURE.md section 5, kernel-enforced and proven by a capability probe; a plain child process is never that boundary, and when the boundary cannot be verified parsing is disabled with a typed isolation_unavailable outcome, so no run - and therefore no run id - can ever come from unisolated parsing); all facts produced by the same run share it, so a whole extraction can be traced, reviewed, or superseded together (analogous to the retrieval-event segment of source_fact.observation_id). A re-extraction of the same document mints a NEW run id and NEW evidence records; it never mutates existing ones."
+    },
+    "extracted_at": {
+      "$ref": "common.schema.json#/$defs/date_time",
+      "description": "Timestamp at which the extraction run produced this detection (RFC 3339). Extraction time, not upload time - the upload timestamp lives on the document ingestion record."
+    },
+    "confidence": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 1,
+      "description": "Extraction-path confidence in the DETECTION, 0-1: deterministic reads of digitally-authored content (vector objects, embedded text) use 1; OCR, line/symbol detection, and AI-assisted classification report their model confidence. FAIL-CLOSED (task objective; PRD section 12): confidence NEVER promotes a value - a high-confidence value that cannot be independently validated still fails closed into a visible unresolved condition, and confidence never substitutes for validation results or professional confirmation."
+    },
+    "validation_results": {
+      "type": "array",
+      "description": "REQUIRED results of the deterministic checks run against this fact. An EMPTY array is the visible statement 'no deterministic check has run yet' (e.g. mid-processing); the backend state machine, not this contract, forbids a fact with material influence from resting in that state. Checks are deterministic code - never AI - and every non-passing outcome stays visible here rather than being dropped or coerced.",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["check_id", "status", "detail"],
+        "properties": {
+          "check_id": {
+            "type": "string",
+            "enum": [
+              "address_bbl_match",
+              "units_consistency",
+              "scale_consistency",
+              "north_orientation",
+              "boundary_closure",
+              "area_vs_stated",
+              "segment_sum",
+              "contradictory_dimensions",
+              "geometry_validity",
+              "elevation_consistency",
+              "tax_lot_geometry_comparison"
+            ],
+            "description": "PLATFORM-DEFINED CLOSED enum, grounded verbatim in the M2-T015 required deterministic checks: address/BBL matching, units, scale, north/orientation, boundary closure, calculated-vs-stated area, segment sums, contradictory dimensions, geometry validity, elevations where present, and comparison against accepted tax-lot geometry. Only the checks actually run against THIS fact appear in its array (not every check applies to every fact type). 'tax_lot_geometry_comparison' records divergence from MapPLUTO/tax-lot geometry as a TYPED comparison result - the cross-check NEVER silently overrides a licensed survey (acceptance scenario SB-S4). New checks are added ADDITIVELY with the implementation that grounds them."
+          },
+          "status": {
+            "type": "string",
+            "enum": ["pass", "fail", "unresolved"],
+            "description": "PLATFORM-DEFINED check outcome. 'pass': the deterministic check confirmed the value. 'fail': the check ran and found a contradiction (e.g. boundary fails to close, calculated area diverges from stated area). 'unresolved': the check could NOT independently validate the value (incomplete reconstruction, missing corroborating data, reference source unavailable) - the fail-closed visible unresolved condition the task objective requires; never silently omitted, never coerced to pass."
+          },
+          "detail": {
+            "type": ["string", "null"],
+            "description": "Human-readable explanation of the outcome; REQUIRED key so a missing explanation is visible. May be null ONLY on 'pass' (enforced below): every 'fail' and every 'unresolved' must state WHY, because a visible unresolved condition with no reason is not reviewable."
+          },
+          "expected_value": {
+            "description": "OPTIONAL reference value the check compared against (e.g. the stated lot area for area_vs_stated, the accepted tax-lot geometry area for tax_lot_geometry_comparison). Any JSON type; carries the comparison basis so the outcome is reproducible from the record."
+          },
+          "observed_value": {
+            "description": "OPTIONAL value the check actually computed/observed (e.g. the polygon area calculated from reconstructed boundary segments, a closure gap distance). Any JSON type."
+          }
+        },
+        "allOf": [
+          {
+            "$comment": "status 'fail' or 'unresolved' => detail must be a non-empty string (a visible failure/unresolved condition must say why). Encoded with anyOf/const because if/then is outside the keyword subset.",
+            "anyOf": [
+              { "properties": { "status": { "const": "pass" } } },
+              { "properties": { "detail": { "$ref": "common.schema.json#/$defs/non_empty_string" } } }
+            ]
+          }
+        ]
+      }
+    },
+    "correction_history": {
+      "type": "array",
+      "description": "REQUIRED APPEND-ONLY history of human corrections to this fact's normalized value/units, oldest first. An EMPTY array is the visible statement 'never corrected'. Entries are never edited or deleted; original_value is never touched by a correction; each entry preserves both the previous and the corrected value so every historical state is reconstructable (PRD section 9 provenance discipline applied to human input).",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "corrected_at",
+          "corrected_by_role",
+          "previous_normalized_value",
+          "corrected_normalized_value",
+          "previous_units",
+          "corrected_units",
+          "reason"
+        ],
+        "properties": {
+          "corrected_at": {
+            "$ref": "common.schema.json#/$defs/date_time",
+            "description": "Timestamp of the correction (RFC 3339)."
+          },
+          "corrected_by_role": {
+            "type": "string",
+            "enum": ["user", "qualified_professional"],
+            "description": "PLATFORM-DEFINED role that made the correction, grounded in the PRD section 5 confirm/correct flow ('user') and the qualified-human approval boundary ('qualified_professional' - e.g. a licensed surveyor or other qualified reviewer). Deterministic code never 'corrects' a fact: re-extraction creates NEW evidence records under a new extraction_run_id, and AI may never write a correction (CLAUDE.md principle 1)."
+          },
+          "corrected_by": {
+            "$ref": "common.schema.json#/$defs/non_empty_string",
+            "description": "OPTIONAL platform identifier of the correcting actor (account/reviewer id). Optional in 1.0.0 because the identity scheme is owned by the auth/storage design still blocked by B-001; the role above is always required."
+          },
+          "previous_normalized_value": {
+            "description": "The normalized value BEFORE this correction, preserved verbatim. Any JSON type."
+          },
+          "corrected_normalized_value": {
+            "description": "The normalized value AFTER this correction - equal to the record's current normalized_value when this is the latest entry. Any JSON type."
+          },
+          "previous_units": {
+            "type": ["string", "null"],
+            "description": "Units before this correction; REQUIRED key, null when unitless, so a unit change (e.g. a decimal/unit-ambiguity fix, a core task fixture class) is always visible."
+          },
+          "corrected_units": {
+            "type": ["string", "null"],
+            "description": "Units after this correction; REQUIRED key, null when unitless."
+          },
+          "reason": {
+            "$ref": "common.schema.json#/$defs/non_empty_string",
+            "description": "Non-empty human-readable reason for the correction (e.g. 'OCR misread the scale digit against the drawn graphic scale bar'). A correction with no stated reason is not reviewable and is rejected."
+          }
+        }
+      }
+    },
+    "professional_confirmation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["state", "confirmed_by", "confirmed_at"],
+      "description": "REQUIRED per-fact professional-confirmation state - the qualified-human approval boundary (CLAUDE.md principle 1; distinct from the DOCUMENT-level state machine uploaded/processing/auto_extracted/needs_review/rejected/professionally_confirmed in docs/SURVEY_DOCUMENT_INGESTION_ARCHITECTURE.md). confirmed_by and confirmed_at are REQUIRED KEYS that are explicitly null while unconfirmed and non-null once a qualified professional has acted, so the confirmation state is always fully stated, never inferred.",
+      "properties": {
+        "state": {
+          "type": "string",
+          "enum": ["unconfirmed", "confirmed", "rejected"],
+          "description": "PLATFORM-DEFINED confirmation state. 'unconfirmed': no qualified professional has reviewed this fact - the birth state of EVERY extracted fact regardless of extraction method, confidence, or validation results (nothing is born confirmed). 'confirmed': a qualified professional confirmed the normalized value. 'rejected': a qualified professional rejected the detection (a subsequent correction plus re-confirmation, or a re-extraction, produces the usable value). Only a qualified human - never AI, never a confidence score, never a passing check alone - moves a fact out of 'unconfirmed'."
+        },
+        "confirmed_by": {
+          "type": ["string", "null"],
+          "description": "Platform identifier of the qualified professional who confirmed/rejected the fact; null exactly while state is 'unconfirmed'. Licensure/qualification records are an auth-design concern (B-001-blocked) referenced by this identifier, not embedded here."
+        },
+        "confirmed_at": {
+          "type": ["string", "null"],
+          "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}(\\.[0-9]+)?(Z|[+-][0-9]{2}:[0-9]{2})$",
+          "description": "RFC 3339 timestamp of the confirmation/rejection; null exactly while state is 'unconfirmed' (pattern applies to the string form; mirrors common.schema.json date_time)."
+        },
+        "note": {
+          "type": ["string", "null"],
+          "description": "OPTIONAL free-text note from the confirming professional; never a substitute for a required field."
+        }
+      },
+      "allOf": [
+        {
+          "$comment": "state 'unconfirmed' => confirmed_by and confirmed_at are null; state 'confirmed'/'rejected' => both are non-null and well-formed. Encoded with anyOf/const because if/then is outside the keyword subset.",
+          "anyOf": [
+            {
+              "properties": {
+                "state": { "const": "unconfirmed" },
+                "confirmed_by": { "type": "null" },
+                "confirmed_at": { "type": "null" }
+              }
+            },
+            {
+              "properties": {
+                "state": { "enum": ["confirmed", "rejected"] },
+                "confirmed_by": { "$ref": "common.schema.json#/$defs/non_empty_string" },
+                "confirmed_at": { "$ref": "common.schema.json#/$defs/date_time" }
+              }
+            }
+          ]
+        }
+      ]
+    }
+  },
+  "$defs": {
+    "raw_bytes_digest_sha256": {
+      "type": "string",
+      "pattern": "^sha256:[0-9a-f]{64}$",
+      "description": "'sha256:' + 64 lowercase hex digesting EXACT RAW BYTES (content-addressable), NOT the canonical-JSON parsed-value form of common.schema.json digest_sha256 - an uploaded document has no canonical JSON form. Same wire format, deliberately distinct semantics (mirrors legal_source_manifest raw_capture.raw_sha256)."
+    }
+  }
+}
