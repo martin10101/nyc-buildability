@@ -217,6 +217,14 @@
    "amends": "source-025-amendment.md",
    "recorded_at": "2026-08-09T05:20:00+00:00",
    "content_digest_sha256": "b538023a9e1ea2b288563ccaa4681dc7ebdba606bc5b5e22ac5c8ef0bd5dcc9c"
+  },
+  {
+   "file": "source-027-amendment.md",
+   "kind": "amendment",
+   "sequence": 27,
+   "amends": "source-026-amendment.md",
+   "recorded_at": "2026-08-09T06:10:00+00:00",
+   "content_digest_sha256": "9e986a2742aee92e0d7a971d5017229cfbb47d80bdc32e112c238c6052caf067"
   }
  ],
  "amendments": [
@@ -244,7 +252,8 @@
   "source-023-amendment.md",
   "source-024-amendment.md",
   "source-025-amendment.md",
-  "source-026-amendment.md"
+  "source-026-amendment.md",
+  "source-027-amendment.md"
  ],
  "supersedes": [],
  "superseded_by": null,
@@ -283,8 +292,8 @@
  "verification_file": "verification.json",
  "final_reviewed_sha": null,
  "final_reviewed_manifest_sha256": null,
- "requirements_content_digest_sha256": "9f17364bd29f89ba86d703e10a9e2a9003c71bdebb8770989184ce2db4a5e30d",
- "requirements_id_digest_sha256": "610d34e0594f41e8576a3d3151150ab3787cf8672038508d7bdecaaa97683206",
+ "requirements_content_digest_sha256": "47d7c82c09f335027199821b58a61499e14f4c87c602f7a36f5f883b8c7f3ea3",
+ "requirements_id_digest_sha256": "e17069007fa76ed573b218f21ec190f113af7737894eb20e0caade622eefe2d4",
  "enforcement_pointers": {
   "tasks": [
    "M0-T037",
@@ -610,10 +619,22 @@
   "D-010-R288",
   "D-010-R289",
   "D-010-R290",
-  "D-010-R291"
+  "D-010-R291",
+  "D-010-R292",
+  "D-010-R293",
+  "D-010-R294",
+  "D-010-R295",
+  "D-010-R296",
+  "D-010-R297",
+  "D-010-R298",
+  "D-010-R299",
+  "D-010-R300",
+  "D-010-R301",
+  "D-010-R302",
+  "D-010-R303"
  ],
  "created_at": "2026-08-07T01:09:55+00:00",
- "updated_at": "2026-08-09T05:20:00+00:00",
+ "updated_at": "2026-08-09T06:10:00+00:00",
  "audit_log": [
   {
    "at": "2026-08-07T01:09:55+00:00",
@@ -770,6 +791,12 @@
    "actor": "orchestrator",
    "action": "amendment-captured",
    "detail": "source-026 captured (foreground-timeout raise + Fable-exhaustion orchestrator/worker fallback test + pre-registered expectation logging; R285-R291); frozen base f70449d1cc8dc6566b5e79a4c9603326b883a656"
+  },
+  {
+   "at": "2026-08-09T06:10:00+00:00",
+   "actor": "orchestrator",
+   "action": "amendment-captured",
+   "detail": "source-027 captured (R289 incident: source-026 automatic fallback DID-NOT-SWITCH; manual R286 opus-4.8 recovery; R291 worker flip; preserve partial work; resume M2-T015 3j/3k; bounded turnover-defect M0-T054 with deterministic tests; R292-R303); frozen base 40c848bdb35c0d96a5f71ec98b94b403e6894c15"
   }
  ]
 }

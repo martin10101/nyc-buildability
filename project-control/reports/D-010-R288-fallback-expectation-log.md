@@ -71,3 +71,53 @@ behavior by removing the exhaustion-window keys IF the owner wants the pre-direc
 back (`fallbackModel` may stay as permanent insurance at the owner's option — ask at revert),
 REMOVE `effortLevel: "xhigh"`, flip `model_selection.toml` back to Fable, and revert the five
 reviewer agent files per the standing reviewer-fallback rule. Record the revert in the ledger.
+
+---
+
+## POST-HOC VERIFICATION — appended 2026-08-09 (R289), do not edit above this line
+
+**Verdict: `DID-NOT-SWITCH`.** The designed `fallbackModel` mechanism did NOT automatically
+carry the main orchestrator from `claude-fable-5` to `claude-opus-4-8` when Fable 5 hit its
+weekly usage limit. The owner had to switch manually. This is the FAILURE CASE this log
+pre-registered (see "Expected sequence" step 3). Recorded honestly per the owner's explicit
+instruction ("Do not claim that the fallback succeeded", source-027).
+
+### Primary evidence
+
+- **Hard-stop message (client, quoted verbatim from the owner's screenshot,
+  `project-control/reports/D-010-R289-fallback-incident/fable5-limit-hardstop-screenshot.jpg`):**
+  "You've reached your Fable 5 limit. Run /usage-credits to continue or switch models with
+  /model." The session stopped after the orchestrator's r35 dispatch commands; no
+  `claude-opus-4-8` assistant turn appeared automatically. Product execution halted.
+- **Manual recovery, not automatic:** the owner then ran `/model claude-opus-4-8`
+  (stdout: "Set model to Opus 4.8 and saved as your default for new sessions";
+  ".claude\\settings.json pins Fable 5 — that applies on restart"). The current successor
+  session therefore continues under a MANUAL switch authorized by R286 — the automatic path
+  did not fire.
+- **Config-reload caveat:** PR #199 (settings with `fallbackModel: ["claude-opus-4-8"]`,
+  `effortLevel: "xhigh"`) was merged but its own note said the change is "Effective on session
+  restart". The exhausted session was the SAME long-running Fable session started before the
+  merge, so the newly-committed `fallbackModel` may never have been loaded by that process.
+
+### Honest cause analysis (R294 — all three stated, none silently chosen)
+
+1. **Config not reloaded (plausible, unproven):** `fallbackModel` landed in `.claude/settings.json`
+   only at PR #199, mid-session; a running session that is never restarted would not pick it up.
+   We cannot prove from inside whether the running process had loaded it.
+2. **Quota-exhaustion may not qualify for `fallbackModel` (plausible, unproven):** the documented
+   trigger for `fallbackModel` is the primary model being "overloaded or unavailable". A weekly
+   usage-limit hard stop may be a distinct limit-reached condition that surfaces as an interactive
+   "switch models" prompt rather than an overload the client auto-retries. The observed message is
+   consistent with this.
+3. **Architectural gap (certain, the load-bearing finding):** even if (1)/(2) were resolved, NO
+   process outside the exhausted Claude session existed to detect the hard stop and launch an
+   Opus successor. A session that has hit its own limit cannot reliably relaunch itself. This is
+   the gap the bounded turnover-reliability defect task (M0-T054, R300–R302) is created to close.
+
+### Continuity evidence
+
+- Session-level continuity held as designed: the ledger + `docs/SESSION_HANDOFF.md` let this
+  successor resume M2-T015 at the recorded seam (latest committed checkpoint `733df60`), so no
+  product work was lost — only the automatic model turnover failed.
+- Worker-model path: `C:/SupervisorController/model_selection.toml` `[claude] model` flipped to
+  `claude-opus-4-8` per R291/R296 before any further supervised dispatch (recorded in the ledger).
