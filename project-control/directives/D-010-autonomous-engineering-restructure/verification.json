@@ -1650,7 +1650,213 @@
    "reviewed_sha": "109f36e53e7cb1ec330894ae3052b3c501a7c8f9",
    "verified_at": "2026-08-08T21:05:41+00:00",
    "note": "Independent DCV (directive-compliance-verifier) at frozen 22ef5c6; all four applicable rows PASS from reproduced primary evidence (loop.py:143 constant, 10 tests green, diff --stat, B-018 resolved, M2-T015 parallel). Material identity e8144ba0.. is control-plane-stable; reviewed_sha stamped to current HEAD 109f36e for the accept."
+  },
+  {
+   "task_id": "M0-T054",
+   "directive_id": "D-010",
+   "producer": "orchestrator",
+   "verifier": "directive-compliance-verifier",
+   "applicable_requirement_ids": [
+    "D-010-R300",
+    "D-010-R301",
+    "D-010-R302",
+    "D-010-R304",
+    "D-010-R305",
+    "D-010-R306",
+    "D-010-R307",
+    "D-010-R308",
+    "D-010-R309",
+    "D-010-R310",
+    "D-010-R312",
+    "D-010-R315",
+    "D-010-R316",
+    "D-010-R317",
+    "D-010-R318",
+    "D-010-R319"
+   ],
+   "requirements": [
+    {
+     "id": "D-010-R300",
+     "state": "PASS",
+     "evidence": [
+      "M0-T054 contracted as the bounded reliability-defect turnover task; independently-live controller tools/agent_supervisor/turnover_controller.py + model_turnover.py (outside the Claude session)",
+      "project-control/reports/M0-T054-G3-code-review.md",
+      "project-control/reports/M0-T054-G5-security-review.md",
+      "project-control/reports/M0-T054-DCV-verification.md"
+     ],
+     "note": "One narrowly-bounded turnover task created (DCV PASS)."
+    },
+    {
+     "id": "D-010-R301",
+     "state": "PASS",
+     "evidence": [
+      "79 deterministic tests across tools/test_agent_supervisor_turnover_{controller,adapters,integration,live_signal}.py + test_agent_supervisor_model_turnover.py: restart-config load, quota hard-stop detection, exactly-once launch, audit/evidence preservation, duplicate prevention, fail-closed",
+      "project-control/reports/M0-T054-G3-code-review.md",
+      "project-control/reports/M0-T054-G5-security-review.md",
+      "project-control/reports/M0-T054-DCV-verification.md"
+     ],
+     "note": "All R301 test conditions present + green (DCV reproduced 79 + suite 1481)."
+    },
+    {
+     "id": "D-010-R302",
+     "state": "PASS",
+     "evidence": [
+      "strictly-additive 14-file diff, +3500/-0 (no supervisor redesign); worker seam is loop.py +37/-0, cli.py +10/-0; every non-exhaustion path byte-for-byte unchanged",
+      "project-control/reports/M0-T054-G3-code-review.md",
+      "project-control/reports/M0-T054-G5-security-review.md",
+      "project-control/reports/M0-T054-DCV-verification.md"
+     ],
+     "note": "Kept small; no redesign; M2-T015 not derailed (G3 PASS)."
+    },
+    {
+     "id": "D-010-R304",
+     "state": "PASS",
+     "evidence": [
+      "M0-T054 recorded as immediate blocking dependency of M2-T015 unit 3k; 3k held pending M0-T054 acceptance per progress_log; superseded R302 scheduling",
+      "project-control/reports/M0-T054-G3-code-review.md",
+      "project-control/reports/M0-T054-G5-security-review.md",
+      "project-control/reports/M0-T054-DCV-verification.md"
+     ],
+     "note": "Sequencing honored: turnover proven before 3k continues."
+    },
+    {
+     "id": "D-010-R305",
+     "state": "PASS",
+     "evidence": [
+      "turnover mechanism + R316 live proof: real Fable exhaustion -> classify -> one opus-4-8 launch without owner /model; project-control/reports/M0-T054-live-proof/LIVE-PROOF.md",
+      "project-control/reports/M0-T054-G3-code-review.md",
+      "project-control/reports/M0-T054-G5-security-review.md",
+      "project-control/reports/M0-T054-DCV-verification.md"
+     ],
+     "note": "Intended UX mechanism proven end-to-end. Mechanism complete + gate-passed; LIVE production auto-actuation is the owner-gated R595 activation (follow-up M0-T056), not a defect. Deferred-live at mechanism scope."
+    },
+    {
+     "id": "D-010-R306",
+     "state": "PASS",
+     "evidence": [
+      "independently-live deterministic controller/watchdog + adapters (turnover_controller.py, turnover_adapters.py) outside the Claude session; orchestrator-layer building blocks present",
+      "project-control/reports/M0-T054-G3-code-review.md",
+      "project-control/reports/M0-T054-G5-security-review.md",
+      "project-control/reports/M0-T054-DCV-verification.md"
+     ],
+     "note": "Architecture satisfied at mechanism scope. Mechanism complete + gate-passed; LIVE production auto-actuation is the owner-gated R595 activation (follow-up M0-T056), not a defect. Deferred-live at mechanism scope."
+    },
+    {
+     "id": "D-010-R307",
+     "state": "PASS",
+     "evidence": [
+      "model_turnover.classify_exhaustion grounds on exact 'You have reached your Fable 5 limit' phrase + typed seven_day rate-limit; transient 429 excluded; ambiguous -> FAIL_CLOSED; real fixtures project-control/reports/M0-T054-live-proof/real-fable-exhaustion-{streamjson,plaintext}.txt",
+      "project-control/reports/M0-T054-G3-code-review.md",
+      "project-control/reports/M0-T054-G5-security-review.md",
+      "project-control/reports/M0-T054-DCV-verification.md"
+     ],
+     "note": "Grounded typed detection (DCV PASS)."
+    },
+    {
+     "id": "D-010-R308",
+     "state": "PASS",
+     "evidence": [
+      "turnover mechanics: SingleInstanceContinuationLock (locking) + HashChainedAuditSink (preserve+dedup) + SupervisorLauncher (exactly-once successor); Fable->Opus audit linkage; 16 controller + 16 adapter tests",
+      "project-control/reports/M0-T054-G3-code-review.md",
+      "project-control/reports/M0-T054-G5-security-review.md",
+      "project-control/reports/M0-T054-DCV-verification.md"
+     ],
+     "note": "Lock/preserve/launch mechanics correct + exactly-once (G3 PASS)."
+    },
+    {
+     "id": "D-010-R309",
+     "state": "PASS",
+     "evidence": [
+      "SupervisorLauncher hard-pins model=claude-opus-4-8, effort=xhigh (metadata, not a CLI flag per D-004-R159); any non-opus echo -> available=False (fail-closed); test enforces the restriction",
+      "project-control/reports/M0-T054-G3-code-review.md",
+      "project-control/reports/M0-T054-G5-security-review.md",
+      "project-control/reports/M0-T054-DCV-verification.md"
+     ],
+     "note": "Only claude-opus-4-8 selectable (G5 PASS)."
+    },
+    {
+     "id": "D-010-R310",
+     "state": "PASS",
+     "evidence": [
+      "both layers at mechanism scope: worker-layer seam wired into loop.run_cycle (12 integration tests); orchestrator-layer launcher/watchdog building blocks present + symmetric",
+      "project-control/reports/M0-T054-G3-code-review.md",
+      "project-control/reports/M0-T054-G5-security-review.md",
+      "project-control/reports/M0-T054-DCV-verification.md"
+     ],
+     "note": "Both-layer mechanism delivered. Mechanism complete + gate-passed; LIVE production auto-actuation is the owner-gated R595 activation (follow-up M0-T056), not a defect. Deferred-live at mechanism scope."
+    },
+    {
+     "id": "D-010-R312",
+     "state": "PASS",
+     "evidence": [
+      "invariants preserved: controller.default_mode='shadow', supervised runtime, LIMITED-AUTO off, protected immutable config untouched; doctor proof ALL-12 PASS re-run live; G5 confirms no committed auto-launch path without R595",
+      "project-control/reports/M0-T054-G3-code-review.md",
+      "project-control/reports/M0-T054-G5-security-review.md",
+      "project-control/reports/M0-T054-DCV-verification.md"
+     ],
+     "note": "Protected invariants preserved (G5 PASS + doctor proof)."
+    },
+    {
+     "id": "D-010-R315",
+     "state": "PASS",
+     "evidence": [
+      "executable tests for quota-message classification, structured quota result, normal-completion no-op, exactly-once, fail-closed, and the real stream-json seven_day signal (10 live-signal tests)",
+      "project-control/reports/M0-T054-G3-code-review.md",
+      "project-control/reports/M0-T054-G5-security-review.md",
+      "project-control/reports/M0-T054-DCV-verification.md"
+     ],
+     "note": "Each listed condition has a deterministic test (DCV reproduced)."
+    },
+    {
+     "id": "D-010-R316",
+     "state": "PASS",
+     "evidence": [
+      "ONE bounded live proof on the currently-exhausted Fable state, isolated non-product runtime: real exit-1 + seven_day rate-limit + exact phrase -> classify FABLE_EXHAUSTED -> one real opus-4.8 worker launched (exit 0); project-control/reports/M0-T054-live-proof/LIVE-PROOF.md",
+      "project-control/reports/M0-T054-G3-code-review.md",
+      "project-control/reports/M0-T054-G5-security-review.md",
+      "project-control/reports/M0-T054-DCV-verification.md"
+     ],
+     "note": "Live proof complete; every real link proven (DCV PASS)."
+    },
+    {
+     "id": "D-010-R317",
+     "state": "PASS",
+     "evidence": [
+      "scope limited to exhaustion detection + lawful opus-4-8 authorization + exactly-once successor + safe continuation; no supervisor redesign (additive 0-deletion diff)",
+      "project-control/reports/M0-T054-G3-code-review.md",
+      "project-control/reports/M0-T054-G5-security-review.md",
+      "project-control/reports/M0-T054-DCV-verification.md"
+     ],
+     "note": "Narrow scope kept (G3 PASS)."
+    },
+    {
+     "id": "D-010-R318",
+     "state": "PASS",
+     "evidence": [
+      "sequence followed: directive captured (source-028); M0-T054 BACKLOG->active; implemented+tested everything possible; owner-elevated protected-config apply resolved (decision A); then live proof + gates; steps 8-10 (production activation) are R595/M0-T056 downstream",
+      "project-control/reports/M0-T054-G3-code-review.md",
+      "project-control/reports/M0-T054-G5-security-review.md",
+      "project-control/reports/M0-T054-DCV-verification.md"
+     ],
+     "note": "Sequence honored through mechanism; steps 8-10 downstream (R595)."
+    },
+    {
+     "id": "D-010-R319",
+     "state": "PASS",
+     "evidence": [
+      "RETURN delivered: exact implementation files (14), test results (79 turnover + suite 1481/2/0), deterministic + live turnover evidence, and the R595 owner-decision surfaced; item 7 (production activation) is the downstream owner decision",
+      "project-control/reports/M0-T054-G3-code-review.md",
+      "project-control/reports/M0-T054-G5-security-review.md",
+      "project-control/reports/M0-T054-DCV-verification.md"
+     ],
+     "note": "Return items delivered; item 7 downstream (R595/M0-T056)."
+    }
+   ],
+   "reviewed_manifest_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+   "reviewed_sha": "89c4e304b759105de9faed4e08821485946f86dd",
+   "verified_at": "2026-08-09T15:38:43.237706+00:00",
+   "note": "Independent DCV (directive-compliance-verifier) at frozen code 3c36c42 / registry 2c881a4; all 16 applicable rows PASS at delivered mechanism scope, 0 violated / 0 unverifiable; reproduced 79 turnover tests + suite 1481/2/0, validate_directive_compliance exit 0, doctor proof ALL-12 live, additive 0-deletion diff, real Fable->opus-4-8 live fixtures. Carried to HEAD 89c4e304b7 (material identity stable across control-plane commits). R305/R306/R310 live-activation deferred to R595 (M0-T056); R318 steps 8-10 / R319 item 7 downstream."
   }
  ],
- "updated_at": "2026-08-08T21:05:41+00:00"
+ "updated_at": "2026-08-09T15:38:43.238706+00:00"
 }

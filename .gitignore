@@ -80,3 +80,7 @@ OWNER_DIRECTIVE_DRAFT_dispatch-efficiency-and-graph-wiring.md
 .claude/settings.local.json.bak*
 # Project npmrc is created locally by new-repo tooling (ignore-scripts=true); not version-controlled
 .npmrc
+
+# Transient SQLite journal artifacts from supervisor runtime runs (not evidence)
+*.sqlite3-wal
+*.sqlite3-shm

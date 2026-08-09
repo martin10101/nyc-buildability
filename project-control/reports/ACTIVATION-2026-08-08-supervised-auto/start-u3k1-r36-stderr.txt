@@ -1,0 +1,17 @@
+Traceback (most recent call last):
+  File "<frozen runpy>", line 198, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "C:\Users\MLFLL\Downloads\nyc-zoning\nyc-development-feasibility-claude-pack\tools\agent_supervisor\__main__.py", line 21, in <module>
+    raise SystemExit(main())
+                     ^^^^^^
+  File "C:\Users\MLFLL\Downloads\nyc-zoning\nyc-development-feasibility-claude-pack\tools\agent_supervisor\cli.py", line 2699, in main
+    return int(args.func(args))
+               ^^^^^^^^^^^^^^^
+  File "C:\Users\MLFLL\Downloads\nyc-zoning\nyc-development-feasibility-claude-pack\tools\agent_supervisor\cli.py", line 2396, in cmd_start
+    run = _run_loop(args, checkout, journal, audit)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\MLFLL\Downloads\nyc-zoning\nyc-development-feasibility-claude-pack\tools\agent_supervisor\cli.py", line 2196, in _run_loop
+    validate_selection(config, selection)
+  File "C:\Users\MLFLL\Downloads\nyc-zoning\nyc-development-feasibility-claude-pack\tools\agent_supervisor\config.py", line 561, in validate_selection
+    raise ConfigError("selection_rejected", "; ".join(errors), selection.source_path)
+tools.agent_supervisor.config.ConfigError: selection_rejected: claude.model is set to 'claude-opus-4-8' but claude.allowed_models is empty; an empty allowlist means only the account/CLI default may be used and no explicit selection is permitted; claude.model = 'claude-opus-4-8' is not in claude.allowed_models and must never be used in any role [C:\SupervisorController\model_selection.toml]

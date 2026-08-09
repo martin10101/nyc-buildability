@@ -1,0 +1,35 @@
+{
+  "command": "start",
+  "mode": "supervised",
+  "controller_version": "0.4.0-phase4",
+  "recovery": {
+    "classification": "UNSAFE_OR_DRIFTED",
+    "next_state": "PAUSED_RECOVERY",
+    "trigger": "recovery_unsafe_or_drifted",
+    "reason_code": "unsafe_or_drifted",
+    "reason": "integrity, authority, identity, repository, toolchain, auth, or policy no longer matches: revalidation failed for ['task_authority', 'branch', 'worktree', 'git_and_remote_state', 'auth', 'cli_capability_manifest']. Pausing synchronously and preserving evidence (S11.5)",
+    "resume_permitted": false,
+    "failed_steps": [
+      "task_authority",
+      "branch",
+      "worktree",
+      "git_and_remote_state",
+      "auth",
+      "cli_capability_manifest"
+    ],
+    "missing_steps": [],
+    "unaccounted_children": [],
+    "pending_effect_ids": [],
+    "notes": [
+      "`start` was invoked without the inputs the loop needs, so the live task/branch/worktree/git/auth/capability set was not collected and reads as not established"
+    ]
+  },
+  "dispatched": false,
+  "provider_calls_made": 0,
+  "limited_auto_enabled": false,
+  "missing_inputs": [
+    "--claude-executable",
+    "--codex-executable"
+  ],
+  "stopped_because": "`start` will not dispatch until every input is named explicitly. Missing: ['--claude-executable', '--codex-executable']. Nothing is discovered from PATH and no provider is contacted by default."
+}
