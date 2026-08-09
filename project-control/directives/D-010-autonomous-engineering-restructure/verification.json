@@ -1856,7 +1856,1379 @@
    "reviewed_sha": "89c4e304b759105de9faed4e08821485946f86dd",
    "verified_at": "2026-08-09T15:38:43.237706+00:00",
    "note": "Independent DCV (directive-compliance-verifier) at frozen code 3c36c42 / registry 2c881a4; all 16 applicable rows PASS at delivered mechanism scope, 0 violated / 0 unverifiable; reproduced 79 turnover tests + suite 1481/2/0, validate_directive_compliance exit 0, doctor proof ALL-12 live, additive 0-deletion diff, real Fable->opus-4-8 live fixtures. Carried to HEAD 89c4e304b7 (material identity stable across control-plane commits). R305/R306/R310 live-activation deferred to R595 (M0-T056); R318 steps 8-10 / R319 item 7 downstream."
+  },
+  {
+   "task_id": "M2-T015",
+   "directive_id": "D-010",
+   "producer": "orchestrator",
+   "verifier": "directive-compliance-verifier",
+   "applicable_requirement_ids": [
+    "D-010-R121",
+    "D-010-R123",
+    "D-010-R133",
+    "D-010-R143",
+    "D-010-R153",
+    "D-010-R167",
+    "D-010-R172",
+    "D-010-R196",
+    "D-010-R213",
+    "D-010-R214",
+    "D-010-R215",
+    "D-010-R216",
+    "D-010-R217",
+    "D-010-R218",
+    "D-010-R219",
+    "D-010-R220",
+    "D-010-R221",
+    "D-010-R222",
+    "D-010-R223",
+    "D-010-R224",
+    "D-010-R225",
+    "D-010-R226",
+    "D-010-R227",
+    "D-010-R228",
+    "D-010-R229",
+    "D-010-R231",
+    "D-010-R232",
+    "D-010-R234",
+    "D-010-R235",
+    "D-010-R236",
+    "D-010-R237",
+    "D-010-R238",
+    "D-010-R239",
+    "D-010-R240",
+    "D-010-R241",
+    "D-010-R242",
+    "D-010-R243",
+    "D-010-R244",
+    "D-010-R245",
+    "D-010-R247",
+    "D-010-R248",
+    "D-010-R249",
+    "D-010-R250",
+    "D-010-R251",
+    "D-010-R252",
+    "D-010-R253",
+    "D-010-R254",
+    "D-010-R255",
+    "D-010-R256",
+    "D-010-R257",
+    "D-010-R258",
+    "D-010-R259",
+    "D-010-R260",
+    "D-010-R261",
+    "D-010-R262",
+    "D-010-R263",
+    "D-010-R264",
+    "D-010-R265",
+    "D-010-R266",
+    "D-010-R267",
+    "D-010-R268",
+    "D-010-R269",
+    "D-010-R270",
+    "D-010-R271",
+    "D-010-R272",
+    "D-010-R273",
+    "D-010-R274",
+    "D-010-R275",
+    "D-010-R276",
+    "D-010-R277",
+    "D-010-R278",
+    "D-010-R279",
+    "D-010-R280",
+    "D-010-R281",
+    "D-010-R282",
+    "D-010-R283",
+    "D-010-R284",
+    "D-010-R285",
+    "D-010-R286",
+    "D-010-R287",
+    "D-010-R288",
+    "D-010-R289",
+    "D-010-R290",
+    "D-010-R291",
+    "D-010-R292",
+    "D-010-R293",
+    "D-010-R294",
+    "D-010-R295",
+    "D-010-R298",
+    "D-010-R299",
+    "D-010-R302",
+    "D-010-R303",
+    "D-010-R304",
+    "D-010-R317",
+    "D-010-R318",
+    "D-010-R341",
+    "D-010-R343"
+   ],
+   "requirements": [
+    {
+     "id": "D-010-R121",
+     "state": "PASS",
+     "evidence": [
+      "project-control/reports/M2-T015-DCV-verification.md (DCV re-verification: 97/97 PASS at 1b3af35)",
+      "project-control/reports/M2-T015-CI-evidence.md (api CI 3.12: ruff clean + 2025 passed / documents 939)",
+      "project-control/reports/M2-T015-G1-data-contract-review.md (PASS + delta)",
+      "project-control/reports/M2-T015-G3-code-review.md (PASS at 1b3af35)",
+      "project-control/reports/M2-T015-G5-security-review.md (PASS + delta)",
+      "project-control/reports/M2-T015-producer-report.md (AOS s6, through 3l + rework)"
+     ],
+     "note": "DCV re-verification PASS at 1b3af35 (independently reproduced: ruff 0.13.0 exit 0, contract exit 0, 367 pytest on 3.11 + captured 3.12 CI 2025 passed, 14/14 fixture digests, activation R221/R224)."
+    },
+    {
+     "id": "D-010-R123",
+     "state": "PASS",
+     "evidence": [
+      "project-control/reports/M2-T015-DCV-verification.md (DCV re-verification: 97/97 PASS at 1b3af35)",
+      "project-control/reports/M2-T015-CI-evidence.md (api CI 3.12: ruff clean + 2025 passed / documents 939)",
+      "project-control/reports/M2-T015-G1-data-contract-review.md (PASS + delta)",
+      "project-control/reports/M2-T015-G3-code-review.md (PASS at 1b3af35)",
+      "project-control/reports/M2-T015-G5-security-review.md (PASS + delta)",
+      "project-control/reports/M2-T015-producer-report.md (AOS s6, through 3l + rework)"
+     ],
+     "note": "DCV re-verification PASS at 1b3af35 (independently reproduced: ruff 0.13.0 exit 0, contract exit 0, 367 pytest on 3.11 + captured 3.12 CI 2025 passed, 14/14 fixture digests, activation R221/R224)."
+    },
+    {
+     "id": "D-010-R133",
+     "state": "PASS",
+     "evidence": [
+      "project-control/reports/M2-T015-DCV-verification.md (DCV re-verification: 97/97 PASS at 1b3af35)",
+      "project-control/reports/M2-T015-CI-evidence.md (api CI 3.12: ruff clean + 2025 passed / documents 939)",
+      "project-control/reports/M2-T015-G1-data-contract-review.md (PASS + delta)",
+      "project-control/reports/M2-T015-G3-code-review.md (PASS at 1b3af35)",
+      "project-control/reports/M2-T015-G5-security-review.md (PASS + delta)",
+      "project-control/reports/M2-T015-producer-report.md (AOS s6, through 3l + rework)"
+     ],
+     "note": "DCV re-verification PASS at 1b3af35 (independently reproduced: ruff 0.13.0 exit 0, contract exit 0, 367 pytest on 3.11 + captured 3.12 CI 2025 passed, 14/14 fixture digests, activation R221/R224)."
+    },
+    {
+     "id": "D-010-R143",
+     "state": "PASS",
+     "evidence": [
+      "project-control/reports/M2-T015-DCV-verification.md (DCV re-verification: 97/97 PASS at 1b3af35)",
+      "project-control/reports/M2-T015-CI-evidence.md (api CI 3.12: ruff clean + 2025 passed / documents 939)",
+      "project-control/reports/M2-T015-G1-data-contract-review.md (PASS + delta)",
+      "project-control/reports/M2-T015-G3-code-review.md (PASS at 1b3af35)",
+      "project-control/reports/M2-T015-G5-security-review.md (PASS + delta)",
+      "project-control/reports/M2-T015-producer-report.md (AOS s6, through 3l + rework)"
+     ],
+     "note": "DCV re-verification PASS at 1b3af35 (independently reproduced: ruff 0.13.0 exit 0, contract exit 0, 367 pytest on 3.11 + captured 3.12 CI 2025 passed, 14/14 fixture digests, activation R221/R224)."
+    },
+    {
+     "id": "D-010-R153",
+     "state": "PASS",
+     "evidence": [
+      "project-control/reports/M2-T015-DCV-verification.md (DCV re-verification: 97/97 PASS at 1b3af35)",
+      "project-control/reports/M2-T015-CI-evidence.md (api CI 3.12: ruff clean + 2025 passed / documents 939)",
+      "project-control/reports/M2-T015-G1-data-contract-review.md (PASS + delta)",
+      "project-control/reports/M2-T015-G3-code-review.md (PASS at 1b3af35)",
+      "project-control/reports/M2-T015-G5-security-review.md (PASS + delta)",
+      "project-control/reports/M2-T015-producer-report.md (AOS s6, through 3l + rework)"
+     ],
+     "note": "DCV re-verification PASS at 1b3af35 (independently reproduced: ruff 0.13.0 exit 0, contract exit 0, 367 pytest on 3.11 + captured 3.12 CI 2025 passed, 14/14 fixture digests, activation R221/R224)."
+    },
+    {
+     "id": "D-010-R167",
+     "state": "PASS",
+     "evidence": [
+      "project-control/reports/M2-T015-DCV-verification.md (DCV re-verification: 97/97 PASS at 1b3af35)",
+      "project-control/reports/M2-T015-CI-evidence.md (api CI 3.12: ruff clean + 2025 passed / documents 939)",
+      "project-control/reports/M2-T015-G1-data-contract-review.md (PASS + delta)",
+      "project-control/reports/M2-T015-G3-code-review.md (PASS at 1b3af35)",
+      "project-control/reports/M2-T015-G5-security-review.md (PASS + delta)",
+      "project-control/reports/M2-T015-producer-report.md (AOS s6, through 3l + rework)"
+     ],
+     "note": "DCV re-verification PASS at 1b3af35 (independently reproduced: ruff 0.13.0 exit 0, contract exit 0, 367 pytest on 3.11 + captured 3.12 CI 2025 passed, 14/14 fixture digests, activation R221/R224)."
+    },
+    {
+     "id": "D-010-R172",
+     "state": "PASS",
+     "evidence": [
+      "project-control/reports/M2-T015-DCV-verification.md (DCV re-verification: 97/97 PASS at 1b3af35)",
+      "project-control/reports/M2-T015-CI-evidence.md (api CI 3.12: ruff clean + 2025 passed / documents 939)",
+      "project-control/reports/M2-T015-G1-data-contract-review.md (PASS + delta)",
+      "project-control/reports/M2-T015-G3-code-review.md (PASS at 1b3af35)",
+      "project-control/reports/M2-T015-G5-security-review.md (PASS + delta)",
+      "project-control/reports/M2-T015-producer-report.md (AOS s6, through 3l + rework)"
+     ],
+     "note": "DCV re-verification PASS at 1b3af35 (independently reproduced: ruff 0.13.0 exit 0, contract exit 0, 367 pytest on 3.11 + captured 3.12 CI 2025 passed, 14/14 fixture digests, activation R221/R224)."
+    },
+    {
+     "id": "D-010-R196",
+     "state": "PASS",
+     "evidence": [
+      "project-control/reports/M2-T015-DCV-verification.md (DCV re-verification: 97/97 PASS at 1b3af35)",
+      "project-control/reports/M2-T015-CI-evidence.md (api CI 3.12: ruff clean + 2025 passed / documents 939)",
+      "project-control/reports/M2-T015-G1-data-contract-review.md (PASS + delta)",
+      "project-control/reports/M2-T015-G3-code-review.md (PASS at 1b3af35)",
+      "project-control/reports/M2-T015-G5-security-review.md (PASS + delta)",
+      "project-control/reports/M2-T015-producer-report.md (AOS s6, through 3l + rework)"
+     ],
+     "note": "DCV re-verification PASS at 1b3af35 (independently reproduced: ruff 0.13.0 exit 0, contract exit 0, 367 pytest on 3.11 + captured 3.12 CI 2025 passed, 14/14 fixture digests, activation R221/R224)."
+    },
+    {
+     "id": "D-010-R213",
+     "state": "PASS",
+     "evidence": [
+      "project-control/reports/M2-T015-DCV-verification.md (DCV re-verification: 97/97 PASS at 1b3af35)",
+      "project-control/reports/M2-T015-CI-evidence.md (api CI 3.12: ruff clean + 2025 passed / documents 939)",
+      "project-control/reports/M2-T015-G1-data-contract-review.md (PASS + delta)",
+      "project-control/reports/M2-T015-G3-code-review.md (PASS at 1b3af35)",
+      "project-control/reports/M2-T015-G5-security-review.md (PASS + delta)",
+      "project-control/reports/M2-T015-producer-report.md (AOS s6, through 3l + rework)"
+     ],
+     "note": "DCV re-verification PASS at 1b3af35 (independently reproduced: ruff 0.13.0 exit 0, contract exit 0, 367 pytest on 3.11 + captured 3.12 CI 2025 passed, 14/14 fixture digests, activation R221/R224)."
+    },
+    {
+     "id": "D-010-R214",
+     "state": "PASS",
+     "evidence": [
+      "project-control/reports/M2-T015-DCV-verification.md (DCV re-verification: 97/97 PASS at 1b3af35)",
+      "project-control/reports/M2-T015-CI-evidence.md (api CI 3.12: ruff clean + 2025 passed / documents 939)",
+      "project-control/reports/M2-T015-G1-data-contract-review.md (PASS + delta)",
+      "project-control/reports/M2-T015-G3-code-review.md (PASS at 1b3af35)",
+      "project-control/reports/M2-T015-G5-security-review.md (PASS + delta)",
+      "project-control/reports/M2-T015-producer-report.md (AOS s6, through 3l + rework)"
+     ],
+     "note": "DCV re-verification PASS at 1b3af35 (independently reproduced: ruff 0.13.0 exit 0, contract exit 0, 367 pytest on 3.11 + captured 3.12 CI 2025 passed, 14/14 fixture digests, activation R221/R224)."
+    },
+    {
+     "id": "D-010-R215",
+     "state": "PASS",
+     "evidence": [
+      "project-control/reports/M2-T015-DCV-verification.md (DCV re-verification: 97/97 PASS at 1b3af35)",
+      "project-control/reports/M2-T015-CI-evidence.md (api CI 3.12: ruff clean + 2025 passed / documents 939)",
+      "project-control/reports/M2-T015-G1-data-contract-review.md (PASS + delta)",
+      "project-control/reports/M2-T015-G3-code-review.md (PASS at 1b3af35)",
+      "project-control/reports/M2-T015-G5-security-review.md (PASS + delta)",
+      "project-control/reports/M2-T015-producer-report.md (AOS s6, through 3l + rework)"
+     ],
+     "note": "DCV re-verification PASS at 1b3af35 (independently reproduced: ruff 0.13.0 exit 0, contract exit 0, 367 pytest on 3.11 + captured 3.12 CI 2025 passed, 14/14 fixture digests, activation R221/R224)."
+    },
+    {
+     "id": "D-010-R216",
+     "state": "PASS",
+     "evidence": [
+      "project-control/reports/M2-T015-DCV-verification.md (DCV re-verification: 97/97 PASS at 1b3af35)",
+      "project-control/reports/M2-T015-CI-evidence.md (api CI 3.12: ruff clean + 2025 passed / documents 939)",
+      "project-control/reports/M2-T015-G1-data-contract-review.md (PASS + delta)",
+      "project-control/reports/M2-T015-G3-code-review.md (PASS at 1b3af35)",
+      "project-control/reports/M2-T015-G5-security-review.md (PASS + delta)",
+      "project-control/reports/M2-T015-producer-report.md (AOS s6, through 3l + rework)"
+     ],
+     "note": "DCV re-verification PASS at 1b3af35 (independently reproduced: ruff 0.13.0 exit 0, contract exit 0, 367 pytest on 3.11 + captured 3.12 CI 2025 passed, 14/14 fixture digests, activation R221/R224)."
+    },
+    {
+     "id": "D-010-R217",
+     "state": "PASS",
+     "evidence": [
+      "project-control/reports/M2-T015-DCV-verification.md (DCV re-verification: 97/97 PASS at 1b3af35)",
+      "project-control/reports/M2-T015-CI-evidence.md (api CI 3.12: ruff clean + 2025 passed / documents 939)",
+      "project-control/reports/M2-T015-G1-data-contract-review.md (PASS + delta)",
+      "project-control/reports/M2-T015-G3-code-review.md (PASS at 1b3af35)",
+      "project-control/reports/M2-T015-G5-security-review.md (PASS + delta)",
+      "project-control/reports/M2-T015-producer-report.md (AOS s6, through 3l + rework)"
+     ],
+     "note": "DCV re-verification PASS at 1b3af35 (independently reproduced: ruff 0.13.0 exit 0, contract exit 0, 367 pytest on 3.11 + captured 3.12 CI 2025 passed, 14/14 fixture digests, activation R221/R224)."
+    },
+    {
+     "id": "D-010-R218",
+     "state": "PASS",
+     "evidence": [
+      "project-control/reports/M2-T015-DCV-verification.md (DCV re-verification: 97/97 PASS at 1b3af35)",
+      "project-control/reports/M2-T015-CI-evidence.md (api CI 3.12: ruff clean + 2025 passed / documents 939)",
+      "project-control/reports/M2-T015-G1-data-contract-review.md (PASS + delta)",
+      "project-control/reports/M2-T015-G3-code-review.md (PASS at 1b3af35)",
+      "project-control/reports/M2-T015-G5-security-review.md (PASS + delta)",
+      "project-control/reports/M2-T015-producer-report.md (AOS s6, through 3l + rework)"
+     ],
+     "note": "DCV re-verification PASS at 1b3af35 (independently reproduced: ruff 0.13.0 exit 0, contract exit 0, 367 pytest on 3.11 + captured 3.12 CI 2025 passed, 14/14 fixture digests, activation R221/R224)."
+    },
+    {
+     "id": "D-010-R219",
+     "state": "PASS",
+     "evidence": [
+      "project-control/reports/M2-T015-DCV-verification.md (DCV re-verification: 97/97 PASS at 1b3af35)",
+      "project-control/reports/M2-T015-CI-evidence.md (api CI 3.12: ruff clean + 2025 passed / documents 939)",
+      "project-control/reports/M2-T015-G1-data-contract-review.md (PASS + delta)",
+      "project-control/reports/M2-T015-G3-code-review.md (PASS at 1b3af35)",
+      "project-control/reports/M2-T015-G5-security-review.md (PASS + delta)",
+      "project-control/reports/M2-T015-producer-report.md (AOS s6, through 3l + rework)"
+     ],
+     "note": "DCV re-verification PASS at 1b3af35 (independently reproduced: ruff 0.13.0 exit 0, contract exit 0, 367 pytest on 3.11 + captured 3.12 CI 2025 passed, 14/14 fixture digests, activation R221/R224)."
+    },
+    {
+     "id": "D-010-R220",
+     "state": "PASS",
+     "evidence": [
+      "project-control/reports/M2-T015-DCV-verification.md (DCV re-verification: 97/97 PASS at 1b3af35)",
+      "project-control/reports/M2-T015-CI-evidence.md (api CI 3.12: ruff clean + 2025 passed / documents 939)",
+      "project-control/reports/M2-T015-G1-data-contract-review.md (PASS + delta)",
+      "project-control/reports/M2-T015-G3-code-review.md (PASS at 1b3af35)",
+      "project-control/reports/M2-T015-G5-security-review.md (PASS + delta)",
+      "project-control/reports/M2-T015-producer-report.md (AOS s6, through 3l + rework)"
+     ],
+     "note": "DCV re-verification PASS at 1b3af35 (independently reproduced: ruff 0.13.0 exit 0, contract exit 0, 367 pytest on 3.11 + captured 3.12 CI 2025 passed, 14/14 fixture digests, activation R221/R224)."
+    },
+    {
+     "id": "D-010-R221",
+     "state": "PASS",
+     "evidence": [
+      "project-control/reports/M2-T015-DCV-verification.md (DCV re-verification: 97/97 PASS at 1b3af35)",
+      "project-control/reports/M2-T015-CI-evidence.md (api CI 3.12: ruff clean + 2025 passed / documents 939)",
+      "project-control/reports/M2-T015-G1-data-contract-review.md (PASS + delta)",
+      "project-control/reports/M2-T015-G3-code-review.md (PASS at 1b3af35)",
+      "project-control/reports/M2-T015-G5-security-review.md (PASS + delta)",
+      "project-control/reports/M2-T015-producer-report.md (AOS s6, through 3l + rework)"
+     ],
+     "note": "DCV re-verification PASS at 1b3af35 (independently reproduced: ruff 0.13.0 exit 0, contract exit 0, 367 pytest on 3.11 + captured 3.12 CI 2025 passed, 14/14 fixture digests, activation R221/R224)."
+    },
+    {
+     "id": "D-010-R222",
+     "state": "PASS",
+     "evidence": [
+      "project-control/reports/M2-T015-DCV-verification.md (DCV re-verification: 97/97 PASS at 1b3af35)",
+      "project-control/reports/M2-T015-CI-evidence.md (api CI 3.12: ruff clean + 2025 passed / documents 939)",
+      "project-control/reports/M2-T015-G1-data-contract-review.md (PASS + delta)",
+      "project-control/reports/M2-T015-G3-code-review.md (PASS at 1b3af35)",
+      "project-control/reports/M2-T015-G5-security-review.md (PASS + delta)",
+      "project-control/reports/M2-T015-producer-report.md (AOS s6, through 3l + rework)"
+     ],
+     "note": "DCV re-verification PASS at 1b3af35 (independently reproduced: ruff 0.13.0 exit 0, contract exit 0, 367 pytest on 3.11 + captured 3.12 CI 2025 passed, 14/14 fixture digests, activation R221/R224)."
+    },
+    {
+     "id": "D-010-R223",
+     "state": "PASS",
+     "evidence": [
+      "project-control/reports/M2-T015-DCV-verification.md (DCV re-verification: 97/97 PASS at 1b3af35)",
+      "project-control/reports/M2-T015-CI-evidence.md (api CI 3.12: ruff clean + 2025 passed / documents 939)",
+      "project-control/reports/M2-T015-G1-data-contract-review.md (PASS + delta)",
+      "project-control/reports/M2-T015-G3-code-review.md (PASS at 1b3af35)",
+      "project-control/reports/M2-T015-G5-security-review.md (PASS + delta)",
+      "project-control/reports/M2-T015-producer-report.md (AOS s6, through 3l + rework)"
+     ],
+     "note": "DCV re-verification PASS at 1b3af35 (independently reproduced: ruff 0.13.0 exit 0, contract exit 0, 367 pytest on 3.11 + captured 3.12 CI 2025 passed, 14/14 fixture digests, activation R221/R224)."
+    },
+    {
+     "id": "D-010-R224",
+     "state": "PASS",
+     "evidence": [
+      "project-control/reports/M2-T015-DCV-verification.md (DCV re-verification: 97/97 PASS at 1b3af35)",
+      "project-control/reports/M2-T015-CI-evidence.md (api CI 3.12: ruff clean + 2025 passed / documents 939)",
+      "project-control/reports/M2-T015-G1-data-contract-review.md (PASS + delta)",
+      "project-control/reports/M2-T015-G3-code-review.md (PASS at 1b3af35)",
+      "project-control/reports/M2-T015-G5-security-review.md (PASS + delta)",
+      "project-control/reports/M2-T015-producer-report.md (AOS s6, through 3l + rework)"
+     ],
+     "note": "DCV re-verification PASS at 1b3af35 (independently reproduced: ruff 0.13.0 exit 0, contract exit 0, 367 pytest on 3.11 + captured 3.12 CI 2025 passed, 14/14 fixture digests, activation R221/R224)."
+    },
+    {
+     "id": "D-010-R225",
+     "state": "PASS",
+     "evidence": [
+      "project-control/reports/M2-T015-DCV-verification.md (DCV re-verification: 97/97 PASS at 1b3af35)",
+      "project-control/reports/M2-T015-CI-evidence.md (api CI 3.12: ruff clean + 2025 passed / documents 939)",
+      "project-control/reports/M2-T015-G1-data-contract-review.md (PASS + delta)",
+      "project-control/reports/M2-T015-G3-code-review.md (PASS at 1b3af35)",
+      "project-control/reports/M2-T015-G5-security-review.md (PASS + delta)",
+      "project-control/reports/M2-T015-producer-report.md (AOS s6, through 3l + rework)"
+     ],
+     "note": "DCV re-verification PASS at 1b3af35 (independently reproduced: ruff 0.13.0 exit 0, contract exit 0, 367 pytest on 3.11 + captured 3.12 CI 2025 passed, 14/14 fixture digests, activation R221/R224)."
+    },
+    {
+     "id": "D-010-R226",
+     "state": "PASS",
+     "evidence": [
+      "project-control/reports/M2-T015-DCV-verification.md (DCV re-verification: 97/97 PASS at 1b3af35)",
+      "project-control/reports/M2-T015-CI-evidence.md (api CI 3.12: ruff clean + 2025 passed / documents 939)",
+      "project-control/reports/M2-T015-G1-data-contract-review.md (PASS + delta)",
+      "project-control/reports/M2-T015-G3-code-review.md (PASS at 1b3af35)",
+      "project-control/reports/M2-T015-G5-security-review.md (PASS + delta)",
+      "project-control/reports/M2-T015-producer-report.md (AOS s6, through 3l + rework)"
+     ],
+     "note": "DCV re-verification PASS at 1b3af35 (independently reproduced: ruff 0.13.0 exit 0, contract exit 0, 367 pytest on 3.11 + captured 3.12 CI 2025 passed, 14/14 fixture digests, activation R221/R224)."
+    },
+    {
+     "id": "D-010-R227",
+     "state": "PASS",
+     "evidence": [
+      "project-control/reports/M2-T015-DCV-verification.md (DCV re-verification: 97/97 PASS at 1b3af35)",
+      "project-control/reports/M2-T015-CI-evidence.md (api CI 3.12: ruff clean + 2025 passed / documents 939)",
+      "project-control/reports/M2-T015-G1-data-contract-review.md (PASS + delta)",
+      "project-control/reports/M2-T015-G3-code-review.md (PASS at 1b3af35)",
+      "project-control/reports/M2-T015-G5-security-review.md (PASS + delta)",
+      "project-control/reports/M2-T015-producer-report.md (AOS s6, through 3l + rework)"
+     ],
+     "note": "DCV re-verification PASS at 1b3af35 (independently reproduced: ruff 0.13.0 exit 0, contract exit 0, 367 pytest on 3.11 + captured 3.12 CI 2025 passed, 14/14 fixture digests, activation R221/R224)."
+    },
+    {
+     "id": "D-010-R228",
+     "state": "PASS",
+     "evidence": [
+      "project-control/reports/M2-T015-DCV-verification.md (DCV re-verification: 97/97 PASS at 1b3af35)",
+      "project-control/reports/M2-T015-CI-evidence.md (api CI 3.12: ruff clean + 2025 passed / documents 939)",
+      "project-control/reports/M2-T015-G1-data-contract-review.md (PASS + delta)",
+      "project-control/reports/M2-T015-G3-code-review.md (PASS at 1b3af35)",
+      "project-control/reports/M2-T015-G5-security-review.md (PASS + delta)",
+      "project-control/reports/M2-T015-producer-report.md (AOS s6, through 3l + rework)"
+     ],
+     "note": "DCV re-verification PASS at 1b3af35 (independently reproduced: ruff 0.13.0 exit 0, contract exit 0, 367 pytest on 3.11 + captured 3.12 CI 2025 passed, 14/14 fixture digests, activation R221/R224)."
+    },
+    {
+     "id": "D-010-R229",
+     "state": "PASS",
+     "evidence": [
+      "project-control/reports/M2-T015-DCV-verification.md (DCV re-verification: 97/97 PASS at 1b3af35)",
+      "project-control/reports/M2-T015-CI-evidence.md (api CI 3.12: ruff clean + 2025 passed / documents 939)",
+      "project-control/reports/M2-T015-G1-data-contract-review.md (PASS + delta)",
+      "project-control/reports/M2-T015-G3-code-review.md (PASS at 1b3af35)",
+      "project-control/reports/M2-T015-G5-security-review.md (PASS + delta)",
+      "project-control/reports/M2-T015-producer-report.md (AOS s6, through 3l + rework)"
+     ],
+     "note": "DCV re-verification PASS at 1b3af35 (independently reproduced: ruff 0.13.0 exit 0, contract exit 0, 367 pytest on 3.11 + captured 3.12 CI 2025 passed, 14/14 fixture digests, activation R221/R224)."
+    },
+    {
+     "id": "D-010-R231",
+     "state": "PASS",
+     "evidence": [
+      "project-control/reports/M2-T015-DCV-verification.md (DCV re-verification: 97/97 PASS at 1b3af35)",
+      "project-control/reports/M2-T015-CI-evidence.md (api CI 3.12: ruff clean + 2025 passed / documents 939)",
+      "project-control/reports/M2-T015-G1-data-contract-review.md (PASS + delta)",
+      "project-control/reports/M2-T015-G3-code-review.md (PASS at 1b3af35)",
+      "project-control/reports/M2-T015-G5-security-review.md (PASS + delta)",
+      "project-control/reports/M2-T015-producer-report.md (AOS s6, through 3l + rework)"
+     ],
+     "note": "DCV re-verification PASS at 1b3af35 (independently reproduced: ruff 0.13.0 exit 0, contract exit 0, 367 pytest on 3.11 + captured 3.12 CI 2025 passed, 14/14 fixture digests, activation R221/R224)."
+    },
+    {
+     "id": "D-010-R232",
+     "state": "PASS",
+     "evidence": [
+      "project-control/reports/M2-T015-DCV-verification.md (DCV re-verification: 97/97 PASS at 1b3af35)",
+      "project-control/reports/M2-T015-CI-evidence.md (api CI 3.12: ruff clean + 2025 passed / documents 939)",
+      "project-control/reports/M2-T015-G1-data-contract-review.md (PASS + delta)",
+      "project-control/reports/M2-T015-G3-code-review.md (PASS at 1b3af35)",
+      "project-control/reports/M2-T015-G5-security-review.md (PASS + delta)",
+      "project-control/reports/M2-T015-producer-report.md (AOS s6, through 3l + rework)"
+     ],
+     "note": "DCV re-verification PASS at 1b3af35 (independently reproduced: ruff 0.13.0 exit 0, contract exit 0, 367 pytest on 3.11 + captured 3.12 CI 2025 passed, 14/14 fixture digests, activation R221/R224)."
+    },
+    {
+     "id": "D-010-R234",
+     "state": "PASS",
+     "evidence": [
+      "project-control/reports/M2-T015-DCV-verification.md (DCV re-verification: 97/97 PASS at 1b3af35)",
+      "project-control/reports/M2-T015-CI-evidence.md (api CI 3.12: ruff clean + 2025 passed / documents 939)",
+      "project-control/reports/M2-T015-G1-data-contract-review.md (PASS + delta)",
+      "project-control/reports/M2-T015-G3-code-review.md (PASS at 1b3af35)",
+      "project-control/reports/M2-T015-G5-security-review.md (PASS + delta)",
+      "project-control/reports/M2-T015-producer-report.md (AOS s6, through 3l + rework)"
+     ],
+     "note": "DCV re-verification PASS at 1b3af35 (independently reproduced: ruff 0.13.0 exit 0, contract exit 0, 367 pytest on 3.11 + captured 3.12 CI 2025 passed, 14/14 fixture digests, activation R221/R224)."
+    },
+    {
+     "id": "D-010-R235",
+     "state": "PASS",
+     "evidence": [
+      "project-control/reports/M2-T015-DCV-verification.md (DCV re-verification: 97/97 PASS at 1b3af35)",
+      "project-control/reports/M2-T015-CI-evidence.md (api CI 3.12: ruff clean + 2025 passed / documents 939)",
+      "project-control/reports/M2-T015-G1-data-contract-review.md (PASS + delta)",
+      "project-control/reports/M2-T015-G3-code-review.md (PASS at 1b3af35)",
+      "project-control/reports/M2-T015-G5-security-review.md (PASS + delta)",
+      "project-control/reports/M2-T015-producer-report.md (AOS s6, through 3l + rework)"
+     ],
+     "note": "DCV re-verification PASS at 1b3af35 (independently reproduced: ruff 0.13.0 exit 0, contract exit 0, 367 pytest on 3.11 + captured 3.12 CI 2025 passed, 14/14 fixture digests, activation R221/R224)."
+    },
+    {
+     "id": "D-010-R236",
+     "state": "PASS",
+     "evidence": [
+      "project-control/reports/M2-T015-DCV-verification.md (DCV re-verification: 97/97 PASS at 1b3af35)",
+      "project-control/reports/M2-T015-CI-evidence.md (api CI 3.12: ruff clean + 2025 passed / documents 939)",
+      "project-control/reports/M2-T015-G1-data-contract-review.md (PASS + delta)",
+      "project-control/reports/M2-T015-G3-code-review.md (PASS at 1b3af35)",
+      "project-control/reports/M2-T015-G5-security-review.md (PASS + delta)",
+      "project-control/reports/M2-T015-producer-report.md (AOS s6, through 3l + rework)"
+     ],
+     "note": "DCV re-verification PASS at 1b3af35 (independently reproduced: ruff 0.13.0 exit 0, contract exit 0, 367 pytest on 3.11 + captured 3.12 CI 2025 passed, 14/14 fixture digests, activation R221/R224)."
+    },
+    {
+     "id": "D-010-R237",
+     "state": "PASS",
+     "evidence": [
+      "project-control/reports/M2-T015-DCV-verification.md (DCV re-verification: 97/97 PASS at 1b3af35)",
+      "project-control/reports/M2-T015-CI-evidence.md (api CI 3.12: ruff clean + 2025 passed / documents 939)",
+      "project-control/reports/M2-T015-G1-data-contract-review.md (PASS + delta)",
+      "project-control/reports/M2-T015-G3-code-review.md (PASS at 1b3af35)",
+      "project-control/reports/M2-T015-G5-security-review.md (PASS + delta)",
+      "project-control/reports/M2-T015-producer-report.md (AOS s6, through 3l + rework)"
+     ],
+     "note": "DCV re-verification PASS at 1b3af35 (independently reproduced: ruff 0.13.0 exit 0, contract exit 0, 367 pytest on 3.11 + captured 3.12 CI 2025 passed, 14/14 fixture digests, activation R221/R224)."
+    },
+    {
+     "id": "D-010-R238",
+     "state": "PASS",
+     "evidence": [
+      "project-control/reports/M2-T015-DCV-verification.md (DCV re-verification: 97/97 PASS at 1b3af35)",
+      "project-control/reports/M2-T015-CI-evidence.md (api CI 3.12: ruff clean + 2025 passed / documents 939)",
+      "project-control/reports/M2-T015-G1-data-contract-review.md (PASS + delta)",
+      "project-control/reports/M2-T015-G3-code-review.md (PASS at 1b3af35)",
+      "project-control/reports/M2-T015-G5-security-review.md (PASS + delta)",
+      "project-control/reports/M2-T015-producer-report.md (AOS s6, through 3l + rework)"
+     ],
+     "note": "DCV re-verification PASS at 1b3af35 (independently reproduced: ruff 0.13.0 exit 0, contract exit 0, 367 pytest on 3.11 + captured 3.12 CI 2025 passed, 14/14 fixture digests, activation R221/R224)."
+    },
+    {
+     "id": "D-010-R239",
+     "state": "PASS",
+     "evidence": [
+      "project-control/reports/M2-T015-DCV-verification.md (DCV re-verification: 97/97 PASS at 1b3af35)",
+      "project-control/reports/M2-T015-CI-evidence.md (api CI 3.12: ruff clean + 2025 passed / documents 939)",
+      "project-control/reports/M2-T015-G1-data-contract-review.md (PASS + delta)",
+      "project-control/reports/M2-T015-G3-code-review.md (PASS at 1b3af35)",
+      "project-control/reports/M2-T015-G5-security-review.md (PASS + delta)",
+      "project-control/reports/M2-T015-producer-report.md (AOS s6, through 3l + rework)"
+     ],
+     "note": "DCV re-verification PASS at 1b3af35 (independently reproduced: ruff 0.13.0 exit 0, contract exit 0, 367 pytest on 3.11 + captured 3.12 CI 2025 passed, 14/14 fixture digests, activation R221/R224)."
+    },
+    {
+     "id": "D-010-R240",
+     "state": "PASS",
+     "evidence": [
+      "project-control/reports/M2-T015-DCV-verification.md (DCV re-verification: 97/97 PASS at 1b3af35)",
+      "project-control/reports/M2-T015-CI-evidence.md (api CI 3.12: ruff clean + 2025 passed / documents 939)",
+      "project-control/reports/M2-T015-G1-data-contract-review.md (PASS + delta)",
+      "project-control/reports/M2-T015-G3-code-review.md (PASS at 1b3af35)",
+      "project-control/reports/M2-T015-G5-security-review.md (PASS + delta)",
+      "project-control/reports/M2-T015-producer-report.md (AOS s6, through 3l + rework)"
+     ],
+     "note": "DCV re-verification PASS at 1b3af35 (independently reproduced: ruff 0.13.0 exit 0, contract exit 0, 367 pytest on 3.11 + captured 3.12 CI 2025 passed, 14/14 fixture digests, activation R221/R224)."
+    },
+    {
+     "id": "D-010-R241",
+     "state": "PASS",
+     "evidence": [
+      "project-control/reports/M2-T015-DCV-verification.md (DCV re-verification: 97/97 PASS at 1b3af35)",
+      "project-control/reports/M2-T015-CI-evidence.md (api CI 3.12: ruff clean + 2025 passed / documents 939)",
+      "project-control/reports/M2-T015-G1-data-contract-review.md (PASS + delta)",
+      "project-control/reports/M2-T015-G3-code-review.md (PASS at 1b3af35)",
+      "project-control/reports/M2-T015-G5-security-review.md (PASS + delta)",
+      "project-control/reports/M2-T015-producer-report.md (AOS s6, through 3l + rework)"
+     ],
+     "note": "DCV re-verification PASS at 1b3af35 (independently reproduced: ruff 0.13.0 exit 0, contract exit 0, 367 pytest on 3.11 + captured 3.12 CI 2025 passed, 14/14 fixture digests, activation R221/R224)."
+    },
+    {
+     "id": "D-010-R242",
+     "state": "PASS",
+     "evidence": [
+      "project-control/reports/M2-T015-DCV-verification.md (DCV re-verification: 97/97 PASS at 1b3af35)",
+      "project-control/reports/M2-T015-CI-evidence.md (api CI 3.12: ruff clean + 2025 passed / documents 939)",
+      "project-control/reports/M2-T015-G1-data-contract-review.md (PASS + delta)",
+      "project-control/reports/M2-T015-G3-code-review.md (PASS at 1b3af35)",
+      "project-control/reports/M2-T015-G5-security-review.md (PASS + delta)",
+      "project-control/reports/M2-T015-producer-report.md (AOS s6, through 3l + rework)"
+     ],
+     "note": "DCV re-verification PASS at 1b3af35 (independently reproduced: ruff 0.13.0 exit 0, contract exit 0, 367 pytest on 3.11 + captured 3.12 CI 2025 passed, 14/14 fixture digests, activation R221/R224)."
+    },
+    {
+     "id": "D-010-R243",
+     "state": "PASS",
+     "evidence": [
+      "project-control/reports/M2-T015-DCV-verification.md (DCV re-verification: 97/97 PASS at 1b3af35)",
+      "project-control/reports/M2-T015-CI-evidence.md (api CI 3.12: ruff clean + 2025 passed / documents 939)",
+      "project-control/reports/M2-T015-G1-data-contract-review.md (PASS + delta)",
+      "project-control/reports/M2-T015-G3-code-review.md (PASS at 1b3af35)",
+      "project-control/reports/M2-T015-G5-security-review.md (PASS + delta)",
+      "project-control/reports/M2-T015-producer-report.md (AOS s6, through 3l + rework)"
+     ],
+     "note": "DCV re-verification PASS at 1b3af35 (independently reproduced: ruff 0.13.0 exit 0, contract exit 0, 367 pytest on 3.11 + captured 3.12 CI 2025 passed, 14/14 fixture digests, activation R221/R224)."
+    },
+    {
+     "id": "D-010-R244",
+     "state": "PASS",
+     "evidence": [
+      "project-control/reports/M2-T015-DCV-verification.md (DCV re-verification: 97/97 PASS at 1b3af35)",
+      "project-control/reports/M2-T015-CI-evidence.md (api CI 3.12: ruff clean + 2025 passed / documents 939)",
+      "project-control/reports/M2-T015-G1-data-contract-review.md (PASS + delta)",
+      "project-control/reports/M2-T015-G3-code-review.md (PASS at 1b3af35)",
+      "project-control/reports/M2-T015-G5-security-review.md (PASS + delta)",
+      "project-control/reports/M2-T015-producer-report.md (AOS s6, through 3l + rework)"
+     ],
+     "note": "DCV re-verification PASS at 1b3af35 (independently reproduced: ruff 0.13.0 exit 0, contract exit 0, 367 pytest on 3.11 + captured 3.12 CI 2025 passed, 14/14 fixture digests, activation R221/R224)."
+    },
+    {
+     "id": "D-010-R245",
+     "state": "PASS",
+     "evidence": [
+      "project-control/reports/M2-T015-DCV-verification.md (DCV re-verification: 97/97 PASS at 1b3af35)",
+      "project-control/reports/M2-T015-CI-evidence.md (api CI 3.12: ruff clean + 2025 passed / documents 939)",
+      "project-control/reports/M2-T015-G1-data-contract-review.md (PASS + delta)",
+      "project-control/reports/M2-T015-G3-code-review.md (PASS at 1b3af35)",
+      "project-control/reports/M2-T015-G5-security-review.md (PASS + delta)",
+      "project-control/reports/M2-T015-producer-report.md (AOS s6, through 3l + rework)"
+     ],
+     "note": "DCV re-verification PASS at 1b3af35 (independently reproduced: ruff 0.13.0 exit 0, contract exit 0, 367 pytest on 3.11 + captured 3.12 CI 2025 passed, 14/14 fixture digests, activation R221/R224)."
+    },
+    {
+     "id": "D-010-R247",
+     "state": "PASS",
+     "evidence": [
+      "project-control/reports/M2-T015-DCV-verification.md (DCV re-verification: 97/97 PASS at 1b3af35)",
+      "project-control/reports/M2-T015-CI-evidence.md (api CI 3.12: ruff clean + 2025 passed / documents 939)",
+      "project-control/reports/M2-T015-G1-data-contract-review.md (PASS + delta)",
+      "project-control/reports/M2-T015-G3-code-review.md (PASS at 1b3af35)",
+      "project-control/reports/M2-T015-G5-security-review.md (PASS + delta)",
+      "project-control/reports/M2-T015-producer-report.md (AOS s6, through 3l + rework)"
+     ],
+     "note": "DCV re-verification PASS at 1b3af35 (independently reproduced: ruff 0.13.0 exit 0, contract exit 0, 367 pytest on 3.11 + captured 3.12 CI 2025 passed, 14/14 fixture digests, activation R221/R224)."
+    },
+    {
+     "id": "D-010-R248",
+     "state": "PASS",
+     "evidence": [
+      "project-control/reports/M2-T015-DCV-verification.md (DCV re-verification: 97/97 PASS at 1b3af35)",
+      "project-control/reports/M2-T015-CI-evidence.md (api CI 3.12: ruff clean + 2025 passed / documents 939)",
+      "project-control/reports/M2-T015-G1-data-contract-review.md (PASS + delta)",
+      "project-control/reports/M2-T015-G3-code-review.md (PASS at 1b3af35)",
+      "project-control/reports/M2-T015-G5-security-review.md (PASS + delta)",
+      "project-control/reports/M2-T015-producer-report.md (AOS s6, through 3l + rework)"
+     ],
+     "note": "DCV re-verification PASS at 1b3af35 (independently reproduced: ruff 0.13.0 exit 0, contract exit 0, 367 pytest on 3.11 + captured 3.12 CI 2025 passed, 14/14 fixture digests, activation R221/R224)."
+    },
+    {
+     "id": "D-010-R249",
+     "state": "PASS",
+     "evidence": [
+      "project-control/reports/M2-T015-DCV-verification.md (DCV re-verification: 97/97 PASS at 1b3af35)",
+      "project-control/reports/M2-T015-CI-evidence.md (api CI 3.12: ruff clean + 2025 passed / documents 939)",
+      "project-control/reports/M2-T015-G1-data-contract-review.md (PASS + delta)",
+      "project-control/reports/M2-T015-G3-code-review.md (PASS at 1b3af35)",
+      "project-control/reports/M2-T015-G5-security-review.md (PASS + delta)",
+      "project-control/reports/M2-T015-producer-report.md (AOS s6, through 3l + rework)"
+     ],
+     "note": "DCV re-verification PASS at 1b3af35 (independently reproduced: ruff 0.13.0 exit 0, contract exit 0, 367 pytest on 3.11 + captured 3.12 CI 2025 passed, 14/14 fixture digests, activation R221/R224)."
+    },
+    {
+     "id": "D-010-R250",
+     "state": "PASS",
+     "evidence": [
+      "project-control/reports/M2-T015-DCV-verification.md (DCV re-verification: 97/97 PASS at 1b3af35)",
+      "project-control/reports/M2-T015-CI-evidence.md (api CI 3.12: ruff clean + 2025 passed / documents 939)",
+      "project-control/reports/M2-T015-G1-data-contract-review.md (PASS + delta)",
+      "project-control/reports/M2-T015-G3-code-review.md (PASS at 1b3af35)",
+      "project-control/reports/M2-T015-G5-security-review.md (PASS + delta)",
+      "project-control/reports/M2-T015-producer-report.md (AOS s6, through 3l + rework)"
+     ],
+     "note": "DCV re-verification PASS at 1b3af35 (independently reproduced: ruff 0.13.0 exit 0, contract exit 0, 367 pytest on 3.11 + captured 3.12 CI 2025 passed, 14/14 fixture digests, activation R221/R224)."
+    },
+    {
+     "id": "D-010-R251",
+     "state": "PASS",
+     "evidence": [
+      "project-control/reports/M2-T015-DCV-verification.md (DCV re-verification: 97/97 PASS at 1b3af35)",
+      "project-control/reports/M2-T015-CI-evidence.md (api CI 3.12: ruff clean + 2025 passed / documents 939)",
+      "project-control/reports/M2-T015-G1-data-contract-review.md (PASS + delta)",
+      "project-control/reports/M2-T015-G3-code-review.md (PASS at 1b3af35)",
+      "project-control/reports/M2-T015-G5-security-review.md (PASS + delta)",
+      "project-control/reports/M2-T015-producer-report.md (AOS s6, through 3l + rework)"
+     ],
+     "note": "DCV re-verification PASS at 1b3af35 (independently reproduced: ruff 0.13.0 exit 0, contract exit 0, 367 pytest on 3.11 + captured 3.12 CI 2025 passed, 14/14 fixture digests, activation R221/R224)."
+    },
+    {
+     "id": "D-010-R252",
+     "state": "PASS",
+     "evidence": [
+      "project-control/reports/M2-T015-DCV-verification.md (DCV re-verification: 97/97 PASS at 1b3af35)",
+      "project-control/reports/M2-T015-CI-evidence.md (api CI 3.12: ruff clean + 2025 passed / documents 939)",
+      "project-control/reports/M2-T015-G1-data-contract-review.md (PASS + delta)",
+      "project-control/reports/M2-T015-G3-code-review.md (PASS at 1b3af35)",
+      "project-control/reports/M2-T015-G5-security-review.md (PASS + delta)",
+      "project-control/reports/M2-T015-producer-report.md (AOS s6, through 3l + rework)"
+     ],
+     "note": "DCV re-verification PASS at 1b3af35 (independently reproduced: ruff 0.13.0 exit 0, contract exit 0, 367 pytest on 3.11 + captured 3.12 CI 2025 passed, 14/14 fixture digests, activation R221/R224)."
+    },
+    {
+     "id": "D-010-R253",
+     "state": "PASS",
+     "evidence": [
+      "project-control/reports/M2-T015-DCV-verification.md (DCV re-verification: 97/97 PASS at 1b3af35)",
+      "project-control/reports/M2-T015-CI-evidence.md (api CI 3.12: ruff clean + 2025 passed / documents 939)",
+      "project-control/reports/M2-T015-G1-data-contract-review.md (PASS + delta)",
+      "project-control/reports/M2-T015-G3-code-review.md (PASS at 1b3af35)",
+      "project-control/reports/M2-T015-G5-security-review.md (PASS + delta)",
+      "project-control/reports/M2-T015-producer-report.md (AOS s6, through 3l + rework)"
+     ],
+     "note": "DCV re-verification PASS at 1b3af35 (independently reproduced: ruff 0.13.0 exit 0, contract exit 0, 367 pytest on 3.11 + captured 3.12 CI 2025 passed, 14/14 fixture digests, activation R221/R224)."
+    },
+    {
+     "id": "D-010-R254",
+     "state": "PASS",
+     "evidence": [
+      "project-control/reports/M2-T015-DCV-verification.md (DCV re-verification: 97/97 PASS at 1b3af35)",
+      "project-control/reports/M2-T015-CI-evidence.md (api CI 3.12: ruff clean + 2025 passed / documents 939)",
+      "project-control/reports/M2-T015-G1-data-contract-review.md (PASS + delta)",
+      "project-control/reports/M2-T015-G3-code-review.md (PASS at 1b3af35)",
+      "project-control/reports/M2-T015-G5-security-review.md (PASS + delta)",
+      "project-control/reports/M2-T015-producer-report.md (AOS s6, through 3l + rework)"
+     ],
+     "note": "DCV re-verification PASS at 1b3af35 (independently reproduced: ruff 0.13.0 exit 0, contract exit 0, 367 pytest on 3.11 + captured 3.12 CI 2025 passed, 14/14 fixture digests, activation R221/R224)."
+    },
+    {
+     "id": "D-010-R255",
+     "state": "PASS",
+     "evidence": [
+      "project-control/reports/M2-T015-DCV-verification.md (DCV re-verification: 97/97 PASS at 1b3af35)",
+      "project-control/reports/M2-T015-CI-evidence.md (api CI 3.12: ruff clean + 2025 passed / documents 939)",
+      "project-control/reports/M2-T015-G1-data-contract-review.md (PASS + delta)",
+      "project-control/reports/M2-T015-G3-code-review.md (PASS at 1b3af35)",
+      "project-control/reports/M2-T015-G5-security-review.md (PASS + delta)",
+      "project-control/reports/M2-T015-producer-report.md (AOS s6, through 3l + rework)"
+     ],
+     "note": "DCV re-verification PASS at 1b3af35 (independently reproduced: ruff 0.13.0 exit 0, contract exit 0, 367 pytest on 3.11 + captured 3.12 CI 2025 passed, 14/14 fixture digests, activation R221/R224)."
+    },
+    {
+     "id": "D-010-R256",
+     "state": "PASS",
+     "evidence": [
+      "project-control/reports/M2-T015-DCV-verification.md (DCV re-verification: 97/97 PASS at 1b3af35)",
+      "project-control/reports/M2-T015-CI-evidence.md (api CI 3.12: ruff clean + 2025 passed / documents 939)",
+      "project-control/reports/M2-T015-G1-data-contract-review.md (PASS + delta)",
+      "project-control/reports/M2-T015-G3-code-review.md (PASS at 1b3af35)",
+      "project-control/reports/M2-T015-G5-security-review.md (PASS + delta)",
+      "project-control/reports/M2-T015-producer-report.md (AOS s6, through 3l + rework)"
+     ],
+     "note": "DCV re-verification PASS at 1b3af35 (independently reproduced: ruff 0.13.0 exit 0, contract exit 0, 367 pytest on 3.11 + captured 3.12 CI 2025 passed, 14/14 fixture digests, activation R221/R224)."
+    },
+    {
+     "id": "D-010-R257",
+     "state": "PASS",
+     "evidence": [
+      "project-control/reports/M2-T015-DCV-verification.md (DCV re-verification: 97/97 PASS at 1b3af35)",
+      "project-control/reports/M2-T015-CI-evidence.md (api CI 3.12: ruff clean + 2025 passed / documents 939)",
+      "project-control/reports/M2-T015-G1-data-contract-review.md (PASS + delta)",
+      "project-control/reports/M2-T015-G3-code-review.md (PASS at 1b3af35)",
+      "project-control/reports/M2-T015-G5-security-review.md (PASS + delta)",
+      "project-control/reports/M2-T015-producer-report.md (AOS s6, through 3l + rework)"
+     ],
+     "note": "DCV re-verification PASS at 1b3af35 (independently reproduced: ruff 0.13.0 exit 0, contract exit 0, 367 pytest on 3.11 + captured 3.12 CI 2025 passed, 14/14 fixture digests, activation R221/R224)."
+    },
+    {
+     "id": "D-010-R258",
+     "state": "PASS",
+     "evidence": [
+      "project-control/reports/M2-T015-DCV-verification.md (DCV re-verification: 97/97 PASS at 1b3af35)",
+      "project-control/reports/M2-T015-CI-evidence.md (api CI 3.12: ruff clean + 2025 passed / documents 939)",
+      "project-control/reports/M2-T015-G1-data-contract-review.md (PASS + delta)",
+      "project-control/reports/M2-T015-G3-code-review.md (PASS at 1b3af35)",
+      "project-control/reports/M2-T015-G5-security-review.md (PASS + delta)",
+      "project-control/reports/M2-T015-producer-report.md (AOS s6, through 3l + rework)"
+     ],
+     "note": "DCV re-verification PASS at 1b3af35 (independently reproduced: ruff 0.13.0 exit 0, contract exit 0, 367 pytest on 3.11 + captured 3.12 CI 2025 passed, 14/14 fixture digests, activation R221/R224)."
+    },
+    {
+     "id": "D-010-R259",
+     "state": "PASS",
+     "evidence": [
+      "project-control/reports/M2-T015-DCV-verification.md (DCV re-verification: 97/97 PASS at 1b3af35)",
+      "project-control/reports/M2-T015-CI-evidence.md (api CI 3.12: ruff clean + 2025 passed / documents 939)",
+      "project-control/reports/M2-T015-G1-data-contract-review.md (PASS + delta)",
+      "project-control/reports/M2-T015-G3-code-review.md (PASS at 1b3af35)",
+      "project-control/reports/M2-T015-G5-security-review.md (PASS + delta)",
+      "project-control/reports/M2-T015-producer-report.md (AOS s6, through 3l + rework)"
+     ],
+     "note": "DCV re-verification PASS at 1b3af35 (independently reproduced: ruff 0.13.0 exit 0, contract exit 0, 367 pytest on 3.11 + captured 3.12 CI 2025 passed, 14/14 fixture digests, activation R221/R224)."
+    },
+    {
+     "id": "D-010-R260",
+     "state": "PASS",
+     "evidence": [
+      "project-control/reports/M2-T015-DCV-verification.md (DCV re-verification: 97/97 PASS at 1b3af35)",
+      "project-control/reports/M2-T015-CI-evidence.md (api CI 3.12: ruff clean + 2025 passed / documents 939)",
+      "project-control/reports/M2-T015-G1-data-contract-review.md (PASS + delta)",
+      "project-control/reports/M2-T015-G3-code-review.md (PASS at 1b3af35)",
+      "project-control/reports/M2-T015-G5-security-review.md (PASS + delta)",
+      "project-control/reports/M2-T015-producer-report.md (AOS s6, through 3l + rework)"
+     ],
+     "note": "DCV re-verification PASS at 1b3af35 (independently reproduced: ruff 0.13.0 exit 0, contract exit 0, 367 pytest on 3.11 + captured 3.12 CI 2025 passed, 14/14 fixture digests, activation R221/R224)."
+    },
+    {
+     "id": "D-010-R261",
+     "state": "PASS",
+     "evidence": [
+      "project-control/reports/M2-T015-DCV-verification.md (DCV re-verification: 97/97 PASS at 1b3af35)",
+      "project-control/reports/M2-T015-CI-evidence.md (api CI 3.12: ruff clean + 2025 passed / documents 939)",
+      "project-control/reports/M2-T015-G1-data-contract-review.md (PASS + delta)",
+      "project-control/reports/M2-T015-G3-code-review.md (PASS at 1b3af35)",
+      "project-control/reports/M2-T015-G5-security-review.md (PASS + delta)",
+      "project-control/reports/M2-T015-producer-report.md (AOS s6, through 3l + rework)"
+     ],
+     "note": "DCV re-verification PASS at 1b3af35 (independently reproduced: ruff 0.13.0 exit 0, contract exit 0, 367 pytest on 3.11 + captured 3.12 CI 2025 passed, 14/14 fixture digests, activation R221/R224)."
+    },
+    {
+     "id": "D-010-R262",
+     "state": "PASS",
+     "evidence": [
+      "project-control/reports/M2-T015-DCV-verification.md (DCV re-verification: 97/97 PASS at 1b3af35)",
+      "project-control/reports/M2-T015-CI-evidence.md (api CI 3.12: ruff clean + 2025 passed / documents 939)",
+      "project-control/reports/M2-T015-G1-data-contract-review.md (PASS + delta)",
+      "project-control/reports/M2-T015-G3-code-review.md (PASS at 1b3af35)",
+      "project-control/reports/M2-T015-G5-security-review.md (PASS + delta)",
+      "project-control/reports/M2-T015-producer-report.md (AOS s6, through 3l + rework)"
+     ],
+     "note": "DCV re-verification PASS at 1b3af35 (independently reproduced: ruff 0.13.0 exit 0, contract exit 0, 367 pytest on 3.11 + captured 3.12 CI 2025 passed, 14/14 fixture digests, activation R221/R224)."
+    },
+    {
+     "id": "D-010-R263",
+     "state": "PASS",
+     "evidence": [
+      "project-control/reports/M2-T015-DCV-verification.md (DCV re-verification: 97/97 PASS at 1b3af35)",
+      "project-control/reports/M2-T015-CI-evidence.md (api CI 3.12: ruff clean + 2025 passed / documents 939)",
+      "project-control/reports/M2-T015-G1-data-contract-review.md (PASS + delta)",
+      "project-control/reports/M2-T015-G3-code-review.md (PASS at 1b3af35)",
+      "project-control/reports/M2-T015-G5-security-review.md (PASS + delta)",
+      "project-control/reports/M2-T015-producer-report.md (AOS s6, through 3l + rework)"
+     ],
+     "note": "DCV re-verification PASS at 1b3af35 (independently reproduced: ruff 0.13.0 exit 0, contract exit 0, 367 pytest on 3.11 + captured 3.12 CI 2025 passed, 14/14 fixture digests, activation R221/R224)."
+    },
+    {
+     "id": "D-010-R264",
+     "state": "PASS",
+     "evidence": [
+      "project-control/reports/M2-T015-DCV-verification.md (DCV re-verification: 97/97 PASS at 1b3af35)",
+      "project-control/reports/M2-T015-CI-evidence.md (api CI 3.12: ruff clean + 2025 passed / documents 939)",
+      "project-control/reports/M2-T015-G1-data-contract-review.md (PASS + delta)",
+      "project-control/reports/M2-T015-G3-code-review.md (PASS at 1b3af35)",
+      "project-control/reports/M2-T015-G5-security-review.md (PASS + delta)",
+      "project-control/reports/M2-T015-producer-report.md (AOS s6, through 3l + rework)"
+     ],
+     "note": "DCV re-verification PASS at 1b3af35 (independently reproduced: ruff 0.13.0 exit 0, contract exit 0, 367 pytest on 3.11 + captured 3.12 CI 2025 passed, 14/14 fixture digests, activation R221/R224)."
+    },
+    {
+     "id": "D-010-R265",
+     "state": "PASS",
+     "evidence": [
+      "project-control/reports/M2-T015-DCV-verification.md (DCV re-verification: 97/97 PASS at 1b3af35)",
+      "project-control/reports/M2-T015-CI-evidence.md (api CI 3.12: ruff clean + 2025 passed / documents 939)",
+      "project-control/reports/M2-T015-G1-data-contract-review.md (PASS + delta)",
+      "project-control/reports/M2-T015-G3-code-review.md (PASS at 1b3af35)",
+      "project-control/reports/M2-T015-G5-security-review.md (PASS + delta)",
+      "project-control/reports/M2-T015-producer-report.md (AOS s6, through 3l + rework)"
+     ],
+     "note": "DCV re-verification PASS at 1b3af35 (independently reproduced: ruff 0.13.0 exit 0, contract exit 0, 367 pytest on 3.11 + captured 3.12 CI 2025 passed, 14/14 fixture digests, activation R221/R224)."
+    },
+    {
+     "id": "D-010-R266",
+     "state": "PASS",
+     "evidence": [
+      "project-control/reports/M2-T015-DCV-verification.md (DCV re-verification: 97/97 PASS at 1b3af35)",
+      "project-control/reports/M2-T015-CI-evidence.md (api CI 3.12: ruff clean + 2025 passed / documents 939)",
+      "project-control/reports/M2-T015-G1-data-contract-review.md (PASS + delta)",
+      "project-control/reports/M2-T015-G3-code-review.md (PASS at 1b3af35)",
+      "project-control/reports/M2-T015-G5-security-review.md (PASS + delta)",
+      "project-control/reports/M2-T015-producer-report.md (AOS s6, through 3l + rework)"
+     ],
+     "note": "DCV re-verification PASS at 1b3af35 (independently reproduced: ruff 0.13.0 exit 0, contract exit 0, 367 pytest on 3.11 + captured 3.12 CI 2025 passed, 14/14 fixture digests, activation R221/R224)."
+    },
+    {
+     "id": "D-010-R267",
+     "state": "PASS",
+     "evidence": [
+      "project-control/reports/M2-T015-DCV-verification.md (DCV re-verification: 97/97 PASS at 1b3af35)",
+      "project-control/reports/M2-T015-CI-evidence.md (api CI 3.12: ruff clean + 2025 passed / documents 939)",
+      "project-control/reports/M2-T015-G1-data-contract-review.md (PASS + delta)",
+      "project-control/reports/M2-T015-G3-code-review.md (PASS at 1b3af35)",
+      "project-control/reports/M2-T015-G5-security-review.md (PASS + delta)",
+      "project-control/reports/M2-T015-producer-report.md (AOS s6, through 3l + rework)"
+     ],
+     "note": "DCV re-verification PASS at 1b3af35 (independently reproduced: ruff 0.13.0 exit 0, contract exit 0, 367 pytest on 3.11 + captured 3.12 CI 2025 passed, 14/14 fixture digests, activation R221/R224)."
+    },
+    {
+     "id": "D-010-R268",
+     "state": "PASS",
+     "evidence": [
+      "project-control/reports/M2-T015-DCV-verification.md (DCV re-verification: 97/97 PASS at 1b3af35)",
+      "project-control/reports/M2-T015-CI-evidence.md (api CI 3.12: ruff clean + 2025 passed / documents 939)",
+      "project-control/reports/M2-T015-G1-data-contract-review.md (PASS + delta)",
+      "project-control/reports/M2-T015-G3-code-review.md (PASS at 1b3af35)",
+      "project-control/reports/M2-T015-G5-security-review.md (PASS + delta)",
+      "project-control/reports/M2-T015-producer-report.md (AOS s6, through 3l + rework)"
+     ],
+     "note": "DCV re-verification PASS at 1b3af35 (independently reproduced: ruff 0.13.0 exit 0, contract exit 0, 367 pytest on 3.11 + captured 3.12 CI 2025 passed, 14/14 fixture digests, activation R221/R224)."
+    },
+    {
+     "id": "D-010-R269",
+     "state": "PASS",
+     "evidence": [
+      "project-control/reports/M2-T015-DCV-verification.md (DCV re-verification: 97/97 PASS at 1b3af35)",
+      "project-control/reports/M2-T015-CI-evidence.md (api CI 3.12: ruff clean + 2025 passed / documents 939)",
+      "project-control/reports/M2-T015-G1-data-contract-review.md (PASS + delta)",
+      "project-control/reports/M2-T015-G3-code-review.md (PASS at 1b3af35)",
+      "project-control/reports/M2-T015-G5-security-review.md (PASS + delta)",
+      "project-control/reports/M2-T015-producer-report.md (AOS s6, through 3l + rework)"
+     ],
+     "note": "DCV re-verification PASS at 1b3af35 (independently reproduced: ruff 0.13.0 exit 0, contract exit 0, 367 pytest on 3.11 + captured 3.12 CI 2025 passed, 14/14 fixture digests, activation R221/R224)."
+    },
+    {
+     "id": "D-010-R270",
+     "state": "PASS",
+     "evidence": [
+      "project-control/reports/M2-T015-DCV-verification.md (DCV re-verification: 97/97 PASS at 1b3af35)",
+      "project-control/reports/M2-T015-CI-evidence.md (api CI 3.12: ruff clean + 2025 passed / documents 939)",
+      "project-control/reports/M2-T015-G1-data-contract-review.md (PASS + delta)",
+      "project-control/reports/M2-T015-G3-code-review.md (PASS at 1b3af35)",
+      "project-control/reports/M2-T015-G5-security-review.md (PASS + delta)",
+      "project-control/reports/M2-T015-producer-report.md (AOS s6, through 3l + rework)"
+     ],
+     "note": "DCV re-verification PASS at 1b3af35 (independently reproduced: ruff 0.13.0 exit 0, contract exit 0, 367 pytest on 3.11 + captured 3.12 CI 2025 passed, 14/14 fixture digests, activation R221/R224)."
+    },
+    {
+     "id": "D-010-R271",
+     "state": "PASS",
+     "evidence": [
+      "project-control/reports/M2-T015-DCV-verification.md (DCV re-verification: 97/97 PASS at 1b3af35)",
+      "project-control/reports/M2-T015-CI-evidence.md (api CI 3.12: ruff clean + 2025 passed / documents 939)",
+      "project-control/reports/M2-T015-G1-data-contract-review.md (PASS + delta)",
+      "project-control/reports/M2-T015-G3-code-review.md (PASS at 1b3af35)",
+      "project-control/reports/M2-T015-G5-security-review.md (PASS + delta)",
+      "project-control/reports/M2-T015-producer-report.md (AOS s6, through 3l + rework)"
+     ],
+     "note": "DCV re-verification PASS at 1b3af35 (independently reproduced: ruff 0.13.0 exit 0, contract exit 0, 367 pytest on 3.11 + captured 3.12 CI 2025 passed, 14/14 fixture digests, activation R221/R224)."
+    },
+    {
+     "id": "D-010-R272",
+     "state": "PASS",
+     "evidence": [
+      "project-control/reports/M2-T015-DCV-verification.md (DCV re-verification: 97/97 PASS at 1b3af35)",
+      "project-control/reports/M2-T015-CI-evidence.md (api CI 3.12: ruff clean + 2025 passed / documents 939)",
+      "project-control/reports/M2-T015-G1-data-contract-review.md (PASS + delta)",
+      "project-control/reports/M2-T015-G3-code-review.md (PASS at 1b3af35)",
+      "project-control/reports/M2-T015-G5-security-review.md (PASS + delta)",
+      "project-control/reports/M2-T015-producer-report.md (AOS s6, through 3l + rework)"
+     ],
+     "note": "DCV re-verification PASS at 1b3af35 (independently reproduced: ruff 0.13.0 exit 0, contract exit 0, 367 pytest on 3.11 + captured 3.12 CI 2025 passed, 14/14 fixture digests, activation R221/R224)."
+    },
+    {
+     "id": "D-010-R273",
+     "state": "PASS",
+     "evidence": [
+      "project-control/reports/M2-T015-DCV-verification.md (DCV re-verification: 97/97 PASS at 1b3af35)",
+      "project-control/reports/M2-T015-CI-evidence.md (api CI 3.12: ruff clean + 2025 passed / documents 939)",
+      "project-control/reports/M2-T015-G1-data-contract-review.md (PASS + delta)",
+      "project-control/reports/M2-T015-G3-code-review.md (PASS at 1b3af35)",
+      "project-control/reports/M2-T015-G5-security-review.md (PASS + delta)",
+      "project-control/reports/M2-T015-producer-report.md (AOS s6, through 3l + rework)"
+     ],
+     "note": "DCV re-verification PASS at 1b3af35 (independently reproduced: ruff 0.13.0 exit 0, contract exit 0, 367 pytest on 3.11 + captured 3.12 CI 2025 passed, 14/14 fixture digests, activation R221/R224)."
+    },
+    {
+     "id": "D-010-R274",
+     "state": "PASS",
+     "evidence": [
+      "project-control/reports/M2-T015-DCV-verification.md (DCV re-verification: 97/97 PASS at 1b3af35)",
+      "project-control/reports/M2-T015-CI-evidence.md (api CI 3.12: ruff clean + 2025 passed / documents 939)",
+      "project-control/reports/M2-T015-G1-data-contract-review.md (PASS + delta)",
+      "project-control/reports/M2-T015-G3-code-review.md (PASS at 1b3af35)",
+      "project-control/reports/M2-T015-G5-security-review.md (PASS + delta)",
+      "project-control/reports/M2-T015-producer-report.md (AOS s6, through 3l + rework)"
+     ],
+     "note": "DCV re-verification PASS at 1b3af35 (independently reproduced: ruff 0.13.0 exit 0, contract exit 0, 367 pytest on 3.11 + captured 3.12 CI 2025 passed, 14/14 fixture digests, activation R221/R224)."
+    },
+    {
+     "id": "D-010-R275",
+     "state": "PASS",
+     "evidence": [
+      "project-control/reports/M2-T015-DCV-verification.md (DCV re-verification: 97/97 PASS at 1b3af35)",
+      "project-control/reports/M2-T015-CI-evidence.md (api CI 3.12: ruff clean + 2025 passed / documents 939)",
+      "project-control/reports/M2-T015-G1-data-contract-review.md (PASS + delta)",
+      "project-control/reports/M2-T015-G3-code-review.md (PASS at 1b3af35)",
+      "project-control/reports/M2-T015-G5-security-review.md (PASS + delta)",
+      "project-control/reports/M2-T015-producer-report.md (AOS s6, through 3l + rework)"
+     ],
+     "note": "DCV re-verification PASS at 1b3af35 (independently reproduced: ruff 0.13.0 exit 0, contract exit 0, 367 pytest on 3.11 + captured 3.12 CI 2025 passed, 14/14 fixture digests, activation R221/R224)."
+    },
+    {
+     "id": "D-010-R276",
+     "state": "PASS",
+     "evidence": [
+      "project-control/reports/M2-T015-DCV-verification.md (DCV re-verification: 97/97 PASS at 1b3af35)",
+      "project-control/reports/M2-T015-CI-evidence.md (api CI 3.12: ruff clean + 2025 passed / documents 939)",
+      "project-control/reports/M2-T015-G1-data-contract-review.md (PASS + delta)",
+      "project-control/reports/M2-T015-G3-code-review.md (PASS at 1b3af35)",
+      "project-control/reports/M2-T015-G5-security-review.md (PASS + delta)",
+      "project-control/reports/M2-T015-producer-report.md (AOS s6, through 3l + rework)"
+     ],
+     "note": "DCV re-verification PASS at 1b3af35 (independently reproduced: ruff 0.13.0 exit 0, contract exit 0, 367 pytest on 3.11 + captured 3.12 CI 2025 passed, 14/14 fixture digests, activation R221/R224)."
+    },
+    {
+     "id": "D-010-R277",
+     "state": "PASS",
+     "evidence": [
+      "project-control/reports/M2-T015-DCV-verification.md (DCV re-verification: 97/97 PASS at 1b3af35)",
+      "project-control/reports/M2-T015-CI-evidence.md (api CI 3.12: ruff clean + 2025 passed / documents 939)",
+      "project-control/reports/M2-T015-G1-data-contract-review.md (PASS + delta)",
+      "project-control/reports/M2-T015-G3-code-review.md (PASS at 1b3af35)",
+      "project-control/reports/M2-T015-G5-security-review.md (PASS + delta)",
+      "project-control/reports/M2-T015-producer-report.md (AOS s6, through 3l + rework)"
+     ],
+     "note": "DCV re-verification PASS at 1b3af35 (independently reproduced: ruff 0.13.0 exit 0, contract exit 0, 367 pytest on 3.11 + captured 3.12 CI 2025 passed, 14/14 fixture digests, activation R221/R224). Lawful deferral named with reason + acceptance-hold (OCR/raster, rotation-normalization, distance/bearing normalization, boundary/area reconstruction + tax-lot AREA cross-check)."
+    },
+    {
+     "id": "D-010-R278",
+     "state": "PASS",
+     "evidence": [
+      "project-control/reports/M2-T015-DCV-verification.md (DCV re-verification: 97/97 PASS at 1b3af35)",
+      "project-control/reports/M2-T015-CI-evidence.md (api CI 3.12: ruff clean + 2025 passed / documents 939)",
+      "project-control/reports/M2-T015-G1-data-contract-review.md (PASS + delta)",
+      "project-control/reports/M2-T015-G3-code-review.md (PASS at 1b3af35)",
+      "project-control/reports/M2-T015-G5-security-review.md (PASS + delta)",
+      "project-control/reports/M2-T015-producer-report.md (AOS s6, through 3l + rework)"
+     ],
+     "note": "DCV re-verification PASS at 1b3af35 (independently reproduced: ruff 0.13.0 exit 0, contract exit 0, 367 pytest on 3.11 + captured 3.12 CI 2025 passed, 14/14 fixture digests, activation R221/R224). Deferrals each named with reason and acceptance-hold; every unit ships working code + tests."
+    },
+    {
+     "id": "D-010-R279",
+     "state": "PASS",
+     "evidence": [
+      "project-control/reports/M2-T015-DCV-verification.md (DCV re-verification: 97/97 PASS at 1b3af35)",
+      "project-control/reports/M2-T015-CI-evidence.md (api CI 3.12: ruff clean + 2025 passed / documents 939)",
+      "project-control/reports/M2-T015-G1-data-contract-review.md (PASS + delta)",
+      "project-control/reports/M2-T015-G3-code-review.md (PASS at 1b3af35)",
+      "project-control/reports/M2-T015-G5-security-review.md (PASS + delta)",
+      "project-control/reports/M2-T015-producer-report.md (AOS s6, through 3l + rework)"
+     ],
+     "note": "DCV re-verification PASS at 1b3af35 (independently reproduced: ruff 0.13.0 exit 0, contract exit 0, 367 pytest on 3.11 + captured 3.12 CI 2025 passed, 14/14 fixture digests, activation R221/R224). No speculative/framework/supervisor/ACL/infra work; deferrals documented."
+    },
+    {
+     "id": "D-010-R280",
+     "state": "PASS",
+     "evidence": [
+      "project-control/reports/M2-T015-DCV-verification.md (DCV re-verification: 97/97 PASS at 1b3af35)",
+      "project-control/reports/M2-T015-CI-evidence.md (api CI 3.12: ruff clean + 2025 passed / documents 939)",
+      "project-control/reports/M2-T015-G1-data-contract-review.md (PASS + delta)",
+      "project-control/reports/M2-T015-G3-code-review.md (PASS at 1b3af35)",
+      "project-control/reports/M2-T015-G5-security-review.md (PASS + delta)",
+      "project-control/reports/M2-T015-producer-report.md (AOS s6, through 3l + rework)"
+     ],
+     "note": "DCV re-verification PASS at 1b3af35 (independently reproduced: ruff 0.13.0 exit 0, contract exit 0, 367 pytest on 3.11 + captured 3.12 CI 2025 passed, 14/14 fixture digests, activation R221/R224). 8 hardening areas kept inside M2-T015; deferrals honestly disclosed; additive diff, no scope deletion."
+    },
+    {
+     "id": "D-010-R281",
+     "state": "PASS",
+     "evidence": [
+      "project-control/reports/M2-T015-DCV-verification.md (DCV re-verification: 97/97 PASS at 1b3af35)",
+      "project-control/reports/M2-T015-CI-evidence.md (api CI 3.12: ruff clean + 2025 passed / documents 939)",
+      "project-control/reports/M2-T015-G1-data-contract-review.md (PASS + delta)",
+      "project-control/reports/M2-T015-G3-code-review.md (PASS at 1b3af35)",
+      "project-control/reports/M2-T015-G5-security-review.md (PASS + delta)",
+      "project-control/reports/M2-T015-producer-report.md (AOS s6, through 3l + rework)"
+     ],
+     "note": "DCV re-verification PASS at 1b3af35 (independently reproduced: ruff 0.13.0 exit 0, contract exit 0, 367 pytest on 3.11 + captured 3.12 CI 2025 passed, 14/14 fixture digests, activation R221/R224)."
+    },
+    {
+     "id": "D-010-R282",
+     "state": "PASS",
+     "evidence": [
+      "project-control/reports/M2-T015-DCV-verification.md (DCV re-verification: 97/97 PASS at 1b3af35)",
+      "project-control/reports/M2-T015-CI-evidence.md (api CI 3.12: ruff clean + 2025 passed / documents 939)",
+      "project-control/reports/M2-T015-G1-data-contract-review.md (PASS + delta)",
+      "project-control/reports/M2-T015-G3-code-review.md (PASS at 1b3af35)",
+      "project-control/reports/M2-T015-G5-security-review.md (PASS + delta)",
+      "project-control/reports/M2-T015-producer-report.md (AOS s6, through 3l + rework)"
+     ],
+     "note": "DCV re-verification PASS at 1b3af35 (independently reproduced: ruff 0.13.0 exit 0, contract exit 0, 367 pytest on 3.11 + captured 3.12 CI 2025 passed, 14/14 fixture digests, activation R221/R224)."
+    },
+    {
+     "id": "D-010-R283",
+     "state": "PASS",
+     "evidence": [
+      "project-control/reports/M2-T015-DCV-verification.md (DCV re-verification: 97/97 PASS at 1b3af35)",
+      "project-control/reports/M2-T015-CI-evidence.md (api CI 3.12: ruff clean + 2025 passed / documents 939)",
+      "project-control/reports/M2-T015-G1-data-contract-review.md (PASS + delta)",
+      "project-control/reports/M2-T015-G3-code-review.md (PASS at 1b3af35)",
+      "project-control/reports/M2-T015-G5-security-review.md (PASS + delta)",
+      "project-control/reports/M2-T015-producer-report.md (AOS s6, through 3l + rework)"
+     ],
+     "note": "DCV re-verification PASS at 1b3af35 (independently reproduced: ruff 0.13.0 exit 0, contract exit 0, 367 pytest on 3.11 + captured 3.12 CI 2025 passed, 14/14 fixture digests, activation R221/R224)."
+    },
+    {
+     "id": "D-010-R284",
+     "state": "PASS",
+     "evidence": [
+      "project-control/reports/M2-T015-DCV-verification.md (DCV re-verification: 97/97 PASS at 1b3af35)",
+      "project-control/reports/M2-T015-CI-evidence.md (api CI 3.12: ruff clean + 2025 passed / documents 939)",
+      "project-control/reports/M2-T015-G1-data-contract-review.md (PASS + delta)",
+      "project-control/reports/M2-T015-G3-code-review.md (PASS at 1b3af35)",
+      "project-control/reports/M2-T015-G5-security-review.md (PASS + delta)",
+      "project-control/reports/M2-T015-producer-report.md (AOS s6, through 3l + rework)"
+     ],
+     "note": "DCV re-verification PASS at 1b3af35 (independently reproduced: ruff 0.13.0 exit 0, contract exit 0, 367 pytest on 3.11 + captured 3.12 CI 2025 passed, 14/14 fixture digests, activation R221/R224)."
+    },
+    {
+     "id": "D-010-R285",
+     "state": "PASS",
+     "evidence": [
+      "project-control/reports/M2-T015-DCV-verification.md (DCV re-verification: 97/97 PASS at 1b3af35)",
+      "project-control/reports/M2-T015-CI-evidence.md (api CI 3.12: ruff clean + 2025 passed / documents 939)",
+      "project-control/reports/M2-T015-G1-data-contract-review.md (PASS + delta)",
+      "project-control/reports/M2-T015-G3-code-review.md (PASS at 1b3af35)",
+      "project-control/reports/M2-T015-G5-security-review.md (PASS + delta)",
+      "project-control/reports/M2-T015-producer-report.md (AOS s6, through 3l + rework)"
+     ],
+     "note": "DCV re-verification PASS at 1b3af35 (independently reproduced: ruff 0.13.0 exit 0, contract exit 0, 367 pytest on 3.11 + captured 3.12 CI 2025 passed, 14/14 fixture digests, activation R221/R224)."
+    },
+    {
+     "id": "D-010-R286",
+     "state": "PASS",
+     "evidence": [
+      "project-control/reports/M2-T015-DCV-verification.md (DCV re-verification: 97/97 PASS at 1b3af35)",
+      "project-control/reports/M2-T015-CI-evidence.md (api CI 3.12: ruff clean + 2025 passed / documents 939)",
+      "project-control/reports/M2-T015-G1-data-contract-review.md (PASS + delta)",
+      "project-control/reports/M2-T015-G3-code-review.md (PASS at 1b3af35)",
+      "project-control/reports/M2-T015-G5-security-review.md (PASS + delta)",
+      "project-control/reports/M2-T015-producer-report.md (AOS s6, through 3l + rework)"
+     ],
+     "note": "DCV re-verification PASS at 1b3af35 (independently reproduced: ruff 0.13.0 exit 0, contract exit 0, 367 pytest on 3.11 + captured 3.12 CI 2025 passed, 14/14 fixture digests, activation R221/R224)."
+    },
+    {
+     "id": "D-010-R287",
+     "state": "PASS",
+     "evidence": [
+      "project-control/reports/M2-T015-DCV-verification.md (DCV re-verification: 97/97 PASS at 1b3af35)",
+      "project-control/reports/M2-T015-CI-evidence.md (api CI 3.12: ruff clean + 2025 passed / documents 939)",
+      "project-control/reports/M2-T015-G1-data-contract-review.md (PASS + delta)",
+      "project-control/reports/M2-T015-G3-code-review.md (PASS at 1b3af35)",
+      "project-control/reports/M2-T015-G5-security-review.md (PASS + delta)",
+      "project-control/reports/M2-T015-producer-report.md (AOS s6, through 3l + rework)"
+     ],
+     "note": "DCV re-verification PASS at 1b3af35 (independently reproduced: ruff 0.13.0 exit 0, contract exit 0, 367 pytest on 3.11 + captured 3.12 CI 2025 passed, 14/14 fixture digests, activation R221/R224)."
+    },
+    {
+     "id": "D-010-R288",
+     "state": "PASS",
+     "evidence": [
+      "project-control/reports/M2-T015-DCV-verification.md (DCV re-verification: 97/97 PASS at 1b3af35)",
+      "project-control/reports/M2-T015-CI-evidence.md (api CI 3.12: ruff clean + 2025 passed / documents 939)",
+      "project-control/reports/M2-T015-G1-data-contract-review.md (PASS + delta)",
+      "project-control/reports/M2-T015-G3-code-review.md (PASS at 1b3af35)",
+      "project-control/reports/M2-T015-G5-security-review.md (PASS + delta)",
+      "project-control/reports/M2-T015-producer-report.md (AOS s6, through 3l + rework)"
+     ],
+     "note": "DCV re-verification PASS at 1b3af35 (independently reproduced: ruff 0.13.0 exit 0, contract exit 0, 367 pytest on 3.11 + captured 3.12 CI 2025 passed, 14/14 fixture digests, activation R221/R224)."
+    },
+    {
+     "id": "D-010-R289",
+     "state": "PASS",
+     "evidence": [
+      "project-control/reports/M2-T015-DCV-verification.md (DCV re-verification: 97/97 PASS at 1b3af35)",
+      "project-control/reports/M2-T015-CI-evidence.md (api CI 3.12: ruff clean + 2025 passed / documents 939)",
+      "project-control/reports/M2-T015-G1-data-contract-review.md (PASS + delta)",
+      "project-control/reports/M2-T015-G3-code-review.md (PASS at 1b3af35)",
+      "project-control/reports/M2-T015-G5-security-review.md (PASS + delta)",
+      "project-control/reports/M2-T015-producer-report.md (AOS s6, through 3l + rework)"
+     ],
+     "note": "DCV re-verification PASS at 1b3af35 (independently reproduced: ruff 0.13.0 exit 0, contract exit 0, 367 pytest on 3.11 + captured 3.12 CI 2025 passed, 14/14 fixture digests, activation R221/R224)."
+    },
+    {
+     "id": "D-010-R290",
+     "state": "PASS",
+     "evidence": [
+      "project-control/reports/M2-T015-DCV-verification.md (DCV re-verification: 97/97 PASS at 1b3af35)",
+      "project-control/reports/M2-T015-CI-evidence.md (api CI 3.12: ruff clean + 2025 passed / documents 939)",
+      "project-control/reports/M2-T015-G1-data-contract-review.md (PASS + delta)",
+      "project-control/reports/M2-T015-G3-code-review.md (PASS at 1b3af35)",
+      "project-control/reports/M2-T015-G5-security-review.md (PASS + delta)",
+      "project-control/reports/M2-T015-producer-report.md (AOS s6, through 3l + rework)"
+     ],
+     "note": "DCV re-verification PASS at 1b3af35 (independently reproduced: ruff 0.13.0 exit 0, contract exit 0, 367 pytest on 3.11 + captured 3.12 CI 2025 passed, 14/14 fixture digests, activation R221/R224)."
+    },
+    {
+     "id": "D-010-R291",
+     "state": "PASS",
+     "evidence": [
+      "project-control/reports/M2-T015-DCV-verification.md (DCV re-verification: 97/97 PASS at 1b3af35)",
+      "project-control/reports/M2-T015-CI-evidence.md (api CI 3.12: ruff clean + 2025 passed / documents 939)",
+      "project-control/reports/M2-T015-G1-data-contract-review.md (PASS + delta)",
+      "project-control/reports/M2-T015-G3-code-review.md (PASS at 1b3af35)",
+      "project-control/reports/M2-T015-G5-security-review.md (PASS + delta)",
+      "project-control/reports/M2-T015-producer-report.md (AOS s6, through 3l + rework)"
+     ],
+     "note": "DCV re-verification PASS at 1b3af35 (independently reproduced: ruff 0.13.0 exit 0, contract exit 0, 367 pytest on 3.11 + captured 3.12 CI 2025 passed, 14/14 fixture digests, activation R221/R224)."
+    },
+    {
+     "id": "D-010-R292",
+     "state": "PASS",
+     "evidence": [
+      "project-control/reports/M2-T015-DCV-verification.md (DCV re-verification: 97/97 PASS at 1b3af35)",
+      "project-control/reports/M2-T015-CI-evidence.md (api CI 3.12: ruff clean + 2025 passed / documents 939)",
+      "project-control/reports/M2-T015-G1-data-contract-review.md (PASS + delta)",
+      "project-control/reports/M2-T015-G3-code-review.md (PASS at 1b3af35)",
+      "project-control/reports/M2-T015-G5-security-review.md (PASS + delta)",
+      "project-control/reports/M2-T015-producer-report.md (AOS s6, through 3l + rework)"
+     ],
+     "note": "DCV re-verification PASS at 1b3af35 (independently reproduced: ruff 0.13.0 exit 0, contract exit 0, 367 pytest on 3.11 + captured 3.12 CI 2025 passed, 14/14 fixture digests, activation R221/R224)."
+    },
+    {
+     "id": "D-010-R293",
+     "state": "PASS",
+     "evidence": [
+      "project-control/reports/M2-T015-DCV-verification.md (DCV re-verification: 97/97 PASS at 1b3af35)",
+      "project-control/reports/M2-T015-CI-evidence.md (api CI 3.12: ruff clean + 2025 passed / documents 939)",
+      "project-control/reports/M2-T015-G1-data-contract-review.md (PASS + delta)",
+      "project-control/reports/M2-T015-G3-code-review.md (PASS at 1b3af35)",
+      "project-control/reports/M2-T015-G5-security-review.md (PASS + delta)",
+      "project-control/reports/M2-T015-producer-report.md (AOS s6, through 3l + rework)"
+     ],
+     "note": "DCV re-verification PASS at 1b3af35 (independently reproduced: ruff 0.13.0 exit 0, contract exit 0, 367 pytest on 3.11 + captured 3.12 CI 2025 passed, 14/14 fixture digests, activation R221/R224)."
+    },
+    {
+     "id": "D-010-R294",
+     "state": "PASS",
+     "evidence": [
+      "project-control/reports/M2-T015-DCV-verification.md (DCV re-verification: 97/97 PASS at 1b3af35)",
+      "project-control/reports/M2-T015-CI-evidence.md (api CI 3.12: ruff clean + 2025 passed / documents 939)",
+      "project-control/reports/M2-T015-G1-data-contract-review.md (PASS + delta)",
+      "project-control/reports/M2-T015-G3-code-review.md (PASS at 1b3af35)",
+      "project-control/reports/M2-T015-G5-security-review.md (PASS + delta)",
+      "project-control/reports/M2-T015-producer-report.md (AOS s6, through 3l + rework)"
+     ],
+     "note": "DCV re-verification PASS at 1b3af35 (independently reproduced: ruff 0.13.0 exit 0, contract exit 0, 367 pytest on 3.11 + captured 3.12 CI 2025 passed, 14/14 fixture digests, activation R221/R224)."
+    },
+    {
+     "id": "D-010-R295",
+     "state": "PASS",
+     "evidence": [
+      "project-control/reports/M2-T015-DCV-verification.md (DCV re-verification: 97/97 PASS at 1b3af35)",
+      "project-control/reports/M2-T015-CI-evidence.md (api CI 3.12: ruff clean + 2025 passed / documents 939)",
+      "project-control/reports/M2-T015-G1-data-contract-review.md (PASS + delta)",
+      "project-control/reports/M2-T015-G3-code-review.md (PASS at 1b3af35)",
+      "project-control/reports/M2-T015-G5-security-review.md (PASS + delta)",
+      "project-control/reports/M2-T015-producer-report.md (AOS s6, through 3l + rework)"
+     ],
+     "note": "DCV re-verification PASS at 1b3af35 (independently reproduced: ruff 0.13.0 exit 0, contract exit 0, 367 pytest on 3.11 + captured 3.12 CI 2025 passed, 14/14 fixture digests, activation R221/R224)."
+    },
+    {
+     "id": "D-010-R298",
+     "state": "PASS",
+     "evidence": [
+      "project-control/reports/M2-T015-DCV-verification.md (DCV re-verification: 97/97 PASS at 1b3af35)",
+      "project-control/reports/M2-T015-CI-evidence.md (api CI 3.12: ruff clean + 2025 passed / documents 939)",
+      "project-control/reports/M2-T015-G1-data-contract-review.md (PASS + delta)",
+      "project-control/reports/M2-T015-G3-code-review.md (PASS at 1b3af35)",
+      "project-control/reports/M2-T015-G5-security-review.md (PASS + delta)",
+      "project-control/reports/M2-T015-producer-report.md (AOS s6, through 3l + rework)"
+     ],
+     "note": "DCV re-verification PASS at 1b3af35 (independently reproduced: ruff 0.13.0 exit 0, contract exit 0, 367 pytest on 3.11 + captured 3.12 CI 2025 passed, 14/14 fixture digests, activation R221/R224)."
+    },
+    {
+     "id": "D-010-R299",
+     "state": "PASS",
+     "evidence": [
+      "project-control/reports/M2-T015-DCV-verification.md (DCV re-verification: 97/97 PASS at 1b3af35)",
+      "project-control/reports/M2-T015-CI-evidence.md (api CI 3.12: ruff clean + 2025 passed / documents 939)",
+      "project-control/reports/M2-T015-G1-data-contract-review.md (PASS + delta)",
+      "project-control/reports/M2-T015-G3-code-review.md (PASS at 1b3af35)",
+      "project-control/reports/M2-T015-G5-security-review.md (PASS + delta)",
+      "project-control/reports/M2-T015-producer-report.md (AOS s6, through 3l + rework)"
+     ],
+     "note": "DCV re-verification PASS at 1b3af35 (independently reproduced: ruff 0.13.0 exit 0, contract exit 0, 367 pytest on 3.11 + captured 3.12 CI 2025 passed, 14/14 fixture digests, activation R221/R224)."
+    },
+    {
+     "id": "D-010-R302",
+     "state": "PASS",
+     "evidence": [
+      "project-control/reports/M2-T015-DCV-verification.md (DCV re-verification: 97/97 PASS at 1b3af35)",
+      "project-control/reports/M2-T015-CI-evidence.md (api CI 3.12: ruff clean + 2025 passed / documents 939)",
+      "project-control/reports/M2-T015-G1-data-contract-review.md (PASS + delta)",
+      "project-control/reports/M2-T015-G3-code-review.md (PASS at 1b3af35)",
+      "project-control/reports/M2-T015-G5-security-review.md (PASS + delta)",
+      "project-control/reports/M2-T015-producer-report.md (AOS s6, through 3l + rework)"
+     ],
+     "note": "DCV re-verification PASS at 1b3af35 (independently reproduced: ruff 0.13.0 exit 0, contract exit 0, 367 pytest on 3.11 + captured 3.12 CI 2025 passed, 14/14 fixture digests, activation R221/R224)."
+    },
+    {
+     "id": "D-010-R303",
+     "state": "PASS",
+     "evidence": [
+      "project-control/reports/M2-T015-DCV-verification.md (DCV re-verification: 97/97 PASS at 1b3af35)",
+      "project-control/reports/M2-T015-CI-evidence.md (api CI 3.12: ruff clean + 2025 passed / documents 939)",
+      "project-control/reports/M2-T015-G1-data-contract-review.md (PASS + delta)",
+      "project-control/reports/M2-T015-G3-code-review.md (PASS at 1b3af35)",
+      "project-control/reports/M2-T015-G5-security-review.md (PASS + delta)",
+      "project-control/reports/M2-T015-producer-report.md (AOS s6, through 3l + rework)"
+     ],
+     "note": "DCV re-verification PASS at 1b3af35 (independently reproduced: ruff 0.13.0 exit 0, contract exit 0, 367 pytest on 3.11 + captured 3.12 CI 2025 passed, 14/14 fixture digests, activation R221/R224)."
+    },
+    {
+     "id": "D-010-R304",
+     "state": "PASS",
+     "evidence": [
+      "project-control/reports/M2-T015-DCV-verification.md (DCV re-verification: 97/97 PASS at 1b3af35)",
+      "project-control/reports/M2-T015-CI-evidence.md (api CI 3.12: ruff clean + 2025 passed / documents 939)",
+      "project-control/reports/M2-T015-G1-data-contract-review.md (PASS + delta)",
+      "project-control/reports/M2-T015-G3-code-review.md (PASS at 1b3af35)",
+      "project-control/reports/M2-T015-G5-security-review.md (PASS + delta)",
+      "project-control/reports/M2-T015-producer-report.md (AOS s6, through 3l + rework)"
+     ],
+     "note": "DCV re-verification PASS at 1b3af35 (independently reproduced: ruff 0.13.0 exit 0, contract exit 0, 367 pytest on 3.11 + captured 3.12 CI 2025 passed, 14/14 fixture digests, activation R221/R224)."
+    },
+    {
+     "id": "D-010-R317",
+     "state": "PASS",
+     "evidence": [
+      "project-control/reports/M2-T015-DCV-verification.md (DCV re-verification: 97/97 PASS at 1b3af35)",
+      "project-control/reports/M2-T015-CI-evidence.md (api CI 3.12: ruff clean + 2025 passed / documents 939)",
+      "project-control/reports/M2-T015-G1-data-contract-review.md (PASS + delta)",
+      "project-control/reports/M2-T015-G3-code-review.md (PASS at 1b3af35)",
+      "project-control/reports/M2-T015-G5-security-review.md (PASS + delta)",
+      "project-control/reports/M2-T015-producer-report.md (AOS s6, through 3l + rework)"
+     ],
+     "note": "DCV re-verification PASS at 1b3af35 (independently reproduced: ruff 0.13.0 exit 0, contract exit 0, 367 pytest on 3.11 + captured 3.12 CI 2025 passed, 14/14 fixture digests, activation R221/R224)."
+    },
+    {
+     "id": "D-010-R318",
+     "state": "PASS",
+     "evidence": [
+      "project-control/reports/M2-T015-DCV-verification.md (DCV re-verification: 97/97 PASS at 1b3af35)",
+      "project-control/reports/M2-T015-CI-evidence.md (api CI 3.12: ruff clean + 2025 passed / documents 939)",
+      "project-control/reports/M2-T015-G1-data-contract-review.md (PASS + delta)",
+      "project-control/reports/M2-T015-G3-code-review.md (PASS at 1b3af35)",
+      "project-control/reports/M2-T015-G5-security-review.md (PASS + delta)",
+      "project-control/reports/M2-T015-producer-report.md (AOS s6, through 3l + rework)"
+     ],
+     "note": "DCV re-verification PASS at 1b3af35 (independently reproduced: ruff 0.13.0 exit 0, contract exit 0, 367 pytest on 3.11 + captured 3.12 CI 2025 passed, 14/14 fixture digests, activation R221/R224)."
+    },
+    {
+     "id": "D-010-R341",
+     "state": "PASS",
+     "evidence": [
+      "project-control/reports/M2-T015-DCV-verification.md (DCV re-verification: 97/97 PASS at 1b3af35)",
+      "project-control/reports/M2-T015-CI-evidence.md (api CI 3.12: ruff clean + 2025 passed / documents 939)",
+      "project-control/reports/M2-T015-G1-data-contract-review.md (PASS + delta)",
+      "project-control/reports/M2-T015-G3-code-review.md (PASS at 1b3af35)",
+      "project-control/reports/M2-T015-G5-security-review.md (PASS + delta)",
+      "project-control/reports/M2-T015-producer-report.md (AOS s6, through 3l + rework)"
+     ],
+     "note": "DCV re-verification PASS at 1b3af35 (independently reproduced: ruff 0.13.0 exit 0, contract exit 0, 367 pytest on 3.11 + captured 3.12 CI 2025 passed, 14/14 fixture digests, activation R221/R224)."
+    },
+    {
+     "id": "D-010-R343",
+     "state": "PASS",
+     "evidence": [
+      "project-control/reports/M2-T015-DCV-verification.md (DCV re-verification: 97/97 PASS at 1b3af35)",
+      "project-control/reports/M2-T015-CI-evidence.md (api CI 3.12: ruff clean + 2025 passed / documents 939)",
+      "project-control/reports/M2-T015-G1-data-contract-review.md (PASS + delta)",
+      "project-control/reports/M2-T015-G3-code-review.md (PASS at 1b3af35)",
+      "project-control/reports/M2-T015-G5-security-review.md (PASS + delta)",
+      "project-control/reports/M2-T015-producer-report.md (AOS s6, through 3l + rework)"
+     ],
+     "note": "DCV re-verification PASS at 1b3af35 (independently reproduced: ruff 0.13.0 exit 0, contract exit 0, 367 pytest on 3.11 + captured 3.12 CI 2025 passed, 14/14 fixture digests, activation R221/R224)."
+    }
+   ],
+   "reviewed_manifest_sha256": "a9ebbaedaf7e722ac7fbd6a154af23fba177675eeb5acc88cf02ba5954b260b5",
+   "reviewed_sha": "1b3af356360013200166418020e64dbdad8b60a0",
+   "verified_at": "2026-08-09T17:54:20.884266+00:00",
+   "note": "Independent DCV (directive-compliance-verifier) re-verification at merged main HEAD 1b3af35 (PR #213). All 97 applicable D-010 requirements PASS, 0 VIOLATED / 0 UNVERIFIABLE. The pass-1 FAIL (ruff SB-S9 + missing SURVEY_FIXTURE_MATRIX.md/fixture-pack + stale report) was reworked and re-verified RESOLVED; pass-1 used the stale 29-req worktree registry, this pass uses main's current 97-req set. Gate wave: G1 PASS + delta, G3 PASS at 1b3af35, G5 PASS + delta, DCV 97/97. Full-suite pytest (2025) rests on the orchestrator-captured 3.12 CI evidence (M2-T015-CI-evidence.md) per the evidence-capture division of labor (shipped units.py uses PEP 695, which needs Python 3.12; sandbox is 3.11)."
   }
  ],
- "updated_at": "2026-08-09T15:38:43.238706+00:00"
+ "updated_at": "2026-08-09T17:54:20.885331+00:00"
 }
