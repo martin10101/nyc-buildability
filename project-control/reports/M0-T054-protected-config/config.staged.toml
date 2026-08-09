@@ -1,0 +1,17 @@
+# NYC Buildability Supervisor — IMMUTABLE controller config (D-007 §3.1)
+# Manifest-covered. Drafted 2026-08-04 for the M0-T036 Phase 5 shadow pilot;
+# effective only when the owner places it at the controller location.
+# [limits] intentionally omitted: every fail-closed default from
+# tools/agent_supervisor/config.py Limits applies unchanged.
+
+[controller]
+default_mode = "shadow"
+
+[codex]
+# Both verified accepted on the installed codex-cli 0.146.0 (Phase 0, 2026-08-03).
+allowed_models = ["gpt-5.6-sol", "gpt-5.6-terra"]
+
+[claude]
+# Empty list = only the account/CLI default may be used; no explicit Claude
+# selection is permitted (directive §3.1). Most conservative pilot posture.
+allowed_models = ["claude-opus-4-8"]
