@@ -34,6 +34,8 @@ __all__ = [
     "CheckPassed",
     "CheckResult",
     "CheckUnevaluable",
+    "calculated_vs_stated_area",
+    "contradictory_dimensions",
 ]
 
 
@@ -130,3 +132,12 @@ class CheckUnevaluable:
 
 
 CheckResult = CheckPassed | CheckFailed | CheckUnevaluable
+
+
+# Re-exported deterministic checks. Imported AFTER the result types above: each check
+# module consumes those types from this package, so a top-of-module import would be
+# circular during package initialization.
+from app.documents.checks.area import (  # noqa: E402
+    calculated_vs_stated_area,
+    contradictory_dimensions,
+)
