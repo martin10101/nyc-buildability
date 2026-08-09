@@ -209,6 +209,14 @@
    "amends": "source-024-amendment.md",
    "recorded_at": "2026-08-08T22:19:25+00:00",
    "content_digest_sha256": "3240d1867fa344fc1343d8cbf8a3575af065abb351494ed30cecf12fc667a95e"
+  },
+  {
+   "file": "source-026-amendment.md",
+   "kind": "amendment",
+   "sequence": 26,
+   "amends": "source-025-amendment.md",
+   "recorded_at": "2026-08-09T05:20:00+00:00",
+   "content_digest_sha256": "b538023a9e1ea2b288563ccaa4681dc7ebdba606bc5b5e22ac5c8ef0bd5dcc9c"
   }
  ],
  "amendments": [
@@ -235,7 +243,8 @@
   "source-022-amendment.md",
   "source-023-amendment.md",
   "source-024-amendment.md",
-  "source-025-amendment.md"
+  "source-025-amendment.md",
+  "source-026-amendment.md"
  ],
  "supersedes": [],
  "superseded_by": null,
@@ -274,8 +283,8 @@
  "verification_file": "verification.json",
  "final_reviewed_sha": null,
  "final_reviewed_manifest_sha256": null,
- "requirements_content_digest_sha256": "93faeda3c7a231e61190cb70d81067b00f865f4afd4d8e89d271741204c012f0",
- "requirements_id_digest_sha256": "958bfbed69344af6c3e93806ad3873a4d9cfc131ba6acc0724b37adf24c8c660",
+ "requirements_content_digest_sha256": "9f17364bd29f89ba86d703e10a9e2a9003c71bdebb8770989184ce2db4a5e30d",
+ "requirements_id_digest_sha256": "610d34e0594f41e8576a3d3151150ab3787cf8672038508d7bdecaaa97683206",
  "enforcement_pointers": {
   "tasks": [
    "M0-T037",
@@ -594,10 +603,17 @@
   "D-010-R281",
   "D-010-R282",
   "D-010-R283",
-  "D-010-R284"
+  "D-010-R284",
+  "D-010-R285",
+  "D-010-R286",
+  "D-010-R287",
+  "D-010-R288",
+  "D-010-R289",
+  "D-010-R290",
+  "D-010-R291"
  ],
  "created_at": "2026-08-07T01:09:55+00:00",
- "updated_at": "2026-08-08T22:19:25+00:00",
+ "updated_at": "2026-08-09T05:20:00+00:00",
  "audit_log": [
   {
    "at": "2026-08-07T01:09:55+00:00",
@@ -748,6 +764,12 @@
    "at": "2026-08-08T22:19:25+00:00",
    "actor": "orchestrator",
    "action": "amendment source-025 recorded (owner product-first M2-T015 hardening + SB-S1..S9 scope closure + resumption; R242-R284 added; 8 hardening areas routed inside M2-T015); digests restamped"
+  },
+  {
+   "at": "2026-08-09T05:20:00+00:00",
+   "actor": "orchestrator",
+   "action": "amendment-captured",
+   "detail": "source-026 captured (foreground-timeout raise + Fable-exhaustion orchestrator/worker fallback test + pre-registered expectation logging; R285-R291); frozen base f70449d1cc8dc6566b5e79a4c9603326b883a656"
   }
  ]
 }
