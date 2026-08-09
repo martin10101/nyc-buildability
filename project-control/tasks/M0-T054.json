@@ -24,11 +24,11 @@
     "control-plane-verifier"
   ],
   "status": "in_progress",
-  "progress_percent": 45,
+  "progress_percent": 60,
   "risks": [],
   "blockers": [],
   "created_at": "2026-08-09T06:29:35.652832+00:00",
-  "updated_at": "2026-08-09T08:09:45.668940+00:00",
+  "updated_at": "2026-08-09T08:29:03.418257+00:00",
   "directive_refs": [
     {
       "directive_id": "D-010",
@@ -72,6 +72,13 @@
       "percent": 45,
       "status": "in_progress",
       "message": "Protected-config apply RESOLVED (owner decision A) + worker flipped + increments 1-2 committed. R314 doctor proof ALL PASS (12/12) at accepted SHA 6aef12a9 (CRLF form; CR-stripped == pre-registered LF 9560f901, line-ending-only, owner-accepted); PROTECTED file+parent, exact three-principal DACL, claude-opus-4-8 accepted against LIVE config, shadow/supervised/codex intact, allowlist == [claude-opus-4-8] only. Mutable model_selection.toml [claude] model flipped to claude-opus-4-8 (R296/R308) and validate_selection against the LIVE config = ok (proven, not just a config claim). Implementation: increment 1 DETECTION (941297c, 25 tests) + increment 2 ACTUATION (4bd1ceb, 16 tests) committed to task branch - 41 deterministic tests, strictly additive, full supervisor suite 1443 passed / 2 skipped (baseline 1427 preserved, >=1165 floor, 0 failures). NEXT increment 3: wire the detection+actuation to the REAL dependencies (locking.py SingleInstanceLock, hash-chained audit_log.py, a real cli.py successor launcher) + the supervisor worker-result integration (a defect-lane change to a frozen module, so under standard gates), THEN the bounded LIVE Fable->Opus proof on an isolated non-product runtime (R316), then M0-T054 gates + acceptance, then resume M2-T015 3k on opus-4.8."
+    },
+    {
+      "at": "2026-08-09T08:29:03.418257+00:00",
+      "agent": "backend-engineer",
+      "percent": 60,
+      "status": "in_progress",
+      "message": "Increment 3 COMPLETE + committed (task branch f1864bf): real-dependency adapters - SingleInstanceContinuationLock (locking.py, fail-closed LockError->already-held), HashChainedAuditSink (audit_log.py, redaction-proof SHA-256 dedup marker, fail-closed reads->already-actioned), SupervisorLauncher (claude_runner.build_argv + assert_argv_safe; model/effort hard-pinned to opus-4.8/xhigh, effort as metadata not a CLI flag per D-004-R159; fail-closed available=False on any error/non-opus echo; injected command-runner, production subprocess seam defined-not-exercised), SupervisorIdentity (models.to_utc_iso + uuid4). 16 tests incl. end-to-end controller+adapters FABLE_EXHAUSTED->one opus-4.8 launch+audit-link+idempotency. Full turnover stack now = detection(inc1)+actuation(inc2)+adapters(inc3) = 57 deterministic tests, strictly additive, suite 1459 passed / 2 skipped (baseline 1443 preserved, 0 failures). NEXT increment 4: minimal GATED integration into the supervisor worker-result path (classify a Fable worker result; on FABLE_EXHAUSTED redispatch the same unit exactly once on opus-4.8 via the adapters) - a defect-lane change to a frozen module under standard gates + freeze-baseline re-establishment - then the bounded LIVE proof (R316), then gates + acceptance. NOTE: routine ledger commits are batching to the next real seam PR (parked efficiency directive A2/A4; prospective but applied where lawful now)."
     }
   ],
   "worktree": "C:/Users/MLFLL/Downloads/nyc-zoning/wt-m0t054"
