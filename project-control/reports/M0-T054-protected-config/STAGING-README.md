@@ -91,3 +91,21 @@ Then tell me it's applied. **Stop here for the owner.**
 - `default_mode = shadow`; active runtime = supervised; LIMITED-AUTO off.
 
 If any check is unexpected, I stop and report — no product execution continues.
+
+## 7. RESOLUTION — applied 2026-08-09, owner decision "A" (accept)
+
+The owner applied the elevated command. The R314 doctor proof (`doctor_proof.py`,
+output `doctor_proof_output.txt`) initially showed **9/10 PASS** with one miss: the live
+SHA was `6aef12a9…`, not the pre-registered LF `9560f901…`. Root cause: **line-ending-only** —
+git autocrlf converted the staged file (this `reports/` path lacked the `eol=lf` pin the
+`directives/` path has) from LF (729 B) to CRLF (746 B), and `Copy-Item` copied the CRLF form.
+Proven benign: the applied file with `\r\n` stripped hashes to exactly the pre-registered
+`9560f901…`. CRLF is valid TOML; the supervisor parses and accepts it.
+
+**Owner chose (A): accept the applied CRLF file as correct.** The recorded expected SHA is
+therefore the applied value **`6aef12a9f60a6a64d7af77de3c071289c35dfe60977239e901df8d642c3fffde`**.
+Re-run verdict: **ALL PASS (12/12)** — content correct, PROTECTED file+parent, exact
+three-principal DACL, `claude-opus-4-8` accepted against the LIVE config, `default_mode=shadow`,
+codex unchanged, allowlist exactly `[claude-opus-4-8]`, and the CR-stripped content == the
+pre-registered LF SHA. The mutable worker `model_selection.toml` `[claude] model` was then set to
+`claude-opus-4-8` (R296/R308) and validated against the live config (`validate_selection` ok=True).
