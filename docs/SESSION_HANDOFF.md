@@ -5,10 +5,69 @@
 the remote: **origin/main may have advanced, so do not trust any SHA written here as still-current.**
 This file is orientation only. Operating rules, gates, and workflow routes live in `CLAUDE.md`.
 
-Refreshed **2026-08-08 (session 8, SUPERVISED-AUTO active; M2-T015 in progress)**. **This block
-supersedes older sections**; the ledger wins on any conflict.
+Refreshed **2026-08-09 (session 9, SUPERVISED-AUTO active; M2-T015 98%, unit 3i complete)**.
+**This block supersedes older sections**; the ledger wins on any conflict.
 
-## SESSION 8 STATE — SUPERVISED-AUTO ACTIVATED; building M2-T015 product proof #1
+## SESSION 9 STATE — M2-T015 ingestion/validation/reader chain COMPLETE through unit 3i
+
+**Accepted count 72.** Main `0f1d3df` (at refresh; verify live). Task branch
+`task/M2-T015-survey-ingestion` @ **`733df60`** — units 1..3i all committed+pushed, each with
+passing tests. Full `services/api/tests/documents/` suite at that SHA: **888 passed / 1 skipped**
+(symlink skip runs on Linux CI).
+
+**Delivered this session (each a committed micro-unit, all supervised runs):** 3d-2 unit typing
+H2 (`b3d2398`); 3e-1 geometry/location validation H3 (`2174505`); 3e-2 correction-history H4
+(`3b0f2bc`); 3f-1 promotion gate module H5 (`05fcb1c`); 3f-2 state-machine wiring R265
+(`98e87bc`); 3g-1..3 all eight SB-S3 deterministic checks (`16b8a08`,`c17fc01`,`66daba4`);
+3h SB-S4 tax-lot cross-check (`bb37b98`); 3i-1 fail-closed isolation gate R275/R276 (`1e0bbfa`);
+3i-2 format routing + isolation-gated entry + wrong-address routing SB-S2/S7 (`6733347`);
+3i-3a-1/2/3a/3b + 3i-3b the complete IN-REPO strict-subset deterministic vector-PDF reader
+(lexer -> objects -> xref -> container -> content interpreter; `b210d56`,`9fd3b19`,`7aea0a0`,
+`c12f41a`,`733df60`).
+
+**Design decision (recorded in ledger + commits):** no third-party PDF parser is admitted and
+`requirements.in` is OUTSIDE the packet's allowed_paths, so the SB-S1/R274 real vector path is
+the in-repo fail-closed grounded-subset reader; a hardened third-party parser remains a lawful
+LATER G5 dependency-admission step. Production parsing stays DISABLED wherever the
+Landlock+seccomp boundary is unprovable (isolation.py, no bypass); Linux CI is the provable
+substrate (R274/R275); production enablement deployment-gated under B-001.
+
+**REMAINING M2-T015 work:** **3j** H6 adversarial fixture matrix + H7 contract pipeline +
+`packages/contracts/generated/survey_evidence.ts` generation or lawful-exclusion record + SB-S8;
+**3k** DecoderSeam wiring (route the pdf reader through `begin_extraction_job`; ALL gated-edge
+call sites must use `promotion_gated_transition`, raw `transition()` is authority-only — standing
+forward-note), e2e real-path test, `docs/M2-T015-SB-COVERAGE-MATRIX.md` (R272), full CI/SB-S9;
+then `project-control/reports/M2-T015-producer-report.md`, then the gate lifecycle (G0-G5 + DCV +
+CI + PR + merge + accept), then **M2-T016** (proof #2).
+
+**SUPERVISED MECHANICS — SESSION-9 LESSONS (critical, supersede session-8 cadence notes):**
+
+1. **Foreground, not background.** The harness background-kill window shrank below worker
+   time-to-first-write (3 consecutive zero-output kills). Run every unit FOREGROUND:
+   Bash-tool timeout 600000, `--unit-timeout 540 --max-cycles 1 --max-turns 12..16`. Reliable
+   for ~24 runs since.
+2. **Fresh runtime base per unit**: `%LOCALAPPDATA%/NYCBuildabilitySupervisor-rNN` (r8..r31
+   used; NEXT = r32). A PAUSED_RECOVERY base can be reused only after the audited
+   `clear-recovery` verb.
+3. **Scope law:** novel-design units (parsers, new engines) fit ONE module per window — tests
+   as a follow-up tests-only unit; pattern-mirroring units (validators/checks following an
+   existing module's idiom) fit module+tests together. Never commit a module without its
+   passing tests (accumulate rule). If a window produces zero writes, split the scope, don't
+   just retry.
+4. **Worker prompts must forbid shell commands** (no packet-documented test command exists, so
+   every command DEFERs and wastes turns) and demand write-first turn budgets + an HONEST
+   checkpoint stating tests run out-of-loop.
+5. **In-loop Codex verdicts of the evidence-boundary class** (HALT_UNSAFE/REVISE complaining the
+   packet lacks the task-worktree diff/tests — supervisor collects git evidence from the
+   canonical checkout) are RESOLVED by orchestrator out-of-loop verification per the
+   evidence-capture division of labor: run the suite, review the diff, verify scope, commit,
+   record in ledger. Honest checkpoints have also yielded clean CONTINUEs.
+6. Dispatch command template unchanged (see session-8 block below); model_selection pins the
+   worker to claude-fable-5; one r29-class provider stall (2 events/540s) — just retry on a
+   fresh base.
+
+_Session-8 activation/mechanics block retained below (still-valid template + activation
+history)._
 
 **Accepted count 72.** Main `7b4f30f` (at refresh; may have advanced — verify). Task branch
 `task/M2-T015-survey-ingestion` @ **`9120a02`** carries the M2-T015 product work (not yet PR'd;
