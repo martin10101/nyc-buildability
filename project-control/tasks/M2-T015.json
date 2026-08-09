@@ -72,8 +72,8 @@
     "code-reviewer",
     "security-reviewer"
   ],
-  "status": "in_progress",
-  "progress_percent": 98,
+  "status": "blocked",
+  "progress_percent": 99,
   "risks": [
     "DISPATCH HOLD: awaits owner review of the 2026-07-20 planning report AND M2-T014 acceptance (format policy is a hard input)",
     "B-001: production storage/tenant-isolation/retention remain blocked; the architecture doc must design for them and mark them deferred - G3 verifies the honesty of that split",
@@ -84,7 +84,7 @@
   ],
   "blockers": [],
   "created_at": "2026-07-20T06:34:25.468863+00:00",
-  "updated_at": "2026-08-09T06:28:49.646741+00:00",
+  "updated_at": "2026-08-09T06:43:53.446092+00:00",
   "directive_refs": [
     {
       "directive_id": "D-010",
@@ -311,6 +311,20 @@
       "percent": 98,
       "status": "in_progress",
       "message": "Unit 3j-1 COMPLETE (survey_evidence.ts generator extension, H7/SB-S8) committed to task branch @ 1e4125c. Safe partial work from the scope-blocked r32/r33 worker attempts (generate_ts_types.py extension + test file) was PRESERVED per R298, packet allowed_paths amended for the generator script + its test, generator run deterministically, focused suite captured: packages/contracts/scripts/tests 29 passed (5 new survey_evidence tests: byte-identity vs committed, determinism, LF discipline, no-change-to-the-other-three regression, closed-vocabulary/digest pins). property_profile.ts/rule_evaluation.ts/scenario.ts byte-identical (verified). R296 APPLIED: C:/SupervisorController/model_selection.toml [claude] model flipped to claude-opus-4-8 (mutable path only; protected config + LIMITED-AUTO untouched). Latest safe committed checkpoint confirmed = 733df60 before this unit; task branch now 1e4125c. Orchestrator running as manually-recovered claude-opus-4-8 xhigh successor (owner /model after Fable-5 weekly-limit hard stop; R289=DID-NOT-SWITCH). NEXT: remaining 3j (adversarial survey_evidence fixture matrix + contract-pipeline reconciliation, H6/SB-S8), then 3k."
+    },
+    {
+      "at": "2026-08-09T06:36:02.684760+00:00",
+      "agent": "orchestrator",
+      "percent": 99,
+      "status": "in_progress",
+      "message": "Unit 3j VERIFIED COMPLETE. Beyond 3j-1 (survey_evidence.ts, committed 1e4125c), the remaining 3j acceptance criteria are already met and proven green: (H6) the survey_evidence contract fixture matrix (4 valid + 8 invalid) landed in unit 1 (cabe128); (H7/SB-S8) the CI contract validator .github/scripts/validate_contracts.py auto-discovers by schema dir - ran locally, exit 0: survey_evidence.schema.json OK, 4/4 valid fixtures pass, 8/8 invalid fixtures correctly rejected each with a precise typed reason (bad digest pattern, confirmed-without-identity anyOf, failed-check-without-detail, location-missing-object-ref, missing document_digest, missing units key, unapproved extraction_method enum, additionalProperties). survey_evidence.ts byte-identity is enforced by the contracts-typegen CI check. NEXT and FINAL product unit = 3k: end-to-end real-path wiring (DecoderSeam) + SB-S1..S9 coverage matrix + producer report + full-CI proof (R272/R274/SB-S9), then the M2-T015 gate lifecycle (G0-G5 + DCV + PR + accept). Worker now dispatches on claude-opus-4-8 (R296)."
+    },
+    {
+      "at": "2026-08-09T06:43:53.446092+00:00",
+      "agent": "orchestrator",
+      "percent": 99,
+      "status": "blocked",
+      "message": "3k SUPERVISED-DISPATCH BLOCKED (R296 config-guardrail conflict surfaced by the machine). Attempting unit 3k-1 (DecoderSeam wiring) on runtime base r36, the supervisor's validate_selection FAIL-CLOSED rejected the R291/R296 worker flip: 'claude.model is set to claude-opus-4-8 but claude.allowed_models is empty; an empty allowlist means only the account/CLI default may be used'. The protected immutable C:/Program Files/SupervisorConfig/config.toml has [claude] allowed_models = [] (account-default-only, live-proven session-7), and R297 forbids me from editing it to add opus-4.8. So R296's literal instruction (name opus-4.8 in the mutable model_selection.toml) is UNLAWFUL per the supervisor's own guardrail; I reverted model_selection.toml [claude] model back to the only lawful value \"\" (defer to account/CLI default). Because the settings.json model pin is claude-fable-5 (exhausted) and the fallbackModel did NOT auto-switch (R289=DID-NOT-SWITCH), a headless supervised worker cannot reliably run opus-4.8 right now. NET: the ORCHESTRATOR runs on opus-4.8 (manual /model, fine), but SUPERVISED WORKER dispatch for 3k is blocked pending an OWNER decision (add claude-opus-4-8 to config.toml allowed_models - an owner-only protected-config change) OR Fable credits returning next week. 3j remains COMPLETE; no product work lost; task branch @ 1e4125c. This is also a direct input to M0-T054 (the watchdog's successor launch needs the worker model to be lawfully selectable)."
     }
   ]
 }
