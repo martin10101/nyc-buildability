@@ -3,7 +3,8 @@ name: control-plane-verifier
 description: Independent read-only verifier of project-control integrity — task lifecycle transitions, gate records, reviewer independence, acceptance records, checkpoint timing, ledger totals, and owner holds. Cannot change any control-plane state.
 tools: Read, Grep, Glob, Bash, Skill
 disallowedTools: Write, Edit, MultiEdit, NotebookEdit, Agent
-model: claude-fable-5
+model: claude-opus-4-8
+effort: xhigh
 permissionMode: plan
 skills:
   - status-board

@@ -1,0 +1,22 @@
+---
+name: python-tooling-lock-agegate-review
+description: G5 review method for M0-T020 Python tooling-lock + machine release-age gate (follow-up to M0-T018) — hash-pinning, dual audit, fail-closed age gate, SSRF surface
+metadata:
+  type: project
+---
+
+M0-T020 extended the M0-T018 Python supply-chain baseline: it added a full hash-pinned TOOLING lock (services/api/requirements-tools.lock, 42 pkgs incl uv/pip/pip-audit/pytest/setuptools/wheel/ruff/httpx/pyyaml + transitives), a machine release-age gate (services/api/scripts/dependency_age_gate.py), and rewired every audited Python CI path to install ONLY from the two locks. Reviewed clean at head 9da5449 (PR #60). Review method for any future tooling-lock / age-gate change:
+
+**Hash-pinning integrity:** grep `pip[- ]?install|pipx|uv==|upgrade pip` across ci.yml + scheduled-audit.yml. Every tool install must be `pip install --require-hashes -r requirements-tools.lock`; the only non-hashed installs allowed are `pip install --no-deps .` (local app, pulls nothing). Confirm NO `pipx run --spec`, NO unpinned `--upgrade pip`, NO `pip install uv==` download (uv is bootstrapped FROM the lock; `uv==` should appear only in comments/operator-hint echoes in lock_*.sh, never a CI run:). Count pins-vs-hashes in the lock (M0-T020: 42 `==` pins, 389 sha256 lines).
+
+**Age gate (dependency_age_gate.py) fail-closed audit:** pure urllib+stdlib (grep-confirm NO subprocess/os.system/eval/exec/shell=True). Fixed host `https://pypi.org` (PYPI_JSON_URL + PYPI_TIME_URL). `now` comes from PyPI's `Date` response header, not local clock. Boundary `age >= 604800` (exactly 604800 PASS / 604799 FAIL). Uses NEWEST upload ts among ONLY lock-admitted sha256 artifacts (defends old-version/new-artifact bypass). Fails closed on: outage, missing/malformed timestamp, unmatched hash, unhashed pin, hash-before-pin, empty urls. NO env/skip/force/allow/ignore CLI arg (only `locks` positional) — no agent bypass. 17 deterministic offline unit tests (scripts/tests/) cover boundary + every fail-closed branch; they run in api-tooling-lock-verify (the `api` job's testpaths=["tests"] does NOT collect scripts/tests).
+
+**SSRF residual (non-blocking, defense-in-depth):** name/version interpolated into the fixed PyPI URL come from the COMMITTED lock (byte-identity enforced by api-lock-verify + api-tooling-lock-verify BEFORE the gate runs), name regex `[A-Za-z0-9._-]+`, version regex `[^\s;\\]+`. Realistic threat fully mitigated; URL-encoding the version segment would harden further. Default urllib redirect handling is safe here (only JSON body / Date header consumed, never a Location URL; fixed HTTPS host).
+
+**Dual audit + independent CI-log confirmation:** exact-production-install runs pip-audit on BOTH locks in an ISOLATED $RUNNER_TEMP/auditenv (from the tooling lock, `--no-deps --strict`), BLOCKING, both `No known vulnerabilities found`. scheduled-audit.yml mirrors it on daily cron + dependency-artifact PRs + workflow_dispatch. Verify via `gh run view <id> --log | grep "release-age gate"` — the live gate prints per-package upload ts + elapsed age; tight passers (anyio 7.94d, websockets 10.52d, uvicorn 12.33d) prove it's genuinely measuring, not rubber-stamping. RESULT line: "PASS — every admitted artifact is >= 7 days old".
+
+**Down-pinned transitives are a health signal, not a smell:** filelock 3.29.7 (newest 3.31.1 was 0.63d) and platformdirs 4.10.0 (newest 4.10.1 was 2.60d) were deliberately down-pinned in requirements-tools.in because the resolver's newest picks FAILED the 7-day gate — confirms enforcement works.
+
+**Bounded-scope checks:** pyproject diff must be ONLY the `[dev]` pytest specifier `pytest>=8,<9` -> `pytest>=9.0.3,<10` (+comment); httpx/ruff dev RANGES stay (CI installs exact from lock). requirements.txt production lock byte-identical to main (no runtime surface change — immutability held). requirements.in header fix removes the stale `pip-compile` reference -> names lock_requirements.sh + exact uv command (same stale-header residual I flagged at M0-T018, NOW FIXED). Full suite 538 passed under pytest 9.0.3 (api + exact-production-install). Forbidden paths (app/**, generate-lockfile.yml, secret-scan.yml, apps/web/**, M0-T018 files) untouched. .gitignore adds services/api/**/*.egg-info/ (the M0-T018 follow-up residual, NOW FIXED). No fake tokens -> no `# secretscan:allow` needed; secret-scan green.
+
+Related: [[python-supply-chain-audit-review]], [[supply-chain-action-pinning-review]], [[g5-gate-recording-protocol]].
