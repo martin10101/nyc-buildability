@@ -521,6 +521,71 @@ def _event_text(event: Mapping[str, Any]) -> str:
     return "\n".join(parts)
 
 
+def detect_exhaustion_evidence(
+    events: Sequence[Mapping[str, Any]],
+) -> tuple[str, dict[str, Any] | None]:
+    """Distill a unit's exhaustion-relevant signal from its stream events.
+
+    Additive, side-effect-free reader (M0-T054 increment 5) over the SAME event
+    list `run_unit` already holds. The live proof under
+    ``project-control/reports/M0-T054-live-proof/`` (reproducing D-010 source-028 /
+    R289) showed that on a REAL Fable weekly-limit hard-stop the two grounded
+    exhaustion signals BOTH live in the stream events - never on stderr (empty) and
+    never in the checkpoint error (a generic no-checkpoint string), which is why the
+    worker-turnover seam classified NOT_EXHAUSTED and never fired. This gatherer
+    exposes them so the seam can see what the classifier needs:
+
+    * ``result_text`` - the phrase-bearing text off any api-error ``result`` or
+      ``assistant`` event (``is_error`` / ``error == "rate_limit"`` /
+      ``is_api_error_message``); this carries the exact weekly-limit message
+      verbatim.
+    * ``rate_limit_rejection`` - a dict copied from the FIRST ``rate_limit_event``
+      whose status is ``"rejected"`` (the running model id attached under
+      ``model_id`` for attribution).
+
+    This ONLY gathers; it makes no exhaustion decision. The turnover classifier
+    (`model_turnover.classify_exhaustion`) alone decides weekly-exhaustion (grounded)
+    versus a transient per-minute 429 (fail-closed), so a bare throttle surfaced here
+    is never itself a turnover.
+    """
+    running_model = ""
+    texts: list[str] = []
+    rejection: dict[str, Any] | None = None
+    for event in events:
+        if not isinstance(event, Mapping):
+            continue
+        etype = event.get("type")
+        if etype == "system" and event.get("subtype") == "init":
+            model = event.get("model")
+            if isinstance(model, str) and model:
+                running_model = model
+        is_api_error = (
+            event.get("is_api_error_message") is True
+            or event.get("error") == "rate_limit"
+            or (etype == "result" and event.get("is_error") is True))
+        if is_api_error:
+            text = _event_text(event)
+            if text:
+                texts.append(text)
+        if etype == "rate_limit_event" and rejection is None:
+            info = event.get("rate_limit_info")
+            if isinstance(info, Mapping):
+                status = str(info.get("status", "")).strip().lower()
+                if status == "rejected":
+                    rejection = dict(info)
+    if rejection is not None and running_model:
+        rejection.setdefault("model_id", running_model)
+    # De-duplicate identical text fragments (the api-error `assistant` and terminal
+    # `result` events carry the SAME phrase) while preserving first-seen order.
+    seen: set[str] = set()
+    ordered: list[str] = []
+    for text in texts:
+        if text not in seen:
+            seen.add(text)
+            ordered.append(text)
+    return "\n".join(ordered), rejection
+
+
 # --------------------------------------------------------------------------
 # Model identity and context usage on the stream (D-004-R739, R743..R745)
 # --------------------------------------------------------------------------
@@ -858,6 +923,22 @@ class RunResult:
     context_tokens: int = 0
     #: True when at least one usage object was readable on the stream.
     usage_known: bool = False
+    #: M0-T054 increment 5 (live proof project-control/reports/M0-T054-live-proof/,
+    #: reproducing D-010 source-028 / R289): the exhaustion-relevant text distilled
+    #: from the stream's api-error `result`/`assistant` events. On a REAL Fable
+    #: weekly-limit hard-stop the exact message ("You've reached your Fable 5
+    #: limit...") surfaces HERE - inside the stream events - and NOT on
+    #: `stderr_tail` (empty) or `checkpoint_error` (a generic no-checkpoint string),
+    #: which is precisely why the worker-turnover seam could not see it before. Empty
+    #: on every non-exhaustion path, so existing behaviour is byte-for-byte unchanged.
+    result_text: str = ""
+    #: M0-T054 increment 5: a raw stream `rate_limit_event` REJECTION lifted verbatim
+    #: (status == "rejected"), with the running model id attached for attribution.
+    #: This is a pure GATHER - both the WEEKLY (7-day) exhaustion and any transient
+    #: per-minute throttle are surfaced raw; the turnover CLASSIFIER
+    #: (`model_turnover`) is the sole decider of weekly-exhaustion vs transient, so a
+    #: bare 429 stays fail-closed. None when the stream carried no rejected event.
+    rate_limit_rejection: dict[str, Any] | None = None
 
     @property
     def ok(self) -> bool:
@@ -1118,6 +1199,13 @@ class ClaudeRunner:
             inspect_stream(events, expected_model=self.config.expected_model
                            or self.config.model)
 
+        # M0-T054 increment 5: distill the exhaustion-relevant stream signal so the
+        # worker-turnover seam can see the exact weekly-limit message (and any
+        # rejected rate-limit event) even when the checkpoint error is generic and
+        # stderr is empty. Pure GATHER over the drained event list; the classifier
+        # decides. Additive only - no existing field or path is affected.
+        result_text, rate_limit_rejection = detect_exhaustion_evidence(events)
+
         result = RunResult(
             argv=tuple(argv),
             returncode=process.returncode if process.returncode is not None else -1,
@@ -1143,6 +1231,8 @@ class ClaudeRunner:
             mismatch_detail=mismatch_detail,
             context_tokens=context_tokens,
             usage_known=usage_known,
+            result_text=result_text,
+            rate_limit_rejection=rate_limit_rejection,
         )
         self._audit_run(result)
         return result

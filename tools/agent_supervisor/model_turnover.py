@@ -113,6 +113,15 @@ _STRUCTURED_CODE_KEYS: tuple[str, ...] = (
     "type", "subtype", "error_type", "error", "status",
 )
 
+#: WEEKLY (7-day) markers on a stream ``rate_limit_event.rateLimitType`` (D-010
+#: source-028 / R289; M0-T054 live proof real-fable-exhaustion-streamjson.txt). A
+#: rejected rate-limit event carrying one of these is a WEEKLY usage exhaustion -
+#: grounded and DISTINCT from a transient per-minute 429 throttle, which carries no
+#: weekly marker and so stays fail-closed (AMBIGUOUS). This is the one narrow place
+#: a rate-limit event is admitted as exhaustion; STRUCTURED_QUOTA_CODES still
+#: excludes a bare 429/rate-limit precisely so a temporary throttle never qualifies.
+_WEEKLY_RATE_LIMIT_MARKERS: tuple[str, ...] = ("seven_day", "week")
+
 #: Limit/quota-*looking* wording that is NOT the confirmed weekly-limit phrase.
 #: Its presence WITHOUT the confirmed phrase is suspicious, never confirmed, so
 #: it fails closed to AMBIGUOUS - never FABLE_EXHAUSTED.
@@ -174,16 +183,46 @@ def _references_fable(result: Mapping[str, Any], model_id: str) -> bool:
     return False
 
 
+def _weekly_rate_limit_rejection(structured_result: Mapping[str, Any]) -> bool:
+    """True when the structured result is a WEEKLY (7-day) rate-limit REJECTION.
+
+    Grounded from the real stream shape (D-010 source-028 / R289; M0-T054 live
+    proof): a ``rate_limit_event`` whose ``rateLimitType`` carries a weekly marker
+    AND whose ``status`` is ``"rejected"``. Both the camelCase stream key
+    (``rateLimitType``) and a snake_case mirror (``rate_limit_type``) are read, and a
+    nested ``rate_limit_info`` object is scanned one level so the raw event shape
+    works too. A transient per-minute 429 carries NO weekly marker, so it returns
+    False and stays fail-closed - the deliberate 429-exclusion is preserved.
+    """
+    def _check(mapping: Mapping[str, Any]) -> bool:
+        rlt = ""
+        for key in ("rateLimitType", "rate_limit_type"):
+            value = mapping.get(key)
+            if isinstance(value, str) and value:
+                rlt = value.lower()
+                break
+        if not any(marker in rlt for marker in _WEEKLY_RATE_LIMIT_MARKERS):
+            return False
+        status = mapping.get("status")
+        return isinstance(status, str) and status.strip().lower() == "rejected"
+
+    if _check(structured_result):
+        return True
+    nested = structured_result.get("rate_limit_info")
+    return isinstance(nested, Mapping) and _check(nested)
+
+
 def _structured_signal(
     structured_result: Any, model_id: str,
 ) -> tuple[str, str]:
-    """Inspect a structured provider/CLI result for a typed quota-exhaustion code.
+    """Inspect a structured provider/CLI result for a typed quota-exhaustion signal.
 
     Returns ``(kind, reason)`` where `kind` is one of:
-    * ``"fable_exhausted"`` - a recognized quota code, attributable to Fable;
-    * ``"quota_unattributed"`` - a recognized quota code that CANNOT be tied to
-      the Fable model (so it must not authorize a Fable turnover);
-    * ``""`` - no recognized typed quota code.
+    * ``"fable_exhausted"`` - a recognized quota code OR a WEEKLY (7-day) rate-limit
+      rejection, attributable to Fable;
+    * ``"quota_unattributed"`` - the same recognized signal but one that CANNOT be
+      tied to the Fable model (so it must not authorize a Fable turnover);
+    * ``""`` - no recognized typed quota code and no weekly rate-limit rejection.
     """
     if not isinstance(structured_result, Mapping):
         return "", ""
@@ -201,15 +240,32 @@ def _structured_signal(
                     break
             if found:
                 break
-    if not found:
+
+    # A WEEKLY (7-day) rate-limit rejection is a grounded exhaustion even though a
+    # bare 429/rate-limit is deliberately NOT in STRUCTURED_QUOTA_CODES: the weekly
+    # marker + rejected status is what distinguishes an exhausted WEEKLY quota from a
+    # transient per-minute throttle (M0-T054 live proof; the throttle carries neither
+    # and remains fail-closed).
+    weekly = _weekly_rate_limit_rejection(structured_result)
+    if not found and not weekly:
         return "", ""
-    if _references_fable(structured_result, model_id):
-        return ("fable_exhausted",
-                f"structured typed code {found!r} denotes a Fable usage-limit/quota "
-                f"exhaustion")
-    return ("quota_unattributed",
+
+    if found:
+        basis = f"structured typed code {found!r} denotes a Fable usage-limit/quota exhaustion"
+        unattributed = (
             f"structured typed code {found!r} denotes a quota exhaustion but is not "
             f"attributable to the Fable model, so it cannot authorize a Fable turnover")
+    else:  # weekly rate-limit rejection
+        basis = ("a WEEKLY (7-day) rate-limit rejection denotes a Fable usage-limit "
+                 "exhaustion (a transient 429 would carry no weekly marker)")
+        unattributed = (
+            "a WEEKLY (7-day) rate-limit rejection denotes a usage-limit exhaustion but "
+            "is not attributable to the Fable model, so it cannot authorize a Fable "
+            "turnover")
+
+    if _references_fable(structured_result, model_id):
+        return ("fable_exhausted", basis)
+    return ("quota_unattributed", unattributed)
 
 
 def _text_confirms_fable(text: str) -> str:

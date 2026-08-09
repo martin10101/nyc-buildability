@@ -45,7 +45,7 @@ The two governing rules restate the supervisor-freeze / AD-025 lane:
 from __future__ import annotations
 
 import dataclasses
-from typing import Any, Callable
+from typing import Any, Callable, Mapping
 
 from .model_turnover import TurnoverEvidence, classify_exhaustion
 from .turnover_controller import (
@@ -132,20 +132,37 @@ class WorkerTurnoverIntegration:
     def evidence_from_run_result(run_result: Any, *, current_model: str) -> TurnoverEvidence:
         """Build the classifier's evidence from the ACTUAL bounded-unit result.
 
-        The Fable weekly-limit message surfaces on the worker's stderr, which the
-        runner retains as `stderr_tail`; `checkpoint_error` carries any parser-side
-        error text. Both are folded into the evidence text. `exit_code` is the
+        M0-T054 increment 5 (live proof project-control/reports/M0-T054-live-proof/,
+        reproducing D-010 source-028 / R289) closed a REAL gap: on a genuine Fable
+        weekly-limit hard-stop the exact phrase does NOT reach `stderr_tail` (empty)
+        or `checkpoint_error` (a generic no-checkpoint / malformed string) - it lives
+        in the STREAM events, which the runner now distills into `result_text` (the
+        api-error result/assistant text carrying the exact message) and
+        `rate_limit_rejection` (a raw rejected `rate_limit_event`). Feeding only
+        stderr+checkpoint_error, as before, left the classifier blind and it returned
+        NOT_EXHAUSTED, so the turnover never fired on real exhaustion.
+
+        So the evidence now folds `result_text` into the stdout text ALONGSIDE the
+        parser-side `checkpoint_error`, still carries `stderr_tail`, and passes the
+        raw `rate_limit_rejection` through as `structured_result`. `exit_code` is the
         observed process return code (the runner reports -1 when none was seen, an
         UNKNOWN-but-not-success exit), and `model_id` is the model the just-failed
         unit actually ran on, so a structured attribution can tie the signal to
-        Fable. The classifier remains the sole decider; this only gathers.
+        Fable. The classifier remains the SOLE decider (it fails a bare/transient 429
+        closed); this only gathers.
         """
         stderr = str(getattr(run_result, "stderr_tail", "") or "")
         checkpoint_error = str(getattr(run_result, "checkpoint_error", "") or "")
+        result_text = str(getattr(run_result, "result_text", "") or "")
+        stdout = "\n".join(part for part in (checkpoint_error, result_text) if part)
+        structured = getattr(run_result, "rate_limit_rejection", None)
+        if not isinstance(structured, Mapping):
+            structured = None
         return TurnoverEvidence(
-            stdout=checkpoint_error,
+            stdout=stdout,
             stderr=stderr,
             exit_code=getattr(run_result, "returncode", None),
+            structured_result=structured,
             model_id=str(current_model or ""),
         )
 
