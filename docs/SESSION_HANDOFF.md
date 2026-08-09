@@ -27,12 +27,20 @@ validated against the live config. Evidence: `project-control/reports/M0-T054-pr
 `default_mode=shadow`, supervised runtime, LIMITED-AUTO off — all intact.** Revert worker + settings
 `effortLevel` + reviewer files on the owner's typed "Fable is back" (R290).
 
-**M0-T054 (in_progress 75%, owner priority-correction D-010 source-028 R304–R319) — mechanism DONE.**
-Four additive increments on the task branch, **69 deterministic tests**, full supervisor suite
-**1471 passed / 2 skipped** (freeze baseline ≥1165 preserved, 0 failures):
-- inc1 `model_turnover.py` fail-closed detection (25); inc2 `turnover_controller.py` exactly-once
-  actuation (16); inc3 `turnover_adapters.py` real lock/audit/launcher/identity (16); inc4 gated
-  loop integration `worker_turnover.py` + `loop.py` (+37/−0) + `cli.py` (+10/−0) (12).
+**M0-T054 (in_progress 90%, D-010 source-028 R304–R319) — mechanism + LIVE PROOF DONE; gates in flight.**
+Task branch `task/M0-T054-turnover-watchdog` @ **`3c36c42`**. **Five** additive increments, **79
+deterministic tests**, full supervisor suite **1481 passed / 2 skipped** (freeze baseline preserved):
+- inc1 detection (25); inc2 exactly-once actuation (16); inc3 real adapters (16); inc4 gated loop
+  integration `loop.py` (+37/−0) + `cli.py` (+10/−0) (12); inc5 live-signal plumbing (10) — surfaces
+  the real exhaustion evidence (`result_text` + `seven_day` rate-limit) so the turnover fires in the
+  live loop (a real gap the live proof caught; `claude_runner.py` additive).
+- **LIVE PROOF (R316) DONE** — `project-control/reports/M0-T054-live-proof/LIVE-PROOF.md`: real Fable
+  exhaustion (exit 1, real signal) → `classify_exhaustion` → FABLE_EXHAUSTED → integration on the real
+  signal → one opus-4-8 launch decision + audit link → a **real opus-4.8 worker launches** (exit 0).
+  Every real link proven; only the single-continuous-auto-run is production-gated (see below).
+- **Gates IN FLIGHT:** G3 code-review + G5 security-review dispatched against `3c36c42`. Remaining for
+  accept: record G3/G5 + control-plane/DCV gates + producer report (AOS s6) + verification.json
+  (R304–R319; R316 evidence) + accept.
 - **⚠️ OWNER-DECISION (surfaced, work around, don't block):** production wiring is
   **RECORD-INTENT-ONLY** — `default_actuation_authorization` is False unconditionally because no
   runnable mode authorizes an automatic worker redispatch (shadow forwards nothing; supervised holds
