@@ -5,8 +5,56 @@
 the remote: **origin/main may have advanced, so do not trust any SHA written here as still-current.**
 This file is orientation only. Operating rules, gates, and workflow routes live in `CLAUDE.md`.
 
-Refreshed **2026-08-09 (session 9, SUPERVISED-AUTO active; M2-T015 98%, unit 3i complete)**.
+Refreshed **2026-08-09 (session 10, R289 fallback-incident recovery; running on claude-opus-4-8)**.
 **This block supersedes older sections**; the ledger wins on any conflict.
+
+## SESSION 10 STATE — R289 = DID-NOT-SWITCH; manual Opus-4.8 recovery; M2-T015 3j done, 3k next
+
+**Accepted count 72.** Main `a41f237` (PR #200 merged — verify; may have advanced). Task branch
+`task/M2-T015-survey-ingestion` @ **`1e4125c`** (pushed to origin).
+
+**R289 fallback test resolved (D-010 source-027, R292–R303).** Fable 5 hit its weekly usage limit
+mid-session and **hard-stopped** ("You've reached your Fable 5 limit … switch models with /model").
+The built-in `fallbackModel` did **NOT** auto-switch the orchestrator to Opus — verdict
+**DID-NOT-SWITCH**. The owner switched manually via `/model claude-opus-4-8`; this session is the
+R286-authorized **manual** Opus-4.8 successor (the automatic path is not claimed as working).
+Durable record: `project-control/reports/D-010-R288-fallback-expectation-log.md` (appended
+verification section, original untouched) + `project-control/reports/D-010-R289-fallback-incident/`
+(hard-stop screenshot). Three honest causes stated: config-maybe-not-reloaded (same session never
+restarted) / quota-maybe-not-a-`fallbackModel`-trigger / **no process outside the exhausted session
+to launch a successor** (the load-bearing gap → M0-T054).
+
+**Model posture NOW:** settings (committed, PR #199) `model: claude-fable-5` +
+`fallbackModel: ["claude-opus-4-8"]` + `effortLevel: xhigh`; **worker**
+`C:/SupervisorController/model_selection.toml` `[claude] model = "claude-opus-4-8"` (R291/R296 flip —
+mutable path only; protected `C:/Program Files/SupervisorConfig/config.toml` + LIMITED-AUTO
+untouched). Reviewers already on opus-4.8 xhigh (standing). **Revert all on the owner's typed
+"Fable is back" (R290):** settings `effortLevel`, `model_selection.toml` worker → "", reviewer files.
+
+**M2-T015 = 99%. Unit 3j COMPLETE.** 3j-1 `survey_evidence.ts` generator extension committed
+@ `1e4125c` (contracts tests 29 passed / 5 new; property_profile/rule_evaluation/scenario byte-identical).
+The scope-blocked r32/r33 worker edits were preserved (R298), packet `allowed_paths` amended for
+`generate_ts_types.py` + its test, generator run, evidence captured. The contract fixture matrix
+(4 valid + 8 invalid) already existed from unit 1 (`cabe128`); **SB-S8 proven green** —
+`.github/scripts/validate_contracts.py` exit 0 with survey_evidence auto-covered (4/4 valid pass,
+8/8 invalid rejected each with a precise typed reason). survey_evidence.ts byte-identity is enforced
+by the `contracts-typegen` CI check. **ONLY remaining product unit = 3k** (see session-9 detail
+below for exact wiring notes), then the M2-T015 gate lifecycle (G0–G5 + DCV + PR + accept), then M2-T016.
+
+**Bounded turnover-defect M0-T054 (BACKLOG, R300–R302):** independently-live watchdog OUTSIDE the
+Claude session that detects a quota hard stop, preserves evidence, launches **exactly one**
+`claude-opus-4-8` xhigh successor, loads the handoff, updates the mutable worker selection, resumes
+from the latest safe checkpoint **without duplicate workers/commits**, and **fails closed** on
+ambiguity; deterministic tests required (restart-config-load, hard-stop-detect, exactly-once-launch,
+audit-preservation, duplicate-prevention, safe-failure). Scheduled **after M2-T015 acceptance, before
+M2-T016**, unless needed sooner for safe continuation. Small — no supervisor redesign.
+
+**Supervised dispatch (raised window):** foreground `Bash` timeout `1500000` ms, `--unit-timeout 1200`,
+fresh runtime base `r36+`, explicit `--claude-executable C:\Users\MLFLL\.local\bin\claude.exe` and
+`--codex-executable ...\@openai\codex-win32-x64\vendor\x86_64-pc-windows-msvc\bin\codex.exe` (both are
+REQUIRED — `start` refuses to discover from PATH).
+
+<!-- superseded session-9 block retained below for reference -->
 
 ## SESSION 9 STATE — M2-T015 ingestion/validation/reader chain COMPLETE through unit 3i
 
