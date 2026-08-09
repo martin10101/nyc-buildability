@@ -38,9 +38,20 @@ deterministic tests**, full supervisor suite **1481 passed / 2 skipped** (freeze
   exhaustion (exit 1, real signal) → `classify_exhaustion` → FABLE_EXHAUSTED → integration on the real
   signal → one opus-4-8 launch decision + audit link → a **real opus-4.8 worker launches** (exit 0).
   Every real link proven; only the single-continuous-auto-run is production-gated (see below).
-- **Gates IN FLIGHT:** G3 code-review + G5 security-review dispatched against `3c36c42`. Remaining for
-  accept: record G3/G5 + control-plane/DCV gates + producer report (AOS s6) + verification.json
-  (R304–R319; R316 evidence) + accept.
+- **ALL 3 GATES PASS at `3c36c42`** (verbatim reports on main): G3 code-reviewer PASS
+  (`M0-T054-G3-code-review.md`), G5 security-reviewer PASS (`M0-T054-G5-security-review.md`), DCV
+  directive-compliance-verifier PASS 16/16 (`M0-T054-DCV-verification.md`). **READY TO ACCEPT.**
+- **EXACT ACCEPT RECIPE (mechanical, all evidence PASS):** M0-T054 applicable D-010 set = **16 reqs**
+  `[R300,R301,R302,R304,R305,R306,R307,R308,R309,R310,R312,R315,R316,R317,R318,R319]` (compute:
+  `DirectiveRegistry().derive_applicable(M0-T054.json)`). Steps: (1) write a `verification.json`
+  **v2** `task_verifications[]` row for M0-T054 — `directive_id=D-010`, `producer=orchestrator`,
+  `verifier=directive-compliance-verifier`, `reviewed_sha=3c36c42` (must == the reviewed HEAD),
+  `reviewed_manifest_sha256`, and a `requirements[]` row **state=PASS** for each of the 16
+  (R305/R306/R310 carry the live-activation-deferred note; all PASS at mechanism scope per the DCV);
+  (2) producer report (AOS s6); (3) `submit --requested-status awaiting_gate` with an evidence-map;
+  (4) record gates G0/G2/G3/G5 (`--sha 3c36c42`); (5) `accept --task-id M0-T054 --agent orchestrator`.
+  Watch the `reviewed_sha==HEAD` + material-identity gotchas (see memory `in-regime-accept-mechanics`).
+  Accepting M0-T054 **unblocks M2-T015 3k**.
 - **⚠️ OWNER-DECISION (surfaced, work around, don't block):** production wiring is
   **RECORD-INTENT-ONLY** — `default_actuation_authorization` is False unconditionally because no
   runnable mode authorizes an automatic worker redispatch (shadow forwards nothing; supervised holds
