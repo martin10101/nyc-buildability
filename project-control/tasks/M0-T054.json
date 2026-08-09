@@ -24,11 +24,11 @@
     "control-plane-verifier"
   ],
   "status": "in_progress",
-  "progress_percent": 90,
+  "progress_percent": 95,
   "risks": [],
   "blockers": [],
   "created_at": "2026-08-09T06:29:35.652832+00:00",
-  "updated_at": "2026-08-09T09:52:31.790040+00:00",
+  "updated_at": "2026-08-09T10:11:50.699503+00:00",
   "directive_refs": [
     {
       "directive_id": "D-010",
@@ -100,6 +100,20 @@
       "percent": 90,
       "status": "in_progress",
       "message": "LIVE PROOF (R316) COMPLETE - chain proven with REAL components (not unit-tests-alone), documented at project-control/reports/M0-T054-live-proof/LIVE-PROOF.md: (1) real Fable worker exit 1 + real seven_day rate_limit + exact phrase; (2) classify_exhaustion(real signal) -> FABLE_EXHAUSTED; (3) inc-5 distills the real evidence (10 live-signal tests, real capture as oracle); (4a) integration drives the REAL signal -> one opus-4-8 launch decision + Fable->Opus audit link (authorized channel); (4b) REAL opus-4.8 worker actually launches + runs (model claude-opus-4-8, exit 0, result OK, saved); (5) handoff+safe-checkpoint carried; (6) no owner /model. Fail-closed transient-429 exclusion preserved. Increment 5 committed to task branch @ 3c36c42; turnover stack = 79 deterministic tests, suite 1481 passed / 2 skipped. HONEST LIMITATION (documented): the single-continuous-process auto-run is production-gated (record-intent-only; R595 activation held by SHADOW-ONLY/LIMITED-AUTO-off) - every real LINK is proven; only owner-gated production auto-actuation is deferred to the R595 decision. REMAINING for M0-T054 accept: producer report (AOS s6) + G0/G2/G3/G5 + DCV + verification.json (R304-R319; R316 evidence above) + accept. Then M2-T015 3k on opus-4.8."
+    },
+    {
+      "at": "2026-08-09T10:09:51.575646+00:00",
+      "agent": "orchestrator",
+      "percent": 92,
+      "status": "in_progress",
+      "message": "G3 code review = PASS (code-reviewer, independent; saved project-control/reports/M0-T054-G3-code-review.md). Verified: 79 turnover tests + full suite 1481 passed/2 skipped; all 7 code files additive (0 deletions); fail-closed detection + exactly-once actuation correct (no double-launch/non-opus/false-positive/missed-real-signal path); minimal frozen-loop change preserving every non-exhaustion path byte-for-byte; freeze S1-S4 satisfied (SHADOW-ONLY/R595 preserved). ADVISORY (non-blocking, scope): only the WORKER-layer seam is wired into the loop; the ORCHESTRATOR-layer (main-orchestrator watchdog = task title + owner's #1 concern 'auto-start next session') building blocks are correct but the LIVE out-of-session entrypoint is R595-activation scope. Dispatching increment 6: orchestrator-layer watchdog entrypoint (record-intent-only, gated, symmetric with worker layer) to complete R310 both-layers at the mechanism level; LIVE auto-launch (both layers) stays R595-gated. G5 security review still running."
+    },
+    {
+      "at": "2026-08-09T10:11:50.699503+00:00",
+      "agent": "orchestrator",
+      "percent": 95,
+      "status": "in_progress",
+      "message": "G5 security review = PASS (security-reviewer, independent; saved project-control/reports/M0-T054-G5-security-review.md). No blocking findings: production record-intent-only (no committed auto-launch path without R595); successor-launch argv-safe + hard-pinned opus-4.8/xhigh; fail-closed detection (429 excluded); exactly-once + fail-closed audit; fixtures secret-free; suite 1481 passed. BOTH gate reviews now PASS (G3 code + G5 security) at 3c36c42. HONEST ACCEPTANCE SCOPE: M0-T054 delivers the turnover MECHANISM (layer-agnostic detection+actuation+adapters, worker-layer loop integration, R316 live proof) - complete + gate-passed. The LIVE production actuation (worker auto-redispatch AND the main-orchestrator auto-restart watchdog) = the R595 activation, held by the reaffirmed shadow-only/LIMITED-AUTO-off posture; deferred to the owner's R595 decision via follow-up M0-T056 (NOT a defect - a Tier-D owner-only flip). REMAINING for M0-T054 accept: G0/G2 + control-plane/DCV gates + producer report + verification.json (R304-R319; R316/live-proof; both-layer mechanism + R595 scope note) + accept -> unblocks M2-T015 3k."
     }
   ],
   "worktree": "C:/Users/MLFLL/Downloads/nyc-zoning/wt-m0t054"

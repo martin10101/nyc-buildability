@@ -1,0 +1,42 @@
+{
+  "task_id": "M0-T056",
+  "title": "R595 activation: live main-orchestrator + worker turnover auto-launch (OWNER-DECISION-GATED)",
+  "task_type": "backend",
+  "milestone_id": "M0",
+  "objective": "GATED ON THE OWNER'S R595 DECISION (do not start until the owner authorizes R595 activation; a Tier-D flip changing the shadow-only/LIMITED-AUTO-off posture). Then: (1) wire an independently-live process OUTSIDE the Claude session (main-orchestrator watchdog / existing verified launcher) that detects the orchestrator's own quota hard stop and auto-launches exactly one claude-opus-4-8 xhigh successor session loading the durable handoff + safe checkpoint; (2) enable the worker-layer auto-redispatch in the supervised loop via the owner-authorized actuation channel (flip default_actuation_authorization / wire a real controller+launcher); both single-instance, exactly-once, no duplicate workers/commits, audit-linked, fail-closed, durable across the terminal/session boundary; (3) the bounded live continuous proof (real Fable orchestrator/worker exhaustion -> real opus successor auto-launched, no owner /model). Reuse the M0-T054 controller/adapters/detection unchanged. Do NOT weaken any hold beyond the exact R595 activation the owner authorizes.",
+  "business_reason": "The M0-T054 turnover MECHANISM is built, tested (79 tests), gate-passed (G3+G5), and live-proven, but production actuation is deliberately RECORD-INTENT-ONLY. This task is the LIVE ACTIVATION the owner asked for ('auto-start the next session without me'): an independently-live main-orchestrator watchdog + both-layer production auto-launch. That capability IS the R595 autonomous-continuation path, currently HELD by the reaffirmed shadow-only / LIMITED-AUTO-off posture. HELD until the owner's explicit R595 activation decision (Tier-D, owner-only).",
+  "inputs": [],
+  "outputs": [],
+  "dependencies": [
+    "M0-T054"
+  ],
+  "allowed_paths": [],
+  "forbidden_paths": [],
+  "acceptance_scenarios": [],
+  "required_gates": [
+    "G0",
+    "G2",
+    "G3",
+    "G5"
+  ],
+  "producer_agent": null,
+  "reviewer_agents": [
+    "code-reviewer",
+    "security-reviewer",
+    "control-plane-verifier"
+  ],
+  "status": "backlog",
+  "progress_percent": 0,
+  "risks": [],
+  "blockers": [],
+  "created_at": "2026-08-09T10:12:30.259337+00:00",
+  "updated_at": "2026-08-09T10:12:30.599206+00:00",
+  "directive_refs": [
+    {
+      "directive_id": "D-010",
+      "requirement_ids": "ALL"
+    }
+  ],
+  "directive_regime_version": "1.0",
+  "directive_regime_entered_at": "2026-08-09T10:12:30.259337+00:00"
+}
