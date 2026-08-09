@@ -1,0 +1,14 @@
+=== M0-T054 protected-config doctor proof (R314), owner decision A ===
+  [PASS] content matches staged file  (live 746B vs staged 746B)
+  [PASS] SHA-256 == recorded applied value  (live 6aef12a9f60a6a64.. expected 6aef12a9f60a6a64..)
+  [PASS] content == authorized change (CR-stripped == pre-registered LF SHA)  (line-ending-only difference confirmed)
+  [PASS] protected FILE ACL = PROTECTED  (PROTECTED)
+  [PASS] protected PARENT ACL = PROTECTED  (PROTECTED)
+  [PASS] intended three-principal DACL (Admins:F, SYSTEM:F, MLFLL:RX)  ([["LAPTOP-M7D730QA\\MLFLL", ["RX"]], ["NT AUTHORITY\\SYSTEM", ["F"]], ["BUILTIN\\Administrators", ["F"]]])
+  [PASS] config readable (unelevated)  (read succeeded)
+  [PASS] model_selection.toml writable by ordinary account  (C:\SupervisorController\model_selection.toml)
+  [PASS] explicit claude-opus-4-8 selection accepted (live config)
+  [PASS] controller.default_mode == shadow  ({'default_mode': 'shadow'})
+  [PASS] codex.allowed_models unchanged  (('gpt-5.6-sol', 'gpt-5.6-terra'))
+  [PASS] claude.allowed_models == [claude-opus-4-8] only  (('claude-opus-4-8',))
+=== VERDICT: ALL PASS ===

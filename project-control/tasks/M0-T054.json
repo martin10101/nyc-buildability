@@ -24,11 +24,11 @@
     "control-plane-verifier"
   ],
   "status": "in_progress",
-  "progress_percent": 1,
+  "progress_percent": 45,
   "risks": [],
   "blockers": [],
   "created_at": "2026-08-09T06:29:35.652832+00:00",
-  "updated_at": "2026-08-09T07:33:47.404581+00:00",
+  "updated_at": "2026-08-09T08:09:45.668940+00:00",
   "directive_refs": [
     {
       "directive_id": "D-010",
@@ -51,6 +51,27 @@
       "percent": 1,
       "status": "in_progress",
       "message": "Implementation started (opus-4.8 producer): watchdog + deterministic tests, everything possible without the protected-config apply."
+    },
+    {
+      "at": "2026-08-09T07:54:31.198015+00:00",
+      "agent": "backend-engineer",
+      "percent": 25,
+      "status": "in_progress",
+      "message": "Increment 1 COMPLETE + committed (task branch 941297c): fail-closed Fable-exhaustion DETECTION core (tools/agent_supervisor/model_turnover.py) + 25 deterministic tests (R307 + detection R315 items). Additive-only (no frozen-module edits). Independent orchestrator verification: focused 25 passed; full supervisor suite 1427 passed / 2 skipped (baseline 1402, above the >=1165 freeze floor, 0 failures) - M0-T039 baseline preserved (formal freeze-report re-establishment deferred to the gate). Detection grounds on the exact weekly-limit phrase or a typed Fable-attributable quota code; 429/rate-limit excluded; contradiction/unattributed/bare-limit/network/unknown -> AMBIGUOUS_FAIL_CLOSED; permission-denied -> NOT_EXHAUSTED; never raises. NEXT increment 2 (dispatched, opus-4.8 producer): turnover ACTUATION controller - exactly-once successor decision, single-instance lock, duplicate-event suppression, audit linkage (Fable->Opus), safe-stop-if-opus-unavailable, and BOTH-layer decision logic (orchestrator successor + worker redispatch) via an INJECTED launcher (fake in tests) - fully testable without the protected-config apply. Live proof + real launcher wiring follow the owner's elevated apply."
+    },
+    {
+      "at": "2026-08-09T07:59:15.717435+00:00",
+      "agent": "orchestrator",
+      "percent": 25,
+      "status": "blocked",
+      "message": "R314 doctor proof after owner elevated apply: 9/10 checks PASS (content matches staged; protected FILE ACL=PROTECTED; protected PARENT ACL=PROTECTED; exact three-principal DACL Admins:F/SYSTEM:F/MLFLL:RX; config readable; model_selection.toml writable; explicit claude-opus-4-8 selection ACCEPTED by validate_selection; default_mode=shadow; codex.allowed_models unchanged; claude.allowed_models==[claude-opus-4-8] only). ONE check FAILED: live config SHA 6aef12a9.. != pre-registered 9560f901.. - PROVEN line-ending-only (live-with-CRLF-stripped == 9560f901.. exactly). Cause: git autocrlf converted the staged config.staged.toml (project-control/reports/** lacks the eol=lf pin that directives/** has) from LF(729B) to CRLF(746B); the owner's Copy-Item copied the CRLF form. Content is byte-identical to the authorized change except \\n vs \\r\\n; CRLF is valid TOML and the supervisor parses+accepts it. STOPPED per R314 pending owner choice: (A) accept the applied CRLF config as correct - re-record expected SHA to 6aef12a9 and proceed; or (B) re-apply an LF-corrected staged file to match the pre-registered SHA + original LF convention. No worker-model flip or live proof until resolved."
+    },
+    {
+      "at": "2026-08-09T08:09:45.668940+00:00",
+      "agent": "orchestrator",
+      "percent": 45,
+      "status": "in_progress",
+      "message": "Protected-config apply RESOLVED (owner decision A) + worker flipped + increments 1-2 committed. R314 doctor proof ALL PASS (12/12) at accepted SHA 6aef12a9 (CRLF form; CR-stripped == pre-registered LF 9560f901, line-ending-only, owner-accepted); PROTECTED file+parent, exact three-principal DACL, claude-opus-4-8 accepted against LIVE config, shadow/supervised/codex intact, allowlist == [claude-opus-4-8] only. Mutable model_selection.toml [claude] model flipped to claude-opus-4-8 (R296/R308) and validate_selection against the LIVE config = ok (proven, not just a config claim). Implementation: increment 1 DETECTION (941297c, 25 tests) + increment 2 ACTUATION (4bd1ceb, 16 tests) committed to task branch - 41 deterministic tests, strictly additive, full supervisor suite 1443 passed / 2 skipped (baseline 1427 preserved, >=1165 floor, 0 failures). NEXT increment 3: wire the detection+actuation to the REAL dependencies (locking.py SingleInstanceLock, hash-chained audit_log.py, a real cli.py successor launcher) + the supervisor worker-result integration (a defect-lane change to a frozen module, so under standard gates), THEN the bounded LIVE Fable->Opus proof on an isolated non-product runtime (R316), then M0-T054 gates + acceptance, then resume M2-T015 3k on opus-4.8."
     }
   ],
   "worktree": "C:/Users/MLFLL/Downloads/nyc-zoning/wt-m0t054"
