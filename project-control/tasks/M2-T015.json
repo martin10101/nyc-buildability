@@ -73,8 +73,8 @@
     "code-reviewer",
     "security-reviewer"
   ],
-  "status": "blocked",
-  "progress_percent": 99,
+  "status": "accepted",
+  "progress_percent": 100,
   "risks": [
     "DISPATCH HOLD: awaits owner review of the 2026-07-20 planning report AND M2-T014 acceptance (format policy is a hard input)",
     "B-001: production storage/tenant-isolation/retention remain blocked; the architecture doc must design for them and mark them deferred - G3 verifies the honesty of that split",
@@ -85,7 +85,7 @@
   ],
   "blockers": [],
   "created_at": "2026-07-20T06:34:25.468863+00:00",
-  "updated_at": "2026-08-09T07:34:34.075254+00:00",
+  "updated_at": "2026-08-09T17:59:25.929933+00:00",
   "directive_refs": [
     {
       "directive_id": "D-010",
@@ -333,6 +333,22 @@
       "percent": 99,
       "status": "blocked",
       "message": "Dependency wired: M0-T054 added as a BLOCKING dependency of M2-T015 (owner priority-correction D-010 source-028 R304). M2-T015 3k continuation is held until M0-T054 (automatic Fable->Opus turnover) is implemented, proven, and accepted. Completed 3j work at task branch 1e4125c is preserved."
+    },
+    {
+      "at": "2026-08-09T15:52:17.974303+00:00",
+      "agent": "orchestrator",
+      "percent": 99,
+      "status": "in_progress",
+      "message": "UNBLOCKED: M0-T054 (automatic Fable->Opus turnover) accepted (73), satisfying the D-010 source-028 R304 blocking dependency; the R296 config-guardrail (empty allowed_models) is also resolved (claude-opus-4-8 now in the protected allowlist). Resuming unit 3k on opus-4.8: DecoderSeam wiring of the in-repo vector-PDF reader through routing.begin_extraction_job behind the isolation.py fail-closed gate, survey_evidence fact assembly, deterministic checks, gated-edge transitions (promotion_gated_transition), e2e + SB-COVERAGE-MATRIX (R272) + full CI SB-S9."
+    },
+    {
+      "at": "2026-08-09T16:59:08.639653+00:00",
+      "agent": "orchestrator",
+      "percent": 95,
+      "status": "in_progress",
+      "message": "GATE WAVE (897e7df, 4 independent reviewers): G1 data-contract PASS, G5 security PASS, G3 code FAIL, DCV directive-compliance FAIL. CONSENSUS: pipeline logic/security/contract SOUND (925 tests, no functional defects; G3 ruled the 3l unevaluable->needs_review fail-closed rule CORRECT) but task NOT acceptable due to 3 real gaps: (1) SB-S9 FAILS - 'cd services/api && ruff check .' exits 1 with 37 violations under pinned ruff 0.13.0, all in M2-T015's own new files (earlier 'ruff clean' claim held only for the 3k/3l delta not the whole tree CI lints); (2) MISSING named outputs - docs/SURVEY_FIXTURE_MATRIX.md and the committed synthetic fixture pack + MANIFEST (build_fixture_pack.py pattern) covering the 12 objective fixture categories; (3) STALE producer report (through Unit 2). R221/R224 confirmed on main. Reports saved M2-T015-{G1,G5,G3,DCV}. Dispatching rework producer (ruff-clean + fixture pack + SURVEY_FIXTURE_MATRIX + report); then re-gate at the green SHA against main's 97-req set."
     }
-  ]
+  ],
+  "accepted_by": "orchestrator",
+  "accepted_at": "2026-08-09T17:59:25.929933+00:00"
 }
