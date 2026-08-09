@@ -67,9 +67,18 @@ Orchestrator captures test/commit evidence; in-loop Codex evidence-boundary REVI
 orchestrator out-of-loop verification.
 
 ## Other open items
-- **Owner product-efficiency directive** parked at `docs/OWNER_EFFICIENCY_DIRECTIVE_PLAN.md` —
-  PROSPECTIVE, starts after M2-T015 acceptance, M2-T016 is the proving ground; no repo-wide refactor;
-  formal registry capture (likely D-011) folds into a control seam at Phase-1 start.
+- **Owner product-efficiency directive** — captured (D-010 source-029, R320–R343). **Phase 1 DONE**
+  (M0-T055, PR #206): `docs/LEAN_OPERATING_PROCESS.md` + CLAUDE.md pointer; canonical routine record =
+  per-task `progress_log` + git + CI; lean 7-field ≤2000-tok handoff + 6 seam triggers; 1–2
+  routine-control-PR batching; concise-code/parameterized-test/safer-packet guidance. Effective
+  **M2-T016 onward** (prospective; nothing retroactive). **Part-D independent review = PASS**
+  (control-plane-verifier; verbatim `project-control/reports/M0-T055-partD-review.md`). Remaining for
+  M0-T055 accept: G0/G2 + G3/G5 gates (dispatch code-reviewer G3 + security-reviewer G5) +
+  verification.json (R320-R343; R338/R339/R342 pending-with-justification; R336 NA post-acceptance) +
+  accept. **Phase 2** = run/measure M2-T016 under the rules
+  (needs M2-T015 accepted first). **Phase 3** = one bounded projector helper only if M2-T016 still
+  shows duplication. PDF keep-vs-replace assessment (B9) = post-M2-T015-acceptance, comparison-only.
+  **Apply the lean rules to all product work from M2-T016 on.**
 - **M0-T047 (nanoid):** age-eligible 2026-08-10; until then `web-dependency-security` stays red
   repo-wide (NON-required; Tier A merges unaffected).
 - Rework queue (M0-T021/M0-T034) and the M3 chain (under blockers) remain available.
