@@ -17,18 +17,18 @@
     "G3",
     "G5"
   ],
-  "producer_agent": null,
+  "producer_agent": "backend-engineer",
   "reviewer_agents": [
     "code-reviewer",
     "security-reviewer",
     "control-plane-verifier"
   ],
-  "status": "backlog",
-  "progress_percent": 0,
+  "status": "in_progress",
+  "progress_percent": 1,
   "risks": [],
   "blockers": [],
   "created_at": "2026-08-09T06:29:35.652832+00:00",
-  "updated_at": "2026-08-09T06:29:35.985003+00:00",
+  "updated_at": "2026-08-09T07:33:47.404581+00:00",
   "directive_refs": [
     {
       "directive_id": "D-010",
@@ -36,5 +36,22 @@
     }
   ],
   "directive_regime_version": "1.0",
-  "directive_regime_entered_at": "2026-08-09T06:29:35.652832+00:00"
+  "directive_regime_entered_at": "2026-08-09T06:29:35.652832+00:00",
+  "progress_log": [
+    {
+      "at": "2026-08-09T07:33:41.023623+00:00",
+      "agent": "orchestrator",
+      "percent": 0,
+      "status": "ready",
+      "message": "G0 readiness: M0-T054 turnover-watchdog contracted with full source-028 spec (R304-R319), gates G0/G2/G3/G5, reviewers code-reviewer+security-reviewer+control-plane-verifier, worktree wt-m0t054. Blocking dependency of M2-T015 3k."
+    },
+    {
+      "at": "2026-08-09T07:33:47.402562+00:00",
+      "agent": "backend-engineer",
+      "percent": 1,
+      "status": "in_progress",
+      "message": "Implementation started (opus-4.8 producer): watchdog + deterministic tests, everything possible without the protected-config apply."
+    }
+  ],
+  "worktree": "C:/Users/MLFLL/Downloads/nyc-zoning/wt-m0t054"
 }

@@ -1,10 +1,10 @@
 {
  "schema": "directive_requirements/v1",
  "directive_id": "D-010",
- "version": 23,
- "requirement_count": 303,
+ "version": 24,
+ "requirement_count": 319,
  "producer": "orchestrator",
- "updated_at": "2026-08-09T06:10:00+00:00",
+ "updated_at": "2026-08-09T08:00:00+00:00",
  "requirements": [
   {
    "id": "D-010-R001",
@@ -10727,6 +10727,572 @@
     "tasks": []
    },
    "amendment_sequence": 27
+  },
+  {
+   "id": "D-010-R304",
+   "text": "SEQUENCING (supersedes R302): M0-T054 (automatic Fable->Opus turnover) is now an IMMEDIATE BLOCKING dependency of M2-T015 unit 3k, not scheduled after M2-T015 acceptance. It must be implemented, tested, and proven (deterministic + one bounded live proof) BEFORE 3k continues, because M2-T015 cannot finish while Fable is exhausted and the supervised worker cannot lawfully select Opus 4.8.",
+   "source_ref": "source-028-amendment.md#verbatim-owner-text",
+   "classification": "sequencing",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T054",
+     "M2-T015"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [
+     "dispatch",
+     "accept"
+    ],
+    "effective_date": "2026-08-09"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "owner priority-correction 2026-08-09 (source-028): implement/test/prove automatic Fable->Opus turnover as M0-T054 before M2-T015 3k",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "amendment_sequence": 28
+  },
+  {
+   "id": "D-010-R305",
+   "text": "INTENDED UX: on Fable 5 unavailability from usage/credit/quota exhaustion while work runs, the owner need NOT notice the message, type /model, or paste a recovery prompt; a process OUTSIDE the exhausted Claude session detects it and automatically starts exactly one successor on the full identifier claude-opus-4-8 at xhigh effort, loading the latest durable handoff/journal/safe checkpoint and continuing without repeating completed work or duplicating workers/commits; turnover is durable across the terminal/session boundary; same-session continuation only if technically and safely supported, otherwise a new successor session restoring continuity from durable evidence (no false claim the provider process survived).",
+   "source_ref": "source-028-amendment.md#verbatim-owner-text",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T054"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [
+     "dispatch",
+     "accept"
+    ],
+    "effective_date": "2026-08-09"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "owner priority-correction 2026-08-09 (source-028): implement/test/prove automatic Fable->Opus turnover as M0-T054 before M2-T015 3k",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "amendment_sequence": 28
+  },
+  {
+   "id": "D-010-R306",
+   "text": "ARCHITECTURE: implement the turnover decision in an independently-live deterministic controller/watchdog/existing-verified-launcher OUTSIDE the Claude process. Do NOT rely solely on Claude Code built-in fallbackModel, the exhausted session reading its own final UI message, the exhausted session typing /model, model reasoning to classify the event, or an owner being present. (Built-in fallbackModel already failed live at R289.)",
+   "source_ref": "source-028-amendment.md#verbatim-owner-text",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T054"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [
+     "dispatch",
+     "accept"
+    ],
+    "effective_date": "2026-08-09"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "owner priority-correction 2026-08-09 (source-028): implement/test/prove automatic Fable->Opus turnover as M0-T054 before M2-T015 3k",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "amendment_sequence": 28
+  },
+  {
+   "id": "D-010-R307",
+   "text": "DETECTION: recognize only grounded, typed Fable-unavailability signals, including the exact weekly-limit hard stop 'You have reached your Fable 5 limit. Run /usage-credits to continue or switch models with /model.', via structured process output/exit results/provider-CLI evidence. Do NOT treat ordinary coding failures, permission denials, malformed checkpoints, network ambiguity, or unknown errors as exhaustion. Unknown/contradictory evidence must FAIL CLOSED and preserve evidence, never guess.",
+   "source_ref": "source-028-amendment.md#verbatim-owner-text",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T054"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [
+     "dispatch",
+     "accept"
+    ],
+    "effective_date": "2026-08-09"
+   },
+   "dependencies": [],
+   "required_harness": "Tests: exact quota-message classification; structured quota result; normal completion no-turnover; ordinary-failure no-turnover; permission-denial no-turnover; unknown/ambiguous fail-closed.",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "owner priority-correction 2026-08-09 (source-028): implement/test/prove automatic Fable->Opus turnover as M0-T054 before M2-T015 3k",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "amendment_sequence": 28
+  },
+  {
+   "id": "D-010-R308",
+   "text": "TURNOVER MECHANICS for a confirmed exhaustion event: acquire the single-instance/continuation lock; preserve the stopped process output + journal; prove no surviving Fable worker or competing orchestrator remains; record the exact last safe checkpoint; select ONLY claude-opus-4-8; launch EXACTLY ONE Opus xhigh successor; load SESSION_HANDOFF + relevant task/controller state; resume from the correct safe seam; keep an audit record linking the stopped Fable execution to the Opus successor; prevent repeated turnover on a duplicate event; prevent duplicate workers/commits/external effects; stop safely if Opus 4.8 is also unavailable.",
+   "source_ref": "source-028-amendment.md#verbatim-owner-text",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T054"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [
+     "dispatch",
+     "accept"
+    ],
+    "effective_date": "2026-08-09"
+   },
+   "dependencies": [],
+   "required_harness": "Tests: single-instance lock; duplicate-event suppression; surviving-child detection; audit linkage; exactly-one launch; duplicate-worker/commit prevention; Opus-unavailable safe failure; checkpoint restoration.",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "owner priority-correction 2026-08-09 (source-028): implement/test/prove automatic Fable->Opus turnover as M0-T054 before M2-T015 3k",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "amendment_sequence": 28
+  },
+  {
+   "id": "D-010-R309",
+   "text": "MODEL RESTRICTION: do not select Opus 5, Sonnet, or any model other than claude-opus-4-8 for turnover without a separate owner decision.",
+   "source_ref": "source-028-amendment.md#verbatim-owner-text",
+   "classification": "prohibition",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T054"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [
+     "dispatch",
+     "accept"
+    ],
+    "effective_date": "2026-08-09"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "owner priority-correction 2026-08-09 (source-028): implement/test/prove automatic Fable->Opus turnover as M0-T054 before M2-T015 3k",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "amendment_sequence": 28
+  },
+  {
+   "id": "D-010-R310",
+   "text": "BOTH EXECUTION LAYERS: (1) main-orchestrator exhaustion - the independently-live launcher/watchdog starts or resumes the Opus 4.8 orchestrator with the durable handoff; (2) supervised-worker exhaustion - the controller records the failed Fable worker, verifies no child survives, and redispatches the SAME bounded unit exactly once on Opus 4.8 from its safe starting checkpoint.",
+   "source_ref": "source-028-amendment.md#verbatim-owner-text",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T054"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [
+     "dispatch",
+     "accept"
+    ],
+    "effective_date": "2026-08-09"
+   },
+   "dependencies": [],
+   "required_harness": "Tests: supervised-worker redispatch on Opus; main-orchestrator successor startup on Opus.",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "owner priority-correction 2026-08-09 (source-028): implement/test/prove automatic Fable->Opus turnover as M0-T054 before M2-T015 3k",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "amendment_sequence": 28
+  },
+  {
+   "id": "D-010-R311",
+   "text": "PROTECTED MODEL AUTHORIZATION: add exactly 'claude-opus-4-8' to [claude].allowed_models in C:/Program Files/SupervisorConfig/config.toml. This narrowly supersedes R297 for that exact allowlist addition ONLY; no other protected configuration value may change.",
+   "source_ref": "source-028-amendment.md#verbatim-owner-text",
+   "classification": "authorization",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T054"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [
+     "C:/Program Files/SupervisorConfig/config.toml"
+    ],
+    "lifecycle_events": [
+     "dispatch"
+    ],
+    "effective_date": "2026-08-09"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "owner priority-correction 2026-08-09 (source-028): implement/test/prove automatic Fable->Opus turnover as M0-T054 before M2-T015 3k",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "amendment_sequence": 28
+  },
+  {
+   "id": "D-010-R312",
+   "text": "PRESERVE INVARIANTS across the protected change: controller.default_mode='shadow'; active authorized runtime=supervised; LIMITED-AUTO unauthorized and OFF; Codex model configuration unchanged; all command/filesystem/credential/approval protections unchanged.",
+   "source_ref": "source-028-amendment.md#verbatim-owner-text",
+   "classification": "prohibition",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T054"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [
+     "dispatch",
+     "accept"
+    ],
+    "effective_date": "2026-08-09"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "owner priority-correction 2026-08-09 (source-028): implement/test/prove automatic Fable->Opus turnover as M0-T054 before M2-T015 3k",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "amendment_sequence": 28
+  },
+  {
+   "id": "D-010-R313",
+   "text": "PROTECTED-CHANGE PROCEDURE: use the existing tested protected-config update + DACL-hardening procedure (harden_controller_config.ps1). BEFORE any live protected-file modification: (1) capture directive; (2) exact before/after diff; (3) prove only the one allowlist value changes; (4) calculate + record the new SHA-256; (5) run the existing full-vector dry-run; (6) return ONE exact elevated command; (7) STOP for the owner's elevated apply. Do NOT ask the owner to hand-edit TOML, reconstruct commands, or run arbitrary recursive icacls.",
+   "source_ref": "source-028-amendment.md#verbatim-owner-text",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T054"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [
+     "C:/Program Files/SupervisorConfig/config.toml"
+    ],
+    "lifecycle_events": [
+     "dispatch"
+    ],
+    "effective_date": "2026-08-09"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "Before/after diff + staged config + new SHA-256 + full-vector dry-run + one elevated command staged under project-control/reports/M0-T054-protected-config/; stop-for-owner recorded.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "owner priority-correction 2026-08-09 (source-028): implement/test/prove automatic Fable->Opus turnover as M0-T054 before M2-T015 3k",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "amendment_sequence": 28
+  },
+  {
+   "id": "D-010-R314",
+   "text": "DOCTOR PROOF after the owner's elevated apply (all required, stop if any fails): content matches the staged file; SHA-256 == the new recorded value; protected file ACL=PROTECTED; protected parent ACL=PROTECTED; intended three-principal DACLs remain; config readable; model_selection.toml writable by the ordinary account; explicit claude-opus-4-8 selection accepted; default_mode=shadow; runtime=supervised; LIMITED-AUTO off.",
+   "source_ref": "source-028-amendment.md#verbatim-owner-text",
+   "classification": "harness",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T054"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [
+     "C:/Program Files/SupervisorConfig/config.toml"
+    ],
+    "lifecycle_events": [
+     "accept"
+    ],
+    "effective_date": "2026-08-09"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "Unelevated doctor JSON + os_acl verdict + validate_selection acceptance captured under project-control/reports/M0-T054-protected-config/.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "owner priority-correction 2026-08-09 (source-028): implement/test/prove automatic Fable->Opus turnover as M0-T054 before M2-T015 3k",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "amendment_sequence": 28
+  },
+  {
+   "id": "D-010-R315",
+   "text": "DETERMINISTIC TESTS: M0-T054 must include executable tests for each listed condition (quota-message classification, structured quota result, normal-completion no-turnover, ordinary-failure no-turnover, permission-denial no-turnover, unknown/ambiguous safe stop, config reload after allowlist change, exactly-one Opus launch, correct full identifier claude-opus-4-8, xhigh effort selection, handoff+checkpoint restoration, Fable<->Opus audit linkage, single-instance locking, duplicate-event suppression, duplicate-worker prevention, duplicate-commit/external-effect prevention, surviving-child detection, Opus-unavailable safe failure, restart/reboot recovery where supported, supervised-worker redispatch on Opus, main-orchestrator successor startup on Opus).",
+   "source_ref": "source-028-amendment.md#verbatim-owner-text",
+   "classification": "harness",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T054"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [
+     "dispatch",
+     "accept"
+    ],
+    "effective_date": "2026-08-09"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "owner priority-correction 2026-08-09 (source-028): implement/test/prove automatic Fable->Opus turnover as M0-T054 before M2-T015 3k",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "amendment_sequence": 28
+  },
+  {
+   "id": "D-010-R316",
+   "text": "LIVE PROOF: use controlled fake-provider/process fixtures first, then ONE bounded live proof using the currently-exhausted Fable state on an ISOLATED NON-PRODUCT runtime (must not duplicate M2-T015 work or mutate production data), demonstrating Fable launch/probe -> grounded weekly-limit hard stop detected -> Fable process accounted for -> exactly one Opus 4.8 xhigh successor launched -> durable handoff loaded -> safe checkpoint identified -> continuation action reached -> no owner /model or recovery prompt. Do NOT claim success from unit tests alone or from manual selectability.",
+   "source_ref": "source-028-amendment.md#verbatim-owner-text",
+   "classification": "evidence",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T054"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [
+     "dispatch",
+     "accept"
+    ],
+    "effective_date": "2026-08-09"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "owner priority-correction 2026-08-09 (source-028): implement/test/prove automatic Fable->Opus turnover as M0-T054 before M2-T015 3k",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "amendment_sequence": 28
+  },
+  {
+   "id": "D-010-R317",
+   "text": "SCOPE: keep M0-T054 narrow (model-exhaustion detection, lawful model authorization, exactly-once successor launch, safe continuation). Do NOT redesign the supervisor, expand LIMITED-AUTO, or reopen unrelated ACL/controller/infrastructure work. Do NOT lose or repeat the completed M2-T015 work at task commit 1e4125c.",
+   "source_ref": "source-028-amendment.md#verbatim-owner-text",
+   "classification": "prohibition",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T054",
+     "M2-T015"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [
+     "dispatch",
+     "accept"
+    ],
+    "effective_date": "2026-08-09"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "owner priority-correction 2026-08-09 (source-028): implement/test/prove automatic Fable->Opus turnover as M0-T054 before M2-T015 3k",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "amendment_sequence": 28
+  },
+  {
+   "id": "D-010-R318",
+   "text": "SEQUENCE: (1) capture directive; (2) move M0-T054 BACKLOG -> active/blocked-for-owner; (3) implement + test everything possible without the protected apply; (4) stage the one allowlist change + return the exact elevated command; (5) after apply, run the full protection/selection proof; (6) complete the bounded live turnover proof; (7) run M0-T054 independent reviews/gates/acceptance; (8) resume M2-T015 3k automatically on Opus; (9) complete M2-T015 tests/reviews/PR/acceptance; (10) continue to M2-T016 under supervised-auto, LIMITED-AUTO off.",
+   "source_ref": "source-028-amendment.md#verbatim-owner-text",
+   "classification": "sequencing",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T054",
+     "M2-T015"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [
+     "dispatch",
+     "accept"
+    ],
+    "effective_date": "2026-08-09"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "owner priority-correction 2026-08-09 (source-028): implement/test/prove automatic Fable->Opus turnover as M0-T054 before M2-T015 3k",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "amendment_sequence": 28
+  },
+  {
+   "id": "D-010-R319",
+   "text": "RETURN (before asking for any new product decision): (1) exact M0-T054 implementation files; (2) its test results; (3) deterministic + live turnover evidence; (4) new protected-config SHA + doctor proof; (5) proof of the actual Opus 4.8 successor model; (6) proof no duplicate worker/commit occurred; (7) proof M2-T015 resumed from its correct checkpoint; (8) any genuine remaining blocker requiring owner authority.",
+   "source_ref": "source-028-amendment.md#verbatim-owner-text",
+   "classification": "return",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T054"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [
+     "dispatch",
+     "accept"
+    ],
+    "effective_date": "2026-08-09"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "owner priority-correction 2026-08-09 (source-028): implement/test/prove automatic Fable->Opus turnover as M0-T054 before M2-T015 3k",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "amendment_sequence": 28
   }
  ]
 }

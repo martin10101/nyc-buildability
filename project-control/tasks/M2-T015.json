@@ -21,7 +21,8 @@
     "project-control/reports/M2-T015-producer-report.md (AOS section-6 packet)"
   ],
   "dependencies": [
-    "M2-T014"
+    "M2-T014",
+    "M0-T054"
   ],
   "allowed_paths": [
     "services/api/app/documents/**",
@@ -84,7 +85,7 @@
   ],
   "blockers": [],
   "created_at": "2026-07-20T06:34:25.468863+00:00",
-  "updated_at": "2026-08-09T06:43:53.446092+00:00",
+  "updated_at": "2026-08-09T07:34:34.075254+00:00",
   "directive_refs": [
     {
       "directive_id": "D-010",
@@ -325,6 +326,13 @@
       "percent": 99,
       "status": "blocked",
       "message": "3k SUPERVISED-DISPATCH BLOCKED (R296 config-guardrail conflict surfaced by the machine). Attempting unit 3k-1 (DecoderSeam wiring) on runtime base r36, the supervisor's validate_selection FAIL-CLOSED rejected the R291/R296 worker flip: 'claude.model is set to claude-opus-4-8 but claude.allowed_models is empty; an empty allowlist means only the account/CLI default may be used'. The protected immutable C:/Program Files/SupervisorConfig/config.toml has [claude] allowed_models = [] (account-default-only, live-proven session-7), and R297 forbids me from editing it to add opus-4.8. So R296's literal instruction (name opus-4.8 in the mutable model_selection.toml) is UNLAWFUL per the supervisor's own guardrail; I reverted model_selection.toml [claude] model back to the only lawful value \"\" (defer to account/CLI default). Because the settings.json model pin is claude-fable-5 (exhausted) and the fallbackModel did NOT auto-switch (R289=DID-NOT-SWITCH), a headless supervised worker cannot reliably run opus-4.8 right now. NET: the ORCHESTRATOR runs on opus-4.8 (manual /model, fine), but SUPERVISED WORKER dispatch for 3k is blocked pending an OWNER decision (add claude-opus-4-8 to config.toml allowed_models - an owner-only protected-config change) OR Fable credits returning next week. 3j remains COMPLETE; no product work lost; task branch @ 1e4125c. This is also a direct input to M0-T054 (the watchdog's successor launch needs the worker model to be lawfully selectable)."
+    },
+    {
+      "at": "2026-08-09T07:34:34.075254+00:00",
+      "agent": "orchestrator",
+      "percent": 99,
+      "status": "blocked",
+      "message": "Dependency wired: M0-T054 added as a BLOCKING dependency of M2-T015 (owner priority-correction D-010 source-028 R304). M2-T015 3k continuation is held until M0-T054 (automatic Fable->Opus turnover) is implemented, proven, and accepted. Completed 3j work at task branch 1e4125c is preserved."
     }
   ]
 }
