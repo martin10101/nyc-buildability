@@ -19,17 +19,20 @@ import pytest
 from app.documents.models import DocumentIngestionRecord
 from app.documents.promotion import (
     REQUIRED_VALIDATIONS,
+    PromotionAllowed,
     PromotionRefused,
     evaluate_promotion,
 )
 from app.documents.review_actions import (
     AcceptFactRequest,
     ConcurrentReviewModification,
+    ConfirmationRejected,
     ConfirmDocumentRequest,
     CorrectFactRequest,
     CorrectionRejected,
     DocumentRecordNotFound,
     FactNotFound,
+    PostConfirmationEditRefused,
     RejectDocumentRequest,
     RejectFactRequest,
     ReopenDocumentRequest,
@@ -158,6 +161,9 @@ class InMemoryReviewStore:
         self.facts: dict[tuple[str, str], dict] = {}
         self.material: dict[str, list[str]] = {}
         self.originals: set[str] = set()
+        # Independently-held immutable original detection values, snapshotted at ingest and
+        # NEVER updated by a correction (mirrors the original extraction record).
+        self.original_values: dict[tuple[str, str], object] = {}
         self.audit: list = []
         self.recalcs: list = []
 
@@ -165,7 +171,9 @@ class InMemoryReviewStore:
         self.documents[record.document_digest] = record
         self.material[record.document_digest] = [f["evidence_id"] for f in facts]
         for fact in facts:
-            self.facts[(record.document_digest, fact["evidence_id"])] = dict(fact)
+            key = (record.document_digest, fact["evidence_id"])
+            self.facts[key] = dict(fact)
+            self.original_values[key] = fact["original_value"]
         if original:
             self.originals.add(record.document_digest)
 
@@ -210,6 +218,12 @@ class InMemoryReviewStore:
 
     def original_exists(self, document_digest: str) -> bool:
         return document_digest in self.originals
+
+    def original_fact_value(self, document_digest, evidence_id):
+        key = (document_digest, evidence_id)
+        if key not in self.original_values:
+            raise FactNotFound("no original detection", evidence_id=evidence_id)
+        return self.original_values[key]
 
     def append_audit(self, event) -> None:
         self.audit.append(event)
@@ -570,10 +584,20 @@ def test_illegal_transitions_fail_closed(name, state, call):
     assert store.load_document(DIGEST).state is before  # unchanged
 
 
-def test_reject_document_requires_reason():
+@pytest.mark.parametrize("empty", ["   ", ""])
+def test_reject_document_empty_reason_raises_shipped_transition_reason_required(empty):
+    # R4: the error domain is the shipped transition machinery, not a fact-level refusal.
     store = _store()
-    with pytest.raises((TransitionReasonRequired, CorrectionRejected)):
-        reject_document(store, RejectDocumentRequest(DIGEST, "   ", PRO, WHEN))
+    with pytest.raises(TransitionReasonRequired):
+        reject_document(store, RejectDocumentRequest(DIGEST, empty, PRO, WHEN))
+    assert store.audit == []  # no write
+
+
+@pytest.mark.parametrize("empty", ["   ", ""])
+def test_reopen_document_empty_reason_raises_shipped_transition_reason_required(empty):
+    store = _store(state=DocumentState.PROFESSIONALLY_CONFIRMED)
+    with pytest.raises(TransitionReasonRequired):
+        reopen_document(store, ReopenDocumentRequest(DIGEST, empty, PRO, WHEN))
 
 
 def test_reject_document_terminal_and_audited():
@@ -639,3 +663,97 @@ def test_missing_fact_is_typed_not_found():
     store = _store()
     with pytest.raises(FactNotFound):
         accept_fact(store, AcceptFactRequest(DIGEST, "nope", USER, WHEN))
+
+
+# ============================================ R1: rejected fact blocks confirmation
+
+
+def test_r1_professionally_rejected_fact_blocks_confirmation_and_is_not_overwritten():
+    # Invariant: a professionally-rejected (yet deterministically resolved) material fact
+    # blocks document confirmation and is NEVER relabeled "confirmed".
+    store = _store(facts=[make_fact("ev-1"), make_fact("ev-2")])
+    reject_fact(store, RejectFactRequest(DIGEST, "ev-2", "detection unusable", PRO, WHEN))
+    # ev-2 is deterministically promotable, so only the explicit reject-state check catches it.
+    assert isinstance(store.promotion_verdict(DIGEST, "ev-2"), PromotionAllowed)
+    with pytest.raises(ConfirmationRejected) as exc:
+        confirm_document(store, ConfirmDocumentRequest(DIGEST, PRO, WHEN))
+    assert "ev-2" in exc.value.payload["detail"]["rejected_fact_ids"]
+    # The document did not transition and ev-2 stays rejected (never overwritten).
+    assert store.load_document(DIGEST).state is DocumentState.NEEDS_REVIEW
+    assert store.load_fact(DIGEST, "ev-2")["professional_confirmation"]["state"] == "rejected"
+
+
+def test_r1_read_model_lists_rejected_fact_as_blocking():
+    store = _store(facts=[make_fact("ev-1"), make_fact("ev-2")])
+    reject_fact(store, RejectFactRequest(DIGEST, "ev-2", "illegible", PRO, WHEN))
+    view = read_document_review(store, DIGEST, PRO)
+    assert "ev-2" in view.blocking_fact_ids
+    assert view.confirm_precondition_met is False
+    impacts = {f.evidence_id: f.downstream_impact for f in view.facts}
+    assert impacts["ev-2"].impact_kind is DownstreamImpactKind.BLOCKED
+
+
+# ==================================== R2: no silent post-confirmation fact edits
+
+
+@pytest.mark.parametrize(
+    "call",
+    [
+        lambda s: correct_fact(
+            s,
+            CorrectFactRequest(
+                DIGEST, "ev-1", 9999.0, "square_feet", "sneaky", PRO, WHEN,
+                history_fingerprint(s.load_fact(DIGEST, "ev-1")["correction_history"]),
+            ),
+        ),
+        lambda s: reject_fact(s, RejectFactRequest(DIGEST, "ev-1", "sneaky", PRO, WHEN)),
+    ],
+    ids=["correct", "reject"],
+)
+def test_r2_fact_edit_on_confirmed_document_is_refused(call):
+    # Build a genuinely confirmed document end to end.
+    store = _store(facts=[make_fact("ev-1")])
+    confirm_document(store, ConfirmDocumentRequest(DIGEST, PRO, WHEN))
+    assert store.load_document(DIGEST).state is DocumentState.PROFESSIONALLY_CONFIRMED
+    before_value = store.load_fact(DIGEST, "ev-1")["normalized_value"]
+    with pytest.raises(PostConfirmationEditRefused):
+        call(store)
+    # Nothing changed — the confirmed review is intact until an explicit reopen.
+    assert store.load_fact(DIGEST, "ev-1")["normalized_value"] == before_value
+    assert store.load_document(DIGEST).state is DocumentState.PROFESSIONALLY_CONFIRMED
+
+
+def test_r2_reopen_then_correct_is_allowed_and_audited():
+    store = _store(facts=[make_fact("ev-1")])
+    confirm_document(store, ConfirmDocumentRequest(DIGEST, PRO, WHEN))
+    reopen_document(
+        store, ReopenDocumentRequest(DIGEST, "post-confirmation contradiction", PRO, WHEN)
+    )
+    assert store.load_document(DIGEST).state is DocumentState.NEEDS_REVIEW
+    fp = history_fingerprint(store.load_fact(DIGEST, "ev-1")["correction_history"])
+    result = correct_fact(
+        store,
+        CorrectFactRequest(DIGEST, "ev-1", 4700.0, "square_feet", "true value", PRO, WHEN, fp),
+    )
+    assert result.correction_count == 1
+    assert store.load_fact(DIGEST, "ev-1")["normalized_value"] == 4700.0
+    assert result.audit_events[0].event_type is ReviewEventType.FACT_CORRECTED
+
+
+# ==================================== R3: real immutable-original cross-check
+
+
+def test_r3_tampered_stored_original_is_detected_by_correction_cross_check():
+    # The independently-held original ("AREA = 5000 SF") diverges from a mutated stored
+    # original_value; the shipped expected-original cross-check now actually fires.
+    store = _store()
+    store.facts[(DIGEST, "ev-1")]["original_value"] = "TAMPERED = 9999 SF"
+    assert store.original_fact_value(DIGEST, "ev-1") == "AREA = 5000 SF"  # pristine snapshot
+    fp = history_fingerprint(store.load_fact(DIGEST, "ev-1")["correction_history"])
+    with pytest.raises(CorrectionRejected) as exc:
+        correct_fact(
+            store,
+            CorrectFactRequest(DIGEST, "ev-1", 4800.0, "square_feet", "fix", USER, WHEN, fp),
+        )
+    assert exc.value.payload["detail"]["reject_code"] == "unresolved_correction_history"
+    assert store.load_fact(DIGEST, "ev-1")["correction_history"] == []  # no write

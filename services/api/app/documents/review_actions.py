@@ -87,6 +87,7 @@ __all__ = [
     "DocumentReviewView",
     "FactNotFound",
     "FactView",
+    "PostConfirmationEditRefused",
     "RejectDocumentRequest",
     "RejectFactRequest",
     "ReopenDocumentRequest",
@@ -156,6 +157,19 @@ class ConcurrentReviewModification(ReviewActionError):
     """
 
     reject_code = "concurrent_review_modification"
+
+
+class PostConfirmationEditRefused(ReviewActionError):
+    """A fact edit was attempted on a ``professionally_confirmed`` document (fail-closed).
+
+    Editing (correct/reject) a fact of a confirmed document would silently invalidate a
+    completed professional review. The reviewer must first REOPEN the document (edge 12,
+    :func:`reopen_document`) — a visible, audited transition — before any fact edit
+    (workflow section 4 edge 12; "reopening is visible and audited, never silent"). One
+    clear next action: reopen, then edit.
+    """
+
+    reject_code = "post_confirmation_edit_refused"
 
 
 class CorrectionRejected(ReviewActionError):
@@ -231,6 +245,16 @@ class ReviewStore(Protocol):
 
     def original_exists(self, document_digest: str) -> bool:
         """True when the immutable original bytes are retrievable (SC-S2)."""
+        ...
+
+    def original_fact_value(self, document_digest: str, evidence_id: str) -> object:
+        """The INDEPENDENTLY-held immutable ``original_value`` of the fact (SC-S2).
+
+        Sourced from the original extraction record (not the mutable current fact), so a
+        correction's ``expected_original`` cross-check can actually detect a mutated
+        stored original — the tamper guard fires only when the two disagree. Raises
+        :class:`FactNotFound` when no original detection exists for the id.
+        """
         ...
 
     def append_audit(self, event: ReviewAuditEvent) -> None:
@@ -529,6 +553,22 @@ def _baseline(fact: dict) -> NormalizationBaseline | None:
     )
 
 
+def _refuse_post_confirmation_edit(record: DocumentIngestionRecord, verb: str) -> None:
+    """Refuse a fact edit on a ``professionally_confirmed`` document (fail-closed).
+
+    Editing a fact of a confirmed document must not be silent: the reviewer reopens the
+    document first (edge 12), which is visible and audited. Keeps ``auto_extracted`` /
+    ``needs_review`` behavior unchanged.
+    """
+    if record.state is DocumentState.PROFESSIONALLY_CONFIRMED:
+        raise PostConfirmationEditRefused(
+            f"cannot {verb} a fact on a professionally_confirmed document; reopen the "
+            "document first (edge 12) so the change is visible and audited",
+            document_digest=record.document_digest,
+            document_state=record.state.value,
+        )
+
+
 def _recalc(
     trigger: ReviewEventType,
     document_digest: str,
@@ -574,7 +614,12 @@ def read_document_review(
         verdict = store.promotion_verdict(document_digest, evidence_id)
         confirmation_state = _confirmation_state(fact)
         confirmation = fact.get("professional_confirmation") or _UNCONFIRMED_WIRE
-        if isinstance(verdict, PromotionRefused):
+        # A fact blocks document confirmation when it is deterministically unproven OR
+        # professionally rejected (a rejected detection is never confirmable — R1).
+        if (
+            isinstance(verdict, PromotionRefused)
+            or confirmation_state is ProfessionalConfirmationState.REJECTED
+        ):
             blocking.append(evidence_id)
         summary = fact.get("check_summary") or {}
         correction_history = tuple(fact.get("correction_history") or ())
@@ -690,6 +735,7 @@ def correct_fact(store: ReviewStore, request: CorrectFactRequest) -> ReviewActio
     )
     reason = _require_non_empty_reason(request.reason)
     record = store.load_document(request.document_digest)
+    _refuse_post_confirmation_edit(record, "correct")
     fact = store.load_fact(request.document_digest, request.evidence_id)
     accepted_history = list(fact.get("correction_history") or [])
 
@@ -725,12 +771,18 @@ def correct_fact(store: ReviewStore, request: CorrectFactRequest) -> ReviewActio
     if isinstance(extension, UnresolvedCorrectionHistory):
         raise CorrectionRejected(extension.reason, detail=extension.to_payload())
 
+    # The immutable original is fetched INDEPENDENTLY (from the original extraction
+    # record), never the mutable current fact, so the shipped tamper cross-check can fire
+    # if the stored original_value was mutated (SC-S2).
+    expected_original = store.original_fact_value(
+        request.document_digest, request.evidence_id
+    )
     integrity = validate_correction_history(
         original_value=fact.get("original_value"),
         normalized_value=request.corrected_normalized_value,
         units=request.corrected_units,
         correction_history=submitted_history,
-        expected_original=OriginalValueReference(fact.get("original_value")),
+        expected_original=OriginalValueReference(expected_original),
         baseline=_baseline(fact),
     )
     if isinstance(integrity, UnresolvedCorrectionHistory):
@@ -816,6 +868,7 @@ def reject_fact(store: ReviewStore, request: RejectFactRequest) -> ReviewActionR
     )
     reason = _require_non_empty_reason(request.reason)
     record = store.load_document(request.document_digest)
+    _refuse_post_confirmation_edit(record, "reject")
     fact = store.load_fact(request.document_digest, request.evidence_id)
     accepted_history = list(fact.get("correction_history") or [])
 
@@ -916,6 +969,26 @@ def confirm_document(
     )
     record = store.load_document(request.document_digest)
     material_ids = store.material_fact_ids(request.document_digest)
+
+    # A professionally-rejected fact BLOCKS confirmation and is NEVER silently overwritten
+    # to "confirmed" (workflow sections 7.2/10.4 over the literal section-12 table). A
+    # rejected detection can be deterministically promotable, so the H5 gate alone would
+    # not catch it — this explicit refusal does. It is cleared only by re-extraction or a
+    # corrected new upload, never by confirm_document.
+    rejected_ids = [
+        evidence_id
+        for evidence_id in material_ids
+        if _confirmation_state(store.load_fact(request.document_digest, evidence_id))
+        is ProfessionalConfirmationState.REJECTED
+    ]
+    if rejected_ids:
+        raise ConfirmationRejected(
+            "cannot confirm a document while material facts are professionally rejected; "
+            "a rejected detection is unusable and blocks confirmation until re-extraction "
+            "or a corrected upload replaces it — never overwritten to 'confirmed'",
+            detail={"rejected_fact_ids": rejected_ids},
+        )
+
     verdicts: dict[str, object] = {
         evidence_id: store.promotion_verdict(request.document_digest, evidence_id)
         for evidence_id in material_ids
@@ -1013,7 +1086,10 @@ def reject_document(
         request.principal.principal_kind,
         request.principal.actor_id,
     )
-    reason = _require_non_empty_reason(request.reason)
+    # Reason discipline is the shipped transition's job (edge 11 requires it): an empty
+    # reason raises the shipped ``TransitionReasonRequired``, keeping the error domain
+    # correct (R4) — not a fact-level CorrectionRejected.
+    reason = request.reason
     record = store.load_document(request.document_digest)
     actor = TransitionActor(ActorKind.QUALIFIED_HUMAN, actor_id=principal.actor_id)
     advanced, transition_record = _advance_document(
@@ -1067,7 +1143,9 @@ def reopen_document(
         request.principal.principal_kind,
         request.principal.actor_id,
     )
-    reason = _require_non_empty_reason(request.reason)
+    # Edge 12 requires a reason; an empty one raises the shipped
+    # ``TransitionReasonRequired`` (R4), not a fact-level CorrectionRejected.
+    reason = request.reason
     record = store.load_document(request.document_digest)
     actor = TransitionActor(ActorKind.QUALIFIED_HUMAN, actor_id=principal.actor_id)
     advanced, transition_record = _advance_document(
