@@ -1,0 +1,490 @@
+/* Survey review screens (task M2-T016, Packet C).
+   Reuses the global design tokens from globals.css. Status is never carried by
+   color alone: every tone class is paired with a text label + symbol in the
+   markup (StatusBadge, fact rows, alt-summary). */
+
+/* ---- Status tones (paired with label + symbol in markup) ---- */
+.sr-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35em;
+  font-size: 0.78rem;
+  font-weight: 600;
+  padding: 0.15em 0.6em;
+  border-radius: 999px;
+  white-space: nowrap;
+}
+.sr-badge-symbol {
+  font-weight: 700;
+}
+.sr-tone-neutral,
+.sr-tone-muted {
+  background: var(--status-neutral-bg);
+  color: var(--status-neutral-fg);
+}
+.sr-tone-info {
+  background: var(--status-review-bg);
+  color: var(--status-review-fg);
+}
+.sr-tone-caution {
+  background: var(--status-conditional-bg);
+  color: var(--status-conditional-fg);
+}
+.sr-tone-conflict {
+  background: var(--status-conflict-bg);
+  color: var(--status-conflict-fg);
+}
+.sr-tone-positive {
+  background: var(--status-verified-bg);
+  color: var(--status-verified-fg);
+}
+
+/* ---- Layout: overlay-dominant, decisions on the right ---- */
+.sr-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr);
+  gap: var(--space-5);
+  align-items: start;
+}
+.sr-layout-canvas {
+  position: sticky;
+  top: var(--space-4);
+}
+.sr-layout-decisions {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+}
+
+/* ---- Top bar ---- */
+.sr-topbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+  align-items: baseline;
+  justify-content: space-between;
+}
+.sr-topbar-status {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+.sr-recalc {
+  font-size: 0.82rem;
+  color: var(--status-review-fg);
+  background: var(--status-review-bg);
+  border-radius: var(--radius-control);
+  padding: 0.15em 0.6em;
+}
+.sr-dominant-action {
+  flex-basis: 100%;
+  margin: 0;
+  font-weight: 600;
+  color: var(--text-secondary);
+}
+
+/* ---- Overlay ---- */
+.sr-overlay {
+  background: var(--surface-card);
+  border: 1px solid var(--border-quiet);
+  border-radius: var(--radius-card);
+  padding: var(--space-4);
+}
+.sr-overlay-toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--space-3);
+  flex-wrap: wrap;
+  margin-bottom: var(--space-3);
+}
+.sr-overlay-toggle {
+  font-size: 0.85rem;
+}
+.sr-overlay-canvas {
+  background: var(--surface-inset);
+  border-radius: var(--radius-control);
+  overflow: hidden;
+}
+.sr-overlay-empty {
+  padding: var(--space-5);
+}
+.sr-overlay-svg {
+  display: block;
+  width: 100%;
+  height: auto;
+  max-height: 70vh;
+}
+.sr-overlay-page {
+  fill: #ffffff;
+  stroke: var(--border-strong);
+  stroke-width: 1;
+}
+.sr-overlay-mark {
+  fill-opacity: 0.18;
+  stroke-width: 2;
+  cursor: pointer;
+}
+.sr-overlay-mark.sr-tone-conflict {
+  fill: var(--status-conflict-fg);
+  stroke: var(--status-conflict-fg);
+}
+.sr-overlay-mark.sr-tone-caution {
+  fill: var(--status-conditional-fg);
+  stroke: var(--status-conditional-fg);
+}
+.sr-overlay-mark.sr-tone-info {
+  fill: var(--accent);
+  stroke: var(--accent);
+}
+.sr-overlay-mark.sr-tone-positive {
+  fill: var(--status-verified-fg);
+  stroke: var(--status-verified-fg);
+}
+.sr-overlay-mark-selected {
+  fill-opacity: 0.32;
+  stroke-width: 3.5;
+}
+.sr-overlay-mark:focus-visible {
+  outline: none;
+  stroke-dasharray: 4 2;
+}
+/* F4: non-color status cue ON the mark — a small glyph in addition to the
+   dashed/dotted stroke set inline (never color alone). */
+.sr-overlay-glyph {
+  font-size: 13px;
+  font-weight: 700;
+  paint-order: stroke;
+  stroke: #ffffff;
+  stroke-width: 2px;
+}
+.sr-overlay-glyph.sr-tone-conflict {
+  fill: var(--status-conflict-fg);
+}
+.sr-overlay-glyph.sr-tone-caution {
+  fill: var(--status-conditional-fg);
+}
+.sr-overlay-glyph.sr-tone-info {
+  fill: var(--accent);
+}
+.sr-overlay-glyph.sr-tone-positive {
+  fill: var(--status-verified-fg);
+}
+.sr-check-counts {
+  list-style: none;
+  margin: 0 0 var(--space-2);
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+.sr-overlay-altsummary {
+  margin-top: var(--space-3);
+  font-size: 0.85rem;
+}
+.sr-alt-list {
+  margin: var(--space-2) 0 0;
+  padding-left: 1.2rem;
+}
+.sr-alt-list li {
+  margin-bottom: var(--space-1);
+}
+
+/* ---- Fact list ---- */
+.sr-fact-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+.sr-fact-button {
+  width: 100%;
+  text-align: left;
+  background: var(--surface-card);
+  border: 1px solid var(--border-quiet);
+  border-radius: var(--radius-control);
+  padding: var(--space-3);
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+.sr-fact-button-selected {
+  border-color: var(--accent);
+  box-shadow: inset 0 0 0 1px var(--accent);
+}
+.sr-fact-headline {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--space-3);
+  align-items: baseline;
+}
+.sr-fact-label {
+  font-weight: 600;
+}
+.sr-ai-tag {
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: var(--status-unsupported-fg);
+}
+.sr-fact-status {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  align-items: center;
+}
+.sr-check-summary {
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 0.1em 0.5em;
+  border-radius: 999px;
+}
+
+/* ---- Focused item ---- */
+.sr-focused-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  align-items: center;
+  margin-bottom: var(--space-3);
+}
+.sr-subhead {
+  font-size: 0.9rem;
+  font-weight: 700;
+  margin: var(--space-4) 0 var(--space-2);
+}
+.sr-sidebyside {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-4);
+}
+.sr-original,
+.sr-current {
+  background: var(--surface-inset);
+  border-radius: var(--radius-control);
+  padding: var(--space-3);
+}
+.sr-kv {
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+.sr-kv dt {
+  font-size: 0.78rem;
+  color: var(--text-tertiary);
+}
+.sr-kv dd {
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+.sr-history-table {
+  margin-top: var(--space-3);
+}
+
+/* ---- Checks ---- */
+.sr-checks {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+.sr-check-item {
+  border-radius: var(--radius-control);
+  padding: var(--space-3);
+}
+.sr-check-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--space-3);
+}
+.sr-check-name {
+  font-weight: 600;
+}
+.sr-check-detail {
+  margin: var(--space-2) 0 0;
+  font-size: 0.88rem;
+}
+.sr-check-values {
+  margin: var(--space-2) 0 0;
+  display: grid;
+  grid-template-columns: max-content 1fr;
+  gap: var(--space-1) var(--space-3);
+  font-size: 0.85rem;
+}
+.sr-check-values dt {
+  color: var(--text-tertiary);
+}
+.sr-check-values dd {
+  margin: 0;
+  font-variant-numeric: tabular-nums;
+}
+.sr-check-resolve {
+  margin: var(--space-2) 0 0;
+  font-size: 0.82rem;
+  font-weight: 600;
+}
+
+/* ---- Editors / forms ---- */
+.sr-editor {
+  margin-top: var(--space-4);
+  border-top: 1px solid var(--border-quiet);
+  padding-top: var(--space-3);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+.sr-field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+.sr-readonly {
+  font-variant-numeric: tabular-nums;
+  font-weight: 600;
+  background: var(--surface-inset);
+  border-radius: var(--radius-control);
+  padding: var(--space-2) var(--space-3);
+}
+.sr-textarea {
+  min-height: 4.5rem;
+  resize: vertical;
+  font-family: inherit;
+}
+.sr-editor-actions,
+.sr-action-row,
+.sr-decision-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+}
+.sr-action-set {
+  margin-top: var(--space-3);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+.sr-danger-button {
+  font-size: 0.9rem;
+  font-weight: 600;
+  padding: var(--space-2) var(--space-4);
+  border-radius: var(--radius-control);
+  border: 1px solid var(--status-conflict-fg);
+  background: var(--surface-card);
+  color: var(--status-conflict-fg);
+  cursor: pointer;
+}
+.sr-danger-button:disabled {
+  background: var(--surface-inset);
+  color: var(--text-tertiary);
+  border-color: var(--border-quiet);
+  cursor: not-allowed;
+}
+
+/* ---- Downstream + decision ---- */
+.sr-downstream-list,
+.sr-blocking-list {
+  list-style: none;
+  margin: var(--space-3) 0 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+.sr-downstream-item {
+  border: 1px solid var(--border-quiet);
+  border-radius: var(--radius-control);
+  padding: var(--space-3);
+}
+.sr-downstream-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--space-3);
+}
+.sr-downstream-label {
+  font-weight: 600;
+}
+.sr-downstream-explanation {
+  margin: var(--space-2) 0 0;
+  font-size: 0.9rem;
+}
+.sr-downstream-provisional {
+  margin: var(--space-2) 0 0;
+  font-size: 0.88rem;
+}
+.sr-link-button {
+  background: none;
+  border: none;
+  padding: 0;
+  color: var(--accent);
+  font-weight: 600;
+  cursor: pointer;
+  text-decoration: underline;
+  font-size: inherit;
+}
+.sr-blocking {
+  margin-top: var(--space-3);
+}
+.sr-decision-actions {
+  margin-bottom: var(--space-3);
+}
+
+/* ---- Page nav / inbox / audit ---- */
+.sr-page-nav {
+  display: flex;
+  gap: var(--space-2);
+  margin-top: var(--space-3);
+  flex-wrap: wrap;
+}
+.sr-page-active {
+  border-color: var(--accent);
+}
+.sr-state-history {
+  margin-bottom: var(--space-5);
+  font-size: 0.9rem;
+}
+.sr-state-history summary {
+  cursor: pointer;
+  color: var(--accent);
+  font-weight: 600;
+}
+.sr-inbox-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.sr-inbox-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--space-3);
+}
+.sr-inbox-link {
+  font-weight: 600;
+  color: var(--accent);
+}
+
+/* ---- Responsive (workflow §10.10) — no critical warning is ever hidden ---- */
+@media (max-width: 960px) {
+  .sr-layout {
+    grid-template-columns: 1fr;
+  }
+  .sr-layout-canvas {
+    position: static;
+  }
+}
+@media (max-width: 767px) {
+  .sr-sidebyside {
+    grid-template-columns: 1fr;
+  }
+  .sr-fact-headline {
+    flex-direction: column;
+    gap: var(--space-1);
+  }
+}
