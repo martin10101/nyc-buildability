@@ -1,11 +1,11 @@
 /**
- * Plain-language mapping of typed review outcomes (task M2-T016).
+ * Plain-language mapping of typed review outcomes (task M2-T016 rework).
  *
- * The client returns machine-readable `reject_code`s and transport-failure
- * kinds; this module turns each into honest reviewer copy: WHAT failed, whether
- * RETRY is safe, and whether prior state is intact. A raw backend payload is
- * never shown (workflow §10.8). Corrections are append-only, so no failed
- * action can corrupt state — every mappable failure is safe to retry.
+ * The client returns machine-readable backend `reject_code`s and transport
+ * failures; this module turns each into honest reviewer copy: WHAT failed,
+ * whether RETRY is safe, and whether prior state is intact. A raw backend
+ * payload is never shown (workflow §10.8). Corrections are append-only, so no
+ * failed action can corrupt state.
  */
 
 import type {
@@ -17,31 +17,62 @@ import type {
 export interface FailureCopy {
   title: string;
   body: string;
-  /** Whether the same action is safe to re-attempt without side effects. */
   retrySafe: boolean;
-  /** Whether the reviewer must change their input before retrying. */
   needsInput: boolean;
 }
 
 const REJECT_COPY: Record<ReviewRejectCode, FailureCopy> = {
-  unauthorized: {
+  unauthorized_review_action: {
     title: "You are not authorized for this action",
     body:
-      "Your role cannot perform this action. Only a designated qualified professional may confirm or reject a document. Nothing was changed.",
+      "Your role cannot perform this action. Only a designated qualified professional may confirm, reject, or reopen a document. Nothing was changed.",
+    retrySafe: false,
+    needsInput: false,
+  },
+  document_record_not_found: {
+    title: "The document was not found",
+    body: "This document no longer exists, or the digest is wrong. Return to the review inbox.",
+    retrySafe: false,
+    needsInput: false,
+  },
+  fact_not_found: {
+    title: "The fact was not found",
+    body: "This fact no longer exists on the document. Re-open the current state and try again.",
+    retrySafe: true,
+    needsInput: false,
+  },
+  concurrent_review_modification: {
+    title: "This item was updated by someone else",
+    body:
+      "The item's accepted history changed since you opened it, so your change was not applied — nothing was lost or corrupted. The current state has been reloaded; your draft is preserved below — re-apply it.",
+    retrySafe: true,
+    needsInput: true,
+  },
+  correction_rejected: {
+    title: "The correction was rejected by a deterministic check",
+    body:
+      "The correction failed a deterministic correction-history check (tamper, chain, append-only, no-op, or missing reason). Nothing was changed — the immutable original is intact. Adjust your input and try again.",
+    retrySafe: true,
+    needsInput: true,
+  },
+  confirmation_rejected: {
+    title: "Rejected facts block confirmation",
+    body:
+      "This document cannot be confirmed while material facts are professionally rejected. A rejected detection is unusable and is never overwritten to 'confirmed' — replace it via a re-extraction or a corrected upload first. The blocking facts are listed below.",
     retrySafe: false,
     needsInput: false,
   },
   illegal_transition: {
     title: "That transition is not allowed from the current state",
     body:
-      "The document state changed underneath this action, or the action is not legal from where the document is now. Re-open the current state and try again. Nothing was changed.",
-    retrySafe: true,
+      "The document state changed underneath this action, or the H5 precondition is unmet. Resolve the remaining open items and try again. Nothing was changed.",
+    retrySafe: false,
     needsInput: false,
   },
   unauthorized_transition_actor: {
     title: "Only a designated professional can do this",
     body:
-      "Confirming or rejecting a document requires the designated qualified-professional role with an attributed identity. Nothing was changed.",
+      "Confirming, rejecting, or reopening a document requires the designated qualified-professional role with an attributed identity. Nothing was changed.",
     retrySafe: false,
     needsInput: false,
   },
@@ -51,58 +82,12 @@ const REJECT_COPY: Record<ReviewRejectCode, FailureCopy> = {
     retrySafe: true,
     needsInput: true,
   },
-  promotion_gate_unmet: {
-    title: "Some material facts still block confirmation",
+  post_confirmation_edit_refused: {
+    title: "Reopen the document before editing a confirmed fact",
     body:
-      "The document cannot be confirmed until every material fact has a passing deterministic verdict. Resolve the remaining open items first. Nothing was changed.",
+      "This document is professionally confirmed, so a fact cannot be corrected or rejected directly — that would silently invalidate a completed review. Reopen the document first (a visible, audited step), then make your change. Nothing was changed.",
     retrySafe: false,
     needsInput: false,
-  },
-  correction_tampered: {
-    title: "The correction did not match the immutable original",
-    body:
-      "The submitted correction failed the tamper check against the immutable original value. Nothing was changed — the original is intact. Re-open the current state and try again.",
-    retrySafe: true,
-    needsInput: true,
-  },
-  correction_chain_mismatch: {
-    title: "The correction history changed since you opened it",
-    body:
-      "Another correction was appended while you were editing. Nothing was changed. Re-open the current state to see the latest history, then re-apply your change.",
-    retrySafe: true,
-    needsInput: true,
-  },
-  correction_no_op: {
-    title: "Nothing was changed by this correction",
-    body:
-      "A correction must change the value or units. Affirming an unchanged value is professional confirmation, not a correction. Change a value, or use Accept instead.",
-    retrySafe: true,
-    needsInput: true,
-  },
-  correction_reason_required: {
-    title: "A correction needs a reason",
-    body: "Every correction must state a non-empty reason so it is reviewable. Add a reason and try again.",
-    retrySafe: true,
-    needsInput: true,
-  },
-  stale_history: {
-    title: "This item was updated by someone else",
-    body:
-      "The item's accepted history changed since you opened it, so your change was not applied — nothing was lost or corrupted. The current state has been re-loaded below; re-apply your change on it.",
-    retrySafe: true,
-    needsInput: true,
-  },
-  not_found: {
-    title: "The document or item was not found",
-    body: "This document or fact no longer exists, or the id is wrong. Return to the review inbox.",
-    retrySafe: false,
-    needsInput: false,
-  },
-  validation_error: {
-    title: "The action input was rejected",
-    body: "The review service rejected the submitted input. Check the value and reason, then try again.",
-    retrySafe: true,
-    needsInput: true,
   },
 };
 
@@ -110,7 +95,6 @@ export function rejectCodeCopy(code: ReviewRejectCode): FailureCopy {
   return REJECT_COPY[code];
 }
 
-/** Copy for a non-success ACTION outcome (excludes success + aborted). */
 export function actionFailureCopy(outcome: ActionOutcome): FailureCopy | null {
   switch (outcome.kind) {
     case "updated":
@@ -119,12 +103,7 @@ export function actionFailureCopy(outcome: ActionOutcome): FailureCopy | null {
     case "error":
       return rejectCodeCopy(outcome.reject_code);
     case "network_error":
-      return {
-        title: "Could not reach the review service",
-        body: outcome.message,
-        retrySafe: true,
-        needsInput: false,
-      };
+      return { title: "Could not reach the review service", body: outcome.message, retrySafe: true, needsInput: false };
     case "client_timeout":
       return {
         title: "The action took too long",
@@ -151,19 +130,13 @@ export function actionFailureCopy(outcome: ActionOutcome): FailureCopy | null {
   }
 }
 
-/** Copy for a non-success READ outcome (excludes success + aborted). */
 export function readFailureCopy(outcome: ReadDocumentOutcome): FailureCopy | null {
   switch (outcome.kind) {
     case "document":
     case "aborted":
       return null;
     case "not_found":
-      return {
-        title: "No survey document found",
-        body: outcome.message,
-        retrySafe: false,
-        needsInput: false,
-      };
+      return { title: "No survey document found", body: outcome.message, retrySafe: false, needsInput: false };
     case "unauthorized":
       return {
         title: "You are not authorized to view this document",
@@ -172,17 +145,11 @@ export function readFailureCopy(outcome: ReadDocumentOutcome): FailureCopy | nul
         needsInput: false,
       };
     case "network_error":
-      return {
-        title: "Could not reach the review service",
-        body: outcome.message,
-        retrySafe: true,
-        needsInput: false,
-      };
+      return { title: "Could not reach the review service", body: outcome.message, retrySafe: true, needsInput: false };
     case "client_timeout":
       return {
         title: "The document took too long to load",
-        body:
-          "The review service did not answer in time, so the request was cancelled. Retrying is safe.",
+        body: "The review service did not answer in time, so the request was cancelled. Retrying is safe.",
         retrySafe: true,
         needsInput: false,
       };

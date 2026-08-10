@@ -149,6 +149,35 @@
   outline: none;
   stroke-dasharray: 4 2;
 }
+/* F4: non-color status cue ON the mark — a small glyph in addition to the
+   dashed/dotted stroke set inline (never color alone). */
+.sr-overlay-glyph {
+  font-size: 13px;
+  font-weight: 700;
+  paint-order: stroke;
+  stroke: #ffffff;
+  stroke-width: 2px;
+}
+.sr-overlay-glyph.sr-tone-conflict {
+  fill: var(--status-conflict-fg);
+}
+.sr-overlay-glyph.sr-tone-caution {
+  fill: var(--status-conditional-fg);
+}
+.sr-overlay-glyph.sr-tone-info {
+  fill: var(--accent);
+}
+.sr-overlay-glyph.sr-tone-positive {
+  fill: var(--status-verified-fg);
+}
+.sr-check-counts {
+  list-style: none;
+  margin: 0 0 var(--space-2);
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
 .sr-overlay-altsummary {
   margin-top: var(--space-3);
   font-size: 0.85rem;

@@ -1,73 +1,77 @@
 "use client";
 
 import { StatusBadge } from "./StatusBadge";
-import { checkLabel, checkStatusDisplay } from "@/lib/surveyReview/labels";
-import { renderValue } from "@/lib/surveyReview/model";
-import type { SurveyEvidenceFact } from "@/lib/surveyReview/types";
+import { checkSummaryDisplay } from "@/lib/surveyReview/labels";
+import type { FactView } from "@/lib/surveyReview/types";
 
 /**
- * Deterministic-check panel (task M2-T016; workflow §7.4, §10.2, SC-S6).
+ * Deterministic-check summary (task M2-T016 rework; workflow §7.4, §10.2, SC-S6).
  *
- * A failing check is a CONFLICT: shown with a plain-language explanation of what
- * disagrees and by how much (using the check's expected/observed values). A
- * conflict is UNRESOLVABLE-BY-CLICK — there is deliberately NO acknowledge /
- * dismiss / ignore control. The only resolutions are Correct (with reason) or
- * Reject (with reason), offered by the focused item's action set. Passing checks
- * are shown plainly; unresolved checks are a visible fail-closed condition.
+ * The backend `FactView` surfaces the check outcome as COUNTS
+ * (`check_pass`/`check_fail`/`check_unresolved`) plus a plain-language
+ * `downstream_impact.reason`. A failing check is a CONFLICT: shown plainly, with
+ * the backend's plain-language explanation, and UNRESOLVABLE-BY-CLICK — there is
+ * deliberately NO acknowledge / dismiss / ignore control. The only resolutions
+ * are Correct (with reason) or Reject (with reason).
+ *
+ * AWAITING-BACKEND: the read model does not expose per-check `expected`/
+ * `observed` values, so those numeric details are not shown here (never
+ * fabricated). Recommended follow-up: surface failing-check details on FactView.
  */
-export function ChecksPanel({ fact }: { fact: SurveyEvidenceFact }) {
-  const checks = fact.validation_results;
-  if (checks.length === 0) {
+export function ChecksPanel({ fact }: { fact: FactView }) {
+  const total = fact.check_pass + fact.check_fail + fact.check_unresolved;
+  const isConflict = fact.check_fail > 0;
+  const isUnresolved = fact.check_unresolved > 0;
+
+  if (total === 0) {
     return (
       <p className="section-note" data-testid="checks-empty">
         No deterministic check has run against this fact yet.
       </p>
     );
   }
+
   return (
-    <ul className="sr-checks" data-testid="checks-panel">
-      {checks.map((check) => {
-        const display = checkStatusDisplay(check.status);
-        const isConflict = check.status === "fail";
-        const isUnresolved = check.status === "unresolved";
-        return (
-          <li
-            key={`${check.check_id}-${check.status}`}
-            className={`sr-check-item sr-tone-${display.tone}`}
-            data-testid={`check-${check.check_id}`}
-          >
-            <div className="sr-check-head">
-              <span className="sr-check-name">{checkLabel(check.check_id)}</span>
-              <StatusBadge display={display} />
-            </div>
-            {check.detail ? <p className="sr-check-detail">{check.detail}</p> : null}
-            {(isConflict || isUnresolved) &&
-            (check.expected_value !== undefined || check.observed_value !== undefined) ? (
-              <dl className="sr-check-values">
-                {check.expected_value !== undefined ? (
-                  <div>
-                    <dt>Expected</dt>
-                    <dd>{renderValue(check.expected_value)}</dd>
-                  </div>
-                ) : null}
-                {check.observed_value !== undefined ? (
-                  <div>
-                    <dt>Observed</dt>
-                    <dd>{renderValue(check.observed_value)}</dd>
-                  </div>
-                ) : null}
-              </dl>
-            ) : null}
-            {isConflict ? (
-              <p className="sr-check-resolve" data-testid={`conflict-resolve-${check.check_id}`}>
-                This conflict cannot be dismissed. Resolve it by correcting the
-                fact or rejecting the detection — both require a reason and are
-                audited.
-              </p>
-            ) : null}
+    <div className="sr-checks" data-testid="checks-panel">
+      <ul className="sr-check-counts">
+        {fact.check_fail > 0 ? (
+          <li className="sr-check-item sr-tone-conflict" data-testid="check-conflict">
+            <span className="sr-check-name">
+              {fact.check_fail} deterministic check{fact.check_fail === 1 ? "" : "s"} in conflict
+            </span>
+            <StatusBadge display={checkSummaryDisplay("conflict")} />
           </li>
-        );
-      })}
-    </ul>
+        ) : null}
+        {fact.check_unresolved > 0 ? (
+          <li className="sr-check-item sr-tone-caution" data-testid="check-unresolved">
+            <span className="sr-check-name">
+              {fact.check_unresolved} check{fact.check_unresolved === 1 ? "" : "s"} unresolved
+            </span>
+            <StatusBadge display={checkSummaryDisplay("unresolved")} />
+          </li>
+        ) : null}
+        {fact.check_pass > 0 ? (
+          <li className="sr-check-item sr-tone-positive" data-testid="check-passed">
+            <span className="sr-check-name">
+              {fact.check_pass} check{fact.check_pass === 1 ? "" : "s"} passed
+            </span>
+            <StatusBadge display={checkSummaryDisplay("passed")} />
+          </li>
+        ) : null}
+      </ul>
+
+      {(isConflict || isUnresolved) && fact.downstream_impact ? (
+        <p className="sr-check-detail" data-testid="check-reason">
+          {fact.downstream_impact.reason}
+        </p>
+      ) : null}
+
+      {isConflict ? (
+        <p className="sr-check-resolve" data-testid="conflict-resolve">
+          This conflict cannot be dismissed. Resolve it by correcting the fact or
+          rejecting the detection — both require a reason and are audited.
+        </p>
+      ) : null}
+    </div>
   );
 }

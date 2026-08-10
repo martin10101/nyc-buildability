@@ -2,46 +2,65 @@
 
 import { useState, type FormEvent } from "react";
 import { actionFailureCopy } from "@/lib/surveyReview/errorCopy";
-import { renderValue } from "@/lib/surveyReview/model";
-import type { ActionOutcome, CorrectFactRequest, ReviewFact } from "@/lib/surveyReview/types";
+import { coerceToSampleType, renderValue } from "@/lib/surveyReview/model";
+import type { ActionOutcome, CorrectFactRequest, FactView } from "@/lib/surveyReview/types";
+
+/** The reviewer's in-progress correction draft — held by the PARENT (F3). */
+export interface CorrectionDraft {
+  value: string;
+  units: string;
+  reason: string;
+}
+
+export function initialDraft(fact: FactView): CorrectionDraft {
+  return { value: renderValue(fact.normalized_value), units: fact.units ?? "", reason: "" };
+}
 
 /**
- * Focused correction editor (task M2-T016; workflow §10.4, SC-S1/S6).
+ * Focused correction editor (task M2-T016; workflow §10.4, SC-S1/S6/S7).
  *
- * Shows the IMMUTABLE `original_value` read-only, the current normalized
- * value/units, an input for the corrected value + units, and a REQUIRED reason.
- * Unit changes are explicit (both sides visible) so a decimal/unit-ambiguity
- * fix is always shown. On failure the reviewer's unsaved input is preserved and
- * re-presented for retry (§10.8) — a failed correction can never corrupt state
- * because corrections are append-only server-side.
+ * CONTROLLED by a parent-held `draft` so it SURVIVES a stale-history reload:
+ * when the fact remounts (its correction history changed underneath), the parent
+ * re-injects the same draft and re-opens the editor — the reviewer's unsaved
+ * value/units/reason are re-presented, never lost (F3, §10.8).
+ *
+ * The immutable `original_value` is read-only; unit changes are explicit (both
+ * sides visible). The corrected value is coerced back to the fact's ORIGINAL
+ * JSON type (F5) so a numeric measurement is not silently re-typed to a string.
  */
 export function CorrectionForm({
   fact,
+  draft,
+  onDraftChange,
   onSubmit,
   onCancel,
+  staleNotice,
 }: {
-  fact: ReviewFact;
+  fact: FactView;
+  draft: CorrectionDraft;
+  onDraftChange: (draft: CorrectionDraft) => void;
   onSubmit: (req: CorrectFactRequest) => Promise<ActionOutcome>;
   onCancel: () => void;
+  staleNotice: string | null;
 }) {
-  const initialValue = renderValue(fact.fact.normalized_value);
-  const [value, setValue] = useState(initialValue);
-  const [units, setUnits] = useState(fact.fact.units ?? "");
-  const [reason, setReason] = useState("");
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [clientError, setClientError] = useState<string | null>(null);
+
+  const baseValue = renderValue(fact.normalized_value);
 
   async function handleSubmit(event: FormEvent) {
     event.preventDefault();
     setError(null);
     setClientError(null);
-    if (reason.trim() === "") {
+    if (draft.reason.trim() === "") {
       setClientError("A reason is required for every correction.");
       return;
     }
-    const unchangedValue = value === initialValue;
-    const unchangedUnits = (units || null) === (fact.fact.units ?? null);
+    const coerced = coerceToSampleType(draft.value, fact.normalized_value);
+    const newUnits = draft.units.trim() === "" ? null : draft.units.trim();
+    const unchangedValue = JSON.stringify(coerced) === JSON.stringify(fact.normalized_value);
+    const unchangedUnits = newUnits === (fact.units ?? null);
     if (unchangedValue && unchangedUnits) {
       setClientError(
         "Nothing changed. A correction must change the value or units — use Accept to affirm an unchanged value.",
@@ -50,43 +69,51 @@ export function CorrectionForm({
     }
     setBusy(true);
     const outcome = await onSubmit({
-      documentId: "", // filled by the parent handler (kept out of the form)
-      evidenceId: fact.fact.evidence_id,
-      corrected_normalized_value: value,
-      corrected_units: units.trim() === "" ? null : units.trim(),
-      reason: reason.trim(),
+      documentDigest: "", // injected by the parent handler
+      evidenceId: fact.evidence_id,
+      corrected_normalized_value: coerced,
+      corrected_units: newUnits,
+      reason: draft.reason.trim(),
       accepted_history_fingerprint: fact.accepted_history_fingerprint,
     });
     setBusy(false);
-    if (outcome.kind === "updated" || outcome.kind === "aborted") {
-      return; // parent closes the editor and re-renders the settled document
-    }
+    if (outcome.kind === "updated" || outcome.kind === "aborted") return;
     const copy = actionFailureCopy(outcome);
     setError(copy ? `${copy.title}. ${copy.body}` : "The correction could not be applied.");
-    // Input is intentionally preserved for retry.
+    // Input is preserved by the parent-held draft for retry.
   }
 
   return (
     <form className="sr-editor" onSubmit={handleSubmit} data-testid="correction-form">
       <h4 className="sr-subhead">Correct this fact</h4>
+      {staleNotice ? (
+        <p className="inline-error" role="alert" data-testid="stale-notice">
+          {staleNotice}
+        </p>
+      ) : null}
       <div className="sr-field">
         <span className="field-label">Original detected value (immutable)</span>
         <output className="sr-readonly" data-testid="correction-original">
-          {renderValue(fact.fact.original_value)}
+          {renderValue(fact.original_value)}
         </output>
       </div>
       <div className="sr-field">
         <label className="field-label" htmlFor="correction-value">
-          Corrected normalized value
+          Corrected normalized value{" "}
+          {typeof fact.normalized_value === "number" ? (
+            <span className="section-note">(numeric)</span>
+          ) : null}
         </label>
         <input
           id="correction-value"
           className="text-input"
-          value={value}
-          onChange={(e) => setValue(e.target.value)}
+          value={draft.value}
+          onChange={(e) => onDraftChange({ ...draft, value: e.target.value })}
           disabled={busy}
           data-testid="correction-value"
+          inputMode={typeof fact.normalized_value === "number" ? "decimal" : undefined}
         />
+        <span className="field-hint">Current: {baseValue}</span>
       </div>
       <div className="sr-field">
         <label className="field-label" htmlFor="correction-units">
@@ -95,8 +122,8 @@ export function CorrectionForm({
         <input
           id="correction-units"
           className="text-input"
-          value={units}
-          onChange={(e) => setUnits(e.target.value)}
+          value={draft.units}
+          onChange={(e) => onDraftChange({ ...draft, units: e.target.value })}
           disabled={busy}
           data-testid="correction-units"
         />
@@ -108,8 +135,8 @@ export function CorrectionForm({
         <textarea
           id="correction-reason"
           className="text-input sr-textarea"
-          value={reason}
-          onChange={(e) => setReason(e.target.value)}
+          value={draft.reason}
+          onChange={(e) => onDraftChange({ ...draft, reason: e.target.value })}
           disabled={busy}
           required
           data-testid="correction-reason"

@@ -1,21 +1,25 @@
 import { expect, test } from "@playwright/test";
-import { installSurveyReviewMock } from "./survey-review-helpers";
+import { DIGEST_PRO, DIGEST_USER, installSurveyReviewMock } from "./survey-review-helpers";
 
 /**
- * SC-S3 authorization + SC-S4 no-auto-verified (task M2-T016). An unauthorized
- * (read-only) principal cannot accept/correct/reject or confirm; the
- * confirm/document-reject actions are offered only to the designated
- * professional role (server-enforced, UI-mirrored). Nothing is labeled
- * "Verified" — auto-extracted facts read "Unconfirmed evidence" everywhere.
+ * SC-S3 authorization + SC-S4 no-auto-verified (task M2-T016 rework). A preparer
+ * (human_user) may accept/correct but cannot reject a fact (professional-only in
+ * the shipped slice) or take any document decision; a professional can, but the
+ * confirm control is H5-gated. Nothing is labelled "Verified".
  */
 
-test("SC-S3: a read-only consumer cannot act, and the confirm action is not offered", async ({ page }) => {
+const CLEAN = "sev:doc:p1:1";
+
+function reviewUrl(digest: string): string {
+  return `/survey/review/${encodeURIComponent(digest)}`;
+}
+
+test("SC-S3: a preparer cannot reject a fact or confirm the document", async ({ page }) => {
   await installSurveyReviewMock(page);
-  await page.goto("/survey/review/doc-consumer");
+  await page.goto(reviewUrl(DIGEST_USER));
 
   await expect(page.getByTestId("focused-item")).toBeVisible();
-  await expect(page.getByTestId("action-accept")).toBeDisabled();
-  await expect(page.getByTestId("action-correct")).toBeDisabled();
+  await expect(page.getByTestId("action-correct")).toBeEnabled();
   await expect(page.getByTestId("action-reject")).toBeDisabled();
   await expect(page.getByTestId("action-disabled-reason")).toBeVisible();
 
@@ -24,26 +28,14 @@ test("SC-S3: a read-only consumer cannot act, and the confirm action is not offe
   await expect(page.getByTestId("confirm-capability-note")).toBeVisible();
 });
 
-test("SC-S3: a preparer can correct facts but cannot confirm the document", async ({ page }) => {
+test("SC-S4: facts read 'Unconfirmed evidence'; nothing is labelled 'Verified'; confirm is H5-gated", async ({ page }) => {
   await installSurveyReviewMock(page);
-  await page.goto("/survey/review/doc-user");
-
-  await expect(page.getByTestId("focused-item")).toBeVisible();
-  await expect(page.getByTestId("action-correct")).toBeEnabled();
-  await expect(page.getByTestId("action-confirm-document")).toHaveCount(0);
-  await expect(page.getByTestId("confirm-capability-note")).toBeVisible();
-});
-
-test("SC-S4: facts read 'Unconfirmed evidence' and nothing is labeled 'Verified'", async ({ page }) => {
-  await installSurveyReviewMock(page);
-  await page.goto("/survey/review/doc-pro");
+  await page.goto(reviewUrl(DIGEST_PRO));
 
   await expect(page.getByTestId("review-topbar")).toBeVisible();
-  await expect(page.getByTestId("fact-confirmation-sev:doc:p1:1")).toContainText("Unconfirmed evidence");
-  // No status/label is ever the standalone word "Verified" for a survey fact.
+  await expect(page.getByTestId(`fact-confirmation-${CLEAN}`)).toContainText("Unconfirmed evidence");
   await expect(page.getByText("Verified", { exact: true })).toHaveCount(0);
 
-  // The professional sees a confirm control, but it is gated by the H5 precondition.
   await expect(page.getByTestId("action-confirm-document")).toBeDisabled();
   await expect(page.getByTestId("confirm-blocked-explanation")).toContainText("Stated lot area");
 });

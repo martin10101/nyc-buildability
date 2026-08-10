@@ -1,31 +1,24 @@
 /**
- * Survey-review display vocabulary (task M2-T016).
+ * Survey-review display vocabulary (task M2-T016 rework).
  *
  * Every status is communicated with the full quadruple — LABEL + SYMBOL +
  * (CSS) tone + GLOSS — so meaning is never carried by color alone
  * (docs/PREMIUM_PRODUCT_DESIGN_SYSTEM.md §8; docs/PRODUCT_FLOW_AND_AI_BOUNDARIES.md).
- * The exact wire enum value is preserved; the gloss only explains it. The UI
- * never invents a status and never upgrades one — in particular "Verified" is
- * NEVER used for a survey fact (workflow §5.4).
+ * The exact wire enum value is preserved; the gloss only explains it. "Verified"
+ * is NEVER used for a survey fact (workflow §5.4).
  */
 
 import type {
-  CheckId,
-  CheckStatus,
   ConfirmationState,
   DocumentState,
-  DownstreamStatus,
+  DownstreamImpactKind,
   ExtractionMethod,
 } from "./types";
 
 export interface StatusDisplay {
-  /** Human label shown to the reviewer. */
   label: string;
-  /** Non-color symbol so status is never color-only. */
   symbol: string;
-  /** Plain-language explanation (title/screen-reader gloss). */
   gloss: string;
-  /** CSS tone class suffix (`.sr-tone-<tone>`); never the sole signal. */
   tone: "neutral" | "info" | "caution" | "conflict" | "positive" | "muted";
 }
 
@@ -100,82 +93,59 @@ export function confirmationDisplay(state: ConfirmationState): StatusDisplay {
   return CONFIRMATION_DISPLAY[state];
 }
 
-const CHECK_STATUS_DISPLAY: Record<CheckStatus, StatusDisplay> = {
-  pass: {
-    label: "Passed",
-    symbol: "✓",
-    gloss: "The deterministic check confirmed the value.",
-    tone: "positive",
-  },
-  fail: {
+/** Presentation status derived from a fact's deterministic-check counts. */
+export type CheckSummaryKind = "conflict" | "unresolved" | "passed";
+
+const CHECK_SUMMARY_DISPLAY: Record<CheckSummaryKind, StatusDisplay> = {
+  conflict: {
     label: "Conflict",
     symbol: "≠",
-    gloss: "The check ran and found a contradiction. Resolve by correcting the fact or rejecting the detection.",
+    gloss: "A deterministic check found a contradiction. Resolve by correcting the fact or rejecting the detection.",
     tone: "conflict",
   },
   unresolved: {
     label: "Unresolved",
     symbol: "?",
-    gloss: "The check could not independently validate the value. This is a visible fail-closed condition, never a silent pass.",
+    gloss: "A deterministic check could not independently validate the value — a visible fail-closed condition, never a silent pass.",
     tone: "caution",
+  },
+  passed: {
+    label: "Checks passed",
+    symbol: "✓",
+    gloss: "Every executed deterministic check confirmed the value.",
+    tone: "positive",
   },
 };
 
-export function checkStatusDisplay(status: CheckStatus): StatusDisplay {
-  return CHECK_STATUS_DISPLAY[status];
+export function checkSummaryDisplay(kind: CheckSummaryKind): StatusDisplay {
+  return CHECK_SUMMARY_DISPLAY[kind];
 }
 
-const DOWNSTREAM_DISPLAY: Record<DownstreamStatus, StatusDisplay> = {
+const DOWNSTREAM_DISPLAY: Record<DownstreamImpactKind, StatusDisplay> = {
   blocked: {
     label: "Blocked",
     symbol: "⨯",
-    gloss: "This conclusion cannot be computed without the unresolved survey item. No value is fabricated.",
+    gloss: "A dependent buildability conclusion cannot rest on this fact until it is resolved. No value is fabricated.",
     tone: "conflict",
   },
   provisional: {
     label: "Provisional",
     symbol: "≈",
-    gloss: "Computed on a stated assumption while a survey item is unresolved. Not a final result.",
+    gloss: "A dependent conclusion is provisional on this unconfirmed evidence — not a final result.",
     tone: "caution",
   },
-  recalculating: {
-    label: "Recalculating",
-    symbol: "◔",
-    gloss: "Your decision changed the evidence; dependent conclusions are being recomputed.",
-    tone: "info",
-  },
-  cleared: {
-    label: "Cleared",
-    symbol: "✓",
-    gloss: "The blocking survey item was resolved and the dependent conclusion recomputed.",
-    tone: "positive",
-  },
 };
 
-export function downstreamDisplay(status: DownstreamStatus): StatusDisplay {
-  return DOWNSTREAM_DISPLAY[status];
+export function downstreamKindDisplay(kind: DownstreamImpactKind): StatusDisplay {
+  return DOWNSTREAM_DISPLAY[kind];
 }
 
-/** Human labels for the closed check-id enum. */
-const CHECK_LABELS: Record<CheckId, string> = {
-  address_bbl_match: "Address / BBL match",
-  units_consistency: "Units consistency",
-  scale_consistency: "Scale consistency",
-  north_orientation: "North orientation",
-  boundary_closure: "Boundary closure",
-  area_vs_stated: "Calculated vs stated area",
-  segment_sum: "Segment sum",
-  contradictory_dimensions: "Contradictory dimensions",
-  geometry_validity: "Geometry validity",
-  elevation_consistency: "Elevation consistency",
-  tax_lot_geometry_comparison: "Tax-lot geometry comparison",
-};
-
-export function checkLabel(checkId: CheckId): string {
-  return CHECK_LABELS[checkId];
+/** Coverage-status gloss for a downstream impact (existing 1.4.0 vocabulary). */
+export function coverageStatusGloss(status: string): string {
+  if (status === "data_conflict") return "Official/derived sources disagree; nothing was resolved.";
+  return "A qualified professional must review this before reliance.";
 }
 
-/** Human labels + advisory marker for the closed extraction-method enum. */
 const EXTRACTION_METHOD_LABELS: Record<ExtractionMethod, { label: string; advisory: boolean }> = {
   vector_object_extraction: { label: "Vector object extraction", advisory: false },
   embedded_text_extraction: { label: "Embedded text extraction", advisory: false },
@@ -188,6 +158,33 @@ const EXTRACTION_METHOD_LABELS: Record<ExtractionMethod, { label: string; adviso
   },
 };
 
-export function extractionMethodDisplay(method: ExtractionMethod): { label: string; advisory: boolean } {
+export function extractionMethodDisplay(
+  method: ExtractionMethod | null,
+): { label: string; advisory: boolean } {
+  if (!method) return { label: "Unknown extraction method", advisory: true };
   return EXTRACTION_METHOD_LABELS[method];
+}
+
+/**
+ * AWAITING-BACKEND label for the open `fact_type` string. A small known map for
+ * the common survey fact types, else a humanised fallback (never fabricated —
+ * it is a display transform of the wire value, clearly derived).
+ */
+const FACT_TYPE_LABELS: Record<string, string> = {
+  boundary_segment_distance: "Boundary segment distance",
+  boundary_bearing: "Boundary bearing",
+  stated_lot_area: "Stated lot area",
+  scale_statement: "Scale statement",
+  north_arrow_orientation: "North arrow orientation",
+  elevation_value: "Elevation value",
+  address_text: "Address text",
+};
+
+export function factTypeLabel(factType: string): string {
+  if (FACT_TYPE_LABELS[factType]) return FACT_TYPE_LABELS[factType];
+  return factType
+    .split(/[_\s]+/)
+    .filter(Boolean)
+    .map((word, i) => (i === 0 ? word.charAt(0).toUpperCase() + word.slice(1) : word))
+    .join(" ");
 }

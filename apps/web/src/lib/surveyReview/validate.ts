@@ -1,22 +1,17 @@
 /**
- * Structural validation of the survey-review read-model BEFORE render
- * (task M2-T016). Mirrors the property screen's discipline
+ * Structural validation of the backend `DocumentReviewView` BEFORE render
+ * (task M2-T016 rework). Mirrors the property screen's discipline
  * (src/lib/validate-profile.ts): a malformed payload becomes a distinct
  * `validation_failure` outcome carrying only a bounded problem list — nothing
  * from an invalid response is ever partially rendered.
  *
- * This is a SHAPE guard, not legal validation: it checks that the fields the
- * review UI reads exist and carry documented enum values, so the components can
- * trust the model. It never computes zoning values, promotes evidence, or
- * upgrades a status.
+ * SHAPE guard only — it checks that the fields the review UI reads exist and
+ * carry documented enum values, so the client mapper + components can trust the
+ * payload. It never computes zoning values, promotes evidence, or upgrades a
+ * status.
  */
 
-import type {
-  ConfirmationState,
-  DocumentState,
-  ReviewDocument,
-  ReviewFact,
-} from "./types";
+import type { ConfirmationState, DocumentState } from "./types";
 
 const DOCUMENT_STATES: ReadonlySet<string> = new Set<DocumentState>([
   "uploaded",
@@ -33,20 +28,12 @@ const CONFIRMATION_STATES: ReadonlySet<string> = new Set<ConfirmationState>([
   "rejected",
 ]);
 
-const DOWNSTREAM_STATUSES: ReadonlySet<string> = new Set([
-  "blocked",
-  "provisional",
-  "recalculating",
-  "cleared",
-]);
-
 function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === "object" && value !== null && !Array.isArray(value);
 }
 
 export interface ReviewValidation {
   ok: boolean;
-  document: ReviewDocument;
   problems: string[];
 }
 
@@ -55,54 +42,49 @@ function validateFact(raw: unknown, index: number, problems: string[]): void {
     problems.push(`facts[${index}] is not an object`);
     return;
   }
-  const fact = raw.fact;
-  if (!isRecord(fact)) {
-    problems.push(`facts[${index}].fact is missing or not an object`);
-    return;
+  if (typeof raw.evidence_id !== "string" || raw.evidence_id === "") {
+    problems.push(`facts[${index}].evidence_id is missing`);
   }
-  if (typeof fact.evidence_id !== "string" || fact.evidence_id === "") {
-    problems.push(`facts[${index}].fact.evidence_id is missing`);
+  if (!CONFIRMATION_STATES.has(String(raw.confirmation_state))) {
+    problems.push(`facts[${index}].confirmation_state is missing or not a documented state`);
   }
-  const confirmation = fact.professional_confirmation;
-  if (!isRecord(confirmation) || !CONFIRMATION_STATES.has(String(confirmation.state))) {
-    problems.push(
-      `facts[${index}].fact.professional_confirmation.state is missing or not a documented state`,
-    );
+  if (typeof raw.promotable !== "boolean") {
+    problems.push(`facts[${index}].promotable is missing or not a boolean`);
   }
-  if (!Array.isArray(fact.validation_results)) {
-    problems.push(`facts[${index}].fact.validation_results is not an array`);
+  if (!Array.isArray(raw.correction_history)) {
+    problems.push(`facts[${index}].correction_history is not an array`);
   }
-  if (!Array.isArray(fact.correction_history)) {
-    problems.push(`facts[${index}].fact.correction_history is not an array`);
-  }
-  const promotion = raw.promotion;
-  if (!isRecord(promotion) || typeof promotion.allowed !== "boolean") {
-    problems.push(`facts[${index}].promotion.allowed is missing or not a boolean`);
-  }
-  if (typeof raw.accepted_history_fingerprint !== "string") {
-    problems.push(`facts[${index}].accepted_history_fingerprint is missing`);
+  for (const key of ["check_pass", "check_fail", "check_unresolved"]) {
+    if (typeof raw[key] !== "number") {
+      problems.push(`facts[${index}].${key} is missing or not a number`);
+    }
   }
 }
 
 /**
- * Validate a decoded review-document body. Returns `ok:false` with a bounded
- * problem list when the payload cannot be trusted; the caller renders the
- * validation-failure state and shows NOTHING from the body.
+ * Validate a decoded `DocumentReviewView` body. Returns `ok:false` with a
+ * bounded problem list when the payload cannot be trusted; the caller renders
+ * the validation-failure state and shows NOTHING from the body.
  */
-export function validateReviewDocument(body: unknown): ReviewValidation {
+export function validateReviewView(body: unknown): ReviewValidation {
   const problems: string[] = [];
   if (!isRecord(body)) {
-    return { ok: false, document: {} as ReviewDocument, problems: ["response body is not an object"] };
+    return { ok: false, problems: ["response body is not an object"] };
   }
-
-  if (typeof body.document_id !== "string" || body.document_id === "") {
-    problems.push("document_id is missing");
+  if (typeof body.document_digest !== "string" || body.document_digest === "") {
+    problems.push("document_digest is missing");
   }
   if (!DOCUMENT_STATES.has(String(body.state))) {
     problems.push("state is missing or not a documented DocumentState");
   }
   if (typeof body.target_bbl !== "string") {
     problems.push("target_bbl is missing");
+  }
+  if (typeof body.confirm_precondition_met !== "boolean") {
+    problems.push("confirm_precondition_met is missing or not a boolean");
+  }
+  if (!Array.isArray(body.blocking_fact_ids)) {
+    problems.push("blocking_fact_ids is not an array");
   }
   if (!Array.isArray(body.state_history)) {
     problems.push("state_history is not an array");
@@ -112,29 +94,5 @@ export function validateReviewDocument(body: unknown): ReviewValidation {
   } else {
     (body.facts as unknown[]).forEach((fact, index) => validateFact(fact, index, problems));
   }
-  if (!Array.isArray(body.downstream)) {
-    problems.push("downstream is not an array");
-  } else {
-    (body.downstream as unknown[]).forEach((conclusion, index) => {
-      if (!isRecord(conclusion) || !DOWNSTREAM_STATUSES.has(String(conclusion.status))) {
-        problems.push(`downstream[${index}].status is missing or not a documented status`);
-      }
-    });
-  }
-  const principal = body.principal;
-  if (!isRecord(principal) || !isRecord(principal.capabilities)) {
-    problems.push("principal.capabilities is missing");
-  }
-  if (typeof body.extraction_available !== "boolean") {
-    problems.push("extraction_available is missing or not a boolean");
-  }
-
-  return {
-    ok: problems.length === 0,
-    document: body as unknown as ReviewDocument,
-    problems,
-  };
+  return { ok: problems.length === 0, problems };
 }
-
-/** Narrowed accessor used by tests. */
-export type { ReviewFact };

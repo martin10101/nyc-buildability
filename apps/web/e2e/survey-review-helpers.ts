@@ -2,15 +2,21 @@ import type { Page } from "@playwright/test";
 import {
   handleRequest,
   seedStore,
+  DIGEST_PRO,
+  DIGEST_USER,
+  DIGEST_UPLOADED,
   type MockStore,
 } from "../src/test-support/survey-review/mockBackend";
 
+export { DIGEST_PRO, DIGEST_USER, DIGEST_UPLOADED };
+
 /**
- * Install the stateful survey-review mock (task M2-T016). Intercepts the review
- * API and serves the same reducer used by the component tests, with closure-held
- * store state persisting across intercepted requests within a test — so the full
- * journey (correct → recalc → confirm) runs without a live backend. The reducer
- * uses only type imports from the app, so no runtime `@/` alias is needed here.
+ * Install the stateful survey-review mock (task M2-T016 rework). Intercepts the
+ * digest-keyed review API and serves the same reducer used by the component
+ * tests, with closure-held store state persisting across intercepted requests
+ * within a test — so the full journey (correct → recalc → confirm) runs without
+ * a live backend. The reducer uses only type imports from the app plus a
+ * relative fingerprint import, so no runtime `@/` alias is needed here.
  */
 export async function installSurveyReviewMock(
   page: Page,

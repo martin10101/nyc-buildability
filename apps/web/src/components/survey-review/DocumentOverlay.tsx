@@ -3,34 +3,28 @@
 import { useMemo, useState } from "react";
 import { confirmationDisplay } from "@/lib/surveyReview/labels";
 import { factResolution, renderValue } from "@/lib/surveyReview/model";
-import type { BoundingBox, ReviewFact } from "@/lib/surveyReview/types";
+import type { BoundingBox, FactView } from "@/lib/surveyReview/types";
 
 /**
  * Original document page + overlay of extracted geometry (task M2-T016;
  * workflow §10.2). The overlay is a DOCUMENT ANNOTATION, never a georeferenced
- * map — page space is never presented as survey/world coordinates. Each
- * detection is anchored to its evidence `location.bounding_box` in its declared
- * `coordinate_space` (never guessed). Uncertain / conflicting detections are
- * marked distinctly AND labeled in text (never color alone).
+ * map. Each detection is anchored to its `location.bounding_box` in its declared
+ * `coordinate_space` (never guessed).
  *
- * B-001 honesty: production storage is unprovisioned, so a page image may be
- * absent (`image_ref === null`). The overlay then renders a neutral page
- * schematic (clearly labeled) with the annotations still anchored — it never
- * fabricates a document image.
+ * F4: uncertain/conflicting marks carry a NON-COLOR cue (dashed stroke for a
+ * conflict, dotted for an unresolved check) AND a small status glyph, in
+ * addition to the tone color — status on the overlay is never by color alone.
+ * Each mark also exposes its label/value/status as text (aria-label) and there
+ * is a full text alt-summary below.
  */
 
-const PAGE_FALLBACK_WIDTH = 800;
-const PAGE_FALLBACK_HEIGHT = 1035;
+const PAGE_FALLBACK_WIDTH = 612;
+const PAGE_FALLBACK_HEIGHT = 792;
 
-function toSvgRect(
-  box: BoundingBox,
-  pageHeight: number,
-): { x: number; y: number; width: number; height: number } {
+function toSvgRect(box: BoundingBox, pageHeight: number) {
   const width = Math.abs(box.x_max - box.x_min);
   const height = Math.abs(box.y_max - box.y_min);
   const x = Math.min(box.x_min, box.x_max);
-  // raster_pixels: origin top-left, y down → SVG maps directly.
-  // pdf_user_space_points: origin lower-left, y up → flip into SVG (y down).
   const yTop =
     box.coordinate_space === "raster_pixels"
       ? Math.min(box.y_min, box.y_max)
@@ -38,13 +32,25 @@ function toSvgRect(
   return { x, y: yTop, width, height };
 }
 
-function toneForResolution(fact: ReviewFact): string {
-  const resolution = factResolution(fact);
-  if (resolution === "conflict") return "conflict";
-  if (resolution === "unresolved") return "caution";
-  if (resolution === "rejected") return "conflict";
-  if (resolution === "confirmed") return "positive";
-  return "info";
+interface MarkStyle {
+  tone: string;
+  dash: string | undefined;
+  glyph: string;
+}
+
+function markStyle(fact: FactView): MarkStyle {
+  switch (factResolution(fact)) {
+    case "conflict":
+      return { tone: "conflict", dash: "6 3", glyph: "≠" };
+    case "unresolved":
+      return { tone: "caution", dash: "2 3", glyph: "?" };
+    case "rejected":
+      return { tone: "conflict", dash: "6 3", glyph: "✕" };
+    case "confirmed":
+      return { tone: "positive", dash: undefined, glyph: "✓" };
+    default:
+      return { tone: "info", dash: undefined, glyph: "◐" };
+  }
 }
 
 export function DocumentOverlay({
@@ -57,7 +63,7 @@ export function DocumentOverlay({
   selectedEvidenceId,
   onSelect,
 }: {
-  facts: ReviewFact[];
+  facts: FactView[];
   pageNumber: number;
   imageRef: string | null;
   pageWidth: number | null;
@@ -72,14 +78,11 @@ export function DocumentOverlay({
   const height = pageHeight ?? PAGE_FALLBACK_HEIGHT;
 
   const pageFacts = useMemo(
-    () => facts.filter((f) => f.fact.page_number === pageNumber),
+    () => facts.filter((f) => (f.page_number ?? 1) === pageNumber),
     [facts, pageNumber],
   );
   const boxedFacts = useMemo(
-    () =>
-      pageFacts.filter(
-        (f) => f.fact.location.kind === "bounding_box" && f.fact.location.bounding_box,
-      ),
+    () => pageFacts.filter((f) => f.location?.kind === "bounding_box" && f.location.bounding_box),
     [pageFacts],
   );
   const visibleFacts = showOnlyOpen
@@ -128,58 +131,66 @@ export function DocumentOverlay({
           aria-label={`Extracted-geometry overlay for page ${pageNumber}`}
           preserveAspectRatio="xMidYMid meet"
         >
-          {/* Neutral page schematic when no rendered image is available. */}
           {imageRef ? (
             <image href={imageRef} x={0} y={0} width={width} height={height} />
           ) : (
             <rect x={0} y={0} width={width} height={height} className="sr-overlay-page" />
           )}
           {visibleFacts.map((f) => {
-            const box = f.fact.location.bounding_box as BoundingBox;
+            const box = f.location!.bounding_box as BoundingBox;
             const rect = toSvgRect(box, height);
-            const selected = f.fact.evidence_id === selectedEvidenceId;
+            const selected = f.evidence_id === selectedEvidenceId;
+            const style = markStyle(f);
             return (
-              <rect
-                key={f.fact.evidence_id}
-                x={rect.x}
-                y={rect.y}
-                width={rect.width}
-                height={rect.height}
-                className={`sr-overlay-mark sr-tone-${toneForResolution(f)}${selected ? " sr-overlay-mark-selected" : ""}`}
-                tabIndex={0}
-                role="button"
-                aria-pressed={selected}
-                aria-label={`${f.display_label}: ${renderValue(f.fact.normalized_value)}${f.fact.units ? ` ${f.fact.units}` : ""}. ${confirmationDisplay(f.fact.professional_confirmation.state).label}. Select to focus.`}
-                data-testid={`overlay-mark-${f.fact.evidence_id}`}
-                onClick={() => onSelect(f.fact.evidence_id)}
-                onKeyDown={(e) => {
-                  if (e.key === "Enter" || e.key === " ") {
-                    e.preventDefault();
-                    onSelect(f.fact.evidence_id);
-                  }
-                }}
-              />
+              <g key={f.evidence_id}>
+                <rect
+                  x={rect.x}
+                  y={rect.y}
+                  width={rect.width}
+                  height={rect.height}
+                  strokeDasharray={style.dash}
+                  className={`sr-overlay-mark sr-tone-${style.tone}${selected ? " sr-overlay-mark-selected" : ""}`}
+                  tabIndex={0}
+                  role="button"
+                  aria-pressed={selected}
+                  aria-label={`${f.display_label}: ${renderValue(f.normalized_value)}${f.units ? ` ${f.units}` : ""}. ${confirmationDisplay(f.confirmation_state).label}. Select to focus.`}
+                  data-testid={`overlay-mark-${f.evidence_id}`}
+                  onClick={() => onSelect(f.evidence_id)}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter" || e.key === " ") {
+                      e.preventDefault();
+                      onSelect(f.evidence_id);
+                    }
+                  }}
+                />
+                <text
+                  x={rect.x + 2}
+                  y={rect.y + 12}
+                  className={`sr-overlay-glyph sr-tone-${style.tone}`}
+                  aria-hidden="true"
+                  data-testid={`overlay-glyph-${f.evidence_id}`}
+                >
+                  {style.glyph}
+                </text>
+              </g>
             );
           })}
         </svg>
       </div>
 
-      {/* Non-visual equivalent of the overlay (accessibility §10.9). */}
       <details className="sr-overlay-altsummary" data-testid="overlay-alt-summary">
         <summary>Text summary of the overlay findings</summary>
         <ul className="sr-alt-list">
           {pageFacts.map((f) => {
-            const confirmation = confirmationDisplay(f.fact.professional_confirmation.state);
+            const confirmation = confirmationDisplay(f.confirmation_state);
             const resolution = factResolution(f);
             return (
-              <li key={f.fact.evidence_id}>
-                <strong>{f.display_label}</strong>: {renderValue(f.fact.normalized_value)}
-                {f.fact.units ? ` ${f.fact.units}` : ""} — {confirmation.label}
+              <li key={f.evidence_id}>
+                <strong>{f.display_label}</strong>: {renderValue(f.normalized_value)}
+                {f.units ? ` ${f.units}` : ""} — {confirmation.label}
                 {resolution === "conflict" ? " — has a data conflict" : ""}
                 {resolution === "unresolved" ? " — has an unresolved check" : ""}
-                {f.fact.location.kind === "vector_object"
-                  ? " (located by vector object reference)"
-                  : ""}
+                {f.location?.kind === "vector_object" ? " (located by vector object reference)" : ""}
               </li>
             );
           })}

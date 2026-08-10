@@ -1,74 +1,94 @@
 /**
- * Survey-review API-client SEAM — HTTP implementation (task M2-T016, Packet C).
+ * Survey-review API-client SEAM — HTTP implementation (task M2-T016 rework;
+ * reconciled to the shipped backend slice, contract in
+ * `project-control/reports/M2-T016-backend-return.md`).
  *
  * The ONE place survey-review server communication lives. Components depend on
- * the `SurveyReviewClient` interface (./types.ts) through the React context in
- * ./context.tsx — never on fetch calls scattered through the tree. This keeps
- * the whole backend contract reconcilable in a single module: when the backend
- * review-action slice ships, only the endpoint map + decoders below are checked
- * against it.
+ * the `SurveyReviewClient` interface (./types.ts) through the React context
+ * (./context.tsx) — never on scattered fetch calls.
  *
- * Discipline carried over from the hardened property client (src/lib/api.ts):
- *   - every response body is runtime-validated (./validate.ts) before any
- *     component renders it; a malformed body is a `validation_failure` outcome
- *     carrying only a bounded problem list — nothing partial is shown;
- *   - all reflected server text is length-capped + control-stripped
- *     (src/lib/bounded.ts); correlation ids are token-allowlisted;
- *   - requests are cancellable (AbortController) and time-bounded; a superseded
- *     request resolves to `aborted`, a timeout to the recoverable
- *     `client_timeout` outcome;
- *   - typed backend refusals (reject_code) map to plain-language UI copy at the
- *     component layer — this module never shows raw payloads.
+ * Endpoints (keyed on the `document_digest` = `sha256:<64hex>`; colon URL-encoded):
+ *   GET  /api/v1/documents/{digest}/review                 -> DocumentReviewView
+ *   POST /api/v1/documents/{digest}/facts/{eid}/accept     -> ReviewActionResult
+ *   POST /api/v1/documents/{digest}/facts/{eid}/correct    -> ReviewActionResult
+ *   POST /api/v1/documents/{digest}/facts/{eid}/reject     -> ReviewActionResult
+ *   POST /api/v1/documents/{digest}/confirm                -> ReviewActionResult
+ *   POST /api/v1/documents/{digest}/reject                 -> ReviewActionResult
+ *   POST /api/v1/documents/{digest}/reopen                 -> ReviewActionResult
  *
- * No legal logic lives here (docs/PRODUCT_FLOW_AND_AI_BOUNDARIES.md): it
- * transports, verifies shape, and classifies. It never promotes evidence,
- * computes a promotion verdict, or confirms anything.
+ * The mutating handlers return a `ReviewActionResult`, NOT the settled document.
+ * So after each successful mutation the client RE-READS the review view (single
+ * place, below) and returns that fresh `ReviewDocument` for the UI to render.
+ *
+ * Discipline carried over from the hardened property client: runtime validation
+ * before render, bounded reflection, cancellation/timeout, typed refusals mapped
+ * to plain language at the component layer. No legal logic here.
  */
 
 import { boundedText, boundedToken } from "../bounded";
-import { validateReviewDocument } from "./validate";
+import { historyFingerprint } from "./fingerprint";
+import { factTypeLabel } from "./labels";
+import { validateReviewView } from "./validate";
 import type {
   AcceptFactRequest,
   ActionOutcome,
   ConfirmDocumentRequest,
   CorrectFactRequest,
   DocumentState,
+  FactView,
   InboxEntry,
   InboxOutcome,
+  JsonValue,
   ReadDocumentOutcome,
   RejectDocumentRequest,
   RejectFactRequest,
+  ReopenDocumentRequest,
   RequestOptions,
-  RequestReExtractionRequest,
   ReviewActionError,
+  ReviewDocument,
+  ReviewPage,
+  ReviewPrincipal,
   ReviewRejectCode,
   SurveyReviewClient,
 } from "./types";
 
-/** Default request budget; kept below the Playwright timeout so the timeout
- * journey is provable in CI without configuration. */
 export const DEFAULT_TIMEOUT_MS = 12_000;
 
 const REJECT_CODES: ReadonlySet<string> = new Set<ReviewRejectCode>([
-  "unauthorized",
+  "unauthorized_review_action",
+  "document_record_not_found",
+  "fact_not_found",
+  "concurrent_review_modification",
+  "correction_rejected",
+  "confirmation_rejected",
   "illegal_transition",
   "unauthorized_transition_actor",
   "transition_reason_required",
-  "promotion_gate_unmet",
-  "correction_tampered",
-  "correction_chain_mismatch",
-  "correction_no_op",
-  "correction_reason_required",
-  "stale_history",
-  "not_found",
-  "validation_error",
+  "post_confirmation_edit_refused",
 ]);
 
 /**
- * API base URL. NEXT_PUBLIC_API_BASE_URL is compiled into the browser bundle at
- * build time (publishable name only). Default matches local/CI where FastAPI
- * listens on 127.0.0.1:8000.
+ * AWAITING-BACKEND capability surface (workflow §5.2). Until the review read
+ * returns the principal's capabilities, actions are shown enabled and the
+ * server's typed `unauthorized_review_action` refusal is surfaced in plain
+ * language — the UI never fabricates a capability it was not told.
  */
+const SERVER_ENFORCED_PRINCIPAL: ReviewPrincipal = {
+  principal_id: null,
+  role: "user",
+  display_name: "Reviewer",
+  capabilities: {
+    can_view: true,
+    can_accept_fact: true,
+    can_correct_fact: true,
+    can_reject_fact: true,
+    can_confirm_document: true,
+    can_reject_document: true,
+    can_reopen_document: true,
+  },
+  capabilities_known: false,
+};
+
 export function apiBaseUrl(): string {
   return process.env.NEXT_PUBLIC_API_BASE_URL || "http://127.0.0.1:8000";
 }
@@ -84,23 +104,13 @@ function asRecord(value: unknown): Record<string, unknown> | null {
 }
 
 interface RawFetchResult {
-  /** Present when the network round-trip succeeded and JSON decoded. */
-  ok?: {
-    status: number;
-    body: unknown;
-    correlationId: string | null;
-  };
-  /** Present when the round-trip failed at the transport level. */
+  ok?: { status: number; body: unknown; correlationId: string | null };
   transport?:
     | { kind: "network_error"; message: string }
     | { kind: "client_timeout"; timeoutMs: number }
     | { kind: "aborted" };
 }
 
-/**
- * Perform one cancellable, time-bounded fetch and decode JSON. Returns a
- * discriminated raw result so each public method can classify by endpoint.
- */
 async function rawFetch(
   url: string,
   init: RequestInit,
@@ -111,9 +121,7 @@ async function rawFetch(
   const controller = new AbortController();
   let timedOut = false;
   const externalSignal = options.signal;
-  if (externalSignal?.aborted) {
-    return { transport: { kind: "aborted" } };
-  }
+  if (externalSignal?.aborted) return { transport: { kind: "aborted" } };
   const onExternalAbort = () => controller.abort();
   externalSignal?.addEventListener("abort", onExternalAbort);
   const timer = setTimeout(() => {
@@ -132,28 +140,22 @@ async function rawFetch(
       });
     } catch {
       if (timedOut) return { transport: { kind: "client_timeout", timeoutMs } };
-      if (controller.signal.aborted || externalSignal?.aborted) {
-        return { transport: { kind: "aborted" } };
-      }
+      if (controller.signal.aborted || externalSignal?.aborted) return { transport: { kind: "aborted" } };
       return {
         transport: {
           kind: "network_error",
           message:
-            "The review service could not be reached. Nothing was changed. " +
-            "This action is safe to retry.",
+            "The review service could not be reached. Nothing was changed. This action is safe to retry.",
         },
       };
     }
-
     const correlationId = boundedToken(response.headers.get("X-Correlation-ID"));
     let body: unknown = null;
     try {
       body = await response.json();
     } catch {
       if (timedOut) return { transport: { kind: "client_timeout", timeoutMs } };
-      if (controller.signal.aborted || externalSignal?.aborted) {
-        return { transport: { kind: "aborted" } };
-      }
+      if (controller.signal.aborted || externalSignal?.aborted) return { transport: { kind: "aborted" } };
       body = null;
     }
     return { ok: { status: response.status, body, correlationId } };
@@ -163,7 +165,15 @@ async function rawFetch(
   }
 }
 
-/** Map a decoded error body to the typed `ReviewActionError`. */
+function postInit(payload: unknown): RequestInit {
+  return {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(payload),
+  };
+}
+
+/** Map a decoded backend error body to the typed `ReviewActionError`. */
 function decodeError(
   status: number,
   body: unknown,
@@ -178,20 +188,17 @@ function decodeError(
       message: boundedText(record?.message, "The review service refused this action."),
       correlationId,
     };
-    // A stale-history refusal may carry the current document so the reviewer
-    // can re-open live state without losing their input (workflow §6.3).
-    if (rawCode === "stale_history" && record && record.current_document) {
-      const validation = validateReviewDocument(record.current_document);
-      if (validation.ok) error.currentDocument = validation.document;
+    const detail = asRecord(record?.detail);
+    const rejected = detail?.rejected_fact_ids;
+    if (Array.isArray(rejected)) {
+      error.rejectedFactIds = rejected.map((id) => boundedToken(id, 128) ?? String(id));
     }
     return error;
   }
-  // A 4xx/5xx without a documented reject_code — surface not_found distinctly,
-  // otherwise it is an unexpected condition (handled by the caller).
   if (status === 404) {
     return {
       kind: "error",
-      reject_code: "not_found",
+      reject_code: "document_record_not_found",
       message: boundedText(record?.message, "The document was not found."),
       correlationId,
     };
@@ -199,45 +206,126 @@ function decodeError(
   return null;
 }
 
-/** Shared decode for endpoints that return a fresh `ReviewDocument`. */
-function decodeActionResponse(result: RawFetchResult): ActionOutcome {
-  if (result.transport) return result.transport;
-  const { status, body, correlationId } = result.ok!;
-  if (status >= 200 && status < 300) {
-    const validation = validateReviewDocument(body);
-    if (!validation.ok) {
-      return {
-        kind: "validation_failure",
-        problems: validation.problems.map((p) => boundedText(p, "problem detail unavailable")),
-        correlationId,
-      };
-    }
-    return { kind: "updated", document: validation.document, correlationId };
-  }
-  const error = decodeError(status, body, correlationId);
-  if (error) return error;
-  return { kind: "unexpected_response", httpStatus: status, correlationId };
+// --------------------------------------------------------------------------
+// Backend DocumentReviewView -> client ReviewDocument (derive missing fields)
+// --------------------------------------------------------------------------
+
+function mapFact(raw: Record<string, unknown>): FactView {
+  const correctionHistory = Array.isArray(raw.correction_history)
+    ? (raw.correction_history as FactView["correction_history"])
+    : [];
+  const rawLabel = raw.display_label;
+  const factType = typeof raw.fact_type === "string" ? raw.fact_type : "unknown";
+  return {
+    evidence_id: String(raw.evidence_id),
+    fact_type: factType,
+    original_value: raw.original_value as FactView["original_value"],
+    baseline_normalized_value: raw.baseline_normalized_value as FactView["baseline_normalized_value"],
+    baseline_units: (raw.baseline_units as string | null) ?? null,
+    normalized_value: raw.normalized_value as FactView["normalized_value"],
+    units: (raw.units as string | null) ?? null,
+    confirmation_state: raw.confirmation_state as FactView["confirmation_state"],
+    confirmation_note: (raw.confirmation_note as string | null) ?? null,
+    correction_history: correctionHistory,
+    correction_count:
+      typeof raw.correction_count === "number" ? raw.correction_count : correctionHistory.length,
+    check_pass: typeof raw.check_pass === "number" ? raw.check_pass : 0,
+    check_fail: typeof raw.check_fail === "number" ? raw.check_fail : 0,
+    check_unresolved: typeof raw.check_unresolved === "number" ? raw.check_unresolved : 0,
+    location: (raw.location as FactView["location"]) ?? null,
+    page_number: typeof raw.page_number === "number" ? raw.page_number : null,
+    extraction_method: (raw.extraction_method as FactView["extraction_method"]) ?? null,
+    is_unconfirmed_evidence: raw.is_unconfirmed_evidence !== false,
+    promotable: raw.promotable === true,
+    downstream_impact: (raw.downstream_impact as FactView["downstream_impact"]) ?? null,
+    // client-derived / awaiting-backend:
+    display_label:
+      typeof rawLabel === "string" && rawLabel !== "" ? rawLabel : factTypeLabel(factType),
+    ai_drafted_label:
+      raw.ai_drafted_label === true || raw.extraction_method === "ai_assisted_classification",
+    accepted_history_fingerprint: historyFingerprint(correctionHistory as unknown as JsonValue[]),
+  };
 }
 
-function postInit(payload: unknown): RequestInit {
+function derivePages(facts: FactView[]): ReviewPage[] {
+  const byPage = new Map<number, ReviewPage>();
+  for (const fact of facts) {
+    const page = fact.page_number ?? 1;
+    if (!byPage.has(page)) {
+      byPage.set(page, {
+        page_number: page,
+        image_ref: null,
+        width: null,
+        height: null,
+        coordinate_space: fact.location?.bounding_box?.coordinate_space ?? null,
+      });
+    }
+  }
+  return [...byPage.values()].sort((a, b) => a.page_number - b.page_number);
+}
+
+function mapPrincipal(raw: unknown): ReviewPrincipal {
+  const record = asRecord(raw);
+  const caps = record ? asRecord(record.capabilities) : null;
+  if (!record || !caps) return SERVER_ENFORCED_PRINCIPAL;
+  const bool = (key: string) => caps[key] === true;
   return {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(payload),
+    principal_id: typeof record.principal_id === "string" ? record.principal_id : null,
+    role: record.role === "qualified_professional" ? "qualified_professional" : "user",
+    display_name: boundedText(record.display_name, "Reviewer"),
+    capabilities: {
+      can_view: bool("can_view"),
+      can_accept_fact: bool("can_accept_fact"),
+      can_correct_fact: bool("can_correct_fact"),
+      can_reject_fact: bool("can_reject_fact"),
+      can_confirm_document: bool("can_confirm_document"),
+      can_reject_document: bool("can_reject_document"),
+      can_reopen_document: bool("can_reopen_document"),
+    },
+    capabilities_known: true,
+  };
+}
+
+function mapReviewDocument(raw: Record<string, unknown>): ReviewDocument {
+  const facts = Array.isArray(raw.facts)
+    ? (raw.facts as unknown[]).map((f) => mapFact(f as Record<string, unknown>))
+    : [];
+  const state = raw.state as DocumentState;
+  const targetBbl = typeof raw.target_bbl === "string" ? raw.target_bbl : "";
+  return {
+    document_digest: String(raw.document_digest),
+    target_bbl: targetBbl,
+    state,
+    state_history: Array.isArray(raw.state_history)
+      ? (raw.state_history as ReviewDocument["state_history"])
+      : [],
+    facts,
+    confirm_precondition_met: raw.confirm_precondition_met === true,
+    blocking_fact_ids: Array.isArray(raw.blocking_fact_ids) ? (raw.blocking_fact_ids as string[]) : [],
+    original_available: raw.original_available === true,
+    correlation_id: typeof raw.correlation_id === "string" ? raw.correlation_id : null,
+    // client-derived / awaiting-backend:
+    title:
+      typeof raw.title === "string" && raw.title !== ""
+        ? raw.title
+        : `Survey document — BBL ${targetBbl || "unknown"}`,
+    pages: derivePages(facts),
+    principal: mapPrincipal(raw.principal),
+    extraction_available: state !== "uploaded",
   };
 }
 
 class HttpSurveyReviewClient implements SurveyReviewClient {
   async readDocument(
-    documentId: string,
+    documentDigest: string,
     options: RequestOptions = {},
   ): Promise<ReadDocumentOutcome> {
-    const url = `${documentsBase()}/${encodeURIComponent(documentId)}/review`;
+    const url = `${documentsBase()}/${encodeURIComponent(documentDigest)}/review`;
     const result = await rawFetch(url, { method: "GET" }, options);
     if (result.transport) return result.transport;
     const { status, body, correlationId } = result.ok!;
     if (status === 200) {
-      const validation = validateReviewDocument(body);
+      const validation = validateReviewView(body);
       if (!validation.ok) {
         return {
           kind: "validation_failure",
@@ -245,33 +333,34 @@ class HttpSurveyReviewClient implements SurveyReviewClient {
           correlationId,
         };
       }
-      return { kind: "document", document: validation.document, correlationId };
+      return {
+        kind: "document",
+        document: mapReviewDocument(body as Record<string, unknown>),
+        correlationId,
+      };
     }
     const record = asRecord(body);
     if (status === 404) {
       return {
         kind: "not_found",
-        message: boundedText(record?.message, "No survey document was found for this id."),
+        message: boundedText(record?.message, "No survey document was found for this digest."),
         correlationId,
       };
     }
     if (status === 401 || status === 403) {
       return {
         kind: "unauthorized",
-        message: boundedText(
-          record?.message,
-          "You are not authorized to view this survey document.",
-        ),
+        message: boundedText(record?.message, "You are not authorized to view this survey document."),
         correlationId,
       };
     }
     return { kind: "unexpected_response", httpStatus: status, correlationId };
   }
 
-  async listInbox(
-    state?: DocumentState,
-    options: RequestOptions = {},
-  ): Promise<InboxOutcome> {
+  async listInbox(state?: DocumentState, options: RequestOptions = {}): Promise<InboxOutcome> {
+    // AWAITING-BACKEND: no review-inbox endpoint yet. The seam is preserved; if
+    // the endpoint is absent the request returns a documented empty/failure and
+    // the UI degrades honestly (never a fabricated queue).
     const query = state ? `?state=${encodeURIComponent(state)}` : "";
     const url = `${documentsBase()}/review-inbox${query}`;
     const result = await rawFetch(url, { method: "GET" }, options);
@@ -281,27 +370,22 @@ class HttpSurveyReviewClient implements SurveyReviewClient {
       const record = asRecord(body);
       const rawEntries = record && Array.isArray(record.entries) ? record.entries : null;
       if (!rawEntries) {
-        return {
-          kind: "validation_failure",
-          problems: ["inbox response is missing the entries array"],
-          correlationId,
-        };
+        return { kind: "validation_failure", problems: ["inbox response missing entries"], correlationId };
       }
       const entries: InboxEntry[] = rawEntries
         .map((entry): InboxEntry | null => {
           const row = asRecord(entry);
-          if (!row || typeof row.document_id !== "string") return null;
+          if (!row || typeof row.document_digest !== "string") return null;
           return {
-            document_id: boundedToken(row.document_id, 128) ?? row.document_id,
+            document_digest: row.document_digest,
             title: boundedText(row.title, "Untitled document"),
             target_bbl: boundedToken(row.target_bbl, 32) ?? "",
             state: row.state as DocumentState,
-            open_item_count:
-              typeof row.open_item_count === "number" ? row.open_item_count : 0,
+            open_item_count: typeof row.open_item_count === "number" ? row.open_item_count : 0,
             updated_at: typeof row.updated_at === "string" ? row.updated_at : "",
           };
         })
-        .filter((entry): entry is InboxEntry => entry !== null);
+        .filter((e): e is InboxEntry => e !== null);
       return { kind: "inbox", entries, correlationId };
     }
     if (status === 401 || status === 403) {
@@ -314,52 +398,95 @@ class HttpSurveyReviewClient implements SurveyReviewClient {
     return { kind: "unexpected_response", httpStatus: status, correlationId };
   }
 
+  /** Re-read the settled view after a successful mutation. */
+  private async reReadAsAction(
+    documentDigest: string,
+    options: RequestOptions,
+  ): Promise<ActionOutcome> {
+    const read = await this.readDocument(documentDigest, options);
+    switch (read.kind) {
+      case "document":
+        return { kind: "updated", document: read.document, correlationId: read.correlationId };
+      case "not_found":
+        return {
+          kind: "error",
+          reject_code: "document_record_not_found",
+          message: read.message,
+          correlationId: read.correlationId,
+        };
+      case "unauthorized":
+        return {
+          kind: "error",
+          reject_code: "unauthorized_review_action",
+          message: read.message,
+          correlationId: read.correlationId,
+        };
+      default:
+        return read; // network_error | client_timeout | aborted | unexpected_response | validation_failure
+    }
+  }
+
+  private async finishMutation(
+    result: RawFetchResult,
+    documentDigest: string,
+    options: RequestOptions,
+  ): Promise<ActionOutcome> {
+    if (result.transport) return result.transport;
+    const { status, body, correlationId } = result.ok!;
+    if (status >= 200 && status < 300) {
+      return this.reReadAsAction(documentDigest, options);
+    }
+    const error = decodeError(status, body, correlationId);
+    if (!error) return { kind: "unexpected_response", httpStatus: status, correlationId };
+    if (error.reject_code === "concurrent_review_modification") {
+      // Re-read so the reviewer sees the fresh state and can re-apply their draft.
+      const fresh = await this.readDocument(documentDigest, options);
+      if (fresh.kind === "document") error.currentDocument = fresh.document;
+    }
+    return error;
+  }
+
   async acceptFact(req: AcceptFactRequest, options: RequestOptions = {}): Promise<ActionOutcome> {
-    const url = `${documentsBase()}/${encodeURIComponent(req.documentId)}/facts/${encodeURIComponent(req.evidenceId)}/accept`;
-    return decodeActionResponse(await rawFetch(url, postInit({}), options));
+    const url = `${documentsBase()}/${encodeURIComponent(req.documentDigest)}/facts/${encodeURIComponent(req.evidenceId)}/accept`;
+    return this.finishMutation(await rawFetch(url, postInit({}), options), req.documentDigest, options);
   }
 
   async correctFact(req: CorrectFactRequest, options: RequestOptions = {}): Promise<ActionOutcome> {
-    const url = `${documentsBase()}/${encodeURIComponent(req.documentId)}/facts/${encodeURIComponent(req.evidenceId)}/correct`;
-    return decodeActionResponse(
-      await rawFetch(
-        url,
-        postInit({
-          corrected_normalized_value: req.corrected_normalized_value,
-          corrected_units: req.corrected_units,
-          reason: req.reason,
-          accepted_history_fingerprint: req.accepted_history_fingerprint,
-        }),
-        options,
-      ),
+    const url = `${documentsBase()}/${encodeURIComponent(req.documentDigest)}/facts/${encodeURIComponent(req.evidenceId)}/correct`;
+    const res = await rawFetch(
+      url,
+      postInit({
+        corrected_normalized_value: req.corrected_normalized_value,
+        corrected_units: req.corrected_units,
+        reason: req.reason,
+        accepted_history_fingerprint: req.accepted_history_fingerprint,
+      }),
+      options,
     );
+    return this.finishMutation(res, req.documentDigest, options);
   }
 
   async rejectFact(req: RejectFactRequest, options: RequestOptions = {}): Promise<ActionOutcome> {
-    const url = `${documentsBase()}/${encodeURIComponent(req.documentId)}/facts/${encodeURIComponent(req.evidenceId)}/reject`;
-    return decodeActionResponse(await rawFetch(url, postInit({ reason: req.reason }), options));
+    const url = `${documentsBase()}/${encodeURIComponent(req.documentDigest)}/facts/${encodeURIComponent(req.evidenceId)}/reject`;
+    return this.finishMutation(await rawFetch(url, postInit({ reason: req.reason }), options), req.documentDigest, options);
   }
 
   async rejectDocument(req: RejectDocumentRequest, options: RequestOptions = {}): Promise<ActionOutcome> {
-    const url = `${documentsBase()}/${encodeURIComponent(req.documentId)}/reject`;
-    return decodeActionResponse(await rawFetch(url, postInit({ reason: req.reason }), options));
+    const url = `${documentsBase()}/${encodeURIComponent(req.documentDigest)}/reject`;
+    return this.finishMutation(await rawFetch(url, postInit({ reason: req.reason }), options), req.documentDigest, options);
   }
 
   async confirmDocument(req: ConfirmDocumentRequest, options: RequestOptions = {}): Promise<ActionOutcome> {
-    const url = `${documentsBase()}/${encodeURIComponent(req.documentId)}/confirm`;
-    return decodeActionResponse(await rawFetch(url, postInit({}), options));
+    const url = `${documentsBase()}/${encodeURIComponent(req.documentDigest)}/confirm`;
+    return this.finishMutation(await rawFetch(url, postInit({}), options), req.documentDigest, options);
   }
 
-  async requestReExtraction(
-    req: RequestReExtractionRequest,
-    options: RequestOptions = {},
-  ): Promise<ActionOutcome> {
-    const url = `${documentsBase()}/${encodeURIComponent(req.documentId)}/reextract`;
-    return decodeActionResponse(await rawFetch(url, postInit({}), options));
+  async reopenDocument(req: ReopenDocumentRequest, options: RequestOptions = {}): Promise<ActionOutcome> {
+    const url = `${documentsBase()}/${encodeURIComponent(req.documentDigest)}/reopen`;
+    return this.finishMutation(await rawFetch(url, postInit({ reason: req.reason }), options), req.documentDigest, options);
   }
 }
 
-/** Construct the default HTTP-backed client. */
 export function createHttpSurveyReviewClient(): SurveyReviewClient {
   return new HttpSurveyReviewClient();
 }

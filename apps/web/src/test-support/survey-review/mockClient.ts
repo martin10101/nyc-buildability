@@ -10,7 +10,7 @@ import { createHttpSurveyReviewClient } from "@/lib/surveyReview/api";
 import type { SurveyReviewClient } from "@/lib/surveyReview/types";
 import { createStoreFetch, seedStore, type MockStore } from "./mockBackend";
 
-export { seedStore } from "./mockBackend";
+export { seedStore, DIGEST_PRO, DIGEST_USER, DIGEST_UPLOADED } from "./mockBackend";
 export type { MockStore } from "./mockBackend";
 
 export function createMockSurveyReviewClient(store: MockStore = seedStore()): SurveyReviewClient {
@@ -24,6 +24,6 @@ export function createMockSurveyReviewClient(store: MockStore = seedStore()): Su
     rejectFact: (req, o = {}) => http.rejectFact(req, { fetchImpl, ...o }),
     rejectDocument: (req, o = {}) => http.rejectDocument(req, { fetchImpl, ...o }),
     confirmDocument: (req, o = {}) => http.confirmDocument(req, { fetchImpl, ...o }),
-    requestReExtraction: (req, o = {}) => http.requestReExtraction(req, { fetchImpl, ...o }),
+    reopenDocument: (req, o = {}) => http.reopenDocument(req, { fetchImpl, ...o }),
   };
 }

@@ -2,20 +2,18 @@
 
 import { FactRow } from "./FactRow";
 import { orderFactsByUrgency } from "@/lib/surveyReview/model";
-import type { ReviewFact } from "@/lib/surveyReview/types";
+import type { FactView } from "@/lib/surveyReview/types";
 
 /**
  * The fact list ordered by DECISION URGENCY (task M2-T016; workflow §3.1, §10.1):
- * conflicts and unresolved items first, then unconfirmed evidence, then
- * resolved. The dominant next action is always "resolve the highest-priority
- * open item," which is why urgency ordering is deterministic and stable.
+ * conflicts and unresolved items first, then unconfirmed evidence, then resolved.
  */
 export function FactList({
   facts,
   selectedEvidenceId,
   onSelect,
 }: {
-  facts: ReviewFact[];
+  facts: FactView[];
   selectedEvidenceId: string | null;
   onSelect: (evidenceId: string) => void;
 }) {
@@ -36,9 +34,9 @@ export function FactList({
         <ul className="sr-fact-list">
           {ordered.map((fact) => (
             <FactRow
-              key={fact.fact.evidence_id}
+              key={fact.evidence_id}
               fact={fact}
-              selected={fact.fact.evidence_id === selectedEvidenceId}
+              selected={fact.evidence_id === selectedEvidenceId}
               onSelect={onSelect}
             />
           ))}

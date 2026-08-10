@@ -69,9 +69,9 @@ export function ReviewInbox() {
         ) : (
           <ul className="sr-inbox-list">
             {outcome.entries.map((entry) => (
-              <li key={entry.document_id} className="card sr-inbox-row" data-testid={`inbox-row-${entry.document_id}`}>
+              <li key={entry.document_digest} className="card sr-inbox-row" data-testid={`inbox-row-${entry.document_digest}`}>
                 <div className="sr-inbox-main">
-                  <Link className="sr-inbox-link" href={`/survey/review/${encodeURIComponent(entry.document_id)}`}>
+                  <Link className="sr-inbox-link" href={`/survey/review/${encodeURIComponent(entry.document_digest)}`}>
                     {entry.title}
                   </Link>
                   <p className="section-note">

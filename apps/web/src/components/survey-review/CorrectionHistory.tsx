@@ -2,21 +2,27 @@
 
 import { extractionMethodDisplay } from "@/lib/surveyReview/labels";
 import { renderValue } from "@/lib/surveyReview/model";
-import type { SurveyEvidenceFact } from "@/lib/surveyReview/types";
+import type { FactView } from "@/lib/surveyReview/types";
 
 /**
  * Immutability side-by-side (task M2-T016; workflow §6.4, SC-S2).
  *
  * Shows the IMMUTABLE original detection (`original_value` + the pre-correction
- * baseline) next to the current corrected value and the full append-only
- * correction chain. Corrections NEVER visually overwrite the original — the
- * original stays first-class and openable at its exact page. This is a
- * first-class affordance, not a buried audit log.
+ * baseline the backend returns as `baseline_normalized_value`/`baseline_units`)
+ * next to the current corrected value and the full append-only correction chain.
+ * Corrections NEVER visually overwrite the original.
  */
-export function CorrectionHistory({ fact }: { fact: SurveyEvidenceFact }) {
+export function CorrectionHistory({
+  fact,
+  documentDigest,
+  originalAvailable,
+}: {
+  fact: FactView;
+  documentDigest: string;
+  originalAvailable: boolean;
+}) {
   const history = fact.correction_history;
   const method = extractionMethodDisplay(fact.extraction_method);
-  const baseline = history.length > 0 ? history[0] : null;
 
   return (
     <div className="sr-history" data-testid="correction-history">
@@ -33,9 +39,8 @@ export function CorrectionHistory({ fact }: { fact: SurveyEvidenceFact }) {
             <div>
               <dt>Original normalized value</dt>
               <dd>
-                {baseline
-                  ? `${renderValue(baseline.previous_normalized_value)}${baseline.previous_units ? ` ${baseline.previous_units}` : ""}`
-                  : `${renderValue(fact.normalized_value)}${fact.units ? ` ${fact.units}` : ""}`}
+                {renderValue(fact.baseline_normalized_value)}
+                {fact.baseline_units ? ` ${fact.baseline_units}` : ""}
               </dd>
             </div>
             <div>
@@ -50,9 +55,11 @@ export function CorrectionHistory({ fact }: { fact: SurveyEvidenceFact }) {
             <div>
               <dt>Original document</dt>
               <dd className="section-note">
-                Page {fact.page_number} of the immutable original (digest{" "}
-                <code>{fact.document_digest.slice(0, 19)}…</code>). The original
-                bytes and this value are unchanged after any correction.
+                {fact.page_number ? `Page ${fact.page_number} of the ` : "The "}
+                immutable original (digest <code>{documentDigest.slice(0, 19)}…</code>).{" "}
+                {originalAvailable
+                  ? "The original bytes and this value are unchanged after any correction."
+                  : "The original bytes are not retrievable in this environment (B-001), but the digest and this value are unchanged."}
               </dd>
             </div>
           </dl>

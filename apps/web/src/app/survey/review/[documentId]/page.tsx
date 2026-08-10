@@ -13,9 +13,10 @@ export const metadata: Metadata = {
 /**
  * Survey review screen route (task M2-T016, Packet C). INTERNAL ONLY: gated
  * behind INTERNAL_SURVEY_REVIEW_ENABLED (fail-safe off; 404 when disabled).
- * The document id is taken from the path; the client screen loads the review
- * read-model through the injected SurveyReviewClient and performs no writes of
- * its own — every decision is a server-authorized action.
+ * The path segment is the document DIGEST (`sha256:<64hex>`, URL-encoded); the
+ * client screen loads the review read-model through the injected
+ * SurveyReviewClient and performs no writes of its own — every decision is a
+ * server-authorized action.
  */
 export default async function SurveyReviewPage({
   params,
@@ -28,7 +29,7 @@ export default async function SurveyReviewPage({
     <div className="property-shell">
       <InternalBanner />
       <SurveyReviewClientProvider>
-        <SurveyReviewScreen documentId={documentId} />
+        <SurveyReviewScreen documentDigest={documentId} />
       </SurveyReviewClientProvider>
     </div>
   );
