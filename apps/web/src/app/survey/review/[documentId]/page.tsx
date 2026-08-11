@@ -31,11 +31,23 @@ export default async function SurveyReviewPage({
 }) {
   if (!surveyReviewEnabled()) notFound();
   const { documentId } = await params;
+  // The digest is `sha256:<64hex>`, so the `:` is percent-encoded in the path.
+  // The route param arrives with that encoding intact, and the API client
+  // encodes again when it builds the request URL — double-encoding the digest
+  // into `sha256%3A...`, which matches no document. Decode once here. A valid
+  // digest contains no `%`, so this is a no-op if the param ever arrives
+  // already decoded, and a malformed segment fails closed rather than throwing.
+  let documentDigest = documentId;
+  try {
+    documentDigest = decodeURIComponent(documentId);
+  } catch {
+    notFound();
+  }
   return (
     <div className="property-shell">
       <InternalBanner />
       <SurveyReviewClientProvider>
-        <SurveyReviewScreen documentDigest={documentId} />
+        <SurveyReviewScreen documentDigest={documentDigest} />
       </SurveyReviewClientProvider>
     </div>
   );
