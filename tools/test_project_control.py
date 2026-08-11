@@ -1305,6 +1305,12 @@ def test_s9_directive_claim_and_governance() -> None:
                 "--reviewers", "reviewer-v,reviewer-z", "--directive-refs", "D-900:ALL")
         assert r.returncode == 0, f"new-task in-regime failed: {r.stderr}"
         assert read_json(pc / "tasks" / "M9-T900.json").get("directive_regime_version") == "1.0"
+        # Give the task a real, committed scope so the in-regime G0 gate can stamp a NON-empty
+        # content identity: the empty-identity guard (D-011 item 6/M0-T057) now fails closed on
+        # a zero-file scope, which this claim/governance test never intended to exercise.
+        (tmp / "probe.txt").write_text("scope\n", encoding="utf-8")
+        edit_task(tmp, "M9-T900", allowed_paths=["probe.txt"])
+        git_commit_all(tmp, "scope M9-T900")
         write_report(tmp, "m9t900-g0.json", '{"g":0}')
         run(tmp, "gate", "--task-id", "M9-T900", "--gate-id", "G0", "--reviewer",
             "orchestrator", "--result", "PASS", "--report", "project-control/reports/m9t900-g0.json")
@@ -2792,6 +2798,55 @@ def test_s11_no_special_casing_source_proofs() -> None:
         shutil.rmtree(tmpdir, ignore_errors=True)
 
 
+def test_s12_empty_identity_guard() -> None:
+    """D-011 item 6 / M0-T057: the shared submit/gate/accept identity path (_task_git_identity)
+    refuses an in-regime task whose allowed_paths resolve to ZERO tracked files (which would
+    otherwise stamp the empty-set content identity, binding no code). A real pathspec still
+    stamps a real identity."""
+    tmpdir = tempfile.mkdtemp(prefix="pc-empty-ident-")
+    tmp = Path(tmpdir)
+    try:
+        make_temp_project(tmp)
+        setup_regime(tmp)
+        pc = tmp / "project-control"
+        (tmp / "probe.txt").write_text("content\n", encoding="utf-8")
+        make_directive(pc, "D-900", "example", task_ids=["M9-T900"], task_types=[],
+                       milestones=[], req_specs=[("D-900-R001", ["M9-T900"])])
+        run(tmp, "new-task", "--task-id", "M9-T900", "--title", "t", "--task-type", "research",
+            "--milestone", "M0", "--objective", "o", "--gates", "G0,G3",
+            "--reviewers", "reviewer-v,reviewer-z", "--directive-refs", "D-900:ALL")
+
+        # (a) positive control: a real pathspec stamps a real (non-empty) identity.
+        edit_task(tmp, "M9-T900", allowed_paths=["probe.txt"])
+        git_commit_all(tmp, "commit probe + real allowed_paths")
+        write_report(tmp, "g0.json", '{"g":0}')
+        r = run(tmp, "gate", "--task-id", "M9-T900", "--gate-id", "G0", "--reviewer",
+                "orchestrator", "--result", "PASS", "--report", "project-control/reports/g0.json")
+        assert r.returncode == 0, f"a real pathspec must gate cleanly: {r.stdout} {r.stderr}"
+        rec = read_json(pc / "gates" / "M9-T900-G0.json")
+        assert rec.get("content_manifest_sha256") not in (None, _dr.EMPTY_MANIFEST_IDENTITY), \
+            "the stamped identity must be a real manifest hash, not the empty-set hash"
+
+        # (b) PROSE allowed_paths (git matches them literally -> nothing) fail closed.
+        edit_task(tmp, "M9-T900", allowed_paths=["apps/web/src/** (survey review feature areas)"])
+        git_commit_all(tmp, "prose allowed_paths")
+        r = run(tmp, "gate", "--task-id", "M9-T900", "--gate-id", "G0", "--reviewer",
+                "orchestrator", "--result", "PASS", "--report", "project-control/reports/g0.json")
+        assert r.returncode != 0 and "ZERO tracked files" in (r.stdout + r.stderr), \
+            f"prose allowed_paths must fail the identity closed: {r.stdout} {r.stderr}"
+
+        # (c) a MALFORMED path-free opt-in (marker without justification) fails closed too.
+        edit_task(tmp, "M9-T900", path_free_governance=True)  # no path_free_justification
+        git_commit_all(tmp, "malformed opt-in")
+        r = run(tmp, "gate", "--task-id", "M9-T900", "--gate-id", "G0", "--reviewer",
+                "orchestrator", "--result", "PASS", "--report", "project-control/reports/g0.json")
+        assert r.returncode != 0 and "path_free_justification" in (r.stdout + r.stderr), \
+            f"a half-declared opt-in must fail closed: {r.stdout} {r.stderr}"
+        print("OK: S12 empty-identity guard (prose + malformed opt-in fail closed; real path stamps real identity)")
+    finally:
+        shutil.rmtree(tmpdir, ignore_errors=True)
+
+
 ALL_TESTS = [
     test_original_workflow,
     test_s1_transitions,
@@ -2815,6 +2870,7 @@ ALL_TESTS = [
     test_s11_deferral_is_not_waiver_at_the_first_post_accept_opportunity,
     test_s11_missing_producer_identity_fails_closed,
     test_s11_no_special_casing_source_proofs,
+    test_s12_empty_identity_guard,
 ]
 
 
