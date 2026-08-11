@@ -75,7 +75,7 @@
     "security-reviewer"
   ],
   "status": "in_progress",
-  "progress_percent": 97,
+  "progress_percent": 98,
   "risks": [
     "DISPATCH HOLD: awaits owner review of the 2026-07-20 planning report AND acceptance of M2-T015 + M2-T012",
     "The professional-confirmation role definition is a human-authority decision: the packet defines the mechanism; WHO qualifies is recorded as an owner/qualified-human decision before the state can be granted in production",
@@ -86,7 +86,7 @@
   ],
   "blockers": [],
   "created_at": "2026-07-20T06:34:25.583607+00:00",
-  "updated_at": "2026-08-11T05:37:46.644131+00:00",
+  "updated_at": "2026-08-11T10:27:16.567885+00:00",
   "progress_log": [
     {
       "at": "2026-08-10T01:45:48.106659+00:00",
@@ -199,6 +199,13 @@
       "percent": 97,
       "status": "in_progress",
       "message": "D-011 item 5 IDENTITY REPAIR (reconciled branch off main 7cc1fed, where the M2-T016 code exists): allowed_paths changed from PROSE entries that matched no files (frozen identity = empty-set hash e3b0c442) to real git pathspecs binding the actual survey-review implementation files (components/survey-review, lib/surveyReview, app/survey/review, test-support/survey-review, the 5 e2e specs + playwright.config, the 3 documents review_* modules + their tests, the workflow doc, the producer report). This MOVES the content identity, so the stale 77-row DCV (taken at d45f330) is invalidated and MUST be re-run independently at the new identity/gated HEAD before acceptance (owner-directed 'rerun the identity-bound evidence'). Gates recording remains owed. Old prose entries: ['apps/web/src/** (survey review feature areas)', 'services/api/app/documents/** (review-action endpoints + audit events only, disclosed)', 'services/api/tests/documents/**, apps/web tests/e2e for the new screens', 'docs/SURVEY_REVIEW_WORKFLOW.md', 'project-control/reports/M2-T016-producer-report.md']"
+    },
+    {
+      "at": "2026-08-11T10:27:16.567885+00:00",
+      "agent": "orchestrator",
+      "percent": 98,
+      "status": "in_progress",
+      "message": "Independent re-DCV (directive-compliance-verifier) at repaired identity ac3d45cb / HEAD cfc27fd: the 3 previously-UNVERIFIABLE reqs now PASS (R338 measurement reproduces exactly: 47 files/+8536, 11 commits, 16 seam events; R339 explicit no-op; R342 item 9 present). M2-T016 is now FULLY directive-verified 77/77 PASS at the real identity. Measurement over-claim corrected per the verifier (gate-evidence rule is in the progress_log, codification into LEAN_OPERATING_PROCESS.md is an open follow-up). REMAINING for acceptance (mechanical): write the 77-row D-010 verification.json at ac3d45cb, record G0/G2/G3/G4/G5 (G3/G5/human-journey reports on file; G0/G2/G4 = readiness/tests/CI-green from PR #216), re-submit at ac3d45cb, accept. Accept order M0-T055(done)->M2-T016->M0-T053."
     }
   ],
   "directive_refs": [

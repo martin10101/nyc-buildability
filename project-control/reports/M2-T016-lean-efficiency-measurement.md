@@ -31,9 +31,11 @@ and immutability were preserved (independently confirmed by the M2-T016 DCV, 74/
 
 It also **surfaced two things the process had to fix, honestly recorded rather than smoothed over**:
 metric 7 (reviewers passing without green browser evidence; stale-head reviews) and metric 6 (the
-missing measurement + the condensation-not-verbatim reviewer return). Both are now closed rules in
-`docs/LEAN_OPERATING_PROCESS.md` / the session handoff. Net: the lean process is **adopted for product
-work from M2-T016 on**, with the gate-evidence-standard correction as its first improvement.
+missing measurement + the condensation-not-verbatim reviewer return). Both are **recorded in the
+M2-T016 progress_log** as the gate-evidence lesson (attach a green `web-e2e` run; freeze the worktree
+for a gate wave); **codifying them into `docs/LEAN_OPERATING_PROCESS.md` is an open follow-up**, not yet
+done at this HEAD. Net: the lean process is **adopted for product work from M2-T016 on**, with the
+gate-evidence-standard correction as its first improvement (pending codification).
 
 ## Phase-3 conditional (R339)
 
