@@ -27,7 +27,10 @@ prove three things:
 """
 from __future__ import annotations
 
+import contextlib
 import dataclasses
+import io
+import json
 import os
 import pathlib
 import sys
@@ -305,6 +308,214 @@ class FailClosedResumeTests(StartReentryBase):
         outcome_ = rec.recover_boot(
             journal=self.journal, lock=None, revalidation=self.ALL_PASS)
         self.assertEqual(outcome_.classification, rec.SAFE_CHECKPOINT)
+
+
+# --------------------------------------------------------------------------
+# (d) M0-T053: the C1 host-containment gate in the START launch path
+# (qualifying evidence: M0-T052 G5 SEC-MAJOR, required correction C1)
+# --------------------------------------------------------------------------
+
+CONFIG_TOML = """
+[codex]
+allowed_models = ["codex-primary"]
+
+[claude]
+allowed_models = ["claude-worker"]
+
+[controller]
+default_mode = "shadow"
+
+[limits]
+max_review_packet_bytes = 262144
+"""
+
+SELECTION_TOML = """
+[codex]
+review_model = "codex-primary"
+advisory_model = "codex-primary"
+fallback_models = []
+
+[claude]
+model = "claude-worker"
+fallback_models = []
+"""
+
+
+class ContainmentGateTests(unittest.TestCase):
+    """C1: `start` refuses to spawn a worker on a host without kill-on-close.
+
+    Until M0-T053 the bar lived only in the activation record and in `doctor`'s
+    advisory report, so nothing stopped a supervised run on a POSIX or
+    Windows-`taskkill` host - where an external kill of the supervisor skips the
+    runner's `finally` termination and strands a live worker for the next
+    `start` to launch a second worker over (M0-T052 G5 SEC-MAJOR, C1).
+    """
+
+    def setUp(self) -> None:
+        from tools.agent_supervisor import cli
+        from tools.agent_supervisor import process as proc
+
+        self.cli = cli
+        self.proc = proc
+        self._tmp = tempfile.TemporaryDirectory()
+        self.addCleanup(self._tmp.cleanup)
+        self.tmp = pathlib.Path(self._tmp.name).resolve()
+        self.repo = self.tmp / "repo"
+        (self.repo / "tools").mkdir(parents=True)
+        self.runtime = self.tmp / "runtime"
+        self.config = self.tmp / "config.toml"
+        self.config.write_text(CONFIG_TOML, encoding="utf-8")
+        self.selection = self.tmp / "model_selection.toml"
+        self.selection.write_text(SELECTION_TOML, encoding="utf-8")
+        self.packet = self.tmp / "M0-T053.json"
+        self.packet.write_text(json.dumps({
+            "task_id": "M0-T053",
+            "allowed_paths": ["tools/agent_supervisor/**"],
+            "forbidden_paths": [".github/**"],
+            "status": "in_progress",
+            "stop_conditions": ["no bypass flags"],
+        }), encoding="utf-8")
+
+    def full_inputs(self) -> tuple[str, ...]:
+        return ("start", "--mode", "shadow",
+                "--claude-executable", sys.executable,
+                "--codex-executable", sys.executable,
+                "--task-packet", str(self.packet),
+                "--config", str(self.config),
+                "--model-selection", str(self.selection))
+
+    def run_cli(self, *args: str) -> tuple[int, dict]:
+        stdout = io.StringIO()
+        argv = [*args, "--checkout", str(self.repo),
+                "--runtime-base", str(self.runtime), "--json"]
+        with contextlib.redirect_stdout(stdout):
+            code = self.cli.main(list(argv))
+        return code, json.loads(stdout.getvalue())
+
+    @contextlib.contextmanager
+    def host_containment(self, kind: str):
+        """Pretend this host's DEFAULT containment is `kind`.
+
+        The gate is patched at its single source of truth - the same
+        `default_containment_kind()` `doctor` reads - so both host shapes are
+        exercised on any machine the suite runs on, and neither branch depends
+        on which OS happens to be running the test.
+        """
+        original = self.cli.default_containment_kind
+        self.cli.default_containment_kind = lambda: kind  # type: ignore[assignment]
+        try:
+            yield
+        finally:
+            self.cli.default_containment_kind = original  # type: ignore[assignment]
+
+    def audit_events(self) -> list[str]:
+        from tools.agent_supervisor.durable_state import runtime_dir_for
+
+        path = runtime_dir_for(self.repo, base=str(self.runtime)) / "audit.jsonl"
+        if not path.exists():
+            return []
+        return [json.loads(line)["event_type"]
+                for line in path.read_text(encoding="utf-8").splitlines() if line.strip()]
+
+    def test_the_gate_reads_the_same_host_source_doctor_reads(self) -> None:
+        # Doctor parity by construction: the gate has no config, flag, or
+        # environment input of its own - it reports what the host actually does.
+        ok, kind, _ = self.cli.containment_precondition()
+        self.assertEqual(kind, self.proc.default_containment_kind())
+        self.assertEqual(ok, kind == self.proc.CONTAINMENT_JOB_OBJECT)
+
+    def test_a_posix_process_group_host_refuses_to_dispatch(self) -> None:
+        with self.host_containment(self.proc.CONTAINMENT_PROCESS_GROUP):
+            code, payload = self.run_cli(*self.full_inputs())
+        self.assertEqual(code, 0)
+        self.assertFalse(payload["dispatched"],
+                         "a host without kill-on-close must never spawn a worker")
+        self.assertEqual(payload["provider_calls_made"], 0)
+        self.assertFalse(payload["containment"]["ok"])
+        self.assertEqual(payload["containment"]["kind"],
+                         self.proc.CONTAINMENT_PROCESS_GROUP)
+        self.assertIn("containment_refused", payload["stopped_because"])
+        self.assertIn("double-launch", payload["stopped_because"])
+        self.assertIn("containment_gate_refused", self.audit_events())
+
+    def test_a_windows_taskkill_fallback_host_refuses_to_dispatch(self) -> None:
+        with self.host_containment(self.proc.CONTAINMENT_TASKKILL):
+            _, payload = self.run_cli(*self.full_inputs())
+        self.assertFalse(payload["dispatched"])
+        self.assertEqual(payload["containment"]["kind"], self.proc.CONTAINMENT_TASKKILL)
+        self.assertIn("containment_refused", payload["stopped_because"])
+
+    def test_an_undeterminable_containment_refuses_to_dispatch(self) -> None:
+        def explode() -> str:
+            raise OSError("the host would not say")
+
+        original = self.cli.default_containment_kind
+        self.cli.default_containment_kind = explode  # type: ignore[assignment]
+        try:
+            _, payload = self.run_cli(*self.full_inputs())
+        finally:
+            self.cli.default_containment_kind = original  # type: ignore[assignment]
+        self.assertFalse(payload["dispatched"])
+        self.assertEqual(payload["containment"]["kind"], "unknown")
+        self.assertIn("REFUSAL", payload["stopped_because"])
+
+    def test_a_job_object_host_permits_the_dispatch(self) -> None:
+        with self.host_containment(self.proc.CONTAINMENT_JOB_OBJECT):
+            code, payload = self.run_cli(*self.full_inputs())
+        self.assertEqual(code, 0)
+        self.assertTrue(payload["containment"]["ok"])
+        self.assertTrue(payload["dispatched"],
+                        "the gate must not block the verified live host shape")
+        # sys.executable is not a real worker, so the cycle ends in the honest
+        # no_valid_checkpoint stop; what C1 requires is that dispatch RAN.
+        self.assertEqual(payload["stopped_because"], "no_valid_checkpoint")
+        self.assertNotIn("containment_gate_refused", self.audit_events())
+
+    def test_the_dispatched_run_records_and_clears_the_child_in_production(self) -> None:
+        """C2 end to end through the real CLI: the launch path really is wired.
+
+        The two accounting calls are observed where the RUNNER makes them (the
+        spies delegate to the real functions, so the journal is written exactly
+        as in production), because "the key ended up empty" alone would also be
+        true of a launch path that recorded nothing and only cleared. Both the
+        call with a live pid and the final empty record are asserted.
+        """
+        from tools.agent_supervisor import claude_runner as cr
+        from tools.agent_supervisor.durable_state import DB_FILENAME, runtime_dir_for
+
+        recorded: list[dict] = []
+        cleared: list[bool] = []
+        real_record, real_clear = cr.record_launched_child, cr.clear_child_record
+
+        def spy_record(journal, *, pid, role, start_token=""):
+            recorded.append({"pid": pid, "role": role})
+            real_record(journal, pid=pid, role=role, start_token=start_token)
+
+        def spy_clear(journal):
+            cleared.append(True)
+            real_clear(journal)
+
+        cr.record_launched_child = spy_record  # type: ignore[assignment]
+        cr.clear_child_record = spy_clear  # type: ignore[assignment]
+        try:
+            with self.host_containment(self.proc.CONTAINMENT_JOB_OBJECT):
+                _, payload = self.run_cli(*self.full_inputs())
+        finally:
+            cr.record_launched_child = real_record  # type: ignore[assignment]
+            cr.clear_child_record = real_clear  # type: ignore[assignment]
+
+        self.assertTrue(payload["dispatched"])
+        self.assertEqual(len(recorded), 1,
+                         "the production launch path must record the worker pid")
+        self.assertEqual(recorded[0]["role"], cr.WORKER_CHILD_ROLE)
+        self.assertGreater(int(recorded[0]["pid"]), 0)
+        self.assertEqual(len(cleared), 1, "the verified exit must clear the record")
+
+        journal = DurableJournal(
+            runtime_dir_for(self.repo, base=str(self.runtime)) / DB_FILENAME).open()
+        self.addCleanup(journal.close)
+        self.assertEqual(journal.get_state(rec.CHILD_PROCESSES_KEY, "absent"), [],
+                         "the durable record must be empty after the verified exit")
 
 
 if __name__ == "__main__":
