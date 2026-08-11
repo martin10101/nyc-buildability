@@ -11,7 +11,18 @@ file is orientation only. Rules/gates/workflow routes live in `CLAUDE.md`. Old b
 Refreshed **2026-08-11 (session 16; `claude-opus-4-8`)**. **Accepted = 78.** Owner directive captured as
 **D-011 amendment-003** (`directives/D-011-bounded-truth-reconciliation/source-003-amendment.md`). The
 integration branch is **PR #220 `control/session15-acceptance`**, worktree `.claude/worktrees/session15-acc`,
-HEAD ≈ `9b47b00` (verify live). Do control-plane accept work HERE. The ledger wins.
+HEAD ≈ `3a6b2c5` (verify live). Do control-plane accept work HERE. The ledger wins.
+
+### PATH TO CODEX (ordered runway — what's left)
+1. **P1 M0-T058** gate wave → accept (build first; P2/P3 branch off its claude_runner.py).
+2. **P2 M0-T059** + **P3 M0-T060** gate waves (after P1) → accept. **P6 M0-T061** may run in parallel.
+3. Follow-ups: drain M0-T056 grandfather entry; add the M0-T057 O1 justification test; run **M0-T047/#219**
+   (nanoid) gate wave → accept → merge #219 to main.
+4. **Merge PR #220 → main** (Tier A, after required checks green) so the accepted ledger + guard land on main.
+5. **M0-T056** (R595 production actuation) — **OWNER-GATED**: held by D-011 R001; the owner must explicitly
+   lift the M0-T056 hold before it can be built/accepted.
+6. **Owner flips R595** + adds the accept allowlist (Tier D, owner-only) → Codex runs live.
+Steps 1–4 are autonomous under standard gates; steps 5–6 need explicit owner authorization.
 
 ### Done this session (fixed order D-010-R283) — all on #220, pushed
 1. **M2-T016 ACCEPTED** (76) at repaired identity `ac3d45cb`. Fresh independent DCV 77/77 D-010 PASS
