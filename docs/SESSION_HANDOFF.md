@@ -19,10 +19,13 @@ HEAD ≈ `3a6b2c5` (verify live). Do control-plane accept work HERE. The ledger 
 3. Follow-ups: drain M0-T056 grandfather entry; add the M0-T057 O1 justification test; run **M0-T047/#219**
    (nanoid) gate wave → accept → merge #219 to main.
 4. **Merge PR #220 → main** (Tier A, after required checks green) so the accepted ledger + guard land on main.
-5. **M0-T056** (R595 production actuation) — **OWNER-GATED**: held by D-011 R001; the owner must explicitly
-   lift the M0-T056 hold before it can be built/accepted.
-6. **Owner flips R595** + adds the accept allowlist (Tier D, owner-only) → Codex runs live.
-Steps 1–4 are autonomous under standard gates; steps 5–6 need explicit owner authorization.
+5. **M0-T056** (R595 production actuation) — **AUTHORIZED** (D-011 amendment-004): build + full gate wave
+   (G0/G2/G3/G5 + DCV) + accept.
+6. **Activate R595 + add the accept allowlist** — **AUTHORIZED** (D-011 amendment-004): take the supervisor
+   live to run Codex end-to-end.
+All six steps are now authorized; **steps 5–6 are SEQUENCED strictly after** P1-P6 land + follow-ups + #220→main
+(D-011 R031 — safety prerequisites NOT waived). A failed gate / reproduced defect / unresolvable contradiction
+still STOPS and returns to the owner.
 
 ### Done this session (fixed order D-010-R283) — all on #220, pushed
 1. **M2-T016 ACCEPTED** (76) at repaired identity `ac3d45cb`. Fresh independent DCV 77/77 D-010 PASS
@@ -68,11 +71,13 @@ coherently (contract→claim→producer in an isolated worktree→G3+G5→DCV→
   code is not permitted even under the owner's "when convenient". #220's own `web-dependency-security` stays red
   on nanoid until the fix reaches this branch (known non-required; D-011 item 1).
 
-### Holds (unchanged) + Codex
-**M0-T056 NOT started, R595 NOT activated, accept allowlist NOT added** (D-011 R001-R003/R029). "Open Codex
-fully" is the destination after P1-P3/P6 land + owner flips the switch — NOT authorization to actuate.
-Codex model-fallback = RESOLVED (tries main model first each session, non-sticky). deployment/G6/Graphify/
-expansion holds; `default_mode=shadow`; LIMITED-AUTO off; supervisor is Windows-Job-Object-only today (P8).
+### Go-live AUTHORIZED (D-011 amendment-004) + remaining holds
+**Owner authorized full Codex go-live (session 16):** build+accept M0-T056, activate R595, add the accept
+allowlist — **SEQUENCED strictly after** P1/P2/P3/P6 accepted + follow-ups + #220→main (R030/R031). The
+R001-R003/R019/R029 no-actuation holds are LIFTED for that sequence; the safety bar (gates + DCV + freeze
+baseline) is UNCHANGED — do NOT activate R595 before P1-P6 are accepted. Codex model-fallback = RESOLVED
+(tries main model first each session, non-sticky). Still in force: deployment/G6/Graphify/expansion holds;
+`default_mode=shadow` until R595 flips; the live proof host must satisfy the C1 Job-Object gate (P8).
 
 ### Carried rules
 Accept-mechanics recipe (proven again this session): work in the #220 worktree, keep accept evidence

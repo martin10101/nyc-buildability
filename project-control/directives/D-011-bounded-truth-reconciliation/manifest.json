@@ -33,11 +33,20 @@
       "amends": "source-001.md",
       "recorded_at": "2026-08-11T18:30:00+00:00",
       "content_digest_sha256": "78e812e0e9bff7f065373cd9b3e704c1474142bc367b8a1997a7812b64fbae6d"
+    },
+    {
+      "file": "source-004-amendment.md",
+      "kind": "amendment",
+      "sequence": 4,
+      "amends": "source-001.md",
+      "recorded_at": "2026-08-11T20:20:00+00:00",
+      "content_digest_sha256": "af7b931240ea52befbc29fb5feefb74991214538f16a5f712767c3bded321261"
     }
   ],
   "amendments": [
     "source-002-amendment.md",
-    "source-003-amendment.md"
+    "source-003-amendment.md",
+    "source-004-amendment.md"
   ],
   "supersedes": [],
   "superseded_by": null,
@@ -70,8 +79,8 @@
   "verification_file": "verification.json",
   "final_reviewed_sha": null,
   "final_reviewed_manifest_sha256": null,
-  "requirements_content_digest_sha256": "ce836a0932329c4778463194b0809d4c992913490fc0506a4c8e924ee7ddea05",
-  "requirements_id_digest_sha256": "44e462d3236528f6b56d6fd88a13df2b81812f09e06c261e3116dbcefad9ea98",
+  "requirements_content_digest_sha256": "afdf88040e641e9d3f9cba7396ef7765f480c187851fc1f9941e897e160c4e37",
+  "requirements_id_digest_sha256": "be11ca23017e88d4b93d28d78dc3666b8a3ead5fcb3cea31ddaaa3714961be17",
   "enforcement_pointers": {
     "tasks": [],
     "gates": [],
@@ -118,10 +127,13 @@
     "D-011-R026",
     "D-011-R027",
     "D-011-R028",
-    "D-011-R029"
+    "D-011-R029",
+    "D-011-R030",
+    "D-011-R031",
+    "D-011-R032"
   ],
   "created_at": "2026-08-11T06:22:00+00:00",
-  "updated_at": "2026-08-11T18:30:00+00:00",
+  "updated_at": "2026-08-11T20:20:00+00:00",
   "audit_log": [
     {
       "at": "2026-08-11T06:22:00+00:00",
@@ -132,6 +144,11 @@
       "at": "2026-08-11T18:30:00+00:00",
       "by": "orchestrator",
       "note": "Amendment 003 (session 16) captured verbatim as source-003-amendment.md (sha256 78e812e0e9bff7f065373cd9b3e704c1474142bc367b8a1997a7812b64fbae6d). Added 10 rows D-011-R020..R029 (execution plan: fixed order R283, accept-mechanics harness, per-accept authorization, the three in-chain accept obligations, P1/P2/P3/P6 sequencing, merge #219, Codex-fallback resolution, continuation authorization). Same non-ledger D-011-CORRECTION/governance sentinel; holds unchanged. Verification deferred to the independent directive-compliance-verifier."
+    },
+    {
+      "at": "2026-08-11T20:20:00+00:00",
+      "by": "orchestrator",
+      "note": "Amendment 004 (session 16 GO-LIVE authorization) captured verbatim as source-004-amendment.md (sha256 af7b931240ea52befbc29fb5feefb74991214538f16a5f712767c3bded321261). Added 3 rows D-011-R030..R032: owner authorizes full Codex go-live (build+accept M0-T056, activate R595, add accept allowlist), SEQUENCED after P1/P2/P3/P6 (M0-T058-T061) accepted + follow-ups + #220 merged; supersedes R001/R002/R003/R019/R029 once prerequisites met; safety bar unchanged. Same non-ledger D-011-CORRECTION/governance sentinel."
     }
   ]
 }

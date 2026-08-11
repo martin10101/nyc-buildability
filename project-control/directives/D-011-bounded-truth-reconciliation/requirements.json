@@ -2,9 +2,9 @@
   "schema": "directive_requirements/v1",
   "directive_id": "D-011",
   "version": 1,
-  "requirement_count": 29,
+  "requirement_count": 32,
   "producer": "orchestrator",
-  "updated_at": "2026-08-11T18:30:00+00:00",
+  "updated_at": "2026-08-11T20:20:00+00:00",
   "requirements": [
     {
       "id": "D-011-R001",
@@ -1049,6 +1049,114 @@
         "tasks": []
       },
       "amendment_sequence": 3
+    },
+    {
+      "id": "D-011-R030",
+      "text": "AUTHORIZATION (go-live): the owner authorizes going FULLY LIVE - build + full-gate-wave + accept M0-T056 (the R595 production-actuation task), then activate R595 and add the accept allowlist, taking the supervisor live to run Codex end-to-end. This SUPERSEDES the source-001 prohibitions R001 (no M0-T056), R002 (no R595 activation), R003 (no broad accept allowlist) and the hold R019/R029 once R031's prerequisites are met.",
+      "source_ref": "source-004-amendment.md#go-live-auth",
+      "classification": "authorization",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "D-011-CORRECTION"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [
+          "blocker"
+        ],
+        "effective_date": "2026-08-11"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured verbatim on owner instruction (session 16, amendment 004 go-live authorization); verified at D-011 verification (producer != verifier)",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      },
+      "amendment_sequence": 4
+    },
+    {
+      "id": "D-011-R031",
+      "text": "SEQUENCING/HOLD (conditional actuation): the go-live authorization proceeds ONLY after (1) the P1/P2/P3/P6 supervisor safety fixes (M0-T058/M0-T059/M0-T060/M0-T061) are BUILT and ACCEPTED through their full standard gate waves (G0/G2/G3/G5 + independent DCV, re-establishing the M0-T039 >=1165-test freeze baseline); (2) the recorded non-blocking follow-ups clear; (3) PR #220 merges to main. Do NOT activate R595 before P1-P6 are accepted. The safety prerequisites are NOT waived.",
+      "source_ref": "source-004-amendment.md#sequenced-conditional",
+      "classification": "sequencing",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "D-011-CORRECTION"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [
+          "blocker"
+        ],
+        "effective_date": "2026-08-11"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured verbatim on owner instruction (session 16, amendment 004 go-live authorization); verified at D-011 verification (producer != verifier)",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      },
+      "amendment_sequence": 4
+    },
+    {
+      "id": "D-011-R032",
+      "text": "HOLD (residual boundary): everything up to actuation runs under the standard governance gates and the accept-mechanics recipe (evidence bar unchanged). All Tier D hard stops OTHER than the now-lifted M0-T056/R595/accept-allowlist items remain in force; a failed gate, a reproduced defect, or a genuine unresolvable contradiction STOPS and returns to the owner rather than proceeding to actuation.",
+      "source_ref": "source-004-amendment.md#residual-boundary",
+      "classification": "hold",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "D-011-CORRECTION"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [
+          "blocker"
+        ],
+        "effective_date": "2026-08-11"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured verbatim on owner instruction (session 16, amendment 004 go-live authorization); verified at D-011 verification (producer != verifier)",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      },
+      "amendment_sequence": 4
     }
   ]
 }
