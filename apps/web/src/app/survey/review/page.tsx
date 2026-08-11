@@ -10,6 +10,12 @@ export const metadata: Metadata = {
   title: "Survey review inbox — NYC Buildability (internal)",
 };
 
+// Required for the runtime flag to mean anything (same as /dashboard). Without
+// it Next evaluates `surveyReviewEnabled()` during the BUILD, where the flag is
+// unset, and bakes the 404 into a static page — so setting the variable at
+// runtime would never open the route.
+export const dynamic = "force-dynamic";
+
 /**
  * Survey review inbox route (task M2-T016, Packet C). INTERNAL ONLY: gated
  * behind the non-public runtime flag INTERNAL_SURVEY_REVIEW_ENABLED (fail-safe
