@@ -41,8 +41,8 @@
     "code-reviewer",
     "security-reviewer"
   ],
-  "status": "in_progress",
-  "progress_percent": 85,
+  "status": "accepted",
+  "progress_percent": 100,
   "risks": [
     "Depends on M0-T058 (P1): both edit claude_runner.py \u2014 build AFTER P1 lands, branch off P1's claude_runner.py; never parallel producers.",
     "Supervisor-freeze: change the tree hash, re-establish the M0-T039 baseline under G0/G2/G3/G5.",
@@ -50,7 +50,7 @@
   ],
   "blockers": [],
   "created_at": "2026-08-11T17:41:59.693810+00:00",
-  "updated_at": "2026-08-11T20:20:25.768907+00:00",
+  "updated_at": "2026-08-11T20:46:07.741599+00:00",
   "directive_refs": [
     {
       "directive_id": "D-010",
@@ -68,5 +68,7 @@
       "status": "in_progress",
       "message": "Scope-wall resolution (orchestrator-authorized): the clear_child_record(journal,*,pid,start_token) signature change necessarily breaks the 1-arg monkeypatch spy in tools/test_agent_supervisor_start_reentry.py (a direct dependent of the changed fn, not in the 20-module freeze list but in the full-pytest CI job). Producer STOP-and-reported at the boundary (correct). Added that one test file to allowed_paths for the minimal 2-line companion fix (spy accepts+forwards **kwargs); no production behavior widened."
     }
-  ]
+  ],
+  "accepted_by": "orchestrator",
+  "accepted_at": "2026-08-11T20:46:07.740599+00:00"
 }

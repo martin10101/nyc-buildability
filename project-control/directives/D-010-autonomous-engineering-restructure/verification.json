@@ -3906,7 +3906,20 @@
       "verified_at": "2026-08-11T20:15:34+00:00",
       "note": "EMPTY-SET verification. M0-T061 (P6 supervisor-freeze safety fix: silent-reviewer -> one re-dispatch -> hard fail-closed STOP) cites D-010:ALL, but directive_registry.derive_applicable derives ZERO applicable D-010 requirements at this identity (UNRESOLVED empty; no fail-closed ambiguity). Independently confirmed by directive-compliance-verifier at reviewed_sha 77d7162 / material identity e8a7d6b2: re-derived 0/357 matches; no wildcard row; the one empty-task_ids row (R297) is a host-config-path prohibition disjoint from tools/agent_supervisor/**; all topically-related reviewer/silent/timeout/re-dispatch/fail-closed/freeze requirements are scoped by task_ids to OTHER tasks (R347->M0-T056 pattern). This row exists because accept() fail-closes when a CITED directive has no task_verification row. Substantive independent review of the fix is G3 code-review (code-reviewer PASS: silence-code set complete, ok=False floor for every decision-None outcome) + G5 security-review (security-reviewer PASS: adversarial enumeration, NO residual fail-open), both at 77d7162. Verifier directive-compliance-verifier != producer backend-engineer.",
       "requirements": []
+    },
+    {
+      "directive_id": "D-010",
+      "task_id": "M0-T059",
+      "applicable_requirement_ids": [],
+      "reviewed_sha": "9c01612560d16a8019a9b0b801009791d18ed40f",
+      "reviewed_manifest_sha256": "5c33d6155b753079962786a449a69dd2a1fb4fed6b4e7f3f83b513829b47e48e",
+      "producer": "backend-engineer",
+      "verifier": "directive-compliance-verifier",
+      "schema_version": "directive_verification/v2",
+      "verified_at": "2026-08-11T20:45:33+00:00",
+      "note": "EMPTY-SET verification. M0-T059 (P2 supervisor-freeze safety fix: clear_child_record removes only (pid,start_token), not whole-key) cites D-010:ALL, but directive_registry.derive_applicable derives ZERO applicable D-010 requirements at this identity (UNRESOLVED empty). Independently confirmed by directive-compliance-verifier at reviewed_sha 9c01612 / material identity 5c33d615: enumerated all 357 rows, 0 bind M0-T059 by task_ids; the one empty-task_ids row (R297) is path-scoped to C:/Program Files/SupervisorConfig/config.toml (disjoint); R347 (the invariant this fix protects) is scoped to M0-T056, not M0-T059 (topical relatedness != applicability). Substantive review: G3 code-review PASS (filter fail-closed, R347 fail-open closed) + G5 security-review PASS (no cross-record erase; fails closed; explicit adversarial (a) NO cross-erase / (b) NO false-block), both at 9c01612. Verifier != producer backend-engineer. Carried forward: G5 LOW advisory (atomic read-modify-write if M0-T056 adds a concurrent recorder).",
+      "requirements": []
     }
   ],
-  "updated_at": "2026-08-11T20:15:34+00:00"
+  "updated_at": "2026-08-11T20:45:33+00:00"
 }
