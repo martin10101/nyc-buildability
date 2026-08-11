@@ -1,8 +1,8 @@
 {
  "schema": "directive_requirements/v1",
  "directive_id": "D-010",
- "version": 26,
- "requirement_count": 351,
+ "version": 27,
+ "requirement_count": 357,
  "producer": "orchestrator",
  "updated_at": "2026-08-11T00:00:00+00:00",
  "requirements": [
@@ -12492,6 +12492,240 @@
     ]
    },
    "amendment_sequence": 30
+  },
+  {
+   "id": "D-010-R352",
+   "text": "ORDER OF OPERATIONS for the R595 build session: (1) FIRST land the finished prior-session work - accept M0-T055, then finalize and accept M2-T016; (2) complete the R595 capture (append R344-R351 to the registry, validate with tools/validate_directive_compliance.py --check) as durable-before-action for M0-T056; (3) bind the R595 build directive to M0-T056 via /directive-compliance; (4) build M0-T056 through full gates; (5) ONLY AFTER the isolated proof and gates pass, flip to production actuation. The production flip is never the first step.",
+   "source_ref": "source-031-amendment.md#verbatim-owner-text",
+   "classification": "sequencing",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T056"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [
+     "create",
+     "dispatch",
+     "accept"
+    ],
+    "effective_date": "2026-08-11"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "control-plane-verifier",
+   "status": "pending",
+   "status_reason": "owner R595 build directive 2026-08-11 (source-031); bound to M0-T056 only - see the binding note in source-031",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": [
+     "M0-T056"
+    ]
+   },
+   "amendment_sequence": 31
+  },
+  {
+   "id": "D-010-R353",
+   "text": "M2-T016 FINALIZATION CHECKLIST (owner-specified, executed in the R595 build session): transcribe the 77-row DCV verification at project-control/reports/M2-T016-DCV-verification.json into the D-010 registry; record gates G0/G2/G3/G4/G5 at the integration HEAD; merge PR #216 after CI is green; create the B-001-blocked survey-review HTTP-route / production-ReviewStore follow-up task; then accept. Recorded here for durability; bound to M0-T056 only so the frozen M2-T016 verification set is not retroactively grown (see the binding note in source-031).",
+   "source_ref": "source-031-amendment.md#verbatim-owner-text",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T056"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [
+     "create",
+     "dispatch",
+     "accept"
+    ],
+    "effective_date": "2026-08-11"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "control-plane-verifier",
+   "status": "pending",
+   "status_reason": "owner R595 build directive 2026-08-11 (source-031); bound to M0-T056 only - see the binding note in source-031",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": [
+     "M0-T056"
+    ]
+   },
+   "amendment_sequence": 31
+  },
+  {
+   "id": "D-010-R354",
+   "text": "PERMISSION BOUNDARY (the crux of autonomy): an unattended loop requires the runner to be ALLOWED to run the control commands (python tools/project_control.py accept, git push, gh merge) without a per-command prompt; the auto-mode classifier currently blocks accept. When a step needs that permission the agent must STOP and give the owner the EXACT settings allow-rule to add (or the exact command to run) in plain English plus the exact line. The agent must NOT try to bypass the classifier - including by granting itself the permission by editing the settings allowlist.",
+   "source_ref": "source-031-amendment.md#verbatim-owner-text",
+   "classification": "prohibition",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T056"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [
+     "create",
+     "dispatch",
+     "accept"
+    ],
+    "effective_date": "2026-08-11"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "security-reviewer",
+   "status": "pending",
+   "status_reason": "owner R595 build directive 2026-08-11 (source-031); owner-only action - the allowlist change is the owner's to make",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": [
+     "M0-T056"
+    ]
+   },
+   "amendment_sequence": 31
+  },
+  {
+   "id": "D-010-R355",
+   "text": "END STATE: the owner gives ONE command and the supervised loop runs for days - dispatching workers, committing, pushing, opening and merging PRs, accepting green Tier-A work, and auto-restarting a fresh session when tokens run out - while parking every Tier-D / Section-20 item for the owner and continuing other unblocked work. The loop keeps dispatching until a gated step genuinely needs the owner, then surfaces it in plain English with the exact line to type.",
+   "source_ref": "source-031-amendment.md#verbatim-owner-text",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T056"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [
+     "create",
+     "dispatch",
+     "accept"
+    ],
+    "effective_date": "2026-08-11"
+   },
+   "dependencies": [
+    "D-010-R345",
+    "D-010-R346"
+   ],
+   "required_harness": "Bounded isolated live proof (R349) plus the gate wave.",
+   "required_evidence": "",
+   "producer": "backend-engineer",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "owner R595 build directive 2026-08-11 (source-031)",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": [
+     "M0-T056"
+    ]
+   },
+   "amendment_sequence": 31
+  },
+  {
+   "id": "D-010-R356",
+   "text": "ENVIRONMENT CONSTRAINTS reaffirmed for this build: this sandbox is Python 3.11 while services/api needs 3.12 (PEP 695), so Python behavior is verified via captured CI evidence, never local pytest; CI pins ruff 0.13.0 and a local ruff may be stale; directive-registry writes use the Edit tool because Bash writes to the registry are classifier-gated; never git init a new repo (use new-repo.ps1); never run a local npm install; the machine is a thin client with roughly 7 GB free.",
+   "source_ref": "source-031-amendment.md#verbatim-owner-text",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T056"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [
+     "create",
+     "dispatch",
+     "accept"
+    ],
+    "effective_date": "2026-08-11"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "ci-evidence-verifier",
+   "status": "pending",
+   "status_reason": "owner R595 build directive 2026-08-11 (source-031)",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": [
+     "M0-T056"
+    ]
+   },
+   "amendment_sequence": 31
+  },
+  {
+   "id": "D-010-R357",
+   "text": "SUPERVISOR-RUNTIME REUSE: the supervisor lives at C:/SupervisorController/ with a protected config (config.toml allowed_models plus ACLs), shadow and supervised modes, and LIMITED-AUTO off. The M0-T056 build reuses the accepted M0-T054 controller, adapters, and detection UNCHANGED rather than reimplementing them.",
+   "source_ref": "source-031-amendment.md#verbatim-owner-text",
+   "classification": "dependency",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T056"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [
+     "create",
+     "dispatch",
+     "accept"
+    ],
+    "effective_date": "2026-08-11"
+   },
+   "dependencies": [
+    "D-010-R345",
+    "D-010-R346"
+   ],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "backend-engineer",
+   "independent_verifier": "code-reviewer",
+   "status": "pending",
+   "status_reason": "owner R595 build directive 2026-08-11 (source-031)",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": [
+     "M0-T056"
+    ]
+   },
+   "amendment_sequence": 31
   }
  ]
 }
