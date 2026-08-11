@@ -37,12 +37,18 @@ export default async function SurveyReviewPage({
   // into `sha256%3A...`, which matches no document. Decode once here. A valid
   // digest contains no `%`, so this is a no-op if the param ever arrives
   // already decoded, and a malformed segment fails closed rather than throwing.
-  let documentDigest = documentId;
+  let documentDigest: string;
   try {
     documentDigest = decodeURIComponent(documentId);
   } catch {
     notFound();
   }
+  // Enforce the documented digest contract at the boundary (G3 F14). Without it the
+  // route forwards an arbitrary decoded string to the client; that is contained today
+  // only because every consumer re-encodes with encodeURIComponent, which is a
+  // convention, not a guarantee. 404 rather than a typed error keeps this route's
+  // information posture identical to the flag-off response (G3 F15).
+  if (!/^sha256:[0-9a-f]{64}$/.test(documentDigest)) notFound();
   return (
     <div className="property-shell">
       <InternalBanner />

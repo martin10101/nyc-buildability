@@ -233,25 +233,29 @@ describe("boundedEvidenceId — rejected_fact_ids must survive sanitization", ()
     expect(boundedEvidenceId("a".repeat(500))?.length).toBe(128);
   });
 
-  it("drops unsanitizable entries from rejectedFactIds instead of emitting them raw", async () => {
-    const client = createMockSurveyReviewClient(seedStore());
-    const doc = await read(client, DIGEST_PRO);
-    await client.correctFact({
-      documentDigest: DIGEST_PRO,
-      evidenceId: AREA,
-      corrected_normalized_value: 4800,
-      corrected_units: "square_feet",
-      reason: "resolve",
-      accepted_history_fingerprint: fp(doc, AREA),
-    });
-    await client.rejectFact({ documentDigest: DIGEST_PRO, evidenceId: NORTH, reason: "AI guess unusable" });
-    const out = await client.confirmDocument({ documentDigest: DIGEST_PRO });
+  // G3 F4: the mock backend only ever emits its own fixture ids, which all sanitize
+  // cleanly, so driving it can never exercise the DROP path — the half that replaced
+  // the old `?? String(id)` raw-value fallback. Stub the response instead so both
+  // halves are pinned: sanitizable ids survive, everything else is dropped rather
+  // than reflected. Under the pre-fix code this yields
+  // ["sevdocp13", "<<<>>>", "42", "[object Object]"] and fails on both counts.
+  it("keeps sanitizable ids and drops the rest", async () => {
+    const out = await createHttpSurveyReviewClient().confirmDocument(
+      { documentDigest: DIGEST_PRO },
+      {
+        fetchImpl: async () =>
+          new Response(
+            JSON.stringify({
+              reject_code: "confirmation_rejected",
+              message: "blocked",
+              detail: { rejected_fact_ids: [NORTH, "<<<>>>", 42, { a: 1 }, "sev:doc:<script>:2"] },
+            }),
+            { status: 422, headers: { "Content-Type": "application/json" } },
+          ),
+      },
+    );
     expect(out.kind).toBe("error");
     if (out.kind !== "error") return;
-    // The real id round-trips, and every emitted entry is a sanitized string.
-    expect(out.rejectedFactIds).toContain(NORTH);
-    for (const id of out.rejectedFactIds ?? []) {
-      expect(boundedEvidenceId(id)).toBe(id);
-    }
+    expect(out.rejectedFactIds).toEqual([NORTH, "sev:doc:script:2"]);
   });
 });
