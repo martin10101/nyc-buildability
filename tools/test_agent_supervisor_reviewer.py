@@ -39,8 +39,11 @@ REPO = HERE.parent
 sys.path.insert(0, str(REPO))
 
 from tools.agent_supervisor import codex_reviewer as rv  # noqa: E402
+from tools.agent_supervisor import ephemeral_review as er  # noqa: E402
 from tools.agent_supervisor import evidence as ev  # noqa: E402
 from tools.agent_supervisor import policy as pol  # noqa: E402
+from tools.agent_supervisor import review_packet as rp  # noqa: E402
+from tools.agent_supervisor.models import CodexDecision, USAGE_UNKNOWN  # noqa: E402
 from tools.agent_supervisor.audit_log import AuditLog  # noqa: E402
 from tools.agent_supervisor.config import (  # noqa: E402
     ConfigError,
@@ -997,6 +1000,188 @@ class EvidenceTests(unittest.TestCase):
             task_packet=packet_file, directive_refs=("D-007",))
         self.assertTrue(built.ok)
         self.assertLess(built.packet.size_bytes, ev.DEFAULT_PACKET_BYTES)
+
+
+# --------------------------------------------------------------------------
+# P6 (M0-T061): silent-reviewer detection -> ONE controlled re-dispatch -> hard
+# fail-closed PAUSE/STOP. "Absent evidence must never be treated as passing
+# evidence" under unattended actuation. The verdict-consuming seam is
+# `ephemeral_review.conduct_ephemeral_review`; here every reviewer is a fake
+# ReviewOutcome (no process, no network), mirroring the ExhaustedReviewer idiom.
+# --------------------------------------------------------------------------
+
+
+def _p6_decision(value: str, **over: object) -> CodexDecision:
+    """Build one delivered CodexDecision (decision is not None) for the tests."""
+    base = dict(
+        schema_version="1.0.0", decision=value,
+        reviewed_task_id="M0-T061", reviewed_checkpoint_id="cp-1",
+        verified_repo_head="b" * 40, verified_origin_main="c" * 40,
+        model_used="codex-primary")
+    base.update(over)
+    return CodexDecision(**base)  # type: ignore[arg-type]
+
+
+class _SilentReviewer:
+    """Returns NO verdict (decision is None) on EVERY dispatch; counts calls.
+
+    Mirrors `CodexReviewer.review` when it times out / idles / exhausts the
+    schema retry: ok=False, decision=None, an error_code carried.
+    """
+
+    def __init__(self, error_code: str = "review_timeout") -> None:
+        self.calls = 0
+        self.error_code = error_code
+
+    def review(self, packet, **kwargs):  # noqa: ANN001
+        self.calls += 1
+        return rv.ReviewOutcome(
+            None, "codex-primary", "sel-digest", 3, returncode=1,
+            error_code=self.error_code,
+            error_message="the reviewer timed out; partial output discarded",
+            packet_digest="pd", usage_telemetry=USAGE_UNKNOWN)
+
+
+class _SilentThenVerdictReviewer:
+    """Silent on the first dispatch; delivers a valid verdict on the re-dispatch."""
+
+    def __init__(self, decision: CodexDecision) -> None:
+        self.calls = 0
+        self._decision = decision
+
+    def review(self, packet, **kwargs):  # noqa: ANN001
+        self.calls += 1
+        if self.calls == 1:
+            return rv.ReviewOutcome(
+                None, "codex-primary", "sel-digest", 3, returncode=1,
+                error_code="review_timeout",
+                error_message="timed out; partial output discarded",
+                packet_digest="pd")
+        return rv.ReviewOutcome(
+            self._decision, "codex-primary", "sel-digest", 1,
+            packet_digest="pd", decision_digest="dd")
+
+
+class _VerdictReviewer:
+    """Delivers a verdict on the FIRST dispatch (no silence); counts calls."""
+
+    def __init__(self, decision: CodexDecision, error_code: str = "") -> None:
+        self.calls = 0
+        self._decision = decision
+        self._error_code = error_code
+
+    def review(self, packet, **kwargs):  # noqa: ANN001
+        self.calls += 1
+        return rv.ReviewOutcome(
+            self._decision, "codex-primary", "sel-digest", 1,
+            packet_digest="pd", decision_digest="dd",
+            error_code=self._error_code)
+
+
+class P6SilentReviewerRedispatch(unittest.TestCase):
+    PACKET = {"sections": {"summary": "did the thing"}}
+
+    def _run(self, reviewer, journal=None):  # noqa: ANN001
+        return er.conduct_ephemeral_review(
+            reviewer, self.PACKET, reviewed_task_id="M0-T061",
+            reviewed_checkpoint_id="cp-1", budget=rp.ReviewBudget(),
+            model_context_window=400000, run_id="run-1", journal=journal)
+
+    def test_sc1_silent_reviewer_redispatches_once_then_hard_fails_closed(self):
+        rev = _SilentReviewer(error_code="review_timeout")
+        record = self._run(rev)
+        # EXACTLY ONE controlled re-dispatch: first dispatch + one retry = 2 calls.
+        self.assertEqual(rev.calls, 2)
+        # Hard fail-closed PAUSE/STOP: no verdict, distinct code, ok=False.
+        self.assertFalse(record.ok)
+        self.assertIsNone(record.decision)
+        self.assertEqual(record.decision_value, "")
+        self.assertEqual(record.error_code, "reviewer_silent_no_verdict")
+        # Visible evidence: notify events surface the silence and the pause.
+        self.assertIn("reviewer_silent_no_verdict", record.notify_events)
+        self.assertIn("reviewer_paused_fail_closed", record.notify_events)
+        self.assertIn("reviewer_silent_redispatched", record.notify_events)
+        # The underlying reviewer failure is carried for diagnosis.
+        self.assertIn("review_timeout", record.error_message)
+        # Sealed + verifiable like every other durable review record.
+        self.assertTrue(record.record_digest)
+        self.assertTrue(er.verify_record(record.to_dict()))
+
+    def test_sc1_hard_fail_record_is_journaled_and_round_trips(self):
+        tmp = tempfile.mkdtemp()
+        journal = er.ReviewJournal(pathlib.Path(tmp) / "reviews.jsonl", fsync=False)
+        record = self._run(_SilentReviewer(), journal=journal)
+        self.assertEqual(record.error_code, "reviewer_silent_no_verdict")
+        rows = journal.load()
+        self.assertEqual(len(rows), 1)
+        self.assertTrue(journal.verify())
+
+    def test_sc2_silent_then_verdict_on_retry_proceeds_normally(self):
+        rev = _SilentThenVerdictReviewer(
+            _p6_decision("CONTINUE", next_claude_prompt="proceed to the next unit"))
+        record = self._run(rev)
+        self.assertEqual(rev.calls, 2)               # one retry, then delivered
+        self.assertTrue(record.ok)                   # NO false stop
+        self.assertIsNotNone(record.decision)
+        self.assertEqual(record.decision_value, "CONTINUE")
+        self.assertNotEqual(record.error_code, "reviewer_silent_no_verdict")
+        # Recovered-from-silence stays visible, but it is NOT a pause/stop.
+        self.assertIn("reviewer_redispatched_after_silence", record.notify_events)
+        self.assertNotIn("reviewer_paused_fail_closed", record.notify_events)
+
+    def test_sc3_delivered_halt_unsafe_is_not_redispatched(self):
+        rev = _VerdictReviewer(
+            _p6_decision("HALT_UNSAFE", blocking_findings=[{"issue": "unsafe"}]))
+        record = self._run(rev)
+        self.assertEqual(rev.calls, 1)               # delivered first try; NO retry
+        self.assertEqual(record.decision_value, "HALT_UNSAFE")
+        self.assertNotIn("reviewer_redispatched_after_silence", record.notify_events)
+        self.assertNotEqual(record.error_code, "reviewer_silent_no_verdict")
+
+    def test_sc3_delivered_stop_for_owner_is_not_redispatched(self):
+        rev = _VerdictReviewer(
+            _p6_decision("STOP_FOR_OWNER", owner_question="what should I do next?"))
+        record = self._run(rev)
+        self.assertEqual(rev.calls, 1)
+        self.assertEqual(record.decision_value, "STOP_FOR_OWNER")
+        self.assertNotIn("reviewer_redispatched_after_silence", record.notify_events)
+        self.assertNotEqual(record.error_code, "reviewer_silent_no_verdict")
+
+    def test_sc4_persistent_no_output_silence_never_downgrades_to_proceed(self):
+        # Every genuine no-output silence code (dispatched, returned NOTHING) that
+        # is silent on BOTH dispatches -> ONE re-dispatch -> hard fail-closed
+        # PAUSE/STOP. It NEVER yields ok=True or a decision.
+        for code in ("review_timeout", "missing_decision_file",
+                     "provider_rejected_request"):
+            with self.subTest(error_code=code):
+                rev = _SilentReviewer(error_code=code)
+                record = self._run(rev)
+                self.assertEqual(rev.calls, 2)                 # exactly one retry
+                self.assertFalse(record.ok)
+                self.assertIsNone(record.decision)
+                self.assertEqual(record.decision_value, "")
+                self.assertEqual(record.error_code, "reviewer_silent_no_verdict")
+                self.assertNotIn("reviewer_redispatched_after_silence",
+                                 record.notify_events)
+
+    def test_sc4_adjudicated_no_verdict_stays_fail_closed_without_redispatch(self):
+        # An already-bounded-adjudicated no-verdict (schema_retry_exhausted or a
+        # per-decision validation code) is NOT genuine "absent evidence": the
+        # reviewer's own bounded retry already sealed a distinct ok=False record.
+        # P6 does NOT re-dispatch or relabel it - but it must STILL be fail-closed
+        # (never downgraded to proceed/ok=True), preserving the G3 M-2 invariant.
+        for code in ("schema_retry_exhausted", "missing_required_field"):
+            with self.subTest(error_code=code):
+                rev = _SilentReviewer(error_code=code)
+                record = self._run(rev)
+                self.assertEqual(rev.calls, 1)                 # NO re-dispatch
+                self.assertFalse(record.ok)                    # still fail-closed
+                self.assertIsNone(record.decision)
+                self.assertEqual(record.decision_value, "")
+                self.assertEqual(record.error_code, code)      # underlying preserved
+                self.assertNotEqual(record.error_code, "reviewer_silent_no_verdict")
+                self.assertNotIn("reviewer_redispatched_after_silence",
+                                 record.notify_events)
 
 
 if __name__ == "__main__":
