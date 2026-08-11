@@ -1645,6 +1645,35 @@ class EmptyIdentityGuardTests(unittest.TestCase):
         self.assertFalse(opted)
         self.assertIn("must be the boolean true", err)
 
+    # O1 (M0-T057 producer observation, M0-T062): the marker-present branch must fail
+    # closed for EVERY non-usable justification shape, not just an absent key. An
+    # empty-string, whitespace-only, or non-string justification is a half-declared
+    # opt-in -- it looks deliberate while recording no reason -- so it must be refused
+    # with the same EXPLICIT error as a missing one (never silently opted in). The code
+    # already fails closed via `not isinstance(just, str) or not just.strip()`; these
+    # assertions lock that in against regression.
+
+    def test_empty_string_justification_is_refused(self):
+        opted, err = dr.path_free_opt_in({dr.PATH_FREE_MARKER: True,
+                                          dr.PATH_FREE_JUSTIFICATION: ""})
+        self.assertFalse(opted)
+        self.assertIn(dr.PATH_FREE_JUSTIFICATION, err)
+
+    def test_whitespace_only_justification_is_refused(self):
+        opted, err = dr.path_free_opt_in({dr.PATH_FREE_MARKER: True,
+                                          dr.PATH_FREE_JUSTIFICATION: "   \t\n"})
+        self.assertFalse(opted)
+        self.assertIn(dr.PATH_FREE_JUSTIFICATION, err)
+
+    def test_non_string_justification_is_refused(self):
+        # bool is a str-disjoint type here (isinstance(True, str) is False); None, int,
+        # list, and dict must all fail closed rather than stamp the empty-set identity.
+        for bad in (123, 0, True, False, None, ["why"], {"why": 1}):
+            opted, err = dr.path_free_opt_in({dr.PATH_FREE_MARKER: True,
+                                              dr.PATH_FREE_JUSTIFICATION: bad})
+            self.assertFalse(opted, f"non-string justification {bad!r} must fail closed")
+            self.assertIn(dr.PATH_FREE_JUSTIFICATION, err)
+
     def test_valid_optin_is_permitted_and_the_justification_is_recorded(self):
         just = "pure governance replan packet; binds no tracked content by design"
         task = {dr.PATH_FREE_MARKER: True, dr.PATH_FREE_JUSTIFICATION: just}

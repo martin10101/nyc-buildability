@@ -63,16 +63,20 @@ _CONTROL_PLANE_PREFIXES = ("project-control/",)
 
 # FROZEN grandfather allowlist for c17: the in-regime tasks whose allowed_paths ALREADY
 # resolve to zero tracked files at the M0-T057 baseline (commit 7cc1fed) -- backlog stubs
-# with empty allowed_paths (M0-T026/T032/T056), the accepted continuation task M0-T054, and
+# with empty allowed_paths (M0-T026/T032), the accepted continuation task M0-T054, and
 # M3 tasks carrying PROSE allowed_paths. This task does NOT rewrite those packets; their
 # historical remediation is handled separately (D-011). The allowlist keeps the current repo
 # EXIT 0 while c17 fails closed on any NEWLY-introduced empty-identity task. Draining an entry
 # is safe: once a task's allowed_paths match real tracked files it resolves non-empty and never
 # reaches c17 regardless of membership. (M0-T055 DRAINED 2026-08-11 session 16: D-011 item-5
 # repaired its allowed_paths to bind docs/LEAN_OPERATING_PROCESS.md and it is now accepted at
-# real identity f3a6a363, so it resolves non-empty and no longer needs grandfathering.)
+# real identity f3a6a363, so it resolves non-empty and no longer needs grandfathering. M0-T056
+# DRAINED 2026-08-11 session 18: its packet gained real allowed_paths binding
+# tools/agent_supervisor/*.py -- 7 tracked files at HEAD -- so it resolves non-empty, the entry
+# was inert, and control-plane-verifier flagged the stale membership; M0-T056's own empty-identity
+# risk is now carried by c17 live, not by this frozen list.)
 _EMPTY_IDENTITY_GRANDFATHERED = frozenset({
-    "M0-T026", "M0-T032", "M0-T054", "M0-T056",
+    "M0-T026", "M0-T032", "M0-T054",
     "M3-T002", "M3-T003", "M3-T004", "M3-T005",
 })
 
