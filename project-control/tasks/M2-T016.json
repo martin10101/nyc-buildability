@@ -23,9 +23,22 @@
     "M2-T012"
   ],
   "allowed_paths": [
-    "apps/web/src/** (survey review feature areas)",
-    "services/api/app/documents/** (review-action endpoints + audit events only, disclosed)",
-    "services/api/tests/documents/**, apps/web tests/e2e for the new screens",
+    "apps/web/src/components/survey-review",
+    "apps/web/src/lib/surveyReview",
+    "apps/web/src/app/survey/review",
+    "apps/web/src/test-support/survey-review",
+    "apps/web/e2e/survey-review-authorization.spec.ts",
+    "apps/web/e2e/survey-review-helpers.ts",
+    "apps/web/e2e/survey-review-inbox.spec.ts",
+    "apps/web/e2e/survey-review-journey.spec.ts",
+    "apps/web/e2e/survey-review-recovery-a11y.spec.ts",
+    "apps/web/playwright.config.ts",
+    "services/api/app/documents/review_actions.py",
+    "services/api/app/documents/review_authz.py",
+    "services/api/app/documents/review_events.py",
+    "services/api/tests/documents/test_review_actions.py",
+    "services/api/tests/documents/test_review_authz.py",
+    "services/api/tests/documents/test_review_events.py",
     "docs/SURVEY_REVIEW_WORKFLOW.md",
     "project-control/reports/M2-T016-producer-report.md"
   ],
@@ -179,6 +192,13 @@
       "percent": 97,
       "status": "in_progress",
       "message": "GATE-RECORDING RECIPE (handoff; NOT yet executed, deliberately). G3 delta re-attestation is confirmed PASS at e3c2ce6 by the same independent reviewer, F4 and F10 DISCHARGED, no new findings; it recommends recording G3 as PASS at e3c2ce6. Minor factual correction from it: the correction range is 3 files not 4 (F14 and F16 both land in [documentId]/page.tsx - 4 findings, 3 files). WHY THE GATE IS NOT RECORDED YET: project_control.py gate resolves the reviewed sha through _task_git_identity -> frozen_git_identity with require_clean=True, which REFUSES when the passed --sha is not HEAD ('a clean live content-identity stamp must be taken at HEAD'). e3c2ce6 is now merged into origin/main (main moved 37667ff -> 7cc1fed) but is not HEAD of any checkout, and stamping the gate with a sha the review did NOT happen at would be false provenance - exactly the stale-head dishonesty this task's whole rework exists to correct. EXACT RECIPE for the next session: (1) ensure the primary checkout is clean; (2) git checkout e3c2ce6 (detached HEAD - the gate file is a NEW untracked file under project-control/gates/ and therefore survives the branch switch back); (3) python tools/project_control.py gate --task-id M2-T016 --gate-id G3 --reviewer code-reviewer --result PASS --report M2-T016-delta-G3-code-review.md --sha e3c2ce6; (4) git checkout back to the working branch; (5) verify project-control/gates/M2-T016-G3.json carries reviewed_sha e3c2ce6 and role independent_review. STILL OWED BEFORE ACCEPTANCE, independent of that: G5 delta review (the G5 reviewer went idle without delivering); G0/G2/G4 records; and a RE-STAMPED DCV - the 77-row verification was taken at d45f330 and the head has moved twice (d45f330 -> 5a684fc -> e3c2ce6), so it is STALE and must be re-verified at the finally-gated sha by an independent verifier (producer != verifier). Also owed: verbatim capture of the SECOND G3 reviewer's return, currently held only as an explicitly-labelled condensation."
+    },
+    {
+      "at": "2026-08-11T07:12:34.584994+00:00",
+      "agent": "orchestrator",
+      "percent": 97,
+      "status": "in_progress",
+      "message": "D-011 item 5 IDENTITY REPAIR (reconciled branch off main 7cc1fed, where the M2-T016 code exists): allowed_paths changed from PROSE entries that matched no files (frozen identity = empty-set hash e3b0c442) to real git pathspecs binding the actual survey-review implementation files (components/survey-review, lib/surveyReview, app/survey/review, test-support/survey-review, the 5 e2e specs + playwright.config, the 3 documents review_* modules + their tests, the workflow doc, the producer report). This MOVES the content identity, so the stale 77-row DCV (taken at d45f330) is invalidated and MUST be re-run independently at the new identity/gated HEAD before acceptance (owner-directed 'rerun the identity-bound evidence'). Gates recording remains owed. Old prose entries: ['apps/web/src/** (survey review feature areas)', 'services/api/app/documents/** (review-action endpoints + audit events only, disclosed)', 'services/api/tests/documents/**, apps/web tests/e2e for the new screens', 'docs/SURVEY_REVIEW_WORKFLOW.md', 'project-control/reports/M2-T016-producer-report.md']"
     }
   ],
   "directive_refs": [

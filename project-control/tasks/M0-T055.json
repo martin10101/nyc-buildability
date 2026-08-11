@@ -8,7 +8,9 @@
   "inputs": [],
   "outputs": [],
   "dependencies": [],
-  "allowed_paths": [],
+  "allowed_paths": [
+    "docs/LEAN_OPERATING_PROCESS.md"
+  ],
   "forbidden_paths": [],
   "acceptance_scenarios": [],
   "required_gates": [
@@ -22,8 +24,8 @@
     "security-reviewer",
     "control-plane-verifier"
   ],
-  "status": "accepted",
-  "progress_percent": 100,
+  "status": "awaiting_gate",
+  "progress_percent": 96,
   "risks": [],
   "blockers": [],
   "created_at": "2026-08-09T09:04:52.369280+00:00",
@@ -64,9 +66,14 @@
       "percent": 96,
       "status": "in_progress",
       "message": "G3 code-reviewer PASS + G5 security-reviewer PASS preserved verbatim (reports/M0-T055-G3-code-review.md, reports/M0-T055-G5-security-review.md); Part-D control-plane-verifier PASS on file. Independent DCV dispatched for the 21 applicable D-010 reqs (R320-R335,R337,R340-R343) at HEAD 37667ff. NEXT: assemble verification.json + record G0/G2/G3/G5 + accept."
+    },
+    {
+      "at": "2026-08-11T07:12:34.584994+00:00",
+      "agent": "orchestrator",
+      "percent": 96,
+      "status": "awaiting_gate",
+      "message": "D-011 item 5 IDENTITY REPAIR. The prior session's acceptance of M0-T055 exists ONLY on the unmerged PR #217 branch and was bound to the EMPTY-SET hash (empty allowed_paths) - it never landed on main (main shows in_progress). On this reconciled branch off main the acceptance is reset to awaiting_gate and allowed_paths now binds its real deliverable docs/LEAN_OPERATING_PROCESS.md (the Phase-1 lean-operating-process policy this task authored). This is NOT reopening a landed accepted task - it is redoing an unmerged acceptance correctly under owner directive D-011 item 5. The G2/G3/G5 gate verdicts reviewed the policy CONTENT (unchanged) and stand; the identity-bound DCV must be re-run independently at the new identity before re-acceptance. CLAUDE.md's one-line routing-row addition is a shared-file edit deliberately NOT bound, to keep the identity specific to the authored policy doc. Prior status was 'accepted'; old allowed_paths []"
     }
   ],
-  "worktree": "C:/Users/MLFLL/Downloads/nyc-zoning/nyc-development-feasibility-claude-pack",
-  "accepted_by": "orchestrator",
-  "accepted_at": "2026-08-11T06:12:31.534894+00:00"
+  "worktree": "C:/Users/MLFLL/Downloads/nyc-zoning/nyc-development-feasibility-claude-pack"
 }
