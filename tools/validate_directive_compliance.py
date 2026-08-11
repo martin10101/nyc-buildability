@@ -63,14 +63,16 @@ _CONTROL_PLANE_PREFIXES = ("project-control/",)
 
 # FROZEN grandfather allowlist for c17: the in-regime tasks whose allowed_paths ALREADY
 # resolve to zero tracked files at the M0-T057 baseline (commit 7cc1fed) -- backlog stubs
-# with empty allowed_paths (M0-T026/T032/T056), continuation tasks (M0-T054 accepted,
-# M0-T055 in progress), and M3 tasks carrying PROSE allowed_paths. This task does NOT
-# rewrite those packets; their historical remediation is handled separately (D-011). The
-# allowlist keeps the current repo EXIT 0 while c17 fails closed on any NEWLY-introduced
-# empty-identity task. Draining an entry is safe: once a task's allowed_paths match real
-# tracked files it resolves non-empty and never reaches c17 regardless of membership.
+# with empty allowed_paths (M0-T026/T032/T056), the accepted continuation task M0-T054, and
+# M3 tasks carrying PROSE allowed_paths. This task does NOT rewrite those packets; their
+# historical remediation is handled separately (D-011). The allowlist keeps the current repo
+# EXIT 0 while c17 fails closed on any NEWLY-introduced empty-identity task. Draining an entry
+# is safe: once a task's allowed_paths match real tracked files it resolves non-empty and never
+# reaches c17 regardless of membership. (M0-T055 DRAINED 2026-08-11 session 16: D-011 item-5
+# repaired its allowed_paths to bind docs/LEAN_OPERATING_PROCESS.md and it is now accepted at
+# real identity f3a6a363, so it resolves non-empty and no longer needs grandfathering.)
 _EMPTY_IDENTITY_GRANDFATHERED = frozenset({
-    "M0-T026", "M0-T032", "M0-T054", "M0-T055", "M0-T056",
+    "M0-T026", "M0-T032", "M0-T054", "M0-T056",
     "M3-T002", "M3-T003", "M3-T004", "M3-T005",
 })
 
@@ -281,7 +283,7 @@ def _validate_empty_identity(tasks_dir: Path) -> list:
     arm is skipped (the malformed-opt-in arm still runs, and the project_control.py guard
     remains the fail-closed backstop at every lifecycle transition). Read-only."""
     errors: list = []
-    top, gerr = dr.git_work_tree_root(ROOT)
+    _, gerr = dr.git_work_tree_root(ROOT)
     commit = None
     if gerr is None:
         commit, cerr = dr.resolve_commit(ROOT, None)
@@ -305,7 +307,7 @@ def _validate_empty_identity(tasks_dir: Path) -> list:
         if commit is None:
             continue  # no git here; empty-resolution deferred to the CLI guard
         paths = list(task.get("allowed_paths") or [])
-        _ident, entries, e1 = dr.git_tree_manifest(
+        _, entries, e1 = dr.git_tree_manifest(
             ROOT, commit, paths, exclude_prefixes=_CONTROL_PLANE_PREFIXES)
         cp_entries, e2 = dr.control_plane_entries(
             ROOT, commit, paths, include_prefixes=_CONTROL_PLANE_PREFIXES)
@@ -356,7 +358,6 @@ def validate(registry_root: Path = DIRECTIVES_DIR, tasks_dir: Path = TASKS_DIR) 
     errors.extend(_validate_empty_identity(tasks_dir))
 
     # c16: multiple directives are handled independently; iterate each.
-    active_ids = [d.directive_id for d in reg.active_directives()]
     for did, d in sorted(reg.directives.items()):
         w = f"[{did}]"
         # c2 source hashes + structural load errors surfaced by the resolver
