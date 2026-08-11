@@ -53,7 +53,15 @@ export default defineConfig({
       // the human-journey walkthrough (G4) can exercise /dashboard in a real
       // browser. Non-public runtime flag, read server-side, never inlined into the
       // client bundle; unset in production so the route 404s by default.
-      env: { INTERNAL_RULE_EVAL_UI: "1", INTERNAL_OWNER_DASHBOARD_ENABLED: "1" },
+      // M2-T016: also enable the internal survey-review screens so the
+      // human-journey walkthrough (G3) can exercise /survey/review in a real
+      // browser. Non-public runtime flag, read server-side, never inlined into
+      // the client bundle; unset in production so the route 404s by default.
+      env: {
+        INTERNAL_RULE_EVAL_UI: "1",
+        INTERNAL_OWNER_DASHBOARD_ENABLED: "1",
+        INTERNAL_SURVEY_REVIEW_ENABLED: "1",
+      },
     },
   ],
 });
