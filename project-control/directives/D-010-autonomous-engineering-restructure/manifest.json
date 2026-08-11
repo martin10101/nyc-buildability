@@ -1,7 +1,7 @@
 {
  "schema": "directive_manifest/v1",
  "directive_id": "D-010",
- "version": 25,
+ "version": 26,
  "slug": "autonomous-engineering-restructure",
  "title": "Autonomous Engineering Restructure and NYC Buildability Pilot Acceleration (Autonomous Engineering V2)",
  "status": "active",
@@ -241,6 +241,14 @@
    "amends": "source-028-amendment.md",
    "recorded_at": "2026-08-09T10:00:00+00:00",
    "content_digest_sha256": "0ca7870630bbd36fa3125ae890bd8cf2c6c5c4d3aed91029d8a0aa409aa045a7"
+  },
+  {
+   "file": "source-030-amendment.md",
+   "kind": "amendment",
+   "sequence": 30,
+   "amends": "source-029-amendment.md",
+   "recorded_at": "2026-08-09T12:00:00+00:00",
+   "content_digest_sha256": "b2c97f05dde54aeb600ef89ee9d7033adf396fac654dd9b2fc8e53d27be657b0"
   }
  ],
  "amendments": [
@@ -271,7 +279,8 @@
   "source-026-amendment.md",
   "source-027-amendment.md",
   "source-028-amendment.md",
-  "source-029-amendment.md"
+  "source-029-amendment.md",
+  "source-030-amendment.md"
  ],
  "supersedes": [],
  "superseded_by": null,
@@ -310,8 +319,8 @@
  "verification_file": "verification.json",
  "final_reviewed_sha": null,
  "final_reviewed_manifest_sha256": null,
- "requirements_content_digest_sha256": "3748645ef846bbd4e84e6340decfdcb770f2951a65f4fd625e0cfcfc9f59a625",
- "requirements_id_digest_sha256": "d9d105ddeab2ead749de7c7a1192960a556726201808482bf6783a95e2222490",
+ "requirements_content_digest_sha256": "5885409098518334762903f2bc094e91914e5aa91f99735cd92a7c5fb6953306",
+ "requirements_id_digest_sha256": "caeb03c331617bb9380295fd933425ea48663c7fa05dfcc6b0ddc7ceb68efc1c",
  "enforcement_pointers": {
   "tasks": [
    "M0-T037",
@@ -689,10 +698,18 @@
   "D-010-R340",
   "D-010-R341",
   "D-010-R342",
-  "D-010-R343"
+  "D-010-R343",
+  "D-010-R344",
+  "D-010-R345",
+  "D-010-R346",
+  "D-010-R347",
+  "D-010-R348",
+  "D-010-R349",
+  "D-010-R350",
+  "D-010-R351"
  ],
  "created_at": "2026-08-07T01:09:55+00:00",
- "updated_at": "2026-08-09T10:00:00+00:00",
+ "updated_at": "2026-08-11T00:00:00+00:00",
  "audit_log": [
   {
    "at": "2026-08-07T01:09:55+00:00",
@@ -867,6 +884,12 @@
    "actor": "orchestrator",
    "action": "amendment-captured",
    "detail": "source-029 captured (product-efficiency directive: lean control-plane + concise code without weakening safety; Phase 1 authorized now; R320-R343); frozen base 14abf8e"
+  },
+  {
+   "at": "2026-08-11T00:00:00+00:00",
+   "actor": "orchestrator",
+   "action": "amendment-registered",
+   "detail": "source-030 registered and decomposed into R344-R351 (OWNER R595 ACTIVATION AUTHORIZATION: build the turnover auto-launch in production as M0-T056). The verbatim capture file source-030-amendment.md was written at session 13 (2026-08-09, frozen base 37667ff) but the requirements.json/manifest.json append was still owed; this entry completes the durable-before-action capture ahead of any M0-T056 dispatch. R344 authorization; R345 orchestrator-layer watchdog; R346 worker-layer auto-redispatch; R347 safety invariants; R348 bounded prohibition (exactly one hold lifted, every other hold intact, no self-approval, Tier-D parked); R349 isolated live proof + G0/G2/G3/G5 + DCV; R350 dependency/sequencing (flip is last); R351 return. All bind M0-T056 ONLY via applicability.task_ids, so no already-gated task's applicable set moves (conjunction semantics). affected_tasks deliberately NOT extended to M0-T056: c14 would fail an in-regime affected task with no verification row; M0-T056 is bound by its own directive_refs plus these applicability rows, and joins affected_tasks at acceptance. Requirement count 343 -> 351; requirements_content_digest and requirements_id_digest recomputed."
   }
  ]
 }
