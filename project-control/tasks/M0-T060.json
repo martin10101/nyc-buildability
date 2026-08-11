@@ -1,0 +1,60 @@
+{
+  "task_id": "M0-T060",
+  "title": "P3: achieved per-cycle containment != job_object must STOP, not merely record (M0-T053 R4 half)",
+  "task_type": "backend",
+  "milestone_id": "M0",
+  "objective": "QUALIFYING EVIDENCE (AD-093 demonstrated security risk): M0-T053 G5 R4 enforcement half + M0-T036-ACTIVATION-CHECKLIST P3. M0-T053 enforces criterion (1) of the 2026-08-08 pin (host DEFAULT containment) but criterion (2) - the ACHIEVED per-cycle containment - is still only RECORDED on RunResult.containment / the claude_process_started transition. ProcessContainer.adopt can degrade honestly to taskkill at launch time; a cycle whose run_result.containment != 'job_object' must PAUSE/STOP, because unattended nobody reads the audit line. SCOPE (smallest durable set): make an achieved-containment != 'job_object' outcome a fail-closed STOP of the supervised cycle with an explicit recorded reason, not merely an audit line. Correct nothing else (supervisor-freeze; do NOT change loop behaviour beyond this stop). REQUIRED TESTS: a cycle reporting containment=job_object proceeds; a cycle reporting a degraded containment STOPS with the recorded reason; full supervisor suite re-establishes the M0-T039 baseline (>=1165, 0 failures) plus the new tests.",
+  "business_reason": "P3 is a required pre-M0-T056 correction: unattended, a per-cycle containment degradation must halt rather than be silently recorded, since no operator reads the audit line under actuation.",
+  "inputs": [],
+  "outputs": [],
+  "dependencies": [
+    "M0-T058"
+  ],
+  "allowed_paths": [
+    "tools/agent_supervisor/loop.py",
+    "tools/agent_supervisor/claude_runner.py",
+    "tools/test_agent_supervisor_loop.py",
+    "project-control/reports/M0-T060-producer-report.md"
+  ],
+  "forbidden_paths": [
+    "tools/agent_supervisor/** modules not named in allowed_paths (smallest durable set only; wider need = STOP-and-report at G0)",
+    "project-control/** (except own producer report)",
+    ".claude/**",
+    "services/**, apps/**, packages/**",
+    "Any redesign or speculative supervisor feature (supervisor-freeze; defect-only)"
+  ],
+  "acceptance_scenarios": [
+    "P3-SC1 a cycle reporting run_result.containment == 'job_object' proceeds normally.",
+    "P3-SC2 a cycle reporting a degraded/non-job_object achieved containment STOPS with an explicit recorded reason (does not merely audit and continue).",
+    "P3-SC3 freeze baseline: full supervisor suite re-establishes M0-T039 (>=1165, 0 failures) + new tests; non-vacuity shown."
+  ],
+  "required_gates": [
+    "G0",
+    "G2",
+    "G3",
+    "G5"
+  ],
+  "producer_agent": null,
+  "reviewer_agents": [
+    "code-reviewer",
+    "security-reviewer"
+  ],
+  "status": "backlog",
+  "progress_percent": 0,
+  "risks": [
+    "PRODUCER MUST CONFIRM EXACT FILES AT G0: the achieved-containment STOP touches wherever RunResult.containment is evaluated post-run (loop.py likely; claude_runner.py produces it; state_machine.py holds the claude_process_started transition). Narrow to the smallest set; STOP-and-report if a different file is required.",
+    "Depends on M0-T058 (P1): both may touch claude_runner.py — sequence after P1.",
+    "Supervisor-freeze: do NOT change loop behaviour beyond this single fail-closed stop; re-establish the M0-T039 baseline."
+  ],
+  "blockers": [],
+  "created_at": "2026-08-11T17:42:00.949610+00:00",
+  "updated_at": "2026-08-11T17:42:01.302867+00:00",
+  "directive_refs": [
+    {
+      "directive_id": "D-010",
+      "requirement_ids": "ALL"
+    }
+  ],
+  "directive_regime_version": "1.0",
+  "directive_regime_entered_at": "2026-08-11T17:42:00.949610+00:00"
+}
