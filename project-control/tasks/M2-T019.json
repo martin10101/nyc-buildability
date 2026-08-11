@@ -10,7 +10,14 @@
   "dependencies": [
     "M2-T016"
   ],
-  "allowed_paths": [],
+  "allowed_paths": [
+    "services/api/app/documents/review_actions.py",
+    "services/api/app/documents/review_store.py",
+    "services/api/app/routers",
+    "services/api/tests/documents",
+    "supabase/migrations",
+    "project-control/reports/M2-T019-producer-report.md"
+  ],
   "forbidden_paths": [],
   "acceptance_scenarios": [],
   "required_gates": [
