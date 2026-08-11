@@ -268,5 +268,26 @@ containment sweep.
    converged — and, in one case, corrected each other. Those are reproducible without a human. The
    reviewer-silence gap is the one that was covered only by someone being awake.
 
+5. **P7 — CRITERION (1)'s WORDING IS OPERATOR-MISLEADING ON NON-WINDOWS HOSTS.** Raised by the
+   M0-T053 G3 review. The 2026-08-08 pin words criterion (1) as "`doctor` reports
+   `containment_default: ok, job_object`". The M0-T053 gate and `doctor` share the same containment
+   SOURCE (`default_containment_kind()`), so the reported KIND can never diverge — but their
+   VERDICTS do. `_check_containment_default()` (`cli.py:1102-1129`) returns **ok=True on POSIX when
+   the kind is `process_group`** (line 1124 sets `expected` per-OS) and **ok=True on a Windows host
+   that refuses a Job Object** (1119-1123). So on Linux `doctor` prints `containment_default: ok`
+   while the gate REFUSES. The direction is safe — the gate is strictly stricter — so this is not a
+   defect. But an operator who checks only the `ok` flag on a non-Windows host would wrongly believe
+   criterion (1) is met. **Read criterion (1) as requiring `kind == job_object`, not merely
+   `ok == true`.** Describe the gate as sharing doctor's containment SOURCE, never as "doctor
+   parity" — an earlier orchestrator note and the PR #218 body used that phrase and it is corrected
+   here.
+
+6. **P8 — DEPLOYMENT NARROWING (operational, not a defect).** The M0-T053 gate is unconditional on
+   mode, so `start` now HARD-REFUSES on every POSIX host — including Render — and including shadow
+   mode, which does spawn a real worker. **The supervisor is now Windows-Job-Object-only.** This
+   matches the pin's "any run that spawns a live worker" and breaks nothing today, but M0-T056 must
+   not assume a POSIX runner is available for the isolated live proof, and the owner should know the
+   supervisor cannot currently `start` on Render.
+
 This pin ADDS restrictions; it relaxes nothing, and it does not lift or alter the R595 prerequisite
 structure above.
