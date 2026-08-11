@@ -35,17 +35,17 @@
     "G3",
     "G5"
   ],
-  "producer_agent": null,
+  "producer_agent": "backend-engineer",
   "reviewer_agents": [
     "code-reviewer",
     "security-reviewer"
   ],
-  "status": "backlog",
-  "progress_percent": 0,
+  "status": "in_progress",
+  "progress_percent": 96,
   "risks": [],
   "blockers": [],
   "created_at": "2026-08-08T20:47:25.688693+00:00",
-  "updated_at": "2026-08-08T20:47:25.767118+00:00",
+  "updated_at": "2026-08-11T05:51:53.337755+00:00",
   "directive_refs": [
     {
       "directive_id": "D-010",
@@ -53,5 +53,36 @@
     }
   ],
   "directive_regime_version": "1.0",
-  "directive_regime_entered_at": "2026-08-08T20:47:25.688693+00:00"
+  "directive_regime_entered_at": "2026-08-08T20:47:25.688693+00:00",
+  "progress_log": [
+    {
+      "at": "2026-08-11T04:48:53.510484+00:00",
+      "agent": "orchestrator",
+      "percent": 0,
+      "status": "ready",
+      "message": "G0 readiness (session 14): dependency M0-T052 is ACCEPTED; qualifying evidence cited in the packet per supervisor-freeze sections 2/3 (M0-T052 G5 SEC-MAJOR, project-control/reports/M0-T052-g5-security.md - a demonstrated security risk, which is a listed qualifying-evidence class). Promoted now because the R595 production actuation channel (M0-T056) depends on it: D-010 R347 makes 'no duplicate workers' a BINDING invariant, and the ACTIVATION-RECORD PIN (M0-T036-ACTIVATION-CHECKLIST.md, 2026-08-08) records that until M0-T053 lands, record_launched_child has no production caller, recover_boot's surviving-child fail-closed is INERT in production, and the C1 job-object bar is a written precondition only. Dispatching to backend-engineer in worktree .claude/worktrees/M0-T053-child-accounting (branch task/M0-T053-child-accounting from origin/main 37667ff)."
+    },
+    {
+      "at": "2026-08-11T05:29:01.001622+00:00",
+      "agent": "backend-engineer",
+      "percent": 90,
+      "status": "in_progress",
+      "message": "PRODUCER COMPLETE (session 14). C2: ClaudeRunner gains an optional journal; run_unit records the launched child right after container.adopt(pid) and settles the record after the finally; cli._run_loop passes journal=journal - that single keyword is what makes recover_boot's surviving-child fail-closed LIVE in production instead of inert. C1: new containment_precondition(); cmd_start evaluates it and refuses as the LAST gate before a spawn, auditing containment_gate_refused, with NO flag/env/config override so it cannot be bypassed; doctor parity is structural (same default_containment_kind() the doctor reads). Fail-closed cores: settle returns early unless the pid was OS-reaped; an unwritable journal at record time terminates the worker and raises RunnerError(child_record_unwritable); an undeterminable containment kind refuses with kind 'unknown'. EVIDENCE: full supervisor suite 1493 passed / 2 skipped, run TWICE, re-establishing the M0-T039 freeze baseline (bar >=1165, 0 failures; pre-change baseline at 37667ff was 1481/2); 12 tests added. NON-VACUITY proven by five guard mutations, each reverted: gate-always-permits (2 failed), delete record call (4), delete clear call (3), never-settle (1), swallow unwritable-journal (2); two probes exposed WEAK assertions which the producer strengthened rather than accepted. Also fixed a test-only sqlite flake (two DurableJournal connections racing the first open of a fresh file). ruff 0.13.0 on the changed files: 5 pre-existing F401 only. My earlier Pyright model_available flag was WRONG and the producer disproved it with evidence: the signature is unchanged at base 37667ff (loop.py:905) and git diff -U0 shows no match - the cited cli.py lines merely MOVED down as insertions pushed them. Committed e5586e5 in the agent worktree, cherry-picked to a387331 on task/M0-T053-child-accounting, pushed. RESIDUAL R4 (most material, carried to M0-T056): the gate enforces criterion (1) of the C1 pin (host default containment) but NOT criterion (2), the achieved per-cycle 'containment: job_object' audit line - ProcessContainer.adopt can still degrade honestly to taskkill at launch time, and enforcing that mid-run is a loop-behaviour change beyond this packet. Also open: R1 microsecond Popen-to-record window, R2 model-probe child unaccounted, R3 journal=None still accepted by the runner, R5 RunnerError not caught by cmd_start so it exits as a traceback (fail-closed, worker killed first). NEXT: CI, then G3 + G5 independent gates."
+    },
+    {
+      "at": "2026-08-11T05:45:06.100864+00:00",
+      "agent": "orchestrator",
+      "percent": 95,
+      "status": "in_progress",
+      "message": "G5 SECURITY REVIEW (independent security-reviewer, read-only): VERDICT PASS, analysis COMPLETE, no BLOCKING finding. It REPRODUCED the producer's headline exactly by running the suite itself: 1493 passed / 2 skipped. Q1 answered YES - the double-launch hole closes on the real production path; it traced cli.py:2269 (the only non-test ClaudeRunner, now passing journal=journal) -> Popen -> container.adopt -> record BEFORE the first write -> settle gated on poll(), and confirmed the mechanism is genuinely non-inert because loop.py transitions START_CLAUDE->CLAUDE_RUNNING only AFTER run_unit returns while START_CLAUDE is in CYCLE_ENTRY_STATES, so a mid-unit kill really does leave a legal re-entry that would have dispatched a second worker. It found NO path where a live child exists unrecorded and NO path where a record is cleared while the child lives, except finding 4's compound. It also CORRECTED the producer's framing of R1: R1 does not stand alone, because the gate admits only job_object hosts where KILL_ON_JOB_CLOSE + non-inheritable handle means the kernel kills the child - R1 is reachable only via R4. On R4 its firm severity is MINOR for M0-T053 and NOT false assurance, because a degraded adopt still RECORDS the orphan unconditionally so the next start still refuses. Also caught a transcription slip (producer said 15 deselected; real number 16) while confirming the baseline 1481 and delta +12 are correct. THREE ITEMS ARE REQUIRED-CORRECTION BEFORE M0-T056'S FIRST LIVE ACTUATION and explicitly do NOT block M0-T053 acceptance - now PINNED into project-control/reports/M0-T036-ACTIVATION-CHECKLIST.md as P1/P2/P3 (plus recommended P4/P5), in the same place and for the same reason M0-T052's C1/C2 produced this task: P1 claude_runner.py:1283-1298 asserts a termination it never verifies (discards terminate_all's bool, swallows exceptions, never waits) - compound = live unrecorded orphan + traceback exit + next start reads SAFE_CHECKPOINT and DOUBLE-LAUNCHES, squarely on R347; P2 recovery.py clear_child_record is a WHOLE-KEY wipe, latent with one recorder but fail-open the moment M0-T056's successor-launch seam (turnover_adapters.py:434, currently unwired, spawning with no accounting and no gate) records anything, because a worker's clean exit would erase the live successor's record; P3 achieved per-cycle containment must become a STOP not a record, since unattended nobody reads the audit line. Reviewer's standing judgement: M0-T056 MAY build on this as its no-duplicate-workers foundation, but 'I would NOT accept an M0-T056 that treats these residuals as already closed.' Verbatim report owed at project-control/reports/M0-T053-G5-security-review.md (heredoc quoting failed; capture from the session transcript). REMAINING for M0-T053: G3 verdict, G0/G2 records, DCV, accept."
+    },
+    {
+      "at": "2026-08-11T05:51:53.337755+00:00",
+      "agent": "orchestrator",
+      "percent": 96,
+      "status": "in_progress",
+      "message": "G3 CODE REVIEW (independent code-reviewer): VERDICT PASS, UNCONDITIONAL - no BLOCKING, no REQUIRED-CORRECTION. Both gates now PASS. It independently reproduced 1493/2 in the worktree AND 1481/2 in the primary checkout, and did NOT take the baseline on faith: main is at a398fe8 but 'git diff --stat 37667ff..a398fe8 -- tools' is EMPTY, so that tree is byte-identical to base. ruff 0.13.0: base 6 errors, branch 5, branch a strict SUBSET (os became used) - no new lint, one removed. It re-verified the single-call-site claim itself and went further than the producer by checking the adjacent knob: RunnerConfig.use_job_object defaults True and is set from NO cli arg or config anywhere, so there is no config-side route to pass the gate then spawn uncontained. Drove all four host shapes live. Its sandbox hook blocked programmatic test-runner invocation so it could NOT re-run the mutation matrix - it said so plainly and verified the guards from the other side by driving production code in memory instead (settle retains on poll()=None and clears on poll()=0; unwritable journal refuses with child_record_unwritable, calls terminate_all+close, closes all three pipes, chains the OSError cause). CORRECTION TO A FALSE CLAIM I RECORDED: I wrote 'doctor parity is structural' in this task's progress log and in the PR #218 body. That is HALF TRUE and must not stand unqualified. The gate and doctor share default_containment_kind(), so the reported KIND cannot diverge - but the VERDICTS do: _check_containment_default() (cli.py:1102-1129) returns ok=True on POSIX when kind is process_group (line 1124 sets expected per-OS) and ok=True on a Windows host that refuses a Job Object (1119-1123). So on Linux doctor prints 'containment_default: ok' while the gate REFUSES. The direction is safe (the gate is stricter) so it is not a defect, but the 2026-08-08 pin's criterion (1) is worded 'doctor reports containment_default: ok, job_object', and an operator checking only the ok flag on a non-Windows host would wrongly believe criterion (1) was met. Correct wording is 'same containment SOURCE', not 'doctor parity'. OPERATIONAL CONSEQUENCE FOR MERGE, not previously surfaced: the gate is unconditional on mode, so 'start' now HARD-REFUSES on every POSIX host including Render, and including shadow mode (shadow does spawn a real worker). The supervisor is now Windows-job-object-only. That matches the pin's 'any run that spawns a live worker' and breaks nothing today, but it is a real deployment narrowing the owner should know about. CONVERGENCE: its MINOR finding 1 (clear_child_record whole-key wipe) independently matches G5's P2, and it independently raised the uncontained doctor --live preflight probe that G5 raised as its finding 6 - two reviewers, no communication, same two items. On R4 it judges deferral DEFENSIBLE and NOT false assurance, agreeing with G5, because the payload and refusal text say 'default' throughout and never claim an achieved guarantee, and enforcing criterion (2) means stopping the loop mid-run, which supervisor-freeze section 1 forbids in this packet. Its extra MINOR items: killing a live worker for an unjournalable pid writes NOTHING to the audit log though the runner holds self.audit; the unwritable-record test asserts only the error code so deleting terminate_all() keeps the suite green (coverage gap, behaviour verified present); and the start payload key 'containment' reads as achieved containment but is the host precondition. ACCEPTANCE WATCH-OUT it flagged: the commit carries 2 files under .claude/agent-memory/backend-engineer/ while the packet's forbidden_paths lists .claude/** - the project-control rule permits agent-memory writes so it reads as the carve-out, but confirm acceptance does not trip on it."
+    }
+  ],
+  "worktree": ".claude/worktrees/M0-T053-child-accounting"
 }

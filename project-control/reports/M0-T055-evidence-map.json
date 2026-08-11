@@ -1,0 +1,35 @@
+{
+  "task_id": "M0-T055",
+  "directive_id": "D-010",
+  "reviewed_sha": "37667ff08302c97933711414f8e3484280a45b7a",
+  "applicable_ids": [
+    "D-010-R320", "D-010-R321", "D-010-R322", "D-010-R323", "D-010-R324",
+    "D-010-R325", "D-010-R326", "D-010-R327", "D-010-R328", "D-010-R329",
+    "D-010-R330", "D-010-R331", "D-010-R332", "D-010-R333", "D-010-R334",
+    "D-010-R335", "D-010-R337", "D-010-R340", "D-010-R341", "D-010-R342",
+    "D-010-R343"
+  ],
+  "requirements": {
+    "D-010-R320": ["docs/LEAN_OPERATING_PROCESS.md:3-5", "docs/LEAN_OPERATING_PROCESS.md:9-10", "project-control/reports/M0-T055-DCV-verification.json"],
+    "D-010-R321": ["docs/LEAN_OPERATING_PROCESS.md:14-37", "project-control/reports/M0-T055-DCV-verification.json"],
+    "D-010-R322": ["docs/LEAN_OPERATING_PROCESS.md:87-89", "project-control/reports/M0-T055-DCV-verification.json"],
+    "D-010-R323": ["docs/LEAN_OPERATING_PROCESS.md:39-52", "project-control/reports/M0-T055-DCV-verification.json"],
+    "D-010-R324": ["docs/LEAN_OPERATING_PROCESS.md:54-62", "project-control/reports/M0-T055-DCV-verification.json"],
+    "D-010-R325": ["docs/LEAN_OPERATING_PROCESS.md:35-37", "docs/LEAN_OPERATING_PROCESS.md:114", "project-control/reports/M0-T055-DCV-verification.json"],
+    "D-010-R326": ["docs/LEAN_OPERATING_PROCESS.md:85-86", "project-control/reports/M0-T055-DCV-verification.json"],
+    "D-010-R327": ["docs/LEAN_OPERATING_PROCESS.md:82-84", "project-control/reports/M0-T055-DCV-verification.json"],
+    "D-010-R328": ["docs/LEAN_OPERATING_PROCESS.md:99-102", "docs/LEAN_OPERATING_PROCESS.md:5", "project-control/reports/M0-T055-DCV-verification.json"],
+    "D-010-R329": ["docs/LEAN_OPERATING_PROCESS.md:66-70", "project-control/reports/M0-T055-DCV-verification.json"],
+    "D-010-R330": ["docs/LEAN_OPERATING_PROCESS.md:71", "project-control/reports/M0-T055-DCV-verification.json"],
+    "D-010-R331": ["docs/LEAN_OPERATING_PROCESS.md:72", "project-control/reports/M0-T055-DCV-verification.json"],
+    "D-010-R332": ["docs/LEAN_OPERATING_PROCESS.md:73-74", "project-control/reports/M0-T055-DCV-verification.json"],
+    "D-010-R333": ["docs/LEAN_OPERATING_PROCESS.md:75-77", "project-control/reports/M0-T055-DCV-verification.json"],
+    "D-010-R334": ["docs/LEAN_OPERATING_PROCESS.md:78", "project-control/reports/M0-T055-DCV-verification.json"],
+    "D-010-R335": ["docs/LEAN_OPERATING_PROCESS.md:79-81", "project-control/reports/M0-T055-DCV-verification.json"],
+    "D-010-R337": ["docs/LEAN_OPERATING_PROCESS.md:113-115", "git show --name-only 5792bad (no apps/services/tools)", "project-control/reports/M0-T055-DCV-verification.json"],
+    "D-010-R340": ["project-control/reports/M0-T055-partD-review.md", "project-control/reports/M0-T055-G3-code-review.md", "project-control/reports/M0-T055-G5-security-review.md", "docs/LEAN_OPERATING_PROCESS.md:107-109"],
+    "D-010-R341": ["docs/LEAN_OPERATING_PROCESS.md:103-106", "git show --name-only 5792bad (no protected-config/ACL/activation)", "project-control/reports/M0-T055-DCV-verification.json"],
+    "D-010-R342": ["docs/LEAN_OPERATING_PROCESS.md:14-115 (return items 1-8)", "docs/LEAN_OPERATING_PROCESS.md:111-123 (items 9-10 deferred post-M2-T016)", "project-control/reports/M0-T055-DCV-verification.json"],
+    "D-010-R343": ["docs/LEAN_OPERATING_PROCESS.md:103-104", "no R595 activation at HEAD (policy-only)", "project-control/reports/M0-T055-DCV-verification.json"]
+  }
+}

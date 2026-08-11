@@ -1,0 +1,8 @@
+{
+  "schema": "directive_verification/v2",
+  "directive_id": "D-011",
+  "producer": "orchestrator",
+  "authority_note": "Pending independent verification by directive-compliance-verifier (producer != verifier). No requirement verified yet; capture only. The in-session truth table is the owner's requested return (R017), not a substitute for this independent verification.",
+  "task_verifications": [],
+  "updated_at": "2026-08-11T06:22:00+00:00"
+}

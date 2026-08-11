@@ -1,0 +1,54 @@
+{
+  "task_id": "M0-T057",
+  "title": "Make allowed_paths bind real content: prose pathspecs silently collapse the frozen identity to the empty-set hash",
+  "task_type": "governance",
+  "milestone_id": "M0",
+  "objective": "QUALIFYING EVIDENCE (session 14, 2026-08-11): M2-T016's allowed_paths are descriptive strings such as 'apps/web/src/** (survey review feature areas)' and 'services/api/app/documents/** (review-action endpoints + audit events only, disclosed)'. Those match nothing, so tools/directive_registry.py::frozen_git_identity returned e3b0c442...b855 - sha256 of the empty set - for a task shipping ~48 changed files. M0-T055 has the same shape (empty allowed_paths). SCOPE: (1) add a MECHANICAL guard that fails closed when a task's declared allowed_paths resolve to an empty tracked-file set while the task is not genuinely path-free - i.e. make the empty-set identity an explicit, surfaced condition rather than a silent pass; the guard must distinguish a legitimately path-free governance packet (which must then say so explicitly, e.g. an opt-in marker plus justification) from a code task whose pathspecs simply do not match; (2) wire it into the same fail-closed path submit/gate/accept already share, and into tools/validate_directive_compliance.py so CI catches it; (3) add regression tests covering: prose entry matches nothing -> REFUSE; valid pathspec -> identity is a real manifest hash; explicitly-declared path-free governance packet -> permitted with its justification recorded; (4) audit the EXISTING packets and report which ones currently stamp the empty-set hash, WITHOUT rewriting any accepted or in-flight packet - changing allowed_paths moves the material digest and would invalidate existing verification, so remediation of historical packets is a separate owner-visible decision, not part of this task. Correct nothing else.",
+  "business_reason": "The directive-compliance acceptance gate is built on a frozen content identity computed from each task's allowed_paths. When those entries are prose rather than git pathspecs they match no files, frozen_git_identity returns the deterministic EMPTY-SET hash, and the identity binds NO code - so 'verified at this content identity' means nothing for that task, and the dirt guard also drops to an empty scope. This is a silent, undetected failure of the mechanism the whole D-001 regime depends on, discovered while accepting M2-T016 in session 14.",
+  "inputs": [],
+  "outputs": [],
+  "dependencies": [],
+  "allowed_paths": [
+    "tools/directive_registry.py",
+    "tools/project_control.py",
+    "tools/validate_directive_compliance.py",
+    "tools/test_directive_compliance.py",
+    "tools/test_project_control.py",
+    "project-control/reports/M0-T057-producer-report.md"
+  ],
+  "forbidden_paths": [],
+  "acceptance_scenarios": [],
+  "required_gates": [
+    "G0",
+    "G2",
+    "G3"
+  ],
+  "producer_agent": null,
+  "reviewer_agents": [
+    "control-plane-verifier",
+    "code-reviewer"
+  ],
+  "status": "backlog",
+  "progress_percent": 0,
+  "risks": [],
+  "blockers": [],
+  "created_at": "2026-08-11T05:17:12.844326+00:00",
+  "updated_at": "2026-08-11T05:18:12.212241+00:00",
+  "directive_refs": [
+    {
+      "directive_id": "D-001",
+      "requirement_ids": "ALL"
+    }
+  ],
+  "directive_regime_version": "1.0",
+  "directive_regime_entered_at": "2026-08-11T05:17:12.844326+00:00",
+  "progress_log": [
+    {
+      "at": "2026-08-11T05:18:12.212241+00:00",
+      "agent": "orchestrator",
+      "percent": 0,
+      "status": "backlog",
+      "message": "AUDIT EVIDENCE captured at contracting (session 14, 2026-08-11, run against HEAD via directive_registry.frozen_git_identity with require_clean=False). NINETEEN packets currently stamp the deterministic EMPTY-SET identity e3b0c442...b855, meaning their frozen content identity binds NO tracked content. Two distinct causes. (A) NO allowed_paths at all (12): M0-T000 accepted, M0-T007 blocked, M0-T008 blocked, M0-T017 accepted, M0-T026 backlog, M0-T032 backlog, M0-T054 ACCEPTED, M0-T055 awaiting_gate, M0-T057 backlog (this packet - fixed below), M2-T019 backlog (fixed below), M4-T003 awaiting_gate, M2-T016 see (B). (B) PROSE / non-matching pathspecs (7): M1-T001 ACCEPTED, M2-T016 in_progress, M3-T002/T003/T004/T005 backlog, M4-T006 awaiting_gate, M6-T001 backlog. FOUR ARE ALREADY ACCEPTED - M0-T000, M0-T017, M0-T054, M1-T001 - so for those the recorded phrase 'independently verified at the reviewed content identity' is, mechanically, a statement about the empty set. That is the finding, stated plainly rather than softened. Most consequential: M0-T054 is the accepted turnover mechanism that M0-T056 (R595 production actuation) reuses and builds on. NOT REMEDIATED HERE, deliberately: accepted packets are immutable and editing allowed_paths on an in-flight packet moves its material digest and invalidates its existing verification, so retrofitting is an owner-visible decision, not a silent cleanup. This task's job is the MECHANICAL GUARD plus this audit; historical remediation is separate. NOTE the guard must not simply ban the empty set: a genuinely path-free governance packet is legitimate and must remain possible via an explicit opt-in marker with justification, which is exactly what distinguishes it from a code task whose pathspecs silently match nothing."
+    }
+  ]
+}

@@ -4,149 +4,89 @@
 `python tools/project_control.py status` and `python tools/current_state.py` — and reconcile against
 the remote: **origin/main may have advanced, so do not trust any SHA written here as still-current.**
 This file is orientation only. Operating rules, gates, and workflow routes live in `CLAUDE.md`.
-Old session blocks (1–10) are recoverable via `git log -p docs/SESSION_HANDOFF.md`.
+Old session blocks (1–14) are recoverable via `git log -p docs/SESSION_HANDOFF.md`. Keep this file
+CURRENT-ONLY: the `context-budget` CI check is a REQUIRED status and fails the PR above ~4000 tokens,
+so trim the previous session's block when you add yours.
 
-Refreshed **2026-08-09 (session 11; running on claude-opus-4-8)**. Supersedes older sections; the
-ledger wins on any conflict. (Lean per the parked efficiency directive — see below.)
+## SESSION 15 STATE — bounded truth reconciliation (owner directive D-011); nothing accepted this session
 
-## SESSION 12 STATE — M0-T054 + M2-T015 BOTH ACCEPTED (74); next = M2-T016 / M0-T055
+Refreshed **2026-08-11 (session 15; model `claude-opus-4-8`)**. The prior session's "PRs #217/#218 open
+and green" claim was **false** and is corrected here. **Accepted count = 75** (M0-T055 accepted on this
+branch only — see below). No new acceptance this session. The ledger wins on any conflict.
 
-Refreshed **2026-08-09 (session 12; claude-opus-4-8)**. **Accepted count 74.** Main **`d265269`** (verify).
+### Ground truth (verified live 2026-08-11)
 
-- **M0-T054 ACCEPTED (73)** — unattended Fable→Opus turnover watchdog. Code merged PR #211; acceptance
-  PR #212. Gates G0/G2/G3/G5 + DCV 16/16 PASS. **Mechanism only (record-intent-only in production); live
-  auto-actuation = owner-gated R595 (follow-up M0-T056), NOT a defect.** SHADOW-ONLY / LIMITED-AUTO-off /
-  protected-config holds unchanged.
-- **M2-T015 ACCEPTED (74)** — secure survey/official-document ingestion + deterministic-verification
-  pipeline (Packet B). Units 3k (DecoderSeam behind isolation gate) + 3l (SB-S4 tax-lot BBL cross-check)
-  → code PR #213 → acceptance PR #214. **97/97 D-010 PASS; gates G0–G5 + DCV all PASS.** A full 4-reviewer
-  gate wave (897e7df) correctly FAILED it (ruff + missing named outputs + stale report); reworked
-  (whole-tree ruff 0.13.0 clean, committed synthetic fixture pack SVY01–SVY14 + MANIFEST +
-  `docs/SURVEY_FIXTURE_MATRIX.md`, report current) → re-gated at 1b3af35 → accepted.
-  **Honestly-deferred LATER units (documented in SURVEY_FIXTURE_MATRIX + coverage matrix):** SB-S4 AREA
-  cross-check (needs lot-area geometry reconstruction), OCR/raster extraction, rotation-normalization,
-  distance/bearing normalization, boundary/area reconstruction. B-001 storage still designed-but-deferred.
+- **origin/main = `7cc1fed`**. **PR #216 MERGED** — M2-T016 survey-review product code is on main.
+- **PR #217** open (control `control/session14-m0t055-accept`), **PR #218** open
+  (`task/M0-T053-child-accounting` @ `a3873311`). **Neither is fully green.** On BOTH, every
+  functional/required check passes; the ONLY red is **`web-dependency-security`** (non-required) on the
+  known **nanoid** advisory GHSA-2v37-7h3g-55p8 (needs ≥3.3.17; the lock still pins 3.3.16). So the
+  workflow conclusion is red while all required contexts are green — do not call them "green".
+- **M2-T016 code is merged (PR #216) but the TASK is NOT accepted** — status `in_progress` 97%. "Merged"
+  ≠ "accepted".
+- **M0-T053** producer work COMPLETE and both independent reviews **RETURNED**: G5 security PASS and G3
+  code PASS (verbatim reports on file). Gates not yet recorded; task `in_progress` 96%, not accepted.
+- **No Opus 5 authorship** is claimed anywhere; this session ran on `claude-opus-4-8` (owner-set).
 
-**⚠ ENV LANDMINE — PEP 695 / Python 3.12:** `services/api/app/documents/units.py::_match_unit` uses PEP 695
-generics (correct: `requires-python>=3.12`, ruff `target-version=py312`, CI `api` job = Python **3.12**).
-**This sandbox has only Python 3.11.9** (the `py -0p`-listed 3.13 exe is MISSING) → `pytest` cannot even
-collect `tests/documents/` (SyntaxError on import). Verify Python via the **captured 3.12 CI evidence**
-(evidence-capture division of labor); ruff parses independently so `ruff check .` still works locally. Also:
-**local ruff was 0.9.9 but CI pins 0.13.0** — always `pip install ruff==0.13.0` before trusting a local ruff
-result (0.9.9 flags UP038 which 0.13.0 dropped, and misses I001/UP047 sorting differences → a false "clean").
+### `accept` fails closed already (item 4 — verified)
 
-**NEXT (no owner needed):**
-1. **M0-T055** (lean operating process) — Part-D review PASS on file; remaining: G3 (code-reviewer) + G5
-   (security-reviewer) gates + verification.json (R320–R343) + accept. Small acceptance cycle.
-2. **M2-T016** — first product task under the lean process (needs M2-T015 accepted — now done). Contract
-   via `/start-controlled-task`, then dispatch under `docs/LEAN_OPERATING_PROCESS.md`.
-3. Optional follow-ups: **M0-T056** (R595 live-activation, owner-gated), the M2-T015 deferred later units,
-   rework queue (M0-T021/M0-T034), the M3 chain (under blockers).
+`project_control.py accept()` (lines 1196-1199) refuses when **any required gate has no PASS record**, and
+`INDEPENDENT_GATES` further reject a `self_check` role or a gate recorded by the producer. **Reviewer
+silence therefore can never become acceptance** — there is simply no PASS record, so accept fails closed.
+**P6 is additive, not a duplicate gate:** it should add bounded reviewer-timeout detection → one controlled
+retry / re-dispatch → then **PAUSE/STOP with visible evidence**. It does not touch the acceptance gate.
 
-**Repo hygiene done this session:** reviewer-model fallback flip + agent-memory flush committed; redundant
-owner-directive intake copies + `.npmrc` + settings backups gitignored; transient `*.sqlite3-wal/-shm`
-gitignored; survey fixture pack marked `binary` in `.gitattributes`.
+### R595 pre-actuation pins — correct classification (item 3; NOT eight equivalent blockers)
 
----
+Pinned in `project-control/reports/M0-T036-ACTIVATION-CHECKLIST.md`. Before M0-T056 **live actuation**:
 
-## SESSION 11 STATE (historical) — M0-T054 turnover mechanism IMPLEMENTED (awaiting-gate); one owner-decision surfaced
+- **P1, P2, P3 — REQUIRED engineering corrections** (G5): P1 claude_runner terminate-without-verify (live
+  unrecorded orphan → double-launch on R347); P2 `clear_child_record` whole-key wipe (fail-open once the
+  M0-T056 successor-launch seam records anything); P3 achieved per-cycle containment must **STOP**, not
+  merely record.
+- **P6 — REQUIRED, deterministic**: reviewer timeout → one retry/re-dispatch → PAUSE/STOP (above).
+- **P4, P5 — RECOMMENDATIONS, not mandatory blockers.**
+- **P7 — wording/interpretation**: "doctor parity" is wrong; doctor and the launch gate share a
+  containment **source** (`default_containment_kind()`), but their **verdicts are not equivalent** (doctor
+  prints `ok` on POSIX/process_group while the gate REFUSES). Use "same containment source".
+- **P8 — Windows-only deployment constraint**: the gate hard-refuses on every POSIX host (incl. Render and
+  shadow mode), so the supervisor is currently Windows-Job-Object-only. Real narrowing, breaks nothing today.
 
-**Accepted count 72.** Main `dd4a0c9` (PRs #200–#204 merged — verify). Two active task branches:
-- `task/M2-T015-survey-ingestion` @ **`1e4125c`** — 3j done; **3k is the only remaining product unit**,
-  now HELD by a blocking dependency on M0-T054.
-- `task/M0-T054-turnover-watchdog` @ **`9cd7d38`** — the turnover mechanism (below).
+### Active tasks + what each still needs
 
-**R289 recovery COMPLETE + proven.** Fable hit its weekly limit; built-in `fallbackModel` did NOT
-auto-switch (verdict **DID-NOT-SWITCH**, D-010 source-027). Owner manually `/model`'d to Opus 4.8
-(this session). Owner then authorized (source-028) adding `claude-opus-4-8` to the protected
-`config.toml [claude] allowed_models` (narrowly supersedes R297); **applied + R314 doctor proof ALL
-PASS** (accepted SHA `6aef12a9`, line-ending-only diff from pre-registered `9560f901`, owner decision
-"A"). Worker `C:/SupervisorController/model_selection.toml` `[claude] model = "claude-opus-4-8"`,
-validated against the live config. Evidence: `project-control/reports/M0-T054-protected-config/`
-(doctor_proof.py + output) and `.../D-010-R289-fallback-incident/`. **Protected config,
-`default_mode=shadow`, supervised runtime, LIMITED-AUTO off — all intact.** Revert worker + settings
-`effortLevel` + reviewer files on the owner's typed "Fable is back" (R290).
+1. **M0-T055** accepted on THIS branch only (PR #217, not merged → on main it is effectively in-flight).
+   Its `allowed_paths` is empty ⇒ frozen identity is the **empty-set hash** `e3b0c442`, binding no files.
+   **D-011 item 5**: repair `allowed_paths` to its real deliverables (`docs/LEAN_OPERATING_PROCESS.md`,
+   `CLAUDE.md`, its reports) and rerun ONLY the identity-bound gate/DCV evidence that repair invalidates.
+2. **M2-T016** `in_progress` — merged code, not accepted. Exact-head **G3 delta re-attestation PASS at
+   `e3c2ce6`** is preserved (`reports/M2-T016-delta-G3-code-review.md`). **OUTSTANDING**: the SECOND G3
+   reviewer's return is held only as an explicitly-labelled condensation — the verbatim second return is
+   NOT captured; do not treat the condensation as verbatim. Also owed: G5 delta, G0/G2/G4 records, a
+   RE-STAMPED DCV at the gated head, and the same empty-set `allowed_paths` repair (item 5).
+3. **M0-T053** — record G0/G2/G3/G5, DCV, then accept. P1/P2/P3 are pre-**M0-T056**, NOT pre-M0-T053
+   acceptance. Preserve the verbatim G5 return (owed at `reports/M0-T053-G5-security-review.md`).
+4. **M0-T057** backlog — the empty-identity fail-closed guard (D-011 item 6): smallest mechanical guard
+   that REFUSES when a non-path-free task's `allowed_paths` resolve to the empty set; allow an explicit
+   opt-in marker + justification for genuinely path-free governance packets. Audit already captured.
+5. **M0-T047** backlog — nanoid 3.3.17 remediation (D-011 item 8): add exact-pin `overrides` to
+   `apps/web/package.json` and regenerate the lock via the **CI-bot workflow (NO local npm)**; age gate now
+   passes (earliest 2026-08-10). No waiver, no audit suppression, no unrelated upgrades.
 
-**M0-T054 (in_progress 90%, D-010 source-028 R304–R319) — mechanism + LIVE PROOF DONE; gates in flight.**
-Task branch `task/M0-T054-turnover-watchdog` @ **`3c36c42`**. **Five** additive increments, **79
-deterministic tests**, full supervisor suite **1481 passed / 2 skipped** (freeze baseline preserved):
-- inc1 detection (25); inc2 exactly-once actuation (16); inc3 real adapters (16); inc4 gated loop
-  integration `loop.py` (+37/−0) + `cli.py` (+10/−0) (12); inc5 live-signal plumbing (10) — surfaces
-  the real exhaustion evidence (`result_text` + `seven_day` rate-limit) so the turnover fires in the
-  live loop (a real gap the live proof caught; `claude_runner.py` additive).
-- **LIVE PROOF (R316) DONE** — `project-control/reports/M0-T054-live-proof/LIVE-PROOF.md`: real Fable
-  exhaustion (exit 1, real signal) → `classify_exhaustion` → FABLE_EXHAUSTED → integration on the real
-  signal → one opus-4-8 launch decision + audit link → a **real opus-4.8 worker launches** (exit 0).
-  Every real link proven; only the single-continuous-auto-run is production-gated (see below).
-- **ALL 3 GATES PASS at `3c36c42`** (verbatim reports on main): G3 code-reviewer PASS
-  (`M0-T054-G3-code-review.md`), G5 security-reviewer PASS (`M0-T054-G5-security-review.md`), DCV
-  directive-compliance-verifier PASS 16/16 (`M0-T054-DCV-verification.md`). **READY TO ACCEPT.**
-- **EXACT ACCEPT RECIPE (mechanical, all evidence PASS):** M0-T054 applicable D-010 set = **16 reqs**
-  `[R300,R301,R302,R304,R305,R306,R307,R308,R309,R310,R312,R315,R316,R317,R318,R319]` (compute:
-  `DirectiveRegistry().derive_applicable(M0-T054.json)`). Steps: (1) write a `verification.json`
-  **v2** `task_verifications[]` row for M0-T054 — `directive_id=D-010`, `producer=orchestrator`,
-  `verifier=directive-compliance-verifier`, `reviewed_sha=3c36c42` (must == the reviewed HEAD),
-  `reviewed_manifest_sha256`, and a `requirements[]` row **state=PASS** for each of the 16
-  (R305/R306/R310 carry the live-activation-deferred note; all PASS at mechanism scope per the DCV);
-  (2) producer report (AOS s6); (3) `submit --requested-status awaiting_gate` with an evidence-map;
-  (4) record gates G0/G2/G3/G5 (`--sha 3c36c42`); (5) `accept --task-id M0-T054 --agent orchestrator`.
-  Watch the `reviewed_sha==HEAD` + material-identity gotchas (see memory `in-regime-accept-mechanics`).
-  Accepting M0-T054 **unblocks M2-T015 3k**.
-- **⚠️ OWNER-DECISION (surfaced, work around, don't block):** production wiring is
-  **RECORD-INTENT-ONLY** — `default_actuation_authorization` is False unconditionally because no
-  runnable mode authorizes an automatic worker redispatch (shadow forwards nothing; supervised holds
-  every forward at `WAIT_FOR_OWNER`; LIMITED-AUTO off). A confirmed exhaustion is
-  classified+recorded+surfaced but **never auto-launched** in production. An actual automatic
-  production launch needs an owner-authorized actuation channel (**R595 activation**), which conflicts
-  with the reaffirmed SHADOW-ONLY / LIMITED-AUTO-off holds. **Owner must decide** whether to authorize
-  production auto-launch (R595) or keep record-intent-only. Does NOT block the rest.
+### R595 / Codex — NOT activated (holds stand)
 
-**REMAINING (all standard-gate, no owner needed except the R595 decision above):**
-1. **M0-T054 bounded LIVE proof (R316)** — on an ISOLATED non-product runtime with an authorized
-   channel (authorize=True + real controller/adapters/launcher), drive a real Fable worker (exhausted)
-   → detect → exactly one opus-4.8 xhigh successor launched → observe. No production change. Must not
-   touch M2-T015 or production data.
-2. **M0-T054** producer report + G0/G2/G3/G5 + DCV + acceptance (defect-lane frozen-module change:
-   re-establish the `M0-T039-supervisor-freeze.md` baseline at 1471).
-3. On M0-T054 acceptance → **resume M2-T015 3k on Opus 4.8** (DecoderSeam: route the in-repo vector-PDF
-   reader through `services/api/app/documents/extraction/routing.py::begin_extraction_job`, behind the
-   `isolation.py` fail-closed gate; assemble survey_evidence facts; deterministic checks; **every
-   gated-edge transition uses `promotion_gated_transition`, raw `transition()` is authority-only**;
-   e2e + `docs/M2-T015-SB-COVERAGE-MATRIX.md` (R272) + full CI SB-S9) → producer report → G0–G5 + DCV
-   + PR + accept → **M2-T016** (first task under the leaner efficiency process).
-
-## Supervised dispatch mechanics
-Foreground: `Bash` timeout `1500000` ms, `--unit-timeout 1200 --max-cycles 1 --max-turns 12..16`,
-fresh runtime base `%LOCALAPPDATA%/NYCBuildabilitySupervisor-rNN`. **Both provider executables are
-REQUIRED** (`start` refuses PATH discovery): `--claude-executable C:\Users\MLFLL\.local\bin\claude.exe`,
-`--codex-executable C:\Users\MLFLL\AppData\Roaming\npm\node_modules\@openai\codex\node_modules\@openai\codex-win32-x64\vendor\x86_64-pc-windows-msvc\bin\codex.exe`.
-Worker model is now `claude-opus-4-8` (lawful). Producers spawned via the Agent tool run on their
-pinned model (backend-engineer = opus-4.8), unaffected by Fable exhaustion — used for M0-T054 inc1–4.
-Orchestrator captures test/commit evidence; in-loop Codex evidence-boundary REVISE/HALT resolved by
-orchestrator out-of-loop verification.
-
-## Other open items
-- **Owner product-efficiency directive** — captured (D-010 source-029, R320–R343). **Phase 1 DONE**
-  (M0-T055, PR #206): `docs/LEAN_OPERATING_PROCESS.md` + CLAUDE.md pointer; canonical routine record =
-  per-task `progress_log` + git + CI; lean 7-field ≤2000-tok handoff + 6 seam triggers; 1–2
-  routine-control-PR batching; concise-code/parameterized-test/safer-packet guidance. Effective
-  **M2-T016 onward** (prospective; nothing retroactive). **Part-D independent review = PASS**
-  (control-plane-verifier; verbatim `project-control/reports/M0-T055-partD-review.md`). Remaining for
-  M0-T055 accept: G0/G2 + G3/G5 gates (dispatch code-reviewer G3 + security-reviewer G5) +
-  verification.json (R320-R343; R338/R339/R342 pending-with-justification; R336 NA post-acceptance) +
-  accept. **Phase 2** = run/measure M2-T016 under the rules
-  (needs M2-T015 accepted first). **Phase 3** = one bounded projector helper only if M2-T016 still
-  shows duplication. PDF keep-vs-replace assessment (B9) = post-M2-T015-acceptance, comparison-only.
-  **Apply the lean rules to all product work from M2-T016 on.**
-- **M0-T047 (nanoid):** age-eligible 2026-08-10; until then `web-dependency-security` stays red
-  repo-wide (NON-required; Tier A merges unaffected).
-- Rework queue (M0-T021/M0-T034) and the M3 chain (under blockers) remain available.
+D-011 R001-R003 re-affirm: **do not start M0-T056, do not activate R595, do not add the broad accept
+allowlist.** "Open Codex fully" is the destination, not authorization. Gating before actuation: land
+P1-P3 + P6, accept M0-T053, then owner flips the switch. **Model-fallback (D-011 R018):** each new session
+must try the MAIN model first and fall back to the lazy model ONLY on unavailability (cap/token/outage),
+never sticky across sessions — supervisor investigation in flight.
 
 ## Carried rules
-- Task branches from origin/main; producers spawned UNNAMED (or via Agent-tool pinned agents);
-  classifier denial ⇒ exact-path staging first, else STOP + surface the `!` line; all
+- Task branches from origin/main; producers spawned **UNNAMED** (named spawns hit `readonly_agent_guard`
+  fail-closed); classifier denial ⇒ exact-path staging first, else STOP + surface the `!` line; all
   `project-control/**` + `directives/**` explicit LF; commits stage exact paths; ADR-006 Tier A merges
-  after green required checks; owner dry-run-first for any elevated script.
-- Reviewer models `claude-opus-4-8` xhigh (standing). Orchestrator currently opus-4.8 (manual R286/R295).
+  after green **required** checks; owner dry-run-first for any elevated script.
+- **Prose `allowed_paths` silently defeat the identity machinery** — use real pathspecs. Do not retrofit
+  accepted packets (moving the digest invalidates their verification); M0-T057 is the mechanical fix.
+- Reviewer models `claude-opus-4-8` xhigh (standing). Orchestrator currently `claude-opus-4-8`.
 - Standing holds unchanged: deployment/G6/Graphify/expansion; supervised runtime; `default_mode=shadow`;
   LIMITED-AUTO off; R595 pre-activation blocking.

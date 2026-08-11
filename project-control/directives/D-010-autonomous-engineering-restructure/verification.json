@@ -3228,7 +3228,222 @@
    "reviewed_sha": "1b3af356360013200166418020e64dbdad8b60a0",
    "verified_at": "2026-08-09T17:54:20.884266+00:00",
    "note": "Independent DCV (directive-compliance-verifier) re-verification at merged main HEAD 1b3af35 (PR #213). All 97 applicable D-010 requirements PASS, 0 VIOLATED / 0 UNVERIFIABLE. The pass-1 FAIL (ruff SB-S9 + missing SURVEY_FIXTURE_MATRIX.md/fixture-pack + stale report) was reworked and re-verified RESOLVED; pass-1 used the stale 29-req worktree registry, this pass uses main's current 97-req set. Gate wave: G1 PASS + delta, G3 PASS at 1b3af35, G5 PASS + delta, DCV 97/97. Full-suite pytest (2025) rests on the orchestrator-captured 3.12 CI evidence (M2-T015-CI-evidence.md) per the evidence-capture division of labor (shipped units.py uses PEP 695, which needs Python 3.12; sandbox is 3.11)."
+  },
+  {
+   "task_id": "M0-T055",
+   "directive_id": "D-010",
+   "producer": "orchestrator",
+   "verifier": "directive-compliance-verifier",
+   "applicable_requirement_ids": [
+    "D-010-R320",
+    "D-010-R321",
+    "D-010-R322",
+    "D-010-R323",
+    "D-010-R324",
+    "D-010-R325",
+    "D-010-R326",
+    "D-010-R327",
+    "D-010-R328",
+    "D-010-R329",
+    "D-010-R330",
+    "D-010-R331",
+    "D-010-R332",
+    "D-010-R333",
+    "D-010-R334",
+    "D-010-R335",
+    "D-010-R337",
+    "D-010-R340",
+    "D-010-R341",
+    "D-010-R342",
+    "D-010-R343"
+   ],
+   "reviewed_manifest_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+   "reviewed_sha": "003c7b92b7085256cf85fd745bca8ca1d133f6ed",
+   "verified_at": "2026-08-09T18:35:00+00:00",
+   "requirements": [
+    {
+     "id": "D-010-R320",
+     "state": "PASS",
+     "evidence": [
+      "docs/LEAN_OPERATING_PROCESS.md:3-5",
+      "docs/LEAN_OPERATING_PROCESS.md:9-10"
+     ],
+     "note": "Guiding rule stated verbatim; line-count reduction not an acceptance criterion; policy-only."
+    },
+    {
+     "id": "D-010-R321",
+     "state": "PASS",
+     "evidence": [
+      "docs/LEAN_OPERATING_PROCESS.md:14-29",
+      "docs/LEAN_OPERATING_PROCESS.md:31-37"
+     ],
+     "note": "Canonical record = per-task progress_log + git + CI; no new DB/service/parallel source of truth; no historical evidence deleted."
+    },
+    {
+     "id": "D-010-R322",
+     "state": "PASS",
+     "evidence": [
+      "docs/LEAN_OPERATING_PROCESS.md:87-89"
+     ],
+     "note": "Minimal unit event (A2) captures all required fields; not re-narrated into several files."
+    },
+    {
+     "id": "D-010-R323",
+     "state": "PASS",
+     "evidence": [
+      "docs/LEAN_OPERATING_PROCESS.md:39-45",
+      "docs/LEAN_OPERATING_PROCESS.md:47-52"
+     ],
+     "note": "7-field <=~2000-tok handoff + the six real-seam triggers match the source exactly."
+    },
+    {
+     "id": "D-010-R324",
+     "state": "PASS",
+     "evidence": [
+      "docs/LEAN_OPERATING_PROCESS.md:54-62"
+     ],
+     "note": "1-2 seam-PR batching with full pre-action-durability carve-outs; never combine product code + privileged controller changes."
+    },
+    {
+     "id": "D-010-R325",
+     "state": "PASS",
+     "evidence": [
+      "docs/LEAN_OPERATING_PROCESS.md:35-37",
+      "docs/LEAN_OPERATING_PROCESS.md:114"
+     ],
+     "note": "A5 generated objective reporting via projection principle; obligation established, not weakened."
+    },
+    {
+     "id": "D-010-R326",
+     "state": "PASS",
+     "evidence": [
+      "docs/LEAN_OPERATING_PROCESS.md:85-86"
+     ],
+     "note": "A6 control-plane effort <=~15-20% target with exact carve-outs."
+    },
+    {
+     "id": "D-010-R327",
+     "state": "PASS",
+     "evidence": [
+      "docs/LEAN_OPERATING_PROCESS.md:82-84"
+     ],
+     "note": "A7 safer packets: bounded allowed_paths incl. generated artifact + generator + focused tests + wiring; no broad wildcards."
+    },
+    {
+     "id": "D-010-R328",
+     "state": "PASS",
+     "evidence": [
+      "docs/LEAN_OPERATING_PROCESS.md:99-102",
+      "docs/LEAN_OPERATING_PROCESS.md:5"
+     ],
+     "note": "B1 preserve-list reproduced in full; line-count not an acceptance criterion."
+    },
+    {
+     "id": "D-010-R329",
+     "state": "PASS",
+     "evidence": [
+      "docs/LEAN_OPERATING_PROCESS.md:66-70"
+     ],
+     "note": "B2 centralize doctrine; keep security-rationale / past-defect comments."
+    },
+    {
+     "id": "D-010-R330",
+     "state": "PASS",
+     "evidence": [
+      "docs/LEAN_OPERATING_PROCESS.md:71"
+     ],
+     "note": "B3 shared typed results only where repetition real and semantics identical; no framework/DSL."
+    },
+    {
+     "id": "D-010-R331",
+     "state": "PASS",
+     "evidence": [
+      "docs/LEAN_OPERATING_PROCESS.md:72"
+     ],
+     "note": "B4 one closed/typed/deterministic/tested survey rule table; unknowns fail closed."
+    },
+    {
+     "id": "D-010-R332",
+     "state": "PASS",
+     "evidence": [
+      "docs/LEAN_OPERATING_PROCESS.md:73-74"
+     ],
+     "note": "B5 short typed errors with structured metadata; no essays."
+    },
+    {
+     "id": "D-010-R333",
+     "state": "PASS",
+     "evidence": [
+      "docs/LEAN_OPERATING_PROCESS.md:75-77"
+     ],
+     "note": "B6 parameterized adversarial tests; preserve every case; never merge tests that hide which invariant failed."
+    },
+    {
+     "id": "D-010-R334",
+     "state": "PASS",
+     "evidence": [
+      "docs/LEAN_OPERATING_PROCESS.md:78"
+     ],
+     "note": "B7 generated contract types deterministic/drift-checked/CI-covered; no parallel hand-written types."
+    },
+    {
+     "id": "D-010-R335",
+     "state": "PASS",
+     "evidence": [
+      "docs/LEAN_OPERATING_PROCESS.md:79-81"
+     ],
+     "note": "B8 cohesive modules; abstraction only to remove real repetition or protect an invariant."
+    },
+    {
+     "id": "D-010-R337",
+     "state": "PASS",
+     "evidence": [
+      "docs/LEAN_OPERATING_PROCESS.md:113-115",
+      "git show --name-only 5792bad = no apps/services/tools"
+     ],
+     "note": "C-Phase1 delivered: smallest prospective policy; no supervisor-core or product-module code changed."
+    },
+    {
+     "id": "D-010-R340",
+     "state": "PASS",
+     "evidence": [
+      "project-control/reports/M0-T055-partD-review.md",
+      "project-control/reports/M0-T055-G3-code-review.md",
+      "project-control/reports/M0-T055-G5-security-review.md",
+      "docs/LEAN_OPERATING_PROCESS.md:107-109"
+     ],
+     "note": "Independent Part-D review performed AND policy captured; load-bearing claims reproduced (additive-only, digest match, validator exit 0); REVISE triggers absent."
+    },
+    {
+     "id": "D-010-R341",
+     "state": "PASS",
+     "evidence": [
+      "docs/LEAN_OPERATING_PROCESS.md:103-106",
+      "git show --name-only 5792bad = no protected-config/ACL/activation/hooks/settings"
+     ],
+     "note": "Part E prohibitions captured and complied with: no LIMITED-AUTO, no activation change, no history rewrite, no evidence deletion, M0-T054/M2-T015 untouched."
+    },
+    {
+     "id": "D-010-R342",
+     "state": "PASS",
+     "evidence": [
+      "docs/LEAN_OPERATING_PROCESS.md:14-115 (items 1-8)",
+      "docs/LEAN_OPERATING_PROCESS.md:111-123 (items 9-10 deferred post-M2-T016)"
+     ],
+     "note": "PASS at the scope DUE at M0-T055: items 1-8 returned; items 9-10 inherently future by the directive's own phasing and honestly marked pending/conditional (not claimed done); they bind the post-M2-T016 seam."
+    },
+    {
+     "id": "D-010-R343",
+     "state": "PASS",
+     "evidence": [
+      "docs/LEAN_OPERATING_PROCESS.md:103-104",
+      "no R595 activation at HEAD (policy-only)"
+     ],
+     "note": "Deliverable consistent with the standing resolution: R595 kept record-intent-only, NOT self-authorized at the frozen head. (Later owner R595 authorization is captured as source-030 and binds M0-T056.)"
+    }
+   ],
+   "note": "Independent DCV (directive-compliance-verifier) at frozen HEAD 37667ff; applicable set re-derived to exactly 21 ids (R336/R338/R339 excluded, bind M2-T016); all 21 PASS, 0 violated / 0 unverifiable. Content identity e3b0c44 (empty allowed_paths), reviewed_sha == HEAD. validate_directive_compliance exit 0; suites test_directive_compliance 102 / test_project_control / test_directive_reminder 12 green. G3 code-reviewer PASS + G5 security-reviewer PASS + Part-D control-plane-verifier PASS on file. R342 PASS at M0-T055 scope (items 9-10 deferred post-M2-T016); R343 record-intent-only preserved."
   }
  ],
- "updated_at": "2026-08-09T17:54:20.885331+00:00"
+ "updated_at": "2026-08-09T18:35:00+00:00"
 }
