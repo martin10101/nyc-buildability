@@ -27,19 +27,23 @@ HEAD ≈ `9b47b00` (verify live). Do control-plane accept work HERE. The ledger 
    allowlist (now accepted at real identity `f3a6a363`), 3 dead locals removed. BOTH reviews PASS (G3
    code-review + control-plane-verifier). D-001 empty-set verification row (0 applicable, M2-T014 precedent).
 
-### NEXT — Step 4: supervisor safety fixes P1, P2, P3, P6 (owner directive; each its own gate wave)
-The real remaining engineering before M0-T056/R595. All in `tools/agent_supervisor/`. Pinned in
+### NEXT — Step 4: supervisor safety fixes P1/P2/P3/P6 — CONTRACTED as M0-T058..T061 (each its own gate wave)
+The real remaining engineering before M0-T056/R595. All in `tools/agent_supervisor/`, under the
+supervisor-freeze lane (defect-only, cited evidence, gates **G0/G2/G3/G5**, must re-establish the M0-T039
+**≥1165-test baseline, 0 failures**). All four are tracked backlog tasks (directive_refs D-010:ALL, qualifying
+evidence + acceptance scenarios in each packet); **no producers dispatched yet** — run each gate wave
+coherently (contract→claim→producer in an isolated worktree→G3+G5→DCV→accept). Pinned in
 `reports/M0-T036-ACTIVATION-CHECKLIST.md`:
-- **P1** `claude_runner.py:1283-1298` — capture `terminate_all()`'s bool, bounded `process.wait()`, raise a
-  DISTINCT code if the child is still alive (today it asserts a termination it never verifies → live
-  unrecorded orphan → next `start` double-launches; D-010-R347).
-- **P2** `recovery.py:190-191` — `clear_child_record` must remove by `(pid, start_token)`, not whole-key
-  (fail-open once M0-T056's successor-launch seam records anything).
-- **P3** achieved per-cycle containment `run_result.containment != "job_object"` must **STOP/PAUSE**, not
-  merely record (criterion-2 enforcement; unattended nobody reads the audit line).
-- **P6** reviewer-silence — a dispatched-but-silent reviewer must be a hard fail-closed STOP with a recorded
-  reason: bounded timeout detection → one controlled retry/re-dispatch → PAUSE/STOP with visible evidence.
-  Additive to the acceptance gate (which already fails closed), NOT a duplicate.
+- **M0-T058 (P1)** `claude_runner.py:1283-1298` — capture `terminate_all()`'s bool, bounded `process.wait()`,
+  raise a DISTINCT code if the child is still alive (unverified termination assertion → live orphan → next
+  `start` double-launches; D-010-R347).
+- **M0-T059 (P2)** `recovery.py:190-191` — `clear_child_record` remove by `(pid, start_token)`, not whole-key.
+  **depends_on M0-T058** (both edit claude_runner.py — build P1 first, never parallel).
+- **M0-T060 (P3)** achieved per-cycle containment `!= "job_object"` must **STOP**, not merely record.
+  **depends_on M0-T058**; producer confirms exact file (loop.py/claude_runner.py) at G0.
+- **M0-T061 (P6)** reviewer-silence → bounded timeout → ONE retry → hard fail-closed **STOP** with recorded
+  reason; additive to (not a duplicate of) `accept`. Disjoint module (review_cadence/ephemeral_review/
+  codex_reviewer) → **may parallelize** once its file set is confirmed disjoint at G0.
 
 ### Non-blocking follow-ups recorded (do NOT reopen accepted work)
 - Drain **M0-T056** from `_EMPTY_IDENTITY_GRANDFATHERED` (it gained real paths → now resolves non-empty; the
