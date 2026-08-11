@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { createHttpSurveyReviewClient } from "@/lib/surveyReview/api";
+import { boundedEvidenceId, createHttpSurveyReviewClient } from "@/lib/surveyReview/api";
 import {
   createMockSurveyReviewClient,
   seedStore,
@@ -207,5 +207,51 @@ describe("survey-review client — authorization (SC-S3)", () => {
     const out = await createMockSurveyReviewClient().confirmDocument({ documentDigest: DIGEST_USER });
     expect(out.kind).toBe("error");
     if (out.kind === "error") expect(out.reject_code).toBe("unauthorized_transition_actor");
+  });
+});
+
+describe("boundedEvidenceId — rejected_fact_ids must survive sanitization", () => {
+  // Regression: `boundedToken` strips `:`, so a colon-delimited evidence id came
+  // back as `sevdocp13` and no longer matched any `fact.evidence_id` — the UI
+  // could not point the reviewer at the facts that blocked confirmation.
+  const SANITIZER_CASES: ReadonlyArray<[string, unknown, string | null]> = [
+    ["keeps a colon-delimited evidence id intact", "sev:doc:p1:3", "sev:doc:p1:3"],
+    ["keeps the dot/underscore/hyphen charset", "sev:doc-a.b_c:9", "sev:doc-a.b_c:9"],
+    ["strips markup rather than passing it through", "sev:doc<script>:1", "sev:docscript:1"],
+    ["strips whitespace", "sev :doc\tp1", "sev:docp1"],
+    ["returns null for a value that sanitizes to empty", "<<<>>>", null],
+    ["returns null for an empty string", "", null],
+    ["returns null for a non-string", 42, null],
+    ["returns null for null", null, null],
+  ];
+
+  it.each(SANITIZER_CASES)("%s", (_label, input, expected) => {
+    expect(boundedEvidenceId(input)).toBe(expected);
+  });
+
+  it("bounds the length", () => {
+    expect(boundedEvidenceId("a".repeat(500))?.length).toBe(128);
+  });
+
+  it("drops unsanitizable entries from rejectedFactIds instead of emitting them raw", async () => {
+    const client = createMockSurveyReviewClient(seedStore());
+    const doc = await read(client, DIGEST_PRO);
+    await client.correctFact({
+      documentDigest: DIGEST_PRO,
+      evidenceId: AREA,
+      corrected_normalized_value: 4800,
+      corrected_units: "square_feet",
+      reason: "resolve",
+      accepted_history_fingerprint: fp(doc, AREA),
+    });
+    await client.rejectFact({ documentDigest: DIGEST_PRO, evidenceId: NORTH, reason: "AI guess unusable" });
+    const out = await client.confirmDocument({ documentDigest: DIGEST_PRO });
+    expect(out.kind).toBe("error");
+    if (out.kind !== "error") return;
+    // The real id round-trips, and every emitted entry is a sanitized string.
+    expect(out.rejectedFactIds).toContain(NORTH);
+    for (const id of out.rejectedFactIds ?? []) {
+      expect(boundedEvidenceId(id)).toBe(id);
+    }
   });
 });

@@ -68,6 +68,25 @@ const REJECT_CODES: ReadonlySet<string> = new Set<ReviewRejectCode>([
 ]);
 
 /**
+ * Bounded sanitizer for an evidence id. Same defensive shape as `boundedToken`
+ * (non-string rejected, hostile characters stripped, length bounded, empty ->
+ * null) but the charset keeps `:` because evidence ids are colon-delimited
+ * (`sev:doc:p1:3`). `boundedToken` would flatten that to `sevdocp13`, and a
+ * rejected-fact id that no longer equals any `fact.evidence_id` cannot be
+ * matched back to the fact that blocked confirmation.
+ */
+const MAX_EVIDENCE_ID_LENGTH = 128;
+
+export function boundedEvidenceId(
+  value: unknown,
+  max: number = MAX_EVIDENCE_ID_LENGTH,
+): string | null {
+  if (typeof value !== "string") return null;
+  const cleaned = value.replace(/[^A-Za-z0-9._:-]/g, "").slice(0, max);
+  return cleaned === "" ? null : cleaned;
+}
+
+/**
  * AWAITING-BACKEND capability surface (workflow §5.2). Until the review read
  * returns the principal's capabilities, actions are shown enabled and the
  * server's typed `unauthorized_review_action` refusal is surfaced in plain
@@ -191,7 +210,12 @@ function decodeError(
     const detail = asRecord(record?.detail);
     const rejected = detail?.rejected_fact_ids;
     if (Array.isArray(rejected)) {
-      error.rejectedFactIds = rejected.map((id) => boundedToken(id, 128) ?? String(id));
+      // An entry that sanitizes to nothing is DROPPED, not passed through as
+      // `String(id)` — falling back to the raw value would defeat the sanitizer
+      // for exactly the hostile inputs it exists to bound.
+      error.rejectedFactIds = rejected
+        .map((id) => boundedEvidenceId(id))
+        .filter((id): id is string => id !== null);
     }
     return error;
   }
