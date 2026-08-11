@@ -3,86 +3,70 @@
 **Authoritative state:** the `project-control/` ledger + git + CI. On resume, read it live —
 `python tools/project_control.py status` and `python tools/current_state.py` — and reconcile against
 the remote: **origin/main may have advanced, so do not trust any SHA here as still-current.** This
-file is orientation only. Rules/gates/workflow routes live in `CLAUDE.md`. Old blocks (1–15) via
+file is orientation only. Rules/gates/workflow routes live in `CLAUDE.md`. Old blocks via
 `git log -p docs/SESSION_HANDOFF.md`. Keep CURRENT-ONLY: the `context-budget` CI check fails > ~4000 tok.
 
-## SESSION 16 — D-010-R283 acceptance chain landed; P1/P2/P3/P6 are the remaining work
+## SESSION 17 — supervisor safety fixes P1/P6/P2 ACCEPTED; P3 + follow-ups + go-live remain
 
-Refreshed **2026-08-11 (session 16; `claude-opus-4-8`)**. **Accepted = 78.** Owner directive captured as
-**D-011 amendment-003** (`directives/D-011-bounded-truth-reconciliation/source-003-amendment.md`). The
-integration branch is **PR #220 `control/session15-acceptance`**, worktree `.claude/worktrees/session15-acc`,
-HEAD ≈ `3a6b2c5` (verify live). Do control-plane accept work HERE. The ledger wins.
+Refreshed **2026-08-11 (session 17; `claude-opus-4-8`)**. **Accepted = 81.** Integration branch is
+**PR #220 `control/session15-acceptance`**, worktree `.claude/worktrees/session15-acc`, HEAD ≈ `a80e718`
+(verify live; pushed). Owner go-live authorization = **D-011 amendment-004** (R030/R031/R032): full Codex
+go-live AUTHORIZED but **strictly sequenced after** P1/P2/P3/P6 accepted + follow-ups + #220→main. Do
+control-plane accept work HERE. The ledger wins.
 
-### PATH TO CODEX (ordered runway — what's left)
-1. **P1 M0-T058** gate wave → accept (build first; P2/P3 branch off its claude_runner.py).
-2. **P2 M0-T059** + **P3 M0-T060** gate waves (after P1) → accept. **P6 M0-T061** may run in parallel.
-3. Follow-ups: drain M0-T056 grandfather entry; add the M0-T057 O1 justification test; run **M0-T047/#219**
-   (nanoid) gate wave → accept → merge #219 to main.
-4. **Merge PR #220 → main** (Tier A, after required checks green) so the accepted ledger + guard land on main.
-5. **M0-T056** (R595 production actuation) — **AUTHORIZED** (D-011 amendment-004): build + full gate wave
-   (G0/G2/G3/G5 + DCV) + accept.
-6. **Activate R595 + add the accept allowlist** — **AUTHORIZED** (D-011 amendment-004): take the supervisor
-   live to run Codex end-to-end.
-All six steps are now authorized; **steps 5–6 are SEQUENCED strictly after** P1-P6 land + follow-ups + #220→main
-(D-011 R031 — safety prerequisites NOT waived). A failed gate / reproduced defect / unresolvable contradiction
-still STOPS and returns to the owner.
+### Done this session (all on #220, pushed)
+- **M0-T058 (P1) ACCEPTED (79)** at `9239cc3` — honest `child_record_unwritable_orphan_live` reason code
+  (captures terminate_all() bool + bounded process.wait(10s); closes the unverified-termination double-launch).
+- **M0-T061 (P6) ACCEPTED (80)** at `fd7d9fa` — dispatched-but-silent reviewer → one re-dispatch → hard
+  fail-closed STOP (`SILENT_NO_VERDICT_CODES`; `schema_retry_exhausted`/validation correctly excluded).
+- **M0-T059 (P2) ACCEPTED (81)** at `a80e718` — `clear_child_record` removes only `(pid, start_token)`, not
+  whole-key (closes the R347 fail-open; + `recorded_start_token_for`; companion 2-line spy fix in
+  `test_start_reentry` under an orchestrator-authorized scope expansion).
+- Each: G0/G2/G3/G5 all PASS at reviewed_sha==HEAD + independent DCV (empty D-010 set — honest, see below).
+  Freeze baseline re-established at each accept (now **1188** 20-module unittest / **1506** full pytest, 0 fail).
 
-### Done this session (fixed order D-010-R283) — all on #220, pushed
-1. **M2-T016 ACCEPTED** (76) at repaired identity `ac3d45cb`. Fresh independent DCV 77/77 D-010 PASS
-   (`reports/M2-T016-DCV-final-ac3d45cb.json`); gates G0/G2/G3/G4/G5; new independent **frontend G5 delta**
-   PASS (`reports/M2-T016-frontend-G5-delta-security-review.md`) closed the outstanding G5-delta gap; G4 =
-   all required CI green at `e3c2ce6`. **B-001 precision fix**: it named the survey-review UI task in its
-   prose, which the accept-guard word-matched as a false block; the authoritative `affects` names M2-T019
-   (the production ReviewStore), not the UI task — described generically; no hold weakened.
-2. **M0-T053 ACCEPTED** (77) at identity `e6746f68`. DCV 4/4 D-010 PASS; gates G0/G2/G3/G5. Its G5's three
-   items are pinned **P1/P2/P3** (pre-M0-T056, non-blocking for M0-T053).
-3. **M0-T057 ACCEPTED** (78) at identity `6525ddfb` — the empty-identity fail-closed guard (D-011 item 6).
-   Cherry-picked from `task/M0-T057-empty-identity-guard`, **M0-T055 drained** from the c17 grandfather
-   allowlist (now accepted at real identity `f3a6a363`), 3 dead locals removed. BOTH reviews PASS (G3
-   code-review + control-plane-verifier). D-001 empty-set verification row (0 applicable, M2-T014 precedent).
+### NEXT — runway (ordered; D-011 amendment-004)
+1. **P3 M0-T060** — the LAST supervisor safety fix (achieved per-cycle containment `!= job_object` must STOP,
+   not merely record). depends_on M0-T058 (accepted). **Shares claude_runner.py with P2 → build off post-P2
+   HEAD.** Producer confirms exact file (loop.py likely; claude_runner.py/state_machine.py) at G0. Full gate
+   wave (G0/G2/G3/G5 + DCV + accept), supervisor-freeze, ≥1165 baseline + full-pytest parity.
+2. **Follow-ups:** drain M0-T056 from `_EMPTY_IDENTITY_GRANDFATHERED` (inert — gained real paths); add the
+   M0-T057 O1 empty/whitespace `path_free_justification` unit assertion; run **M0-T047/#219** (nanoid 3.3.17)
+   through its full G0/G2/G3/G5 + **D-009** DCV + accept, then merge #219 to main.
+3. **Merge PR #220 → main** (Tier A, after required checks green). Note: #220's `web-dependency-security`
+   stays red on nanoid until #219's fix reaches this branch (known non-required; D-011 item 1).
+4. **M0-T056** (R595 production actuation) — **AUTHORIZED**: build + full gate wave (G0/G2/G3/G5 + DCV) + accept.
+5. **Activate R595 + add the accept allowlist** — **AUTHORIZED** — supervisor live end-to-end. ONLY after
+   M0-T056 accepted. Verify default_mode flips off shadow + the live proof host satisfies the C1 Job-Object
+   gate (P8: POSIX/Render hard-refuses `start`). Steps 4-5 STRICTLY after 1-3 (R031, safety bar NOT waived).
 
-### NEXT — Step 4: supervisor safety fixes P1/P2/P3/P6 — CONTRACTED as M0-T058..T061 (each its own gate wave)
-The real remaining engineering before M0-T056/R595. All in `tools/agent_supervisor/`, under the
-supervisor-freeze lane (defect-only, cited evidence, gates **G0/G2/G3/G5**, must re-establish the M0-T039
-**≥1165-test baseline, 0 failures**). All four are tracked backlog tasks (directive_refs D-010:ALL, qualifying
-evidence + acceptance scenarios in each packet); **no producers dispatched yet** — run each gate wave
-coherently (contract→claim→producer in an isolated worktree→G3+G5→DCV→accept). Pinned in
-`reports/M0-T036-ACTIVATION-CHECKLIST.md`:
-- **M0-T058 (P1)** `claude_runner.py:1283-1298` — capture `terminate_all()`'s bool, bounded `process.wait()`,
-  raise a DISTINCT code if the child is still alive (unverified termination assertion → live orphan → next
-  `start` double-launches; D-010-R347).
-- **M0-T059 (P2)** `recovery.py:190-191` — `clear_child_record` remove by `(pid, start_token)`, not whole-key.
-  **depends_on M0-T058** (both edit claude_runner.py — build P1 first, never parallel).
-- **M0-T060 (P3)** achieved per-cycle containment `!= "job_object"` must **STOP**, not merely record.
-  **depends_on M0-T058**; producer confirms exact file (loop.py/claude_runner.py) at G0.
-- **M0-T061 (P6)** reviewer-silence → bounded timeout → ONE retry → hard fail-closed **STOP** with recorded
-  reason; additive to (not a duplicate of) `accept`. Disjoint module (review_cadence/ephemeral_review/
-  codex_reviewer) → **may parallelize** once its file set is confirmed disjoint at G0.
+### Carried M0-T056 pre-actuation residuals (do not assume closed)
+P1/P6/P2/P3 ARE the pre-M0-T056 corrections (activation-checklist §2026-08-11 pin). Now landing. Plus **G5 LOW
+advisory (M0-T059)**: if M0-T056 adds a concurrent recorder settling the same pid, use an atomic read-modify-write
+in `clear_child_record`/`recorded_start_token_for` (two `get_state` reads today; benign single-threaded, fails
+closed). M0-T056 also: adds a 2nd spawner (`turnover_adapters.py make_subprocess_command_runner`) + removes the
+human — the reason these residuals matter.
 
-### Non-blocking follow-ups recorded (do NOT reopen accepted work)
-- Drain **M0-T056** from `_EMPTY_IDENTITY_GRANDFATHERED` (it gained real paths → now resolves non-empty; the
-  entry is inert; control-plane-verifier flagged it). Do at the next control-plane touch (moving it now would
-  disturb M0-T057's accepted identity).
-- Add a unit assertion for empty/whitespace/non-string `path_free_justification` (M0-T057 O1; code already
-  fails closed).
-- **PR #219 / M0-T047** (nanoid 3.3.17): the override + CI-regenerated lock exist on `task/M0-T047-nanoid-lock`
-  and #219 is mergeable, but **M0-T047 is still backlog with ZERO gates** — it is NOT a bare merge. Run its full
-  gate wave (claim → G0/G2/G3/G5 → D-009 DCV → accept, like M0-T057 was landed) THEN merge; merging un-gated
-  code is not permitted even under the owner's "when convenient". #220's own `web-dependency-security` stays red
-  on nanoid until the fix reaches this branch (known non-required; D-011 item 1).
+### Session-17 accept mechanics (proven; reuse)
+- **Producers auto-isolate off origin/main** (lags #220 by ~40 commits). Instruct each producer, in ITS OWN
+  `agent-<id>` worktree, to `git reset --hard <post-dep-accept-sha>` first (lossless — main is an ancestor);
+  extract the fix as `git diff <sha>..HEAD` and cherry-pick onto #220. Guard EVERY producer prompt: before any
+  git write, `git rev-parse --show-toplevel` must contain `.claude/worktrees/agent-` (else STOP — a git write in
+  the primary checkout corrupts orchestrator state; happened + self-restored session 17).
+- **NEVER resume a TaskStop-KILLED producer** (its worktree is torn down → resume lands in the primary checkout).
+  Natural-completion resume via SendMessage is safe (worktree persists). Dispatch fresh instead.
+- **Read-only reviewers run IN `session15-acc` at HEAD** (not isolated); their safety guard correctly refuses the
+  reset — so review at the current HEAD directly (`git show/diff <sha>`), no reset instruction needed.
+- **These new supervisor tasks have an EMPTY D-010 applicable set** (`derive_applicable → []`): D-010 rows are
+  task_ids-scoped to prior tasks (R347→M0-T056, not the fix task). Record an empty-set `task_verifications` row
+  (verifier=directive-compliance-verifier ≠ producer) so accept()'s cited-directive check passes; substance is G3+G5.
+- Keep accept evidence UNCOMMITTED until after accept (reviewed_sha==HEAD); material identity stable across
+  control-plane commits; gates stamped at HEAD. `project-control/**`+`directives/**` explicit LF; stage exact
+  paths. **CI ruff runs only in `services/api`** (tools/ not linted); the CI `supervisor-bridge` job runs the FULL
+  `pytest tools/test_agent_supervisor_*.py` (all 36 modules) — the 20-module freeze list is a SUBSET, so confirm
+  full-pytest parity too. Reviewer/orchestrator model `claude-opus-4-8` xhigh; producers UNNAMED.
 
-### Go-live AUTHORIZED (D-011 amendment-004) + remaining holds
-**Owner authorized full Codex go-live (session 16):** build+accept M0-T056, activate R595, add the accept
-allowlist — **SEQUENCED strictly after** P1/P2/P3/P6 accepted + follow-ups + #220→main (R030/R031). The
-R001-R003/R019/R029 no-actuation holds are LIFTED for that sequence; the safety bar (gates + DCV + freeze
-baseline) is UNCHANGED — do NOT activate R595 before P1-P6 are accepted. Codex model-fallback = RESOLVED
-(tries main model first each session, non-sticky). Still in force: deployment/G6/Graphify/expansion holds;
-`default_mode=shadow` until R595 flips; the live proof host must satisfy the C1 Job-Object gate (P8).
-
-### Carried rules
-Accept-mechanics recipe (proven again this session): work in the #220 worktree, keep accept evidence
-uncommitted until after accept (`reviewed_sha`==HEAD), material identity stable across control-plane commits;
-fresh independent DCV per task bound to the real identity (never transcribe a stale/narrative DCV); gates
-stamped at HEAD. Producers spawned UNNAMED. `project-control/**`+`directives/**` explicit LF; stage exact
-paths. Reviewer/orchestrator model `claude-opus-4-8` xhigh. Prose `allowed_paths` = empty-set identity (now
-guarded by M0-T057).
+### Still in force
+deployment/G6/Graphify/expansion holds; `default_mode=shadow` until R595 flips; a failed gate / reproduced defect
+/ unresolvable contradiction STOPS and returns to the owner. Codex model-fallback RESOLVED (tries main model first,
+non-sticky).
