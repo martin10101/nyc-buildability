@@ -260,6 +260,15 @@ PROBE_TIMEOUT = "probe_timeout"
 #: wall timeout, which remains reserved for genuinely runaway units.
 GRACEFUL_CLOSE_GRACE_SECONDS = 30.0
 
+#: The `record_launched_child` REFUSAL path (`_record_launched_worker`) must
+#: actually VERIFY the worker it claims to have terminated is gone, but a degraded
+#: taskkill fallback can report failure and the reap check must never block the
+#: refusal forever. So the post-kill `process.wait()` is bounded: it either
+#: observes the exit (proof the child is reaped) or times out, and a timeout with
+#: the child still alive is reported as a possible LIVE ORPHAN rather than as a
+#: termination that never happened.
+CHILD_KILL_REAP_SECONDS = 10.0
+
 
 class RunnerError(Exception):
     """The worker adapter refused to run, or the run could not be trusted."""
@@ -1280,10 +1289,27 @@ class ClaudeRunner:
                                   role=WORKER_CHILD_ROLE,
                                   start_token=process_start_token(process.pid))
         except Exception as exc:
+            # The record failed, so this child must be killed and NOT run. Capture
+            # WHETHER the kill actually succeeded instead of assuming it did: the
+            # degraded taskkill fallback can return False and leave the worker
+            # alive, and the refusal below must not claim a termination that never
+            # happened.
+            killed = False
             try:
-                container.terminate_all()
+                killed = container.terminate_all()
             except Exception:  # pragma: no cover - defensive
-                pass
+                killed = False
+            # Actually verify the child is reaped, but never block the refusal
+            # forever: a bounded wait either observes the exit (proof it is gone)
+            # or times out with the child still alive.
+            reaped = False
+            try:
+                process.wait(timeout=CHILD_KILL_REAP_SECONDS)
+                reaped = True
+            except subprocess.TimeoutExpired:
+                reaped = False
+            except Exception:  # pragma: no cover - defensive
+                reaped = process.poll() is not None
             container.close()
             for pipe in (process.stdin, process.stdout, process.stderr):
                 try:
@@ -1291,6 +1317,19 @@ class ClaudeRunner:
                         pipe.close()
                 except Exception:  # pragma: no cover - defensive
                     pass
+            if not (killed or reaped):
+                # The kill could not be verified and the bounded wait did not see
+                # the child exit: a live orphan may survive. Say so, honestly,
+                # instead of claiming termination - the distinct code lets an
+                # operator hunt the pid rather than trust a false "terminated",
+                # and stops the next `start` from double-launching over it.
+                raise RunnerError(
+                    "child_record_unwritable_orphan_live",
+                    f"the launched worker (pid {process.pid}) could not be recorded in the "
+                    f"durable journal ({exc}) AND its termination could not be verified "
+                    f"(terminate_all reported {killed}; the bounded {CHILD_KILL_REAP_SECONDS}s "
+                    f"reap wait did not observe the child exit); a LIVE ORPHAN may survive that "
+                    f"recovery cannot account for, so the unit refuses") from exc
             raise RunnerError(
                 "child_record_unwritable",
                 f"the launched worker (pid {process.pid}) could not be recorded in the "

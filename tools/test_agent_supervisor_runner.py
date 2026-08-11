@@ -1070,6 +1070,56 @@ class _UnwritableJournal:
         raise OSError("disk is gone")
 
 
+class _FakeKillContainer:
+    """A ProcessContainer stand-in whose `terminate_all()` result is scripted.
+
+    Real `terminate_all()` returns False on the degraded taskkill fallback (a
+    `terminate_process_tree` that returned False), which is exactly the case
+    M0-T058 makes honest.
+    """
+
+    def __init__(self, *, terminate_result: bool) -> None:
+        self._terminate_result = terminate_result
+        self.terminate_calls = 0
+        self.closed = False
+
+    def terminate_all(self) -> bool:
+        self.terminate_calls += 1
+        return self._terminate_result
+
+    def close(self) -> None:
+        self.closed = True
+
+
+class _FakeKillProcess:
+    """A Popen stand-in with a scripted bounded `wait()` and liveness.
+
+    `reaped=True` -> `wait()` returns (the OS reaped the child); `reaped=False`
+    -> `wait()` raises `TimeoutExpired` (the bounded wait elapsed), and
+    `alive_after` is what a follow-up `poll()` would then observe.
+    """
+
+    stdin = None
+    stdout = None
+    stderr = None
+
+    def __init__(self, *, pid: int = 424242, reaped: bool,
+                 alive_after: bool = True) -> None:
+        self.pid = pid
+        self._reaped = reaped
+        self._alive_after = alive_after
+        self.wait_calls: list[object] = []
+
+    def wait(self, timeout: object = None) -> int:
+        self.wait_calls.append(timeout)
+        if self._reaped:
+            return 0
+        raise subprocess.TimeoutExpired(cmd="worker", timeout=timeout)
+
+    def poll(self) -> "int | None":
+        return None if self._alive_after else 0
+
+
 class ProductionChildAccountingTests(RunnerTestBase):
     """C2: `record_launched_child` / `clear_child_record` on the PRODUCTION path.
 
@@ -1218,6 +1268,60 @@ class ProductionChildAccountingTests(RunnerTestBase):
         with self.assertRaises(cr.RunnerError) as ctx:
             self.runner_for(_UnwritableJournal()).run_unit("do the unit")
         self.assertEqual(ctx.exception.code, "child_record_unwritable")
+
+    # M0-T058 (M0-T053 G5 finding 4): the record-unwritable REFUSAL must not
+    # claim a termination it did not verify. `_record_launched_worker` is driven
+    # directly with a fake container/process so the kill result and the reap wait
+    # are controlled without a real, un-killable orphan.
+    def _refuse_record(self, *, terminate_result: bool, reaped: bool,
+                       alive_after: bool = True) -> "tuple[cr.RunnerError, _FakeKillProcess]":
+        runner = self.runner_for(_UnwritableJournal())
+        container = _FakeKillContainer(terminate_result=terminate_result)
+        process = _FakeKillProcess(reaped=reaped, alive_after=alive_after)
+        try:
+            runner._record_launched_worker(process, container)
+        except cr.RunnerError as exc:
+            self.assertTrue(container.closed, "the container must be released on refusal")
+            return exc, process
+        self.fail("an unwritable child record must raise RunnerError")
+
+    def test_p1_sc1_verified_kill_keeps_the_original_reason(self) -> None:
+        """P1-SC1: `terminate_all()` True (or the bounded wait reaps the child)
+        keeps `child_record_unwritable` - the honest code for a worker that IS
+        gone, unchanged from before."""
+        exc, _ = self._refuse_record(terminate_result=True, reaped=False,
+                                     alive_after=True)
+        self.assertEqual(exc.code, "child_record_unwritable")
+        # The other half of "verified": the kill returned False but the bounded
+        # wait actually observed the child exit, which is proof enough.
+        exc2, _ = self._refuse_record(terminate_result=False, reaped=True,
+                                      alive_after=False)
+        self.assertEqual(exc2.code, "child_record_unwritable")
+
+    def test_p1_sc2_unverified_kill_reports_a_possible_live_orphan(self) -> None:
+        """P1-SC2: `terminate_all()` False AND the bounded wait times out with the
+        child still alive -> the DISTINCT reason code, whose message names a live
+        orphan, so nobody is told the worker was terminated when it was not."""
+        exc, _ = self._refuse_record(terminate_result=False, reaped=False,
+                                     alive_after=True)
+        self.assertEqual(exc.code, "child_record_unwritable_orphan_live")
+        self.assertNotEqual(exc.code, "child_record_unwritable")
+        self.assertIn("LIVE ORPHAN", exc.message)
+
+    def test_p1_sc3_the_reap_wait_is_bounded_and_never_hangs(self) -> None:
+        """P1-SC3: the post-kill `process.wait()` is called with a FINITE timeout
+        (never `None`), so the refusal can never block indefinitely on a child
+        that will not die. The timeout path is the one SC2 exercises."""
+        _, process = self._refuse_record(terminate_result=False, reaped=False,
+                                         alive_after=True)
+        self.assertEqual(len(process.wait_calls), 1,
+                         "the bounded wait must run exactly once")
+        timeout = process.wait_calls[0]
+        self.assertIsNotNone(timeout, "an unbounded wait (timeout=None) can hang forever")
+        self.assertIsInstance(timeout, (int, float))
+        self.assertGreater(timeout, 0)
+        self.assertLess(timeout, float("inf"))
+        self.assertEqual(timeout, cr.CHILD_KILL_REAP_SECONDS)
 
     def test_a_runner_without_a_journal_keeps_the_previous_behaviour(self) -> None:
         """The probe/test runners own no journal and must still run unchanged."""
