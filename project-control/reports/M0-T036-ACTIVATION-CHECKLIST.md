@@ -198,3 +198,54 @@ required corrections C1/C2). BINDING for supervised-auto operation from this dat
 
 These pins ADD restrictions; they relax nothing. The N-4 / N-5 / MINOR-2 residuals accepted in
 the owner's activation decision (D-010 source-023) are unchanged.
+
+---
+
+# ACTIVATION-RECORD PIN — 2026-08-11 (M0-T053 G5; recorded by the orchestrator)
+
+Registered at the M0-T053 G5 security review (verbatim:
+`project-control/reports/M0-T053-G5-security-review.md`, VERDICT PASS). M0-T053 closes the C1/C2
+double-launch residual and the reviewer confirms the hole is shut on the production path: it is now
+"two independent live mechanisms" rather than one platform mechanism with the other inert.
+
+**These three items are REQUIRED CORRECTIONS BEFORE M0-T056's FIRST LIVE ACTUATION.** They do NOT
+block M0-T053's acceptance. They are pinned here, in the same place and for the same reason M0-T052's
+C1/C2 produced M0-T053: so the next task cannot be built on the assumption they are already closed.
+The reviewer's exact words: "I would NOT accept an M0-T056 that treats these residuals as already
+closed. I WOULD accept M0-T053 now with them pinned."
+
+Why M0-T056 specifically, and not now: it changes the threat model in two ways M0-T053 never faced —
+it **adds a second spawner** (`turnover_adapters.py:434 make_subprocess_command_runner`, the
+successor-launch seam, currently unwired, spawning via `process.run` with no accounting and no gate),
+and it **removes the human**. Residuals that are tolerable because an operator reads an audit line
+stop being tolerable when nobody is reading.
+
+1. **P1 — verify the termination you assert (G5 finding 4).** `claude_runner.py:1283-1298` discards
+   `container.terminate_all()`'s boolean, swallows exceptions, and never `wait()`/`poll()`s, yet the
+   raised message states the worker was terminated. On the degraded-taskkill path
+   `terminate_process_tree` can legitimately return False. Compound failure = degraded containment +
+   failed journal write + failed kill = a LIVE UNRECORDED orphan with an empty record and a traceback
+   exit, after which the next `start` reads SAFE_CHECKPOINT and DOUBLE-LAUNCHES. Lands squarely on
+   D-010-R347. Fix: capture the boolean, bounded `process.wait()`, and raise a DISTINCT code if the
+   child is still alive.
+2. **P2 — make `clear_child_record` remove by (pid, start_token), not whole-key (G5 finding 5).**
+   `recovery.py:190-191` wipes the whole key, so settle clears records it did not create. Latent today
+   because there is exactly one recorder. The moment M0-T056's successor-launch seam records anything,
+   a worker's clean exit ERASES the live successor's record — fail-open on precisely the
+   no-duplicate-workers invariant R347 makes binding.
+3. **P3 — achieved per-cycle containment must become a STOP, not a record (R4 enforcement half).**
+   M0-T053 enforces criterion (1) of the 2026-08-08 pin (host DEFAULT containment). Criterion (2), the
+   ACHIEVED `containment: job_object` line, is still only recorded on `RunResult.containment` and the
+   `claude_process_started` transition. A cycle whose `run_result.containment != "job_object"` must
+   PAUSE. Unattended, nobody reads the audit line.
+
+Recommended alongside them, not required: **P4** catch `RunnerError` in `cmd_start` as a
+`loop_refusal` payload plus an audited event (G5 finding 7 — `RunnerError` and `LoopError` are
+siblings, so the traceback exit produces no structured refusal record; verified lock-released,
+no partial row, next start not misled, so it is loud and fail-closed but silent to a
+supervisor-of-supervisor); and **P5** register `doctor --live` (`preflight.py:126-131`, spawns a real
+child with no container, record, or gate — pre-existing, cannot duplicate a worker) for the M0-T056
+containment sweep.
+
+This pin ADDS restrictions; it relaxes nothing, and it does not lift or alter the R595 prerequisite
+structure above.
