@@ -9,6 +9,41 @@ Old session blocks (1–10) are recoverable via `git log -p docs/SESSION_HANDOFF
 Refreshed **2026-08-09 (session 11; running on claude-opus-4-8)**. Supersedes older sections; the
 ledger wins on any conflict. (Lean per the parked efficiency directive — see below.)
 
+## SESSION 13 STATE — M0-T055 + M2-T016 built/reviewed/verified, BLOCKED ONLY on the `accept` permission
+
+Refreshed **2026-08-09 (session 13; claude-opus-4-8)**. **Accepted count still 74** (nothing accepted this
+session — see the blocker). Lean 7-field current-state; the ledger wins on conflict.
+
+1. **Active tasks + status.** `M0-T055` (lean-process policy) `awaiting_gate` 96% — fully staged for accept.
+   `M2-T016` (survey review UI + review-action API, Packet C) `in_progress` 95% — fully built + reviewed +
+   DCV-verified, integrated. `M0-T056` (R595 activation) `backlog` — HELD (Tier-D; build not started).
+2. **Active branch + latest safe SHA.** origin/main `37667ff` (unchanged). M2-T016 code branch
+   `task/M2-T016-survey-review` @ `d45f330` → **PR #216** (open, CI running, NOT merged). Backend unit
+   `57d8574`, frontend unit `dc8c5de` (both on the branch).
+3. **Completed units.** M0-T055: G2/G3/G5 PASS + DCV 21/21 PASS; verification.json row IN the D-010 registry;
+   packet corrected (governance type, G0 dropped as structurally non-recordable for an orchestrator-produced
+   task). M2-T016: design spec + backend (G3+G5 delta PASS, blocking C1/F1 found+fixed, 190 tests) + frontend
+   (G3-code + human-journey delta PASS, F1/F3 fixed) + DCV **77/77 PASS** (`reports/M2-T016-DCV-verification.json`).
+   R595 owner authorization captured verbatim (D-010 `source-030-amendment.md`, uncommitted; R344-R351 registry
+   append still owed before any M0-T056 dispatch).
+4. **Current unfinished unit.** M2-T016 control-plane finalization: transcribe the 77-row verification.json into
+   the D-010 registry, record G0/G2/G3/G4/G5 at the acceptance HEAD, create the B-001-blocked survey-review
+   HTTP-route/production-`ReviewStore` follow-up task, merge #216 after CI green, accept. M0-T055: re-stamp
+   reviewed_sha (empty-set identity, stable) + accept.
+5. **Blockers / owner decisions.** **BLOCKER — the `accept` CLI is denied by the auto-mode permission
+   classifier** (only `accept` + directive-registry Bash-writes are gated; build/review/gate/push/PR all work).
+   Nothing lands without the owner allowing/running `python tools/project_control.py accept`. Owner decisions
+   surfaced (mechanisms built, non-blocking): professional-confirmation **role identity** (Tier-D legal);
+   authoritative **survey-geometry** as a profile input (new contracted decision, STOP); **R595** production
+   auto-launch authorized (M0-T056) but build held.
+6. **Exact next action.** Owner: `! python tools/project_control.py accept --task-id M0-T055 --agent orchestrator`
+   (or allow that command). Then finalize + accept M2-T016 (transcribe DCV → registry, record gates at the
+   integration HEAD, merge #216, accept), then optionally the held M0-T056 (R595) build.
+7. **Authoritative evidence.** `project-control/tasks/{M0-T055,M2-T016,M0-T056}.json` progress_logs (canonical);
+   `project-control/reports/M2-T016-*` (verbatim gate reports + DCV JSON + producer report); PR #216;
+   D-010 `verification.json` (M0-T055 row) + `source-030-amendment.md`; worktrees `M2-T016-integrate` (d45f330),
+   `agent-a8724b1c4277f23fe` (backend), `agent-a973a7a01a1a58933` (frontend), `agent-a670edbfa2d06a655` (spec).
+
 ## SESSION 12 STATE — M0-T054 + M2-T015 BOTH ACCEPTED (74); next = M2-T016 / M0-T055
 
 Refreshed **2026-08-09 (session 12; claude-opus-4-8)**. **Accepted count 74.** Main **`d265269`** (verify).

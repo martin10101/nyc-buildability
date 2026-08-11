@@ -1,7 +1,7 @@
 {
   "task_id": "M0-T055",
   "title": "Lean operating process \u2014 Phase 1 policy (product-efficiency directive)",
-  "task_type": "backend",
+  "task_type": "governance",
   "milestone_id": "M0",
   "objective": "PHASE 1 (policy-only, no product/supervisor-code changes, no repo-wide refactor): establish the lean operating rules. Deliverables: (1) A1 map of duplicated control-plane facts + the SELECTED canonical routine execution record (smallest existing machine-readable record; prefer the journal/ledger; no new DB; no deletion of historical evidence); (2) a concise lean-operating-process POLICY (canonical record; minimal unit-completion event; seam-only handoffs with the 6 triggers + 7-field <=2000-tok format; 1-2 routine control-PR batching rule; generated objective reporting; concise-code + parameterized-test + safer-packet expectations); (3) proof no safety/evidence/gate/provenance requirement was removed. Rules apply PROSPECTIVELY (M2-T016 first). Independent Part-D review (evidence loss, weakened fail-closed, directive-compliance incompatibility, source-of-truth ownership, excessive abstraction, less-diagnostic tests, product delay).",
   "business_reason": "Owner product-efficiency directive (D-010 source-029, R320-R343): reduce duplicated control-plane work + code verbosity WITHOUT weakening verification/testing/provenance/safety. Phase 1 = smallest prospective policy-only changes; Part D requires independent review; prospective (M2-T016 is the first task under it).",
@@ -12,7 +12,6 @@
   "forbidden_paths": [],
   "acceptance_scenarios": [],
   "required_gates": [
-    "G0",
     "G2",
     "G3",
     "G5"
@@ -23,12 +22,12 @@
     "security-reviewer",
     "control-plane-verifier"
   ],
-  "status": "in_progress",
-  "progress_percent": 95,
+  "status": "awaiting_gate",
+  "progress_percent": 85,
   "risks": [],
   "blockers": [],
   "created_at": "2026-08-09T09:04:52.369280+00:00",
-  "updated_at": "2026-08-09T09:17:34.441156+00:00",
+  "updated_at": "2026-08-10T01:14:03.645834+00:00",
   "directive_refs": [
     {
       "directive_id": "D-010",
@@ -58,6 +57,13 @@
       "percent": 95,
       "status": "in_progress",
       "message": "Part-D independent review (control-plane-verifier) = PASS, preserved verbatim at project-control/reports/M0-T055-partD-review.md. All 7 owner Part-D checks CLEAN (no evidence loss, no weakened fail-closed, no directive-compliance incompatibility, clear source-of-truth, no excessive abstraction, no less-diagnostic tests, no product delay) + verbatim capture confirmed (source-029 SHA matches manifest), validator PASS (343 reqs), prospective marking correct, R595 record-intent resolution consistent with holds. Two non-blocking accept-time advisories: (1) M0-T055 empty acceptance_scenarios/allowed_paths acceptable (orchestrator producer, no code paths); (2) return items 9-10 legitimately deferred to Phase 2/3 - carry as justified pending/NA in verification.json at acceptance (R342/R338/R339). REMAINING for M0-T055 acceptance: record G0/G2 + the G3/G5 independent-reviewer gates (dispatch code-reviewer G3 + security-reviewer G5) + directive verification.json (R320-R343 rows; R338/R339/R342 pending-with-justification; R336 NA-post-acceptance) + accept. Phase 1 policy is on main (PR #206, 7c529f1); it governs M2-T016 onward."
+    },
+    {
+      "at": "2026-08-10T01:02:59.142049+00:00",
+      "agent": "orchestrator",
+      "percent": 96,
+      "status": "in_progress",
+      "message": "G3 code-reviewer PASS + G5 security-reviewer PASS preserved verbatim (reports/M0-T055-G3-code-review.md, reports/M0-T055-G5-security-review.md); Part-D control-plane-verifier PASS on file. Independent DCV dispatched for the 21 applicable D-010 reqs (R320-R335,R337,R340-R343) at HEAD 37667ff. NEXT: assemble verification.json + record G0/G2/G3/G5 + accept."
     }
   ],
   "worktree": "C:/Users/MLFLL/Downloads/nyc-zoning/nyc-development-feasibility-claude-pack"
