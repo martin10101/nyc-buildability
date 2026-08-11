@@ -187,8 +187,40 @@ def record_launched_child(journal: Any, *, pid: int, role: str,
     journal.set_state(CHILD_PROCESSES_KEY, recorded)
 
 
-def clear_child_record(journal: Any) -> None:
-    journal.set_state(CHILD_PROCESSES_KEY, [])
+def clear_child_record(journal: Any, *, pid: int, start_token: str = "") -> None:
+    """Remove ONLY the recorded child matching ``(pid, start_token)``.
+
+    A settle clears exactly the one child it launched and reaped; every other
+    recorded child stays intact. Wiping the whole key here (the pre-M0-T059
+    behavior) is latent today with a single recorder, but fails OPEN on the
+    no-duplicate-workers invariant the moment a second child is recorded - one
+    worker's clean exit would erase a live successor's record (M0-T053 G5
+    finding 5; D-010-R347). ``start_token`` disambiguates a reused pid: an entry
+    whose recorded token differs is an unrelated process and is left untouched.
+    """
+    recorded = journal.get_state(CHILD_PROCESSES_KEY, []) or []
+    remaining = [
+        entry for entry in recorded
+        if not (isinstance(entry, Mapping)
+                and int(entry.get("pid", 0) or 0) == pid
+                and str(entry.get("start_token", "")) == start_token)
+    ]
+    journal.set_state(CHILD_PROCESSES_KEY, remaining)
+
+
+def recorded_start_token_for(journal: Any, pid: int) -> str:
+    """The ``start_token`` recorded for ``pid`` ('' when the pid is not recorded).
+
+    A settle recovers the exact token it journaled at launch so it can clear
+    precisely its own entry: the launch-time token (the process creation stamp)
+    cannot be re-derived once the child has exited, so the durable record is the
+    only faithful source.
+    """
+    recorded = journal.get_state(CHILD_PROCESSES_KEY, []) or []
+    for entry in recorded:
+        if isinstance(entry, Mapping) and int(entry.get("pid", 0) or 0) == pid:
+            return str(entry.get("start_token", ""))
+    return ""
 
 
 # --------------------------------------------------------------------------

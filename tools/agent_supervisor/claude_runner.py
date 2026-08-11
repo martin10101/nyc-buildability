@@ -65,7 +65,11 @@ from .process import (
     minimal_env,
     terminate_process_tree,
 )
-from .recovery import clear_child_record, record_launched_child
+from .recovery import (
+    clear_child_record,
+    record_launched_child,
+    recorded_start_token_for,
+)
 
 #: The exact confirmed base invocation, in order. Kept as data so a test can
 #: assert the shape rather than trusting prose.
@@ -1345,12 +1349,19 @@ class ClaudeRunner:
         still without a returncode is NOT assumed dead: the record stands, and
         the next `start` classifies UNSAFE_OR_DRIFTED rather than launching a
         second worker.
+
+        The clear targets ONLY the `(pid, start_token)` THIS unit recorded, so any
+        other recorded child - notably a live successor a launch seam records under
+        a different pid - survives (M0-T059; M0-T053 G5 finding 5; D-010-R347). The
+        launch-time start_token cannot be re-derived from an exited pid, so it is
+        recovered from the durable record itself.
         """
         if self.journal is None:
             return
         if process.poll() is None:
             return
-        clear_child_record(self.journal)
+        start_token = recorded_start_token_for(self.journal, process.pid)
+        clear_child_record(self.journal, pid=process.pid, start_token=start_token)
 
     def _answer_control_request(
         self,

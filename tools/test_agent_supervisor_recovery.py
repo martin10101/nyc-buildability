@@ -436,8 +436,52 @@ class ChildAccountingTests(RecoveryBase):
 
     def test_clearing_the_record_empties_it(self) -> None:
         rec.record_launched_child(self.journal, pid=1, role="worker")
-        rec.clear_child_record(self.journal)
+        rec.clear_child_record(self.journal, pid=1, start_token="")
         self.assertEqual(rec.account_for_children(self.journal), ())
+
+    def _recorded_pids(self) -> list[int]:
+        recorded = self.journal.get_state(rec.CHILD_PROCESSES_KEY, []) or []
+        return [int(e.get("pid", 0) or 0) for e in recorded]
+
+    def test_p2_sc1_settling_one_child_leaves_a_second_recorded_child(self) -> None:
+        """P2-SC1: clearing one child does NOT wipe a second recorded child.
+
+        The pre-M0-T059 whole-key wipe would fail OPEN here: one worker's clean
+        exit would erase a live successor's record (D-010-R347).
+        """
+        rec.record_launched_child(self.journal, pid=101, role="worker",
+                                  start_token="tokA")
+        rec.record_launched_child(self.journal, pid=202, role="worker",
+                                  start_token="tokB")
+
+        rec.clear_child_record(self.journal, pid=101, start_token="tokA")
+
+        self.assertEqual(self._recorded_pids(), [202],
+                         "only the settled child is cleared; the other survives")
+
+    def test_p2_sc2_settling_an_unrecorded_pid_is_a_no_op(self) -> None:
+        """P2-SC2: clearing a pid that was never recorded touches nothing."""
+        rec.record_launched_child(self.journal, pid=303, role="worker",
+                                  start_token="tokC")
+
+        rec.clear_child_record(self.journal, pid=999, start_token="tokX")
+
+        self.assertEqual(self._recorded_pids(), [303],
+                         "an unrecorded pid leaves every recorded child intact")
+
+    def test_p2_sc3_a_reused_pid_with_a_different_start_token_is_not_cleared(self) -> None:
+        """P2-SC3: start_token disambiguates a reused pid.
+
+        A record for pid P under token B must NOT be cleared by a settle that
+        recorded pid P under token A - they are different processes.
+        """
+        rec.record_launched_child(self.journal, pid=404, role="worker",
+                                  start_token="tokB")
+
+        rec.clear_child_record(self.journal, pid=404, start_token="tokA")
+
+        self.assertEqual(self._recorded_pids(), [404],
+                         "a differing start_token means a reused pid, left untouched")
 
 
 # --------------------------------------------------------------------------
