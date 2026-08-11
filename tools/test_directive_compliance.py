@@ -1611,5 +1611,152 @@ class ControlPlaneMaterialIdentityTests(unittest.TestCase):
                          "a scope with no control-plane paths keeps its existing identity")
 
 
+class EmptyIdentityGuardTests(unittest.TestCase):
+    """D-011 item 6 / M0-T057: a task whose allowed_paths resolve to ZERO tracked files
+    must fail closed instead of silently stamping the empty-set content identity. The one
+    permitted empty identity is an explicitly-declared, justified path-free governance
+    packet."""
+
+    def setUp(self):
+        self.tmp = Path(tempfile.mkdtemp(prefix="emptyident-"))
+        _init_repo(self.tmp)
+        (self.tmp / "code.py").write_text("x = 1\n", encoding="utf-8")
+        _git(self.tmp, "add", "-A")
+        _git(self.tmp, "commit", "-q", "-m", "seed")
+
+    def tearDown(self):
+        shutil.rmtree(self.tmp, ignore_errors=True)
+
+    # ---- path_free_opt_in marker semantics -------------------------------
+
+    def test_absent_marker_is_not_opted_in_and_not_an_error(self):
+        opted, err = dr.path_free_opt_in({"task_id": "M9-T900", "allowed_paths": ["code.py"]})
+        self.assertFalse(opted)
+        self.assertIsNone(err, "a task with real paths must not be forced to declare a marker")
+
+    def test_marker_present_without_justification_is_refused(self):
+        opted, err = dr.path_free_opt_in({dr.PATH_FREE_MARKER: True})
+        self.assertFalse(opted)
+        self.assertIn(dr.PATH_FREE_JUSTIFICATION, err)
+
+    def test_marker_not_boolean_true_is_refused(self):
+        opted, err = dr.path_free_opt_in({dr.PATH_FREE_MARKER: "yes",
+                                          dr.PATH_FREE_JUSTIFICATION: "why"})
+        self.assertFalse(opted)
+        self.assertIn("must be the boolean true", err)
+
+    def test_valid_optin_is_permitted_and_the_justification_is_recorded(self):
+        just = "pure governance replan packet; binds no tracked content by design"
+        task = {dr.PATH_FREE_MARKER: True, dr.PATH_FREE_JUSTIFICATION: just}
+        opted, err = dr.path_free_opt_in(task)
+        self.assertTrue(opted)
+        self.assertIsNone(err)
+        self.assertEqual(task[dr.PATH_FREE_JUSTIFICATION], just,
+                         "the justification stays recorded on the packet the CLI stamps")
+
+    # ---- frozen_git_identity empty-set guard -----------------------------
+
+    def test_prose_allowed_paths_are_refused(self):
+        """The exact defect: a prose entry git matches literally, matching nothing."""
+        prose = ["apps/web/src/** (survey review feature areas)"]
+        ident, _sha, err = dr.frozen_git_identity(prose, root=self.tmp)
+        self.assertIsNone(ident)
+        self.assertIsNotNone(err)
+        self.assertIn("ZERO tracked files", err)
+
+    def test_empty_allowed_paths_are_refused(self):
+        ident, _sha, err = dr.frozen_git_identity([], root=self.tmp)
+        self.assertIsNone(ident)
+        self.assertIn("ZERO tracked files", err)
+
+    def test_valid_pathspec_yields_a_real_manifest_hash(self):
+        ident, _sha, err = dr.frozen_git_identity(["code.py"], root=self.tmp)
+        self.assertIsNone(err)
+        self.assertTrue(ident)
+        self.assertNotEqual(ident, dr.EMPTY_MANIFEST_IDENTITY,
+                            "a matching pathspec must bind a real manifest, not the empty-set hash")
+        raw, _entries, _e = dr.git_tree_manifest(self.tmp, "HEAD", ["code.py"])
+        self.assertEqual(ident, raw, "the identity is exactly the tracked-content manifest")
+
+    def test_optin_permits_the_preserved_empty_set_hash(self):
+        ident, _sha, err = dr.frozen_git_identity([], root=self.tmp, allow_empty_identity=True)
+        self.assertIsNone(err)
+        self.assertEqual(ident, dr.EMPTY_MANIFEST_IDENTITY,
+                         "a genuinely path-free opt-in still stamps the PRESERVED empty-set hash")
+
+    def test_non_vacuity_the_optin_flag_flips_refuse_to_the_empty_hash(self):
+        """NON-VACUITY. Identical inputs; only the guard's opt-in flag differs. WITH the
+        guard (default False) a prose scope is REFUSED. Flip the flag True -- the pre-guard
+        behavior -- and the SAME scope silently becomes the empty-set identity. So the guard
+        is doing real work: if the `not allow_empty_identity` clause were removed from
+        frozen_git_identity, test_prose_allowed_paths_are_refused would fail because `ident`
+        would be EMPTY_MANIFEST_IDENTITY and `err` None."""
+        prose = ["services/api/app/corpus/ingest/** (OWNED by a task)"]
+        blocked_ident, _s, blocked_err = dr.frozen_git_identity(prose, root=self.tmp)
+        self.assertIsNone(blocked_ident)
+        self.assertIn("ZERO tracked files", blocked_err)
+        old_ident, _s2, old_err = dr.frozen_git_identity(
+            prose, root=self.tmp, allow_empty_identity=True)
+        self.assertIsNone(old_err)
+        self.assertEqual(old_ident, dr.EMPTY_MANIFEST_IDENTITY,
+                         "without the guard the prose scope collapses to the empty-set hash")
+
+
+class ValidatorEmptyIdentityTests(unittest.TestCase):
+    """c17: the CI-side static catch resolves each in-regime task's allowed_paths at HEAD
+    and refuses an empty-resolving, non-opted-in, non-grandfathered task."""
+
+    def setUp(self):
+        self.tmp = Path(tempfile.mkdtemp(prefix="vdc-empty-"))
+        _init_repo(self.tmp)
+        (self.tmp / "code.py").write_text("x = 1\n", encoding="utf-8")
+        self.tasks = self.tmp / "project-control" / "tasks"
+        self.tasks.mkdir(parents=True)
+        _git(self.tmp, "add", "-A")
+        _git(self.tmp, "commit", "-q", "-m", "seed")
+        self._orig_root = vdc.ROOT
+        vdc.ROOT = self.tmp  # point the validator's git resolution at this temp repo
+
+    def tearDown(self):
+        vdc.ROOT = self._orig_root
+        shutil.rmtree(self.tmp, ignore_errors=True)
+
+    def _task(self, task_id="M9-T901", **over):
+        t = {"task_id": task_id, "directive_regime_version": "1.0",
+             "allowed_paths": ["code.py"]}
+        t.update(over)
+        _write(self.tasks / f"{task_id}.json", t)
+
+    def test_prose_paths_are_flagged(self):
+        self._task(allowed_paths=["apps/web/src/** (note)"])
+        errs = vdc._validate_empty_identity(self.tasks)
+        self.assertTrue(any("M9-T901" in e and "ZERO tracked files" in e for e in errs), errs)
+
+    def test_valid_paths_are_clean(self):
+        self._task(allowed_paths=["code.py"])
+        self.assertEqual(vdc._validate_empty_identity(self.tasks), [])
+
+    def test_valid_optin_is_clean(self):
+        self._task(allowed_paths=[], path_free_governance=True,
+                   path_free_justification="pure governance packet")
+        self.assertEqual(vdc._validate_empty_identity(self.tasks), [])
+
+    def test_malformed_optin_is_flagged_regardless_of_paths(self):
+        self._task(allowed_paths=["code.py"], path_free_governance=True)  # no justification
+        errs = vdc._validate_empty_identity(self.tasks)
+        self.assertTrue(any("M9-T901" in e and dr.PATH_FREE_JUSTIFICATION in e for e in errs), errs)
+
+    def test_not_in_regime_task_is_ignored(self):
+        _write(self.tasks / "M9-T902.json", {"task_id": "M9-T902", "allowed_paths": []})
+        self.assertEqual(vdc._validate_empty_identity(self.tasks), [])
+
+    def test_grandfathered_task_is_not_flagged(self):
+        gid = sorted(vdc._EMPTY_IDENTITY_GRANDFATHERED)[0]
+        _write(self.tasks / f"{gid}.json",
+               {"task_id": gid, "directive_regime_version": "1.0", "allowed_paths": []})
+        errs = vdc._validate_empty_identity(self.tasks)
+        self.assertFalse(any(gid in e for e in errs), errs)
+
+
 if __name__ == "__main__":
     unittest.main(verbosity=2)

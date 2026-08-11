@@ -379,11 +379,22 @@ def _task_git_identity(reg_mod, t: dict, reviewed_sha=None):
     a relevant file is untracked, or a control-plane file in scope carries a MATERIAL
     working-tree change (D-001 amendment 3 Section 3; D-004-R630). Submit, gate, and
     accept all call THIS one function, so the raw-blob work-product component and the
-    control-plane material component can never diverge between the three."""
+    control-plane material component can never diverge between the three.
+
+    Empty-identity guard (D-011 item 6; M0-T057): a task whose allowed_paths resolve to
+    ZERO tracked files would otherwise stamp the deterministic empty-set hash, binding no
+    code. That is refused here unless the task explicitly declares itself a genuinely
+    path-free governance packet (path_free_governance:true + path_free_justification),
+    read through the shared path_free_opt_in() so the CLI and the validator agree. A
+    marker that is present but malformed fails closed with its own reason."""
+    opted_in, opt_err = reg_mod.path_free_opt_in(t)
+    if opt_err:
+        return None, None, opt_err
     return reg_mod.frozen_git_identity(
         list(t.get("allowed_paths") or []), reviewed_sha=reviewed_sha, root=ROOT,
         exclude_prefixes=_MANIFEST_EXCLUDE_PREFIXES, require_clean=True,
-        control_plane_prefixes=_CONTROL_PLANE_MATERIAL_PREFIXES)
+        control_plane_prefixes=_CONTROL_PLANE_MATERIAL_PREFIXES,
+        allow_empty_identity=opted_in)
 
 
 def _legacy_grandfather_check(t: dict, task_id: str):

@@ -1189,6 +1189,73 @@ def content_manifest(paths: list, root: Path = ROOT, exclude_prefixes: tuple = (
 
 SHA40_RE = re.compile(r"^[0-9a-f]{40}$")
 
+# ==========================================================================
+# EMPTY-IDENTITY FAIL-CLOSED GUARD  (owner directive D-011 item 6; M0-T057)
+#
+# THE DEFECT.  frozen_git_identity() hashes the manifest of the tracked objects a
+# task's allowed_paths resolve to. When those pathspecs resolve to ZERO tracked
+# objects the manifest is empty and the SHA-256 of nothing is the deterministic
+# EMPTY-SET hash (e3b0c442...). "Verified at this identity" then binds NO code:
+# submit/gate/accept and the validator all compare that constant with itself, so
+# the freshness and dirt guards see nothing. Two shapes reach it: an empty
+# allowed_paths list, and -- more insidiously -- a PROSE allowed_paths entry such
+# as "apps/web/src/** (survey review feature areas)" or
+# "services/api/app/corpus/ingest/** (OWNED by M3-T002)" that git matches
+# literally and therefore matches nothing.
+#
+# THE GUARD.  An empty resolved manifest FAILS CLOSED. The ONLY permitted empty
+# identity is a task that is GENUINELY path-free and declares it explicitly: it
+# must carry the opt-in marker `path_free_governance: true` together with a
+# non-empty `path_free_justification`. Every other shape -- a missing marker, a
+# non-boolean marker, a marker set without a justification, or a code task whose
+# pathspecs simply matched nothing -- is REFUSED. The opt-in is deliberately
+# minimal and additive (task packets already admit extra keys, so no schema
+# change) and is read by BOTH consumers -- project_control.py and
+# validate_directive_compliance.py -- through path_free_opt_in() so the CLI and
+# the validator can never diverge on what "legitimately path-free" means.
+# ==========================================================================
+
+PATH_FREE_MARKER = "path_free_governance"
+PATH_FREE_JUSTIFICATION = "path_free_justification"
+# The deterministic SHA-256 of an empty manifest -- the identity a zero-file scope
+# collapses to. PRESERVED, not removed: a genuinely path-free opt-in task still
+# stamps it. The guard forbids only REACHING it without the explicit opt-in.
+EMPTY_MANIFEST_IDENTITY = hashlib.sha256(b"").hexdigest()
+
+
+def path_free_opt_in(task) -> tuple:
+    """(opted_in, error) for the empty-identity guard.
+
+    A task is a LEGITIMATELY path-free governance packet -- one allowed to stamp the
+    empty-manifest identity -- ONLY when it EXPLICITLY sets `path_free_governance: true`
+    AND supplies a non-empty `path_free_justification`. Every other shape fails closed:
+
+      * marker ABSENT              -> (False, None)   not opted in; the caller's own
+                                      empty-manifest check refuses with its "zero tracked
+                                      files" reason (a task with real paths never reaches
+                                      that check, so an ordinary task needs no marker);
+      * marker present but NOT the boolean True, or present WITH a missing/empty/
+        non-string justification -> (False, reason)  an EXPLICIT refusal: a half-declared
+                                      opt-in is more dangerous than none, because it looks
+                                      deliberate while binding nothing.
+
+    Read-only; never raises. `additionalProperties` on the task packet admits both keys,
+    so reading them defines no schema."""
+    if not isinstance(task, dict):
+        return False, "task is not an object; path-free opt-in cannot be read (fail closed)"
+    marker = task.get(PATH_FREE_MARKER)
+    if marker is None:
+        return False, None
+    if marker is not True:
+        return (False, f"{PATH_FREE_MARKER} must be the boolean true to opt a task out of the "
+                       f"empty-identity guard, got {marker!r} (fail closed)")
+    just = task.get(PATH_FREE_JUSTIFICATION)
+    if not isinstance(just, str) or not just.strip():
+        return (False, f"{PATH_FREE_MARKER} is set but {PATH_FREE_JUSTIFICATION} is missing or "
+                       f"empty; a genuinely path-free governance packet must record WHY it binds "
+                       f"no tracked content (fail closed)")
+    return True, None
+
 
 def _run_git(root: Path, args: list) -> tuple:
     """Run `git -C root <args>` capturing bytes. Returns (stdout_bytes, error_or_None).
@@ -1487,23 +1554,30 @@ def _is_lifecycle_only_packet_change(root: Path, xy: str, path: str) -> bool:
 def frozen_git_identity(paths: list, reviewed_sha: str | None = None,
                         root: Path = ROOT, exclude_prefixes: tuple = (),
                         require_clean: bool = True,
-                        control_plane_prefixes: tuple = ()) -> tuple:
+                        control_plane_prefixes: tuple = (),
+                        allow_empty_identity: bool = False) -> tuple:
     """The authoritative git-canonical reviewed content identity for a task's paths.
     Returns (identity_hex, resolved_commit_sha, error). Fails closed (error != None) when:
       * `root` is not a git work tree / git is unavailable;
       * reviewed_sha (or HEAD) does not resolve to a commit;
       * require_clean and a relevant tracked file is dirty or a relevant file is untracked;
       * require_clean and a control-plane file in scope carries a MATERIAL (non-lifecycle)
-        working-tree change (D-004-R630).
+        working-tree change (D-004-R630);
+      * the resolved manifest is EMPTY (allowed_paths match ZERO tracked objects) and
+        `allow_empty_identity` is False -- the empty-identity guard (D-011 item 6; M0-T057).
 
     The identity has TWO components hashed as one manifest: the raw-blob entries for
     paths outside `exclude_prefixes`, plus the MATERIAL entries for paths inside
     `control_plane_prefixes` (see the CONTROL-PLANE MATERIAL IDENTITY section). When
     `control_plane_prefixes` is empty, or no path in scope falls inside it, the value is
     byte-identical to the raw-blob identity, so existing identities are unchanged.
-    An empty relevant set yields the deterministic empty-set hash -- which for a
-    governance-shaped task is no longer possible unless its allowed_paths genuinely
-    contain no tracked content at all."""
+
+    An empty relevant set would yield the deterministic empty-set hash, which binds no
+    content. That is REFUSED unless `allow_empty_identity` is True -- the single flag the
+    caller sets ONLY for a task that path_free_opt_in() confirms is a genuinely path-free
+    governance packet (explicit marker + justification). The flag defaults to False so the
+    safe behavior -- fail closed on a zero-file scope -- is the behavior a caller gets
+    without opting in."""
     top, err = git_work_tree_root(root)
     if err is not None:
         return None, None, f"content identity requires a git work tree: {err}"
@@ -1541,6 +1615,18 @@ def frozen_git_identity(paths: list, reviewed_sha: str | None = None,
     cp_entries, cperr = control_plane_entries(root, commit, paths, control_plane_prefixes)
     if cperr is not None:
         return None, None, cperr
+    # Empty-identity guard (D-011 item 6; M0-T057): if BOTH components resolve to zero
+    # entries the identity is the empty-set hash and binds no content. Refuse unless the
+    # caller has opted this task in as genuinely path-free. Checked BEFORE the material
+    # rehash so the refusal reason is precise rather than a bare constant hash downstream.
+    if not entries and not cp_entries and not allow_empty_identity:
+        return None, None, (
+            f"allowed_paths resolve to ZERO tracked files at {commit[:12]}; the reviewed "
+            f"content identity would collapse to the empty-set hash and bind no code (fail "
+            f"closed). Fix allowed_paths so they match tracked files (a prose entry like "
+            f"'src/** (some note)' is matched literally and matches nothing), or -- for a "
+            f"genuinely path-free governance packet -- opt in with {PATH_FREE_MARKER}:true "
+            f"+ {PATH_FREE_JUSTIFICATION}.")
     if cp_entries:
         identity = _hash_manifest_entries(list(entries) + list(cp_entries))
     return identity, commit, None
