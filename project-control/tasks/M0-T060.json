@@ -34,21 +34,21 @@
     "G3",
     "G5"
   ],
-  "producer_agent": null,
+  "producer_agent": "backend-engineer",
   "reviewer_agents": [
     "code-reviewer",
     "security-reviewer"
   ],
-  "status": "backlog",
-  "progress_percent": 0,
+  "status": "claimed",
+  "progress_percent": 10,
   "risks": [
     "PRODUCER MUST CONFIRM EXACT FILES AT G0: the achieved-containment STOP touches wherever RunResult.containment is evaluated post-run (loop.py likely; claude_runner.py produces it; state_machine.py holds the claude_process_started transition). Narrow to the smallest set; STOP-and-report if a different file is required.",
-    "Depends on M0-T058 (P1): both may touch claude_runner.py — sequence after P1.",
+    "Depends on M0-T058 (P1): both may touch claude_runner.py \u2014 sequence after P1.",
     "Supervisor-freeze: do NOT change loop behaviour beyond this single fail-closed stop; re-establish the M0-T039 baseline."
   ],
   "blockers": [],
   "created_at": "2026-08-11T17:42:00.949610+00:00",
-  "updated_at": "2026-08-11T17:42:01.302867+00:00",
+  "updated_at": "2026-08-11T20:50:51.384757+00:00",
   "directive_refs": [
     {
       "directive_id": "D-010",
@@ -56,5 +56,6 @@
     }
   ],
   "directive_regime_version": "1.0",
-  "directive_regime_entered_at": "2026-08-11T17:42:00.949610+00:00"
+  "directive_regime_entered_at": "2026-08-11T17:42:00.949610+00:00",
+  "worktree": ".claude/worktrees/agent-p3"
 }
