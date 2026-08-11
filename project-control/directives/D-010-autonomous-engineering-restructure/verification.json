@@ -3932,7 +3932,47 @@
       "verified_at": "2026-08-11T21:32:38+00:00",
       "note": "EMPTY-SET verification. M0-T060 (P3 supervisor-freeze safety fix: achieved per-cycle containment != job_object is a fail-closed STOP, not merely recorded) cites D-010:ALL, but directive_registry.derive_applicable derives ZERO applicable D-010 requirements at this identity (UNRESOLVED empty). Independently confirmed by directive-compliance-verifier at reviewed_sha a9eb1b7 / material identity d8e0568b: enumerated all 357 rows, M0-T060 appears 0 times in the D-010 directory (in no task_ids), the 5 path-scoped rows target Windows controller-config paths disjoint from tools/agent_supervisor/**, and the criterion-related holds are scoped to other tasks (R244 C1-containment-proof -> M0-T053/M2-T015/M2-T016; R347 + criterion-2/actuation-flip -> M0-T056; topical relatedness != applicability). Substantive review: G3 code-review PASS (unconditional fail-closed; ordering correct - no degraded cycle reaches CHECKPOINT_RECEIVED, no paramount stop masked) + G5 security-review PASS (full containment-value enumeration; RunResult.ok excludes containment so the degraded case reaches the guard; no fail-open), both at a9eb1b7. Verifier != producer backend-engineer. Carried forward: G5 LOW advisory (optionally also gate on verified_in_job in M0-T056 hardening).",
       "requirements": []
+    },
+    {
+      "directive_id": "D-010",
+      "task_id": "M0-T047",
+      "applicable_requirement_ids": [
+        "D-010-R233",
+        "D-010-R246"
+      ],
+      "reviewed_sha": "c032dfe54bc2c947d1b86b7f87988d658a04a6cd",
+      "reviewed_manifest_sha256": "c57ae9c91eee1b38e77d2da5bd307dc5510b7ebb0cc8b458c861718d52cd4544",
+      "producer": "orchestrator",
+      "verifier": "directive-compliance-verifier",
+      "schema_version": "directive_verification/v2",
+      "verified_at": "2026-08-11T23:12:00+00:00",
+      "note": "Independent DCV at reviewed_sha c032dfe. derive_applicable => {D-010-R233, D-010-R246}; both classification 'hold' (not lifecycle-deferral-eligible) so verified PASS directly at accept. D-009 applicable subset empty (separate empty row). Verifier directive-compliance-verifier != producer orchestrator.",
+      "requirements": [
+        {
+          "id": "D-010-R233",
+          "state": "PASS",
+          "evidence": [
+            "Age-eligibility: nanoid 3.3.17 published 2026-08-03T10:39:22.487Z (M0-T047.json inputs; lock integrity sha512-xQLf0A3HOMlg...); +604800s => eligible on/after 2026-08-10T10:39:22Z; today 2026-08-11 is after that instant (age > 7 days).",
+            "Machine gate PASS on reviewed head: check-run 'web-dependency-security (audit + committed-lock age gate + npm CLI advisory)' = success, head_sha=c032dfe54bc2c947d1b86b7f87988d658a04a6cd, run 31543741054 job 93951659768 (also run 31543737246 job 93951647965), created 2026-08-11T22:45:18Z.",
+            "Machine gate PASS on reviewed head: check-run 'web tree re-audit (blocking on any finding / too-new / outage)' = success, head_sha=c032dfe54bc2c947d1b86b7f87988d658a04a6cd, run 31543741030 job 93951659800, created 2026-08-11T22:45:18Z; committed-lock age gate re-evaluated the registry timestamp at today's date and cleared 3.3.17 (>=604800s).",
+            "CI ran on the reviewed head: gh pr view 220 --json headRefOid = c032dfe54bc2c947d1b86b7f87988d658a04a6cd; all 33 check-runs on c032dfe = success.",
+            "Age rule NOT bypassed / NO waiver: apps/web/scripts/dependency_age_gate.mjs fail-closed (lines 19/27 'no allowlist/exception'; MIN_AGE_SECONDS=604800 line 46; 'ageSeconds >= MIN_AGE_SECONDS' line 231); no waiver file under apps/web; apps/web/package.json contains only exact-pin override 'nanoid':'3.3.17' with no exception key."
+          ],
+          "note": "hold verified PASS directly. Today (2026-08-11) is on/after the 2026-08-10T10:39:22Z age-eligibility instant, and the package-age rule was enforced not bypassed: the fail-closed committed-lock age gate cleared 3.3.17 (>=604800s) on the reviewed head; no owner age-only waiver used."
+        },
+        {
+          "id": "D-010-R246",
+          "state": "PASS",
+          "evidence": [
+            "Diff scope (git diff --name-only c032dfe^ c032dfe) = apps/web/package.json, apps/web/package-lock.json, project-control/reports/M0-T047-producer-report.md. No .github/workflows/*, no apps/web/scripts/dependency_age_gate.mjs, no docs/DEPENDENCY_SECURITY_POLICY.md changed (age gate / dependency policy untouched); the third file is the producer report, an allowed_paths artifact.",
+            "Byte-identical to #219 tip 7ac2f91: git rev-parse c032dfe:apps/web/package.json = 90e801ae167cf2805d1cafa98289eedd5f58ca47 == 7ac2f91:apps/web/package.json; c032dfe:apps/web/package-lock.json = 6e75bff6e7fe519fe547046b1b2565dba8bd0ef9 == 7ac2f91:apps/web/package-lock.json.",
+            "Nanoid-only change: package.json adds exact-pin override 'nanoid':'3.3.17'; lock node_modules/nanoid 3.3.16 -> 3.3.17 (resolved https://registry.npmjs.org/nanoid/-/nanoid-3.3.17.tgz, integrity sha512-xQLf0A3HOMlg...); no other locked version changed.",
+            "Gate ran through its EXISTING unchanged path and passed: web-dependency-security + web tree re-audit = success on c032dfe (same runs as R233)."
+          ],
+          "note": "hold verified PASS directly. The remediation neither modified nor weakened the M0-T047 age gate / dependency policy: the diff is confined to the two apps/web dependency files (byte-identical to #219 tip 7ac2f91) plus the permitted producer report; the age gate ran unchanged and passed."
+        }
+      ]
     }
   ],
-  "updated_at": "2026-08-11T21:32:38+00:00"
+  "updated_at": "2026-08-11T23:13:00+00:00"
 }

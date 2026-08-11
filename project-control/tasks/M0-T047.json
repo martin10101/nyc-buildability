@@ -10,7 +10,7 @@
     "registry.npmjs.org/nanoid (3.3.16 published 2026-07-12T08:23:40.690Z in-lock; 3.3.17 published 2026-08-03T10:39:22.487Z integrity sha512-xQLf0A3HOMlg...; 3.3.18 published 2026-08-07T16:41:05.696Z)",
     "apps/web/package-lock.json (single entry node_modules/nanoid 3.3.16, prod, transitive via postcss; no direct manifest dep)",
     "project-control/reports/M0-T019-* (js-yaml round-2 remediation precedent: override + CI-bot lock regeneration, no local npm)",
-    ".claude/ORCHESTRATION_POLICY.md §G; docs/DEPENDENCY_SECURITY_POLICY.md"
+    ".claude/ORCHESTRATION_POLICY.md \u00a7G; docs/DEPENDENCY_SECURITY_POLICY.md"
   ],
   "outputs": [
     "apps/web/package.json overrides entry nanoid 3.3.17 (exact pin) + CI-regenerated committed lockfile",
@@ -47,24 +47,50 @@
     "G3",
     "G5"
   ],
-  "producer_agent": "frontend-engineer",
+  "producer_agent": "orchestrator",
   "reviewer_agents": [
     "code-reviewer",
     "security-reviewer",
     "directive-compliance-verifier"
   ],
-  "status": "backlog",
-  "progress_percent": 0,
+  "status": "accepted",
+  "progress_percent": 100,
   "risks": [],
   "blockers": [],
   "created_at": "2026-08-08T04:10:20.030601+00:00",
-  "updated_at": "2026-08-08T04:10:20.115274+00:00",
+  "updated_at": "2026-08-11T23:05:17.966464+00:00",
   "directive_refs": [
     {
       "directive_id": "D-009",
       "requirement_ids": "ALL"
+    },
+    {
+      "directive_id": "D-010",
+      "requirement_ids": [
+        "D-010-R233",
+        "D-010-R246"
+      ]
     }
   ],
   "directive_regime_version": "1.0",
-  "directive_regime_entered_at": "2026-08-08T04:10:20.030601+00:00"
+  "directive_regime_entered_at": "2026-08-08T04:10:20.030601+00:00",
+  "worktree": ".claude/worktrees/session15-acc",
+  "progress_log": [
+    {
+      "at": "2026-08-11T22:52:48.889316+00:00",
+      "agent": "orchestrator",
+      "percent": 70,
+      "status": "in_progress",
+      "message": "Landed nanoid 3.3.17 (byte-identical to #219) onto #220; corrected directive_refs to cover applicable D-010-R233/R246 holds (selective-citation guard)."
+    },
+    {
+      "at": "2026-08-11T22:52:49.821161+00:00",
+      "agent": "orchestrator",
+      "percent": 85,
+      "status": "self_check",
+      "message": "Self-check: fresh #220 web-dependency-security + re-audit PASS on c032dfe (age gate cleared at today's date); blob parity with #219 confirmed."
+    }
+  ],
+  "accepted_by": "orchestrator",
+  "accepted_at": "2026-08-11T23:05:17.966464+00:00"
 }
