@@ -247,5 +247,26 @@ supervisor-of-supervisor); and **P5** register `doctor --live` (`preflight.py:12
 child with no container, record, or gate — pre-existing, cannot duplicate a worker) for the M0-T056
 containment sweep.
 
+4. **P6 — A REVIEWER THAT RETURNS NOTHING MUST BLOCK, NOT PASS SILENTLY.** Added by the orchestrator
+   from *observed* session-14 behaviour, not from a reviewer finding. Across this session **four**
+   independently-dispatched reviewers went idle having completed their analysis without ever
+   delivering it; each verdict was recovered only because a human-paced orchestrator noticed the
+   silence and re-dispatched. Two of those four then returned REQUIRED corrections, so the missing
+   reports were not empty — they were load-bearing.
+
+   Unattended, this is the `d45f330` failure with a different cause: **absent evidence treated as
+   passing evidence.** M0-T056 must therefore treat "gate dispatched, no verdict returned" as a
+   hard fail-closed stop with a recorded reason — the same posture `project_control.py accept`
+   already takes when a `reviewed_sha` is stale or a relevant file is dirty. A dispatched-but-silent
+   reviewer must never be indistinguishable from a clean review, and no timeout may downgrade to
+   "proceed".
+
+   Note for whoever builds this: the correcting factor in session 14 was NOT human judgement. No
+   human approved or blocked anything all session, and the one human-gated step (`accept`) caught
+   zero defects. What caught the defects was executable evidence (a red CI run), machine-enforced
+   producer/reviewer independence, adversarially-scoped review prompts, and redundant reviewers who
+   converged — and, in one case, corrected each other. Those are reproducible without a human. The
+   reviewer-silence gap is the one that was covered only by someone being awake.
+
 This pin ADDS restrictions; it relaxes nothing, and it does not lift or alter the R595 prerequisite
 structure above.
