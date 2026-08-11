@@ -30,14 +30,25 @@ the accept allowlist — STRICTLY SEQUENCED after the now-DONE follow-ups + #220
 
 ### NEXT — runway (ordered; D-011 amendment-004). Steps 1-2 DONE.
 3. **M0-T056** (R595 production actuation) — **AUTHORIZED**: build + full gate wave (G0/G2/G3/G5 + DCV) + accept.
-   Packet is `ready`, in-regime D-010:ALL, allowed_paths = 7 `tools/agent_supervisor/*` + report. Adds a 2nd
-   spawner (`turnover_adapters.py make_subprocess_command_runner`) + removes the human. Fold in the two carried
-   G5 residuals below. **NOTE:** derive_applicable may flag OTHER applicable D-010 rows (like M0-T047 did) —
-   run `evaluate_task_refs` first and cite whatever it requires (selective-citation guard fails closed).
+   Packet `ready`, cites D-010:ALL, `evaluate_task_refs` **ok:True**, applicable set = **R344-R357** (14 reqs,
+   ALL captured in the registry; durable-before-action already done). Spec = D-010 **source-030** (authz +
+   scope) + **source-031** (build directive: order/safety/permission/end-state) + the 7 acceptance scenarios
+   AS-1..AS-7 in the packet. Build parts: **(a)** watchdog OUTSIDE the Claude session → detects orchestrator
+   quota hard stop → auto-launches exactly ONE `claude-opus-4-8` successor (handoff+checkpoint), exactly-once;
+   **(b)** worker-layer actuation predicate replacing `default_actuation_authorization`'s unconditional False
+   (`worker_turnover.py:70`) wired to the real controller/launcher — **REUSE accepted M0-T054 unchanged**;
+   **(c)** bounded live continuous proof on an ISOLATED non-product runtime. Fold in the 2 carried G5 residuals
+   below. Current allowed_paths (6 core `agent_supervisor/*` + `test_..._model_turnover.py` + report) will
+   likely need EXPANSION to match the real build surface (claude_runner/recovery/resume_scheduler/cli + new
+   tests) — set allowed_paths = the producer's actual changed files before gating (M0-T056 is not accepted, so
+   this is allowed). Producer UNNAMED off origin/main (now current). **OWNER TOUCHPOINT:** AS-5's REAL live-proof
+   needs a **Windows/job_object host** (AS-4 C1 gate hard-refuses on POSIX/Render, P8) — the producer must NOT
+   run it; produce a runbook + exact command, then STOP and hand it to the owner. R354 permission boundary:
+   never bypass the classifier; the supervisor runner's `accept`/`push`/`gh` allowlist is an OWNER settings change.
 4. **Activate R595 + add the accept allowlist** — **AUTHORIZED** — supervisor live end-to-end. ONLY after
-   M0-T056 accepted. Verify `default_mode` flips off shadow + the live proof host satisfies the C1 Job-Object
-   gate (P8: POSIX/Render hard-refuses `start` → the live proof likely runs on the owner's Windows host w/
-   elevated config ACL; **STOP + hand the owner the exact command** at that step — genuine owner touchpoint).
+   M0-T056 accepted. Flip `default_actuation_authorization` live + `default_mode` off shadow; add the owner
+   accept-allowlist (settings allow-rule for the supervisor runner). Verify the live proof host satisfies C1
+   Job-Object. **STOP + hand the owner the exact command/allow-rule** (genuine owner touchpoint; plain English + exact line).
 
 ### Carried M0-T056 pre-actuation residuals (2 non-blocking G5 advisories)
 - **(M0-T059)** if M0-T056 adds a concurrent recorder settling the same pid, use an atomic read-modify-write in
