@@ -40,12 +40,12 @@
     "code-reviewer",
     "security-reviewer"
   ],
-  "status": "claimed",
-  "progress_percent": 10,
+  "status": "in_progress",
+  "progress_percent": 90,
   "risks": [],
   "blockers": [],
   "created_at": "2026-08-08T20:47:25.688693+00:00",
-  "updated_at": "2026-08-11T04:48:55.305655+00:00",
+  "updated_at": "2026-08-11T05:29:01.001622+00:00",
   "directive_refs": [
     {
       "directive_id": "D-010",
@@ -61,6 +61,13 @@
       "percent": 0,
       "status": "ready",
       "message": "G0 readiness (session 14): dependency M0-T052 is ACCEPTED; qualifying evidence cited in the packet per supervisor-freeze sections 2/3 (M0-T052 G5 SEC-MAJOR, project-control/reports/M0-T052-g5-security.md - a demonstrated security risk, which is a listed qualifying-evidence class). Promoted now because the R595 production actuation channel (M0-T056) depends on it: D-010 R347 makes 'no duplicate workers' a BINDING invariant, and the ACTIVATION-RECORD PIN (M0-T036-ACTIVATION-CHECKLIST.md, 2026-08-08) records that until M0-T053 lands, record_launched_child has no production caller, recover_boot's surviving-child fail-closed is INERT in production, and the C1 job-object bar is a written precondition only. Dispatching to backend-engineer in worktree .claude/worktrees/M0-T053-child-accounting (branch task/M0-T053-child-accounting from origin/main 37667ff)."
+    },
+    {
+      "at": "2026-08-11T05:29:01.001622+00:00",
+      "agent": "backend-engineer",
+      "percent": 90,
+      "status": "in_progress",
+      "message": "PRODUCER COMPLETE (session 14). C2: ClaudeRunner gains an optional journal; run_unit records the launched child right after container.adopt(pid) and settles the record after the finally; cli._run_loop passes journal=journal - that single keyword is what makes recover_boot's surviving-child fail-closed LIVE in production instead of inert. C1: new containment_precondition(); cmd_start evaluates it and refuses as the LAST gate before a spawn, auditing containment_gate_refused, with NO flag/env/config override so it cannot be bypassed; doctor parity is structural (same default_containment_kind() the doctor reads). Fail-closed cores: settle returns early unless the pid was OS-reaped; an unwritable journal at record time terminates the worker and raises RunnerError(child_record_unwritable); an undeterminable containment kind refuses with kind 'unknown'. EVIDENCE: full supervisor suite 1493 passed / 2 skipped, run TWICE, re-establishing the M0-T039 freeze baseline (bar >=1165, 0 failures; pre-change baseline at 37667ff was 1481/2); 12 tests added. NON-VACUITY proven by five guard mutations, each reverted: gate-always-permits (2 failed), delete record call (4), delete clear call (3), never-settle (1), swallow unwritable-journal (2); two probes exposed WEAK assertions which the producer strengthened rather than accepted. Also fixed a test-only sqlite flake (two DurableJournal connections racing the first open of a fresh file). ruff 0.13.0 on the changed files: 5 pre-existing F401 only. My earlier Pyright model_available flag was WRONG and the producer disproved it with evidence: the signature is unchanged at base 37667ff (loop.py:905) and git diff -U0 shows no match - the cited cli.py lines merely MOVED down as insertions pushed them. Committed e5586e5 in the agent worktree, cherry-picked to a387331 on task/M0-T053-child-accounting, pushed. RESIDUAL R4 (most material, carried to M0-T056): the gate enforces criterion (1) of the C1 pin (host default containment) but NOT criterion (2), the achieved per-cycle 'containment: job_object' audit line - ProcessContainer.adopt can still degrade honestly to taskkill at launch time, and enforcing that mid-run is a loop-behaviour change beyond this packet. Also open: R1 microsecond Popen-to-record window, R2 model-probe child unaccounted, R3 journal=None still accepted by the runner, R5 RunnerError not caught by cmd_start so it exits as a traceback (fail-closed, worker killed first). NEXT: CI, then G3 + G5 independent gates."
     }
   ],
   "worktree": ".claude/worktrees/M0-T053-child-accounting"

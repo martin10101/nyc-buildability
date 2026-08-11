@@ -1,5 +1,13 @@
 # G3 INDEPENDENT DELTA CODE REVIEW — M2-T016 orchestrator fix commits
 
+> **DELTA RE-ATTESTATION AT `e3c2ce6` (verbatim, appended by the orchestrator) — see the
+> "DELTA RE-ATTESTATION" section at the END of this file.** The verdict below was taken at
+> `5a684fc`; both required corrections (F4, F10) were then applied and the same independent
+> reviewer re-attested at the new head. Gate G3 is recorded at `e3c2ce6` on the strength of that
+> re-attestation, not this original verdict alone.
+
+
+
 > VERBATIM capture of the independent `code-reviewer` return (session 14, 2026-08-11), preserved by the
 > orchestrator under `.claude/rules/project-control.md` report-preservation. Transport decoding only;
 > no condensation, no editing. Verdict recorded as gate G3 = PASS with BLOCKING required corrections
@@ -136,3 +144,34 @@ Recommended, not required: F14 (validate `^sha256:[0-9a-f]{64}$`), F5 (surface a
 ## Note on CI evidence
 
 Green CI at `5a684fc` on the required checks, including `web-e2e` (277 vitest + 73 Playwright), is consistent with everything I verified by inspection and is the only executable evidence available for changes 2 and 3. I did not verify the run myself. The red `web-dependency-security` check (`nanoid`, GHSA-2v37-7h3g-55p8) is outside this delta — no dependency or lockfile is touched — so it does not affect this G3 verdict. Whether a red dependency-security check may be treated as non-required for merge is a policy call for you, not a G3 finding; I note only that the standing policy describes that gate as fail-closed with no agent waiver, so the tension is worth resolving explicitly rather than implicitly.
+
+---
+
+# DELTA RE-ATTESTATION AT `e3c2ce6`
+
+> VERBATIM capture of the same independent `code-reviewer`'s delta attestation after the two
+> required corrections were applied. Transport decoding only; no condensation.
+
+DELTA VERDICT: PASS
+
+Scope: `5a684fc..e3c2ce6`, one commit, 3 files (+58/-19). Both required corrections are discharged, no new finding, nothing in the delta regresses anything from the prior review. Same execution limitation as before — no `node_modules`, so I judged from source plus your CI report; I ran no tests.
+
+**F4 — DISCHARGED, and it pins both halves.** I traced the stub through `confirmDocument` -> `rawFetch` -> `finishMutation` -> `decodeError` (`apps/web/src/lib/surveyReview/api.ts:212-219`) and hand-evaluated the array. Input `[NORTH, "<<<>>>", 42, {a:1}, "sev:doc:<script>:2"]` yields: NORTH kept; `"<<<>>>"` -> empty -> null -> dropped; `42` and `{a:1}` non-string -> null -> dropped; `"sev:doc:<script>:2"` -> `"sev:doc:script:2"` kept. Result `[NORTH, "sev:doc:script:2"]`, in that order — `map().filter()` preserves order and `toEqual` is order-sensitive, so it pins ordering too. Revert behavior, all three ways:
+- charset only (back to `boundedToken`): first element becomes `sevdocp13` -> fails
+- drop only (restore `?? String(id)`, keep the new helper): 5 elements including `"<<<>>>"`, `"42"`, `"[object Object]"` -> fails
+- both (the pre-delta line): `["sevdocp13","<<<>>>","42","[object Object]","sevdocscript2"]` -> fails
+Each half fails independently, which is exactly what was missing. Two things I like beyond the recipe: the `sev:doc:<script>:2` case distinguishes *strip* from *drop* (a hostile-but-recoverable id survives sanitized rather than vanishing), and the pre-existing mock-path assertion at `api.test.ts:160` is untouched, so you kept end-to-end coverage and added the stubbed coverage rather than trading one for the other. `DIGEST_PRO` vs `"sha256:x"` is immaterial — fetch is stubbed, the URL is built and discarded — and it is the more consistent choice. No unused imports result from the replacement: `seedStore`, `read`, `fp`, `AREA`, `createMockSurveyReviewClient` are all still used elsewhere in the file, and `boundedEvidenceId` is still called directly by the `it.each` table and the length test.
+
+Minor correction to my own F7 for the record: I wrote that the export would become unnecessary after F4. It does not — the direct sanitizer table still calls it. The export stays needed either way.
+
+**F10 — DISCHARGED, and your testid choice is better than my suggestion.** `apps/web/e2e/survey-review-inbox.spec.ts:24-28`. `review-inbox` is the outer wrapper at `apps/web/src/components/survey-review/ReviewInbox.tsx:42`, rendered unconditionally once the component mounts, so its visibility is precisely the proof that the page component executed and the flag gate passed at request time — if the route were baked as `notFound()` the Next 404 page renders and none of these testids exist. That is a sharper assertion than `internal-banner`, which is shared with other screens. `inbox-empty` (`ReviewInbox.tsx:60-62`) additionally requires `outcome.kind === "inbox"` with zero entries, so it also proves the client reached the mocked `review-inbox` endpoint and rendered the honest empty queue rather than a failure state. The `**/api/v1/documents/**` route pattern does match `/api/v1/documents/review-inbox`, and the same pattern is already load-bearing for the seven journey specs. Naming the test for the cause resolves my F18 caveat.
+
+**F14 — safe; I verified the digest contract independently and it is stronger than "no existing path breaks".** All three fixtures are `sha256:` + 64 hex (`apps/web/src/test-support/survey-review/fixtures.ts:27-29` — `"a"`, `"b"`, `"d"` repeated 64, all valid hex), so DIGEST_UPLOADED would pass too if a spec ever navigates to it. Every short digest is confined to vitest unit tests that call the client or build model objects directly and never traverse the route: `api.test.ts:46,52,54` (`sha256:deadbeef`, `sha256:x`), `model.test.ts:39,46,150` (`sha256:x`, `sha256:abc`); `api.test.ts:92`'s `sha256:STALE` is a history fingerprint, not a digest. `fixture_api.py:215` is a `normalized_digest` on the property harness, unrelated and 64-hex anyway. The stronger point: your regex is byte-identical to the backend's own canonical validator, `RAW_BYTES_DIGEST_PATTERN = re.compile(r"^sha256:[0-9a-f]{64}$")` at `services/api/app/documents/models.py:47`, mirrored at `services/api/app/documents/storage.py:43` and produced by `hashlib.sha256(...).hexdigest()` (always lowercase). So this is not a guessed contract — the server rejects anything the route now rejects, and the inbox links are built from server-validated digests, so no legitimate navigation can 404. The frontend already uses the identical pattern for rule-evaluation fingerprints (`apps/web/src/lib/rule-evaluation-contract.ts:185`). Placement is right too: after the flag gate, so a malformed digest and a disabled flag return the same 404 and leak nothing.
+
+**F16 — correct as applied.** The definite-assignment form is in place and `documentDigest` is consumed by the F14 check immediately after, so the compiler now proves no un-decoded value can flow. Typecheck green confirms `notFound(): never` behaves as predicted.
+
+**F5 and F7 not applied — correctly classified as non-blocking follow-ups.** F5 is a UI-honesty improvement on a path that is now provably defensive-only: the backend validates its own evidence ids, and after F4 you have a test showing exactly what gets dropped, so the "silent" part is documented rather than unknown. I would log it as a follow-up because it touches the no-silent-drops principle, but it should not hold this task. F7 is pure code organization with no behavioral content. Neither belongs in this delta.
+
+No new findings in `5a684fc..e3c2ce6`. My prior verdict stands, now with both required corrections discharged: recommend recording G3 as PASS at `e3c2ce6`.
+
+On the policy escalation — agreed, and thank you for taking it up rather than resolving it locally. The contradiction is squarely between the written policy (advisory gates fail closed, never warning-only, no agent waiver) and the branch configuration (that check not required), and only the owner can say which one moves. Nothing about it changes this G3 verdict, since the delta touches no dependency or lockfile.

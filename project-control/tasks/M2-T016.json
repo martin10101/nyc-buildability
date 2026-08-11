@@ -62,7 +62,7 @@
     "security-reviewer"
   ],
   "status": "in_progress",
-  "progress_percent": 96,
+  "progress_percent": 97,
   "risks": [
     "DISPATCH HOLD: awaits owner review of the 2026-07-20 planning report AND acceptance of M2-T015 + M2-T012",
     "The professional-confirmation role definition is a human-authority decision: the packet defines the mechanism; WHO qualifies is recorded as an owner/qualified-human decision before the state can be granted in production",
@@ -73,7 +73,7 @@
   ],
   "blockers": [],
   "created_at": "2026-07-20T06:34:25.583607+00:00",
-  "updated_at": "2026-08-11T05:25:31.940209+00:00",
+  "updated_at": "2026-08-11T05:34:43.180694+00:00",
   "progress_log": [
     {
       "at": "2026-08-10T01:45:48.106659+00:00",
@@ -165,6 +165,13 @@
       "percent": 96,
       "status": "in_progress",
       "message": "G3 DELTA REVIEW (independent code-reviewer, read-only, producer=orchestrator so independence holds): VERDICT PASS with TWO BLOCKING required corrections. Verbatim report preserved at project-control/reports/M2-T016-delta-G3-code-review.md. Reviewed d45f330..5a684fc (4 files, +97/-3). It verified every claim independently and found the code changes correct and at the right layer, but caught two EVIDENCE defects. F4 (REQUIRED): my test titled 'drops unsanitizable entries from rejectedFactIds instead of emitting them raw' was VACUOUS - it drove the mock backend, which only emits its own fixture ids, all of which sanitize cleanly, so the filter never removed anything and reverting the drop half would have left the test GREEN. The unpinned half was the security-relevant one; the reviewer further established that the old '?? String(id)' fallback also coerced NON-STRINGS (an object rendered as '[object Object]') with no length cap at all. F10 (REQUIRED): no spec loaded the bare inbox /survey/review, so force-dynamic on the statically-prerenderable inbox route was justified by analogy and exercised by nothing. BOTH CORRECTIONS APPLIED at e3c2ce6, plus two of its recommendations: F14 (validate ^sha256:[0-9a-f]{64}$ at the route - its containment analysis holds only because every consumer happens to re-encode, a convention not a guarantee) and F16 (definite-assignment form so a future fallback path becomes a type error). Deliberately NOT applied, carried as follow-ups: F5 (surface a dropped-id count so nothing material is dropped silently) and F7 (co-locate the sanitizer with boundedToken). The reviewer also answered my explicit question: e2e-only pinning for the force-dynamic and digest-decode fixes IS adequate G3 evidence, because both are integration-boundary defects no unit test could have caught, and a unit test asserting the dynamic export would pin the string not the behavior. GATE NOT YET RECORDED: corrections are BLOCKING per the gate-verdict semantics rule until CI is green at e3c2ce6, and the reviewed head has moved from 5a684fc to e3c2ce6 so the G3 verdict needs a delta re-attestation at the new head before G3 is recorded and before acceptance. G5 delta review still outstanding."
+    },
+    {
+      "at": "2026-08-11T05:34:43.179693+00:00",
+      "agent": "orchestrator",
+      "percent": 97,
+      "status": "in_progress",
+      "message": "SECOND INDEPENDENT G3 (dispatched after the first reviewer went idle twice; both then delivered). VERDICT PASS with required corrections RC-1/RC-2/RC-3, which are exactly the F4/F10/F14 already applied at e3c2ce6. TWO REVIEWERS WHO NEVER COMMUNICATED CONVERGED ON THE SAME THREE CORRECTIONS - strong signal for the corrections themselves. It also delivered the first reviewer's DELTA RE-ATTESTATION at e3c2ce6: PASS, F4 and F10 DISCHARGED, no new findings; it hand-evaluated the stub array and confirmed each half fails independently on revert (charset-only -> sevdocp13; drop-only -> 5 elements incl '[object Object]'; both -> the pre-delta output), and confirmed my F14 regex is BYTE-IDENTICAL to the backend's own canonical validator RAW_BYTES_DIGEST_PATTERN at services/api/app/documents/models.py:47 - a contract-derived rule, not a guessed one. CORRECTION TO DURABLE STATE I PREVIOUSLY RECORDED: my earlier note that 'model.ts:139 gates canOfferConfirm on blocking_fact_ids.length > 0' is WRONG and the second reviewer disproved it. canOfferConfirm (model.ts:88-94) reads capabilities.can_confirm_document, the confirmable source states, and the server's confirm_precondition_met - it NEVER reads blocking_fact_ids; the length>0 read is in dominantAction (model.ts:131-146). So the confirm button cannot be flipped disabled->enabled that way. The CONCLUSION (never sanitize blocking_fact_ids) still stands on two better grounds: charset-filtering mangles identity keys so factsBlockingConfirmation returns [] and the panel says 'no material facts to confirm yet' while the server says blocked; and DROPPING lets dominantAction fall through to 'All material facts are resolved' while confirm_precondition_met is still false - a false all-clear. Memory corrected. PROCESS DEFECT AGAINST ME (reviewer Finding 15, accepted): I applied the first reviewer's corrections to the worktree WHILE the second review was in flight, so it verified 5a684fc against a tree that had moved to e3c2ce6 - the same stale-head failure mode this whole exercise exists to correct. RULE TO ADOPT: freeze the worktree for the duration of a gate wave. New non-blocking follow-ups recorded: FU-1 surface a dropped-entry count (errorCopy says 'The blocking facts are listed below' and could contradict an empty list); FU-2 evidence_id charset is a client-side guess the contract does not guarantee (schema says implementation-defined) - either pin it in survey_evidence.schema.json or move to opaque matching + render-time bounding; FU-3 extract surveyReviewPath()/parseDocumentDigest() so the digest URL contract is one exported pair rather than four encodeURIComponent calls agreeing by convention; FU-4 pin the URIError->notFound() branch; FU-5 if blocking_fact_ids is ever hardened use a TYPE filter with a dropped-count, never a charset filter."
     }
   ],
   "directive_refs": [
