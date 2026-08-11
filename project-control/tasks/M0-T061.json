@@ -37,22 +37,22 @@
     "G3",
     "G5"
   ],
-  "producer_agent": null,
+  "producer_agent": "backend-engineer",
   "reviewer_agents": [
     "code-reviewer",
     "security-reviewer"
   ],
-  "status": "backlog",
-  "progress_percent": 0,
+  "status": "claimed",
+  "progress_percent": 10,
   "risks": [
     "PRODUCER MUST CONFIRM EXACT FILES AT G0: reviewer-gate dispatch/timeout handling is spread across review_cadence.py / ephemeral_review.py / codex_reviewer.py / loop.py; find where a reviewer verdict is awaited and narrow to the smallest set that adds the timeout->retry->STOP. STOP-and-report if a different file is required.",
-    "Additive to (NOT a duplicate of) project_control.accept, which already fail-closes on a missing PASS record — P6 is the supervisor's OWN reviewer-gate posture under unattended actuation.",
-    "Independent of P1/P2/P3 file scope (different modules) — MAY be built in parallel with them IF the confirmed file set stays disjoint from claude_runner.py/recovery.py/loop.py.",
+    "Additive to (NOT a duplicate of) project_control.accept, which already fail-closes on a missing PASS record \u2014 P6 is the supervisor's OWN reviewer-gate posture under unattended actuation.",
+    "Independent of P1/P2/P3 file scope (different modules) \u2014 MAY be built in parallel with them IF the confirmed file set stays disjoint from claude_runner.py/recovery.py/loop.py.",
     "Supervisor-freeze: re-establish the M0-T039 baseline under G0/G2/G3/G5."
   ],
   "blockers": [],
   "created_at": "2026-08-11T17:42:02.225472+00:00",
-  "updated_at": "2026-08-11T17:42:02.603377+00:00",
+  "updated_at": "2026-08-11T18:34:11.664455+00:00",
   "directive_refs": [
     {
       "directive_id": "D-010",
@@ -60,5 +60,6 @@
     }
   ],
   "directive_regime_version": "1.0",
-  "directive_regime_entered_at": "2026-08-11T17:42:02.225472+00:00"
+  "directive_regime_entered_at": "2026-08-11T17:42:02.225472+00:00",
+  "worktree": ".claude/worktrees/M0-T061-p6"
 }
