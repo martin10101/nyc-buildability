@@ -1,0 +1,237 @@
+{
+  "task_id": "M2-T016",
+  "directive_id": "D-010",
+  "requirements": {
+    "D-010-R121": [
+      "source-011-amendment present; 'no new obligations'; M2-T016 entered D-010 regime 2026-08-10 (task.directive_regime_entered_at), holds preserved"
+    ],
+    "D-010-R133": [
+      "pre-activation prohibition not violated: task regime-entered 2026-08-10, after owner activation 2026-08-08 (R219/source-023)"
+    ],
+    "D-010-R143": [
+      "re-affirms R133; M2-T016 dispatched post-activation, not started early"
+    ],
+    "D-010-R153": [
+      "activation-package order honored; M2-T016 followed M2-T015 (task.dependencies=[M2-T015]) after activation"
+    ],
+    "D-010-R167": [
+      "no activation/config/ACL change in M2-T016 diff (git diff --name-only 37667ff..e3c2ce6 = survey-review files only)"
+    ],
+    "D-010-R172": [
+      "config.toml/ACL absent from M2-T016 diff; no activation move"
+    ],
+    "D-010-R196": [
+      "hold intact: M2-T016 touches no config.toml/ACL path (diff name-list confirms)"
+    ],
+    "D-010-R213": [
+      "owner activation line typed 2026-08-08 (R219) precedes task work 2026-08-10; product proof not begun before it"
+    ],
+    "D-010-R214": [
+      "grounding: producer report + task packet reconcile with live repo/git; durable ledger authoritative"
+    ],
+    "D-010-R215": [
+      "activation-era PR #187 verified durable (source-023); M2-T016 itself merged via required-check PR #216, no bypass"
+    ],
+    "D-010-R216": [
+      "no broad audit/supervisor redesign; M2-T016 is product-only additive diff"
+    ],
+    "D-010-R217": [
+      "ACLs unchanged, hardening not reopened; no ACL/config paths in diff"
+    ],
+    "D-010-R218": [
+      "controller.default_mode='shadow' preserved; config.toml not in M2-T016 diff"
+    ],
+    "D-010-R219": [
+      "owner activation decision recorded durably in D-010 source-023-amendment.md"
+    ],
+    "D-010-R220": [
+      "activation prerequisites verified before acting (source-023); M2-T016 consistent, no gate weakened"
+    ],
+    "D-010-R221": [
+      "activation decision recorded via D-010 registry (source-023-amendment)"
+    ],
+    "D-010-R222": [
+      "existing supervisor runtime used at M2-T015 era; M2-T016 invents/redesigns nothing (diff = documents+web only)"
+    ],
+    "D-010-R223": [
+      "active runtime proven supervised (activation evidence); M2-T016 ran as product proof #2 under it"
+    ],
+    "D-010-R224": [
+      "pre-product verification (record/ACL/config-sha/runtime) done at M2-T015; M2-T016 changes no config, consistent"
+    ],
+    "D-010-R225": [
+      "not called complete while shadow; M2-T016 executed only as authorized product proof"
+    ],
+    "D-010-R226": [
+      "returned to product: M2-T016 is survey-review product (docs/SURVEY_REVIEW_WORKFLOW.md + apps/web + services/api), not supervisor architecture"
+    ],
+    "D-010-R228": [
+      "self-sufficient lifecycle: built/reviewed/integrated without owner hand-carry; owner-only items surfaced non-blocking (producer report judgment section)"
+    ],
+    "D-010-R230": [
+      "sequencing: M2-T016 = product proof #2 after M2-T015 (task.dependencies=[M2-T015]); ran after M2-T015"
+    ],
+    "D-010-R231": [
+      "limited-auto not authorized; M2-T016 does not authorize it (R343 keeps R595 record-intent-only)"
+    ],
+    "D-010-R232": [
+      "five-borough product scope preserved: SURVEY_REVIEW_WORKFLOW.md states/section-5 + review code; no supervisor fallback"
+    ],
+    "D-010-R234": [
+      "working rules: additive commits (no reset/clean), no data deletion, gates preserved, evidence-backed claims"
+    ],
+    "D-010-R235": [
+      "reporting: producer report concise (AOS section-6), no long historical recap"
+    ],
+    "D-010-R236": [
+      "B-018 Option A resolution durable (source-024); M2-T016 does not touch runtime base"
+    ],
+    "D-010-R237": [
+      "B-018 treated as real defect (source-024); outside M2-T016 scope; not contradicted"
+    ],
+    "D-010-R238": [
+      "root-cause after M2-T015 (defect lane); M2-T016 unaffected/unchanged"
+    ],
+    "D-010-R239": [
+      "smallest durable fix in defect lane (M0-T054); M2-T016 did not broaden supervisor"
+    ],
+    "D-010-R240": [
+      "B-018 fix not broadened to redesign; M2-T016 additive product-only diff"
+    ],
+    "D-010-R241": [
+      "fix scheduled at bounded checkpoint, disjoint scope; M2-T016 not interrupted/cut"
+    ],
+    "D-010-R242": [
+      "M0-T052 not reopened (absent from M2-T016 diff)"
+    ],
+    "D-010-R243": [
+      "no supervisor/ACL/config/autonomy cycle; M2-T016 is additive product work"
+    ],
+    "D-010-R244": [
+      "M0-T053 kept in backlog; blocking conditions (C1-proof fail/host change) not triggered by M2-T016"
+    ],
+    "D-010-R245": [
+      "M0-T053 did not interrupt M2-T016; product proofs finished first on C1-pinned host"
+    ],
+    "D-010-R279": [
+      "working code + executable tests: review_{actions,authz,events}.py (33/10/10 tests) + apps/web UI + vitest/e2e; docs accompany not substitute"
+    ],
+    "D-010-R280": [
+      "strictly additive (37667ff..e3c2ce6 = 49 files +9331/-1; -1 = benign playwright env-var line); no rewrite/scope deletion"
+    ],
+    "D-010-R283": [
+      "required sequence honored: D-010 captured, routing map, M2-T015 then M2-T016 (step 5) with full G0-G5 lifecycle"
+    ],
+    "D-010-R284": [
+      "stop-and-return only for owner-only: surfaced professional-confirmation role (Tier-D) + survey-geometry contract (STOP), build not blocked"
+    ],
+    "D-010-R285": [
+      "BASH_MAX_TIMEOUT_MS=1800000 present at .claude/settings.json:8 (discharged separately; .claude forbidden for M2-T016, not in diff)"
+    ],
+    "D-010-R286": [
+      "orchestrator opus-continuity authorization durable (source-026); M2-T016 consistent"
+    ],
+    "D-010-R287": [
+      "fallback observed not faked: D-010-R288 pre-log + D-010-R289-fallback-incident record"
+    ],
+    "D-010-R288": [
+      "pre-registration present: project-control/reports/D-010-R288-fallback-expectation-log.md"
+    ],
+    "D-010-R289": [
+      "post-exhaustion verification durable: reports/D-010-R289-fallback-incident/ (hardstop screenshot); verdict recorded"
+    ],
+    "D-010-R290": [
+      "owner switch-back reserved, not triggered; opus authorized meanwhile; M2-T016 consistent"
+    ],
+    "D-010-R291": [
+      "worker model-flip interpretation recorded (source-026 annotations); durable"
+    ],
+    "D-010-R292": [
+      "DID-NOT-SWITCH verdict recorded durably in source-027-amendment; not claimed success"
+    ],
+    "D-010-R293": [
+      "stopped-Fable evidence preserved: reports/D-010-R289-fallback-incident/fable5-limit-hardstop-screenshot.jpg"
+    ],
+    "D-010-R294": [
+      "all three candidate causes stated in source-027-amendment.md (grep 5 matches: restart/weekly-quota/no-external-process)"
+    ],
+    "D-010-R295": [
+      "proceeded as manually-recovered opus successor (R286 failure case); authorization discharged"
+    ],
+    "D-010-R302": [
+      "turnover fix kept small (M0-T054), after M2-T015 before M2-T016; M2-T016 not derailed"
+    ],
+    "D-010-R303": [
+      "return items (R289 record, checkpoint, opus selection, defect task, resume) durably recorded"
+    ],
+    "D-010-R320": [
+      "guiding rule adopted in docs/LEAN_OPERATING_PROCESS.md; M2-T016 preserved verification/testing/provenance/safety; no repo-wide refactor"
+    ],
+    "D-010-R321": [
+      "A1 canonical record = task progress_log (machine-readable), single source; no new DB/parallel source (LEAN doc Return item 1)"
+    ],
+    "D-010-R322": [
+      "A2 one structured event per unit: 2 units, per-unit progress_log entries with commit/tests/verdict; no multi-file re-narration"
+    ],
+    "D-010-R323": [
+      "A3 seam-only handoffs: 7-field lean SESSION_HANDOFF; no old-session pasting (LEAN doc Return item 3)"
+    ],
+    "D-010-R324": [
+      "A4 batched control PRs: single seam PR #216 for product; no unrelated product+privileged mixing"
+    ],
+    "D-010-R325": [
+      "A5 producer report projects machine facts; narrative reserved for judgment/owner decisions"
+    ],
+    "D-010-R326": [
+      "A6 control-plane overhead within ~15-20% (measurement metric 4); no % supervisor feature built"
+    ],
+    "D-010-R327": [
+      "A7 bounded allowed_paths: 18 exact pathspecs (D-011 item-5 repair), no broad wildcards; identity binds real files"
+    ],
+    "D-010-R328": [
+      "B1 safety preserved: gate modules byte-unchanged (promotion_gated_transition imported not redefined), append-only + immutability (R1/R3 tests), adversarial tests intact"
+    ],
+    "D-010-R329": [
+      "B2 concise docs; comments explain WHY (route pages document force-dynamic rationale, page.tsx:13-17/34-51); no security-rationale comments removed"
+    ],
+    "D-010-R330": [
+      "B3 typed patterns reused: PromotionAllowed/Refused, typed ReviewActionError reject_code set; no bespoke framework"
+    ],
+    "D-010-R331": [
+      "B4 grounded rules canonical: consumes shipped ALLOWED_TRANSITIONS + promotion gate; unknown combos fail closed (illegal_transition tests)"
+    ],
+    "D-010-R332": [
+      "B5 short typed errors: reject_code + message + metadata (rejected_fact_ids); no essays in error strings"
+    ],
+    "D-010-R333": [
+      "B6 adversarial coverage preserved+parameterized: backend fail-closed/illegal-transition param tables (test_review_actions.py:509,579) + frontend SANITIZER_CASES table (api.test.ts:217-260)"
+    ],
+    "D-010-R334": [
+      "B7 drift-checked contract-derived types retained; M2-T016 consumes profile 1.4.0 contract unchanged (forbidden path, absent from diff); no parallel schema"
+    ],
+    "D-010-R335": [
+      "B8 cohesive modules: review_{actions,authz,events}.py separation of authority; no unrelated parsing/persistence mixed"
+    ],
+    "D-010-R336": [
+      "B9 PDF-lexer assessment bounded/after M2-T015; M2-T016 does not touch or replace the lexer"
+    ],
+    "D-010-R338": [
+      "reports/M2-T016-lean-efficiency-measurement.md returns all 7 metrics incl honest gate/reviewer-context-loss (metric 7) + no evidence weakened; units/commits=2/11 verified. CAVEAT: aux figure '47 files/+8536' does NOT reproduce (actual 37667ff..e3c2ce6=49/+9331; no range yields 47/8536); non-material per R320 (line-count not acceptance criterion), under-claims"
+    ],
+    "D-010-R339": [
+      "Phase-3 helper NOT triggered; explicit no-op recorded (measurement Phase-3 conditional); no projection helper/DB in diff"
+    ],
+    "D-010-R340": [
+      "Part D: no efficiency code change (Phase-3 no-op); actual changes independently reviewed (G3/G5/human-journey delta reports) + this DCV; LEAN doc Return item 8:107"
+    ],
+    "D-010-R341": [
+      "Part E honored: no M0-T054/M2-T015 interruption, no protected-config/ACL change, no limited-auto, no history rewrite, single benign deletion, no repo-wide cleanup"
+    ],
+    "D-010-R342": [
+      "Return items 1-8 in docs/LEAN_OPERATING_PROCESS.md (Return-item headings); item 9 = measurement doc; item 10 = no follow-up helper (codification noted open)"
+    ],
+    "D-010-R343": [
+      "owner follow-up authorization discharged: Phase 1 policy (M0-T055), autonomous continuation; R595 kept record-intent-only, M2-T016 touches no config/ACL/activation"
+    ]
+  }
+}

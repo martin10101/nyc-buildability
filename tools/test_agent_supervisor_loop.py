@@ -300,6 +300,58 @@ class CyclePathTests(LoopTestBase):
         self.assertEqual(self.machine.current_state, sm.WAIT_FOR_OWNER)
 
 
+class AchievedContainmentTests(LoopTestBase):
+    """M0-T060: the ACHIEVED per-cycle containment (M0-T053 G5 R4 enforcement
+    half; 2026-08-08 pin criterion 2). A cycle that only got taskkill-strength
+    containment must FAIL CLOSED, not merely record an audit line and continue.
+    """
+
+    def test_P3_SC1_job_object_containment_proceeds_normally(self) -> None:
+        # A cycle reporting job-strength containment is the normal case: it walks
+        # the full path and never trips the containment stop.
+        self.at_preflight()
+        loop = self.build(mode="supervised",
+                          runner=FakeRunner(run_result(containment="job_object")),
+                          approval_gate=lambda digest, prompt: True)
+        result = loop.run_cycle("first unit", cycle=1)
+        self.assertEqual(result.stopped, "")
+        self.assertTrue(result.forwarded)
+        self.assertEqual(self.machine.current_state, sm.CLAUDE_RUNNING)
+
+    def test_P3_SC2_degraded_containment_stops_with_a_recorded_reason(self) -> None:
+        # ProcessContainer.adopt honestly degraded to taskkill at launch. The
+        # cycle must STOP (not audit-and-continue) with an explicit reason.
+        self.at_preflight()
+        degraded = run_result(
+            containment="taskkill",
+            containment_fallback_reason="job object creation denied (access denied)")
+        loop = self.build(mode="supervised",
+                          runner=FakeRunner(degraded),
+                          approval_gate=lambda digest, prompt: True)
+        result = loop.run_cycle("first unit", cycle=1)
+        self.assertEqual(result.stopped, "containment_degraded")
+        self.assertFalse(result.forwarded)
+        self.assertEqual(self.machine.current_state, sm.PAUSED_RECOVERY)
+        # The reason is explicit and surfaces the achieved kind + fallback cause -
+        # not merely an audit line.
+        self.assertIn("taskkill", result.reason)
+        self.assertIn("job_object", result.reason)
+        self.assertIn("job object creation denied", result.reason)
+        # A synchronous owner touch was recorded for the stop.
+        self.assertTrue(any(t.reason_code == "containment_degraded"
+                            for t in result.owner_touches))
+
+    def test_process_group_containment_also_fails_closed(self) -> None:
+        # Anything short of job_object fails closed; process_group is not enough.
+        self.at_preflight()
+        loop = self.build(mode="supervised",
+                          runner=FakeRunner(run_result(containment="process_group")),
+                          approval_gate=lambda digest, prompt: True)
+        result = loop.run_cycle("first unit", cycle=1)
+        self.assertEqual(result.stopped, "containment_degraded")
+        self.assertEqual(self.machine.current_state, sm.PAUSED_RECOVERY)
+
+
 class DecisionRoutingTests(LoopTestBase):
     def route(self, dec: CodexDecision, *, mode: str = "shadow"):
         self.at_preflight()

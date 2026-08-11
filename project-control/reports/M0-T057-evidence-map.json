@@ -1,0 +1,6 @@
+{
+  "task_id": "M0-T057",
+  "directive_id": "D-001",
+  "note": "M0-T057 cites D-001:ALL but the canonical resolver derives ZERO applicable D-001 requirements (D-001 rows are scoped to the D-001 regime tasks, chiefly M0-T023, not every in-regime task; M2-T014/M0-T033 precedent). No per-requirement evidence rows apply.",
+  "requirements": {}
+}

@@ -1,0 +1,63 @@
+{
+  "task_id": "M0-T058",
+  "title": "P1: verify the worker termination the record-unwritable path asserts (M0-T053 G5 finding 4)",
+  "task_type": "backend",
+  "milestone_id": "M0",
+  "objective": "QUALIFYING EVIDENCE (AD-093 demonstrated security risk): M0-T053 G5 security review + M0-T036-ACTIVATION-CHECKLIST P1. claude_runner.py:1283-1298 (the record_unwritable except block) calls container.terminate_all() but DISCARDS its boolean, swallows exceptions, and never wait()/poll()s, yet the raised RunnerError('child_record_unwritable') states the worker WAS terminated. On the degraded-taskkill path terminate_process_tree can legitimately return False; compound failure (degraded containment + failed journal write + failed kill) = a LIVE UNRECORDED orphan with an empty record + a traceback exit, after which the next start reads SAFE_CHECKPOINT and DOUBLE-LAUNCHES (squarely D-010-R347). SCOPE (smallest durable set): capture terminate_all()'s boolean, add a bounded process.wait(), and raise a DISTINCT reason code (not the generic child_record_unwritable) when the child is verifiably STILL ALIVE after the kill attempt, so the fail-closed refusal is honest about whether an orphan survives. Correct nothing else (no redesign; supervisor-freeze). REQUIRED TESTS: kill-succeeds path still raises child_record_unwritable; kill-returns-False / child-still-alive path raises the DISTINCT code; bounded wait does not hang; full supervisor suite re-establishes the M0-T039 freeze baseline (>=1165, 0 failures) plus the new tests.",
+  "business_reason": "P1 is a required pre-M0-T056 correction (M0-T036-ACTIVATION-CHECKLIST): it closes the double-launch residual where an unverified termination assertion lets the next start launch a second worker over a live orphan (R347). Non-blocking for M0-T053 acceptance (already accepted); blocking before live actuation.",
+  "inputs": [],
+  "outputs": [],
+  "dependencies": [
+    "M0-T053"
+  ],
+  "allowed_paths": [
+    "tools/agent_supervisor/claude_runner.py",
+    "tools/test_agent_supervisor_runner.py",
+    "project-control/reports/M0-T058-producer-report.md"
+  ],
+  "forbidden_paths": [
+    "tools/agent_supervisor/** modules not named in allowed_paths (smallest durable set only; wider need = STOP-and-report)",
+    "project-control/** (except own producer report)",
+    ".claude/**",
+    "services/**, apps/**, packages/**",
+    "Any redesign or speculative supervisor feature (supervisor-freeze; defect-only)"
+  ],
+  "acceptance_scenarios": [
+    "P1-SC1 kill-succeeds: record_launched_child raises; terminate_all() returns True (or the child is confirmed reaped by a bounded wait) -> RunnerError('child_record_unwritable') as before, worker gone.",
+    "P1-SC2 kill-unverified: terminate_all() returns False or the bounded process.wait() times out with the child still alive -> a DISTINCT reason code (e.g. child_record_unwritable_orphan_live) is raised, naming that a live orphan may survive, so the operator/next-start is not told the worker was terminated when it was not.",
+    "P1-SC3 bounded wait does not hang: the wait has a finite timeout and never blocks the unit indefinitely.",
+    "P1-SC4 freeze baseline: full supervisor suite re-establishes the M0-T039 baseline (>=1165 passed, 0 failures) plus the new P1 tests; non-vacuity shown (reverting the guard fails a test)."
+  ],
+  "required_gates": [
+    "G0",
+    "G2",
+    "G3",
+    "G5"
+  ],
+  "producer_agent": "backend-engineer",
+  "reviewer_agents": [
+    "code-reviewer",
+    "security-reviewer"
+  ],
+  "status": "accepted",
+  "progress_percent": 100,
+  "risks": [
+    "File overlap: P2 (M0-T059) also edits claude_runner.py (the _settle_worker_record caller of clear_child_record); build P1 FIRST, then P2 branches off P1's claude_runner.py. Never run P1/P2 producers in parallel.",
+    "Supervisor-freeze: change the tree hash and re-establish the M0-T039 suite baseline under G0/G2/G3/G5.",
+    "Windows-Job-Object-only host (P8); degraded-taskkill path is the one this fix hardens."
+  ],
+  "blockers": [],
+  "created_at": "2026-08-11T17:40:09.551066+00:00",
+  "updated_at": "2026-08-11T19:49:01.339009+00:00",
+  "directive_refs": [
+    {
+      "directive_id": "D-010",
+      "requirement_ids": "ALL"
+    }
+  ],
+  "directive_regime_version": "1.0",
+  "directive_regime_entered_at": "2026-08-11T17:40:09.559288+00:00",
+  "worktree": ".claude/worktrees/M0-T058-p1",
+  "accepted_by": "orchestrator",
+  "accepted_at": "2026-08-11T19:49:01.338527+00:00"
+}

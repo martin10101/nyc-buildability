@@ -73,6 +73,7 @@ from .policy import (
     evaluate as evaluate_policy,
     DEFAULT_POLICY_CONFIG,
 )
+from .process import CONTAINMENT_JOB_OBJECT
 from .protocol import build_envelope
 from .resume_scheduler import EMERGENCY_STOP_KEY
 from .state_machine import (
@@ -1742,6 +1743,43 @@ class SupervisedLoop:
                 TOUCH_SYNCHRONOUS_STOP, reason_code="no_valid_checkpoint",
                 reason=reason, cycle=cycle, basis="S14"))
             return stop("no_valid_checkpoint", reason, PAUSED_RECOVERY)
+
+        # M0-T060 (M0-T053 G5 R4 enforcement half; 2026-08-08 pin criterion 2):
+        # criterion (1) pins the host DEFAULT containment at doctor time; the
+        # ACHIEVED per-cycle containment is enforced HERE, on the OTHERWISE-OK path
+        # - the only path that would PROCEED. `ProcessContainer.adopt` can honestly
+        # DEGRADE to taskkill at launch (job-object creation denied), and that
+        # degradation was previously only RECORDED on the `claude_process_started`
+        # transition detail above. Recording is not enough: unattended, nobody reads
+        # the audit line, and a child that spawns its own tree can ESCAPE a non-job
+        # container. A cycle that did not actually get job-strength containment is
+        # therefore a FAIL-CLOSED stop with an explicit recorded reason - never a
+        # silent continue (S13.2 / S13.12 invariants 10 and 11). Placed AFTER the
+        # S14 checkpoint/effect reconciliation so a paramount ambiguous-effect or
+        # no-checkpoint stop is never masked by this one; a cycle whose checkpoint
+        # already failed stops for that reason. A cycle reporting `job_object`
+        # proceeds unchanged.
+        achieved = str(getattr(run_result, "containment", "") or "")
+        if achieved != CONTAINMENT_JOB_OBJECT:
+            fallback = str(getattr(run_result, "containment_fallback_reason", "") or "")
+            containment_reason = (
+                f"the cycle achieved {achieved or 'unknown'!r} containment, not "
+                f"job-strength {CONTAINMENT_JOB_OBJECT!r}: a child that spawns its "
+                f"own process tree can escape a non-job container, so an unattended "
+                f"run must fail closed rather than proceed on it")
+            if fallback:
+                containment_reason += f" (fallback reason: {fallback})"
+            self.machine.transition(
+                PAUSED_RECOVERY, "unsafe_condition",
+                detail={"cycle": cycle, "reason": "containment_degraded",
+                        "containment": achieved,
+                        "containment_fallback_reason": fallback})
+            touches.append(self._touch(
+                TOUCH_SYNCHRONOUS_STOP, reason_code="containment_degraded",
+                reason=containment_reason, cycle=cycle,
+                basis="M0-T053 G5 R4 achieved-containment enforcement (2026-08-08 "
+                      "pin criterion 2; S13.2 / S13.12 invariants 10-11)"))
+            return stop("containment_degraded", containment_reason, PAUSED_RECOVERY)
 
         self.machine.transition(
             CHECKPOINT_RECEIVED, "valid_checkpoint_received",

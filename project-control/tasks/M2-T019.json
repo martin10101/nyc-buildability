@@ -1,0 +1,49 @@
+{
+  "task_id": "M2-T019",
+  "title": "Survey-review HTTP routes + production ReviewStore (B-001-blocked seams from M2-T016)",
+  "task_type": "backend",
+  "milestone_id": "M2",
+  "objective": "BLOCKED BY B-001 (Supabase management access token) - contract now, build when B-001 clears. Close the two storage/transport seams M2-T016 disclosed in project-control/reports/M2-T016-backend-return.md: (1) HTTP ROUTER - bind the seven shipped review-action handlers to the REST surface suggested in that return under /api/v1 (GET documents/{digest}/review; POST facts/{eid}/accept|correct|reject; POST documents/{digest}/confirm|reject|reopen), with the principal resolved by the auth channel and NEVER from the request payload, and the typed reject_code -> HTTP status mapping exactly as returned (unauthorized_review_action 403; document_record_not_found/fact_not_found 404; concurrent_review_modification 409; correction_rejected/confirmation_rejected 422; illegal_transition 409; unauthorized_transition_actor 403; transition_reason_required 422). (2) PRODUCTION ReviewStore - implement the ReviewStore Protocol against Supabase with tested RLS, replacing the in-process test store, and make confirm_document's per-fact loop ATOMIC (the local store's per-fact loop is non-transactional and is only single-process CI-acceptable; a partial multi-fact commit in production would leave a document half-confirmed). Reuse the shipped state/promotion/isolation/gate/correction_history/errors modules unmodified; every gated edge continues through promotion_gated_transition and raw transition() is authority-only. Out of scope: the buildability recompute worker (DependentRecalculationRequested stays consumer_bound=False) and any authoritative survey-geometry profile surface (the section 9.3 owner STOP is still in force).",
+  "business_reason": "M2-T016 shipped the survey review-action handlers as pure Python in services/api/app/documents/** plus the review UI, but deliberately left two seams unbuilt because they need durable cloud storage/auth that B-001 (missing Supabase management access token) blocks. Until these land, the review workflow cannot be exercised over HTTP by a real reviewer against durable storage.",
+  "inputs": [],
+  "outputs": [],
+  "dependencies": [
+    "M2-T016"
+  ],
+  "allowed_paths": [
+    "services/api/app/documents/review_actions.py",
+    "services/api/app/documents/review_store.py",
+    "services/api/app/routers",
+    "services/api/tests/documents",
+    "supabase/migrations",
+    "project-control/reports/M2-T019-producer-report.md"
+  ],
+  "forbidden_paths": [],
+  "acceptance_scenarios": [],
+  "required_gates": [
+    "G0",
+    "G2",
+    "G3",
+    "G5"
+  ],
+  "producer_agent": null,
+  "reviewer_agents": [
+    "code-reviewer",
+    "security-reviewer",
+    "control-plane-verifier"
+  ],
+  "status": "backlog",
+  "progress_percent": 0,
+  "risks": [],
+  "blockers": [],
+  "created_at": "2026-08-11T04:30:16.174046+00:00",
+  "updated_at": "2026-08-11T04:30:16.572862+00:00",
+  "directive_refs": [
+    {
+      "directive_id": "D-010",
+      "requirement_ids": "ALL"
+    }
+  ],
+  "directive_regime_version": "1.0",
+  "directive_regime_entered_at": "2026-08-11T04:30:16.174046+00:00"
+}

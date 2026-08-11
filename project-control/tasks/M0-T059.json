@@ -1,0 +1,74 @@
+{
+  "task_id": "M0-T059",
+  "title": "P2: clear_child_record must remove by (pid, start_token), not whole-key (M0-T053 G5 finding 5)",
+  "task_type": "backend",
+  "milestone_id": "M0",
+  "objective": "QUALIFYING EVIDENCE (AD-093 demonstrated security risk): M0-T053 G5 finding 5 + M0-T036-ACTIVATION-CHECKLIST P2. recovery.py:190-191 clear_child_record wipes the WHOLE CHILD_PROCESSES_KEY, so settle clears records it did not create. Latent today (exactly one recorder), but the moment M0-T056's successor-launch seam records anything, a worker's clean exit ERASES the live successor's record - fail-open on the no-duplicate-workers invariant D-010-R347 makes binding. SCOPE (smallest durable set): clear_child_record removes ONLY the entry matching (pid, start_token), leaving other recorded children intact; update its sole caller _settle_worker_record (claude_runner.py) to pass the pid+start_token it settled. Correct nothing else (supervisor-freeze). REQUIRED TESTS: settling one child leaves a second recorded child intact; settling a pid that is not recorded is a no-op; reused-pid with a different start_token is NOT cleared; full supervisor suite re-establishes the M0-T039 baseline (>=1165, 0 failures) plus the new tests.",
+  "business_reason": "P2 is a required pre-M0-T056 correction: it removes the fail-open that appears the moment a second spawner (M0-T056 successor-launch) records a child, protecting the no-duplicate-workers invariant R347.",
+  "inputs": [],
+  "outputs": [],
+  "dependencies": [
+    "M0-T058"
+  ],
+  "allowed_paths": [
+    "tools/agent_supervisor/recovery.py",
+    "tools/agent_supervisor/claude_runner.py",
+    "tools/test_agent_supervisor_recovery.py",
+    "tools/test_agent_supervisor_start_reentry.py",
+    "project-control/reports/M0-T059-producer-report.md"
+  ],
+  "forbidden_paths": [
+    "tools/agent_supervisor/** modules not named in allowed_paths (smallest durable set only; wider need = STOP-and-report at G0)",
+    "project-control/** (except own producer report)",
+    ".claude/**",
+    "services/**, apps/**, packages/**",
+    "Any redesign or speculative supervisor feature (supervisor-freeze; defect-only)"
+  ],
+  "acceptance_scenarios": [
+    "P2-SC1 settling one child leaves a second recorded child intact (no whole-key wipe).",
+    "P2-SC2 settling a pid that is not recorded is a no-op (other records untouched).",
+    "P2-SC3 a reused pid with a DIFFERENT start_token is NOT cleared (start_token disambiguates).",
+    "P2-SC4 freeze baseline: full supervisor suite re-establishes M0-T039 (>=1165, 0 failures) + new tests; non-vacuity shown."
+  ],
+  "required_gates": [
+    "G0",
+    "G2",
+    "G3",
+    "G5"
+  ],
+  "producer_agent": "backend-engineer",
+  "reviewer_agents": [
+    "code-reviewer",
+    "security-reviewer"
+  ],
+  "status": "accepted",
+  "progress_percent": 100,
+  "risks": [
+    "Depends on M0-T058 (P1): both edit claude_runner.py \u2014 build AFTER P1 lands, branch off P1's claude_runner.py; never parallel producers.",
+    "Supervisor-freeze: change the tree hash, re-establish the M0-T039 baseline under G0/G2/G3/G5.",
+    "clear_child_record signature change ripples to its sole caller _settle_worker_record; keep the change minimal."
+  ],
+  "blockers": [],
+  "created_at": "2026-08-11T17:41:59.693810+00:00",
+  "updated_at": "2026-08-11T20:46:07.741599+00:00",
+  "directive_refs": [
+    {
+      "directive_id": "D-010",
+      "requirement_ids": "ALL"
+    }
+  ],
+  "directive_regime_version": "1.0",
+  "directive_regime_entered_at": "2026-08-11T17:41:59.700943+00:00",
+  "worktree": ".claude/worktrees/agent-p2",
+  "progress_log": [
+    {
+      "at": "2026-08-11T20:20:25.767903+00:00",
+      "agent": "orchestrator",
+      "percent": 85,
+      "status": "in_progress",
+      "message": "Scope-wall resolution (orchestrator-authorized): the clear_child_record(journal,*,pid,start_token) signature change necessarily breaks the 1-arg monkeypatch spy in tools/test_agent_supervisor_start_reentry.py (a direct dependent of the changed fn, not in the 20-module freeze list but in the full-pytest CI job). Producer STOP-and-reported at the boundary (correct). Added that one test file to allowed_paths for the minimal 2-line companion fix (spy accepts+forwards **kwargs); no production behavior widened."
+    }
+  ],
+  "accepted_by": "orchestrator",
+  "accepted_at": "2026-08-11T20:46:07.740599+00:00"
+}

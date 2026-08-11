@@ -56,6 +56,30 @@ REQUIREMENT_REQUIRED = ("id", "text", "source_ref", "classification", "applicabi
                         "producer", "independent_verifier", "status", "status_reason",
                         "evidence_paths", "reviewed_sha", "maps_to")
 
+# c17 (D-011 item 6; M0-T057): the SAME exclude/include prefix the CLI uses so the
+# validator resolves a task's allowed_paths to exactly the manifest the identity is built
+# from (raw-blob outside the control plane + MATERIAL entries inside it).
+_CONTROL_PLANE_PREFIXES = ("project-control/",)
+
+# FROZEN grandfather allowlist for c17: the in-regime tasks whose allowed_paths ALREADY
+# resolve to zero tracked files at the M0-T057 baseline (commit 7cc1fed) -- backlog stubs
+# with empty allowed_paths (M0-T026/T032), the accepted continuation task M0-T054, and
+# M3 tasks carrying PROSE allowed_paths. This task does NOT rewrite those packets; their
+# historical remediation is handled separately (D-011). The allowlist keeps the current repo
+# EXIT 0 while c17 fails closed on any NEWLY-introduced empty-identity task. Draining an entry
+# is safe: once a task's allowed_paths match real tracked files it resolves non-empty and never
+# reaches c17 regardless of membership. (M0-T055 DRAINED 2026-08-11 session 16: D-011 item-5
+# repaired its allowed_paths to bind docs/LEAN_OPERATING_PROCESS.md and it is now accepted at
+# real identity f3a6a363, so it resolves non-empty and no longer needs grandfathering. M0-T056
+# DRAINED 2026-08-11 session 18: its packet gained real allowed_paths binding
+# tools/agent_supervisor/*.py -- 7 tracked files at HEAD -- so it resolves non-empty, the entry
+# was inert, and control-plane-verifier flagged the stale membership; M0-T056's own empty-identity
+# risk is now carried by c17 live, not by this frozen list.)
+_EMPTY_IDENTITY_GRANDFATHERED = frozenset({
+    "M0-T026", "M0-T032", "M0-T054",
+    "M3-T002", "M3-T003", "M3-T004", "M3-T005",
+})
+
 
 def _load_json(path: Path):
     return json.loads(path.read_text(encoding="utf-8-sig"))
@@ -246,6 +270,67 @@ def _validate_migration_manifest(registry_root: Path, active_directives) -> list
     return errors
 
 
+def _validate_empty_identity(tasks_dir: Path) -> list:
+    """c17 (D-011 item 6; M0-T057): a task whose allowed_paths resolve to ZERO tracked
+    files would stamp the empty-set content identity, binding no code -- the exact defect
+    the shared identity path in project_control.py now fails closed on at submit/gate/
+    accept. This is the CI-side static catch.
+
+    For every in-regime task file:
+      * a MALFORMED path-free opt-in (path_free_governance present but not True, or True
+        without a justification) is ALWAYS an error -- it protects the opt-in mechanism
+        itself and needs no git;
+      * an allowed_paths set that resolves EMPTY at HEAD, while the task is NOT a valid
+        path-free opt-in and NOT in the frozen grandfather allowlist, is an error.
+
+    Resolution uses git; when this checkout is not a git work tree the empty-resolution
+    arm is skipped (the malformed-opt-in arm still runs, and the project_control.py guard
+    remains the fail-closed backstop at every lifecycle transition). Read-only."""
+    errors: list = []
+    _, gerr = dr.git_work_tree_root(ROOT)
+    commit = None
+    if gerr is None:
+        commit, cerr = dr.resolve_commit(ROOT, None)
+        if cerr is not None:
+            commit = None
+    if not tasks_dir.exists():
+        return errors
+    for tp in sorted(tasks_dir.glob("*.json")):
+        try:
+            task = _load_json(tp)
+        except (ValueError, OSError):
+            continue
+        tid = task.get("task_id") or tp.stem
+        in_regime = bool(task.get("directive_regime_version")) or bool(task.get("directive_refs"))
+        if not in_regime:
+            continue
+        opted_in, opt_err = dr.path_free_opt_in(task)
+        if opt_err:
+            errors.append(f"c17 in-regime task {tid}: {opt_err}")
+            continue
+        if commit is None:
+            continue  # no git here; empty-resolution deferred to the CLI guard
+        paths = list(task.get("allowed_paths") or [])
+        _, entries, e1 = dr.git_tree_manifest(
+            ROOT, commit, paths, exclude_prefixes=_CONTROL_PLANE_PREFIXES)
+        cp_entries, e2 = dr.control_plane_entries(
+            ROOT, commit, paths, include_prefixes=_CONTROL_PLANE_PREFIXES)
+        if e1 is not None or e2 is not None:
+            continue  # a resolution error is surfaced by the CLI identity path, not here
+        if entries or cp_entries or opted_in:
+            continue
+        if tid in _EMPTY_IDENTITY_GRANDFATHERED:
+            continue  # frozen pre-existing debt; remediated separately (D-011)
+        errors.append(
+            f"c17 in-regime task {tid} allowed_paths resolve to ZERO tracked files at HEAD; "
+            f"the content identity would collapse to the empty-set hash and bind no code. "
+            f"Fix allowed_paths so they match tracked files (a prose entry like "
+            f"'src/** (note)' matches literally and matches nothing), or declare a genuinely "
+            f"path-free governance packet with {dr.PATH_FREE_MARKER}:true + "
+            f"{dr.PATH_FREE_JUSTIFICATION}.")
+    return errors
+
+
 def validate(registry_root: Path = DIRECTIVES_DIR, tasks_dir: Path = TASKS_DIR) -> list:
     """Return a list of human-readable error strings ([] == valid)."""
     errors: list = []
@@ -271,9 +356,12 @@ def validate(registry_root: Path = DIRECTIVES_DIR, tasks_dir: Path = TASKS_DIR) 
         errors.append("c1 versioned schema missing: schema/v2/directive_verification.schema.json")
     # Immutable migration manifest integrity + append-only content lock (Section 1).
     errors.extend(_validate_migration_manifest(registry_root, reg.active_directives()))
+    # c17 empty-identity guard: refuse a task whose allowed_paths resolve to zero tracked
+    # files (empty-set content identity) unless it validly opts in as path-free (D-011
+    # item 6; M0-T057).
+    errors.extend(_validate_empty_identity(tasks_dir))
 
     # c16: multiple directives are handled independently; iterate each.
-    active_ids = [d.directive_id for d in reg.active_directives()]
     for did, d in sorted(reg.directives.items()):
         w = f"[{did}]"
         # c2 source hashes + structural load errors surfaced by the resolver

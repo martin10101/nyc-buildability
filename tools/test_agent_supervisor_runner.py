@@ -37,8 +37,10 @@ sys.path.insert(0, str(REPO))
 from tools.agent_supervisor import broker as bk  # noqa: E402
 from tools.agent_supervisor import claude_runner as cr  # noqa: E402
 from tools.agent_supervisor import policy as pol  # noqa: E402
+from tools.agent_supervisor import recovery as rec  # noqa: E402
 from tools.agent_supervisor.audit_log import AuditLog  # noqa: E402
 from tools.agent_supervisor.durable_state import DurableJournal  # noqa: E402
+from tools.agent_supervisor.locking import probe_process  # noqa: E402
 
 # --------------------------------------------------------------------------
 # The fake claude executable
@@ -1024,6 +1026,307 @@ class ModelIdentityAndUsageTests(RunnerTestBase):
             [{"type": "assistant", "message": {"content": "hi"}}])
         self.assertFalse(known)
         self.assertEqual(tokens, 0)
+
+
+# --------------------------------------------------------------------------
+# M0-T053: production child accounting (qualifying evidence: M0-T052 G5
+# SEC-MAJOR, required correction C2)
+# --------------------------------------------------------------------------
+
+
+class _RecordingJournal:
+    """A real journal with every `launched_child_processes` write observed.
+
+    Delegation, not a fake: the production code writes through to the REAL
+    `DurableJournal`, and the spy only keeps a copy of what the child-accounting
+    key was set to, in order. That is what makes "the record was written and then
+    cleared" provable rather than inferred from a final empty list (which is also
+    what a runner that recorded NOTHING would leave behind).
+    """
+
+    def __init__(self, journal: DurableJournal) -> None:
+        self._journal = journal
+        self.child_writes: list[list] = []
+
+    def get_state(self, key: str, default: object = None) -> object:
+        return self._journal.get_state(key, default)
+
+    def set_state(self, key: str, value: object) -> None:
+        if key == rec.CHILD_PROCESSES_KEY:
+            self.child_writes.append(json.loads(json.dumps(value)))
+        self._journal.set_state(key, value)
+
+    def pending_effects(self) -> list:
+        return self._journal.pending_effects()
+
+
+class _UnwritableJournal:
+    """A journal whose child-accounting write always fails."""
+
+    def get_state(self, _key: str, default: object = None) -> object:
+        return default
+
+    def set_state(self, _key: str, _value: object) -> None:
+        raise OSError("disk is gone")
+
+
+class _FakeKillContainer:
+    """A ProcessContainer stand-in whose `terminate_all()` result is scripted.
+
+    Real `terminate_all()` returns False on the degraded taskkill fallback (a
+    `terminate_process_tree` that returned False), which is exactly the case
+    M0-T058 makes honest.
+    """
+
+    def __init__(self, *, terminate_result: bool) -> None:
+        self._terminate_result = terminate_result
+        self.terminate_calls = 0
+        self.closed = False
+
+    def terminate_all(self) -> bool:
+        self.terminate_calls += 1
+        return self._terminate_result
+
+    def close(self) -> None:
+        self.closed = True
+
+
+class _FakeKillProcess:
+    """A Popen stand-in with a scripted bounded `wait()` and liveness.
+
+    `reaped=True` -> `wait()` returns (the OS reaped the child); `reaped=False`
+    -> `wait()` raises `TimeoutExpired` (the bounded wait elapsed), and
+    `alive_after` is what a follow-up `poll()` would then observe.
+    """
+
+    stdin = None
+    stdout = None
+    stderr = None
+
+    def __init__(self, *, pid: int = 424242, reaped: bool,
+                 alive_after: bool = True) -> None:
+        self.pid = pid
+        self._reaped = reaped
+        self._alive_after = alive_after
+        self.wait_calls: list[object] = []
+
+    def wait(self, timeout: object = None) -> int:
+        self.wait_calls.append(timeout)
+        if self._reaped:
+            return 0
+        raise subprocess.TimeoutExpired(cmd="worker", timeout=timeout)
+
+    def poll(self) -> "int | None":
+        return None if self._alive_after else 0
+
+
+class ProductionChildAccountingTests(RunnerTestBase):
+    """C2: `record_launched_child` / `clear_child_record` on the PRODUCTION path.
+
+    Before M0-T053 `record_launched_child` had no production caller: the runner
+    spawned the worker with `subprocess.Popen` + `container.adopt` and journaled
+    nothing, so `recover_boot`'s surviving-child fail-closed was inert in
+    production and the only real protection against resuming over an orphaned
+    worker was platform kill-on-close (M0-T052 G5, SEC-MAJOR).
+    """
+
+    ALL_PASS = {name: True for name in rec.REVALIDATION_STEPS}
+
+    def setUp(self) -> None:
+        super().setUp()
+        self.db = self.tmp / "journal.sqlite3"
+
+    def runner_for(self, journal: object, *, mode: str = "normal",
+                   timeout: float = 60.0) -> "_ScriptRunner":
+        config = cr.RunnerConfig(
+            executable=sys.executable, max_turns=4, timeout_seconds=timeout,
+            cwd=str(self.tmp),
+            extra_env={"FAKE_MODE": mode, "PYTHONIOENCODING": "utf-8"})
+        return _ScriptRunner(config, script=str(self.fake), journal=journal)
+
+    def test_a_clean_unit_records_the_pid_and_then_clears_the_record(self) -> None:
+        journal = DurableJournal(self.db).open()
+        self.addCleanup(journal.close)
+        spy = _RecordingJournal(journal)
+
+        result = self.runner_for(spy).run_unit("do the unit")
+
+        self.assertTrue(result.ok, result.checkpoint_error)
+        self.assertEqual(len(spy.child_writes), 2,
+                         "the production path must write the record at spawn and "
+                         "clear it after the verified exit")
+        recorded = spy.child_writes[0]
+        self.assertEqual(len(recorded), 1)
+        self.assertEqual(recorded[0]["role"], cr.WORKER_CHILD_ROLE)
+        self.assertGreater(int(recorded[0]["pid"]), 0)
+        self.assertEqual(spy.child_writes[1], [], "a verified exit clears the record")
+        self.assertEqual(journal.get_state(rec.CHILD_PROCESSES_KEY), [])
+
+    def test_after_a_clean_unit_the_next_resume_proceeds(self) -> None:
+        """The other half of C2: clearing must not leave a resume permanently barred."""
+        journal = DurableJournal(self.db).open()
+        self.addCleanup(journal.close)
+        self.runner_for(journal).run_unit("do the unit")
+
+        self.assertEqual(journal.get_state(rec.CHILD_PROCESSES_KEY, "absent"), [])
+        outcome = rec.recover_boot(journal=journal, lock=None,
+                                   revalidation=self.ALL_PASS)
+        self.assertEqual(outcome.classification, rec.SAFE_CHECKPOINT)
+        self.assertEqual(outcome.unaccounted_children, ())
+
+    def test_a_child_without_a_verified_exit_keeps_the_record(self) -> None:
+        """Fail closed on the clear side: no returncode means no clearing.
+
+        The record is what a later `start` refuses on, so it is removed only for
+        a pid the OS has actually reaped - never because the termination path
+        was merely asked to run.
+        """
+        journal = DurableJournal(self.db).open()
+        self.addCleanup(journal.close)
+        rec.record_launched_child(journal, pid=os.getpid(),
+                                  role=cr.WORKER_CHILD_ROLE)
+
+        class _NeverReaped:
+            pid = os.getpid()
+
+            def poll(self) -> None:
+                return None
+
+        self.runner_for(journal)._settle_worker_record(_NeverReaped())
+        self.assertEqual(len(journal.get_state(rec.CHILD_PROCESSES_KEY, [])), 1,
+                         "an unreaped child must stay recorded so the next start refuses")
+
+    def test_a_surviving_recorded_child_makes_the_next_start_refuse(self) -> None:
+        """Spawn -> record -> "kill" the supervisor -> the resume REFUSES.
+
+        The supervisor process is simulated exactly the way a crash leaves
+        things: the launching supervisor owns its own journal connection and is
+        still mid-`run_unit` with a LIVE worker; the "restarted" supervisor is a
+        second, independent connection to the same durable journal file, and it
+        runs the real `recover_boot`. Nothing is recorded by hand - the pid it
+        refuses on is the one `ClaudeRunner.run_unit` journaled at spawn.
+        """
+        # The journal file exists before either "process" runs: a crash resume
+        # reads a journal the crashed run already created. (It also keeps the
+        # two connections off a concurrent first-open, which SQLite refuses
+        # with `database is locked` - a test artifact, not a runtime path: the
+        # single-instance lock is what keeps two live supervisors apart.)
+        resumed = DurableJournal(self.db).open()
+        self.addCleanup(resumed.close)
+
+        cancel = threading.Event()
+        crashed = threading.Event()
+        failure: list[BaseException] = []
+
+        def launching_supervisor() -> None:
+            journal = DurableJournal(self.db).open()
+            try:
+                self.runner_for(journal, mode="hang", timeout=120.0).run_unit(
+                    "do the unit", cancel_event=cancel)
+            except BaseException as exc:  # pragma: no cover - surfaced below
+                failure.append(exc)
+            finally:
+                journal.close()
+                crashed.set()
+
+        thread = threading.Thread(target=launching_supervisor, daemon=True)
+        thread.start()
+        self.addCleanup(thread.join, 60)
+        self.addCleanup(cancel.set)
+
+        # The restarted supervisor reads through its OWN connection: nothing here
+        # is remembered from the launching "process".
+        deadline = time.monotonic() + 30.0
+        recorded: list = []
+        while time.monotonic() < deadline:
+            recorded = resumed.get_state(rec.CHILD_PROCESSES_KEY, []) or []
+            if recorded or crashed.is_set():
+                break
+            time.sleep(0.05)
+        self.assertFalse(failure, f"the launching unit raised: {failure}")
+        self.assertTrue(recorded, "the production launch path recorded no child")
+        pid = int(recorded[0]["pid"])
+        self.assertEqual(recorded[0]["role"], cr.WORKER_CHILD_ROLE)
+        probe = probe_process(pid)
+        self.assertTrue(probe.determined and probe.alive,
+                        f"the recorded worker must still be alive: {probe.detail}")
+
+        outcome = rec.recover_boot(journal=resumed, lock=None,
+                                   revalidation=self.ALL_PASS)
+        self.assertEqual(outcome.classification, rec.UNSAFE_OR_DRIFTED)
+        self.assertIn(pid, outcome.unaccounted_children)
+        # This is the exact boolean `cmd_start` gates dispatch on, so no second
+        # worker is ever launched over the live one.
+        self.assertNotEqual(outcome.classification, rec.SAFE_CHECKPOINT)
+
+        cancel.set()
+        self.assertTrue(crashed.wait(60), "the launching unit never finished")
+        self.assertFalse(failure, f"the launching unit raised: {failure}")
+
+    def test_an_unwritable_child_record_refuses_the_unit(self) -> None:
+        """Fail closed: a child that cannot be journaled is killed, not run."""
+        with self.assertRaises(cr.RunnerError) as ctx:
+            self.runner_for(_UnwritableJournal()).run_unit("do the unit")
+        self.assertEqual(ctx.exception.code, "child_record_unwritable")
+
+    # M0-T058 (M0-T053 G5 finding 4): the record-unwritable REFUSAL must not
+    # claim a termination it did not verify. `_record_launched_worker` is driven
+    # directly with a fake container/process so the kill result and the reap wait
+    # are controlled without a real, un-killable orphan.
+    def _refuse_record(self, *, terminate_result: bool, reaped: bool,
+                       alive_after: bool = True) -> "tuple[cr.RunnerError, _FakeKillProcess]":
+        runner = self.runner_for(_UnwritableJournal())
+        container = _FakeKillContainer(terminate_result=terminate_result)
+        process = _FakeKillProcess(reaped=reaped, alive_after=alive_after)
+        try:
+            runner._record_launched_worker(process, container)
+        except cr.RunnerError as exc:
+            self.assertTrue(container.closed, "the container must be released on refusal")
+            return exc, process
+        self.fail("an unwritable child record must raise RunnerError")
+
+    def test_p1_sc1_verified_kill_keeps_the_original_reason(self) -> None:
+        """P1-SC1: `terminate_all()` True (or the bounded wait reaps the child)
+        keeps `child_record_unwritable` - the honest code for a worker that IS
+        gone, unchanged from before."""
+        exc, _ = self._refuse_record(terminate_result=True, reaped=False,
+                                     alive_after=True)
+        self.assertEqual(exc.code, "child_record_unwritable")
+        # The other half of "verified": the kill returned False but the bounded
+        # wait actually observed the child exit, which is proof enough.
+        exc2, _ = self._refuse_record(terminate_result=False, reaped=True,
+                                      alive_after=False)
+        self.assertEqual(exc2.code, "child_record_unwritable")
+
+    def test_p1_sc2_unverified_kill_reports_a_possible_live_orphan(self) -> None:
+        """P1-SC2: `terminate_all()` False AND the bounded wait times out with the
+        child still alive -> the DISTINCT reason code, whose message names a live
+        orphan, so nobody is told the worker was terminated when it was not."""
+        exc, _ = self._refuse_record(terminate_result=False, reaped=False,
+                                     alive_after=True)
+        self.assertEqual(exc.code, "child_record_unwritable_orphan_live")
+        self.assertNotEqual(exc.code, "child_record_unwritable")
+        self.assertIn("LIVE ORPHAN", exc.message)
+
+    def test_p1_sc3_the_reap_wait_is_bounded_and_never_hangs(self) -> None:
+        """P1-SC3: the post-kill `process.wait()` is called with a FINITE timeout
+        (never `None`), so the refusal can never block indefinitely on a child
+        that will not die. The timeout path is the one SC2 exercises."""
+        _, process = self._refuse_record(terminate_result=False, reaped=False,
+                                         alive_after=True)
+        self.assertEqual(len(process.wait_calls), 1,
+                         "the bounded wait must run exactly once")
+        timeout = process.wait_calls[0]
+        self.assertIsNotNone(timeout, "an unbounded wait (timeout=None) can hang forever")
+        self.assertIsInstance(timeout, (int, float))
+        self.assertGreater(timeout, 0)
+        self.assertLess(timeout, float("inf"))
+        self.assertEqual(timeout, cr.CHILD_KILL_REAP_SECONDS)
+
+    def test_a_runner_without_a_journal_keeps_the_previous_behaviour(self) -> None:
+        """The probe/test runners own no journal and must still run unchanged."""
+        result = self.runner_for(None).run_unit("do the unit")
+        self.assertTrue(result.ok, result.checkpoint_error)
 
 
 if __name__ == "__main__":

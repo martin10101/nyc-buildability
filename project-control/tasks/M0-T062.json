@@ -1,0 +1,61 @@
+{
+  "task_id": "M0-T062",
+  "title": "Directive-compliance follow-up hygiene: drain inert M0-T056 grandfather entry + O1 path_free_justification fail-closed regression tests",
+  "task_type": "governance",
+  "milestone_id": "M0",
+  "objective": "Two provably-safe D-011 runway follow-ups on the directive-compliance validator: (a) drain the now-inert M0-T056 entry from validate_directive_compliance.py _EMPTY_IDENTITY_GRANDFATHERED (M0-T056 gained real allowed_paths binding 7 tracked tools/agent_supervisor files, so it resolves non-empty and never reaches c17); (b) add O1 regression tests asserting path_free_opt_in fails closed on empty-string, whitespace-only, and non-string path_free_justification (code already fails closed).",
+  "business_reason": "Pre-M0-T056 / pre-#220-merge cleanup required by D-011 amendment-004 runway step 1; control-plane-verifier flagged the stale M0-T056 grandfather membership; O1 locks in existing fail-closed behavior against regression.",
+  "inputs": [],
+  "outputs": [],
+  "dependencies": [],
+  "allowed_paths": [
+    "tools/validate_directive_compliance.py",
+    "tools/test_directive_compliance.py",
+    "project-control/reports/M0-T062-producer-report.md"
+  ],
+  "forbidden_paths": [],
+  "acceptance_scenarios": [],
+  "required_gates": [
+    "G0",
+    "G2",
+    "G3"
+  ],
+  "producer_agent": "orchestrator",
+  "reviewer_agents": [
+    "control-plane-verifier",
+    "code-reviewer"
+  ],
+  "status": "accepted",
+  "progress_percent": 100,
+  "risks": [],
+  "blockers": [],
+  "created_at": "2026-08-11T22:08:42.254885+00:00",
+  "updated_at": "2026-08-11T22:40:49.029142+00:00",
+  "directive_refs": [
+    {
+      "directive_id": "D-001",
+      "requirement_ids": "ALL"
+    }
+  ],
+  "directive_regime_version": "1.0",
+  "directive_regime_entered_at": "2026-08-11T22:08:42.254885+00:00",
+  "worktree": ".claude/worktrees/session15-acc",
+  "progress_log": [
+    {
+      "at": "2026-08-11T22:21:21.536790+00:00",
+      "agent": "orchestrator",
+      "percent": 70,
+      "status": "in_progress",
+      "message": "Producing the two edits in session15-acc."
+    },
+    {
+      "at": "2026-08-11T22:21:22.500912+00:00",
+      "agent": "orchestrator",
+      "percent": 85,
+      "status": "self_check",
+      "message": "Self-check green; reviewed content committed at e2ab6de."
+    }
+  ],
+  "accepted_by": "orchestrator",
+  "accepted_at": "2026-08-11T22:40:49.026494+00:00"
+}

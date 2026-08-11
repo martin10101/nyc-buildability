@@ -1,0 +1,16 @@
+{
+  "task_id": "M0-T047",
+  "note": "M0-T047 cites D-009:ALL and D-010:{R233,R246}. The canonical resolver derives the applicable set = {D-010-R233, D-010-R246} (two M0-T047-scoped nanoid age-gate holds); the applicable D-009 subset is EMPTY (D-009 rows scope to M0-T019/FE-S9, not this nanoid patch bump). The selective-citation guard REQUIRES citing D-010-R233/R246 (evaluate_task_refs ok:False otherwise). Both holds are classification 'hold' (not lifecycle-deferral-eligible) so they verify PASS directly at accept. Evidence below; the independent D-009+D-010 DCV re-verifies.",
+  "requirements": {
+    "D-010-R233": [
+      "D-010-R233 states nanoid (M0-T047) is age-eligible on/after 2026-08-10T10:39:22Z. Today is 2026-08-11 (after eligibility). The package-age rule was NOT bypassed.",
+      "Fresh CI on control/session15-acceptance HEAD c032dfe: 'web-dependency-security (audit + committed-lock age gate + npm CLI advisory)' = PASS and 'web tree re-audit (blocking on any finding / too-new / outage)' = PASS -- the committed-lock age gate re-evaluated the registry release timestamp at today's date and cleared 3.3.17 (>=7 complete days). Run 31543741054 job 93951659768; re-audit run 31543741030 job 93951659800.",
+      "No owner-authorized age-only exception was invoked; the normal 7-day gate cleared on its own."
+    ],
+    "D-010-R246": [
+      "D-010-R246 holds: do not touch/bypass the M0-T047 nanoid age gate; it follows its existing date/policy. This task did NOT modify, weaken, or waive the age gate or the dependency_age_gate policy; it only admits nanoid 3.3.17 through the EXISTING gate, which enforced fresh on c032dfe and passed.",
+      "Diff scope is exactly 2 files (apps/web/package.json exact-pin override + apps/web/package-lock.json 3.3.16->3.3.17), byte-identical to the CI-validated #219 tip 7ac2f91; no CI/policy/age-gate file touched.",
+      "web-dependency-security PASS on c032dfe is the machine proof the age gate ran unbypassed and cleared."
+    ]
+  }
+}

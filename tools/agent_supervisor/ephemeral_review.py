@@ -36,6 +36,22 @@ from .review_packet import ReviewBudget, assess_evidence_packet, guard_packet
 
 RECORD_VERSION = "1.0.0"
 
+#: P6 (M0-T061): reviewer `error_code`s that mean the DISPATCHED reviewer returned
+#: NOTHING adjudicable - it timed out, produced no decision file, or the provider
+#: rejected the turn (HTTP 400 -> `turn.failed`). These are the "gate dispatched,
+#: no verdict returned" cases the P6 re-dispatch guard exists for: absent output
+#: that must never be indistinguishable from a clean review.
+#:
+#: Deliberately EXCLUDED: `schema_retry_exhausted` (and per-decision validation
+#: codes). Those mean the reviewer DELIVERED output that its OWN bounded schema
+#: retry already adjudicated and fail-closed into a distinct, sealed, ok=False
+#: record (the gate-reviewed G3 M-2 invariant in
+#: `test_agent_supervisor_ephemeral_review`). That is not "absent evidence treated
+#: as passing evidence", so it is not re-dispatched or relabeled here.
+SILENT_NO_VERDICT_CODES: frozenset[str] = frozenset({
+    "review_timeout", "missing_decision_file", "provider_rejected_request",
+})
+
 REVIEWER_ROLE = "reviewer"
 #: AD-088 / 0A.5: the writable Codex worker fallback. A recorded EXCEPTION, never
 #: activated by this loop - `conduct_ephemeral_review` refuses any non-reviewer
@@ -222,6 +238,54 @@ def _refusal_record(*, error_code: str, error_message: str, run_id: str,
     return record
 
 
+def _silent_reviewer_record(
+    *, run_id: str, task_id: str, checkpoint_id: str, packet_digest: str,
+    budget: dict[str, Any], guard_findings: list[dict[str, Any]],
+    first_outcome: Any, redispatch_outcome: Any, prior: "ReviewRecord | None",
+    now: Callable[[], str], journal: "ReviewJournal | None") -> ReviewRecord:
+    """A hard fail-closed PAUSE/STOP record for a reviewer that returned NO verdict.
+
+    P6 (M0-T061): under unattended actuation a gate that was DISPATCHED but
+    returned no decision - on both the first dispatch and the single controlled
+    re-dispatch - must never be indistinguishable from a clean review ("absent
+    evidence treated as passing evidence"). This seals a DISTINCT, VISIBLE
+    fail-closed record (ok=False, decision=None, its own `error_code`, a notify
+    event) rather than proceeding. It carries the underlying outcome's own failure
+    code, message, and usage so the silence is diagnosable, and is sealed and
+    journaled exactly like `_refusal_record` and every other durable review record.
+    """
+    underlying_code = (redispatch_outcome.error_code
+                       or first_outcome.error_code or "no_decision")
+    underlying_message = (redispatch_outcome.error_message
+                          or first_outcome.error_message or "")
+    message = (
+        "the dispatched reviewer returned NO verdict (outcome.decision is None) on "
+        "both the first dispatch AND the single controlled re-dispatch; fail-closed "
+        "PAUSE/STOP rather than treating absent evidence as passing evidence (P6). "
+        f"underlying reviewer failure [{underlying_code}]: {underlying_message}")
+    record = ReviewRecord(
+        record_version=RECORD_VERSION, run_id=run_id,
+        reviewed_task_id=task_id, reviewed_checkpoint_id=checkpoint_id,
+        role=REVIEWER_ROLE, created_at_utc=now(), ok=False,
+        decision=None, decision_value="", decision_digest="",
+        evidence_refs=[], model_used=redispatch_outcome.model_used,
+        model_selection_digest=redispatch_outcome.selection_digest,
+        model_self_report_mismatch="",
+        usage_telemetry=getattr(redispatch_outcome, "usage_telemetry", USAGE_UNKNOWN),
+        packet_digest=packet_digest, budget=budget, guard_findings=guard_findings,
+        reopened_sources=[],
+        independence=_independence_proof(packet_digest, prior=prior),
+        attempts=first_outcome.attempts + redispatch_outcome.attempts,
+        returncode=redispatch_outcome.returncode,
+        error_code="reviewer_silent_no_verdict", error_message=message,
+        notify_events=["reviewer_silent_redispatched",
+                       "reviewer_silent_no_verdict",
+                       "reviewer_paused_fail_closed"]).finalize()
+    if journal is not None:
+        journal.append(record)
+    return record
+
+
 def conduct_ephemeral_review(
     reviewer: Any,
     packet: Mapping[str, Any],
@@ -286,9 +350,38 @@ def conduct_ephemeral_review(
             prior=prior_record, now=now, journal=journal)
 
     # 3. Fresh, read-only ephemeral process -> one validated decision.
+    # P6 (M0-T061): under unattended actuation a reviewer that was DISPATCHED but
+    # returned NOTHING adjudicable (timeout / no decision file / provider-rejected
+    # turn -> decision is None AND a SILENT_NO_VERDICT_CODES error) must never be
+    # indistinguishable from a clean review. Detect that silence, allow EXACTLY ONE
+    # controlled re-dispatch of the same packet, then fail closed to a hard
+    # PAUSE/STOP record. A DELIVERED verdict (`decision is not None`) - including a
+    # FAIL/BLOCKED HALT_UNSAFE/STOP_FOR_OWNER - is never re-dispatched; neither is
+    # an already-bounded-adjudicated failure (schema_retry_exhausted / validation
+    # exhaustion), which is a distinct sealed ok=False record on its own.
+    extra_notify: list[str] = []
     outcome = reviewer.review(
         packet_dict, expected_task_id=reviewed_task_id,
         expected_checkpoint_id=reviewed_checkpoint_id)
+    if outcome.decision is None and outcome.error_code in SILENT_NO_VERDICT_CODES:
+        # No verdict returned. Bounded detection -> EXACTLY ONE controlled
+        # re-dispatch of the same packet (a fresh read-only process).
+        redispatch = reviewer.review(
+            packet_dict, expected_task_id=reviewed_task_id,
+            expected_checkpoint_id=reviewed_checkpoint_id)
+        if redispatch.decision is None:
+            # Still silent after the one retry -> hard fail-closed PAUSE/STOP.
+            # Never downgraded to "proceed"/ok=True.
+            return _silent_reviewer_record(
+                run_id=run_id, task_id=reviewed_task_id,
+                checkpoint_id=reviewed_checkpoint_id, packet_digest=packet_digest,
+                budget=assessment.to_dict(), guard_findings=guard_findings,
+                first_outcome=outcome, redispatch_outcome=redispatch,
+                prior=prior_record, now=now, journal=journal)
+        # The single re-dispatch DELIVERED a verdict; proceed normally, but tag
+        # the sealed record so the recovered-from-silence path stays visible.
+        outcome = redispatch
+        extra_notify.append("reviewer_redispatched_after_silence")
 
     # 4. Seal the durable record (0A.1 item 7).
     decision = outcome.decision
@@ -311,7 +404,7 @@ def conduct_ephemeral_review(
         independence=_independence_proof(packet_digest, prior=prior_record),
         attempts=outcome.attempts, returncode=outcome.returncode,
         error_code=outcome.error_code, error_message=outcome.error_message,
-        notify_events=list(outcome.notify_events)).finalize()
+        notify_events=list(outcome.notify_events) + extra_notify).finalize()
     if journal is not None:
         journal.append(record)
     return record

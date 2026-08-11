@@ -1,0 +1,67 @@
+{
+  "task_id": "M0-T061",
+  "title": "P6: a dispatched-but-silent reviewer must fail closed (timeout -> one retry -> STOP), not pass silently",
+  "task_type": "backend",
+  "milestone_id": "M0",
+  "objective": "QUALIFYING EVIDENCE (AD-093 unresolved crash/recovery problem + observed session-14 behaviour): M0-T036-ACTIVATION-CHECKLIST P6. Across session 14 FOUR independently-dispatched reviewers went idle having completed analysis without delivering; each verdict was recovered only because a human-paced orchestrator noticed and re-dispatched, and two then returned REQUIRED corrections (the missing reports were load-bearing). Unattended this is 'absent evidence treated as passing evidence' (the d45f330 failure mode). SCOPE (deterministic, additive; does NOT touch the acceptance gate which already fails closed on a missing PASS): the supervisor's reviewer-gate handling must treat 'gate dispatched, no verdict returned' as bounded-timeout detection -> ONE controlled retry/re-dispatch -> then a hard fail-closed PAUSE/STOP with a recorded reason and visible evidence. A dispatched-but-silent reviewer must never be indistinguishable from a clean review; no timeout may downgrade to 'proceed'. REQUIRED TESTS: a silent reviewer triggers exactly one re-dispatch then STOPS with the recorded reason; a reviewer that returns on retry proceeds normally; a returned FAIL/BLOCKED is unaffected; full supervisor suite re-establishes the M0-T039 baseline (>=1165, 0 failures) plus the new tests.",
+  "business_reason": "P6 is a required pre-M0-T056 deterministic correction: under unattended actuation a silent reviewer must block, not pass; it is additive to (not a duplicate of) project_control.accept which already fail-closes on a missing PASS record.",
+  "inputs": [],
+  "outputs": [],
+  "dependencies": [
+    "M0-T058"
+  ],
+  "allowed_paths": [
+    "tools/agent_supervisor/review_cadence.py",
+    "tools/agent_supervisor/ephemeral_review.py",
+    "tools/agent_supervisor/codex_reviewer.py",
+    "tools/test_agent_supervisor_reviewer.py",
+    "project-control/reports/M0-T061-producer-report.md"
+  ],
+  "forbidden_paths": [
+    "tools/agent_supervisor/** modules not named in allowed_paths (smallest durable set only; wider need = STOP-and-report at G0)",
+    "project-control/** (except own producer report)",
+    ".claude/**",
+    "services/**, apps/**, packages/**",
+    "Any redesign or speculative supervisor feature (supervisor-freeze; defect-only)"
+  ],
+  "acceptance_scenarios": [
+    "P6-SC1 a dispatched reviewer that returns nothing triggers EXACTLY ONE controlled re-dispatch, then a hard fail-closed PAUSE/STOP with a recorded reason and visible evidence.",
+    "P6-SC2 a reviewer that returns on the retry proceeds normally (no false stop).",
+    "P6-SC3 a returned FAIL/BLOCKED verdict is unaffected (P6 only handles SILENCE, not delivered verdicts).",
+    "P6-SC4 no timeout downgrades to 'proceed'; a silent reviewer is never indistinguishable from a clean review.",
+    "P6-SC5 freeze baseline: full supervisor suite re-establishes M0-T039 (>=1165, 0 failures) + new tests; non-vacuity shown."
+  ],
+  "required_gates": [
+    "G0",
+    "G2",
+    "G3",
+    "G5"
+  ],
+  "producer_agent": "backend-engineer",
+  "reviewer_agents": [
+    "code-reviewer",
+    "security-reviewer"
+  ],
+  "status": "accepted",
+  "progress_percent": 100,
+  "risks": [
+    "PRODUCER MUST CONFIRM EXACT FILES AT G0: reviewer-gate dispatch/timeout handling is spread across review_cadence.py / ephemeral_review.py / codex_reviewer.py / loop.py; find where a reviewer verdict is awaited and narrow to the smallest set that adds the timeout->retry->STOP. STOP-and-report if a different file is required.",
+    "Additive to (NOT a duplicate of) project_control.accept, which already fail-closes on a missing PASS record \u2014 P6 is the supervisor's OWN reviewer-gate posture under unattended actuation.",
+    "Independent of P1/P2/P3 file scope (different modules) \u2014 MAY be built in parallel with them IF the confirmed file set stays disjoint from claude_runner.py/recovery.py/loop.py.",
+    "Supervisor-freeze: re-establish the M0-T039 baseline under G0/G2/G3/G5."
+  ],
+  "blockers": [],
+  "created_at": "2026-08-11T17:42:02.225472+00:00",
+  "updated_at": "2026-08-11T20:16:10.990763+00:00",
+  "directive_refs": [
+    {
+      "directive_id": "D-010",
+      "requirement_ids": "ALL"
+    }
+  ],
+  "directive_regime_version": "1.0",
+  "directive_regime_entered_at": "2026-08-11T17:42:02.225472+00:00",
+  "worktree": ".claude/worktrees/M0-T061-p6",
+  "accepted_by": "orchestrator",
+  "accepted_at": "2026-08-11T20:16:10.990763+00:00"
+}

@@ -1,0 +1,154 @@
+{
+  "schema": "directive_manifest/v1",
+  "directive_id": "D-011",
+  "version": 1,
+  "slug": "bounded-truth-reconciliation",
+  "title": "Bounded truth reconciliation (owner correction of session-14 acceptance evidence)",
+  "status": "active",
+  "issued_by": "owner",
+  "issued_at": "2026-08-11",
+  "captured_at": "2026-08-11T06:22:00+00:00",
+  "channel": "owner_typed_instruction",
+  "frozen_baseline_sha": "7cc1fed7ea66df8abe952e48bfea2451469f93ac",
+  "sources": [
+    {
+      "file": "source-001.md",
+      "kind": "original",
+      "sequence": 1,
+      "recorded_at": "2026-08-11T06:22:00+00:00",
+      "content_digest_sha256": "19c14a4597b0a281b225a7e3ae1d27811221f674b703fc4799ce91e6666de824"
+    },
+    {
+      "file": "source-002-amendment.md",
+      "kind": "amendment",
+      "sequence": 2,
+      "amends": "source-001.md",
+      "recorded_at": "2026-08-11T06:22:00+00:00",
+      "content_digest_sha256": "e84ab9c9ba3733b7d77fc2bd1d0b0151490b56dd76d815dc24abbc9760680b9a"
+    },
+    {
+      "file": "source-003-amendment.md",
+      "kind": "amendment",
+      "sequence": 3,
+      "amends": "source-001.md",
+      "recorded_at": "2026-08-11T18:30:00+00:00",
+      "content_digest_sha256": "78e812e0e9bff7f065373cd9b3e704c1474142bc367b8a1997a7812b64fbae6d"
+    },
+    {
+      "file": "source-004-amendment.md",
+      "kind": "amendment",
+      "sequence": 4,
+      "amends": "source-001.md",
+      "recorded_at": "2026-08-11T20:20:00+00:00",
+      "content_digest_sha256": "af7b931240ea52befbc29fb5feefb74991214538f16a5f712767c3bded321261"
+    }
+  ],
+  "amendments": [
+    "source-002-amendment.md",
+    "source-003-amendment.md",
+    "source-004-amendment.md"
+  ],
+  "supersedes": [],
+  "superseded_by": null,
+  "affected_tasks": [],
+  "affected_prs": [
+    "#217",
+    "#218"
+  ],
+  "affected_branches": [
+    "control/session14-m0t055-accept",
+    "task/M0-T053-child-accounting"
+  ],
+  "scope": {
+    "task_ids": [
+      "D-011-CORRECTION"
+    ],
+    "task_types": [
+      "governance"
+    ],
+    "milestones": [],
+    "paths": []
+  },
+  "applicability_note": "D-011-CORRECTION is a NON-LEDGER governance sentinel (D-008-BOUNDARY / D-006-PRACTICE precedent): a bounded owner correction verified at directive verification, never entering a ledger task's accept() set. affected_tasks are recorded as provenance only; D-011 does NOT rebind directive_refs onto the already in-regime M2-T016/M0-T055/M0-T053 D-010 packets (two-lane principle; avoids destabilising their existing D-010 verification). Prohibitions R001-R004 (no M0-T056, no R595 activation, no broad allowlist, no multi-day redesign) are standing holds the orchestrator must honour; they reinforce, and do not replace, existing holds.",
+  "owner_approval": {
+    "state": "issued_owner_typed",
+    "decision": "Owner typed this bounded correction 2026-08-11 after independently inspecting the live repository."
+  },
+  "lifecycle_state": "active",
+  "requirements_file": "requirements.json",
+  "verification_file": "verification.json",
+  "final_reviewed_sha": null,
+  "final_reviewed_manifest_sha256": null,
+  "requirements_content_digest_sha256": "afdf88040e641e9d3f9cba7396ef7765f480c187851fc1f9941e897e160c4e37",
+  "requirements_id_digest_sha256": "be11ca23017e88d4b93d28d78dc3666b8a3ead5fcb3cea31ddaaa3714961be17",
+  "enforcement_pointers": {
+    "tasks": [],
+    "gates": [],
+    "blockers": [],
+    "rules": [
+      "docs/SESSION_HANDOFF.md",
+      "project-control/reports/M0-T036-ACTIVATION-CHECKLIST.md"
+    ],
+    "hold": true
+  },
+  "notes": [
+    "Verification pending independent directive-compliance-verifier at a frozen head (producer != verifier).",
+    "The owner's requested truth table (R017) is returned in-session as the human-facing return; formal per-requirement verification.json is separate and independent.",
+    "R009/R010/R015 are multi-step (identity re-gate / guard gate wave / CI-bot lock regen); their completion status is reported honestly in the truth table, not asserted here.",
+    "PROVENANCE (not enforced via D-011, no rebinding): affected tasks M2-T016, M0-T055, M0-T053 (already in-regime under D-010); M0-T057 (guard, R010) and M0-T047 (nanoid, R015) carry their own directive_refs. affected_prs #217/#218. Recorded here rather than in affected_tasks/enforcement_pointers to avoid c14 rebinding.",
+    "R018 (model-fallback: try main first each session, lazy only on unavailability, non-sticky) is scoped to the supervisor bridge (tools/agent_supervisor/**) and is a pre-actuation behavior requirement alongside P1-P3/P6."
+  ],
+  "locked_requirement_ids": [
+    "D-011-R001",
+    "D-011-R002",
+    "D-011-R003",
+    "D-011-R004",
+    "D-011-R005",
+    "D-011-R006",
+    "D-011-R007",
+    "D-011-R008",
+    "D-011-R009",
+    "D-011-R010",
+    "D-011-R011",
+    "D-011-R012",
+    "D-011-R013",
+    "D-011-R014",
+    "D-011-R015",
+    "D-011-R016",
+    "D-011-R017",
+    "D-011-R018",
+    "D-011-R019",
+    "D-011-R020",
+    "D-011-R021",
+    "D-011-R022",
+    "D-011-R023",
+    "D-011-R024",
+    "D-011-R025",
+    "D-011-R026",
+    "D-011-R027",
+    "D-011-R028",
+    "D-011-R029",
+    "D-011-R030",
+    "D-011-R031",
+    "D-011-R032"
+  ],
+  "created_at": "2026-08-11T06:22:00+00:00",
+  "updated_at": "2026-08-11T20:20:00+00:00",
+  "audit_log": [
+    {
+      "at": "2026-08-11T06:22:00+00:00",
+      "by": "orchestrator",
+      "note": "D-011 captured verbatim as source-001.md (sha256 19c14a4597b0a281b225a7e3ae1d27811221f674b703fc4799ce91e6666de824) from origin/main 7cc1fed7ea66df8abe952e48bfea2451469f93ac. 19 rows D-011-R001..R019 decomposed (4 prohibitions/holds, corrections, deliverables, 1 return-item). Non-ledger sentinel D-011-CORRECTION; provenance-only affected_tasks. Verification deferred to the independent verifier."
+    },
+    {
+      "at": "2026-08-11T18:30:00+00:00",
+      "by": "orchestrator",
+      "note": "Amendment 003 (session 16) captured verbatim as source-003-amendment.md (sha256 78e812e0e9bff7f065373cd9b3e704c1474142bc367b8a1997a7812b64fbae6d). Added 10 rows D-011-R020..R029 (execution plan: fixed order R283, accept-mechanics harness, per-accept authorization, the three in-chain accept obligations, P1/P2/P3/P6 sequencing, merge #219, Codex-fallback resolution, continuation authorization). Same non-ledger D-011-CORRECTION/governance sentinel; holds unchanged. Verification deferred to the independent directive-compliance-verifier."
+    },
+    {
+      "at": "2026-08-11T20:20:00+00:00",
+      "by": "orchestrator",
+      "note": "Amendment 004 (session 16 GO-LIVE authorization) captured verbatim as source-004-amendment.md (sha256 af7b931240ea52befbc29fb5feefb74991214538f16a5f712767c3bded321261). Added 3 rows D-011-R030..R032: owner authorizes full Codex go-live (build+accept M0-T056, activate R595, add accept allowlist), SEQUENCED after P1/P2/P3/P6 (M0-T058-T061) accepted + follow-ups + #220 merged; supersedes R001/R002/R003/R019/R029 once prerequisites met; safety bar unchanged. Same non-ledger D-011-CORRECTION/governance sentinel."
+    }
+  ]
+}
