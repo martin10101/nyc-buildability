@@ -1,0 +1,6 @@
+{
+  "task_id": "M0-T060",
+  "directive_id": "D-010",
+  "note": "M0-T060 cites D-010:ALL but the canonical resolver (directive_registry.derive_applicable) derives ZERO applicable D-010 requirements at this identity (UNRESOLVED empty; no fail-closed ambiguity): D-010 rows are scoped by their applicability conjunction to specific prior tasks/decisions, not to every in-regime task (M0-T057/M0-T058/M0-T059/M0-T061 empty-set precedent). No per-requirement evidence rows apply. The substantive independent review of this supervisor-freeze safety fix is carried by G3 (code-reviewer) and G5 (security-reviewer); an independent empty-set DCV row is recorded at accept.",
+  "requirements": {}
+}

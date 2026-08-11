@@ -3919,7 +3919,20 @@
       "verified_at": "2026-08-11T20:45:33+00:00",
       "note": "EMPTY-SET verification. M0-T059 (P2 supervisor-freeze safety fix: clear_child_record removes only (pid,start_token), not whole-key) cites D-010:ALL, but directive_registry.derive_applicable derives ZERO applicable D-010 requirements at this identity (UNRESOLVED empty). Independently confirmed by directive-compliance-verifier at reviewed_sha 9c01612 / material identity 5c33d615: enumerated all 357 rows, 0 bind M0-T059 by task_ids; the one empty-task_ids row (R297) is path-scoped to C:/Program Files/SupervisorConfig/config.toml (disjoint); R347 (the invariant this fix protects) is scoped to M0-T056, not M0-T059 (topical relatedness != applicability). Substantive review: G3 code-review PASS (filter fail-closed, R347 fail-open closed) + G5 security-review PASS (no cross-record erase; fails closed; explicit adversarial (a) NO cross-erase / (b) NO false-block), both at 9c01612. Verifier != producer backend-engineer. Carried forward: G5 LOW advisory (atomic read-modify-write if M0-T056 adds a concurrent recorder).",
       "requirements": []
+    },
+    {
+      "directive_id": "D-010",
+      "task_id": "M0-T060",
+      "applicable_requirement_ids": [],
+      "reviewed_sha": "a9eb1b7f9e2eb79fc8652d5e1c6cef45126be021",
+      "reviewed_manifest_sha256": "d8e0568bbc542b1c780bf43a62054e81d000932b35f6b33a05cc19ba56f8c29c",
+      "producer": "backend-engineer",
+      "verifier": "directive-compliance-verifier",
+      "schema_version": "directive_verification/v2",
+      "verified_at": "2026-08-11T21:32:38+00:00",
+      "note": "EMPTY-SET verification. M0-T060 (P3 supervisor-freeze safety fix: achieved per-cycle containment != job_object is a fail-closed STOP, not merely recorded) cites D-010:ALL, but directive_registry.derive_applicable derives ZERO applicable D-010 requirements at this identity (UNRESOLVED empty). Independently confirmed by directive-compliance-verifier at reviewed_sha a9eb1b7 / material identity d8e0568b: enumerated all 357 rows, M0-T060 appears 0 times in the D-010 directory (in no task_ids), the 5 path-scoped rows target Windows controller-config paths disjoint from tools/agent_supervisor/**, and the criterion-related holds are scoped to other tasks (R244 C1-containment-proof -> M0-T053/M2-T015/M2-T016; R347 + criterion-2/actuation-flip -> M0-T056; topical relatedness != applicability). Substantive review: G3 code-review PASS (unconditional fail-closed; ordering correct - no degraded cycle reaches CHECKPOINT_RECEIVED, no paramount stop masked) + G5 security-review PASS (full containment-value enumeration; RunResult.ok excludes containment so the degraded case reaches the guard; no fail-open), both at a9eb1b7. Verifier != producer backend-engineer. Carried forward: G5 LOW advisory (optionally also gate on verified_in_job in M0-T056 hardening).",
+      "requirements": []
     }
   ],
-  "updated_at": "2026-08-11T20:45:33+00:00"
+  "updated_at": "2026-08-11T21:32:38+00:00"
 }

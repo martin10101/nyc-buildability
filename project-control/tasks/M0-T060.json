@@ -39,8 +39,8 @@
     "code-reviewer",
     "security-reviewer"
   ],
-  "status": "claimed",
-  "progress_percent": 10,
+  "status": "accepted",
+  "progress_percent": 100,
   "risks": [
     "PRODUCER MUST CONFIRM EXACT FILES AT G0: the achieved-containment STOP touches wherever RunResult.containment is evaluated post-run (loop.py likely; claude_runner.py produces it; state_machine.py holds the claude_process_started transition). Narrow to the smallest set; STOP-and-report if a different file is required.",
     "Depends on M0-T058 (P1): both may touch claude_runner.py \u2014 sequence after P1.",
@@ -48,7 +48,7 @@
   ],
   "blockers": [],
   "created_at": "2026-08-11T17:42:00.949610+00:00",
-  "updated_at": "2026-08-11T20:50:51.384757+00:00",
+  "updated_at": "2026-08-11T21:33:03.548345+00:00",
   "directive_refs": [
     {
       "directive_id": "D-010",
@@ -57,5 +57,7 @@
   ],
   "directive_regime_version": "1.0",
   "directive_regime_entered_at": "2026-08-11T17:42:00.949610+00:00",
-  "worktree": ".claude/worktrees/agent-p3"
+  "worktree": ".claude/worktrees/agent-p3",
+  "accepted_by": "orchestrator",
+  "accepted_at": "2026-08-11T21:33:03.548345+00:00"
 }
