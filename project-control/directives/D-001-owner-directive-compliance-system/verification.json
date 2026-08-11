@@ -1697,7 +1697,20 @@
       "verified_at": "2026-08-11T19:45:00+00:00",
       "note": "EMPTY-SET verification. M0-T057 cites D-001:ALL, but the canonical resolver derives ZERO D-001 requirements applicable to this packet (D-001 rows are scoped to the D-001 regime tasks, chiefly M0-T023, not to every in-regime task; M2-T014/M0-T033 precedent). This row exists because accept() fail-closes when a CITED directive has no task_verification row, independently of whether any of its requirements are applicable. M0-T057's substantive independent verification is its G3 code-review (code-reviewer PASS) + the control-plane-verifier review (PASS), both at identity 6525ddfb / HEAD 8221419. Verifier control-plane-verifier != producer orchestrator.",
       "requirements": []
+    },
+    {
+      "directive_id": "D-001",
+      "task_id": "M0-T062",
+      "applicable_requirement_ids": [],
+      "reviewed_sha": "e2ab6dec97af2f973d5cc9294a681a4cd63c58f6",
+      "reviewed_manifest_sha256": "8c83acc0bbe7bca2309989a1a5f2a58d651ad36838292033f3484c2b2824f193",
+      "producer": "orchestrator",
+      "verifier": "control-plane-verifier",
+      "schema_version": "directive_verification/v2",
+      "verified_at": "2026-08-11T22:45:00+00:00",
+      "note": "EMPTY-SET verification. M0-T062 cites D-001:ALL, but the canonical resolver (directive_registry.derive_applicable) derives ZERO D-001 requirements applicable to this packet: all 136 D-001 rows scope task_ids=[M0-T023] (the D-001 regime governance task), 0 rows carry a wildcard (empty) task_ids, and M0-T062 (governance/M0) matches none under conjunction semantics; unresolved=[] (no ambiguity, no BLOCK). This row exists because accept() fail-closes when a CITED directive has no task_verification row, independent of whether any requirement is applicable (M0-T057 / M2-T014 / M0-T033 empty-set precedent; D-001 rows scope the regime tasks, chiefly M0-T023, not every in-regime task). DRAIN-SAFETY: the reviewed commit removed the now-inert M0-T056 entry from validate_directive_compliance._EMPTY_IDENTITY_GRANDFATHERED; M0-T056's allowed_paths resolve to 7 tracked tools/agent_supervisor files at e2ab6de, so it resolves NON-EMPTY, never reaches the c17 empty-identity guard, and its allowlist membership was dead weight -- with the entry drained, validate_directive_compliance.py --check still exits 0, c17 emits 0 errors for M0-T056 (now guarded live), and sorted(_EMPTY_IDENTITY_GRANDFATHERED)[0] stays 'M0-T026'. The O1 additions are pure regression tests (empty/whitespace/non-string path_free_justification already fail closed; the justification tests pass). Substantive independent verification is carried by the G3 code-review (code-reviewer PASS at e2ab6de / manifest 8c83acc0) + this control-plane-verifier review + the required CI control-plane job (validate_directive_compliance --check + test_directive_compliance). Verifier control-plane-verifier != producer orchestrator.",
+      "requirements": []
     }
   ],
-  "updated_at": "2026-08-11T19:45:00+00:00"
+  "updated_at": "2026-08-11T22:46:00+00:00"
 }
