@@ -1,0 +1,694 @@
+{
+  "schema": "directive_requirements/v1",
+  "directive_id": "D-011",
+  "version": 1,
+  "requirement_count": 19,
+  "producer": "orchestrator",
+  "updated_at": "2026-08-11T06:22:00+00:00",
+  "requirements": [
+    {
+      "id": "D-011-R001",
+      "text": "PROHIBITION: do not start M0-T056.",
+      "source_ref": "source-001.md#preamble",
+      "classification": "prohibition",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "D-011-CORRECTION"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [
+          "blocker"
+        ],
+        "effective_date": "2026-08-11"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured verbatim on owner instruction; verified at D-011 verification (producer != verifier)",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      },
+      "amendment_sequence": 1
+    },
+    {
+      "id": "D-011-R002",
+      "text": "PROHIBITION: do not activate R595.",
+      "source_ref": "source-001.md#preamble",
+      "classification": "prohibition",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "D-011-CORRECTION"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [
+          "blocker"
+        ],
+        "effective_date": "2026-08-11"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured verbatim on owner instruction; verified at D-011 verification (producer != verifier)",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      },
+      "amendment_sequence": 1
+    },
+    {
+      "id": "D-011-R003",
+      "text": "PROHIBITION: do not request or add the broad accept allowlist yet.",
+      "source_ref": "source-001.md#preamble",
+      "classification": "prohibition",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "D-011-CORRECTION"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [
+          "blocker"
+        ],
+        "effective_date": "2026-08-11"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured verbatim on owner instruction; verified at D-011 verification (producer != verifier)",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      },
+      "amendment_sequence": 1
+    },
+    {
+      "id": "D-011-R004",
+      "text": "SCOPE HOLD: do not create a broad supervisor redesign or begin another multi-day control-plane project; corrections must be bounded.",
+      "source_ref": "source-001.md#preamble",
+      "classification": "hold",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "D-011-CORRECTION"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [
+          "blocker"
+        ],
+        "effective_date": "2026-08-11"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured verbatim on owner instruction; verified at D-011 verification (producer != verifier)",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      },
+      "amendment_sequence": 1
+    },
+    {
+      "id": "D-011-R005",
+      "text": "Do not describe PR #217 or PR #218 as fully green: functional/required checks pass but the workflow conclusion is red because web-dependency-security still detects the known nanoid advisory.",
+      "source_ref": "source-001.md#item-1",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "D-011-CORRECTION"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [
+          "blocker"
+        ],
+        "effective_date": "2026-08-11"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured verbatim on owner instruction; verified at D-011 verification (producer != verifier)",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      },
+      "amendment_sequence": 1
+    },
+    {
+      "id": "D-011-R006",
+      "text": "Refresh SESSION_HANDOFF.md to current truth: main = 7cc1fed; PR #216 merged; M2-T016 product code merged but task not accepted; PRs #217/#218 open; M0-T053 producer + G3/G5 reviews returned. Do not claim Opus 5 authorship without durable evidence.",
+      "source_ref": "source-001.md#item-2",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "D-011-CORRECTION"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [
+          "blocker"
+        ],
+        "effective_date": "2026-08-11"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured verbatim on owner instruction; verified at D-011 verification (producer != verifier)",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      },
+      "amendment_sequence": 1
+    },
+    {
+      "id": "D-011-R007",
+      "text": "Correct R595 blocker classification: P1/P2/P3 required engineering corrections before M0-T056 live actuation; P6 deterministic reviewer-timeout/retry/pause; P4/P5 recommendations (not mandatory); P7 wording/interpretation; P8 Windows-only deployment constraint. Not all eight are equivalent blockers.",
+      "source_ref": "source-001.md#item-3",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "D-011-CORRECTION"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [
+          "blocker"
+        ],
+        "effective_date": "2026-08-11"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured verbatim on owner instruction; verified at D-011 verification (producer != verifier)",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      },
+      "amendment_sequence": 1
+    },
+    {
+      "id": "D-011-R008",
+      "text": "Verify and state that project_control.py accept already fails closed when a required gate has no PASS record (reviewer silence cannot become acceptance). P6 adds bounded timeout detection + one controlled retry/re-dispatch + PAUSE/STOP with visible evidence; do not duplicate the existing acceptance gate.",
+      "source_ref": "source-001.md#item-4",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "D-011-CORRECTION"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [
+          "blocker"
+        ],
+        "effective_date": "2026-08-11"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured verbatim on owner instruction; verified at D-011 verification (producer != verifier)",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      },
+      "amendment_sequence": 1
+    },
+    {
+      "id": "D-011-R009",
+      "text": "Repair in-flight M2-T016 and M0-T055 allowed_paths so acceptance identities bind actual implementation files (not the empty-set hash). Invalidate and rerun ONLY the final identity-bound DCV/gate evidence this repair legitimately invalidates. Do not remediate every historical empty-identity packet here.",
+      "source_ref": "source-001.md#item-5",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "D-011-CORRECTION"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [
+          "blocker"
+        ],
+        "effective_date": "2026-08-11"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured verbatim on owner instruction; verified at D-011 verification (producer != verifier)",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      },
+      "amendment_sequence": 1
+    },
+    {
+      "id": "D-011-R010",
+      "text": "Implement the smallest M0-T057 fail-closed guard so future non-path-free tasks cannot freeze an empty file identity accidentally. Keep bounded.",
+      "source_ref": "source-001.md#item-6",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "D-011-CORRECTION"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [
+          "blocker"
+        ],
+        "effective_date": "2026-08-11"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured verbatim on owner instruction; verified at D-011 verification (producer != verifier)",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      },
+      "amendment_sequence": 1
+    },
+    {
+      "id": "D-011-R011",
+      "text": "PR #218: remove or split the .claude/agent-memory/** files from the M0-T053 task diff unless a lawful, explicitly gate-proven carve-out exists.",
+      "source_ref": "source-001.md#item-7a",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "D-011-CORRECTION"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [
+          "blocker"
+        ],
+        "effective_date": "2026-08-11"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured verbatim on owner instruction; verified at D-011 verification (producer != verifier)",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      },
+      "amendment_sequence": 1
+    },
+    {
+      "id": "D-011-R012",
+      "text": "PR #218: correct 'doctor parity' to the truthful statement \u2014 doctor and the launch gate share a containment source, but their verdicts are not equivalent.",
+      "source_ref": "source-001.md#item-7b",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "D-011-CORRECTION"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [
+          "blocker"
+        ],
+        "effective_date": "2026-08-11"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured verbatim on owner instruction; verified at D-011 verification (producer != verifier)",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      },
+      "amendment_sequence": 1
+    },
+    {
+      "id": "D-011-R013",
+      "text": "PR #218: update the PR description and lifecycle state to reflect the returned G3/G5 reports.",
+      "source_ref": "source-001.md#item-7c",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "D-011-CORRECTION"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [
+          "blocker"
+        ],
+        "effective_date": "2026-08-11"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured verbatim on owner instruction; verified at D-011 verification (producer != verifier)",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      },
+      "amendment_sequence": 1
+    },
+    {
+      "id": "D-011-R014",
+      "text": "PR #218: preserve P1-P3 as required before M0-T056 actuation.",
+      "source_ref": "source-001.md#item-7d",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "D-011-CORRECTION"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [
+          "blocker"
+        ],
+        "effective_date": "2026-08-11"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured verbatim on owner instruction; verified at D-011 verification (producer != verifier)",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      },
+      "amendment_sequence": 1
+    },
+    {
+      "id": "D-011-R015",
+      "text": "Complete M0-T047's now-eligible exact nanoid 3.3.17 remediation through the approved lockfile/CI workflow. No waiver, no audit suppression, no unrelated dependency upgrades.",
+      "source_ref": "source-001.md#item-8",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "D-011-CORRECTION"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [
+          "blocker"
+        ],
+        "effective_date": "2026-08-11"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured verbatim on owner instruction; verified at D-011 verification (producer != verifier)",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      },
+      "amendment_sequence": 1
+    },
+    {
+      "id": "D-011-R016",
+      "text": "Preserve the valid exact-head M2-T016 review; clearly label the missing second verbatim reviewer return as outstanding; do not represent its condensation as equivalent verbatim evidence.",
+      "source_ref": "source-001.md#item-9",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "D-011-CORRECTION"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [
+          "blocker"
+        ],
+        "effective_date": "2026-08-11"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured verbatim on owner instruction; verified at D-011 verification (producer != verifier)",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      },
+      "amendment_sequence": 1
+    },
+    {
+      "id": "D-011-R017",
+      "text": "Return one concise truth table (task/PR; exact current SHA; merged/open; functional CI result; security-check result; identity binds real files y/n; gates complete y/n; safe to accept y/n; remaining required blocker).",
+      "source_ref": "source-001.md#return-table",
+      "classification": "return",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "D-011-CORRECTION"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [
+          "blocker"
+        ],
+        "effective_date": "2026-08-11"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured verbatim on owner instruction; verified at D-011 verification (producer != verifier)",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      },
+      "amendment_sequence": 1
+    },
+    {
+      "id": "D-011-R018",
+      "text": "Supervisor model-selection: at the start of every NEW session/run, attempt the MAIN/primary model FIRST; fall back to the cheaper ('lazy') model ONLY when the main is unavailable (weekly cap / token exhaustion / provider outage); the fallback must NOT persist as a sticky default into later sessions - each new session re-attempts the main model first.",
+      "source_ref": "source-002-amendment.md#model-fallback",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "D-011-CORRECTION"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [
+          "blocker"
+        ],
+        "effective_date": "2026-08-11"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured verbatim on owner instruction; verified at D-011 verification (producer != verifier)",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      },
+      "amendment_sequence": 2
+    },
+    {
+      "id": "D-011-R019",
+      "text": "'Open Codex fully' is forward INTENT, not an authorization to actuate now: the source-001 prohibitions (no M0-T056, no R595 activation, no broad accept allowlist) REMAIN in force until P1-P3/P6 land, M0-T053 is accepted, and the owner flips the activation switch.",
+      "source_ref": "source-002-amendment.md#open-codex-intent",
+      "classification": "hold",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "D-011-CORRECTION"
+        ],
+        "task_types": [
+          "governance"
+        ],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [
+          "blocker"
+        ],
+        "effective_date": "2026-08-11"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured verbatim on owner instruction; verified at D-011 verification (producer != verifier)",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      },
+      "amendment_sequence": 2
+    }
+  ]
+}
