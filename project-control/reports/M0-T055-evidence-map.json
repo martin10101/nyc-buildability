@@ -1,35 +1,67 @@
 {
-  "task_id": "M0-T055",
-  "directive_id": "D-010",
-  "reviewed_sha": "37667ff08302c97933711414f8e3484280a45b7a",
-  "applicable_ids": [
-    "D-010-R320", "D-010-R321", "D-010-R322", "D-010-R323", "D-010-R324",
-    "D-010-R325", "D-010-R326", "D-010-R327", "D-010-R328", "D-010-R329",
-    "D-010-R330", "D-010-R331", "D-010-R332", "D-010-R333", "D-010-R334",
-    "D-010-R335", "D-010-R337", "D-010-R340", "D-010-R341", "D-010-R342",
-    "D-010-R343"
-  ],
   "requirements": {
-    "D-010-R320": ["docs/LEAN_OPERATING_PROCESS.md:3-5", "docs/LEAN_OPERATING_PROCESS.md:9-10", "project-control/reports/M0-T055-DCV-verification.json"],
-    "D-010-R321": ["docs/LEAN_OPERATING_PROCESS.md:14-37", "project-control/reports/M0-T055-DCV-verification.json"],
-    "D-010-R322": ["docs/LEAN_OPERATING_PROCESS.md:87-89", "project-control/reports/M0-T055-DCV-verification.json"],
-    "D-010-R323": ["docs/LEAN_OPERATING_PROCESS.md:39-52", "project-control/reports/M0-T055-DCV-verification.json"],
-    "D-010-R324": ["docs/LEAN_OPERATING_PROCESS.md:54-62", "project-control/reports/M0-T055-DCV-verification.json"],
-    "D-010-R325": ["docs/LEAN_OPERATING_PROCESS.md:35-37", "docs/LEAN_OPERATING_PROCESS.md:114", "project-control/reports/M0-T055-DCV-verification.json"],
-    "D-010-R326": ["docs/LEAN_OPERATING_PROCESS.md:85-86", "project-control/reports/M0-T055-DCV-verification.json"],
-    "D-010-R327": ["docs/LEAN_OPERATING_PROCESS.md:82-84", "project-control/reports/M0-T055-DCV-verification.json"],
-    "D-010-R328": ["docs/LEAN_OPERATING_PROCESS.md:99-102", "docs/LEAN_OPERATING_PROCESS.md:5", "project-control/reports/M0-T055-DCV-verification.json"],
-    "D-010-R329": ["docs/LEAN_OPERATING_PROCESS.md:66-70", "project-control/reports/M0-T055-DCV-verification.json"],
-    "D-010-R330": ["docs/LEAN_OPERATING_PROCESS.md:71", "project-control/reports/M0-T055-DCV-verification.json"],
-    "D-010-R331": ["docs/LEAN_OPERATING_PROCESS.md:72", "project-control/reports/M0-T055-DCV-verification.json"],
-    "D-010-R332": ["docs/LEAN_OPERATING_PROCESS.md:73-74", "project-control/reports/M0-T055-DCV-verification.json"],
-    "D-010-R333": ["docs/LEAN_OPERATING_PROCESS.md:75-77", "project-control/reports/M0-T055-DCV-verification.json"],
-    "D-010-R334": ["docs/LEAN_OPERATING_PROCESS.md:78", "project-control/reports/M0-T055-DCV-verification.json"],
-    "D-010-R335": ["docs/LEAN_OPERATING_PROCESS.md:79-81", "project-control/reports/M0-T055-DCV-verification.json"],
-    "D-010-R337": ["docs/LEAN_OPERATING_PROCESS.md:113-115", "git show --name-only 5792bad (no apps/services/tools)", "project-control/reports/M0-T055-DCV-verification.json"],
-    "D-010-R340": ["project-control/reports/M0-T055-partD-review.md", "project-control/reports/M0-T055-G3-code-review.md", "project-control/reports/M0-T055-G5-security-review.md", "docs/LEAN_OPERATING_PROCESS.md:107-109"],
-    "D-010-R341": ["docs/LEAN_OPERATING_PROCESS.md:103-106", "git show --name-only 5792bad (no protected-config/ACL/activation)", "project-control/reports/M0-T055-DCV-verification.json"],
-    "D-010-R342": ["docs/LEAN_OPERATING_PROCESS.md:14-115 (return items 1-8)", "docs/LEAN_OPERATING_PROCESS.md:111-123 (items 9-10 deferred post-M2-T016)", "project-control/reports/M0-T055-DCV-verification.json"],
-    "D-010-R343": ["docs/LEAN_OPERATING_PROCESS.md:103-104", "no R595 activation at HEAD (policy-only)", "project-control/reports/M0-T055-DCV-verification.json"]
+    "D-010-R320": [
+      "LEAN_OPERATING_PROCESS.md:4-5 guiding rule (cut duplicated explanation/bookkeeping, NOT verification/testing/provenance/safety; line-count never an acceptance criterion); no repo-wide refactor :104"
+    ],
+    "D-010-R321": [
+      "Return item1 duplication map :14-29; item2 :31-37 canonical=progress_log+git+CI, 'no new database/service/parallel source of truth', no historical deletion"
+    ],
+    "D-010-R322": [
+      "A2 minimal unit event :87-89 exact field set (task/unit/branch/SHA/tests+result/verdict/blocker/next/evidence) + not re-narrated into several files"
+    ],
+    "D-010-R323": [
+      "A3 :41-45 7 handoff fields <=~2000 tok + never paste old histories; :49-52 6 seam triggers (a-f) + 'not after every normal unit'"
+    ],
+    "D-010-R324": [
+      "A4 :54-62 1-2 meaningful seam PRs; standalone carve-outs complete; 'never combine unrelated product code + privileged controller changes'"
+    ],
+    "D-010-R325": [
+      "A5 projection principle :29,:36-37 (handoff/PR/report is projection of progress_log+git+CI + engineering judgment only); thin but present; no machine-fact restatement"
+    ],
+    "D-010-R326": [
+      "A6 :85-86 control-plane effort <=~15-20% target, report+return-to-product if exceeded; 'not license to skip evidence'"
+    ],
+    "D-010-R327": [
+      "A7 :82-84 packet creation includes generated artifact+source generator+focused tests+wiring in exact/bounded allowed_paths, no broad wildcards / no weakened scope enforcement"
+    ],
+    "D-010-R328": [
+      "B1 :99-102 all 13 preserved safety elements enumerated; G5 point 1 independently confirms all thirteen"
+    ],
+    "D-010-R329": [
+      "B2 :66-70 docs-hold doctrine; concise module/function docs; comments explain WHY; keep security-rationale/past-defect comments"
+    ],
+    "D-010-R330": [
+      "B3 :71 shared typed results only where repetition real + semantics identical; no framework/DSL"
+    ],
+    "D-010-R331": [
+      "B4 :72 one closed/typed/deterministic/tested survey rule table; unknowns fail closed"
+    ],
+    "D-010-R332": [
+      "B5 :73-74 short typed errors: stable code+concise message+structured metadata; no essays in error strings"
+    ],
+    "D-010-R333": [
+      "B6 :75-77 parameterized fixture tables; 'preserve every malicious/malformed/ambiguous/tampered/unresolved case; never merge tests when that hides which invariant failed'"
+    ],
+    "D-010-R334": [
+      "B7 :78 generated contract types deterministic, drift-checked, CI-covered; no parallel hand-written types"
+    ],
+    "D-010-R335": [
+      "B8 :79-81 cohesive modules, small interfaces, don't split for line limits, don't mix parsing/validation/persistence/authority"
+    ],
+    "D-010-R337": [
+      "C-Phase1 policy-only :7-10 prospective M2-T016 onward + 'no product-module or supervisor-core code changes'; git show --stat 5792bad = 7 docs/registry files, zero .py/.ts; G3 pt1 + G5 precondition confirm policy-only"
+    ],
+    "D-010-R340": [
+      "Part-D independent review by control-plane-verifier (!=producer orchestrator)=PASS, all 7 owner checks CLEAN (M0-T055-partD-review.md); G3 code-reviewer PASS + G5 security-reviewer PASS; no REVISE trigger"
+    ],
+    "D-010-R341": [
+      "Part E prohibitions :103-106 (no protected-config/ACL change, no LIMITED-AUTO, no activation change, no history rewrite, no evidence deletion, no repo-wide cleanup); G5 confirms state.json touches no holds/ACL; M0-T054/M2-T015 untouched"
+    ],
+    "D-010-R342": [
+      "RETURN items 1-8 present+verified (item1 :14-29, item2 :31-37, item3 :41-45, item4 :49-52, item5 :54-62, item6 :64-89, item7 :113-115 files-changed incl CLAUDE.md:73, item8 :91-109); items 9-10 legitimately deferred to Phase 2/3 per directive phasing, documented :111-123"
+    ],
+    "D-010-R343": [
+      "Owner follow-up authorization + R595 SHADOW-ONLY posture :103-104 (no LIMITED-AUTO, no activation change); Part-D check (d) + G5 point 5 confirm record-intent-only / isolated-runtime / no self-authorized R595 activation"
+    ]
   }
 }
