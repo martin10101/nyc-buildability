@@ -2,91 +2,75 @@
 
 **Authoritative state:** the `project-control/` ledger + git + CI. On resume, read it live —
 `python tools/project_control.py status` and `python tools/current_state.py` — and reconcile against
-the remote: **origin/main may have advanced, so do not trust any SHA written here as still-current.**
-This file is orientation only. Operating rules, gates, and workflow routes live in `CLAUDE.md`.
-Old session blocks (1–14) are recoverable via `git log -p docs/SESSION_HANDOFF.md`. Keep this file
-CURRENT-ONLY: the `context-budget` CI check is a REQUIRED status and fails the PR above ~4000 tokens,
-so trim the previous session's block when you add yours.
+the remote: **origin/main may have advanced, so do not trust any SHA here as still-current.** This
+file is orientation only. Rules/gates/workflow routes live in `CLAUDE.md`. Old blocks (1–14) via
+`git log -p docs/SESSION_HANDOFF.md`. Keep CURRENT-ONLY: the `context-budget` CI check fails > ~4000 tok.
 
-## SESSION 15 STATE — bounded truth reconciliation (owner directive D-011); nothing accepted this session
+## SESSION 15 — bounded truth reconciliation (D-011) + real-identity acceptances
 
-Refreshed **2026-08-11 (session 15; model `claude-opus-4-8`)**. The prior session's "PRs #217/#218 open
-and green" claim was **false** and is corrected here. **Accepted count = 75** (M0-T055 accepted on this
-branch only — see below). No new acceptance this session. The ledger wins on any conflict.
+Refreshed **2026-08-11 (session 15; `claude-opus-4-8`)**. **Accepted = 75.** Owner directive D-011
+(captured verbatim, `project-control/directives/D-011-bounded-truth-reconciliation/`). The ledger wins.
 
-### Ground truth (verified live 2026-08-11)
+### Integration branch: PR #220 `control/session15-acceptance`
+It is the **single reconciled integration branch off current main `7cc1fed`** (supersedes the stale
+#217, closed). It carries: D-011 capture; corrected handoff; the item-5 identity repairs; **M0-T055
+ACCEPTED**; the M2-T016 measurement + re-DCV; and **M0-T053's code (merged in from #218)**. Its worktree
+is `.claude/worktrees/session15-acc`. Do control-plane accept work HERE (current registry + all code +
+advanced states coexist). HEAD at handoff ≈ `f38c2ef` (verify live).
 
-- **origin/main = `7cc1fed`**. **PR #216 MERGED** — M2-T016 survey-review product code is on main.
-- **PR #217** open (control `control/session14-m0t055-accept`), **PR #218** open
-  (`task/M0-T053-child-accounting` @ `a3873311`). **Neither is fully green.** On BOTH, every
-  functional/required check passes; the ONLY red is **`web-dependency-security`** (non-required) on the
-  known **nanoid** advisory GHSA-2v37-7h3g-55p8 (needs ≥3.3.17; the lock still pins 3.3.16). So the
-  workflow conclusion is red while all required contexts are green — do not call them "green".
-- **M2-T016 code is merged (PR #216) but the TASK is NOT accepted** — status `in_progress` 97%. "Merged"
-  ≠ "accepted".
-- **M0-T053** producer work COMPLETE and both independent reviews **RETURNED**: G5 security PASS and G3
-  code PASS (verbatim reports on file). Gates not yet recorded; task `in_progress` 96%, not accepted.
-- **No Opus 5 authorship** is claimed anywhere; this session ran on `claude-opus-4-8` (owner-set).
+### Open PRs
+- **#220** control integration (above) — the live acceptance branch.
+- **#219** `task/M0-T047-nanoid-lock` — nanoid **3.3.17** override + CI-bot-regenerated lock; **security
+  check GREEN** on this branch; owed: G3/G5/DCV records + merge. (Merging #219 to main greens #218/#220's
+  `web-dependency-security`.)
+- **#218** `task/M0-T053-child-accounting` — M0-T053 product code; **its code is already merged into
+  #220**, so #218 is effectively superseded (can be closed once #220 lands, like #217).
 
-### `accept` fails closed already (item 4 — verified)
+### Acceptance chain — ORDER IS FIXED: M0-T055 → M2-T016 → M0-T053 (D-010-R283)
+1. **M0-T055 — ACCEPTED ✓** at real identity `f3a6a363` (was empty-set). DCV 21/21 PASS.
+2. **M2-T016 — VERIFIED 77/77, NOT yet accepted.** Identity `ac3d45cb` (repaired). Independent re-DCV
+   PASS at HEAD after the Phase-2 measurement was produced (`reports/M2-T016-lean-efficiency-measurement.md`).
+   **Remaining = mechanical accept only** (recipe below): write the 77-row D-010 `verification.json` row,
+   record gates **G0/G2/G3/G4/G5**, re-submit at `ac3d45cb`, accept. Gate reports on file:
+   `reports/M2-T016-delta-G3-code-review.md` (G3), backend/`-G5-delta`/human-journey (G5/G3); G0=readiness,
+   G2=190 backend tests, G4=green CI on PR #216.
+3. **M0-T053 — code VERIFIED SOUND** (R242/R244/R245 PASS; full supervisor suite 1493/2 reproduced),
+   identity `e6746f68`. **Blocked ONLY by order** (R283: must accept after M2-T016). After M2-T016
+   accepts, re-run its DCV at the new HEAD (R283 flips PASS), record G0/G2/G3/G5 (G3/G5 verbatim on file),
+   accept. P1/P2/P3 are pre-**M0-T056**, NOT pre-M0-T053-accept.
 
-`project_control.py accept()` (lines 1196-1199) refuses when **any required gate has no PASS record**, and
-`INDEPENDENT_GATES` further reject a `self_check` role or a gate recorded by the producer. **Reviewer
-silence therefore can never become acceptance** — there is simply no PASS record, so accept fails closed.
-**P6 is additive, not a duplicate gate:** it should add bounded reviewer-timeout detection → one controlled
-retry / re-dispatch → then **PAUSE/STOP with visible evidence**. It does not touch the acceptance gate.
+### THE ACCEPT MECHANICS RECIPE (proven on M0-T055 this session)
+`accept` IS runnable (not a permission wall; owner authorizes each accept — do NOT add the broad
+allowlist, D-011 R003). To accept an in-regime task at a repaired identity, work in the #220 worktree
+and DO NOT COMMIT until after accept (accept reads the WORKING TREE; `reviewed_sha` must == HEAD, and
+the identity is content-stable across uncommitted control-plane files):
+1. Refresh the D-010 `verification.json` row (independent DCV verdicts, all PASS) → `reviewed_manifest_sha256`
+   = repaired identity, `reviewed_sha` = current HEAD, `producer`=task's producer, `verifier`=directive-compliance-verifier.
+2. `progress` awaiting_gate→**rework**→in_progress; write an `M<t>-evidence-map.json` (each applicable req → evidence);
+   `submit --report <md> --evidence-map <json> --sha <HEAD>` (re-stamps the producer record at the new identity).
+3. Gates must be PASS + independent role (G3/G4/G5 are INDEPENDENT_GATES; G0/G2 may be self_check). Record any
+   missing gate with `gate --sha <HEAD>` (require_clean stamps identity at HEAD).
+4. `accept` (fail-closed; only writes `accepted` if ALL pass). THEN `git add` the exact control files + commit + push.
 
-### R595 pre-actuation pins — correct classification (item 3; NOT eight equivalent blockers)
+### M0-T057 guard (D-011 item 6) — built, on `task/M0-T057-empty-identity-guard` @ `7bc98f5`
+Fails closed when allowed_paths bind zero tracked files; opt-in marker `path_free_governance:true` +
+`path_free_justification`; wired into the shared `_task_git_identity` (submit/gate/accept) + validator c17.
+**Control-plane review = PASS** (grandfather list of 9 recomputed exact; runtime still fails all 9 closed;
+robust to #220). **Code-review PENDING at handoff** — if it flags real regressions, small rework; else
+gate G0/G2/G3 + accept. Follow-ups: add an ordering-invariant test; drain the inert `M0-T055` grandfather
+entry once #220 merges.
 
-Pinned in `project-control/reports/M0-T036-ACTIVATION-CHECKLIST.md`. Before M0-T056 **live actuation**:
+### Path to Codex/R595 (owner's "how many steps") — 6 steps
+1 ✅ M0-T055 accepted · 2 🔄 M2-T016 (verified; accept) · 3 ⏳ M0-T053 (accept, after #2) · 4–5 ⏳ **P1/P2/P3
++ P6 supervisor safety fixes** (the real remaining engineering — NOT started; frozen-lane, each needs a gate
+wave) · 6 ⏳ build+accept **M0-T056**, then owner flips R595. **Codex model-fallback = RESOLVED** (Codex
+already tries its main model first each session, non-sticky — no change needed; the sticky-fallback risk is
+Claude-orchestrator-side only). P8: supervisor is Windows-Job-Object-only today.
 
-- **P1, P2, P3 — REQUIRED engineering corrections** (G5): P1 claude_runner terminate-without-verify (live
-  unrecorded orphan → double-launch on R347); P2 `clear_child_record` whole-key wipe (fail-open once the
-  M0-T056 successor-launch seam records anything); P3 achieved per-cycle containment must **STOP**, not
-  merely record.
-- **P6 — REQUIRED, deterministic**: reviewer timeout → one retry/re-dispatch → PAUSE/STOP (above).
-- **P4, P5 — RECOMMENDATIONS, not mandatory blockers.**
-- **P7 — wording/interpretation**: "doctor parity" is wrong; doctor and the launch gate share a
-  containment **source** (`default_containment_kind()`), but their **verdicts are not equivalent** (doctor
-  prints `ok` on POSIX/process_group while the gate REFUSES). Use "same containment source".
-- **P8 — Windows-only deployment constraint**: the gate hard-refuses on every POSIX host (incl. Render and
-  shadow mode), so the supervisor is currently Windows-Job-Object-only. Real narrowing, breaks nothing today.
-
-### Active tasks + what each still needs
-
-1. **M0-T055** accepted on THIS branch only (PR #217, not merged → on main it is effectively in-flight).
-   Its `allowed_paths` is empty ⇒ frozen identity is the **empty-set hash** `e3b0c442`, binding no files.
-   **D-011 item 5**: repair `allowed_paths` to its real deliverables (`docs/LEAN_OPERATING_PROCESS.md`,
-   `CLAUDE.md`, its reports) and rerun ONLY the identity-bound gate/DCV evidence that repair invalidates.
-2. **M2-T016** `in_progress` — merged code, not accepted. Exact-head **G3 delta re-attestation PASS at
-   `e3c2ce6`** is preserved (`reports/M2-T016-delta-G3-code-review.md`). **OUTSTANDING**: the SECOND G3
-   reviewer's return is held only as an explicitly-labelled condensation — the verbatim second return is
-   NOT captured; do not treat the condensation as verbatim. Also owed: G5 delta, G0/G2/G4 records, a
-   RE-STAMPED DCV at the gated head, and the same empty-set `allowed_paths` repair (item 5).
-3. **M0-T053** — record G0/G2/G3/G5, DCV, then accept. P1/P2/P3 are pre-**M0-T056**, NOT pre-M0-T053
-   acceptance. Preserve the verbatim G5 return (owed at `reports/M0-T053-G5-security-review.md`).
-4. **M0-T057** backlog — the empty-identity fail-closed guard (D-011 item 6): smallest mechanical guard
-   that REFUSES when a non-path-free task's `allowed_paths` resolve to the empty set; allow an explicit
-   opt-in marker + justification for genuinely path-free governance packets. Audit already captured.
-5. **M0-T047** backlog — nanoid 3.3.17 remediation (D-011 item 8): add exact-pin `overrides` to
-   `apps/web/package.json` and regenerate the lock via the **CI-bot workflow (NO local npm)**; age gate now
-   passes (earliest 2026-08-10). No waiver, no audit suppression, no unrelated upgrades.
-
-### R595 / Codex — NOT activated (holds stand)
-
-D-011 R001-R003 re-affirm: **do not start M0-T056, do not activate R595, do not add the broad accept
-allowlist.** "Open Codex fully" is the destination, not authorization. Gating before actuation: land
-P1-P3 + P6, accept M0-T053, then owner flips the switch. **Model-fallback (D-011 R018):** each new session
-must try the MAIN model first and fall back to the lazy model ONLY on unavailability (cap/token/outage),
-never sticky across sessions — supervisor investigation in flight.
-
-## Carried rules
-- Task branches from origin/main; producers spawned **UNNAMED** (named spawns hit `readonly_agent_guard`
-  fail-closed); classifier denial ⇒ exact-path staging first, else STOP + surface the `!` line; all
-  `project-control/**` + `directives/**` explicit LF; commits stage exact paths; ADR-006 Tier A merges
-  after green **required** checks; owner dry-run-first for any elevated script.
-- **Prose `allowed_paths` silently defeat the identity machinery** — use real pathspecs. Do not retrofit
-  accepted packets (moving the digest invalidates their verification); M0-T057 is the mechanical fix.
-- Reviewer models `claude-opus-4-8` xhigh (standing). Orchestrator currently `claude-opus-4-8`.
-- Standing holds unchanged: deployment/G6/Graphify/expansion; supervised runtime; `default_mode=shadow`;
-  LIMITED-AUTO off; R595 pre-activation blocking.
+### Holds (unchanged) + carried rules
+- **M0-T056 NOT started, R595 NOT activated, accept allowlist NOT added** (D-011 R001-R003). deployment/G6/
+  Graphify/expansion holds; `default_mode=shadow`; LIMITED-AUTO off.
+- Task branches from origin/main; producers spawned **UNNAMED** (named → `readonly_agent_guard` fail-closed);
+  `project-control/**`+`directives/**` explicit LF; commit exact paths; Tier A merges after green **required**
+  checks. Reviewer/orchestrator model `claude-opus-4-8` xhigh. Prose `allowed_paths` = empty-set identity;
+  use real pathspecs (M0-T057 now guards this).
