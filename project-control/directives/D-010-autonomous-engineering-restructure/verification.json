@@ -3258,7 +3258,7 @@
     "D-010-R343"
    ],
    "reviewed_manifest_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-   "reviewed_sha": "37667ff08302c97933711414f8e3484280a45b7a",
+   "reviewed_sha": "003c7b92b7085256cf85fd745bca8ca1d133f6ed",
    "verified_at": "2026-08-09T18:35:00+00:00",
    "requirements": [
     {

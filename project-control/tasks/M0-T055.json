@@ -22,12 +22,12 @@
     "security-reviewer",
     "control-plane-verifier"
   ],
-  "status": "awaiting_gate",
-  "progress_percent": 85,
+  "status": "accepted",
+  "progress_percent": 100,
   "risks": [],
   "blockers": [],
   "created_at": "2026-08-09T09:04:52.369280+00:00",
-  "updated_at": "2026-08-10T01:14:03.645834+00:00",
+  "updated_at": "2026-08-11T06:12:31.535899+00:00",
   "directive_refs": [
     {
       "directive_id": "D-010",
@@ -66,5 +66,7 @@
       "message": "G3 code-reviewer PASS + G5 security-reviewer PASS preserved verbatim (reports/M0-T055-G3-code-review.md, reports/M0-T055-G5-security-review.md); Part-D control-plane-verifier PASS on file. Independent DCV dispatched for the 21 applicable D-010 reqs (R320-R335,R337,R340-R343) at HEAD 37667ff. NEXT: assemble verification.json + record G0/G2/G3/G5 + accept."
     }
   ],
-  "worktree": "C:/Users/MLFLL/Downloads/nyc-zoning/nyc-development-feasibility-claude-pack"
+  "worktree": "C:/Users/MLFLL/Downloads/nyc-zoning/nyc-development-feasibility-claude-pack",
+  "accepted_by": "orchestrator",
+  "accepted_at": "2026-08-11T06:12:31.534894+00:00"
 }
