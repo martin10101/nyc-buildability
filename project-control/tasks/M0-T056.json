@@ -5,14 +5,49 @@
   "milestone_id": "M0",
   "objective": "GATED ON THE OWNER'S R595 DECISION (do not start until the owner authorizes R595 activation; a Tier-D flip changing the shadow-only/LIMITED-AUTO-off posture). Then: (1) wire an independently-live process OUTSIDE the Claude session (main-orchestrator watchdog / existing verified launcher) that detects the orchestrator's own quota hard stop and auto-launches exactly one claude-opus-4-8 xhigh successor session loading the durable handoff + safe checkpoint; (2) enable the worker-layer auto-redispatch in the supervised loop via the owner-authorized actuation channel (flip default_actuation_authorization / wire a real controller+launcher); both single-instance, exactly-once, no duplicate workers/commits, audit-linked, fail-closed, durable across the terminal/session boundary; (3) the bounded live continuous proof (real Fable orchestrator/worker exhaustion -> real opus successor auto-launched, no owner /model). Reuse the M0-T054 controller/adapters/detection unchanged. Do NOT weaken any hold beyond the exact R595 activation the owner authorizes.",
   "business_reason": "The M0-T054 turnover MECHANISM is built, tested (79 tests), gate-passed (G3+G5), and live-proven, but production actuation is deliberately RECORD-INTENT-ONLY. This task is the LIVE ACTIVATION the owner asked for ('auto-start the next session without me'): an independently-live main-orchestrator watchdog + both-layer production auto-launch. That capability IS the R595 autonomous-continuation path, currently HELD by the reaffirmed shadow-only / LIMITED-AUTO-off posture. HELD until the owner's explicit R595 activation decision (Tier-D, owner-only).",
-  "inputs": [],
-  "outputs": [],
-  "dependencies": [
-    "M0-T054"
+  "inputs": [
+    "project-control/directives/D-010-autonomous-engineering-restructure/source-030-amendment.md (owner R595 activation authorization)",
+    "project-control/directives/D-010-autonomous-engineering-restructure/source-031-amendment.md (R595 build directive: order, safety, permission boundary, end state)",
+    "project-control/reports/M0-T036-ACTIVATION-CHECKLIST.md (MANDATORY BLOCKING prerequisites + the 2026-08-08 ACTIVATION-RECORD PIN C1/C2)",
+    "project-control/reports/M0-T039-supervisor-freeze.md (freeze baseline the suite must re-establish)",
+    "project-control/reports/M0-T054-live-proof/LIVE-PROOF.md (the proven turnover chain being activated)"
   ],
-  "allowed_paths": [],
-  "forbidden_paths": [],
-  "acceptance_scenarios": [],
+  "outputs": [
+    "Orchestrator-layer watchdog living OUTSIDE the Claude session that detects the orchestrator's own quota hard stop and auto-launches exactly one claude-opus-4-8 successor loading the durable handoff + safe checkpoint",
+    "Worker-layer production actuation: an owner-authorized actuation predicate replacing default_actuation_authorization's unconditional False, wired to the real controller + launcher",
+    "Bounded live continuous proof on an ISOLATED non-product runtime (real exhaustion -> real successor auto-launched, no owner /model), touching no production data",
+    "Re-established supervisor-freeze suite baseline (M0-T039-supervisor-freeze.md) with 0 failures",
+    "project-control/reports/M0-T056-producer-report.md (AOS section-6 packet) + the isolated live-proof evidence directory"
+  ],
+  "dependencies": [
+    "M0-T054",
+    "M0-T053"
+  ],
+  "allowed_paths": [
+    "tools/agent_supervisor/worker_turnover.py",
+    "tools/agent_supervisor/turnover_controller.py",
+    "tools/agent_supervisor/turnover_adapters.py",
+    "tools/agent_supervisor/model_turnover.py",
+    "tools/agent_supervisor/loop.py",
+    "tools/agent_supervisor/cli.py",
+    "tools/test_agent_supervisor_model_turnover.py",
+    "project-control/reports/M0-T056-producer-report.md"
+  ],
+  "forbidden_paths": [
+    "services/api/**",
+    "apps/web/**",
+    "packages/contracts/**",
+    "C:/SupervisorController/config.toml"
+  ],
+  "acceptance_scenarios": [
+    "AS-1 (orchestrator layer): with the watchdog live outside the Claude session and a simulated orchestrator quota hard stop, EXACTLY ONE claude-opus-4-8 successor is launched, it loads the durable handoff + safe checkpoint, and the launch is audit-linked. A second detection of the SAME exhaustion launches nothing (exactly-once).",
+    "AS-2 (worker layer): with the owner-authorized actuation predicate injected, a confirmed FABLE_EXHAUSTED verdict redispatches the SAME bounded unit on claude-opus-4-8 exactly once through the controller; with the predicate absent the behavior is byte-identical to today's record-intent-only path.",
+    "AS-3 (fail-closed): NOT_EXHAUSTED and AMBIGUOUS_FAIL_CLOSED never actuate; an unreadable/ambiguous signal refuses rather than launches; a refusal is recorded with its reason.",
+    "AS-4 (no duplicate workers): with a surviving recorded child from M0-T053's production child accounting, the turnover REFUSES to launch (no double-launch), and the C1 job-object containment gate refuses actuation on a host whose default containment is not job_object.",
+    "AS-5 (bounded isolated live proof): on an ISOLATED non-product runtime, a REAL exhaustion drives a REAL successor auto-launch with no owner /model step, touching no production data and not touching M2-T015 artifacts.",
+    "AS-6 (no other hold moved): a diff-level demonstration that protected config/ACL scope, command/path/credential protections, LIMITED-AUTO for non-turnover actions, five-borough scope, and the history-rewrite / evidence-deletion prohibitions are unchanged; and that the loop still cannot self-approve (producer != approver at every gate).",
+    "AS-7 (freeze baseline): the full supervisor suite re-establishes the M0-T039 freeze baseline with 0 failures."
+  ],
   "required_gates": [
     "G0",
     "G2",
@@ -25,12 +60,12 @@
     "security-reviewer",
     "control-plane-verifier"
   ],
-  "status": "backlog",
-  "progress_percent": 0,
+  "status": "ready",
+  "progress_percent": 5,
   "risks": [],
   "blockers": [],
   "created_at": "2026-08-09T10:12:30.259337+00:00",
-  "updated_at": "2026-08-09T10:12:30.599206+00:00",
+  "updated_at": "2026-08-11T04:48:05.793509+00:00",
   "directive_refs": [
     {
       "directive_id": "D-010",
@@ -38,5 +73,14 @@
     }
   ],
   "directive_regime_version": "1.0",
-  "directive_regime_entered_at": "2026-08-09T10:12:30.259337+00:00"
+  "directive_regime_entered_at": "2026-08-09T10:12:30.259337+00:00",
+  "progress_log": [
+    {
+      "at": "2026-08-11T04:48:05.793509+00:00",
+      "agent": "orchestrator",
+      "percent": 5,
+      "status": "ready",
+      "message": "SESSION 14 CONTRACTING (D-010 source-030 R344-R351 + source-031 R352-R357; applicable set = 14, bound via applicability.task_ids). Packet contracted from a stub: real inputs/outputs, 8 REAL allowed_paths pathspecs (identity now computes to f419af8c instead of the empty-set hash - contrast M2-T016, whose PROSE allowed_paths bind nothing), forbidden_paths, and 7 acceptance scenarios AS-1..AS-7. SEQUENCING CHANGE (orchestrator decision, evidence-backed): M0-T053 ADDED as a dependency alongside M0-T054. Why: R347 makes 'single-instance, exactly-once, NO DUPLICATE WORKERS, audit-linked, fail-closed' BINDING for the production actuation channel, and project-control/reports/M0-T036-ACTIVATION-CHECKLIST.md ACTIVATION-RECORD PIN (2026-08-08, M0-T052 G5 C1/C2) records that until M0-T053 lands, record_launched_child has NO production caller so recover_boot's surviving-child fail-closed is INERT in production, and double-launch protection rests on the Job Object alone with the C1 job-object containment bar being a WRITTEN precondition only, not runtime-enforced. An unattended multi-day loop that auto-relaunches sessions is exactly the scenario where a stranded-START_CLAUDE resume double-launches over an orphaned worker, so shipping R595 production actuation before M0-T053 would ship the invariant R347 declares non-optional. This is ordinary engineering sequencing, not an owner-only decision (D-008 escalation boundary), so it proceeds without asking - and it is reported to the owner. M0-T053 is unblocked now (its dependency M0-T052 is accepted) and is dispatched first."
+    }
+  ]
 }

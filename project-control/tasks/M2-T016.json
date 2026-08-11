@@ -54,15 +54,15 @@
     "G4",
     "G5"
   ],
-  "producer_agent": null,
+  "producer_agent": "frontend-engineer",
   "reviewer_agents": [
     "code-reviewer",
     "human-journey-reviewer",
     "visual-quality-reviewer",
     "security-reviewer"
   ],
-  "status": "backlog",
-  "progress_percent": 0,
+  "status": "in_progress",
+  "progress_percent": 95,
   "risks": [
     "DISPATCH HOLD: awaits owner review of the 2026-07-20 planning report AND acceptance of M2-T015 + M2-T012",
     "The professional-confirmation role definition is a human-authority decision: the packet defines the mechanism; WHO qualifies is recorded as an owner/qualified-human decision before the state can be granted in production",
@@ -73,5 +73,93 @@
   ],
   "blockers": [],
   "created_at": "2026-07-20T06:34:25.583607+00:00",
-  "updated_at": "2026-07-20T06:34:25.583607+00:00"
+  "updated_at": "2026-08-11T04:53:06.578431+00:00",
+  "progress_log": [
+    {
+      "at": "2026-08-10T01:45:48.106659+00:00",
+      "agent": "orchestrator",
+      "percent": 5,
+      "status": "ready",
+      "message": "Definition-of-ready: design foundation produced (docs/SURVEY_REVIEW_WORKFLOW.md by product-design-director) reconciling the 6 packet states 1:1 with shipped DocumentState, 12-edge transition table, professional-confirmation MECHANISM specified with role-identity flagged as pending owner/Tier-D decision (rec: NY-licensed PLS), correction/audit model, profile-1.4.0 consume-only integration (survey-geometry authoritative promotion flagged as a NEW contracted decision, deferred). Next: backend review-action API unit under lean process."
+    },
+    {
+      "at": "2026-08-10T01:51:49.113553+00:00",
+      "agent": "orchestrator",
+      "percent": 25,
+      "status": "in_progress",
+      "message": "Lean units dispatched in parallel (disjoint scopes, isolated worktrees): (U1) backend review-action API \u2014 backend-engineer building services/api/app/documents review-action endpoints + audit + immutability + promotion_gated_transition reuse + adversarial tests, returns the concrete API contract; (U2) frontend review screens \u2014 frontend-engineer building apps/web survey-review UI (overlay, accept/correct/reject, state visibility, blocked/provisional honesty, a11y) against the spec UX contract with an isolated typed API-client seam for reconciliation. Design foundation (docs/SURVEY_REVIEW_WORKFLOW.md) done. Integration + gates on return. Owner decisions surfaced (non-blocking build): professional-confirmation role identity (Tier-D); authoritative survey-geometry profile contract version (deferred)."
+    },
+    {
+      "at": "2026-08-10T02:22:05.128221+00:00",
+      "agent": "orchestrator",
+      "percent": 45,
+      "status": "in_progress",
+      "message": "U1 backend review-action API gate-reviewed at worktree 5d2ebbb: G3 code-reviewer PASS (reports/M2-T016-backend-G3-code-review.md) + G5 security-reviewer PASS (reports/M2-T016-backend-G5-security-review.md); both reproduced 181/181 tests + confirmed additive/gate-modules-unchanged. TWO honesty corrections required (blocking, same family): C1/R1 = a professionally-rejected fact must BLOCK confirm_document (not be silently overwritten to confirmed); F1/R2 = correct/reject on a professionally_confirmed doc must refuse and require explicit reopen. Rework dispatched to the backend producer (R1/R2 + R3 real immutability cross-check + R4 error-domain + regressions). F2/F3/F5 (atomic confirm, CAS coverage, route-populates-principal-from-auth + digest validation + server-side verdict) carried to a future B-001 route/store binding task (the HTTP router + production ReviewStore is a separate unit, correctly out of this pure-handler slice). Spec \u00a712 to be reconciled with \u00a77.2/\u00a710.4 at integration. Frontend U2 still building."
+    },
+    {
+      "at": "2026-08-10T02:29:34.135841+00:00",
+      "agent": "orchestrator",
+      "percent": 60,
+      "status": "in_progress",
+      "message": "U1 backend rework complete at worktree 57d8574 (parent 5d2ebbb; additive, only review_actions.py + test_review_actions.py): R1 professionally-rejected fact now permanently BLOCKS confirm_document (typed confirmation_rejected, listed in blocking_fact_ids, confirm_precondition_met=False, never overwritten to confirmed); R2 correct/reject on a professionally_confirmed doc refused (post_confirmation_edit_refused) until explicit audited reopen; R3 real independent-original immutability cross-check via new ReviewStore.original_fact_value seam; R4 empty-reason->shipped TransitionReasonRequired. 190 tests pass (+9 regression), ruff 0.13.0 clean, security machinery + profile untouched. Delta re-reviews dispatched to G3 (confirm C1 resolved) + G5 (confirm F1 resolved). Reconciled rule to sync into spec \u00a712: a professionally-rejected fact blocks confirmation and clears only via re-extraction/corrected upload (\u00a77.2/\u00a710.4 wins over the literal \u00a712 table); post-confirmation edits require reopen. F2/F3/F5 carried to future B-001 route/store task. U2 frontend human-journey review in flight; FE api-client reconciliation to follow (backend contract now final)."
+    },
+    {
+      "at": "2026-08-10T02:33:47.520565+00:00",
+      "agent": "orchestrator",
+      "percent": 68,
+      "status": "in_progress",
+      "message": "U1 backend review-action API COMPLETE + gate-verified at worktree 57d8574: G3 code-review delta PASS (C1 RESOLVED; reports/M2-T016-backend-G3-delta-review.md) + G5 security delta PASS (F1 RESOLVED; reports/M2-T016-backend-G5-delta-review.md); both reproduced 190 tests + ruff 0.13.0 clean + gate modules byte-unchanged + forge/principal defenses intact. DEFERRED (durably logged; to bind to a follow-up survey-review HTTP-route + production-ReviewStore task, blocked by B-001): F2 atomic multi-fact confirm; F3 CAS coverage of the professional_confirmation field; F5 route MUST populate ReviewPrincipal from the authenticated channel (never payload) + validate the sha256 digest + compute promotion_verdict solely server-side. Non-blocking note: post-confirmation-edit guard covers PROFESSIONALLY_CONFIRMED but not terminal REJECTED docs (dead/never-authoritative, no masquerade). NEXT: await U2 frontend human-journey review, then reconcile FE api-client to the final backend contract + integrate + sync spec \u00a712."
+    },
+    {
+      "at": "2026-08-10T02:36:26.014529+00:00",
+      "agent": "orchestrator",
+      "percent": 72,
+      "status": "in_progress",
+      "message": "U2 frontend human-journey gate at worktree 99f5cc5: PASS (reports/M2-T016-frontend-human-journey-review.md) \u2014 honesty/authority CORE faithful (no unconfirmed/rejected evidence reads as authoritative; no silent defaults; SC-S1..S7 satisfied; two-layer model, no Verified state, capability+H5-gated confirm, non-dismissible conflicts, blocked/provisional propagation all correct). Required corrections F1 (dominant-action never points to Confirm when it is the only step; \u00a710.3) + F3 (stale_history reload loses in-progress correction input; \u00a710.8); advisory F2 (Accept lacks visible/audited affordance) / F4 (overlay marks color-only; \u00a710.2) / F5 (correction value always string). Frontend rework dispatched (batched): (A) reconcile api-client to the final backend contract 57d8574 (endpoints/digest/reopen/error-codes/field-map/re-read-after-mutation/new confirmation_rejected+post_confirmation_edit_refused semantics) + (B) fix F1/F3 required + F2/F4/F5. Backend U1 already gate-verified. Next: integrate + FE code/security/visual gates + DCV + stage for accept."
+    },
+    {
+      "at": "2026-08-10T03:16:10.813107+00:00",
+      "agent": "orchestrator",
+      "percent": 80,
+      "status": "in_progress",
+      "message": "U2 frontend rework at worktree dc8c5de (parent 99f5cc5): (A) api-client reconciled to backend 57d8574 (digest endpoints, reopen, re-read-after-mutation, 1:1 error codes incl confirmation_rejected+post_confirmation_edit_refused, flat FactView field map) + (B) F1/F3 required + F2/F4/F5 fixed with tests (reports/M2-T016-frontend-rework-return.md). FIVE honest read-model gaps surfaced (UI degrades honestly, never fabricates) -> bound to the follow-up HTTP-route/read-model-assembly task (B-001-blocked): (1) FactView should expose history_fingerprint so FE echoes it instead of the current hand-rolled SHA-256 reproduction; (2) display_label/ai_drafted_label server-side; (3) per-action principal capability surface so unauthorized actions disable up front (SC-S3 in prod); (4) review-inbox endpoint; (5) per-check expected/observed. Re-verifications dispatched: fresh FE G3 code-review (fingerprint fail-safe + reconciliation + F1-F5) + human-journey delta (F1/F3 resolved). Then integrate BE 57d8574 + FE dc8c5de + spec onto task branch, record gates, DCV, stage for accept."
+    },
+    {
+      "at": "2026-08-10T03:31:50.848099+00:00",
+      "agent": "orchestrator",
+      "percent": 90,
+      "status": "in_progress",
+      "message": "All units built + gate-reviewed PASS + INTEGRATED + PR #216 (branch task/M2-T016-survey-review @ d45f330): backend 57d8574 (G3+G5 delta PASS, C1/F1 resolved) + frontend dc8c5de (G3-code + human-journey delta PASS, F1/F3 resolved) + spec (docs/SURVEY_REVIEW_WORKFLOW.md, \u00a712.1 reconciled) + producer report merged (48 files, gitleaks clean, CI running). Verbatim gate reports in project-control/reports/M2-T016-*. REMAINING (deferred to the acceptance seam, since accept is permission-gated): record G0/G2/G3/G4/G5 on the integrated SHA + directive-compliance verification.json + create the B-001-blocked route/store follow-up task + merge PR #216 (after CI green) + accept. Owner decisions surfaced (mechanisms built, non-blocking): professional-confirmation role identity (Tier-D); authoritative survey-geometry profile contract (STOP)."
+    },
+    {
+      "at": "2026-08-10T03:58:57.385662+00:00",
+      "agent": "orchestrator",
+      "percent": 95,
+      "status": "in_progress",
+      "message": "Independent DCV COMPLETE: 77/77 applicable D-010 requirements PASS, 0 violated / 0 unverifiable / 0 blocked, at integration head d45f330 (reports/M2-T016-DCV-verification.json). Re-derived the 77-id set independently; validate_directive_compliance exit 0; harness suites (directive_compliance 102, project_control 22, directive_reminder 12) + 3 backend test files 190 pass; diff strictly additive (48 files, gate modules + profile/contract.py 1.4.0 byte-unchanged). M2-T016 is now FULLY VERIFIED: design + backend (G3+G5 delta) + frontend (G3-code + human-journey delta) all PASS + DCV 77/77 + integrated PR #216. REMAINING = control-plane finalization gated on the accept-permission (and entangled with M0-T055's pending accept via HEAD identity): transcribe the 77-row verification.json into the D-010 registry, record G0/G2/G3/G4/G5 at the acceptance HEAD, create the B-001-blocked route/store follow-up task, merge PR #216 after CI green, accept. DCV evidence durably preserved for that transcription."
+    },
+    {
+      "at": "2026-08-11T04:46:47.510010+00:00",
+      "agent": "orchestrator",
+      "percent": 95,
+      "status": "in_progress",
+      "message": "SESSION 14 CORRECTION - the prior session's 'fully verified' claim was PREMATURE: CI on PR #216 had not finished when the handoff was written, and it FAILED. web-e2e (required check, run 31352797639) failed 1/277: api.test.ts SC-S4 'blocks confirmation with confirmation_rejected + rejected_fact_ids' -> AssertionError: expected ['sevdocp13'] to include 'sev:doc:p1:3'. Root cause = a REAL product defect the whole G3/G5/human-journey/DCV wave missed: decodeError sanitized detail.rejected_fact_ids with the shared boundedToken (charset [A-Za-z0-9._-]), which strips the colons out of evidence ids, so a confirmation-blocking response returned ids matching no fact.evidence_id and the UI could not point a reviewer at the blocking facts. Secondary hole in the same line: the '?? String(id)' fallback emitted the RAW unsanitized value exactly when sanitization yielded empty. FIXED at 80252d3 (branch task/M2-T016-survey-review): module-local boundedEvidenceId keeping ':' with boundedToken's defensive shape; shared boundedToken deliberately untouched (lib/api.ts + lib/rule-evaluation.ts depend on its narrow charset); unsanitizable entries dropped; parameterized adversarial sanitizer table + an end-to-end assertion added. NOT verified locally (worktree has no node_modules; local npm prohibited) - CI is the verifier. CONSEQUENCE FOR ACCEPTANCE: the 77-row DCV at d45f330 and the G3/G5/human-journey verdicts are now STALE (reviewed head moved d45f330 -> 80252d3); they need a delta re-review + re-stamp at the new head before any gate is recorded. Also recorded: M2-T016 allowed_paths are PROSE, not pathspecs ('apps/web/src/** (survey review feature areas)'), so its frozen content identity computes to the EMPTY-SET hash e3b0c442 and binds no code at all - a real weakness in the identity machinery, logged for a follow-up rather than changed now (editing allowed_paths would move the material digest and invalidate the existing verification)."
+    },
+    {
+      "at": "2026-08-11T04:53:06.576417+00:00",
+      "agent": "orchestrator",
+      "percent": 95,
+      "status": "in_progress",
+      "message": "SECOND DEFECT, more serious than the first. Fixing the vitest failure let Playwright run for the FIRST TIME on this branch (at d45f330 the web-e2e job died at the vitest step before Playwright started), and ALL SEVEN survey-review e2e specs failed identically - survey-review-authorization SC-S3/SC-S4, survey-review-journey SC-S1 x2, survey-review-recovery-a11y SC-S7 x3 - with getByTestId('focused-item') never appearing because /survey/review/<digest> served a 404. ROOT CAUSE: both route files (src/app/survey/review/page.tsx and .../[documentId]/page.tsx) call surveyReviewEnabled() but declare NO dynamic export, so Next evaluates INTERNAL_SURVEY_REVIEW_ENABLED during next build - where it is unset - and bakes notFound() into a static page; next start with the flag set cannot undo it. This is a PRODUCT bug, not a harness quirk: config.ts documents the flag as a non-public runtime flag 'read fresh each call', and /dashboard - the pattern these routes explicitly say they mirror - already declares export const dynamic='force-dynamic' for exactly this reason. In any deployment setting the flag at runtime the survey-review screens would have 404'd. FIXED at 749f9dd (force-dynamic on both routes; the gate itself unchanged and still fail-safe off). PROCESS FINDING for the gate wave: M2-T016's own required output is a 'UI human-journey acceptance pack: browser automation + independent manual-style walkthrough', yet the browser-automation half was never green - the human-journey reviewer returned PASS without a passing e2e run, and the producer's checkpoint was submitted before CI finished. The G3/G4 evidence standard needs a green web-e2e run attached, not a walkthrough narrative. Verified by CI only in both fixes (no node_modules in the worktree; local npm prohibited)."
+    }
+  ],
+  "directive_refs": [
+    {
+      "directive_id": "D-010",
+      "requirement_ids": "ALL"
+    }
+  ],
+  "directive_regime_version": "1.0",
+  "directive_regime_entered_at": "2026-08-10T01:51:38.185048+00:00",
+  "worktree": ".claude/worktrees/M2-T016-survey-review"
 }
