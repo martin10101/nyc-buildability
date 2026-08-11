@@ -3843,7 +3843,44 @@
           "evidence": "owner follow-up authorization discharged: Phase 1 policy (M0-T055), autonomous continuation; R595 kept record-intent-only, M2-T016 touches no config/ACL/activation"
         }
       ]
+    },
+    {
+      "task_id": "M0-T053",
+      "directive_id": "D-010",
+      "producer": "backend-engineer",
+      "verifier": "directive-compliance-verifier",
+      "applicable_requirement_ids": [
+        "D-010-R242",
+        "D-010-R244",
+        "D-010-R245",
+        "D-010-R283"
+      ],
+      "reviewed_manifest_sha256": "e6746f683d847ab9a09b4609f508aba72f235fbbdb49900dcc39e12abe1da141",
+      "reviewed_sha": "1f2e81a6b23cb37c0de75f813f27a2fcc06896c2",
+      "verified_at": "2026-08-11T19:05:00+00:00",
+      "requirements": [
+        {
+          "id": "D-010-R242",
+          "state": "PASS",
+          "evidence": "Diff (37667ff..branch) is additive: claude_runner.py +77/-1, cli.py +61/-1, +2 new tests; loop.py and M0-T052 crash/loop tests untouched; shared start_reentry.py appended-only (0 deletions); M0-T052.json stays accepted; C1 gate cites M0-T052 G5 C1 as enforcement."
+        },
+        {
+          "id": "D-010-R244",
+          "state": "PASS",
+          "evidence": "containment_precondition() returns (True,'job_object') on this host; supervisor SHADOW-ONLY (R595 not activated); limited_auto_enabled hard-coded False, no config key; accepting M0-T053 installs the fail-closed C1 gate BEFORE any of the 4 gated events - the 'becomes blocking' enforcement."
+        },
+        {
+          "id": "D-010-R245",
+          "state": "PASS",
+          "evidence": "M2-T015.json accepted 2026-08-09, M2-T016.json accepted 2026-08-11 (both finished); M0-T053 remained in_progress/backlog and did not interrupt either product proof."
+        },
+        {
+          "id": "D-010-R283",
+          "state": "PASS",
+          "evidence": "Step5 M2-T016 status==accepted (proof #2); Step6 M0-T053 backlog until both proofs accepted; Step7 no host relaxation (still job_object, gate refuses others); Step8 LIMITED-AUTO limited_auto_enabled=False/unauthorized."
+        }
+      ]
     }
   ],
-  "updated_at": "2026-08-11T18:45:00+00:00"
+  "updated_at": "2026-08-11T19:05:00+00:00"
 }

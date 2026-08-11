@@ -40,12 +40,12 @@
     "code-reviewer",
     "security-reviewer"
   ],
-  "status": "in_progress",
-  "progress_percent": 96,
+  "status": "accepted",
+  "progress_percent": 100,
   "risks": [],
   "blockers": [],
   "created_at": "2026-08-08T20:47:25.688693+00:00",
-  "updated_at": "2026-08-11T05:51:53.337755+00:00",
+  "updated_at": "2026-08-11T16:47:01.205654+00:00",
   "directive_refs": [
     {
       "directive_id": "D-010",
@@ -84,5 +84,7 @@
       "message": "G3 CODE REVIEW (independent code-reviewer): VERDICT PASS, UNCONDITIONAL - no BLOCKING, no REQUIRED-CORRECTION. Both gates now PASS. It independently reproduced 1493/2 in the worktree AND 1481/2 in the primary checkout, and did NOT take the baseline on faith: main is at a398fe8 but 'git diff --stat 37667ff..a398fe8 -- tools' is EMPTY, so that tree is byte-identical to base. ruff 0.13.0: base 6 errors, branch 5, branch a strict SUBSET (os became used) - no new lint, one removed. It re-verified the single-call-site claim itself and went further than the producer by checking the adjacent knob: RunnerConfig.use_job_object defaults True and is set from NO cli arg or config anywhere, so there is no config-side route to pass the gate then spawn uncontained. Drove all four host shapes live. Its sandbox hook blocked programmatic test-runner invocation so it could NOT re-run the mutation matrix - it said so plainly and verified the guards from the other side by driving production code in memory instead (settle retains on poll()=None and clears on poll()=0; unwritable journal refuses with child_record_unwritable, calls terminate_all+close, closes all three pipes, chains the OSError cause). CORRECTION TO A FALSE CLAIM I RECORDED: I wrote 'doctor parity is structural' in this task's progress log and in the PR #218 body. That is HALF TRUE and must not stand unqualified. The gate and doctor share default_containment_kind(), so the reported KIND cannot diverge - but the VERDICTS do: _check_containment_default() (cli.py:1102-1129) returns ok=True on POSIX when kind is process_group (line 1124 sets expected per-OS) and ok=True on a Windows host that refuses a Job Object (1119-1123). So on Linux doctor prints 'containment_default: ok' while the gate REFUSES. The direction is safe (the gate is stricter) so it is not a defect, but the 2026-08-08 pin's criterion (1) is worded 'doctor reports containment_default: ok, job_object', and an operator checking only the ok flag on a non-Windows host would wrongly believe criterion (1) was met. Correct wording is 'same containment SOURCE', not 'doctor parity'. OPERATIONAL CONSEQUENCE FOR MERGE, not previously surfaced: the gate is unconditional on mode, so 'start' now HARD-REFUSES on every POSIX host including Render, and including shadow mode (shadow does spawn a real worker). The supervisor is now Windows-job-object-only. That matches the pin's 'any run that spawns a live worker' and breaks nothing today, but it is a real deployment narrowing the owner should know about. CONVERGENCE: its MINOR finding 1 (clear_child_record whole-key wipe) independently matches G5's P2, and it independently raised the uncontained doctor --live preflight probe that G5 raised as its finding 6 - two reviewers, no communication, same two items. On R4 it judges deferral DEFENSIBLE and NOT false assurance, agreeing with G5, because the payload and refusal text say 'default' throughout and never claim an achieved guarantee, and enforcing criterion (2) means stopping the loop mid-run, which supervisor-freeze section 1 forbids in this packet. Its extra MINOR items: killing a live worker for an unjournalable pid writes NOTHING to the audit log though the runner holds self.audit; the unwritable-record test asserts only the error code so deleting terminate_all() keeps the suite green (coverage gap, behaviour verified present); and the start payload key 'containment' reads as achieved containment but is the host precondition. ACCEPTANCE WATCH-OUT it flagged: the commit carries 2 files under .claude/agent-memory/backend-engineer/ while the packet's forbidden_paths lists .claude/** - the project-control rule permits agent-memory writes so it reads as the carve-out, but confirm acceptance does not trip on it."
     }
   ],
-  "worktree": ".claude/worktrees/M0-T053-child-accounting"
+  "worktree": ".claude/worktrees/M0-T053-child-accounting",
+  "accepted_by": "orchestrator",
+  "accepted_at": "2026-08-11T16:47:01.203637+00:00"
 }
