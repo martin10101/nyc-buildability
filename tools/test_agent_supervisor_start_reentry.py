@@ -491,9 +491,9 @@ class ContainmentGateTests(unittest.TestCase):
             recorded.append({"pid": pid, "role": role})
             real_record(journal, pid=pid, role=role, start_token=start_token)
 
-        def spy_clear(journal):
+        def spy_clear(journal, **kwargs):
             cleared.append(True)
-            real_clear(journal)
+            real_clear(journal, **kwargs)
 
         cr.record_launched_child = spy_record  # type: ignore[assignment]
         cr.clear_child_record = spy_clear  # type: ignore[assignment]
