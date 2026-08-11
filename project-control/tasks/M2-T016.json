@@ -62,7 +62,7 @@
     "security-reviewer"
   ],
   "status": "in_progress",
-  "progress_percent": 95,
+  "progress_percent": 96,
   "risks": [
     "DISPATCH HOLD: awaits owner review of the 2026-07-20 planning report AND acceptance of M2-T015 + M2-T012",
     "The professional-confirmation role definition is a human-authority decision: the packet defines the mechanism; WHO qualifies is recorded as an owner/qualified-human decision before the state can be granted in production",
@@ -73,7 +73,7 @@
   ],
   "blockers": [],
   "created_at": "2026-07-20T06:34:25.583607+00:00",
-  "updated_at": "2026-08-11T05:14:44.258994+00:00",
+  "updated_at": "2026-08-11T05:25:31.940209+00:00",
   "progress_log": [
     {
       "at": "2026-08-10T01:45:48.106659+00:00",
@@ -158,6 +158,13 @@
       "percent": 95,
       "status": "in_progress",
       "message": "THIRD DEFECT + independent corroboration. (c) The review route double-encoded the digest: the [documentId] param arrives percent-encoded and the client re-encodes when building the request URL, producing sha256%253A... which matched no document, so the screen rendered 'No survey document was found for this digest'. Only reachable through the Next route, which is why the jsdom component tests never caught it (they pass the raw digest straight to SurveyReviewScreen). Fixed at 5a684fc by decoding once in the page, fail-closed via notFound() on URIError. CI at 5a684fc is now GREEN on every required check: 277 vitest + 73 Playwright. Only web-dependency-security is red, on the pre-existing nanoid advisory GHSA-2v37-7h3g-55p8 (needs >=3.3.17; age gate has passed but the lockfile cannot be regenerated here because local npm is prohibited) - NON-required, unrelated. THREE FINDINGS from an independent read-only analysis that I am recording because they change what future work should NOT do: (1) the deleted '?? String(id)' fallback was a REACHABLE reflection of raw server content, not a theoretical one - ConfirmDocumentPanel.tsx:41 does facts.find(f => f.evidence_id === id)?.display_label ?? id and renders it at :194, so an unmatched or hostile id reached the reviewer verbatim; this is the strongest justification on file for dropping rather than coercing. (2) DO NOT drop-sanitize api.ts:304 blocking_fact_ids for 'consistency' with the new evidence-id sanitizer: model.ts:139 gates canOfferConfirm on blocking_fact_ids.length > 0, so dropping a malformed entry could flip a correctly BLOCKED confirmation into an OFFERED one - the legally unsafe direction. (3) api.ts:220 String(raw.evidence_id) is type narrowing after validate.ts:45 already rejects non-string/empty, NOT a hole; sanitizing there would desynchronise the client id from the server id used in action URLs. QUEUED FOLLOW-UP (not applied now, to avoid changing the diff under the two in-flight delta reviewers): a stronger regression driving hostile rejected_fact_ids through the real decodeError path on a 422 response, rather than only asserting at the sanitizer level."
+    },
+    {
+      "at": "2026-08-11T05:25:31.939081+00:00",
+      "agent": "orchestrator",
+      "percent": 96,
+      "status": "in_progress",
+      "message": "G3 DELTA REVIEW (independent code-reviewer, read-only, producer=orchestrator so independence holds): VERDICT PASS with TWO BLOCKING required corrections. Verbatim report preserved at project-control/reports/M2-T016-delta-G3-code-review.md. Reviewed d45f330..5a684fc (4 files, +97/-3). It verified every claim independently and found the code changes correct and at the right layer, but caught two EVIDENCE defects. F4 (REQUIRED): my test titled 'drops unsanitizable entries from rejectedFactIds instead of emitting them raw' was VACUOUS - it drove the mock backend, which only emits its own fixture ids, all of which sanitize cleanly, so the filter never removed anything and reverting the drop half would have left the test GREEN. The unpinned half was the security-relevant one; the reviewer further established that the old '?? String(id)' fallback also coerced NON-STRINGS (an object rendered as '[object Object]') with no length cap at all. F10 (REQUIRED): no spec loaded the bare inbox /survey/review, so force-dynamic on the statically-prerenderable inbox route was justified by analogy and exercised by nothing. BOTH CORRECTIONS APPLIED at e3c2ce6, plus two of its recommendations: F14 (validate ^sha256:[0-9a-f]{64}$ at the route - its containment analysis holds only because every consumer happens to re-encode, a convention not a guarantee) and F16 (definite-assignment form so a future fallback path becomes a type error). Deliberately NOT applied, carried as follow-ups: F5 (surface a dropped-id count so nothing material is dropped silently) and F7 (co-locate the sanitizer with boundedToken). The reviewer also answered my explicit question: e2e-only pinning for the force-dynamic and digest-decode fixes IS adequate G3 evidence, because both are integration-boundary defects no unit test could have caught, and a unit test asserting the dynamic export would pin the string not the behavior. GATE NOT YET RECORDED: corrections are BLOCKING per the gate-verdict semantics rule until CI is green at e3c2ce6, and the reviewed head has moved from 5a684fc to e3c2ce6 so the G3 verdict needs a delta re-attestation at the new head before G3 is recorded and before acceptance. G5 delta review still outstanding."
     }
   ],
   "directive_refs": [
