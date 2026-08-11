@@ -55,10 +55,11 @@ the identity is content-stable across uncommitted control-plane files):
 ### M0-T057 guard (D-011 item 6) — built, on `task/M0-T057-empty-identity-guard` @ `7bc98f5`
 Fails closed when allowed_paths bind zero tracked files; opt-in marker `path_free_governance:true` +
 `path_free_justification`; wired into the shared `_task_git_identity` (submit/gate/accept) + validator c17.
-**Control-plane review = PASS** (grandfather list of 9 recomputed exact; runtime still fails all 9 closed;
-robust to #220). **Code-review PENDING at handoff** — if it flags real regressions, small rework; else
-gate G0/G2/G3 + accept. Follow-ups: add an ordering-invariant test; drain the inert `M0-T055` grandfather
-entry once #220 merges.
+**BOTH independent reviews = PASS.** Control-plane: grandfather list of 9 recomputed exact, runtime still
+fails all 9 closed, robust to #220. Code: 140 tests pass, correctness verified, the Pyright warnings are
+PRE-EXISTING (git blame) not introduced, scope clean (6 files, no packet rewritten). **No rework** — next:
+record gates G0/G2/G3 + accept (mechanics recipe above). Follow-ups (non-blocking): add an ordering-invariant
+test; drain the inert `M0-T055` grandfather entry once #220 merges.
 
 ### Path to Codex/R595 (owner's "how many steps") — 6 steps
 1 ✅ M0-T055 accepted · 2 🔄 M2-T016 (verified; accept) · 3 ⏳ M0-T053 (accept, after #2) · 4–5 ⏳ **P1/P2/P3
