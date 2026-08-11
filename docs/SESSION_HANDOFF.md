@@ -51,8 +51,11 @@ coherently (contract→claim→producer in an isolated worktree→G3+G5→DCV→
   disturb M0-T057's accepted identity).
 - Add a unit assertion for empty/whitespace/non-string `path_free_justification` (M0-T057 O1; code already
   fails closed).
-- **Merge PR #219** (nanoid 3.3.17) when convenient to green `web-dependency-security`; #220's own security
-  check stays red on nanoid until the fix reaches this branch.
+- **PR #219 / M0-T047** (nanoid 3.3.17): the override + CI-regenerated lock exist on `task/M0-T047-nanoid-lock`
+  and #219 is mergeable, but **M0-T047 is still backlog with ZERO gates** — it is NOT a bare merge. Run its full
+  gate wave (claim → G0/G2/G3/G5 → D-009 DCV → accept, like M0-T057 was landed) THEN merge; merging un-gated
+  code is not permitted even under the owner's "when convenient". #220's own `web-dependency-security` stays red
+  on nanoid until the fix reaches this branch (known non-required; D-011 item 1).
 
 ### Holds (unchanged) + Codex
 **M0-T056 NOT started, R595 NOT activated, accept allowlist NOT added** (D-011 R001-R003/R029). "Open Codex
