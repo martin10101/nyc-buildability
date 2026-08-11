@@ -2186,6 +2186,43 @@ def _dispatch_inputs_missing(args: argparse.Namespace) -> list[str]:
     return sorted(name for name, value in required.items() if not value)
 
 
+def containment_precondition() -> tuple[bool, str, str]:
+    """The C1 host-containment gate for any run that spawns a live worker.
+
+    Qualifying evidence: M0-T052 G5 SEC-MAJOR, required correction C1, pinned
+    verbatim in `project-control/reports/M0-T036-ACTIVATION-CHECKLIST.md`
+    ("ACTIVATION-RECORD PIN - 2026-08-08"). The pin bars a supervised run on any
+    host whose default containment is not the kill-on-close Job Object, and asked
+    that the bar be enforced in the `start` launch path rather than only reported
+    by `doctor`. This is that enforcement, and it reads containment through the
+    SAME `default_containment_kind()` that `doctor`'s `containment_default` check
+    reads, so the two can never disagree.
+
+    Fail closed: only a proven `job_object` permits dispatch. `taskkill`
+    (Windows without a job) and `process_group` (POSIX, incl. Render) terminate
+    the worker from the runner's `finally` block, which an external kill of the
+    supervisor skips - leaving an orphaned worker that a later `start` would
+    launch a second worker over. Anything this function cannot prove is a
+    refusal, never an assumption.
+    """
+    try:
+        kind = default_containment_kind()
+    except Exception as exc:  # pragma: no cover - defensive; unprovable = refused
+        return False, "unknown", (
+            f"the host's default containment could not be determined ({exc}); an "
+            f"unprovable containment is a REFUSAL, never an assumption")
+    if kind == CONTAINMENT_JOB_OBJECT:
+        return True, kind, ("the host's default containment is the kill-on-close Job "
+                            "Object, so a worker cannot outlive an externally killed "
+                            "supervisor")
+    return False, kind, (
+        f"this host's default containment is {kind!r}, not {CONTAINMENT_JOB_OBJECT!r}. "
+        f"Without kill-on-close, an external kill of the supervisor skips the runner's "
+        f"termination path and leaves a live orphaned worker, so a later `start` could "
+        f"double-launch over it (M0-T052 G5 C1; ACTIVATION-RECORD PIN 2026-08-08). "
+        f"Dispatch is REFUSED on this host")
+
+
 def _run_loop(args: argparse.Namespace, checkout: pathlib.Path,
               journal: DurableJournal, audit: AuditLog) -> dict[str, Any]:
     """Build the real loop from explicitly-named inputs and run it."""
@@ -2224,7 +2261,12 @@ def _run_loop(args: argparse.Namespace, checkout: pathlib.Path,
         executable=args.claude_executable, cwd=str(worktree),
         max_turns=args.max_turns, timeout_seconds=args.unit_timeout,
         model=launch_model, expected_model=expected_model)
-    runner = ClaudeRunner(runner_config, audit=audit, run_id=run_id)
+    # M0-T053 (qualifying evidence: M0-T052 G5 SEC-MAJOR, correction C2): the
+    # PRODUCTION launch path hands the runner the durable journal, so every
+    # worker spawn is recorded and every verified exit clears the record. This
+    # single argument is what makes `recover_boot`'s surviving-child fail-closed
+    # live in production instead of only in a test that recorded a child by hand.
+    runner = ClaudeRunner(runner_config, audit=audit, run_id=run_id, journal=journal)
     reviewer = CodexReviewer(
         args.codex_executable, repo=str(repo),
         schema_path=str(PACKAGE_ROOT / "schemas" / "codex_decision.schema.json"),
@@ -2365,6 +2407,11 @@ def cmd_start(args: argparse.Namespace) -> int:
                    ("`start` was invoked without the inputs the loop needs, so the live "
                     "task/branch/worktree/git/auth/capability set was not collected and "
                     "reads as not established",)))
+        # M0-T052 G5 C1 (M0-T053): the host-containment precondition, evaluated
+        # on every `start` and reported whether or not it is the reason for a
+        # stop, so the answer is in the record even when something else stops
+        # the run first.
+        containment_ok, containment_kind, containment_detail = containment_precondition()
         payload: dict[str, Any] = {
             "command": "start",
             "mode": args.mode,
@@ -2374,6 +2421,8 @@ def cmd_start(args: argparse.Namespace) -> int:
             "provider_calls_made": 0,
             "limited_auto_enabled": False,
             "missing_inputs": missing_inputs,
+            "containment": {"ok": containment_ok, "kind": containment_kind,
+                            "detail": containment_detail},
             "stopped_because": "",
         }
         if not dispatchable:
@@ -2394,6 +2443,17 @@ def cmd_start(args: argparse.Namespace) -> int:
                 f"the pre-dispatch classification is {outcome.classification} "
                 f"({outcome.reason_code}); a run never starts over an unresolved "
                 f"recovery condition. {outcome.reason}")
+        elif not containment_ok:
+            # M0-T052 G5 C1: the LAST gate before a live worker is spawned. The
+            # refusal is audited, because a host that cannot contain a worker is
+            # a safety condition and not a passing remark.
+            payload["stopped_because"] = (
+                f"containment_refused: {containment_detail}")
+            audit.append("containment_gate_refused", policy_result="REFUSED",
+                         detail={"containment_kind": containment_kind,
+                                 "required": CONTAINMENT_JOB_OBJECT,
+                                 "mode": args.mode,
+                                 "reason": containment_detail})
         else:
             # V1.1 correction B-2: a loop REFUSAL is a report, not a traceback.
             # This covers both the loop's own refusals (LoopError, e.g.

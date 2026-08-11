@@ -47,6 +47,7 @@ import time
 import uuid
 from typing import Any, Callable, Iterator, Mapping, Sequence
 
+from .locking import process_start_token
 from .models import (
     CHECKPOINT_STATUSES,
     USAGE_UNKNOWN,
@@ -64,6 +65,7 @@ from .process import (
     minimal_env,
     terminate_process_tree,
 )
+from .recovery import clear_child_record, record_launched_child
 
 #: The exact confirmed base invocation, in order. Kept as data so a test can
 #: assert the shape rather than trusting prose.
@@ -76,6 +78,10 @@ CONFIRMED_BASE_ARGS: tuple[str, ...] = (
 
 REQUIRED_PERMISSION_MODE = "manual"
 REQUIRED_PERMISSION_PROMPT_TOOL = "stdio"
+
+#: The role recorded for the worker child in the journal's child-accounting
+#: record (M0-T053; qualifying evidence: M0-T052 G5 SEC-MAJOR correction C2).
+WORKER_CHILD_ROLE = "claude_worker"
 
 #: Flags that would resume "the most recent session" instead of an exact one.
 #: S8.2 forbids them for unattended work.
@@ -960,10 +966,20 @@ class ClaudeRunner:
     """Owns the Claude subprocess. Never attaches to an interactive terminal."""
 
     def __init__(self, config: RunnerConfig, *, audit: Any = None,
-                 run_id: str = "") -> None:
+                 run_id: str = "", journal: Any = None) -> None:
         self.config = config
         self.audit = audit
         self.run_id = run_id or f"run_{uuid.uuid4().hex[:12]}"
+        # M0-T053 (qualifying evidence: M0-T052 G5 SEC-MAJOR, correction C2).
+        # The durable journal the launched worker pid is recorded in. Before
+        # this, `record_launched_child` had NO production caller, so a
+        # supervisor killed mid-unit left an orphaned worker that
+        # `recover_boot`'s surviving-child check could never see and the next
+        # operator `start` would double-launch over. The production launch path
+        # (`cli._run_loop`) always supplies it; `None` means this runner keeps no
+        # accounting and is used only where nothing durable exists to keep it in
+        # (the model launch probe, and unit tests of the stdio loop itself).
+        self.journal = journal
 
     def executable_identity(self) -> dict[str, Any]:
         identity = executable_identity(self.config.executable, name="claude")
@@ -1050,6 +1066,11 @@ class ClaudeRunner:
             stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE,
             text=True, encoding="utf-8", errors="replace", bufsize=1)
         container.adopt(process.pid)
+        # M0-T053 (M0-T052 G5 C2): journal the pid the moment it exists AND is
+        # contained, before a single byte is written to it. From here on, a
+        # supervisor that dies without reaching the clear below leaves a
+        # RECORDED child, which `recover_boot` accounts for and refuses on.
+        self._record_launched_worker(process, container)
 
         def drain_stderr() -> None:
             assert process.stderr is not None
@@ -1180,6 +1201,10 @@ class ClaudeRunner:
             container.close()
 
         duration = time.monotonic() - started
+        # M0-T053 (M0-T052 G5 C2): the record is cleared only now, and only on a
+        # VERIFIED exit - never on the assumption that the finally block above
+        # did its job.
+        self._settle_worker_record(process)
         checkpoint: ClaudeCheckpoint | None = None
         checkpoint_error = ""
         try:
@@ -1236,6 +1261,57 @@ class ClaudeRunner:
         )
         self._audit_run(result)
         return result
+
+    def _record_launched_worker(self, process: "subprocess.Popen[str]",
+                                container: ProcessContainer) -> None:
+        """Journal the launched worker pid (M0-T053; M0-T052 G5 C2).
+
+        Called with the child already ADOPTED, so the supervisor can kill what it
+        is about to record. A journal that cannot be written is a REFUSAL, not a
+        warning: the worker is terminated and the unit raises, because a live
+        child no recovery could account for is exactly the orphan a later resume
+        would double-launch over. The recorded `start_token` is the process
+        creation stamp, so a reused pid cannot later masquerade as this child.
+        """
+        if self.journal is None:
+            return
+        try:
+            record_launched_child(self.journal, pid=process.pid,
+                                  role=WORKER_CHILD_ROLE,
+                                  start_token=process_start_token(process.pid))
+        except Exception as exc:
+            try:
+                container.terminate_all()
+            except Exception:  # pragma: no cover - defensive
+                pass
+            container.close()
+            for pipe in (process.stdin, process.stdout, process.stderr):
+                try:
+                    if pipe is not None and not pipe.closed:
+                        pipe.close()
+                except Exception:  # pragma: no cover - defensive
+                    pass
+            raise RunnerError(
+                "child_record_unwritable",
+                f"the launched worker (pid {process.pid}) could not be recorded in the "
+                f"durable journal ({exc}); the worker was terminated and the unit refuses "
+                f"rather than run a child that recovery could never account for") from exc
+
+    def _settle_worker_record(self, process: "subprocess.Popen[str]") -> None:
+        """Clear the child record ONLY on a verified exit (M0-T053; M0-T052 G5 C2).
+
+        `run_unit`'s finally block always waits on the process, so a returncode
+        here means the OS reaped that pid - proof the worker is gone, and a
+        stronger fact than a liveness probe (which a reused pid can fool). A pid
+        still without a returncode is NOT assumed dead: the record stands, and
+        the next `start` classifies UNSAFE_OR_DRIFTED rather than launching a
+        second worker.
+        """
+        if self.journal is None:
+            return
+        if process.poll() is None:
+            return
+        clear_child_record(self.journal)
 
     def _answer_control_request(
         self,
