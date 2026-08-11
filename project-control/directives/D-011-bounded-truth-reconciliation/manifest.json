@@ -25,10 +25,19 @@
       "amends": "source-001.md",
       "recorded_at": "2026-08-11T06:22:00+00:00",
       "content_digest_sha256": "e84ab9c9ba3733b7d77fc2bd1d0b0151490b56dd76d815dc24abbc9760680b9a"
+    },
+    {
+      "file": "source-003-amendment.md",
+      "kind": "amendment",
+      "sequence": 3,
+      "amends": "source-001.md",
+      "recorded_at": "2026-08-11T18:30:00+00:00",
+      "content_digest_sha256": "78e812e0e9bff7f065373cd9b3e704c1474142bc367b8a1997a7812b64fbae6d"
     }
   ],
   "amendments": [
-    "source-002-amendment.md"
+    "source-002-amendment.md",
+    "source-003-amendment.md"
   ],
   "supersedes": [],
   "superseded_by": null,
@@ -61,8 +70,8 @@
   "verification_file": "verification.json",
   "final_reviewed_sha": null,
   "final_reviewed_manifest_sha256": null,
-  "requirements_content_digest_sha256": "806a58fc165097c011ed5aeee1df01985bb04e7200dbb2873c4988915e564402",
-  "requirements_id_digest_sha256": "ee771ad579f0c0997921eb821a3b3171525bfa5d8bf882b2f5fcc44e1728b4ae",
+  "requirements_content_digest_sha256": "ce836a0932329c4778463194b0809d4c992913490fc0506a4c8e924ee7ddea05",
+  "requirements_id_digest_sha256": "44e462d3236528f6b56d6fd88a13df2b81812f09e06c261e3116dbcefad9ea98",
   "enforcement_pointers": {
     "tasks": [],
     "gates": [],
@@ -99,15 +108,30 @@
     "D-011-R016",
     "D-011-R017",
     "D-011-R018",
-    "D-011-R019"
+    "D-011-R019",
+    "D-011-R020",
+    "D-011-R021",
+    "D-011-R022",
+    "D-011-R023",
+    "D-011-R024",
+    "D-011-R025",
+    "D-011-R026",
+    "D-011-R027",
+    "D-011-R028",
+    "D-011-R029"
   ],
   "created_at": "2026-08-11T06:22:00+00:00",
-  "updated_at": "2026-08-11T06:22:00+00:00",
+  "updated_at": "2026-08-11T18:30:00+00:00",
   "audit_log": [
     {
       "at": "2026-08-11T06:22:00+00:00",
       "by": "orchestrator",
       "note": "D-011 captured verbatim as source-001.md (sha256 19c14a4597b0a281b225a7e3ae1d27811221f674b703fc4799ce91e6666de824) from origin/main 7cc1fed7ea66df8abe952e48bfea2451469f93ac. 19 rows D-011-R001..R019 decomposed (4 prohibitions/holds, corrections, deliverables, 1 return-item). Non-ledger sentinel D-011-CORRECTION; provenance-only affected_tasks. Verification deferred to the independent verifier."
+    },
+    {
+      "at": "2026-08-11T18:30:00+00:00",
+      "by": "orchestrator",
+      "note": "Amendment 003 (session 16) captured verbatim as source-003-amendment.md (sha256 78e812e0e9bff7f065373cd9b3e704c1474142bc367b8a1997a7812b64fbae6d). Added 10 rows D-011-R020..R029 (execution plan: fixed order R283, accept-mechanics harness, per-accept authorization, the three in-chain accept obligations, P1/P2/P3/P6 sequencing, merge #219, Codex-fallback resolution, continuation authorization). Same non-ledger D-011-CORRECTION/governance sentinel; holds unchanged. Verification deferred to the independent directive-compliance-verifier."
     }
   ]
 }
