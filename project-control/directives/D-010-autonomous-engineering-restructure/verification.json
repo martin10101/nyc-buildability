@@ -3893,7 +3893,20 @@
       "verified_at": "2026-08-11T19:48:19+00:00",
       "note": "EMPTY-SET verification. M0-T058 (P1 supervisor-freeze safety fix) cites D-010:ALL, but the canonical resolver (directive_registry.derive_applicable) derives ZERO applicable D-010 requirements at this identity (UNRESOLVED empty; no fail-closed ambiguity). Independently confirmed by directive-compliance-verifier at reviewed_sha 7c935f2 / material identity db098084: all 357 D-010 rows analyzed; 356 carry task_ids conjunctions not naming M0-T058, the 5 path-scoped rows target host-config paths disjoint from tools/agent_supervisor/**, and R347 (the no-duplicate-workers invariant named in M0-T058's own objective) is an obligation scoped to M0-T056, not this defect-hardening precursor (topical relatedness != applicability; positive control: a probe task_id=M0-T056 derives 14 rows incl R347, M0-T058 derives 0). This row exists because accept() fail-closes when a CITED directive has no task_verification row, independently of whether any requirement is applicable. Substantive independent review of the fix is G3 code-review (code-reviewer PASS) + G5 security-review (security-reviewer PASS), both at 7c935f2. Verifier directive-compliance-verifier != producer backend-engineer.",
       "requirements": []
+    },
+    {
+      "directive_id": "D-010",
+      "task_id": "M0-T061",
+      "applicable_requirement_ids": [],
+      "reviewed_sha": "77d7162dc8a2b33652f9831968314e56d8a66438",
+      "reviewed_manifest_sha256": "e8a7d6b2d140e5f8a9839aca7928c9c7a9f70c158c638f9068a602100396d567",
+      "producer": "backend-engineer",
+      "verifier": "directive-compliance-verifier",
+      "schema_version": "directive_verification/v2",
+      "verified_at": "2026-08-11T20:15:34+00:00",
+      "note": "EMPTY-SET verification. M0-T061 (P6 supervisor-freeze safety fix: silent-reviewer -> one re-dispatch -> hard fail-closed STOP) cites D-010:ALL, but directive_registry.derive_applicable derives ZERO applicable D-010 requirements at this identity (UNRESOLVED empty; no fail-closed ambiguity). Independently confirmed by directive-compliance-verifier at reviewed_sha 77d7162 / material identity e8a7d6b2: re-derived 0/357 matches; no wildcard row; the one empty-task_ids row (R297) is a host-config-path prohibition disjoint from tools/agent_supervisor/**; all topically-related reviewer/silent/timeout/re-dispatch/fail-closed/freeze requirements are scoped by task_ids to OTHER tasks (R347->M0-T056 pattern). This row exists because accept() fail-closes when a CITED directive has no task_verification row. Substantive independent review of the fix is G3 code-review (code-reviewer PASS: silence-code set complete, ok=False floor for every decision-None outcome) + G5 security-review (security-reviewer PASS: adversarial enumeration, NO residual fail-open), both at 77d7162. Verifier directive-compliance-verifier != producer backend-engineer.",
+      "requirements": []
     }
   ],
-  "updated_at": "2026-08-11T19:48:19+00:00"
+  "updated_at": "2026-08-11T20:15:34+00:00"
 }

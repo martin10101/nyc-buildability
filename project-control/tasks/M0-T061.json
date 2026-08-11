@@ -42,8 +42,8 @@
     "code-reviewer",
     "security-reviewer"
   ],
-  "status": "claimed",
-  "progress_percent": 10,
+  "status": "accepted",
+  "progress_percent": 100,
   "risks": [
     "PRODUCER MUST CONFIRM EXACT FILES AT G0: reviewer-gate dispatch/timeout handling is spread across review_cadence.py / ephemeral_review.py / codex_reviewer.py / loop.py; find where a reviewer verdict is awaited and narrow to the smallest set that adds the timeout->retry->STOP. STOP-and-report if a different file is required.",
     "Additive to (NOT a duplicate of) project_control.accept, which already fail-closes on a missing PASS record \u2014 P6 is the supervisor's OWN reviewer-gate posture under unattended actuation.",
@@ -52,7 +52,7 @@
   ],
   "blockers": [],
   "created_at": "2026-08-11T17:42:02.225472+00:00",
-  "updated_at": "2026-08-11T18:34:11.664455+00:00",
+  "updated_at": "2026-08-11T20:16:10.990763+00:00",
   "directive_refs": [
     {
       "directive_id": "D-010",
@@ -61,5 +61,7 @@
   ],
   "directive_regime_version": "1.0",
   "directive_regime_entered_at": "2026-08-11T17:42:02.225472+00:00",
-  "worktree": ".claude/worktrees/M0-T061-p6"
+  "worktree": ".claude/worktrees/M0-T061-p6",
+  "accepted_by": "orchestrator",
+  "accepted_at": "2026-08-11T20:16:10.990763+00:00"
 }
