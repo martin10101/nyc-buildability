@@ -150,3 +150,22 @@ Requested action: either (a) expand M0-T059 allowed_paths to include
 dispatches/applies it. I did NOT edit that file (out of scope). No other repo caller of
 `clear_child_record` exists (grep over `tools/`): production `claude_runner._settle_worker_record`,
 the recovery test (updated), and this start_reentry spy.
+
+---
+
+## COMPANION FIX APPLIED (allowed_paths amended by orchestrator 2026-08-11)
+
+Orchestrator amended M0-T059 allowed_paths to include `tools/test_agent_supervisor_start_reentry.py`.
+Applied the minimal 2-line signature-tolerant spy:
+```python
+def spy_clear(journal, **kwargs):
+    cleared.append(True)
+    real_clear(journal, **kwargs)
+```
+Evidence:
+- `python -m unittest tools.test_agent_supervisor_start_reentry` => `Ran 16 ... OK` (was `FAILED (errors=1)`).
+- FULL supervisor pytest `python -m pytest tools/test_agent_supervisor_*.py -q` => `1499 passed, 2 skipped in 116.28s` (0 failures).
+- 20-module freeze baseline re-run => `Ran 1181 ... OK (skipped=2)`.
+
+`git diff --name-only 9239cc3 HEAD` now: recovery.py, claude_runner.py, test_agent_supervisor_recovery.py,
+test_agent_supervisor_start_reentry.py, M0-T059-producer-report.md — all within the amended allowed_paths.
