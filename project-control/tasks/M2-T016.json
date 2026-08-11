@@ -73,7 +73,7 @@
   ],
   "blockers": [],
   "created_at": "2026-07-20T06:34:25.583607+00:00",
-  "updated_at": "2026-08-11T04:53:06.578431+00:00",
+  "updated_at": "2026-08-11T05:14:44.258994+00:00",
   "progress_log": [
     {
       "at": "2026-08-10T01:45:48.106659+00:00",
@@ -151,6 +151,13 @@
       "percent": 95,
       "status": "in_progress",
       "message": "SECOND DEFECT, more serious than the first. Fixing the vitest failure let Playwright run for the FIRST TIME on this branch (at d45f330 the web-e2e job died at the vitest step before Playwright started), and ALL SEVEN survey-review e2e specs failed identically - survey-review-authorization SC-S3/SC-S4, survey-review-journey SC-S1 x2, survey-review-recovery-a11y SC-S7 x3 - with getByTestId('focused-item') never appearing because /survey/review/<digest> served a 404. ROOT CAUSE: both route files (src/app/survey/review/page.tsx and .../[documentId]/page.tsx) call surveyReviewEnabled() but declare NO dynamic export, so Next evaluates INTERNAL_SURVEY_REVIEW_ENABLED during next build - where it is unset - and bakes notFound() into a static page; next start with the flag set cannot undo it. This is a PRODUCT bug, not a harness quirk: config.ts documents the flag as a non-public runtime flag 'read fresh each call', and /dashboard - the pattern these routes explicitly say they mirror - already declares export const dynamic='force-dynamic' for exactly this reason. In any deployment setting the flag at runtime the survey-review screens would have 404'd. FIXED at 749f9dd (force-dynamic on both routes; the gate itself unchanged and still fail-safe off). PROCESS FINDING for the gate wave: M2-T016's own required output is a 'UI human-journey acceptance pack: browser automation + independent manual-style walkthrough', yet the browser-automation half was never green - the human-journey reviewer returned PASS without a passing e2e run, and the producer's checkpoint was submitted before CI finished. The G3/G4 evidence standard needs a green web-e2e run attached, not a walkthrough narrative. Verified by CI only in both fixes (no node_modules in the worktree; local npm prohibited)."
+    },
+    {
+      "at": "2026-08-11T05:14:44.258994+00:00",
+      "agent": "orchestrator",
+      "percent": 95,
+      "status": "in_progress",
+      "message": "THIRD DEFECT + independent corroboration. (c) The review route double-encoded the digest: the [documentId] param arrives percent-encoded and the client re-encodes when building the request URL, producing sha256%253A... which matched no document, so the screen rendered 'No survey document was found for this digest'. Only reachable through the Next route, which is why the jsdom component tests never caught it (they pass the raw digest straight to SurveyReviewScreen). Fixed at 5a684fc by decoding once in the page, fail-closed via notFound() on URIError. CI at 5a684fc is now GREEN on every required check: 277 vitest + 73 Playwright. Only web-dependency-security is red, on the pre-existing nanoid advisory GHSA-2v37-7h3g-55p8 (needs >=3.3.17; age gate has passed but the lockfile cannot be regenerated here because local npm is prohibited) - NON-required, unrelated. THREE FINDINGS from an independent read-only analysis that I am recording because they change what future work should NOT do: (1) the deleted '?? String(id)' fallback was a REACHABLE reflection of raw server content, not a theoretical one - ConfirmDocumentPanel.tsx:41 does facts.find(f => f.evidence_id === id)?.display_label ?? id and renders it at :194, so an unmatched or hostile id reached the reviewer verbatim; this is the strongest justification on file for dropping rather than coercing. (2) DO NOT drop-sanitize api.ts:304 blocking_fact_ids for 'consistency' with the new evidence-id sanitizer: model.ts:139 gates canOfferConfirm on blocking_fact_ids.length > 0, so dropping a malformed entry could flip a correctly BLOCKED confirmation into an OFFERED one - the legally unsafe direction. (3) api.ts:220 String(raw.evidence_id) is type narrowing after validate.ts:45 already rejects non-string/empty, NOT a hole; sanitizing there would desynchronise the client id from the server id used in action URLs. QUEUED FOLLOW-UP (not applied now, to avoid changing the diff under the two in-flight delta reviewers): a stronger regression driving hostile rejected_fact_ids through the real decodeError path on a 422 response, rather than only asserting at the sanitizer level."
     }
   ],
   "directive_refs": [
