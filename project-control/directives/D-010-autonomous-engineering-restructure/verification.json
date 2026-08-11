@@ -3880,7 +3880,20 @@
           "evidence": "Step5 M2-T016 status==accepted (proof #2); Step6 M0-T053 backlog until both proofs accepted; Step7 no host relaxation (still job_object, gate refuses others); Step8 LIMITED-AUTO limited_auto_enabled=False/unauthorized."
         }
       ]
+    },
+    {
+      "directive_id": "D-010",
+      "task_id": "M0-T058",
+      "applicable_requirement_ids": [],
+      "reviewed_sha": "7c935f223898c91bfe9cee6e5e37e333de09099e",
+      "reviewed_manifest_sha256": "db098084ff37a5920ea97ab16ba8929b40f0782f0c1d5b17c04ec74f2d98f1ce",
+      "producer": "backend-engineer",
+      "verifier": "directive-compliance-verifier",
+      "schema_version": "directive_verification/v2",
+      "verified_at": "2026-08-11T19:48:19+00:00",
+      "note": "EMPTY-SET verification. M0-T058 (P1 supervisor-freeze safety fix) cites D-010:ALL, but the canonical resolver (directive_registry.derive_applicable) derives ZERO applicable D-010 requirements at this identity (UNRESOLVED empty; no fail-closed ambiguity). Independently confirmed by directive-compliance-verifier at reviewed_sha 7c935f2 / material identity db098084: all 357 D-010 rows analyzed; 356 carry task_ids conjunctions not naming M0-T058, the 5 path-scoped rows target host-config paths disjoint from tools/agent_supervisor/**, and R347 (the no-duplicate-workers invariant named in M0-T058's own objective) is an obligation scoped to M0-T056, not this defect-hardening precursor (topical relatedness != applicability; positive control: a probe task_id=M0-T056 derives 14 rows incl R347, M0-T058 derives 0). This row exists because accept() fail-closes when a CITED directive has no task_verification row, independently of whether any requirement is applicable. Substantive independent review of the fix is G3 code-review (code-reviewer PASS) + G5 security-review (security-reviewer PASS), both at 7c935f2. Verifier directive-compliance-verifier != producer backend-engineer.",
+      "requirements": []
     }
   ],
-  "updated_at": "2026-08-11T19:05:00+00:00"
+  "updated_at": "2026-08-11T19:48:19+00:00"
 }

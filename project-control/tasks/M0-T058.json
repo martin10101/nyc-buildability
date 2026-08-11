@@ -39,8 +39,8 @@
     "code-reviewer",
     "security-reviewer"
   ],
-  "status": "claimed",
-  "progress_percent": 10,
+  "status": "accepted",
+  "progress_percent": 100,
   "risks": [
     "File overlap: P2 (M0-T059) also edits claude_runner.py (the _settle_worker_record caller of clear_child_record); build P1 FIRST, then P2 branches off P1's claude_runner.py. Never run P1/P2 producers in parallel.",
     "Supervisor-freeze: change the tree hash and re-establish the M0-T039 suite baseline under G0/G2/G3/G5.",
@@ -48,7 +48,7 @@
   ],
   "blockers": [],
   "created_at": "2026-08-11T17:40:09.551066+00:00",
-  "updated_at": "2026-08-11T18:34:10.458425+00:00",
+  "updated_at": "2026-08-11T19:49:01.339009+00:00",
   "directive_refs": [
     {
       "directive_id": "D-010",
@@ -57,5 +57,7 @@
   ],
   "directive_regime_version": "1.0",
   "directive_regime_entered_at": "2026-08-11T17:40:09.559288+00:00",
-  "worktree": ".claude/worktrees/M0-T058-p1"
+  "worktree": ".claude/worktrees/M0-T058-p1",
+  "accepted_by": "orchestrator",
+  "accepted_at": "2026-08-11T19:49:01.338527+00:00"
 }
