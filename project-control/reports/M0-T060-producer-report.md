@@ -177,4 +177,13 @@ RunResult fields it produces were sufficient).
 
 ## 6. git rev-parse HEAD
 
-(recorded post-commit below)
+```
+674e44c16df41e9d7976b623e045a18971a4ce1a
+```
+Base: `20b82eaa0a689f0230c94261d1ff53d8f47e12e2`. Committed on branch
+`worktree-agent-a8aae5c7e41c9b1f0` in the isolated agent worktree. Not pushed
+(orchestrator integrates). gitleaks pre-commit hook: `no leaks found`.
+
+NOTE: this report file was updated (this §6) AFTER the commit above, so it now
+shows as a modified working-tree file at `674e44c`. Only the SHA text changed; the
+producer deliverables (loop.py, test file) are unchanged and remain committed.
