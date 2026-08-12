@@ -27,7 +27,9 @@ from pathlib import Path
 from typing import Any
 
 from tools.agent_supervisor import cli
+from tools.agent_supervisor import state_machine as sm
 from tools.agent_supervisor.audit_log import AuditLog
+from tools.agent_supervisor.claude_runner import RunResult
 from tools.agent_supervisor.loop import LoopConfig
 from tools.agent_supervisor.locking import probe_process
 from tools.agent_supervisor.model_turnover import ExhaustionClassification
@@ -45,6 +47,13 @@ from tools.agent_supervisor.turnover_controller import (
 from tools.agent_supervisor.worker_turnover import (
     ACTUATION_AUTHORIZATION_ATTR,
     default_actuation_authorization,
+)
+# Reuse the proven assembled-loop harness so the M0-T060 containment-gate test
+# drives one REAL run_cycle through the state machine (non-vacuous).
+from tools.test_agent_supervisor_turnover_integration import (  # noqa: E402
+    LoopSeamTestBase,
+    FakeRunner as LoopFakeRunner,
+    checkpoint as loop_checkpoint,
 )
 
 # The exact Fable weekly-limit hard-stop message (D-010 source-028 / R289).
@@ -337,6 +346,54 @@ class NoOtherHoldMovedTests(unittest.TestCase):
         # still raises before any actuation could be considered.
         with self.assertRaises(Exception):
             LoopConfig(mode="limited-auto", task_id="M0-T056", stage="s")
+
+
+# --------------------------------------------------------------------------
+# M0-T060 fold-in: the achieved-job_object cycle must be VERIFIED in-job. Direct,
+# non-vacuous regression over the loop.py `containment_unverified` branch: one
+# REAL run_cycle whose RunResult reports job_object containment but an UNVERIFIED
+# in-job membership must PAUSE; a verified (or default) cycle must NOT trip it.
+# --------------------------------------------------------------------------
+
+
+class ContainmentVerifiedGateTests(LoopSeamTestBase):
+    def _result(self, **overrides) -> RunResult:
+        # A valid checkpoint so the cycle passes the no-checkpoint/turnover seam and
+        # REACHES the achieved-containment gate; job_object so it is the OTHERWISE-OK
+        # path that would proceed but for verified_in_job.
+        data = dict(argv=("fake",), returncode=0, duration_seconds=0.1,
+                    session_id="sess-1", checkpoint=loop_checkpoint(),
+                    containment="job_object")
+        data.update(overrides)
+        return RunResult(**data)
+
+    def test_unverified_job_object_cycle_stops_containment_unverified(self) -> None:
+        runner = LoopFakeRunner(self._result(containment_verified_in_job=False),
+                                model="claude-fable-5")
+        loop = self.build(runner=runner, worker_turnover=None)
+        self.at_preflight()
+        result = loop.run_cycle("do the unit", cycle=1)
+        # The cycle fails closed on the unverified in-job membership and lands in
+        # the safe PAUSED_RECOVERY state (NOT the ordinary CHECKPOINT_RECEIVED path).
+        self.assertEqual(result.stopped, "containment_unverified")
+        self.assertEqual(result.reached_state, sm.PAUSED_RECOVERY)
+
+    def test_default_verified_job_object_cycle_does_not_trip(self) -> None:
+        # verified_in_job defaults True on a hand-built RunResult -> the branch is
+        # NOT tripped; the cycle proceeds past it (freeze-safe backward-compat).
+        runner = LoopFakeRunner(self._result(), model="claude-fable-5")
+        loop = self.build(runner=runner, worker_turnover=None)
+        self.at_preflight()
+        result = loop.run_cycle("do the unit", cycle=1)
+        self.assertNotEqual(result.stopped, "containment_unverified")
+
+    def test_explicit_verified_true_job_object_cycle_does_not_trip(self) -> None:
+        runner = LoopFakeRunner(self._result(containment_verified_in_job=True),
+                                model="claude-fable-5")
+        loop = self.build(runner=runner, worker_turnover=None)
+        self.at_preflight()
+        result = loop.run_cycle("do the unit", cycle=1)
+        self.assertNotEqual(result.stopped, "containment_unverified")
 
 
 if __name__ == "__main__":  # pragma: no cover

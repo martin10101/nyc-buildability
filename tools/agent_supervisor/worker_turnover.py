@@ -85,9 +85,10 @@ def default_actuation_authorization(config: Any) -> bool:
     holds each forward at WAIT_FOR_OWNER, limited-auto is refused by name). M0-T056
     replaces that unconditional False with a single, explicit, owner-set signal:
     this authorizes an automatic redispatch ONLY when the run config carries
-    ``turnover_actuation_authorization`` as the literal boolean ``True`` - a value
-    the owner opts into per run via the `--authorize-turnover-actuation` flag,
-    never a mode default and never taken from the protected controller config.
+    ``turnover_actuation_authorized`` (``ACTUATION_AUTHORIZATION_ATTR``) as the
+    literal boolean ``True`` - a value the owner opts into per run via the
+    `--authorize-turnover-actuation` flag, never a mode default and never taken
+    from the protected controller config.
 
     Absent, missing, or any non-``True`` value returns False, which keeps the
     record-intent-only path BYTE-IDENTICAL to the pre-activation behavior: a
