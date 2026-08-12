@@ -6,81 +6,62 @@ the remote: **origin/main may have advanced, so do not trust any SHA here as sti
 file is orientation only. Rules/gates/workflow routes live in `CLAUDE.md`. Old blocks via
 `git log -p docs/SESSION_HANDOFF.md`. Keep CURRENT-ONLY: the `context-budget` CI check fails > ~4000 tok.
 
-## SESSION 18 — steps 1-2 DONE (#219+#220 merged to main); M0-T056 + R595 go-live remain
+## SESSION 18 END — steps 1-2 done (accepted 84, on main); M0-T056 code+gates DONE; live-proof + accept remain
 
-Refreshed **2026-08-11 (session 18; `claude-opus-4-8`)**. **Accepted = 84.** #220 (session 15 control)
-is **MERGED to main** (merge `0d42953`). Integration branch is now **`control/session16-codex-golive`**
-off `origin/main` (worktree `.claude/worktrees/session15-acc`; open a PR when you push). Owner go-live
-authorization = **D-011 amendment-004** (R030/R031/R032): build+accept M0-T056, then activate R595 + add
-the accept allowlist — STRICTLY SEQUENCED after the now-DONE follow-ups + #220→main. The ledger wins.
+Refreshed **2026-08-11 (session 18 rotation; `claude-opus-4-8`)**. **Accepted = 84.** origin/main =
+**`0d42953`** (M0-T062 + M0-T047 + #220 all merged). Integration branch for the go-live phase =
+**`control/session16-codex-golive`** (PR #221), worktree `.claude/worktrees/session15-acc`, HEAD ≈ `67cf95f`
+(verify live; pushed). Owner go-live authz = **D-011 amendment-004** + D-010 source-030/031 (R595 build).
+The ledger wins.
 
-### Done this session (all on main now)
-- **M0-T062 ACCEPTED (83)** — follow-ups (a)+(b): drained inert `M0-T056` from `_EMPTY_IDENTITY_GRANDFATHERED`
-  (it gained 7 tracked `tools/agent_supervisor` allowed_paths → resolves non-empty → c17 guards it live) +
-  O1 `path_free_justification` fail-closed regression tests. Governance/orchestrator-produced; G0/G2/G3 +
-  control-plane-verifier DCV (empty D-001 set). `validate --check` exit 0.
-- **M0-T047 ACCEPTED (84)** — nanoid **3.3.17** remediation (GHSA-2v37-7h3g-55p8), D-009. Landed byte-identical
-  to #219 onto #220; G0/G2/G3(code)/G5(security) + D-009/D-010 DCV. **Selective-citation fix:** the resolver
-  REQUIRES citing the two M0-T047-scoped nanoid age-gate HOLDS **D-010-R233** (age-eligible on/after
-  2026-08-10T10:39:22Z) + **D-010-R246** (don't bypass the age gate) — both classification `hold` (NOT
-  deferrable) → verified PASS directly; D-009 applicable subset empty (empty row). Age genuinely satisfied
-  (nanoid 3.3.17 uploaded 2026-08-03T10:39:22Z, 8.50d; NO waiver); fresh #220 web-dependency-security PASS.
-- **PR #219 MERGED → main** (nanoid fix; merge `75cc81b`, remote branch deleted). **PR #220 MERGED → main**
-  (merge `0d42953`; all 8 required checks green on head 98aeb64; merge-tree dry-run was clean).
+### Done this session (on main)
+- **M0-T062 ACCEPTED (83)** — drained inert M0-T056 grandfather entry + O1 path_free_justification tests.
+- **M0-T047 ACCEPTED (84)** — nanoid 3.3.17 (GHSA-2v37-7h3g-55p8), D-009; #219 merged. **Selective-citation:**
+  the resolver forced citing holds **D-010-R233** (age-eligible on/after 2026-08-10T10:39:22Z) + **R246**
+  (don't bypass age gate) — both `hold` class (not deferrable) verified PASS directly; D-009 subset empty.
+- **PR #220 MERGED → main** (`0d42953`; all 8 required checks green; merge-tree dry-run clean).
 
-### NEXT — runway (ordered; D-011 amendment-004). Steps 1-2 DONE.
-3. **M0-T056** (R595 production actuation) — **CODE BUILT + UNDER REVIEW** (session 18). Producer commit
-   cherry-picked onto session16 at **`8196039`** (6 files: worker_turnover/loop/cli/claude_runner + new
-   `test_agent_supervisor_r595_actuation.py` (16 tests) + report; turnover_controller/adapters/model_turnover
-   REUSED UNCHANGED). allowed_paths already narrowed to those 6. Freeze re-established **1525/0** full glob +
-   **1191/0** 20-module baseline (CI supervisor-bridge validating). **G3 + G5 both PASS** at 8196039
-   (verbatim reports saved: `M0-T056-G3-code-review.md`, `-G5-security-review.md`). Finding **A (P1)
-   RECONCILED** = already CLOSED by accepted M0-T058 (`claude_runner.py:1300-1349` child_record_unwritable_orphan_live
-   captures killed=terminate_all() + bounded wait + distinct code; the M0-T036 checklist P1 has STALE line
-   numbers 1283-1298 and needs a "resolved by M0-T058" mark). Findings **B** (add a direct regression test for
-   the M0-T060 `containment_unverified` branch) + **C** (worker_turnover.py docstring typo) are in a small
-   **rework** (producer a30aa314 resumed). REMAINING to accept: cherry-pick the rework delta → **delta G3
-   re-review** → run the lifecycle (claim/progress/G2/submit with an evidence-map over R344-R357) → record
-   G3(delta)/G5 → **DCV of R344-R357** (directive-compliance-verifier ≠ producer; R349/AS-5 pending the
-   live-proof) → **owner live-proof (AS-5/R349)** on Windows/job_object → accept. M0-T059 correctly NOT
-   triggered (no concurrent recorder added). Originally: build + full gate wave.
-   Packet `ready`, cites D-010:ALL, `evaluate_task_refs` **ok:True**, applicable set = **R344-R357** (14 reqs,
-   ALL captured in the registry; durable-before-action already done). Spec = D-010 **source-030** (authz +
-   scope) + **source-031** (build directive: order/safety/permission/end-state) + the 7 acceptance scenarios
-   AS-1..AS-7 in the packet. Build parts: **(a)** watchdog OUTSIDE the Claude session → detects orchestrator
-   quota hard stop → auto-launches exactly ONE `claude-opus-4-8` successor (handoff+checkpoint), exactly-once;
-   **(b)** worker-layer actuation predicate replacing `default_actuation_authorization`'s unconditional False
-   (`worker_turnover.py:70`) wired to the real controller/launcher — **REUSE accepted M0-T054 unchanged**;
-   **(c)** bounded live continuous proof on an ISOLATED non-product runtime. Fold in the 2 carried G5 residuals
-   below. Current allowed_paths (6 core `agent_supervisor/*` + `test_..._model_turnover.py` + report) will
-   likely need EXPANSION to match the real build surface (claude_runner/recovery/resume_scheduler/cli + new
-   tests) — set allowed_paths = the producer's actual changed files before gating (M0-T056 is not accepted, so
-   this is allowed). Producer UNNAMED off origin/main (now current). **OWNER TOUCHPOINT:** AS-5's REAL live-proof
-   needs a **Windows/job_object host** (AS-4 C1 gate hard-refuses on POSIX/Render, P8) — the producer must NOT
-   run it; produce a runbook + exact command, then STOP and hand it to the owner. R354 permission boundary:
-   never bypass the classifier; the supervisor runner's `accept`/`push`/`gh` allowlist is an OWNER settings change.
-4. **Activate R595 + add the accept allowlist** — **AUTHORIZED** — supervisor live end-to-end. ONLY after
-   M0-T056 accepted. Flip `default_actuation_authorization` live + `default_mode` off shadow; add the owner
-   accept-allowlist (settings allow-rule for the supervisor runner). Verify the live proof host satisfies C1
-   Job-Object. **STOP + hand the owner the exact command/allow-rule** (genuine owner touchpoint; plain English + exact line).
+### M0-T056 (R595 actuation) — CODE BUILT + ALL CODE GATES PASS; NOT yet accepted
+- Reviewed code identity = **`a90ac19`** on session16 (6 allowed_paths files: worker_turnover/loop/cli/claude_runner
+  + `test_agent_supervisor_r595_actuation.py` (19 tests) + producer report; turnover_controller/adapters/model_turnover
+  REUSED UNCHANGED). HEAD `67cf95f` only ADDED gate reports + narrowed allowed_paths — the 6 code files are
+  byte-unchanged since a90ac19, so the material identity is stable.
+- **Gates PASS (verbatim reports saved):** G3 code + G5 security at 8196039; **G3 delta + G5 delta at a90ac19**
+  (`M0-T056-G3-code-review.md`, `-G5-security-review.md`, `-G3-delta-review.md`, `-G5-delta-review.md`). Findings
+  **B** (M0-T060 branch regression test — added, teeth confirmed) + **C** (docstring) CLOSED; **A/P1** reconciled
+  = already closed by accepted M0-T058 (`claude_runner.py:1300-1349` captures killed=terminate_all()+bounded wait+
+  distinct orphan-alive code; all 5 terminate_all sites audited SAFE, no termination change). Freeze **1528/0** full
+  glob / **1191/0** 20-module baseline (verify CI supervisor-bridge green on 67cf95f).
 
-### Carried M0-T056 pre-actuation residuals (2 non-blocking G5 advisories)
-- **(M0-T059)** if M0-T056 adds a concurrent recorder settling the same pid, use an atomic read-modify-write in
-  `clear_child_record`/`recorded_start_token_for` (two `get_state` reads today; benign single-threaded).
-- **(M0-T060)** optionally also gate the achieved `job_object` branch on `ContainmentReport.verified_in_job`.
+### NEXT — finish M0-T056, then R595 (ordered; strictly sequenced)
+3a. **Finish M0-T056 accept** (in session15-acc worktree): claim `ready`→claimed, progress, G2 self-check, submit with
+   an **evidence-map over the applicable set R344-R357** (14 reqs; `evaluate_task_refs` ok:True, D-010:ALL). Record
+   **G3 + G5 at --sha a90ac19** (reuse the delta reports as the gate reports; reviewed code identity is a90ac19).
+   Then the **DCV of R344-R357** (directive-compliance-verifier ≠ producer). **R349/AS-5 (isolated live-proof) is
+   PENDING the owner** — it needs a Windows/job_object host (C1 gate hard-refuses on POSIX); the DCV verifies R349
+   against the owner's live-proof evidence. So: **OWNER TOUCHPOINT #1** = run the AS-5 live-proof per the exact runbook
+   in `M0-T056-producer-report.md` §7 (A-D) on an isolated non-product Windows checkout; capture the sealed evidence
+   dir + JSON payloads. After the owner returns that evidence → complete the DCV → **accept M0-T056**. Then update the
+   M0-T036 checklist to mark P1 resolved by M0-T058 (stale line refs 1283-1298).
+4. **Activate R595 + accept allowlist** — ONLY after M0-T056 accepted. Flip `default_actuation_authorization` live +
+   `default_mode` off shadow. **OWNER TOUCHPOINT #2** = the accept-allowlist is an owner settings change (widen the
+   auto-mode classifier so the supervisor runner may run `accept`/`git push`/`gh` unattended — producer report §7-E);
+   never bypass the classifier (R354). Hand the owner the exact allow-rule + confirm the live proof host satisfies C1.
 
-### Accept mechanics (proven session 17-18; reuse)
-- **Reviewed content commit FIRST** (code+producer-report), stamp `--sha <R>` on gates; keep gate/DCV/accept
-  evidence UNCOMMITTED until after `accept` (HEAD stays R; material identity = allowed_paths manifest, stable
-  across control-plane commits). Fill DCV `reviewed_manifest_sha256` from the G3/G5 gate `content_manifest_sha256`.
-- **Empty-set cited directive** still needs a `task_verifications` row (verifier=directive-compliance-verifier or
-  control-plane-verifier ≠ producer). Non-empty applicable requirements each need a `{id,state:PASS,evidence,note}`.
-- **Producers auto-isolate off origin/main** (now current). Reviewers run read-only IN `session15-acc` at HEAD;
-  their shell cwd may be the PRIMARY checkout → give ABSOLUTE worktree paths + `git -C <worktree>`.
-- CI `control-plane` runs `validate_directive_compliance.py --check` + `test_directive_compliance.py`;
-  `supervisor-bridge` runs the FULL `pytest tools/test_agent_supervisor_*.py` (36 modules; freeze list is a subset).
-  `project-control/**` LF; stage exact paths; commit+push after each accept. Reviewer/orchestrator `claude-opus-4-8` xhigh; producers UNNAMED.
+### Accept mechanics (proven session 18; reuse)
+- Reviewed content commit FIRST (code + producer report); keep gate/DCV/accept evidence UNCOMMITTED until after
+  `accept` (HEAD stays the reviewed sha; material identity = allowed_paths manifest, stable across control-plane
+  commits). Fill DCV `reviewed_manifest_sha256` from the G3/G5 gate `content_manifest_sha256`.
+- **Empty-set cited directive** still needs a `task_verifications` row (verifier ≠ producer). Non-empty applicable
+  reqs each need `{id,state:PASS,evidence,note}`. `hold`-class reqs are NOT deferrable → verify PASS directly.
+- Producers auto-isolate off origin/main; guard EVERY producer git write with `git rev-parse --show-toplevel` must
+  contain `.claude/worktrees/agent-`. Reviewers read-only IN session15-acc; give ABSOLUTE worktree paths + `git -C`.
+  Natural-completion producers resume via SendMessage (worktree persists); never resume a TaskStop-killed one.
+- CI `control-plane` runs validate_directive_compliance + test_directive_compliance; `supervisor-bridge` runs the
+  FULL `pytest tools/test_agent_supervisor_*.py`. `project-control/**` LF; stage exact paths; commit+push per accept.
+  Reviewer/orchestrator `claude-opus-4-8` xhigh; producers UNNAMED.
 
 ### Still in force
-deployment/G6/Graphify/expansion holds; `default_mode=shadow` until R595 flips; a failed gate / reproduced defect
-/ unresolvable contradiction STOPS and returns to the owner. Codex model-fallback RESOLVED (non-sticky).
+deployment/G6/Graphify/expansion holds; `default_mode=shadow` until R595 flips; a failed gate / reproduced defect /
+unresolvable contradiction STOPS and returns to the owner. Codex model-fallback RESOLVED (non-sticky). M0-T059
+correctly NOT triggered (no concurrent recorder added); if a future task adds one, harden recovery.py RMW.
