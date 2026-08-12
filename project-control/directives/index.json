@@ -175,7 +175,19 @@
         "M0-T047"
       ],
       "manifest": "D-011-bounded-truth-reconciliation/manifest.json"
+    },
+    {
+      "directive_id": "D-012",
+      "slug": "supervised-product-validation-run",
+      "title": "First bounded supervised-auto product validation run (owner-authorized)",
+      "status": "active",
+      "issued_at": "2026-08-12",
+      "issued_by": "owner",
+      "supersedes": [],
+      "superseded_by": null,
+      "affected_tasks": [],
+      "manifest": "D-012-supervised-product-validation-run/manifest.json"
     }
   ],
-  "updated_at": "2026-08-11T06:22:00+00:00"
+  "updated_at": "2026-08-12T05:00:00+00:00"
 }
