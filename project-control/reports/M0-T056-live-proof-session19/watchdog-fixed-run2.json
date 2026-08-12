@@ -1,0 +1,14 @@
+{
+  "command": "orchestrator-watchdog",
+  "layer": "orchestrator",
+  "classification": "fable_exhausted",
+  "reason": "exhaustion event 'orchestrator-exhaustion:a7d3ec00d540988971429a5c0c9352fe84f5d283' was already actioned; suppressing a repeat turnover",
+  "launched": false,
+  "actuated": false,
+  "successor_id": "",
+  "event_id": "orchestrator-exhaustion:a7d3ec00d540988971429a5c0c9352fe84f5d283",
+  "audit_record_id": "",
+  "successor_model_id": "",
+  "containment_kind": "job_object",
+  "status": "suppressed_duplicate"
+}
