@@ -33,12 +33,17 @@ the accept allowlist — STRICTLY SEQUENCED after the now-DONE follow-ups + #220
    cherry-picked onto session16 at **`8196039`** (6 files: worker_turnover/loop/cli/claude_runner + new
    `test_agent_supervisor_r595_actuation.py` (16 tests) + report; turnover_controller/adapters/model_turnover
    REUSED UNCHANGED). allowed_paths already narrowed to those 6. Freeze re-established **1525/0** full glob +
-   **1191/0** 20-module baseline (CI supervisor-bridge validating). **G3+G5 dispatched** (code+security).
-   REMAINING to accept: run the lifecycle (G0/claim/progress/G2/submit with an evidence-map covering R344-R357),
-   record G3/G5, run the **DCV of R344-R357** (directive-compliance-verifier ≠ producer), then the **owner
-   live-proof (AS-5/R349)** must return before accept. Fold-ins done: M0-T060 (verified_in_job gate); M0-T059
-   NOT triggered (no concurrent recorder added — correct). **Open flag:** M0-T053 pin **P1** (`claude_runner`
-   termination path) left UNCHANGED — confirm before the owner runs AS-5. Originally: build + full gate wave.
+   **1191/0** 20-module baseline (CI supervisor-bridge validating). **G3 + G5 both PASS** at 8196039
+   (verbatim reports saved: `M0-T056-G3-code-review.md`, `-G5-security-review.md`). Finding **A (P1)
+   RECONCILED** = already CLOSED by accepted M0-T058 (`claude_runner.py:1300-1349` child_record_unwritable_orphan_live
+   captures killed=terminate_all() + bounded wait + distinct code; the M0-T036 checklist P1 has STALE line
+   numbers 1283-1298 and needs a "resolved by M0-T058" mark). Findings **B** (add a direct regression test for
+   the M0-T060 `containment_unverified` branch) + **C** (worker_turnover.py docstring typo) are in a small
+   **rework** (producer a30aa314 resumed). REMAINING to accept: cherry-pick the rework delta → **delta G3
+   re-review** → run the lifecycle (claim/progress/G2/submit with an evidence-map over R344-R357) → record
+   G3(delta)/G5 → **DCV of R344-R357** (directive-compliance-verifier ≠ producer; R349/AS-5 pending the
+   live-proof) → **owner live-proof (AS-5/R349)** on Windows/job_object → accept. M0-T059 correctly NOT
+   triggered (no concurrent recorder added). Originally: build + full gate wave.
    Packet `ready`, cites D-010:ALL, `evaluate_task_refs` **ok:True**, applicable set = **R344-R357** (14 reqs,
    ALL captured in the registry; durable-before-action already done). Spec = D-010 **source-030** (authz +
    scope) + **source-031** (build directive: order/safety/permission/end-state) + the 7 acceptance scenarios
