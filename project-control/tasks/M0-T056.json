@@ -25,12 +25,10 @@
   ],
   "allowed_paths": [
     "tools/agent_supervisor/worker_turnover.py",
-    "tools/agent_supervisor/turnover_controller.py",
-    "tools/agent_supervisor/turnover_adapters.py",
-    "tools/agent_supervisor/model_turnover.py",
     "tools/agent_supervisor/loop.py",
     "tools/agent_supervisor/cli.py",
-    "tools/test_agent_supervisor_model_turnover.py",
+    "tools/agent_supervisor/claude_runner.py",
+    "tools/test_agent_supervisor_r595_actuation.py",
     "project-control/reports/M0-T056-producer-report.md"
   ],
   "forbidden_paths": [
