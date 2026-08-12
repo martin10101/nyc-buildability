@@ -1,0 +1,98 @@
+{
+  "command": "start",
+  "mode": "supervised",
+  "controller_version": "0.4.0-phase4",
+  "recovery": {
+    "classification": "SAFE_CHECKPOINT",
+    "next_state": "PREFLIGHT",
+    "trigger": "recovery_safe_checkpoint",
+    "reason_code": "safe_no_auto_resume",
+    "reason": "the last action has a verified after-effect and every invariant matches, but limited-auto was NOT already owner-enabled, so recovery does not resume by itself: it re-runs preflight and waits for an explicit operator start (S11.5). Recovery never enables or broadens limited-auto",
+    "resume_permitted": false,
+    "failed_steps": [],
+    "missing_steps": [],
+    "unaccounted_children": [],
+    "pending_effect_ids": [],
+    "notes": [
+      "every input the loop needs was named explicitly; the pre-dispatch sequence ran before any provider contact"
+    ]
+  },
+  "dispatched": true,
+  "provider_calls_made": 1,
+  "limited_auto_enabled": false,
+  "missing_inputs": [],
+  "containment": {
+    "ok": true,
+    "kind": "job_object",
+    "detail": "the host's default containment is the kill-on-close Job Object, so a worker cannot outlive an externally killed supervisor"
+  },
+  "stopped_because": "fable_exhaustion_worker_turnover",
+  "loop": {
+    "run_id": "run_a6b010b17760",
+    "mode": "supervised",
+    "final_state": "PAUSED_RECOVERY",
+    "stopped": "fable_exhaustion_worker_turnover",
+    "cycles": [
+      {
+        "cycle": 1,
+        "mode": "supervised",
+        "reached_state": "PAUSED_RECOVERY",
+        "path": [
+          "START_CLAUDE",
+          "CLAUDE_RUNNING",
+          "PAUSED_RECOVERY"
+        ],
+        "checkpoint_id": "",
+        "decision": "",
+        "tier": "",
+        "reason_code": "",
+        "reason": "a confirmed Fable weekly-limit exhaustion was turned over: launched exactly one claude-opus-4-8/xhigh successor 'opus-worker-e857f56520b68134' for the worker layer from safe checkpoint ''; audited Fable 'ab8776e1-7b2f-4da8-9b81-b04c87527384' -> Opus 'opus-worker-e857f56520b68134'",
+        "forwarded": false,
+        "forward": null,
+        "shadow_plan": null,
+        "pending_prompt_digest": "",
+        "owner_touches": [
+          {
+            "kind": "synchronous_stop",
+            "reason_code": "fable_exhaustion_worker_turnover",
+            "reason": "a confirmed Fable weekly-limit exhaustion was turned over: launched exactly one claude-opus-4-8/xhigh successor 'opus-worker-e857f56520b68134' for the worker layer from safe checkpoint ''; audited Fable 'ab8776e1-7b2f-4da8-9b81-b04c87527384' -> Opus 'opus-worker-e857f56520b68134'",
+            "cycle": 1,
+            "counted": true,
+            "basis": "M0-T054 Fable->Opus worker turnover (R289 / D-010 source-028)",
+            "at_utc": "2026-08-12T04:18:47.450Z"
+          }
+        ],
+        "notify_events": [],
+        "stopped": "fable_exhaustion_worker_turnover",
+        "packet_digest": "",
+        "notes": [],
+        "model_mismatch": false,
+        "context_tokens": 0,
+        "rotation_pending": false
+      }
+    ],
+    "budget": {
+      "budget": 2,
+      "counted": 1,
+      "within_budget": true,
+      "excess": 0,
+      "touches": [
+        {
+          "kind": "synchronous_stop",
+          "reason_code": "fable_exhaustion_worker_turnover",
+          "reason": "a confirmed Fable weekly-limit exhaustion was turned over: launched exactly one claude-opus-4-8/xhigh successor 'opus-worker-e857f56520b68134' for the worker layer from safe checkpoint ''; audited Fable 'ab8776e1-7b2f-4da8-9b81-b04c87527384' -> Opus 'opus-worker-e857f56520b68134'",
+          "cycle": 1,
+          "counted": true,
+          "basis": "M0-T054 Fable->Opus worker turnover (R289 / D-010 source-028)",
+          "at_utc": "2026-08-12T04:18:47.450Z"
+        }
+      ],
+      "authorizes_nothing": true,
+      "note": "The budget is a MEASUREMENT. Every excess stop must be dispositioned either as an accepted permanent gate or as a PROPOSED deterministic policy change that has passed security and control-plane review, replay testing, and explicit owner approval. The budget itself authorizes nothing (D-007 S16.7)."
+    },
+    "forwarded_message_ids": [],
+    "provider_calls": 1,
+    "rotations": [],
+    "limited_auto_enabled": false
+  }
+}
