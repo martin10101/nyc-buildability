@@ -29,7 +29,16 @@ the accept allowlist — STRICTLY SEQUENCED after the now-DONE follow-ups + #220
   (merge `0d42953`; all 8 required checks green on head 98aeb64; merge-tree dry-run was clean).
 
 ### NEXT — runway (ordered; D-011 amendment-004). Steps 1-2 DONE.
-3. **M0-T056** (R595 production actuation) — **AUTHORIZED**: build + full gate wave (G0/G2/G3/G5 + DCV) + accept.
+3. **M0-T056** (R595 production actuation) — **CODE BUILT + UNDER REVIEW** (session 18). Producer commit
+   cherry-picked onto session16 at **`8196039`** (6 files: worker_turnover/loop/cli/claude_runner + new
+   `test_agent_supervisor_r595_actuation.py` (16 tests) + report; turnover_controller/adapters/model_turnover
+   REUSED UNCHANGED). allowed_paths already narrowed to those 6. Freeze re-established **1525/0** full glob +
+   **1191/0** 20-module baseline (CI supervisor-bridge validating). **G3+G5 dispatched** (code+security).
+   REMAINING to accept: run the lifecycle (G0/claim/progress/G2/submit with an evidence-map covering R344-R357),
+   record G3/G5, run the **DCV of R344-R357** (directive-compliance-verifier ≠ producer), then the **owner
+   live-proof (AS-5/R349)** must return before accept. Fold-ins done: M0-T060 (verified_in_job gate); M0-T059
+   NOT triggered (no concurrent recorder added — correct). **Open flag:** M0-T053 pin **P1** (`claude_runner`
+   termination path) left UNCHANGED — confirm before the owner runs AS-5. Originally: build + full gate wave.
    Packet `ready`, cites D-010:ALL, `evaluate_task_refs` **ok:True**, applicable set = **R344-R357** (14 reqs,
    ALL captured in the registry; durable-before-action already done). Spec = D-010 **source-030** (authz +
    scope) + **source-031** (build directive: order/safety/permission/end-state) + the 7 acceptance scenarios
