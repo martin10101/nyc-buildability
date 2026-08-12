@@ -251,6 +251,13 @@ class LoopConfig:
     #: "orchestrator"-role session may substitute the pinned model at a seam (and
     #: only for quota exhaustion). The worker default ("") always pauses instead.
     session_role: str = ""
+    #: M0-T056 (R595): the owner's per-run turnover-actuation authorization. Set to
+    #: True ONLY by the `--authorize-turnover-actuation` operator flag (cli.py). It
+    #: is the single signal `worker_turnover.default_actuation_authorization` reads;
+    #: default False keeps the record-intent-only path byte-identical to today and
+    #: preserves every existing caller (a run the owner did not explicitly authorize
+    #: never auto-redispatches a worker).
+    turnover_actuation_authorized: bool = False
 
     def __post_init__(self) -> None:
         if self.mode == MODE_LIMITED_AUTO:
@@ -1780,6 +1787,37 @@ class SupervisedLoop:
                 basis="M0-T053 G5 R4 achieved-containment enforcement (2026-08-08 "
                       "pin criterion 2; S13.2 / S13.12 invariants 10-11)"))
             return stop("containment_degraded", containment_reason, PAUSED_RECOVERY)
+
+        # M0-T056 fold-in of the carried M0-T060 residual (M0-T053 G5 pin P3): a
+        # reported `job_object` KIND is not proof that the child is actually inside
+        # the job. `ProcessContainer.adopt` records `ContainmentReport.verified_in_job`
+        # from a real `is_process_in_job` membership probe; a kind that says
+        # job_object while membership could NOT be confirmed gives no more real
+        # containment than taskkill, so it must fail closed under an unattended loop
+        # rather than proceed on an unverified claim. The strengthening is ADDITIVE
+        # and freeze-safe: the runner reports the boolean explicitly, and a
+        # run_result that does not carry the field at all (every pre-existing test
+        # fake, and any non-Windows cycle that never reaches this job_object branch)
+        # reads the True default and proceeds exactly as before. ONLY an explicit
+        # `verified_in_job == False` on an otherwise job_object cycle stops here.
+        verified_in_job = getattr(run_result, "containment_verified_in_job", True)
+        if verified_in_job is False:
+            unverified_reason = (
+                f"the cycle reported {CONTAINMENT_JOB_OBJECT!r} containment but its "
+                f"in-job membership could not be verified (ContainmentReport."
+                f"verified_in_job is False): an unverified job assignment is not proof "
+                f"of kill-on-close containment, so an unattended run fails closed rather "
+                f"than proceed on an unconfirmed claim")
+            self.machine.transition(
+                PAUSED_RECOVERY, "unsafe_condition",
+                detail={"cycle": cycle, "reason": "containment_unverified",
+                        "containment": achieved, "verified_in_job": False})
+            touches.append(self._touch(
+                TOUCH_SYNCHRONOUS_STOP, reason_code="containment_unverified",
+                reason=unverified_reason, cycle=cycle,
+                basis="M0-T056 / M0-T060 verified_in_job strengthening (M0-T053 G5 "
+                      "pin P3; S13.2 / S13.12 invariants 10-11)"))
+            return stop("containment_unverified", unverified_reason, PAUSED_RECOVERY)
 
         self.machine.transition(
             CHECKPOINT_RECEIVED, "valid_checkpoint_received",

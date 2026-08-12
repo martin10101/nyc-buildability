@@ -923,6 +923,13 @@ class RunResult:
     tree_terminated: bool = False
     containment: str = ""
     containment_fallback_reason: str = ""
+    #: M0-T056 fold-in of the M0-T060 residual (M0-T053 G5 pin P3): whether the
+    #: child's in-job membership was VERIFIED (`ContainmentReport.verified_in_job`,
+    #: from a real `is_process_in_job` probe). The loop fails a cycle closed when
+    #: this is explicitly False on an otherwise `job_object` cycle. Defaults True so
+    #: a hand-built RunResult (tests) proceeds as before; the runner sets it
+    #: explicitly from the report below.
+    containment_verified_in_job: bool = True
     stderr_tail: str = ""
     injection_labels: tuple[str, ...] = ()
     raw_events: tuple[dict[str, Any], ...] = ()
@@ -1260,6 +1267,7 @@ class ClaudeRunner:
             tree_terminated=tree_terminated,
             containment=containment_report.kind,
             containment_fallback_reason=containment_report.fallback_reason,
+            containment_verified_in_job=containment_report.verified_in_job,
             stderr_tail="".join(stderr_chunks)[-4000:],
             injection_labels=untrusted.labels,
             raw_events=tuple(events),
