@@ -1,0 +1,135 @@
+{
+ "schema": "evidence_map/v1",
+ "task_id": "M0-T064",
+ "producer": "orchestrator",
+ "reviewed_sha": "SET_AT_SUBMIT",
+ "note": "Evidence per applicable D-013 row for M0-T064 (42 rows). The byte-identical parity invariant (R037/R079) is the discharged A2 obligation A1's DCV carried forward.",
+ "requirements": {
+  "D-013-R001": [
+   "A2 is the incremental-index half of the census/index layer (one pipeline, bounded units)."
+  ],
+  "D-013-R002": [
+   "No 'read whole repo' claim; the build reports cache_result + change_set + affected closure with provenance."
+  ],
+  "D-013-R003": [
+   "Lower cost = cache reuse on unchanged snapshots, never dropping material; a changed snapshot rebuilds fully."
+  ],
+  "D-013-R004": [
+   "Reconciled against live git/fingerprint; reuse keyed on the content-hashed snapshot fingerprint."
+  ],
+  "D-013-R006": [
+   "Worker role does not bypass gates/push/accept; submitted to independent gates."
+  ],
+  "D-013-R007": [
+   "Single writer for the unit; independent read-only reviewers."
+  ],
+  "D-013-R008": [
+   "No new taxonomy; reuses A1 identity + code-graph."
+  ],
+  "D-013-R009": [
+   "All structural work deterministic Python; no LLM in indexing/invalidation/promotion."
+  ],
+  "D-013-R010": [
+   "One focused new module (299 SLOC) by cohesion."
+  ],
+  "D-013-R011": [
+   "No caches/secrets in git; generations + telemetry stay in the A1 external cache dir."
+  ],
+  "D-013-R012": [
+   "No token-savings claim; estimated_tokens null."
+  ],
+  "D-013-R013": [
+   "Fail closed on stale/corrupt/ambiguous via the A1 cache rules (quarantine, validate-before-promote)."
+  ],
+  "D-013-R022": [
+   "Only A2 (incremental) implemented this unit; B-F untouched."
+  ],
+  "D-013-R023": [
+   "Census reused from A1 (eligible/indexed/excluded/failed); change_set derived from manifests."
+  ],
+  "D-013-R024": [
+   "Telemetry carries cache result, files examined/hashed/parsed/reused, affected, versions."
+  ],
+  "D-013-R025": [
+   "Complete census reused from A1; incremental never silently narrows it."
+  ],
+  "D-013-R031": [
+   "Generations OUTSIDE the worktree (A1 cache dir); telemetry external."
+  ],
+  "D-013-R032": [
+   "Exact change-set derivation: added/content_modified/metadata_modified/deleted/renamed + global invalidators (classify_changes)."
+  ],
+  "D-013-R033": [
+   "Smallest proven invalidation closure: affected_closure = changed files + transitive importers from the cached graph edges."
+  ],
+  "D-013-R034": [
+   "Rename rebinding: a delete+add sharing a raw content digest is classified renamed, not add+delete (test_rename_is_detected_by_content_digest)."
+  ],
+  "D-013-R035": [
+   "Atomic generations reused from A1 (lock+temp+validate+os.replace+current pointer)."
+  ],
+  "D-013-R036": [
+   "Corruption/stale-lock/concurrent-writer detection + fail-closed + idempotent retry (A1 cache; test_corrupt_generation_is_recovered_and_rebuilt, test_idempotent_retry)."
+  ],
+  "D-013-R037": [
+   "BYTE-IDENTICAL incremental-vs-clean-full parity enforced by test (ParityInvariant, 3 change classes) - the A2 obligation A1's DCV carried forward."
+  ],
+  "D-013-R042": [
+   "Unused context capacity never a fill reason; A2 only builds/reuses the index."
+  ],
+  "D-013-R050": [
+   "Two storage classes (external redacted telemetry + bounded committed evidence: parity-evidence.md)."
+  ],
+  "D-013-R051": [
+   "Nullable measures never fabricated as zero (estimated_tokens null; known counts present)."
+  ],
+  "D-013-R052": [
+   "Run record fields: cache_result, files examined/hashed/parsed/reused, affected, rebuild_reason, elapsed, snapshot fingerprint."
+  ],
+  "D-013-R053": [
+   "Distinct measures separate; no combined token-savings number."
+  ],
+  "D-013-R056": [
+   "Full-rebuild-on-global-invalidator with reported reason (rebuild_reason=global_invalidator:...); test_global_invalidator_forces_full_rebuild."
+  ],
+  "D-013-R059": [
+   "Records files examined/hashed/parsed/reused, affected dependents, cache hit/miss, runtime, nullable token estimate; never fabricates a zero."
+  ],
+  "D-013-R064": [
+   "Committed summary in project-control/reports; cache/telemetry in the external runtime dir."
+  ],
+  "D-013-R065": [
+   "Unit A2 implements incremental change classification + invalidation + parity, per the source-002 A/A split."
+  ],
+  "D-013-R066": [
+   "A2 does not implement memory digests / ontology / context injection (C/D/B)."
+  ],
+  "D-013-R067": [
+   "Reuses accepted A1 helpers; ci.yml change is one additive step in the A1 job region; no overlap."
+  ],
+  "D-013-R068": [
+   "End-of-unit handoff: producer report + evidence map + parity evidence; documented tests + gates run."
+  ],
+  "D-013-R069": [
+   "Does not continue to the next unit until independent review returns."
+  ],
+  "D-013-R070": [
+   "Review bound to the frozen content identity (accept() enforces)."
+  ],
+  "D-013-R071": [
+   "Recoverable: full rebuild always available (clean_full_build_bytes); prior valid generation retained; no destructive command."
+  ],
+  "D-013-R077": [
+   "A2 decision: incremental indexing/invalidation on top of A1, byte-identical parity required - implemented."
+  ],
+  "D-013-R079": [
+   "Byte-identical incremental-vs-full REQUIRED and PROVEN (ParityInvariant.test_parity_holds_after_each_change_class == clean_full each time)."
+  ],
+  "D-013-R081": [
+   "Eligibility not widened; reuses A1's code_graph roots via the fingerprint."
+  ],
+  "D-013-R082": [
+   "tools/agent_supervisor/** NOT modified (A2 does not import it directly; A1 does, read-only)."
+  ]
+ }
+}

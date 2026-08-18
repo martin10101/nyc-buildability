@@ -87,6 +87,24 @@ digest non-colliding even on identical bytes. Canonical JSON is
   the per-checkout cache dir outside the repo, with measured-only fields null
   when unavailable (never fabricated as zero; D-013-R051).
 
+### Incremental indexing (`tools/repo_index_incremental.py`, A2, D-013-R037/R079)
+- **Reuse-or-rebuild**: an unchanged snapshot (its content-hashed fingerprint
+  already has a validated generation) reuses that generation verbatim — a cache
+  hit that skips the expensive parse/resolve. A changed snapshot rebuilds via the
+  same `code_graph.build_graph` the clean rebuild uses.
+- **Parity invariant** (enforced by test): the incremental export is
+  BYTE-IDENTICAL to a clean full rebuild for the same snapshot — by construction
+  (reuse returns the exact cached full-build bytes; a rebuild is a full build).
+- **Change classification**: added / content_modified / metadata_modified /
+  deleted / renamed (a delete+add sharing a raw content digest), plus global
+  invalidators (parser/config/schema/eligibility version change) which force a
+  full rebuild with a recorded reason.
+- **Affected importer closure**: the deterministic transitive set of files that
+  import a changed file, from the cached code-graph edges — reported for
+  telemetry and future partial-parse optimization.
+- **Crash-safety / concurrency**: reuses the A1 cache's fail-closed rules; a full
+  rebuild is always available as reference and recovery. mtime is never trusted.
+
 ## Rollback (D-013-R071)
 A1 adds only NEW modules and one additive CI step; nothing changes the generator
 or any existing behavior. To roll back:
