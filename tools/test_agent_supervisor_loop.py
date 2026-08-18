@@ -1082,6 +1082,13 @@ class CliStartTests(LoopTestBase):
         }), encoding="utf-8")
         self.claude = self.tmp / "fake_claude.py"
         self.claude.write_text(FAKE_CLAUDE, encoding="utf-8")
+        # M0-T072: --manifest is a required dispatch input; every start fixture
+        # records a manifest binding its external config.
+        from tools.agent_supervisor.manifest import generate_manifest, write_manifest
+        self.manifest_path = write_manifest(
+            generate_manifest(self.cli.PACKAGE_ROOT,
+                              extra_files=(("config.toml", self.config),)),
+            self.tmp / "controller_manifest.json")
 
     def run_cli(self, *args: str) -> tuple[int, dict]:
         import contextlib
@@ -1103,7 +1110,7 @@ class CliStartTests(LoopTestBase):
         self.assertEqual(
             payload["missing_inputs"],
             ["--claude-executable", "--codex-executable", "--config",
-             "--model-selection", "--task-packet"])
+             "--manifest", "--model-selection", "--task-packet"])
 
     def test_start_names_exactly_which_input_is_missing(self) -> None:
         _, payload = self.run_cli(
@@ -1111,6 +1118,7 @@ class CliStartTests(LoopTestBase):
             "--claude-executable", sys.executable,
             "--codex-executable", sys.executable,
             "--config", str(self.config),
+            "--manifest", str(self.manifest_path),
             "--model-selection", str(self.selection))
         self.assertEqual(payload["missing_inputs"], ["--task-packet"])
         self.assertFalse(payload["dispatched"])
@@ -1153,6 +1161,7 @@ class CliStartTests(LoopTestBase):
                        "--codex-executable", sys.executable,
                        "--task-packet", str(self.packet),
                        "--config", str(self.config),
+                       "--manifest", str(self.manifest_path),
                        "--model-selection", str(self.selection))
 
         # 1. The parked journal refuses with a REPORT, not a traceback (B-2/F-2).
@@ -1412,6 +1421,7 @@ class CliStartTests(LoopTestBase):
             "--codex-executable", sys.executable,
             "--task-packet", str(self.packet),
             "--config", str(self.config),
+            "--manifest", str(self.manifest_path),
             "--model-selection", str(self.selection))
         self.assertEqual(code, 0, "a refusal is a reported outcome, not a crash")
         self.assertFalse(payload["dispatched"])

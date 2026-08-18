@@ -1725,6 +1725,19 @@
   },
   {
    "directive_id": "D-001",
+   "task_id": "M0-T072",
+   "applicable_requirement_ids": [],
+   "reviewed_sha": "074ffad25e90900a4e6f8c71b9e1b6bf653d7a98",
+   "reviewed_manifest_sha256": "b1315bdc24b8a809636d0c6b0a296fd0091cd48065faa7732dc5cf171c2beb07",
+   "producer": "orchestrator",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "requirements": [],
+   "verified_at": "2026-08-18T13:53:43+00:00",
+   "note": "D-001:ALL process regime; own requirements govern M0-T023, none apply (empty-but-present, M0-T070 precedent)."
+  },
+  {
+   "directive_id": "D-001",
    "task_id": "M0-T073",
    "applicable_requirement_ids": [],
    "reviewed_sha": "fde13bfb1d3156862e7934cb00c7bdeec5303672",
@@ -1762,5 +1775,5 @@
    "note": "Empty applicable set: no D-001 requirement row is applicable to M2-T014 (resolver-derived; refs D-001:ALL). Row exists to satisfy the fail-closed per-task verification check at accept. Content identity 73b36e60 stable since submit (gates G0/G2/G3 recorded at it)."
   }
  ],
- "updated_at": "2026-08-18T13:45:15+00:00"
+ "updated_at": "2026-08-18T13:53:43+00:00"
 }

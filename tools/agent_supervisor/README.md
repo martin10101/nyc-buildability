@@ -42,7 +42,7 @@ python -m tools.agent_supervisor doctor
 python -m tools.agent_supervisor status
 python -m tools.agent_supervisor recovery-status
 python -m tools.agent_supervisor schedule-status
-python -m tools.agent_supervisor verify-controller
+python -m tools.agent_supervisor verify-controller --manifest <recorded manifest> --config <active config.toml>
 python -m tools.agent_supervisor pending-approvals
 python -m tools.agent_supervisor autostart-plan
 python -m tools.agent_supervisor replay
@@ -182,6 +182,25 @@ python -m tools.agent_supervisor doctor \
     --manifest <path to a recorded controller_manifest.json> \
     --live          # ONE short real call to Claude; see caveat 3
 ```
+
+**External-config binding (M0-T072).** When `--manifest` is supplied, the
+`controller_manifest` check runs the SAME verification production dispatch uses:
+the package tree AND the active immutable config, bound in the manifest under its
+stable logical name `config.toml` (the absolute path is never recorded). With
+`--manifest` but no `--config` the check fails closed. To record a manifest:
+
+```
+python -m tools.agent_supervisor record-manifest \
+    --config <path to the active config.toml> \
+    --out tools/agent_supervisor/controller_manifest.json
+```
+
+`verify-controller --manifest <path> --config <path>` verifies the same binding
+and fails closed without a recorded manifest (a self-generated manifest verifies
+nothing). `start` requires `--manifest` as a dispatch input and refuses to
+dispatch when the manifest omits `config.toml`, the config path is missing, the
+digest differs, or the manifest is stale (wrong controller version, or an edited
+manifest whose recorded digest no longer matches its own content).
 
 `--live` is the only thing in this whole package that talks to a provider. It
 runs at most one bounded turn, works in a throwaway folder, and is off by
@@ -451,9 +470,14 @@ tested.
 
 Two files, on purpose:
 
-* **`config.toml`** — immutable, covered by the controller manifest. Policy,
-  limits, and the per-provider lists of models you permit **at all**. Changing it
-  invalidates the manifest and follows the full controller-update process.
+* **`config.toml`** — immutable, covered by the controller manifest. It lives
+  OUTSIDE the package directory (e.g. `C:\Program Files\SupervisorConfig\`) and
+  is bound into the manifest under the stable logical name `config.toml` by
+  `record-manifest --config <path>` (M0-T072); the absolute private path is never
+  written into the manifest. Policy, limits, and the per-provider lists of models
+  you permit **at all**. Changing it invalidates the manifest and follows the
+  full controller-update process. Never duplicate it inside the package: the
+  production verification refuses an in-package `config.toml`.
 * **`model_selection.toml`** — runtime, deliberately **outside** the manifest.
   Which permitted model is currently active. Changing a model must never
   invalidate the controller, and a test proves it does not.
