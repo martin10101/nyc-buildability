@@ -1734,7 +1734,20 @@
    "schema_version": "directive_verification/v2",
    "verified_at": "2026-08-18T10:18:53+00:00",
    "note": "EMPTY-SET verification (M0-T062/M0-T071 precedent). M0-T070 cites D-001:ALL; the canonical resolver derives ZERO D-001 requirements applicable to this packet (evaluate_task_refs applicable set = the 30 D-014 rows only). Confirmed alongside the fresh independent directive-compliance-verifier run of 2026-08-18 at head 46f7469 (project-control/reports/M0-T070-DCV-final-verification.md)."
+  },
+  {
+   "directive_id": "D-001",
+   "task_id": "M0-T073",
+   "applicable_requirement_ids": [],
+   "reviewed_sha": "fde13bfb1d3156862e7934cb00c7bdeec5303672",
+   "reviewed_manifest_sha256": "4a4d89d89f754cf81b3dfb3f714940d2c8d42ff3ca3dbdff837c57e45aaaee2b",
+   "producer": "orchestrator",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "requirements": [],
+   "verified_at": "2026-08-18T13:34:32+00:00",
+   "note": "M0-T073 is bound to D-001:ALL as the process regime; D-001's own requirements govern the compliance system (M0-T023), none apply to this modularity-enforcement task (empty-but-present row, M0-T070 precedent). D-001 process compliance re-derived PASS in the independent verification."
   }
  ],
- "updated_at": "2026-08-18T10:18:53+00:00"
+ "updated_at": "2026-08-18T13:34:32+00:00"
 }
