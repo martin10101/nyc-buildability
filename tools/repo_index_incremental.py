@@ -468,10 +468,10 @@ def _run_record(res: IncrementalResult, fp: rf.FingerprintResult, *,
 def append_run_record(record: dict[str, Any], cache: ric.IndexCache) -> pathlib.Path:
     """Append one redacted run record to the external, per-checkout, append-only
     JSONL telemetry log (D-013-R050). Lives outside the repo, never committed."""
-    cache.root.mkdir(parents=True, exist_ok=True)
     log = cache.root / TELEMETRY_FILENAME
-    with log.open("a", encoding="utf-8", newline="\n") as fh:
-        fh.write(json.dumps(record, sort_keys=True) + "\n")
+    # Bounded/rotated retention (M0-T075, D-018-R036): the log stays outside
+    # the repo and can no longer grow without bound.
+    ric.append_jsonl_rotated(log, record)
     return log
 
 
@@ -486,6 +486,12 @@ def _finish(res: IncrementalResult, fp: rf.FingerprintResult,
             append_run_record(record, cache)
         except OSError:
             pass  # telemetry is best-effort; a build never fails on logging
+    # REAL bounded generation retention (M0-T075, D-018-R035): keep the current
+    # generation plus rollback generations; best-effort, never fails a build.
+    try:
+        cache.prune(keep=3)
+    except (OSError, ric.CacheError):
+        pass
     return res
 
 

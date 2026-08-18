@@ -39,7 +39,7 @@ _ROOT = pathlib.Path(__file__).resolve().parent.parent
 if str(_ROOT) not in sys.path:
     sys.path.insert(0, str(_ROOT))
 
-from tools.memory_digest import is_canonical_repo_path  # noqa: E402
+from tools import context_paths as cpaths  # noqa: E402
 from tools.subsystem_resolver import (  # noqa: E402
     load_map, norm_path, resolve_path, version_stamp)
 
@@ -231,7 +231,7 @@ def card_view(res, gi, loaded_map, repo_root: str, seed: str,
             "kind": node.get("kind"), "name": node.get("name"),
             "module": node.get("module"), "line": node.get("line"),
             "is_test": node.get("is_test"),
-            "exists_in_tree": (pathlib.Path(repo_root) / nid).exists(),
+            "exists_in_tree": cpaths.contained_exists(repo_root, nid),
             "subsystem": _subsystem_of(nid, loaded_map),
             "out_edge_count": len(gi.out_edges.get(nid, [])),
             "in_edge_count": len(gi.in_edges.get(nid, [])),
@@ -249,18 +249,22 @@ def card_view(res, gi, loaded_map, repo_root: str, seed: str,
 
 def deep_view(res, loaded_map, repo_root: str, path: str, start: int, end: int,
               *, max_lines: int = 200) -> dict:
-    """R023 deep: reopen ONE authoritative source, exact and bounded."""
+    """R023 deep: reopen ONE authoritative source, exact and bounded.
+
+    Reads go ONLY through the shared containment rule (D-018-R031/R033:
+    deep source views) — canonical form + real-path (symlink/junction)
+    containment, no absolute path ever disclosed."""
     p = norm_path(path)
-    if not is_canonical_repo_path(p):
-        raise ViewsError("non_canonical_path",
-                         f"{path!r} is not a canonical repo-relative path")
-    fs_path = pathlib.Path(repo_root) / p
+    try:
+        fs_path = cpaths.contained_repo_path(repo_root, p)
+    except cpaths.PathContainmentError as exc:
+        raise ViewsError(exc.code, exc.detail) from None
     if not fs_path.is_file():
         raise ViewsError("path_not_in_tree", f"{p!r} is not a file in the tree")
     try:
-        raw = fs_path.read_bytes()
-    except OSError as exc:
-        raise ViewsError("source_unreadable", f"{p}: {exc}") from exc
+        raw = cpaths.contained_read_bytes(repo_root, p)
+    except cpaths.PathContainmentError as exc:
+        raise ViewsError("source_unreadable", exc.detail) from None
     lines = raw.decode("utf-8", errors="replace").splitlines()
     start = max(int(start), 1)
     if lines and start > len(lines):

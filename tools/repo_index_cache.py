@@ -86,6 +86,39 @@ def _content_digest(payload: dict[str, Any]) -> str:
     return h.hexdigest()
 
 
+def rotate_jsonl_if_needed(path: str | os.PathLike[str], *,
+                           max_bytes: int = 1_000_000, keep: int = 1) -> bool:
+    """Bounded/rotated retention for an append-only JSONL log (D-018-R036).
+
+    When the live file reaches `max_bytes` it is rotated to `<name>.1`
+    (older rotations shift up; anything beyond `keep` rotations is dropped),
+    so external telemetry/routing records stay bounded while recent history
+    survives. Returns True when a rotation happened. Best-effort: an OSError
+    never breaks the caller (telemetry must not fail a build)."""
+    p = pathlib.Path(path)
+    try:
+        if not p.exists() or p.stat().st_size < max_bytes:
+            return False
+        for i in range(keep, 0, -1):
+            newer = p if i == 1 else pathlib.Path(f"{p}.{i - 1}")
+            older = pathlib.Path(f"{p}.{i}")
+            if newer.exists():
+                os.replace(newer, older)
+        return True
+    except OSError:
+        return False
+
+
+def append_jsonl_rotated(path: str | os.PathLike[str], record: dict, *,
+                         max_bytes: int = 1_000_000, keep: int = 1) -> None:
+    """Rotate-then-append one JSON record (shared R036 retention helper)."""
+    p = pathlib.Path(path)
+    p.parent.mkdir(parents=True, exist_ok=True)
+    rotate_jsonl_if_needed(p, max_bytes=max_bytes, keep=keep)
+    with p.open("a", encoding="utf-8", newline="\n") as fh:
+        fh.write(json.dumps(record, sort_keys=True) + "\n")
+
+
 def cache_base_dir() -> pathlib.Path:
     if os.name == "nt":
         local = os.environ.get("LOCALAPPDATA")
@@ -241,35 +274,46 @@ class IndexCache:
         """
         self._ensure_dirs()
         self.recover()
+        with SingleWriterLock(self.root):
+            return self.write_generation_locked(fingerprint, payload)
+
+    def write_generation_locked(self, fingerprint: str,
+                                payload: dict[str, Any]) -> Generation:
+        """Write/validate/promote WITHOUT acquiring the writer lock.
+
+        The caller MUST already hold this store's SingleWriterLock — this
+        exists so a transaction can cover load-current → conflict check →
+        mutation → validation → promotion in ONE protected span
+        (M0-T075 / D-018-R027); calling it unlocked forfeits that guarantee.
+        """
+        self._ensure_dirs()
         existing = self.generations_dir / fingerprint
         if existing.is_dir() and self._generation_valid(existing):
             self._set_current(fingerprint)
             return Generation(fingerprint, _content_digest(payload), existing)
-
-        with SingleWriterLock(self.root):
-            digest = _content_digest(payload)
-            tmp = self.tmp_dir / f"{fingerprint}.{os.getpid()}"
+        digest = _content_digest(payload)
+        tmp = self.tmp_dir / f"{fingerprint}.{os.getpid()}"
+        shutil.rmtree(tmp, ignore_errors=True)
+        tmp.mkdir(parents=True)
+        (tmp / "payload.json").write_text(
+            json.dumps(payload, sort_keys=True, separators=(",", ":")),
+            encoding="utf-8")
+        (tmp / "meta.json").write_text(json.dumps({
+            "cache_format_version": CACHE_FORMAT_VERSION,
+            "fingerprint": fingerprint,
+            "content_digest": digest,
+        }, sort_keys=True), encoding="utf-8")
+        # VALIDATE before promotion.
+        if not self._generation_valid(tmp):
             shutil.rmtree(tmp, ignore_errors=True)
-            tmp.mkdir(parents=True)
-            (tmp / "payload.json").write_text(
-                json.dumps(payload, sort_keys=True, separators=(",", ":")),
-                encoding="utf-8")
-            (tmp / "meta.json").write_text(json.dumps({
-                "cache_format_version": CACHE_FORMAT_VERSION,
-                "fingerprint": fingerprint,
-                "content_digest": digest,
-            }, sort_keys=True), encoding="utf-8")
-            # VALIDATE before promotion.
-            if not self._generation_valid(tmp):
-                shutil.rmtree(tmp, ignore_errors=True)
-                raise CacheError("validation_failed",
-                                 "generation failed self-validation before promotion")
-            # ATOMIC promotion: replace the target directory in one operation.
-            if existing.exists():
-                shutil.rmtree(existing, ignore_errors=True)
-            os.replace(tmp, existing)
-            self._set_current(fingerprint)
-            return Generation(fingerprint, digest, existing)
+            raise CacheError("validation_failed",
+                             "generation failed self-validation before promotion")
+        # ATOMIC promotion: replace the target directory in one operation.
+        if existing.exists():
+            shutil.rmtree(existing, ignore_errors=True)
+        os.replace(tmp, existing)
+        self._set_current(fingerprint)
+        return Generation(fingerprint, digest, existing)
 
     def _set_current(self, fingerprint: str) -> None:
         tmp = self.current_pointer.with_suffix(".json.tmp")
@@ -306,7 +350,15 @@ class IndexCache:
     def prune(self, keep: int = 3) -> list[str]:
         """Keep the `keep` most-recently-modified valid generations plus the
         current one; return the fingerprints pruned. Bounded retention keeps a
-        prior valid generation available for rollback (D-013-R071)."""
+        prior valid generation available for rollback (D-013-R071).
+
+        Serialized under the single-writer lock (M0-T075, D-018-R035): pruning
+        while another writer promotes raises `concurrent_writer` instead of
+        racing it; callers treat that as skip-this-round."""
+        with SingleWriterLock(self.root):
+            return self._prune_locked(keep)
+
+    def _prune_locked(self, keep: int) -> list[str]:
         self._ensure_dirs()
         current = None
         if self.current_pointer.exists():

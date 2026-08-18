@@ -102,15 +102,10 @@ def _require(cond: bool, code: str, detail: str) -> None:
         raise DigestSchemaError(code, detail)
 
 
-def is_canonical_repo_path(p: object) -> bool:
-    """True only for a canonical repo-relative POSIX path (R044): no
-    backslashes, no drive/colon, no leading slash, and no empty/'.'/'..'
-    segments — so a digest can never smuggle a traversal or absolute path."""
-    if not isinstance(p, str) or not p:
-        return False
-    if "\\" in p or ":" in p or p.startswith("/"):
-        return False
-    return all(seg not in ("", ".", "..") for seg in p.split("/"))
+from tools.context_paths import is_canonical_repo_path  # noqa: E402,F401
+# is_canonical_repo_path: THE shared canonical-path rule (M0-T075,
+# D-018-R031) — moved to tools/context_paths.py as the single source of
+# truth; re-exported here to preserve this module's public surface (R044).
 
 
 def _check_files(files: list) -> None:

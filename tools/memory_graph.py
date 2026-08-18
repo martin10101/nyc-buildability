@@ -40,6 +40,7 @@ from tools import memory_grounding as grounding  # noqa: E402
 from tools import repo_index_cache as ric  # noqa: E402
 from tools import subsystem_entities as ents  # noqa: E402
 from tools.context_pack_io import canon_json_bytes  # noqa: E402
+from tools import context_paths as cpaths  # noqa: E402
 from tools.memory_digest import (  # noqa: E402
     DigestSchemaError, judge_advisory_tag, validate_digest)
 from tools.subsystem_resolver import (  # noqa: E402
@@ -70,9 +71,12 @@ def memory_store(repo_root: str, base: str | None = None) -> ric.IndexCache:
     return ric.IndexCache(repo_root, base=b)
 
 
-def _file_digest(path: pathlib.Path) -> str:
-    """CRLF-normalized sha256 (A1 convention) of a working-tree file."""
-    return hashlib.sha256(path.read_bytes().replace(b"\r\n", b"\n")).hexdigest()
+def _file_digest(repo_root: str, rel: str) -> str:
+    """CRLF-normalized sha256 (A1 convention) of a working-tree file, read
+    ONLY through the shared containment rule (D-018-R031/R033: memory
+    evidence paths). Raises PathContainmentError on refusal."""
+    data = cpaths.contained_read_bytes(repo_root, rel)
+    return hashlib.sha256(data.replace(b"\r\n", b"\n")).hexdigest()
 
 
 def _proposals_from_digest(doc: dict) -> list[dict]:
@@ -115,10 +119,10 @@ def _ground_links(doc: dict, resolved: dict, repo_root: str,
             claimed = file_digests.get(value)
             if claimed is not None:
                 try:
-                    current = _file_digest(pathlib.Path(repo_root) / value)
-                except OSError:
+                    current = _file_digest(repo_root, value)
+                except cpaths.PathContainmentError as exc:
                     quarantined.append({"kind": kind, "value": value,
-                                        "reason": "file_digest_unreadable"})
+                                        "reason": exc.code})
                     continue
                 if current != claimed:
                     quarantined.append({"kind": kind, "value": value,
@@ -135,11 +139,18 @@ def _ground_links(doc: dict, resolved: dict, repo_root: str,
     return valid, quarantined
 
 
+#: Memory-store generations kept by in-transaction retention (rollback safe).
+RETENTION_KEEP = 5
+
+
 def promote_digest(doc: dict, repo_root: str, *, diff_files: list[str] | None = None,
                    approved_relations: list[str] | None = None,
                    base: str | None = None, map_path: str | None = None,
-                   graph_index=None, indexes=None) -> dict:
-    """Validate → resolve → ground → quarantine-or-promote. Deterministic."""
+                   graph_index=None, indexes=None, retries: int = 0) -> dict:
+    """Validate → resolve → ground → quarantine-or-promote. Deterministic.
+
+    `retries`: on `concurrent_writer` the transaction is retried up to this
+    many times (default 0: the refusal surfaces explicitly to the caller)."""
     diff_files = diff_files or []
     approved_relations = approved_relations or []
     validate_digest(doc, repo_root)
@@ -187,28 +198,55 @@ def promote_digest(doc: dict, repo_root: str, *, diff_files: list[str] | None = 
         "memory_graph_version": MEMORY_GRAPH_VERSION,
     }
 
-    current = store.load_current()
-    payload = (current.load_payload() if current
-               else {"memory_graph_version": MEMORY_GRAPH_VERSION, "nodes": {}})
-    existing = payload["nodes"].get(doc["digest_id"])
-    if existing is not None:
-        assert current is not None  # a node can only come from a loaded generation
-        if existing == node:
-            return {"status": "already_promoted", "digest_id": doc["digest_id"],
-                    "generation_fingerprint": current.fingerprint,
+    # ---- the promotion TRANSACTION (M0-T075, D-018-R027..R029) --------------
+    # ONE single-writer span covers load-current -> idempotency/conflict check
+    # -> mutation -> validation -> generation promotion (+ bounded retention).
+    # Before this fix the load happened OUTSIDE the store lock: two concurrent
+    # valid digests could both read the same base generation and the second
+    # promotion silently dropped the first node (stale-read lost update) while
+    # both callers reported "promoted". Now a concurrent writer receives the
+    # explicit `concurrent_writer` refusal and succeeds on retry; a lost node
+    # is structurally impossible.
+    def _transaction() -> dict:
+        with ric.SingleWriterLock(store.root):
+            current = store.load_current()
+            payload = (current.load_payload() if current
+                       else {"memory_graph_version": MEMORY_GRAPH_VERSION,
+                             "nodes": {}})
+            existing = payload["nodes"].get(doc["digest_id"])
+            if existing is not None:
+                assert current is not None  # node implies a loaded generation
+                if existing == node:
+                    return {"status": "already_promoted",
+                            "digest_id": doc["digest_id"],
+                            "generation_fingerprint": current.fingerprint,
+                            "nodes": len(payload["nodes"])}
+                raise MemoryGraphError(
+                    "digest_id_conflict",
+                    f"digest {doc['digest_id'][:16]}... already promoted with "
+                    "a different node (digest content or promotion context "
+                    "changed)")
+            payload["nodes"][doc["digest_id"]] = node
+            fingerprint = hashlib.sha256(canon_json_bytes(payload)).hexdigest()
+            gen = store.write_generation_locked(fingerprint, payload)
+            try:  # REAL bounded retention inside the same span (D-018-R035)
+                store._prune_locked(RETENTION_KEEP)
+            except OSError:
+                pass  # retention is hygiene; promotion already succeeded
+            return {"status": "promoted", "digest_id": doc["digest_id"],
+                    "generation_fingerprint": gen.fingerprint,
+                    "quarantined_links": len(node["quarantined_links"]),
+                    "discarded_advisory_tags": len(node["discarded_advisory_tags"]),
                     "nodes": len(payload["nodes"])}
-        raise MemoryGraphError(
-            "digest_id_conflict",
-            f"digest {doc['digest_id'][:16]}... already promoted with a different "
-            "node (digest content or promotion context changed)")
-    payload["nodes"][doc["digest_id"]] = node
-    fingerprint = hashlib.sha256(canon_json_bytes(payload)).hexdigest()
-    gen = store.write_generation(fingerprint, payload)
-    return {"status": "promoted", "digest_id": doc["digest_id"],
-            "generation_fingerprint": gen.fingerprint,
-            "quarantined_links": len(node["quarantined_links"]),
-            "discarded_advisory_tags": len(node["discarded_advisory_tags"]),
-            "nodes": len(payload["nodes"])}
+
+    for attempt in range(retries + 1):
+        try:
+            return _transaction()
+        except ric.CacheError as exc:
+            if exc.code == "concurrent_writer" and attempt < retries:
+                continue  # explicit retry after the other writer finishes
+            raise
+    raise AssertionError("unreachable")  # pragma: no cover
 
 
 def _emit(doc: dict) -> None:
