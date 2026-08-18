@@ -524,3 +524,16 @@ jobs:
         run: python3 tools/modularity_check.py --check
       - name: Modularity checker proof tests
         run: python3 tools/test_modularity_check.py
+
+  # M0-T074 (D-017-R122, ADDITIVE job; existing jobs untouched): deterministic
+  # complexity-based model routing. Stdlib only. Prevents an unauthorized
+  # model, a self-selected model, an unrecorded fallback, or an ungrounded
+  # complexity classification, and pins the frozen routing corpus (simple
+  # tasks stay inexpensive; HIGH/CRITICAL can never route weaker).
+  model-routing:
+    name: model-routing (frozen corpus + allowlist boundary tests)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+      - name: Model routing tests
+        run: python3 tools/test_model_routing.py
