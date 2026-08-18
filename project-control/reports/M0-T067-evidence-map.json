@@ -1,0 +1,95 @@
+{
+ "schema": "evidence_map/v1",
+ "task_id": "M0-T067",
+ "producer": "orchestrator",
+ "note": "Evidence per applicable D-013 row for M0-T067 (29 rows, derived by directive_registry.evaluate_task_refs at claim). Unit D: closed-schema session/task memory digests, deterministic derived parents via the Unit C resolver, default-deny grounding with quarantine, and atomic/idempotent/replay/concurrency-safe promotion reusing the accepted A2 generation store.",
+ "requirements": {
+  "D-013-R001": [
+   "Unit D is the session/task memory layer of the ONE pipeline, a bounded task unit stacked on accepted A1/A2/B/C; consumes Unit C (propose/resolve/version stamp) and the A2 store read-only."
+  ],
+  "D-013-R002": [
+   "No whole-repo claim anywhere; digests carry explicit repo_sha/source-manifest/branch provenance and bounded evidence_refs; docs/MEMORY_GRAPH.md labels the layer a fact store, never authority."
+  ],
+  "D-013-R003": [
+   "Nothing silently dropped: every unvalidatable or ungrounded link lands in quarantined_links (or a digest-quarantine record) with a machine-readable reason; invalid advisory tags land in discarded_advisory_tags (AS-3/AS-5 tests)."
+  ],
+  "D-013-R004": [
+   "All derivations read the LIVE authoritative indexes (master_plan.json, tasks/*.json, directives registry) via Unit C AuthoritativeIndexes; grounding reads the LIVE task packet; M0-T066 acceptance + merge (1ded78f) verified before claim."
+  ],
+  "D-013-R006": [
+   "Control plane respected: G0 at the contract commit, claim via project_control.py, submit -> independent G3/G4/G5 -> accept, orchestrator-executed per ADR-005; producer never self-accepts."
+  ],
+  "D-013-R007": [
+   "Single writer (orchestrator in wt-m0t064 on task/M0-T067-memory-graph); review by a fresh read-only independent agent; the STORE itself is single-writer locked (concurrent_writer refusal, AS-6)."
+  ],
+  "D-013-R008": [
+   "No new taxonomy: subsystem placement happens ONLY through the accepted Unit C versioned map; the agent allowlist and outcome enum derive from existing repo facts (.claude/agents stems + gate/lifecycle vocabulary); digest ids are content-derived, not invented names."
+  ],
+  "D-013-R009": [
+   "Every structural decision (validation, parent selection, existence checks, grounding, promotion) is pure deterministic code; no LLM anywhere; advisory tags are the only model-suppliable field and are leaves judged by deterministic rules (AS-2/AS-5)."
+  ],
+  "D-013-R010": [
+   "Modules split by ownership (schema 157 SLOC / grounding 64 / promotion 227 / tests 315), each far under the 600-SLOC warn line; no existing file refactored or grown; the A2 store and Unit C resolver are reused, not copied."
+  ],
+  "D-013-R011": [
+   "Nothing memory-related is committed: the graph store, digest-quarantine records, and generations live ONLY in the external per-checkout runtime dir; in-repo store locations refuse (cache_inside_repo, AS-6); digests cap note length (no transcripts) and tests use temp bases."
+  ],
+  "D-013-R012": [
+   "No token-savings or efficiency claim anywhere in code, doc, or reports."
+  ],
+  "D-013-R013": [
+   "Fail closed at every layer: DigestSchemaError (12+ codes incl. closed_schema_violation, digest_id_mismatch, agent_not_in_allowlist), GroundingError (task_packet_unreadable), MemoryGraphError (digest_id_conflict), CacheError (concurrent_writer, cache_inside_repo, validation_failed), quarantine for stale/ungrounded/unresolved (AS-1/AS-3/AS-4/AS-6 tests)."
+  ],
+  "D-013-R022": [
+   "Sequencing preserved under current authority: R022 bound the original bootstrap run (amended by source-002); D-017 authorizes the A-to-Z continuation in dependency order; Unit D claimed only AFTER Unit C (M0-T066) was accepted and merged to main (1ded78f), preserving A->B->C->D."
+  ],
+  "D-013-R025": [
+   "No census or deep-understanding claim; the digest records exactly the bounded facts given to it, quarantines what it cannot validate, and the doc states the layer 'stores and links facts; it never decides compliance'."
+  ],
+  "D-013-R038": [
+   "Advisory (potentially model-picked) content is exactly as R038 demands: advisory_tags are separate leaves, excluded from structural truth and parent derivation (asserted by AS-5: tags never appear in structural_links), and invalid ones are discarded with reasons; no LLM summaries are implemented or authorized here."
+  ],
+  "D-013-R039": [
+   "Unit D adds NO independent context budget and no concatenated dump: it stores bounded digests for the ONE compiler's future selection; the promotion CLI emits bounded JSON documents only."
+  ],
+  "D-013-R042": [
+   "Nothing is included to fill capacity: digests are bounded (note <= 2000 chars, evidence refs <= 300 chars each), and the graph stores only validated links."
+  ],
+  "D-013-R043": [
+   "Sequencing satisfied by construction: Unit C's versioned resolver (accepted, merged 1ded78f) is established and BOUND by every digest (resolver_version/map_version/map_digest required fields); a digest with a stale ontology stamp is quarantined whole (stale_ontology_version, AS-3 test)."
+  ],
+  "D-013-R044": [
+   "The CLOSED schema carries every R044-required field: schema_version, stable content-derived digest_id, task_id, requirement_ids[], files[] with content digests where possible (nullable), agent from the repo-derived enum, outcome from the enum, repo_sha + source-manifest fingerprint (nullable, never fabricated), branch, task-index/directive-index digests, resolver/ontology version, evidence refs, unresolved_links[] with reasons, advisory tags separated from structural links. Unknown fields refuse (AS-1)."
+  ],
+  "D-013-R045": [
+   "Parents DERIVED, never model-chosen: digest->task packet->milestone via authoritative indexes; requirement->directive via the registry; files->subsystem ONLY via the versioned Unit C resolver; model-picked topic tags are advisory leaves only (AS-2 + AS-5 tests)."
+  ],
+  "D-013-R046": [
+   "Two passes implemented literally: the digest's claims become typed proposals (Unit C propose, pass 1); the deterministic resolver validates and derives every structural link (Unit C resolve_proposals + grounding, pass 2)."
+  ],
+  "D-013-R047": [
+   "Existence alone never suffices: docs/OUTSIDE.md EXISTS in the fixture tree yet quarantines as ungrounded_file_link; an existing-but-uncited directive's requirement quarantines as ungrounded_requirement_link; grounding bases are exactly task scope/diff/evidence/owner-approved relation; unresolved/ambiguous/stale links quarantine with machine-readable reasons (AS-3 tests)."
+  ],
+  "D-013-R048": [
+   "Promotion is atomic (A2 temp+validate+os.replace), idempotent (double promotion returns already_promoted with the identical generation; AS-4), replay-safe (injected crash before promotion leaves the prior state; replay converges to the byte-identical clean-run fingerprint; AS-4), concurrency-safe (held lock refuses with concurrent_writer, store unchanged; AS-6); crash points tested via os.replace injection; an invalid advisory tag alone NEVER quarantines a valid digest - it is discarded separately (AS-5)."
+  ],
+  "D-013-R050": [
+   "Two storage classes respected: the memory graph + quarantine records live ONLY in the external per-checkout runtime directory (never committed); committed artifacts are the sanitized reports under project-control/reports/M0-T067-*; no raw prompts, transcripts, private absolute paths, or unbounded logs."
+  ],
+  "D-013-R051": [
+   "Nullable fields never fabricated: source_manifest_fingerprint and per-file content_digest accept null; graph node/indexing fields stay null when no graph is provided; a missing value is never coerced to zero."
+  ],
+  "D-013-R053": [
+   "No combined or invented savings metric exists anywhere in Unit D outputs."
+  ],
+  "D-013-R064": [
+   "Paths follow existing conventions: code in tools/, doc in docs/, reports in project-control/reports/M0-T067-*; runtime data in the existing external runtime directory namespace (NYCBuildabilityContextIndex/memory-graph); no parallel control plane."
+  ],
+  "D-013-R069": [
+   "Continuation permitted by the control plane + owner authority: Unit C accepted (gates PASS, review PASS, 24/24 DCV) and merged; D-017 directs the A-to-Z continuation; a fresh read-only independent review of Unit D is dispatched before its gates."
+  ],
+  "D-013-R082": [
+   "tools/agent_supervisor/** untouched: listed in forbidden_paths and absent from the branch diff."
+  ]
+ }
+}

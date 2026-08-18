@@ -1,142 +1,143 @@
 {
- "task_id": "M0-T067",
- "title": "Context-intelligence Unit D: session/task memory graph with closed-schema digests, derived parents, quarantine (D-013)",
- "task_type": "infrastructure",
- "milestone_id": "M0",
- "objective": "Closed-schema session/task memory digests whose parents are DERIVED (digest->task->directive/milestone; requirement links->requirement entities; files->code-graph nodes; subsystem only via the versioned Unit-C resolver); two-pass extraction+deterministic resolution; grounding required (task scope/diff/evidence/owner-approved relation); unresolved/ambiguous/stale/ungrounded links quarantined; promotion atomic, idempotent, replay-safe, concurrency-safe with tested crash points; invalid advisory tags discarded separately, never quarantining a valid digest.",
- "business_reason": "D-013 Unit D; depends on Unit C resolver (sequencing requirement).",
- "inputs": [
-  "tools/subsystem_resolver.py + tools/subsystem_entities.py (accepted Unit C: versioned resolver, two-pass entity validation, index digests — consumed read-only)",
-  "tools/repo_index_cache.py IndexCache/SingleWriterLock/cache_dir_for (accepted A2 atomic generation store, reused as the external memory-graph store — consumed read-only)",
-  "tools/repo_fingerprint.py + tools/repo_index_incremental.py (accepted A1/A2 identity: repo_sha, source-manifest fingerprint — consumed read-only)",
-  ".claude/agents/*.md stems + orchestrator (deterministic agent allowlist source)",
-  "D-013 requirements R009/R011/R044/R045/R046/R047/R048/R050/R051 (closed schema, derived parents, grounding, quarantine, atomic promotion, storage classes)"
- ],
- "outputs": [
-  "tools/memory_digest.py — CLOSED digest schema (schema_version 1.0.0): exact allowed field set (unknown fields refuse), required R044 fields (stable content-derived digest_id, task_id, requirement_ids[], files[] with digests, agent from the repo-derived allowlist, outcome enum, repo_sha, source-manifest fingerprint, branch, task/directive index digests, resolver/ontology versions, evidence refs, unresolved_links, advisory tags separated), fail-closed validation with machine-readable codes",
-  "tools/memory_grounding.py — deterministic R047 grounding: a structural link requires authoritative task scope/diff/evidence/owner-approved relation, existence alone never suffices; per-link machine-readable grounding verdicts",
-  "tools/memory_graph.py — two-pass promotion pipeline (validate -> propose via Unit C -> resolve -> ground -> quarantine or promote) into an external per-checkout generation store reusing the accepted A2 IndexCache (atomic, idempotent by digest_id, replay-safe, single-writer locked); digest-level and link-level quarantine records with reasons; invalid advisory tags discarded separately; bounded CLI (promote/show/check)",
-  "tools/test_memory_graph.py — executable AS-1..AS-6 acceptance tests + crash-point injection, concurrency, idempotency, replay, staleness and quarantine edge cases",
-  "docs/MEMORY_GRAPH.md — the memory-graph contract: schema, grounding rules, quarantine semantics, promotion guarantees, storage location, Unit E consumption notes",
-  "project-control/reports/M0-T067-producer-report.md, M0-T067-evidence-map.json, M0-T067-coverage-evidence.md, M0-T067-G0-readiness.md"
- ],
- "dependencies": [
-  "M0-T066"
- ],
- "allowed_paths": [
-  "tools/memory_digest.py",
-  "tools/memory_grounding.py",
-  "tools/memory_graph.py",
-  "tools/test_memory_graph.py",
-  "docs/MEMORY_GRAPH.md",
-  "project-control/reports/M0-T067-producer-report.md",
-  "project-control/reports/M0-T067-evidence-map.json",
-  "project-control/reports/M0-T067-coverage-evidence.md",
-  "project-control/reports/M0-T067-G0-readiness.md"
- ],
- "forbidden_paths": [
-  "tools/agent_supervisor/",
-  "tools/code_graph/generate.py",
-  "tools/code_graph/query.py",
-  "tools/repo_fingerprint.py",
-  "tools/repo_index_incremental.py",
-  "tools/repo_index_cache.py",
-  "tools/repo_index_assembly.py",
-  "tools/repo_index_baseline.py",
-  "tools/context_pack.py",
-  "tools/context_pack_budget.py",
-  "tools/context_pack_index.py",
-  "tools/context_pack_sources.py",
-  "tools/context_pack_render.py",
-  "tools/context_pack_assembly.py",
-  "tools/context_pack_io.py",
-  "tools/subsystem_resolver.py",
-  "tools/subsystem_entities.py",
-  "tools/subsystem_map.json",
-  "tools/modularity_baseline.json",
-  "tools/model_routing.py",
-  ".github/",
-  "services/",
-  "apps/",
-  ".claude/"
- ],
- "acceptance_scenarios": [
-  {
-   "id": "AS-1",
-   "given": "digest documents with an unknown extra field, a missing required field, an agent outside the repo-derived allowlist, an outcome outside the enum, and a digest_id that does not match the content-derived id",
-   "when": "each is validated",
-   "then": "every one refuses with a machine-readable code (closed schema, fail closed) and a fully valid digest validates; the allowlist derives deterministically from .claude/agents/*.md stems + orchestrator (D-013-R044/R013)"
-  },
-  {
-   "id": "AS-2",
-   "given": "a valid grounded digest",
-   "when": "it is promoted",
-   "then": "every parent is DERIVED via pass-2 code: digest->task->milestone via the packet + master plan, requirement->directive via the registry, file->subsystem only via the versioned Unit-C resolver (resolver/map versions + task/directive index digests stamped into the promoted node); no model chooses any structural link (D-013-R045/R046/R044)"
-  },
-  {
-   "id": "AS-3",
-   "given": "a digest claiming a file link that EXISTS in the tree but is grounded in neither the task packet scope nor the provided diff/evidence nor an owner-approved relation, plus an unresolvable requirement link",
-   "when": "promotion runs",
-   "then": "those structural links are QUARANTINED with machine-readable reasons (ungrounded_file_link / unknown_requirement_id) and never silently enter the graph; existence alone is never sufficient (D-013-R047)"
-  },
-  {
-   "id": "AS-4",
-   "given": "the same digest promoted twice, and a crash injected between the temp write and atomic promotion on a fresh store",
-   "when": "promotion and replay run",
-   "then": "double promotion is idempotent (identical generation, no duplicate nodes); the crash leaves the prior valid generation intact (never a half-written graph) and the replay completes cleanly to the identical final state (D-013-R048)"
-  },
-  {
-   "id": "AS-5",
-   "given": "an otherwise valid digest carrying one invalid advisory tag",
-   "when": "it is promoted",
-   "then": "the digest PROMOTES with the invalid tag discarded into a separate machine-readable record; the digest itself is never quarantined for an advisory tag alone; valid advisory tags stay leaves, never structural parents (D-013-R048/R045)"
-  },
-  {
-   "id": "AS-6",
-   "given": "a second writer holding the store lock, and a store location resolving inside the repository",
-   "when": "promotion is attempted",
-   "then": "the locked attempt refuses safely with a machine-readable error (no corruption, single-writer serialization) and the in-repo location refuses (cache_inside_repo) — the memory graph lives only in the external per-checkout runtime directory and is never committed (D-013-R048/R050/R011)"
-  }
- ],
- "required_gates": [
-  "G0",
-  "G3",
-  "G4",
-  "G5"
- ],
- "producer_agent": null,
- "reviewer_agents": [
-  "code-reviewer",
-  "qa-engineer",
-  "security-reviewer",
-  "directive-compliance-verifier"
- ],
- "status": "backlog",
- "progress_percent": 0,
- "risks": [
-  "Grounding too permissive would let ungrounded links into the graph (R047 violation); mitigated by default-deny grounding (existence never suffices) + AS-3",
-  "Scope creep into Unit E: this unit builds digests + promotion + store only; NO repository-intelligence views or status projections (Unit E, M0-T068)"
- ],
- "blockers": [],
- "created_at": "2026-08-18T04:25:08.087640+00:00",
- "updated_at": "2026-08-18T04:25:08.485255+00:00",
- "directive_refs": [
-  {
-   "directive_id": "D-001",
-   "requirement_ids": "ALL"
-  },
-  {
-   "directive_id": "D-013",
-   "requirement_ids": "ALL"
-  }
- ],
- "directive_regime_version": "1.0",
- "directive_regime_entered_at": "2026-08-18T04:25:08.087640+00:00",
- "path_free_governance": true,
- "path_free_justification": "Paths bound at claim (2026-08-18) after M0-T066 acceptance, per the D-013 sequencing reservation (source-002). New memory-digest schema + grounding + promotion modules reusing the accepted A2 store and Unit C resolver read-only; no existing module is rewritten.",
- "documented_test_commands": [
-  "python tools/test_memory_graph.py",
-  "python -m pytest tools/test_memory_graph.py -q",
-  "python tools/modularity_check.py --check"
- ]
+  "task_id": "M0-T067",
+  "title": "Context-intelligence Unit D: session/task memory graph with closed-schema digests, derived parents, quarantine (D-013)",
+  "task_type": "infrastructure",
+  "milestone_id": "M0",
+  "objective": "Closed-schema session/task memory digests whose parents are DERIVED (digest->task->directive/milestone; requirement links->requirement entities; files->code-graph nodes; subsystem only via the versioned Unit-C resolver); two-pass extraction+deterministic resolution; grounding required (task scope/diff/evidence/owner-approved relation); unresolved/ambiguous/stale/ungrounded links quarantined; promotion atomic, idempotent, replay-safe, concurrency-safe with tested crash points; invalid advisory tags discarded separately, never quarantining a valid digest.",
+  "business_reason": "D-013 Unit D; depends on Unit C resolver (sequencing requirement).",
+  "inputs": [
+    "tools/subsystem_resolver.py + tools/subsystem_entities.py (accepted Unit C: versioned resolver, two-pass entity validation, index digests \u2014 consumed read-only)",
+    "tools/repo_index_cache.py IndexCache/SingleWriterLock/cache_dir_for (accepted A2 atomic generation store, reused as the external memory-graph store \u2014 consumed read-only)",
+    "tools/repo_fingerprint.py + tools/repo_index_incremental.py (accepted A1/A2 identity: repo_sha, source-manifest fingerprint \u2014 consumed read-only)",
+    ".claude/agents/*.md stems + orchestrator (deterministic agent allowlist source)",
+    "D-013 requirements R009/R011/R044/R045/R046/R047/R048/R050/R051 (closed schema, derived parents, grounding, quarantine, atomic promotion, storage classes)"
+  ],
+  "outputs": [
+    "tools/memory_digest.py \u2014 CLOSED digest schema (schema_version 1.0.0): exact allowed field set (unknown fields refuse), required R044 fields (stable content-derived digest_id, task_id, requirement_ids[], files[] with digests, agent from the repo-derived allowlist, outcome enum, repo_sha, source-manifest fingerprint, branch, task/directive index digests, resolver/ontology versions, evidence refs, unresolved_links, advisory tags separated), fail-closed validation with machine-readable codes",
+    "tools/memory_grounding.py \u2014 deterministic R047 grounding: a structural link requires authoritative task scope/diff/evidence/owner-approved relation, existence alone never suffices; per-link machine-readable grounding verdicts",
+    "tools/memory_graph.py \u2014 two-pass promotion pipeline (validate -> propose via Unit C -> resolve -> ground -> quarantine or promote) into an external per-checkout generation store reusing the accepted A2 IndexCache (atomic, idempotent by digest_id, replay-safe, single-writer locked); digest-level and link-level quarantine records with reasons; invalid advisory tags discarded separately; bounded CLI (promote/show/check)",
+    "tools/test_memory_graph.py \u2014 executable AS-1..AS-6 acceptance tests + crash-point injection, concurrency, idempotency, replay, staleness and quarantine edge cases",
+    "docs/MEMORY_GRAPH.md \u2014 the memory-graph contract: schema, grounding rules, quarantine semantics, promotion guarantees, storage location, Unit E consumption notes",
+    "project-control/reports/M0-T067-producer-report.md, M0-T067-evidence-map.json, M0-T067-coverage-evidence.md, M0-T067-G0-readiness.md"
+  ],
+  "dependencies": [
+    "M0-T066"
+  ],
+  "allowed_paths": [
+    "tools/memory_digest.py",
+    "tools/memory_grounding.py",
+    "tools/memory_graph.py",
+    "tools/test_memory_graph.py",
+    "docs/MEMORY_GRAPH.md",
+    "project-control/reports/M0-T067-producer-report.md",
+    "project-control/reports/M0-T067-evidence-map.json",
+    "project-control/reports/M0-T067-coverage-evidence.md",
+    "project-control/reports/M0-T067-G0-readiness.md"
+  ],
+  "forbidden_paths": [
+    "tools/agent_supervisor/",
+    "tools/code_graph/generate.py",
+    "tools/code_graph/query.py",
+    "tools/repo_fingerprint.py",
+    "tools/repo_index_incremental.py",
+    "tools/repo_index_cache.py",
+    "tools/repo_index_assembly.py",
+    "tools/repo_index_baseline.py",
+    "tools/context_pack.py",
+    "tools/context_pack_budget.py",
+    "tools/context_pack_index.py",
+    "tools/context_pack_sources.py",
+    "tools/context_pack_render.py",
+    "tools/context_pack_assembly.py",
+    "tools/context_pack_io.py",
+    "tools/subsystem_resolver.py",
+    "tools/subsystem_entities.py",
+    "tools/subsystem_map.json",
+    "tools/modularity_baseline.json",
+    "tools/model_routing.py",
+    ".github/",
+    "services/",
+    "apps/",
+    ".claude/"
+  ],
+  "acceptance_scenarios": [
+    {
+      "id": "AS-1",
+      "given": "digest documents with an unknown extra field, a missing required field, an agent outside the repo-derived allowlist, an outcome outside the enum, and a digest_id that does not match the content-derived id",
+      "when": "each is validated",
+      "then": "every one refuses with a machine-readable code (closed schema, fail closed) and a fully valid digest validates; the allowlist derives deterministically from .claude/agents/*.md stems + orchestrator (D-013-R044/R013)"
+    },
+    {
+      "id": "AS-2",
+      "given": "a valid grounded digest",
+      "when": "it is promoted",
+      "then": "every parent is DERIVED via pass-2 code: digest->task->milestone via the packet + master plan, requirement->directive via the registry, file->subsystem only via the versioned Unit-C resolver (resolver/map versions + task/directive index digests stamped into the promoted node); no model chooses any structural link (D-013-R045/R046/R044)"
+    },
+    {
+      "id": "AS-3",
+      "given": "a digest claiming a file link that EXISTS in the tree but is grounded in neither the task packet scope nor the provided diff/evidence nor an owner-approved relation, plus an unresolvable requirement link",
+      "when": "promotion runs",
+      "then": "those structural links are QUARANTINED with machine-readable reasons (ungrounded_file_link / unknown_requirement_id) and never silently enter the graph; existence alone is never sufficient (D-013-R047)"
+    },
+    {
+      "id": "AS-4",
+      "given": "the same digest promoted twice, and a crash injected between the temp write and atomic promotion on a fresh store",
+      "when": "promotion and replay run",
+      "then": "double promotion is idempotent (identical generation, no duplicate nodes); the crash leaves the prior valid generation intact (never a half-written graph) and the replay completes cleanly to the identical final state (D-013-R048)"
+    },
+    {
+      "id": "AS-5",
+      "given": "an otherwise valid digest carrying one invalid advisory tag",
+      "when": "it is promoted",
+      "then": "the digest PROMOTES with the invalid tag discarded into a separate machine-readable record; the digest itself is never quarantined for an advisory tag alone; valid advisory tags stay leaves, never structural parents (D-013-R048/R045)"
+    },
+    {
+      "id": "AS-6",
+      "given": "a second writer holding the store lock, and a store location resolving inside the repository",
+      "when": "promotion is attempted",
+      "then": "the locked attempt refuses safely with a machine-readable error (no corruption, single-writer serialization) and the in-repo location refuses (cache_inside_repo) \u2014 the memory graph lives only in the external per-checkout runtime directory and is never committed (D-013-R048/R050/R011)"
+    }
+  ],
+  "required_gates": [
+    "G0",
+    "G3",
+    "G4",
+    "G5"
+  ],
+  "producer_agent": "orchestrator",
+  "reviewer_agents": [
+    "code-reviewer",
+    "qa-engineer",
+    "security-reviewer",
+    "directive-compliance-verifier"
+  ],
+  "status": "claimed",
+  "progress_percent": 10,
+  "risks": [
+    "Grounding too permissive would let ungrounded links into the graph (R047 violation); mitigated by default-deny grounding (existence never suffices) + AS-3",
+    "Scope creep into Unit E: this unit builds digests + promotion + store only; NO repository-intelligence views or status projections (Unit E, M0-T068)"
+  ],
+  "blockers": [],
+  "created_at": "2026-08-18T04:25:08.087640+00:00",
+  "updated_at": "2026-08-18T18:24:00.519953+00:00",
+  "directive_refs": [
+    {
+      "directive_id": "D-001",
+      "requirement_ids": "ALL"
+    },
+    {
+      "directive_id": "D-013",
+      "requirement_ids": "ALL"
+    }
+  ],
+  "directive_regime_version": "1.0",
+  "directive_regime_entered_at": "2026-08-18T04:25:08.087640+00:00",
+  "path_free_governance": true,
+  "path_free_justification": "Paths bound at claim (2026-08-18) after M0-T066 acceptance, per the D-013 sequencing reservation (source-002). New memory-digest schema + grounding + promotion modules reusing the accepted A2 store and Unit C resolver read-only; no existing module is rewritten.",
+  "documented_test_commands": [
+    "python tools/test_memory_graph.py",
+    "python -m pytest tools/test_memory_graph.py -q",
+    "python tools/modularity_check.py --check"
+  ],
+  "worktree": "C:/Users/MLFLL/Downloads/nyc-zoning/wt-m0t064"
 }
