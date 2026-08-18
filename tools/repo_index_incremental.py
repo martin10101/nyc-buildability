@@ -271,15 +271,28 @@ def _fingerprint(root: pathlib.Path) -> rf.FingerprintResult:
     the cache key nor register as an invalidator -- and a reused TS bundle would
     keep stale alias-resolved edges (byte divergence). Folding it in makes such a
     change a global invalidator that forces a full rebuild."""
-    return rf.compute_fingerprint(
-        root, config_versions={"codegraph_config_inputs":
-                               asm.config_inputs_version(root)})
+    return _fingerprint_with(root, None)
+
+
+def _fingerprint_with(root: pathlib.Path,
+                      extra_config_versions: dict | None) -> rf.FingerprintResult:
+    """Compose config_versions; `extra_config_versions` lets a benchmark or
+    test simulate a PARSER/INDEXER VERSION change through the REAL global-
+    invalidator path (M0-T075, D-018-R043) without touching the frozen
+    fingerprint module. Production callers pass None (byte-identical
+    behavior)."""
+    versions = {"codegraph_config_inputs": asm.config_inputs_version(root)}
+    if extra_config_versions:
+        versions.update({str(k): str(v)
+                         for k, v in sorted(extra_config_versions.items())})
+    return rf.compute_fingerprint(root, config_versions=versions)
 
 
 def build_incremental(repo_root: str | os.PathLike[str], *,
                       cache_base: str | os.PathLike[str] | None = None,
                       run_id: str | None = None,
                       persist_telemetry: bool = True,
+                      extra_config_versions: dict | None = None,
                       ) -> IncrementalResult:
     """Build (or reuse) the index for the current snapshot, guaranteeing parity.
 
@@ -291,7 +304,7 @@ def build_incremental(repo_root: str | os.PathLike[str], *,
     """
     root = pathlib.Path(repo_root).resolve()
     started = time.time()
-    fp = _fingerprint(root)
+    fp = _fingerprint_with(root, extra_config_versions)
     cache = ric.IndexCache(root, base=cache_base)
     cache.recover()
 

@@ -162,6 +162,55 @@ class AS6DeterminismFailClosed(Case):
             sp.build_projection(self.root)
         self.assertNotIn(self.root, cm.exception.detail)
 
+    def test_uncommitted_control_plane_change_marks_stale(self) -> None:
+        # D-018-R048 / reviewer proof 5: an UNCOMMITTED task-status edit (HEAD
+        # unchanged) must stale the projection via the input-manifest digest.
+        out_json = os.path.join(self.root, "proj.json")
+        p = subprocess.run(
+            [sys.executable, CLI, "--repo", self.root, "generate",
+             "--out-json", out_json], capture_output=True, text=True)
+        self.assertEqual(p.returncode, 0, p.stdout + p.stderr)
+        head_before = _git(self.root, "rev-parse", "HEAD")
+        packet = os.path.join(self.root, "project-control", "tasks",
+                              "M0-T802.json")
+        doc = json.load(open(packet, encoding="utf-8"))
+        doc["status"] = "self_check"  # uncommitted edit; also exercises R049
+        _write(self.root, "project-control/tasks/M0-T802.json", doc)
+        self.assertEqual(_git(self.root, "rev-parse", "HEAD"), head_before)
+        p2 = subprocess.run(
+            [sys.executable, CLI, "--repo", self.root, "check", out_json],
+            capture_output=True, text=True)
+        self.assertEqual(p2.returncode, 3, p2.stdout + p2.stderr)
+        body = json.loads(p2.stdout)
+        self.assertTrue(body["stale"])
+        # HEAD identical on both sides: only the input manifest moved
+        self.assertEqual(body["recorded"]["repo_sha"], body["current"]["repo_sha"])
+        self.assertNotEqual(body["recorded"]["input_manifest_digest"],
+                            body["current"]["input_manifest_digest"])
+
+    def test_self_check_and_canceled_map_to_compact_meanings(self) -> None:
+        for status, compact in (("self_check", "gates pending"),
+                                ("canceled", "superseded")):
+            doc = json.load(open(os.path.join(
+                self.root, "project-control", "tasks", "M0-T802.json"),
+                encoding="utf-8"))
+            doc["status"] = status
+            _write(self.root, "project-control/tasks/M0-T802.json", doc)
+            proj = sp.build_projection(self.root)
+            by_id = {n["task_id"]: n for n in proj["nodes"]}
+            self.assertEqual(by_id["M0-T802"]["status"], compact, status)
+
+    def test_generated_current_kind_and_snapshot_note(self) -> None:
+        proj = sp.build_projection(self.root)
+        self.assertEqual(proj["projection_kind"], "generated_current")
+        out_json = os.path.join(self.root, "proj2.json")
+        subprocess.run([sys.executable, CLI, "--repo", self.root, "generate",
+                        "--out-json", out_json], check=True, capture_output=True)
+        p = subprocess.run([sys.executable, CLI, "--repo", self.root,
+                            "check", out_json], capture_output=True, text=True)
+        body = json.loads(p.stdout)
+        self.assertIn("SNAPSHOT", body["note"])
+
     def test_cli_generate_and_stale_check(self) -> None:
         out_json = os.path.join(self.root, "proj.json")
         p = subprocess.run(

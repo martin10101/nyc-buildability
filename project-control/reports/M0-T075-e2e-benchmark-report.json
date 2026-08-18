@@ -1,0 +1,164 @@
+{
+  "baseline_comparison": {
+    "no_worse_than_baseline": true,
+    "runs": [
+      {
+        "baseline_sources": 8,
+        "baseline_sources_missing_now": [],
+        "exit": 0,
+        "integrated_sources": 18,
+        "no_worse_than_baseline": true,
+        "sufficient": true,
+        "task": "M0-T066"
+      },
+      {
+        "baseline_sources": 8,
+        "baseline_sources_missing_now": [],
+        "exit": 0,
+        "integrated_sources": 17,
+        "no_worse_than_baseline": true,
+        "sufficient": true,
+        "task": "M0-T067"
+      }
+    ],
+    "status": "compared"
+  },
+  "checks": {
+    "advisory_memory_handled": true,
+    "cold_warm_deterministic": true,
+    "exact_provenance": true,
+    "global_budget_or_split_refusal": true,
+    "graph_source_evidence_resolved": true,
+    "required_evidence_completeness": true,
+    "requirement_texts_end_to_end": true
+  },
+  "method": "the ACTUAL integrated compiler (context_pack build/emit) invoked per shape with the same task packet, diff base, role, provider/model, reasoning setting (none recorded — the compiler takes no reasoning argument), and source snapshot, cold then warm",
+  "provider_token_savings": "UNMEASURED — no provider-reported usage exists in this offline benchmark (D-013-R012/R057)",
+  "schema": "context_benchmark_e2e/v1",
+  "shapes": [
+    {
+      "code_evidence_required": true,
+      "cold_warm_byte_identical": true,
+      "conditions": {
+        "diff_base": "HEAD",
+        "max_bytes": 400000,
+        "model": "claude-fable-5",
+        "provider": "claude",
+        "reasoning_setting": null,
+        "role": "worker",
+        "snapshot_manifest_digest": "311d1366a023c2f54cfc4992f0a4758f2b12e75e2f84b602cfee68adc3ad8e42",
+        "task": "M0-T900"
+      },
+      "exit_cold": 0,
+      "exit_warm": 0,
+      "graph_or_source_evidence_resolved": true,
+      "in_regime": true,
+      "memory_status_honest": true,
+      "provenance_complete": true,
+      "requirement_ids_present": true,
+      "requirements_group_present": true,
+      "reviewer_insufficiency_exit": 3,
+      "shape": "single_file_bug",
+      "source_excerpt_present": true,
+      "sufficient": true,
+      "tiny_budget_split_exit": 2,
+      "within_budget": true
+    },
+    {
+      "code_evidence_required": true,
+      "cold_warm_byte_identical": true,
+      "conditions": {
+        "diff_base": "HEAD",
+        "max_bytes": 400000,
+        "model": "claude-fable-5",
+        "provider": "claude",
+        "reasoning_setting": null,
+        "role": "worker",
+        "snapshot_manifest_digest": "36312d4ce0c1d40bc54f04d15b6f33b2691927680a165ae2833ba82fd4992866",
+        "task": "M0-T900"
+      },
+      "exit_cold": 0,
+      "exit_warm": 0,
+      "graph_or_source_evidence_resolved": true,
+      "in_regime": false,
+      "memory_status_honest": true,
+      "provenance_complete": true,
+      "shape": "cross_module_change",
+      "source_excerpt_present": true,
+      "sufficient": true,
+      "within_budget": true
+    },
+    {
+      "code_evidence_required": true,
+      "cold_warm_byte_identical": true,
+      "conditions": {
+        "diff_base": "HEAD",
+        "max_bytes": 400000,
+        "model": "claude-fable-5",
+        "provider": "claude",
+        "reasoning_setting": null,
+        "role": "worker",
+        "snapshot_manifest_digest": "7fb105f2f94c07f4e4345e07825b79dd216699f5967fbfb8b9dbb4607db4d8b7",
+        "task": "M0-T900"
+      },
+      "exit_cold": 0,
+      "exit_warm": 0,
+      "graph_or_source_evidence_resolved": true,
+      "in_regime": false,
+      "memory_status_honest": true,
+      "provenance_complete": true,
+      "shape": "frontend_backend_boundary",
+      "source_excerpt_present": true,
+      "sufficient": true,
+      "within_budget": true
+    },
+    {
+      "code_evidence_required": true,
+      "cold_warm_byte_identical": true,
+      "conditions": {
+        "diff_base": "HEAD",
+        "max_bytes": 400000,
+        "model": "claude-fable-5",
+        "provider": "claude",
+        "reasoning_setting": null,
+        "role": "worker",
+        "snapshot_manifest_digest": "bb7395725f1a5b781705d13a93a3bcd1a7857d448142913b89a0cbf979fb898b",
+        "task": "M0-T900"
+      },
+      "exit_cold": 0,
+      "exit_warm": 0,
+      "graph_or_source_evidence_resolved": true,
+      "in_regime": false,
+      "memory_status_honest": true,
+      "provenance_complete": true,
+      "shape": "schema_change",
+      "source_excerpt_present": true,
+      "sufficient": true,
+      "within_budget": true
+    },
+    {
+      "code_evidence_required": false,
+      "cold_warm_byte_identical": true,
+      "conditions": {
+        "diff_base": "HEAD",
+        "max_bytes": 400000,
+        "model": "claude-fable-5",
+        "provider": "claude",
+        "reasoning_setting": null,
+        "role": "worker",
+        "snapshot_manifest_digest": "4ccc8dff66b08d3889b3f463c395cd46ee9cc41516f6b2f485af22c87232af5d",
+        "task": "M0-T900"
+      },
+      "exit_cold": 0,
+      "exit_warm": 0,
+      "graph_or_source_evidence_resolved": false,
+      "in_regime": false,
+      "memory_status_honest": true,
+      "provenance_complete": true,
+      "shape": "control_plane_only",
+      "source_excerpt_present": false,
+      "sufficient": true,
+      "within_budget": true
+    }
+  ]
+}

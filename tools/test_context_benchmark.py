@@ -32,7 +32,15 @@ class AS1ShapeAndCases(unittest.TestCase):
             {"cold_build", "warm_no_change", "one_file_change",
              "dependency_change", "rename", "delete",
              "corrupt_cache_recovery", "interrupted_write_recovery",
-             "concurrent_writer"})
+             "concurrent_writer", "parser_version_change"})
+
+    def test_parser_version_case_is_distinct_and_documented(self) -> None:
+        # M0-T075 (D-018-R043): the parser-version bump must force a FULL
+        # rebuild through the real global-invalidator path, byte-identical.
+        row = self.rows["parser_version_change"]
+        self.assertTrue(row["parser_version_full_rebuild"])
+        self.assertTrue(row["byte_identical"])
+        self.assertIn("parser_probe", row["rebuild_reason"])
 
     def test_every_case_byte_identical_to_clean_full(self) -> None:
         for case, row in self.rows.items():
@@ -116,6 +124,52 @@ class AS3AS4ReportHonesty(unittest.TestCase):
         self.assertIn("non_eligible_change", cases)
         non = [r for r in rows if r["case"] == "non_eligible_change"][0]
         self.assertTrue(non["byte_identical"])
+
+
+class P95Correction(unittest.TestCase):
+    def test_p95_nearest_rank(self) -> None:
+        # M0-T075 (D-018-R045): nearest-rank p95, not the old median-at-small-n.
+        s = cb._stats([1.0, 2.0, 3.0])
+        self.assertEqual(s["p95"], 3.0)   # was 2.0 (median) before the fix
+        self.assertEqual(s["median"], 2.0)
+        s20 = cb._stats([float(i) for i in range(1, 21)])
+        self.assertEqual(s20["p95"], 19.0)  # ceil(0.95*20)-1 = rank 18 -> 19.0
+        self.assertEqual(cb._stats([])["p95"], None)
+
+
+class EvidencePredicates(unittest.TestCase):
+    def test_lock_orphan_parser_folded_into_evidence(self) -> None:
+        # M0-T075 (D-018-R044): actual refusal/quarantine + the parser case
+        # are PASS predicates; absence of the case fails the predicate.
+        saved = dict(cb.SHAPES)
+        cb.SHAPES = {"single_file_bug": saved["single_file_bug"]}
+        try:
+            report = cb.build_report(samples=1)
+        finally:
+            cb.SHAPES = saved
+        ev = report["promotion_evidence_R059"]
+        self.assertTrue(ev["lock_refusal_enforced"])
+        self.assertTrue(ev["orphan_temp_quarantined"])
+        self.assertTrue(ev["parser_version_change_documented_full_rebuild"])
+
+
+class E2ESingleShape(unittest.TestCase):
+    def test_e2e_regime_shape_end_to_end(self) -> None:
+        # Bounded CI-viable slice of the e2e corpus: the in-regime shape
+        # proves requirement texts, excerpts, determinism, split refusal,
+        # and enforceable insufficiency through the ACTUAL compiler.
+        row = cb._e2e_shape("single_file_bug")
+        self.assertEqual(row["exit_cold"], 0)
+        self.assertTrue(row["cold_warm_byte_identical"])
+        self.assertTrue(row["within_budget"])
+        self.assertTrue(row["sufficient"])
+        self.assertTrue(row["provenance_complete"])
+        self.assertTrue(row["requirement_ids_present"])
+        self.assertTrue(row["requirements_group_present"])
+        self.assertTrue(row["source_excerpt_present"])
+        self.assertTrue(row["graph_or_source_evidence_resolved"])
+        self.assertEqual(row["tiny_budget_split_exit"], 2)
+        self.assertEqual(row["reviewer_insufficiency_exit"], 3)
 
 
 class DeterministicCorpus(unittest.TestCase):
