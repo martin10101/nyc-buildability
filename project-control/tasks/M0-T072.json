@@ -106,8 +106,8 @@
     "security-reviewer",
     "directive-compliance-verifier"
   ],
-  "status": "self_check",
-  "progress_percent": 75,
+  "status": "awaiting_gate",
+  "progress_percent": 85,
   "risks": [
     "Supervisor-freeze lane: change must re-establish the M0-T039 suite baseline (>=1165 tests, 0 failures) and cite qualifying evidence in packet + commit message.",
     "Fail-closed additions must not break the existing test-only synthetic-root manifest flows (test_agent_supervisor_phase1/broker); test-only code-manifest behavior may remain where appropriate (D-017-R047).",
@@ -115,7 +115,7 @@
   ],
   "blockers": [],
   "created_at": "2026-08-18T11:28:01.685743+00:00",
-  "updated_at": "2026-08-18T12:24:05.149902+00:00",
+  "updated_at": "2026-08-18T12:24:18.352649+00:00",
   "directive_refs": [
     {
       "directive_id": "D-001",
