@@ -96,8 +96,8 @@
     "security-reviewer",
     "directive-compliance-verifier"
   ],
-  "status": "awaiting_gate",
-  "progress_percent": 95,
+  "status": "accepted",
+  "progress_percent": 100,
   "risks": [
     "npm may rewrite unrelated lock metadata mechanically; any such churn is inspected and reverted by targeted edits (never git reset/clean) per D-015-R015",
     "local npm is 11.4.2 vs CI pin 11.18.0; deterministic verification relies on npm ci + CI's pinned jobs; documented in evidence",
@@ -105,7 +105,7 @@
   ],
   "blockers": [],
   "created_at": "2026-08-18T07:30:27.892051+00:00",
-  "updated_at": "2026-08-18T07:56:37.038218+00:00",
+  "updated_at": "2026-08-18T08:28:01.360425+00:00",
   "directive_refs": [
     {
       "directive_id": "D-001",
@@ -118,5 +118,7 @@
   ],
   "directive_regime_version": "1.0",
   "directive_regime_entered_at": "2026-08-18T07:30:27.894056+00:00",
-  "worktree": "C:/Users/MLFLL/Downloads/nyc-zoning/wt-m0t071"
+  "worktree": "C:/Users/MLFLL/Downloads/nyc-zoning/wt-m0t071",
+  "accepted_by": "orchestrator",
+  "accepted_at": "2026-08-18T08:28:01.360425+00:00"
 }

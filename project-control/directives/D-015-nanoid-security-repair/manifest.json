@@ -13,7 +13,7 @@
  "frozen_baseline_sha": "5c71fe0e08c8717cc20ac232d8bd0d8a328525e1",
  "requirements_file": "requirements.json",
  "verification_file": "verification.json",
- "final_reviewed_sha": null,
+ "final_reviewed_sha": "a997f19bb2f9d3c76d5d08885144de7d4f4f8517",
  "sources": [
   {
    "file": "source-001.md",
@@ -86,6 +86,11 @@
    "at": "2026-08-18T07:29:28+00:00",
    "by": "orchestrator",
    "note": "D-015 captured verbatim: source-001.md (sha256 4ec12dddd8fa439c913a4aec1150ae1a230777144952687845a6144dd83ac989) = the owner's nanoid security-repair authorization of 2026-08-18. Frozen baseline origin/main 5c71fe0e08c8717cc20ac232d8bd0d8a328525e1. 28 rows D-015-R001..D-015-R028 decomposed. Ledger task M0-T071 is the single corrective task; D-015-BOOTSTRAP is the session sentinel. All registry files written as LF bytes and digests computed over those exact bytes (D-014 amendment-2 c14 lesson)."
+  },
+  {
+   "at": "2026-08-18T08:26:35+00:00",
+   "by": "orchestrator",
+   "note": "Owner-authorized acceptance cycle: fresh independent directive-compliance-verifier verification at head a997f19bb2f9 / identity 371eb3dac925 returned PASS 28/28 (21 task rows + 7 sentinel rows; 0 FAIL, 0 UNVERIFIABLE). final_reviewed_sha stamped. requirements.json untouched (c14 digests unchanged); verdicts live in verification.json per D-013 precedent."
   }
  ]
 }
