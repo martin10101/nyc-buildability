@@ -59,4 +59,4 @@ Additive `verify_manifest_with_config` + `manifest_is_stale` + `CONFIG_LOGICAL_N
 (`manifest.py`); doctor/verify-controller/start wired to the same production
 verification; `record-manifest` command; `--manifest` added to required dispatch
 inputs; failed verification exits non-zero and never contacts a provider. Proven by
-`tools/test_agent_supervisor_manifest_binding.py` (27 tests, AS-1..AS-9).
+`tools/test_agent_supervisor_manifest_binding.py` (33 tests, AS-1..AS-9 + guard regressions).

@@ -31,7 +31,8 @@
   "project-control/reports/M0-T072-G3-code-review.md",
   "project-control/reports/M0-T072-G4-qa-review.md",
   "project-control/reports/M0-T072-G5-security-review.md",
-  "project-control/reports/M0-T072-DCV-verification.md"
+  "project-control/reports/M0-T072-DCV-verification.md",
+  "project-control/reports/M0-T072-reverification.md"
  ],
  "forbidden_paths": [
   "tools/agent_supervisor/config.py",

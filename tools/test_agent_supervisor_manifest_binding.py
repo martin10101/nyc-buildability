@@ -396,6 +396,23 @@ class CliProductionPathTests(TempCase):
             self.assertFalse((self.tmp / "never.json").exists(),
                              "a refused recording must write nothing")
 
+    def test_record_manifest_out_cannot_target_protected_files(self) -> None:
+        """G5-4 regression: --out may not overwrite the config or model selection,
+        and a refused recording writes nothing (re-verify obs 1)."""
+        config = self.external_config()
+        # --out == --config
+        code, _ = self._run_cli("record-manifest", "--config", str(config),
+                                "--out", str(config))
+        self.assertEqual(code, 1)
+        self.assertEqual(config.read_text(encoding="utf-8"), VALID_CONFIG)
+        # --out basename config.toml / model_selection.toml in another dir
+        for name in ("config.toml", mf.MODEL_SELECTION_FILENAME):
+            target = self.tmp / "out" / name
+            code, _ = self._run_cli("record-manifest", "--config", str(config),
+                                    "--out", str(target))
+            self.assertEqual(code, 1, name)
+            self.assertFalse(target.exists(), f"refused --out {name} wrote a file")
+
     def test_verify_controller_no_manifest_payload_schema(self) -> None:
         """G3 finding 6: every verify-controller payload carries the same keys."""
         code, payload = self._run_cli("verify-controller")

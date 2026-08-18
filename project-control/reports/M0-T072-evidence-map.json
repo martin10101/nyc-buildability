@@ -15,7 +15,7 @@
   "D-017-R044": "start verifies the same external file before provider contact (verify_manifest_with_config before recover_boot; provider sentinel never touched): test_as7_no_provider_call_on_config_drift; --manifest now a required dispatch input: test_start_without_manifest_is_a_missing_required_input.",
   "D-017-R045": "Production dispatch fails closed on all four: manifest omits config.toml (test_as4_start_refuses_manifest_without_config_binding), config path missing (test_as3_no_config_path_fails_closed / missing file test_as3_missing_config_fails), digest differs (test_as2/as5/as7), stale manifest (test_as8_wrong_controller_version_is_stale, test_as8_edited_manifest_is_stale); failed verification exits non-zero.",
   "D-017-R046": "model_selection.toml stays excluded (EXCLUDED_NAMES unchanged): test_as6_model_selection_change_never_invalidates.",
-  "D-017-R047": "Test-only synthetic-root flows retained (phase1 ManifestTests untouched and passing in the 1813-test battery); production dispatch cannot accept a manifest failing to bind its config (R045 tests).",
+  "D-017-R047": "Test-only synthetic-root flows retained (phase1 ManifestTests untouched and passing in the 1845-test battery); production dispatch cannot accept a manifest failing to bind its config (R045 tests).",
   "D-017-R048": "No duplication: in-package config.toml REFUSED by verify_manifest_with_config and record-manifest (test_in_package_config_duplicate_is_refused).",
   "D-017-R049": "No symbolic-link or hard-link workaround anywhere in the diff (grep-clean; reviewers verify).",
   "D-017-R050": "Protected config never altered: no write path touches it; Stage-0 and post-implementation SHA-256 both 6aef12a9...fffde (reviewers re-hash).",
