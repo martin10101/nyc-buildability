@@ -1661,12 +1661,311 @@
    "task_id": "M0-T068",
    "directive_id": "D-013",
    "producer": "orchestrator",
-   "verifier": "",
-   "applicable_requirement_ids": [],
-   "requirements": [],
-   "reviewed_sha": null,
-   "reviewed_manifest_sha256": null,
-   "note": "PENDING stub created at capture (c14 coverage). The applicable set is derived by the resolver at verification time and every row is filled by the independent verifier at the unit's accept cycle; nothing is verified yet."
+   "verifier": "directive-compliance-verifier",
+   "applicable_requirement_ids": [
+    "D-013-R001",
+    "D-013-R002",
+    "D-013-R003",
+    "D-013-R004",
+    "D-013-R006",
+    "D-013-R007",
+    "D-013-R008",
+    "D-013-R009",
+    "D-013-R010",
+    "D-013-R011",
+    "D-013-R012",
+    "D-013-R013",
+    "D-013-R022",
+    "D-013-R023",
+    "D-013-R024",
+    "D-013-R025",
+    "D-013-R038",
+    "D-013-R039",
+    "D-013-R042",
+    "D-013-R050",
+    "D-013-R051",
+    "D-013-R052",
+    "D-013-R053",
+    "D-013-R058",
+    "D-013-R064",
+    "D-013-R069",
+    "D-013-R082"
+   ],
+   "requirements": [
+    {
+     "id": "D-013-R001",
+     "state": "PASS",
+     "evidence": [
+      "git diff --name-only main...HEAD @4cd7274 -> only new modules (tools/repo_views.py, repo_views_query.py, test_repo_views.py, docs/REPO_VIEWS.md) + M0-T068 control-plane/report/gate files; no all-at-once rewrite; Unit E is one bounded ledger task"
+     ],
+     "verified_at": "2026-08-18T19:34:53+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "4cd7274097e5df108420d8e93afd2aaf5d1f4bc3"
+    },
+    {
+     "id": "D-013-R002",
+     "state": "PASS",
+     "evidence": [
+      "tools/repo_views.py every view returns coverage_mode + coverage record with provenance; deep_view reopens exact source with content_digest; reproduced census coverage record @4cd7274 carries repo_identity/snapshot_fingerprint/head_sha/source_manifest_digest"
+     ],
+     "verified_at": "2026-08-18T19:34:53+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "4cd7274097e5df108420d8e93afd2aaf5d1f4bc3"
+    },
+    {
+     "id": "D-013-R003",
+     "state": "PASS",
+     "evidence": [
+      "tools/repo_views.py _truncate emits {limit,returned,omitted,truncated}; deep_view returns exact excerpt + sha256 content_digest not a summary; docs/REPO_VIEWS.md 'source files remain authoritative'; AS-3 tests pass (26/26)"
+     ],
+     "verified_at": "2026-08-18T19:34:53+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "4cd7274097e5df108420d8e93afd2aaf5d1f4bc3"
+    },
+    {
+     "id": "D-013-R004",
+     "state": "PASS",
+     "evidence": [
+      "project-control/tasks/M0-T068.json directive_refs D-001:ALL + D-013:ALL, dependency M0-T067 accepted+merged (PR#234/40b530f); HEAD reconciled 4cd7274; per M0-T065/T067 precedent verification.json PASS"
+     ],
+     "verified_at": "2026-08-18T19:34:53+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "4cd7274097e5df108420d8e93afd2aaf5d1f4bc3"
+    },
+    {
+     "id": "D-013-R006",
+     "state": "PASS",
+     "evidence": [
+      "project-control/tasks/M0-T068.json status=awaiting_gate (grep confirmed, not self-accepted); branch task/M0-T068-repo-views not main; M0-T068 not merged in main log; G3 FAIL then rework recorded (project-control/gates/M0-T068-G3.json) - gate not bypassed"
+     ],
+     "verified_at": "2026-08-18T19:34:53+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "4cd7274097e5df108420d8e93afd2aaf5d1f4bc3"
+    },
+    {
+     "id": "D-013-R007",
+     "state": "PASS",
+     "evidence": [
+      "single task branch, single-producer commits; reviewer read-only; no concurrent-writer evidence; per M0-T065/T067 precedent PASS"
+     ],
+     "verified_at": "2026-08-18T19:34:53+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "4cd7274097e5df108420d8e93afd2aaf5d1f4bc3"
+    },
+    {
+     "id": "D-013-R008",
+     "state": "PASS",
+     "evidence": [
+      "tools/repo_views.py uses only existing taxonomies: file paths (norm_path), graph node kinds from export (gi.nodes.kind), subsystem ONLY via versioned Unit C resolver (_subsystem_of), task/directive/requirement IDs; no new free-form taxonomy"
+     ],
+     "verified_at": "2026-08-18T19:34:53+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "4cd7274097e5df108420d8e93afd2aaf5d1f4bc3"
+    },
+    {
+     "id": "D-013-R009",
+     "state": "PASS",
+     "evidence": [
+      "Grep of both modules for llm|openai|anthropic|claude|gpt|completion|chat|summar -> only match is docstring 'never assemble a prompt'; all retrieval deterministic code; subsystem via resolver, kinds from export; new invalid_task_id guard is a deterministic regex"
+     ],
+     "verified_at": "2026-08-18T19:34:53+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "4cd7274097e5df108420d8e93afd2aaf5d1f4bc3"
+    },
+    {
+     "id": "D-013-R010",
+     "state": "PASS",
+     "evidence": [
+      "git diff --name-only main...HEAD -> no existing production file modified; only new tool files added; no shorten-for-AI refactor"
+     ],
+     "verified_at": "2026-08-18T19:34:53+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "4cd7274097e5df108420d8e93afd2aaf5d1f4bc3"
+    },
+    {
+     "id": "D-013-R011",
+     "state": "PASS",
+     "evidence": [
+      "build_index persist_telemetry=False (views write nothing); grep of all committed project-control/reports/M0-T068*.{md,json} + gates/M0-T068-G3.json for absolute paths/secrets/keys/transcripts -> no matches (clean)"
+     ],
+     "verified_at": "2026-08-18T19:34:53+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "4cd7274097e5df108420d8e93afd2aaf5d1f4bc3"
+    },
+    {
+     "id": "D-013-R012",
+     "state": "PASS",
+     "evidence": [
+      "no token-savings claim; _DETERMINISTIC_KEYS excludes estimated_tokens/provider_tokens; reproduced round 1: provider_tokens=None, estimated_tokens=None kept distinct from deterministic coverage"
+     ],
+     "verified_at": "2026-08-18T19:34:53+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "4cd7274097e5df108420d8e93afd2aaf5d1f4bc3"
+    },
+    {
+     "id": "D-013-R013",
+     "state": "PASS",
+     "evidence": [
+      "FIXED (round-1 finding 2). tools/repo_views_query.py _RX_TASK_ID + about_task guard raise invalid_task_id BEFORE build_index/any fs access; reproduced: traversal probes '../..','../../../../etc/passwd', a real relative-path to a temp secret, 'M0-T068/../../../x', 'M0-T068; rm', '' -> all raise invalid_task_id (out-of-repo secret never read); tools/repo_views.py deep_view excerpt_out_of_range reproduced; pre-existing codes index_unavailable/ontology_unavailable/non_canonical_path/path_not_in_tree/source_unreadable/task_packet_unreadable/unsupported_base_fingerprint remain; CLI exit 2 (test_about_task_traversal_id_refuses returncode 2, assertNotIn 'LEAK'); 26/26 tests pass"
+     ],
+     "verified_at": "2026-08-18T19:34:53+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "4cd7274097e5df108420d8e93afd2aaf5d1f4bc3"
+    },
+    {
+     "id": "D-013-R022",
+     "state": "PASS",
+     "evidence": [
+      "requirements.json R022 'in this run'/'bootstrap-only' scopes the bootstrap session; D-017 source-001.md authorizes 'one continuous A-to-Z implementation'; git log main dependency-order acceptance PR#232(B)/#233(C)/#234(D=40b530f) before M0-T068; matches verification.json M0-T065/T067 R022=PASS"
+     ],
+     "verified_at": "2026-08-18T19:34:53+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "4cd7274097e5df108420d8e93afd2aaf5d1f4bc3"
+    },
+    {
+     "id": "D-013-R023",
+     "state": "PASS",
+     "evidence": [
+      "CONFIRMED unchanged. tools/repo_views.py census_view/changed_view/neighborhood_view+card_view/deep_view each set coverage_mode in {census,changed,neighborhood,deep}; reproduced change_set classification keys added/content_modified/metadata_modified/deleted/renamed/global_invalidators intact; census reconciles=True (448=448); deep exact excerpt+digest; changed refuses unsupported_base_fingerprint"
+     ],
+     "verified_at": "2026-08-18T19:34:53+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "4cd7274097e5df108420d8e93afd2aaf5d1f4bc3"
+    },
+    {
+     "id": "D-013-R024",
+     "state": "PASS",
+     "evidence": [
+      "FIXED (round-1 finding 1). tools/repo_views.py _CACHE_STATE_KEYS now includes 'change_set'; reproduced census_view @4cd7274: runtime (labeled cache_state_non_identity) keys = affected_dependents, cache_result(hit/miss), change_set, files_parsed(reparsed), files_reused, mode, rebuild_reason; runtime.change_set keys = added, content_modified, deleted(=removed), global_invalidators, metadata_modified(=modified), renamed(=rebound) -> the full reparsed/rebound/removed/invalidated group now carried; change_set NOT in deterministic coverage (byte-identity preserved, coverage keys unchanged: repo_identity/snapshot_fingerprint/head_sha/branch/dirty_state_digest/source_manifest_digest/census{eligible,indexed,excluded,failed,stale,reconciles}/versions{codegraph_config_inputs,codegraph_schema,eligibility,fingerprint,ontology}/generator_identity/graph_nodes_after/graph_edges_after/export_digest/views_version/query_params/limits); AS-2 test asserts change_set+deleted in runtime; 26/26 pass"
+     ],
+     "verified_at": "2026-08-18T19:34:53+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "4cd7274097e5df108420d8e93afd2aaf5d1f4bc3"
+    },
+    {
+     "id": "D-013-R025",
+     "state": "PASS",
+     "evidence": [
+      "census_view reconciles=True with eligible==indexed (every eligible accounted); deep_view reopens actual source bytes with sha256 digest (only reopened files get deep excerpts); docs/REPO_VIEWS.md summaries advisory, source authoritative"
+     ],
+     "verified_at": "2026-08-18T19:34:53+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "4cd7274097e5df108420d8e93afd2aaf5d1f4bc3"
+    },
+    {
+     "id": "D-013-R038",
+     "state": "PASS",
+     "evidence": [
+      "no LLM-generated summaries in M0-T068 (grep R009 clean); structural truth solely from deterministic index/graph/versioned resolver; conditional requirement satisfied by absence + deterministic sourcing"
+     ],
+     "verified_at": "2026-08-18T19:34:53+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "4cd7274097e5df108420d8e93afd2aaf5d1f4bc3"
+    },
+    {
+     "id": "D-013-R039",
+     "state": "PASS",
+     "evidence": [
+      "tools/repo_views.py views return bounded structured dicts, never assemble a prompt/budget (docstring); no independent-budget concatenation; docs/REPO_VIEWS.md 'Views feed the ONE context compiler ... never assemble a prompt, budget, or capacity-filling content'"
+     ],
+     "verified_at": "2026-08-18T19:34:53+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "4cd7274097e5df108420d8e93afd2aaf5d1f4bc3"
+    },
+    {
+     "id": "D-013-R042",
+     "state": "PASS",
+     "evidence": [
+      "bounded explicit limits file_limit=100/edge_limit=25,10/max_lines=200 with truncation markers; no context-window/capacity-fill logic; retrieval controlled by explicit limits"
+     ],
+     "verified_at": "2026-08-18T19:34:53+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "4cd7274097e5df108420d8e93afd2aaf5d1f4bc3"
+    },
+    {
+     "id": "D-013-R050",
+     "state": "PASS",
+     "evidence": [
+      "HARDENED (round-1 R050 aspect). tools/repo_views_query.py about_task task_packet_unreadable detail now repo-relative ('project-control/tasks/{task_id}.json: {type}', no absolute path, no raw exception text); test_task_packet_error_detail_is_repo_relative asserts self.root absent from detail; external runtime telemetry not committed (persist_telemetry=False); committed evidence = sanitized reports under project-control/reports (grep-clean)"
+     ],
+     "verified_at": "2026-08-18T19:34:53+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "4cd7274097e5df108420d8e93afd2aaf5d1f4bc3"
+    },
+    {
+     "id": "D-013-R051",
+     "state": "PASS",
+     "evidence": [
+      "tools/repo_views_query.py _memory_digests returns advisory:True with status store_unavailable/store_empty (never fabricated); reproduced round 1 provider_tokens=None (nullable, not zero); test_memory_absent_is_labeled_not_fabricated passes"
+     ],
+     "verified_at": "2026-08-18T19:34:53+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "4cd7274097e5df108420d8e93afd2aaf5d1f4bc3"
+    },
+    {
+     "id": "D-013-R052",
+     "state": "PASS",
+     "evidence": [
+      "reproduced res.telemetry run-record keys: schema, run_id, unit_id, role, repo_identity, head_sha, branch, dirty_state_digest, source_manifest_digest, snapshot_fingerprint, versions, census(eligible/indexed/excluded/failed/stale), change_set(added/modified/deleted/renamed), files_examined/parsed/reused, affected_dependents, mode/rebuild_reason, graph_nodes_before/after, graph_edges_before/after, estimated_tokens, provider_tokens(nullable), elapsed_seconds; deterministic coverage excludes all volatile fields (no leak, verified change_set NOT in coverage) - byte-identity discipline preserved"
+     ],
+     "verified_at": "2026-08-18T19:34:53+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "4cd7274097e5df108420d8e93afd2aaf5d1f4bc3"
+    },
+    {
+     "id": "D-013-R053",
+     "state": "PASS",
+     "evidence": [
+      "estimated_tokens, provider_tokens, cache_result kept as distinct fields; no combined 'token savings' number in either module"
+     ],
+     "verified_at": "2026-08-18T19:34:53+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "4cd7274097e5df108420d8e93afd2aaf5d1f4bc3"
+    },
+    {
+     "id": "D-013-R058",
+     "state": "PASS",
+     "evidence": [
+      "git diff main...HEAD -- tools/context_pack*.py + all reused modules is EMPTY (compiler retrieval untouched); views additive; no evidence removed/correctness worsened; 26/26 tests pass"
+     ],
+     "verified_at": "2026-08-18T19:34:53+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "4cd7274097e5df108420d8e93afd2aaf5d1f4bc3"
+    },
+    {
+     "id": "D-013-R064",
+     "state": "PASS",
+     "evidence": [
+      "committed summaries under existing project-control/reports/; index cache external (build_index cache_base); no parallel control plane; docs/REPO_VIEWS.md confirms external cache/no writes"
+     ],
+     "verified_at": "2026-08-18T19:34:53+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "4cd7274097e5df108420d8e93afd2aaf5d1f4bc3"
+    },
+    {
+     "id": "D-013-R069",
+     "state": "PASS",
+     "evidence": [
+      "git log main: M0-T067 (Unit D) gated (G3 FAIL->PASS/G4/G5, review PASS), accepted+merged 40b530f (PR#234) before M0-T068; D-017 permits continuation; matches verification.json M0-T065/T067 R069=PASS"
+     ],
+     "verified_at": "2026-08-18T19:34:53+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "4cd7274097e5df108420d8e93afd2aaf5d1f4bc3"
+    },
+    {
+     "id": "D-013-R082",
+     "state": "PASS",
+     "evidence": [
+      "git diff main...HEAD -- tools/agent_supervisor/ @4cd7274 -> EMPTY (no modification)"
+     ],
+     "verified_at": "2026-08-18T19:34:53+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "4cd7274097e5df108420d8e93afd2aaf5d1f4bc3"
+    }
+   ],
+   "reviewed_sha": "4cd7274097e5df108420d8e93afd2aaf5d1f4bc3",
+   "reviewed_manifest_sha256": "96d3116f7d19afe76f9c286f08a4897d7307e6c0669ac9afeb388d363529cf1e",
+   "note": "Independent DCV PASS round 2: 27/27 applicable D-013 requirements verified at reviewed_sha 4cd7274 / manifest 96d3116f7d19. Unit E: bounded repository-intelligence views (census/changed/neighborhood/deep) with the single R024 coverage-record builder, explicit truncation, typed retrieval, fail-closed behavior. Round-1 review found two blocking defects (R024 'files removed' gap; about_task task-id traversal reading outside the repo; G3 FAIL at 319078b on file); the rework closed both — change_set counts in the labeled cache-state section and an invalid_task_id guard before any filesystem access — independently reproduced by the DCV with the reviewer's probes + 3 regression tests (26/26). R022/R069 satisfied under the D-017 continuation after Unit D merged (40b530f). Producer (orchestrator) != verifier."
   },
   {
    "task_id": "M0-T069",
@@ -2291,5 +2590,5 @@
    "note": "Independent DCV PASS 46/46 (round 1) + code/QA delta re-review CONFIRM-CLOSED (MAJOR-1/MINOR-2/F1). R037/R079 A1-scope only; the byte-identical incremental-vs-full parity test is the A2 (M0-T064) obligation, built and passing. Producer != verifier."
   }
  ],
- "updated_at": "2026-08-18T18:54:51+00:00"
+ "updated_at": "2026-08-18T19:34:53+00:00"
 }
