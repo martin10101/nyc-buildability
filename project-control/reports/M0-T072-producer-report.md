@@ -58,10 +58,13 @@ the in-package-config guard applies to the production entry points only.
 - Targeted pre-battery run of the nine modules that reference the changed surfaces
   (broker, endurance, ipc, loop, model_chain, phase1, reviewer, runner, start_reentry):
   **561 passed**.
-- Disclosure: an earlier full-battery attempt was externally stopped at ~93% and its
-  progress line showed 5 failures in one cluster; the failure names were never printed
-  (killed before the summary) and the complete clean rerun above reproduced none of
-  them. No test was modified between those runs.
+- Correction (round 1): an earlier producer battery reported "1813 passed, 0 failures";
+  independent review (G3/G5/DCV) proved this was measured against the WRONG working tree
+  (the unmodified ctl17 checkout, which lacks the new test module). The true be3a599 tree
+  had 14 failures from four fixture modules asserting the pre-repair contract; those
+  fixtures are now updated and the battery is 1845 passed / 2 skipped / 0 failures. The
+  earlier "5-failure cluster" from a killed battery was the honest leading-edge signal,
+  not noise.
 
 ## Requirement disposition notes
 
