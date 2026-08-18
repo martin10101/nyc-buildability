@@ -46,12 +46,16 @@ builder — fail-safe).
 
 ## Why parity is guaranteed, not luck
 The A1 fingerprint hashes CONTENT of every eligible file (mtime never trusted), so
-the reuse key can't be fooled by a restored mtime. On a content-only edit the
-resolution index (`_PyIndex`/`_TsResolver`, a function of the file-PATH set) and
-schema-node set are unchanged, so a reused bundle is provably still exact; only
-changed files are re-extracted; the assembly is deterministic. The parity test
-compares against the REAL generator (independent reference). See
-`M0-T064-parity-evidence.md`.
+the reuse key can't be fooled by a restored mtime. A reused bundle is exact only
+while every input its extraction depended on is unchanged: the file's own content,
+the resolution index, and the schema-node set. `_PyIndex` is a function of the
+Python file-PATH set; `_TsResolver` is a function of the TS file-PATH set PLUS the
+tsconfig alias map (`code_graph.CONFIG_INPUTS`); the schema-node set depends on the
+schema files' paths + `$id`. The gate reuses a bundle only when the path set,
+schema set, AND config inputs are unchanged (a config-input change is folded into
+the fingerprint and fires a global invalidator → full rebuild). Only changed files
+are re-extracted; the assembly is deterministic. The parity test compares against
+the REAL generator (independent reference). See `M0-T064-parity-evidence.md`.
 
 ## Selective-reparse correction (this revision)
 The first A2 revision full-rebuilt on ANY change (parity-safe but not
@@ -65,17 +69,28 @@ graph (wrong keys) and silently collapsed to the changed set — now read from r
 import edges; (b) the prior manifest lacked `config_versions`, spuriously firing a
 global invalidator on every rebuild — now merged before classification.
 
+## tsconfig stale-reuse fix (review FAIL → resolved)
+The re-review found a real byte-divergence: a tsconfig alias change (which steers
+TS `@/` resolution) concurrent with a source edit took the incremental path and
+reused stale TS bundles, because tsconfig is a generator `CONFIG_INPUT`, not an
+indexed file, so A1's fingerprint never captured it. Fixed by folding a digest of
+the generator's `CONFIG_INPUTS` (`repo_index_assembly.config_inputs_version`) into
+the fingerprint the incremental layer uses: any config-input change now moves the
+cache key (no stale hit, even for a committed tsconfig-only edit) and surfaces as a
+global invalidator → full rebuild. Regression: `TsconfigInvalidation` (3 tests),
+including the reviewer's exact repro.
+
 ## Acceptance scenarios (AS-1..AS-5) — all proven
-Each maps to passing tests in `tools/test_repo_index_incremental.py` (22) and
+Each maps to passing tests in `tools/test_repo_index_incremental.py` (25) and
 `tools/test_repo_index_assembly.py` (7). The A/A split (source-002 decisions 4/6)
 places this incremental build + the byte-identical parity TEST in A2; A1 delivered
 the deterministic reference.
 
 ## Test evidence (documented_test_commands)
-- `python tools/test_repo_index_incremental.py` → 22 passed.
+- `python tools/test_repo_index_incremental.py` → 25 passed.
 - `python tools/test_repo_index_assembly.py` → 7 passed.
-- `python -m pytest tools/test_repo_index_incremental.py tools/test_repo_index_assembly.py -q` → 29 passed.
-- Full A1+A2 battery (`pytest tools/test_repo_{fingerprint,index_cache,index_baseline,index_incremental,assembly}.py`) → 63 passed, 1 skipped.
+- `python -m pytest tools/test_repo_index_incremental.py tools/test_repo_index_assembly.py -q` → 32 passed.
+- Full A1+A2 battery (`pytest tools/test_repo_{fingerprint,index_cache,index_baseline,index_incremental,assembly}.py`) → 66 passed, 1 skipped.
 - Real-repo: cold `incremental==full` True (files_parsed=420); warm reuse `==full`
   True (files_parsed=0); warm 1-file edit `==full` True (files_parsed=1).
 - `python tools/modularity_check.py --check` → 0 failures (incremental 500 SLOC,

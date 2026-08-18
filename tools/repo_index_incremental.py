@@ -264,6 +264,18 @@ def _full_via_generator(root: pathlib.Path) -> tuple[bytes, dict[str, Any], dict
     return export, payload, {"nodes": n, "edges": e}
 
 
+def _fingerprint(root: pathlib.Path) -> rf.FingerprintResult:
+    """A1's snapshot fingerprint, extended with the generator's CONFIG_INPUTS
+    digest (e.g. apps/web/tsconfig.json). tsconfig steers TS alias resolution but
+    is not an indexed file, so without this a tsconfig change would neither move
+    the cache key nor register as an invalidator -- and a reused TS bundle would
+    keep stale alias-resolved edges (byte divergence). Folding it in makes such a
+    change a global invalidator that forces a full rebuild."""
+    return rf.compute_fingerprint(
+        root, config_versions={"codegraph_config_inputs":
+                               asm.config_inputs_version(root)})
+
+
 def build_incremental(repo_root: str | os.PathLike[str], *,
                       cache_base: str | os.PathLike[str] | None = None,
                       run_id: str | None = None,
@@ -279,7 +291,7 @@ def build_incremental(repo_root: str | os.PathLike[str], *,
     """
     root = pathlib.Path(repo_root).resolve()
     started = time.time()
-    fp = rf.compute_fingerprint(root)
+    fp = _fingerprint(root)
     cache = ric.IndexCache(root, base=cache_base)
     cache.recover()
 

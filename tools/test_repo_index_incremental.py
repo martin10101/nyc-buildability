@@ -177,6 +177,50 @@ class GeneratorFallback(RepoCase):
             cg.SCHEMA_VERSION = original
 
 
+class TsconfigInvalidation(RepoCase):
+    """Regression (review FAIL): a tsconfig alias change steers TS `@/` resolution
+    but tsconfig is not an indexed file. It MUST invalidate reuse, else a reused TS
+    bundle keeps stale alias-resolved edges and the incremental export diverges
+    from a clean full rebuild (D-013-R032/R037/R079)."""
+
+    def setUp(self) -> None:
+        super().setUp()
+        self.add("apps/web/tsconfig.json",
+                 '{"compilerOptions":{"paths":{"@/*":["./src/*"]}}}')
+        self.add("apps/web/src/b.ts", "export const x = 1;\n")
+        self.add("apps/web/src/a.ts", "import { x } from '@/b';\n")
+        self.add("services/api/t.py", "v = 1\n")
+
+    def test_tsconfig_change_with_source_edit_forces_full_and_is_identical(self) -> None:
+        self.build()  # seed: a.ts resolves '@/b' -> apps/web/src/b.ts
+        # retarget the alias AND edit an unrelated source file in the same snapshot
+        (self.repo / "apps/web/tsconfig.json").write_text(
+            '{"compilerOptions":{"paths":{"@/*":["./src/nowhere/*"]}}}', newline="\n")
+        (self.repo / "services/api/t.py").write_text("v = 2\n", newline="\n")
+        _git(self.repo, "commit", "-aqm", "retarget alias + edit source")
+        r = self.build()
+        self.assertEqual(r.mode, "full")            # config input changed -> full
+        self.assertEqual(r.export_bytes, self.full_bytes())   # no stale TS bundle
+
+    def test_committed_tsconfig_only_change_is_not_served_stale(self) -> None:
+        self.build()
+        (self.repo / "apps/web/tsconfig.json").write_text(
+            '{"compilerOptions":{"paths":{"@/*":["./src/nowhere/*"]}}}', newline="\n")
+        _git(self.repo, "commit", "-aqm", "retarget alias only")
+        r = self.build()
+        # even with no indexed-file change, the config-input digest moved the key
+        self.assertFalse(r.reused)                  # not a stale cache hit
+        self.assertEqual(r.export_bytes, self.full_bytes())
+
+    def test_source_edit_without_tsconfig_change_stays_incremental(self) -> None:
+        self.build()
+        (self.repo / "services/api/t.py").write_text("v = 3\n", newline="\n")
+        _git(self.repo, "commit", "-aqm", "edit source only")
+        r = self.build()
+        self.assertEqual(r.mode, "incremental")     # tsconfig fix must not over-invalidate
+        self.assertEqual(r.export_bytes, self.full_bytes())
+
+
 class ChangeClassification(RepoCase):
     def test_rename_is_detected_by_content_digest(self) -> None:
         self.add("services/api/a.py", "def a():\n    return 1\n")

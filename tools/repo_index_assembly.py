@@ -28,6 +28,7 @@ no cross-file key collisions and merge back deterministically.
 from __future__ import annotations
 
 import dataclasses
+import hashlib
 import json
 import os
 import pathlib
@@ -65,6 +66,29 @@ def _require_known_generator() -> None:
         raise UnknownGeneratorError(
             f"generator {generator_identity()} != verified "
             f"{KNOWN_GENERATOR_VERSION}/{KNOWN_SCHEMA_VERSION}")
+
+
+def config_inputs_version(repo_root: str | os.PathLike[str]) -> str:
+    """A digest over the generator's CONFIG_INPUTS (e.g. apps/web/tsconfig.json).
+
+    These files STEER generation -- tsconfig drives TS `@/` alias resolution in
+    `_TsResolver` -- but are NOT indexed source files, so A1's snapshot
+    fingerprint does not otherwise capture them. Folding this digest into the
+    fingerprint the incremental layer uses makes any config-input change (a) move
+    the cache key (no stale hit even for a committed tsconfig-only edit) and
+    (b) surface as a global invalidator in classify_changes, forcing a full
+    rebuild. Without it, a reused TS bundle keeps its old alias-resolved edges and
+    the incremental export diverges from a clean full rebuild. Hashes exactly like
+    the generator's own `_fingerprint_entry` (CRLF->LF, sha256), so an existing
+    vs. absent config input is handled identically to the generator.
+    """
+    root = str(pathlib.Path(repo_root).resolve())
+    h = hashlib.sha256()
+    h.update(b"codegraph_config_inputs\x00")
+    for rel in cg.CONFIG_INPUTS:
+        if os.path.isfile(os.path.join(root, *rel.split("/"))):
+            h.update(cg._fingerprint_entry(root, rel))
+    return h.hexdigest()
 
 
 @dataclasses.dataclass

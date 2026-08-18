@@ -15,7 +15,7 @@
    "Lower cost = cache reuse on unchanged snapshots + selective reparse (only changed files) on a local edit, never dropping material; structural/invalidator changes rebuild fully."
   ],
   "D-013-R004": [
-   "Reconciled against live git/fingerprint; reuse keyed on the content-hashed snapshot fingerprint."
+   "Reconciled against live git/fingerprint; reuse keyed on the content-hashed snapshot fingerprint, which folds in a digest of the generator's CONFIG_INPUTS (apps/web/tsconfig.json) so a config-input change never serves stale (test_committed_tsconfig_only_change_is_not_served_stale)."
   ],
   "D-013-R006": [
    "Worker role does not bypass gates/push/accept; submitted to independent gates."
@@ -90,7 +90,7 @@
    "Distinct measures separate; no combined token-savings number."
   ],
   "D-013-R056": [
-   "Full-rebuild-on-global-invalidator with reported reason (rebuild_reason=global_invalidator:...); test_global_invalidator_forces_full_rebuild."
+   "Full-rebuild-on-global-invalidator with reported reason (rebuild_reason=global_invalidator:...), including a change to the generator's CONFIG_INPUTS/tsconfig alias map (test_global_invalidator_forces_full_rebuild, test_tsconfig_change_with_source_edit_forces_full_and_is_identical)."
   ],
   "D-013-R059": [
    "Promotion evidence: warm no-change run reparses ZERO source files (files_parsed=0; test_warm_no_change_reparses_zero); a local change triggers no full rebuild (mode=incremental, only changed files reparsed; test_local_edit_reparses_only_changed_no_full_rebuild); incremental and clean full exports match byte-for-byte; census accounts for every eligible file; nullable measures never fabricated as zero."
@@ -123,7 +123,7 @@
    "A2 decision: incremental indexing/invalidation on top of A1, byte-identical parity required - implemented."
   ],
   "D-013-R079": [
-   "Byte-identical incremental-vs-full REQUIRED and PROVEN vs the REAL generator, including selective-reparse builds (ParityInvariant + SelectiveReparse == clean_full each time; assembly cold/warm == build_graph)."
+   "Byte-identical incremental-vs-full REQUIRED and PROVEN vs the REAL generator, including selective-reparse builds and the tsconfig-alias hazard (ParityInvariant + SelectiveReparse + TsconfigInvalidation == clean_full each time; assembly cold/warm == build_graph)."
   ],
   "D-013-R081": [
    "Eligibility not widened; reuses A1's code_graph roots via the fingerprint."

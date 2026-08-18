@@ -98,10 +98,17 @@ digest non-colliding even on identical bytes. Canonical JSON is
     output; **no full rebuild on a local change** (D-013-R032/R059).
   - `full` — a cold build, a structural change (add/delete/rename, which alters
     the global resolution index or the schema-node set), or a global invalidator
-    (parser/config/schema/eligibility version) rebuilds via the same driver with
-    a recorded reason. A structural change is a documented invalidator of the
-    resolution index, so a full rebuild is the deterministically-safe closure
-    (D-013-R032 "smallest deterministically proven invalidation closure").
+    (parser/config/schema/eligibility version, **or a change to the generator's
+    `CONFIG_INPUTS`** — e.g. `apps/web/tsconfig.json`, which steers TS `@/` alias
+    resolution) rebuilds via the same driver with a recorded reason. A structural
+    change is a documented invalidator of the resolution index, so a full rebuild
+    is the deterministically-safe closure (D-013-R032 "smallest deterministically
+    proven invalidation closure").
+  - **Config-input guard**: tsconfig is not an indexed file, so a digest of the
+    generator's `CONFIG_INPUTS` is folded into the fingerprint the incremental
+    layer uses (`repo_index_assembly.config_inputs_version`); a config-input change
+    moves the cache key (no stale hit) and fires a global invalidator. Without it,
+    a reused TS bundle would keep stale alias-resolved edges — a byte divergence.
 - **Byte-identical assembly** (`repo_index_assembly.drive`): reproduces
   `code_graph.build_graph`'s exported bytes from per-file bundles. It reuses the
   generator's own extraction internals (`_extract_py/_ts`, `_PyIndex`,

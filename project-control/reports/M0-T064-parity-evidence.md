@@ -15,10 +15,22 @@ Two invariants carry the unit:
   reproduces `build_graph`'s output from per-file *bundles* (each file's exact
   slice of nodes + import edges + contract edges + externals; every edge a file
   contributes has `from == that file`, so bundles partition the graph with no
-  cross-file key collision). On a content-only edit the global resolution index
-  (`_PyIndex`/`_TsResolver`, a function of the file-PATH set) and the schema-node
-  set are unchanged, so a reused bundle is provably still exact; only the changed
-  files are re-extracted.
+  cross-file key collision). A reused bundle is exact only while every input its
+  extraction depended on is unchanged: the file's own content, the resolution
+  index, and the schema-node set. `_PyIndex` is a function of the Python file-PATH
+  set (guarded by "no add/delete/rename" + `scan_input_files` equality);
+  `_TsResolver` is a function of the TS file-PATH set **plus the tsconfig alias
+  map** (`code_graph.CONFIG_INPUTS`); the schema-node set is a function of the
+  schema files' paths + `$id` content (guarded by "no schema content change").
+- **Config-input guard (the tsconfig hazard).** tsconfig is not an indexed file,
+  so A1's fingerprint does not otherwise capture it — a tsconfig alias change
+  would leave the cache key unmoved and never register as a change, letting a
+  reused TS bundle keep stale alias-resolved edges (a real byte divergence, found
+  in review). The incremental layer therefore folds a digest of the generator's
+  `CONFIG_INPUTS` into the fingerprint (`repo_index_assembly.config_inputs_version`):
+  any config-input change moves the cache key (no stale hit, even for a committed
+  tsconfig-only edit) AND surfaces as a global invalidator that forces a full
+  rebuild. Only then is "a reused bundle is exact on a content-only edit" true.
 - The driver is **version-guarded**: it runs only against the exact
   `GENERATOR_VERSION`/`SCHEMA_VERSION` it was verified for (`1.1.0`/`1.0.0`); any
   other version raises `UnknownGeneratorError` and the caller falls back to the
@@ -30,17 +42,20 @@ Two invariants carry the unit:
 ## Real-repo proof (deterministic; reproduce with the harness below)
 ```
 generator:        1.1.0/1.0.0  (recognized)
-cold build:       mode=full         export == clean_full (real build_graph) = True   files_parsed=420  files_reused=0    inputs=430
-warm no-change:   mode=reuse        export == clean_full = True                        files_parsed=0    files_reused=430
+cold build:       mode=full         export == clean_full (real build_graph) = True   files_parsed=421  files_reused=0    inputs=431
+warm no-change:   mode=reuse        export == clean_full = True                        files_parsed=0    files_reused=431
 warm 1-file edit: mode=incremental  export == clean_full = True                        files_parsed=1    (only the edited file)
-contract-edge partition == real _contract_edges = True (318 edges)
+contract-edge partition == real _contract_edges = True
+tsconfig alias change + source edit:  mode=full   export == clean_full = True   (no stale TS bundle)
 ```
+(Counts are the live repo at review time and drift as files are added; the parity
+equality, not the absolute count, is the invariant.)
 Reproduce:
 `python -c "import tools.repo_index_assembly as a, tools.code_graph.generate as g; \
 r=a.drive('.'); import"` and `python tools/test_repo_index_assembly.py` +
 `python tools/test_repo_index_incremental.py`.
 
-## Test proof (`tools/test_repo_index_incremental.py`, 22 tests · `tools/test_repo_index_assembly.py`, 7 tests)
+## Test proof (`tools/test_repo_index_incremental.py`, 25 tests · `tools/test_repo_index_assembly.py`, 7 tests)
 - `ParityInvariant.test_cold_build_matches_full` / `test_warm_reuse_matches_full`
   — cold and warm-reuse both == clean full (real generator).
 - `ParityInvariant.test_parity_holds_after_each_change_class` — parity re-verified
@@ -52,6 +67,10 @@ r=a.drive('.'); import"` and `python tools/test_repo_index_assembly.py` +
 - `SelectiveReparse.test_two_file_edit_reparses_two`.
 - `GeneratorFallback.*` — an unrecognized generator version falls back to the real
   builder (byte-identical) and the assembly driver refuses to run.
+- `TsconfigInvalidation.*` — a tsconfig alias change (with or without a concurrent
+  source edit) forces a full rebuild and stays byte-identical (no stale TS bundle);
+  a committed tsconfig-only change is not served stale; a normal source edit with
+  no tsconfig change still takes the incremental path (no over-invalidation).
 - `ChangeClassification.*` — rename (not add+delete), global invalidator, metadata.
 - `ImporterClosure.test_importer_closure_is_transitive_and_deterministic` and
   `test_closure_on_real_bundles` — closure over the REAL import edges.
