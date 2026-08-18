@@ -207,7 +207,21 @@
     "M0-T069"
    ],
    "manifest": "D-013-context-intelligence-pipeline/manifest.json"
+  },
+  {
+   "directive_id": "D-014",
+   "slug": "supervisor-command-authority-repair",
+   "title": "Bounded supervisor repair: packet command authority wiring (defect A) + revoke-all/status open_asks reconciliation (defect B)",
+   "status": "active",
+   "issued_at": "2026-08-18",
+   "issued_by": "owner",
+   "supersedes": [],
+   "superseded_by": null,
+   "affected_tasks": [
+    "M0-T070"
+   ],
+   "manifest": "D-014-supervisor-command-authority-repair/manifest.json"
   }
  ],
- "updated_at": "2026-08-12T05:00:00+00:00"
+ "updated_at": "2026-08-18T05:47:12+00:00"
 }

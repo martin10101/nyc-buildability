@@ -616,6 +616,27 @@ class DurableJournal:
                 "SELECT * FROM queued_asks WHERE answered_at_utc = '' ORDER BY created_at_utc")
         ]
 
+    def resolve_ask(self, ask_id: str, answer: str) -> bool:
+        """Mark a queued ASK answered, preserving the row as history.
+
+        M0-T070 (D-014 AS-8): revoking or answering an approval never deleted
+        its `queued_asks` row, and nothing else updates this table, so the ask
+        stayed "open" forever. The row is UPDATEd, never deleted - the question
+        and its request digest remain auditable history. Returns False when no
+        unanswered row matches (already resolved, or a loop-origin ask id).
+        """
+        self.conn.execute("BEGIN IMMEDIATE")
+        try:
+            cursor = self.conn.execute(
+                "UPDATE queued_asks SET answered_at_utc = ?, answer = ? "
+                "WHERE ask_id = ? AND answered_at_utc = ''",
+                (to_utc_iso(), answer, ask_id))
+            self.conn.execute("COMMIT")
+        except Exception:
+            self.conn.execute("ROLLBACK")
+            raise
+        return cursor.rowcount > 0
+
     # -- backup / restore (S6, S13.11) ---------------------------------------
 
     def backup_to(self, destination: str | os.PathLike[str]) -> pathlib.Path:

@@ -1,0 +1,102 @@
+{
+ "schema": "directive_manifest/v1",
+ "directive_id": "D-014",
+ "version": 1,
+ "slug": "supervisor-command-authority-repair",
+ "title": "Bounded supervisor repair: packet command authority wiring (defect A) + revoke-all/status open_asks reconciliation (defect B)",
+ "status": "active",
+ "issued_by": "owner",
+ "issued_at": "2026-08-18",
+ "captured_at": "2026-08-18T05:47:12+00:00",
+ "channel": "owner_typed_instruction",
+ "frozen_baseline_sha": "de2f224a7db16405edfc0e2f2f0902f5164819a0",
+ "sources": [
+  {
+   "file": "source-001.md",
+   "kind": "original",
+   "sequence": 1,
+   "recorded_at": "2026-08-18T05:47:12+00:00",
+   "content_digest_sha256": "7628740e1a19ee1cf7424c42d1af00c4feeb2c9fbf4f2ad804bf101bb59596f6"
+  }
+ ],
+ "amendments": [],
+ "supersedes": [],
+ "superseded_by": null,
+ "affected_tasks": [
+  "M0-T070"
+ ],
+ "affected_prs": [],
+ "affected_branches": [
+  "task/M0-T070-supervisor-authority-repair"
+ ],
+ "scope": {
+  "task_ids": [
+   "M0-T070",
+   "D-014-BOOTSTRAP"
+  ],
+  "task_types": [
+   "governance"
+  ],
+  "milestones": [],
+  "paths": []
+ },
+ "applicability_note": "Rows bind the single corrective ledger task M0-T070 via applicability.task_ids. D-014-BOOTSTRAP is a NON-LEDGER governance sentinel (D-012/D-013 precedent) for the session-scope reconciliation, capture-once, stop-rule, and return-report duties; sentinel rows are verified at directive verification, never inside a ledger task's accept() set. applicability.paths is deliberately empty so D-014 never forces unrelated tasks into citation; binding is by task id only (rows carry task_ids only, never task_ids+task_types conjunctions). scope.task_types carries 'governance' (D-013 precedent) because M0-T070 edits control-plane files (its packet, directive capture, and reports) under this directive's authority, satisfying the s19/D-001-R118 governance-path claim guard for the scoped task_ids. frozen_baseline_sha is the stacking base de2f224 (tip of control/context-intelligence-init, which carries the D-013 bootstrap and the reserved M0-T063..M0-T069 packets); origin/main at capture was 5c71fe0e08c8717cc20ac232d8bd0d8a328525e1.",
+ "owner_approval": {
+  "state": "issued_owner_typed",
+  "decision": "Owner typed the 'OWNER AUTHORIZATION - BOUNDED SUPERVISOR REPAIR' message of 2026-08-18 authorizing a separate bounded control-plane repair conditional on source-confirming defects A and B; capture-once authorized by the same message."
+ },
+ "lifecycle_state": "active",
+ "requirements_file": "requirements.json",
+ "verification_file": "verification.json",
+ "final_reviewed_sha": null,
+ "locked_requirement_ids": [
+  "D-014-R001",
+  "D-014-R002",
+  "D-014-R003",
+  "D-014-R004",
+  "D-014-R005",
+  "D-014-R006",
+  "D-014-R007",
+  "D-014-R008",
+  "D-014-R009",
+  "D-014-R010",
+  "D-014-R011",
+  "D-014-R012",
+  "D-014-R013",
+  "D-014-R014",
+  "D-014-R015",
+  "D-014-R016",
+  "D-014-R017",
+  "D-014-R018",
+  "D-014-R019",
+  "D-014-R020",
+  "D-014-R021",
+  "D-014-R022",
+  "D-014-R023",
+  "D-014-R024",
+  "D-014-R025",
+  "D-014-R026",
+  "D-014-R027",
+  "D-014-R028",
+  "D-014-R029",
+  "D-014-R030",
+  "D-014-R031",
+  "D-014-R032",
+  "D-014-R033",
+  "D-014-R034",
+  "D-014-R035",
+  "D-014-R036",
+  "D-014-R037",
+  "D-014-R038",
+  "D-014-R039"
+ ],
+ "requirements_id_digest_sha256": "78aa15a452118dfc897e4c1ae366011295e942161874f6e881613343a27fd8a7",
+ "requirements_content_digest_sha256": "352e50c362644f35a12aa3c4e59f3bec120e8aede9909251aa04466491f40557",
+ "audit_log": [
+  {
+   "at": "2026-08-18T05:50:20+00:00",
+   "by": "orchestrator",
+   "note": "D-014 captured verbatim: source-001.md (sha256 7628740e1a19ee1cf7424c42d1af00c4feeb2c9fbf4f2ad804bf101bb59596f6) = the owner's 'OWNER AUTHORIZATION - BOUNDED SUPERVISOR REPAIR' message of 2026-08-18 (bounded corrective repair of supervisor defects A and B, conditional on source confirmation; both defects were CONFIRMED from source and the live run_M0_T063_A1 audit/journal evidence before capture). Frozen baseline de2f224a7db16405edfc0e2f2f0902f5164819a0 (tip of control/context-intelligence-init; origin/main 5c71fe0e08c8717cc20ac232d8bd0d8a328525e1). 39 rows D-014-R001..D-014-R039 decomposed: decision=1, evidence=2, harness=9, hold=1, obligation=12, prohibition=11, return=1, sequencing=2. Ledger task M0-T070 is the single corrective task; D-014-BOOTSTRAP is the non-ledger governance sentinel for session-scope reconciliation/capture/return duties."
+  }
+ ]
+}
