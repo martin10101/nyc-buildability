@@ -49,8 +49,9 @@ the in-package-config guard applies to the production entry points only.
 ## Test evidence (all at this branch, Python 3.11.9, Windows)
 
 - New regression suite: `python -m pytest tools/test_agent_supervisor_manifest_binding.py`
-  → **27 passed**.
-- Full battery `python -m pytest tools/ -q` → **1813 passed, 2 skipped, 0 failures**
+  → **32 passed** (round-1 rework added AS-1 start dispatch positive control, AS-8
+  through production dispatch, patterns-mismatch, excluded-source-name, schema).
+- Full battery `python -m pytest tools/ -q` at be3a599 → **1845 passed, 2 skipped, 0 failures**
   (12m35s) — re-establishing the M0-T039 freeze baseline (≥1165, 0 failures) with the
   repair applied. Includes the full supervisor, project-control, directive-compliance,
   and new regression suites (D-017-R052).

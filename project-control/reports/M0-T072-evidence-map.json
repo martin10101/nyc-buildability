@@ -2,8 +2,8 @@
  "schema": "evidence_map/v1",
  "task_id": "M0-T072",
  "producer": "orchestrator",
- "reviewed_sha": "173297467ce737ad54fbdb6e61ebfa7ec40909c6",
- "note": "Evidence per D-017 requirement bound to M0-T072 (rows R037..R053, source-001.md Stage 1). Reviewers reproduce each claim at the frozen head.",
+ "reviewed_sha": "be3a5994bc6eff3046d59b25889278359c6384bb",
+ "note": "Evidence per D-017 requirement bound to M0-T072 (rows R037..R053, source-001.md Stage 1). Reviewers reproduce each claim at the frozen head. Round-1 rework at be3a599 closes G3 FAIL (14 regressions), G4 C1/C2 (patterns bypass + record-manifest source guard), G5 SEC-MAJOR (patterns coverage-downgrade), DCV R052 (false battery claim). reviewed_sha updated to be3a599.",
  "requirements": {
   "D-017-R037": "All seven source-level facts confirmed with line citations at 026e7cb in project-control/reports/M0-T072-defect-evidence.md (config outside package; extra_files present but unwired; doctor/verify-controller/start never pass it; runbook generation gap; CMD carets; doctor --live probe rule; --checkout journal addressing).",
   "D-017-R038": "One bounded prerequisite repair under the next reconciled unused ID (M0-T072; tasks dir ended at M0-T071); treated as one deployment-safety defect (defect-evidence report, packet supervisor_freeze_qualifying_evidence field).",
@@ -19,8 +19,8 @@
   "D-017-R048": "No duplication: in-package config.toml REFUSED by verify_manifest_with_config and record-manifest (test_in_package_config_duplicate_is_refused).",
   "D-017-R049": "No symbolic-link or hard-link workaround anywhere in the diff (grep-clean; reviewers verify).",
   "D-017-R050": "Protected config never altered: no write path touches it; Stage-0 and post-implementation SHA-256 both 6aef12a9...fffde (reviewers re-hash).",
-  "D-017-R051": "All nine regression proofs implemented as AS-1..AS-9 (27 tests passing); mapping table in M0-T072-before-after-evidence.md.",
-  "D-017-R052": "Full supervisor+project-control+directive-compliance+new suites: 1813 passed, 2 skipped, 0 failures (freeze baseline re-established); independent G3/G4/G5/DCV dispatched at the reviewed head; merge only when green and accepted.",
+  "D-017-R051": "All nine regression proofs implemented as AS-1..AS-9 (32 tests passing at be3a599: adds AS-1 start-dispatch positive control, AS-8 through production dispatch, manifest_patterns_mismatch, record-manifest excluded-source-name refusal, uniform verify-controller schema); mapping table in M0-T072-before-after-evidence.md.",
+  "D-017-R052": "Full supervisor+project-control+directive-compliance+new suites at the rework head be3a599: 1845 passed, 2 skipped, 0 failures - re-establishes the M0-T039 freeze baseline (>=1165/0). The round-1 '1813 passed' claim was captured from the WRONG working directory (unmodified ctl17 tree, which also lacks the new test module); corrected here. The 14 pre-existing-test regressions (G3/DCV round 1) are fixed by updating broker/loop/model_chain/start_reentry fixtures to the new fail-closed contract; ContainmentGateTests genuinely reach the containment gate again. Independent G3/G4/G5/DCV re-review at be3a599.",
   "D-017-R053": "docs/CONTROLLER_UPDATE_RUNBOOK.md regenerated from THIS source (commands exist in this diff: record-manifest, verify-controller --config); AS-9 RunbookHygieneTests enforce no CMD carets, no unresolved executable placeholders, doctor --live as the only probe."
  }
 }

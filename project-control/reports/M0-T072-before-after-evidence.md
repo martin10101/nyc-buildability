@@ -20,5 +20,7 @@ After = this branch. Each row is proven by a named test in
 | + | verify-controller without --manifest | `ok: true` having verified NOTHING | exit 1, fail-closed message | `test_verify_controller_without_manifest_fails_closed` |
 | + | start without --manifest | silently `controller_manifest: True` | `--manifest` in missing_inputs; manifest_binding `not_established`; no dispatch | `test_start_without_manifest_is_a_missing_required_input` |
 
-Suite baseline after the change: **1813 passed, 2 skipped, 0 failures** (full
-`tools/` battery), vs the M0-T039 freeze floor of ≥1165/0.
+Suite baseline after the rework (be3a599): **1845 passed, 2 skipped, 0 failures**
+(full `tools/` battery), vs the M0-T039 freeze floor of ≥1165/0. The round-1
+'1813' figure was measured on the wrong working tree (ctl17, lacking the new
+test module); corrected here.
