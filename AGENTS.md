@@ -62,6 +62,17 @@ for gates; `docs/PROJECT_CONTROL_PROTOCOL.md` and ADR-005 for lifecycle and
 authority; `docs/ACCEPTANCE_SCENARIO_STANDARD.md` for scenarios. Path-scoped
 `AGENTS.md` files under a subtree add only that subtree's rules.
 
+## Modularity (permanent)
+Production code is organized around clear responsibilities and stable module
+boundaries (`docs/CODE_MODULARITY_POLICY.md`; CI job `modularity`). During
+planning and review, treat as FINDINGS: unjustified responsibility mixing
+(domain + storage + serialization + I/O + wiring + presentation in one file),
+excessive module growth (warn 600 / justify 750 / hard 1,000 SLOC), giant
+functions, hidden coupling, and giant generic utility modules. A new oversized
+handwritten file or unjustified growth of a grandfathered one fails CI; a
+passing line count never excuses responsibility mixing. Check the packet's
+boundary answers against the actual diff.
+
 ## Code graph and context packs
 Use `python tools/code_graph/query.py` for dependency, impact, and who-consumes
 questions — advisory only; verify every material conclusion in real source. A

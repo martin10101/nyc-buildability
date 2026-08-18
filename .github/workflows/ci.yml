@@ -525,3 +525,33 @@ jobs:
       - name: Supervisor test suite
         shell: bash
         run: pytest tools/test_agent_supervisor_*.py
+
+  # M0-T073 (D-017-R110, ADDITIVE job; existing jobs untouched): permanent
+  # modularity enforcement. Stdlib only. --check fails on a NEW handwritten
+  # production file above the hard threshold or material growth of a
+  # grandfathered oversized file without a reviewed, expiring, path-exact
+  # exception; legacy debt is reported via the reviewed baseline, never
+  # retro-failed. The proof tests demonstrate pass/fail/exception/baseline
+  # semantics including that baseline regeneration cannot erase live debt.
+  modularity:
+    name: modularity (deterministic size/responsibility regression gate)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+      - name: Modularity policy check (fail-closed)
+        run: python3 tools/modularity_check.py --check
+      - name: Modularity checker proof tests
+        run: python3 tools/test_modularity_check.py
+
+  # M0-T074 (D-017-R122, ADDITIVE job; existing jobs untouched): deterministic
+  # complexity-based model routing. Stdlib only. Prevents an unauthorized
+  # model, a self-selected model, an unrecorded fallback, or an ungrounded
+  # complexity classification, and pins the frozen routing corpus (simple
+  # tasks stay inexpensive; HIGH/CRITICAL can never route weaker).
+  model-routing:
+    name: model-routing (frozen corpus + allowlist boundary tests)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+      - name: Model routing tests
+        run: python3 tools/test_model_routing.py

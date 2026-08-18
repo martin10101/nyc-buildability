@@ -1,0 +1,19 @@
+{
+ "schema": "evidence_map/v1",
+ "task_id": "M0-T074",
+ "producer": "orchestrator",
+ "reviewed_sha": "1059ab479d1ffa6cab1f7b78738ba9ed18134163",
+ "note": "Evidence per D-017 requirement bound to M0-T074 (rows R114..R123, source-002-amendment.md model-routing stage). Reviewers reproduce each claim at the frozen head.",
+ "requirements": {
+  "D-017-R114": "tools/model_routing.py route(): choice derives only from classify(signals)+allowlist ordering; no model/preferred/override parameter exists (test_no_self_selection_api_exists).",
+  "D-017-R115": "classify() implements the four bands with the owner's work shapes (policy s'Complexity bands'); corpus RC-01..RC-15 pins band outcomes (test_every_case_classifies_and_routes_as_frozen).",
+  "D-017-R116": "Signals frozen dataclass carries all ten owner signals; unknown names TypeError (test_signals_are_typed_and_closed); every verdict cites determining_signals (test_every_band_cites_determining_signals); ambiguity raises one band (test_ambiguity_raises_never_lowers).",
+  "D-017-R117": "route() restricted to permitted allowlist evidence (test_unauthorized_model_cannot_be_chosen); allowlist loaded read-only via tools.agent_supervisor.config.load_controller_config with config sha256 recorded (test_permitted_models_load_from_protected_config_format); no write path to config.toml/model_selection.toml (test_router_never_writes_config_or_selection; tools/agent_supervisor/ is a forbidden write path and untouched in the diff).",
+  "D-017-R118": "Single-permitted-model branch reports adaptive_available=false with 'UNAVAILABLE ... not pretending selection occurred' (test_single_claude_model_reports_adaptive_unavailable); live allowlist read-only confirms claude=[claude-opus-4-8].",
+  "D-017-R119": "LOW/MEDIUM lower-cost, HIGH/CRITICAL stronger (corpus tests test_simple_tasks_stay_inexpensive / test_critical_tasks_always_take_the_strongest); security-reviewer + directive-compliance-verifier + final-acceptance roles route strongest (test_strongest_reviewer_roles_get_the_strongest_model).",
+  "D-017-R120": "escalate_after_failure: one level for LOW/MEDIUM with mandatory recorded reason (test_failed_low_escalates_one_level_with_reason, test_escalation_without_reason_refused); HIGH/CRITICAL refused with 'not silently downgraded' (test_high_and_critical_never_rerouted); quota fallback a separate kind=quota_fallback record (test_quota_fallback_is_separate_and_recorded).",
+  "D-017-R121": "Decision record fields: task_id, complexity_band, determining_signals, chosen_model, permitted_models_evidence(allowlist+config sha256), quota_fallback separation note, estimated_context_tokens, result, nullable telemetry never fabricated as zero (test_decision_record_fields_and_null_telemetry); append-only JSONL via append_decision, path under durable_state runtime dir outside the repo (test_append_decision_jsonl_outside_repo; decisions_path()).",
+  "D-017-R122": "Frozen corpus tools/model_routing_corpus.json (15 cases) + tools/test_model_routing.py (21 tests) + additive ci.yml model-routing job prove: simple stays inexpensive; critical cannot route weaker; unauthorized model, self-selected model, unrecorded fallback, ungrounded classification all prevented.",
+  "D-017-R123": "docs/MODEL_ROUTING_POLICY.md s'Current honest state': protected allowlist change is an owner action via the established procedure after repository implementation; the router never requests or performs it; no OWNER_ACTION_BUNDLE needed for routing to operate honestly today."
+ }
+}
