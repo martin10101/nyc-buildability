@@ -1,49 +1,124 @@
 {
- "task_id": "M0-T065",
- "title": "Context-intelligence Unit B: unified bounded context compiler consuming the deterministic index (D-013)",
- "task_type": "infrastructure",
- "milestone_id": "M0",
- "objective": "Make the ONE context pack (tools/context_pack.py) consume the deterministic index under ONE global budget with coverage/provenance emission, refuse-or-split on overflow, and the owner-approved explicit amendment introducing the adaptive 5K-8K normal tier (owner decision 7) to the accepted 32K/64K/20% budget contract; never silently rewrite the accepted contract.",
- "business_reason": "D-013 Unit B; single-compiler principle (no independent concatenated budgets).",
- "inputs": [],
- "outputs": [],
- "dependencies": [
-  "M0-T064"
- ],
- "allowed_paths": [],
- "forbidden_paths": [],
- "acceptance_scenarios": [],
- "required_gates": [
-  "G0",
-  "G3",
-  "G4",
-  "G5"
- ],
- "producer_agent": null,
- "reviewer_agents": [
-  "code-reviewer",
-  "qa-engineer",
-  "security-reviewer",
-  "directive-compliance-verifier"
- ],
- "status": "backlog",
- "progress_percent": 0,
- "risks": [],
- "blockers": [],
- "created_at": "2026-08-18T04:24:47.953134+00:00",
- "updated_at": "2026-08-18T04:24:48.339416+00:00",
- "directive_refs": [
-  {
-   "directive_id": "D-001",
-   "requirement_ids": "ALL"
-  },
-  {
-   "directive_id": "D-013",
-   "requirement_ids": "ALL"
-  }
- ],
- "directive_regime_version": "1.0",
- "directive_regime_entered_at": "2026-08-18T04:24:47.953134+00:00",
- "path_free_governance": true,
- "path_free_justification": "Roadmap reservation contracted at the D-013 bootstrap (owner authorization 2026-08-18, source-002). Genuinely path-free until claimed: exact allowed paths are bound at claim time after predecessor acceptance per D-013 sequencing; no implementation content exists or is authorized yet for this unit."
+  "task_id": "M0-T065",
+  "title": "Context-intelligence Unit B: unified bounded context compiler consuming the deterministic index (D-013)",
+  "task_type": "infrastructure",
+  "milestone_id": "M0",
+  "objective": "Make the ONE context pack (tools/context_pack.py) consume the deterministic index under ONE global budget with coverage/provenance emission, refuse-or-split on overflow, and the owner-approved explicit amendment introducing the adaptive 5K-8K normal tier (owner decision 7) to the accepted 32K/64K/20% budget contract; never silently rewrite the accepted contract.",
+  "business_reason": "D-013 Unit B; single-compiler principle (no independent concatenated budgets).",
+  "inputs": [],
+  "outputs": [],
+  "dependencies": [
+    "M0-T064"
+  ],
+  "allowed_paths": [
+    "tools/context_pack.py",
+    "tools/context_pack_budget.py",
+    "tools/context_pack_index.py",
+    "tools/context_pack_sources.py",
+    "tools/context_pack_render.py",
+    "tools/context_pack_assembly.py",
+    "tools/test_context_pack.py",
+    "tools/test_context_pack_index.py",
+    "docs/CONTEXT_PACKS.md",
+    "project-control/reports/M0-T065-producer-report.md",
+    "project-control/reports/M0-T065-evidence-map.json",
+    "project-control/reports/M0-T065-coverage-evidence.md",
+    "project-control/reports/M0-T065-G0-readiness.md"
+  ],
+  "forbidden_paths": [
+    "tools/agent_supervisor/",
+    "tools/code_graph/generate.py",
+    "tools/code_graph/query.py",
+    "tools/repo_fingerprint.py",
+    "tools/repo_index_incremental.py",
+    "tools/repo_index_cache.py",
+    "tools/repo_index_assembly.py",
+    "tools/repo_index_baseline.py",
+    "tools/modularity_baseline.json",
+    "tools/model_routing.py",
+    ".github/",
+    "services/",
+    "apps/",
+    ".claude/"
+  ],
+  "acceptance_scenarios": [
+    {
+      "id": "AS-1",
+      "given": "a fixture repo with a task packet, diff, and code-graph neighborhood",
+      "when": "the context pack is built consuming the deterministic index",
+      "then": "exactly one context.md is produced whose meta records ONE total budget (budget.single_total_budget=true, one effective_bound_bytes shared by all sources; no per-source budgets) (D-013-R039/R040)"
+    },
+    {
+      "id": "AS-2",
+      "given": "a small change with low dependency breadth and no --target-tokens override",
+      "when": "the pack is built",
+      "then": "budget.tier.tier=='normal', the adaptive target is within [5000,8000], budget.tier.hard_ceiling_unchanged==true, and budget.amendment.changes_constants==false (D-013-R041/R080)"
+    },
+    {
+      "id": "AS-3",
+      "given": "high dependency breadth but no tier justification",
+      "when": "the pack is built, then rebuilt WITH a justification",
+      "then": "without justification the target is NOT silently raised above normal (the withheld larger target is recorded); with justification tier=='medium' and the target never exceeds the accepted 32,000 contract (D-013-R041/R042)"
+    },
+    {
+      "id": "AS-4",
+      "given": "the built pack",
+      "when": "its meta is inspected",
+      "then": "the deterministic meta carries git HEAD/branch, source_manifest_digest, export_digest, indexer/schema/eligibility versions, a census with reconciles==true, a coverage-mode label, and dependency breadth (D-013-R023/R024/R002); the VOLATILE snapshot_fingerprint + dirty_state_digest + index mode/rebuild_reason are recorded in the EXTERNAL append-only run-record JSONL (never in the byte-deterministic artifact, so AS-6 determinism holds) \u2014 the meta flags snapshot_identity_in_external_run_record=true"
+    },
+    {
+      "id": "AS-5",
+      "given": "a large material --include under a tiny byte budget",
+      "when": "the pack is built",
+      "then": "it refuses with a split proposal (overflow.resolved=='split_required'), material is preserved as evidence and never silently truncated, and the hard ceiling remains min(ordinary,relative) \u2014 the tier target never relaxes the ceiling (D-013-R003/R013/R040)"
+    },
+    {
+      "id": "AS-6",
+      "given": "identical repo state and arguments",
+      "when": "the pack is built twice",
+      "then": "context.md and context.meta.json are byte-identical (the index export bytes, fingerprint, and tier decision are all deterministic) (D-013-R037-style determinism)"
+    }
+  ],
+  "required_gates": [
+    "G0",
+    "G3",
+    "G4",
+    "G5"
+  ],
+  "producer_agent": "orchestrator",
+  "reviewer_agents": [
+    "code-reviewer",
+    "qa-engineer",
+    "security-reviewer",
+    "directive-compliance-verifier"
+  ],
+  "status": "accepted",
+  "progress_percent": 100,
+  "risks": [],
+  "blockers": [],
+  "created_at": "2026-08-18T04:24:47.953134+00:00",
+  "updated_at": "2026-08-18T17:17:15.511444+00:00",
+  "directive_refs": [
+    {
+      "directive_id": "D-001",
+      "requirement_ids": "ALL"
+    },
+    {
+      "directive_id": "D-013",
+      "requirement_ids": "ALL"
+    }
+  ],
+  "directive_regime_version": "1.0",
+  "directive_regime_entered_at": "2026-08-18T04:24:47.953134+00:00",
+  "path_free_governance": true,
+  "path_free_justification": "Paths bound at claim (2026-08-18) after M0-T064 acceptance, per the D-013 sequencing reservation (source-002). Decomposition of the 850-SLOC context_pack.py into focused modules + index consumption + the owner-approved adaptive-tier amendment.",
+  "documented_test_commands": [
+    "python tools/test_context_pack.py",
+    "python tools/test_context_pack_index.py",
+    "python -m pytest tools/test_context_pack.py tools/test_context_pack_index.py -q",
+    "python tools/modularity_check.py --check"
+  ],
+  "worktree": "C:/Users/MLFLL/Downloads/nyc-zoning/wt-m0t064",
+  "accepted_by": "orchestrator",
+  "accepted_at": "2026-08-18T17:17:15.511444+00:00"
 }

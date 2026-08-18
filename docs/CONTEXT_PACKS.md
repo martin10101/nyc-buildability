@@ -138,6 +138,45 @@ constants, the byte→token estimate, and the effective-ceiling logic are identi
 so the two can never diverge silently. The runtime keeps its own copy so it does
 not depend on the frozen shadow-only tree.
 
+### Adaptive tier amendment (D-013-R041 / owner decision 7)
+
+Unit B (M0-T065) adds an **owner-approved adaptive TARGET tier** as an *explicit
+amendment* to the contract above. It **does not rewrite** the accepted
+32K/64K/20% numbers — the drift-locked constants are physically unchanged
+(`amendment.changes_constants: false`), and the **hard ceiling is still the lower
+of the ordinary and relative ceilings**. The tier only chooses the *target* a
+packet aims for:
+
+| Tier | Target | Selected when |
+|---|---|---|
+| `small` | ≈ 5,000 est. tokens | ≤ 1 dependent and ≤ 1 changed file |
+| `normal` | ≈ 8,000 est. tokens | the adaptive default (low dependency breadth) |
+| `medium` | larger, **capped at the accepted 32,000 target** | high dependency breadth **and** an explicit `--tier-justification` |
+| `large` | stays at normal, **`prefer_split: true`** | architectural / very high breadth (split-first) |
+
+Dependency breadth is derived **deterministically** from the A1/A2 index (the
+importer edges of the changed/target files). Honesty is fail-closed: a `medium`/
+`large` candidate **without** a recorded justification does **not** silently grant
+the larger target — the target is held at the normal band and the withheld larger
+target is recorded (`tier.withheld_larger_target`, `tier.withheld_reason`).
+`--target-tokens` remains an explicit override; `--tier`, `--tier-justification`,
+and `--architectural` steer the tier. The amendment record is emitted verbatim at
+`budget.amendment`.
+
+### Deterministic index consumption (D-013-R040)
+
+The compiler consumes the accepted A1/A2 deterministic index **in process** (no
+subprocess, no cache-rebuild side effect): the code-graph *neighborhoods* for the
+changed/target paths, and a **census + provenance** source. The pack records
+source-identity provenance that is invariant to transient working-tree noise
+(`source_manifest_digest`, `export_digest`, HEAD/branch, census, versions) so the
+pack stays byte-deterministic even when `--out` is written inside the repo; the
+volatile full snapshot fingerprint + dirty-state digest are recorded only in the
+**external** run-record JSONL (never in the deterministic artifact). `--no-index`
+is a fail-safe escape hatch that records a coverage omission and degrades to
+diff/routing coverage (never a silent gap). `--index-cache-base` and
+`--no-index-telemetry` control the external cache/telemetry.
+
 ## `context.meta.json` field reference
 
 | Field | Meaning |
@@ -146,12 +185,13 @@ not depend on the frozen shadow-only tree.
 | `task_id`, `repo_sha` | the task and the repository SHA (the time anchor) |
 | `role`, `provider` | requested role and provider |
 | `generated_from` | every input knob (repo, diff base, includes, ci summary, graph limit) |
-| `budget` | target/ordinary/relative/bytes-per-token + model context window used |
+| `budget` | `single_total_budget: true` (ONE budget across all sources), target/ordinary/relative/bytes-per-token + model window, the adaptive `tier` block, and the `amendment` record (`changes_constants: false`) |
 | `bounds` | `max_bytes`, the four token bounds, `effective_ceiling_tokens` + basis, `effective_bound_bytes` |
 | `actuals` | `context_md_bytes`, `estimated_tokens`, and `within_*` booleans (max bytes / effective bound / target / effective ceiling) |
-| `included_files[]` | per source: `source_id`, `group`, `category`, `origin`, **`sha256`**, `bytes`, `estimated_tokens`, `material`, `truncated`, `truncation`, `evidence_path` |
+| `included_files[]` | per source: `source_id`, `group`, `category`, `origin`, **`sha256`**, `bytes`, `estimated_tokens`, `material`, `truncated`, `truncation`, `evidence_path` (no per-source budget — the budget is shared) |
 | `omitted_categories[]` | the 8 default exclusions plus every conditional omission, each with a reason |
-| `graph_queries[]` | each bounded advisory query run (`subcommand`, `arg`, `limit`, `ok`, `lines_returned`) |
+| `graph_queries[]` | each bounded in-process code-graph neighborhood (`subcommand`, `seed`, `resolved`, `resolved_id`, `limit`, `out_edges`, `in_edges`, `export_digest`) |
+| `provenance` | deterministic index provenance: `index_consumed`, `head_sha`, `branch`, `source_manifest_digest`, `export_digest`, `versions`, `generator_identity`, `census` (with `reconciles`), `coverage_mode`, `dependency_breadth` |
 | `truncated_any`, `truncations[]` | whether any source was summarized, and for each: original digest + bytes, summarized bytes, method, preserved artifact |
 | `sufficiency` | role-sufficiency flag: `sufficient`, `reason`, required/present/missing source groups |
 | `overflow` | `triggered`, `resolved` (`within_bound` \| `summarized` \| `split_required`), guidance, and the split proposal when fail-closed |
