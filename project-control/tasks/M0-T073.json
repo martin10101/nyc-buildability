@@ -46,8 +46,8 @@
     "security-reviewer",
     "directive-compliance-verifier"
   ],
-  "status": "self_check",
-  "progress_percent": 75,
+  "status": "awaiting_gate",
+  "progress_percent": 85,
   "risks": [
     "ci.yml overlap: additive step only; on a real conflict with open PR work touching ci.yml, stop with an overlap report (D-013-R067 pattern).",
     "CLAUDE.md/AGENTS.md additions must stay concise (base-context budget); details live in docs/CODE_MODULARITY_POLICY.md.",
@@ -55,7 +55,7 @@
   ],
   "blockers": [],
   "created_at": "2026-08-18T11:29:09.633699+00:00",
-  "updated_at": "2026-08-18T12:20:37.274816+00:00",
+  "updated_at": "2026-08-18T12:22:14.171246+00:00",
   "directive_refs": [
     {
       "directive_id": "D-001",
