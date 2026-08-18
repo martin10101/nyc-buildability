@@ -1,0 +1,89 @@
+{
+ "schema": "evidence_map/v1",
+ "task_id": "M0-T065",
+ "producer": "orchestrator",
+ "note": "Evidence per applicable D-013 row for M0-T065 (27 rows). Unit B: decompose context_pack.py into focused modules (modularity), consume the deterministic A1/A2 index under ONE total budget with coverage/provenance emission + refuse-or-split, and add the owner-approved adaptive 5K-8K tier amendment that never rewrites the 32K/64K/20% contract.",
+ "requirements": {
+  "D-013-R001": [
+   "Unit B is the bounded context-compiler layer of the ONE pipeline; feeds from the A1/A2 census/index layer."
+  ],
+  "D-013-R002": [
+   "No 'read whole repo' claim; the pack records coverage_mode + census + provenance + omissions with reasons (make_meta provenance/omitted_categories)."
+  ],
+  "D-013-R003": [
+   "Lower cost via bounded selection under one budget; material is NEVER silently dropped (refuse-or-split; --no-index records a coverage omission, never a silent gap)."
+  ],
+  "D-013-R004": [
+   "Reconciled against live git + the deterministic index (build_incremental); repo_sha is the only time anchor; determinism enforced by test."
+  ],
+  "D-013-R006": [
+   "Worker role does not bypass gates; submitted to independent G3/G4/G5."
+  ],
+  "D-013-R007": [
+   "Single writer for the unit; independent read-only reviewers."
+  ],
+  "D-013-R008": [
+   "No new taxonomy; reuses A1/A2 identity + code_graph query; no per-feature digest invention."
+  ],
+  "D-013-R009": [
+   "All selection/budgeting/tiering is deterministic Python; no LLM in the compiler."
+  ],
+  "D-013-R010": [
+   "Decomposed the 850-SLOC context_pack.py into 6 focused modules (io 54, budget 171, sources 293, index 141, render 236, assembly 224) + a 116-SLOC facade; all < 600 SLOC; modularity_check 0 failures; public imports preserved via the facade."
+  ],
+  "D-013-R011": [
+   "No caches/secrets in git; the index cache + telemetry stay in the external per-checkout dir; --no-index-telemetry for hermetic runs."
+  ],
+  "D-013-R012": [
+   "No token-savings claim; estimated_tokens is a deterministic byte estimate, not billing; measured provider tokens not fabricated."
+  ],
+  "D-013-R013": [
+   "Fail closed on over-budget material (split_required, exit 2); index errors degrade to a recorded coverage omission (never a silent smaller pack)."
+  ],
+  "D-013-R022": [
+   "Only Unit B (compiler) implemented here; C/D/E/F untouched."
+  ],
+  "D-013-R025": [
+   "Complete census consumed from A1 (eligible/indexed/excluded/failed, reconciles); never silently narrowed; recorded in provenance."
+  ],
+  "D-013-R039": [
+   "Units B-E feed ONE compiler under ONE total budget: budget.single_total_budget=true; a single effective_bound_bytes across all sources; no per-source budgets (test AS1_SingleBudget)."
+  ],
+  "D-013-R040": [
+   "Compiler contract: accepts task/role/provider/model/fingerprint/budget; selects task+diff+code-graph neighborhoods+census+source excerpts; ONE budget; emits included sources, omitted categories+reasons, truncations, source digests, graph query params, estimated tokens, actual bytes, role-sufficiency; refuse-or-split; never quietly truncates material (make_meta + assembly.build; tests AS1/AS4/AS5)."
+  ],
+  "D-013-R041": [
+   "Adaptive tier (small/normal ~5K-8K; medium justified; large split-first; hard ceiling = min(absolute,relative); one shared budget) implemented as an EXPLICIT owner-approved amendment (BUDGET_AMENDMENT, changes_constants=false); never rewrites the 32K/64K/20% contract; medium/large withhold the larger target without justification (context_pack_budget.select_tier; tests AS2/AS3)."
+  ],
+  "D-013-R042": [
+   "Unused capacity never a fill reason; tier sets a TARGET not a floor; retrieval-quality-bounded selection; the target never exceeds the accepted 32K."
+  ],
+  "D-013-R050": [
+   "Two storage classes: external append-only redacted JSONL run record (the A2 index telemetry, per-checkout, never committed; --no-index-telemetry to disable) + committed deterministic evidence (context.meta.json + this report/coverage evidence)."
+  ],
+  "D-013-R051": [
+   "Nullable measured fields never fabricated as zero (provider/model recorded when given; the deterministic estimate is labeled an estimate)."
+  ],
+  "D-013-R052": [
+   "Run record fields: repo identity/HEAD/branch/source-manifest+snapshot fingerprint (external record), versions, census counts, coverage mode, budget tier, included/omitted/truncated counts, sufficiency, graph queries, context bytes + estimated tokens (make_meta + the A2 run record)."
+  ],
+  "D-013-R053": [
+   "Distinct measures kept separate; no combined token-savings number; the budget is one shared total, reported once."
+  ],
+  "D-013-R058": [
+   "The compiler emits provenance for every material inclusion/omission (source digests, origins, coverage mode, census, graph query params); a 'read the repo' claim carries an explicit coverage mode (R002/R025)."
+  ],
+  "D-013-R064": [
+   "Committed deterministic/sanitized evidence in project-control/reports; cache + telemetry in the external runtime dir; no raw prompts/transcripts/absolute paths (provenance carries shas, not paths)."
+  ],
+  "D-013-R069": [
+   "Does not continue to the next unit until independent review returns; submitted for G3/G4/G5."
+  ],
+  "D-013-R080": [
+   "The proposed 5K-8K context tier is delivered in Unit B as an explicit amendment (see R041)."
+  ],
+  "D-013-R082": [
+   "tools/agent_supervisor/** NOT modified; the drift-locked budget constants are byte-equal to review_packet.py (drift-lock test passes); the tier layers on top."
+  ]
+ }
+}
