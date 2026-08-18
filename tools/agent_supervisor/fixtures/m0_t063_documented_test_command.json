@@ -1,0 +1,65 @@
+{
+  "fixture_id": "m0_t063_documented_test_command",
+  "title": "The exact M0-T063 baseline/test-command need (D-014 AS-10)",
+  "summary": "run_M0_T063_A1 (controller 0.4.0-phase4, 2026-08-18) failed closed: the packet carried no command-authority field and production _run_loop passed no documented_test_commands into TaskAuthority, so all three worker Bash requests were classified ASK:undocumented_command (audit sequences 4-6, request ids 85d454e2/0446ed2c/7a3d51cb) and the run ended PAUSED_RECOVERY with exit 1, no checkpoint, and no Codex review. This fixture is the M0-T063 packet shape WITH the canonical field the repair defines: its own three stdlib test suites plus the packet-documented pytest form. The intended commands must classify AUTO documented_test_command; every altered or injected variant must not.",
+  "provenance": [
+    "project-control/tasks/M0-T063.json",
+    "project-control/reports/M0-T070-incident-evidence.md",
+    "project-control/directives/D-014-supervisor-command-authority-repair/source-001.md"
+  ],
+  "packet": {
+    "task_id": "M0-T063",
+    "status": "in_progress",
+    "allowed_paths": [
+      "tools/repo_fingerprint.py",
+      "tools/test_repo_fingerprint.py",
+      "tools/repo_index_cache.py",
+      "tools/test_repo_index_cache.py",
+      "tools/repo_index_baseline.py",
+      "tools/test_repo_index_baseline.py",
+      "docs/CONTEXT_INTELLIGENCE_PIPELINE.md",
+      ".github/workflows/ci.yml",
+      "project-control/reports/M0-T063-producer-report.md",
+      "project-control/reports/M0-T063-baseline-evidence.md"
+    ],
+    "forbidden_paths": [
+      "tools/agent_supervisor/",
+      "tools/code_graph/generate.py",
+      "tools/code_graph/query.py",
+      "tools/context_pack.py"
+    ],
+    "documented_test_commands": [
+      "python tools/test_repo_fingerprint.py",
+      "python tools/test_repo_index_cache.py",
+      "python tools/test_repo_index_baseline.py",
+      "python -m pytest tools/test_repo_fingerprint.py tools/test_repo_index_cache.py tools/test_repo_index_baseline.py -q"
+    ]
+  },
+  "run": {
+    "repo_root": "/repo",
+    "worktree": "/repo/wt-m0t063",
+    "branch": "task/M0-T063-context-index-a1",
+    "stage": "in_progress"
+  },
+  "intended_auto": [
+    "python tools/test_repo_fingerprint.py",
+    "python tools/test_repo_index_cache.py",
+    "python tools/test_repo_index_baseline.py",
+    "python -m pytest tools/test_repo_fingerprint.py tools/test_repo_index_cache.py tools/test_repo_index_baseline.py -q"
+  ],
+  "must_not_auto": [
+    {"command": "python3 tools/test_repo_fingerprint.py", "why": "changed executable"},
+    {"command": "pytest tools/test_repo_fingerprint.py", "why": "changed executable"},
+    {"command": "python tools/test_repo_fingerprint.py -k fingerprint", "why": "changed arguments (appended flag)"},
+    {"command": "python tools/test_repo_fingerprint.pyc", "why": "changed argument (different file)"},
+    {"command": "python tools/test_repo_fingerprint.py; python tools/evil.py", "why": "appended second command (chaining)"},
+    {"command": "python tools/test_repo_fingerprint.py && rm -rf .", "why": "appended destructive command"},
+    {"command": "python tools/test_repo_fingerprint.py | sh", "why": "pipe into a shell"},
+    {"command": "python tools/test_repo_fingerprint.py > results.txt", "why": "redirection"},
+    {"command": "python $(cat which_test) ", "why": "command substitution"},
+    {"command": "python `cat which_test`", "why": "backtick substitution"},
+    {"command": "python tools/setup_env.py", "why": "undocumented command"},
+    {"command": "python -m pytest tools/ -q", "why": "undocumented broader invocation"},
+    {"command": "python", "why": "undocumented bare interpreter (token count differs)"}
+  ]
+}

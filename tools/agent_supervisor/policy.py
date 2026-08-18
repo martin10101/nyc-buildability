@@ -856,6 +856,88 @@ def _shape_matches(shape: str, tokens: Sequence[str]) -> bool:
 # Task authority and policy configuration
 # --------------------------------------------------------------------------
 
+#: THE one canonical task-packet key for documented baseline/test commands
+#: (D-014 AS-1). `schemas/task_packet_commands.schema.json` is the machine-
+#: readable contract for the same closed profile; a source-level test asserts
+#: the two stay in lockstep so neither can drift permissive on its own.
+DOCUMENTED_TEST_COMMANDS_KEY = "documented_test_commands"
+
+#: Closed bounds. A task documenting more test commands than this is not a
+#: test contract, it is an allowlist - and allowlists are exactly what D-014
+#: AS-6 forbids this field from becoming.
+MAX_DOCUMENTED_TEST_COMMANDS = 16
+MAX_DOCUMENTED_TEST_COMMAND_CHARS = 512
+
+#: Closed character profile: a command shape is a program word followed by
+#: plain arguments and the two fnmatch wildcards `*`/`?` that grant shapes
+#: already use. Everything shell-significant is OUTSIDE the class - chaining
+#: (; & |), redirection (< >), substitution ($ ` ( )), grouping ({ }),
+#: quoting (' " \), comments (#), home/expansion (~ ^ % !), and every control
+#: character - so a packet can never document its way into shell semantics.
+_DOCUMENTED_COMMAND_PROFILE = re.compile(
+    r"^[A-Za-z0-9][A-Za-z0-9 ._/:=@+,*?\[\]-]*$")
+
+
+def validate_documented_test_commands(packet: Mapping[str, Any]) -> tuple[str, ...]:
+    """Extract and validate the canonical documented-test-command field.
+
+    Deterministic and fail closed (D-014 AS-1/AS-3): an absent key confers no
+    authority and returns (); ANY malformation - wrong container type, wrong
+    entry type, empty or padded strings, oversize, duplicates, characters
+    outside the closed profile, chaining, substitution, redirection, or a
+    shape the classifier's own parser cannot read as one clean segment -
+    raises PolicyError instead of silently dropping or repairing the entry.
+    A packet that cannot be validated must not run at all: a silently emptied
+    field would reproduce the exact defect this function exists to close
+    (run_M0_T063_A1, every documented command classified ASK).
+    """
+    if DOCUMENTED_TEST_COMMANDS_KEY not in packet:
+        return ()
+    raw = packet[DOCUMENTED_TEST_COMMANDS_KEY]
+    if not isinstance(raw, (list, tuple)) or isinstance(raw, (str, bytes)):
+        raise PolicyError(
+            "bad_documented_test_commands",
+            f"{DOCUMENTED_TEST_COMMANDS_KEY} must be a JSON array of strings, "
+            f"got {type(raw).__name__}")
+    if len(raw) > MAX_DOCUMENTED_TEST_COMMANDS:
+        raise PolicyError(
+            "bad_documented_test_commands",
+            f"{len(raw)} entries exceed the bound of "
+            f"{MAX_DOCUMENTED_TEST_COMMANDS}; this field documents a task's "
+            f"test commands, it is not a command allowlist")
+    seen: set[str] = set()
+    for index, entry in enumerate(raw):
+        where = f"{DOCUMENTED_TEST_COMMANDS_KEY}[{index}]"
+        if not isinstance(entry, str):
+            raise PolicyError("bad_documented_test_commands",
+                              f"{where} must be a string, got {type(entry).__name__}")
+        if not entry or entry != entry.strip():
+            raise PolicyError("bad_documented_test_commands",
+                              f"{where} is empty or has leading/trailing whitespace")
+        if len(entry) > MAX_DOCUMENTED_TEST_COMMAND_CHARS:
+            raise PolicyError(
+                "bad_documented_test_commands",
+                f"{where} is {len(entry)} characters, over the bound of "
+                f"{MAX_DOCUMENTED_TEST_COMMAND_CHARS}")
+        if not _DOCUMENTED_COMMAND_PROFILE.match(entry):
+            raise PolicyError(
+                "bad_documented_test_commands",
+                f"{where} contains characters outside the closed documented-"
+                f"command profile (no chaining, substitution, redirection, "
+                f"quoting, or control characters)")
+        shape = parse_command(entry)
+        if (shape.parse_error or not shape.tokens or shape.has_substitution
+                or shape.has_metacharacter or len(shape.segments) != 1):
+            raise PolicyError(
+                "bad_documented_test_commands",
+                f"{where} does not parse as one clean command segment under "
+                f"the classifier's own parser")
+        if entry in seen:
+            raise PolicyError("bad_documented_test_commands",
+                              f"{where} duplicates an earlier entry")
+        seen.add(entry)
+    return tuple(raw)
+
 
 @dataclasses.dataclass(frozen=True)
 class TaskAuthority:
