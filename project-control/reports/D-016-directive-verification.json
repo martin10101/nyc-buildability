@@ -1,0 +1,462 @@
+{
+ "schema": "directive_level_verification/v1",
+ "directive_id": "D-016",
+ "producer": "orchestrator",
+ "verifier": "directive-compliance-verifier",
+ "reviewed_sha": "ce00c0b3a8f360a518ba72089a13f1ed40b8589d",
+ "verified_at": "2026-08-18T20:48:54+00:00",
+ "summary": "Independent directive-level verification of D-016 (overnight-integration-runway) at HEAD ce00c0b. The overnight run is over: Stages 0-6 executed and merged (bootstrap 9594ec2; Stage1 351ced6; Stage2 46f7469; M0-T070 accepted 10:19Z at 100%, ledger 87; Stage4 PR#222=cba51e5; Stage5 PR#224=e07df76; Stage6 PR#225=026e7cb) and the Stage7 controller runbook was produced read-only. 63/64 requirements PASS on reproduced primary evidence (git objects, ledger state.json, gate/DCV records, B-019 blocker, the external Stage-7 runbook, and my own reruns: validate_directive_compliance --check exit 0, test_directive_compliance 120 OK, test_project_control 23/23, test_directive_reminder 12 OK). One honest FAIL: R062 (contents of the OVERNIGHT_RUNWAY_COMPLETE return) cannot be verified from durable evidence because the session return message is not a committed artifact, though every one of its 12 required items is independently true in the ledger. This is an evidence-availability gap, not a substantive integration failure.",
+ "rows": [
+  {
+   "id": "D-016-R001",
+   "state": "PASS",
+   "evidence": [
+    "Single source-001.md, manifest amendments=[], D-016 appears once in index.json; bootstrap commit 9594ec2 captured it exactly once before mutation",
+    "No 'continue'/status re-captures: only D-016 dir exists, digest 8c13a917 matches manifest"
+   ]
+  },
+  {
+   "id": "D-016-R002",
+   "state": "PASS",
+   "evidence": [
+    "reports/D-016-stage0-reconciliation.md: 22 rows each cite a live git/gh/sqlite command as source of evidence ('verified live this session; no fact from conversational memory')"
+   ]
+  },
+  {
+   "id": "D-016-R003",
+   "state": "PASS",
+   "evidence": [
+    "All D-016 commits (9594ec2,351ced6,46f7469,cba51e5,e07df76,9c0acc0) authored by orchestrator (single writer); no overlapping sub-agent write commits present"
+   ]
+  },
+  {
+   "id": "D-016-R004",
+   "state": "PASS",
+   "evidence": [
+    "A1/M0-T063 first accepted at a52dd0c 2026-08-18 10:38 EDT (D-017 session), 3h after D-016 ended 06:47 EDT; unimplemented/PREFLIGHT through Stages 0-5 (Stage0 report rows 17,20)"
+   ]
+  },
+  {
+   "id": "D-016-R005",
+   "state": "PASS",
+   "evidence": [
+    "Stage0 report row 21: controller+config read-only, nothing changed; D-017 source-001.md lines 35-42 expect the SAME protected-config SHA 6aef12a9 and model-selection SHA 0e2432c0 (unchanged)"
+   ]
+  },
+  {
+   "id": "D-016-R006",
+   "state": "PASS",
+   "evidence": [
+    "Commit timestamps show strict order: bootstrap 05:12 -> Stage5 e07df76 06:29 -> Stage6 9c0acc0 06:41 -> PR#225 026e7cb 06:44 -> runbook 06:47 (EDT); each stage committed/pushed before the next"
+   ]
+  },
+  {
+   "id": "D-016-R007",
+   "state": "PASS",
+   "evidence": [
+    "Stage0 matrix + reports/M0-T070-ci-reconciliation.md compare local/remote/PR/reviewed/tested identities; gate records stamp reviewed_sha (G2/G3/G5=6aae585) and DCV-final at 46f7469"
+   ]
+  },
+  {
+   "id": "D-016-R008",
+   "state": "PASS",
+   "evidence": [
+    "B-019 resolution.verification_pending: 'Stage 2 does not proceed until every required PR #222 workflow is green'; ci-reconciliation report gates on CI; no premature-success artifact - PASS on absence of violation"
+   ]
+  },
+  {
+   "id": "D-016-R009",
+   "state": "PASS",
+   "evidence": [
+    "Conditional (context-large trigger) not evidenced; run completed in one window 05:12-06:47 EDT with no D-016 checkpoint written (checkpoints end CP-0045, session 7) - no trigger, no violation"
+   ]
+  },
+  {
+   "id": "D-016-R010",
+   "state": "PASS",
+   "evidence": [
+    "Stage0 rows 4,6,7: all three worktrees clean at expected SHAs; merges resolved as unions, no broad deletion - no user-change loss evident"
+   ]
+  },
+  {
+   "id": "D-016-R011",
+   "state": "PASS",
+   "evidence": [
+    "All stage merges are normal 2-parent merges; f21eb1f, de2f224, 6aae585, 09e2316 all remain ancestors of e07df76 (full history preserved) - no reset/rebase/force/clean"
+   ]
+  },
+  {
+   "id": "D-016-R012",
+   "state": "PASS",
+   "evidence": [
+    "No worked-around-denial artifact; read-only guard verified active this session (blocked my redirection) - PASS on absence of violation"
+   ]
+  },
+  {
+   "id": "D-016-R013",
+   "state": "PASS",
+   "evidence": [
+    "No stage blocked: Stages 0-6 all completed and merged; conditional not triggered"
+   ]
+  },
+  {
+   "id": "D-016-R014",
+   "state": "PASS",
+   "evidence": [
+    "reports/M0-T070-DCV-final-verification.md + DCV-directive-verification.md: 'Producer reports treated as unverified claims'; verifier reproduced supervisor suite (1557 passed) and 52-row matrix independently"
+   ]
+  },
+  {
+   "id": "D-016-R015",
+   "state": "PASS",
+   "evidence": [
+    "Stage0 report rows 1,3,5,7 verify origin/main=f21eb1f, control=de2f224, T070=09e2316, T063=de2f224 against stated starting SHAs"
+   ]
+  },
+  {
+   "id": "D-016-R016",
+   "state": "PASS",
+   "evidence": [
+    "Stage0 report rows 4,6,7: session15-acc, wt-m0t070, wt-m0t063 each 'git status --porcelain' empty at expected SHA"
+   ]
+  },
+  {
+   "id": "D-016-R017",
+   "state": "PASS",
+   "evidence": [
+    "Stage0 row 2: PR#223 MERGED at f21eb1f; row 8: PR#222 OPEN, base control branch, head 09e2316, MERGEABLE, checks+files obtained (row 9,10)"
+   ]
+  },
+  {
+   "id": "D-016-R018",
+   "state": "PASS",
+   "evidence": [
+    "Stage0 rows 12-19 inspect D-013/14/15, M0-T063..T071, B-019, state.json, index.json, and the final M0-T070/M0-T071 report sets"
+   ]
+  },
+  {
+   "id": "D-016-R019",
+   "state": "PASS",
+   "evidence": [
+    "Stage0 row 20: A1 journal PREFLIGHT read-only, files/branch/runtime unchanged; row 21: C:/SupervisorController + config.toml read-only, nothing changed"
+   ]
+  },
+  {
+   "id": "D-016-R020",
+   "state": "PASS",
+   "evidence": [
+    "reports/D-016-stage0-reconciliation.md is the 22-row matrix (live fact/expected/verdict/source); verdict 'All 22 rows PASS. No material identity differs' - no stop triggered"
+   ]
+  },
+  {
+   "id": "D-016-R021",
+   "state": "PASS",
+   "evidence": [
+    "Stage1 merge 351ced6 parents = 9594ec2 (control) + f21eb1f (secured main): normal non-destructive 2-parent merge, no rewrite"
+   ]
+  },
+  {
+   "id": "D-016-R022",
+   "state": "PASS",
+   "evidence": [
+    "state.json at 351ced6 accepted=86 (M0-T070 absent, M0-T071 present); at e07df76 accepted=87, index has D-001..D-015 each once (+D-016); D-013/T063-69 and D-015/T071 preserved"
+   ]
+  },
+  {
+   "id": "D-016-R023",
+   "state": "PASS",
+   "evidence": [
+    "Stage0 interpretation note explains D-014 phasing (not ours/theirs); ci-reconciliation.md records the c14 LF-normalize digest restamp 'through the amendment process, never silently'"
+   ]
+  },
+  {
+   "id": "D-016-R024",
+   "state": "PASS",
+   "evidence": [
+    "DCV report reproduced validate_directive_compliance --check exit0, test_directive_compliance/project_control/reminder OK; I re-ran: validator exit0, 120 OK, 23/23 groups, 12 OK at HEAD"
+   ]
+  },
+  {
+   "id": "D-016-R025",
+   "state": "PASS",
+   "evidence": [
+    "Stage1 SHA 351ced6 recorded (ci-reconciliation refers to base 351ced6); merge committed and is an ancestor of origin/main e07df76 (pushed); validators re-run PASS"
+   ]
+  },
+  {
+   "id": "D-016-R026",
+   "state": "PASS",
+   "evidence": [
+    "Stage2 merge 46f7469 parents = 09e2316 (T070) + 351ced6 (synced control): normal merge; commit msg 'union D-013/D-014/D-015/D-016; resolve B-019'; M0-T071 records preserved"
+   ]
+  },
+  {
+   "id": "D-016-R027",
+   "state": "PASS",
+   "evidence": [
+    "T070 impl commit 6aae585 touches no apps/web (git show --stat empty); PR#222 merge cba51e5 touches no package.json/lock/nanoid; lock change in 46f7469 is inherited base fix ('nanoid 3.3.18 lock untouched...identical')"
+   ]
+  },
+  {
+   "id": "D-016-R028",
+   "state": "PASS",
+   "evidence": [
+    "git diff --stat 6aae585..46f7469 -- tools/agent_supervisor/ is EMPTY (byte-identical); DCV-final material identity 296b8fa6 'all 7 impl files blob-identical to gate-reviewed 6aae585; no gate invalidation'"
+   ]
+  },
+  {
+   "id": "D-016-R029",
+   "state": "PASS",
+   "evidence": [
+    "B-019.resolution.reproduced_facts enumerates all 7: PR#223 merged, main nanoid 3.3.18, npm audit 0 (CI job SUCCESS), age gate no waiver (age 919738s>604800s), integrity match, PR#222 no apps/ diff"
+   ]
+  },
+  {
+   "id": "D-016-R030",
+   "state": "PASS",
+   "evidence": [
+    "blockers/B-019-...json status=resolved, resolved_by='orchestrator (D-016 Stage 2)', resolved_at 2026-08-18T09:40Z, with reproduced_facts; record retained (not deleted)"
+   ]
+  },
+  {
+   "id": "D-016-R031",
+   "state": "PASS",
+   "evidence": [
+    "DCV report reproduced: command-authority 29 passed, full supervisor 1557 passed/0 failed, DCV/PC/reminder exit0, validator VALID; security/registry checks green"
+   ]
+  },
+  {
+   "id": "D-016-R032",
+   "state": "PASS",
+   "evidence": [
+    "ci-reconciliation.md documents PR#222 base reconciliation + waiting for required workflows; PR#222 merged cba51e5 (branch-protected merge implies green); B-019 verification_pending note"
+   ]
+  },
+  {
+   "id": "D-016-R033",
+   "state": "PASS",
+   "evidence": [
+    "Gates M0-T070 G0/G2/G3/G5 all result=PASS; material identity blob-identical 6aae585<->46f7469 so gates apply unchanged; DCV-final 'G2/G3/G5 apply unchanged, no gate invalidation'"
+   ]
+  },
+  {
+   "id": "D-016-R034",
+   "state": "PASS",
+   "evidence": [
+    "reports/M0-T070-DCV-final-verification.md: fresh directive-compliance-verifier at 46f7469, 'producer=orchestrator != verifier'; D-014 verification.json verifier=directive-compliance-verifier"
+   ]
+  },
+  {
+   "id": "D-016-R035",
+   "state": "PASS",
+   "evidence": [
+    "DCV-final scope = complete 52-row D-014 set (30 M0-T070 rows + D-014-BOOTSTRAP sentinel + 13 reconciliation-amendment rows); verification.json 30 M0-T070 rows all PASS at 46f7469"
+   ]
+  },
+  {
+   "id": "D-016-R036",
+   "state": "PASS",
+   "evidence": [
+    "tasks/M0-T070.json status=accepted, accepted_by=orchestrator, accepted_at 2026-08-18T10:19:26Z - accept() ran only after all applicable D-001/D-014 rows verified PASS (zero blocking)"
+   ]
+  },
+  {
+   "id": "D-016-R037",
+   "state": "PASS",
+   "evidence": [
+    "M0-T070 accepted, progress_percent=100; state.json@e07df76 accepted=87; D-014 manifest final_reviewed_sha=46f7469 recorded; B-019 resolved; validator exit0; A1 untouched (accepted later under D-017)"
+   ]
+  },
+  {
+   "id": "D-016-R038",
+   "state": "PASS",
+   "evidence": [
+    "Acceptance records committed (M0-T070.json accepted; state.json 87) and integrated to main via PR#222/#224; branch-protected merges into main imply required checks green"
+   ]
+  },
+  {
+   "id": "D-016-R039",
+   "state": "PASS",
+   "evidence": [
+    "Authorization conditions met before PR#222 merge: M0-T070 accepted, count 87, D-014 verified, B-019 resolved, base=control branch, Stage0 row 10 confirms diff has no apps/ or controller-runtime files"
+   ]
+  },
+  {
+   "id": "D-016-R040",
+   "state": "PASS",
+   "evidence": [
+    "PR#222 merged as normal 2-parent merge cba51e5 (parents 351ced6 + 10636b6); no auto-merge artifact"
+   ]
+  },
+  {
+   "id": "D-016-R041",
+   "state": "PASS",
+   "evidence": [
+    "cba51e5 = 'Merge pull request #222'; origin/control/context-intelligence-init advanced to it; control-plane validators re-run (I confirm validator exit0 at HEAD)"
+   ]
+  },
+  {
+   "id": "D-016-R042",
+   "state": "PASS",
+   "evidence": [
+    "No merge denial occurred (cba51e5 succeeded); conditional denial-handling not triggered"
+   ]
+  },
+  {
+   "id": "D-016-R043",
+   "state": "PASS",
+   "evidence": [
+    "Stage5 control->main PR #224 opened and merged (e07df76='Merge pull request #224 from ...control/context-intelligence-init')"
+   ]
+  },
+  {
+   "id": "D-016-R044",
+   "state": "PASS",
+   "evidence": [
+    "e07df76 diff includes tasks/M0-T063.json(116)+M0-T064..T069(49 each), D-013 runway, accepted M0-T070; grep for M0-T071.json/D-015-nanoid in diff = empty (no duplication)"
+   ]
+  },
+  {
+   "id": "D-016-R045",
+   "state": "PASS",
+   "evidence": [
+    "state.json@e07df76 accepted=87; package-lock nanoid=3.3.18 preserved (not undone); M0-T071 not re-touched in e07df76 diff; commit msg 'ledger 87'"
+   ]
+  },
+  {
+   "id": "D-016-R046",
+   "state": "PASS",
+   "evidence": [
+    "Stage5 authorization conditions met before merge (green checks, mergeable, valid identities, intended scope per e07df76 diff, no controller action bundled)"
+   ]
+  },
+  {
+   "id": "D-016-R047",
+   "state": "PASS",
+   "evidence": [
+    "e07df76 normal merge (parents f21eb1f + cba51e5); origin/main = e07df76 after merge; resulting main SHA recorded; D-017 later starts from post-Stage6 026e7cb"
+   ]
+  },
+  {
+   "id": "D-016-R048",
+   "state": "PASS",
+   "evidence": [
+    "Stage6 commit 9c0acc0 msg: 4 commands are 'exactly the four gate-reviewed commands from the accepted fixture m0_t063_documented_test_command.json (D-014 AS-10)'; 'any additional command would be a guess...avoided'"
+   ]
+  },
+  {
+   "id": "D-016-R049",
+   "state": "PASS",
+   "evidence": [
+    "M0-T063.documented_test_commands = 4 exact invocations (test_repo_fingerprint/index_cache/index_baseline + one pytest with 3 positional files); no wildcard/chaining/redirection/substitution/broad grant"
+   ]
+  },
+  {
+   "id": "D-016-R050",
+   "state": "PASS",
+   "evidence": [
+    "Canonical documented_test_commands field populated (schema task_packet_commands.schema.json); validate_documented_test_commands accepts these, malformed variants (chaining/redirection/empty/non-list) fail closed (commit msg + D-014-R019 tests)"
+   ]
+  },
+  {
+   "id": "D-016-R051",
+   "state": "PASS",
+   "evidence": [
+    "Amendment on dedicated branch merged via PR#225; validate_directive_compliance --check exit0 at HEAD; minimal packet-field addition did not invalidate existing M0-T063 G0 - no re-gate required by control plane"
+   ]
+  },
+  {
+   "id": "D-016-R052",
+   "state": "PASS",
+   "evidence": [
+    "9c0acc0 is a 6-line packet-only change (no A1 source); Stage7 runbook header 'NOTHING...has been executed' (supervisor not started); A1 first implemented under D-017"
+   ]
+  },
+  {
+   "id": "D-016-R053",
+   "state": "PASS",
+   "evidence": [
+    "Amendment isolated on dedicated branch task/M0-T063-packet-commands (PR#225), branched from e07df76, single commit 9c0acc0 - not mixed into an already-merged branch"
+   ]
+  },
+  {
+   "id": "D-016-R054",
+   "state": "PASS",
+   "evidence": [
+    "Schema/authority-loading/command-classification tests are the D-014 AS-1..AS-10 suite (reproduced by DCV, 29 passed); directive-compliance+project-control validators pass; PR#225 merged (CI green)"
+   ]
+  },
+  {
+   "id": "D-016-R055",
+   "state": "PASS",
+   "evidence": [
+    "PR#225 merged to main 026e7cb only after verification; commit msg 'exact accepted fixture set, no broadening' - no ambiguity-driven broadening"
+   ]
+  },
+  {
+   "id": "D-016-R056",
+   "state": "PASS",
+   "evidence": [
+    "A1 branch synced to accepted main via normal non-destructive merge a54dc34 (parent includes 026e7cb); A1 never implemented/run during D-016 (first accepted a52dd0c under D-017). Note: sync commit landed in the continuous follow-on D-017 session"
+   ]
+  },
+  {
+   "id": "D-016-R057",
+   "state": "PASS",
+   "evidence": [
+    "M0-T063 packet contains exact documented_test_commands; A1 unstarted at Stage6 end (accepted 3h later); supervisor runtime intact (Stage0 row 20 + runbook section 12 journal PREFLIGHT)"
+   ]
+  },
+  {
+   "id": "D-016-R058",
+   "state": "PASS",
+   "evidence": [
+    "External runbook CONTROLLER_UPDATE_RUNBOOK_2026-08-18.md inspects accepted main supervisor tree, config.toml, model_selection.toml, ACL, runtime status, A1 durable state (read-only)"
+   ]
+  },
+  {
+   "id": "D-016-R059",
+   "state": "PASS",
+   "evidence": [
+    "Runbook '2026-08-18 (D-016 Stage 7)' contains all 15 enumerated sections (## 1..## 15: controller SHA, new SHA, files delta, backup/rollback, manifest cmds, config hash, ACL, model-selection, stop/update/start, doctor, live-response, A1 status, A1 start cmd, touchpoints, rollback triggers)"
+   ]
+  },
+  {
+   "id": "D-016-R060",
+   "state": "PASS",
+   "evidence": [
+    "Runbook header: 'NOTHING in this runbook has been executed: the live controller, protected config, model selection, manifest, and runtime state are all untouched'; D-017 confirms unchanged config/model SHAs"
+   ]
+  },
+  {
+   "id": "D-016-R061",
+   "state": "PASS",
+   "evidence": [
+    "Run continued to completion of authorized integration: Stages 0-6 merged (026e7cb) + Stage7 runbook produced read-only; D-017 source-001.md continues from that terminal end-state (owner handoff evidences a terminal return)"
+   ]
+  },
+  {
+   "id": "D-016-R062",
+   "state": "FAIL",
+   "evidence": [
+    "The OVERNIGHT_RUNWAY_COMPLETE return is a session message, not a committed artifact; its enumerated contents cannot be verified from durable repository evidence. Honest insufficient - note: all 12 required items ARE independently true in the ledger (PR#222=cba51e5, PR#224=e07df76, main 026e7cb, count 87, D-013/14/15 active, B-019 resolved, PR#225, A1 state, runbook, A1 start cmd)"
+   ]
+  },
+  {
+   "id": "D-016-R063",
+   "state": "PASS",
+   "evidence": [
+    "Run completed, did not block; no OVERNIGHT_RUNWAY_BLOCKED return was due or issued - conditional obligation vacuously satisfied"
+   ]
+  },
+  {
+   "id": "D-016-R064",
+   "state": "PASS",
+   "evidence": [
+    "Merges occurred only after enumerated conditions met (Stages 3-6 records); controller untouched (runbook read-only); A1 not started; CI-gated per ci-reconciliation.md - no violation of final prohibitions"
+   ]
+  }
+ ],
+ "pass_count": 63,
+ "fail_count": 1
+}
