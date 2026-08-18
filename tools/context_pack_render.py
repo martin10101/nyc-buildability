@@ -23,6 +23,11 @@ if str(_ROOT) not in sys.path:
 from tools.context_pack_budget import BUDGET_AMENDMENT, estimate_tokens  # noqa: E402
 from tools.context_pack_io import sha256_hex  # noqa: E402
 from tools.context_pack_sources import DEFAULT_EXCLUSIONS, SUMMARY_HEAD_LINES  # noqa: E402
+from tools.context_paths import CONTAINMENT_VERSION as _CONTAINMENT_VERSION  # noqa: E402
+
+
+def _containment_version() -> str:
+    return _CONTAINMENT_VERSION
 
 SCHEMA_VERSION = "1.1"
 
@@ -217,6 +222,7 @@ def make_meta(result, args, actual_bytes, estimated) -> dict:
         omitted.append({"category": cat, "default_exclusion": True, "reason": reason})
     omitted.extend(sorted(result["omissions"], key=lambda o: o["category"]))
     truncated_any = bool(result["truncations"])
+    extras = result.get("extras") or {}
     return {
         "schema_version": SCHEMA_VERSION,
         "task_id": args.task,
@@ -230,6 +236,18 @@ def make_meta(result, args, actual_bytes, estimated) -> dict:
             "include": sorted(set(args.include)),
             "ci_summary": args.ci_summary,
             "graph_limit": args.graph_limit,
+        },
+        # M0-T075 vertical-integration provenance (D-018-R011..R018) --------
+        "integration": {
+            "containment_version": _containment_version(),
+            "requirements": extras.get("requirements"),
+            "implementation_paths": extras.get("implementation_paths"),
+            "prose_extraction": extras.get("prose_extraction"),
+            "unresolved_seeds": extras.get("unresolved_seeds"),
+            "selection": extras.get("selection"),
+            "ontology_status": extras.get("ontology_status"),
+            "memory_status": extras.get("memory_status"),
+            "subsystems_touched": extras.get("subsystems_touched"),
         },
         "budget": {
             "single_total_budget": True,

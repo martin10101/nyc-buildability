@@ -125,9 +125,12 @@ def main(argv=None) -> int:
     }
     stream = sys.stderr if code != 0 else sys.stdout
     print(json.dumps(summary, sort_keys=True), file=stream)
-    if code != 0:
+    if code == 2:
         print("FAIL-CLOSED: material does not fit the effective bound; see "
               "context.md split proposal.", file=sys.stderr)
+    elif code == 3:
+        print("FAIL-CLOSED: packet is INSUFFICIENT for the role — "
+              + meta["sufficiency"]["reason"], file=sys.stderr)
     return code
 
 

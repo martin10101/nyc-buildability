@@ -85,6 +85,7 @@ def gather_index_sources(repo: str, targets: list[str], graph_limit: int,
     from tools.context_pack_sources import Source
 
     result = {"sources": [], "omissions": [], "graph_queries": [],
+              "graph_index": None,
               "provenance": {"index_consumed": False, "coverage_mode": "none",
                              "dependency_breadth": 0, "changed_targets": len(targets)}}
 
@@ -105,6 +106,7 @@ def gather_index_sources(repo: str, targets: list[str], graph_limit: int,
         graph = json.loads(res.export_bytes)
         gi = cgquery.GraphIndex(graph)
         export_digest = res.export_digest()
+        result["graph_index"] = gi  # in-process handle for downstream selection
     except Exception as exc:  # fail-safe: never crash the pack on an index error
         result["omissions"].append({
             "category": "code_graph", "default_exclusion": False,

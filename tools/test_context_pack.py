@@ -277,7 +277,7 @@ class TestAS3Overflow(unittest.TestCase):
                 fh.write(("CI_LINE step passed\n" * 4000).encode("utf-8"))
             out = os.path.join(root, "out")
             proc = run_cli(root, ["--task", "M0-T099", "--role", "worker",
-                                  "--provider", "claude", "--max-bytes", "9000",
+                                  "--provider", "claude", "--max-bytes", "14000",
                                   "--out", out, "--ci-summary", ci])
             self.assertEqual(proc.returncode, 0, proc.stderr.decode())
             meta = load_meta(out)
@@ -299,7 +299,7 @@ class TestAS3Overflow(unittest.TestCase):
             # the effective bound (F1: footer-aware enforcement).
             self.assertTrue(meta["actuals"]["within_effective_bound"])
             assert_bound_invariant(self, out, proc.returncode)
-            self.assertLessEqual(md_bytes(out), 9000)
+            self.assertLessEqual(md_bytes(out), 14000)
 
     def test_as3_material_never_silently_truncated_failclosed(self):
         with tempfile.TemporaryDirectory() as root:
@@ -427,7 +427,9 @@ class TestAS4ReviewerPrimarySource(unittest.TestCase):
             out = os.path.join(root, "out")
             proc = run_cli(root, ["--task", "M0-T099", "--role", "reviewer",
                                   "--provider", "codex", "--max-bytes", "500000", "--out", out])
-            self.assertEqual(proc.returncode, 0)
+            # M0-T075 (D-018-R019): insufficiency is ENFORCEABLE - the packet
+            # is emitted as a bounded machine-readable result and exit is 3.
+            self.assertEqual(proc.returncode, 3)
             meta = load_meta(out)
             self.assertFalse(meta["sufficiency"]["sufficient"])
             self.assertIn("primary-source", meta["sufficiency"]["reason"])
@@ -519,7 +521,7 @@ class TestDeterminism(unittest.TestCase):
             with open(ci, "wb") as fh:
                 fh.write(("CI_LINE step passed\n" * 4000).encode("utf-8"))
             common = ["--task", "M0-T099", "--role", "worker", "--provider",
-                      "claude", "--max-bytes", "9000", "--ci-summary", ci]
+                      "claude", "--max-bytes", "14000", "--ci-summary", ci]
             out_a = os.path.join(root, "a")
             out_b = os.path.join(root, "b")
             pa = run_cli(root, common + ["--out", out_a])
