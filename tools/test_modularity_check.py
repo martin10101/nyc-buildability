@@ -277,16 +277,27 @@ class ProofTests(RepoCase):
         self.assertIn("new_oversized", kinds)
         self.assertEqual(kinds["new_oversized"]["sloc"], 1200)
 
-    def test_r1_unterminated_block_scan_warns_not_silently_undercounts(self) -> None:
-        """G3-R1: /* inside a string literal is surfaced, not silently swallowed."""
-        # A real-world Vite pattern: /* is inside a string, no */ follows.
+    def test_r1_string_literal_comment_markers_do_not_fool_the_scanner(self) -> None:
+        """G3-R1 / G4-D1: /* inside a string literal is COUNTED correctly (not
+        swallowed, not falsely flagged uncertain); only a genuinely open block
+        comment at EOF is surfaced as uncertain."""
+        # Real Vite pattern: /* is inside a string, no real comment involved.
         self.add("apps/web/src/lib/glob.ts",
                  'const mods = import.meta.glob("./modules/*.ts");\n'
-                 + "export const x = 1;\n" * 700)
+                 + "export const x = 1;\n" * 700)  # 701 real SLOC
         self.write_baseline({})
         code, payload = self.run_main("--check")
-        kinds = {w["kind"] for w in payload["warnings"]}
-        self.assertIn("sloc_scan_uncertain", kinds)
+        warn_kinds = {w["kind"] for w in payload["warnings"]}
+        self.assertNotIn("sloc_scan_uncertain", warn_kinds,
+                         "a /* inside a string is not an uncertain scan")
+        self.assertIn("review_signal", warn_kinds)  # 701 > 600, counted right
+        # A genuinely unterminated block comment (syntax error) still warns.
+        self.add("apps/web/src/lib/broken.ts",
+                 "export const y = 1;\n/* an unterminated block comment\n"
+                 + "still comment\n" * 5)
+        code, payload = self.run_main("--check")
+        self.assertIn("sloc_scan_uncertain",
+                      {w["kind"] for w in payload["warnings"]})
 
     def test_r2_refactoring_a_file_down_does_not_trip_too_broad(self) -> None:
         """G3-R2: exception breadth is judged against the recorded review size,

@@ -3,7 +3,7 @@
  "task_id": "M0-T073",
  "producer": "orchestrator",
  "reviewed_sha": "ad3408d4c3f77a9dfb1f796395869da558420353",
- "note": "Evidence per D-017 requirement bound to M0-T073 (rows R105..R113, source-002-amendment.md items 1-7). Reviewers reproduce each claim at the frozen head; the producer's map is claims, not proof. Rework round 1 corrections applied per G3-C1..C3, G4-C1..C2, G5 SEC-MINOR-1/2/4/5/6.",
+ "note": "Evidence per D-017 requirement bound to M0-T073 (rows R105..R113, source-002-amendment.md items 1-7). Reviewers reproduce each claim at the frozen head; the producer's map is claims, not proof. Rework round 1 corrections applied per G3-C1..C3, G4-C1..C2, G5 SEC-MINOR-1/2/4/5/6. Round-3: quote/backtick-aware TS scanner (closes G3-R1/G4-D1 string-literal cases A-D); stale_exception warning for a shrunk file (G4-D2); single-use claim qualified (G4-D3).",
  "requirements": {
   "D-017-R105": "Permanence encoded in artifacts, not session state: CLAUDE.md principle 16 (every session), AGENTS.md Modularity section (every Codex review), .claude/rules/code-architecture.md (auto-loads on production source), .github/workflows/ci.yml modularity job (every PR/push). Producer report s'Deliverables'.",
   "D-017-R106": "CLAUDE.md principle 16: all seven mandated statements present; conciseness proven by python tools/context_budget_check.py PASS at ad3408d.",
