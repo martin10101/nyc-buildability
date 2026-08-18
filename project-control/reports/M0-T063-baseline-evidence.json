@@ -1,9 +1,9 @@
 {
  "census": {
-  "eligible": 422,
+  "eligible": 426,
   "excluded": {},
   "failed": {},
-  "indexed": 422,
+  "indexed": 426,
   "reconciles": true,
   "stale": 0
  },
@@ -13,7 +13,7 @@
   "edge_counts": {
    "by_confidence": {
     "derived": 318,
-    "exact": 3043,
+    "exact": 3081,
     "partial": 3,
     "unresolved": 18
    },
@@ -23,7 +23,7 @@
     },
     "py": {
      "derived": 229,
-     "exact": 2681,
+     "exact": 2719,
      "unresolved": 7
     },
     "ts": {
@@ -36,27 +36,27 @@
    "by_type": {
     "contract_ref": 318,
     "dynamic_import": 3,
-    "import": 3058,
+    "import": 3096,
     "reexport": 3
    }
   },
-  "edges": 3382,
-  "input_files": 422,
+  "edges": 3420,
+  "input_files": 426,
   "node_counts": {
-   "class": 977,
+   "class": 988,
    "contract_schema": 10,
    "external": 70,
-   "function": 3163,
-   "method": 3221,
-   "py_module": 292,
+   "function": 3188,
+   "method": 3275,
+   "py_module": 296,
    "ts_module": 120,
    "ts_symbol": 471
   },
-  "nodes": 8324
+  "nodes": 8418
  },
- "export_digest": "0f932795601d1da01c69da12899d0733729a55bf911b2e72d3c6defe57404282",
+ "export_digest": "3d64d3b2a7584fc011db9aa7351e91a963094c5abc97503e72002f2dcc27f758",
  "generator_version": "1.1.0",
  "schema": "repo_index_baseline/v1",
- "snapshot_fingerprint": "7128c77baf1bf81240847399fbc23ee9e2a799a6cbd40f6c617d097df59c3c97",
- "source_fingerprint": "537b6f747e5881a4c7a275c5400f8acc2b5f7b725c4b8b546e62d7b13efb9d71"
+ "snapshot_fingerprint": "190dec00f10f6abeb63227cb8d10466df60c1a9250226a4bb9bcbc455a39c2af",
+ "source_fingerprint": "2ce8b8899dd91dcd1e2b3022c536ebc555b3a0cf7cc9fcdc7a5c5392c88d2a66"
 }
