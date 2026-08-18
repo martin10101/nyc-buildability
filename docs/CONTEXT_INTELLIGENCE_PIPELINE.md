@@ -25,7 +25,11 @@ three pieces; A2–F extend it.
   repo-identity namespace + value; HEAD sha + branch + detached flag; a
   dirty-state digest over the sorted porcelain status set; the per-file source
   manifest digest; and the config/parser/schema version set. HEAD alone is never
-  sufficient — the dirty digest is always included.
+  sufficient — the dirty digest is always included. The per-file manifest hashes
+  the CONTENT of EVERY eligible file, tracked or untracked (matching what the
+  code-graph generator indexes), so the snapshot fingerprint uniquely determines
+  the generator's output; `tracked` is recorded per file as census metadata, not
+  an index-exclusion.
 - **Per-file manifest**: for each eligible tracked file, a domain-separated
   `raw` digest (exact bytes) and `lf` digest (CRLF→LF normalized, so a pure
   line-ending flip is distinguishable), size, and parse-relevant mode metadata
@@ -72,7 +76,8 @@ digest non-colliding even on identical bytes. Canonical JSON is
 ### Baseline harness (`tools/repo_index_baseline.py`, D-013-R049/R050/R054/R055)
 - Runs the UNMODIFIED code-graph generator (`code_graph.build_graph`) and records
   the export digest (over the generator's own canonical bytes) + node/edge/input
-  counts + the generator's source fingerprint — the REFERENCE that A2's
+  counts + the generator's `source_fingerprint` (a content fingerprint of the
+  whole input corpus, NOT a generator-code identity) — the REFERENCE that A2's
   incremental output must match byte-for-byte.
 - **Two storage classes**: (a) committed evidence — a bounded, sanitized JSON+MD
   summary (digests + counts + census only; no raw graph; no private absolute

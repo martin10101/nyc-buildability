@@ -88,6 +88,23 @@ class CrashRecovery(CacheCase):
         self.assertIsNone(cur if (cur and cur.fingerprint == "fpX") else None)
         self.assertNotEqual(cur.fingerprint if cur else None, "fpX")
 
+    def test_live_writer_temp_dir_is_not_quarantined(self) -> None:
+        # MINOR-2 (G3 review): a temp generation owned by a LIVE pid is an
+        # in-progress write, not an orphan - recover() must leave it alone so a
+        # concurrent reader cannot abort a healthy write. A dead-pid temp IS
+        # quarantined.
+        import os as _os
+        self.cache.write_generation("fp1", {"n": 1})
+        self.cache._ensure_dirs()
+        live = self.cache.tmp_dir / f"fpLive.{_os.getpid()}"
+        live.mkdir(parents=True)
+        dead = self.cache.tmp_dir / "fpDead.999999999"
+        dead.mkdir(parents=True)
+        q = self.cache.recover()
+        self.assertTrue(live.exists(), "a live writer's temp dir was quarantined")
+        self.assertFalse(dead.exists(), "a dead-pid orphan temp was not quarantined")
+        self.assertTrue(any("fpDead" in x for x in q))
+
     def test_validation_before_promotion(self) -> None:
         # a payload that is not JSON-serializable cannot be written; a valid one
         # is validated (digest matches) before promotion.

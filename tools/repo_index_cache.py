@@ -51,6 +51,31 @@ class CacheError(Exception):
         self.message = message
 
 
+def _pid_alive(pid: int) -> bool:
+    if pid <= 0:
+        return False
+    try:
+        if os.name == "nt":
+            import ctypes
+            h = ctypes.windll.kernel32.OpenProcess(0x1000, False, pid)
+            if h:
+                ctypes.windll.kernel32.CloseHandle(h)
+                return True
+            return False
+        os.kill(pid, 0)
+        return True
+    except (OSError, ValueError):
+        return False
+
+
+def _temp_owner_alive(temp_name: str) -> bool:
+    """A temp generation is named `<fingerprint>.<pid>`; True if that pid lives."""
+    try:
+        return _pid_alive(int(temp_name.rsplit(".", 1)[-1]))
+    except (ValueError, IndexError):
+        return False
+
+
 def _content_digest(payload: dict[str, Any]) -> str:
     body = json.dumps(payload, sort_keys=True, separators=(",", ":"),
                       ensure_ascii=True).encode("utf-8")
@@ -106,20 +131,7 @@ class SingleWriterLock:
         self._held = False
 
     def _pid_alive(self, pid: int) -> bool:
-        if pid <= 0:
-            return False
-        try:
-            if os.name == "nt":
-                import ctypes
-                h = ctypes.windll.kernel32.OpenProcess(0x1000, False, pid)
-                if h:
-                    ctypes.windll.kernel32.CloseHandle(h)
-                    return True
-                return False
-            os.kill(pid, 0)
-            return True
-        except (OSError, ValueError):
-            return False
+        return _pid_alive(pid)
 
     def acquire(self) -> None:
         self.lock_path.parent.mkdir(parents=True, exist_ok=True)
@@ -183,6 +195,13 @@ class IndexCache:
         quarantined: list[str] = []
         for tmp in sorted(self.tmp_dir.glob("*")):
             if tmp.is_dir():
+                # MINOR-2 (G3 review): a temp generation is named `<fp>.<pid>`.
+                # If that pid is a LIVE process, the write is still in progress -
+                # never yank it out from under an active writer (a concurrent
+                # reader's recover() would otherwise abort a healthy write). Only
+                # an orphan (dead-pid) temp generation is quarantined.
+                if _temp_owner_alive(tmp.name):
+                    continue
                 dest = self.quarantine_dir / f"{tmp.name}.incomplete"
                 shutil.rmtree(dest, ignore_errors=True)
                 shutil.move(str(tmp), str(dest))

@@ -335,11 +335,6 @@ def compute_fingerprint(
             failures.append({"path": rel, "reason": FAILED_UNREADABLE,
                              "detail": "eligible file not present at hash time"})
             continue
-        if rel not in tracked:
-            # Eligible pattern but untracked: excluded with an explicit reason,
-            # and separately visible so a stray file is never invisible.
-            census.add_excluded(EXCLUDED_UNTRACKED)
-            continue
         try:
             mode = _file_mode_metadata(abs_path)
             if mode["is_symlink"] and not abs_path.resolve().exists():
@@ -354,8 +349,15 @@ def compute_fingerprint(
             failures.append({"path": rel, "reason": FAILED_UNREADABLE,
                              "detail": exc.__class__.__name__})
             continue
+        # MAJOR-1 fix (G3 review): the accepted code-graph generator indexes
+        # EVERY filesystem-eligible file, tracked or not. The fingerprint must
+        # hash the same set so `snapshot_fingerprint` uniquely determines the
+        # generator's output - otherwise a modified-but-untracked source would
+        # collide on the fingerprint and A2 would serve a stale index. `tracked`
+        # is recorded as metadata (informational + census), never an exclusion;
+        # the git dirty-state digest separately binds the uncommitted status.
         entries.append(FileEntry(path=rel, raw_digest=raw, lf_digest=lf,
-                                 size=size, mode=mode, tracked=True))
+                                 size=size, mode=mode, tracked=(rel in tracked)))
         census.indexed += 1
 
     entries.sort(key=lambda e: e.path)

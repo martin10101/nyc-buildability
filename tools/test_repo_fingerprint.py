@@ -112,14 +112,29 @@ class CensusAccounting(RepoCase):
         self.assertTrue(c.reconciles())
         self.assertEqual(c.indexed, 2)
 
-    def test_untracked_eligible_file_is_excluded_not_indexed(self) -> None:
+    def test_untracked_eligible_file_is_indexed_and_flagged(self) -> None:
+        # MAJOR-1 (G3 review): the generator indexes untracked eligible files,
+        # so the fingerprint must too - hash their content, flag tracked=False.
         self.add("services/api/a.py", "X = 1\n")
-        # eligible pattern, present, but never git-added
         (self.repo / "tools").mkdir(parents=True, exist_ok=True)
         (self.repo / "tools" / "u.py").write_text("U = 1\n", encoding="utf-8")
-        c = self.fp().census
-        self.assertEqual(c.excluded.get("untracked"), 1)
-        self.assertTrue(c.reconciles())
+        r = self.fp()
+        self.assertTrue(r.census.reconciles())
+        entry = next(e for e in r.file_manifest if e.path == "tools/u.py")
+        self.assertFalse(entry.tracked)          # flagged as untracked
+        self.assertEqual(len(entry.raw_digest), 64)  # but its content IS hashed
+        self.assertEqual(r.census.excluded, {})  # no untracked-exclusion
+
+    def test_untracked_content_change_moves_the_fingerprint(self) -> None:
+        # The MAJOR-1 collision the fix closes: two different untracked contents
+        # MUST NOT share a snapshot fingerprint.
+        self.add("services/api/a.py", "X = 1\n")
+        (self.repo / "tools").mkdir(parents=True, exist_ok=True)
+        u = self.repo / "tools" / "u.py"
+        u.write_text("U = 1\n", encoding="utf-8")
+        fpA = self.fp().snapshot_fingerprint
+        u.write_text("U = 999\n", encoding="utf-8")  # untracked content changes
+        self.assertNotEqual(fpA, self.fp().snapshot_fingerprint)
 
     def test_excluded_directory_is_not_eligible(self) -> None:
         self.add("services/api/a.py", "X = 1\n")
