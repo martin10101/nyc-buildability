@@ -1,0 +1,19 @@
+{
+  "map_schema_version": "1.0.0",
+  "map_version": "1.0.0",
+  "vocabulary_law": "Closed vocabulary (D-013-R008): every subsystem_id below IS a repo-relative directory prefix that must exist in the tree at load time, and must equal its rule's prefix byte-for-byte. Free-form taxonomy names are structurally impossible: the resolver fails closed on any rule whose subsystem_id differs from its prefix or whose prefix is not an existing directory.",
+  "resolution_law": "Deterministic longest-prefix match on whole path segments; a path matching no rule resolves to unresolved with reason no_matching_subsystem_rule, never to a guessed bucket (D-013-R009/R045).",
+  "rules": [
+    {"subsystem_id": "services/api", "prefix": "services/api"},
+    {"subsystem_id": "apps/web", "prefix": "apps/web"},
+    {"subsystem_id": "packages/contracts", "prefix": "packages/contracts"},
+    {"subsystem_id": "tools/code_graph", "prefix": "tools/code_graph"},
+    {"subsystem_id": "tools/agent_supervisor", "prefix": "tools/agent_supervisor"},
+    {"subsystem_id": "tools", "prefix": "tools"},
+    {"subsystem_id": "docs", "prefix": "docs"},
+    {"subsystem_id": "project-control", "prefix": "project-control"},
+    {"subsystem_id": "supabase", "prefix": "supabase"},
+    {"subsystem_id": ".github", "prefix": ".github"},
+    {"subsystem_id": ".claude", "prefix": ".claude"}
+  ]
+}

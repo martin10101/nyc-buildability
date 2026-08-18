@@ -1042,12 +1042,288 @@
    "task_id": "M0-T066",
    "directive_id": "D-013",
    "producer": "orchestrator",
-   "verifier": "",
-   "applicable_requirement_ids": [],
-   "requirements": [],
-   "reviewed_sha": null,
-   "reviewed_manifest_sha256": null,
-   "note": "PENDING stub created at capture (c14 coverage). The applicable set is derived by the resolver at verification time and every row is filled by the independent verifier at the unit's accept cycle; nothing is verified yet."
+   "verifier": "directive-compliance-verifier",
+   "applicable_requirement_ids": [
+    "D-013-R001",
+    "D-013-R002",
+    "D-013-R003",
+    "D-013-R004",
+    "D-013-R006",
+    "D-013-R007",
+    "D-013-R008",
+    "D-013-R009",
+    "D-013-R010",
+    "D-013-R011",
+    "D-013-R012",
+    "D-013-R013",
+    "D-013-R022",
+    "D-013-R025",
+    "D-013-R039",
+    "D-013-R042",
+    "D-013-R043",
+    "D-013-R045",
+    "D-013-R050",
+    "D-013-R051",
+    "D-013-R053",
+    "D-013-R064",
+    "D-013-R069",
+    "D-013-R082"
+   ],
+   "requirements": [
+    {
+     "id": "D-013-R001",
+     "state": "PASS",
+     "evidence": [
+      "Unit C is layer (c) 'closed deterministic ontology' delivered as a bounded task unit, not an all-at-once rewrite: git diff --name-only main...HEAD shows only new subsystem_* files + docs/SUBSYSTEM_ONTOLOGY.md + control-plane records",
+      "tools/subsystem_resolver.py header docstring lines 1-25 scope the unit to the ontology layer"
+     ],
+     "verified_at": "2026-08-18T18:10:06+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "c21dca2dd34cdbc93d73c35f5d11016195be6de7"
+    },
+    {
+     "id": "D-013-R002",
+     "state": "PASS",
+     "evidence": [
+      "tools/subsystem_resolver.py report_graph_kinds() (lines 182-207) enumerates ACTUAL node/edge kinds from the index export with export_digest provenance; no 'read whole repository' claim",
+      "docs/SUBSYSTEM_ONTOLOGY.md lines 67-77 states actual kinds and subsystem_node_kind_in_graph:false"
+     ],
+     "verified_at": "2026-08-18T18:10:06+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "c21dca2dd34cdbc93d73c35f5d11016195be6de7"
+    },
+    {
+     "id": "D-013-R003",
+     "state": "PASS",
+     "evidence": [
+      "tools/subsystem_entities.py resolve_proposals (lines 216-237) drops nothing silently: every proposal becomes a link or an unresolved_links[] entry with a machine-readable reason; test AS4TwoPass asserts len(links)+len(unresolved)==len(proposals)",
+      "docs/SUBSYSTEM_ONTOLOGY.md line 80 'source files remain authoritative; this maps facts'"
+     ],
+     "verified_at": "2026-08-18T18:10:06+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "c21dca2dd34cdbc93d73c35f5d11016195be6de7"
+    },
+    {
+     "id": "D-013-R004",
+     "state": "PASS",
+     "evidence": [
+      "tools/subsystem_entities.py AuthoritativeIndexes.load (lines 75-112) treats master_plan.json + tasks/*.json + directives registry as authoritative for all derivations; fails closed if unreadable",
+      "project-control/reports/M0-T066-G0-readiness.md present in diff (control-plane reconciliation)"
+     ],
+     "verified_at": "2026-08-18T18:10:06+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "c21dca2dd34cdbc93d73c35f5d11016195be6de7"
+    },
+    {
+     "id": "D-013-R006",
+     "state": "PASS",
+     "evidence": [
+      "HEAD c21dca2 is on the task branch, NOT main (git log); task status 'awaiting_gate' in project-control/tasks/M0-T066.json line 109; gate record project-control/gates/M0-T066-G0.json present - control plane not bypassed, nothing merged/accepted from worker role"
+     ],
+     "verified_at": "2026-08-18T18:10:06+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "c21dca2dd34cdbc93d73c35f5d11016195be6de7"
+    },
+    {
+     "id": "D-013-R007",
+     "state": "PASS",
+     "evidence": [
+      "project-control/tasks/M0-T066.json single producer_agent 'orchestrator' (line 102) + read-only reviewer_agents (lines 103-108); verified per recorded M0-T065 precedent (D-013 verification.json task_verifications R007=PASS)"
+     ],
+     "verified_at": "2026-08-18T18:10:06+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "c21dca2dd34cdbc93d73c35f5d11016195be6de7"
+    },
+    {
+     "id": "D-013-R008",
+     "state": "PASS",
+     "evidence": [
+      "tools/subsystem_resolver.py _validate_rule (lines 79-95) raises free_form_subsystem_id when subsystem_id != prefix and prefix_not_in_tree when the prefix is not a real directory - a second free-form taxonomy is structurally impossible",
+      "tools/subsystem_map.json all 11 rules have subsystem_id==prefix; `vocabulary` output lists 11 existing dirs; tests test_free_form_name_fails_closed + test_nonexistent_prefix_fails_closed PASS (21/21)"
+     ],
+     "verified_at": "2026-08-18T18:10:06+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "c21dca2dd34cdbc93d73c35f5d11016195be6de7"
+    },
+    {
+     "id": "D-013-R009",
+     "state": "PASS",
+     "evidence": [
+      "tools/subsystem_resolver.py resolve_path (lines 155-171) and tools/subsystem_entities.py _resolve_one (lines 163-213) are pure deterministic code with no model/LLM call anywhere; parent selection, existence validation are code-only",
+      "test AS3DerivedParents asserts zero model involvement; grep of both modules shows no LLM/network invocation"
+     ],
+     "verified_at": "2026-08-18T18:10:06+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "c21dca2dd34cdbc93d73c35f5d11016195be6de7"
+    },
+    {
+     "id": "D-013-R010",
+     "state": "PASS",
+     "evidence": [
+      "git diff --name-only main...HEAD adds only NEW files (subsystem_resolver.py, subsystem_entities.py, subsystem_map.json, test, doc); no existing file was refactored/shortened"
+     ],
+     "verified_at": "2026-08-18T18:10:06+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "c21dca2dd34cdbc93d73c35f5d11016195be6de7"
+    },
+    {
+     "id": "D-013-R011",
+     "state": "PASS",
+     "evidence": [
+      "git diff --name-only main...HEAD committed set = code + subsystem_map.json + doc + sanitized reports only; no cache/JSONL/transcript/secret; grep over committed reports/docs/map returned only two self-attestation lines (no actual secret)",
+      "report_graph_kinds writes index cache to cache_base temp dir (line 190), outside the worktree"
+     ],
+     "verified_at": "2026-08-18T18:10:06+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "c21dca2dd34cdbc93d73c35f5d11016195be6de7"
+    },
+    {
+     "id": "D-013-R012",
+     "state": "PASS",
+     "evidence": [
+      "No token-savings claim exists in any committed artifact; grep for 'token.?saving' returned only project-control/reports/M0-T066-evidence-map.json:38 which explicitly states 'No token-savings or efficiency claim anywhere in code, doc, or reports'"
+     ],
+     "verified_at": "2026-08-18T18:10:06+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "c21dca2dd34cdbc93d73c35f5d11016195be6de7"
+    },
+    {
+     "id": "D-013-R013",
+     "state": "PASS",
+     "evidence": [
+      "tools/subsystem_resolver.py load_map raises SubsystemMapError (fail-closed) on map_unreadable/map_malformed_json/map_not_object/unknown_map_schema_version/missing_map_version/rules_missing/duplicate_rule_prefix (lines 99-137); CLI exits 2 with error doc (lines 231-233)",
+      "tools/subsystem_entities.py raises EntityIndexError on unreadable master plan/directive requirements; AS6FailClosed class 6 tests + AS-4 unresolved reasons all PASS (21/21)"
+     ],
+     "verified_at": "2026-08-18T18:10:06+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "c21dca2dd34cdbc93d73c35f5d11016195be6de7"
+    },
+    {
+     "id": "D-013-R022",
+     "state": "PASS",
+     "evidence": [
+      "Requirement text amended by source-002 (bootstrap-only 'this run'); owner directive D-017 source-001.md line 63 STAGE 6 explicitly authorizes 'M0-T066: Unit C - deterministic subsystem ontology' as continuous A-to-Z continuation after Unit B; M0-T065 (Unit B) accepted+merged to main at 1d159a8 (git log); M0-T066 claimed after - judged identically to recorded M0-T065 R022=PASS precedent in D-013 verification.json"
+     ],
+     "verified_at": "2026-08-18T18:10:06+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "c21dca2dd34cdbc93d73c35f5d11016195be6de7"
+    },
+    {
+     "id": "D-013-R025",
+     "state": "PASS",
+     "evidence": [
+      "No false 'complete census'/'deep understanding' claim: report_graph_kinds enumerates only kinds ACTUALLY present in the index export; docs/SUBSYSTEM_ONTOLOGY.md line 80 labels the layer 'Advisory placement layer; source files remain authoritative' (summaries are navigation aids)"
+     ],
+     "verified_at": "2026-08-18T18:10:06+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "c21dca2dd34cdbc93d73c35f5d11016195be6de7"
+    },
+    {
+     "id": "D-013-R039",
+     "state": "PASS",
+     "evidence": [
+      "Unit C produces subsystem derivations consumed by the single downstream compiler/Unit D (version-stamped records), not a parallel context budget or independent concatenation: tools/subsystem_entities.py resolve_proposals returns link records only (lines 232-237); no context-pack/budget assembly is added - consistent with the ONE-compiler design (recorded M0-T065 R039=PASS precedent)"
+     ],
+     "verified_at": "2026-08-18T18:10:06+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "c21dca2dd34cdbc93d73c35f5d11016195be6de7"
+    },
+    {
+     "id": "D-013-R042",
+     "state": "PASS",
+     "evidence": [
+      "The resolver includes nothing into any context window and has no budget-filling behavior; it emits bounded deterministic derivation records only (tools/subsystem_resolver.py resolve/vocabulary/version CLI, lines 235-269) - no capacity-filling path exists to violate the prohibition"
+     ],
+     "verified_at": "2026-08-18T18:10:06+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "c21dca2dd34cdbc93d73c35f5d11016195be6de7"
+    },
+    {
+     "id": "D-013-R043",
+     "state": "PASS",
+     "evidence": [
+      "Unit C establishes the versioned deterministic subsystem/ontology mapping: RESOLVER_VERSION=1.0.0 + map_version=1.0.0 + map_digest a569d502... exported by version_stamp (tools/subsystem_resolver.py lines 42,145-152); `check` CLI confirms the stamp. Unit D (M0-T067 memory graph) is NOT implemented in this diff (git diff shows no memory/digest module), so D is not before C",
+      "docs/SUBSYSTEM_ONTOLOGY.md lines 81-84 record Unit D sequenced after this unit"
+     ],
+     "verified_at": "2026-08-18T18:10:06+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "c21dca2dd34cdbc93d73c35f5d11016195be6de7"
+    },
+    {
+     "id": "D-013-R045",
+     "state": "PASS",
+     "evidence": [
+      "tools/subsystem_entities.py _resolve_one derives every parent from authoritative facts: task->milestone via packet+master_plan (lines 176-182), requirement->directive via registry (lines 187-191), path->subsystem via versioned resolver (lines 192-205), symbols only by exact graph node-id membership; model tags never mint a link (propose() is pass-1 only)",
+      "test AS3DerivedParents PASS; evidence preserved as advisory leaf not structural parent"
+     ],
+     "verified_at": "2026-08-18T18:10:06+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "c21dca2dd34cdbc93d73c35f5d11016195be6de7"
+    },
+    {
+     "id": "D-013-R050",
+     "state": "PASS",
+     "evidence": [
+      "Committed evidence summaries are sanitized JSON/MD under project-control/reports/M0-T066-*; runtime index cache stays external (report_graph_kinds cache_base temp dir, tools/subsystem_resolver.py line 190); no JSONL/telemetry committed (git diff name-only); no raw prompts/private absolute paths/credentials in committed reports (grep clean)"
+     ],
+     "verified_at": "2026-08-18T18:10:06+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "c21dca2dd34cdbc93d73c35f5d11016195be6de7"
+    },
+    {
+     "id": "D-013-R051",
+     "state": "PASS",
+     "evidence": [
+      "tools/subsystem_entities.py _resolve_one sets graph_indexed=None and graph_node=None when no graph provided (lines 200-205); symbol evidence stays None - no missing value fabricated as zero; coverage-evidence.md line 61 'graph_not_provided (null, never fabricated)'"
+     ],
+     "verified_at": "2026-08-18T18:10:06+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "c21dca2dd34cdbc93d73c35f5d11016195be6de7"
+    },
+    {
+     "id": "D-013-R053",
+     "state": "PASS",
+     "evidence": [
+      "No combined 'token savings' number exists anywhere; grep 'token.?saving' over committed artifacts returns only the evidence-map self-attestation that no such number is produced; the resolver produces no provider-token/context-occupancy measures at all"
+     ],
+     "verified_at": "2026-08-18T18:10:06+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "c21dca2dd34cdbc93d73c35f5d11016195be6de7"
+    },
+    {
+     "id": "D-013-R064",
+     "state": "PASS",
+     "evidence": [
+      "Committed summaries live in the existing task report area project-control/reports/ (git diff name-only); code under tools/; no parallel control plane or example-filename mirror created - diff scope confined to allowed_paths + normal control-plane records (gates/state/task)"
+     ],
+     "verified_at": "2026-08-18T18:10:06+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "c21dca2dd34cdbc93d73c35f5d11016195be6de7"
+    },
+    {
+     "id": "D-013-R069",
+     "state": "PASS",
+     "evidence": [
+      "Hold honored: M0-T066 is at status 'awaiting_gate' (task packet line 109) under independent review now; the next unit M0-T067 (Unit D) is NOT implemented (git diff shows no memory-graph files); D-017 authorizes continuation only in dependency order after review - judged identically to recorded M0-T065 R069=PASS precedent"
+     ],
+     "verified_at": "2026-08-18T18:10:06+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "c21dca2dd34cdbc93d73c35f5d11016195be6de7"
+    },
+    {
+     "id": "D-013-R082",
+     "state": "PASS",
+     "evidence": [
+      "git diff --stat main...HEAD -- tools/agent_supervisor/ returns EMPTY (untouched); tools/agent_supervisor/ is also in the task's forbidden_paths (packet line 36)"
+     ],
+     "verified_at": "2026-08-18T18:10:06+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "c21dca2dd34cdbc93d73c35f5d11016195be6de7"
+    }
+   ],
+   "reviewed_sha": "c21dca2dd34cdbc93d73c35f5d11016195be6de7",
+   "reviewed_manifest_sha256": "1bc6aa54acd02ed756085885331dffa714a907fefcc26607614bcc48b6d9e4c3",
+   "note": "Independent DCV PASS: 24/24 applicable D-013 requirements verified at reviewed_sha c21dca2 / manifest 1bc6aa54acd0. Unit C: versioned deterministic subsystem/ontology resolver - closed vocabulary structurally enforced (id==existing path prefix, fail closed), pure-code derived parents, two-pass extract->resolve with machine-readable unresolved_links, honest graph kinds (no subsystem node injected), version binding (RESOLVER_VERSION+map digest+index digests) established before Unit D. R022/R043/R069 satisfied under the D-017 A-to-Z continuation after Unit B merged (1d159a8), per the M0-T065 precedent. Producer (orchestrator) != verifier."
   },
   {
    "task_id": "M0-T067",
@@ -1694,5 +1970,5 @@
    "note": "Independent DCV PASS 46/46 (round 1) + code/QA delta re-review CONFIRM-CLOSED (MAJOR-1/MINOR-2/F1). R037/R079 A1-scope only; the byte-identical incremental-vs-full parity test is the A2 (M0-T064) obligation, built and passing. Producer != verifier."
   }
  ],
- "updated_at": "2026-08-18T17:20:00+00:00"
+ "updated_at": "2026-08-18T18:10:06+00:00"
 }

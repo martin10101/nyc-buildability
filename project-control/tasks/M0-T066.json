@@ -1,49 +1,140 @@
 {
- "task_id": "M0-T066",
- "title": "Context-intelligence Unit C: canonical versioned deterministic subsystem/ontology resolver (D-013)",
- "task_type": "infrastructure",
- "milestone_id": "M0",
- "objective": "Define the missing subsystem mapping deterministically and version it BEFORE any memory digest may reference it; closed vocabulary derived from existing paths/symbols/requirements/tasks/directives/milestones only (no second free-form taxonomy); no LLM parent selection.",
- "business_reason": "D-013 Unit C; prerequisite of Unit D (memory graph).",
- "inputs": [],
- "outputs": [],
- "dependencies": [
-  "M0-T065"
- ],
- "allowed_paths": [],
- "forbidden_paths": [],
- "acceptance_scenarios": [],
- "required_gates": [
-  "G0",
-  "G3",
-  "G4",
-  "G5"
- ],
- "producer_agent": null,
- "reviewer_agents": [
-  "code-reviewer",
-  "qa-engineer",
-  "security-reviewer",
-  "directive-compliance-verifier"
- ],
- "status": "backlog",
- "progress_percent": 0,
- "risks": [],
- "blockers": [],
- "created_at": "2026-08-18T04:24:49.335736+00:00",
- "updated_at": "2026-08-18T04:24:49.785037+00:00",
- "directive_refs": [
-  {
-   "directive_id": "D-001",
-   "requirement_ids": "ALL"
-  },
-  {
-   "directive_id": "D-013",
-   "requirement_ids": "ALL"
-  }
- ],
- "directive_regime_version": "1.0",
- "directive_regime_entered_at": "2026-08-18T04:24:49.335736+00:00",
- "path_free_governance": true,
- "path_free_justification": "Roadmap reservation contracted at the D-013 bootstrap (owner authorization 2026-08-18, source-002). Genuinely path-free until claimed: exact allowed paths are bound at claim time after predecessor acceptance per D-013 sequencing; no implementation content exists or is authorized yet for this unit."
+  "task_id": "M0-T066",
+  "title": "Context-intelligence Unit C: canonical versioned deterministic subsystem/ontology resolver (D-013)",
+  "task_type": "infrastructure",
+  "milestone_id": "M0",
+  "objective": "Define the missing subsystem mapping deterministically and version it BEFORE any memory digest may reference it; closed vocabulary derived from existing paths/symbols/requirements/tasks/directives/milestones only (no second free-form taxonomy); no LLM parent selection.",
+  "business_reason": "D-013 Unit C; prerequisite of Unit D (memory graph).",
+  "inputs": [
+    "tools/repo_index_incremental.py build_incremental + tools/code_graph/query.py GraphIndex (accepted A1/A2 index, consumed read-only in process)",
+    "project-control/master_plan.json, project-control/tasks/*.json, project-control/directives/*/ (authoritative entity indexes, read-only)",
+    "D-013 requirements R008/R009/R018/R028/R043/R044/R045/R046 (closed vocabulary, no LLM parents, honest graph kinds, version binding, two-pass)"
+  ],
+  "outputs": [
+    "tools/subsystem_map.json \u2014 versioned closed-vocabulary mapping file (ordered longest-prefix rules whose subsystem ids ARE existing repo path prefixes; map_version + canonical digest)",
+    "tools/subsystem_resolver.py \u2014 versioned deterministic resolver (map load/validate fail-closed, path\u2192subsystem longest-prefix resolution, RESOLVER_VERSION + map digest export, bounded CLI + --check determinism proof)",
+    "tools/subsystem_entities.py \u2014 deterministic entity existence validation against authoritative indexes (task/requirement/directive/milestone/file/graph-node) + the two-pass extract\u2192resolve API with unresolved_links reasons",
+    "tools/test_subsystem_resolver.py \u2014 executable AS-1..AS-6 acceptance tests + edge cases",
+    "docs/SUBSYSTEM_ONTOLOGY.md \u2014 ontology doc: derivation rules, versioning, honest statement of ACTUAL code-graph node/edge kinds (subsystem is a resolver-layer bucket, never a graph node)",
+    "project-control/reports/M0-T066-producer-report.md, M0-T066-evidence-map.json, M0-T066-coverage-evidence.md, M0-T066-G0-readiness.md"
+  ],
+  "dependencies": [
+    "M0-T065"
+  ],
+  "allowed_paths": [
+    "tools/subsystem_resolver.py",
+    "tools/subsystem_entities.py",
+    "tools/subsystem_map.json",
+    "tools/test_subsystem_resolver.py",
+    "docs/SUBSYSTEM_ONTOLOGY.md",
+    "project-control/reports/M0-T066-producer-report.md",
+    "project-control/reports/M0-T066-evidence-map.json",
+    "project-control/reports/M0-T066-coverage-evidence.md",
+    "project-control/reports/M0-T066-G0-readiness.md"
+  ],
+  "forbidden_paths": [
+    "tools/agent_supervisor/",
+    "tools/code_graph/generate.py",
+    "tools/code_graph/query.py",
+    "tools/repo_fingerprint.py",
+    "tools/repo_index_incremental.py",
+    "tools/repo_index_cache.py",
+    "tools/repo_index_assembly.py",
+    "tools/repo_index_baseline.py",
+    "tools/context_pack.py",
+    "tools/context_pack_budget.py",
+    "tools/context_pack_index.py",
+    "tools/context_pack_sources.py",
+    "tools/context_pack_render.py",
+    "tools/context_pack_assembly.py",
+    "tools/context_pack_io.py",
+    "tools/modularity_baseline.json",
+    "tools/model_routing.py",
+    ".github/",
+    "services/",
+    "apps/",
+    ".claude/"
+  ],
+  "acceptance_scenarios": [
+    {
+      "id": "AS-1",
+      "given": "the versioned subsystem map (tools/subsystem_map.json)",
+      "when": "the resolver loads and validates it against the current repository tree",
+      "then": "every subsystem id IS an existing repo-relative directory prefix (closed vocabulary = existing paths, no free-form taxonomy names anywhere); a map rule naming a nonexistent prefix fails validation with a machine-readable reason (D-013-R008)"
+    },
+    {
+      "id": "AS-2",
+      "given": "identical repository state and arguments",
+      "when": "resolution runs twice",
+      "then": "the resolution output is byte-identical and stamps resolver_version, map_version, and map_digest (sha256 over canonical map bytes) so downstream fingerprints and memory digests can bind the ontology version (D-013-R028/R044)"
+    },
+    {
+      "id": "AS-3",
+      "given": "a repo file path, a task id, and a requirement id",
+      "when": "each is resolved",
+      "then": "every parent is DERIVED deterministically \u2014 path\u2192subsystem via ordered longest-prefix rules; task\u2192milestone via the task packet + master plan; requirement\u2192directive via the directives registry \u2014 with zero model involvement in any structural decision (D-013-R009/R045)"
+    },
+    {
+      "id": "AS-4",
+      "given": "extraction proposals that include a nonexistent path, task id, and requirement id alongside valid ones",
+      "when": "the deterministic resolver pass runs over the proposals",
+      "then": "each valid proposal receives a validated structural link and each invalid one lands in unresolved_links[] with a machine-readable reason; nothing is guessed, invented, or silently dropped (two passes: extraction proposes, resolver validates/derives \u2014 D-013-R046)"
+    },
+    {
+      "id": "AS-5",
+      "given": "the accepted A1/A2 deterministic index export",
+      "when": "the resolver reports coverage",
+      "then": "it enumerates the ACTUAL node and edge kinds present in the export, labels subsystem as a resolver-layer mapping, and asserts the graph itself defines no subsystem node kind; graph bytes are never modified (D-013-R018)"
+    },
+    {
+      "id": "AS-6",
+      "given": "a malformed map, an unknown map_version, or an unreadable authoritative index",
+      "when": "resolution is attempted",
+      "then": "the resolver refuses with a nonzero exit and a machine-readable reason \u2014 never a silent default vocabulary and never a partial answer presented as complete (fail closed, D-013-R013-style)"
+    }
+  ],
+  "required_gates": [
+    "G0",
+    "G3",
+    "G4",
+    "G5"
+  ],
+  "producer_agent": "orchestrator",
+  "reviewer_agents": [
+    "code-reviewer",
+    "qa-engineer",
+    "security-reviewer",
+    "directive-compliance-verifier"
+  ],
+  "status": "accepted",
+  "progress_percent": 100,
+  "risks": [
+    "Vocabulary drift: a committed enumerated map can go stale when directories move; mitigated by validating every rule prefix against the live tree at load (fail closed) and versioning the map",
+    "Scope creep into Unit D: this unit establishes the resolver + versions only; NO memory digests, NO session-memory schema implementation (D-013-R043 sequencing, R066-style boundary)"
+  ],
+  "blockers": [],
+  "created_at": "2026-08-18T04:24:49.335736+00:00",
+  "updated_at": "2026-08-18T18:12:20.730638+00:00",
+  "directive_refs": [
+    {
+      "directive_id": "D-001",
+      "requirement_ids": "ALL"
+    },
+    {
+      "directive_id": "D-013",
+      "requirement_ids": "ALL"
+    }
+  ],
+  "directive_regime_version": "1.0",
+  "directive_regime_entered_at": "2026-08-18T04:24:49.335736+00:00",
+  "path_free_governance": true,
+  "path_free_justification": "Paths bound at claim (2026-08-18) after M0-T065 acceptance, per the D-013 sequencing reservation (source-002). New versioned deterministic subsystem resolver (map + resolver + entity validation + tests + doc); no existing module is rewritten.",
+  "documented_test_commands": [
+    "python tools/test_subsystem_resolver.py",
+    "python -m pytest tools/test_subsystem_resolver.py -q",
+    "python tools/modularity_check.py --check"
+  ],
+  "worktree": "C:/Users/MLFLL/Downloads/nyc-zoning/wt-m0t064",
+  "accepted_by": "orchestrator",
+  "accepted_at": "2026-08-18T18:12:20.727501+00:00"
 }
