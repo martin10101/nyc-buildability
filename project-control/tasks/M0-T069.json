@@ -1,152 +1,153 @@
 {
- "task_id": "M0-T069",
- "title": "Context-intelligence Unit F: promotion benchmark, operating runbook, deterministic status projection (D-013)",
- "task_type": "infrastructure",
- "milestone_id": "M0",
- "objective": "Before/after benchmark over the frozen representative corpus (correctness first; the full promotion-evidence list of D-013), honest efficiency reporting with provider-token savings labeled unmeasured when unavailable, threshold proposal with rationale for the owner/control-plane promotion decision, the operating runbook, and the deterministic initiative status projection (bounded JSON + Markdown, Mermaid as view only, stale-marking by generating SHA).",
- "business_reason": "D-013 Unit F; promotion decision gate for the whole pipeline.",
- "inputs": [
-  "tools/repo_index_baseline.py capture_baseline (accepted A1 reference: UNMODIFIED full builder digests/counts — read-only)",
-  "tools/repo_index_incremental.py build_incremental + tools/repo_index_cache.py (accepted A2 new path + store — read-only)",
-  "tools/subsystem_entities.py AuthoritativeIndexes (accepted Unit C index digests — read-only)",
-  "project-control/tasks|gates|state + directives verification records + git (authoritative status-projection facts, read-only)",
-  "D-013 requirements R054-R060 (benchmark/promotion evidence/honest reporting/decision discipline), R061-R063 (deterministic status projection), R071 (rollback documentation), R012/R053/R057 (no invented savings)"
- ],
- "outputs": [
-  "tools/context_benchmark.py — deterministic frozen-corpus benchmark: the five directive-named task shapes (single-file bug, cross-module change, frontend/backend boundary, schema change, control-plane-only), reference (unmodified full builder via the accepted A1 harness) vs the new incremental path at the SAME SHA over the SAME snapshot (confound-removal method documented), cold/warm plus the R056 change classes (no-change, one-file, dependency change, delete, rename, config change, corrupt cache, interrupted write, concurrent writer); machine-readable report with correctness verdicts first, sample counts + median/p95 timings labeled measured-runtime, provider token savings labeled UNMEASURED",
-  "tools/status_projection.py — deterministic initiative status projection over the D-013 unit tasks from control-plane facts + git: R063 node fields (task id, requirement ids, dependencies, roles, branch + reviewed SHA, implementation files, evidence location, review-report digest, gates + state, accepted/blocked reason, rollback point), R062 status mapping, bounded canonical JSON + Markdown rendered FROM the JSON (Mermaid from the same JSON), generating-SHA + task/directive index digest stamps, and a stale-check mode",
-  "tools/test_context_benchmark.py + tools/test_status_projection.py — executable AS-1..AS-6 acceptance tests",
-  "docs/CONTEXT_PIPELINE_RUNBOOK.md — operating runbook: build/query/promotion flows, failure recovery, the R071 rollback path (disable the new index path without deleting the prior valid cache generation, restore full-build behavior, quarantine incompatible generations, committed why-evidence), and the R060 threshold proposal + PENDING owner promotion decision",
-  "project-control/reports/M0-T069-benchmark-report.json + M0-T069-benchmark-report.md (committed sanitized benchmark evidence) and M0-T069-status-projection.json + M0-T069-status-projection.md (the generated projection snapshot)",
-  "project-control/reports/M0-T069-producer-report.md, M0-T069-evidence-map.json, M0-T069-coverage-evidence.md, M0-T069-G0-readiness.md"
- ],
- "dependencies": [
-  "M0-T068"
- ],
- "allowed_paths": [
-  "tools/context_benchmark.py",
-  "tools/status_projection.py",
-  "tools/test_context_benchmark.py",
-  "tools/test_status_projection.py",
-  "docs/CONTEXT_PIPELINE_RUNBOOK.md",
-  "project-control/reports/M0-T069-benchmark-report.json",
-  "project-control/reports/M0-T069-benchmark-report.md",
-  "project-control/reports/M0-T069-status-projection.json",
-  "project-control/reports/M0-T069-status-projection.md",
-  "project-control/reports/M0-T069-producer-report.md",
-  "project-control/reports/M0-T069-evidence-map.json",
-  "project-control/reports/M0-T069-coverage-evidence.md",
-  "project-control/reports/M0-T069-G0-readiness.md"
- ],
- "forbidden_paths": [
-  "tools/agent_supervisor/",
-  "tools/code_graph/generate.py",
-  "tools/code_graph/query.py",
-  "tools/repo_fingerprint.py",
-  "tools/repo_index_incremental.py",
-  "tools/repo_index_cache.py",
-  "tools/repo_index_assembly.py",
-  "tools/repo_index_baseline.py",
-  "tools/context_pack.py",
-  "tools/context_pack_budget.py",
-  "tools/context_pack_index.py",
-  "tools/context_pack_sources.py",
-  "tools/context_pack_render.py",
-  "tools/context_pack_assembly.py",
-  "tools/context_pack_io.py",
-  "tools/subsystem_resolver.py",
-  "tools/subsystem_entities.py",
-  "tools/subsystem_map.json",
-  "tools/memory_digest.py",
-  "tools/memory_grounding.py",
-  "tools/memory_graph.py",
-  "tools/repo_views.py",
-  "tools/repo_views_query.py",
-  "tools/modularity_baseline.json",
-  "tools/model_routing.py",
-  ".github/",
-  "services/",
-  "apps/",
-  ".claude/"
- ],
- "acceptance_scenarios": [
-  {
-   "id": "AS-1",
-   "given": "the deterministic frozen corpus covering the five directive-named task shapes",
-   "when": "the benchmark runs",
-   "then": "for every shape the reference (unmodified full builder) and the new incremental path run at the SAME SHA over the SAME snapshot (the confound-removal method is stated in the report), across cold and warm cache plus the R056 change classes: no-change, one-file change, dependency/export change, delete, rename, config change, corrupt cache, interrupted write, concurrent writer (D-013-R054/R056)"
-  },
-  {
-   "id": "AS-2",
-   "given": "the benchmark report",
-   "when": "its promotion-evidence section is inspected",
-   "then": "it machine-readably proves each R059 minimum: census accounts for every eligible file; incremental and clean-full exports are byte-identical per case; a warm no-change run reparses zero source files; a local change triggers no full rebuild unless a documented global invalidator changed; delete/rename leave no stale nodes or edges; corruption/crash/concurrency cases preserve a valid generation (D-013-R059)"
-  },
-  {
-   "id": "AS-3",
-   "given": "the efficiency section of the report",
-   "when": "it is inspected",
-   "then": "correctness verdicts come first; timings carry sample counts with median/p95 where meaningful and are labeled measured runtime (never byte-identity content); deterministic reuse metrics (files parsed/reused) are reported separately; provider token savings are labeled UNMEASURED and no combined savings number exists anywhere (D-013-R057/R012/R053)"
-  },
-  {
-   "id": "AS-4",
-   "given": "the promotion-decision section",
-   "when": "it is inspected",
-   "then": "thresholds are PROPOSED with recorded rationale and the promotion decision is explicitly marked PENDING the owner/control-plane decision; nothing in Unit F flips any promotion flag or changes any accepted behavior (D-013-R060)"
-  },
-  {
-   "id": "AS-5",
-   "given": "the status projection over the D-013 unit tasks",
-   "when": "it is generated",
-   "then": "every value derives deterministically from control-plane files + git (never hand-maintained); each unit node carries the R063 fields (task id, exact requirement ids, dependency ids, roles, branch + current reviewed SHA, implementation files, evidence location, review-report digest, required gates with state, accepted/blocked reason, rollback point); statuses use the documented R062 mapping; the Markdown (and any Mermaid) renders FROM the same JSON; the projection declares its generating repository SHA + task/directive index digests, and the check mode exits nonzero when HEAD has moved (stale-marking) (D-013-R061/R062/R063)"
-  },
-  {
-   "id": "AS-6",
-   "given": "unreadable control-plane inputs, and two runs at identical state",
-   "when": "projection and benchmark run",
-   "then": "unreadable inputs fail closed with machine-readable codes; two projection runs at the same state are byte-identical; benchmark correctness sections are deterministic; the runbook documents the full R071 rollback path (disable the new index path WITHOUT deleting the prior valid cache generation, restore full-build behavior, quarantine incompatible generations, committed why-evidence) (D-013-R013/R071)"
-  }
- ],
- "required_gates": [
-  "G0",
-  "G3",
-  "G4",
-  "G5"
- ],
- "producer_agent": null,
- "reviewer_agents": [
-  "code-reviewer",
-  "qa-engineer",
-  "security-reviewer",
-  "directive-compliance-verifier"
- ],
- "status": "backlog",
- "progress_percent": 0,
- "risks": [
-  "Benchmark runtime: fixture repos are kept small so the suite stays CI-viable; sample counts recorded honestly",
-  "Promotion overreach: Unit F PROPOSES thresholds and reports evidence only; the promotion decision stays with the owner/control plane (R060) and no behavior flag changes"
- ],
- "blockers": [],
- "created_at": "2026-08-18T04:25:10.826108+00:00",
- "updated_at": "2026-08-18T04:25:11.252342+00:00",
- "directive_refs": [
-  {
-   "directive_id": "D-001",
-   "requirement_ids": "ALL"
-  },
-  {
-   "directive_id": "D-013",
-   "requirement_ids": "ALL"
-  }
- ],
- "directive_regime_version": "1.0",
- "directive_regime_entered_at": "2026-08-18T04:25:10.826108+00:00",
- "path_free_governance": true,
- "path_free_justification": "Paths bound at claim (2026-08-18) after M0-T068 acceptance, per the D-013 sequencing reservation (source-002). New benchmark + status-projection modules consuming the accepted A1 baseline harness, A2 incremental path, and control-plane facts strictly read-only; no existing module is rewritten.",
- "documented_test_commands": [
-  "python tools/test_context_benchmark.py",
-  "python tools/test_status_projection.py",
-  "python -m pytest tools/test_context_benchmark.py tools/test_status_projection.py -q",
-  "python tools/modularity_check.py --check"
- ]
+  "task_id": "M0-T069",
+  "title": "Context-intelligence Unit F: promotion benchmark, operating runbook, deterministic status projection (D-013)",
+  "task_type": "infrastructure",
+  "milestone_id": "M0",
+  "objective": "Before/after benchmark over the frozen representative corpus (correctness first; the full promotion-evidence list of D-013), honest efficiency reporting with provider-token savings labeled unmeasured when unavailable, threshold proposal with rationale for the owner/control-plane promotion decision, the operating runbook, and the deterministic initiative status projection (bounded JSON + Markdown, Mermaid as view only, stale-marking by generating SHA).",
+  "business_reason": "D-013 Unit F; promotion decision gate for the whole pipeline.",
+  "inputs": [
+    "tools/repo_index_baseline.py capture_baseline (accepted A1 reference: UNMODIFIED full builder digests/counts \u2014 read-only)",
+    "tools/repo_index_incremental.py build_incremental + tools/repo_index_cache.py (accepted A2 new path + store \u2014 read-only)",
+    "tools/subsystem_entities.py AuthoritativeIndexes (accepted Unit C index digests \u2014 read-only)",
+    "project-control/tasks|gates|state + directives verification records + git (authoritative status-projection facts, read-only)",
+    "D-013 requirements R054-R060 (benchmark/promotion evidence/honest reporting/decision discipline), R061-R063 (deterministic status projection), R071 (rollback documentation), R012/R053/R057 (no invented savings)"
+  ],
+  "outputs": [
+    "tools/context_benchmark.py \u2014 deterministic frozen-corpus benchmark: the five directive-named task shapes (single-file bug, cross-module change, frontend/backend boundary, schema change, control-plane-only), reference (unmodified full builder via the accepted A1 harness) vs the new incremental path at the SAME SHA over the SAME snapshot (confound-removal method documented), cold/warm plus the R056 change classes (no-change, one-file, dependency change, delete, rename, config change, corrupt cache, interrupted write, concurrent writer); machine-readable report with correctness verdicts first, sample counts + median/p95 timings labeled measured-runtime, provider token savings labeled UNMEASURED",
+    "tools/status_projection.py \u2014 deterministic initiative status projection over the D-013 unit tasks from control-plane facts + git: R063 node fields (task id, requirement ids, dependencies, roles, branch + reviewed SHA, implementation files, evidence location, review-report digest, gates + state, accepted/blocked reason, rollback point), R062 status mapping, bounded canonical JSON + Markdown rendered FROM the JSON (Mermaid from the same JSON), generating-SHA + task/directive index digest stamps, and a stale-check mode",
+    "tools/test_context_benchmark.py + tools/test_status_projection.py \u2014 executable AS-1..AS-6 acceptance tests",
+    "docs/CONTEXT_PIPELINE_RUNBOOK.md \u2014 operating runbook: build/query/promotion flows, failure recovery, the R071 rollback path (disable the new index path without deleting the prior valid cache generation, restore full-build behavior, quarantine incompatible generations, committed why-evidence), and the R060 threshold proposal + PENDING owner promotion decision",
+    "project-control/reports/M0-T069-benchmark-report.json + M0-T069-benchmark-report.md (committed sanitized benchmark evidence) and M0-T069-status-projection.json + M0-T069-status-projection.md (the generated projection snapshot)",
+    "project-control/reports/M0-T069-producer-report.md, M0-T069-evidence-map.json, M0-T069-coverage-evidence.md, M0-T069-G0-readiness.md"
+  ],
+  "dependencies": [
+    "M0-T068"
+  ],
+  "allowed_paths": [
+    "tools/context_benchmark.py",
+    "tools/status_projection.py",
+    "tools/test_context_benchmark.py",
+    "tools/test_status_projection.py",
+    "docs/CONTEXT_PIPELINE_RUNBOOK.md",
+    "project-control/reports/M0-T069-benchmark-report.json",
+    "project-control/reports/M0-T069-benchmark-report.md",
+    "project-control/reports/M0-T069-status-projection.json",
+    "project-control/reports/M0-T069-status-projection.md",
+    "project-control/reports/M0-T069-producer-report.md",
+    "project-control/reports/M0-T069-evidence-map.json",
+    "project-control/reports/M0-T069-coverage-evidence.md",
+    "project-control/reports/M0-T069-G0-readiness.md"
+  ],
+  "forbidden_paths": [
+    "tools/agent_supervisor/",
+    "tools/code_graph/generate.py",
+    "tools/code_graph/query.py",
+    "tools/repo_fingerprint.py",
+    "tools/repo_index_incremental.py",
+    "tools/repo_index_cache.py",
+    "tools/repo_index_assembly.py",
+    "tools/repo_index_baseline.py",
+    "tools/context_pack.py",
+    "tools/context_pack_budget.py",
+    "tools/context_pack_index.py",
+    "tools/context_pack_sources.py",
+    "tools/context_pack_render.py",
+    "tools/context_pack_assembly.py",
+    "tools/context_pack_io.py",
+    "tools/subsystem_resolver.py",
+    "tools/subsystem_entities.py",
+    "tools/subsystem_map.json",
+    "tools/memory_digest.py",
+    "tools/memory_grounding.py",
+    "tools/memory_graph.py",
+    "tools/repo_views.py",
+    "tools/repo_views_query.py",
+    "tools/modularity_baseline.json",
+    "tools/model_routing.py",
+    ".github/",
+    "services/",
+    "apps/",
+    ".claude/"
+  ],
+  "acceptance_scenarios": [
+    {
+      "id": "AS-1",
+      "given": "the deterministic frozen corpus covering the five directive-named task shapes",
+      "when": "the benchmark runs",
+      "then": "for every shape the reference (unmodified full builder) and the new incremental path run at the SAME SHA over the SAME snapshot (the confound-removal method is stated in the report), across cold and warm cache plus the R056 change classes: no-change, one-file change, dependency/export change, delete, rename, config change, corrupt cache, interrupted write, concurrent writer (D-013-R054/R056)"
+    },
+    {
+      "id": "AS-2",
+      "given": "the benchmark report",
+      "when": "its promotion-evidence section is inspected",
+      "then": "it machine-readably proves each R059 minimum: census accounts for every eligible file; incremental and clean-full exports are byte-identical per case; a warm no-change run reparses zero source files; a local change triggers no full rebuild unless a documented global invalidator changed; delete/rename leave no stale nodes or edges; corruption/crash/concurrency cases preserve a valid generation (D-013-R059)"
+    },
+    {
+      "id": "AS-3",
+      "given": "the efficiency section of the report",
+      "when": "it is inspected",
+      "then": "correctness verdicts come first; timings carry sample counts with median/p95 where meaningful and are labeled measured runtime (never byte-identity content); deterministic reuse metrics (files parsed/reused) are reported separately; provider token savings are labeled UNMEASURED and no combined savings number exists anywhere (D-013-R057/R012/R053)"
+    },
+    {
+      "id": "AS-4",
+      "given": "the promotion-decision section",
+      "when": "it is inspected",
+      "then": "thresholds are PROPOSED with recorded rationale and the promotion decision is explicitly marked PENDING the owner/control-plane decision; nothing in Unit F flips any promotion flag or changes any accepted behavior (D-013-R060)"
+    },
+    {
+      "id": "AS-5",
+      "given": "the status projection over the D-013 unit tasks",
+      "when": "it is generated",
+      "then": "every value derives deterministically from control-plane files + git (never hand-maintained); each unit node carries the R063 fields (task id, exact requirement ids, dependency ids, roles, branch + current reviewed SHA, implementation files, evidence location, review-report digest, required gates with state, accepted/blocked reason, rollback point); statuses use the documented R062 mapping; the Markdown (and any Mermaid) renders FROM the same JSON; the projection declares its generating repository SHA + task/directive index digests, and the check mode exits nonzero when HEAD has moved (stale-marking) (D-013-R061/R062/R063)"
+    },
+    {
+      "id": "AS-6",
+      "given": "unreadable control-plane inputs, and two runs at identical state",
+      "when": "projection and benchmark run",
+      "then": "unreadable inputs fail closed with machine-readable codes; two projection runs at the same state are byte-identical; benchmark correctness sections are deterministic; the runbook documents the full R071 rollback path (disable the new index path WITHOUT deleting the prior valid cache generation, restore full-build behavior, quarantine incompatible generations, committed why-evidence) (D-013-R013/R071)"
+    }
+  ],
+  "required_gates": [
+    "G0",
+    "G3",
+    "G4",
+    "G5"
+  ],
+  "producer_agent": "orchestrator",
+  "reviewer_agents": [
+    "code-reviewer",
+    "qa-engineer",
+    "security-reviewer",
+    "directive-compliance-verifier"
+  ],
+  "status": "claimed",
+  "progress_percent": 10,
+  "risks": [
+    "Benchmark runtime: fixture repos are kept small so the suite stays CI-viable; sample counts recorded honestly",
+    "Promotion overreach: Unit F PROPOSES thresholds and reports evidence only; the promotion decision stays with the owner/control plane (R060) and no behavior flag changes"
+  ],
+  "blockers": [],
+  "created_at": "2026-08-18T04:25:10.826108+00:00",
+  "updated_at": "2026-08-18T19:46:00.251955+00:00",
+  "directive_refs": [
+    {
+      "directive_id": "D-001",
+      "requirement_ids": "ALL"
+    },
+    {
+      "directive_id": "D-013",
+      "requirement_ids": "ALL"
+    }
+  ],
+  "directive_regime_version": "1.0",
+  "directive_regime_entered_at": "2026-08-18T04:25:10.826108+00:00",
+  "path_free_governance": true,
+  "path_free_justification": "Paths bound at claim (2026-08-18) after M0-T068 acceptance, per the D-013 sequencing reservation (source-002). New benchmark + status-projection modules consuming the accepted A1 baseline harness, A2 incremental path, and control-plane facts strictly read-only; no existing module is rewritten.",
+  "documented_test_commands": [
+    "python tools/test_context_benchmark.py",
+    "python tools/test_status_projection.py",
+    "python -m pytest tools/test_context_benchmark.py tools/test_status_projection.py -q",
+    "python tools/modularity_check.py --check"
+  ],
+  "worktree": "C:/Users/MLFLL/Downloads/nyc-zoning/wt-m0t064"
 }
