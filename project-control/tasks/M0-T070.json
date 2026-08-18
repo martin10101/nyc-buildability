@@ -1,173 +1,173 @@
 {
- "task_id": "M0-T070",
- "title": "Supervisor corrective repair: packet documented-test-command authority wiring (defect A) + revoke-all/status open_asks reconciliation (defect B) - D-014",
- "task_type": "governance",
- "milestone_id": "M0",
- "objective": "Repair two source-confirmed supervisor defects that failed run_M0_T063_A1 closed: (A) production _run_loop builds TaskAuthority.from_packet without documented_test_commands, so no packet command can ever earn the documented-test AUTO classification (audit: 3x ASK:undocumented_command); define ONE canonical, closed, schema-validated task-packet field for documented baseline/test commands, load it validated and fail-closed in _run_loop, and prove production wiring with a regression test (AS-1..AS-7, AS-10). (B) broker.revoke_all revokes approval records but nothing ever resolves queued_asks rows, so cmd_status open_asks lists revoked requests as open actionable questions; reconcile revoke-all and status so revoked requests are never presented as actionable while historical audit evidence is preserved, including read-time labeling so the EXISTING A1 runtime database (which must not be mutated) reports correctly (AS-8, AS-9). Qualifying evidence (supervisor-freeze s2): a reproduced defect + inability to complete an authorized product task - run_M0_T063_A1 (controller 0.4.0-phase4) ended PAUSED_RECOVERY with three ASK-classified Bash commands, exit 1, no checkpoint, no Codex review; A1 worktree clean at de2f224a7db16405edfc0e2f2f0902f5164819a0; owner revoke-all reported revoked=3 yet status still lists the three revoked requests under open_asks (live journal: 3 queued_asks with answered_at_utc empty while all 3 approval records are REVOKED). No general Bash allowlist, no broad executable grant, no settings bypass, no always-allow (AS-6); fail-closed behavior must not weaken (prohibition 5).",
- "business_reason": "D-014 owner authorization 2026-08-18: bounded control-plane repair so the accepted supervised Codex/Claude loop can execute documented task test commands and report approval state truthfully; unblocks a future authorized A1 re-run without repeating its cost.",
- "inputs": [
-  "project-control/directives/D-014-supervisor-command-authority-repair/ (requirements applicable to M0-T070)",
-  "tools/agent_supervisor/cli.py _run_loop (defect A production construction site)",
-  "tools/agent_supervisor/policy.py TaskAuthority.from_packet + _auto_test_command + _shape_matches (existing documented-test classification, reused not replaced)",
-  "tools/agent_supervisor/broker.py revoke_all/defer (defect B write path)",
-  "tools/agent_supervisor/durable_state.py queued_asks/open_asks (defect B read path)",
-  "tools/agent_supervisor/replay.py build_authority (existing documented_test_commands packet-key precedent)",
-  "project-control/tasks/M0-T063.json (fixture source for the exact baseline/test-command need; NEVER modified)",
-  "project-control/reports/M0-T039-supervisor-freeze.md (suite baseline to re-establish)"
- ],
- "outputs": [
-  "tools/agent_supervisor/schemas/task_packet_commands.schema.json - closed schema for the canonical documented_test_commands task-packet field",
-  "tools/agent_supervisor/policy.py - fail-closed validator/loader for the canonical field (deterministic; empty/wrong-type/chaining/substitution/redirection/metacharacter/malformed never AUTO)",
-  "tools/agent_supervisor/cli.py - _run_loop loads validated packet commands and passes them into TaskAuthority; status reconciles queued asks against approval-record state at read time (labels revoked history; never mutates the journal)",
-  "tools/agent_supervisor/broker.py + durable_state.py - revoke_all resolves matching queued_asks rows durably (rows preserved as revoked history)",
-  "tools/test_agent_supervisor_command_authority.py - AS-1..AS-10 tests incl. production-wiring regression and revoke/status lifecycle",
-  "tools/agent_supervisor/fixtures/m0_t063_documented_test_command.json - M0-T063-shaped bounded fixture (intended command AUTO; altered/injected variants not)",
-  "project-control/reports/M0-T070-incident-evidence.md - run_M0_T063_A1 incident evidence (audit chain + read-only journal facts)",
-  "project-control/reports/M0-T070-before-after-evidence.md - AS-12 before/after classification + checkpoint-progression + bounded measurement evidence",
-  "project-control/reports/M0-T070-producer-report.md - producer evidence for G2/G3/G5"
- ],
- "dependencies": [],
- "allowed_paths": [
-  "tools/agent_supervisor/cli.py",
-  "tools/agent_supervisor/policy.py",
-  "tools/agent_supervisor/broker.py",
-  "tools/agent_supervisor/durable_state.py",
-  "tools/agent_supervisor/schemas/task_packet_commands.schema.json",
-  "tools/agent_supervisor/fixtures/m0_t063_documented_test_command.json",
-  "tools/test_agent_supervisor_command_authority.py",
-  "project-control/reports/M0-T070-incident-evidence.md",
-  "project-control/reports/M0-T070-producer-report.md",
-  "project-control/reports/M0-T070-before-after-evidence.md"
- ],
- "forbidden_paths": [
-  "tools/repo_fingerprint.py",
-  "tools/repo_index_cache.py",
-  "tools/repo_index_baseline.py",
-  "tools/code_graph/",
-  ".github/",
-  "services/",
-  "apps/",
-  ".claude/"
- ],
- "acceptance_scenarios": [
-  {
-   "id": "AS-1",
-   "name": "canonical closed schema-validated packet field",
-   "given": "a task packet with documented_test_commands present/absent/malformed",
-   "when": "the packet is loaded for a production run",
-   "then": "exactly one canonical field name is accepted; schema validation rejects non-list, non-string, empty-string, oversized, and unknown-shape content; absence yields an empty tuple (fail closed), never a default grant"
-  },
-  {
-   "id": "AS-2",
-   "name": "production _run_loop wiring",
-   "given": "a packet documenting baseline/test commands",
-   "when": "_run_loop constructs the production TaskAuthority",
-   "then": "the validated commands are passed into TaskAuthority.from_packet and reach policy evaluation"
-  },
-  {
-   "id": "AS-3",
-   "name": "deterministic fail-closed authorization",
-   "given": "empty values, wrong types, shell chaining, substitution, redirection, unexpected metacharacters, malformed commands",
-   "when": "validation or classification runs",
-   "then": "no such input ever gains AUTO authority"
-  },
-  {
-   "id": "AS-4",
-   "name": "documented shape earns existing AUTO",
-   "given": "a command exactly matching an explicitly documented and validated shape",
-   "when": "policy evaluates it",
-   "then": "it receives the EXISTING documented_test_command AUTO classification (S4.1), advisory-eligible as today"
-  },
-  {
-   "id": "AS-5",
-   "name": "variants remain ASK/HARD_DENY",
-   "given": "changed executable, changed arguments, appended command, undocumented command, or a command outside task authority",
-   "when": "policy evaluates it",
-   "then": "classification remains ASK or HARD_DENY under existing policy"
-  },
-  {
-   "id": "AS-6",
-   "name": "no broad grants",
-   "given": "the full diff",
-   "when": "reviewed",
-   "then": "no general Bash allowlist, broad executable grant, settings-file bypass, or automatic always-allow exists"
-  },
-  {
-   "id": "AS-7",
-   "name": "production-wiring regression test",
-   "given": "the authority-construction path used by the real loop",
-   "when": "the regression test runs",
-   "then": "it proves packet commands reach that authority (not only a direct TaskAuthority unit test) and fails if the wiring regresses"
-  },
-  {
-   "id": "AS-8",
-   "name": "revoke/status reconciliation",
-   "given": "pending asks whose approvals are then revoked by revoke-all",
-   "when": "status is read (including against a pre-fix journal that cannot be mutated)",
-   "then": "revoked requests are never presented as currently open actionable requests; historical audit evidence is preserved"
-  },
-  {
-   "id": "AS-9",
-   "name": "lifecycle tests",
-   "given": "a pending request",
-   "when": "revoke-all runs",
-   "then": "tests prove: pending appears open; revoke-all revokes; pending-approvals returns zero; status no longer shows it actionable or labels it revoked history; audit chain and journal integrity remain valid"
-  },
-  {
-   "id": "AS-10",
-   "name": "M0-T063 fixture",
-   "given": "a fixture with the exact M0-T063 baseline/test-command need",
-   "when": "policy evaluates the intended command and altered/injected variants",
-   "then": "the intended command is authorized; every altered/injected variant is not"
-  },
-  {
-   "id": "AS-11",
-   "name": "full suites at gate profile",
-   "given": "the frozen head",
-   "when": "the full supervisor, directive-compliance, and project-control suites run",
-   "then": "all pass; the M0-T039 freeze baseline (>=1165 tests, 0 failures) is re-established"
-  },
-  {
-   "id": "AS-12",
-   "name": "before/after bounded evidence",
-   "given": "bounded fixtures only (never a repeat of the real A1 run)",
-   "when": "evidence is produced",
-   "then": "before/after classification, checkpoint progression, and available token/runtime measurements are recorded"
-  }
- ],
- "required_gates": [
-  "G0",
-  "G2",
-  "G3",
-  "G5"
- ],
- "producer_agent": "orchestrator",
- "reviewer_agents": [
-  "code-reviewer",
-  "security-reviewer",
-  "directive-compliance-verifier"
- ],
- "status": "claimed",
- "progress_percent": 10,
- "risks": [
-  "supervisor-freeze: any tools/agent_supervisor/** change shifts the frozen tree hash; the M0-T039 suite baseline must be re-established under G0/G2/G3/G5 (qualifying evidence cited in packet + commit)",
-  "prohibition 3: the live A1 runtime SQLite database must never be mutated; status-side reconciliation must be read-only",
-  "AS-6/prohibition 5: the fix must not broaden Bash authority or weaken fail-closed behavior"
- ],
- "blockers": [],
- "created_at": "2026-08-18T05:52:18.258012+00:00",
- "updated_at": "2026-08-18T05:54:43.103921+00:00",
- "directive_refs": [
-  {
-   "directive_id": "D-001",
-   "requirement_ids": "ALL"
-  },
-  {
-   "directive_id": "D-014",
-   "requirement_ids": "ALL"
-  }
- ],
- "directive_regime_version": "1.0",
- "directive_regime_entered_at": "2026-08-18T05:52:18.258012+00:00",
- "worktree": "C:/Users/MLFLL/Downloads/nyc-zoning/wt-m0t070"
+  "task_id": "M0-T070",
+  "title": "Supervisor corrective repair: packet documented-test-command authority wiring (defect A) + revoke-all/status open_asks reconciliation (defect B) - D-014",
+  "task_type": "governance",
+  "milestone_id": "M0",
+  "objective": "Repair two source-confirmed supervisor defects that failed run_M0_T063_A1 closed: (A) production _run_loop builds TaskAuthority.from_packet without documented_test_commands, so no packet command can ever earn the documented-test AUTO classification (audit: 3x ASK:undocumented_command); define ONE canonical, closed, schema-validated task-packet field for documented baseline/test commands, load it validated and fail-closed in _run_loop, and prove production wiring with a regression test (AS-1..AS-7, AS-10). (B) broker.revoke_all revokes approval records but nothing ever resolves queued_asks rows, so cmd_status open_asks lists revoked requests as open actionable questions; reconcile revoke-all and status so revoked requests are never presented as actionable while historical audit evidence is preserved, including read-time labeling so the EXISTING A1 runtime database (which must not be mutated) reports correctly (AS-8, AS-9). Qualifying evidence (supervisor-freeze s2): a reproduced defect + inability to complete an authorized product task - run_M0_T063_A1 (controller 0.4.0-phase4) ended PAUSED_RECOVERY with three ASK-classified Bash commands, exit 1, no checkpoint, no Codex review; A1 worktree clean at de2f224a7db16405edfc0e2f2f0902f5164819a0; owner revoke-all reported revoked=3 yet status still lists the three revoked requests under open_asks (live journal: 3 queued_asks with answered_at_utc empty while all 3 approval records are REVOKED). No general Bash allowlist, no broad executable grant, no settings bypass, no always-allow (AS-6); fail-closed behavior must not weaken (prohibition 5).",
+  "business_reason": "D-014 owner authorization 2026-08-18: bounded control-plane repair so the accepted supervised Codex/Claude loop can execute documented task test commands and report approval state truthfully; unblocks a future authorized A1 re-run without repeating its cost.",
+  "inputs": [
+    "project-control/directives/D-014-supervisor-command-authority-repair/ (requirements applicable to M0-T070)",
+    "tools/agent_supervisor/cli.py _run_loop (defect A production construction site)",
+    "tools/agent_supervisor/policy.py TaskAuthority.from_packet + _auto_test_command + _shape_matches (existing documented-test classification, reused not replaced)",
+    "tools/agent_supervisor/broker.py revoke_all/defer (defect B write path)",
+    "tools/agent_supervisor/durable_state.py queued_asks/open_asks (defect B read path)",
+    "tools/agent_supervisor/replay.py build_authority (existing documented_test_commands packet-key precedent)",
+    "project-control/tasks/M0-T063.json (fixture source for the exact baseline/test-command need; NEVER modified)",
+    "project-control/reports/M0-T039-supervisor-freeze.md (suite baseline to re-establish)"
+  ],
+  "outputs": [
+    "tools/agent_supervisor/schemas/task_packet_commands.schema.json - closed schema for the canonical documented_test_commands task-packet field",
+    "tools/agent_supervisor/policy.py - fail-closed validator/loader for the canonical field (deterministic; empty/wrong-type/chaining/substitution/redirection/metacharacter/malformed never AUTO)",
+    "tools/agent_supervisor/cli.py - _run_loop loads validated packet commands and passes them into TaskAuthority; status reconciles queued asks against approval-record state at read time (labels revoked history; never mutates the journal)",
+    "tools/agent_supervisor/broker.py + durable_state.py - revoke_all resolves matching queued_asks rows durably (rows preserved as revoked history)",
+    "tools/test_agent_supervisor_command_authority.py - AS-1..AS-10 tests incl. production-wiring regression and revoke/status lifecycle",
+    "tools/agent_supervisor/fixtures/m0_t063_documented_test_command.json - M0-T063-shaped bounded fixture (intended command AUTO; altered/injected variants not)",
+    "project-control/reports/M0-T070-incident-evidence.md - run_M0_T063_A1 incident evidence (audit chain + read-only journal facts)",
+    "project-control/reports/M0-T070-before-after-evidence.md - AS-12 before/after classification + checkpoint-progression + bounded measurement evidence",
+    "project-control/reports/M0-T070-producer-report.md - producer evidence for G2/G3/G5"
+  ],
+  "dependencies": [],
+  "allowed_paths": [
+    "tools/agent_supervisor/cli.py",
+    "tools/agent_supervisor/policy.py",
+    "tools/agent_supervisor/broker.py",
+    "tools/agent_supervisor/durable_state.py",
+    "tools/agent_supervisor/schemas/task_packet_commands.schema.json",
+    "tools/agent_supervisor/fixtures/m0_t063_documented_test_command.json",
+    "tools/test_agent_supervisor_command_authority.py",
+    "project-control/reports/M0-T070-incident-evidence.md",
+    "project-control/reports/M0-T070-producer-report.md",
+    "project-control/reports/M0-T070-before-after-evidence.md"
+  ],
+  "forbidden_paths": [
+    "tools/repo_fingerprint.py",
+    "tools/repo_index_cache.py",
+    "tools/repo_index_baseline.py",
+    "tools/code_graph/",
+    ".github/",
+    "services/",
+    "apps/",
+    ".claude/"
+  ],
+  "acceptance_scenarios": [
+    {
+      "id": "AS-1",
+      "name": "canonical closed schema-validated packet field",
+      "given": "a task packet with documented_test_commands present/absent/malformed",
+      "when": "the packet is loaded for a production run",
+      "then": "exactly one canonical field name is accepted; schema validation rejects non-list, non-string, empty-string, oversized, and unknown-shape content; absence yields an empty tuple (fail closed), never a default grant"
+    },
+    {
+      "id": "AS-2",
+      "name": "production _run_loop wiring",
+      "given": "a packet documenting baseline/test commands",
+      "when": "_run_loop constructs the production TaskAuthority",
+      "then": "the validated commands are passed into TaskAuthority.from_packet and reach policy evaluation"
+    },
+    {
+      "id": "AS-3",
+      "name": "deterministic fail-closed authorization",
+      "given": "empty values, wrong types, shell chaining, substitution, redirection, unexpected metacharacters, malformed commands",
+      "when": "validation or classification runs",
+      "then": "no such input ever gains AUTO authority"
+    },
+    {
+      "id": "AS-4",
+      "name": "documented shape earns existing AUTO",
+      "given": "a command exactly matching an explicitly documented and validated shape",
+      "when": "policy evaluates it",
+      "then": "it receives the EXISTING documented_test_command AUTO classification (S4.1), advisory-eligible as today"
+    },
+    {
+      "id": "AS-5",
+      "name": "variants remain ASK/HARD_DENY",
+      "given": "changed executable, changed arguments, appended command, undocumented command, or a command outside task authority",
+      "when": "policy evaluates it",
+      "then": "classification remains ASK or HARD_DENY under existing policy"
+    },
+    {
+      "id": "AS-6",
+      "name": "no broad grants",
+      "given": "the full diff",
+      "when": "reviewed",
+      "then": "no general Bash allowlist, broad executable grant, settings-file bypass, or automatic always-allow exists"
+    },
+    {
+      "id": "AS-7",
+      "name": "production-wiring regression test",
+      "given": "the authority-construction path used by the real loop",
+      "when": "the regression test runs",
+      "then": "it proves packet commands reach that authority (not only a direct TaskAuthority unit test) and fails if the wiring regresses"
+    },
+    {
+      "id": "AS-8",
+      "name": "revoke/status reconciliation",
+      "given": "pending asks whose approvals are then revoked by revoke-all",
+      "when": "status is read (including against a pre-fix journal that cannot be mutated)",
+      "then": "revoked requests are never presented as currently open actionable requests; historical audit evidence is preserved"
+    },
+    {
+      "id": "AS-9",
+      "name": "lifecycle tests",
+      "given": "a pending request",
+      "when": "revoke-all runs",
+      "then": "tests prove: pending appears open; revoke-all revokes; pending-approvals returns zero; status no longer shows it actionable or labels it revoked history; audit chain and journal integrity remain valid"
+    },
+    {
+      "id": "AS-10",
+      "name": "M0-T063 fixture",
+      "given": "a fixture with the exact M0-T063 baseline/test-command need",
+      "when": "policy evaluates the intended command and altered/injected variants",
+      "then": "the intended command is authorized; every altered/injected variant is not"
+    },
+    {
+      "id": "AS-11",
+      "name": "full suites at gate profile",
+      "given": "the frozen head",
+      "when": "the full supervisor, directive-compliance, and project-control suites run",
+      "then": "all pass; the M0-T039 freeze baseline (>=1165 tests, 0 failures) is re-established"
+    },
+    {
+      "id": "AS-12",
+      "name": "before/after bounded evidence",
+      "given": "bounded fixtures only (never a repeat of the real A1 run)",
+      "when": "evidence is produced",
+      "then": "before/after classification, checkpoint progression, and available token/runtime measurements are recorded"
+    }
+  ],
+  "required_gates": [
+    "G0",
+    "G2",
+    "G3",
+    "G5"
+  ],
+  "producer_agent": "orchestrator",
+  "reviewer_agents": [
+    "code-reviewer",
+    "security-reviewer",
+    "directive-compliance-verifier"
+  ],
+  "status": "awaiting_gate",
+  "progress_percent": 95,
+  "risks": [
+    "supervisor-freeze: any tools/agent_supervisor/** change shifts the frozen tree hash; the M0-T039 suite baseline must be re-established under G0/G2/G3/G5 (qualifying evidence cited in packet + commit)",
+    "prohibition 3: the live A1 runtime SQLite database must never be mutated; status-side reconciliation must be read-only",
+    "AS-6/prohibition 5: the fix must not broaden Bash authority or weaken fail-closed behavior"
+  ],
+  "blockers": [],
+  "created_at": "2026-08-18T05:52:18.258012+00:00",
+  "updated_at": "2026-08-18T06:40:06.855724+00:00",
+  "directive_refs": [
+    {
+      "directive_id": "D-001",
+      "requirement_ids": "ALL"
+    },
+    {
+      "directive_id": "D-014",
+      "requirement_ids": "ALL"
+    }
+  ],
+  "directive_regime_version": "1.0",
+  "directive_regime_entered_at": "2026-08-18T05:52:18.258012+00:00",
+  "worktree": "C:/Users/MLFLL/Downloads/nyc-zoning/wt-m0t070"
 }
