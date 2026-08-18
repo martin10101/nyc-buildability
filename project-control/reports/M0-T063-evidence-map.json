@@ -2,7 +2,7 @@
  "schema": "evidence_map/v1",
  "task_id": "M0-T063",
  "producer": "supervised-auto-worker",
- "reviewed_sha": "SET_AT_SUBMIT",
+ "reviewed_sha": "1c1359d95ba52f6c7a63ad381bcd9f18720b5b8b",
  "requirements": {
   "D-013-R001": [
    "A1 is one bounded unit of the single pipeline (content-addressed census/index layer); docs/CONTEXT_INTELLIGENCE_PIPELINE.md 'Layers'; no all-at-once rewrite."
