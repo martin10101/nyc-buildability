@@ -115,5 +115,5 @@
    "note": "PENDING stub created at capture (c14 coverage). The applicable set is derived by the resolver at verification time and every row is filled by the independent verifier at the task's accept cycle; nothing is verified yet."
   }
  ],
- "updated_at": "2026-08-18T11:48:18+00:00"
+ "updated_at": "2026-08-18T12:02:39+00:00"
 }
