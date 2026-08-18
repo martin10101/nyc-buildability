@@ -1329,12 +1329,333 @@
    "task_id": "M0-T067",
    "directive_id": "D-013",
    "producer": "orchestrator",
-   "verifier": "",
-   "applicable_requirement_ids": [],
-   "requirements": [],
-   "reviewed_sha": null,
-   "reviewed_manifest_sha256": null,
-   "note": "PENDING stub created at capture (c14 coverage). The applicable set is derived by the resolver at verification time and every row is filled by the independent verifier at the unit's accept cycle; nothing is verified yet."
+   "verifier": "directive-compliance-verifier",
+   "applicable_requirement_ids": [
+    "D-013-R001",
+    "D-013-R002",
+    "D-013-R003",
+    "D-013-R004",
+    "D-013-R006",
+    "D-013-R007",
+    "D-013-R008",
+    "D-013-R009",
+    "D-013-R010",
+    "D-013-R011",
+    "D-013-R012",
+    "D-013-R013",
+    "D-013-R022",
+    "D-013-R025",
+    "D-013-R038",
+    "D-013-R039",
+    "D-013-R042",
+    "D-013-R043",
+    "D-013-R044",
+    "D-013-R045",
+    "D-013-R046",
+    "D-013-R047",
+    "D-013-R048",
+    "D-013-R050",
+    "D-013-R051",
+    "D-013-R053",
+    "D-013-R064",
+    "D-013-R069",
+    "D-013-R082"
+   ],
+   "requirements": [
+    {
+     "id": "D-013-R001",
+     "state": "PASS",
+     "evidence": [
+      "Bounded task unit implementing pipeline layer (c) closed deterministic ontology for memory placement, inside the control plane, not an all-at-once rewrite. tools/memory_graph.py + memory_digest.py + memory_grounding.py are three focused modules consuming accepted Unit A (repo_index_cache) and Unit C (subsystem_resolver/entities) read-only; docs/MEMORY_GRAPH.md 'Boundaries' states the graph feeds the ONE compiler (R039). git diff --name-only main...HEAD shows only Unit-D files + reports/docs. Judged per M0-T066 precedent."
+     ],
+     "verified_at": "2026-08-18T18:54:51+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "a00543910a01daa2fac8104c5d2246b00e3850a1"
+    },
+    {
+     "id": "D-013-R002",
+     "state": "PASS",
+     "evidence": [
+      "No 'read the whole repository' claim: git grep -i 'read the whole repo|complete structural census|whole repository' at HEAD over tools/memory_*.py, docs/MEMORY_GRAPH.md and M0-T067 reports = NONE. Digests carry explicit provenance (repo_sha 40-hex, source_manifest_fingerprint, task_index_digest/directive_index_digest, ontology stamp) per memory_digest.py _FIELDS."
+     ],
+     "verified_at": "2026-08-18T18:54:51+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "a00543910a01daa2fac8104c5d2246b00e3850a1"
+    },
+    {
+     "id": "D-013-R003",
+     "state": "PASS",
+     "evidence": [
+      "No silent dropping/overflow-hiding/summary-substitution: memory_graph.py _ground_links records every unresolved/ungrounded/stale/non-canonical link under quarantined_links with a machine-readable reason (never silent); advisory tags excluded from structural truth. Docs 'Quarantine, never silent'. No summary replaces source evidence."
+     ],
+     "verified_at": "2026-08-18T18:54:51+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "a00543910a01daa2fac8104c5d2246b00e3850a1"
+    },
+    {
+     "id": "D-013-R004",
+     "state": "PASS",
+     "evidence": [
+      "Authoritative indexes drive parents: memory_graph.py calls Unit C ents.resolve_proposals (loads AuthoritativeIndexes: master_plan, task packets, directives registry) + the versioned subsystem map; grounding.grounding_facts reads the live task packet. Digest binds repo_sha/branch/index digests at validate_digest. Judged per M0-T066 precedent."
+     ],
+     "verified_at": "2026-08-18T18:54:51+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "a00543910a01daa2fac8104c5d2246b00e3850a1"
+    },
+    {
+     "id": "D-013-R006",
+     "state": "PASS",
+     "evidence": [
+      "No control-plane bypass: HEAD on branch task/M0-T067-memory-graph (not main); committed task status='rework' under review (working tree re-submitting to awaiting_gate), not self-accepted; git diff --name-only main...HEAD shows no project_control.py/validate_directive/gate-infra source changes. The G3 FAIL was recorded by the control plane (gates/M0-T067-G3.json result=FAIL @ c13eda7), evidencing the gate was honored, not weakened."
+     ],
+     "verified_at": "2026-08-18T18:54:51+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "a00543910a01daa2fac8104c5d2246b00e3850a1"
+    },
+    {
+     "id": "D-013-R007",
+     "state": "PASS",
+     "evidence": [
+      "Single coherent producer diff; worktree isolated at wt-m0t064 (git rev-parse --show-toplevel). No evidence of two writing agents; reviewer pass is read-only. Judged on absence-of-violation + M0-T066 precedent."
+     ],
+     "verified_at": "2026-08-18T18:54:51+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "a00543910a01daa2fac8104c5d2246b00e3850a1"
+    },
+    {
+     "id": "D-013-R008",
+     "state": "PASS",
+     "evidence": [
+      "No second free-form taxonomy: memory_graph.py structural_links kinds are only existing entities (task/requirement/path/subsystem/milestone/directive) derived by Unit C _resolve_one (subsystem_entities.py); model-picked advisory_tags are a SEPARATE leaf list, never structural parents. AS-5 asserts no 'advisory' kind in structural_links."
+     ],
+     "verified_at": "2026-08-18T18:54:51+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "a00543910a01daa2fac8104c5d2246b00e3850a1"
+    },
+    {
+     "id": "D-013-R009",
+     "state": "PASS",
+     "evidence": [
+      "No LLM in the pipeline: tools/memory_digest.py, memory_grounding.py, memory_graph.py are pure deterministic Python with no model/provider calls. Structural indexing/parent selection = ents.propose+resolve_proposals; existence validation = _resolve_one + is_canonical_repo_path; promotion decisions = promote_digest. Module docstring: 'all deterministic code (R009)'."
+     ],
+     "verified_at": "2026-08-18T18:54:51+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "a00543910a01daa2fac8104c5d2246b00e3850a1"
+    },
+    {
+     "id": "D-013-R010",
+     "state": "PASS",
+     "evidence": [
+      "No refactor-for-shortness: git diff shows the reuse modules (subsystem_resolver/entities/map, repo_index_cache, context_pack_io) UNMODIFIED; the round-2 delta only adds the B1 defense (is_canonical_repo_path, exact-match grounding, Unicode-C tag check) within the existing responsibility split. python tools/modularity_check.py --check = failures 0, no memory_* warnings."
+     ],
+     "verified_at": "2026-08-18T18:54:51+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "a00543910a01daa2fac8104c5d2246b00e3850a1"
+    },
+    {
+     "id": "D-013-R011",
+     "state": "PASS",
+     "evidence": [
+      "No caches/transcripts/secrets in Git: store lives external via ric.cache_base_dir() and cache_dir_for refuses in-repo (cache_inside_repo); digest 'note' bounded <=2000 chars. git diff --name-only = no cache/JSONL/transcript files; git grep for C:/Users, /home/ in committed reports/docs/code = NONE. The B1 fix additionally blocks an absolute/out-of-repo path from ever being recorded as a structural link (file_path_not_canonical)."
+     ],
+     "verified_at": "2026-08-18T18:54:51+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "a00543910a01daa2fac8104c5d2246b00e3850a1"
+    },
+    {
+     "id": "D-013-R012",
+     "state": "PASS",
+     "evidence": [
+      "No byte-estimate token-savings claim: Unit D performs no token measurement; git grep -i 'token.saving|savings' at HEAD matches only evidence-map.json negative attestations ('No token-savings or efficiency claim anywhere')."
+     ],
+     "verified_at": "2026-08-18T18:54:51+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "a00543910a01daa2fac8104c5d2246b00e3850a1"
+    },
+    {
+     "id": "D-013-R013",
+     "state": "PASS",
+     "evidence": [
+      "Fail-closed at every layer, strengthened by B1 rework: memory_digest.validate_digest raises DigestSchemaError with machine codes including the NEW file_path_not_canonical for any non-canonical files[].path (memory_digest.py is_canonical_repo_path + _check_files); memory_grounding adds non_canonical_path refusal (defense-in-depth); stale ontology -> stale_ontology_version; unreadable packet -> GroundingError('task_packet_unreadable'); IndexCache -> concurrent_writer/validation_failed/cache_inside_repo. Reproduced: test_non_canonical_file_paths_refuse_at_schema asserts file_path_not_canonical for 8 shapes (traversal/drive/absolute/backslash/'.'/'..'/doubled-slash); full suite 31/31."
+     ],
+     "verified_at": "2026-08-18T18:54:51+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "a00543910a01daa2fac8104c5d2246b00e3850a1"
+    },
+    {
+     "id": "D-013-R022",
+     "state": "PASS",
+     "evidence": [
+      "Amended source-002 (bootstrap-only 'this run'). D-017 source-001.md line 64 authorizes 'M0-T067: Unit D' and STAGE 7 as the continuous A-to-Z continuation; Unit C (M0-T066) accepted+merged to main at 1ded78f (git merge-base main HEAD); M0-T067 claimed after. Judged identically to recorded M0-T065/M0-T066 R022=PASS precedent (D-013 verification.json)."
+     ],
+     "verified_at": "2026-08-18T18:54:51+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "a00543910a01daa2fac8104c5d2246b00e3850a1"
+    },
+    {
+     "id": "D-013-R025",
+     "state": "PASS",
+     "evidence": [
+      "No improper census/deep-understanding claim: git grep 'complete structural census|whole repository' over code/docs/reports = NONE; advisory tags/summaries are explicitly non-authoritative leaves excluded from structural truth (memory_graph node advisory_tags vs structural_links; docs 'advisory tags are leaves')."
+     ],
+     "verified_at": "2026-08-18T18:54:51+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "a00543910a01daa2fac8104c5d2246b00e3850a1"
+    },
+    {
+     "id": "D-013-R038",
+     "state": "PASS",
+     "evidence": [
+      "Advisory summaries excluded from structural truth and parent derivation: memory_graph.py separates advisory_tags/discarded_advisory_tags from structural_links; judge_advisory_tag validates per-tag, NOW hardened to reject all Unicode category-C characters (control/format/surrogate/DEL) instead of only ord(c)<32; model-picked tags never become parents. AS-5 + test_del_and_format_chars_discarded (DEL \\x7f and zero-width \\u200b -> advisory_tag_control_chars, digest promotes)."
+     ],
+     "verified_at": "2026-08-18T18:54:51+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "a00543910a01daa2fac8104c5d2246b00e3850a1"
+    },
+    {
+     "id": "D-013-R039",
+     "state": "PASS",
+     "evidence": [
+      "Unit D feeds the ONE compiler, not an independent budget: memory_graph.py produces bounded per-digest nodes into an external store; no unbounded dump. docs/MEMORY_GRAPH.md 'Boundaries': 'it never feeds an unbounded dump into any context (the ONE compiler selects bounded evidence - R039/R042)'. No concatenation of separate budgets in the diff."
+     ],
+     "verified_at": "2026-08-18T18:54:51+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "a00543910a01daa2fac8104c5d2246b00e3850a1"
+    },
+    {
+     "id": "D-013-R042",
+     "state": "PASS",
+     "evidence": [
+      "No capacity-filling: Unit D stores bounded facts (closed digest schema, bounded evidence_refs<=300 chars, note<=2000) and does not inject context. docs 'Boundaries' cites R042. No logic that fills window on unused capacity."
+     ],
+     "verified_at": "2026-08-18T18:54:51+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "a00543910a01daa2fac8104c5d2246b00e3850a1"
+    },
+    {
+     "id": "D-013-R043",
+     "state": "PASS",
+     "evidence": [
+      "Unit D implemented only after Unit C established the versioned ontology: git merge-base main HEAD = 1ded78f (Unit C accepted+merged). memory_graph.py imports the versioned resolver (subsystem_resolver.version_stamp -> resolver_version/map_version/map_digest) stamped into every node; a stale stamp quarantines whole (test_stale_ontology_quarantines_whole_digest). subsystem_entities.py UNMODIFIED (read-only). Judged per M0-T066 R043=PASS precedent."
+     ],
+     "verified_at": "2026-08-18T18:54:51+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "a00543910a01daa2fac8104c5d2246b00e3850a1"
+    },
+    {
+     "id": "D-013-R044",
+     "state": "PASS",
+     "evidence": [
+      "Closed schema with all minimum fields present + fail-closed, NOW enforcing canonical repo-relative paths (B1 fix): memory_digest.py _FIELDS enumerates schema_version, digest_id, task_id, requirement_ids[], files[] (path+content_digest|null), agent (allowlist), outcome (OUTCOME_ENUM), repo_sha, source_manifest_fingerprint (nullable), branch, task_index_digest, directive_index_digest, resolver_version, map_version, map_digest, evidence_refs[], unresolved_links[] (reason), advisory_tags[]. NEW is_canonical_repo_path() (rejects backslash, ':' drive, leading '/', and empty/'.'/'..' segments) is called by _check_files, raising fail-closed file_path_not_canonical - directly enforcing the 'repo-relative canonical paths' clause. validate_digest still refuses unknown fields (closed_schema_violation) and drifted digest_id (digest_id_mismatch). Reproduced: test_non_canonical_file_paths_refuse_at_schema (8 shapes -> file_path_not_canonical) + test_reviewer_probe_traversal_digest_never_promotes (real out-of-repo file via '../../../secret.txt' raises file_path_not_canonical and store stays empty); AS-1 refusals intact; 31/31 pass."
+     ],
+     "verified_at": "2026-08-18T18:54:51+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "a00543910a01daa2fac8104c5d2246b00e3850a1"
+    },
+    {
+     "id": "D-013-R045",
+     "state": "PASS",
+     "evidence": [
+      "Parents DERIVED not model-chosen: subsystem_entities._resolve_one derives task->milestone (master plan), requirement->directive (registry), path->subsystem (resolve_path vs versioned map); memory_graph builds structural_links only from resolved links, advisory tags are leaves. AS-2 test_promotion_derives_all_parents asserts milestone=M0, directive=D-900, subsystem=services/api. Unchanged by B1 delta."
+     ],
+     "verified_at": "2026-08-18T18:54:51+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "a00543910a01daa2fac8104c5d2246b00e3850a1"
+    },
+    {
+     "id": "D-013-R046",
+     "state": "PASS",
+     "evidence": [
+      "Two passes: memory_graph._proposals_from_digest -> ents.propose (pass 1) then ents.resolve_proposals (pass 2, deterministic resolver validates+derives every link). subsystem_entities docstring 'two-pass resolve (M0-T066 ... D-013-R046)'. Unchanged by B1 delta."
+     ],
+     "verified_at": "2026-08-18T18:54:51+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "a00543910a01daa2fac8104c5d2246b00e3850a1"
+    },
+    {
+     "id": "D-013-R047",
+     "state": "PASS",
+     "evidence": [
+      "Default-deny grounding, existence/mention never enough - B1 grounding loophole CLOSED: memory_grounding.ground_file_link now (a) refuses non-canonical paths up front (non_canonical_path) and (b) grounds via evidence only on EXACT normalized equality (the round-1 substring 'p in ref' was removed); allowed_paths/diff/owner-approved paths unchanged; ground_requirement_link still requires the directive be cited. Reproduced: test_evidence_substring_no_longer_grounds (evidence 'see services/api/other.py.bak notes' -> quarantined ungrounded_file_link), test_evidence_exact_match_still_grounds (exact ref grounds basis=evidence_ref), test_grounding_refuses_non_canonical_defense_in_depth (-> non_canonical_path), test_reviewer_probe_traversal_digest_never_promotes (out-of-repo '../../../secret.txt' never enters the graph). AS-3 ungrounded_file_link/unknown_requirement_id/stale_file_link intact; 31/31 pass."
+     ],
+     "verified_at": "2026-08-18T18:54:51+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "a00543910a01daa2fac8104c5d2246b00e3850a1"
+    },
+    {
+     "id": "D-013-R048",
+     "state": "PASS",
+     "evidence": [
+      "Atomic/idempotent/replay/concurrency-safe with real crash + advisory separated: promote_digest writes via ric.IndexCache.write_generation (lock -> temp -> validate -> atomic os.replace, repo_index_cache.py); idempotent by digest_id (already_promoted / digest_id_conflict). AS-4 test_crash_before_atomic_promotion_then_replay patches ric.os.replace to raise OSError (REAL injected crash) and asserts load_current() is None then replay converges byte-identically; AS-6 concurrent_writer; AS-5 invalid advisory tag discarded separately with digest still promoting - advisory validity now hardened to Unicode category-C (test_del_and_format_chars_discarded: DEL \\x7f and zero-width \\u200b -> advisory_tag_control_chars, digest promotes). 31/31 pass."
+     ],
+     "verified_at": "2026-08-18T18:54:51+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "a00543910a01daa2fac8104c5d2246b00e3850a1"
+    },
+    {
+     "id": "D-013-R050",
+     "state": "PASS",
+     "evidence": [
+      "Two storage classes: external runtime store never committed (memory_store -> ric.cache_base_dir()/memory-graph, refuses in-repo; git diff shows no store/JSONL files) + committed sanitized summaries under project-control/reports/M0-T067-* (JSON/MD). git grep for private absolute paths/credentials in committed reports = NONE. AS-6 test_store_inside_repo_refuses asserts cache_inside_repo."
+     ],
+     "verified_at": "2026-08-18T18:54:51+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "a00543910a01daa2fac8104c5d2246b00e3850a1"
+    },
+    {
+     "id": "D-013-R051",
+     "state": "PASS",
+     "evidence": [
+      "Nullable never fabricated: memory_digest.py _FIELDS marks source_manifest_fingerprint (str, NoneType) nullable and files[].content_digest accepts null; validate_digest never coerces null to zero/empty. Fixture make_digest carries both as None and validates. Unchanged by B1 delta."
+     ],
+     "verified_at": "2026-08-18T18:54:51+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "a00543910a01daa2fac8104c5d2246b00e3850a1"
+    },
+    {
+     "id": "D-013-R053",
+     "state": "PASS",
+     "evidence": [
+      "Distinct measures never combined into invented 'token savings': Unit D computes no such number; git grep -i 'token.saving|savings' at HEAD matches only evidence-map.json negative attestations. No conflation of byte estimate / provider usage / cache perf."
+     ],
+     "verified_at": "2026-08-18T18:54:51+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "a00543910a01daa2fac8104c5d2246b00e3850a1"
+    },
+    {
+     "id": "D-013-R064",
+     "state": "PASS",
+     "evidence": [
+      "Report conventions respected: committed summaries under existing task report area project-control/reports/M0-T067-* (incl. the round-1 FAIL report); JSONL/cache external (cache_base_dir); code under tools/. No parallel control plane or example-filename mirror; diff confined to allowed_paths + ordinary control-plane records."
+     ],
+     "verified_at": "2026-08-18T18:54:51+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "a00543910a01daa2fac8104c5d2246b00e3850a1"
+    },
+    {
+     "id": "D-013-R069",
+     "state": "PASS",
+     "evidence": [
+      "Hold honored: M0-T067 committed status='rework' -> re-submitting to awaiting_gate under independent review; the next unit (M0-T068 Unit E / M0-T069 Unit F) is NOT implemented - git diff --name-only main...HEAD shows only Unit-D files, git grep for context_pack/status/view/T068/T069 in the diff = NONE. D-017 authorizes continuation only in dependency order after review. Judged identically to recorded M0-T065/M0-T066 R069=PASS precedent."
+     ],
+     "verified_at": "2026-08-18T18:54:51+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "a00543910a01daa2fac8104c5d2246b00e3850a1"
+    },
+    {
+     "id": "D-013-R082",
+     "state": "PASS",
+     "evidence": [
+      "git diff main...HEAD -- tools/agent_supervisor/ is EMPTY (no output). tools/agent_supervisor/** unmodified by this initiative, including the round-2 rework."
+     ],
+     "verified_at": "2026-08-18T18:54:51+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "a00543910a01daa2fac8104c5d2246b00e3850a1"
+    }
+   ],
+   "reviewed_sha": "a00543910a01daa2fac8104c5d2246b00e3850a1",
+   "reviewed_manifest_sha256": "07b6f6752598e574249e3b6db07ef6a05d027bfd1b50cec6324395418560abdb",
+   "note": "Independent DCV PASS round 2: 29/29 applicable D-013 requirements verified at reviewed_sha a005439 / manifest 07b6f6752598. Unit D: closed-schema memory digests, derived parents via the Unit C two-pass resolver, default-deny grounding + quarantine, atomic/idempotent/replay/concurrency-safe promotion reusing the accepted A2 store. Round-1 review found blocking defect B1 (path traversal via non-canonical files[].path + substring evidence grounding; G3 FAIL at c13eda7 on file); the rework closed it at both schema (file_path_not_canonical) and grounding (exact-match evidence, non_canonical_path) layers, independently reproduced by the DCV with the reviewer's actual exploit + 6 regression tests (31/31). R022/R043/R069 satisfied under the D-017 continuation after Unit C merged (1ded78f). Producer (orchestrator) != verifier."
   },
   {
    "task_id": "M0-T068",
@@ -1970,5 +2291,5 @@
    "note": "Independent DCV PASS 46/46 (round 1) + code/QA delta re-review CONFIRM-CLOSED (MAJOR-1/MINOR-2/F1). R037/R079 A1-scope only; the byte-identical incremental-vs-full parity test is the A2 (M0-T064) obligation, built and passing. Producer != verifier."
   }
  ],
- "updated_at": "2026-08-18T18:10:06+00:00"
+ "updated_at": "2026-08-18T18:54:51+00:00"
 }
