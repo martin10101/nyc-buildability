@@ -375,6 +375,13 @@ class ContainmentGateTests(unittest.TestCase):
             "status": "in_progress",
             "stop_conditions": ["no bypass flags"],
         }), encoding="utf-8")
+        # M0-T072: --manifest is a required dispatch input.
+        from tools.agent_supervisor import cli as _cli
+        from tools.agent_supervisor.manifest import generate_manifest, write_manifest
+        self.manifest_path = write_manifest(
+            generate_manifest(_cli.PACKAGE_ROOT,
+                              extra_files=(("config.toml", self.config),)),
+            self.tmp / "controller_manifest.json")
 
     def full_inputs(self) -> tuple[str, ...]:
         return ("start", "--mode", "shadow",
@@ -382,6 +389,7 @@ class ContainmentGateTests(unittest.TestCase):
                 "--codex-executable", sys.executable,
                 "--task-packet", str(self.packet),
                 "--config", str(self.config),
+                "--manifest", str(self.manifest_path),
                 "--model-selection", str(self.selection))
 
     def run_cli(self, *args: str) -> tuple[int, dict]:

@@ -15,7 +15,8 @@ marked **OWNER**. Everything else is executable by the authorized orchestrator u
 |---|---|
 | Live controller | `C:\SupervisorController` |
 | Protected config (immutable, never modified) | `C:\Program Files\SupervisorConfig\config.toml` |
-| Expected protected-config SHA-256 | `6aef12a9f60a6a64d7af77de3c071289c35dfe60977239e901df8d642c3fffde` |
+| Expected protected-config SHA-256 (raw bytes, `Get-FileHash`) | `6aef12a9f60a6a64d7af77de3c071289c35dfe60977239e901df8d642c3fffde` |
+| Expected protected-config SHA-256 (LF-normalized, as the MANIFEST records it) | `9560f901e40e64cc320698c6cea9d5996e9e8495fb3ed22c6e681a6ebf1581e5` |
 | Mutable model selection (outside the manifest by design) | `C:\SupervisorController\model_selection.toml` |
 | Expected model-selection SHA-256 | `0e2432c0a25632ccb7ef35392c64dc70bd95fac16f2e136e54801e2407a66cf4` |
 | A1 worktree / journal checkout | `C:\Users\MLFLL\Downloads\nyc-zoning\wt-m0t063` |
@@ -60,13 +61,17 @@ in either direction.
 
 ## 4. Copy the accepted controller delta
 
-Derive the delta from a clean checkout of the accepted merge commit, then copy ONLY the
-files that differ (CRLF-normalized comparison), and verify each copied file:
+Derive the delta from a FRESH clean worktree pinned to accepted origin/main (never a
+transient task worktree), then copy ONLY the files that differ (CRLF-normalized
+comparison), and verify each copied file:
 
 ```powershell
-$src = "C:\Users\MLFLL\Downloads\nyc-zoning\wt-m0t072\tools\agent_supervisor"
-git -C C:\Users\MLFLL\Downloads\nyc-zoning\wt-m0t072 diff --no-index --name-only `
-  C:\SupervisorController\tools\agent_supervisor $src
+$repo = "C:\Users\MLFLL\Downloads\nyc-zoning\nyc-development-feasibility-claude-pack"
+git -C $repo fetch origin
+$sha = git -C $repo rev-parse origin/main
+git -C $repo worktree add C:\Users\MLFLL\Downloads\nyc-zoning\wt-controller-src $sha
+$src = "C:\Users\MLFLL\Downloads\nyc-zoning\wt-controller-src\tools\agent_supervisor"
+git -C $repo diff --no-index --name-only C:\SupervisorController\tools\agent_supervisor $src
 ```
 
 Copy each differing file with `Copy-Item`, then re-run the same `git diff --no-index`
@@ -88,7 +93,13 @@ python -m tools.agent_supervisor record-manifest `
 The manifest stores the config under its stable logical name `config.toml` with its
 digest; the absolute private path is never written into the manifest.
 `model_selection.toml` stays excluded by design: a model change never invalidates the
-controller.
+controller — and `record-manifest` REFUSES a source file named `model_selection.toml`
+or `controller_manifest.json`, so a mistyped path cannot bind the wrong file.
+
+NOTE on digests: the manifest records the LF-NORMALIZED SHA-256 of every covered file
+(so CRLF and LF checkouts agree). For the protected config that is the second value in
+§1's table — it deliberately differs from `Get-FileHash`'s raw-byte value on a CRLF
+file. Do not "correct" a healthy manifest because the two differ.
 
 ## 6. Verify the controller — manifest AND external config
 
@@ -101,8 +112,12 @@ python -m tools.agent_supervisor verify-controller `
 Expect `controller verified, including the external config.toml binding.`
 `verify-controller` without `--manifest` now fails closed: nothing verified is never
 reported ok. Production dispatch fails closed on: a manifest omitting `config.toml`
-(`manifest_missing_config`), a missing config path, a digest mismatch, or a stale
-manifest (`manifest_stale`: wrong controller version or an edited manifest file).
+(`manifest_missing_config`), a missing config path, a digest mismatch, coverage
+patterns that differ from the canonical set (`manifest_patterns_mismatch`), or a
+stale manifest (`manifest_stale`: wrong controller version, or a recorded digest
+that no longer matches the manifest's own recorded content — a SELF-CONSISTENCY
+check that catches accidental or partial edits; deliberate tampering is caught by
+the digests no longer matching the live tree, plus review of any manifest change).
 
 ## 7. Full doctor
 
@@ -153,7 +168,8 @@ error; the §8 probe does not record VERIFIED; the A1 journal state changed duri
 update; or any file outside the accepted delta changed in `C:\SupervisorController`.
 
 ```powershell
-$backup = "C:\SupervisorBackup\<the stamp created in step 3>"
+$backup = Get-ChildItem C:\SupervisorBackup -Directory |
+  Sort-Object Name -Descending | Select-Object -First 1 -ExpandProperty FullName
 robocopy "$backup\agent_supervisor" C:\SupervisorController\tools\agent_supervisor /E /R:2 /W:2
 Remove-Item C:\SupervisorController\tools\agent_supervisor\controller_manifest.json -ErrorAction SilentlyContinue
 python -m tools.agent_supervisor doctor `
@@ -162,9 +178,9 @@ python -m tools.agent_supervisor doctor `
   --model-selection C:\SupervisorController\model_selection.toml
 ```
 
-(The step-3 `$stamp` value is echoed by step 3 when it runs; substitute the concrete
-directory name printed there. Restoring copies over the live tree without deleting
-anything else; journals are untouched.)
+(The command selects the NEWEST timestamped backup automatically; to restore an older
+one, set `$backup` to that exact directory instead. Restoring copies over the live
+tree without deleting anything else; journals are untouched.)
 
 ## 11. Supervised A1 start (after a fully verified update)
 

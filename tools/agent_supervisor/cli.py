@@ -127,8 +127,10 @@ from .loop import (
     verify_covered_instruction,
 )
 from .locking import SingleInstanceLock, assess as assess_lock, probe_process
-from .manifest import (CONFIG_LOGICAL_NAME, MODEL_SELECTION_FILENAME, generate_manifest,
-                       read_manifest, verify_manifest_with_config, write_manifest)
+from .manifest import (CONFIG_LOGICAL_NAME, EXCLUDED_NAMES, MANIFEST_FILENAME,
+                       MODEL_SELECTION_FILENAME, ManifestError, ManifestVerification,
+                       generate_manifest, read_manifest, verify_manifest_with_config,
+                       write_manifest)
 from .model_change_ipc import (
     NAMED_PIPE_STATUS,
     Caller,
@@ -1253,6 +1255,15 @@ def _check_control_response_live(args: argparse.Namespace,
 def cmd_doctor(args: argparse.Namespace) -> int:
     """Read-only health check across every implemented phase."""
     checkout = pathlib.Path(args.checkout).resolve()
+    manifest_check = _check_manifest(args.manifest, args.config)
+    if getattr(args, "live", False) and not manifest_check.ok:
+        # G3 finding 8: the ONE live provider probe never runs over a failed
+        # manifest/config verification - verify before provider contact holds
+        # for doctor exactly as it does for start.
+        args.live = False
+        live_suppressed = True
+    else:
+        live_suppressed = False
     checks: list[Check] = [
         _check_python(),
         _check_timezone_database(),
@@ -1262,7 +1273,7 @@ def cmd_doctor(args: argparse.Namespace) -> int:
         _check_protocol_roundtrip(),
         _check_hard_denies(),
         _check_breakers(),
-        _check_manifest(args.manifest, args.config),
+        manifest_check,
         _check_policy_tiers(checkout),
         _check_approval_binding(checkout),
         _check_claude_adapter(),
@@ -1290,7 +1301,15 @@ def cmd_doctor(args: argparse.Namespace) -> int:
         _check_deferred_commands_empty(),
     ]
     runtime_check, runtime = _check_runtime_dir(checkout, args.runtime_base)
-    checks.append(_check_control_response_live(args, runtime if runtime_check.ok else None))
+    if live_suppressed:
+        checks.append(Check(
+            "control_response_live_probe", False,
+            f"--live REFUSED: the controller_manifest check failed "
+            f"({manifest_check.detail[:120]}...); the bounded live probe never "
+            f"contacts a provider over an unverified controller"))
+    else:
+        checks.append(_check_control_response_live(
+            args, runtime if runtime_check.ok else None))
     checks.append(runtime_check)
     if runtime is not None and runtime_check.ok:
         checks.append(_check_journal(runtime))
@@ -1553,10 +1572,16 @@ def cmd_verify_controller(args: argparse.Namespace) -> int:
                        "recorded controller manifest and the active immutable config "
                        "(--manifest <path> --config <path>). To record a manifest, "
                        "run `record-manifest --config <path>`."),
+            # Same schema as the verified branch (G3 finding 6): consumers can
+            # rely on these keys on every path.
+            "reason_code": "missing_manifest",
+            "config_bound": False,
             "controller_version": CONTROLLER_VERSION,
         }
-        print(json.dumps(payload, indent=2) if args.json
-              else f"HALT: {payload['detail']}", file=None if args.json else sys.stderr)
+        if args.json:
+            print(json.dumps(payload, indent=2))
+        else:
+            print(f"HALT: {payload['detail']}", file=sys.stderr)
         return 1
     try:
         manifest = read_manifest(args.manifest)
@@ -1594,18 +1619,41 @@ def cmd_record_manifest(args: argparse.Namespace) -> int:
     if not config_path.is_file():
         print(f"config not found: {config_path}", file=sys.stderr)
         return 1
+    # G4-C2: the SOURCE file's own name must not be a deliberately-excluded one.
+    # Binding model_selection.toml under the logical name config.toml would make
+    # every authenticated model change invalidate the controller (S3.1) while
+    # the real immutable config stays unbound - a one-typo operator trap.
+    if config_path.name in EXCLUDED_NAMES:
+        print(f"refusing: {config_path.name!r} is deliberately OUTSIDE the manifest "
+              f"(S3.1) and cannot be bound as the immutable config; pass the real "
+              f"config.toml path", file=sys.stderr)
+        return 1
     in_package_config = PACKAGE_ROOT / CONFIG_LOGICAL_NAME
     if in_package_config.is_file():
         print(f"refusing: a {CONFIG_LOGICAL_NAME!r} exists INSIDE the package tree "
               f"({in_package_config}); the active immutable config must live outside "
               f"the package (D-017-R048)", file=sys.stderr)
         return 1
+    out_path = (pathlib.Path(args.out) if args.out
+                else PACKAGE_ROOT / MANIFEST_FILENAME)
+    # G5 finding 4: --out is a write target and must never be able to destroy
+    # the immutable config (or the model selection) via a swapped/mistyped
+    # argument. Refused BEFORE anything is generated or written.
+    if out_path.resolve() == config_path.resolve():
+        print(f"refusing: --out and --config are the same file ({out_path}); "
+              f"recording would overwrite the immutable config", file=sys.stderr)
+        return 1
+    if out_path.name in (CONFIG_LOGICAL_NAME, MODEL_SELECTION_FILENAME):
+        print(f"refusing: --out may not be named {out_path.name!r}; the manifest "
+              f"is written as {MANIFEST_FILENAME!r}", file=sys.stderr)
+        return 1
     manifest = generate_manifest(
         PACKAGE_ROOT, extra_files=((CONFIG_LOGICAL_NAME, config_path),))
-    out_path = pathlib.Path(args.out) if args.out else PACKAGE_ROOT / "controller_manifest.json"
-    write_manifest(manifest, out_path)
-    verification = verify_manifest_with_config(PACKAGE_ROOT, read_manifest(out_path),
-                                               config_path)
+    # Verify BEFORE writing so a failed round trip never leaves a bad manifest
+    # on disk (G3 finding 11).
+    verification = verify_manifest_with_config(PACKAGE_ROOT, manifest, config_path)
+    if verification.ok:
+        write_manifest(manifest, out_path)
     payload = {
         "command": "record-manifest",
         "ok": verification.ok,
@@ -1624,8 +1672,8 @@ def cmd_record_manifest(args: argparse.Namespace) -> int:
               f"(digest {payload['manifest_digest'][:16]}...), binding the external "
               f"{CONFIG_LOGICAL_NAME}; round-trip verification passed.")
     else:
-        print(f"RECORDED BUT FAILED round-trip verification: {payload['detail']}",
-              file=sys.stderr)
+        print(f"NOT RECORDED - verification failed, nothing was written: "
+              f"{payload['detail']}", file=sys.stderr)
     return 0 if verification.ok else 1
 
 
@@ -2779,8 +2827,15 @@ def cmd_start(args: argparse.Namespace) -> int:
         # input gate. The former expression defaulted to True with no manifest.
         manifest_verification = None
         if args.manifest:
-            manifest_verification = verify_manifest_with_config(
-                PACKAGE_ROOT, read_manifest(args.manifest), args.config)
+            try:
+                manifest_verification = verify_manifest_with_config(
+                    PACKAGE_ROOT, read_manifest(args.manifest), args.config)
+            except ManifestError as exc:
+                # G3 finding 9: an unreadable/malformed manifest is a clean
+                # fail-closed refusal, not a traceback - same as every sibling
+                # verification path.
+                manifest_verification = ManifestVerification(
+                    ok=False, message=str(exc), reason_code="manifest_unreadable")
             manifest_ok = manifest_verification.ok
         else:
             manifest_ok = False
@@ -3008,7 +3063,9 @@ def build_parser() -> argparse.ArgumentParser:
     start.add_argument("--mode", choices=["shadow", "supervised", "limited-auto"],
                        default="shadow")
     start.add_argument("--manifest", default=None,
-                       help="controller manifest to verify before anything else")
+                       help="recorded controller manifest - a REQUIRED dispatch input "
+                            "(M0-T072); verified together with --config, including the "
+                            "external config.toml binding, before any provider contact")
     start.add_argument("--claude-executable", default=None,
                        help="explicit path to the Claude executable; never a PATH search")
     start.add_argument("--codex-executable", default=None,

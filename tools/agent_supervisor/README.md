@@ -42,7 +42,7 @@ python -m tools.agent_supervisor doctor
 python -m tools.agent_supervisor status
 python -m tools.agent_supervisor recovery-status
 python -m tools.agent_supervisor schedule-status
-python -m tools.agent_supervisor verify-controller
+python -m tools.agent_supervisor verify-controller --manifest <recorded manifest> --config <active config.toml>
 python -m tools.agent_supervisor pending-approvals
 python -m tools.agent_supervisor autostart-plan
 python -m tools.agent_supervisor replay

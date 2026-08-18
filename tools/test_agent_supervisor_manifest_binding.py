@@ -324,6 +324,85 @@ class CliProductionPathTests(TempCase):
                 "--model-selection", str(selection)]
         return argv, sentinel
 
+    @unittest.skipUnless(os.name == "nt",
+                         "dispatch requires the Job Object containment host "
+                         "(CI runs supervisor tests on windows-latest)")
+    def test_as1_start_dispatches_with_verified_binding(self) -> None:
+        """AS-1 start leg + AS-7 POSITIVE CONTROL: with a correctly bound
+        manifest the run DISPATCHES and the fake provider really fires - so the
+        AS-7 sentinel-absent assertions cannot pass vacuously."""
+        config = self.external_config()
+        manifest = mf.generate_manifest(
+            PACKAGE_ROOT, extra_files=((mf.CONFIG_LOGICAL_NAME, config),))
+        manifest_path = mf.write_manifest(manifest, self.tmp / "m.json")
+        argv, sentinel = self._start_args(manifest_path, config)
+        code, payload = self._run_cli(*argv)
+        self.assertTrue(payload.get("manifest_binding", {}).get("ok"), payload)
+        self.assertTrue(payload.get("dispatched"), payload)
+        self.assertGreaterEqual(payload.get("provider_calls_made", 0), 1)
+        self.assertTrue(sentinel.exists(),
+                        "positive control: the fake provider must actually fire")
+        self.assertEqual(code, 0, payload)
+
+    def test_as8_stale_manifest_refused_at_dispatch(self) -> None:
+        """AS-8 through the PRODUCTION dispatch path, not just the manifest layer."""
+        config = self.external_config()
+        stale = mf.generate_manifest(
+            PACKAGE_ROOT, extra_files=((mf.CONFIG_LOGICAL_NAME, config),),
+            controller_version="0.0.0-obsolete")
+        manifest_path = mf.write_manifest(stale, self.tmp / "stale.json")
+        argv, sentinel = self._start_args(manifest_path, config)
+        code, payload = self._run_cli(*argv)
+        self.assertFalse(payload.get("dispatched", True), payload)
+        self.assertEqual(payload.get("provider_calls_made"), 0)
+        self.assertEqual(payload["manifest_binding"]["reason_code"], "manifest_stale")
+        self.assertFalse(sentinel.exists())
+        self.assertNotEqual(code, 0)
+
+    def test_patterns_mismatch_fails_closed(self) -> None:
+        """G4-C1 regression: a manifest that narrows its own coverage patterns
+        is refused even when internally self-consistent."""
+        from agent_supervisor.models import digest_of
+        config = self.external_config()
+        good = mf.generate_manifest(
+            PACKAGE_ROOT, extra_files=((mf.CONFIG_LOGICAL_NAME, config),))
+        degenerate = dict(good)
+        degenerate["patterns"] = []
+        degenerate["files"] = {mf.CONFIG_LOGICAL_NAME:
+                               good["files"][mf.CONFIG_LOGICAL_NAME]}
+        degenerate["manifest_digest"] = digest_of(
+            {"files": degenerate["files"],
+             "controller_version": degenerate["controller_version"],
+             "patterns": degenerate["patterns"]})
+        verification = mf.verify_manifest_with_config(PACKAGE_ROOT, degenerate, config)
+        self.assertFalse(verification.ok)
+        self.assertEqual(verification.reason_code, "manifest_patterns_mismatch")
+        manifest_path = mf.write_manifest(degenerate, self.tmp / "degenerate.json")
+        code, payload = self._run_cli("verify-controller",
+                                      "--manifest", str(manifest_path),
+                                      "--config", str(config))
+        self.assertEqual(code, 1)
+        self.assertEqual(payload.get("reason_code"), "manifest_patterns_mismatch")
+
+    def test_record_manifest_refuses_excluded_source_names(self) -> None:
+        """G4-C2 regression: binding model_selection.toml (or the manifest
+        itself) as the config source is a one-typo operator trap - refused."""
+        for name in (mf.MODEL_SELECTION_FILENAME, "controller_manifest.json"):
+            wrong = write(self.tmp / "elsewhere" / name, VALID_SELECTION)
+            code, payload = self._run_cli("record-manifest",
+                                          "--config", str(wrong),
+                                          "--out", str(self.tmp / "never.json"))
+            self.assertEqual(code, 1, payload)
+            self.assertFalse((self.tmp / "never.json").exists(),
+                             "a refused recording must write nothing")
+
+    def test_verify_controller_no_manifest_payload_schema(self) -> None:
+        """G3 finding 6: every verify-controller payload carries the same keys."""
+        code, payload = self._run_cli("verify-controller")
+        self.assertEqual(code, 1)
+        self.assertEqual(payload.get("reason_code"), "missing_manifest")
+        self.assertIs(payload.get("config_bound"), False)
+
     def test_as4_start_refuses_manifest_without_config_binding(self) -> None:
         config = self.external_config()
         unbound = mf.generate_manifest(PACKAGE_ROOT)  # omits config.toml
@@ -386,17 +465,36 @@ class RunbookHygieneTests(unittest.TestCase):
         self.assertEqual(offenders, [],
                          f"CMD caret continuation inside code fences at lines {offenders}")
 
+    def _fenced_lines(self) -> list[tuple[int, str]]:
+        in_fence = False
+        lines = []
+        for n, line in enumerate(self.text.splitlines(), start=1):
+            if line.strip().startswith("```"):
+                in_fence = not in_fence
+                continue
+            if in_fence:
+                lines.append((n, line))
+        return lines
+
     def test_no_unresolved_executable_placeholders(self) -> None:
-        for pattern in ("<exact", "<path", "<your", "<fill", "<insert", "<codex-cli"):
-            self.assertNotIn(pattern, self.text.lower(),
-                             f"unresolved placeholder {pattern!r} in runbook")
+        # G3 finding 4 / G4-C4: a GENERIC scan, not a hand-picked prefix list.
+        # Any <...> inside a code fence is an unresolved placeholder: it cannot
+        # be pasted into PowerShell (angle brackets are illegal in paths).
+        offenders = [(n, m.group(0)) for n, line in self._fenced_lines()
+                     for m in re.finditer(r"<[^>\n]+>", line)]
+        self.assertEqual(offenders, [],
+                         f"unresolved <placeholder> inside code fences: {offenders}")
 
     def test_doctor_live_is_the_only_live_probe(self) -> None:
-        self.assertIn("doctor --live", self.text)
-        # `start` must never be described as the control-response probe.
-        for m in re.finditer(r"probe", self.text, flags=re.IGNORECASE):
-            window = self.text[max(0, m.start() - 200):m.end() + 200]
-            self.assertNotIn("start` as the probe", window)
+        # The exact policy sentence must be present...
+        self.assertIn("`doctor --live` is the ONLY intentional bounded live "
+                      "control-response probe", self.text)
+        # ...and no fenced command combines `start` with `--live`, nor does any
+        # fenced start invocation appear in the probe section (s8).
+        for n, line in self._fenced_lines():
+            if "--live" in line:
+                self.assertNotRegex(line, r"\bstart\b",
+                                    f"line {n}: start used with --live")
 
     def test_runbook_uses_the_recorded_binding_commands(self) -> None:
         self.assertIn("record-manifest", self.text)
