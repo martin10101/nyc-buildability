@@ -22,6 +22,7 @@ import hashlib
 import pathlib
 import re
 import sys
+import unicodedata
 
 _ROOT = pathlib.Path(__file__).resolve().parent.parent
 if str(_ROOT) not in sys.path:
@@ -101,14 +102,28 @@ def _require(cond: bool, code: str, detail: str) -> None:
         raise DigestSchemaError(code, detail)
 
 
+def is_canonical_repo_path(p: object) -> bool:
+    """True only for a canonical repo-relative POSIX path (R044): no
+    backslashes, no drive/colon, no leading slash, and no empty/'.'/'..'
+    segments — so a digest can never smuggle a traversal or absolute path."""
+    if not isinstance(p, str) or not p:
+        return False
+    if "\\" in p or ":" in p or p.startswith("/"):
+        return False
+    return all(seg not in ("", ".", "..") for seg in p.split("/"))
+
+
 def _check_files(files: list) -> None:
     for i, f in enumerate(files):
         _require(isinstance(f, dict), "bad_file_entry", f"files[{i}] not an object")
         extra = set(f) - {"path", "content_digest"}
         _require(not extra, "bad_file_entry",
                  f"files[{i}] unknown keys {sorted(extra)}")
-        _require(isinstance(f.get("path"), str) and bool(f.get("path")),
-                 "bad_file_entry", f"files[{i}].path must be a non-empty string")
+        _require(is_canonical_repo_path(f.get("path")),
+                 "file_path_not_canonical",
+                 f"files[{i}].path must be a canonical repo-relative POSIX path "
+                 "(no '..'/'.' segments, no absolute/drive paths, no backslashes, "
+                 "no doubled slashes)")
         cd = f.get("content_digest")
         _require(cd is None or bool(isinstance(cd, str) and _RX_SHA64.match(cd)),
                  "bad_file_entry",
@@ -183,6 +198,8 @@ def judge_advisory_tag(tag: object) -> str | None:
         return "advisory_tag_not_string"
     if not tag or len(tag) > MAX_ADVISORY_TAG_CHARS:
         return "advisory_tag_bad_length"
-    if any(ord(c) < 32 for c in tag):
+    # Unicode category C* covers control, format, surrogate, and DEL — not
+    # just ord(c) < 32 (G3 round-1 observation O4).
+    if any(unicodedata.category(c).startswith("C") for c in tag):
         return "advisory_tag_control_chars"
     return None

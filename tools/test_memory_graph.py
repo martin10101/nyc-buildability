@@ -324,6 +324,81 @@ class AS6ConcurrencyAndStorage(Case):
         self.assertEqual(cm.exception.code, "cache_inside_repo")
 
 
+class B1PathTraversalRegression(Case):
+    """G3 round-1 blocking defect B1: non-canonical files[].path admitted an
+    out-of-repo structural link via '..' traversal + substring evidence match."""
+
+    def test_non_canonical_file_paths_refuse_at_schema(self) -> None:
+        for bad in ("services/api/../../../secret.txt", "C:/Users/x/secret.txt",
+                    "..", "a//b", "a\\b", "./a", "/abs/path", "a/./b"):
+            doc = make_digest(self.root, self.map_path,
+                              files=[{"path": bad, "content_digest": None}])
+            with self.assertRaises(md.DigestSchemaError) as cm:
+                md.validate_digest(doc, self.root)
+            self.assertEqual(cm.exception.code, "file_path_not_canonical", bad)
+
+    def test_reviewer_probe_traversal_digest_never_promotes(self) -> None:
+        # Reproduce the round-1 exploit shape: a REAL file outside the repo
+        # root, claimed via a '..' path and self-referencing evidence.
+        with tempfile.TemporaryDirectory() as outer:
+            repo = os.path.join(outer, "repo")
+            os.makedirs(repo)
+            map_path = build_fixture(repo)
+            _write(outer, "secret.txt", "outside the repository\n")
+            evil = "services/api/../../../secret.txt"
+            doc = make_digest(repo, map_path,
+                              files=[{"path": evil, "content_digest": None}],
+                              evidence_refs=[evil])
+            with self.assertRaises(md.DigestSchemaError) as cm:
+                mg.promote_digest(doc, repo, base=self.base, map_path=map_path)
+            self.assertEqual(cm.exception.code, "file_path_not_canonical")
+            self.assertIsNone(mg.memory_store(repo, base=self.base).load_current())
+
+    def test_grounding_refuses_non_canonical_defense_in_depth(self) -> None:
+        from tools import memory_grounding as grd
+        facts = grd.grounding_facts(self.root, "M0-T001")
+        g = grd.ground_file_link("services/api/../../../secret.txt", facts,
+                                 [], ["services/api/../../../secret.txt"], [])
+        self.assertFalse(g["grounded"])
+        self.assertEqual(g["reason"], "non_canonical_path")
+
+    def test_evidence_substring_no_longer_grounds(self) -> None:
+        # round-1 O1/B1: a mere MENTION inside an evidence ref must not ground.
+        doc = make_digest(self.root, self.map_path,
+                          files=[{"path": "services/api/other.py",
+                                  "content_digest": None}],
+                          evidence_refs=["see services/api/other.py.bak notes"])
+        out = self.promote(doc)
+        payload = mg.memory_store(self.root, base=self.base).load_current().load_payload()
+        node = payload["nodes"][out["digest_id"]]
+        self.assertEqual(node["quarantined_links"][0]["reason"], "ungrounded_file_link")
+
+    def test_evidence_exact_match_still_grounds(self) -> None:
+        doc = make_digest(self.root, self.map_path,
+                          files=[{"path": "services/api/other.py",
+                                  "content_digest": None}],
+                          evidence_refs=["services/api/other.py"])
+        out = self.promote(doc)
+        payload = mg.memory_store(self.root, base=self.base).load_current().load_payload()
+        node = payload["nodes"][out["digest_id"]]
+        link = [li for li in node["structural_links"] if li["kind"] == "path"][0]
+        self.assertEqual(link["grounding_basis"], "evidence_ref")
+
+
+class O4UnicodeControlTags(Case):
+    def test_del_and_format_chars_discarded(self) -> None:
+        doc = make_digest(self.root, self.map_path,
+                          advisory_tags=["ok-tag", "bad\x7ftag", "zw\u200bj"])
+        out = self.promote(doc)
+        self.assertEqual(out["status"], "promoted")
+        payload = mg.memory_store(self.root, base=self.base).load_current().load_payload()
+        node = payload["nodes"][out["digest_id"]]
+        self.assertEqual(node["advisory_tags"], ["ok-tag"])
+        reasons = {d["reason"] for d in node["discarded_advisory_tags"]}
+        self.assertEqual(reasons, {"advisory_tag_control_chars"})
+        self.assertEqual(len(node["discarded_advisory_tags"]), 2)
+
+
 class EdgeCases(Case):
     def test_unresolved_task_quarantines_digest(self) -> None:
         doc = make_digest(self.root, self.map_path, task_id="M0-T999")

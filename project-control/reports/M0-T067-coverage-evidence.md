@@ -55,12 +55,36 @@
   machine-readable error; `show` reports nodes + generation fingerprint;
   a second digest extends the graph to 2 nodes.
 
-## Test + lint evidence (local, Python 3.11.9, ruff 0.13.0 = CI version)
-- `python tools/test_memory_graph.py` → 25 tests, OK.
-- `python -m pytest tools/test_memory_graph.py -q` → 25 passed.
+## G3 round-1 rework (B1 path traversal + O1/O3/O4) — round 2
+The round-1 independent review (M0-T067-review-FAIL-round1.md) demonstrated
+B1: a `..`-embedded `files[].path` (`services/api/../../../secret.txt`)
+resolved, grounded via a SUBSTRING match on digest-controlled evidence_refs,
+and entered structural_links pointing outside the repository. Fixes (confined
+to memory_digest / memory_grounding / memory_graph message + tests + doc):
+- **Schema canonicality (R044)**: `is_canonical_repo_path` — `files[].path`
+  must be canonical repo-relative POSIX (no `..`/`.` segments, no
+  absolute/drive paths, no backslashes, no doubled slashes) else
+  `file_path_not_canonical`. Regression tests cover all 8 shapes including
+  the reviewer's exact probe reproduced end-to-end (a REAL file outside the
+  repo root): promotion now refuses at validation and the store stays empty.
+- **Exact-match evidence grounding (O1/B1)**: `p in ref` substring matching
+  removed; an evidence ref grounds only on exact normalized equality (tested:
+  a mere mention no longer grounds; the exact ref still does).
+- **Grounding defense-in-depth**: non-canonical paths refuse in
+  `ground_file_link` itself (`non_canonical_path`) even if a caller bypasses
+  the schema.
+- **O4**: advisory-tag control-char check now rejects all Unicode category-C
+  characters (DEL `\x7f`, format chars like `​`) — tested.
+- **O3**: `digest_id_conflict` message now says "digest content or promotion
+  context changed".
+
+## Test + lint evidence (round 2; local, Python 3.11.9, ruff 0.13.0 = CI version)
+- `python tools/test_memory_graph.py` → 31 tests, OK (25 round-1 + 6
+  B1/O1/O4 regression tests).
+- `python -m pytest tools/test_memory_graph.py -q` → 31 passed.
 - `python tools/test_subsystem_resolver.py` (Unit C regression) → 21 tests, OK.
 - `ruff check` on the four new files → All checks passed.
-- `python tools/modularity_check.py --check` → selected 254 files; failures 0
+- `python tools/modularity_check.py --check` → failures 0
   (4 pre-existing warnings in unrelated files).
-- New module sizes (SLOC): memory_digest 157, memory_grounding 64,
-  memory_graph 227, test_memory_graph 315 — all far below the 600 warn line.
+- New module sizes (SLOC): memory_digest ~170, memory_grounding ~70,
+  memory_graph ~230, test_memory_graph ~380 — all far below the 600 warn line.

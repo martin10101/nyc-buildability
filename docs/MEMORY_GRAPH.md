@@ -12,7 +12,11 @@ idempotent, replay-safe, and concurrency-safe. Nothing here is model-decided
   (`closed_schema_violation`). Required fields: `schema_version`,
   content-derived `digest_id` (sha256 over the canonical document without the
   id; a drifted id refuses), `task_id`, `requirement_ids[]`, `files[]`
-  (`{path, content_digest|null}`), `agent`, `outcome`, `repo_sha`,
+  (`{path, content_digest|null}` — `path` must be a CANONICAL repo-relative
+  POSIX path: no `..`/`.` segments, no absolute/drive paths, no backslashes,
+  no doubled slashes, else `file_path_not_canonical`; this is the R044
+  "repo-relative canonical paths" constraint and the traversal guard from the
+  G3 round-1 finding B1), `agent`, `outcome`, `repo_sha`,
   `source_manifest_fingerprint` (nullable, never fabricated — R051), `branch`,
   `task_index_digest` + `directive_index_digest` (from Unit C
   `AuthoritativeIndexes.digests()`), `resolver_version`/`map_version`/
@@ -30,8 +34,11 @@ Existence alone is NEVER enough. Default-deny:
 
 - a **file link** is grounded only by: task packet `allowed_paths`
   (whole-segment prefix), the promotion call's `diff_files`, the digest's own
-  `evidence_refs`, or an explicit `approved_relations` entry
-  (owner-approved). Otherwise `ungrounded_file_link`.
+  `evidence_refs` (EXACT normalized equality — a mere mention/substring never
+  grounds; G3 round-1 B1/O1), or an explicit `approved_relations` entry
+  (owner-approved). Otherwise `ungrounded_file_link`. A non-canonical path is
+  refused here too (`non_canonical_path`, defense-in-depth under the schema
+  guard).
 - a **requirement link** is grounded only when its directive is cited by the
   digest's task packet `directive_refs` (`ungrounded_requirement_link`
   otherwise — even for requirements that exist in the registry).
@@ -64,8 +71,9 @@ quarantine-or-promote.
   write and promotion leaves the prior valid generation; replay converges to
   the byte-identical clean-run state (tested with injected crashes).
 - **Idempotent by content**: re-promoting an identical digest is
-  `already_promoted` (same generation); the same `digest_id` with different
-  content (e.g. a different grounding outcome) fails closed
+  `already_promoted` (same generation); the same `digest_id` with a different
+  resulting node — whether the digest content or the promotion context (e.g.
+  a different grounding outcome) changed — fails closed
   (`digest_id_conflict`).
 - **Deterministic**: no wall clock anywhere; the same digest + repository
   state promotes to byte-identical generation payloads (fingerprint = sha256

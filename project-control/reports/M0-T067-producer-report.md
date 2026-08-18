@@ -53,11 +53,24 @@ main 1ded78f).
 - **Unit E boundary**: no views/status projections; `show` prints only a
   bounded store summary.
 
-## Self-check results (documented_test_commands)
+## G3 round-1 rework (review FAIL → fixed)
 
-- `python tools/test_memory_graph.py` → **25 tests OK**.
-- `python -m pytest tools/test_memory_graph.py -q` → **25 passed**.
-- `python tools/modularity_check.py --check` → **failures 0** (254 files).
+The round-1 independent review found blocking defect **B1** (path traversal:
+non-canonical `files[].path` + substring evidence grounding admitted an
+out-of-repo structural link). Fixed in round 2 entirely within allowed_paths:
+canonical-path enforcement at the schema (`file_path_not_canonical`),
+exact-match evidence grounding (substring removed), `non_canonical_path`
+defense-in-depth in grounding, Unicode category-C advisory-tag rejection (O4),
+clarified conflict message (O3), doc updated (O5). Six regression tests added,
+including the reviewer's exact probe reproduced end-to-end. Details:
+`M0-T067-coverage-evidence.md`; round-1 report:
+`M0-T067-review-FAIL-round1.md`.
+
+## Self-check results (documented_test_commands, round 2)
+
+- `python tools/test_memory_graph.py` → **31 tests OK**.
+- `python -m pytest tools/test_memory_graph.py -q` → **31 passed**.
+- `python tools/modularity_check.py --check` → **failures 0**.
 - `ruff check` (0.13.0, CI-matching) on the four new files → clean.
 - Unit C regression: `python tools/test_subsystem_resolver.py` → **21 OK**.
 

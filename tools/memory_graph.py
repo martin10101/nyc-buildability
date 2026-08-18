@@ -199,7 +199,8 @@ def promote_digest(doc: dict, repo_root: str, *, diff_files: list[str] | None = 
                     "nodes": len(payload["nodes"])}
         raise MemoryGraphError(
             "digest_id_conflict",
-            f"digest {doc['digest_id'][:16]}... already promoted with different content")
+            f"digest {doc['digest_id'][:16]}... already promoted with a different "
+            "node (digest content or promotion context changed)")
     payload["nodes"][doc["digest_id"]] = node
     fingerprint = hashlib.sha256(canon_json_bytes(payload)).hexdigest()
     gen = store.write_generation(fingerprint, payload)

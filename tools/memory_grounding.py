@@ -20,6 +20,7 @@ _ROOT = pathlib.Path(__file__).resolve().parent.parent
 if str(_ROOT) not in sys.path:
     sys.path.insert(0, str(_ROOT))
 
+from tools.memory_digest import is_canonical_repo_path  # noqa: E402
 from tools.subsystem_resolver import norm_path  # noqa: E402
 
 
@@ -59,14 +60,23 @@ def grounding_facts(repo_root: str, task_id: str) -> dict:
 def ground_file_link(path: str, facts: dict, diff_files: list[str],
                      evidence_refs: list[str],
                      approved_relations: list[str]) -> dict:
-    """Default-deny file grounding. Returns {grounded, basis|reason}."""
+    """Default-deny file grounding. Returns {grounded, basis|reason}.
+
+    Evidence matching is EXACT normalized equality, never substring (a digest
+    author must name the path, not merely mention it — G3 round-1 B1). A
+    non-canonical path ('..'/'.' segments, absolute, drive, backslash) is
+    refused here as defense-in-depth even though the closed schema already
+    rejects it upstream.
+    """
     p = norm_path(path)
+    if not is_canonical_repo_path(p):
+        return {"grounded": False, "reason": "non_canonical_path"}
     for prefix in facts["allowed_paths"]:
         if _prefix_match(p, prefix):
             return {"grounded": True, "basis": "task_allowed_paths"}
     if p in {norm_path(d) for d in diff_files}:
         return {"grounded": True, "basis": "diff"}
-    if any(p == norm_path(ref) or p in ref for ref in evidence_refs):
+    if any(p == norm_path(ref) for ref in evidence_refs):
         return {"grounded": True, "basis": "evidence_ref"}
     if p in {norm_path(a) for a in approved_relations}:
         return {"grounded": True, "basis": "owner_approved_relation"}
