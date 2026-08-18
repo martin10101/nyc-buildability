@@ -1,0 +1,12 @@
+{
+  "task_id": "M0-T074",
+  "gate_id": "G3",
+  "reviewer": "code-reviewer",
+  "role": "independent_review",
+  "result": "PASS",
+  "report_file": "project-control/reports/M0-T074-consolidated-review.md",
+  "reviewed_at": "2026-08-18T13:44:30.840959+00:00",
+  "content_manifest_sha256": "afc969facb18872f8aeba4921b265a30eec710ea14d7ba40527a91caf05ab77d",
+  "reviewed_sha": "b3038925a49059130231c04276e3b4b093c493d9",
+  "updated_at": "2026-08-18T13:44:31.410061+00:00"
+}

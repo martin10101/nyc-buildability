@@ -1674,18 +1674,6 @@
    "requirements": []
   },
   {
-   "task_id": "M2-T014",
-   "directive_id": "D-001",
-   "producer": "official-source-researcher",
-   "verifier": "directive-compliance-verifier",
-   "applicable_requirement_ids": [],
-   "requirements": [],
-   "reviewed_sha": "1438c549da1b72f76207cee051b0c35754363f68",
-   "reviewed_manifest_sha256": "73b36e609faea8295c55c7b3ca5807b2377dcc9f51363765e76b2099156e3b73",
-   "verified_at": "2026-08-07T21:35:00+00:00",
-   "note": "Empty applicable set: no D-001 requirement row is applicable to M2-T014 (resolver-derived; refs D-001:ALL). Row exists to satisfy the fail-closed per-task verification check at accept. Content identity 73b36e60 stable since submit (gates G0/G2/G3 recorded at it)."
-  },
-  {
    "directive_id": "D-001",
    "task_id": "M0-T057",
    "applicable_requirement_ids": [],
@@ -1713,6 +1701,18 @@
   },
   {
    "directive_id": "D-001",
+   "task_id": "M0-T070",
+   "applicable_requirement_ids": [],
+   "reviewed_sha": "46f746928dda26b1a3527e1cfec901e642115578",
+   "reviewed_manifest_sha256": "296b8fa6b7ff5e44cee9eacf0e2bb1b7bbfdd3fa170c0e77cae71140372f965c",
+   "producer": "orchestrator",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-08-18T10:18:53+00:00",
+   "note": "EMPTY-SET verification (M0-T062/M0-T071 precedent). M0-T070 cites D-001:ALL; the canonical resolver derives ZERO D-001 requirements applicable to this packet (evaluate_task_refs applicable set = the 30 D-014 rows only). Confirmed alongside the fresh independent directive-compliance-verifier run of 2026-08-18 at head 46f7469 (project-control/reports/M0-T070-DCV-final-verification.md)."
+  },
+  {
+   "directive_id": "D-001",
    "task_id": "M0-T071",
    "applicable_requirement_ids": [],
    "reviewed_sha": "a997f19bb2f9d3c76d5d08885144de7d4f4f8517",
@@ -1725,15 +1725,16 @@
   },
   {
    "directive_id": "D-001",
-   "task_id": "M0-T070",
+   "task_id": "M0-T072",
    "applicable_requirement_ids": [],
-   "reviewed_sha": "46f746928dda26b1a3527e1cfec901e642115578",
-   "reviewed_manifest_sha256": "296b8fa6b7ff5e44cee9eacf0e2bb1b7bbfdd3fa170c0e77cae71140372f965c",
+   "reviewed_sha": "074ffad25e90900a4e6f8c71b9e1b6bf653d7a98",
+   "reviewed_manifest_sha256": "b1315bdc24b8a809636d0c6b0a296fd0091cd48065faa7732dc5cf171c2beb07",
    "producer": "orchestrator",
    "verifier": "directive-compliance-verifier",
    "schema_version": "directive_verification/v2",
-   "verified_at": "2026-08-18T10:18:53+00:00",
-   "note": "EMPTY-SET verification (M0-T062/M0-T071 precedent). M0-T070 cites D-001:ALL; the canonical resolver derives ZERO D-001 requirements applicable to this packet (evaluate_task_refs applicable set = the 30 D-014 rows only). Confirmed alongside the fresh independent directive-compliance-verifier run of 2026-08-18 at head 46f7469 (project-control/reports/M0-T070-DCV-final-verification.md)."
+   "requirements": [],
+   "verified_at": "2026-08-18T13:53:43+00:00",
+   "note": "D-001:ALL process regime; own requirements govern M0-T023, none apply (empty-but-present, M0-T070 precedent)."
   },
   {
    "directive_id": "D-001",
@@ -1750,16 +1751,28 @@
   },
   {
    "directive_id": "D-001",
-   "task_id": "M0-T072",
+   "task_id": "M0-T074",
    "applicable_requirement_ids": [],
-   "reviewed_sha": "074ffad25e90900a4e6f8c71b9e1b6bf653d7a98",
-   "reviewed_manifest_sha256": "b1315bdc24b8a809636d0c6b0a296fd0091cd48065faa7732dc5cf171c2beb07",
+   "reviewed_sha": "b3038925a49059130231c04276e3b4b093c493d9",
+   "reviewed_manifest_sha256": "afc969facb18872f8aeba4921b265a30eec710ea14d7ba40527a91caf05ab77d",
    "producer": "orchestrator",
    "verifier": "directive-compliance-verifier",
    "schema_version": "directive_verification/v2",
    "requirements": [],
-   "verified_at": "2026-08-18T13:53:43+00:00",
-   "note": "D-001:ALL process regime; own requirements govern M0-T023, none apply (empty-but-present, M0-T070 precedent)."
+   "verified_at": "2026-08-18T13:45:15+00:00",
+   "note": "D-001:ALL is the process regime; its own requirements govern M0-T023, none apply to this routing task (empty-but-present, M0-T070 precedent)."
+  },
+  {
+   "task_id": "M2-T014",
+   "directive_id": "D-001",
+   "producer": "official-source-researcher",
+   "verifier": "directive-compliance-verifier",
+   "applicable_requirement_ids": [],
+   "requirements": [],
+   "reviewed_sha": "1438c549da1b72f76207cee051b0c35754363f68",
+   "reviewed_manifest_sha256": "73b36e609faea8295c55c7b3ca5807b2377dcc9f51363765e76b2099156e3b73",
+   "verified_at": "2026-08-07T21:35:00+00:00",
+   "note": "Empty applicable set: no D-001 requirement row is applicable to M2-T014 (resolver-derived; refs D-001:ALL). Row exists to satisfy the fail-closed per-task verification check at accept. Content identity 73b36e60 stable since submit (gates G0/G2/G3 recorded at it)."
   }
  ],
  "updated_at": "2026-08-18T13:53:43+00:00"

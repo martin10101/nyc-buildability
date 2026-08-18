@@ -82,138 +82,6 @@
    "note": "PENDING stub created at capture (c14 coverage). The applicable set is derived by the resolver at verification time and every row is filled by the independent verifier at the task's accept cycle; nothing is verified yet."
   },
   {
-   "task_id": "M0-T074",
-   "directive_id": "D-017",
-   "producer": "orchestrator",
-   "verifier": "",
-   "applicable_requirement_ids": [],
-   "requirements": [],
-   "reviewed_sha": null,
-   "reviewed_manifest_sha256": null,
-   "note": "PENDING stub created at capture (c14 coverage). The applicable set is derived by the resolver at verification time and every row is filled by the independent verifier at the task's accept cycle; nothing is verified yet."
-  },
-  {
-   "task_id": "M0-T073",
-   "directive_id": "D-017",
-   "producer": "orchestrator",
-   "verifier": "directive-compliance-verifier",
-   "applicable_requirement_ids": [
-    "D-017-R105",
-    "D-017-R106",
-    "D-017-R107",
-    "D-017-R108",
-    "D-017-R109",
-    "D-017-R110",
-    "D-017-R111",
-    "D-017-R112",
-    "D-017-R113"
-   ],
-   "requirements": [
-    {
-     "id": "D-017-R105",
-     "state": "PASS",
-     "evidence": [
-      "project-control/reports/M0-T073-G5-DCV-reverification.md",
-      "project-control/reports/M0-T073-evidence-map.json"
-     ],
-     "verified_at": "2026-08-18T13:31:25+00:00",
-     "verified_by": "directive-compliance-verifier",
-     "reviewed_sha": "fde13bfb1d3156862e7934cb00c7bdeec5303672"
-    },
-    {
-     "id": "D-017-R106",
-     "state": "PASS",
-     "evidence": [
-      "project-control/reports/M0-T073-G5-DCV-reverification.md",
-      "project-control/reports/M0-T073-evidence-map.json"
-     ],
-     "verified_at": "2026-08-18T13:31:25+00:00",
-     "verified_by": "directive-compliance-verifier",
-     "reviewed_sha": "fde13bfb1d3156862e7934cb00c7bdeec5303672"
-    },
-    {
-     "id": "D-017-R107",
-     "state": "PASS",
-     "evidence": [
-      "project-control/reports/M0-T073-G5-DCV-reverification.md",
-      "project-control/reports/M0-T073-evidence-map.json"
-     ],
-     "verified_at": "2026-08-18T13:31:25+00:00",
-     "verified_by": "directive-compliance-verifier",
-     "reviewed_sha": "fde13bfb1d3156862e7934cb00c7bdeec5303672"
-    },
-    {
-     "id": "D-017-R108",
-     "state": "PASS",
-     "evidence": [
-      "project-control/reports/M0-T073-G5-DCV-reverification.md",
-      "project-control/reports/M0-T073-evidence-map.json"
-     ],
-     "verified_at": "2026-08-18T13:31:25+00:00",
-     "verified_by": "directive-compliance-verifier",
-     "reviewed_sha": "fde13bfb1d3156862e7934cb00c7bdeec5303672"
-    },
-    {
-     "id": "D-017-R109",
-     "state": "PASS",
-     "evidence": [
-      "project-control/reports/M0-T073-G5-DCV-reverification.md",
-      "project-control/reports/M0-T073-evidence-map.json"
-     ],
-     "verified_at": "2026-08-18T13:31:25+00:00",
-     "verified_by": "directive-compliance-verifier",
-     "reviewed_sha": "fde13bfb1d3156862e7934cb00c7bdeec5303672"
-    },
-    {
-     "id": "D-017-R110",
-     "state": "PASS",
-     "evidence": [
-      "project-control/reports/M0-T073-G5-DCV-reverification.md",
-      "project-control/reports/M0-T073-evidence-map.json"
-     ],
-     "verified_at": "2026-08-18T13:31:25+00:00",
-     "verified_by": "directive-compliance-verifier",
-     "reviewed_sha": "fde13bfb1d3156862e7934cb00c7bdeec5303672"
-    },
-    {
-     "id": "D-017-R111",
-     "state": "PASS",
-     "evidence": [
-      "project-control/reports/M0-T073-G5-DCV-reverification.md",
-      "project-control/reports/M0-T073-evidence-map.json"
-     ],
-     "verified_at": "2026-08-18T13:31:25+00:00",
-     "verified_by": "directive-compliance-verifier",
-     "reviewed_sha": "fde13bfb1d3156862e7934cb00c7bdeec5303672"
-    },
-    {
-     "id": "D-017-R112",
-     "state": "PASS",
-     "evidence": [
-      "project-control/reports/M0-T073-G5-DCV-reverification.md",
-      "project-control/reports/M0-T073-evidence-map.json"
-     ],
-     "verified_at": "2026-08-18T13:31:25+00:00",
-     "verified_by": "directive-compliance-verifier",
-     "reviewed_sha": "fde13bfb1d3156862e7934cb00c7bdeec5303672"
-    },
-    {
-     "id": "D-017-R113",
-     "state": "PASS",
-     "evidence": [
-      "project-control/reports/M0-T073-G5-DCV-reverification.md",
-      "project-control/reports/M0-T073-evidence-map.json"
-     ],
-     "verified_at": "2026-08-18T13:31:25+00:00",
-     "verified_by": "directive-compliance-verifier",
-     "reviewed_sha": "fde13bfb1d3156862e7934cb00c7bdeec5303672"
-    }
-   ],
-   "reviewed_sha": "fde13bfb1d3156862e7934cb00c7bdeec5303672",
-   "reviewed_manifest_sha256": "4a4d89d89f754cf81b3dfb3f714940d2c8d42ff3ca3dbdff837c57e45aaaee2b",
-   "note": "Independent security+directive-compliance re-verification PASS 9/9 at 11b0cd1c4860fb1abb21fe9bb2a3ab84e846fd7e after rounds 1-3 rework; producer != verifier (orchestrator transcribed the independent verifier's verdict)."
-  },
-  {
    "task_id": "M0-T072",
    "directive_id": "D-017",
    "producer": "orchestrator",
@@ -429,6 +297,260 @@
    "reviewed_sha": "074ffad25e90900a4e6f8c71b9e1b6bf653d7a98",
    "reviewed_manifest_sha256": "b1315bdc24b8a809636d0c6b0a296fd0091cd48065faa7732dc5cf171c2beb07",
    "note": "Independent re-verification PASS 17/17 at 074ffad25e90900a4e6f8c71b9e1b6bf653d7a98; round-1 G3 FAIL blockers closed; battery 1845/0; R053 post-merge re-confirmation obligation. Producer != verifier."
+  },
+  {
+   "task_id": "M0-T073",
+   "directive_id": "D-017",
+   "producer": "orchestrator",
+   "verifier": "directive-compliance-verifier",
+   "applicable_requirement_ids": [
+    "D-017-R105",
+    "D-017-R106",
+    "D-017-R107",
+    "D-017-R108",
+    "D-017-R109",
+    "D-017-R110",
+    "D-017-R111",
+    "D-017-R112",
+    "D-017-R113"
+   ],
+   "requirements": [
+    {
+     "id": "D-017-R105",
+     "state": "PASS",
+     "evidence": [
+      "project-control/reports/M0-T073-G5-DCV-reverification.md",
+      "project-control/reports/M0-T073-evidence-map.json"
+     ],
+     "verified_at": "2026-08-18T13:31:25+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "fde13bfb1d3156862e7934cb00c7bdeec5303672"
+    },
+    {
+     "id": "D-017-R106",
+     "state": "PASS",
+     "evidence": [
+      "project-control/reports/M0-T073-G5-DCV-reverification.md",
+      "project-control/reports/M0-T073-evidence-map.json"
+     ],
+     "verified_at": "2026-08-18T13:31:25+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "fde13bfb1d3156862e7934cb00c7bdeec5303672"
+    },
+    {
+     "id": "D-017-R107",
+     "state": "PASS",
+     "evidence": [
+      "project-control/reports/M0-T073-G5-DCV-reverification.md",
+      "project-control/reports/M0-T073-evidence-map.json"
+     ],
+     "verified_at": "2026-08-18T13:31:25+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "fde13bfb1d3156862e7934cb00c7bdeec5303672"
+    },
+    {
+     "id": "D-017-R108",
+     "state": "PASS",
+     "evidence": [
+      "project-control/reports/M0-T073-G5-DCV-reverification.md",
+      "project-control/reports/M0-T073-evidence-map.json"
+     ],
+     "verified_at": "2026-08-18T13:31:25+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "fde13bfb1d3156862e7934cb00c7bdeec5303672"
+    },
+    {
+     "id": "D-017-R109",
+     "state": "PASS",
+     "evidence": [
+      "project-control/reports/M0-T073-G5-DCV-reverification.md",
+      "project-control/reports/M0-T073-evidence-map.json"
+     ],
+     "verified_at": "2026-08-18T13:31:25+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "fde13bfb1d3156862e7934cb00c7bdeec5303672"
+    },
+    {
+     "id": "D-017-R110",
+     "state": "PASS",
+     "evidence": [
+      "project-control/reports/M0-T073-G5-DCV-reverification.md",
+      "project-control/reports/M0-T073-evidence-map.json"
+     ],
+     "verified_at": "2026-08-18T13:31:25+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "fde13bfb1d3156862e7934cb00c7bdeec5303672"
+    },
+    {
+     "id": "D-017-R111",
+     "state": "PASS",
+     "evidence": [
+      "project-control/reports/M0-T073-G5-DCV-reverification.md",
+      "project-control/reports/M0-T073-evidence-map.json"
+     ],
+     "verified_at": "2026-08-18T13:31:25+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "fde13bfb1d3156862e7934cb00c7bdeec5303672"
+    },
+    {
+     "id": "D-017-R112",
+     "state": "PASS",
+     "evidence": [
+      "project-control/reports/M0-T073-G5-DCV-reverification.md",
+      "project-control/reports/M0-T073-evidence-map.json"
+     ],
+     "verified_at": "2026-08-18T13:31:25+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "fde13bfb1d3156862e7934cb00c7bdeec5303672"
+    },
+    {
+     "id": "D-017-R113",
+     "state": "PASS",
+     "evidence": [
+      "project-control/reports/M0-T073-G5-DCV-reverification.md",
+      "project-control/reports/M0-T073-evidence-map.json"
+     ],
+     "verified_at": "2026-08-18T13:31:25+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "fde13bfb1d3156862e7934cb00c7bdeec5303672"
+    }
+   ],
+   "reviewed_sha": "fde13bfb1d3156862e7934cb00c7bdeec5303672",
+   "reviewed_manifest_sha256": "4a4d89d89f754cf81b3dfb3f714940d2c8d42ff3ca3dbdff837c57e45aaaee2b",
+   "note": "Independent security+directive-compliance re-verification PASS 9/9 at 11b0cd1c4860fb1abb21fe9bb2a3ab84e846fd7e after rounds 1-3 rework; producer != verifier (orchestrator transcribed the independent verifier's verdict)."
+  },
+  {
+   "task_id": "M0-T074",
+   "directive_id": "D-017",
+   "producer": "orchestrator",
+   "verifier": "directive-compliance-verifier",
+   "applicable_requirement_ids": [
+    "D-017-R114",
+    "D-017-R115",
+    "D-017-R116",
+    "D-017-R117",
+    "D-017-R118",
+    "D-017-R119",
+    "D-017-R120",
+    "D-017-R121",
+    "D-017-R122",
+    "D-017-R123"
+   ],
+   "requirements": [
+    {
+     "id": "D-017-R114",
+     "state": "PASS",
+     "evidence": [
+      "project-control/reports/M0-T074-consolidated-review.md",
+      "project-control/reports/M0-T074-evidence-map.json"
+     ],
+     "verified_at": "2026-08-18T13:45:15+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "b3038925a49059130231c04276e3b4b093c493d9"
+    },
+    {
+     "id": "D-017-R115",
+     "state": "PASS",
+     "evidence": [
+      "project-control/reports/M0-T074-consolidated-review.md",
+      "project-control/reports/M0-T074-evidence-map.json"
+     ],
+     "verified_at": "2026-08-18T13:45:15+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "b3038925a49059130231c04276e3b4b093c493d9"
+    },
+    {
+     "id": "D-017-R116",
+     "state": "PASS",
+     "evidence": [
+      "project-control/reports/M0-T074-consolidated-review.md",
+      "project-control/reports/M0-T074-evidence-map.json"
+     ],
+     "verified_at": "2026-08-18T13:45:15+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "b3038925a49059130231c04276e3b4b093c493d9"
+    },
+    {
+     "id": "D-017-R117",
+     "state": "PASS",
+     "evidence": [
+      "project-control/reports/M0-T074-consolidated-review.md",
+      "project-control/reports/M0-T074-evidence-map.json"
+     ],
+     "verified_at": "2026-08-18T13:45:15+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "b3038925a49059130231c04276e3b4b093c493d9"
+    },
+    {
+     "id": "D-017-R118",
+     "state": "PASS",
+     "evidence": [
+      "project-control/reports/M0-T074-consolidated-review.md",
+      "project-control/reports/M0-T074-evidence-map.json"
+     ],
+     "verified_at": "2026-08-18T13:45:15+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "b3038925a49059130231c04276e3b4b093c493d9"
+    },
+    {
+     "id": "D-017-R119",
+     "state": "PASS",
+     "evidence": [
+      "project-control/reports/M0-T074-consolidated-review.md",
+      "project-control/reports/M0-T074-evidence-map.json"
+     ],
+     "verified_at": "2026-08-18T13:45:15+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "b3038925a49059130231c04276e3b4b093c493d9"
+    },
+    {
+     "id": "D-017-R120",
+     "state": "PASS",
+     "evidence": [
+      "project-control/reports/M0-T074-consolidated-review.md",
+      "project-control/reports/M0-T074-evidence-map.json"
+     ],
+     "verified_at": "2026-08-18T13:45:15+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "b3038925a49059130231c04276e3b4b093c493d9"
+    },
+    {
+     "id": "D-017-R121",
+     "state": "PASS",
+     "evidence": [
+      "project-control/reports/M0-T074-consolidated-review.md",
+      "project-control/reports/M0-T074-evidence-map.json"
+     ],
+     "verified_at": "2026-08-18T13:45:15+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "b3038925a49059130231c04276e3b4b093c493d9"
+    },
+    {
+     "id": "D-017-R122",
+     "state": "PASS",
+     "evidence": [
+      "project-control/reports/M0-T074-consolidated-review.md",
+      "project-control/reports/M0-T074-evidence-map.json"
+     ],
+     "verified_at": "2026-08-18T13:45:15+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "b3038925a49059130231c04276e3b4b093c493d9"
+    },
+    {
+     "id": "D-017-R123",
+     "state": "PASS",
+     "evidence": [
+      "project-control/reports/M0-T074-consolidated-review.md",
+      "project-control/reports/M0-T074-evidence-map.json"
+     ],
+     "verified_at": "2026-08-18T13:45:15+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "b3038925a49059130231c04276e3b4b093c493d9"
+    }
+   ],
+   "reviewed_sha": "b3038925a49059130231c04276e3b4b093c493d9",
+   "reviewed_manifest_sha256": "afc969facb18872f8aeba4921b265a30eec710ea14d7ba40527a91caf05ab77d",
+   "note": "Independent consolidated review PASS 10/10 at b3038925a49059130231c04276e3b4b093c493d9; producer != verifier."
   }
  ],
  "updated_at": "2026-08-18T13:53:43+00:00"
