@@ -30,7 +30,7 @@ three pieces; A2–F extend it.
   code-graph generator indexes), so the snapshot fingerprint uniquely determines
   the generator's output; `tracked` is recorded per file as census metadata, not
   an index-exclusion.
-- **Per-file manifest**: for each eligible tracked file, a domain-separated
+- **Per-file manifest**: for each eligible file (tracked or untracked), a domain-separated
   `raw` digest (exact bytes) and `lf` digest (CRLF→LF normalized, so a pure
   line-ending flip is distinguishable), size, and parse-relevant mode metadata
   (symlink flag, NFC name, casefold name — so a case-only or normalization-only
@@ -44,9 +44,11 @@ three pieces; A2–F extend it.
 
 ### Census accounting (D-013-R023/R024/R025)
 `eligible = indexed + Σ excluded(reason) + Σ failed(reason)` must reconcile.
-Excluded reasons are grouped (e.g. `untracked`); failures are grouped
-(`unreadable`, `symlink_unresolved`). "Complete census" only holds when every
-eligible file is accounted as indexed or explicitly excluded/failed.
+At the fingerprint layer every eligible file (from the accepted code-graph walk,
+which has already applied directory exclusions) is indexed unless it is a
+recorded failure, so `excluded` is normally empty here; `failed` reasons are
+grouped (`unreadable`, `symlink_unresolved`). "Complete census" only holds when
+every eligible file is accounted as indexed or explicitly failed.
 
 ### Hash domains (D-013-R029)
 Every digest is `sha256(domain \x00 len(part) part …)`; the domain tag plus
