@@ -127,7 +127,8 @@ from .loop import (
     verify_covered_instruction,
 )
 from .locking import SingleInstanceLock, assess as assess_lock, probe_process
-from .manifest import MODEL_SELECTION_FILENAME, generate_manifest, read_manifest, verify_manifest
+from .manifest import (CONFIG_LOGICAL_NAME, MODEL_SELECTION_FILENAME, generate_manifest,
+                       read_manifest, verify_manifest_with_config, write_manifest)
 from .model_change_ipc import (
     NAMED_PIPE_STATUS,
     Caller,
@@ -429,23 +430,34 @@ def _check_audit(runtime: pathlib.Path) -> Check:
                  f"{verification.head_sequence}")
 
 
-def _check_manifest(manifest_path: str | None) -> Check:
+def _check_manifest(manifest_path: str | None, config_path: str | None) -> Check:
     if manifest_path is None:
         manifest = generate_manifest(PACKAGE_ROOT)
         return Check("controller_manifest", True,
-                     f"no manifest supplied; generated one over {len(manifest['files'])} files "
-                     f"(digest {manifest['manifest_digest'][:16]}...). "
+                     f"no manifest supplied; generated an INFORMATIONAL one over "
+                     f"{len(manifest['files'])} files (digest "
+                     f"{manifest['manifest_digest'][:16]}...). NOTHING was verified "
+                     f"against a recorded manifest; production dispatch requires "
+                     f"--manifest, and a recorded manifest must bind the external "
+                     f"{CONFIG_LOGICAL_NAME} (record-manifest --config <path>). "
                      f"{MODEL_SELECTION_FILENAME} is deliberately excluded")
     try:
         manifest = read_manifest(manifest_path)
     except Exception as exc:
         return Check("controller_manifest", False, str(exc))
-    verification = verify_manifest(PACKAGE_ROOT, manifest)
+    # M0-T072 (D-017-R042): the SAME verification production dispatch uses - the
+    # package tree AND the external immutable config bound under its stable
+    # logical name. --manifest without --config fails closed.
+    verification = verify_manifest_with_config(PACKAGE_ROOT, manifest, config_path)
     if not verification.ok:
-        return Check("controller_manifest", False, verification.halt_reason())
+        detail = verification.message or verification.halt_reason()
+        if verification.reason_code:
+            detail = f"{verification.reason_code}: {detail}"
+        return Check("controller_manifest", False, detail)
     return Check("controller_manifest", True,
                  f"{len(manifest['files'])} files verified against "
-                 f"{manifest.get('manifest_digest', '')[:16]}...")
+                 f"{manifest.get('manifest_digest', '')[:16]}... including the external "
+                 f"{CONFIG_LOGICAL_NAME} binding")
 
 
 def _controller_config_acl_posture(config_path: str | None) -> dict[str, Any]:
@@ -1250,7 +1262,7 @@ def cmd_doctor(args: argparse.Namespace) -> int:
         _check_protocol_roundtrip(),
         _check_hard_denies(),
         _check_breakers(),
-        _check_manifest(args.manifest),
+        _check_manifest(args.manifest, args.config),
         _check_policy_tiers(checkout),
         _check_approval_binding(checkout),
         _check_claude_adapter(),
@@ -1525,41 +1537,95 @@ def cmd_revoke_all(args: argparse.Namespace) -> int:
 
 
 def cmd_verify_controller(args: argparse.Namespace) -> int:
-    """Verify the LIVE controller package against a recorded manifest (S13.1)."""
+    """Verify the LIVE controller package against a recorded manifest (S13.1).
+
+    M0-T072 (D-017-R043): verification is fail-closed. A recorded --manifest is
+    REQUIRED (a self-generated manifest verifies nothing), and it is checked with
+    the external immutable config bound under its stable logical name via
+    --config. The former no-manifest "generated ok" response was a defect: it
+    reported ok=True having verified nothing.
+    """
     if args.manifest is None:
-        manifest = generate_manifest(PACKAGE_ROOT)
         payload = {
             "command": "verify-controller",
-            "ok": True,
-            "generated": True,
-            "files": len(manifest["files"]),
-            "manifest_digest": manifest["manifest_digest"],
+            "ok": False,
+            "detail": ("no --manifest supplied; nothing was verified. Supply the "
+                       "recorded controller manifest and the active immutable config "
+                       "(--manifest <path> --config <path>). To record a manifest, "
+                       "run `record-manifest --config <path>`."),
             "controller_version": CONTROLLER_VERSION,
-            "note": (f"no --manifest supplied, so this generated one over the live "
-                     f"package. {MODEL_SELECTION_FILENAME} is deliberately excluded: "
-                     f"changing a model never invalidates the controller."),
         }
-        print(json.dumps(payload, indent=2) if args.json else
-              f"generated manifest over {payload['files']} files: "
-              f"{payload['manifest_digest']}\n{payload['note']}")
-        return 0
+        print(json.dumps(payload, indent=2) if args.json
+              else f"HALT: {payload['detail']}", file=None if args.json else sys.stderr)
+        return 1
     try:
         manifest = read_manifest(args.manifest)
     except Exception as exc:
         print(f"manifest unreadable: {exc}", file=sys.stderr)
         return 1
-    verification = verify_manifest(PACKAGE_ROOT, manifest)
+    verification = verify_manifest_with_config(PACKAGE_ROOT, manifest, args.config)
+    detail = "" if verification.ok else (verification.message or verification.halt_reason())
     payload = {
         "command": "verify-controller",
         "ok": verification.ok,
-        "detail": "" if verification.ok else verification.halt_reason(),
+        "detail": detail,
+        "reason_code": verification.reason_code,
+        "config_bound": verification.ok,
         "controller_version": CONTROLLER_VERSION,
     }
     if args.json:
         print(json.dumps(payload, indent=2))
     else:
-        print("controller verified." if verification.ok
-              else f"HALT: {verification.halt_reason()}")
+        print(f"controller verified, including the external {CONFIG_LOGICAL_NAME} binding."
+              if verification.ok else f"HALT: {detail}")
+    return 0 if verification.ok else 1
+
+
+def cmd_record_manifest(args: argparse.Namespace) -> int:
+    """Generate and RECORD the controller manifest, binding the external config.
+
+    M0-T072 (D-017-R041): the only supported way to record a production manifest.
+    The active immutable config is bound under its stable logical name
+    `config.toml`; its absolute private path is never written into the manifest
+    (only the logical name and digest are recorded). The result is round-trip
+    verified with the same production check before the command reports success.
+    """
+    config_path = pathlib.Path(args.config)
+    if not config_path.is_file():
+        print(f"config not found: {config_path}", file=sys.stderr)
+        return 1
+    in_package_config = PACKAGE_ROOT / CONFIG_LOGICAL_NAME
+    if in_package_config.is_file():
+        print(f"refusing: a {CONFIG_LOGICAL_NAME!r} exists INSIDE the package tree "
+              f"({in_package_config}); the active immutable config must live outside "
+              f"the package (D-017-R048)", file=sys.stderr)
+        return 1
+    manifest = generate_manifest(
+        PACKAGE_ROOT, extra_files=((CONFIG_LOGICAL_NAME, config_path),))
+    out_path = pathlib.Path(args.out) if args.out else PACKAGE_ROOT / "controller_manifest.json"
+    write_manifest(manifest, out_path)
+    verification = verify_manifest_with_config(PACKAGE_ROOT, read_manifest(out_path),
+                                               config_path)
+    payload = {
+        "command": "record-manifest",
+        "ok": verification.ok,
+        "manifest": str(out_path),
+        "files": len(manifest["files"]),
+        "manifest_digest": manifest["manifest_digest"],
+        "config_bound_as": CONFIG_LOGICAL_NAME,
+        "controller_version": CONTROLLER_VERSION,
+        "detail": "" if verification.ok else (verification.message
+                                              or verification.halt_reason()),
+    }
+    if args.json:
+        print(json.dumps(payload, indent=2))
+    elif verification.ok:
+        print(f"recorded {out_path} over {payload['files']} files "
+              f"(digest {payload['manifest_digest'][:16]}...), binding the external "
+              f"{CONFIG_LOGICAL_NAME}; round-trip verification passed.")
+    else:
+        print(f"RECORDED BUT FAILED round-trip verification: {payload['detail']}",
+              file=sys.stderr)
     return 0 if verification.ok else 1
 
 
@@ -2233,6 +2299,10 @@ def _dispatch_inputs_missing(args: argparse.Namespace) -> list[str]:
         "--task-packet": args.task_packet,
         "--config": args.config,
         "--model-selection": args.model_selection,
+        # M0-T072 (D-017-R044/R045): production dispatch never proceeds without a
+        # recorded manifest that binds the external immutable config; omitting
+        # --manifest used to silently pass controller_manifest=True.
+        "--manifest": args.manifest,
     }
     return sorted(name for name, value in required.items() if not value)
 
@@ -2701,8 +2771,19 @@ def cmd_start(args: argparse.Namespace) -> int:
     lock = SingleInstanceLock(runtime, checkout_key=checkout_key(checkout),
                               controller_version=CONTROLLER_VERSION)
     try:
-        manifest_ok = verify_manifest(
-            PACKAGE_ROOT, read_manifest(args.manifest)).ok if args.manifest else True
+        # M0-T072 (D-017-R044): when a manifest is named, it is verified WITH the
+        # external immutable config bound under its stable logical name, before
+        # anything could contact a provider. Without --manifest nothing is
+        # verified: the manifest reads NOT ESTABLISHED (False) - exactly like
+        # task authority - and dispatch is separately refused by the required-
+        # input gate. The former expression defaulted to True with no manifest.
+        manifest_verification = None
+        if args.manifest:
+            manifest_verification = verify_manifest_with_config(
+                PACKAGE_ROOT, read_manifest(args.manifest), args.config)
+            manifest_ok = manifest_verification.ok
+        else:
+            manifest_ok = False
         integrity = journal.integrity_check()
         chain = audit.verify_chain()
         missing_inputs = _dispatch_inputs_missing(args)
@@ -2747,6 +2828,16 @@ def cmd_start(args: argparse.Namespace) -> int:
             "missing_inputs": missing_inputs,
             "containment": {"ok": containment_ok, "kind": containment_kind,
                             "detail": containment_detail},
+            # M0-T072: the external-config manifest binding verdict, in the record
+            # whether or not it is the reason the run stops.
+            "manifest_binding": {
+                "ok": manifest_ok,
+                "reason_code": (manifest_verification.reason_code
+                                if manifest_verification is not None else "not_established"),
+                "detail": ("" if manifest_verification is None or manifest_verification.ok
+                           else (manifest_verification.message
+                                 or manifest_verification.halt_reason())),
+            },
             "stopped_because": "",
         }
         if not dispatchable:
@@ -2832,6 +2923,11 @@ def cmd_start(args: argparse.Namespace) -> int:
         lines += ["NOT DISPATCHED. " + payload["stopped_because"],
                   "no provider was contacted; limited-auto is disabled."]
     _emit(args, payload, lines)
+    if manifest_verification is not None and not manifest_verification.ok:
+        # M0-T072 (D-017-R045): a FAILED manifest/config verification is a
+        # security halt, not an ordinary not-dispatchable report - callers and
+        # scripts must fail closed on it. Missing-input stops still exit 0.
+        return 1
     return 0
 
 
@@ -3024,8 +3120,26 @@ def build_parser() -> argparse.ArgumentParser:
                             help="verify the live controller against a manifest (live)")
     add_common(verify)
     verify.add_argument("--manifest", default=None,
-                        help="path to a recorded controller_manifest.json")
+                        help="path to a recorded controller_manifest.json (REQUIRED for "
+                             "verification; without it nothing is verified and the "
+                             "command fails closed)")
+    verify.add_argument("--config", default=None,
+                        help="path to the active immutable config.toml; verified against "
+                             "the manifest's external-config binding (M0-T072)")
     verify.set_defaults(func=cmd_verify_controller)
+
+    record = sub.add_parser(
+        "record-manifest",
+        help="generate and record the controller manifest, binding the external "
+             "immutable config under its stable logical name (live)")
+    add_common(record)
+    record.add_argument("--config", required=True,
+                        help="path to the active immutable config.toml to bind; the "
+                             "absolute path is never written into the manifest")
+    record.add_argument("--out", default=None,
+                        help="where to write the manifest (default: "
+                             "controller_manifest.json in the package directory)")
+    record.set_defaults(func=cmd_record_manifest)
 
     simple = [
         ("pause", cmd_pause, "set the durable manual pause (live)"),
