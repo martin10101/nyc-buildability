@@ -142,5 +142,6 @@
   "D-013-R082": [
    "tools/agent_supervisor/** NOT modified by A1 (imported read-only for the checkout identity only); git diff shows no supervisor change."
   ]
- }
+ },
+ "note": "Evidence per applicable D-013 row for M0-T063 (46 rows). Round-1 findings (G3 MAJOR-1, QA F1, MINOR-2) closed in rework and delta-re-verified CONFIRM-CLOSED. Reviewers reproduce each claim at the frozen head."
 }
