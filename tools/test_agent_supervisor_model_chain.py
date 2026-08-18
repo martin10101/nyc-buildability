@@ -585,6 +585,13 @@ class CrashResumeTests(ChainTestBase):
             "status": "in_progress",
             "stop_conditions": ["no bypass flags"],
         }), encoding="utf-8")
+        # M0-T072: --manifest is a required dispatch input.
+        from tools.agent_supervisor import cli as _cli
+        from tools.agent_supervisor.manifest import generate_manifest, write_manifest
+        self.manifest_path = write_manifest(
+            generate_manifest(_cli.PACKAGE_ROOT,
+                              extra_files=(("config.toml", self.config_path),)),
+            self.tmp / "controller_manifest.json")
 
     def _seed_active_switch(self, run_id: str) -> None:
         """The durable record a crashed, already-switched run leaves behind."""
@@ -624,6 +631,7 @@ class CrashResumeTests(ChainTestBase):
                 "--codex-executable", sys.executable,
                 "--task-packet", str(self.packet),
                 "--config", str(self.config_path),
+                "--manifest", str(self.manifest_path),
                 "--model-selection", str(self.selection_path),
                 "--session-role", "orchestrator",
                 "--run-id", run_id, "--max-cycles", "1",
@@ -669,6 +677,7 @@ class CrashResumeTests(ChainTestBase):
                 "--codex-executable", sys.executable,
                 "--task-packet", str(self.packet),
                 "--config", str(self.config_path),
+                "--manifest", str(self.manifest_path),
                 "--model-selection", str(self.selection_path),
                 "--session-role", "orchestrator",
                 "--run-id", run_id, "--max-cycles", "1",
@@ -693,6 +702,7 @@ class CrashResumeTests(ChainTestBase):
                 "--codex-executable", sys.executable,
                 "--task-packet", str(self.packet),
                 "--config", str(self.config_path),
+                "--manifest", str(self.manifest_path),
                 "--model-selection", str(self.selection_path),
                 "--run-id", "run-clean", "--max-cycles", "1",
                 "--unit-timeout", "60",
@@ -743,6 +753,7 @@ class CrashResumeTests(ChainTestBase):
                 "--codex-executable", sys.executable,
                 "--task-packet", str(self.packet),
                 "--config", str(self.config_path),
+                "--manifest", str(self.manifest_path),
                 "--model-selection", str(self.selection_path),
                 "--run-id", "run-sampler", "--max-cycles", "1",
                 "--unit-timeout", "60",
