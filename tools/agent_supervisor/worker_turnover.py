@@ -67,18 +67,37 @@ REASON_TURNOVER_LAUNCHED = "fable_exhaustion_worker_turnover"
 REASON_TURNOVER_RECORDED = "fable_exhaustion_turnover_recorded"
 
 
-def default_actuation_authorization(config: Any) -> bool:
-    """Fail-closed authorization: NO mode in this build auto-redispatches a worker.
+#: The single, explicit run-config attribute that carries the owner's R595
+#: turnover-actuation authorization. It is set on the loop config ONLY by the
+#: `--authorize-turnover-actuation` operator flag (the R595 activation channel,
+#: cli.py); it is NOT a mode default and is NEVER read from the protected
+#: controller config (config.toml). Its absence, or any value other than the
+#: literal boolean True, is fail-closed to record-intent-only.
+ACTUATION_AUTHORIZATION_ATTR = "turnover_actuation_authorized"
 
-    Automatic worker redispatch is a forward-equivalent action, and every runnable
-    mode withholds that authority: shadow forwards nothing, supervised holds each
-    forward at WAIT_FOR_OWNER for an owner approval bound to its digest, and
-    limited-auto is refused by name before a `LoopConfig` can even be built. So
-    this returns False unconditionally: a confirmed exhaustion is RECORDED and
-    SURFACED, never silently auto-run. An owner-authorized actuation channel (the
-    R595 activation path) injects a different predicate to exercise the launch.
+
+def default_actuation_authorization(config: Any) -> bool:
+    """Owner-authorized actuation predicate; fail-closed by default (R595 / M0-T056).
+
+    Automatic worker redispatch is a forward-equivalent action, so before the R595
+    activation this returned an unconditional False and every confirmed exhaustion
+    was RECORDED and SURFACED, never auto-run (shadow forwards nothing, supervised
+    holds each forward at WAIT_FOR_OWNER, limited-auto is refused by name). M0-T056
+    replaces that unconditional False with a single, explicit, owner-set signal:
+    this authorizes an automatic redispatch ONLY when the run config carries
+    ``turnover_actuation_authorized`` (``ACTUATION_AUTHORIZATION_ATTR``) as the
+    literal boolean ``True`` - a value the owner opts into per run via the
+    `--authorize-turnover-actuation` flag, never a mode default and never taken
+    from the protected controller config.
+
+    Absent, missing, or any non-``True`` value returns False, which keeps the
+    record-intent-only path BYTE-IDENTICAL to the pre-activation behavior: a
+    predicate that is not injected (config lacks the attribute) and a run the owner
+    did not explicitly authorize both fail closed here. Because the loop config's
+    field defaults to False (loop.py `LoopConfig`), every existing caller and the
+    unauthorized production path are unchanged.
     """
-    return False
+    return getattr(config, ACTUATION_AUTHORIZATION_ATTR, False) is True
 
 
 @dataclasses.dataclass(frozen=True)

@@ -207,7 +207,22 @@ from .resume_scheduler import (
     wake_suppressed,
 )
 from .retention import RetentionPolicy, file_sha256
+from .models import sha256_hex
 from .worker_turnover import WorkerTurnoverIntegration
+from .model_turnover import TurnoverEvidence, classify_exhaustion
+from .turnover_controller import (
+    TurnoverContext,
+    TurnoverController,
+    TurnoverLayer,
+)
+from .turnover_adapters import (
+    HashChainedAuditSink,
+    SingleInstanceContinuationLock,
+    SuccessorLaunchTargets,
+    SupervisorIdentity,
+    SupervisorLauncher,
+    make_subprocess_command_runner,
+)
 from .rotation import (
     Handoff,
     HandoffVerification,
@@ -2223,6 +2238,242 @@ def containment_precondition() -> tuple[bool, str, str]:
         f"Dispatch is REFUSED on this host")
 
 
+# --------------------------------------------------------------------------
+# R595 / M0-T056: owner-authorized turnover ACTUATION channels (worker +
+# orchestrator layers). Both REUSE the accepted M0-T054 controller + adapters
+# UNCHANGED; the successor is always the frozen opus-4-8/xhigh pin. Every launch
+# is fail-closed, single-instance, dedup-exactly-once, audit-linked, and gated on
+# the C1 job-object containment precondition.
+# --------------------------------------------------------------------------
+
+
+def _turnover_continuation_lock(checkout: pathlib.Path, runtime_base: str | None
+                                ) -> SingleInstanceLock:
+    """A continuation lock in a DISTINCT `turnover/` runtime subdir.
+
+    It must NOT share the supervisor's own `supervisor.lock` file: that file is
+    already held by the running supervisor (or, for the watchdog, by the dead
+    orchestrator's checkout), and releasing it from the controller's finally block
+    would drop the main single-instance lock. A separate directory gives the
+    turnover attempt its own lock file, so it serializes turnover launches across
+    processes without ever touching the S7 single-instance lock.
+    """
+    turnover_runtime = runtime_dir_for(checkout, base=runtime_base) / "turnover"
+    return SingleInstanceLock(
+        turnover_runtime, checkout_key=checkout_key(checkout),
+        controller_version=CONTROLLER_VERSION)
+
+
+def _child_survivor_predicate(journal: DurableJournal):
+    """A `SurvivorPredicate` wired to M0-T053 production child accounting.
+
+    A surviving recorded worker child blocks a redispatch (the no-duplicate-workers
+    invariant, R347 / AS-4). Unreadable child state fails CLOSED to "survivor
+    present" so an unprovable state never permits a second launch.
+    """
+    def _survivor(_context: TurnoverContext) -> bool:
+        try:
+            accounts = account_for_children(journal)
+        except Exception:
+            return True
+        return any(getattr(account, "surviving", False) for account in accounts)
+    return _survivor
+
+
+def _build_worker_actuation_channel(
+    *, args: argparse.Namespace, journal: DurableJournal, audit: AuditLog,
+    checkout: pathlib.Path, claude_executable: str, max_turns: int,
+    unit_timeout: float,
+) -> tuple[TurnoverController | None, dict[str, Any]]:
+    """Assemble the owner-authorized WORKER-layer actuation channel.
+
+    Returns ``(controller, report)``. The controller is None - keeping the seam
+    RECORD-INTENT-ONLY and byte-identical to the pre-activation path - UNLESS the
+    owner passed ``--authorize-turnover-actuation`` AND the C1 job-object
+    containment gate passes. The real M0-T054 adapters are used UNCHANGED.
+    """
+    if not getattr(args, "authorize_turnover_actuation", False):
+        return None, {
+            "authorized": False, "wired": False,
+            "reason": "owner did not pass --authorize-turnover-actuation; the worker "
+                      "turnover seam stays record-intent-only (byte-identical to the "
+                      "pre-activation path)"}
+    contained, kind, detail = containment_precondition()
+    if not contained:
+        return None, {
+            "authorized": True, "wired": False, "containment_ok": False,
+            "containment_kind": kind,
+            "reason": f"C1 job-object containment gate REFUSES actuation: {detail}"}
+    launcher = SupervisorLauncher(
+        command_runner=make_subprocess_command_runner(
+            new_successor_id=lambda: f"opus-worker-{os.urandom(8).hex()}"),
+        targets=SuccessorLaunchTargets(
+            checkout=str(checkout), claude_executable=claude_executable,
+            max_turns=max_turns, unit_timeout_seconds=unit_timeout))
+    controller = TurnoverController(
+        launcher=launcher,
+        lock=SingleInstanceContinuationLock(
+            _turnover_continuation_lock(checkout, args.runtime_base)),
+        audit=HashChainedAuditSink(audit),
+        identity=SupervisorIdentity(),
+        survivor_detected=_child_survivor_predicate(journal))
+    return controller, {
+        "authorized": True, "wired": True, "containment_ok": True,
+        "containment_kind": kind,
+        "reason": "worker-layer actuation channel wired (M0-T054 adapters + survivor "
+                  "detector); a confirmed FABLE_EXHAUSTED verdict redispatches the same "
+                  "bounded unit on claude-opus-4-8 exactly once through the controller"}
+
+
+def _orchestrator_exhaustion_event_id(signal_text: str, checkout: str) -> str:
+    """A deterministic exhaustion-event id for the SAME orchestrator hard stop.
+
+    Stable in ``(signal_text, checkout)`` so a second watchdog invocation on the
+    SAME captured exhaustion presents the SAME event id; the controller's durable
+    dedup then suppresses a second successor (exactly-once across process
+    restarts).
+    """
+    digest = sha256_hex(f"orchestrator-exhaustion:{checkout}:{signal_text}".encode("utf-8"))
+    return f"orchestrator-exhaustion:{digest[:40]}"
+
+
+def run_orchestrator_watchdog(
+    *, signal_text: str, journal: DurableJournal, audit: AuditLog,
+    checkout: str, orchestrator_argv_prefix: tuple[str, ...],
+    command_runner, handoff_reference: str = "", safe_checkpoint_id: str = "",
+    current_model: str = "claude-fable-5", task_id: str = "",
+    containment_check=None,
+) -> dict[str, Any]:
+    """The ORCHESTRATOR-layer watchdog decision (AS-1), independent of argparse.
+
+    Runs OUTSIDE the Claude session (invoked by the OS scheduler on the
+    orchestrator's terminal output). It CLASSIFIES the captured signal with the
+    frozen M0-T054 detector, and ONLY on a grounded FABLE_EXHAUSTED verdict, and
+    ONLY when the C1 containment gate passes, drives the frozen TurnoverController
+    (layer=ORCHESTRATOR) to launch EXACTLY ONE opus-4-8 successor that loads the
+    durable handoff + safe checkpoint. NOT_EXHAUSTED / AMBIGUOUS_FAIL_CLOSED and an
+    unreadable signal REFUSE and record the reason; they never launch. The
+    ``command_runner`` is injected so tests never spawn a process.
+    """
+    containment_check = containment_check or containment_precondition
+    evidence = TurnoverEvidence(
+        stdout=str(signal_text or ""), exit_code=-1, model_id=current_model)
+    verdict = classify_exhaustion(evidence)
+    payload: dict[str, Any] = {
+        "command": "orchestrator-watchdog", "layer": "orchestrator",
+        "classification": verdict.classification.value, "reason": verdict.reason,
+        "launched": False, "actuated": False, "successor_id": "", "event_id": "",
+        "audit_record_id": "", "successor_model_id": "",
+    }
+    if not verdict.should_turn_over:
+        # FAIL-CLOSED: not a grounded exhaustion. Record the refusal; never launch.
+        record_id = audit.append(
+            "orchestrator_watchdog_no_turnover",
+            detail={"classification": verdict.classification.value,
+                    "reason": verdict.reason}).digest
+        payload.update({"refused": True, "audit_record_id": record_id,
+                        "note": "no grounded Fable exhaustion; fail closed, no successor "
+                                "launched"})
+        return payload
+    contained, kind, detail = containment_check()
+    payload["containment_kind"] = kind
+    if not contained:
+        record_id = audit.append(
+            "orchestrator_watchdog_containment_refused", policy_result="REFUSED",
+            detail={"containment_kind": kind, "required": CONTAINMENT_JOB_OBJECT,
+                    "reason": detail}).digest
+        payload.update({"refused": True, "audit_record_id": record_id,
+                        "note": f"C1 job-object containment gate REFUSES actuation: {detail}"})
+        return payload
+    controller = TurnoverController(
+        launcher=SupervisorLauncher(
+            command_runner=command_runner,
+            targets=SuccessorLaunchTargets(
+                checkout=checkout,
+                orchestrator_argv_prefix=tuple(orchestrator_argv_prefix))),
+        lock=SingleInstanceContinuationLock(
+            _turnover_continuation_lock(pathlib.Path(checkout), None)),
+        audit=HashChainedAuditSink(audit),
+        identity=SupervisorIdentity(),
+        survivor_detected=_child_survivor_predicate(journal))
+    event_id = _orchestrator_exhaustion_event_id(signal_text, checkout)
+    context = TurnoverContext(
+        task_id=task_id, event_id=event_id,
+        failed_fable_execution_id=event_id,
+        safe_checkpoint_id=safe_checkpoint_id,
+        handoff_reference=handoff_reference or event_id,
+        layer=TurnoverLayer.ORCHESTRATOR)
+    outcome = controller.execute(verdict, context)
+    payload.update({
+        "launched": outcome.turned_over, "actuated": outcome.turned_over,
+        "successor_id": outcome.successor_id, "event_id": outcome.event_id,
+        "audit_record_id": outcome.audit_record_id,
+        "successor_model_id": outcome.model_id, "status": outcome.status.value,
+        "reason": outcome.reason})
+    return payload
+
+
+def cmd_orchestrator_watchdog(args: argparse.Namespace) -> int:
+    """Independently-live orchestrator watchdog (AS-1). Runs OUTSIDE the session.
+
+    The OS scheduler (Windows Task Scheduler; see the M0-T056 runbook) invokes this
+    on the orchestrator's captured terminal output. It reuses the frozen M0-T054
+    detection + controller + adapters to auto-launch exactly one opus-4-8 successor
+    on a grounded orchestrator quota hard stop.
+    """
+    signal_path = getattr(args, "exhaustion_signal", "") or ""
+    if not signal_path:
+        print("--exhaustion-signal is required: the path to the captured orchestrator "
+              "terminal output (stream-json / result text) to classify.", file=sys.stderr)
+        return 1
+    try:
+        signal_text = pathlib.Path(signal_path).read_text(encoding="utf-8-sig")
+    except OSError as exc:
+        # An unreadable signal is a REFUSAL, never a launch (fail-closed).
+        print(f"exhaustion signal unreadable ({exc}); refusing to actuate (fail-closed).",
+              file=sys.stderr)
+        return 1
+    prefix = tuple(getattr(args, "orchestrator_launcher_arg", []) or [])
+    if not prefix:
+        print("--orchestrator-launcher-arg is required (repeatable): the fixed argv head "
+              "that relaunches the orchestrator session (e.g. the `python -m "
+              "tools.agent_supervisor start` invocation).", file=sys.stderr)
+        return 1
+    checkout = str(pathlib.Path(args.checkout).resolve())
+    _, journal, audit = _open_runtime(args)
+    try:
+        handoff_reference = getattr(args, "handoff_reference", "") or ""
+        if not handoff_reference:
+            # Load the durable handoff digest so the successor resumes from it.
+            try:
+                stored = RotationLedger(journal, audit=audit).stored_handoff()
+                if stored is not None:
+                    handoff_reference = str(
+                        Handoff.from_dict(stored["handoff"]).digest())
+            except RotationError:
+                handoff_reference = ""
+        payload = run_orchestrator_watchdog(
+            signal_text=signal_text, journal=journal, audit=audit, checkout=checkout,
+            orchestrator_argv_prefix=prefix,
+            command_runner=make_subprocess_command_runner(
+                new_successor_id=lambda: f"opus-orchestrator-{os.urandom(8).hex()}"),
+            handoff_reference=handoff_reference,
+            safe_checkpoint_id=getattr(args, "safe_checkpoint_id", "") or "",
+            current_model=getattr(args, "current_model", "") or "claude-fable-5",
+            task_id=str(journal.get_state("task_id", "") or ""))
+    finally:
+        journal.close()
+    _emit(args, payload,
+          [f"classification : {payload['classification']}",
+           f"launched       : {payload['launched']}",
+           f"successor      : {payload.get('successor_model_id', '')} "
+           f"{payload.get('successor_id', '')}",
+           f"event id       : {payload.get('event_id', '')}",
+           f"audit record   : {payload.get('audit_record_id', '')}",
+           f"reason         : {payload['reason']}"])
+    return 0
+
+
 def _run_loop(args: argparse.Namespace, checkout: pathlib.Path,
               journal: DurableJournal, audit: AuditLog) -> dict[str, Any]:
     """Build the real loop from explicitly-named inputs and run it."""
@@ -2321,6 +2572,15 @@ def _run_loop(args: argparse.Namespace, checkout: pathlib.Path,
             classify_unavailable=classify_quota_exhaustion,
             audit=audit, run_id=run_id)
 
+    # M0-T056 (R595): assemble the owner-authorized WORKER-layer actuation channel.
+    # Absent the flag (or on a non-job_object host) this returns None and the seam
+    # is byte-identical to the pre-activation record-intent-only path.
+    worker_controller, _worker_actuation_report = _build_worker_actuation_channel(
+        args=args, journal=journal, audit=audit, checkout=checkout,
+        claude_executable=args.claude_executable, max_turns=args.max_turns,
+        unit_timeout=args.unit_timeout)
+    worker_turnover_integration = WorkerTurnoverIntegration(controller=worker_controller)
+
     loop = SupervisedLoop(
         config=LoopConfig(
             mode=args.mode, task_id=str(packet.get("task_id", "")),
@@ -2332,7 +2592,14 @@ def _run_loop(args: argparse.Namespace, checkout: pathlib.Path,
             # D-004 am.26 / D-007 am.11: orchestrator-continuity role, default
             # absent. Only an orchestrator-role session substitutes the pinned
             # model (and only for quota exhaustion); the worker default pauses.
-            session_role=session_role),
+            session_role=session_role,
+            # M0-T056 (R595): the owner's per-run turnover-actuation authorization,
+            # read by default_actuation_authorization. Default False (unauthorized)
+            # keeps the worker turnover seam byte-identical to the record-intent-only
+            # path; True is set ONLY by the explicit --authorize-turnover-actuation
+            # flag below.
+            turnover_actuation_authorized=bool(
+                getattr(args, "authorize_turnover_actuation", False))),
         journal=journal, audit=audit, machine=machine, authority=authority,
         runner=runner, reviewer=reviewer, run_id=run_id, collector=collector,
         broker=broker, breakers=breakers,
@@ -2344,14 +2611,14 @@ def _run_loop(args: argparse.Namespace, checkout: pathlib.Path,
         model_available=model_available,
         resource_sampler=resource_sampler,
         # M0-T054 increment 4 (qualifying evidence: reproduced R289 incident,
-        # D-010 source-028): wire the WORKER-layer Fable->Opus turnover seam. It is
-        # RECORD-INTENT-ONLY here: the supervisor is SHADOW-ONLY (supervisor-freeze
-        # §4, R595 pre-activation blocking), and no runnable mode authorizes an
-        # automatic worker redispatch, so a confirmed exhaustion is classified,
-        # recorded, and surfaced but NEVER auto-launched. The authorized-actuation
-        # channel (real adapters + survivor detector) is supplied only at R595
-        # activation; every non-exhaustion path is unchanged.
-        worker_turnover=WorkerTurnoverIntegration(),
+        # D-010 source-028): the WORKER-layer Fable->Opus turnover seam. M0-T056
+        # (R595) supplies the owner-authorized actuation channel above: with
+        # --authorize-turnover-actuation AND job_object containment the controller
+        # is real (a confirmed exhaustion redispatches opus-4-8 exactly once);
+        # without it worker_controller is None and the seam is record-intent-only,
+        # byte-identical to the pre-activation path. Every non-exhaustion path is
+        # unchanged either way.
+        worker_turnover=worker_turnover_integration,
         approval_gate=(lambda digest, _prompt: digest in approved))
     return loop.run(args.prompt).to_dict()
 
@@ -2646,7 +2913,45 @@ def build_parser() -> argparse.ArgumentParser:
                             "an id outside the chain is never selectable. Absent = the "
                             "worker default, which PAUSES for the owner instead of ever "
                             "substituting a pinned model. Reviewer pins are never affected")
+    start.add_argument(
+        "--authorize-turnover-actuation", action="store_true",
+        help="M0-T056 (R595): the owner's EXPLICIT per-run authorization to ACTUATE a "
+             "WORKER-layer Fable->opus-4-8 turnover. Without it (default) a confirmed "
+             "exhaustion is record-intent-only, byte-identical to the pre-activation "
+             "path. With it AND a job_object-contained host, a confirmed FABLE_EXHAUSTED "
+             "verdict redispatches the SAME bounded unit on claude-opus-4-8 exactly once "
+             "through the M0-T054 controller. Never a mode default; never read from the "
+             "protected controller config. Weakens no other hold")
     start.set_defaults(func=cmd_start)
+
+    watchdog = sub.add_parser(
+        "orchestrator-watchdog",
+        help="M0-T056 (R595): independently-live watchdog that runs OUTSIDE the Claude "
+             "session (OS scheduler). It classifies the orchestrator's captured terminal "
+             "output and, on a grounded Fable quota hard stop, auto-launches exactly one "
+             "claude-opus-4-8 successor loading the durable handoff + safe checkpoint")
+    add_common(watchdog)
+    watchdog.add_argument(
+        "--exhaustion-signal", required=True,
+        help="path to the captured orchestrator terminal output (stream-json / result "
+             "text) to classify. An unreadable signal is a REFUSAL, never a launch")
+    watchdog.add_argument(
+        "--orchestrator-launcher-arg", action="append", default=[],
+        help="a FIXED argv-head element (repeatable) that relaunches the orchestrator "
+             "session, e.g. the `python -m tools.agent_supervisor start` invocation. "
+             "argv-safety-checked; no --effort/bypass token is admitted")
+    watchdog.add_argument(
+        "--handoff-reference", default=None,
+        help="the durable handoff reference the successor resumes from; defaults to the "
+             "stored VERIFIED handoff digest")
+    watchdog.add_argument(
+        "--safe-checkpoint-id", default=None,
+        help="the safe checkpoint id the successor resumes from")
+    watchdog.add_argument(
+        "--current-model", default=None,
+        help="the model the just-exhausted orchestrator ran on (default claude-fable-5), "
+             "used only to attribute the exhaustion signal")
+    watchdog.set_defaults(func=cmd_orchestrator_watchdog)
 
     pending = sub.add_parser("pending-approvals",
                              help="list queued requests with their digests (live)")

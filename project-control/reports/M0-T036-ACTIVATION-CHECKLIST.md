@@ -228,6 +228,14 @@ stop being tolerable when nobody is reading.
    exit, after which the next `start` reads SAFE_CHECKPOINT and DOUBLE-LAUNCHES. Lands squarely on
    D-010-R347. Fix: capture the boolean, bounded `process.wait()`, and raise a DISTINCT code if the
    child is still alive.
+
+   **RESOLVED — M0-T058 (accepted 2026-08-11).** The fix is present in `claude_runner.py` (now
+   ~lines 1300-1349, the M0-T058 record-write-failure refusal): `killed = container.terminate_all()`
+   is captured, followed by a bounded `process.wait(CHILD_KILL_REAP_SECONDS)`, and a DISTINCT
+   `child_record_unwritable_orphan_live` code is raised iff the child is neither killed nor reaped —
+   preventing the next `start` from reading SAFE_CHECKPOINT and double-launching. Independently
+   confirmed by the M0-T056 G3 delta review (all 5 `terminate_all` sites audited SAFE; no termination
+   change). The `1283-1298` line refs above are stale (pre-M0-T058).
 2. **P2 — make `clear_child_record` remove by (pid, start_token), not whole-key (G5 finding 5).**
    `recovery.py:190-191` wipes the whole key, so settle clears records it did not create. Latent today
    because there is exactly one recorder. The moment M0-T056's successor-launch seam records anything,

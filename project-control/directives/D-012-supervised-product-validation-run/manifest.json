@@ -1,0 +1,85 @@
+{
+  "schema": "directive_manifest/v1",
+  "directive_id": "D-012",
+  "version": 1,
+  "slug": "supervised-product-validation-run",
+  "title": "First bounded supervised-auto product validation run (owner-authorized)",
+  "status": "active",
+  "issued_by": "owner",
+  "issued_at": "2026-08-12",
+  "captured_at": "2026-08-12T05:00:00+00:00",
+  "channel": "owner_typed_instruction",
+  "frozen_baseline_sha": "0d42953f1225135a88dc208e2c3256f06b96199e",
+  "sources": [
+    {
+      "file": "source-001.md",
+      "kind": "original",
+      "sequence": 1,
+      "recorded_at": "2026-08-12T05:00:00+00:00",
+      "content_digest_sha256": "0bfe935088afd1dfb1a0a53128db79ae00e201a23a04e2d94f0bb0fad291181f"
+    }
+  ],
+  "amendments": [],
+  "supersedes": [],
+  "superseded_by": null,
+  "affected_tasks": [],
+  "affected_prs": [],
+  "affected_branches": [
+    "control/session16-codex-golive"
+  ],
+  "scope": {
+    "task_ids": [
+      "D-012-VALIDATION"
+    ],
+    "task_types": [
+      "governance"
+    ],
+    "milestones": [],
+    "paths": [
+      "apps/web/src/lib/format.ts",
+      "apps/web/src/lib/__tests__/format.test.ts"
+    ]
+  },
+  "applicability_note": "D-012-VALIDATION is a NON-LEDGER governance sentinel (D-011-CORRECTION precedent): a bounded, owner-authorized supervised-auto validation run verified at directive verification, never entering a ledger task's accept() set. affected_tasks is empty on purpose (no rebinding onto ledger packets; two-lane principle). The produced pluralize change does NOT merge via this run; a merge is a separate normal-gate follow-up. Prohibitions R004/R005 are run-scoped and reinforce, not replace, existing holds (R348 turnover-only scope and the M0-T036 activation prerequisites remain in force).",
+  "owner_approval": {
+    "state": "issued_owner_typed",
+    "decision": "Owner typed the authorization in session 19 (2026-08-12), selecting 'Small utility + test' and confirming 'yes lets run but can he do it in a new seasen' after the orchestrator proposed the exact bounded pluralize task and its constraints."
+  },
+  "lifecycle_state": "active",
+  "requirements_file": "requirements.json",
+  "verification_file": "verification.json",
+  "final_reviewed_sha": null,
+  "final_reviewed_manifest_sha256": null,
+  "requirements_content_digest_sha256": "c74d28dc27fb109c908752967461b41af760e255be69bad8962fa0d16aac39c0",
+  "requirements_id_digest_sha256": "80d19ddb99ddffdba01e562a2d2f5e5a1a6eedeaa60bd2b1ef6face3107bafe0",
+  "enforcement_pointers": {
+    "tasks": [],
+    "gates": [],
+    "blockers": [],
+    "rules": [],
+    "hold": false
+  },
+  "notes": [
+    "Verification pending independent directive-compliance-verifier at run completion (producer != verifier).",
+    "Non-ledger D-012-VALIDATION governance sentinel; provenance-only, no rebinding onto ledger tasks.",
+    "This authorization is a one-off bounded per-tier validation decision; it does not activate limited-auto / unattended product autonomy and does not alter R348 or the M0-T036 activation prerequisites."
+  ],
+  "locked_requirement_ids": [
+    "D-012-R001",
+    "D-012-R002",
+    "D-012-R003",
+    "D-012-R004",
+    "D-012-R005",
+    "D-012-R006",
+    "D-012-R007"
+  ],
+  "created_at": "2026-08-12T05:00:00+00:00",
+  "updated_at": "2026-08-12T05:00:00+00:00",
+  "audit_log": [
+    {
+      "at": "2026-08-12T05:00:00+00:00",
+      "by": "orchestrator",
+      "note": "D-012 captured verbatim as source-001.md (sha256 0bfe935088afd1dfb1a0a53128db79ae00e201a23a04e2d94f0bb0fad291181f) from origin/main 0d42953f1225135a88dc208e2c3256f06b96199e. 7 rows D-012-R001..R007 decomposed (1 authorization, 2 deliverables, 1 hold, 2 prohibitions, 1 return-item). Non-ledger D-012-VALIDATION governance sentinel; bounded supervised-auto validation run for the pluralize helper. Verification deferred to the independent directive-compliance-verifier at run completion."
+    }
+  ]
+}

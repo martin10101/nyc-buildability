@@ -1,0 +1,8 @@
+{
+  "schema": "directive_verification/v2",
+  "directive_id": "D-012",
+  "producer": "orchestrator",
+  "authority_note": "Pending independent verification by directive-compliance-verifier (producer != verifier) at run completion. Capture only; no requirement verified yet. This is a non-ledger governance sentinel (D-012-VALIDATION); the bounded validation run does not enter a ledger accept() set, and the produced pluralize change does not merge via this run.",
+  "task_verifications": [],
+  "updated_at": "2026-08-12T05:00:00+00:00"
+}

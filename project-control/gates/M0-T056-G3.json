@@ -1,0 +1,12 @@
+{
+  "task_id": "M0-T056",
+  "gate_id": "G3",
+  "reviewer": "code-reviewer",
+  "role": "independent_review",
+  "result": "PASS",
+  "report_file": "project-control/reports/M0-T056-G3-delta-review.md",
+  "reviewed_at": "2026-08-12T01:27:08.197592+00:00",
+  "content_manifest_sha256": "9306071de8fd2013dc15452581c8a4616725a0d545db8fffc531c56a94396d48",
+  "reviewed_sha": "44f27999e0cd6aee4c42c0a4100578730a0608f5",
+  "updated_at": "2026-08-12T01:27:09.942558+00:00"
+}
