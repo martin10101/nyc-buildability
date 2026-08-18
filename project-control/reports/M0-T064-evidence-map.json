@@ -2,7 +2,7 @@
  "schema": "evidence_map/v1",
  "task_id": "M0-T064",
  "producer": "orchestrator",
- "reviewed_sha": "SET_AT_SUBMIT",
+ "reviewed_sha": "a89682c852ee4fca202c97c358e1218ea7aab729",
  "note": "Evidence per applicable D-013 row for M0-T064 (42 rows). The byte-identical parity invariant (R037/R079) is the discharged A2 obligation A1's DCV carried forward.",
  "requirements": {
   "D-013-R001": [
