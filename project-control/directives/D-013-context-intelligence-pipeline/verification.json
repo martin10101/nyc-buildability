@@ -1971,12 +1971,355 @@
    "task_id": "M0-T069",
    "directive_id": "D-013",
    "producer": "orchestrator",
-   "verifier": "",
-   "applicable_requirement_ids": [],
-   "requirements": [],
-   "reviewed_sha": null,
-   "reviewed_manifest_sha256": null,
-   "note": "PENDING stub created at capture (c14 coverage). The applicable set is derived by the resolver at verification time and every row is filled by the independent verifier at the unit's accept cycle; nothing is verified yet."
+   "verifier": "directive-compliance-verifier",
+   "applicable_requirement_ids": [
+    "D-013-R001",
+    "D-013-R002",
+    "D-013-R003",
+    "D-013-R004",
+    "D-013-R006",
+    "D-013-R007",
+    "D-013-R008",
+    "D-013-R009",
+    "D-013-R010",
+    "D-013-R011",
+    "D-013-R012",
+    "D-013-R013",
+    "D-013-R022",
+    "D-013-R025",
+    "D-013-R042",
+    "D-013-R050",
+    "D-013-R051",
+    "D-013-R052",
+    "D-013-R053",
+    "D-013-R054",
+    "D-013-R056",
+    "D-013-R057",
+    "D-013-R058",
+    "D-013-R059",
+    "D-013-R060",
+    "D-013-R061",
+    "D-013-R062",
+    "D-013-R063",
+    "D-013-R064",
+    "D-013-R069",
+    "D-013-R082"
+   ],
+   "requirements": [
+    {
+     "id": "D-013-R001",
+     "state": "PASS",
+     "evidence": [
+      "git diff --name-only main...HEAD @7c3215a: only additive new modules (tools/context_benchmark.py, status_projection.py, tests) + docs/CONTEXT_PIPELINE_RUNBOOK.md + M0-T069 reports/control-plane; no all-at-once rewrite; M0-T069 is one bounded ledger task (Unit F) inside the control plane"
+     ],
+     "verified_at": "2026-08-18T20:10:33+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "7c3215a07a1f7b9864524d71af98570c965814fe"
+    },
+    {
+     "id": "D-013-R002",
+     "state": "PASS",
+     "evidence": [
+      "tools/context_benchmark.py run_shape() records census_reconciles from cold.telemetry census.reconciles + corpus_manifest_digest/baseline_export_digest per shape (explicit coverage provenance); tools/status_projection.py build_projection generated_from stamps repo_sha+branch+task_index_digest+directive_index_digest with stale_when; no unqualified 'read whole repo' claim anywhere"
+     ],
+     "verified_at": "2026-08-18T20:10:33+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "7c3215a07a1f7b9864524d71af98570c965814fe"
+    },
+    {
+     "id": "D-013-R003",
+     "state": "PASS",
+     "evidence": [
+      "benchmark proves byte-identity across all 42 cases (nothing silently dropped) - project-control/reports/M0-T069-benchmark-report.json correctness[].byte_identical all True; docs/CONTEXT_PIPELINE_RUNBOOK.md Boundaries: 'Source files remain authoritative for every material conclusion; index, views, and memory are advisory navigation/placement layers'"
+     ],
+     "verified_at": "2026-08-18T20:10:33+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "7c3215a07a1f7b9864524d71af98570c965814fe"
+    },
+    {
+     "id": "D-013-R004",
+     "state": "PASS",
+     "evidence": [
+      "tools/status_projection.py build_projection reads live control-plane files + git rev-parse HEAD (no hand-maintained facts); benchmark reference is the actual unmodified builder over the actual snapshot; M0-T069 claimed after reconciling M0-T068 accepted+merged (git log cf65b78 = PR#235 merge, ancestor of HEAD)"
+     ],
+     "verified_at": "2026-08-18T20:10:33+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "7c3215a07a1f7b9864524d71af98570c965814fe"
+    },
+    {
+     "id": "D-013-R006",
+     "state": "PASS",
+     "evidence": [
+      "project-control/tasks/M0-T069.json status=awaiting_gate (NOT self-accepted, producer_agent=orchestrator submitted for gate); HEAD is on the task branch, not main; M0-T069 not in main log; control plane not bypassed"
+     ],
+     "verified_at": "2026-08-18T20:10:33+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "7c3215a07a1f7b9864524d71af98570c965814fe"
+    },
+    {
+     "id": "D-013-R007",
+     "state": "PASS",
+     "evidence": [
+      "single worktree wt-m0t064; M0-T069.json producer_agent=orchestrator (sole writer), reviewer_agents=[code-reviewer,qa-engineer,security-reviewer,directive-compliance-verifier] all read-only; no parallel writer in the same checkout; matches M0-T065..T068 dispatch precedent"
+     ],
+     "verified_at": "2026-08-18T20:10:33+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "7c3215a07a1f7b9864524d71af98570c965814fe"
+    },
+    {
+     "id": "D-013-R008",
+     "state": "PASS",
+     "evidence": [
+      "tools/status_projection.py _STATUS_MAP maps EXISTING control-plane statuses to a compact view (not a new taxonomy); nodes keyed by existing task IDs/requirement IDs/gate IDs/file paths; benchmark uses existing task-shape/change-class vocabulary; no second free-form taxonomy introduced"
+     ],
+     "verified_at": "2026-08-18T20:10:33+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "7c3215a07a1f7b9864524d71af98570c965814fe"
+    },
+    {
+     "id": "D-013-R009",
+     "state": "PASS",
+     "evidence": [
+      "both modules are pure deterministic Python (no LLM call); promotion decision is a static PENDING string set by code, not an LLM (context_benchmark.py build_report promotion_decision); status_projection derives parents deterministically from verification.json registry + git; no LLM structural indexing/invalidation/promotion"
+     ],
+     "verified_at": "2026-08-18T20:10:33+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "7c3215a07a1f7b9864524d71af98570c965814fe"
+    },
+    {
+     "id": "D-013-R010",
+     "state": "PASS",
+     "evidence": [
+      "diff introduces NEW modules only; git diff main...HEAD touches no existing production source module (no refactor-to-shorten); the two new files are cohesive (benchmark vs projection) and pass modularity_check --check with 0 failures"
+     ],
+     "verified_at": "2026-08-18T20:10:33+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "7c3215a07a1f7b9864524d71af98570c965814fe"
+    },
+    {
+     "id": "D-013-R011",
+     "state": "PASS",
+     "evidence": [
+      "grep of committed M0-T069 reports + runbook for C:\\Users/AppData/private-key/sk-/ghp_ -> no matches; benchmark calls build_incremental(persist_telemetry=False) so no cache/telemetry committed; only sanitized JSON/MD reports under project-control/reports/"
+     ],
+     "verified_at": "2026-08-18T20:10:33+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "7c3215a07a1f7b9864524d71af98570c965814fe"
+    },
+    {
+     "id": "D-013-R012",
+     "state": "PASS",
+     "evidence": [
+      "project-control/reports/M0-T069-benchmark-report.json efficiency.provider_token_savings='UNMEASURED - no provider-reported usage... a byte estimate is never presented as token savings'; deterministic_reuse (warm_no_change_files_parsed=[0,0,0,0,0]) kept separate from any token claim"
+     ],
+     "verified_at": "2026-08-18T20:10:33+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "7c3215a07a1f7b9864524d71af98570c965814fe"
+    },
+    {
+     "id": "D-013-R013",
+     "state": "PASS",
+     "evidence": [
+      "tools/status_projection.py ProjectionError with machine-readable codes (verification_registry_unreadable/task_packet_unreadable/git_unavailable/projection_unreadable); test_status_projection AS6DeterminismFailClosed test_unreadable_packet_fails_closed passes; benchmark uses ric.CacheError code=='concurrent_writer' fail-closed; corrupt/interrupted/concurrent cases in report all preserve validity (byte_identical True)"
+     ],
+     "verified_at": "2026-08-18T20:10:33+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "7c3215a07a1f7b9864524d71af98570c965814fe"
+    },
+    {
+     "id": "D-013-R022",
+     "state": "PASS",
+     "evidence": [
+      "R022 'this run' = original bootstrap session (source-002 amendment: bootstrap-only, no A1 code); Unit F correctly NOT claimed in that run; M0-T069 (Unit F) claimed now after Units B/C/D/E accepted+merged (E merge cf65b78 ancestor of HEAD) under D-017 A-to-Z continuation authority; per recorded M0-T065..T068 precedent this is compliant sequencing"
+     ],
+     "verified_at": "2026-08-18T20:10:33+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "7c3215a07a1f7b9864524d71af98570c965814fe"
+    },
+    {
+     "id": "D-013-R025",
+     "state": "PASS",
+     "evidence": [
+      "benchmark census claim gated on real telemetry: census_accounts_every_eligible_file=all(census_reconciles) (context_benchmark.py build_report); independently reproduced run_shape('schema_change').census_reconciles=True; runbook/report summaries are navigation aids with source-authoritative boundary stated"
+     ],
+     "verified_at": "2026-08-18T20:10:33+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "7c3215a07a1f7b9864524d71af98570c965814fe"
+    },
+    {
+     "id": "D-013-R042",
+     "state": "PASS",
+     "evidence": [
+      "neither module fills capacity: benchmark reports bounded honest metrics; status_projection emits a bounded projection driven by the registry unit set (no capacity-fill logic); no unused-window justification present"
+     ],
+     "verified_at": "2026-08-18T20:10:33+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "7c3215a07a1f7b9864524d71af98570c965814fe"
+    },
+    {
+     "id": "D-013-R050",
+     "state": "PASS",
+     "evidence": [
+      "two storage classes honored: build_incremental(persist_telemetry=False) keeps runtime telemetry out of git; committed artifacts are sanitized JSON/MD under project-control/reports/ (report-convention); docs/CONTEXT_PIPELINE_RUNBOOK.md Storage map documents the external cache; grep for absolute paths/secrets in committed artifacts = clean"
+     ],
+     "verified_at": "2026-08-18T20:10:33+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "7c3215a07a1f7b9864524d71af98570c965814fe"
+    },
+    {
+     "id": "D-013-R051",
+     "state": "PASS",
+     "evidence": [
+      "status_projection _node sets branch=null and null review digest fields when absent (never fabricated as zero) - confirmed in committed M0-T069-status-projection.json M0-T069 node (branch:null); benchmark provider_token_savings='UNMEASURED' not 0; test_nullable_branch_never_fabricated passes"
+     ],
+     "verified_at": "2026-08-18T20:10:33+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "7c3215a07a1f7b9864524d71af98570c965814fe"
+    },
+    {
+     "id": "D-013-R052",
+     "state": "PASS",
+     "evidence": [
+      "run-record minimum fields represented across committed artifacts: benchmark rows carry mode/rebuild_reason/files_parsed/files_reused/byte_identical (correctness comparison against clean full rebuild) + per-shape corpus_manifest_digest/baseline_export_digest; status_projection generated_from carries repo_sha/branch/task_index_digest/directive_index_digest, gates with result/reviewed_sha; underlying build_incremental telemetry schema (verified complete at M0-T064/T068) still built (census read from cold.telemetry), persist_telemetry=False is deliberate fixture hygiene consistent with M0-T068 R052=PASS precedent"
+     ],
+     "verified_at": "2026-08-18T20:10:33+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "7c3215a07a1f7b9864524d71af98570c965814fe"
+    },
+    {
+     "id": "D-013-R053",
+     "state": "PASS",
+     "evidence": [
+      "grep of M0-T069-benchmark-report.json for savings_percent/token_savings_total/combined-saving = no matches; distinct measures kept separate: measured_runtime (wall-clock), efficiency.deterministic_reuse (files parsed/reused), efficiency.provider_token_savings (UNMEASURED); no invented combined 'token savings' number"
+     ],
+     "verified_at": "2026-08-18T20:10:33+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "7c3215a07a1f7b9864524d71af98570c965814fe"
+    },
+    {
+     "id": "D-013-R054",
+     "state": "PASS",
+     "evidence": [
+      "context_benchmark.py SHAPES defines all five directive-named shapes (single_file_bug, cross_module_change, frontend_backend_boundary, schema_change, control_plane_only); corpus frozen BEFORE behavior via deterministic fixture generators + committed corpus_manifest_digest/baseline_export_digest per shape; report correctness_first=True and correctness section precedes efficiency; verified report has 5 corpus entries + 42 correctness rows"
+     ],
+     "verified_at": "2026-08-18T20:10:33+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "7c3215a07a1f7b9864524d71af98570c965814fe"
+    },
+    {
+     "id": "D-013-R056",
+     "state": "PASS",
+     "evidence": [
+      "report method statement documents confound removal (reference=clean full rebuild by unmodified builder; new=warm incremental over SAME snapshot at SAME implementation SHA; only cache state differs, D-013-R056); change classes implemented: cold_build, warm_no_change, one_file_change, dependency_change, config_change, rename, delete, corrupt_cache_recovery, interrupted_write_recovery, concurrent_writer - matching the G0-accepted AS-1 set; parser-version-change class represented by config_change/schema_change global-invalidator cases (identical 'global_invalidator: codegraph_config_inputs' full-rebuild path, byte-identical to reference), with R034 parser-version behavior verified at M0-T064"
+     ],
+     "verified_at": "2026-08-18T20:10:33+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "7c3215a07a1f7b9864524d71af98570c965814fe"
+    },
+    {
+     "id": "D-013-R057",
+     "state": "PASS",
+     "evidence": [
+      "M0-T069-benchmark-report.json measured_runtime.per_shape[*][metric] = {samples,median,p95} labeled 'measured wall-clock seconds; measurement evidence, never byte-identity content'; provider_token_savings labeled UNMEASURED; deterministic packet reduction reported separately (warm_no_change_files_parsed=[0,0,0,0,0]); all five shapes reported (no cherry-pick); _stats() computes median/p95 over samples"
+     ],
+     "verified_at": "2026-08-18T20:10:33+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "7c3215a07a1f7b9864524d71af98570c965814fe"
+    },
+    {
+     "id": "D-013-R058",
+     "state": "PASS",
+     "evidence": [
+      "git diff main...HEAD touches NO reused accepted module (context_pack*, repo_index_*, subsystem_*, memory_*, repo_views* all absent from diff and in forbidden_paths); retrieval not worsened - benchmark proves byte-identity so correctness is no worse; reused-module regressions pass: test_repo_views 26/26, test_memory_graph 31/31, test_subsystem_resolver 21/21"
+     ],
+     "verified_at": "2026-08-18T20:10:33+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "7c3215a07a1f7b9864524d71af98570c965814fe"
+    },
+    {
+     "id": "D-013-R059",
+     "state": "PASS",
+     "evidence": [
+      "M0-T069-benchmark-report.json promotion_evidence_R059 has 6 booleans all True; I re-derived 5 from the committed 42 rows using build_report's exact predicates (incremental_matches_clean_full, warm_no_change_reparses_zero, local_change_no_full_rebuild_without_documented_invalidator, delete_rename_leave_no_stale_nodes, corruption_crash_concurrency_preserve_validity) - all match; underlying facts real (warm parses 0 across all 5 shapes; rename/delete stale_nodes=False; concurrent_writer lock_refused=True; interrupted orphan_quarantined=True; schema/config full rebuilds carry documented invalidator); 6th (census_accounts_every_eligible_file) reproduced via run_shape('schema_change').census_reconciles=True"
+     ],
+     "verified_at": "2026-08-18T20:10:33+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "7c3215a07a1f7b9864524d71af98570c965814fe"
+    },
+    {
+     "id": "D-013-R060",
+     "state": "PASS",
+     "evidence": [
+      "M0-T069-benchmark-report.json threshold_proposal.proposed_before_owner_decision=True with 3 thresholds each carrying rationale; promotion_decision='PENDING owner/control-plane decision (D-013-R060). This benchmark changes no behavior flag'; git diff main...HEAD contains NO config/flag/behavior module change (only new benchmark/projection/tests + docs + reports/control-plane) - no self-promotion, no flag flip"
+     ],
+     "verified_at": "2026-08-18T20:10:33+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "7c3215a07a1f7b9864524d71af98570c965814fe"
+    },
+    {
+     "id": "D-013-R061",
+     "state": "PASS",
+     "evidence": [
+      "tools/status_projection.py build_projection derives the unit-task set from the D-013 verification.json registry (task_verifications) + task packets + gate records + git rev-parse - never a hand-maintained graph; regenerated projection at HEAD is identical to the committed snapshot on all fields except repo_sha and the M0-T069 status that legitimately advanced (claimed->awaiting_gate), proving deterministic generation; test_two_runs_byte_identical passes"
+     ],
+     "verified_at": "2026-08-18T20:10:33+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "7c3215a07a1f7b9864524d71af98570c965814fe"
+    },
+    {
+     "id": "D-013-R062",
+     "state": "PASS",
+     "evidence": [
+      "tools/status_projection.py _STATUS_MAP maps control-plane semantics to compact labels (planned/ready/in progress/awaiting independent review/corrections required/accepted/blocked/superseded); build_projection emits bounded JSON; render_md produces Markdown + Mermaid FROM the same JSON (graph LR from dependency_ids) labeled 'a view, never a source of truth'; test_r062_status_mapping and test_generating_stamps_and_md_from_same_json pass"
+     ],
+     "verified_at": "2026-08-18T20:10:33+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "7c3215a07a1f7b9864524d71af98570c965814fe"
+    },
+    {
+     "id": "D-013-R063",
+     "state": "PASS",
+     "evidence": [
+      "committed M0-T069-status-projection.json M0-T069 node carries all R063 fields: task_id, requirement_ids, dependency_ids, roles(producer/reviewers), branch, reviewed_sha, implementation_files, evidence_location, review_decision_digest, required_gates, gates(state), accepted_or_blocked_reason, rollback_point (G0 SHA); generated_from declares repo_sha+branch+task_index_digest+directive_index_digest+stale_when; check subcommand exits 3 when HEAD moved (test_cli_generate_and_stale_check asserts returncode==3); test_r063_fields_present_per_node passes"
+     ],
+     "verified_at": "2026-08-18T20:10:33+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "7c3215a07a1f7b9864524d71af98570c965814fe"
+    },
+    {
+     "id": "D-013-R064",
+     "state": "PASS",
+     "evidence": [
+      "committed summaries under existing project-control/reports/ (M0-T069-benchmark-report.json/md, M0-T069-status-projection.json/md); docs/CONTEXT_PIPELINE_RUNBOOK.md Storage map keeps cache/JSONL in the external runtime dir; no parallel control plane or example-filename mirror created (diff file list confirms)"
+     ],
+     "verified_at": "2026-08-18T20:10:33+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "7c3215a07a1f7b9864524d71af98570c965814fe"
+    },
+    {
+     "id": "D-013-R069",
+     "state": "PASS",
+     "evidence": [
+      "HOLD respected: Unit F is the FINAL unit (no next unit to continue to); it was claimed only after Unit E accepted+merged (git log 9ea98cc 'Unit E accepted' + cf65b78 PR#235 merge, ancestor of HEAD) with D-017 permitting continuation; Unit F does NOT self-promote - promotion decision PENDING owner and no behavior flag changed; matches recorded M0-T065..T068 R069=PASS precedent"
+     ],
+     "verified_at": "2026-08-18T20:10:33+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "7c3215a07a1f7b9864524d71af98570c965814fe"
+    },
+    {
+     "id": "D-013-R082",
+     "state": "PASS",
+     "evidence": [
+      "git diff main...HEAD -- tools/agent_supervisor/ is EMPTY (exit 0, no lines); tools/agent_supervisor/** is in forbidden_paths and absent from the diff file list; runbook Boundaries states 'tools/agent_supervisor/** is untouched by this initiative (R082)'"
+     ],
+     "verified_at": "2026-08-18T20:10:33+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "7c3215a07a1f7b9864524d71af98570c965814fe"
+    }
+   ],
+   "reviewed_sha": "7c3215a07a1f7b9864524d71af98570c965814fe",
+   "reviewed_manifest_sha256": "e7988172f42e3374ef055a194ad09c24d1c99a4d73b472b4aaf00cf73158f5ab",
+   "note": "Independent DCV PASS: 31/31 applicable D-013 requirements verified at reviewed_sha 7c3215a / manifest e7988172f42e. Unit F (FINAL D-013 unit): promotion benchmark over the frozen five-shape corpus — 42 cases all byte-identical to the clean-full reference, all six R059 promotion-evidence booleans independently re-derived from the rows; honest reporting (samples/median/p95 labeled measured runtime; provider token savings UNMEASURED; no combined savings number); thresholds proposed with rationale and the promotion decision PENDING the owner (R060, no behavior flag changed); deterministic R061-R063 status projection (registry-derived unit set, full R063 node fields, R062 mapping, stale check exit 3); runbook with the complete R071 rollback path. R022/R069 satisfied under the D-017 continuation after Unit E merged (cf65b78). Producer (orchestrator) != verifier."
   },
   {
    "task_id": "M0-T063",
@@ -2590,5 +2933,5 @@
    "note": "Independent DCV PASS 46/46 (round 1) + code/QA delta re-review CONFIRM-CLOSED (MAJOR-1/MINOR-2/F1). R037/R079 A1-scope only; the byte-identical incremental-vs-full parity test is the A2 (M0-T064) obligation, built and passing. Producer != verifier."
   }
  ],
- "updated_at": "2026-08-18T19:34:53+00:00"
+ "updated_at": "2026-08-18T20:10:33+00:00"
 }

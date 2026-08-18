@@ -1,0 +1,101 @@
+{
+ "schema": "evidence_map/v1",
+ "task_id": "M0-T069",
+ "producer": "orchestrator",
+ "note": "Evidence per applicable D-013 row for M0-T069 (31 rows, derived by directive_registry.evaluate_task_refs at claim). Unit F: promotion benchmark over the frozen five-shape corpus (42 cases, all byte-identical), the operating runbook with the R071 rollback path, and the deterministic R061-R063 status projection.",
+ "requirements": {
+  "D-013-R001": [
+   "Unit F is layer (d) of the ONE pipeline — the measurement and status system proving what changed and whether it helped; a bounded task unit consuming all accepted layers read-only."
+  ],
+  "D-013-R002": [
+   "Every benchmark verdict carries reproducible provenance (corpus manifest digests, A1 baseline export digests, per-case modes/reasons); the projection stamps its generating SHA + index digests; no understanding overclaim anywhere."
+  ],
+  "D-013-R003": [
+   "Nothing silently dropped: 42/42 cases reported individually with byte-identity verdicts; the non-eligible-change conservative full rebuild is reported honestly with its documented fallback reason instead of being hidden or misclassified."
+  ],
+  "D-013-R004": [
+   "Projection facts come ONLY from authoritative sources: the D-013 verification registry defines the unit set; packets/gates/submission records/state/git supply every field; M0-T068 acceptance + merge (cf65b78) verified before claim."
+  ],
+  "D-013-R006": [
+   "Control plane respected: G0 at contract commit b086bba, claim via project_control.py, submit -> independent G3/G4/G5 -> accept; the benchmark changes no behavior flag and the promotion decision is explicitly owner-pending (no worker-role completion claim)."
+  ],
+  "D-013-R007": [
+   "Single writer (orchestrator in wt-m0t064 on task/M0-T069-benchmark-runbook); review by a fresh read-only independent agent."
+  ],
+  "D-013-R008": [
+   "No new taxonomy: benchmark shapes are the five directive-named task shapes; projection statuses are the directive-named R062 vocabulary mapped from existing control-plane semantics; no invented classification."
+  ],
+  "D-013-R009": [
+   "Benchmark and projection are pure deterministic code; no LLM performs any structural decision, comparison, or promotion judgment (the promotion DECISION itself is explicitly reserved to the owner/control plane)."
+  ],
+  "D-013-R010": [
+   "Two focused modules split by responsibility (benchmark ~420 SLOC-class; projection ~280) + two test files; no existing file grown; all consumed accepted modules forbidden (import-only)."
+  ],
+  "D-013-R011": [
+   "Nothing cache-like or secret committed: benchmark fixtures + caches are temp dirs; committed artifacts are the sanitized benchmark report (digests/counts/verdicts, no absolute paths) and the projection snapshot."
+  ],
+  "D-013-R012": [
+   "No token-savings claim: provider token savings are labeled UNMEASURED in the report and the runbook; the deterministic reuse metrics are separate and never presented as savings (AS-3 test asserts the label and the absence of combined numbers)."
+  ],
+  "D-013-R013": [
+   "Fail closed: ProjectionError codes (verification_registry_unreadable, task_packet_unreadable, gate_record_unreadable, submission_record_unreadable, git_unavailable) with repo-relative details, CLI exit 2; benchmark CLI exits 2 when any R059 evidence item fails; stale projection check exits 3."
+  ],
+  "D-013-R022": [
+   "Sequencing preserved under current authority: R022 bound the original bootstrap run (amended by source-002); D-017 authorizes the A-to-Z continuation; Unit F claimed only AFTER Unit E (M0-T068) was accepted and merged to main (cf65b78), completing A->B->C->D->E->F in order."
+  ],
+  "D-013-R025": [
+   "The census evidence item derives from the per-build census reconciles flag (asserted per shape), never claimed; 'deep understanding' is claimed nowhere; the projection labels itself a VIEW, never source of truth."
+  ],
+  "D-013-R042": [
+   "Nothing fills capacity: the benchmark report and projection are bounded documents; no context injection exists in Unit F."
+  ],
+  "D-013-R050": [
+   "Two storage classes: benchmark runs use temp caches (external); committed evidence is sanitized JSON/MD under project-control/reports/M0-T069-*; error details are repo-relative; no transcripts/absolute private paths/credentials."
+  ],
+  "D-013-R051": [
+   "Nullable never fabricated: the projection's branch field is null with a recorded reason (not recorded in the control plane after merge); timing stats are null at zero samples; the A1 baseline telemetry convention (null provider tokens) is reused unchanged."
+  ],
+  "D-013-R052": [
+   "Run-record discipline: wall-clock timings live ONLY in the measured_runtime section explicitly labeled 'never byte-identity content'; correctness sections carry deterministic content (digests, modes, reasons, counts)."
+  ],
+  "D-013-R053": [
+   "The report keeps deterministic reuse metrics, wall-clock timings, and (unavailable) provider usage as DISTINCT sections; no combined savings number exists (AS-3 test asserts absence)."
+  ],
+  "D-013-R054": [
+   "Correctness first (report flag + section order); the frozen corpus covers exactly the five directive-named shapes: single-file bug, cross-module change, frontend/backend boundary, schema change, control-plane-only; each shape's manifest digest recorded (deterministic corpus, test-proven)."
+  ],
+  "D-013-R056": [
+   "Old-vs-new over the SAME frozen snapshot at the SAME SHA (the method statement documents the confound removal: reference = fresh-cache clean full rebuild by the unmodified builder; new = warm incremental); cold + warm cases; change classes no-change, one-file, dependency, delete, rename, config change, corrupt cache, interrupted write, concurrent writer — all executed (42 rows)."
+  ],
+  "D-013-R057": [
+   "Sample counts + median/p95 recorded per timing metric; 42 cases across 5 shapes (never one cherry-picked task); provider usage unavailable -> deterministic reuse reported alone and provider token savings labeled UNMEASURED."
+  ],
+  "D-013-R058": [
+   "No retrieval was shrunk anywhere in this unit (no compiler/view change: all those modules are forbidden and untouched); the benchmark verifies correctness parity, so no smaller-but-wrong outcome exists."
+  ],
+  "D-013-R059": [
+   "All six minimum promotion-evidence items machine-readably TRUE in the committed report: census accounts for every eligible file; incremental==clean-full byte-identical (42/42); warm no-change reparses zero; local change stays incremental absent a documented invalidator (config/schema invalidators recorded; the non-source control-plane edit's conservative full rebuild recorded with its documented fallback reason); delete/rename leave no stale nodes; corruption/crash/concurrency preserve validity."
+  ],
+  "D-013-R060": [
+   "Thresholds PROPOSED with recorded rationale (byte-identity 100%, warm zero-reparse, recovery validity 100%) BEFORE any owner decision; the report and runbook mark the promotion decision PENDING owner/control-plane; no behavior flag changed (AS-4 test)."
+  ],
+  "D-013-R061": [
+   "The projection derives every value from authoritative files (the D-013 verification registry defines the unit set; packets/gates/submissions/state/git supply fields); nothing is hand-maintained; two runs at identical state are byte-identical (tested)."
+  ],
+  "D-013-R062": [
+   "Statuses map from existing control-plane semantics via the documented table (planned/ready/in progress/awaiting independent review/corrections required/accepted/blocked/superseded); output is bounded canonical JSON + Markdown rendered FROM the JSON; the Mermaid graph renders from the same JSON and is labeled a view, never source of truth (tested)."
+  ],
+  "D-013-R063": [
+   "Every node carries: task id + exact applicable requirement ids (from the independent verification), dependency ids, producer/reviewer roles, branch (null-honest) + current reviewed SHA, implementation files, evidence location, the latest independent-review report digest (the honest mapping of the decision digest for this repo's review mechanism, labeled), required gates with state, accepted/blocked reason, and the rollback point (G0 contract SHA); the projection declares its generating repo SHA + task/directive index digests and the check mode exits 3 when HEAD moves (tested)."
+  ],
+  "D-013-R064": [
+   "Paths follow conventions: code in tools/, doc in docs/, all committed evidence in project-control/reports/M0-T069-*; no parallel control plane; benchmark caches in temp dirs."
+  ],
+  "D-013-R069": [
+   "Continuation permitted: Unit E accepted (gates incl. FAIL->PASS G3 history, round-2 review PASS, 27/27 DCV) and merged; D-017 directs the continuation; a fresh read-only independent review of Unit F is dispatched before its gates; the pipeline PROMOTION decision remains owner-pending (R060) — Unit F does not self-declare initiative completion."
+  ],
+  "D-013-R082": [
+   "tools/agent_supervisor/** untouched: listed in forbidden_paths and absent from the branch diff."
+  ]
+ }
+}
