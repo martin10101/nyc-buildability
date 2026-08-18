@@ -1808,7 +1808,18 @@
    "reviewed_sha": "a222d23f701b2211ae47d152383fb896ef949960",
    "reviewed_manifest_sha256": "46a5a30a9ae995f3d8325fd32265dbb0e27b8745dad0373cddfd5bc79b746139",
    "note": "Empty-but-present: 0 D-001 requirements applicable to M0-T065 (an implementation unit). Row present for c14 coverage at reviewed_sha a222d23. Producer (orchestrator) != verifier."
+  },
+  {
+   "task_id": "M0-T066",
+   "directive_id": "D-001",
+   "producer": "orchestrator",
+   "verifier": "directive-compliance-verifier",
+   "applicable_requirement_ids": [],
+   "requirements": [],
+   "reviewed_sha": "c21dca2dd34cdbc93d73c35f5d11016195be6de7",
+   "reviewed_manifest_sha256": "1bc6aa54acd02ed756085885331dffa714a907fefcc26607614bcc48b6d9e4c3",
+   "note": "Empty-but-present: 0 D-001 requirements applicable to M0-T066 (an implementation unit; confirmed by evaluate_task_refs and independently by the DCV run). Row present for coverage at reviewed_sha c21dca2. Producer (orchestrator) != verifier."
   }
  ],
- "updated_at": "2026-08-18T17:20:00+00:00"
+ "updated_at": "2026-08-18T18:10:06+00:00"
 }
