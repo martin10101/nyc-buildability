@@ -1,0 +1,91 @@
+{
+ "schema": "directive_manifest/v1",
+ "directive_id": "D-015",
+ "version": 1,
+ "slug": "nanoid-security-repair",
+ "title": "Bounded dependency-security repair: nanoid 3.3.17 -> 3.3.18 (GHSA-2v37-7h3g-55p8, closes B-019) under the normal policy, no age waiver",
+ "status": "active",
+ "lifecycle_state": "active",
+ "issued_by": "owner",
+ "issued_at": "2026-08-18",
+ "captured_at": "2026-08-18T07:29:28+00:00",
+ "channel": "owner_typed_instruction",
+ "frozen_baseline_sha": "5c71fe0e08c8717cc20ac232d8bd0d8a328525e1",
+ "requirements_file": "requirements.json",
+ "verification_file": "verification.json",
+ "final_reviewed_sha": null,
+ "sources": [
+  {
+   "file": "source-001.md",
+   "kind": "original",
+   "sequence": 1,
+   "recorded_at": "2026-08-18T07:29:28+00:00",
+   "content_digest_sha256": "4ec12dddd8fa439c913a4aec1150ae1a230777144952687845a6144dd83ac989"
+  }
+ ],
+ "amendments": [],
+ "supersedes": [],
+ "superseded_by": null,
+ "affected_tasks": [
+  "M0-T071"
+ ],
+ "affected_prs": [],
+ "affected_branches": [
+  "task/M0-T071-nanoid-ghsa-2v37"
+ ],
+ "scope": {
+  "task_ids": [
+   "M0-T071",
+   "D-015-BOOTSTRAP"
+  ],
+  "task_types": [
+   "governance"
+  ],
+  "milestones": [],
+  "paths": []
+ },
+ "applicability_note": "Rows bind the single corrective ledger task M0-T071 via applicability.task_ids. D-015-BOOTSTRAP is the NON-LEDGER governance sentinel (D-012/D-013/D-014 precedent) for session-scope reconciliation and return duties; sentinel rows are verified at directive verification, never inside a ledger task's accept() set. Rows carry task_ids only (no task_ids+task_types conjunctions). scope.task_types carries 'governance' because M0-T071 edits control-plane files (its packet and reports) under this directive's authority (s19/D-001-R118 claim guard). frozen_baseline_sha is origin/main 5c71fe0e (the branch base; NOT the control branch - this repair is deliberately unstacked so it can merge to main first and close B-019 for every branch). Note: B-019 and directive D-014 exist on the M0-T070 repair branch, not on this branch's base; index.json here appends D-015 after D-013, and the later control-branch merge reconciles the index union (documented in the return report).",
+ "locked_requirement_ids": [
+  "D-015-R001",
+  "D-015-R002",
+  "D-015-R003",
+  "D-015-R004",
+  "D-015-R005",
+  "D-015-R006",
+  "D-015-R007",
+  "D-015-R008",
+  "D-015-R009",
+  "D-015-R010",
+  "D-015-R011",
+  "D-015-R012",
+  "D-015-R013",
+  "D-015-R014",
+  "D-015-R015",
+  "D-015-R016",
+  "D-015-R017",
+  "D-015-R018",
+  "D-015-R019",
+  "D-015-R020",
+  "D-015-R021",
+  "D-015-R022",
+  "D-015-R023",
+  "D-015-R024",
+  "D-015-R025",
+  "D-015-R026",
+  "D-015-R027",
+  "D-015-R028"
+ ],
+ "requirements_id_digest_sha256": "5ff6da003b1f935d43fe61fc9761e94a30ee676eb2bcd7e48f24d10a3b8ea458",
+ "requirements_content_digest_sha256": "9f14636f8cef97a2b9acc111153540a418bf2daa1c8816e7c79e81013aec9aa9",
+ "owner_approval": {
+  "state": "issued_owner_typed",
+  "decision": "Owner typed the 'OWNER AUTHORIZATION - NANOID SECURITY REPAIR' message of 2026-08-18 with the verified decision block (3.3.18 patched + age-satisfied, no waiver) authorizing the bounded upgrade under the normal policy."
+ },
+ "audit_log": [
+  {
+   "at": "2026-08-18T07:29:28+00:00",
+   "by": "orchestrator",
+   "note": "D-015 captured verbatim: source-001.md (sha256 4ec12dddd8fa439c913a4aec1150ae1a230777144952687845a6144dd83ac989) = the owner's nanoid security-repair authorization of 2026-08-18. Frozen baseline origin/main 5c71fe0e08c8717cc20ac232d8bd0d8a328525e1. 28 rows D-015-R001..D-015-R028 decomposed. Ledger task M0-T071 is the single corrective task; D-015-BOOTSTRAP is the session sentinel. All registry files written as LF bytes and digests computed over those exact bytes (D-014 amendment-2 c14 lesson)."
+  }
+ ]
+}

@@ -1,0 +1,959 @@
+{
+ "schema": "directive_requirements/v1",
+ "directive_id": "D-015",
+ "version": 1,
+ "requirement_count": 28,
+ "producer": "orchestrator",
+ "updated_at": "2026-08-18T07:29:28+00:00",
+ "requirements": [
+  {
+   "id": "D-015-R001",
+   "text": "OWNER DECISION (verified): nanoid 3.3.17 is vulnerable under GHSA-2v37-7h3g-55p8; 3.3.18 is the compatible patched version, released 2026-08-07, and has already satisfied the seven-complete-day release-age requirement as of 2026-08-18; NO age waiver is requested or authorized; upgrade to 3.3.18 under the normal dependency-security policy.",
+   "source_ref": "source-001.md#owner-decision",
+   "classification": "decision",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T071",
+     "D-015-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-18"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "captured verbatim at D-015 bootstrap; verified at the M0-T071 gate cycle (producer != verifier)",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": [
+     "M0-T071"
+    ]
+   },
+   "amendment_sequence": 1
+  },
+  {
+   "id": "D-015-R002",
+   "text": "This is a new, separate task. PROHIBITION: do not modify M0-T070 or PR #222.",
+   "source_ref": "source-001.md#separation",
+   "classification": "prohibition",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T071",
+     "D-015-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-18"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "captured verbatim at D-015 bootstrap; verified at the M0-T071 gate cycle (producer != verifier)",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": [
+     "M0-T071"
+    ]
+   },
+   "amendment_sequence": 1
+  },
+  {
+   "id": "D-015-R003",
+   "text": "FIRST, read-only reconciliation: fetch origin/main and verify its current SHA.",
+   "source_ref": "source-001.md#reconciliation-1",
+   "classification": "sequencing",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-015-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-18"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "captured verbatim at D-015 bootstrap; verified at the M0-T071 gate cycle (producer != verifier)",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "amendment_sequence": 1
+  },
+  {
+   "id": "D-015-R004",
+   "text": "Confirm B-019 and the existing nanoid 3.3.17 lock entry.",
+   "source_ref": "source-001.md#reconciliation-2",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-015-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-18"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "captured verbatim at D-015 bootstrap; verified at the M0-T071 gate cycle (producer != verifier)",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "amendment_sequence": 1
+  },
+  {
+   "id": "D-015-R005",
+   "text": "Confirm the dependency path is postcss -> nanoid.",
+   "source_ref": "source-001.md#reconciliation-3",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-015-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-18"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "captured verbatim at D-015 bootstrap; verified at the M0-T071 gate cycle (producer != verifier)",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "amendment_sequence": 1
+  },
+  {
+   "id": "D-015-R006",
+   "text": "Verify 3.3.18 publication age against the repository's authoritative age-gate mechanism.",
+   "source_ref": "source-001.md#reconciliation-4",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-015-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-18"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "registry publish timestamp + computed age vs 604800s; scripts/dependency_age_gate.mjs run on the updated lock",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "captured verbatim at D-015 bootstrap; verified at the M0-T071 gate cycle (producer != verifier)",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "amendment_sequence": 1
+  },
+  {
+   "id": "D-015-R007",
+   "text": "Verify 3.3.18 is not affected by GHSA-2v37-7h3g-55p8 and has no other outstanding npm advisories.",
+   "source_ref": "source-001.md#reconciliation-5",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-015-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-18"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "captured verbatim at D-015 bootstrap; verified at the M0-T071 gate cycle (producer != verifier)",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "amendment_sequence": 1
+  },
+  {
+   "id": "D-015-R008",
+   "text": "Reconcile the next available ledger task ID; do not assume or reuse an ID.",
+   "source_ref": "source-001.md#reconciliation-6",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-015-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-18"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "captured verbatim at D-015 bootstrap; verified at the M0-T071 gate cycle (producer != verifier)",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "amendment_sequence": 1
+  },
+  {
+   "id": "D-015-R009",
+   "text": "Create a separate worktree and task branch directly from current origin/main.",
+   "source_ref": "source-001.md#reconciliation-7",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-015-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-18"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "captured verbatim at D-015 bootstrap; verified at the M0-T071 gate cycle (producer != verifier)",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "amendment_sequence": 1
+  },
+  {
+   "id": "D-015-R010",
+   "text": "Update the transitive nanoid resolution from exactly 3.3.17 to exactly 3.3.18.",
+   "source_ref": "source-001.md#impl-resolution",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T071"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-18"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "captured verbatim at D-015 bootstrap; verified at the M0-T071 gate cycle (producer != verifier)",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": [
+     "M0-T071"
+    ]
+   },
+   "amendment_sequence": 1
+  },
+  {
+   "id": "D-015-R011",
+   "text": "Update only the minimum lockfile data required for that resolution and its verified registry integrity.",
+   "source_ref": "source-001.md#impl-minimal",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T071"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-18"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "captured verbatim at D-015 bootstrap; verified at the M0-T071 gate cycle (producer != verifier)",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": [
+     "M0-T071"
+    ]
+   },
+   "amendment_sequence": 1
+  },
+  {
+   "id": "D-015-R012",
+   "text": "PROHIBITION: do not add nanoid as an unnecessary direct application dependency.",
+   "source_ref": "source-001.md#impl-no-direct-dep",
+   "classification": "prohibition",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T071"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-18"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "captured verbatim at D-015 bootstrap; verified at the M0-T071 gate cycle (producer != verifier)",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": [
+     "M0-T071"
+    ]
+   },
+   "amendment_sequence": 1
+  },
+  {
+   "id": "D-015-R013",
+   "text": "PROHIBITION: do not perform a broad dependency upgrade.",
+   "source_ref": "source-001.md#impl-no-broad",
+   "classification": "prohibition",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T071"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-18"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "captured verbatim at D-015 bootstrap; verified at the M0-T071 gate cycle (producer != verifier)",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": [
+     "M0-T071"
+    ]
+   },
+   "amendment_sequence": 1
+  },
+  {
+   "id": "D-015-R014",
+   "text": "PROHIBITION: do not use unrestricted npm audit fix.",
+   "source_ref": "source-001.md#impl-no-audit-fix",
+   "classification": "prohibition",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T071"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-18"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "captured verbatim at D-015 bootstrap; verified at the M0-T071 gate cycle (producer != verifier)",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": [
+     "M0-T071"
+    ]
+   },
+   "amendment_sequence": 1
+  },
+  {
+   "id": "D-015-R015",
+   "text": "If the package manager mechanically changes anything beyond the required nanoid lock entries, inspect it and revert unrelated changes through targeted edits; PROHIBITION: no git reset or git clean.",
+   "source_ref": "source-001.md#impl-targeted-revert",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T071"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-18"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "captured verbatim at D-015 bootstrap; verified at the M0-T071 gate cycle (producer != verifier)",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": [
+     "M0-T071"
+    ]
+   },
+   "amendment_sequence": 1
+  },
+  {
+   "id": "D-015-R016",
+   "text": "Run the complete dependency-security policy: deterministic npm install; npm audit at every severity; JSON vulnerability total must equal zero; committed-lockfile release-age verification; registry integrity verification; npm CLI advisory verification; applicable web lint, typecheck, build, unit, and E2E tests.",
+   "source_ref": "source-001.md#impl-policy-suite",
+   "classification": "harness",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T071"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-18"
+   },
+   "dependencies": [],
+   "required_harness": "each named check executed with recorded output at the frozen implementation commit",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "captured verbatim at D-015 bootstrap; verified at the M0-T071 gate cycle (producer != verifier)",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": [
+     "M0-T071"
+    ]
+   },
+   "amendment_sequence": 1
+  },
+  {
+   "id": "D-015-R017",
+   "text": "Add a regression/evidence record proving: before nanoid 3.3.17 advisory failure; after nanoid 3.3.18 zero advisory; publication age exceeds 604800 seconds; no waiver was used; no unrelated package versions changed.",
+   "source_ref": "source-001.md#impl-evidence",
+   "classification": "evidence",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T071"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-18"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "committed evidence record under project-control/reports/",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "captured verbatim at D-015 bootstrap; verified at the M0-T071 gate cycle (producer != verifier)",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": [
+     "M0-T071"
+    ]
+   },
+   "amendment_sequence": 1
+  },
+  {
+   "id": "D-015-R018",
+   "text": "Use one producer only. After the frozen implementation commit, use independent read-only security and QA reviewers in parallel if supported by the accepted gate process.",
+   "source_ref": "source-001.md#impl-reviewers",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T071"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-18"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "captured verbatim at D-015 bootstrap; verified at the M0-T071 gate cycle (producer != verifier)",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": [
+     "M0-T071"
+    ]
+   },
+   "amendment_sequence": 1
+  },
+  {
+   "id": "D-015-R019",
+   "text": "Commit, push, open a PR targeting main, and wait for all GitHub checks.",
+   "source_ref": "source-001.md#impl-pr",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T071"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-18"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "captured verbatim at D-015 bootstrap; verified at the M0-T071 gate cycle (producer != verifier)",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": [
+     "M0-T071"
+    ]
+   },
+   "amendment_sequence": 1
+  },
+  {
+   "id": "D-015-R020",
+   "text": "PROHIBITION 1: do not modify PR #222 or its branch.",
+   "source_ref": "source-001.md#prohibition-1",
+   "classification": "prohibition",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T071",
+     "D-015-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-18"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "captured verbatim at D-015 bootstrap; verified at the M0-T071 gate cycle (producer != verifier)",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": [
+     "M0-T071"
+    ]
+   },
+   "amendment_sequence": 1
+  },
+  {
+   "id": "D-015-R021",
+   "text": "PROHIBITION 2: do not modify M0-T070 or D-014.",
+   "source_ref": "source-001.md#prohibition-2",
+   "classification": "prohibition",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T071",
+     "D-015-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-18"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "captured verbatim at D-015 bootstrap; verified at the M0-T071 gate cycle (producer != verifier)",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": [
+     "M0-T071"
+    ]
+   },
+   "amendment_sequence": 1
+  },
+  {
+   "id": "D-015-R022",
+   "text": "PROHIBITION 3: do not change the supervisor/controller.",
+   "source_ref": "source-001.md#prohibition-3",
+   "classification": "prohibition",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T071",
+     "D-015-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-18"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "captured verbatim at D-015 bootstrap; verified at the M0-T071 gate cycle (producer != verifier)",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": [
+     "M0-T071"
+    ]
+   },
+   "amendment_sequence": 1
+  },
+  {
+   "id": "D-015-R023",
+   "text": "PROHIBITION 4: do not suppress, waive, ignore, or allowlist any security advisory.",
+   "source_ref": "source-001.md#prohibition-4",
+   "classification": "prohibition",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T071",
+     "D-015-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-18"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "captured verbatim at D-015 bootstrap; verified at the M0-T071 gate cycle (producer != verifier)",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": [
+     "M0-T071"
+    ]
+   },
+   "amendment_sequence": 1
+  },
+  {
+   "id": "D-015-R024",
+   "text": "PROHIBITION 5: do not perform broad package upgrades.",
+   "source_ref": "source-001.md#prohibition-5",
+   "classification": "prohibition",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T071",
+     "D-015-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-18"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "captured verbatim at D-015 bootstrap; verified at the M0-T071 gate cycle (producer != verifier)",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": [
+     "M0-T071"
+    ]
+   },
+   "amendment_sequence": 1
+  },
+  {
+   "id": "D-015-R025",
+   "text": "PROHIBITION 6: do not merge anything.",
+   "source_ref": "source-001.md#prohibition-6",
+   "classification": "prohibition",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T071",
+     "D-015-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-18"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "captured verbatim at D-015 bootstrap; verified at the M0-T071 gate cycle (producer != verifier)",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": [
+     "M0-T071"
+    ]
+   },
+   "amendment_sequence": 1
+  },
+  {
+   "id": "D-015-R026",
+   "text": "PROHIBITION 7: do not update the control/context-intelligence-init branch yet.",
+   "source_ref": "source-001.md#prohibition-7",
+   "classification": "prohibition",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T071",
+     "D-015-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-18"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "captured verbatim at D-015 bootstrap; verified at the M0-T071 gate cycle (producer != verifier)",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": [
+     "M0-T071"
+    ]
+   },
+   "amendment_sequence": 1
+  },
+  {
+   "id": "D-015-R027",
+   "text": "PROHIBITION 8: do not restart A1.",
+   "source_ref": "source-001.md#prohibition-8",
+   "classification": "prohibition",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T071",
+     "D-015-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-18"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "captured verbatim at D-015 bootstrap; verified at the M0-T071 gate cycle (producer != verifier)",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": [
+     "M0-T071"
+    ]
+   },
+   "amendment_sequence": 1
+  },
+  {
+   "id": "D-015-R028",
+   "text": "After all checks finish, return NANOID_REPAIR_PR_READY including: reconciled task ID; branch/worktree; exact origin/main base SHA; exact before/after lockfile entries; official release timestamp and calculated age; advisory results; every file changed; tests and gates; commit SHA and PR URL; confirmation that no waiver was used; exact merge and subsequent branch-sync sequence. Do not merge.",
+   "source_ref": "source-001.md#return",
+   "classification": "return",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T071",
+     "D-015-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-18"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "committed return copy under project-control/reports/",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "captured verbatim at D-015 bootstrap; verified at the M0-T071 gate cycle (producer != verifier)",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": [
+     "M0-T071"
+    ]
+   },
+   "amendment_sequence": 1
+  }
+ ]
+}

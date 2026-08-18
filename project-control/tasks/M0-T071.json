@@ -1,0 +1,122 @@
+{
+ "task_id": "M0-T071",
+ "title": "Bounded dependency-security repair: transitive nanoid 3.3.17 -> 3.3.18 (GHSA-2v37-7h3g-55p8; closes B-019) under the normal policy, no age waiver - D-015",
+ "task_type": "frontend",
+ "milestone_id": "M0",
+ "objective": "Owner-authorized (D-015, 2026-08-18) minimal upgrade of the transitive nanoid resolution in apps/web/package-lock.json from exactly 3.3.17 to exactly 3.3.18, the first patched version for GHSA-2v37-7h3g-55p8 (high: custom generators can loop indefinitely when size is zero; dependency path postcss -> nanoid ^3.3.16). Reconciled facts: 3.3.18 published 2026-08-07T16:41:05.696Z (registry time), age ~917151s >= 604800s - the seven-complete-day gate is ALREADY satisfied and NO age waiver is requested, authorized, or used; 3.3.18 is affected by zero of the four nanoid GHSA advisories (28wg-ghj8-5hjv <3.3.16, 2v37-7h3g-55p8 <3.3.18, mwcw-c2x4-8c55 <3.3.8, qrpm-p2h7-hrv2 <3.1.31). Minimum lockfile delta only (version/resolved/integrity for node_modules/nanoid, integrity sha512-DTg4MJbGMWkfi6VZFdNt2/caMbQy4Ou+Op/hJQvGEWcnVfoA1QA+xzRKAzw9jD6+GVOOeYr/mIcuDSdug6F6+w== verified against registry.npmjs.org); no direct dependency added, no broad upgrade, no unrestricted npm audit fix, unrelated package-manager churn reverted by targeted edits (never git reset/clean). Full policy run: npm ci; npm audit --audit-level=low; audit JSON total == 0; scripts/dependency_age_gate.mjs on the committed lock; registry integrity verification; npm CLI advisory verification; applicable web lint/typecheck/build/unit/E2E. One producer (orchestrator); after the frozen implementation commit, independent read-only security-reviewer (G5) and qa-engineer (G4) in parallel. PR targets main directly from origin/main 5c71fe0e08c8717cc20ac232d8bd0d8a328525e1 (deliberately unstacked: closes the failing web-dependency-security gate for every branch; PR #222 then inherits green untouched). No merge; no control-branch update; no supervisor/controller change; no A1 restart. CONTRACT CORRECTION (pre-submit, npm-ci fail-closed evidence): the repo's own exact-pin policy (M0-T019 FE-S10) pins the transitive in apps/web/package.json overrides {'nanoid': '3.3.17'}; npm ci refuses the lock-only bump ('Missing: nanoid@3.3.17 from lock file'), proving the override line is PART of the minimum required change. allowed_paths therefore includes apps/web/package.json for that single override value only (3.3.17 -> 3.3.18); an override is the policy's exact-pin mechanism, NOT a direct application dependency (D-015-R012 untouched); every other package.json byte must remain unchanged.",
+ "business_reason": "B-019: the inherited nanoid 3.3.17 advisory fails the blocking web-dependency-security gate on every branch including PR #222 and origin/main; this repair restores a green dependency gate repo-wide under the permanent policy with zero waivers.",
+ "inputs": [
+  "project-control/directives/D-015-nanoid-security-repair/ (requirements applicable to M0-T071)",
+  "B-019 (recorded on task/M0-T070-supervisor-authority-repair): nanoid advisory blocker this task closes",
+  "apps/web/package-lock.json node_modules/nanoid entry (3.3.17, integrity sha512-xQLf0A3HOMlgHq0n247/LRu...)",
+  "registry.npmjs.org/nanoid: 3.3.18 published 2026-08-07T16:41:05.696Z, integrity sha512-DTg4MJbGMWkfi6VZFdNt2/...",
+  "apps/web/scripts/dependency_age_gate.mjs (authoritative committed-lock age gate + npm CLI advisory verification)",
+  "docs/DEPENDENCY_SECURITY_POLICY.md"
+ ],
+ "outputs": [
+  "apps/web/package-lock.json - node_modules/nanoid resolution 3.3.17 -> 3.3.18 (minimum delta: version/resolved/integrity), nothing else changed",
+  "project-control/reports/M0-T071-dependency-evidence.md - before/after regression evidence (advisory failure -> zero; age > 604800s; no waiver; no unrelated version changes; full policy-run outputs)",
+  "project-control/reports/M0-T071-producer-report.md - producer evidence for G2/G4/G5"
+ ],
+ "dependencies": [],
+ "allowed_paths": [
+  "apps/web/package.json",
+  "apps/web/package-lock.json",
+  "project-control/reports/M0-T071-dependency-evidence.md",
+  "project-control/reports/M0-T071-producer-report.md"
+ ],
+ "forbidden_paths": [
+  "apps/web/.npmrc",
+  "tools/agent_supervisor/",
+  ".github/",
+  "services/",
+  "project-control/directives/D-014-supervisor-command-authority-repair/",
+  "project-control/tasks/M0-T070.json"
+ ],
+ "acceptance_scenarios": [
+  {
+   "id": "AS-1",
+   "name": "exact minimal resolution bump",
+   "given": "the committed lock pinning nanoid 3.3.17",
+   "when": "the repair lands",
+   "then": "node_modules/nanoid resolves exactly 3.3.18 with the registry-verified integrity; the lock diff touches only the nanoid entry (and npm's mechanical metadata for that entry); package.json unchanged; no direct nanoid dependency added"
+  },
+  {
+   "id": "AS-2",
+   "name": "zero advisories at every severity",
+   "given": "the updated lock",
+   "when": "npm ci and npm audit --audit-level=low run (dev deps included)",
+   "then": "install is deterministic and integrity-verified; audit reports zero vulnerabilities; the audit JSON total equals 0"
+  },
+  {
+   "id": "AS-3",
+   "name": "age gate passes with no waiver",
+   "given": "the committed lock",
+   "when": "scripts/dependency_age_gate.mjs package-lock.json runs",
+   "then": "every entry including nanoid 3.3.18 is >= 604800s old; no waiver record exists or is used"
+  },
+  {
+   "id": "AS-4",
+   "name": "npm CLI advisory verification",
+   "given": "the CI npm pin 11.18.0",
+   "when": "scripts/dependency_age_gate.mjs --npm-cli-advisory 11.18.0 runs",
+   "then": "the pinned npm CLI is advisory-free; the check passes"
+  },
+  {
+   "id": "AS-5",
+   "name": "web suite green",
+   "given": "the updated lock",
+   "when": "web lint, typecheck, build, unit, and E2E tests run",
+   "then": "all pass locally where the toolchain permits and in CI for every job"
+  },
+  {
+   "id": "AS-6",
+   "name": "no unrelated changes",
+   "given": "the full branch diff vs origin/main",
+   "when": "reviewed",
+   "then": "only apps/web/package-lock.json (nanoid entry) + the M0-T071/D-015 control-plane files change; no other package version moves"
+  },
+  {
+   "id": "AS-7",
+   "name": "independent review",
+   "given": "the frozen implementation commit",
+   "when": "read-only security-reviewer (G5) and qa-engineer (G4) review in parallel",
+   "then": "both return recorded verdicts; producer != reviewer throughout"
+  }
+ ],
+ "required_gates": [
+  "G0",
+  "G2",
+  "G4",
+  "G5"
+ ],
+ "producer_agent": "orchestrator",
+ "reviewer_agents": [
+  "qa-engineer",
+  "security-reviewer",
+  "directive-compliance-verifier"
+ ],
+ "status": "claimed",
+ "progress_percent": 10,
+ "risks": [
+  "npm may rewrite unrelated lock metadata mechanically; any such churn is inspected and reverted by targeted edits (never git reset/clean) per D-015-R015",
+  "local npm is 11.4.2 vs CI pin 11.18.0; deterministic verification relies on npm ci + CI's pinned jobs; documented in evidence",
+  "thin-client storage: node_modules created only inside wt-m0t071 for the policy run and removed after evidence capture"
+ ],
+ "blockers": [],
+ "created_at": "2026-08-18T07:30:27.892051+00:00",
+ "updated_at": "2026-08-18T07:31:19.865113+00:00",
+ "directive_refs": [
+  {
+   "directive_id": "D-001",
+   "requirement_ids": "ALL"
+  },
+  {
+   "directive_id": "D-015",
+   "requirement_ids": "ALL"
+  }
+ ],
+ "directive_regime_version": "1.0",
+ "directive_regime_entered_at": "2026-08-18T07:30:27.894056+00:00",
+ "worktree": "C:/Users/MLFLL/Downloads/nyc-zoning/wt-m0t071"
+}
