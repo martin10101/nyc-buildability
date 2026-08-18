@@ -5,9 +5,10 @@
   {
    "kind": "baseline-regeneration",
    "approval_id": "M0-T073-initial-baseline",
+   "for_version": 1,
    "owner": "owner (D-017 source-002-amendment.md item 5: versioned, reviewed baseline for existing legacy debt)",
-   "reason": "Initial adoption of the modularity policy: record the existing legacy-debt register at M0-T073 implementation time. Reviewed as part of the M0-T073 PR (G2/G3/G4/G5).",
-   "review_evidence": "project-control/tasks/M0-T073.json; project-control/directives/D-017-a-to-z-completion-authorization/requirements.json (D-017-R110)",
+   "reason": "Initial adoption of the modularity policy: record the existing legacy-debt register at M0-T073 implementation time, re-measured after the G4-C2 comment-span-aware SLOC correction. Reviewed as part of the M0-T073 PR (G2/G3/G4/G5).",
+   "review_evidence": "project-control/tasks/M0-T073.json; project-control/directives/D-017-a-to-z-completion-authorization/requirements.json (D-017-R110); project-control/reports/M0-T073-G4-qa-review.md (C2)",
    "expires": "2026-08-25"
   }
  ]
