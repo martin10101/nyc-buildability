@@ -1,0 +1,12 @@
+{
+  "task_id": "M0-T063",
+  "gate_id": "G4",
+  "reviewer": "qa-engineer",
+  "role": "independent_review",
+  "result": "PASS",
+  "report_file": "project-control/reports/M0-T063-delta-reverification.md",
+  "reviewed_at": "2026-08-18T14:36:12.778353+00:00",
+  "content_manifest_sha256": "63590fbf4fd512255e2989fac4734448dba195fc3bee1d9d5c2084da031f61e8",
+  "reviewed_sha": "8457b15ddc2ce14230ae09afc7f8266123521bdf",
+  "updated_at": "2026-08-18T14:36:13.673825+00:00"
+}

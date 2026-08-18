@@ -629,10 +629,14 @@ class OperatorCommandTests(unittest.TestCase):
         self.assertEqual(code, 1)
 
     def test_verify_controller_reports_the_live_package(self) -> None:
+        # M0-T072 (D-017-R043): a bare verify-controller verifies NOTHING and
+        # therefore fails closed - the former self-generated `ok: true` was the
+        # defect this repair closes.
         code, payload = self.run_cli("verify-controller")
-        self.assertEqual(code, 0)
-        self.assertTrue(payload["ok"])
-        self.assertIn("model_selection.toml", payload["note"])
+        self.assertEqual(code, 1)
+        self.assertFalse(payload["ok"])
+        self.assertEqual(payload["reason_code"], "missing_manifest")
+        self.assertIn("nothing was verified", payload["detail"])
 
     def test_verify_controller_halts_on_a_tampered_manifest(self) -> None:
         from tools.agent_supervisor import cli

@@ -40,6 +40,12 @@ MANIFEST_FILENAME = "controller_manifest.json"
 #: The runtime model selection is never manifest-covered (S3.1).
 MODEL_SELECTION_FILENAME = "model_selection.toml"
 
+#: The stable logical manifest name for the ACTIVE immutable config, which lives
+#: OUTSIDE the package directory (an operator-chosen protected location). The
+#: manifest records this logical name and the file's digest - never its absolute
+#: private path (M0-T072, D-017-R039/R040).
+CONFIG_LOGICAL_NAME = "config.toml"
+
 #: Glob patterns covered by the manifest, relative to the controller root.
 COVERED_PATTERNS: tuple[str, ...] = (
     "*.py",
@@ -80,6 +86,12 @@ class ManifestVerification:
     unexpected: tuple[str, ...] = ()
     manifest_digest: str = ""
     message: str = ""
+    #: Machine-readable failure class for the config-binding pre-checks
+    #: (M0-T072): "" on success or ordinary content drift; otherwise one of
+    #: manifest_stale | manifest_patterns_mismatch |
+    #: config_duplicated_in_package | manifest_missing_config |
+    #: config_path_missing (see verify_manifest_with_config's ordered contract).
+    reason_code: str = ""
 
     def halt_reason(self) -> str:
         """A single operator-readable reason, or "" when nothing changed."""
@@ -175,8 +187,12 @@ def generate_manifest(
         "excluded": sorted(EXCLUDED_NAMES),
         "files": dict(sorted(entries.items())),
     }
+    # M0-T072 G4-C1: `patterns` is inside the recorded digest. It defines what
+    # the manifest COVERS; leaving it outside let an edited manifest narrow its
+    # own coverage to nothing while staying self-consistent.
     manifest["manifest_digest"] = digest_of(
-        {"files": manifest["files"], "controller_version": controller_version})
+        {"files": manifest["files"], "controller_version": controller_version,
+         "patterns": manifest["patterns"]})
     return manifest
 
 
@@ -247,3 +263,115 @@ def require_verified(
     if not verification.ok:
         raise ManifestError("manifest_changed", verification.halt_reason())
     return verification
+
+
+def _failure(reason_code: str, message: str, manifest: dict[str, Any]) -> ManifestVerification:
+    return ManifestVerification(
+        ok=False,
+        manifest_digest=str(manifest.get("manifest_digest", "")),
+        message=message,
+        reason_code=reason_code,
+    )
+
+
+def manifest_is_stale(
+    manifest: dict[str, Any],
+    *,
+    running_controller_version: str = CONTROLLER_VERSION,
+) -> str:
+    """Deterministic staleness verdict for a recorded manifest.
+
+    A manifest is STALE when (a) it was recorded for a different controller
+    version than the one running, or (b) its recorded `manifest_digest` no
+    longer matches the digest recomputed over its own recorded files and
+    version - an internally inconsistent (edited) manifest. Returns "" when
+    fresh, else a human-readable reason (M0-T072, D-017-R045).
+    """
+    recorded_version = manifest.get("controller_version")
+    if recorded_version != running_controller_version:
+        return (f"manifest was recorded for controller version {recorded_version!r} "
+                f"but {running_controller_version!r} is running")
+    expected = digest_of(
+        {"files": dict(manifest.get("files", {})),
+         "controller_version": recorded_version,
+         "patterns": list(manifest.get("patterns", []))})
+    recorded_digest = manifest.get("manifest_digest")
+    if recorded_digest != expected:
+        # A self-consistency check, not an authenticity control: it catches
+        # accidental or partial edits, while a deliberate edit that recomputes
+        # the digest passes. Authenticity comes from the digests matching the
+        # live tree plus review of any manifest change.
+        return (f"manifest_digest {str(recorded_digest)[:16]}... does not match the digest "
+                f"recomputed over the manifest's own recorded files/version/patterns "
+                f"({expected[:16]}...); the manifest was edited after recording")
+    return ""
+
+
+def verify_manifest_with_config(
+    root: str | os.PathLike[str],
+    manifest: dict[str, Any],
+    config_path: str | os.PathLike[str] | None,
+    *,
+    running_controller_version: str = CONTROLLER_VERSION,
+) -> ManifestVerification:
+    """The PRODUCTION manifest check: package tree AND the external immutable config.
+
+    Fail-closed order (M0-T072, D-017-R042..R045); `reason_code` values:
+    1. `manifest_stale`               - wrong controller version, or the recorded
+                                        digest no longer matches the manifest's own
+                                        recorded files/version/patterns;
+    2. `manifest_patterns_mismatch`   - the manifest does not carry the canonical
+                                        COVERED_PATTERNS, so it could attest to a
+                                        narrowed (even empty) coverage;
+    3. `config_duplicated_in_package` - a config.toml inside the package tree
+                                        would shadow the external binding;
+    4. `manifest_missing_config`      - the manifest does not bind `config.toml`;
+    5. `config_path_missing`          - no external config path was supplied, so
+                                        the recorded binding cannot be verified;
+    6. ordinary content verification with the external config bound under its
+       stable logical name (a missing file reports `missing`, a byte change
+       reports `changed` - both halt).
+
+    `model_selection.toml` stays outside the manifest by design (S3.1): a model
+    change never invalidates the controller.
+    """
+    stale = manifest_is_stale(
+        manifest, running_controller_version=running_controller_version)
+    if stale:
+        return _failure("manifest_stale", f"stale manifest - {stale}", manifest)
+    if tuple(manifest.get("patterns", ())) != tuple(COVERED_PATTERNS):
+        return _failure(
+            "manifest_patterns_mismatch",
+            f"the manifest's coverage patterns {manifest.get('patterns')!r} are not "
+            f"the canonical COVERED_PATTERNS; a production manifest may never narrow "
+            f"its own coverage (G4-C1). Re-record it with `record-manifest`",
+            manifest)
+    package_root = pathlib.Path(root).resolve()
+    duplicates = [p for p in package_root.rglob(CONFIG_LOGICAL_NAME)
+                  if not any(part in EXCLUDED_DIR_PARTS for part in
+                             p.relative_to(package_root).parts)]
+    if duplicates:
+        return _failure(
+            "config_duplicated_in_package",
+            f"a {CONFIG_LOGICAL_NAME!r} exists INSIDE the package tree "
+            f"({duplicates[0]}); it would shadow the external binding. The "
+            f"active immutable config must live outside the package "
+            f"(D-017-R048) - remove the in-package copy",
+            manifest)
+    if CONFIG_LOGICAL_NAME not in manifest.get("files", {}):
+        return _failure(
+            "manifest_missing_config",
+            f"the manifest does not bind the active immutable config: no "
+            f"{CONFIG_LOGICAL_NAME!r} entry. Production dispatch never accepts a "
+            f"manifest that fails to bind its config; re-record it with "
+            f"`record-manifest --config <path>`",
+            manifest)
+    if config_path is None:
+        return _failure(
+            "config_path_missing",
+            f"the manifest binds {CONFIG_LOGICAL_NAME!r} but no --config path was "
+            f"supplied, so the binding cannot be verified. Supply the active "
+            f"immutable config path",
+            manifest)
+    return verify_manifest(
+        root, manifest, extra_files=((CONFIG_LOGICAL_NAME, config_path),))

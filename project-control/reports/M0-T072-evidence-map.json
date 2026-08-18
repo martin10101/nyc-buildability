@@ -1,0 +1,26 @@
+{
+ "schema": "evidence_map/v1",
+ "task_id": "M0-T072",
+ "producer": "orchestrator",
+ "reviewed_sha": "be3a5994bc6eff3046d59b25889278359c6384bb",
+ "note": "Evidence per D-017 requirement bound to M0-T072 (rows R037..R053, source-001.md Stage 1). Reviewers reproduce each claim at the frozen head. Round-1 rework at be3a599 closes G3 FAIL (14 regressions), G4 C1/C2 (patterns bypass + record-manifest source guard), G5 SEC-MAJOR (patterns coverage-downgrade), DCV R052 (false battery claim). reviewed_sha updated to be3a599.",
+ "requirements": {
+  "D-017-R037": "All seven source-level facts confirmed with line citations at 026e7cb in project-control/reports/M0-T072-defect-evidence.md (config outside package; extra_files present but unwired; doctor/verify-controller/start never pass it; runbook generation gap; CMD carets; doctor --live probe rule; --checkout journal addressing).",
+  "D-017-R038": "One bounded prerequisite repair under the next reconciled unused ID (M0-T072; tasks dir ended at M0-T071); treated as one deployment-safety defect (defect-evidence report, packet supervisor_freeze_qualifying_evidence field).",
+  "D-017-R039": "CONFIG_LOGICAL_NAME='config.toml' in manifest.py; record-manifest binds under that stable logical name (test_record_manifest_round_trip asserts files key 'config.toml').",
+  "D-017-R040": "Absolute private path never serialized: test_as1_absolute_config_path_never_leaks_into_the_manifest + test_record_manifest_round_trip (private directory name absent from recorded JSON).",
+  "D-017-R041": "generate_manifest via record-manifest includes the external config (CLI record-manifest; round-trip verified before success).",
+  "D-017-R042": "doctor _check_manifest(manifest, config) runs verify_manifest_with_config; --manifest without --config fails closed: test_doctor_verifies_the_external_config_binding, test_doctor_fails_on_config_drift, test_doctor_with_manifest_but_no_config_fails_closed.",
+  "D-017-R043": "verify-controller --config added; verifies the same external file; without --manifest fails closed: test_verify_controller_passes_with_bound_manifest_and_config, test_verify_controller_detects_config_drift, test_verify_controller_without_manifest_fails_closed.",
+  "D-017-R044": "start verifies the same external file before provider contact (verify_manifest_with_config before recover_boot; provider sentinel never touched): test_as7_no_provider_call_on_config_drift; --manifest now a required dispatch input: test_start_without_manifest_is_a_missing_required_input.",
+  "D-017-R045": "Production dispatch fails closed on all four: manifest omits config.toml (test_as4_start_refuses_manifest_without_config_binding), config path missing (test_as3_no_config_path_fails_closed / missing file test_as3_missing_config_fails), digest differs (test_as2/as5/as7), stale manifest (test_as8_wrong_controller_version_is_stale, test_as8_edited_manifest_is_stale); failed verification exits non-zero.",
+  "D-017-R046": "model_selection.toml stays excluded (EXCLUDED_NAMES unchanged): test_as6_model_selection_change_never_invalidates.",
+  "D-017-R047": "Test-only synthetic-root flows retained (phase1 ManifestTests untouched and passing in the 1845-test battery); production dispatch cannot accept a manifest failing to bind its config (R045 tests).",
+  "D-017-R048": "No duplication: in-package config.toml REFUSED by verify_manifest_with_config and record-manifest (test_in_package_config_duplicate_is_refused).",
+  "D-017-R049": "No symbolic-link or hard-link workaround anywhere in the diff (grep-clean; reviewers verify).",
+  "D-017-R050": "Protected config never altered: no write path touches it; Stage-0 and post-implementation SHA-256 both 6aef12a9...fffde (reviewers re-hash).",
+  "D-017-R051": "All nine regression proofs implemented as AS-1..AS-9 (32 tests passing at be3a599: adds AS-1 start-dispatch positive control, AS-8 through production dispatch, manifest_patterns_mismatch, record-manifest excluded-source-name refusal, uniform verify-controller schema); mapping table in M0-T072-before-after-evidence.md.",
+  "D-017-R052": "Full supervisor+project-control+directive-compliance+new suites at the rework head be3a599: 1845 passed, 2 skipped, 0 failures - re-establishes the M0-T039 freeze baseline (>=1165/0). The round-1 '1813 passed' claim was captured from the WRONG working directory (unmodified ctl17 tree, which also lacks the new test module); corrected here. The 14 pre-existing-test regressions (G3/DCV round 1) are fixed by updating broker/loop/model_chain/start_reentry fixtures to the new fail-closed contract; ContainmentGateTests genuinely reach the containment gate again. Independent G3/G4/G5/DCV re-review at be3a599.",
+  "D-017-R053": "docs/CONTROLLER_UPDATE_RUNBOOK.md regenerated from THIS source (commands exist in this diff: record-manifest, verify-controller --config); AS-9 RunbookHygieneTests enforce no CMD carets, no unresolved executable placeholders, doctor --live as the only probe."
+ }
+}

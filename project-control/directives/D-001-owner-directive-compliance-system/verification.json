@@ -1701,6 +1701,19 @@
   },
   {
    "directive_id": "D-001",
+   "task_id": "M0-T063",
+   "applicable_requirement_ids": [],
+   "reviewed_sha": "8457b15ddc2ce14230ae09afc7f8266123521bdf",
+   "reviewed_manifest_sha256": "63590fbf4fd512255e2989fac4734448dba195fc3bee1d9d5c2084da031f61e8",
+   "producer": "supervised-auto-worker",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "requirements": [],
+   "verified_at": "2026-08-18T14:37:58+00:00",
+   "note": "D-001:ALL process regime; own requirements govern M0-T023, none apply to this unit (empty-but-present, M0-T070 precedent)."
+  },
+  {
+   "directive_id": "D-001",
    "task_id": "M0-T070",
    "applicable_requirement_ids": [],
    "reviewed_sha": "46f746928dda26b1a3527e1cfec901e642115578",
@@ -1722,6 +1735,19 @@
    "schema_version": "directive_verification/v2",
    "verified_at": "2026-08-18T08:26:35+00:00",
    "note": "EMPTY-SET verification (M0-T062 precedent). M0-T071 cites D-001:ALL; the canonical resolver derives ZERO D-001 requirements applicable to this packet (evaluate_task_refs applicable set = 21 D-015 rows only). Confirmed by the independent directive-compliance-verifier run of 2026-08-18 (project-control/reports/M0-T071-DCV-final-verification.md) at the recorded head/identity."
+  },
+  {
+   "directive_id": "D-001",
+   "task_id": "M0-T072",
+   "applicable_requirement_ids": [],
+   "reviewed_sha": "074ffad25e90900a4e6f8c71b9e1b6bf653d7a98",
+   "reviewed_manifest_sha256": "b1315bdc24b8a809636d0c6b0a296fd0091cd48065faa7732dc5cf171c2beb07",
+   "producer": "orchestrator",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "requirements": [],
+   "verified_at": "2026-08-18T13:53:43+00:00",
+   "note": "D-001:ALL process regime; own requirements govern M0-T023, none apply (empty-but-present, M0-T070 precedent)."
   },
   {
    "directive_id": "D-001",
@@ -1762,5 +1788,5 @@
    "note": "Empty applicable set: no D-001 requirement row is applicable to M2-T014 (resolver-derived; refs D-001:ALL). Row exists to satisfy the fail-closed per-task verification check at accept. Content identity 73b36e60 stable since submit (gates G0/G2/G3 recorded at it)."
   }
  ],
- "updated_at": "2026-08-18T13:45:15+00:00"
+ "updated_at": "2026-08-18T14:37:58+00:00"
 }
