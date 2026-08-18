@@ -46,8 +46,8 @@
     "security-reviewer",
     "directive-compliance-verifier"
   ],
-  "status": "claimed",
-  "progress_percent": 10,
+  "status": "self_check",
+  "progress_percent": 75,
   "risks": [
     "ci.yml overlap: additive step only; on a real conflict with open PR work touching ci.yml, stop with an overlap report (D-013-R067 pattern).",
     "CLAUDE.md/AGENTS.md additions must stay concise (base-context budget); details live in docs/CODE_MODULARITY_POLICY.md.",
@@ -55,7 +55,7 @@
   ],
   "blockers": [],
   "created_at": "2026-08-18T11:29:09.633699+00:00",
-  "updated_at": "2026-08-18T12:11:54.440775+00:00",
+  "updated_at": "2026-08-18T12:20:37.274816+00:00",
   "directive_refs": [
     {
       "directive_id": "D-001",
@@ -68,5 +68,21 @@
   ],
   "directive_regime_version": "1.0",
   "directive_regime_entered_at": "2026-08-18T11:29:09.633699+00:00",
-  "worktree": "C:/Users/MLFLL/Downloads/nyc-zoning/wt-m0t073"
+  "worktree": "C:/Users/MLFLL/Downloads/nyc-zoning/wt-m0t073",
+  "progress_log": [
+    {
+      "at": "2026-08-18T12:20:37.049013+00:00",
+      "agent": "orchestrator",
+      "percent": 60,
+      "status": "in_progress",
+      "message": "Implementation committed: checker+baseline+exceptions+proof tests, policy/rule/principles, additive CI job, skills integration"
+    },
+    {
+      "at": "2026-08-18T12:20:37.274816+00:00",
+      "agent": "orchestrator",
+      "percent": 75,
+      "status": "self_check",
+      "message": "Self-checks green: 17/17 proof tests, --check 0 failures over 239 files, context-budget PASS, determinism verified"
+    }
+  ]
 }
