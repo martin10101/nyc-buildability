@@ -270,6 +270,20 @@
     "M0-T074"
    ],
    "manifest": "D-017-a-to-z-completion-authorization/manifest.json"
+  },
+  {
+   "directive_id": "D-018",
+   "slug": "context-vertical-integration-correction",
+   "title": "One bounded corrective vertical-integration task for the context-intelligence system - end-to-end compiler integration, concurrency hardening, path containment, real retention, promotion-proof repair, projection input-manifest staleness, runbook correction, permanent context-pipeline CI",
+   "status": "active",
+   "issued_at": "2026-08-18",
+   "issued_by": "owner",
+   "supersedes": [],
+   "superseded_by": null,
+   "affected_tasks": [
+    "M0-T075"
+   ],
+   "manifest": "D-018-context-vertical-integration-correction/manifest.json"
   }
  ],
  "updated_at": "2026-08-18T09:05:00+00:00"

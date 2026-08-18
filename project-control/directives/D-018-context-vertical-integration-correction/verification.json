@@ -1,0 +1,20 @@
+{
+ "schema": "directive_verification/v2",
+ "directive_id": "D-018",
+ "producer": "orchestrator",
+ "authority_note": "Pending independent verification by directive-compliance-verifier (producer != verifier). Capture only; no requirement verified yet. M0-T075 rows are verified through the task's gates and accept() evidence map; D-018-BOOTSTRAP sentinel rows are verified at directive verification when the run returns.",
+ "task_verifications": [
+  {
+   "task_id": "M0-T075",
+   "directive_id": "D-018",
+   "producer": "orchestrator",
+   "verifier": "",
+   "applicable_requirement_ids": [],
+   "requirements": [],
+   "reviewed_sha": null,
+   "reviewed_manifest_sha256": null,
+   "note": "PENDING stub created at capture. Filled by the independent verifier at the accept cycle."
+  }
+ ],
+ "updated_at": "2026-08-18T21:05:00+00:00"
+}
