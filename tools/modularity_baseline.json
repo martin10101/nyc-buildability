@@ -1,0 +1,36 @@
+{
+ "version": 1,
+ "generated_with_approval_id": "M0-T073-initial-baseline",
+ "thresholds": {
+  "warn": 600,
+  "justify": 750,
+  "hard": 1000
+ },
+ "files": {
+  "packages/contracts/scripts/generate_ts_types.py": 630,
+  "services/api/app/connectors/mappluto_geometry_arcgis.py": 1854,
+  "services/api/app/connectors/pluto_soda.py": 685,
+  "services/api/app/connectors/zoning_features_arcgis.py": 1626,
+  "services/api/app/connectors/ztldb_soda.py": 1593,
+  "services/api/app/documents/correction_history.py": 715,
+  "services/api/app/documents/extraction/survey_pipeline.py": 615,
+  "services/api/app/documents/review_actions.py": 994,
+  "services/api/app/rules/evaluator.py": 624,
+  "services/api/app/scenario/builder.py": 814,
+  "tools/agent_supervisor/broker.py": 640,
+  "tools/agent_supervisor/claude_runner.py": 1258,
+  "tools/agent_supervisor/cli.py": 2685,
+  "tools/agent_supervisor/github_flow.py": 690,
+  "tools/agent_supervisor/loop.py": 1899,
+  "tools/agent_supervisor/model_change_ipc.py": 638,
+  "tools/agent_supervisor/policy.py": 1577,
+  "tools/agent_supervisor/resume_scheduler.py": 946,
+  "tools/agent_supervisor/rotation.py": 746,
+  "tools/code_graph/generate.py": 781,
+  "tools/context_pack.py": 850,
+  "tools/directive_registry.py": 1287,
+  "tools/project_control.py": 1196
+ },
+ "baseline_digest": "885cf1c36ec7fbf1bbfef02aa1220ce8312dfd1a22fbbf0676ac3541dd5f605e",
+ "note": "reviewed legacy-debt register; entries persist while their file remains at or above the warning threshold - regeneration never erases live debt"
+}

@@ -1,0 +1,14 @@
+{
+ "schema": "modularity_exceptions/v1",
+ "note": "Explicit, expiring, path-specific exceptions to docs/CODE_MODULARITY_POLICY.md. Every entry needs owner, reason, review_evidence, expires. File exceptions need an exact path (no globs, no directories) and max_lines. Baseline regeneration needs a kind=baseline-regeneration entry with approval_id; expired regeneration approvals go inert for --check but are refused by --regenerate-baseline. Expired or malformed FILE exceptions fail the check closed.",
+ "exceptions": [
+  {
+   "kind": "baseline-regeneration",
+   "approval_id": "M0-T073-initial-baseline",
+   "owner": "owner (D-017 source-002-amendment.md item 5: versioned, reviewed baseline for existing legacy debt)",
+   "reason": "Initial adoption of the modularity policy: record the existing legacy-debt register at M0-T073 implementation time. Reviewed as part of the M0-T073 PR (G2/G3/G4/G5).",
+   "review_evidence": "project-control/tasks/M0-T073.json; project-control/directives/D-017-a-to-z-completion-authorization/requirements.json (D-017-R110)",
+   "expires": "2026-08-25"
+  }
+ ]
+}
