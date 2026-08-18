@@ -1,0 +1,30 @@
+{
+ "schema": "evidence_map/v1",
+ "task_id": "M0-T071",
+ "producer": "orchestrator",
+ "reviewed_sha": "e7c7d37745e35c56abb39f854bc14c44d6e87723",
+ "note": "Producer evidence pointers for every requirement applicable to M0-T071 (21 D-015 rows). Producer claims nothing verified: independent verification is owed by qa-engineer (G4), security-reviewer (G5), and directive-compliance-verifier.",
+ "requirements": {
+  "D-015-R001": "owner decision honored end-to-end: exact 3.3.18, normal policy, NO waiver (age gate PASS at 917698s in M0-T071-dependency-evidence.md; no waiver record exists)",
+  "D-015-R002": "separate task M0-T071 on task/M0-T071-nanoid-ghsa-2v37 from origin/main; diff contains no M0-T070/PR-222 file; wt-m0t070 untouched",
+  "D-015-R010": "apps/web/package-lock.json node_modules/nanoid 3.3.17 -> exactly 3.3.18 (git show e7c7d377: 3-line entry diff)",
+  "D-015-R011": "minimum data: 3 lock lines (version/resolved/integrity, registry-verified) + the required M0-T019 exact-pin override line (npm ci fail-closed proof in evidence report)",
+  "D-015-R012": "package.json dependencies/devDependencies contain no nanoid (only the overrides pin, the policy mechanism)",
+  "D-015-R013": "lock diff touches only the nanoid entry; every other package version byte-identical",
+  "D-015-R014": "npm audit fix never run (implementation was a surgical edit; command absent from session evidence)",
+  "D-015-R015": "local-npm libc churn (79 lines) fully reverted via pristine-bytes file write + surgical re-edit; no git reset/clean invoked (evidence report, 'mechanical churn' section)",
+  "D-015-R016": "full policy run recorded: npm ci 560 pkgs integrity-verified; audit 0; JSON total 0; scripts/dependency_age_gate.mjs PASS; npm CLI advisory 11.18.0 PASS; depage unit tests 40/40; eslint/tsc clean; vitest 287; next build success; E2E via pinned CI web-e2e job (3.12 harness not hostable in 3.11 sandbox)",
+  "D-015-R017": "project-control/reports/M0-T071-dependency-evidence.md (before/after entries, age 917698s > 604800s, zero advisories, no waiver, no unrelated changes)",
+  "D-015-R018": "single producer (orchestrator); qa-engineer (G4) + security-reviewer (G5) dispatched read-only in parallel at frozen commit e7c7d377",
+  "D-015-R019": "commit e7c7d377 pushed; PR to main opened; all GitHub checks awaited and reported in the return",
+  "D-015-R020": "PR #222 branch untouched (no push to task/M0-T070-supervisor-authority-repair after 09e2316)",
+  "D-015-R021": "M0-T070/D-014 files absent from this branch's diff; their branch not modified",
+  "D-015-R022": "tools/agent_supervisor/** absent from diff; controller paths untouched",
+  "D-015-R023": "no suppression/waiver/allowlist anywhere: the advisory is removed by upgrading, audit runs at --audit-level=low with dev deps included",
+  "D-015-R024": "no broad upgrade: single-package bump, all other versions unchanged (lock diff proof)",
+  "D-015-R025": "nothing merged: PR left OPEN; no gh pr merge invoked",
+  "D-015-R026": "control/context-intelligence-init not updated (no push to it)",
+  "D-015-R027": "A1 not restarted: wt-m0t063 untouched, no supervisor start/resume invoked",
+  "D-015-R028": "NANOID_REPAIR_PR_READY return with all eleven items; committed copy project-control/reports/M0-T071-return-report.md"
+ }
+}

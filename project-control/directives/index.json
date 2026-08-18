@@ -221,7 +221,33 @@
     "M0-T070"
    ],
    "manifest": "D-014-supervisor-command-authority-repair/manifest.json"
+  },
+  {
+   "directive_id": "D-015",
+   "slug": "nanoid-security-repair",
+   "title": "Bounded dependency-security repair: nanoid 3.3.17 -> 3.3.18 (GHSA-2v37-7h3g-55p8, closes B-019) under the normal policy, no age waiver",
+   "status": "active",
+   "issued_at": "2026-08-18",
+   "issued_by": "owner",
+   "supersedes": [],
+   "superseded_by": null,
+   "affected_tasks": [
+    "M0-T071"
+   ],
+   "manifest": "D-015-nanoid-security-repair/manifest.json"
+  },
+  {
+   "directive_id": "D-016",
+   "slug": "overnight-integration-runway",
+   "title": "Overnight owner authorization - complete context-intelligence integration runway (Stages 0-7)",
+   "status": "active",
+   "issued_at": "2026-08-18",
+   "issued_by": "owner",
+   "supersedes": [],
+   "superseded_by": null,
+   "affected_tasks": [],
+   "manifest": "D-016-overnight-integration-runway/manifest.json"
   }
  ],
- "updated_at": "2026-08-18T06:58:44+00:00"
+ "updated_at": "2026-08-18T09:05:00+00:00"
 }

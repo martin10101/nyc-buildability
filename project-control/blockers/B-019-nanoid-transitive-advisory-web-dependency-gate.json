@@ -1,7 +1,22 @@
 {
  "blocker_id": "B-019",
  "title": "nanoid 3.3.17 high-severity advisory (GHSA-2v37-7h3g-55p8) fails the web-dependency-security gate on every branch; external to M0-T070; needs its own authorized dependency-repair task",
- "status": "open",
+ "status": "resolved",
+ "resolved_at": "2026-08-18T09:40:00+00:00",
+ "resolved_by": "orchestrator (D-016 Stage 2; owner-authorized overnight integration runway)",
+ "resolution": {
+  "summary": "Resolved exactly along the recorded resolution_path: the owner authorized the separate dependency-repair task M0-T071 under D-015; PR #223 (branched from origin/main, not stacked on the supervisor/D-013 stacks) bumped the transitive pin nanoid 3.3.17 -> 3.3.18 and merged to main first; PR #222 then inherited the repaired lock by merging its updated base (which now contains main f21eb1f). No waiver of any kind was used.",
+  "reproduced_facts": [
+   "PR #223 state MERGED, merge commit f21eb1fbca3e16d1602a14775c99bb3cac75eb1e, merged 2026-08-18T08:46:33Z (gh pr view 223)",
+   "origin/main apps/web/package-lock.json pins node_modules/nanoid at 3.3.18, resolved https://registry.npmjs.org/nanoid/-/nanoid-3.3.18.tgz (git show origin/main:apps/web/package-lock.json)",
+   "npm audit zero vulnerabilities + registry integrity + committed-lock age gate: web-dependency-security (audit + committed-lock age gate + npm CLI advisory) COMPLETED SUCCESS on PR #223 (authoritative CI job; thin-client policy forbids local npm)",
+   "release-age gate passed WITHOUT waiver: D-015-R001 independent verification - nanoid@3.3.18 uploaded 2026-08-07T16:41:05.696Z, age 919738s > 604800s, no waiver artifact in diff 5c71fe0..a997f19 (project-control/directives/D-015-nanoid-security-repair/verification.json; reports/M0-T071-DCV-final-verification.md)",
+   "package integrity matches the accepted lock: this branch's post-merge apps/web/package-lock.json is blob-identical to origin/main (both 8a1e629bb445045ec9d4c034281957a3e6c6555d), integrity sha512-DTg4MJbGMWkfi6VZFdNt2/caMbQy4Ou+O... unchanged",
+   "PR #222 does not introduce or modify the dependency: git diff vs base for apps/web/ is empty and the PR file list contains no apps/ paths",
+   "M0-T071 accepted (100%) on main; D-015 registered active in the directive index; accepted ledger count 86 after base sync"
+  ],
+  "verification_pending": "The web-dependency-security job re-runs on this PR's own head after this base-reconciliation push; Stage 2 does not proceed until every required PR #222 workflow is green."
+ },
  "created_at": "2026-08-18",
  "created_by": "orchestrator",
  "affects": [
