@@ -34,7 +34,10 @@
   "project-control/reports/M0-T063-producer-report.md",
   "project-control/reports/M0-T063-baseline-evidence.md",
   "project-control/reports/M0-T063-evidence-map.json",
-  "project-control/reports/M0-T063-baseline-evidence.json"
+  "project-control/reports/M0-T063-baseline-evidence.json",
+  "project-control/reports/M0-T063-review-records.md",
+  "project-control/reports/M0-T063-rework-evidence.md",
+  "project-control/reports/M0-T063-delta-reverification.md"
  ],
  "forbidden_paths": [
   "tools/agent_supervisor/",
@@ -98,8 +101,8 @@
   "security-reviewer",
   "directive-compliance-verifier"
  ],
- "status": "self_check",
- "progress_percent": 75,
+ "status": "awaiting_gate",
+ "progress_percent": 85,
  "risks": [
   "OVERLAP DISCLOSURE: open PR #64 (task/M0-T019-frontend-security) also touches .github/workflows/ci.yml. A1's change is one ADDITIVE step in a different region; if a real conflict with PR #64 materializes, the worker STOPS with an overlap report and proposed sequencing instead of editing (D-013 s13 hold).",
   "Baseline must be captured from the UNMODIFIED generator before any new caching path is wired (D-013 s10/s11); the harness therefore lands and runs before any generator-facing integration in A2.",
@@ -107,7 +110,7 @@
  ],
  "blockers": [],
  "created_at": "2026-08-18T04:24:27.993208+00:00",
- "updated_at": "2026-08-18T14:09:47.271205+00:00",
+ "updated_at": "2026-08-18T14:11:55.151719+00:00",
  "directive_refs": [
   {
    "directive_id": "D-001",
