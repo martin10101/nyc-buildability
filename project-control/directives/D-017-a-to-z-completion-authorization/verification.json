@@ -1,0 +1,119 @@
+{
+ "schema": "directive_verification/v2",
+ "directive_id": "D-017",
+ "producer": "orchestrator",
+ "authority_note": "Pending independent verification by directive-compliance-verifier (producer != verifier). Capture only; no requirement verified yet. Sentinel-bound rows - including every Unit A1..F stage row - are verified at directive verification as the authorized stages complete; the only task-bound rows are M0-T072, M0-T073, and M0-T074, verified per-task at the reviewed content identity before acceptance (D-014/D-016 precedent). M0-T063..M0-T069 rows for c14 coverage are stubs over informational maps_to pointers; those units' accept() sets come from D-001+D-013.",
+ "task_verifications": [
+  {
+   "task_id": "M0-T063",
+   "directive_id": "D-017",
+   "producer": "orchestrator",
+   "verifier": "",
+   "applicable_requirement_ids": [],
+   "requirements": [],
+   "reviewed_sha": null,
+   "reviewed_manifest_sha256": null,
+   "note": "PENDING stub created at capture (c14 coverage). The applicable set is derived by the resolver at verification time and every row is filled by the independent verifier at the task's accept cycle; nothing is verified yet."
+  },
+  {
+   "task_id": "M0-T064",
+   "directive_id": "D-017",
+   "producer": "orchestrator",
+   "verifier": "",
+   "applicable_requirement_ids": [],
+   "requirements": [],
+   "reviewed_sha": null,
+   "reviewed_manifest_sha256": null,
+   "note": "PENDING stub created at capture (c14 coverage). The applicable set is derived by the resolver at verification time and every row is filled by the independent verifier at the task's accept cycle; nothing is verified yet."
+  },
+  {
+   "task_id": "M0-T065",
+   "directive_id": "D-017",
+   "producer": "orchestrator",
+   "verifier": "",
+   "applicable_requirement_ids": [],
+   "requirements": [],
+   "reviewed_sha": null,
+   "reviewed_manifest_sha256": null,
+   "note": "PENDING stub created at capture (c14 coverage). The applicable set is derived by the resolver at verification time and every row is filled by the independent verifier at the task's accept cycle; nothing is verified yet."
+  },
+  {
+   "task_id": "M0-T066",
+   "directive_id": "D-017",
+   "producer": "orchestrator",
+   "verifier": "",
+   "applicable_requirement_ids": [],
+   "requirements": [],
+   "reviewed_sha": null,
+   "reviewed_manifest_sha256": null,
+   "note": "PENDING stub created at capture (c14 coverage). The applicable set is derived by the resolver at verification time and every row is filled by the independent verifier at the task's accept cycle; nothing is verified yet."
+  },
+  {
+   "task_id": "M0-T067",
+   "directive_id": "D-017",
+   "producer": "orchestrator",
+   "verifier": "",
+   "applicable_requirement_ids": [],
+   "requirements": [],
+   "reviewed_sha": null,
+   "reviewed_manifest_sha256": null,
+   "note": "PENDING stub created at capture (c14 coverage). The applicable set is derived by the resolver at verification time and every row is filled by the independent verifier at the task's accept cycle; nothing is verified yet."
+  },
+  {
+   "task_id": "M0-T068",
+   "directive_id": "D-017",
+   "producer": "orchestrator",
+   "verifier": "",
+   "applicable_requirement_ids": [],
+   "requirements": [],
+   "reviewed_sha": null,
+   "reviewed_manifest_sha256": null,
+   "note": "PENDING stub created at capture (c14 coverage). The applicable set is derived by the resolver at verification time and every row is filled by the independent verifier at the task's accept cycle; nothing is verified yet."
+  },
+  {
+   "task_id": "M0-T069",
+   "directive_id": "D-017",
+   "producer": "orchestrator",
+   "verifier": "",
+   "applicable_requirement_ids": [],
+   "requirements": [],
+   "reviewed_sha": null,
+   "reviewed_manifest_sha256": null,
+   "note": "PENDING stub created at capture (c14 coverage). The applicable set is derived by the resolver at verification time and every row is filled by the independent verifier at the task's accept cycle; nothing is verified yet."
+  },
+  {
+   "task_id": "M0-T072",
+   "directive_id": "D-017",
+   "producer": "orchestrator",
+   "verifier": "",
+   "applicable_requirement_ids": [],
+   "requirements": [],
+   "reviewed_sha": null,
+   "reviewed_manifest_sha256": null,
+   "note": "PENDING stub created at capture (c14 coverage). The applicable set is derived by the resolver at verification time and every row is filled by the independent verifier at the task's accept cycle; nothing is verified yet."
+  },
+  {
+   "task_id": "M0-T073",
+   "directive_id": "D-017",
+   "producer": "orchestrator",
+   "verifier": "",
+   "applicable_requirement_ids": [],
+   "requirements": [],
+   "reviewed_sha": null,
+   "reviewed_manifest_sha256": null,
+   "note": "PENDING stub created at capture (c14 coverage). The applicable set is derived by the resolver at verification time and every row is filled by the independent verifier at the task's accept cycle; nothing is verified yet."
+  },
+  {
+   "task_id": "M0-T074",
+   "directive_id": "D-017",
+   "producer": "orchestrator",
+   "verifier": "",
+   "applicable_requirement_ids": [],
+   "requirements": [],
+   "reviewed_sha": null,
+   "reviewed_manifest_sha256": null,
+   "note": "PENDING stub created at capture (c14 coverage). The applicable set is derived by the resolver at verification time and every row is filled by the independent verifier at the task's accept cycle; nothing is verified yet."
+  }
+ ],
+ "updated_at": "2026-08-18T11:43:35+00:00"
+}
