@@ -1722,7 +1722,19 @@
    "schema_version": "directive_verification/v2",
    "verified_at": "2026-08-18T08:26:35+00:00",
    "note": "EMPTY-SET verification (M0-T062 precedent). M0-T071 cites D-001:ALL; the canonical resolver derives ZERO D-001 requirements applicable to this packet (evaluate_task_refs applicable set = 21 D-015 rows only). Confirmed by the independent directive-compliance-verifier run of 2026-08-18 (project-control/reports/M0-T071-DCV-final-verification.md) at the recorded head/identity."
+  },
+  {
+   "directive_id": "D-001",
+   "task_id": "M0-T070",
+   "applicable_requirement_ids": [],
+   "reviewed_sha": "46f746928dda26b1a3527e1cfec901e642115578",
+   "reviewed_manifest_sha256": "296b8fa6b7ff5e44cee9eacf0e2bb1b7bbfdd3fa170c0e77cae71140372f965c",
+   "producer": "orchestrator",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-08-18T10:18:53+00:00",
+   "note": "EMPTY-SET verification (M0-T062/M0-T071 precedent). M0-T070 cites D-001:ALL; the canonical resolver derives ZERO D-001 requirements applicable to this packet (evaluate_task_refs applicable set = the 30 D-014 rows only). Confirmed alongside the fresh independent directive-compliance-verifier run of 2026-08-18 at head 46f7469 (project-control/reports/M0-T070-DCV-final-verification.md)."
   }
  ],
- "updated_at": "2026-08-18T08:26:35+00:00"
+ "updated_at": "2026-08-18T10:18:53+00:00"
 }

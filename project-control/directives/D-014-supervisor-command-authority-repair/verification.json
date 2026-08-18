@@ -46,337 +46,337 @@
      "id": "D-014-R009",
      "state": "PASS",
      "evidence": [
-      "commit 6aae585 adds exactly one task packet; branch task/M0-T070-supervisor-authority-repair; worktree wt-m0t070",
-      "project-control/reports/M0-T070-DCV-directive-verification.md"
+      "project-control/tasks/M0-T070.json is the single corrective task; branch task/M0-T070-supervisor-authority-repair; worktree wt-m0t070 (git worktree list)",
+      "project-control/reports/M0-T070-DCV-final-verification.md"
      ],
-     "verified_at": "2026-08-18T06:44:25+00:00",
+     "verified_at": "2026-08-18T10:17:41+00:00",
      "verified_by": "directive-compliance-verifier",
-     "reviewed_sha": "6aae5857fdcdf55f5197e542013bdc81f8035d14"
+     "reviewed_sha": "46f746928dda26b1a3527e1cfec901e642115578"
     },
     {
      "id": "D-014-R010",
      "state": "PASS",
      "evidence": [
-      "M0-T070-incident-evidence.md (audit seq 4-6 + read-only journal facts) + bounded packet committed",
-      "project-control/reports/M0-T070-DCV-directive-verification.md"
+      "M0-T070-incident-evidence.md + bounded packet M0-T070.json committed (in PR#222 file list)",
+      "project-control/reports/M0-T070-DCV-final-verification.md"
      ],
-     "verified_at": "2026-08-18T06:44:25+00:00",
+     "verified_at": "2026-08-18T10:17:41+00:00",
      "verified_by": "directive-compliance-verifier",
-     "reviewed_sha": "6aae5857fdcdf55f5197e542013bdc81f8035d14"
+     "reviewed_sha": "46f746928dda26b1a3527e1cfec901e642115578"
     },
     {
      "id": "D-014-R012",
      "state": "PASS",
      "evidence": [
-      "full diff de2f224..6aae585 within allowed_paths + control plane; wt-m0t063 status --porcelain empty",
-      "project-control/reports/M0-T070-DCV-directive-verification.md"
+      "PR#222 own files all within wt-m0t070 allowed_paths + control plane; no apps/; diff confined to task scope",
+      "project-control/reports/M0-T070-DCV-final-verification.md"
      ],
-     "verified_at": "2026-08-18T06:44:25+00:00",
+     "verified_at": "2026-08-18T10:17:41+00:00",
      "verified_by": "directive-compliance-verifier",
-     "reviewed_sha": "6aae5857fdcdf55f5197e542013bdc81f8035d14"
+     "reviewed_sha": "46f746928dda26b1a3527e1cfec901e642115578"
     },
     {
      "id": "D-014-R013",
      "state": "PASS",
      "evidence": [
-      "suites reproduced by verifier: 29/29, 1557/0, control-plane suites exit 0; G3/G5 independent gates PASS",
-      "project-control/reports/M0-T070-DCV-directive-verification.md"
+      "gates G0/G2/G3/G5 recorded (in diff); suites reproduced: cmd-auth 29/29, dc 120, pc 23 groups, reminder 12",
+      "project-control/reports/M0-T070-DCV-final-verification.md"
      ],
-     "verified_at": "2026-08-18T06:44:25+00:00",
+     "verified_at": "2026-08-18T10:17:41+00:00",
      "verified_by": "directive-compliance-verifier",
-     "reviewed_sha": "6aae5857fdcdf55f5197e542013bdc81f8035d14"
+     "reviewed_sha": "46f746928dda26b1a3527e1cfec901e642115578"
     },
     {
      "id": "D-014-R014",
-     "state": "pending",
+     "state": "PASS",
      "evidence": [
-      "PENDING-EXTERNAL at reviewed head: commit exists locally; push + PR are later acts (completed post-verification; see return report)",
-      "project-control/reports/M0-T070-DCV-directive-verification.md"
+      "PR#222 OPEN head 46f7469, branch pushed; first-parent chain 6aae585->bcc0962->04cae38->09e2316->46f7469",
+      "project-control/reports/M0-T070-DCV-final-verification.md"
      ],
-     "verified_at": "2026-08-18T06:44:25+00:00",
+     "verified_at": "2026-08-18T10:17:41+00:00",
      "verified_by": "directive-compliance-verifier",
-     "reviewed_sha": "6aae5857fdcdf55f5197e542013bdc81f8035d14"
+     "reviewed_sha": "46f746928dda26b1a3527e1cfec901e642115578"
     },
     {
      "id": "D-014-R015",
-     "state": "pending",
+     "state": "PASS",
      "evidence": [
-      "PENDING-EXTERNAL at reviewed head: nothing merged (origin/main 5c71fe0); stop-before-merge honored as ongoing conduct",
-      "project-control/reports/M0-T070-DCV-directive-verification.md"
+      "PR#222 mergeCommit null / mergedAt null (OPEN); M0-T070 status awaiting_gate not accepted; controller SHADOW-ONLY per return-report; no runtime activation",
+      "project-control/reports/M0-T070-DCV-final-verification.md"
      ],
-     "verified_at": "2026-08-18T06:44:25+00:00",
+     "verified_at": "2026-08-18T10:17:41+00:00",
      "verified_by": "directive-compliance-verifier",
-     "reviewed_sha": "6aae5857fdcdf55f5197e542013bdc81f8035d14"
+     "reviewed_sha": "46f746928dda26b1a3527e1cfec901e642115578"
     },
     {
      "id": "D-014-R016",
      "state": "PASS",
      "evidence": [
-      "no tools/repo_*.py in diff; wt-m0t063 clean at de2f224; nothing merged; no protected-config write; policy strengthened",
-      "project-control/reports/M0-T070-DCV-directive-verification.md"
+      "wt-m0t063 clean de2f224 (no restart); no A1 impl files or protected config in diff; policy strengthened; PR#222 unmerged",
+      "project-control/reports/M0-T070-DCV-final-verification.md"
      ],
-     "verified_at": "2026-08-18T06:44:25+00:00",
+     "verified_at": "2026-08-18T10:17:41+00:00",
      "verified_by": "directive-compliance-verifier",
-     "reviewed_sha": "6aae5857fdcdf55f5197e542013bdc81f8035d14"
+     "reviewed_sha": "46f746928dda26b1a3527e1cfec901e642115578"
     },
     {
      "id": "D-014-R017",
      "state": "PASS",
      "evidence": [
-      "schemas/task_packet_commands.schema.json + policy.validate_documented_test_commands + SchemaValidatorLockstepTests (4 pass)",
-      "project-control/reports/M0-T070-DCV-directive-verification.md"
+      "schemas/task_packet_commands.schema.json closed profile (maxItems16, restrictive pattern) + policy.validate_documented_test_commands; SchemaValidatorLockstepTests 4 pass",
+      "project-control/reports/M0-T070-DCV-final-verification.md"
      ],
-     "verified_at": "2026-08-18T06:44:25+00:00",
+     "verified_at": "2026-08-18T10:17:41+00:00",
      "verified_by": "directive-compliance-verifier",
-     "reviewed_sha": "6aae5857fdcdf55f5197e542013bdc81f8035d14"
+     "reviewed_sha": "46f746928dda26b1a3527e1cfec901e642115578"
     },
     {
      "id": "D-014-R018",
      "state": "PASS",
      "evidence": [
-      "cli.production_task_authority used by _run_loop (cli.py:2544); ProductionWiringTests pass",
-      "project-control/reports/M0-T070-DCV-directive-verification.md"
+      "cli.production_task_authority (cli.py:2513) loads validator, used by _run_loop (cli.py:2544); ProductionWiringTests pass",
+      "project-control/reports/M0-T070-DCV-final-verification.md"
      ],
-     "verified_at": "2026-08-18T06:44:25+00:00",
+     "verified_at": "2026-08-18T10:17:41+00:00",
      "verified_by": "directive-compliance-verifier",
-     "reviewed_sha": "6aae5857fdcdf55f5197e542013bdc81f8035d14"
+     "reviewed_sha": "46f746928dda26b1a3527e1cfec901e642115578"
     },
     {
      "id": "D-014-R019",
      "state": "PASS",
      "evidence": [
-      "PolicyError on every malformation; ValidatorFailClosedTests (8 pass)",
-      "project-control/reports/M0-T070-DCV-directive-verification.md"
+      "validate_documented_test_commands (policy.py:881) raises PolicyError on empty/wrong-type/bounds/shell-meta/multi-segment; ValidatorFailClosedTests 8 pass",
+      "project-control/reports/M0-T070-DCV-final-verification.md"
      ],
-     "verified_at": "2026-08-18T06:44:25+00:00",
+     "verified_at": "2026-08-18T10:17:41+00:00",
      "verified_by": "directive-compliance-verifier",
-     "reviewed_sha": "6aae5857fdcdf55f5197e542013bdc81f8035d14"
+     "reviewed_sha": "46f746928dda26b1a3527e1cfec901e642115578"
     },
     {
      "id": "D-014-R020",
      "state": "PASS",
      "evidence": [
-      "M0T063FixtureTests.test_every_intended_command_is_auto_documented_test passes (S4.1 tier, documented_test_command)",
-      "project-control/reports/M0-T070-DCV-directive-verification.md"
+      "M0T063FixtureTests.test_every_intended_command_is_auto_documented_test passes",
+      "project-control/reports/M0-T070-DCV-final-verification.md"
      ],
-     "verified_at": "2026-08-18T06:44:25+00:00",
+     "verified_at": "2026-08-18T10:17:41+00:00",
      "verified_by": "directive-compliance-verifier",
-     "reviewed_sha": "6aae5857fdcdf55f5197e542013bdc81f8035d14"
+     "reviewed_sha": "46f746928dda26b1a3527e1cfec901e642115578"
     },
     {
      "id": "D-014-R021",
      "state": "PASS",
      "evidence": [
-      "13 adversarial variants ASK/HARD_DENY + outside-authority test pass",
-      "project-control/reports/M0-T070-DCV-directive-verification.md"
+      "M0T063FixtureTests: altered/injected variants never AUTO + test_a_command_outside_the_task_authority_is_not_auto pass",
+      "project-control/reports/M0-T070-DCV-final-verification.md"
      ],
-     "verified_at": "2026-08-18T06:44:25+00:00",
+     "verified_at": "2026-08-18T10:17:41+00:00",
      "verified_by": "directive-compliance-verifier",
-     "reviewed_sha": "6aae5857fdcdf55f5197e542013bdc81f8035d14"
+     "reviewed_sha": "46f746928dda26b1a3527e1cfec901e642115578"
     },
     {
      "id": "D-014-R022",
      "state": "PASS",
      "evidence": [
-      "NoBroadGrantTests pass; no allowlist/bypass/always-allow in diff; cap 16; closed profile",
-      "project-control/reports/M0-T070-DCV-directive-verification.md"
+      "MAX_DOCUMENTED_TEST_COMMANDS=16 cap; no allowlist/bypass in diff; NoBroadGrantTests 3 pass (entry cap + no-other-authority + no-wildcard-program)",
+      "project-control/reports/M0-T070-DCV-final-verification.md"
      ],
-     "verified_at": "2026-08-18T06:44:25+00:00",
+     "verified_at": "2026-08-18T10:17:41+00:00",
      "verified_by": "directive-compliance-verifier",
-     "reviewed_sha": "6aae5857fdcdf55f5197e542013bdc81f8035d14"
+     "reviewed_sha": "46f746928dda26b1a3527e1cfec901e642115578"
     },
     {
      "id": "D-014-R023",
      "state": "PASS",
      "evidence": [
-      "AST pin: _run_loop calls production_task_authority, not from_packet/TaskAuthority; validator-in-path AST test passes",
-      "project-control/reports/M0-T070-DCV-directive-verification.md"
+      "ProductionWiringTests.test_run_loop_builds_authority_only_through_the_production_path (AST pin) + loads-through-validator pass",
+      "project-control/reports/M0-T070-DCV-final-verification.md"
      ],
-     "verified_at": "2026-08-18T06:44:25+00:00",
+     "verified_at": "2026-08-18T10:17:41+00:00",
      "verified_by": "directive-compliance-verifier",
-     "reviewed_sha": "6aae5857fdcdf55f5197e542013bdc81f8035d14"
+     "reviewed_sha": "46f746928dda26b1a3527e1cfec901e642115578"
     },
     {
      "id": "D-014-R024",
      "state": "PASS",
      "evidence": [
-      "revoke_all -> resolve_ask (UPDATE never DELETE); cmd_status read-time reconcile; history-preservation test passes",
-      "project-control/reports/M0-T070-DCV-directive-verification.md"
+      "broker.revoke_all->journal.resolve_ask UPDATE queued_asks never DELETE (durable_state.py:619-638); cmd_status read-time reconcile read-only (cli.py:1346-1370)",
+      "project-control/reports/M0-T070-DCV-final-verification.md"
      ],
-     "verified_at": "2026-08-18T06:44:25+00:00",
+     "verified_at": "2026-08-18T10:17:41+00:00",
      "verified_by": "directive-compliance-verifier",
-     "reviewed_sha": "6aae5857fdcdf55f5197e542013bdc81f8035d14"
+     "reviewed_sha": "46f746928dda26b1a3527e1cfec901e642115578"
     },
     {
      "id": "D-014-R025",
      "state": "PASS",
      "evidence": [
-      "RevokeStatusLifecycleTests: pending open -> revoke -> pending-approvals 0 -> status truthful (incl. pre-fix journal read-only) with audit/journal integrity",
-      "project-control/reports/M0-T070-DCV-directive-verification.md"
+      "RevokeStatusLifecycleTests 5 pass: pending open->revoke->pending-approvals 0->status truthful->revoked history preserved + audit/journal integrity",
+      "project-control/reports/M0-T070-DCV-final-verification.md"
      ],
-     "verified_at": "2026-08-18T06:44:25+00:00",
+     "verified_at": "2026-08-18T10:17:41+00:00",
      "verified_by": "directive-compliance-verifier",
-     "reviewed_sha": "6aae5857fdcdf55f5197e542013bdc81f8035d14"
+     "reviewed_sha": "46f746928dda26b1a3527e1cfec901e642115578"
     },
     {
      "id": "D-014-R026",
      "state": "PASS",
      "evidence": [
-      "fixtures/m0_t063_documented_test_command.json (4 intended + 13 adversarial) + fixture tests pass",
-      "project-control/reports/M0-T070-DCV-directive-verification.md"
+      "fixtures/m0_t063_documented_test_command.json (4 intended + 13 adversarial); M0T063FixtureTests pass",
+      "project-control/reports/M0-T070-DCV-final-verification.md"
      ],
-     "verified_at": "2026-08-18T06:44:25+00:00",
+     "verified_at": "2026-08-18T10:17:41+00:00",
      "verified_by": "directive-compliance-verifier",
-     "reviewed_sha": "6aae5857fdcdf55f5197e542013bdc81f8035d14"
+     "reviewed_sha": "46f746928dda26b1a3527e1cfec901e642115578"
     },
     {
      "id": "D-014-R027",
      "state": "PASS",
      "evidence": [
-      "verifier-reproduced: supervisor 1557/0; project-control + directive suites exit 0; registry --check VALID",
-      "project-control/reports/M0-T070-DCV-directive-verification.md"
+      "CI supervisor-bridge SUCCESS (pytest tools/test_agent_supervisor_*.py) on 46f7469; local cmd-auth 29/29; pc 23 groups + dc 120 + reminder 12 reproduced",
+      "project-control/reports/M0-T070-DCV-final-verification.md"
      ],
-     "verified_at": "2026-08-18T06:44:25+00:00",
+     "verified_at": "2026-08-18T10:17:41+00:00",
      "verified_by": "directive-compliance-verifier",
-     "reviewed_sha": "6aae5857fdcdf55f5197e542013bdc81f8035d14"
+     "reviewed_sha": "46f746928dda26b1a3527e1cfec901e642115578"
     },
     {
      "id": "D-014-R028",
      "state": "PASS",
      "evidence": [
-      "M0-T070-before-after-evidence.md + executable BEFORE reproduction test; no A1 re-run",
-      "project-control/reports/M0-T070-DCV-directive-verification.md"
+      "M0-T070-before-after-evidence.md + M0T063FixtureTests.test_the_pre_fix_construction_reproduces_the_a1_failure; no A1 re-run",
+      "project-control/reports/M0-T070-DCV-final-verification.md"
      ],
-     "verified_at": "2026-08-18T06:44:25+00:00",
+     "verified_at": "2026-08-18T10:17:41+00:00",
      "verified_by": "directive-compliance-verifier",
-     "reviewed_sha": "6aae5857fdcdf55f5197e542013bdc81f8035d14"
+     "reviewed_sha": "46f746928dda26b1a3527e1cfec901e642115578"
     },
     {
      "id": "D-014-R029",
      "state": "PASS",
      "evidence": [
-      "config.toml appears only in verbatim directive text; no code writes it",
-      "project-control/reports/M0-T070-DCV-directive-verification.md"
+      "config.toml appears only in verbatim directive text; absent from diff de2f224..46f7469",
+      "project-control/reports/M0-T070-DCV-final-verification.md"
      ],
-     "verified_at": "2026-08-18T06:44:25+00:00",
+     "verified_at": "2026-08-18T10:17:41+00:00",
      "verified_by": "directive-compliance-verifier",
-     "reviewed_sha": "6aae5857fdcdf55f5197e542013bdc81f8035d14"
+     "reviewed_sha": "46f746928dda26b1a3527e1cfec901e642115578"
     },
     {
      "id": "D-014-R030",
      "state": "PASS",
      "evidence": [
-      "model_selection.toml appears only in verbatim directive text; no code writes it",
-      "project-control/reports/M0-T070-DCV-directive-verification.md"
+      "model_selection.toml absent from diff de2f224..46f7469; only in directive text",
+      "project-control/reports/M0-T070-DCV-final-verification.md"
      ],
-     "verified_at": "2026-08-18T06:44:25+00:00",
+     "verified_at": "2026-08-18T10:17:41+00:00",
      "verified_by": "directive-compliance-verifier",
-     "reviewed_sha": "6aae5857fdcdf55f5197e542013bdc81f8035d14"
+     "reviewed_sha": "46f746928dda26b1a3527e1cfec901e642115578"
     },
     {
      "id": "D-014-R031",
      "state": "PASS",
      "evidence": [
-      "A1 DB not opened by verifier; resolve_ask called only by revoke_all (never run against A1); status read-only; incident report documents ro/immutable access",
-      "project-control/reports/M0-T070-DCV-directive-verification.md"
+      "A1 SQLite DB in %LOCALAPPDATA%, not in repo/diff; incident-evidence.md documents mode=ro&immutable=1 read-only access",
+      "project-control/reports/M0-T070-DCV-final-verification.md"
      ],
-     "verified_at": "2026-08-18T06:44:25+00:00",
+     "verified_at": "2026-08-18T10:17:41+00:00",
      "verified_by": "directive-compliance-verifier",
-     "reviewed_sha": "6aae5857fdcdf55f5197e542013bdc81f8035d14"
+     "reviewed_sha": "46f746928dda26b1a3527e1cfec901e642115578"
     },
     {
      "id": "D-014-R032",
      "state": "PASS",
      "evidence": [
-      "wt-m0t063 clean, HEAD de2f224",
-      "project-control/reports/M0-T070-DCV-directive-verification.md"
+      "wt-m0t063 clean at de2f224 (git worktree list); A1 branch task/M0-T063-context-index-a1 head unchanged = de2f224",
+      "project-control/reports/M0-T070-DCV-final-verification.md"
      ],
-     "verified_at": "2026-08-18T06:44:25+00:00",
+     "verified_at": "2026-08-18T10:17:41+00:00",
      "verified_by": "directive-compliance-verifier",
-     "reviewed_sha": "6aae5857fdcdf55f5197e542013bdc81f8035d14"
+     "reviewed_sha": "46f746928dda26b1a3527e1cfec901e642115578"
     },
     {
      "id": "D-014-R033",
      "state": "PASS",
      "evidence": [
-      "fail-closed strengthened; no tier changed; adversarial variants remain ASK/HARD_DENY",
-      "project-control/reports/M0-T070-DCV-directive-verification.md"
+      "fail-closed validator ADDED (strengthens); no tier weakened; adversarial variants remain ASK/HARD_DENY; NoBroadGrantTests pass",
+      "project-control/reports/M0-T070-DCV-final-verification.md"
      ],
-     "verified_at": "2026-08-18T06:44:25+00:00",
+     "verified_at": "2026-08-18T10:17:41+00:00",
      "verified_by": "directive-compliance-verifier",
-     "reviewed_sha": "6aae5857fdcdf55f5197e542013bdc81f8035d14"
+     "reviewed_sha": "46f746928dda26b1a3527e1cfec901e642115578"
     },
     {
      "id": "D-014-R034",
      "state": "PASS",
      "evidence": [
-      "nothing merged; task branch only contains 6aae585; C:/SupervisorController absent from repo/diff",
-      "project-control/reports/M0-T070-DCV-directive-verification.md"
+      "C:/SupervisorController absent from repo/diff; PR#222 unmerged; nothing activated/replaced",
+      "project-control/reports/M0-T070-DCV-final-verification.md"
      ],
-     "verified_at": "2026-08-18T06:44:25+00:00",
+     "verified_at": "2026-08-18T10:17:41+00:00",
      "verified_by": "directive-compliance-verifier",
-     "reviewed_sha": "6aae5857fdcdf55f5197e542013bdc81f8035d14"
+     "reviewed_sha": "46f746928dda26b1a3527e1cfec901e642115578"
     },
     {
      "id": "D-014-R035",
      "state": "PASS",
      "evidence": [
-      "no destructive act: reflog shows only 3x no-op 'reset: moving to HEAD' (git stash push/pop internals during a lint comparison, HEAD never moved off base; no force/clean/history rewrite); evidence-map wording corrected; flagged for owner literal-reading adjudication",
-      "project-control/reports/M0-T070-DCV-directive-verification.md"
+      "reflog shows only 3 no-op 'reset: moving to HEAD' at de2f224 (git stash push/pop internals; HEAD never moved; no force/clean/rewrite). Disclosed for owner literal-reading adjudication",
+      "project-control/reports/M0-T070-DCV-final-verification.md"
      ],
-     "verified_at": "2026-08-18T06:44:25+00:00",
+     "verified_at": "2026-08-18T10:17:41+00:00",
      "verified_by": "directive-compliance-verifier",
-     "reviewed_sha": "6aae5857fdcdf55f5197e542013bdc81f8035d14"
+     "reviewed_sha": "46f746928dda26b1a3527e1cfec901e642115578"
     },
     {
      "id": "D-014-R036",
      "state": "PASS",
      "evidence": [
-      "diff --name-only contains no Units A1-F implementation files",
-      "project-control/reports/M0-T070-DCV-directive-verification.md"
+      "diff de2f224..46f7469 contains no Units A1-F impl files (repo_fingerprint/index in forbidden_paths, absent)",
+      "project-control/reports/M0-T070-DCV-final-verification.md"
      ],
-     "verified_at": "2026-08-18T06:44:25+00:00",
+     "verified_at": "2026-08-18T10:17:41+00:00",
      "verified_by": "directive-compliance-verifier",
-     "reviewed_sha": "6aae5857fdcdf55f5197e542013bdc81f8035d14"
+     "reviewed_sha": "46f746928dda26b1a3527e1cfec901e642115578"
     },
     {
      "id": "D-014-R037",
      "state": "PASS",
      "evidence": [
-      "rollback scoped to branch + worktree removal only; documented in G0 review + producer report + return report",
-      "project-control/reports/M0-T070-DCV-directive-verification.md"
+      "return-report item8: rollback scoped to branch+worktree removal only; A1 + runtime evidence intact",
+      "project-control/reports/M0-T070-DCV-final-verification.md"
      ],
-     "verified_at": "2026-08-18T06:44:25+00:00",
+     "verified_at": "2026-08-18T10:17:41+00:00",
      "verified_by": "directive-compliance-verifier",
-     "reviewed_sha": "6aae5857fdcdf55f5197e542013bdc81f8035d14"
+     "reviewed_sha": "46f746928dda26b1a3527e1cfec901e642115578"
     },
     {
      "id": "D-014-R038",
-     "state": "pending",
+     "state": "PASS",
      "evidence": [
-      "PENDING-EXTERNAL at reviewed head: return message + committed return-report copy delivered in the return cycle (M0-T070-return-report.md)",
-      "project-control/reports/M0-T070-DCV-directive-verification.md"
+      "project-control/reports/M0-T070-return-report.md committed at 04cae38 with all 9 required items (task id, branch, files, root cause, before/after, SHA+PR, gates, risks, merge/controller cmds)",
+      "project-control/reports/M0-T070-DCV-final-verification.md"
      ],
-     "verified_at": "2026-08-18T06:44:25+00:00",
+     "verified_at": "2026-08-18T10:17:41+00:00",
      "verified_by": "directive-compliance-verifier",
-     "reviewed_sha": "6aae5857fdcdf55f5197e542013bdc81f8035d14"
+     "reviewed_sha": "46f746928dda26b1a3527e1cfec901e642115578"
     },
     {
      "id": "D-014-R039",
      "state": "PASS",
      "evidence": [
-      "wt-m0t063 clean at de2f224; no supervisor start/resume against it this session",
-      "project-control/reports/M0-T070-DCV-directive-verification.md"
+      "wt-m0t063 clean de2f224; no supervisor start/resume against A1 this session",
+      "project-control/reports/M0-T070-DCV-final-verification.md"
      ],
-     "verified_at": "2026-08-18T06:44:25+00:00",
+     "verified_at": "2026-08-18T10:17:41+00:00",
      "verified_by": "directive-compliance-verifier",
-     "reviewed_sha": "6aae5857fdcdf55f5197e542013bdc81f8035d14"
+     "reviewed_sha": "46f746928dda26b1a3527e1cfec901e642115578"
     }
    ],
-   "reviewed_sha": "6aae5857fdcdf55f5197e542013bdc81f8035d14",
+   "reviewed_sha": "46f746928dda26b1a3527e1cfec901e642115578",
    "reviewed_manifest_sha256": "296b8fa6b7ff5e44cee9eacf0e2bb1b7bbfdd3fa170c0e77cae71140372f965c",
-   "note": "Independent verification recorded from the directive-compliance-verifier report (project-control/reports/M0-T070-DCV-directive-verification.md) at frozen head 6aae5857fdcd, content identity 296b8fa6b7ff. 27 PASS; 3 pending rows (R014/R015/R038) are the genuinely external return-cycle acts (push/PR, stop-before-merge conduct, return message + committed copy), to be re-verified at the accept cycle. Verifier verdict: PASS with two recorded discrepancies (R035 evidence-map wording corrected; R038 committed return copy owed and delivered in the return cycle)."
+   "note": "Final fresh independent verification at the post-base-reconciliation head 46f746928dda (D-016 Stage 3). Supersedes the 6aae5857 cycle's rows, whose three PENDING-EXTERNAL items (R014 push/PR, R015 stop-before-merge conduct, R038 return delivery) are now verified against live state. Full 52-row matrix incl. sentinel and amendment rows: project-control/reports/M0-T070-DCV-final-verification.md"
   }
  ],
- "updated_at": "2026-08-18T06:58:44+00:00"
+ "updated_at": "2026-08-18T10:17:41+00:00"
 }

@@ -58,7 +58,7 @@
  "lifecycle_state": "active",
  "requirements_file": "requirements.json",
  "verification_file": "verification.json",
- "final_reviewed_sha": null,
+ "final_reviewed_sha": "46f746928dda26b1a3527e1cfec901e642115578",
  "locked_requirement_ids": [
   "D-014-R001",
   "D-014-R002",
@@ -125,6 +125,11 @@
    "at": "2026-08-18T06:58:44+00:00",
    "by": "orchestrator",
    "note": "Amendment 2 captured verbatim: source-002-amendment.md (sha256 b2b17b294ce8698625d942eb0981476cd8a0b8830313b977579b6a317338f099) = the owner's 'PR #222 LIVE CI RECONCILIATION - DO NOT MERGE' message of 2026-08-18. 13 rows D-014-R040..D-014-R052 appended (amendment_sequence 2), ALL bound to the D-014-BOOTSTRAP sentinel as session-scope reconciliation duties so the already-gated M0-T070 applicable set (30 rows, gates G0/G2/G3/G5 PASS at 6aae5857) is unchanged. DIGEST RESTAMP RECORD (c14, never silent): the previous requirements_content_digest_sha256 352e50c36264... was computed over Windows CRLF working-tree bytes; git normalized the committed blob to LF (sha256 237abcd104c5...), so CI's control-plane job failed the c14 body check while the requirement BODIES were byte-identical apart from line endings (CI job 95622882065, run 32108527309). This restamp (a) rewrites requirements.json with LF bytes matching the git blob exactly, (b) appends the amendment-2 rows, and (c) records the new content digest 96828f9097cd... and id digest over 52 locked ids. Old disk-CRLF digest 352e50c36264...; R001-R039 JSON values asserted unchanged by the rewriting script."
+  },
+  {
+   "at": "2026-08-18T10:17:41+00:00",
+   "by": "orchestrator",
+   "note": "D-016 Stage 3: fresh independent directive-compliance-verifier run at head 46f746928dda26b1a3527e1cfec901e642115578 - all 52 requirements PASS (30 task rows restamped in verification.json; sentinel + amendment rows verified in reports/M0-T070-DCV-final-verification.md). final_reviewed_sha stamped 46f746928dda; material identity 296b8fa6b7ff unchanged from gate-reviewed 6aae5857; B-019 resolved; PR #222 32/32 checks green."
   }
  ]
 }
