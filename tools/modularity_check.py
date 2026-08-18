@@ -143,8 +143,16 @@ def _ts_line_has_code(line: str, in_block: bool) -> tuple[bool, bool]:
     return bool("".join(remainder).strip()), in_block
 
 
-def source_lines(path: pathlib.Path) -> int:
-    """Non-blank, non-comment-only physical lines (policy s10 definition)."""
+def source_lines(path: pathlib.Path) -> tuple[int, bool]:
+    """Non-blank, non-comment-only physical lines (policy s10 definition).
+
+    Returns (sloc, scan_uncertain). scan_uncertain is True for a TS/TSX file
+    whose scan ends inside an open block comment - almost always a `/*` inside a
+    string literal (e.g. `import.meta.glob('./x/*.ts')`), which the span scanner
+    cannot distinguish from a real comment and which would zero out the tail of
+    the file. It is surfaced as a warning so an undercount cannot hide silently
+    (G3-R1).
+    """
     try:
         text = path.read_text(encoding="utf-8", errors="replace")
     except OSError as exc:
@@ -165,7 +173,7 @@ def source_lines(path: pathlib.Path) -> int:
             if line.startswith("#"):
                 continue
         count += 1
-    return count
+    return count, (suffix in (".ts", ".tsx") and in_block_comment)
 
 
 def top_level_symbols(path: pathlib.Path) -> int:
@@ -174,11 +182,13 @@ def top_level_symbols(path: pathlib.Path) -> int:
     return sum(1 for line in text.splitlines() if pattern.match(line))
 
 
-def census(repo: pathlib.Path) -> dict[str, dict[str, int]]:
-    result: dict[str, dict[str, int]] = {}
+def census(repo: pathlib.Path) -> dict[str, dict[str, Any]]:
+    result: dict[str, dict[str, Any]] = {}
     for rel in selected_files(repo):
         p = repo / rel
-        result[rel] = {"sloc": source_lines(p), "symbols": top_level_symbols(p)}
+        sloc, uncertain = source_lines(p)
+        result[rel] = {"sloc": sloc, "symbols": top_level_symbols(p),
+                       "scan_uncertain": uncertain}
     return result
 
 
@@ -290,6 +300,10 @@ def load_exceptions(path: pathlib.Path, today: datetime.date,
                              f"closed")
         if not isinstance(e.get("max_lines"), int) or e["max_lines"] <= 0:
             raise CheckError(f"{where}: file exception needs positive int max_lines")
+        if "baseline_sloc" in e and (not isinstance(e["baseline_sloc"], int)
+                                     or e["baseline_sloc"] <= 0):
+            raise CheckError(f"{where}: baseline_sloc, when present, must be a "
+                             f"positive int (the file's SLOC at review time)")
         if target in per_file:
             raise CheckError(f"{where}: duplicate exception for {target!r}")
         per_file[target] = e
@@ -319,6 +333,12 @@ def run_check(repo: pathlib.Path, today: datetime.date,
         sloc = counts[path]["sloc"]
         symbols = counts[path]["symbols"]
         exception = per_file_exceptions.get(path)
+        if counts[path].get("scan_uncertain"):
+            warnings.append({
+                "kind": "sloc_scan_uncertain", "path": path,
+                "note": "the SLOC scan ended inside an open block comment "
+                        "(likely a /* inside a string literal); this file's count "
+                        "may be undercounted - inspect it (G3-R1)"})
         if symbols > SYMBOL_CEILING:
             # Report-only signal, emitted BEFORE any failure short-circuit so an
             # already-failing file keeps its signal (G3-F11).
@@ -327,14 +347,23 @@ def run_check(repo: pathlib.Path, today: datetime.date,
                              "symbols": symbols,
                              "note": f"many top-level symbols{approx}; a signal, "
                                      f"not a verdict"})
-        if exception is not None and exception["max_lines"] > material_growth_limit(sloc):
-            failures.append({
-                "kind": "exception_too_broad", "path": path, "sloc": sloc,
-                "limit": material_growth_limit(sloc),
-                "detail": f"the reviewed ceiling ({exception['max_lines']}) grossly "
-                          f"exceeds the file's current size; an exception permits at "
-                          f"most one growth step - renew it narrowly (G5 SEC-MINOR-4)"})
-            continue
+        if exception is not None:
+            # G5 SEC-MINOR-4: an exception permits at most one growth step above
+            # the size recorded WHEN IT WAS REVIEWED (exception.baseline_sloc),
+            # not above the current size - so shrinking a file toward its split
+            # target (policy s6) never trips this, only an over-broad ceiling
+            # does (G3-R2).
+            reviewed_sloc = exception.get("baseline_sloc", sloc)
+            if exception["max_lines"] > material_growth_limit(reviewed_sloc):
+                failures.append({
+                    "kind": "exception_too_broad", "path": path, "sloc": sloc,
+                    "limit": material_growth_limit(reviewed_sloc),
+                    "detail": f"the reviewed ceiling ({exception['max_lines']}) "
+                              f"exceeds one growth step above the recorded review size "
+                              f"({reviewed_sloc}); narrow it, or if the file was "
+                              f"refactored below threshold, DELETE the exception "
+                              f"(G5 SEC-MINOR-4)"})
+                continue
         if exception is not None and sloc > exception["max_lines"]:
             failures.append({
                 "kind": "exception_exceeded", "path": path, "sloc": sloc,
@@ -394,8 +423,10 @@ def regenerate_baseline(repo: pathlib.Path, today: datetime.date,
     counts = census(repo)
     _, regenerations = load_exceptions(exceptions_path, today, set(counts))
     version = 1
+    old_entries: dict[str, int] = {}
     if baseline_path.is_file():
-        version = json.loads(baseline_path.read_text(encoding="utf-8"))["version"] + 1
+        prior_version, old_entries = load_baseline(baseline_path)  # G3-R3: guarded read
+        version = prior_version + 1
     approved = [r for r in regenerations
                 if r.get("approval_id") == approval_id and not r.get("_expired")
                 and r.get("for_version") == version]
@@ -405,9 +436,6 @@ def regenerate_baseline(repo: pathlib.Path, today: datetime.date,
             f"{approval_id!r} bound to version {version} in {exceptions_path.name}; "
             f"approvals are single-use, bound to the one version they produce - the "
             f"baseline cannot be casually regenerated (D-017-R110, G5 SEC-MINOR-2)")
-    old_entries: dict[str, int] = {}
-    if baseline_path.is_file():
-        _, old_entries = load_baseline(baseline_path)
     entries: dict[str, int] = {}
     for path, data in counts.items():
         sloc = data["sloc"]

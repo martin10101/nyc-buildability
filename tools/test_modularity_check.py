@@ -277,6 +277,34 @@ class ProofTests(RepoCase):
         self.assertIn("new_oversized", kinds)
         self.assertEqual(kinds["new_oversized"]["sloc"], 1200)
 
+    def test_r1_unterminated_block_scan_warns_not_silently_undercounts(self) -> None:
+        """G3-R1: /* inside a string literal is surfaced, not silently swallowed."""
+        # A real-world Vite pattern: /* is inside a string, no */ follows.
+        self.add("apps/web/src/lib/glob.ts",
+                 'const mods = import.meta.glob("./modules/*.ts");\n'
+                 + "export const x = 1;\n" * 700)
+        self.write_baseline({})
+        code, payload = self.run_main("--check")
+        kinds = {w["kind"] for w in payload["warnings"]}
+        self.assertIn("sloc_scan_uncertain", kinds)
+
+    def test_r2_refactoring_a_file_down_does_not_trip_too_broad(self) -> None:
+        """G3-R2: exception breadth is judged against the recorded review size,
+        so shrinking a file toward its split target never breaks CI."""
+        self.add("services/api/big.py", module_text(1100))
+        self.write_baseline({})
+        # Reviewed when the file was 1100; ceiling 1200 = one growth step.
+        exc = self.file_exception("services/api/big.py", 1200)
+        exc["baseline_sloc"] = 1100
+        self.write_exceptions([exc])
+        self.assertEqual(self.run_main("--check")[0], 0)
+        # Refactor it DOWN to 700 - must still pass, not trip exception_too_broad.
+        self.add("services/api/big.py", module_text(700))
+        code, payload = self.run_main("--check")
+        self.assertEqual(code, 0, payload)
+        self.assertNotIn("exception_too_broad",
+                         {f["kind"] for f in payload["failures"]})
+
     def test_missing_baseline_fails_closed(self) -> None:
         self.add("services/api/ok.py", module_text(100))
         code, payload = self.run_main("--check")
