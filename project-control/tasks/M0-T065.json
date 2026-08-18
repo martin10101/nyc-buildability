@@ -64,7 +64,7 @@
       "id": "AS-4",
       "given": "the built pack",
       "when": "its meta is inspected",
-      "then": "it carries snapshot_fingerprint, git HEAD/branch/dirty_state_digest, source_manifest_digest, export_digest, indexer/schema/eligibility versions, index mode/rebuild_reason, and a census with reconciles==true plus a coverage-mode label (D-013-R023/R024/R002)"
+      "then": "the deterministic meta carries git HEAD/branch, source_manifest_digest, export_digest, indexer/schema/eligibility versions, a census with reconciles==true, a coverage-mode label, and dependency breadth (D-013-R023/R024/R002); the VOLATILE snapshot_fingerprint + dirty_state_digest + index mode/rebuild_reason are recorded in the EXTERNAL append-only run-record JSONL (never in the byte-deterministic artifact, so AS-6 determinism holds) \u2014 the meta flags snapshot_identity_in_external_run_record=true"
     },
     {
       "id": "AS-5",
@@ -85,19 +85,19 @@
     "G4",
     "G5"
   ],
-  "producer_agent": null,
+  "producer_agent": "orchestrator",
   "reviewer_agents": [
     "code-reviewer",
     "qa-engineer",
     "security-reviewer",
     "directive-compliance-verifier"
   ],
-  "status": "backlog",
-  "progress_percent": 0,
+  "status": "accepted",
+  "progress_percent": 100,
   "risks": [],
   "blockers": [],
   "created_at": "2026-08-18T04:24:47.953134+00:00",
-  "updated_at": "2026-08-18T04:24:48.339416+00:00",
+  "updated_at": "2026-08-18T17:17:15.511444+00:00",
   "directive_refs": [
     {
       "directive_id": "D-001",
@@ -117,5 +117,8 @@
     "python tools/test_context_pack_index.py",
     "python -m pytest tools/test_context_pack.py tools/test_context_pack_index.py -q",
     "python tools/modularity_check.py --check"
-  ]
+  ],
+  "worktree": "C:/Users/MLFLL/Downloads/nyc-zoning/wt-m0t064",
+  "accepted_by": "orchestrator",
+  "accepted_at": "2026-08-18T17:17:15.511444+00:00"
 }
