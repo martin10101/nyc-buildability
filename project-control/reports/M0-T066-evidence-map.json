@@ -1,0 +1,80 @@
+{
+ "schema": "evidence_map/v1",
+ "task_id": "M0-T066",
+ "producer": "orchestrator",
+ "note": "Evidence per applicable D-013 row for M0-T066 (24 rows, derived by directive_registry.evaluate_task_refs at claim). Unit C: the canonical versioned deterministic subsystem/ontology resolver — closed vocabulary (subsystem ids ARE existing repo path prefixes, structurally enforced), deterministic longest-prefix resolution, entity existence validation against authoritative indexes, two-pass extract→resolve, established BEFORE Unit D memory digests.",
+ "requirements": {
+  "D-013-R001": [
+   "Unit C is layer (c) of the ONE pipeline: the closed deterministic ontology for session/task memory placement; consumes the A1/A2 index read-only in process (report_graph_kinds -> build_incremental)."
+  ],
+  "D-013-R002": [
+   "No whole-repo-understanding claim: `subsystem_resolver.py kinds` reports coverage from the ACTUAL index export (export_digest recorded); vocabulary validity is checked against the live tree at every load; the doc labels the layer advisory (source files remain authoritative)."
+  ],
+  "D-013-R003": [
+   "Bounded deterministic placement instead of model guessing; nothing silently dropped: every unvalidatable proposal lands in unresolved_links[] with a machine-readable reason (AS-4 test asserts links+unresolved == proposals)."
+  ],
+  "D-013-R004": [
+   "Reconciled against the live checkout before claim: PR #232 merge verified (gh pr view + git rev-parse; origin/main 1d159a8), M0-T065 accepted in ledger; entity validation reads the LIVE project-control indexes, never a cached copy."
+  ],
+  "D-013-R006": [
+   "No control-plane bypass: G0 recorded at contract commit af6ba2f, claim via project_control.py, submit -> independent G3/G4/G5 -> accept, all orchestrator-executed per ADR-005; producer never self-accepts."
+  ],
+  "D-013-R007": [
+   "Single writer: orchestrator produces in wt-m0t064 on task/M0-T066-subsystem-resolver; review is a fresh read-only independent agent (producer != reviewer != verifier)."
+  ],
+  "D-013-R008": [
+   "Closed vocabulary is STRUCTURAL: load_map fails closed on subsystem_id != prefix (free_form_subsystem_id) and on any prefix that is not an existing directory (prefix_not_in_tree); AS-1 tests prove both refusals plus the real map's 11 ids all being existing directory prefixes. No free-form taxonomy can pass validation."
+  ],
+  "D-013-R009": [
+   "Pure deterministic code end-to-end: regex classification, longest-prefix segment match, authoritative-index membership checks; no LLM performs structural indexing, parent selection, existence validation, or any promotion decision (AS-3)."
+  ],
+  "D-013-R010": [
+   "Modules split by ownership, not for shortness: map data (subsystem_map.json), resolution+versioning (subsystem_resolver.py ~250 SLOC), entity validation+two-pass (subsystem_entities.py ~230 SLOC); no existing file was refactored or grown."
+  ],
+  "D-013-R011": [
+   "Nothing cache-like or secret committed: the map is a small versioned config; tests use temp cache dirs; the A2 index cache stays in the external per-checkout runtime directory."
+  ],
+  "D-013-R012": [
+   "No token-savings or efficiency claim anywhere in code, doc, or reports."
+  ],
+  "D-013-R013": [
+   "Fail closed in every layer: SubsystemMapError (7 machine-readable codes), EntityIndexError (unreadable/malformed master plan, directives index, requirements.json), CLI exit 2 with an error document; AS-6 tests all of these; never a silent default vocabulary."
+  ],
+  "D-013-R022": [
+   "Sequencing preserved under current authority: R022 bound the ORIGINAL bootstrap run (amended by source-002); the owner A-to-Z authorization (D-017) directs continuation through Units B-F in dependency order. Unit C was claimed only AFTER Unit B (M0-T065) was accepted and merged to main (1d159a8), preserving A -> B -> C order."
+  ],
+  "D-013-R025": [
+   "No 'complete census' or 'deep understanding' claim: the kinds report enumerates exactly what the index export contains and labels subsystem as a resolver-layer mapping; the doc states the layer maps facts and never decides compliance."
+  ],
+  "D-013-R039": [
+   "Unit C adds NO independent context budget and no concatenated dump: it is a placement/validation layer consumed by the ONE compiler pipeline; it emits no context pack content of its own."
+  ],
+  "D-013-R042": [
+   "Nothing is included anywhere merely to fill capacity: resolver outputs are bounded to the proposals given; the CLI prints bounded JSON documents only."
+  ],
+  "D-013-R043": [
+   "THIS unit establishes the versioned deterministic subsystem/ontology mapping (RESOLVER_VERSION + map_version + map_digest + index digests) BEFORE Unit D: M0-T067 depends on M0-T066 in the ledger and remains backlog; no memory digest was implemented here (packet risk note enforces the boundary)."
+  ],
+  "D-013-R045": [
+   "Parents are DERIVED, never model-chosen: task->milestone via the task packet + master_plan.json; requirement->directive via the directives registry; path->subsystem only through the versioned resolver; files->existing code-graph nodes when indexed; symbols only by exact node-id membership (AS-3, EdgeCases::test_symbol_resolves_against_provided_graph)."
+  ],
+  "D-013-R050": [
+   "Two storage classes respected: committed deterministic evidence under project-control/reports/M0-T066-*; this unit produces no runtime telemetry (tests pass persist-free temp cache dirs; no JSONL, no raw prompts, no absolute private paths committed)."
+  ],
+  "D-013-R051": [
+   "Missing values are never fabricated: graph_node/graph_indexed are null (not false/0) when no graph is provided; evidence stays null when absent; unresolved_links carry reasons instead of invented parents."
+  ],
+  "D-013-R053": [
+   "No combined or invented 'savings' metric exists anywhere in Unit C outputs."
+  ],
+  "D-013-R064": [
+   "Paths follow existing conventions: reports in project-control/reports/M0-T066-*, code + versioned map in tools/ beside the modules they serve, doc in docs/; no parallel control plane."
+  ],
+  "D-013-R069": [
+   "Continuation to Unit C was permitted by the control plane + owner authority: Unit B accepted (all gates PASS, independent review PASS, 27/27 DCV) and merged; D-017 owner authorization directs the A-to-Z continuation; a fresh read-only independent review of Unit C is dispatched before its gates."
+  ],
+  "D-013-R082": [
+   "tools/agent_supervisor/** untouched: listed in forbidden_paths and absent from the branch diff (git diff main...HEAD -- tools/agent_supervisor is empty)."
+  ]
+ }
+}
