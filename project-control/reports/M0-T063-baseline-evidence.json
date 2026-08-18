@@ -1,0 +1,62 @@
+{
+ "census": {
+  "eligible": 426,
+  "excluded": {},
+  "failed": {},
+  "indexed": 426,
+  "reconciles": true,
+  "stale": 0
+ },
+ "checkout_identity": "1854a2a4ff3baf3d1eb39d8640e27c170958ba06ea347477f5940cc464e5d262",
+ "codegraph_schema_version": "1.0.0",
+ "counts": {
+  "edge_counts": {
+   "by_confidence": {
+    "derived": 318,
+    "exact": 3081,
+    "partial": 3,
+    "unresolved": 18
+   },
+   "by_language_confidence": {
+    "json": {
+     "derived": 31
+    },
+    "py": {
+     "derived": 229,
+     "exact": 2719,
+     "unresolved": 7
+    },
+    "ts": {
+     "derived": 58,
+     "exact": 362,
+     "partial": 3,
+     "unresolved": 11
+    }
+   },
+   "by_type": {
+    "contract_ref": 318,
+    "dynamic_import": 3,
+    "import": 3096,
+    "reexport": 3
+   }
+  },
+  "edges": 3420,
+  "input_files": 426,
+  "node_counts": {
+   "class": 988,
+   "contract_schema": 10,
+   "external": 70,
+   "function": 3188,
+   "method": 3275,
+   "py_module": 296,
+   "ts_module": 120,
+   "ts_symbol": 471
+  },
+  "nodes": 8418
+ },
+ "export_digest": "3d64d3b2a7584fc011db9aa7351e91a963094c5abc97503e72002f2dcc27f758",
+ "generator_version": "1.1.0",
+ "schema": "repo_index_baseline/v1",
+ "snapshot_fingerprint": "190dec00f10f6abeb63227cb8d10466df60c1a9250226a4bb9bcbc455a39c2af",
+ "source_fingerprint": "2ce8b8899dd91dcd1e2b3022c536ebc555b3a0cf7cc9fcdc7a5c5392c88d2a66"
+}

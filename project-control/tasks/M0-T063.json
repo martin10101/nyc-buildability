@@ -32,7 +32,12 @@
     "docs/CONTEXT_INTELLIGENCE_PIPELINE.md",
     ".github/workflows/ci.yml",
     "project-control/reports/M0-T063-producer-report.md",
-    "project-control/reports/M0-T063-baseline-evidence.md"
+    "project-control/reports/M0-T063-baseline-evidence.md",
+    "project-control/reports/M0-T063-evidence-map.json",
+    "project-control/reports/M0-T063-baseline-evidence.json",
+    "project-control/reports/M0-T063-review-records.md",
+    "project-control/reports/M0-T063-rework-evidence.md",
+    "project-control/reports/M0-T063-delta-reverification.md"
   ],
   "forbidden_paths": [
     "tools/agent_supervisor/",
@@ -96,8 +101,8 @@
     "security-reviewer",
     "directive-compliance-verifier"
   ],
-  "status": "claimed",
-  "progress_percent": 10,
+  "status": "accepted",
+  "progress_percent": 100,
   "risks": [
     "OVERLAP DISCLOSURE: open PR #64 (task/M0-T019-frontend-security) also touches .github/workflows/ci.yml. A1's change is one ADDITIVE step in a different region; if a real conflict with PR #64 materializes, the worker STOPS with an overlap report and proposed sequencing instead of editing (D-013 s13 hold).",
     "Baseline must be captured from the UNMODIFIED generator before any new caching path is wired (D-013 s10/s11); the harness therefore lands and runs before any generator-facing integration in A2.",
@@ -105,7 +110,7 @@
   ],
   "blockers": [],
   "created_at": "2026-08-18T04:24:27.993208+00:00",
-  "updated_at": "2026-08-18T04:28:02.650663+00:00",
+  "updated_at": "2026-08-18T14:38:29.576708+00:00",
   "directive_refs": [
     {
       "directive_id": "D-001",
@@ -118,5 +123,30 @@
   ],
   "directive_regime_version": "1.0",
   "directive_regime_entered_at": "2026-08-18T04:24:27.993208+00:00",
-  "worktree": "C:/Users/MLFLL/Downloads/nyc-zoning/wt-m0t063"
+  "worktree": "C:/Users/MLFLL/Downloads/nyc-zoning/wt-m0t063",
+  "progress_log": [
+    {
+      "at": "2026-08-18T14:09:21.401359+00:00",
+      "agent": "supervised-auto-worker",
+      "percent": 40,
+      "status": "in_progress",
+      "message": "A1 implemented by orchestrator under D-017 authorization"
+    },
+    {
+      "at": "2026-08-18T14:09:47.271205+00:00",
+      "agent": "supervised-auto-worker",
+      "percent": 75,
+      "status": "self_check",
+      "message": "Self-checks green: 32 passed 1 skipped (documented tests); modularity 0 failures; baseline evidence sanitized; determinism proven"
+    },
+    {
+      "at": "2026-08-18T14:30:22.200365+00:00",
+      "agent": "supervised-auto-worker",
+      "percent": 60,
+      "status": "rework",
+      "message": "Round-1: G3 PASS-with-MAJOR-1, G4 FAIL on F1 (stale baseline), DCV PASS 46/46. Rework c45c39e closes MAJOR-1 (all-eligible fingerprint), MINOR-2 (recover live-pid skip), F1 (baseline regenerated, reproduces). 34 tests green."
+    }
+  ],
+  "accepted_by": "orchestrator",
+  "accepted_at": "2026-08-18T14:38:29.576708+00:00"
 }
