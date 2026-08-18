@@ -8,12 +8,644 @@
    "task_id": "M0-T064",
    "directive_id": "D-013",
    "producer": "orchestrator",
-   "verifier": "",
-   "applicable_requirement_ids": [],
-   "requirements": [],
-   "reviewed_sha": null,
-   "reviewed_manifest_sha256": null,
-   "note": "PENDING stub created at capture (c14 coverage). The applicable set is derived by the resolver at verification time and every row is filled by the independent verifier at the unit's accept cycle; nothing is verified yet."
+   "verifier": "directive-compliance-verifier",
+   "applicable_requirement_ids": [
+    "D-013-R001",
+    "D-013-R002",
+    "D-013-R003",
+    "D-013-R004",
+    "D-013-R006",
+    "D-013-R007",
+    "D-013-R008",
+    "D-013-R009",
+    "D-013-R010",
+    "D-013-R011",
+    "D-013-R012",
+    "D-013-R013",
+    "D-013-R022",
+    "D-013-R023",
+    "D-013-R024",
+    "D-013-R025",
+    "D-013-R031",
+    "D-013-R032",
+    "D-013-R033",
+    "D-013-R034",
+    "D-013-R035",
+    "D-013-R036",
+    "D-013-R037",
+    "D-013-R042",
+    "D-013-R050",
+    "D-013-R051",
+    "D-013-R052",
+    "D-013-R053",
+    "D-013-R056",
+    "D-013-R059",
+    "D-013-R064",
+    "D-013-R065",
+    "D-013-R066",
+    "D-013-R067",
+    "D-013-R068",
+    "D-013-R069",
+    "D-013-R070",
+    "D-013-R071",
+    "D-013-R077",
+    "D-013-R079",
+    "D-013-R081",
+    "D-013-R082"
+   ],
+   "requirements": [
+    {
+     "id": "D-013-R001",
+     "state": "PASS",
+     "evidence": [
+      "project-control/reports/M0-T064-rereview-round2-PASS.md",
+      "project-control/reports/M0-T064-rereview-round1-FAIL.md",
+      "project-control/reports/M0-T064-evidence-map.json",
+      "project-control/reports/M0-T064-parity-evidence.md",
+      "project-control/reports/M0-T064-producer-report.md"
+     ],
+     "verified_at": "2026-08-18T16:10:00+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "dc6a72d0bca967b7c1e63c25977fc0b5df38ddeb"
+    },
+    {
+     "id": "D-013-R002",
+     "state": "PASS",
+     "evidence": [
+      "project-control/reports/M0-T064-rereview-round2-PASS.md",
+      "project-control/reports/M0-T064-rereview-round1-FAIL.md",
+      "project-control/reports/M0-T064-evidence-map.json",
+      "project-control/reports/M0-T064-parity-evidence.md",
+      "project-control/reports/M0-T064-producer-report.md"
+     ],
+     "verified_at": "2026-08-18T16:10:00+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "dc6a72d0bca967b7c1e63c25977fc0b5df38ddeb"
+    },
+    {
+     "id": "D-013-R003",
+     "state": "PASS",
+     "evidence": [
+      "project-control/reports/M0-T064-rereview-round2-PASS.md",
+      "project-control/reports/M0-T064-rereview-round1-FAIL.md",
+      "project-control/reports/M0-T064-evidence-map.json",
+      "project-control/reports/M0-T064-parity-evidence.md",
+      "project-control/reports/M0-T064-producer-report.md"
+     ],
+     "verified_at": "2026-08-18T16:10:00+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "dc6a72d0bca967b7c1e63c25977fc0b5df38ddeb"
+    },
+    {
+     "id": "D-013-R004",
+     "state": "PASS",
+     "evidence": [
+      "project-control/reports/M0-T064-rereview-round2-PASS.md",
+      "project-control/reports/M0-T064-rereview-round1-FAIL.md",
+      "project-control/reports/M0-T064-evidence-map.json",
+      "project-control/reports/M0-T064-parity-evidence.md",
+      "project-control/reports/M0-T064-producer-report.md"
+     ],
+     "verified_at": "2026-08-18T16:10:00+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "dc6a72d0bca967b7c1e63c25977fc0b5df38ddeb"
+    },
+    {
+     "id": "D-013-R006",
+     "state": "PASS",
+     "evidence": [
+      "project-control/reports/M0-T064-rereview-round2-PASS.md",
+      "project-control/reports/M0-T064-rereview-round1-FAIL.md",
+      "project-control/reports/M0-T064-evidence-map.json",
+      "project-control/reports/M0-T064-parity-evidence.md",
+      "project-control/reports/M0-T064-producer-report.md"
+     ],
+     "verified_at": "2026-08-18T16:10:00+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "dc6a72d0bca967b7c1e63c25977fc0b5df38ddeb"
+    },
+    {
+     "id": "D-013-R007",
+     "state": "PASS",
+     "evidence": [
+      "project-control/reports/M0-T064-rereview-round2-PASS.md",
+      "project-control/reports/M0-T064-rereview-round1-FAIL.md",
+      "project-control/reports/M0-T064-evidence-map.json",
+      "project-control/reports/M0-T064-parity-evidence.md",
+      "project-control/reports/M0-T064-producer-report.md"
+     ],
+     "verified_at": "2026-08-18T16:10:00+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "dc6a72d0bca967b7c1e63c25977fc0b5df38ddeb"
+    },
+    {
+     "id": "D-013-R008",
+     "state": "PASS",
+     "evidence": [
+      "project-control/reports/M0-T064-rereview-round2-PASS.md",
+      "project-control/reports/M0-T064-rereview-round1-FAIL.md",
+      "project-control/reports/M0-T064-evidence-map.json",
+      "project-control/reports/M0-T064-parity-evidence.md",
+      "project-control/reports/M0-T064-producer-report.md"
+     ],
+     "verified_at": "2026-08-18T16:10:00+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "dc6a72d0bca967b7c1e63c25977fc0b5df38ddeb"
+    },
+    {
+     "id": "D-013-R009",
+     "state": "PASS",
+     "evidence": [
+      "project-control/reports/M0-T064-rereview-round2-PASS.md",
+      "project-control/reports/M0-T064-rereview-round1-FAIL.md",
+      "project-control/reports/M0-T064-evidence-map.json",
+      "project-control/reports/M0-T064-parity-evidence.md",
+      "project-control/reports/M0-T064-producer-report.md"
+     ],
+     "verified_at": "2026-08-18T16:10:00+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "dc6a72d0bca967b7c1e63c25977fc0b5df38ddeb"
+    },
+    {
+     "id": "D-013-R010",
+     "state": "PASS",
+     "evidence": [
+      "project-control/reports/M0-T064-rereview-round2-PASS.md",
+      "project-control/reports/M0-T064-rereview-round1-FAIL.md",
+      "project-control/reports/M0-T064-evidence-map.json",
+      "project-control/reports/M0-T064-parity-evidence.md",
+      "project-control/reports/M0-T064-producer-report.md"
+     ],
+     "verified_at": "2026-08-18T16:10:00+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "dc6a72d0bca967b7c1e63c25977fc0b5df38ddeb"
+    },
+    {
+     "id": "D-013-R011",
+     "state": "PASS",
+     "evidence": [
+      "project-control/reports/M0-T064-rereview-round2-PASS.md",
+      "project-control/reports/M0-T064-rereview-round1-FAIL.md",
+      "project-control/reports/M0-T064-evidence-map.json",
+      "project-control/reports/M0-T064-parity-evidence.md",
+      "project-control/reports/M0-T064-producer-report.md"
+     ],
+     "verified_at": "2026-08-18T16:10:00+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "dc6a72d0bca967b7c1e63c25977fc0b5df38ddeb"
+    },
+    {
+     "id": "D-013-R012",
+     "state": "PASS",
+     "evidence": [
+      "project-control/reports/M0-T064-rereview-round2-PASS.md",
+      "project-control/reports/M0-T064-rereview-round1-FAIL.md",
+      "project-control/reports/M0-T064-evidence-map.json",
+      "project-control/reports/M0-T064-parity-evidence.md",
+      "project-control/reports/M0-T064-producer-report.md"
+     ],
+     "verified_at": "2026-08-18T16:10:00+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "dc6a72d0bca967b7c1e63c25977fc0b5df38ddeb"
+    },
+    {
+     "id": "D-013-R013",
+     "state": "PASS",
+     "evidence": [
+      "project-control/reports/M0-T064-rereview-round2-PASS.md",
+      "project-control/reports/M0-T064-rereview-round1-FAIL.md",
+      "project-control/reports/M0-T064-evidence-map.json",
+      "project-control/reports/M0-T064-parity-evidence.md",
+      "project-control/reports/M0-T064-producer-report.md"
+     ],
+     "verified_at": "2026-08-18T16:10:00+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "dc6a72d0bca967b7c1e63c25977fc0b5df38ddeb"
+    },
+    {
+     "id": "D-013-R022",
+     "state": "PASS",
+     "evidence": [
+      "project-control/reports/M0-T064-rereview-round2-PASS.md",
+      "project-control/reports/M0-T064-rereview-round1-FAIL.md",
+      "project-control/reports/M0-T064-evidence-map.json",
+      "project-control/reports/M0-T064-parity-evidence.md",
+      "project-control/reports/M0-T064-producer-report.md"
+     ],
+     "verified_at": "2026-08-18T16:10:00+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "dc6a72d0bca967b7c1e63c25977fc0b5df38ddeb"
+    },
+    {
+     "id": "D-013-R023",
+     "state": "PASS",
+     "evidence": [
+      "project-control/reports/M0-T064-rereview-round2-PASS.md",
+      "project-control/reports/M0-T064-rereview-round1-FAIL.md",
+      "project-control/reports/M0-T064-evidence-map.json",
+      "project-control/reports/M0-T064-parity-evidence.md",
+      "project-control/reports/M0-T064-producer-report.md"
+     ],
+     "verified_at": "2026-08-18T16:10:00+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "dc6a72d0bca967b7c1e63c25977fc0b5df38ddeb"
+    },
+    {
+     "id": "D-013-R024",
+     "state": "PASS",
+     "evidence": [
+      "project-control/reports/M0-T064-rereview-round2-PASS.md",
+      "project-control/reports/M0-T064-rereview-round1-FAIL.md",
+      "project-control/reports/M0-T064-evidence-map.json",
+      "project-control/reports/M0-T064-parity-evidence.md",
+      "project-control/reports/M0-T064-producer-report.md"
+     ],
+     "verified_at": "2026-08-18T16:10:00+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "dc6a72d0bca967b7c1e63c25977fc0b5df38ddeb"
+    },
+    {
+     "id": "D-013-R025",
+     "state": "PASS",
+     "evidence": [
+      "project-control/reports/M0-T064-rereview-round2-PASS.md",
+      "project-control/reports/M0-T064-rereview-round1-FAIL.md",
+      "project-control/reports/M0-T064-evidence-map.json",
+      "project-control/reports/M0-T064-parity-evidence.md",
+      "project-control/reports/M0-T064-producer-report.md"
+     ],
+     "verified_at": "2026-08-18T16:10:00+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "dc6a72d0bca967b7c1e63c25977fc0b5df38ddeb"
+    },
+    {
+     "id": "D-013-R031",
+     "state": "PASS",
+     "evidence": [
+      "project-control/reports/M0-T064-rereview-round2-PASS.md",
+      "project-control/reports/M0-T064-rereview-round1-FAIL.md",
+      "project-control/reports/M0-T064-evidence-map.json",
+      "project-control/reports/M0-T064-parity-evidence.md",
+      "project-control/reports/M0-T064-producer-report.md"
+     ],
+     "verified_at": "2026-08-18T16:10:00+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "dc6a72d0bca967b7c1e63c25977fc0b5df38ddeb"
+    },
+    {
+     "id": "D-013-R032",
+     "state": "PASS",
+     "evidence": [
+      "project-control/reports/M0-T064-rereview-round2-PASS.md",
+      "project-control/reports/M0-T064-rereview-round1-FAIL.md",
+      "project-control/reports/M0-T064-evidence-map.json",
+      "project-control/reports/M0-T064-parity-evidence.md",
+      "project-control/reports/M0-T064-producer-report.md"
+     ],
+     "verified_at": "2026-08-18T16:10:00+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "dc6a72d0bca967b7c1e63c25977fc0b5df38ddeb"
+    },
+    {
+     "id": "D-013-R033",
+     "state": "PASS",
+     "evidence": [
+      "project-control/reports/M0-T064-rereview-round2-PASS.md",
+      "project-control/reports/M0-T064-rereview-round1-FAIL.md",
+      "project-control/reports/M0-T064-evidence-map.json",
+      "project-control/reports/M0-T064-parity-evidence.md",
+      "project-control/reports/M0-T064-producer-report.md"
+     ],
+     "verified_at": "2026-08-18T16:10:00+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "dc6a72d0bca967b7c1e63c25977fc0b5df38ddeb"
+    },
+    {
+     "id": "D-013-R034",
+     "state": "PASS",
+     "evidence": [
+      "project-control/reports/M0-T064-rereview-round2-PASS.md",
+      "project-control/reports/M0-T064-rereview-round1-FAIL.md",
+      "project-control/reports/M0-T064-evidence-map.json",
+      "project-control/reports/M0-T064-parity-evidence.md",
+      "project-control/reports/M0-T064-producer-report.md"
+     ],
+     "verified_at": "2026-08-18T16:10:00+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "dc6a72d0bca967b7c1e63c25977fc0b5df38ddeb"
+    },
+    {
+     "id": "D-013-R035",
+     "state": "PASS",
+     "evidence": [
+      "project-control/reports/M0-T064-rereview-round2-PASS.md",
+      "project-control/reports/M0-T064-rereview-round1-FAIL.md",
+      "project-control/reports/M0-T064-evidence-map.json",
+      "project-control/reports/M0-T064-parity-evidence.md",
+      "project-control/reports/M0-T064-producer-report.md"
+     ],
+     "verified_at": "2026-08-18T16:10:00+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "dc6a72d0bca967b7c1e63c25977fc0b5df38ddeb"
+    },
+    {
+     "id": "D-013-R036",
+     "state": "PASS",
+     "evidence": [
+      "project-control/reports/M0-T064-rereview-round2-PASS.md",
+      "project-control/reports/M0-T064-rereview-round1-FAIL.md",
+      "project-control/reports/M0-T064-evidence-map.json",
+      "project-control/reports/M0-T064-parity-evidence.md",
+      "project-control/reports/M0-T064-producer-report.md"
+     ],
+     "verified_at": "2026-08-18T16:10:00+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "dc6a72d0bca967b7c1e63c25977fc0b5df38ddeb"
+    },
+    {
+     "id": "D-013-R037",
+     "state": "PASS",
+     "evidence": [
+      "project-control/reports/M0-T064-rereview-round2-PASS.md",
+      "project-control/reports/M0-T064-rereview-round1-FAIL.md",
+      "project-control/reports/M0-T064-evidence-map.json",
+      "project-control/reports/M0-T064-parity-evidence.md",
+      "project-control/reports/M0-T064-producer-report.md"
+     ],
+     "verified_at": "2026-08-18T16:10:00+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "dc6a72d0bca967b7c1e63c25977fc0b5df38ddeb"
+    },
+    {
+     "id": "D-013-R042",
+     "state": "PASS",
+     "evidence": [
+      "project-control/reports/M0-T064-rereview-round2-PASS.md",
+      "project-control/reports/M0-T064-rereview-round1-FAIL.md",
+      "project-control/reports/M0-T064-evidence-map.json",
+      "project-control/reports/M0-T064-parity-evidence.md",
+      "project-control/reports/M0-T064-producer-report.md"
+     ],
+     "verified_at": "2026-08-18T16:10:00+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "dc6a72d0bca967b7c1e63c25977fc0b5df38ddeb"
+    },
+    {
+     "id": "D-013-R050",
+     "state": "PASS",
+     "evidence": [
+      "project-control/reports/M0-T064-rereview-round2-PASS.md",
+      "project-control/reports/M0-T064-rereview-round1-FAIL.md",
+      "project-control/reports/M0-T064-evidence-map.json",
+      "project-control/reports/M0-T064-parity-evidence.md",
+      "project-control/reports/M0-T064-producer-report.md"
+     ],
+     "verified_at": "2026-08-18T16:10:00+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "dc6a72d0bca967b7c1e63c25977fc0b5df38ddeb"
+    },
+    {
+     "id": "D-013-R051",
+     "state": "PASS",
+     "evidence": [
+      "project-control/reports/M0-T064-rereview-round2-PASS.md",
+      "project-control/reports/M0-T064-rereview-round1-FAIL.md",
+      "project-control/reports/M0-T064-evidence-map.json",
+      "project-control/reports/M0-T064-parity-evidence.md",
+      "project-control/reports/M0-T064-producer-report.md"
+     ],
+     "verified_at": "2026-08-18T16:10:00+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "dc6a72d0bca967b7c1e63c25977fc0b5df38ddeb"
+    },
+    {
+     "id": "D-013-R052",
+     "state": "PASS",
+     "evidence": [
+      "project-control/reports/M0-T064-rereview-round2-PASS.md",
+      "project-control/reports/M0-T064-rereview-round1-FAIL.md",
+      "project-control/reports/M0-T064-evidence-map.json",
+      "project-control/reports/M0-T064-parity-evidence.md",
+      "project-control/reports/M0-T064-producer-report.md"
+     ],
+     "verified_at": "2026-08-18T16:10:00+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "dc6a72d0bca967b7c1e63c25977fc0b5df38ddeb"
+    },
+    {
+     "id": "D-013-R053",
+     "state": "PASS",
+     "evidence": [
+      "project-control/reports/M0-T064-rereview-round2-PASS.md",
+      "project-control/reports/M0-T064-rereview-round1-FAIL.md",
+      "project-control/reports/M0-T064-evidence-map.json",
+      "project-control/reports/M0-T064-parity-evidence.md",
+      "project-control/reports/M0-T064-producer-report.md"
+     ],
+     "verified_at": "2026-08-18T16:10:00+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "dc6a72d0bca967b7c1e63c25977fc0b5df38ddeb"
+    },
+    {
+     "id": "D-013-R056",
+     "state": "PASS",
+     "evidence": [
+      "project-control/reports/M0-T064-rereview-round2-PASS.md",
+      "project-control/reports/M0-T064-rereview-round1-FAIL.md",
+      "project-control/reports/M0-T064-evidence-map.json",
+      "project-control/reports/M0-T064-parity-evidence.md",
+      "project-control/reports/M0-T064-producer-report.md"
+     ],
+     "verified_at": "2026-08-18T16:10:00+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "dc6a72d0bca967b7c1e63c25977fc0b5df38ddeb"
+    },
+    {
+     "id": "D-013-R059",
+     "state": "PASS",
+     "evidence": [
+      "project-control/reports/M0-T064-rereview-round2-PASS.md",
+      "project-control/reports/M0-T064-rereview-round1-FAIL.md",
+      "project-control/reports/M0-T064-evidence-map.json",
+      "project-control/reports/M0-T064-parity-evidence.md",
+      "project-control/reports/M0-T064-producer-report.md"
+     ],
+     "verified_at": "2026-08-18T16:10:00+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "dc6a72d0bca967b7c1e63c25977fc0b5df38ddeb"
+    },
+    {
+     "id": "D-013-R064",
+     "state": "PASS",
+     "evidence": [
+      "project-control/reports/M0-T064-rereview-round2-PASS.md",
+      "project-control/reports/M0-T064-rereview-round1-FAIL.md",
+      "project-control/reports/M0-T064-evidence-map.json",
+      "project-control/reports/M0-T064-parity-evidence.md",
+      "project-control/reports/M0-T064-producer-report.md"
+     ],
+     "verified_at": "2026-08-18T16:10:00+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "dc6a72d0bca967b7c1e63c25977fc0b5df38ddeb"
+    },
+    {
+     "id": "D-013-R065",
+     "state": "PASS",
+     "evidence": [
+      "project-control/reports/M0-T064-rereview-round2-PASS.md",
+      "project-control/reports/M0-T064-rereview-round1-FAIL.md",
+      "project-control/reports/M0-T064-evidence-map.json",
+      "project-control/reports/M0-T064-parity-evidence.md",
+      "project-control/reports/M0-T064-producer-report.md"
+     ],
+     "verified_at": "2026-08-18T16:10:00+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "dc6a72d0bca967b7c1e63c25977fc0b5df38ddeb"
+    },
+    {
+     "id": "D-013-R066",
+     "state": "PASS",
+     "evidence": [
+      "project-control/reports/M0-T064-rereview-round2-PASS.md",
+      "project-control/reports/M0-T064-rereview-round1-FAIL.md",
+      "project-control/reports/M0-T064-evidence-map.json",
+      "project-control/reports/M0-T064-parity-evidence.md",
+      "project-control/reports/M0-T064-producer-report.md"
+     ],
+     "verified_at": "2026-08-18T16:10:00+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "dc6a72d0bca967b7c1e63c25977fc0b5df38ddeb"
+    },
+    {
+     "id": "D-013-R067",
+     "state": "PASS",
+     "evidence": [
+      "project-control/reports/M0-T064-rereview-round2-PASS.md",
+      "project-control/reports/M0-T064-rereview-round1-FAIL.md",
+      "project-control/reports/M0-T064-evidence-map.json",
+      "project-control/reports/M0-T064-parity-evidence.md",
+      "project-control/reports/M0-T064-producer-report.md"
+     ],
+     "verified_at": "2026-08-18T16:10:00+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "dc6a72d0bca967b7c1e63c25977fc0b5df38ddeb"
+    },
+    {
+     "id": "D-013-R068",
+     "state": "PASS",
+     "evidence": [
+      "project-control/reports/M0-T064-rereview-round2-PASS.md",
+      "project-control/reports/M0-T064-rereview-round1-FAIL.md",
+      "project-control/reports/M0-T064-evidence-map.json",
+      "project-control/reports/M0-T064-parity-evidence.md",
+      "project-control/reports/M0-T064-producer-report.md"
+     ],
+     "verified_at": "2026-08-18T16:10:00+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "dc6a72d0bca967b7c1e63c25977fc0b5df38ddeb"
+    },
+    {
+     "id": "D-013-R069",
+     "state": "PASS",
+     "evidence": [
+      "project-control/reports/M0-T064-rereview-round2-PASS.md",
+      "project-control/reports/M0-T064-rereview-round1-FAIL.md",
+      "project-control/reports/M0-T064-evidence-map.json",
+      "project-control/reports/M0-T064-parity-evidence.md",
+      "project-control/reports/M0-T064-producer-report.md"
+     ],
+     "verified_at": "2026-08-18T16:10:00+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "dc6a72d0bca967b7c1e63c25977fc0b5df38ddeb"
+    },
+    {
+     "id": "D-013-R070",
+     "state": "PASS",
+     "evidence": [
+      "project-control/reports/M0-T064-rereview-round2-PASS.md",
+      "project-control/reports/M0-T064-rereview-round1-FAIL.md",
+      "project-control/reports/M0-T064-evidence-map.json",
+      "project-control/reports/M0-T064-parity-evidence.md",
+      "project-control/reports/M0-T064-producer-report.md"
+     ],
+     "verified_at": "2026-08-18T16:10:00+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "dc6a72d0bca967b7c1e63c25977fc0b5df38ddeb"
+    },
+    {
+     "id": "D-013-R071",
+     "state": "PASS",
+     "evidence": [
+      "project-control/reports/M0-T064-rereview-round2-PASS.md",
+      "project-control/reports/M0-T064-rereview-round1-FAIL.md",
+      "project-control/reports/M0-T064-evidence-map.json",
+      "project-control/reports/M0-T064-parity-evidence.md",
+      "project-control/reports/M0-T064-producer-report.md"
+     ],
+     "verified_at": "2026-08-18T16:10:00+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "dc6a72d0bca967b7c1e63c25977fc0b5df38ddeb"
+    },
+    {
+     "id": "D-013-R077",
+     "state": "PASS",
+     "evidence": [
+      "project-control/reports/M0-T064-rereview-round2-PASS.md",
+      "project-control/reports/M0-T064-rereview-round1-FAIL.md",
+      "project-control/reports/M0-T064-evidence-map.json",
+      "project-control/reports/M0-T064-parity-evidence.md",
+      "project-control/reports/M0-T064-producer-report.md"
+     ],
+     "verified_at": "2026-08-18T16:10:00+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "dc6a72d0bca967b7c1e63c25977fc0b5df38ddeb"
+    },
+    {
+     "id": "D-013-R079",
+     "state": "PASS",
+     "evidence": [
+      "project-control/reports/M0-T064-rereview-round2-PASS.md",
+      "project-control/reports/M0-T064-rereview-round1-FAIL.md",
+      "project-control/reports/M0-T064-evidence-map.json",
+      "project-control/reports/M0-T064-parity-evidence.md",
+      "project-control/reports/M0-T064-producer-report.md"
+     ],
+     "verified_at": "2026-08-18T16:10:00+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "dc6a72d0bca967b7c1e63c25977fc0b5df38ddeb"
+    },
+    {
+     "id": "D-013-R081",
+     "state": "PASS",
+     "evidence": [
+      "project-control/reports/M0-T064-rereview-round2-PASS.md",
+      "project-control/reports/M0-T064-rereview-round1-FAIL.md",
+      "project-control/reports/M0-T064-evidence-map.json",
+      "project-control/reports/M0-T064-parity-evidence.md",
+      "project-control/reports/M0-T064-producer-report.md"
+     ],
+     "verified_at": "2026-08-18T16:10:00+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "dc6a72d0bca967b7c1e63c25977fc0b5df38ddeb"
+    },
+    {
+     "id": "D-013-R082",
+     "state": "PASS",
+     "evidence": [
+      "project-control/reports/M0-T064-rereview-round2-PASS.md",
+      "project-control/reports/M0-T064-rereview-round1-FAIL.md",
+      "project-control/reports/M0-T064-evidence-map.json",
+      "project-control/reports/M0-T064-parity-evidence.md",
+      "project-control/reports/M0-T064-producer-report.md"
+     ],
+     "verified_at": "2026-08-18T16:10:00+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "dc6a72d0bca967b7c1e63c25977fc0b5df38ddeb"
+    }
+   ],
+   "reviewed_sha": "dc6a72d0bca967b7c1e63c25977fc0b5df38ddeb",
+   "reviewed_manifest_sha256": "c7571321b63e51a7523c8ced623bd59856471cb98c2f7e83c1c876d657a0e603",
+   "note": "Independent DCV PASS: 42/42 applicable D-013 requirements verified at reviewed_sha dc6a72d / manifest c7571321. Round-1 re-review found a real byte-divergence (tsconfig stale reuse, R032/R037/R079); fixed (config_inputs_version folded into the fingerprint) and round-2 re-review confirmed PASS across cold/warm/all change classes + the tsconfig hazard, no over-invalidation, no other unguarded input, forbidden paths byte-identical to main. Producer (orchestrator) != verifier (directive-compliance-verifier)."
   },
   {
    "task_id": "M0-T065",
@@ -682,5 +1314,5 @@
    "note": "Independent DCV PASS 46/46 (round 1) + code/QA delta re-review CONFIRM-CLOSED (MAJOR-1/MINOR-2/F1). R037/R079 A1-scope only; the byte-identical incremental-vs-full parity test is the A2 (M0-T064) obligation, built and passing. Producer != verifier."
   }
  ],
- "updated_at": "2026-08-18T14:37:58+00:00"
+ "updated_at": "2026-08-18T16:10:00+00:00"
 }

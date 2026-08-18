@@ -498,6 +498,10 @@ jobs:
         run: python3 tools/test_repo_index_cache.py
       - name: Baseline harness tests
         run: python3 tools/test_repo_index_baseline.py
+      - name: Byte-identical assembly driver tests (A2)
+        run: python3 tools/test_repo_index_assembly.py
+      - name: Incremental indexing + selective-reparse + parity tests (A2)
+        run: python3 tools/test_repo_index_incremental.py
 
   # Task M0-T036 (ADDITIVE job; existing jobs untouched; owner CI grant
   # 2026-08-03, D-007-R543..R550): run the supervisor-bridge test suite with
