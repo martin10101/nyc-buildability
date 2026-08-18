@@ -247,6 +247,29 @@
    "superseded_by": null,
    "affected_tasks": [],
    "manifest": "D-016-overnight-integration-runway/manifest.json"
+  },
+  {
+   "directive_id": "D-017",
+   "slug": "a-to-z-completion-authorization",
+   "title": "Owner A-to-Z completion authorization - context-intelligence implementation (Units A1-F), controller manifest repair and safe live-controller update, permanent modularity enforcement, deterministic complexity-based model routing",
+   "status": "active",
+   "issued_at": "2026-08-18",
+   "issued_by": "owner",
+   "supersedes": [],
+   "superseded_by": null,
+   "affected_tasks": [
+    "M0-T063",
+    "M0-T064",
+    "M0-T065",
+    "M0-T066",
+    "M0-T067",
+    "M0-T068",
+    "M0-T069",
+    "M0-T072",
+    "M0-T073",
+    "M0-T074"
+   ],
+   "manifest": "D-017-a-to-z-completion-authorization/manifest.json"
   }
  ],
  "updated_at": "2026-08-18T09:05:00+00:00"

@@ -1,0 +1,71 @@
+{
+ "task_id": "M0-T073",
+ "title": "Permanent software-engineering modularity enforcement: root CLAUDE.md principle, AGENTS.md rule, path-scoped code-architecture rule, CODE_MODULARITY_POLICY.md, deterministic CI modularity checker, task/review integration (D-017 amendment)",
+ "task_type": "governance",
+ "milestone_id": "M0",
+ "objective": "Make the modularity and code-organization requirements permanent repository rules per D-017-R105..R113: concise root CLAUDE.md principle; equivalent AGENTS.md rule for Codex review; auto-loading .claude/rules/code-architecture.md for handwritten Python/TypeScript/TSX production source; docs/CODE_MODULARITY_POLICY.md as the detailed source of truth; a deterministic CI modularity checker (handwritten-only, exclusions, hard/warning thresholds, versioned reviewed baseline that cannot be casually regenerated, explicit expiring path-specific exceptions, deterministic output, line count never sole proof); task-packet/coding-workflow/code-review-checklist integration; continuing enforcement proven by the seven D-017-R113 tests.",
+ "business_reason": "Owner directive: modularity rules are permanent repository law, not initiative-scoped; new giant-file regressions must fail CI after the initiative ends.",
+ "inputs": [],
+ "outputs": [],
+ "dependencies": [],
+ "allowed_paths": [
+  "CLAUDE.md",
+  "AGENTS.md",
+  ".claude/rules/code-architecture.md",
+  "docs/CODE_MODULARITY_POLICY.md",
+  "tools/modularity_check.py",
+  "tools/test_modularity_check.py",
+  "tools/modularity_baseline.json",
+  "tools/modularity_exceptions.json",
+  ".github/workflows/ci.yml",
+  ".claude/skills/start-controlled-task/SKILL.md",
+  ".claude/skills/run-quality-gate/SKILL.md",
+  "project-control/reports/M0-T073-producer-report.md",
+  "project-control/reports/M0-T073-evidence.md"
+ ],
+ "forbidden_paths": [
+  "tools/agent_supervisor/",
+  "tools/project_control.py",
+  "tools/code_graph/",
+  "services/",
+  "apps/",
+  "project-control/tasks/"
+ ],
+ "acceptance_scenarios": [],
+ "required_gates": [
+  "G0",
+  "G2",
+  "G3",
+  "G4",
+  "G5"
+ ],
+ "producer_agent": null,
+ "reviewer_agents": [
+  "code-reviewer",
+  "qa-engineer",
+  "security-reviewer",
+  "directive-compliance-verifier"
+ ],
+ "status": "backlog",
+ "progress_percent": 0,
+ "risks": [
+  "ci.yml overlap: additive step only; on a real conflict with open PR work touching ci.yml, stop with an overlap report (D-013-R067 pattern).",
+  "CLAUDE.md/AGENTS.md additions must stay concise (base-context budget); details live in docs/CODE_MODULARITY_POLICY.md.",
+  "Baseline must be versioned and non-casually-regenerable; regeneration path requires reviewed exception evidence."
+ ],
+ "blockers": [],
+ "created_at": "2026-08-18T11:29:09.633699+00:00",
+ "updated_at": "2026-08-18T11:29:09.736981+00:00",
+ "directive_refs": [
+  {
+   "directive_id": "D-001",
+   "requirement_ids": "ALL"
+  },
+  {
+   "directive_id": "D-017",
+   "requirement_ids": "ALL"
+  }
+ ],
+ "directive_regime_version": "1.0",
+ "directive_regime_entered_at": "2026-08-18T11:29:09.633699+00:00"
+}
