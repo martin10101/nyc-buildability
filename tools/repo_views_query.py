@@ -22,6 +22,7 @@ from __future__ import annotations
 import argparse
 import json
 import pathlib
+import re
 import sys
 
 _ROOT = pathlib.Path(__file__).resolve().parent.parent
@@ -85,17 +86,28 @@ def about_file(repo_root: str, path: str, *, cache_base: str | None = None,
         res, loaded_map, {"edge_limit": 10, "memory_limit": MAX_MEMORY_DIGESTS})
 
 
+_RX_TASK_ID = re.compile(r"^M\d+-T\d+$")
+
+
 def about_task(repo_root: str, task_id: str, *, cache_base: str | None = None,
                memory_base: str | None = None,
                map_path: str | None = None) -> dict:
+    # The id is a path component: anything but the exact ledger pattern
+    # refuses BEFORE any filesystem access (G3 round-1 finding 2 — a
+    # traversal id must never read outside the repository).
+    if not _RX_TASK_ID.match(task_id or ""):
+        raise rv.ViewsError("invalid_task_id",
+                            f"{task_id!r} is not a ledger task id (M<n>-T<n>)")
     res, _gi, loaded_map = rv.build_index(repo_root, cache_base, map_path)
     packet_path = (pathlib.Path(repo_root) / "project-control" / "tasks"
                    / f"{task_id}.json")
     try:
         packet = json.loads(packet_path.read_bytes().decode("utf-8"))
     except (OSError, UnicodeDecodeError, json.JSONDecodeError) as exc:
-        raise rv.ViewsError("task_packet_unreadable",
-                            f"{packet_path}: {exc}") from exc
+        # detail stays repo-relative: no absolute paths in error documents
+        raise rv.ViewsError(
+            "task_packet_unreadable",
+            f"project-control/tasks/{task_id}.json: {type(exc).__name__}") from exc
     files, files_marker = rv._truncate(
         sorted(packet.get("allowed_paths") or []), MAX_FILES_LISTED)
     content = {

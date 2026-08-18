@@ -49,11 +49,22 @@ main 40b530f).
 - **Reuse of the B1 hardening**: deep-view paths validate through Unit D's
   `is_canonical_repo_path` (traversal/absolute refuse before any read).
 
-## Self-check results (documented_test_commands)
+## G3 round-1 rework (review FAIL → fixed)
 
-- `python tools/test_repo_views.py` → **23 tests OK**.
-- `python -m pytest tools/test_repo_views.py -q` → **23 passed**.
-- `python tools/modularity_check.py --check` → **failures 0** (257 files).
+Round-1 review found two blocking defects, both fixed in round 2 entirely
+within allowed_paths: (1) R024 "files removed" gap — `change_set` counts now
+ride in the labeled cache-state section, asserted per view; (2) `about_task`
+task-id path traversal — the id must match the exact `M<n>-T<n>` ledger
+pattern before any filesystem access (`invalid_task_id`), regression-tested
+with the reviewer's out-of-repo probe. Observations addressed: repo-relative
+error details, `excerpt_out_of_range` refusal, complete fail-closed code list
+in the doc. Round-1 report: `M0-T068-review-FAIL-round1.md`.
+
+## Self-check results (documented_test_commands, round 2)
+
+- `python tools/test_repo_views.py` → **26 tests OK**.
+- `python -m pytest tools/test_repo_views.py -q` → **26 passed**.
+- `python tools/modularity_check.py --check` → **failures 0** (259 files).
 - `ruff check` (0.13.0, CI-matching) on the three new files → clean.
 - Regressions: Unit C 21/21 OK, Unit D 31/31 OK.
 

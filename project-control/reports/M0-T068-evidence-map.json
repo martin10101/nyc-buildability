@@ -38,7 +38,7 @@
    "No token-savings or efficiency claim anywhere in code, doc, or reports."
   ],
   "D-013-R013": [
-   "Fail closed: index_unavailable / ontology_unavailable / non_canonical_path / path_not_in_tree / source_unreadable / task_packet_unreadable / unsupported_base_fingerprint, all machine-readable, CLI exit 2 (AS-5 tests); no partial answer presented as complete."
+   "Fail closed: index_unavailable / ontology_unavailable / non_canonical_path / path_not_in_tree / source_unreadable / excerpt_out_of_range / task_packet_unreadable / invalid_task_id (a traversal task id refuses BEFORE any filesystem access - G3 round-1 finding 2 fixed with a probe-reproducing regression test) / unsupported_base_fingerprint / missing_question_value, all machine-readable, CLI exit 2 (AS-5 tests incl. the reviewer's out-of-repo probe); no partial answer presented as complete."
   ],
   "D-013-R022": [
    "Sequencing preserved under current authority: R022 bound the original bootstrap run (amended by source-002); D-017 authorizes the A-to-Z continuation; Unit E claimed only AFTER Unit D (M0-T067) was accepted and merged to main (40b530f), preserving A->B->C->D->E."
@@ -47,7 +47,7 @@
    "All four directive-named coverage modes implemented explicitly and labeled on every output: census (every eligible file accounted indexed/excluded/failed with reasons + reconciles), changed (deterministic change classification vs the prior cache generation; unsupported stated base REFUSES), neighborhood (bounded graph neighborhood around a named seed), deep (exact bounded authoritative-source excerpt with digest + line provenance). AS-1 tests each."
   ],
   "D-013-R024": [
-   "ONE coverage-record builder used by every view emits: repository identity, snapshot fingerprint, HEAD/branch/dirty-state digest, eligible/indexed counts, excluded/failed grouped by reason, stale count, cache hit/miss + reparse counts (in the labeled non-identity section), indexer/schema/config/ontology versions, source manifest digest, export digest, and the EXACT query parameters and result limits. AS-2 asserts every field group on all five views."
+   "ONE coverage-record builder used by every view emits: repository identity, snapshot fingerprint, HEAD/branch/dirty-state digest, eligible/indexed counts, excluded/failed grouped by reason, stale count, cache hit/miss + files reparsed/reused + the change_set counts covering files removed (deleted)/renamed/modified/invalidated (all in the labeled non-identity cache-state section - the R024 'files reparsed/rebound/removed/invalidated' group; G3 round-1 finding 1 fixed), indexer/schema/config/ontology versions, source manifest digest, export digest, and the EXACT query parameters and result limits. AS-2 asserts every field group incl. change_set.deleted on all five views."
   ],
   "D-013-R025": [
    "The census view claims exactly what the underlying census proves (reconciles flag surfaced, never asserted); 'deep' returns actual reopened source lines; no deep-understanding claim exists anywhere."

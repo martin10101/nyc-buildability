@@ -52,13 +52,31 @@
 - CLI `check` self-proof passes (two-run byte-compare; changed view
   documented-excluded).
 
-## Test + lint evidence (local, Python 3.11.9, ruff 0.13.0 = CI version)
-- `python tools/test_repo_views.py` → 23 tests, OK.
-- `python -m pytest tools/test_repo_views.py -q` → 23 passed.
+## G3 round-1 rework (two blocking findings) — round 2
+The round-1 independent review (M0-T068-review-FAIL-round1.md) found:
+- **Finding 1 (R024)**: "files removed" carried in NEITHER coverage section.
+  Fixed: `change_set` counts (incl. `deleted` = removed, renamed, modified,
+  invalidators) now ride in the labeled `cache_state_non_identity` section
+  (cache-relative, so that is the correct section); AS-2 asserts
+  `change_set.deleted` presence on every view.
+- **Finding 2 (R013, security)**: `about_task` accepted a traversal task id
+  and read a JSON file OUTSIDE the repository with exit 0. Fixed: the id must
+  match the exact `M<n>-T<n>` ledger pattern BEFORE any filesystem access
+  (`invalid_task_id`); regression test reproduces the reviewer's probe with a
+  real out-of-repo file and asserts nothing is read or leaked (module + CLI).
+- Observations addressed: `task_packet_unreadable` detail is now
+  repo-relative (no absolute paths in error documents); out-of-range deep
+  requests refuse (`excerpt_out_of_range`); the doc's fail-closed list now
+  names every emitted code.
+
+## Test + lint evidence (round 2; local, Python 3.11.9, ruff 0.13.0 = CI version)
+- `python tools/test_repo_views.py` → 26 tests, OK (23 round-1 + 3 new
+  regression tests).
+- `python -m pytest tools/test_repo_views.py -q` → 26 passed.
 - Unit C regression `python tools/test_subsystem_resolver.py` → 21 OK;
   Unit D regression `python tools/test_memory_graph.py` → 31 OK.
 - `ruff check` on the three new files → All checks passed.
-- `python tools/modularity_check.py --check` → selected 257 files; failures 0
+- `python tools/modularity_check.py --check` → selected 259 files; failures 0
   (4 pre-existing warnings in unrelated files).
 - New module sizes (SLOC-class): repo_views ~300, repo_views_query ~250,
   test_repo_views ~330 — all far below the 600 warn line.

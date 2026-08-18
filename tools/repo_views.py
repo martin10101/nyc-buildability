@@ -53,11 +53,14 @@ _DETERMINISTIC_KEYS = (
     "versions", "generator_identity", "graph_nodes_after", "graph_edges_after",
 )
 
-#: Telemetry keys for the SEPARATE non-identity cache-state section (R024
-#: requires cache hit/miss + reparse counts; they differ cold vs warm, so they
-#: are carried outside the byte-identity sections, explicitly labeled).
+#: Telemetry keys for the SEPARATE non-identity cache-state section. R024
+#: requires cache hit/miss plus the files reparsed/rebound/REMOVED/invalidated
+#: counts; `change_set` carries added/content_modified/metadata_modified/
+#: deleted (= removed)/renamed counts. These differ cold vs warm (they are
+#: relative to the prior cache generation), so they are carried outside the
+#: byte-identity sections, explicitly labeled (G3 round-1 finding 1).
 _CACHE_STATE_KEYS = ("mode", "cache_result", "rebuild_reason", "files_parsed",
-                     "files_reused", "affected_dependents")
+                     "files_reused", "affected_dependents", "change_set")
 
 
 class ViewsError(Exception):
@@ -260,6 +263,9 @@ def deep_view(res, loaded_map, repo_root: str, path: str, start: int, end: int,
         raise ViewsError("source_unreadable", f"{p}: {exc}") from exc
     lines = raw.decode("utf-8", errors="replace").splitlines()
     start = max(int(start), 1)
+    if lines and start > len(lines):
+        raise ViewsError("excerpt_out_of_range",
+                         f"start line {start} exceeds {p!r}'s {len(lines)} lines")
     end = min(int(end), len(lines))
     requested = max(end - start + 1, 0)
     kept = lines[start - 1:start - 1 + min(requested, max_lines)]

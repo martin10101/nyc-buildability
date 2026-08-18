@@ -162,6 +162,11 @@ class AS2CoverageRecord(Case):
                 self.assertIn(key, census)
             self.assertEqual(v["runtime"]["label"], "cache_state_non_identity")
             self.assertIn("cache_result", v["runtime"])
+            # R024 "files reparsed/rebound/removed/invalidated": the change_set
+            # counts (incl. deleted = removed) ride in the cache-state section
+            # (G3 round-1 finding 1).
+            self.assertIn("change_set", v["runtime"])
+            self.assertIn("deleted", v["runtime"]["change_set"])
 
     def test_query_params_and_limits_exact(self) -> None:
         res, gi, lm = self.build()
@@ -294,6 +299,43 @@ class AS5FailClosed(Case):
             rq.about_task(self.root, "M0-T999", cache_base=self.cache,
                           map_path=self.map_path)
         self.assertEqual(cm.exception.code, "task_packet_unreadable")
+
+    def test_about_task_traversal_id_refuses(self) -> None:
+        # G3 round-1 finding 2: a traversal id must refuse BEFORE any
+        # filesystem access — reproduce the reviewer's probe with a REAL file
+        # outside the repo root and assert it is never surfaced.
+        outer = os.path.dirname(self.root)
+        probe = os.path.join(outer, "probe_outside_secret.json")
+        with open(probe, "w", encoding="utf-8") as fh:
+            json.dump({"task_id": "LEAK", "title": "outside"}, fh)
+        self.addCleanup(os.remove, probe)
+        for evil in ("../probe_outside_secret", "../../probe_outside_secret",
+                     "M0-T001/../M0-T001", "", "not-a-task"):
+            with self.assertRaises(rv.ViewsError) as cm:
+                rq.about_task(self.root, evil, cache_base=self.cache,
+                              map_path=self.map_path)
+            self.assertEqual(cm.exception.code, "invalid_task_id", evil)
+        p = subprocess.run(
+            [sys.executable, QUERY_CLI, "--repo", self.root,
+             "--cache-base", self.cache, "--map", self.map_path,
+             "ask", "about_task", "../probe_outside_secret"],
+            capture_output=True, text=True)
+        self.assertEqual(p.returncode, 2)
+        self.assertEqual(json.loads(p.stdout)["error"]["code"], "invalid_task_id")
+        self.assertNotIn("LEAK", p.stdout)  # the out-of-repo packet never read
+
+    def test_task_packet_error_detail_is_repo_relative(self) -> None:
+        with self.assertRaises(rv.ViewsError) as cm:
+            rq.about_task(self.root, "M0-T999", cache_base=self.cache,
+                          map_path=self.map_path)
+        self.assertEqual(cm.exception.code, "task_packet_unreadable")
+        self.assertNotIn(self.root, cm.exception.detail)  # no absolute path
+
+    def test_deep_out_of_range_refuses(self) -> None:
+        res, _gi, lm = self.build()
+        with self.assertRaises(rv.ViewsError) as cm:
+            rv.deep_view(res, lm, self.root, "docs/notes.md", 99, 120)
+        self.assertEqual(cm.exception.code, "excerpt_out_of_range")
 
     def test_cli_exit_2_with_error_doc(self) -> None:
         p = subprocess.run(

@@ -26,9 +26,13 @@ stamp** (`resolver_version`/`map_version`/`map_digest`), generator identity,
 source-manifest and export digests, graph node/edge counts, `views_version`,
 and the EXACT `query_params` and result `limits`.
 
-Cache hit/miss, mode, rebuild reason, and reparse counts (also required by
-R024) live in a SEPARATE section labeled `cache_state_non_identity`: they
-legitimately differ cold vs warm, so they are excluded from byte-identity.
+Cache hit/miss, mode, rebuild reason, reparse/reuse counts, and the
+`change_set` counts (added / content_modified / metadata_modified / deleted
+(= files removed) / renamed / global invalidators — the R024 "files
+reparsed/rebound/removed/invalidated" group) live in a SEPARATE section
+labeled `cache_state_non_identity`: they are relative to the prior cache
+generation and legitimately differ cold vs warm, so they are excluded from
+byte-identity.
 The deterministic sections (content + coverage) of `census`/`card`/
 `neighborhood`/`deep` are byte-identical across cold and warm runs (tested);
 the `changed` view's content is base-relative by design (disclosed by its
@@ -56,8 +60,12 @@ fabricated answer (R051).
 
 `index_unavailable` (index cannot be built), `ontology_unavailable`,
 `non_canonical_path`, `path_not_in_tree`, `source_unreadable`,
-`task_packet_unreadable`, `unsupported_base_fingerprint` — all machine-
-readable, CLI exit 2. No partial answer is presented as complete.
+`excerpt_out_of_range`, `task_packet_unreadable` (detail stays
+repo-relative), `invalid_task_id` (a task id is a path component: anything
+but the exact `M<n>-T<n>` ledger pattern refuses BEFORE any filesystem
+access), `unsupported_base_fingerprint`, `missing_question_value`,
+`nondeterministic_views` (check self-proof), `view_failed` (catch-all) — all
+machine-readable, CLI exit 2. No partial answer is presented as complete.
 
 ## CLI
 

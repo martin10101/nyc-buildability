@@ -112,15 +112,15 @@
     "security-reviewer",
     "directive-compliance-verifier"
   ],
-  "status": "claimed",
-  "progress_percent": 10,
+  "status": "rework",
+  "progress_percent": 85,
   "risks": [
     "Coverage-record drift: R024 names many required fields; mitigated by a single coverage-record builder used by every view + AS-2 field assertions",
     "Scope creep into Unit F: no benchmarks/runbook and no initiative status projection here; this unit is retrieval views only"
   ],
   "blockers": [],
   "created_at": "2026-08-18T04:25:09.468722+00:00",
-  "updated_at": "2026-08-18T19:03:53.382783+00:00",
+  "updated_at": "2026-08-18T19:24:11.453527+00:00",
   "directive_refs": [
     {
       "directive_id": "D-001",
