@@ -1,0 +1,12 @@
+{
+  "task_id": "M0-T071",
+  "gate_id": "G0",
+  "reviewer": "orchestrator",
+  "role": "administrative",
+  "result": "PASS",
+  "report_file": "project-control/reports/M0-T071-G0-contract-review.md",
+  "reviewed_at": "2026-08-18T07:31:17.399257+00:00",
+  "content_manifest_sha256": "2c664ee663aefd5633aa9af1f0e5e41faa9cb45ae642684d1c73481614d8018c",
+  "reviewed_sha": "5c71fe0e08c8717cc20ac232d8bd0d8a328525e1",
+  "updated_at": "2026-08-18T07:31:17.838943+00:00"
+}

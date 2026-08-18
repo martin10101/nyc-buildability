@@ -1,0 +1,366 @@
+{
+ "schema": "directive_verification/v2",
+ "directive_id": "D-015",
+ "producer": "orchestrator",
+ "authority_note": "Pending independent verification by directive-compliance-verifier (producer != verifier). Capture only; no requirement verified yet. M0-T071 rows verify through the task's gates; D-015-BOOTSTRAP sentinel rows verify at directive verification after the repair session (D-012..D-014 precedent; no sentinel task_verification stub - c5 task_id pattern).",
+ "task_verifications": [
+  {
+   "task_id": "M0-T071",
+   "directive_id": "D-015",
+   "producer": "orchestrator",
+   "verifier": "directive-compliance-verifier",
+   "applicable_requirement_ids": [
+    "D-015-R001",
+    "D-015-R002",
+    "D-015-R010",
+    "D-015-R011",
+    "D-015-R012",
+    "D-015-R013",
+    "D-015-R014",
+    "D-015-R015",
+    "D-015-R016",
+    "D-015-R017",
+    "D-015-R018",
+    "D-015-R019",
+    "D-015-R020",
+    "D-015-R021",
+    "D-015-R022",
+    "D-015-R023",
+    "D-015-R024",
+    "D-015-R025",
+    "D-015-R026",
+    "D-015-R027",
+    "D-015-R028"
+   ],
+   "requirements": [
+    {
+     "id": "D-015-R001",
+     "state": "PASS",
+     "evidence": [
+      "age gate rerun by verifier: PASS nanoid@3.3.18 uploaded=2026-08-07T16:41:05.696Z age=919738s > 604800s; no waiver artifact in full diff 5c71fe0..a997f19",
+      "project-control/reports/M0-T071-DCV-final-verification.md"
+     ],
+     "verified_at": "2026-08-18T08:26:35+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "a997f19bb2f9d3c76d5d08885144de7d4f4f8517"
+    },
+    {
+     "id": "D-015-R002",
+     "state": "PASS",
+     "evidence": [
+      "name-only diff contains no M0-T070/PR#222 file; PR #222 head 09e23162 OPEN untouched",
+      "project-control/reports/M0-T071-DCV-final-verification.md"
+     ],
+     "verified_at": "2026-08-18T08:26:35+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "a997f19bb2f9d3c76d5d08885144de7d4f4f8517"
+    },
+    {
+     "id": "D-015-R010",
+     "state": "PASS",
+     "evidence": [
+      "lock diff: node_modules/nanoid version/resolved/integrity 3.3.17 -> 3.3.18 (single entry)",
+      "project-control/reports/M0-T071-DCV-final-verification.md"
+     ],
+     "verified_at": "2026-08-18T08:26:35+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "a997f19bb2f9d3c76d5d08885144de7d4f4f8517"
+    },
+    {
+     "id": "D-015-R011",
+     "state": "PASS",
+     "evidence": [
+      "lock diff exactly 3 lines; integrity sha512-DTg4MJbGMWkfi6VZFdNt2/... registry-verified (age-gate integrity check + G5 byte-for-byte tarball match)",
+      "project-control/reports/M0-T071-DCV-final-verification.md"
+     ],
+     "verified_at": "2026-08-18T08:26:35+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "a997f19bb2f9d3c76d5d08885144de7d4f4f8517"
+    },
+    {
+     "id": "D-015-R012",
+     "state": "PASS",
+     "evidence": [
+      "package.json dependencies/devDependencies contain no nanoid; only overrides.nanoid (exact-pin mechanism)",
+      "project-control/reports/M0-T071-DCV-final-verification.md"
+     ],
+     "verified_at": "2026-08-18T08:26:35+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "a997f19bb2f9d3c76d5d08885144de7d4f4f8517"
+    },
+    {
+     "id": "D-015-R013",
+     "state": "PASS",
+     "evidence": [
+      "full diff: only 2 implementation files; every other lock entry byte-identical",
+      "project-control/reports/M0-T071-DCV-final-verification.md"
+     ],
+     "verified_at": "2026-08-18T08:26:35+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "a997f19bb2f9d3c76d5d08885144de7d4f4f8517"
+    },
+    {
+     "id": "D-015-R014",
+     "state": "PASS",
+     "evidence": [
+      "final lock diff = exactly the 3 nanoid lines (npm audit fix rewrite shape absent)",
+      "project-control/reports/M0-T071-DCV-final-verification.md"
+     ],
+     "verified_at": "2026-08-18T08:26:35+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "a997f19bb2f9d3c76d5d08885144de7d4f4f8517"
+    },
+    {
+     "id": "D-015-R015",
+     "state": "PASS",
+     "evidence": [
+      "no unrelated churn in committed diff; worktree clean; no git reset/clean residue",
+      "project-control/reports/M0-T071-DCV-final-verification.md"
+     ],
+     "verified_at": "2026-08-18T08:26:35+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "a997f19bb2f9d3c76d5d08885144de7d4f4f8517"
+    },
+    {
+     "id": "D-015-R016",
+     "state": "PASS",
+     "evidence": [
+      "verifier reran age gate + CLI advisory PASS; G4 reran npm ci/audit 0/vitest 287/tsc/eslint; CI web+web-e2e+web-dependency-security+exact-production-install all SUCCESS",
+      "project-control/reports/M0-T071-DCV-final-verification.md"
+     ],
+     "verified_at": "2026-08-18T08:26:35+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "a997f19bb2f9d3c76d5d08885144de7d4f4f8517"
+    },
+    {
+     "id": "D-015-R017",
+     "state": "PASS",
+     "evidence": [
+      "M0-T071-dependency-evidence.md committed at e7c7d37 (before-failure / after-zero / age>604800s / no waiver / no unrelated changes)",
+      "project-control/reports/M0-T071-DCV-final-verification.md"
+     ],
+     "verified_at": "2026-08-18T08:26:35+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "a997f19bb2f9d3c76d5d08885144de7d4f4f8517"
+    },
+    {
+     "id": "D-015-R018",
+     "state": "PASS",
+     "evidence": [
+      "gates G4 (qa-engineer) + G5 (security-reviewer) independent_review PASS at e7c7d37 / identity 371eb3d, parallel (07:53/07:56); single producer orchestrator",
+      "project-control/reports/M0-T071-DCV-final-verification.md"
+     ],
+     "verified_at": "2026-08-18T08:26:35+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "a997f19bb2f9d3c76d5d08885144de7d4f4f8517"
+    },
+    {
+     "id": "D-015-R019",
+     "state": "PASS",
+     "evidence": [
+      "commit e7c7d37 pushed; PR #223 base main OPEN; gh pr checks: 33/33 SUCCESS",
+      "project-control/reports/M0-T071-DCV-final-verification.md"
+     ],
+     "verified_at": "2026-08-18T08:26:35+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "a997f19bb2f9d3c76d5d08885144de7d4f4f8517"
+    },
+    {
+     "id": "D-015-R020",
+     "state": "PASS",
+     "evidence": [
+      "gh pr view 222: OPEN, mergedAt null, head 09e23162 - branch untouched",
+      "project-control/reports/M0-T071-DCV-final-verification.md"
+     ],
+     "verified_at": "2026-08-18T08:26:35+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "a997f19bb2f9d3c76d5d08885144de7d4f4f8517"
+    },
+    {
+     "id": "D-015-R021",
+     "state": "PASS",
+     "evidence": [
+      "no M0-T070.json / D-014-* file in full name-only diff",
+      "project-control/reports/M0-T071-DCV-final-verification.md"
+     ],
+     "verified_at": "2026-08-18T08:26:35+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "a997f19bb2f9d3c76d5d08885144de7d4f4f8517"
+    },
+    {
+     "id": "D-015-R022",
+     "state": "PASS",
+     "evidence": [
+      "no tools/agent_supervisor or controller path in diff",
+      "project-control/reports/M0-T071-DCV-final-verification.md"
+     ],
+     "verified_at": "2026-08-18T08:26:35+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "a997f19bb2f9d3c76d5d08885144de7d4f4f8517"
+    },
+    {
+     "id": "D-015-R023",
+     "state": "PASS",
+     "evidence": [
+      ".npmrc byte-identical; no waiver/allowlist/suppression file; advisory removed by upgrade; CI audit green on merit",
+      "project-control/reports/M0-T071-DCV-final-verification.md"
+     ],
+     "verified_at": "2026-08-18T08:26:35+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "a997f19bb2f9d3c76d5d08885144de7d4f4f8517"
+    },
+    {
+     "id": "D-015-R024",
+     "state": "PASS",
+     "evidence": [
+      "single-package bump; all other versions byte-identical",
+      "project-control/reports/M0-T071-DCV-final-verification.md"
+     ],
+     "verified_at": "2026-08-18T08:26:35+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "a997f19bb2f9d3c76d5d08885144de7d4f4f8517"
+    },
+    {
+     "id": "D-015-R025",
+     "state": "PASS",
+     "evidence": [
+      "PR #223 and PR #222 both OPEN (mergedAt null); origin/main still 5c71fe0",
+      "project-control/reports/M0-T071-DCV-final-verification.md"
+     ],
+     "verified_at": "2026-08-18T08:26:35+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "a997f19bb2f9d3c76d5d08885144de7d4f4f8517"
+    },
+    {
+     "id": "D-015-R026",
+     "state": "PASS",
+     "evidence": [
+      "origin/control/context-intelligence-init tip de2f224 (no M0-T071 commits in its history)",
+      "project-control/reports/M0-T071-DCV-final-verification.md"
+     ],
+     "verified_at": "2026-08-18T08:26:35+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "a997f19bb2f9d3c76d5d08885144de7d4f4f8517"
+    },
+    {
+     "id": "D-015-R027",
+     "state": "PASS",
+     "evidence": [
+      "wt-m0t063 HEAD de2f224, status clean - A1 untouched, not restarted",
+      "project-control/reports/M0-T071-DCV-final-verification.md"
+     ],
+     "verified_at": "2026-08-18T08:26:35+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "a997f19bb2f9d3c76d5d08885144de7d4f4f8517"
+    },
+    {
+     "id": "D-015-R028",
+     "state": "PASS",
+     "evidence": [
+      "M0-T071-return-report.md committed at a997f19: NANOID_REPAIR_PR_READY with all 11 required items",
+      "project-control/reports/M0-T071-DCV-final-verification.md"
+     ],
+     "verified_at": "2026-08-18T08:26:35+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "a997f19bb2f9d3c76d5d08885144de7d4f4f8517"
+    }
+   ],
+   "reviewed_sha": "a997f19bb2f9d3c76d5d08885144de7d4f4f8517",
+   "reviewed_manifest_sha256": "371eb3dac9250537ba5f8bc21d74c20515b292249dfff3406cefa82c4c27f361",
+   "note": "FINAL independent verification recorded from the fresh directive-compliance-verifier run of 2026-08-18 (project-control/reports/M0-T071-DCV-final-verification.md) at head a997f19bb2f9, material identity 371eb3dac925 (canonical implementation e7c7d377; later commits control-plane-only, identity verified stable). 21/21 applicable rows PASS; producer (orchestrator) != verifier. Sentinel rows recorded under sentinel_verifications.",
+   "verified_at": "2026-08-18T08:26:35+00:00"
+  }
+ ],
+ "updated_at": "2026-08-18T08:26:35+00:00",
+ "sentinel_verifications": [
+  {
+   "sentinel_id": "D-015-BOOTSTRAP",
+   "directive_id": "D-015",
+   "producer": "orchestrator",
+   "verifier": "directive-compliance-verifier",
+   "reviewed_sha": "a997f19bb2f9d3c76d5d08885144de7d4f4f8517",
+   "reviewed_manifest_sha256": "371eb3dac9250537ba5f8bc21d74c20515b292249dfff3406cefa82c4c27f361",
+   "verified_at": "2026-08-18T08:26:35+00:00",
+   "note": "Session-scope reconciliation duties (D-012..D-014 precedent: sentinel rows verify at directive verification, never inside a ledger task's accept() set; recorded here as a documentary section - c5 forbids sentinel ids in task_verifications). 7/7 PASS by the independent verifier.",
+   "requirements": [
+    {
+     "id": "D-015-R003",
+     "state": "PASS",
+     "evidence": [
+      "git ls-remote origin main = 5c71fe0; merge-base(5c71fe0, a997f19) = 5c71fe0; manifest frozen_baseline_sha matches",
+      "project-control/reports/M0-T071-DCV-final-verification.md"
+     ],
+     "verified_at": "2026-08-18T08:26:35+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "a997f19bb2f9d3c76d5d08885144de7d4f4f8517"
+    },
+    {
+     "id": "D-015-R004",
+     "state": "PASS",
+     "evidence": [
+      "B-019 exists open on the M0-T070 branch (status open, nanoid 3.3.17, GHSA-2v37-7h3g-55p8); BEFORE lock entry integrity matches",
+      "project-control/reports/M0-T071-DCV-final-verification.md"
+     ],
+     "verified_at": "2026-08-18T08:26:35+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "a997f19bb2f9d3c76d5d08885144de7d4f4f8517"
+    },
+    {
+     "id": "D-015-R005",
+     "state": "PASS",
+     "evidence": [
+      "committed lock: postcss 8.5.23 requires nanoid ^3.3.16; exactly one node_modules/nanoid entry",
+      "project-control/reports/M0-T071-DCV-final-verification.md"
+     ],
+     "verified_at": "2026-08-18T08:26:35+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "a997f19bb2f9d3c76d5d08885144de7d4f4f8517"
+    },
+    {
+     "id": "D-015-R006",
+     "state": "PASS",
+     "evidence": [
+      "authoritative scripts/dependency_age_gate.mjs rerun: PASS, uploaded 2026-08-07T16:41:05.696Z, age 919738s",
+      "project-control/reports/M0-T071-DCV-final-verification.md"
+     ],
+     "verified_at": "2026-08-18T08:26:35+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "a997f19bb2f9d3c76d5d08885144de7d4f4f8517"
+    },
+    {
+     "id": "D-015-R007",
+     "state": "PASS",
+     "evidence": [
+      "advisory range <3.3.18 patched by 3.3.18; audit total 0 reproduced (G4) and CI web-dependency-security SUCCESS",
+      "project-control/reports/M0-T071-DCV-final-verification.md"
+     ],
+     "verified_at": "2026-08-18T08:26:35+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "a997f19bb2f9d3c76d5d08885144de7d4f4f8517"
+    },
+    {
+     "id": "D-015-R008",
+     "state": "PASS",
+     "evidence": [
+      "M0-T071.json absent on 5c71fe0 and de2f224; M0-T070 allocated on its branch - next free ID confirmed",
+      "project-control/reports/M0-T071-DCV-final-verification.md"
+     ],
+     "verified_at": "2026-08-18T08:26:35+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "a997f19bb2f9d3c76d5d08885144de7d4f4f8517"
+    },
+    {
+     "id": "D-015-R009",
+     "state": "PASS",
+     "evidence": [
+      "linear 2-commit branch e7c7d37 <- a997f19 with merge-base = origin/main 5c71fe0 (direct branch from current main)",
+      "project-control/reports/M0-T071-DCV-final-verification.md"
+     ],
+     "verified_at": "2026-08-18T08:26:35+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "a997f19bb2f9d3c76d5d08885144de7d4f4f8517"
+    }
+   ]
+  }
+ ]
+}
