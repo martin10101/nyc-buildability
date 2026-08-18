@@ -1,0 +1,15 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "task_packet_commands.schema.json",
+  "title": "Task-packet documented baseline/test commands (canonical field)",
+  "description": "THE one canonical, closed task-packet field for documented baseline/test commands (D-014 AS-1): top-level packet key 'documented_test_commands'. The runtime authority for this profile is tools/agent_supervisor/policy.py validate_documented_test_commands (stdlib, deterministic, fail closed); a source-level test asserts this schema and that validator agree on the bounds and character profile so neither can drift permissive alone. Absence of the key is legal and confers no authority (empty tuple); null, any other type, or any entry outside this profile is a hard validation failure that refuses the run - never a silently dropped or repaired entry. Entries are matched token-by-token against a proposed command by the existing documented-test classification (S4.1 _auto_test_command via _shape_matches); '*' and '?' are fnmatch wildcards within one token, exactly as standing-grant shapes already behave. This field is a per-task test contract, never a general Bash allowlist (D-014 AS-6).",
+  "type": "array",
+  "maxItems": 16,
+  "uniqueItems": true,
+  "items": {
+    "type": "string",
+    "minLength": 1,
+    "maxLength": 512,
+    "pattern": "^[A-Za-z0-9][A-Za-z0-9 ._/:=@+,*?\\[\\]-]*$"
+  }
+}

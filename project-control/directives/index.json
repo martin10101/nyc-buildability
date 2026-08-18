@@ -189,6 +189,40 @@
    "manifest": "D-012-supervised-product-validation-run/manifest.json"
   },
   {
+   "directive_id": "D-013",
+   "slug": "context-intelligence-pipeline",
+   "title": "Context-intelligence pipeline (census/index, bounded context compiler, ontology, measurement) - units A1/A2/B/C/D/E/F",
+   "status": "active",
+   "issued_at": "2026-08-18",
+   "issued_by": "owner",
+   "supersedes": [],
+   "superseded_by": null,
+   "affected_tasks": [
+    "M0-T063",
+    "M0-T064",
+    "M0-T065",
+    "M0-T066",
+    "M0-T067",
+    "M0-T068",
+    "M0-T069"
+   ],
+   "manifest": "D-013-context-intelligence-pipeline/manifest.json"
+  },
+  {
+   "directive_id": "D-014",
+   "slug": "supervisor-command-authority-repair",
+   "title": "Bounded supervisor repair: packet command authority wiring (defect A) + revoke-all/status open_asks reconciliation (defect B)",
+   "status": "active",
+   "issued_at": "2026-08-18",
+   "issued_by": "owner",
+   "supersedes": [],
+   "superseded_by": null,
+   "affected_tasks": [
+    "M0-T070"
+   ],
+   "manifest": "D-014-supervisor-command-authority-repair/manifest.json"
+  },
+  {
    "directive_id": "D-015",
    "slug": "nanoid-security-repair",
    "title": "Bounded dependency-security repair: nanoid 3.3.17 -> 3.3.18 (GHSA-2v37-7h3g-55p8, closes B-019) under the normal policy, no age waiver",
@@ -201,7 +235,19 @@
     "M0-T071"
    ],
    "manifest": "D-015-nanoid-security-repair/manifest.json"
+  },
+  {
+   "directive_id": "D-016",
+   "slug": "overnight-integration-runway",
+   "title": "Overnight owner authorization - complete context-intelligence integration runway (Stages 0-7)",
+   "status": "active",
+   "issued_at": "2026-08-18",
+   "issued_by": "owner",
+   "supersedes": [],
+   "superseded_by": null,
+   "affected_tasks": [],
+   "manifest": "D-016-overnight-integration-runway/manifest.json"
   }
  ],
- "updated_at": "2026-08-18T07:29:28+00:00"
+ "updated_at": "2026-08-18T09:05:00+00:00"
 }

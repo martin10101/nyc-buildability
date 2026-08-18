@@ -53,7 +53,7 @@ import os
 import pathlib
 import sys
 import zoneinfo
-from typing import Any, Sequence
+from typing import Any, Mapping, Sequence
 
 from . import CONTROLLER_VERSION, PHASE, PROTOCOL_VERSION, SCHEMA_VERSION
 from .anchor import (
@@ -64,7 +64,13 @@ from .anchor import (
     build_publish_plan,
 )
 from .audit_log import AuditLog
-from .broker import ApprovalBroker, BrokerError, build_request
+from .broker import (
+    APPROVAL_PREFIX,
+    STATUS_PENDING,
+    ApprovalBroker,
+    BrokerError,
+    build_request,
+)
 from .circuit_breakers import CircuitBreakers
 from .claude_runner import (
     CONTROL_RESPONSE_WRAPPER_VERIFIED,
@@ -147,6 +153,7 @@ from .policy import (
     TaskAuthority,
     apply_model_recommendation,
     evaluate as evaluate_policy,
+    validate_documented_test_commands,
 )
 from .preflight import (
     UNVERIFIED,
@@ -1336,6 +1343,31 @@ def cmd_status(args: argparse.Namespace) -> int:
     with DurableJournal(db_path) as journal:
         integrity = journal.integrity_check()
         last = journal.last_transition()
+        # M0-T070 (D-014 AS-8): an ask row is ACTIONABLE only while its broker
+        # approval record still awaits the owner. Reconciling here, at read
+        # time, is what keeps journals written before this fix truthful too -
+        # revoke-all used to leave `queued_asks` rows unanswered forever, so a
+        # revoked request kept appearing under open_asks. Broker-origin asks
+        # carry the `ask_<request_id>` id minted by `ApprovalBroker.defer`; an
+        # ask with no approval record (rotation pause, model-chain exhaustion)
+        # is a genuine owner question and stays open. Read-only on purpose: the
+        # status command may never mutate a journal it reports on.
+        open_asks: list[dict[str, Any]] = []
+        resolved_asks: list[dict[str, Any]] = []
+        state = journal.all_state()
+        for ask in journal.open_asks():
+            entry = ask.to_dict()
+            record: Any = None
+            if ask.ask_id.startswith("ask_"):
+                record = state.get(APPROVAL_PREFIX + ask.ask_id[len("ask_"):])
+            if not isinstance(record, dict) or record.get("status") == STATUS_PENDING:
+                open_asks.append(entry)
+                continue
+            entry["actionable"] = False
+            entry["approval_status"] = str(record.get("status", ""))
+            entry["resolution"] = str(record.get("revoked_reason", "")
+                                      or record.get("status", ""))
+            resolved_asks.append(entry)
         payload = {
             "command": "status",
             "controller_version": CONTROLLER_VERSION,
@@ -1347,7 +1379,8 @@ def cmd_status(args: argparse.Namespace) -> int:
             "current_state": journal.get_state("current_state", INITIAL_STATE),
             "last_transition": last.to_dict() if last else None,
             "pending_effects": [e.to_dict() for e in journal.pending_effects()],
-            "open_asks": [a.to_dict() for a in journal.open_asks()],
+            "open_asks": open_asks,
+            "resolved_asks": resolved_asks,
             "unsent_outbound": len(journal.unsent_outbound()),
             "audit_chain_ok": chain.ok,
             "audit_head_sequence": chain.head_sequence,
@@ -1368,6 +1401,9 @@ def cmd_status(args: argparse.Namespace) -> int:
               f"(head sequence {payload['audit_head_sequence']}) {payload['audit_detail']}")
         print(f"pending effects:  {len(payload['pending_effects'])}")
         print(f"queued questions: {len(payload['open_asks'])}")
+        if payload["resolved_asks"]:
+            print(f"resolved history: {len(payload['resolved_asks'])} "
+                  f"(revoked/answered approval requests; not actionable)")
         print("limited-auto:     disabled (not implemented in this phase)")
     return 0 if payload["journal_ok"] and payload["audit_chain_ok"] else 1
 
@@ -2474,6 +2510,27 @@ def cmd_orchestrator_watchdog(args: argparse.Namespace) -> int:
     return 0
 
 
+def production_task_authority(packet: Mapping[str, Any], *, repo_root: str,
+                              worktree: str, branch: str,
+                              stage: str) -> TaskAuthority:
+    """THE TaskAuthority construction for a production supervised run.
+
+    M0-T070 (qualifying evidence: run_M0_T063_A1 defect, D-014 AS-2): the
+    packet's documented baseline/test commands are loaded through the
+    fail-closed validator and handed to the authority here, in the one
+    place the real loop builds it. Before this function existed, `_run_loop`
+    called `TaskAuthority.from_packet` without `documented_test_commands`,
+    so the S4.1 documented-test AUTO tier was unreachable in production and
+    every packet test command was classified ASK. A malformed field refuses
+    the run (PolicyError) rather than silently running without the commands,
+    which would reproduce the same defect with a validator in the middle.
+    """
+    return TaskAuthority.from_packet(
+        packet, repo_root=repo_root, worktree=worktree, branch=branch,
+        stage=stage,
+        documented_test_commands=validate_documented_test_commands(packet))
+
+
 def _run_loop(args: argparse.Namespace, checkout: pathlib.Path,
               journal: DurableJournal, audit: AuditLog) -> dict[str, Any]:
     """Build the real loop from explicitly-named inputs and run it."""
@@ -2484,7 +2541,7 @@ def _run_loop(args: argparse.Namespace, checkout: pathlib.Path,
     selection = load_model_selection(args.model_selection)
     validate_selection(config, selection)
 
-    authority = TaskAuthority.from_packet(
+    authority = production_task_authority(
         packet, repo_root=str(repo), worktree=str(worktree),
         branch=args.branch or "", stage=args.stage or str(packet.get("status", "")))
     run_id = args.run_id or f"run_{checkout_key(checkout)[:12]}"

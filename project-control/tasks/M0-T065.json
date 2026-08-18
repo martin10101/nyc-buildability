@@ -1,0 +1,49 @@
+{
+ "task_id": "M0-T065",
+ "title": "Context-intelligence Unit B: unified bounded context compiler consuming the deterministic index (D-013)",
+ "task_type": "infrastructure",
+ "milestone_id": "M0",
+ "objective": "Make the ONE context pack (tools/context_pack.py) consume the deterministic index under ONE global budget with coverage/provenance emission, refuse-or-split on overflow, and the owner-approved explicit amendment introducing the adaptive 5K-8K normal tier (owner decision 7) to the accepted 32K/64K/20% budget contract; never silently rewrite the accepted contract.",
+ "business_reason": "D-013 Unit B; single-compiler principle (no independent concatenated budgets).",
+ "inputs": [],
+ "outputs": [],
+ "dependencies": [
+  "M0-T064"
+ ],
+ "allowed_paths": [],
+ "forbidden_paths": [],
+ "acceptance_scenarios": [],
+ "required_gates": [
+  "G0",
+  "G3",
+  "G4",
+  "G5"
+ ],
+ "producer_agent": null,
+ "reviewer_agents": [
+  "code-reviewer",
+  "qa-engineer",
+  "security-reviewer",
+  "directive-compliance-verifier"
+ ],
+ "status": "backlog",
+ "progress_percent": 0,
+ "risks": [],
+ "blockers": [],
+ "created_at": "2026-08-18T04:24:47.953134+00:00",
+ "updated_at": "2026-08-18T04:24:48.339416+00:00",
+ "directive_refs": [
+  {
+   "directive_id": "D-001",
+   "requirement_ids": "ALL"
+  },
+  {
+   "directive_id": "D-013",
+   "requirement_ids": "ALL"
+  }
+ ],
+ "directive_regime_version": "1.0",
+ "directive_regime_entered_at": "2026-08-18T04:24:47.953134+00:00",
+ "path_free_governance": true,
+ "path_free_justification": "Roadmap reservation contracted at the D-013 bootstrap (owner authorization 2026-08-18, source-002). Genuinely path-free until claimed: exact allowed paths are bound at claim time after predecessor acceptance per D-013 sequencing; no implementation content exists or is authorized yet for this unit."
+}

@@ -677,6 +677,12 @@ class ApprovalBroker:
                 record["revoked_reason"] = reason
                 record["updated_at_utc"] = to_utc_iso()
                 self.journal.set_state(key, record)
+                # M0-T070 (D-014 AS-8): also resolve the queued ASK row this
+                # request minted in `defer` (`ask_<request_id>`), so a revoked
+                # request can never surface as an open actionable question.
+                # The row is preserved as answered history, never deleted.
+                self.journal.resolve_ask(
+                    f"ask_{key[len(APPROVAL_PREFIX):]}", f"revoked: {reason}")
                 revoked += 1
         self.journal.set_state("limited_auto_enabled", False)
         self.journal.set_state("revoke_all", {"at_utc": to_utc_iso(), "reason": reason,

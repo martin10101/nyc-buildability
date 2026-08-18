@@ -1,0 +1,49 @@
+{
+ "task_id": "M0-T069",
+ "title": "Context-intelligence Unit F: promotion benchmark, operating runbook, deterministic status projection (D-013)",
+ "task_type": "infrastructure",
+ "milestone_id": "M0",
+ "objective": "Before/after benchmark over the frozen representative corpus (correctness first; the full promotion-evidence list of D-013), honest efficiency reporting with provider-token savings labeled unmeasured when unavailable, threshold proposal with rationale for the owner/control-plane promotion decision, the operating runbook, and the deterministic initiative status projection (bounded JSON + Markdown, Mermaid as view only, stale-marking by generating SHA).",
+ "business_reason": "D-013 Unit F; promotion decision gate for the whole pipeline.",
+ "inputs": [],
+ "outputs": [],
+ "dependencies": [
+  "M0-T068"
+ ],
+ "allowed_paths": [],
+ "forbidden_paths": [],
+ "acceptance_scenarios": [],
+ "required_gates": [
+  "G0",
+  "G3",
+  "G4",
+  "G5"
+ ],
+ "producer_agent": null,
+ "reviewer_agents": [
+  "code-reviewer",
+  "qa-engineer",
+  "security-reviewer",
+  "directive-compliance-verifier"
+ ],
+ "status": "backlog",
+ "progress_percent": 0,
+ "risks": [],
+ "blockers": [],
+ "created_at": "2026-08-18T04:25:10.826108+00:00",
+ "updated_at": "2026-08-18T04:25:11.252342+00:00",
+ "directive_refs": [
+  {
+   "directive_id": "D-001",
+   "requirement_ids": "ALL"
+  },
+  {
+   "directive_id": "D-013",
+   "requirement_ids": "ALL"
+  }
+ ],
+ "directive_regime_version": "1.0",
+ "directive_regime_entered_at": "2026-08-18T04:25:10.826108+00:00",
+ "path_free_governance": true,
+ "path_free_justification": "Roadmap reservation contracted at the D-013 bootstrap (owner authorization 2026-08-18, source-002). Genuinely path-free until claimed: exact allowed paths are bound at claim time after predecessor acceptance per D-013 sequencing; no implementation content exists or is authorized yet for this unit."
+}
