@@ -1786,7 +1786,18 @@
    "reviewed_manifest_sha256": "73b36e609faea8295c55c7b3ca5807b2377dcc9f51363765e76b2099156e3b73",
    "verified_at": "2026-08-07T21:35:00+00:00",
    "note": "Empty applicable set: no D-001 requirement row is applicable to M2-T014 (resolver-derived; refs D-001:ALL). Row exists to satisfy the fail-closed per-task verification check at accept. Content identity 73b36e60 stable since submit (gates G0/G2/G3 recorded at it)."
+  },
+  {
+   "task_id": "M0-T064",
+   "directive_id": "D-001",
+   "producer": "orchestrator",
+   "verifier": "directive-compliance-verifier",
+   "applicable_requirement_ids": [],
+   "requirements": [],
+   "reviewed_sha": "dc6a72d0bca967b7c1e63c25977fc0b5df38ddeb",
+   "reviewed_manifest_sha256": "c7571321b63e51a7523c8ced623bd59856471cb98c2f7e83c1c876d657a0e603",
+   "note": "Empty-but-present: 0 D-001 requirements are applicable to M0-T064 (an implementation unit; D-001 governs the directive-compliance registry itself). Row present for c14 coverage at reviewed_sha dc6a72d / manifest c7571321. Producer (orchestrator) != verifier."
   }
  ],
- "updated_at": "2026-08-18T14:37:58+00:00"
+ "updated_at": "2026-08-18T16:10:00+00:00"
 }

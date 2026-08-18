@@ -79,12 +79,12 @@
     "security-reviewer",
     "directive-compliance-verifier"
   ],
-  "status": "awaiting_gate",
-  "progress_percent": 85,
+  "status": "accepted",
+  "progress_percent": 100,
   "risks": [],
   "blockers": [],
   "created_at": "2026-08-18T04:24:46.572066+00:00",
-  "updated_at": "2026-08-18T14:44:53.012977+00:00",
+  "updated_at": "2026-08-18T16:06:07.656568+00:00",
   "directive_refs": [
     {
       "directive_id": "D-001",
@@ -104,5 +104,7 @@
     "python tools/test_repo_index_assembly.py",
     "python -m pytest tools/test_repo_index_incremental.py tools/test_repo_index_assembly.py -q"
   ],
-  "worktree": "C:/Users/MLFLL/Downloads/nyc-zoning/wt-m0t064"
+  "worktree": "C:/Users/MLFLL/Downloads/nyc-zoning/wt-m0t064",
+  "accepted_by": "orchestrator",
+  "accepted_at": "2026-08-18T16:06:07.656568+00:00"
 }
