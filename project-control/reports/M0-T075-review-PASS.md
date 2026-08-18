@@ -62,3 +62,30 @@ My own probes on `contained_repo_path` refused: in-repo absolute drive path, `do
 ## Verdict
 
 **PASS** — all 8 directive proofs independently reproduced; scope otherwise clean, forbidden diff empty, CI purely additive, M0-T069 preserved, no promotion/behavior-flag change — conditioned on the one BLOCKING administrative correction (add `tools/context_pack_evidence.py` to the packet's `allowed_paths` and re-run the applicability dry-run) being applied and validated before acceptance.
+
+
+---
+
+# M0-T075 independent review — correction attestation — PASS
+
+> Saved VERBATIM by the orchestrator from the same reviewer's agent-return
+> channel (transport entity-decoding only). Delta attestation at the
+> corrected HEAD db82e0a.
+
+**Reviewed HEAD:** `db82e0abb86aa6fe5e2858a29978315a553c881c` (worktree `C:/Users/MLFLL/Downloads/nyc-zoning/wt-m0t064` confirmed; commit "M0-T075: apply required review correction - context_pack_evidence.py added to packet allowed_paths", parent = my reviewed `df2468d`).
+
+**(a) HEAD confirmed:** `git rev-parse HEAD` = `db82e0abb86aa6fe5e2858a29978315a553c881c`.
+
+**(b) Delta is control-plane-only.** `git diff df2468d..db82e0a --name-only` = exactly 4 files:
+- `project-control/reports/M0-T075-review-PASS.md` (saved verbatim review report)
+- `project-control/reports/M0-T075.json` (submission record)
+- `project-control/state.json` (lifecycle bookkeeping)
+- `project-control/tasks/M0-T075.json` (packet amendment)
+
+No tools/, docs/, or `.github/` file changed — every code/doc/CI artifact I reviewed and every proof I reproduced at `df2468d` is byte-identical at `db82e0a`. (Working tree additionally carries only post-HEAD orchestrator bookkeeping: `progress_log`/`updated_at` in the packet plus state/submission records; zero non-control-plane dirty files.)
+
+**(c) Correction verified.** The committed packet at `db82e0a` has **44 allowed_paths** and `tools/context_pack_evidence.py` is present (working copy identical in `allowed_paths`). Applicability dry-run re-run at this HEAD: `directive_registry.evaluate_task_refs` -> `ok: true`, **63 applicable**, evidence-map coverage **missing [] / extra []** — unchanged from my original review, as predicted by my dry-run.
+
+**(d) Verdict.** The single BLOCKING administrative finding is **closed**. My observations (seed-ordering, pre-existing lock-reclaim TOCTOU, supplied-string echo, pre-existing whole-tree ruff noise, e2e source-count environment variance) remain non-blocking follow-up candidates and do not condition the verdict.
+
+**FINAL: PASS — unconditional at db82e0abb86aa6fe5e2858a29978315a553c881c.**

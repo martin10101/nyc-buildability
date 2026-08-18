@@ -2931,7 +2931,18 @@
    "reviewed_sha": "8457b15ddc2ce14230ae09afc7f8266123521bdf",
    "reviewed_manifest_sha256": "63590fbf4fd512255e2989fac4734448dba195fc3bee1d9d5c2084da031f61e8",
    "note": "Independent DCV PASS 46/46 (round 1) + code/QA delta re-review CONFIRM-CLOSED (MAJOR-1/MINOR-2/F1). R037/R079 A1-scope only; the byte-identical incremental-vs-full parity test is the A2 (M0-T064) obligation, built and passing. Producer != verifier."
+  },
+  {
+   "task_id": "M0-T075",
+   "directive_id": "D-013",
+   "producer": "orchestrator",
+   "verifier": "directive-compliance-verifier",
+   "applicable_requirement_ids": [],
+   "requirements": [],
+   "reviewed_sha": "db82e0abb86aa6fe5e2858a29978315a553c881c",
+   "reviewed_manifest_sha256": "a0f4aef4a2a42f4c08fe68300c52a4ec875d960a47b2f3c6da8646df3dd395ce",
+   "note": "Empty-but-present: 0 D-013 requirements applicable to M0-T075 (confirmed by evaluate_task_refs and independently by the DCV run; the task's corrective scope binds D-018 rows only). Row present for coverage at reviewed_sha db82e0a. Producer (orchestrator) != verifier."
   }
  ],
- "updated_at": "2026-08-18T20:10:33+00:00"
+ "updated_at": "2026-08-18T23:10:02+00:00"
 }
