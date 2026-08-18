@@ -481,6 +481,24 @@ jobs:
       - name: Run code-graph fixture test suite
         run: python3 tools/test_code_graph.py
 
+  # M0-T063 Unit A1 (D-013, ADDITIVE job; existing jobs untouched): the
+  # context-intelligence foundation - repository fingerprint + per-file
+  # manifest, crash-safe cache generations, and the baseline harness. Stdlib
+  # only (git + code_graph, both already present); the three test modules are
+  # the packet's documented_test_commands. Deterministic; no network, no
+  # secrets. SHA-pinned checkout identical to the sibling jobs.
+  context-index-a1:
+    name: context-index-a1 (fingerprint + cache + baseline)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+      - name: Repository fingerprint tests
+        run: python3 tools/test_repo_fingerprint.py
+      - name: Index cache crash-safety tests
+        run: python3 tools/test_repo_index_cache.py
+      - name: Baseline harness tests
+        run: python3 tools/test_repo_index_baseline.py
+
   # Task M0-T036 (ADDITIVE job; existing jobs untouched; owner CI grant
   # 2026-08-03, D-007-R543..R550): run the supervisor-bridge test suite with
   # the exact invocation standing grant (a) uses locally. The suite and the
