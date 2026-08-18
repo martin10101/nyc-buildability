@@ -107,13 +107,135 @@
    "task_id": "M0-T074",
    "directive_id": "D-017",
    "producer": "orchestrator",
-   "verifier": "",
-   "applicable_requirement_ids": [],
-   "requirements": [],
-   "reviewed_sha": null,
-   "reviewed_manifest_sha256": null,
-   "note": "PENDING stub created at capture (c14 coverage). The applicable set is derived by the resolver at verification time and every row is filled by the independent verifier at the task's accept cycle; nothing is verified yet."
+   "verifier": "directive-compliance-verifier",
+   "applicable_requirement_ids": [
+    "D-017-R114",
+    "D-017-R115",
+    "D-017-R116",
+    "D-017-R117",
+    "D-017-R118",
+    "D-017-R119",
+    "D-017-R120",
+    "D-017-R121",
+    "D-017-R122",
+    "D-017-R123"
+   ],
+   "requirements": [
+    {
+     "id": "D-017-R114",
+     "state": "PASS",
+     "evidence": [
+      "project-control/reports/M0-T074-consolidated-review.md",
+      "project-control/reports/M0-T074-evidence-map.json"
+     ],
+     "verified_at": "2026-08-18T13:45:15+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "b3038925a49059130231c04276e3b4b093c493d9"
+    },
+    {
+     "id": "D-017-R115",
+     "state": "PASS",
+     "evidence": [
+      "project-control/reports/M0-T074-consolidated-review.md",
+      "project-control/reports/M0-T074-evidence-map.json"
+     ],
+     "verified_at": "2026-08-18T13:45:15+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "b3038925a49059130231c04276e3b4b093c493d9"
+    },
+    {
+     "id": "D-017-R116",
+     "state": "PASS",
+     "evidence": [
+      "project-control/reports/M0-T074-consolidated-review.md",
+      "project-control/reports/M0-T074-evidence-map.json"
+     ],
+     "verified_at": "2026-08-18T13:45:15+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "b3038925a49059130231c04276e3b4b093c493d9"
+    },
+    {
+     "id": "D-017-R117",
+     "state": "PASS",
+     "evidence": [
+      "project-control/reports/M0-T074-consolidated-review.md",
+      "project-control/reports/M0-T074-evidence-map.json"
+     ],
+     "verified_at": "2026-08-18T13:45:15+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "b3038925a49059130231c04276e3b4b093c493d9"
+    },
+    {
+     "id": "D-017-R118",
+     "state": "PASS",
+     "evidence": [
+      "project-control/reports/M0-T074-consolidated-review.md",
+      "project-control/reports/M0-T074-evidence-map.json"
+     ],
+     "verified_at": "2026-08-18T13:45:15+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "b3038925a49059130231c04276e3b4b093c493d9"
+    },
+    {
+     "id": "D-017-R119",
+     "state": "PASS",
+     "evidence": [
+      "project-control/reports/M0-T074-consolidated-review.md",
+      "project-control/reports/M0-T074-evidence-map.json"
+     ],
+     "verified_at": "2026-08-18T13:45:15+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "b3038925a49059130231c04276e3b4b093c493d9"
+    },
+    {
+     "id": "D-017-R120",
+     "state": "PASS",
+     "evidence": [
+      "project-control/reports/M0-T074-consolidated-review.md",
+      "project-control/reports/M0-T074-evidence-map.json"
+     ],
+     "verified_at": "2026-08-18T13:45:15+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "b3038925a49059130231c04276e3b4b093c493d9"
+    },
+    {
+     "id": "D-017-R121",
+     "state": "PASS",
+     "evidence": [
+      "project-control/reports/M0-T074-consolidated-review.md",
+      "project-control/reports/M0-T074-evidence-map.json"
+     ],
+     "verified_at": "2026-08-18T13:45:15+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "b3038925a49059130231c04276e3b4b093c493d9"
+    },
+    {
+     "id": "D-017-R122",
+     "state": "PASS",
+     "evidence": [
+      "project-control/reports/M0-T074-consolidated-review.md",
+      "project-control/reports/M0-T074-evidence-map.json"
+     ],
+     "verified_at": "2026-08-18T13:45:15+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "b3038925a49059130231c04276e3b4b093c493d9"
+    },
+    {
+     "id": "D-017-R123",
+     "state": "PASS",
+     "evidence": [
+      "project-control/reports/M0-T074-consolidated-review.md",
+      "project-control/reports/M0-T074-evidence-map.json"
+     ],
+     "verified_at": "2026-08-18T13:45:15+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "b3038925a49059130231c04276e3b4b093c493d9"
+    }
+   ],
+   "reviewed_sha": "b3038925a49059130231c04276e3b4b093c493d9",
+   "reviewed_manifest_sha256": "afc969facb18872f8aeba4921b265a30eec710ea14d7ba40527a91caf05ab77d",
+   "note": "Independent consolidated review PASS 10/10 at b3038925a49059130231c04276e3b4b093c493d9; producer != verifier."
   }
  ],
- "updated_at": "2026-08-18T12:02:39+00:00"
+ "updated_at": "2026-08-18T13:45:15+00:00"
 }

@@ -1,83 +1,92 @@
 {
- "task_id": "M0-T074",
- "title": "Deterministic complexity-based model routing: LOW/MEDIUM/HIGH/CRITICAL classification from deterministic signals, bounded by the protected controller model allowlist (D-017 amendment)",
- "task_type": "governance",
- "milestone_id": "M0",
- "objective": "Implement the D-017-R114..R123 model-routing layer: deterministic complexity classification (LOW/MEDIUM/HIGH/CRITICAL) from measured signals (files/subsystems affected, dependency-graph spread, security/authorization impact, external side effects, schema/migration impact, ambiguity, prior failures, reviewer roles, estimated context size, packet risk); route only to models already permitted by the protected controller configuration; never let a worker add or authorize a model; never modify config.toml or model_selection.toml; report honestly when only one Claude model is authorized; record every routing decision (task ID, band, signals, chosen model, permitted-model evidence, fallback status, context size, result, telemetry when available); recorded one-level escalation for failed LOW/MEDIUM, never silent downgrade of HIGH/CRITICAL; quota fallback recorded separately from complexity routing; frozen routing test corpus plus CI tests preventing unauthorized/self-selected models, unrecorded fallback, ungrounded classification. If meaningful Claude routing needs a protected allowlist change, finish repository implementation first and return one consolidated OWNER_ACTION_BUNDLE.",
- "business_reason": "Owner directive: model choice must be a deterministic, auditable control-plane decision bounded by the protected allowlist, not model self-selection.",
- "inputs": [],
- "outputs": [],
- "dependencies": [],
- "allowed_paths": [
-  "tools/model_routing.py",
-  "tools/test_model_routing.py",
-  "tools/model_routing_corpus.json",
-  "docs/MODEL_ROUTING_POLICY.md",
-  ".github/workflows/ci.yml",
-  "project-control/reports/M0-T074-producer-report.md",
-  "project-control/reports/M0-T074-evidence-map.json",
-  "project-control/reports/M0-T074-consolidated-review.md"
- ],
- "forbidden_paths": [
-  "tools/agent_supervisor/",
-  "tools/project_control.py",
-  "tools/code_graph/",
-  "services/",
-  "apps/",
-  ".claude/"
- ],
- "acceptance_scenarios": [],
- "required_gates": [
-  "G0",
-  "G2",
-  "G3",
-  "G4",
-  "G5"
- ],
- "producer_agent": "orchestrator",
- "reviewer_agents": [
-  "code-reviewer",
-  "qa-engineer",
-  "security-reviewer",
-  "directive-compliance-verifier"
- ],
- "status": "awaiting_gate",
- "progress_percent": 85,
- "risks": [
-  "Protected config allows exactly one Claude model (claude-opus-4-8): adaptive Claude routing must be reported unavailable, never simulated (D-017-R118); enabling it requires an owner protected-config change via OWNER_ACTION_BUNDLE (D-017-R123).",
-  "The router reads the protected config allowlist read-only; it never writes config.toml or model_selection.toml and never touches tools/agent_supervisor/.",
-  "Quota fallback (existing model_selection mechanism) and complexity routing are separate recorded decisions (D-017-R120)."
- ],
- "blockers": [],
- "created_at": "2026-08-18T11:29:12.347902+00:00",
- "updated_at": "2026-08-18T12:34:03.737661+00:00",
- "directive_refs": [
-  {
-   "directive_id": "D-001",
-   "requirement_ids": "ALL"
-  },
-  {
-   "directive_id": "D-017",
-   "requirement_ids": "ALL"
-  }
- ],
- "directive_regime_version": "1.0",
- "directive_regime_entered_at": "2026-08-18T11:29:12.347902+00:00",
- "worktree": "C:/Users/MLFLL/Downloads/nyc-zoning/wt-m0t074",
- "progress_log": [
-  {
-   "at": "2026-08-18T12:32:39.872380+00:00",
-   "agent": "orchestrator",
-   "percent": 60,
-   "status": "in_progress",
-   "message": "Router+corpus+21 tests+policy+additive model-routing CI job implemented"
-  },
-  {
-   "at": "2026-08-18T12:32:40.431751+00:00",
-   "agent": "orchestrator",
-   "percent": 75,
-   "status": "self_check",
-   "message": "Self-checks green: 21/21 routing tests; modularity --check 0 failures; supervisor untouched; allowlist read-only"
-  }
- ]
+  "task_id": "M0-T074",
+  "title": "Deterministic complexity-based model routing: LOW/MEDIUM/HIGH/CRITICAL classification from deterministic signals, bounded by the protected controller model allowlist (D-017 amendment)",
+  "task_type": "governance",
+  "milestone_id": "M0",
+  "objective": "Implement the D-017-R114..R123 model-routing layer: deterministic complexity classification (LOW/MEDIUM/HIGH/CRITICAL) from measured signals (files/subsystems affected, dependency-graph spread, security/authorization impact, external side effects, schema/migration impact, ambiguity, prior failures, reviewer roles, estimated context size, packet risk); route only to models already permitted by the protected controller configuration; never let a worker add or authorize a model; never modify config.toml or model_selection.toml; report honestly when only one Claude model is authorized; record every routing decision (task ID, band, signals, chosen model, permitted-model evidence, fallback status, context size, result, telemetry when available); recorded one-level escalation for failed LOW/MEDIUM, never silent downgrade of HIGH/CRITICAL; quota fallback recorded separately from complexity routing; frozen routing test corpus plus CI tests preventing unauthorized/self-selected models, unrecorded fallback, ungrounded classification. If meaningful Claude routing needs a protected allowlist change, finish repository implementation first and return one consolidated OWNER_ACTION_BUNDLE.",
+  "business_reason": "Owner directive: model choice must be a deterministic, auditable control-plane decision bounded by the protected allowlist, not model self-selection.",
+  "inputs": [],
+  "outputs": [],
+  "dependencies": [],
+  "allowed_paths": [
+    "tools/model_routing.py",
+    "tools/test_model_routing.py",
+    "tools/model_routing_corpus.json",
+    "docs/MODEL_ROUTING_POLICY.md",
+    ".github/workflows/ci.yml",
+    "project-control/reports/M0-T074-producer-report.md",
+    "project-control/reports/M0-T074-evidence-map.json",
+    "project-control/reports/M0-T074-consolidated-review.md"
+  ],
+  "forbidden_paths": [
+    "tools/agent_supervisor/",
+    "tools/project_control.py",
+    "tools/code_graph/",
+    "services/",
+    "apps/",
+    ".claude/"
+  ],
+  "acceptance_scenarios": [],
+  "required_gates": [
+    "G0",
+    "G2",
+    "G3",
+    "G4",
+    "G5"
+  ],
+  "producer_agent": "orchestrator",
+  "reviewer_agents": [
+    "code-reviewer",
+    "qa-engineer",
+    "security-reviewer",
+    "directive-compliance-verifier"
+  ],
+  "status": "accepted",
+  "progress_percent": 100,
+  "risks": [
+    "Protected config allows exactly one Claude model (claude-opus-4-8): adaptive Claude routing must be reported unavailable, never simulated (D-017-R118); enabling it requires an owner protected-config change via OWNER_ACTION_BUNDLE (D-017-R123).",
+    "The router reads the protected config allowlist read-only; it never writes config.toml or model_selection.toml and never touches tools/agent_supervisor/.",
+    "Quota fallback (existing model_selection mechanism) and complexity routing are separate recorded decisions (D-017-R120)."
+  ],
+  "blockers": [],
+  "created_at": "2026-08-18T11:29:12.347902+00:00",
+  "updated_at": "2026-08-18T13:45:41.270026+00:00",
+  "directive_refs": [
+    {
+      "directive_id": "D-001",
+      "requirement_ids": "ALL"
+    },
+    {
+      "directive_id": "D-017",
+      "requirement_ids": "ALL"
+    }
+  ],
+  "directive_regime_version": "1.0",
+  "directive_regime_entered_at": "2026-08-18T11:29:12.347902+00:00",
+  "worktree": "C:/Users/MLFLL/Downloads/nyc-zoning/wt-m0t074",
+  "progress_log": [
+    {
+      "at": "2026-08-18T12:32:39.872380+00:00",
+      "agent": "orchestrator",
+      "percent": 60,
+      "status": "in_progress",
+      "message": "Router+corpus+21 tests+policy+additive model-routing CI job implemented"
+    },
+    {
+      "at": "2026-08-18T12:32:40.431751+00:00",
+      "agent": "orchestrator",
+      "percent": 75,
+      "status": "self_check",
+      "message": "Self-checks green: 21/21 routing tests; modularity --check 0 failures; supervisor untouched; allowlist read-only"
+    },
+    {
+      "at": "2026-08-18T13:44:28.054063+00:00",
+      "agent": "orchestrator",
+      "percent": 60,
+      "status": "rework",
+      "message": "Reconcile allowed_paths + preserve consolidated review PASS 10/10; re-stamp identity"
+    }
+  ],
+  "accepted_by": "orchestrator",
+  "accepted_at": "2026-08-18T13:45:41.270026+00:00"
 }

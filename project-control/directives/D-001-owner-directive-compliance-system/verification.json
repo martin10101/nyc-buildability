@@ -1734,7 +1734,20 @@
    "schema_version": "directive_verification/v2",
    "verified_at": "2026-08-18T10:18:53+00:00",
    "note": "EMPTY-SET verification (M0-T062/M0-T071 precedent). M0-T070 cites D-001:ALL; the canonical resolver derives ZERO D-001 requirements applicable to this packet (evaluate_task_refs applicable set = the 30 D-014 rows only). Confirmed alongside the fresh independent directive-compliance-verifier run of 2026-08-18 at head 46f7469 (project-control/reports/M0-T070-DCV-final-verification.md)."
+  },
+  {
+   "directive_id": "D-001",
+   "task_id": "M0-T074",
+   "applicable_requirement_ids": [],
+   "reviewed_sha": "b3038925a49059130231c04276e3b4b093c493d9",
+   "reviewed_manifest_sha256": "afc969facb18872f8aeba4921b265a30eec710ea14d7ba40527a91caf05ab77d",
+   "producer": "orchestrator",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "requirements": [],
+   "verified_at": "2026-08-18T13:45:15+00:00",
+   "note": "D-001:ALL is the process regime; its own requirements govern M0-T023, none apply to this routing task (empty-but-present, M0-T070 precedent)."
   }
  ],
- "updated_at": "2026-08-18T10:18:53+00:00"
+ "updated_at": "2026-08-18T13:45:15+00:00"
 }
