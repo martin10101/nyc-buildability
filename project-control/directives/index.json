@@ -207,7 +207,19 @@
     "M0-T069"
    ],
    "manifest": "D-013-context-intelligence-pipeline/manifest.json"
+  },
+  {
+   "directive_id": "D-016",
+   "slug": "overnight-integration-runway",
+   "title": "Overnight owner authorization - complete context-intelligence integration runway (Stages 0-7)",
+   "status": "active",
+   "issued_at": "2026-08-18",
+   "issued_by": "owner",
+   "supersedes": [],
+   "superseded_by": null,
+   "affected_tasks": [],
+   "manifest": "D-016-overnight-integration-runway/manifest.json"
   }
  ],
- "updated_at": "2026-08-12T05:00:00+00:00"
+ "updated_at": "2026-08-18T09:05:00+00:00"
 }

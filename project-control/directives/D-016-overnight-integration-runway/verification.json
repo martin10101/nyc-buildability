@@ -1,0 +1,8 @@
+{
+ "schema": "directive_verification/v2",
+ "directive_id": "D-016",
+ "producer": "orchestrator",
+ "authority_note": "Pending independent verification by directive-compliance-verifier (producer != verifier). Capture only; no requirement verified yet. All rows bind the D-016-BOOTSTRAP governance sentinel and are verified at directive verification after the overnight integration run ends (D-012-VALIDATION / D-013-BOOTSTRAP precedent).",
+ "task_verifications": [],
+ "updated_at": "2026-08-18T09:05:00+00:00"
+}

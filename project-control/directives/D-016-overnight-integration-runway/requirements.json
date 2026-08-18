@@ -1,0 +1,2132 @@
+{
+ "schema": "directive_requirements/v1",
+ "directive_id": "D-016",
+ "version": 1,
+ "requirement_count": 64,
+ "producer": "orchestrator",
+ "updated_at": "2026-08-18T09:05:00+00:00",
+ "requirements": [
+  {
+   "id": "D-016-R001",
+   "text": "Capture this authorization exactly once, verbatim, as one owner instruction; create NO additional captures from inferred decisions, status messages, tool output, or later casual words such as continue.",
+   "source_ref": "source-001.md#preamble",
+   "classification": "prohibition",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-016-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-18"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "captured verbatim at D-016 bootstrap; verified at directive verification after the overnight run (D-012-VALIDATION / D-013-BOOTSTRAP precedent)",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "amendment_sequence": 1
+  },
+  {
+   "id": "D-016-R002",
+   "text": "Reconstruct all facts from Git, GitHub, task packets, directives, gate records, reports, CI, and durable supervisor state; do not rely on previous conversational memory.",
+   "source_ref": "source-001.md#preamble",
+   "classification": "evidence",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-016-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-18"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "captured verbatim at D-016 bootstrap; verified at directive verification after the overnight run (D-012-VALIDATION / D-013-BOOTSTRAP precedent)",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "amendment_sequence": 1
+  },
+  {
+   "id": "D-016-R003",
+   "text": "Use one writer only: sub-agents may run bounded read-only work (git/GitHub verification, directive/registry review, security review, QA review, CI monitoring, diff inspection) but must not make overlapping repository changes; the primary orchestrator remains the sole writer and reconciles all results from primary evidence.",
+   "source_ref": "source-001.md#preamble",
+   "classification": "harness",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-016-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-18"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "captured verbatim at D-016 bootstrap; verified at directive verification after the overnight run (D-012-VALIDATION / D-013-BOOTSTRAP precedent)",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "amendment_sequence": 1
+  },
+  {
+   "id": "D-016-R004",
+   "text": "HOLD: Do not implement or start A1 (M0-T063) during the repository-integration stages (Stages 0-5).",
+   "source_ref": "source-001.md#known-starting-state-a1",
+   "classification": "hold",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-016-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-18"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "captured verbatim at D-016 bootstrap; verified at directive verification after the overnight run (D-012-VALIDATION / D-013-BOOTSTRAP precedent)",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": [
+     "M0-T063"
+    ]
+   },
+   "amendment_sequence": 1
+  },
+  {
+   "id": "D-016-R005",
+   "text": "HOLD: Do not modify, replace, activate, or relax the live controller at C:/SupervisorController or the protected configuration at C:/Program Files/SupervisorConfig/config.toml while the owner is unavailable.",
+   "source_ref": "source-001.md#known-starting-state-live-controller",
+   "classification": "hold",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-016-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-18"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "captured verbatim at D-016 bootstrap; verified at directive verification after the overnight run (D-012-VALIDATION / D-013-BOOTSTRAP precedent)",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "amendment_sequence": 1
+  },
+  {
+   "id": "D-016-R006",
+   "text": "Work stage by stage in the stated order (Stage 0 through Stage 7); never begin a dependent stage until the preceding stage is committed, pushed, verified, and clean.",
+   "source_ref": "source-001.md#general-operating-rules-1-2",
+   "classification": "sequencing",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-016-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-18"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "captured verbatim at D-016 bootstrap; verified at directive verification after the overnight run (D-012-VALIDATION / D-013-BOOTSTRAP precedent)",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "amendment_sequence": 1
+  },
+  {
+   "id": "D-016-R007",
+   "text": "At every stage, compare local HEAD, remote HEAD, PR HEAD, reviewed identity, and tested identity.",
+   "source_ref": "source-001.md#general-operating-rules-3",
+   "classification": "evidence",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-016-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-18"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "captured verbatim at D-016 bootstrap; verified at directive verification after the overnight run (D-012-VALIDATION / D-013-BOOTSTRAP precedent)",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "amendment_sequence": 1
+  },
+  {
+   "id": "D-016-R008",
+   "text": "Never report success before authoritative GitHub CI finishes.",
+   "source_ref": "source-001.md#general-operating-rules-4",
+   "classification": "prohibition",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-016-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-18"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "captured verbatim at D-016 bootstrap; verified at directive verification after the overnight run (D-012-VALIDATION / D-013-BOOTSTRAP precedent)",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "amendment_sequence": 1
+  },
+  {
+   "id": "D-016-R009",
+   "text": "If context becomes large: write a durable bounded checkpoint report, finish the current atomic action, leave all worktrees clean and pushed, and return a precise resumption command; do not improvise across context loss.",
+   "source_ref": "source-001.md#general-operating-rules-5",
+   "classification": "harness",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-016-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-18"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "captured verbatim at D-016 bootstrap; verified at directive verification after the overnight run (D-012-VALIDATION / D-013-BOOTSTRAP precedent)",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "amendment_sequence": 1
+  },
+  {
+   "id": "D-016-R010",
+   "text": "Preserve all existing user changes.",
+   "source_ref": "source-001.md#general-operating-rules-6",
+   "classification": "prohibition",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-016-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-18"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "captured verbatim at D-016 bootstrap; verified at directive verification after the overnight run (D-012-VALIDATION / D-013-BOOTSTRAP precedent)",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "amendment_sequence": 1
+  },
+  {
+   "id": "D-016-R011",
+   "text": "Never use git reset, git clean, rebase, force push, destructive checkout, history rewriting, broad file deletion, security suppression, test bypass, or advisory waiver.",
+   "source_ref": "source-001.md#general-operating-rules-7",
+   "classification": "prohibition",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-016-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-18"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "captured verbatim at D-016 bootstrap; verified at directive verification after the overnight run (D-012-VALIDATION / D-013-BOOTSTRAP precedent)",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "amendment_sequence": 1
+  },
+  {
+   "id": "D-016-R012",
+   "text": "A permission-classifier denial is a stop condition for that action; do not work around it.",
+   "source_ref": "source-001.md#general-operating-rules-8",
+   "classification": "prohibition",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-016-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-18"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "captured verbatim at D-016 bootstrap; verified at directive verification after the overnight run (D-012-VALIDATION / D-013-BOOTSTRAP precedent)",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "amendment_sequence": 1
+  },
+  {
+   "id": "D-016-R013",
+   "text": "If one stage becomes blocked, do not continue into dependent stages; perform only safe read-only diagnosis and genuinely independent read-only work.",
+   "source_ref": "source-001.md#general-operating-rules-9",
+   "classification": "sequencing",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-016-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-18"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "captured verbatim at D-016 bootstrap; verified at directive verification after the overnight run (D-012-VALIDATION / D-013-BOOTSTRAP precedent)",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "amendment_sequence": 1
+  },
+  {
+   "id": "D-016-R014",
+   "text": "Do not manufacture PASS evidence or accept producer assertions as independent verification.",
+   "source_ref": "source-001.md#general-operating-rules-10",
+   "classification": "prohibition",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-016-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-18"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "captured verbatim at D-016 bootstrap; verified at directive verification after the overnight run (D-012-VALIDATION / D-013-BOOTSTRAP precedent)",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "amendment_sequence": 1
+  },
+  {
+   "id": "D-016-R015",
+   "text": "Stage 0: before any mutation, fetch all remotes and verify origin/main, control/context-intelligence-init, task/M0-T070-supervisor-authority-repair, and task/M0-T063-context-index-a1 against the stated starting SHAs (f21eb1fb..., de2f224a..., 09e23162..., de2f224a...).",
+   "source_ref": "source-001.md#stage-0-items-1-2",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-016-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-18"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "captured verbatim at D-016 bootstrap; verified at directive verification after the overnight run (D-012-VALIDATION / D-013-BOOTSTRAP precedent)",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "amendment_sequence": 1
+  },
+  {
+   "id": "D-016-R016",
+   "text": "Stage 0: verify all three relevant worktrees (session15-acc, wt-m0t070, wt-m0t063) are clean.",
+   "source_ref": "source-001.md#stage-0-item-3",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-016-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-18"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "captured verbatim at D-016 bootstrap; verified at directive verification after the overnight run (D-012-VALIDATION / D-013-BOOTSTRAP precedent)",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "amendment_sequence": 1
+  },
+  {
+   "id": "D-016-R017",
+   "text": "Stage 0: verify PR #223 is merged at f21eb1f, and verify PR #222 remains open, obtaining its live base, head, mergeability, checks, and changed files.",
+   "source_ref": "source-001.md#stage-0-items-4-5",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-016-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-18"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "captured verbatim at D-016 bootstrap; verified at directive verification after the overnight run (D-012-VALIDATION / D-013-BOOTSTRAP precedent)",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "amendment_sequence": 1
+  },
+  {
+   "id": "D-016-R018",
+   "text": "Stage 0: inspect D-013, D-014, D-015, M0-T063 through M0-T071, B-019, project-control/state.json, project-control/directives/index.json, and the final M0-T070 and M0-T071 reports.",
+   "source_ref": "source-001.md#stage-0-item-6",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-016-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-18"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "captured verbatim at D-016 bootstrap; verified at directive verification after the overnight run (D-012-VALIDATION / D-013-BOOTSTRAP precedent)",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "amendment_sequence": 1
+  },
+  {
+   "id": "D-016-R019",
+   "text": "Stage 0: verify A1 files, branch, worktree, and runtime (durable supervisor state) have not changed; verify C:/SupervisorController and the protected configuration read-only without changing them.",
+   "source_ref": "source-001.md#stage-0-items-7-8",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-016-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-18"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "captured verbatim at D-016 bootstrap; verified at directive verification after the overnight run (D-012-VALIDATION / D-013-BOOTSTRAP precedent)",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "amendment_sequence": 1
+  },
+  {
+   "id": "D-016-R020",
+   "text": "Stage 0: produce a reconciliation matrix showing live fact, expected fact, PASS/STOP, and source of evidence; stop immediately if a material identity or worktree condition differs unexpectedly.",
+   "source_ref": "source-001.md#stage-0-items-9-10",
+   "classification": "evidence",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-016-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-18"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "captured verbatim at D-016 bootstrap; verified at directive verification after the overnight run (D-012-VALIDATION / D-013-BOOTSTRAP precedent)",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "amendment_sequence": 1
+  },
+  {
+   "id": "D-016-R021",
+   "text": "Stage 1: in session15-acc, merge origin/main at f21eb1f into control/context-intelligence-init using a normal non-destructive merge; do not rebase or rewrite either history; resolve conflicts semantically as a union.",
+   "source_ref": "source-001.md#stage-1-items-1-3",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-016-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-18"
+   },
+   "dependencies": [
+    "D-016-R015"
+   ],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "captured verbatim at D-016 bootstrap; verified at directive verification after the overnight run (D-012-VALIDATION / D-013-BOOTSTRAP precedent)",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "amendment_sequence": 1
+  },
+  {
+   "id": "D-016-R022",
+   "text": "Stage 1 semantic outcome: preserve D-013 and M0-T063 through M0-T069; preserve accepted D-015 and M0-T071 from main; preserve every earlier directive and task; directives/index.json contains every valid directive present in the merged parents exactly once (D-001 through D-015 once D-014 lands via PR #222); state.json contains the union of valid tasks with an accepted count of 86 before M0-T070 acceptance; D-015 verification and final reviewed identity remain accepted and unchanged.",
+   "source_ref": "source-001.md#stage-1-required-semantic-outcome",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-016-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-18"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "captured verbatim at D-016 bootstrap; verified at directive verification after the overnight run (D-012-VALIDATION / D-013-BOOTSTRAP precedent)",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "amendment_sequence": 1
+  },
+  {
+   "id": "D-016-R023",
+   "text": "Stage 1: do not silently select ours or theirs for registry or state files; explain every resolved conflict and the semantic result.",
+   "source_ref": "source-001.md#stage-1-required-semantic-outcome",
+   "classification": "prohibition",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-016-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-18"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "captured verbatim at D-016 bootstrap; verified at directive verification after the overnight run (D-012-VALIDATION / D-013-BOOTSTRAP precedent)",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "amendment_sequence": 1
+  },
+  {
+   "id": "D-016-R024",
+   "text": "Stage 1: run all required checks including python tools/validate_directive_compliance.py --check, python tools/test_directive_compliance.py, python tools/test_project_control.py, registry/state consistency checks, and any applicable product-map or control-plane validators.",
+   "source_ref": "source-001.md#stage-1-checks",
+   "classification": "harness",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-016-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-18"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "captured verbatim at D-016 bootstrap; verified at directive verification after the overnight run (D-012-VALIDATION / D-013-BOOTSTRAP precedent)",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "amendment_sequence": 1
+  },
+  {
+   "id": "D-016-R025",
+   "text": "Stage 1 completion: confirm the worktree is clean except the intended merge result; commit the integration merge; push control/context-intelligence-init; verify local HEAD equals origin/control/context-intelligence-init; re-run the critical validators on the pushed commit; record the synchronized control-branch SHA.",
+   "source_ref": "source-001.md#stage-1-then",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-016-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-18"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "captured verbatim at D-016 bootstrap; verified at directive verification after the overnight run (D-012-VALIDATION / D-013-BOOTSTRAP precedent)",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "amendment_sequence": 1
+  },
+  {
+   "id": "D-016-R026",
+   "text": "Stage 2: in wt-m0t070, fetch the newly synchronized control branch and merge origin/control/context-intelligence-init into task/M0-T070-supervisor-authority-repair using a normal merge; resolve conflicts as the union of D-013, D-014, and D-015; preserve the accepted M0-T071 records from main.",
+   "source_ref": "source-001.md#stage-2-items-1-4",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-016-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-18"
+   },
+   "dependencies": [
+    "D-016-R025"
+   ],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "captured verbatim at D-016 bootstrap; verified at directive verification after the overnight run (D-012-VALIDATION / D-013-BOOTSTRAP precedent)",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": [
+     "M0-T070"
+    ]
+   },
+   "amendment_sequence": 1
+  },
+  {
+   "id": "D-016-R027",
+   "text": "Stage 2: do not alter the Nano ID implementation; do not modify apps/web/package.json or package-lock.json.",
+   "source_ref": "source-001.md#stage-2-items-5-6",
+   "classification": "prohibition",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-016-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-18"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "captured verbatim at D-016 bootstrap; verified at directive verification after the overnight run (D-012-VALIDATION / D-013-BOOTSTRAP precedent)",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": [
+     "M0-T070"
+    ]
+   },
+   "amendment_sequence": 1
+  },
+  {
+   "id": "D-016-R028",
+   "text": "Stage 2: verify the M0-T070 supervisor implementation files remain byte-identical to the independently gated material identity unless a genuine base-integration change requires review; if implementation material changes for any reason, invalidate stale gates and obtain fresh independent review; never rely on an old gate after a material change.",
+   "source_ref": "source-001.md#stage-2-items-7-8",
+   "classification": "evidence",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-016-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-18"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "captured verbatim at D-016 bootstrap; verified at directive verification after the overnight run (D-012-VALIDATION / D-013-BOOTSTRAP precedent)",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": [
+     "M0-T070"
+    ]
+   },
+   "amendment_sequence": 1
+  },
+  {
+   "id": "D-016-R029",
+   "text": "Stage 2: resolve B-019 only after reproducing ALL of: PR #223 is merged; origin/main contains nanoid 3.3.18; npm audit reports zero vulnerabilities; the repository age gate passes without waiver; dependency-security is green; the package integrity matches the accepted lock; PR #222 does not introduce or modify the dependency.",
+   "source_ref": "source-001.md#stage-2-b019-preconditions",
+   "classification": "evidence",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-016-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-18"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "captured verbatim at D-016 bootstrap; verified at directive verification after the overnight run (D-012-VALIDATION / D-013-BOOTSTRAP precedent)",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": [
+     "M0-T070"
+    ]
+   },
+   "amendment_sequence": 1
+  },
+  {
+   "id": "D-016-R030",
+   "text": "Stage 2: update B-019 to resolved with direct evidence; do not delete its history.",
+   "source_ref": "source-001.md#stage-2-b019-resolution",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-016-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-18"
+   },
+   "dependencies": [
+    "D-016-R029"
+   ],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "captured verbatim at D-016 bootstrap; verified at directive verification after the overnight run (D-012-VALIDATION / D-013-BOOTSTRAP precedent)",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": [
+     "M0-T070"
+    ]
+   },
+   "amendment_sequence": 1
+  },
+  {
+   "id": "D-016-R031",
+   "text": "Stage 2: run M0-T070 command-authority tests, the full supervisor test suite, project-control tests, directive-compliance tests, validate_directive_compliance.py --check, and appropriate security and registry checks.",
+   "source_ref": "source-001.md#stage-2-run",
+   "classification": "harness",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-016-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-18"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "captured verbatim at D-016 bootstrap; verified at directive verification after the overnight run (D-012-VALIDATION / D-013-BOOTSTRAP precedent)",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": [
+     "M0-T070"
+    ]
+   },
+   "amendment_sequence": 1
+  },
+  {
+   "id": "D-016-R032",
+   "text": "Stage 2 completion: commit the base reconciliation and B-019 resolution; push the PR #222 branch; verify local branch equals remote; wait for all PR #222 GitHub workflows; do not proceed unless every required workflow completed successfully.",
+   "source_ref": "source-001.md#stage-2-then",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-016-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-18"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "captured verbatim at D-016 bootstrap; verified at directive verification after the overnight run (D-012-VALIDATION / D-013-BOOTSTRAP precedent)",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": [
+     "M0-T070"
+    ]
+   },
+   "amendment_sequence": 1
+  },
+  {
+   "id": "D-016-R033",
+   "text": "Stage 3: after PR #222 is fully green, establish the final canonical material identity; confirm G0/G2/G3/G5 apply to that exact material; if the identity differs materially, rerun the affected gates using fresh independent reviewers.",
+   "source_ref": "source-001.md#stage-3-items-1-3",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-016-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-18"
+   },
+   "dependencies": [
+    "D-016-R032"
+   ],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "captured verbatim at D-016 bootstrap; verified at directive verification after the overnight run (D-012-VALIDATION / D-013-BOOTSTRAP precedent)",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": [
+     "M0-T070"
+    ]
+   },
+   "amendment_sequence": 1
+  },
+  {
+   "id": "D-016-R034",
+   "text": "Stage 3: run a fresh directive-compliance-verifier independent from the producer.",
+   "source_ref": "source-001.md#stage-3-items-4-5",
+   "classification": "evidence",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-016-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-18"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "captured verbatim at D-016 bootstrap; verified at directive verification after the overnight run (D-012-VALIDATION / D-013-BOOTSTRAP precedent)",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": [
+     "M0-T070"
+    ]
+   },
+   "amendment_sequence": 1
+  },
+  {
+   "id": "D-016-R035",
+   "text": "Stage 3: resolve the complete applicable D-014 requirement set: M0-T070-bound requirements, D-014-BOOTSTRAP sentinel requirements, and reconciliation amendment requirements; use primary evidence for every PASS; mark genuine failures or unverifiable requirements honestly.",
+   "source_ref": "source-001.md#stage-3-items-6-8",
+   "classification": "evidence",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-016-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-18"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "captured verbatim at D-016 bootstrap; verified at directive verification after the overnight run (D-012-VALIDATION / D-013-BOOTSTRAP precedent)",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": [
+     "M0-T070"
+    ]
+   },
+   "amendment_sequence": 1
+  },
+  {
+   "id": "D-016-R036",
+   "text": "Stage 3: run the acceptance precondition resolver; require zero blocking reasons and zero improper deferrals; accept M0-T070 through the repository-prescribed command only if every condition genuinely passes.",
+   "source_ref": "source-001.md#stage-3-items-9-11",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-016-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-18"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "captured verbatim at D-016 bootstrap; verified at directive verification after the overnight run (D-012-VALIDATION / D-013-BOOTSTRAP precedent)",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": [
+     "M0-T070"
+    ]
+   },
+   "amendment_sequence": 1
+  },
+  {
+   "id": "D-016-R037",
+   "text": "Stage 3 required post-acceptance state: M0-T070 status accepted at 100 percent; accepted ledger count exactly 87; D-014 verification complete with final reviewed identity recorded; B-019 resolved; no duplicate task or acceptance record; directive registry validation passes; A1 remains untouched.",
+   "source_ref": "source-001.md#stage-3-required-post-acceptance-state",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-016-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-18"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "captured verbatim at D-016 bootstrap; verified at directive verification after the overnight run (D-012-VALIDATION / D-013-BOOTSTRAP precedent)",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": [
+     "M0-T070"
+    ]
+   },
+   "amendment_sequence": 1
+  },
+  {
+   "id": "D-016-R038",
+   "text": "Stage 3 completion: commit and push the acceptance records, then wait for every GitHub workflow on the final acceptance HEAD; require all green.",
+   "source_ref": "source-001.md#stage-3-required-post-acceptance-state",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-016-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-18"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "captured verbatim at D-016 bootstrap; verified at directive verification after the overnight run (D-012-VALIDATION / D-013-BOOTSTRAP precedent)",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": [
+     "M0-T070"
+    ]
+   },
+   "amendment_sequence": 1
+  },
+  {
+   "id": "D-016-R039",
+   "text": "Stage 4 AUTHORIZATION: merge PR #222 only if ALL are simultaneously true: PR #222 open and mergeable; M0-T070 accepted; accepted count 87; D-014 verification complete; B-019 resolved; reviewed material equals final material under the canonical identity rule; every required GitHub check on the final HEAD successful; no unresolved discussion, blocker, permission issue, or security finding; PR base equals the synchronized control branch; no protected config, controller-runtime, A1, or unrelated application files in the PR diff.",
+   "source_ref": "source-001.md#stage-4-conditions",
+   "classification": "authorization",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-016-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-18"
+   },
+   "dependencies": [
+    "D-016-R038"
+   ],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "captured verbatim at D-016 bootstrap; verified at directive verification after the overnight run (D-012-VALIDATION / D-013-BOOTSTRAP precedent)",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": [
+     "M0-T070"
+    ]
+   },
+   "amendment_sequence": 1
+  },
+  {
+   "id": "D-016-R040",
+   "text": "Stage 4: merge PR #222 using the repository normal merge strategy; do not enable auto-merge.",
+   "source_ref": "source-001.md#stage-4-items-1-2",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-016-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-18"
+   },
+   "dependencies": [
+    "D-016-R039"
+   ],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "captured verbatim at D-016 bootstrap; verified at directive verification after the overnight run (D-012-VALIDATION / D-013-BOOTSTRAP precedent)",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": [
+     "M0-T070"
+    ]
+   },
+   "amendment_sequence": 1
+  },
+  {
+   "id": "D-016-R041",
+   "text": "Stage 4 post-merge: fetch the remote; verify PR #222 state MERGED; record its merge commit; verify origin/control/context-intelligence-init equals the expected merge result; run the critical control-plane validators on the merged control branch.",
+   "source_ref": "source-001.md#stage-4-items-3-7",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-016-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-18"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "captured verbatim at D-016 bootstrap; verified at directive verification after the overnight run (D-012-VALIDATION / D-013-BOOTSTRAP precedent)",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": [
+     "M0-T070"
+    ]
+   },
+   "amendment_sequence": 1
+  },
+  {
+   "id": "D-016-R042",
+   "text": "Stage 4: if GitHub or the permission classifier denies the merge, do not bypass it; preserve the fully ready state and return the exact owner command.",
+   "source_ref": "source-001.md#stage-4-denial",
+   "classification": "prohibition",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-016-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-18"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "captured verbatim at D-016 bootstrap; verified at directive verification after the overnight run (D-012-VALIDATION / D-013-BOOTSTRAP precedent)",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": [
+     "M0-T070"
+    ]
+   },
+   "amendment_sequence": 1
+  },
+  {
+   "id": "D-016-R043",
+   "text": "Stage 5: after PR #222 is merged into the control branch, determine whether an existing control-branch-to-main PR exists; if none exists, open one using the repository established integration format.",
+   "source_ref": "source-001.md#stage-5-items-1-2",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-016-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-18"
+   },
+   "dependencies": [
+    "D-016-R041"
+   ],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "captured verbatim at D-016 bootstrap; verified at directive verification after the overnight run (D-012-VALIDATION / D-013-BOOTSTRAP precedent)",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "amendment_sequence": 1
+  },
+  {
+   "id": "D-016-R044",
+   "text": "Stage 5: confirm the integration diff contains the D-013 context-intelligence bootstrap, the M0-T063 through M0-T069 task runway, and the accepted M0-T070 supervisor repair, with no duplicate D-015/M0-T071 changes already present on main and no unintended application changes.",
+   "source_ref": "source-001.md#stage-5-item-3",
+   "classification": "evidence",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-016-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-18"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "captured verbatim at D-016 bootstrap; verified at directive verification after the overnight run (D-012-VALIDATION / D-013-BOOTSTRAP precedent)",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "amendment_sequence": 1
+  },
+  {
+   "id": "D-016-R045",
+   "text": "Stage 5: resolve registry/state comparisons as the union of D-001 through D-015; run the full required CI and independent integration checks; require every GitHub check to finish successfully; verify accepted count remains 87; verify main's accepted M0-T071 records are not duplicated or regressed; verify the control branch does not undo nanoid 3.3.18.",
+   "source_ref": "source-001.md#stage-5-items-4-9",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-016-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-18"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "captured verbatim at D-016 bootstrap; verified at directive verification after the overnight run (D-012-VALIDATION / D-013-BOOTSTRAP precedent)",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "amendment_sequence": 1
+  },
+  {
+   "id": "D-016-R046",
+   "text": "Stage 5 AUTHORIZATION: merge the control integration PR into main only if: all checks green; mergeable and current with main; accepted task and directive identities valid; no security or scope blocker; the diff is exactly the intended control/context/supervisor integration; no protected local controller action bundled into it.",
+   "source_ref": "source-001.md#stage-5-conditions",
+   "classification": "authorization",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-016-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-18"
+   },
+   "dependencies": [
+    "D-016-R045"
+   ],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "captured verbatim at D-016 bootstrap; verified at directive verification after the overnight run (D-012-VALIDATION / D-013-BOOTSTRAP precedent)",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "amendment_sequence": 1
+  },
+  {
+   "id": "D-016-R047",
+   "text": "Stage 5 post-merge: merge with the normal merge strategy; fetch origin; verify the PR is MERGED; verify origin/main equals the new integration merge; run post-merge validation read-only; record the resulting main SHA; if permission is denied, do not bypass it and return the exact owner command.",
+   "source_ref": "source-001.md#stage-5-post-merge-and-denial",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-016-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-18"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "captured verbatim at D-016 bootstrap; verified at directive verification after the overnight run (D-012-VALIDATION / D-013-BOOTSTRAP precedent)",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "amendment_sequence": 1
+  },
+  {
+   "id": "D-016-R048",
+   "text": "Stage 6: only after the supervisor repair and D-013 runway are present on origin/main, inspect the accepted M0-T070 schema and the exact M0-T063 fixture, inspect M0-T063 baseline and test obligations, and determine every exact baseline/test command A1 genuinely requires; do not guess commands.",
+   "source_ref": "source-001.md#stage-6-items-1-4",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-016-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-18"
+   },
+   "dependencies": [
+    "D-016-R047"
+   ],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "captured verbatim at D-016 bootstrap; verified at directive verification after the overnight run (D-012-VALIDATION / D-013-BOOTSTRAP precedent)",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": [
+     "M0-T063"
+    ]
+   },
+   "amendment_sequence": 1
+  },
+  {
+   "id": "D-016-R049",
+   "text": "Stage 6: do not use wildcards, shell chaining, substitution, redirection, broad executable patterns, or a general Bash grant.",
+   "source_ref": "source-001.md#stage-6-item-5",
+   "classification": "prohibition",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-016-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-18"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "captured verbatim at D-016 bootstrap; verified at directive verification after the overnight run (D-012-VALIDATION / D-013-BOOTSTRAP precedent)",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": [
+     "M0-T063"
+    ]
+   },
+   "amendment_sequence": 1
+  },
+  {
+   "id": "D-016-R050",
+   "text": "Stage 6: use the canonical documented_test_commands field; include only exact, validated command shapes required by M0-T063; ensure malformed or altered variants remain ASK/HARD_DENY.",
+   "source_ref": "source-001.md#stage-6-items-6-8",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-016-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-18"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "captured verbatim at D-016 bootstrap; verified at directive verification after the overnight run (D-012-VALIDATION / D-013-BOOTSTRAP precedent)",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": [
+     "M0-T063"
+    ]
+   },
+   "amendment_sequence": 1
+  },
+  {
+   "id": "D-016-R051",
+   "text": "Stage 6: follow the existing task-amendment/reverification process; re-run M0-T063 G0 or other packet gates if the control plane requires them after packet amendment.",
+   "source_ref": "source-001.md#stage-6-items-9-10",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-016-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-18"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "captured verbatim at D-016 bootstrap; verified at directive verification after the overnight run (D-012-VALIDATION / D-013-BOOTSTRAP precedent)",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": [
+     "M0-T063"
+    ]
+   },
+   "amendment_sequence": 1
+  },
+  {
+   "id": "D-016-R052",
+   "text": "Stage 6: do not implement A1 and do not start the supervisor.",
+   "source_ref": "source-001.md#stage-6-items-11-12",
+   "classification": "prohibition",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-016-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-18"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "captured verbatim at D-016 bootstrap; verified at directive verification after the overnight run (D-012-VALIDATION / D-013-BOOTSTRAP precedent)",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": [
+     "M0-T063"
+    ]
+   },
+   "amendment_sequence": 1
+  },
+  {
+   "id": "D-016-R053",
+   "text": "Stage 6: create a dedicated, minimal branch/worktree if required by repository policy; do not mix this packet amendment into an already merged branch.",
+   "source_ref": "source-001.md#stage-6-branch",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-016-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-18"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "captured verbatim at D-016 bootstrap; verified at directive verification after the overnight run (D-012-VALIDATION / D-013-BOOTSTRAP precedent)",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": [
+     "M0-T063"
+    ]
+   },
+   "amendment_sequence": 1
+  },
+  {
+   "id": "D-016-R054",
+   "text": "Stage 6: run schema validation, production authority-loading tests, exact command-classification tests, directive compliance, project-control validation, and required CI.",
+   "source_ref": "source-001.md#stage-6-run",
+   "classification": "harness",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-016-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-18"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "captured verbatim at D-016 bootstrap; verified at directive verification after the overnight run (D-012-VALIDATION / D-013-BOOTSTRAP precedent)",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": [
+     "M0-T063"
+    ]
+   },
+   "amendment_sequence": 1
+  },
+  {
+   "id": "D-016-R055",
+   "text": "Stage 6 AUTHORIZATION: merge the narrowly scoped packet amendment into main using the normal strategy only if it is fully verified and its PR is green; if any ambiguity exists over command authority, stop instead of broadening it.",
+   "source_ref": "source-001.md#stage-6-merge-authorization",
+   "classification": "authorization",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-016-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-18"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "captured verbatim at D-016 bootstrap; verified at directive verification after the overnight run (D-012-VALIDATION / D-013-BOOTSTRAP precedent)",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": [
+     "M0-T063"
+    ]
+   },
+   "amendment_sequence": 1
+  },
+  {
+   "id": "D-016-R056",
+   "text": "Stage 6 post-merge: synchronize the existing A1 task branch/worktree with the accepted main state using only a normal non-destructive merge; do not implement or run A1.",
+   "source_ref": "source-001.md#stage-6-post-merge",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-016-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-18"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "captured verbatim at D-016 bootstrap; verified at directive verification after the overnight run (D-012-VALIDATION / D-013-BOOTSTRAP precedent)",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": [
+     "M0-T063"
+    ]
+   },
+   "amendment_sequence": 1
+  },
+  {
+   "id": "D-016-R057",
+   "text": "Stage 6 required result: the M0-T063 packet contains the exact accepted documented commands; the A1 worktree is clean; the A1 branch includes the accepted controller contract and task packet; A1 remains unstarted; the supervisor runtime database remains intact.",
+   "source_ref": "source-001.md#stage-6-required-result",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-016-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-18"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "captured verbatim at D-016 bootstrap; verified at directive verification after the overnight run (D-012-VALIDATION / D-013-BOOTSTRAP precedent)",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": [
+     "M0-T063"
+    ]
+   },
+   "amendment_sequence": 1
+  },
+  {
+   "id": "D-016-R058",
+   "text": "Stage 7: perform read-only inspection of the accepted origin/main supervisor tree, C:/SupervisorController, the protected config.toml, the controller manifest, model_selection.toml, ACL posture, current runtime status, and A1 durable state.",
+   "source_ref": "source-001.md#stage-7-inspection",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-016-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-18"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "captured verbatim at D-016 bootstrap; verified at directive verification after the overnight run (D-012-VALIDATION / D-013-BOOTSTRAP precedent)",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "amendment_sequence": 1
+  },
+  {
+   "id": "D-016-R059",
+   "text": "Stage 7: produce a precise controller-update package and owner runbook containing all fifteen enumerated items (current controller SHA/version; new accepted supervisor SHA/version; exact files added/changed/removed; backup destination and rollback procedure; manifest regeneration and verification commands; protected-config hash verification; ACL verification; model-selection verification; stop/update/start sequence; post-update doctor command; live control-response verification; A1 status/recovery verification; exact supervised A1 start command; expected owner approval touchpoints; exact rollback triggers).",
+   "source_ref": "source-001.md#stage-7-runbook",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-016-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-18"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "captured verbatim at D-016 bootstrap; verified at directive verification after the overnight run (D-012-VALIDATION / D-013-BOOTSTRAP precedent)",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "amendment_sequence": 1
+  },
+  {
+   "id": "D-016-R060",
+   "text": "Stage 7 PROHIBITIONS (owner-present actions only): do not copy files into C:/SupervisorController; do not change protected config; do not change model selection; do not regenerate the live manifest; do not stop or restart the live controller; do not clear or delete runtime state; do not start A1.",
+   "source_ref": "source-001.md#stage-7-do-not",
+   "classification": "prohibition",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-016-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-18"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "captured verbatim at D-016 bootstrap; verified at directive verification after the overnight run (D-012-VALIDATION / D-013-BOOTSTRAP precedent)",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "amendment_sequence": 1
+  },
+  {
+   "id": "D-016-R061",
+   "text": "Continue until all authorized repository integration work is complete or a real stop condition prevents safe progress; then return exactly one of OVERNIGHT_RUNWAY_COMPLETE or OVERNIGHT_RUNWAY_BLOCKED.",
+   "source_ref": "source-001.md#final-return",
+   "classification": "return",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-016-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-18"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "captured verbatim at D-016 bootstrap; verified at directive verification after the overnight run (D-012-VALIDATION / D-013-BOOTSTRAP precedent)",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "amendment_sequence": 1
+  },
+  {
+   "id": "D-016-R062",
+   "text": "OVERNIGHT_RUNWAY_COMPLETE must include: PR #222 final state and merge commit; control integration PR and merge commit; final origin/main SHA; accepted task count; D-013/D-014/D-015 registry status; B-019 status; M0-T063 packet-amendment PR/merge status; A1 branch/worktree SHA and cleanliness; every test and CI result; exact controller-update runbook; exact A1 start command; remaining owner actions in order.",
+   "source_ref": "source-001.md#final-return-complete",
+   "classification": "return",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-016-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-18"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "captured verbatim at D-016 bootstrap; verified at directive verification after the overnight run (D-012-VALIDATION / D-013-BOOTSTRAP precedent)",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "amendment_sequence": 1
+  },
+  {
+   "id": "D-016-R063",
+   "text": "OVERNIGHT_RUNWAY_BLOCKED must include: completed stages; exact blocked stage; exact evidence and reason; all local/remote SHAs; worktree cleanliness; actions not taken; safest next command for the owner.",
+   "source_ref": "source-001.md#final-return-blocked",
+   "classification": "return",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-016-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-18"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "captured verbatim at D-016 bootstrap; verified at directive verification after the overnight run (D-012-VALIDATION / D-013-BOOTSTRAP precedent)",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "amendment_sequence": 1
+  },
+  {
+   "id": "D-016-R064",
+   "text": "Final prohibitions: do not claim completion while CI is running; do not merge anything unless every explicit condition is satisfied; do not modify the live controller; do not start A1.",
+   "source_ref": "source-001.md#final-prohibitions",
+   "classification": "prohibition",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-016-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-18"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "captured verbatim at D-016 bootstrap; verified at directive verification after the overnight run (D-012-VALIDATION / D-013-BOOTSTRAP precedent)",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "amendment_sequence": 1
+  }
+ ]
+}

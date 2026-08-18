@@ -1,0 +1,138 @@
+{
+ "schema": "directive_manifest/v1",
+ "directive_id": "D-016",
+ "version": 1,
+ "slug": "overnight-integration-runway",
+ "title": "Overnight owner authorization - complete context-intelligence integration runway (Stages 0-7)",
+ "status": "active",
+ "issued_by": "owner",
+ "issued_at": "2026-08-18",
+ "captured_at": "2026-08-18T09:05:00+00:00",
+ "channel": "owner_typed_instruction",
+ "frozen_baseline_sha": "f21eb1fbca3e16d1602a14775c99bb3cac75eb1e",
+ "sources": [
+  {
+   "file": "source-001.md",
+   "kind": "original",
+   "sequence": 1,
+   "recorded_at": "2026-08-18T09:05:00+00:00",
+   "content_digest_sha256": "8c13a917883aa503105951015a533ac7527a42501b553a5b6741ab434fc78e88"
+  }
+ ],
+ "amendments": [],
+ "supersedes": [],
+ "superseded_by": null,
+ "affected_tasks": [],
+ "affected_prs": [
+  222,
+  223
+ ],
+ "affected_branches": [
+  "control/context-intelligence-init",
+  "task/M0-T070-supervisor-authority-repair",
+  "task/M0-T063-context-index-a1",
+  "main"
+ ],
+ "scope": {
+  "task_ids": [
+   "D-016-BOOTSTRAP"
+  ],
+  "task_types": [
+   "governance"
+  ],
+  "milestones": [],
+  "paths": []
+ },
+ "applicability_note": "Every row binds the NON-LEDGER governance sentinel D-016-BOOTSTRAP (D-012-VALIDATION / D-013-BOOTSTRAP precedent): this directive authorizes and constrains the orchestrator's overnight integration session, it does not add requirements into any ledger task's accept() set. M0-T070's acceptance runs under D-001+D-014 as already bound at claim time (new requirement task_ids are never bound onto an already-gated task); M0-T063's Stage 6 packet amendment follows the existing task-amendment process. maps_to.tasks entries are informational pointers only. Sentinel rows are verified at directive verification after the overnight run ends.",
+ "owner_approval": {
+  "state": "issued_owner_typed",
+  "decision": "Owner typed the OVERNIGHT OWNER AUTHORIZATION message of 2026-08-18 authorizing the bounded Stages 0-7: read-only reconciliation, main-into-control sync, PR #222 base reconciliation and B-019 resolution, M0-T070 gate/acceptance cycle, conditional PR #222 merge, conditional control-to-main integration merge, M0-T063 documented_test_commands packet amendment, and a read-only controller-update runbook; live-controller changes and A1 start remain owner-present actions."
+ },
+ "lifecycle_state": "active",
+ "requirements_file": "requirements.json",
+ "verification_file": "verification.json",
+ "final_reviewed_sha": null,
+ "final_reviewed_manifest_sha256": null,
+ "requirements_content_digest_sha256": "378b3d5d717b027557d8f53a4e8c4e154921269cdb4ebf8dd356ddff3b5e3389",
+ "requirements_id_digest_sha256": "f31cedf46615b7166e0143540eaf500988deb5e76802a3598a8491ffc806769b",
+ "enforcement_pointers": {
+  "tasks": [],
+  "gates": [],
+  "blockers": [],
+  "rules": [],
+  "hold": false
+ },
+ "locked_requirement_ids": [
+  "D-016-R001",
+  "D-016-R002",
+  "D-016-R003",
+  "D-016-R004",
+  "D-016-R005",
+  "D-016-R006",
+  "D-016-R007",
+  "D-016-R008",
+  "D-016-R009",
+  "D-016-R010",
+  "D-016-R011",
+  "D-016-R012",
+  "D-016-R013",
+  "D-016-R014",
+  "D-016-R015",
+  "D-016-R016",
+  "D-016-R017",
+  "D-016-R018",
+  "D-016-R019",
+  "D-016-R020",
+  "D-016-R021",
+  "D-016-R022",
+  "D-016-R023",
+  "D-016-R024",
+  "D-016-R025",
+  "D-016-R026",
+  "D-016-R027",
+  "D-016-R028",
+  "D-016-R029",
+  "D-016-R030",
+  "D-016-R031",
+  "D-016-R032",
+  "D-016-R033",
+  "D-016-R034",
+  "D-016-R035",
+  "D-016-R036",
+  "D-016-R037",
+  "D-016-R038",
+  "D-016-R039",
+  "D-016-R040",
+  "D-016-R041",
+  "D-016-R042",
+  "D-016-R043",
+  "D-016-R044",
+  "D-016-R045",
+  "D-016-R046",
+  "D-016-R047",
+  "D-016-R048",
+  "D-016-R049",
+  "D-016-R050",
+  "D-016-R051",
+  "D-016-R052",
+  "D-016-R053",
+  "D-016-R054",
+  "D-016-R055",
+  "D-016-R056",
+  "D-016-R057",
+  "D-016-R058",
+  "D-016-R059",
+  "D-016-R060",
+  "D-016-R061",
+  "D-016-R062",
+  "D-016-R063",
+  "D-016-R064"
+ ],
+ "audit_log": [
+  {
+   "at": "2026-08-18T09:05:00+00:00",
+   "by": "orchestrator",
+   "note": "D-016 captured verbatim: source-001.md (sha256 8c13a917883aa503105951015a533ac7527a42501b553a5b6741ab434fc78e88) = the owner's OVERNIGHT OWNER AUTHORIZATION of 2026-08-18 for the complete context-intelligence integration runway, captured exactly once per its own capture-once instruction before any repository mutation; frozen origin/main baseline f21eb1fbca3e16d1602a14775c99bb3cac75eb1e; 64 atomic requirements bound to the D-016-BOOTSTRAP governance sentinel."
+  }
+ ]
+}
