@@ -1,145 +1,152 @@
 {
- "task_id": "M0-T073",
- "title": "Permanent software-engineering modularity enforcement: root CLAUDE.md principle, AGENTS.md rule, path-scoped code-architecture rule, CODE_MODULARITY_POLICY.md, deterministic CI modularity checker, task/review integration (D-017 amendment)",
- "task_type": "governance",
- "milestone_id": "M0",
- "objective": "Make the modularity and code-organization requirements permanent repository rules per D-017-R105..R113: concise root CLAUDE.md principle; equivalent AGENTS.md rule for Codex review; auto-loading .claude/rules/code-architecture.md for handwritten Python/TypeScript/TSX production source; docs/CODE_MODULARITY_POLICY.md as the detailed source of truth; a deterministic CI modularity checker (handwritten-only, exclusions, hard/warning thresholds, versioned reviewed baseline that cannot be casually regenerated, explicit expiring path-specific exceptions, deterministic output, line count never sole proof); task-packet/coding-workflow/code-review-checklist integration; continuing enforcement proven by the seven D-017-R113 tests.",
- "business_reason": "Owner directive: modularity rules are permanent repository law, not initiative-scoped; new giant-file regressions must fail CI after the initiative ends.",
- "inputs": [],
- "outputs": [],
- "dependencies": [],
- "allowed_paths": [
-  "CLAUDE.md",
-  "AGENTS.md",
-  ".claude/rules/code-architecture.md",
-  "docs/CODE_MODULARITY_POLICY.md",
-  "tools/modularity_check.py",
-  "tools/test_modularity_check.py",
-  "tools/modularity_baseline.json",
-  "tools/modularity_exceptions.json",
-  ".github/workflows/ci.yml",
-  ".claude/skills/start-controlled-task/SKILL.md",
-  ".claude/skills/run-quality-gate/SKILL.md",
-  "project-control/reports/M0-T073-producer-report.md",
-  "project-control/reports/M0-T073-evidence-map.json",
-  "project-control/reports/M0-T073-G0-readiness.md",
-  "project-control/reports/M0-T073-G3-code-review.md",
-  "project-control/reports/M0-T073-G4-qa-review.md",
-  "project-control/reports/M0-T073-G5-security-review.md",
-  "project-control/reports/M0-T073-DCV-verification.md",
-  "project-control/reports/M0-T073-G5-DCV-reverification.md"
- ],
- "forbidden_paths": [
-  "tools/agent_supervisor/",
-  "tools/project_control.py",
-  "tools/code_graph/",
-  "services/",
-  "apps/",
-  "project-control/tasks/"
- ],
- "acceptance_scenarios": [
-  {
-   "id": "AS-1",
-   "given": "a normal focused module (300 SLOC)",
-   "when": "--check runs",
-   "then": "it passes with no failures (test_1)"
-  },
-  {
-   "id": "AS-2",
-   "given": "a NEW 1100-SLOC handwritten production module with no exception",
-   "when": "--check runs",
-   "then": "new_oversized failure, exit 1 (test_2)"
-  },
-  {
-   "id": "AS-3",
-   "given": "a grandfathered file grown past max(50,10%) over its recorded size",
-   "when": "--check runs",
-   "then": "baseline_growth failure; within-limit growth passes (test_3/test_3b)"
-  },
-  {
-   "id": "AS-4",
-   "given": "oversized files under generated/migrations/tests paths",
-   "when": "--check runs",
-   "then": "not selected, no failure (test_4)"
-  },
-  {
-   "id": "AS-5",
-   "given": "a reviewed, path-exact, in-horizon exception",
-   "when": "--check runs before and after growth past its ceiling",
-   "then": "passes, then exception_exceeded; a grossly broad ceiling fails exception_too_broad (test_5, test_6f)"
-  },
-  {
-   "id": "AS-6",
-   "given": "an expired, broadened, mistargeted, malformed, or duplicate exception",
-   "when": "--check runs",
-   "then": "fails closed with a structured error (test_6, 6b, 6c, 6d, 6e)"
-  },
-  {
-   "id": "AS-7",
-   "given": "a baseline regeneration attempt",
-   "when": "run without / with a version-bound unexpired approval",
-   "then": "refused without; with approval debt carries forward at min(recorded,current); an edited baseline digest fails; approvals are single-use (test_7, 7b, 7c)"
-  }
- ],
- "required_gates": [
-  "G0",
-  "G2",
-  "G3",
-  "G4",
-  "G5"
- ],
- "producer_agent": "orchestrator",
- "reviewer_agents": [
-  "code-reviewer",
-  "qa-engineer",
-  "security-reviewer",
-  "directive-compliance-verifier"
- ],
- "status": "awaiting_gate",
- "progress_percent": 90,
- "risks": [
-  "ci.yml overlap: additive step only; on a real conflict with open PR work touching ci.yml, stop with an overlap report (D-013-R067 pattern).",
-  "CLAUDE.md/AGENTS.md additions must stay concise (base-context budget); details live in docs/CODE_MODULARITY_POLICY.md.",
-  "Baseline must be versioned and non-casually-regenerable; regeneration path requires reviewed exception evidence."
- ],
- "blockers": [],
- "created_at": "2026-08-18T11:29:09.633699+00:00",
- "updated_at": "2026-08-18T13:13:59.718879+00:00",
- "directive_refs": [
-  {
-   "directive_id": "D-001",
-   "requirement_ids": "ALL"
-  },
-  {
-   "directive_id": "D-017",
-   "requirement_ids": "ALL"
-  }
- ],
- "directive_regime_version": "1.0",
- "directive_regime_entered_at": "2026-08-18T11:29:09.633699+00:00",
- "worktree": "C:/Users/MLFLL/Downloads/nyc-zoning/wt-m0t073",
- "progress_log": [
-  {
-   "at": "2026-08-18T12:20:37.049013+00:00",
-   "agent": "orchestrator",
-   "percent": 60,
-   "status": "in_progress",
-   "message": "Implementation committed: checker+baseline+exceptions+proof tests, policy/rule/principles, additive CI job, skills integration"
-  },
-  {
-   "at": "2026-08-18T12:20:37.274816+00:00",
-   "agent": "orchestrator",
-   "percent": 75,
-   "status": "self_check",
-   "message": "Self-checks green: 17/17 proof tests, --check 0 failures over 239 files, context-budget PASS, determinism verified"
-  },
-  {
-   "at": "2026-08-18T13:13:59.718879+00:00",
-   "agent": "orchestrator",
-   "percent": 90,
-   "status": "awaiting_gate",
-   "message": "G3 CONFIRM-PASS + G4 CONFIRM-PASS (delta re-reviews at 638ad744); all C1/C2/C3 + F/D residuals closed at 5487b84 (rounds 1-3): TS SLOC quote-aware, exception breadth review-time-bound, structured errors, horizon+single-use approvals, evidence 240. G5 re-review + final DCV pending at held head 5487b84"
-  }
- ],
- "scope_amendment_note": "Amended in rework after G3/G4/G5/DCV round 1: review-report and evidence artifacts admitted explicitly; acceptance_scenarios backfilled from the seven owner proofs (G3-F12). No production-module scope added."
+  "task_id": "M0-T073",
+  "title": "Permanent software-engineering modularity enforcement: root CLAUDE.md principle, AGENTS.md rule, path-scoped code-architecture rule, CODE_MODULARITY_POLICY.md, deterministic CI modularity checker, task/review integration (D-017 amendment)",
+  "task_type": "governance",
+  "milestone_id": "M0",
+  "objective": "Make the modularity and code-organization requirements permanent repository rules per D-017-R105..R113: concise root CLAUDE.md principle; equivalent AGENTS.md rule for Codex review; auto-loading .claude/rules/code-architecture.md for handwritten Python/TypeScript/TSX production source; docs/CODE_MODULARITY_POLICY.md as the detailed source of truth; a deterministic CI modularity checker (handwritten-only, exclusions, hard/warning thresholds, versioned reviewed baseline that cannot be casually regenerated, explicit expiring path-specific exceptions, deterministic output, line count never sole proof); task-packet/coding-workflow/code-review-checklist integration; continuing enforcement proven by the seven D-017-R113 tests.",
+  "business_reason": "Owner directive: modularity rules are permanent repository law, not initiative-scoped; new giant-file regressions must fail CI after the initiative ends.",
+  "inputs": [],
+  "outputs": [],
+  "dependencies": [],
+  "allowed_paths": [
+    "CLAUDE.md",
+    "AGENTS.md",
+    ".claude/rules/code-architecture.md",
+    "docs/CODE_MODULARITY_POLICY.md",
+    "tools/modularity_check.py",
+    "tools/test_modularity_check.py",
+    "tools/modularity_baseline.json",
+    "tools/modularity_exceptions.json",
+    ".github/workflows/ci.yml",
+    ".claude/skills/start-controlled-task/SKILL.md",
+    ".claude/skills/run-quality-gate/SKILL.md",
+    "project-control/reports/M0-T073-producer-report.md",
+    "project-control/reports/M0-T073-evidence-map.json",
+    "project-control/reports/M0-T073-G0-readiness.md",
+    "project-control/reports/M0-T073-G3-code-review.md",
+    "project-control/reports/M0-T073-G4-qa-review.md",
+    "project-control/reports/M0-T073-G5-security-review.md",
+    "project-control/reports/M0-T073-DCV-verification.md",
+    "project-control/reports/M0-T073-G5-DCV-reverification.md"
+  ],
+  "forbidden_paths": [
+    "tools/agent_supervisor/",
+    "tools/project_control.py",
+    "tools/code_graph/",
+    "services/",
+    "apps/",
+    "project-control/tasks/"
+  ],
+  "acceptance_scenarios": [
+    {
+      "id": "AS-1",
+      "given": "a normal focused module (300 SLOC)",
+      "when": "--check runs",
+      "then": "it passes with no failures (test_1)"
+    },
+    {
+      "id": "AS-2",
+      "given": "a NEW 1100-SLOC handwritten production module with no exception",
+      "when": "--check runs",
+      "then": "new_oversized failure, exit 1 (test_2)"
+    },
+    {
+      "id": "AS-3",
+      "given": "a grandfathered file grown past max(50,10%) over its recorded size",
+      "when": "--check runs",
+      "then": "baseline_growth failure; within-limit growth passes (test_3/test_3b)"
+    },
+    {
+      "id": "AS-4",
+      "given": "oversized files under generated/migrations/tests paths",
+      "when": "--check runs",
+      "then": "not selected, no failure (test_4)"
+    },
+    {
+      "id": "AS-5",
+      "given": "a reviewed, path-exact, in-horizon exception",
+      "when": "--check runs before and after growth past its ceiling",
+      "then": "passes, then exception_exceeded; a grossly broad ceiling fails exception_too_broad (test_5, test_6f)"
+    },
+    {
+      "id": "AS-6",
+      "given": "an expired, broadened, mistargeted, malformed, or duplicate exception",
+      "when": "--check runs",
+      "then": "fails closed with a structured error (test_6, 6b, 6c, 6d, 6e)"
+    },
+    {
+      "id": "AS-7",
+      "given": "a baseline regeneration attempt",
+      "when": "run without / with a version-bound unexpired approval",
+      "then": "refused without; with approval debt carries forward at min(recorded,current); an edited baseline digest fails; approvals are single-use (test_7, 7b, 7c)"
+    }
+  ],
+  "required_gates": [
+    "G0",
+    "G2",
+    "G3",
+    "G4",
+    "G5"
+  ],
+  "producer_agent": "orchestrator",
+  "reviewer_agents": [
+    "code-reviewer",
+    "qa-engineer",
+    "security-reviewer",
+    "directive-compliance-verifier"
+  ],
+  "status": "awaiting_gate",
+  "progress_percent": 95,
+  "risks": [
+    "ci.yml overlap: additive step only; on a real conflict with open PR work touching ci.yml, stop with an overlap report (D-013-R067 pattern).",
+    "CLAUDE.md/AGENTS.md additions must stay concise (base-context budget); details live in docs/CODE_MODULARITY_POLICY.md.",
+    "Baseline must be versioned and non-casually-regenerable; regeneration path requires reviewed exception evidence."
+  ],
+  "blockers": [],
+  "created_at": "2026-08-18T11:29:09.633699+00:00",
+  "updated_at": "2026-08-18T13:31:02.957161+00:00",
+  "directive_refs": [
+    {
+      "directive_id": "D-001",
+      "requirement_ids": "ALL"
+    },
+    {
+      "directive_id": "D-017",
+      "requirement_ids": "ALL"
+    }
+  ],
+  "directive_regime_version": "1.0",
+  "directive_regime_entered_at": "2026-08-18T11:29:09.633699+00:00",
+  "worktree": "C:/Users/MLFLL/Downloads/nyc-zoning/wt-m0t073",
+  "progress_log": [
+    {
+      "at": "2026-08-18T12:20:37.049013+00:00",
+      "agent": "orchestrator",
+      "percent": 60,
+      "status": "in_progress",
+      "message": "Implementation committed: checker+baseline+exceptions+proof tests, policy/rule/principles, additive CI job, skills integration"
+    },
+    {
+      "at": "2026-08-18T12:20:37.274816+00:00",
+      "agent": "orchestrator",
+      "percent": 75,
+      "status": "self_check",
+      "message": "Self-checks green: 17/17 proof tests, --check 0 failures over 239 files, context-budget PASS, determinism verified"
+    },
+    {
+      "at": "2026-08-18T13:13:59.718879+00:00",
+      "agent": "orchestrator",
+      "percent": 90,
+      "status": "awaiting_gate",
+      "message": "G3 CONFIRM-PASS + G4 CONFIRM-PASS (delta re-reviews at 638ad744); all C1/C2/C3 + F/D residuals closed at 5487b84 (rounds 1-3): TS SLOC quote-aware, exception breadth review-time-bound, structured errors, horizon+single-use approvals, evidence 240. G5 re-review + final DCV pending at held head 5487b84"
+    },
+    {
+      "at": "2026-08-18T13:30:45.996256+00:00",
+      "agent": "orchestrator",
+      "percent": 60,
+      "status": "rework",
+      "message": "Return to rework to re-stamp content identity at final head after G5/DCV re-verification"
+    }
+  ],
+  "scope_amendment_note": "Amended in rework after G3/G4/G5/DCV round 1: review-report and evidence artifacts admitted explicitly; acceptance_scenarios backfilled from the seven owner proofs (G3-F12). No production-module scope added."
 }
