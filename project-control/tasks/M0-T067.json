@@ -1,0 +1,49 @@
+{
+ "task_id": "M0-T067",
+ "title": "Context-intelligence Unit D: session/task memory graph with closed-schema digests, derived parents, quarantine (D-013)",
+ "task_type": "infrastructure",
+ "milestone_id": "M0",
+ "objective": "Closed-schema session/task memory digests whose parents are DERIVED (digest->task->directive/milestone; requirement links->requirement entities; files->code-graph nodes; subsystem only via the versioned Unit-C resolver); two-pass extraction+deterministic resolution; grounding required (task scope/diff/evidence/owner-approved relation); unresolved/ambiguous/stale/ungrounded links quarantined; promotion atomic, idempotent, replay-safe, concurrency-safe with tested crash points; invalid advisory tags discarded separately, never quarantining a valid digest.",
+ "business_reason": "D-013 Unit D; depends on Unit C resolver (sequencing requirement).",
+ "inputs": [],
+ "outputs": [],
+ "dependencies": [
+  "M0-T066"
+ ],
+ "allowed_paths": [],
+ "forbidden_paths": [],
+ "acceptance_scenarios": [],
+ "required_gates": [
+  "G0",
+  "G3",
+  "G4",
+  "G5"
+ ],
+ "producer_agent": null,
+ "reviewer_agents": [
+  "code-reviewer",
+  "qa-engineer",
+  "security-reviewer",
+  "directive-compliance-verifier"
+ ],
+ "status": "backlog",
+ "progress_percent": 0,
+ "risks": [],
+ "blockers": [],
+ "created_at": "2026-08-18T04:25:08.087640+00:00",
+ "updated_at": "2026-08-18T04:25:08.485255+00:00",
+ "directive_refs": [
+  {
+   "directive_id": "D-001",
+   "requirement_ids": "ALL"
+  },
+  {
+   "directive_id": "D-013",
+   "requirement_ids": "ALL"
+  }
+ ],
+ "directive_regime_version": "1.0",
+ "directive_regime_entered_at": "2026-08-18T04:25:08.087640+00:00",
+ "path_free_governance": true,
+ "path_free_justification": "Roadmap reservation contracted at the D-013 bootstrap (owner authorization 2026-08-18, source-002). Genuinely path-free until claimed: exact allowed paths are bound at claim time after predecessor acceptance per D-013 sequencing; no implementation content exists or is authorized yet for this unit."
+}
