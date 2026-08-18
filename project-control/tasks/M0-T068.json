@@ -5,14 +5,100 @@
  "milestone_id": "M0",
  "objective": "Bounded census views, file/symbol cards, dependency neighborhoods, and question-oriented retrieval feeding the ONE context compiler (never a second giant prompt); explicit coverage modes census/changed/neighborhood/deep with full machine-readable coverage records and provenance.",
  "business_reason": "D-013 Unit E; retrieval views over the deterministic index.",
- "inputs": [],
- "outputs": [],
+ "inputs": [
+  "tools/repo_index_incremental.py build_incremental (accepted A1/A2 index + telemetry: census, change_set, versions, fingerprints — consumed read-only in process)",
+  "tools/code_graph/query.py GraphIndex (accepted graph: nodes/edges/kinds — read-only)",
+  "tools/subsystem_resolver.py + tools/subsystem_entities.py (accepted Unit C versioned ontology — read-only)",
+  "tools/memory_graph.py memory_store (accepted Unit D external store — read-only, advisory)",
+  "D-013 requirements R023 (coverage modes), R024 (coverage-record minimum fields), R039/R042 (feed the ONE compiler, no filling), R009/R018 (deterministic, honest kinds), R013 (fail closed)"
+ ],
+ "outputs": [
+  "tools/repo_views.py — core bounded view builders: census view (every eligible file accounted indexed/excluded/failed with reasons), changed view (this run's deterministic change classification vs the prior cache generation, fail-closed on unsupported base fingerprints), dependency neighborhood view, file/symbol card view (kind, subsystem via Unit C, bounded edges), deep view (exact bounded source excerpt with digest + line provenance), plus the R024 coverage-record builder with a separate labeled non-identity cache-state section",
+  "tools/repo_views_query.py — deterministic question-oriented retrieval (about_file/about_task/about_requirement/who_imports/what_changed) returning bounded structured answers with coverage records and machine-readable no-answers; bounded CLI (census/changed/card/neighborhood/deep/ask/check with a determinism self-proof)",
+  "tools/test_repo_views.py — executable AS-1..AS-6 acceptance tests + truncation, no-answer, fail-closed and cold-vs-warm determinism cases",
+  "docs/REPO_VIEWS.md — the views contract: modes, coverage-record fields, bounds/truncation semantics, advisory memory reads, Unit B/compiler consumption notes",
+  "project-control/reports/M0-T068-producer-report.md, M0-T068-evidence-map.json, M0-T068-coverage-evidence.md, M0-T068-G0-readiness.md"
+ ],
  "dependencies": [
   "M0-T067"
  ],
- "allowed_paths": [],
- "forbidden_paths": [],
- "acceptance_scenarios": [],
+ "allowed_paths": [
+  "tools/repo_views.py",
+  "tools/repo_views_query.py",
+  "tools/test_repo_views.py",
+  "docs/REPO_VIEWS.md",
+  "project-control/reports/M0-T068-producer-report.md",
+  "project-control/reports/M0-T068-evidence-map.json",
+  "project-control/reports/M0-T068-coverage-evidence.md",
+  "project-control/reports/M0-T068-G0-readiness.md"
+ ],
+ "forbidden_paths": [
+  "tools/agent_supervisor/",
+  "tools/code_graph/generate.py",
+  "tools/code_graph/query.py",
+  "tools/repo_fingerprint.py",
+  "tools/repo_index_incremental.py",
+  "tools/repo_index_cache.py",
+  "tools/repo_index_assembly.py",
+  "tools/repo_index_baseline.py",
+  "tools/context_pack.py",
+  "tools/context_pack_budget.py",
+  "tools/context_pack_index.py",
+  "tools/context_pack_sources.py",
+  "tools/context_pack_render.py",
+  "tools/context_pack_assembly.py",
+  "tools/context_pack_io.py",
+  "tools/subsystem_resolver.py",
+  "tools/subsystem_entities.py",
+  "tools/subsystem_map.json",
+  "tools/memory_digest.py",
+  "tools/memory_grounding.py",
+  "tools/memory_graph.py",
+  "tools/modularity_baseline.json",
+  "tools/model_routing.py",
+  ".github/",
+  "services/",
+  "apps/",
+  ".claude/"
+ ],
+ "acceptance_scenarios": [
+  {
+   "id": "AS-1",
+   "given": "the deterministic index over a fixture repository",
+   "when": "each view is built",
+   "then": "every view labels its coverage_mode from exactly {census, changed, neighborhood, deep}; the census view accounts for EVERY eligible file as indexed or excluded/failed with per-reason groups (census.reconciles true); the changed view reports this run's deterministic change classification (added/content_modified/metadata_modified/deleted/renamed + global invalidators) against the prior cache generation and REFUSES an unsupported stated base fingerprint; the neighborhood view is bounded around a named seed; the deep view returns an exact bounded excerpt with content digest and line provenance (D-013-R023)"
+  },
+  {
+   "id": "AS-2",
+   "given": "any view output",
+   "when": "its coverage record is inspected",
+   "then": "it machine-readably carries repository identity, snapshot fingerprint, HEAD/branch/dirty-state digest, eligible/indexed counts, excluded and failed files grouped by reason, stale count, indexer/schema/config versions PLUS the Unit C ontology version stamp, source manifest digest, export digest, and the EXACT query parameters and result limits; cache hit/miss and rebuild fields live in a separate section explicitly labeled non-identity cache state (D-013-R024)"
+  },
+  {
+   "id": "AS-3",
+   "given": "a query whose full result exceeds the view's limit",
+   "when": "the view is built",
+   "then": "output is truncated at the recorded limit WITH a machine-readable truncation marker (count of omitted items) — never silently; views return bounded structured data for the ONE compiler and never assemble a prompt, budget, or capacity-filling content of their own (D-013-R039/R042/R003)"
+  },
+  {
+   "id": "AS-4",
+   "given": "cards, neighborhoods, and question answers",
+   "when": "they are produced",
+   "then": "all retrieval is deterministic code (no LLM anywhere); reported node/edge kinds are exactly those in the index export; subsystem labels come ONLY from the versioned Unit C resolver; an unresolvable seed/question returns a machine-readable no-answer (never a guess); memory-graph reads are labeled advisory and an absent/empty store is labeled, never fabricated (D-013-R009/R018/R045/R051)"
+  },
+  {
+   "id": "AS-5",
+   "given": "an unavailable/corrupt index, a non-canonical or out-of-tree deep-view path, and an unreadable task packet",
+   "when": "views are requested",
+   "then": "each refuses with a machine-readable error (CLI exit 2) — index_unavailable / non_canonical_path / path_not_in_tree / task_packet_unreadable; no partial answer is ever presented as complete (D-013-R013)"
+  },
+  {
+   "id": "AS-6",
+   "given": "identical repository state and arguments, cold cache then warm cache",
+   "when": "the same view is built in both runs",
+   "then": "the deterministic sections (view content + coverage record) are byte-identical across cold and warm; only the labeled non-identity cache-state section may differ; the CLI check subcommand self-proves this (D-013-R037-style determinism)"
+  }
+ ],
  "required_gates": [
   "G0",
   "G3",
@@ -28,7 +114,10 @@
  ],
  "status": "backlog",
  "progress_percent": 0,
- "risks": [],
+ "risks": [
+  "Coverage-record drift: R024 names many required fields; mitigated by a single coverage-record builder used by every view + AS-2 field assertions",
+  "Scope creep into Unit F: no benchmarks/runbook and no initiative status projection here; this unit is retrieval views only"
+ ],
  "blockers": [],
  "created_at": "2026-08-18T04:25:09.468722+00:00",
  "updated_at": "2026-08-18T04:25:09.867590+00:00",
@@ -45,5 +134,10 @@
  "directive_regime_version": "1.0",
  "directive_regime_entered_at": "2026-08-18T04:25:09.474494+00:00",
  "path_free_governance": true,
- "path_free_justification": "Roadmap reservation contracted at the D-013 bootstrap (owner authorization 2026-08-18, source-002). Genuinely path-free until claimed: exact allowed paths are bound at claim time after predecessor acceptance per D-013 sequencing; no implementation content exists or is authorized yet for this unit."
+ "path_free_justification": "Paths bound at claim (2026-08-18) after M0-T067 acceptance, per the D-013 sequencing reservation (source-002). New bounded-views modules consuming the accepted A1/A2 index, Unit C resolver, and Unit D store strictly read-only; no existing module is rewritten.",
+ "documented_test_commands": [
+  "python tools/test_repo_views.py",
+  "python -m pytest tools/test_repo_views.py -q",
+  "python tools/modularity_check.py --check"
+ ]
 }
