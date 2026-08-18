@@ -1,0 +1,146 @@
+{
+ "schema": "evidence_map/v1",
+ "task_id": "M0-T063",
+ "producer": "supervised-auto-worker",
+ "reviewed_sha": "SET_AT_SUBMIT",
+ "requirements": {
+  "D-013-R001": [
+   "A1 is one bounded unit of the single pipeline (content-addressed census/index layer); docs/CONTEXT_INTELLIGENCE_PIPELINE.md 'Layers'; no all-at-once rewrite."
+  ],
+  "D-013-R002": [
+   "No 'read the whole repo' claim; every fingerprint carries explicit census coverage (eligible/indexed/excluded/failed) and provenance; repo_fingerprint.FingerprintResult.to_dict."
+  ],
+  "D-013-R003": [
+   "Lower cost never from dropping context: A1 records every eligible file as indexed/excluded/failed and never silently skips (census reconciles; unreadable->failure). No summaries replace source."
+  ],
+  "D-013-R004": [
+   "Reconciled against the live checkout before acting: Stage 0 reconciliation; A1 fingerprint reads real git HEAD/branch/dirty and the accepted eligibility roots."
+  ],
+  "D-013-R006": [
+   "A1 (repository role) does not bypass gates/push to main/accept from a worker role; orchestrator runs project_control per ADR-005; submitted for independent G0/G3/G4/G5/DCV."
+  ],
+  "D-013-R007": [
+   "Single writer for the unit; independent read-only reviewers dispatched; no two writing agents in this checkout."
+  ],
+  "D-013-R008": [
+   "No second free-form taxonomy: eligibility and identity reuse the accepted code-graph roots and durable_state checkout identity; no new taxonomy introduced (ontology is Unit C, not A1)."
+  ],
+  "D-013-R009": [
+   "No LLM performs indexing/invalidation/promotion: all A1 structural work is deterministic Python (repo_fingerprint/repo_index_cache/repo_index_baseline); zero provider calls."
+  ],
+  "D-013-R010": [
+   "No refactor merely to shorten for an AI; the three modules are new, each single-responsibility, under 600 SLOC by cohesion not by AI-shortening."
+  ],
+  "D-013-R011": [
+   "No caches/transcripts/secrets/prompts in git: cache generations + telemetry live OUTSIDE the repo (LOCALAPPDATA); only sanitized bounded evidence (.md/.json digests+counts) committed."
+  ],
+  "D-013-R012": [
+   "No token-savings claim from a byte estimate; A1 makes no token claim; telemetry provider-token fields are null (not zero) when unavailable."
+  ],
+  "D-013-R013": [
+   "Fail closed on stale/corrupt/ambiguous: cache recover() quarantines incomplete/corrupt generations; verify before promotion; fingerprint raises on non-repo."
+  ],
+  "D-013-R022": [
+   "Only A1 implemented this run; A2 (incremental) NOT implemented (no incremental path wired); stops at the A1 review checkpoint; Units B-F untouched."
+  ],
+  "D-013-R023": [
+   "Coverage census enumerates every eligible tracked file with indexed/excluded/failed counts (repo_fingerprint.Census); modes documented in the pipeline doc."
+  ],
+  "D-013-R024": [
+   "Coverage record includes repo identity+snapshot fingerprint, HEAD+branch+dirty digest, eligible/indexed counts, excluded grouped by reason, failures grouped by reason, version fields, source-manifest digest (FingerprintResult.to_dict + Census.to_dict)."
+  ],
+  "D-013-R025": [
+   "'Complete census' only when every eligible file is indexed or explicitly excluded/failed (Census.reconciles); generated summaries are navigation aids only."
+  ],
+  "D-013-R026": [
+   "ONE reusable fingerprint service (repo_fingerprint) reused by cache+baseline; no per-feature digest invention (all digests via domain_hash)."
+  ],
+  "D-013-R027": [
+   "Repo namespace identity is the canonical-path sha256 (durable_state.checkout_key), never the basename; secrets in remote URLs never included (identity is the path hash)."
+  ],
+  "D-013-R028": [
+   "Snapshot fingerprint covers committed AND uncommitted state: HEAD sha+branch+detached, dirty-state digest, per-file manifest (path/eligibility/content sha/mode), config/parser/schema versions, eligibility-rule version (compute_fingerprint)."
+  ],
+  "D-013-R029": [
+   "Canonical serialization (sorted keys, explicit UTF-8), domain-separated hashes (domain_hash); newline (raw vs lf), symlink (recorded/classified), case+Unicode (NFC+casefold name), unreadable (recorded failure, never skipped) all handled; test_repo_fingerprint AS-1/AS-2."
+  ],
+  "D-013-R030": [
+   "Per-file manifest of bounded metadata + digests; cache key binds content digest + parser/config/schema versions; mtime NEVER proof (always hashes content); test_repo_fingerprint::MtimeNeverProof."
+  ],
+  "D-013-R031": [
+   "Cache OUTSIDE the worktree at the accepted per-checkout LOCALAPPDATA namespace; telemetry outside too; only sanitized evidence committed (repo_index_cache.cache_dir_for refuses inside-repo; test OutsideRepoGuard)."
+  ],
+  "D-013-R035": [
+   "Atomic generations: lock + temp + validate + os.replace promotion + current pointer; a crash leaves prior valid or complete new, never half (test_repo_index_cache::CrashRecovery/AtomicPromotion)."
+  ],
+  "D-013-R036": [
+   "Detects corruption/incompatible version/incomplete/stale lock/concurrent writer; fail closed or recover per explicit rule; retries idempotent (test Locking + CrashRecovery + test_retry_is_idempotent)."
+  ],
+  "D-013-R037": [
+   "PARITY INVARIANT: A1 captures the deterministic byte-level REFERENCE (export_digest over the generator's own canonical bytes) that A2's incremental-vs-full byte-identity test compares against; per source-002 decision 6 the A/A split makes the incremental build + its parity test A2 scope; A1 delivers the reference + determinism (test_repo_index_baseline determinism)."
+  ],
+  "D-013-R042": [
+   "Unused context capacity never a reason to fill: A1 makes no context-window decision (that is Unit B); A1 only measures."
+  ],
+  "D-013-R049": [
+   "Baseline captured BEFORE behavior changes: repo_index_baseline runs the UNMODIFIED generator; A1 wires no new index path into the generator (forbidden path untouched)."
+  ],
+  "D-013-R050": [
+   "Two storage classes: external append-only redacted JSONL telemetry in the per-checkout cache dir (append_telemetry) + bounded sanitized committed evidence (.md/.json); test TelemetryIsRedacted*/CommittedEvidenceIsBounded*."
+  ],
+  "D-013-R051": [
+   "Nullable fields when unavailable; provider_input_tokens/output/context_window_occupancy are null, NOT fabricated as zero (telemetry_record; test asserts null)."
+  ],
+  "D-013-R052": [
+   "Run record fields: schema+kind, snapshot fingerprint, checkout identity, generator version, export digest, node/edge/input counts, eligible/indexed, elapsed (nullable), provider tokens (nullable). Deterministic content, no wall-clock in the committed digest artifacts."
+  ],
+  "D-013-R053": [
+   "Distinct measures kept separate: A1 records deterministic digest+counts only; no combined 'token savings' number invented."
+  ],
+  "D-013-R054": [
+   "Reference corpus + source manifest frozen BEFORE behavior changes: the baseline export_digest+counts+source_fingerprint captured from the unmodified generator over the accepted roots (baseline-evidence.md)."
+  ],
+  "D-013-R055": [
+   "Old/reference behavior recorded before implementation: baseline-evidence.json/.md record the generator's reference output; test_export_digest_tracks_a_content_change proves it is a real reference."
+  ],
+  "D-013-R064": [
+   "Committed summaries in the existing task report area (project-control/reports/M0-T063-baseline-evidence.*); JSONL/cache in the existing external runtime dir; no parallel control plane."
+  ],
+  "D-013-R065": [
+   "Unit A implements baseline/fingerprint-contract/manifest-contract/cache-generation design (A1 per source-002 split); incremental indexing is A2 (not in this unit)."
+  ],
+  "D-013-R066": [
+   "A1 does NOT implement session-memory digests / advisory summaries / a new ontology / broad context injection (those are Units C/D/B); only the census/index foundation."
+  ],
+  "D-013-R067": [
+   "Small changes reusing accepted helpers (durable_state, code_graph); on the .github/workflows/ci.yml overlap with open PR work the change is one ADDITIVE job in a different region - no textual conflict (merged forward cleanly)."
+  ],
+  "D-013-R068": [
+   "End-of-unit handoff: this submission records branch/base/HEAD/diff, runs the documented tests + gates, and provides a bounded reviewer packet (producer report + evidence map + sanitized baseline evidence), excluding transcripts/full dumps/secrets."
+  ],
+  "D-013-R069": [
+   "Does not continue to the next unit until independent review returns; A2-F not started; awaiting the G3/G4/G5/DCV verdicts."
+  ],
+  "D-013-R070": [
+   "Review result is bounded/machine-readable via the project-control gate + directive verification records; a review at a different SHA/identity is stale (frozen content identity enforced by accept())."
+  ],
+  "D-013-R071": [
+   "Recoverable checkpoint before behavior change; rollback documented (pipeline doc 'Rollback'): disable the new path without deleting the prior valid cache generation; quarantine incompatible generations; no destructive broad filesystem command."
+  ],
+  "D-013-R076": [
+   "A1 covers baseline, telemetry, repository fingerprint contract, persisted per-file manifest contract, cache-generation design, tests, and rollback plan (all present)."
+  ],
+  "D-013-R078": [
+   "Kept the accepted canonical-path checkout identity for the cache namespace; added HEAD, dirty-state digest, config versions, per-file content digests to the snapshot/manifest identity (compute_fingerprint)."
+  ],
+  "D-013-R079": [
+   "Byte-identical incremental-vs-full is REQUIRED and is A2's proof; A1 provides the deterministic reference export_digest that makes that proof well-defined (source-002 decision 6 A/A split)."
+  ],
+  "D-013-R081": [
+   "Kept the existing accepted code-graph eligibility roots; census NOT widened (eligible_files reuses code_graph.scan_input_files; docs note it)."
+  ],
+  "D-013-R082": [
+   "tools/agent_supervisor/** NOT modified by A1 (imported read-only for the checkout identity only); git diff shows no supervisor change."
+  ]
+ }
+}
