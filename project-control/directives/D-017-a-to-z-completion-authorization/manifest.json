@@ -7,7 +7,7 @@
  "status": "active",
  "issued_by": "owner",
  "issued_at": "2026-08-18",
- "captured_at": "2026-08-18T11:48:18+00:00",
+ "captured_at": "2026-08-18T12:02:39+00:00",
  "channel": "owner_typed_instruction",
  "frozen_baseline_sha": "026e7cbcd937ca29b2dcc7c8dc46be3f1477cbb0",
  "sources": [
@@ -15,7 +15,7 @@
    "file": "source-001.md",
    "kind": "original",
    "sequence": 1,
-   "recorded_at": "2026-08-18T11:48:18+00:00",
+   "recorded_at": "2026-08-18T12:02:39+00:00",
    "content_digest_sha256": "b285e60c5e9955f44bf0e9198921704e99f64eae727cdeabdf2d511c01944bde"
   },
   {
@@ -23,7 +23,7 @@
    "kind": "amendment",
    "sequence": 2,
    "amends": "source-001.md",
-   "recorded_at": "2026-08-18T11:48:18+00:00",
+   "recorded_at": "2026-08-18T12:02:39+00:00",
    "content_digest_sha256": "45ac13eba64fdcd83450f3212bef34bc062637f459b2502b1886c406cc62cb47"
   }
  ],
@@ -74,7 +74,7 @@
  "verification_file": "verification.json",
  "final_reviewed_sha": null,
  "final_reviewed_manifest_sha256": null,
- "requirements_content_digest_sha256": "7c15e4807146dd5e0512ab2da95fef1574f660e6e74e7eb6b1096edb7da2ca83",
+ "requirements_content_digest_sha256": "d7cfadef85fe82daf93195c833b8706b810f269df9491e6de547d40f7adb050b",
  "requirements_id_digest_sha256": "d032d6139fa12a170f96bd2b8b4fe1162ab2df4f15f92452ac7a202f8e2b6183",
  "enforcement_pointers": {
   "tasks": [],
@@ -210,7 +210,7 @@
  ],
  "audit_log": [
   {
-   "at": "2026-08-18T11:48:18+00:00",
+   "at": "2026-08-18T12:02:39+00:00",
    "by": "orchestrator",
    "note": "D-017 captured verbatim before any repository mutation of this session's implementation scope: source-001.md (sha256 b285e60c5e9955f44bf0e9198921704e99f64eae727cdeabdf2d511c01944bde) = the owner's A-to-Z continuous implementation authorization of 2026-08-18, captured exactly once per its own capture-once instruction; source-002-amendment.md (sha256 45ac13eba64fdcd83450f3212bef34bc062637f459b2502b1886c406cc62cb47) = the owner's same-day amendment adding permanent modularity enforcement and deterministic model routing, received mid-capture and recorded append-only in the initial capture; frozen origin/main baseline 026e7cbcd937ca29b2dcc7c8dc46be3f1477cbb0; 123 atomic requirements (104 original + 19 amendment) bound to the D-017-BOOTSTRAP governance sentinel, with Stage 1 rows additionally bound to M0-T072, modularity rows to M0-T073, and routing rows to M0-T074. Decomposition corrected before first commit per the independent completeness verification (producer != verifier): starting-state identities restored in R004, unit allocation table restored in R007, binding declaration aligned to sentinel-only for units, three test obligations reclassified harness, six sequencing dependencies machine-encoded."
   }
