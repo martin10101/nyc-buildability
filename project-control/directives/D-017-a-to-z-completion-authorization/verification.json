@@ -129,7 +129,7 @@
      ],
      "verified_at": "2026-08-18T13:31:25+00:00",
      "verified_by": "directive-compliance-verifier",
-     "reviewed_sha": "11b0cd1c4860fb1abb21fe9bb2a3ab84e846fd7e"
+     "reviewed_sha": "fde13bfb1d3156862e7934cb00c7bdeec5303672"
     },
     {
      "id": "D-017-R106",
@@ -140,7 +140,7 @@
      ],
      "verified_at": "2026-08-18T13:31:25+00:00",
      "verified_by": "directive-compliance-verifier",
-     "reviewed_sha": "11b0cd1c4860fb1abb21fe9bb2a3ab84e846fd7e"
+     "reviewed_sha": "fde13bfb1d3156862e7934cb00c7bdeec5303672"
     },
     {
      "id": "D-017-R107",
@@ -151,7 +151,7 @@
      ],
      "verified_at": "2026-08-18T13:31:25+00:00",
      "verified_by": "directive-compliance-verifier",
-     "reviewed_sha": "11b0cd1c4860fb1abb21fe9bb2a3ab84e846fd7e"
+     "reviewed_sha": "fde13bfb1d3156862e7934cb00c7bdeec5303672"
     },
     {
      "id": "D-017-R108",
@@ -162,7 +162,7 @@
      ],
      "verified_at": "2026-08-18T13:31:25+00:00",
      "verified_by": "directive-compliance-verifier",
-     "reviewed_sha": "11b0cd1c4860fb1abb21fe9bb2a3ab84e846fd7e"
+     "reviewed_sha": "fde13bfb1d3156862e7934cb00c7bdeec5303672"
     },
     {
      "id": "D-017-R109",
@@ -173,7 +173,7 @@
      ],
      "verified_at": "2026-08-18T13:31:25+00:00",
      "verified_by": "directive-compliance-verifier",
-     "reviewed_sha": "11b0cd1c4860fb1abb21fe9bb2a3ab84e846fd7e"
+     "reviewed_sha": "fde13bfb1d3156862e7934cb00c7bdeec5303672"
     },
     {
      "id": "D-017-R110",
@@ -184,7 +184,7 @@
      ],
      "verified_at": "2026-08-18T13:31:25+00:00",
      "verified_by": "directive-compliance-verifier",
-     "reviewed_sha": "11b0cd1c4860fb1abb21fe9bb2a3ab84e846fd7e"
+     "reviewed_sha": "fde13bfb1d3156862e7934cb00c7bdeec5303672"
     },
     {
      "id": "D-017-R111",
@@ -195,7 +195,7 @@
      ],
      "verified_at": "2026-08-18T13:31:25+00:00",
      "verified_by": "directive-compliance-verifier",
-     "reviewed_sha": "11b0cd1c4860fb1abb21fe9bb2a3ab84e846fd7e"
+     "reviewed_sha": "fde13bfb1d3156862e7934cb00c7bdeec5303672"
     },
     {
      "id": "D-017-R112",
@@ -206,7 +206,7 @@
      ],
      "verified_at": "2026-08-18T13:31:25+00:00",
      "verified_by": "directive-compliance-verifier",
-     "reviewed_sha": "11b0cd1c4860fb1abb21fe9bb2a3ab84e846fd7e"
+     "reviewed_sha": "fde13bfb1d3156862e7934cb00c7bdeec5303672"
     },
     {
      "id": "D-017-R113",
@@ -217,13 +217,13 @@
      ],
      "verified_at": "2026-08-18T13:31:25+00:00",
      "verified_by": "directive-compliance-verifier",
-     "reviewed_sha": "11b0cd1c4860fb1abb21fe9bb2a3ab84e846fd7e"
+     "reviewed_sha": "fde13bfb1d3156862e7934cb00c7bdeec5303672"
     }
    ],
-   "reviewed_sha": "11b0cd1c4860fb1abb21fe9bb2a3ab84e846fd7e",
-   "reviewed_manifest_sha256": null,
+   "reviewed_sha": "fde13bfb1d3156862e7934cb00c7bdeec5303672",
+   "reviewed_manifest_sha256": "4a4d89d89f754cf81b3dfb3f714940d2c8d42ff3ca3dbdff837c57e45aaaee2b",
    "note": "Independent security+directive-compliance re-verification PASS 9/9 at 11b0cd1c4860fb1abb21fe9bb2a3ab84e846fd7e after rounds 1-3 rework; producer != verifier (orchestrator transcribed the independent verifier's verdict)."
   }
  ],
- "updated_at": "2026-08-18T13:31:25+00:00"
+ "updated_at": "2026-08-18T13:34:32+00:00"
 }
