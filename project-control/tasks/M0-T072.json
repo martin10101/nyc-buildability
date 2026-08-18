@@ -1,168 +1,177 @@
 {
- "task_id": "M0-T072",
- "title": "Controller external-config manifest binding repair: config.toml logical entry, doctor/verify-controller/start verification, fail-closed production dispatch (D-017 Stage 1)",
- "task_type": "governance",
- "milestone_id": "M0",
- "objective": "Repair the deployment-safety defect confirmed at 026e7cb: verify_manifest is never called with extra_files on any CLI path, so the external protected config (C:\\Program Files\\SupervisorConfig\\config.toml) is structurally unbindable into manifest verification; start without --manifest silently passes controller_manifest=True; verify-controller has no --config; no CLI command records a manifest; staleness is never checked. Implement the external-config manifest contract: stable logical name config.toml without leaking the absolute private path; a manifest recording command; doctor --manifest --config, verify-controller --manifest --config, and start all verify the external config before provider contact; production dispatch fails closed if the manifest omits config.toml, the config path is missing, the digest differs, or the manifest is stale; model_selection.toml stays excluded; no package duplication, no symlink/hard-link workaround, no protected-config change. Add the nine D-017-R051 regression proofs; regenerate the controller-update runbook from merged source in PowerShell-native form (no CMD carets, no unresolved placeholders).",
- "business_reason": "The live controller cannot be safely updated (D-017 Stage 2) while its manifest verification cannot bind the active immutable config; the current runbook would generate a manifest that silently omits the protected config it claims to cover.",
- "inputs": [
-  "project-control/directives/D-017-a-to-z-completion-authorization/ (Stage 1 rows D-017-R037..R053)",
-  "project-control/reports/M0-T039-supervisor-freeze.md (frozen suite baseline to re-establish)",
-  "tools/agent_supervisor/manifest.py (extra_files API already present, unwired)",
-  "CONTROLLER_UPDATE_RUNBOOK_2026-08-18.md (superseded external runbook; source of the S13 command inventory)"
- ],
- "outputs": [],
- "dependencies": [],
- "allowed_paths": [
-  "tools/agent_supervisor/manifest.py",
-  "tools/agent_supervisor/cli.py",
-  "tools/agent_supervisor/README.md",
-  "tools/test_agent_supervisor_manifest_binding.py",
-  "docs/CONTROLLER_UPDATE_RUNBOOK.md",
-  "project-control/reports/M0-T072-defect-evidence.md",
-  "project-control/reports/M0-T072-producer-report.md",
-  "project-control/reports/M0-T072-before-after-evidence.md",
-  "tools/test_agent_supervisor_broker.py",
-  "tools/test_agent_supervisor_loop.py",
-  "tools/test_agent_supervisor_model_chain.py",
-  "tools/test_agent_supervisor_start_reentry.py",
-  "project-control/reports/M0-T072-G0-readiness.md",
-  "project-control/reports/M0-T072-evidence-map.json",
-  "project-control/reports/M0-T072-G3-code-review.md",
-  "project-control/reports/M0-T072-G4-qa-review.md",
-  "project-control/reports/M0-T072-G5-security-review.md",
-  "project-control/reports/M0-T072-DCV-verification.md",
-  "project-control/reports/M0-T072-reverification.md"
- ],
- "forbidden_paths": [
-  "tools/agent_supervisor/config.py",
-  "tools/agent_supervisor/policy.py",
-  "tools/agent_supervisor/broker.py",
-  "tools/agent_supervisor/loop.py",
-  "tools/repo_fingerprint.py",
-  "tools/repo_index_cache.py",
-  "tools/repo_index_baseline.py",
-  "tools/code_graph/",
-  "services/",
-  "apps/",
-  ".claude/"
- ],
- "acceptance_scenarios": [
-  {
-   "id": "AS-1",
-   "given": "a recorded manifest binding the external protected config under logical name config.toml and an unchanged config file",
-   "when": "doctor --manifest --config, verify-controller --manifest --config, and the start verification path run",
-   "then": "all three verify the external config against the manifest and pass; the manifest contains no absolute private path"
-  },
-  {
-   "id": "AS-2",
-   "given": "the same manifest and a config file changed by one byte",
-   "when": "each verification path runs",
-   "then": "each fails closed with a digest mismatch naming the logical entry config.toml"
-  },
-  {
-   "id": "AS-3",
-   "given": "the same manifest and a missing config path",
-   "when": "each verification path runs",
-   "then": "each fails closed (missing), never treats absence as pass"
-  },
-  {
-   "id": "AS-4",
-   "given": "a manifest that omits the config.toml logical entry",
-   "when": "production dispatch verification runs",
-   "then": "dispatch is refused fail-closed (manifest_missing_config)"
-  },
-  {
-   "id": "AS-5",
-   "given": "a wrong --config path (different existing file)",
-   "when": "verification runs",
-   "then": "fails closed with digest mismatch"
-  },
-  {
-   "id": "AS-6",
-   "given": "a model_selection.toml content change",
-   "when": "manifest verification runs",
-   "then": "the controller manifest remains valid (model selection stays excluded by design)"
-  },
-  {
-   "id": "AS-7",
-   "given": "any failing manifest/config verification on the start path",
-   "when": "start proceeds toward dispatch",
-   "then": "no provider call occurs (verified with a fake provider transport)"
-  },
-  {
-   "id": "AS-8",
-   "given": "a stale manifest (recorded controller_version differing from the running CONTROLLER_VERSION)",
-   "when": "production dispatch verification runs",
-   "then": "dispatch is refused fail-closed (manifest_stale)"
-  },
-  {
-   "id": "AS-9",
-   "given": "the regenerated docs/CONTROLLER_UPDATE_RUNBOOK.md",
-   "when": "scanned",
-   "then": "it contains no CMD caret continuation and no unresolved executable placeholders, and doctor --live remains the only intentional bounded live control-response probe"
-  }
- ],
- "required_gates": [
-  "G0",
-  "G2",
-  "G3",
-  "G4",
-  "G5"
- ],
- "producer_agent": "orchestrator",
- "reviewer_agents": [
-  "code-reviewer",
-  "qa-engineer",
-  "security-reviewer",
-  "directive-compliance-verifier"
- ],
- "status": "rework",
- "progress_percent": 60,
- "risks": [
-  "Supervisor-freeze lane: change must re-establish the M0-T039 suite baseline (>=1165 tests, 0 failures) and cite qualifying evidence in packet + commit message.",
-  "Fail-closed additions must not break the existing test-only synthetic-root manifest flows (test_agent_supervisor_phase1/broker); test-only code-manifest behavior may remain where appropriate (D-017-R047).",
-  "The A1 supervised start command (D-016 runbook s13) gains --manifest/--config coverage; the regenerated runbook must reflect the merged source exactly, not remembered commands."
- ],
- "blockers": [],
- "created_at": "2026-08-18T11:28:01.685743+00:00",
- "updated_at": "2026-08-18T12:44:00.659875+00:00",
- "directive_refs": [
-  {
-   "directive_id": "D-001",
-   "requirement_ids": "ALL"
-  },
-  {
-   "directive_id": "D-017",
-   "requirement_ids": "ALL"
-  }
- ],
- "directive_regime_version": "1.0",
- "directive_regime_entered_at": "2026-08-18T11:28:01.685743+00:00",
- "supervisor_freeze_qualifying_evidence": "AD-093 defect lane (supervisor-freeze rule s2): (a) REPRODUCED DEFECT - at main@026e7cb, verify_manifest is called without extra_files on every CLI path (cli.py:443, cli.py:1551, cli.py:2704-2705), so the external protected config is structurally unbindable into manifest verification and a manifest that correctly recorded a config.toml logical entry would FAIL as 'missing'; start without --manifest sets controller_manifest=True having verified nothing (cli.py:2704-2705, _dispatch_inputs_missing cli.py:2228-2237); verify-controller has no --config input (cli.py:3023-3028); no CLI command records a manifest (write_manifest has no production caller); require_verified has zero production callers. (b) DEMONSTRATED SECURITY RISK - production dispatch can proceed with a manifest that omits the active immutable config entirely, defeating the config-binding guarantee the README claims (README.md:454-456). Evidence file: project-control/reports/M0-T072-defect-evidence.md.",
- "worktree": "C:/Users/MLFLL/Downloads/nyc-zoning/wt-m0t072",
- "progress_log": [
-  {
-   "at": "2026-08-18T12:24:04.930733+00:00",
-   "agent": "orchestrator",
-   "percent": 60,
-   "status": "in_progress",
-   "message": "Implementation complete: manifest binding layer + CLI wiring + record-manifest + runbook + 27 regression tests"
-  },
-  {
-   "at": "2026-08-18T12:24:05.149902+00:00",
-   "agent": "orchestrator",
-   "percent": 75,
-   "status": "self_check",
-   "message": "Self-checks green: 27/27 new suite; 561 targeted; full battery 1813 passed 2 skipped 0 failures (freeze baseline re-established)"
-  },
-  {
-   "at": "2026-08-18T12:44:00.658869+00:00",
-   "agent": "orchestrator",
-   "percent": 60,
-   "status": "rework",
-   "message": "G3 FAIL round 1: 14 pre-existing supervisor tests assert the pre-repair contract (broker/loop/model_chain/start_reentry); battery evidence was captured from the wrong cwd (unmodified ctl17 tree) and is false - re-basing all evidence; packet amendment admits the four test modules + the two mandated report files; G4 corrections C1 (patterns hole) and C2 (record-manifest source-name guard) folded into the same rework"
-  }
- ],
- "scope_amendment_note": "Amended in rework after G3 round-1 FAIL (finding 1c) and G4 F10: the four pre-existing supervisor test modules asserting the pre-repair contract must be updated to the new fail-closed contract (freeze-suite re-establishment), and the mandated evidence-map/G0-readiness/review-report files are admitted explicitly. No production-module scope added."
+  "task_id": "M0-T072",
+  "title": "Controller external-config manifest binding repair: config.toml logical entry, doctor/verify-controller/start verification, fail-closed production dispatch (D-017 Stage 1)",
+  "task_type": "governance",
+  "milestone_id": "M0",
+  "objective": "Repair the deployment-safety defect confirmed at 026e7cb: verify_manifest is never called with extra_files on any CLI path, so the external protected config (C:\\Program Files\\SupervisorConfig\\config.toml) is structurally unbindable into manifest verification; start without --manifest silently passes controller_manifest=True; verify-controller has no --config; no CLI command records a manifest; staleness is never checked. Implement the external-config manifest contract: stable logical name config.toml without leaking the absolute private path; a manifest recording command; doctor --manifest --config, verify-controller --manifest --config, and start all verify the external config before provider contact; production dispatch fails closed if the manifest omits config.toml, the config path is missing, the digest differs, or the manifest is stale; model_selection.toml stays excluded; no package duplication, no symlink/hard-link workaround, no protected-config change. Add the nine D-017-R051 regression proofs; regenerate the controller-update runbook from merged source in PowerShell-native form (no CMD carets, no unresolved placeholders).",
+  "business_reason": "The live controller cannot be safely updated (D-017 Stage 2) while its manifest verification cannot bind the active immutable config; the current runbook would generate a manifest that silently omits the protected config it claims to cover.",
+  "inputs": [
+    "project-control/directives/D-017-a-to-z-completion-authorization/ (Stage 1 rows D-017-R037..R053)",
+    "project-control/reports/M0-T039-supervisor-freeze.md (frozen suite baseline to re-establish)",
+    "tools/agent_supervisor/manifest.py (extra_files API already present, unwired)",
+    "CONTROLLER_UPDATE_RUNBOOK_2026-08-18.md (superseded external runbook; source of the S13 command inventory)"
+  ],
+  "outputs": [],
+  "dependencies": [],
+  "allowed_paths": [
+    "tools/agent_supervisor/manifest.py",
+    "tools/agent_supervisor/cli.py",
+    "tools/agent_supervisor/README.md",
+    "tools/test_agent_supervisor_manifest_binding.py",
+    "docs/CONTROLLER_UPDATE_RUNBOOK.md",
+    "project-control/reports/M0-T072-defect-evidence.md",
+    "project-control/reports/M0-T072-producer-report.md",
+    "project-control/reports/M0-T072-before-after-evidence.md",
+    "tools/test_agent_supervisor_broker.py",
+    "tools/test_agent_supervisor_loop.py",
+    "tools/test_agent_supervisor_model_chain.py",
+    "tools/test_agent_supervisor_start_reentry.py",
+    "project-control/reports/M0-T072-G0-readiness.md",
+    "project-control/reports/M0-T072-evidence-map.json",
+    "project-control/reports/M0-T072-G3-code-review.md",
+    "project-control/reports/M0-T072-G4-qa-review.md",
+    "project-control/reports/M0-T072-G5-security-review.md",
+    "project-control/reports/M0-T072-DCV-verification.md",
+    "project-control/reports/M0-T072-reverification.md"
+  ],
+  "forbidden_paths": [
+    "tools/agent_supervisor/config.py",
+    "tools/agent_supervisor/policy.py",
+    "tools/agent_supervisor/broker.py",
+    "tools/agent_supervisor/loop.py",
+    "tools/repo_fingerprint.py",
+    "tools/repo_index_cache.py",
+    "tools/repo_index_baseline.py",
+    "tools/code_graph/",
+    "services/",
+    "apps/",
+    ".claude/"
+  ],
+  "acceptance_scenarios": [
+    {
+      "id": "AS-1",
+      "given": "a recorded manifest binding the external protected config under logical name config.toml and an unchanged config file",
+      "when": "doctor --manifest --config, verify-controller --manifest --config, and the start verification path run",
+      "then": "all three verify the external config against the manifest and pass; the manifest contains no absolute private path"
+    },
+    {
+      "id": "AS-2",
+      "given": "the same manifest and a config file changed by one byte",
+      "when": "each verification path runs",
+      "then": "each fails closed with a digest mismatch naming the logical entry config.toml"
+    },
+    {
+      "id": "AS-3",
+      "given": "the same manifest and a missing config path",
+      "when": "each verification path runs",
+      "then": "each fails closed (missing), never treats absence as pass"
+    },
+    {
+      "id": "AS-4",
+      "given": "a manifest that omits the config.toml logical entry",
+      "when": "production dispatch verification runs",
+      "then": "dispatch is refused fail-closed (manifest_missing_config)"
+    },
+    {
+      "id": "AS-5",
+      "given": "a wrong --config path (different existing file)",
+      "when": "verification runs",
+      "then": "fails closed with digest mismatch"
+    },
+    {
+      "id": "AS-6",
+      "given": "a model_selection.toml content change",
+      "when": "manifest verification runs",
+      "then": "the controller manifest remains valid (model selection stays excluded by design)"
+    },
+    {
+      "id": "AS-7",
+      "given": "any failing manifest/config verification on the start path",
+      "when": "start proceeds toward dispatch",
+      "then": "no provider call occurs (verified with a fake provider transport)"
+    },
+    {
+      "id": "AS-8",
+      "given": "a stale manifest (recorded controller_version differing from the running CONTROLLER_VERSION)",
+      "when": "production dispatch verification runs",
+      "then": "dispatch is refused fail-closed (manifest_stale)"
+    },
+    {
+      "id": "AS-9",
+      "given": "the regenerated docs/CONTROLLER_UPDATE_RUNBOOK.md",
+      "when": "scanned",
+      "then": "it contains no CMD caret continuation and no unresolved executable placeholders, and doctor --live remains the only intentional bounded live control-response probe"
+    }
+  ],
+  "required_gates": [
+    "G0",
+    "G2",
+    "G3",
+    "G4",
+    "G5"
+  ],
+  "producer_agent": "orchestrator",
+  "reviewer_agents": [
+    "code-reviewer",
+    "qa-engineer",
+    "security-reviewer",
+    "directive-compliance-verifier"
+  ],
+  "status": "accepted",
+  "progress_percent": 100,
+  "risks": [
+    "Supervisor-freeze lane: change must re-establish the M0-T039 suite baseline (>=1165 tests, 0 failures) and cite qualifying evidence in packet + commit message.",
+    "Fail-closed additions must not break the existing test-only synthetic-root manifest flows (test_agent_supervisor_phase1/broker); test-only code-manifest behavior may remain where appropriate (D-017-R047).",
+    "The A1 supervised start command (D-016 runbook s13) gains --manifest/--config coverage; the regenerated runbook must reflect the merged source exactly, not remembered commands."
+  ],
+  "blockers": [],
+  "created_at": "2026-08-18T11:28:01.685743+00:00",
+  "updated_at": "2026-08-18T13:54:16.274254+00:00",
+  "directive_refs": [
+    {
+      "directive_id": "D-001",
+      "requirement_ids": "ALL"
+    },
+    {
+      "directive_id": "D-017",
+      "requirement_ids": "ALL"
+    }
+  ],
+  "directive_regime_version": "1.0",
+  "directive_regime_entered_at": "2026-08-18T11:28:01.685743+00:00",
+  "supervisor_freeze_qualifying_evidence": "AD-093 defect lane (supervisor-freeze rule s2): (a) REPRODUCED DEFECT - at main@026e7cb, verify_manifest is called without extra_files on every CLI path (cli.py:443, cli.py:1551, cli.py:2704-2705), so the external protected config is structurally unbindable into manifest verification and a manifest that correctly recorded a config.toml logical entry would FAIL as 'missing'; start without --manifest sets controller_manifest=True having verified nothing (cli.py:2704-2705, _dispatch_inputs_missing cli.py:2228-2237); verify-controller has no --config input (cli.py:3023-3028); no CLI command records a manifest (write_manifest has no production caller); require_verified has zero production callers. (b) DEMONSTRATED SECURITY RISK - production dispatch can proceed with a manifest that omits the active immutable config entirely, defeating the config-binding guarantee the README claims (README.md:454-456). Evidence file: project-control/reports/M0-T072-defect-evidence.md.",
+  "worktree": "C:/Users/MLFLL/Downloads/nyc-zoning/wt-m0t072",
+  "progress_log": [
+    {
+      "at": "2026-08-18T12:24:04.930733+00:00",
+      "agent": "orchestrator",
+      "percent": 60,
+      "status": "in_progress",
+      "message": "Implementation complete: manifest binding layer + CLI wiring + record-manifest + runbook + 27 regression tests"
+    },
+    {
+      "at": "2026-08-18T12:24:05.149902+00:00",
+      "agent": "orchestrator",
+      "percent": 75,
+      "status": "self_check",
+      "message": "Self-checks green: 27/27 new suite; 561 targeted; full battery 1813 passed 2 skipped 0 failures (freeze baseline re-established)"
+    },
+    {
+      "at": "2026-08-18T12:44:00.658869+00:00",
+      "agent": "orchestrator",
+      "percent": 60,
+      "status": "rework",
+      "message": "G3 FAIL round 1: 14 pre-existing supervisor tests assert the pre-repair contract (broker/loop/model_chain/start_reentry); battery evidence was captured from the wrong cwd (unmodified ctl17 tree) and is false - re-basing all evidence; packet amendment admits the four test modules + the two mandated report files; G4 corrections C1 (patterns hole) and C2 (record-manifest source-name guard) folded into the same rework"
+    },
+    {
+      "at": "2026-08-18T13:52:11.244382+00:00",
+      "agent": "orchestrator",
+      "percent": 60,
+      "status": "rework",
+      "message": "Merge-forward main + close re-verification obs; re-stamp identity"
+    }
+  ],
+  "scope_amendment_note": "Amended in rework after G3 round-1 FAIL (finding 1c) and G4 F10: the four pre-existing supervisor test modules asserting the pre-repair contract must be updated to the new fail-closed contract (freeze-suite re-establishment), and the mandated evidence-map/G0-readiness/review-report files are admitted explicitly. No production-module scope added.",
+  "accepted_by": "orchestrator",
+  "accepted_at": "2026-08-18T13:54:16.274254+00:00"
 }

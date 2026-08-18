@@ -5,8 +5,17 @@
   "role": "self_check",
   "result": "PASS",
   "report_file": "project-control/reports/M0-T072-before-after-evidence.md",
-  "reviewed_at": "2026-08-18T12:24:47.951740+00:00",
-  "content_manifest_sha256": "132b19318211f59557eebe5d4aa20a1cf829c51fa7a9b29a60795b2cd00ffe7a",
-  "reviewed_sha": "2514f6707f3839617c932691beff0aac7e63c8ac",
-  "updated_at": "2026-08-18T12:24:48.500643+00:00"
+  "reviewed_at": "2026-08-18T13:52:22.066676+00:00",
+  "content_manifest_sha256": "b1315bdc24b8a809636d0c6b0a296fd0091cd48065faa7732dc5cf171c2beb07",
+  "reviewed_sha": "074ffad25e90900a4e6f8c71b9e1b6bf653d7a98",
+  "history": [
+    {
+      "reviewer": "orchestrator",
+      "role": "self_check",
+      "result": "PASS",
+      "report_file": "project-control/reports/M0-T072-before-after-evidence.md",
+      "reviewed_at": "2026-08-18T12:24:47.951740+00:00"
+    }
+  ],
+  "updated_at": "2026-08-18T13:52:23.162862+00:00"
 }
