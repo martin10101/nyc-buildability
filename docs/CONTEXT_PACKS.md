@@ -234,3 +234,20 @@ Given the **same repository state and the same arguments**, `context.md` and
 timestamps (the repository SHA is the only time anchor), every path list and JSON
 object is sorted, and recorded paths use POSIX separators on every platform. A
 build-twice byte-equality test (`test_determinism_byte_identical`) proves it.
+
+
+## M0-T075 vertical integration (D-018)
+
+The compiler is now the ONE integrated pipeline: every pack additionally
+carries the exact applicable requirement IDs AND texts (directive_refs incl.
+"ALL" resolved deterministically), reopened authoritative source/test
+excerpts selected from task scope + changes + graph evidence, bounded Unit C
+ontology placement, and explicitly ADVISORY Unit D memory digests — all under
+the same single budget. Graph seeds come only from changed files and
+canonical implementation paths (prose fields pass a strict deterministic
+extractor; every candidate is recorded resolved/unresolved). Role
+sufficiency is ENFORCEABLE: an insufficient packet exits 3 with a bounded
+machine-readable result; the over-budget split refusal (exit 2) is
+unchanged. All file reads go through the shared containment rule
+(`tools/context_paths.py`). The canonical orchestrator-facing command is
+`tools/context_orchestrate.py` (see `docs/CONTEXT_PIPELINE_RUNBOOK.md`).

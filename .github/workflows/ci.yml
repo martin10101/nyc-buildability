@@ -559,3 +559,32 @@ jobs:
       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
       - name: Model routing tests
         run: python3 tools/test_model_routing.py
+
+  # M0-T075 (D-018-R053, ADDITIVE job; existing jobs untouched): the complete
+  # context-pipeline surface — Units B (compiler + index consumption),
+  # C (ontology), D (memory graph), E (views), F (benchmark + projection) —
+  # plus the M0-T075 integration/adversarial suite (two-writer race,
+  # containment probes, entry-point wiring, retention). Stdlib only. This job
+  # never replaces the unit-scoped jobs above; it is the permanent
+  # end-to-end regression net for the ONE context compiler.
+  context-pipeline:
+    name: context-pipeline (Units B-F suites + integration/adversarial tests)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+      - name: Unit B compiler suites
+        run: |
+          python3 tools/test_context_pack.py
+          python3 tools/test_context_pack_index.py
+      - name: Unit C ontology suite
+        run: python3 tools/test_subsystem_resolver.py
+      - name: Unit D memory-graph suite
+        run: python3 tools/test_memory_graph.py
+      - name: Unit E views suite
+        run: python3 tools/test_repo_views.py
+      - name: Unit F benchmark + projection suites
+        run: |
+          python3 tools/test_context_benchmark.py
+          python3 tools/test_status_projection.py
+      - name: M0-T075 integration + adversarial suite
+        run: python3 tools/test_context_integration.py

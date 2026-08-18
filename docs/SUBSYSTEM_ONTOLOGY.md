@@ -83,3 +83,11 @@ states `subsystem_node_kind_in_graph: false`.
   digests, their storage, and promotion are Unit D (M0-T067), sequenced after
   this unit (R043).
 - Tests: `python tools/test_subsystem_resolver.py` (AS-1..AS-6 + edge cases).
+
+
+## M0-T075 correction (D-018)
+
+Ontology resolution inputs (entity path existence checks) go through the
+shared containment rule in `tools/context_paths.py`; a non-canonical or
+checkout-escaping path refuses with the containment code instead of a
+filesystem probe.

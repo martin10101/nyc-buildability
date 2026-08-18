@@ -1,0 +1,246 @@
+{
+ "schema": "m0_t075_baseline_g0/v1",
+ "captured_from": "96ed233e338fcf16d4e8d4d7918d1d89452b3b21",
+ "note": "Captured BEFORE any behavior change (D-018-R039) from the accepted code at the SHA above (code identical to accepted main c123b5e; only control-plane capture commits differ). Compiler runs use the accepted context_pack.py CLI. The absent categories list is the honest pre-integration gap record: the accepted pack included NO requirement texts, NO reopened source excerpts, and (for these runs) NO graph neighborhoods.",
+ "index_benchmark_reference": {
+  "file": "project-control/reports/M0-T069-benchmark-report.json",
+  "sha256": "55d081e17dc33b8428fb0bd5f85a50a6f7f4be93a521f263c8dfde00aff740fe",
+  "cases": 42,
+  "all_byte_identical": true,
+  "scope": "INDEX parity benchmark (accepted M0-T069 scope)"
+ },
+ "compiler_runs": [
+  {
+   "task": "M0-T066",
+   "role": "worker",
+   "provider": "claude",
+   "max_bytes": 500000,
+   "exit": 0,
+   "context_md_sha256": "915fc186a51f4aed078c56f0a34d6b55ea9ce58025de09287adbf5b0c731d9bc",
+   "context_meta_sha256": "e1dac008d2b2c3c2d72d60c715e0c2ffde0869c5096b0915d251773ef4f0a7a7",
+   "included_source_ids": [
+    "changed_paths",
+    "git_diff",
+    "latest_checkpoint",
+    "ledger_state",
+    "previous_handoff",
+    "repo_census",
+    "routing_table",
+    "task_packet"
+   ],
+   "included_origins": [
+    "CLAUDE.md#on-demand-routing",
+    "git diff --name-only HEAD",
+    "git diff HEAD",
+    "project-control/checkpoints/CP-0045.json",
+    "project-control/reports/session-handoff-2026-08-07.json",
+    "project-control/state.json",
+    "project-control/tasks/M0-T066.json",
+    "tools/repo_fingerprint.py"
+   ],
+   "omitted_categories": [
+    "all_historical_reports",
+    "contracts",
+    "entire_directive_registry",
+    "entire_prd",
+    "full_city_datasets",
+    "full_generated_artifacts",
+    "latest_ci",
+    "old_session_transcripts",
+    "relevant_blockers",
+    "unrelated_task_packets",
+    "whole_code_graph"
+   ],
+   "graph_queries": [
+    {
+     "export_digest": "505d812f358419cc66dc505ef402c15337b59eb508d423ec2f95815ec1c27fa5",
+     "in_edges": 0,
+     "limit": 20,
+     "out_edges": 0,
+     "resolved": false,
+     "resolved_id": null,
+     "seed": "docs/SUBSYSTEM_ONTOLOGY.md — ontology doc: derivation rules, versioning, honest statement of ACTUAL code-graph node/edge kinds (subsystem is a resolver-layer bucket, never a graph node)",
+     "subcommand": "neighborhood"
+    },
+    {
+     "export_digest": "505d812f358419cc66dc505ef402c15337b59eb508d423ec2f95815ec1c27fa5",
+     "in_edges": 0,
+     "limit": 20,
+     "out_edges": 0,
+     "resolved": false,
+     "resolved_id": null,
+     "seed": "project-control/directives/D-018-context-vertical-integration-correction/manifest.json",
+     "subcommand": "neighborhood"
+    },
+    {
+     "export_digest": "505d812f358419cc66dc505ef402c15337b59eb508d423ec2f95815ec1c27fa5",
+     "in_edges": 0,
+     "limit": 20,
+     "out_edges": 0,
+     "resolved": false,
+     "resolved_id": null,
+     "seed": "project-control/reports/M0-T066-producer-report.md, M0-T066-evidence-map.json, M0-T066-coverage-evidence.md, M0-T066-G0-readiness.md",
+     "subcommand": "neighborhood"
+    },
+    {
+     "export_digest": "505d812f358419cc66dc505ef402c15337b59eb508d423ec2f95815ec1c27fa5",
+     "in_edges": 0,
+     "limit": 20,
+     "out_edges": 0,
+     "resolved": false,
+     "resolved_id": null,
+     "seed": "project-control/state.json",
+     "subcommand": "neighborhood"
+    },
+    {
+     "export_digest": "505d812f358419cc66dc505ef402c15337b59eb508d423ec2f95815ec1c27fa5",
+     "in_edges": 0,
+     "limit": 20,
+     "out_edges": 0,
+     "resolved": false,
+     "resolved_id": null,
+     "seed": "project-control/tasks/M0-T075.json",
+     "subcommand": "neighborhood"
+    }
+   ],
+   "sufficiency": {
+    "missing_source_groups": [],
+    "present_source_groups": [
+     "changed_paths",
+     "git_diff",
+     "latest_checkpoint",
+     "ledger_state",
+     "previous_handoff",
+     "repo_census",
+     "routing_table",
+     "task_packet"
+    ],
+    "reason": "all required source groups for role 'worker' are present: task_packet, routing_table",
+    "required_source_groups": [
+     "task_packet",
+     "routing_table"
+    ],
+    "role": "worker",
+    "sufficient": true
+   },
+   "coverage_mode": "census",
+   "estimated_tokens": 12762
+  },
+  {
+   "task": "M0-T067",
+   "role": "worker",
+   "provider": "claude",
+   "max_bytes": 500000,
+   "exit": 0,
+   "context_md_sha256": "95d9c2afb37f0f9f07b4b0515ed63225fdfe898be2e6762e6058b944a044f6d3",
+   "context_meta_sha256": "c6cda3e91e4cf0dda4e65b8c61366297350c9476e475bd0eb68dcb9534992088",
+   "included_source_ids": [
+    "changed_paths",
+    "git_diff",
+    "latest_checkpoint",
+    "ledger_state",
+    "previous_handoff",
+    "repo_census",
+    "routing_table",
+    "task_packet"
+   ],
+   "included_origins": [
+    "CLAUDE.md#on-demand-routing",
+    "git diff --name-only HEAD",
+    "git diff HEAD",
+    "project-control/checkpoints/CP-0045.json",
+    "project-control/reports/session-handoff-2026-08-07.json",
+    "project-control/state.json",
+    "project-control/tasks/M0-T067.json",
+    "tools/repo_fingerprint.py"
+   ],
+   "omitted_categories": [
+    "all_historical_reports",
+    "contracts",
+    "entire_directive_registry",
+    "entire_prd",
+    "full_city_datasets",
+    "full_generated_artifacts",
+    "latest_ci",
+    "old_session_transcripts",
+    "relevant_blockers",
+    "unrelated_task_packets",
+    "whole_code_graph"
+   ],
+   "graph_queries": [
+    {
+     "export_digest": "505d812f358419cc66dc505ef402c15337b59eb508d423ec2f95815ec1c27fa5",
+     "in_edges": 0,
+     "limit": 20,
+     "out_edges": 0,
+     "resolved": false,
+     "resolved_id": null,
+     "seed": "docs/MEMORY_GRAPH.md — the memory-graph contract: schema, grounding rules, quarantine semantics, promotion guarantees, storage location, Unit E consumption notes",
+     "subcommand": "neighborhood"
+    },
+    {
+     "export_digest": "505d812f358419cc66dc505ef402c15337b59eb508d423ec2f95815ec1c27fa5",
+     "in_edges": 0,
+     "limit": 20,
+     "out_edges": 0,
+     "resolved": false,
+     "resolved_id": null,
+     "seed": "project-control/directives/D-018-context-vertical-integration-correction/manifest.json",
+     "subcommand": "neighborhood"
+    },
+    {
+     "export_digest": "505d812f358419cc66dc505ef402c15337b59eb508d423ec2f95815ec1c27fa5",
+     "in_edges": 0,
+     "limit": 20,
+     "out_edges": 0,
+     "resolved": false,
+     "resolved_id": null,
+     "seed": "project-control/reports/M0-T067-producer-report.md, M0-T067-evidence-map.json, M0-T067-coverage-evidence.md, M0-T067-G0-readiness.md",
+     "subcommand": "neighborhood"
+    },
+    {
+     "export_digest": "505d812f358419cc66dc505ef402c15337b59eb508d423ec2f95815ec1c27fa5",
+     "in_edges": 0,
+     "limit": 20,
+     "out_edges": 0,
+     "resolved": false,
+     "resolved_id": null,
+     "seed": "project-control/state.json",
+     "subcommand": "neighborhood"
+    },
+    {
+     "export_digest": "505d812f358419cc66dc505ef402c15337b59eb508d423ec2f95815ec1c27fa5",
+     "in_edges": 0,
+     "limit": 20,
+     "out_edges": 0,
+     "resolved": false,
+     "resolved_id": null,
+     "seed": "project-control/tasks/M0-T075.json",
+     "subcommand": "neighborhood"
+    }
+   ],
+   "sufficiency": {
+    "missing_source_groups": [],
+    "present_source_groups": [
+     "changed_paths",
+     "git_diff",
+     "latest_checkpoint",
+     "ledger_state",
+     "previous_handoff",
+     "repo_census",
+     "routing_table",
+     "task_packet"
+    ],
+    "reason": "all required source groups for role 'worker' are present: task_packet, routing_table",
+    "required_source_groups": [
+     "task_packet",
+     "routing_table"
+    ],
+    "role": "worker",
+    "sufficient": true
+   },
+   "coverage_mode": "census",
+   "estimated_tokens": 13144
+  }
+ ]
+}

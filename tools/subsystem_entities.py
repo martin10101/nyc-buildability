@@ -34,6 +34,7 @@ _ROOT = pathlib.Path(__file__).resolve().parent.parent
 if str(_ROOT) not in sys.path:
     sys.path.insert(0, str(_ROOT))
 
+from tools import context_paths as cpaths  # noqa: E402
 from tools.context_pack_io import canon_json_bytes  # noqa: E402
 from tools.subsystem_resolver import norm_path, resolve_path, version_stamp  # noqa: E402
 
@@ -190,7 +191,14 @@ def _resolve_one(p: dict, idx: AuthoritativeIndexes, root: pathlib.Path,
         return {"kind": kind, "value": value,
                 "parents": {"directive": idx.requirements[value]}}, None
     if kind == "path":
-        if not (root / value).exists():
+        # Ontology resolution inputs read through THE shared containment rule
+        # (D-018-R031/R033): non-canonical or checkout-escaping paths refuse
+        # with the containment code, never a filesystem probe.
+        try:
+            exists = cpaths.contained_repo_path(str(root), value).exists()
+        except cpaths.PathContainmentError as exc:
+            return bad(exc.code)
+        if not exists:
             return bad("path_not_in_source_tree")
         r = resolve_path(value, loaded_map)
         if not r["resolved"]:

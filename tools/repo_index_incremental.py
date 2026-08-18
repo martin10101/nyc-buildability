@@ -271,15 +271,28 @@ def _fingerprint(root: pathlib.Path) -> rf.FingerprintResult:
     the cache key nor register as an invalidator -- and a reused TS bundle would
     keep stale alias-resolved edges (byte divergence). Folding it in makes such a
     change a global invalidator that forces a full rebuild."""
-    return rf.compute_fingerprint(
-        root, config_versions={"codegraph_config_inputs":
-                               asm.config_inputs_version(root)})
+    return _fingerprint_with(root, None)
+
+
+def _fingerprint_with(root: pathlib.Path,
+                      extra_config_versions: dict | None) -> rf.FingerprintResult:
+    """Compose config_versions; `extra_config_versions` lets a benchmark or
+    test simulate a PARSER/INDEXER VERSION change through the REAL global-
+    invalidator path (M0-T075, D-018-R043) without touching the frozen
+    fingerprint module. Production callers pass None (byte-identical
+    behavior)."""
+    versions = {"codegraph_config_inputs": asm.config_inputs_version(root)}
+    if extra_config_versions:
+        versions.update({str(k): str(v)
+                         for k, v in sorted(extra_config_versions.items())})
+    return rf.compute_fingerprint(root, config_versions=versions)
 
 
 def build_incremental(repo_root: str | os.PathLike[str], *,
                       cache_base: str | os.PathLike[str] | None = None,
                       run_id: str | None = None,
                       persist_telemetry: bool = True,
+                      extra_config_versions: dict | None = None,
                       ) -> IncrementalResult:
     """Build (or reuse) the index for the current snapshot, guaranteeing parity.
 
@@ -291,7 +304,7 @@ def build_incremental(repo_root: str | os.PathLike[str], *,
     """
     root = pathlib.Path(repo_root).resolve()
     started = time.time()
-    fp = _fingerprint(root)
+    fp = _fingerprint_with(root, extra_config_versions)
     cache = ric.IndexCache(root, base=cache_base)
     cache.recover()
 
@@ -468,10 +481,10 @@ def _run_record(res: IncrementalResult, fp: rf.FingerprintResult, *,
 def append_run_record(record: dict[str, Any], cache: ric.IndexCache) -> pathlib.Path:
     """Append one redacted run record to the external, per-checkout, append-only
     JSONL telemetry log (D-013-R050). Lives outside the repo, never committed."""
-    cache.root.mkdir(parents=True, exist_ok=True)
     log = cache.root / TELEMETRY_FILENAME
-    with log.open("a", encoding="utf-8", newline="\n") as fh:
-        fh.write(json.dumps(record, sort_keys=True) + "\n")
+    # Bounded/rotated retention (M0-T075, D-018-R036): the log stays outside
+    # the repo and can no longer grow without bound.
+    ric.append_jsonl_rotated(log, record)
     return log
 
 
@@ -486,6 +499,12 @@ def _finish(res: IncrementalResult, fp: rf.FingerprintResult,
             append_run_record(record, cache)
         except OSError:
             pass  # telemetry is best-effort; a build never fails on logging
+    # REAL bounded generation retention (M0-T075, D-018-R035): keep the current
+    # generation plus rollback generations; best-effort, never fails a build.
+    try:
+        cache.prune(keep=3)
+    except (OSError, ric.CacheError):
+        pass
     return res
 
 

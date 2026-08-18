@@ -1,0 +1,144 @@
+{
+ "schema": "directive_manifest/v1",
+ "directive_id": "D-018",
+ "version": 1,
+ "slug": "context-vertical-integration-correction",
+ "title": "One bounded corrective vertical-integration task for the context-intelligence system - end-to-end compiler integration, concurrency hardening, path containment, real retention, promotion-proof repair, projection input-manifest staleness, runbook correction, permanent context-pipeline CI",
+ "status": "active",
+ "issued_by": "owner",
+ "issued_at": "2026-08-18",
+ "captured_at": "2026-08-18T21:05:00+00:00",
+ "channel": "owner_typed_instruction",
+ "frozen_baseline_sha": "c123b5e723c4a61f891ab215d194255e2f280d4e",
+ "sources": [
+  {
+   "file": "source-001.md",
+   "kind": "original",
+   "sequence": 1,
+   "recorded_at": "2026-08-18T21:05:00+00:00",
+   "content_digest_sha256": "6a45fd178ab94680a65171adb32b2534ff0b05b10fa06aa7bfbebeb2d9962b4a"
+  }
+ ],
+ "amendments": [],
+ "supersedes": [],
+ "superseded_by": null,
+ "affected_tasks": [
+  "M0-T075"
+ ],
+ "affected_prs": [],
+ "affected_branches": [
+  "task/M0-T075-context-integration"
+ ],
+ "scope": {
+  "kind": "single-corrective-task",
+  "allowed": "one task (M0-T075), one branch, one PR; context-pipeline tools, tests, runbook, one additive CI job, hermetic fixtures only",
+  "prohibited": "tools/agent_supervisor/**, controller config/model_selection, protected hashes, limited-auto, branch protection, security policy, history, NYC application logic beyond hermetic fixtures, D-013-R060 promotion decision, controller update bundle execution",
+  "task_ids": [
+   "M0-T075"
+  ],
+  "task_types": [
+   "governance"
+  ]
+ },
+ "applicability_note": "Session-governance rows (R001-R005 reconcile/stop/one-task discipline, R069 return format, R070 bundle prohibition) bind the NON-LEDGER sentinel D-018-BOOTSTRAP (D-016/D-017 precedent) and are verified at directive verification; every implementation row binds the single ledger task M0-T075 and is enforced at accept() through its claim-time directive_refs.",
+ "owner_approval": {
+  "state": "authorized",
+  "note": "owner-typed authorization in session, 2026-08-18"
+ },
+ "lifecycle_state": "active",
+ "requirements_file": "requirements.json",
+ "verification_file": "verification.json",
+ "final_reviewed_sha": null,
+ "final_reviewed_manifest_sha256": null,
+ "requirements_content_digest_sha256": "fa8eb38fef93c2a96f677b1731c109520f1b612b99725428c7c58cfcfcdc2b66",
+ "requirements_id_digest_sha256": "f4b47494917bd1de83d77b886210776658dc1039dcd0b280f25c160348c7a278",
+ "enforcement_pointers": {
+  "cli": "tools/project_control.py (claim --directive-refs; accept blocking on verification)",
+  "validator": "tools/validate_directive_compliance.py",
+  "registry": "tools/directive_registry.py"
+ },
+ "locked_requirement_ids": [
+  "D-018-R001",
+  "D-018-R002",
+  "D-018-R003",
+  "D-018-R004",
+  "D-018-R005",
+  "D-018-R006",
+  "D-018-R007",
+  "D-018-R008",
+  "D-018-R009",
+  "D-018-R010",
+  "D-018-R011",
+  "D-018-R012",
+  "D-018-R013",
+  "D-018-R014",
+  "D-018-R015",
+  "D-018-R016",
+  "D-018-R017",
+  "D-018-R018",
+  "D-018-R019",
+  "D-018-R020",
+  "D-018-R021",
+  "D-018-R022",
+  "D-018-R023",
+  "D-018-R024",
+  "D-018-R025",
+  "D-018-R026",
+  "D-018-R027",
+  "D-018-R028",
+  "D-018-R029",
+  "D-018-R030",
+  "D-018-R031",
+  "D-018-R032",
+  "D-018-R033",
+  "D-018-R034",
+  "D-018-R035",
+  "D-018-R036",
+  "D-018-R037",
+  "D-018-R038",
+  "D-018-R039",
+  "D-018-R040",
+  "D-018-R041",
+  "D-018-R042",
+  "D-018-R043",
+  "D-018-R044",
+  "D-018-R045",
+  "D-018-R046",
+  "D-018-R047",
+  "D-018-R048",
+  "D-018-R049",
+  "D-018-R050",
+  "D-018-R051",
+  "D-018-R052",
+  "D-018-R053",
+  "D-018-R054",
+  "D-018-R055",
+  "D-018-R056",
+  "D-018-R057",
+  "D-018-R058",
+  "D-018-R059",
+  "D-018-R060",
+  "D-018-R061",
+  "D-018-R062",
+  "D-018-R063",
+  "D-018-R064",
+  "D-018-R065",
+  "D-018-R066",
+  "D-018-R067",
+  "D-018-R068",
+  "D-018-R069",
+  "D-018-R070"
+ ],
+ "audit_log": [
+  {
+   "at": "2026-08-18T21:05:00+00:00",
+   "actor": "orchestrator",
+   "event": "captured source-001 verbatim, decomposed 70 requirements, activated registry entry (owner-typed authorization)"
+  },
+  {
+   "at": "2026-08-18T21:20:00+00:00",
+   "actor": "orchestrator",
+   "event": "scope.task_ids/[task_types incl. governance] added so the s19 governance-path guard recognizes D-018 as the governance authority for M0-T075's owner-authorized additive CI job (.github/workflows/ci.yml, D-018-R053); source text unchanged"
+  }
+ ]
+}

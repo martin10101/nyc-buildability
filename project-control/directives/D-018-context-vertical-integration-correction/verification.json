@@ -1,0 +1,726 @@
+{
+ "schema": "directive_verification/v2",
+ "directive_id": "D-018",
+ "producer": "orchestrator",
+ "authority_note": "Pending independent verification by directive-compliance-verifier (producer != verifier). Capture only; no requirement verified yet. M0-T075 rows are verified through the task's gates and accept() evidence map; D-018-BOOTSTRAP sentinel rows are verified at directive verification when the run returns.",
+ "task_verifications": [
+  {
+   "task_id": "M0-T075",
+   "directive_id": "D-018",
+   "producer": "orchestrator",
+   "verifier": "directive-compliance-verifier",
+   "applicable_requirement_ids": [
+    "D-018-R006",
+    "D-018-R007",
+    "D-018-R008",
+    "D-018-R009",
+    "D-018-R010",
+    "D-018-R011",
+    "D-018-R012",
+    "D-018-R013",
+    "D-018-R014",
+    "D-018-R015",
+    "D-018-R016",
+    "D-018-R017",
+    "D-018-R018",
+    "D-018-R019",
+    "D-018-R020",
+    "D-018-R021",
+    "D-018-R022",
+    "D-018-R023",
+    "D-018-R024",
+    "D-018-R025",
+    "D-018-R026",
+    "D-018-R027",
+    "D-018-R028",
+    "D-018-R029",
+    "D-018-R030",
+    "D-018-R031",
+    "D-018-R032",
+    "D-018-R033",
+    "D-018-R034",
+    "D-018-R035",
+    "D-018-R036",
+    "D-018-R037",
+    "D-018-R038",
+    "D-018-R039",
+    "D-018-R040",
+    "D-018-R041",
+    "D-018-R042",
+    "D-018-R043",
+    "D-018-R044",
+    "D-018-R045",
+    "D-018-R046",
+    "D-018-R047",
+    "D-018-R048",
+    "D-018-R049",
+    "D-018-R050",
+    "D-018-R051",
+    "D-018-R052",
+    "D-018-R053",
+    "D-018-R054",
+    "D-018-R055",
+    "D-018-R056",
+    "D-018-R057",
+    "D-018-R058",
+    "D-018-R059",
+    "D-018-R060",
+    "D-018-R061",
+    "D-018-R062",
+    "D-018-R063",
+    "D-018-R064",
+    "D-018-R065",
+    "D-018-R066",
+    "D-018-R067",
+    "D-018-R068"
+   ],
+   "requirements": [
+    {
+     "id": "D-018-R006",
+     "state": "PASS",
+     "evidence": [
+      "git log main...HEAD -- project-control/tasks/M0-T069.json project-control/gates/M0-T069-*.json = EMPTY (not reopened)",
+      "git diff main...HEAD -- project-control/reports/M0-T069-benchmark-report.json = EMPTY (42-case result unchanged)",
+      "M0-T069-benchmark-scope-correction.md: does NOT reopen/alter/dispute"
+     ],
+     "verified_at": "2026-08-18T23:10:02+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "db82e0abb86aa6fe5e2858a29978315a553c881c"
+    },
+    {
+     "id": "D-018-R007",
+     "state": "PASS",
+     "evidence": [
+      "project-control/reports/M0-T069-benchmark-scope-correction.md exists; labels the 42-case result an INDEX-PARITY benchmark and states its scope limit; follow-up record, not a reopen"
+     ],
+     "verified_at": "2026-08-18T23:10:02+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "db82e0abb86aa6fe5e2858a29978315a553c881c"
+    },
+    {
+     "id": "D-018-R008",
+     "state": "PASS",
+     "evidence": [
+      "Live compile context_pack.py --task M0-T066 exit 0, meta.sufficient=true, single integration section",
+      "docs/CONTEXT_PIPELINE_RUNBOOK.md: 'There is ONE context compiler: tools/context_pack.py'"
+     ],
+     "verified_at": "2026-08-18T23:10:02+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "db82e0abb86aa6fe5e2858a29978315a553c881c"
+    },
+    {
+     "id": "D-018-R009",
+     "state": "PASS",
+     "evidence": [
+      "Unchanged CLI signature succeeds; tools/test_context_pack.py 15 tests OK (public interface preserved); layered facade retained"
+     ],
+     "verified_at": "2026-08-18T23:10:02+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "db82e0abb86aa6fe5e2858a29978315a553c881c"
+    },
+    {
+     "id": "D-018-R010",
+     "state": "PASS",
+     "evidence": [
+      "evidence/task_packet.json produced; sufficiency.present_source_groups includes task_packet under the single budget"
+     ],
+     "verified_at": "2026-08-18T23:10:02+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "db82e0abb86aa6fe5e2858a29978315a553c881c"
+    },
+    {
+     "id": "D-018-R011",
+     "state": "PASS",
+     "evidence": [
+      "evidence/requirements.json = {applicable_requirements:[{id,text}...], provenance} with exact texts (D-013-R001 verbatim)",
+      "integration.requirements.provenance.resolution='directive_registry.evaluate_task_refs (deterministic, ALL expanded)', applicable_count 24"
+     ],
+     "verified_at": "2026-08-18T23:10:02+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "db82e0abb86aa6fe5e2858a29978315a553c881c"
+    },
+    {
+     "id": "D-018-R012",
+     "state": "PASS",
+     "evidence": [
+      "integration.implementation_paths = 4 real allowed/changed paths; graph_queries seeds are those paths, not prose sentences"
+     ],
+     "verified_at": "2026-08-18T23:10:02+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "db82e0abb86aa6fe5e2858a29978315a553c881c"
+    },
+    {
+     "id": "D-018-R013",
+     "state": "PASS",
+     "evidence": [
+      "integration.prose_extraction records tokens with resolved flags ('load/validate' resolved:false)",
+      "test_prose_is_never_a_literal_seed asserts no token/seed contains a space - PASS"
+     ],
+     "verified_at": "2026-08-18T23:10:02+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "db82e0abb86aa6fe5e2858a29978315a553c881c"
+    },
+    {
+     "id": "D-018-R014",
+     "state": "PASS",
+     "evidence": [
+      "integration.unresolved_seeds recorded with reasons",
+      "sufficiency.code_evidence_required=true AND code_evidence_resolved=true; test_unresolved_seeds_recorded PASS"
+     ],
+     "verified_at": "2026-08-18T23:10:02+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "db82e0abb86aa6fe5e2858a29978315a553c881c"
+    },
+    {
+     "id": "D-018-R015",
+     "state": "PASS",
+     "evidence": [
+      "integration.ontology_status='ok' (Unit C); groups include ontology + repo_census (Unit E views); evidence files emitted"
+     ],
+     "verified_at": "2026-08-18T23:10:02+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "db82e0abb86aa6fe5e2858a29978315a553c881c"
+    },
+    {
+     "id": "D-018-R016",
+     "state": "PASS",
+     "evidence": [
+      "integration.memory_status='store_empty' (honest absence); memory_advisory group present; context.md labels memory advisory"
+     ],
+     "verified_at": "2026-08-18T23:10:02+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "db82e0abb86aa6fe5e2858a29978315a553c881c"
+    },
+    {
+     "id": "D-018-R017",
+     "state": "PASS",
+     "evidence": [
+      "integration.selection.excerpt_records with caps; evidence dir carries source/test excerpt files; Proof1 asserts source_excerpts group present"
+     ],
+     "verified_at": "2026-08-18T23:10:02+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "db82e0abb86aa6fe5e2858a29978315a553c881c"
+    },
+    {
+     "id": "D-018-R018",
+     "state": "PASS",
+     "evidence": [
+      "meta.provenance: census, export/source-manifest digests, graph counts, versions; omitted_categories with reasons; truncations recorded"
+     ],
+     "verified_at": "2026-08-18T23:10:02+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "db82e0abb86aa6fe5e2858a29978315a553c881c"
+    },
+    {
+     "id": "D-018-R019",
+     "state": "PASS",
+     "evidence": [
+      "test_as4_reviewer_insufficient_without_hunks asserts returncode==3; bounded machine-readable result on nonzero exits"
+     ],
+     "verified_at": "2026-08-18T23:10:02+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "db82e0abb86aa6fe5e2858a29978315a553c881c"
+    },
+    {
+     "id": "D-018-R020",
+     "state": "PASS",
+     "evidence": [
+      "Split guidance + split-first large tier preserved; e2e tiny_budget_split_exit=2 (over-budget nonzero split)"
+     ],
+     "verified_at": "2026-08-18T23:10:02+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "db82e0abb86aa6fe5e2858a29978315a553c881c"
+    },
+    {
+     "id": "D-018-R021",
+     "state": "PASS",
+     "evidence": [
+      "omitted_categories record every omission; sufficiency exits nonzero on missing groups - a recorded omission is never silent success"
+     ],
+     "verified_at": "2026-08-18T23:10:02+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "db82e0abb86aa6fe5e2858a29978315a553c881c"
+    },
+    {
+     "id": "D-018-R022",
+     "state": "PASS",
+     "evidence": [
+      "tools/context_orchestrate.py OUTSIDE tools/agent_supervisor/; test_entry_point_invokes_integrated_compiler asserts meta contains integration - PASS"
+     ],
+     "verified_at": "2026-08-18T23:10:02+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "db82e0abb86aa6fe5e2858a29978315a553c881c"
+    },
+    {
+     "id": "D-018-R023",
+     "state": "PASS",
+     "evidence": [
+      "derive_signals derives mr.Signals FROM compiled evidence (impl paths, requirements, subsystems); test_routing_signals_derived_and_recorded PASS"
+     ],
+     "verified_at": "2026-08-18T23:10:02+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "db82e0abb86aa6fe5e2858a29978315a553c881c"
+    },
+    {
+     "id": "D-018-R024",
+     "state": "PASS",
+     "evidence": [
+      "With requirements error, derive_signals sets ambiguity_or_missing_evidence=True + note; never silent LOW"
+     ],
+     "verified_at": "2026-08-18T23:10:02+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "db82e0abb86aa6fe5e2858a29978315a553c881c"
+    },
+    {
+     "id": "D-018-R025",
+     "state": "PASS",
+     "evidence": [
+      "dispatch_manifest.json schema context_dispatch_manifest/v1; decision recorded to rotated external model_routing.jsonl (accepted convention)"
+     ],
+     "verified_at": "2026-08-18T23:10:02+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "db82e0abb86aa6fe5e2858a29978315a553c881c"
+    },
+    {
+     "id": "D-018-R026",
+     "state": "PASS",
+     "evidence": [
+      "manifest.supervisor_boundary contains OWNER-GATED (test asserts); runbook states no automatic supervisor integration is claimed"
+     ],
+     "verified_at": "2026-08-18T23:10:02+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "db82e0abb86aa6fe5e2858a29978315a553c881c"
+    },
+    {
+     "id": "D-018-R027",
+     "state": "PASS",
+     "evidence": [
+      "promote_digest._transaction: SingleWriterLock spans load_current -> idempotency -> conflict -> mutation -> validation -> write_generation_locked -> retention"
+     ],
+     "verified_at": "2026-08-18T23:10:02+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "db82e0abb86aa6fe5e2858a29978315a553c881c"
+    },
+    {
+     "id": "D-018-R028",
+     "state": "PASS",
+     "evidence": [
+      "Proof3: writer B receives concurrent_writer then succeeds on retry; both digests survive; retry loop continues on concurrent_writer"
+     ],
+     "verified_at": "2026-08-18T23:10:02+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "db82e0abb86aa6fe5e2858a29978315a553c881c"
+    },
+    {
+     "id": "D-018-R029",
+     "state": "PASS",
+     "evidence": [
+      "Proof3 final assert len(nodes)==2 with both digest_ids present (no lost node) - PASS"
+     ],
+     "verified_at": "2026-08-18T23:10:02+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "db82e0abb86aa6fe5e2858a29978315a553c881c"
+    },
+    {
+     "id": "D-018-R030",
+     "state": "PASS",
+     "evidence": [
+      "Proof3TwoWriterRace = the exact stale-read/lost-update interleave (hooked load_current pauses A mid-transaction while B promotes); executed and PASS"
+     ],
+     "verified_at": "2026-08-18T23:10:02+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "db82e0abb86aa6fe5e2858a29978315a553c881c"
+    },
+    {
+     "id": "D-018-R031",
+     "state": "PASS",
+     "evidence": [
+      "tools/context_paths.py = THE canonical rule (CONTAINMENT_VERSION 1.0.0 = meta.integration.containment_version)",
+      "adopted by repo_views, subsystem_entities, memory_grounding, context_pack_sources, context_pack_evidence, memory_digest (grep confirmed)"
+     ],
+     "verified_at": "2026-08-18T23:10:02+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "db82e0abb86aa6fe5e2858a29978315a553c881c"
+    },
+    {
+     "id": "D-018-R032",
+     "state": "PASS",
+     "evidence": [
+      "is_canonical_repo_path rejects backslash/colon/leading-slash/control/empty/dot/dotdot; contained_repo_path realpath-checks escapes",
+      "Proof4 probes every form + real junction escape - PASS"
+     ],
+     "verified_at": "2026-08-18T23:10:02+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "db82e0abb86aa6fe5e2858a29978315a553c881c"
+    },
+    {
+     "id": "D-018-R033",
+     "state": "PASS",
+     "evidence": [
+      "contained_ used across deep views/seeds, ontology inputs, memory evidence, --include/excerpts, task-derived paths",
+      "test_deep_view_and_include_and_memory_paths_covered PASS"
+     ],
+     "verified_at": "2026-08-18T23:10:02+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "db82e0abb86aa6fe5e2858a29978315a553c881c"
+    },
+    {
+     "id": "D-018-R034",
+     "state": "PASS",
+     "evidence": [
+      "PathContainmentError.detail = bounded repr of the supplied string only - never a resolved absolute path; Proof4 asserts no root/outer leak incl. junction case"
+     ],
+     "verified_at": "2026-08-18T23:10:02+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "db82e0abb86aa6fe5e2858a29978315a553c881c"
+    },
+    {
+     "id": "D-018-R035",
+     "state": "PASS",
+     "evidence": [
+      "prune/_prune_locked keep current+rollback; memory span calls _prune_locked(RETENTION_KEEP); build_incremental calls cache.prune(keep=3)",
+      "test_generation_prune_keeps_current_plus_rollback PASS"
+     ],
+     "verified_at": "2026-08-18T23:10:02+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "db82e0abb86aa6fe5e2858a29978315a553c881c"
+    },
+    {
+     "id": "D-018-R036",
+     "state": "PASS",
+     "evidence": [
+      "append_jsonl_rotated + rotate_jsonl_if_needed bound the logs; test_jsonl_rotation_bounds_the_log PASS; entry point rotates model_routing.jsonl"
+     ],
+     "verified_at": "2026-08-18T23:10:02+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "db82e0abb86aa6fe5e2858a29978315a553c881c"
+    },
+    {
+     "id": "D-018-R037",
+     "state": "PASS",
+     "evidence": [
+      "cache_base_dir outside the checkout; no runtime files in the git diff; redacted run-record shape unchanged"
+     ],
+     "verified_at": "2026-08-18T23:10:02+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "db82e0abb86aa6fe5e2858a29978315a553c881c"
+    },
+    {
+     "id": "D-018-R038",
+     "state": "PASS",
+     "evidence": [
+      "M0-T069 report UNMODIFIED; build_report reproduced with superset case rows all byte_identical=True - extended not replaced"
+     ],
+     "verified_at": "2026-08-18T23:10:02+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "db82e0abb86aa6fe5e2858a29978315a553c881c"
+    },
+    {
+     "id": "D-018-R039",
+     "state": "PASS",
+     "evidence": [
+      "M0-T075-baseline-g0.json captured_from=96ed233e with the note 'Captured BEFORE any behavior change (D-018-R039)'; G0 gate at that SHA"
+     ],
+     "verified_at": "2026-08-18T23:10:02+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "db82e0abb86aa6fe5e2858a29978315a553c881c"
+    },
+    {
+     "id": "D-018-R040",
+     "state": "PASS",
+     "evidence": [
+      "Committed M0-T069 report retains 42 correctness rows; reproduced benchmark keeps all original case classes green"
+     ],
+     "verified_at": "2026-08-18T23:10:02+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "db82e0abb86aa6fe5e2858a29978315a553c881c"
+    },
+    {
+     "id": "D-018-R041",
+     "state": "PASS",
+     "evidence": [
+      "e2e section: five shapes invoke the ACTUAL compiler with same packet/diff-base/role/provider-model/reasoning(null, honest)/snapshot digest per shape; test_e2e_regime_shape_end_to_end PASS"
+     ],
+     "verified_at": "2026-08-18T23:10:02+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "db82e0abb86aa6fe5e2858a29978315a553c881c"
+    },
+    {
+     "id": "D-018-R042",
+     "state": "PASS",
+     "evidence": [
+      "e2e checks all true incl. cold/warm byte-identity, budget-or-split, evidence completeness, provenance, resolved evidence, advisory memory",
+      "baseline_comparison.no_worse_than_baseline=true (M0-T066/T067, none missing)"
+     ],
+     "verified_at": "2026-08-18T23:10:02+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "db82e0abb86aa6fe5e2858a29978315a553c881c"
+    },
+    {
+     "id": "D-018-R043",
+     "state": "PASS",
+     "evidence": [
+      "test_parser_version_case_is_distinct_and_documented asserts full rebuild + byte_identical + rebuild_reason contains parser_probe - PASS"
+     ],
+     "verified_at": "2026-08-18T23:10:02+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "db82e0abb86aa6fe5e2858a29978315a553c881c"
+    },
+    {
+     "id": "D-018-R044",
+     "state": "PASS",
+     "evidence": [
+      "evidence[lock_refusal_enforced]/[orphan_temp_quarantined]/[parser_version_change_documented_full_rebuild] are PASS predicates that FAIL on case absence; reproduced true"
+     ],
+     "verified_at": "2026-08-18T23:10:02+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "db82e0abb86aa6fe5e2858a29978315a553c881c"
+    },
+    {
+     "id": "D-018-R045",
+     "state": "PASS",
+     "evidence": [
+      "_stats nearest-rank ceil(0.95n)-1 (comment cites D-018-R045); test_p95_nearest_rank PASS"
+     ],
+     "verified_at": "2026-08-18T23:10:02+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "db82e0abb86aa6fe5e2858a29978315a553c881c"
+    },
+    {
+     "id": "D-018-R046",
+     "state": "PASS",
+     "evidence": [
+      "provider_token_savings='UNMEASURED - no provider-reported usage...'; test asserts label + absence of combined numbers"
+     ],
+     "verified_at": "2026-08-18T23:10:02+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "db82e0abb86aa6fe5e2858a29978315a553c881c"
+    },
+    {
+     "id": "D-018-R047",
+     "state": "PASS",
+     "evidence": [
+      "promotion_decision='PENDING owner/control-plane decision (D-013-R060)...'; producer report: owner-gated items NOT executed; no flag flip in the diff"
+     ],
+     "verified_at": "2026-08-18T23:10:02+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "db82e0abb86aa6fe5e2858a29978315a553c881c"
+    },
+    {
+     "id": "D-018-R048",
+     "state": "PASS",
+     "evidence": [
+      "input_manifest_digest over every consumed control-plane file + index digests + git HEAD; test_uncommitted_control_plane_change_marks_stale: digests differ with SAME HEAD - PASS"
+     ],
+     "verified_at": "2026-08-18T23:10:02+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "db82e0abb86aa6fe5e2858a29978315a553c881c"
+    },
+    {
+     "id": "D-018-R049",
+     "state": "PASS",
+     "evidence": [
+      "_STATUS_MAP: self_check->gates pending; canceled->superseded; mapping test PASS"
+     ],
+     "verified_at": "2026-08-18T23:10:02+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "db82e0abb86aa6fe5e2858a29978315a553c881c"
+    },
+    {
+     "id": "D-018-R050",
+     "state": "PASS",
+     "evidence": [
+      "projection_kind='generated_current' + snapshot note in check; test_generated_current_kind_and_snapshot_note PASS"
+     ],
+     "verified_at": "2026-08-18T23:10:02+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "db82e0abb86aa6fe5e2858a29978315a553c881c"
+    },
+    {
+     "id": "D-018-R051",
+     "state": "PASS",
+     "evidence": [
+      "Runbook commands carry --max-bytes; reproduced context_orchestrate prepare, context_pack --max-bytes, views census, resolver version; remaining commands exercised by passing suites"
+     ],
+     "verified_at": "2026-08-18T23:10:02+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "db82e0abb86aa6fe5e2858a29978315a553c881c"
+    },
+    {
+     "id": "D-018-R052",
+     "state": "PASS",
+     "evidence": [
+      "Runbook: 'THE canonical compiler and entry point (one compiler)'; controller/supervisor consumption stated OWNER-GATED"
+     ],
+     "verified_at": "2026-08-18T23:10:02+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "db82e0abb86aa6fe5e2858a29978315a553c881c"
+    },
+    {
+     "id": "D-018-R053",
+     "state": "PASS",
+     "evidence": [
+      "ci.yml job context-pipeline runs test_context_pack/_index, subsystem_resolver, memory_graph, repo_views, context_benchmark, status_projection, context_integration (Units B-F + integration); SHA-pinned checkout"
+     ],
+     "verified_at": "2026-08-18T23:10:02+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "db82e0abb86aa6fe5e2858a29978315a553c881c"
+    },
+    {
+     "id": "D-018-R054",
+     "state": "PASS",
+     "evidence": [
+      "git diff main...HEAD -- .github/workflows/ci.yml: 0 lines removed (purely additive); security/modularity/supervisor tooling diffs EMPTY"
+     ],
+     "verified_at": "2026-08-18T23:10:02+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "db82e0abb86aa6fe5e2858a29978315a553c881c"
+    },
+    {
+     "id": "D-018-R055",
+     "state": "PASS",
+     "evidence": [
+      "Reproduced live on M0-T066: real implementation paths resolve, exact requirement IDs+texts present, source excerpt present, prose never literal; Proof1 suite PASS"
+     ],
+     "verified_at": "2026-08-18T23:10:02+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "db82e0abb86aa6fe5e2858a29978315a553c881c"
+    },
+    {
+     "id": "D-018-R056",
+     "state": "PASS",
+     "evidence": [
+      "Reproduced: insufficient packets exit nonzero (returncode 3 reviewer-no-hunks; bounded result)"
+     ],
+     "verified_at": "2026-08-18T23:10:02+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "db82e0abb86aa6fe5e2858a29978315a553c881c"
+    },
+    {
+     "id": "D-018-R057",
+     "state": "PASS",
+     "evidence": [
+      "Reproduced: Proof3 two synchronized writers -> both nodes survive, B refused + retry promoted"
+     ],
+     "verified_at": "2026-08-18T23:10:02+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "db82e0abb86aa6fe5e2858a29978315a553c881c"
+    },
+    {
+     "id": "D-018-R058",
+     "state": "PASS",
+     "evidence": [
+      "Reproduced: Proof4 absolute/traversal/out-of-repo junction refused with no private-path leak"
+     ],
+     "verified_at": "2026-08-18T23:10:02+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "db82e0abb86aa6fe5e2858a29978315a553c881c"
+    },
+    {
+     "id": "D-018-R059",
+     "state": "PASS",
+     "evidence": [
+      "Reproduced: uncommitted status edit -> input-manifest digest differs -> STALE exit 3, HEAD unchanged"
+     ],
+     "verified_at": "2026-08-18T23:10:02+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "db82e0abb86aa6fe5e2858a29978315a553c881c"
+    },
+    {
+     "id": "D-018-R060",
+     "state": "PASS",
+     "evidence": [
+      "ci.yml context-pipeline job runs the complete compiler/memory/views/benchmark/projection suites permanently"
+     ],
+     "verified_at": "2026-08-18T23:10:02+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "db82e0abb86aa6fe5e2858a29978315a553c881c"
+    },
+    {
+     "id": "D-018-R061",
+     "state": "PASS",
+     "evidence": [
+      "Reproduced: context_orchestrate.py prepare emits the integrated meta + manifest + grounded signals (calls cp.build_parser/build/emit; no second packet)"
+     ],
+     "verified_at": "2026-08-18T23:10:02+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "db82e0abb86aa6fe5e2858a29978315a553c881c"
+    },
+    {
+     "id": "D-018-R062",
+     "state": "PASS",
+     "evidence": [
+      "M0-T069 report (42 cases) UNMODIFIED; reproduced benchmark rows all byte_identical=True; parity suite in permanent CI"
+     ],
+     "verified_at": "2026-08-18T23:10:02+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "db82e0abb86aa6fe5e2858a29978315a553c881c"
+    },
+    {
+     "id": "D-018-R063",
+     "state": "PASS",
+     "evidence": [
+      "git diff main...HEAD -- tools/agent_supervisor/ = EMPTY; no config.toml/model_selection/protected/branch/security/limited-auto reference in changed files; linear commits (no rewrite)"
+     ],
+     "verified_at": "2026-08-18T23:10:02+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "db82e0abb86aa6fe5e2858a29978315a553c881c"
+    },
+    {
+     "id": "D-018-R064",
+     "state": "PASS",
+     "evidence": [
+      "No controller bundle executed, no live probe, no R060 promotion decision (PENDING everywhere; verified absence)"
+     ],
+     "verified_at": "2026-08-18T23:10:02+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "db82e0abb86aa6fe5e2858a29978315a553c881c"
+    },
+    {
+     "id": "D-018-R065",
+     "state": "PASS",
+     "evidence": [
+      "git diff main...HEAD -- services/ apps/ packages/ supabase/ = EMPTY; benchmark fixtures hermetic tempdirs only"
+     ],
+     "verified_at": "2026-08-18T23:10:02+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "db82e0abb86aa6fe5e2858a29978315a553c881c"
+    },
+    {
+     "id": "D-018-R066",
+     "state": "PASS",
+     "evidence": [
+      "producer_agent=orchestrator; independent_verifier=directive-compliance-verifier; verification written by the independent verifier (producer != verifier)"
+     ],
+     "verified_at": "2026-08-18T23:10:02+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "db82e0abb86aa6fe5e2858a29978315a553c881c"
+    },
+    {
+     "id": "D-018-R067",
+     "state": "PASS",
+     "evidence": [
+      "Reproduced green at HEAD: 10 documented suites OK; modularity 0 failures; validate_directive_compliance OK; permanent CI job runs the same"
+     ],
+     "verified_at": "2026-08-18T23:10:02+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "db82e0abb86aa6fe5e2858a29978315a553c881c"
+    },
+    {
+     "id": "D-018-R068",
+     "state": "PASS",
+     "evidence": [
+      "Status awaiting_gate under independent review; verification at frozen reviewed SHA; accept/merge remain the orchestrator's gated downstream steps"
+     ],
+     "verified_at": "2026-08-18T23:10:02+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "db82e0abb86aa6fe5e2858a29978315a553c881c"
+    }
+   ],
+   "reviewed_sha": "db82e0abb86aa6fe5e2858a29978315a553c881c",
+   "reviewed_manifest_sha256": "a0f4aef4a2a42f4c08fe68300c52a4ec875d960a47b2f3c6da8646df3dd395ce",
+   "note": "Independent DCV PASS: 63/63 task-bound D-018 requirements verified on reproduced primary evidence at df2468d and RESTAMPED at the corrected identity db82e0a / manifest a0f4aef4a2a4 after the control-plane-only delta (packet allowed_paths amendment adding tools/context_pack_evidence.py — the reviewer's blocking administrative finding and the DCV's own observation, now CLOSED; delta verified control-plane-only, applicability 63/missing [], validator exit 0, spot suites 11+31 OK). Independent review PASS unconditional at db82e0a with all 8 owner-mandated proofs reproduced. The 7 session-governance sentinel rows (R001-R005, R069, R070) are verified at directive verification when the run returns. Producer (orchestrator) != verifier."
+  }
+ ],
+ "updated_at": "2026-08-18T23:10:02+00:00"
+}

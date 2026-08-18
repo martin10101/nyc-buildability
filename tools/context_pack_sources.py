@@ -19,7 +19,9 @@ _ROOT = pathlib.Path(__file__).resolve().parent.parent
 if str(_ROOT) not in sys.path:
     sys.path.insert(0, str(_ROOT))
 
+from tools import context_pack_evidence as cpe  # noqa: E402
 from tools import context_pack_index as cpi  # noqa: E402
+from tools import context_paths as cpaths  # noqa: E402
 from tools.context_pack_io import (  # noqa: E402
     canon_json_bytes, load_json, read_text, rel_posix, run_git,
 )
@@ -41,7 +43,9 @@ DEFAULT_EXCLUSIONS = (
 
 #: Source groups whose content may be summarized under overflow (NON-material
 #: logs). Everything else is MATERIAL and is never silently truncated (AD-046).
-REDUCIBLE_GROUPS = frozenset({"code_graph", "latest_ci", "previous_handoff"})
+#: memory_advisory is explicitly ADVISORY evidence (D-018-R016) — reducible.
+REDUCIBLE_GROUPS = frozenset({"code_graph", "latest_ci", "previous_handoff",
+                              "memory_advisory"})
 
 SUMMARY_HEAD_LINES = 20
 
@@ -85,14 +89,18 @@ def _pc(repo: str, *parts: str) -> str:
 
 def gather_sources(repo: str, task_id: str, diff_base: str, include: list[str],
                    ci_summary: str | None, graph_limit: int,
-                   index_opts: dict | None = None) -> tuple[list[Source], list[dict], list[dict], dict, dict]:
+                   index_opts: dict | None = None) -> tuple[list[Source], list[dict], list[dict], dict, dict, dict]:
     """Returns (sources, conditional_omissions, graph_queries, task_packet_obj,
-    index_provenance). ``index_opts`` steers the deterministic index consumption
-    (cache base, telemetry, and an escape hatch)."""
+    index_provenance, extras). ``index_opts`` steers the deterministic index
+    consumption (cache base, telemetry, and an escape hatch). ``extras``
+    carries the M0-T075 vertical-integration provenance (requirements
+    resolution, prose extraction, excerpt selection, ontology, memory
+    status, implementation paths) consumed by sufficiency + the meta."""
     sources: list[Source] = []
     omissions: list[dict] = []
     graph_queries: list[dict] = []
     index_opts = index_opts or {}
+    extras: dict = {}
 
     # 1. task packet ------------------------------------------------------
     task_path = _pc(repo, "tasks", f"{task_id}.json")
@@ -105,6 +113,24 @@ def gather_sources(repo: str, task_id: str, diff_base: str, include: list[str],
     else:
         omissions.append({"category": "task_packet", "default_exclusion": False,
                           "reason": f"task packet not found at {rel_posix(task_path, repo)}"})
+
+    # 1b. exact applicable requirement IDs + texts (M0-T075, D-018-R011) --
+    req_res = cpe.resolve_requirements(repo, task_obj if isinstance(task_obj, dict) else {})
+    extras["requirements"] = {k: v for k, v in req_res.items() if k != "applicable"}
+    extras["requirements"]["applicable_ids"] = [r["id"] for r in req_res["applicable"]]
+    if req_res["error"]:
+        omissions.append({"category": "requirements", "default_exclusion": False,
+                          "reason": f"requirement evidence unavailable: {req_res['error']}"})
+    elif req_res["in_regime"]:
+        sources.append(Source(
+            "requirements", "requirements", 15,
+            "Applicable directive requirements (exact IDs + texts)",
+            "requirements", "project-control/directives/", "json",
+            cpe.requirements_content(req_res)))
+    else:
+        omissions.append({"category": "requirements", "default_exclusion": False,
+                          "reason": "task carries no directive_refs (not in the "
+                                    "directive regime); no requirement rows bind"})
 
     # 2. ledger state -----------------------------------------------------
     state_path = _pc(repo, "state.json")
@@ -135,16 +161,75 @@ def gather_sources(repo: str, task_id: str, diff_base: str, include: list[str],
         f"git diff --name-only {diff_base}", "text", changed_body))
 
     # 5. code graph + census -- from the deterministic A1/A2 index -------
-    targets = list(changed)
-    for out_path in (task_obj or {}).get("outputs", []) if isinstance(task_obj, dict) else []:
-        if isinstance(out_path, str):
-            targets.append(out_path)
-    idx = cpi.gather_index_sources(repo, sorted(set(t for t in targets if t)),
-                                   graph_limit, index_opts)
+    # SEEDING (M0-T075, D-018-R012..R014): seeds are REAL paths only —
+    # changed files + the task's canonical implementation paths. Prose fields
+    # (outputs/inputs) are never used literally; they pass through the strict
+    # deterministic extractor, and every prose candidate is recorded as
+    # resolved or unresolved.
+    task_dict = task_obj if isinstance(task_obj, dict) else {}
+    impl_paths = cpe.implementation_paths(task_dict)
+    prose = cpe.extract_prose_paths(repo, task_dict)
+    extras["implementation_paths"] = impl_paths
+    extras["prose_extraction"] = prose["records"]
+    seed_candidates = sorted(set(changed) | set(impl_paths) | set(prose["resolved"]))
+    targets, refused_seeds = [], []
+    for t in seed_candidates:
+        if cpaths.is_canonical_repo_path(t):
+            targets.append(t)
+        else:
+            refused_seeds.append({"seed": t, "reason": "non_canonical_path"})
+    extras["refused_seeds"] = refused_seeds
+    idx = cpi.gather_index_sources(repo, targets, graph_limit, index_opts)
     sources.extend(idx["sources"])
     omissions.extend(idx["omissions"])
     graph_queries.extend(idx["graph_queries"])
     index_provenance = idx["provenance"]
+    extras["unresolved_seeds"] = [
+        {"seed": q.get("seed"), "reason": "seed_not_in_graph"}
+        for q in idx["graph_queries"] if not q.get("resolved")] + refused_seeds
+
+    # 5b. Unit C ontology placement for the implementation paths (R015) ---
+    ont = cpe.ontology_placement(repo, impl_paths)
+    extras["subsystems_touched"] = int(ont.get("subsystems_touched") or 0)
+    extras["ontology_status"] = ont.get("status")
+    if ont.get("status") == "ok" and ont.get("placements"):
+        sources.append(Source(
+            "ontology", "ontology", 47, "Subsystem placement (Unit C resolver)",
+            "ontology", "tools/subsystem_resolver.py", "json",
+            canon_json_bytes({"version": ont["version"],
+                              "placements": ont["placements"]}).decode("utf-8")))
+    else:
+        omissions.append({"category": "ontology", "default_exclusion": False,
+                          "reason": (f"ontology placement unavailable "
+                                     f"({ont.get('reason') or 'no implementation paths'})")})
+
+    # 5c. reopened authoritative source + test excerpts (R017) ------------
+    excerpts, test_excerpts, sel_prov = cpe.select_source_excerpts(
+        repo, impl_paths, changed, idx.get("graph_index"))
+    extras["selection"] = sel_prov
+    for e in excerpts:
+        sources.append(Source(
+            f"source::{e['path']}", "source_excerpts", 55,
+            f"Authoritative source: {e['path']}", "source_excerpt",
+            e["path"], _lang_for(e["path"]), e["content"]))
+    for t in test_excerpts:
+        sources.append(Source(
+            f"test::{t['path']}", "source_excerpts", 56,
+            f"Relevant test: {t['path']}", "test_excerpt",
+            t["path"], _lang_for(t["path"]), t["content"]))
+    if impl_paths and not excerpts:
+        omissions.append({"category": "source_excerpts", "default_exclusion": False,
+                          "reason": "implementation paths are in scope but no "
+                                    "authoritative source file resolved to reopen"})
+
+    # 5d. bounded ADVISORY Unit D memory evidence (R016) ------------------
+    mem = cpe.memory_advisory(repo, task_id, index_opts.get("memory_base"))
+    extras["memory_status"] = mem.get("status")
+    sources.append(Source(
+        "memory_advisory", "memory_advisory", 85,
+        "Session memory digests (ADVISORY only)", "memory_advisory",
+        "external per-checkout memory store", "json",
+        canon_json_bytes(mem).decode("utf-8")))
 
     # 6. authoritative routing table (CLAUDE.md) -------------------------
     routing = _extract_routing_table(repo)
@@ -198,17 +283,24 @@ def gather_sources(repo: str, task_id: str, diff_base: str, include: list[str],
                           "reason": "no --ci-summary injected; builder never calls the network for CI"})
 
     # 11. explicit source files (--include) ------------------------------
+    # Reads go ONLY through the shared containment rule (M0-T075,
+    # D-018-R031/R033): absolute/drive/traversal/escaping includes are
+    # REFUSED with the machine-readable code; no absolute path is echoed.
     for inc in sorted(set(include)):
-        abspath = inc if os.path.isabs(inc) else os.path.join(repo, inc)
-        text = read_text(abspath)
-        rel = rel_posix(abspath, repo)
-        if text is None:
-            omissions.append({"category": "explicit_source", "default_exclusion": False,
-                              "reason": f"--include not readable: {rel}"})
+        rel = str(inc).replace("\\", "/")
+        while rel.startswith("./"):
+            rel = rel[2:]
+        try:
+            data = cpaths.contained_read_bytes(repo, rel)
+        except cpaths.PathContainmentError as exc:
+            omissions.append({"category": "explicit_source",
+                              "default_exclusion": False,
+                              "reason": f"--include refused ({exc.code}): {exc.detail}"})
             continue
         sources.append(Source(
             f"include::{rel}", "explicit_sources", 100, f"Explicit source: {rel}",
-            "explicit_source", rel, _lang_for(rel), text))
+            "explicit_source", rel, _lang_for(rel),
+            data.decode("utf-8", errors="replace")))
 
     # 12. previous handoff ------------------------------------------------
     handoff_src = _gather_handoff(repo)
@@ -219,7 +311,8 @@ def gather_sources(repo: str, task_id: str, diff_base: str, include: list[str],
                           "reason": "no session-handoff-*.json and no docs/SESSION_HANDOFF.md"})
 
     return (sources, omissions, graph_queries,
-            (task_obj if isinstance(task_obj, dict) else {}), index_provenance)
+            (task_obj if isinstance(task_obj, dict) else {}), index_provenance,
+            extras)
 
 
 def _extract_routing_table(repo: str) -> str | None:
@@ -257,9 +350,11 @@ def _gather_contracts(repo: str, task_obj) -> tuple[list[Source], dict | None]:
                     "reason": "task paths do not touch packages/contracts; contracts omitted (12.1 relevant-only)"}
     sources: list[Source] = []
     for rel in touched:
-        abspath = os.path.join(repo, *rel.split("/"))
-        text = read_text(abspath)
-        if text is None:
+        # task-derived paths read through the shared containment rule (R033)
+        try:
+            text = cpaths.contained_read_bytes(repo, rel).decode(
+                "utf-8", errors="replace")
+        except cpaths.PathContainmentError:
             continue
         sources.append(Source(
             f"contract::{rel}", "contracts", 60, f"Contract: {rel}", "contract",

@@ -46,14 +46,20 @@ from tools.subsystem_entities import AuthoritativeIndexes, EntityIndexError  # n
 PROJECTION_SCHEMA = "d013_status_projection/v1"
 
 _STATUS_MAP = {
+    # ACTUAL project_control.py lifecycle statuses -> the directive's compact
+    # meanings (M0-T075, D-018-R049). self_check = producer self-check done,
+    # independent gates still outstanding; canceled maps to the compact
+    # "superseded" meaning (the id is retired without acceptance).
     "backlog": "planned",
     "ready": "ready",
     "claimed": "in progress",
     "in_progress": "in progress",
+    "self_check": "gates pending",
     "awaiting_gate": "awaiting independent review",
     "rework": "corrections required",
     "blocked": "blocked",
     "accepted": "accepted",
+    "canceled": "superseded",
     "superseded": "superseded",
 }
 
@@ -70,10 +76,23 @@ class ProjectionError(Exception):
         return {"error": {"code": self.code, "detail": self.detail}}
 
 
+_INPUTS: list[tuple[str, str]] | None = None
+
+
+def _record_input(rel: str, data: bytes) -> None:
+    if _INPUTS is not None:
+        _INPUTS.append((rel, hashlib.sha256(data).hexdigest()))
+
+
 def _read_json(path: pathlib.Path, code: str) -> dict:
     try:
-        return json.loads(path.read_bytes().decode("utf-8"))
-    except (OSError, UnicodeDecodeError, json.JSONDecodeError) as exc:
+        data = path.read_bytes()
+    except OSError as exc:
+        raise ProjectionError(code, f"{path.name}: {type(exc).__name__}") from exc
+    _record_input(path.name, data)
+    try:
+        return json.loads(data.decode("utf-8"))
+    except (UnicodeDecodeError, json.JSONDecodeError) as exc:
         raise ProjectionError(code, f"{path.name}: {type(exc).__name__}") from exc
 
 
@@ -113,8 +132,11 @@ def _review_digest(repo_root: pathlib.Path, task_id: str) -> dict:
         return {"report": None, "sha256": None,
                 "note": "no independent-review report on file"}
     latest = candidates[-1]  # deterministic: lexicographic; PASS rounds sort last
+    digest = _sha256_file(latest)
+    if digest:
+        _record_input(latest.name, digest.encode())
     return {"report": f"project-control/reports/{latest.name}",
-            "sha256": _sha256_file(latest)}
+            "sha256": digest}
 
 
 def _node(repo_root: pathlib.Path, task_id: str, verification_entry: dict) -> dict:
@@ -156,7 +178,16 @@ def _node(repo_root: pathlib.Path, task_id: str, verification_entry: dict) -> di
 
 
 def build_projection(repo_root: str) -> dict:
+    global _INPUTS
     root = pathlib.Path(repo_root).resolve()
+    _INPUTS = []
+    try:
+        return _build_projection_collected(root)
+    finally:
+        _INPUTS = None
+
+
+def _build_projection_collected(root: pathlib.Path) -> dict:
     verification = _read_json(
         root / "project-control" / "directives"
         / "D-013-context-intelligence-pipeline" / "verification.json",
@@ -169,16 +200,36 @@ def build_projection(repo_root: str) -> dict:
     except EntityIndexError as exc:
         raise ProjectionError(exc.code, exc.detail) from exc
     nodes = [_node(root, tid, entries[tid]) for tid in sorted(entries)]
+    # Deterministic INPUT-MANIFEST digest (M0-T075, D-018-R048): every material
+    # input that can change this projection — task packets (all, via the task
+    # index digest), the verification registry, gate records, submission
+    # records, review reports, task/directive indexes, and the Git identity —
+    # is hashed; the check subcommand recomputes and compares, so an
+    # UNCOMMITTED control-plane edit marks the projection stale (HEAD alone
+    # cannot).
+    manifest_rows = sorted(set(_INPUTS or []))
+    manifest_rows.append(("git:HEAD", _git(str(root), "rev-parse", "HEAD")))
+    manifest_rows.append(("index:tasks", digests["task_index_digest"]))
+    manifest_rows.append(("index:directives", digests["directive_index_digest"]))
+    input_manifest_digest = hashlib.sha256(
+        ";".join(f"{name}|{dig}" for name, dig in manifest_rows).encode()
+    ).hexdigest()
     return {
         "schema": PROJECTION_SCHEMA,
+        "projection_kind": "generated_current",
         "generated_from": {
             "repo_sha": _git(str(root), "rev-parse", "HEAD"),
             "branch": _git(str(root), "rev-parse", "--abbrev-ref", "HEAD"),
             "task_index_digest": digests["task_index_digest"],
             "directive_index_digest": digests["directive_index_digest"],
-            "stale_when": ("the current HEAD differs from repo_sha or either "
-                           "index digest changes; verify with the `check` "
-                           "subcommand (exit 3 = stale)"),
+            "input_manifest_digest": input_manifest_digest,
+            "input_manifest_entries": len(manifest_rows),
+            "stale_when": ("ANY material input changes: the check subcommand "
+                           "regenerates the projection live and compares the "
+                           "deterministic input-manifest digest (task packets/"
+                           "statuses, verification registry, gates, submission "
+                           "records, review reports, task/directive indexes, "
+                           "git HEAD); exit 3 = stale"),
         },
         "status_mapping": dict(_STATUS_MAP),
         "nodes": nodes,
@@ -237,15 +288,27 @@ def main(argv: list[str] | None = None) -> int:
         if args.cmd == "check":
             doc = _read_json(pathlib.Path(args.projection_json),
                              "projection_unreadable")
-            current = _git(args.repo, "rev-parse", "HEAD")
-            recorded = (doc.get("generated_from") or {}).get("repo_sha")
-            if current != recorded:
-                sys.stdout.write(canon_json_bytes(
-                    {"stale": True, "recorded": recorded,
-                     "current": current}).decode("utf-8"))
-                return 3
-            sys.stdout.write(canon_json_bytes({"stale": False}).decode("utf-8"))
-            return 0
+            gen = doc.get("generated_from") or {}
+            recorded_sha = gen.get("repo_sha")
+            recorded_manifest = gen.get("input_manifest_digest")
+            kind = doc.get("projection_kind") or "committed_or_historical_snapshot"
+            live = build_projection(args.repo)
+            live_gen = live["generated_from"]
+            stale = (recorded_sha != live_gen["repo_sha"]
+                     or recorded_manifest != live_gen["input_manifest_digest"])
+            out_doc = {
+                "stale": stale,
+                "checked_projection_kind": kind,
+                "note": ("a file on disk is a COMMITTED/HISTORICAL SNAPSHOT of "
+                         "the moment it was generated; regenerate for the "
+                         "current projection (D-018-R050)"),
+                "recorded": {"repo_sha": recorded_sha,
+                             "input_manifest_digest": recorded_manifest},
+                "current": {"repo_sha": live_gen["repo_sha"],
+                            "input_manifest_digest": live_gen["input_manifest_digest"]},
+            }
+            sys.stdout.write(canon_json_bytes(out_doc).decode("utf-8"))
+            return 3 if stale else 0
     except ProjectionError as exc:
         sys.stdout.write(canon_json_bytes(exc.doc()).decode("utf-8"))
         return 2

@@ -40,7 +40,18 @@ ROLE_REQUIRED = {
 }
 
 
-def assess_sufficiency(role: str, present_groups: set) -> dict:
+def assess_sufficiency(role: str, present_groups: set, extras: dict | None = None,
+                       graph_queries: list | None = None) -> dict:
+    """Role sufficiency — ENFORCEABLE (M0-T075, D-018-R014/R019/R021).
+
+    Beyond the Section 12.3 group checks: an in-regime task whose exact
+    requirement evidence did not resolve is INSUFFICIENT; a task with
+    implementation paths in scope (code evidence required) is INSUFFICIENT
+    when neither a graph seed resolved nor a source excerpt reopened. A
+    recorded omission of required evidence is never silently success — the
+    compiler exits nonzero on an insufficient packet.
+    """
+    extras = extras or {}
     required = ROLE_REQUIRED[role]
     missing = [r for r in required if r not in present_groups]
     reason_parts = []
@@ -55,6 +66,32 @@ def assess_sufficiency(role: str, present_groups: set) -> dict:
                 "a worker claim cannot be verified from a summary alone")
     if missing:
         reason_parts.append("missing required source groups: " + ", ".join(missing))
+
+    # In-regime requirement evidence (D-018-R011/R019) --------------------
+    req = extras.get("requirements") or {}
+    if req.get("in_regime"):
+        if req.get("error"):
+            sufficient = False
+            reason_parts.append(
+                f"required requirement evidence unavailable: {req['error']}")
+        elif "requirements" not in present_groups:
+            sufficient = False
+            reason_parts.append(
+                "task is in the directive regime but the requirements source "
+                "is absent")
+
+    # Code-evidence rule (D-018-R014) -------------------------------------
+    impl = extras.get("implementation_paths") or []
+    code_evidence_required = bool(impl) and role in ("worker", "reviewer")
+    resolved_graph = any(q.get("resolved") for q in (graph_queries or []))
+    has_excerpt = "source_excerpts" in present_groups
+    if code_evidence_required and not resolved_graph and not has_excerpt:
+        sufficient = False
+        reason_parts.append(
+            "code evidence required (implementation paths in task scope) but "
+            "NO graph seed resolved and NO authoritative source excerpt "
+            "reopened — the packet must not be declared sufficient")
+
     if sufficient and not reason_parts:
         reason_parts.append(
             f"all required source groups for role '{role}' are present: "
@@ -66,6 +103,9 @@ def assess_sufficiency(role: str, present_groups: set) -> dict:
         "required_source_groups": list(required),
         "present_source_groups": sorted(present_groups),
         "missing_source_groups": missing,
+        "code_evidence_required": code_evidence_required,
+        "code_evidence_resolved": bool(resolved_graph or has_excerpt),
+        "in_regime": bool(req.get("in_regime")),
     }
 
 
@@ -89,7 +129,7 @@ def build(args) -> dict:
     rc, head_out = run_git(repo, ["rev-parse", "HEAD"])
     repo_sha = head_out.strip() if rc == 0 and head_out.strip() else "UNKNOWN"
 
-    sources, omissions, graph_queries, task_obj, index_provenance = gather_sources(
+    sources, omissions, graph_queries, task_obj, index_provenance, extras = gather_sources(
         repo, args.task, args.diff_base, args.include, args.ci_summary,
         args.graph_limit, _index_opts(args))
 
@@ -97,7 +137,7 @@ def build(args) -> dict:
     signals = TierSignals(
         dependency_breadth=int(index_provenance.get("dependency_breadth") or 0),
         changed_files=int(index_provenance.get("changed_targets") or 0),
-        subsystems_touched=0,
+        subsystems_touched=int(extras.get("subsystems_touched") or 0),
         architectural=bool(getattr(args, "architectural", False)),
         explicit_tier=getattr(args, "tier", None),
         justification=getattr(args, "tier_justification", None))
@@ -115,7 +155,8 @@ def build(args) -> dict:
         src.content_rendered = src.content
 
     present_groups = {s.group for s in sources}
-    sufficiency = assess_sufficiency(args.role, present_groups)
+    sufficiency = assess_sufficiency(args.role, present_groups, extras,
+                                     graph_queries)
 
     tier_dict = tier.to_dict()
     header = render.make_header(args, repo_sha, effective_bound_bytes, ceiling, tier_dict)
@@ -193,6 +234,7 @@ def build(args) -> dict:
         "final_digests": final_digests,
         "overflow": overflow,
         "task_obj": task_obj,
+        "extras": extras,
     }
 
 
@@ -267,6 +309,11 @@ def emit(result, args) -> tuple[dict, int]:
     atomic_write(os.path.join(out, "context.md"), md.encode("utf-8"))
     meta = render.make_meta(result, args, actual_bytes, estimated)
     atomic_write(os.path.join(out, "context.meta.json"), canon_json_bytes(meta))
+    # ENFORCEABLE role sufficiency (M0-T075, D-018-R019/R021): an
+    # insufficient packet is emitted as a bounded machine-readable result and
+    # the process exits NONZERO — a recorded omission is never silent success.
+    if not result["sufficiency"]["sufficient"]:
+        return meta, 3
     return meta, 0
 
 
