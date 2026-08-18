@@ -1,10 +1,10 @@
 {
  "schema": "directive_requirements/v1",
  "directive_id": "D-014",
- "version": 1,
- "requirement_count": 39,
+ "version": 2,
+ "requirement_count": 52,
  "producer": "orchestrator",
- "updated_at": "2026-08-18T05:47:12+00:00",
+ "updated_at": "2026-08-18T06:58:44+00:00",
  "requirements": [
   {
    "id": "D-014-R001",
@@ -1326,6 +1326,422 @@
     ]
    },
    "amendment_sequence": 1
+  },
+  {
+   "id": "D-014-R040",
+   "text": "Fetch and inspect the complete live PR #222 CI state (run 32108527309) before acting.",
+   "source_ref": "source-002-amendment.md#authorized-1",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-014-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-18"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "captured at D-014 amendment 2 (PR #222 live CI reconciliation); session-scope duty verified at directive verification",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "amendment_sequence": 2
+  },
+  {
+   "id": "D-014-R041",
+   "text": "Fix the D-014 registry/manifest digest mismatch according to the existing directive-compliance process; PROHIBITION: do not conceal or bypass it.",
+   "source_ref": "source-002-amendment.md#authorized-2",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-014-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-18"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "captured at D-014 amendment 2 (PR #222 live CI reconciliation); session-scope duty verified at directive verification",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "amendment_sequence": 2
+  },
+  {
+   "id": "D-014-R042",
+   "text": "Run python tools/validate_directive_compliance.py --check, the applicable directive-compliance tests, the project-control tests, and the M0-T070 supervisor tests.",
+   "source_ref": "source-002-amendment.md#authorized-3",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-014-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-18"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "captured at D-014 amendment 2 (PR #222 live CI reconciliation); session-scope duty verified at directive verification",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "amendment_sequence": 2
+  },
+  {
+   "id": "D-014-R043",
+   "text": "Reconcile the final reviewed SHA / content-manifest evidence following the established gate and acceptance lifecycle.",
+   "source_ref": "source-002-amendment.md#authorized-4",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-014-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-18"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "captured at D-014 amendment 2 (PR #222 live CI reconciliation); session-scope duty verified at directive verification",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "amendment_sequence": 2
+  },
+  {
+   "id": "D-014-R044",
+   "text": "Wait for every GitHub job to finish and report each final result.",
+   "source_ref": "source-002-amendment.md#authorized-5",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-014-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-18"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "captured at D-014 amendment 2 (PR #222 live CI reconciliation); session-scope duty verified at directive verification",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "amendment_sequence": 2
+  },
+  {
+   "id": "D-014-R045",
+   "text": "Push only legitimate M0-T070/control-plane corrections.",
+   "source_ref": "source-002-amendment.md#authorized-6",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-014-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-18"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "captured at D-014 amendment 2 (PR #222 live CI reconciliation); session-scope duty verified at directive verification",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "amendment_sequence": 2
+  },
+  {
+   "id": "D-014-R046",
+   "text": "PROHIBITION: do not merge or activate anything; do not merge PR #222.",
+   "source_ref": "source-002-amendment.md#authorized-7",
+   "classification": "prohibition",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-014-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-18"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "captured at D-014 amendment 2 (PR #222 live CI reconciliation); session-scope duty verified at directive verification",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "amendment_sequence": 2
+  },
+  {
+   "id": "D-014-R047",
+   "text": "PROHIBITION (nanoid): do not edit apps/web/package.json or package-lock.json in M0-T070; do not run npm audit fix; do not suppress, waive, or allowlist GHSA-2v37-7h3g-55p8.",
+   "source_ref": "source-002-amendment.md#nanoid-prohibitions",
+   "classification": "prohibition",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-014-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-18"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "captured at D-014 amendment 2 (PR #222 live CI reconciliation); session-scope duty verified at directive verification",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "amendment_sequence": 2
+  },
+  {
+   "id": "D-014-R048",
+   "text": "Verify read-only whether nanoid 3.3.17 is inherited unchanged from the PR base and origin/main.",
+   "source_ref": "source-002-amendment.md#nanoid-verify",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-014-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-18"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "captured at D-014 amendment 2 (PR #222 live CI reconciliation); session-scope duty verified at directive verification",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "amendment_sequence": 2
+  },
+  {
+   "id": "D-014-R049",
+   "text": "Record the nanoid advisory as a separate external security blocker requiring its own task and authorized scope.",
+   "source_ref": "source-002-amendment.md#nanoid-blocker",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-014-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-18"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "captured at D-014 amendment 2 (PR #222 live CI reconciliation); session-scope duty verified at directive verification",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "amendment_sequence": 2
+  },
+  {
+   "id": "D-014-R050",
+   "text": "Recommend the correct branch/stacking sequence for the separate dependency repair; PROHIBITION: do not create or implement that separate task without new owner authorization.",
+   "source_ref": "source-002-amendment.md#nanoid-stacking",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-014-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-18"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "captured at D-014 amendment 2 (PR #222 live CI reconciliation); session-scope duty verified at directive verification",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "amendment_sequence": 2
+  },
+  {
+   "id": "D-014-R051",
+   "text": "Return exactly one of PR_222_CI_RECONCILED (only if all M0-T070-owned failures are corrected; include new HEAD, local tests, final GitHub jobs, gate identity, task lifecycle state, remaining nanoid blocker) or PR_222_BLOCKED (with the precise unresolved condition and evidence).",
+   "source_ref": "source-002-amendment.md#return",
+   "classification": "return",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-014-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-18"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "captured at D-014 amendment 2 (PR #222 live CI reconciliation); session-scope duty verified at directive verification",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "amendment_sequence": 2
+  },
+  {
+   "id": "D-014-R052",
+   "text": "Do not restart A1.",
+   "source_ref": "source-002-amendment.md#do-not-restart-a1",
+   "classification": "prohibition",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-014-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-18"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "captured at D-014 amendment 2 (PR #222 live CI reconciliation); session-scope duty verified at directive verification",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "amendment_sequence": 2
   }
  ]
 }

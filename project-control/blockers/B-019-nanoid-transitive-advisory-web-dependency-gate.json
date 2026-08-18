@@ -1,0 +1,22 @@
+{
+ "blocker_id": "B-019",
+ "title": "nanoid 3.3.17 high-severity advisory (GHSA-2v37-7h3g-55p8) fails the web-dependency-security gate on every branch; external to M0-T070; needs its own authorized dependency-repair task",
+ "status": "open",
+ "created_at": "2026-08-18",
+ "created_by": "orchestrator",
+ "affects": [
+  "PR #222 (M0-T070 supervisor repair): web-dependency-security job red for an inherited dependency the task is forbidden to touch (apps/** in forbidden_paths; D-014-R047 prohibits editing the lock, npm audit fix, and any suppression/waiver)",
+  "control/context-intelligence-init and origin/main: the identical lock entry exists on both, so EVERY current branch fails this job until the dependency is repaired on its own track"
+ ],
+ "detail": "CI run 32108527309 job 95622881295 (web-dependency-security: blocking npm audit --audit-level=low, dev deps included) fails: nanoid <3.3.18, severity high, GHSA-2v37-7h3g-55p8 ('custom generators can loop indefinitely when size is zero'), path node_modules/nanoid, inherited transitively via postcss. Read-only verification (git show <ref>:apps/web/package-lock.json): nanoid is pinned at 3.3.17 with the byte-identical integrity hash sha512-xQLf0A3HOMlgHq0n247/LRu... at PR #222 head 04cae38, PR base control/context-intelligence-init de2f224, and origin/main 5c71fe0, and PR #222 touches zero files under apps/ (git diff de2f224..HEAD -- apps/ is empty). The advisory is newer than the committed lock; the failure is therefore pre-existing on main and unrelated to the M0-T070 diff. Patched compatible version per the advisory and npm audit: nanoid 3.3.18.",
+ "not_authorized_here": "Per the owner's 2026-08-18 reconciliation directive (D-014 source-002-amendment, rows D-014-R047/R049/R050): M0-T070 must not edit apps/web/package.json or package-lock.json, must not run npm audit fix, and must not suppress, waive, or allowlist the advisory. Creating or implementing the separate dependency-repair task requires NEW owner authorization and is not done by this blocker.",
+ "resolution_path": "One separate dependency-repair task with its own authorized scope (apps/web/package-lock.json admission surface), branched from origin/main (NOT stacked on control/context-intelligence-init or task/M0-T070-supervisor-authority-repair, because the vulnerable lock entry lives on main and the fix must not entangle the supervisor-repair or D-013 stacks): bump the transitive pin nanoid 3.3.17 -> 3.3.18 under docs/DEPENDENCY_SECURITY_POLICY.md - advisory-free at every severity, exact-pinned, registry-integrity-matched, and >= 7 complete days old (604800s passes, 604799 fails). If 3.3.18 is younger than 7 days at execution time, the ONLY permissible exception is an owner-authorized, single-package, auto-expiring waiver of the AGE requirement (never of an advisory). Merge order: the dependency PR lands on main first; PR #222 and the control branch then inherit the green gate when they merge (no rebase of PR #222 required - its lock is identical to main's today and remains untouched).",
+ "owner_decision_required": "Authorize the separate nanoid dependency-repair task (and, if 3.3.18 is younger than 7 days, decide the single-package age waiver).",
+ "references": [
+  "https://github.com/advisories/GHSA-2v37-7h3g-55p8",
+  "CI run 32108527309, job 95622881295",
+  "project-control/directives/D-014-supervisor-command-authority-repair/source-002-amendment.md",
+  "B-017-frontend-transitive-advisory-age-blocker.json (prior instance of the same policy shape: transitive advisory vs age gate)",
+  "docs/DEPENDENCY_SECURITY_POLICY.md"
+ ]
+}

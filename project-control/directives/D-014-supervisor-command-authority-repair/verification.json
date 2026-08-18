@@ -378,5 +378,5 @@
    "note": "Independent verification recorded from the directive-compliance-verifier report (project-control/reports/M0-T070-DCV-directive-verification.md) at frozen head 6aae5857fdcd, content identity 296b8fa6b7ff. 27 PASS; 3 pending rows (R014/R015/R038) are the genuinely external return-cycle acts (push/PR, stop-before-merge conduct, return message + committed copy), to be re-verified at the accept cycle. Verifier verdict: PASS with two recorded discrepancies (R035 evidence-map wording corrected; R038 committed return copy owed and delivered in the return cycle)."
   }
  ],
- "updated_at": "2026-08-18T06:44:25+00:00"
+ "updated_at": "2026-08-18T06:58:44+00:00"
 }
