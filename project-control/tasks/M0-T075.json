@@ -1,197 +1,198 @@
 {
- "task_id": "M0-T075",
- "title": "Context pipeline end-to-end integration, concurrency hardening, and promotion-proof repair",
- "task_type": "infrastructure",
- "milestone_id": "M0",
- "objective": "One bounded corrective vertical-integration task (D-018): make the ONE context compiler genuinely operate end-to-end (task packet + exact requirement texts + changed/allowed-path graph seeding via a strict deterministic path extractor + bounded Unit C/E results + advisory Unit D memory + reopened source excerpts, all under one shared budget, with enforceable role sufficiency and exact provenance); one canonical orchestrator-facing entry point with grounded model routing; memory-graph transaction fix with a two-writer regression; one shared canonical path/real-path containment rule; real bounded retention; extended end-to-end benchmark with G0 baseline; input-manifest projection staleness; corrected smoke-tested runbook; one permanent additive context-pipeline CI job.",
- "business_reason": "D-018 owner corrective directive: close the vertical-integration gaps left across D-013 units without restarting the program.",
- "inputs": [
-  "Accepted D-013 units A1..F on main c123b5e (index, compiler modules, ontology, memory, views, benchmark, projection) - integrated, not rebuilt",
-  "tools/model_routing.py Signals (accepted M0-T074, consumed read-only by the new entry point)",
-  "project-control task packets + directives registry (authoritative requirement texts via directive_registry resolution incl. ALL)",
-  "D-018 requirements R006-R068 (the corrective scope); D-013 standing rows; docs/CONTEXT_PIPELINE_RUNBOOK.md commands"
- ],
- "outputs": [
-  "tools/context_paths.py - the ONE shared canonical repository-path + real-path containment rule (absolute/drive/dot/doubled/backslash/traversal/symlink-escape refusal; no private-path disclosure) adopted by context --include, deep views, graph/view seeds, ontology inputs, memory evidence paths, task-derived paths",
-  "Integrated compiler (context_pack modules): task packet + exact applicable requirement IDs AND texts (deterministic ALL resolution) + changed/allowed-path graph seeding with a strict deterministic prose path extractor + unresolved-seed recording + bounded Unit C/E results + advisory Unit D memory (absence/quarantine honest) + deterministically selected reopened source/test/contract excerpts, all under the ONE shared budget with enforceable role sufficiency (bounded machine-readable nonzero exit) and exact inclusion/omission/truncation/query/digest/coverage provenance; existing public interface preserved where practical; split proposal preserved",
-  "tools/context_orchestrate.py - the canonical orchestrator-facing entry point (outside tools/agent_supervisor/**) that invokes the integrated compiler, derives model_routing.Signals from compiled evidence (missing signals -> ambiguity/missing-evidence, never silent LOW), emits a bounded routing/dispatch manifest, and records the decision via the accepted external runtime convention",
-  "Memory-graph transaction fix: single-writer span covers load-current -> idempotency/conflict -> mutation -> validation -> promotion; two-writer stale-read/lost-update regression test; concurrent_writer + retry semantics",
-  "Real retention: bounded generation retention for index + memory stores preserving rollback generations; bounded/rotated external telemetry + routing JSONL; runtime state outside Git; redaction preserved",
-  "Extended Unit F benchmark: G0 baseline captured from accepted main BEFORE changes; 42/42 index cases retained; NEW end-to-end 5-shape corpus invoking the ACTUAL compiler (same packet/diff base/role/provider-model/reasoning/snapshot); cold/warm determinism, budget-or-split, evidence completeness, provenance, resolved graph/source evidence, advisory-memory handling, correctness vs baseline; distinct parser-version case; lock-refusal + orphan-quarantine pass predicates; corrected p95; UNMEASURED provider savings preserved",
-  "Status projection input-manifest staleness (every material input digested, not HEAD alone), full project_control.py status mapping incl. self_check + canceled, snapshot-vs-current distinction",
-  "docs/CONTEXT_PIPELINE_RUNBOOK.md corrected + smoke-tested (incl. --max-bytes), describing the one canonical compiler + honest owner-gated controller boundary",
-  "ONE permanent additive CI job (context-pipeline) running Units B-F suites + new integration/adversarial tests; no existing CI weakened",
-  "project-control/reports/M0-T069-benchmark-scope-correction.md - honest follow-up record: M0-T069's 42/42 result preserved as an INDEX-parity benchmark; its actual scope explained",
-  "project-control/reports/M0-T075-* producer evidence (G0 baseline capture, e2e benchmark report, producer report, evidence map, coverage evidence, G0 readiness)"
- ],
- "dependencies": [
-  "M0-T069"
- ],
- "allowed_paths": [
-  "tools/context_paths.py",
-  "tools/context_orchestrate.py",
-  "tools/context_pack.py",
-  "tools/context_pack_assembly.py",
-  "tools/context_pack_budget.py",
-  "tools/context_pack_index.py",
-  "tools/context_pack_io.py",
-  "tools/context_pack_render.py",
-  "tools/context_pack_sources.py",
-  "tools/memory_digest.py",
-  "tools/memory_grounding.py",
-  "tools/memory_graph.py",
-  "tools/repo_views.py",
-  "tools/repo_views_query.py",
-  "tools/subsystem_resolver.py",
-  "tools/subsystem_entities.py",
-  "tools/repo_index_cache.py",
-  "tools/repo_index_incremental.py",
-  "tools/context_benchmark.py",
-  "tools/status_projection.py",
-  "tools/test_context_pack.py",
-  "tools/test_context_pack_index.py",
-  "tools/test_context_integration.py",
-  "tools/test_subsystem_resolver.py",
-  "tools/test_memory_graph.py",
-  "tools/test_repo_views.py",
-  "tools/test_context_benchmark.py",
-  "tools/test_status_projection.py",
-  "tools/test_repo_index_cache.py",
-  ".github/workflows/ci.yml",
-  "docs/CONTEXT_PIPELINE_RUNBOOK.md",
-  "docs/CONTEXT_PACKS.md",
-  "docs/MEMORY_GRAPH.md",
-  "docs/REPO_VIEWS.md",
-  "docs/SUBSYSTEM_ONTOLOGY.md",
-  "project-control/reports/M0-T069-benchmark-scope-correction.md",
-  "project-control/reports/M0-T075-producer-report.md",
-  "project-control/reports/M0-T075-evidence-map.json",
-  "project-control/reports/M0-T075-coverage-evidence.md",
-  "project-control/reports/M0-T075-G0-readiness.md",
-  "project-control/reports/M0-T075-baseline-g0.json",
-  "project-control/reports/M0-T075-e2e-benchmark-report.json",
-  "project-control/reports/M0-T075-e2e-benchmark-report.md"
- ],
- "forbidden_paths": [
-  "tools/agent_supervisor/",
-  "tools/code_graph/generate.py",
-  "tools/code_graph/query.py",
-  "tools/repo_fingerprint.py",
-  "tools/repo_index_assembly.py",
-  "tools/repo_index_baseline.py",
-  "tools/model_routing.py",
-  "tools/modularity_baseline.json",
-  "tools/modularity_check.py",
-  "services/",
-  "apps/",
-  "packages/",
-  "supabase/",
-  ".claude/"
- ],
- "acceptance_scenarios": [
-  {
-   "id": "AS-1",
-   "given": "a clean accepted task from the real ledger",
-   "when": "the integrated compiler runs end-to-end",
-   "then": "real allowed/changed implementation paths resolve as graph/source seeds (prose output descriptions never used as literal paths; strict deterministic extractor only; unresolved seeds recorded); the exact applicable requirement IDs AND texts are present (directive_refs incl. ALL resolved deterministically); at least one authoritative source excerpt binds; bounded Unit C/E results and explicitly-advisory Unit D memory (absence/quarantine honest) are included under the ONE shared budget with exact inclusion/omission/truncation/query/digest/coverage provenance (D-018-R008..R018)"
-  },
-  {
-   "id": "AS-2",
-   "given": "a materially insufficient role packet (required task/requirement/diff/source/review evidence missing, ambiguous, stale, or a code-evidence task with zero resolved graph/source evidence)",
-   "when": "compilation is attempted",
-   "then": "a bounded machine-readable result is emitted and the exit code is nonzero; a recorded omission is never silently treated as success; the existing over-budget split proposal is preserved (D-018-R019..R021)"
-  },
-  {
-   "id": "AS-3",
-   "given": "two synchronized concurrent writers promoting two different valid digests",
-   "when": "both promotions run",
-   "then": "either both nodes survive, or exactly one receives concurrent_writer and succeeds on retry; both-report-promoted-with-one-node-lost is impossible; the single-writer span covers load-current through generation promotion; the exact two-writer stale-read/lost-update regression test exists (D-018-R027..R030)"
-  },
-  {
-   "id": "AS-4",
-   "given": "absolute, drive, dot/dot-dot, doubled-separator, backslash, traversal, and out-of-repo symlink/junction paths presented to context --include, deep views, graph/view seeds, ontology inputs, memory evidence paths, and task-derived paths",
-   "when": "each read is attempted",
-   "then": "the ONE shared containment rule refuses each machine-readably and no error or packet discloses a private absolute path (D-018-R031..R034)"
-  },
-  {
-   "id": "AS-5",
-   "given": "a committed projection snapshot and then an uncommitted material control-plane change (e.g. a task status edit)",
-   "when": "the projection check runs",
-   "then": "the deterministic input-manifest digest (task packets/status, verification registry, gates, submissions/review decisions, task/directive indexes, git identity) marks it STALE with nonzero exit; all real project_control.py statuses incl. self_check and canceled map to compact meanings; committed-historical-snapshot vs freshly-generated-current is explicit (D-018-R048..R050)"
-  },
-  {
-   "id": "AS-6",
-   "given": "the canonical orchestrator-facing entry point",
-   "when": "it is invoked for a real task and role",
-   "then": "it calls the INTEGRATED compiler (never builds a second packet), derives model_routing.Signals from the compiled task/diff/graph/ontology evidence (missing signals set ambiguity/missing-evidence and never silently default a complex task to LOW), emits a bounded routing/dispatch manifest, and records the decision through the accepted external runtime convention (D-018-R022..R026)"
-  },
-  {
-   "id": "AS-7",
-   "given": "the extended benchmark",
-   "when": "it runs",
-   "then": "the pre-change G0 baseline from accepted main is captured and compared; the existing 42/42 index cases remain green and are honestly labeled index-parity; the NEW five-shape end-to-end corpus invokes the ACTUAL compiler with identical packet/diff base/role/provider-model/reasoning/snapshot and proves cold/warm determinism, global-budget-or-nonzero-split, required-evidence completeness, exact provenance, resolved graph/source evidence, advisory-memory handling, and correctness no worse than baseline; a distinct parser-version case exists; lock refusal + orphan quarantine are pass predicates; p95 is corrected; provider token savings remain UNMEASURED (D-018-R038..R047)"
-  },
-  {
-   "id": "AS-8",
-   "given": "index/memory stores with many generations and telemetry/routing JSONL records",
-   "when": "retention runs",
-   "then": "bounded generation retention prunes safely while preserving rollback generations; JSONL records are bounded/rotated; all runtime state stays outside Git; redaction is preserved (D-018-R035..R037)"
-  },
-  {
-   "id": "AS-9",
-   "given": "the CI workflow and the runbook",
-   "when": "inspected and smoke-tested",
-   "then": "ONE permanent additive context-pipeline CI job runs the complete Units B-F suites plus the new integration/adversarial tests with no existing job removed/weakened/skipped/replaced; EVERY runbook command executes as written (incl. the required --max-bytes context-pack argument); the runbook describes the one canonical compiler and states honestly that controller/supervisor consumption remains owner-gated (D-018-R051..R054, R026)"
-  }
- ],
- "required_gates": [
-  "G0",
-  "G3",
-  "G4",
-  "G5"
- ],
- "producer_agent": null,
- "reviewer_agents": [
-  "code-reviewer",
-  "qa-engineer",
-  "security-reviewer",
-  "directive-compliance-verifier"
- ],
- "status": "backlog",
- "progress_percent": 0,
- "risks": [
-  "Touching accepted modules (Units B-E, A2 cache) risks regressions: every existing suite is in documented_test_commands and the permanent CI job; behavior-preserving integration verified against the captured G0 baseline",
-  "One-PR breadth: scope is strictly the D-018 requirement set; anything discovered beyond it becomes a follow-up task, never scope growth"
- ],
- "blockers": [],
- "created_at": "2026-08-18T21:58:16.603649+00:00",
- "updated_at": "2026-08-18T21:58:16.714778+00:00",
- "directive_refs": [
-  {
-   "directive_id": "D-001",
-   "requirement_ids": "ALL"
-  },
-  {
-   "directive_id": "D-013",
-   "requirement_ids": "ALL"
-  },
-  {
-   "directive_id": "D-018",
-   "requirement_ids": "ALL"
-  }
- ],
- "directive_regime_version": "1.0",
- "directive_regime_entered_at": "2026-08-18T21:58:16.603649+00:00",
- "documented_test_commands": [
-  "python tools/test_context_integration.py",
-  "python tools/test_context_pack.py",
-  "python tools/test_context_pack_index.py",
-  "python tools/test_subsystem_resolver.py",
-  "python tools/test_memory_graph.py",
-  "python tools/test_repo_views.py",
-  "python tools/test_context_benchmark.py",
-  "python tools/test_status_projection.py",
-  "python tools/test_repo_index_cache.py",
-  "python tools/modularity_check.py --check"
- ]
+  "task_id": "M0-T075",
+  "title": "Context pipeline end-to-end integration, concurrency hardening, and promotion-proof repair",
+  "task_type": "infrastructure",
+  "milestone_id": "M0",
+  "objective": "One bounded corrective vertical-integration task (D-018): make the ONE context compiler genuinely operate end-to-end (task packet + exact requirement texts + changed/allowed-path graph seeding via a strict deterministic path extractor + bounded Unit C/E results + advisory Unit D memory + reopened source excerpts, all under one shared budget, with enforceable role sufficiency and exact provenance); one canonical orchestrator-facing entry point with grounded model routing; memory-graph transaction fix with a two-writer regression; one shared canonical path/real-path containment rule; real bounded retention; extended end-to-end benchmark with G0 baseline; input-manifest projection staleness; corrected smoke-tested runbook; one permanent additive context-pipeline CI job.",
+  "business_reason": "D-018 owner corrective directive: close the vertical-integration gaps left across D-013 units without restarting the program.",
+  "inputs": [
+    "Accepted D-013 units A1..F on main c123b5e (index, compiler modules, ontology, memory, views, benchmark, projection) - integrated, not rebuilt",
+    "tools/model_routing.py Signals (accepted M0-T074, consumed read-only by the new entry point)",
+    "project-control task packets + directives registry (authoritative requirement texts via directive_registry resolution incl. ALL)",
+    "D-018 requirements R006-R068 (the corrective scope); D-013 standing rows; docs/CONTEXT_PIPELINE_RUNBOOK.md commands"
+  ],
+  "outputs": [
+    "tools/context_paths.py - the ONE shared canonical repository-path + real-path containment rule (absolute/drive/dot/doubled/backslash/traversal/symlink-escape refusal; no private-path disclosure) adopted by context --include, deep views, graph/view seeds, ontology inputs, memory evidence paths, task-derived paths",
+    "Integrated compiler (context_pack modules): task packet + exact applicable requirement IDs AND texts (deterministic ALL resolution) + changed/allowed-path graph seeding with a strict deterministic prose path extractor + unresolved-seed recording + bounded Unit C/E results + advisory Unit D memory (absence/quarantine honest) + deterministically selected reopened source/test/contract excerpts, all under the ONE shared budget with enforceable role sufficiency (bounded machine-readable nonzero exit) and exact inclusion/omission/truncation/query/digest/coverage provenance; existing public interface preserved where practical; split proposal preserved",
+    "tools/context_orchestrate.py - the canonical orchestrator-facing entry point (outside tools/agent_supervisor/**) that invokes the integrated compiler, derives model_routing.Signals from compiled evidence (missing signals -> ambiguity/missing-evidence, never silent LOW), emits a bounded routing/dispatch manifest, and records the decision via the accepted external runtime convention",
+    "Memory-graph transaction fix: single-writer span covers load-current -> idempotency/conflict -> mutation -> validation -> promotion; two-writer stale-read/lost-update regression test; concurrent_writer + retry semantics",
+    "Real retention: bounded generation retention for index + memory stores preserving rollback generations; bounded/rotated external telemetry + routing JSONL; runtime state outside Git; redaction preserved",
+    "Extended Unit F benchmark: G0 baseline captured from accepted main BEFORE changes; 42/42 index cases retained; NEW end-to-end 5-shape corpus invoking the ACTUAL compiler (same packet/diff base/role/provider-model/reasoning/snapshot); cold/warm determinism, budget-or-split, evidence completeness, provenance, resolved graph/source evidence, advisory-memory handling, correctness vs baseline; distinct parser-version case; lock-refusal + orphan-quarantine pass predicates; corrected p95; UNMEASURED provider savings preserved",
+    "Status projection input-manifest staleness (every material input digested, not HEAD alone), full project_control.py status mapping incl. self_check + canceled, snapshot-vs-current distinction",
+    "docs/CONTEXT_PIPELINE_RUNBOOK.md corrected + smoke-tested (incl. --max-bytes), describing the one canonical compiler + honest owner-gated controller boundary",
+    "ONE permanent additive CI job (context-pipeline) running Units B-F suites + new integration/adversarial tests; no existing CI weakened",
+    "project-control/reports/M0-T069-benchmark-scope-correction.md - honest follow-up record: M0-T069's 42/42 result preserved as an INDEX-parity benchmark; its actual scope explained",
+    "project-control/reports/M0-T075-* producer evidence (G0 baseline capture, e2e benchmark report, producer report, evidence map, coverage evidence, G0 readiness)"
+  ],
+  "dependencies": [
+    "M0-T069"
+  ],
+  "allowed_paths": [
+    "tools/context_paths.py",
+    "tools/context_orchestrate.py",
+    "tools/context_pack.py",
+    "tools/context_pack_assembly.py",
+    "tools/context_pack_budget.py",
+    "tools/context_pack_index.py",
+    "tools/context_pack_io.py",
+    "tools/context_pack_render.py",
+    "tools/context_pack_sources.py",
+    "tools/memory_digest.py",
+    "tools/memory_grounding.py",
+    "tools/memory_graph.py",
+    "tools/repo_views.py",
+    "tools/repo_views_query.py",
+    "tools/subsystem_resolver.py",
+    "tools/subsystem_entities.py",
+    "tools/repo_index_cache.py",
+    "tools/repo_index_incremental.py",
+    "tools/context_benchmark.py",
+    "tools/status_projection.py",
+    "tools/test_context_pack.py",
+    "tools/test_context_pack_index.py",
+    "tools/test_context_integration.py",
+    "tools/test_subsystem_resolver.py",
+    "tools/test_memory_graph.py",
+    "tools/test_repo_views.py",
+    "tools/test_context_benchmark.py",
+    "tools/test_status_projection.py",
+    "tools/test_repo_index_cache.py",
+    ".github/workflows/ci.yml",
+    "docs/CONTEXT_PIPELINE_RUNBOOK.md",
+    "docs/CONTEXT_PACKS.md",
+    "docs/MEMORY_GRAPH.md",
+    "docs/REPO_VIEWS.md",
+    "docs/SUBSYSTEM_ONTOLOGY.md",
+    "project-control/reports/M0-T069-benchmark-scope-correction.md",
+    "project-control/reports/M0-T075-producer-report.md",
+    "project-control/reports/M0-T075-evidence-map.json",
+    "project-control/reports/M0-T075-coverage-evidence.md",
+    "project-control/reports/M0-T075-G0-readiness.md",
+    "project-control/reports/M0-T075-baseline-g0.json",
+    "project-control/reports/M0-T075-e2e-benchmark-report.json",
+    "project-control/reports/M0-T075-e2e-benchmark-report.md"
+  ],
+  "forbidden_paths": [
+    "tools/agent_supervisor/",
+    "tools/code_graph/generate.py",
+    "tools/code_graph/query.py",
+    "tools/repo_fingerprint.py",
+    "tools/repo_index_assembly.py",
+    "tools/repo_index_baseline.py",
+    "tools/model_routing.py",
+    "tools/modularity_baseline.json",
+    "tools/modularity_check.py",
+    "services/",
+    "apps/",
+    "packages/",
+    "supabase/",
+    ".claude/"
+  ],
+  "acceptance_scenarios": [
+    {
+      "id": "AS-1",
+      "given": "a clean accepted task from the real ledger",
+      "when": "the integrated compiler runs end-to-end",
+      "then": "real allowed/changed implementation paths resolve as graph/source seeds (prose output descriptions never used as literal paths; strict deterministic extractor only; unresolved seeds recorded); the exact applicable requirement IDs AND texts are present (directive_refs incl. ALL resolved deterministically); at least one authoritative source excerpt binds; bounded Unit C/E results and explicitly-advisory Unit D memory (absence/quarantine honest) are included under the ONE shared budget with exact inclusion/omission/truncation/query/digest/coverage provenance (D-018-R008..R018)"
+    },
+    {
+      "id": "AS-2",
+      "given": "a materially insufficient role packet (required task/requirement/diff/source/review evidence missing, ambiguous, stale, or a code-evidence task with zero resolved graph/source evidence)",
+      "when": "compilation is attempted",
+      "then": "a bounded machine-readable result is emitted and the exit code is nonzero; a recorded omission is never silently treated as success; the existing over-budget split proposal is preserved (D-018-R019..R021)"
+    },
+    {
+      "id": "AS-3",
+      "given": "two synchronized concurrent writers promoting two different valid digests",
+      "when": "both promotions run",
+      "then": "either both nodes survive, or exactly one receives concurrent_writer and succeeds on retry; both-report-promoted-with-one-node-lost is impossible; the single-writer span covers load-current through generation promotion; the exact two-writer stale-read/lost-update regression test exists (D-018-R027..R030)"
+    },
+    {
+      "id": "AS-4",
+      "given": "absolute, drive, dot/dot-dot, doubled-separator, backslash, traversal, and out-of-repo symlink/junction paths presented to context --include, deep views, graph/view seeds, ontology inputs, memory evidence paths, and task-derived paths",
+      "when": "each read is attempted",
+      "then": "the ONE shared containment rule refuses each machine-readably and no error or packet discloses a private absolute path (D-018-R031..R034)"
+    },
+    {
+      "id": "AS-5",
+      "given": "a committed projection snapshot and then an uncommitted material control-plane change (e.g. a task status edit)",
+      "when": "the projection check runs",
+      "then": "the deterministic input-manifest digest (task packets/status, verification registry, gates, submissions/review decisions, task/directive indexes, git identity) marks it STALE with nonzero exit; all real project_control.py statuses incl. self_check and canceled map to compact meanings; committed-historical-snapshot vs freshly-generated-current is explicit (D-018-R048..R050)"
+    },
+    {
+      "id": "AS-6",
+      "given": "the canonical orchestrator-facing entry point",
+      "when": "it is invoked for a real task and role",
+      "then": "it calls the INTEGRATED compiler (never builds a second packet), derives model_routing.Signals from the compiled task/diff/graph/ontology evidence (missing signals set ambiguity/missing-evidence and never silently default a complex task to LOW), emits a bounded routing/dispatch manifest, and records the decision through the accepted external runtime convention (D-018-R022..R026)"
+    },
+    {
+      "id": "AS-7",
+      "given": "the extended benchmark",
+      "when": "it runs",
+      "then": "the pre-change G0 baseline from accepted main is captured and compared; the existing 42/42 index cases remain green and are honestly labeled index-parity; the NEW five-shape end-to-end corpus invokes the ACTUAL compiler with identical packet/diff base/role/provider-model/reasoning/snapshot and proves cold/warm determinism, global-budget-or-nonzero-split, required-evidence completeness, exact provenance, resolved graph/source evidence, advisory-memory handling, and correctness no worse than baseline; a distinct parser-version case exists; lock refusal + orphan quarantine are pass predicates; p95 is corrected; provider token savings remain UNMEASURED (D-018-R038..R047)"
+    },
+    {
+      "id": "AS-8",
+      "given": "index/memory stores with many generations and telemetry/routing JSONL records",
+      "when": "retention runs",
+      "then": "bounded generation retention prunes safely while preserving rollback generations; JSONL records are bounded/rotated; all runtime state stays outside Git; redaction is preserved (D-018-R035..R037)"
+    },
+    {
+      "id": "AS-9",
+      "given": "the CI workflow and the runbook",
+      "when": "inspected and smoke-tested",
+      "then": "ONE permanent additive context-pipeline CI job runs the complete Units B-F suites plus the new integration/adversarial tests with no existing job removed/weakened/skipped/replaced; EVERY runbook command executes as written (incl. the required --max-bytes context-pack argument); the runbook describes the one canonical compiler and states honestly that controller/supervisor consumption remains owner-gated (D-018-R051..R054, R026)"
+    }
+  ],
+  "required_gates": [
+    "G0",
+    "G3",
+    "G4",
+    "G5"
+  ],
+  "producer_agent": "orchestrator",
+  "reviewer_agents": [
+    "code-reviewer",
+    "qa-engineer",
+    "security-reviewer",
+    "directive-compliance-verifier"
+  ],
+  "status": "claimed",
+  "progress_percent": 10,
+  "risks": [
+    "Touching accepted modules (Units B-E, A2 cache) risks regressions: every existing suite is in documented_test_commands and the permanent CI job; behavior-preserving integration verified against the captured G0 baseline",
+    "One-PR breadth: scope is strictly the D-018 requirement set; anything discovered beyond it becomes a follow-up task, never scope growth"
+  ],
+  "blockers": [],
+  "created_at": "2026-08-18T21:58:16.603649+00:00",
+  "updated_at": "2026-08-18T22:04:46.960098+00:00",
+  "directive_refs": [
+    {
+      "directive_id": "D-001",
+      "requirement_ids": "ALL"
+    },
+    {
+      "directive_id": "D-013",
+      "requirement_ids": "ALL"
+    },
+    {
+      "directive_id": "D-018",
+      "requirement_ids": "ALL"
+    }
+  ],
+  "directive_regime_version": "1.0",
+  "directive_regime_entered_at": "2026-08-18T21:58:16.603649+00:00",
+  "documented_test_commands": [
+    "python tools/test_context_integration.py",
+    "python tools/test_context_pack.py",
+    "python tools/test_context_pack_index.py",
+    "python tools/test_subsystem_resolver.py",
+    "python tools/test_memory_graph.py",
+    "python tools/test_repo_views.py",
+    "python tools/test_context_benchmark.py",
+    "python tools/test_status_projection.py",
+    "python tools/test_repo_index_cache.py",
+    "python tools/modularity_check.py --check"
+  ],
+  "worktree": "C:/Users/MLFLL/Downloads/nyc-zoning/wt-m0t064"
 }

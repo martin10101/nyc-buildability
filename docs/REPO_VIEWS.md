@@ -84,3 +84,11 @@ python tools/repo_views_query.py check     # two-run byte-identity self-proof
   control-plane files, and the external memory store.
 - Tests: `python tools/test_repo_views.py` (AS-1..AS-6 + truncation,
   no-answer, fail-closed, cold-vs-warm determinism).
+
+
+## M0-T075 correction (D-018)
+
+Deep-view and card reads now go through the ONE shared containment rule
+(`tools/context_paths.py`): canonical repo-relative form plus real-path
+(symlink/junction) containment — an out-of-checkout link target refuses with
+`path_escapes_repository` and no error discloses a private absolute path.

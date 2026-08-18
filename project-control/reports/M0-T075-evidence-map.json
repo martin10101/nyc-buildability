@@ -1,0 +1,197 @@
+{
+ "schema": "evidence_map/v1",
+ "task_id": "M0-T075",
+ "producer": "orchestrator",
+ "note": "Evidence per applicable D-018 row for M0-T075 (63 task-bound rows derived by directive_registry.evaluate_task_refs at claim; the 7 session-governance rows bind the D-018-BOOTSTRAP sentinel and are verified at directive verification). D-001 and D-013 are cited ALL with empty applicable sets (empty-but-present rows at accept).",
+ "requirements": {
+  "D-018-R006": [
+   "M0-T069 NOT reopened: its packet/gates/verification untouched (git diff shows no M0-T069 control-plane edits); the 42/42 result retained and re-affirmed in M0-T069-benchmark-scope-correction.md"
+  ],
+  "D-018-R007": [
+   "project-control/reports/M0-T069-benchmark-scope-correction.md: honest index-parity scope record + what M0-T075 adds; M0-T069 records unchanged"
+  ],
+  "D-018-R008": [
+   "ONE compiler: tools/context_pack.py build/emit is the single pipeline; the entry point wraps it (context_orchestrate.py builds via cp.build_parser/build/emit, never a second packet); e2e benchmark invokes the ACTUAL compiler (M0-T075-e2e-benchmark-report.json checks all true)"
+  ],
+  "D-018-R009": [
+   "Public interface preserved: context_pack.py facade exports unchanged; existing suites test_context_pack (15) + test_context_pack_index (8) green; CLI args unchanged (additive only)"
+  ],
+  "D-018-R010": [
+   "Task packet consumed as source 1 under the single effective_bound_bytes budget (assembly.build unchanged single-budget contract; drift-lock tests green)"
+  ],
+  "D-018-R011": [
+   "context_pack_evidence.resolve_requirements: directive_registry.evaluate_task_refs resolves refs incl. ALL deterministically; exact texts pulled from each directive's requirements.json; real-task compile of M0-T066 carries 24 exact ids+texts (integration test Proof1)"
+  ],
+  "D-018-R012": [
+   "Seeds = changed files + implementation_paths(task allowed_paths, non-control-plane) only; outputs prose never literal (gather_sources section 5); e2e + Proof1 tests assert no space-containing seed"
+  ],
+  "D-018-R013": [
+   "extract_prose_paths: strict token regex + canonical rule + tree existence; every candidate recorded {field, token, resolved} in meta.integration.prose_extraction"
+  ],
+  "D-018-R014": [
+   "unresolved_seeds recorded in meta.integration (refused + not-in-graph); code-evidence rule: implementation paths in scope with NO resolved graph seed and NO excerpt -> insufficient exit 3 (assess_sufficiency; e2e reviewer_insufficiency_exit==3)"
+  ],
+  "D-018-R015": [
+   "Bounded Unit C ontology source (placements + version stamp) + Unit E-class bounded views: graph neighborhoods + census from the same in-process index (gather_index_sources), all under the one budget"
+  ],
+  "D-018-R016": [
+   "memory_advisory source explicitly labeled ADVISORY; absence/quarantine honest (store_empty/no_digests_for_task/store_unavailable + quarantined_digests count); reducible group (never crowds material)"
+  ],
+  "D-018-R017": [
+   "select_source_excerpts: deterministic (changed-first implementation paths, capped, contained reads) + tests from graph is_test importers and tools/test_<stem>.py; real-task compile reopened 4 sources + 3 tests; detailed claims bind to the reopened bytes (sha256 per included file)"
+  ],
+  "D-018-R018": [
+   "meta carries included_files (sha256/bytes/origin/evidence_path), omitted_categories with reasons, truncations, graph_queries with params+export digest, and meta.integration (requirements provenance, prose extraction, unresolved seeds, selection records, containment version)"
+  ],
+  "D-018-R019": [
+   "assess_sufficiency enforceable: in-regime requirement failure, missing groups, or unresolved code evidence -> emit returns exit 3 with the bounded meta; e2e + AS-4 reviewer test assert exit 3"
+  ],
+  "D-018-R020": [
+   "Split proposal preserved verbatim (assembly overflow path untouched; exit 2); e2e tiny_budget_split_exit==2; AS-5 suite green"
+  ],
+  "D-018-R021": [
+   "No recorded omission is silent success: insufficiency exits nonzero; omissions carry reasons; --include refusals recorded as omissions with containment codes"
+  ],
+  "D-018-R022": [
+   "tools/context_orchestrate.py: canonical entry point OUTSIDE tools/agent_supervisor/**; invokes cp.build_parser/build/emit directly (Proof7 test executes it end-to-end and asserts the integrated meta)"
+  ],
+  "D-018-R023": [
+   "derive_signals maps compiled evidence -> model_routing.Signals: files_affected (changed targets), subsystems_affected (ontology), dependency_graph_spread (index breadth), prefix-derived risk flags, estimated_context_tokens from actuals"
+  ],
+  "D-018-R024": [
+   "Missing/unresolved evidence sets ambiguity_or_missing_evidence=True with notes (derive_signals; Proof7 routing test asserts it); model_routing.classify treats ambiguity as band-raising - LOW can never be silently defaulted"
+  ],
+  "D-018-R025": [
+   "Bounded dispatch_manifest.json (schema context_dispatch_manifest/v1) per run; decision recorded via mr.append_decision to mr.decisions_path (accepted external runtime convention), rotation applied first (rotate_jsonl_if_needed)"
+  ],
+  "D-018-R026": [
+   "Boundary stated honestly in the manifest supervisor_boundary field AND the runbook: automatic controller consumption remains OWNER-GATED (protected files unchanged); canonical non-protected command wired into docs/CONTEXT_PIPELINE_RUNBOOK.md"
+  ],
+  "D-018-R027": [
+   "memory_graph.promote_digest _transaction(): SingleWriterLock held across load_current -> conflict/idempotency -> mutation -> validation -> write_generation_locked (repo_index_cache adds the locked write path)"
+  ],
+  "D-018-R028": [
+   "Two-writer test (Proof3): interleaved writer receives explicit concurrent_writer, succeeds on retry; both nodes present in the final generation"
+  ],
+  "D-018-R029": [
+   "Lost update structurally impossible: the load happens inside the lock; Proof3 asserts len(nodes)==2 and B refused - both-promoted-one-lost cannot occur"
+  ],
+  "D-018-R030": [
+   "tools/test_context_integration.py Proof3TwoWriterRace: the exact stale-read/lost-update interleave via a hooked load_current + synchronized threads"
+  ],
+  "D-018-R031": [
+   "tools/context_paths.py: THE shared rule (canonical form + realpath containment); adopters: compiler --include/contracts/excerpts, deep views, view seeds/cards, ontology entity paths, memory evidence digests, task-derived paths"
+  ],
+  "D-018-R032": [
+   "is_canonical_repo_path rejects absolute//drive/'.'/'..'//doubled//backslash/control chars; contained_repo_path realpath-checks symlink/junction escapes (path_escapes_repository); Proof4 probes every form"
+  ],
+  "D-018-R033": [
+   "Coverage proven per surface: --include (omission with containment code), deep_view (ViewsError), seeds (refused_seeds recorded), ontology (_resolve_one containment), memory (_file_digest contained), task-derived contract reads (contained)"
+  ],
+  "D-018-R034": [
+   "PathContainmentError.detail carries only the bounded caller-supplied string; Proof4 asserts no repo/outer absolute path appears in any refusal, including the junction case"
+  ],
+  "D-018-R035": [
+   "Real retention invoked: build_incremental calls cache.prune(keep=3) (lock-serialized, current+rollback preserved); memory promotion prunes inside the transaction (RETENTION_KEEP=5); RetentionReal tests"
+  ],
+  "D-018-R036": [
+   "append_jsonl_rotated/rotate_jsonl_if_needed bound incremental_telemetry.jsonl and model_routing.jsonl (rotation test asserts size bound + .1 rotation)"
+  ],
+  "D-018-R037": [
+   "All runtime state external (cache_base_dir namespaces; cache_inside_repo refusal); git status clean after every suite run; redacted record shapes unchanged"
+  ],
+  "D-018-R038": [
+   "Unit F benchmark EXTENDED in place: build_report keeps all original cases + adds parser case + predicates; e2e is an additive mode (--e2e); M0-T069 report untouched"
+  ],
+  "D-018-R039": [
+   "G0 baseline captured BEFORE any behavior change at the capture commit (project-control/reports/M0-T075-baseline-g0.json: accepted-code compiler runs + index benchmark reference digest)"
+  ],
+  "D-018-R040": [
+   "42/42 index cases retained: run_shape case set superset (10 cases/shape now); AS1 suite asserts the full case set incl. the original nine; committed M0-T069 report preserved"
+  ],
+  "D-018-R041": [
+   "build_e2e_report: five shapes invoke the ACTUAL compiler with identical task packet/diff base/role/provider/model/reasoning(none, recorded)/snapshot digest (conditions block per shape)"
+  ],
+  "D-018-R042": [
+   "e2e checks all true: cold_warm_deterministic, global_budget_or_split_refusal, required_evidence_completeness, exact_provenance, graph_source_evidence_resolved (where required), advisory_memory_handled, requirement_texts_end_to_end; baseline comparison no_worse_than_baseline=true (8->18/17 sources, none missing)"
+  ],
+  "D-018-R043": [
+   "Distinct parser_version_change case: extra_config_versions hook drives the REAL global-invalidator path (rebuild_reason carries parser_probe:1->2), full rebuild byte-identical; asserted in suite + folded into evidence"
+  ],
+  "D-018-R044": [
+   "lock_refusal_enforced + orphan_temp_quarantined + parser_version_change_documented_full_rebuild are R059-evidence PASS predicates (absence of the case FAILS); EvidencePredicates test"
+  ],
+  "D-018-R045": [
+   "_stats nearest-rank p95 (ceil(0.95n)-1); P95Correction test proves n=3 -> max (was median) and n=20 -> rank 19"
+  ],
+  "D-018-R046": [
+   "provider_token_savings remains the UNMEASURED string in both reports; no combined savings number anywhere (grep clean)"
+  ],
+  "D-018-R047": [
+   "No promotion approved/activated: no behavior flag changed; benchmark/runbook state the decision is PENDING owner; evidence + recommendation returned in the final report"
+  ],
+  "D-018-R048": [
+   "status_projection input-manifest digest over every consumed file (packets/registry/gates/submissions/review reports) + task/directive index digests + git HEAD; check regenerates live and compares; uncommitted task-status edit -> stale exit 3 with UNCHANGED HEAD (test)"
+  ],
+  "D-018-R049": [
+   "_STATUS_MAP covers the actual CLI statuses incl. self_check ('gates pending') and canceled ('superseded'); mapping test"
+  ],
+  "D-018-R050": [
+   "projection_kind='generated_current' on fresh output; check labels the on-disk file a committed/historical snapshot in its machine-readable note; test asserts both"
+  ],
+  "D-018-R051": [
+   "Every runbook command smoke-tested as written (13 commands incl. the required --max-bytes on both compiler entries); session evidence in the producer report"
+  ],
+  "D-018-R052": [
+   "Runbook rewritten around THE canonical compiler + entry point and states the owner-gated supervisor boundary explicitly"
+  ],
+  "D-018-R053": [
+   "ONE additive CI job 'context-pipeline' appended to .github/workflows/ci.yml running all Units B-F suites + test_context_integration.py; diff is pure insertion (+29 lines)"
+  ],
+  "D-018-R054": [
+   "No existing CI/security/modularity/branch-protection/supervisor test removed or weakened: workflow diff is append-only; modularity/model-routing/supervisor jobs untouched"
+  ],
+  "D-018-R055": [
+   "Reviewer harness: Proof1 tests on real M0-T066 (paths resolve, 24 exact requirements, excerpts present, prose never literal)"
+  ],
+  "D-018-R056": [
+   "Reviewer harness: e2e reviewer_insufficiency_exit==3 + AS-4 suite (materially insufficient packet exits nonzero)"
+  ],
+  "D-018-R057": [
+   "Reviewer harness: Proof3 two-writer race test (concurrent_writer + retry; no lost node)"
+  ],
+  "D-018-R058": [
+   "Reviewer harness: Proof4 containment probes (absolute/traversal/junction) with no-path-leak assertions"
+  ],
+  "D-018-R059": [
+   "Reviewer harness: projection uncommitted-change staleness test (exit 3, HEAD unchanged)"
+  ],
+  "D-018-R060": [
+   "Reviewer harness: the context-pipeline CI job lists every suite; permanent (push+PR triggers of the existing workflow)"
+  ],
+  "D-018-R061": [
+   "Reviewer harness: Proof7 executes context_orchestrate.py and asserts the integrated meta + manifest + grounded signals"
+  ],
+  "D-018-R062": [
+   "Reviewer harness: index-parity retained - AS1/AS3 benchmark suites + the committed M0-T069 report reference in the baseline"
+  ],
+  "D-018-R063": [
+   "Protected surfaces untouched: git diff main...HEAD -- tools/agent_supervisor/ (+ code_graph builders, fingerprint, baseline, assembly, model_routing, modularity tooling, apps/, services/) is EMPTY except allowed files; no history rewrite; hashes unchanged"
+  ],
+  "D-018-R064": [
+   "No controller bundle executed, no live probe, no R060 promotion decision (owner-pending statements in report + runbook)"
+  ],
+  "D-018-R065": [
+   "No NYC application logic touched: services/ apps/ packages/ supabase/ absent from the diff; benchmark fixtures are hermetic temp dirs only"
+  ],
+  "D-018-R066": [
+   "Claude sole writer (single branch, orchestrator commits); fresh independent reviewer + DCV dispatched at the frozen submit SHA (producer != reviewer/verifier)"
+  ],
+  "D-018-R067": [
+   "Full battery run at submit: all context suites + A1/A2 suites + modularity --check + validate_directive_compliance (results in the producer report); CI runs the same on the PR"
+  ],
+  "D-018-R068": [
+   "Standard lifecycle: submit -> independent review -> rework genuine findings -> verification at the frozen reviewed SHA -> accept -> merge on green (this task follows the same control plane as M0-T063..T069)"
+  ]
+ }
+}

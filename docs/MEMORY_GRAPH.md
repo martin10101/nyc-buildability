@@ -98,3 +98,17 @@ machine-readable error document is printed).
   Unit E (M0-T068). The promotion benchmark/runbook is Unit F (M0-T069).
 - Tests: `python tools/test_memory_graph.py` (AS-1..AS-6 + crash/concurrency
   edge cases).
+
+
+## M0-T075 corrections (D-018)
+
+- **Transaction span**: promotion now holds the store's single-writer lock
+  across load-current → idempotency/conflict check → mutation → validation →
+  generation promotion. Two concurrent valid digests either both survive or
+  one receives the explicit `concurrent_writer` refusal and succeeds on
+  retry (`promote_digest(..., retries=N)`); a silently lost node is
+  structurally impossible (two-writer regression test on file).
+- **Real retention**: bounded generation retention runs inside the
+  transaction (current + rollback generations preserved).
+- **Containment**: memory evidence paths are read only through the shared
+  rule in `tools/context_paths.py` (canonical form + real-path containment).
