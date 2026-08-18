@@ -109,42 +109,80 @@ def selected_files(repo: pathlib.Path) -> list[str]:
     return sorted(chosen)
 
 
-def _ts_line_has_code(line: str, in_block: bool) -> tuple[bool, bool]:
-    """Comment-span-aware: does any non-comment content remain on this line?
+def _ts_line_has_code(line: str, in_block: bool,
+                      in_template: bool = False) -> tuple[bool, bool, bool]:
+    """Quote- and comment-aware: does non-comment code remain on this line?
 
-    Strips /* ... */ spans (tracking multi-line state) and // tails, then asks
-    whether anything non-blank survives - so `/* c */ const x = 1` counts and
-    `code */` after a block terminator counts (G4-C2). String literals
-    containing comment markers can still fool this scanner; that bound is
-    documented in policy s10.
+    A char scanner that tracks three cross-line-relevant states so a comment
+    marker inside a string literal is never mistaken for a real comment
+    (G3-R1 / G4-D1): block-comment spans (`/* */`, multi-line), template-literal
+    spans (backtick, multi-line), and single-line '' / "" strings (reset each
+    line). `//` and `/*` inside any string are ignored; `*/` inside a string
+    does not close a block. Returns (has_code, in_block, in_template).
+    Remaining bound (documented, policy s10): a raw `${...}` nesting a backtick
+    is not tracked, and escaped quotes inside single-line strings are handled
+    but exotic nesting is not - both conspicuous in review.
     """
     remainder: list[str] = []
     i = 0
-    while i < len(line):
+    n = len(line)
+    while i < n:
+        ch = line[i]
         if in_block:
             end = line.find("*/", i)
             if end == -1:
-                return bool("".join(remainder).strip()), True
+                return bool("".join(remainder).strip()), True, in_template
             i = end + 2
             in_block = False
             continue
-        start_block = line.find("/*", i)
-        start_line = line.find("//", i)
-        if start_line != -1 and (start_block == -1 or start_line < start_block):
-            remainder.append(line[i:start_line])
-            return bool("".join(remainder).strip()), False
-        if start_block != -1:
-            remainder.append(line[i:start_block])
-            i = start_block + 2
+        if in_template:
+            end = line.find("`", i)
+            if end == -1:
+                # whole line is template-literal body: non-blank string content
+                return True, False, True
+            remainder.append("t")  # template body counts as code content
+            i = end + 1
+            in_template = False
+            continue
+        two = line[i:i + 2]
+        if two == "//":
+            break  # rest of line is a comment
+        if two == "/*":
+            i += 2
             in_block = True
             continue
-        remainder.append(line[i:])
-        break
-    return bool("".join(remainder).strip()), in_block
+        if ch == "`":
+            remainder.append("t")
+            i += 1
+            in_template = True
+            continue
+        if ch in ("'", '"'):
+            remainder.append("s")  # a string literal is code content
+            i += 1
+            while i < n:
+                if line[i] == "\\":
+                    i += 2
+                    continue
+                if line[i] == ch:
+                    i += 1
+                    break
+                i += 1
+            continue
+        remainder.append(ch)
+        i += 1
+    return bool("".join(remainder).strip()), in_block, in_template
 
 
-def source_lines(path: pathlib.Path) -> int:
-    """Non-blank, non-comment-only physical lines (policy s10 definition)."""
+def source_lines(path: pathlib.Path) -> tuple[int, bool]:
+    """Non-blank, non-comment-only physical lines (policy s10 definition).
+
+    Returns (sloc, scan_uncertain). scan_uncertain is True for a TS/TSX file
+    whose scan ends inside an open block comment - almost always a `/*` inside a
+    string literal (e.g. `import.meta.glob('./x/*.ts')`), which the span scanner
+    cannot distinguish from a real comment and which would zero out the tail of
+    the file. It is surfaced as a warning so an undercount cannot hide silently
+    (G3-R1).
+    """
     try:
         text = path.read_text(encoding="utf-8", errors="replace")
     except OSError as exc:
@@ -152,12 +190,14 @@ def source_lines(path: pathlib.Path) -> int:
     suffix = path.suffix
     count = 0
     in_block_comment = False
+    in_template = False
     for raw in text.splitlines():
         line = raw.strip()
         if not line:
             continue
         if suffix in (".ts", ".tsx"):
-            has_code, in_block_comment = _ts_line_has_code(line, in_block_comment)
+            has_code, in_block_comment, in_template = _ts_line_has_code(
+                line, in_block_comment, in_template)
             if not has_code:
                 continue
         else:  # .py: comment-only lines; `#` inside docstrings/strings is a
@@ -165,7 +205,10 @@ def source_lines(path: pathlib.Path) -> int:
             if line.startswith("#"):
                 continue
         count += 1
-    return count
+    # A scan ending inside an open block comment is genuinely ambiguous; an open
+    # template literal at EOF is a syntax error in real code, so treat it the
+    # same - surface uncertainty rather than trust a possibly-truncated count.
+    return count, (suffix in (".ts", ".tsx") and (in_block_comment or in_template))
 
 
 def top_level_symbols(path: pathlib.Path) -> int:
@@ -174,11 +217,13 @@ def top_level_symbols(path: pathlib.Path) -> int:
     return sum(1 for line in text.splitlines() if pattern.match(line))
 
 
-def census(repo: pathlib.Path) -> dict[str, dict[str, int]]:
-    result: dict[str, dict[str, int]] = {}
+def census(repo: pathlib.Path) -> dict[str, dict[str, Any]]:
+    result: dict[str, dict[str, Any]] = {}
     for rel in selected_files(repo):
         p = repo / rel
-        result[rel] = {"sloc": source_lines(p), "symbols": top_level_symbols(p)}
+        sloc, uncertain = source_lines(p)
+        result[rel] = {"sloc": sloc, "symbols": top_level_symbols(p),
+                       "scan_uncertain": uncertain}
     return result
 
 
@@ -290,6 +335,10 @@ def load_exceptions(path: pathlib.Path, today: datetime.date,
                              f"closed")
         if not isinstance(e.get("max_lines"), int) or e["max_lines"] <= 0:
             raise CheckError(f"{where}: file exception needs positive int max_lines")
+        if "baseline_sloc" in e and (not isinstance(e["baseline_sloc"], int)
+                                     or e["baseline_sloc"] <= 0):
+            raise CheckError(f"{where}: baseline_sloc, when present, must be a "
+                             f"positive int (the file's SLOC at review time)")
         if target in per_file:
             raise CheckError(f"{where}: duplicate exception for {target!r}")
         per_file[target] = e
@@ -319,6 +368,12 @@ def run_check(repo: pathlib.Path, today: datetime.date,
         sloc = counts[path]["sloc"]
         symbols = counts[path]["symbols"]
         exception = per_file_exceptions.get(path)
+        if counts[path].get("scan_uncertain"):
+            warnings.append({
+                "kind": "sloc_scan_uncertain", "path": path,
+                "note": "the SLOC scan ended inside an open block comment "
+                        "(likely a /* inside a string literal); this file's count "
+                        "may be undercounted - inspect it (G3-R1)"})
         if symbols > SYMBOL_CEILING:
             # Report-only signal, emitted BEFORE any failure short-circuit so an
             # already-failing file keeps its signal (G3-F11).
@@ -327,14 +382,34 @@ def run_check(repo: pathlib.Path, today: datetime.date,
                              "symbols": symbols,
                              "note": f"many top-level symbols{approx}; a signal, "
                                      f"not a verdict"})
-        if exception is not None and exception["max_lines"] > material_growth_limit(sloc):
-            failures.append({
-                "kind": "exception_too_broad", "path": path, "sloc": sloc,
-                "limit": material_growth_limit(sloc),
-                "detail": f"the reviewed ceiling ({exception['max_lines']}) grossly "
-                          f"exceeds the file's current size; an exception permits at "
-                          f"most one growth step - renew it narrowly (G5 SEC-MINOR-4)"})
-            continue
+        if exception is not None:
+            # G5 SEC-MINOR-4 / G3-R2 / G4-D2: an exception permits at most one
+            # growth step above the size recorded WHEN IT WAS REVIEWED
+            # (exception.baseline_sloc, default current). A ceiling above that is
+            # over-broad and FAILS. But if the FILE has since shrunk comfortably
+            # below its own ceiling, the exception is merely STALE (the file is
+            # small - benign); that is a warning, and a hard failure is reserved
+            # for a ceiling that outruns the review size while the file is still
+            # near it.
+            reviewed_sloc = exception.get("baseline_sloc", sloc)
+            over_broad = exception["max_lines"] > material_growth_limit(reviewed_sloc)
+            shrunk_clear = sloc <= material_growth_limit(WARN_SLOC)
+            if over_broad and shrunk_clear:
+                warnings.append({
+                    "kind": "stale_exception", "path": path, "sloc": sloc,
+                    "note": f"file is {sloc} SLOC, well under its exception ceiling "
+                            f"({exception['max_lines']}) - the exception is stale; "
+                            f"DELETE it (the refactor policy s6 asked for succeeded)"})
+            elif over_broad:
+                failures.append({
+                    "kind": "exception_too_broad", "path": path, "sloc": sloc,
+                    "limit": material_growth_limit(reviewed_sloc),
+                    "detail": f"the reviewed ceiling ({exception['max_lines']}) "
+                              f"exceeds one growth step above the recorded review size "
+                              f"({reviewed_sloc}); narrow it, or if the file was "
+                              f"refactored below threshold, DELETE the exception "
+                              f"(G5 SEC-MINOR-4)"})
+                continue
         if exception is not None and sloc > exception["max_lines"]:
             failures.append({
                 "kind": "exception_exceeded", "path": path, "sloc": sloc,
@@ -394,8 +469,10 @@ def regenerate_baseline(repo: pathlib.Path, today: datetime.date,
     counts = census(repo)
     _, regenerations = load_exceptions(exceptions_path, today, set(counts))
     version = 1
+    old_entries: dict[str, int] = {}
     if baseline_path.is_file():
-        version = json.loads(baseline_path.read_text(encoding="utf-8"))["version"] + 1
+        prior_version, old_entries = load_baseline(baseline_path)  # G3-R3: guarded read
+        version = prior_version + 1
     approved = [r for r in regenerations
                 if r.get("approval_id") == approval_id and not r.get("_expired")
                 and r.get("for_version") == version]
@@ -403,11 +480,11 @@ def regenerate_baseline(repo: pathlib.Path, today: datetime.date,
         raise CheckError(
             f"no unexpired baseline-regeneration approval with approval_id "
             f"{approval_id!r} bound to version {version} in {exceptions_path.name}; "
-            f"approvals are single-use, bound to the one version they produce - the "
-            f"baseline cannot be casually regenerated (D-017-R110, G5 SEC-MINOR-2)")
-    old_entries: dict[str, int] = {}
-    if baseline_path.is_file():
-        _, old_entries = load_baseline(baseline_path)
+            f"an approval is bound to the one version it produces (while the "
+            f"predecessor baseline exists) - the baseline cannot be casually "
+            f"regenerated (D-017-R110, G5 SEC-MINOR-2). Deleting the baseline to "
+            f"reset the counter is a conspicuous whole-file diff that review "
+            f"catches (G4-D3, policy s7)")
     entries: dict[str, int] = {}
     for path, data in counts.items():
         sloc = data["sloc"]

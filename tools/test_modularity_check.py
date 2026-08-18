@@ -277,6 +277,45 @@ class ProofTests(RepoCase):
         self.assertIn("new_oversized", kinds)
         self.assertEqual(kinds["new_oversized"]["sloc"], 1200)
 
+    def test_r1_string_literal_comment_markers_do_not_fool_the_scanner(self) -> None:
+        """G3-R1 / G4-D1: /* inside a string literal is COUNTED correctly (not
+        swallowed, not falsely flagged uncertain); only a genuinely open block
+        comment at EOF is surfaced as uncertain."""
+        # Real Vite pattern: /* is inside a string, no real comment involved.
+        self.add("apps/web/src/lib/glob.ts",
+                 'const mods = import.meta.glob("./modules/*.ts");\n'
+                 + "export const x = 1;\n" * 700)  # 701 real SLOC
+        self.write_baseline({})
+        code, payload = self.run_main("--check")
+        warn_kinds = {w["kind"] for w in payload["warnings"]}
+        self.assertNotIn("sloc_scan_uncertain", warn_kinds,
+                         "a /* inside a string is not an uncertain scan")
+        self.assertIn("review_signal", warn_kinds)  # 701 > 600, counted right
+        # A genuinely unterminated block comment (syntax error) still warns.
+        self.add("apps/web/src/lib/broken.ts",
+                 "export const y = 1;\n/* an unterminated block comment\n"
+                 + "still comment\n" * 5)
+        code, payload = self.run_main("--check")
+        self.assertIn("sloc_scan_uncertain",
+                      {w["kind"] for w in payload["warnings"]})
+
+    def test_r2_refactoring_a_file_down_does_not_trip_too_broad(self) -> None:
+        """G3-R2: exception breadth is judged against the recorded review size,
+        so shrinking a file toward its split target never breaks CI."""
+        self.add("services/api/big.py", module_text(1100))
+        self.write_baseline({})
+        # Reviewed when the file was 1100; ceiling 1200 = one growth step.
+        exc = self.file_exception("services/api/big.py", 1200)
+        exc["baseline_sloc"] = 1100
+        self.write_exceptions([exc])
+        self.assertEqual(self.run_main("--check")[0], 0)
+        # Refactor it DOWN to 700 - must still pass, not trip exception_too_broad.
+        self.add("services/api/big.py", module_text(700))
+        code, payload = self.run_main("--check")
+        self.assertEqual(code, 0, payload)
+        self.assertNotIn("exception_too_broad",
+                         {f["kind"] for f in payload["failures"]})
+
     def test_missing_baseline_fails_closed(self) -> None:
         self.add("services/api/ok.py", module_text(100))
         code, payload = self.run_main("--check")
