@@ -87,21 +87,46 @@ digest non-colliding even on identical bytes. Canonical JSON is
   the per-checkout cache dir outside the repo, with measured-only fields null
   when unavailable (never fabricated as zero; D-013-R051).
 
-### Incremental indexing (`tools/repo_index_incremental.py`, A2, D-013-R037/R079)
-- **Reuse-or-rebuild**: an unchanged snapshot (its content-hashed fingerprint
-  already has a validated generation) reuses that generation verbatim — a cache
-  hit that skips the expensive parse/resolve. A changed snapshot rebuilds via the
-  same `code_graph.build_graph` the clean rebuild uses.
+### Incremental indexing (`tools/repo_index_incremental.py` + `tools/repo_index_assembly.py`, A2, D-013-R032/R037/R059/R079)
+- **Three build modes**, recorded per run as `mode`/`rebuild_reason`:
+  - `reuse` — an unchanged snapshot (its content-hashed fingerprint already has a
+    validated generation) returns that generation's exact bytes; **zero files
+    reparsed** (D-013-R059).
+  - `incremental` — a local content edit reparses **only the changed files**
+    (`ast.parse` / TS scan re-run for those), reuses every unchanged file's
+    cached per-file extraction *bundle*, and reassembles the exact generator
+    output; **no full rebuild on a local change** (D-013-R032/R059).
+  - `full` — a cold build, a structural change (add/delete/rename, which alters
+    the global resolution index or the schema-node set), or a global invalidator
+    (parser/config/schema/eligibility version) rebuilds via the same driver with
+    a recorded reason. A structural change is a documented invalidator of the
+    resolution index, so a full rebuild is the deterministically-safe closure
+    (D-013-R032 "smallest deterministically proven invalidation closure").
+- **Byte-identical assembly** (`repo_index_assembly.drive`): reproduces
+  `code_graph.build_graph`'s exported bytes from per-file bundles. It reuses the
+  generator's own extraction internals (`_extract_py/_ts`, `_PyIndex`,
+  `_TsResolver`, `_contract_edges`, `_EdgeSet`) and is **version-guarded** — it
+  runs only against the exact `GENERATOR_VERSION`/`SCHEMA_VERSION` it was
+  verified for; any other version raises and the caller falls back to the real
+  `build_graph` (fail-safe, never fail-wrong).
 - **Parity invariant** (enforced by test): the incremental export is
-  BYTE-IDENTICAL to a clean full rebuild for the same snapshot — by construction
-  (reuse returns the exact cached full-build bytes; a rebuild is a full build).
+  BYTE-IDENTICAL to a clean full rebuild produced by the REAL
+  `code_graph.build_graph` — an independent reference, across cold / warm-reuse /
+  every change class. If the generator is bumped, the parity test fails until the
+  replica (and its known-version constants) are updated in lock-step.
 - **Change classification**: added / content_modified / metadata_modified /
   deleted / renamed (a delete+add sharing a raw content digest), plus global
-  invalidators (parser/config/schema/eligibility version change) which force a
-  full rebuild with a recorded reason.
+  invalidators.
 - **Affected importer closure**: the deterministic transitive set of files that
-  import a changed file, from the cached code-graph edges — reported for
-  telemetry and future partial-parse optimization.
+  import a changed file, read from the cached bundles' real import edges (an
+  internal import resolves `to` a target file path).
+- **Run record + telemetry** (D-013-R024/R050/R052): each build emits a rich
+  machine-readable run record (repo identity, HEAD/branch/dirty digest,
+  source-manifest fingerprint, versions, census, change counts, files
+  parsed/reused, graph nodes/edges before+after, mode/reason; measured-only
+  fields are null, never fabricated) and appends it to an external, append-only,
+  redacted JSONL log in the per-checkout runtime dir (never committed; identity
+  is a sha, never an absolute path).
 - **Crash-safety / concurrency**: reuses the A1 cache's fail-closed rules; a full
   rebuild is always available as reference and recovery. mtime is never trusted.
 

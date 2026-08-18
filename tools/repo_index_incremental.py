@@ -1,34 +1,44 @@
 #!/usr/bin/env python3
-"""Incremental indexing on top of A1 (M0-T064 Unit A2, D-013-R037/R079 et al.).
+"""Incremental indexing on top of A1 (M0-T064 Unit A2, D-013-R032/R037/R079 et al.).
 
-The parity invariant is the load-bearing contract: the incremental build's
-exported bytes are BYTE-IDENTICAL to a clean full rebuild for the same snapshot
-and effective versions (D-013-R079; enforced by test). It is guaranteed by
-construction, not by luck:
+Two invariants govern this layer:
 
-  * the snapshot fingerprint (A1) always hashes file CONTENT - mtime is never
-    trusted (D-013-R030), so the reuse decision can never be fooled by a
-    restored mtime;
-  * on an UNCHANGED snapshot the validated cached generation is returned
-    verbatim - the exact bytes of a prior full build (cache hit; the win is
-    skipping the expensive parse/resolve, not re-serializing);
-  * on a CHANGED snapshot the index is produced by the SAME full builder
-    (`code_graph.build_graph`) the clean rebuild uses, so the output matches by
-    construction; the incremental layer additionally derives the exact change
-    set and the deterministically affected importer closure and reports them
-    (telemetry + future partial-parse optimization), and forces a full rebuild
-    on any GLOBAL invalidator (parser/config/schema/eligibility change) with a
-    recorded reason.
+  * PARITY (load-bearing, D-013-R079/R037): the incremental export is
+    BYTE-IDENTICAL to a clean full rebuild for the same snapshot and effective
+    versions. Guaranteed by construction and proven by test against the REAL
+    `code_graph.build_graph` (an independent reference), never by luck.
+  * SELECTIVE REPARSE (D-013-R032/R059): on a local content edit only the
+    changed files are reparsed (`ast.parse` / TS scan); a warm no-change run
+    reparses zero files; a local change triggers no full rebuild. Delivered by
+    `repo_index_assembly.drive`, which reuses per-file extraction *bundles* from
+    the prior generation for every unchanged file and reassembles the exact
+    generator output.
+
+Rebuild taxonomy (recorded in each run's `mode`/`rebuild_reason`):
+  * `reuse`       -- snapshot fingerprint already has a validated generation;
+                     the exact prior bytes are returned (no parse at all).
+  * `incremental` -- content-only edits; reparse only the changed files, reuse
+                     the rest. The dominant "local change" case (D-013-R059).
+  * `full`        -- a cold build, a structural change (add/delete/rename, which
+                     alters the global resolution index or the schema-node set),
+                     or a global invalidator (parser/config/schema/eligibility
+                     version). Rebuilt via the same builder; still byte-identical.
+                     A structural change is a documented invalidator of the
+                     resolution index, so a full rebuild is the deterministically
+                     safe closure (D-013-R032 "smallest deterministically proven
+                     invalidation closure"); content edits take the minimal path.
 
 Change classification (D-013): added / content_modified / metadata_modified /
 deleted / renamed (a delete+add sharing a content digest), plus global
-invalidators. Every generation is validated before promotion; a corrupt/stale/
-concurrent state is handled by the A1 cache's fail-closed rules; retries are
-idempotent. A full rebuild always remains available as reference and recovery.
+invalidators. mtime is never trusted (A1, D-013-R030). Every generation is
+validated before promotion; a corrupt/stale/concurrent state is handled by the
+A1 cache's fail-closed rules; retries are idempotent. A full rebuild via the real
+generator always remains available as reference and recovery.
 """
 from __future__ import annotations
 
 import dataclasses
+import json
 import os
 import pathlib
 import sys
@@ -40,10 +50,14 @@ if str(_ROOT) not in sys.path:
     sys.path.insert(0, str(_ROOT))
 
 from tools import repo_fingerprint as rf  # noqa: E402
+from tools import repo_index_assembly as asm  # noqa: E402
 from tools import repo_index_cache as ric  # noqa: E402
 from tools.code_graph import generate as codegraph  # noqa: E402
 
-INCREMENTAL_SCHEMA = "repo_index_incremental/v1"
+INCREMENTAL_SCHEMA = "repo_index_incremental/v2"
+RUN_RECORD_SCHEMA = "repo_index_runrecord/v1"
+UNIT_ID = "M0-T064"
+TELEMETRY_FILENAME = "incremental_telemetry.jsonl"
 
 # Change classes (D-013).
 ADDED = "added"
@@ -66,12 +80,29 @@ class ChangeSet:
         return bool(self.added or self.content_modified or self.deleted
                     or self.renamed or self.global_invalidators)
 
+    def is_structural(self) -> bool:
+        """A change that alters the global resolution index or schema-node set,
+        so unchanged files' edges could re-resolve -> a full rebuild is required
+        for a deterministically-safe (byte-identical) result."""
+        return bool(self.added or self.deleted or self.renamed
+                    or self.global_invalidators)
+
     def changed_paths(self) -> set[str]:
         paths = set(self.added) | set(self.content_modified) | set(self.deleted)
         for old, new in self.renamed:
             paths.add(old)
             paths.add(new)
         return paths
+
+    def counts(self) -> dict[str, int]:
+        return {
+            "added": len(self.added),
+            "content_modified": len(self.content_modified),
+            "metadata_modified": len(self.metadata_modified),
+            "deleted": len(self.deleted),
+            "renamed": len(self.renamed),
+            "global_invalidators": len(self.global_invalidators),
+        }
 
     def to_dict(self) -> dict[str, Any]:
         return {
@@ -102,7 +133,6 @@ def classify_changes(prior_manifest: dict[str, Any],
     cur_files = _manifest_index([e.to_dict() for e in current.file_manifest])
 
     cs = ChangeSet()
-    # global invalidators: any config version that changed
     prior_versions = prior_manifest.get("config_versions", {})
     for key, val in current.config_versions.items():
         if prior_versions.get(key) != val:
@@ -121,7 +151,6 @@ def classify_changes(prior_manifest: dict[str, Any],
         elif p.get("mode") != c.get("mode"):
             cs.metadata_modified.append(path)
 
-    # rename detection: pair a deleted + added with the same raw content digest
     del_by_digest: dict[str, list[str]] = {}
     for path in cs.deleted:
         del_by_digest.setdefault(prior_files[path]["raw_digest"], []).append(path)
@@ -141,20 +170,21 @@ def classify_changes(prior_manifest: dict[str, Any],
     return cs
 
 
-def affected_closure(changed: set[str], graph: dict[str, Any]) -> set[str]:
-    """Deterministic importer closure: the changed files plus every file that,
-    per the cached code-graph edges, imports (directly or transitively) a
-    changed file. Used to report the minimal re-index scope (D-013).
+def importer_closure(changed: set[str], bundles: dict[str, dict[str, Any]],
+                     input_files: list[str]) -> set[str]:
+    """Deterministic importer closure over the cached per-file extraction bundles:
+    the changed files plus every file that imports (directly or transitively) a
+    changed file. An internal import edge resolves `to` a target FILE path, so the
+    reverse map is read straight from each bundle's `import_edges` -- the real
+    graph shape, not a guessed one.
     """
-    # Build a reverse edge map: target-file -> {source-files that depend on it}.
-    node_file = {n.get("id"): n.get("file") for n in graph.get("nodes", [])
-                 if n.get("file")}
+    input_set = set(input_files)
     importers: dict[str, set[str]] = {}
-    for e in graph.get("edges", []):
-        src_file = node_file.get(e.get("source"))
-        dst_file = node_file.get(e.get("target"))
-        if src_file and dst_file and src_file != dst_file:
-            importers.setdefault(dst_file, set()).add(src_file)
+    for rel, bundle in bundles.items():
+        for e in bundle.get("import_edges", []):
+            tgt = e.get("to")
+            if tgt in input_set and tgt != rel:
+                importers.setdefault(tgt, set()).add(rel)
     closure = set(changed)
     frontier = set(changed)
     while frontier:
@@ -172,10 +202,17 @@ def affected_closure(changed: set[str], graph: dict[str, Any]) -> set[str]:
 class IncrementalResult:
     schema: str
     snapshot_fingerprint: str
-    reused: bool                       # True = cache hit (no rebuild)
-    rebuild_reason: str                # "" on reuse; else why a full build ran
+    reused: bool                       # True = cache hit (no rebuild at all)
+    mode: str                          # "reuse" | "incremental" | "full"
+    rebuild_reason: str                # "" on reuse; else why/how it was built
     change_set: ChangeSet
     affected_files: list[str]
+    files_parsed: int
+    files_reused: int
+    nodes_before: int
+    edges_before: int
+    nodes_after: int
+    edges_after: int
     export_bytes: bytes               # the canonical index bytes (parity subject)
     telemetry: dict[str, Any]
 
@@ -183,20 +220,62 @@ class IncrementalResult:
         return rf.domain_hash("codegraph_export", self.export_bytes)
 
 
-def _full_build_bytes(repo_root: pathlib.Path) -> tuple[bytes, dict[str, Any]]:
-    graph, meta, _ = codegraph.build_graph(str(repo_root))
-    return codegraph.serialize(graph), {"graph": graph, "meta": meta}
+def _schema_content_changed(cs: ChangeSet) -> bool:
+    def is_schema(p: str) -> bool:
+        return (p.startswith(codegraph.SCHEMA_DIR_PREFIX)
+                and p.endswith(codegraph.SCHEMA_SUFFIX))
+    return any(is_schema(p) for p in cs.content_modified)
+
+
+def _graph_counts(graph: dict[str, Any]) -> tuple[int, int]:
+    return len(graph.get("nodes", [])), len(graph.get("edges", []))
+
+
+def _payload_from_assembly(res: "asm.AssemblyResult",
+                           fp: rf.FingerprintResult) -> dict[str, Any]:
+    n, e = _graph_counts(res.graph)
+    return {
+        "export": res.export_bytes.decode("utf-8"),
+        "manifest": fp.manifest_to_dict(),
+        "config_versions": fp.config_versions,
+        "input_files": res.input_files,
+        "schema_nodes": res.schema_nodes,
+        "bundles": res.bundles,
+        "generator_identity": asm.generator_identity(),
+        "counts": {"nodes": n, "edges": e},
+    }
+
+
+def _full_via_generator(root: pathlib.Path) -> tuple[bytes, dict[str, Any], dict[str, Any]]:
+    """Fail-safe full build through the REAL generator (used only when the live
+    generator is not the version the assembly replica verifies). No reusable
+    bundles are produced, so the next build is also a full rebuild until the
+    replica is updated -- correctness before speed."""
+    graph, meta, input_files = codegraph.build_graph(str(root))
+    export = codegraph.serialize(graph)
+    n, e = _graph_counts(graph)
+    payload = {
+        "export": export.decode("utf-8"),
+        "manifest": None,           # filled by caller (needs the fingerprint)
+        "input_files": input_files,
+        "generator_identity": asm.generator_identity(),
+        "counts": {"nodes": n, "edges": e},
+    }
+    return export, payload, {"nodes": n, "edges": e}
 
 
 def build_incremental(repo_root: str | os.PathLike[str], *,
                       cache_base: str | os.PathLike[str] | None = None,
+                      run_id: str | None = None,
+                      persist_telemetry: bool = True,
                       ) -> IncrementalResult:
     """Build (or reuse) the index for the current snapshot, guaranteeing parity.
 
-    Returns the canonical export bytes plus a run record. Reuse when the current
-    snapshot fingerprint already has a validated cached generation; otherwise a
-    full rebuild (parity-safe), with the change set + affected closure computed
-    from the prior generation when one exists.
+    Reuse when the snapshot fingerprint already has a validated generation;
+    otherwise classify against the prior generation and either selectively
+    reparse (content-only edits) or full-rebuild (structural / invalidator /
+    cold / unknown-generator), always producing bytes byte-identical to a clean
+    full rebuild.
     """
     root = pathlib.Path(repo_root).resolve()
     started = time.time()
@@ -204,96 +283,218 @@ def build_incremental(repo_root: str | os.PathLike[str], *,
     cache = ric.IndexCache(root, base=cache_base)
     cache.recover()
 
-    # cache hit: an already-validated generation for this exact snapshot
+    # ---- cache hit: an already-validated generation for this exact snapshot ----
     hit = cache.load_fingerprint(fp.snapshot_fingerprint)
     if hit is not None:
         payload = hit.load_payload()
         export_bytes = payload["export"].encode("utf-8")
-        return IncrementalResult(
-            schema=INCREMENTAL_SCHEMA,
-            snapshot_fingerprint=fp.snapshot_fingerprint,
-            reused=True, rebuild_reason="",
+        n, e = (payload.get("counts", {}).get("nodes", 0),
+                payload.get("counts", {}).get("edges", 0))
+        res = IncrementalResult(
+            schema=INCREMENTAL_SCHEMA, snapshot_fingerprint=fp.snapshot_fingerprint,
+            reused=True, mode="reuse", rebuild_reason="",
             change_set=ChangeSet(), affected_files=[],
-            export_bytes=export_bytes,
-            telemetry=_telemetry(fp, reused=True, reason="",
-                                 files_hashed=fp.census.indexed,
-                                 files_parsed=0, files_reused=fp.census.indexed,
-                                 affected=0, elapsed=time.time() - started))
+            files_parsed=0, files_reused=fp.census.indexed,
+            nodes_before=n, edges_before=e, nodes_after=n, edges_after=e,
+            export_bytes=export_bytes, telemetry={})
+        return _finish(res, fp, cache, started, run_id, persist_telemetry)
 
-    # miss: classify against the previous current generation (if any), rebuild
+    # ---- miss: classify against the previous current generation (if any) ----
     prior = cache.load_current()
     change_set = ChangeSet()
-    affected: set[str] = set()
+    prior_payload: dict[str, Any] | None = None
+    prior_bundles: dict[str, dict[str, Any]] = {}
+    nodes_before = edges_before = 0
     if prior is not None:
         prior_payload = prior.load_payload()
-        prior_manifest = prior_payload.get("manifest", {})
+        # the stored manifest omits config_versions (kept as a sibling field);
+        # merge it back so version invalidators are detected, not spuriously
+        # fired against an empty prior version set.
+        prior_manifest = dict(prior_payload.get("manifest") or {})
+        prior_manifest.setdefault("config_versions",
+                                  prior_payload.get("config_versions") or {})
         change_set = classify_changes(prior_manifest, fp)
-        prior_graph = prior_payload.get("graph", {"nodes": [], "edges": []})
-        affected = affected_closure(change_set.changed_paths(), prior_graph)
-        reason = ("global_invalidator: " + ", ".join(change_set.global_invalidators)
-                  if change_set.global_invalidators
-                  else f"content_change: {len(change_set.changed_paths())} files")
-    else:
-        reason = "cold_build: no prior generation"
+        prior_bundles = prior_payload.get("bundles") or {}
+        nodes_before = prior_payload.get("counts", {}).get("nodes", 0)
+        edges_before = prior_payload.get("counts", {}).get("edges", 0)
 
-    export_bytes, built = _full_build_bytes(root)
-    payload = {
-        "export": export_bytes.decode("utf-8"),
-        "manifest": fp.manifest_to_dict(),
-        "config_versions": fp.config_versions,
-        "graph": built["graph"],
-    }
+    input_files_now = codegraph.scan_input_files(str(root))
+
+    # ---- fast path: content-only edits, verified generator, reusable bundles ----
+    can_incremental = (
+        prior_payload is not None
+        and asm.generator_recognized()
+        and prior_payload.get("generator_identity") == asm.generator_identity()
+        and bool(prior_bundles)
+        and not change_set.is_structural()
+        and not _schema_content_changed(change_set)
+        and change_set.any_content_change()
+        and input_files_now == prior_payload.get("input_files"))
+
+    if can_incremental:
+        changed = frozenset(change_set.content_modified)
+        res_asm = asm.drive(
+            root, prior_bundles=prior_bundles,
+            prior_schema_nodes=prior_payload.get("schema_nodes"),
+            changed=changed, input_files=input_files_now)
+        export_bytes = res_asm.export_bytes
+        affected = importer_closure(change_set.changed_paths(), prior_bundles,
+                                    input_files_now)
+        reason = (f"incremental: reparsed {res_asm.files_parsed} of "
+                  f"{len(input_files_now)} files")
+        payload = _payload_from_assembly(res_asm, fp)
+        cache.write_generation(fp.snapshot_fingerprint, payload)
+        n, e = _graph_counts(res_asm.graph)
+        res = IncrementalResult(
+            schema=INCREMENTAL_SCHEMA, snapshot_fingerprint=fp.snapshot_fingerprint,
+            reused=False, mode="incremental", rebuild_reason=reason,
+            change_set=change_set, affected_files=sorted(affected),
+            files_parsed=res_asm.files_parsed, files_reused=res_asm.files_reused,
+            nodes_before=nodes_before, edges_before=edges_before,
+            nodes_after=n, edges_after=e,
+            export_bytes=export_bytes, telemetry={})
+        return _finish(res, fp, cache, started, run_id, persist_telemetry)
+
+    # ---- full rebuild (cold / structural / invalidator / unknown generator) ----
+    if not asm.generator_recognized():
+        # the most actionable signal: an unrecognized generator disables every
+        # future incremental build until the assembly replica is updated.
+        reason = f"full: unrecognized generator {asm.generator_identity()}"
+    elif prior_payload is None:
+        reason = "full: cold build (no prior generation)"
+    elif change_set.global_invalidators:
+        reason = "full: global_invalidator: " + ", ".join(change_set.global_invalidators)
+    elif change_set.is_structural():
+        reason = ("full: structural change (add/delete/rename alters the "
+                  "resolution index): " + json.dumps(change_set.counts(),
+                                                      sort_keys=True))
+    elif _schema_content_changed(change_set):
+        reason = "full: schema-node set changed"
+    else:
+        reason = "full: rebuild"
+
+    affected = (importer_closure(change_set.changed_paths(), prior_bundles,
+                                 input_files_now) if prior_bundles else set())
+
+    if asm.generator_recognized():
+        res_asm = asm.drive(root)   # cold drive: byte-identical, yields bundles
+        export_bytes = res_asm.export_bytes
+        payload = _payload_from_assembly(res_asm, fp)
+        files_parsed, files_reused = res_asm.files_parsed, res_asm.files_reused
+        n, e = _graph_counts(res_asm.graph)
+    else:
+        export_bytes, payload, cnt = _full_via_generator(root)
+        payload["manifest"] = fp.manifest_to_dict()
+        payload["config_versions"] = fp.config_versions
+        files_parsed, files_reused = fp.census.indexed, 0
+        n, e = cnt["nodes"], cnt["edges"]
+
     cache.write_generation(fp.snapshot_fingerprint, payload)
-    return IncrementalResult(
-        schema=INCREMENTAL_SCHEMA,
-        snapshot_fingerprint=fp.snapshot_fingerprint,
-        reused=False, rebuild_reason=reason,
+    res = IncrementalResult(
+        schema=INCREMENTAL_SCHEMA, snapshot_fingerprint=fp.snapshot_fingerprint,
+        reused=False, mode="full", rebuild_reason=reason,
         change_set=change_set, affected_files=sorted(affected),
-        export_bytes=export_bytes,
-        telemetry=_telemetry(fp, reused=False, reason=reason,
-                             files_hashed=fp.census.indexed,
-                             files_parsed=fp.census.indexed,
-                             files_reused=0, affected=len(affected),
-                             elapsed=time.time() - started))
+        files_parsed=files_parsed, files_reused=files_reused,
+        nodes_before=nodes_before, edges_before=edges_before,
+        nodes_after=n, edges_after=e,
+        export_bytes=export_bytes, telemetry={})
+    return _finish(res, fp, cache, started, run_id, persist_telemetry)
 
 
 def clean_full_build_bytes(repo_root: str | os.PathLike[str]) -> bytes:
-    """A clean full rebuild's canonical bytes - the parity reference."""
-    return _full_build_bytes(pathlib.Path(repo_root).resolve())[0]
+    """A clean full rebuild's canonical bytes via the REAL generator - the
+    INDEPENDENT parity reference the incremental output must match."""
+    graph, _, _ = codegraph.build_graph(str(pathlib.Path(repo_root).resolve()))
+    return codegraph.serialize(graph)
 
 
-def _telemetry(fp: rf.FingerprintResult, *, reused: bool, reason: str,
-               files_hashed: int, files_parsed: int, files_reused: int,
-               affected: int, elapsed: float) -> dict[str, Any]:
+# --------------------------------------------------------------------------
+# run record (D-013-R024/R052) + external append-only telemetry (D-013-R050)
+# --------------------------------------------------------------------------
+
+def _run_record(res: IncrementalResult, fp: rf.FingerprintResult, *,
+                run_id: str | None, elapsed_seconds: float) -> dict[str, Any]:
+    """The minimum machine-readable run record (D-013-R024/R052). Deterministic
+    content except `elapsed_seconds`, which is permitted ONLY in the external
+    runtime record and never enters a byte-identity artifact. Redacted: identity
+    is a sha, never an absolute path; no prompts/transcripts; bounded counts."""
     return {
-        "schema": INCREMENTAL_SCHEMA,
+        "schema": RUN_RECORD_SCHEMA,
+        "run_id": run_id,
+        "unit_id": UNIT_ID,
+        "role": "orchestrator",
+        "repo_identity": fp.checkout_identity,
+        "head_sha": fp.head.sha,
+        "branch": fp.head.branch,
+        "head_detached": fp.head.is_detached,
+        "dirty_state_digest": fp.dirty_state_digest,
+        "source_manifest_digest": fp.source_manifest_digest,
         "snapshot_fingerprint": fp.snapshot_fingerprint,
-        "cache_result": "hit" if reused else "miss",
-        "rebuild_reason": reason,
+        "versions": dict(sorted(fp.config_versions.items())),
+        "generator_identity": asm.generator_identity(),
+        "census": fp.census.to_dict(),
+        "change_set": res.change_set.counts(),
+        "mode": res.mode,
+        "cache_result": "hit" if res.reused else "miss",
+        "rebuild_reason": res.rebuild_reason,
         "files_examined": fp.census.eligible,
-        "files_hashed": files_hashed,
-        "files_parsed": files_parsed,
-        "files_reused": files_reused,
-        "affected_dependents": affected,
-        "elapsed_seconds": elapsed,
-        # provider/token measures are not applicable to a deterministic build:
+        "files_parsed": res.files_parsed,
+        "files_reused": res.files_reused,
+        "affected_dependents": len(res.affected_files),
+        "graph_nodes_before": res.nodes_before,
+        "graph_edges_before": res.edges_before,
+        "graph_nodes_after": res.nodes_after,
+        "graph_edges_after": res.edges_after,
+        "export_digest": res.export_digest(),
+        # measured-only fields are null when not applicable, NEVER fabricated:
         "estimated_tokens": None,
+        "provider_tokens": None,
+        "elapsed_seconds": elapsed_seconds,
     }
+
+
+def append_run_record(record: dict[str, Any], cache: ric.IndexCache) -> pathlib.Path:
+    """Append one redacted run record to the external, per-checkout, append-only
+    JSONL telemetry log (D-013-R050). Lives outside the repo, never committed."""
+    cache.root.mkdir(parents=True, exist_ok=True)
+    log = cache.root / TELEMETRY_FILENAME
+    with log.open("a", encoding="utf-8", newline="\n") as fh:
+        fh.write(json.dumps(record, sort_keys=True) + "\n")
+    return log
+
+
+def _finish(res: IncrementalResult, fp: rf.FingerprintResult,
+            cache: ric.IndexCache, started: float, run_id: str | None,
+            persist_telemetry: bool) -> IncrementalResult:
+    record = _run_record(res, fp, run_id=run_id,
+                         elapsed_seconds=time.time() - started)
+    res.telemetry = record
+    if persist_telemetry:
+        try:
+            append_run_record(record, cache)
+        except OSError:
+            pass  # telemetry is best-effort; a build never fails on logging
+    return res
 
 
 if __name__ == "__main__":
     import argparse
-    import json
     ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     ap.add_argument("--repo", default=str(pathlib.Path.cwd()))
     ap.add_argument("--cache-base", default=None)
+    ap.add_argument("--run-id", default=None)
+    ap.add_argument("--no-telemetry", action="store_true")
     args = ap.parse_args()
-    r = build_incremental(args.repo, cache_base=args.cache_base)
+    r = build_incremental(args.repo, cache_base=args.cache_base,
+                          run_id=args.run_id,
+                          persist_telemetry=not args.no_telemetry)
     print(json.dumps({
         "snapshot_fingerprint": r.snapshot_fingerprint,
-        "reused": r.reused, "rebuild_reason": r.rebuild_reason,
+        "mode": r.mode, "reused": r.reused, "rebuild_reason": r.rebuild_reason,
         "export_digest": r.export_digest(),
+        "files_parsed": r.files_parsed, "files_reused": r.files_reused,
         "change_set": r.change_set.to_dict(),
         "affected_files": len(r.affected_files),
+        "graph": {"nodes": r.nodes_after, "edges": r.edges_after},
         "telemetry": r.telemetry,
     }, indent=2))

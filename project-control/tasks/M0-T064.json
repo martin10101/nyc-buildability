@@ -3,7 +3,7 @@
   "title": "Context-intelligence Unit A2: incremental change classification, invalidation closure, incremental/full byte-identical parity (D-013)",
   "task_type": "infrastructure",
   "milestone_id": "M0",
-  "objective": "Implement D-013 Unit A2 on top of accepted A1: exact change-set derivation (added/content-modified/metadata-modified/deleted/renamed + parser/config/schema invalidations + deterministically affected importers), smallest proven invalidation closure, rename rebinding, full-rebuild-on-global-invalidator with reported reason, corruption/stale-lock/concurrent-writer detection with tested fail-closed rules, idempotent retries, and the enforced BYTE-IDENTICAL incremental-vs-clean-full parity invariant (owner decision 6) with the benchmark scenario matrix (no-change/one-file/dependency/delete/rename/parser-version/config/corrupt-cache/interrupted-write/concurrent-writer, cold+warm). Implemented as: the snapshot fingerprint always hashes content (mtime never trusted); an unchanged snapshot reuses the validated cached generation (the win = skipping parse/resolve); a changed snapshot derives the exact change set + affected importer closure and rebuilds via the same full builder so parity holds by construction; a global invalidator forces a full rebuild with a recorded reason. The byte-identical incremental-vs-clean-full parity invariant is enforced by test (D-013-R037/R079).",
+  "objective": "Implement D-013 Unit A2 on top of accepted A1: exact change-set derivation (added/content-modified/metadata-modified/deleted/renamed + parser/config/schema invalidations + deterministically affected importers), smallest proven invalidation closure, rename rebinding, full-rebuild-on-global-invalidator with reported reason, corruption/stale-lock/concurrent-writer detection with tested fail-closed rules, idempotent retries, and the enforced BYTE-IDENTICAL incremental-vs-clean-full parity invariant (owner decision 6) with the benchmark scenario matrix (no-change/one-file/dependency/delete/rename/parser-version/config/corrupt-cache/interrupted-write/concurrent-writer, cold+warm). Implemented as: the snapshot fingerprint always hashes content (mtime never trusted); an unchanged snapshot reuses the validated cached generation (the win = skipping parse/resolve); on a local content edit only the changed files are reparsed (their per-file extraction re-run) while every unchanged file's cached extraction bundle is reused, and the exact generator output is reassembled byte-identically (D-013-R032/R059 selective reparse); a structural change (add/delete/rename, which alters the global resolution index or schema-node set) or a global invalidator forces a full rebuild with a recorded reason (the deterministically-safe closure); an unrecognized generator version falls back to the real builder. The byte-identical incremental-vs-clean-full parity invariant is enforced by test against the REAL code_graph.build_graph (D-013-R037/R079); the affected importer closure is derived from the real import edges.",
   "business_reason": "D-013 Unit A2; only after A1 is reviewed and accepted (owner decision 4).",
   "inputs": [],
   "outputs": [],
@@ -12,7 +12,9 @@
   ],
   "allowed_paths": [
     "tools/repo_index_incremental.py",
+    "tools/repo_index_assembly.py",
     "tools/test_repo_index_incremental.py",
+    "tools/test_repo_index_assembly.py",
     "docs/CONTEXT_INTELLIGENCE_PIPELINE.md",
     ".github/workflows/ci.yml",
     "project-control/reports/M0-T064-producer-report.md",
@@ -49,7 +51,7 @@
       "id": "AS-3",
       "given": "a changed snapshot",
       "when": "the incremental build runs",
-      "then": "only changed eligible files drive the decision, the deterministically affected importer closure is computed, a full rebuild runs with a recorded reason, and the export is BYTE-IDENTICAL to a clean full rebuild"
+      "then": "for a content-only edit only the changed files are reparsed and unchanged files are reused (no full rebuild); for a structural/invalidator change a full rebuild runs with a recorded reason; the deterministically affected importer closure is computed from real edges; and in every case the export is BYTE-IDENTICAL to a clean full rebuild"
     },
     {
       "id": "AS-4",
@@ -77,12 +79,12 @@
     "security-reviewer",
     "directive-compliance-verifier"
   ],
-  "status": "claimed",
-  "progress_percent": 10,
+  "status": "awaiting_gate",
+  "progress_percent": 85,
   "risks": [],
   "blockers": [],
   "created_at": "2026-08-18T04:24:46.572066+00:00",
-  "updated_at": "2026-08-18T14:44:40.983027+00:00",
+  "updated_at": "2026-08-18T14:44:53.012977+00:00",
   "directive_refs": [
     {
       "directive_id": "D-001",
@@ -99,7 +101,8 @@
   "path_free_justification": "Roadmap reservation contracted at the D-013 bootstrap (owner authorization 2026-08-18, source-002). Genuinely path-free until claimed: exact allowed paths are bound at claim time after predecessor acceptance per D-013 sequencing; no implementation content exists or is authorized yet for this unit.",
   "documented_test_commands": [
     "python tools/test_repo_index_incremental.py",
-    "python -m pytest tools/test_repo_index_incremental.py -q"
+    "python tools/test_repo_index_assembly.py",
+    "python -m pytest tools/test_repo_index_incremental.py tools/test_repo_index_assembly.py -q"
   ],
   "worktree": "C:/Users/MLFLL/Downloads/nyc-zoning/wt-m0t064"
 }

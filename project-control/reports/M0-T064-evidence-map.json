@@ -12,7 +12,7 @@
    "No 'read whole repo' claim; the build reports cache_result + change_set + affected closure with provenance."
   ],
   "D-013-R003": [
-   "Lower cost = cache reuse on unchanged snapshots, never dropping material; a changed snapshot rebuilds fully."
+   "Lower cost = cache reuse on unchanged snapshots + selective reparse (only changed files) on a local edit, never dropping material; structural/invalidator changes rebuild fully."
   ],
   "D-013-R004": [
    "Reconciled against live git/fingerprint; reuse keyed on the content-hashed snapshot fingerprint."
@@ -30,7 +30,7 @@
    "All structural work deterministic Python; no LLM in indexing/invalidation/promotion."
   ],
   "D-013-R010": [
-   "One focused new module (299 SLOC) by cohesion."
+   "Two focused modules by cohesion: incremental orchestration/telemetry (repo_index_incremental.py, 500 SLOC) and the generator-coupled byte-identical assembly driver (repo_index_assembly.py, 317 SLOC); modularity_check 0 failures."
   ],
   "D-013-R011": [
    "No caches/secrets in git; generations + telemetry stay in the A1 external cache dir."
@@ -48,7 +48,7 @@
    "Census reused from A1 (eligible/indexed/excluded/failed); change_set derived from manifests."
   ],
   "D-013-R024": [
-   "Telemetry carries cache result, files examined/hashed/parsed/reused, affected, versions."
+   "Run record carries repo identity, HEAD/branch/dirty-state digest, source-manifest fingerprint, snapshot fingerprint, census (eligible/indexed/excluded/failed/stale), cache result, files examined/parsed/reused, affected dependents, change-set counts, indexer/schema/generator versions (test_run_record_has_required_fields)."
   ],
   "D-013-R025": [
    "Complete census reused from A1; incremental never silently narrows it."
@@ -60,7 +60,7 @@
    "Exact change-set derivation: added/content_modified/metadata_modified/deleted/renamed + global invalidators (classify_changes)."
   ],
   "D-013-R033": [
-   "Smallest proven invalidation closure: affected_closure = changed files + transitive importers from the cached graph edges."
+   "Smallest proven invalidation closure: a content edit reparses ONLY the changed files (files_parsed == |content_modified|) with unchanged files reused; importer_closure = changed files + transitive importers read from the cached bundles' REAL import edges (test_local_edit_reparses_only_changed_no_full_rebuild, test_closure_on_real_bundles)."
   ],
   "D-013-R034": [
    "Rename rebinding: a delete+add sharing a raw content digest is classified renamed, not add+delete (test_rename_is_detected_by_content_digest)."
@@ -72,19 +72,19 @@
    "Corruption/stale-lock/concurrent-writer detection + fail-closed + idempotent retry (A1 cache; test_corrupt_generation_is_recovered_and_rebuilt, test_idempotent_retry)."
   ],
   "D-013-R037": [
-   "BYTE-IDENTICAL incremental-vs-clean-full parity enforced by test (ParityInvariant, 3 change classes) - the A2 obligation A1's DCV carried forward."
+   "BYTE-IDENTICAL incremental-vs-clean-full parity enforced by test against the REAL code_graph.build_graph (independent reference) across cold/warm-reuse/content-edit/add/delete/rename; the assembly driver's cold+warm output matches build_graph byte-for-byte (test_repo_index_assembly) - the A2 obligation A1's DCV carried forward."
   ],
   "D-013-R042": [
    "Unused context capacity never a fill reason; A2 only builds/reuses the index."
   ],
   "D-013-R050": [
-   "Two storage classes (external redacted telemetry + bounded committed evidence: parity-evidence.md)."
+   "Two storage classes: external append-only redacted JSONL run records in the per-checkout runtime dir (incremental_telemetry.jsonl, never committed; append_run_record; test_telemetry_is_appended_jsonl, test_no_absolute_path_in_record) + bounded committed evidence (parity-evidence.md, producer report)."
   ],
   "D-013-R051": [
    "Nullable measures never fabricated as zero (estimated_tokens null; known counts present)."
   ],
   "D-013-R052": [
-   "Run record fields: cache_result, files examined/hashed/parsed/reused, affected, rebuild_reason, elapsed, snapshot fingerprint."
+   "Run record fields: schema+run id, unit id, role, repo identity, HEAD/branch/dirty digest, source-manifest+snapshot fingerprint, indexer/schema/generator versions, census counts, change-set counts, mode (full/incremental/reuse) + rebuild reason, files examined/parsed/reused, affected dependents, graph nodes+edges BEFORE and AFTER, export digest, elapsed (runtime record only); provider/token measures null when unavailable."
   ],
   "D-013-R053": [
    "Distinct measures separate; no combined token-savings number."
@@ -93,7 +93,7 @@
    "Full-rebuild-on-global-invalidator with reported reason (rebuild_reason=global_invalidator:...); test_global_invalidator_forces_full_rebuild."
   ],
   "D-013-R059": [
-   "Records files examined/hashed/parsed/reused, affected dependents, cache hit/miss, runtime, nullable token estimate; never fabricates a zero."
+   "Promotion evidence: warm no-change run reparses ZERO source files (files_parsed=0; test_warm_no_change_reparses_zero); a local change triggers no full rebuild (mode=incremental, only changed files reparsed; test_local_edit_reparses_only_changed_no_full_rebuild); incremental and clean full exports match byte-for-byte; census accounts for every eligible file; nullable measures never fabricated as zero."
   ],
   "D-013-R064": [
    "Committed summary in project-control/reports; cache/telemetry in the external runtime dir."
@@ -123,7 +123,7 @@
    "A2 decision: incremental indexing/invalidation on top of A1, byte-identical parity required - implemented."
   ],
   "D-013-R079": [
-   "Byte-identical incremental-vs-full REQUIRED and PROVEN (ParityInvariant.test_parity_holds_after_each_change_class == clean_full each time)."
+   "Byte-identical incremental-vs-full REQUIRED and PROVEN vs the REAL generator, including selective-reparse builds (ParityInvariant + SelectiveReparse == clean_full each time; assembly cold/warm == build_graph)."
   ],
   "D-013-R081": [
    "Eligibility not widened; reuses A1's code_graph roots via the fingerprint."
