@@ -69,7 +69,7 @@ class RepoCase(unittest.TestCase):
         return code, json.loads(body)
 
     def file_exception(self, path: str, max_lines: int, *,
-                       expires: str = "2026-12-31", **overrides) -> dict:
+                       expires: str = "2026-10-31", **overrides) -> dict:
         entry = {"kind": "file", "path": path, "max_lines": max_lines,
                  "owner": "owner", "reason": "reviewed cohesion justification",
                  "review_evidence": "PR #999 G3 review", "expires": expires}
@@ -165,8 +165,9 @@ class ProofTests(RepoCase):
         # (b) with approval: the still-oversized entry PERSISTS and never grows
         self.write_exceptions([{
             "kind": "baseline-regeneration", "approval_id": "APPROVED-1",
+            "for_version": 2,
             "owner": "owner", "reason": "reviewed", "review_evidence": "PR #999",
-            "expires": "2026-12-31"}])
+            "expires": "2026-09-30"}])
         code, payload = self.run_main("--regenerate-baseline",
                                       "--approval-id", "APPROVED-1")
         self.assertEqual(code, 0, payload)
@@ -187,6 +188,7 @@ class ProofTests(RepoCase):
         self.write_baseline({})
         self.write_exceptions([{
             "kind": "baseline-regeneration", "approval_id": "OLD-1",
+            "for_version": 1,
             "owner": "owner", "reason": "used up", "review_evidence": "PR #900",
             "expires": "2026-01-01"}])
         code, payload = self.run_main("--regenerate-baseline",
@@ -194,6 +196,86 @@ class ProofTests(RepoCase):
         self.assertEqual(code, 1)
         code, payload = self.run_main("--check")
         self.assertEqual(code, 0, payload)  # inert for --check
+
+    def test_6d_malformed_exceptions_fail_closed(self) -> None:
+        """G3-F6: malformed entries are structured CheckError refusals."""
+        self.add("services/api/justified.py", module_text(1100))
+        self.write_baseline({})
+        cases = [
+            ([{"kind": "file", "path": "services/api/justified.py",
+               "max_lines": 1150, "reason": "r", "review_evidence": "e",
+               "expires": "2026-10-01"}], "missing required field 'owner'"),
+            ([self.file_exception("services/api/justified.py", 1150,
+                                  expires="31-12-2026")], "bad expires date"),
+            ([{**self.file_exception("services/api/justified.py", 1150),
+               "max_lines": -5}], "positive int max_lines"),
+            (["just a string"], "entry must be an object"),
+        ]
+        for entries, needle in cases:
+            self.write_exceptions(entries)
+            code, payload = self.run_main("--check")
+            self.assertEqual(code, 1, payload)
+            self.assertIn(needle, payload["error"])
+
+    def test_6e_duplicate_exception_fails_closed(self) -> None:
+        self.add("services/api/justified.py", module_text(1100))
+        self.write_baseline({})
+        self.write_exceptions([
+            self.file_exception("services/api/justified.py", 1150),
+            self.file_exception("services/api/justified.py", 1180),
+        ])
+        code, payload = self.run_main("--check")
+        self.assertEqual(code, 1)
+        self.assertIn("duplicate exception", payload["error"])
+
+    def test_6f_horizon_and_breadth_bounds(self) -> None:
+        """G5 SEC-MINOR-4: 'temporary' and 'narrow' are machine-enforced."""
+        self.add("services/api/justified.py", module_text(1100))
+        self.write_baseline({})
+        self.write_exceptions([self.file_exception("services/api/justified.py",
+                                                   1150, expires="2027-08-18")])
+        code, payload = self.run_main("--check")
+        self.assertEqual(code, 1)
+        self.assertIn("temporary horizon", payload["error"])
+        self.write_exceptions([self.file_exception("services/api/justified.py",
+                                                   10 ** 9)])
+        code, payload = self.run_main("--check")
+        self.assertEqual(code, 1)
+        self.assertIn("exception_too_broad",
+                      {f["kind"] for f in payload["failures"]})
+
+    def test_7c_regeneration_approval_is_single_use(self) -> None:
+        """G5 SEC-MINOR-2: an approval binds to the ONE version it produces."""
+        self.add("services/api/legacy.py", module_text(1500))
+        self.write_exceptions([{
+            "kind": "baseline-regeneration", "approval_id": "ONCE-1",
+            "for_version": 1, "owner": "owner", "reason": "adoption",
+            "review_evidence": "PR #999", "expires": "2026-09-30"}])
+        code, payload = self.run_main("--regenerate-baseline",
+                                      "--approval-id", "ONCE-1")
+        self.assertEqual(code, 0, payload)
+        # A second regeneration would produce v2; the v1-bound approval refuses.
+        code, payload = self.run_main("--regenerate-baseline",
+                                      "--approval-id", "ONCE-1")
+        self.assertEqual(code, 1)
+        self.assertIn("bound to version 2", payload["error"])
+
+    def test_ts_inline_block_comments_are_counted_correctly(self) -> None:
+        """G4-C2: code sharing a line with a block comment still counts."""
+        block = ("/* start\n"
+                 "   still block */ const b = 2;\n"
+                 "/* one */ const c = 3;\n"
+                 "const d = 4; // tail comment\n"
+                 "// only comment\n"
+                 "/* whole-line comment */\n")
+        self.add("apps/web/src/lib/counted.ts", block * 400)
+        self.write_baseline({})
+        code, payload = self.run_main("--check")
+        # 3 counted lines per block x 400 = 1200 SLOC -> new_oversized
+        self.assertEqual(code, 1, payload)
+        kinds = {f["kind"]: f for f in payload["failures"]}
+        self.assertIn("new_oversized", kinds)
+        self.assertEqual(kinds["new_oversized"]["sloc"], 1200)
 
     def test_missing_baseline_fails_closed(self) -> None:
         self.add("services/api/ok.py", module_text(100))
@@ -209,7 +291,9 @@ class ProofTests(RepoCase):
         self.assertIn("review_signal", {w["kind"] for w in payload["warnings"]})
         self.add("services/api/giant.py", module_text(1100))
         code, payload = self.run_main("--report")
-        self.assertEqual(code, 0)  # report mode surfaces, never gates
+        self.assertEqual(code, 0)  # report mode never gates...
+        self.assertTrue(payload["failures"],
+                        "...but it must still SURFACE the violation (G3-F10)")
 
     def test_output_is_deterministic(self) -> None:
         self.add("services/api/b.py", module_text(650))

@@ -25,9 +25,9 @@ What is REPORTED but never fails:
     TypeScript; reliable for Python).
 
 Determinism: selection comes from `git ls-files` (tracked files only), all
-output is sorted, and expiry comparison uses --today when supplied (CI passes
-the commit date; interactive runs default to the current UTC date, which is the
-one intentional time input).
+output is sorted, and expiry comparison uses --today when supplied (tests pin
+it; CI and interactive runs default to the current UTC date - the one
+intentional time input, so an expired exception turns a rerun red on purpose).
 """
 from __future__ import annotations
 
@@ -49,6 +49,7 @@ SYMBOL_CEILING = 40  # top-level symbols; report-only signal
 
 GROWTH_ABSOLUTE = 50    # material growth = max(GROWTH_ABSOLUTE, 10%) over baseline
 GROWTH_FRACTION = 0.10
+EXCEPTION_HORIZON_DAYS = 90  # exceptions are temporary; never standing waivers
 
 #: Handwritten production roots -> extensions. Everything else is out of scope.
 INCLUDE_RULES: tuple[tuple[str, tuple[str, ...]], ...] = (
@@ -86,8 +87,11 @@ def _is_test_file(path: str) -> bool:
 
 def selected_files(repo: pathlib.Path) -> list[str]:
     """Tracked handwritten production files, sorted, POSIX-relative."""
-    out = subprocess.run(["git", "ls-files"], cwd=str(repo), capture_output=True,
-                         text=True, check=True)
+    try:
+        out = subprocess.run(["git", "ls-files"], cwd=str(repo),
+                             capture_output=True, text=True, check=True)
+    except (subprocess.CalledProcessError, OSError) as exc:
+        raise CheckError(f"git ls-files failed in {repo}: {exc}") from exc
     chosen: list[str] = []
     for line in out.stdout.splitlines():
         path = line.strip()
@@ -105,6 +109,40 @@ def selected_files(repo: pathlib.Path) -> list[str]:
     return sorted(chosen)
 
 
+def _ts_line_has_code(line: str, in_block: bool) -> tuple[bool, bool]:
+    """Comment-span-aware: does any non-comment content remain on this line?
+
+    Strips /* ... */ spans (tracking multi-line state) and // tails, then asks
+    whether anything non-blank survives - so `/* c */ const x = 1` counts and
+    `code */` after a block terminator counts (G4-C2). String literals
+    containing comment markers can still fool this scanner; that bound is
+    documented in policy s10.
+    """
+    remainder: list[str] = []
+    i = 0
+    while i < len(line):
+        if in_block:
+            end = line.find("*/", i)
+            if end == -1:
+                return bool("".join(remainder).strip()), True
+            i = end + 2
+            in_block = False
+            continue
+        start_block = line.find("/*", i)
+        start_line = line.find("//", i)
+        if start_line != -1 and (start_block == -1 or start_line < start_block):
+            remainder.append(line[i:start_line])
+            return bool("".join(remainder).strip()), False
+        if start_block != -1:
+            remainder.append(line[i:start_block])
+            i = start_block + 2
+            in_block = True
+            continue
+        remainder.append(line[i:])
+        break
+    return bool("".join(remainder).strip()), in_block
+
+
 def source_lines(path: pathlib.Path) -> int:
     """Non-blank, non-comment-only physical lines (policy s10 definition)."""
     try:
@@ -119,17 +157,11 @@ def source_lines(path: pathlib.Path) -> int:
         if not line:
             continue
         if suffix in (".ts", ".tsx"):
-            if in_block_comment:
-                if "*/" in line:
-                    in_block_comment = False
+            has_code, in_block_comment = _ts_line_has_code(line, in_block_comment)
+            if not has_code:
                 continue
-            if line.startswith("/*"):
-                if "*/" not in line:
-                    in_block_comment = True
-                continue
-            if line.startswith("//"):
-                continue
-        else:  # .py
+        else:  # .py: comment-only lines; `#` inside docstrings/strings is a
+            # documented heuristic bound (policy s10)
             if line.startswith("#"):
                 continue
         count += 1
@@ -150,31 +182,43 @@ def census(repo: pathlib.Path) -> dict[str, dict[str, int]]:
     return result
 
 
-def baseline_digest(entries: dict[str, int], version: int) -> str:
+def baseline_digest(entries: dict[str, int], version: int,
+                    approval_id: str = "") -> str:
     canonical = json.dumps({"version": version,
+                            "approval_id": approval_id,
                             "files": dict(sorted(entries.items()))},
                            sort_keys=True, separators=(",", ":"))
     return hashlib.sha256(canonical.encode("utf-8")).hexdigest()
 
 
 def load_baseline(path: pathlib.Path) -> tuple[int, dict[str, int]]:
-    """Load and integrity-check the reviewed baseline. Fail closed on tamper."""
+    """Load and integrity-check the reviewed baseline. Fail closed on drift."""
     if not path.is_file():
         raise CheckError(f"baseline missing: {path} (the baseline is reviewed "
                          f"repository state; run --regenerate-baseline only with "
                          f"a recorded approval)")
-    data = json.loads(path.read_text(encoding="utf-8"))
+    try:
+        data = json.loads(path.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError) as exc:
+        raise CheckError(f"baseline unreadable: {exc}") from exc
+    if not isinstance(data, dict):
+        raise CheckError("baseline malformed: top level must be an object")
     version = data.get("version")
     entries = data.get("files")
     recorded = data.get("baseline_digest")
+    approval_id = str(data.get("generated_with_approval_id", ""))
     if not isinstance(version, int) or not isinstance(entries, dict):
         raise CheckError("baseline malformed: needs int `version` and object `files`")
     entries = {str(k): int(v) for k, v in entries.items()}
-    if recorded != baseline_digest(entries, version):
+    if recorded != baseline_digest(entries, version, approval_id):
+        # A self-consistency check over version+approval+entries: it catches
+        # accidental or unrecomputed edits and forces any deliberate change
+        # through a visible diff carrying a recomputed digest - where review,
+        # not cryptography, is the actual authenticity control (G5 SEC-MINOR-1).
         raise CheckError(
             "baseline_digest mismatch: tools/modularity_baseline.json was edited "
-            "without regeneration approval; debt cannot be erased by editing the "
-            "baseline (D-017-R110)")
+            "outside the approved regeneration path; recompute via "
+            "--regenerate-baseline with a reviewed approval (D-017-R110)")
     return version, entries
 
 
@@ -187,7 +231,12 @@ def load_exceptions(path: pathlib.Path, today: datetime.date,
     """
     if not path.is_file():
         return {}, []
-    data = json.loads(path.read_text(encoding="utf-8"))
+    try:
+        data = json.loads(path.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError) as exc:
+        raise CheckError(f"exceptions unreadable: {exc}") from exc
+    if not isinstance(data, dict):
+        raise CheckError("exceptions malformed: top level must be an object")
     entries = data.get("exceptions", [])
     if not isinstance(entries, list):
         raise CheckError("exceptions malformed: `exceptions` must be a list")
@@ -195,6 +244,8 @@ def load_exceptions(path: pathlib.Path, today: datetime.date,
     regenerations: list[dict] = []
     for i, e in enumerate(entries):
         where = f"exceptions[{i}]"
+        if not isinstance(e, dict):
+            raise CheckError(f"{where}: entry must be an object")
         for field in ("owner", "reason", "review_evidence", "expires"):
             if not isinstance(e.get(field), str) or not e.get(field).strip():
                 raise CheckError(f"{where}: missing required field {field!r}")
@@ -202,10 +253,19 @@ def load_exceptions(path: pathlib.Path, today: datetime.date,
             expires = datetime.date.fromisoformat(e["expires"])
         except ValueError as exc:
             raise CheckError(f"{where}: bad expires date {e['expires']!r}") from exc
+        if expires > today + datetime.timedelta(days=EXCEPTION_HORIZON_DAYS):
+            raise CheckError(
+                f"{where}: expires {expires.isoformat()} exceeds the "
+                f"{EXCEPTION_HORIZON_DAYS}-day temporary horizon; exceptions are "
+                f"temporary by policy s8, never standing waivers")
         kind = e.get("kind", "file")
         if kind == "baseline-regeneration":
             if not isinstance(e.get("approval_id"), str) or not e["approval_id"].strip():
                 raise CheckError(f"{where}: baseline-regeneration needs approval_id")
+            if not isinstance(e.get("for_version"), int) or e["for_version"] <= 0:
+                raise CheckError(f"{where}: baseline-regeneration needs int "
+                                 f"for_version - each approval is single-use, "
+                                 f"bound to the one baseline version it produces")
             # A consumed approval goes inert when it expires (it is only
             # load-bearing for --regenerate-baseline, which refuses it then);
             # it must not poison later --check runs.
@@ -259,6 +319,22 @@ def run_check(repo: pathlib.Path, today: datetime.date,
         sloc = counts[path]["sloc"]
         symbols = counts[path]["symbols"]
         exception = per_file_exceptions.get(path)
+        if symbols > SYMBOL_CEILING:
+            # Report-only signal, emitted BEFORE any failure short-circuit so an
+            # already-failing file keeps its signal (G3-F11).
+            approx = " (approximate count)" if path.endswith((".ts", ".tsx")) else ""
+            warnings.append({"kind": "symbol_ceiling", "path": path,
+                             "symbols": symbols,
+                             "note": f"many top-level symbols{approx}; a signal, "
+                                     f"not a verdict"})
+        if exception is not None and exception["max_lines"] > material_growth_limit(sloc):
+            failures.append({
+                "kind": "exception_too_broad", "path": path, "sloc": sloc,
+                "limit": material_growth_limit(sloc),
+                "detail": f"the reviewed ceiling ({exception['max_lines']}) grossly "
+                          f"exceeds the file's current size; an exception permits at "
+                          f"most one growth step - renew it narrowly (G5 SEC-MINOR-4)"})
+            continue
         if exception is not None and sloc > exception["max_lines"]:
             failures.append({
                 "kind": "exception_exceeded", "path": path, "sloc": sloc,
@@ -288,13 +364,6 @@ def run_check(repo: pathlib.Path, today: datetime.date,
                              "justification in review" if sloc > JUSTIFY_SLOC else
                              "above the warning threshold; consider the module "
                              "boundary before growing it further")})
-        if symbols > SYMBOL_CEILING:
-            approx = " (approximate count)" if path.endswith((".ts", ".tsx")) else ""
-            warnings.append({"kind": "symbol_ceiling", "path": path,
-                             "symbols": symbols,
-                             "note": f"many top-level symbols{approx}; a signal, "
-                                     f"not a verdict"})
-
     return {
         "command": "modularity-check",
         "today": today.isoformat(),
@@ -324,13 +393,18 @@ def regenerate_baseline(repo: pathlib.Path, today: datetime.date,
     """
     counts = census(repo)
     _, regenerations = load_exceptions(exceptions_path, today, set(counts))
+    version = 1
+    if baseline_path.is_file():
+        version = json.loads(baseline_path.read_text(encoding="utf-8"))["version"] + 1
     approved = [r for r in regenerations
-                if r.get("approval_id") == approval_id and not r.get("_expired")]
+                if r.get("approval_id") == approval_id and not r.get("_expired")
+                and r.get("for_version") == version]
     if not approved:
         raise CheckError(
             f"no unexpired baseline-regeneration approval with approval_id "
-            f"{approval_id!r} in {exceptions_path.name}; the baseline cannot be "
-            f"casually regenerated (D-017-R110)")
+            f"{approval_id!r} bound to version {version} in {exceptions_path.name}; "
+            f"approvals are single-use, bound to the one version they produce - the "
+            f"baseline cannot be casually regenerated (D-017-R110, G5 SEC-MINOR-2)")
     old_entries: dict[str, int] = {}
     if baseline_path.is_file():
         _, old_entries = load_baseline(baseline_path)
@@ -342,18 +416,16 @@ def regenerate_baseline(repo: pathlib.Path, today: datetime.date,
                 entries[path] = min(old_entries[path], sloc)
         elif sloc >= WARN_SLOC:
             entries[path] = sloc
-    version = 1
-    if baseline_path.is_file():
-        version = json.loads(baseline_path.read_text(encoding="utf-8"))["version"] + 1
     doc = {
         "version": version,
         "generated_with_approval_id": approval_id,
         "thresholds": {"warn": WARN_SLOC, "justify": JUSTIFY_SLOC, "hard": HARD_SLOC},
         "files": dict(sorted(entries.items())),
-        "baseline_digest": baseline_digest(entries, version),
+        "baseline_digest": baseline_digest(entries, version, approval_id),
         "note": ("reviewed legacy-debt register; entries persist while their file "
                  "remains at or above the warning threshold - regeneration never "
-                 "erases live debt"),
+                 "erases live debt (a currently-failing NEW file absorbed here is "
+                 "the reviewed absorption path, visible in this file's diff)"),
     }
     baseline_path.write_text(json.dumps(doc, indent=1) + "\n",
                              encoding="utf-8", newline="\n")

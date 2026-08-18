@@ -16,11 +16,11 @@ items 1-7), bound to this task at claim.
 | R110 | `tools/modularity_check.py` (+ `tools/modularity_baseline.json`, `tools/modularity_exceptions.json`) | deterministic checker: handwritten-production-only selection from `git ls-files`; generated/vendored/lock/schema/migration/fixture/test exclusions; new-oversized fail; material-growth fail (`max(50, 10%)`); warning reporting; top-level symbol signal; versioned digest-locked baseline; approval-gated regeneration that never erases live debt; explicit expiring path-exact exceptions; deterministic sorted output; the two "line count is never proof / never an excuse" clauses in output and policy |
 | R111 | `.claude/skills/start-controlled-task/SKILL.md`, `.claude/skills/run-quality-gate/SKILL.md` | the seven boundary questions at claim time; the reviewer instruction to check answers against the actual diff |
 | R112 | `.github/workflows/ci.yml` | ADDITIVE `modularity` job (check + proof tests) on every PR/push; existing jobs untouched |
-| R113 | `tools/test_modularity_check.py` | 17 tests incl. the seven mandated proofs (see evidence) |
+| R113 | `tools/test_modularity_check.py` | 22 tests incl. the seven mandated proofs plus malformed/duplicate/horizon/breadth/single-use-approval/TS-comment-counting regressions (see evidence) |
 
 ## Evidence
 
-- `python -m pytest tools/test_modularity_check.py -q` → **17 passed** (the seven
+- `python tools/test_modularity_check.py` → **22 passed** (the seven
   D-017-R113 proofs map to: proof 1 `test_1_normal_focused_module_passes`; proof 2
   `test_2_new_unjustifiably_oversized_module_fails`; proof 3
   `test_3_growth_of_grandfathered_oversized_file_fails`; proof 4
@@ -30,7 +30,10 @@ items 1-7), bound to this task at claim.
   `test_6c_incorrectly_targeted_exception_fails`; proof 7
   `test_7_regeneration_cannot_silently_erase_debt` (+7b)).
 - `python tools/modularity_check.py --check` on this branch → **0 failures**, 4
-  symbol-ceiling warnings (review signals), 239 selected files.
+  symbol-ceiling warnings (review signals), 240 selected files (corrected from the
+  originally recorded 239, which was captured before the checker itself was staged
+  - G3-C3/G4-C1; re-measured after the G4-C2 comment-span-aware SLOC correction and
+  the fresh baseline regeneration under the same reviewed approval).
 - Initial baseline: version 1, **23 legacy-debt entries** (largest:
   `tools/agent_supervisor/cli.py`), generated under approval
   `M0-T073-initial-baseline` (expires 2026-08-25; reviewed in this PR), digest-locked.

@@ -31,6 +31,6 @@
   "tools/directive_registry.py": 1287,
   "tools/project_control.py": 1196
  },
- "baseline_digest": "885cf1c36ec7fbf1bbfef02aa1220ce8312dfd1a22fbbf0676ac3541dd5f605e",
- "note": "reviewed legacy-debt register; entries persist while their file remains at or above the warning threshold - regeneration never erases live debt"
+ "baseline_digest": "9f6dcfa4f9eeaeb7e7e04c7ef733e1eab5ba7bd62c7e773e8138b69ed0e438cb",
+ "note": "reviewed legacy-debt register; entries persist while their file remains at or above the warning threshold - regeneration never erases live debt (a currently-failing NEW file absorbed here is the reviewed absorption path, visible in this file's diff)"
 }
