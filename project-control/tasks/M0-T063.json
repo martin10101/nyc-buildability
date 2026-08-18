@@ -40,6 +40,12 @@
     "tools/code_graph/query.py",
     "tools/context_pack.py"
   ],
+  "documented_test_commands": [
+    "python tools/test_repo_fingerprint.py",
+    "python tools/test_repo_index_cache.py",
+    "python tools/test_repo_index_baseline.py",
+    "python -m pytest tools/test_repo_fingerprint.py tools/test_repo_index_cache.py tools/test_repo_index_baseline.py -q"
+  ],
   "acceptance_scenarios": [
     {
       "id": "AS-1",
