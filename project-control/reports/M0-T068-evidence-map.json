@@ -1,0 +1,89 @@
+{
+ "schema": "evidence_map/v1",
+ "task_id": "M0-T068",
+ "producer": "orchestrator",
+ "note": "Evidence per applicable D-013 row for M0-T068 (27 rows, derived by directive_registry.evaluate_task_refs at claim). Unit E: bounded repository-intelligence views (census/changed/neighborhood/deep) with the single R024 coverage-record builder, explicit truncation, typed question retrieval, and fail-closed behavior — feeding the ONE compiler.",
+ "requirements": {
+  "D-013-R001": [
+   "Unit E is the bounded-views retrieval layer of the ONE pipeline, a bounded task unit stacked on accepted A1/A2/B/C/D; consumes the index, graph, ontology, and memory store strictly read-only."
+  ],
+  "D-013-R002": [
+   "Every view carries explicit coverage_mode + the full R024 coverage record (identity, fingerprints, census, versions, query params); no whole-repo-understanding claim anywhere; the doc labels views advisory navigation with source files authoritative."
+  ],
+  "D-013-R003": [
+   "Nothing silently dropped: every list is capped with a machine-readable truncation marker {limit, returned, omitted, truncated} (AS-3 tests for neighborhood/census/deep); unresolvable inputs return machine-readable no-answers."
+  ],
+  "D-013-R004": [
+   "Reconciled against the live checkout: views read the live index build, live tree, live control-plane files; M0-T067 acceptance + merge (40b530f) verified before claim."
+  ],
+  "D-013-R006": [
+   "Control plane respected: G0 at contract commit 1006f16, claim via project_control.py, submit -> independent G3/G4/G5 -> accept, orchestrator-executed per ADR-005."
+  ],
+  "D-013-R007": [
+   "Single writer (orchestrator in wt-m0t064 on task/M0-T068-repo-views); review by a fresh read-only independent agent."
+  ],
+  "D-013-R008": [
+   "No new taxonomy: subsystem labels come ONLY from the accepted versioned Unit C map (card/neighborhood _subsystem_of -> resolve_path); modes are the four directive-named coverage modes; no invented classification scheme."
+  ],
+  "D-013-R009": [
+   "All retrieval is deterministic code: typed question forms, exact index/graph lookups, longest-prefix subsystem resolution; no LLM performs any selection, ranking, or answer synthesis (AS-4)."
+  ],
+  "D-013-R010": [
+   "Two focused modules split by responsibility (view builders 300 SLOC-class; query+CLI 250 SLOC-class); no existing file grown; all reused accepted modules are forbidden_paths (import-only)."
+  ],
+  "D-013-R011": [
+   "Nothing cache-like or secret committed: views write NOTHING (persist_telemetry=False; index cache external; memory store read-only); tests use temp bases."
+  ],
+  "D-013-R012": [
+   "No token-savings or efficiency claim anywhere in code, doc, or reports."
+  ],
+  "D-013-R013": [
+   "Fail closed: index_unavailable / ontology_unavailable / non_canonical_path / path_not_in_tree / source_unreadable / excerpt_out_of_range / task_packet_unreadable / invalid_task_id (a traversal task id refuses BEFORE any filesystem access - G3 round-1 finding 2 fixed with a probe-reproducing regression test) / unsupported_base_fingerprint / missing_question_value, all machine-readable, CLI exit 2 (AS-5 tests incl. the reviewer's out-of-repo probe); no partial answer presented as complete."
+  ],
+  "D-013-R022": [
+   "Sequencing preserved under current authority: R022 bound the original bootstrap run (amended by source-002); D-017 authorizes the A-to-Z continuation; Unit E claimed only AFTER Unit D (M0-T067) was accepted and merged to main (40b530f), preserving A->B->C->D->E."
+  ],
+  "D-013-R023": [
+   "All four directive-named coverage modes implemented explicitly and labeled on every output: census (every eligible file accounted indexed/excluded/failed with reasons + reconciles), changed (deterministic change classification vs the prior cache generation; unsupported stated base REFUSES), neighborhood (bounded graph neighborhood around a named seed), deep (exact bounded authoritative-source excerpt with digest + line provenance). AS-1 tests each."
+  ],
+  "D-013-R024": [
+   "ONE coverage-record builder used by every view emits: repository identity, snapshot fingerprint, HEAD/branch/dirty-state digest, eligible/indexed counts, excluded/failed grouped by reason, stale count, cache hit/miss + files reparsed/reused + the change_set counts covering files removed (deleted)/renamed/modified/invalidated (all in the labeled non-identity cache-state section - the R024 'files reparsed/rebound/removed/invalidated' group; G3 round-1 finding 1 fixed), indexer/schema/config/ontology versions, source manifest digest, export digest, and the EXACT query parameters and result limits. AS-2 asserts every field group incl. change_set.deleted on all five views."
+  ],
+  "D-013-R025": [
+   "The census view claims exactly what the underlying census proves (reconciles flag surfaced, never asserted); 'deep' returns actual reopened source lines; no deep-understanding claim exists anywhere."
+  ],
+  "D-013-R038": [
+   "No advisory semantic summaries are generated; the only advisory content surfaced is Unit D memory digests, explicitly labeled advisory and excluded from any structural claim (AS-4 memory tests)."
+  ],
+  "D-013-R039": [
+   "Views feed the ONE compiler: bounded structured data only; no prompt assembly, no independent budget, no concatenated dump (the doc's consumption contract + AS-3)."
+  ],
+  "D-013-R042": [
+   "Nothing fills capacity: every list is limit-capped with recorded limits; a view never returns more because space allows."
+  ],
+  "D-013-R050": [
+   "Two storage classes respected: Unit E writes NOTHING (no runtime telemetry persisted: build_index passes persist_telemetry=False; no committed artifacts beyond sanitized reports)."
+  ],
+  "D-013-R051": [
+   "Missing values never fabricated: absent/empty memory store labeled store_unavailable/store_empty with empty digest lists (AS-4 test); unresolvable seeds return reasons, not defaults."
+  ],
+  "D-013-R052": [
+   "Run-record discipline honored by NON-emission: views persist no run records (read-only layer); the coverage record carries the deterministic identity/version/count fields, and volatile cache-state fields are separated and labeled, never mixed into byte-identity content."
+  ],
+  "D-013-R053": [
+   "No combined or invented savings metric exists anywhere in Unit E outputs."
+  ],
+  "D-013-R058": [
+   "Retrieval was not shrunk: Unit E ADDS bounded views without changing the compiler's selection or budget (context_pack_* untouched); no evidence source was removed, so no smaller-but-wrong regression is possible from this unit."
+  ],
+  "D-013-R064": [
+   "Paths follow existing conventions: code in tools/, doc in docs/, reports in project-control/reports/M0-T068-*; no parallel control plane; no new runtime directory."
+  ],
+  "D-013-R069": [
+   "Continuation permitted by the control plane + owner authority: Unit D accepted (gates PASS incl. the FAIL->PASS G3 history, review round-2 PASS, 29/29 DCV) and merged; D-017 directs the A-to-Z continuation; a fresh read-only independent review of Unit E is dispatched before its gates."
+  ],
+  "D-013-R082": [
+   "tools/agent_supervisor/** untouched: listed in forbidden_paths and absent from the branch diff."
+  ]
+ }
+}
