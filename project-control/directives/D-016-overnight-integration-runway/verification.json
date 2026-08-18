@@ -2,7 +2,7 @@
  "schema": "directive_verification/v2",
  "directive_id": "D-016",
  "producer": "orchestrator",
- "authority_note": "Pending independent verification by directive-compliance-verifier (producer != verifier). Capture only; no requirement verified yet. All rows bind the D-016-BOOTSTRAP governance sentinel and are verified at directive verification after the overnight integration run ends (D-012-VALIDATION / D-013-BOOTSTRAP precedent).",
+ "authority_note": "Directive-level verification RECORDED 2026-08-18 under D-017 (source line 165) by an independent directive-compliance-verifier (producer != verifier) at reviewed_sha ce00c0b3a8f3: 63/64 requirements PASS on primary evidence; ONE honest FAIL (R062 - the OVERNIGHT_RUNWAY_COMPLETE session return was never committed, an evidence-availability gap, though all 12 of its required items are independently true in the ledger). Full 64-row record: project-control/reports/D-016-directive-verification.json. This registry keeps task_verifications for ledger tasks only (schema c5); D-016 executed through M0-T070/M0-T071 whose task-level verifications live in D-014/D-015.",
  "task_verifications": [],
- "updated_at": "2026-08-18T09:05:00+00:00"
+ "updated_at": "2026-08-18T20:48:54+00:00"
 }
