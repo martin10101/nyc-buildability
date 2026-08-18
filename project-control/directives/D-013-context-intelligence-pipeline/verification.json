@@ -5,17 +5,6 @@
  "authority_note": "Pending independent verification by directive-compliance-verifier (producer != verifier). Capture only; no requirement verified yet. Unit rows are verified through their ledger tasks' gates and accept() evidence maps; D-013-BOOTSTRAP sentinel rows are verified at directive verification after the bootstrap session (D-012-VALIDATION precedent).",
  "task_verifications": [
   {
-   "task_id": "M0-T063",
-   "directive_id": "D-013",
-   "producer": "orchestrator",
-   "verifier": "",
-   "applicable_requirement_ids": [],
-   "requirements": [],
-   "reviewed_sha": null,
-   "reviewed_manifest_sha256": null,
-   "note": "PENDING stub created at capture (c14 coverage). The applicable set is derived by the resolver at verification time and every row is filled by the independent verifier at the unit's accept cycle; nothing is verified yet."
-  },
-  {
    "task_id": "M0-T064",
    "directive_id": "D-013",
    "producer": "orchestrator",
@@ -80,7 +69,618 @@
    "reviewed_sha": null,
    "reviewed_manifest_sha256": null,
    "note": "PENDING stub created at capture (c14 coverage). The applicable set is derived by the resolver at verification time and every row is filled by the independent verifier at the unit's accept cycle; nothing is verified yet."
+  },
+  {
+   "task_id": "M0-T063",
+   "directive_id": "D-013",
+   "producer": "supervised-auto-worker",
+   "verifier": "directive-compliance-verifier",
+   "applicable_requirement_ids": [
+    "D-013-R001",
+    "D-013-R002",
+    "D-013-R003",
+    "D-013-R004",
+    "D-013-R006",
+    "D-013-R007",
+    "D-013-R008",
+    "D-013-R009",
+    "D-013-R010",
+    "D-013-R011",
+    "D-013-R012",
+    "D-013-R013",
+    "D-013-R022",
+    "D-013-R023",
+    "D-013-R024",
+    "D-013-R025",
+    "D-013-R026",
+    "D-013-R027",
+    "D-013-R028",
+    "D-013-R029",
+    "D-013-R030",
+    "D-013-R031",
+    "D-013-R035",
+    "D-013-R036",
+    "D-013-R037",
+    "D-013-R042",
+    "D-013-R049",
+    "D-013-R050",
+    "D-013-R051",
+    "D-013-R052",
+    "D-013-R053",
+    "D-013-R054",
+    "D-013-R055",
+    "D-013-R064",
+    "D-013-R065",
+    "D-013-R066",
+    "D-013-R067",
+    "D-013-R068",
+    "D-013-R069",
+    "D-013-R070",
+    "D-013-R071",
+    "D-013-R076",
+    "D-013-R078",
+    "D-013-R079",
+    "D-013-R081",
+    "D-013-R082"
+   ],
+   "requirements": [
+    {
+     "id": "D-013-R001",
+     "state": "PASS",
+     "evidence": [
+      "project-control/reports/M0-T063-review-records.md",
+      "project-control/reports/M0-T063-delta-reverification.md",
+      "project-control/reports/M0-T063-evidence-map.json"
+     ],
+     "verified_at": "2026-08-18T14:37:58+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "8457b15ddc2ce14230ae09afc7f8266123521bdf"
+    },
+    {
+     "id": "D-013-R002",
+     "state": "PASS",
+     "evidence": [
+      "project-control/reports/M0-T063-review-records.md",
+      "project-control/reports/M0-T063-delta-reverification.md",
+      "project-control/reports/M0-T063-evidence-map.json"
+     ],
+     "verified_at": "2026-08-18T14:37:58+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "8457b15ddc2ce14230ae09afc7f8266123521bdf"
+    },
+    {
+     "id": "D-013-R003",
+     "state": "PASS",
+     "evidence": [
+      "project-control/reports/M0-T063-review-records.md",
+      "project-control/reports/M0-T063-delta-reverification.md",
+      "project-control/reports/M0-T063-evidence-map.json"
+     ],
+     "verified_at": "2026-08-18T14:37:58+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "8457b15ddc2ce14230ae09afc7f8266123521bdf"
+    },
+    {
+     "id": "D-013-R004",
+     "state": "PASS",
+     "evidence": [
+      "project-control/reports/M0-T063-review-records.md",
+      "project-control/reports/M0-T063-delta-reverification.md",
+      "project-control/reports/M0-T063-evidence-map.json"
+     ],
+     "verified_at": "2026-08-18T14:37:58+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "8457b15ddc2ce14230ae09afc7f8266123521bdf"
+    },
+    {
+     "id": "D-013-R006",
+     "state": "PASS",
+     "evidence": [
+      "project-control/reports/M0-T063-review-records.md",
+      "project-control/reports/M0-T063-delta-reverification.md",
+      "project-control/reports/M0-T063-evidence-map.json"
+     ],
+     "verified_at": "2026-08-18T14:37:58+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "8457b15ddc2ce14230ae09afc7f8266123521bdf"
+    },
+    {
+     "id": "D-013-R007",
+     "state": "PASS",
+     "evidence": [
+      "project-control/reports/M0-T063-review-records.md",
+      "project-control/reports/M0-T063-delta-reverification.md",
+      "project-control/reports/M0-T063-evidence-map.json"
+     ],
+     "verified_at": "2026-08-18T14:37:58+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "8457b15ddc2ce14230ae09afc7f8266123521bdf"
+    },
+    {
+     "id": "D-013-R008",
+     "state": "PASS",
+     "evidence": [
+      "project-control/reports/M0-T063-review-records.md",
+      "project-control/reports/M0-T063-delta-reverification.md",
+      "project-control/reports/M0-T063-evidence-map.json"
+     ],
+     "verified_at": "2026-08-18T14:37:58+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "8457b15ddc2ce14230ae09afc7f8266123521bdf"
+    },
+    {
+     "id": "D-013-R009",
+     "state": "PASS",
+     "evidence": [
+      "project-control/reports/M0-T063-review-records.md",
+      "project-control/reports/M0-T063-delta-reverification.md",
+      "project-control/reports/M0-T063-evidence-map.json"
+     ],
+     "verified_at": "2026-08-18T14:37:58+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "8457b15ddc2ce14230ae09afc7f8266123521bdf"
+    },
+    {
+     "id": "D-013-R010",
+     "state": "PASS",
+     "evidence": [
+      "project-control/reports/M0-T063-review-records.md",
+      "project-control/reports/M0-T063-delta-reverification.md",
+      "project-control/reports/M0-T063-evidence-map.json"
+     ],
+     "verified_at": "2026-08-18T14:37:58+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "8457b15ddc2ce14230ae09afc7f8266123521bdf"
+    },
+    {
+     "id": "D-013-R011",
+     "state": "PASS",
+     "evidence": [
+      "project-control/reports/M0-T063-review-records.md",
+      "project-control/reports/M0-T063-delta-reverification.md",
+      "project-control/reports/M0-T063-evidence-map.json"
+     ],
+     "verified_at": "2026-08-18T14:37:58+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "8457b15ddc2ce14230ae09afc7f8266123521bdf"
+    },
+    {
+     "id": "D-013-R012",
+     "state": "PASS",
+     "evidence": [
+      "project-control/reports/M0-T063-review-records.md",
+      "project-control/reports/M0-T063-delta-reverification.md",
+      "project-control/reports/M0-T063-evidence-map.json"
+     ],
+     "verified_at": "2026-08-18T14:37:58+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "8457b15ddc2ce14230ae09afc7f8266123521bdf"
+    },
+    {
+     "id": "D-013-R013",
+     "state": "PASS",
+     "evidence": [
+      "project-control/reports/M0-T063-review-records.md",
+      "project-control/reports/M0-T063-delta-reverification.md",
+      "project-control/reports/M0-T063-evidence-map.json"
+     ],
+     "verified_at": "2026-08-18T14:37:58+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "8457b15ddc2ce14230ae09afc7f8266123521bdf"
+    },
+    {
+     "id": "D-013-R022",
+     "state": "PASS",
+     "evidence": [
+      "project-control/reports/M0-T063-review-records.md",
+      "project-control/reports/M0-T063-delta-reverification.md",
+      "project-control/reports/M0-T063-evidence-map.json"
+     ],
+     "verified_at": "2026-08-18T14:37:58+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "8457b15ddc2ce14230ae09afc7f8266123521bdf"
+    },
+    {
+     "id": "D-013-R023",
+     "state": "PASS",
+     "evidence": [
+      "project-control/reports/M0-T063-review-records.md",
+      "project-control/reports/M0-T063-delta-reverification.md",
+      "project-control/reports/M0-T063-evidence-map.json"
+     ],
+     "verified_at": "2026-08-18T14:37:58+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "8457b15ddc2ce14230ae09afc7f8266123521bdf"
+    },
+    {
+     "id": "D-013-R024",
+     "state": "PASS",
+     "evidence": [
+      "project-control/reports/M0-T063-review-records.md",
+      "project-control/reports/M0-T063-delta-reverification.md",
+      "project-control/reports/M0-T063-evidence-map.json"
+     ],
+     "verified_at": "2026-08-18T14:37:58+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "8457b15ddc2ce14230ae09afc7f8266123521bdf"
+    },
+    {
+     "id": "D-013-R025",
+     "state": "PASS",
+     "evidence": [
+      "project-control/reports/M0-T063-review-records.md",
+      "project-control/reports/M0-T063-delta-reverification.md",
+      "project-control/reports/M0-T063-evidence-map.json"
+     ],
+     "verified_at": "2026-08-18T14:37:58+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "8457b15ddc2ce14230ae09afc7f8266123521bdf"
+    },
+    {
+     "id": "D-013-R026",
+     "state": "PASS",
+     "evidence": [
+      "project-control/reports/M0-T063-review-records.md",
+      "project-control/reports/M0-T063-delta-reverification.md",
+      "project-control/reports/M0-T063-evidence-map.json"
+     ],
+     "verified_at": "2026-08-18T14:37:58+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "8457b15ddc2ce14230ae09afc7f8266123521bdf"
+    },
+    {
+     "id": "D-013-R027",
+     "state": "PASS",
+     "evidence": [
+      "project-control/reports/M0-T063-review-records.md",
+      "project-control/reports/M0-T063-delta-reverification.md",
+      "project-control/reports/M0-T063-evidence-map.json"
+     ],
+     "verified_at": "2026-08-18T14:37:58+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "8457b15ddc2ce14230ae09afc7f8266123521bdf"
+    },
+    {
+     "id": "D-013-R028",
+     "state": "PASS",
+     "evidence": [
+      "project-control/reports/M0-T063-review-records.md",
+      "project-control/reports/M0-T063-delta-reverification.md",
+      "project-control/reports/M0-T063-evidence-map.json"
+     ],
+     "verified_at": "2026-08-18T14:37:58+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "8457b15ddc2ce14230ae09afc7f8266123521bdf"
+    },
+    {
+     "id": "D-013-R029",
+     "state": "PASS",
+     "evidence": [
+      "project-control/reports/M0-T063-review-records.md",
+      "project-control/reports/M0-T063-delta-reverification.md",
+      "project-control/reports/M0-T063-evidence-map.json"
+     ],
+     "verified_at": "2026-08-18T14:37:58+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "8457b15ddc2ce14230ae09afc7f8266123521bdf"
+    },
+    {
+     "id": "D-013-R030",
+     "state": "PASS",
+     "evidence": [
+      "project-control/reports/M0-T063-review-records.md",
+      "project-control/reports/M0-T063-delta-reverification.md",
+      "project-control/reports/M0-T063-evidence-map.json"
+     ],
+     "verified_at": "2026-08-18T14:37:58+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "8457b15ddc2ce14230ae09afc7f8266123521bdf"
+    },
+    {
+     "id": "D-013-R031",
+     "state": "PASS",
+     "evidence": [
+      "project-control/reports/M0-T063-review-records.md",
+      "project-control/reports/M0-T063-delta-reverification.md",
+      "project-control/reports/M0-T063-evidence-map.json"
+     ],
+     "verified_at": "2026-08-18T14:37:58+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "8457b15ddc2ce14230ae09afc7f8266123521bdf"
+    },
+    {
+     "id": "D-013-R035",
+     "state": "PASS",
+     "evidence": [
+      "project-control/reports/M0-T063-review-records.md",
+      "project-control/reports/M0-T063-delta-reverification.md",
+      "project-control/reports/M0-T063-evidence-map.json"
+     ],
+     "verified_at": "2026-08-18T14:37:58+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "8457b15ddc2ce14230ae09afc7f8266123521bdf"
+    },
+    {
+     "id": "D-013-R036",
+     "state": "PASS",
+     "evidence": [
+      "project-control/reports/M0-T063-review-records.md",
+      "project-control/reports/M0-T063-delta-reverification.md",
+      "project-control/reports/M0-T063-evidence-map.json"
+     ],
+     "verified_at": "2026-08-18T14:37:58+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "8457b15ddc2ce14230ae09afc7f8266123521bdf"
+    },
+    {
+     "id": "D-013-R037",
+     "state": "PASS",
+     "evidence": [
+      "project-control/reports/M0-T063-review-records.md",
+      "project-control/reports/M0-T063-delta-reverification.md",
+      "project-control/reports/M0-T063-evidence-map.json"
+     ],
+     "verified_at": "2026-08-18T14:37:58+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "8457b15ddc2ce14230ae09afc7f8266123521bdf"
+    },
+    {
+     "id": "D-013-R042",
+     "state": "PASS",
+     "evidence": [
+      "project-control/reports/M0-T063-review-records.md",
+      "project-control/reports/M0-T063-delta-reverification.md",
+      "project-control/reports/M0-T063-evidence-map.json"
+     ],
+     "verified_at": "2026-08-18T14:37:58+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "8457b15ddc2ce14230ae09afc7f8266123521bdf"
+    },
+    {
+     "id": "D-013-R049",
+     "state": "PASS",
+     "evidence": [
+      "project-control/reports/M0-T063-review-records.md",
+      "project-control/reports/M0-T063-delta-reverification.md",
+      "project-control/reports/M0-T063-evidence-map.json"
+     ],
+     "verified_at": "2026-08-18T14:37:58+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "8457b15ddc2ce14230ae09afc7f8266123521bdf"
+    },
+    {
+     "id": "D-013-R050",
+     "state": "PASS",
+     "evidence": [
+      "project-control/reports/M0-T063-review-records.md",
+      "project-control/reports/M0-T063-delta-reverification.md",
+      "project-control/reports/M0-T063-evidence-map.json"
+     ],
+     "verified_at": "2026-08-18T14:37:58+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "8457b15ddc2ce14230ae09afc7f8266123521bdf"
+    },
+    {
+     "id": "D-013-R051",
+     "state": "PASS",
+     "evidence": [
+      "project-control/reports/M0-T063-review-records.md",
+      "project-control/reports/M0-T063-delta-reverification.md",
+      "project-control/reports/M0-T063-evidence-map.json"
+     ],
+     "verified_at": "2026-08-18T14:37:58+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "8457b15ddc2ce14230ae09afc7f8266123521bdf"
+    },
+    {
+     "id": "D-013-R052",
+     "state": "PASS",
+     "evidence": [
+      "project-control/reports/M0-T063-review-records.md",
+      "project-control/reports/M0-T063-delta-reverification.md",
+      "project-control/reports/M0-T063-evidence-map.json"
+     ],
+     "verified_at": "2026-08-18T14:37:58+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "8457b15ddc2ce14230ae09afc7f8266123521bdf"
+    },
+    {
+     "id": "D-013-R053",
+     "state": "PASS",
+     "evidence": [
+      "project-control/reports/M0-T063-review-records.md",
+      "project-control/reports/M0-T063-delta-reverification.md",
+      "project-control/reports/M0-T063-evidence-map.json"
+     ],
+     "verified_at": "2026-08-18T14:37:58+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "8457b15ddc2ce14230ae09afc7f8266123521bdf"
+    },
+    {
+     "id": "D-013-R054",
+     "state": "PASS",
+     "evidence": [
+      "project-control/reports/M0-T063-review-records.md",
+      "project-control/reports/M0-T063-delta-reverification.md",
+      "project-control/reports/M0-T063-evidence-map.json"
+     ],
+     "verified_at": "2026-08-18T14:37:58+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "8457b15ddc2ce14230ae09afc7f8266123521bdf"
+    },
+    {
+     "id": "D-013-R055",
+     "state": "PASS",
+     "evidence": [
+      "project-control/reports/M0-T063-review-records.md",
+      "project-control/reports/M0-T063-delta-reverification.md",
+      "project-control/reports/M0-T063-evidence-map.json"
+     ],
+     "verified_at": "2026-08-18T14:37:58+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "8457b15ddc2ce14230ae09afc7f8266123521bdf"
+    },
+    {
+     "id": "D-013-R064",
+     "state": "PASS",
+     "evidence": [
+      "project-control/reports/M0-T063-review-records.md",
+      "project-control/reports/M0-T063-delta-reverification.md",
+      "project-control/reports/M0-T063-evidence-map.json"
+     ],
+     "verified_at": "2026-08-18T14:37:58+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "8457b15ddc2ce14230ae09afc7f8266123521bdf"
+    },
+    {
+     "id": "D-013-R065",
+     "state": "PASS",
+     "evidence": [
+      "project-control/reports/M0-T063-review-records.md",
+      "project-control/reports/M0-T063-delta-reverification.md",
+      "project-control/reports/M0-T063-evidence-map.json"
+     ],
+     "verified_at": "2026-08-18T14:37:58+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "8457b15ddc2ce14230ae09afc7f8266123521bdf"
+    },
+    {
+     "id": "D-013-R066",
+     "state": "PASS",
+     "evidence": [
+      "project-control/reports/M0-T063-review-records.md",
+      "project-control/reports/M0-T063-delta-reverification.md",
+      "project-control/reports/M0-T063-evidence-map.json"
+     ],
+     "verified_at": "2026-08-18T14:37:58+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "8457b15ddc2ce14230ae09afc7f8266123521bdf"
+    },
+    {
+     "id": "D-013-R067",
+     "state": "PASS",
+     "evidence": [
+      "project-control/reports/M0-T063-review-records.md",
+      "project-control/reports/M0-T063-delta-reverification.md",
+      "project-control/reports/M0-T063-evidence-map.json"
+     ],
+     "verified_at": "2026-08-18T14:37:58+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "8457b15ddc2ce14230ae09afc7f8266123521bdf"
+    },
+    {
+     "id": "D-013-R068",
+     "state": "PASS",
+     "evidence": [
+      "project-control/reports/M0-T063-review-records.md",
+      "project-control/reports/M0-T063-delta-reverification.md",
+      "project-control/reports/M0-T063-evidence-map.json"
+     ],
+     "verified_at": "2026-08-18T14:37:58+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "8457b15ddc2ce14230ae09afc7f8266123521bdf"
+    },
+    {
+     "id": "D-013-R069",
+     "state": "PASS",
+     "evidence": [
+      "project-control/reports/M0-T063-review-records.md",
+      "project-control/reports/M0-T063-delta-reverification.md",
+      "project-control/reports/M0-T063-evidence-map.json"
+     ],
+     "verified_at": "2026-08-18T14:37:58+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "8457b15ddc2ce14230ae09afc7f8266123521bdf"
+    },
+    {
+     "id": "D-013-R070",
+     "state": "PASS",
+     "evidence": [
+      "project-control/reports/M0-T063-review-records.md",
+      "project-control/reports/M0-T063-delta-reverification.md",
+      "project-control/reports/M0-T063-evidence-map.json"
+     ],
+     "verified_at": "2026-08-18T14:37:58+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "8457b15ddc2ce14230ae09afc7f8266123521bdf"
+    },
+    {
+     "id": "D-013-R071",
+     "state": "PASS",
+     "evidence": [
+      "project-control/reports/M0-T063-review-records.md",
+      "project-control/reports/M0-T063-delta-reverification.md",
+      "project-control/reports/M0-T063-evidence-map.json"
+     ],
+     "verified_at": "2026-08-18T14:37:58+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "8457b15ddc2ce14230ae09afc7f8266123521bdf"
+    },
+    {
+     "id": "D-013-R076",
+     "state": "PASS",
+     "evidence": [
+      "project-control/reports/M0-T063-review-records.md",
+      "project-control/reports/M0-T063-delta-reverification.md",
+      "project-control/reports/M0-T063-evidence-map.json"
+     ],
+     "verified_at": "2026-08-18T14:37:58+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "8457b15ddc2ce14230ae09afc7f8266123521bdf"
+    },
+    {
+     "id": "D-013-R078",
+     "state": "PASS",
+     "evidence": [
+      "project-control/reports/M0-T063-review-records.md",
+      "project-control/reports/M0-T063-delta-reverification.md",
+      "project-control/reports/M0-T063-evidence-map.json"
+     ],
+     "verified_at": "2026-08-18T14:37:58+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "8457b15ddc2ce14230ae09afc7f8266123521bdf"
+    },
+    {
+     "id": "D-013-R079",
+     "state": "PASS",
+     "evidence": [
+      "project-control/reports/M0-T063-review-records.md",
+      "project-control/reports/M0-T063-delta-reverification.md",
+      "project-control/reports/M0-T063-evidence-map.json"
+     ],
+     "verified_at": "2026-08-18T14:37:58+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "8457b15ddc2ce14230ae09afc7f8266123521bdf"
+    },
+    {
+     "id": "D-013-R081",
+     "state": "PASS",
+     "evidence": [
+      "project-control/reports/M0-T063-review-records.md",
+      "project-control/reports/M0-T063-delta-reverification.md",
+      "project-control/reports/M0-T063-evidence-map.json"
+     ],
+     "verified_at": "2026-08-18T14:37:58+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "8457b15ddc2ce14230ae09afc7f8266123521bdf"
+    },
+    {
+     "id": "D-013-R082",
+     "state": "PASS",
+     "evidence": [
+      "project-control/reports/M0-T063-review-records.md",
+      "project-control/reports/M0-T063-delta-reverification.md",
+      "project-control/reports/M0-T063-evidence-map.json"
+     ],
+     "verified_at": "2026-08-18T14:37:58+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "8457b15ddc2ce14230ae09afc7f8266123521bdf"
+    }
+   ],
+   "reviewed_sha": "8457b15ddc2ce14230ae09afc7f8266123521bdf",
+   "reviewed_manifest_sha256": "63590fbf4fd512255e2989fac4734448dba195fc3bee1d9d5c2084da031f61e8",
+   "note": "Independent DCV PASS 46/46 (round 1) + code/QA delta re-review CONFIRM-CLOSED (MAJOR-1/MINOR-2/F1). R037/R079 A1-scope only; the byte-identical incremental-vs-full parity test is the A2 (M0-T064) obligation, built and passing. Producer != verifier."
   }
  ],
- "updated_at": "2026-08-18T04:29:32+00:00"
+ "updated_at": "2026-08-18T14:37:58+00:00"
 }
