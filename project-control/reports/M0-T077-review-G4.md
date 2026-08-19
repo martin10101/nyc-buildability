@@ -149,3 +149,94 @@ I made no repository edits and ran no write commands; both worktrees show **zero
 **Note on live state:** the branch has since advanced to `f254698` with G5 work in flight (subagent connector inheritance). That is outside my anchor and G5's domain; my verdict is against `b0200803` as instructed.
 
 Paths: `C:\Users\MLFLL\Downloads\nyc-zoning\wt-m0t077\tools\validate_mcp_policy.py`, `...\tools\test_mcp_policy.py`, `...\.claude\settings.json`, `...\.github\workflows\ci.yml`, `...\docs\MCP_DEFAULT_DENY_POLICY.md`, `...\project-control\reports\M0-T077-fresh-session-proof.md`, `...\project-control\reports\M0-T077-submission.md`.
+
+
+---
+---
+
+<!-- Orchestrator preservation note: CORRECTION CONFIRMATION below, returned through
+the agent-return channel by the same independent read-only G4 reviewer after the
+blocking corrections were committed at 4544e96, saved VERBATIM (transport
+entity-decoding only). Received 2026-08-19. Verdict: CORRECTIONS CLOSED — the
+G4 PASS gate's blocking corrections are resolved and independently verified.
+Everything below is the reviewer's text. -->
+
+# G4 CORRECTIONS CLOSED — M0-T077 / D-020, verified at `4544e96600d6ad5ad6153448d764c8f7f1cc9b07`
+
+All five items confirmed. Verified against blobs extracted with `git archive 4544e96 | tar -x` into scratch, plus live runs in the worktree (HEAD `4544e96`). Baseline at this identity: `validate_mcp_policy.py --check` exit **0**; `test_mcp_policy.py` → `Ran 37 tests` / `OK` / exit **0**.
+
+## (1) MAJOR-1 — CLOSED
+
+Re-ran my exact coordinated-weakening probe on a scratch copy: dropped `supabase` from `deniedMcpServers` + `disabledMcpjsonServers` **and** from `DENIED_SERVER_NAMES` + `DISABLED_MCPJSON_NAMES`.
+
+```
+DENIED   -> ['pencil','mysql','sequential-thinking','playwright']
+DISABLED -> ['mysql','sequential-thinking','playwright']
+validator exit=0        (unchanged — the validator alone still cannot see it)
+tests     exit=1        FAILED (failures=1)
+FAIL: test_audited_identifiers_pinned_independently
+AssertionError: Tuples differ:
+  ('pencil','mysql','sequential-thinking','playwright') !=
+  ('pencil','supabase','mysql','sequential-thinking','playwright')
+```
+
+The suite now **fails**, which is exactly the requirement. The independent pin does the work the validator structurally cannot.
+
+## (2) MAJOR-2 — CLOSED, and the residual disclosure is accurate
+
+I tested all four deletion variants against the frozen tree, not just the one you named:
+
+| Variant | validator | tests | caught by |
+|---|---|---|---|
+| A. both steps intact (control) | 0 | 0 | — |
+| B. **validator step only** deleted | **1** | **1** | `test_ci_wires_validator_and_test_steps` |
+| C. **test step only** deleted | **1** | **1** | same |
+| D. **both steps** deleted | **1** | **1** | same |
+| E. **entire `ci.yml`** deleted | **1** | **1** | p1/p10 path |
+
+So single-step deletion is machine-caught by the survivor, as claimed. On the residual: cases D and E *are* detected when the checks are executed — the real residual is that deleting both steps means **CI never invokes the validator**, so nothing surfaces the failure. That is a self-reference limit no in-job check can close, and the policy doc states it precisely:
+
+> "…validator and test each assert that BOTH CI steps still exist (p10), so deleting either one is machine-caught by the survivor; deleting both removes every executor of the guard and is catchable only in diff review — a disclosed residual, as is the gitignored `.claude/settings.local.json` (not readable by CI, and empirically unable to weaken the policy)."
+
+Honest and correct, and it volunteers the `settings.local.json` residual on top. Confirmed.
+
+## (3) MINOR — all three CLOSED
+
+| Claim | Now reads |
+|---|---|
+| policy doc:20 | "The policy is **six additive entries** merged into…" ✅ |
+| submission:40 | "**+19 lines / 0 deleted**, purely additive merge of six policy entries (5 MCP keys + the deny-first `permissions.deny: ["mcp__*"]` rule)" ✅ |
+| proof §4 | "`git diff --numstat 31c50a09..HEAD -- .claude/settings.json` is `19 0` — purely ADDITIVE from base to every reviewed identity (the enforcement blob has been `dd11cd79…` since `eb742f2`)… the six policy entries…" ✅ |
+
+Two `a2bee92` mentions remain at proof lines 22/24, and they are **correct as written** — §2 narrates when Runs A/B were actually captured. My finding was scoped to §4's additive-diff claim, which is now re-anchored to HEAD with the numstat. Nothing further needed.
+
+## (4) Sign-off — RECORDED
+
+Progress log, G4 entry, verbatim:
+
+> "Sign-off recorded: the orchestrator explicitly ACCEPTS the validator's unknown-key fail-closed strictness as intended design (documented in validator docstring, policy doc, and G3 confirmation) — future legitimate settings additions must extend KNOWN_KEY_SHAPES in the same reviewed change."
+
+The validator docstring carries the operative rule ("Adding a genuinely new setting to the checked-in file therefore requires extending `KNOWN_KEY_SHAPES` in the same reviewed change — intended visibility, mirroring the connector procedure"), and there is a matching handoff note in the earlier G3-closure log entry.
+
+One precision note, not a blocker: the literal extend-`KNOWN_KEY_SHAPES` instruction lives in the **validator docstring**, not in the policy doc. The policy doc's "Durable validation" section describes the whole-file assertion mechanism and its "intended visibility" framing appears at line 75 in the connector procedure, but a future editor reading only the policy doc would not find the explicit instruction. Worth a one-line addition whenever that file is next touched; I am not holding the closure on it.
+
+## (5) Enforcement blob — UNCHANGED
+
+```
+git rev-parse 4544e96:.claude/settings.json
+dd11cd79e01f309c524f00906ff1266de439a287    ✅ matches
+git diff --numstat b0200803 4544e96 -- .claude/settings.json
+(empty — untouched)
+```
+
+`git diff --name-status b0200803 4544e96` moves only `tools/validate_mcp_policy.py`, `tools/test_mcp_policy.py`, `docs/MCP_DEFAULT_DENY_POLICY.md`, and control-plane reports/gates/state/task files. No enforcement surface moved.
+
+## Regression check (unprompted, but the corrections touched the validator)
+
+The five shapes from my original blocking finding are all still caught at `4544e96` — `$schema:42`, `env:"not-an-object"`, `cleanupPeriodDays:"thirty"`, `includeCoAuthoredBy:"yes"`, `model:123` → validator exit **1** each; intact policy → exit **0**. The MAJOR-1/MAJOR-2 work did not regress the p9 whole-file assertion.
+
+Live confirmation in the worktree at HEAD `4544e96`: `claude mcp list` from the root returns `No MCP servers configured.` The policy remains empirically effective.
+
+I made no repository edits; both worktrees show zero modifications attributable to me and my scratch probes are cleaned up.
+
+**Verdict: CORRECTIONS CLOSED.** My G4 PASS stands with no remaining blocking items.
