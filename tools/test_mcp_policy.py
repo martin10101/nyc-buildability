@@ -140,6 +140,25 @@ class McpPolicyValidatorTest(unittest.TestCase):
         errs = self.errors_for(self.mutate(enableAllProjectMcpServers=True))
         self.assertTrue(any(e.startswith("p6") for e in errs))
 
+    # ---- p8 deny-first tool rule ----
+
+    def test_permissions_block_removed_fails(self):
+        errs = self.errors_for(self.mutate(permissions=vmp))
+        self.assertTrue(any(e.startswith("p8") for e in errs))
+
+    def test_mcp_tool_deny_rule_removed_fails(self):
+        errs = self.errors_for(self.mutate(permissions={"deny": []}))
+        self.assertTrue(any(e.startswith("p8") for e in errs))
+
+    def test_mcp_tool_deny_rule_narrowed_fails(self):
+        errs = self.errors_for(self.mutate(permissions={"deny": ["mcp__supabase__*"]}))
+        self.assertTrue(any(e.startswith("p8") for e in errs))
+
+    def test_extra_deny_rules_alongside_wildcard_pass(self):
+        settings = copy.deepcopy(self.intact)
+        settings["permissions"] = {"deny": ["mcp__*", "WebFetch"]}
+        self.assertEqual(self.errors_for(settings), [])
+
     # ---- p7 merge-not-replace preservation ----
 
     def test_wholesale_replacement_fails(self):

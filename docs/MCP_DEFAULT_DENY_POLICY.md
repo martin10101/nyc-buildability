@@ -31,6 +31,16 @@ code.claude.com). Effect proven empirically by fresh-process probes
 | `deniedMcpServers` | 5 entries | Explicit denials by the exact audited identifiers: `pencil`, `supabase`, `mysql`, `sequential-thinking`, `playwright`. The denylist merges from all settings sources and takes precedence over any allowlist, so these stay blocked even after a future task allowlists a different connector. |
 | `disabledMcpjsonServers` | 4 entries | Rejects the audited `.mcp.json`-defined servers (`supabase`, `mysql`, `sequential-thinking`, `playwright`) so they are never approved or started for this project. |
 | `enableAllProjectMcpServers` | `false` | Auto-approval of project `.mcp.json` servers is explicitly off. |
+| `permissions.deny` | `["mcp__*"]` | Deny-first TOOL rule: per the official settings precedence, "if a tool is denied at any level, no other level can allow it" — so even a server that some other settings source later allowlists exposes no usable MCP tool in this repository. |
+
+Documented caveat, recorded honestly: without `allowManagedMcpServersOnly` in MANAGED
+settings (none exist on this machine), `allowedMcpServers` lists MERGE from every
+settings source, so an explicit user-scope allowlist entry could broaden the empty
+project allowlist for a *new* server. The audited identifiers stay blocked regardless
+(`deniedMcpServers` merges from all sources and "nothing overrides a denylist match"),
+and `permissions.deny: ["mcp__*"]` keeps every MCP tool unusable here regardless of
+connection state. Such an edit is explicit user action, not the ambient default D-020
+governs.
 
 Scope of effect: **this repository and its worktrees only** (project-scope settings).
 Nothing was changed in the owner's global configuration (`~/.claude.json`, user
@@ -77,6 +87,18 @@ active.
 invariant above **including** that the pre-existing settings survived the merge; it
 runs with `tools/test_mcp_policy.py` in the required **control-plane** CI job on every
 push and PR, so accidental removal or weakening of the policy blocks merge.
+
+## Official documentation (mechanism confirmation, D-020 §5)
+
+- Managed MCP, allow/denylists, `disableClaudeAiConnectors`, deny-precedence quotes:
+  https://code.claude.com/docs/en/managed-mcp
+- Settings precedence (managed > CLI > local > project > user; deny-at-any-level wins):
+  https://code.claude.com/docs/en/permissions#settings-precedence
+- MCP tool permission rules (`mcp__*` wildcards): https://code.claude.com/docs/en/permissions#mcp
+- `.mcp.json` scoping and `disabledMcpjsonServers`: https://code.claude.com/docs/en/mcp-quickstart
+  and https://code.claude.com/docs/en/debug-your-config#check-mcp-servers
+- Settings reference (key shapes; also mirrored by the `$schema` this file declares):
+  https://code.claude.com/docs/en/settings
 
 ## Honest enforcement boundary
 

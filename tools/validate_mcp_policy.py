@@ -19,6 +19,10 @@ repository (and its clean worktrees) load NO unrelated external MCP server:
   p5  disabledMcpjsonServers contains at least the four audited .mcp.json
       identifiers (supabase, mysql, sequential-thinking, playwright)
   p6  enableAllProjectMcpServers is exactly false
+  p8  permissions.deny contains "mcp__*" (deny-first tool rule: per the official
+      settings precedence, a deny at any level cannot be allowed by another level,
+      so MCP tool use stays blocked even if a broader allowlist appears in a user
+      or local settings source)
   p7  the pre-existing settings the merge was required to preserve still exist:
       $schema, model, fallbackModel, effortLevel, env, and the three control-plane
       hook registrations (agent_dispatch_guard, readonly_agent_guard,
@@ -109,6 +113,13 @@ def validate(settings_path: Path) -> list[str]:
     if settings.get("enableAllProjectMcpServers") is not False:
         errors.append("p6 enableAllProjectMcpServers must be exactly false "
                       f"(found: {settings.get('enableAllProjectMcpServers')!r})")
+
+    permissions = settings.get("permissions")
+    deny_rules = permissions.get("deny") if isinstance(permissions, dict) else None
+    if not (isinstance(deny_rules, list) and "mcp__*" in deny_rules):
+        errors.append("p8 permissions.deny must contain the un-overridable "
+                      "deny-first tool rule 'mcp__*' "
+                      f"(found: {deny_rules!r})")
 
     for key in PRESERVED_KEYS:
         if key not in settings:
