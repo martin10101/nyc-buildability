@@ -1,304 +1,318 @@
 {
-  "schema": "directive_index/v1",
-  "version": 1,
-  "note": "Registry of owner directives. MULTIPLE directives may be status 'active' at once; this is a keyed list, never a single global current-directive pointer (D-001-R010/R018). Records are provenance only: all work-blocking decisions flow through tools/project_control.py, blockers, holds, and gates (two-lane principle, D-001-R118).",
-  "directive_states": [
-    "proposed",
-    "active",
-    "superseded",
-    "withdrawn",
-    "retired"
-  ],
-  "directives": [
-    {
-      "directive_id": "D-001",
-      "slug": "owner-directive-compliance-system",
-      "title": "Durable Owner Directive Compliance System",
-      "status": "active",
-      "issued_at": "2026-07-23",
-      "issued_by": "owner",
-      "supersedes": [],
-      "superseded_by": null,
-      "affected_tasks": [
-        "M0-T023"
-      ],
-      "manifest": "D-001-owner-directive-compliance-system/manifest.json"
-    },
-    {
-      "directive_id": "D-002",
-      "slug": "activate-control-system-first-wave",
-      "title": "Activate the control system, consolidate the plan, and prepare the first blind-isolated parallel build wave",
-      "status": "active",
-      "issued_at": "2026-07-24",
-      "issued_by": "owner",
-      "supersedes": [],
-      "superseded_by": null,
-      "affected_tasks": [
-        "M0-T024",
-        "M3-T001",
-        "M4-T007",
-        "M2-T017"
-      ],
-      "manifest": "D-002-activate-control-system-first-wave/manifest.json"
-    },
-    {
-      "directive_id": "D-003",
-      "slug": "first-wave-integration-and-second-wave",
-      "title": "Integrate first wave (D-002 sequential integration) and prepare second wave",
-      "status": "active",
-      "issued_at": "2026-07-24",
-      "issued_by": "owner",
-      "supersedes": [],
-      "superseded_by": null,
-      "affected_tasks": [
-        "M0-T026"
-      ],
-      "manifest": "D-003-first-wave-integration-and-second-wave/manifest.json"
-    },
-    {
-      "directive_id": "D-004",
-      "slug": "agent-teams-runtime-adoption",
-      "title": "Agent-teams runtime adoption, staged with pilots",
-      "status": "active",
-      "issued_at": "2026-07-24",
-      "issued_by": "owner",
-      "supersedes": [],
-      "superseded_by": null,
-      "affected_tasks": [
-        "M0-T027",
-        "M0-T028"
-      ],
-      "manifest": "D-004-agent-teams-runtime-adoption/manifest.json"
-    },
-    {
-      "directive_id": "D-005",
-      "slug": "codebase-knowledge-graph-pilot",
-      "title": "Codebase knowledge graph pilot (Graphify) - controlled evaluation before any adoption",
-      "status": "active",
-      "issued_at": "2026-07-29",
-      "issued_by": "owner",
-      "supersedes": [],
-      "superseded_by": null,
-      "affected_tasks": [],
-      "manifest": "D-005-codebase-knowledge-graph-pilot/manifest.json"
-    },
-    {
-      "directive_id": "D-006",
-      "slug": "dispatch-efficiency-and-graph-wiring",
-      "title": "Dispatch Efficiency and Code-Graph Wiring (owner draft v1.2, issued via D-004-R679)",
-      "status": "active",
-      "issued_at": "2026-08-03",
-      "issued_by": "owner",
-      "supersedes": [],
-      "superseded_by": null,
-      "affected_tasks": [
-        "M0-T035"
-      ],
-      "manifest": "D-006-dispatch-efficiency-and-graph-wiring/manifest.json"
-    },
-    {
-      "directive_id": "D-007",
-      "slug": "codex-claude-supervisor-bridge",
-      "title": "Codex-Claude Code Supervisor Bridge (v4.3, Autonomy-Tuned) - build directive",
-      "status": "active",
-      "issued_at": "2026-07-31",
-      "issued_by": "owner",
-      "supersedes": [],
-      "superseded_by": null,
-      "affected_tasks": [
-        "M0-T036"
-      ],
-      "manifest": "D-007-codex-claude-supervisor-bridge/manifest.json"
-    },
-    {
-      "directive_id": "D-008",
-      "slug": "owner-escalation-boundary",
-      "title": "Owner escalation boundary (stop-and-ask only for credentials/payment or legal sign-offs)",
-      "status": "active",
-      "issued_at": "2026-08-04",
-      "issued_by": "owner",
-      "supersedes": [],
-      "superseded_by": null,
-      "affected_tasks": [],
-      "manifest": "D-008-owner-escalation-boundary/manifest.json"
-    },
-    {
-      "directive_id": "D-009",
-      "slug": "dependency-security-governance",
-      "title": "Dependency-Security Governance Directive (fresh, owner-activated 2026-08-04)",
-      "status": "active",
-      "issued_at": "2026-08-04",
-      "issued_by": "owner",
-      "supersedes": [],
-      "superseded_by": null,
-      "affected_tasks": [
-        "M0-T019"
-      ],
-      "manifest": "D-009-dependency-security-governance/manifest.json"
-    },
-    {
-      "directive_id": "D-010",
-      "slug": "autonomous-engineering-restructure",
-      "title": "Autonomous Engineering Restructure and NYC Buildability Pilot Acceleration (Autonomous Engineering V2)",
-      "status": "active",
-      "issued_at": "2026-08-06",
-      "issued_by": "owner",
-      "supersedes": [],
-      "superseded_by": null,
-      "affected_tasks": [
-        "M0-T037",
-        "M0-T038",
-        "M0-T039",
-        "M0-T040",
-        "M0-T041",
-        "M0-T042",
-        "M0-T043",
-        "M0-T044",
-        "M0-T045"
-      ],
-      "manifest": "D-010-autonomous-engineering-restructure/manifest.json"
-    },
-    {
-      "directive_id": "D-011",
-      "slug": "bounded-truth-reconciliation",
-      "title": "Bounded truth reconciliation (owner correction of session-14 acceptance evidence)",
-      "status": "active",
-      "issued_at": "2026-08-11",
-      "issued_by": "owner",
-      "supersedes": [],
-      "superseded_by": null,
-      "affected_tasks": [
-        "M2-T016",
-        "M0-T055",
-        "M0-T053",
-        "M0-T057",
-        "M0-T047"
-      ],
-      "manifest": "D-011-bounded-truth-reconciliation/manifest.json"
-    },
-    {
-      "directive_id": "D-012",
-      "slug": "supervised-product-validation-run",
-      "title": "First bounded supervised-auto product validation run (owner-authorized)",
-      "status": "active",
-      "issued_at": "2026-08-12",
-      "issued_by": "owner",
-      "supersedes": [],
-      "superseded_by": null,
-      "affected_tasks": [],
-      "manifest": "D-012-supervised-product-validation-run/manifest.json"
-    },
-    {
-      "directive_id": "D-013",
-      "slug": "context-intelligence-pipeline",
-      "title": "Context-intelligence pipeline (census/index, bounded context compiler, ontology, measurement) - units A1/A2/B/C/D/E/F",
-      "status": "active",
-      "issued_at": "2026-08-18",
-      "issued_by": "owner",
-      "supersedes": [],
-      "superseded_by": null,
-      "affected_tasks": [
-        "M0-T063",
-        "M0-T064",
-        "M0-T065",
-        "M0-T066",
-        "M0-T067",
-        "M0-T068",
-        "M0-T069"
-      ],
-      "manifest": "D-013-context-intelligence-pipeline/manifest.json"
-    },
-    {
-      "directive_id": "D-014",
-      "slug": "supervisor-command-authority-repair",
-      "title": "Bounded supervisor repair: packet command authority wiring (defect A) + revoke-all/status open_asks reconciliation (defect B)",
-      "status": "active",
-      "issued_at": "2026-08-18",
-      "issued_by": "owner",
-      "supersedes": [],
-      "superseded_by": null,
-      "affected_tasks": [
-        "M0-T070"
-      ],
-      "manifest": "D-014-supervisor-command-authority-repair/manifest.json"
-    },
-    {
-      "directive_id": "D-015",
-      "slug": "nanoid-security-repair",
-      "title": "Bounded dependency-security repair: nanoid 3.3.17 -> 3.3.18 (GHSA-2v37-7h3g-55p8, closes B-019) under the normal policy, no age waiver",
-      "status": "active",
-      "issued_at": "2026-08-18",
-      "issued_by": "owner",
-      "supersedes": [],
-      "superseded_by": null,
-      "affected_tasks": [
-        "M0-T071"
-      ],
-      "manifest": "D-015-nanoid-security-repair/manifest.json"
-    },
-    {
-      "directive_id": "D-016",
-      "slug": "overnight-integration-runway",
-      "title": "Overnight owner authorization - complete context-intelligence integration runway (Stages 0-7)",
-      "status": "active",
-      "issued_at": "2026-08-18",
-      "issued_by": "owner",
-      "supersedes": [],
-      "superseded_by": null,
-      "affected_tasks": [],
-      "manifest": "D-016-overnight-integration-runway/manifest.json"
-    },
-    {
-      "directive_id": "D-017",
-      "slug": "a-to-z-completion-authorization",
-      "title": "Owner A-to-Z completion authorization - context-intelligence implementation (Units A1-F), controller manifest repair and safe live-controller update, permanent modularity enforcement, deterministic complexity-based model routing",
-      "status": "active",
-      "issued_at": "2026-08-18",
-      "issued_by": "owner",
-      "supersedes": [],
-      "superseded_by": null,
-      "affected_tasks": [
-        "M0-T063",
-        "M0-T064",
-        "M0-T065",
-        "M0-T066",
-        "M0-T067",
-        "M0-T068",
-        "M0-T069",
-        "M0-T072",
-        "M0-T073",
-        "M0-T074"
-      ],
-      "manifest": "D-017-a-to-z-completion-authorization/manifest.json"
-    },
-    {
-      "directive_id": "D-018",
-      "slug": "context-vertical-integration-correction",
-      "title": "One bounded corrective vertical-integration task for the context-intelligence system - end-to-end compiler integration, concurrency hardening, path containment, real retention, promotion-proof repair, projection input-manifest staleness, runbook correction, permanent context-pipeline CI",
-      "status": "active",
-      "issued_at": "2026-08-18",
-      "issued_by": "owner",
-      "supersedes": [],
-      "superseded_by": null,
-      "affected_tasks": [
-        "M0-T075"
-      ],
-      "manifest": "D-018-context-vertical-integration-correction/manifest.json"
-    },
-    {
-      "directive_id": "D-019",
-      "slug": "context-pipeline-promotion-blocker-closure",
-      "title": "Context pipeline promotion-blocker closure and adversarial completion protocol: repair the memory single-writer lock, complete path containment + private-path redaction, frozen diff-base identity, true Unit E consumption + seed ordering, honest routing unknowns, useful bounded advisory memory, and a reproducible clean-checkout e2e benchmark in permanent CI - one task, one branch, one PR.",
-      "status": "active",
-      "issued_at": "2026-08-19",
-      "issued_by": "owner",
-      "supersedes": [],
-      "superseded_by": null,
-      "affected_tasks": [
-        "M0-T076"
-      ],
-      "manifest": "D-019-context-pipeline-promotion-blocker-closure/manifest.json"
-    }
-  ],
-  "updated_at": "2026-08-18T09:05:00+00:00"
+ "schema": "directive_index/v1",
+ "version": 1,
+ "note": "Registry of owner directives. MULTIPLE directives may be status 'active' at once; this is a keyed list, never a single global current-directive pointer (D-001-R010/R018). Records are provenance only: all work-blocking decisions flow through tools/project_control.py, blockers, holds, and gates (two-lane principle, D-001-R118).",
+ "directive_states": [
+  "proposed",
+  "active",
+  "superseded",
+  "withdrawn",
+  "retired"
+ ],
+ "directives": [
+  {
+   "directive_id": "D-001",
+   "slug": "owner-directive-compliance-system",
+   "title": "Durable Owner Directive Compliance System",
+   "status": "active",
+   "issued_at": "2026-07-23",
+   "issued_by": "owner",
+   "supersedes": [],
+   "superseded_by": null,
+   "affected_tasks": [
+    "M0-T023"
+   ],
+   "manifest": "D-001-owner-directive-compliance-system/manifest.json"
+  },
+  {
+   "directive_id": "D-002",
+   "slug": "activate-control-system-first-wave",
+   "title": "Activate the control system, consolidate the plan, and prepare the first blind-isolated parallel build wave",
+   "status": "active",
+   "issued_at": "2026-07-24",
+   "issued_by": "owner",
+   "supersedes": [],
+   "superseded_by": null,
+   "affected_tasks": [
+    "M0-T024",
+    "M3-T001",
+    "M4-T007",
+    "M2-T017"
+   ],
+   "manifest": "D-002-activate-control-system-first-wave/manifest.json"
+  },
+  {
+   "directive_id": "D-003",
+   "slug": "first-wave-integration-and-second-wave",
+   "title": "Integrate first wave (D-002 sequential integration) and prepare second wave",
+   "status": "active",
+   "issued_at": "2026-07-24",
+   "issued_by": "owner",
+   "supersedes": [],
+   "superseded_by": null,
+   "affected_tasks": [
+    "M0-T026"
+   ],
+   "manifest": "D-003-first-wave-integration-and-second-wave/manifest.json"
+  },
+  {
+   "directive_id": "D-004",
+   "slug": "agent-teams-runtime-adoption",
+   "title": "Agent-teams runtime adoption, staged with pilots",
+   "status": "active",
+   "issued_at": "2026-07-24",
+   "issued_by": "owner",
+   "supersedes": [],
+   "superseded_by": null,
+   "affected_tasks": [
+    "M0-T027",
+    "M0-T028"
+   ],
+   "manifest": "D-004-agent-teams-runtime-adoption/manifest.json"
+  },
+  {
+   "directive_id": "D-005",
+   "slug": "codebase-knowledge-graph-pilot",
+   "title": "Codebase knowledge graph pilot (Graphify) - controlled evaluation before any adoption",
+   "status": "active",
+   "issued_at": "2026-07-29",
+   "issued_by": "owner",
+   "supersedes": [],
+   "superseded_by": null,
+   "affected_tasks": [],
+   "manifest": "D-005-codebase-knowledge-graph-pilot/manifest.json"
+  },
+  {
+   "directive_id": "D-006",
+   "slug": "dispatch-efficiency-and-graph-wiring",
+   "title": "Dispatch Efficiency and Code-Graph Wiring (owner draft v1.2, issued via D-004-R679)",
+   "status": "active",
+   "issued_at": "2026-08-03",
+   "issued_by": "owner",
+   "supersedes": [],
+   "superseded_by": null,
+   "affected_tasks": [
+    "M0-T035"
+   ],
+   "manifest": "D-006-dispatch-efficiency-and-graph-wiring/manifest.json"
+  },
+  {
+   "directive_id": "D-007",
+   "slug": "codex-claude-supervisor-bridge",
+   "title": "Codex-Claude Code Supervisor Bridge (v4.3, Autonomy-Tuned) - build directive",
+   "status": "active",
+   "issued_at": "2026-07-31",
+   "issued_by": "owner",
+   "supersedes": [],
+   "superseded_by": null,
+   "affected_tasks": [
+    "M0-T036"
+   ],
+   "manifest": "D-007-codex-claude-supervisor-bridge/manifest.json"
+  },
+  {
+   "directive_id": "D-008",
+   "slug": "owner-escalation-boundary",
+   "title": "Owner escalation boundary (stop-and-ask only for credentials/payment or legal sign-offs)",
+   "status": "active",
+   "issued_at": "2026-08-04",
+   "issued_by": "owner",
+   "supersedes": [],
+   "superseded_by": null,
+   "affected_tasks": [],
+   "manifest": "D-008-owner-escalation-boundary/manifest.json"
+  },
+  {
+   "directive_id": "D-009",
+   "slug": "dependency-security-governance",
+   "title": "Dependency-Security Governance Directive (fresh, owner-activated 2026-08-04)",
+   "status": "active",
+   "issued_at": "2026-08-04",
+   "issued_by": "owner",
+   "supersedes": [],
+   "superseded_by": null,
+   "affected_tasks": [
+    "M0-T019"
+   ],
+   "manifest": "D-009-dependency-security-governance/manifest.json"
+  },
+  {
+   "directive_id": "D-010",
+   "slug": "autonomous-engineering-restructure",
+   "title": "Autonomous Engineering Restructure and NYC Buildability Pilot Acceleration (Autonomous Engineering V2)",
+   "status": "active",
+   "issued_at": "2026-08-06",
+   "issued_by": "owner",
+   "supersedes": [],
+   "superseded_by": null,
+   "affected_tasks": [
+    "M0-T037",
+    "M0-T038",
+    "M0-T039",
+    "M0-T040",
+    "M0-T041",
+    "M0-T042",
+    "M0-T043",
+    "M0-T044",
+    "M0-T045"
+   ],
+   "manifest": "D-010-autonomous-engineering-restructure/manifest.json"
+  },
+  {
+   "directive_id": "D-011",
+   "slug": "bounded-truth-reconciliation",
+   "title": "Bounded truth reconciliation (owner correction of session-14 acceptance evidence)",
+   "status": "active",
+   "issued_at": "2026-08-11",
+   "issued_by": "owner",
+   "supersedes": [],
+   "superseded_by": null,
+   "affected_tasks": [
+    "M2-T016",
+    "M0-T055",
+    "M0-T053",
+    "M0-T057",
+    "M0-T047"
+   ],
+   "manifest": "D-011-bounded-truth-reconciliation/manifest.json"
+  },
+  {
+   "directive_id": "D-012",
+   "slug": "supervised-product-validation-run",
+   "title": "First bounded supervised-auto product validation run (owner-authorized)",
+   "status": "active",
+   "issued_at": "2026-08-12",
+   "issued_by": "owner",
+   "supersedes": [],
+   "superseded_by": null,
+   "affected_tasks": [],
+   "manifest": "D-012-supervised-product-validation-run/manifest.json"
+  },
+  {
+   "directive_id": "D-013",
+   "slug": "context-intelligence-pipeline",
+   "title": "Context-intelligence pipeline (census/index, bounded context compiler, ontology, measurement) - units A1/A2/B/C/D/E/F",
+   "status": "active",
+   "issued_at": "2026-08-18",
+   "issued_by": "owner",
+   "supersedes": [],
+   "superseded_by": null,
+   "affected_tasks": [
+    "M0-T063",
+    "M0-T064",
+    "M0-T065",
+    "M0-T066",
+    "M0-T067",
+    "M0-T068",
+    "M0-T069"
+   ],
+   "manifest": "D-013-context-intelligence-pipeline/manifest.json"
+  },
+  {
+   "directive_id": "D-014",
+   "slug": "supervisor-command-authority-repair",
+   "title": "Bounded supervisor repair: packet command authority wiring (defect A) + revoke-all/status open_asks reconciliation (defect B)",
+   "status": "active",
+   "issued_at": "2026-08-18",
+   "issued_by": "owner",
+   "supersedes": [],
+   "superseded_by": null,
+   "affected_tasks": [
+    "M0-T070"
+   ],
+   "manifest": "D-014-supervisor-command-authority-repair/manifest.json"
+  },
+  {
+   "directive_id": "D-015",
+   "slug": "nanoid-security-repair",
+   "title": "Bounded dependency-security repair: nanoid 3.3.17 -> 3.3.18 (GHSA-2v37-7h3g-55p8, closes B-019) under the normal policy, no age waiver",
+   "status": "active",
+   "issued_at": "2026-08-18",
+   "issued_by": "owner",
+   "supersedes": [],
+   "superseded_by": null,
+   "affected_tasks": [
+    "M0-T071"
+   ],
+   "manifest": "D-015-nanoid-security-repair/manifest.json"
+  },
+  {
+   "directive_id": "D-016",
+   "slug": "overnight-integration-runway",
+   "title": "Overnight owner authorization - complete context-intelligence integration runway (Stages 0-7)",
+   "status": "active",
+   "issued_at": "2026-08-18",
+   "issued_by": "owner",
+   "supersedes": [],
+   "superseded_by": null,
+   "affected_tasks": [],
+   "manifest": "D-016-overnight-integration-runway/manifest.json"
+  },
+  {
+   "directive_id": "D-017",
+   "slug": "a-to-z-completion-authorization",
+   "title": "Owner A-to-Z completion authorization - context-intelligence implementation (Units A1-F), controller manifest repair and safe live-controller update, permanent modularity enforcement, deterministic complexity-based model routing",
+   "status": "active",
+   "issued_at": "2026-08-18",
+   "issued_by": "owner",
+   "supersedes": [],
+   "superseded_by": null,
+   "affected_tasks": [
+    "M0-T063",
+    "M0-T064",
+    "M0-T065",
+    "M0-T066",
+    "M0-T067",
+    "M0-T068",
+    "M0-T069",
+    "M0-T072",
+    "M0-T073",
+    "M0-T074"
+   ],
+   "manifest": "D-017-a-to-z-completion-authorization/manifest.json"
+  },
+  {
+   "directive_id": "D-018",
+   "slug": "context-vertical-integration-correction",
+   "title": "One bounded corrective vertical-integration task for the context-intelligence system - end-to-end compiler integration, concurrency hardening, path containment, real retention, promotion-proof repair, projection input-manifest staleness, runbook correction, permanent context-pipeline CI",
+   "status": "active",
+   "issued_at": "2026-08-18",
+   "issued_by": "owner",
+   "supersedes": [],
+   "superseded_by": null,
+   "affected_tasks": [
+    "M0-T075"
+   ],
+   "manifest": "D-018-context-vertical-integration-correction/manifest.json"
+  },
+  {
+   "directive_id": "D-019",
+   "slug": "context-pipeline-promotion-blocker-closure",
+   "title": "Context pipeline promotion-blocker closure and adversarial completion protocol: repair the memory single-writer lock, complete path containment + private-path redaction, frozen diff-base identity, true Unit E consumption + seed ordering, honest routing unknowns, useful bounded advisory memory, and a reproducible clean-checkout e2e benchmark in permanent CI - one task, one branch, one PR.",
+   "status": "active",
+   "issued_at": "2026-08-19",
+   "issued_by": "owner",
+   "supersedes": [],
+   "superseded_by": null,
+   "affected_tasks": [
+    "M0-T076"
+   ],
+   "manifest": "D-019-context-pipeline-promotion-blocker-closure/manifest.json"
+  },
+  {
+   "directive_id": "D-020",
+   "slug": "program-wide-mcp-default-deny",
+   "title": "Program-wide MCP default-deny: every ordinary Claude Code session in NYC Buildability defaults to NO unrelated external MCP server active (claude.ai Airtable, Microsoft 365, Pencil, Supabase, or any other), via the smallest supported repository-level policy merged into the checked-in project settings - one task, one branch, one PR; no controller activation, no R060 promotion, no NYC application development.",
+   "status": "active",
+   "issued_at": "2026-08-19",
+   "issued_by": "owner",
+   "supersedes": [],
+   "superseded_by": null,
+   "affected_tasks": [
+    "M0-T077"
+   ],
+   "manifest": "D-020-program-wide-mcp-default-deny/manifest.json"
+  }
+ ],
+ "updated_at": "2026-08-19T18:30:00+00:00"
 }

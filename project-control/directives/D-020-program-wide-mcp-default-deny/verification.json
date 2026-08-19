@@ -1,0 +1,160 @@
+{
+ "schema": "directive_verification/v2",
+ "directive_id": "D-020",
+ "authority_note": "Pending independent verification by directive-compliance-verifier (producer != verifier). Capture only; no requirement verified yet. M0-T077 rows are verified through the task's gates and accept() evidence map at the reviewed content identity; D-020-BOOTSTRAP sentinel rows are verified at directive verification when the run returns.",
+ "producer": "orchestrator",
+ "verifier": "directive-compliance-verifier",
+ "task_verifications": [
+  {
+   "task_id": "M0-T077",
+   "directive_id": "D-020",
+   "producer": "orchestrator",
+   "verifier": "directive-compliance-verifier",
+   "applicable_requirement_ids": [
+    "D-020-R005",
+    "D-020-R006",
+    "D-020-R007",
+    "D-020-R008",
+    "D-020-R016",
+    "D-020-R017",
+    "D-020-R018",
+    "D-020-R019",
+    "D-020-R020",
+    "D-020-R021",
+    "D-020-R022",
+    "D-020-R023",
+    "D-020-R024",
+    "D-020-R025",
+    "D-020-R026",
+    "D-020-R027",
+    "D-020-R028",
+    "D-020-R029",
+    "D-020-R030",
+    "D-020-R031",
+    "D-020-R032",
+    "D-020-R033",
+    "D-020-R034"
+   ],
+   "reviewed_sha": null,
+   "verified_at": null,
+   "requirements": [
+    {
+     "id": "D-020-R005",
+     "state": "pending",
+     "evidence": []
+    },
+    {
+     "id": "D-020-R006",
+     "state": "pending",
+     "evidence": []
+    },
+    {
+     "id": "D-020-R007",
+     "state": "pending",
+     "evidence": []
+    },
+    {
+     "id": "D-020-R008",
+     "state": "pending",
+     "evidence": []
+    },
+    {
+     "id": "D-020-R016",
+     "state": "pending",
+     "evidence": []
+    },
+    {
+     "id": "D-020-R017",
+     "state": "pending",
+     "evidence": []
+    },
+    {
+     "id": "D-020-R018",
+     "state": "pending",
+     "evidence": []
+    },
+    {
+     "id": "D-020-R019",
+     "state": "pending",
+     "evidence": []
+    },
+    {
+     "id": "D-020-R020",
+     "state": "pending",
+     "evidence": []
+    },
+    {
+     "id": "D-020-R021",
+     "state": "pending",
+     "evidence": []
+    },
+    {
+     "id": "D-020-R022",
+     "state": "pending",
+     "evidence": []
+    },
+    {
+     "id": "D-020-R023",
+     "state": "pending",
+     "evidence": []
+    },
+    {
+     "id": "D-020-R024",
+     "state": "pending",
+     "evidence": []
+    },
+    {
+     "id": "D-020-R025",
+     "state": "pending",
+     "evidence": []
+    },
+    {
+     "id": "D-020-R026",
+     "state": "pending",
+     "evidence": []
+    },
+    {
+     "id": "D-020-R027",
+     "state": "pending",
+     "evidence": []
+    },
+    {
+     "id": "D-020-R028",
+     "state": "pending",
+     "evidence": []
+    },
+    {
+     "id": "D-020-R029",
+     "state": "pending",
+     "evidence": []
+    },
+    {
+     "id": "D-020-R030",
+     "state": "pending",
+     "evidence": []
+    },
+    {
+     "id": "D-020-R031",
+     "state": "pending",
+     "evidence": []
+    },
+    {
+     "id": "D-020-R032",
+     "state": "pending",
+     "evidence": []
+    },
+    {
+     "id": "D-020-R033",
+     "state": "pending",
+     "evidence": []
+    },
+    {
+     "id": "D-020-R034",
+     "state": "pending",
+     "evidence": []
+    }
+   ]
+  }
+ ],
+ "updated_at": "2026-08-19T18:30:00+00:00"
+}

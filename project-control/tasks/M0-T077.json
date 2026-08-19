@@ -1,0 +1,165 @@
+{
+ "task_id": "M0-T077",
+ "title": "Program-wide MCP default-deny repository policy (D-020)",
+ "task_type": "governance",
+ "milestone_id": "M0",
+ "objective": "Implement the smallest supported repository-level policy so every ordinary Claude Code session opened from this repository and its clean worktrees defaults to NO unrelated external MCP server active (claude.ai Airtable, Microsoft 365, Pencil, Supabase, or any other), after a complete read-only MCP audit: merge the supported disableClaudeAiConnectors setting into the existing checked-in project settings preserving every existing setting; disable the other audited servers at repository scope by their exact audited identifiers via the officially supported mechanisms (deniedMcpServers, disabledMcpjsonServers, enableAllProjectMcpServers:false); document the default-deny rule and the narrow future-authorization path; add the smallest durable CI validation that detects removal or weakening of the policy; prove the policy from fresh processes before and after; inspect supervisor launch compatibility read-only; never modify the owner's global configuration or disconnect account-wide connectors.",
+ "business_reason": "D-020 owner directive: unrelated external MCP connectors must not accompany ordinary repository, control-plane, testing, context, or application sessions merely because they are installed globally or connected to the owner's account; connector use requires explicit per-task authorization.",
+ "inputs": [
+  "Live reconciliation 2026-08-19: origin/main 31c50a09bd1671d111f21923c6a2d739f51187dd (PR #239 merge, head 93c80fb6), 99 accepted tasks, D-019/M0-T076 closed, post-merge CI green, D-013-R060 PENDING, controller bundle not run, limited-auto disabled - all checkpoint items confirmed",
+  "Read-only MCP audit (committed as project-control/reports/M0-T077-mcp-audit.md): claude.ai Airtable + Microsoft 365 (+ ever-connected Intuit QuickBooks) from the claude.ai account; pencil from user-scope ~/.claude.json mcpServers; supabase from the user-profile .mcp.json picked up by ancestor-directory traversal and pre-approved by user-scope enabledMcpjsonServers which also lists mysql/sequential-thinking/playwright; plugin pyright-lsp is LSP-only, not an external MCP connector",
+  "Official mechanism confirmation: claude-code-settings JSON schema (json.schemastore.org/claude-code-settings.json) + code.claude.com docs - disableClaudeAiConnectors (any settings source, v2.1.182+; installed CLI 2.1.220), allowedMcpServers/deniedMcpServers (deny merges from all sources, deny > allow, empty allow = none allowed), disabledMcpjsonServers, enableAllProjectMcpServers",
+  "Empirical fresh-process mechanism probes in an isolated scratch project (before any repo change): full policy => 'No MCP servers configured'; ablations attribute each key (disableClaudeAiConnectors removes claude.ai connectors; disabledMcpjsonServers removes supabase; project-scope deniedMcpServers removes user-scope pencil; allowedMcpServers [] alone removes everything)"
+ ],
+ "outputs": [
+  ".claude/settings.json - MERGE-ONLY addition of the MCP default-deny policy keys (disableClaudeAiConnectors true, allowedMcpServers [], deniedMcpServers for the five audited local identifiers, disabledMcpjsonServers for the four audited .mcp.json identifiers, enableAllProjectMcpServers false); every pre-existing key preserved verbatim",
+  "docs/MCP_DEFAULT_DENY_POLICY.md - the default-deny rule, per-key mechanism rationale, the narrow future-task connector-authorization procedure, and the honest enforcement boundary (repository-scope only; account/global config untouched)",
+  "tools/validate_mcp_policy.py - stdlib-only fail-closed validator: exits nonzero if any policy invariant is removed or weakened",
+  "tools/test_mcp_policy.py - deterministic tests for the validator including removal/weakening regressions",
+  ".github/workflows/ci.yml - ONE added step in the existing required control-plane job running the validator (no other workflow/test touched)",
+  "project-control/reports/M0-T077-mcp-audit.md - complete MCP inventory (10 attributes per server, secrets redacted)",
+  "project-control/reports/M0-T077-fresh-session-proof.md - before/after fresh-process evidence incl. global-preservation digests",
+  "project-control/reports/M0-T077-supervisor-compatibility.md - read-only supervisor launch-path finding and any owner-gated gap",
+  "D-020 directive record + task lifecycle artifacts (reports, evidence map, gate records)"
+ ],
+ "dependencies": [],
+ "allowed_paths": [
+  ".claude/settings.json",
+  "docs/MCP_DEFAULT_DENY_POLICY.md",
+  "tools/validate_mcp_policy.py",
+  "tools/test_mcp_policy.py",
+  ".github/workflows/ci.yml",
+  "project-control/directives/D-020-program-wide-mcp-default-deny/source-001.md",
+  "project-control/directives/D-020-program-wide-mcp-default-deny/manifest.json",
+  "project-control/directives/D-020-program-wide-mcp-default-deny/requirements.json",
+  "project-control/directives/D-020-program-wide-mcp-default-deny/verification.json",
+  "project-control/directives/index.json",
+  "project-control/tasks/M0-T077.json",
+  "project-control/state.json",
+  "project-control/gates/M0-T077-G0.json",
+  "project-control/gates/M0-T077-G3.json",
+  "project-control/gates/M0-T077-G4.json",
+  "project-control/gates/M0-T077-G5.json",
+  "project-control/reports/M0-T077-G0-readiness.md",
+  "project-control/reports/M0-T077-mcp-audit.md",
+  "project-control/reports/M0-T077-fresh-session-proof.md",
+  "project-control/reports/M0-T077-supervisor-compatibility.md",
+  "project-control/reports/M0-T077-submission.md",
+  "project-control/reports/M0-T077-evidence-map.json",
+  "project-control/reports/M0-T077-review-G3.md",
+  "project-control/reports/M0-T077-review-G4.md",
+  "project-control/reports/M0-T077-review-G5.md",
+  "project-control/reports/M0-T077-directive-verification.md",
+  "docs/SESSION_HANDOFF.md"
+ ],
+ "forbidden_paths": [
+  "tools/agent_supervisor/",
+  "tools/model_routing.py",
+  "tools/model_selection.toml",
+  "apps/",
+  "services/",
+  "packages/",
+  "supabase/",
+  ".claude/hooks/",
+  ".claude/agents/",
+  ".claude/skills/",
+  ".claude/rules/",
+  ".claude/ORCHESTRATION_POLICY.md",
+  ".mcp.json",
+  ".github/workflows/secret-scan.yml",
+  ".github/workflows/context-budget.yml",
+  ".github/workflows/scheduled-audit.yml",
+  ".github/workflows/scheduled-web-audit.yml",
+  ".github/workflows/generate-lockfile.yml"
+ ],
+ "acceptance_scenarios": [
+  {
+   "id": "AS-1",
+   "given": "the merged MCP default-deny policy in the checked-in .claude/settings.json",
+   "when": "a FRESH Claude Code process enumerates MCP servers (claude mcp list) from a clean worktree of this repository",
+   "then": "no MCP server is configured or active: claude.ai Airtable absent, Microsoft 365 absent, pencil absent, supabase absent, nothing unexpected present"
+  },
+  {
+   "id": "AS-2",
+   "given": "the same policy",
+   "when": "the fresh-process enumeration is repeated from a SECOND clean worktree and again after process exit (fresh session restart)",
+   "then": "the result is identical - the policy is carried by tracked files alone and survives closing and starting fresh repository sessions"
+  },
+  {
+   "id": "AS-3",
+   "given": "byte digests of the owner's global configuration (user ~/.claude.json, user ~/.claude/settings.json, user-level .mcp.json) captured before implementation",
+   "when": "the task completes",
+   "then": "those files are byte-identical (no global connector disconnected, deleted, or modified) and a fresh-process enumeration from a NON-repository directory still shows the connectors available to unrelated projects"
+  },
+  {
+   "id": "AS-4",
+   "given": "the pre-change checked-in .claude/settings.json ($schema, model, fallbackModel, effortLevel, env, hooks)",
+   "when": "the policy keys are merged",
+   "then": "every pre-existing key and value is preserved verbatim; the diff is purely additive MCP-policy keys; the file still parses and the repository settings load normally"
+  },
+  {
+   "id": "AS-5",
+   "given": "tools/validate_mcp_policy.py wired into the existing required control-plane CI job",
+   "when": "any policy invariant is removed or weakened (disableClaudeAiConnectors not true, allowedMcpServers missing/non-empty, an audited identifier dropped from deniedMcpServers/disabledMcpjsonServers, enableAllProjectMcpServers not false, settings file unparseable)",
+   "then": "the validator exits nonzero and the required CI job fails; with the intact policy it exits 0"
+  },
+  {
+   "id": "AS-6",
+   "given": "the read-only supervisor-launch inspection (tools/agent_supervisor/claude_runner.py RunnerConfig.cwd -> subprocess cwd -> authority.worktree)",
+   "when": "the finding is recorded",
+   "then": "whether supervised launches consume the repository policy is stated with evidence, protected files are unmodified, and any residual owner-gated gap is recorded honestly with the smallest proposed later step"
+  },
+  {
+   "id": "AS-7",
+   "given": "all committed audit/proof reports",
+   "when": "scanned (incl. the existing secret-scan CI)",
+   "then": "no secret, token, credential, connection string, database key, or private account content appears; caller-private absolute paths are redacted where required"
+  },
+  {
+   "id": "AS-8",
+   "given": "the one-task/one-branch/one-PR bounding",
+   "when": "the PR is opened and independently accepted with CI green",
+   "then": "work STOPS: no merge, no controller bundle, no R060 decision, no further task without explicit owner authorization"
+  }
+ ],
+ "required_gates": [
+  "G0",
+  "G3",
+  "G4",
+  "G5"
+ ],
+ "producer_agent": null,
+ "reviewer_agents": [
+  "code-reviewer",
+  "qa-engineer",
+  "security-reviewer",
+  "directive-compliance-verifier"
+ ],
+ "status": "backlog",
+ "progress_percent": 0,
+ "risks": [
+  "Settings-merge risk: a wholesale replacement would violate D-020-R022 - mitigated by merge-only edit, AS-4 verbatim-preservation check, and the validator asserting the pre-existing keys still exist",
+  "Over-blocking risk: allowedMcpServers [] denies every MCP server at repository scope by design; a future task that genuinely needs one connector must follow the documented narrow authorization procedure (edit the checked-in policy in its own reviewed task)",
+  "Enforcement-boundary risk: repository-scope settings cannot govern sessions launched OUTSIDE this repository, and a user-initiated in-session /mcp reconnect is interactive user action - documented honestly; no global config modified as a workaround (D-020-R026/R031)",
+  "Supervisor risk: supervised launches consume the policy only if the worker cwd is a repo worktree containing the checked-in settings - inspected read-only; any gap recorded as owner-gated (D-020-R034)"
+ ],
+ "blockers": [],
+ "created_at": "2026-08-19T21:25:58.957357+00:00",
+ "updated_at": "2026-08-19T21:25:59.070348+00:00",
+ "directive_refs": [
+  {
+   "directive_id": "D-020",
+   "requirement_ids": "ALL"
+  }
+ ],
+ "directive_regime_version": "1.0",
+ "directive_regime_entered_at": "2026-08-19T21:25:58.957357+00:00",
+ "documented_test_commands": [
+  "python tools/validate_mcp_policy.py --check",
+  "python tools/test_mcp_policy.py",
+  "python tools/validate_directive_compliance.py --check",
+  "python tools/test_project_control.py",
+  "python tools/modularity_check.py --check",
+  "claude mcp list   (fresh process, run from a clean worktree of this repository - documented proof command, also captured in the committed fresh-session proof)"
+ ]
+}

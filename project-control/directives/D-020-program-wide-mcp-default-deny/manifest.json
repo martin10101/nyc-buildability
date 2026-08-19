@@ -1,0 +1,105 @@
+{
+ "schema": "directive_manifest/v1",
+ "directive_id": "D-020",
+ "version": 1,
+ "slug": "program-wide-mcp-default-deny",
+ "title": "Program-wide MCP default-deny: every ordinary Claude Code session in NYC Buildability defaults to NO unrelated external MCP server active (claude.ai Airtable, Microsoft 365, Pencil, Supabase, or any other), via the smallest supported repository-level policy merged into the checked-in project settings - one task, one branch, one PR; no controller activation, no R060 promotion, no NYC application development.",
+ "status": "active",
+ "lifecycle_state": "active",
+ "issued_by": "owner",
+ "issued_at": "2026-08-19",
+ "captured_at": "2026-08-19T18:30:00+00:00",
+ "created_at": "2026-08-19T18:30:00+00:00",
+ "updated_at": "2026-08-19T18:30:00+00:00",
+ "channel": "owner_typed_instruction",
+ "frozen_baseline_sha": "31c50a09bd1671d111f21923c6a2d739f51187dd",
+ "sources": [
+  {
+   "file": "source-001.md",
+   "kind": "original",
+   "sequence": 1,
+   "recorded_at": "2026-08-19T18:30:00+00:00",
+   "content_digest_sha256": "bf418f3a812d6f305bcd0a73f956dee495e7ba1576657c6445b05235fa14df8d"
+  }
+ ],
+ "amendments": [],
+ "supersedes": [],
+ "superseded_by": null,
+ "affected_tasks": [
+  "M0-T077"
+ ],
+ "affected_prs": [],
+ "affected_branches": [
+  "task/M0-T077-mcp-default-deny"
+ ],
+ "scope": {
+  "kind": "single-bounded-task",
+  "allowed": "one task (M0-T077), one branch, one PR; read-only MCP audit; the checked-in repository Claude settings (merge only, never wholesale replacement); MCP default-deny policy documentation; the smallest durable automated validation wired into existing CI; required project-control artifacts; read-only supervisor-launch compatibility inspection",
+  "prohibited": "tools/agent_supervisor/**, protected controller installation/configuration, model-selection configuration, tools/model_routing.py, apps/**, services/**, packages/**, supabase data or configuration, Airtable or Microsoft 365 data, branch protection, security policy, unrelated workflows or tests, D-013-R060 state, previously accepted task evidence, limited-auto, history rewriting, weakening/removing/skipping/replacing existing tests, owner global Claude configuration changes, account-wide connector disconnection or deletion, invoking any external MCP connector during this work, merging the PR without explicit owner authorization",
+  "task_ids": [
+   "M0-T077"
+  ],
+  "task_types": [
+   "governance"
+  ]
+ },
+ "applicability_note": "Session-governance rows (R001-R004, R009-R015: reconcile-first/stop-on-divergence, read-only infra reconciliation, no context-system reopening, one-task/one-branch/one-PR authorization bounding, no-merge-without-owner-authorization stop, no external MCP invocation during the work, sub-agent independence discipline, protected/forbidden areas, narrow-change scope, no limited-auto/history-rewrite/test-weakening, required return) bind the NON-LEDGER sentinel D-020-BOOTSTRAP (D-016/D-017/D-018/D-019 precedent) and are verified at directive verification. Task rows (R005-R008, R016-R034: verbatim capture with live-registry identifier resolution, one-task creation, frozen allowed paths, full lifecycle, read-only audit + redaction + official-docs confirmation, smallest supported repository-level default-deny policy, settings merge/preservation, repository-scope disables by audited identifier, fresh-session applicability and proof, global-preservation guarantees, documentation, durable validation, no new permissions framework, limitation reporting, supervisor compatibility read-only) bind M0-T077 and are verified through the task's gates and accept() evidence map at the reviewed content identity.",
+ "owner_approval": {
+  "state": "authorized",
+  "note": "owner-typed directive in session, 2026-08-19: 'This instruction authorizes exactly ONE bounded repository task for the program-wide MCP policy described below.'"
+ },
+ "enforcement_pointers": {
+  "cli": "tools/project_control.py (claim --directive-refs; accept blocking on verification)",
+  "validator": "tools/validate_directive_compliance.py",
+  "registry": "tools/directive_registry.py"
+ },
+ "requirements_file": "requirements.json",
+ "verification_file": "verification.json",
+ "locked_requirement_ids": [
+  "D-020-R001",
+  "D-020-R002",
+  "D-020-R003",
+  "D-020-R004",
+  "D-020-R005",
+  "D-020-R006",
+  "D-020-R007",
+  "D-020-R008",
+  "D-020-R009",
+  "D-020-R010",
+  "D-020-R011",
+  "D-020-R012",
+  "D-020-R013",
+  "D-020-R014",
+  "D-020-R015",
+  "D-020-R016",
+  "D-020-R017",
+  "D-020-R018",
+  "D-020-R019",
+  "D-020-R020",
+  "D-020-R021",
+  "D-020-R022",
+  "D-020-R023",
+  "D-020-R024",
+  "D-020-R025",
+  "D-020-R026",
+  "D-020-R027",
+  "D-020-R028",
+  "D-020-R029",
+  "D-020-R030",
+  "D-020-R031",
+  "D-020-R032",
+  "D-020-R033",
+  "D-020-R034"
+ ],
+ "requirements_id_digest_sha256": "6827e80bcd41c4c19d54b82611d29bfffecc6e06fccfc1dbe400a4b81d307c80",
+ "requirements_content_digest_sha256": "0ddb2d850f6ba706912d56ede040cc38ed3baf3338177a4092a31e4093ecd2e6",
+ "final_reviewed_sha": null,
+ "final_reviewed_manifest_sha256": null,
+ "audit_log": [
+  {
+   "at": "2026-08-19T18:30:00+00:00",
+   "actor": "orchestrator",
+   "event": "captured source-001 verbatim (owner program-wide MCP default-deny directive), decomposed 34 requirements (11 D-020-BOOTSTRAP session-governance + 23 M0-T077 audit/implementation/proof rows), activated registry entry under the owner-typed single-task authorization; next-available identifiers D-020/M0-T077 confirmed against the live registry and ledger before assignment"
+  }
+ ]
+}
