@@ -83,10 +83,16 @@ active.
 
 ## Durable validation
 
-`tools/validate_mcp_policy.py --check` (stdlib, read-only, fail-closed) asserts every
-invariant above **including** that the pre-existing settings survived the merge; it
-runs with `tools/test_mcp_policy.py` in the required **control-plane** CI job on every
-push and PR, so accidental removal or weakening of the policy blocks merge.
+`tools/validate_mcp_policy.py --check` (stdlib, read-only, fail-closed) asserts the
+policy keys' exact values, that the pre-existing settings survived the merge (with a
+documented string-level residual for hook commands, backstopped by the hook test
+suites in the same job), and a whole-file shape assertion — every key present must be
+known and correctly shaped, because one mistyped key makes Claude Code silently
+discard the entire file. It runs with `tools/test_mcp_policy.py` in the
+**control-plane** CI job on every push and PR, so accidental removal or weakening of
+the policy fails that job visibly. (Failing checks gate merges only to the extent
+branch protection requires them — a pre-existing repository setting this policy does
+not change.)
 
 ## Official documentation (mechanism confirmation, D-020 §5)
 

@@ -40,7 +40,7 @@ identity:
 | `.claude/settings.json` | +24 lines, purely additive merge of 5 MCP keys + 1 deny-first `permissions.deny: ["mcp__*"]` rule | The repository-level default-deny policy itself (D-020-R020..R024) |
 | `tools/validate_mcp_policy.py` | new (stdlib, ~210 lines) | Fail-closed durable validation of every policy invariant (p1-p9) incl. merge-preservation and consumer-discard shape guards (R029) |
 | `tools/test_mcp_policy.py` | new (28 tests) | Removal/weakening regressions for the validator incl. the G3 bypass fixtures (R029) |
-| `.github/workflows/ci.yml` | +8 lines: two steps in the existing required control-plane job | Runs the validator + tests on every push/PR so weakening blocks merge (R029); no other workflow/test touched |
+| `.github/workflows/ci.yml` | +10 lines: two steps in the existing control-plane job | Runs the validator + tests on every push/PR so weakening fails that job visibly (R029; merge-gating is a branch-protection setting this task does not change); no other workflow/test touched |
 | `docs/MCP_DEFAULT_DENY_POLICY.md` | new | The rule, per-key mechanism, inventory summary, future narrow-authorization path, honest boundary (R028) |
 | `project-control/directives/D-020-program-wide-mcp-default-deny/*` | new | Verbatim capture + 34-requirement decomposition + pending verification stub (R005) |
 | `project-control/directives/index.json` | +1 entry | Registry activation of D-020 |

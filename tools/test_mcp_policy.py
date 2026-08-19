@@ -231,6 +231,51 @@ class McpPolicyValidatorTest(unittest.TestCase):
         settings["permissions"]["defaultMode"] = "plan"
         self.assertEqual(self.errors_for(settings), [])
 
+    # ---- p9 whole-file shape assertion (G3 re-review probes 59-63) ----
+
+    def test_probe59_permissions_allow_not_a_list_fails(self):
+        weakened = copy.deepcopy(self.intact)
+        weakened["permissions"]["allow"] = "not-a-list"
+        errs = self.errors_for(weakened)
+        self.assertTrue(any(e.startswith("p9") and "allow" in e for e in errs))
+
+    def test_probe60_env_not_an_object_fails(self):
+        errs = self.errors_for(self.mutate(env="not-an-object"))
+        self.assertTrue(any(e.startswith("p9") and "'env'" in e for e in errs))
+
+    def test_probe61_fallback_model_non_string_elements_fails(self):
+        errs = self.errors_for(self.mutate(fallbackModel=[123]))
+        self.assertTrue(any(e.startswith("p9") and "fallbackModel" in e
+                            for e in errs))
+
+    def test_probe62_schema_key_number_fails(self):
+        weakened = copy.deepcopy(self.intact)
+        weakened["$schema"] = 12345
+        errs = self.errors_for(weakened)
+        self.assertTrue(any(e.startswith("p9") and "$schema" in e for e in errs))
+
+    def test_probe63_unknown_key_fails_closed(self):
+        weakened = copy.deepcopy(self.intact)
+        weakened["cleanupPeriodDays"] = "thirty"
+        errs = self.errors_for(weakened)
+        self.assertTrue(any(e.startswith("p9") and "cleanupPeriodDays" in e
+                            for e in errs))
+
+    def test_unknown_permissions_subkey_fails_closed(self):
+        weakened = copy.deepcopy(self.intact)
+        weakened["permissions"]["notARealField"] = True
+        errs = self.errors_for(weakened)
+        self.assertTrue(any(e.startswith("p9") and "notARealField" in e
+                            for e in errs))
+
+    def test_denied_entry_with_extra_key_fails_closed(self):
+        weakened = copy.deepcopy(self.intact)
+        weakened["deniedMcpServers"] = (weakened["deniedMcpServers"]
+                                        + [{"serverName": "x", "toolName": "y"}])
+        errs = self.errors_for(weakened)
+        self.assertTrue(any(e.startswith("p9") and "deniedMcpServers" in e
+                            for e in errs))
+
     # ---- exit codes ----
 
     def test_main_exit_one_on_weakened_policy(self):

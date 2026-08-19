@@ -137,7 +137,7 @@
     "directive-compliance-verifier"
   ],
   "status": "awaiting_gate",
-  "progress_percent": 85,
+  "progress_percent": 92,
   "risks": [
     "Settings-merge risk: a wholesale replacement would violate D-020-R022 - mitigated by merge-only edit, AS-4 verbatim-preservation check, and the validator asserting the pre-existing keys still exist",
     "Over-blocking risk: allowedMcpServers [] denies every MCP server at repository scope by design; a future task that genuinely needs one connector must follow the documented narrow authorization procedure (edit the checked-in policy in its own reviewed task)",
@@ -146,7 +146,7 @@
   ],
   "blockers": [],
   "created_at": "2026-08-19T21:25:58.957357+00:00",
-  "updated_at": "2026-08-19T22:25:56.489570+00:00",
+  "updated_at": "2026-08-19T22:34:48.811989+00:00",
   "directive_refs": [
     {
       "directive_id": "D-020",
@@ -171,6 +171,13 @@
       "percent": 90,
       "status": "claimed",
       "message": "G3 rework (FAIL at 90ea22f5): F-1 subdirectory limitation disclosed in policy doc + proof (Runs F/G committed evidence, owner-gated next step recorded); F-2 p9 schema-shape guards (model str, fallbackModel list, permissions.defaultMode enum) + regressions; F-3 hook check now requires full .claude/hooks/<script> path inside a registered command (decoy regression added, residual documented); F-4 allowed_paths amended to include the standard CLI submission artifact project-control/reports/M0-T077.json (contract-drafting omission, 96 precedents); F-6 ci.yml comment corrected (main is unprotected; steps fail the job, branch protection unchanged). Re-submission at a corrected frozen identity follows."
+    },
+    {
+      "at": "2026-08-19T22:34:48.811989+00:00",
+      "agent": "orchestrator",
+      "percent": 92,
+      "status": "awaiting_gate",
+      "message": "G3 recorded PASS (re-review verdict: PASS with required corrections, gate-verdict semantics rule). BLOCKING corrections before next gate/acceptance: (1) F-2-residual - replace enumerated p9 shape guards with a whole-file shape assertion over the known key set incl. list element types and env/permissions sub-object types, unknown keys fail closed, regressions for re-review probes 59-63; (2) F-6-residual - correct the two remaining blocks-merge phrasings (docs/MCP_DEFAULT_DENY_POLICY.md, M0-T077-submission.md) and scope the asserts-every-invariant clause."
     }
   ]
 }

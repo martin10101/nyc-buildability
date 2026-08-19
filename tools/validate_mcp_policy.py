@@ -30,12 +30,15 @@ repository (and its clean worktrees) load NO unrelated external MCP server:
       referenced by a registered entry's "command"), not merely a substring
       anywhere in the hooks blob — the policy may never arrive by replacing the
       file (G3 F-3)
-  p9  schema-shape guards: Claude Code DISCARDS the entire settings file — silently
-      voiding the whole policy — when certain keys carry a schema-invalid shape,
-      even though the file still parses as JSON. Guarded shapes (each reproduced
-      by the G3 adversarial review, F-2): model must be a string, fallbackModel
-      must be a list, and permissions.defaultMode (when present) must be a valid
-      permission-mode enum member
+  p9  whole-file shape assertion: Claude Code DISCARDS the entire settings file —
+      silently voiding the whole policy — when any key carries a schema-invalid
+      shape, even though the file still parses as JSON (G3 F-2 + re-review probes
+      59-63 demonstrated eight such shapes). Instead of enumerating discard shapes,
+      EVERY key present must be a known key matching its expected shape, including
+      list element types and the env/permissions/hooks sub-structures; anything
+      unrecognized or mistyped fails CLOSED. Adding a genuinely new setting to the
+      checked-in file therefore requires extending KNOWN_KEY_SHAPES in the same
+      reviewed change — intended visibility, mirroring the connector procedure
 
 A future task that is explicitly authorized to use ONE connector edits the policy
 inside its own reviewed task (see docs/MCP_DEFAULT_DENY_POLICY.md); this validator
@@ -78,10 +81,94 @@ PRESERVED_HOOKS = (
     "readonly_agent_guard.py",
     "directive_reminder.py",
 )
-#: permissions.defaultMode values PROVEN accepted by the consumer (G3 probes 30-31);
-#: anything else makes Claude Code discard the whole settings file. Deliberately
-#: conservative: a value missing here fails VISIBLY (fail closed), never silently.
+#: permissions.defaultMode values PROVEN accepted by the consumer (G3 re-review
+#: probes 55-58 verified all four against the live CLI); anything else makes Claude
+#: Code discard the whole settings file. Deliberately conservative: a value missing
+#: here fails VISIBLY (fail closed), never silently.
 VALID_DEFAULT_MODES = ("default", "acceptEdits", "plan", "bypassPermissions")
+
+
+def _is_str_list(v: object) -> bool:
+    return isinstance(v, list) and all(isinstance(x, str) for x in v)
+
+
+def _is_str_dict(v: object) -> bool:
+    return (isinstance(v, dict)
+            and all(isinstance(k, str) and isinstance(x, str) for k, x in v.items()))
+
+
+def _is_mcp_matcher_list(v: object) -> bool:
+    """allowedMcpServers/deniedMcpServers: entries carry exactly one matcher —
+    serverName (str), serverUrl (str), or serverCommand (list of str)."""
+    if not isinstance(v, list):
+        return False
+    for entry in v:
+        if not isinstance(entry, dict) or len(entry) != 1:
+            return False
+        ((key, val),) = entry.items()
+        if key in ("serverName", "serverUrl"):
+            if not isinstance(val, str):
+                return False
+        elif key == "serverCommand":
+            if not _is_str_list(val):
+                return False
+        else:
+            return False
+    return True
+
+
+def _is_hooks_shape(v: object) -> bool:
+    """hooks: {event: [{matcher?: str, hooks: [{type: str, command: str}, ...]}]}"""
+    if not isinstance(v, dict):
+        return False
+    for event, entries in v.items():
+        if not isinstance(event, str) or not isinstance(entries, list):
+            return False
+        for entry in entries:
+            if not isinstance(entry, dict):
+                return False
+            if "matcher" in entry and not isinstance(entry["matcher"], str):
+                return False
+            inner = entry.get("hooks")
+            if not isinstance(inner, list):
+                return False
+            for hook in inner:
+                if not isinstance(hook, dict):
+                    return False
+                if not isinstance(hook.get("type"), str):
+                    return False
+                if not isinstance(hook.get("command"), str):
+                    return False
+    return True
+
+
+#: Known permission sub-keys and their required shapes (p9).
+PERMISSION_KEY_SHAPES = {
+    "deny": (_is_str_list, "list of rule strings"),
+    "allow": (_is_str_list, "list of rule strings"),
+    "ask": (_is_str_list, "list of rule strings"),
+    "additionalDirectories": (_is_str_list, "list of path strings"),
+    "defaultMode": (lambda v: v in VALID_DEFAULT_MODES,
+                    f"one of {VALID_DEFAULT_MODES}"),
+}
+
+#: Every key the checked-in settings file is allowed to carry, with its required
+#: shape (p9). A key added to the file later must be added here in the SAME
+#: reviewed change, or the validator fails closed.
+KNOWN_KEY_SHAPES = {
+    "$schema": (lambda v: isinstance(v, str), "string"),
+    "model": (lambda v: isinstance(v, str), "string"),
+    "fallbackModel": (_is_str_list, "list of model-id strings"),
+    "effortLevel": (lambda v: isinstance(v, str), "string"),
+    "disableClaudeAiConnectors": (lambda v: isinstance(v, bool), "boolean"),
+    "allowedMcpServers": (_is_mcp_matcher_list, "list of matcher objects"),
+    "deniedMcpServers": (_is_mcp_matcher_list, "list of matcher objects"),
+    "disabledMcpjsonServers": (_is_str_list, "list of server-name strings"),
+    "enableAllProjectMcpServers": (lambda v: isinstance(v, bool), "boolean"),
+    "permissions": (lambda v: isinstance(v, dict), "object"),
+    "env": (_is_str_dict, "object of string values"),
+    "hooks": (_is_hooks_shape, "hooks registration structure"),
+}
 
 
 def _registered_hook_commands(hooks: object):
@@ -170,20 +257,32 @@ def validate(settings_path: Path) -> list[str]:
                           "(no registered hook command references "
                           f".claude/hooks/{hook})")
 
-    if "model" in settings and not isinstance(settings.get("model"), str):
-        errors.append("p9 model must be a string; a schema-invalid shape makes "
-                      "Claude Code discard the ENTIRE settings file "
-                      f"(found: {type(settings.get('model')).__name__})")
-    if "fallbackModel" in settings and not isinstance(settings.get("fallbackModel"), list):
-        errors.append("p9 fallbackModel must be a list; a schema-invalid shape makes "
-                      "Claude Code discard the ENTIRE settings file "
-                      f"(found: {type(settings.get('fallbackModel')).__name__})")
-    if isinstance(permissions, dict) and "defaultMode" in permissions:
-        mode = permissions.get("defaultMode")
-        if mode not in VALID_DEFAULT_MODES:
-            errors.append("p9 permissions.defaultMode must be one of "
-                          f"{VALID_DEFAULT_MODES}; an invalid value makes Claude "
-                          f"Code discard the ENTIRE settings file (found: {mode!r})")
+    # p9 whole-file shape assertion (fail closed): any unknown or mistyped key can
+    # make Claude Code silently discard the ENTIRE settings file.
+    for key, value in settings.items():
+        spec = KNOWN_KEY_SHAPES.get(key)
+        if spec is None:
+            errors.append(f"p9 unknown settings key {key!r} (fail closed: an "
+                          "unrecognized or mistyped key is the consumer-discard "
+                          "vector; extend KNOWN_KEY_SHAPES in the same reviewed "
+                          "change that adds a key)")
+            continue
+        check, expected = spec
+        if not check(value):
+            errors.append(f"p9 settings key {key!r} must be {expected}; a "
+                          "schema-invalid shape makes Claude Code discard the "
+                          "ENTIRE settings file")
+    if isinstance(permissions, dict):
+        for key, value in permissions.items():
+            spec = PERMISSION_KEY_SHAPES.get(key)
+            if spec is None:
+                errors.append(f"p9 unknown permissions sub-key {key!r} (fail closed)")
+                continue
+            check, expected = spec
+            if not check(value):
+                errors.append(f"p9 permissions.{key} must be {expected}; a "
+                              "schema-invalid shape makes Claude Code discard the "
+                              "ENTIRE settings file")
 
     return errors
 
