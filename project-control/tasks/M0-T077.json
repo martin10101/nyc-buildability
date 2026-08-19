@@ -135,7 +135,7 @@
     "security-reviewer",
     "directive-compliance-verifier"
   ],
-  "status": "awaiting_gate",
+  "status": "rework",
   "progress_percent": 85,
   "risks": [
     "Settings-merge risk: a wholesale replacement would violate D-020-R022 - mitigated by merge-only edit, AS-4 verbatim-preservation check, and the validator asserting the pre-existing keys still exist",
@@ -145,7 +145,7 @@
   ],
   "blockers": [],
   "created_at": "2026-08-19T21:25:58.957357+00:00",
-  "updated_at": "2026-08-19T22:07:18.727509+00:00",
+  "updated_at": "2026-08-19T22:21:30.577490+00:00",
   "directive_refs": [
     {
       "directive_id": "D-020",
