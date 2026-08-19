@@ -210,3 +210,173 @@ Minor observation for future operators: when `allowedMcpServers` blocks claude.a
 2. **F-2 (major):** add type/enum assertions for `model`, `fallbackModel`, and `permissions.defaultMode`, with regressions proving a schema-invalid preserved key fails the validator.
 3. **F-4, F-5 (minor):** amend `allowed_paths` (or record the CLI-artifact exception) for `project-control/reports/M0-T077.json`, and record the gate against a frozen sha.
 4. **F-3, F-6 (minor, orchestrator's discretion):** tighten p7's hook check to inspect registrations rather than a JSON substring; correct the "blocks merge" comment given `main` is unprotected.
+
+
+---
+---
+
+<!-- Orchestrator preservation note: RE-REVIEW below, returned through the
+agent-return channel by the same independent read-only G3 reviewer after the
+rework, saved VERBATIM (transport entity-decoding only). Received 2026-08-19.
+Verdict: PASS with required corrections — recorded as gate G3 PASS per the
+gate-verdict semantics rule; the section-4 corrections are BLOCKING for the
+next gate and for acceptance. Everything below is the reviewer's text. -->
+
+# G3 Re-Review — M0-T077 (D-020 MCP default-deny), corrected identity
+
+**Reviewer:** code-reviewer (independent, read-only)
+**Identity re-reviewed:** `9e5c8221f87f4e975bbcdb6dcf778a45a1ad2338`
+**Branch head checked:** `002ffc39405ca3992831b4b0d95f3f670e990a30`
+**Prior verdict:** FAIL at `90ea22f5` (1 BLOCKING, 1 MAJOR, 4 MINOR)
+
+## VERDICT: **PASS with required corrections**
+
+Per `.claude/rules/project-control.md` gate-verdict semantics this is recorded as **PASS**, and the corrections in §4 are **BLOCKING for acceptance and for the next gate**.
+
+**The BLOCKING finding F-1 is fully and accurately remediated.** I re-verified the disclosure text against my own measurements rather than taking it on trust: it is precise, it does not overclaim, the old "elsewhere" sentence is gone, the mitigation is real, and the owner-gated next step is recorded. F-3 is fully closed and its documented residual is *verifiably* honest — I checked the mechanism it defers to and it does hold. F-4 is clean at both commits. F-6 is corrected in `ci.yml`.
+
+**F-2 is not closed as a class.** The three shapes I reported are now guarded and I confirmed each of my original bypass fixtures fails. But the guard is an enumeration of the shapes I happened to find, and in one fuzzing pass I found **five more** schema-invalid shapes that pass p1–p9 while Claude Code silently discards the whole settings file — including one that defeats the newly added `fallbackModel` guard from the inside. That does not block this gate (the shipped policy artifact is byte-identical to the one I already proved works) but it must be closed before acceptance, and the fix should be structural rather than another three entries.
+
+I modified nothing in the repository; `git status` is clean. Fixtures live only in my OS temp scratchpad.
+
+---
+
+## 1. Item 6 first — enforcement artifacts are unchanged, so my passing probes still stand
+
+`.claude/settings.json` is the **same blob** at all three commits:
+
+```
+git rev-parse eb742f2:.claude/settings.json 9e5c8221:.claude/settings.json 002ffc3:.claude/settings.json
+dd11cd79e01f309c524f00906ff1266de439a287   (x3, identical)
+```
+
+So probes 1–41 from the first review carry over unchanged: the policy blocks all four servers at worktree root, `settings.local.json` cannot re-enable anything, the empty allowlist is deny-all, and the deny-first `mcp__*` rule genuinely strips MCP tools from the model's toolset. Equally, my F-1 subdirectory measurements still describe the shipped artifact — which is exactly what the new disclosure now says.
+
+`git diff --name-status 9e5c8221..002ffc3` touches only `project-control/reports/M0-T077.json`, `state.json`, and `tasks/M0-T077.json` — control-plane records only, as you described.
+
+---
+
+## 2. Probes executed (continuing the numbering from my first report)
+
+`$STRIP` is the same environment scrub as before; `$WT` = the worktree; `$PROBE` = my temp scratchpad.
+
+### F-2 regression — my original bypass fixtures against the NEW validator
+
+| # | Fixture (unchanged from first review) | Old result | New result |
+|---|---|---|---|
+| 50 | `p12-badtype` (`model:12345`, `env:{}`, `effortLevel:[...]`) | PASS (bypass) | **FAIL** — `p9 model must be a string … (found: int)` |
+| 51 | `p12a-model-number` | PASS (bypass) | **FAIL** — same p9 message |
+| 52 | `b3-invalid-mode` (`defaultMode:"notARealMode"`) | PASS (bypass) | **FAIL** — `p9 permissions.defaultMode must be one of (...)` |
+| 53 | `p13b`, `p13c` (minimal fixtures) | PASS | **FAIL** (on p2/p4 — these fixtures never carried the full policy; superseded by probe 61) |
+| 54 | `p14-hookdecoy` (F-3 echo decoy) | PASS (bypass) | **FAIL** — `p7 … disappeared (no registered hook command references .claude/hooks/agent_dispatch_guard.py)` |
+
+### F-2 completeness — is every value the validator *admits* actually safe?
+
+`VALID_DEFAULT_MODES = ("default", "acceptEdits", "plan", "bypassPermissions")`. The source comment says these were "PROVEN accepted by the consumer (G3 probes 30-31)" — I had actually only proven `bypassPermissions`, so I tested all four:
+
+| # | `permissions.defaultMode` | Validator | Consumer (`claude mcp list`) |
+|---|---|---|---|
+| 55 | `"default"` | PASS | blocked |
+| 56 | `"acceptEdits"` | PASS | blocked |
+| 57 | `"plan"` | PASS | blocked |
+| 58 | `"bypassPermissions"` | PASS | blocked |
+
+**No admitted mode discards the file.** The enum list is safe, and the fail-closed posture for unlisted values is the right call.
+
+### F-2 completeness — hunting NEW discard shapes that still pass p1–p9
+
+Each fixture is the committed `9e5c8221` settings with one key overridden.
+
+| # | Shape | Validator | Consumer | Verdict |
+|---|---|---|---|---|
+| 59 | `permissions.allow: "not-a-list"` | **PASS** | **file discarded, all servers returned** | **NEW BYPASS** |
+| 60 | `env: "not-an-object"` | **PASS** | **file discarded** | **NEW BYPASS** |
+| 61 | `fallbackModel: [123]` (list of non-strings) | **PASS** | **file discarded** | **NEW BYPASS — defeats the new p9 guard from inside** |
+| 62 | `$schema: 12345` | **PASS** | **file discarded** | **NEW BYPASS** |
+| 63 | `cleanupPeriodDays: "thirty"` | **PASS** | **file discarded** | **NEW BYPASS** |
+| 64 | `fallbackModel: "claude-opus-4-8"` (string) | **FAIL** (p9) | file discarded | guard works ✓ |
+| 65 | `effortLevel: "ultra"` (invalid enum string) | PASS | blocked | tolerated, no issue |
+| 66 | `model: "not-a-real-model-id"` | PASS | blocked | tolerated, no issue |
+| 67 | `permissions.deny: ["mcp__*", 123]` | PASS | blocked | tolerated, no issue |
+| 68 | `deniedMcpServers` entries with nested non-string extras | PASS | blocked | tolerated, no issue |
+| 69 | `hooks: []` | FAIL (p7) | blocked | fail-closed ✓ |
+
+### F-3 — tightened hook check and the honesty of its residual
+
+| # | Check | Result |
+|---|---|---|
+| 70 | `p15-pathdecoy` — all three guards deleted, but the command string contains the literal full paths `.claude/hooks/agent_dispatch_guard.py` etc. | Validator **PASSES** — matches the residual documented in the source comment |
+| 71 | Does the deferred-to mechanism actually hold? Read `tools/test_readonly_agent_guard.py:108-126` and `tools/test_directive_reminder.py:163-175` | **Yes.** `check_settings_commands()` requires *every* hook command in `.claude/settings.json` to be the canonical `python "${CLAUDE_PROJECT_DIR}/.claude/hooks/<x>.py"` form, shlex-split against a space-containing synthetic root and resolved to an existing hook file — an `echo …` decoy fails it. `test_settings_json_valid_and_hooks_wired` additionally asserts the reminder is wired on **both** `SessionStart` and `UserPromptSubmit`. Both run in the same control-plane job. |
+
+The comment's claim — *"a command crafted to contain the exact path still satisfies it; the behavioral guarantee comes from the hook test suites the same CI job runs"* — is accurate and I verified the deferral target rather than accepting it. **F-3 closed, residual honest.**
+
+### F-1 — disclosure accuracy
+
+| # | Check | Result |
+|---|---|---|
+| 72 | `grep -rn "elsewhere"` across the policy doc and proof | **no match** — the old overclaim is gone |
+| 73 | Subdirectory disclosure present | policy doc 3 hits, proof 4 hits |
+| 74 | Read the "Honest enforcement boundary" section | Accurate: names cwd-only resolution, gives `<repo>/tools` as the example, states "including live Supabase tools", cites Runs F/G, states the supervisor-root mitigation, warns against scattering settings files, and records the owner-gated next step (owner-installed managed settings, deliberately not performed) |
+| 75 | Read proof Runs F/G and corrected §5 | Run F (subdirectory, full ambient set) and Run G (same worktree root, control) match **exactly** what I measured in my probes 21/22 vs 20. §5 now reads "started at the ROOT … Sessions started in a SUBDIRECTORY … load no project settings at all" |
+| 76 | Does the proof credit the tool-exposure evidence correctly? | Yes — cites the reviewer's probes 40/41 for the `mcp__supabase*` finding rather than restating it as its own |
+
+The first bullet of the boundary section was also rewritten from "launched from this repository and its worktrees" to "launched **from the ROOT of** this repository or one of its worktrees" — the precise correction needed. No remaining sentence overclaims the scope.
+
+### F-4, F-6, and general health
+
+| # | Check | Result |
+|---|---|---|
+| 77 | Containment vs frozen `allowed_paths` at `9e5c8221` | 22 changed files, **outside allowed: NONE**, forbidden: NONE |
+| 78 | Containment at branch head `002ffc3` | 22 changed files, **outside allowed: NONE**, forbidden: NONE |
+| 79 | `python tools/test_mcp_policy.py` | OK; six new tests added: `test_hook_decoy_substring_fails`, `test_hook_names_in_noncommand_field_fail`, `test_model_wrong_type_fails`, `test_fallback_model_string_fails`, `test_invalid_default_mode_fails`, `test_valid_default_mode_passes` |
+| 80 | `python tools/validate_mcp_policy.py --check` on the real committed settings | exit 0 |
+| 81 | `ci.yml` MCP comment | **Corrected**: now says the steps "fail this job on every push and PR" and adds "(Failing checks gate merges only to the extent branch protection requires them — a pre-existing repository setting this task does not change; G3 F-6.)" — accurate and honest |
+| 82 | `grep -rn "blocks merge"` across this task's artifacts | Still present in `docs/MCP_DEFAULT_DENY_POLICY.md:89` and `project-control/reports/M0-T077-submission.md:43` (see F-6-residual). `ci.yml:439` is the pre-existing D-001 comment, not this task's |
+| 83 | G3 FAIL gate record + verbatim preservation | `gates/M0-T077-G3.json` records `result: FAIL`, reviewer `code-reviewer`; `reports/M0-T077-review-G3.md` carries a preservation header and my text below it |
+
+---
+
+## 3. Findings
+
+### F-1 — RESOLVED (was BLOCKING)
+Disclosed accurately in both documents, evidence committed as Runs F/G matching my independent measurements, mitigation stated correctly, owner-gated next step recorded, no surviving overclaim. Probes 72–76.
+
+### F-2-residual — MAJOR (carried forward, not closed as a class)
+The three reported shapes are guarded and verified (probes 50–52, 64), and the admitted enum values are all consumer-safe (55–58). But p9 enumerates shapes rather than asserting one, and I found five more live bypasses in a single pass (probes 59–63). The most telling is **probe 61**: `fallbackModel: [123]` passes the brand-new `isinstance(x, list)` guard because the guard never checks element types, and the consumer still discards the file. **Probe 59** (`permissions.allow: "not-a-list"`) is the most realistic in practice — writing a single allow rule as a bare string instead of a one-element list is an ordinary mistake, and it would silently void the entire MCP policy with green CI.
+
+Enumerating five more shapes is the wrong fix; it is the same whack-a-mole with a longer stick. The settings file is small (12 top-level keys) and changes rarely, so the structurally complete and *smaller* fix is a **whole-file shape assertion**: every key present must be a known key and match its expected type — including element types for list-valued keys and a recursive type check for `env` and `permissions` sub-keys — with anything unrecognized failing closed. That converts an open-ended "which shape discards?" question into a closed "is the file still exactly the expected shape?" check, and it would have caught all eight shapes I have now demonstrated without my having to find them first.
+
+### F-6-residual — MINOR (partially closed)
+`ci.yml` is corrected and now states the boundary honestly (probe 81). Two of this task's own artifacts still assert merge-blocking that branch protection does not provide (probe 82):
+- `docs/MCP_DEFAULT_DENY_POLICY.md:89` — *"so accidental removal or weakening of the policy blocks merge."* This sentence also claims the validator "asserts every invariant above", which F-2-residual shows is broader than reality.
+- `project-control/reports/M0-T077-submission.md:43` — *"Runs the validator + tests on every push/PR so weakening blocks merge (R029)."*
+
+### F-3 — RESOLVED (was MINOR)
+Path-anchored registration check works, my original decoy now fails, and the documented residual defers to a mechanism I verified actually exists and would catch the stronger decoy. Probes 54, 70, 71.
+
+### F-4 — RESOLVED (was MINOR)
+`project-control/reports/M0-T077.json` is now in `allowed_paths`; containment is clean at both `9e5c8221` and `002ffc3`. Probes 77–78.
+
+### F-5 — RESOLVED (was MINOR, process)
+The re-review was performed against a stated frozen identity, the enforcement blob is provably unchanged across it, and the prior FAIL gate is recorded with the review preserved verbatim under a truthful preservation header. Probes 50, 83.
+
+### INFO — quality of the rework
+The validator's new docstring is careful: it says "Guarded shapes (each reproduced by the G3 adversarial review, F-2)" rather than claiming completeness, and the `VALID_DEFAULT_MODES` comment explicitly chooses visible failure over silent admission. The six new tests map one-to-one onto the corrections. The disclosure prose is the strongest part of this rework — it states the limitation plainly, including the Supabase consequence, instead of burying it.
+
+---
+
+## 4. Required corrections (BLOCKING for acceptance / next gate)
+
+1. **F-2-residual (major):** replace the three enumerated p9 shape guards with a whole-file shape assertion over the known key set, including list element types (closing probe 61) and sub-object types for `env` and `permissions` (closing probes 59, 60). Add regressions for at least probes 59–63. Unknown keys should fail closed, since probes 62–63 show an unrecognized-or-mistyped key is exactly the discard vector.
+2. **F-6-residual (minor):** correct `docs/MCP_DEFAULT_DENY_POLICY.md:89` and `project-control/reports/M0-T077-submission.md:43` to the honest phrasing already adopted in `ci.yml`, and scope the "asserts every invariant" clause to what the validator actually checks.
+
+---
+
+## 5. What I could not test, and why
+
+1. **User-scope `allowedMcpServers` broadening** — still requires writing the owner's `~/.claude/settings.json`, prohibited by D-020 items 5–6. The deny-first mitigation's effectiveness I did verify behaviorally in the first review (probes 37–39).
+2. **Managed settings** — the owner-gated next step the doc now proposes is untestable here for the same reason: installing `managed-settings.json` is an owner-machine action. I can confirm the proposal is the correct mechanism in principle; I cannot confirm it works on this machine.
+3. **Exhaustiveness of my own shape fuzzing** — I tested 11 shapes and found 5 discards. I make no claim that 5 is the complete set; that is precisely why I recommend a whole-file assertion instead of enumerating my findings.
+4. **CI actually executing on GitHub** — I parsed the workflow and ran both commands locally; I did not trigger a run. `main` remains unprotected (unchanged from the first review).
+5. **Live supervised worker launch** — owner-present only; correctly declared as an owner-gated residual.
+6. **Interactive (non-`-p`) sessions** — all evidence remains fresh-process and headless.
