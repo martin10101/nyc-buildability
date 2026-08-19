@@ -72,3 +72,41 @@ clean/dirty/committed/uncommitted/missing/malformed/hostile states.
 
 None of the three affects a required guarantee; all are refuted or re-accepted with
 reasoning, none silently carried.
+
+---
+
+## Re-review after cross-platform lock correction (corrected identity)
+
+**Corrected reviewed identity:** branch head `cabb65880a3d884bc3ffcaf9731171ab9402c68f`,
+frozen evidence manifest `d5035b85718d0267a175fa7948422f66e9d4c274791a20a940da73ce6a234eff`.
+
+After the first review PASS, GitHub CI on **Linux** reproduced a POSIX-only defect
+the Windows-only local suite could not: the lock's atomic publication used
+`os.rename(staging_dir, writer.lock)`, and on POSIX `os.rename` REPLACES an empty
+target directory (unlike Windows, where it raises) — so a peer could take over a
+live publication-window lock, violating R018 on Linux. The producer corrected
+`tools/repo_index_cache.py` to use `os.mkdir` as the exclusion gate (fails on an
+existing directory on BOTH platforms, never replaces) with atomic `owner.json`
+publication via temp + `os.rename`. An **independent adversarial re-review** and an
+**independent DCV re-attestation** were performed at the corrected identity.
+
+**Independent re-review verdict: PASS.**
+- The ONLY changed tool file between the first-reviewed SHA `56c2d6a` and `cabb658`
+  is `tools/repo_index_cache.py`; every other `tools/*.py` (production and test) is
+  byte-identical, so the first review's 27 non-lock verdicts carry forward.
+- New cross-platform lock probes (not copied): owner-less/partial young lock refused;
+  provably-stale lock reclaimed via atomic `os.rename` move (spy-observed); two
+  racing reclaimers → exactly one winner; 4-thread race → 1 winner/3 refusals every
+  trial; token-matched release preserves a successor's lock; two writers with a
+  widened reserve→publish window and retries → **0 lost nodes in 40 trials** (with a
+  sensitivity control that genuinely contends the window).
+- Full context-pipeline suite green; documented e2e exit 0 twice; **PR #239 CI fully
+  green on Linux** (including `context-pipeline`); PR MERGEABLE. Forbidden-path diff
+  empty; `model_routing.py` byte-unchanged; no existing test removed.
+
+**Independent DCV re-attestation:** R015–R021 personally re-verified on the corrected
+lock (cross-platform guarantee restored, Linux CI green); R022–R037, R005, R006,
+R012, R014 carry forward on byte-identical code — **all 28 M0-T076-applicable
+requirements PASS at `d5035b85…`.** G3/G4/G5 are re-issued pinned to this corrected
+identity (below), so the independent-reviewer-discipline requirement (R007) is
+satisfied against the code that will merge.
