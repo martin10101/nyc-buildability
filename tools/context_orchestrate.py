@@ -30,6 +30,8 @@ from __future__ import annotations
 
 import argparse
 import dataclasses
+import os
+import re
 import pathlib
 import sys
 
@@ -40,9 +42,76 @@ if str(_ROOT) not in sys.path:
 from tools import context_pack as cp  # noqa: E402
 from tools import model_routing as mr  # noqa: E402
 from tools import repo_index_cache as ric  # noqa: E402
-from tools.context_pack_io import canon_json_bytes  # noqa: E402
+from tools.context_pack_io import canon_json_bytes, load_json, run_git  # noqa: E402
 
 MANIFEST_SCHEMA = "context_dispatch_manifest/v1"
+
+_SHA40 = re.compile(r"^[0-9a-f]{40}$")
+
+
+def _git_head(repo: str) -> str:
+    rc, out = run_git(repo, ["rev-parse", "HEAD"])
+    return out.strip() if rc == 0 else "UNKNOWN"
+
+
+def _git_dirty(repo: str) -> bool:
+    rc, out = run_git(repo, ["status", "--porcelain"])
+    return rc != 0 or bool(out.strip())
+
+
+def _rev_resolvable(repo: str, ref: str) -> str | None:
+    """The resolved 40-hex commit for `ref`, or None if git can't resolve it."""
+    rc, out = run_git(repo, ["rev-parse", "--verify", "--quiet", f"{ref}^{{commit}}"])
+    sha = out.strip()
+    return sha if rc == 0 and _SHA40.match(sha) else None
+
+
+def _frozen_g0_sha(repo: str, task_id: str) -> str | None:
+    """The task's frozen G0 reviewed head SHA, read from its recorded G0 gate."""
+    gate = load_json(os.path.join(repo, "project-control", "gates",
+                                  f"{task_id}-G0.json"))
+    if isinstance(gate, dict):
+        sha = str(gate.get("sha") or gate.get("reviewed_sha") or "").strip()
+        if _SHA40.match(sha):
+            return sha
+    return None
+
+
+def resolve_diff_base(repo: str, task_id: str, role: str,
+                      explicit: str | None) -> tuple[str | None, dict]:
+    """Resolve the diff base for a worker/reviewer packet WITHOUT silently using
+    HEAD (M0-T076 / D-019-R026/R027).
+
+    Precedence: an explicit trusted `--diff-base` wins; otherwise the task's
+    frozen G0 reviewed SHA is used; if neither is available the caller is REFUSED
+    (must pass an explicit trusted base) rather than defaulting to HEAD. Returns
+    (base_or_None, provenance)."""
+    head = _git_head(repo)
+    dirty = _git_dirty(repo)
+    prov = {"role": role, "head_sha": head, "dirty": dirty,
+            "chosen_base_sha": None, "resolution": None, "diff_command": None,
+            "error": None}
+    if explicit is not None:
+        resolved = _rev_resolvable(repo, explicit)
+        if resolved is None:
+            prov["resolution"] = "explicit_unresolvable"
+            prov["error"] = ("explicit --diff-base could not be resolved to a "
+                             "commit in this repository")
+            return None, prov
+        prov.update(chosen_base_sha=resolved, resolution="explicit_trusted_diff_base",
+                    diff_command=f"git diff {resolved}")
+        return resolved, prov
+    frozen = _frozen_g0_sha(repo, task_id)
+    if frozen and _rev_resolvable(repo, frozen):
+        prov.update(chosen_base_sha=frozen, resolution="frozen_g0_gate_sha",
+                    diff_command=f"git diff {frozen}")
+        return frozen, prov
+    prov["resolution"] = "unresolved_require_explicit"
+    prov["error"] = (
+        "no frozen G0 base is available for this task and no explicit trusted "
+        "--diff-base was given; refusing to silently diff against HEAD (a "
+        "committed reviewer packet would see no change). Pass --diff-base <sha>.")
+    return None, prov
 
 #: Deterministic prefix rules for packet-derived risk flags (R023).
 _CONTROL_PLANE_PREFIXES = ("project-control/", ".github/", ".claude/")
@@ -134,7 +203,10 @@ def main(argv=None) -> int:
     p.add_argument("--out", required=True)
     p.add_argument("--repo", default=".")
     p.add_argument("--model", default=None)
-    p.add_argument("--diff-base", default="HEAD", dest="diff_base")
+    # Default is the SENTINEL None: the orchestrator resolves the task's frozen
+    # G0 base rather than silently diffing against HEAD (M0-T076, D-019-R026).
+    # An explicit value (even "HEAD") is treated as a trusted operator override.
+    p.add_argument("--diff-base", default=None, dest="diff_base")
     p.add_argument("--route", action="store_true",
                    help="derive Signals from the compiled evidence and record "
                         "a model-routing decision")
@@ -148,11 +220,34 @@ def main(argv=None) -> int:
                    dest="no_index_telemetry")
     args = ap.parse_args(argv)
 
+    # Resolve the diff base BEFORE compiling: a worker/reviewer packet must diff
+    # against the task's frozen G0 base (or an explicit trusted base), never a
+    # silent HEAD that would hide committed work (M0-T076, D-019-R026/R027).
+    repo_abs = str(pathlib.Path(args.repo).resolve())
+    diff_base, diff_prov = resolve_diff_base(repo_abs, args.task, args.role,
+                                             args.diff_base)
+    if diff_base is None:
+        manifest = {"schema": MANIFEST_SCHEMA, "task_id": args.task,
+                    "role": args.role, "provider": args.provider,
+                    "diff_base_resolution": diff_prov,
+                    "compile": {"exit": 3, "sufficient": False,
+                                "sufficiency_reason": diff_prov["error"]},
+                    "routing": {"requested": bool(args.route),
+                                "status": "not_attempted_unresolved_diff_base"}}
+        out_dir = pathlib.Path(args.out)
+        out_dir.mkdir(parents=True, exist_ok=True)
+        (out_dir / "dispatch_manifest.json").write_bytes(canon_json_bytes(manifest))
+        _emit({"task_id": args.task, "compile_exit": 3, "sufficient": False,
+               "routing_status": manifest["routing"]["status"],
+               "diff_base_error": diff_prov["error"],
+               "manifest": "dispatch_manifest.json"})
+        return 3
+
     # THE integrated compiler — same parser, same build/emit, one packet.
     pack_argv = ["--task", args.task, "--role", args.role,
                  "--provider", args.provider, "--max-bytes", str(args.max_bytes),
                  "--out", args.out, "--repo", args.repo,
-                 "--diff-base", args.diff_base]
+                 "--diff-base", diff_base]
     if args.model:
         pack_argv += ["--model", args.model]
     if args.index_cache_base:
@@ -168,6 +263,7 @@ def main(argv=None) -> int:
         "task_id": args.task,
         "role": args.role,
         "provider": args.provider,
+        "diff_base_resolution": diff_prov,
         "compile": {
             "exit": compile_exit,
             "sufficient": meta["sufficiency"]["sufficient"],

@@ -354,6 +354,83 @@ class D019RacedEscapingLink(unittest.TestCase):
                              cm.exception.detail.replace("\\", "/"))
 
 
+class D019FrozenDiffBase(unittest.TestCase):
+    """M0-T076 / D-019-R026..R028: the orchestrator resolves the task's frozen G0
+    base instead of silently diffing HEAD, so a COMMITTED reviewer packet still
+    contains the committed hunks; a missing frozen base + no explicit override is
+    REFUSED rather than defaulting to HEAD; full provenance is recorded."""
+
+    def _git(self, repo, *args):
+        env = dict(os.environ)
+        env.update({"GIT_AUTHOR_NAME": "T", "GIT_AUTHOR_EMAIL": "t@x",
+                    "GIT_COMMITTER_NAME": "T", "GIT_COMMITTER_EMAIL": "t@x",
+                    "GIT_CONFIG_NOSYSTEM": "1"})
+        subprocess.run(["git", *args], cwd=repo, env=env, check=True,
+                       stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+
+    def _repo_with_committed_change(self, tmp):
+        from tools.context_pack_io import run_git
+        self._git(tmp, "init", "-q")
+        self._git(tmp, "commit", "--allow-empty", "-q", "-m", "root", "--no-verify")
+        _write(tmp, "tools/widget.py", "def widget():\n    return 1\n")
+        self._git(tmp, "add", "-A")
+        self._git(tmp, "commit", "-q", "-m", "base", "--no-verify")
+        base_sha = run_git(tmp, ["rev-parse", "HEAD"])[1].strip()
+        # record the frozen G0 gate for the task at this base
+        _write(tmp, "project-control/gates/M0-T500-G0.json",
+               json.dumps({"task_id": "M0-T500", "gate_id": "G0",
+                           "reviewed_sha": base_sha}))
+        # now COMMIT a change on top (the reviewer must still see it)
+        _write(tmp, "tools/widget.py",
+               "def widget():\n    return 2  # COMMITTED_CHANGE_MARKER\n")
+        self._git(tmp, "add", "-A")
+        self._git(tmp, "commit", "-q", "-m", "work", "--no-verify")
+        head_sha = run_git(tmp, ["rev-parse", "HEAD"])[1].strip()
+        return base_sha, head_sha
+
+    def test_committed_change_visible_against_frozen_base(self) -> None:
+        from tools import context_orchestrate as co
+        from tools.context_pack_io import run_git
+        with tempfile.TemporaryDirectory() as tmp:
+            base_sha, head_sha = self._repo_with_committed_change(tmp)
+            base, prov = co.resolve_diff_base(tmp, "M0-T500", "reviewer", None)
+            self.assertEqual(prov["resolution"], "frozen_g0_gate_sha")
+            self.assertEqual(base, base_sha)
+            self.assertNotEqual(base, head_sha)          # NOT silently HEAD
+            self.assertEqual(prov["head_sha"], head_sha)
+            self.assertEqual(prov["diff_command"], f"git diff {base_sha}")
+            # the committed hunk is present in the diff against the frozen base
+            out = run_git(tmp, ["diff", base])[1]
+            self.assertIn("COMMITTED_CHANGE_MARKER", out)
+            # ... and empty against HEAD (the exact former reviewer failure mode)
+            self.assertEqual(run_git(tmp, ["diff", head_sha])[1].strip(), "")
+
+    def test_no_frozen_base_refuses_instead_of_head(self) -> None:
+        from tools import context_orchestrate as co
+        with tempfile.TemporaryDirectory() as tmp:
+            self._git(tmp, "init", "-q")
+            _write(tmp, "a.py", "x=1\n")
+            self._git(tmp, "add", "-A")
+            self._git(tmp, "commit", "-q", "-m", "c", "--no-verify")
+            base, prov = co.resolve_diff_base(tmp, "M0-T999", "reviewer", None)
+            self.assertIsNone(base)                       # refuses; never HEAD
+            self.assertEqual(prov["resolution"], "unresolved_require_explicit")
+            self.assertIsNotNone(prov["error"])
+
+    def test_explicit_trusted_base_resolves(self) -> None:
+        from tools import context_orchestrate as co
+        from tools.context_pack_io import run_git
+        with tempfile.TemporaryDirectory() as tmp:
+            base_sha, head_sha = self._repo_with_committed_change(tmp)
+            base, prov = co.resolve_diff_base(tmp, "M0-T500", "worker", base_sha)
+            self.assertEqual(base, base_sha)
+            self.assertEqual(prov["resolution"], "explicit_trusted_diff_base")
+            # an unresolvable explicit base is refused, not silently accepted
+            b2, p2 = co.resolve_diff_base(tmp, "M0-T500", "worker", "deadbeef" * 5)
+            self.assertIsNone(b2)
+            self.assertEqual(p2["resolution"], "explicit_unresolvable")
+
+
 class Proof7EntryPoint(unittest.TestCase):
     """Proof 7: the canonical entry point ACTUALLY calls the integrated
     compiler + grounded router (never a second packet)."""
@@ -366,6 +443,12 @@ class Proof7EntryPoint(unittest.TestCase):
                  "prepare", "--task", "M0-T066", "--role", "worker",
                  "--provider", "claude", "--max-bytes", "500000",
                  "--out", out, "--repo", _ROOT,
+                 # M0-T066 is compiled here from an UNRELATED HEAD (not its own
+                 # branch), so the caller supplies an explicit trusted diff base
+                 # rather than the task's frozen G0 (M0-T076, D-019-R026). This
+                 # test asserts the entry point invokes the integrated compiler,
+                 # not diff-base semantics (covered by D019FrozenDiffBase).
+                 "--diff-base", "HEAD",
                  "--index-cache-base", cache, "--no-index-telemetry"],
                 capture_output=True, text=True)
             self.assertEqual(p.returncode, 0, p.stdout + p.stderr)
