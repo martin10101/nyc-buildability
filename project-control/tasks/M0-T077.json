@@ -136,8 +136,8 @@
     "security-reviewer",
     "directive-compliance-verifier"
   ],
-  "status": "awaiting_gate",
-  "progress_percent": 97,
+  "status": "rework",
+  "progress_percent": 98,
   "risks": [
     "Settings-merge risk: a wholesale replacement would violate D-020-R022 - mitigated by merge-only edit, AS-4 verbatim-preservation check, and the validator asserting the pre-existing keys still exist",
     "Over-blocking risk: allowedMcpServers [] denies every MCP server at repository scope by design; a future task that genuinely needs one connector must follow the documented narrow authorization procedure (edit the checked-in policy in its own reviewed task)",
@@ -146,7 +146,7 @@
   ],
   "blockers": [],
   "created_at": "2026-08-19T21:25:58.957357+00:00",
-  "updated_at": "2026-08-19T23:09:31.482158+00:00",
+  "updated_at": "2026-08-19T23:38:08.277910+00:00",
   "directive_refs": [
     {
       "directive_id": "D-020",
@@ -199,6 +199,13 @@
       "percent": 97,
       "status": "awaiting_gate",
       "message": "G4 recorded PASS (verdict: PASS with required corrections). BLOCKING before acceptance: MAJOR-1 pin audited identifiers in the test independently of the validator constants; MAJOR-2 test asserting the two ci.yml steps exist; MINOR three stale claims (five-additive-keys, +24 lines, a2bee92 anchor). Sign-off recorded: the orchestrator explicitly ACCEPTS the validator's unknown-key fail-closed strictness as intended design (documented in validator docstring, policy doc, and G3 confirmation) - future legitimate settings additions must extend KNOWN_KEY_SHAPES in the same reviewed change. G5 F-1 correction confirmed CLOSED by g5 reviewer at f254698."
+    },
+    {
+      "at": "2026-08-19T23:38:08.277910+00:00",
+      "agent": "orchestrator",
+      "percent": 98,
+      "status": "rework",
+      "message": "Administrative rework transition solely to re-freeze the submission identity at the final content: the reviewer-required corrections (G3 F-2-residual/F-6-residual, G4 MAJOR-1/MAJOR-2/MINOR, G5 F-1/F-2) landed after the 9e5c8221 submission; every correction is independently confirmed CLOSED and the DCV verified ALL 34 requirements PASS at 35ffd42. No code change in this transition."
     }
   ]
 }
