@@ -48,8 +48,8 @@
  "lifecycle_state": "active",
  "requirements_file": "requirements.json",
  "verification_file": "verification.json",
- "final_reviewed_sha": null,
- "final_reviewed_manifest_sha256": null,
+ "final_reviewed_sha": "4c5607d1cf12de689bade7baf088fb90b0e306df",
+ "final_reviewed_manifest_sha256": "d5035b85718d0267a175fa7948422f66e9d4c274791a20a940da73ce6a234eff",
  "requirements_content_digest_sha256": "0ed39acbc96075ef3af2a7a14b032161cb1c7ea0f5c1d8a598c7db58274a97fc",
  "requirements_id_digest_sha256": "1f72316f6526bb4bf35a40ae830fc7fb510693782497d6ed62d89e329adfbb06",
  "enforcement_pointers": {
@@ -103,6 +103,11 @@
    "at": "2026-08-19T15:00:00+00:00",
    "actor": "orchestrator",
    "event": "captured source-001 verbatim (owner master prompt), decomposed 37 requirements (9 D-019-BOOTSTRAP governance + 28 M0-T076 implementation/protocol/proof), activated registry entry under owner-typed authorization; scope.task_types includes governance so the s19 governance-path guard recognizes D-019 as the governance authority for M0-T076's .github/workflows/ci.yml change (R037)"
+  },
+  {
+   "at": "2026-08-19T16:35:00+00:00",
+   "actor": "orchestrator",
+   "event": "M0-T076 re-accepted at CORRECTED identity d5035b85 after CI-caught POSIX lock fix; independent re-review + DCV re-attestation 28/28 PASS; CI green on Linux (PR #239)"
   }
  ]
 }

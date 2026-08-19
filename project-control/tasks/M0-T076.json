@@ -155,8 +155,8 @@
     "security-reviewer",
     "directive-compliance-verifier"
   ],
-  "status": "awaiting_gate",
-  "progress_percent": 95,
+  "status": "accepted",
+  "progress_percent": 100,
   "risks": [
     "Touching accepted M0-T075 modules risks regressions: every existing suite is in documented_test_commands and permanent CI; behavior-preserving integration verified against a fresh clean-state baseline (M0-T075 baseline preserved unmodified)",
     "The lock rework is concurrency-critical: the exact publication-race regression plus adversarial raced probes must prove no lost node under the pre-owner.json interleave",
@@ -164,7 +164,7 @@
   ],
   "blockers": [],
   "created_at": "2026-08-19T06:19:42.296300+00:00",
-  "updated_at": "2026-08-19T08:32:31.391253+00:00",
+  "updated_at": "2026-08-19T08:34:25.689142+00:00",
   "directive_refs": [
     {
       "directive_id": "D-019",
@@ -222,5 +222,7 @@
       "status": "self_check",
       "message": "self-check: lock+memory suites green on Windows; POSIX correctness restored"
     }
-  ]
+  ],
+  "accepted_by": "orchestrator",
+  "accepted_at": "2026-08-19T08:34:25.689142+00:00"
 }
