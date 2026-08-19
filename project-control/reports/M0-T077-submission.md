@@ -3,13 +3,43 @@
 Producer: orchestrator (per ADR-005 the orchestrator executed every write; producers of
 the review verdicts are separate read-only agents). Requested status: awaiting_gate.
 
+## G3 rework corrections (this re-submission supersedes identity 90ea22f5)
+
+The first G3 adversarial review returned FAIL (verbatim:
+`M0-T077-review-G3.md`; gate recorded FAIL). Every required correction is in this
+identity:
+
+- **F-1 (blocking, disclosure):** the subdirectory limitation — Claude Code resolves
+  project settings from the session's starting directory only, so a session started
+  in `<repo>/tools` gets the full ambient connector set — is now disclosed in
+  `docs/MCP_DEFAULT_DENY_POLICY.md` (Honest enforcement boundary) and
+  `M0-T077-fresh-session-proof.md` (Runs F/G, committed re-reproduction; §5
+  corrected — the prior "sessions launched elsewhere" sentence overclaimed), with
+  the supervisor-root mitigation noted and the smallest owner-gated next step
+  recorded (owner-installed managed settings; explicitly not performed here).
+- **F-2 (major):** validator invariant p9 — `model` must be a string,
+  `fallbackModel` a list, `permissions.defaultMode` a proven enum member — because a
+  schema-invalid shape makes Claude Code silently discard the ENTIRE settings file.
+  Three regressions added.
+- **F-3 (minor):** p7 hook preservation now requires the full
+  `.claude/hooks/<script>` path inside an actual registered hook command (the
+  review's echo-decoy now fails); the remaining string-level residual is documented
+  in the validator itself.
+- **F-4 (minor):** `allowed_paths` amended (+ recorded progress message) to include
+  the standard control-CLI submission artifact `project-control/reports/M0-T077.json`.
+- **F-5 (minor):** this re-submission freezes a single corrected identity; gates are
+  recorded at live HEAD stamps per the CLI's fail-closed content-identity rule.
+- **F-6 (minor):** the ci.yml comment no longer claims merge-blocking; it states the
+  steps fail the control-plane job and that branch protection is a pre-existing
+  repository setting this task does not change.
+
 ## What changed (exact files and why)
 
 | File | Change | Why |
 |---|---|---|
 | `.claude/settings.json` | +24 lines, purely additive merge of 5 MCP keys + 1 deny-first `permissions.deny: ["mcp__*"]` rule | The repository-level default-deny policy itself (D-020-R020..R024) |
-| `tools/validate_mcp_policy.py` | new (stdlib, ~165 lines) | Fail-closed durable validation of every policy invariant (p1-p8) incl. merge-preservation (R029) |
-| `tools/test_mcp_policy.py` | new (22 tests) | Removal/weakening regressions for the validator (R029) |
+| `tools/validate_mcp_policy.py` | new (stdlib, ~210 lines) | Fail-closed durable validation of every policy invariant (p1-p9) incl. merge-preservation and consumer-discard shape guards (R029) |
+| `tools/test_mcp_policy.py` | new (28 tests) | Removal/weakening regressions for the validator incl. the G3 bypass fixtures (R029) |
 | `.github/workflows/ci.yml` | +8 lines: two steps in the existing required control-plane job | Runs the validator + tests on every push/PR so weakening blocks merge (R029); no other workflow/test touched |
 | `docs/MCP_DEFAULT_DENY_POLICY.md` | new | The rule, per-key mechanism, inventory summary, future narrow-authorization path, honest boundary (R028) |
 | `project-control/directives/D-020-program-wide-mcp-default-deny/*` | new | Verbatim capture + 34-requirement decomposition + pending verification stub (R005) |
@@ -20,7 +50,7 @@ the review verdicts are separate read-only agents). Requested status: awaiting_g
 ## Self-check results (producer, G2-class; independent gates still required)
 
 - `python tools/validate_mcp_policy.py --check` → exit 0
-- `python tools/test_mcp_policy.py` → 22/22 OK
+- `python tools/test_mcp_policy.py` → 28/28 OK
 - `python tools/validate_directive_compliance.py --check` → exit 0 (D-020 registered)
 - `python tools/modularity_check.py --check` → PASS (only pre-existing warnings on
   legacy files; both new modules are small and single-purpose)

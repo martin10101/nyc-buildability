@@ -26,7 +26,16 @@ repository (and its clean worktrees) load NO unrelated external MCP server:
   p7  the pre-existing settings the merge was required to preserve still exist:
       $schema, model, fallbackModel, effortLevel, env, and the three control-plane
       hook registrations (agent_dispatch_guard, readonly_agent_guard,
-      directive_reminder) — the policy may never arrive by replacing the file
+      directive_reminder) — each hook must be an actual registration (its script
+      referenced by a registered entry's "command"), not merely a substring
+      anywhere in the hooks blob — the policy may never arrive by replacing the
+      file (G3 F-3)
+  p9  schema-shape guards: Claude Code DISCARDS the entire settings file — silently
+      voiding the whole policy — when certain keys carry a schema-invalid shape,
+      even though the file still parses as JSON. Guarded shapes (each reproduced
+      by the G3 adversarial review, F-2): model must be a string, fallbackModel
+      must be a list, and permissions.defaultMode (when present) must be a valid
+      permission-mode enum member
 
 A future task that is explicitly authorized to use ONE connector edits the policy
 inside its own reviewed task (see docs/MCP_DEFAULT_DENY_POLICY.md); this validator
@@ -69,6 +78,29 @@ PRESERVED_HOOKS = (
     "readonly_agent_guard.py",
     "directive_reminder.py",
 )
+#: permissions.defaultMode values PROVEN accepted by the consumer (G3 probes 30-31);
+#: anything else makes Claude Code discard the whole settings file. Deliberately
+#: conservative: a value missing here fails VISIBLY (fail closed), never silently.
+VALID_DEFAULT_MODES = ("default", "acceptEdits", "plan", "bypassPermissions")
+
+
+def _registered_hook_commands(hooks: object):
+    """Yield every "command" string of an actual hook registration.
+
+    Shape: hooks -> {event: [{matcher?, hooks: [{type, command}, ...]}, ...]}.
+    Anything malformed is simply not yielded — the caller then reports the
+    expected hook as missing (fail closed)."""
+    if not isinstance(hooks, dict):
+        return
+    for entries in hooks.values():
+        if not isinstance(entries, list):
+            continue
+        for entry in entries:
+            if not isinstance(entry, dict):
+                continue
+            for hook in entry.get("hooks") or []:
+                if isinstance(hook, dict) and isinstance(hook.get("command"), str):
+                    yield hook["command"]
 
 
 def validate(settings_path: Path) -> list[str]:
@@ -125,10 +157,33 @@ def validate(settings_path: Path) -> list[str]:
         if key not in settings:
             errors.append(f"p7 pre-existing setting {key!r} disappeared "
                           "(the policy must merge, never replace)")
-    hooks_blob = json.dumps(settings.get("hooks", {}))
+    # Each guard script must be referenced BY FULL PATH inside a registered hook
+    # command (hooks -> event -> entry -> hooks[] -> command), not merely appear as
+    # a substring somewhere in the hooks blob (G3 F-3 decoy). Honest residual: a
+    # string-level check cannot prove invocation semantics — a command crafted to
+    # contain the exact path still satisfies it; the behavioral guarantee comes
+    # from the hook test suites the same CI job runs.
+    commands = list(_registered_hook_commands(settings.get("hooks")))
     for hook in PRESERVED_HOOKS:
-        if hook not in hooks_blob:
-            errors.append(f"p7 pre-existing hook registration {hook!r} disappeared")
+        if not any(f".claude/hooks/{hook}" in cmd for cmd in commands):
+            errors.append(f"p7 pre-existing hook registration {hook!r} disappeared "
+                          "(no registered hook command references "
+                          f".claude/hooks/{hook})")
+
+    if "model" in settings and not isinstance(settings.get("model"), str):
+        errors.append("p9 model must be a string; a schema-invalid shape makes "
+                      "Claude Code discard the ENTIRE settings file "
+                      f"(found: {type(settings.get('model')).__name__})")
+    if "fallbackModel" in settings and not isinstance(settings.get("fallbackModel"), list):
+        errors.append("p9 fallbackModel must be a list; a schema-invalid shape makes "
+                      "Claude Code discard the ENTIRE settings file "
+                      f"(found: {type(settings.get('fallbackModel')).__name__})")
+    if isinstance(permissions, dict) and "defaultMode" in permissions:
+        mode = permissions.get("defaultMode")
+        if mode not in VALID_DEFAULT_MODES:
+            errors.append("p9 permissions.defaultMode must be one of "
+                          f"{VALID_DEFAULT_MODES}; an invalid value makes Claude "
+                          f"Code discard the ENTIRE settings file (found: {mode!r})")
 
     return errors
 

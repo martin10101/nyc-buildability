@@ -102,6 +102,24 @@ policy keys inserted after `effortLevel`; `$schema`, `model`, `fallbackModel`,
 `effortLevel`, `env` (both timeout vars), and all four hook registrations
 byte-identical. `tools/validate_mcp_policy.py` p7 asserts this permanently.
 
+**Runs F and G — SUBDIRECTORY limitation evidence (G3 F-1), captured after the G3
+review reproduced it.** Run F: a fresh process started in `wt-t077-proof/tools` (a
+SUBDIRECTORY of the clean policy worktree) loads NO project settings — cwd-only
+resolution — and shows the full ambient set:
+
+```
+claude.ai Airtable: https://mcp.airtable.com/mcp - ✔ Connected
+claude.ai Microsoft 365: https://microsoft365.mcp.claude.com/mcp - ! Needs authentication
+pencil: … - ✔ Connected
+supabase: npx -y @supabase/mcp-server-supabase@latest --project-ref dyiv… - ✔ Connected
+```
+
+Run G (control, same worktree, ROOT): `No MCP servers configured.` The G3 reviewer
+additionally proved via headless sessions that this exposes usable `mcp__supabase*`
+tools in the subdirectory case (review report, probes 40/41). See the policy doc's
+"Honest enforcement boundary" for the disclosure, mitigations, and the smallest
+owner-gated next step.
+
 ## 5. Honest limitations
 
 - The proof medium is `claude mcp list` from fresh processes (plus the isolated
@@ -109,10 +127,13 @@ byte-identical. `tools/validate_mcp_policy.py` p7 asserts this permanently.
   restart of THIS orchestrator session cannot be self-verified from inside it; the
   fresh-process runs above are the smallest safe equivalent (D-020 §7 fallback),
   and they exercise the same configuration-resolution path a new session uses.
-- The policy governs sessions launched from THIS repository and its worktrees.
-  Sessions launched elsewhere (including the user profile root) are outside
-  repository-scope authority by design; blocking there would require changing the
-  owner's global configuration, which D-020 §6 prohibits.
+- **The policy governs sessions started at the ROOT of this repository or one of its
+  worktrees.** Sessions started in a SUBDIRECTORY of the repository load no project
+  settings at all (cwd-only resolution — Runs F/G above, G3 F-1) and sessions
+  launched outside the repository never load them; blocking either case at machine
+  scope would require changing the owner's global configuration or installing
+  managed settings, which D-020 §6 prohibits within this task. Supervised workers
+  always launch at the worktree root and are therefore covered.
 - An interactive user can still take explicit manual action in their own session
   (e.g. `claude mcp add` at local scope). The policy removes the ambient DEFAULT
   presence, which is D-020's stated objective; it is not (and cannot be) a

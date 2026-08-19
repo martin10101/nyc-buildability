@@ -181,6 +181,56 @@ class McpPolicyValidatorTest(unittest.TestCase):
         self.assertTrue(any(e.startswith("p7") and "readonly_agent_guard" in e
                             for e in errs))
 
+    def test_hook_decoy_substring_fails(self):
+        # G3 F-3: all three guard registrations deleted, filenames surviving only
+        # inside one inert echo command (the review's exact decoy) must NOT count
+        # as "preserved" — the bare filename lacks the required full script path.
+        decoy = self.mutate(hooks={
+            "SessionStart": [{"hooks": [{
+                "type": "command",
+                "command": "echo disabled: agent_dispatch_guard.py "
+                           "readonly_agent_guard.py directive_reminder.py"}]}]})
+        errs = self.errors_for(decoy)
+        for name in ("agent_dispatch_guard", "readonly_agent_guard",
+                     "directive_reminder"):
+            with self.subTest(hook=name):
+                self.assertTrue(any(e.startswith("p7") and name in e for e in errs))
+
+    def test_hook_names_in_noncommand_field_fail(self):
+        noncommand = self.mutate(hooks={
+            "SessionStart": [{"matcher": ".claude/hooks/agent_dispatch_guard.py "
+                                         ".claude/hooks/readonly_agent_guard.py "
+                                         ".claude/hooks/directive_reminder.py",
+                              "hooks": [{"type": "command", "command": "echo hi"}]}]})
+        errs = self.errors_for(noncommand)
+        self.assertTrue(all(any(e.startswith("p7") and name in e for e in errs)
+                            for name in ("agent_dispatch_guard",
+                                         "readonly_agent_guard",
+                                         "directive_reminder")))
+
+    # ---- p9 schema-shape guards (G3 F-2: consumer discards the whole file) ----
+
+    def test_model_wrong_type_fails(self):
+        errs = self.errors_for(self.mutate(model=["claude-fable-5"]))
+        self.assertTrue(any(e.startswith("p9") and "model" in e for e in errs))
+
+    def test_fallback_model_string_fails(self):
+        errs = self.errors_for(self.mutate(fallbackModel="claude-opus-4-8"))
+        self.assertTrue(any(e.startswith("p9") and "fallbackModel" in e
+                            for e in errs))
+
+    def test_invalid_default_mode_fails(self):
+        weakened = copy.deepcopy(self.intact)
+        weakened["permissions"]["defaultMode"] = "notARealMode"
+        errs = self.errors_for(weakened)
+        self.assertTrue(any(e.startswith("p9") and "defaultMode" in e
+                            for e in errs))
+
+    def test_valid_default_mode_passes(self):
+        settings = copy.deepcopy(self.intact)
+        settings["permissions"]["defaultMode"] = "plan"
+        self.assertEqual(self.errors_for(settings), [])
+
     # ---- exit codes ----
 
     def test_main_exit_one_on_weakened_policy(self):

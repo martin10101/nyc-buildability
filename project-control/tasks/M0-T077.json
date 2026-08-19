@@ -50,7 +50,8 @@
     "project-control/reports/M0-T077-review-G4.md",
     "project-control/reports/M0-T077-review-G5.md",
     "project-control/reports/M0-T077-directive-verification.md",
-    "docs/SESSION_HANDOFF.md"
+    "docs/SESSION_HANDOFF.md",
+    "project-control/reports/M0-T077.json"
   ],
   "forbidden_paths": [
     "tools/agent_supervisor/",
@@ -135,8 +136,8 @@
     "security-reviewer",
     "directive-compliance-verifier"
   ],
-  "status": "rework",
-  "progress_percent": 85,
+  "status": "claimed",
+  "progress_percent": 90,
   "risks": [
     "Settings-merge risk: a wholesale replacement would violate D-020-R022 - mitigated by merge-only edit, AS-4 verbatim-preservation check, and the validator asserting the pre-existing keys still exist",
     "Over-blocking risk: allowedMcpServers [] denies every MCP server at repository scope by design; a future task that genuinely needs one connector must follow the documented narrow authorization procedure (edit the checked-in policy in its own reviewed task)",
@@ -145,7 +146,7 @@
   ],
   "blockers": [],
   "created_at": "2026-08-19T21:25:58.957357+00:00",
-  "updated_at": "2026-08-19T22:21:30.577490+00:00",
+  "updated_at": "2026-08-19T22:25:06.601210+00:00",
   "directive_refs": [
     {
       "directive_id": "D-020",
@@ -162,5 +163,14 @@
     "python tools/modularity_check.py --check",
     "claude mcp list   (fresh process, run from a clean worktree of this repository - documented proof command, also captured in the committed fresh-session proof)"
   ],
-  "worktree": "C:/Users/MLFLL/Downloads/nyc-zoning/wt-m0t077"
+  "worktree": "C:/Users/MLFLL/Downloads/nyc-zoning/wt-m0t077",
+  "progress_log": [
+    {
+      "at": "2026-08-19T22:25:06.601210+00:00",
+      "agent": "orchestrator",
+      "percent": 90,
+      "status": "claimed",
+      "message": "G3 rework (FAIL at 90ea22f5): F-1 subdirectory limitation disclosed in policy doc + proof (Runs F/G committed evidence, owner-gated next step recorded); F-2 p9 schema-shape guards (model str, fallbackModel list, permissions.defaultMode enum) + regressions; F-3 hook check now requires full .claude/hooks/<script> path inside a registered command (decoy regression added, residual documented); F-4 allowed_paths amended to include the standard CLI submission artifact project-control/reports/M0-T077.json (contract-drafting omission, 96 precedents); F-6 ci.yml comment corrected (main is unprotected; steps fail the job, branch protection unchanged). Re-submission at a corrected frozen identity follows."
+    }
+  ]
 }

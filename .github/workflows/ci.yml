@@ -448,8 +448,10 @@ jobs:
         run: python3 tools/test_readonly_agent_guard.py
       # MCP default-deny policy (D-020, task M0-T077): the checked-in project settings
       # must keep every ordinary session free of unrelated external MCP servers.
-      # Added to the already-required control-plane job so removing or weakening the
-      # policy blocks merge (connected check; no branch-protection change needed).
+      # Added to the existing control-plane job so removing or weakening the policy
+      # fails this job on every push and PR. (Failing checks gate merges only to the
+      # extent branch protection requires them — a pre-existing repository setting
+      # this task does not change; G3 F-6.)
       - name: Validate MCP default-deny policy (.claude/settings.json invariants)
         run: python3 tools/validate_mcp_policy.py --check
       - name: Run MCP default-deny policy validator tests

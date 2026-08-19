@@ -102,11 +102,25 @@ push and PR, so accidental removal or weakening of the policy blocks merge.
 
 ## Honest enforcement boundary
 
-- Project-scope settings govern sessions launched **from this repository and its
-  worktrees**. They cannot govern sessions launched elsewhere (those never load this
-  repo's settings), and an interactive user can always take explicit manual action in
+- Project-scope settings govern sessions launched **from the ROOT of this repository
+  or one of its worktrees**. They cannot govern sessions launched outside the
+  repository, and an interactive user can always take explicit manual action in
   their own session; this policy removes the *default* presence, which is what D-020
   requires.
+- **Subdirectory limitation (G3 F-1, independently reproduced and re-proven):**
+  Claude Code resolves `.claude/settings.json` from the session's starting directory
+  only — it does not walk up to the repository root. A session started in a
+  SUBDIRECTORY (e.g. `<repo>/tools`) loads no project settings and therefore gets
+  the full ambient connector set, including live Supabase tools. Committed evidence:
+  `project-control/reports/M0-T077-fresh-session-proof.md` Runs F/G. Mitigations in
+  place: supervised workers always launch with `cwd` set to the worktree ROOT
+  (`tools/agent_supervisor/claude_runner.py` path, verified read-only), so agent
+  sessions are covered; the residual is a HUMAN starting a session one level down.
+  Do not "fix" this by scattering settings files into subdirectories. **Smallest
+  owner-gated next step:** the only supported machine-wide close-out is an
+  owner-installed managed settings file (an owner-machine action outside repository
+  scope, deliberately not performed by this task); short of that, start repository
+  sessions from the repo root.
 - Supervised launches: the supervisor starts workers with `cwd` set to a repository
   worktree (`tools/agent_supervisor/claude_runner.py`), so fresh supervised sessions
   load the same checked-in settings. Details and residual owner-gated items:
