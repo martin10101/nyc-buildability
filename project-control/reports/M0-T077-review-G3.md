@@ -380,3 +380,81 @@ The validator's new docstring is careful: it says "Guarded shapes (each reproduc
 4. **CI actually executing on GitHub** — I parsed the workflow and ran both commands locally; I did not trigger a run. `main` remains unprotected (unchanged from the first review).
 5. **Live supervised worker launch** — owner-present only; correctly declared as an owner-gated residual.
 6. **Interactive (non-`-p`) sessions** — all evidence remains fresh-process and headless.
+
+
+---
+---
+
+<!-- Orchestrator preservation note: CORRECTION CONFIRMATION below, returned through
+the agent-return channel by the same independent read-only G3 reviewer after the
+blocking corrections were committed at b0200803, saved VERBATIM (transport
+entity-decoding only). Received 2026-08-19. Verdict: CORRECTIONS CLOSED — the
+G3 PASS gate's blocking corrections are resolved and independently verified.
+Everything below is the reviewer's text. -->
+
+# G3 Correction Confirmation — M0-T077 at `b0200803184b37b042dc734b092bb51759a52eaf`
+
+## VERDICT: **CORRECTIONS CLOSED**
+
+Both §4 blocking corrections are verified closed. No new findings. Nothing in the repository was modified by me; `git status` is clean.
+
+---
+
+## Item 3 — enforcement artifact unchanged ✓
+
+```
+git rev-parse eb742f2:.claude/settings.json b0200803:.claude/settings.json 002ffc3:.claude/settings.json
+dd11cd79e01f309c524f00906ff1266de439a287   (identical across all three)
+```
+
+Still the same blob I proved effective, so every enforcement probe from both prior reviews carries over untouched.
+
+## Item 1 — F-2-residual CLOSED, and closed as a *class* ✓
+
+`python tools/validate_mcp_policy.py --check` on the real committed settings: **exit 0**. `python tools/test_mcp_policy.py`: **OK, 35 tests**.
+
+I re-ran all five fixtures from my probes 59–63 and fuzzed thirteen more shapes against the new whole-file assertion, checking specifically for the dangerous combination (validator PASS + consumer discards the file):
+
+| Fixture | Validator | Consumer |
+|---|---|---|
+| `permissions.allow: "not-a-list"` (probe 59) | **FAIL** | discarded |
+| `env: "not-an-object"` (probe 60) | **FAIL** | discarded |
+| `fallbackModel: [123]` (probe 61) | **FAIL** | discarded |
+| `$schema: 12345` (probe 62) | **FAIL** | discarded |
+| `cleanupPeriodDays: "thirty"` (probe 63) | **FAIL** | discarded |
+| `disabledMcpjsonServers: [...,123]` | **FAIL** | discarded |
+| `hooks` entry with `hooks: "not-a-list"` | **FAIL** | discarded |
+| `permissions.additionalDirectories: [123]` | **FAIL** | discarded |
+| `disableClaudeAiConnectors: 1` | **FAIL** | discarded |
+| `permissions.ask: "nope"` | **FAIL** | discarded |
+| `$schema: null` | **FAIL** | discarded |
+| `env: {"BASH_DEFAULT_TIMEOUT_MS": 300000}` | FAIL | tolerated |
+| unknown top-level key | FAIL | tolerated |
+| unknown `permissions` sub-key | FAIL | tolerated |
+| `deniedMcpServers` with a bare string element | FAIL | tolerated |
+| `effortLevel: 7` | FAIL | tolerated |
+| `outputStyle: "concise"` (legitimate key) | FAIL | tolerated |
+| `fallbackModel: []` | PASS | blocked ✓ |
+
+**All eleven shapes that actually discard the file now fail the validator. Zero bypasses found** — no fixture produced validator PASS with a discarded file.
+
+This is stronger than the correction I asked for. Six of those eleven discard shapes (`disabledMcpjsonServers` mixed types, a broken `hooks` entry, `additionalDirectories` element type, `disableClaudeAiConnectors: 1`, `permissions.ask` as a string, `$schema: null`) are ones I never reported — the assertion caught them because it validates the whole file rather than the shapes I happened to find. That was the point of the correction, and it holds.
+
+The six over-strict rows are fail-closed and visible, which is the documented design. Worth an operational note rather than a finding: adding a legitimate new Claude Code setting (the `outputStyle` row) will fail CI until `KNOWN_KEY_SHAPES` is extended in the same reviewed change. The validator docstring states this as intended visibility, mirroring the connector-authorization procedure, and I agree it is the right trade for a 12-key policy file — but whoever next edits `.claude/settings.json` will meet it, so it belongs in the handoff.
+
+## Item 2 — F-6-residual CLOSED ✓
+
+`grep -rn "blocks merge\|block merge\|blocks the merge"` across `docs/MCP_DEFAULT_DENY_POLICY.md` and `project-control/reports/M0-T077-submission.md`: **no match in either file.**
+
+Both now carry the honest phrasing, and the coverage claim is properly scoped. The policy doc's "Durable validation" section no longer says "asserts every invariant"; it enumerates what is actually asserted — exact policy-key values, merge preservation **with the string-level hook residual named and its backstop identified**, and the whole-file shape assertion with the reason ("one mistyped key makes Claude Code silently discard the entire file") — then states plainly that "Failing checks gate merges only to the extent branch protection requires them — a pre-existing repository setting this policy does not change." The submission report's `ci.yml` row matches.
+
+Naming the hook residual in the user-facing doc, not just the source comment, is more than I asked for and is the right call.
+
+## Incidental checks
+
+- Containment at `b0200803`: 22 changed files, **none outside `allowed_paths`**, none in `forbidden_paths`.
+- Working tree clean; `b0200803` is branch head.
+
+---
+
+**Bottom line:** F-1 (blocking), F-2, F-2-residual, F-3, F-4, F-5, F-6, and F-6-residual are all resolved and independently verified. I have no remaining findings against this task. The one thing I could not test remains unchanged from the first review: exhaustiveness of my own fuzzing — I tested 18 shapes here and found no bypass, which is evidence of a well-formed general assertion rather than proof that none exists. The whole-file design is what makes me comfortable saying so; enumerated guards never would have been.
