@@ -39,6 +39,10 @@ repository (and its clean worktrees) load NO unrelated external MCP server:
       unrecognized or mistyped fails CLOSED. Adding a genuinely new setting to the
       checked-in file therefore requires extending KNOWN_KEY_SHAPES in the same
       reviewed change — intended visibility, mirroring the connector procedure
+  p10 CI-wiring twin check (G4 MAJOR-2): the required control-plane workflow must
+      still run BOTH policy steps (this validator and its test suite). Removing
+      one step is caught by the survivor; removing both removes every executor of
+      this file and is catchable only by diff review — disclosed, not hidden
 
 A future task that is explicitly authorized to use ONE connector edits the policy
 inside its own reviewed task (see docs/MCP_DEFAULT_DENY_POLICY.md); this validator
@@ -283,6 +287,17 @@ def validate(settings_path: Path) -> list[str]:
                 errors.append(f"p9 permissions.{key} must be {expected}; a "
                               "schema-invalid shape makes Claude Code discard the "
                               "ENTIRE settings file")
+
+    ci_path = ROOT / ".github" / "workflows" / "ci.yml"
+    try:
+        ci_text = ci_path.read_text(encoding="utf-8")
+    except OSError as exc:
+        errors.append(f"p10 cannot read {ci_path.name}: {exc} (fail closed)")
+    else:
+        for step in ("python3 tools/validate_mcp_policy.py --check",
+                     "python3 tools/test_mcp_policy.py"):
+            if step not in ci_text:
+                errors.append(f"p10 required control-plane CI step missing: {step!r}")
 
     return errors
 

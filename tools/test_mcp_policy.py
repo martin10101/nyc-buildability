@@ -22,6 +22,17 @@ sys.path.insert(0, str(HERE))
 
 import validate_mcp_policy as vmp  # noqa: E402
 
+# G4 MAJOR-1: the audited identifiers (project-control/reports/M0-T077-mcp-audit.md),
+# pinned here INDEPENDENTLY of the validator's own constants. A coordinated edit
+# that shrinks both the settings lists and the validator's tuples in one pass now
+# fails these pins instead of silently shrinking the test with it.
+AUDITED_DENIED_IDENTIFIERS = (
+    "pencil", "supabase", "mysql", "sequential-thinking", "playwright",
+)
+AUDITED_MCPJSON_IDENTIFIERS = (
+    "supabase", "mysql", "sequential-thinking", "playwright",
+)
+
 
 def write_fixture(tmp: Path, settings: dict) -> Path:
     path = tmp / "settings.json"
@@ -230,6 +241,30 @@ class McpPolicyValidatorTest(unittest.TestCase):
         settings = copy.deepcopy(self.intact)
         settings["permissions"]["defaultMode"] = "plan"
         self.assertEqual(self.errors_for(settings), [])
+
+    # ---- audited-identifier pinning + CI wiring (G4 MAJOR-1 / MAJOR-2) ----
+
+    def test_audited_identifiers_pinned_independently(self):
+        self.assertEqual(tuple(vmp.DENIED_SERVER_NAMES), AUDITED_DENIED_IDENTIFIERS)
+        self.assertEqual(tuple(vmp.DISABLED_MCPJSON_NAMES),
+                         AUDITED_MCPJSON_IDENTIFIERS)
+        committed_denied = {e.get("serverName")
+                            for e in self.intact["deniedMcpServers"]}
+        self.assertTrue(set(AUDITED_DENIED_IDENTIFIERS) <= committed_denied)
+        self.assertTrue(set(AUDITED_MCPJSON_IDENTIFIERS)
+                        <= set(self.intact["disabledMcpjsonServers"]))
+
+    def test_ci_wires_validator_and_test_steps(self):
+        # G4 MAJOR-2: deleting a control-plane step must fail a machine check.
+        # Honest residual: if BOTH steps are deleted, neither this test nor the
+        # validator runs in CI — a self-referential guard cannot survive removal
+        # of every executor of itself; that final case is caught by the validator's
+        # p10 twin check while the validator step survives, and beyond that only
+        # by diff review (disclosed in the policy doc).
+        ci = (HERE.parent / ".github" / "workflows" / "ci.yml").read_text(
+            encoding="utf-8")
+        self.assertIn("python3 tools/validate_mcp_policy.py --check", ci)
+        self.assertIn("python3 tools/test_mcp_policy.py", ci)
 
     # ---- p9 whole-file shape assertion (G3 re-review probes 59-63) ----
 

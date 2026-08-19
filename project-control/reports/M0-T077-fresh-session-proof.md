@@ -97,10 +97,13 @@ disconnected, deleted, or modified account-wide (D-020 §6.5-6.7).
 
 ## 4. Settings preservation (merge, not replacement)
 
-`git diff 31c50a09..a2bee92 -- .claude/settings.json` is purely ADDITIVE: the five
-policy keys inserted after `effortLevel`; `$schema`, `model`, `fallbackModel`,
-`effortLevel`, `env` (both timeout vars), and all four hook registrations
-byte-identical. `tools/validate_mcp_policy.py` p7 asserts this permanently.
+`git diff --numstat 31c50a09..HEAD -- .claude/settings.json` is `19 0` — purely
+ADDITIVE from base to every reviewed identity (the enforcement blob has been
+`dd11cd79…` since eb742f2): the six policy entries inserted after `effortLevel`;
+`$schema`, `model`, `fallbackModel`, `effortLevel`, `env` (both timeout vars), and
+all four hook registrations byte-identical. `tools/validate_mcp_policy.py` p7
+asserts this permanently. (G4 re-verified `19 / 0` independently at the reviewed
+identity.)
 
 **Runs F and G — SUBDIRECTORY limitation evidence (G3 F-1), captured after the G3
 review reproduced it.** Run F: a fresh process started in `wt-t077-proof/tools` (a

@@ -17,7 +17,7 @@ per-task decision instead of an accident of what is installed.
 
 ## The policy (checked-in `.claude/settings.json`)
 
-The policy is five additive keys merged into the existing project settings — the file
+The policy is six additive entries merged into the existing project settings — the file
 was never replaced, and every prior setting (`$schema`, `model`, `fallbackModel`,
 `effortLevel`, `env`, `hooks`) is preserved verbatim. All keys are officially
 supported Claude Code settings (claude-code-settings JSON schema; settings/MCP docs at
@@ -90,9 +90,14 @@ suites in the same job), and a whole-file shape assertion — every key present 
 known and correctly shaped, because one mistyped key makes Claude Code silently
 discard the entire file. It runs with `tools/test_mcp_policy.py` in the
 **control-plane** CI job on every push and PR, so accidental removal or weakening of
-the policy fails that job visibly. (Failing checks gate merges only to the extent
-branch protection requires them — a pre-existing repository setting this policy does
-not change.)
+the policy fails that job visibly. The audited identifiers are additionally pinned
+inside the test suite independently of the validator's own constants, and validator
+and test each assert that BOTH CI steps still exist (p10), so deleting either one is
+machine-caught by the survivor; deleting both removes every executor of the guard
+and is catchable only in diff review — a disclosed residual, as is the gitignored
+`.claude/settings.local.json` (not readable by CI, and empirically unable to weaken
+the policy). (Failing checks gate merges only to the extent branch protection
+requires them — a pre-existing repository setting this policy does not change.)
 
 ## Official documentation (mechanism confirmation, D-020 §5)
 

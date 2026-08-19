@@ -37,7 +37,7 @@ identity:
 
 | File | Change | Why |
 |---|---|---|
-| `.claude/settings.json` | +24 lines, purely additive merge of 5 MCP keys + 1 deny-first `permissions.deny: ["mcp__*"]` rule | The repository-level default-deny policy itself (D-020-R020..R024) |
+| `.claude/settings.json` | +19 lines / 0 deleted, purely additive merge of six policy entries (5 MCP keys + the deny-first `permissions.deny: ["mcp__*"]` rule) | The repository-level default-deny policy itself (D-020-R020..R024) |
 | `tools/validate_mcp_policy.py` | new (stdlib, ~310 lines) | Fail-closed durable validation: exact policy-key values, merge preservation, and a whole-file shape assertion (p1-p9) (R029) |
 | `tools/test_mcp_policy.py` | new (35 tests) | Removal/weakening regressions for the validator incl. the G3 bypass fixtures and re-review probes 59-63 (R029) |
 | `.github/workflows/ci.yml` | +10 lines: two steps in the existing control-plane job | Runs the validator + tests on every push/PR so weakening fails that job visibly (R029; merge-gating is a branch-protection setting this task does not change); no other workflow/test touched |
