@@ -158,3 +158,89 @@ Recorded so the next reviewer does not have to re-derive it (probe 12). Any futu
 - **Authority/protected surface:** intact. No supervisor, routing, application, service, package, supabase, other-workflow, or other-task file modified; `index.json` is a verified pure append.
 - **Global preservation:** confirmed. Both digests match (`1fc898cc…`, `a738fcfa…`); a fresh non-repository `claude mcp list` shows all four connectors still available to unrelated projects.
 - **Validator execution safety:** confirmed. Stdlib-only, read-only, no vacuous-pass path, correctly wired into the existing `control-plane` job on push and pull_request.
+
+
+---
+---
+
+<!-- Orchestrator preservation note: CORRECTION CONFIRMATION below, returned through
+the agent-return channel by the same independent read-only G5 reviewer after the
+blocking F-1 disclosure correction was committed at f254698, saved VERBATIM
+(transport entity-decoding only). Received 2026-08-19. Verdict: CORRECTION
+CLOSED — the G5 PASS gate's blocking correction is resolved and independently
+verified. Everything below is the reviewer's text. -->
+
+# G5 Correction Confirmation — M0-T077 at `f254698bb70b86abd1e1741acbb7b884debe358e`
+
+**Reviewer:** security-reviewer (same independent read-only agent that returned the G5 verdict)
+
+## VERDICT: **CORRECTION CLOSED**
+
+Both the blocking F-1 disclosure correction and the minor F-2 count refresh are verified closed. No new findings. I modified nothing; all checks were read-only.
+
+---
+
+## Item 2 first — the enforcement artifact did not move ✓
+
+```
+git rev-parse eb742f2:.claude/settings.json a861c4d:.claude/settings.json f254698:.claude/settings.json
+dd11cd79e01f309c524f00906ff1266de439a287   (identical across all three)
+```
+
+`git diff --name-status a861c4d..f254698 -- .claude/settings.json tools/validate_mcp_policy.py tools/test_mcp_policy.py .github/workflows/ci.yml` returns **empty** — all four enforcement artifacts are byte-unchanged. Every enforcement probe from G3 and from my G5 review therefore carries over untouched, which is exactly what a documentation-only correction should look like.
+
+The correction commit touches 7 files (`docs/MCP_DEFAULT_DENY_POLICY.md`, `M0-T077-fresh-session-proof.md`, `M0-T077-submission.md`, `tasks/M0-T077.json`, `state.json`, plus the new `gates/M0-T077-G5.json` and `reports/M0-T077-review-G5.md`). Full base-to-head containment at `31c50a09..f254698`: **24 files, all inside the frozen contract, none in `forbidden_paths`**.
+
+## Item 1 — F-1 disclosure CLOSED, and accurate against my own measurements ✓
+
+I re-read both sections rather than accepting the diff on trust.
+
+**`docs/MCP_DEFAULT_DENY_POLICY.md`** — a new "Per-process resolution and subagent inheritance (G5 F-1)" bullet in the Honest enforcement boundary states all four elements I asked for, correctly:
+
+- **Per-process resolution:** *"Claude Code resolves MCP configuration ONCE per `claude` process, at session start."* ✓
+- **Subagent inheritance:** *"Agent-tool subagents dispatched inside a session are not new processes — they INHERIT the parent session's connector set regardless of the directory they are assigned to work in."* ✓
+- **The operative consequence, stated concretely:** a session started outside a worktree root — *"including an interactive orchestrator session started at the user-profile directory, the operating pattern at the time this policy landed"* — carries ambient connectors *"including live Supabase tools"* through its entire agent tree, *"even while its agents work inside this repository and a fresh `claude mcp list` in the same worktree correctly reports none."* That is precisely the asymmetry I demonstrated from inside my own session. ✓
+- **The narrowing is gone.** *"the residual is a HUMAN starting a session one level down"* is deleted and replaced with: *"The residuals are therefore: any interactive session (and its whole subagent tree) started anywhere other than a repository worktree root, including one level down inside the repository."* The adjacent overclaim *"so agent sessions are covered"* is likewise corrected to *"SUPERVISOR-launched workers always start with `cwd` set to the worktree ROOT … so supervised sessions are covered"* — accurate, and it preserves the true supervisor mitigation without letting it read as blanket agent coverage. ✓
+- **Operational rule + owner-gated close-out both recorded:** *"**Operational rule (smallest next step):** start orchestrator and interactive sessions FROM a repository worktree root. **Smallest owner-gated close-out:** an owner-installed managed settings file (an owner-machine action outside repository scope, deliberately not performed by this task)."* ✓
+
+**`M0-T077-fresh-session-proof.md` §5** — carries the parallel disclosure, corrects *"Supervised workers always launch at the worktree root and are therefore covered"* to *"SUPERVISOR-launched workers…"*, and adds one sentence that is stronger than what I requested and is the right thing to say: *"The fresh-process runs in this report measure what a NEW session gets; they do not retrofit protection onto an already-running session."* That names the exact reason the evidence set and the lived exposure diverged. ✓
+
+**Residual-overclaim sweep at `f254698`.** `grep -ril` for `"agent sessions are covered"`, `"one level down"`, `"residual is a HUMAN"`, and `"HUMAN starting"` across `docs/MCP_DEFAULT_DENY_POLICY.md` and every `M0-T077-*.md`:
+
+- The policy doc and the fresh-session proof — **the two normative documents** — return **no match** for any of the four. ✓
+- Remaining hits are only in `M0-T077-review-G3.md` and `M0-T077-review-G5.md` (verbatim preserved reviewer text, correctly immutable historical record) and in `M0-T077-submission.md`, where the phrase appears **inside quotation marks describing what was corrected** (*"the two sentences that narrowed the residual to \"a HUMAN starting a session one level down\" are corrected"*). Correct usage, not a live claim.
+
+Positive-coverage check: `subagent`, `per-process`/`once per`, `inherit`/`INHERIT`, and `worktree root` now each appear in **both** normative documents — up from zero hits for the first three when I ran the same sweep during the review.
+
+## Item 3 — counts refreshed correctly ✓
+
+**Submission report**, verified against ground truth rather than the diff alone:
+
+| Claim | Was | Now | Ground truth |
+|---|---|---|---|
+| validator size | "~210 lines" | "~310 lines" | `wc -l tools/validate_mcp_policy.py` = **310** ✓ |
+| test count (table) | "28 tests" | "35 tests" | `python tools/test_mcp_policy.py` → **Ran 35 tests … OK** ✓ |
+| test count (self-check) | "28/28 OK" | "35/35 OK" | same ✓ |
+| validator description | "every policy invariant … consumer-discard shape guards" | "exact policy-key values, merge preservation, and a whole-file shape assertion" | matches the shipped p1–p9 design ✓ |
+
+`python tools/validate_mcp_policy.py --check` → exit **0** at `f254698`. A new "G5 correction" section records both F-1 and F-2 honestly, including the line *"The enforcement blob `dd11cd79…` did not change."*
+
+**PR #240 body** (head now `f254698…`) refreshed correctly on all three points I raised:
+
+- "five officially supported keys" → *"six officially supported policy entries"*, now explicitly listing *"the un-overridable deny-first tool rule `permissions.deny: [\"mcp__*\"]`"*. ✓
+- "18 removal/weakening regressions" → *"35 removal/weakening regressions"*, with the validator described as a whole-file shape assertion *"because one mistyped key makes Claude Code silently discard the entire settings file."* ✓
+- Beyond the refresh, the body's Proof section now surfaces both disclosed limitations to any PR reader: *"sessions started in a repository SUBDIRECTORY load no project settings, and subagents INHERIT the connector set of a parent session started outside a worktree root — operational rule: start sessions from a repository worktree root; owner-gated close-out: managed settings."* ✓
+
+## Incidental checks
+
+- **Gate record** `project-control/gates/M0-T077-G5.json`: `result: PASS`, `reviewer: security-reviewer`, `role: independent_review`, `report_file` pointing at the preservation file, `reviewed_sha: 6666dc7e…`, manifest `dce3b584…`. Correct.
+- **Preservation file** `project-control/reports/M0-T077-review-G5.md` (160 lines): header truthfully labels the text VERBATIM, names the fresh-replacement circumstance, records the verdict as "PASS with one required correction — recorded as gate G5 PASS per the gate-verdict semantics rule; the section-4 F-1 documentation correction is BLOCKING for acceptance." Body matches what I sent.
+- **Secret re-scan of the 234 newly added lines** (`a861c4d..f254698`): `dyiv` followed by an alphanumeric = **0**; JWT, `postgres://`, and `Bearer <token>` patterns = **0**. Six patterns (`sbp_`, `sb_secret`, `service_role`, `sk-ant-`, `ghp_`, `github_pat_`) each show one hit — all on **line 36 of my own preserved G5 report**, which is the probe-3 row *listing the pattern names I scanned for*. Confirmed to be bare prefixes: every one of them followed by a 6+ character value-like token returns **0**. `python .github/scripts/secret_scan.py` at `f254698` → **PASS, no findings**, exit 0, with no new allowlist or pragma entries required.
+
+## One note for the acceptance record (not a finding)
+
+The G5 gate is recorded at `reviewed_sha: 6666dc7e…`, and the blocking correction landed afterwards at `f254698`. That ordering is correct and mirrors the G3 precedent, but it means the gate record alone does not evidence the closure. Acceptance should therefore be recorded at an identity **at or after `f254698`**, with this confirmation as the evidence that the pre-acceptance blocking item is closed.
+
+---
+
+**Bottom line:** G5 F-1 and F-2 are both closed. The disclosure is accurate, complete, and free of the narrowing that produced the finding; the enforcement blob `dd11cd79…` is untouched, so no prior probe result is invalidated; the counts and PR body match shipped reality. I have no remaining findings against this task. My unchanged not-testable items stand as listed in §3 of the original report — chiefly user-scope allowlist broadening, managed-settings precedence, and a live supervised worker launch, all three blocked by D-020's own prohibitions rather than by anything this task did.
