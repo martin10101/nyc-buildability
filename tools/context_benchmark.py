@@ -439,6 +439,7 @@ def build_report(*, samples: int = 1) -> dict:
 # ==========================================================================
 
 E2E_SCHEMA = "context_benchmark_e2e/v1"
+E2E_BASELINE_SCHEMA = "context_benchmark_e2e_baseline/v1"  # M0-T076, D-019-R035
 _E2E_MODEL = "claude-fable-5"
 
 _REAL_MAP_PREFIXES = ("services/api", "apps/web", "packages/contracts",
@@ -592,7 +593,7 @@ def build_e2e_report(baseline_path: str | None = None) -> dict:
                    "snapshot, cold then warm"),
         "shapes": shapes,
         "checks": checks,
-        "baseline_comparison": _baseline_comparison(baseline_path),
+        "baseline_comparison": _baseline_comparison(baseline_path, shapes),
         "provider_token_savings": ("UNMEASURED — no provider-reported usage "
                                    "exists in this offline benchmark "
                                    "(D-013-R012/R057)"),
@@ -600,35 +601,96 @@ def build_e2e_report(baseline_path: str | None = None) -> dict:
     return report
 
 
-def _baseline_comparison(baseline_path: str | None) -> dict:
-    """Representative-task correctness vs the captured G0 baseline (R042):
-    rerun the INTEGRATED compiler on the same real tasks and require every
-    baseline-included source id to still be present with sufficiency true."""
+#: The state-INVARIANT required-evidence + relevance fingerprint of one e2e
+#: shape (M0-T076, D-019-R035/R036). Every field is a meaningful required-
+#: evidence or relevance signal — never a volatile source-id count or a
+#: working-tree-diff artifact — so the same clean checkout reproduces it exactly.
+_E2E_FINGERPRINT_FIELDS = (
+    "exit_cold", "sufficient", "provenance_complete",
+    "graph_or_source_evidence_resolved", "source_excerpt_present",
+    "memory_status_honest", "within_budget", "code_evidence_required",
+    "requirement_ids_present", "requirements_group_present",
+)
+
+
+def _shape_fingerprint(shape_row: dict) -> dict:
+    return {k: shape_row.get(k) for k in _E2E_FINGERPRINT_FIELDS}
+
+
+def _fingerprint_no_worse(base: dict, cur: dict) -> tuple[bool, list[str]]:
+    """`cur` is no worse than `base` on MEANINGFUL required evidence + relevance
+    (D-019-R036): a boolean that was True must stay True; exit 0 must stay 0; a
+    relevance signal (requirement ids/group) must be preserved. Never a source-id
+    count comparison. Returns (ok, regressions)."""
+    regressions = []
+    # exit: a baseline success (0) must remain 0
+    if base.get("exit_cold") == 0 and cur.get("exit_cold") != 0:
+        regressions.append(f"exit_cold regressed {base.get('exit_cold')}->{cur.get('exit_cold')}")
+    for f in _E2E_FINGERPRINT_FIELDS:
+        if f == "exit_cold":
+            continue
+        if base.get(f) is True and cur.get(f) is not True:
+            regressions.append(f"{f} regressed True->{cur.get(f)!r}")
+        # relevance identity for the regime shape's requirement signals
+        if f in ("requirement_ids_present", "requirements_group_present"):
+            if base.get(f) is not None and base.get(f) != cur.get(f):
+                regressions.append(f"{f} changed {base.get(f)!r}->{cur.get(f)!r}")
+    return (not regressions), regressions
+
+
+def capture_e2e_baseline() -> dict:
+    """A frozen, clean-state e2e baseline: the required-evidence + relevance
+    fingerprint of every hermetic shape (M0-T076, D-019-R035). The shapes build
+    their OWN git repo and commit, so this is reproducible from any clean
+    checkout — the baseline is captured under the exact conditions the
+    comparison reruns under (same packet/diff base/role/provider-model/reasoning/
+    source snapshot/clean state)."""
+    shapes = [_e2e_shape(name) for name in SHAPES]
+    return {
+        "schema": E2E_BASELINE_SCHEMA,
+        "capture_conditions": {
+            "task": "M0-T900", "role": "worker", "provider": "claude",
+            "model": _E2E_MODEL, "reasoning_setting": None, "diff_base": "HEAD",
+            "max_bytes": 400_000, "clean_state": True,
+            "note": ("hermetic per-shape git repos: fully reproducible from any "
+                     "clean checkout; required-evidence fingerprint only")},
+        "shapes": {s["shape"]: _shape_fingerprint(s) for s in shapes},
+        "provider_token_savings": ("UNMEASURED — no provider-reported usage "
+                                   "exists in this offline benchmark"),
+    }
+
+
+def _baseline_comparison(baseline_path: str | None,
+                         shapes: list[dict] | None = None) -> dict:
+    """Frozen, apples-to-apples comparison vs a clean-captured e2e baseline
+    (M0-T076, D-019-R035/R036): compare each shape's required-evidence + relevance
+    fingerprint (NOT source-id counts) and require it to be no worse than the
+    baseline captured under equivalent conditions."""
     if not baseline_path or not os.path.isfile(baseline_path):
         return {"status": "baseline_not_provided"}
-    from tools import context_pack as cp
     baseline = json.loads(open(baseline_path, encoding="utf-8").read())
+    if baseline.get("schema") != E2E_BASELINE_SCHEMA:
+        return {"status": "incompatible_baseline_schema",
+                "expected": E2E_BASELINE_SCHEMA, "found": baseline.get("schema"),
+                "no_worse_than_baseline": False}
+    base_shapes = baseline.get("shapes") or {}
+    shapes = shapes if shapes is not None else [_e2e_shape(name) for name in SHAPES]
     rows = []
-    for run in baseline.get("compiler_runs", []):
-        with tempfile.TemporaryDirectory() as out, \
-             tempfile.TemporaryDirectory() as cache:
-            argv = ["--task", run["task"], "--role", run["role"],
-                    "--provider", run["provider"],
-                    "--max-bytes", str(run["max_bytes"]), "--out", out,
-                    "--index-cache-base", cache, "--no-index-telemetry"]
-            args = cp.build_parser().parse_args(argv)
-            meta, code = cp.emit(cp.build(args), args)
-            now_ids = {f["source_id"] for f in meta["included_files"]}
-            missing = sorted(set(run.get("included_source_ids") or []) - now_ids)
-            rows.append({"task": run["task"], "exit": code,
-                         "baseline_sources": len(run.get("included_source_ids") or []),
-                         "integrated_sources": len(now_ids),
-                         "baseline_sources_missing_now": missing,
-                         "sufficient": meta["sufficiency"]["sufficient"],
-                         "no_worse_than_baseline": not missing
-                                                   and meta["sufficiency"]["sufficient"]
-                                                   and code == 0})
+    for s in shapes:
+        name = s["shape"]
+        cur_fp = _shape_fingerprint(s)
+        base_fp = base_shapes.get(name)
+        if base_fp is None:
+            rows.append({"shape": name, "no_worse_than_baseline": False,
+                         "reason": "shape absent from baseline"})
+            continue
+        ok, regressions = _fingerprint_no_worse(base_fp, cur_fp)
+        rows.append({"shape": name, "no_worse_than_baseline": ok,
+                     "regressions": regressions,
+                     "required_evidence": cur_fp})
     return {"status": "compared", "runs": rows,
+            "comparison_basis": "required-evidence + relevance fingerprint "
+                                "(state-invariant; not source-id counts)",
             "no_worse_than_baseline": all(r["no_worse_than_baseline"] for r in rows)}
 
 
@@ -647,13 +709,14 @@ def render_e2e_md(report: dict) -> str:
             f"{s['provenance_complete']} | "
             f"{s['graph_or_source_evidence_resolved']} |")
     bc = report["baseline_comparison"]
-    lines += ["", "## Baseline comparison (G0, R042)", "",
-              f"- status: {bc.get('status')}"]
+    lines += ["", "## Baseline comparison (frozen clean-state, D-019-R035/R036)", "",
+              f"- status: {bc.get('status')}",
+              f"- basis: {bc.get('comparison_basis', 'n/a')}",
+              f"- no-worse-than-baseline: {bc.get('no_worse_than_baseline')}"]
     for r in bc.get("runs", []):
-        lines.append(f"- {r['task']}: integrated {r['integrated_sources']} "
-                     f"sources vs baseline {r['baseline_sources']}; missing "
-                     f"{r['baseline_sources_missing_now'] or 'none'}; "
-                     f"no-worse={r['no_worse_than_baseline']}")
+        reg = r.get("regressions") or (["shape absent"] if r.get("reason") else [])
+        lines.append(f"- {r.get('shape')}: no-worse={r['no_worse_than_baseline']}"
+                     + (f"; regressions={reg}" if reg else ""))
     lines += ["", f"- provider token savings: {report['provider_token_savings']}", ""]
     return "\n".join(lines)
 
@@ -697,8 +760,16 @@ def main(argv: list[str] | None = None) -> int:
                     help="run the END-TO-END compiler benchmark instead of "
                          "the index-parity benchmark")
     ap.add_argument("--baseline", default=None,
-                    help="path to the captured G0 baseline JSON (e2e mode)")
+                    help="path to the captured e2e baseline JSON (e2e mode)")
+    ap.add_argument("--capture-e2e-baseline", default=None, dest="capture_e2e_baseline",
+                    help="capture a frozen clean-state e2e baseline to this path "
+                         "(state-invariant required-evidence fingerprint) and exit")
     args = ap.parse_args(argv)
+    if args.capture_e2e_baseline:
+        baseline = capture_e2e_baseline()
+        pathlib.Path(args.capture_e2e_baseline).write_bytes(canon_json_bytes(baseline))
+        sys.stdout.write(f"captured e2e baseline -> {args.capture_e2e_baseline}\n")
+        return 0
     if args.e2e:
         report = build_e2e_report(args.baseline)
         ok = (all(report["checks"].values())

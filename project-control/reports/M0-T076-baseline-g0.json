@@ -1,0 +1,77 @@
+{
+  "capture_conditions": {
+    "clean_state": true,
+    "diff_base": "HEAD",
+    "max_bytes": 400000,
+    "model": "claude-fable-5",
+    "note": "hermetic per-shape git repos: fully reproducible from any clean checkout; required-evidence fingerprint only",
+    "provider": "claude",
+    "reasoning_setting": null,
+    "role": "worker",
+    "task": "M0-T900"
+  },
+  "provider_token_savings": "UNMEASURED — no provider-reported usage exists in this offline benchmark",
+  "schema": "context_benchmark_e2e_baseline/v1",
+  "shapes": {
+    "control_plane_only": {
+      "code_evidence_required": false,
+      "exit_cold": 0,
+      "graph_or_source_evidence_resolved": false,
+      "memory_status_honest": true,
+      "provenance_complete": true,
+      "requirement_ids_present": null,
+      "requirements_group_present": null,
+      "source_excerpt_present": false,
+      "sufficient": true,
+      "within_budget": true
+    },
+    "cross_module_change": {
+      "code_evidence_required": true,
+      "exit_cold": 0,
+      "graph_or_source_evidence_resolved": true,
+      "memory_status_honest": true,
+      "provenance_complete": true,
+      "requirement_ids_present": null,
+      "requirements_group_present": null,
+      "source_excerpt_present": true,
+      "sufficient": true,
+      "within_budget": true
+    },
+    "frontend_backend_boundary": {
+      "code_evidence_required": true,
+      "exit_cold": 0,
+      "graph_or_source_evidence_resolved": true,
+      "memory_status_honest": true,
+      "provenance_complete": true,
+      "requirement_ids_present": null,
+      "requirements_group_present": null,
+      "source_excerpt_present": true,
+      "sufficient": true,
+      "within_budget": true
+    },
+    "schema_change": {
+      "code_evidence_required": true,
+      "exit_cold": 0,
+      "graph_or_source_evidence_resolved": true,
+      "memory_status_honest": true,
+      "provenance_complete": true,
+      "requirement_ids_present": null,
+      "requirements_group_present": null,
+      "source_excerpt_present": true,
+      "sufficient": true,
+      "within_budget": true
+    },
+    "single_file_bug": {
+      "code_evidence_required": true,
+      "exit_cold": 0,
+      "graph_or_source_evidence_resolved": true,
+      "memory_status_honest": true,
+      "provenance_complete": true,
+      "requirement_ids_present": true,
+      "requirements_group_present": true,
+      "source_excerpt_present": true,
+      "sufficient": true,
+      "within_budget": true
+    }
+  }
+}

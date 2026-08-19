@@ -588,3 +588,12 @@ jobs:
           python3 tools/test_status_projection.py
       - name: M0-T075 integration + adversarial suite
         run: python3 tools/test_context_integration.py
+      # M0-T076 / D-019-R036/R037: the COMPLETE clean-checkout end-to-end
+      # compiler benchmark runs on every push/PR (this checkout IS a clean
+      # checkout of merged/PR HEAD), reproducing the frozen apples-to-apples
+      # baseline comparison — not only the single-shape unit test. Exits nonzero
+      # on any required-evidence regression, gating the pipeline.
+      - name: Clean-checkout e2e compiler benchmark (frozen baseline)
+        run: |
+          python3 tools/context_benchmark.py --e2e \
+            --baseline project-control/reports/M0-T076-baseline-g0.json

@@ -1,0 +1,302 @@
+{
+ "schema": "directive_verification/v2",
+ "directive_id": "D-019",
+ "authority_note": "Independently verified by directive-compliance-verifier (producer=orchestrator != verifier). All 28 M0-T076-applicable D-019 requirements PASS at reviewed content identity d5035b85718d0267a175fa7948422f66e9d4c274791a20a940da73ce6a234eff. Adversarial reviewer, producer, and DCV are three independent parties.",
+ "producer": "orchestrator",
+ "verifier": "directive-compliance-verifier",
+ "task_verifications": [
+  {
+   "task_id": "M0-T076",
+   "directive_id": "D-019",
+   "producer": "orchestrator",
+   "verifier": "directive-compliance-verifier",
+   "applicable_requirement_ids": [
+    "D-019-R005",
+    "D-019-R006",
+    "D-019-R007",
+    "D-019-R012",
+    "D-019-R014",
+    "D-019-R015",
+    "D-019-R016",
+    "D-019-R017",
+    "D-019-R018",
+    "D-019-R019",
+    "D-019-R020",
+    "D-019-R021",
+    "D-019-R022",
+    "D-019-R023",
+    "D-019-R024",
+    "D-019-R025",
+    "D-019-R026",
+    "D-019-R027",
+    "D-019-R028",
+    "D-019-R029",
+    "D-019-R030",
+    "D-019-R031",
+    "D-019-R032",
+    "D-019-R033",
+    "D-019-R034",
+    "D-019-R035",
+    "D-019-R036",
+    "D-019-R037"
+   ],
+   "reviewed_sha": "4c5607d1cf12de689bade7baf088fb90b0e306df",
+   "reviewed_manifest_sha256": "d5035b85718d0267a175fa7948422f66e9d4c274791a20a940da73ce6a234eff",
+   "requirements": [
+    {
+     "id": "D-019-R005",
+     "state": "PASS",
+     "evidence": [
+      "DCV: git diff base..HEAD shows only new M0-T075-reconciliation-correction.md; M0-T075 task/gates/reports UNCHANGED; M0-T075 baseline e2e exits 2 on clean checkout (matches report)"
+     ],
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "4c5607d1cf12de689bade7baf088fb90b0e306df"
+    },
+    {
+     "id": "D-019-R006",
+     "state": "PASS",
+     "evidence": [
+      "DCV: M0-T076-counterexample-matrix.md has 24 rows covering every absolute-language requirement with command/exit/result"
+     ],
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "4c5607d1cf12de689bade7baf088fb90b0e306df"
+    },
+    {
+     "id": "D-019-R007",
+     "state": "PASS",
+     "evidence": [
+      "Independent adversarial RE-REVIEW + DCV RE-ATTESTATION at corrected identity d5035b85: M0-T076-review-PASS.md re-review addendum + G3/G4/G5 re-pinned to the corrected code; only repo_index_cache.py changed, all else byte-identical; new cross-platform lock probes; producer/reviewer/DCV independent"
+     ],
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "4c5607d1cf12de689bade7baf088fb90b0e306df"
+    },
+    {
+     "id": "D-019-R012",
+     "state": "PASS",
+     "evidence": [
+      "DCV: lifecycle correctly ordered G0->matrix->frozen submit->review->DCV; pre-merge items (e2e x2, lock exploit, containment, committed diff, all suites, modularity, validator, forbidden-path empty) reproduced green"
+     ],
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "4c5607d1cf12de689bade7baf088fb90b0e306df"
+    },
+    {
+     "id": "D-019-R014",
+     "state": "PASS",
+     "evidence": [
+      "DCV: 11/12 proofs reproduced directly; proof 3 raced-escaping-link env-gated (realpath containment present)"
+     ],
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "4c5607d1cf12de689bade7baf088fb90b0e306df"
+    },
+    {
+     "id": "D-019-R015",
+     "state": "PASS",
+     "evidence": [
+      "DCV re-attest @corrected: acquire() os.mkdir exclusion gate (fails on existing dir on BOTH platforms, never replaces) + atomic owner.json publish via temp+os.rename; probe: young owner-less writer.lock refused (cross-platform, Linux CI green)"
+     ],
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "4c5607d1cf12de689bade7baf088fb90b0e306df"
+    },
+    {
+     "id": "D-019-R016",
+     "state": "PASS",
+     "evidence": [
+      "DCV: secrets.token_hex(16); probe read a 32-hex token from owner.json"
+     ],
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "4c5607d1cf12de689bade7baf088fb90b0e306df"
+    },
+    {
+     "id": "D-019-R017",
+     "state": "PASS",
+     "evidence": [
+      "DCV re-attest: _atomic_quarantine_stale os.rename to unique name; two racing reclaimers -> exactly one winner"
+     ],
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "4c5607d1cf12de689bade7baf088fb90b0e306df"
+    },
+    {
+     "id": "D-019-R018",
+     "state": "PASS",
+     "evidence": [
+      "DCV: _reclaimable reclaims partial/absent metadata only if dir_age>900s; probe: young owner-less refused, aged reclaimed"
+     ],
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "4c5607d1cf12de689bade7baf088fb90b0e306df"
+    },
+    {
+     "id": "D-019-R019",
+     "state": "PASS",
+     "evidence": [
+      "DCV: release() rmtrees only when owns() (token match); probe: forged foreign token -> lock preserved"
+     ],
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "4c5607d1cf12de689bade7baf088fb90b0e306df"
+    },
+    {
+     "id": "D-019-R020",
+     "state": "PASS",
+     "evidence": [
+      "DCV: memory_graph.promote_digest._transaction wraps load->idempotency->mutation->fingerprint->write_generation_locked->_prune_locked in one SingleWriterLock"
+     ],
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "4c5607d1cf12de689bade7baf088fb90b0e306df"
+    },
+    {
+     "id": "D-019-R021",
+     "state": "PASS",
+     "evidence": [
+      "DCV: D019LockPublicationRace(5)+test_two_valid_writers_no_lost_node pass (test_memory_graph 38/38); 8-thread race serialized to 1 winner"
+     ],
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "4c5607d1cf12de689bade7baf088fb90b0e306df"
+    },
+    {
+     "id": "D-019-R022",
+     "state": "PASS",
+     "evidence": [
+      "DCV: --ci-summary routes through cpaths.contained_read_bytes (context_pack_sources.py:352); all evidence reads use cpaths.contained_*"
+     ],
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "4c5607d1cf12de689bade7baf088fb90b0e306df"
+    },
+    {
+     "id": "D-019-R023",
+     "state": "PASS",
+     "evidence": [
+      "DCV: is_canonical_repo_path refuses backslash/colon/leading-slash/dot-segments/control-chars + realpath escape check; hostile ci-summary/include never read"
+     ],
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "4c5607d1cf12de689bade7baf088fb90b0e306df"
+    },
+    {
+     "id": "D-019-R024",
+     "state": "PASS",
+     "evidence": [
+      "DCV: PathContainmentError/redact_context_ref redact non-canonical; unique markers appear nowhere in outputs/streams"
+     ],
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "4c5607d1cf12de689bade7baf088fb90b0e306df"
+    },
+    {
+     "id": "D-019-R025",
+     "state": "PASS",
+     "evidence": [
+      "DCV: --ci-summary C:/Windows/win.ini -> exit 3, sufficient:false, marker absent from context.md/meta/evidence/stdout/stderr"
+     ],
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "4c5607d1cf12de689bade7baf088fb90b0e306df"
+    },
+    {
+     "id": "D-019-R026",
+     "state": "PASS",
+     "evidence": [
+      "DCV: resolve_diff_base explicit->frozen G0->refuse; never silent HEAD; test_no_frozen_base_refuses_instead_of_head passes"
+     ],
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "4c5607d1cf12de689bade7baf088fb90b0e306df"
+    },
+    {
+     "id": "D-019-R027",
+     "state": "PASS",
+     "evidence": [
+      "DCV: provenance records chosen_base_sha/resolution/head_sha/dirty/diff_command; asserted in test_committed_change_visible_against_frozen_base"
+     ],
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "4c5607d1cf12de689bade7baf088fb90b0e306df"
+    },
+    {
+     "id": "D-019-R028",
+     "state": "PASS",
+     "evidence": [
+      "DCV: committed COMMITTED_CHANGE_MARKER present vs frozen base, empty vs HEAD"
+     ],
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "4c5607d1cf12de689bade7baf088fb90b0e306df"
+    },
+    {
+     "id": "D-019-R029",
+     "state": "PASS",
+     "evidence": [
+      "DCV: context_pack_index._neighborhood (live-called) invokes rv.neighborhood_edges; same primitive consumed in repo_views.py; spy test passes"
+     ],
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "4c5607d1cf12de689bade7baf088fb90b0e306df"
+    },
+    {
+     "id": "D-019-R030",
+     "state": "PASS",
+     "evidence": [
+      "DCV: _ordered_seeds five impl-first tiers + selected/skipped_over_cap/refused provenance"
+     ],
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "4c5607d1cf12de689bade7baf088fb90b0e306df"
+    },
+    {
+     "id": "D-019-R031",
+     "state": "PASS",
+     "evidence": [
+      "DCV: clean M0-T066 compile exit 0; seeds 4x allowed_impl then 1 prose (impl before docs/control-plane); excerpts/tests disjoint"
+     ],
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "4c5607d1cf12de689bade7baf088fb90b0e306df"
+    },
+    {
+     "id": "D-019-R032",
+     "state": "PASS",
+     "evidence": [
+      "DCV: derive_signals every risk field carries basis or undetermined->ambiguity"
+     ],
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "4c5607d1cf12de689bade7baf088fb90b0e306df"
+    },
+    {
+     "id": "D-019-R033",
+     "state": "PASS",
+     "evidence": [
+      "DCV: concurrency code task -> concurrency_or_performance=False WITH ambiguity=True (never false-without-ambiguity); model_routing.py byte-unchanged"
+     ],
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "4c5607d1cf12de689bade7baf088fb90b0e306df"
+    },
+    {
+     "id": "D-019-R034",
+     "state": "PASS",
+     "evidence": [
+      "DCV: _advisory_row bounded useful fields (id/outcome+agent/capped note/req_ids/files/evidence/unresolved/source_identity/advisory:true); not full digest"
+     ],
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "4c5607d1cf12de689bade7baf088fb90b0e306df"
+    },
+    {
+     "id": "D-019-R035",
+     "state": "PASS",
+     "evidence": [
+      "DCV: capture_e2e_baseline frozen required-evidence+relevance fingerprint; comparison_basis says not source-id counts"
+     ],
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "4c5607d1cf12de689bade7baf088fb90b0e306df"
+    },
+    {
+     "id": "D-019-R036",
+     "state": "PASS",
+     "evidence": [
+      "DCV: ran documented e2e twice -> exit 0,0; no-worse compares fingerprint not counts; provider_token_savings UNMEASURED"
+     ],
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "4c5607d1cf12de689bade7baf088fb90b0e306df"
+    },
+    {
+     "id": "D-019-R037",
+     "state": "PASS",
+     "evidence": [
+      ".github/workflows/ci.yml context-pipeline job additive clean-checkout e2e step; no job removed"
+     ],
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "4c5607d1cf12de689bade7baf088fb90b0e306df"
+    }
+   ]
+  }
+ ],
+ "updated_at": "2026-08-19T15:00:00+00:00"
+}

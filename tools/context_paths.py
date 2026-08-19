@@ -35,18 +35,35 @@ _MAX_ERR_CHARS = 120
 class PathContainmentError(Exception):
     """Fail-closed containment refusal with a machine-readable code.
 
-    `detail` is bounded and repo-relative: it repeats only (a truncated form
-    of) the caller-supplied path string, never a resolved absolute path.
+    `detail` NEVER repeats a private absolute/drive/traversal path (M0-T076 /
+    D-019-R024): a caller-supplied string is echoed ONLY when it is a canonical
+    repo-relative path (safe to disclose, e.g. a symlink that escapes at resolve
+    time); any non-canonical supplied string — an absolute path, a drive path,
+    a `..` traversal, backslashes — is redacted to a fixed marker so the error
+    (and any packet/omission/stderr carrying it) cannot leak it.
     """
 
     def __init__(self, code: str, supplied: object):
         self.code = code
-        shown = repr(str(supplied))[:_MAX_ERR_CHARS]
-        self.detail = f"refused context path {shown}"
+        if is_canonical_repo_path(supplied):
+            shown = repr(str(supplied))[:_MAX_ERR_CHARS]
+            self.detail = f"refused context path {shown}"
+        else:
+            self.detail = f"refused non-canonical context path [redacted:{code}]"
         super().__init__(f"{code}: {self.detail}")
 
     def doc(self) -> dict:
         return {"error": {"code": self.code, "detail": self.detail}}
+
+
+def redact_context_ref(p: object) -> str:
+    """A disclosure-safe rendering of a caller-supplied context reference.
+
+    Returns the canonical repo-relative string unchanged (safe to record) or a
+    fixed redaction marker for any non-canonical/absolute/traversal input, so
+    error details, omission reasons, and packet metadata never repeat a private
+    absolute path (D-019-R024)."""
+    return str(p) if is_canonical_repo_path(p) else "[redacted:non_canonical_path]"
 
 
 def is_canonical_repo_path(p: object) -> bool:

@@ -1,0 +1,12 @@
+{
+  "task_id": "M0-T076",
+  "gate_id": "G0",
+  "reviewer": "orchestrator",
+  "role": "administrative",
+  "result": "PASS",
+  "report_file": "project-control/reports/M0-T076-G0-readiness.md",
+  "reviewed_at": "2026-08-19T06:26:10.586201+00:00",
+  "content_manifest_sha256": "f3300c41cad2781616a2afd36bfd52f3bd2fb57478cd67656b26a4a46b4fa86b",
+  "reviewed_sha": "9d850a8185f1f39ec40ca8bfc37cf94ebef0e4a0",
+  "updated_at": "2026-08-19T06:26:12.712038+00:00"
+}

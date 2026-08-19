@@ -278,7 +278,7 @@ class TestAS3Overflow(unittest.TestCase):
             out = os.path.join(root, "out")
             proc = run_cli(root, ["--task", "M0-T099", "--role", "worker",
                                   "--provider", "claude", "--max-bytes", "14000",
-                                  "--out", out, "--ci-summary", ci])
+                                  "--out", out, "--ci-summary", "ci.txt"])
             self.assertEqual(proc.returncode, 0, proc.stderr.decode())
             meta = load_meta(out)
             self.assertTrue(meta["overflow"]["triggered"])
@@ -521,7 +521,7 @@ class TestDeterminism(unittest.TestCase):
             with open(ci, "wb") as fh:
                 fh.write(("CI_LINE step passed\n" * 4000).encode("utf-8"))
             common = ["--task", "M0-T099", "--role", "worker", "--provider",
-                      "claude", "--max-bytes", "14000", "--ci-summary", ci]
+                      "claude", "--max-bytes", "14000", "--ci-summary", "ci.txt"]
             out_a = os.path.join(root, "a")
             out_b = os.path.join(root, "b")
             pa = run_cli(root, common + ["--out", out_a])

@@ -24,6 +24,7 @@ if str(_ROOT) not in sys.path:
     sys.path.insert(0, str(_ROOT))
 
 from tools import repo_index_incremental as inc  # noqa: E402
+from tools import repo_views as rv  # noqa: E402  (Unit E: shared primitive)
 from tools.code_graph import query as cgquery  # noqa: E402
 from tools.context_pack_io import canon_json_bytes  # noqa: E402
 
@@ -56,21 +57,25 @@ def _norm(target: str) -> str:
 
 
 def _neighborhood(gi, nid: str, limit: int) -> list[str]:
-    """Bounded, deterministic neighborhood lines for one resolved node."""
-    cap = max(int(limit), 1)
-    out_edges = sorted(gi.out_edges.get(nid, []),
-                       key=lambda e: (e["to"], e["type"], e["line"]))
-    in_edges = sorted(gi.in_edges.get(nid, []),
-                      key=lambda e: (e["from"], e["type"], e["line"]))
+    """Bounded, deterministic neighborhood lines for one resolved node.
+
+    Formats the rows produced by the SHARED Unit E primitive
+    ``repo_views.neighborhood_edges`` (M0-T076, D-019-R029) — the compiler no
+    longer reimplements edge extraction/sorting/truncation; it consumes Unit E's
+    exact function and only renders the result as text."""
+    nb = rv.neighborhood_edges(gi, nid, edge_limit=max(int(limit), 1))
+    out_rows, in_rows = nb["out_edges"], nb["in_edges"]
     lines = [f"# {nid}",
-             f"  out ({len(out_edges)}): depends on",
-             *[f"    -> {e['to']} [{e['type']}/{e['confidence']}]" for e in out_edges[:cap]]]
-    if len(out_edges) > cap:
-        lines.append(f"    ...(+{len(out_edges) - cap} more)")
-    lines.append(f"  in ({len(in_edges)}): depended on by")
-    lines += [f"    <- {e['from']} [{e['type']}/{e['confidence']}]" for e in in_edges[:cap]]
-    if len(in_edges) > cap:
-        lines.append(f"    ...(+{len(in_edges) - cap} more)")
+             f"  out ({nb['out_edge_count']}): depends on",
+             *[f"    -> {r['to']} [{r['type']}/{r['confidence']}]" for r in out_rows]]
+    om = nb["out_truncation"]
+    if om and om.get("omitted"):
+        lines.append(f"    ...(+{om['omitted']} more)")
+    lines.append(f"  in ({nb['in_edge_count']}): depended on by")
+    lines += [f"    <- {r['from']} [{r['type']}/{r['confidence']}]" for r in in_rows]
+    im = nb["in_truncation"]
+    if im and im.get("omitted"):
+        lines.append(f"    ...(+{im['omitted']} more)")
     return lines
 
 

@@ -182,5 +182,54 @@ class DeterministicCorpus(unittest.TestCase):
         self.assertEqual(digests[0], digests[1])
 
 
+class D019FrozenBaseline(unittest.TestCase):
+    """M0-T076 / D-019-R035/R036: the e2e baseline comparison is a frozen,
+    state-invariant required-evidence comparison, not a source-id count."""
+
+    def test_no_worse_compares_required_evidence_not_counts(self) -> None:
+        base = {"exit_cold": 0, "sufficient": True, "provenance_complete": True,
+                "graph_or_source_evidence_resolved": True,
+                "source_excerpt_present": True, "memory_status_honest": True,
+                "within_budget": True, "requirement_ids_present": True,
+                "requirements_group_present": True}
+        ok, regs = cb._fingerprint_no_worse(base, dict(base))
+        self.assertTrue(ok)
+        self.assertEqual(regs, [])
+        # a real regression is caught: sufficiency lost, or exit regressed
+        worse = dict(base, sufficient=False)
+        ok2, regs2 = cb._fingerprint_no_worse(base, worse)
+        self.assertFalse(ok2)
+        self.assertTrue(any("sufficient" in r for r in regs2))
+        ok3, _ = cb._fingerprint_no_worse(base, dict(base, exit_cold=3))
+        self.assertFalse(ok3)
+        # relevance identity: a changed requirement signal is a regression
+        ok4, regs4 = cb._fingerprint_no_worse(base, dict(base, requirement_ids_present=False))
+        self.assertFalse(ok4)
+
+    def test_capture_and_compare_roundtrip_no_worse(self) -> None:
+        baseline = cb.capture_e2e_baseline()
+        self.assertEqual(baseline["schema"], cb.E2E_BASELINE_SCHEMA)
+        self.assertEqual(set(baseline["shapes"]), set(cb.SHAPES))
+        with tempfile.TemporaryDirectory() as d:
+            bpath = os.path.join(d, "baseline.json")
+            with open(bpath, "wb") as fh:
+                fh.write(cb.canon_json_bytes(baseline))
+            report = cb.build_e2e_report(bpath)
+            bc = report["baseline_comparison"]
+            self.assertEqual(bc["status"], "compared")
+            self.assertTrue(bc["no_worse_than_baseline"])
+            self.assertIn("required-evidence", bc["comparison_basis"])
+
+    def test_committed_baseline_is_valid_schema(self) -> None:
+        import json as _json
+        path = os.path.join(_ROOT, "project-control", "reports",
+                            "M0-T076-baseline-g0.json")
+        with open(path, encoding="utf-8") as fh:
+            base = _json.load(fh)
+        self.assertEqual(base["schema"], cb.E2E_BASELINE_SCHEMA)
+        self.assertEqual(set(base["shapes"]), set(cb.SHAPES))
+        self.assertIn("UNMEASURED", base["provider_token_savings"])
+
+
 if __name__ == "__main__":
     unittest.main()

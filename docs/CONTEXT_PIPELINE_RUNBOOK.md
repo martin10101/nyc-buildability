@@ -48,7 +48,28 @@ integration change. No automatic supervisor integration is claimed.
 | Status projection (JSON+MD) | `python tools/status_projection.py generate --out-json p.json --out-md p.md` |
 | Projection staleness check (exit 3 = stale) | `python tools/status_projection.py check p.json` |
 | Index-parity benchmark (Unit F scope) | `python tools/context_benchmark.py --samples 3 --out-json r.json --out-md r.md` |
-| END-TO-END compiler benchmark (M0-T075) | `python tools/context_benchmark.py --e2e --baseline project-control/reports/M0-T075-baseline-g0.json --out-json e.json --out-md e.md` |
+| END-TO-END compiler benchmark — reproducible clean-checkout, frozen baseline (M0-T076) | `python tools/context_benchmark.py --e2e --baseline project-control/reports/M0-T076-baseline-g0.json --out-json e.json --out-md e.md` |
+| Re-capture the frozen clean-state e2e baseline (only when the required evidence legitimately changes) | `python tools/context_benchmark.py --capture-e2e-baseline project-control/reports/M0-T076-baseline-g0.json` |
+| Prepare a grounded worker/reviewer packet (canonical orchestrator, frozen G0 diff base) | `python tools/context_orchestrate.py prepare --task M0-Txxx --role reviewer --provider claude --max-bytes 400000 --out <dir>` |
+
+> **Diff base (M0-T076 / D-019-R026).** `context_orchestrate.py` resolves the
+> task's frozen G0 reviewed SHA as the default diff base (never a silent `HEAD`),
+> so a reviewer packet on a **committed** branch still contains the committed
+> hunks. Pass `--diff-base <sha>` to override with a trusted base; if no frozen
+> base is recorded and none is given, the orchestrator REFUSES (nonzero) rather
+> than diffing `HEAD`. The dispatch manifest records the chosen base SHA, how it
+> was resolved, the current head SHA, the dirty/clean state, and the exact diff
+> command.
+>
+> **Reproducible e2e baseline (M0-T076 / D-019-R035..R037).** The e2e benchmark
+> compares each frozen hermetic shape's **required-evidence + relevance
+> fingerprint** (sufficiency, exit, requirement ids/texts, resolved graph/source
+> evidence, ontology, advisory-memory handling) against a clean-captured baseline
+> — never a working-tree-diff source-id count. The exact command above exits `0`
+> from any clean checkout and runs in permanent CI (`context-pipeline` job).
+> M0-T075's baseline is preserved unmodified; see
+> `project-control/reports/M0-T075-reconciliation-correction.md` for what the
+> earlier dirty-capture "no-worse" result actually demonstrated.
 
 Determinism self-proofs: `python tools/subsystem_resolver.py check`,
 `python tools/repo_views_query.py check`,

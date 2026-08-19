@@ -246,6 +246,252 @@ class Proof4Containment(unittest.TestCase):
         self.assertTrue(_RX_TASK.match("M0-T001"))
 
 
+class D019ContainmentRedactionInsufficiency(unittest.TestCase):
+    """M0-T076 / D-019-R022..R025: --ci-summary joins the shared containment
+    rule; a refused EXPLICIT --include/--ci-summary is insufficient (nonzero) and
+    NEVER leaks its marker/absolute path into context.md, metadata, evidence,
+    stdout or stderr; the omission reason is redacted."""
+
+    def _run(self, extra):
+        out = tempfile.mkdtemp()
+        cache = tempfile.mkdtemp()
+        p = subprocess.run(
+            [sys.executable, os.path.join(_HERE, "context_pack.py"),
+             "--task", "M0-T066", "--role", "worker", "--provider", "claude",
+             "--max-bytes", "500000", "--out", out, "--repo", _ROOT,
+             "--index-cache-base", cache, "--no-index-telemetry", *extra],
+            capture_output=True, text=True)
+        with open(os.path.join(out, "context.meta.json"), encoding="utf-8") as fh:
+            meta = json.load(fh)
+        # The disclosure-relevant surfaces: streams + the omission/echo channels
+        # where a SUPPLIED path would be repeated (never unrelated source excerpts,
+        # which legitimately contain strings like "/etc/passwd" as test data).
+        omission_text = json.dumps(meta["omitted_categories"]) + json.dumps(
+            meta["generated_from"])
+        return p.returncode, meta, omission_text, p.stdout + p.stderr, out
+
+    def test_absolute_ci_summary_refused_no_leak(self) -> None:
+        # Assemble the marker at RUNTIME so the literal string exists in no source
+        # file (else it would appear in a legitimate source excerpt of the packet
+        # and confound the leak scan — not a containment leak).
+        marker = "".join(["CIMK", "R", "%08x" % (os.getpid() & 0xFFFFFFFF), "END"])
+        secret = os.path.join(tempfile.mkdtemp(), "private_ci.txt")
+        with open(secret, "w", encoding="utf-8") as fh:
+            fh.write(marker + "\n")
+        rc, meta, omission, streams, out = self._run(["--ci-summary", secret])
+        self.assertNotEqual(rc, 0)                       # R025 insufficiency
+        self.assertFalse(meta["sufficiency"]["sufficient"])
+        # the unique marker + absolute dir must appear NOWHERE (content + every file)
+        whole = streams
+        for base, _d, files in os.walk(out):
+            for fn in files:
+                with open(os.path.join(base, fn), encoding="utf-8",
+                          errors="replace") as fh:
+                    whole += fh.read()
+        self.assertNotIn(marker, whole)                  # content never read
+        self.assertNotIn(os.path.dirname(secret).replace("\\", "/"),
+                         whole.replace("\\", "/"))        # R024 no abs path anywhere
+        self.assertEqual(meta["generated_from"]["ci_summary"]["status"], "refused")
+        self.assertEqual(meta["generated_from"]["ci_summary"]["ref"],
+                         "[redacted:non_canonical_path]")
+
+    def test_absolute_include_refused_redacted_and_insufficient(self) -> None:
+        rc, meta, omission, streams, _ = self._run(
+            ["--include", r"C:\Windows\System32\drivers\etc\hosts"])
+        self.assertNotEqual(rc, 0)
+        self.assertFalse(meta["sufficiency"]["sufficient"])
+        # the SUPPLIED absolute path is redacted in every echo channel
+        self.assertNotIn("System32", omission)
+        self.assertNotIn("System32", streams)
+        self.assertIn("[redacted", omission)
+        self.assertEqual(meta["generated_from"]["include"], [])
+        self.assertEqual(meta["generated_from"]["include_refused"][0]["ref"],
+                         "[redacted:non_canonical_path]")
+
+    def test_traversal_include_refused_and_insufficient(self) -> None:
+        rc, meta, omission, streams, _ = self._run(["--include", "../../../etc/passwd"])
+        self.assertNotEqual(rc, 0)
+        self.assertFalse(meta["sufficiency"]["sufficient"])
+        # the supplied traversal string is redacted where it would be echoed
+        self.assertNotIn("etc/passwd", omission.replace("\\", "/"))
+        self.assertNotIn("etc/passwd", streams.replace("\\", "/"))
+
+
+class D019RacedEscapingLink(unittest.TestCase):
+    """M0-T076 / D-019 proof 3: containment is applied AT READ TIME, so an
+    escaping junction/symlink swapped in BEFORE the read still refuses — the
+    canonical-string check alone never authorizes a later read."""
+
+    def test_link_present_at_read_time_refuses(self) -> None:
+        with tempfile.TemporaryDirectory() as outer:
+            root = os.path.join(outer, "repo")
+            os.makedirs(os.path.join(root, "docs"))
+            secret_dir = os.path.join(outer, "secret")
+            os.makedirs(secret_dir)
+            _write(outer, "secret/leak.txt", "OUTSIDE\n")
+            rel = "docs/link/leak.txt"
+            # The canonical STRING check passes (no absolute/traversal); the
+            # escape only exists once the junction is materialized. Containment
+            # must still refuse because it re-resolves the real path at read time.
+            self.assertTrue(cpaths.is_canonical_repo_path(rel))
+            link = os.path.join(root, "docs", "link")
+            made = False
+            try:
+                os.symlink(secret_dir, link, target_is_directory=True)
+                made = True
+            except OSError:
+                if os.name == "nt":
+                    pr = subprocess.run(["cmd", "/c", "mklink", "/J", link, secret_dir],
+                                        capture_output=True)
+                    made = pr.returncode == 0
+            if not made:
+                self.skipTest("cannot create symlink/junction here")
+            with self.assertRaises(cpaths.PathContainmentError) as cm:
+                cpaths.contained_read_bytes(root, rel)
+            self.assertEqual(cm.exception.code, "path_escapes_repository")
+            self.assertNotIn("secret", cm.exception.detail)
+            self.assertNotIn(outer.replace("\\", "/"),
+                             cm.exception.detail.replace("\\", "/"))
+
+
+class D019FrozenDiffBase(unittest.TestCase):
+    """M0-T076 / D-019-R026..R028: the orchestrator resolves the task's frozen G0
+    base instead of silently diffing HEAD, so a COMMITTED reviewer packet still
+    contains the committed hunks; a missing frozen base + no explicit override is
+    REFUSED rather than defaulting to HEAD; full provenance is recorded."""
+
+    def _git(self, repo, *args):
+        env = dict(os.environ)
+        env.update({"GIT_AUTHOR_NAME": "T", "GIT_AUTHOR_EMAIL": "t@x",
+                    "GIT_COMMITTER_NAME": "T", "GIT_COMMITTER_EMAIL": "t@x",
+                    "GIT_CONFIG_NOSYSTEM": "1"})
+        subprocess.run(["git", *args], cwd=repo, env=env, check=True,
+                       stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+
+    def _repo_with_committed_change(self, tmp):
+        from tools.context_pack_io import run_git
+        self._git(tmp, "init", "-q")
+        self._git(tmp, "commit", "--allow-empty", "-q", "-m", "root", "--no-verify")
+        _write(tmp, "tools/widget.py", "def widget():\n    return 1\n")
+        self._git(tmp, "add", "-A")
+        self._git(tmp, "commit", "-q", "-m", "base", "--no-verify")
+        base_sha = run_git(tmp, ["rev-parse", "HEAD"])[1].strip()
+        # record the frozen G0 gate for the task at this base
+        _write(tmp, "project-control/gates/M0-T500-G0.json",
+               json.dumps({"task_id": "M0-T500", "gate_id": "G0",
+                           "reviewed_sha": base_sha}))
+        # now COMMIT a change on top (the reviewer must still see it)
+        _write(tmp, "tools/widget.py",
+               "def widget():\n    return 2  # COMMITTED_CHANGE_MARKER\n")
+        self._git(tmp, "add", "-A")
+        self._git(tmp, "commit", "-q", "-m", "work", "--no-verify")
+        head_sha = run_git(tmp, ["rev-parse", "HEAD"])[1].strip()
+        return base_sha, head_sha
+
+    def test_committed_change_visible_against_frozen_base(self) -> None:
+        from tools import context_orchestrate as co
+        from tools.context_pack_io import run_git
+        with tempfile.TemporaryDirectory() as tmp:
+            base_sha, head_sha = self._repo_with_committed_change(tmp)
+            base, prov = co.resolve_diff_base(tmp, "M0-T500", "reviewer", None)
+            self.assertEqual(prov["resolution"], "frozen_g0_gate_sha")
+            self.assertEqual(base, base_sha)
+            self.assertNotEqual(base, head_sha)          # NOT silently HEAD
+            self.assertEqual(prov["head_sha"], head_sha)
+            self.assertEqual(prov["diff_command"], f"git diff {base_sha}")
+            # the committed hunk is present in the diff against the frozen base
+            out = run_git(tmp, ["diff", base])[1]
+            self.assertIn("COMMITTED_CHANGE_MARKER", out)
+            # ... and empty against HEAD (the exact former reviewer failure mode)
+            self.assertEqual(run_git(tmp, ["diff", head_sha])[1].strip(), "")
+
+    def test_no_frozen_base_refuses_instead_of_head(self) -> None:
+        from tools import context_orchestrate as co
+        with tempfile.TemporaryDirectory() as tmp:
+            self._git(tmp, "init", "-q")
+            _write(tmp, "a.py", "x=1\n")
+            self._git(tmp, "add", "-A")
+            self._git(tmp, "commit", "-q", "-m", "c", "--no-verify")
+            base, prov = co.resolve_diff_base(tmp, "M0-T999", "reviewer", None)
+            self.assertIsNone(base)                       # refuses; never HEAD
+            self.assertEqual(prov["resolution"], "unresolved_require_explicit")
+            self.assertIsNotNone(prov["error"])
+
+    def test_explicit_trusted_base_resolves(self) -> None:
+        from tools import context_orchestrate as co
+        from tools.context_pack_io import run_git
+        with tempfile.TemporaryDirectory() as tmp:
+            base_sha, head_sha = self._repo_with_committed_change(tmp)
+            base, prov = co.resolve_diff_base(tmp, "M0-T500", "worker", base_sha)
+            self.assertEqual(base, base_sha)
+            self.assertEqual(prov["resolution"], "explicit_trusted_diff_base")
+            # an unresolvable explicit base is refused, not silently accepted
+            b2, p2 = co.resolve_diff_base(tmp, "M0-T500", "worker", "deadbeef" * 5)
+            self.assertIsNone(b2)
+            self.assertEqual(p2["resolution"], "explicit_unresolvable")
+
+
+class D019UnitEConsumptionAndSeedOrder(unittest.TestCase):
+    """M0-T076 / D-019-R029..R031: the compiler CONSUMES the real Unit E
+    neighborhood primitive (traced call), and seeds are chosen implementation-
+    first with recorded selection/skip provenance."""
+
+    def test_compiler_neighborhood_calls_unit_e_primitive(self) -> None:
+        # Trace the ACTUAL call path (not just importability): context_pack_index
+        # ._neighborhood must invoke repo_views.neighborhood_edges.
+        from unittest import mock
+        from tools import context_pack_index as cpi
+        from tools import repo_views as rv
+
+        class _GI:
+            nodes = {"a.py": {"kind": "module"}}
+            out_edges = {"a.py": [{"to": "b.py", "type": "import",
+                                   "confidence": "high", "line": 1}]}
+            in_edges = {"a.py": [{"from": "c.py", "type": "import",
+                                  "confidence": "high", "line": 2}]}
+
+        real = rv.neighborhood_edges
+        with mock.patch.object(rv, "neighborhood_edges",
+                               side_effect=real) as spy:
+            lines = cpi._neighborhood(_GI(), "a.py", 20)
+        spy.assert_called_once()                     # genuine consumption
+        self.assertTrue(any("b.py" in ln for ln in lines))
+        self.assertTrue(any("c.py" in ln for ln in lines))
+        # and cpi imports rv at module scope (the real integration, not a copy)
+        self.assertIs(cpi.rv, rv)
+
+    def test_seed_order_impl_before_docs_control_plane(self) -> None:
+        from tools import context_pack_sources as cps
+        changed = ["project-control/state.json", "docs/guide.md",
+                   "tools/impl_alpha.py", "services/api/app/thing.py"]
+        impl = ["tools/impl_beta.py"]
+        prose = []
+        with tempfile.TemporaryDirectory() as repo:
+            ordered, prov = cps._ordered_seeds(repo, changed, impl, prose)
+        tiers = {s["seed"]: s["tier"] for s in prov["selected"]}
+        # implementation paths (changed + allowed) precede docs/control-plane
+        impl_seeds = [s for s in ordered if not s.startswith(
+            ("project-control/", "docs/", ".github/", ".claude/"))]
+        docs_seeds = [s for s in ordered if s.startswith(
+            ("project-control/", "docs/"))]
+        self.assertTrue(impl_seeds, "no implementation seeds selected")
+        for imp in impl_seeds:
+            for doc in docs_seeds:
+                self.assertLess(ordered.index(imp), ordered.index(doc))
+        self.assertEqual(tiers.get("tools/impl_alpha.py"), "changed_impl")
+        self.assertEqual(tiers.get("tools/impl_beta.py"), "allowed_impl")
+
+    def test_non_canonical_seed_refused_recorded(self) -> None:
+        from tools import context_pack_sources as cps
+        with tempfile.TemporaryDirectory() as repo:
+            ordered, prov = cps._ordered_seeds(
+                repo, ["C:/abs/x.py", "../evil.py", "tools/ok.py"], [], [])
+        refused = {r["seed"] for r in prov["refused"]}
+        self.assertIn("C:/abs/x.py", refused)
+        self.assertIn("../evil.py", refused)
+        self.assertNotIn("C:/abs/x.py", ordered)
+
+
 class Proof7EntryPoint(unittest.TestCase):
     """Proof 7: the canonical entry point ACTUALLY calls the integrated
     compiler + grounded router (never a second packet)."""
@@ -258,6 +504,12 @@ class Proof7EntryPoint(unittest.TestCase):
                  "prepare", "--task", "M0-T066", "--role", "worker",
                  "--provider", "claude", "--max-bytes", "500000",
                  "--out", out, "--repo", _ROOT,
+                 # M0-T066 is compiled here from an UNRELATED HEAD (not its own
+                 # branch), so the caller supplies an explicit trusted diff base
+                 # rather than the task's frozen G0 (M0-T076, D-019-R026). This
+                 # test asserts the entry point invokes the integrated compiler,
+                 # not diff-base semantics (covered by D019FrozenDiffBase).
+                 "--diff-base", "HEAD",
                  "--index-cache-base", cache, "--no-index-telemetry"],
                 capture_output=True, text=True)
             self.assertEqual(p.returncode, 0, p.stdout + p.stderr)
@@ -281,9 +533,65 @@ class Proof7EntryPoint(unittest.TestCase):
                                 "subsystems_touched": 0},
                 "provenance": {}, "sufficiency": {"sufficient": False},
                 "included_files": [], "actuals": {}}
-        signals, notes = co.derive_signals(meta, 3)
+        signals, notes, prov = co.derive_signals(meta, 3)
         self.assertTrue(signals.ambiguity_or_missing_evidence)
         self.assertTrue(any("requirement evidence" in n for n in notes))
+
+
+class D019HonestRouting(unittest.TestCase):
+    """M0-T076 / D-019-R032/R033: no risk-bearing Signals field is a silent
+    False; an undetermined risk signal raises ambiguity; a concurrency task can
+    never emerge concurrency_or_performance=False with no ambiguity."""
+
+    def _sufficient_code_task(self):
+        return {"integration": {"implementation_paths": ["tools/repo_index_cache.py"],
+                                "requirements": {"in_regime": True, "error": None},
+                                "subsystems_touched": 1, "ontology_status": "ok",
+                                "memory_status": "ok", "unresolved_seeds": []},
+                "provenance": {"changed_targets": 1, "dependency_breadth": 2},
+                "sufficiency": {"sufficient": True, "code_evidence_required": True,
+                                "code_evidence_resolved": True},
+                "included_files": [{"group": "task_packet"}],
+                "actuals": {"estimated_tokens": 1000}}
+
+    def test_concurrency_task_never_false_without_ambiguity(self) -> None:
+        from tools import context_orchestrate as co
+        signals, notes, prov = co.derive_signals(self._sufficient_code_task(), 0)
+        # the forbidden pre-change outcome: concurrency_or_performance=False with
+        # ambiguity=False. Now impossible for a code task.
+        self.assertFalse(
+            signals.concurrency_or_performance is False
+            and signals.ambiguity_or_missing_evidence is False)
+        self.assertTrue(signals.ambiguity_or_missing_evidence)
+        self.assertTrue(prov["concurrency_or_performance"].get("undetermined"))
+        self.assertTrue(prov["destructive_operations"].get("undetermined"))
+        self.assertTrue(prov["external_side_effects"].get("undetermined"))
+
+    def test_every_signal_has_a_basis(self) -> None:
+        from tools import context_orchestrate as co
+        _s, _n, prov = co.derive_signals(self._sufficient_code_task(), 0)
+        for field in ("security_or_authorization_impact", "protected_configuration_impact",
+                      "destructive_operations", "external_side_effects",
+                      "schema_or_migration_impact", "concurrency_or_performance",
+                      "control_plane_change", "legal_or_numeric_correctness"):
+            self.assertIn(field, prov)
+            self.assertIn("basis", prov[field])
+
+    def test_pure_docs_task_affirms_absence_without_ambiguity(self) -> None:
+        from tools import context_orchestrate as co
+        meta = {"integration": {"implementation_paths": [],
+                                "requirements": {"in_regime": False, "error": None},
+                                "subsystems_touched": 0, "ontology_status": None,
+                                "memory_status": "ok", "unresolved_seeds": []},
+                "provenance": {"changed_targets": 0, "dependency_breadth": 0},
+                "sufficiency": {"sufficient": True},
+                "included_files": [{"group": "task_packet"}],
+                "actuals": {"estimated_tokens": 100}}
+        _s, _n, prov = co.derive_signals(meta, 0)
+        # no code in scope -> the behavioral risks are AFFIRMED absent, not undetermined
+        self.assertEqual(prov["concurrency_or_performance"]["basis"],
+                         "structured:no_code_scope")
+        self.assertFalse(prov["concurrency_or_performance"].get("undetermined"))
 
 
 class RetentionReal(unittest.TestCase):

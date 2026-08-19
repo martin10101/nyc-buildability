@@ -238,8 +238,11 @@ def select_source_excerpts(repo: str, impl_paths: list[str], changed: list[str],
                 node = gi.nodes.get(src) or {}
                 if node.get("is_test"):
                     test_candidates.append(src)
+    # Avoid duplicate excerpts (M0-T076, D-019-R031): a file already reopened as
+    # a source excerpt is never ALSO emitted as a test excerpt.
+    picked_set = set(picked)
     tests, test_records = [], []
-    for rel in sorted(set(test_candidates))[:MAX_TEST_FILES]:
+    for rel in [t for t in sorted(set(test_candidates)) if t not in picked_set][:MAX_TEST_FILES]:
         try:
             body, rec = _bounded_text(repo, rel, TEST_HEAD_LINES)
         except cpaths.PathContainmentError as exc:
@@ -293,14 +296,59 @@ def memory_advisory(repo: str, task_id: str, memory_base: str | None = None) -> 
         digest = node.get("digest") or {}
         if digest.get("task_id") != task_id:
             continue
-        rows.append({"digest_id": did, "outcome": digest.get("outcome"),
-                     "agent": digest.get("agent"),
-                     "quarantined_links": len(node.get("quarantined_links") or [])})
+        rows.append(_advisory_row(did, digest, node))
     out["digests"] = rows[:MAX_MEMORY_DIGESTS]
     out["truncated"] = len(rows) > MAX_MEMORY_DIGESTS
     if not rows:
         out["status"] = "no_digests_for_task"
     return out
+
+
+#: Bounded caps for the USEFUL advisory digest fields (M0-T076, D-019-R034);
+#: memory stays advisory and under the single global packet budget.
+MAX_ADVISORY_REQ_IDS = 12
+MAX_ADVISORY_FILES = 12
+MAX_ADVISORY_EVIDENCE = 8
+ADVISORY_NOTE_CAP = 280
+
+
+def _bounded_list(items, cap):
+    items = [i for i in (items or []) if isinstance(i, str)]
+    return items[:cap], max(len(items) - cap, 0)
+
+
+def _advisory_row(did: str, digest: dict, node: dict) -> dict:
+    """A bounded, USEFUL advisory digest row (D-019-R034): id, outcome+agent, a
+    bounded note, requirement ids, file paths, evidence refs, unresolved/
+    quarantined state, and source/repository identity — never the full digest,
+    and always explicitly advisory."""
+    req_ids, req_over = _bounded_list(digest.get("requirement_ids"),
+                                      MAX_ADVISORY_REQ_IDS)
+    files = [f.get("path") for f in (digest.get("files") or [])
+             if isinstance(f, dict) and isinstance(f.get("path"), str)]
+    files, files_over = _bounded_list(files, MAX_ADVISORY_FILES)
+    ev, ev_over = _bounded_list(digest.get("evidence_refs"), MAX_ADVISORY_EVIDENCE)
+    note = digest.get("note")
+    if isinstance(note, str) and len(note) > ADVISORY_NOTE_CAP:
+        note = note[:ADVISORY_NOTE_CAP] + "…"
+    quarantined = node.get("quarantined_links") or []
+    return {
+        "digest_id": did,
+        "outcome": digest.get("outcome"),
+        "agent": digest.get("agent"),
+        "note": note,
+        "requirement_ids": req_ids,
+        "files": files,
+        "evidence_refs": ev,
+        "quarantined_links": len(quarantined),
+        "unresolved": bool(quarantined),
+        "source_identity": {"repo_sha": digest.get("repo_sha"),
+                            "branch": digest.get("branch")},
+        "bounded": {"requirement_ids_omitted": req_over,
+                    "files_omitted": files_over,
+                    "evidence_refs_omitted": ev_over},
+        "advisory": True,
+    }
 
 
 def ontology_placement(repo: str, impl_paths: list[str]) -> dict:
