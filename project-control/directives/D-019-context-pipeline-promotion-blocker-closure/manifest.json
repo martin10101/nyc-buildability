@@ -48,8 +48,8 @@
  "lifecycle_state": "active",
  "requirements_file": "requirements.json",
  "verification_file": "verification.json",
- "final_reviewed_sha": null,
- "final_reviewed_manifest_sha256": null,
+ "final_reviewed_sha": "161f3ef98f50806ac95d49f3c7e4ccdee431e9fd",
+ "final_reviewed_manifest_sha256": "e1843bfbde821c098a034ba4c1777a376eb3a8c6f405f60744287e5b7bb0e594",
  "requirements_content_digest_sha256": "0ed39acbc96075ef3af2a7a14b032161cb1c7ea0f5c1d8a598c7db58274a97fc",
  "requirements_id_digest_sha256": "1f72316f6526bb4bf35a40ae830fc7fb510693782497d6ed62d89e329adfbb06",
  "enforcement_pointers": {
@@ -103,6 +103,11 @@
    "at": "2026-08-19T15:00:00+00:00",
    "actor": "orchestrator",
    "event": "captured source-001 verbatim (owner master prompt), decomposed 37 requirements (9 D-019-BOOTSTRAP governance + 28 M0-T076 implementation/protocol/proof), activated registry entry under owner-typed authorization; scope.task_types includes governance so the s19 governance-path guard recognizes D-019 as the governance authority for M0-T076's .github/workflows/ci.yml change (R037)"
+  },
+  {
+   "at": "2026-08-19T16:00:00+00:00",
+   "actor": "orchestrator",
+   "event": "M0-T076 accepted; independent DCV 28/28 PASS at reviewed identity e1843bf (SHA 161f3ef); adversarial review PASS; producer/reviewer/verifier independent"
   }
  ]
 }
