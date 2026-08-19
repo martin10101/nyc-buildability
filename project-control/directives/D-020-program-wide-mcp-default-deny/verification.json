@@ -1,7 +1,7 @@
 {
  "schema": "directive_verification/v2",
  "directive_id": "D-020",
- "authority_note": "Pending independent verification by directive-compliance-verifier (producer != verifier). Capture only; no requirement verified yet. M0-T077 rows are verified through the task's gates and accept() evidence map at the reviewed content identity; D-020-BOOTSTRAP sentinel rows are verified at directive verification when the run returns.",
+ "authority_note": "Independent verification by directive-compliance-verifier (producer=orchestrator != verifier): ALL 34 D-020 requirements PASS (23 M0-T077 rows recorded here at the final content identity; 11 D-020-BOOTSTRAP session-governance rows verified in the preserved report, D-016..D-019 sentinel precedent). Two bounded-evidence notes recorded verbatim in the report: R010 transcript-level non-invocation; R024 worktree-root scope with disclosed subdirectory + subagent-inheritance residuals.",
  "producer": "orchestrator",
  "verifier": "directive-compliance-verifier",
  "task_verifications": [
@@ -35,126 +35,242 @@
     "D-020-R033",
     "D-020-R034"
    ],
-   "reviewed_sha": null,
-   "verified_at": null,
+   "reviewed_sha": "59556584499de6618b06ec5819b9bb1170fdbb37",
+   "verified_at": "2026-08-19T23:45:00+00:00",
    "requirements": [
     {
      "id": "D-020-R005",
-     "state": "pending",
-     "evidence": []
+     "state": "PASS",
+     "evidence": [
+      "DCV: sha256(source-001.md)=bf418f3a matches manifest digest; single capture commit 6afc4c0; next ID resolved from live registry",
+      "project-control/reports/M0-T077-directive-verification.md"
+     ],
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "59556584499de6618b06ec5819b9bb1170fdbb37"
     },
     {
      "id": "D-020-R006",
-     "state": "pending",
-     "evidence": []
+     "state": "PASS",
+     "evidence": [
+      "DCV: ledger ended at M0-T076; exactly one task file added; next ID resolved live",
+      "project-control/reports/M0-T077-directive-verification.md"
+     ],
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "59556584499de6618b06ec5819b9bb1170fdbb37"
     },
     {
      "id": "D-020-R007",
-     "state": "pending",
-     "evidence": []
+     "state": "PASS",
+     "evidence": [
+      "DCV: allowed_paths frozen at 6afc4c0 before implementation a2bee92; single recorded post-freeze addition = CLI submission artifact (G3 F-4, progress-logged)",
+      "project-control/reports/M0-T077-directive-verification.md"
+     ],
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "59556584499de6618b06ec5819b9bb1170fdbb37"
     },
     {
      "id": "D-020-R008",
-     "state": "pending",
-     "evidence": []
+     "state": "PASS",
+     "evidence": [
+      "DCV: full lifecycle evidenced in commit order incl. adversarial G3 FAIL->rework->PASS; verification precedes acceptance",
+      "project-control/reports/M0-T077-directive-verification.md"
+     ],
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "59556584499de6618b06ec5819b9bb1170fdbb37"
     },
     {
      "id": "D-020-R016",
-     "state": "pending",
-     "evidence": []
+     "state": "PASS",
+     "evidence": [
+      "DCV: M0-T077-mcp-audit.md carries all ten attributes for the four active servers; subdirectory counterexample listing found no server the audit missed",
+      "project-control/reports/M0-T077-directive-verification.md"
+     ],
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "59556584499de6618b06ec5819b9bb1170fdbb37"
     },
     {
      "id": "D-020-R017",
-     "state": "pending",
-     "evidence": []
+     "state": "PASS",
+     "evidence": [
+      "DCV: read-only commands attested; owner-file digests unchanged prove inspection wrote nothing",
+      "project-control/reports/M0-T077-directive-verification.md"
+     ],
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "59556584499de6618b06ec5819b9bb1170fdbb37"
     },
     {
      "id": "D-020-R018",
-     "state": "pending",
-     "evidence": []
+     "state": "PASS",
+     "evidence": [
+      "DCV: 0 secret-pattern hits over all added lines; supabase ref never beyond 4-char truncation; secret-scan CI SUCCESS",
+      "project-control/reports/M0-T077-directive-verification.md"
+     ],
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "59556584499de6618b06ec5819b9bb1170fdbb37"
     },
     {
      "id": "D-020-R019",
-     "state": "pending",
-     "evidence": []
+     "state": "PASS",
+     "evidence": [
+      "DCV: five code.claude.com citations mapped to relied-on behavior; corroborated empirically by G0 ablations + G3/G4 probes",
+      "project-control/reports/M0-T077-directive-verification.md"
+     ],
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "59556584499de6618b06ec5819b9bb1170fdbb37"
     },
     {
      "id": "D-020-R020",
-     "state": "pending",
-     "evidence": []
+     "state": "PASS",
+     "evidence": [
+      "DCV: six officially supported entries, +19/-0; fresh-process root listing empty; per-key ablations prove minimality; residuals disclosed via R031/R033",
+      "project-control/reports/M0-T077-directive-verification.md"
+     ],
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "59556584499de6618b06ec5819b9bb1170fdbb37"
     },
     {
      "id": "D-020-R021",
-     "state": "pending",
-     "evidence": []
+     "state": "PASS",
+     "evidence": [
+      "DCV: disableClaudeAiConnectors true merged into existing settings; p2 pins it; connectors absent from root listings",
+      "project-control/reports/M0-T077-directive-verification.md"
+     ],
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "59556584499de6618b06ec5819b9bb1170fdbb37"
     },
     {
      "id": "D-020-R022",
-     "state": "pending",
-     "evidence": []
+     "state": "PASS",
+     "evidence": [
+      "DCV: numstat 19/0 guarantees preservation; validator p7 path-anchored hook check verified against echo-decoy",
+      "project-control/reports/M0-T077-directive-verification.md"
+     ],
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "59556584499de6618b06ec5819b9bb1170fdbb37"
     },
     {
      "id": "D-020-R023",
-     "state": "pending",
-     "evidence": []
+     "state": "PASS",
+     "evidence": [
+      "DCV: audited identifiers match audit exactly; p4/p5 pin them; G4 MAJOR-1 independent pin defeats coordinated shrink (re-run exit 1)",
+      "project-control/reports/M0-T077-directive-verification.md"
+     ],
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "59556584499de6618b06ec5819b9bb1170fdbb37"
     },
     {
      "id": "D-020-R024",
-     "state": "pending",
-     "evidence": []
+     "state": "PASS",
+     "evidence": [
+      "DCV: PASS at worktree-root scope (fresh-process runs incl. verifier's own); subdirectory counterexample reproduced and disclosed via the R031 path",
+      "project-control/reports/M0-T077-directive-verification.md"
+     ],
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "59556584499de6618b06ec5819b9bb1170fdbb37"
     },
     {
      "id": "D-020-R025",
-     "state": "pending",
-     "evidence": []
+     "state": "PASS",
+     "evidence": [
+      "DCV: owner-file digests unchanged; all four account connectors demonstrably still connected and functional",
+      "project-control/reports/M0-T077-directive-verification.md"
+     ],
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "59556584499de6618b06ec5819b9bb1170fdbb37"
     },
     {
      "id": "D-020-R026",
-     "state": "pending",
-     "evidence": []
+     "state": "PASS",
+     "evidence": [
+      "DCV: policy carried by tracked files alone (empty-scratch-dir probe); no global edit in diff",
+      "project-control/reports/M0-T077-directive-verification.md"
+     ],
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "59556584499de6618b06ec5819b9bb1170fdbb37"
     },
     {
      "id": "D-020-R027",
-     "state": "pending",
-     "evidence": []
+     "state": "PASS",
+     "evidence": [
+      "DCV: non-repo fresh listing shows all connectors available to unrelated projects (three independent runs + verifier's own)",
+      "project-control/reports/M0-T077-directive-verification.md"
+     ],
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "59556584499de6618b06ec5819b9bb1170fdbb37"
     },
     {
      "id": "D-020-R028",
-     "state": "pending",
-     "evidence": []
+     "state": "PASS",
+     "evidence": [
+      "DCV: rule + narrow future-authorization procedure documented concretely (policy doc lines 3-8, 65-82)",
+      "project-control/reports/M0-T077-directive-verification.md"
+     ],
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "59556584499de6618b06ec5819b9bb1170fdbb37"
     },
     {
      "id": "D-020-R029",
-     "state": "pending",
-     "evidence": []
+     "state": "PASS",
+     "evidence": [
+      "DCV: validator exit 0 + 37/37 OK re-run; both steps in existing control-plane job; observed executing in real GitHub run at HEAD; weakening coverage independently measured",
+      "project-control/reports/M0-T077-directive-verification.md"
+     ],
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "59556584499de6618b06ec5819b9bb1170fdbb37"
     },
     {
      "id": "D-020-R030",
-     "state": "pending",
-     "evidence": []
+     "state": "PASS",
+     "evidence": [
+      "DCV: closed key set for one file, not a framework; permissions block is a single deny rule using the existing system; no hook/agent/skill/rule touched",
+      "project-control/reports/M0-T077-directive-verification.md"
+     ],
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "59556584499de6618b06ec5819b9bb1170fdbb37"
     },
     {
      "id": "D-020-R031",
-     "state": "pending",
-     "evidence": []
+     "state": "PASS",
+     "evidence": [
+      "DCV: both session-context limitations disclosed exactly with smallest owner-gated next steps; global settings not modified as workaround",
+      "project-control/reports/M0-T077-directive-verification.md"
+     ],
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "59556584499de6618b06ec5819b9bb1170fdbb37"
     },
     {
      "id": "D-020-R032",
-     "state": "pending",
-     "evidence": []
+     "state": "PASS",
+     "evidence": [
+      "DCV: fresh-process proof disclaims the running-session shortcut; before/after clean-worktree runs incl. restart-survival pair; residual stated honestly",
+      "project-control/reports/M0-T077-directive-verification.md"
+     ],
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "59556584499de6618b06ec5819b9bb1170fdbb37"
     },
     {
      "id": "D-020-R033",
-     "state": "pending",
-     "evidence": []
+     "state": "PASS",
+     "evidence": [
+      "DCV: all nine required evidence items present and independently re-derived where possible",
+      "project-control/reports/M0-T077-directive-verification.md"
+     ],
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "59556584499de6618b06ec5819b9bb1170fdbb37"
     },
     {
      "id": "D-020-R034",
-     "state": "pending",
-     "evidence": []
+     "state": "PASS",
+     "evidence": [
+      "DCV: supervisor citations re-verified line-by-line read-only; no settings/mcp-config flags; no supervisor file in diff; no full-enforcement claim; owner-gated gap recorded",
+      "project-control/reports/M0-T077-directive-verification.md"
+     ],
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "59556584499de6618b06ec5819b9bb1170fdbb37"
     }
-   ]
+   ],
+   "reviewed_manifest_sha256": "f103af3ef1433e58a0352bab74618eb2ef6da1f457e66a6e3310a999d9c3439f"
   }
  ],
- "updated_at": "2026-08-19T18:30:00+00:00"
+ "updated_at": "2026-08-19T23:45:00+00:00"
 }

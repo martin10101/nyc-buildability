@@ -124,8 +124,8 @@
     "security-reviewer",
     "directive-compliance-verifier"
   ],
-  "status": "rework",
-  "progress_percent": 98,
+  "status": "accepted",
+  "progress_percent": 100,
   "risks": [
     "Settings-merge risk: a wholesale replacement would violate D-020-R022 - mitigated by merge-only edit, AS-4 verbatim-preservation check, and the validator asserting the pre-existing keys still exist",
     "Over-blocking risk: allowedMcpServers [] denies every MCP server at repository scope by design; a future task that genuinely needs one connector must follow the documented narrow authorization procedure (edit the checked-in policy in its own reviewed task)",
@@ -134,7 +134,7 @@
   ],
   "blockers": [],
   "created_at": "2026-08-19T21:25:58.957357+00:00",
-  "updated_at": "2026-08-19T23:43:15.771603+00:00",
+  "updated_at": "2026-08-19T23:44:59.376779+00:00",
   "directive_refs": [
     {
       "directive_id": "D-020",
@@ -202,5 +202,7 @@
       "status": "rework",
       "message": "Contract amendment (narrowing, T076 precedent): removed 12 CLI/registry-owned lifecycle records (state.json, gate records, CLI submission record, the task packet itself, D-020 directive registry files, index.json) from allowed_paths - they are orchestrator/CLI-owned control-plane records, not producer work product, and their inclusion made the content identity self-referential (every lifecycle write moved the identity the lifecycle was trying to freeze; accept fail-closed on the verifier record dirty state). Added the directive-verification preservation report. Substantive work product and all evidence reports remain in scope; no substantive file changed. Re-freeze + gate re-record + verification + accept follow at one stable HEAD."
     }
-  ]
+  ],
+  "accepted_by": "orchestrator",
+  "accepted_at": "2026-08-19T23:44:59.376779+00:00"
 }
