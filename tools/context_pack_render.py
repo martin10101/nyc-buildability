@@ -230,11 +230,20 @@ def make_meta(result, args, actual_bytes, estimated) -> dict:
         "role": args.role,
         "provider": args.provider,
         "model": getattr(args, "model", None),
+        # generated_from records ONLY disclosure-safe references: accepted
+        # (canonical, contained) --include values and a redacted view of the
+        # --ci-summary request. A refused absolute/traversal value is never
+        # repeated here (M0-T076, D-019-R024) — its raw string stays out of the
+        # packet metadata entirely; the refusal is recorded, redacted, below.
         "generated_from": {
             "repo": ".",
-            "diff_base": args.diff_base,
-            "include": sorted(set(args.include)),
-            "ci_summary": args.ci_summary,
+            "diff_base": getattr(args, "diff_base", None),
+            "include": (extras.get("explicit_reads") or {}).get("include_accepted",
+                                                                []),
+            "include_refused": (extras.get("explicit_reads") or {}).get(
+                "include_refused", []),
+            "ci_summary": (extras.get("explicit_reads") or {}).get(
+                "ci_summary", {"requested": bool(getattr(args, "ci_summary", None))}),
             "graph_limit": args.graph_limit,
         },
         # M0-T075 vertical-integration provenance (D-018-R011..R018) --------

@@ -92,6 +92,18 @@ def assess_sufficiency(role: str, present_groups: set, extras: dict | None = Non
             "NO graph seed resolved and NO authoritative source excerpt "
             "reopened — the packet must not be declared sufficient")
 
+    # Refused EXPLICIT request rule (M0-T076, D-019-R025) -----------------
+    # An operator who explicitly asked for a --include or --ci-summary and had it
+    # REFUSED (absolute/traversal/escape) gets a nonzero, INSUFFICIENT packet — a
+    # refused explicit request is never a silent ordinary omission.
+    refused = extras.get("refused_explicit_requests") or []
+    if refused:
+        sufficient = False
+        kinds = ", ".join(sorted({r.get("kind", "?") for r in refused}))
+        reason_parts.append(
+            f"explicitly requested read(s) refused by containment ({kinds}); a "
+            f"refused explicit --include/--ci-summary makes the packet insufficient")
+
     if sufficient and not reason_parts:
         reason_parts.append(
             f"all required source groups for role '{role}' are present: "
@@ -106,6 +118,7 @@ def assess_sufficiency(role: str, present_groups: set, extras: dict | None = Non
         "code_evidence_required": code_evidence_required,
         "code_evidence_resolved": bool(resolved_graph or has_excerpt),
         "in_regime": bool(req.get("in_regime")),
+        "refused_explicit_requests": refused,
     }
 
 

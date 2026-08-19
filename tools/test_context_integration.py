@@ -246,6 +246,114 @@ class Proof4Containment(unittest.TestCase):
         self.assertTrue(_RX_TASK.match("M0-T001"))
 
 
+class D019ContainmentRedactionInsufficiency(unittest.TestCase):
+    """M0-T076 / D-019-R022..R025: --ci-summary joins the shared containment
+    rule; a refused EXPLICIT --include/--ci-summary is insufficient (nonzero) and
+    NEVER leaks its marker/absolute path into context.md, metadata, evidence,
+    stdout or stderr; the omission reason is redacted."""
+
+    def _run(self, extra):
+        out = tempfile.mkdtemp()
+        cache = tempfile.mkdtemp()
+        p = subprocess.run(
+            [sys.executable, os.path.join(_HERE, "context_pack.py"),
+             "--task", "M0-T066", "--role", "worker", "--provider", "claude",
+             "--max-bytes", "500000", "--out", out, "--repo", _ROOT,
+             "--index-cache-base", cache, "--no-index-telemetry", *extra],
+            capture_output=True, text=True)
+        with open(os.path.join(out, "context.meta.json"), encoding="utf-8") as fh:
+            meta = json.load(fh)
+        # The disclosure-relevant surfaces: streams + the omission/echo channels
+        # where a SUPPLIED path would be repeated (never unrelated source excerpts,
+        # which legitimately contain strings like "/etc/passwd" as test data).
+        omission_text = json.dumps(meta["omitted_categories"]) + json.dumps(
+            meta["generated_from"])
+        return p.returncode, meta, omission_text, p.stdout + p.stderr, out
+
+    def test_absolute_ci_summary_refused_no_leak(self) -> None:
+        # Assemble the marker at RUNTIME so the literal string exists in no source
+        # file (else it would appear in a legitimate source excerpt of the packet
+        # and confound the leak scan — not a containment leak).
+        marker = "".join(["CIMK", "R", "%08x" % (os.getpid() & 0xFFFFFFFF), "END"])
+        secret = os.path.join(tempfile.mkdtemp(), "private_ci.txt")
+        with open(secret, "w", encoding="utf-8") as fh:
+            fh.write(marker + "\n")
+        rc, meta, omission, streams, out = self._run(["--ci-summary", secret])
+        self.assertNotEqual(rc, 0)                       # R025 insufficiency
+        self.assertFalse(meta["sufficiency"]["sufficient"])
+        # the unique marker + absolute dir must appear NOWHERE (content + every file)
+        whole = streams
+        for base, _d, files in os.walk(out):
+            for fn in files:
+                with open(os.path.join(base, fn), encoding="utf-8",
+                          errors="replace") as fh:
+                    whole += fh.read()
+        self.assertNotIn(marker, whole)                  # content never read
+        self.assertNotIn(os.path.dirname(secret).replace("\\", "/"),
+                         whole.replace("\\", "/"))        # R024 no abs path anywhere
+        self.assertEqual(meta["generated_from"]["ci_summary"]["status"], "refused")
+        self.assertEqual(meta["generated_from"]["ci_summary"]["ref"],
+                         "[redacted:non_canonical_path]")
+
+    def test_absolute_include_refused_redacted_and_insufficient(self) -> None:
+        rc, meta, omission, streams, _ = self._run(
+            ["--include", r"C:\Windows\System32\drivers\etc\hosts"])
+        self.assertNotEqual(rc, 0)
+        self.assertFalse(meta["sufficiency"]["sufficient"])
+        # the SUPPLIED absolute path is redacted in every echo channel
+        self.assertNotIn("System32", omission)
+        self.assertNotIn("System32", streams)
+        self.assertIn("[redacted", omission)
+        self.assertEqual(meta["generated_from"]["include"], [])
+        self.assertEqual(meta["generated_from"]["include_refused"][0]["ref"],
+                         "[redacted:non_canonical_path]")
+
+    def test_traversal_include_refused_and_insufficient(self) -> None:
+        rc, meta, omission, streams, _ = self._run(["--include", "../../../etc/passwd"])
+        self.assertNotEqual(rc, 0)
+        self.assertFalse(meta["sufficiency"]["sufficient"])
+        # the supplied traversal string is redacted where it would be echoed
+        self.assertNotIn("etc/passwd", omission.replace("\\", "/"))
+        self.assertNotIn("etc/passwd", streams.replace("\\", "/"))
+
+
+class D019RacedEscapingLink(unittest.TestCase):
+    """M0-T076 / D-019 proof 3: containment is applied AT READ TIME, so an
+    escaping junction/symlink swapped in BEFORE the read still refuses — the
+    canonical-string check alone never authorizes a later read."""
+
+    def test_link_present_at_read_time_refuses(self) -> None:
+        with tempfile.TemporaryDirectory() as outer:
+            root = os.path.join(outer, "repo")
+            os.makedirs(os.path.join(root, "docs"))
+            secret_dir = os.path.join(outer, "secret")
+            os.makedirs(secret_dir)
+            _write(outer, "secret/leak.txt", "OUTSIDE\n")
+            rel = "docs/link/leak.txt"
+            # The canonical STRING check passes (no absolute/traversal); the
+            # escape only exists once the junction is materialized. Containment
+            # must still refuse because it re-resolves the real path at read time.
+            self.assertTrue(cpaths.is_canonical_repo_path(rel))
+            link = os.path.join(root, "docs", "link")
+            made = False
+            try:
+                os.symlink(secret_dir, link, target_is_directory=True)
+                made = True
+            except OSError:
+                if os.name == "nt":
+                    pr = subprocess.run(["cmd", "/c", "mklink", "/J", link, secret_dir],
+                                        capture_output=True)
+                    made = pr.returncode == 0
+            if not made:
+                self.skipTest("cannot create symlink/junction here")
+            with self.assertRaises(cpaths.PathContainmentError) as cm:
+                cpaths.contained_read_bytes(root, rel)
+            self.assertEqual(cm.exception.code, "path_escapes_repository")
+            self.assertNotIn("secret", cm.exception.detail)
+            self.assertNotIn(outer.replace("\\", "/"),
+                             cm.exception.detail.replace("\\", "/"))
+
+
 class Proof7EntryPoint(unittest.TestCase):
     """Proof 7: the canonical entry point ACTUALLY calls the integrated
     compiler + grounded router (never a second packet)."""

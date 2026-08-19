@@ -101,6 +101,7 @@ def gather_sources(repo: str, task_id: str, diff_base: str, include: list[str],
     graph_queries: list[dict] = []
     index_opts = index_opts or {}
     extras: dict = {}
+    refused_explicit: list[dict] = []  # explicitly-requested reads that were refused
 
     # 1. task packet ------------------------------------------------------
     task_path = _pc(repo, "tasks", f"{task_id}.json")
@@ -269,23 +270,41 @@ def gather_sources(repo: str, task_id: str, diff_base: str, include: list[str],
                           "reason": f"no blocker references {task_id}"})
 
     # 10. latest CI -- injectable only; never network --------------------
+    # --ci-summary is an EXPLICITLY REQUESTED read and goes ONLY through the
+    # shared containment rule (M0-T076, D-019-R022/R024/R025): an absolute/drive/
+    # traversal/escaping value is REFUSED (never read, never echoed) AND, because
+    # it was explicitly requested, marks the packet insufficient.
     if ci_summary:
-        ci_text = read_text(ci_summary)
-        if ci_text is not None:
+        ci_rel = str(ci_summary).replace("\\", "/")
+        while ci_rel.startswith("./"):
+            ci_rel = ci_rel[2:]
+        try:
+            ci_bytes = cpaths.contained_read_bytes(repo, ci_rel)
+        except cpaths.PathContainmentError as exc:
+            omissions.append({"category": "latest_ci", "default_exclusion": False,
+                              "reason": f"--ci-summary refused ({exc.code}): {exc.detail}"})
+            refused_explicit.append({"kind": "ci_summary", "code": exc.code,
+                                     "ref": cpaths.redact_context_ref(ci_rel)})
+            explicit_ci = {"requested": True, "status": "refused", "code": exc.code,
+                           "ref": cpaths.redact_context_ref(ci_rel)}
+        else:
             sources.append(Source(
                 "latest_ci", "latest_ci", 90, "Latest CI summary (injected)",
-                "latest_ci", rel_posix(ci_summary, repo), "text", ci_text))
-        else:
-            omissions.append({"category": "latest_ci", "default_exclusion": False,
-                              "reason": f"--ci-summary path unreadable: {ci_summary}"})
+                "latest_ci", ci_rel, "text",
+                ci_bytes.decode("utf-8", errors="replace")))
+            explicit_ci = {"requested": True, "status": "accepted", "ref": ci_rel}
     else:
         omissions.append({"category": "latest_ci", "default_exclusion": False,
                           "reason": "no --ci-summary injected; builder never calls the network for CI"})
+        explicit_ci = {"requested": False, "status": "absent"}
 
     # 11. explicit source files (--include) ------------------------------
     # Reads go ONLY through the shared containment rule (M0-T075,
     # D-018-R031/R033): absolute/drive/traversal/escaping includes are
-    # REFUSED with the machine-readable code; no absolute path is echoed.
+    # REFUSED with the machine-readable code; no absolute path is echoed
+    # (redacted, D-019-R024). A refused EXPLICIT request marks the packet
+    # insufficient (D-019-R025) — never a silent success.
+    include_accepted: list[str] = []
     for inc in sorted(set(include)):
         rel = str(inc).replace("\\", "/")
         while rel.startswith("./"):
@@ -296,11 +315,20 @@ def gather_sources(repo: str, task_id: str, diff_base: str, include: list[str],
             omissions.append({"category": "explicit_source",
                               "default_exclusion": False,
                               "reason": f"--include refused ({exc.code}): {exc.detail}"})
+            refused_explicit.append({"kind": "include", "code": exc.code,
+                                     "ref": cpaths.redact_context_ref(rel)})
             continue
+        include_accepted.append(rel)
         sources.append(Source(
             f"include::{rel}", "explicit_sources", 100, f"Explicit source: {rel}",
             "explicit_source", rel, _lang_for(rel),
             data.decode("utf-8", errors="replace")))
+    extras["explicit_reads"] = {
+        "include_accepted": include_accepted,
+        "include_refused": [r for r in refused_explicit if r["kind"] == "include"],
+        "ci_summary": explicit_ci,
+    }
+    extras["refused_explicit_requests"] = refused_explicit
 
     # 12. previous handoff ------------------------------------------------
     handoff_src = _gather_handoff(repo)

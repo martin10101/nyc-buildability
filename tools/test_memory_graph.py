@@ -324,6 +324,105 @@ class AS6ConcurrencyAndStorage(Case):
         self.assertEqual(cm.exception.code, "cache_inside_repo")
 
 
+class D019LockPublicationRace(Case):
+    """M0-T076 / D-019-R015..R021: the EXACT former two-promoted/one-lost race.
+
+    Former mechanism: `acquire()` created writer.lock via `mkdir` and only
+    afterwards wrote owner.json; a second writer that observed the directory
+    BEFORE owner.json existed read empty metadata, classified the lock as
+    stale/dead, REMOVED it, and entered concurrently — so two valid promotions
+    could both report `promoted` while the final graph kept only one node. These
+    tests pin every interleave that made that possible."""
+
+    def _mk_store(self):
+        s = mg.memory_store(self.root, base=self.base)
+        s._ensure_dirs()
+        return s
+
+    def test_owner_less_publication_window_is_never_reclaimed(self) -> None:
+        # Writer A has published the lock directory but PAUSED before owner.json
+        # exists (the exact former window). Writer B must REFUSE — never reclaim a
+        # potentially live lock from missing metadata (R018).
+        store = self._mk_store()
+        lock_path = store.root / "writer.lock"
+        lock_path.mkdir(parents=True)  # owner.json deliberately absent
+        b = ric.SingleWriterLock(store.root)
+        with self.assertRaises(ric.CacheError) as cm:
+            b.acquire()
+        self.assertEqual(cm.exception.code, "concurrent_writer")
+        self.assertTrue(lock_path.exists())      # A's live lock untouched
+        self.assertFalse((lock_path / "owner.json").exists())
+
+    def test_partial_metadata_is_never_reclaimed(self) -> None:
+        # A half-written owner.json (missing acquired_at) is a publication window,
+        # not proof of death: a peer refuses rather than reclaims (R018).
+        store = self._mk_store()
+        lock_path = store.root / "writer.lock"
+        lock_path.mkdir(parents=True)
+        (lock_path / "owner.json").write_text(json.dumps({"pid": os.getpid()}))
+        with self.assertRaises(ric.CacheError) as cm:
+            ric.SingleWriterLock(store.root).acquire()
+        self.assertEqual(cm.exception.code, "concurrent_writer")
+
+    def test_promotion_refuses_across_the_publication_window(self) -> None:
+        # Drive it through the real promotion entry point: with an owner-less lock
+        # present, a concurrent promotion cannot enter (retries exhausted) and
+        # NOTHING is corrupted — no node is written behind the live writer.
+        store = self._mk_store()
+        (store.root / "writer.lock").mkdir(parents=True)
+        doc = make_digest(self.root, self.map_path)
+        with self.assertRaises(ric.CacheError) as cm:
+            self.promote(doc, retries=1)
+        self.assertEqual(cm.exception.code, "concurrent_writer")
+        self.assertIsNone(store.load_current())
+
+    def test_unguessable_token_and_token_matched_release(self) -> None:
+        # Every owner carries a high-entropy token (R016); release only removes
+        # the lock while OUR token still owns it (R019).
+        store = self._mk_store()
+        a = ric.SingleWriterLock(store.root)
+        a.acquire()
+        rec = json.loads((a.lock_path / "owner.json").read_text())
+        self.assertIn("token", rec)
+        self.assertGreaterEqual(len(rec["token"]), 32)   # 16 bytes hex
+        self.assertTrue(a.owns())
+        # A successor takes over the lock name (simulate an atomic takeover):
+        a.lock_path.rename(a.cache_dir / "taken")        # A no longer owns the name
+        successor = ric.SingleWriterLock(store.root)
+        successor.acquire()                              # writes a NEW token
+        succ_token = json.loads((successor.lock_path / "owner.json").read_text())["token"]
+        self.assertNotEqual(succ_token, rec["token"])
+        a.release()                                      # A must NOT delete the successor's lock
+        self.assertTrue(successor.owns())
+        self.assertTrue(successor.lock_path.exists())
+        successor.release()
+        self.assertFalse(successor.lock_path.exists())
+
+    def test_two_valid_writers_no_lost_node(self) -> None:
+        # The forbidden outcome end to end: two DIFFERENT valid digests. Because a
+        # peer can never be inside the ownership span concurrently, promotion is
+        # serialized and BOTH nodes survive — never two-promoted/one-lost.
+        d1 = make_digest(self.root, self.map_path)
+        d2 = make_digest(self.root, self.map_path, outcome="INFO")
+        r1 = self.promote(d1)
+        # While the store is quiescent, a live writer holds the lock; a second
+        # promotion with bounded retries refuses rather than racing in.
+        holder = ric.SingleWriterLock(mg.memory_store(self.root, base=self.base).root)
+        holder.acquire()
+        try:
+            with self.assertRaises(ric.CacheError) as cm:
+                self.promote(d2, retries=1)
+            self.assertEqual(cm.exception.code, "concurrent_writer")
+        finally:
+            holder.release()
+        r2 = self.promote(d2)  # now free: succeeds, keeping d1
+        self.assertEqual(r1["status"], "promoted")
+        self.assertEqual(r2["status"], "promoted")
+        payload = mg.memory_store(self.root, base=self.base).load_current().load_payload()
+        self.assertEqual(len(payload["nodes"]), 2)
+        self.assertEqual(sorted(payload["nodes"]), sorted([d1["digest_id"], d2["digest_id"]]))
+
+
 class B1PathTraversalRegression(Case):
     """G3 round-1 blocking defect B1: non-canonical files[].path admitted an
     out-of-repo structural link via '..' traversal + substring evidence match."""
