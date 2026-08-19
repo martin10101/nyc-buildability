@@ -1,0 +1,189 @@
+{
+  "task_id": "M0-T076",
+  "title": "Context pipeline promotion-blocker closure and adversarial completion protocol",
+  "task_type": "infrastructure",
+  "milestone_id": "M0",
+  "objective": "Close the five independently reproduced promotion blockers left by M0-T075 (D-018) without a rebuild: (A) repair SingleWriterLock so ownership metadata is complete before the public lock is visible, every owner holds an unguessable token, stale takeover is atomic move/quarantine, partial metadata never reclaims a live lock, release is token-matched, and load->conflict->mutation->validation->promotion->retention stay in one ownership span, with the exact publication-race regression; (B) route every context read (incl. --ci-summary) through the shared containment rule, redact caller-supplied absolute paths, and make a refused explicit --include/--ci-summary insufficient/nonzero with no marker leakage; (C) resolve+validate a frozen G0 diff base for worker/reviewer packets with committed-work tests; (D) consume the real Unit E view primitive and apply the deterministic changed-code-first seed order with recorded selection; (E) honest routing unknowns raising ambiguity; (F) useful bounded advisory memory digests; (G) a reproducible clean-checkout e2e benchmark in permanent CI. Plus an honest M0-T075 reconciliation report; no reopening of accepted records.",
+  "business_reason": "D-019 owner corrective directive: make D-013-R060 promotion honestly decidable by closing the reproduced blockers; leave R060 pending for the owner.",
+  "inputs": [
+    "Accepted M0-T075 (D-018) context pipeline on main 3c10894 - integrated, NOT rebuilt or reopened",
+    "Five independently reproduced promotion blockers (handoff section 4 + this session's pre-change failure records): A lock publication/reclaim race, B --ci-summary/--include containment bypass + private-path echo, C dirty-capture e2e baseline, D diff-base HEAD reviewer failure, E incomplete Unit E consumption / alphabetical seed cap / silent-false routing / thin advisory memory",
+    "tools/model_routing.py Signals + classify() (consumed READ-ONLY; not modified)",
+    "tools/repo_views.py accepted Unit E view builders (the real primitive to consume)",
+    "docs/CONTEXT_PIPELINE_RUNBOOK.md documented commands"
+  ],
+  "outputs": [
+    "tools/repo_index_cache.py - SingleWriterLock reworked: fully-populated temp dir with owner metadata + unguessable token atomically renamed into place; stale takeover via atomic move to quarantine; partial/missing metadata never reclaims a live lock; token-matched release; one ownership span for load->conflict->mutation->validation->promotion->retention",
+    "tools/memory_graph.py - promotion transaction uses the token-checked lock; two-writer publication-race regression proves no lost node",
+    "tools/context_paths.py + tools/context_pack_sources.py - ALL context reads (incl. --ci-summary) routed through the shared containment rule; caller-supplied absolute strings redacted in every omission/error detail; a refused explicit --include/--ci-summary makes the packet insufficient (nonzero) with no marker leakage to context.md/meta/evidence/stdout/stderr",
+    "tools/context_orchestrate.py - frozen G0/explicit diff base resolution for worker/reviewer packets (never silent HEAD) with recorded base SHA/resolution/head/dirty state/exact diff command; honest routing: every Signals field derived from structured compiled evidence or identified as undetermined (undetermined risk-bearing signal raises ambiguity_or_missing_evidence; never silently false)",
+    "tools/context_pack_index.py + tools/repo_views.py - the compiler consumes a genuine shared Unit E neighborhood primitive (traced call path); deterministic changed-code-first seed order with all selected/unresolved/skipped-over-cap candidates recorded; no duplicate source/test excerpts",
+    "tools/context_pack_evidence.py - bounded advisory memory digests carry useful fields (digest id, outcome+agent, bounded note, requirement ids, file paths, evidence refs, unresolved/quarantined state, source/repo identity), explicitly advisory, under the single global budget",
+    "tools/context_benchmark.py + .github/workflows/ci.yml - frozen apples-to-apples e2e benchmark (equivalent packet/diff base/role/provider-model/reasoning/source snapshot/clean state) that exits 0 twice from independent clean checkouts and is added to permanent CI; no-worse-than-baseline tests required evidence + relevance, not only source-ID counts; provider token savings UNMEASURED",
+    "project-control/reports/M0-T076-baseline-g0.json - clean-state frozen baseline (new; M0-T075's baseline is preserved unmodified)",
+    "project-control/reports/M0-T075-reconciliation-correction.md - honest record of what the M0-T075 e2e 'no-worse' result actually demonstrated (dirty-state capture), analogous to the M0-T069 scope correction; no reopening of accepted records",
+    "project-control/reports/M0-T076-* producer evidence (producer report, counterexample matrix, evidence map, coverage evidence, e2e benchmark report, G0 readiness)",
+    "docs/CONTEXT_PIPELINE_RUNBOOK.md - corrected + smoke-tested commands for the frozen diff base and the clean-checkout e2e benchmark"
+  ],
+  "dependencies": [
+    "M0-T075"
+  ],
+  "allowed_paths": [
+    "tools/context_paths.py",
+    "tools/context_orchestrate.py",
+    "tools/context_pack.py",
+    "tools/context_pack_assembly.py",
+    "tools/context_pack_evidence.py",
+    "tools/context_pack_index.py",
+    "tools/context_pack_sources.py",
+    "tools/context_pack_render.py",
+    "tools/repo_views.py",
+    "tools/repo_index_cache.py",
+    "tools/memory_graph.py",
+    "tools/context_benchmark.py",
+    "tools/status_projection.py",
+    "tools/test_context_pack.py",
+    "tools/test_context_pack_index.py",
+    "tools/test_context_integration.py",
+    "tools/test_memory_graph.py",
+    "tools/test_repo_views.py",
+    "tools/test_context_benchmark.py",
+    "tools/test_repo_index_cache.py",
+    "tools/test_status_projection.py",
+    ".github/workflows/ci.yml",
+    "docs/CONTEXT_PIPELINE_RUNBOOK.md",
+    "project-control/reports/M0-T076-baseline-g0.json",
+    "project-control/reports/M0-T076-producer-report.md",
+    "project-control/reports/M0-T076-evidence-map.json",
+    "project-control/reports/M0-T076-coverage-evidence.md",
+    "project-control/reports/M0-T076-counterexample-matrix.md",
+    "project-control/reports/M0-T076-G0-readiness.md",
+    "project-control/reports/M0-T076-e2e-benchmark-report.json",
+    "project-control/reports/M0-T076-e2e-benchmark-report.md",
+    "project-control/reports/M0-T075-reconciliation-correction.md"
+  ],
+  "forbidden_paths": [
+    "tools/agent_supervisor/",
+    "tools/code_graph/generate.py",
+    "tools/code_graph/query.py",
+    "tools/repo_fingerprint.py",
+    "tools/repo_index_assembly.py",
+    "tools/repo_index_baseline.py",
+    "tools/repo_index_incremental.py",
+    "tools/model_routing.py",
+    "tools/model_selection.toml",
+    "tools/modularity_baseline.json",
+    "tools/modularity_check.py",
+    "services/",
+    "apps/",
+    "packages/",
+    "supabase/",
+    ".claude/"
+  ],
+  "acceptance_scenarios": [
+    {
+      "id": "AS-1",
+      "given": "the former two-promoted/one-lost concurrent memory-writer schedule (writer A pauses during lock publication, writer B enters)",
+      "when": "both promotions run against the reworked SingleWriterLock",
+      "then": "ownership metadata + an unguessable token are visible atomically before the lock is public; B cannot reclaim A's live lock from missing/partial metadata; either both nodes survive or exactly one gets concurrent_writer and succeeds on retry; both-promoted-with-one-node-lost is impossible; the exact deterministic publication-race regression exists (D-019-R015..R021)"
+    },
+    {
+      "id": "AS-2",
+      "given": "absolute/drive/traversal/dot/doubled-separator/backslash/escaping-link paths presented to --include, --ci-summary, and every other context read (task/state/directive requirements, routing table, checkpoint/blocker/handoff, source/test/contract excerpts, graph/view seeds, ontology inputs, deep views, memory evidence)",
+      "when": "each read is attempted (static and raced escaping-link)",
+      "then": "the shared containment rule refuses each; no absolute path is read or echoed in context.md/metadata/evidence/stdout/stderr; a refused explicitly requested --include/--ci-summary makes the packet insufficient and the exit nonzero (D-019-R022..R025)"
+    },
+    {
+      "id": "AS-3",
+      "given": "a task whose work has been COMMITTED on its branch",
+      "when": "the canonical orchestrator prepares worker and reviewer packets",
+      "then": "it resolves+validates the task's frozen G0 base (never silently HEAD), the committed hunks are present, the packet exits 0, and the chosen base SHA/resolution/head SHA/dirty-clean state/exact diff command are recorded; committed-work tests cover both committed and uncommitted states (D-019-R026..R028)"
+    },
+    {
+      "id": "AS-4",
+      "given": "the M0-T066 clean compile and the shared Unit E primitive",
+      "when": "seeds and neighborhoods are built",
+      "then": "the compiler consumes the genuine shared Unit E view primitive (traced import + call), M0-T066's subsystem implementation files are queried before documentation/control-plane candidates consume the five-seed cap, the deterministic seed order records all selected/unresolved/skipped-over-cap candidates, and source/test excerpts are not duplicated (D-019-R029..R031)"
+    },
+    {
+      "id": "AS-5",
+      "given": "a concurrency-focused task and any task whose risk-bearing impact is not structurally determinable",
+      "when": "model_routing.Signals are derived from the compiled evidence",
+      "then": "every field is derived from authoritative structured compiled evidence or identified as undetermined; an undetermined risk-bearing signal (concurrency/security/schema/destructive/external-side-effect/protected-config) raises ambiguity_or_missing_evidence; a concurrency task can never emerge as concurrency_or_performance=false with no ambiguity; protected model configuration is unchanged (D-019-R032..R033)"
+    },
+    {
+      "id": "AS-6",
+      "given": "a real advisory memory digest for the task",
+      "when": "the compiler includes advisory memory",
+      "then": "the bounded digest carries useful fields (id, outcome+agent, bounded note, requirement ids, file paths, evidence refs, unresolved/quarantined state, source/repo identity), stays explicitly ADVISORY under the single global budget, and never substitutes for reopened authoritative source (D-019-R034)"
+    },
+    {
+      "id": "AS-7",
+      "given": "the frozen clean-state e2e benchmark",
+      "when": "it runs from two independent clean checkouts",
+      "then": "the exact documented command exits 0 both times using equivalent packet/diff base/role/provider-model/reasoning/source snapshot/clean state; no-worse-than-baseline tests required evidence + relevance (not only source-ID counts); provider token savings remain UNMEASURED; the benchmark runs in permanent CI (D-019-R035..R037)"
+    },
+    {
+      "id": "AS-8",
+      "given": "a committed projection snapshot and an uncommitted material control-plane change",
+      "when": "the projection check runs",
+      "then": "the deterministic input-manifest digest still marks it STALE with nonzero exit (no regression from M0-T075) (D-019-R014 proof 9)"
+    },
+    {
+      "id": "AS-9",
+      "given": "the expanded index-parity benchmark",
+      "when": "it runs cold then warm",
+      "then": "it remains byte-identical across every case and the pre-existing context/index/graph/memory/view/benchmark/projection/routing suites remain green; no existing test removed/skipped/weakened (D-019-R011, R014 proofs 11-12)"
+    },
+    {
+      "id": "AS-10",
+      "given": "the mandatory adversarial completion protocol",
+      "when": "the producer submits and an independent reviewer + independent DCV verify at the exact reviewed SHA",
+      "then": "a requirement-to-counterexample matrix exists for every absolute-language requirement (command/input/exit/output-digest/result recorded); the reviewer uses a fresh clean worktree pinned to the submitted SHA with NEW probes, traces real imports/calls, executes documented commands, tests hostile states, and marks FAIL on any contradicted guarantee; producer, reviewer and verifier are independent (D-019-R006, R007, R012)"
+    }
+  ],
+  "required_gates": [
+    "G0",
+    "G3",
+    "G4",
+    "G5"
+  ],
+  "producer_agent": null,
+  "reviewer_agents": [
+    "code-reviewer",
+    "qa-engineer",
+    "security-reviewer",
+    "directive-compliance-verifier"
+  ],
+  "status": "backlog",
+  "progress_percent": 0,
+  "risks": [
+    "Touching accepted M0-T075 modules risks regressions: every existing suite is in documented_test_commands and permanent CI; behavior-preserving integration verified against a fresh clean-state baseline (M0-T075 baseline preserved unmodified)",
+    "The lock rework is concurrency-critical: the exact publication-race regression plus adversarial raced probes must prove no lost node under the pre-owner.json interleave",
+    "One-PR breadth is strictly the D-019 requirement set; any new independently reproduced blocker on a protected surface (code-graph generators/fingerprint/baseline) STOPS and is reported before expanding"
+  ],
+  "blockers": [],
+  "created_at": "2026-08-19T06:19:42.296300+00:00",
+  "updated_at": "2026-08-19T06:19:42.424391+00:00",
+  "directive_refs": [
+    {
+      "directive_id": "D-019",
+      "requirement_ids": "ALL"
+    }
+  ],
+  "directive_regime_version": "1.0",
+  "directive_regime_entered_at": "2026-08-19T06:19:42.296300+00:00",
+  "documented_test_commands": [
+    "python tools/test_context_integration.py",
+    "python tools/test_context_pack.py",
+    "python tools/test_context_pack_index.py",
+    "python tools/test_memory_graph.py",
+    "python tools/test_repo_views.py",
+    "python tools/test_context_benchmark.py",
+    "python tools/test_status_projection.py",
+    "python tools/test_repo_index_cache.py",
+    "python tools/modularity_check.py --check",
+    "python tools/validate_directive_compliance.py --check"
+  ],
+  "worktree": "C:/Users/MLFLL/Downloads/nyc-zoning/wt-m0t064"
+}

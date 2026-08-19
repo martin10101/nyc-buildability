@@ -1,0 +1,1194 @@
+{
+ "schema": "directive_requirements/v1",
+ "directive_id": "D-019",
+ "version": 1,
+ "requirement_count": 37,
+ "producer": "orchestrator",
+ "updated_at": "2026-08-19T15:00:00+00:00",
+ "requirements": [
+  {
+   "id": "D-019-R001",
+   "text": "Exactly ONE bounded corrective task, one branch, one PR; not a rebuild; no NYC application work, controller changes or pipeline promotion.",
+   "source_ref": "source-001.md#section-2",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-019-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-19"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 1
+  },
+  {
+   "id": "D-019-R002",
+   "text": "Reconcile live before creating anything: fetch/reconcile origin/main; confirm the handoff checkpoint or report every difference; confirm the worktree is clean; confirm M0-T076 and D-019 remain unused (else choose the next valid identity and report it); confirm no overlapping branch or PR; run the directive validator; capture a clean reproducible pre-change failure record for every blocker.",
+   "source_ref": "source-001.md#section-1",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-019-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-19"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 1
+  },
+  {
+   "id": "D-019-R003",
+   "text": "Do not rely on the historical PASS reports as proof; treat them as claims to verify.",
+   "source_ref": "source-001.md#section-1",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-019-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-19"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 1
+  },
+  {
+   "id": "D-019-R004",
+   "text": "Capture the complete owner instruction as one new directive D-019 (proposed) and create one task M0-T076 (proposed); producer, adversarial reviewer and directive verifier must be independent.",
+   "source_ref": "source-001.md#section-2",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-019-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-19"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 1
+  },
+  {
+   "id": "D-019-R008",
+   "text": "Do not modify or operate tools/agent_supervisor/**, protected config.toml, model_selection.toml, controller manifests or the live controller, apps/**, services/**, packages/**, supabase/**, NYC zoning/legal/numeric application logic, branch protection or security policy, limited-auto, or history rewriting.",
+   "source_ref": "source-001.md#section-6",
+   "classification": "prohibition",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-019-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-19"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 1
+  },
+  {
+   "id": "D-019-R009",
+   "text": "Do not approve or activate D-013-R060 (leave it pending for the owner); do not run the controller-update bundle or any live probe.",
+   "source_ref": "source-001.md#section-6",
+   "classification": "hold",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-019-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-19"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 1
+  },
+  {
+   "id": "D-019-R010",
+   "text": "Do not modify code-graph generators, fingerprint or baseline engines unless a new independently reproduced blocker proves it unavoidable; stop and report before expanding into such a surface.",
+   "source_ref": "source-001.md#section-6",
+   "classification": "prohibition",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-019-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-19"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 1
+  },
+  {
+   "id": "D-019-R011",
+   "text": "Do not remove, skip, weaken or replace any existing test.",
+   "source_ref": "source-001.md#section-6",
+   "classification": "prohibition",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-019-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-19"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 1
+  },
+  {
+   "id": "D-019-R013",
+   "text": "The final return must include directive/task/PR/merge identities; exact reviewed SHA and manifest; exact commands and test counts; adversarial probes and results; clean-checkout benchmark results; before/after evidence; protected-path diff confirmation; what remains owner-gated; and an evidence-based R060 recommendation left pending for the owner.",
+   "source_ref": "source-001.md#section-7",
+   "classification": "return",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-019-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-19"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 1
+  },
+  {
+   "id": "D-019-R005",
+   "text": "Do not reopen or rewrite M0-T075; preserve its records historically and add an honest correction/reconciliation report (analogous to the M0-T069 scope correction, no disputing what was true).",
+   "source_ref": "source-001.md#section-2",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T076"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-19"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 1
+  },
+  {
+   "id": "D-019-R006",
+   "text": "Before submission the producer must create a requirement-to-counterexample matrix: for every requirement containing every/never/atomic/same/complete/exact/cannot or equivalent absolute language, state the most likely counterexample, execute it, and record command, input, exit, output digest and result.",
+   "source_ref": "source-001.md#section-4",
+   "classification": "evidence",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T076"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-19"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 1
+  },
+  {
+   "id": "D-019-R007",
+   "text": "The independent reviewer must begin from the directive and actual code (not the producer's conclusions), use a fresh clean worktree pinned to the submitted SHA, create new adversarial probes not copied from producer tests, trace actual imports and calls for every claimed integration, execute all documented commands exactly, test clean/dirty/committed/uncommitted/missing/malformed/hostile states, attempt to exploit every observation (including defects labeled pre-existing or low probability), reject proxy proof (field presence, source/test counts) when semantic correctness is required, and mark FAIL if any literal directive guarantee is contradicted; a review observation affecting a required guarantee is blocking and cannot be downgraded because the code predates this task.",
+   "source_ref": "source-001.md#section-4",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T076"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-19"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 1
+  },
+  {
+   "id": "D-019-R012",
+   "text": "Use the complete normal lifecycle: G0 -> implementation -> producer counterexample matrix -> frozen submit SHA -> fresh adversarial review -> correction/retest if necessary -> independent DCV at the exact reviewed identity -> G3/G4/G5 -> accept -> merge only when every required check is green; before merge verify from a fresh clean worktree the exact head-SHA identity, full clean e2e benchmark twice, exact lock exploit, full containment probes, all documented commands, all existing and new suites, modularity, directive validation, and forbidden-path diff empty.",
+   "source_ref": "source-001.md#section-7",
+   "classification": "sequencing",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T076"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-19"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 1
+  },
+  {
+   "id": "D-019-R014",
+   "text": "Independently reproduce at minimum: (1) the former two-promoted/one-lost schedule no longer loses either node; (2) absolute --ci-summary and --include markers are never read or disclosed and cause nonzero; (3) static and raced escaping-link probes refuse; (4) committed task changes appear using the recorded frozen base; (5) M0-T066 graph evidence starts from its implementation; (6) actual Unit E provenance and call identity appear; (7) a concurrency task routes high/ambiguous rather than silently false; (8) a real advisory digest contributes useful bounded context; (9) status projection still catches uncommitted changes; (10) the exact clean-checkout e2e command exits 0 twice; (11) expanded index parity remains byte-identical; (12) all pre-existing context/index/graph/memory/view/benchmark/projection and routing suites remain green.",
+   "source_ref": "source-001.md#section-5",
+   "classification": "evidence",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T076"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-19"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 1
+  },
+  {
+   "id": "D-019-R015",
+   "text": "SingleWriterLock: ownership metadata must be complete before the public lock becomes visible.",
+   "source_ref": "source-001.md#A",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T076"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-19"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 1
+  },
+  {
+   "id": "D-019-R016",
+   "text": "SingleWriterLock: every owner has an unguessable ownership token.",
+   "source_ref": "source-001.md#A",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T076"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-19"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 1
+  },
+  {
+   "id": "D-019-R017",
+   "text": "SingleWriterLock: stale takeover uses an atomic move/quarantine operation.",
+   "source_ref": "source-001.md#A",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T076"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-19"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 1
+  },
+  {
+   "id": "D-019-R018",
+   "text": "SingleWriterLock: missing or partial metadata cannot cause immediate reclamation of a potentially live lock.",
+   "source_ref": "source-001.md#A",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T076"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-19"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 1
+  },
+  {
+   "id": "D-019-R019",
+   "text": "SingleWriterLock: release removes the lock only when the token still matches.",
+   "source_ref": "source-001.md#A",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T076"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-19"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 1
+  },
+  {
+   "id": "D-019-R020",
+   "text": "SingleWriterLock: load, conflict/idempotency check, mutation, validation, promotion and retention remain inside one valid ownership span.",
+   "source_ref": "source-001.md#A",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T076"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-19"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 1
+  },
+  {
+   "id": "D-019-R021",
+   "text": "Add the exact deterministic regression where writer A pauses during lock publication and writer B attempts entry; the forbidden outcome (both reporting promoted while one node disappears) must be impossible.",
+   "source_ref": "source-001.md#A",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T076"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-19"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 1
+  },
+  {
+   "id": "D-019-R022",
+   "text": "Inventory every context-related read and apply the shared canonical and real-path containment rule to all repository evidence reads: task/state/directive requirements; routing table; checkpoint, blocker and handoff records; --include and --ci-summary; source/test/contract excerpts; graph/view seeds; ontology inputs; deep views; memory evidence paths.",
+   "source_ref": "source-001.md#B",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T076"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-19"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 1
+  },
+  {
+   "id": "D-019-R023",
+   "text": "Absolute paths, drive paths, traversal, dot segments, doubled separators, backslashes and escaping links must never be read.",
+   "source_ref": "source-001.md#B",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T076"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-19"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 1
+  },
+  {
+   "id": "D-019-R024",
+   "text": "Errors and packets must not repeat a supplied private absolute path.",
+   "source_ref": "source-001.md#B",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T076"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-19"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 1
+  },
+  {
+   "id": "D-019-R025",
+   "text": "A refused explicitly requested --include or --ci-summary must make the result nonzero/insufficient; its marker content must be absent from context.md, metadata, evidence files, stdout and stderr.",
+   "source_ref": "source-001.md#B",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T076"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-19"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 1
+  },
+  {
+   "id": "D-019-R026",
+   "text": "The canonical orchestrator must not silently use HEAD for active worker or reviewer tasks; resolve and validate the task's frozen G0 reviewed SHA as the default diff base, or require an explicit trusted --diff-base when no frozen base is available.",
+   "source_ref": "source-001.md#C",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T076"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-19"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 1
+  },
+  {
+   "id": "D-019-R027",
+   "text": "Record the chosen base SHA, how it was resolved, the current head SHA, dirty/clean state, and the exact diff command.",
+   "source_ref": "source-001.md#C",
+   "classification": "evidence",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T076"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-19"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 1
+  },
+  {
+   "id": "D-019-R028",
+   "text": "Add committed-work tests: after a task change is committed, the worker and reviewer packets must still contain the applicable committed hunks.",
+   "source_ref": "source-001.md#C",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T076"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-19"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 1
+  },
+  {
+   "id": "D-019-R029",
+   "text": "Consume actual accepted Unit E repository-view functions, or extract a genuine shared primitive used by both Unit E and the compiler; do not describe duplicated logic as 'Unit E-class'.",
+   "source_ref": "source-001.md#D",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T076"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-19"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 1
+  },
+  {
+   "id": "D-019-R030",
+   "text": "Deterministic seed order: (1) actual changed implementation paths; (2) canonical allowed implementation paths; (3) relevant graph-derived test/dependent paths; (4) strictly extracted prose candidates; (5) documentation/control-plane candidates only when relevant; record all selected, unresolved and skipped-over-cap candidates.",
+   "source_ref": "source-001.md#D",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T076"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-19"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 1
+  },
+  {
+   "id": "D-019-R031",
+   "text": "A clean M0-T066 proof must query its subsystem implementation files before documentation and reports consume the five-seed cap; avoid duplicate source/test excerpts.",
+   "source_ref": "source-001.md#D",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T076"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-19"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 1
+  },
+  {
+   "id": "D-019-R032",
+   "text": "Every model_routing.Signals field must be derived from authoritative structured compiled evidence or identified as undetermined; an undetermined risk-bearing signal must raise ambiguity_or_missing_evidence; never silently use false for unknown concurrency, security, schema, destructive-operation, external-side-effect or protected-configuration impact.",
+   "source_ref": "source-001.md#E",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T076"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-19"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 1
+  },
+  {
+   "id": "D-019-R033",
+   "text": "Prove that a concurrency-focused task cannot emerge as concurrency_or_performance=false with no ambiguity; do not modify protected model configuration.",
+   "source_ref": "source-001.md#E",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T076"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-19"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 1
+  },
+  {
+   "id": "D-019-R034",
+   "text": "Keep memory explicitly ADVISORY; for relevant task digests include bounded useful fields (digest ID; outcome and agent; bounded note; requirement IDs; relevant file paths; evidence references; unresolved/quarantined state; source/repository identity); all memory content remains under the existing single global packet budget and never substitutes for reopened authoritative source.",
+   "source_ref": "source-001.md#F",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T076"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-19"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 1
+  },
+  {
+   "id": "D-019-R035",
+   "text": "Replace the dirty-working-tree comparison with a genuinely frozen, apples-to-apples comparison whose baseline and post-change runs use equivalent task packet, diff base, role, provider/model, reasoning setting, source snapshot and clean/dirty state.",
+   "source_ref": "source-001.md#G",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T076"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-19"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 1
+  },
+  {
+   "id": "D-019-R036",
+   "text": "The exact documented e2e command must exit 0 twice from independent clean checkouts; 'no worse than baseline' must test meaningful required evidence and relevance, not only source-ID counts; keep provider token savings UNMEASURED unless real provider usage exists.",
+   "source_ref": "source-001.md#G",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T076"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-19"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 1
+  },
+  {
+   "id": "D-019-R037",
+   "text": "Add the complete clean-checkout e2e benchmark to permanent CI; do not rely only on the single-shape unit test.",
+   "source_ref": "source-001.md#G",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T076"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-19"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 1
+  }
+ ]
+}
