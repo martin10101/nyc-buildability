@@ -43,6 +43,14 @@ committed — the policy needs only `.claude/settings.json`):
 No MCP servers configured. Use `claude mcp add` to add a server.
 ```
 
+**Runs D and E — clean worktree re-checked-out at the FINAL content commit `eb742f2`**
+(which adds the deny-first `permissions.deny: ["mcp__*"]` tool rule and the official
+doc citations), two fresh processes across a process exit:
+
+```
+No MCP servers configured. Use `claude mcp add` to add a server.
+```
+
 Per-item evidence required by D-020 §7:
 - Airtable NOT active ✔ (absent from Runs A/B/C)
 - Microsoft 365 NOT active ✔ (absent)

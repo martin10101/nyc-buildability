@@ -1,0 +1,98 @@
+{
+  "task_id": "M0-T077",
+  "directive_id": "D-020",
+  "producer": "orchestrator",
+  "requirements": {
+    "D-020-R005": [
+      "project-control/directives/D-020-program-wide-mcp-default-deny/source-001.md",
+      "project-control/directives/D-020-program-wide-mcp-default-deny/manifest.json",
+      "project-control/directives/index.json",
+      "project-control/reports/M0-T077-G0-readiness.md"
+    ],
+    "D-020-R006": [
+      "project-control/tasks/M0-T077.json",
+      "project-control/reports/M0-T077-G0-readiness.md"
+    ],
+    "D-020-R007": [
+      "project-control/tasks/M0-T077.json",
+      "project-control/reports/M0-T077-G0-readiness.md"
+    ],
+    "D-020-R008": [
+      "project-control/gates/M0-T077-G0.json",
+      "project-control/reports/M0-T077-submission.md",
+      "project-control/tasks/M0-T077.json"
+    ],
+    "D-020-R016": [
+      "project-control/reports/M0-T077-mcp-audit.md"
+    ],
+    "D-020-R017": [
+      "project-control/reports/M0-T077-mcp-audit.md",
+      "project-control/reports/M0-T077-G0-readiness.md"
+    ],
+    "D-020-R018": [
+      "project-control/reports/M0-T077-mcp-audit.md",
+      "project-control/reports/M0-T077-fresh-session-proof.md"
+    ],
+    "D-020-R019": [
+      "project-control/reports/M0-T077-mcp-audit.md",
+      "docs/MCP_DEFAULT_DENY_POLICY.md"
+    ],
+    "D-020-R020": [
+      ".claude/settings.json",
+      "docs/MCP_DEFAULT_DENY_POLICY.md",
+      "project-control/reports/M0-T077-fresh-session-proof.md"
+    ],
+    "D-020-R021": [
+      ".claude/settings.json",
+      "project-control/reports/M0-T077-fresh-session-proof.md"
+    ],
+    "D-020-R022": [
+      ".claude/settings.json",
+      "tools/validate_mcp_policy.py",
+      "project-control/reports/M0-T077-fresh-session-proof.md"
+    ],
+    "D-020-R023": [
+      ".claude/settings.json",
+      "project-control/reports/M0-T077-mcp-audit.md",
+      "docs/MCP_DEFAULT_DENY_POLICY.md"
+    ],
+    "D-020-R024": [
+      "project-control/reports/M0-T077-fresh-session-proof.md"
+    ],
+    "D-020-R025": [
+      "project-control/reports/M0-T077-fresh-session-proof.md"
+    ],
+    "D-020-R026": [
+      "project-control/reports/M0-T077-fresh-session-proof.md",
+      "project-control/reports/M0-T077-mcp-audit.md"
+    ],
+    "D-020-R027": [
+      "project-control/reports/M0-T077-fresh-session-proof.md"
+    ],
+    "D-020-R028": [
+      "docs/MCP_DEFAULT_DENY_POLICY.md"
+    ],
+    "D-020-R029": [
+      "tools/validate_mcp_policy.py",
+      "tools/test_mcp_policy.py",
+      ".github/workflows/ci.yml"
+    ],
+    "D-020-R030": [
+      "tools/validate_mcp_policy.py",
+      "docs/MCP_DEFAULT_DENY_POLICY.md"
+    ],
+    "D-020-R031": [
+      "project-control/reports/M0-T077-fresh-session-proof.md",
+      "project-control/reports/M0-T077-supervisor-compatibility.md"
+    ],
+    "D-020-R032": [
+      "project-control/reports/M0-T077-fresh-session-proof.md"
+    ],
+    "D-020-R033": [
+      "project-control/reports/M0-T077-fresh-session-proof.md"
+    ],
+    "D-020-R034": [
+      "project-control/reports/M0-T077-supervisor-compatibility.md"
+    ]
+  }
+}
