@@ -119,17 +119,26 @@ _SECURITY_PREFIXES = ("tools/agent_supervisor/", ".github/workflows/")
 _SCHEMA_PREFIXES = ("packages/contracts/", "supabase/")
 
 
-def derive_signals(meta: dict, compile_exit: int) -> tuple["mr.Signals", list[str]]:
-    """model_routing.Signals FROM the compiled evidence (D-018-R023/R024).
+def derive_signals(meta: dict, compile_exit: int
+                   ) -> tuple["mr.Signals", list[str], dict]:
+    """model_routing.Signals FROM the compiled evidence (D-018-R023/R024;
+    M0-T076 / D-019-R032/R033).
 
-    Returns (signals, notes). Every non-derivable or unresolved input is a
-    note AND sets ambiguity_or_missing_evidence=True so the band can only go
-    UP on unknown-ness — never a silent LOW default."""
+    Returns (signals, notes, provenance). EVERY field is either derived from
+    authoritative structured compiled evidence (paths/counts/graph) or marked
+    UNDETERMINED — and an undetermined RISK-BEARING signal raises
+    ambiguity_or_missing_evidence so the band can only go UP on unknown-ness,
+    never a silent False. A concurrency/security/schema/destructive/external/
+    protected-config impact that cannot be structurally proven ABSENT is never
+    reported as a confident False (D-019-R032). `provenance` records the value
+    AND basis of every field."""
     notes: list[str] = []
+    prov_sig: dict[str, dict] = {}
     integ = meta.get("integration") or {}
     prov = meta.get("provenance") or {}
     suff = meta.get("sufficiency") or {}
     task_paths = list((integ.get("implementation_paths") or []))
+    changed_targets = int(prov.get("changed_targets") or 0)
     packet = {}
     for f in meta.get("included_files") or []:
         if f.get("group") == "task_packet":
@@ -162,28 +171,74 @@ def derive_signals(meta: dict, compile_exit: int) -> tuple["mr.Signals", list[st
 
     all_scope = task_paths + [
         r.get("seed") or "" for r in (integ.get("unresolved_seeds") or [])]
+
+    # A task with NO code in scope (pure docs/control-plane) lets us AFFIRM the
+    # absence of runtime-behavioral impact from structured evidence; a task that
+    # touches code cannot have those impacts proven absent from paths alone.
+    code_in_scope = bool(task_paths) or changed_targets > 0
+
+    def _structured_flag(name: str, prefixes: tuple[str, ...]) -> bool:
+        val = _flag(prefixes)
+        prov_sig[name] = {"value": val,
+                          "basis": "structured_paths:" + ",".join(prefixes)}
+        return val
+
+    def _risk_or_undetermined(name: str) -> bool:
+        """A behavioral risk signal we cannot compute structurally. Affirmed
+        False only when there is NO code in scope; otherwise UNDETERMINED ->
+        raise ambiguity (never a confident silent False, D-019-R032)."""
+        nonlocal ambiguity
+        if not code_in_scope:
+            prov_sig[name] = {"value": False, "basis": "structured:no_code_scope"}
+            return False
+        prov_sig[name] = {"value": False, "basis": "undetermined_no_structured_basis",
+                          "undetermined": True}
+        ambiguity = True
+        notes.append(f"{name} undetermined from compiled evidence -> ambiguity raised")
+        return False
+
+    security = _structured_flag("security_or_authorization_impact", _SECURITY_PREFIXES)
+    control_plane = _structured_flag("control_plane_change", _CONTROL_PLANE_PREFIXES)
+    schema = _structured_flag("schema_or_migration_impact", _SCHEMA_PREFIXES)
+    protected_cfg = any("config.toml" in p or "model_selection" in p for p in all_scope)
+    prov_sig["protected_configuration_impact"] = {
+        "value": protected_cfg, "basis": "structured_paths:config.toml,model_selection"}
+    legal = any(p.startswith(("services/api/app/", "packages/contracts/"))
+                for p in task_paths)
+    prov_sig["legal_or_numeric_correctness"] = {
+        "value": legal, "basis": "structured_paths:services/api/app,packages/contracts"}
+    prov_sig["files_affected"] = {"value": changed_targets or len(task_paths),
+                                  "basis": "structured_counts"}
+    prov_sig["subsystems_affected"] = {"value": int(integ.get("subsystems_touched") or 0),
+                                       "basis": "structured_counts"}
+    prov_sig["dependency_graph_spread"] = {"value": int(prov.get("dependency_breadth") or 0),
+                                           "basis": "structured_graph"}
+
+    destructive = _risk_or_undetermined("destructive_operations")
+    external = _risk_or_undetermined("external_side_effects")
+    concurrency = _risk_or_undetermined("concurrency_or_performance")
+    prov_sig["ambiguity_or_missing_evidence"] = {"value": ambiguity,
+                                                 "basis": "derived"}
+
     signals = mr.Signals(
-        files_affected=int(prov.get("changed_targets") or 0) or len(task_paths),
+        files_affected=changed_targets or len(task_paths),
         subsystems_affected=int(integ.get("subsystems_touched") or 0),
         dependency_graph_spread=int(prov.get("dependency_breadth") or 0),
-        security_or_authorization_impact=_flag(_SECURITY_PREFIXES),
-        protected_configuration_impact=any(
-            "config.toml" in p or "model_selection" in p for p in all_scope),
-        destructive_operations=False,
-        control_plane_change=_flag(_CONTROL_PLANE_PREFIXES),
-        legal_or_numeric_correctness=any(
-            p.startswith(("services/api/app/", "packages/contracts/"))
-            for p in task_paths),
-        external_side_effects=False,
-        schema_or_migration_impact=_flag(_SCHEMA_PREFIXES),
-        concurrency_or_performance=False,
+        security_or_authorization_impact=security,
+        protected_configuration_impact=protected_cfg,
+        destructive_operations=destructive,
+        control_plane_change=control_plane,
+        legal_or_numeric_correctness=legal,
+        external_side_effects=external,
+        schema_or_migration_impact=schema,
+        concurrency_or_performance=concurrency,
         ambiguity_or_missing_evidence=ambiguity,
         prior_failed_attempts=0,
         required_reviewer_roles=(),
         estimated_context_tokens=(meta.get("actuals") or {}).get("estimated_tokens"),
         packet_risk_classification=None,
     )
-    return signals, notes
+    return signals, notes, prov_sig
 
 
 def _emit(doc: dict) -> None:
@@ -284,9 +339,10 @@ def main(argv=None) -> int:
 
     exit_code = compile_exit
     if args.route:
-        signals, notes = derive_signals(meta, compile_exit)
+        signals, notes, signal_prov = derive_signals(meta, compile_exit)
         manifest["routing"]["signals"] = dataclasses.asdict(signals)
         manifest["routing"]["signal_notes"] = notes
+        manifest["routing"]["signal_provenance"] = signal_prov
         if not args.model_config:
             manifest["routing"]["status"] = "config_path_required"
             exit_code = exit_code or 2

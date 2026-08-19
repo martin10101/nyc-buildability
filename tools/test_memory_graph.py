@@ -398,6 +398,44 @@ class D019LockPublicationRace(Case):
         successor.release()
         self.assertFalse(successor.lock_path.exists())
 
+    def test_advisory_digest_contributes_useful_bounded_fields(self) -> None:
+        # M0-T076 / D-019-R034 + proof 8: a REAL promoted digest yields an
+        # advisory row carrying useful bounded fields (note, requirement ids,
+        # files, evidence refs, source identity), still explicitly advisory.
+        from tools import context_pack_evidence as cpe
+        doc = make_digest(self.root, self.map_path,
+                          note="watch the lock publication window on retries")
+        self.promote(doc)
+        adv = cpe.memory_advisory(self.root, "M0-T001", memory_base=self.base)
+        self.assertTrue(adv["advisory"])
+        self.assertEqual(adv["status"], "ok")
+        row = next(r for r in adv["digests"] if r["digest_id"] == doc["digest_id"])
+        self.assertEqual(row["outcome"], "PASS")
+        self.assertEqual(row["agent"], "qa-engineer")
+        self.assertIn("lock publication window", row["note"])
+        self.assertEqual(row["requirement_ids"], ["D-900-R001"])
+        self.assertIn("services/api/x.py", row["files"])
+        self.assertIn("project-control/reports/M0-T001-report.md", row["evidence_refs"])
+        self.assertEqual(row["source_identity"]["branch"], "task/M0-T001-fixture")
+        self.assertTrue(row["advisory"])
+
+    def test_advisory_row_is_bounded(self) -> None:
+        from tools import context_pack_evidence as cpe
+        row = cpe._advisory_row(
+            "id", {"outcome": "PASS", "agent": "qa-engineer",
+                   "note": "x" * 999,
+                   "requirement_ids": [f"D-900-R{i:03d}" for i in range(50)],
+                   "files": [{"path": f"services/api/f{i}.py"} for i in range(50)],
+                   "evidence_refs": [f"e{i}.md" for i in range(50)],
+                   "repo_sha": "a" * 40, "branch": "b"},
+            {"quarantined_links": [{"x": 1}]})
+        self.assertLessEqual(len(row["note"]), cpe.ADVISORY_NOTE_CAP + 1)
+        self.assertLessEqual(len(row["requirement_ids"]), cpe.MAX_ADVISORY_REQ_IDS)
+        self.assertLessEqual(len(row["files"]), cpe.MAX_ADVISORY_FILES)
+        self.assertLessEqual(len(row["evidence_refs"]), cpe.MAX_ADVISORY_EVIDENCE)
+        self.assertGreater(row["bounded"]["requirement_ids_omitted"], 0)
+        self.assertTrue(row["unresolved"])
+
     def test_two_valid_writers_no_lost_node(self) -> None:
         # The forbidden outcome end to end: two DIFFERENT valid digests. Because a
         # peer can never be inside the ownership span concurrently, promotion is

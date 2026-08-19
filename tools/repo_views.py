@@ -185,6 +185,28 @@ def _edges(gi, nid: str, direction: str, limit: int) -> tuple[list, dict]:
     return _truncate(rows, limit)
 
 
+def neighborhood_edges(gi, nid: str, *, edge_limit: int = 25) -> dict:
+    """THE shared bounded-neighborhood primitive (M0-T068 Unit E).
+
+    Returns the deterministic in/out dependency rows + explicit truncation
+    markers around a resolved node. This is the SINGLE implementation consumed
+    by BOTH the Unit E neighborhood/card views here AND the context compiler
+    (``context_pack_index``) — the compiler no longer reimplements neighborhood
+    logic (M0-T076, D-019-R029); it calls this exact function, so the two can
+    never drift. Returns ``None`` fields for an unresolved node (never raises)."""
+    if nid not in gi.nodes:
+        return {"node_id": nid, "resolved": False, "out_edges": [],
+                "out_truncation": None, "in_edges": [], "in_truncation": None,
+                "out_edge_count": 0, "in_edge_count": 0}
+    out_rows, out_marker = _edges(gi, nid, "out", edge_limit)
+    in_rows, in_marker = _edges(gi, nid, "in", edge_limit)
+    return {"node_id": nid, "resolved": True,
+            "out_edges": out_rows, "out_truncation": out_marker,
+            "in_edges": in_rows, "in_truncation": in_marker,
+            "out_edge_count": len(gi.out_edges.get(nid, [])),
+            "in_edge_count": len(gi.in_edges.get(nid, []))}
+
+
 def _subsystem_of(node_id: str, loaded_map) -> dict:
     """Subsystem ONLY via the versioned Unit C resolver (R045); honest miss."""
     r = resolve_path(node_id, loaded_map)
@@ -194,18 +216,17 @@ def _subsystem_of(node_id: str, loaded_map) -> dict:
 
 def neighborhood_view(res, gi, loaded_map, seed: str, *, edge_limit: int = 25) -> dict:
     nid = norm_path(seed)
-    if nid not in gi.nodes:
+    nb = neighborhood_edges(gi, nid, edge_limit=edge_limit)  # shared primitive
+    if not nb["resolved"]:
         content = {"seed": seed, "resolved": False,
                    "reason": "seed_not_in_graph"}
     else:
-        out_rows, out_marker = _edges(gi, nid, "out", edge_limit)
-        in_rows, in_marker = _edges(gi, nid, "in", edge_limit)
         content = {
             "seed": seed, "resolved": True, "node_id": nid,
             "node_kind": gi.nodes[nid].get("kind"),
             "subsystem": _subsystem_of(nid, loaded_map),
-            "out_edges": out_rows, "out_truncation": out_marker,
-            "in_edges": in_rows, "in_truncation": in_marker,
+            "out_edges": nb["out_edges"], "out_truncation": nb["out_truncation"],
+            "in_edges": nb["in_edges"], "in_truncation": nb["in_truncation"],
         }
     return {
         "view": "neighborhood", "coverage_mode": "neighborhood", "content": content,

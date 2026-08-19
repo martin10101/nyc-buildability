@@ -431,6 +431,67 @@ class D019FrozenDiffBase(unittest.TestCase):
             self.assertEqual(p2["resolution"], "explicit_unresolvable")
 
 
+class D019UnitEConsumptionAndSeedOrder(unittest.TestCase):
+    """M0-T076 / D-019-R029..R031: the compiler CONSUMES the real Unit E
+    neighborhood primitive (traced call), and seeds are chosen implementation-
+    first with recorded selection/skip provenance."""
+
+    def test_compiler_neighborhood_calls_unit_e_primitive(self) -> None:
+        # Trace the ACTUAL call path (not just importability): context_pack_index
+        # ._neighborhood must invoke repo_views.neighborhood_edges.
+        from unittest import mock
+        from tools import context_pack_index as cpi
+        from tools import repo_views as rv
+
+        class _GI:
+            nodes = {"a.py": {"kind": "module"}}
+            out_edges = {"a.py": [{"to": "b.py", "type": "import",
+                                   "confidence": "high", "line": 1}]}
+            in_edges = {"a.py": [{"from": "c.py", "type": "import",
+                                  "confidence": "high", "line": 2}]}
+
+        real = rv.neighborhood_edges
+        with mock.patch.object(rv, "neighborhood_edges",
+                               side_effect=real) as spy:
+            lines = cpi._neighborhood(_GI(), "a.py", 20)
+        spy.assert_called_once()                     # genuine consumption
+        self.assertTrue(any("b.py" in ln for ln in lines))
+        self.assertTrue(any("c.py" in ln for ln in lines))
+        # and cpi imports rv at module scope (the real integration, not a copy)
+        self.assertIs(cpi.rv, rv)
+
+    def test_seed_order_impl_before_docs_control_plane(self) -> None:
+        from tools import context_pack_sources as cps
+        changed = ["project-control/state.json", "docs/guide.md",
+                   "tools/impl_alpha.py", "services/api/app/thing.py"]
+        impl = ["tools/impl_beta.py"]
+        prose = []
+        with tempfile.TemporaryDirectory() as repo:
+            ordered, prov = cps._ordered_seeds(repo, changed, impl, prose)
+        tiers = {s["seed"]: s["tier"] for s in prov["selected"]}
+        # implementation paths (changed + allowed) precede docs/control-plane
+        impl_seeds = [s for s in ordered if not s.startswith(
+            ("project-control/", "docs/", ".github/", ".claude/"))]
+        docs_seeds = [s for s in ordered if s.startswith(
+            ("project-control/", "docs/"))]
+        self.assertTrue(impl_seeds, "no implementation seeds selected")
+        for imp in impl_seeds:
+            for doc in docs_seeds:
+                self.assertLess(ordered.index(imp), ordered.index(doc))
+        self.assertEqual(tiers.get("tools/impl_alpha.py"), "changed_impl")
+        self.assertEqual(tiers.get("tools/impl_beta.py"), "allowed_impl")
+
+    def test_non_canonical_seed_refused_recorded(self) -> None:
+        from tools import context_pack_sources as cps
+        with tempfile.TemporaryDirectory() as repo:
+            ordered, prov = cps._ordered_seeds(
+                repo, ["C:/abs/x.py", "../evil.py", "tools/ok.py"], [], [])
+        refused = {r["seed"] for r in prov["refused"]}
+        self.assertIn("C:/abs/x.py", refused)
+        self.assertIn("../evil.py", refused)
+        self.assertNotIn("C:/abs/x.py", ordered)
+
+
 class Proof7EntryPoint(unittest.TestCase):
     """Proof 7: the canonical entry point ACTUALLY calls the integrated
     compiler + grounded router (never a second packet)."""
@@ -472,9 +533,65 @@ class Proof7EntryPoint(unittest.TestCase):
                                 "subsystems_touched": 0},
                 "provenance": {}, "sufficiency": {"sufficient": False},
                 "included_files": [], "actuals": {}}
-        signals, notes = co.derive_signals(meta, 3)
+        signals, notes, prov = co.derive_signals(meta, 3)
         self.assertTrue(signals.ambiguity_or_missing_evidence)
         self.assertTrue(any("requirement evidence" in n for n in notes))
+
+
+class D019HonestRouting(unittest.TestCase):
+    """M0-T076 / D-019-R032/R033: no risk-bearing Signals field is a silent
+    False; an undetermined risk signal raises ambiguity; a concurrency task can
+    never emerge concurrency_or_performance=False with no ambiguity."""
+
+    def _sufficient_code_task(self):
+        return {"integration": {"implementation_paths": ["tools/repo_index_cache.py"],
+                                "requirements": {"in_regime": True, "error": None},
+                                "subsystems_touched": 1, "ontology_status": "ok",
+                                "memory_status": "ok", "unresolved_seeds": []},
+                "provenance": {"changed_targets": 1, "dependency_breadth": 2},
+                "sufficiency": {"sufficient": True, "code_evidence_required": True,
+                                "code_evidence_resolved": True},
+                "included_files": [{"group": "task_packet"}],
+                "actuals": {"estimated_tokens": 1000}}
+
+    def test_concurrency_task_never_false_without_ambiguity(self) -> None:
+        from tools import context_orchestrate as co
+        signals, notes, prov = co.derive_signals(self._sufficient_code_task(), 0)
+        # the forbidden pre-change outcome: concurrency_or_performance=False with
+        # ambiguity=False. Now impossible for a code task.
+        self.assertFalse(
+            signals.concurrency_or_performance is False
+            and signals.ambiguity_or_missing_evidence is False)
+        self.assertTrue(signals.ambiguity_or_missing_evidence)
+        self.assertTrue(prov["concurrency_or_performance"].get("undetermined"))
+        self.assertTrue(prov["destructive_operations"].get("undetermined"))
+        self.assertTrue(prov["external_side_effects"].get("undetermined"))
+
+    def test_every_signal_has_a_basis(self) -> None:
+        from tools import context_orchestrate as co
+        _s, _n, prov = co.derive_signals(self._sufficient_code_task(), 0)
+        for field in ("security_or_authorization_impact", "protected_configuration_impact",
+                      "destructive_operations", "external_side_effects",
+                      "schema_or_migration_impact", "concurrency_or_performance",
+                      "control_plane_change", "legal_or_numeric_correctness"):
+            self.assertIn(field, prov)
+            self.assertIn("basis", prov[field])
+
+    def test_pure_docs_task_affirms_absence_without_ambiguity(self) -> None:
+        from tools import context_orchestrate as co
+        meta = {"integration": {"implementation_paths": [],
+                                "requirements": {"in_regime": False, "error": None},
+                                "subsystems_touched": 0, "ontology_status": None,
+                                "memory_status": "ok", "unresolved_seeds": []},
+                "provenance": {"changed_targets": 0, "dependency_breadth": 0},
+                "sufficiency": {"sufficient": True},
+                "included_files": [{"group": "task_packet"}],
+                "actuals": {"estimated_tokens": 100}}
+        _s, _n, prov = co.derive_signals(meta, 0)
+        # no code in scope -> the behavioral risks are AFFIRMED absent, not undetermined
+        self.assertEqual(prov["concurrency_or_performance"]["basis"],
+                         "structured:no_code_scope")
+        self.assertFalse(prov["concurrency_or_performance"].get("undetermined"))
 
 
 class RetentionReal(unittest.TestCase):

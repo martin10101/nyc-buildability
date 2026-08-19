@@ -87,6 +87,74 @@ def _pc(repo: str, *parts: str) -> str:
     return os.path.join(repo, "project-control", *parts)
 
 
+#: Prefixes that are documentation/control-plane (prose), NOT implementation.
+_CONTROL_DOCS_PREFIXES = ("project-control/", "docs/", ".github/", ".claude/")
+
+
+def _is_impl_seed(p: str) -> bool:
+    return (cpaths.is_canonical_repo_path(p)
+            and not p.startswith(_CONTROL_DOCS_PREFIXES))
+
+
+def _ordered_seeds(repo: str, changed: list[str], impl_paths: list[str],
+                   prose_resolved: list[str]) -> tuple[list[str], dict]:
+    """Deterministic priority-ordered graph seeds (D-019-R030).
+
+    Tier order: (1) changed implementation paths, (2) canonical allowed
+    implementation paths, (3) graph-derived test/dependent paths (the
+    conventional ``tools/test_<stem>.py`` of the implementation seeds),
+    (4) strictly-extracted prose candidates, (5) documentation/control-plane
+    candidates. Non-canonical seeds are refused (recorded). Returns the ordered
+    seed list (deduped, tier-priority preserved) and a provenance record naming
+    every selected, skipped-over-cap and refused candidate."""
+    refused: list[dict] = []
+
+    def _canon(seq):
+        keep = []
+        for p in seq:
+            if cpaths.is_canonical_repo_path(p):
+                keep.append(p)
+            else:
+                refused.append({"seed": p, "reason": "non_canonical_path"})
+        return keep
+
+    changed_c = _canon(changed)
+    prose_c = _canon(prose_resolved)
+    p1 = sorted({c for c in changed_c if _is_impl_seed(c)})            # changed impl
+    p2 = sorted({p for p in impl_paths if _is_impl_seed(p)})          # allowed impl
+    p3 = []                                                            # test/dependents
+    for base in p1 + p2:
+        stem = base.rsplit("/", 1)[-1].rsplit(".", 1)[0]
+        conv = f"tools/test_{stem}.py"
+        if cpaths.contained_exists(repo, conv):
+            p3.append(conv)
+    p3 = sorted(set(p3))
+    p4 = sorted({p for p in prose_c if _is_impl_seed(p)})             # prose impl
+    p5 = sorted({c for c in changed_c if not _is_impl_seed(c)})       # docs/control-plane
+    tiers = [("changed_impl", p1), ("allowed_impl", p2),
+             ("graph_test_dependent", p3), ("prose_candidate", p4),
+             ("docs_control_plane", p5)]
+    ordered: list[str] = []
+    tier_of: dict[str, str] = {}
+    seen: set[str] = set()
+    for name, tier in tiers:
+        for p in tier:
+            if p not in seen:
+                seen.add(p)
+                ordered.append(p)
+                tier_of[p] = name
+    cap = cpi.MAX_SEEDS
+    prov = {
+        "cap": cap,
+        "tier_order": ["changed_impl", "allowed_impl", "graph_test_dependent",
+                       "prose_candidate", "docs_control_plane"],
+        "selected": [{"seed": p, "tier": tier_of[p]} for p in ordered[:cap]],
+        "skipped_over_cap": [{"seed": p, "tier": tier_of[p]} for p in ordered[cap:]],
+        "refused": refused,
+    }
+    return ordered, prov
+
+
 def gather_sources(repo: str, task_id: str, diff_base: str, include: list[str],
                    ci_summary: str | None, graph_limit: int,
                    index_opts: dict | None = None) -> tuple[list[Source], list[dict], list[dict], dict, dict, dict]:
@@ -172,13 +240,15 @@ def gather_sources(repo: str, task_id: str, diff_base: str, include: list[str],
     prose = cpe.extract_prose_paths(repo, task_dict)
     extras["implementation_paths"] = impl_paths
     extras["prose_extraction"] = prose["records"]
-    seed_candidates = sorted(set(changed) | set(impl_paths) | set(prose["resolved"]))
-    targets, refused_seeds = [], []
-    for t in seed_candidates:
-        if cpaths.is_canonical_repo_path(t):
-            targets.append(t)
-        else:
-            refused_seeds.append({"seed": t, "reason": "non_canonical_path"})
+    # DETERMINISTIC SEED ORDER (M0-T076, D-019-R030): changed implementation
+    # paths, then canonical allowed implementation paths, then graph-derived
+    # test/dependent paths, then strict prose candidates, then documentation/
+    # control-plane paths — so the bounded five-seed cap is spent on the task's
+    # real implementation before docs/control-plane, and every selected,
+    # unresolved and skipped-over-cap candidate is recorded.
+    targets, seed_prov = _ordered_seeds(repo, changed, impl_paths, prose["resolved"])
+    extras["seed_selection"] = seed_prov
+    refused_seeds = seed_prov["refused"]
     extras["refused_seeds"] = refused_seeds
     idx = cpi.gather_index_sources(repo, targets, graph_limit, index_opts)
     sources.extend(idx["sources"])
