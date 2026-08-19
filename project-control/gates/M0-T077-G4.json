@@ -5,8 +5,17 @@
   "role": "independent_review",
   "result": "PASS",
   "report_file": "project-control/reports/M0-T077-review-G4.md",
-  "reviewed_at": "2026-08-19T23:09:29.461464+00:00",
-  "content_manifest_sha256": "f28fa17a04ae76d974d1154b3c3aec75c03cf4defe0294b47dea140ce4b1b1bb",
-  "reviewed_sha": "25715f05d6aae9b898a3e2b1f0d3a5fdc32d321c",
-  "updated_at": "2026-08-19T23:09:31.132910+00:00"
+  "reviewed_at": "2026-08-19T23:39:08.642630+00:00",
+  "content_manifest_sha256": "f4950914de9c1d13bcdea5ec50d887aa7b0ab806dba43d2ea729633c71173090",
+  "reviewed_sha": "4b34612882e34fab08a231b6c62fa12b3f54edf6",
+  "history": [
+    {
+      "reviewer": "qa-engineer",
+      "role": "independent_review",
+      "result": "PASS",
+      "report_file": "project-control/reports/M0-T077-review-G4.md",
+      "reviewed_at": "2026-08-19T23:09:29.461464+00:00"
+    }
+  ],
+  "updated_at": "2026-08-19T23:39:10.307890+00:00"
 }
