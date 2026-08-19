@@ -38,8 +38,8 @@ identity:
 | File | Change | Why |
 |---|---|---|
 | `.claude/settings.json` | +24 lines, purely additive merge of 5 MCP keys + 1 deny-first `permissions.deny: ["mcp__*"]` rule | The repository-level default-deny policy itself (D-020-R020..R024) |
-| `tools/validate_mcp_policy.py` | new (stdlib, ~210 lines) | Fail-closed durable validation of every policy invariant (p1-p9) incl. merge-preservation and consumer-discard shape guards (R029) |
-| `tools/test_mcp_policy.py` | new (28 tests) | Removal/weakening regressions for the validator incl. the G3 bypass fixtures (R029) |
+| `tools/validate_mcp_policy.py` | new (stdlib, ~310 lines) | Fail-closed durable validation: exact policy-key values, merge preservation, and a whole-file shape assertion (p1-p9) (R029) |
+| `tools/test_mcp_policy.py` | new (35 tests) | Removal/weakening regressions for the validator incl. the G3 bypass fixtures and re-review probes 59-63 (R029) |
 | `.github/workflows/ci.yml` | +10 lines: two steps in the existing control-plane job | Runs the validator + tests on every push/PR so weakening fails that job visibly (R029; merge-gating is a branch-protection setting this task does not change); no other workflow/test touched |
 | `docs/MCP_DEFAULT_DENY_POLICY.md` | new | The rule, per-key mechanism, inventory summary, future narrow-authorization path, honest boundary (R028) |
 | `project-control/directives/D-020-program-wide-mcp-default-deny/*` | new | Verbatim capture + 34-requirement decomposition + pending verification stub (R005) |
@@ -50,7 +50,21 @@ identity:
 ## Self-check results (producer, G2-class; independent gates still required)
 
 - `python tools/validate_mcp_policy.py --check` → exit 0
-- `python tools/test_mcp_policy.py` → 28/28 OK
+- `python tools/test_mcp_policy.py` → 35/35 OK
+
+## G5 correction (2026-08-19, after the G5 PASS-with-required-correction verdict)
+
+- **G5 F-1 (blocking, disclosure):** per-process MCP resolution and Agent-tool
+  subagent inheritance are now disclosed in the policy doc's enforcement boundary
+  and the fresh-session proof §5 — a session started outside a worktree root
+  (including an orchestrator session at the user-profile directory) carries the
+  ambient connectors through its whole agent tree; the two sentences that narrowed
+  the residual to "a HUMAN starting a session one level down" are corrected; the
+  operational rule (start orchestrator/interactive sessions from a repository
+  worktree root) is recorded alongside the owner-gated managed-settings close-out.
+  The enforcement blob `dd11cd79…` did not change.
+- **G5 F-2 (minor):** validator/test counts in this report refreshed to the shipped
+  310-line validator and 35-test suite; the PR body was refreshed the same way.
 - `python tools/validate_directive_compliance.py --check` → exit 0 (D-020 registered)
 - `python tools/modularity_check.py --check` → PASS (only pre-existing warnings on
   legacy files; both new modules are small and single-purpose)

@@ -118,15 +118,28 @@ not change.)
   only — it does not walk up to the repository root. A session started in a
   SUBDIRECTORY (e.g. `<repo>/tools`) loads no project settings and therefore gets
   the full ambient connector set, including live Supabase tools. Committed evidence:
-  `project-control/reports/M0-T077-fresh-session-proof.md` Runs F/G. Mitigations in
-  place: supervised workers always launch with `cwd` set to the worktree ROOT
-  (`tools/agent_supervisor/claude_runner.py` path, verified read-only), so agent
-  sessions are covered; the residual is a HUMAN starting a session one level down.
-  Do not "fix" this by scattering settings files into subdirectories. **Smallest
-  owner-gated next step:** the only supported machine-wide close-out is an
-  owner-installed managed settings file (an owner-machine action outside repository
-  scope, deliberately not performed by this task); short of that, start repository
-  sessions from the repo root.
+  `project-control/reports/M0-T077-fresh-session-proof.md` Runs F/G. Mitigation in
+  place: SUPERVISOR-launched workers always start with `cwd` set to the worktree
+  ROOT (`tools/agent_supervisor/claude_runner.py` path, verified read-only), so
+  supervised sessions are covered. Do not "fix" this by scattering settings files
+  into subdirectories.
+- **Per-process resolution and subagent inheritance (G5 F-1):** Claude Code
+  resolves MCP configuration ONCE per `claude` process, at session start.
+  Agent-tool subagents dispatched inside a session are not new processes — they
+  INHERIT the parent session's connector set regardless of the directory they are
+  assigned to work in. Consequently, a session started outside a repository
+  worktree root — including an interactive orchestrator session started at the
+  user-profile directory, the operating pattern at the time this policy landed —
+  carries the ambient connectors (including live Supabase tools) through its
+  entire agent tree, even while its agents work inside this repository and a
+  fresh `claude mcp list` in the same worktree correctly reports none. The
+  residuals are therefore: any interactive session (and its whole subagent tree)
+  started anywhere other than a repository worktree root, including one level
+  down inside the repository. **Operational rule (smallest next step):** start
+  orchestrator and interactive sessions FROM a repository worktree root.
+  **Smallest owner-gated close-out:** an owner-installed managed settings file
+  (an owner-machine action outside repository scope, deliberately not performed
+  by this task).
 - Supervised launches: the supervisor starts workers with `cwd` set to a repository
   worktree (`tools/agent_supervisor/claude_runner.py`), so fresh supervised sessions
   load the same checked-in settings. Details and residual owner-gated items:

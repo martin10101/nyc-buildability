@@ -132,8 +132,19 @@ owner-gated next step.
   settings at all (cwd-only resolution — Runs F/G above, G3 F-1) and sessions
   launched outside the repository never load them; blocking either case at machine
   scope would require changing the owner's global configuration or installing
-  managed settings, which D-020 §6 prohibits within this task. Supervised workers
-  always launch at the worktree root and are therefore covered.
+  managed settings, which D-020 §6 prohibits within this task. SUPERVISOR-launched
+  workers always start at the worktree root and are therefore covered.
+- **Per-process resolution and subagent inheritance (G5 F-1):** MCP configuration
+  is resolved once per `claude` process at session start, and Agent-tool subagents
+  INHERIT the parent session's connector set regardless of their assigned working
+  directory. An interactive orchestrator session started outside a worktree root
+  (e.g. at the user-profile directory — the pattern in use when this task ran, as
+  the G5 reviewer demonstrated from inside its own session) therefore carries the
+  ambient connectors through its entire agent tree even while working in this
+  repository. The fresh-process runs in this report measure what a NEW session
+  gets; they do not retrofit protection onto an already-running session. The
+  operational rule and the owner-gated close-out are recorded in
+  `docs/MCP_DEFAULT_DENY_POLICY.md` ("Honest enforcement boundary").
 - An interactive user can still take explicit manual action in their own session
   (e.g. `claude mcp add` at local scope). The policy removes the ambient DEFAULT
   presence, which is D-020's stated objective; it is not (and cannot be) a
