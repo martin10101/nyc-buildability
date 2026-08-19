@@ -137,7 +137,7 @@
     "directive-compliance-verifier"
   ],
   "status": "awaiting_gate",
-  "progress_percent": 95,
+  "progress_percent": 96,
   "risks": [
     "Settings-merge risk: a wholesale replacement would violate D-020-R022 - mitigated by merge-only edit, AS-4 verbatim-preservation check, and the validator asserting the pre-existing keys still exist",
     "Over-blocking risk: allowedMcpServers [] denies every MCP server at repository scope by design; a future task that genuinely needs one connector must follow the documented narrow authorization procedure (edit the checked-in policy in its own reviewed task)",
@@ -146,7 +146,7 @@
   ],
   "blockers": [],
   "created_at": "2026-08-19T21:25:58.957357+00:00",
-  "updated_at": "2026-08-19T22:42:35.712504+00:00",
+  "updated_at": "2026-08-19T22:58:14.186962+00:00",
   "directive_refs": [
     {
       "directive_id": "D-020",
@@ -185,6 +185,13 @@
       "percent": 95,
       "status": "awaiting_gate",
       "message": "G3 blocking corrections independently confirmed CLOSED at b0200803 by the same reviewer (18-shape fuzz, zero validator-pass-with-consumer-discard bypasses; F-6-residual phrasing verified; settings blob dd11cd79 unchanged; containment clean). Operational note for handoff: adding a legitimate new settings key requires extending KNOWN_KEY_SHAPES in the same reviewed change (intended fail-closed visibility). G4/G5 verdicts pending."
+    },
+    {
+      "at": "2026-08-19T22:58:14.186962+00:00",
+      "agent": "orchestrator",
+      "percent": 96,
+      "status": "awaiting_gate",
+      "message": "G5 recorded PASS (verdict: PASS with one required correction). BLOCKING before acceptance: G5 F-1 - disclose per-process MCP resolution + subagent inheritance (subagents of a session started outside a worktree root, incl. an orchestrator session at the user profile, inherit the ambient connector set regardless of cwd) in the policy doc boundary + proof section 5; correct the two sentences narrowing the residual to a human one level down; record the operational next step (start orchestrator/interactive sessions at a repo worktree root) alongside the owner-gated managed-settings option. Discretionary G5 F-2: refresh stale counts in submission report + PR body. Enforcement blob dd11cd79 must not change."
     }
   ]
 }
