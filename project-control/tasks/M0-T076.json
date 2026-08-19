@@ -148,15 +148,15 @@
     "G4",
     "G5"
   ],
-  "producer_agent": null,
+  "producer_agent": "orchestrator",
   "reviewer_agents": [
     "code-reviewer",
     "qa-engineer",
     "security-reviewer",
     "directive-compliance-verifier"
   ],
-  "status": "backlog",
-  "progress_percent": 0,
+  "status": "awaiting_gate",
+  "progress_percent": 85,
   "risks": [
     "Touching accepted M0-T075 modules risks regressions: every existing suite is in documented_test_commands and permanent CI; behavior-preserving integration verified against a fresh clean-state baseline (M0-T075 baseline preserved unmodified)",
     "The lock rework is concurrency-critical: the exact publication-race regression plus adversarial raced probes must prove no lost node under the pre-owner.json interleave",
@@ -164,7 +164,7 @@
   ],
   "blockers": [],
   "created_at": "2026-08-19T06:19:42.296300+00:00",
-  "updated_at": "2026-08-19T06:19:42.424391+00:00",
+  "updated_at": "2026-08-19T07:09:59.403050+00:00",
   "directive_refs": [
     {
       "directive_id": "D-019",
@@ -185,5 +185,21 @@
     "python tools/modularity_check.py --check",
     "python tools/validate_directive_compliance.py --check"
   ],
-  "worktree": "C:/Users/MLFLL/Downloads/nyc-zoning/wt-m0t064"
+  "worktree": "C:/Users/MLFLL/Downloads/nyc-zoning/wt-m0t064",
+  "progress_log": [
+    {
+      "at": "2026-08-19T07:09:46.157729+00:00",
+      "agent": "orchestrator",
+      "percent": 90,
+      "status": "in_progress",
+      "message": "corrections A-G implemented; 252 passed/1 skipped; producer matrix complete"
+    },
+    {
+      "at": "2026-08-19T07:09:46.377834+00:00",
+      "agent": "orchestrator",
+      "percent": 95,
+      "status": "self_check",
+      "message": "self-check green: full context-pipeline suite, modularity, directive validator, clean-checkout proofs"
+    }
+  ]
 }
