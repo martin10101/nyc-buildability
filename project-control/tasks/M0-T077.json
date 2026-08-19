@@ -29,17 +29,6 @@
     "tools/validate_mcp_policy.py",
     "tools/test_mcp_policy.py",
     ".github/workflows/ci.yml",
-    "project-control/directives/D-020-program-wide-mcp-default-deny/source-001.md",
-    "project-control/directives/D-020-program-wide-mcp-default-deny/manifest.json",
-    "project-control/directives/D-020-program-wide-mcp-default-deny/requirements.json",
-    "project-control/directives/D-020-program-wide-mcp-default-deny/verification.json",
-    "project-control/directives/index.json",
-    "project-control/tasks/M0-T077.json",
-    "project-control/state.json",
-    "project-control/gates/M0-T077-G0.json",
-    "project-control/gates/M0-T077-G3.json",
-    "project-control/gates/M0-T077-G4.json",
-    "project-control/gates/M0-T077-G5.json",
     "project-control/reports/M0-T077-G0-readiness.md",
     "project-control/reports/M0-T077-mcp-audit.md",
     "project-control/reports/M0-T077-fresh-session-proof.md",
@@ -50,8 +39,7 @@
     "project-control/reports/M0-T077-review-G4.md",
     "project-control/reports/M0-T077-review-G5.md",
     "project-control/reports/M0-T077-directive-verification.md",
-    "docs/SESSION_HANDOFF.md",
-    "project-control/reports/M0-T077.json"
+    "docs/SESSION_HANDOFF.md"
   ],
   "forbidden_paths": [
     "tools/agent_supervisor/",
@@ -136,8 +124,8 @@
     "security-reviewer",
     "directive-compliance-verifier"
   ],
-  "status": "awaiting_gate",
-  "progress_percent": 95,
+  "status": "rework",
+  "progress_percent": 98,
   "risks": [
     "Settings-merge risk: a wholesale replacement would violate D-020-R022 - mitigated by merge-only edit, AS-4 verbatim-preservation check, and the validator asserting the pre-existing keys still exist",
     "Over-blocking risk: allowedMcpServers [] denies every MCP server at repository scope by design; a future task that genuinely needs one connector must follow the documented narrow authorization procedure (edit the checked-in policy in its own reviewed task)",
@@ -146,7 +134,7 @@
   ],
   "blockers": [],
   "created_at": "2026-08-19T21:25:58.957357+00:00",
-  "updated_at": "2026-08-19T23:39:13.096786+00:00",
+  "updated_at": "2026-08-19T23:43:15.771603+00:00",
   "directive_refs": [
     {
       "directive_id": "D-020",
@@ -206,6 +194,13 @@
       "percent": 98,
       "status": "rework",
       "message": "Administrative rework transition solely to re-freeze the submission identity at the final content: the reviewer-required corrections (G3 F-2-residual/F-6-residual, G4 MAJOR-1/MAJOR-2/MINOR, G5 F-1/F-2) landed after the 9e5c8221 submission; every correction is independently confirmed CLOSED and the DCV verified ALL 34 requirements PASS at 35ffd42. No code change in this transition."
+    },
+    {
+      "at": "2026-08-19T23:43:15.771603+00:00",
+      "agent": "orchestrator",
+      "percent": 98,
+      "status": "rework",
+      "message": "Contract amendment (narrowing, T076 precedent): removed 12 CLI/registry-owned lifecycle records (state.json, gate records, CLI submission record, the task packet itself, D-020 directive registry files, index.json) from allowed_paths - they are orchestrator/CLI-owned control-plane records, not producer work product, and their inclusion made the content identity self-referential (every lifecycle write moved the identity the lifecycle was trying to freeze; accept fail-closed on the verifier record dirty state). Added the directive-verification preservation report. Substantive work product and all evidence reports remain in scope; no substantive file changed. Re-freeze + gate re-record + verification + accept follow at one stable HEAD."
     }
   ]
 }
