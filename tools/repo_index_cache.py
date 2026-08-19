@@ -176,19 +176,23 @@ _OWNER_STALENESS_KEYS = ("pid", "acquired_at")
 class SingleWriterLock:
     """Single-writer lock with ATOMIC ownership publication (M0-T076 / D-019-R015..R020).
 
-    The exclusion primitive is still an atomic ``mkdir`` of ``writer.lock``, but
-    ownership is only ever OBSERVED as complete: ``owner.json`` (pid + an
-    unguessable token + acquired_at) is written into a private staging directory
-    and atomically ``os.replace``-d into place, so a peer either sees no lock, or
-    a lock whose metadata is already complete — never a half-published one it can
-    mistake for dead.
+    The exclusion primitive is an atomic ``os.mkdir`` of ``writer.lock``: it fails
+    if the directory already exists on BOTH POSIX and Windows and NEVER replaces
+    an existing (even empty) lock — unlike ``os.rename``/``os.replace`` onto a
+    directory, whose POSIX semantics would silently replace an empty target. The
+    complete ownership record (pid + an unguessable token + acquired_at) is then
+    published immediately and atomically (temp file + ``os.rename`` onto the
+    absent ``owner.json``).
 
-    A peer that finds the directory present treats it as LIVE unless ownership is
-    COMPLETE and provably abandoned (recorded pid dead AND aged past
-    LOCK_STALE_SECONDS). Missing/partial metadata is a just-published lock, not a
-    stale one, and can only be reclaimed once the directory ITSELF has aged past
-    the timeout (R018). Reclamation never rmtrees in place: the stale directory is
-    atomically MOVED to a unique quarantine name (R017), so exactly one racing
+    A peer that finds the directory present cannot take it over through the
+    reserve path (its ``mkdir`` fails); it must go through reclaim, which treats
+    the lock as LIVE unless ownership is COMPLETE and provably abandoned (recorded
+    pid dead AND aged past LOCK_STALE_SECONDS). Missing/partial metadata is a
+    just-reserved lock (the tiny reserve→publish window) or a mid-publication
+    crash, not a stale one, and can only be reclaimed once the directory ITSELF
+    has aged past the timeout (R018) — so a peer never acts on an incomplete lock.
+    Reclamation never rmtrees in place: the stale directory is atomically MOVED to
+    a unique quarantine name via ``os.rename`` (R017), so exactly one racing
     reclaimer wins. Release removes the lock only while our token still owns it
     (R019)."""
 
@@ -216,18 +220,18 @@ class SingleWriterLock:
     def _has_staleness_fields(meta: dict[str, Any]) -> bool:
         return all(k in meta for k in _OWNER_STALENESS_KEYS)
 
-    def _build_staging(self, token: str) -> pathlib.Path:
-        """A fully-populated private staging dir holding the COMPLETE ownership
-        record, ready to be atomically renamed into place. The lock therefore
-        only ever becomes visible WITH its metadata already inside (R015)."""
-        staging = self.cache_dir / f"writer.lock.pub.{os.getpid()}.{token[:8]}"
-        shutil.rmtree(staging, ignore_errors=True)
-        staging.mkdir(parents=True)
+    def _publish_owner(self, token: str) -> None:
+        """Publish the COMPLETE ownership record into the held lock directory
+        atomically: write a private temp file, then ``os.rename`` it onto
+        ``owner.json`` (the target is absent on a freshly-mkdir'd lock, so the
+        rename is atomic and cross-platform). ``os.rename`` — not ``os.replace``
+        — so a test that patches the store's atomic-promotion primitive
+        (``os.replace``) never perturbs lock ownership."""
         record = {"pid": os.getpid(), "token": token, "acquired_at": time.time(),
                   "host": _host_id()}
-        (staging / "owner.json").write_text(json.dumps(record, sort_keys=True),
-                                            encoding="utf-8")
-        return staging
+        tmp = self.lock_path / f"owner.json.{os.getpid()}.{token[:8]}.tmp"
+        tmp.write_text(json.dumps(record, sort_keys=True), encoding="utf-8")
+        os.rename(tmp, self.lock_path / "owner.json")
 
     def _dir_age(self) -> float:
         try:
@@ -263,25 +267,32 @@ class SingleWriterLock:
     def acquire(self) -> None:
         self.lock_path.parent.mkdir(parents=True, exist_ok=True)
         token = secrets.token_hex(16)
-        # Bounded retry loop: each pass either wins the atomic publish, reclaims a
-        # provably stale lock and retries, or refuses a live one.
+        # Bounded retry loop: each pass either wins the exclusive create, reclaims
+        # a provably stale lock and retries, or refuses a live one.
         for _ in range(64):
-            staging = self._build_staging(token)
             try:
-                # Atomic exclusive publish: rename the fully-populated staging dir
-                # onto writer.lock. Renaming onto an EXISTING lock raises, so the
-                # lock is never observed empty/owner-less through this path (R015).
-                os.rename(staging, self.lock_path)
-            except OSError:
-                shutil.rmtree(staging, ignore_errors=True)
+                # ATOMIC EXCLUSIVE reservation. os.mkdir fails if the directory
+                # exists on BOTH POSIX and Windows — and, unlike os.rename onto a
+                # directory, it NEVER replaces an existing (even empty) lock. This
+                # is what makes the publication-window guarantee (R018) hold
+                # cross-platform: a peer that finds any writer.lock present cannot
+                # take it over here; it must go through the reclaim path, which
+                # refuses a young owner-less lock.
+                self.lock_path.mkdir()
+            except FileExistsError:
                 meta = self._read_meta()
                 if self._reclaimable(meta):
                     self._atomic_quarantine_stale()
-                    continue  # publish a fresh lock (another writer may win first)
+                    continue  # try to reserve a fresh lock (another writer may win)
                 raise CacheError(
                     "concurrent_writer",
                     f"another writer holds {self.lock_path} "
                     f"(pid {meta.get('pid') if meta else 'unpublished'})")
+            # We hold the reserved directory: publish COMPLETE ownership
+            # immediately and atomically, before returning. During the tiny
+            # reserve→publish window a peer's mkdir fails AND it reads an
+            # owner-less lock, so it refuses (never acts on an incomplete lock).
+            self._publish_owner(token)
             self._token = token
             self._held = True
             return
