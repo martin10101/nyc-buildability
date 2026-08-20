@@ -1,10 +1,11 @@
-import { cleanup, fireEvent, render, screen, within } from "@testing-library/react";
+import { cleanup, fireEvent, render, screen, waitFor, within } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
+import { PropertyLookup } from "@/components/property/PropertyLookup";
 import { ScenarioFailure } from "@/components/scenario/ScenarioFailure";
 import { ScenarioPanel } from "@/components/scenario/ScenarioPanel";
 import { ScenarioResult } from "@/components/scenario/ScenarioResult";
 import type { Scenario } from "@/lib/scenario-contract";
-import { jsonResponse } from "@/test-support/fixtures";
+import { baseProfile, jsonResponse } from "@/test-support/fixtures";
 import preliminaryFixture from "../../../../../../packages/contracts/fixtures/valid/scenario/preliminary_r5_cap.json";
 import unsupportedFixture from "../../../../../../packages/contracts/fixtures/valid/scenario/unsupported_family.json";
 import conflictFixture from "../../../../../../packages/contracts/fixtures/valid/scenario/no_scenario_conflict.json";
@@ -157,5 +158,54 @@ describe("ScenarioPanel — independent load + retry", () => {
       />,
     );
     await screen.findByTestId("scenario-state-feature_unavailable");
+  });
+});
+
+// --------------------------------------------------------------------------
+// Defense-in-depth at the property-screen integration point (M5-T002 wiring):
+// when the surface is disabled the panel is never mounted and no request to the
+// scenario endpoint is ever issued (mirrors the rule-eval gating test).
+// --------------------------------------------------------------------------
+
+function stubProfileAndScenario(): { urls: string[] } {
+  const urls: string[] = [];
+  vi.stubGlobal(
+    "fetch",
+    vi.fn(async (url: string) => {
+      urls.push(url);
+      return url.includes("/scenario")
+        ? jsonResponse(preliminaryDoc(), 200)
+        : jsonResponse(baseProfile(), 200);
+    }),
+  );
+  return { urls };
+}
+
+function submitBbl(value: string) {
+  fireEvent.change(screen.getByLabelText("BBL"), { target: { value } });
+  fireEvent.click(screen.getByRole("button", { name: "Look up property" }));
+}
+
+describe("PropertyLookup — scenario surface gating (no-fetch when disabled)", () => {
+  it("does NOT mount the scenario panel or call the endpoint when disabled", async () => {
+    const { urls } = stubProfileAndScenario();
+    render(<PropertyLookup scenarioEnabled={false} />);
+    submitBbl("1000010010");
+    await screen.findByTestId("profile-view");
+
+    await new Promise((resolve) => setTimeout(resolve, 20));
+    expect(screen.queryByTestId("scenario-panel")).toBeNull();
+    expect(urls.some((url) => url.includes("/scenario"))).toBe(false);
+  });
+
+  it("mounts the panel and calls the scenario endpoint exactly when enabled", async () => {
+    const { urls } = stubProfileAndScenario();
+    render(<PropertyLookup scenarioEnabled={true} />);
+    submitBbl("1000010010");
+    await screen.findByTestId("profile-view");
+    await screen.findByTestId("scenario-panel");
+    await waitFor(() =>
+      expect(urls.some((url) => url.endsWith("/1000010010/scenario"))).toBe(true),
+    );
   });
 });

@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { InternalBanner } from "@/components/property/InternalBanner";
 import { PropertyLookup } from "@/components/property/PropertyLookup";
 import { ruleEvaluationSurfaceEnabled } from "@/lib/rule-evaluation";
+import { scenarioSurfaceEnabled } from "@/lib/scenario";
 
 export const metadata: Metadata = {
   title: "Property lookup — NYC Buildability (internal)",
@@ -20,6 +21,12 @@ export const metadata: Metadata = {
  * off the rule-evaluation surface is never rendered and its fetch is never
  * issued (defense in depth; the endpoint is independently gated). A per-request
  * `?ruleeval=off` acts only as a fail-safe kill switch.
+ *
+ * M5-T002 adds an independent draft scenario surface the same way: the Server
+ * Component reads the non-public runtime flag INTERNAL_SCENARIO_UI once per
+ * request and passes a plain boolean into the client tree. When off the scenario
+ * surface is never rendered and its fetch is never issued; `?scenario=off` acts
+ * only as a fail-safe kill switch. The two surfaces are gated independently.
  */
 export default async function PropertyPage({
   searchParams,
@@ -28,10 +35,11 @@ export default async function PropertyPage({
 }) {
   const params = await searchParams;
   const ruleEvalEnabled = ruleEvaluationSurfaceEnabled({ ruleeval: params.ruleeval });
+  const scenarioEnabled = scenarioSurfaceEnabled({ scenario: params.scenario });
   return (
     <div className="property-shell">
       <InternalBanner />
-      <PropertyLookup ruleEvalEnabled={ruleEvalEnabled} />
+      <PropertyLookup ruleEvalEnabled={ruleEvalEnabled} scenarioEnabled={scenarioEnabled} />
     </div>
   );
 }

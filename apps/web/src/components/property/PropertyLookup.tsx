@@ -20,6 +20,7 @@ import { ProfessionalReviewPanel } from "./ProfessionalReviewPanel";
 import { UnsupportedSection } from "./UnsupportedSection";
 import { ZoningSection } from "./ZoningSection";
 import { RuleEvaluationPanel } from "@/components/rule-evaluation/RuleEvaluationPanel";
+import { ScenarioPanel } from "@/components/scenario/ScenarioPanel";
 
 /**
  * Property screen state machine (tasks M2-T001/M2-T002). Purely
@@ -114,9 +115,11 @@ function CompletenessBanner({ profile }: { profile: PropertyProfile }) {
 function ProfileView({
   profile,
   ruleEvalEnabled,
+  scenarioEnabled,
 }: {
   profile: PropertyProfile;
   ruleEvalEnabled: boolean;
+  scenarioEnabled: boolean;
 }) {
   const byId = provenanceById(profile);
   return (
@@ -162,17 +165,28 @@ function ProfileView({
           never alters the existing profile layout or the Property -> Confirm
           focus/tab flow, and it loads independently of the profile above. */}
       {ruleEvalEnabled ? <RuleEvaluationPanel bbl={profile.identity.bbl} /> : null}
+      {/* Additive, optional draft scenario enrichment (M5-T002). Same pattern as
+          the rule-evaluation panel: rendered only when its own frontend flag is on
+          for this request, placed LAST so it never alters the existing layout or
+          focus/tab flow, and it loads independently of the profile above. Flag off
+          -> never mounted and its fetch is never issued. */}
+      {scenarioEnabled ? <ScenarioPanel bbl={profile.identity.bbl} /> : null}
     </div>
   );
 }
 
 export function PropertyLookup({
   ruleEvalEnabled = false,
+  scenarioEnabled = false,
 }: {
   /** Additive (M4-T005): render the draft rule-evaluation surface after a
    * successful profile. Defaults to false so existing behavior is unchanged and
    * the surface (and its fetch) stay off unless the Server Component enabled it. */
   ruleEvalEnabled?: boolean;
+  /** Additive (M5-T002): render the draft scenario surface after a successful
+   * profile. Defaults to false so existing behavior is unchanged and the surface
+   * (and its fetch) stay off unless the Server Component enabled it. */
+  scenarioEnabled?: boolean;
 } = {}) {
   const [bblInput, setBblInput] = useState("");
   const [formError, setFormError] = useState<string | null>(null);
@@ -326,6 +340,7 @@ export function PropertyLookup({
             <ProfileView
               profile={result.outcome.profile}
               ruleEvalEnabled={ruleEvalEnabled}
+              scenarioEnabled={scenarioEnabled}
             />
           ) : (
             <OutcomeFailureStates outcome={result.outcome} onRetry={retry} />
