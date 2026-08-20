@@ -1,0 +1,100 @@
+{
+  "task_id": "M5-T002",
+  "title": "Scenario endpoint + property-screen scenario surface: internal flag-gated GET /api/v1/properties/{bbl}/scenario serving the M5-T001 draft coverage-aware scenario verbatim, plus the flag-gated property-screen scenario panel with honest no-scenario states, provenance, and needs_review disclaimer (R5 pilot; D-021)",
+  "task_type": "fullstack",
+  "milestone_id": "M5",
+  "objective": "Expose the merged M5-T001 deterministic scenario foundation end to end for the R5 single-lot low-rise family-residential pilot. Backend: add GET /api/v1/properties/{bbl}/scenario mirroring the M4-T005 rule-evaluation endpoint pattern exactly - internal/dev only, feature-flag gated OFF by default (new INTERNAL_SCENARIO_ENABLED config token; absent/unknown -> generic 404 indistinguishable from unmounted, include_in_schema=False), bbl path param only (never a request body or browser-supplied profile), server-side rebuild of the canonical property profile via the trusted injected PLUTO fetcher + spatial substrate provider, server-side rule evaluation via evaluate_property, then app.scenario.builder.build_scenario consumed READ-ONLY with NO assumptions, validated with validate_scenario_document BEFORE emit (closes FH-M5T001-S1) plus a bounded-depth guard on the assembled document (closes FH-M5T001-S2); a no_scenario/unsupported/professional-review outcome is a NORMAL 200 scenario document, never an error; typed error mapping identical to the rule-evaluation route; correlation id on every response; no traceback/path/secret leakage. Frontend: add a flag-gated scenario surface to the existing Property screen mirroring the rule-evaluation panel pattern (lib/scenario.ts + components/scenario/*), rendering the draft zoning-floor-area cap VERBATIM with its draft-cap label, rule citations/provenance, coverage status (never verified), needs_review + not_verified_disclaimer, and honest typed no-scenario states (unsupported, missing constraint, spatial uncertainty, conflict, malformed) - flag off -> nothing renders and no fetch fires. Deterministic code only; no AI; no recomputation of the cap anywhere (surfaced value == canonical trace value); scenario/profile/rules modules and canonical contracts consumed READ-ONLY and unchanged. Tests: API acceptance pack (flag off/on, happy path, each no-scenario family, malformed input, validate-before-emit, depth bound, error mapping) + web vitest component tests + Playwright e2e vs the recorded-official-fixture API (scenario.spec.ts + scenario-flag-off.spec.ts patterned on rule-evaluation specs).",
+  "business_reason": "D-021 (owner 2026-08-19): resume building the actual product; single next dependency-ready end-to-end unit a future user can calculate and view - turns the merged but invisible M5-T001 scenario foundation into a working, honest, provenance-preserving scenario view for the R5 pilot while preserving the five-borough architecture and staged rule expansion. M5 engineering vs merged draft/needs_review M4 artifacts remains authorized (owner 2026-07-21/22); final acceptance of the draft-rule chain still owes genuine G6 legal approval - not weakened by this task.",
+  "inputs": [
+    "services/api/app/scenario/** - build_scenario / validate_scenario_document / assert_scenario_not_verified (READ-ONLY; never modified, never recomputed around)",
+    "services/api/app/api/v1/rule_evaluation.py + properties.py - endpoint pattern, PlutoFetcher/substrate injection seams, single-sourced error maps (READ-ONLY)",
+    "services/api/app/rules/integration.py evaluate_property + app/profile/builder.py build_property_profile + app/profile/contract.py validate_profile (READ-ONLY)",
+    "packages/contracts/schemas/v1/scenario.schema.json (1.x), packages/contracts/generated/scenario.ts, packages/contracts/fixtures/valid|invalid/scenario/** (READ-ONLY; no contract change in this task)",
+    "apps/web/src/lib/rule-evaluation.ts, rule-evaluation-contract.ts + apps/web/src/components/rule-evaluation/** + apps/web/e2e/rule-evaluation*.spec.ts (pattern to mirror; READ-ONLY)",
+    "project-control/reports/M5-T001-future-hardening.md - FH-M5T001-S1 (validate before emit) + FH-M5T001-S2 (depth bound) closed at this endpoint boundary",
+    "docs/PRODUCT_FLOW_AND_AI_BOUNDARIES.md, docs/ACCEPTANCE_SCENARIO_STANDARD.md, PRD.md sections 7.2/9/12/13"
+  ],
+  "outputs": [
+    "GET /api/v1/properties/{bbl}/scenario - internal, INTERNAL_SCENARIO_ENABLED flag-gated OFF by default, include_in_schema=False, bbl path param only, server-side profile rebuild + rule evaluation + build_scenario, validate_scenario_document + bounded-depth guard BEFORE emit, typed error mapping identical to the rule-evaluation route",
+    "services/api/app/config.py internal_scenario_enabled() helper (explicit-true-token semantics identical to internal_rule_eval_enabled)",
+    "Flag-gated property-screen scenario surface: apps/web/src/lib/scenario.ts (+ scenario-contract.ts runtime validation) + apps/web/src/components/scenario/** wired into apps/web/src/app/property - draft zoning-floor-area cap VERBATIM with draft-cap label, provenance/citations, coverage badge (never verified), needs_review + not_verified_disclaimer, honest typed no-scenario and failure states; flag off -> no render, no fetch",
+    "API acceptance pack under services/api/tests/api/ + web unit tests (lib/__tests__/scenario*.test.ts, components/scenario/__tests__) + Playwright e2e scenario.spec.ts + scenario-flag-off.spec.ts vs the recorded-official-fixture harness",
+    "project-control/reports/M5-T002-producer-report.md"
+  ],
+  "dependencies": [
+    "M5-T001",
+    "M4-T005"
+  ],
+  "allowed_paths": [
+    "services/api/app/api/v1/scenario.py",
+    "services/api/app/api/v1/__init__.py",
+    "services/api/app/main.py",
+    "services/api/app/config.py",
+    "services/api/tests/api/**",
+    "apps/web/src/app/property/**",
+    "apps/web/src/components/scenario/**",
+    "apps/web/src/lib/scenario.ts",
+    "apps/web/src/lib/scenario-contract.ts",
+    "apps/web/src/lib/__tests__/scenario*",
+    "apps/web/e2e/scenario.spec.ts",
+    "apps/web/e2e/scenario-flag-off.spec.ts",
+    "apps/web/e2e/harness/**",
+    "project-control/reports/M5-T002-producer-report.md"
+  ],
+  "forbidden_paths": [
+    "services/api/app/scenario/**, services/api/app/profile/**, services/api/app/spatial/**, services/api/app/rules/** (consume READ-ONLY; no modification)",
+    "packages/contracts/** (no schema/typegen/fixture change in this task; scenario contract consumed as-is)",
+    "tools/agent_supervisor/**, protected controller configuration, model-selection configuration, the context pipeline, the MCP policy, .claude/settings.json (D-021 holds R005-R008)",
+    "Recomputing or relabeling the canonical draft zoning-floor-area cap anywhere (backend or frontend); hidden assumptions/utilization defaults; emitting 'verified'; any AI in the calculation or presentation path",
+    "Modifying, weakening, or deleting any existing test, CI workflow, security control, or branch protection (D-021-R011); unrelated e2e specs and harness behavior for existing routes stay byte-compatible",
+    "project-control/** except own producer report; .claude/** except own agent-memory; no new public endpoint beyond the single flag-gated internal route"
+  ],
+  "acceptance_scenarios": [
+    "AS-1 API flag off (default): INTERNAL_SCENARIO_ENABLED absent/empty/unknown -> GET /api/v1/properties/{bbl}/scenario returns the generic 404 {\"detail\":\"Not Found\"} byte-indistinguishable from an unmounted path, no correlation id, absent from OpenAPI; flag-off is the DEFAULT deployment posture.",
+    "AS-2 API happy path (R5 pilot): flag on + recorded R5 fixture (confident district, conditional rule_evaluation with finite max_residential_floor_area_sq_ft) -> 200 scenario document whose surfaced cap == the canonical trace value VERBATIM (asserted against the fixture trace, never recomputed), draft-zoning-floor-area-cap label, citations + provenance, coverage conditional (never verified), needs_review + not_verified_disclaimer, X-Correlation-ID present.",
+    "AS-3 API honest no-scenario families: unsupported district, missing critical constraint, spatial uncertainty / professional_review_required, data/rule conflict, malformed or non-finite inputs -> each yields a NORMAL 200 scenario document with the typed no_scenario/unsupported outcome and a visible reason; never a 500, never an invented or negative/NaN/inf value.",
+    "AS-4 validate-before-emit + depth bound (FH-M5T001-S1/S2): the endpoint always calls validate_scenario_document before send - a document failing validation becomes typed internal_contract_error 500 with no internals; an adversarially deep-nested provenance sub-object hits a bounded-depth guard and returns a typed failure, never RecursionError/stack exhaustion.",
+    "AS-5 API error-mapping parity: malformed BBL -> 422 typed validation_error; upstream connector failures -> the same single-sourced status map as the rule-evaluation route; dataset no_match -> 404 machine-state body with source/dataset ids; unexpected exception -> documented generic 500; no traceback, path, secret, or internal string in any response.",
+    "AS-6 no injection surface: the route accepts ONLY the bbl path parameter - no request body, no query-supplied profile/rule-evaluation/assumptions; POST returns 405; the browser can never supply the facts a scenario rests on.",
+    "AS-7 web flag off: with the scenario surface flag off, the property screen renders zero scenario UI and fires zero scenario fetches (spec patterned on rule-evaluation-flag-off.spec.ts); the property profile remains fully usable.",
+    "AS-8 web happy path: flag on -> the property screen shows the draft cap VERBATIM (value equals the fixture's canonical trace value), draft-cap label, provenance disclosure, coverage badge never 'verified', needs_review + not_verified_disclaimer; every 200 body is runtime-validated against the generated scenario types before render, with validation failure as a distinct honest state.",
+    "AS-9 web honest failure states: each no-scenario family renders its typed honest state with the backend-produced reason (no invented numbers, no up-labeling); feature_unavailable (flag-off server 404) shows the benign 'not available in this environment' note and never blocks the profile; API faults render the recoverable failure state; outcome announcements/a11y consistent with the existing property-screen patterns.",
+    "AS-10 regression + determinism: full repository CI green; profile/spatial/rules/scenario modules, canonical contracts, and all unrelated tests byte-unchanged; identical input -> byte-identical 200 response body (deterministic ordering preserved from the builder)."
+  ],
+  "required_gates": [
+    "G0",
+    "G3",
+    "G4",
+    "G5"
+  ],
+  "producer_agent": "backend-engineer",
+  "reviewer_agents": [
+    "code-reviewer",
+    "qa-engineer",
+    "human-journey-reviewer",
+    "security-reviewer"
+  ],
+  "status": "claimed",
+  "progress_percent": 10,
+  "risks": [
+    "HARD: consume app/scenario, app/rules, app/profile READ-ONLY; the surfaced cap is the canonical trace value verbatim - never recomputed, never relabeled (backend or frontend).",
+    "HARD: endpoint OFF by default behind an explicit-true-token flag; only the bbl path parameter crosses the trust boundary; no request body ever.",
+    "Fail closed: validate_scenario_document + bounded-depth guard before every emit (closes FH-M5T001-S1/S2); no-scenario outcomes are honest 200 documents, never errors, never silence.",
+    "Never emit or render 'verified'; needs_review + not_verified_disclaimer carried end-to-end; frontend classifies presentation only, never computes legal values (PRODUCT_FLOW_AND_AI_BOUNDARIES).",
+    "D-021 holds bind this task: D-013-R060 stays PENDING; no controller-update bundle; no limited-auto; no protected controller/model-selection/context-pipeline/MCP-policy edits; no test/review/CI/security weakening; unrelated dirty files preserved; PR stays UNMERGED at completion (merge identity reported to owner).",
+    "M5 engineering vs merged draft/needs_review M4 artifacts authorized (owner 2026-07-21/22); genuine G6 legal approval of the M4 chain is NOT weakened or claimed by this task; every surfaced value stays draft/needs_review.",
+    "Thin-client: implementation + tests run in worktree/CI; no local db, no bulk data."
+  ],
+  "blockers": [],
+  "created_at": "2026-08-20T03:48:33.609845+00:00",
+  "updated_at": "2026-08-20T03:56:43.310377+00:00",
+  "directive_refs": [
+    {
+      "directive_id": "D-021",
+      "requirement_ids": "ALL"
+    }
+  ],
+  "directive_regime_version": "1.0",
+  "directive_regime_entered_at": "2026-08-20T03:48:33.609845+00:00",
+  "worktree": ".claude/worktrees/M5-T002-scenario-endpoint"
+}

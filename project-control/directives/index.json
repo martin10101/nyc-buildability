@@ -312,6 +312,20 @@
     "M0-T077"
    ],
    "manifest": "D-020-program-wide-mcp-default-deny/manifest.json"
+  },
+  {
+   "directive_id": "D-021",
+   "slug": "resume-product-r5-pilot-next-unit",
+   "title": "Resume NYC Buildability product work: defer (not cancel) autonomy/controller activation, preserve all named holds, reconcile first, and deliver the single next dependency-ready product unit for the R5 single-lot low-rise family-residential pilot - exactly one bounded product task, one branch, one PR, implemented end to end under the independent producer/reviewer/verifier lifecycle, stopping with the PR independently accepted and fully green but UNMERGED.",
+   "status": "active",
+   "issued_at": "2026-08-19",
+   "issued_by": "owner",
+   "supersedes": [],
+   "superseded_by": null,
+   "affected_tasks": [
+    "M5-T002"
+   ],
+   "manifest": "D-021-resume-product-r5-pilot-next-unit/manifest.json"
   }
  ],
  "updated_at": "2026-08-19T18:30:00+00:00"
