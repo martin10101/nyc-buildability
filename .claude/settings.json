@@ -3,6 +3,25 @@
   "model": "claude-fable-5",
   "fallbackModel": ["claude-opus-4-8"],
   "effortLevel": "xhigh",
+  "disableClaudeAiConnectors": true,
+  "allowedMcpServers": [],
+  "deniedMcpServers": [
+    { "serverName": "pencil" },
+    { "serverName": "supabase" },
+    { "serverName": "mysql" },
+    { "serverName": "sequential-thinking" },
+    { "serverName": "playwright" }
+  ],
+  "disabledMcpjsonServers": [
+    "supabase",
+    "mysql",
+    "sequential-thinking",
+    "playwright"
+  ],
+  "enableAllProjectMcpServers": false,
+  "permissions": {
+    "deny": ["mcp__*"]
+  },
   "env": {
     "BASH_DEFAULT_TIMEOUT_MS": "300000",
     "BASH_MAX_TIMEOUT_MS": "1800000"

@@ -1,0 +1,28 @@
+{
+  "task_id": "M0-T077",
+  "gate_id": "G5",
+  "reviewer": "security-reviewer",
+  "role": "independent_review",
+  "result": "PASS",
+  "report_file": "project-control/reports/M0-T077-review-G5.md",
+  "reviewed_at": "2026-08-19T23:44:07.825009+00:00",
+  "content_manifest_sha256": "f103af3ef1433e58a0352bab74618eb2ef6da1f457e66a6e3310a999d9c3439f",
+  "reviewed_sha": "59556584499de6618b06ec5819b9bb1170fdbb37",
+  "history": [
+    {
+      "reviewer": "security-reviewer",
+      "role": "independent_review",
+      "result": "PASS",
+      "report_file": "project-control/reports/M0-T077-review-G5.md",
+      "reviewed_at": "2026-08-19T22:58:30.937321+00:00"
+    },
+    {
+      "reviewer": "security-reviewer",
+      "role": "independent_review",
+      "result": "PASS",
+      "report_file": "project-control/reports/M0-T077-review-G5.md",
+      "reviewed_at": "2026-08-19T23:39:11.428642+00:00"
+    }
+  ],
+  "updated_at": "2026-08-19T23:44:08.797033+00:00"
+}
