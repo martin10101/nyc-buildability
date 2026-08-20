@@ -76,8 +76,8 @@
     "human-journey-reviewer",
     "security-reviewer"
   ],
-  "status": "rework",
-  "progress_percent": 60,
+  "status": "awaiting_gate",
+  "progress_percent": 85,
   "risks": [
     "HARD: consume app/scenario, app/rules, app/profile READ-ONLY; the surfaced cap is the canonical trace value verbatim - never recomputed, never relabeled (backend or frontend).",
     "HARD: endpoint OFF by default behind an explicit-true-token flag; only the bbl path parameter crosses the trust boundary; no request body ever.",
@@ -89,7 +89,7 @@
   ],
   "blockers": [],
   "created_at": "2026-08-20T03:48:33.609845+00:00",
-  "updated_at": "2026-08-20T05:51:23.905961+00:00",
+  "updated_at": "2026-08-20T06:13:01.578879+00:00",
   "directive_refs": [
     {
       "directive_id": "D-021",
