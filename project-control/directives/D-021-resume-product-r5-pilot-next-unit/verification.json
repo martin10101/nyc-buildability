@@ -1,7 +1,7 @@
 {
  "schema": "directive_verification/v2",
  "directive_id": "D-021",
- "authority_note": "Pending independent verification by directive-compliance-verifier (producer != verifier). Capture only; no requirement verified yet. M5-T002 rows are verified through the task's gates and accept() evidence map at the reviewed content identity; D-021-BOOTSTRAP sentinel rows (R002-R004, R012-R018, R024) are verified at directive verification when the run returns.",
+ "authority_note": "Independent verification by directive-compliance-verifier (producer=orchestrator/backend-engineer != verifier): ALL 25 D-021 requirements PASS (14 M5-T002 rows recorded here at reviewed_sha 2fee786, content identity 31e652a, content-manifest d5004488; 11 D-021-BOOTSTRAP session-governance rows R002-R004, R012-R018, R024 verified in the preserved report project-control/reports/M5-T002-directive-verification.md, D-016..D-020 sentinel precedent). Verifier's R022 nuance recorded verbatim in the report: never-merge hold core satisfied (PR #241 OPEN, main unchanged, CI fully green, all gates PASS); ledger acceptance honestly parked on the dependency chain's G6 qualified-human legal approval, which D-021-R011 forbids weakening.",
  "producer": "orchestrator",
  "verifier": "directive-compliance-verifier",
  "task_verifications": [
@@ -26,108 +26,138 @@
     "D-021-R023",
     "D-021-R025"
    ],
-   "reviewed_sha": null,
-   "verified_at": null,
+   "reviewed_sha": "2fee786c33b70af20a7988be7d9e59c00b1790a4",
+   "verified_at": "2026-08-20T05:55:00+00:00",
    "requirements": [
     {
      "id": "D-021-R001",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": null,
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "DCV: git diff d8b3899..HEAD --name-only clean of supervisor/controller/model-selection/context-pipeline/MCP paths; autonomy handoff untouched (neither advanced nor dismantled)"
+     ],
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "2fee786c33b70af20a7988be7d9e59c00b1790a4"
     },
     {
      "id": "D-021-R005",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": null,
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "DCV: D-013-R060 requirements.json status=pending; git diff d8b3899..HEAD -- project-control/directives/D-013* empty"
+     ],
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "2fee786c33b70af20a7988be7d9e59c00b1790a4"
     },
     {
      "id": "D-021-R006",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": null,
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "DCV: no supervisor/controller files in diff; no controller-update bundle artifacts changed"
+     ],
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "2fee786c33b70af20a7988be7d9e59c00b1790a4"
     },
     {
      "id": "D-021-R007",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": null,
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "DCV: no settings/config/model_selection changes in git diff d8b3899..HEAD"
+     ],
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "2fee786c33b70af20a7988be7d9e59c00b1790a4"
     },
     {
      "id": "D-021-R008",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": null,
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "DCV: zero protected-area paths in git diff d8b3899..HEAD --name-only"
+     ],
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "2fee786c33b70af20a7988be7d9e59c00b1790a4"
     },
     {
      "id": "D-021-R009",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": null,
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "DCV: only one new task (M5-T002.json, sole 2026-08-20 task file); no new governance/infra initiative"
+     ],
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "2fee786c33b70af20a7988be7d9e59c00b1790a4"
     },
     {
      "id": "D-021-R010",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": null,
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "DCV: clean tree at session start (bootstrap evidence); all d8b3899..HEAD paths task-owned; no unrelated file reverted/committed"
+     ],
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "2fee786c33b70af20a7988be7d9e59c00b1790a4"
     },
     {
      "id": "D-021-R011",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": null,
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "DCV: no existing test M/D in git diff d8b3899..31e652a --name-status; additive-only diffs to existing files inspected in full; pytest tests/api 144 passed reproduced; no .github/CI/branch-protection change"
+     ],
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "2fee786c33b70af20a7988be7d9e59c00b1790a4"
     },
     {
      "id": "D-021-R019",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": null,
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "DCV: one task (M5-T002), one new remote branch (origin/task/M5-T002-scenario-endpoint), one new PR (#241; #64 pre-existing)"
+     ],
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "2fee786c33b70af20a7988be7d9e59c00b1790a4"
     },
     {
      "id": "D-021-R020",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": null,
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "DCV: scenario.py validate-before-emit :332, depth guard :110-125, assumptions=None :313, fail-safe 404 :188; test_scenario_api cap==canonical_trace_cap() verbatim :306-309; never-verified asserted; pytest tests/api 144 passed; CI 20/20 success incl. web-e2e",
+      "project-control/reports/M5-T002-directive-verification.md"
+     ],
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "2fee786c33b70af20a7988be7d9e59c00b1790a4"
     },
     {
      "id": "D-021-R021",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": null,
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "DCV: producer_agent=backend-engineer; G3/G4/G5 reviewers code-reviewer/qa-engineer/security-reviewer all != producer at reviewed_sha 2fee786; G0 administrative orchestrator; verifier != producer"
+     ],
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "2fee786c33b70af20a7988be7d9e59c00b1790a4"
     },
     {
      "id": "D-021-R022",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": null,
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "DCV: gh pr view 241 state OPEN, DO-NOT-MERGE banner; main == d8b3899 via gh api branches/main; CI 0 non-success; ledger acceptance honestly parked on dependency-chain G6 legal hold (hold preserved, not weakened)"
+     ],
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "2fee786c33b70af20a7988be7d9e59c00b1790a4"
     },
     {
      "id": "D-021-R023",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": null,
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "DCV: reports/D-021-owner-report.md contains PR #241, branch, reviewed content identity 31e652a, merge-identity statement, honest awaiting_gate explanation"
+     ],
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "2fee786c33b70af20a7988be7d9e59c00b1790a4"
     },
     {
      "id": "D-021-R025",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": null,
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "DCV: one product task only; no controller activation / R060 change / infra / deployment / merge (PR OPEN, main unchanged)"
+     ],
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "2fee786c33b70af20a7988be7d9e59c00b1790a4"
     }
-   ]
+   ],
+   "reviewed_manifest_sha256": "d500448825bb896130d3e99f1519c0ef90a96541b9940128b7cd90be2619cbf8"
   }
  ]
 }

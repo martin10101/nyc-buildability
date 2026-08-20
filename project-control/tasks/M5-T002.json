@@ -77,7 +77,7 @@
     "security-reviewer"
   ],
   "status": "awaiting_gate",
-  "progress_percent": 85,
+  "progress_percent": 99,
   "risks": [
     "HARD: consume app/scenario, app/rules, app/profile READ-ONLY; the surfaced cap is the canonical trace value verbatim - never recomputed, never relabeled (backend or frontend).",
     "HARD: endpoint OFF by default behind an explicit-true-token flag; only the bbl path parameter crosses the trust boundary; no request body ever.",
@@ -89,7 +89,7 @@
   ],
   "blockers": [],
   "created_at": "2026-08-20T03:48:33.609845+00:00",
-  "updated_at": "2026-08-20T04:37:43.016264+00:00",
+  "updated_at": "2026-08-20T05:07:49.066039+00:00",
   "directive_refs": [
     {
       "directive_id": "D-021",
@@ -113,6 +113,13 @@
       "percent": 45,
       "status": "in_progress",
       "message": "Producer returned (agent worktree, wip/M5-T002-producer 8872438): endpoint+config+router+33-test API pack (33/33, tests/api 144/144, api+scenario 198/198, modularity 0 failures, ruff 0.13.0 clean on changed files) + web scenario lib/contract/components/unit tests/e2e specs + additive harness flag. Contract amendment (pre-gate, objective-consistent, T077 precedent): allowed_paths += apps/web/src/components/property/PropertyLookup.tsx (the actual rule-eval wiring point; packet objective already required property-screen wiring) + apps/web/playwright.config.ts (webServer env INTERNAL_SCENARIO_UI, mirrors INTERNAL_RULE_EVAL_UI). evaluate_task_refs still ok:True, same 14-req applicable set; validator exit 0. D1 accepted: producer kept the rule-eval NON-public server-read flag pattern (stronger than the packet's NEXT_PUBLIC suggestion; packet also said mirror rule-eval - resolved in favor of the stronger guarantee). Producer resumed for B1 wiring + B2 playwright env."
+    },
+    {
+      "at": "2026-08-20T05:07:49.066039+00:00",
+      "agent": "orchestrator",
+      "percent": 99,
+      "status": "awaiting_gate",
+      "message": "COMPLETE except owner-side unblocks: gates G0/G3/G4/G5 PASS + human-journey PASS (reports on file), D-021 DCV PASS 25/25 (verification.json filled at 2fee786, content identity 31e652a, manifest d5004488), CI 20/20 green on PR #241 head, accept dry-run refuses ONLY on dependency-accepted (M5-T001/M4-T005 parked on M4-chain G6 legal approval - preserved per D-021-R011). PR #241 stays UNMERGED per D-021-R022. No further review work owed at acceptance time."
     }
   ]
 }
