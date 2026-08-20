@@ -312,6 +312,34 @@
     "M0-T077"
    ],
    "manifest": "D-020-program-wide-mcp-default-deny/manifest.json"
+  },
+  {
+   "directive_id": "D-021",
+   "slug": "resume-product-r5-pilot-next-unit",
+   "title": "Resume NYC Buildability product work: defer (not cancel) autonomy/controller activation, preserve all named holds, reconcile first, and deliver the single next dependency-ready product unit for the R5 single-lot low-rise family-residential pilot - exactly one bounded product task, one branch, one PR, implemented end to end under the independent producer/reviewer/verifier lifecycle, stopping with the PR independently accepted and fully green but UNMERGED.",
+   "status": "active",
+   "issued_at": "2026-08-19",
+   "issued_by": "owner",
+   "supersedes": [],
+   "superseded_by": null,
+   "affected_tasks": [
+    "M5-T002"
+   ],
+   "manifest": "D-021-resume-product-r5-pilot-next-unit/manifest.json"
+  },
+  {
+   "directive_id": "D-022",
+   "slug": "scenario-contract-validator-correction",
+   "title": "Complete blocking finding on M5-T002: browser scenario-contract validator does not enforce the canonical scenario contract (8 reproduced adversarial bypasses) - one bounded correction on the existing branch, faithful schema enforcement + adversarial tests, new frozen identity, invalidate and rerun G3/G4/G5/DCV, final independent review; PR #241 stays open and UNMERGED.",
+   "status": "active",
+   "issued_at": "2026-08-20",
+   "issued_by": "owner",
+   "supersedes": [],
+   "superseded_by": null,
+   "affected_tasks": [
+    "M5-T002"
+   ],
+   "manifest": "D-022-scenario-contract-validator-correction/manifest.json"
   }
  ],
  "updated_at": "2026-08-19T18:30:00+00:00"

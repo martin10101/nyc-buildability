@@ -1,0 +1,92 @@
+{
+ "schema": "directive_manifest/v1",
+ "directive_id": "D-022",
+ "version": 1,
+ "slug": "scenario-contract-validator-correction",
+ "title": "Complete blocking finding on M5-T002: apps/web/src/lib/scenario-contract.ts does not actually enforce the canonical scenario contract (8 reproduced adversarial bypasses incl. negative/zero cap, malformed BBL, rule_status 'verified', null citation/assumption items, unexpected top-level key, embedded_property_profile.json) - one bounded correction on the existing branch: faithful browser-side schema enforcement + adversarial tests + fetchScenario validation_failure proof; new frozen identity; invalidate and rerun G3/G4/G5/DCV; final independent review; PR #241 stays open and UNMERGED.",
+ "status": "active",
+ "lifecycle_state": "active",
+ "issued_by": "owner",
+ "issued_at": "2026-08-20",
+ "captured_at": "2026-08-20T06:40:00+00:00",
+ "created_at": "2026-08-20T06:40:00+00:00",
+ "updated_at": "2026-08-20T06:40:00+00:00",
+ "channel": "owner_typed_instruction",
+ "frozen_baseline_sha": "2b45a13b5256dcfb3a92e970dfb08c691d7ff13c",
+ "sources": [
+  {
+   "file": "source-001.md",
+   "kind": "original",
+   "sequence": 1,
+   "recorded_at": "2026-08-20T06:40:00+00:00",
+   "content_digest_sha256": "19318119685836412b292344bc698be10a8c8b4d43a831aa2c166dd07307515b"
+  }
+ ],
+ "amendments": [],
+ "supersedes": [],
+ "superseded_by": null,
+ "affected_tasks": [
+  "M5-T002"
+ ],
+ "affected_prs": [241],
+ "affected_branches": [
+  "task/M5-T002-scenario-endpoint"
+ ],
+ "scope": {
+  "kind": "single-bounded-correction",
+  "allowed": "one bounded correction on the existing task/M5-T002-scenario-endpoint branch: fix apps/web/src/lib/scenario-contract.ts to faithfully enforce the existing canonical scenario schema (no new dependencies, no schema change), add focused adversarial validator tests and fetchScenario validation_failure tests, fixture pass/fail proofs; required project-control rework/re-review records; return the new merge identity + measured evidence",
+  "prohibited": "merging PR #241; new tasks/branches/PRs; changing backend calculations, scenario/rules/profile modules, canonical contracts, dependencies, feature flags, agent setup, supervisor, MCP policy, or unrelated files; cosmetic cleanup or broad refactoring; claiming complete/safe/correct/accepted/ready-to-merge before the adversarial tests and final frozen-identity reviews pass",
+  "task_ids": [
+   "M5-T002"
+  ],
+  "task_types": [
+   "fullstack"
+  ]
+ },
+ "applicability_note": "Session-governance rows (R003: reconcile-first with stop-on-identity-change) bind the NON-LEDGER sentinel D-022-BOOTSTRAP (D-016..D-021 precedent). Hold/prohibition/return rows binding both the sentinel and M5-T002: R001 (never merge), R002 (one bounded correction), R012 (no out-of-scope changes), R020 (return identity+evidence), R021 (no premature completion claims) - hold-class rows are never deferrable. Task rows (R004-R011, R013-R019) bind M5-T002 and are verified through the rework gate wave and the directive verification at the corrected frozen identity.",
+ "owner_approval": {
+  "state": "authorized",
+  "note": "owner-typed correction directive in session, 2026-08-20: 'Do not merge PR #241. Perform one bounded correction on the existing M5-T002 branch.'"
+ },
+ "enforcement_pointers": {
+  "cli": "tools/project_control.py (claim --directive-refs; accept blocking on verification)",
+  "validator": "tools/validate_directive_compliance.py",
+  "registry": "tools/directive_registry.py"
+ },
+ "requirements_file": "requirements.json",
+ "verification_file": "verification.json",
+ "locked_requirement_ids": [
+  "D-022-R001",
+  "D-022-R002",
+  "D-022-R003",
+  "D-022-R004",
+  "D-022-R005",
+  "D-022-R006",
+  "D-022-R007",
+  "D-022-R008",
+  "D-022-R009",
+  "D-022-R010",
+  "D-022-R011",
+  "D-022-R012",
+  "D-022-R013",
+  "D-022-R014",
+  "D-022-R015",
+  "D-022-R016",
+  "D-022-R017",
+  "D-022-R018",
+  "D-022-R019",
+  "D-022-R020",
+  "D-022-R021"
+ ],
+ "requirements_id_digest_sha256": "d978beaa38a41d24bc47c8e31569259ee250659a0e7079866e257bb28b3fa0ba",
+ "requirements_content_digest_sha256": "730423594c3c1b9beaf6ec44ada98712b40cc15d206432044c0a7f59ea7bc211",
+ "final_reviewed_sha": null,
+ "final_reviewed_manifest_sha256": null,
+ "audit_log": [
+  {
+   "at": "2026-08-20T06:40:00+00:00",
+   "actor": "orchestrator",
+   "event": "captured source-001 verbatim (owner blocking-finding correction on M5-T002 scenario-contract validator), decomposed 21 requirements (1 bootstrap reconcile row + 5 hold/prohibition/return rows binding sentinel+task + 15 task correction/verification rows); reconciliation confirmed BEFORE any edit: PR #241 OPEN, head 2b45a13, base main d8b3899, task-relevant tree clean (only human-journey-reviewer agent-memory dirty, preserved as found), affected files owned solely by M5-T002; identifiers D-022 confirmed next-free against the live registry; previous-identity G3/G4/G5/DCV conclusions to be invalidated per R016"
+  }
+ ]
+}

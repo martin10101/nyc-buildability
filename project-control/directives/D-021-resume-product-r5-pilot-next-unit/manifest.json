@@ -1,0 +1,96 @@
+{
+ "schema": "directive_manifest/v1",
+ "directive_id": "D-021",
+ "version": 1,
+ "slug": "resume-product-r5-pilot-next-unit",
+ "title": "Resume NYC Buildability product work: defer (not cancel) autonomy/controller activation, preserve all named holds, reconcile first, and deliver the single next dependency-ready product unit for the R5 single-lot low-rise family-residential pilot - exactly one bounded product task, one branch, one PR, implemented end to end under the independent producer/reviewer/verifier lifecycle, stopping with the PR independently accepted and fully green but UNMERGED.",
+ "status": "active",
+ "lifecycle_state": "active",
+ "issued_by": "owner",
+ "issued_at": "2026-08-19",
+ "captured_at": "2026-08-20T03:45:00+00:00",
+ "created_at": "2026-08-20T03:45:00+00:00",
+ "updated_at": "2026-08-20T03:45:00+00:00",
+ "channel": "owner_typed_instruction",
+ "frozen_baseline_sha": "d8b3899f61efa6620e18a26541ced96020f5bef9",
+ "sources": [
+  {
+   "file": "source-001.md",
+   "kind": "original",
+   "sequence": 1,
+   "recorded_at": "2026-08-20T03:45:00+00:00",
+   "content_digest_sha256": "9320b9b1a3398ad04ef40c38ce476f9f6e852b28ad99b0498442b377017a4682"
+  }
+ ],
+ "amendments": [],
+ "supersedes": [],
+ "superseded_by": null,
+ "affected_tasks": [
+  "M5-T002"
+ ],
+ "affected_prs": [],
+ "affected_branches": [
+  "task/M5-T002-scenario-endpoint"
+ ],
+ "scope": {
+  "kind": "single-bounded-task",
+  "allowed": "one product task (M5-T002), one branch, one PR: the rule-evaluation-to-scenario internal endpoint plus the property-screen scenario surface for the R5 pilot, with deterministic calculations, provenance, coverage boundaries, tests, and honest failure states; required project-control artifacts; the plain-English owner report with the exact merge identity",
+  "prohibited": "continuing the autonomy/controller activation handoff work; running the controller-update bundle; enabling limited-auto; modifying protected controller configuration, model-selection configuration, tools/agent_supervisor/**, the context pipeline, or the MCP policy; promoting or changing D-013-R060; beginning another context-management/autonomy/governance/infrastructure-hardening project absent a directly reproduced blocker; documentation-only work, broad discovery, speculative refactors; weakening tests, reviews, CI, security controls, or branch protection; deleting or committing unrelated dirty files; controller activation, R060 promotion, broad infrastructure work, deployment, or merging the PR",
+  "task_ids": [
+   "M5-T002"
+  ],
+  "task_types": [
+   "fullstack"
+  ]
+ },
+ "applicability_note": "Session-governance rows (R002-R004, R012-R018, R024: reconcile-first, fresh-process/empty-MCP-roster confirmation with conditional stop, roadmap/PRD/ledger/code reading, single dependency-ready product-unit selection for the R5 pilot, prefer-planned/smallest-end-to-end selection discipline, verbatim capture + decomposition, multiple-unit owner-decision branch) bind the NON-LEDGER sentinel D-021-BOOTSTRAP (D-016..D-020 precedent) and are verified at directive verification. Hold/prohibition/authorization rows (R001, R005-R011, R022, R025) bind BOTH D-021-BOOTSTRAP and M5-T002 - hold-class rows are never deferrable and verify PASS directly. Task rows (R019-R021, R023) bind M5-T002 and are verified through the task's gates and accept() evidence map at the reviewed content identity.",
+ "owner_approval": {
+  "state": "authorized",
+  "note": "owner-typed directive in session, 2026-08-19: 'This is authorization for one bounded NYC product task only. It is not authorization for controller activation, R060 promotion, broad infrastructure work, deployment, or merging.'"
+ },
+ "enforcement_pointers": {
+  "cli": "tools/project_control.py (claim --directive-refs; accept blocking on verification)",
+  "validator": "tools/validate_directive_compliance.py",
+  "registry": "tools/directive_registry.py"
+ },
+ "requirements_file": "requirements.json",
+ "verification_file": "verification.json",
+ "locked_requirement_ids": [
+  "D-021-R001",
+  "D-021-R002",
+  "D-021-R003",
+  "D-021-R004",
+  "D-021-R005",
+  "D-021-R006",
+  "D-021-R007",
+  "D-021-R008",
+  "D-021-R009",
+  "D-021-R010",
+  "D-021-R011",
+  "D-021-R012",
+  "D-021-R013",
+  "D-021-R014",
+  "D-021-R015",
+  "D-021-R016",
+  "D-021-R017",
+  "D-021-R018",
+  "D-021-R019",
+  "D-021-R020",
+  "D-021-R021",
+  "D-021-R022",
+  "D-021-R023",
+  "D-021-R024",
+  "D-021-R025"
+ ],
+ "requirements_id_digest_sha256": "54814eb7f8aee25fdb1860fa3beed8d3358d784f40fac266a5a3a0124b86b343",
+ "requirements_content_digest_sha256": "0430ac6c0f4e181f306f02e5c85a2280e6a6fc946e4651fc71ea9c59c1ea3a2a",
+ "final_reviewed_sha": null,
+ "final_reviewed_manifest_sha256": null,
+ "audit_log": [
+  {
+   "at": "2026-08-20T03:45:00+00:00",
+   "actor": "orchestrator",
+   "event": "captured source-001 verbatim (owner resume-product directive, 2026-08-19), decomposed 25 requirements (10 D-021-BOOTSTRAP session-governance rows + 11 hold/prohibition/authorization rows binding both the sentinel and M5-T002 + 4 task rows), activated registry entry under the owner-typed single-task authorization; next-available identifiers D-021/M5-T002 confirmed against the live registry and ledger before assignment; frozen baseline origin/main d8b3899 (local main == origin/main, clean worktree, all 20 CI check runs green, MCP roster empty)"
+  }
+ ]
+}

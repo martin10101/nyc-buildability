@@ -57,8 +57,17 @@ export default defineConfig({
       // human-journey walkthrough (G3) can exercise /survey/review in a real
       // browser. Non-public runtime flag, read server-side, never inlined into
       // the client bundle; unset in production so the route 404s by default.
+      // M5-T002: also enable the FRONTEND draft-scenario surface for this test
+      // server (INTERNAL_SCENARIO_UI), exactly parallel to INTERNAL_RULE_EVAL_UI:
+      // a non-public runtime flag read by the Server Component (never inlined into
+      // the client bundle; `next start` picks it up without a rebuild). The surface
+      // still renders ONLY on requests that also opt in with `?scenario=on`, so
+      // unrelated journeys are unaffected and the no-call spec proves the browser is
+      // silent without the opt-in. The API's server flag INTERNAL_SCENARIO_ENABLED
+      // is enabled by the harness (e2e/harness/fixture_api.py).
       env: {
         INTERNAL_RULE_EVAL_UI: "1",
+        INTERNAL_SCENARIO_UI: "1",
         INTERNAL_OWNER_DASHBOARD_ENABLED: "1",
         INTERNAL_SURVEY_REVIEW_ENABLED: "1",
       },

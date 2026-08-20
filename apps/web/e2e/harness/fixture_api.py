@@ -55,7 +55,10 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from app.api.v1.properties import get_pluto_fetcher
 from app.api.v1.rule_evaluation import get_spatial_substrate_provider
-from app.config import INTERNAL_RULE_EVAL_ENABLED_ENV_VAR
+from app.config import (
+    INTERNAL_RULE_EVAL_ENABLED_ENV_VAR,
+    INTERNAL_SCENARIO_ENABLED_ENV_VAR,
+)
 from app.connectors.pluto_soda import (
     TransportFailure,
     TransportResponse,
@@ -248,6 +251,13 @@ def build_app():
     # frontend spec still proves the browser issues no request when the surface
     # is not opted in, regardless of this server-side flag.
     os.environ[INTERNAL_RULE_EVAL_ENABLED_ENV_VAR] = "1"
+    # M5-T002: enable the internal scenario endpoint's SERVER flag for this test
+    # process too (independent of the frontend flag). The scenario route REUSES
+    # the same PLUTO fetcher + spatial-substrate provider seams overridden below,
+    # so the substrate routing table (confident R5 -> preliminary scenario; split
+    # lot / no substrate -> professional-review no_scenario) drives the scenario
+    # UI states through the REAL endpoint with no additional wiring.
+    os.environ[INTERNAL_SCENARIO_ENABLED_ENV_VAR] = "1"
     app.dependency_overrides[get_pluto_fetcher] = lambda: harness_fetcher
     app.dependency_overrides[get_spatial_substrate_provider] = (
         lambda: harness_substrate_provider
