@@ -13,6 +13,7 @@ import preliminaryFixture from "../../../../../packages/contracts/fixtures/valid
 import unsupportedFixture from "../../../../../packages/contracts/fixtures/valid/scenario/unsupported_family.json";
 import conflictFixture from "../../../../../packages/contracts/fixtures/valid/scenario/no_scenario_conflict.json";
 import professionalReviewFixture from "../../../../../packages/contracts/fixtures/valid/scenario/no_scenario_professional_review.json";
+import embeddedProfileFixture from "../../../../../packages/contracts/fixtures/invalid/scenario/embedded_property_profile.json";
 
 /**
  * Task M5-T002, client layer:
@@ -152,6 +153,44 @@ describe("fetchScenario — envelope classification", () => {
     expect(outcome.kind).toBe("validation_failure");
     if (outcome.kind === "validation_failure") {
       expect(outcome.problems.length).toBeGreaterThan(0);
+    }
+  });
+
+  // D-022: a malformed 200 body can NEVER be classified as kind="scenario" — it
+  // must become validation_failure so malformed nested data never reaches
+  // ScenarioResult. Each case is an owner-reproduced bypass the pre-correction
+  // client accepted (a negative cap surfaced verbatim, a null citation that later
+  // crashed citation rendering, and the embedded-property invalid fixture).
+  it("rejects a 200 with a negative cap as validation_failure (never scenario)", async () => {
+    const bad = preliminaryDoc();
+    bad.draft_zoning_floor_area_cap_sq_ft = -1;
+    const outcome = await fetchScenario("1000010100", stub(jsonResponse(bad, 200)));
+    expect(outcome.kind).toBe("validation_failure");
+    if (outcome.kind === "validation_failure") {
+      expect(
+        outcome.problems.some((p) => p.startsWith("draft_zoning_floor_area_cap_sq_ft")),
+      ).toBe(true);
+    }
+  });
+
+  it("rejects a 200 with a null citation item as validation_failure (never scenario)", async () => {
+    const bad = preliminaryDoc();
+    // A null citation passed the old validator and could then crash citation
+    // rendering inside ScenarioResult.
+    (bad.cap_provenance as unknown as { citations: unknown[] }).citations = [null];
+    const outcome = await fetchScenario("1000010100", stub(jsonResponse(bad, 200)));
+    expect(outcome.kind).toBe("validation_failure");
+    if (outcome.kind === "validation_failure") {
+      expect(outcome.problems.some((p) => p.startsWith("cap_provenance.citations[0]"))).toBe(true);
+    }
+  });
+
+  it("rejects the embedded_property_profile.json body as validation_failure (never scenario)", async () => {
+    const bad = clone(embeddedProfileFixture);
+    const outcome = await fetchScenario("1000477501", stub(jsonResponse(bad, 200)));
+    expect(outcome.kind).toBe("validation_failure");
+    if (outcome.kind === "validation_failure") {
+      expect(outcome.problems.some((p) => p.startsWith("property_profile"))).toBe(true);
     }
   });
 

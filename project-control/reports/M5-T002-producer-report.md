@@ -262,3 +262,120 @@ the `scenarioEnabled` boolean). Web tests remain unexecuted (thin-client; CI aut
 
 `scenario.py` is a focused route module mirroring `rule_evaluation.py`'s shape and size (well under the
 ~600 SLOC ceiling); `modularity_check --check` reports 0 failures and does not flag any new file.
+
+---
+
+# D-022 correction — scenario-contract validator faithful enforcement
+
+Owner blocking finding (directive D-022, `project-control/directives/D-022-scenario-contract-validator-correction/source-001.md`):
+`validateScenarioDocument` claimed to enforce the canonical scenario contract before casting an HTTP-200 body
+to `Scenario`, but adversarial execution proved it accepted eight malformed bodies, and `fetchScenario`
+classified a negative-cap 200 body as `kind="scenario"`. Correction is bounded to the four files in scope; no
+schema fork, no new dependency, no backend change.
+
+## What was broken (and why the original tests missed it)
+
+The original validator sampled a few fields per object instead of enforcing the schema's
+`additionalProperties:false` + `required` at every level, and used loose type tests:
+
+- **No top-level `additionalProperties:false` / required-presence.** An unexpected top-level property (bypass 7)
+  and the committed `embedded_property_profile.json` fixture (bypass 8, which adds a root `property_profile`)
+  both passed.
+- **Draft cap checked only `typeof === "number"`.** `-1` (bypass 1) and `0` (bypass 2) — and `NaN`/`±Infinity` —
+  all passed, even though the schema is `exclusiveMinimum: 0` (strictly positive) or `null`.
+- **`evaluated_input.bbl` accepted any non-empty string.** `"x"` (bypass 3) passed; the schema requires the
+  canonical BBL pattern `^[1-5][0-9]{5}[0-9]{4}$` or `null`.
+- **`cap_provenance.rule_status` was only checked `typeof === "string"`.** `"verified"` (bypass 4) passed; the
+  schema enum is exactly `["discovered","extracted_draft","needs_review","published"]`.
+- **`cap_provenance.citations` was only checked `Array.isArray`.** The item shape was never validated, so
+  `[null]` (bypass 5) passed and a null citation could then crash citation rendering in `ScenarioResult`.
+- **`assumptions` was only checked `Array.isArray`.** The item shape was never validated, so `[null]`
+  (bypass 6) passed.
+- **`constraint.provenance` used `typeof value === "object"`,** which is `true` for an array — arrays slipped
+  through the intended object-or-null gate.
+- No `additionalProperties`/required enforcement on `evaluated_input`, `cap_provenance`, `citation`,
+  `constraint`, `assumption`, `coverage_matrix` rows, or `integrity_check`; `integrity_check.tolerance`
+  accepted non-finite numbers.
+
+Why the original tests missed it: the pack asserted the happy-path fixtures passed and a *handful* of negative
+cases (wrong `contract_version`, `verified` top-level `coverage_status`, non-numeric cap, bad constraint
+`state`), but had **no adversarial test per bypass** and **no committed-fixture sweep**, so the invalid
+fixtures (including `embedded_property_profile.json`) were never fed through the validator, and the loose
+per-field checks were never probed at their boundaries. No existing assertion encoded acceptance of a bypass,
+so **no test needed to be flipped** — the gap was missing coverage, not wrong coverage. All prior assertions are
+retained unchanged.
+
+## The fix (faithful enforcement, before casting `unknown` to `Scenario`)
+
+`apps/web/src/lib/scenario-contract.ts`:
+- Added `checkKnownAndRequiredKeys` enforcing `additionalProperties:false` + `required` at every object level
+  (root, `evaluated_input`, `cap_provenance`, `citation`, `constraint`, `assumption`, `coverage_matrix` rows,
+  `integrity_check`). Root allowed keys = the 16 required keys + the optional fixture-only `_expected_failure`
+  (string).
+- `draft_zoning_floor_area_cap_sq_ft`: `null` OR a **finite** number strictly `> 0` (`isFiniteNumber` +
+  `> 0`).
+- `evaluated_input.bbl`: `null` or the canonical `BBL_PATTERN`; `input_fingerprint`: `null` or
+  `DIGEST_SHA256_PATTERN`; versions non-empty strings.
+- `cap_provenance.rule_status`: new `CAP_PROVENANCE_RULE_STATUSES` enum; `citations` every item validated via
+  `checkCitation` (required `{snapshot_id,section,quote,provenance}` strings + `provenance` via `isRecord`,
+  optional `last_amended` string|null, `additionalProperties:false`).
+- `constraint.provenance` and `citation.provenance`: `isRecord`-or-null (arrays now fail).
+- `assumptions[]`: new `checkAssumption` (required shape; `[null]` fails).
+- `coverage_matrix` rows + `integrity_check`: added `additionalProperties`/required-presence; `tolerance` must
+  be finite; `rule_status_today` locked to a new `COVERAGE_MATRIX_RULE_STATUSES` enum.
+- All numeric checks route through `Number.isFinite` (`isFiniteNumber`); scalar values use `isContractScalar`
+  (finite number | string | boolean | null).
+- Failure stays **total** and the bounded `Problems`/`MAX_REPORTED_PROBLEMS` mechanism is unchanged.
+- Added two `MutuallyEqual` compile-time proofs to `ScenarioEnumAssertions`: `rule_status` locked to the
+  generated `CapProvenance["rule_status"]` union (exact generated type name confirmed in
+  `packages/contracts/generated/scenario.ts`), and `rule_status_today` locked to
+  `CoverageMatrixRow["rule_status_today"]`.
+
+No schema fork (types remain a type-only import of the generated module); no new dependency; no feature-flag,
+component, backend, or config change.
+
+## Per-bypass mapping (bypass → rejecting check → test)
+
+| # | Reproduced bypass | Rejecting check (scenario-contract.ts) | Test |
+|---|---|---|---|
+| 1 | `draft_..._cap_sq_ft = -1` | finite `> 0` gate | contract: "bypass 1: … = -1"; scenario: "negative cap … validation_failure" |
+| 2 | `draft_..._cap_sq_ft = 0` | finite `> 0` gate | contract: "bypass 2: … = 0" |
+| 3 | `evaluated_input.bbl = "x"` | `BBL_PATTERN` in `checkEvaluatedInput` | contract: "bypass 3: … bbl = 'x'" |
+| 4 | `cap_provenance.rule_status = "verified"` | `checkEnum` vs `CAP_PROVENANCE_RULE_STATUSES` | contract: "bypass 4: … rule_status = 'verified'" |
+| 5 | `cap_provenance.citations = [null]` | `checkCitation` (item is `isRecord`) | contract: "bypass 5: … citations = [null]"; scenario: "null citation … validation_failure" |
+| 6 | `assumptions = [null]` | `checkAssumption` (item is `isRecord`) | contract: "bypass 6: … assumptions = [null]" |
+| 7 | unexpected top-level property | root `checkKnownAndRequiredKeys` (`additionalProperties:false`) | contract: "bypass 7: an unexpected top-level property" |
+| 8 | `embedded_property_profile.json` | root `additionalProperties:false` (`property_profile`) | contract: "bypass 8: … embedded_property_profile.json"; scenario: "embedded_property_profile.json body … validation_failure" |
+
+Extra adversarial coverage: `+Infinity`/`NaN` caps and a `constraints[0].provenance = []` array (the `typeof`
+hole) are also asserted rejected. Fixture sweeps assert every committed valid fixture (4) passes and every
+committed invalid fixture (3) fails, with `embedded_property_profile.json` asserted present and rejected
+explicitly.
+
+## Tests added (additive; nothing weakened or deleted)
+
+- `apps/web/src/lib/__tests__/scenario-contract.test.ts`: all original assertions retained; added the 8
+  per-bypass adversarial tests + extra `Infinity`/`NaN`/array-provenance case + the committed-fixture sweep
+  (static imports of all 4 valid + 3 invalid fixtures — deterministic and `tsc`-clean; `import.meta.glob` was
+  deliberately avoided because there is no `vite/client` ambient-types reference and the test files are inside
+  the `tsc --noEmit` include, so a glob call would break the CI typecheck).
+- `apps/web/src/lib/__tests__/scenario.test.ts`: original assertions retained; added three `fetchScenario`
+  tests proving a 200 body with (i) cap `-1`, (ii) a null citation item, (iii) the `embedded_property_profile`
+  body classifies as `kind="validation_failure"`, never `kind="scenario"` (mirroring the existing mocked-HTTP
+  `stub(jsonResponse(...))` pattern).
+
+## Verification (measured in this worktree; vitest is CI-proven)
+
+- `cd services/api && python -m pytest tests/api -q` → **144 passed in 5.83s** (zero backend impact).
+- `python tools/modularity_check.py --check` (repo root) → **selected 271 files; failures 0; warnings 5**
+  (the 5 warnings are pre-existing and unrelated; `scenario-contract.ts` is not flagged).
+- **vitest / tsc / lint / build / Playwright are NOT run locally** — the owner's thin-client policy forbids
+  installing `node_modules` on this machine; those jobs are authoritative from the clean-checkout CI run. Each
+  changed test was re-read line-by-line against the new validator (imports, fixture paths — five `../` from the
+  test file, exact problem-path prefixes, and `boundedText` preserving those prefixes so the `fetchScenario`
+  `startsWith` assertions hold) for consistency.
+
+## Could not verify locally
+- Frontend unit execution (vitest), `tsc --noEmit`, ESLint, `next build`, and Playwright journeys — deferred to
+  CI per thin-client policy. The static-import sweep and the avoidance of `import.meta.glob` were chosen
+  specifically to keep the CI `tsc --noEmit` typecheck green without a config or ambient-types change.
