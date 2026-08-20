@@ -76,8 +76,8 @@
     "human-journey-reviewer",
     "security-reviewer"
   ],
-  "status": "awaiting_gate",
-  "progress_percent": 99,
+  "status": "rework",
+  "progress_percent": 60,
   "risks": [
     "HARD: consume app/scenario, app/rules, app/profile READ-ONLY; the surfaced cap is the canonical trace value verbatim - never recomputed, never relabeled (backend or frontend).",
     "HARD: endpoint OFF by default behind an explicit-true-token flag; only the bbl path parameter crosses the trust boundary; no request body ever.",
@@ -89,10 +89,14 @@
   ],
   "blockers": [],
   "created_at": "2026-08-20T03:48:33.609845+00:00",
-  "updated_at": "2026-08-20T05:07:49.066039+00:00",
+  "updated_at": "2026-08-20T05:51:23.905961+00:00",
   "directive_refs": [
     {
       "directive_id": "D-021",
+      "requirement_ids": "ALL"
+    },
+    {
+      "directive_id": "D-022",
       "requirement_ids": "ALL"
     }
   ],
@@ -120,6 +124,13 @@
       "percent": 99,
       "status": "awaiting_gate",
       "message": "COMPLETE except owner-side unblocks: gates G0/G3/G4/G5 PASS + human-journey PASS (reports on file), D-021 DCV PASS 25/25 (verification.json filled at 2fee786, content identity 31e652a, manifest d5004488), CI 20/20 green on PR #241 head, accept dry-run refuses ONLY on dependency-accepted (M5-T001/M4-T005 parked on M4-chain G6 legal approval - preserved per D-021-R011). PR #241 stays UNMERGED per D-021-R022. No further review work owed at acceptance time."
+    },
+    {
+      "at": "2026-08-20T05:51:23.905961+00:00",
+      "agent": "orchestrator",
+      "percent": 60,
+      "status": "rework",
+      "message": "D-022 (owner 2026-08-20): COMPLETE BLOCKING FINDING - scenario-contract.ts browser validator does not enforce the canonical scenario contract (8 reproduced bypasses: cap=-1, cap=0, bbl='x', rule_status='verified', citations=[null], assumptions=[null], unexpected top-level key, embedded_property_profile.json; fetchScenario classifies negative-cap as kind=scenario). Per D-022-R016 the G3/G4/G5 gate PASS records and the D-021 DCV conclusions recorded at identity 2fee786/31e652a are INVALIDATED for the corrected code and may not be cited as current evidence; full re-review + re-verification required at the new frozen identity. One bounded correction on this branch; PR #241 stays OPEN/UNMERGED (D-022-R001)."
     }
   ]
 }
