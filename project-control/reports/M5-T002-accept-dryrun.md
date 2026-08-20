@@ -1,5 +1,10 @@
 # M5-T002 accept() dry-run — verbatim fail-closed reasons (2026-08-20)
 
+> **Re-run after the D-022 correction (corrected identity 69558cd, HEAD after gate/DCV re-records):**
+> identical result — the ONLY refusal reasons are the two dependency lines below; all re-recorded
+> gates (G3/G4/G5 PASS at 7f9231e), the 46/46 re-verified directive requirements (D-021+D-022), and
+> every identity/blocker precondition pass. The original run below is preserved for the record.
+
 Run by the orchestrator AFTER all gates (G0/G3/G4/G5) PASS, the human-journey walkthrough PASS,
 the D-021 directive verification PASS (25/25, `verification.json` filled at reviewed_sha 2fee786),
 CI fully green (20/20 contexts), and PR #241 open/unmerged. Command and complete output:

@@ -1,7 +1,17 @@
 # D-021 owner report — one bounded product task delivered (M5-T002), PR unmerged
 
-**Date:** 2026-08-20. **Directive:** D-021 (captured verbatim at
-`project-control/directives/D-021-resume-product-r5-pilot-next-unit/source-001.md`).
+**Date:** 2026-08-20 (refreshed after the owner's D-022 blocking-finding correction).
+**Directives:** D-021 (`project-control/directives/D-021-resume-product-r5-pilot-next-unit/source-001.md`)
++ D-022 correction (`project-control/directives/D-022-scenario-contract-validator-correction/source-001.md`).
+
+> **D-022 correction applied and independently re-verified.** The owner proved the browser
+> scenario-contract validator accepted 8 adversarial bypasses. One bounded correction (single content
+> commit `69558cd`, exactly 4 files: the validator, its two test files, the producer report) now
+> enforces the canonical schema faithfully; all 8 bypasses are rejected and adversarially tested; the
+> prior G3/G4/G5/DCV conclusions were invalidated and the full wave re-ran at the corrected frozen
+> identity — all PASS, zero blocking findings; the directive-compliance verifier re-verified all 46
+> requirements (25 D-021 + 21 D-022) PASS. CI: 20/20 contexts green, including 370 vitest tests and
+> 80 Playwright journeys executed from a clean checkout.
 
 ## Plain English: what you can now do that you could not before
 
@@ -62,8 +72,10 @@ session start (fresh process at the worktree root) — no stop condition.
 - **PR:** #241 — https://github.com/martin10101/nyc-buildability/pull/241 (OPEN, mergeable, DO-NOT-MERGE
   banner in the title/body)
 - **Branch:** `task/M5-T002-scenario-endpoint` (base `main` @ d8b3899)
-- **Reviewed content identity:** commit `31e652aff0b7689cc22c46376d42a12f8c9eab82` (all product code);
-  every later commit on the branch is control-plane records only (gates, verification, reports) — the
+- **Reviewed content identity (post D-022 correction):** commit
+  `69558cda53dc7bc9ebbe649aef318e65b1aa22d0`, tree `ee6dce0f29416e6637dd46382872a88a25578ce1` — the
+  final product code (original unit at 31e652a + the single D-022 correction commit). Every commit on
+  the branch after `69558cd` is control-plane records only (gates, verification, reports) — the
   reviewed code is byte-identical at the final head.
 - **Exact merge identity = the PR head commit at merge time**; the final pushed head SHA is stated in
   the session's closing report and visible on the PR. Merging PR #241 is the single action that ships

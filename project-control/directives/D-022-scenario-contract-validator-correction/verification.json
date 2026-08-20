@@ -1,7 +1,7 @@
 {
  "schema": "directive_verification/v2",
  "directive_id": "D-022",
- "authority_note": "Pending independent verification by directive-compliance-verifier (producer != verifier). Capture only; no requirement verified yet. M5-T002 rows are verified at the corrected frozen identity after the rework gate wave; the D-022-BOOTSTRAP sentinel row (R003) is verified at directive verification.",
+ "authority_note": "Independent verification by directive-compliance-verifier (producer != verifier): ALL 21 D-022 requirements PASS at the corrected frozen identity (code 69558cd / tree ee6dce0f, HEAD 7f9231e, content-manifest ba9803c4). 20 M5-T002 task rows recorded here; the D-022-BOOTSTRAP sentinel row (R003 reconcile-first) verified in the preserved report project-control/reports/M5-T002-directive-verification-d022.md. Five non-blocking records-hygiene discrepancies from the DCV report were closed by the orchestrator in the same control-plane commit (both verification files re-stamped, owner report refreshed, ledger progress entry added).",
  "producer": "orchestrator",
  "verifier": "directive-compliance-verifier",
  "task_verifications": [
@@ -32,150 +32,211 @@
     "D-022-R020",
     "D-022-R021"
    ],
-   "reviewed_sha": null,
-   "verified_at": null,
+   "reviewed_sha": "7f9231edbd04aaf33e68b986dd643af4aa2ff916",
+   "verified_at": "2026-08-20T07:55:00+00:00",
    "requirements": [
     {
      "id": "D-022-R001",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": null,
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "DCV: gh pr view 241: OPEN, mergedAt null, DO-NOT-MERGE title; main d8b3899 via gh api branches/main",
+      "project-control/reports/M5-T002-directive-verification-d022.md"
+     ],
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "7f9231edbd04aaf33e68b986dd643af4aa2ff916"
     },
     {
      "id": "D-022-R002",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": null,
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "DCV: correction diff 2d9eb74..69558cd = exactly 4 files (validator + 2 tests + producer report); same branch/PR; no new task",
+      "project-control/reports/M5-T002-directive-verification-d022.md"
+     ],
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "7f9231edbd04aaf33e68b986dd643af4aa2ff916"
     },
     {
      "id": "D-022-R004",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": null,
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "DCV: no package/lock/schema/generated files in any diff; validateScenarioDocument rewritten (+231/-21)",
+      "project-control/reports/M5-T002-directive-verification-d022.md"
+     ],
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "7f9231edbd04aaf33e68b986dd643af4aa2ff916"
     },
     {
      "id": "D-022-R005",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": null,
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "DCV: traced: root+7-nested additionalProperties:false+required, BBL_PATTERN L292, digest L307, cap finite>0 L522-533, rule_status enum L418, citation/assumption/constraint/coverage/integrity shapes, isRecord rejects arrays L342/392",
+      "project-control/reports/M5-T002-directive-verification-d022.md"
+     ],
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "7f9231edbd04aaf33e68b986dd643af4aa2ff916"
     },
     {
      "id": "D-022-R006",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": null,
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "DCV: Problems caps at MAX_REPORTED_PROBLEMS=20 + sentinel at 21 (L201-211)",
+      "project-control/reports/M5-T002-directive-verification-d022.md"
+     ],
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "7f9231edbd04aaf33e68b986dd643af4aa2ff916"
     },
     {
      "id": "D-022-R007",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": null,
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "DCV: 4 valid fixtures swept ok:true (test L199-201); CI web-e2e green at 7f9231e (scenario-contract.test.ts 25 tests)",
+      "project-control/reports/M5-T002-directive-verification-d022.md"
+     ],
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "7f9231edbd04aaf33e68b986dd643af4aa2ff916"
     },
     {
      "id": "D-022-R008",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": null,
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "DCV: 3 invalid fixtures swept ok:false; embedded_property_profile.json sole defect = top-level property_profile key, rejected by additionalProperties (explicit test L207-215)",
+      "project-control/reports/M5-T002-directive-verification-d022.md"
+     ],
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "7f9231edbd04aaf33e68b986dd643af4aa2ff916"
     },
     {
      "id": "D-022-R009",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": null,
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "DCV: bypass 1-8 tests (L105-151) + Infinity/NaN/array-provenance extras (L153-165), each cloning a valid fixture with one defect, asserting rejection at the named path",
+      "project-control/reports/M5-T002-directive-verification-d022.md"
+     ],
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "7f9231edbd04aaf33e68b986dd643af4aa2ff916"
     },
     {
      "id": "D-022-R010",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": null,
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "DCV: scenario.test.ts L164-195: negative cap, null citation, embedded fixture -> kind=validation_failure via REAL fetchScenario + REAL validator (no vi.mock)",
+      "project-control/reports/M5-T002-directive-verification-d022.md"
+     ],
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "7f9231edbd04aaf33e68b986dd643af4aa2ff916"
     },
     {
      "id": "D-022-R011",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": null,
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "DCV: fetchScenario returns kind=scenario only when validation.ok (scenario.ts L332-343); ScenarioPanel renders ScenarioResult only for kind=scenario (ScenarioPanel.tsx L135-136)",
+      "project-control/reports/M5-T002-directive-verification-d022.md"
+     ],
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "7f9231edbd04aaf33e68b986dd643af4aa2ff916"
     },
     {
      "id": "D-022-R012",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": null,
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "DCV: correction diff = 4 files only; no backend/scenario/rules/profile/contracts/deps/flags/agent/supervisor/MCP file",
+      "project-control/reports/M5-T002-directive-verification-d022.md"
+     ],
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "7f9231edbd04aaf33e68b986dd643af4aa2ff916"
     },
     {
      "id": "D-022-R013",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": null,
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "DCV: all correction changes fix-motivated; DIGEST_SHA256_PATTERN extraction + isContractScalar rename functionally required; no gratuitous churn",
+      "project-control/reports/M5-T002-directive-verification-d022.md"
+     ],
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "7f9231edbd04aaf33e68b986dd643af4aa2ff916"
     },
     {
      "id": "D-022-R014",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": null,
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "DCV: CI 20/20 success at 7f9231e (web lint+typecheck+build, web-e2e vitest 370 + Playwright 80, contracts, contracts-typegen, api, modularity); pytest tests/api 144 reproduced",
+      "project-control/reports/M5-T002-directive-verification-d022.md"
+     ],
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "7f9231edbd04aaf33e68b986dd643af4aa2ff916"
     },
     {
      "id": "D-022-R015",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": null,
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "DCV: frozen 69558cd / tree ee6dce0f confirmed by git rev-parse; recorded in all 3 d022 gate reports + task",
+      "project-control/reports/M5-T002-directive-verification-d022.md"
+     ],
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "7f9231edbd04aaf33e68b986dd643af4aa2ff916"
     },
     {
      "id": "D-022-R016",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": null,
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "DCV: rework progress entry (05:51) invalidates prior G3/G4/G5 + DCV at 2fee786/31e652a; 3 d022 gate reports each state prior PASS not relied upon",
+      "project-control/reports/M5-T002-directive-verification-d022.md"
+     ],
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "7f9231edbd04aaf33e68b986dd643af4aa2ff916"
     },
     {
      "id": "D-022-R017",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": null,
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "DCV: G3/G4/G5 d022 reports at the same frozen identity, each reproducing the 8 bypasses; DCV reproduced every trace independently",
+      "project-control/reports/M5-T002-directive-verification-d022.md"
+     ],
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "7f9231edbd04aaf33e68b986dd643af4aa2ff916"
     },
     {
      "id": "D-022-R018",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": null,
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "DCV: all reviewer findings non-blocking; 69558cd..HEAD control-plane only -> no code change after wave; consolidated single wave",
+      "project-control/reports/M5-T002-directive-verification-d022.md"
+     ],
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "7f9231edbd04aaf33e68b986dd643af4aa2ff916"
     },
     {
      "id": "D-022-R019",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": null,
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "DCV: gate wave at 7f9231e with no subsequent code change = the final independent review of the final frozen result",
+      "project-control/reports/M5-T002-directive-verification-d022.md"
+     ],
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "7f9231edbd04aaf33e68b986dd643af4aa2ff916"
     },
     {
      "id": "D-022-R020",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": null,
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "DCV: closing owner report returns PR #241 head + measured evidence (CI 20/20, pytest 144, vitest 370, Playwright 80)",
+      "project-control/reports/M5-T002-directive-verification-d022.md"
+     ],
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "7f9231edbd04aaf33e68b986dd643af4aa2ff916"
     },
     {
      "id": "D-022-R021",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": null,
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "DCV: no completion claim for the corrected identity before CI green; task awaiting_gate; prior COMPLETE claim was at the invalidated pre-D-022 identity and was reworked",
+      "project-control/reports/M5-T002-directive-verification-d022.md"
+     ],
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "7f9231edbd04aaf33e68b986dd643af4aa2ff916"
     }
-   ]
+   ],
+   "reviewed_manifest_sha256": "ba9803c4759069f7133b1227ed2e499cab4c9f40cbb7ee7af2c70001fd824f59"
   }
  ]
 }

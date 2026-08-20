@@ -77,7 +77,7 @@
     "security-reviewer"
   ],
   "status": "awaiting_gate",
-  "progress_percent": 85,
+  "progress_percent": 99,
   "risks": [
     "HARD: consume app/scenario, app/rules, app/profile READ-ONLY; the surfaced cap is the canonical trace value verbatim - never recomputed, never relabeled (backend or frontend).",
     "HARD: endpoint OFF by default behind an explicit-true-token flag; only the bbl path parameter crosses the trust boundary; no request body ever.",
@@ -89,7 +89,7 @@
   ],
   "blockers": [],
   "created_at": "2026-08-20T03:48:33.609845+00:00",
-  "updated_at": "2026-08-20T06:13:01.578879+00:00",
+  "updated_at": "2026-08-20T06:48:59.127159+00:00",
   "directive_refs": [
     {
       "directive_id": "D-021",
@@ -131,6 +131,13 @@
       "percent": 60,
       "status": "rework",
       "message": "D-022 (owner 2026-08-20): COMPLETE BLOCKING FINDING - scenario-contract.ts browser validator does not enforce the canonical scenario contract (8 reproduced bypasses: cap=-1, cap=0, bbl='x', rule_status='verified', citations=[null], assumptions=[null], unexpected top-level key, embedded_property_profile.json; fetchScenario classifies negative-cap as kind=scenario). Per D-022-R016 the G3/G4/G5 gate PASS records and the D-021 DCV conclusions recorded at identity 2fee786/31e652a are INVALIDATED for the corrected code and may not be cited as current evidence; full re-review + re-verification required at the new frozen identity. One bounded correction on this branch; PR #241 stays OPEN/UNMERGED (D-022-R001)."
+    },
+    {
+      "at": "2026-08-20T06:48:59.127159+00:00",
+      "agent": "orchestrator",
+      "percent": 99,
+      "status": "awaiting_gate",
+      "message": "D-022 re-review COMPLETE at corrected frozen identity 69558cd (tree ee6dce0f): G3/G4/G5 re-recorded PASS at 7f9231e (reports M5-T002-G{3,4,5}-*-d022.md, zero blocking findings; all 8 owner bypasses reproduced-rejected by every reviewer), DCV re-verified 46/46 PASS (D-021 25 + D-022 21; both verification.json files re-stamped at 7f9231e/manifest ba9803c4; report M5-T002-directive-verification-d022.md incl. orchestrator disposition of the 5 records-hygiene items). CI 20/20 green at 7f9231e (vitest 370, Playwright 80, clean checkout). Accept dry-run again refuses ONLY on dependency-accepted (M5-T001/M4-T005 parked on M4-chain G6). PR #241 OPEN/UNMERGED per D-021-R022/D-022-R001."
     }
   ]
 }
