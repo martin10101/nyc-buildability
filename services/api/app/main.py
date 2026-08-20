@@ -30,6 +30,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from app.api.v1.properties import router as properties_v1_router
 from app.api.v1.rule_evaluation import router as rule_evaluation_v1_router
+from app.api.v1.scenario import router as scenario_v1_router
 
 API_VERSION = "0.1.0"
 
@@ -119,6 +120,12 @@ def create_app() -> FastAPI:
     # entry) unless INTERNAL_RULE_EVAL_ENABLED is explicitly true; absent/unknown
     # -> disabled (fail safe). See app.api.v1.rule_evaluation.
     application.include_router(rule_evaluation_v1_router)
+    # Internal, feature-flag-gated scenario endpoint (task M5-T002). Registered
+    # the same way as the rule-evaluation router: ALWAYS mounted but unreachable
+    # (generic 404, no OpenAPI entry) unless INTERNAL_SCENARIO_ENABLED is
+    # explicitly true; absent/unknown -> disabled (fail safe). See
+    # app.api.v1.scenario.
+    application.include_router(scenario_v1_router)
 
     @application.get("/api/v1/health")
     def health() -> dict[str, str]:

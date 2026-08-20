@@ -1,0 +1,211 @@
+# M5-T002 — Producer report
+
+Scenario endpoint + property-screen scenario surface (internal, flag-gated). Producer:
+`backend-engineer`. Branch base: `task/M5-T002-scenario-endpoint` @ `5239dcf`. Directive: D-021 (ALL).
+
+This is a producer evidence record only. It does not accept the task or claim gate readiness; an
+independent gate decides that.
+
+---
+
+## 1. What I built (all inside the packet's allowed_paths)
+
+### Backend (fully complete; self-checks pass in-worktree)
+
+- **`services/api/app/config.py`** — added `internal_scenario_enabled()` + `INTERNAL_SCENARIO_ENABLED_ENV_VAR`,
+  byte-for-byte the same explicit-true-token / fail-safe semantics as `internal_rule_eval_enabled`
+  (absent/empty/unknown -> disabled).
+- **`services/api/app/api/v1/scenario.py`** (new) — `GET /api/v1/properties/{bbl}/scenario`,
+  `include_in_schema=False`, mirroring `rule_evaluation.py` stage by stage:
+  - Flag off -> identical generic `404 {"detail":"Not Found"}`, no correlation id, checked FIRST.
+  - `bbl` path param ONLY. No request body, no query params. `build_scenario(..., assumptions=None)` — the
+    browser can never supply the facts a scenario rests on.
+  - `normalize_bbl` -> typed 422; injected `PlutoFetcher` via `Depends(get_pluto_fetcher)` -> the same
+    single-sourced `_ERROR_STATUS` map; `no_match` -> the same 404 machine-state body; substrate via
+    `Depends(get_spatial_substrate_provider)` **REUSED by import from `rule_evaluation.py`** (the seam is
+    not duplicated).
+  - `build_property_profile` -> `validate_profile` (typed `internal_contract_error` 500) ->
+    `evaluate_property` -> `serialize_rule_evaluation` -> `validate_rule_evaluation_document` (typed 500) ->
+    `build_scenario(profile, rule_evaluation_document)` consumed READ-ONLY.
+  - **FH-M5T001-S2 (depth bound):** `_document_depth_ok()` — an ITERATIVE explicit-stack depth check (limit
+    64), run BEFORE contract validation, so an adversarially deep document returns a typed 500 and never a
+    `RecursionError` (the guard itself never recurses).
+  - **FH-M5T001-S1 (validate before emit):** ALWAYS calls `validate_scenario_document(document)` before send;
+    failure -> typed `internal_contract_error` 500 with no internals.
+  - A no_scenario / unsupported / professional-review outcome from `build_scenario` is a NORMAL 200 document.
+    200s carry `X-Correlation-ID`. Logging is payload-only (no `str(exc)`/traceback). Everything after fetch
+    is inside one generic-500 guard.
+  - The surfaced cap is never recomputed or relabeled here — it is whatever `build_scenario` surfaced verbatim
+    from the canonical trace.
+- **`services/api/app/main.py`** — registered `scenario_v1_router` exactly like `rule_evaluation_v1_router`
+  (always mounted; unreachable + absent from OpenAPI unless the flag is explicitly true).
+- **`services/api/tests/api/test_scenario_api.py`** (new) — 33 tests (see §3 for the AS map).
+
+### Frontend (surface fully built + unit/component-tested; property-screen render wiring is BLOCKED on an out-of-scope file — see §4)
+
+- **`apps/web/src/lib/scenario-contract.ts`** — runtime validation of a 200 scenario body against the
+  GENERATED types (`packages/contracts/generated/scenario.ts`), mirroring `rule-evaluation-contract.ts`
+  (two-way `MutuallyEqual` enum proofs; rejects `verified`; bounded problem list).
+- **`apps/web/src/lib/scenario.ts`** — typed client + presentation classifier + feature-flag helper,
+  mirroring `lib/rule-evaluation.ts` guarantee-for-guarantee: exact (status, state) pair matrix incl.
+  `feature_unavailable` for the flag-off (404, null) pair; runtime contract validation before render;
+  bounded/control-stripped reflected text; token-allowlisted correlation id; AbortController + timeout;
+  `aborted`/`client_timeout` outcomes.
+- **`apps/web/src/components/scenario/{ScenarioPanel,ScenarioResult,ScenarioFailure}.tsx`** + `__tests__/` —
+  render the draft cap VERBATIM with its draft-cap label, cap rule/citations/provenance disclosure, the
+  rule-coverage map, coverage badge (never "verified"), `needs_review` + `not_verified_disclaimer`, each
+  honest typed no-scenario state with the backend-produced reason, and `feature_unavailable` as a benign
+  "not available in this environment" note. Focus/announcement discipline mirrors the rule-eval surface
+  (own live region, no focus hijack on background load).
+- **`apps/web/src/lib/__tests__/scenario.test.ts`** + **`scenario-contract.test.ts`** — client-layer tests
+  (flag matrix, pair matrix, envelope classification, verified-rejection, presentation classifier,
+  announcements) mirroring `rule-evaluation.test.ts`.
+- **`apps/web/e2e/scenario.spec.ts`** + **`scenario-flag-off.spec.ts`** — Playwright journeys patterned on
+  the rule-eval specs.
+- **`apps/web/e2e/harness/fixture_api.py`** — extended ADDITIVELY: `build_app()` now also sets
+  `INTERNAL_SCENARIO_ENABLED=1`. The scenario route REUSES the existing PLUTO fetcher + substrate seams, so
+  the existing substrate routing table drives the scenario UI states with no other harness change; existing
+  routes are byte-behavior-unchanged.
+
+---
+
+## 2. Hard-boundary compliance (D-021 + packet)
+
+- READ-ONLY honored: **zero edits** to `app/scenario/**`, `app/profile/**`, `app/spatial/**`, `app/rules/**`,
+  `packages/contracts/**`. The cap is never recomputed or relabeled (backend or frontend); no "verified" is
+  emitted or rendered; no hidden assumptions (`assumptions=None`); deterministic code only, no AI.
+- No existing test / CI workflow / security control touched. Unrelated dirty files: none present.
+- All 12 changed paths are inside the packet's allowed_paths (verified against `git status`).
+- No new public endpoint beyond the single flag-gated internal route.
+
+---
+
+## 3. AS coverage map (evidence)
+
+| AS | Where covered | Notes |
+|----|---------------|-------|
+| AS-1 API flag off/absent/unknown -> generic 404, not in OpenAPI | `test_scenario_api.py::test_as1_flag_off_or_unknown_is_generic_404` (8 tokens), `::test_as1_openapi_never_lists_the_internal_route` | byte-equal `{"detail":"Not Found"}`, no correlation id, no hint |
+| AS-2 happy path -> 200, cap == canonical trace VERBATIM | `::test_as2_happy_path_surfaces_the_canonical_cap_verbatim` | cap asserted `== canonical_trace_cap()` (rule_evaluation trace rebuilt via the same production path), never recomputed; never "verified"; `needs_review` + disclaimer + `X-Correlation-ID` |
+| AS-3 honest no-scenario families -> 200 | real path: `::test_as3_absent_substrate_is_200_professional_review`, `::test_as3_split_lot_is_200_professional_review`; pass-through: `::test_as3_no_scenario_families_pass_through_as_200` (unsupported, conflict, professional_review committed fixtures); builder-only families: `::test_as3_builder_missing_constraint_is_honest_no_scenario`, `::test_as3_builder_malformed_input_is_honest_no_scenario` | the fixed R5 endpoint path can only itself reach preliminary + professional-review; unsupported/conflict/missing/malformed are proven at the pass-through + builder boundary, exactly as the M4-T005 pack proves its unsupported/conflict families at the serializer boundary (documented pattern) |
+| AS-4 validate-before-emit + depth bound | `::test_as4_invalid_document_is_typed_500_no_internals`, `::test_as4_adversarially_deep_document_hits_bounded_depth_no_recursionerror` | invalid doc -> typed 500; a 5000-deep doc -> typed 500, no `RecursionError`/traceback |
+| AS-5 error-mapping parity + no leakage | `::test_as5_*` (422 malformed x3, 504 timeout, 503 unavailable, 502 schema_drift, 404 no_match, generic 500, token/stack-leak absence) | same single-sourced map as rule-eval; no traceback/secret/path in any body |
+| AS-6 no injection surface; POST -> 405 | `::test_as6_post_is_405_method_not_allowed`, `::test_as6_query_supplied_assumptions_are_ignored` | query `?assumptions=...` is inert (byte-identical body) |
+| AS-10 determinism + regression | `::test_as10_response_is_deterministic`, `::test_as10_existing_property_route_still_works`, `::test_as10_health_endpoint_unaffected` | identical input -> byte-identical 200 body |
+| AS-7 web flag off (no render, no fetch) | `apps/web/src/lib/__tests__/scenario.test.ts` (surface-gate suite) + `apps/web/e2e/scenario-flag-off.spec.ts` | no-opt-in and `?scenario=off` render nothing and fire no `/scenario` request |
+| AS-8 web happy path (cap verbatim, runtime-validated) | `apps/web/src/components/scenario/__tests__/scenario.test.tsx` (cap value `15,000` + draft label + never-verified + provenance) + `apps/web/src/lib/__tests__/scenario*.test.ts` + `apps/web/e2e/scenario.spec.ts` | **property-screen render wiring BLOCKED — see §4**; component/client logic fully covered |
+| AS-9 web honest failure states | component test (feature_unavailable, network_error+retry, no-cap on no-scenario) + `apps/web/e2e/scenario.spec.ts` | same blocker as AS-8 for the live property-screen journeys |
+
+---
+
+## 4. Limitations / blockers — stated plainly
+
+### B1 (HARD, blocks the property-screen integration part of AS-7/8/9): the render-wiring file is outside allowed_paths
+
+The rule-evaluation panel is wired into the property screen inside
+**`apps/web/src/components/property/PropertyLookup.tsx`** (its `ProfileView` renders
+`{ruleEvalEnabled ? <RuleEvaluationPanel .../> : null}`), and `apps/web/src/app/property/page.tsx` computes
+the flag and passes it as a prop. To wire the scenario surface "the same way", BOTH of those files must
+change — but only `apps/web/src/app/property/**` is in this task's allowed_paths;
+`components/property/PropertyLookup.tsx` is **not**. Passing a `scenarioEnabled` prop from `page.tsx` alone
+is a TypeScript error until `PropertyLookup` declares/consumes it, so I did **not** modify `page.tsx`
+either (leaving it byte-unchanged rather than shipping an unused value that fails `tsc`/eslint).
+
+I did NOT edit either out-of-scope file (respecting the HARD path boundary; editing outside allowed_paths
+fails the gate on scope). The scenario surface is fully built, drop-in, and unit/component-tested. The exact
+additive wiring needed (mirrors the rule-eval lines verbatim):
+
+- `apps/web/src/app/property/page.tsx`:
+  - import `scenarioSurfaceEnabled` from `@/lib/scenario`;
+  - `const scenarioEnabled = scenarioSurfaceEnabled({ scenario: params.scenario });`
+  - pass `scenarioEnabled` into `<PropertyLookup ... />`.
+- `apps/web/src/components/property/PropertyLookup.tsx`:
+  - add optional prop `scenarioEnabled?: boolean` (default false) threaded to `ProfileView`;
+  - in `ProfileView`, after the rule-eval panel: `{scenarioEnabled ? <ScenarioPanel bbl={profile.identity.bbl} /> : null}` (import from `@/components/scenario/ScenarioPanel`).
+
+Recommended resolution (orchestrator's call, per ADR-005): amend allowed_paths to add
+`apps/web/src/components/property/PropertyLookup.tsx` (M0-T077 allowed_paths-amendment precedent) so I apply
+the ~2-line additive wiring, OR split a small wiring follow-up task. Until then the property-screen live
+journeys (AS-8/AS-9 happy/failure) cannot render; the flag-off no-render/no-fetch guarantee (AS-7) holds
+regardless and is proven.
+
+### B2 (config, blocks the scenario.spec.ts happy-path in CI): the e2e web-server frontend flag is set in an out-of-scope file
+
+`scenario.spec.ts` renders only when the web test server has the frontend flag on. The rule-eval equivalent
+is enabled via `INTERNAL_RULE_EVAL_UI: "1"` in **`apps/web/playwright.config.ts`** `webServer.env` — a file
+outside allowed_paths. The scenario surface needs `INTERNAL_SCENARIO_UI: "1"` added there. I set the SERVER
+endpoint flag in the harness (in scope), but the web-server frontend flag requires that one-line config edit
+(and, coupled with B1, the render wiring). `scenario-flag-off.spec.ts` needs no such change and is correct
+today.
+
+### D1 (disclosed decision): frontend flag var name — I used `INTERNAL_SCENARIO_UI` (non-public), not `NEXT_PUBLIC_*`
+
+The packet's item 6 says two things that conflict: (a) "mirroring `lib/rule-evaluation.ts`
+guarantee-for-guarantee" and (b) "use an analogous `NEXT_PUBLIC_*` var". Rule-eval DELIBERATELY uses a
+non-public server-read var (`INTERNAL_RULE_EVAL_UI`) precisely so Next never inlines the flag into the client
+bundle (its own module comment states this). A `NEXT_PUBLIC_*` var would inline the flag/endpoint hint into
+the browser bundle — a weaker posture than the pattern I was told to mirror, and a security-guarantee
+reduction on a legally-sensitive platform. I preserved the stronger guarantee (non-public runtime var,
+mirroring rule-eval exactly) and am flagging the deviation here for the reviewer to confirm or send back.
+The functional guarantee is identical either way: off by default (var unset -> off) + per-request `?scenario=on`
+opt-in; the endpoint is independently server-gated, so the defense-in-depth frontend flag never gates data.
+
+### N1 (non-blocking, environment): `python -m pytest tests` (whole services/api) cannot collect on this sandbox
+
+Pre-existing PEP 695 generic syntax under `tests/documents/**` requires Python 3.12; this sandbox is 3.11.9,
+so those 15 collection errors are unrelated to this task (`SyntaxError: expected '('`). CI runs 3.12 and is
+authoritative. I ran `tests/api` and `tests/scenario` (both collect and pass — see §5).
+
+### N2 (thin-client): web tests written, not executed
+
+Per the packet + thin-client policy, no npm/node/npx/playwright was run. The vitest unit/component tests and
+Playwright e2e specs are written to mirror the accepted rule-eval patterns; CI is authoritative for them.
+
+---
+
+## 5. Commands run (in-worktree) with real output
+
+```
+$ git rev-parse --show-toplevel
+C:/Users/MLFLL/Downloads/.../.claude/worktrees/agent-a7d83133a1fce5dab   (contains .claude/worktrees/agent- : PASS)
+
+$ python --version
+Python 3.11.9
+
+$ cd services/api && python -m pytest tests/api/test_scenario_api.py -q
+.................................                                         [100%]
+33 passed in 7.35s
+
+$ python -m pytest tests/api -q
+........................................................................ [ 50%]
+........................................................................ [100%]
+144 passed in 4.64s
+
+$ python -m pytest tests/api tests/scenario -q
+........................................................................ [ 36%]
+........................................................................ [ 72%]
+......................................................                   [100%]
+198 passed in 4.69s
+
+$ python -m pytest tests -q        # whole services/api (see N1)
+... 15 errors in 10.11s            # PRE-EXISTING PEP695/3.12 collection errors in tests/documents/** ONLY
+
+$ python tools/modularity_check.py --check        # from repo root
+selected 265 files; failures 0; warnings 5
+  (all 5 warnings are pre-existing, UNTOUCHED files; scenario.py and the new tests are not flagged)
+
+$ cd services/api && python -m ruff --version && python -m ruff check app/api/v1/scenario.py app/config.py app/main.py tests/api/test_scenario_api.py
+ruff 0.13.0
+All checks passed!
+
+$ python -m ruff check ../../apps/web/e2e/harness/fixture_api.py
+All checks passed!
+```
+
+Ruff local version (0.13.0) matches CI. Web `tsc`/eslint/vitest/playwright: NOT run (thin-client; CI authoritative).
+
+---
+
+## 6. Modularity
+
+`scenario.py` is a focused route module mirroring `rule_evaluation.py`'s shape and size (well under the
+~600 SLOC ceiling); `modularity_check --check` reports 0 failures and does not flag any new file.
