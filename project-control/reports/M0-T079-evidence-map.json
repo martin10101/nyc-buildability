@@ -1,0 +1,26 @@
+{
+ "task_id": "M0-T079",
+ "directive_id": "D-023",
+ "requirements": {
+  "D-023-R001": "Handoff identity verified at capture; task derives from packet must-fix 2/3/7/14. project-control/reports/M0-T079-producer-report.md section 1.",
+  "D-023-R002": "Task 2 of the coordinated chain; single task branch merged into the campaign branch. project-control/reports/M0-T079-producer-report.md header.",
+  "D-023-R003": "Conduct row honored throughout M0-T079; project-control/reports/M0-T079-producer-report.md sections 5/8/9 and the AD-093 citation; no violation observed; independent gates to confirm.",
+  "D-023-R004": "Conduct row honored throughout M0-T079; project-control/reports/M0-T079-producer-report.md sections 5/8/9 and the AD-093 citation; no violation observed; independent gates to confirm.",
+  "D-023-R005": "Conduct row honored throughout M0-T079; project-control/reports/M0-T079-producer-report.md sections 5/8/9 and the AD-093 citation; no violation observed; independent gates to confirm.",
+  "D-023-R006": "Conduct row honored throughout M0-T079; project-control/reports/M0-T079-producer-report.md sections 5/8/9 and the AD-093 citation; no violation observed; independent gates to confirm.",
+  "D-023-R010": "Work confined to authorized area 1 (bounded mode); diff clear of rotation/model/github/remote-approval modules. project-control/reports/M0-T079-producer-report.md section 9.",
+  "D-023-R011": "Bounded mode implemented on existing supervisor stack; durable budgets/counters crash-safe (AS-5/6/7); deterministic seam stop (AS-4); breakers wired (AS-19/20); OFF by default, R595 intact. project-control/reports/M0-T079-producer-report.md sections 2-5.",
+  "D-023-R023": "Evidence labeled unit/fake-runner only; no readiness/reliability claim; live canary explicitly not attempted. project-control/reports/M0-T079-producer-report.md section 6.4 evidence label.",
+  "D-023-R025": "Conduct row honored throughout M0-T079; project-control/reports/M0-T079-producer-report.md sections 5/8/9 and the AD-093 citation; no violation observed; independent gates to confirm.",
+  "D-023-R026": "Conduct row honored throughout M0-T079; project-control/reports/M0-T079-producer-report.md sections 5/8/9 and the AD-093 citation; no violation observed; independent gates to confirm.",
+  "D-023-R027": "Conduct row honored throughout M0-T079; project-control/reports/M0-T079-producer-report.md sections 5/8/9 and the AD-093 citation; no violation observed; independent gates to confirm.",
+  "D-023-R028": "Conduct row honored throughout M0-T079; project-control/reports/M0-T079-producer-report.md sections 5/8/9 and the AD-093 citation; no violation observed; independent gates to confirm.",
+  "D-023-R029": "Conduct row honored throughout M0-T079; project-control/reports/M0-T079-producer-report.md sections 5/8/9 and the AD-093 citation; no violation observed; independent gates to confirm.",
+  "D-023-R030": "Conduct row honored throughout M0-T079; project-control/reports/M0-T079-producer-report.md sections 5/8/9 and the AD-093 citation; no violation observed; independent gates to confirm.",
+  "D-023-R031": "Conduct row honored throughout M0-T079; project-control/reports/M0-T079-producer-report.md sections 5/8/9 and the AD-093 citation; no violation observed; independent gates to confirm.",
+  "D-023-R033": "Activation hold honored: mode implemented and OFF; enable is per-launch owner input only; no durable enable flag set; doctor states it. project-control/reports/M0-T079-producer-report.md section 5.",
+  "D-023-R036": "Produced autonomously in-scope; deviations flagged for reviewers, not owner. project-control/reports/M0-T079-producer-report.md section 8.",
+  "D-023-R037": "No hardcoded max run length: None-default wall clock, no ceiling constant (source-scan test), unlimited run proven never timer-stopped (AS-1/2), enormous budget unclamped (AS-3.4), budget_conflict on relaunch change. project-control/reports/M0-T079-producer-report.md sections 2.2/3.1.",
+  "D-023-R038": "Conduct row honored throughout M0-T079; project-control/reports/M0-T079-producer-report.md sections 5/8/9 and the AD-093 citation; no violation observed; independent gates to confirm."
+ }
+}
