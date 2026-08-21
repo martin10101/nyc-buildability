@@ -1144,8 +1144,15 @@ class CliStartTests(LoopTestBase):
         return code, json.loads(stdout.getvalue())
 
     def test_start_without_the_required_inputs_does_not_dispatch(self) -> None:
+        """M0-T079 C7: a missing input is a TYPED refusal, not exit 0.
+
+        The payload always said `dispatched: false`, but an unattended launcher
+        reads the exit code, and 0 meant "the run happened". A drifted argv or a
+        moved config reported success for a run that executed no cycle.
+        """
         code, payload = self.run_cli("start", "--mode", "shadow")
-        self.assertEqual(code, 0)
+        self.assertEqual(code, refusals.EXIT_CODES[refusals.STALE_STATE])
+        self.assertEqual(payload["refusal"]["reason_code"], "missing_required_inputs")
         self.assertFalse(payload["dispatched"])
         self.assertEqual(payload["provider_calls_made"], 0)
         self.assertFalse(payload["limited_auto_enabled"])
@@ -1153,6 +1160,8 @@ class CliStartTests(LoopTestBase):
             payload["missing_inputs"],
             ["--claude-executable", "--codex-executable", "--config",
              "--manifest", "--model-selection", "--task-packet"])
+        self.assertEqual(payload["refusal"]["detail"]["missing_inputs"],
+                         payload["missing_inputs"])
 
     def test_start_names_exactly_which_input_is_missing(self) -> None:
         _, payload = self.run_cli(

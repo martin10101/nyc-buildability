@@ -28,6 +28,17 @@ The rules it implements, none of which a run can talk its way out of:
   clamped to a persisted HIGH-WATER mark so a clock that jumps backwards - by
   NTP, by a manual change, or by a hostile local actor - can never hand the run
   more time than it has already used.
+* **A present-but-unreadable record REFUSES; only an absent one starts fresh**
+  (C1, G5 M1). A deleted record, a non-record payload, a null ``started_at_epoch``,
+  an unreadable budget block, and a budget block that no longer matches its own
+  recorded digest are five distinct corruptions, and every one of them is a typed,
+  audited refusal. Treating any of them as a first launch is precisely how a run
+  would reset its own bounds, and it would bypass every other guarantee here at
+  once - because the record they defend would simply have been replaced.
+* **A daily cap stays daily** (C4, G5 I2). Per-DAY tallies are evaluated against
+  the CURRENT injected-clock day, so a peak from an earlier day neither exhausts
+  the run nor is restored into a fresh breaker. Per-RUN tallies stay monotonic:
+  they bound the run, not the day.
 * **Deterministic exhaustion.** A budgeted run stops at exhaustion with an
   explicit machine-readable exit reason (`refusals.BUDGET_EXHAUSTED`), between
   cycles, never mid-unit (S11.2: the in-flight unit is always finished first).
@@ -49,9 +60,16 @@ import datetime as _dt
 import time
 from typing import Any, Callable, Mapping
 
-from .circuit_breakers import COUNTER_LIMITS
+from .circuit_breakers import COUNTER_LIMITS, PER_DAY_COUNTERS
 from .config import Limits
 from .models import digest_of, to_utc_iso
+
+#: The sentinel that means "the journal has NO run-budget row for this run".
+#: `get_state` returns its default for a missing row, and a row holding JSON
+#: `null` reads back as `None` - so `None` cannot be used to tell "absent" from
+#: "present but empty". That distinction is the whole of C1: absent is a first
+#: launch, present-but-unreadable is a refusal.
+_ABSENT: Any = object()
 
 #: The durable state key one run's budget record lives under.
 RUN_BUDGET_KEY = "run_budget"
@@ -187,12 +205,39 @@ class RunBudget:
 
     @classmethod
     def from_dict(cls, data: Mapping[str, Any]) -> "RunBudget":
+        """Rebuild a budget from its persisted form, or raise a TYPED error.
+
+        C5 (G5 I4): every corruption shape leaves through `BudgetError`. A bare
+        `float()` on a tampered `wall_clock_seconds` used to raise
+        ValueError/TypeError, which no caller catches, so a corrupt record
+        surfaced as a traceback and the generic exit 1 that `refusals.py`
+        numbers its codes from 10 specifically to avoid.
+        """
         if not isinstance(data, Mapping):
             raise BudgetError("unreadable_budget",
                               "the persisted budget is not a record; refusing to guess it")
         raw = data.get("wall_clock_seconds", None)
-        return cls(wall_clock_seconds=None if raw is None else float(raw),
-                   counter_limits=dict(data.get("counter_limits", {}) or {}))
+        wall: float | None = None
+        if raw is not None:
+            try:
+                wall = float(raw)
+            except (TypeError, ValueError) as exc:
+                raise BudgetError(
+                    "unreadable_budget",
+                    f"the persisted wall-clock budget {raw!r} is not a number "
+                    f"({exc}); a budget that cannot be read is never guessed at") from exc
+        limits = data.get("counter_limits", {}) or {}
+        if not isinstance(limits, Mapping):
+            raise BudgetError(
+                "unreadable_budget",
+                f"the persisted counter limits are {type(limits).__name__}, not a record")
+        try:
+            counter_limits = {str(name): int(value) for name, value in limits.items()}
+        except (TypeError, ValueError) as exc:
+            raise BudgetError(
+                "unreadable_budget",
+                f"a persisted counter limit is not an integer ({exc})") from exc
+        return cls(wall_clock_seconds=wall, counter_limits=counter_limits)
 
     def digest(self) -> str:
         """Identity of the bounds themselves - what a resume is compared against."""
@@ -237,11 +282,17 @@ class RunBudgetLedger:
     """
 
     def __init__(self, journal: Any, *, run_id: str, budget: RunBudget,
-                 clock: Clock = system_clock) -> None:
+                 clock: Clock = system_clock, audit: Any = None) -> None:
         self.journal = journal
         self.run_id = str(run_id)
         self.budget = budget
         self._clock = clock
+        #: C6 (G5 I5): the hash-chained audit log. A budget that starts, resumes,
+        #: or REFUSES is a security-relevant event, and `budget_conflict` is the
+        #: canonical "a run tried to change its own bounds" tamper signal - the
+        #: one a reviewer most wants in a tamper-evident log. Default None keeps
+        #: every existing caller and test unchanged.
+        self.audit = audit
         self._record: dict[str, Any] | None = None
         self._resumed = False
 
@@ -265,36 +316,122 @@ class RunBudgetLedger:
 
     # -- lifecycle -----------------------------------------------------------
 
+    def _audit(self, event: str, **detail: Any) -> None:
+        """Seal one budget lifecycle event. Never masks the caller's outcome.
+
+        A damaged audit chain refuses new appends by design (`audit_log.append`).
+        That refusal must not swallow a `budget_conflict` - the broken chain is
+        itself recorded evidence, and the caller still fails closed - so the
+        append is best-effort and the raise that follows it is not.
+        """
+        if self.audit is None:
+            return
+        try:
+            self.audit.append(event, run_id=self.run_id,
+                              policy_result=str(detail.get("reason_code", "") or event),
+                              detail={"run_budget_key": self.key(), **detail})
+        except Exception:  # pragma: no cover - a damaged chain is its own evidence
+            pass
+
+    def _refuse(self, code: str, message: str) -> "BudgetError":
+        """Seal a budget refusal and return the typed error for the caller to raise."""
+        self._audit("run_budget_refused", reason_code=code, message=message)
+        return BudgetError(code, message)
+
     def start(self) -> dict[str, Any]:
         """Persist the budget at run start, or reload the ORIGINAL on a resume.
 
-        Fails closed on a resume whose supplied budget differs from the persisted
-        one: the run's own launch arguments must not be able to extend, shrink,
-        or reset a budget mid-run. Choosing different bounds is an owner act on a
-        NEW run id, not a re-launch of the same one.
-        """
-        existing = self.journal.get_state(self.key(), None)
-        if isinstance(existing, Mapping) and existing.get("started_at_epoch") is not None:
-            record = dict(existing)
-            persisted = RunBudget.from_dict(record.get("budget", {}) or {})
-            if persisted.digest() != self.budget.digest():
-                raise BudgetError(
-                    "budget_conflict",
-                    f"run {self.run_id!r} was started with a different budget "
-                    f"({persisted.to_dict()}) and that persisted budget is authoritative; "
-                    f"a run can never extend, shrink, or reset its own bounds by "
-                    f"re-launching with new arguments. Start a NEW run id to use "
-                    f"different bounds")
-            # The ORIGINAL budget object, not the supplied one: identical by digest,
-            # but the persisted record stays the single source.
-            self.budget = persisted
-            record["resumes"] = int(record.get("resumes", 0) or 0) + 1
-            record["resumed_at_utc"] = to_utc_iso()
-            self._resumed = True
-            self._record = record
-            self._commit()
-            return dict(record)
+        Three outcomes, and exactly three (C1, G5 M1):
 
+        1. **No record at all** - a legitimate first launch. Mint the record.
+        2. **A well-formed started record** - a resume. Reload the ORIGINAL start
+           instant and budget, and refuse `budget_conflict` if this launch names
+           different bounds: a run's own arguments must never extend, shrink, or
+           reset its budget mid-run. Different bounds are an owner act on a NEW
+           run id.
+        3. **A record that is present but not a well-formed started record** -
+           REFUSE, typed and audited.
+
+        Case 3 is the containment break this replaces. `start()` previously took
+        the resume branch only on `isinstance(existing, Mapping) and
+        existing.get("started_at_epoch") is not None`, so a DELETED record, a
+        non-Mapping record, and an intact record with `started_at_epoch: null`
+        all fell through to the fresh-start path - minting a new start instant,
+        zeroing the elapsed high-water mark, emptying the tallies, and never
+        reaching the `budget_conflict` check. The supervised worker runs as the
+        same OS user on the same host and can write the journal, so nulling one
+        JSON field bought it an unlimited run with fresh model-call,
+        external-write, restart, and livelock allowances - defeating every other
+        monotonicity guarantee at once, because the record they defend was simply
+        replaced. "Present but unreadable" is now the opposite of "absent": the
+        first is a refusal, only the second is a fresh start.
+        """
+        existing = self.journal.get_state(self.key(), _ABSENT)
+        if existing is _ABSENT:
+            return self._first_launch()
+        return self._resume(existing)
+
+    def _resume(self, existing: Any) -> dict[str, Any]:
+        """Reload a PRESENT record, or refuse it. Never falls through to a fresh start."""
+        if not isinstance(existing, Mapping):
+            raise self._refuse(
+                "budget_record_unreadable",
+                f"the persisted run-budget record for {self.run_id!r} is "
+                f"{type(existing).__name__}, not a record. A run-budget key that exists "
+                f"but cannot be read is a REFUSAL, never a fresh budget - treating it as a "
+                f"first launch is exactly how a run would reset its own bounds")
+        started = existing.get("started_at_epoch")
+        if not isinstance(started, (int, float)) or isinstance(started, bool) \
+                or started != started or started <= 0:
+            raise self._refuse(
+                "budget_record_malformed",
+                f"the persisted run-budget record for {self.run_id!r} carries "
+                f"started_at_epoch={started!r}, which is not a real run-start instant. "
+                f"The record is present, so this is a REFUSAL: a run that has already "
+                f"started cannot re-start with a clean clock and empty tallies")
+        record = dict(existing)
+        try:
+            persisted = RunBudget.from_dict(record.get("budget", {}) or {})
+        except BudgetError as exc:
+            raise self._refuse(
+                "budget_record_malformed",
+                f"the persisted run-budget record for {self.run_id!r} carries an "
+                f"unreadable budget ({exc.message}); refusing rather than replacing it "
+                f"with the bounds this launch happens to name") from exc
+        # The record states its own budget digest. A mismatch means the budget
+        # block was rewritten under the record, which the conflict check below
+        # would otherwise accept as "the persisted budget".
+        recorded_digest = str(record.get("budget_digest", "") or "")
+        if recorded_digest and recorded_digest != persisted.digest():
+            raise self._refuse(
+                "budget_record_tampered",
+                f"the persisted run-budget record for {self.run_id!r} does not match its "
+                f"own recorded budget digest; the budget block was rewritten after the "
+                f"run started")
+        if persisted.digest() != self.budget.digest():
+            raise self._refuse(
+                "budget_conflict",
+                f"run {self.run_id!r} was started with a different budget "
+                f"({persisted.to_dict()}) and that persisted budget is authoritative; "
+                f"a run can never extend, shrink, or reset its own bounds by "
+                f"re-launching with new arguments. Start a NEW run id "
+                f"(`--run-id <fresh-id>`) to use different bounds")
+        # The ORIGINAL budget object, not the supplied one: identical by digest,
+        # but the persisted record stays the single source.
+        self.budget = persisted
+        record["resumes"] = int(record.get("resumes", 0) or 0) + 1
+        record["resumed_at_utc"] = to_utc_iso()
+        self._resumed = True
+        self._record = record
+        self._commit()
+        self._audit("run_budget_resumed", reason_code="run_budget_resumed",
+                    resumes=record["resumes"],
+                    started_at_utc=record.get("started_at_utc", ""),
+                    budget_digest=self.budget.digest())
+        return dict(record)
+
+    def _first_launch(self) -> dict[str, Any]:
+        """Mint the record. Reached ONLY when no run-budget key exists at all."""
         started = self.now()
         record = {
             "schema_version": BUDGET_RECORD_SCHEMA_VERSION,
@@ -317,6 +454,10 @@ class RunBudgetLedger:
         self._resumed = False
         self._record = record
         self._commit()
+        self._audit("run_budget_started", reason_code="run_budget_started",
+                    started_at_utc=record["started_at_utc"],
+                    budget=self.budget.to_dict(),
+                    budget_digest=record["budget_digest"])
         return dict(record)
 
     def record(self) -> dict[str, Any]:
@@ -391,7 +532,9 @@ class RunBudgetLedger:
             return BudgetVerdict(
                 True, "counter", "budget_exhausted",
                 f"the run reached its owner-set counter bound(s) {list(counters)}; the "
-                f"tally is durable, so it neither resets nor shrinks on a resume",
+                f"tally is durable, so it neither resets nor shrinks on a resume. Start a "
+                f"NEW run id (`--run-id <fresh-id>`) to begin a run with a fresh allowance; "
+                f"the exhausted record stays intact as evidence",
                 elapsed, wall, None, counters)
         if wall is None:
             return BudgetVerdict(
@@ -407,12 +550,30 @@ class RunBudgetLedger:
                 elapsed, wall, 0.0, ())
         return BudgetVerdict(False, "", "", "", elapsed, wall, wall - elapsed, ())
 
+    def stale_day(self) -> bool:
+        """True when the persisted tallies were accrued on an EARLIER UTC day."""
+        recorded = str(self.record().get("counter_day_utc", "") or "")
+        return bool(recorded) and recorded != self.utc_day()
+
     def _exhausted_counters(self, counters: Mapping[str, Any]) -> tuple[str, ...]:
-        """Counter names whose persisted tally has reached their owner-set bound."""
+        """Counter names whose persisted tally has reached their owner-set bound.
+
+        C4 (G5 I2): a PER-DAY counter is only exhausted while its window is still
+        today's. The live `CircuitBreakers` rolls per-day counters to zero when
+        the UTC day advances (`record_daily`), but the persisted record keeps the
+        peak - so a run that hit `model_calls_per_day` on day 1 stayed "exhausted"
+        forever on that run id, silently turning a DAILY cap into a permanent one
+        and stranding exactly the long-running case D-023-R011 asks for. Per-RUN
+        counters are unaffected and stay monotonic: they are bounds on the run,
+        not on the day.
+        """
         limits = self.budget.counter_limits
+        stale = self.stale_day()
         return tuple(
             name for name in sorted(counters)
-            if name in limits and int(counters.get(name, 0) or 0) >= int(limits[name]))
+            if name in limits
+            and not (stale and name in PER_DAY_COUNTERS)
+            and int(counters.get(name, 0) or 0) >= int(limits[name]))
 
     # -- counter tallies -----------------------------------------------------
 
@@ -431,7 +592,15 @@ class RunBudgetLedger:
                 "unknown_counter_limit",
                 f"refusing to persist tallies for unknown counters {unknown}; an unknown "
                 f"name is a typo, and a typo must never become an unenforced bound")
+        # C4: when the UTC day advances, the PER-DAY tallies start from what the
+        # live breaker now reads rather than from yesterday's peak - the breaker
+        # has already rolled them, and max()-ing against the peak is what made a
+        # daily cap permanent. Per-run counters stay monotonic.
+        rolled = bool(day) and day != str(record.get("counter_day_utc", "") or "")
         for name, value in snapshot.items():
+            if rolled and name in PER_DAY_COUNTERS:
+                current[name] = int(value)
+                continue
             current[name] = max(int(current.get(name, 0) or 0), int(value))
         record["counters"] = current
         if day:
@@ -445,12 +614,39 @@ class RunBudgetLedger:
         the HIGHER of the two per counter, so reconciliation can only ever raise
         a tally - a crash is never a way to earn back model calls, external
         writes, restarts, or livelock allowance.
+
+        C4: PER-DAY tallies from an earlier UTC day are NOT restored - their
+        window has rolled and the day's allowance is genuinely fresh. Per-run
+        tallies are always restored.
+
+        C5 (G5 I4): a tally name the record should not contain leaves through a
+        TYPED `BudgetError`. `persist_counters` validates names on write; this
+        validates them on READ, so a hand-edited record raises the same error
+        class `cmd_start` maps to a structured refusal rather than a `BreakerError`
+        that nothing catches.
         """
         record = self.record()
         counters = dict(record.get("counters", {}) or {})
         if breakers is None or not counters:
             return counters
-        breakers.restore(counters, day=str(record.get("counter_day_utc", "") or ""))
+        unknown = sorted(set(counters) - set(COUNTER_LIMITS))
+        if unknown:
+            raise self._refuse(
+                "unknown_counter_limit",
+                f"the persisted run-budget record names counters that are not S13.8 "
+                f"breakers: {unknown}. A tally the breakers do not know is an unenforceable "
+                f"bound, so the record is refused rather than partially restored")
+        recorded_day = str(record.get("counter_day_utc", "") or "")
+        stale = self.stale_day()
+        restorable = {name: value for name, value in counters.items()
+                      if not (stale and name in PER_DAY_COUNTERS)}
+        try:
+            breakers.restore(restorable, day="" if stale else recorded_day)
+        except Exception as exc:  # BreakerError and anything else -> typed refusal
+            raise self._refuse(
+                "unrestorable_counters",
+                f"the persisted tallies could not be reconciled with the breakers "
+                f"({exc}); refusing rather than resuming with an unknown allowance") from exc
         return dict(breakers.snapshot())
 
     # -- termination ---------------------------------------------------------
@@ -490,6 +686,7 @@ class RunBudgetLedger:
             "resumes": int(record.get("resumes", 0) or 0),
             "counters": dict(record.get("counters", {}) or {}),
             "counter_day_utc": record.get("counter_day_utc", ""),
+            "counter_day_is_stale": self.stale_day(),
             "backwards_clock_observations": int(
                 record.get("backwards_clock_observations", 0) or 0),
             "exhausted": verdict.exhausted,

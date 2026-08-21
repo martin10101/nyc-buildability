@@ -5,11 +5,14 @@ directive **D-007**. It is being built in five phases. **Phases 1, 2, 3 and 4
 exist today.**
 
 **Nothing in this package runs your project unattended.** The loop exists now,
-but it only runs in the two modes that cannot act on their own: `shadow` (which
-forwards *nothing*) and `supervised` (where you approve every single prompt).
-There is still no push, no merge, and no acceptance. The unattended writing mode
-(`limited-auto`) is not implemented at all, and turning it on later is a
-separate, explicit decision that only you can make.
+but by default it only runs in the two modes that cannot act on their own:
+`shadow` (which forwards *nothing*) and `supervised` (where you approve every
+single prompt). There is still no push, no merge, and no acceptance. The
+unattended writing mode (`limited-auto`) is now BUILT — M0-T079 gave it durable
+owner-controlled run budgets, wired circuit breakers, live pre-dispatch probes,
+and typed refusals — and it is **off**. Every launch that does not carry the
+explicit `--owner-enable-bounded-auto` input is refused by name, and actually
+turning it on for real work is still a separate decision that only you can make.
 
 What Phase 4 added — *validation*, the part that proves the first three phases
 actually behave:
@@ -266,7 +269,11 @@ Nothing is deferred. Every command in the directive's list is implemented.
   running a long-lived unattended pipe server is not built (caveat 4).
 * **The Phase 5 shadow pilot** — one real controlled task run in shadow mode,
   measured against the owner-touch budget, ending in a decision packet.
-* **`limited-auto`.** Not implemented at all, in any form.
+* **`limited-auto` ACTIVATION.** The mode itself is implemented (M0-T079) and is
+  OFF by default: without the explicit per-launch `--owner-enable-bounded-auto`
+  input it is a structured refusal (outcome `refused_mode`, exit 16). Activating
+  it on a live host is a separate owner act under the R595 pre-activation path,
+  and no measured unattended run has been performed.
 
 ---
 

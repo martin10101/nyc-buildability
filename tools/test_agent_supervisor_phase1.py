@@ -839,7 +839,12 @@ class CliTests(TempCase):
         # M0-T079: the bounded mode EXISTS now, so `doctor` says what is true -
         # implemented, off by default, and enabled only per launch by the owner.
         self.assertIn("limited-auto: IMPLEMENTED and OFF by default", text)
-        self.assertIn("refusal exit codes:", text)
+        self.assertIn("exit codes:", text)
+        # C7 (G4 F1): the contract names the reserved codes too, so a caller
+        # is never left to infer what 0 and 1 mean.
+        self.assertIn("ok=0", text)
+        self.assertIn("legacy_halt=1", text)
+        self.assertIn("refused_mode=16", text)
 
     def test_doctor_reports_every_phase1_check(self) -> None:
         import contextlib

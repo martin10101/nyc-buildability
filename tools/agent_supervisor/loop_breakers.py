@@ -43,15 +43,18 @@ from __future__ import annotations
 
 from typing import Any
 
-from .circuit_breakers import PER_DAY_COUNTERS
+from .circuit_breakers import PER_DAY_COUNTERS, RESET_ON_PROGRESS
 
 #: The one decision label that is NOT forward progress. See `record_progress`.
 REVISE = "REVISE"
 
-#: The counters a REVISE forward may clear. Deliberately excludes
-#: `consecutive_revision_loops`, which is the thing a revision forward measures.
-_REVISE_SAFE_RESETS = ("consecutive_invalid_outputs", "consecutive_hard_denies",
-                       "consecutive_no_progress")
+#: The counters a REVISE forward may clear: every RESET_ON_PROGRESS counter
+#: EXCEPT `consecutive_revision_loops`, which is the thing a revision forward
+#: measures. Derived from `RESET_ON_PROGRESS` rather than hand-listed (C12, G4
+#: F2) so a counter added to that set later is cleared here too, instead of
+#: silently accumulating and surfacing as a surprise trip.
+_REVISE_SAFE_RESETS: tuple[str, ...] = tuple(
+    sorted(RESET_ON_PROGRESS - {"consecutive_revision_loops"}))
 
 
 def tick(breakers: Any, name: str) -> tuple[bool, str]:

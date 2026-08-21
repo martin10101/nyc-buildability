@@ -79,7 +79,7 @@ from .broker import (
     BrokerError,
     build_request,
 )
-from .circuit_breakers import CircuitBreakers
+from .circuit_breakers import BreakerError, CircuitBreakers
 from .claude_runner import (
     CONTROL_RESPONSE_WRAPPER_VERIFIED,
     QUOTA_EXHAUSTION_SIGNAL_VERIFIED,
@@ -211,17 +211,22 @@ from .recovery import (
     set_manual_pause,
 )
 from . import refusals
+from .redaction import redact_structure
 from .remote_approvals import RemoteApprovalRegistry
 from .run_budget import BudgetError, RunBudget, RunBudgetLedger
 from .start_gate import (
     bounded_mode_gate,
+    deadline_blocks_dispatch,
+    dispatch_inputs_missing,
     dispatched_run_refusal,
     emit_refusal,
     live_revalidation,
     load_task_packet,
     loop_refusal,
+    missing_input_refusal,
     recovery_refusal,
     revalidation_note,
+    seal_owner_gate_refusal,
     unprobed_revalidation,
 )
 from .resume_scheduler import (
@@ -1379,6 +1384,7 @@ def cmd_doctor(args: argparse.Namespace) -> int:
                         "(outcome refused_mode, exit 16), and activation remains a "
                         "separate explicit owner act recorded through directive compliance",
         "refusal_contract": list(refusals.document()),
+        "reserved_exit_codes": list(refusals.reserved_exit_codes()),
     }
     if args.json:
         print(json.dumps(payload, indent=2))
@@ -1394,8 +1400,9 @@ def cmd_doctor(args: argparse.Namespace) -> int:
         print(f"\noverall: {'PASS' if ok else 'FAIL'}")
         print("limited-auto: IMPLEMENTED and OFF by default; enabling it is an explicit "
               "per-launch owner act.")
-        print("refusal exit codes: " + ", ".join(
-            f"{row['outcome']}={row['exit_code']}" for row in refusals.document()))
+        print("exit codes: " + ", ".join(
+            f"{row['outcome']}={row['exit_code']}"
+            for row in (*refusals.reserved_exit_codes(), *refusals.document())))
     return 0 if ok else 1
 
 
@@ -1740,10 +1747,17 @@ def _open_runtime(args: argparse.Namespace) -> tuple[pathlib.Path, DurableJourna
 
 
 def _emit(args: argparse.Namespace, payload: dict[str, Any], lines: Sequence[str]) -> None:
+    """Print a command's result, REDACTED, on stdout.
+
+    C2 (G5 M2): stdout is a TRANSMISSION, so it obeys redaction.py's rule like
+    every other. It did not, and M0-T079 newly routed the raw `git remote
+    get-url` result into the payload - so an `x-access-token:` remote put a live
+    PAT into the log of every `start --json`.
+    """
     if args.json:
-        print(json.dumps(payload, indent=2, default=str))
+        print(json.dumps(redact_structure(payload).value, indent=2, default=str))
     else:
-        for line in lines:
+        for line in redact_structure(list(lines)).value:
             print(line)
 
 
@@ -2388,22 +2402,6 @@ def cmd_replay(args: argparse.Namespace) -> int:
     return 0 if (report.ok and manifest_ok and not provenance_bad) else 1
 
 
-def _dispatch_inputs_missing(args: argparse.Namespace) -> list[str]:
-    """Which explicit inputs `start` still needs before it may dispatch."""
-    required = {
-        "--claude-executable": args.claude_executable,
-        "--codex-executable": args.codex_executable,
-        "--task-packet": args.task_packet,
-        "--config": args.config,
-        "--model-selection": args.model_selection,
-        # M0-T072 (D-017-R044/R045): production dispatch never proceeds without a
-        # recorded manifest that binds the external immutable config; omitting
-        # --manifest used to silently pass controller_manifest=True.
-        "--manifest": args.manifest,
-    }
-    return sorted(name for name, value in required.items() if not value)
-
-
 def containment_precondition() -> tuple[bool, str, str]:
     """The C1 host-containment gate for any run that spawns a live worker.
 
@@ -2763,7 +2761,11 @@ def _run_loop(args: argparse.Namespace, checkout: pathlib.Path,
         journal, run_id=run_id,
         budget=RunBudget.from_limits(
             config.limits,
-            wall_clock_seconds=getattr(args, "run_wall_clock_seconds", None)))
+            wall_clock_seconds=getattr(args, "run_wall_clock_seconds", None)),
+        # C6 (G5 I5): a budget that starts, resumes, or REFUSES is sealed in the
+        # hash-chained log - `budget_conflict` above all, since it is the
+        # canonical "a run tried to change its own bounds" tamper signal.
+        audit=audit)
     budget_ledger.start()
 
     # AS-3: wire live resource sampling into the loop for the R207 gauge set. The
@@ -2883,6 +2885,7 @@ def cmd_start(args: argparse.Namespace) -> int:
     """
     gate = bounded_mode_gate(args)
     if gate is not None:
+        seal_owner_gate_refusal(args, gate, AUDIT_FILENAME)
         return emit_refusal(args, gate)
 
     checkout = pathlib.Path(args.checkout).resolve()
@@ -2912,7 +2915,7 @@ def cmd_start(args: argparse.Namespace) -> int:
             manifest_ok = False
         integrity = journal.integrity_check()
         chain = audit.verify_chain()
-        missing_inputs = _dispatch_inputs_missing(args)
+        missing_inputs = dispatch_inputs_missing(args)
         dispatchable = not missing_inputs
         manifest_reason = (manifest_verification.reason_code
                            if manifest_verification is not None else "not_established")
@@ -2925,7 +2928,7 @@ def cmd_start(args: argparse.Namespace) -> int:
             revalidation, probe_report = live_revalidation(
                 args, checkout=checkout, journal=journal, packet=packet,
                 manifest_ok=manifest_ok, manifest_reason=manifest_reason,
-                integrity_ok=integrity.ok, chain_ok=chain.ok)
+                integrity_ok=integrity.ok, chain_ok=chain.ok, audit=audit)
         else:
             revalidation = unprobed_revalidation(
                 manifest_ok=manifest_ok, integrity_ok=integrity.ok,
@@ -2969,10 +2972,8 @@ def cmd_start(args: argparse.Namespace) -> int:
             payload["probes"] = {"probes": [], "failed": ["task_authority"]}
         refusal: refusals.Refusal | None = None
         if not dispatchable:
-            payload["stopped_because"] = (
-                f"`start` will not dispatch until every input is named explicitly. "
-                f"Missing: {missing_inputs}. Nothing is discovered from PATH and no "
-                f"provider is contacted by default.")
+            refusal = missing_input_refusal(missing_inputs)
+            payload["stopped_because"] = refusal.message
         elif packet_error:
             payload["stopped_because"] = f"task_packet_unreadable: {packet_error}"
             refusal = refusals.refusal(
@@ -2993,17 +2994,21 @@ def cmd_start(args: argparse.Namespace) -> int:
                 f"({outcome.reason_code}); a run never starts over an unresolved "
                 f"recovery condition. {outcome.reason}")
             refusal = recovery_refusal(outcome, probe_report)
-        elif outcome.reason_code in ("safe_but_forbidden", "deadline_restored"):
-            # M0-T079: a SAFE_CHECKPOINT that a durable flag or a restored
+        elif (outcome.reason_code in ("safe_but_forbidden", "deadline_restored")
+              and deadline_blocks_dispatch(outcome, DurableFlags.read(journal),
+                                           probe_report)):
+            # The refusal names the flag that ACTUALLY blocks, which is not
+            # always the one `recover_boot` stamped (C9 follow-through).
+            # M0-T079: a SAFE_CHECKPOINT that a durable flag or an UNEXPIRED
             # usage-limit deadline forbids. `classify` reports these WITH the
-            # SAFE_CHECKPOINT classification, so the classification gate above
-            # lets them through and the run would have dispatched over a durable
-            # emergency stop, manual pause, open owner gate, or an unexpired
-            # deadline. It stops here instead, with the outcome that names which.
+            # SAFE_CHECKPOINT classification, so the gate above let them through
+            # and the run dispatched over an emergency stop, a manual pause, or
+            # an open owner gate. It stops here, naming which one (C9).
             payload["stopped_because"] = (
                 f"the pre-dispatch check is SAFE_CHECKPOINT but {outcome.reason_code}; "
                 f"{outcome.reason}")
-            refusal = recovery_refusal(outcome, probe_report)
+            refusal = recovery_refusal(outcome, probe_report,
+                                       DurableFlags.read(journal))
         elif not containment_ok:
             # M0-T052 G5 C1: the LAST gate before a live worker is spawned. The
             # refusal is audited, because a host that cannot contain a worker is
@@ -3042,15 +3047,16 @@ def cmd_start(args: argparse.Namespace) -> int:
                 payload["stopped_because"] = (
                     f"the loop refused to run: {code}: {message}")
                 refusal = loop_refusal(code, message, args.mode)
-            except BudgetError as exc:
-                # M0-T079: the run budget refused before the loop was built - a
-                # relaunch that named different bounds for a run already under
-                # way, or a malformed budget. Never a traceback.
-                payload["stopped_because"] = f"{exc.code}: {exc.message}"
+            except (BudgetError, BreakerError) as exc:
+                # M0-T079 C5: every persisted-state corruption the budget or the
+                # breakers detect leaves as a TYPED refusal - never a traceback.
+                code = getattr(exc, "code", "budget_error")
+                message = getattr(exc, "message", str(exc))
+                payload["stopped_because"] = f"{code}: {message}"
                 refusal = refusals.refusal(
-                    refusals.STALE_STATE if exc.code == "budget_conflict"
-                    else refusals.BUDGET_EXHAUSTED,
-                    reason_code=exc.code, message=exc.message,
+                    refusals.BUDGET_EXHAUSTED if code == "budget_exhausted"
+                    else refusals.STALE_STATE,
+                    reason_code=code, message=message,
                     detail={"mode": args.mode, "source": "run_budget"})
             else:
                 payload["dispatched"] = True
@@ -3206,7 +3212,14 @@ def build_parser() -> argparse.ArgumentParser:
     start.add_argument("--worktree", default=None, help="the isolated task worktree")
     start.add_argument("--branch", default=None, help="the task branch")
     start.add_argument("--stage", default=None, help="the authorized stage")
-    start.add_argument("--run-id", default=None)
+    start.add_argument(
+        "--run-id", default=None,
+        help="the run this invocation belongs to (default: derived from the checkout "
+             "path). It is the IDENTITY of the durable run budget: the same id RESUMES "
+             "that run, reloading its original start instant, elapsed time, and spent "
+             "tallies. It is therefore also the escape hatch - a run that has spent its "
+             "owner-set budget is finished, and a genuinely NEW run needs a NEW id. The "
+             "exhausted record is never rewritten; it stays as evidence")
     start.add_argument("--prompt", default="Report a structured checkpoint for the "
                                            "current authorized stage.",
                        help="the first unit's prompt")
@@ -3268,6 +3281,13 @@ def build_parser() -> argparse.ArgumentParser:
              "crash-resume reloads the ORIGINAL start instant and budget - elapsed time "
              "never resets, and a relaunch naming different bounds for the same --run-id "
              "is refused rather than honoured")
+    start.add_argument(
+        "--repin-cli-identity", action="store_true",
+        help="accept a provider CLI whose identity CHANGED since this run was pinned, "
+             "and re-pin it. Drift detection is unchanged and still refuses by default; "
+             "this is the supported remedy for a legitimate update, instead of deleting "
+             "the journal and losing the run's evidence. The new identity is recorded "
+             "with provenance and sealed in the audit chain. A per-launch human act")
     start.add_argument(
         "--require-remote-reachable", action="store_true",
         help="state that this run NEEDS the git remote to answer. The pre-dispatch probe "

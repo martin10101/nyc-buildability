@@ -205,7 +205,7 @@ class BoundedTestBase(unittest.TestCase):
         budget = rb.RunBudget.from_limits(limits or Limits(),
                                           wall_clock_seconds=wall_clock_seconds)
         led = rb.RunBudgetLedger(journal or self.journal, run_id=run_id or self.run_id,
-                                 budget=budget, clock=self.clock)
+                                 budget=budget, clock=self.clock, audit=self.audit)
         led.start()
         return led
 
@@ -262,22 +262,49 @@ class UnlimitedRunTests(BoundedTestBase):
         self.assertTrue(run.run_budget["unlimited"])
         self.assertGreater(run.run_budget["elapsed_seconds"], 86_400.0)
 
+    #: C12 (G3 M-2): the name says "anywhere", so the scan covers every module
+    #: that could hold a ceiling, and the pattern catches the shapes the original
+    #: regex missed - a leading underscore, `DEFAULT_*`, and `*_CAP`.
+    CEILING_PATTERN = (
+        r"^_?(?:MAX|MAXIMUM|DEFAULT|ABSOLUTE|HARD)_[A-Z_]*"
+        r"(?:RUN|WALL|DURATION|SECONDS|CLOCK|STOP)[A-Z_]*"
+        r"|^_?[A-Z_]*(?:RUN|WALL|DURATION|CLOCK)[A-Z_]*"
+        r"(?:MAX|MAXIMUM|CEILING|CAP|LIMIT)")
+
     def test_no_hardcoded_maximum_run_length_exists_anywhere(self) -> None:
         """D-023-R037 at the source level: no ceiling constant, no default.
 
         A comment promising "no maximum" is worth nothing if a constant somewhere
-        quietly caps the run, so this reads the source. `run_budget.py` may
-        define no MAX/CEILING/LIMIT-shaped run-length constant, and the CLI's
-        wall-clock argument must default to None.
+        quietly caps the run, so this reads the source - all four modules that
+        could hold one, not just `run_budget.py` (C12) - and the CLI's wall-clock
+        argument must default to None.
         """
-        source = (PACKAGE / "run_budget.py").read_text(encoding="utf-8")
-        forbidden = re.findall(
-            r"^(MAX_[A-Z_]*(?:RUN|WALL|DURATION|SECONDS)[A-Z_]*|"
-            r"[A-Z_]*(?:RUN|WALL)[A-Z_]*(?:MAX|CEILING|LIMIT))\s*[:=]",
-            source, flags=re.MULTILINE)
-        self.assertEqual(forbidden, [],
-                         f"a hardcoded run-length ceiling appeared: {forbidden}")
-        self.assertNotIn("MAXIMUM_RUN_SECONDS", source)
+        for name in ("run_budget.py", "loop.py", "cli.py", "loop_breakers.py"):
+            source = (PACKAGE / name).read_text(encoding="utf-8")
+            found = re.findall(self.CEILING_PATTERN + r"\s*[:=]", source,
+                               flags=re.MULTILINE)
+            self.assertEqual(found, [],
+                             f"a hardcoded run-length ceiling appeared in {name}: {found}")
+
+    def test_the_ceiling_scan_actually_catches_a_ceiling(self) -> None:
+        """A guard nobody probed is a guard nobody can trust (C12 / G3 M-2)."""
+        for name in ("MAX_RUN_SECONDS", "_MAX_RUN_SECONDS", "RUN_CEILING",
+                     "ABSOLUTE_RUN_CAP", "DEFAULT_WALL_CLOCK_SECONDS",
+                     "HARD_STOP_SECONDS", "MAX_WALL_CLOCK", "RUN_LENGTH_MAX",
+                     "_RUN_DURATION_LIMIT"):
+            with self.subTest(name=name):
+                self.assertTrue(
+                    re.findall(self.CEILING_PATTERN + r"\s*[:=]",
+                               f"{name} = 36000\n", flags=re.MULTILINE),
+                    f"the scan would not have caught {name}")
+
+    def test_the_ceiling_scan_does_not_flag_ordinary_names(self) -> None:
+        for name in ("RUN_BUDGET_KEY", "MAX_CYCLES", "COUNTER_LIMITS",
+                     "BUDGET_RECORD_SCHEMA_VERSION", "DEFAULT_OWNER_TOUCH_BUDGET"):
+            with self.subTest(name=name):
+                self.assertEqual(
+                    re.findall(self.CEILING_PATTERN + r"\s*[:=]",
+                               f"{name} = 1\n", flags=re.MULTILINE), [])
 
         from tools.agent_supervisor import cli
 
@@ -476,15 +503,71 @@ class CrashResumeBudgetTests(BoundedTestBase):
 
     def test_restore_reconciles_a_fresh_breaker_set_upward_only(self) -> None:
         led = self.ledger(wall_clock_seconds=None)
+        today = rb.utc_day_for(self.clock.now)
         led.persist_counters({"model_calls_per_task": 7, "restart_attempts": 2},
-                             day="2026-08-21")
+                             day=today)
         breakers = CircuitBreakers(Limits())
         breakers.record("restart_attempts", 3)  # already higher than the record
         led.restore_counters(breakers)
         snapshot = breakers.snapshot()
         self.assertEqual(snapshot["model_calls_per_task"], 7)
         self.assertEqual(snapshot["restart_attempts"], 3, "restore must never lower")
-        self.assertEqual(breakers.day, "2026-08-21")
+        self.assertEqual(breakers.day, today)
+
+    def test_a_same_day_resume_restores_the_per_day_tally(self) -> None:
+        led = self.ledger(wall_clock_seconds=None)
+        today = rb.utc_day_for(self.clock.now)
+        led.persist_counters({"model_calls_per_day": 1500}, day=today)
+        breakers = CircuitBreakers(Limits())
+        led.restore_counters(breakers)
+        self.assertEqual(breakers.value("model_calls_per_day"), 1500,
+                         "the day has not rolled, so the tally is still today's")
+
+    def test_a_per_day_tally_from_an_earlier_day_is_not_restored(self) -> None:
+        """C4: a daily cap is daily. Yesterday's peak is not today's spend."""
+        led = self.ledger(wall_clock_seconds=None)
+        led.persist_counters({"model_calls_per_day": 1500, "model_calls_per_task": 9},
+                             day="2026-02-01")
+        self.clock.advance(48 * 3600.0)  # the UTC day rolls
+        self.assertTrue(led.stale_day())
+        breakers = CircuitBreakers(Limits())
+        led.restore_counters(breakers)
+        self.assertEqual(breakers.value("model_calls_per_day"), 0)
+        self.assertEqual(breakers.value("model_calls_per_task"), 9,
+                         "per-RUN tallies bound the run, not the day, and still restore")
+
+    def test_an_exhausted_per_day_counter_stops_exhausting_when_the_day_rolls(self) -> None:
+        """C4 (G5 I2): a daily cap silently became a permanent cap on that run id."""
+        led = self.ledger(wall_clock_seconds=None,
+                          limits=Limits(max_model_calls_per_day=2000))
+        led.persist_counters({"model_calls_per_day": 2000},
+                             day=rb.utc_day_for(self.clock.now))
+        self.assertTrue(led.check().exhausted)
+        self.assertIn("model_calls_per_day", led.check().exhausted_counters)
+
+        self.clock.advance(24 * 3600.0)  # a new UTC day
+        verdict = led.check()
+        self.assertFalse(verdict.exhausted,
+                         "the daily window rolled; the peak is history, not spend")
+        self.assertEqual(verdict.exhausted_counters, ())
+
+    def test_a_rolled_day_replaces_the_persisted_per_day_peak(self) -> None:
+        led = self.ledger(wall_clock_seconds=None)
+        led.persist_counters({"model_calls_per_day": 2000}, day="2026-02-01")
+        self.clock.advance(24 * 3600.0)
+        led.persist_counters({"model_calls_per_day": 1},
+                             day=rb.utc_day_for(self.clock.now))
+        self.assertEqual(led.record()["counters"]["model_calls_per_day"], 1,
+                         "max() against yesterday's peak is what made a daily cap "
+                         "permanent")
+
+    def test_a_per_run_tally_is_never_rolled_by_a_new_day(self) -> None:
+        led = self.ledger(wall_clock_seconds=None)
+        led.persist_counters({"model_calls_per_task": 40}, day="2026-02-01")
+        self.clock.advance(72 * 3600.0)
+        led.persist_counters({"model_calls_per_task": 2},
+                             day=rb.utc_day_for(self.clock.now))
+        self.assertEqual(led.record()["counters"]["model_calls_per_task"], 40)
 
     def test_restore_refuses_an_unknown_counter_name(self) -> None:
         breakers = CircuitBreakers(Limits())
@@ -897,6 +980,272 @@ class CliBoundedModeTests(BoundedTestBase):
         self.assertEqual(code, 16)
         self.assertNotIn("missing_inputs", payload)
         self.assertNotIn("recovery", payload)
+
+    def test_a_refused_bounded_launch_is_sealed_in_the_audit_chain(self) -> None:
+        """C6 (G5 I5): an attempted activation under the R033 hold leaves a trace.
+
+        The gate deliberately runs before the lock and the journal, which also
+        meant the attempt was recorded nowhere at all - the one event a security
+        reviewer would most want in a tamper-evident log.
+        """
+        from tools.agent_supervisor.durable_state import runtime_dir_for
+
+        self.run_cli("start", "--mode", "limited-auto", "--json")
+        path = (runtime_dir_for(self.repo, base=str(self.tmp / "runtime"))
+                / "audit.jsonl")
+        self.assertTrue(path.exists(), "the refusal must reach the audit log")
+        records = [json.loads(line) for line in
+                   path.read_text(encoding="utf-8").splitlines() if line.strip()]
+        refused = [r for r in records
+                   if r["event_type"] == "bounded_mode_launch_refused"]
+        self.assertEqual(len(refused), 1)
+        self.assertEqual(refused[0]["policy_result"], "limited_auto_not_enabled")
+        self.assertEqual(refused[0]["decision"], "refuse")
+
+
+# --------------------------------------------------------------------------
+# 8. Corrections C1-C12 (consolidated review round)
+# --------------------------------------------------------------------------
+
+
+class BudgetSelfResetTests(BoundedTestBase):
+    """C1 (G5 M1): a run could reset its own budget by nulling one JSON field.
+
+    `start()` took the resume branch only on `isinstance(existing, Mapping) and
+    existing.get("started_at_epoch") is not None`; every other shape fell through
+    to a FRESH start that minted a new start instant, zeroed the elapsed
+    high-water mark, emptied the tallies, and never reached the budget_conflict
+    check. The supervised worker runs as the same OS user and can write the
+    journal, so one field edit bought an unlimited run.
+    """
+
+    def spend(self, *, wall_clock_seconds: float = 3600.0) -> rb.RunBudgetLedger:
+        """A run 3000s into a 3600s budget, with tallies spent."""
+        led = self.ledger(wall_clock_seconds=wall_clock_seconds)
+        self.clock.advance(3000.0)
+        led.observe()
+        led.persist_counters({"model_calls_per_task": 40},
+                             day=rb.utc_day_for(self.clock.now))
+        return led
+
+    def reopen(self, *, wall_clock_seconds: float | None = 3600.0) -> rb.RunBudgetLedger:
+        led = rb.RunBudgetLedger(
+            self.journal, run_id=self.run_id, clock=self.clock, audit=self.audit,
+            budget=rb.RunBudget.from_limits(Limits(),
+                                            wall_clock_seconds=wall_clock_seconds))
+        led.start()
+        return led
+
+    def tamper(self, mutate) -> None:
+        record = self.journal.get_state(f"run_budget/{self.run_id}")
+        self.journal.set_state(f"run_budget/{self.run_id}", mutate(dict(record)))
+
+    def test_control_an_honest_relaunch_with_new_bounds_is_refused(self) -> None:
+        self.spend()
+        with self.assertRaises(rb.BudgetError) as ctx:
+            self.reopen(wall_clock_seconds=36_000.0)
+        self.assertEqual(ctx.exception.code, "budget_conflict")
+
+    def test_a_nulled_start_instant_refuses_instead_of_minting_a_fresh_budget(self) -> None:
+        """The exact proven attack: one field to null, and the clock reset."""
+        self.spend()
+        self.tamper(lambda r: {**r, "started_at_epoch": None})
+        with self.assertRaises(rb.BudgetError) as ctx:
+            self.reopen(wall_clock_seconds=36_000.0)
+        self.assertEqual(ctx.exception.code, "budget_record_malformed")
+        # And the record it refused is untouched: no fresh start was minted.
+        record = rb.load_record(self.journal, self.run_id)
+        self.assertEqual(record["budget"]["wall_clock_seconds"], 3600.0)
+        self.assertGreaterEqual(record["elapsed_high_water_seconds"], 3000.0)
+        self.assertEqual(record["counters"]["model_calls_per_task"], 40)
+
+    def test_a_deleted_record_refuses_rather_than_starting_over(self) -> None:
+        self.spend()
+        self.journal.set_state(f"run_budget/{self.run_id}", None)
+        with self.assertRaises(rb.BudgetError) as ctx:
+            self.reopen(wall_clock_seconds=36_000.0)
+        self.assertEqual(ctx.exception.code, "budget_record_unreadable")
+
+    def test_a_non_record_payload_refuses(self) -> None:
+        for payload in ("wiped", 0, [], 12.5, True):
+            with self.subTest(payload=payload):
+                self.setUp()
+                self.spend()
+                self.journal.set_state(f"run_budget/{self.run_id}", payload)
+                with self.assertRaises(rb.BudgetError) as ctx:
+                    self.reopen(wall_clock_seconds=36_000.0)
+                self.assertIn(ctx.exception.code,
+                              ("budget_record_unreadable", "budget_record_malformed"))
+
+    def test_a_non_numeric_or_impossible_start_instant_refuses(self) -> None:
+        for value in ("2026-01-01", 0, -5.0, [], {}, True):
+            with self.subTest(value=value):
+                self.setUp()
+                self.spend()
+                self.tamper(lambda r, v=value: {**r, "started_at_epoch": v})
+                with self.assertRaises(rb.BudgetError) as ctx:
+                    self.reopen()
+                self.assertEqual(ctx.exception.code, "budget_record_malformed")
+
+    def test_a_rewritten_budget_block_is_caught_by_its_own_recorded_digest(self) -> None:
+        """Rewriting the budget under the record does not become 'the persisted budget'."""
+        self.spend()
+        self.tamper(lambda r: {**r, "budget": {**r["budget"],
+                                               "wall_clock_seconds": 36_000.0}})
+        with self.assertRaises(rb.BudgetError) as ctx:
+            self.reopen(wall_clock_seconds=36_000.0)
+        self.assertEqual(ctx.exception.code, "budget_record_tampered")
+
+    def test_an_unreadable_budget_block_refuses(self) -> None:
+        self.spend()
+        self.tamper(lambda r: {**r, "budget": {"wall_clock_seconds": "forever"},
+                               "budget_digest": ""})
+        with self.assertRaises(rb.BudgetError) as ctx:
+            self.reopen()
+        self.assertEqual(ctx.exception.code, "budget_record_malformed")
+
+    def test_an_absent_record_is_still_a_legitimate_first_launch(self) -> None:
+        """The one shape that MAY start fresh - and the only one."""
+        led = self.reopen(wall_clock_seconds=600.0)
+        self.assertFalse(led.resumed)
+        self.assertEqual(led.record()["elapsed_high_water_seconds"], 0.0)
+
+    def test_every_refusal_and_launch_is_sealed_in_the_audit_chain(self) -> None:
+        """C6: budget_conflict is the canonical budget-tamper signal."""
+        self.spend()
+        with self.assertRaises(rb.BudgetError):
+            self.reopen(wall_clock_seconds=36_000.0)
+        events = [(r["event_type"], r["policy_result"]) for r in self.audit.read_all()]
+        self.assertIn(("run_budget_started", "run_budget_started"), events)
+        self.assertIn(("run_budget_refused", "budget_conflict"), events)
+
+    def test_a_resume_is_sealed_too(self) -> None:
+        self.spend()
+        self.reopen()
+        events = [r["event_type"] for r in self.audit.read_all()]
+        self.assertIn("run_budget_resumed", events)
+
+
+class CorruptStateTypedRefusalTests(BoundedTestBase):
+    """C5 (G5 I3+I4): corrupt persisted state is TYPED, never a traceback."""
+
+    def test_a_corrupt_persisted_wall_clock_raises_a_typed_error(self) -> None:
+        for bad in ("forever", [], {}, "12x"):
+            with self.subTest(value=bad):
+                with self.assertRaises(rb.BudgetError) as ctx:
+                    rb.RunBudget.from_dict({"wall_clock_seconds": bad})
+                self.assertEqual(ctx.exception.code, "unreadable_budget")
+
+    def test_corrupt_persisted_counter_limits_raise_a_typed_error(self) -> None:
+        with self.assertRaises(rb.BudgetError):
+            rb.RunBudget.from_dict({"counter_limits": "all of them"})
+        with self.assertRaises(rb.BudgetError):
+            rb.RunBudget.from_dict({"counter_limits": {"model_calls_per_task": "many"}})
+
+    def test_an_unknown_tally_name_in_the_record_is_a_typed_refusal(self) -> None:
+        """`persist_counters` validated names on WRITE; nothing validated on READ."""
+        led = self.ledger()
+        record = dict(self.journal.get_state(f"run_budget/{self.run_id}"))
+        record["counters"] = {"model_calls_per_taks": 3}
+        self.journal.set_state(f"run_budget/{self.run_id}", record)
+        reopened = rb.RunBudgetLedger(
+            self.journal, run_id=self.run_id, clock=self.clock,
+            budget=rb.RunBudget.from_limits(Limits()))
+        reopened.start()
+        with self.assertRaises(rb.BudgetError) as ctx:
+            reopened.restore_counters(CircuitBreakers(Limits()))
+        self.assertEqual(ctx.exception.code, "unknown_counter_limit")
+        del led
+
+
+class ArgvReplayTests(unittest.TestCase):
+    """C3 (G5 I1): a synthesized argv can never carry the owner enable."""
+
+    def test_the_enable_is_denied_in_any_synthesized_argv(self) -> None:
+        from tools.agent_supervisor import process as proc
+
+        for token in ("--owner-enable-bounded-auto", "--OWNER-ENABLE-BOUNDED-AUTO",
+                      "--owner-enable-bounded-auto=true"):
+            with self.subTest(token=token):
+                with self.assertRaises(proc.HardDenyError):
+                    proc.assert_argv_safe(["python", "-m", "tools.agent_supervisor",
+                                           "start", token])
+
+    def test_the_pre_existing_deny_sets_are_unchanged(self) -> None:
+        from tools.agent_supervisor import process as proc
+
+        self.assertIn("--dangerously-skip-permissions", proc.HARD_DENY_ARGUMENTS)
+        self.assertEqual(proc.EFFORT_ARGUMENT_PREFIXES,
+                         ("--effort", "--reasoning-effort"))
+        self.assertEqual(proc.assert_argv_safe(["git", "status", "--porcelain"]),
+                         ["git", "status", "--porcelain"])
+
+
+class RedactedOutputTests(BoundedTestBase):
+    """C2 (G5 M2): stdout is a transmission, and it is redacted like every other."""
+
+    PAT_REMOTE = "https://x-access-token:ghp_0123456789abcdefghijklmnop@github.com/o/r.git"
+
+    def emit(self, *, as_json: bool) -> str:
+        import argparse
+
+        from tools.agent_supervisor import cli
+
+        payload = {"probes": {"probes": [{"step": "git_and_remote_state",
+                                          "detail": f"remote is {self.PAT_REMOTE}",
+                                          "evidence": {"remote_url": self.PAT_REMOTE}}]}}
+        buffer = io.StringIO()
+        with contextlib.redirect_stdout(buffer):
+            cli._emit(argparse.Namespace(json=as_json), payload,
+                      [f"remote: {self.PAT_REMOTE}"])
+        return buffer.getvalue()
+
+    def test_a_pat_bearing_remote_never_reaches_stdout_as_json(self) -> None:
+        text = self.emit(as_json=True)
+        self.assertNotIn("ghp_0123456789abcdefghijklmnop", text)
+        self.assertIn("REDACTED", text)
+
+    def test_a_pat_bearing_remote_never_reaches_stdout_in_human_mode(self) -> None:
+        text = self.emit(as_json=False)
+        self.assertNotIn("ghp_0123456789abcdefghijklmnop", text)
+        self.assertIn("REDACTED", text)
+
+    def test_a_refusal_is_redacted_on_both_channels(self) -> None:
+        item = refusals.refusal(
+            refusals.UNSAFE, reason_code="remote_unreachable",
+            message=f"the remote {self.PAT_REMOTE} did not answer",
+            detail={"url": self.PAT_REMOTE})
+        for as_json in (True, False):
+            with self.subTest(as_json=as_json):
+                stream = io.StringIO()
+                refusals.emit(item, as_json=as_json, stream=stream)
+                self.assertNotIn("ghp_0123456789abcdefghijklmnop", stream.getvalue())
+
+    def test_ordinary_payloads_are_unchanged_by_redaction(self) -> None:
+        """Over-eager, but not destructive: a clean payload survives verbatim."""
+        import argparse
+
+        from tools.agent_supervisor import cli
+
+        payload = {"command": "start", "dispatched": True, "provider_calls_made": 2,
+                   "missing_inputs": [], "recovery": {"classification": "SAFE_CHECKPOINT"}}
+        buffer = io.StringIO()
+        with contextlib.redirect_stdout(buffer):
+            cli._emit(argparse.Namespace(json=True), payload, [])
+        self.assertEqual(json.loads(buffer.getvalue()), payload)
+
+
+class RevisionResetDerivationTests(unittest.TestCase):
+    """C12 (G4 F2): the REVISE reset set is derived, so it cannot drift."""
+
+    def test_it_is_exactly_reset_on_progress_minus_the_revision_counter(self) -> None:
+        from tools.agent_supervisor import loop_breakers as lb
+        from tools.agent_supervisor.circuit_breakers import RESET_ON_PROGRESS
+
+        self.assertEqual(set(lb._REVISE_SAFE_RESETS),
+                         set(RESET_ON_PROGRESS) - {"consecutive_revision_loops"})
+        self.assertTrue(set(lb._REVISE_SAFE_RESETS).issubset(RESET_ON_PROGRESS))
+        self.assertNotIn("consecutive_revision_loops", lb._REVISE_SAFE_RESETS)
 
 
 if __name__ == "__main__":  # pragma: no cover
