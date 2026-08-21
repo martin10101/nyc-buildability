@@ -1631,6 +1631,21 @@ class SupervisedLoop:
             if trigger:
                 self.machine.transition(state, trigger,
                                         detail={"cycle": cycle, "breaker": name})
+            # C6 (G5 I5): seal the trip itself, by name and value. A trip taken
+            # WITHOUT an S7 trigger - the cycle counter and the pre-dispatch
+            # model-call counter both stop at their legal entry state without
+            # transitioning - otherwise reached the hash-chained log only through
+            # a transition detail that, in those cases, does not exist. A limit
+            # that fired is exactly the kind of event a tamper-evident log is for.
+            if self.audit is not None:
+                self.audit.append(
+                    "circuit_breaker_tripped", run_id=self.run_id,
+                    policy_result="circuit_breaker_hard_threshold",
+                    detail={"breaker": name, "cycle": cycle,
+                            "value": (self.breakers.value(name)
+                                      if self.breakers is not None else None),
+                            "transitioned": bool(trigger), "trigger": trigger,
+                            "state": state, "reason": message})
             touches.append(self._touch(
                 TOUCH_SYNCHRONOUS_STOP, reason_code="circuit_breaker_hard_threshold",
                 reason=message, cycle=cycle,

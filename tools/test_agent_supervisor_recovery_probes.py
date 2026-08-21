@@ -207,11 +207,75 @@ class TaskAuthorityProbeTests(ProbeTestBase):
         self.assertFalse(result.passes)
         self.assertEqual(result.reason_code, "ledger_task_id_mismatch")
 
-    def test_an_unresolved_blocker_removes_authority(self) -> None:
-        self.write_ledger("M0-T079", blockers=[{"id": "B-1"}])
+    def write_blocker(self, blocker_id: str, *, status: str,
+                      affects=None, detail: str = "") -> pathlib.Path:
+        directory = self.repo / "project-control" / "blockers"
+        directory.mkdir(parents=True, exist_ok=True)
+        path = directory / f"{blocker_id}.json"
+        path.write_text(json.dumps({
+            "blocker_id": blocker_id, "status": status,
+            "affects": affects if affects is not None else [], "detail": detail}),
+            encoding="utf-8")
+        return path
+
+    def test_a_task_record_blockers_list_is_not_authority(self) -> None:
+        """C8 (G3 I-1): the free-form list the control plane never maintains.
+
+        `project_control.py` initialises `"blockers": []` at creation and never
+        appends to or prunes it. Reading it produced false refusals on live
+        records - M0-T019 is accepted while carrying a RESOLVED B-017 - and gave
+        an assurance ("no unresolved blockers") it had not established.
+        """
+        self.write_ledger("M0-T079", blockers=["B-017"])
+        self.write_blocker("B-017", status="resolved", affects=["M0-T079"])
+        result = self.probe()
+        self.assertTrue(result.passes,
+                        "a RESOLVED blocker must not refuse the run forever")
+
+    def test_an_open_blocker_record_naming_the_task_refuses(self) -> None:
+        self.write_ledger("M0-T079")
+        self.write_blocker("B-042", status="open", affects=["M0-T079"])
         result = self.probe()
         self.assertFalse(result.passes)
         self.assertEqual(result.reason_code, "task_blocked")
+        self.assertEqual(result.evidence["blockers"], ["B-042"])
+
+    def test_an_open_blocker_naming_the_task_only_in_its_detail_refuses(self) -> None:
+        """Matched exactly as `accept()` matches it: word-bounded, either field."""
+        self.write_ledger("M0-T079")
+        self.write_blocker("B-043", status="open", affects=[],
+                           detail="blocked pending M0-T079 rework")
+        self.assertFalse(self.probe().passes)
+
+    def test_a_blocker_with_no_status_counts_as_open(self) -> None:
+        self.write_ledger("M0-T079")
+        self.write_blocker("B-044", status="", affects=["M0-T079"])
+        self.assertFalse(self.probe().passes)
+
+    def test_an_open_blocker_naming_a_DIFFERENT_task_does_not_refuse(self) -> None:
+        self.write_ledger("M0-T079")
+        self.write_blocker("B-045", status="open", affects=["M0-T080"])
+        self.assertTrue(self.probe().passes)
+
+    def test_a_rework_id_still_matches_its_base_task(self) -> None:
+        """Deliberately conservative, exactly like `_blocker_references`."""
+        self.write_ledger("M0-T079")
+        self.write_blocker("B-046", status="open", affects=["M0-T079-R1"])
+        self.assertFalse(self.probe().passes)
+
+    def test_an_unreadable_blocker_record_fails_closed(self) -> None:
+        self.write_ledger("M0-T079")
+        self.write_blocker("B-047", status="open").write_text("{ not json",
+                                                              encoding="utf-8")
+        result = self.probe()
+        self.assertFalse(result.passes)
+        self.assertFalse(result.known)
+        self.assertEqual(result.reason_code, "blockers_unreadable")
+
+    def test_no_blockers_directory_at_all_is_not_a_refusal(self) -> None:
+        self.write_ledger("M0-T079")
+        self.assertFalse((self.repo / "project-control" / "blockers").exists())
+        self.assertTrue(self.probe().passes)
 
     def test_a_packet_with_no_task_id_confers_nothing(self) -> None:
         result = self.probe(self.packet(task_id=""))
@@ -531,6 +595,37 @@ class JournalFactProbeTests(ProbeTestBase):
         self.assertTrue(result.passes)
         self.assertTrue(result.evidence["outstanding"])
 
+    def test_the_deadline_parser_reads_instants_not_strings(self) -> None:
+        """C9: lexicographic ISO comparison gated nothing until it gated dispatch."""
+        self.assertIsNotNone(rp.parse_utc_instant("2026-08-21T12:00:00.000Z"))
+        # Same instant, three spellings the old string compare would disagree on.
+        base = rp.parse_utc_instant("2026-08-21T12:00:00Z")
+        self.assertEqual(base, rp.parse_utc_instant("2026-08-21T12:00:00+00:00"))
+        self.assertEqual(base, rp.parse_utc_instant("2026-08-21T14:00:00+02:00"))
+        self.assertEqual(base, rp.parse_utc_instant("2026-08-21T12:00:00"))
+        for bad in ("", "whenever", "2026-13-45T99:99:99Z", "next tuesday"):
+            with self.subTest(value=bad):
+                self.assertIsNone(rp.parse_utc_instant(bad))
+
+    def test_an_offset_form_deadline_is_compared_as_an_instant(self) -> None:
+        """The case where a text compare and an instant compare DISAGREE.
+
+        The clock reads 2026-02-02T02:40:00Z. The deadline `06:00:00+05:00` is
+        01:00Z - already past - but as TEXT `"2026-02-02T06:00..."` sorts after
+        `"2026-02-02T02:40..."`, so the old lexicographic compare called it
+        outstanding. The regex guarding it only anchored `^\\d{4}-\\d{2}-\\d{2}T`,
+        so the offset form reached that compare unchallenged.
+        """
+        clock = lambda: 1_770_000_000.0  # noqa: E731 - 2026-02-02T02:40:00Z
+        expired = "2026-02-02T06:00:00+05:00"
+        self.assertGreater(expired, "2026-02-02T02:40:00.000Z",
+                           "premise: the strings sort the wrong way round")
+        self.journal.set_state(RESUME_NOT_BEFORE_KEY, expired)
+        result = rp.probe_scheduled_deadlines(journal=self.journal, clock=clock)
+        self.assertTrue(result.passes)
+        self.assertFalse(result.evidence["outstanding"],
+                         "01:00Z is in the past; the offset must be honoured")
+
     def test_an_unparseable_deadline_is_undetermined(self) -> None:
         self.journal.set_state(RESUME_NOT_BEFORE_KEY, "soon-ish")
         result = rp.probe_scheduled_deadlines(journal=self.journal,
@@ -646,6 +741,37 @@ class SuiteTests(ProbeTestBase):
         self.assertIn("worktree", report.to_dict()["failed"])
         self.assertIn("git_and_remote_state", report.to_dict()["failed"])
 
+    def test_a_raising_probe_does_not_kill_the_other_ten(self) -> None:
+        """C5 (G5 I3): the probes were arguments to ONE tuple literal.
+
+        The first raise killed the rest and the exception escaped `run_live_probes`
+        entirely - `cmd_start` catches three exception classes and `main()` catches
+        none, so an unreadable journal produced a traceback and the generic exit 1
+        that `refusals.py` numbers its codes from 10 specifically to avoid.
+        """
+        self.write_ledger("M0-T079")
+        report = rp.run_live_probes(self.inputs(journal=UnreadableJournal()))
+        steps = {r.step for r in report.results}
+        self.assertEqual(steps, set(rp.STEP_PROBES) | set(rp.FOLDED_PROBES),
+                         "every probe must still run")
+        # The journal-backed probes are UNDETERMINED; the rest still answered.
+        for step in ("cli_capability_manifest", "scheduled_deadlines",
+                     "pending_requests", "last_external_effect", "surviving_children"):
+            with self.subTest(step=step):
+                self.assertFalse(report.by_step()[step].passes)
+        self.assertTrue(report.by_step()["task_authority"].passes)
+        self.assertTrue(report.by_step()["branch"].passes)
+
+    def test_a_probe_that_raises_is_undetermined_not_passed(self) -> None:
+        def explode() -> rp.ProbeResult:
+            raise RuntimeError("the disk went away")
+
+        result = rp._isolated("auth", explode)
+        self.assertFalse(result.passes)
+        self.assertFalse(result.known)
+        self.assertEqual(result.reason_code, "probe_raised")
+        self.assertIn("RuntimeError", result.detail)
+
     def test_each_missing_fact_on_its_own_makes_the_recovery_verdict_unsafe(self) -> None:
         """One failed step is enough - they do not have to accumulate."""
         self.write_ledger("M0-T079")
@@ -736,6 +862,29 @@ class StartProbeIntegrationTests(unittest.TestCase):
                      ["commit", "-q", "--allow-empty", "-m", "fixture"]):
             subprocess.run(["git", *argv], cwd=str(self.repo), check=True,
                            capture_output=True, env=env)
+
+    def set_journal_state(self, key: str, value) -> None:
+        from tools.agent_supervisor.durable_state import DB_FILENAME, runtime_dir_for
+
+        runtime_dir = runtime_dir_for(self.repo, base=str(self.runtime))
+        runtime_dir.mkdir(parents=True, exist_ok=True)
+        journal = DurableJournal(runtime_dir / DB_FILENAME).open()
+        try:
+            journal.set_state(key, value)
+        finally:
+            journal.close()
+
+    def set_deadline(self, when: str) -> None:
+        self.set_journal_state(RESUME_NOT_BEFORE_KEY, when)
+
+    def audit_events(self) -> list[str]:
+        from tools.agent_supervisor.durable_state import runtime_dir_for
+
+        path = runtime_dir_for(self.repo, base=str(self.runtime)) / "audit.jsonl"
+        if not path.exists():
+            return []
+        return [json.loads(line)["event_type"]
+                for line in path.read_text(encoding="utf-8").splitlines() if line.strip()]
 
     def full_inputs(self) -> tuple[str, ...]:
         return ("start", "--mode", "shadow",
@@ -841,6 +990,128 @@ class StartProbeIntegrationTests(unittest.TestCase):
         self.assertEqual(payload["provider_calls_made"], 0)
         self.assertEqual(code, refusals.EXIT_CODES[refusals.APPROVAL_REQUIRED])
         self.assertEqual(payload["refusal"]["reason_code"], "safe_but_forbidden")
+
+    def test_an_expired_deadline_no_longer_refuses_dispatch(self) -> None:
+        """C9 (G3 I-2 / G5 I7): the gate compares the deadline to NOW.
+
+        `recovery.classify` stamps `deadline_restored` on the mere PRESENCE of
+        `resume_not_before_utc`, and nothing clears the key on expiry - so once
+        M0-T079 made that reason code refuse, a long-past deadline refused
+        forever, while `assert_may_contact_provider` was happily permitting
+        provider contact. The two layers disagreed and the strict one was wrong.
+        """
+        self.make_git_checkout()
+        self.set_deadline("2020-01-01T00:00:00.000Z")
+        with self.host_containment(self.proc.CONTAINMENT_JOB_OBJECT):
+            code, payload = self.run_cli(*self.full_inputs())
+        self.assertTrue(payload["dispatched"],
+                        f"an expired deadline must not refuse: {payload['stopped_because']}")
+        self.assertNotIn("refusal", payload)
+        self.assertEqual(code, 0)
+
+    def test_an_outstanding_deadline_still_refuses(self) -> None:
+        self.make_git_checkout()
+        self.set_deadline("2099-01-01T00:00:00.000Z")
+        with self.host_containment(self.proc.CONTAINMENT_JOB_OBJECT):
+            code, payload = self.run_cli(*self.full_inputs())
+        self.assertFalse(payload["dispatched"])
+        self.assertEqual(payload["provider_calls_made"], 0)
+        self.assertEqual(code, refusals.EXIT_CODES[refusals.STALE_STATE])
+        self.assertEqual(payload["refusal"]["reason_code"], "deadline_restored")
+
+    def test_an_unparseable_deadline_still_refuses(self) -> None:
+        """Undetermined is honoured, never ignored."""
+        self.make_git_checkout()
+        self.set_deadline("whenever")
+        with self.host_containment(self.proc.CONTAINMENT_JOB_OBJECT):
+            code, payload = self.run_cli(*self.full_inputs())
+        self.assertFalse(payload["dispatched"])
+        self.assertNotEqual(code, 0)
+
+    def test_an_expired_deadline_does_not_excuse_a_real_hold(self) -> None:
+        """The deadline steps aside only when it is the ONLY thing blocking."""
+        from tools.agent_supervisor.resume_scheduler import MANUAL_PAUSE_KEY
+
+        self.make_git_checkout()
+        self.set_deadline("2020-01-01T00:00:00.000Z")
+        self.set_journal_state(MANUAL_PAUSE_KEY, True)
+        with self.host_containment(self.proc.CONTAINMENT_JOB_OBJECT):
+            code, payload = self.run_cli(*self.full_inputs())
+        self.assertFalse(payload["dispatched"])
+        self.assertEqual(code, refusals.EXIT_CODES[refusals.APPROVAL_REQUIRED])
+        self.assertEqual(payload["refusal"]["reason_code"], "safe_but_forbidden")
+
+    def test_a_credential_bearing_remote_never_reaches_stdout(self) -> None:
+        """C2 (G5 M2) end to end through the real CLI.
+
+        The probe records the raw `git remote get-url` result, so a routine
+        `x-access-token:` remote put a live PAT into the emitted payload.
+        """
+        self.make_git_checkout()
+        pat = "ghp_0123456789abcdefghijklmnop"
+        subprocess.run(
+            ["git", "remote", "add", "origin",
+             f"https://x-access-token:{pat}@github.com/owner/repo.git"],
+            cwd=str(self.repo), check=True, capture_output=True)
+        stdout = io.StringIO()
+        stderr = io.StringIO()
+        argv = [*self.full_inputs(), "--checkout", str(self.repo),
+                "--runtime-base", str(self.runtime), "--json"]
+        with self.host_containment(self.proc.CONTAINMENT_JOB_OBJECT), \
+                contextlib.redirect_stdout(stdout), contextlib.redirect_stderr(stderr):
+            self.cli.main(list(argv))
+        emitted = stdout.getvalue() + stderr.getvalue()
+        self.assertIn("git_and_remote_state", emitted,
+                      "the probe evidence IS in the payload; that is the point")
+        self.assertNotIn(pat, emitted)
+        self.assertIn("REDACTED", emitted)
+
+    def test_a_drifted_cli_can_be_repinned_by_an_explicit_owner_act(self) -> None:
+        """C10 (G3 I-3): detection unchanged, and now there is a way out."""
+        from tools.agent_supervisor.durable_state import DB_FILENAME, runtime_dir_for
+
+        self.make_git_checkout()
+        with self.host_containment(self.proc.CONTAINMENT_JOB_OBJECT):
+            self.run_cli(*self.full_inputs())
+
+        db = runtime_dir_for(self.repo, base=str(self.runtime)) / DB_FILENAME
+        journal = DurableJournal(db).open()
+        try:
+            pinned = dict(journal.get_state(rp.EXECUTABLE_IDENTITY_KEY))
+            pinned["claude"] = {**pinned["claude"], "digest": "0" * 64}
+            journal.set_state(rp.EXECUTABLE_IDENTITY_KEY, pinned)
+        finally:
+            journal.close()
+
+        # Drift still refuses by default.
+        with self.host_containment(self.proc.CONTAINMENT_JOB_OBJECT):
+            code, payload = self.run_cli(*self.full_inputs())
+        self.assertFalse(payload["dispatched"])
+        self.assertEqual(code, refusals.EXIT_CODES[refusals.UNSAFE])
+        self.assertIn("cli_capability_manifest", payload["probes"]["failed"])
+
+        # The explicit operator act re-pins it, with provenance. (The fake worker
+        # left the journal in PAUSED_RECOVERY, so this run stops for THAT - the
+        # claim under test is that it is no longer stopped by the drift latch.)
+        with self.host_containment(self.proc.CONTAINMENT_JOB_OBJECT):
+            code, payload = self.run_cli(*self.full_inputs(), "--repin-cli-identity")
+        self.assertEqual(payload["probes"]["failed"], [], payload["probes"])
+        self.assertNotIn("provider_cli_drift", json.dumps(payload))
+
+        journal = DurableJournal(db).open()
+        try:
+            repinned = journal.get_state(rp.EXECUTABLE_IDENTITY_KEY)["claude"]
+        finally:
+            journal.close()
+        self.assertEqual(repinned["replaced_digest"], "0" * 64)
+        self.assertIn("operator", repinned["repinned_by"])
+        self.assertTrue(repinned["repinned_at_utc"])
+        self.assertIn("cli_identity_repinned", self.audit_events())
+
+        # And the NEXT ordinary start - no flag - passes against the new pin.
+        with self.host_containment(self.proc.CONTAINMENT_JOB_OBJECT):
+            _, payload = self.run_cli(*self.full_inputs())
+        self.assertEqual(payload["probes"]["failed"], [])
 
 
 if __name__ == "__main__":  # pragma: no cover

@@ -44,6 +44,7 @@ fails closed.
 from __future__ import annotations
 
 import dataclasses
+import datetime as _dt
 import json
 import os
 import pathlib
@@ -52,7 +53,23 @@ import subprocess
 from typing import Any, Callable, Mapping, Sequence
 
 from .durable_state import JournalError
+from .models import to_utc_iso
 from .preflight import CAPABILITY_KEY
+# M0-T079 correction round: the shared result vocabulary and the control-plane
+# probes now live in their own modules. Re-exported here so every caller, test,
+# and `from .recovery_probes import ...` site is unchanged.
+from .probe_control_plane import (  # noqa: F401
+    WORKING_STATUSES,
+    open_blockers_for,
+    probe_task_authority,
+)
+from .probe_result import (
+    ProbeReport,
+    ProbeResult,
+    fail_probe as _fail,
+    ok_probe as _ok,
+    unknown_probe as _unknown,
+)
 from .process import ProcessError, executable_identity
 from .recovery import CHILD_PROCESSES_KEY, account_for_children
 from .resume_scheduler import RESUME_NOT_BEFORE_KEY
@@ -64,11 +81,6 @@ from .run_budget import Clock, system_clock, utc_iso_for
 #: detail (AD-093 "provider CLI/API drift").
 EXECUTABLE_IDENTITY_KEY = "cli_executable_identity"
 
-#: Task statuses in which a packet actually confers working authority. Same set
-#: `policy.TaskAuthority.from_packet` uses for `active`, referenced rather than
-#: restated so the two can never drift apart.
-WORKING_STATUSES: frozenset[str] = frozenset({"in_progress", "claimed", "awaiting_gate"})
-
 #: Files in the git directory that mean an operation is half-finished. A worktree
 #: mid-merge/rebase/cherry-pick/bisect is not a base a supervised run may build on.
 IN_PROGRESS_MARKERS: tuple[str, ...] = (
@@ -77,80 +89,6 @@ IN_PROGRESS_MARKERS: tuple[str, ...] = (
 )
 
 _SHA_RE = re.compile(r"^[0-9a-f]{40}$")
-
-
-# --------------------------------------------------------------------------
-# Results
-# --------------------------------------------------------------------------
-
-
-@dataclasses.dataclass(frozen=True)
-class ProbeResult:
-    """One revalidation answer, and whether it was actually established.
-
-    `known=False` means the probe could not determine the fact. That is NOT a
-    pass, and `passes` is the only place that judgement is made.
-    """
-
-    step: str
-    ok: bool
-    known: bool = True
-    reason_code: str = ""
-    detail: str = ""
-    evidence: Mapping[str, Any] = dataclasses.field(default_factory=dict)
-
-    def __post_init__(self) -> None:
-        object.__setattr__(self, "evidence", dict(self.evidence or {}))
-
-    @property
-    def passes(self) -> bool:
-        """A probe passes only when it is BOTH established and satisfied."""
-        return bool(self.ok and self.known)
-
-    def to_dict(self) -> dict[str, Any]:
-        data = dataclasses.asdict(self)
-        data["passes"] = self.passes
-        return data
-
-
-def _ok(step: str, detail: str, **evidence: Any) -> ProbeResult:
-    return ProbeResult(step, True, True, "", detail, evidence)
-
-
-def _fail(step: str, reason_code: str, detail: str, **evidence: Any) -> ProbeResult:
-    return ProbeResult(step, False, True, reason_code, detail, evidence)
-
-
-def _unknown(step: str, reason_code: str, detail: str, **evidence: Any) -> ProbeResult:
-    """An UNDETERMINED fact. Fails closed exactly like a failed one."""
-    return ProbeResult(step, False, False, reason_code, detail, evidence)
-
-
-@dataclasses.dataclass(frozen=True)
-class ProbeReport:
-    """Every probe this start ran, and the revalidation map recovery consumes."""
-
-    results: tuple[ProbeResult, ...]
-
-    def by_step(self) -> dict[str, ProbeResult]:
-        return {result.step: result for result in self.results}
-
-    def revalidation(self, steps: Sequence[str]) -> dict[str, bool]:
-        """The `{step: bool}` map for `recover_boot`, restricted to `steps`.
-
-        A step this report has no result for is simply ABSENT, and
-        `recovery.classify` already treats a missing result as a failed check -
-        so an unrun probe can never be mistaken for a passed one.
-        """
-        answers = self.by_step()
-        return {step: answers[step].passes for step in steps if step in answers}
-
-    def failures(self) -> tuple[ProbeResult, ...]:
-        return tuple(r for r in self.results if not r.passes)
-
-    def to_dict(self) -> dict[str, Any]:
-        return {"probes": [r.to_dict() for r in self.results],
-                "failed": [r.step for r in self.failures()]}
 
 
 # --------------------------------------------------------------------------
@@ -199,64 +137,6 @@ def subprocess_git(executable: str = "git", *, timeout_seconds: float = 30.0) ->
 # --------------------------------------------------------------------------
 # Probes
 # --------------------------------------------------------------------------
-
-
-def probe_task_authority(*, packet: Mapping[str, Any], repo_root: str,
-                         packet_path: str = "") -> ProbeResult:
-    """The packet confers live authority AND the ledger agrees it does.
-
-    The packet on disk is the supervisor's authority source (never a model's
-    description of the task), but a packet copy can be stale. The LEDGER entry
-    under `project-control/tasks/<task_id>.json` is the control plane's record,
-    so this requires both to exist and to agree on the task id and status, and
-    requires that status to be one that actually confers work.
-    """
-    step = "task_authority"
-    task_id = str(packet.get("task_id", "") or "")
-    if not task_id:
-        return _fail(step, "packet_without_task_id",
-                     f"the task packet at {packet_path or '<unnamed>'} names no task_id; a "
-                     f"packet that does not say which task it is confers no authority")
-    status = str(packet.get("status", "") or "")
-    if status not in WORKING_STATUSES:
-        return _fail(step, "task_not_active",
-                     f"task {task_id} is {status!r}; a supervised run needs a status that "
-                     f"confers work ({sorted(WORKING_STATUSES)})",
-                     task_id=task_id, status=status)
-    ledger_path = pathlib.Path(repo_root) / "project-control" / "tasks" / f"{task_id}.json"
-    if not ledger_path.is_file():
-        return _unknown(step, "ledger_record_missing",
-                        f"no ledger record at {ledger_path}; the packet's claim to authority "
-                        f"cannot be corroborated against the control plane, and an "
-                        f"uncorroborated authority claim is never assumed true",
-                        task_id=task_id, ledger_path=str(ledger_path))
-    try:
-        ledger = json.loads(ledger_path.read_text(encoding="utf-8-sig"))
-    except (OSError, ValueError) as exc:
-        return _unknown(step, "ledger_record_unreadable",
-                        f"the ledger record {ledger_path} could not be read ({exc}); an "
-                        f"unreadable authority record fails closed",
-                        task_id=task_id)
-    if str(ledger.get("task_id", "")) != task_id:
-        return _fail(step, "ledger_task_id_mismatch",
-                     f"the ledger record at {ledger_path} names task "
-                     f"{ledger.get('task_id')!r}, not {task_id!r}",
-                     task_id=task_id)
-    ledger_status = str(ledger.get("status", "") or "")
-    if ledger_status != status:
-        return _fail(step, "ledger_status_mismatch",
-                     f"the packet says task {task_id} is {status!r} and the ledger says "
-                     f"{ledger_status!r}; the supervisor never picks the more permissive of "
-                     f"two disagreeing authority records",
-                     task_id=task_id, packet_status=status, ledger_status=ledger_status)
-    blockers = ledger.get("blockers") or []
-    if blockers:
-        return _fail(step, "task_blocked",
-                     f"task {task_id} has {len(blockers)} unresolved blocker(s) in the "
-                     f"ledger; a blocked task confers no authority to continue",
-                     task_id=task_id)
-    return _ok(step, f"task {task_id} is {status!r} in both the packet and the ledger, with "
-                     f"no unresolved blockers", task_id=task_id, status=status)
 
 
 def probe_branch(*, git: GitRunner, worktree: str, expected_branch: str = "") -> ProbeResult:
@@ -424,6 +304,7 @@ def probe_auth(*, executables: Mapping[str, str],
 
 def probe_cli_capability_manifest(
     *, journal: Any, executables: Mapping[str, str], record: bool = True,
+    repin: bool = False, audit: Any = None,
 ) -> ProbeResult:
     """No recorded capability probe FAILED, and the provider CLIs have not drifted.
 
@@ -434,6 +315,16 @@ def probe_cli_capability_manifest(
     pinned on first start and compared on every later one, so a CLI that was
     replaced or upgraded under an unattended controller is detected as drift
     instead of being discovered mid-run.
+
+    C10 (G3 I-3) adds the way OUT. Detection is unchanged and still refuses by
+    default; what was missing was any supported remedy, so a routine Claude Code
+    or Codex auto-update bricked every subsequent `start` on that checkout with
+    no option but deleting the journal - destroying the run's durable evidence,
+    which is the thing the rest of this task exists to preserve. `repin=True`
+    (the operator's explicit `--repin-cli-identity`) accepts the NEW identity,
+    records it with provenance - what it replaced, when, and that an owner asked
+    for it - and seals an audit event. A per-launch human act, never a default,
+    and not reachable from a synthesized argv or a config value.
     """
     step = "cli_capability_manifest"
     probes = journal.get_state(CAPABILITY_KEY, {}) or {}
@@ -465,20 +356,41 @@ def probe_cli_capability_manifest(
                           "digest": identity.digest, "digest_kind": identity.digest_kind}
 
     pinned = journal.get_state(EXECUTABLE_IDENTITY_KEY, None)
+    repinned: list[str] = []
     if isinstance(pinned, Mapping) and pinned:
         drifted = sorted(
             name for name, value in observed.items()
             if name in pinned and isinstance(pinned[name], Mapping)
             and (pinned[name].get("digest") != value["digest"]
                  or pinned[name].get("path") != value["path"]))
-        if drifted:
+        if drifted and not repin:
             return _fail(step, "provider_cli_drift",
                          f"the provider executables {drifted} are not the ones this run was "
                          f"pinned to; a CLI that changed under an unattended controller is "
                          f"drift and must be re-established explicitly, not discovered "
-                         f"mid-run", drifted=drifted)
+                         f"mid-run. If the change was a legitimate update, re-pin it "
+                         f"deliberately with `--repin-cli-identity`, which records the new "
+                         f"identity with provenance and seals an audit event",
+                         drifted=drifted)
         merged = {**{k: dict(v) for k, v in pinned.items() if isinstance(v, Mapping)},
                   **observed}
+        for name in drifted:
+            previous = pinned[name] if isinstance(pinned.get(name), Mapping) else {}
+            merged[name] = {**observed[name],
+                            "repinned_at_utc": to_utc_iso(),
+                            "repinned_by": "operator --repin-cli-identity",
+                            "replaced_digest": str(previous.get("digest", "") or ""),
+                            "replaced_path": str(previous.get("path", "") or "")}
+            repinned.append(name)
+        if repinned and audit is not None:
+            try:
+                audit.append(
+                    "cli_identity_repinned", policy_result="owner_repin",
+                    detail={"repinned": repinned,
+                            "note": "an operator explicitly accepted a changed provider "
+                                    "CLI identity; drift detection itself is unchanged"})
+            except Exception:  # pragma: no cover - a damaged chain is its own evidence
+                pass
     else:
         merged = observed
     if record:
@@ -488,10 +400,15 @@ def probe_cli_capability_manifest(
             return _unknown(step, "identity_pin_unwritable",
                             f"the provider-executable identity pin could not be written "
                             f"({exc}); an unrecorded pin cannot detect later drift")
+    if repinned:
+        return _ok(step,
+                   f"an operator re-pinned the provider executables {repinned} to their "
+                   f"current identity with recorded provenance; drift detection resumes "
+                   f"against the new pin", pinned=sorted(merged), repinned=repinned)
     return _ok(step,
                f"no recorded capability probe failed and every provider executable matches "
                f"its pinned identity ({sorted(observed)})",
-               pinned=sorted(merged))
+               pinned=sorted(merged), repinned=[])
 
 
 def probe_pending_requests(*, journal: Any) -> ProbeResult:
@@ -531,20 +448,50 @@ def probe_scheduled_deadlines(*, journal: Any,
     """
     step = "scheduled_deadlines"
     raw = str(journal.get_state(RESUME_NOT_BEFORE_KEY, "") or "")
+    now_epoch = float(clock())
+    now = utc_iso_for(now_epoch)
     if not raw:
-        return _ok(step, "no usage-limit deadline is persisted")
-    now = utc_iso_for(clock())
-    if not re.match(r"^\d{4}-\d{2}-\d{2}T", raw):
+        return _ok(step, "no usage-limit deadline is persisted", outstanding=False)
+    # C9: parse the INSTANT rather than compare ISO strings lexicographically.
+    # The old comparison was guarded by a regex anchoring only
+    # `^\d{4}-\d{2}-\d{2}T`, so an offset form, a different sub-second precision,
+    # or a missing `Z` compared as TEXT - harmless while nothing consumed
+    # `outstanding`, and load-bearing now that the dispatch gate does.
+    deadline_epoch = parse_utc_instant(raw)
+    if deadline_epoch is None:
         return _unknown(step, "deadline_unparseable",
                         f"the persisted resume deadline {raw!r} is not a UTC timestamp this "
                         f"build can compare; an unreadable deadline is honoured, never "
                         f"ignored", deadline=raw)
-    if raw > now:
+    if deadline_epoch > now_epoch:
         return _ok(step, f"a usage-limit deadline is persisted and holds until {raw} (now "
                          f"{now}); recovery restores the timer and contacts no provider "
                          f"before it", deadline=raw, now=now, outstanding=True)
     return _ok(step, f"the persisted deadline {raw} has passed (now {now})",
                deadline=raw, now=now, outstanding=False)
+
+
+def parse_utc_instant(value: str) -> float | None:
+    """Epoch seconds for a UTC ISO-8601 instant, or None when it is unreadable.
+
+    Accepts the package's own `to_utc_iso` shape (`...Z`) and any offset form
+    `datetime.fromisoformat` understands. A naive timestamp is treated as UTC
+    rather than local: S11.4 calls ambiguous time a defect, and the supervisor
+    only ever writes UTC. None means UNDETERMINED, which every caller honours
+    rather than ignores.
+    """
+    text = str(value or "").strip()
+    if not text:
+        return None
+    if text.endswith(("Z", "z")):
+        text = text[:-1] + "+00:00"
+    try:
+        moment = _dt.datetime.fromisoformat(text)
+    except ValueError:
+        return None
+    if moment.tzinfo is None:
+        moment = moment.replace(tzinfo=_dt.timezone.utc)
+    return moment.timestamp()
 
 
 def probe_last_external_effect(*, journal: Any) -> ProbeResult:
@@ -654,38 +601,72 @@ class ProbeInputs:
     auth_check: Callable[[], ProbeResult] | None = None
     clock: Clock = system_clock
     record_identity: bool = True
+    #: C10: the owner's explicit acceptance of a legitimately changed provider
+    #: CLI. Default False keeps drift DETECTION exactly as strict as it was.
+    repin_cli_identity: bool = False
+    #: The hash-chained audit log, so a re-pin leaves a durable owner-visible
+    #: record. Default None keeps every existing caller unchanged.
+    audit: Any = None
+
+
+def _isolated(step: str, probe: Callable[[], ProbeResult]) -> ProbeResult:
+    """Run one probe so a raise becomes ITS failure, not everyone else's.
+
+    C5 (G5 I3): the eleven probes used to be arguments to a single tuple literal,
+    so the first one to raise killed the other ten and the exception escaped
+    `run_live_probes` entirely - `cmd_start` catches only a few exception classes
+    and `main()` catches none, so an unreadable journal produced a traceback and
+    the generic exit 1 that `refusals.py` numbers its codes from 10 specifically
+    to avoid. Every probe now runs, and a raising probe is an UNDETERMINED fact,
+    which fails closed exactly like a determined failure.
+    """
+    try:
+        return probe()
+    except Exception as exc:  # a probe that cannot answer is not a probe that passed
+        return _unknown(step, "probe_raised",
+                        f"the {step} probe could not complete ({type(exc).__name__}: "
+                        f"{exc}); an unfinished check is never a passed one")
 
 
 def run_live_probes(inputs: ProbeInputs) -> ProbeReport:
     """Run every live probe in one pass. Never contacts a provider or GitHub.
 
-    The order is S11.5's, and no probe short-circuits another: the report always
-    carries every answer, so the refusal names EVERY fact that is missing rather
-    than only the first one found.
+    The order is S11.5's, and no probe short-circuits another - not by returning
+    a failure, and (since C5) not by raising either. The report always carries
+    every answer, so the refusal names EVERY fact that is missing rather than
+    only the first one found.
     """
     git = inputs.git if inputs.git is not None else subprocess_git()
-    return ProbeReport(results=(
-        probe_task_authority(packet=inputs.packet, repo_root=inputs.repo_root,
-                             packet_path=inputs.packet_path),
-        probe_branch(git=git, worktree=inputs.worktree,
-                     expected_branch=inputs.expected_branch),
-        probe_worktree(git=git, worktree=inputs.worktree, repo_root=inputs.repo_root),
-        probe_git_and_remote_state(
+    probes: tuple[tuple[str, Callable[[], ProbeResult]], ...] = (
+        ("task_authority", lambda: probe_task_authority(
+            packet=inputs.packet, repo_root=inputs.repo_root,
+            packet_path=inputs.packet_path)),
+        ("branch", lambda: probe_branch(
+            git=git, worktree=inputs.worktree,
+            expected_branch=inputs.expected_branch)),
+        ("worktree", lambda: probe_worktree(
+            git=git, worktree=inputs.worktree, repo_root=inputs.repo_root)),
+        ("git_and_remote_state", lambda: probe_git_and_remote_state(
             git=git, worktree=inputs.worktree, remote=inputs.remote,
             remote_reachability_required=inputs.remote_reachability_required,
-            reachability=inputs.reachability),
-        probe_auth(executables=inputs.executables, auth_check=inputs.auth_check),
-        probe_cli_capability_manifest(journal=inputs.journal,
-                                      executables=inputs.executables,
-                                      record=inputs.record_identity),
-        probe_pending_requests(journal=inputs.journal),
-        probe_scheduled_deadlines(journal=inputs.journal, clock=inputs.clock),
-        probe_last_external_effect(journal=inputs.journal),
-        probe_config_identity(manifest_ok=inputs.manifest_ok,
-                              manifest_reason=inputs.manifest_reason,
-                              config_path=inputs.config_path),
-        probe_surviving_children(journal=inputs.journal),
-    ))
+            reachability=inputs.reachability)),
+        ("auth", lambda: probe_auth(
+            executables=inputs.executables, auth_check=inputs.auth_check)),
+        ("cli_capability_manifest", lambda: probe_cli_capability_manifest(
+            journal=inputs.journal, executables=inputs.executables,
+            record=inputs.record_identity, repin=inputs.repin_cli_identity,
+            audit=inputs.audit)),
+        ("pending_requests", lambda: probe_pending_requests(journal=inputs.journal)),
+        ("scheduled_deadlines", lambda: probe_scheduled_deadlines(
+            journal=inputs.journal, clock=inputs.clock)),
+        ("last_external_effect", lambda: probe_last_external_effect(
+            journal=inputs.journal)),
+        ("config_identity", lambda: probe_config_identity(
+            manifest_ok=inputs.manifest_ok, manifest_reason=inputs.manifest_reason,
+            config_path=inputs.config_path)),
+        ("surviving_children", lambda: probe_surviving_children(journal=inputs.journal)),
+    )
+    return ProbeReport(results=tuple(_isolated(step, probe) for step, probe in probes))
 
 
 #: Probes that ANSWER a `recovery.REVALIDATION_STEPS` entry directly.

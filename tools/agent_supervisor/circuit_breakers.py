@@ -54,10 +54,19 @@ TRIP = "TRIP"
 #:
 #: V1.1 note (G3 finding B-4, reviewed): the first mapping is imprecise on BOTH
 #: sides and is DOCUMENTED here rather than renamed. What the counter actually
-#: measures: Claude units dispatched by ONE supervisor invocation (a fresh
-#: `CircuitBreakers` is built per `start`, and the counter never resets), i.e.
-#: units-per-run - not per-task, and not CLI "turns" (turns are the intra-unit
-#: `--max-turns` bound). Renaming `max_claude_turns_per_run` would invalidate
+#: measures: Claude units dispatched by ONE RUN - not per-task, and not CLI
+#: "turns" (turns are the intra-unit `--max-turns` bound).
+#:
+#: M0-T079 C11 correction: this note used to say "a fresh `CircuitBreakers` is
+#: built per `start`, and the counter never resets", which described the DEFECT
+#: rather than the design. A fresh instance is still built per `start`, but the
+#: tallies now survive it: `run_budget.RunBudgetLedger` persists them and
+#: `restore()` reconciles them back, so a per-RUN counter is bounded across the
+#: crash-resumes a run is made of instead of being handed a full allowance by
+#: every restart. "Per run" is now keyed by `--run-id`, and a genuinely new run
+#: needs a new id. Per-DAY counters are the exception and roll on the UTC day, in
+#: the live breaker (`record_daily`) and in the persisted record alike (C4).
+#: Renaming `max_claude_turns_per_run` would invalidate
 #: every owner-placed, manifest-covered config.toml (S3.1: limits are immutable
 #: config), and renaming the counter would silently decouple historical audit
 #: events from new ones; both renames are config/audit-schema changes for a

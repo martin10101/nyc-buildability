@@ -80,6 +80,25 @@ HARD_DENY_ARGUMENTS: frozenset[str] = frozenset({
 #: never passes it, and `assert_argv_safe()` refuses it like a bypass flag.
 EFFORT_ARGUMENT_PREFIXES: tuple[str, ...] = ("--effort", "--reasoning-effort")
 
+#: Owner-gated ACTIVATION flags, denied in any argv this package SYNTHESIZES.
+#:
+#: M0-T079 C3 (G5 I1): `--owner-enable-bounded-auto` is a per-launch owner act,
+#: typed by a human at a terminal. Nothing here changes that - what it closes is
+#: REPLAY. Paths that build an argv from a stored prefix (a watchdog's launcher
+#: argv, an autostart task definition) would otherwise re-fire an enable the
+#: owner typed once, on every scheduler trigger, forever - and "per-launch" would
+#: quietly mean "per-launch until it is written into a scheduled task".
+#: `resume_scheduler` already guards its own argv with `assert_fixed_action`
+#: exact-list-equality; this is the same discipline for every other synthesized
+#: argv, enforced in the one shared checker rather than at each call site.
+#:
+#: Scope, stated plainly: this denies the flag in argv the SUPERVISOR builds. It
+#: does not and cannot police what an operator types directly, which is the
+#: intended way to enable the mode.
+OWNER_ACTIVATION_ARGUMENTS: frozenset[str] = frozenset({
+    "--owner-enable-bounded-auto",
+})
+
 #: Environment variables a child is allowed to inherit by default. Everything
 #: else is dropped: the worker receives no ambient credentials (S13.3).
 DEFAULT_ENV_ALLOWLIST: tuple[str, ...] = (
@@ -167,6 +186,13 @@ def assert_argv_safe(argv: Sequence[Any]) -> list[str]:
                 item,
                 "effort flags are permanently prohibited in every configuration file, "
                 "prompt, and CLI invocation")
+        if lowered in OWNER_ACTIVATION_ARGUMENTS or any(
+                lowered.startswith(flag + "=") for flag in OWNER_ACTIVATION_ARGUMENTS):
+            raise HardDenyError(
+                item,
+                "owner activation flags are a per-launch human act and are denied in any "
+                "argv this package synthesizes; a stored launcher prefix must never be "
+                "able to replay an enable the owner typed once (M0-T079 C3)")
         out.append(item)
     return out
 

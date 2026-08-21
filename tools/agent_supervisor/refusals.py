@@ -46,6 +46,7 @@ import sys
 from typing import Any, Mapping, Sequence, TextIO
 
 from .models import to_utc_iso
+from .redaction import redact_structure
 
 REFUSAL_SCHEMA_VERSION = "1.0.0"
 
@@ -151,12 +152,19 @@ def refusal(outcome: str, *, reason_code: str, message: str,
 
 
 def emit(item: Refusal, *, as_json: bool, stream: TextIO | None = None) -> int:
-    """Print the refusal and return its exit code. Never raises on output."""
+    """Print the refusal, REDACTED, and return its exit code.
+
+    C2 (G5 M2): a refusal message or detail can quote a path, a remote URL, or a
+    tool's output, and stdout/stderr is a transmission. Everything the supervisor
+    transmits goes through `redact_structure` first (redaction.py's header rule),
+    so a refusal cannot become the leak path the payload printer no longer is.
+    """
     target = stream if stream is not None else sys.stderr
     if as_json:
-        print(json.dumps(item.to_dict(), indent=2, default=str), file=target)
+        print(json.dumps(redact_structure(item.to_dict()).value, indent=2, default=str),
+              file=target)
     else:
-        for line in item.lines():
+        for line in redact_structure(list(item.lines())).value:
             print(line, file=target)
     return item.exit_code
 
@@ -268,6 +276,24 @@ def merge_into_payload(payload: dict[str, Any], item: Refusal) -> dict[str, Any]
     if not payload.get("stopped_because"):
         payload["stopped_because"] = f"{item.reason_code}: {item.message}"
     return payload
+
+
+def reserved_exit_codes() -> Sequence[dict[str, Any]]:
+    """Exit codes that are NOT refusal outcomes, documented so nothing is implicit.
+
+    C7 (G4 F1): the contract advertised 10-16 and said nothing about the codes a
+    caller will also see. `1` predates this contract - `verify-controller` and the
+    M0-T072 manifest security halt both use it - and `0` means the command did
+    what it was asked. Naming them here is the difference between a contract and
+    a list of the interesting cases.
+    """
+    return (
+        {"exit_code": EXIT_OK, "outcome": "ok",
+         "meaning": "the command did what it was asked; for `start`, the run dispatched"},
+        {"exit_code": 1, "outcome": "legacy_halt",
+         "meaning": "pre-existing generic failure: a failed controller-manifest "
+                    "verification (M0-T072 security halt) and `verify-controller`"},
+    )
 
 
 def document() -> Sequence[dict[str, Any]]:
