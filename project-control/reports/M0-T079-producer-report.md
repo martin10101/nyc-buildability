@@ -1,3 +1,15 @@
+> **ORCHESTRATOR ERRATUM (round 3, D2 / G3 re-review R-3).** The producer's verbatim text is
+> preserved below unaltered. Two statements in it are inaccurate and are corrected here rather
+> than by editing the producer's words (report-preservation rule): (1) §3.4 line 191 —
+> "Every trip is a synchronous pause **before** the counted thing happens" is TRUE for the
+> eight event-site counters but NOT for `restart_attempts`, which legitimately ticks **after**
+> the relaunch (`loop.py:2772-2773`) because it counts an event that has already occurred;
+> (2) the deferrals section (~line 672) states the report's blanket claim was corrected — it was
+> not, at round 2. This erratum is that correction. The `restart_attempts` after-the-event tick
+> is the correct and intended placement (a restart cannot be un-done by a breaker); only the
+> report's generalization was wrong. G3 re-review classified this as an important gate-evidence
+> accuracy defect, not a code defect. Verified at round-3 identity (see M0-T079-round3 evidence).
+
 # M0-T079 producer report — bounded unattended mode: durable budgets, wired breakers, live recovery probes, typed refusals
 
 **Task:** M0-T079 (D-023 item 1, amended by D-023-R037)
