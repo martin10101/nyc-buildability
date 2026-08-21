@@ -674,10 +674,17 @@ class CliTests(unittest.TestCase):
         self.assertEqual(cli.DEFERRED_COMMANDS, {})
 
     def test_limited_auto_refuses_by_name(self) -> None:
-        with self.assertRaises(NotImplementedError) as raised:
-            self.run_cli("start", "--mode", "limited-auto")
-        self.assertIn("limited-auto is disabled", str(raised.exception))
-        self.assertIn("explicit owner activation", str(raised.exception))
+        """M0-T079: still refused by name, now with a typed exit code and JSON."""
+        from tools.agent_supervisor import refusals
+
+        code, out, err = self.run_cli("start", "--mode", "limited-auto", "--json")
+        self.assertEqual(code, refusals.EXIT_CODES[refusals.REFUSED_MODE])
+        payload = json.loads(out)
+        self.assertTrue(payload["refused"])
+        self.assertEqual(payload["outcome"], refusals.REFUSED_MODE)
+        self.assertIn("limited-auto is DISABLED", payload["message"])
+        self.assertIn("explicit owner activation", payload["message"])
+        self.assertNotIn("Traceback", out + err)
 
     def test_start_never_dispatches(self) -> None:
         code, out, _ = self.run_cli("start", "--mode", "shadow", "--json")

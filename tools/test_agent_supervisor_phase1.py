@@ -30,6 +30,7 @@ from tools.agent_supervisor import CONTROLLER_VERSION  # noqa: E402
 from tools.agent_supervisor import cli  # noqa: E402
 from tools.agent_supervisor import config as cfg  # noqa: E402
 from tools.agent_supervisor import manifest as mf  # noqa: E402
+from tools.agent_supervisor import refusals  # noqa: E402
 from tools.agent_supervisor import state_machine as sm  # noqa: E402
 from tools.agent_supervisor.audit_log import AuditLog  # noqa: E402
 from tools.agent_supervisor.circuit_breakers import (  # noqa: E402
@@ -835,7 +836,10 @@ class CliTests(TempCase):
             cli.main(["doctor", *self._common()])
         text = buffer.getvalue()
         self.assertIn("overall: PASS", text)
-        self.assertIn("limited-auto: NOT IMPLEMENTED and disabled.", text)
+        # M0-T079: the bounded mode EXISTS now, so `doctor` says what is true -
+        # implemented, off by default, and enabled only per launch by the owner.
+        self.assertIn("limited-auto: IMPLEMENTED and OFF by default", text)
+        self.assertIn("refusal exit codes:", text)
 
     def test_doctor_reports_every_phase1_check(self) -> None:
         import contextlib
@@ -852,7 +856,10 @@ class CliTests(TempCase):
                          "journal_integrity", "audit_chain"):
             self.assertIn(expected, names)
         self.assertTrue(payload["ok"])
-        self.assertIn("NOT IMPLEMENTED", payload["limited_auto"])
+        self.assertIn("IMPLEMENTED and OFF by default", payload["limited_auto"])
+        # The machine-readable refusal contract is part of the doctor report.
+        outcomes = {row["outcome"] for row in payload["refusal_contract"]}
+        self.assertEqual(outcomes, set(refusals.OUTCOMES))
 
     def test_doctor_checks_the_timezone_database(self) -> None:
         """V1.1 correction F-5: tzdata is a checked setup dependency."""
@@ -958,11 +965,18 @@ class CliTests(TempCase):
         self.assertEqual(code, 0)
 
     def test_limited_auto_is_refused_by_name(self) -> None:
-        with self.assertRaises(NotImplementedError) as ctx:
-            cli.main(["start", *self._common(), "--mode", "limited-auto"])
-        message = str(ctx.exception)
-        self.assertIn("limited-auto is disabled", message)
+        """M0-T079: refused exactly as before, reported as a structured outcome."""
+        import contextlib
+        import io
+
+        stderr = io.StringIO()
+        with contextlib.redirect_stderr(stderr):
+            code = cli.main(["start", *self._common(), "--mode", "limited-auto"])
+        self.assertEqual(code, refusals.EXIT_CODES[refusals.REFUSED_MODE])
+        message = stderr.getvalue()
+        self.assertIn("limited-auto is DISABLED", message)
         self.assertIn("explicit owner activation", message)
+        self.assertNotIn("Traceback", message)
 
     def test_every_s12_1_command_is_wired(self) -> None:
         parser = cli.build_parser()

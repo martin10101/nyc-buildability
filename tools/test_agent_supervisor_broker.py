@@ -660,12 +660,21 @@ class OperatorCommandTests(unittest.TestCase):
         self.assertFalse(json.loads(buffer.getvalue())["ok"])
 
     def test_limited_auto_still_refuses_by_name(self) -> None:
-        from tools.agent_supervisor import cli
+        """M0-T079: the same refusal, as a structured outcome instead of a traceback."""
+        import contextlib
+        import io
 
-        with self.assertRaises(NotImplementedError) as ctx:
-            cli.main(["start", "--checkout", str(self.checkout),
-                      "--runtime-base", self.base, "--mode", "limited-auto"])
-        self.assertIn("limited-auto is disabled", str(ctx.exception))
+        from tools.agent_supervisor import cli, refusals
+
+        stderr = io.StringIO()
+        with contextlib.redirect_stderr(stderr):
+            code = cli.main(["start", "--checkout", str(self.checkout),
+                             "--runtime-base", self.base, "--mode", "limited-auto"])
+        self.assertEqual(code, refusals.EXIT_CODES[refusals.REFUSED_MODE])
+        text = stderr.getvalue()
+        self.assertIn("limited-auto is DISABLED", text)
+        self.assertIn("refused_mode", text)
+        self.assertNotIn("Traceback", text)
 
 
 if __name__ == "__main__":

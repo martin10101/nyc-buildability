@@ -198,6 +198,34 @@ class FakeReviewer:
                              tier=map_decision_to_tier(actual))
 
 
+def _make_live_checkout(root: pathlib.Path, *, task_id: str,
+                        status: str = "in_progress") -> pathlib.Path:
+    """A REAL git checkout with a ledger record, for the M0-T079 live probes.
+
+    `start` establishes task authority, the branch, the worktree, and Git state
+    by reading them now; a complete command line no longer certifies them.
+    """
+    import os
+    import subprocess
+
+    root.mkdir(parents=True, exist_ok=True)
+    tasks = root / "project-control" / "tasks"
+    tasks.mkdir(parents=True, exist_ok=True)
+    (tasks / f"{task_id}.json").write_text(
+        json.dumps({"task_id": task_id, "status": status, "blockers": []}),
+        encoding="utf-8")
+    env = {**os.environ,
+           "GIT_AUTHOR_NAME": "supervisor-test",
+           "GIT_AUTHOR_EMAIL": "test@example.invalid",
+           "GIT_COMMITTER_NAME": "supervisor-test",
+           "GIT_COMMITTER_EMAIL": "test@example.invalid"}
+    for argv in (["init", "-q", "-b", "main"],
+                 ["commit", "-q", "--allow-empty", "-m", "fixture"]):
+        subprocess.run(["git", *argv], cwd=str(root), check=True,
+                       capture_output=True, env=env)
+    return root
+
+
 class ChainTestBase(unittest.TestCase):
     def setUp(self) -> None:
         self._tmp = tempfile.TemporaryDirectory()
@@ -571,6 +599,7 @@ class CrashResumeTests(ChainTestBase):
         # `start` builds the runner itself and passes only a minimal allowlisted
         # environment, so the fake falls back to its cwd - the worktree the
         # supervisor sets. Nothing about the launch is arranged by the test.
+        _make_live_checkout(self.repo, task_id="M0-T036")
         self.launch_log = self.repo / "fake_launches.jsonl"
         self.runtime = self.tmp / "runtime"
         self.config_path = self.tmp / "config.toml"

@@ -23,9 +23,21 @@ Unknown breaker names raise rather than passing silently: a typo must not
 disable a safety limit. Limits come from the immutable, manifest-covered
 `config.toml`, so a runtime model change can never move one (S3.1).
 
-Phase 1 scope note: the breakers and their bookkeeping are complete and tested.
-WIRING them to real resource sampling (CPU/memory readings, spend ceilings) and
-to the notification surface is Phase 2/3; the gauge API is ready for it.
+Wiring status (was the Phase 1 scope note; corrected by M0-T079, D-023 item 1).
+The breakers and their bookkeeping have always been complete and tested. What was
+missing was the wiring, and the note said so:
+
+    "WIRING them to real resource sampling (CPU/memory readings, spend ceilings)
+    and to the notification surface is Phase 2/3; the gauge API is ready for it."
+
+M0-T041 (AS-3) wired the GAUGES to live resource sampling. M0-T079 wired every
+remaining COUNTER to its real production event site in the loop -
+`supervisor_cycles_per_task` per cycle, `model_calls_per_task`/`_per_day` on each
+provider dispatch, `external_writes_per_task`/`_per_day` on each outbound send,
+`restart_attempts` on each seam relaunch, and the three livelock counters at
+their semantic sites - and made the tallies survive a crash through
+`restore()` + the durable run-budget record (`run_budget.py`). Spend ceilings
+remain out of scope: no priced-usage signal exists on this build to sample.
 """
 from __future__ import annotations
 
@@ -178,6 +190,39 @@ class CircuitBreakers:
             self._day = day
             for counter in PER_DAY_COUNTERS:
                 self._counters[counter] = 0
+
+    def restore(self, counters: Mapping[str, int], *, day: str = "") -> None:
+        """Reconcile these breakers with tallies persisted before a discontinuity.
+
+        M0-T079 (D-023 item 1): a crash-resume rebuilds `CircuitBreakers` from
+        the immutable limits, which used to hand the resumed run a full fresh
+        allowance of model calls, external writes, restarts, and livelock
+        tolerance. The durable run-budget record carries the tallies forward and
+        this puts them back.
+
+        Monotonic on purpose: each counter is raised to the HIGHER of its current
+        and persisted value, never lowered. A restore can therefore only ever
+        tighten a breaker, so neither a crash, a partial write, nor a replayed
+        older snapshot can give the run back an allowance it has already spent.
+        `day` restores the per-day window the tallies were accrued against, so a
+        resume on the SAME UTC day keeps them and the first tick on a NEW day
+        rolls them exactly as `record_daily` always has. An unknown counter name
+        raises, like every other addressed-by-name path here.
+        """
+        for name, value in counters.items():
+            self._require_counter(name)
+            amount = int(value)
+            if amount < 0:
+                raise BreakerError(
+                    f"counter {name!r} cannot be restored to a negative tally {amount}")
+            self._counters[name] = max(self._counters[name], amount)
+        if day:
+            self._roll_day(day)
+
+    @property
+    def day(self) -> str | None:
+        """The UTC day the per-day counters are currently accruing against."""
+        return self._day
 
     def evaluate(self, name: str) -> BreakerVerdict:
         self._require_counter(name)

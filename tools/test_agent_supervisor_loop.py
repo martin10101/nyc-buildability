@@ -35,6 +35,7 @@ sys.path.insert(0, str(REPO))
 from tools.agent_supervisor import broker as bk  # noqa: E402
 from tools.agent_supervisor import loop as lp  # noqa: E402
 from tools.agent_supervisor import policy as pol  # noqa: E402
+from tools.agent_supervisor import refusals  # noqa: E402
 from tools.agent_supervisor import rotation as rot  # noqa: E402
 from tools.agent_supervisor import state_machine as sm  # noqa: E402
 from tools.agent_supervisor.audit_log import AuditLog  # noqa: E402
@@ -916,15 +917,25 @@ class OwnerTouchBudgetTests(LoopTestBase):
             self.ledger().record("silently_ignore", reason_code="x", reason="", cycle=1)
 
     def test_the_budget_module_cannot_widen_policy(self) -> None:
-        """S15: the shadow counter cannot itself trigger any policy widening."""
-        source = (REPO / "tools" / "agent_supervisor" / "loop.py").read_text(
-            encoding="utf-8")
-        for widening in ("owner_grant", "StandingGrant", "assert_not_widened",
-                         "TIER_ORDER"):
-            self.assertNotIn(widening, source,
-                             f"loop.py references {widening!r}; the owner-touch budget "
-                             f"is a measurement and must not be able to widen authority, "
-                             f"mint a grant, or move a tier")
+        """S15: the shadow counter cannot itself trigger any policy widening.
+
+        M0-T079 split the owner-touch accounting into `owner_touch.py` under the
+        modularity rule, so the scan covers BOTH files - the guarantee follows
+        the code rather than staying pinned to whichever module used to hold it.
+        """
+        package = REPO / "tools" / "agent_supervisor"
+        sources = {name: (package / name).read_text(encoding="utf-8")
+                   for name in ("loop.py", "owner_touch.py")}
+        for name, source in sources.items():
+            for widening in ("owner_grant", "StandingGrant", "assert_not_widened",
+                             "TIER_ORDER"):
+                self.assertNotIn(widening, source,
+                                 f"{name} references {widening!r}; the owner-touch budget "
+                                 f"is a measurement and must not be able to widen "
+                                 f"authority, mint a grant, or move a tier")
+        # The ledger really does live there, so the scan above is not vacuous.
+        self.assertIn("class OwnerTouchLedger", sources["owner_touch.py"])
+        source = sources["loop.py"]
         # `authority`, `policy_config`, and the budget are bound exactly once each
         # (in __init__) and are read-only thereafter.
         for attribute in ("self.authority =", "self.policy_config =", "self.config ="):
@@ -1059,6 +1070,36 @@ fallback_models = []
 """
 
 
+def make_live_checkout(root: pathlib.Path, *, task_id: str,
+                       status: str = "in_progress") -> pathlib.Path:
+    """A REAL git checkout with a ledger record, for the M0-T079 live probes.
+
+    `start` no longer certifies task authority, the branch, the worktree, or Git
+    state from "the operator named every flag" - that synthetic answer is the
+    defect M0-T079 fixed - so a fixture that DISPATCHES has to be a checkout the
+    probes can actually read. One empty commit and one ledger record.
+    """
+    import os
+    import subprocess
+
+    root.mkdir(parents=True, exist_ok=True)
+    tasks = root / "project-control" / "tasks"
+    tasks.mkdir(parents=True, exist_ok=True)
+    (tasks / f"{task_id}.json").write_text(
+        json.dumps({"task_id": task_id, "status": status, "blockers": []}),
+        encoding="utf-8")
+    env = {**os.environ,
+           "GIT_AUTHOR_NAME": "supervisor-test",
+           "GIT_AUTHOR_EMAIL": "test@example.invalid",
+           "GIT_COMMITTER_NAME": "supervisor-test",
+           "GIT_COMMITTER_EMAIL": "test@example.invalid"}
+    for argv in (["init", "-q", "-b", "main"],
+                 ["commit", "-q", "--allow-empty", "-m", "fixture"]):
+        subprocess.run(["git", *argv], cwd=str(root), check=True,
+                       capture_output=True, env=env)
+    return root
+
+
 class CliStartTests(LoopTestBase):
     """`start` is REAL now, so it is driven here exactly as an operator would."""
 
@@ -1067,6 +1108,7 @@ class CliStartTests(LoopTestBase):
         from tools.agent_supervisor import cli
 
         self.cli = cli
+        make_live_checkout(self.repo, task_id="M0-T036")
         self.runtime = self.tmp / "runtime"
         self.config = self.tmp / "config.toml"
         self.config.write_text(CONFIG_TOML, encoding="utf-8")
@@ -1124,9 +1166,28 @@ class CliStartTests(LoopTestBase):
         self.assertFalse(payload["dispatched"])
 
     def test_start_limited_auto_refuses_by_name_before_any_input_check(self) -> None:
-        with self.assertRaises(NotImplementedError) as ctx:
-            self.run_cli("start", "--mode", "limited-auto")
-        self.assertIn("limited-auto is disabled", str(ctx.exception))
+        """M0-T079: the SAME refusal, now machine readable instead of a traceback.
+
+        The bounded mode is off unless the owner enables it for this exact
+        launch, and `start` says so with the documented `refused_mode` outcome,
+        exit 16, and a structured JSON payload - the bare `NotImplementedError`
+        this used to raise gave an unattended wrapper nothing to act on.
+        """
+        code, payload = self.run_cli("start", "--mode", "limited-auto")
+        self.assertEqual(code, refusals.EXIT_CODES[refusals.REFUSED_MODE])
+        self.assertEqual(payload["outcome"], refusals.REFUSED_MODE)
+        self.assertEqual(payload["reason_code"], "limited_auto_not_enabled")
+        self.assertIn("limited-auto is DISABLED", payload["message"])
+        self.assertIn("explicit owner activation", payload["message"])
+        self.assertEqual(payload["detail"]["owner_enable_input"],
+                         "--owner-enable-bounded-auto")
+
+    def test_start_refuses_the_bounded_enable_on_a_non_gated_mode(self) -> None:
+        """A stray enable flag never sits unnoticed in a scheduled task's argv."""
+        code, payload = self.run_cli("start", "--mode", "shadow",
+                                     "--owner-enable-bounded-auto")
+        self.assertEqual(code, refusals.EXIT_CODES[refusals.REFUSED_MODE])
+        self.assertEqual(payload["reason_code"], "owner_enable_without_gated_mode")
 
     def test_run2_scenario_clear_recovery_then_start_works(self) -> None:
         """V1.1 correction F-2, the pilot run-2 scenario end to end.
@@ -1164,9 +1225,10 @@ class CliStartTests(LoopTestBase):
                        "--manifest", str(self.manifest_path),
                        "--model-selection", str(self.selection))
 
-        # 1. The parked journal refuses with a REPORT, not a traceback (B-2/F-2).
+        # 1. The parked journal refuses with a REPORT, not a traceback (B-2/F-2),
+        #    and since M0-T079 with the typed `stale_state` exit code.
         code, payload = self.run_cli(*full_inputs)
-        self.assertEqual(code, 0)
+        self.assertEqual(code, refusals.EXIT_CODES[refusals.STALE_STATE])
         self.assertFalse(payload["dispatched"])
         self.assertIn("PAUSED_RECOVERY", payload["loop_refusal"]["message"])
 
@@ -1423,7 +1485,12 @@ class CliStartTests(LoopTestBase):
             "--config", str(self.config),
             "--manifest", str(self.manifest_path),
             "--model-selection", str(self.selection))
-        self.assertEqual(code, 0, "a refusal is a reported outcome, not a crash")
+        # M0-T079: still a reported outcome rather than a crash, and now with a
+        # typed exit code so a wrapper can act on it (`stale_state`: the durable
+        # state and the caller's idea of where the run is disagree).
+        self.assertEqual(code, refusals.EXIT_CODES[refusals.STALE_STATE],
+                         "a refusal is a reported outcome, not a crash")
+        self.assertEqual(payload["refusal"]["outcome"], refusals.STALE_STATE)
         self.assertFalse(payload["dispatched"])
         self.assertEqual(payload["loop_refusal"]["code"], "bad_cycle_entry_state")
         self.assertIn("bad_cycle_entry_state", payload["stopped_because"])

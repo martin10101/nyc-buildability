@@ -40,9 +40,17 @@ and nothing is defaulted into a provider call.
                        its exact digest. It forwards only a prompt whose digest
                        the operator supplied with `--approve-prompt-digest`.
 
-`start --mode limited-auto` refuses BY NAME, because limited-auto is disabled by
-default and is enabled only by a separate explicit owner activation recorded
-through directive compliance (S12). No code path in this package can turn it on.
+    --mode limited-auto  the bounded UNATTENDED mode (M0-T079, D-023 item 1). It
+                       is implemented and it is OFF: without the explicit
+                       per-launch `--owner-enable-bounded-auto` input it is a
+                       STRUCTURED refusal, and no configuration default, parse
+                       error, migration, or downgrade reaches it. ACTIVATION on
+                       a live host stays a separate explicit owner act under the
+                       R595 pre-activation path (S12; D-023-R033).
+
+EXIT CODES. Refusals are machine readable: `refusals.py` documents one outcome
+and one stable nonzero exit code each, so an unattended wrapper can act on WHY
+the controller refused rather than parse prose. `doctor` prints the contract.
 """
 from __future__ import annotations
 
@@ -53,7 +61,7 @@ import os
 import pathlib
 import sys
 import zoneinfo
-from typing import Any, Mapping, Sequence
+from typing import Any, Callable, Mapping, Sequence
 
 from . import CONTROLLER_VERSION, PHASE, PROTOCOL_VERSION, SCHEMA_VERSION
 from .anchor import (
@@ -115,7 +123,9 @@ from .external_effects import ExternalEffectError, spec_for, stable_action_id
 from .loop import (
     ALL_MODE_NAMES,
     DEFAULT_OWNER_TOUCH_BUDGET,
+    MODE_LIMITED_AUTO,
     MODE_SUPERVISED,
+    OWNER_GATED_MODES,
     RUNNABLE_MODES,
     SESSION_ROLE_ORCHESTRATOR,
     LimitedAutoRefused,
@@ -200,7 +210,20 @@ from .recovery import (
     set_emergency_stop,
     set_manual_pause,
 )
+from . import refusals
 from .remote_approvals import RemoteApprovalRegistry
+from .run_budget import BudgetError, RunBudget, RunBudgetLedger
+from .start_gate import (
+    bounded_mode_gate,
+    dispatched_run_refusal,
+    emit_refusal,
+    live_revalidation,
+    load_task_packet,
+    loop_refusal,
+    recovery_refusal,
+    revalidation_note,
+    unprobed_revalidation,
+)
 from .resume_scheduler import (
     CODEX_HOLD_KEY,
     LIMIT_CLASSES,
@@ -1108,15 +1131,26 @@ def _check_replay_is_inert() -> Check:
 
 
 def _check_loop_modes() -> Check:
-    """limited-auto is refused BY NAME, and shadow can never forward."""
+    """limited-auto is refused BY NAME without the owner enable; shadow never forwards."""
     try:
         LoopConfig(mode="limited-auto", task_id="probe", stage="probe")
     except LimitedAutoRefused:
         pass
     else:
         return Check("loop_modes", False,
-                     "a LoopConfig with mode='limited-auto' was CONSTRUCTED; it must be "
-                     "refused by name")
+                     "a LoopConfig with mode='limited-auto' was CONSTRUCTED without the "
+                     "explicit owner enable; it must be refused by name")
+    # M0-T079: and the owner enable must not be attachable to any OTHER mode - a
+    # stray flag in a scheduled task's argv must never quietly widen a run.
+    for other in RUNNABLE_MODES:
+        try:
+            LoopConfig(mode=other, task_id="probe", stage="probe",
+                       owner_enabled_bounded_auto=True)
+        except LoopError:
+            continue
+        return Check("loop_modes", False,
+                     f"the bounded-mode owner enable was accepted for mode {other!r}, "
+                     f"which is not owner-gated")
     shadow = LoopConfig(mode="shadow", task_id="probe", stage="probe")
     if shadow.forwards:
         return Check("loop_modes", False, "shadow mode reports that it forwards")
@@ -1334,8 +1368,17 @@ def cmd_doctor(args: argparse.Namespace) -> int:
         # definitive PROTECTED verdict; a missing/ambiguous/UNKNOWN posture never
         # reads as protected.
         "controller_config_acl": acl_posture,
-        "limited_auto": "NOT IMPLEMENTED and disabled; activation is a separate explicit "
-                        "owner act recorded through directive compliance",
+        # M0-T079 (D-023 item 1): truthful now that the mode exists. It is
+        # IMPLEMENTED (durable owner-controlled run budgets, wired circuit
+        # breakers, live pre-dispatch probes, typed refusals) and OFF: every
+        # launch that does not carry the explicit owner enable is refused by
+        # name, and ACTIVATING it on a live host is still separately owner-gated
+        # (R595 / D-023-R033). Saying "NOT IMPLEMENTED" here would now be false.
+        "limited_auto": "IMPLEMENTED and OFF by default; every launch without the explicit "
+                        "--owner-enable-bounded-auto input is a structured refusal "
+                        "(outcome refused_mode, exit 16), and activation remains a "
+                        "separate explicit owner act recorded through directive compliance",
+        "refusal_contract": list(refusals.document()),
     }
     if args.json:
         print(json.dumps(payload, indent=2))
@@ -1349,7 +1392,10 @@ def cmd_doctor(args: argparse.Namespace) -> int:
               f"(protected={acl_posture.get('protected', False)}; "
               f"blocks supervised-auto ACTIVATION, not shadow) - {acl_posture.get('note', '')}")
         print(f"\noverall: {'PASS' if ok else 'FAIL'}")
-        print("limited-auto: NOT IMPLEMENTED and disabled.")
+        print("limited-auto: IMPLEMENTED and OFF by default; enabling it is an explicit "
+              "per-launch owner act.")
+        print("refusal exit codes: " + ", ".join(
+            f"{row['outcome']}={row['exit_code']}" for row in refusals.document()))
     return 0 if ok else 1
 
 
@@ -1435,7 +1481,8 @@ def cmd_status(args: argparse.Namespace) -> int:
         if payload["resolved_asks"]:
             print(f"resolved history: {len(payload['resolved_asks'])} "
                   f"(revoked/answered approval requests; not actionable)")
-        print("limited-auto:     disabled (not implemented in this phase)")
+        print("limited-auto:     off for this run (the bounded mode is implemented and "
+              "enabled only per launch by an explicit owner input)")
     return 0 if payload["journal_ok"] and payload["audit_chain_ok"] else 1
 
 
@@ -1551,7 +1598,8 @@ def cmd_revoke_all(args: argparse.Namespace) -> int:
                           "limited_auto_enabled": False}, indent=2))
     else:
         print(f"revoked {revoked} pending/unconsumed approval(s).")
-        print("limited-auto: disabled (it is not implemented and cannot be enabled here).")
+        print("limited-auto: off (the bounded mode is enabled only per launch by an "
+              "explicit owner input; this command never enables it).")
     return 0
 
 
@@ -2015,7 +2063,8 @@ def cmd_recovery_status(args: argparse.Namespace) -> int:
     lines = [f"state:              {payload['current_state']}",
              f"emergency stop:     {flags.emergency_stop}",
              f"manual pause:       {flags.manual_pause}",
-             f"limited-auto:       {flags.limited_auto_enabled} (never enabled by this build)",
+             f"limited-auto:       {flags.limited_auto_enabled} (a durable flag; the mode is "
+             f"additionally enabled per launch by an explicit owner input)",
              f"autostart:          {'permitted' if permitted else 'REFUSED'} - {why}",
              f"surviving children: {sum(1 for c in children if c.surviving)}",
              f"pending effects:    {len(pending)}"]
@@ -2702,6 +2751,21 @@ def _run_loop(args: argparse.Namespace, checkout: pathlib.Path,
     approved = set(args.approve_prompt_digest or [])
     breakers = CircuitBreakers(config.limits)
 
+    # M0-T079 (D-023 item 1, owner amendment D-023-R037): the DURABLE
+    # owner-controlled run budget. `--run-wall-clock-seconds` is optional and has
+    # NO default and NO ceiling - omitting it means unlimited, and an unlimited
+    # run is never stopped by a timer. The counter bounds come from the
+    # manifest-covered immutable config, so the ledger records every bound the
+    # run is actually held to. `start()` persists it on a first launch and
+    # RELOADS the original start instant and budget on a crash-resume; a launch
+    # naming different bounds for the same run id is refused, not honoured.
+    budget_ledger = RunBudgetLedger(
+        journal, run_id=run_id,
+        budget=RunBudget.from_limits(
+            config.limits,
+            wall_clock_seconds=getattr(args, "run_wall_clock_seconds", None)))
+    budget_ledger.start()
+
     # AS-3: wire live resource sampling into the loop for the R207 gauge set. The
     # runtime directory (never inside the repo) is the volume whose free space is
     # sampled; the audit log, its head sidecar, and the journal DB are the
@@ -2774,7 +2838,13 @@ def _run_loop(args: argparse.Namespace, checkout: pathlib.Path,
             # path; True is set ONLY by the explicit --authorize-turnover-actuation
             # flag below.
             turnover_actuation_authorized=bool(
-                getattr(args, "authorize_turnover_actuation", False))),
+                getattr(args, "authorize_turnover_actuation", False)),
+            # M0-T079 (R595 / D-023-R033): the owner's EXPLICIT per-launch enable
+            # for the bounded unattended mode, set ONLY by
+            # --owner-enable-bounded-auto. Without it `LoopConfig` refuses
+            # mode="limited-auto" by name, exactly as it always has.
+            owner_enabled_bounded_auto=bool(
+                getattr(args, "owner_enable_bounded_auto", False))),
         journal=journal, audit=audit, machine=machine, authority=authority,
         runner=runner, reviewer=reviewer, run_id=run_id, collector=collector,
         broker=broker, breakers=breakers,
@@ -2794,6 +2864,10 @@ def _run_loop(args: argparse.Namespace, checkout: pathlib.Path,
         # byte-identical to the pre-activation path. Every non-exhaustion path is
         # unchanged either way.
         worker_turnover=worker_turnover_integration,
+        # M0-T079: the durable run budget. It also carries the breaker tallies
+        # across a crash-resume, so a restarted run cannot earn back model calls,
+        # external writes, or restarts it has already spent.
+        run_budget=budget_ledger,
         approval_gate=(lambda digest, _prompt: digest in approved))
     return loop.run(args.prompt).to_dict()
 
@@ -2807,12 +2881,9 @@ def cmd_start(args: argparse.Namespace) -> int:
     explicitly on the command line, does the loop run. Nothing is discovered from
     PATH; a missing input stops the command and says which one.
     """
-    if args.mode == "limited-auto":
-        raise NotImplementedError(
-            "limited-auto is disabled and is NOT implemented by this build. It is never "
-            "reachable from a configuration default, a parse error, a migration, or a "
-            "downgrade; it is enabled only by a separate explicit owner activation recorded "
-            "through directive compliance (D-007 S12).")
+    gate = bounded_mode_gate(args)
+    if gate is not None:
+        return emit_refusal(args, gate)
 
     checkout = pathlib.Path(args.checkout).resolve()
     runtime, journal, audit = _open_runtime(args)
@@ -2843,30 +2914,25 @@ def cmd_start(args: argparse.Namespace) -> int:
         chain = audit.verify_chain()
         missing_inputs = _dispatch_inputs_missing(args)
         dispatchable = not missing_inputs
-        revalidation = {
-            "controller_manifest": manifest_ok,
-            "journal_integrity": integrity.ok,
-            "audit_chain": chain.ok,
-            # These are established only when the operator named the inputs the
-            # loop needs. Without them `start` reports them NOT established
-            # rather than assuming them true.
-            "task_authority": dispatchable,
-            "branch": dispatchable,
-            "worktree": dispatchable,
-            "git_and_remote_state": dispatchable,
-            "auth": dispatchable,
-            "cli_capability_manifest": dispatchable,
-            "pending_requests": True,
-            "scheduled_deadlines": True,
-            "last_external_effect": True,
-        }
+        manifest_reason = (manifest_verification.reason_code
+                           if manifest_verification is not None else "not_established")
+        probe_report = None
+        packet_error = ""
+        packet: Mapping[str, Any] = {}
+        if dispatchable:
+            packet, packet_error = load_task_packet(str(args.task_packet))
+        if dispatchable and not packet_error:
+            revalidation, probe_report = live_revalidation(
+                args, checkout=checkout, journal=journal, packet=packet,
+                manifest_ok=manifest_ok, manifest_reason=manifest_reason,
+                integrity_ok=integrity.ok, chain_ok=chain.ok)
+        else:
+            revalidation = unprobed_revalidation(
+                manifest_ok=manifest_ok, integrity_ok=integrity.ok,
+                chain_ok=chain.ok)
         outcome = recover_boot(
             journal=journal, lock=lock, revalidation=revalidation, audit=audit,
-            notes=(("every input the loop needs was named explicitly; the pre-dispatch "
-                    "sequence ran before any provider contact",) if dispatchable else
-                   ("`start` was invoked without the inputs the loop needs, so the live "
-                    "task/branch/worktree/git/auth/capability set was not collected and "
-                    "reads as not established",)))
+            notes=(revalidation_note(dispatchable, packet_error),))
         # M0-T052 G5 C1 (M0-T053): the host-containment precondition, evaluated
         # on every `start` and reported whether or not it is the reason for a
         # stop, so the answer is in the record even when something else stops
@@ -2895,11 +2961,24 @@ def cmd_start(args: argparse.Namespace) -> int:
             },
             "stopped_because": "",
         }
+        # M0-T079: what the live probes actually established, in the record, so a
+        # refusal names EVERY fact that was missing rather than only the first.
+        if probe_report is not None:
+            payload["probes"] = probe_report.to_dict()
+        elif dispatchable and packet_error:
+            payload["probes"] = {"probes": [], "failed": ["task_authority"]}
+        refusal: refusals.Refusal | None = None
         if not dispatchable:
             payload["stopped_because"] = (
                 f"`start` will not dispatch until every input is named explicitly. "
                 f"Missing: {missing_inputs}. Nothing is discovered from PATH and no "
                 f"provider is contacted by default.")
+        elif packet_error:
+            payload["stopped_because"] = f"task_packet_unreadable: {packet_error}"
+            refusal = refusals.refusal(
+                refusals.STALE_STATE, reason_code="task_packet_unreadable",
+                message=packet_error,
+                detail={"task_packet": str(args.task_packet or "")})
         elif outcome.classification != SAFE_CHECKPOINT:
             # NOTE the gate: the CLASSIFICATION, not `resume_permitted`.
             # `resume_permitted` answers "may this run continue AUTOMATICALLY,
@@ -2913,6 +2992,18 @@ def cmd_start(args: argparse.Namespace) -> int:
                 f"the pre-dispatch classification is {outcome.classification} "
                 f"({outcome.reason_code}); a run never starts over an unresolved "
                 f"recovery condition. {outcome.reason}")
+            refusal = recovery_refusal(outcome, probe_report)
+        elif outcome.reason_code in ("safe_but_forbidden", "deadline_restored"):
+            # M0-T079: a SAFE_CHECKPOINT that a durable flag or a restored
+            # usage-limit deadline forbids. `classify` reports these WITH the
+            # SAFE_CHECKPOINT classification, so the classification gate above
+            # lets them through and the run would have dispatched over a durable
+            # emergency stop, manual pause, open owner gate, or an unexpired
+            # deadline. It stops here instead, with the outcome that names which.
+            payload["stopped_because"] = (
+                f"the pre-dispatch check is SAFE_CHECKPOINT but {outcome.reason_code}; "
+                f"{outcome.reason}")
+            refusal = recovery_refusal(outcome, probe_report)
         elif not containment_ok:
             # M0-T052 G5 C1: the LAST gate before a live worker is spawned. The
             # refusal is audited, because a host that cannot contain a worker is
@@ -2924,6 +3015,11 @@ def cmd_start(args: argparse.Namespace) -> int:
                                  "required": CONTAINMENT_JOB_OBJECT,
                                  "mode": args.mode,
                                  "reason": containment_detail})
+            refusal = refusals.refusal(
+                refusals.UNSUPPORTED_PLATFORM, reason_code="containment_refused",
+                message=containment_detail,
+                detail={"containment_kind": containment_kind,
+                        "required": CONTAINMENT_JOB_OBJECT})
         else:
             # V1.1 correction B-2: a loop REFUSAL is a report, not a traceback.
             # This covers both the loop's own refusals (LoopError, e.g.
@@ -2945,11 +3041,26 @@ def cmd_start(args: argparse.Namespace) -> int:
                             "first - the audit log is the authoritative count"}
                 payload["stopped_because"] = (
                     f"the loop refused to run: {code}: {message}")
+                refusal = loop_refusal(code, message, args.mode)
+            except BudgetError as exc:
+                # M0-T079: the run budget refused before the loop was built - a
+                # relaunch that named different bounds for a run already under
+                # way, or a malformed budget. Never a traceback.
+                payload["stopped_because"] = f"{exc.code}: {exc.message}"
+                refusal = refusals.refusal(
+                    refusals.STALE_STATE if exc.code == "budget_conflict"
+                    else refusals.BUDGET_EXHAUSTED,
+                    reason_code=exc.code, message=exc.message,
+                    detail={"mode": args.mode, "source": "run_budget"})
             else:
                 payload["dispatched"] = True
                 payload["loop"] = run
                 payload["provider_calls_made"] = run.get("provider_calls", 0)
                 payload["stopped_because"] = run.get("stopped", "")
+                payload["limited_auto_enabled"] = bool(run.get("limited_auto_enabled"))
+                payload["run_budget"] = run.get("run_budget")
+                # M0-T079: how a run ended is a machine-readable fact too.
+                refusal = dispatched_run_refusal(args.mode, run)
     finally:
         lock.release()
         journal.close()
@@ -2971,13 +3082,29 @@ def cmd_start(args: argparse.Namespace) -> int:
             f"(within budget: {budget['within_budget']})",
             "the budget is a measurement and authorizes nothing.",
         ]
-        if args.mode != MODE_SUPERVISED:
+        if args.mode not in (MODE_SUPERVISED, MODE_LIMITED_AUTO):
             lines.append("shadow mode forwarded NOTHING; the recorded plans say what "
                          "would have happened.")
+        if run.get("run_budget"):
+            budget_report = run["run_budget"]
+            lines.append(
+                f"run budget: "
+                f"{'UNLIMITED (no owner wall-clock limit)' if budget_report['unlimited'] else str(budget_report['budget']['wall_clock_seconds']) + 's'}"
+                f", elapsed {budget_report['elapsed_seconds']:.1f}s"
+                f"{' (RESUMED)' if budget_report['resumed'] else ''}")
     else:
         lines += ["NOT DISPATCHED. " + payload["stopped_because"],
-                  "no provider was contacted; limited-auto is disabled."]
+                  "no provider was contacted."]
+        if args.mode != MODE_LIMITED_AUTO:
+            lines.append("limited-auto is off for this launch.")
+    if refusal is not None:
+        payload = refusals.merge_into_payload(payload, refusal)
+        lines = [*lines, "", *refusal.lines()]
     _emit(args, payload, lines)
+    if refusal is not None:
+        # M0-T079: the typed, documented exit code. A refusal an unattended
+        # wrapper cannot detect is not a refusal, it is a silent failure.
+        return refusal.exit_code
     if manifest_verification is not None and not manifest_verification.ok:
         # M0-T072 (D-017-R045): a FAILED manifest/config verification is a
         # security halt, not an ordinary not-dispatchable report - callers and
@@ -3123,6 +3250,30 @@ def build_parser() -> argparse.ArgumentParser:
                             "an id outside the chain is never selectable. Absent = the "
                             "worker default, which PAUSES for the owner instead of ever "
                             "substituting a pinned model. Reviewer pins are never affected")
+    start.add_argument(
+        "--owner-enable-bounded-auto", action="store_true",
+        help="M0-T079 (D-023 item 1; R595 / D-023-R033): the owner's EXPLICIT per-launch "
+             "enable for the bounded unattended mode. Without it `--mode limited-auto` is "
+             "a STRUCTURED refusal (outcome refused_mode, exit 16) and nothing is built. "
+             "It is a launch input only: no configuration default, parse error, migration, "
+             "downgrade, or model can set it, and it weakens no other gate - the run still "
+             "passes the live pre-dispatch probes, the containment precondition, the "
+             "policy tiers, and every circuit breaker")
+    start.add_argument(
+        "--run-wall-clock-seconds", type=float, default=None,
+        help="the OWNER-SET wall-clock budget for this run, in seconds. OMIT IT FOR AN "
+             "UNLIMITED RUN: there is no default and no maximum anywhere in this build "
+             "(owner amendment D-023-R037), and an unlimited run is never stopped by a "
+             "timer. When supplied, the budget is persisted durably at run start and a "
+             "crash-resume reloads the ORIGINAL start instant and budget - elapsed time "
+             "never resets, and a relaunch naming different bounds for the same --run-id "
+             "is refused rather than honoured")
+    start.add_argument(
+        "--require-remote-reachable", action="store_true",
+        help="state that this run NEEDS the git remote to answer. The pre-dispatch probe "
+             "then performs a read-only `git ls-remote` and fails closed if it cannot "
+             "prove reachability. Omitted (the default), the probe records the configured "
+             "remote and contacts no network - a local task-branch run does not need one")
     start.add_argument(
         "--authorize-turnover-actuation", action="store_true",
         help="M0-T056 (R595): the owner's EXPLICIT per-run authorization to ACTUATE a "
