@@ -4,9 +4,18 @@
   "reviewer": "code-reviewer",
   "role": "independent_review",
   "result": "PASS",
-  "report_file": "project-control/reports/M0-T079-G3-review.md",
-  "reviewed_at": "2026-08-21T21:06:29.837803+00:00",
-  "content_manifest_sha256": "b27cc080c598dfa2a1049ba27ee44529218b642de93781b00acbd77f30d119f8",
-  "reviewed_sha": "4131cecaa6c06adaa4073946aee43d3137465eb1",
-  "updated_at": "2026-08-21T21:06:32.331931+00:00"
+  "report_file": "project-control/reports/M0-T079-delta-review.md",
+  "reviewed_at": "2026-08-21T23:44:23.497144+00:00",
+  "content_manifest_sha256": "c9f402baa4d6291bc998e02d3334d013c65a341a5263c6f943c4f591d5605112",
+  "reviewed_sha": "7bfc9d9e96e1a556043feda2f6db9dbd0cc2bf49",
+  "history": [
+    {
+      "reviewer": "code-reviewer",
+      "role": "independent_review",
+      "result": "PASS",
+      "report_file": "project-control/reports/M0-T079-G3-review.md",
+      "reviewed_at": "2026-08-21T21:06:29.837803+00:00"
+    }
+  ],
+  "updated_at": "2026-08-21T23:44:25.960207+00:00"
 }
