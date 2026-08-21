@@ -312,6 +312,27 @@
     "M0-T077"
    ],
    "manifest": "D-020-program-wide-mcp-default-deny/manifest.json"
+  },
+  {
+   "directive_id": "D-023",
+   "slug": "bounded-autonomy-campaign",
+   "title": "Bounded-autonomy campaign: one coordinated, dependency-ordered upgrade of the existing NYC Buildability engineering system authorizing (1) a genuinely bounded unattended mode capable of a measured 10-hour run, (2) tier-permitted real GitHub commit/push/PR/ordinary-green-merge continuation that never overrides DO-NOT-MERGE banners or owner holds (PR #241 held), (3) reliable context/session turnover and model-quota fallback using only owner-approved live-probed model IDs, (4) official Claude Code Remote Control as monitoring/steering only (never the supervisor's approval adapter), and (5) a small project-owned engineering-reliability standard/skill written from scratch - preserving the existing supervisor, agent roster, ledger, worktree isolation, and GitHub workflow; no third-party agent framework; no unattended activation until prerequisites and live canaries pass; all remaining owner-only actions bundled into one exact final checkpoint.",
+   "status": "active",
+   "issued_at": "2026-08-21",
+   "issued_by": "owner",
+   "supersedes": [],
+   "superseded_by": null,
+   "affected_tasks": [
+    "M0-T078",
+    "M0-T079",
+    "M0-T080",
+    "M0-T081",
+    "M0-T082",
+    "M0-T083",
+    "M0-T084",
+    "M0-T085"
+   ],
+   "manifest": "D-023-bounded-autonomy-campaign/manifest.json"
   }
  ],
  "updated_at": "2026-08-19T18:30:00+00:00"

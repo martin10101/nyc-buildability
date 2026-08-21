@@ -1,0 +1,146 @@
+{
+ "schema": "directive_manifest/v1",
+ "directive_id": "D-023",
+ "version": 1,
+ "slug": "bounded-autonomy-campaign",
+ "title": "Bounded-autonomy campaign: one coordinated, dependency-ordered upgrade of the existing NYC Buildability engineering system authorizing (1) a genuinely bounded unattended mode capable of a measured 10-hour run, (2) tier-permitted real GitHub commit/push/PR/ordinary-green-merge continuation that never overrides DO-NOT-MERGE banners or owner holds (PR #241 held), (3) reliable context/session turnover and model-quota fallback using only owner-approved live-probed model IDs, (4) official Claude Code Remote Control as monitoring/steering only (never the supervisor's approval adapter), and (5) a small project-owned engineering-reliability standard/skill written from scratch - preserving the existing supervisor, agent roster, ledger, worktree isolation, and GitHub workflow; no third-party agent framework; no unattended activation until prerequisites and live canaries pass; all remaining owner-only actions bundled into one exact final checkpoint.",
+ "status": "active",
+ "lifecycle_state": "active",
+ "issued_by": "owner",
+ "issued_at": "2026-08-21",
+ "captured_at": "2026-08-21T00:00:00+00:00",
+ "created_at": "2026-08-21T00:00:00+00:00",
+ "updated_at": "2026-08-21T00:00:00+00:00",
+ "channel": "owner_campaign_packet_appendix",
+ "frozen_baseline_sha": "d8b3899f61efa6620e18a26541ced96020f5bef9",
+ "sources": [
+  {
+   "file": "source-001.md",
+   "kind": "original",
+   "sequence": 1,
+   "recorded_at": "2026-08-21T00:00:00+00:00",
+   "content_digest_sha256": "d07148c798e1cf9c65e0cf6faa277d7d1d71c8a26e967698768bffe662390b62"
+  },
+  {
+   "file": "source-002-amendment.md",
+   "kind": "amendment",
+   "sequence": 2,
+   "amends": "source-001.md",
+   "recorded_at": "2026-08-21T00:00:00+00:00",
+   "content_digest_sha256": "5c0278d1c20bf9c2e2610f09291763d35e2fe9b4d964a4364f20a2dc7ead1f55"
+  }
+ ],
+ "amendments": [
+  "source-002-amendment.md"
+ ],
+ "supersedes": [],
+ "superseded_by": null,
+ "affected_tasks": [
+  "M0-T078",
+  "M0-T079",
+  "M0-T080",
+  "M0-T081",
+  "M0-T082",
+  "M0-T083",
+  "M0-T084",
+  "M0-T085"
+ ],
+ "affected_prs": [],
+ "affected_branches": [
+  "control/D-023-autonomy-campaign",
+  "task/M0-T078-reliability-standard",
+  "task/M0-T079-bounded-mode",
+  "task/M0-T080-session-model-turnover",
+  "task/M0-T081-github-continuation",
+  "task/M0-T082-semantic-routing-holds",
+  "task/M0-T083-platform-truthfulness",
+  "task/M0-T084-remote-control-boundary",
+  "task/M0-T085-campaign-proof"
+ ],
+ "scope": {
+  "kind": "coordinated-campaign",
+  "allowed": "one coordinated dependency-ordered campaign (M0-T078..M0-T085): tools/agent_supervisor/** upgrades for bounded mode, durable budgets, recovery probes, session/model turnover, production GitHub continuation, semantic review routing, Remote Control boundary; supervisor tests; docs/ENGINEERING_RELIABILITY_STANDARD.md and .claude/skills/engineering-reliability/SKILL.md written from scratch; policy-duplication reconciliation without weakening any rule; required project-control artifacts; runbooks; one campaign PR through the normal path",
+  "prohibited": "rebuilding the project; replacing the agent roster; installing third-party agent frameworks; installing/importing/executing/vendoring/copying Superpowers, secondsky, wshobson, or any community agent/plugin code; production deploys; credential exposure/acquisition; legal/zoning approvals; releasing G6/legal holds; weakening security/CI/review/branch protections or containment; history rewriting; force-push; direct push to main; altering unrelated user work (including PR #64 and the wt-m0t064 working tree); merging PR #241; activating unattended mode before prerequisites and live canaries pass; protected controller/model-selection configuration changes outside the owner checkpoint; unmeasured readiness/savings claims",
+  "task_ids": [
+   "M0-T078",
+   "M0-T079",
+   "M0-T080",
+   "M0-T081",
+   "M0-T082",
+   "M0-T083",
+   "M0-T084",
+   "M0-T085"
+  ],
+  "task_types": [
+   "governance"
+  ]
+ },
+ "applicability_note": "Session-governance rows (R001-R010, R016-R031 bootstrap-applicable, R035-R036, R038) bind the NON-LEDGER sentinel D-023-BOOTSTRAP (D-016..D-020 precedent) and are verified at directive verification. Deliverable rows bind the campaign tasks: R011+R033 (M0-T079 bounded mode, M0-T085 proof), R012+R032 (M0-T081 GitHub continuation, M0-T082 semantic routing/hold dominance), R013 (M0-T080 session/model turnover), R014 (M0-T084 Remote Control boundary), R015+R038 (M0-T078 reliability standard/skill and campaign-wide no-third-party-code), R016-R024 proof/review rules (M0-T085 and campaign-wide), R020 platform matrix (M0-T083, M0-T085), R023/R025-R031/R036 campaign-wide conduct rows, R034 owner-checkpoint bundling (M0-T085). Verified through each task's gates and accept() evidence map at the reviewed content identity.",
+ "owner_approval": {
+  "state": "authorized",
+  "note": "owner-delivered campaign packet NYC_BUILDABILITY_AUTONOMY_CAMPAIGN_PACKET_2026-08-21.md, Appendix A ('This message is a substantive owner directive. ... It authorizes investigation and a controlled implementation campaign'); conditional authorization - owner-only acts (PR merge where tier requires, protected config, controller apply, Remote Control enablement, canary/10-hour activation) remain reserved to the single final owner checkpoint (R034)."
+ },
+ "enforcement_pointers": {
+  "cli": "tools/project_control.py (claim --directive-refs; accept blocking on verification)",
+  "validator": "tools/validate_directive_compliance.py",
+  "registry": "tools/directive_registry.py"
+ },
+ "requirements_file": "requirements.json",
+ "verification_file": "verification.json",
+ "locked_requirement_ids": [
+  "D-023-R001",
+  "D-023-R002",
+  "D-023-R003",
+  "D-023-R004",
+  "D-023-R005",
+  "D-023-R006",
+  "D-023-R007",
+  "D-023-R008",
+  "D-023-R009",
+  "D-023-R010",
+  "D-023-R011",
+  "D-023-R012",
+  "D-023-R013",
+  "D-023-R014",
+  "D-023-R015",
+  "D-023-R016",
+  "D-023-R017",
+  "D-023-R018",
+  "D-023-R019",
+  "D-023-R020",
+  "D-023-R021",
+  "D-023-R022",
+  "D-023-R023",
+  "D-023-R024",
+  "D-023-R025",
+  "D-023-R026",
+  "D-023-R027",
+  "D-023-R028",
+  "D-023-R029",
+  "D-023-R030",
+  "D-023-R031",
+  "D-023-R032",
+  "D-023-R033",
+  "D-023-R034",
+  "D-023-R035",
+  "D-023-R036",
+  "D-023-R037",
+  "D-023-R038"
+ ],
+ "requirements_id_digest_sha256": "f62c52230b98a8b42779f21a1550a0039f2632f081c169042c0d9dcc2670d0d0",
+ "requirements_content_digest_sha256": "cdd2b1bc0e9e1106359010aeadc2b047949a29cbcd73c0ba252fd96b75f31d07",
+ "final_reviewed_sha": null,
+ "final_reviewed_manifest_sha256": null,
+ "audit_log": [
+  {
+   "at": "2026-08-21T00:00:00+00:00",
+   "actor": "orchestrator",
+   "event": "captured source-001 verbatim from owner campaign packet Appendix A (NYC_BUILDABILITY_AUTONOMY_CAMPAIGN_PACKET_2026-08-21.md, full-packet SHA-256 ebf21d44ffeca1ef39132e2903c9538c8f1f74a13f5b51a9182fe6648107b210; Appendix A extracted byte-for-byte after the '## Appendix A' heading, 4228 bytes; the handoff it attaches, NYC_BUILDABILITY_AUTONOMY_HANDOFF_2026-08-21.md, verified SHA-256 08aee279e495237033c56671b3f00a443acfebffc18be8af637ea7e87bed9752, 50147 bytes/867 lines); decomposed 38 requirements (bootstrap session-governance + campaign task rows), adversarially trace-checked (forward, reverse, category, schema), activated registry entry under the owner conditional authorization; identifiers D-023/M0-T078..M0-T085 confirmed collision-free against the live registry and ledger (main ends at D-020; D-021/D-022 exist only on held PR #241 branch task/M5-T002-scenario-endpoint; ledger max M0-T077) at live-reconciled origin/main d8b3899f61efa6620e18a26541ced96020f5bef9 with zero drift"
+  },
+  {
+   "at": "2026-08-21T00:00:00+00:00",
+   "actor": "orchestrator",
+   "event": "recorded source-002-amendment.md: owner mid-session correction received 2026-08-21 during capture, before activation, captured verbatim as transmitted (typo and truncation preserved) - no hardcoded maximum run-length limit; run duration is owner-controlled at launch and may be unlimited. Recorded interpretation (flagged for owner confirmation at the final checkpoint): the 36,000-second figure in the campaign packet becomes the PROPOSED first measured evidence run, not a ceiling; 'genuinely bounded' (source-001 item 1) is preserved as enforcement-when-set - any budget the owner supplies at launch is enforced faithfully and cannot be extended or reset by the run itself; supplying no wall-clock budget is a valid owner choice yielding an unlimited run. Requirement D-023-R037 added; R011 harness adjusted; no requirement deleted or renumbered"
+  }
+ ]
+}
