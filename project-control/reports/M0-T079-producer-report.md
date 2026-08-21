@@ -360,3 +360,329 @@ The supervisor-freeze rule forbids weakening any existing check. Nine existing t
 - **`recovery.REVALIDATION_STEPS`** — not widened (§3.5).
 - **The S7 transition table** — no edge added or altered anywhere in this task.
 - **Windows Job Object containment** — untouched; the `job_object` precondition still gates every dispatch and now returns a typed `unsupported_platform` refusal instead of exit 0.
+
+---
+
+# CORRECTIONS APPLIED — consolidated round C1–C12
+
+Round 2, applied against `M0-T079-consolidated-correction.md` (issued after G3
+PASS-with-corrections, G4 PASS-with-correction, **G5 FAIL / 2 must-fix** at frozen
+identity `c52613f` / task commit `e830c4b`). Every item C1–C12 is applied; nothing
+is deferred except the two the correction set itself defers. Each entry names the
+fix site and the test that would fail if the fix were reverted.
+
+## Must-fix
+
+### C1 (G5 M1) — budget self-reset via a missing or malformed record
+
+**The defect.** `start()` took the resume branch only on `isinstance(existing,
+Mapping) and existing.get("started_at_epoch") is not None`. Three distinct
+corruptions — record deleted, record not a Mapping, record intact with
+`started_at_epoch: null` — all fell through to the fresh-start path, which minted a
+new start instant, zeroed `elapsed_high_water_seconds`, emptied `counters`, and
+never reached the `budget_conflict` check. The supervised worker runs as the same
+OS user on the same host and can write the journal, so one field edit bought an
+unlimited run with fresh allowances — defeating `persist_counters`'s `max()`,
+`restore`'s `max()`, and the elapsed clamp at once, because the record they all
+defend was simply replaced.
+
+**The fix.** `start()` (`run_budget.py:341`) now branches on ABSENCE, using a
+module-level `_ABSENT` sentinel (`run_budget.py:56`) rather than `None` — a row
+holding JSON `null` reads back as `None`, so `None` cannot distinguish "no row"
+from "row present but empty", and that distinction is the whole finding. No row at
+all → `_first_launch()` (`:433`). A row that exists → `_resume()` (`:374`), which
+REFUSES five shapes with typed, audited errors and never falls through:
+
+| shape | reason code |
+|---|---|
+| payload is not a record | `budget_record_unreadable` |
+| `started_at_epoch` absent / null / non-numeric / ≤ 0 / NaN / bool | `budget_record_malformed` |
+| budget block unreadable | `budget_record_malformed` |
+| budget block no longer matches its own recorded digest | `budget_record_tampered` |
+| well-formed, but this launch names different bounds | `budget_conflict` |
+
+The digest self-check is new and closes the obvious follow-on: rewriting the
+`budget` block under the record would otherwise have been accepted as "the
+persisted budget" by the conflict comparison.
+
+**Tests** (`test_agent_supervisor_bounded_mode.py::BudgetSelfResetTests`, 10):
+`test_control_an_honest_relaunch_with_new_bounds_is_refused` (the control case),
+`test_a_nulled_start_instant_refuses_instead_of_minting_a_fresh_budget` (the exact
+proven attack — and asserts the untouched record still reads 3600 s / ≥3000 s
+elapsed / 40 tallies afterwards),
+`test_a_deleted_record_refuses_rather_than_starting_over`,
+`test_a_non_record_payload_refuses` (5 payload shapes),
+`test_a_non_numeric_or_impossible_start_instant_refuses` (6 values),
+`test_a_rewritten_budget_block_is_caught_by_its_own_recorded_digest`,
+`test_an_unreadable_budget_block_refuses`,
+`test_an_absent_record_is_still_a_legitimate_first_launch` (the one shape that may),
+plus the two audit tests under C6.
+
+### C2 (G5 M2) — credential leak through probe evidence
+
+**The defect.** `probe_git_and_remote_state` records the raw `git remote get-url`
+result in both `evidence` and `detail`; `cmd_start` attaches the whole probe report
+to the payload; `_emit` printed it with a bare `json.dumps`. A routine
+`https://x-access-token:ghp_...@github.com/...` remote therefore put a live PAT on
+stdout of every `start --json` — into a scheduled task's captured log. The
+mitigation existed, is declared mandatory by `redaction.py`'s header, and is
+honoured by `audit_log.append`, `evidence.py`, and `ephemeral_review.py`.
+
+**The fix.** Redaction at the transmission boundary, so it covers this payload and
+every future one rather than one probe's fields: `_emit` (`cli.py:1755`) routes
+both the JSON and the human shape through `redact_structure`, and `refusals.emit`
+(`refusals.py:147`) does the same for the refusal document on either channel. Same
+call, same pattern set as the audit log.
+
+**Tests**: `RedactedOutputTests` (4) covers JSON, human lines, refusals on both
+channels, and a non-destructiveness control (an ordinary payload round-trips
+byte-identical). End to end through the real CLI with a real `git remote add`:
+`test_agent_supervisor_recovery_probes.py::StartProbeIntegrationTests::test_a_credential_bearing_remote_never_reaches_stdout`
+asserts the probe evidence IS present (so the test cannot pass vacuously) and the
+token is NOT, with a `REDACTED` marker.
+
+## Important
+
+### C3 (G5 I1) — synthesized-argv enable replay
+
+`OWNER_ACTIVATION_ARGUMENTS` (`process.py:98`), enforced in `assert_argv_safe`
+(`:189`) beside the pre-existing bypass and effort deny sets, with the `=`-form
+covered the same way. `turnover_adapters.py` untouched, as instructed — the shared
+checker covers that path. The docstring states the scope plainly: this denies the
+flag in argv the SUPERVISOR builds, and cannot (and should not) police what an
+operator types. **Tests**: `ArgvReplayTests` (2), including a regression assertion
+that the pre-existing deny sets and an ordinary argv are unchanged.
+
+### C4 (G5 I2) — per-day tally decay
+
+`_exhausted_counters` (`run_budget.py:558`) skips per-day counters when
+`stale_day()` (`:553`) says the persisted window is not today's; `persist_counters`
+(`:580`) replaces rather than `max()`es a per-day tally when the day rolls;
+`restore_counters` (`:610`) does not restore a stale per-day tally into a fresh
+breaker. Per-RUN counters stay monotonic throughout — they bound the run, not the
+day. **Tests** (5):
+`test_an_exhausted_per_day_counter_stops_exhausting_when_the_day_rolls` (day 1 hits
+the 2000 cap → exhausted; +24 h → not exhausted),
+`test_a_per_day_tally_from_an_earlier_day_is_not_restored`,
+`test_a_same_day_resume_restores_the_per_day_tally`,
+`test_a_rolled_day_replaces_the_persisted_per_day_peak`,
+`test_a_per_run_tally_is_never_rolled_by_a_new_day`.
+
+### C5 (G5 I3+I4) — typed refusals for corrupt persisted state
+
+`_isolated` (`recovery_probes.py:612`) wraps each of the eleven probes so a raise
+becomes that probe's UNDETERMINED result instead of killing the other ten and
+escaping as a traceback; `run_live_probes` (`:631`) builds the report through it.
+`RunBudget.from_dict` (`run_budget.py:207`) raises `BudgetError` on a corrupt wall
+clock and on corrupt counter limits instead of a bare `float()` ValueError;
+`restore_counters` validates tally names on READ (it already did on write) and
+converts any `BreakerError` into a typed `unrestorable_counters` refusal;
+`cmd_start` catches `(BudgetError, BreakerError)` and maps every code to a
+structured refusal. **Tests**: `test_a_raising_probe_does_not_kill_the_other_ten`
+(all eleven still answer; the journal-backed five are undetermined, the rest pass),
+`test_a_probe_that_raises_is_undetermined_not_passed`, and
+`CorruptStateTypedRefusalTests` (3) for the wall clock, the counter limits, and an
+unknown tally name.
+
+### C6 (G5 I5) — audit the tamper / breaker / refused events
+
+Three events, following the `containment_gate_refused` precedent:
+
+- `run_budget_started` / `run_budget_resumed` / `run_budget_refused`
+  (`run_budget.py:319` `_audit`, `:336` `_refuse`) — `budget_conflict` and all four
+  corruption codes are sealed. The ledger takes `audit`; `cli.py:2768` wires it.
+- `circuit_breaker_tripped` (`loop.py:1642`) — names the counter and its value.
+  This is what covers trips taken with `trigger=""`: the cycle counter and the
+  pre-dispatch model-call counter stop at their legal entry state WITHOUT
+  transitioning, so they reached the chain only through a transition detail that in
+  those cases does not exist.
+- `bounded_mode_launch_refused` (`start_gate.py:355`, called at `cli.py:2888`) —
+  opens the audit log ALONE (no lock, no journal, no dispatch) so an attempted
+  activation under the R033 hold leaves a trace.
+
+All three appends are best-effort: a damaged chain refuses new appends by design,
+and that refusal must not convert a clean refusal into a traceback. **Tests**:
+`test_every_refusal_and_launch_is_sealed_in_the_audit_chain`,
+`test_a_resume_is_sealed_too`,
+`test_a_refused_bounded_launch_is_sealed_in_the_audit_chain`.
+
+### C7 (G5 I6 / G4 F1) — missing-input refusal exited 0
+
+Chose the typed refusal, as the correction set preferred. `missing_input_refusal`
+(`start_gate.py:206`) returns `stale_state` / exit 13 with reason code
+`missing_required_inputs` — `stale_state`'s documented meaning is already "a
+required fact is missing or ambiguous". `doctor` additionally documents the
+carve-outs it never named: `refusals.reserved_exit_codes()` (`refusals.py:257`)
+declares `ok=0` and `legacy_halt=1` (the pre-existing `verify-controller` /
+M0-T072 manifest security halt), and both appear in the printed contract and in the
+JSON `reserved_exit_codes` field. **Amended pinned tests**:
+`test_start_without_the_required_inputs_does_not_dispatch` (loop) and endurance's
+`test_start_never_dispatches` / `test_start_releases_the_lock_it_took` now assert
+exit 13 and the refusal reason code while retaining every prior assertion.
+**Genuine dispatch still exits 0**:
+`test_an_expired_deadline_no_longer_refuses_dispatch` asserts `dispatched` and
+`code == 0` together.
+
+### C8 (G3 I1) — probe read a never-maintained ledger field
+
+`open_blockers_for` (`probe_control_plane.py:99`) reads
+`project-control/blockers/B-*.json`, filters `status in ("open", "")`, and matches
+the task id with the SAME word-bounded regex `_blocker_references` uses
+(`project_control.py:1176`), across both `affects` and `detail`, base-id-matches-rework
+included. `probe_task_authority` (`:32`) consults it, and an unreadable blocker set
+is UNDETERMINED (`blockers_unreadable`), never "nothing is blocking". **Tests** (8):
+`test_a_task_record_blockers_list_is_not_authority` (the M0-T019 / B-017 shape — a
+resolved blocker no longer refuses forever),
+`test_an_open_blocker_record_naming_the_task_refuses`,
+`test_an_open_blocker_naming_the_task_only_in_its_detail_refuses`,
+`test_a_blocker_with_no_status_counts_as_open`,
+`test_an_open_blocker_naming_a_DIFFERENT_task_does_not_refuse`,
+`test_a_rework_id_still_matches_its_base_task`,
+`test_an_unreadable_blocker_record_fails_closed`,
+`test_no_blockers_directory_at_all_is_not_a_refusal`.
+
+### C9 (G3 I2 / G5 I7) — `deadline_restored` refused on expired deadlines
+
+`deadline_blocks_dispatch` (`start_gate.py:224`) gates on the `outstanding` fact
+`probe_scheduled_deadlines` already computes, and steps aside ONLY when the
+deadline is the sole thing blocking — a durable emergency stop, manual pause, or
+open owner gate still refuses whatever the deadline says. An undetermined deadline
+keeps the refusal. `parse_utc_instant` (`recovery_probes.py:474`) replaces the
+lexicographic ISO comparison with real instant parsing (`Z`, any offset form, naive
+treated as UTC).
+
+One follow-through the correction did not name but truthfulness required:
+`honest_reason_code` (`start_gate.py:259`) re-labels the refusal
+`safe_but_forbidden` when an expired deadline is present but a FLAG is what
+actually blocks — otherwise the operator was told the deadline stopped a run it did
+not stop. **Tests** (7): expired dispatches (exit 0), outstanding refuses (exit 13,
+`deadline_restored`), unparseable refuses, an expired deadline does not excuse a
+manual pause (exit 14, `safe_but_forbidden`), plus
+`test_the_deadline_parser_reads_instants_not_strings` and
+`test_an_offset_form_deadline_is_compared_as_an_instant`, which asserts its own
+premise — the two strings sort the wrong way round, so the case genuinely
+discriminates.
+
+## Load-bearing minors
+
+### C10 (G3 I3) — provider-CLI drift latch
+
+`--repin-cli-identity` (`cli.py:3285`) → `probe_cli_capability_manifest(repin=...)`
+(`recovery_probes.py:305`). Detection is untouched and still refuses by default;
+the flag accepts the new identity, records provenance (`replaced_digest`,
+`replaced_path`, `repinned_at_utc`, `repinned_by`) and seals `cli_identity_repinned`.
+The refusal message now names the remedy. **Test**:
+`test_a_drifted_cli_can_be_repinned_by_an_explicit_owner_act` walks all four states
+— pin, drift refuses (exit 11), re-pin passes with provenance and an audit event,
+next ordinary start passes against the new pin.
+
+### C11 (G3 I4) — permanent budget-exhaustion trap
+
+The `budget_exhausted` message names `--run-id <fresh-id>` as the way to start a
+fresh run and says the exhausted record stays as evidence (`run_budget.py:518`);
+`--run-id` gained help text explaining that it IS the budget's identity and
+therefore the escape hatch; and the stale `circuit_breakers.py:55` comment ("a
+fresh `CircuitBreakers` is built per `start`, and the counter never resets") is
+corrected — it described the defect, not the design, and C1/C4 make it untrue in
+two directions. On the open question ("consider whether a deliberately-new run
+should require an explicit new id"): it already does, and that is now stated rather
+than implied. I did not add a `--new-run` alias; a second way to spell `--run-id`
+would be a second thing to keep honest.
+
+### C12 — hygiene
+
+`DurableJournal` is imported in `start_gate.py` so `get_type_hints` resolves; the
+R037 source scan now covers `run_budget.py`, `loop.py`, `cli.py`, and
+`loop_breakers.py`, and its pattern catches `_MAX_RUN_SECONDS`, `ABSOLUTE_RUN_CAP`,
+`HARD_STOP_SECONDS`, `DEFAULT_WALL_CLOCK_SECONDS` and five more — with
+`test_the_ceiling_scan_actually_catches_a_ceiling` so the guard is not itself
+unverified, plus a false-positive control; `_REVISE_SAFE_RESETS`
+(`loop_breakers.py:53`) is DERIVED from `RESET_ON_PROGRESS` rather than hand-listed,
+so a counter added later cannot silently drift out of it
+(`RevisionResetDerivationTests`); `README.md:8` and `:269` no longer say
+limited-auto is "not implemented at all, in any form".
+`remote_approvals.py:308` left alone — M0-T080 owns it.
+
+## Modularity
+
+The correction round pushed `cli.py` and `recovery_probes.py` past their limits
+again. Extracted rather than exempted, as in round 1:
+
+- `probe_result.py` (69) — the `ProbeResult` / `ProbeReport` vocabulary and the one
+  place the `ok and known` rule lives, so the three probe families can be split
+  without any of them re-deciding it.
+- `probe_control_plane.py` (127) — task authority + blockers. C8 made the seam
+  obvious: the other probes read the REPOSITORY or the JOURNAL; these read the
+  control plane, a third source with its own authority semantics.
+- `start_gate.py` absorbed `dispatch_inputs_missing` and `seal_owner_gate_refusal`.
+
+`recovery_probes.py` re-exports every moved name, so no caller or test changed.
+Final: `cli.py` 2953 (limit 2953), `loop.py` 2056 (limit 2088),
+`recovery_probes.py` 581 (back under the 600 warn line it had crossed at 723).
+`python tools/modularity_check.py --check` → **failures 0, warnings 5**, the same
+five pre-existing ones.
+
+One judgment call worth flagging: I briefly moved `production_task_authority` out of
+`cli.py` for headroom, and
+`test_agent_supervisor_command_authority.py::test_the_production_path_loads_commands_through_the_validator`
+caught it — that test AST-parses `cli.py` for exactly that function, pinning the
+M0-T070 guarantee to that file. I reverted the move rather than amend the test; the
+headroom came from my own docstrings instead.
+
+## Test counts
+
+| run | before this round | after |
+|---|---|---|
+| `pytest tools/ -k agent_supervisor -q` | 1707 passed / 0 failed / 2 skipped | **1752 passed / 0 failed / 2 skipped** |
+| the two new modules alone | 116 | **161** |
+
++45 tests, 0 regressions. Six existing tests were amended this round
+(`test_start_without_the_required_inputs_does_not_dispatch`,
+`test_start_never_dispatches`, `test_start_releases_the_lock_it_took`,
+`test_doctor_human_output_is_readable`,
+`test_restore_reconciles_a_fresh_breaker_set_upward_only`), and
+`test_an_unresolved_blocker_removes_authority` — which asserted the very behaviour
+C8 identifies as the defect — was replaced by eight tests of the authoritative
+source. Every amendment is a strengthening: each retains its prior assertions and
+adds the exit code, the reason code, or the authoritative-source check.
+
+## Minors deferred, and why
+
+From the G5 and G3 minor lists, none of which are in C1–C12:
+
+- **`probe_cli_capability_manifest` self-pins on first use (TOFU).** Inherent to
+  pinning without an out-of-band identity source; C10 now gives the owner a visible
+  re-pin, which is the part that was actually missing.
+- **`probe_auth` asserts file presence only.** Already documented in the probe's own
+  detail text (`live_credential_check: false`). The injected `auth_check` seam is
+  there for whoever owns live credential verification; inventing one here would
+  claim more than it proved.
+- **`tick_daily` no-ops without a ledger.** Direct `SupervisedLoop` callers that
+  pass no `run_budget` have no clock seam, and `record_daily` refuses an unknown day
+  by design. The per-TASK companion still bounds the same event. Production always
+  wires the ledger.
+- **`tick_event`'s warning is discarded.** Both counters still tick and both still
+  trip; only the WARN-level message of the second is dropped. Cosmetic.
+- **`_previous_checkpoint_id` is not persisted (G3 M-4).** The first cycle after a
+  resume cannot trip `consecutive_no_progress`. Total livelock stays bounded because
+  escaping that way requires restarts and `restart_attempts` IS durable. Persisting
+  it is a real improvement and a clean follow-up, but it is new behaviour rather
+  than a correction, and this is a correction round.
+- **`restart_attempts` ticks AFTER the relaunch (G3 M-3).** Deliberate, and I have
+  corrected the report's blanket claim instead of the code: a restart that has
+  already happened cannot be un-done by a breaker, so ticking after is the only
+  truthful placement. The effective allowance is `limit` restarts, which is what the
+  name says.
+- **AS-20's registry scan matches a name in a comment (G3 M-5).** Left as-is; the
+  per-counter wiring tests are the real proof, and this scan is only a backstop
+  against adding a counter with no site at all.
+- **`AuditLog` holds its chain head in memory; `recovery.py`'s dormant
+  `limited_auto_enabled` key.** Both pre-existing, both documented, neither touched
+  by this task.
+
+## Still deliberately NOT done
+
+Everything in §9 above still holds. Plus, from this round: `turnover_adapters.py`
+(C3 says explicitly not to), `remote_approvals.py:308` (M0-T080), and the
+journal-DB ACL hardening, which the correction set defers to the owner checkpoint
+as a host act — C1 removes the exploit it enabled.
