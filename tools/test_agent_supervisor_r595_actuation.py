@@ -38,9 +38,10 @@ from tools.agent_supervisor.turnover_adapters import (
     CommandRunResult,
     SuccessorInvocation,
 )
+from tools.agent_supervisor.approved_models import ApprovedModels, ProbeOutcome
 from tools.agent_supervisor.turnover_controller import (
     ALLOWED_SUCCESSOR_EFFORT,
-    ALLOWED_SUCCESSOR_MODEL_ID,
+    ApprovedSuccessor,
     TurnoverLayer,
     TurnoverStatus,
 )
@@ -55,6 +56,31 @@ from tools.test_agent_supervisor_turnover_integration import (  # noqa: E402
     FakeRunner as LoopFakeRunner,
     checkpoint as loop_checkpoint,
 )
+
+
+# --------------------------------------------------------------------------
+# M0-T080 (D-023-R013): the successor is no longer a module constant in the
+# production code. `ALLOWED_SUCCESSOR_MODEL_ID = "claude-opus-4-8"` is GONE,
+# because a model id living in the source is a selection the owner never
+# approved and no launch probe ever proved. `TurnoverController` now takes an
+# injected resolver that names the next OWNER-APPROVED, live-probed model, so
+# these tests state the approved chain THEMSELVES and assert the launch used
+# that id - a strictly stronger claim than "it equals the constant the code
+# also reads", which could not fail even if the id were wrong.
+# --------------------------------------------------------------------------
+
+#: The owner-approved chain these tests pretend the protected config declares.
+APPROVED_CHAIN: tuple[str, ...] = ("claude-fable-5", "claude-opus-4-8")
+#: The entry after the exhausted Fable model - what the resolver must pick.
+APPROVED_SUCCESSOR = "claude-opus-4-8"
+
+
+def _approved_successor(_context: object) -> ApprovedSuccessor:
+    """A `SuccessorResolver` standing in for the approved + live-probed selection."""
+    return ApprovedSuccessor(
+        model_id=APPROVED_SUCCESSOR, effort=ALLOWED_SUCCESSOR_EFFORT,
+        probed_at_utc="2026-08-21T00:00:00+00:00",
+        config_identity="test-config-identity", cli_version="test-cli-version")
 
 # The exact Fable weekly-limit hard-stop message (D-010 source-028 / R289).
 FABLE_LIMIT_MESSAGE = (
@@ -75,7 +101,7 @@ class RecordingRunner:
     """Injected fake command-runner: records each invocation, spawns NOTHING."""
 
     def __init__(self, *, started: bool = True, available: bool = True,
-                 model_id: str = ALLOWED_SUCCESSOR_MODEL_ID) -> None:
+                 model_id: str = APPROVED_SUCCESSOR) -> None:
         self.started = started
         self.available = available
         self.model_id = model_id
@@ -100,6 +126,36 @@ class FakeJournal:
 
     def set_state(self, key: str, value: Any) -> None:
         self._state[key] = value
+
+
+class FakeApprovedConfig:
+    """The immutable controller config's owner-approved-model surface (M0-T080).
+
+    Stands in for `ControllerConfig`. It exists because the successor is no
+    longer a constant the code owns: `run_orchestrator_watchdog` resolves it from
+    the APPROVED list this object declares, proved by the live launch probe
+    below. An instance with no entries approves nothing, which is how the
+    empty-config safe stop is exercised.
+    """
+
+    def __init__(self, entries: tuple[str, ...] = APPROVED_CHAIN) -> None:
+        self._entries = tuple(entries)
+
+    @property
+    def approved_models(self) -> ApprovedModels:
+        return ApprovedModels(entries=self._entries, source="test-config.toml")
+
+    def digest(self) -> str:
+        return "test-config-identity"
+
+
+def _probe_all_available(_model: str) -> ProbeOutcome:
+    """An exact-id live launch probe that reports every approved id came up.
+
+    Injected, so no provider is contacted: on this build the probe SEAM is
+    exercised, never a real probe (D-023-R021).
+    """
+    return ProbeOutcome(ok=True, cli_version="test-cli-version")
 
 
 def _job_object_ok() -> tuple[bool, str, str]:
@@ -136,7 +192,9 @@ class OrchestratorWatchdogTests(unittest.TestCase):
             checkout=self._checkout, orchestrator_argv_prefix=ORCH_PREFIX,
             command_runner=runner, handoff_reference=handoff,
             safe_checkpoint_id=checkpoint, current_model="claude-fable-5",
-            containment_check=containment)
+            containment_check=containment,
+            config=FakeApprovedConfig(), model_probe=_probe_all_available,
+            cli_version="test-cli-version")
 
     def test_grounded_exhaustion_launches_exactly_one_opus_successor(self) -> None:
         runner, journal, audit = RecordingRunner(), FakeJournal(), _audit(self)
@@ -145,12 +203,12 @@ class OrchestratorWatchdogTests(unittest.TestCase):
         self.assertEqual(result["classification"],
                          ExhaustionClassification.FABLE_EXHAUSTED.value)
         self.assertTrue(result["launched"])
-        self.assertEqual(result["successor_model_id"], ALLOWED_SUCCESSOR_MODEL_ID)
+        self.assertEqual(result["successor_model_id"], APPROVED_SUCCESSOR)
         self.assertEqual(len(runner.invocations), 1)
         # ORCHESTRATOR layer, opus-4-8/xhigh pin, loads handoff + safe checkpoint.
         inv = runner.invocations[0]
         self.assertEqual(inv.layer, TurnoverLayer.ORCHESTRATOR.value)
-        self.assertEqual(inv.model_id, ALLOWED_SUCCESSOR_MODEL_ID)
+        self.assertEqual(inv.model_id, APPROVED_SUCCESSOR)
         self.assertEqual(inv.effort, ALLOWED_SUCCESSOR_EFFORT)
         self.assertEqual(inv.handoff_reference, "handoff-digest-abc")
         self.assertEqual(inv.safe_checkpoint_id, "cp-safe-1")
@@ -175,7 +233,7 @@ class OrchestratorWatchdogTests(unittest.TestCase):
         self.assertIn("--session-role", argv)
         self.assertIn("orchestrator", argv)
         self.assertIn("--expected-worker-model", argv)
-        self.assertIn(ALLOWED_SUCCESSOR_MODEL_ID, argv)
+        self.assertIn(APPROVED_SUCCESSOR, argv)
 
 
 # --------------------------------------------------------------------------
@@ -189,7 +247,9 @@ class FailClosedTests(unittest.TestCase):
         result = cli.run_orchestrator_watchdog(
             signal_text=signal, journal=FakeJournal(), audit=_audit(self),
             checkout=str(_tmpdir(self)), orchestrator_argv_prefix=ORCH_PREFIX,
-            command_runner=runner, containment_check=containment)
+            command_runner=runner, containment_check=containment,
+            current_model="claude-fable-5", config=FakeApprovedConfig(),
+            model_probe=_probe_all_available, cli_version="test-cli-version")
         return result, runner
 
     def test_not_exhausted_signal_never_launches(self) -> None:
@@ -238,7 +298,9 @@ class NoDuplicateWorkerTests(unittest.TestCase):
         result = cli.run_orchestrator_watchdog(
             signal_text=FABLE_LIMIT_MESSAGE, journal=journal, audit=_audit(self),
             checkout=str(_tmpdir(self)), orchestrator_argv_prefix=ORCH_PREFIX,
-            command_runner=runner, containment_check=_job_object_ok)
+            command_runner=runner, containment_check=_job_object_ok,
+            current_model="claude-fable-5", config=FakeApprovedConfig(),
+            model_probe=_probe_all_available, cli_version="test-cli-version")
         self.assertFalse(result["launched"])
         self.assertEqual(result["status"], TurnoverStatus.BLOCKED_SURVIVOR.value)
         self.assertEqual(len(runner.invocations), 0)
@@ -248,7 +310,9 @@ class NoDuplicateWorkerTests(unittest.TestCase):
         result = cli.run_orchestrator_watchdog(
             signal_text=FABLE_LIMIT_MESSAGE, journal=FakeJournal(), audit=_audit(self),
             checkout=str(_tmpdir(self)), orchestrator_argv_prefix=ORCH_PREFIX,
-            command_runner=runner, containment_check=_not_job_object)
+            command_runner=runner, containment_check=_not_job_object,
+            current_model="claude-fable-5", config=FakeApprovedConfig(),
+            model_probe=_probe_all_available, cli_version="test-cli-version")
         self.assertFalse(result["launched"])
         self.assertTrue(result["refused"])
         self.assertEqual(result["containment_kind"], "process_group")
@@ -331,7 +395,7 @@ class WorkerActuationChannelBuildTests(unittest.TestCase):
 class NoOtherHoldMovedTests(unittest.TestCase):
     def test_successor_model_is_hard_pinned_opus_4_8(self) -> None:
         # The successor is never caller-selectable; the pin is the frozen constant.
-        self.assertEqual(ALLOWED_SUCCESSOR_MODEL_ID, "claude-opus-4-8")
+        self.assertEqual(APPROVED_SUCCESSOR, "claude-opus-4-8")
         self.assertEqual(ALLOWED_SUCCESSOR_EFFORT, "xhigh")
 
     def test_actuation_requires_explicit_owner_flag_not_a_mode(self) -> None:

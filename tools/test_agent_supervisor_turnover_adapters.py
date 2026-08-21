@@ -43,7 +43,7 @@ from tools.agent_supervisor.turnover_adapters import (
 )
 from tools.agent_supervisor.turnover_controller import (
     ALLOWED_SUCCESSOR_EFFORT,
-    ALLOWED_SUCCESSOR_MODEL_ID,
+    ApprovedSuccessor,
     LaunchRequest,
     TurnoverContext,
     TurnoverController,
@@ -51,6 +51,31 @@ from tools.agent_supervisor.turnover_controller import (
     TurnoverStatus,
 )
 
+
+
+# --------------------------------------------------------------------------
+# M0-T080 (D-023-R013): the successor is no longer a module constant in the
+# production code. `ALLOWED_SUCCESSOR_MODEL_ID = "claude-opus-4-8"` is GONE,
+# because a model id living in the source is a selection the owner never
+# approved and no launch probe ever proved. `TurnoverController` now takes an
+# injected resolver that names the next OWNER-APPROVED, live-probed model, so
+# these tests state the approved chain THEMSELVES and assert the launch used
+# that id - a strictly stronger claim than "it equals the constant the code
+# also reads", which could not fail even if the id were wrong.
+# --------------------------------------------------------------------------
+
+#: The owner-approved chain these tests pretend the protected config declares.
+APPROVED_CHAIN: tuple[str, ...] = ("claude-fable-5", "claude-opus-4-8")
+#: The entry after the exhausted Fable model - what the resolver must pick.
+APPROVED_SUCCESSOR = "claude-opus-4-8"
+
+
+def _approved_successor(_context: object) -> ApprovedSuccessor:
+    """A `SuccessorResolver` standing in for the approved + live-probed selection."""
+    return ApprovedSuccessor(
+        model_id=APPROVED_SUCCESSOR, effort=ALLOWED_SUCCESSOR_EFFORT,
+        probed_at_utc="2026-08-21T00:00:00+00:00",
+        config_identity="test-config-identity", cli_version="test-cli-version")
 
 def _tmpdir(case: unittest.TestCase) -> Path:
     holder = tempfile.TemporaryDirectory()
@@ -77,7 +102,7 @@ class RecordingRunner:
     result. No subprocess is ever started."""
 
     def __init__(self, *, available: bool = True, started: bool = True,
-                 model_id: str = ALLOWED_SUCCESSOR_MODEL_ID, detail: str = "",
+                 model_id: str = APPROVED_SUCCESSOR, detail: str = "",
                  raises: bool = False) -> None:
         self.available = available
         self.started = started
@@ -110,7 +135,7 @@ def _orchestrator_targets() -> SuccessorLaunchTargets:
         orchestrator_argv_prefix=("python", "-m", "tools.agent_supervisor.cli", "start"))
 
 
-def _request(layer: TurnoverLayer, *, model_id: str = ALLOWED_SUCCESSOR_MODEL_ID,
+def _request(layer: TurnoverLayer, *, model_id: str = APPROVED_SUCCESSOR,
              effort: str = ALLOWED_SUCCESSOR_EFFORT, event_id: str = "evt-1") -> LaunchRequest:
     return LaunchRequest(
         layer=layer, task_id="M0-T054", event_id=event_id, model_id=model_id, effort=effort,
@@ -233,43 +258,64 @@ class IdentityAdapterTests(unittest.TestCase):
 
 
 class LauncherAdapterTests(unittest.TestCase):
-    def test_worker_builds_opus_xhigh_and_never_a_caller_model(self) -> None:
+    def test_worker_launches_the_approved_model_and_never_a_bare_default(self) -> None:
+        # M0-T080 (D-023-R013). This test used to assert the launcher IGNORED the
+        # request's model and pinned the hard-coded `ALLOWED_SUCCESSOR_MODEL_ID`.
+        # That constant is gone: the model discipline MOVED UP a layer, where it
+        # is stronger. `TurnoverController` now resolves the successor from the
+        # OWNER-APPROVED, live-probed list and refuses any caller preference that
+        # differs (see `test_a_caller_model_never_reaches_the_launcher` below and
+        # the INVALID_MODEL_REFUSED tests in the controller module), so what
+        # reaches the launcher is already the approved id. The launcher's own duty
+        # is to launch EXACTLY that id and to refuse a request that names none -
+        # it has nothing to fall back to.
         runner = RecordingRunner()
         launcher = SupervisorLauncher(command_runner=runner, targets=_worker_targets())
-        # A caller tries to smuggle in a Fable model at low effort; the adapter
-        # MUST ignore both and pin opus-4.8 / xhigh.
         result = launcher.launch(_request(TurnoverLayer.WORKER,
-                                          model_id="claude-fable-5", effort="low"))
+                                          model_id=APPROVED_SUCCESSOR))
 
         self.assertTrue(result.available)
-        self.assertEqual(result.model_id, ALLOWED_SUCCESSOR_MODEL_ID)
+        self.assertEqual(result.model_id, APPROVED_SUCCESSOR)
         self.assertTrue(result.successor_id)
 
         self.assertEqual(len(runner.invocations), 1)
         invocation = runner.invocations[0]
-        self.assertEqual(invocation.model_id, ALLOWED_SUCCESSOR_MODEL_ID)
+        self.assertEqual(invocation.model_id, APPROVED_SUCCESSOR)
         self.assertEqual(invocation.effort, ALLOWED_SUCCESSOR_EFFORT)
-        # The confirmed worker argv pins --model claude-opus-4-8 ...
-        self.assertTrue(_adjacent(invocation.argv, "--model", ALLOWED_SUCCESSOR_MODEL_ID))
-        # ... never the caller's model, and never a hard-denied effort flag.
-        self.assertNotIn("claude-fable-5", invocation.argv)
+        # The confirmed worker argv carries --model <approved id> ...
+        self.assertTrue(_adjacent(invocation.argv, "--model", APPROVED_SUCCESSOR))
+        # ... and never a hard-denied effort flag.
         self.assertFalse(any(t.startswith("--effort") or t.startswith("--reasoning-effort")
                              for t in invocation.argv))
         # Effort rides as invocation metadata / env, not as a CLI flag.
         self.assertEqual(invocation.env.get("SUPERVISOR_SUCCESSOR_EFFORT"),
                          ALLOWED_SUCCESSOR_EFFORT)
 
-    def test_orchestrator_pins_opus_via_expected_worker_model(self) -> None:
+    def test_a_request_naming_no_model_is_refused_with_nothing_launched(self) -> None:
+        # The replacement for "never a caller model": there is no default to fall
+        # back to, so an unnamed model is a refusal rather than a quiet pin.
+        for layer, targets in ((TurnoverLayer.WORKER, _worker_targets()),
+                               (TurnoverLayer.ORCHESTRATOR, _orchestrator_targets())):
+            with self.subTest(layer=layer.value):
+                runner = RecordingRunner()
+                launcher = SupervisorLauncher(command_runner=runner, targets=targets)
+                result = launcher.launch(_request(layer, model_id=""))
+                self.assertFalse(result.available)
+                self.assertIn("no usable successor model", result.detail)
+                self.assertEqual(len(runner.invocations), 0)
+
+    def test_orchestrator_carries_the_approved_model_and_the_role(self) -> None:
         runner = RecordingRunner()
         launcher = SupervisorLauncher(command_runner=runner, targets=_orchestrator_targets())
-        result = launcher.launch(_request(TurnoverLayer.ORCHESTRATOR, model_id="claude-fable-5"))
+        result = launcher.launch(_request(TurnoverLayer.ORCHESTRATOR,
+                                          model_id=APPROVED_SUCCESSOR))
 
         self.assertTrue(result.available)
         invocation = runner.invocations[0]
-        self.assertEqual(invocation.model_id, ALLOWED_SUCCESSOR_MODEL_ID)
+        self.assertEqual(invocation.model_id, APPROVED_SUCCESSOR)
         self.assertEqual(invocation.effort, ALLOWED_SUCCESSOR_EFFORT)
         self.assertTrue(_adjacent(invocation.argv, "--expected-worker-model",
-                                  ALLOWED_SUCCESSOR_MODEL_ID))
+                                  APPROVED_SUCCESSOR))
         self.assertTrue(_adjacent(invocation.argv, "--session-role", "orchestrator"))
         self.assertNotIn("claude-fable-5", invocation.argv)
 
@@ -323,7 +369,7 @@ class EndToEndWiringTests(unittest.TestCase):
         launcher = SupervisorLauncher(command_runner=runner, targets=_worker_targets())
         controller = TurnoverController(
             launcher=launcher, lock=lock, audit=audit,
-            identity=SupervisorIdentity(), survivor_detected=lambda _c: False)
+            identity=SupervisorIdentity(), survivor_detected=lambda _c: False, successor=_approved_successor)
         return controller
 
     def _context(self, event_id: str = "evt-e2e") -> TurnoverContext:
@@ -348,13 +394,13 @@ class EndToEndWiringTests(unittest.TestCase):
 
         self.assertEqual(outcome.status, TurnoverStatus.LAUNCHED_SUCCESSOR)
         self.assertTrue(outcome.turned_over)
-        self.assertEqual(outcome.model_id, ALLOWED_SUCCESSOR_MODEL_ID)
+        self.assertEqual(outcome.model_id, APPROVED_SUCCESSOR)
         self.assertEqual(outcome.effort, ALLOWED_SUCCESSOR_EFFORT)
 
         # Exactly one launch, pinned to opus-4.8 in the confirmed worker argv.
         self.assertEqual(len(runner.invocations), 1)
         self.assertTrue(_adjacent(runner.invocations[0].argv, "--model",
-                                  ALLOWED_SUCCESSOR_MODEL_ID))
+                                  APPROVED_SUCCESSOR))
 
         # The durable audit chain carries the explicit Fable -> Opus link ...
         records = AuditLog(self.audit_log.path, fsync=False).read_all()

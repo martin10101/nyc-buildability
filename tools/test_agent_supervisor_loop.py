@@ -53,6 +53,13 @@ from tools.agent_supervisor.state_machine import StateMachine  # noqa: E402
 _FAKE_LAUNCH_CONFIG = RunnerConfig(executable="fake-claude")
 
 
+#: M0-T080: the HEAD a loop fixture is at. `checkpoint()` already reports it as
+#: `current_sha`, so a rotation built from the last checkpoint pins THIS sha and
+#: the successor is expected to start from it. Before M0-T080 no seam looked at a
+#: SHA at all, so the fixtures never had to name one.
+HEAD_SHA = "b" * 40
+
+
 def checkpoint(**overrides) -> ClaudeCheckpoint:
     data = dict(
         schema_version="1.0.0", run_id="run-loop", checkpoint_id="cp-1",
@@ -90,13 +97,34 @@ class FakeRunner:
         self.prompts: list[str] = []
         #: Every model this runner was asked to launch with, one per unit.
         self.models: list[str] = []
+        #: M0-T080: every provider session id this runner was rebound to resume.
+        self.resumed: list[str] = []
         self.config = dataclasses.replace(_FAKE_LAUNCH_CONFIG, model=model,
                                           expected_model=model)
 
     def with_model(self, model: str) -> "FakeRunner":
-        clone = FakeRunner(*self.results, model=model)
+        clone = type(self)(*self.results, model=model)
+        clone.config = dataclasses.replace(self.config, model=model,
+                                           expected_model=model)
         clone.prompts = self.prompts
         clone.models = self.models
+        clone.resumed = self.resumed
+        return clone
+
+    def with_resume(self, provider_session_id: str) -> "FakeRunner":
+        """M0-T080: the resume rebind, modelled exactly like `with_model`.
+
+        The real runner returns a NEW runner whose launch config carries
+        `resume_session_id`, so a rotation recorded as a resume can be checked
+        against a launch configuration that really changed. The fake does the
+        same, and records the id so a test can assert the actuation reached it.
+        """
+        clone = type(self)(*self.results, model=self.config.model)
+        clone.config = dataclasses.replace(self.config,
+                                           resume_session_id=provider_session_id)
+        clone.prompts = self.prompts
+        clone.models = self.models
+        clone.resumed = self.resumed + [provider_session_id]
         return clone
 
     def run_unit(self, prompt: str, **_kwargs) -> RunResult:
@@ -171,11 +199,36 @@ class LoopTestBase(unittest.TestCase):
     def at_preflight(self) -> None:
         self.machine.transition(sm.PREFLIGHT, "start_command")
 
+    def successor_result(self, *, checkpoint_id: str, session_id: str = "sess-successor",
+                         **overrides) -> RunResult:
+        """The post-rotation unit's result, modelling the S11.3 contract (M0-T080).
+
+        A re-oriented session's FIRST response is a structured READY checkpoint,
+        reporting ITS OWN provider session id and the task / branch / worktree /
+        HEAD it was commanded onto. Before M0-T080 the loop asked for none of
+        that, so these fixtures returned an ordinary UNIT_COMPLETE checkpoint
+        carrying a placeholder worktree and an unrelated starting SHA. The READY
+        gate and the post-launch identity check now require the real thing, so
+        the fake models it - which makes the fixture MORE faithful to a live
+        worker, not less demanding of one.
+        """
+        cp = checkpoint(status="READY", checkpoint_id=checkpoint_id,
+                        claude_session_id=session_id,
+                        starting_sha=HEAD_SHA, current_sha=HEAD_SHA,
+                        worktree=self.authority.worktree,
+                        branch=self.authority.branch,
+                        summary="re-oriented from the verified handoff; nothing changed",
+                        proposed_next_action="await the forwarded unit")
+        data = dict(session_id=session_id, checkpoint=cp)
+        data.update(overrides)
+        return run_result(**data)
+
     def build(self, *, mode: str = "shadow", runner=None, reviewer=None,
               approval_gate=None, budget: int = 2, max_cycles: int = 4,
               breakers=None, broker=None, pinned_model: str = "",
               context_rotation_threshold: int = 0, model_available=None,
-              model_chain=None, session_role: str = "") -> lp.SupervisedLoop:
+              model_chain=None, session_role: str = "",
+              head_sha: str = HEAD_SHA) -> lp.SupervisedLoop:
         return lp.SupervisedLoop(
             config=lp.LoopConfig(mode=mode, task_id="M0-T036", stage="phase4",
                                  allowed_paths=self.authority.allowed_paths,
@@ -190,6 +243,7 @@ class LoopTestBase(unittest.TestCase):
             broker=broker, pinned_model=pinned_model,
             context_rotation_threshold=context_rotation_threshold,
             model_chain=model_chain,
+            head_sha=head_sha,
             model_available=model_available)
 
 
@@ -1640,14 +1694,15 @@ class SeamRotationTests(LoopTestBase):
     reached only at a seam (finish-current-unit invariant, S11.2)."""
 
     def _downgrade_runner(self) -> FakeRunner:
-        # Cycle 1 reports a model downgrade; cycle 2 is clean (the relaunch).
+        # Cycle 1 reports a model downgrade; cycle 2 is the RE-ORIENTED successor,
+        # which answers with the S11.3 READY checkpoint the rotation now requires.
         return FakeRunner(run_result(model_mismatch=True,
                                      mismatch_detail="reported claude-substitute"),
-                          run_result())
+                          self.successor_result(checkpoint_id="cp-successor"))
 
     def _threshold_runner(self) -> FakeRunner:
         return FakeRunner(run_result(context_tokens=500_000, usage_known=True),
-                          run_result())
+                          self.successor_result(checkpoint_id="cp-successor"))
 
     def test_a_model_downgrade_rotates_at_the_seam_and_relaunches_pinned(self) -> None:
         self.at_preflight()
@@ -1664,16 +1719,37 @@ class SeamRotationTests(LoopTestBase):
         self.assertEqual(rotation_record["reason_code"], "model_downgrade")
         self.assertEqual(rotation_record["cycle"], 2, "rotation fires at the seam")
         # relaunch-pinned + never-substitute: the record names the CONFIGURED model
-        # and a brand-new session id, and carries no substitute model.
+        # and carries no substitute model.
         self.assertEqual(rotation_record["pinned_model"], "claude-pinned")
-        self.assertNotEqual(rotation_record["new_session_id"],
-                            rotation_record["old_session_id"])
         self.assertNotIn("substitute_model", rotation_record)
+        # M0-T080: the record carries BOTH identities and never conflates them.
+        # `rotation_record_key` is supervisor-internal bookkeeping (prefix
+        # `sup-rot-`); `previous_provider_session_id` is the id the PROVIDER
+        # issued. Before M0-T080 one key held both meanings and the invented
+        # uuid was stored where the new session's identity belonged.
+        self.assertTrue(rotation_record["rotation_record_key"].startswith("sup-rot-"))
+        self.assertEqual(rotation_record["previous_provider_session_id"], "sess-1")
+        self.assertNotEqual(rotation_record["rotation_record_key"],
+                            rotation_record["previous_provider_session_id"])
+        # A downgrade rotation is cross-model/context-shedding, so resume is
+        # impossible and the record says so EXPLICITLY rather than implying one.
+        self.assertEqual(rotation_record["continuity_mode"], "reorientation")
+        self.assertEqual(rotation_record["provider_session_id"], "")
+        self.assertTrue(rotation_record["provider_session_none_reason"])
         # rotate reused rotation.py: the pending flag is cleared and the outgoing
-        # session archived.
+        # PROVIDER session archived (never the internal key).
         self.assertFalse(rot.rotation_pending(self.journal))
         ledger = rot.RotationLedger(self.journal)
-        self.assertIn(rotation_record["old_session_id"], ledger.archived_sessions())
+        self.assertIn(rotation_record["previous_provider_session_id"],
+                      ledger.archived_sessions())
+        self.assertNotIn(rotation_record["rotation_record_key"],
+                         ledger.archived_sessions())
+        # The full S11.3 path ran: a VERIFIED handoff is durably stored.
+        stored = ledger.stored_handoff()
+        self.assertIsNotNone(stored)
+        self.assertEqual(stored["handoff_digest"], rotation_record["handoff_digest"])
+        # The successor really received the handoff as its reorientation prompt.
+        self.assertIn("SESSION REORIENTATION", runner.prompts[1])
         events = {r["event_type"] for r in self.audit.read_all()}
         self.assertIn("rotation_pending_flagged", events)
         self.assertIn("session_handoff_refreshed", events)
@@ -1809,10 +1885,12 @@ class ModelChainSwitchTests(LoopTestBase):
 
     def _downgrade_runner(self) -> FakeRunner:
         # Cycle 1 reports a model downgrade (sets rotation_pending); later cycles
-        # are clean relaunches.
+        # are the RE-ORIENTED successors, which answer with the S11.3 READY
+        # checkpoint the rotation now requires before anything is forwarded.
         return FakeRunner(run_result(model_mismatch=True,
                                      mismatch_detail="reported claude-substitute"),
-                          run_result(), model=PIN)
+                          self.successor_result(checkpoint_id="cp-successor"),
+                          model=PIN)
 
     def _sub_key(self) -> str:
         return f"model_substitution/{self.run_id}"
@@ -1848,7 +1926,13 @@ class ModelChainSwitchTests(LoopTestBase):
         self.assertEqual(rec["launched_model"], NEXT_1)
         self.assertEqual(rec["pinned_model"], PIN)
         self.assertEqual(rec["chain"], list(CHAIN))
-        self.assertNotEqual(rec["new_session_id"], rec["old_session_id"])
+        # M0-T080: both identities, never conflated. A chain switch is
+        # cross-model, so it can only ever be an explicit reorientation.
+        self.assertTrue(rec["rotation_record_key"].startswith("sup-rot-"))
+        self.assertNotEqual(rec["rotation_record_key"],
+                            rec["previous_provider_session_id"])
+        self.assertEqual(rec["continuity_mode"], "reorientation")
+        self.assertIn("cross_model", rec["provider_session_none_reasons"])
         # durable journal record present, carrying pin/selection/reason/cycle/ids.
         sub = self.journal.get_state(self._sub_key())
         self.assertTrue(sub["active"])
@@ -1856,8 +1940,9 @@ class ModelChainSwitchTests(LoopTestBase):
         self.assertEqual(sub["substitute_model"], NEXT_1)
         self.assertEqual(sub["reason_code"], "quota_exhausted")
         self.assertIn("cycle", sub)
-        self.assertIn("new_session_id", sub)
-        self.assertIn("old_session_id", sub)
+        self.assertIn("rotation_record_key", sub)
+        self.assertIn("previous_provider_session_id", sub)
+        self.assertIn("continuity_mode", sub)
         # first-class audit event, never silent, carrying the same fields.
         events = [r for r in self.audit.read_all()
                   if r["event_type"] == "model_substitution"]
@@ -1980,7 +2065,14 @@ class ModelChainSwitchTests(LoopTestBase):
         self.at_preflight()
         runner = FakeRunner(
             run_result(model_mismatch=True, mismatch_detail="reported substitute"),
-            run_result(), run_result(), model=PIN)
+            # Both post-rotation units are re-oriented successors and answer with
+            # the S11.3 READY checkpoint (M0-T080). Distinct checkpoint ids: a
+            # repeated id is the no-progress livelock signal.
+            self.successor_result(checkpoint_id="cp-successor-1",
+                                  session_id="sess-successor-1"),
+            self.successor_result(checkpoint_id="cp-successor-2",
+                                  session_id="sess-successor-2"),
+            model=PIN)
         # First seam: the pin is exhausted and NEXT_1 answers. Second seam: the pin
         # is available again.
         probe = ChainProbe({}, sequence=[(False, "quota_exhausted"), (True, ""),

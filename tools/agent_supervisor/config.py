@@ -42,6 +42,8 @@ import pathlib
 import tomllib
 from typing import Any, Mapping
 
+from . import approved_models as approved_models_module
+from .approved_models import ApprovedModels
 from .models import digest_of
 
 #: Runtime modes (S12). Limited-auto is listed so it can be REFUSED by name.
@@ -63,6 +65,10 @@ PROVIDERS = ("codex", "claude")
 _CONTROLLER_ONLY_KEYS = frozenset({
     "allowed_models", "limits", "policy", "security", "controller", "audit",
     "tiers", "hard_deny", "grants",
+    # D-023-R013: which models the owner approved is controller authority. A
+    # runtime file that could name it would be a settings-fallback path into
+    # model selection, which is exactly what the directive prohibits.
+    "approved_models", "model_chain",
 })
 
 #: Keys that belong to the runtime selection file and must never appear in the
@@ -71,19 +77,29 @@ _RUNTIME_ONLY_KEYS = frozenset({
     "review_model", "advisory_model", "model", "fallback_models",
 })
 
-#: D-004-R751/R754/R758: the FIXED orchestrator-role model preference chain, in
-#: order. It is owner policy, so it lives in the IMMUTABLE controller config
-#: ([model_chain] below) and is owner-editable only; this tuple is the
-#: fail-closed default used when the section is absent, and it matches the order
-#: the owner named exactly. The ids are EXACT strings: nothing here normalizes,
-#: aliases, or resolves an id, so no entry can ever become a different model
-#: (notably never "claude-opus-5" - an id outside this chain is never selectable
-#: regardless of what a model picker shows).
-DEFAULT_ORCHESTRATOR_MODEL_CHAIN: tuple[str, ...] = (
-    "claude-fable-5", "claude-opus-4-8", "claude-opus-4-7",
-)
+#: D-004-R751/R754/R758 + D-023-R013: the owner-approved model ids, in the
+#: owner's order. There is deliberately NO default tuple here.
+#:
+#: Until M0-T080 this module carried a `DEFAULT_ORCHESTRATOR_MODEL_CHAIN` tuple
+#: of three literal model ids and used it whenever `[model_chain]` was absent, so
+#: a controller config that approved nothing still selected three models the
+#: owner had never written down. (The ids are named in the M0-T080 producer
+#: report, not here: a model id in this file, even in a comment, is one careless
+#: edit away from being a default again.) D-023-R013 forbids exactly that: only
+#: owner-approved, live-probed ids from protected config may be used, and no
+#: silent substitution of any kind - code default, settings fallback, Remote
+#: Control switch, or provider convenience - is permitted. An ABSENT list is
+#: therefore an EMPTY list, and every selection act against an empty list stops
+#: safely with a typed refusal (`approved_models.ApprovedModels.assert_populated`).
+#:
+#: The canonical section is `[approved_models] models`. `[model_chain]
+#: orchestrator_preference` is the LEGACY spelling of the same owner-approved
+#: list and is still accepted verbatim; naming both with different contents is a
+#: refusal rather than a silent precedence rule.
+APPROVED_MODELS_SECTION = approved_models_module.APPROVED_MODELS_SECTION
+APPROVED_MODELS_KEY = approved_models_module.APPROVED_MODELS_KEY
 
-#: The one key `[model_chain]` carries.
+#: The one key the legacy `[model_chain]` section carries.
 _MODEL_CHAIN_KEY = "orchestrator_preference"
 
 
@@ -224,7 +240,7 @@ class Limits:
 
 @dataclasses.dataclass(frozen=True)
 class ModelChain:
-    """The FIXED orchestrator-role model preference chain (D-004-R751/R758).
+    """The owner-approved model list, in the owner's order (D-004-R751/R758).
 
     Owner policy, not a judgement: an orchestrator-role session walks THIS list
     in THIS order, first-available-wins, availability decided by an actual launch
@@ -235,16 +251,17 @@ class ModelChain:
 
     Immutable, and read only from the immutable controller config, so a runtime
     file can never widen or reorder it.
+
+    M0-T080 / D-023-R013: `entries` now defaults to EMPTY and an empty chain is
+    LEGAL to construct. It was previously a construction-time `ConfigError`,
+    which forced a non-empty default to exist somewhere - and the default that
+    existed was three hard-coded model ids. The refusal did not disappear; it
+    MOVED to the point of use (`approved_models.ApprovedModels.assert_populated`),
+    where it can say which config file to populate and produce a typed,
+    machine-readable safe stop instead of a load-time crash.
     """
 
-    entries: tuple[str, ...] = DEFAULT_ORCHESTRATOR_MODEL_CHAIN
-
-    def __post_init__(self) -> None:
-        if not self.entries:
-            raise ConfigError(
-                "empty_model_chain",
-                f"[model_chain] {_MODEL_CHAIN_KEY} must name at least one model; an empty "
-                f"chain would leave an orchestrator-role session with nothing to launch")
+    entries: tuple[str, ...] = ()
 
     def __contains__(self, model: object) -> bool:
         """EXACT string membership. No normalization, no aliasing, no prefixes."""
@@ -281,9 +298,22 @@ class ControllerConfig:
     limits: Limits
     source_path: str
     raw: dict[str, Any] = dataclasses.field(default_factory=dict, repr=False)
-    #: D-004-R751/R758. Defaults to the fail-closed chain when `[model_chain]` is
-    #: absent, so a config that predates this section still has the owner's order.
+    #: D-004-R751/R758 + D-023-R013. EMPTY when the config approves nothing; there
+    #: is no default chain. `approved_models` is the canonical view and
+    #: `model_chain` is the same list under the name the rest of the package
+    #: already imports - they are built from one source and can never disagree.
     model_chain: ModelChain = dataclasses.field(default_factory=ModelChain)
+
+    @property
+    def approved_models(self) -> ApprovedModels:
+        """The owner-approved model ids, with the config file that approved them.
+
+        The one object every model-selection act asks. It carries `source` so a
+        refusal can name the exact file the owner has to populate rather than
+        saying "configuration" and leaving them to find it.
+        """
+        return ApprovedModels(entries=self.model_chain.entries,
+                              source=self.source_path)
 
     def allowlist(self, provider: str) -> tuple[str, ...]:
         """The allowlist for ONE provider. Never merged across providers."""
@@ -362,38 +392,69 @@ def load_controller_config(path: str | os.PathLike[str]) -> ControllerConfig:
 
 
 def _load_model_chain(data: Mapping[str, Any], source: str) -> ModelChain:
-    """Read `[model_chain]` out of the immutable controller config (D-004-R758).
+    """Read the owner-approved model list out of the immutable controller config.
 
-    Absent -> the fail-closed default chain, in the owner's order. Present but
-    malformed -> refused; the chain is never silently repaired, reordered, or
-    partially applied, because a wrong chain is a wrong model selection.
+    Two accepted spellings of ONE list (D-004-R758, D-023-R013):
+
+    * `[approved_models] models` - canonical.
+    * `[model_chain] orchestrator_preference` - the legacy spelling, still read
+      verbatim so an existing controller config keeps working unchanged.
+
+    Both absent -> the approved list is EMPTY. That is not a failure to load and
+    not a reason to substitute a built-in chain (there is none); it is the honest
+    statement that the owner has approved nothing, and the refusal happens at the
+    point some code tries to SELECT a model, where it can be typed and
+    actionable. Both present with different contents -> refused, because a silent
+    precedence rule between two owner-authored lists is a wrong model selection
+    waiting to happen. Present but malformed -> refused; the list is never
+    repaired, reordered, or partially applied.
     """
-    section = data.get("model_chain", None)
-    if section is None:
-        return ModelChain()
-    if not isinstance(section, Mapping):
-        raise ConfigError("bad_section", "[model_chain] must be a table", source)
-    unknown = sorted(set(section) - {_MODEL_CHAIN_KEY})
-    if unknown:
-        raise ConfigError("unknown_model_chain_key",
-                          f"unrecognized [model_chain] keys: {unknown}; the only key is "
-                          f"{_MODEL_CHAIN_KEY!r}", source)
-    if _MODEL_CHAIN_KEY not in section:
+    legacy = _load_named_model_list(data, source, "model_chain", _MODEL_CHAIN_KEY,
+                                    optional_key=False)
+    canonical = _load_named_model_list(data, source, APPROVED_MODELS_SECTION,
+                                       APPROVED_MODELS_KEY, optional_key=False)
+    if legacy is not None and canonical is not None and legacy != canonical:
         raise ConfigError(
-            "missing_model_chain",
-            f"[model_chain] must declare {_MODEL_CHAIN_KEY} (the ordered list of models an "
-            f"orchestrator-role session may launch on); omit the whole section to accept "
-            f"the default chain {list(DEFAULT_ORCHESTRATOR_MODEL_CHAIN)}", source)
-    entries = _require_string_list(section[_MODEL_CHAIN_KEY],
-                                   f"model_chain.{_MODEL_CHAIN_KEY}", source)
+            "approved_models_conflict",
+            f"[{APPROVED_MODELS_SECTION}] {APPROVED_MODELS_KEY} = {list(canonical)} and the "
+            f"legacy [model_chain] {_MODEL_CHAIN_KEY} = {list(legacy)} name DIFFERENT "
+            f"owner-approved lists. They are two spellings of one list; refusing rather "
+            f"than picking one, because guessing which the owner meant is guessing which "
+            f"models are approved", source)
+    entries = canonical if canonical is not None else legacy
+    return ModelChain(entries=entries or ())
+
+
+def _load_named_model_list(data: Mapping[str, Any], source: str, section_name: str,
+                           key: str, *, optional_key: bool) -> tuple[str, ...] | None:
+    """One `[section] key = [...]` ordered model list, or None when absent."""
+    section = data.get(section_name, None)
+    if section is None:
+        return None
+    if not isinstance(section, Mapping):
+        raise ConfigError("bad_section", f"[{section_name}] must be a table", source)
+    unknown = sorted(set(section) - {key})
+    if unknown:
+        raise ConfigError(f"unknown_{section_name}_key",
+                          f"unrecognized [{section_name}] keys: {unknown}; the only key is "
+                          f"{key!r}", source)
+    if key not in section:
+        if optional_key:
+            return None
+        raise ConfigError(
+            f"missing_{section_name}",
+            f"[{section_name}] must declare {key} (the ordered list of owner-approved "
+            f"models a session may launch on); omit the whole section to approve NOTHING - "
+            f"there is no built-in default list (D-023-R013)", source)
+    entries = _require_string_list(section[key], f"{section_name}.{key}", source)
     for entry in entries:
         if entry != entry.strip():
             raise ConfigError(
                 "bad_model_name",
-                f"model_chain.{_MODEL_CHAIN_KEY} entry {entry!r} carries surrounding "
-                f"whitespace; chain ids are used verbatim as the launched --model and are "
-                f"never trimmed, normalized, or aliased", source)
-    return ModelChain(entries=entries)
+                f"{section_name}.{key} entry {entry!r} carries surrounding whitespace; "
+                f"approved ids are used verbatim as the launched --model and are never "
+                f"trimmed, normalized, or aliased", source)
+    return entries
 
 
 # --------------------------------------------------------------------------

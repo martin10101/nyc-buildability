@@ -229,7 +229,14 @@ class WorkerTurnoverIntegration:
                 verdict=verdict,
                 audit_summary={
                     "turnover": "recorded_intent_not_authorized",
-                    "successor_model_id": "claude-opus-4-8",
+                    # M0-T080 (D-023-R013): no model id is named here. Nothing has
+                    # been selected - the approved chain has not been consulted and
+                    # no launch probe has been run - so naming one would state a
+                    # selection that did not happen.
+                    "successor_model_id": "",
+                    "successor_model_note": "not selected: the mode did not authorize an "
+                                            "automatic redispatch, so the owner-approved "
+                                            "chain was never consulted",
                 })
 
         # AUTHORIZED but no actuation channel wired: fail closed to record-intent.
@@ -251,7 +258,9 @@ class WorkerTurnoverIntegration:
                 verdict=verdict,
                 audit_summary={
                     "turnover": "recorded_intent_no_channel",
-                    "successor_model_id": "claude-opus-4-8",
+                    "successor_model_id": "",
+                    "successor_model_note": "not selected: no actuation channel is wired, so "
+                                            "the owner-approved chain was never consulted",
                 })
 
         # AUTHORIZED: build the grounded context and turn over EXACTLY ONCE. The
@@ -264,6 +273,10 @@ class WorkerTurnoverIntegration:
             safe_checkpoint_id=str(safe_checkpoint_id or ""),
             handoff_reference=self._handoff_reference or run_id,
             layer=self._layer,
+            # M0-T080: the model the failed unit ran on, so the controller's
+            # resolver can walk the OWNER-APPROVED list from the entry after it
+            # instead of being handed a successor by a constant.
+            current_model=str(current_model or ""),
         )
         outcome = self._controller.execute(verdict, context)
         actuated = bool(getattr(outcome, "turned_over", False))
