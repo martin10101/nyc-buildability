@@ -17,6 +17,15 @@ Severity vocabulary: docs/ENGINEERING_RELIABILITY_STANDARD.md §9.
 | F-004 | M0-T078 G3 | minor | M0-T078-producer-report.md §1 | Report prose says "five invocation triggers"; frontmatter names seven. Deliverable correct. |
 | F-005 | M0-T078 G5 | minor | ENGINEERING_RELIABILITY_STANDARD.md §9.2 | "Unexplained severity is downgraded when challenged" names no adjudicator; name the reviewer of record or the gate, never the producer. |
 | F-006 | M0-T078 G5 | minor | ENGINEERING_RELIABILITY_STANDARD.md §9.1 | Phrasing could be cited against defense-in-depth G5 findings; clarify that a named plausible mechanism suffices for security findings. |
+| F-007 | M0-T078 DCV | minor | M0-T078-producer-report.md AS-2/AS-8 | Shell-wrapper EXIT= echoes pasted inside blocks labeled "verbatim full output"; substance verified correct. Evidence-fidelity family with F-001. |
+
+## Observations queued for M0-T085 settlement (not defects)
+
+- O-001 (T078 DCV): handoff §6.4's fourth bullet (task-packet fields / gate assertions making
+  reliability-standard triggers executable rather than prompt-only) is owned by no campaign task;
+  settle ownership or defer explicitly at M0-T085.
+- O-002 (T078 DCV): CLAUDE.md/AGENTS.md discovery pointers adjudicated justified (G3 + DCV
+  concur; 31-token measured cost).
 
 ## Resolved findings
 

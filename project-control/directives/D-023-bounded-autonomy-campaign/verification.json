@@ -1,7 +1,7 @@
 {
  "schema": "directive_verification/v2",
  "directive_id": "D-023",
- "authority_note": "Pending independent verification by directive-compliance-verifier (producer != verifier). Capture only; no requirement verified yet. Campaign task rows are verified through each task's gates and accept() evidence map at the reviewed content identity; D-023-BOOTSTRAP sentinel rows are verified at directive verification when the campaign returns.",
+ "authority_note": "Independent verification by directive-compliance-verifier (producer=orchestrator != verifier). M0-T078: ALL 18 applicable rows PASS at sha 7ca7f261 / manifest 6b76e8f6 (verbatim report project-control/reports/M0-T078-directive-verification.md). Remaining campaign tasks pending.",
  "producer": "orchestrator",
  "verifier": "directive-compliance-verifier",
  "task_verifications": [
@@ -30,136 +30,191 @@
     "D-023-R036",
     "D-023-R038"
    ],
-   "reviewed_sha": null,
-   "verified_at": null,
+   "reviewed_sha": "7ca7f261f5d518b05a1301d2e7ef6ad3793073af",
+   "verified_at": "2026-08-21T00:00:00+00:00",
    "requirements": [
     {
      "id": "D-023-R001",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": null,
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "handoff re-hashed by verifier: exact match 08aee279/50147B/867L",
+      "project-control/reports/M0-T078-directive-verification.md"
+     ],
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "7ca7f261f5d518b05a1301d2e7ef6ad3793073af"
     },
     {
      "id": "D-023-R002",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": null,
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "packet directive_refs D-023:ALL; append-only campaign chain 6b9ae32..7ca7f26",
+      "project-control/reports/M0-T078-directive-verification.md"
+     ],
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "7ca7f261f5d518b05a1301d2e7ef6ad3793073af"
     },
     {
      "id": "D-023-R003",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": null,
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "diff 6b9ae32..HEAD: 4 files +327/-2; zero deletions campaign-wide",
+      "project-control/reports/M0-T078-directive-verification.md"
+     ],
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "7ca7f261f5d518b05a1301d2e7ef6ad3793073af"
     },
     {
      "id": "D-023-R004",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": null,
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "no .claude/agents or .claude/hooks change; skill dir = one SKILL.md",
+      "project-control/reports/M0-T078-directive-verification.md"
+     ],
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "7ca7f261f5d518b05a1301d2e7ef6ad3793073af"
     },
     {
      "id": "D-023-R005",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": null,
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "verifier grep over full b1fb384 diff: zero third-party/installer hits",
+      "project-control/reports/M0-T078-directive-verification.md"
+     ],
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "7ca7f261f5d518b05a1301d2e7ef6ad3793073af"
     },
     {
      "id": "D-023-R006",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": null,
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "zero URLs/domains in added lines; G5 independent concurrence",
+      "project-control/reports/M0-T078-directive-verification.md"
+     ],
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "7ca7f261f5d518b05a1301d2e7ef6ad3793073af"
     },
     {
      "id": "D-023-R010",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": null,
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "all changed files inside allowed_paths; zero forbidden_paths touched",
+      "project-control/reports/M0-T078-directive-verification.md"
+     ],
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "7ca7f261f5d518b05a1301d2e7ef6ad3793073af"
     },
     {
      "id": "D-023-R015",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": null,
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "ten vetted areas map 1:1 to handoff lines 371-381; context-budget 2956/6000 PASS reproduced; G3+G5 PASS",
+      "project-control/reports/M0-T078-directive-verification.md"
+     ],
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "7ca7f261f5d518b05a1301d2e7ef6ad3793073af"
     },
     {
      "id": "D-023-R023",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": null,
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "12 claim-vocabulary hits all triggers/prohibitions/self-disclaimer; zero affirmative claims; 31-token delta reproduced",
+      "project-control/reports/M0-T078-directive-verification.md"
+     ],
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "7ca7f261f5d518b05a1301d2e7ef6ad3793073af"
     },
     {
      "id": "D-023-R025",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": null,
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "no deploy surface touched; 'deploy' only descriptive in standard 8.5",
+      "project-control/reports/M0-T078-directive-verification.md"
+     ],
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "7ca7f261f5d518b05a1301d2e7ef6ad3793073af"
     },
     {
      "id": "D-023-R026",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": null,
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "credential-pattern scan zero; G5 secret/BOM/Unicode scan clean",
+      "project-control/reports/M0-T078-directive-verification.md"
+     ],
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "7ca7f261f5d518b05a1301d2e7ef6ad3793073af"
     },
     {
      "id": "D-023-R027",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": null,
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "zero legal/zoning content; 'legal' only as defect class",
+      "project-control/reports/M0-T078-directive-verification.md"
+     ],
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "7ca7f261f5d518b05a1301d2e7ef6ad3793073af"
     },
     {
      "id": "D-023-R028",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": null,
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "blockers/checkpoints/rules untouched; hold non-interaction confirmed by G5",
+      "project-control/reports/M0-T078-directive-verification.md"
+     ],
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "7ca7f261f5d518b05a1301d2e7ef6ad3793073af"
     },
     {
      "id": "D-023-R029",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": null,
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "protections untouched; MCP + DCV validators exit 0 re-run by verifier",
+      "project-control/reports/M0-T078-directive-verification.md"
+     ],
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "7ca7f261f5d518b05a1301d2e7ef6ad3793073af"
     },
     {
      "id": "D-023-R030",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": null,
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "main untouched at d8b3899f; campaign branch append-only; true merge 409386c",
+      "project-control/reports/M0-T078-directive-verification.md"
+     ],
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "7ca7f261f5d518b05a1301d2e7ef6ad3793073af"
     },
     {
      "id": "D-023-R031",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": null,
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "17-file campaign surface; zero overlap with PR #64/#241/wt-m0t064",
+      "project-control/reports/M0-T078-directive-verification.md"
+     ],
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "7ca7f261f5d518b05a1301d2e7ef6ad3793073af"
     },
     {
      "id": "D-023-R036",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": null,
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "no owner interrupt; findings pooled F-001..F-006 per R016/R017",
+      "project-control/reports/M0-T078-directive-verification.md"
+     ],
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "7ca7f261f5d518b05a1301d2e7ef6ad3793073af"
     },
     {
      "id": "D-023-R038",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": null,
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "zero hits Superpowers/secondsky/wshobson + installer verbs across diff",
+      "project-control/reports/M0-T078-directive-verification.md"
+     ],
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "7ca7f261f5d518b05a1301d2e7ef6ad3793073af"
     }
-   ]
+   ],
+   "reviewed_manifest_sha256": "6b76e8f65b7007b22a2aab5277a4243dd52d6231e2cc96c357de6c2848c7834a"
   },
   {
    "task_id": "M0-T079",
