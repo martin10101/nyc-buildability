@@ -42,7 +42,14 @@ issued to producer; awaiting corrected identity + full re-review (G5 must clear 
   applied to the journal DB directory closes the whole class. **Recommendation carried to the
   owner checkpoint: name the journal-DB ACL item on the R595 activation checklist as a
   prerequisite, not merely a finding.** Round-3 additionally requires the `budget_digest`
-  field (closes the cheapest raw-DB variant for free).
+  field (closes the cheapest raw-DB variant for free). **Delta-review addendum:** round-3 D1 makes
+  `exit_detail` operator-visible in the exhaustion refusal; `budget_digest` covers only the budget
+  block, so a raw-DB writer could spoof (not exfiltrate — redaction still applies) the refusal text
+  an operator reads. Same raw-DB adversary class; the owner-checkpoint ACL item should cover "the
+  text the operator reads", not only the durable record.
+- **Infra note (delta-review minor #1):** `tools/agent_supervisor/cli.py` is at exactly its
+  modularity limit (2953/2953) after T079. The next campaign task that edits cli.py (T081/T082/T084)
+  must extract before adding — flag to those producers.
 - **F-008 (G5 re-review, pre-existing, not T079):** `cmd_status --json` (cli.py:1477) prints
   journal-derived content via a bare `json.dumps`, unredacted — a credential planted in a
   transition detail would reach stdout. Out of T079 scope (its only cmd_status change is a
