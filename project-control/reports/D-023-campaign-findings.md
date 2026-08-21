@@ -19,6 +19,20 @@ Severity vocabulary: docs/ENGINEERING_RELIABILITY_STANDARD.md §9.
 | F-006 | M0-T078 G5 | minor | ENGINEERING_RELIABILITY_STANDARD.md §9.1 | Phrasing could be cited against defense-in-depth G5 findings; clarify that a named plausible mechanism suffices for security findings. |
 | F-007 | M0-T078 DCV | minor | M0-T078-producer-report.md AS-2/AS-8 | Shell-wrapper EXIT= echoes pasted inside blocks labeled "verbatim full output"; substance verified correct. Evidence-fidelity family with F-001. |
 
+## M0-T079 correction round (issued as one set; tracked to closure at re-review)
+
+G5 FAIL at reviewed identity c52613f. Consolidated correction C1–C12 in
+`M0-T079-consolidated-correction.md`. Must-fix: C1 budget self-reset via missing/malformed
+record (containment break); C2 credential leak through unredacted probe evidence. Important:
+C3 argv-replay deny-set, C4 per-day tally decay, C5 typed refusals for corrupt state, C6
+tamper/breaker/refused audit events, C7 missing-input exit code, C8 blocker authority, C9
+expired-deadline gate. Minors: C10 drift re-pin, C11 exhaustion escape, C12 hygiene. Status:
+issued to producer; awaiting corrected identity + full re-review (G5 must clear both must-fix).
+
+- **Host act deferred to owner checkpoint:** journal-DB ACL hardening for
+  `%LOCALAPPDATA%\NYCBuildabilitySupervisor` (G5 threat-model; C1 removes the exploit, ACL
+  hardening raises the bar further — protected-host act).
+
 ## Observations queued for M0-T085 settlement (not defects)
 
 - O-001 (T078 DCV): handoff §6.4's fourth bullet (task-packet fields / gate assertions making
