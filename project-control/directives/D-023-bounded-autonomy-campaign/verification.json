@@ -1,7 +1,7 @@
 {
  "schema": "directive_verification/v2",
  "directive_id": "D-023",
- "authority_note": "Independent verification by directive-compliance-verifier (producer=orchestrator != verifier). M0-T078: ALL 18 applicable rows PASS at sha 7ca7f261 / manifest 6b76e8f6 (verbatim report project-control/reports/M0-T078-directive-verification.md). Remaining campaign tasks pending. Re-stamped to final identity commit 621f6732d after the evidence-only ledger commit; path-scoped material manifest verified byte-identical (6b76e8f6...).",
+ "authority_note": "Independent verification by directive-compliance-verifier (producer=orchestrator != verifier). M0-T078: 18/18 PASS. M0-T079: ALL 20 applicable rows PASS at sha baf2c3a5 / manifest c9f402ba (verbatim report M0-T079-directive-verification.md; R026/R029 record the round-1 M2 leak and its independently-verified round-2 closure rather than an all-addressed narrative). Remaining campaign tasks pending.",
  "producer": "orchestrator",
  "verifier": "directive-compliance-verifier",
  "task_verifications": [
@@ -243,150 +243,211 @@
     "D-023-R037",
     "D-023-R038"
    ],
-   "reviewed_sha": null,
-   "verified_at": null,
+   "reviewed_sha": "baf2c3a53e38bc6441a25c1942b38120b0fcd9e6",
+   "verified_at": "2026-08-21T00:00:00+00:00",
    "requirements": [
     {
      "id": "D-023-R001",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": null,
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "manifest audit_log records handoff read at capture (SHA-256 08aee279, 50147B/867L); producer report sec 1.1 derives task from R011/R037/R033 by quoted text",
+      "project-control/reports/M0-T079-directive-verification.md"
+     ],
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "baf2c3a53e38bc6441a25c1942b38120b0fcd9e6"
     },
     {
      "id": "D-023-R002",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": null,
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "task 2 of the chain, one branch, three merge commits; owner_touch.py verbatim extraction, recovery_probes re-exports moved names - upgrade not replacement",
+      "project-control/reports/M0-T079-directive-verification.md"
+     ],
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "baf2c3a53e38bc6441a25c1942b38120b0fcd9e6"
     },
     {
      "id": "D-023-R003",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": null,
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "producer commits e830c4b/41d0490/0ab986b touch only 15 files under tools/agent_supervisor + 9 test modules; existing stack extended in place; state_kv reused not a new table",
+      "project-control/reports/M0-T079-directive-verification.md"
+     ],
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "baf2c3a53e38bc6441a25c1942b38120b0fcd9e6"
     },
     {
      "id": "D-023-R004",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": null,
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "git diff --name-only f99d388 baf2c3a filtered to .claude/ returns nothing; 25-agent roster intact",
+      "project-control/reports/M0-T079-directive-verification.md"
+     ],
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "baf2c3a53e38bc6441a25c1942b38120b0fcd9e6"
     },
     {
      "id": "D-023-R005",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": null,
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "full tools/ diff grep for 13 agent-framework names returns zero; every added import stdlib or first-party; no dependency manifest in diff",
+      "project-control/reports/M0-T079-directive-verification.md"
+     ],
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "baf2c3a53e38bc6441a25c1942b38120b0fcd9e6"
     },
     {
      "id": "D-023-R006",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": null,
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "same grep, no vendored code; new modules cite internal AD-093/S-numbers not upstream APIs",
+      "project-control/reports/M0-T079-directive-verification.md"
+     ],
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "baf2c3a53e38bc6441a25c1942b38120b0fcd9e6"
     },
     {
      "id": "D-023-R010",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": null,
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "scope confined to bounded-mode area 1; github_flow/rotation/turnover/model/remote_approvals absent from producer commits; C3 placed in process.py so turnover_adapters.py (T080) stayed untouched",
+      "project-control/reports/M0-T079-directive-verification.md"
+     ],
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "baf2c3a53e38bc6441a25c1942b38120b0fcd9e6"
     },
     {
      "id": "D-023-R011",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": null,
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "bounded mode on existing supervisor; durable crash-safe budget (WAL+synchronous=FULL); deterministic seam stop (AS-3/4); nine breakers wired at real event sites; live probes; OFF by default; substantiated G3/G4/G5 across three rounds; 10-hr run correctly not claimed (behind R033)",
+      "project-control/reports/M0-T079-directive-verification.md"
+     ],
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "baf2c3a53e38bc6441a25c1942b38120b0fcd9e6"
     },
     {
      "id": "D-023-R023",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": null,
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "grep of all reports: only 10-hour hits are the requirement quoted, a test budget, and two disclaimers; producer report line 332/374 disclaim live/readiness citing R023",
+      "project-control/reports/M0-T079-directive-verification.md"
+     ],
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "baf2c3a53e38bc6441a25c1942b38120b0fcd9e6"
     },
     {
      "id": "D-023-R025",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": null,
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "no deployment/infra/service file in diff; supervisor SHADOW-ONLY, bounded mode OFF",
+      "project-control/reports/M0-T079-directive-verification.md"
+     ],
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "baf2c3a53e38bc6441a25c1942b38120b0fcd9e6"
     },
     {
      "id": "D-023-R026",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": null,
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "CLOSED at frozen identity, with history recorded (not an all-addressed narrative): round-1 identity e830c4b DID leak a live PAT on stdout of every start --json (G5 must-fix M2); independently caught at the gate; closed round 2 by redaction at the transmission boundary (cli.py:1758/1760, refusals.py:164/167); G5-rereview re-proved end-to-end through the real CLI in both modes with audit.jsonl/journal/runtime-dir side channels clean",
+      "project-control/reports/M0-T079-directive-verification.md"
+     ],
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "baf2c3a53e38bc6441a25c1942b38120b0fcd9e6"
     },
     {
      "id": "D-023-R027",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": null,
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "nothing in diff touches legal/zoning rules, services/api, or rule publication",
+      "project-control/reports/M0-T079-directive-verification.md"
+     ],
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "baf2c3a53e38bc6441a25c1942b38120b0fcd9e6"
     },
     {
      "id": "D-023-R028",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": null,
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "finalize() clears nothing (docstring + AS-21: durable values unchanged, emergency stop still false); T079 tightens holds - safe_but_forbidden no longer dispatched over (AS-12, exit 14); no gate/hold file in diff",
+      "project-control/reports/M0-T079-directive-verification.md"
+     ],
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "baf2c3a53e38bc6441a25c1942b38120b0fcd9e6"
     },
     {
      "id": "D-023-R029",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": null,
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "no .github/workflow/CI/branch-protection file in diff; no test weakened (five amended modules gained assertions net; typed exit 10-16 replace silent exit 0). History recorded: the round-1 M2 leak was a transient security-surface regression, caught at the gate and closed round 2 - named here rather than asserting no violation",
+      "project-control/reports/M0-T079-directive-verification.md"
+     ],
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "baf2c3a53e38bc6441a25c1942b38120b0fcd9e6"
     },
     {
      "id": "D-023-R030",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": null,
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "work on control/D-023-autonomy-campaign; main still d8b3899 untouched; only ordinary commits + three --no-ff merges; reflog shows no forced update/rebase/amend",
+      "project-control/reports/M0-T079-directive-verification.md"
+     ],
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "baf2c3a53e38bc6441a25c1942b38120b0fcd9e6"
     },
     {
      "id": "D-023-R031",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": null,
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "producer commits confined to tools/agent_supervisor/** + tests; the one out-of-scope ledger file in range was the orchestrator's gate commit not the producer; PR #241 checkout untouched",
+      "project-control/reports/M0-T079-directive-verification.md"
+     ],
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "baf2c3a53e38bc6441a25c1942b38120b0fcd9e6"
     },
     {
      "id": "D-023-R033",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": null,
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "RUNNABLE_MODES excludes the mode (loop.py:134); owner_enabled_bounded_auto default False; config.py zero occurrences of the enable string; durable limited_auto_enabled written False at all six sites never True; enable is per-launch argv only, added to OWNER_ACTIVATION_ARGUMENTS; no R595/checklist file in diff; G5 both rounds: R595 untouched",
+      "project-control/reports/M0-T079-directive-verification.md"
+     ],
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "baf2c3a53e38bc6441a25c1942b38120b0fcd9e6"
     },
     {
      "id": "D-023-R036",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": null,
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "live reconciliation returned before first mutation (D-023-capture-readiness.md: origin/main d8b3899f 0/0, PR states, 121 packets, collision-free IDs, ruleset, validators PASS, zero drift); work continued autonomously; deviations flagged to reviewers not owner",
+      "project-control/reports/M0-T079-directive-verification.md"
+     ],
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "baf2c3a53e38bc6441a25c1942b38120b0fcd9e6"
     },
     {
      "id": "D-023-R037",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": null,
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "NO CEILING EXISTS: UNLIMITED=None, no companion max constant, package-wide grep finds none; --run-wall-clock-seconds default None; check() returns not-exhausted on wall is None before arithmetic; 1e9s round-trips unclamped; zero/negative refused; source-guard itself tested (widened to run_budget/loop/cli/loop_breakers by C12); counter bounds are separate S13.8 axis from owner config.toml. SELF-EXTENSION CLOSED: round-1 G5 must-fix M1 fixed by _ABSENT sentinel + _resume() refusing five corruption shapes (G5-rereview re-ran attack+12 neighbours via raw SQLite, all refuse); round-3 D3 made budget_digest required (delta-review: strictly additive). Manifest note reframes 36000s as PROPOSED first run not ceiling, flagged for owner",
+      "project-control/reports/M0-T079-directive-verification.md"
+     ],
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "baf2c3a53e38bc6441a25c1942b38120b0fcd9e6"
     },
     {
      "id": "D-023-R038",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": null,
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "same grep as R005/R006 - no Superpowers/secondsky/wshobson anywhere; no downloaded agent/plugin code; no dependency manifest touched",
+      "project-control/reports/M0-T079-directive-verification.md"
+     ],
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "baf2c3a53e38bc6441a25c1942b38120b0fcd9e6"
     }
-   ]
+   ],
+   "reviewed_manifest_sha256": "c9f402baa4d6291bc998e02d3334d013c65a341a5263c6f943c4f591d5605112"
   },
   {
    "task_id": "M0-T080",

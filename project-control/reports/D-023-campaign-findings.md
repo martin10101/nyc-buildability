@@ -56,6 +56,10 @@ issued to producer; awaiting corrected identity + full re-review (G5 must clear 
   prose string) but contradicts C2's now-general "stdout is a transmission" docstring. Pool
   for a later status-command redaction pass / M0-T085 settlement.
 
+- **F-009 (T079 DCV concern #3, minor):** producer report line 332 labels its evidence disclaimer
+  "(D-023-R021)"; R021 applies to D-023-BOOTSTRAP and M0-T085, not M0-T079 — the disclaimer practice
+  is correct (serves R023), only the row number is wrong. Producer text preserved; fix at M0-T085.
+
 ## Observations queued for M0-T085 settlement (not defects)
 
 - O-001 (T078 DCV): handoff §6.4's fourth bullet (task-packet fields / gate assertions making
