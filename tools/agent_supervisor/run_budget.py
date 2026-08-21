@@ -401,8 +401,25 @@ class RunBudgetLedger:
         # The record states its own budget digest. A mismatch means the budget
         # block was rewritten under the record, which the conflict check below
         # would otherwise accept as "the persisted budget".
+        #
+        # D3 (G5 free hardening): the digest is REQUIRED, not merely checked when
+        # present. `if recorded_digest and ...` let a raw-DB writer skip the whole
+        # check by DELETING the field - the cheapest rewrite of the lot.
+        # `_first_launch` always writes it, so a legitimate record can never lack
+        # it, and demanding it costs nothing. (This does not pretend to stop a
+        # determined same-user adversary with raw DB access - a keyed digest
+        # cannot either, since the key would sit on the same host. Row deletion,
+        # a full forge, and elapsed/counter rewrites are correctly deferred to
+        # journal-DB ACL hardening at the owner checkpoint.)
         recorded_digest = str(record.get("budget_digest", "") or "")
-        if recorded_digest and recorded_digest != persisted.digest():
+        if not recorded_digest:
+            raise self._refuse(
+                "budget_record_malformed",
+                f"the persisted run-budget record for {self.run_id!r} carries no "
+                f"budget_digest; every record this build writes has one, so its absence "
+                f"means the record was rewritten. Refusing rather than accepting an "
+                f"unverifiable budget block")
+        if recorded_digest != persisted.digest():
             raise self._refuse(
                 "budget_record_tampered",
                 f"the persisted run-budget record for {self.run_id!r} does not match its "
@@ -546,7 +563,9 @@ class RunBudgetLedger:
                 True, "wall_clock", "budget_exhausted",
                 f"the owner-set wall-clock budget of {wall:g}s is spent "
                 f"({elapsed:.3f}s elapsed since {record['started_at_utc']}); the run stops "
-                f"deterministically rather than continuing past what the owner authorized",
+                f"deterministically rather than continuing past what the owner authorized. "
+                f"Start a NEW run id (`--run-id <fresh-id>`) to begin a run with a fresh "
+                f"budget; the spent record stays intact as evidence",
                 elapsed, wall, 0.0, ())
         return BudgetVerdict(False, "", "", "", elapsed, wall, wall - elapsed, ())
 
@@ -671,7 +690,14 @@ class RunBudgetLedger:
     # -- reporting -----------------------------------------------------------
 
     def report(self) -> dict[str, Any]:
-        """A read-only summary for the run payload and the audit record."""
+        """A read-only summary for the run payload and the audit record.
+
+        D1 (G3 R-2): `exit_detail` and the exhausted DIMENSION are part of the
+        summary. The remedy an operator needs - start a new `--run-id` - is
+        written into `BudgetVerdict.reason` and thence into the durable
+        `exit_detail`, and this report was the one place it did not travel, so
+        the refusal the operator actually reads never named it.
+        """
         record = self.record()
         verdict = self.check()
         return {
@@ -690,7 +716,12 @@ class RunBudgetLedger:
             "backwards_clock_observations": int(
                 record.get("backwards_clock_observations", 0) or 0),
             "exhausted": verdict.exhausted,
+            "exhausted_dimension": verdict.dimension,
+            "exhausted_counters": list(verdict.exhausted_counters),
             "exit_reason": record.get("exit_reason", ""),
+            # The operator-facing "what do I do now" text, for BOTH dimensions.
+            "exit_detail": (str(record.get("exit_detail", "") or "")
+                            or (verdict.reason if verdict.exhausted else "")),
         }
 
 

@@ -299,6 +299,17 @@ def recovery_refusal(outcome: Any, probe_report: ProbeReport | None,
                 "pending_effect_ids": list(outcome.pending_effect_ids)})
 
 
+def run_dispatched(run: Mapping[str, Any]) -> bool:
+    """Did this run actually DISPATCH anything?
+
+    D1 (G3 R-2): the loop being built is not the same as a unit being run. A run
+    whose budget was already spent is refused at the seam before its first cycle -
+    no unit, no provider call, nothing forwarded - and reporting that as
+    `dispatched: true` overstated it to exactly the reader with least context.
+    """
+    return bool(run.get("cycles") or run.get("stopped") != "budget_exhausted")
+
+
 def dispatched_run_refusal(mode: str, run: Mapping[str, Any]) -> refusals.Refusal | None:
     """The typed refusal for how a DISPATCHED run ended, or None if it just ended.
 
@@ -310,12 +321,26 @@ def dispatched_run_refusal(mode: str, run: Mapping[str, Any]) -> refusals.Refusa
     """
     stopped = str(run.get("stopped", "") or "")
     if stopped == "budget_exhausted":
+        # D1 (G3 R-2): the refusal an operator READS must name the remedy. The
+        # message was static and the detail was `report()`, which omitted
+        # `exit_detail` - so the `--run-id <fresh-id>` escape existed in the
+        # durable record and nowhere the operator would look. Both dimensions
+        # (wall clock and counter) now carry it, in the message and the detail.
+        report = run.get("run_budget") or {}
+        detail_text = str(report.get("exit_detail", "") or "")
+        dimension = str(report.get("exhausted_dimension", "") or "budget")
+        message = (f"the owner-set run budget is spent ({dimension}); the run stopped "
+                   f"deterministically between cycles and cleared no durable hold, flag, "
+                   f"deadline, or approval. Start a NEW run id (`--run-id <fresh-id>`) to "
+                   f"begin a run with a fresh budget; the spent record stays intact as "
+                   f"evidence.")
+        if detail_text:
+            message = f"{message} {detail_text}"
         return refusals.refusal(
             refusals.BUDGET_EXHAUSTED, reason_code="budget_exhausted",
-            message="the owner-set run budget is spent; the run stopped "
-                    "deterministically between cycles and cleared no durable hold, "
-                    "flag, deadline, or approval",
-            detail={"run_budget": run.get("run_budget")})
+            message=message,
+            detail={"run_budget": report, "remedy": "--run-id <fresh-id>",
+                    "cycles_executed": len(run.get("cycles", []))})
     if mode != MODE_LIMITED_AUTO:
         return None
     outcome = refusals.outcome_for_unattended_stop(stopped)

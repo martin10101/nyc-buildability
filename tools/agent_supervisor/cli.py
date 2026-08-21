@@ -226,6 +226,7 @@ from .start_gate import (
     missing_input_refusal,
     recovery_refusal,
     revalidation_note,
+    run_dispatched,
     seal_owner_gate_refusal,
     unprobed_revalidation,
 )
@@ -1750,9 +1751,8 @@ def _emit(args: argparse.Namespace, payload: dict[str, Any], lines: Sequence[str
     """Print a command's result, REDACTED, on stdout.
 
     C2 (G5 M2): stdout is a TRANSMISSION, so it obeys redaction.py's rule like
-    every other. It did not, and M0-T079 newly routed the raw `git remote
-    get-url` result into the payload - so an `x-access-token:` remote put a live
-    PAT into the log of every `start --json`.
+    every other. It did not, and M0-T079 routed the raw `git remote get-url`
+    result into the payload - so a PAT-bearing remote reached the log.
     """
     if args.json:
         print(json.dumps(redact_structure(payload).value, indent=2, default=str))
@@ -3059,7 +3059,8 @@ def cmd_start(args: argparse.Namespace) -> int:
                     reason_code=code, message=message,
                     detail={"mode": args.mode, "source": "run_budget"})
             else:
-                payload["dispatched"] = True
+                # D1 (G3 R-2): "the loop was built" is not "a unit ran".
+                payload["dispatched"] = run_dispatched(run)
                 payload["loop"] = run
                 payload["provider_calls_made"] = run.get("provider_calls", 0)
                 payload["stopped_because"] = run.get("stopped", "")
@@ -3114,7 +3115,9 @@ def cmd_start(args: argparse.Namespace) -> int:
     if manifest_verification is not None and not manifest_verification.ok:
         # M0-T072 (D-017-R045): a FAILED manifest/config verification is a
         # security halt, not an ordinary not-dispatchable report - callers and
-        # scripts must fail closed on it. Missing-input stops still exit 0.
+        # scripts must fail closed on it. Reached only when no typed refusal
+        # already claimed the exit code above; since C7 a missing input is one
+        # of those (stale_state / 13) rather than the exit 0 it used to be.
         return 1
     return 0
 

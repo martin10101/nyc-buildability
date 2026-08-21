@@ -46,19 +46,6 @@ class ProbeResult:
         return data
 
 
-def _ok(step: str, detail: str, **evidence: Any) -> ProbeResult:
-    return ProbeResult(step, True, True, "", detail, evidence)
-
-
-def _fail(step: str, reason_code: str, detail: str, **evidence: Any) -> ProbeResult:
-    return ProbeResult(step, False, True, reason_code, detail, evidence)
-
-
-def _unknown(step: str, reason_code: str, detail: str, **evidence: Any) -> ProbeResult:
-    """An UNDETERMINED fact. Fails closed exactly like a failed one."""
-    return ProbeResult(step, False, False, reason_code, detail, evidence)
-
-
 @dataclasses.dataclass(frozen=True)
 class ProbeReport:
     """Every probe this start ran, and the revalidation map recovery consumes."""
