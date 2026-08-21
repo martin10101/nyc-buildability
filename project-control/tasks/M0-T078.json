@@ -1,60 +1,61 @@
 {
- "task_id": "M0-T078",
- "title": "Engineering-reliability standard + skill router (D-023 item 5)",
- "task_type": "governance",
- "milestone_id": "M0",
- "objective": "Write docs/ENGINEERING_RELIABILITY_STANDARD.md (canonical standard + trigger matrix, only the vetted non-duplicative principles) and a short discriminating .claude/skills/engineering-reliability/SKILL.md router from scratch; optional concise discovery pointers in CLAUDE.md/AGENTS.md only if needed; context-budget check stays green; no scripts, downloaded assets, roster changes, or new framework; no performance claims without a frozen benchmark.",
- "business_reason": "D-023 Appendix-A item 5: project-owned reliability standard raising debugging/async/idempotency/retry/error/verification discipline without third-party code.",
- "inputs": [],
- "outputs": [],
- "dependencies": [],
- "allowed_paths": [
-  "docs/ENGINEERING_RELIABILITY_STANDARD.md",
-  ".claude/skills/engineering-reliability/SKILL.md",
-  "CLAUDE.md",
-  "AGENTS.md",
-  "project-control/reports/M0-T078-producer-report.md"
- ],
- "forbidden_paths": [
-  ".claude/ORCHESTRATION_POLICY.md",
-  ".claude/hooks",
-  ".claude/settings.json",
-  "apps",
-  "packages",
-  "project-control/directives/D-001-owner-directive-compliance-system",
-  "project-control/tasks",
-  "services",
-  "supabase",
-  "tools/directive_registry.py",
-  "tools/model_routing.py",
-  "tools/project_control.py",
-  "tools/validate_directive_compliance.py"
- ],
- "acceptance_scenarios": [],
- "required_gates": [
-  "G0",
-  "G2",
-  "G3",
-  "G5"
- ],
- "producer_agent": null,
- "reviewer_agents": [
-  "code-reviewer",
-  "security-reviewer",
-  "directive-compliance-verifier"
- ],
- "status": "backlog",
- "progress_percent": 0,
- "risks": [],
- "blockers": [],
- "created_at": "2026-08-21T18:06:50.553334+00:00",
- "updated_at": "2026-08-21T00:00:00+00:00",
- "directive_refs": [
-  {
-   "directive_id": "D-023",
-   "requirement_ids": "ALL"
-  }
- ],
- "directive_regime_version": "1.0",
- "directive_regime_entered_at": "2026-08-21T18:06:50.553334+00:00"
+  "task_id": "M0-T078",
+  "title": "Engineering-reliability standard + skill router (D-023 item 5)",
+  "task_type": "governance",
+  "milestone_id": "M0",
+  "objective": "Write docs/ENGINEERING_RELIABILITY_STANDARD.md (canonical standard + trigger matrix, only the vetted non-duplicative principles) and a short discriminating .claude/skills/engineering-reliability/SKILL.md router from scratch; optional concise discovery pointers in CLAUDE.md/AGENTS.md only if needed; context-budget check stays green; no scripts, downloaded assets, roster changes, or new framework; no performance claims without a frozen benchmark.",
+  "business_reason": "D-023 Appendix-A item 5: project-owned reliability standard raising debugging/async/idempotency/retry/error/verification discipline without third-party code.",
+  "inputs": [],
+  "outputs": [],
+  "dependencies": [],
+  "allowed_paths": [
+    "docs/ENGINEERING_RELIABILITY_STANDARD.md",
+    ".claude/skills/engineering-reliability/SKILL.md",
+    "CLAUDE.md",
+    "AGENTS.md",
+    "project-control/reports/M0-T078-producer-report.md"
+  ],
+  "forbidden_paths": [
+    ".claude/ORCHESTRATION_POLICY.md",
+    ".claude/hooks",
+    ".claude/settings.json",
+    "apps",
+    "packages",
+    "project-control/directives/D-001-owner-directive-compliance-system",
+    "project-control/tasks",
+    "services",
+    "supabase",
+    "tools/directive_registry.py",
+    "tools/model_routing.py",
+    "tools/project_control.py",
+    "tools/validate_directive_compliance.py"
+  ],
+  "acceptance_scenarios": [],
+  "required_gates": [
+    "G0",
+    "G2",
+    "G3",
+    "G5"
+  ],
+  "producer_agent": "orchestrator",
+  "reviewer_agents": [
+    "code-reviewer",
+    "security-reviewer",
+    "directive-compliance-verifier"
+  ],
+  "status": "claimed",
+  "progress_percent": 10,
+  "risks": [],
+  "blockers": [],
+  "created_at": "2026-08-21T18:06:50.553334+00:00",
+  "updated_at": "2026-08-21T18:14:34.958161+00:00",
+  "directive_refs": [
+    {
+      "directive_id": "D-023",
+      "requirement_ids": "ALL"
+    }
+  ],
+  "directive_regime_version": "1.0",
+  "directive_regime_entered_at": "2026-08-21T18:06:50.553334+00:00",
+  "worktree": "C:/Users/MLFLL/Downloads/nyc-zoning/wt-m0t078"
 }
