@@ -40,19 +40,31 @@ and runs the Section 15 matrices against all of it:
     anchor.py           Option A audit anchoring - MECHANISM ONLY (S13.12)   [P3]
     preflight.py        capability probes incl. the control-response probe   [P3]
     loop.py             the assembled shadow/supervised loop (S7, S12)       [P4]
+    errors.py           the loop's error taxonomy, shared by its modules     [T079]
+    owner_touch.py      the S16.7 owner-touch budget - a MEASUREMENT         [T079]
+    loop_breakers.py    which production event ticks which counter (S13.8)   [T079]
+    run_budget.py       durable owner-controlled run budgets (D-023 item 1)  [T079]
+    recovery_probes.py  LIVE S11.5 step-5 revalidation probes, fail-closed   [T079]
+    refusals.py         typed refusal outcomes + stable exit codes           [T079]
+    start_gate.py       the `start` pre-dispatch gate (owner gate + probes)  [T079]
     replay.py           the replay engine over replay_corpus/ (S12, S15)     [P4]
     cli.py              operator commands (S12.1) - none deferred
 
 NOT in this build (deliberately, and named rather than implied): push EXECUTION,
 Option A anchor PUBLICATION, the long-lived named-pipe IPC server loop, and the
-Phase 5 shadow pilot with its decision packet. `limited-auto` is not implemented
-at all.
+Phase 5 shadow pilot with its decision packet.
 
 The supervisor is a coordinator, evidence collector, and state machine. It is
 NOT a source of project truth: `project-control/` and git remain authoritative.
 
-Autonomy status: limited-auto is NOT implemented and cannot be enabled by this
-code. Activation is a separate explicit owner act (D-007 S12).
+Autonomy status (M0-T079, D-023 item 1): the bounded unattended mode
+(`limited-auto`) is IMPLEMENTED - durable owner-controlled run budgets with NO
+hardcoded maximum run length (D-023-R037), every circuit breaker wired to its
+real event site, live pre-dispatch revalidation probes, and typed structured
+refusals - and it is OFF. Every launch that does not carry the explicit
+per-launch owner enable is refused by name, and ACTIVATING it on a live host
+remains a separate explicit owner act under the R595 pre-activation path
+(D-007 S12; D-023-R033). Nothing in this package can turn it on by itself.
 """
 from __future__ import annotations
 

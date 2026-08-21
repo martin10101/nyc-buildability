@@ -25,9 +25,18 @@ MODES (S12) - there are three runnable shapes and one that is not:
   its digest, and only an explicit operator approval bound to that digest moves
   it to FORWARD_PROMPT. A debugging and fallback mode, not the destination.
 * **replay** - implemented in `replay.py`, not here: it makes no model calls.
-* **limited-auto** - refused BY NAME. `LoopConfig` raises `LimitedAutoRefused`
-  before anything is constructed. There is no code path in this module that can
-  enable it, and no default, parse error, migration, or downgrade reaches it.
+* **limited-auto** - the bounded unattended mode (D-023 item 1). It is OFF, and
+  `LoopConfig` still raises `LimitedAutoRefused` for every launch that does not
+  carry an EXPLICIT owner enable (`owner_enabled_bounded_auto`, set only by the
+  `--owner-enable-bounded-auto` operator flag). No default, parse error,
+  migration, downgrade, config file, or model can set that field, and
+  `RUNNABLE_MODES` deliberately does not contain the mode, so nothing reaches it
+  by widening a list. M0-T079 implemented the mode's machinery - durable
+  owner-controlled run budgets (`run_budget.py`), every circuit breaker wired to
+  its real event site, live pre-dispatch probes (`recovery_probes.py`), and
+  typed structured refusals (`refusals.py`) - which is what the directive asked
+  for; ACTIVATING it on a live host remains separately owner-gated (R595 /
+  D-023-R033) and nothing here lifts that.
 
 EXACTLY-ONCE FORWARDING (S15 state-machine family). A forwarded prompt is
 journaled in the transactional outbox BEFORE it is sent, under a message id
@@ -54,13 +63,29 @@ from typing import Any, Callable, Mapping, Sequence
 from . import CONTROLLER_VERSION
 from . import rotation
 from .audit_log import AuditChainError
+from . import loop_breakers as lb
 from .circuit_breakers import GAUGE_LIMITS
 from .claude_runner import QUOTA_EXHAUSTED_REASON, broker_permission_handler
 from .codex_reviewer import build_forwarded_prompt, stamp_forwarded_at
 from .config import DEFAULT_ORCHESTRATOR_MODEL_CHAIN, ModelChain
 from .durable_state import JournalError
+from .errors import LoopError
 from .evidence import STOP_FOR_OWNER, build_packet
 from .models import ClaudeCheckpoint, CodexDecision, QueuedAsk, digest_of, to_utc_iso
+# M0-T079: owner-touch accounting moved to its own module under the
+# modularity rule. Re-exported here so every existing caller, test, and
+# `from .loop import ...` import site is unchanged.
+from .owner_touch import (
+    COUNTED_TOUCH_KINDS,
+    OWNER_TOUCH_KEY,
+    TOUCH_BLOCKING_ASK,
+    TOUCH_NOTIFY,
+    TOUCH_SUPERVISED_APPROVAL,
+    TOUCH_SYNCHRONOUS_STOP,
+    BudgetReport,
+    OwnerTouch,
+    OwnerTouchLedger,
+)
 from .policy import (
     ASK,
     DENY_AND_HALT,
@@ -102,9 +127,17 @@ MODE_SHADOW = "shadow"
 MODE_SUPERVISED = "supervised"
 MODE_LIMITED_AUTO = "limited-auto"
 
-#: The modes THIS module can run. `replay` lives in `replay.py`; `limited-auto`
-#: is refused by name and is not implemented anywhere.
+#: The modes THIS module runs WITHOUT an owner enable. `replay` lives in
+#: `replay.py`. `limited-auto` is deliberately ABSENT: it is owner-gated, and
+#: keeping it out of this tuple is what makes "no default, parse error,
+#: migration, or downgrade reaches it" true structurally rather than by comment.
 RUNNABLE_MODES: tuple[str, ...] = (MODE_SHADOW, MODE_SUPERVISED)
+
+#: Modes that exist, are implemented, and run ONLY behind an explicit per-launch
+#: owner enable. Membership here authorizes nothing on its own: `LoopConfig`
+#: refuses every one of these unless `owner_enabled_bounded_auto` is True, which
+#: only the operator flag sets (R595 / D-023-R033).
+OWNER_GATED_MODES: tuple[str, ...] = (MODE_LIMITED_AUTO,)
 
 ALL_MODE_NAMES: tuple[str, ...] = (MODE_REPLAY, MODE_SHADOW, MODE_SUPERVISED,
                                    MODE_LIMITED_AUTO)
@@ -209,25 +242,19 @@ SESSION_ROLE_ORCHESTRATOR = "orchestrator"
 SESSION_ROLES: tuple[str, ...] = (SESSION_ROLE_ORCHESTRATOR,)
 
 
-class LoopError(Exception):
-    """The loop refused to do something. Always carries a code."""
-
-    def __init__(self, code: str, message: str) -> None:
-        super().__init__(f"{code}: {message}")
-        self.code = code
-        self.message = message
-
-
 class LimitedAutoRefused(LoopError):
-    """`limited-auto` was named. Refused by name, before anything is built."""
+    """`limited-auto` was named without the owner enable. Refused before anything is built."""
 
     def __init__(self) -> None:
         super().__init__(
             "limited_auto_refused",
-            "limited-auto is DISABLED and is not implemented by this build. It is never "
-            "reachable from a configuration default, a missing value, a parse error, a "
-            "migration, or a downgrade. Enabling it is a separate explicit owner "
-            "activation recorded through directive compliance (D-007 S12).")
+            "limited-auto is DISABLED for this launch. The bounded unattended mode is "
+            "implemented (M0-T079: durable owner-controlled run budgets, wired circuit "
+            "breakers, live pre-dispatch probes, typed refusals) but it is OFF by default "
+            "and is never reachable from a configuration default, a missing value, a parse "
+            "error, a migration, or a downgrade. Enabling it is a separate explicit owner "
+            "activation recorded through directive compliance (D-007 S12; R595 / "
+            "D-023-R033), supplied per launch as --owner-enable-bounded-auto.")
 
 
 # --------------------------------------------------------------------------
@@ -258,16 +285,32 @@ class LoopConfig:
     #: preserves every existing caller (a run the owner did not explicitly authorize
     #: never auto-redispatches a worker).
     turnover_actuation_authorized: bool = False
+    #: M0-T079 (D-023 item 1; R595 / D-023-R033): the owner's EXPLICIT per-launch
+    #: enable for the bounded unattended mode. Set to True ONLY by the
+    #: `--owner-enable-bounded-auto` operator flag (cli.py). Default False means
+    #: `mode="limited-auto"` raises `LimitedAutoRefused` exactly as it always has,
+    #: so no configuration default, parse error, migration, or downgrade reaches
+    #: the mode - and every existing caller is byte-for-byte unchanged.
+    owner_enabled_bounded_auto: bool = False
 
     def __post_init__(self) -> None:
-        if self.mode == MODE_LIMITED_AUTO:
+        if self.mode == MODE_LIMITED_AUTO and not self.owner_enabled_bounded_auto:
             raise LimitedAutoRefused()
-        if self.mode not in RUNNABLE_MODES:
+        if (self.mode not in RUNNABLE_MODES
+                and not (self.mode in OWNER_GATED_MODES
+                         and self.owner_enabled_bounded_auto)):
             raise LoopError(
                 "unknown_mode",
                 f"{self.mode!r} is not a runnable loop mode; expected one of "
                 f"{list(RUNNABLE_MODES)} (replay runs in replay.py, which makes no model "
-                f"calls)")
+                f"calls; {list(OWNER_GATED_MODES)} additionally require an explicit owner "
+                f"enable)")
+        if self.owner_enabled_bounded_auto and self.mode not in OWNER_GATED_MODES:
+            raise LoopError(
+                "owner_enable_without_gated_mode",
+                f"the bounded-mode owner enable was supplied for mode {self.mode!r}, which "
+                f"is not owner-gated; an enable that does not name the mode it enables is "
+                f"refused rather than ignored")
         if not isinstance(self.max_cycles, int) or self.max_cycles < 1:
             raise LoopError("bad_max_cycles", "max_cycles must be a positive integer bound")
         if not isinstance(self.owner_touch_budget, int) or self.owner_touch_budget < 0:
@@ -281,117 +324,27 @@ class LoopConfig:
 
     @property
     def forwards(self) -> bool:
-        """True only for supervised. Shadow forwards nothing, ever."""
-        return self.mode == MODE_SUPERVISED
+        """True for supervised and for the owner-enabled bounded mode.
 
+        Shadow forwards nothing, ever. The two forwarding modes differ in WHO
+        authorizes each forward, not in whether one happens: supervised holds
+        every prompt for an operator approval bound to its digest; bounded
+        forwards an AUTO-tier prompt itself, under the durable run budget and the
+        wired circuit breakers, and stops synchronously for anything else.
+        """
+        return self.mode in (MODE_SUPERVISED, MODE_LIMITED_AUTO)
 
-# --------------------------------------------------------------------------
-# Owner-touch accounting (S12, S16.7)
-# --------------------------------------------------------------------------
+    @property
+    def unattended(self) -> bool:
+        """True only for the owner-enabled bounded mode: nobody is watching.
 
-TOUCH_SYNCHRONOUS_STOP = "synchronous_stop"
-TOUCH_BLOCKING_ASK = "blocking_ask"
-TOUCH_SUPERVISED_APPROVAL = "supervised_mode_approval"
-TOUCH_NOTIFY = "notify"
-
-#: Kinds that count against the S16.7 budget. Supervised-mode approvals are a
-#: property of the DEBUGGING mode, not of the target operating mode, so they are
-#: recorded and reported but never counted - counting them would make the budget
-#: measure the wrong thing. NOTIFY never blocks and never counts.
-COUNTED_TOUCH_KINDS: frozenset[str] = frozenset({
-    TOUCH_SYNCHRONOUS_STOP, TOUCH_BLOCKING_ASK,
-})
-
-OWNER_TOUCH_KEY = "owner_touch_ledger"
-
-
-@dataclasses.dataclass(frozen=True)
-class OwnerTouch:
-    """One moment the owner would have had to act."""
-
-    kind: str
-    reason_code: str
-    reason: str
-    cycle: int
-    counted: bool
-    basis: str = ""
-    at_utc: str = ""
-
-    def to_dict(self) -> dict[str, Any]:
-        return dataclasses.asdict(self)
-
-
-@dataclasses.dataclass(frozen=True)
-class BudgetReport:
-    """What the counter measured. It authorizes nothing (S16.7)."""
-
-    budget: int
-    counted: int
-    within_budget: bool
-    excess: int
-    touches: tuple[OwnerTouch, ...]
-    authorizes_nothing: bool = True
-    note: str = (
-        "The budget is a MEASUREMENT. Every excess stop must be dispositioned either as an "
-        "accepted permanent gate or as a PROPOSED deterministic policy change that has "
-        "passed security and control-plane review, replay testing, and explicit owner "
-        "approval. The budget itself authorizes nothing (D-007 S16.7).")
-
-    def to_dict(self) -> dict[str, Any]:
-        data = dataclasses.asdict(self)
-        data["touches"] = [t.to_dict() for t in self.touches]
-        return data
-
-
-class OwnerTouchLedger:
-    """Durable count of would-be synchronous stops.
-
-    Persisted in the journal's state table keyed by run, so a restart neither
-    loses a touch nor counts one twice. It exposes no mutator of policy, of
-    authority, or of any grant: reading this ledger can never widen anything.
-    """
-
-    def __init__(self, journal: Any, *, run_id: str, budget: int) -> None:
-        self.journal = journal
-        self.run_id = run_id
-        self.budget = int(budget)
-
-    def _key(self) -> str:
-        return f"{OWNER_TOUCH_KEY}/{self.run_id}"
-
-    def all_touches(self) -> tuple[OwnerTouch, ...]:
-        raw = self.journal.get_state(self._key(), [])
-        if not isinstance(raw, list):
-            return ()
-        known = {f.name for f in dataclasses.fields(OwnerTouch)}
-        return tuple(OwnerTouch(**{k: v for k, v in item.items() if k in known})
-                     for item in raw if isinstance(item, dict))
-
-    def record(self, kind: str, *, reason_code: str, reason: str, cycle: int,
-               basis: str = "") -> OwnerTouch:
-        if kind not in (TOUCH_SYNCHRONOUS_STOP, TOUCH_BLOCKING_ASK,
-                        TOUCH_SUPERVISED_APPROVAL, TOUCH_NOTIFY):
-            raise LoopError("unknown_touch_kind", f"{kind!r} is not an owner-touch kind")
-        touch = OwnerTouch(
-            kind=kind, reason_code=reason_code, reason=reason, cycle=cycle,
-            counted=kind in COUNTED_TOUCH_KINDS, basis=basis, at_utc=to_utc_iso())
-        existing = [t.to_dict() for t in self.all_touches()]
-        existing.append(touch.to_dict())
-        self.journal.set_state(self._key(), existing)
-        return touch
-
-    def counted(self) -> int:
-        return sum(1 for t in self.all_touches() if t.counted)
-
-    def report(self) -> BudgetReport:
-        touches = self.all_touches()
-        counted = sum(1 for t in touches if t.counted)
-        return BudgetReport(
-            budget=self.budget,
-            counted=counted,
-            within_budget=counted <= self.budget,
-            excess=max(0, counted - self.budget),
-            touches=touches)
+        The one behavioural consequence inside the loop: an AUTO-tier forward is
+        not parked at WAIT_FOR_OWNER. Every other stop - ASK, HARD-DENY,
+        HALT_UNSAFE, STOP_FOR_OWNER, a tripped breaker, an exhausted budget - is
+        identical to supervised, because an unattended run may only ever do LESS
+        than a supervised one, never more.
+        """
+        return self.mode == MODE_LIMITED_AUTO
 
 
 # --------------------------------------------------------------------------
@@ -503,6 +456,10 @@ class LoopRun:
     #: V1.2 (D-004): one record per seam rotation performed (model downgrade or
     #: context-threshold crossing). Empty on a run that never rotated.
     rotations: tuple[dict[str, Any], ...] = ()
+    #: M0-T079 (D-023 item 1): the durable owner-controlled run budget's report -
+    #: what the owner set, how much was spent, and whether it stopped the run.
+    #: None on a run with no budget ledger, which is also an unlimited run.
+    run_budget: dict[str, Any] | None = None
 
     def to_dict(self) -> dict[str, Any]:
         return {
@@ -515,7 +472,10 @@ class LoopRun:
             "forwarded_message_ids": list(self.forwarded_message_ids),
             "provider_calls": self.provider_calls,
             "rotations": [dict(r) for r in self.rotations],
-            "limited_auto_enabled": False,
+            "run_budget": dict(self.run_budget) if self.run_budget else None,
+            # The bounded unattended mode is off unless the owner enabled it for
+            # THIS launch; a run object reports what it actually was.
+            "limited_auto_enabled": self.mode == MODE_LIMITED_AUTO,
         }
 
 
@@ -917,6 +877,7 @@ class SupervisedLoop:
         executable_identity: Mapping[str, Any] | None = None,
         resource_sampler: Any = None,
         worker_turnover: Any = None,
+        run_budget: Any = None,
     ) -> None:
         self.config = config
         self.journal = journal
@@ -985,6 +946,18 @@ class SupervisedLoop:
         #: The last valid checkpoint id this run received - the safe checkpoint a
         #: turnover redispatch resumes the SAME bounded unit from.
         self._last_checkpoint_id = ""
+        # M0-T079 (D-023 item 1): the durable owner-controlled run budget
+        # (`run_budget.RunBudgetLedger`). Default None keeps every existing caller
+        # and test unchanged - with no ledger there is no timer, which is also
+        # exactly what an unlimited budget means (D-023-R037). When one is
+        # injected the loop asks it, between cycles only, whether the run may take
+        # another step, and persists the breaker tallies through it so a
+        # crash-resume cannot hand the run back an allowance it already spent.
+        self.run_budget = run_budget
+        #: The checkpoint id the PREVIOUS cycle received, for the no-progress
+        #: breaker. Distinct from `_last_checkpoint_id`, which is the safe
+        #: checkpoint a turnover resumes from and is updated in the same place.
+        self._previous_checkpoint_id = ""
 
     # -- guards -------------------------------------------------------------
 
@@ -1026,6 +999,29 @@ class SupervisedLoop:
         if verdict.warning:
             return False, verdict.message
         return False, ""
+
+    # -- M0-T079: the counter breakers, at their real event sites -------------
+    #
+    # WHICH counter one production event ticks, how the per-day window gets its
+    # UTC day, when a forward counts as progress, and how the tallies reach
+    # durable storage all live in `loop_breakers.py` - they change for entirely
+    # different reasons than the S7 wiring this module owns. These are the thin
+    # delegating methods; the event map is documented there.
+
+    def _daily_breaker(self, name: str) -> tuple[bool, str]:
+        return lb.tick_daily(self.breakers, self.run_budget, name)
+
+    def _breakers_for_event(self, *names: str) -> tuple[bool, str, str]:
+        return lb.tick_event(self.breakers, self.run_budget, *names)
+
+    def _reset_breaker(self, name: str) -> None:
+        lb.reset(self.breakers, name)
+
+    def _persist_breaker_tallies(self) -> None:
+        lb.persist(self.breakers, self.run_budget)
+
+    def _record_forward_progress(self, decision: "CodexDecision | str | None") -> None:
+        lb.record_progress(self.breakers, decision)
 
     def _check_resources(self, cycle: int, notify: list[str]) -> tuple[bool, str]:
         """Sample live resources and evaluate the R207 gauge breakers (AS-3).
@@ -1623,6 +1619,26 @@ class SupervisedLoop:
             result.notify_events = tuple(notify)
             return result
 
+        def breaker_stop(name: str, message: str, *, state: str,
+                         trigger: str = "", note: str = "") -> CycleResult:
+            """M0-T079: one synchronous pause for a tripped S13.8 counter.
+
+            The shape is the same at every event site: take the S7 edge when
+            there is one to take (`trigger` empty ends the cycle at its current
+            legal state instead), record the owner touch, persist the tallies so
+            the trip survives a restart, and stop.
+            """
+            if trigger:
+                self.machine.transition(state, trigger,
+                                        detail={"cycle": cycle, "breaker": name})
+            touches.append(self._touch(
+                TOUCH_SYNCHRONOUS_STOP, reason_code="circuit_breaker_hard_threshold",
+                reason=message, cycle=cycle,
+                basis=f"S13.8 hard threshold ({name}){note}"))
+            self._persist_breaker_tallies()
+            return stop("circuit_breaker_hard_threshold", message,
+                        self.machine.current_state if trigger else state)
+
         self._guard()
 
         # --- START_CLAUDE ---------------------------------------------------
@@ -1634,6 +1650,15 @@ class SupervisedLoop:
                 f"Refusing rather than attempting a transition the S7 table does not "
                 f"contain: an illegal transition here would mean the caller and the "
                 f"journal disagree about where the run is")
+
+        # M0-T079: the per-task CYCLE counter, at the one place a cycle begins.
+        # Like the resource guard below it stops at the current LEGAL entry state:
+        # no transition, no stranding, and no provider call has happened yet.
+        tripped, message = self._breaker("supervisor_cycles_per_task")
+        if tripped:
+            return breaker_stop("supervisor_cycles_per_task", message, state=entry)
+        if message:
+            notify.append("circuit_breaker_warning")
 
         # AS-3: sample live resources BEFORE spending a provider call. A trip (a
         # measured limit crossing, or a sampling outage of a measurable gauge)
@@ -1667,6 +1692,20 @@ class SupervisedLoop:
             notify.append("circuit_breaker_warning")
 
         # --- run the bounded unit -------------------------------------------
+        # M0-T079: the per-task and per-day MODEL-CALL counters, at a real
+        # provider dispatch. Ticked BEFORE the call, so a trip stops the run
+        # without spending the call it would have been the (N+1)th of.
+        tripped, name, message = self._breakers_for_event(
+            "model_calls_per_task", "model_calls_per_day")
+        if tripped:
+            return breaker_stop(
+                name, message, state=self.machine.current_state,
+                trigger=("unsafe_condition"
+                         if self.machine.current_state == CLAUDE_RUNNING else ""),
+                note=", before the provider dispatch")
+        if message:
+            notify.append("circuit_breaker_warning")
+
         # G3 V-1: the approval broker is now WIRED. In supervised mode each
         # in-scope tool request the worker makes routes through the four-tier
         # policy + broker; an AUTO/approved tool is PERMITTED and executes. In
@@ -1708,6 +1747,21 @@ class SupervisedLoop:
                               "never success (S14)")
                 else:
                     reason = "the worker exited without a valid checkpoint"
+            # M0-T079: a unit that produced no valid checkpoint IS an invalid
+            # output, and this is the site where that is known. The tally is
+            # durable, so the counter measures consecutive invalid outputs across
+            # the crash-resumes an unattended run is made of, not just within one
+            # process. The cycle stops for its own specific reason either way; a
+            # TRIP is surfaced as a note and a NOTIFY rather than being allowed to
+            # mask a paramount ambiguous-effect or turnover stop below.
+            invalid_tripped, invalid_message = self._breaker("consecutive_invalid_outputs")
+            if invalid_tripped:
+                notify.append("circuit_breaker_warning")
+                result.notes += ("consecutive_invalid_outputs_tripped",)
+                reason = f"{reason}. {invalid_message}"
+            elif invalid_message:
+                notify.append("circuit_breaker_warning")
+            self._persist_breaker_tallies()
             if unreconciled:
                 self.machine.transition(
                     PAUSED_RECOVERY, "unsafe_condition",
@@ -1825,6 +1879,31 @@ class SupervisedLoop:
                     "checkpoint_digest": digest_of(checkpoint.to_dict())})
         land(CHECKPOINT_RECEIVED)
         result.checkpoint_id = checkpoint.checkpoint_id
+        # M0-T079: a VALID checkpoint clears the invalid-output streak. Only a
+        # streak of invalid outputs is a livelock; one bad unit followed by a good
+        # one is ordinary.
+        self._reset_breaker("consecutive_invalid_outputs")
+        # M0-T079: the no-progress counter, at its semantic site. A unit that
+        # returns the SAME checkpoint id as the previous cycle advanced nothing -
+        # the classic unattended livelock, where the worker keeps answering and
+        # the work stands still. A new checkpoint id resets the streak.
+        if (self._previous_checkpoint_id
+                and checkpoint.checkpoint_id == self._previous_checkpoint_id):
+            tripped, message = self._breaker("consecutive_no_progress")
+            if tripped:
+                # `checkpoint_unsafe` is the S7 edge out of CHECKPOINT_RECEIVED for
+                # "the checkpoint itself indicated a S4.5 condition", and a
+                # checkpoint that repeats its predecessor without advancing is
+                # exactly such a condition. No new edge is needed.
+                return breaker_stop(
+                    "consecutive_no_progress", message, state=PAUSED_RECOVERY,
+                    trigger="checkpoint_unsafe",
+                    note=f": the worker returned checkpoint {checkpoint.checkpoint_id!r} again")
+            if message:
+                notify.append("circuit_breaker_warning")
+        else:
+            self._reset_breaker("consecutive_no_progress")
+        self._previous_checkpoint_id = checkpoint.checkpoint_id
         # M0-T054: remember the safe checkpoint a later turnover would resume from.
         self._last_checkpoint_id = checkpoint.checkpoint_id
         if self.breakers is not None:
@@ -1885,12 +1964,34 @@ class SupervisedLoop:
             return stop("circuit_breaker_hard_threshold", message, PAUSED_RECOVERY)
         if message:
             notify.append("circuit_breaker_warning")
+        # M0-T079: the reviewer is the SECOND provider dispatch in a cycle, so it
+        # ticks the same model-call counters. Before the call, for the same reason.
+        tripped, name, message = self._breakers_for_event(
+            "model_calls_per_task", "model_calls_per_day")
+        if tripped:
+            return breaker_stop(name, message, state=PAUSED_RECOVERY,
+                                trigger="unsafe_condition",
+                                note=", before the review dispatch")
+        if message:
+            notify.append("circuit_breaker_warning")
         self.provider_calls += 1
         outcome = self.reviewer.review(
             packet.to_dict(), expected_task_id=self.config.task_id,
             expected_checkpoint_id=checkpoint.checkpoint_id)
         notify.extend(getattr(outcome, "notify_events", ()) or ())
         if not outcome.ok:
+            # M0-T079: a reviewer answer that never validated is an invalid
+            # OUTPUT; a reviewer that was unavailable is not. Only the former
+            # ticks the livelock counter (`schema_retry_exhausted` is the reviewer's
+            # own code for "every bounded retry came back schema-invalid").
+            if str(getattr(outcome, "error_code", "")) == "schema_retry_exhausted":
+                invalid_tripped, invalid_message = self._breaker(
+                    "consecutive_invalid_outputs")
+                if invalid_tripped or invalid_message:
+                    notify.append("circuit_breaker_warning")
+                if invalid_tripped:
+                    result.notes += ("consecutive_invalid_outputs_tripped",)
+                self._persist_breaker_tallies()
             self.machine.transition(
                 WAIT_FOR_OWNER, "codex_unavailable_ask",
                 detail={"cycle": cycle, "error": outcome.error_code,
@@ -1997,6 +2098,22 @@ class SupervisedLoop:
             return stop("stage_complete", "the authorized stage is evidenced complete",
                         COMPLETE)
 
+        # M0-T079: the REVISION-LOOP counter, at its semantic site. A REVISE says
+        # the last unit's work was not accepted; a run of them is the reviewer and
+        # the worker circling. Any other decision that reaches here (CONTINUE)
+        # ends the streak, so the counter measures CONSECUTIVE revisions as its
+        # name claims. The trip stops BEFORE the revision prompt is forwarded -
+        # forwarding it is what would extend the loop.
+        if decision.decision == "REVISE":
+            tripped, message = self._breaker("consecutive_revision_loops")
+            if tripped:
+                return breaker_stop("consecutive_revision_loops", message,
+                                    state=PREFLIGHT, trigger="cycle_closed")
+            if message:
+                notify.append("circuit_breaker_warning")
+        else:
+            self._reset_breaker("consecutive_revision_loops")
+
         # CONTINUE / REVISE: there is a prompt to forward.
         if verdict.tier == ASK:
             self.machine.transition(WAIT_FOR_OWNER, "tier_ask_blocking",
@@ -2061,6 +2178,46 @@ class SupervisedLoop:
             result.notify_events = tuple(notify)
             return result
 
+        # M0-T079: the per-task and per-day EXTERNAL-WRITE counters. Forwarding a
+        # prompt into the recorded worker session is the loop's own external
+        # write - the outbox row is a commitment to send, and the send leaves this
+        # process. Ticked BEFORE the write, so a trip means nothing was sent.
+        # (Modeled external effects that go through `ExternalEffectJournal` live
+        # in github_flow.py, which a later task owns and which this one does not
+        # touch.)
+        tripped, name, message = self._breakers_for_event(
+            "external_writes_per_task", "external_writes_per_day")
+        if tripped:
+            return breaker_stop(name, message, state=PREFLIGHT,
+                                trigger="cycle_closed",
+                                note=", before the outbound send")
+        if message:
+            notify.append("circuit_breaker_warning")
+
+        # --- BOUNDED (limited-auto): forward the AUTO-tier prompt directly ---
+        # M0-T079. The owner-enabled unattended mode reaches this line having
+        # already run everything above it: the breakers, the budget, the policy
+        # tiers, and the HARD-DENY / HALT_UNSAFE / STOP_FOR_OWNER / ASK stops,
+        # all identical to supervised. The ONLY difference is that an AUTO-tier
+        # forward is not parked for a human who is not there - it takes the S7
+        # table's own `tier_auto` edge, which has always meant "the deterministic
+        # policy classified the next action AUTO within packet authority". The
+        # forward itself below is the SAME code both modes run, so an unattended
+        # run can never take a different path to the send than a supervised one.
+        if self.config.unattended:
+            self.machine.transition(
+                FORWARD_PROMPT, "tier_auto",
+                detail={"cycle": cycle, "prompt_digest": prompt_digest,
+                        "reason_code": verdict.reason_code,
+                        "decision": decision.decision,
+                        "note": "bounded unattended forward under the owner-enabled mode; "
+                                "AUTO tier within packet authority, inside the durable run "
+                                "budget and the wired circuit breakers"})
+            land(FORWARD_PROMPT)
+            return self._send_forward(forwarded_prompt, cycle=cycle, decision=decision,
+                                      result=result, land=land, touches=touches,
+                                      notify=notify, prompt_digest=prompt_digest)
+
         # --- SUPERVISED: the owner approves each forwarded prompt -----------
         self.machine.transition(
             WAIT_FOR_OWNER, "tier_ask_blocking",
@@ -2110,28 +2267,48 @@ class SupervisedLoop:
                                 detail={"cycle": cycle, "prompt_digest": prompt_digest})
         land(FORWARD_PROMPT)
 
-        # M0-T048 (R137): append the non-authoritative FORWARDED AT clock at the
-        # ACTUAL forward, excluded from the binding. The parked body stays timestamp-
-        # free; the message id keys on the approval digest, not these bytes, so the
-        # stamp never affects exactly-once identity.
+        return self._send_forward(forwarded_prompt, cycle=cycle, decision=decision,
+                                  result=result, land=land, touches=touches,
+                                  notify=notify, prompt_digest=prompt_digest)
+
+    def _send_forward(self, forwarded_prompt: str, *, cycle: int,
+                      decision: CodexDecision, result: CycleResult,
+                      land: Callable[[str], None], touches: Sequence[OwnerTouch],
+                      notify: Sequence[str], prompt_digest: str) -> CycleResult:
+        """Send the approved/AUTO prompt exactly once and close the cycle.
+
+        The single send path both forwarding modes take, entered only from
+        FORWARD_PROMPT. Supervised arrives here after an operator approval bound
+        to `prompt_digest`; the bounded mode arrives after the `tier_auto` edge.
+        Sharing the code is the point: an unattended run cannot reach the outbox
+        by a route a supervised run does not also take.
+
+        M0-T048 (R137): the non-authoritative FORWARDED AT clock is appended at
+        the ACTUAL forward and excluded from the binding. The parked body stays
+        timestamp-free, and the message id keys on the approval digest rather
+        than these bytes, so the stamp never affects exactly-once identity.
+        """
         forward = self.forward_exactly_once(stamp_forwarded_at(forwarded_prompt),
                                             cycle=cycle, decision=decision)
         result.forward = forward
         result.forwarded = forward.sent
         if forward.sent:
             self._forwarded.append(forward.message_id)
-            self.machine.transition(CLAUDE_RUNNING, "prompt_forwarded",
-                                    detail={"cycle": cycle,
-                                            "message_id": forward.message_id})
+            self.machine.transition(
+                CLAUDE_RUNNING, "prompt_forwarded",
+                detail={"cycle": cycle, "message_id": forward.message_id,
+                        "unattended": self.config.unattended})
             land(CLAUDE_RUNNING)
-            # AS-4 (G5 V1.2.3 LOW): the held prompt has now been approved AND
-            # forwarded, so consume its pending_prompt record. Without this a
-            # later WAIT for a different ask would still carry this cycle's
-            # digest and could be re-approved against a stale record.
-            consume_pending_prompt(self.journal, self.run_id,
-                                   prior_digest=prompt_digest)
-            if self.breakers is not None:
-                self.breakers.record_progress()
+            if not self.config.unattended:
+                # AS-4 (G5 V1.2.3 LOW): the held prompt has now been approved AND
+                # forwarded, so consume its pending_prompt record. Without this a
+                # later WAIT for a different ask would still carry this cycle's
+                # digest and could be re-approved against a stale record. The
+                # bounded mode parks nothing, so it has nothing to consume.
+                consume_pending_prompt(self.journal, self.run_id,
+                                       prior_digest=prompt_digest)
+            self._record_forward_progress(decision)
+        self._persist_breaker_tallies()
         result.owner_touches = tuple(touches)
         result.notify_events = tuple(notify)
         return result
@@ -2422,6 +2599,19 @@ class SupervisedLoop:
         parked_cycle = record.get("cycle")
         if not isinstance(parked_cycle, int) or parked_cycle < 1:
             parked_cycle = 1
+        # M0-T079: the cross-process resume performs the SAME external write as an
+        # in-loop forward, so it ticks the same counters, before the send. A trip
+        # refuses the resume with no send and no state change, like every other
+        # fail-closed guard on this path.
+        tripped, name, message = self._breakers_for_event(
+            "external_writes_per_task", "external_writes_per_day")
+        self._persist_breaker_tallies()
+        if tripped:
+            raise LoopError(
+                "circuit_breaker_hard_threshold",
+                f"refusing to complete the approved forward: {message} (breaker {name}); "
+                f"the outbound send is an external write and the run has reached its "
+                f"owner-set bound for them")
         # Append the non-authoritative clock at the actual forward (R137); the parked
         # `body` stays deterministic and the message id keys on the approval binding.
         forward = self._resume_forward(
@@ -2439,8 +2629,7 @@ class SupervisedLoop:
                     "duplicate_suppressed": forward.duplicate_suppressed})
         if forward.sent:
             self._forwarded.append(forward.message_id)
-            if self.breakers is not None:
-                self.breakers.record_progress()
+            self._record_forward_progress(str(record.get("decision") or "CONTINUE"))
         # Delete the record only AFTER the forward + transition succeeded, mirroring
         # the in-loop consume point, so a crash before this leaves the approved
         # record intact for an idempotent retry rather than losing the handoff.
@@ -2450,12 +2639,38 @@ class SupervisedLoop:
 
     # -- the run ------------------------------------------------------------
 
+    # -- M0-T079: the durable run budget, consulted only at a safe seam -------
+
+    def _budget_stop(self) -> str:
+        """`budget_exhausted` when the owner-set budget is spent, else "".
+
+        Called ONLY between cycles (S11.2: an in-flight unit is never interrupted
+        for pressure, and a budget is pressure). See `loop_breakers.budget_stop`.
+        """
+        return lb.budget_stop(self.run_budget, audit=self.audit, run_id=self.run_id)
+
     def run(self, first_prompt: str) -> LoopRun:
         """Run bounded cycles until the loop stops or the cycle bound is reached."""
         cycles: list[CycleResult] = []
         prompt = first_prompt
         stopped = ""
         start_index = 1
+        # M0-T079: reconcile the persisted breaker tallies BEFORE anything runs,
+        # so a crash-resume re-enters with the allowance it left behind rather
+        # than a fresh one, and refuse immediately when the budget it is resuming
+        # into is already spent.
+        if self.run_budget is not None:
+            self.run_budget.restore_counters(self.breakers)
+            exhausted = self._budget_stop()
+            if exhausted:
+                return LoopRun(
+                    run_id=self.run_id, mode=self.mode, cycles=(),
+                    final_state=self.machine.current_state, stopped=exhausted,
+                    budget=self.touches.report(),
+                    forwarded_message_ids=tuple(self._forwarded),
+                    provider_calls=self.provider_calls,
+                    rotations=tuple(self._rotations),
+                    run_budget=self.run_budget.report())
         # M0-T045: cross-process resume. A run approved at WAIT (via
         # `resume-pending-prompt`, in a separate invocation) rests at
         # FORWARD_PROMPT. Complete that approved forward here BEFORE the cycle loop,
@@ -2478,8 +2693,16 @@ class SupervisedLoop:
                         rotations=tuple(self._rotations))
             start_index = next_index
         for index in range(start_index, self.config.max_cycles + 1):
+            # M0-T079: the budget gate, at the seam BEFORE a unit is dispatched.
+            # Nothing is in flight here, so exhaustion is a clean deterministic
+            # stop rather than an interrupted unit (S11.2).
+            exhausted = self._budget_stop()
+            if exhausted:
+                stopped = exhausted
+                break
             result = self.run_cycle(prompt, cycle=index)
             cycles.append(result)
+            self._persist_breaker_tallies()
             if result.stopped:
                 stopped = result.stopped
                 break
@@ -2526,15 +2749,37 @@ class SupervisedLoop:
                     # never continues on a substitute model.
                     stopped = seam.stopped
                     break
+                # M0-T079: a seam RELAUNCH is a restart - the outgoing session is
+                # archived and a brand-new one is started. That is the production
+                # event `restart_attempts` counts, and this is the single place
+                # every relaunch shape (rotation, chain switch, return-to-pin)
+                # passes through, so it is ticked exactly once each.
+                if seam.relaunched:
+                    tripped, message = self._breaker("restart_attempts")
+                    self._persist_breaker_tallies()
+                    if tripped:
+                        stopped = "circuit_breaker_hard_threshold"
+                        self.touches.record(
+                            TOUCH_SYNCHRONOUS_STOP,
+                            reason_code="circuit_breaker_hard_threshold",
+                            reason=message, cycle=index + 1,
+                            basis="S13.8 hard threshold (restart_attempts): a run that "
+                                  "keeps restarting sessions is not making progress")
+                        break
                 # Relaunched: the next cycle dispatches the SAME forwarded prompt on
                 # the fresh session id - on the pinned model, or on the substitute
                 # model while an orchestrator-role substitution is active.
         else:
             stopped = "max_cycles_reached"
+        if self.run_budget is not None and stopped != "budget_exhausted":
+            # Close the durable record with how the run actually ended, so a later
+            # start reads a truthful exit reason rather than an open record.
+            self.run_budget.finalize(exit_reason=stopped or "cycles_completed")
         return LoopRun(
             run_id=self.run_id, mode=self.mode, cycles=tuple(cycles),
             final_state=self.machine.current_state, stopped=stopped,
             budget=self.touches.report(),
             forwarded_message_ids=tuple(self._forwarded),
             provider_calls=self.provider_calls,
-            rotations=tuple(self._rotations))
+            rotations=tuple(self._rotations),
+            run_budget=(self.run_budget.report() if self.run_budget is not None else None))
