@@ -83,12 +83,12 @@
     "security-reviewer",
     "directive-compliance-verifier"
   ],
-  "status": "claimed",
-  "progress_percent": 10,
+  "status": "rework",
+  "progress_percent": 80,
   "risks": [],
   "blockers": [],
   "created_at": "2026-08-21T18:06:50.913213+00:00",
-  "updated_at": "2026-08-21T18:16:25.940334+00:00",
+  "updated_at": "2026-08-21T21:06:54.108102+00:00",
   "directive_refs": [
     {
       "directive_id": "D-023",
@@ -97,5 +97,14 @@
   ],
   "directive_regime_version": "1.0",
   "directive_regime_entered_at": "2026-08-21T18:06:50.913213+00:00",
-  "worktree": "C:/Users/MLFLL/Downloads/nyc-zoning/wt-m0t079"
+  "worktree": "C:/Users/MLFLL/Downloads/nyc-zoning/wt-m0t079",
+  "progress_log": [
+    {
+      "at": "2026-08-21T21:06:54.108102+00:00",
+      "agent": "orchestrator",
+      "percent": 80,
+      "status": "rework",
+      "message": "G5 FAIL at reviewed identity c52613f (material tree unchanged at HEAD): 2 must-fix (C1 budget self-reset via missing/malformed run_budget record - containment break; C2 credential leak through unredacted probe evidence) + 6 important (C3 argv-replay deny-set, C4 per-day tally decay, C5 typed refusals for corrupt state, C6 tamper/breaker/refused audit events, C7 missing-input exit code, C8 blocker authority) + load-bearing minors C9-C12. G3 PASS and G4 PASS carry blocking-for-acceptance corrections folded into the same set. ONE consolidated correction C1-C12 in project-control/reports/M0-T079-consolidated-correction.md. Journal-DB ACL hardening deferred to owner checkpoint. Re-freeze + full G5 re-pass + focused G3 + full-tree G4 required before re-gate; no acceptance while any must-fix is open."
+    }
+  ]
 }

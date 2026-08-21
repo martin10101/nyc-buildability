@@ -1,0 +1,12 @@
+{
+  "task_id": "M0-T079",
+  "gate_id": "G2",
+  "reviewer": "orchestrator",
+  "role": "self_check",
+  "result": "PASS",
+  "report_file": "project-control/reports/M0-T079-producer-report.md",
+  "reviewed_at": "2026-08-21T20:01:45.953576+00:00",
+  "content_manifest_sha256": "b27cc080c598dfa2a1049ba27ee44529218b642de93781b00acbd77f30d119f8",
+  "reviewed_sha": "c52613f28732d73085efa71114cddde7a1468614",
+  "updated_at": "2026-08-21T20:01:48.428328+00:00"
+}
