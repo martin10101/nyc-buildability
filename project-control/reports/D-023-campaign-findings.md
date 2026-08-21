@@ -29,9 +29,25 @@ tamper/breaker/refused audit events, C7 missing-input exit code, C8 blocker auth
 expired-deadline gate. Minors: C10 drift re-pin, C11 exhaustion escape, C12 hygiene. Status:
 issued to producer; awaiting corrected identity + full re-review (G5 must clear both must-fix).
 
-- **Host act deferred to owner checkpoint:** journal-DB ACL hardening for
-  `%LOCALAPPDATA%\NYCBuildabilitySupervisor` (G5 threat-model; C1 removes the exploit, ACL
-  hardening raises the bar further — protected-host act).
+- **Host act deferred to owner checkpoint — journal-DB ACL hardening for
+  `%LOCALAPPDATA%\NYCBuildabilitySupervisor`.** Honest scope (G3 re-review minor #4 + G5
+  re-review): C1 closes the **in-band** budget self-reset (a run nulling `started_at_epoch`
+  or writing a malformed record through the code's own `start()` path — the round-1 must-fix).
+  It does NOT close the **raw-SQLite-write** class: a true row DELETE, a fully-forged record
+  with a recomputed unkeyed `budget_digest`, dropping the `budget_digest` field, or rewriting
+  elapsed/counters directly — all of which require write access to the un-ACL'd journal DB.
+  G5's security judgment (accepted): a keyed/HMAC digest cannot help because the adversary is
+  the worker running as the **same OS user** (it can read any key the supervisor can), and no
+  key material exists on this build; the existing `harden_controller_config.ps1` ACL pattern
+  applied to the journal DB directory closes the whole class. **Recommendation carried to the
+  owner checkpoint: name the journal-DB ACL item on the R595 activation checklist as a
+  prerequisite, not merely a finding.** Round-3 additionally requires the `budget_digest`
+  field (closes the cheapest raw-DB variant for free).
+- **F-008 (G5 re-review, pre-existing, not T079):** `cmd_status --json` (cli.py:1477) prints
+  journal-derived content via a bare `json.dumps`, unredacted — a credential planted in a
+  transition detail would reach stdout. Out of T079 scope (its only cmd_status change is a
+  prose string) but contradicts C2's now-general "stdout is a transmission" docstring. Pool
+  for a later status-command redaction pass / M0-T085 settlement.
 
 ## Observations queued for M0-T085 settlement (not defects)
 
