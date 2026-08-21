@@ -74,7 +74,7 @@ not imports, precisely so they stay out of every session's base context.
 | Lean operating process (handoffs, control-PR batching, minimal unit events, concise code) — **M2-T016 onward** | `docs/LEAN_OPERATING_PROCESS.md` |
 
 Path-scoped rules in `.claude/rules/` auto-load when you touch their paths (project-control, apps/web,
-services/api, geospatial data, legal/rules, deployment, code architecture). The five standard workflows are on-demand
+services/api, geospatial data, legal/rules, deployment, code architecture). The standard workflows are on-demand
 skills — invoke the one that matches the work:
 
 | Workflow | Skill(s) |
@@ -84,6 +84,7 @@ skills — invoke the one that matches the work:
 | Independent review (evidence gate; UI walkthrough) | `/run-quality-gate`, `/human-walkthrough` |
 | Dependency security (package admission / age gate) | `/dependency-security` |
 | Orchestration (parallel / multi-agent execution) | `/orchestration` |
+| Engineering reliability (behavior change, debugging, async/retry/idempotency, completion claims) | `/engineering-reliability` |
 
 ## Task routine
 
