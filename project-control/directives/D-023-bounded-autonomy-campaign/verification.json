@@ -1,7 +1,7 @@
 {
  "schema": "directive_verification/v2",
  "directive_id": "D-023",
- "authority_note": "Independent verification by directive-compliance-verifier (producer=orchestrator != verifier). M0-T078: ALL 18 applicable rows PASS at sha 7ca7f261 / manifest 6b76e8f6 (verbatim report project-control/reports/M0-T078-directive-verification.md). Remaining campaign tasks pending.",
+ "authority_note": "Independent verification by directive-compliance-verifier (producer=orchestrator != verifier). M0-T078: ALL 18 applicable rows PASS at sha 7ca7f261 / manifest 6b76e8f6 (verbatim report project-control/reports/M0-T078-directive-verification.md). Remaining campaign tasks pending. Re-stamped to final identity commit 621f6732d after the evidence-only ledger commit; path-scoped material manifest verified byte-identical (6b76e8f6...).",
  "producer": "orchestrator",
  "verifier": "directive-compliance-verifier",
  "task_verifications": [
@@ -30,7 +30,7 @@
     "D-023-R036",
     "D-023-R038"
    ],
-   "reviewed_sha": "7ca7f261f5d518b05a1301d2e7ef6ad3793073af",
+   "reviewed_sha": "621f6732d1f12a0776fa361e9f1fd65dc16d8cc0",
    "verified_at": "2026-08-21T00:00:00+00:00",
    "requirements": [
     {
@@ -41,7 +41,7 @@
       "project-control/reports/M0-T078-directive-verification.md"
      ],
      "verified_by": "directive-compliance-verifier",
-     "reviewed_sha": "7ca7f261f5d518b05a1301d2e7ef6ad3793073af"
+     "reviewed_sha": "621f6732d1f12a0776fa361e9f1fd65dc16d8cc0"
     },
     {
      "id": "D-023-R002",
@@ -51,7 +51,7 @@
       "project-control/reports/M0-T078-directive-verification.md"
      ],
      "verified_by": "directive-compliance-verifier",
-     "reviewed_sha": "7ca7f261f5d518b05a1301d2e7ef6ad3793073af"
+     "reviewed_sha": "621f6732d1f12a0776fa361e9f1fd65dc16d8cc0"
     },
     {
      "id": "D-023-R003",
@@ -61,7 +61,7 @@
       "project-control/reports/M0-T078-directive-verification.md"
      ],
      "verified_by": "directive-compliance-verifier",
-     "reviewed_sha": "7ca7f261f5d518b05a1301d2e7ef6ad3793073af"
+     "reviewed_sha": "621f6732d1f12a0776fa361e9f1fd65dc16d8cc0"
     },
     {
      "id": "D-023-R004",
@@ -71,7 +71,7 @@
       "project-control/reports/M0-T078-directive-verification.md"
      ],
      "verified_by": "directive-compliance-verifier",
-     "reviewed_sha": "7ca7f261f5d518b05a1301d2e7ef6ad3793073af"
+     "reviewed_sha": "621f6732d1f12a0776fa361e9f1fd65dc16d8cc0"
     },
     {
      "id": "D-023-R005",
@@ -81,7 +81,7 @@
       "project-control/reports/M0-T078-directive-verification.md"
      ],
      "verified_by": "directive-compliance-verifier",
-     "reviewed_sha": "7ca7f261f5d518b05a1301d2e7ef6ad3793073af"
+     "reviewed_sha": "621f6732d1f12a0776fa361e9f1fd65dc16d8cc0"
     },
     {
      "id": "D-023-R006",
@@ -91,7 +91,7 @@
       "project-control/reports/M0-T078-directive-verification.md"
      ],
      "verified_by": "directive-compliance-verifier",
-     "reviewed_sha": "7ca7f261f5d518b05a1301d2e7ef6ad3793073af"
+     "reviewed_sha": "621f6732d1f12a0776fa361e9f1fd65dc16d8cc0"
     },
     {
      "id": "D-023-R010",
@@ -101,7 +101,7 @@
       "project-control/reports/M0-T078-directive-verification.md"
      ],
      "verified_by": "directive-compliance-verifier",
-     "reviewed_sha": "7ca7f261f5d518b05a1301d2e7ef6ad3793073af"
+     "reviewed_sha": "621f6732d1f12a0776fa361e9f1fd65dc16d8cc0"
     },
     {
      "id": "D-023-R015",
@@ -111,7 +111,7 @@
       "project-control/reports/M0-T078-directive-verification.md"
      ],
      "verified_by": "directive-compliance-verifier",
-     "reviewed_sha": "7ca7f261f5d518b05a1301d2e7ef6ad3793073af"
+     "reviewed_sha": "621f6732d1f12a0776fa361e9f1fd65dc16d8cc0"
     },
     {
      "id": "D-023-R023",
@@ -121,7 +121,7 @@
       "project-control/reports/M0-T078-directive-verification.md"
      ],
      "verified_by": "directive-compliance-verifier",
-     "reviewed_sha": "7ca7f261f5d518b05a1301d2e7ef6ad3793073af"
+     "reviewed_sha": "621f6732d1f12a0776fa361e9f1fd65dc16d8cc0"
     },
     {
      "id": "D-023-R025",
@@ -131,7 +131,7 @@
       "project-control/reports/M0-T078-directive-verification.md"
      ],
      "verified_by": "directive-compliance-verifier",
-     "reviewed_sha": "7ca7f261f5d518b05a1301d2e7ef6ad3793073af"
+     "reviewed_sha": "621f6732d1f12a0776fa361e9f1fd65dc16d8cc0"
     },
     {
      "id": "D-023-R026",
@@ -141,7 +141,7 @@
       "project-control/reports/M0-T078-directive-verification.md"
      ],
      "verified_by": "directive-compliance-verifier",
-     "reviewed_sha": "7ca7f261f5d518b05a1301d2e7ef6ad3793073af"
+     "reviewed_sha": "621f6732d1f12a0776fa361e9f1fd65dc16d8cc0"
     },
     {
      "id": "D-023-R027",
@@ -151,7 +151,7 @@
       "project-control/reports/M0-T078-directive-verification.md"
      ],
      "verified_by": "directive-compliance-verifier",
-     "reviewed_sha": "7ca7f261f5d518b05a1301d2e7ef6ad3793073af"
+     "reviewed_sha": "621f6732d1f12a0776fa361e9f1fd65dc16d8cc0"
     },
     {
      "id": "D-023-R028",
@@ -161,7 +161,7 @@
       "project-control/reports/M0-T078-directive-verification.md"
      ],
      "verified_by": "directive-compliance-verifier",
-     "reviewed_sha": "7ca7f261f5d518b05a1301d2e7ef6ad3793073af"
+     "reviewed_sha": "621f6732d1f12a0776fa361e9f1fd65dc16d8cc0"
     },
     {
      "id": "D-023-R029",
@@ -171,7 +171,7 @@
       "project-control/reports/M0-T078-directive-verification.md"
      ],
      "verified_by": "directive-compliance-verifier",
-     "reviewed_sha": "7ca7f261f5d518b05a1301d2e7ef6ad3793073af"
+     "reviewed_sha": "621f6732d1f12a0776fa361e9f1fd65dc16d8cc0"
     },
     {
      "id": "D-023-R030",
@@ -181,7 +181,7 @@
       "project-control/reports/M0-T078-directive-verification.md"
      ],
      "verified_by": "directive-compliance-verifier",
-     "reviewed_sha": "7ca7f261f5d518b05a1301d2e7ef6ad3793073af"
+     "reviewed_sha": "621f6732d1f12a0776fa361e9f1fd65dc16d8cc0"
     },
     {
      "id": "D-023-R031",
@@ -191,7 +191,7 @@
       "project-control/reports/M0-T078-directive-verification.md"
      ],
      "verified_by": "directive-compliance-verifier",
-     "reviewed_sha": "7ca7f261f5d518b05a1301d2e7ef6ad3793073af"
+     "reviewed_sha": "621f6732d1f12a0776fa361e9f1fd65dc16d8cc0"
     },
     {
      "id": "D-023-R036",
@@ -201,7 +201,7 @@
       "project-control/reports/M0-T078-directive-verification.md"
      ],
      "verified_by": "directive-compliance-verifier",
-     "reviewed_sha": "7ca7f261f5d518b05a1301d2e7ef6ad3793073af"
+     "reviewed_sha": "621f6732d1f12a0776fa361e9f1fd65dc16d8cc0"
     },
     {
      "id": "D-023-R038",
@@ -211,7 +211,7 @@
       "project-control/reports/M0-T078-directive-verification.md"
      ],
      "verified_by": "directive-compliance-verifier",
-     "reviewed_sha": "7ca7f261f5d518b05a1301d2e7ef6ad3793073af"
+     "reviewed_sha": "621f6732d1f12a0776fa361e9f1fd65dc16d8cc0"
     }
    ],
    "reviewed_manifest_sha256": "6b76e8f65b7007b22a2aab5277a4243dd52d6231e2cc96c357de6c2848c7834a"

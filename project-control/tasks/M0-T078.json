@@ -43,12 +43,12 @@
     "security-reviewer",
     "directive-compliance-verifier"
   ],
-  "status": "awaiting_gate",
-  "progress_percent": 95,
+  "status": "accepted",
+  "progress_percent": 100,
   "risks": [],
   "blockers": [],
   "created_at": "2026-08-21T18:06:50.553334+00:00",
-  "updated_at": "2026-08-21T18:37:40.588292+00:00",
+  "updated_at": "2026-08-21T18:50:03.393529+00:00",
   "directive_refs": [
     {
       "directive_id": "D-023",
@@ -57,5 +57,7 @@
   ],
   "directive_regime_version": "1.0",
   "directive_regime_entered_at": "2026-08-21T18:06:50.553334+00:00",
-  "worktree": "C:/Users/MLFLL/Downloads/nyc-zoning/wt-m0t078"
+  "worktree": "C:/Users/MLFLL/Downloads/nyc-zoning/wt-m0t078",
+  "accepted_by": "orchestrator",
+  "accepted_at": "2026-08-21T18:50:03.393529+00:00"
 }
