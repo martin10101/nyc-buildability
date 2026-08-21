@@ -371,6 +371,57 @@ class BudgetExhaustionTests(BoundedTestBase):
         self.assertEqual(record["exit_reason"], "budget_exhausted")
         self.assertTrue(record["stopped_at_utc"])
 
+    def test_the_operator_facing_refusal_names_run_id_for_both_dimensions(self) -> None:
+        """D1 (G3 R-2): the remedy has to be where the operator actually reads.
+
+        `check()` wrote `--run-id` into `BudgetVerdict.reason` and thence into the
+        durable `exit_detail`, but `report()` dropped `exit_detail` and
+        `dispatched_run_refusal`'s message was static - so the escape hatch
+        existed everywhere except the refusal.
+        """
+        from tools.agent_supervisor.start_gate import dispatched_run_refusal
+
+        for dimension, limits, wall in (("wall_clock", Limits(), 100.0),
+                                        ("counter", Limits(max_model_calls_per_task=2),
+                                         None)):
+            with self.subTest(dimension=dimension):
+                self.setUp()
+                led = self.ledger(wall_clock_seconds=wall, limits=limits)
+                if dimension == "wall_clock":
+                    self.clock.advance(200.0)
+                else:
+                    led.persist_counters({"model_calls_per_task": 2},
+                                         day=rb.utc_day_for(self.clock.now))
+                verdict = led.check()
+                self.assertTrue(verdict.exhausted)
+                self.assertEqual(verdict.dimension, dimension)
+                led.finalize(exit_reason="budget_exhausted", detail=verdict.reason)
+
+                report = led.report()
+                self.assertEqual(report["exhausted_dimension"], dimension)
+                self.assertIn("--run-id", report["exit_detail"])
+
+                item = dispatched_run_refusal(
+                    "shadow", {"stopped": "budget_exhausted", "run_budget": report,
+                               "cycles": []})
+                self.assertEqual(item.outcome, refusals.BUDGET_EXHAUSTED)
+                self.assertIn("--run-id", item.message)
+                self.assertEqual(item.detail["remedy"], "--run-id <fresh-id>")
+                self.assertIn("--run-id", "\n".join(item.lines()))
+
+    def test_a_zero_cycle_budget_stop_is_not_reported_as_dispatched(self) -> None:
+        """D1: a run refused at the seam before its first cycle ran nothing."""
+        self.at_preflight()
+        led = self.ledger(wall_clock_seconds=10.0)
+        self.clock.advance(11.0)
+        runner = FakeRunner(run_result())
+        loop = self.build(runner=runner, run_budget=led, max_cycles=4)
+        run = loop.run("first unit")
+        self.assertEqual(run.stopped, "budget_exhausted")
+        self.assertEqual(run.cycles, ())
+        self.assertEqual(runner.prompts, [], "no unit was dispatched")
+        self.assertEqual(run.provider_calls, 0)
+
     def test_exhaustion_is_recorded_in_the_audit_chain(self) -> None:
         self.at_preflight()
         runner = FakeRunner(run_result(), clock=self.clock, seconds_per_unit=40.0)
@@ -1095,6 +1146,39 @@ class BudgetSelfResetTests(BoundedTestBase):
         with self.assertRaises(rb.BudgetError) as ctx:
             self.reopen(wall_clock_seconds=36_000.0)
         self.assertEqual(ctx.exception.code, "budget_record_tampered")
+
+    def test_a_record_whose_budget_digest_was_DELETED_refuses(self) -> None:
+        """D3 (G5 free hardening): the cheapest raw-DB rewrite of the lot.
+
+        The tamper check used to read `if recorded_digest and recorded_digest !=
+        ...`, so dropping the field skipped it entirely and the rewritten budget
+        block sailed into the conflict comparison as "the persisted budget".
+        `_first_launch` always writes the digest, so a legitimate record can never
+        lack one.
+        """
+        self.spend()
+        self.tamper(lambda r: {k: v for k, v in r.items() if k != "budget_digest"})
+        with self.assertRaises(rb.BudgetError) as ctx:
+            self.reopen()
+        self.assertEqual(ctx.exception.code, "budget_record_malformed")
+
+    def test_deleting_the_digest_does_not_smuggle_a_rewritten_budget(self) -> None:
+        """The attack the missing-field skip actually enabled, end to end."""
+        self.spend()
+        self.tamper(lambda r: {**{k: v for k, v in r.items() if k != "budget_digest"},
+                               "budget": {**r["budget"], "wall_clock_seconds": 36_000.0}})
+        with self.assertRaises(rb.BudgetError) as ctx:
+            self.reopen(wall_clock_seconds=36_000.0)
+        self.assertEqual(ctx.exception.code, "budget_record_malformed")
+        record = rb.load_record(self.journal, self.run_id)
+        self.assertGreaterEqual(record["elapsed_high_water_seconds"], 3000.0)
+
+    def test_an_empty_budget_digest_is_refused_like_a_missing_one(self) -> None:
+        self.spend()
+        self.tamper(lambda r: {**r, "budget_digest": ""})
+        with self.assertRaises(rb.BudgetError) as ctx:
+            self.reopen()
+        self.assertEqual(ctx.exception.code, "budget_record_malformed")
 
     def test_an_unreadable_budget_block_refuses(self) -> None:
         self.spend()

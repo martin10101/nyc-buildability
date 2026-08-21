@@ -134,7 +134,7 @@ def open_blockers_for(repo_root: str, task_id: str) -> tuple[list[str], str]:
             return [], f"{path.name} is unreadable ({exc})"
         if not isinstance(record, Mapping):
             return [], f"{path.name} is not a blocker record"
-        if str(record.get("status", "") or "").lower() not in ("open", ""):
+        if str(record.get("status", "") or "").strip().lower() not in ("open", ""):
             continue
         affects = record.get("affects") or []
         parts = ([str(x) for x in affects] if isinstance(affects, list)
