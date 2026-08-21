@@ -1,0 +1,25 @@
+{
+ "task_id": "M0-T078",
+ "directive_id": "D-023",
+ "content_identity": "409386c8e1cf18421c30f43a258c99bd1a2aee25",
+ "requirements": {
+  "D-023-R001": "Handoff read at capture (orchestrator; digest verified in D-023 manifest audit_log); task scoped strictly to its Section-4-derived deliverable. project-control/reports/M0-T078-producer-report.md section 0.",
+  "D-023-R002": "Deliverable produced inside the coordinated campaign chain (task M0-T078 of M0-T078..M0-T085), no fragmented side work. project-control/reports/M0-T078-producer-report.md section 1.",
+  "D-023-R003": "Conduct row honored throughout M0-T078; producer report project-control/reports/M0-T078-producer-report.md sections 1 and 6 (scope containment + confirmations) at content identity 409386c8e1cf18421c30f43a258c99bd1a2aee25; no violation observed.",
+  "D-023-R004": "Agent roster unchanged; no new agents/hooks/scripts. project-control/reports/M0-T078-producer-report.md section 6 confirmations; grep evidence AS-7.",
+  "D-023-R005": "No third-party agent framework installed. project-control/reports/M0-T078-producer-report.md section 6; AS-7 zero third-party names.",
+  "D-023-R006": "No community-repository code copied. project-control/reports/M0-T078-producer-report.md section 6; AS-7.",
+  "D-023-R010": "Work confined to authorized deliverable area 5 (reliability standard/skill). project-control/reports/M0-T078-producer-report.md section 1 path table (all inside allowed_paths).",
+  "D-023-R015": "docs/ENGINEERING_RELIABILITY_STANDARD.md (284 lines, ten vetted principle areas, trigger matrix, non-duplication map Section 0) + .claude/skills/engineering-reliability/SKILL.md (38-line discriminating router) written from scratch at 409386c8e1cf18421c30f43a258c99bd1a2aee25. Acceptance scenarios AS-1..AS-9 executed in project-control/reports/M0-T078-producer-report.md section 4.",
+  "D-023-R023": "No autonomy/correctness/savings/token/reliability/readiness claim made; standard Section 10.8 self-disclaims; AS-9 mechanical audit of claim vocabulary. project-control/reports/M0-T078-producer-report.md sections 4 and 6.",
+  "D-023-R025": "Conduct row honored throughout M0-T078; producer report project-control/reports/M0-T078-producer-report.md sections 1 and 6 (scope containment + confirmations) at content identity 409386c8e1cf18421c30f43a258c99bd1a2aee25; no violation observed.",
+  "D-023-R026": "Conduct row honored throughout M0-T078; producer report project-control/reports/M0-T078-producer-report.md sections 1 and 6 (scope containment + confirmations) at content identity 409386c8e1cf18421c30f43a258c99bd1a2aee25; no violation observed.",
+  "D-023-R027": "Conduct row honored throughout M0-T078; producer report project-control/reports/M0-T078-producer-report.md sections 1 and 6 (scope containment + confirmations) at content identity 409386c8e1cf18421c30f43a258c99bd1a2aee25; no violation observed.",
+  "D-023-R028": "Conduct row honored throughout M0-T078; producer report project-control/reports/M0-T078-producer-report.md sections 1 and 6 (scope containment + confirmations) at content identity 409386c8e1cf18421c30f43a258c99bd1a2aee25; no violation observed.",
+  "D-023-R029": "Conduct row honored throughout M0-T078; producer report project-control/reports/M0-T078-producer-report.md sections 1 and 6 (scope containment + confirmations) at content identity 409386c8e1cf18421c30f43a258c99bd1a2aee25; no violation observed.",
+  "D-023-R030": "Conduct row honored throughout M0-T078; producer report project-control/reports/M0-T078-producer-report.md sections 1 and 6 (scope containment + confirmations) at content identity 409386c8e1cf18421c30f43a258c99bd1a2aee25; no violation observed.",
+  "D-023-R031": "Conduct row honored throughout M0-T078; producer report project-control/reports/M0-T078-producer-report.md sections 1 and 6 (scope containment + confirmations) at content identity 409386c8e1cf18421c30f43a258c99bd1a2aee25; no violation observed.",
+  "D-023-R036": "Produced autonomously within authorization; no owner interruption requested. project-control/reports/M0-T078-producer-report.md section 0.",
+  "D-023-R038": "Superpowers/secondsky/wshobson never fetched, read, referenced, installed, or executed; grep shows zero occurrences in new files. project-control/reports/M0-T078-producer-report.md section 6; AS-7."
+ }
+}
